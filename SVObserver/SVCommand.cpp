@@ -37,7 +37,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "SVStatusLibrary/MessageHandler.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 
 #include "SVInfoStructs.h"
@@ -159,9 +159,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
@@ -227,9 +227,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
@@ -348,9 +348,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
@@ -482,9 +482,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
@@ -574,9 +574,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
@@ -664,9 +664,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
@@ -756,9 +756,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
@@ -854,9 +854,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
@@ -925,9 +925,9 @@ xmlerror:
 		break;
 	} while (0);
 
-	if(( svXmlException = Exception.getMessageHandler() ) != TRUE)
+	if(( svXmlException = Exception.getMessageContainer() ) != TRUE)
 	{ //create an exception object for an XML parse error
-		SvStl::MessageHandler XmlException = svXmlException.GetParserError();
+		SvStl::MessageContainer XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);

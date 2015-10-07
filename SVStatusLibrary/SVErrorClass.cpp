@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVErrorClass.h"
 #include "SVMessage/SVMessage.h"
-#include "MessageHandler.h"
+#include "MessageContainer.h"
 #include "SVUtilityLibrary\SVUtilityGlobals.h"
 
 SVErrorClass::SVErrorClass ()
@@ -210,7 +210,7 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
 			  msvlLastErrorCd ,
 			  programCd  );
 		  // log to event log.
-			SvStl::MessageHandler svE;
+			SvStl::MessageContainer svE;
 			svE.setMessage (SVMSG_SVO_35_LEGACY_ERROR_TRAP, lx_displayString.ToString(), 
 				_T(__DATE__), _T(__TIME__), fileName, lineNbr, _T(__TIMESTAMP__), programCd );
 			svE.logMessage();

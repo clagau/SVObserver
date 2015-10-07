@@ -7,33 +7,33 @@
 //******************************************************************************
 
 #pragma region Constructor
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-MessageManager<M_Handler, M_Data, M_Display, M_Notify>::MessageManager( const MsgTypeEnum Type ) :
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+MessageManager<M_Container, M_Data, M_Display, M_Notify>::MessageManager( const MsgTypeEnum Type ) :
 m_Type( Type )
 {
 }
 
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-MessageManager<M_Handler, M_Data, M_Display, M_Notify>::~MessageManager()
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+MessageManager<M_Container, M_Data, M_Display, M_Notify>::~MessageManager()
 {
 }
 #pragma endregion Constructor
  
 #pragma region Public Methods
-template <typename M_Handler, typename M_Data, ShowDialog M_Display, Notify M_Notify>
-void MessageManager<M_Handler, M_Data, M_Display, M_Notify>::setType( const MsgTypeEnum Type )
+template <typename M_Container, typename M_Data, ShowDialog M_Display, Notify M_Notify>
+void MessageManager<M_Container, M_Data, M_Display, M_Notify>::setType( const MsgTypeEnum Type )
 {
 	m_Type = Type;
 }
 
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-void MessageManager<M_Handler, M_Data, M_Display, M_Notify>::Throw()
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+void MessageManager<M_Container, M_Data, M_Display, M_Notify>::Throw()
 {
-	throw m_Handler; 
+	throw M_Container; 
 }
 
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Handler, M_Data, M_Display, M_Notify>::Process( UINT MsgBoxType = MB_OK )
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Process( UINT MsgBoxType = MB_OK )
 {
 	INT_PTR Result( IDCANCEL );
 
@@ -44,49 +44,49 @@ INT_PTR MessageManager<M_Handler, M_Data, M_Display, M_Notify>::Process( UINT Ms
 	return Result;
 }
 
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Handler, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User=nullptr,  UINT MsgBoxType = MB_OK)
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User=nullptr,  UINT MsgBoxType = MB_OK)
 {
 	INT_PTR Result( IDCANCEL );
 
-	m_Handler.setMessage( MessageCode, AdditionalText, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
+	M_Container.setMessage( MessageCode, AdditionalText, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
 
 	Result = Process( MsgBoxType );
 
 	return Result;
 }
 
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Handler, M_Data, M_Display, M_Notify>::setMessage( const M_Data& rData,  UINT MsgBoxType = MB_OK)
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( const M_Data& rData,  UINT MsgBoxType = MB_OK)
 {
 	INT_PTR Result( IDCANCEL );
 
-	m_Handler.setMessage( rData );
+	M_Container.setMessage( rData );
 
 	Result = Process( MsgBoxType );
 
 	return Result;
 }
 
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-M_Handler& MessageManager<M_Handler, M_Data, M_Display, M_Notify>::getMessageHandler()
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+M_Container& MessageManager<M_Container, M_Data, M_Display, M_Notify>::getMessageContainer()
 {
-	return m_Handler; 
+	return M_Container; 
 }
 #pragma endregion Public Methods
  
 #pragma region Private Methods
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-void MessageManager<M_Handler, M_Data, M_Display, M_Notify>::Log()
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+void MessageManager<M_Container, M_Data, M_Display, M_Notify>::Log()
 {
 	if( LogOnly == m_Type || LogAndDisplay == m_Type )
 	{
-		m_Handler.logMessage();
+		M_Container.logMessage();
 	}
 }
 
-template <typename M_Handler, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Handler, M_Data, M_Display, M_Notify>::Display( const UINT MsgBoxType ) const
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Display( const UINT MsgBoxType ) const
 {
 	INT_PTR Result( IDCANCEL );
 
@@ -96,19 +96,19 @@ INT_PTR MessageManager<M_Handler, M_Data, M_Display, M_Notify>::Display( const U
 		SVString MsgDetails;
 		UINT Type ( MsgBoxType );
 
-		MsgDetails = m_Handler.Format(Msg);
+		MsgDetails = M_Container.Format(Msg);
 		//Message box type icon is determined by the severity of the message so set to 0 then get it from the container
 		Type &= ~MB_ICONMASK;
-		Type |= m_Handler.getSeverityIcon();
+		Type |= M_Container.getSeverityIcon();
 
 		if(nullptr != M_Notify )
 		{
-			M_Notify(SvStl::StartMsgBox,m_Handler.getMessage().m_ProgramCode,Msg.c_str()  );
+			M_Notify(SvStl::StartMsgBox,M_Container.getMessage().m_ProgramCode,Msg.c_str()  );
 		}
 		Result = M_Display( NULL, Msg.c_str(), MsgDetails.c_str(), Type );
 		if(nullptr != M_Notify )
 		{
-			M_Notify(SvStl::EndMsgBox,m_Handler.getMessage().m_ProgramCode,Msg.c_str()  );
+			M_Notify(SvStl::EndMsgBox,M_Container.getMessage().m_ProgramCode,Msg.c_str()  );
 		}
 	}
 	

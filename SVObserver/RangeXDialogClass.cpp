@@ -20,7 +20,7 @@
 #include "svresult.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
-#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -161,7 +161,7 @@ bool RangeXDialogClass::GetDlgData()
 		m_RangeClassHelper.SetInternalData(RangeEnum::ER_WarnLow, csText);
 		res = true;
 	}
-	catch ( const SvStl::MessageHandler& rSvE )
+	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );

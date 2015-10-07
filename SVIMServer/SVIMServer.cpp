@@ -14,7 +14,7 @@
 #include "SVLibrary/SVPackedFile.h"
 #include "SVMessage/SVMessage.h"
 #include "SVCmnLib/utilities.h"
-#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageContainer.h"
 
 SV_EXPORTDLL SVIMServer::SVIMServer() : SVIMCommandServer (CString (_T("SVObserver")))
 {
@@ -243,7 +243,7 @@ void SVIMServer::OnSVIMSendComplete(CString& szSendFileName)
 {
 }
 
-BOOL SVIMServer::OnWriteBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer)
+BOOL SVIMServer::OnWriteBlockComplete(SvStl::MessageContainer *psvException, char *pBuffer, int cbBuffer)
 {
 	SVIMCommand Command;
 	char *pTemp;
@@ -289,7 +289,7 @@ BOOL SVIMServer::OnWriteBlockComplete(SvStl::MessageHandler *psvException, char 
 	return FALSE;
 }
 
-BOOL SVIMServer::OnReadBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer)
+BOOL SVIMServer::OnReadBlockComplete(SvStl::MessageContainer *psvException, char *pBuffer, int cbBuffer)
 {
 	return FALSE;
 }

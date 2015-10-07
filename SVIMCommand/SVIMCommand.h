@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 #define SVIOBUFFSIZE 4096
@@ -40,7 +40,7 @@
 #define SVIM_STOPPING					0x0200
 #define SVIM_RAID_FAILURE			0x0400
 
-typedef void (CALLBACK * SVCOMMANDCOMPLETEPROC)(CString &szFileName, SvStl::MessageHandler *pException, void *pUserData);
+typedef void (CALLBACK * SVCOMMANDCOMPLETEPROC)(CString &szFileName, SvStl::MessageContainer *pException, void *pUserData);
 
 class SVIMCommand 
 {

@@ -7,7 +7,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "MessageHandler.h"
+#include "MessageContainer.h"
 #include "SVMessage\SVMessage.h"
 #include "SVRegistry.h"
 #include "SVObjectLibrary\GlobalConst.h"
@@ -54,25 +54,25 @@ static const TCHAR* const TaskCategory[CategoryNr]= { _T("Unused01"), _T("SVBatc
 namespace Seidenader { namespace SVStatusLibrary
 {
 #pragma region Constructor
-	MessageHandler::MessageHandler()
+	MessageContainer::MessageContainer()
 	{
 	}
 
-	MessageHandler::MessageHandler(const MessageHandler& rRhs) :
+	MessageContainer::MessageContainer(const MessageContainer& rRhs) :
 	m_Message( rRhs.m_Message )
 		, m_AdditionalMessages( rRhs.m_AdditionalMessages )
 		, m_What( rRhs.m_What )
 	{
 	}
 
-	MessageHandler::MessageHandler( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime,
+	MessageContainer::MessageContainer( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime,
 		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime,
 		DWORD ProgramCode, DWORD OSErrorCode, LPCTSTR User )
 	{
 		setMessage( MessageCode, AdditionalText, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
 	}
 
-	const MessageHandler& MessageHandler::operator=(const MessageHandler& rRhs)
+	const MessageContainer& MessageContainer::operator=(const MessageContainer& rRhs)
 	{
 		if( &rRhs != this )
 		{
@@ -84,13 +84,13 @@ namespace Seidenader { namespace SVStatusLibrary
 		return *this;
 	}
 
-	MessageHandler::~MessageHandler()
+	MessageContainer::~MessageContainer()
 	{
 	}
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	void MessageHandler::setMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+	void MessageContainer::setMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
 		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
 		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
 	{
@@ -109,7 +109,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		setMessage( m_Message, false );
 	}
 
-	void MessageHandler::setMessage( const MessageData& rMessage, bool clearData )
+	void MessageContainer::setMessage( const MessageData& rMessage, bool clearData )
 	{
 		if( clearData )
 		{
@@ -135,7 +135,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 	}
 
-	void MessageHandler::addMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+	void MessageContainer::addMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
 		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime , 
 		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
 	{
@@ -156,7 +156,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		setMessage( m_Message, false );
 	}
 
-	void MessageHandler::addMessage( const MessageData& rMessage, bool replaceMainMessage )
+	void MessageContainer::addMessage( const MessageData& rMessage, bool replaceMainMessage )
 	{
 		if( replaceMainMessage )
 		{
@@ -173,14 +173,14 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 	}
 
-	void MessageHandler::clearMessage()
+	void MessageContainer::clearMessage()
 	{
 		m_Message.clear();
 		m_AdditionalMessages.clear();
 		m_What.clear();
 	}
 
-	void MessageHandler::logMessage()
+	void MessageContainer::logMessage()
 	{
 		SVString DebugString;
 		SVStringArray SubstituteStrings;
@@ -239,7 +239,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 	}
 
-	UINT MessageHandler::getSeverityIcon() const
+	UINT MessageContainer::getSeverityIcon() const
 	{
 		UINT Icon( 0 );
 
@@ -269,7 +269,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		return Icon;
 	}
 
-	SVString MessageHandler::Format( SVString& rMessage ) const
+	SVString MessageContainer::Format( SVString& rMessage ) const
 	{
 		SVString Result;
 		SVString MsgDetails;
@@ -342,7 +342,7 @@ namespace Seidenader { namespace SVStatusLibrary
 				reg.DeleteKey();
 			}
 		}
-		catch(  MessageHandler& mh  )
+		catch(  MessageContainer& mh  )
 		{
 			//do nothing;
 		}
@@ -367,17 +367,17 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-	UINT MessageHandler::getSeverity() const
+	UINT MessageContainer::getSeverity() const
 	{
 		return (m_Message.m_MessageCode & 0xc0000000) >> 30;
 	}
 
-	UINT MessageHandler::getFacility() const
+	UINT MessageContainer::getFacility() const
 	{
 		return (m_Message.m_MessageCode & 0x0fff0000) >> 16;
 	}
 
-	SVString MessageHandler::getFacilityName() const
+	SVString MessageContainer::getFacilityName() const
 	{
 		SVString SourceName;
 
@@ -403,17 +403,17 @@ namespace Seidenader { namespace SVStatusLibrary
 		return SourceName;
 	}
 
-	UINT MessageHandler::getEventID() const
+	UINT MessageContainer::getEventID() const
 	{
 		return ( m_Message.m_MessageCode & 0x0000ffff);
 	}
 
-	WORD MessageHandler::getCategory() const
+	WORD MessageContainer::getCategory() const
 	{
 		return (getFacility() & 0x00ff);
 	}
 
-	SVString MessageHandler::getCategoryName() const
+	SVString MessageContainer::getCategoryName() const
 	{
 		SVString Result( CategoryUnknown );
 
@@ -449,7 +449,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		return Result;
 	}
 
-	void MessageHandler::setSubstituteStrings( SVStringArray& rSubstituteStrings ) const
+	void MessageContainer::setSubstituteStrings( SVStringArray& rSubstituteStrings ) const
 	{
 		rSubstituteStrings.clear();
 		rSubstituteStrings.resize( SubstituteStringNr );

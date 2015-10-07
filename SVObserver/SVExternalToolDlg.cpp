@@ -22,7 +22,7 @@
 #include "SVIPDoc.h"
 #include "SVMFCControls\SVFileDialog.h"
 #include "SVLoki\Functor.h"
-#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageContainer.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -179,7 +179,7 @@ void SVExternalToolDlg::OnOK()
 				hr = S_FALSE;
 			}
 		}
-		catch ( const SvStl::MessageHandler& e)
+		catch ( const SvStl::MessageContainer& e)
 		{
 			hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 		}
@@ -402,7 +402,7 @@ void SVExternalToolDlg::InitializeDll()
 
 		m_btnDetails.EnableWindow();
 	}
-	catch ( const SvStl::MessageHandler& e)
+	catch ( const SvStl::MessageContainer& e)
 	{
 		// display all sub-errors in box
 		UpdateData(TRUE);

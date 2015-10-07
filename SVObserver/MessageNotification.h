@@ -64,7 +64,4 @@ protected:
 };
 
 
-//typedef SvStl::MessageManager<SvStl::MessageHandler, SvStl::MessageData, &SvOml::DisplayMessageBox::showDialog,&ErrorNotification::FireNotify> MessageMgrDisplayAndNotify;
-
-
 

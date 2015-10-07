@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #include "SVXml.h"
 #pragma endregion Includes
 
@@ -21,7 +21,7 @@ class SVXmlException : public SVXml
 public:
 	SVXmlException();
 	virtual ~SVXmlException();
-	BOOL operator=( SvStl::MessageHandler& rhs);
+	BOOL operator=( SvStl::MessageContainer& rhs);
 	BOOL GetXmlDoc(BSTR * bstrDoc);
 
 protected:

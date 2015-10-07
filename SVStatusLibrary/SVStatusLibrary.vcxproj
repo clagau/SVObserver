@@ -164,7 +164,7 @@
     <ClCompile Include="SVErrorClass.cpp" />
     <ClCompile Include="SVEventLogClass.cpp" />
     <ClCompile Include="SVEventRecordStruct.cpp" />
-    <ClCompile Include="MessageHandler.cpp" />
+    <ClCompile Include="MessageContainer.cpp" />
     <ClCompile Include="SVRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +175,7 @@
     <ClInclude Include="SVErrorClass.h" />
     <ClInclude Include="SVEventLogClass.h" />
     <ClInclude Include="SVEventRecordStruct.h" />
-    <ClInclude Include="MessageHandler.h" />
+    <ClInclude Include="MessageContainer.h" />
     <ClInclude Include="SVRegistry.h" />
     <ClInclude Include="SVStatusLibrary.h" />
   </ItemGroup>

@@ -19,17 +19,17 @@ namespace Seidenader { namespace SVStatusLibrary
 		#define StdMessageParams _T(__DATE__), _T(__TIME__), _T(__FILE__), __LINE__, _T(__TIMESTAMP__)
 #pragma endregion Declarations
 
-		class MessageHandler : public std::exception
+	class MessageContainer : public std::exception
 	{
 #pragma region Constructor
 	public:
-		MessageHandler();
+		MessageContainer();
 
 		//************************************
 		//! This is the copy constructor
 		//! \param rRhs <in> reference to the message handler to copy
 		//************************************
-		MessageHandler( const MessageHandler& rRhs );
+		MessageContainer( const MessageContainer& rRhs );
 
 		//************************************
 		//! This is the constructor to set the data on construction
@@ -44,7 +44,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param OSErrorCode <in> the operating system error code
 		//! \param User <in> the respective user for security messages
 		//************************************
-		MessageHandler( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+		MessageContainer( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
 						LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
 						DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User = nullptr );
 
@@ -52,9 +52,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! This is the assignment operator
 		//! \param rRhs <in> reference to a message handler with which to set the data
 		//************************************
-		const MessageHandler& operator=(const MessageHandler& rRhs);
+		const MessageContainer& operator=(const MessageContainer& rRhs);
 
-		virtual ~MessageHandler();
+		virtual ~MessageContainer();
 #pragma endregion Constructor
 	
 #pragma region Public Methods

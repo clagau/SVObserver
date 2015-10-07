@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #include "xmlmacros.h"
 #include "element.h"
 #pragma endregion Includes
@@ -36,10 +36,10 @@ public:
 	MSXML2::IXMLDOMNodePtr GetChildElement(MSXML2::IXMLDOMNode * pNode, TCHAR * pName);
 	virtual BOOL GetXmlDoc(BSTR * bstrDoc);
 	BOOL PutXmlCmdDocInBuf(BYTE ** ppBuf, unsigned long * cBufLen);
-	SvStl::MessageHandler& GetParserError(){return m_SVException;};
+	SvStl::MessageContainer& GetParserError(){return m_SVException;};
 
 protected:
-	SvStl::MessageHandler m_SVException;
+	SvStl::MessageContainer m_SVException;
 	BOOL m_ExceptionSet;
 	void Reset();
 	BOOL GetXmlElementValues(Element * pElement);

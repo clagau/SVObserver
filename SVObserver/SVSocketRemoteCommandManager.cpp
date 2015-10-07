@@ -750,7 +750,7 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 		{
 			l_Status = SVVisionProcessorHelper::Instance().SaveConfiguration( l_TempFileName );
 		}
-		catch ( const SvStl::MessageHandler& rSvE )
+		catch ( const SvStl::MessageContainer& rSvE )
 		{
 			l_Status = static_cast<HRESULT> (rSvE.getMessage().m_MessageCode);
 			errText = rSvE.what();
@@ -795,7 +795,7 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 		
 		if (errText.empty())
 		{
-			errText = Exception.getMessageHandler().what();
+			errText = Exception.getMessageContainer().what();
 		}
 		BuildErrorResponse(p_rJsonCommand, p_rJsonResults, l_Status, errText);
 	}
@@ -1272,7 +1272,7 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 		{
 			l_Status = SVVisionProcessorHelper::Instance().LoadConfiguration( l_SourceFileName );
 		}
-		catch (const SvStl::MessageHandler& rSvE)
+		catch (const SvStl::MessageContainer& rSvE)
 		{
 			l_Status = static_cast<HRESULT> (rSvE.getMessage().m_MessageCode);
 			errText = rSvE.what();
@@ -1299,7 +1299,7 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 
 		if (errText.empty())
 		{
-			errText = Exception.getMessageHandler().what();
+			errText = Exception.getMessageContainer().what();
 		}
 		if (!FAILED(l_Status))
 		{

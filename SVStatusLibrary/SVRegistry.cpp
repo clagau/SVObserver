@@ -14,7 +14,7 @@
 
 #include "SVMessage/SVMessage.h"
 
-#include "MessageHandler.h"
+#include "MessageContainer.h"
 #include "MessageManager.h"
 
 #define SV_HKEY_CLASSES_ROOT _T("HKEY_CLASSES_ROOT")
@@ -864,7 +864,7 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 					rc &= reg.ExportKeys (pFile);
 					szKey.clear();
 				}
-				catch ( SvStl::MessageHandler& rSvE )
+				catch ( SvStl::MessageContainer& rSvE )
 				{
 					rc = FALSE;
 					rSvE.logMessage();

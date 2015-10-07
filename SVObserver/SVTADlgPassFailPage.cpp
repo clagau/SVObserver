@@ -13,7 +13,7 @@
 #include <string>
 #include <boost/assign/list_of.hpp>
 #include "SVTADlgPassFailPage.h"
-#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #pragma endregion Includes

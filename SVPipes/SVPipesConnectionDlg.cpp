@@ -84,7 +84,7 @@ void SVPipesConnectionDlg::OnOK()
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_PIPES_REQUIRED_DATA_MISSING, nullptr, StdMessageParams );
 		SVString szMsg;
-		Exception.getMessageHandler().Format( szMsg );
+		Exception.getMessageContainer().Format( szMsg );
 		MessageBox (szMsg.ToString());
 	}
 }

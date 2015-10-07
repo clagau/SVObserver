@@ -54,10 +54,10 @@
     <ClCompile Include="SVRegistry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MessageHandler.cpp">
+    <ClCompile Include="MessageData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MessageData.cpp">
+    <ClCompile Include="MessageContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,10 +86,10 @@
     <ClInclude Include="MessageManagerResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageHandler.h">
+    <ClInclude Include="MessageData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageData.h">
+    <ClInclude Include="MessageContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

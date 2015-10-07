@@ -110,7 +110,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 			::CloseClipboard();
 		}
 	}
-	catch( const SvStl::MessageHandler& rSvE )
+	catch( const SvStl::MessageContainer& rSvE )
 	{
 		SvStl::MessageMgrDisplayAndNotify e( SvStl::LogAndDisplay );
 		e.setMessage( rSvE.getMessage() );
@@ -184,7 +184,7 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 			Result = parseTreeToTool( Tree, rToolGuid );
 		}
 	}
-	catch( const SvStl::MessageHandler& rSvE )
+	catch( const SvStl::MessageContainer& rSvE )
 	{
 		SvStl::MessageMgrDisplayAndNotify e( SvStl::LogAndDisplay );
 		e.setMessage( rSvE.getMessage() );
@@ -202,7 +202,7 @@ bool ToolClipboard::isClipboardDataValid()
 		SVString ClipboardData;
 		convertClipboardDataToString( ClipboardData );
 	}
-	catch(  const SvStl::MessageHandler& )
+	catch(  const SvStl::MessageContainer& )
 	{
 		//Exception means data not correct format
 		Result = false;

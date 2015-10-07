@@ -3564,9 +3564,9 @@ int SVObserverApp::Run()
 	{
 		Result = CWinApp::Run();
 	}
-	catch( const SvStl::MessageHandler& rExp )
+	catch( const SvStl::MessageContainer& rExp )
 	{
-		//This is the topmost catch for MessageHandler exceptions
+		//This is the topmost catch for MessageContainer exceptions
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		//Set the error code to unhandled exception but use the rest of the data from the original exception
 		SVString OrgMessageCode;

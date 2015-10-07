@@ -234,7 +234,7 @@ BOOL SVXmlException::GetXmlDoc(BSTR * bstrDoc)
 }
 
 
-BOOL SVXmlException::operator=( SvStl::MessageHandler& rhs)
+BOOL SVXmlException::operator=( SvStl::MessageContainer& rhs)
 {
 	if(!InitXml())
 	{

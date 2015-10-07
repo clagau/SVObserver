@@ -53,7 +53,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 {
 	HRESULT Result( S_OK );
 
-	SvStl::MessageHandler e;
+	SvStl::MessageContainer e;
 
 	if ( m_hmHandle == NULL )
 	{

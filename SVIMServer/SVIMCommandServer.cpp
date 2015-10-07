@@ -369,7 +369,7 @@ CEvent * SVIMCommandServer::GetCommandCompleteEvent()
 }
 
 //##ModelId=38BE5D1E0000
-BOOL SVIMCommandServer::OnSVIMError(SvStl::MessageHandler* pSVException)
+BOOL SVIMCommandServer::OnSVIMError(SvStl::MessageContainer* pSVException)
 {
 #ifdef DEBUG
 	SVString szMsg;
@@ -383,7 +383,7 @@ BOOL SVIMCommandServer::OnSVIMError(SvStl::MessageHandler* pSVException)
 }
 
 //##ModelId=38BE951D03C8
-SvStl::MessageHandler* SVIMCommandServer::GetLastSVIMError()
+SvStl::MessageContainer* SVIMCommandServer::GetLastSVIMError()
 {
 	return &mSVIMLastException;
 }
@@ -420,13 +420,13 @@ BOOL SVIMCommandServer::GetConnectionName(CString &szConnection)
 }
 
 //##ModelId=38D78F590280
-BOOL SVIMCommandServer::OnWriteBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer)
+BOOL SVIMCommandServer::OnWriteBlockComplete(SvStl::MessageContainer *psvException, char *pBuffer, int cbBuffer)
 {
 	return FALSE;
 }
 
 //##ModelId=38D78F830290
-BOOL SVIMCommandServer::OnReadBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer)
+BOOL SVIMCommandServer::OnReadBlockComplete(SvStl::MessageContainer *psvException, char *pBuffer, int cbBuffer)
 {
 	return FALSE;
 }

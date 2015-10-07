@@ -17,7 +17,7 @@
 #include "SVObjectLibrary\SVAnalyzerLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOMFCLibrary\SVOINIClass.h"
-#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageContainer.h"
 
 #include "SVExternalTool.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
@@ -397,7 +397,7 @@ BOOL SVExternalToolTask::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 			{
 				hr = Initialize();
 			}
-			catch ( const SvStl::MessageHandler& e)
+			catch ( const SvStl::MessageContainer& e)
 			{
 				hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 			}
@@ -445,7 +445,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 	{
 		hr = m_dll.Open(strDllPath, fnNotify);
 	}
-	catch( const SvStl::MessageHandler& e )
+	catch( const SvStl::MessageContainer& e )
 	{
 		m_hrInitialized = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 		throw;
@@ -1821,7 +1821,7 @@ HRESULT SVExternalToolTask::ResetObject()
 	{
 		hr = Initialize( SVDllLoadLibraryCallbackDefault() );
 	}
-	catch ( const SvStl::MessageHandler& e)
+	catch ( const SvStl::MessageContainer& e)
 	{
 		hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 	}

@@ -9,7 +9,7 @@
 #pragma once
  
 #pragma region Includes
-#include "MessageHandler.h"
+#include "MessageContainer.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVStatusLibrary
@@ -39,11 +39,11 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	//************************************
 	//! This is the message manager template class
-	//! \param M_Handler [in] the message data handler which stores and logs the information
+	//! \param M_Container [in] the message data container which stores and logs the information
 	//! \param M_Struct [in] the message data structure
 	//! \param M_Display [in] the message display class
 	//************************************
-	template <typename M_Handler, typename M_Data, ShowDialog M_Display, Notify M_Notify >
+	template <typename M_Container, typename M_Data, ShowDialog M_Display, Notify M_Notify >
 	class MessageManager
 	{
 #pragma region Constructor
@@ -105,10 +105,10 @@ namespace Seidenader { namespace SVStatusLibrary
 		INT_PTR setMessage( const M_Data& rData, const UINT MsgBoxType = MB_OK );
 
 		//************************************
-		//! Gets the message handler container
+		//! Gets the message container
 		//! \returns a reference to the container
 		//************************************
-		M_Handler& getMessageHandler();
+		M_Container& getMessageContainer();
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -129,7 +129,7 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	#pragma region Member variables
 	private:
-		M_Handler m_Handler;					//! The message handler
+		M_Container M_Container;					//! The message handler
 		MsgTypeEnum m_Type;						//! The message type
 #pragma endregion Member variables
 	};
@@ -140,8 +140,8 @@ namespace Seidenader { namespace SVStatusLibrary
 
 #pragma region Declarations
 	//Note the resource dependent message managers are declared in the header file MessageManagerResource.h
-	//This declares message manager no display which uses MessageHandler, MessageData and nullptr (no display method) as the template parameters
-	typedef MessageManager<MessageHandler, MessageData, nullptr,nullptr> MessageMgrNoDisplay;
+	//This declares message manager no display which uses MessageContainer, MessageData and nullptr (no display method) as the template parameters
+	typedef MessageManager<MessageContainer, MessageData, nullptr, nullptr> MessageMgrNoDisplay;
 #pragma endregion Declarations
 
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
