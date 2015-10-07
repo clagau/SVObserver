@@ -124,6 +124,15 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 		KEY_ALL_ACCESS,
 		&mhKey );
 
+	if( lResult == ERROR_ACCESS_DENIED)
+	{
+		lResult = RegOpenKeyEx (hBaseKey,
+			szFullKey.ToString(),
+			static_cast< DWORD >( 0 ),
+			KEY_READ,
+			&mhKey );
+	}
+	
 	if( lResult == ERROR_SUCCESS )
 	{
 		mbCreatedNewKey = FALSE;
@@ -170,11 +179,11 @@ SVRegistryClass::SVRegistryClass()
 
 SVRegistryClass& SVRegistryClass::operator=(const SVRegistryClass &svrRight)
 {
-  if (mhKey)
-    RegCloseKey (mhKey);
+	if (mhKey)
+		RegCloseKey (mhKey);
 
-  InitRegistry( svrRight.mszKey.ToString() );
-  return (*this);
+	InitRegistry( svrRight.mszKey.ToString() );
+	return (*this);
 }
 
 SVRegistryClass::~SVRegistryClass()
@@ -187,13 +196,13 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVString& szValue)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
-		// determine the size of the buffer necessary for the data
+	// determine the size of the buffer necessary for the data
 	if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
-									szValueName,
-									(DWORD *) NULL,
-									&dwType,
-									NULL,
-									&dwSize))
+		szValueName,
+		(DWORD *) NULL,
+		&dwType,
+		NULL,
+		&dwSize))
 	{
 		if (dwType == REG_SZ || dwType == REG_BINARY || dwType == REG_EXPAND_SZ || dwType == REG_MULTI_SZ)
 		{
@@ -202,11 +211,11 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVString& szValue)
 			{
 				// get the data
 				if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
-												szValueName,
-												(DWORD *) NULL,
-												&dwType,
-												pBuff,
-												&dwSize))
+					szValueName,
+					(DWORD *) NULL,
+					&dwType,
+					pBuff,
+					&dwSize))
 				{
 					szValue = (LPCTSTR)pBuff;
 					delete [] pBuff;
@@ -252,21 +261,21 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
 
 	// determine the size of the buffer necessary for the data
 	if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
-																				szValueName,
-																				(DWORD *) NULL,
-																				&dwType,
-																				NULL,
-																				&dwSize))
+		szValueName,
+		(DWORD *) NULL,
+		&dwType,
+		NULL,
+		&dwSize))
 	{
 		if (dwType == REG_DWORD)
 		{
 			// get the data
 			if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
-																						szValueName,
-																						(DWORD *) NULL,
-																						&dwType,
-																						(LPBYTE) pdwValue,
-																						&dwSize))
+				szValueName,
+				(DWORD *) NULL,
+				&dwType,
+				(LPBYTE) pdwValue,
+				&dwSize))
 			{
 				return TRUE;
 			}
@@ -307,22 +316,22 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 
 	// determine the size of the buffer necessary for the data
 	if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
-																				szValueName,
-																				(DWORD *) NULL,
-																				&dwType,
-																				NULL,
-																				&dwSize))
+		szValueName,
+		(DWORD *) NULL,
+		&dwType,
+		NULL,
+		&dwSize))
 	{
 		// set byte array size
 		baValue.SetSize( (int) dwSize);
 
 		// get the data
 		if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
-																					szValueName,
-																					(DWORD *) NULL,
-																					&dwType,
-																					(LPBYTE) baValue.GetData(),
-																					&dwSize))
+			szValueName,
+			(DWORD *) NULL,
+			&dwType,
+			(LPBYTE) baValue.GetData(),
+			&dwSize))
 		{
 			return TRUE;
 		}
@@ -459,7 +468,7 @@ void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
 			{
 				if (!(*pKeyEnumProc) (szKey.ToString(), pUserData))
 				{
-				  lResult = ERROR_NO_MORE_ITEMS;
+					lResult = ERROR_NO_MORE_ITEMS;
 				}
 			}
 		}
@@ -468,7 +477,7 @@ void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
 
 BOOL SVRegistryClass::DeleteKey()
 {
-  if (ERROR_SUCCESS == RegDeleteKey (mhKey, _T("")))
+	if (ERROR_SUCCESS == RegDeleteKey (mhKey, _T("")))
 	{
 		mhKey = NULL;
 		return TRUE;
@@ -479,7 +488,7 @@ BOOL SVRegistryClass::DeleteKey()
 
 BOOL SVRegistryClass::CreatedNewKey()
 {
-  return mbCreatedNewKey;
+	return mbCreatedNewKey;
 }
 
 SVRegistryClass * SVRegistryClass::OpenSubKey( LPCTSTR p_szSubKey )
@@ -563,7 +572,7 @@ BOOL SVRegistryClass::Import(LPCTSTR szFileName)
 	if (pFile = _tfopen (szFileName, _T("r")))
 	{
 		if (_ftscanf (pFile, SV_SHADOWFILEHEADER _T("%c"), &cNewLine) &&
-				cNewLine == _T('\n'))
+			cNewLine == _T('\n'))
 		{
 			rc = ImportKeys (pFile);
 			fclose (pFile);
@@ -592,34 +601,34 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 	int iResult;
 
 	for (iResult = GetImportString (pFile, szName, baValue, &dwType);
-			 (iResult != SV_ISEOF) && (iResult != SV_ISERROR);
-			 iResult = GetImportString (pFile, szName, baValue, &dwType))
+		(iResult != SV_ISEOF) && (iResult != SV_ISERROR);
+		iResult = GetImportString (pFile, szName, baValue, &dwType))
 	{
 		switch (iResult)
 		{
-			case SV_ISKEY :
-				{
-					SVRegistryClass reg(szName.ToString());
-					reg.ImportKeys (pFile);
-				}
-				break;
+		case SV_ISKEY :
+			{
+				SVRegistryClass reg(szName.ToString());
+				reg.ImportKeys (pFile);
+			}
+			break;
 
-			case SV_ISVALUE :
-				SetRegistryValue( szName.ToString(),
-					baValue,
-					dwType,
-					static_cast< DWORD >( baValue.GetSize() ) );
-				break;
+		case SV_ISVALUE :
+			SetRegistryValue( szName.ToString(),
+				baValue,
+				dwType,
+				static_cast< DWORD >( baValue.GetSize() ) );
+			break;
 
-			case SV_ISGARBAGE :
-				{
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY, nullptr, StdMessageParams );
-				}
-				break;
+		case SV_ISGARBAGE :
+			{
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY, nullptr, StdMessageParams );
+			}
+			break;
 
-			default :
-				break;
+		default :
+			break;
 		}
 	}
 	
@@ -633,8 +642,8 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 
 	// skip white space characters
 	for (tBuffer = _fgettc (pFile); 
-			!feof (pFile) && !ferror (pFile) && _istspace (tBuffer); 
-			tBuffer = _fgettc (pFile));
+		!feof (pFile) && !ferror (pFile) && _istspace (tBuffer); 
+		tBuffer = _fgettc (pFile));
 
 	if (feof (pFile))
 		return SV_ISEOF;
@@ -648,129 +657,129 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 
 	switch (tBuffer)
 	{
-		case _T('[') :
-			// read the key name
-			for (szName.clear();
-					(_T('\n') != (tBuffer = _fgettc (pFile))) && !feof (pFile) && !ferror (pFile);
-					szName += tBuffer);
+	case _T('[') :
+		// read the key name
+		for (szName.clear();
+			(_T('\n') != (tBuffer = _fgettc (pFile))) && !feof (pFile) && !ferror (pFile);
+			szName += tBuffer);
 
-			if (ferror (pFile))
+		if (ferror (pFile))
+		{
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, nullptr, StdMessageParams );
+			return SV_ISERROR;
+		}
+
+		if (szName.rfind (_T(']')) == -1)
+		{
+			return SV_ISGARBAGE;
+		}
+
+		szName.erase(szName.rfind (_T(']')));
+
+		return SV_ISKEY;
+		break;
+
+	case _T('"') :
+		// get the value name
+		for (szName.clear();
+			(_T('"') != (tBuffer = _fgettc (pFile))) && !feof (pFile) && !ferror (pFile);
+			)
+		{
+			if (tBuffer == _T('\\'))
 			{
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, nullptr, StdMessageParams );
-				return SV_ISERROR;
+				tBuffer = _fgettc (pFile);
+				if (ferror (pFile) || feof (pFile) || tBuffer == _T('\n'))
+					return SV_ISERROR;
 			}
-
-			if (szName.rfind (_T(']')) == -1)
+			szName += tBuffer;
+		}
+		// skip past the '='
+		_ftscanf (pFile, _T(" ="));
+		// get the data type
+		if (_ftscanf (pFile, _T(" hex%c"), &tBuffer))
+		{
+			if (tBuffer == _T(':'))
 			{
-				return SV_ISGARBAGE;
-			}
-
-			szName.erase(szName.rfind (_T(']')));
-
-			return SV_ISKEY;
-			break;
-
-		case _T('"') :
-			// get the value name
-			for (szName.clear();
-					(_T('"') != (tBuffer = _fgettc (pFile))) && !feof (pFile) && !ferror (pFile);
-					)
-			{
-				if (tBuffer == _T('\\'))
-				{
-					tBuffer = _fgettc (pFile);
-					if (ferror (pFile) || feof (pFile) || tBuffer == _T('\n'))
-						return SV_ISERROR;
-				}
-				szName += tBuffer;
-			}
-			// skip past the '='
-			_ftscanf (pFile, _T(" ="));
-			// get the data type
-      if (_ftscanf (pFile, _T(" hex%c"), &tBuffer))
-			{
-				if (tBuffer == _T(':'))
-				{
-					*pdwType = REG_BINARY;
-				}
-				else
-				{
-					if (!_ftscanf (pFile, _T("%d):"), pdwType))
-					{
-						return SV_ISGARBAGE;
-					}
-				}
-				// get the binary data
-				baValue.RemoveAll();
-				for (i = 0; _ftscanf (pFile, _T(" %x"), &tBuffer); i++)
-				{
-					baValue.Add((BYTE) tBuffer);
-					_ftscanf (pFile, _T("%c"), tBuffer);
-					if (tBuffer == _T(','))
-					{
-						_ftscanf (pFile, _T("\\")); // remove any line continuations...
-					}
-					else
-					{
-						break;
-					}
-				}
+				*pdwType = REG_BINARY;
 			}
 			else
 			{
-				// try to read dword data
-				baValue.RemoveAll();
-				if (_ftscanf (pFile, _T(" dword:%x"), pdwType))
+				if (!_ftscanf (pFile, _T("%d):"), pdwType))
 				{
-					for( i = 0; i < sizeof( DWORD ); i++ )
-					{
-						baValue.Add( ( ( BYTE* ) pdwType )[ i ] );
-					}
-					*pdwType = REG_DWORD;
+					return SV_ISGARBAGE;
+				}
+			}
+			// get the binary data
+			baValue.RemoveAll();
+			for (i = 0; _ftscanf (pFile, _T(" %x"), &tBuffer); i++)
+			{
+				baValue.Add((BYTE) tBuffer);
+				_ftscanf (pFile, _T("%c"), tBuffer);
+				if (tBuffer == _T(','))
+				{
+					_ftscanf (pFile, _T("\\")); // remove any line continuations...
 				}
 				else
 				{
-					// maybe it's string data...
-					if (_ftscanf (pFile, _T(" %c"), &tBuffer))
+					break;
+				}
+			}
+		}
+		else
+		{
+			// try to read dword data
+			baValue.RemoveAll();
+			if (_ftscanf (pFile, _T(" dword:%x"), pdwType))
+			{
+				for( i = 0; i < sizeof( DWORD ); i++ )
+				{
+					baValue.Add( ( ( BYTE* ) pdwType )[ i ] );
+				}
+				*pdwType = REG_DWORD;
+			}
+			else
+			{
+				// maybe it's string data...
+				if (_ftscanf (pFile, _T(" %c"), &tBuffer))
+				{
+					if (tBuffer == _T('"'))
 					{
-						if (tBuffer == _T('"'))
-						{
-							*pdwType = REG_SZ;
-							// get the string data
-							baValue.RemoveAll();
+						*pdwType = REG_SZ;
+						// get the string data
+						baValue.RemoveAll();
 							
-							for (i = 0; _ftscanf (pFile, _T(" %c"), &tBuffer); i++)
-							{
-								if (tBuffer == _T('\\'))
-								{
-									_ftscanf (pFile, _T(" %c"), &tBuffer);
-								}
-								else
-								{
-									if (tBuffer == _T('"'))
-									{
-										break;
-									}
-								}
-								baValue.Add((BYTE) tBuffer);
-							}
-						}
-						else
+						for (i = 0; _ftscanf (pFile, _T(" %c"), &tBuffer); i++)
 						{
-							// couldn't determine type
-							return SV_ISGARBAGE;
+							if (tBuffer == _T('\\'))
+							{
+								_ftscanf (pFile, _T(" %c"), &tBuffer);
+							}
+							else
+							{
+								if (tBuffer == _T('"'))
+								{
+									break;
+								}
+							}
+							baValue.Add((BYTE) tBuffer);
 						}
+					}
+					else
+					{
+						// couldn't determine type
+						return SV_ISGARBAGE;
 					}
 				}
 			}
+		}
 			
-			return SV_ISVALUE;
-			break;
+		return SV_ISVALUE;
+		break;
 
-		default :
-			return SV_ISGARBAGE;
-			break;
+	default :
+		return SV_ISGARBAGE;
+		break;
 	}
 
 	return SV_ISERROR;
@@ -880,12 +889,12 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 BOOL SVRegistryClass::ExportValues(FILE * pFile)
 {
 	BOOL rc = TRUE;
-  TCHAR *pszName, *ptData;
+	TCHAR *pszName, *ptData;
 	BYTE *pData;
-  DWORD dwIndex;
-  DWORD dwcValues, dwcbValueMax, dwcbNameMax;
+	DWORD dwIndex;
+	DWORD dwcValues, dwcbValueMax, dwcbNameMax;
 	DWORD dwcbName, dwcbValue, dwType;
-  LONG lResult;
+	LONG lResult;
 	LONG lLineLen;
 	int i;
 	SVString szComma;
@@ -913,6 +922,37 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 				{
 					switch (pszName[i])
 					{
+					case SV_BACKSLASHCHAR :
+						lLineLen += _ftprintf (pFile, _T("%c%c"), SV_BACKSLASHCHAR, SV_BACKSLASHCHAR);
+						break;
+
+					case _T('"') :
+						lLineLen += _ftprintf (pFile, _T("%c%c"), SV_BACKSLASHCHAR, _T('"'));
+						break;
+
+					default :
+						if (pszName[i] > _T('\xff'))
+						{
+							lLineLen += _ftprintf (pFile, _T("?"));
+						}
+						else
+						{
+							lLineLen += _ftprintf (pFile, _T("%c"), pszName[i]);
+						}
+					}
+				}
+				lLineLen += _ftprintf (pFile, _T("\"="));
+
+				switch (dwType)
+				{
+				case REG_SZ :
+					ptData = (TCHAR *) pData;
+					lLineLen += _ftprintf (pFile, _T("\""));
+					dwcbValue /= sizeof (TCHAR);
+					for (i = 0; (i < (int) dwcbValue) && ptData[i]; i++)
+					{
+						switch (ptData[i])
+						{
 						case SV_BACKSLASHCHAR :
 							lLineLen += _ftprintf (pFile, _T("%c%c"), SV_BACKSLASHCHAR, SV_BACKSLASHCHAR);
 							break;
@@ -922,93 +962,62 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 							break;
 
 						default :
-							if (pszName[i] > _T('\xff'))
+							if (ptData[i] > _T('\xff'))
 							{
 								lLineLen += _ftprintf (pFile, _T("?"));
 							}
 							else
 							{
-								lLineLen += _ftprintf (pFile, _T("%c"), pszName[i]);
+								lLineLen += _ftprintf (pFile, _T("%c"), ptData[i]);
 							}
+						}
 					}
-				}
-				lLineLen += _ftprintf (pFile, _T("\"="));
+					lLineLen += _ftprintf (pFile, _T("\"\n"));
+					break;
 
-				switch (dwType)
-				{
-					case REG_SZ :
-						ptData = (TCHAR *) pData;
-						lLineLen += _ftprintf (pFile, _T("\""));
-						dwcbValue /= sizeof (TCHAR);
-						for (i = 0; (i < (int) dwcbValue) && ptData[i]; i++)
+				case REG_DWORD :
+					lLineLen += _ftprintf (pFile, _T("dword:%08.8x\n"), *((DWORD *) pData));
+					break;
+
+				case REG_BINARY :
+					lLineLen += _ftprintf (pFile, _T("hex:"));
+					szComma = _T(""); 
+					for (i = 0; i < (int) dwcbValue; i++)
+					{
+						lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.ToString() );
+						szComma = _T(",");
+
+						if (lLineLen > 77)
 						{
-							switch (ptData[i])
-							{
-								case SV_BACKSLASHCHAR :
-									lLineLen += _ftprintf (pFile, _T("%c%c"), SV_BACKSLASHCHAR, SV_BACKSLASHCHAR);
-									break;
-
-								case _T('"') :
-									lLineLen += _ftprintf (pFile, _T("%c%c"), SV_BACKSLASHCHAR, _T('"'));
-									break;
-
-								default :
-									if (ptData[i] > _T('\xff'))
-									{
-										lLineLen += _ftprintf (pFile, _T("?"));
-									}
-									else
-									{
-										lLineLen += _ftprintf (pFile, _T("%c"), ptData[i]);
-									}
-							}
+							_ftprintf (pFile, _T("\\\n  "));
+							lLineLen = 2;
 						}
-						lLineLen += _ftprintf (pFile, _T("\"\n"));
-						break;
 
-					case REG_DWORD :
-						lLineLen += _ftprintf (pFile, _T("dword:%08.8x\n"), *((DWORD *) pData));
-						break;
+						lLineLen += _ftprintf (pFile, _T("%02.2x"), pData[i]);
+					}
+					_ftprintf (pFile, _T("\n"));
+					break;
 
-					case REG_BINARY :
-						lLineLen += _ftprintf (pFile, _T("hex:"));
-						szComma = _T(""); 
-						for (i = 0; i < (int) dwcbValue; i++)
+				default :
+					ptData = (TCHAR *) pData;
+					lLineLen += _ftprintf (pFile, _T("hex(%d):"), dwType);
+					szComma = _T("");
+					dwcbValue /= sizeof (TCHAR);
+					for (i = 0; i < (int) dwcbValue; i++)
+					{
+						lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.ToString() );
+						szComma = _T(",");
+
+						if (lLineLen > 77)
 						{
-							lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.ToString() );
-							szComma = _T(",");
-
-							if (lLineLen > 77)
-							{
-								_ftprintf (pFile, _T("\\\n  "));
-								lLineLen = 2;
-							}
-
-							lLineLen += _ftprintf (pFile, _T("%02.2x"), pData[i]);
+							_ftprintf (pFile, _T("\\\n  "));
+							lLineLen = 2;
 						}
-						_ftprintf (pFile, _T("\n"));
-						break;
 
-					default :
-						ptData = (TCHAR *) pData;
-						lLineLen += _ftprintf (pFile, _T("hex(%d):"), dwType);
-						szComma = _T("");
-						dwcbValue /= sizeof (TCHAR);
-						for (i = 0; i < (int) dwcbValue; i++)
-						{
-							lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.ToString() );
-							szComma = _T(",");
-
-							if (lLineLen > 77)
-							{
-								_ftprintf (pFile, _T("\\\n  "));
-								lLineLen = 2;
-							}
-
-							lLineLen += _ftprintf (pFile, _T("%02.2x"), ptData[i]);
-						}
-						_ftprintf (pFile, _T("\n"));
-						break;
+						lLineLen += _ftprintf (pFile, _T("%02.2x"), ptData[i]);
+					}
+					_ftprintf (pFile, _T("\n"));
+					break;
 				}
 			}
 			else

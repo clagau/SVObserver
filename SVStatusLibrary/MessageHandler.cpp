@@ -42,12 +42,12 @@ static const TCHAR* const CategoryNone = _T("None");
 static const TCHAR* const CategorySystem = _T("System");
 static const TCHAR* const CategoryApplication = _T("Application");
 static const TCHAR* const TaskCategory[CategoryNr]= { _T("Unused01"), _T("SVBatchReport"), _T("SVFocusNT"), _T("SVFocusDB"), _T("SVFocusDBManager"),
-								_T("SVIMCommand"), _T("SVIPC"), _T("SVLanguageManager"), _T("SVLibrary"), _T("SVPipes"), 
-								_T("Unused02"), _T("SVTCPIP"), _T("SVObserver"), _T("SVSecurity"), _T("Unused03"),
-								_T("SVMachineMessage"), _T("SVCmdComServer"), _T("SVCmdComClient"), _T("SVDataManager"),
-								_T("SVAccess"), _T("SVIntek"), _T("SVImageCompression"), _T("SVEquation"), _T("SVFileAcquisition"),
-								_T("SVMatroxGige"), _T("SVTVicLpt"), _T("SVOLibrary"), _T("SVSystemLibrary"), _T("SVMatroxLibrary"),
-								_T("SVCI"), _T("SVXMLLibrary") };
+	_T("SVIMCommand"), _T("SVIPC"), _T("SVLanguageManager"), _T("SVLibrary"), _T("SVPipes"), 
+	_T("Unused02"), _T("SVTCPIP"), _T("SVObserver"), _T("SVSecurity"), _T("Unused03"),
+	_T("SVMachineMessage"), _T("SVCmdComServer"), _T("SVCmdComClient"), _T("SVDataManager"),
+	_T("SVAccess"), _T("SVIntek"), _T("SVImageCompression"), _T("SVEquation"), _T("SVFileAcquisition"),
+	_T("SVMatroxGige"), _T("SVTVicLpt"), _T("SVOLibrary"), _T("SVSystemLibrary"), _T("SVMatroxLibrary"),
+	_T("SVCI"), _T("SVXMLLibrary") };
 
 #pragma endregion Declarations
 
@@ -59,15 +59,15 @@ namespace Seidenader { namespace SVStatusLibrary
 	}
 
 	MessageHandler::MessageHandler(const MessageHandler& rRhs) :
-	  m_Message( rRhs.m_Message )
-	, m_AdditionalMessages( rRhs.m_AdditionalMessages )
-	, m_What( rRhs.m_What )
+	m_Message( rRhs.m_Message )
+		, m_AdditionalMessages( rRhs.m_AdditionalMessages )
+		, m_What( rRhs.m_What )
 	{
 	}
 
 	MessageHandler::MessageHandler( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime,
-									LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime,
-									DWORD ProgramCode, DWORD OSErrorCode, LPCTSTR User )
+		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime,
+		DWORD ProgramCode, DWORD OSErrorCode, LPCTSTR User )
 	{
 		setMessage( MessageCode, AdditionalText, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
 	}
@@ -91,8 +91,8 @@ namespace Seidenader { namespace SVStatusLibrary
 
 #pragma region Public Methods
 	void MessageHandler::setMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-									LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
-									DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
+		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
+		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
@@ -136,8 +136,8 @@ namespace Seidenader { namespace SVStatusLibrary
 	}
 
 	void MessageHandler::addMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-									LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime , 
-									DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
+		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime , 
+		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
 	{
 		//Save the current message to the additional messages
 		m_AdditionalMessages.push_back( m_Message );
@@ -281,62 +281,70 @@ namespace Seidenader { namespace SVStatusLibrary
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
 		RegKey = RegPathEventLog + getFacilityName();
-		SVRegistryClass reg( RegKey.c_str() );
 
-		rMessage.clear();
-
-		if (!reg.CreatedNewKey())
+		try 
 		{
-			if (reg.GetRegistryValue( EventMsgFile, MessageDll))
+
+			SVRegistryClass reg( RegKey.c_str());
+			rMessage.clear();
+
+			if (!reg.CreatedNewKey())
 			{
-				Result.Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
-			
-				HRESULT retValue = SvUl::LoadDll::Instance().getDll( MessageDll.c_str(), hMessageDll );
-				if (S_OK == retValue && nullptr != hMessageDll )
+				if (reg.GetRegistryValue( EventMsgFile, MessageDll))
 				{
-					setSubstituteStrings( SubstituteStrings );
+					Result.Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
 
-					for( int i=0; i < SubstituteStringNr; i++ )
+					HRESULT retValue = SvUl::LoadDll::Instance().getDll( MessageDll.c_str(), hMessageDll );
+					if (S_OK == retValue && nullptr != hMessageDll )
 					{
-						if( i < SubstituteStrings.size() )
-						{
-							pSubstituteString[i] = SubstituteStrings[i].c_str();
-						}
-						else
-						{
-							pSubstituteString[i] = nullptr;
-						}
-					}
+						setSubstituteStrings( SubstituteStrings );
 
-					if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_ARGUMENT_ARRAY |
-														 FORMAT_MESSAGE_FROM_HMODULE,
-														 (LPCVOID) hMessageDll, m_Message.m_MessageCode,
-														 SvOl::LCID_USA, (LPTSTR) &pMessage, 11, (va_list *) pSubstituteString))
-					{
-						rMessage = (TCHAR *) pMessage;
-						rMessage.replace(_T("\r\n\r\n"), _T("\r\n") );
-						SVString SearchString( _T("\r\n") );
-						SearchString += DetailsToken;
-						size_t Index = rMessage.find( SearchString.c_str() );
-						if ( -1 != Index )
+						for( int i=0; i < SubstituteStringNr; i++ )
 						{
-							MsgDetails = rMessage.Mid( Index +  SearchString.size() );
-							//Remove unnecessary new lines from the details
-							size_t Pos = MsgDetails.find_first_not_of(_T("\r\n"));
-							if ( -1 != Pos )
+							if( i < SubstituteStrings.size() )
 							{
-								MsgDetails = MsgDetails.substr( Pos );
+								pSubstituteString[i] = SubstituteStrings[i].c_str();
 							}
-							rMessage = rMessage.Left( Index );
+							else
+							{
+								pSubstituteString[i] = nullptr;
+							}
 						}
+
+						if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_ARGUMENT_ARRAY |
+							FORMAT_MESSAGE_FROM_HMODULE,
+							(LPCVOID) hMessageDll, m_Message.m_MessageCode,
+							SvOl::LCID_USA, (LPTSTR) &pMessage, 11, (va_list *) pSubstituteString))
+						{
+							rMessage = (TCHAR *) pMessage;
+							rMessage.replace(_T("\r\n\r\n"), _T("\r\n") );
+							SVString SearchString( _T("\r\n") );
+							SearchString += DetailsToken;
+							size_t Index = rMessage.find( SearchString.c_str() );
+							if ( -1 != Index )
+							{
+								MsgDetails = rMessage.Mid( Index +  SearchString.size() );
+								//Remove unnecessary new lines from the details
+								size_t Pos = MsgDetails.find_first_not_of(_T("\r\n"));
+								if ( -1 != Pos )
+								{
+									MsgDetails = MsgDetails.substr( Pos );
+								}
+								rMessage = rMessage.Left( Index );
+							}
+						}
+						LocalFree (pMessage);
 					}
-					LocalFree (pMessage);
 				}
 			}
+			else
+			{
+				reg.DeleteKey();
+			}
 		}
-		else
+		catch(  MessageHandler& mh  )
 		{
-			reg.DeleteKey();
+			//do nothing;
 		}
 
 		if (rMessage.empty())
@@ -344,13 +352,13 @@ namespace Seidenader { namespace SVStatusLibrary
 			rMessage.Format( ErrorLoadingDll, m_Message.m_MessageCode);
 
 			MsgDetails.Format( DefaultEventFormat,
-										m_Message.m_SourceFile.c_str(),
-										m_Message.m_SourceLine,
-										m_Message.m_SourceDateTime.c_str(),
-										m_Message.m_ProgramCode,
-										m_Message.m_OSErrorCode,
-										m_Message.m_CompileDate.c_str(),
-										m_Message.m_CompileTime.c_str() );
+				m_Message.m_SourceFile.c_str(),
+				m_Message.m_SourceLine,
+				m_Message.m_SourceDateTime.c_str(),
+				m_Message.m_ProgramCode,
+				m_Message.m_OSErrorCode,
+				m_Message.m_CompileDate.c_str(),
+				m_Message.m_CompileTime.c_str() );
 		}
 		Result += MsgDetails;
 
@@ -375,17 +383,17 @@ namespace Seidenader { namespace SVStatusLibrary
 
 		switch( getFacility() )
 		{
-			case FAC_SVSECURITY:
+		case FAC_SVSECURITY:
 			{
 				SourceName = SvSecuritySource;
 				break;
 			}
-			case FAC_SVACCESS:
+		case FAC_SVACCESS:
 			{
 				SourceName = SvAccessSource;
 				break;
 			}
-			default :
+		default :
 			{
 				SourceName = SvEventSource;
 				break;
