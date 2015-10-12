@@ -40,6 +40,7 @@ public:
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 	SVByteValueObjectClass* getInputLUTVectorResult();
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 protected:
 
@@ -75,7 +76,6 @@ protected:
 	SVInObjectInfoStruct	 m_inputLUTVectorResult;
 
 	bool m_bForceLUTRecalc;
-
 };
 
 

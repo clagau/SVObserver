@@ -170,6 +170,43 @@ BOOL SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	return bOk;
 }
 
+
+DWORD_PTR SVLUTOperatorClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+{
+	DWORD_PTR DwResult = NULL;
+	// Try to process message by yourself...
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+	BOOL bUseSilent = TRUE;
+	switch( dwPureMessageID )
+	{
+		case SVMSGID_RESET_ALL_OBJECTS:
+		{
+			HRESULT ResetStatus = ResetObject();
+			if( ResetStatus != S_OK )
+			{
+				DwResult = SVMR_NO_SUCCESS;
+			}
+			else
+			{
+				DwResult = SVMR_SUCCESS;
+			}
+			bool bLutActive = false;
+			m_useLUT.GetValue(bLutActive);
+
+			long lLutMode = 0;
+			m_lutMode.GetValue(lLutMode);
+
+			if (!bLutActive || (bLutActive && (lLutMode != 4)))
+			{
+				//Set DwMessageValue to be silent if you are not using a formual
+				DwMessageValue = bUseSilent;
+			}
+			break;
+		}
+	}
+	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
+}
+
 HRESULT SVLUTOperatorClass::ResetObject()
 {
 	HRESULT l_hrOk = SVUnaryImageOperatorClass::ResetObject();
@@ -437,7 +474,6 @@ BOOL SVLUTOperatorClass::OnValidate()
 {
 	return SVUnaryImageOperatorClass::OnValidate();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
