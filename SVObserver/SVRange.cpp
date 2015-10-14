@@ -254,6 +254,65 @@ BOOL SVRangeClass::OnValidate()
 	return bRetVal;
 }
 
+SVDoubleValueObjectClass&  SVRangeClass::GetRange(RangeEnum::ERange range)
+{
+	switch (range)
+	{
+	case RangeEnum::ER_FailHigh:
+		return FailHigh;
+	case RangeEnum::ER_WarnHigh: 
+		return WarnHigh;	
+	case 	RangeEnum::ER_FailLow:
+		return FailLow;	
+	
+	case 	RangeEnum::ER_WarnLow:
+		return WarnLow;
+	
+	default:
+		ASSERT (FALSE);
+		return WarnLow;
+	}
+
+}
+
+void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
+{
+
+	double dres(0);
+	if( nullptr != m_ValueObjectReferences[range].Object() )
+	{
+		
+		if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[range].Object()) )
+		{
+
+			if(m_ValueObjectReferences[range].IsIndexPresent())
+			{
+				int index = m_ValueObjectReferences[range].ArrayIndex(false);
+				int LastSet =  pValueObject->GetLastSetIndex();
+				pValueObject->GetValue(LastSet,index,dres);
+
+			}
+			else
+			{
+				pValueObject->GetValue( dres );
+			}
+
+			
+			
+		
+		}
+		else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[range].Object()) )
+		{
+			pBasicValueObject->getValue( dres );
+		}
+		GetRange(range).SetValue( bucket,dres );
+	}
+	
+}
+
+
+
+
 BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 {
 	BOOL ret = TRUE;
@@ -265,97 +324,29 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 
 	if(ret)
 	{
-		try
-		{
-			double failLow,failHigh;
-			double warnLow,warnHigh;
-
-			double InputValue;
+			
+			double InputValue,failHigh(0), failLow(0),warnLow(0),warnHigh(0);
 			getInputValue(InputValue);
 
-			if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailLow].Object() )
-			{
-				if(!HasIndirectValue(RangeEnum::ER_FailLow))
-				{
-					throw(1);
-				}
-				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_FailLow].Object()) )
-				{
-					pValueObject->GetValue( failLow );
-				}
-				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_FailLow].Object()) )
-				{
-					pBasicValueObject->getValue( failLow );
-				}
-				FailLow.SetValue( RRunStatus.m_lResultDataIndex, failLow );
-			}
-			else
-			{
-				FailLow.GetValue( failLow );
-			}
 
-			if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object() )
-			{
-				if(!HasIndirectValue(RangeEnum::ER_FailHigh))
-				{
-					throw(1);
-				}
-				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object()) )
-				{
-					pValueObject->GetValue( failHigh );
-				}
-				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object()) )
-				{
-					pBasicValueObject->getValue( failHigh );
-				}
-				FailHigh.SetValue( RRunStatus.m_lResultDataIndex,failHigh );
-			}
-			else
-			{
-				FailHigh.GetValue( failHigh );
-			}
+			
+			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_FailLow );
+			FailLow.GetValue(failLow);
+			
 
-			if( nullptr !=m_ValueObjectReferences[RangeEnum::ER_WarnLow].Object() )
-			{
-				if(!HasIndirectValue(RangeEnum::ER_WarnLow))
-				{
-					throw(1);
-				}
-				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_WarnLow].Object()) )
-				{
-					pValueObject->GetValue( warnLow );
-				}
-				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_WarnLow].Object()) )
-				{
-					pBasicValueObject->getValue( warnLow );
-				}
-				WarnLow.SetValue( RRunStatus.m_lResultDataIndex,warnLow );
-			}
-			else
-			{
-				WarnLow.GetValue( warnLow );
-			}
+			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_FailHigh );
+			FailHigh.GetValue(failHigh);
 
-			if( nullptr !=m_ValueObjectReferences[RangeEnum::ER_WarnHigh].Object() )
-			{
-				if(! HasIndirectValue(RangeEnum::ER_WarnHigh))
-				{
-					throw(1);
-				}
-				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_WarnHigh].Object()) )
-				{
-					pValueObject->GetValue( warnHigh );
-				}
-				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_WarnHigh].Object()) )
-				{
-					pBasicValueObject->getValue( warnHigh );
-				}
-				WarnHigh.SetValue( RRunStatus.m_lResultDataIndex, warnHigh );
-			}
-			else
-			{
-				WarnHigh.GetValue( warnHigh );
-			}
+
+			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnLow );
+			WarnLow.GetValue(warnLow);
+			
+
+			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnHigh );
+			WarnHigh.GetValue(warnHigh);
+	 
+			
+			
 
 			bool isFailed = ( InputValue < failLow || InputValue > failHigh );
 			bool isWarned = ( !isFailed && ( InputValue < warnLow || InputValue > warnHigh ) );
@@ -376,13 +367,6 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 				RRunStatus.SetPassed();
 			}
 		}
-		catch ( ... )
-		{
-			m_isValidRange = false;
-			RRunStatus.SetInvalid();
-			ret = FALSE;
-		}
-	}
 
 	return ret;
 }
@@ -623,39 +607,32 @@ void SVRangeClass::InvalidateRange()
 	m_isValidRange = false;
 }
 
+
+
+
+
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
 {
-	double value;
-	
-	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_FailLow].Object()) )
+	if(m_isValidRange)
 	{
-		pValueObject->GetValue( value );
-		FailLow.SetValue( bucket, value );
+		
+		UpdateRange(bucket, RangeEnum::ER_FailLow );
+		
 	}
-	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_FailLow].Object()) )
-	{
-		pBasicValueObject->getValue( value );
-		FailLow.SetValue( bucket, value );
-	}
-
 	return FailLow;
 }
 
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
 {
-	double value;
+	
+	if(m_isValidRange)
+	{
 
-	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object()) )
-	{
-		pValueObject->GetValue( value );
-		FailLow.SetValue( bucket, value );
-	}
-	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object()) )
-	{
-		pBasicValueObject->getValue( value );
-		FailHigh.SetValue( bucket, value );
+		UpdateRange(bucket, RangeEnum::ER_FailHigh );
+
 	}
 
+	
 	return FailHigh;
 }
 //******************************************************************************

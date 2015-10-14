@@ -125,6 +125,15 @@ public:
 	//************************************
 	const SVDoubleValueObjectClass& getUpdatedFailHigh( int bucket );
 
+
+	//************************************
+	//! Updates the range value with the value from the indirect value if an indirect value exist.
+	//! \param bucket [in] the bucket index
+	//! \param range [in ]  enum ERange
+	//! \returns void
+	//************************************
+	void   UpdateRange(int bucket, RangeEnum::ERange  range );
+	
 protected:
 	virtual void init();
 	BOOL getInputValue( double& RVal );
@@ -139,6 +148,14 @@ protected:
 	//************************************
 	virtual BOOL renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName);
 
+
+	//************************************
+	//! return a reference to the range value 
+	//! \param range [in] enum ERange
+	//! \returns SVDoubleValueObjectClass&
+	//************************************
+	SVDoubleValueObjectClass&  GetRange(RangeEnum::ERange range);
+
 public: // Bad
 	SVDoubleValueObjectClass FailLow;
 	SVDoubleValueObjectClass FailHigh;
@@ -146,6 +163,7 @@ public: // Bad
 	SVDoubleValueObjectClass WarnHigh;
 
 protected:
+	
 	SVStringValueObjectClass m_ValueIndirect[RangeEnum::ER_COUNT];
 	bool m_IsConnectedInput[RangeEnum::ER_COUNT];
 	SVObjectReference m_ValueObjectReferences[RangeEnum::ER_COUNT];

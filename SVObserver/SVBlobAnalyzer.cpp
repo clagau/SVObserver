@@ -1055,8 +1055,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 						SV_TRAP_ERROR_BRK (msvError, 25031);// Break out of for loop
 					}
 
-					double dLow;
-					double dHigh;
+					double dLow(0), dHigh(0);
 					pRange->getUpdatedFailHigh(RRunStatus.m_lResultDataIndex).GetValue(dHigh);
 					pRange->getUpdatedFailLow(RRunStatus.m_lResultDataIndex).GetValue(dLow);
 
@@ -1065,8 +1064,8 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					// Desired behavior in this case is that ALL blobs are excluded.
 					if( dLow > dHigh )
 					{
-						dLow = NULL;
-						dHigh = NULL;
+						dLow = 0;
+						dHigh = 0;
 						// To exclude all blobs, also exclude any blobs which are in the range.
 						l_Code = SVMatroxBlobInterface::BlobSelect( msvResultBufferID, 
 							SVEBlobExclude, 
