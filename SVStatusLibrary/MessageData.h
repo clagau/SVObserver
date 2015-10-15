@@ -54,6 +54,7 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma region Member Variables
 	public:
 		bool m_Logged;						//Flag indicating if the message was written to the event log
+		bool m_Displayed;					//Flag indicating if the message has been displayed
 		DWORD m_MessageCode;				//Number identifying the message
 		SVString m_AdditionalText;			//The additional text to the message code
 		SVString m_CompileDate;				//Date the source file was compiled.

@@ -32,7 +32,8 @@ namespace Seidenader { namespace SVStatusLibrary
 	}
 
 	MessageData::MessageData( DWORD MessageCode, LPCTSTR AdditionalText ) :
-	 m_Logged( false )
+	m_Logged( false )
+	, m_Displayed( false )
 	, m_MessageCode( MessageCode )
 	, m_AdditionalText( AdditionalText )
 	, m_SourceLine( 0 )
@@ -44,6 +45,7 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	MessageData::MessageData( const MessageData& rRhs ) :
 	  m_Logged( rRhs.m_Logged )
+	, m_Displayed( rRhs.m_Displayed )
 	, m_MessageCode( rRhs.m_MessageCode )
 	, m_AdditionalText( rRhs.m_AdditionalText )
 	, m_CompileDate( rRhs.m_CompileDate )
@@ -63,6 +65,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		if( &rRhs != this )
 		{
 			m_Logged = rRhs.m_Logged;
+			m_Displayed = rRhs.m_Displayed;
 			m_MessageCode = rRhs.m_MessageCode;
 			m_AdditionalText = rRhs.m_AdditionalText;
 			m_CompileDate = rRhs.m_CompileDate;
@@ -88,6 +91,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	void MessageData::clear()
 	{
 		m_Logged = false;
+		m_Displayed = false;
 		m_MessageCode = 0;
 		m_AdditionalText.clear();
 		m_CompileDate.clear();

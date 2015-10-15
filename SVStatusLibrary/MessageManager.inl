@@ -40,6 +40,11 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Process( UINT 
 	Log();
 
 	Result = Display( MsgBoxType );
+	if( nullptr != M_Display && LogAndDisplay == m_Type)
+	{
+		//Message has bin displayed
+		M_Container.setMessageDisplayed();
+	}
 
 	return Result;
 }

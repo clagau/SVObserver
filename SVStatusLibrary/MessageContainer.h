@@ -125,6 +125,11 @@ namespace Seidenader { namespace SVStatusLibrary
 		void logMessage();
 
 		//************************************
+		//! This is the method to set that the message has been displayed
+		//************************************
+		inline void setMessageDisplayed() { m_Message.m_Displayed = true; };
+
+		//************************************
 		//! This is the method to get the corresponding severity icon
 		//! \returns the icon ID corresponding to the severity
 		//************************************
