@@ -9,30 +9,31 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:14:42  $
 //******************************************************************************
 
-#ifndef SVOTRIGGERLIST_H
-#define SVOTRIGGERLIST_H
+#pragma once
 
-#include "SVContainerLibrary/SVList.h"
+#pragma region Includes
+#include "SVContainerLibrary\SVList.h"
+#include "SVOTriggerObj.h"
+#pragma endregion Includes
 
-class CSVOTriggerObj;
 class SVString;
 
-class CSVOTriggerList  
+class SVOTriggerList  
 {
 public:
-	typedef SVList< CSVOTriggerObj* > SVTriggerList;
+	typedef SVList< SVOTriggerObjPtr > SVTriggerList;
 	typedef SVTriggerList::iterator iterator;
 	typedef SVTriggerList::const_iterator const_iterator;
 
-	CSVOTriggerList();
-	virtual ~CSVOTriggerList();
+	SVOTriggerList();
+	virtual ~SVOTriggerList();
 
     BOOL AddTriggerToList(const SVString& sTriggerName, int iDigNumber);
     BOOL RemoveTriggerFromList(const SVString& sTriggerName);
 	bool IsTriggerInList(const SVString& sTiggerName) const;
     int GetTriggerListCount() const;
-    CSVOTriggerObj *GetTriggerObjectByName(const SVString& sTriggerName);
-    CSVOTriggerObj *GetTriggerObjectByPosition(int iPos);
+    SVOTriggerObjPtr GetTriggerObjectByName(const SVString& sTriggerName);
+    SVOTriggerObjPtr GetTriggerObjectByPosition(int iPos);
 
     void ResetContent();
 
@@ -43,7 +44,6 @@ private:
     iterator FindTriggerPosition(const SVString& sTriggerName);
 };
 
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

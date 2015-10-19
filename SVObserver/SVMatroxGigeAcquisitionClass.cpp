@@ -76,15 +76,13 @@ bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 
 	if( bOk && m_DeviceParams.ParameterExists( DeviceParamVendorId ) )
 	{
-		CString l_csVenderId;
-
 		_variant_t l_oValue;
 
 		SVDigitizerLoadLibraryClass* l_psvLibrary = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
 
 		if( l_psvLibrary != NULL && l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &l_oValue ) == S_OK )
 		{
-			l_csVenderId = l_oValue.bstrVal;
+			SVString l_csVenderId( l_oValue.bstrVal );
 
 			bOk = l_csVenderId == StringValue( m_DeviceParams.Parameter( DeviceParamVendorId ) );
 		}
@@ -149,7 +147,7 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 
 			SVGigeCameraFileInfoStruct info;
 			info.sFilename = sFile;
-			info.bColorSystem = TheSVObserverApp.IsColorSVIM() ? true : false;
+			info.bColorSystem = IsColor();
 
 			hr = SVGigeCameraProxy::ReadCameraFileImpl( info, m_CameraFileDeviceParams );
 
@@ -184,7 +182,7 @@ HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const CString& sFilename, 
 {
 	SVGigeCameraFileInfoStruct info;
 	info.sFilename = sFilename;
-	info.bColorSystem = TheSVObserverApp.IsColorSVIM() ? true : false;
+	info.bColorSystem = IsColor();
 	HRESULT hr = SVGigeCameraProxy::ReadCameraFileImpl( info, rParams );
 	
 	if (hr == S_OK)

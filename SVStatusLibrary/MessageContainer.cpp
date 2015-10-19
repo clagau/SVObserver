@@ -280,7 +280,8 @@ namespace Seidenader { namespace SVStatusLibrary
 		SVStringArray SubstituteStrings;
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
-		RegKey = RegPathEventLog + getFacilityName();
+		RegKey = RegPathEventLog;
+		RegKey += getFacilityName();
 
 		try 
 		{

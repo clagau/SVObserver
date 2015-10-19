@@ -29,6 +29,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#include "SVInspectionProcess.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -37,10 +38,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static TCHAR szInspectionExportFileFilters[] = _T("Inspection Export Files (*.bxp)|*.bxp||");
-static LPCTSTR scInspectionExportFileExt = _T("bxp");
-static TCHAR szColorInspectionExportFileFilters[] = _T("Color Inspection Export Files (*.cxp)|*.cxp||");
-static LPCTSTR scColorInspectionExportFileExt = _T("cxp");
+static LPCTSTR InspectionExportFileFilters = _T("Inspection Export Files (*.bxp)|*.bxp||");
+static LPCTSTR InspectionExportFileExt = _T("bxp");
+static LPCTSTR ColorInspectionExportFileFilters = _T("Color Inspection Export Files (*.cxp)|*.cxp||");
+static LPCTSTR ColorInspectionExportFileExt = _T("cxp");
+static LPCTSTR AllInspectionExportFileFilters = _T("All Inspection Export Files (*.bxp;*.cxp)|*.bxp;*.cxp||");
+static LPCTSTR AllInspectionExportFileExt = _T("bxp;cxp");
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVOInspectionSourceDlg property page
@@ -99,7 +102,7 @@ void CSVOInspectionSourceDlg::OnBtnAddIpd()
 	CString sNewIns = m_pParent->GetNextInspectionName();
 	CString sNewDisplayName = GetNextInspectionDisplayName(sNewIns);
 
-	m_pParent->AddToInspectList(sNewDisplayName,sNewIns);
+	m_pParent->AddToInspectList(sNewDisplayName,sNewIns, true);
 	
 	int iPos = m_ctlIPDlist.AddString(sNewDisplayName);
 	m_Items.SetItemData(iPos, sNewIns );
@@ -157,8 +160,8 @@ void CSVOInspectionSourceDlg::EnableDisableExport()
 			{
 				sName = l_Iter->second;
 			}
-			CSVOInspectionObj *pObj = m_pParent->GetInspectionObjectByName(sName);
-			if (pObj)
+			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByName(sName);
+			if( nullptr != pInspectionObj )
 			{
 				SVObjectClass *pObject;
 				SVString ipName = sName;
@@ -178,7 +181,6 @@ void CSVOInspectionSourceDlg::EnableDisableExport()
 
 void CSVOInspectionSourceDlg::OnBtnPropVi() 
 {
-	CSVOInspectionObj TmpObj;
 	int iCurSel = m_ctlIPDlist.GetCurSel();
 	CString sTxt;
 	CString sLabel;
@@ -194,44 +196,47 @@ void CSVOInspectionSourceDlg::OnBtnPropVi()
 			sLabel = l_Iter->second;
 		}
 
-		CSVOInspectionObj *pObj = m_pParent->GetInspectionObjectByName(sLabel);
-		TmpObj = *pObj;
-
-		// Get the PPQ that this inspection is attached to
-		CSVOPPQObj *pTempPPQ;
-		BOOL bFound;
-		long hSize;
-		long h;
-		long lSize;
-		long l;
+		SVOInspectionObjPtr pInpectionObj = m_pParent->GetInspectionObjectByName(sLabel);
+		if( nullptr != pInpectionObj )
+		{
+			// Get the PPQ that this inspection is attached to
+			SVOPPQObjPtr pTempPPQ( nullptr );
+			BOOL bFound;
+			long hSize;
+			long h;
+			long lSize;
+			long l;
 		
-		bFound = FALSE;
-		hSize = m_pParent->GetPPQListCount();
-		for( h = 0; !bFound && h < hSize; h++ )
-		{
-			pTempPPQ = m_pParent->GetPPQObject( h );
-			lSize = pTempPPQ->GetAttachedInspectionCount();
-			for( l = 0; !bFound && l < lSize; l++ )
+			bFound = FALSE;
+			hSize = m_pParent->GetPPQListCount();
+			for( h = 0; !bFound && h < hSize; h++ )
 			{
-				if( sLabel == pTempPPQ->GetAttachedInspection( l ) )
-					bFound = TRUE;
+				pTempPPQ = m_pParent->GetPPQObject( h );
+				lSize = pTempPPQ->GetAttachedInspectionCount();
+				for( l = 0; !bFound && l < lSize; l++ )
+				{
+					if( sLabel == pTempPPQ->GetAttachedInspection( l ) )
+						bFound = TRUE;
+				}// end for
 			}// end for
-		}// end for
 
-		CSVOPropertyPageDlg oDlg;
-		oDlg.SetInspectObject(&TmpObj);
-		if ( bFound )
-		{
-			oDlg.SetPPQObject( pTempPPQ );
+			CSVOPropertyPageDlg oDlg;
+			SVOInspectionObj& rTmpObj( oDlg.getInspectObject() );
+
+			rTmpObj = *pInpectionObj;
+			if ( bFound && nullptr != pTempPPQ )
+			{
+				oDlg.getPPQObject() = *pTempPPQ;
+			}
+			oDlg.SetDlgPage(VIRTUAL_INSPECT_DLG);
+			oDlg.SetProductType(m_pParent->GetProductType());
+			if (oDlg.DoModal() == IDOK)
+			{
+				*pInpectionObj = rTmpObj;
+				m_pParent->SetModified(TRUE);
+				m_pParent->ItemChanged(INSPECT_DLG,sLabel,ITEM_ACTION_PROP);
+			}
 		}
-		oDlg.SetDlgPage(VIRTUAL_INSPECT_DLG);
-		oDlg.SetProductType(m_pParent->GetProductType());
-		if (oDlg.DoModal() == IDOK)
-		{
-			*pObj = TmpObj;
-			m_pParent->SetModified(TRUE);
-			m_pParent->ItemChanged(INSPECT_DLG,sLabel,ITEM_ACTION_PROP);
-		}	
 	}		
 }
 
@@ -241,7 +246,7 @@ static bool IsColorImport(LPCTSTR filename)
 	char ext[_MAX_EXT];
 	_splitpath(filename, NULL, NULL, NULL, ext);
 	// skip the '.'
-	if (strcmp(&ext[1], scColorInspectionExportFileExt ) == 0)
+	if (strcmp(&ext[1], ColorInspectionExportFileExt ) == 0)
 	{
 		bRetVal = true;
 	}
@@ -250,32 +255,15 @@ static bool IsColorImport(LPCTSTR filename)
 
 void CSVOInspectionSourceDlg::OnBtnImportIpd() 
 {
-	bool bColor = SVObjectManagerClass::Instance().m_bIsColorSVIM;
-	LPCTSTR fileExt = (bColor) ? scColorInspectionExportFileExt : scInspectionExportFileExt;
-	LPCTSTR fileFilters = (bColor) ? szColorInspectionExportFileFilters : szInspectionExportFileFilters;
 	// prompt for file 
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SvMc::SVFileDialog dlg(true, bFullAccess, fileExt, NULL, dwFlags, fileFilters, this);
+	SvMc::SVFileDialog dlg(true, bFullAccess, AllInspectionExportFileExt, NULL, dwFlags, AllInspectionExportFileFilters, this);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 
 	if (dlg.DoModal() == IDOK)
 	{
 		CString pathName = dlg.GetPathName();
-		// check if color/mono and wrong system
-		if (bColor && !IsColorImport(pathName))
-		{
-			// Show some message
-			MessageBox(_T("Only Exported Color Inspections can be Imported into a Color SVIM."), _T("Import Error"), MB_ICONERROR | MB_OK);
-			return;
-		}
-		if (!bColor && IsColorImport(pathName))
-		{
-			// Show some message
-			MessageBox(_T("Exported Color Inspections cannot be Imported into a Non Color SVIM."), _T("Import Error"), MB_ICONERROR | MB_OK);
-			//AfxMessageBox(_T("Exported Color Inspections cannot be Imported into a Non Color SVIM."));
-			return;
-		}
    
 		// Create new IP
 		OnBtnAddIpd();
@@ -290,22 +278,24 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 				sLabel = l_Iter->second;
 			}
 			
-			CSVOInspectionObj* pObj = m_pParent->GetInspectionObjectByName(sLabel);
+			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByName(sLabel);
 			
 			// Update EnableAuxillaryExtents and NewDisableMethod from Import file
 			long l_NewDisableMethod = 0;
 			long l_EnableAuxExtents = 0;
 			unsigned long l_VersionNumber = 0;
 			HRESULT hr = SVInspectionImporter::GetProperties(pathName, l_NewDisableMethod, l_EnableAuxExtents, l_VersionNumber);
-			if (hr == S_OK)
+			if (hr == S_OK && nullptr != pInspectionObj )
 			{
 				bool shouldLoad = l_VersionNumber <= TheSVObserverApp.getCurrentVersion();
 				if( shouldLoad )
 				{
 					// Save it for later, when we exit the dialog
-					pObj->SetImportFilename(pathName);
-					pObj->SetNewDisableMethod((l_NewDisableMethod) ? "Method 2" : "Method 1");
-					pObj->SetEnableAuxiliaryExtent(l_EnableAuxExtents);
+					pInspectionObj->SetImportFilename(pathName);
+					pInspectionObj->SetNewDisableMethod((l_NewDisableMethod) ? "Method 2" : "Method 1");
+					pInspectionObj->SetEnableAuxiliaryExtent(l_EnableAuxExtents);
+					pInspectionObj->SetColor( IsColorImport(pathName) );
+
 				}
 				else
 				{
@@ -340,18 +330,20 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 			sLabel = l_Iter->second;
 		}
 
-		CSVOInspectionObj *pObj = m_pParent->GetInspectionObjectByName(sLabel);
-		if (pObj)
+		SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByName(sLabel);
+		if( nullptr != pInspectionObj )
 		{
-			SVString ipName = sLabel;// pObj->GetInspectionName();
+			SVString ipName = sLabel;
 
-			SVObjectClass* pObject;
-			HRESULT hr =  SVObjectManagerClass::Instance().GetObjectByDottedName(ipName.c_str(), pObject);
-			if (hr == S_OK && pObject)
+			SVObjectClass* pObject( nullptr );
+			HRESULT hr =  SVObjectManagerClass::Instance().GetObjectByDottedName(ipName, pObject);
+			SVInspectionProcess* pInspectionProcess = dynamic_cast<SVInspectionProcess*> (pObject);
+
+			if (hr == S_OK && nullptr != pInspectionProcess)
 			{
-				bool bColor = SVObjectManagerClass::Instance().m_bIsColorSVIM;
-				LPCTSTR fileExt = (bColor) ? scColorInspectionExportFileExt : scInspectionExportFileExt;
-				LPCTSTR fileFilters = (bColor) ? szColorInspectionExportFileFilters : szInspectionExportFileFilters;
+				bool IsColor = pInspectionProcess->IsColorCamera();
+				LPCTSTR fileExt = (IsColor) ? ColorInspectionExportFileExt : InspectionExportFileExt;
+				LPCTSTR fileFilters = (IsColor) ? ColorInspectionExportFileFilters : InspectionExportFileFilters;
 
 				// prompt for path and file name
 				DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
@@ -362,7 +354,7 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 					CString pathName = dlg.GetPathName();
 			   
 					// Create XML file
-					hr = SVInspectionExporter::Export( pathName, ipName, TheSVObserverApp.getCurrentVersion(), bColor );
+					hr = SVInspectionExporter::Export( pathName, ipName, TheSVObserverApp.getCurrentVersion(), IsColor );
 				}
 			}
 		}
@@ -406,13 +398,16 @@ void CSVOInspectionSourceDlg::SetupList()
 	int iCount = m_pParent->GetInspectionListCount();
 	ClearList();
 
-	CSVOInspectionObj *pObj;
+	SVOInspectionObjPtr pInspectionObj( nullptr );
 
 	for (int i = 0; i < iCount; i++)
 	{
-		pObj = m_pParent->GetInspectionObject(i);
-		int iPos = m_ctlIPDlist.AddString(pObj->GetInspectionName());
-		m_Items.SetItemData( iPos, pObj->GetInspectionLabelName() );
+		pInspectionObj = m_pParent->GetInspectionObject(i);
+		if( nullptr != pInspectionObj )
+		{
+			int iPos = m_ctlIPDlist.AddString(pInspectionObj->GetInspectionName());
+			m_Items.SetItemData( iPos, pInspectionObj->GetInspectionLabelName() );
+		}
 	}
 	m_ctlIPDlist.SetCurSel(0);
 }

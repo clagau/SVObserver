@@ -9,15 +9,7 @@
 //* .Check In Date   : $Date:   02 Dec 2013 11:03:16  $
 //******************************************************************************
 
-#if !defined(AFX_SVOCAMERADLG_H__1704235F_5930_4698_BEA2_662312DF9EA0__INCLUDED_)
-#define AFX_SVOCAMERADLG_H__1704235F_5930_4698_BEA2_662312DF9EA0__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
-/////////////////////////////////////////////////////////////////////////////
-// CSVOCameraDlg dialog
 
 class CSVOConfigAssistantDlg;
 
@@ -63,6 +55,7 @@ protected:
 	afx_msg void OnDblclkLstCamera();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnCameraManager();
+	afx_msg void OnUpdateAdvancedBtn( CCmdUI* PCmdUI );
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -73,11 +66,6 @@ private:
     
     void SetCameraPropForAll(CString sCurrentCamera);
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVOCAMERADLG_H__1704235F_5930_4698_BEA2_662312DF9EA0__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

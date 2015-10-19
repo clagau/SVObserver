@@ -1621,7 +1621,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 	////////////////////////
 	// Color SVIM
-	if ( TheSVObserverApp.IsColorSVIM() )
+	if ( IsColorCamera() )
 	{
 		// get camera
 		CString sKey;
@@ -3539,35 +3539,17 @@ HRESULT SVInspectionProcess::CollectConditionalHistoryData()
 	return hr;
 }
 
-
-BOOL SVInspectionProcess::IsColorInspectionDocument() const
+bool SVInspectionProcess::IsColorCamera() const
 {
-	BOOL bRetVal = false;
+	bool Result( false );
+	SVVirtualCamera* pCamera( GetFirstCamera() );
 
-	SVVirtualCameraMap l_Cameras;
-
-	SVPPQObject* pPPQ = GetPPQ();
-
-	if( nullptr != pPPQ )
+	if( nullptr != pCamera )
 	{
-		pPPQ->GetVirtualCameras( l_Cameras );
+		Result = pCamera->IsColor();
 	}
 
-	SVVirtualCameraMap::const_iterator pos = l_Cameras.begin();
-
-	while( !bRetVal && pos != l_Cameras.end() )
-	{
-		if( pos->second != NULL )
-		{
-			SVAcquisitionClassPtr pCamDevice = pos->second->GetAcquisitionDevice();
-
-			bRetVal = ( !( pCamDevice.empty() ) && pCamDevice->BandSize() == 3L );
-		}
-
-		++pos;
-	}
-
-	return bRetVal;
+	return Result;
 }
 
 SVVirtualCamera* SVInspectionProcess::GetFirstCamera() const
@@ -3853,7 +3835,7 @@ HRESULT SVInspectionProcess::ResetObject()
 {
 	HRESULT l_hrOk = SVObjectClass::ResetObject();
 
-	if( TheSVObserverApp.IsColorSVIM() )
+	if( IsColorCamera() )
 	{
 		if( m_rgbMainImageObject.ResetObject() != S_OK )
 		{
@@ -4249,7 +4231,7 @@ SVInspectionProcess::SVObjectPtrDeque SVInspectionProcess::GetPostProcessObjects
 		}
 	}
 
-	if( TheSVObserverApp.IsColorSVIM() )
+	if( IsColorCamera() )
 	{
 		SVRGBMainImageClass* l_pImage = const_cast< SVRGBMainImageClass* >( &m_rgbMainImageObject );
 
@@ -4273,18 +4255,26 @@ SVObjectClass *SVInspectionProcess::UpdateObject( const GUID &p_oFriendGuid, SVO
 
 SVImageClass* SVInspectionProcess::GetRGBMainImage()
 {
-	if( TheSVObserverApp.IsColorSVIM() )
-		return GetToolSet()->getCurrentImage();
-	else
-		return NULL;
+	SVImageClass* pResult( nullptr );
+
+	if( IsColorCamera() )
+	{
+		pResult = GetToolSet()->getCurrentImage();
+	}
+
+	return pResult;
 }
 
 SVImageClass* SVInspectionProcess::GetHSIMainImage()
 {
-	if( TheSVObserverApp.IsColorSVIM() )
-		return &m_rgbMainImageObject;
-	else
-		return NULL;
+	SVImageClass* pResult( nullptr );
+
+	if( IsColorCamera() )
+	{
+		pResult  = &m_rgbMainImageObject;
+	}
+
+	return pResult;
 }
 
 LPCTSTR SVInspectionProcess::GetDeviceName() const

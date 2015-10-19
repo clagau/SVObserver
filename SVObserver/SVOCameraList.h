@@ -9,26 +9,26 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:48:40  $
 //******************************************************************************
 
-#ifndef SVOCAMERALIST_H
-#define SVOCAMERALIST_H
+#pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVList.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "SVOCameraObj.h"
+#pragma endregion Includes
 
-class CSVOCameraObj;
-
-class CSVOCameraList  
+class SVOCameraList  
 {
 public:
-	typedef SVList< CSVOCameraObj* > SVCameraList;
+	typedef SVList< SVOCameraObjPtr > SVCameraList;
 	typedef SVCameraList::iterator iterator;
 	typedef SVCameraList::const_iterator const_iterator;
 
-	CSVOCameraList();
-	virtual ~CSVOCameraList();
+	SVOCameraList();
+	virtual ~SVOCameraList();
 
-    CSVOCameraList& operator=(const CSVOCameraList &source);
-    CSVOCameraList* operator=(const CSVOCameraList *source);
+    SVOCameraList& operator=(const SVOCameraList &source);
+    SVOCameraList* operator=(const SVOCameraList *source);
 
     BOOL AddCameraToList(CString sCameraName);
     BOOL AddCameraToList(CString sCameraName, int iDig);
@@ -38,10 +38,10 @@ public:
 	BOOL SetCameraDeviceParams( CString sCameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams );
     BOOL RemoveCameraFromList(CString sCameraName);
 
-    CSVOCameraObj *GetCameraObjectByName(CString sCameraName);
-    CSVOCameraObj *GetCameraObjectByPosition(int iPos);
-	const CSVOCameraObj *GetCameraObjectByPosition(int iPos) const;
-    BOOL IsCameraInList(CString sCameraName);
+    SVOCameraObjPtr GetCameraObjectByName(CString sCameraName);
+    SVOCameraObjPtr GetCameraObjectByPosition(int iPos);
+	const SVOCameraObjPtr GetCameraObjectByPosition(int iPos) const;
+    BOOL IsCameraInList(CString sCameraName) const;
 
     void ResetContent();
 
@@ -52,8 +52,6 @@ private:
     
 	iterator FindCameraPosition( CString sCameraName );
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -80,7 +80,6 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 	long lPPQSize = pConfig->GetPPQCount();
 	for( int k = 0; k < lPPQSize; k++ )
 	{
-		CString l_strPPQName;
 		pPPQ = pConfig->GetPPQ( k );
 		if( nullptr == pPPQ )
 		{
@@ -89,7 +88,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 			DebugBreak();
 		}
 
-		l_strPPQName = pPPQ->GetName();
+		SVString l_strPPQName( pPPQ->GetName() );
 		if( l_strPPQName == l_pRemoteGroup->GetPPQName() )
 		{
 			long lSize = 0;

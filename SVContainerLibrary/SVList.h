@@ -86,7 +86,7 @@ public:
 
 	// getting/modifying an element at a given position
 	virtual SVType& GetAt( iterator position );
-	virtual const SVType& GetAt( iterator position ) const;
+	virtual const SVType& GetAt( const_iterator position ) const;
 
 	/*
 	// Attributes (head and tail)

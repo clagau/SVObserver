@@ -2220,9 +2220,9 @@ BOOL SVIPDoc::IsColorInspectionDocument() const
 
 	SVInspectionProcess* pInspection = GetInspectionProcess();
 
-	if( nullptr != pInspection  && TheSVObserverApp.IsColorSVIM() )
+	if( nullptr != pInspection )
 	{
-		bRetVal = pInspection->IsColorInspectionDocument();
+		bRetVal = pInspection->IsColorCamera();
 	}
 
 	return bRetVal;

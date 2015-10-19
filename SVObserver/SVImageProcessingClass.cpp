@@ -142,24 +142,6 @@ HRESULT SVImageProcessingClass::CreateBarCodeBuffer( SVBarCodeBufferInfoClass* p
 	return SVMatroxImageProcessingClass::Instance().CreateBarCodeBuffer( pDataInfo );
 }
 
-HRESULT SVImageProcessingClass::GetAcquisitionDevice( LPCTSTR szName, SVAcquisitionClassPtr& pDevice )
-{
-	HRESULT hr = S_OK;
-
-	pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( szName );
-
-	return hr;
-}
-
-HRESULT SVImageProcessingClass::GetDigitizer(LPCTSTR szName, SVAcquisitionClassPtr& pDevice)
-{
-	HRESULT hr = S_OK;
-
-	pDevice = SVDigitizerProcessingClass::Instance().GetDigitizer( szName );
-
-	return hr;
-}
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

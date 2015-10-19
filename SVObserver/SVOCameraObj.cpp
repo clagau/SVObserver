@@ -22,12 +22,12 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-CSVOCameraObj::CSVOCameraObj()
+SVOCameraObj::SVOCameraObj()
 {
     m_sCameraDisplayName =_T(""); 
     m_iDigNumber = 0;
     m_iBandNumber = 0;
-    m_bIsColor = FALSE;
+    m_IsColor = false;
     m_sCameraFile = _T("");
     m_bCameraFileSet = FALSE;
 	m_bCameraFileChanged = FALSE;
@@ -41,33 +41,33 @@ CSVOCameraObj::CSVOCameraObj()
 	m_fileMode = ContinuousMode;
 }
 
-CSVOCameraObj::~CSVOCameraObj()
+SVOCameraObj::~SVOCameraObj()
 {
 
 }
 
-CString CSVOCameraObj::GetCameraDisplayName() const
+CString SVOCameraObj::GetCameraDisplayName() const
 {
     return m_sCameraDisplayName;
 }
 
-int CSVOCameraObj::GetDigNumber() const
+int SVOCameraObj::GetDigNumber() const
 {
     return m_iDigNumber;
 }
 
-void CSVOCameraObj::SetCameraDisplayName(CString sCameraName)
+void SVOCameraObj::SetCameraDisplayName(CString sCameraName)
 {
     m_sCameraDisplayName = sCameraName;
 }
 
-void CSVOCameraObj::SetDigNumber(int iDigNumber)
+void SVOCameraObj::SetDigNumber(int iDigNumber)
 {
     m_iDigNumber = iDigNumber;
     m_bDigSet = TRUE;
 }
 
-void CSVOCameraObj::SetCameraFile(CString sFileName)
+void SVOCameraObj::SetCameraFile(CString sFileName)
 {
     m_sCameraFile = sFileName;
     if (!m_sCameraFile.IsEmpty())
@@ -83,22 +83,22 @@ void CSVOCameraObj::SetCameraFile(CString sFileName)
     IsCameraObjOk();
 }
 
-void CSVOCameraObj::SetCameraFileChanged()
+void SVOCameraObj::SetCameraFileChanged()
 {
     m_bCameraFileChanged = TRUE;
 }
 
-BOOL CSVOCameraObj::GetCameraFileChanged()
+BOOL SVOCameraObj::GetCameraFileChanged()
 {
     return m_bCameraFileChanged;
 }
 
-CString CSVOCameraObj::GetCameraFile() const
+CString SVOCameraObj::GetCameraFile() const
 {
     return m_sCameraFile;
 }
 
-BOOL CSVOCameraObj::IsCameraObjOk()
+BOOL SVOCameraObj::IsCameraObjOk()
 {
 	if (IsFileAcquisition())
 	{
@@ -118,17 +118,17 @@ BOOL CSVOCameraObj::IsCameraObjOk()
     return m_bCameraObjOk;
 }
 
-void CSVOCameraObj::SetBandNumber(int iBandNumber)
+void SVOCameraObj::SetBandNumber(int iBandNumber)
 {
     m_iBandNumber = iBandNumber;
 }
 
-int CSVOCameraObj::GetBandNumber() const
+int SVOCameraObj::GetBandNumber() const
 {
     return m_iBandNumber;
 }
 
-void CSVOCameraObj::SetCameraFileParams(const SVDeviceParamCollection& rParams)
+void SVOCameraObj::SetCameraFileParams(const SVDeviceParamCollection& rParams)
 {
 	m_CameraFileParams = rParams;
 
@@ -148,37 +148,37 @@ void CSVOCameraObj::SetCameraFileParams(const SVDeviceParamCollection& rParams)
 
 }
 
-void CSVOCameraObj::SetCameraDeviceParams(const SVDeviceParamCollection& rParams)
+void SVOCameraObj::SetCameraDeviceParams(const SVDeviceParamCollection& rParams)
 {
 	m_CameraDeviceParams = rParams;
 }
 
-const SVDeviceParamCollection& CSVOCameraObj::GetCameraFileParams() const
+const SVDeviceParamCollection& SVOCameraObj::GetCameraFileParams() const
 {
 	return m_CameraFileParams;
 }
 
-SVDeviceParamCollection& CSVOCameraObj::GetCameraFileParamsNonConst()
+SVDeviceParamCollection& SVOCameraObj::GetCameraFileParamsNonConst()
 {
 	return m_CameraFileParams;
 }
 
-const SVDeviceParamCollection& CSVOCameraObj::GetCameraDeviceParams()
+const SVDeviceParamCollection& SVOCameraObj::GetCameraDeviceParams()
 {
 	return m_CameraDeviceParams;
 }
 
-SVDeviceParamCollection& CSVOCameraObj::GetCameraDeviceParamsNonConst()
+SVDeviceParamCollection& SVOCameraObj::GetCameraDeviceParamsNonConst()
 {
 	return m_CameraDeviceParams;
 }
 
-CSVOCameraObj& CSVOCameraObj::operator =(const CSVOCameraObj &source)
+SVOCameraObj& SVOCameraObj::operator =(const SVOCameraObj &source)
 {
     m_sCameraDisplayName = source.m_sCameraDisplayName; 
     m_iDigNumber = source.m_iDigNumber;
     m_iBandNumber = source.m_iBandNumber;
-    m_bIsColor = source.m_bIsColor;
+    m_IsColor = source.m_IsColor;
     m_sCameraFile = source.m_sCameraFile;
     m_bCameraFileSet = source.m_bCameraFileSet;
     m_bCameraFileChanged = source.m_bCameraFileChanged;
@@ -197,12 +197,12 @@ CSVOCameraObj& CSVOCameraObj::operator =(const CSVOCameraObj &source)
     return (*this);
 }
 
-CSVOCameraObj* CSVOCameraObj::operator =(const CSVOCameraObj *source)
+SVOCameraObj* SVOCameraObj::operator =(const SVOCameraObj *source)
 {
     m_sCameraDisplayName = source->m_sCameraDisplayName; 
     m_iDigNumber = source->m_iDigNumber;
     m_iBandNumber = source->m_iBandNumber;
-    m_bIsColor = source->m_bIsColor;
+    m_IsColor = source->m_IsColor;
     m_sCameraFile = source->m_sCameraFile;
     m_bCameraFileSet = source->m_bCameraFileSet;
     m_bCameraFileChanged = source->m_bCameraFileChanged;
@@ -221,7 +221,7 @@ CSVOCameraObj* CSVOCameraObj::operator =(const CSVOCameraObj *source)
     return (this);
 }
 
-void CSVOCameraObj::CheckObject()
+void SVOCameraObj::CheckObject()
 {
     //check to see if camera file is empty
 
@@ -229,87 +229,87 @@ void CSVOCameraObj::CheckObject()
    //     m_bCameraSet = TRUE;
 }
 
-bool CSVOCameraObj::IsFileAcquisition() const
+bool SVOCameraObj::IsFileAcquisition() const
 {
 	return m_bFileAcquisition;
 }
 
-void CSVOCameraObj::SetFileAcquisitionMode(bool bFileAcquisition)
+void SVOCameraObj::SetFileAcquisitionMode(bool bFileAcquisition)
 {
 	m_bFileAcquisition = bFileAcquisition;
 }
 
-bool CSVOCameraObj::IsFileImageSizeEditModeFileBased() const
+bool SVOCameraObj::IsFileImageSizeEditModeFileBased() const
 {
 	return m_imageSizeEditModeFileBased;
 }
 
-void CSVOCameraObj::SetFileImageSizeEditModeFileBased(bool bScanFile)
+void SVOCameraObj::SetFileImageSizeEditModeFileBased(bool bScanFile)
 {
 	m_imageSizeEditModeFileBased = bScanFile;
 }
 
-long CSVOCameraObj::GetFileImageWidth() const
+long SVOCameraObj::GetFileImageWidth() const
 {
 	return m_fileImageSize.cx;
 }
 
-void CSVOCameraObj::SetFileImageWidth(long width)
+void SVOCameraObj::SetFileImageWidth(long width)
 {
 	m_fileImageSize.cx = width;
 }
 
-long CSVOCameraObj::GetFileImageHeight() const
+long SVOCameraObj::GetFileImageHeight() const
 {
 	return m_fileImageSize.cy;
 }
 
-void CSVOCameraObj::SetFileImageHeight(long height)
+void SVOCameraObj::SetFileImageHeight(long height)
 {
 	m_fileImageSize.cy = height;
 }
 
-const SIZE& CSVOCameraObj::GetFileImageSize() const
+const SIZE& SVOCameraObj::GetFileImageSize() const
 {
 	return m_fileImageSize;
 }
 
-void CSVOCameraObj::SetFileImageSize(const SIZE& size)
+void SVOCameraObj::SetFileImageSize(const SIZE& size)
 {
 	m_fileImageSize = size;
 }
 
-LPCTSTR CSVOCameraObj::GetImageFilename() const
+LPCTSTR SVOCameraObj::GetImageFilename() const
 {
 	return m_imageFilename.ToString();
 }
 
-void CSVOCameraObj::SetImageFilename(const SVString& filename)
+void SVOCameraObj::SetImageFilename(const SVString& filename)
 {
 	m_imageFilename = filename;
 }
 
-LPCTSTR CSVOCameraObj::GetImageDirectoryName() const
+LPCTSTR SVOCameraObj::GetImageDirectoryName() const
 {
 	return m_imageDirectory.ToString();
 }
 
-void CSVOCameraObj::SetImageDirectoryName(const SVString& directoryName)
+void SVOCameraObj::SetImageDirectoryName(const SVString& directoryName)
 {
 	m_imageDirectory = directoryName;
 }
 
-long CSVOCameraObj::GetFileLoadingMode() const
+long SVOCameraObj::GetFileLoadingMode() const
 {
 	return m_fileMode;
 }
 
-void CSVOCameraObj::SetFileLoadingMode(long mode)
+void SVOCameraObj::SetFileLoadingMode(long mode)
 {
 	m_fileMode = mode;
 }
 
-bool CSVOCameraObj::IsSoftwareTriggerSupported() const
+bool SVOCameraObj::IsSoftwareTriggerSupported() const
 {
 	bool bRetVal = true;
 
@@ -352,7 +352,7 @@ bool CSVOCameraObj::IsSoftwareTriggerSupported() const
 	return bRetVal;
 }
 
-bool CSVOCameraObj::IsCameraLineInputSupported() const
+bool SVOCameraObj::IsCameraLineInputSupported() const
 {
 	bool bRetVal = false;
 

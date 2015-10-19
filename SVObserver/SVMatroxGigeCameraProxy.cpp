@@ -1012,7 +1012,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 
 		if( pDigitizer != NULL && pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) == S_OK )
 		{
-			CString l_csVenderName(l_oValue.bstrVal);
+			SVString l_csVenderName( l_oValue.bstrVal );
 
 			if( l_csVenderName == StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) )
 			{
@@ -1050,7 +1050,7 @@ bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollect
 		// Check Vendor Name
 		if( pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) == S_OK )
 		{
-			CString l_csVenderName(l_oValue.bstrVal);
+			SVString l_csVenderName(l_oValue.bstrVal);
 
 			const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamVendorName );
 			l_bOk = l_csVenderName == StringValue( param );
@@ -1061,7 +1061,7 @@ bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollect
 			// Check Model Name
 			if( pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) == S_OK )
 			{
-				CString l_csModelName(l_oValue.bstrVal);
+				SVString l_csModelName(l_oValue.bstrVal);
 
 				const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamModelName );
 				l_bOk = l_csModelName == StringValue( param );

@@ -9,23 +9,28 @@
 //* .Check In Date   : $Date:   15 May 2014 10:25:52  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVOCameraDlg.h"
+#include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVOPropertyPageDlg.h"
 #include "SVOCameraObj.h"
 #include "SVOInspectionObj.h"
-#include "SVImageProcessingClass.h"
+#include "SVDigitizerProcessingClass.h"
 #include "SVAcquisitionClass.h"
 #include "SVHardwareManifest.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 CSVOCameraDlg::CSVOCameraDlg(CWnd* pParent /*=NULL*/)
 	: CPropertyPage(CSVOCameraDlg::IDD)
@@ -54,6 +59,7 @@ BEGIN_MESSAGE_MAP(CSVOCameraDlg, CDialog)
 	//{{AFX_MSG_MAP(CSVOCameraDlg)
 	ON_LBN_SELCHANGE(IDC_LST_CAMERA, OnSelchangeLstCamera)
 	ON_BN_CLICKED(IDC_BTN_ADVANCED, OnBtnAdvanced)
+	ON_UPDATE_COMMAND_UI(IDC_BTN_ADVANCED, OnUpdateAdvancedBtn)
 	ON_BN_CLICKED(IDC_BTN_DELETE_VC, OnBtnDeleteVc)
 	ON_BN_CLICKED(IDC_BTN_NEW_VC, OnBtnNewVc)
 	ON_BN_CLICKED(IDC_BTN_PROP_VC, OnBtnPropVc)
@@ -63,24 +69,12 @@ BEGIN_MESSAGE_MAP(CSVOCameraDlg, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CSVOCameraDlg message handlers
-
 BOOL CSVOCameraDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
     m_pParent = (CSVOConfigAssistantDlg*)GetParent()->GetParent();
     m_bNewConfig = m_pParent->GetNewConfigFlag();
 	
-	if ( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
-	{
-		// if camera file is specified
-		if ( !m_pParent->GetNewConfigFlag() )
-		{
-			m_btnAdvancedProp.EnableWindow(TRUE);
-		}
-	}
-
 	if( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() )
 		&& SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp.GetSVIMType() ))
 	{
@@ -97,57 +91,70 @@ BOOL CSVOCameraDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
-void CSVOCameraDlg::OnSelchangeLstCamera() 
+void CSVOCameraDlg::OnUpdateAdvancedBtn( CCmdUI* pCmdUI )
 {
+	bool Enabled( true );
+
 	int iCurSel = m_ctlCameraList.GetCurSel();
-	CSVOCameraObj *pObj;
+	SVOCameraObjPtr pCameraObj;
 	CString sTxt;
 
 	if ( iCurSel >= 0 )
 	{
 		m_ctlCameraList.GetText(iCurSel,sTxt);
-		pObj = m_pParent->GetCameraObjectByName(sTxt);
-		if( pObj != NULL )
+		pCameraObj = m_pParent->GetCameraObjectByName(sTxt);
+		if( nullptr != pCameraObj )
 		{
-			if ( !SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
+			if ( !pCameraObj->IsFileAcquisition() )
 			{
-				if ( pObj->IsFileAcquisition() )
+				if ( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 				{
-					m_btnAdvancedProp.EnableWindow(TRUE);
+					if( pCameraObj->GetCameraFile().IsEmpty() )
+					{
+						Enabled = false;
+					}
 				}
 				else
 				{
-					m_btnAdvancedProp.EnableWindow(FALSE);
+					Enabled = false;
 				}
 			}
 		}
 	}
+	pCmdUI->Enable( Enabled );
+}
+
+void CSVOCameraDlg::OnSelchangeLstCamera() 
+{
+	UpdateDialogControls( this, false );
 }
 
 void CSVOCameraDlg::OnBtnAdvanced() 
 {
-    CSVOCameraObj TmpObj;
     int iCurSel = m_ctlCameraList.GetCurSel();
     CString sTxt;
     m_ctlCameraList.GetText(iCurSel,sTxt);
-    CSVOCameraObj *pObj = m_pParent->GetCameraObjectByName(sTxt);
-    TmpObj = *pObj;
-    CSVOPropertyPageDlg oDlg;
-    oDlg.SetCameraObject(&TmpObj);
-    oDlg.SetDlgPage(VIRTUAL_CAMERA_ADV);
-    oDlg.SetProductType(m_pParent->GetProductType());
-	oDlg.SetConfigAssistantDlg(m_pParent);
-    if (oDlg.DoModal() == IDOK)
-    {
-        *pObj = TmpObj;
-        m_pParent->SetModified(TRUE);
-		if (TmpObj.IsFileAcquisition())
+    SVOCameraObjPtr pCameraObj = m_pParent->GetCameraObjectByName(sTxt);
+	if( nullptr != pCameraObj )
+	{
+		CSVOPropertyPageDlg oDlg;
+		SVOCameraObj& rTmpObj( oDlg.getCameraObject() );
+
+		rTmpObj = *pCameraObj;
+		oDlg.SetDlgPage(VIRTUAL_CAMERA_ADV);
+		oDlg.SetProductType(m_pParent->GetProductType());
+		oDlg.SetConfigAssistantDlg(m_pParent);
+		if (oDlg.DoModal() == IDOK)
 		{
-			m_pParent->ItemChanged(CAMERA_DLG,pObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
-		}
-		m_pParent->ItemChanged(CAMERA_DLG,pObj->GetCameraDisplayName(),ITEM_ACCTION_SAVE);
-    }	
+			*pCameraObj = rTmpObj;
+			m_pParent->SetModified(TRUE);
+			if (pCameraObj->IsFileAcquisition())
+			{
+				m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
+			}
+			m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_SAVE);
+		}	
+	}
 }
 
 void CSVOCameraDlg::OnBtnDeleteVc() 
@@ -160,7 +167,7 @@ void CSVOCameraDlg::OnBtnDeleteVc()
         m_ctlCameraList.DeleteString(iCursel);
         m_pParent->RemoveCameraFromList(sTxt);
 
-		CSVOInspectionObj *pInspect;
+		SVOInspectionObjPtr pInspectionObj( nullptr );
 		CString sInspect;
 		long lSize;
 		long l;
@@ -168,10 +175,10 @@ void CSVOCameraDlg::OnBtnDeleteVc()
 		lSize = m_pParent->GetInspectionListCount();
 		for( l = 0; l < lSize; l++ )
 		{
-			pInspect = m_pParent->GetInspectionObject( l );
-			if( sTxt == pInspect->GetToolsetImage() )
+			pInspectionObj = m_pParent->GetInspectionObject( l );
+			if( nullptr != pInspectionObj && sTxt == pInspectionObj->GetToolsetImage() )
 			{
-				pInspect->SetToolsetImage( _T("") );
+				pInspectionObj->SetToolsetImage( _T("") );
 			}
 		}
 
@@ -199,7 +206,7 @@ void CSVOCameraDlg::OnBtnNewVc()
     int iDig  = m_pParent->GetNextCameraNumber() - 1;
     
     m_pParent->AddToCameraList(sNewCamera,iDig);
-    CSVOCameraObj *pObj = m_pParent->GetCameraObjectByName(sNewCamera);
+    SVOCameraObjPtr pObj = m_pParent->GetCameraObjectByName(sNewCamera);
 
     if ( m_pParent->GetProductType() == SVIM_PRODUCT_RGB_MONO )
     {
@@ -222,39 +229,38 @@ void CSVOCameraDlg::OnBtnNewVc()
 
 void CSVOCameraDlg::OnBtnPropVc() 
 {
-    CSVOCameraObj TmpObj;
     int iCurSel = m_ctlCameraList.GetCurSel();
     CString sTxt;
     if (iCurSel != LB_ERR)
     {
         m_ctlCameraList.GetText(iCurSel,sTxt);
-        CSVOCameraObj *pObj = m_pParent->GetCameraObjectByName(sTxt);
-		if( pObj == NULL )
+        SVOCameraObjPtr pCameraObj = m_pParent->GetCameraObjectByName(sTxt);
+		if( nullptr == pCameraObj )
 		{
 			ASSERT(FALSE);
 			return;
 		}
-		TmpObj = *pObj;
         CSVOPropertyPageDlg oDlg;
-        oDlg.SetCameraObject(&TmpObj);
+		SVOCameraObj& rTmpObj( oDlg.getCameraObject() );
+
+        rTmpObj = *pCameraObj;
         oDlg.SetDlgPage(VIRTUAL_CAMERA_DLG);
 		oDlg.SetProductType( m_pParent->GetProductType() );
         if (oDlg.DoModal() == IDOK)
         {
-			if (TmpObj.IsFileAcquisition())
+			if (rTmpObj.IsFileAcquisition())
 			{
-				*pObj = TmpObj;
+				*pCameraObj = rTmpObj;
 				m_pParent->SetModified(TRUE);
-				m_btnAdvancedProp.EnableWindow(true);
-				m_pParent->ItemChanged(CAMERA_DLG,pObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
+				m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
 			}
 			else
 			{
-				if (pObj->IsFileAcquisition() || !TmpObj.GetCameraFile().IsEmpty())
+				if (pCameraObj->IsFileAcquisition() || !rTmpObj.GetCameraFile().IsEmpty() || pCameraObj->IsColor() != rTmpObj.IsColor() )
 				{
-					*pObj = TmpObj;
+					*pCameraObj = rTmpObj;
 					m_pParent->SetModified(TRUE);
-					m_pParent->ItemChanged(CAMERA_DLG,pObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
+					m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
 					m_btnAdvancedProp.EnableWindow(FALSE);
 				
 					if ( (m_bNewConfig) && (!m_bModified) )
@@ -264,41 +270,34 @@ void CSVOCameraDlg::OnBtnPropVc()
 						{
 							if (AfxMessageBox("Would you like to use this camera file for all camera choices?",MB_YESNO) == IDYES)
 							{
-								SetCameraPropForAll(pObj->GetCameraDisplayName());
+								SetCameraPropForAll(pCameraObj->GetCameraDisplayName());
 							}
 						}
 					}
 					if ( m_pParent->GetProductType() == SVIM_PRODUCT_RGB_MONO )
 					{
-						SetCameraPropForAll( pObj->GetCameraDisplayName() );
+						SetCameraPropForAll( pCameraObj->GetCameraDisplayName() );
 					}
 
 					if ( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 					{
-						m_btnAdvancedProp.EnableWindow(TRUE);
-					
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
-						CString strDigName = m_pParent->BuildDigName( pObj );
-						SVAcquisitionClassPtr psvDevice;
-						if ( S_OK == SVImageProcessingClass::Instance().GetAcquisitionDevice( strDigName, psvDevice ) )
+						CString strDigName = m_pParent->BuildDigName( *pCameraObj );
+						SVDigitizerProcessingClass::Instance().SelectDigitizer( strDigName );
+						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strDigName ) );
+						if ( nullptr == psvDevice )
 						{
 							SVFileNameArrayClass svFiles;
 							SVFileNameClass svFile;
-							CString strFileName = pObj->GetCameraFile();
+							CString strFileName = pCameraObj->GetCameraFile();
 							svFile.SetFullFileName( strFileName );
 							svFiles.Add( svFile );
 							psvDevice->LoadFiles( svFiles );
 						}
 					}
 				}
-				else
-				{
-					if ( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
-					{
-						m_btnAdvancedProp.EnableWindow(FALSE);
-					}
-				}
 			}
+			UpdateDialogControls( this, false );
         }
     }
 }
@@ -307,7 +306,7 @@ void CSVOCameraDlg::SetupList()
 {
     m_ctlCameraList.ResetContent();
     int iCamCnt = m_pParent->GetCameraListCount();
-    CSVOCameraObj *pObj;
+    SVOCameraObjPtr pObj;
 
     for (int i = 0; i < iCamCnt; i++)
     {
@@ -335,7 +334,7 @@ void CSVOCameraDlg::OnDblclkLstCamera()
 void CSVOCameraDlg::SetCameraPropForAll(CString sCurrentCamera)
 {
     int iCamCnt = m_pParent->GetCameraListCount();
-    CSVOCameraObj *pObj;
+    SVOCameraObjPtr pObj;
     CString sFileName;
 
     pObj = m_pParent->GetCameraObjectByName(sCurrentCamera);

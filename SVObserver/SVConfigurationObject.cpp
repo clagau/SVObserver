@@ -40,7 +40,6 @@
 #include "SVMainFrm.h"
 #include "SVIODoc.h"
 #include "SVIOController.h"
-#include "SVImageProcessingClass.h"
 #include "SVAcquisitionClass.h"
 #include "SVTriggerClass.h"
 #include "SVSoftwareTriggerClass.h"
@@ -59,14 +58,16 @@
 #include "SVSVIMStateClass.h"
 #include "SVStorageResult.h"
 #include "SVVirtualCamera.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "SVObjectLibrary\GlobalConst.h"
 #include "RemoteMonitorNamedList.h"
 #include "RemoteMonitorListHelper.h"
 #include "RootObject.h"
-#include "SVSystemLibrary/SVThreadManager.h"
+#include "SVSystemLibrary\SVThreadManager.h"
 #include "RangeClassHelper.h"
-#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVIPDoc.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -880,9 +881,7 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 
 HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 {
-	HRESULT		hr;
-
-	hr = S_OK;
+	HRESULT	Result( S_OK );
 
 	BOOL bOk = DestroyConfiguration();
 	if ( bOk )
@@ -892,12 +891,13 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		CString l_sBoardName;
 		long l_lNumBoardDig=0;
 		long l_lNumCameras=0;
+		bool ConfigurationColor( false );
 
 
 		bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_ENVIRONMENT, NULL, htiChild );
 		if (bOk != TRUE)
 		{
-			hr = -1797;
+			Result = -1797;
 		}
 		else
 		{
@@ -907,9 +907,22 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 			{
 				int iType = svValue;
 				SetProductType( (SVIMProductEnum) iType );
+
+				Result = ConvertToMixedProductType( ConfigurationColor );
+				if( S_OK != Result )
+				{
+					//This causes the loading to stop but not to show any messages
+					Result = E_FAIL;
+					bOk = false;
+					//Return now to avoid further loading this needs to be cleaned when breaking this method up
+					return Result;
+				}
 			}
 
-			bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_VERSION_NUMBER, htiChild, svValue );
+			if( bOk )
+			{
+				bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_VERSION_NUMBER, htiChild, svValue );
+			}
 
 			if( bOk )
 			{
@@ -980,7 +993,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		if ( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_IO, NULL, htiChild ) )
+		if (bOk && SVNavigateTreeClass::GetItemBranch( rTree, CTAG_IO, NULL, htiChild ) )
 		{
 			_variant_t svVariant;
 			_variant_t svValue;
@@ -1198,7 +1211,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		if ( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_ACQUISITION_DEVICE, NULL, htiChild ) )
+		if ( bOk && SVNavigateTreeClass::GetItemBranch( rTree, CTAG_ACQUISITION_DEVICE, NULL, htiChild ) )
 		{
 			SVTreeType::SVBranchHandle htiBoardChild = NULL;
 			
@@ -1218,7 +1231,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 				// test for File Acquisition, since there is no LUT, Light, or DeviceParams
 				if (l_sBoardName == _T("File")) 
 				{
-					hr = LoadFileAcquisitionConfiguration(rTree, htiBoardChild, lNumAcqDig);
+					Result = LoadFileAcquisitionConfiguration(rTree, htiBoardChild, lNumAcqDig);
 				}
 				else
 				{
@@ -1304,7 +1317,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 																svLight.Band( i ).Attribute( j ).strName = static_cast< LPCTSTR >( l_String );
 																//Legacy: changed name from Contrast to Gain
-																if( CameraContrast == svLight.Band( i ).Attribute( j ).strName )
+																if( SVString( CameraContrast ) == svLight.Band( i ).Attribute( j ).strName )
 																{
 																	svLight.Band( i ).Attribute( j ).strName = CameraGain;
 																}
@@ -1492,9 +1505,10 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 								if ( ! bLutDone || ! bLutCreated )
 								{
-									bOk = SVImageProcessingClass::Instance().GetAcquisitionDevice( csFullName, psvDevice ) == S_OK;
+									psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( csFullName );
+									bOk = nullptr != psvDevice;
 									ASSERT( bOk );
-									if (psvDevice)
+									if ( bOk )
 									{
 										psvDevice->GetLut(lut);
 										// create default lut
@@ -1513,74 +1527,73 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 									}
 								}
 								SVString strNewAcquisitionDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csFullName);
-								bOk = SVImageProcessingClass::Instance().GetAcquisitionDevice( strNewAcquisitionDeviceName.c_str(), psvDevice ) == S_OK;
+								SVDigitizerProcessingClass::Instance().SelectDigitizer( strNewAcquisitionDeviceName.c_str() );
+								psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strNewAcquisitionDeviceName.c_str() );
+								bOk = nullptr != psvDevice;
 								if ( bOk )
 								{
-									if ( !( psvDevice.empty() ) )
+									SVImageInfoClass svImageInfo;
+
+									psvDevice->LoadFiles( svFileArray ); // @WARNING:  May crash if svFileArray is empty.
+
+									if( 1 < svLight.Band( 0 ).NumAttributes() )
 									{
-										SVImageInfoClass svImageInfo;
+										// This is what old configurations (SEC) set contrast to. 
+										// now read the values from the camera files and save as 
+										// the configuration values.
 
-										psvDevice->LoadFiles( svFileArray ); // @WARNING:  May crash if svFileArray is empty.
-
-										if( 1 < svLight.Band( 0 ).NumAttributes() )
+										if( svLight.Band( 0 ).Attribute( 1 /*LR_CONTRAST*/ ).lValue == -999999999L )
 										{
-											// This is what old configurations (SEC) set contrast to. 
-											// now read the values from the camera files and save as 
-											// the configuration values.
+											psvDevice->LoadLightReference( svLight );
+										}// end if
+									}
 
-											if( svLight.Band( 0 ).Attribute( 1 /*LR_CONTRAST*/ ).lValue == -999999999L )
-											{
-												psvDevice->LoadLightReference( svLight );
-											}// end if
-										}
+									// set the camera file metadata for each device param
+									SVDeviceParamCollection rCamFileParams;
+									psvDevice->GetCameraFileParameters( rCamFileParams );
 
-										// set the camera file metadata for each device param
-										SVDeviceParamCollection rCamFileParams;
-										psvDevice->GetCameraFileParameters( rCamFileParams );
-
-										SVDeviceParamMap::const_iterator iter;
-										for (iter = rCamFileParams.mapParameters.begin(); iter != rCamFileParams.mapParameters.end(); ++iter)
+									SVDeviceParamMap::const_iterator iter;
+									for (iter = rCamFileParams.mapParameters.begin(); iter != rCamFileParams.mapParameters.end(); ++iter)
+									{
+										const SVDeviceParamWrapper& wCamFileParam = iter->second;
+										if ( wCamFileParam.IsValid() )
 										{
-											const SVDeviceParamWrapper& wCamFileParam = iter->second;
-											if ( wCamFileParam.IsValid() )
+											SVDeviceParamWrapper& wParam = svDeviceParams.GetParameter( wCamFileParam->Type() );
+											if ( wParam.IsValid() )
 											{
-												SVDeviceParamWrapper& wParam = svDeviceParams.GetParameter( wCamFileParam->Type() );
-												if ( wParam.IsValid() )
-												{
-													wParam->SetMetadata(wCamFileParam);
-												}
+												wParam->SetMetadata(wCamFileParam);
 											}
 										}
+									}
 
 
-										psvDevice->SetDeviceParameters( svDeviceParams );	// needs to come before LR (quick fix for now)
-										psvDevice->SetLightReference( svLight );
-										psvDevice->SetLut( lut );
-										psvDevice->GetImageInfo( &svImageInfo );
-										psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
+									psvDevice->SetDeviceParameters( svDeviceParams );	// needs to come before LR (quick fix for now)
+									psvDevice->SetLightReference( svLight );
+									psvDevice->SetLut( lut );
+									psvDevice->GetImageInfo( &svImageInfo );
+									psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
 
-										// set the trigger and strobe polarity in the I/O board based on Acq. device params
-										// must get from the acq device instead of using svDeviceParams because the
-										// device may set defaults in LoadFiles
+									// set the trigger and strobe polarity in the I/O board based on Acq. device params
+									// must get from the acq device instead of using svDeviceParams because the
+									// device may set defaults in LoadFiles
 
-										SVDeviceParamCollection params;
-										psvDevice->GetDeviceParameters(params);
+									SVDeviceParamCollection params;
+									psvDevice->GetDeviceParameters(params);
 
-										// trigger
-										if ( params.ParameterExists( DeviceParamAcquisitionTriggerEdge ) )
-										{
-											int iDigNum = psvDevice->DigNumber();
-											const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pParam);
-											SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
-										}
+									// trigger
+									if ( params.ParameterExists( DeviceParamAcquisitionTriggerEdge ) )
+									{
+										int iDigNum = psvDevice->DigNumber();
+										const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pParam);
+										SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
+									}
 
-										// strobe
-										if ( params.ParameterExists( DeviceParamAcquisitionStrobeEdge ) )
-										{
-											int iDigNum = psvDevice->DigNumber();
-											const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
-											SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
-										}
+									// strobe
+									if ( params.ParameterExists( DeviceParamAcquisitionStrobeEdge ) )
+									{
+										int iDigNum = psvDevice->DigNumber();
+										const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
+										SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
 									}
 									// SEJ - Get Combined parameters
 									psvDevice->GetDeviceParameters(svDeviceParams);
@@ -1600,7 +1613,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		if ( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_CAMERA, NULL, htiChild ) )
+		if ( bOk && SVNavigateTreeClass::GetItemBranch( rTree, CTAG_CAMERA, NULL, htiChild ) )
 		{
 			SVTreeType::SVBranchHandle htiSubChild = NULL;
 			
@@ -1670,6 +1683,16 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 						pCamera->SetBandLink( svValue );
 					}
 
+					//If color not available then we need to set it using the global color which comes from the product type
+					if( SVNavigateTreeClass::GetItem( rTree, CTAG_COLOR, htiSubChild, svValue ) )
+					{
+						pCamera->SetIsColor( svValue );
+					}
+					else
+					{
+						pCamera->SetIsColor( ConfigurationColor );
+					}
+
 					if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_MODE, htiSubChild, svValue ) )
 					{
 						pCamera->SetFileAcquisitionMode( svValue );
@@ -1727,7 +1750,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		if ( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_TRIGGER, NULL, htiChild ) )
+		if ( bOk && SVNavigateTreeClass::GetItemBranch( rTree, CTAG_TRIGGER, NULL, htiChild ) )
 		{
 			SVTreeType::SVBranchHandle htiSubChild = NULL;
 			
@@ -1793,7 +1816,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		if ( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INSPECTION, NULL, htiChild ) )
+		if ( bOk &&  SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INSPECTION, NULL, htiChild ) )
 		{
 			SVTreeType::SVBranchHandle htiSubChild = NULL;
 			
@@ -1936,7 +1959,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		if ( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_PPQ, NULL, htiChild ) )
+		if ( bOk &&  SVNavigateTreeClass::GetItemBranch( rTree, CTAG_PPQ, NULL, htiChild ) )
 		{
 			SVTreeType::SVBranchHandle htiSubChild = NULL;
 				
@@ -2379,7 +2402,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		}
 	}// end if DestroyConfiguration()
 
-	return hr;
+	return Result;
 }
 
 HRESULT SVConfigurationObject::ValidateOutputList( )
@@ -2471,8 +2494,6 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 			// need to determine Digitizer Number and Channel
 			CString csFullName;
 
-			SVAcquisitionClassPtr psvDevice;
-
 			// Get Color versus Mono
 			const SVDeviceParam* pParam = svDeviceParams.GetParameter(DeviceParamFileAcqImageFormat);
 			_variant_t var;
@@ -2486,30 +2507,29 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 				csFullName.Format( "%s.%s.Ch_All", csBoardName, csDigName );
 			}
 
-			hr = SVImageProcessingClass::Instance().GetAcquisitionDevice( csFullName, psvDevice );
-			if ( hr == S_OK )
+			SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( csFullName ) );
+			if ( nullptr != psvDevice )
 			{
-				if ( psvDevice != NULL )
-				{
-					SVImageInfoClass svImageInfo;
+				SVImageInfoClass svImageInfo;
 
-					// Set the device parameters for the File Acquisition device (Note: do this before calling LoadFiles)
-					psvDevice->SetDeviceParameters( svDeviceParams );	// needs to come before LR (quick fix for now)
-					psvDevice->SetLightReference( svLight );
-					psvDevice->SetLut( lut );
+				// Set the device parameters for the File Acquisition device (Note: do this before calling LoadFiles)
+				psvDevice->SetDeviceParameters( svDeviceParams );	// needs to come before LR (quick fix for now)
+				psvDevice->SetLightReference( svLight );
+				psvDevice->SetLut( lut );
 
-					// cause the image info to be updated for the File Acquisition device
-					psvDevice->LoadFiles( svFileArray );
+				// cause the image info to be updated for the File Acquisition device
+				psvDevice->LoadFiles( svFileArray );
 
-					psvDevice->GetImageInfo( &svImageInfo );
-					//psvDevice->DestroyBuffers();
-					psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
-				}
-				SVString strRemappedName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csFullName);
-				if( !( AddAcquisitionDevice( strRemappedName.c_str(), svFileArray, svLight, lut, &svDeviceParams ) ) )
-				{
-					hr = E_FAIL;
-				}
+				psvDevice->GetImageInfo( &svImageInfo );
+				//psvDevice->DestroyBuffers();
+				psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
+			}
+			SVString strRemappedName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csFullName);
+			if( !( AddAcquisitionDevice( strRemappedName.c_str(), svFileArray, svLight, lut, &svDeviceParams ) ) )
+			{
+				//This should be addressed when the new error handling is done.
+				//This is to avoid returning E_FAIL which would not be displayed but just stop loading the configuration any further
+				hr = -1798;
 			}
 		}
 		rTree.GetNextBranch( htiBoardChild, htiDigChild );
@@ -2646,15 +2666,13 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 
 			delete pDevice;
 
-			bOk = SVImageProcessingClass::Instance().GetAcquisitionDevice( csKey, psvDevice ) == S_OK;
+			psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( csKey );
+			bOk = nullptr != psvDevice;
 			if ( bOk )
 			{
-				if( !( psvDevice.empty() ) )
-				{
-					psvDevice->DestroyBuffers();
-					psvDevice->ResetLightReference();
-					psvDevice->UnloadFiles();
-				}
+				psvDevice->DestroyBuffers();
+				psvDevice->ResetLightReference();
+				psvDevice->UnloadFiles();
 			}
 		}
 	}
@@ -3235,6 +3253,10 @@ void SVConfigurationObject::SaveCamera(SVObjectXMLWriter& rWriter) const
 				rWriter.WriteAttribute( CTAG_BAND_LINK, svVariant );
 				svVariant.Clear();
 
+				svVariant = pCamera->IsColor();
+				rWriter.WriteAttribute( CTAG_COLOR, svVariant );
+				svVariant.Clear();
+
 				svVariant = pCamera->IsFileAcquisition();
 				rWriter.WriteAttribute( CTAG_FILEACQUISITION_MODE, svVariant );
 				svVariant.Clear();
@@ -3605,6 +3627,41 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 	}
 
 	rWriter.EndElement(); //CTAG_GLOBAL_CONSTANTS
+}
+
+HRESULT SVConfigurationObject::ConvertToMixedProductType( bool& rConfigColor )
+{
+	HRESULT Result( S_OK );
+
+	SVIMProductEnum CurrentType( TheSVObserverApp.GetSVIMType() );
+	SVIMProductEnum ConfigType( GetProductType() );
+
+	//If compatible we need to change the product type from mono and color to mixed
+	bool ConvertType = SVHardwareManifest::IsMixedSystem( CurrentType ) && !SVHardwareManifest::IsMixedSystem( ConfigType );
+	if( ConvertType )
+	{
+		SvStl::MessageMgrDisplayAndNotify Exception(SvStl::LogAndDisplay);
+
+		if( SVHardwareManifest::IsCompatible( ConfigType, CurrentType ) )
+		{
+			if( IDYES == Exception.setMessage( SVMSG_SVO_74_CONVERT_PRODUCT_TYPE, nullptr, StdMessageParams, SvOi::Err_25047_ConvertMixedType, 0, nullptr, MB_YESNO ) )
+			{
+				rConfigColor = SVHardwareManifest::IsColorSystem( ConfigType );
+				SetProductType( CurrentType );
+				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+			}
+			else
+			{
+				Result = SVMSG_SVO_74_CONVERT_PRODUCT_TYPE;
+			}
+		}
+		else
+		{
+			Result = SVMSG_SVO_75_CONFIGURATION_CONVERSION;
+			Exception.setMessage(Result , nullptr, StdMessageParams, SvOi::Err_25048_ConvertMixedType );
+		}
+	}
+	return Result;
 }
 
 BOOL SVConfigurationObject::SaveConfiguration(SVObjectXMLWriter& rWriter) const
@@ -4402,7 +4459,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 
 			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
 
-			if( SvOl::FqnInspections == l_Info.m_NameArray[ 0 ] )
+			if( SVString( SvOl::FqnInspections ) == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ref;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
@@ -4560,7 +4617,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 
 			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
 
-			if( SvOl::FqnRemoteInputs == l_Info.m_NameArray[ 0 ] )
+			if( SVString( SvOl::FqnRemoteInputs ) == l_Info.m_NameArray[ 0 ] )
 			{
 				SVRemoteInputObject* l_pInput = NULL;
 
@@ -4636,7 +4693,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( l_Info.m_NameArray.size() >0 &&  SvOl::FqnInspections == l_Info.m_NameArray[ 0 ] )
+			if( l_Info.m_NameArray.size() >0 &&  SVString( SvOl::FqnInspections ) == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ref;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
@@ -4835,7 +4892,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( SvOl::FqnRemoteInputs == l_Info.m_NameArray[ 0 ] )
+			if( SVString( SvOl::FqnRemoteInputs ) == l_Info.m_NameArray[ 0 ] )
 			{
 				SVRemoteInputObject* l_pInput = NULL;
 
@@ -4970,7 +5027,7 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 
 			SVObjectNameInfo::ParseObjectName( Info, Iter->first );
 
-			if( SvOl::FqnCameras == Info.m_NameArray[ 0 ] )
+			if( SVString( SvOl::FqnCameras ) == Info.m_NameArray[ 0 ] )
 			{
 				BasicValueObject* pValueObject = NULL;
 

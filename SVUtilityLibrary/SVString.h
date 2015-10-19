@@ -207,10 +207,6 @@ protected:
 	SVDataType m_String;
 };
 
-SVString operator+( LPCTSTR psz1, const SVString& str2 );
-bool operator==( LPCTSTR psz1, const SVString& str2 );
-bool operator!=( LPCTSTR psz1, const SVString& str2 );
-
 typedef std::vector< SVString > SVStringArray;
 typedef std::set< SVString > SVStringSet;
 typedef std::map< SVString, SVString > TranslateMap;

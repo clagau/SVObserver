@@ -9,17 +9,19 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:15:04  $
 //******************************************************************************
 
-#ifndef SVOTRIGGEROBJ_H
-#define SVOTRIGGEROBJ_H
+#pragma once
 
-#include "SVUtilityLibrary/SVString.h"
+#pragma region Includes
+#include "SVUtilityLibrary\SVString.h"
 #include "SVTriggerConstants.h"
+#include "SVUtilityLibrary\SVSharedPtr.h"
+#pragma endregion Includes
 
-class CSVOTriggerObj  
+class SVOTriggerObj  
 {
 public:
-	CSVOTriggerObj(const SVString& sTriggerName, int iDig);
-	virtual ~CSVOTriggerObj();
+	SVOTriggerObj(const SVString& sTriggerName, int iDig);
+	virtual ~SVOTriggerObj();
 
 	LPCTSTR GetTriggerDisplayName() const;
 	int GetTriggerDigNumber() const;
@@ -40,7 +42,8 @@ private:  //data members
 	long m_timerPeriod;
 };
 
-#endif
+typedef SVSharedPtr< SVOTriggerObj > SVOTriggerObjPtr;
+
 
 //******************************************************************************
 //* LOG HISTORY:

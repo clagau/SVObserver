@@ -23,7 +23,7 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CSVOPPQObj::CSVOPPQObj()
+SVOPPQObj::SVOPPQObj()
 : m_sPPQName(_T(""))
 , m_sAttachedTrigger(_T(""))
 , m_iPPQMode(0)
@@ -36,38 +36,38 @@ CSVOPPQObj::CSVOPPQObj()
 {
 }
 
-CSVOPPQObj::~CSVOPPQObj()
+SVOPPQObj::~SVOPPQObj()
 {
 	m_slAttachedCameraList.RemoveAll();
 	m_slAttachedCameraList.RemoveAll();
 }
 
-void CSVOPPQObj::SetPPQName(CString sPPQName)
+void SVOPPQObj::SetPPQName(CString sPPQName)
 {
 	m_sPPQName = sPPQName;
 }
 
-CString CSVOPPQObj::GetPPQName()
+CString SVOPPQObj::GetPPQName()
 {
 	return m_sPPQName;
 }
 
-void CSVOPPQObj::AttachTriggerToPPQ(CString sTriggerName)
+void SVOPPQObj::AttachTriggerToPPQ(CString sTriggerName)
 {
 	m_sAttachedTrigger = sTriggerName;
 }
 
-void CSVOPPQObj::DetachTriggerFromPPQ()
+void SVOPPQObj::DetachTriggerFromPPQ()
 {
 	m_sAttachedTrigger = "";
 }
 
-CString CSVOPPQObj::GetAttachedTriggerName() const
+CString SVOPPQObj::GetAttachedTriggerName() const
 {
 	return m_sAttachedTrigger;
 }
 
-BOOL CSVOPPQObj::AttachCameraToPPQ(CString sCameraName)
+BOOL SVOPPQObj::AttachCameraToPPQ(CString sCameraName)
 {
 	BOOL bRet = FALSE;
 	//check to see if it is already in list
@@ -80,7 +80,7 @@ BOOL CSVOPPQObj::AttachCameraToPPQ(CString sCameraName)
 	return bRet;
 }
 
-BOOL CSVOPPQObj::DetachCameraFromPPQ(CString sCameraName)
+BOOL SVOPPQObj::DetachCameraFromPPQ(CString sCameraName)
 {
 	BOOL bRet = FALSE;
 	POSITION pos;
@@ -97,12 +97,12 @@ BOOL CSVOPPQObj::DetachCameraFromPPQ(CString sCameraName)
 	return bRet;
 }
 
-int CSVOPPQObj::GetAttachedCameraCount() const
+int SVOPPQObj::GetAttachedCameraCount() const
 {
 	return static_cast<int>(m_slAttachedCameraList.GetCount());
 }
 
-CString CSVOPPQObj::GetAttachedCamera(int iPos) const
+CString SVOPPQObj::GetAttachedCamera(int iPos) const
 {
 	CString sReturnStr = "";
 	POSITION pos = m_slAttachedCameraList.FindIndex(iPos);
@@ -114,7 +114,7 @@ CString CSVOPPQObj::GetAttachedCamera(int iPos) const
 	return sReturnStr;
 }
 
-BOOL CSVOPPQObj::AttachInspectionToPPQ(CString sInspectName)
+BOOL SVOPPQObj::AttachInspectionToPPQ(CString sInspectName)
 {
 	BOOL bRet = FALSE;
 	
@@ -127,7 +127,7 @@ BOOL CSVOPPQObj::AttachInspectionToPPQ(CString sInspectName)
 	return bRet;
 }
 
-BOOL CSVOPPQObj::DetachInspectionFromPPQ(CString sInspectName)
+BOOL SVOPPQObj::DetachInspectionFromPPQ(CString sInspectName)
 {
 	BOOL bRet = FALSE;
 	POSITION pos;
@@ -145,12 +145,12 @@ BOOL CSVOPPQObj::DetachInspectionFromPPQ(CString sInspectName)
 	return bRet;
 }
 
-int CSVOPPQObj::GetAttachedInspectionCount()
+int SVOPPQObj::GetAttachedInspectionCount()
 {
 	return static_cast<int>(m_slAttachedInspectList.GetCount());
 }
 
-CString CSVOPPQObj::GetAttachedInspection(int iPos)
+CString SVOPPQObj::GetAttachedInspection(int iPos)
 {
 	POSITION pos = m_slAttachedInspectList.FindIndex(iPos);
 	
@@ -158,52 +158,58 @@ CString CSVOPPQObj::GetAttachedInspection(int iPos)
 }
 
 //property methods
-void CSVOPPQObj::SetPPQMode(int iPPQMode)
+void SVOPPQObj::SetPPQMode(int iPPQMode)
 {
 	m_iPPQMode = iPPQMode;
 }
 
-void CSVOPPQObj::SetPPQLength(long lLength)
+void SVOPPQObj::SetPPQLength(long lLength)
 {
 	m_lPPQLength = lLength;
 }
 
-void CSVOPPQObj::SetPPQOutputResetDelay(long lResetDelay)
+void SVOPPQObj::SetPPQOutputResetDelay(long lResetDelay)
 {
 	m_lPPQOutputResetDelay = lResetDelay;
 }
 
-void CSVOPPQObj::SetPPQOutputDelayTime(long lDelayTime)
+void SVOPPQObj::SetPPQOutputDelayTime(long lDelayTime)
 {
 	m_lPPQOutputDelayTime = lDelayTime;
 }
 
-int CSVOPPQObj::GetPPQMode() const
+int SVOPPQObj::GetPPQMode() const
 {
 	return m_iPPQMode;
 }
 
-long CSVOPPQObj::GetPPQLength() const
+long SVOPPQObj::GetPPQLength() const
 {
 	return m_lPPQLength;
 }
 
-long CSVOPPQObj::GetPPQOutputResetDelay() const
+long SVOPPQObj::GetPPQOutputResetDelay() const
 {
 	return m_lPPQOutputResetDelay;
 }
 
-long CSVOPPQObj::GetPPQOutputDelayTime() const
+long SVOPPQObj::GetPPQOutputDelayTime() const
 {
 	return m_lPPQOutputDelayTime;
 }
 
-CSVOPPQObj &CSVOPPQObj::operator =(const CSVOPPQObj &source)
+SVOPPQObj &SVOPPQObj::operator =(const SVOPPQObj &source)
 {
 	if (this != &source)
 	{
 		m_sPPQName = source.m_sPPQName;
 		m_sAttachedTrigger = source.m_sAttachedTrigger;
+		m_slAttachedCameraList.RemoveAll();
+		//The MFC method AddHead only excepts a CStringList pointer that is why const_cast is necessary!
+		m_slAttachedCameraList.AddHead( const_cast<CStringList*> (&source.m_slAttachedCameraList) );
+		m_slAttachedInspectList.RemoveAll();
+		//The MFC method AddHead only excepts a CStringList pointer that is why const_cast is necessary!
+		m_slAttachedInspectList.AddHead( const_cast<CStringList*> (&source.m_slAttachedInspectList) );
 		m_iPPQMode = source.m_iPPQMode;
 		m_lPPQLength = source.m_lPPQLength;
 		m_lPPQOutputResetDelay = source.m_lPPQOutputResetDelay;
@@ -217,52 +223,52 @@ CSVOPPQObj &CSVOPPQObj::operator =(const CSVOPPQObj &source)
 	return (*this);
 }
 
-void CSVOPPQObj::SetMaintainSourceImageProperty(bool bValue)
+void SVOPPQObj::SetMaintainSourceImageProperty(bool bValue)
 {
 	m_bMaintainSrcImg = bValue;
 }
 
-bool CSVOPPQObj::GetMaintainSourceImageProperty() const
+bool SVOPPQObj::GetMaintainSourceImageProperty() const
 {
 	return m_bMaintainSrcImg;
 }
 
-void CSVOPPQObj::SetInspectionTimeout( long lTimeoutMillisec )
+void SVOPPQObj::SetInspectionTimeout( long lTimeoutMillisec )
 {
 	m_lInspectionTimeout = lTimeoutMillisec;
 }
 
-long CSVOPPQObj::GetInspectionTimeout() const
+long SVOPPQObj::GetInspectionTimeout() const
 {
 	return m_lInspectionTimeout;
 }
 
-void CSVOPPQObj::SetAvailableInputsForConditionalOutput(const SVNameGuidPairList& list)
+void SVOPPQObj::SetAvailableInputsForConditionalOutput(const SVNameGuidPairList& list)
 {
 	m_availableInputs = list;
 }
 
-const SVNameGuidPairList& CSVOPPQObj::GetAvailableInputsForConditionalOutput() const
+const SVNameGuidPairList& SVOPPQObj::GetAvailableInputsForConditionalOutput() const
 {
 	return m_availableInputs;
 }
 
-void CSVOPPQObj::SetConditionalOutputName(const SVString& name)
+void SVOPPQObj::SetConditionalOutputName(const SVString& name)
 {
 	m_conditionalOutputName = name;
 }
 
-const SVString& CSVOPPQObj::GetConditionalOutputName() const
+const SVString& SVOPPQObj::GetConditionalOutputName() const
 {
 	return m_conditionalOutputName;
 }
 
-bool CSVOPPQObj::IsConditionalOutputCameraInput() const
+bool SVOPPQObj::IsConditionalOutputCameraInput() const
 {
 	return (m_conditionalOutputName.find("Camera") == 0);
 }
 
-void CSVOPPQObj::RemoveCameraInputConditionalOutput()
+void SVOPPQObj::RemoveCameraInputConditionalOutput()
 {
 	if (IsConditionalOutputCameraInput())
 	{
@@ -270,17 +276,17 @@ void CSVOPPQObj::RemoveCameraInputConditionalOutput()
 	}
 }
 
-void CSVOPPQObj::SetImportedInputList(const SVImportedInputList& list)
+void SVOPPQObj::SetImportedInputList(const SVImportedInputList& list)
 {
 	m_importedInputList = list;
 }
 
-const SVImportedInputList& CSVOPPQObj::GetImportedInputList() const
+const SVImportedInputList& SVOPPQObj::GetImportedInputList() const
 {
 	return m_importedInputList;
 }
 
-void CSVOPPQObj::ClearImportedInputList()
+void SVOPPQObj::ClearImportedInputList()
 {
 	m_importedInputList.clear();
 }

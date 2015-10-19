@@ -29,8 +29,9 @@
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "RemoteMonitorList.h"
-#pragma endregion Includes
 #include "SVObjectLibrary/SVObjectXMLWriter.h"
+#pragma endregion Includes
+
 
 #pragma region Declarations
 class SVDeviceParamCollection;
@@ -298,6 +299,13 @@ private:
 	//! \param rWriter <in> a reference to the xml-writer
 	//************************************
 	void SaveGlobalConstants( SVObjectXMLWriter &rWriter ) const;
+
+	//************************************
+	//! The method checks and if necessary converts the product type to a mixed type
+	//! \param rConfigType <out> a reference to obtain the configuration color
+	//! \returns S_OK on success or the error number
+	//************************************
+	HRESULT ConvertToMixedProductType( bool& rConfigType );
 
 	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass& svFileArray );
 

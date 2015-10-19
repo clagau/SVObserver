@@ -965,8 +965,9 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 					{
 						while (pOwner)
 						{
+							SVInspectionProcess* pInspection =  GetInspection();
 							// if color system & pOwner == SVToolSetClass
-							if (TheSVObserverApp.IsColorSVIM() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && info.ObjectType == SVImageObjectType)
+							if (nullptr != pInspection && pInspection->IsColorCamera() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && info.ObjectType == SVImageObjectType)
 							{
 								pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
 							}

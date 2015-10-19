@@ -9,19 +9,21 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:49:02  $
 //******************************************************************************
 
-#ifndef SVOCAMERAOBJ_H
-#define SVOCAMERAOBJ_H
+#pragma once
 
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
-#include "SVUtilityLibrary/SVString.h"
+#pragma region Includes
+#include "SVOMFCLibrary\SVDeviceParamCollection.h"
+#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary\SVSharedPtr.h"
+#pragma endregion Includes
 
-class CSVOCameraObj  
+class SVOCameraObj  
 {
 public:
-	CSVOCameraObj();
-	virtual ~CSVOCameraObj();
-    CSVOCameraObj& operator =(const CSVOCameraObj &source);
-    CSVOCameraObj* operator =(const CSVOCameraObj *source);
+	SVOCameraObj();
+	virtual ~SVOCameraObj();
+    SVOCameraObj& operator =(const SVOCameraObj &source);
+    SVOCameraObj* operator =(const SVOCameraObj *source);
 
     CString GetCameraDisplayName() const;
     CString GetCameraFile() const;
@@ -61,11 +63,14 @@ public:
 	bool IsSoftwareTriggerSupported() const;
 	bool IsCameraLineInputSupported() const;
 
+	inline void SetIsColor( bool IsColor ){ m_IsColor = IsColor; };
+	inline bool IsColor() const { return m_IsColor; };
+
 private:  //data members
     CString m_sCameraDisplayName; 
     int m_iDigNumber;
     int m_iBandNumber;
-    BOOL m_bIsColor;
+    bool m_IsColor;
     CString m_sCameraFile;
     BOOL m_bCameraFileSet;
 	BOOL m_bCameraFileChanged;
@@ -84,7 +89,8 @@ private:  //data members
     void CheckObject();
 };
 
-#endif
+typedef SVSharedPtr< SVOCameraObj > SVOCameraObjPtr;
+
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -9,21 +9,22 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:10:34  $
 //******************************************************************************
 
-#ifndef SVOPPQLIST_H
-#define SVOPPQLIST_H
+#pragma once
 
-#include "SVContainerLibrary/SVList.h"
+#pragma region Includes
+#include "SVContainerLibrary\SVList.h"
+#include "SVOPPQObj.h"
+#pragma endregion Includes
 
-class CSVOPPQObj;
-
-class CSVOPPQList  
+class SVOPPQList  
 {
 public:
-	typedef SVList< CSVOPPQObj* > SVPPQList;
+	typedef SVList< SVOPPQObjPtr > SVPPQList;
 	typedef SVPPQList::iterator iterator;
+	typedef SVPPQList::const_iterator	const_iterator;
 
-	CSVOPPQList();
-	virtual ~CSVOPPQList();
+	SVOPPQList();
+	virtual ~SVOPPQList();
 
     BOOL AddPPQToList(CString sPPQName);
     BOOL RemovePPQFromList(CString sPPQName);
@@ -38,9 +39,10 @@ public:
     BOOL RemoveTriggerFromPPQ(CString sPPQName);
 
     int GetPPQListCount() const;
-    CSVOPPQObj *GetPPQObjectByName(CString sPPQName);
-    CSVOPPQObj *GetPPQObjectByPosition(int iPos);
-    BOOL IsPPQInList(CString sPPQName);
+    SVOPPQObjPtr GetPPQObjectByName(CString sPPQName);
+	SVOPPQObjPtr GetPPQObjectByPosition(int iPos);
+	const SVOPPQObjPtr GetPPQObjectByPosition(int iPos) const;
+    BOOL IsPPQInList(CString sPPQName) const;
     void ResetContent();
     
 private:
@@ -49,8 +51,6 @@ private:
 	iterator FindPPQPosition(CString sPPQName);
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

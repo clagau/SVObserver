@@ -14,14 +14,12 @@
 
 struct SVIMTypeInfoStruct
 {
-	bool m_ColorSystem;
 	bool m_Supported;
 	short m_MaxDigitizers;
 	short m_MaxTriggers;
 
-	SVIMTypeInfoStruct( bool p_ColorSystem, bool p_Supported, short p_MaxDigitizers, short p_MaxTriggers )
-	: m_ColorSystem( p_ColorSystem )
-	, m_Supported( p_Supported )
+	SVIMTypeInfoStruct( bool p_Supported, short p_MaxDigitizers, short p_MaxTriggers ) :
+	  m_Supported( p_Supported )
 	, m_MaxDigitizers( p_MaxDigitizers )
 	, m_MaxTriggers( p_MaxTriggers)
 	{

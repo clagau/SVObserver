@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include <map>
+#include <memory>
 #include "SVOTriggerDeviceDlg.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVOPropertyPageDlg.h"
@@ -81,12 +82,15 @@ void CSVOTriggerDeviceDlg::SetupList()
 
     m_ctlTriggerList.ResetContent();
     int iTrigCount = m_pParent->GetTriggerListCount();
-    CSVOTriggerObj *pObj;
+    SVOTriggerObjPtr pTriggerObj( nullptr );
 
     for (int i = 0; i < iTrigCount; i++)
     {
-        pObj = m_pParent->GetTriggerObject(i);
-		sortedList.insert(std::make_pair(pObj->GetTriggerDigNumber(), pObj->GetTriggerDisplayName()));
+        pTriggerObj = m_pParent->GetTriggerObject(i);
+		if( nullptr != pTriggerObj )
+		{
+			sortedList.insert(std::make_pair(pTriggerObj->GetTriggerDigNumber(), pTriggerObj->GetTriggerDisplayName()));
+		}
     }
 	for (SortedTriggerList::const_iterator it = sortedList.begin();it != sortedList.end();++it)
 	{
@@ -122,7 +126,7 @@ void CSVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rLis
 	
 	if (!bNonIOSVIM)
 	{
-		name = m_pParent->GetNextTriggerName();
+		name = m_pParent->GetNextTriggerName(TRIGGER_FIXED_NAME);
 		rList.insert(std::make_pair(name, id));
 	}
 	if (m_pParent->IsValidCamera(id) && m_pParent->IsDigitalSystem())
@@ -222,19 +226,23 @@ void CSVOTriggerDeviceDlg::OnBtnPropTrig()
 		CString sTxt;
 		CString sLabel;
 		m_ctlTriggerList.GetText(iCurSel,sTxt);
-		CSVOTriggerObj *pObj = m_pParent->GetTriggerObjectByName(sTxt);
-		CSVOTriggerObj TmpObj(*pObj);
-		CSVOPropertyPageDlg oDlg;
-		oDlg.SetTriggerObject(&TmpObj);
-		oDlg.SetDlgPage(VIRTUAL_TRIGGER_DLG);
-		oDlg.SetProductType(m_pParent->GetProductType());
-		if (oDlg.DoModal() == IDOK)
+		SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+		if( nullptr != pTriggerObj )
 		{
-			*pObj = TmpObj;
-			m_pParent->SetModified(TRUE);
-			EnablePropertyEdit(iCurSel);
-			m_pParent->ItemChanged(TRIGGER_DLG, sTxt, ITEM_ACTION_PROP);
-		}	
+			CSVOPropertyPageDlg oDlg;
+			SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
+
+			rTmpObj = *pTriggerObj;
+			oDlg.SetDlgPage(VIRTUAL_TRIGGER_DLG);
+			oDlg.SetProductType(m_pParent->GetProductType());
+			if (oDlg.DoModal() == IDOK)
+			{
+				*pTriggerObj = rTmpObj;
+				m_pParent->SetModified(TRUE);
+				EnablePropertyEdit(iCurSel);
+				m_pParent->ItemChanged(TRIGGER_DLG, sTxt, ITEM_ACTION_PROP);
+			}
+		}
 	}
 }
 
@@ -246,17 +254,21 @@ void CSVOTriggerDeviceDlg::OnBtnAdvanced()
     if ( iCurSel != LB_ERR )
     {
         m_ctlTriggerList.GetText(iCurSel,sTxt);
-        CSVOTriggerObj *pObj = m_pParent->GetTriggerObjectByName(sTxt);
-        CSVOTriggerObj TmpObj(*pObj);
-        CSVOPropertyPageDlg oDlg;
-        oDlg.SetTriggerObject(&TmpObj);
-        oDlg.SetDlgPage(VIRTUAL_TRIGGER_ADV);
-        oDlg.SetProductType(m_pParent->GetProductType());
-        if (oDlg.DoModal() == IDOK)
-        {
-            *pObj = TmpObj;
-            m_pParent->SetModified(TRUE);
-        }
+		SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+		if( nullptr != pTriggerObj )
+		{
+			CSVOPropertyPageDlg oDlg;
+			SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
+
+			rTmpObj = *pTriggerObj;
+			oDlg.SetDlgPage(VIRTUAL_TRIGGER_ADV);
+			oDlg.SetProductType(m_pParent->GetProductType());
+			if (oDlg.DoModal() == IDOK)
+			{
+				*pTriggerObj = rTmpObj;
+				m_pParent->SetModified(TRUE);
+			}
+		}
     }
 }
 
@@ -292,8 +304,8 @@ void CSVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
 	// check for advanced properties
 	CString sTxt;
 	m_ctlTriggerList.GetText(iSelection, sTxt);
-    CSVOTriggerObj* pObj = m_pParent->GetTriggerObjectByName(sTxt);
-	if (pObj && pObj->IsSoftwareTrigger())
+    SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+	if( nullptr != pTriggerObj && pTriggerObj->IsSoftwareTrigger())
 	{
 		EnableAdvancedPropertyButton(true);
 	}

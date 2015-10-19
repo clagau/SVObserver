@@ -274,7 +274,7 @@ template
 <
 	typename SVT_TYPE
 >
-const typename SVList< SVT_TYPE >::SVType& SVList< SVT_TYPE >::GetAt( iterator position ) const
+const typename SVList< SVT_TYPE >::SVType& SVList< SVT_TYPE >::GetAt( const_iterator position ) const
 {
 	return *position;
 }

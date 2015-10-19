@@ -9,46 +9,49 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:04:40  $
 //******************************************************************************
 
-#ifndef SVOINSPECTIONOBJ_H
-#define SVOINSPECTIONOBJ_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CSVOInspectionObj  
+#pragma region Includes
+#include "SVUtilityLibrary\SVSharedPtr.h"
+#pragma endregion Includes
+
+class SVOInspectionObj  
 {
 public:
-	BOOL IsNewInspection();
-	void SetNewInspection();
-	CSVOInspectionObj();
-	virtual ~CSVOInspectionObj();
+	SVOInspectionObj();
+	virtual ~SVOInspectionObj();
 
-    CString GetInspectionLabelName();
+    CString GetInspectionLabelName() const;
     void SetInspectionLabelName(CString sLabel);
 
-    CString GetInspectionName();
+    CString GetInspectionName() const;
     void SetInspectionName(CString sInspection);
 
-    CString GetToolsetImage();
+    CString GetToolsetImage() const;
     void SetToolsetImage(CString sImage);
 
-	CString GetNewDisableMethod();
+	CString GetNewDisableMethod() const;
 	void SetNewDisableMethod(CString sDisable);
 
-	bool GetShowAuxExtent() { return m_bShowAuxExtent; };
-	void SetShowAuxExtent( bool p_bShowAuxExtent ) { m_bShowAuxExtent = p_bShowAuxExtent; };
+	bool GetShowAuxExtent() const;
+	void SetShowAuxExtent( bool ShowAuxExtent );
 
-	long GetEnableAuxiliaryExtent();
+	long GetEnableAuxiliaryExtent() const;
 	void SetEnableAuxiliaryExtent(long lEnable);
 
-	BOOL HasInspectionNameChange();
-    CString GetOrginalInspectionName();
+	bool HasInspectionNameChange() const;
+    CString GetOrginalInspectionName() const;
     void RenameInspection(CString sNewName);
     
+	bool IsNewInspection() const;
+	void SetNewInspection();
+
 	const CString& GetImportFilename() const;
 	void SetImportFilename(const CString& importFilename);
 	void ClearImportFilename();
+
+	bool IsColor() const;
+	void SetColor( bool Color );
 
 private:
 	CString m_sToolsetImage;
@@ -56,15 +59,16 @@ private:
     CString m_sInspectionName;
     CString m_sOrginalName;
 	CString m_sNewDisableMethod;
-	long m_lEnableAuxiliaryExtent;
-	bool m_bShowAuxExtent;
-    BOOL m_bNameChanged;
-    int m_iNumPanels;
-    BOOL m_bNewInspection;
 	CString m_ImportFilename;
+	long m_lEnableAuxiliaryExtent;
+	int m_iNumPanels;
+	bool m_ShowAuxExtent;
+    bool m_NameChanged;
+    bool m_NewInspection;
+	bool m_Color;
 };
 
-#endif // !defined(AFX_SVOINSPECTIONOBJ_H__92759466_5E72_4AEF_B77D_36EFDF19BFAB__INCLUDED_)
+typedef SVSharedPtr< SVOInspectionObj > SVOInspectionObjPtr;
 
 //******************************************************************************
 //* LOG HISTORY:

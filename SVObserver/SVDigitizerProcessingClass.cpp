@@ -506,31 +506,16 @@ HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR p_szName, SVDigitizerL
 
 	SVString l_FullName = p_szName;
 
-	if( TheSVObserverApp.IsColorSVIM() )
-	{
-		l_FullName += _T( ".Ch_All" );
-	}
-	else
-	{
-		l_FullName += _T( ".Ch_0" );
-	}
+	l_FullName += _T( ".Ch_0" );
 
+	
 	SVNameDigitizerMap::iterator l_Iter = m_AcquisitionDevices.find( l_FullName );
 
-	if( l_Iter != m_AcquisitionDevices.end() && l_Iter->second != NULL )
+	if( l_Iter != m_AcquisitionDevices.end() && nullptr != l_Iter->second  )
 	{
 		l_Iter->second->m_hDigitizer = p_Handle;
 
-		SVNameDigitizerSubsystemMap::iterator l_SubsystemIter = m_DigitizerSubsystems.find( p_szName );
-
-		if( l_SubsystemIter != m_DigitizerSubsystems.end() )
-		{
-			l_SubsystemIter->second = p_pDigitizerSubsystem;
-		}
-		else
-		{
-			m_DigitizerSubsystems[ p_szName ] = p_pDigitizerSubsystem;
-		}
+		m_DigitizerSubsystems[ p_szName ] = p_pDigitizerSubsystem;
 
 		m_Digitizers[ p_szName ] = l_Iter->second;
 	}
@@ -538,8 +523,62 @@ HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR p_szName, SVDigitizerL
 	{
 		l_Status = E_FAIL;
 	}
-
+	
 	return l_Status;
+}
+
+HRESULT SVDigitizerProcessingClass::SelectDigitizer( LPCTSTR AcquisitionName )
+{
+	HRESULT Status = S_OK;
+	SVAcquisitionClassPtr pAcquisitionDevice;
+	bool SwitchDigitizer = false;
+
+	SVNameDigitizerMap::iterator Iter = m_AcquisitionDevices.find( AcquisitionName );
+
+	if( Iter != m_AcquisitionDevices.end() && nullptr != Iter->second )
+	{
+		pAcquisitionDevice = Iter->second;
+		if( NULL == pAcquisitionDevice->m_hDigitizer)
+		{
+			SwitchDigitizer = true;
+		}
+	}
+	else
+	{
+		Status = E_FAIL;
+	}
+
+	if( SwitchDigitizer )
+	{
+		SVString Name( AcquisitionName );
+		SVString::size_type pos = Name.rfind('.');
+		if( SVString::npos != pos )
+		{
+			SVString DigitizerName;
+			SVString PartnerAcquisitionName;
+
+			DigitizerName = Name.Left( pos );
+			PartnerAcquisitionName = DigitizerName;
+			if( SVString::npos != Name.find(_T("Ch_0")) )
+			{
+				PartnerAcquisitionName += _T( ".Ch_All" );
+			}
+			else
+			{
+				PartnerAcquisitionName += _T( ".Ch_0" );
+			}
+			Iter = m_AcquisitionDevices.find( PartnerAcquisitionName );
+
+			if( Iter != m_AcquisitionDevices.end() && nullptr != Iter->second )
+			{
+				pAcquisitionDevice->m_hDigitizer = Iter->second->m_hDigitizer;
+				Iter->second->m_hDigitizer = NULL;
+			}
+			m_Digitizers[ DigitizerName ] = pAcquisitionDevice;
+		}
+	}
+
+	return Status;
 }
 
 HRESULT SVDigitizerProcessingClass::UpdateIntekDevices()

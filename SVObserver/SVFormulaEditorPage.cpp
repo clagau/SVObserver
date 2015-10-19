@@ -746,7 +746,7 @@ void SVFormulaEditorPageClass::enableUndoButton()
 {
 	CString equationText("");
 	m_MathRichEditCtrl.GetWindowText( equationText );
-	if (equationText == m_FormulaController->GetEquationText())
+	if (equationText == m_FormulaController->GetEquationText().c_str() )
 	{
 		m_validateBar.EnableButton(ID_FORMULA_UNDO, false);
 	}

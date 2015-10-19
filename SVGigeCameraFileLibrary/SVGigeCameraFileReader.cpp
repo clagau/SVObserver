@@ -141,7 +141,7 @@ HRESULT SVGigeCameraFileReader::ReadParams( SVDeviceParamCollection& rParams )
 		TCHAR sChecksum[20];
 		DWORD nChars = GetPrivateProfileString(scCHECKSUM, scCHECKSUM, sKEY_DOES_NOT_EXIST, sChecksum, 10, m_rInfo.sFilename.ToString());
 
-		if (sChecksum != sFileChecksum)
+		if (SVString(sChecksum) != sFileChecksum)
 		{
 			// checksum doesn't match
 			hr = SVMSG_INCORRECT_CHECKSUM;

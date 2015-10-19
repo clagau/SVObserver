@@ -9,83 +9,87 @@
 //* .Check In Date   : $Date:   02 Oct 2013 07:01:52  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <set>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVOTriggerList.h"
-#include "SVOTriggerObj.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
-CSVOTriggerList::CSVOTriggerList()
+SVOTriggerList::SVOTriggerList()
 {
 }
 
-CSVOTriggerList::~CSVOTriggerList()
+SVOTriggerList::~SVOTriggerList()
 {
 }
 
-BOOL CSVOTriggerList::AddTriggerToList(const SVString& sTriggerName, int iDigNumber)
+BOOL SVOTriggerList::AddTriggerToList(const SVString& sTriggerName, int iDigNumber)
 {
     BOOL bRet = FALSE;
 
     if (!IsTriggerInList(sTriggerName))
     {
-        CSVOTriggerObj *pObj = new CSVOTriggerObj(sTriggerName, iDigNumber);
-        m_TriggerList.AddTail(pObj);
+        SVOTriggerObjPtr pTriggerObj = new SVOTriggerObj(sTriggerName, iDigNumber);
+        m_TriggerList.AddTail(pTriggerObj);
         bRet = TRUE;
     }
     return bRet;
 }
 
 
-BOOL CSVOTriggerList::RemoveTriggerFromList(const SVString& sTriggerName)
+BOOL SVOTriggerList::RemoveTriggerFromList(const SVString& sTriggerName)
 {
     BOOL bRet = FALSE;
 	iterator pos = FindTriggerPosition(sTriggerName);
 	if (pos != m_TriggerList.end())
     {
-        CSVOTriggerObj *pObj = m_TriggerList.GetAt(pos);
         m_TriggerList.RemoveAt(pos);
-        delete pObj;
         bRet = TRUE;
     }
 
     return bRet;
 }
 
-int CSVOTriggerList::GetTriggerListCount() const
+int SVOTriggerList::GetTriggerListCount() const
 {
     return static_cast<int>(m_TriggerList.GetCount());
 }
 
-CSVOTriggerObj *CSVOTriggerList::GetTriggerObjectByName(const SVString& sTriggerName)
+SVOTriggerObjPtr SVOTriggerList::GetTriggerObjectByName(const SVString& sTriggerName)
 {
 	iterator pos = FindTriggerPosition(sTriggerName);
 
 	return m_TriggerList.GetAt(pos);
 }
 
-CSVOTriggerObj *CSVOTriggerList::GetTriggerObjectByPosition(int iPos)
+SVOTriggerObjPtr SVOTriggerList::GetTriggerObjectByPosition(int iPos)
 {
 	iterator pos = m_TriggerList.FindIndex(iPos);
 
 	return m_TriggerList.GetAt(pos);
 }
 
-int CSVOTriggerList::GetNextTriggerID() const
+int SVOTriggerList::GetNextTriggerID() const
 {
 	typedef std::set<int> IDList;
 	IDList idList;
 	
 	for (const_iterator it = m_TriggerList.begin();it != m_TriggerList.end();++it)
 	{
-		const CSVOTriggerObj* pObj = (*it);
-		idList.insert(pObj->GetTriggerDigNumber());
+		const SVOTriggerObjPtr pTriggerObj = (*it);
+		if( nullptr != pTriggerObj )
+		{
+			idList.insert(pTriggerObj->GetTriggerDigNumber());
+		}
 	}
 	int prevNo = -1;
 	for (IDList::const_iterator it = idList.begin();it != idList.end();++it)
@@ -101,15 +105,15 @@ int CSVOTriggerList::GetNextTriggerID() const
 	return ++prevNo;
 }
 
-bool CSVOTriggerList::IsTriggerInList(const SVString& sTriggerName) const
+bool SVOTriggerList::IsTriggerInList(const SVString& sTriggerName) const
 {
 	bool bFound = false;
 
 	for (const_iterator it = m_TriggerList.begin();it != m_TriggerList.end() && !bFound;++it)
 	{
-		const CSVOTriggerObj* pObj = (*it);
+		const SVOTriggerObjPtr pTriggerObj = (*it);
 
-		if (pObj->GetTriggerDisplayName() == sTriggerName)
+		if ( nullptr != pTriggerObj && SVString( pTriggerObj->GetTriggerDisplayName() ) == sTriggerName )
 		{
 			bFound = true;
 		}
@@ -117,18 +121,18 @@ bool CSVOTriggerList::IsTriggerInList(const SVString& sTriggerName) const
 	return bFound;
 }
 
-CSVOTriggerList::iterator CSVOTriggerList::FindTriggerPosition(const SVString& sTriggerName)
+SVOTriggerList::iterator SVOTriggerList::FindTriggerPosition(const SVString& sTriggerName)
 {
 	iterator pos( m_TriggerList.begin() );
-	BOOL bFound = FALSE;
+	bool Found = false;
 
-	while( pos != m_TriggerList.end() && !bFound )
+	while( pos != m_TriggerList.end() && !Found )
 	{
-		CSVOTriggerObj* pObj = m_TriggerList.GetAt(pos);
+		SVOTriggerObjPtr pTriggerObj = m_TriggerList.GetAt(pos);
 
-		if (sTriggerName == pObj->GetTriggerDisplayName())
+		if( nullptr != pTriggerObj && SVString( pTriggerObj->GetTriggerDisplayName() ) == sTriggerName )
 		{
-			bFound = TRUE;
+			Found = true;
 		}
 		else
 		{
@@ -139,16 +143,9 @@ CSVOTriggerList::iterator CSVOTriggerList::FindTriggerPosition(const SVString& s
 	return pos;
 }
 
-void CSVOTriggerList::ResetContent()
+void SVOTriggerList::ResetContent()
 {
-	iterator pos( m_TriggerList.begin() );
-
-	while( pos != m_TriggerList.end() )
-	{
-		CSVOTriggerObj* pObj = m_TriggerList.GetAt(pos);
-		pos = m_TriggerList.erase(pos);
-		delete pObj;
-	}
+	m_TriggerList.RemoveAll();
 }
 
 //******************************************************************************

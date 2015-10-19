@@ -523,7 +523,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rT
 		SVGUID ToolImageGuid( StringToGUID( ToolImage ) );
 
 		//Color tool can not be inserted into non color system
-		if( SVColorToolClassGuid == ToolTypeGuid && !TheSVObserverApp.IsColorSVIM() )
+		if( SVColorToolClassGuid == ToolTypeGuid && !m_rInspection.IsColorCamera() )
 		{
 			Result = S_FALSE;
 			SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
@@ -531,7 +531,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rT
 			e.Throw();
 		}
 		//Only color tools are allowed to be the first tool in a color system
-		else if( 0 == ToolListindex && SVColorToolClassGuid != ToolTypeGuid && TheSVObserverApp.IsColorSVIM() )
+		else if( 0 == ToolListindex && SVColorToolClassGuid != ToolTypeGuid && m_rInspection.IsColorCamera() )
 		{
 			Result = S_FALSE;
 			SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );

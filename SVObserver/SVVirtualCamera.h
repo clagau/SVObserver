@@ -132,6 +132,9 @@ public:
 	HRESULT UpdateCameraParameters();
 	HRESULT UpdateCameraLongParameter( LPCTSTR Name, const SVLongValueDeviceParam* pLongValueDeviceParam);
 	HRESULT UpdateDeviceParameters(SVDeviceParamCollection& rCameraParameters);
+
+	inline void SetIsColor( bool IsColor ){ m_IsColor = IsColor; };
+	inline bool IsColor()const { return m_IsColor; };
 #pragma endregion Public Methods
 
 protected:
@@ -154,6 +157,7 @@ protected:
 private:
 	BasicValueObjects m_CameraValues;
 	bool m_bFileAcquisition;
+	bool m_IsColor;
 	SVString m_imageFilename;
 	SVString m_imageDirectoryName;
 	bool m_bImageSizeEditModeFileBased;

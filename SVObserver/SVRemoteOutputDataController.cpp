@@ -713,7 +713,7 @@ HRESULT SVRemoteOutputDataController::GetPPQs( std::vector<CString>& p_astrPPQs,
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if( nullptr != pPPQ )
 			{
-				if( pPPQ->GetName() == l_it->second->GetPPQName() )
+				if( SVString( pPPQ->GetName() ) == l_it->second->GetPPQName() )
 				{
 					p_astrPPQs.push_back( pPPQ->GetName() );
 					break;

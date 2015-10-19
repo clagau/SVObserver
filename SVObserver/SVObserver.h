@@ -268,8 +268,6 @@ public:
 	void DestroySVIMServer();
 	BOOL IsSVIMServerEnabled() const;
 
-	bool IsColorSVIM() const;
-
 	bool IsMatrox1394() const;
 	bool IsCoreco() const;
 	bool IsMatroxGige() const;

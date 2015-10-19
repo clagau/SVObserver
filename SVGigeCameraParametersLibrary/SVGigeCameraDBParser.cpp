@@ -17,20 +17,20 @@
 
 HRESULT SVGigeCameraDBParser::Parse(BSTR data, SVGigeDeviceParameterMap& params)
 {
-	CoInitialize(NULL);
-	MSXML2::ISAXXMLReader* pRdr = NULL;
+	CoInitialize( nullptr );
+	MSXML2::ISAXXMLReader* pRdr( nullptr );
 
-	HRESULT hr = CoCreateInstance(__uuidof(MSXML2::SAXXMLReader), NULL, CLSCTX_ALL, __uuidof(MSXML2::ISAXXMLReader), (void **)&pRdr);
+	HRESULT hr = CoCreateInstance(__uuidof(MSXML2::SAXXMLReader), nullptr, CLSCTX_ALL, __uuidof(MSXML2::ISAXXMLReader), (void **)&pRdr);
 
 	if (hr == S_OK) 
 	{
 		SVGigeCameraDBContent contentHandler;
+		SVSAXErrorHandlerImpl<SVGigeCameraDBContent> ErrorHandler(contentHandler);
 		hr = pRdr->putContentHandler(&contentHandler);
 		
 		if (hr == S_OK)
 		{
-			SVSAXErrorHandlerImpl<SVGigeCameraDBContent>* pErrorHandler = new SVSAXErrorHandlerImpl<SVGigeCameraDBContent>(contentHandler);
-			hr = pRdr->putErrorHandler(pErrorHandler);
+			hr = pRdr->putErrorHandler(&ErrorHandler);
 		}
 		
 		if (hr == S_OK)
@@ -48,8 +48,8 @@ HRESULT SVGigeCameraDBParser::Parse(BSTR data, SVGigeDeviceParameterMap& params)
 				params = contentHandler.GetGigeDeviceParameterMap();
 			}
 		}
-		pRdr->putContentHandler(NULL);
-		pRdr->putErrorHandler(NULL);
+		pRdr->putContentHandler( nullptr );
+		pRdr->putErrorHandler( nullptr );
 		pRdr->Release();
 	}
 	

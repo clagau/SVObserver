@@ -9,42 +9,46 @@
 //* .Check In Date   : $Date:   02 Oct 2013 06:48:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOPPQList.h"
 #include "SVOPPQObj.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
-CSVOPPQList::CSVOPPQList()
+SVOPPQList::SVOPPQList()
 {
 
 }
 
-CSVOPPQList::~CSVOPPQList()
+SVOPPQList::~SVOPPQList()
 {
 
 }
 
-BOOL CSVOPPQList::AddPPQToList(CString sPPQName)
+BOOL SVOPPQList::AddPPQToList(CString sPPQName)
 {
 	BOOL bRet = FALSE;
 
 	if (!IsPPQInList(sPPQName))
 	{
-		CSVOPPQObj *pObj = new CSVOPPQObj();
-		pObj->SetPPQName(sPPQName);
-		m_PPQList.AddTail(pObj);
+		SVOPPQObjPtr pPPQObj = new SVOPPQObj();
+		pPPQObj->SetPPQName(sPPQName);
+		m_PPQList.AddTail(pPPQObj);
 		bRet = TRUE;
 	}
 
 	return bRet;
 }
 
-BOOL CSVOPPQList::RemovePPQFromList(CString sPPQName)
+BOOL SVOPPQList::RemovePPQFromList(CString sPPQName)
 {
 	BOOL bRet = FALSE;
 	iterator pos = FindPPQPosition(sPPQName);
@@ -52,63 +56,92 @@ BOOL CSVOPPQList::RemovePPQFromList(CString sPPQName)
 	if (pos != m_PPQList.end())
 	{
 		bRet = TRUE;
-		CSVOPPQObj *pObj = m_PPQList.GetAt(pos);
 		m_PPQList.RemoveAt(pos);
-		delete pObj;
 	}
 
 	return bRet;
 }
 
-BOOL CSVOPPQList::AttachCameraToPPQ(CString sPPQName, CString sCamera)
+BOOL SVOPPQList::AttachCameraToPPQ(CString sPPQName, CString sCamera)
 {
-	CSVOPPQObj *pObj = GetPPQObjectByName(sPPQName);
-	ASSERT(pObj);
+	BOOL Result( FALSE );
+	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
+	ASSERT(nullptr != pPPQObj);
 
-	return pObj->AttachCameraToPPQ(sCamera);
+	if( nullptr != pPPQObj )
+	{
+		Result = pPPQObj->AttachCameraToPPQ(sCamera);
+	}
+
+	return Result;
 }
 
-BOOL CSVOPPQList::RemoveCameraFromPPQ(CString sPPQName, CString sCamera)
+BOOL SVOPPQList::RemoveCameraFromPPQ(CString sPPQName, CString sCamera)
 {
-	CSVOPPQObj *pObj = GetPPQObjectByName(sPPQName);
-	ASSERT(pObj);
+	BOOL Result( FALSE );
 
-	return pObj->DetachCameraFromPPQ(sCamera);
+	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
+	ASSERT(nullptr != pPPQObj);
+
+	if( nullptr != pPPQObj )
+	{
+		Result =  pPPQObj->DetachCameraFromPPQ(sCamera);
+	}
+
+	return Result;
 }
 
 
-BOOL CSVOPPQList::AttachInspectToPPQ(CString sPPQName, CString sInspect)
+BOOL SVOPPQList::AttachInspectToPPQ(CString sPPQName, CString sInspect)
 {
-	CSVOPPQObj *pObj = GetPPQObjectByName(sPPQName);
-	ASSERT(pObj);
+	BOOL Result( FALSE );
+	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
+	ASSERT(nullptr != pPPQObj);
 
-	return pObj->AttachInspectionToPPQ(sInspect);
+	if( nullptr != pPPQObj )
+	{
+		Result = pPPQObj->AttachInspectionToPPQ(sInspect);
+	}
+
+	return Result;
 }
 
-BOOL CSVOPPQList::RemoveInspectFromPPQ(CString sPPQName, CString sInspect)
+BOOL SVOPPQList::RemoveInspectFromPPQ(CString sPPQName, CString sInspect)
 {
-	CSVOPPQObj *pObj = GetPPQObjectByName(sPPQName);
-	ASSERT(pObj);
+	BOOL Result( FALSE );
+	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
+	ASSERT(nullptr != pPPQObj);
 
-	return pObj->DetachInspectionFromPPQ(sInspect);
+	if( nullptr != pPPQObj )
+	{
+		Result =  pPPQObj->DetachInspectionFromPPQ(sInspect);
+	}
+
+	return Result;
 }
 
-BOOL CSVOPPQList::AttachTriggerToPPQ(CString sPPQName, CString sTrigger)
+BOOL SVOPPQList::AttachTriggerToPPQ(CString sPPQName, CString sTrigger)
 {
-	CSVOPPQObj *pObj = GetPPQObjectByName(sPPQName);
-	ASSERT(pObj);
+	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
+	ASSERT(nullptr != pPPQObj);
 
-	pObj->AttachTriggerToPPQ(sTrigger);
+	if( nullptr != pPPQObj )
+	{
+		pPPQObj->AttachTriggerToPPQ(sTrigger);
+	}
 
 	return TRUE;
 }
 
-BOOL CSVOPPQList::RemoveTriggerFromPPQ(CString sPPQName)
+BOOL SVOPPQList::RemoveTriggerFromPPQ(CString sPPQName)
 {
-	CSVOPPQObj *pObj = GetPPQObjectByName(sPPQName);
-	ASSERT(pObj);
+	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
+	ASSERT(nullptr != pPPQObj);
 
-	pObj->DetachTriggerFromPPQ();
+	if( nullptr != pPPQObj )
+	{
+		pPPQObj->DetachTriggerFromPPQ();
+	}
 
 	return TRUE;
 }
@@ -116,16 +149,16 @@ BOOL CSVOPPQList::RemoveTriggerFromPPQ(CString sPPQName)
 
 
 
-BOOL CSVOPPQList::IsPPQInList(CString sPPQName)
+BOOL SVOPPQList::IsPPQInList(CString sPPQName) const
 {
-	iterator pos( m_PPQList.begin() );
+	const_iterator pos( m_PPQList.begin() );
 	BOOL bFound = FALSE;
 
 	while( pos != m_PPQList.end() && (!bFound) )
 	{
-		CSVOPPQObj* pObj = m_PPQList.GetAt(pos);
+		const SVOPPQObjPtr pPPQObj = m_PPQList.GetAt(pos);
 
-		if (pObj->GetPPQName() == sPPQName)
+		if( nullptr != pPPQObj && sPPQName == pPPQObj->GetPPQName() )
 		{
 			bFound = TRUE;
 		}
@@ -139,18 +172,18 @@ BOOL CSVOPPQList::IsPPQInList(CString sPPQName)
 }
 
 
-CSVOPPQList::iterator CSVOPPQList::FindPPQPosition(CString sPPQName)
+SVOPPQList::iterator SVOPPQList::FindPPQPosition(CString sPPQName)
 {
 	iterator pos( m_PPQList.begin() );
-	BOOL bFound = FALSE;
+	bool Found = false;
 
-	while( pos != m_PPQList.end() && (!bFound) )
+	while( pos != m_PPQList.end() && (!Found) )
 	{
-		CSVOPPQObj* pObj = m_PPQList.GetAt(pos);
+		SVOPPQObjPtr pPPQObj = m_PPQList.GetAt(pos);
 
-		if (pObj->GetPPQName() == sPPQName)
+		if( nullptr != pPPQObj && sPPQName == pPPQObj->GetPPQName() )
 		{
-			bFound = TRUE;
+			Found = true;
 		}
 		else
 		{
@@ -161,41 +194,53 @@ CSVOPPQList::iterator CSVOPPQList::FindPPQPosition(CString sPPQName)
 	return pos;
 }
 
-CSVOPPQObj *CSVOPPQList::GetPPQObjectByName(CString sPPQName)
+SVOPPQObjPtr SVOPPQList::GetPPQObjectByName(CString sPPQName)
 {
+	SVOPPQObjPtr pReturnObj( nullptr );
+
 	iterator pos = FindPPQPosition(sPPQName);
 
 	if (pos != m_PPQList.end())
-		return m_PPQList.GetAt(pos);
-	else
-		return NULL;
+	{
+		pReturnObj =  m_PPQList.GetAt(pos);
+	}
+	return pReturnObj;
 }
 
-CSVOPPQObj *CSVOPPQList::GetPPQObjectByPosition(int iPos)
+SVOPPQObjPtr SVOPPQList::GetPPQObjectByPosition(int iPos)
 {
+	SVOPPQObjPtr pResult( nullptr );
+
 	iterator pos = m_PPQList.FindIndex(iPos);
 
 	if (pos != m_PPQList.end())
-		return m_PPQList.GetAt(pos);
-	else
-		return NULL;
+	{
+		pResult =  m_PPQList.GetAt(pos);
+	}
+	return pResult;
 }
 
-int CSVOPPQList::GetPPQListCount() const
+const SVOPPQObjPtr SVOPPQList::GetPPQObjectByPosition(int iPos) const
+{
+	SVOPPQObjPtr pResult( nullptr );
+
+	const_iterator pos = m_PPQList.FindIndex(iPos);
+
+	if (pos != m_PPQList.end())
+	{
+		pResult =  m_PPQList.GetAt(pos);
+	}
+	return pResult;
+}
+
+int SVOPPQList::GetPPQListCount() const
 {
 	return static_cast<int>(m_PPQList.GetCount());
 }
 
-void CSVOPPQList::ResetContent()
+void SVOPPQList::ResetContent()
 {
-	iterator pos( m_PPQList.begin() );
-
-	while( pos != m_PPQList.end() )
-	{
-		CSVOPPQObj* pObj = m_PPQList.GetAt(pos);
-		pos = m_PPQList.erase(pos);
-		delete pObj;
-	}
+	m_PPQList.RemoveAll();
 }
 
 //******************************************************************************

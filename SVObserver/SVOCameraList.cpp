@@ -9,27 +9,30 @@
 //* .Check In Date   : $Date:   01 Oct 2013 15:24:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCameraList.h"
-#include "SVOCameraObj.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
-CSVOCameraList::CSVOCameraList()
+SVOCameraList::SVOCameraList()
 {
 
 }
 
-CSVOCameraList::~CSVOCameraList()
+SVOCameraList::~SVOCameraList()
 {
 
 }
 
-CSVOCameraList &CSVOCameraList::operator =(const CSVOCameraList &source)
+SVOCameraList &SVOCameraList::operator =(const SVOCameraList &source)
 {
 	if( this != &source )
 	{
@@ -54,17 +57,17 @@ CSVOCameraList &CSVOCameraList::operator =(const CSVOCameraList &source)
 }
 
 
-BOOL CSVOCameraList::IsCameraInList(CString sCameraName)
+BOOL SVOCameraList::IsCameraInList(CString sCameraName) const
 {
 	BOOL bFound = FALSE;
 
-	iterator pos( m_CameraList.begin() );
+	const_iterator pos( m_CameraList.begin() );
 
 	while( pos != m_CameraList.end() && !bFound )
 	{
-		CSVOCameraObj* pObj = m_CameraList.GetAt(pos);
+		const SVOCameraObjPtr pCameraObj = m_CameraList.GetAt(pos);
 
-		if (sCameraName == pObj->GetCameraDisplayName())
+		if ( nullptr != pCameraObj && sCameraName == pCameraObj->GetCameraDisplayName())
 		{
 			bFound = TRUE;
 		}
@@ -77,13 +80,13 @@ BOOL CSVOCameraList::IsCameraInList(CString sCameraName)
 	return bFound;
 }
 
-BOOL CSVOCameraList::AddCameraToList(CString sCameraName)
+BOOL SVOCameraList::AddCameraToList(CString sCameraName)
 {
 	BOOL bRet = FALSE;
-	CSVOCameraObj *pObj;
+
 	if (!IsCameraInList(sCameraName))
 	{
-		pObj = new CSVOCameraObj();
+		SVOCameraObjPtr pObj = new SVOCameraObj();
 		pObj->SetCameraDisplayName(sCameraName);
 		m_CameraList.AddTail(pObj);
 		bRet = TRUE;
@@ -93,14 +96,13 @@ BOOL CSVOCameraList::AddCameraToList(CString sCameraName)
 	return bRet;
 }
 
-BOOL CSVOCameraList::AddCameraToList(CString sCameraName, int iDig)
+BOOL SVOCameraList::AddCameraToList(CString sCameraName, int iDig)
 {
 	BOOL bRet = FALSE;
-	CSVOCameraObj *pObj;
 
 	if (!IsCameraInList(sCameraName))
 	{
-		pObj = new CSVOCameraObj();
+		SVOCameraObjPtr pObj = new SVOCameraObj();
 		pObj->SetCameraDisplayName(sCameraName);
 		pObj->SetDigNumber(iDig);
 		m_CameraList.AddTail(pObj);
@@ -110,14 +112,13 @@ BOOL CSVOCameraList::AddCameraToList(CString sCameraName, int iDig)
 	return bRet;
 }
 
-BOOL CSVOCameraList::AddCameraToList(CString sCameraName, int iDig, int iBands)
+BOOL SVOCameraList::AddCameraToList(CString sCameraName, int iDig, int iBands)
 {
 	BOOL bRet = FALSE;
-	CSVOCameraObj *pObj;
 
 	if (!IsCameraInList(sCameraName))
 	{
-		pObj = new CSVOCameraObj();
+		SVOCameraObjPtr pObj = new SVOCameraObj();
 		pObj->SetCameraDisplayName(sCameraName);
 		pObj->SetDigNumber(iDig);
 		pObj->SetBandNumber(iBands);
@@ -128,18 +129,18 @@ BOOL CSVOCameraList::AddCameraToList(CString sCameraName, int iDig, int iBands)
 	return bRet;
 }
 
-CSVOCameraList::iterator CSVOCameraList::FindCameraPosition(CString sCameraName)
+SVOCameraList::iterator SVOCameraList::FindCameraPosition(CString sCameraName)
 {
 	iterator pos( m_CameraList.begin() );
-	BOOL bFound = FALSE;
+	bool Found = false;
 
-	while( pos != m_CameraList.end() && !bFound )
+	while( pos != m_CameraList.end() && !Found )
 	{
-		CSVOCameraObj* pObj = m_CameraList.GetAt(pos);
+		SVOCameraObjPtr pCameraObj = m_CameraList.GetAt(pos);
 
-		if (sCameraName == pObj->GetCameraDisplayName())
+		if( nullptr != pCameraObj && sCameraName == pCameraObj->GetCameraDisplayName() )
 		{
-			bFound = TRUE;
+			Found = true;
 		}
 		else
 		{
@@ -151,14 +152,14 @@ CSVOCameraList::iterator CSVOCameraList::FindCameraPosition(CString sCameraName)
 }
 
 
-BOOL CSVOCameraList::SetCameraDig(CString sCameraName, int iDig)
+BOOL SVOCameraList::SetCameraDig(CString sCameraName, int iDig)
 {
 	iterator pos = FindCameraPosition(sCameraName);
 	BOOL bRet = FALSE;
 
 	if (pos != m_CameraList.end())
 	{
-		CSVOCameraObj *pObj = m_CameraList.GetAt(pos);
+		SVOCameraObjPtr pObj = m_CameraList.GetAt(pos);
 		pObj->SetDigNumber(iDig);
 		m_CameraList.SetAt(pos,pObj);
 		bRet = TRUE;
@@ -166,14 +167,14 @@ BOOL CSVOCameraList::SetCameraDig(CString sCameraName, int iDig)
 	return bRet;
 }
 
-BOOL CSVOCameraList::SetCameraFile(CString sCameraName, CString sFileName)
+BOOL SVOCameraList::SetCameraFile(CString sCameraName, CString sFileName)
 {
 	iterator pos = FindCameraPosition(sCameraName);
 	BOOL bRet = FALSE;
 
 	if (pos != m_CameraList.end())
 	{
-		CSVOCameraObj *pObj = m_CameraList.GetAt(pos);
+		SVOCameraObjPtr pObj = m_CameraList.GetAt(pos);
 		pObj->SetCameraFile(sFileName);
 		m_CameraList.SetAt(pos,pObj);
 		bRet = TRUE;
@@ -182,14 +183,14 @@ BOOL CSVOCameraList::SetCameraFile(CString sCameraName, CString sFileName)
 	return bRet;
 }
 
-BOOL CSVOCameraList::SetCameraDeviceParams( CString sCameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams )
+BOOL SVOCameraList::SetCameraDeviceParams( CString sCameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams )
 {
 	iterator pos = FindCameraPosition(sCameraName);
 	BOOL bRet = FALSE;
 
 	if (pos != m_CameraList.end())
 	{
-		CSVOCameraObj* pObj = m_CameraList.GetAt(pos);
+		SVOCameraObjPtr pObj = m_CameraList.GetAt(pos);
 		pObj->SetCameraFileParams( rCameraFileParams );
 		pObj->SetCameraDeviceParams( rCameraDeviceParams );
 		m_CameraList.SetAt(pos,pObj);
@@ -200,26 +201,25 @@ BOOL CSVOCameraList::SetCameraDeviceParams( CString sCameraName, const SVDeviceP
 }
 
 
-BOOL CSVOCameraList::RemoveCameraFromList(CString sCameraName)
+BOOL SVOCameraList::RemoveCameraFromList(CString sCameraName)
 {
 	iterator pos = FindCameraPosition(sCameraName);
 	BOOL bRet = FALSE;
 
 	if (pos != m_CameraList.end())
 	{
-		CSVOCameraObj *pObj = m_CameraList.GetAt(pos);
 		m_CameraList.RemoveAt(pos);
 		bRet = TRUE;
-		delete pObj;
 	}
 
 	return bRet;
 }
 
-CSVOCameraObj *CSVOCameraList::GetCameraObjectByName(CString sCameraName)
+SVOCameraObjPtr SVOCameraList::GetCameraObjectByName(CString sCameraName)
 {
+	SVOCameraObjPtr pReturnObj( nullptr );
+
 	iterator pos = FindCameraPosition(sCameraName);
-	CSVOCameraObj *pReturnObj = NULL;
 
 	if (pos != m_CameraList.end())
 	{
@@ -229,37 +229,40 @@ CSVOCameraObj *CSVOCameraList::GetCameraObjectByName(CString sCameraName)
 	return pReturnObj;
 }
 
-CSVOCameraObj *CSVOCameraList::GetCameraObjectByPosition(int iPos)
+SVOCameraObjPtr SVOCameraList::GetCameraObjectByPosition(int iPos)
 {
-	iterator pos = m_CameraList.FindIndex(iPos);
+	SVOCameraObjPtr pReturnObj( nullptr );
 
-	return m_CameraList.GetAt(pos);
+	iterator pos = m_CameraList.FindIndex(iPos);
+	if (pos != m_CameraList.end())
+	{
+		pReturnObj =  *pos;
+	}
+
+	return pReturnObj;
 }
 
-const CSVOCameraObj *CSVOCameraList::GetCameraObjectByPosition(int iPos) const
+const SVOCameraObjPtr SVOCameraList::GetCameraObjectByPosition(int iPos) const
 {
+	SVOCameraObjPtr pReturnObj( nullptr );
+
 	const_iterator pos = m_CameraList.FindIndex(iPos);
 	if (pos != m_CameraList.end())
-		return (*pos);
+	{
+		pReturnObj =  *pos;
+	}
 
-	return NULL;
+	return pReturnObj;
 }
 
-int CSVOCameraList::GetCameraListCount() const
+int SVOCameraList::GetCameraListCount() const
 {
 	return static_cast<int>(m_CameraList.GetCount());
 }
 
-void CSVOCameraList::ResetContent()
+void SVOCameraList::ResetContent()
 {
-	iterator pos( m_CameraList.begin() );
-
-	while( pos != m_CameraList.end() )
-	{
-		CSVOCameraObj* pObj = m_CameraList.GetAt(pos);
-		pos = m_CameraList.erase(pos);
-		delete pObj;
-	}
+	m_CameraList.RemoveAll();
 }
 
 //******************************************************************************

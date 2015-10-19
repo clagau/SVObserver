@@ -486,13 +486,11 @@ HRESULT SVTestIntekDCamDriverProxy::IsValidCameraFileParameters( SVDeviceParamCo
 	if( hDigitizer != NULL && pDigitizer != NULL &&
 		rDeviceParams.ParameterExists( DeviceParamVendorId ) )
 	{
-		CString l_csVenderId;
-
 		_variant_t l_oValue;
 
 		if( pDigitizer != NULL && pDigitizer->ParameterGetValue( hDigitizer, SVIntekParameterDCamVendorId, 0, &l_oValue ) == S_OK )
 		{
-			l_csVenderId = l_oValue.bstrVal;
+			SVString l_csVenderId( l_oValue.bstrVal );
 
 			if( l_csVenderId == StringValue( rDeviceParams.Parameter( DeviceParamVendorId ) ) )
 			{
@@ -526,13 +524,11 @@ bool SVTestIntekDCamDriverProxy::CameraMatchesCameraFile(const SVDeviceParamColl
 	if( hDigitizer != NULL && pDigitizer != NULL &&
 		rCameraFileDeviceParams.ParameterExists( DeviceParamVendorId ) )
 	{
-		CString l_csVenderId;
-
 		_variant_t l_oValue;
 
 		if( pDigitizer->ParameterGetValue( hDigitizer, SVIntekParameterDCamVendorId, 0, &l_oValue ) == S_OK )
 		{
-			l_csVenderId = l_oValue.bstrVal;
+			SVString l_csVenderId( l_oValue.bstrVal );
 
 			l_bOk = l_csVenderId == StringValue( rCameraFileDeviceParams.Parameter( DeviceParamVendorId ) );
 

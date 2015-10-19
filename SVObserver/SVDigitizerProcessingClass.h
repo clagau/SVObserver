@@ -9,14 +9,15 @@
 //* .Check In Date   : $Date:   04 Aug 2014 07:24:08  $
 //******************************************************************************
 
-#ifndef SVDIGITIZERPROCESSINGCLASS_H
-#define SVDIGITIZERPROCESSINGCLASS_H
+#pragma once
 
+#pragma region Includes
 #include <map>
 #include <set>
 #include <utility>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
+#pragma endregion Includes
 
 class SVDigitizerLoadLibraryClass;
 
@@ -54,6 +55,13 @@ public:
 	HRESULT StoreLastCameraImage();
 	HRESULT RestoreLastCameraImage();
 
+	//************************************
+	//! The method is used to select the corresponding digitizer
+	//! \param AcquisitionName <in> The name of the acquisition device
+	//! \returns S_OK on success
+	//************************************
+	HRESULT SelectDigitizer( LPCTSTR AcquisitionName );
+
 	SVString GetReOrderedCamera( LPCTSTR Name ) const;
 
 protected:
@@ -86,8 +94,6 @@ private:
 	SVNameDigitizerSubsystemMap m_DigitizerSubsystems;
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

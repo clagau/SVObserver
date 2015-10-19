@@ -61,9 +61,6 @@ public:
 	
 	HRESULT CreateBarCodeBuffer( SVBarCodeBufferInfoClass* pDataInfo );
 
-	HRESULT GetAcquisitionDevice( LPCTSTR szName, SVAcquisitionClassPtr& pDevice );
-	HRESULT GetDigitizer( LPCTSTR szName, SVAcquisitionClassPtr& pDevice );
-
 protected:
 	SVImageProcessingClass();
 

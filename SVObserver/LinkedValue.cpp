@@ -128,7 +128,8 @@ HRESULT LinkedValue::SetInputValue(const SVString& valueString)
 	if( 0 == valueString.find( ToolSetName ) && nullptr != m_pInspection )
 	{
 		ObjectName = m_pInspection->GetName();
-		ObjectName += _T(".") + valueString;
+		ObjectName += _T(".");
+		ObjectName += valueString;
 	}
 	else
 	{

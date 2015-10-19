@@ -116,6 +116,8 @@ public:
 
 	virtual bool IsValidBoard() const;
 
+	virtual bool IsColor() const { return (miBandSize > 1) ; };
+
 	virtual HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
 

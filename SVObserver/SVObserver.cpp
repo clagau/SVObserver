@@ -59,7 +59,7 @@
 #include "SVDigitalOutputObject1.h"
 
 #include "SVConfigurationLibrary\SVOCMGlobals.h"
-#include "SVImageProcessingClass.h"
+#include "SVDigitizerProcessingClass.h"
 
 #include "SVOConfigAssistantDlg.h"
 
@@ -2394,36 +2394,25 @@ void SVObserverApp::OnUpdateResumeFreeze( CCmdUI* PCmdUI )
 
 void SVObserverApp::OnUpdateAddColorTool( CCmdUI* PCmdUI ) 
 {
-	if( IsColorSVIM() )
+	BOOL Enabled = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
+	// Check current user access...
+	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+
+	if( Enabled )
 	{
+		Enabled = FALSE;
 		CMDIChildWnd* pMDIChild;
 		if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
 		{
-			CDocument* pCurrentDocument;
-			if( ( pCurrentDocument = pMDIChild->GetActiveDocument() ) )
+			SVIPDoc* pCurrentDocument = dynamic_cast< SVIPDoc* > ( pMDIChild->GetActiveDocument() );
+			if( nullptr != pCurrentDocument && pCurrentDocument->IsColorInspectionDocument() )
 			{
-				if( ( dynamic_cast< SVIPDoc* >( pCurrentDocument ) )->IsColorInspectionDocument() )
-				{
-					PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-						OkToEdit());
-				}
-				else
-				{
-					// Disable
-					PCmdUI->Enable( FALSE );
-				}
+				Enabled = TRUE;
 			}
 		}
 	}
-	else
-	{
-		CMenu *pMenu;
-		CWnd* pWindow = AfxGetMainWnd();
-		pMenu = pWindow->GetMenu();
 
-		// remove from menu...
-		pMenu->RemoveMenu( ID_ADD_COLORTOOL, MF_BYCOMMAND );
-	}
+	PCmdUI->Enable( Enabled );
 }
 
 void SVObserverApp::OnUpdateRegressionTest(CCmdUI *pCmdUI)
@@ -3081,17 +3070,6 @@ BOOL SVObserverApp::InitInstance()
 
 	ValidateMRUList();
 
-	// JMS - Add Color SVIM Mode Active Flag
-	BOOL l_bIsColorSVIM = GetProfileInt(_T( "Settings" ),_T( "Color SVIM Mode Active" ), -1 );
-	if ( l_bIsColorSVIM == -1)
-	{
-		WriteProfileInt(_T( "Settings" ),_T( "Color SVIM Mode Active" ), false );
-
-		l_bIsColorSVIM = false;
-	}
-
-	SVObjectManagerClass::Instance().m_bIsColorSVIM = (l_bIsColorSVIM) ? true : false;
-
 	// Get SourceImageDepth
 	m_lSouceImageDepth = GetProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), -1 );
 	if ( m_lSouceImageDepth == -1 )
@@ -3654,7 +3632,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			while (1)
 			{
 				hr = SVOCMLoadConfiguration( m_CurrentVersion, configVer, bStr, m_XMLTree );
-				if (hr & 0xc0000000)
+				if (hr & SV_ERROR_CONDITION)
 				{
 					break;
 				}
@@ -3674,7 +3652,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 					if( AfxMessageBox( strText, MB_YESNO ) == IDNO )
 					{
-						hr = -1801;
+						hr = E_FAIL;
 						break;
 					}
 				}
@@ -3702,7 +3680,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					hr = pConfig->LoadConfiguration( m_XMLTree );
 				}
 
-				if (hr & 0xc0000000)
+				if (hr & SV_ERROR_CONDITION)
 				{
 					break;
 				}
@@ -3763,20 +3741,19 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 			m_XMLTree.Clear();
 
-			if (hr & 0xc0000000)
+			if (hr & SV_ERROR_CONDITION)
 			{
 				// If there was an error during configuration loading...
 				SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
 				SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 				m_XMLTree.Clear();
 
-				if (hr != -1801) // -1801 means the user aborted because 
-								//  configuration versions were different.
+				//Use E_FAIL to stop the loading but do not show any error messages
+				if( E_FAIL != hr )
 				{
 					CString strText;
-					strText.Format( _T( "The configuration could not succussfully load.\n"
-						"hr = %d.\n"), 
-						hr);
+					strText.Format( _T( "The configuration could not successfully load.\n"
+									"hr = %d.\n"), hr);
 
 					AfxMessageBox( strText, MB_OK );
 				}
@@ -4518,11 +4495,6 @@ BOOL SVObserverApp::IsSVIMServerEnabled() const
 	return (m_pSVIMServerWrapper) ? TRUE : FALSE;
 }
 
-bool SVObserverApp::IsColorSVIM() const
-{
-	return SVObjectManagerClass::Instance().m_bIsColorSVIM;
-}
-
 bool SVObserverApp::IsMatrox1394() const
 {
 	bool l_bOk = false;
@@ -4562,168 +4534,171 @@ bool SVObserverApp::IsMatroxGige() const
 
 BOOL SVObserverApp::CheckSVIMType() const
 {
-	BOOL l_bOk = FALSE;
+	BOOL Result = FALSE;
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	SVIMProductEnum l_eSVIMType = GetSVIMType();
+	SVIMProductEnum SVIMType = GetSVIMType();
 	//If configuration object pointer is nullptr then set the enum to invalid
-	SVIMProductEnum l_eProductType = SVIM_PRODUCT_INVALID_TYPE;
-	if( nullptr != pConfig ){ l_eProductType = pConfig->GetProductType(); }
+	SVIMProductEnum ProductType = SVIM_PRODUCT_INVALID_TYPE;
+	if( nullptr != pConfig )
+	{ 
+		ProductType = pConfig->GetProductType(); 
+	}
 
-	l_bOk = l_eSVIMType == l_eProductType;
+	Result = SVIMType == ProductType;
 
 	// Exceptions
-	if( ! l_bOk )
+	if( ! Result )
 	{
-		switch( l_eSVIMType )
+		switch( SVIMType )
 		{
 		case SVIM_PRODUCT_FULL:
 			{
-				l_bOk = l_eProductType == SVIM_PRODUCT_05;
+				Result = ProductType == SVIM_PRODUCT_05;
 
 				break;
 			}
 		case SVIM_PRODUCT_D3:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D3_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X3;
+				Result |= ProductType == SVIM_PRODUCT_D3_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D2;
+				Result |= ProductType == SVIM_PRODUCT_D2_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_X1;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_X3;
 
 				break;
 			}
 		case SVIM_PRODUCT_D3_COLOR:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X3_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D2_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X3_COLOR;
 
 				break;
 			}
 		case SVIM_PRODUCT_D3_HUB:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X3;
+				Result |= ProductType == SVIM_PRODUCT_D3;
+				Result |= ProductType == SVIM_PRODUCT_D2_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D2;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_X1;
+				Result |= ProductType == SVIM_PRODUCT_X3;
 
 				break;
 			}
 		case SVIM_PRODUCT_D2:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D2_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_X1;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
 
 				break;
 			}
 		case SVIM_PRODUCT_D2_COLOR:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
 
 				break;
 			}
 		case SVIM_PRODUCT_D2_HUB:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+				Result |= ProductType == SVIM_PRODUCT_D2;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_X1;
 
 				break;
 			}
 		case SVIM_PRODUCT_D1:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_X1;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
 
 				break;
 			}
 		case SVIM_PRODUCT_D1_COLOR:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
 
 				break;
 			}
 		case SVIM_PRODUCT_D1_HUB:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_X1;
 
 				break;
 			}
 		case SVIM_PRODUCT_X1:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
 
 				break;
 			}
 		case SVIM_PRODUCT_X2:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_D2;
+				Result |= ProductType == SVIM_PRODUCT_D3;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
 				break;
 			}
 
 		case SVIM_PRODUCT_X3:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_D2;
+				Result |= ProductType == SVIM_PRODUCT_D3;
+				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
 
 				break;
 			}
 		case SVIM_PRODUCT_X1_COLOR:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
 
 				break;
 			}
 		case SVIM_PRODUCT_X2_COLOR:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D2_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
 				break;
 			}
 		case SVIM_PRODUCT_X3_COLOR:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D3_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D2_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_D3_COLOR;
 				break;
 			}
 		case SVIM_PRODUCT_X1_HUB:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+				Result |= ProductType == SVIM_PRODUCT_D1;
+				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
+				Result |= ProductType == SVIM_PRODUCT_X1;
 
 				break;
 			}
@@ -4733,11 +4708,11 @@ BOOL SVObserverApp::CheckSVIMType() const
 		case SVIM_PRODUCT_X2_GD8A_COLOR:
 		case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD1A_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD2A_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD4A_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD1A_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD2A_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD4A_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR;
 				break;
 			}
 		case SVIM_PRODUCT_X2_GD1A:
@@ -4746,13 +4721,29 @@ BOOL SVObserverApp::CheckSVIMType() const
 		case SVIM_PRODUCT_X2_GD8A:
 		case SVIM_PRODUCT_X2_GD8A_NONIO:
 			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD1A;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD2A;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD4A;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD1A;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD2A;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD4A;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD8A;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
 				break;
 			}
+		case SVIM_PRODUCT_X2_GD1A_MIXED:
+		case SVIM_PRODUCT_X2_GD8A_MIXED:
+			{
+				Result |= ProductType == SVIM_PRODUCT_X2_GD1A;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD2A;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD4A;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD8A;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD1A_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD2A_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD4A_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_COLOR;
+				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR;
+				break;
+			}
+
 		default:
 			{
 				// Do nothing.
@@ -4760,13 +4751,12 @@ BOOL SVObserverApp::CheckSVIMType() const
 			}
 		}
 	}
-	return l_bOk;
+	return Result;
 }
 
 SVIMProductEnum SVObserverApp::GetSVIMType() const
 {
 	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
-	bool bIsColor = IsColorSVIM();
 
 	if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A4_MONO ) == 0 )
 	{
@@ -4778,128 +4768,51 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	}
 	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A1_RGB ) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_RGB_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_RGB_MONO;
-		}
+		eType = SVIM_PRODUCT_RGB_MONO;
 	}
 	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D1 ) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_D1_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_D1;
-		}
+		eType = SVIM_PRODUCT_D1;
 	}
 	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D2 ) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_D2_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_D2;
-		}
+		eType = SVIM_PRODUCT_D2;
 	}
 	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D3 ) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_D3_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_D3;
-		}
+		eType = SVIM_PRODUCT_D3;
 	}
 	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_INTEK_D1 ) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_X1_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_X1;
-		}
+		eType = SVIM_PRODUCT_X1;
 	}
 	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_INTEK_D3 ) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_X3_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_X3;
-		}
+		eType = SVIM_PRODUCT_X3;
 	}
 	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_X2_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_X2;
-		}
+		eType = SVIM_PRODUCT_X2;
 	}
 	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_X2_GD1A_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_X2_GD1A;
-		}
+		eType = SVIM_PRODUCT_X2_GD1A_MIXED;
 	}
 	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD2A) == 0 )
 	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_X2_GD2A_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_X2_GD2A;
-		}
+		eType = SVIM_PRODUCT_X2_GD2A;
 	}
 	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD4A) == 0 )
 	{
-		if( bIsColor )
-		{
-			eType = SVIM_PRODUCT_X2_GD4A_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_X2_GD4A;
-		}
+		eType = SVIM_PRODUCT_X2_GD4A;
 	}
 	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A) == 0 )
 	{
-		if( bIsColor )
-		{
-			eType = SVIM_PRODUCT_X2_GD8A_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_X2_GD8A;
-		}
+		eType = SVIM_PRODUCT_X2_GD8A_MIXED;
 	}
 	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A_NONIO) == 0 )
 	{
-		eType = (( bIsColor ) ? SVIM_PRODUCT_X2_GD8A_NONIO_COLOR : SVIM_PRODUCT_X2_GD8A_NONIO);
+		eType = SVIM_PRODUCT_X2_GD8A_NONIO;
 	}
 	else if( m_csFrameGrabber.CompareNoCase( FRAME_GRABBER_VIPER_DIGITAL ) == 0 )
 	{
@@ -6085,19 +5998,19 @@ bool SVObserverApp::OkToEdit()
 
 BOOL SVObserverApp::IsMonochromeImageAvailable()
 {
-	BOOL bOk = !IsColorSVIM();
+	BOOL Monochrome(false);
 
-	CMDIChildWnd* pMDIChild;
+	CMDIChildWnd* pMDIChild( nullptr );
 	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
 	{
 		m_pCurrentDocument = dynamic_cast< SVIPDoc* >( pMDIChild->GetActiveDocument() );
 	}
-	else
+	if( nullptr != m_pCurrentDocument )
 	{
-		return bOk;
+		Monochrome = !m_pCurrentDocument->IsColorInspectionDocument();
 	}
 
-	if ( !bOk && m_pCurrentDocument )
+	if ( !Monochrome )
 	{
 		SVObjectTypeInfoStruct info;
 
@@ -6110,7 +6023,7 @@ BOOL SVObserverApp::IsMonochromeImageAvailable()
 
 		SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
-		for( l_Iter = l_Visitor.GetObjects().begin(); !bOk && l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
+		for( l_Iter = l_Visitor.GetObjects().begin(); !Monochrome && l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 		{
 			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
@@ -6122,7 +6035,7 @@ BOOL SVObserverApp::IsMonochromeImageAvailable()
 
 					long l_lBandNumber = 1;
 
-					bOk = ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber ) == S_OK && l_lBandNumber == 1;
+					Monochrome = ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber ) == S_OK && l_lBandNumber == 1;
 				}
 				else
 				{
@@ -6132,7 +6045,7 @@ BOOL SVObserverApp::IsMonochromeImageAvailable()
 		}
 	}
 
-	return bOk;
+	return Monochrome;
 }
 
 void SVObserverApp::SVGetCurrentConfigName(CString &ConfigName) const
@@ -6400,15 +6313,15 @@ HRESULT SVObserverApp::SendCameraParameters( const CStringArray& rCameras )
 
 	for ( int i=0; i < rCameras.GetSize(); i++ )
 	{
-		SVAcquisitionClassPtr pDevice;
 		SVDeviceParamCollection* pDeviceParams = NULL;
 
 		SVFileNameArrayClass* pDummyFiles = NULL;
 		SVLightReference* pDummyLight = NULL;
 		SVLut* pDummyLut = NULL;
-
-		if ( SVImageProcessingClass::Instance().GetAcquisitionDevice( rCameras.GetAt(i), pDevice ) == S_OK &&
-			 nullptr != pConfig &&
+		
+		CString DigitizerName( rCameras.GetAt(i) );
+		SVAcquisitionClassPtr pDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigitizerName ) );
+		if ( nullptr != pDevice && nullptr != pConfig &&
 			pConfig->GetAcquisitionDevice(rCameras.GetAt(i), pDummyFiles, pDummyLight, pDummyLut, pDeviceParams ) )
 		{
 			// Check for the camera file and camera to match.
@@ -7739,25 +7652,24 @@ HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConne
 			CString sDigName = rCamerasToConnect.GetAt( i );
 			SVAcquisitionClassPtr pAcqDevice;
 
-			if ( S_OK == SVImageProcessingClass::Instance().GetAcquisitionDevice( sDigName, pAcqDevice ) )
+			SVDigitizerProcessingClass::Instance().SelectDigitizer( sDigName );
+			pAcqDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
+			if ( nullptr != pAcqDevice )
 			{
-				if ( !( pAcqDevice.empty() ) )
-				{
-					// dummy vars
-					SVLightReference* pLR;
-					SVFileNameArrayClass* pFiles;
-					SVLut* pLut;
-					SVDeviceParamCollection* pParams;
+				// dummy vars
+				SVLightReference* pLR;
+				SVFileNameArrayClass* pFiles;
+				SVLut* pLut;
+				SVDeviceParamCollection* pParams;
 
-					if ( pConfig->GetAcquisitionDevice( sDigName, pFiles, pLR, pLut, pParams ) )
-					{
-						SVImageInfoClass svImageInfo;
-						pAcqDevice->GetImageInfo(&svImageInfo);
-						hr = pAcqDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
-					}
+				if ( pConfig->GetAcquisitionDevice( sDigName, pFiles, pLR, pLut, pParams ) )
+				{
+					SVImageInfoClass svImageInfo;
+					pAcqDevice->GetImageInfo(&svImageInfo);
+					hr = pAcqDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
 				}
-			}// end if ( S_OK == TheSVObserverApp.mpsvImaging->GetAcquisitionDevice( sDigName, pAcqDevice ) )
-		}// end for ( int i=0; i < rCamerasToConnect.GetSize(); i++)
+			}
+		}
 
 		hr = ConnectToolsetBuffers();
 	}

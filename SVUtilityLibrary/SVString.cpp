@@ -912,29 +912,6 @@ bool SVString::matchesRegularExpression( LPCTSTR RegularExpression ) const
 	return Result;
 }
 
-SVString operator+( LPCTSTR psz1, const SVString& str2 )
-{
-	SVString l_Temp( psz1 );
-
-	l_Temp += str2.ToString();
-
-	return l_Temp;
-}
-
-bool operator==( LPCTSTR psz1, const SVString& str2 )
-{
-	SVString l_Temp( psz1 );
-
-	return l_Temp == str2;
-}
-
-bool operator!=( LPCTSTR psz1, const SVString& str2 )
-{
-	SVString l_Temp( psz1 );
-
-	return l_Temp == str2;
-}
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

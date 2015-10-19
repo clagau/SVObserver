@@ -42,7 +42,8 @@ static SVObjectClass* GetTool(const SVString& rName, const SVTaskObjectListClass
 	SVObjectClass* pObject(nullptr);
 	for (int i = 0; !pObject && i < rToolSet.GetSize(); i++)
 	{
-		if (rToolSet.GetAt(i)->GetName() == rName) 
+		SVString ToolName( rToolSet.GetAt(i)->GetName() );
+		if ( ToolName == rName) 
 		{
 			pObject = rToolSet.GetAt(i);
 		}

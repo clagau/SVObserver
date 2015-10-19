@@ -9,23 +9,29 @@
 //* .Check In Date   : $Date:   11 Jun 2013 15:37:30  $
 //******************************************************************************
 
-#ifndef SVOPROPERTYPAGEDLG_H
-#define SVOPROPERTYPAGEDLG_H
+#pragma once
 
+#pragma region Includes
 #include "SVConfigurationLibrary/SVObserverEnums.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "PropertyTree/PropTree.h"
+#include "SVOCameraObj.h"
+#include "SVOInspectionObj.h"
+#include "SVOPPQObj.h"
+#include "SVOTriggerObj.h"
+#pragma endregion Includes
 
 // defines for the dlgs
 enum PROPERTY_PAGE_DIALOG_TYPE
 {
 	VIRTUAL_CAMERA_DLG                  = 1,
-	VIRTUAL_INSPECT_DLG                 ,//= 2,
-	VIRTUAL_TRIGGER_DLG                 ,//= 3,
-	VIRTUAL_PPQ_DLG                     ,//= 4,
-	VIRTUAL_CAMERA_ADV                  ,//= 5,
-	VIRTUAL_TRIGGER_ADV                 ,//= 6,
-	VIRTUAL_INSPECT_ADV                 ,//= 7,
-	VIRTUAL_PPQ_ADV                     ,//= 8,
+	VIRTUAL_INSPECT_DLG,
+	VIRTUAL_TRIGGER_DLG,
+	VIRTUAL_PPQ_DLG,
+	VIRTUAL_CAMERA_ADV,
+	VIRTUAL_TRIGGER_ADV,
+	VIRTUAL_INSPECT_ADV,
+	VIRTUAL_PPQ_ADV,
 };
 
 enum
@@ -44,43 +50,41 @@ const CString PPQ_EXTENDED_TIME_DELAY             ( _T("ExtendedTimeDelay") );
 enum PROPERTY_PAGE_PROPERTY
 {
 	PROP_AD_FILE_NAME                   = 101,
-	PROP_TRG_TYPE						,//= 102
-	PROP_INS_TOOLSET_IMAGE              ,//= 103
-	PROP_PPQ_MODE                       ,//= 104
-	PROP_PPQ_LENGTH                     ,//= 105
-	PROP_PPQ_OUTPUT_RESET_DELAY         ,//= 106
-	PROP_PPQ_OUTPUT_DELAY_TIME          ,//= 107
-	PROP_PPQ_MAINTAIN_SRC_IMG           ,//= 108
-	PROP_INS_NEW_DISABLE_METHOD         ,//= 109
-	PROP_INS_ENABLE_AUX_EXTENT          ,//= 110
-	PROP_PPQ_INSPECTION_TIMEOUT         ,//= 111
-	PROP_CAMERA_TYPE_FILE_OR_REAL		,//= 112
-	PROP_FILECAMERA_FILENAME			,//= 113
-	PROP_FILECAMERA_DIRECTORY			,//= 114
-	PROP_FILECAMERA_MODE				,//= 115
-	PROP_PPQ_CONDITIONAL_OUTPUT			,//= 116
+	PROP_TRG_TYPE,
+	PROP_INS_TOOLSET_IMAGE,
+	PROP_PPQ_MODE,
+	PROP_PPQ_LENGTH,
+	PROP_PPQ_OUTPUT_RESET_DELAY,
+	PROP_PPQ_OUTPUT_DELAY_TIME,
+	PROP_PPQ_MAINTAIN_SRC_IMG,
+	PROP_INS_NEW_DISABLE_METHOD,
+	PROP_INS_ENABLE_AUX_EXTENT,
+	PROP_PPQ_INSPECTION_TIMEOUT,
+	PROP_CAMERA_TYPE_FILE_OR_REAL,
+	PROP_FILECAMERA_FILENAME,
+	PROP_FILECAMERA_DIRECTORY,
+	PROP_FILECAMERA_MODE,
+	PROP_PPQ_CONDITIONAL_OUTPUT,
+	PROP_CAMERA_COLOR,
 
 	//defines for advanced properties
-	PROP_ADV_CAMERA_DIG                 = 201,//= 201
-	PROP_ADV_CAMERA_BANDS               ,//= 202
-	PROP_ADV_TRIGGER_PERIOD		        ,//= 203
-	PROP_ADV_FILECAMERA_IMAGESIZEEDITMODE, //= 204
-	PROP_ADV_FILECAMERA_IMAGEWIDTH		,//= 205
-	PROP_ADV_FILECAMERA_IMAGEHEIGHT		,//= 206
+	PROP_ADV_CAMERA_DIG                 = 201,
+	PROP_ADV_CAMERA_BANDS,
+	PROP_ADV_TRIGGER_PERIOD,
+	PROP_ADV_FILECAMERA_IMAGESIZEEDITMODE,
+	PROP_ADV_FILECAMERA_IMAGEWIDTH,
+	PROP_ADV_FILECAMERA_IMAGEHEIGHT,
 
 	PROP_CAMERA_FILE_BASE               = 10000
 };
 
 
-#include "PropertyTree/PropTree.h"
-
 /////////////////////////////////////////////////////////////////////////////
 // CSVOPropertyPageDlg dialog
 
-class CSVOCameraObj;
-class CSVOTriggerObj;
-class CSVOInspectionObj;
-class CSVOPPQObj;
+class SVOTriggerObj;
+class SVOInspectionObj;
+class SVOPPQObj;
 class CSVOConfigAssistantDlg;
 
 class CSVOPropertyPageDlg : public CDialog
@@ -89,10 +93,10 @@ class CSVOPropertyPageDlg : public CDialog
 public:
 	CSVOPropertyPageDlg(CWnd* pParent = NULL);   // standard constructor
 
-    void SetCameraObject(CSVOCameraObj *pCamObj);
-    void SetTriggerObject(CSVOTriggerObj *pTrigObj);
-    void SetInspectObject(CSVOInspectionObj *pInspectObj);
-    void SetPPQObject(CSVOPPQObj *pPPQObj);
+	SVOCameraObj& getCameraObject() { return m_CameraObj; };
+    SVOTriggerObj& getTriggerObject() { return m_TriggerObj; };
+    SVOInspectionObj& getInspectObject() { return m_InspectionObj; };
+    SVOPPQObj& getPPQObject() { return m_PPQObj; };
 
     void SetDlgPage(int nID);
 
@@ -136,10 +140,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private: //data members
-    CSVOCameraObj *m_pCameraObj;
-    CSVOTriggerObj *m_pTriggerObj;
-    CSVOInspectionObj *m_pInspectionObj;
-    CSVOPPQObj *m_pPPQObj;
+    SVOCameraObj m_CameraObj;
+    SVOTriggerObj m_TriggerObj;
+    SVOInspectionObj m_InspectionObj;
+    SVOPPQObj m_PPQObj;
 	CSVOConfigAssistantDlg* m_pAssistant;
 
 	CMapStringToPtr	*m_pMap;
@@ -156,7 +160,7 @@ private: //data members
 	void SetupAdvancedCamera();
 	void SetupFileCamera(SVRPropertyItem* pRoot);
 	void SetupAdvancedFileCamera(SVRPropertyItem* pRoot);
-	void SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SVDeviceParam* pDeviceParam, const SVDeviceParam* pFileParam);
+	void SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SVDeviceParam* pDeviceParam, const SVDeviceParam* pFileParam, bool ColorCamera);
 	
 	void ShowCameraProperties();
 	void UpdateFileImageSize();
@@ -171,10 +175,6 @@ private: //data members
 	bool IsGigeSystem() const;
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVOPROPERTYPAGEDLG_H__2C59346D_3B30_464C_BD9D_B6044E3DB320__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

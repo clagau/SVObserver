@@ -209,6 +209,8 @@ public:
 	BOOL IsColorInspectionDocument() const;
 
 	int UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
+	bool IsColorCamera() const;
+
 
 	LPCTSTR GetToolsetImage();
 	void SetToolsetImage( CString sToolsetImage );

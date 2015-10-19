@@ -1952,7 +1952,7 @@ static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr ioEntry, const SVStrin
 	bool bRetVal = false;
 	if (ioEntry && ioEntry->m_pValueObject)
 	{
-		bRetVal = (ioEntry->m_pValueObject->GetName() == name);
+		bRetVal = ( SVString( ioEntry->m_pValueObject->GetName() ) == name);
 	}
 	return bRetVal; 
 }
@@ -1962,7 +1962,7 @@ static bool CompareCompleteNameWithIOEntry(SVIOEntryHostStructPtr ioEntry, const
 	bool bRetVal = false;
 	if (ioEntry && ioEntry->m_pValueObject)
 	{
-		bRetVal = (ioEntry->m_pValueObject->GetCompleteObjectName() == name);
+		bRetVal = ( SVString( ioEntry->m_pValueObject->GetCompleteObjectName() ) == name);
 	}
 	return bRetVal; 
 }

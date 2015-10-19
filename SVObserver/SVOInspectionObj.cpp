@@ -22,116 +22,133 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CSVOInspectionObj::CSVOInspectionObj()
+SVOInspectionObj::SVOInspectionObj() :
+	m_NameChanged( false )
+,	m_NewInspection( false )
+,	m_sNewDisableMethod( _T( "Method 1" ) )
+,	m_Color( false )
+,	m_ShowAuxExtent( true )
 {
-    m_bNameChanged = FALSE;
-    m_bNewInspection = FALSE;
-	m_sNewDisableMethod = _T( "Method 1" );
-	m_bShowAuxExtent = true;
 }
 
-CSVOInspectionObj::~CSVOInspectionObj()
+SVOInspectionObj::~SVOInspectionObj()
 {
-    m_bNameChanged = FALSE;
-    m_bNewInspection = FALSE;
-	m_sNewDisableMethod = _T( "Method 1" );
-	m_bShowAuxExtent = true;
 }
 
-CString CSVOInspectionObj::GetInspectionLabelName()
+CString SVOInspectionObj::GetInspectionLabelName() const
 {
     return m_sLabelName;
 }
 
-void CSVOInspectionObj::SetInspectionLabelName(CString sLabel)
+void SVOInspectionObj::SetInspectionLabelName(CString sLabel)
 {
     m_sLabelName = sLabel;
 }
 
-CString CSVOInspectionObj::GetInspectionName()
+CString SVOInspectionObj::GetInspectionName() const
 {
     return m_sInspectionName;
 }
 
-void CSVOInspectionObj::SetInspectionName(CString sInspection)
+void SVOInspectionObj::SetInspectionName(CString sInspection)
 {
     m_sInspectionName = sInspection;
 }
 
-CString CSVOInspectionObj::GetToolsetImage()
+CString SVOInspectionObj::GetToolsetImage() const
 {
     return m_sToolsetImage; 
 }
 
-void CSVOInspectionObj::SetToolsetImage(CString sImage)
+void SVOInspectionObj::SetToolsetImage(CString sImage)
 {
     m_sToolsetImage = sImage;
 } 
 
-CString CSVOInspectionObj::GetNewDisableMethod()
+CString SVOInspectionObj::GetNewDisableMethod() const
 {
-    return m_sNewDisableMethod; 
+    return m_sNewDisableMethod;
 }
 
-void CSVOInspectionObj::SetNewDisableMethod(CString sDisable)
+void SVOInspectionObj::SetNewDisableMethod(CString sDisable)
 {
     m_sNewDisableMethod = sDisable;
 } 
 
-long CSVOInspectionObj::GetEnableAuxiliaryExtent()
+bool SVOInspectionObj::GetShowAuxExtent() const
+{
+	return m_ShowAuxExtent;
+}
+
+void SVOInspectionObj::SetShowAuxExtent( bool ShowAuxExtent )
+{
+	 m_ShowAuxExtent = ShowAuxExtent;
+}
+
+long SVOInspectionObj::GetEnableAuxiliaryExtent() const
 {
     return m_lEnableAuxiliaryExtent; 
 }
 
-void CSVOInspectionObj::SetEnableAuxiliaryExtent( long  lEnable)
+void SVOInspectionObj::SetEnableAuxiliaryExtent( long  lEnable)
 {
     m_lEnableAuxiliaryExtent = lEnable;
 } 
 
-BOOL CSVOInspectionObj::HasInspectionNameChange()
+bool SVOInspectionObj::HasInspectionNameChange() const
 {
-    return m_bNameChanged;
+    return m_NameChanged;
 }
 
-CString CSVOInspectionObj::GetOrginalInspectionName()
+CString SVOInspectionObj::GetOrginalInspectionName() const
 {
     return m_sOrginalName;
 }
 
-void CSVOInspectionObj::RenameInspection(CString sNewName)
+void SVOInspectionObj::RenameInspection(CString sNewName)
 {
-    if (!m_bNameChanged)
+    if (!m_NameChanged)
     {
         //only change once...
-        m_bNameChanged = TRUE;
+        m_NameChanged = true;
         m_sOrginalName = m_sInspectionName;
     }
     m_sInspectionName = sNewName;
 }
 
-void CSVOInspectionObj::SetNewInspection()
+bool SVOInspectionObj::IsNewInspection() const
 {
-    m_bNewInspection = TRUE;
+	return m_NewInspection;
 }
 
-BOOL CSVOInspectionObj::IsNewInspection()
+void SVOInspectionObj::SetNewInspection()
 {
-    return m_bNewInspection;
+    m_NewInspection = true;
 }
 
-const CString& CSVOInspectionObj::GetImportFilename() const
+const CString& SVOInspectionObj::GetImportFilename() const
 {
 	return m_ImportFilename;
 }
 
-void CSVOInspectionObj::SetImportFilename(const CString& filename)
+void SVOInspectionObj::SetImportFilename(const CString& filename)
 {
 	m_ImportFilename = filename;
 }
 
-void CSVOInspectionObj::ClearImportFilename()
+void SVOInspectionObj::ClearImportFilename()
 {
 	m_ImportFilename.Empty();
+}
+
+bool SVOInspectionObj::IsColor() const
+{
+	return m_Color;
+}
+
+void SVOInspectionObj::SetColor( bool Color )
+{
+	m_Color = Color;
 }
 
 //******************************************************************************

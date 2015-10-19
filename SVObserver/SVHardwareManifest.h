@@ -9,14 +9,15 @@
 //* .Check In Date   : $Date:   11 Jun 2013 15:26:12  $
 //******************************************************************************
 
-#ifndef SVHARDWAREMANIFEST_H
-#define SVHARDWAREMANIFEST_H
+#pragma once
 
+#pragma region Includes
 #include <map>
 #include "SVAcquisitionConstructParams.h"
 #include "SVTriggerDeviceParams.h"
 #include "SVIMTypeInfoStruct.h"
 #include "SVConfigurationLibrary/SVObserverEnums.h"
+#pragma endregion Includes
 
 class SVHardwareManifest
 {
@@ -33,29 +34,89 @@ public:
 	static SVIMTypeInfoStruct GetSVIMTypeInfo( SVIMProductEnum p_ID  );
 
 	template <typename Insertor>
-	static void GetSupportedSVIMList(bool bColor, Insertor insertor)
+	static void GetSupportedSVIMList( Insertor insertor )
 	{
 		for (SVIMTypeMap::const_iterator l_Iter = m_SVIMTypeMap.begin(); l_Iter != m_SVIMTypeMap.end(); ++l_Iter)
 		{
 			const SVIMTypeInfoStruct& l_SVIMInfo = l_Iter->second;
 
-			if ( l_SVIMInfo.m_ColorSystem == bColor && l_SVIMInfo.m_Supported == true )
+			if ( l_SVIMInfo.m_Supported )
 			{
 				insertor = l_Iter->first;
 			}
 		}
 	}
 
+	//************************************
+	//! This is a static method to generate the software trigger name
+	//! \param iDig <in> the index the digitizer
+	//! \returns the string with the name
+	//************************************
 	static SVString BuildSoftwareTriggerDeviceName(int iDig);
+
+	//************************************
+	//! This is a static method to generate the acquisition trigger name
+	//! \param iDig <in> the index the digitizer
+	//! \returns the string with the name
+	//************************************
 	static SVString BuildAcquisitionTriggerDeviceName(int iDig);
+
+	//************************************
+	//! This is a static method to generate the IO board trigger name
+	//! \param iDig <in> the index the digitizer
+	//! \returns the string with the name
+	//************************************
 	static SVString BuildIOBoardTriggerDeviceName(int iDig);
 
-	static bool IsCompatible( SVIMProductEnum p_CurrentConfigType, SVIMProductEnum p_NewConfigType );
-	static bool IsColorSystem(SVIMProductEnum p_ProductType);
-	static bool IsMatroxGige(SVIMProductEnum p_ProductType);
-	static bool IsDigitalSVIM(SVIMProductEnum p_ProductType);
-	static bool IsProductTypeRAID(SVIMProductEnum p_ProductType);
-	static bool IsNonIOSVIM(SVIMProductEnum p_ProductType);
+	//************************************
+	//! This is a static method to check if two product types are compatible
+	//! \param ConfigType <in> the configuration product type
+	//! \param ProductType <in> the SVIM product type
+	//! \returns true if the ConfigType is compatible to the ProductType
+	//************************************
+	static bool IsCompatible( SVIMProductEnum ConfigType, SVIMProductEnum ProductType );
+
+	//************************************
+	//! This is a static method to check if the product type is color
+	//! \param ProductType <in> the SVIM product type
+	//! \returns true if it is a color type
+	//************************************
+	static bool IsColorSystem(SVIMProductEnum ProductType);
+
+	//************************************
+	//! This is a static method to check if the product type is mixed (mono and color camera)
+	//! \param ProductType <in> the SVIM product type
+	//! \returns true if it is a mixed type
+	//************************************
+	static bool IsMixedSystem(SVIMProductEnum ProductType);
+
+	//************************************
+	//! This is a static method to check if the product type is a GigE system
+	//! \param ProductType <in> the SVIM product type
+	//! \returns true if it is a GigE type
+	//************************************
+	static bool IsMatroxGige(SVIMProductEnum ProductType);
+
+	//************************************
+	//! This is a static method to check if the product type is digital
+	//! \param ProductType <in> the SVIM product type
+	//! \returns true if it is a digital type
+	//************************************
+	static bool IsDigitalSVIM(SVIMProductEnum ProductType);
+
+	//************************************
+	//! This is a static method to check if the product type is RAID
+	//! \param ProductType <in> the SVIM product type
+	//! \returns true if it is a RAID type
+	//************************************
+	static bool IsProductTypeRAID(SVIMProductEnum ProductType);
+
+	//************************************
+	//! This is a static method to check if the product type is non IO 
+	//! \param ProductType <in> the SVIM product type
+	//! \returns true if it is a non IO type
+	//************************************
+	static bool IsNonIOSVIM(SVIMProductEnum ProductType);
 
 protected:
 	SVHardwareManifest();
@@ -66,7 +127,7 @@ protected:
 private:
 	/*
 	Do not implement the following to methods.
-	These definitions prevent copy and assignement operations.
+	These definitions prevent copy and assignment operations.
 	*/
 	SVHardwareManifest( const SVHardwareManifest& p_rObject );
 	const SVHardwareManifest& operator=( const SVHardwareManifest& p_rObject );
@@ -77,8 +138,6 @@ private:
 	typedef std::map< SVIMProductEnum, SVIMTypeInfoStruct > SVIMTypeMap;
 	static const SVIMTypeMap m_SVIMTypeMap;
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

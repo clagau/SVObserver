@@ -9,24 +9,26 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:04:18  $
 //******************************************************************************
 
-#ifndef SVOINSPECTIONLIST_H
-#define SVOINSPECTIONLIST_H
+#pragma once
 
-#include "SVContainerLibrary/SVList.h"
+#pragma region Includes
+#include "SVContainerLibrary\SVList.h"
+#include "SVOInspectionObj.h"
+#pragma endregion Includes
 
-class CSVOInspectionObj;
-
-class CSVOInspectionList  
+class SVOInspectionList  
 {
 public:
-	typedef SVList< CSVOInspectionObj* > SVInspectionList;
+	typedef SVList< SVOInspectionObjPtr > SVInspectionList;
 	typedef SVInspectionList::iterator iterator;
+	typedef SVInspectionList::const_iterator const_iterator;
 
-	CSVOInspectionList();
-	virtual ~CSVOInspectionList();
+	SVOInspectionList();
+	virtual ~SVOInspectionList();
 
-	BOOL AddInspectionToList(CString sInspectLabel, CString sInspectName);
+	BOOL AddInspectionToList(CString sInspectLabel, CString sInspectName, bool NewInspection);
 	BOOL SetToolsetImage(CString sInspectLabel, CString sImage);
+	BOOL SetColor(CString sInspectLabel, bool Color);
 	BOOL SetNewDisableMethod(CString sInspectLabel, CString sDisable);
 	BOOL SetEnableAuxiliaryExtent(CString sInspectLabel, long sEnable);
 	BOOL SetShowAuxExtent(CString sInspectLabel, bool p_bShow);
@@ -35,11 +37,11 @@ public:
 
 	CString GetInspectionName(CString sInspectLabel);
 	CString GetInspectionLabel(CString sInspectName);
-	CSVOInspectionObj *GetInspectionByName(CString sInspectLabel);
-	CSVOInspectionObj *GetInspectionByPosition(int iPos);
-	BOOL IsInspectionInList(CString sInspectLabel);
-	BOOL IsInspectionNameInList(CString sInspectName);
-	BOOL IsInspectionInList(CString sInspectLabel, CString sInspectName);
+	SVOInspectionObjPtr GetInspectionByName(CString sInspectLabel);
+	SVOInspectionObjPtr GetInspectionByPosition(int iPos);
+	BOOL IsInspectionInList(CString sInspectLabel) const;
+	BOOL IsInspectionNameInList(CString sInspectName) const;
+	BOOL IsInspectionInList(CString sInspectLabel, CString sInspectName) const;
 
 	void ResetContent();
 	int GetInspectionListCount() const;
@@ -52,8 +54,6 @@ private:
 
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

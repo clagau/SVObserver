@@ -23,6 +23,7 @@ LPCTSTR const CTAG_LIGHT_REFERENCE_ARRAY          = (_T("LightReferenceArray"));
 LPCTSTR const CTAG_ACQUISITION_DEVICE_FILE_NAME   = (_T("AcquisitionDeviceFileName"));
 LPCTSTR const CTAG_TYPE                           = (_T("Type"));
 LPCTSTR const CTAG_BAND_LINK                      = (_T("BandLink"));
+LPCTSTR const CTAG_COLOR	                      = (_T("Color"));
 LPCTSTR const CTAG_ACQUISITION_DEVICE             = (_T("AcquisitionDevice"));
 LPCTSTR const CTAG_SIZE                           = (_T("Size"));
 LPCTSTR const CTAGF_BAND_X                        = (_T("Band_%d")); // CTAGF indicates formatting is required.

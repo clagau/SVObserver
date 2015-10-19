@@ -167,7 +167,7 @@ HRESULT SVWatershedFilterClass::setMarkerImage(const SVString imageName)
 		{
 			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-			if( isValidMarkerImage( pImage, *pToolSet ) && pImage->getDisplayedName() == imageName )
+			if( isValidMarkerImage( pImage, *pToolSet ) && SVString( pImage->getDisplayedName() ) == imageName )
 			{
 				retVal = ConnectToImage( &m_MarkerImageInfo, pImage );
 				break;

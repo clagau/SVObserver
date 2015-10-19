@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   28 Apr 2014 17:35:02  $
 // ******************************************************************************
 
-#ifndef SVOCONFIGASSISTANTDLG_H
-#define SVOCONFIGASSISTANTDLG_H
+#pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVOCameraDlg.h"
 #include "SVOTriggerDeviceDlg.h"
@@ -28,6 +28,7 @@
 #include "SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
 #include "ObjectInterfaces\DataStructures.h"
+#pragma endregion Includes
 
 // Moved SVIM_FULL_BOARD, etc. to SVObserverEnums.h
 
@@ -46,7 +47,7 @@ enum ConfigItemTypeEnum
     ITEM_PPQ_ATTACH_INS     = 11,
     ITEM_PPQ_PROP_SRC_IMG   = 12,
 	ITEM_ACTION_REFRESH     = 13,
-    ITEM_ACCTION_SAVE       = 14
+    ITEM_ACTION_SAVE		= 14
 };
 
 enum ConfigTypeEnum
@@ -67,7 +68,7 @@ enum ConfigMsgTypeEnum
 /////////////////////////////////////////////////////////////////////////////
 // CSVOConfigAssistantDlg dialog
 
-class CSVOTriggerList;
+class SVOTriggerList;
 
 class CSVOConfigAssistantDlg : public CDialog
 {
@@ -90,7 +91,7 @@ public:
 	BOOL AssignCameraFileToCamera(CString sCameraName, CString sCameraFile);
 	BOOL AssignDigToCamera(CString sCameraName, int iDig);
 	BOOL AddToTriggerList(CString sTriggerName, int iDig);
-	BOOL AddToInspectList(CString sExternal, CString sInternal);
+	BOOL AddToInspectList(CString sExternal, CString sInternal, bool NewInspection);
 	BOOL AddToPPQList(CString sPPQ, CString sCamera, CString sTrigger, CString sInspection);
 	BOOL AddToPPQList(CString sPPQ);
 
@@ -101,14 +102,14 @@ public:
 
 	BOOL IsDigitizerUsed(CString sDigString);
 	BOOL IsTriggerDigUsed(CString sDigString);
-	BOOL IsCameraInList(CString sCameraName);
+	BOOL IsCameraInList(CString sCameraName) const;
 	bool IsTriggerInList(CString sTriggerName) const;
-	BOOL IsInspectionInList(CString sInspectionName);
-	BOOL IsInspectionNameInList(CString sInspectionName);
-	BOOL IsPPQInList(CString sPPQName);
+	BOOL IsInspectionInList(CString sInspectionName) const;
+	BOOL IsInspectionNameInList(CString sInspectionName) const;
+	BOOL IsPPQInList(CString sPPQName) const;
 
-	CString BuildDigName(CSVOCameraObj *pObj, bool bIsAcqDev = false );
-	CString BuildTrgDig(CSVOTriggerObj *pObj);
+	CString BuildDigName(const SVOCameraObj& rCameraObj, bool bIsAcqDev = false) const;
+	CString BuildTrgDig(const SVOTriggerObj& rTriggerObj) const;
 
 	CString GetInspectionLabelFromName(CString sInspectName);
 	CString GetInspectionNameFromLabel(CString sInspectLabel);
@@ -119,23 +120,22 @@ public:
 	int GetTriggerListCount() const;
 	int GetPPQListCount() const;
 
-	CSVOCameraObj *GetCameraObject(int iPos);
-	const CSVOCameraObj* GetCameraObject(int iPos) const;
-	CSVOCameraObj *GetCameraObjectByName(CString sCameraName);
-	CSVOTriggerObj *GetTriggerObject(int iPos);
-	CSVOTriggerObj *GetTriggerObjectByName(CString sTriggerName);
-	CSVOInspectionObj *GetInspectionObject(int iPos);
-	CSVOInspectionObj *GetInspectionObjectByName(CString sName);
-	CSVOPPQObj *GetPPQObject(int iPos);
-	CSVOPPQObj *GetPPQObjectByName(CString sPPQName);
+	SVOCameraObjPtr GetCameraObject(int iPos);
+	SVOCameraObjPtr GetCameraObjectByName(CString sCameraName);
+	SVOTriggerObjPtr GetTriggerObject(int iPos);
+	SVOTriggerObjPtr GetTriggerObjectByName(CString sTriggerName);
+	SVOInspectionObjPtr GetInspectionObject(int iPos);
+	SVOInspectionObjPtr GetInspectionObjectByName(CString sName);
+	SVOPPQObjPtr GetPPQObject(int iPos);
+	SVOPPQObjPtr GetPPQObjectByName(CString sPPQName);
 
 	CString GetNextCameraName();
-	int GetNextCameraNumber();
-	CString GetNextInspectionName();
-	CString GetNextInspectionDisplayName();
-	CString GetNextTriggerName(const CString& baseName = TRIGGER_FIXED_NAME);
+	int GetNextCameraNumber() const;
+	CString GetNextInspectionName() const;
+	CString GetNextInspectionDisplayName() const;
+	CString GetNextTriggerName(const CString& baseName) const;
 	int GetNextTriggerID() const;
-	CString GetNextPPQName();
+	CString GetNextPPQName() const;
 
 	CStringList m_slUsedTriggers;
 	CStringList m_slUsedInspect;
@@ -150,7 +150,7 @@ public:
 	bool IsSoftwareTriggerAllowed(LPCTSTR sTriggerName) const;
 	bool IsCameraLineInputAllowed(LPCTSTR triggerName) const;
 
-	CSVOPPQObj* GetPPQForAttachedTrigger(const CString& sTriggerName);
+	SVOPPQObjPtr GetPPQForAttachedTrigger(const CString& sTriggerName);
 
 	BOOL IsInspectUsed(CString sInspect);
 	void AddUsedInspect(CString sInspect);
@@ -229,10 +229,11 @@ protected:
 
 private:
 	void UpdateAvailableSystems( SVIMProductEnum p_CurrentConfigurationType, SVIMProductEnum p_SelectedConfigurationType );
-	HRESULT CheckCamera(CSVOCameraObj* pCam, bool SetFileParameters = false);
+	HRESULT CheckCamera( SVOCameraObj& rCameraObj, bool SetFileParameters = false );
+	void CheckColor( const SVOCameraObj& rCameraObj );
 	void CheckTriggers();
-	BOOL CheckTrigger(CSVOTriggerObj* pTrig);
-	void RemoveFileAcquisitionMessages(CSVOCameraObj* pCam);
+	BOOL CheckTrigger( const SVOTriggerObj& rTriggerObj);
+	void RemoveFileAcquisitionMessages( const CString& rCameraName );
 
 	HRESULT ConnectToolsetBuffers();
 	void resolveGlobalConflicts( SvOi::GlobalConflictPairVector& rGlobalConflicts );
@@ -258,16 +259,6 @@ private:
 
 	int m_iLastInspectionNum;
 
-	int m_iCameraErrors;
-	int m_iInspectErrors;
-	int m_iInsToolsetError;
-	int m_iInvalidCamera;
-	int m_iInvalidTrigger;
-	int m_iPPQTriggerError;
-	int m_iPPQCameraError;
-	int m_iPPQMaintainSourceImageError;
-	int m_i1394ColorCamError;
-
 	int m_iNextCameraNumber;
 	SVIOBoardCapabilities m_svCapabilities;
 
@@ -279,12 +270,12 @@ private:
 
 	BOOL SystemChangeResetCamera( SVIMProductEnum p_lNewSystemType );
 
-	CSVOCameraList m_CameraList;
-	CSVOInspectionList m_InspectList;
-	CSVOTriggerList m_TriggerList;
-	CSVOPPQList m_PPQList;
+	SVOCameraList m_CameraList;
+	SVOInspectionList m_InspectList;
+	SVOTriggerList m_TriggerList;
+	SVOPPQList m_PPQList;
 
-	CSVOCameraList m_TmpCameraList; //used for cancel
+	SVOCameraList m_TmpCameraList; //used for cancel
 
 	BOOL AddMessageToList(int iDlg, CString sMessage);
 	BOOL RemoveMessageFromList(CString sMessage);
@@ -296,17 +287,11 @@ private:
 	//private member function...
 	void SetupSystemComboBox();
 	void ReloadForCurrentSystem();
-	void CreateDefaultForFullSVIM();
-	void CreateDefaultFor05SVIM();
+	void CreateDefaultForSVIM(int Number);
 	void CreateDefaultForRGBSVIM();
-	void CreateDefaultForColorSVIM();
 
-	//default methods for 1394 configuration
-	//mono
-	void CreateDefaultForSVIMDigitalNonIO(int iNumber);
-	void CreateDefaultForSVIMDigital(int iNumber);
-	void CreateDefaultForSVIMDigitalHub(int iNumber);
-	void CreateDefaultForSVIMColorDigital(int iNumber);
+	void CreateDefaultForSVIMDigital( int Number, LPCTSTR TriggerBaseName );
+	void CreateDefaultForSVIMDigitalHub(int Number);
 
 	void SetCurrentSystemDisplay();
 	CString BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag, CString sObjectName, CString sMessage);
@@ -336,20 +321,16 @@ private:
 	BOOL IsCameraOnPPQ(CString sPPQName, CString sCameraName);
 	BOOL IsTriggerOnPPQ(CString sPPQName, CString sTriggerName);
 
-	CSVOPPQObj* GetPPQObjectByInspectionName(const SVString& inspectionName);
+	SVOPPQObjPtr GetPPQObjectByInspectionName(const SVString& inspectionName);
 
 	void ConvertToDigital(SVIMProductEnum productType);
 
-	bool IsColorConfig() const;
 	void SetupTriggerStrobeMessage();
 
 	BOOL RenameInspectionObjects(CString sInspectionName, CString sNewInspectionName);
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:

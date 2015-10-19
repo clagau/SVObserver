@@ -50,7 +50,6 @@ SVObjectManagerClass::SVObjectManagerClass()
 , m_LastFrameRate( 10 )
 , m_ObserverCookie( 1 )
 , m_FileSequenceNumber( 0 )
-, m_bIsColorSVIM(false)
 {
 	m_TranslationMap[FqnInspections] = FqnConfiguration;
 	m_TranslationMap[FqnPPQs] = FqnConfiguration;

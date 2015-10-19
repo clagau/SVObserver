@@ -41,24 +41,26 @@ HRESULT CALLBACK SVVirtualCamera::SVImageCallback( void *pvOwner, void *pvCaller
 
 SVVirtualCamera::SVVirtualCamera( LPCSTR ObjectName )
 : SVObjectClass( ObjectName )
+	,mlBandLink( 0 )
+	,m_bFileAcquisition( false )
+	,m_IsColor( false )
+	,m_bImageSizeEditModeFileBased( true )
+	,m_imageLoadingMode( 0 )
 {
-	mlBandLink = 0;
-	m_bFileAcquisition = false;
 	m_imageSize.cx = 0;
 	m_imageSize.cy = 0;
-	m_bImageSizeEditModeFileBased = true;
-	m_imageLoadingMode = 0;
 }
 
 SVVirtualCamera::SVVirtualCamera( SVObjectClass* POwner, int StringResourceID )
 : SVObjectClass( POwner, StringResourceID )
+,mlBandLink( 0 )
+,m_bFileAcquisition( false )
+,m_IsColor( false )
+,m_bImageSizeEditModeFileBased( true )
+,m_imageLoadingMode( 0 )
 {
-	mlBandLink = 0;
-	m_bFileAcquisition = false;
 	m_imageSize.cx = 0;
 	m_imageSize.cy = 0;
-	m_bImageSizeEditModeFileBased = true;
-	m_imageLoadingMode = 0;
 }
 
 SVVirtualCamera::~SVVirtualCamera()
@@ -116,6 +118,7 @@ BOOL SVVirtualCamera::Create( LPCTSTR p_szDeviceName )
 		bOk = Destroy();
 	}
 
+	SVDigitizerProcessingClass::Instance().SelectDigitizer( p_szDeviceName );
 	mpsvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( p_szDeviceName );
 
 	bOk = !( mpsvDevice.empty() ) && bOk;

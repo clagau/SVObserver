@@ -189,8 +189,6 @@ public:
 
 	HRESULT getTreeList(const SVString& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const;
 
-	bool m_bIsColorSVIM;
-
 protected:
 	typedef std::map< SVString, SVGUID > SVSubjectDataNameSubjectIDMap;
 

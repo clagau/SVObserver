@@ -9,24 +9,26 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:10:58  $
 //******************************************************************************
 
-#ifndef SVOPPQOBJ_H
-#define SVOPPQOBJ_H
+#pragma once
 
+#pragma region Includes
 #include <deque>
 #include <utility>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVImportedInputList.h"
+#include "SVUtilityLibrary\SVSharedPtr.h"
+#pragma endregion Includes
 
 typedef std::pair<SVString, GUID> SVNameGuidPair;
 typedef std::deque<SVNameGuidPair> SVNameGuidPairList;
 
-class CSVOPPQObj  
+class SVOPPQObj  
 {
 public:
-	CSVOPPQObj();
-	virtual ~CSVOPPQObj();
+	SVOPPQObj();
+	virtual ~SVOPPQObj();
 
-	CSVOPPQObj& operator=(const CSVOPPQObj &source);
+	SVOPPQObj& operator=(const SVOPPQObj &source);
 
 	void SetPPQName(CString sPPQName);
 	CString GetPPQName();
@@ -90,7 +92,8 @@ private:
 	SVImportedInputList m_importedInputList;
 };
 
-#endif
+typedef SVSharedPtr< SVOPPQObj > SVOPPQObjPtr;
+
 
 //******************************************************************************
 //* LOG HISTORY:

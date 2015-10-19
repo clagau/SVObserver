@@ -19,7 +19,7 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-CSVOTriggerObj::CSVOTriggerObj(const SVString& name, int nDig)
+SVOTriggerObj::SVOTriggerObj(const SVString& name, int nDig)
 : m_sTriggerDisplayName(name)
 , m_iDigNumber(nDig)
 , m_timerPeriod(SVSoftwareTriggerDefaults::TimerPeriod)
@@ -27,43 +27,43 @@ CSVOTriggerObj::CSVOTriggerObj(const SVString& name, int nDig)
 {
 }
 
-CSVOTriggerObj::~CSVOTriggerObj()
+SVOTriggerObj::~SVOTriggerObj()
 {
 }
 
-LPCTSTR CSVOTriggerObj::GetTriggerDisplayName() const
+LPCTSTR SVOTriggerObj::GetTriggerDisplayName() const
 {
 	return m_sTriggerDisplayName.ToString();
 }
 
-int CSVOTriggerObj::GetTriggerDigNumber() const
+int SVOTriggerObj::GetTriggerDigNumber() const
 {
     return m_iDigNumber;
 }
 
 // For Software trigger
-void CSVOTriggerObj::SetTimerPeriod(long lPeriod)
+void SVOTriggerObj::SetTimerPeriod(long lPeriod)
 {
 	m_timerPeriod = lPeriod;
 }
 
 // For Software trigger
-long CSVOTriggerObj::GetTimerPeriod() const
+long SVOTriggerObj::GetTimerPeriod() const
 {
 	return m_timerPeriod;
 }
 
-bool CSVOTriggerObj::IsSoftwareTrigger() const
+bool SVOTriggerObj::IsSoftwareTrigger() const
 {
 	return m_bSoftwareTrigger;
 }
 
-void CSVOTriggerObj::SetSoftwareTrigger(bool bSoftwareTrigger)
+void SVOTriggerObj::SetSoftwareTrigger(bool bSoftwareTrigger)
 {
 	m_bSoftwareTrigger = bSoftwareTrigger;
 }
 
-bool CSVOTriggerObj::IsAcquisitionTrigger() const
+bool SVOTriggerObj::IsAcquisitionTrigger() const
 {
 	bool bRet = (m_sTriggerDisplayName.find(SV_CAMERA_TRIGGER_NAME) == 0);
 	return bRet;

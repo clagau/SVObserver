@@ -3505,6 +3505,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		long lHeight;
 		long lBufSize;
 		long lTabSize;
+		bool IsColor( false );
 
 		char* pDIB = NULL;
 
@@ -3517,19 +3518,24 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		long l_lBandNumber = 1;
 		long l_lBandLink = 0;
 
-		SVImageClass* l_pImage = NULL;
+		SVImageClass* pImage( nullptr );
 
-		oChildInfo.GetOwnerImage( l_pImage );
+		oChildInfo.GetOwnerImage( pImage );
 
-		if( l_pImage != NULL )
+		if( nullptr != pImage )
 		{
-			l_lType = l_pImage->GetImageType();
+			l_lType = pImage->GetImageType();
+			SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pImage->GetAncestor( SVInspectionObjectType ) );
+			if( nullptr != pInspection )
+			{
+				IsColor = pInspection->IsColorCamera();
+			}
 		}
 
 		oChildInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
 		oChildInfo.GetImageProperty( SVImagePropertyBandLink, l_lBandLink );
 
-		if (!TheSVObserverApp.IsColorSVIM() && l_lType == SVImageTypePhysical && l_lBandNumber == 3)
+		if ( IsColor && l_lType == SVImageTypePhysical && l_lBandNumber == 3)
 		{
 			bDestroyHandle = TRUE;
 
