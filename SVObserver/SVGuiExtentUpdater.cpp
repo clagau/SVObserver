@@ -19,7 +19,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
-HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, bool ForwardSize )
+HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, SVCommandExtentResetModeEnum resetMode )
 {
 	CWaitCursor wait;
 
@@ -30,7 +30,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtent, &rExtents );
-			commandPtr->SetResetInspection(ForwardSize);
+			commandPtr->SetResetInspection(resetMode);
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
@@ -39,7 +39,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const
 	return status;
 }
 
-HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObject,bool ForwardSize)
+HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObject,SVCommandExtentResetModeEnum resetMode)
 {
 	CWaitCursor wait;
 	HRESULT status = SvOi::Err_10002_SetImageExtentToParent_InvalidParameter;
@@ -50,7 +50,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObjec
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToParent);
-			commandPtr->SetResetInspection(ForwardSize);
+			commandPtr->SetResetInspection(resetMode);
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
@@ -60,7 +60,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObjec
 }
 
 
-HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents ,bool ForwardSize )
+HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents ,SVCommandExtentResetModeEnum resetMode )
 {
 	CWaitCursor wait;
 	HRESULT status = SvOi::Err_10003_SetImageExtentToFit_InvalidParameter;
@@ -71,7 +71,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, 
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToFit, &rExtents );
-			commandPtr->SetResetInspection(ForwardSize);
+			commandPtr->SetResetInspection(resetMode);
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
@@ -81,7 +81,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, 
 }
 
 
-HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject,bool ForwardSize )
+HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject,SVCommandExtentResetModeEnum resetMode )
 {
 	CWaitCursor wait;
 	HRESULT status = SvOi::Err_10002_SetImageExtentToParent_InvalidParameter;
@@ -92,7 +92,7 @@ HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObjec
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_ForwardExtent);
-			commandPtr->SetResetInspection(ForwardSize);
+			commandPtr->SetResetInspection(resetMode);
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}

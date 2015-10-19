@@ -4910,6 +4910,39 @@ DWORD SVInspectionProcess::GetObjectColor() const
 	return SV_DEFAULT_WHITE_COLOR;
 }
 
+
+
+bool   SVInspectionProcess::LoopOverTools(pToolFunc pf, int& counter ) 
+{
+	bool ret = false;
+	counter =0;
+	SVToolSetClass* pToolSet(nullptr);
+	SVTaskObjectClass* pTaskObject(nullptr);
+	pToolSet = GetToolSet();
+	if(pToolSet)
+	{
+		ret = true;
+		for(int index =0; index < pToolSet->GetSize(); index ++)
+		{
+			pTaskObject = pToolSet->GetAt(index);
+			if(nullptr != pTaskObject)
+			{
+				int result = pf(pTaskObject);
+				if(result < 0)
+				{
+					return false;
+				}
+				else
+				{
+					counter += result; 
+				}	
+				
+			}
+		}		
+	}
+	return ret;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

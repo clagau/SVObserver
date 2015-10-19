@@ -13,22 +13,23 @@
 
 #include "SVTaskObject.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
+#include "SVCommandInspectionExtentUpdater.h"
 
 class SVGuiExtentUpdater
 {
 public:
-	static HRESULT SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, bool ForwardSize = false);
-	static HRESULT SetImageExtentToParent(SVTaskObjectClass* pTaskObject, bool ForwardSize = false);
-	static HRESULT SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, bool ForwardSize = false);
+	static HRESULT SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, SVCommandExtentResetModeEnum resetMode = ResetMode_Tool);
+	static HRESULT SetImageExtentToParent(SVTaskObjectClass* pTaskObject, SVCommandExtentResetModeEnum resetMode = ResetMode_Tool);
+	static HRESULT SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, SVCommandExtentResetModeEnum resetMode = ResetMode_Tool);
 	
 	//************************************
 	//! Update the size of the Image in pTool 
-	//! and if forward size is true 	all Images wich are dependent from this Image
+	//! and if forward size is true 	all Images which are dependent from this Image
 	//! \param p_pTaskObject [in]
 	//! \param ForwardSize [in]
 	//! \returns HRESULT
 	//************************************
-	static HRESULT ForwardSizeAndPosition(SVTaskObjectClass* p_pTaskObject, bool ForwardSize  ) ;
+	static HRESULT ForwardSizeAndPosition(SVTaskObjectClass* p_pTaskObject, SVCommandExtentResetModeEnum resetMode  ) ;
 
 private:
 	static const int TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS = 120000;

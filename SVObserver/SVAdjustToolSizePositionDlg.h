@@ -17,6 +17,7 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "PropertyTree/PropTree.h"
 #include "SVMFCControls\SVUpDownButton.h"
+#include "SVObjectLibrary\SVObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -109,7 +110,13 @@ private:
 	//! \returns bool
 	//************************************	
 	bool IsFullSizeAllowed();
+	//************************************
+	//! return True if propagate button  should be enabled 
+	//! \returns bool
+	//************************************
+	bool UsePropagate();
 
+	
 #pragma endregion Private Methods
 
 #pragma region Member variables

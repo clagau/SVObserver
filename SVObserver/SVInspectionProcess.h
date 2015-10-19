@@ -75,6 +75,12 @@ public:
 	typedef SVBiUniqueMap< CString, SVValueObjectClass* >::type SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
 	typedef SVVector< SVPPQObject* > SVPPQObjectPtrVector;
+	//************************************
+	//! FunctionPointer as Argument for LooopOverTool
+	//! negative return values indicate an error 
+	//************************************
+	typedef int  (*pToolFunc) (SVObjectClass *pObject );
+
 
 	SVInspectionProcess( LPCSTR ObjectName );
 	SVInspectionProcess( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
@@ -262,6 +268,18 @@ public:
 	
 	virtual DWORD GetObjectColor() const;
 
+	
+	
+	
+	//************************************
+	//! calls pf for all object in Inspection 
+	//! \param pf [in] function pointer 
+	//! \param counter [out] sum over results from pf
+	//! \returns bool true if all call from pf are not negativ
+	//************************************
+	bool   LoopOverTools(pToolFunc pf, int& counter ); 
+	
+	
 	SVIOEntryStructVector m_PPQInputs;
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update

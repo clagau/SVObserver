@@ -2217,7 +2217,7 @@
 #define IDC_BUTTON_TA_HEIGHT            16087
 #define IDC_BUTTON_POSITION_Y           16088
 #define IDC_COMBO_TA_SIZE_MODE_POSITIONY 16089
-#define IDC_BUT_PROPAGATE               16090
+#define IDC_BUTTON_PROPAGATE               16090
 #define IDC_BUT_EDIT_TOOL               16091
 #define IDC_EDIT_RING_DEPTH             16092
 #define IDC_BUTTON_RING_DEPTH           16093

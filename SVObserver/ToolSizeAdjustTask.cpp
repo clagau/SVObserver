@@ -750,6 +750,36 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(SVObjectClass *pOb
 }
 
 
+BOOL ToolSizeAdjustTask::UseSizeAdjust( SVObjectClass *pObject)
+{
+
+	BOOL ret = FALSE;
+	ToolSizeAdjustTask* pToolSizeAdjustTask =  GetToolSizeAdjustTask(pObject);
+	if(pToolSizeAdjustTask)
+	{
+		ret = pToolSizeAdjustTask->UseAutoMode();
+	}
+
+	return ret;
+
+}
+
+
+BOOL ToolSizeAdjustTask::UseAutoMode() const
+{
+	long Mode(TSModeCount);
+	for( int vType  = TSPositionX ; vType < TSValuesCount ; ++vType)
+	{
+		HRESULT hresult =  m_InputModes[vType].GetValue( Mode );
+		if(Mode == TSFullSize || Mode == TSFormula)
+		{
+			return TRUE;
+		}
+	}
+	return false;
+}
+
+
 DWORD ToolSizeAdjustTask::GetObjectColor() const
 {
 	return SV_DEFAULT_WHITE_COLOR;

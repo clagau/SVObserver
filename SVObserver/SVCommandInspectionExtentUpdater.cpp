@@ -13,6 +13,8 @@
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVToolSet.h"
+#include "ToolSizeAdjustTask.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -25,12 +27,12 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(const SVCommandInspectionExtentUpdater& rObject)
-: m_InspectionId( rObject.m_InspectionId ), m_ToolId( rObject.m_ToolId ), m_ImageExtent( rObject.m_ImageExtent ), m_mode( rObject.m_mode ),m_bResetInspection(false)
+: m_InspectionId( rObject.m_InspectionId ), m_ToolId( rObject.m_ToolId ), m_ImageExtent( rObject.m_ImageExtent ), m_mode( rObject.m_mode ),m_ResetMode(ResetMode_Tool)
 {
 }
 
 SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent)
-: m_InspectionId( rInspectionId ), m_ToolId( rToolId ), m_mode( mode ),m_bResetInspection(false)
+: m_InspectionId( rInspectionId ), m_ToolId( rToolId ), m_mode( mode ),m_ResetMode(ResetMode_Tool)
 {
 	if(nullptr != pImageExtent )
 	{
@@ -42,6 +44,24 @@ SVCommandInspectionExtentUpdater::~SVCommandInspectionExtentUpdater()
 {
 }
 #pragma endregion Constructor
+
+int SVCommandInspectionExtentUpdater::ResetToolSizeAdjustTool(SVObjectClass* pObject)
+{
+
+	if( TRUE == ToolSizeAdjustTask::UseSizeAdjust(pObject))
+	{
+		DWORD_PTR result = ::SVSendMessage(pObject, SVM_RESET_ALL_OBJECTS, NULL, NULL);
+		if(result =! SVMR_SUCCESS)
+		{
+			ASSERT(FALSE);
+			return 0;
+		}
+
+	}
+	return 1;
+
+}
+
 
 #pragma region Public Methods
 HRESULT SVCommandInspectionExtentUpdater::Execute()
@@ -60,8 +80,11 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 		SVDataManagerHandle dMIndexHandle;
 
 		svProduct.GetResultDataIndex( dMIndexHandle );
-
-		bool ResetModeAuto = !m_bResetInspection ; 
+		bool ResetModeAuto(true);
+		if(m_ResetMode == ResetMode_Inspection || m_ResetMode == ResetMode_ToolList ||  m_mode == ExtentUpdaterMode_ForwardExtent)
+		{
+			ResetModeAuto = false;
+		}
 		int index = dMIndexHandle.GetIndex();
 		switch (m_mode)
 		{
@@ -94,26 +117,44 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			}
 			
 
-			SVObjectClass* pResetObject(nullptr);
+			
 			SVToolClass* pToolRun(nullptr); 
-			if(m_bResetInspection)
+			DWORD_PTR result(0); 
+			if(m_ResetMode == ResetMode_Inspection )
 			{
-				pResetObject =  dynamic_cast<SVObjectClass*>  (pInspection);
+				SVObjectClass*  pResetObject =  dynamic_cast<SVObjectClass*>  (pInspection);
+				result = ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, NULL, NULL);
+			}
+			else if ( m_ResetMode == ResetMode_ToolList)
+			{
+				if(pInspection)
+				{
+					
+					int LoopCount(0);
+					pInspection->LoopOverTools( SVCommandInspectionExtentUpdater::ResetToolSizeAdjustTool, LoopCount); 
+					if(LoopCount > 0)
+					{
+						result = SVMR_SUCCESS;
+					}
+				}
+			
 			}
 			else
 			{
 				pToolRun = pTool;
-				pResetObject =  dynamic_cast<SVObjectClass*>  (pTool);
-			}
-			
+				SVObjectClass*  pResetObject =  dynamic_cast<SVObjectClass*>  (pTool);
+				result = ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, NULL, NULL);
 
-			if ( nullptr == pResetObject || ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, NULL, NULL) != SVMR_SUCCESS)
+			}
+
+			if ( result == SVMR_SUCCESS)
 			{
-				retVal = SvOi::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
+				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : SvOi::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
+				
 			}
 			else
 			{
-				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : SvOi::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
+				retVal = SvOi::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
 			}
 
 			if(ResetModeAuto)
@@ -142,9 +183,10 @@ bool SVCommandInspectionExtentUpdater::empty() const
 	return bRet;
 }
 
-void SVCommandInspectionExtentUpdater::SetResetInspection(bool forward)
+void SVCommandInspectionExtentUpdater::SetResetInspection(SVCommandExtentResetModeEnum resetMode)
 {
-	m_bResetInspection = forward;
+	
+	m_ResetMode = resetMode;
 }
 
 #pragma endregion Public Methods

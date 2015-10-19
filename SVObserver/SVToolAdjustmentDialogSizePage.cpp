@@ -466,7 +466,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnKillActive()
 	}
 	if(nullptr != m_pTool)
 	{
-		hr  = SVGuiExtentUpdater::ForwardSizeAndPosition(m_pTool, false);
+		hr  = SVGuiExtentUpdater::ForwardSizeAndPosition(m_pTool, ResetMode_Tool);
 	}
 	return CPropertyPage::OnKillActive();
 }
