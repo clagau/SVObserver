@@ -102,7 +102,7 @@ IDB_KNOB_FACE           BITMAP                  "RES\\SVKnob.bmp"
 IDB_KNOB_MASK           BITMAP                  "RES\\SVKnob_mask.bmp"
 IDB_SVDOT_FACE          BITMAP                  "RES\\SVKnobDot.bmp"
 IDB_SVDOT_MASK          BITMAP                  "RES\\SVKnobDot_mask.bmp"
-IDB_KOERBER              BITMAP                  "res\\Korber.bmp"
+IDB_KOERBER             BITMAP                  "res\\Korber.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2703,7 +2703,7 @@ STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Translation"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "",IDC_PROPERTY_TREE,7,7,205,228,WS_BORDER | WS_TABSTOP    
+    LTEXT           "",IDC_PROPERTY_TREE,7,7,205,228,WS_BORDER | WS_TABSTOP
     CONTROL         "",IDC_DIALOGIMAGE,
                     "{8174991A-A5F5-4CB3-85E3-3B31FAEF2314}",WS_TABSTOP,225,7,221,170
 END
@@ -2734,6 +2734,8 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,443,229,50,14
     LTEXT           "Please select which Global Constant value should be used:\r\n1. The current value from the loaded configuration or\r\n2.The value being imported from the inspection",IDC_STATIC,7,213,330,30
 END
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -3765,7 +3767,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "Enable Auto Save",                    ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -3799,17 +3801,16 @@ BEGIN
         MENUITEM "&Edit Configuration\tCtrl+E", ID_EDIT_EDITENVIRONMENT,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Edit &Remote Inputs",         ID_EDIT_EDITREMOTEINPUTS,MFT_STRING,MFS_ENABLED
-
-		MENUITEM "Add Remote Outputs",          ID_EDIT_ADD_REMOTE_OUTPUTS,MFT_STRING,MFS_ENABLED
+        MENUITEM "Add Remote Outputs",          ID_EDIT_ADD_REMOTE_OUTPUTS,MFT_STRING,MFS_ENABLED
         MENUITEM "Add Monitor List",            ID_EDIT_ADD_MONITORLIST,MFT_STRING,MFS_ENABLED
-        POPUP "&Global Constant",           65535,MFT_STRING,MFS_ENABLED
-		BEGIN
-    		MENUITEM "&Add",                        ID_EDIT_GLOBAL_CONSTANT_ADD,MFT_STRING,MFS_ENABLED
-			MENUITEM "&Edit",                       ID_EDIT_GLOBAL_CONSTANT_EDIT,MFT_STRING,MFS_ENABLED
-			MENUITEM "&Remove",                     ID_EDIT_GLOBAL_CONSTANT_DELETE,MFT_STRING,MFS_ENABLED
-			MENUITEM MFT_SEPARATOR
-			MENUITEM "Show &Dependencies",          ID_GLOBAL_CONSTANT_DEPENDENCIES,MFT_STRING,MFS_ENABLED
-		END
+        POPUP "&Global Constant",               65535,MFT_STRING,MFS_ENABLED
+        BEGIN
+            MENUITEM "&Add",                        ID_EDIT_GLOBAL_CONSTANT_ADD,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Edit",                       ID_EDIT_GLOBAL_CONSTANT_EDIT,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Remove",                     ID_EDIT_GLOBAL_CONSTANT_DELETE,MFT_STRING,MFS_ENABLED
+            MENUITEM MFT_SEPARATOR
+            MENUITEM "Show &Dependencies",          ID_GLOBAL_CONSTANT_DEPENDENCIES,MFT_STRING,MFS_ENABLED
+        END
     END
     POPUP "&View",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
@@ -3846,12 +3847,12 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "Test Outputs",                ID_EXTRAS_TESTOUTPUTS,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
-        POPUP "&Utilities",                 65535,MFT_STRING,MFS_ENABLED
+        POPUP "&Utilities",                     65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "&Customize Utilities",    ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "Enable Auto Save",                    ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -3876,7 +3877,7 @@ BEGIN
         MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT_CONFIG,MFT_STRING,MFS_ENABLED
         MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
-        MENUITEM "Save &Image",                 ID_FILE_SAVE_IMAGE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Save &Image...\tCtrl+M",      ID_FILE_SAVE_IMAGE,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Recent File",                 ID_FILE_MRU_FILE1,MFT_STRING,MFS_GRAYED
         MENUITEM MFT_SEPARATOR
@@ -3893,7 +3894,7 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "Edit Tool Set &Condition",    ID_EDIT_EDITTOOLSETCONDITION,MFT_STRING,MFS_ENABLED
         MENUITEM "Edit T&ool",                  ID_EDIT_EDITTOOL,MFT_STRING,MFS_ENABLED
-        MENUITEM "Adjust Tool Size and Position\tCtrl+A",  ID_EDIT_ADJUSTTOOLPOSITION,MFT_STRING,MFS_ENABLED
+        MENUITEM "Adjust Tool Size and Position\tCtrl+A", ID_EDIT_ADJUSTTOOLPOSITION,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Adjust &Light Reference",     ID_EDIT_ADJUSTLIGHTREFERENCE,MFT_STRING,MFS_ENABLED
         MENUITEM "Adjust L&UT",                 ID_EDIT_ADJUSTLUT,MFT_STRING,MFS_ENABLED
@@ -3985,7 +3986,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "Enable Auto Save",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -4014,7 +4015,7 @@ BEGIN
         END
         MENUITEM "Configure Analyzer",          ID_CONFIG_ANALYZER
         MENUITEM "Show Analyzer Result",        ID_ANALYZER_RESULT
-        MENUITEM "Adjust Tool Size and Position",    ID_ADJUST_POSITION
+        MENUITEM "Adjust Tool Size and Position", ID_ADJUST_POSITION
         MENUITEM "Select Display Image",        ID_SELECT_DISPLAY_IMAGE
     END
 END
@@ -4065,7 +4066,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Copy Tool",                   ID_EDIT_COPY
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
-        MENUITEM "Adjust Tool Size and Position",        ID_EDIT_ADJUSTTOOLPOSITION
+        MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
     END
 END
 
@@ -4173,13 +4174,15 @@ IDR_GLOBAL_CONSTANT_CONTEXT_MENU MENU
 BEGIN
     POPUP "Global Consants"
     BEGIN
-        MENUITEM "Add Constant",                 ID_EDIT_GLOBAL_CONSTANT_ADD
-        MENUITEM "Edit Constant",                ID_EDIT_GLOBAL_CONSTANT_EDIT
-        MENUITEM "Remove Constant",	             ID_EDIT_GLOBAL_CONSTANT_DELETE
+        MENUITEM "Add Constant",                ID_EDIT_GLOBAL_CONSTANT_ADD
+        MENUITEM "Edit Constant",               ID_EDIT_GLOBAL_CONSTANT_EDIT
+        MENUITEM "Remove Constant",             ID_EDIT_GLOBAL_CONSTANT_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "Show Dependencies",	         ID_GLOBAL_CONSTANT_DEPENDENCIES
+        MENUITEM "Show Dependencies",           ID_GLOBAL_CONSTANT_DEPENDENCIES
     END
 END
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Accelerator
@@ -4233,6 +4236,7 @@ BEGIN
     VK_SUBTRACT,    ID_ZOOM_MINUS,          VIRTKEY, CONTROL, NOINVERT
     VK_OEM_PLUS,    ID_ZOOM_PLUS,           VIRTKEY, CONTROL, NOINVERT
     VK_ADD,         ID_ZOOM_PLUS,           VIRTKEY, CONTROL, NOINVERT
+    "M",            ID_FILE_SAVE_IMAGE,     VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -4823,13 +4827,32 @@ END
 STRINGTABLE
 BEGIN
     IDS_BLOB_FILL_TYPE      "Blob Fill Type"
-    IDS_BLACK_BLOBS         "Blob Color"
     IDS_CLASSNAME_SVVARIANTVALUEOBJECT "Variant Value"
     IDS_OBJECTNAME_IMAGE2   "Image2"
     IDS_OBJECTNAME_IMAGE3   "Image3"
     IDS_OBJECTNAME_IMAGE4   "Image4"
     IDS_CLASSNAME_SV_EXTERNAL_TOOL "External Tool"
     IDS_CLASSNAME_SV_EXTERNAL_TOOL_TASK "DLL"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_PAT_PRELIMINARYACCEPTANCETHRESHOLD_ERROR 
+                            "Invalid Preliminary Acceptance Threshold Value (range is 1.0 to 100.0)"
+    IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER "Remote Output Controller"
+    IDS_CLASSNAME_SVREMOTEOUTPUTGROUP "Remote Output Group"
+    IDS_RESULT_PICKER       "Result Picker"
+    IDS_OBJECTNAME_CAMERA_TRIGGER_DATA "Camera Trigger Data"
+    IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP "Camera Timestamp"
+    IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE "Camera Input Line State"
+    IDS_CLASSNAME_SVCAMERADATAINPUTOBJECT "Camera Data Input"
+    IDS_BLACK_BLOBS         "Blob Color"
+    IDS_FAIL_HIGH           "Fail High"
+    IDS_FAIL_LOW            "Fail Low"
+    IDS_WARN_HIGH           "Warn High"
+    IDS_WARN_LOW            "Warn Low"
+    IDS_IS_LESS_THAN        "ERROR:\n%1\nis less than\n%2"
+    IDS_ISANINVALID_REFERENCE "ERROR:\n%1: %2\nis an invalid reference."
 END
 
 STRINGTABLE
@@ -4850,7 +4873,6 @@ END
 STRINGTABLE
 BEGIN
     AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
-    IDS_REGTEST_SETTING     "Settings [S]"
     IDS_REGTEST_STOP        "Stop [Home]"
     IDS_REGTEST_PLAY        "Play [P]"
     IDS_REGTEST_PAUSE       "Pause [P]"
@@ -4877,8 +4899,7 @@ BEGIN
                             "Enable Source Image Extents"
     ID_INDICATOR_GIGE_LICENSE_ERROR "License Error"
     IDS_BLOB_FEATURE_DEFAULT_VALUE "Default Value"
-    IDS_FAIL_HIGH           "Fail High"
-    IDS_FAIL_LOW            "Fail Low"
+    IDS_REGTEST_SETTING     "Settings [S]"
 END
 
 STRINGTABLE
@@ -5206,19 +5227,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_PAT_PRELIMINARYACCEPTANCETHRESHOLD_ERROR 
-                            "Invalid Preliminary Acceptance Threshold Value (range is 1.0 to 100.0)"
-    IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER "Remote Output Controller"
-    IDS_CLASSNAME_SVREMOTEOUTPUTGROUP "Remote Output Group"
-    IDS_RESULT_PICKER       "Result Picker"
-    IDS_OBJECTNAME_CAMERA_TRIGGER_DATA "Camera Trigger Data"
-    IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP "Camera Timestamp"
-    IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE "Camera Input Line State"
-    IDS_CLASSNAME_SVCAMERADATAINPUTOBJECT "Camera Data Input"
-END
-
-STRINGTABLE
-BEGIN
     IDS_OBJECTNAME_PAT_INTERPOLATION "Angle Interpolation"
     IDS_OBJECTNAME_PAT_MATCHSCORE "Match Score"
     IDS_OBJECTNAME_PAT_RESULTX "Result Position X"
@@ -5453,14 +5461,6 @@ BEGIN
     ID_ZOOM_ONE             "zoom one\nZoom 1:1"
     ID_ZOOM_FIT             "zoom fit\nZoom []"
     ID_TOOLBAR_STANDARD     "Show or hide the tool bar\nToggle Tool Bar"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_WARN_HIGH				"Warn High"
-    IDS_WARN_LOW				"Warn Low"
-    IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-    IDS_ISANINVALID_REFERENCE	"ERROR:\n%1: %2\nis an invalid reference."
 END
 
 STRINGTABLE
@@ -5928,12 +5928,8 @@ BEGIN
     IDS_OBJECTNAME_FAIL_LOW_INDIRECT "Fail Low Indirect"
     IDS_OBJECTNAME_FAIL_HIGH_INDIRECT "Fail High Indirect"
     IDS_OBJECTNAME_WARN_HIGH_INDIRECT "Warn High Indirect"
-    IDS_CLASSNAME_TOOLSIZEADJUSTTASK "ToolSizeAdjustTask"
     IDS_CLASSNAME_RINGBUFFER_TOOL "Ring Buffer Tool"
-    IDS_OBJECTNAME_RINGBUFFER_DEPTH "Buffer Depth"
-    IDS_OBJECTNAME_RINGBUFFER_INDEX1 "Image Index 1"
-    IDS_OBJECTNAME_RINGBUFFER_INDEX2 "Image Index 2"
-    IDS_OBJECTNAME_RINGBUFFER_FLAG "Flag of Output Images"
+    IDS_CLASSNAME_TOOLSIZEADJUSTTASK "ToolSizeAdjustTask"
 END
 
 STRINGTABLE
@@ -5946,6 +5942,10 @@ BEGIN
     IDS_CLASSNAME_EQ_ADJUSTSIZE_POSITION_Y "Evaluate Position Y"
     IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX "Mode Adjust Position X"
     IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY "Mode Adjust Position Y"
+    IDS_OBJECTNAME_RINGBUFFER_DEPTH "Buffer Depth"
+    IDS_OBJECTNAME_RINGBUFFER_INDEX1 "Image Index 1"
+    IDS_OBJECTNAME_RINGBUFFER_INDEX2 "Image Index 2"
+    IDS_OBJECTNAME_RINGBUFFER_FLAG "Flag of Output Images"
 END
 
 STRINGTABLE
@@ -5991,6 +5991,10 @@ BEGIN
     IDS_OBJECTNAME_DLL_DEP_FILE_13 "DLL Depencency 13"
     IDS_OBJECTNAME_DLL_DEP_FILE_14 "DLL Depencency 14"
     IDS_OBJECTNAME_DLL_DEP_FILE_15 "DLL Depencency 15"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_DLL_DEP_FILE_16 "DLL Depencency 16"
     IDS_OBJECTNAME_DLL_DEP_FILE_17 "DLL Depencency 17"
     IDS_OBJECTNAME_DLL_DEP_FILE_18 "DLL Depencency 18"
@@ -6007,6 +6011,10 @@ BEGIN
     IDS_OBJECTNAME_DLL_DEP_FILE_29 "DLL Depencency 29"
     IDS_OBJECTNAME_DLL_DEP_FILE_30 "DLL Depencency 30"
     IDS_OBJECTNAME_DLL_DEP_FILE_31 "DLL Depencency 31"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_DLL_DEP_FILE_32 "DLL Depencency 32"
     IDS_OBJECTNAME_DLL_DEP_FILE_33 "DLL Depencency 33"
     IDS_OBJECTNAME_DLL_DEP_FILE_34 "DLL Depencency 34"
@@ -6023,6 +6031,10 @@ BEGIN
     IDS_OBJECTNAME_DLL_DEP_FILE_45 "DLL Depencency 45"
     IDS_OBJECTNAME_DLL_DEP_FILE_46 "DLL Depencency 46"
     IDS_OBJECTNAME_DLL_DEP_FILE_47 "DLL Depencency 47"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_DLL_DEP_FILE_48 "DLL Depencency 48"
     IDS_OBJECTNAME_DLL_DEP_FILE_49 "DLL Depencency 49"
     IDS_OBJECTNAME_DLL_DEP_FILE_50 "DLL Depencency 50"
@@ -6045,6 +6057,10 @@ BEGIN
     IDS_OBJECTNAME_INPUT_13 "Input 13"
     IDS_OBJECTNAME_INPUT_14 "Input 14"
     IDS_OBJECTNAME_INPUT_15 "Input 15"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_INPUT_16 "Input 16"
     IDS_OBJECTNAME_INPUT_17 "Input 17"
     IDS_OBJECTNAME_INPUT_18 "Input 18"
@@ -6061,6 +6077,10 @@ BEGIN
     IDS_OBJECTNAME_INPUT_29 "Input 29"
     IDS_OBJECTNAME_INPUT_30 "Input 30"
     IDS_OBJECTNAME_INPUT_31 "Input 31"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_INPUT_32 "Input 32"
     IDS_OBJECTNAME_INPUT_33 "Input 33"
     IDS_OBJECTNAME_INPUT_34 "Input 34"
@@ -6077,6 +6097,10 @@ BEGIN
     IDS_OBJECTNAME_INPUT_45 "Input 45"
     IDS_OBJECTNAME_INPUT_46 "Input 46"
     IDS_OBJECTNAME_INPUT_47 "Input 47"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_INPUT_48 "Input 48"
     IDS_OBJECTNAME_INPUT_49 "Input 49"
     IDS_OBJECTNAME_INPUT_50 "Input 50"
@@ -6096,6 +6120,10 @@ BEGIN
     IDS_OBJECTNAME_INPUT_09_NAME "Input 09 Name"
     IDS_OBJECTNAME_INPUT_10_NAME "Input 10 Name"
     IDS_OBJECTNAME_INPUT_11_NAME "Input 11 Name"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_INPUT_12_NAME "Input 12 Name"
     IDS_OBJECTNAME_INPUT_13_NAME "Input 13 Name"
     IDS_OBJECTNAME_INPUT_14_NAME "Input 14 Name"
@@ -6112,6 +6140,10 @@ BEGIN
     IDS_OBJECTNAME_INPUT_25_NAME "Input 25 Name"
     IDS_OBJECTNAME_INPUT_26_NAME "Input 26 Name"
     IDS_OBJECTNAME_INPUT_27_NAME "Input 27 Name"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_INPUT_28_NAME "Input 28 Name"
     IDS_OBJECTNAME_INPUT_29_NAME "Input 29 Name"
     IDS_OBJECTNAME_INPUT_30_NAME "Input 30 Name"
@@ -6128,6 +6160,10 @@ BEGIN
     IDS_OBJECTNAME_INPUT_41_NAME "Input 41 Name"
     IDS_OBJECTNAME_INPUT_42_NAME "Input 42 Name"
     IDS_OBJECTNAME_INPUT_43_NAME "Input 43 Name"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_INPUT_44_NAME "Input 44 Name"
     IDS_OBJECTNAME_INPUT_45_NAME "Input 45 Name"
     IDS_OBJECTNAME_INPUT_46_NAME "Input 46 Name"
@@ -6148,6 +6184,10 @@ BEGIN
     IDS_OBJECTNAME_RESULT_05 "Result 05"
     IDS_OBJECTNAME_RESULT_06 "Result 06"
     IDS_OBJECTNAME_RESULT_07 "Result 07"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_RESULT_08 "Result 08"
     IDS_OBJECTNAME_RESULT_09 "Result 09"
     IDS_OBJECTNAME_RESULT_10 "Result 10"
@@ -6164,6 +6204,10 @@ BEGIN
     IDS_OBJECTNAME_RESULT_21 "Result 21"
     IDS_OBJECTNAME_RESULT_22 "Result 22"
     IDS_OBJECTNAME_RESULT_23 "Result 23"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_RESULT_24 "Result 24"
     IDS_OBJECTNAME_RESULT_25 "Result 25"
     IDS_OBJECTNAME_RESULT_26 "Result 26"
@@ -6180,6 +6224,10 @@ BEGIN
     IDS_OBJECTNAME_RESULT_37 "Result 37"
     IDS_OBJECTNAME_RESULT_38 "Result 38"
     IDS_OBJECTNAME_RESULT_39 "Result 39"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_RESULT_40 "Result 40"
     IDS_OBJECTNAME_RESULT_41 "Result 41"
     IDS_OBJECTNAME_RESULT_42 "Result 42"
@@ -6198,6 +6246,10 @@ BEGIN
     IDS_OBJECTNAME_RESULT_01_NAME "Result 01 Name"
     IDS_OBJECTNAME_RESULT_02_NAME "Result 02 Name"
     IDS_OBJECTNAME_RESULT_03_NAME "Result 03 Name"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_RESULT_04_NAME "Result 04 Name"
     IDS_OBJECTNAME_RESULT_05_NAME "Result 05 Name"
     IDS_OBJECTNAME_RESULT_06_NAME "Result 06 Name"
@@ -6214,6 +6266,10 @@ BEGIN
     IDS_OBJECTNAME_RESULT_17_NAME "Result 17 Name"
     IDS_OBJECTNAME_RESULT_18_NAME "Result 18 Name"
     IDS_OBJECTNAME_RESULT_19_NAME "Result 19 Name"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_RESULT_20_NAME "Result 20 Name"
     IDS_OBJECTNAME_RESULT_21_NAME "Result 21 Name"
     IDS_OBJECTNAME_RESULT_22_NAME "Result 22 Name"
@@ -6230,6 +6286,10 @@ BEGIN
     IDS_OBJECTNAME_RESULT_33_NAME "Result 33 Name"
     IDS_OBJECTNAME_RESULT_34_NAME "Result 34 Name"
     IDS_OBJECTNAME_RESULT_35_NAME "Result 35 Name"
+END
+
+STRINGTABLE
+BEGIN
     IDS_OBJECTNAME_RESULT_36_NAME "Result 36 Name"
     IDS_OBJECTNAME_RESULT_37_NAME "Result 37 Name"
     IDS_OBJECTNAME_RESULT_38_NAME "Result 38 Name"
@@ -6320,8 +6380,10 @@ BEGIN
     ID_ZOOM_PLUS            "zoom plus\nZoom +"
 END
 
-#endif    // Englisch (USA) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
+
+
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////

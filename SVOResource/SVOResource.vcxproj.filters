@@ -234,6 +234,9 @@
     <None Include="res\dot_disabled.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\global_constant.ico">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
