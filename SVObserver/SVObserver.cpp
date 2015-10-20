@@ -3677,7 +3677,16 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 				if( nullptr != pConfig )
 				{
-					hr = pConfig->LoadConfiguration( m_XMLTree );
+					try
+					{
+						hr = pConfig->LoadConfiguration( m_XMLTree );
+					}
+					catch ( const SvStl::MessageContainer& rSvE )
+					{
+						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+						Exception.setMessage( rSvE.getMessage() );
+						hr = E_FAIL;
+					}
 				}
 
 				if (hr & SV_ERROR_CONDITION)

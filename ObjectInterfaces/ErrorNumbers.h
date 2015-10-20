@@ -239,6 +239,7 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_25046_InvalidImage = Gra_ErrorBase + 46;
 	static const int Err_25047_ConvertMixedType = Gra_ErrorBase + 47;
 	static const int Err_25048_ConvertMixedType = Gra_ErrorBase + 48;
+	static const int Err_25049_LoadFileFailed = Gra_ErrorBase + 49;
 
 	//Robert Yoho error base
 	static const int Rpy_ErrorBase = 45000;
