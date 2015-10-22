@@ -64,8 +64,10 @@ void SVMMTimer::Stop()
 		// Stop and Cleanup Async procedure
 		timer.m_asyncProcedure.Destroy();
 	}
+	timer.m_CritSec.Lock();
 	// Remove all Subscribed Event handlers
 	timer.m_eventListeners.clear();
+	timer.m_CritSec.Unlock();
 }
 
 // Add Event Handlers
@@ -75,13 +77,14 @@ void SVMMTimer::Subscribe(const SVString& receiverTag, unsigned long interval, S
 	
 	// Subscribe to event
 	SVMMTimerEventHandler eventHandler(interval, pCallback);
+	timer.m_CritSec.Lock();
 	timer.m_eventListeners[receiverTag] = eventHandler;
-
 	// start it up if not started
 	if (!timer.m_asyncProcedure.IsActive())
 	{
 		timer.Start();
 	}
+	timer.m_CritSec.Unlock();
 }
 
 // Set Timer Interval
@@ -89,6 +92,7 @@ void SVMMTimer::SetInterval(const SVString& receiverTag, unsigned long interval)
 {
 	SVMMTimer& timer = SVMMTimer::Instance();
 	typedef SVTimerEventListeners::iterator Iter;
+	timer.m_CritSec.Lock();
 	// Find event handler
 	Iter it = timer.m_eventListeners.find(receiverTag);
 
@@ -97,6 +101,7 @@ void SVMMTimer::SetInterval(const SVString& receiverTag, unsigned long interval)
 	{
 		it->second.setInterval(interval);
 	}
+	timer.m_CritSec.Unlock();
 }
 
 // Remove Event handlers
@@ -104,6 +109,7 @@ void SVMMTimer::UnSubscribe(const SVString& receiverTag)
 {
 	SVMMTimer& timer = SVMMTimer::Instance();
 
+	timer.m_CritSec.Lock();
 	// UnSubscribe to event
 	SVTimerEventListeners::iterator it = timer.m_eventListeners.find(receiverTag);
 	if (it != timer.m_eventListeners.end())
@@ -115,6 +121,7 @@ void SVMMTimer::UnSubscribe(const SVString& receiverTag)
 	{
 		timer.Stop();
 	}
+	timer.m_CritSec.Unlock();
 }
 
 // Callback for the TimeSetEvent API call
@@ -135,6 +142,7 @@ void CALLBACK SVMMTimer::TimerAPCProc( ULONG_PTR dwParam )
 // Event Dispatcher
 void SVMMTimer::Dispatch( bool& p_WaitForEvents )
 {
+	m_CritSec.Lock();
 	SVTimerEventListeners::iterator it;
 	for (it = m_eventListeners.begin();it != m_eventListeners.end();++it)
 	{
@@ -151,6 +159,7 @@ void SVMMTimer::Dispatch( bool& p_WaitForEvents )
 		//	}
 		//}
 	}
+	m_CritSec.Unlock();
 }
 
 //******************************************************************************

@@ -143,8 +143,9 @@ HRESULT SVSoftwareTriggerDevice::AddTriggerCallback(HANDLE handle, SVTriggerCall
 		triggerStruct.callbackStruct.pData = pData;
 
 		list.push_back(triggerStruct);
+		m_CritSec.Lock();
 		m_triggerList.insert(std::make_pair(handle, list));
-			
+		m_CritSec.Unlock();
 		hr = S_OK;
 	}
 	return hr;
@@ -154,6 +155,7 @@ HRESULT SVSoftwareTriggerDevice::RemoveTriggerCallback(HANDLE handle, SVTriggerC
 {
 	HRESULT hr = S_FALSE;
 
+	m_CritSec.Lock();
 	TriggerList::iterator it = m_triggerList.find(handle);
 	if (it != m_triggerList.end())
 	{
@@ -167,22 +169,24 @@ HRESULT SVSoftwareTriggerDevice::RemoveTriggerCallback(HANDLE handle, SVTriggerC
 			hr = S_OK;
 		}
 	}
+	m_CritSec.Unlock();
 	return hr;
 }
 
 HRESULT SVSoftwareTriggerDevice::RemoveAllTriggerCallbacks(HANDLE handle)
 {
+	m_CritSec.Lock();
 	TriggerList::iterator it = m_triggerList.find(handle);
 	if (it != m_triggerList.end())
 	{
 		TriggerCallbackList& list = it->second;
-		
 		for (size_t i = 0;i < list.size();i++)
 		{
 			list[i].bStarted = false;
 		}
 		m_triggerList.erase(it);
 	}
+	m_CritSec.Unlock();
 	return S_OK;
 }
 
@@ -192,6 +196,7 @@ HRESULT SVSoftwareTriggerDevice::StartTrigger(HANDLE handle)
 
 	SetTimerCallback(handle);
 
+	m_CritSec.Lock();
 	TriggerList::iterator it = m_triggerList.find(handle);
 	if (it != m_triggerList.end())
 	{
@@ -206,6 +211,7 @@ HRESULT SVSoftwareTriggerDevice::StartTrigger(HANDLE handle)
 		}
 		hr = S_OK;
 	}
+	m_CritSec.Unlock();
 	return hr;
 }
 
@@ -215,6 +221,7 @@ HRESULT SVSoftwareTriggerDevice::StopTrigger(HANDLE handle)
 
 	RemoveTimerCallback(handle);
 
+	m_CritSec.Lock();
 	TriggerList::iterator it = m_triggerList.find(handle);
 	if (it != m_triggerList.end())
 	{
@@ -226,6 +233,7 @@ HRESULT SVSoftwareTriggerDevice::StopTrigger(HANDLE handle)
 		}
 		hr = S_OK;
 	}
+	m_CritSec.Unlock();
 	return hr;
 }
 
@@ -369,6 +377,7 @@ HRESULT SVSoftwareTriggerDevice::GetTriggerPeriod( HANDLE handle, long* p_lPerio
 HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( HANDLE handle, long p_lPeriod )
 {
 	HRESULT hr = S_FALSE;
+	m_CritSec.Lock();
 	TimerList::iterator it = m_timerList.find(handle);
 	if (it != m_timerList.end())
 	{
@@ -382,12 +391,14 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( HANDLE handle, long p_lPeriod
 		}
 		hr = S_OK;
 	}
+	m_CritSec.Unlock();
 	return hr;
 }
 
 HRESULT SVSoftwareTriggerDevice::SetTimerCallback(HANDLE handle)
 {
 	HRESULT hr = S_FALSE;
+	m_CritSec.Lock();
 	TimerList::iterator it = m_timerList.find(handle);
 	if (it != m_timerList.end())
 	{
@@ -405,12 +416,14 @@ HRESULT SVSoftwareTriggerDevice::SetTimerCallback(HANDLE handle)
 			hr = S_OK;
 		}
 	}
+	m_CritSec.Unlock();
 	return hr;
 }
 
 HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(HANDLE handle)
 {
 	HRESULT hr = S_FALSE;
+	m_CritSec.Lock();
 	TimerList::iterator it = m_timerList.find(handle);
 	if (it != m_timerList.end())
 	{
@@ -423,6 +436,7 @@ HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(HANDLE handle)
 			hr = S_OK;
 		}
 	}
+	m_CritSec.Unlock();
 	return hr;
 }
 
@@ -443,12 +457,14 @@ void SVSoftwareTriggerDevice::OnSoftwareTimer(const SVString& tag)
 		HANDLE handle = it->second;
 
 		// get callback list
+		m_CritSec.Lock();
 		TriggerList::iterator triggerIt = m_triggerList.find(handle);
 		if (triggerIt != m_triggerList.end())
 		{
 			TriggerCallbackList& list = triggerIt->second;
 			std::for_each(list.begin(), list.end(), SVSoftwareTriggerDevice::DispatchTrigger);
 		}
+		m_CritSec.Unlock();
 	}
 }
 

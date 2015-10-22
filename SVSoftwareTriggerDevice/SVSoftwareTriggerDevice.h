@@ -18,6 +18,7 @@
 #include "SVTimerLibrary/SVTimerCallbackImpl.h"
 #include "SVTriggerLibrary/SVTriggerCallbackStruct.h"
 #include "SVContainerLibrary/SVBidirectionalMap.h"
+#include "SVSystemLibrary\/SVCriticalSection.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -90,6 +91,7 @@ private:
 	HRESULT RemoveTimerCallback(HANDLE handle);
 	void OnSoftwareTimer(const SVString& tag);
 	static void DispatchTrigger(const SVSoftwareTriggerStruct& triggerListener);
+	SVCriticalSection m_CritSec;
 };
 
 #endif

@@ -16,6 +16,7 @@
 #include <boost/function.hpp>
 #include "SVMMTimerEventHandler.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
+#include "SVSystemLibrary/SVCriticalSection.h"
 
 class SVMMTimer
 {
@@ -44,6 +45,7 @@ private:
 	static void CALLBACK TimerAPCProc( ULONG_PTR dwParam );
 
 	void Dispatch( bool& p_WaitForEvents );
+	SVCriticalSection m_CritSec;
 };
 
 #endif
