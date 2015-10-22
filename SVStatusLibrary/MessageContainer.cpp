@@ -30,7 +30,7 @@ static const TCHAR* const DebugLogFormat = _T( "Exception: ErrorCode: %d\nMessag
 static const TCHAR* const RegPathEventLog = _T("HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\EventLog\\Application\\");
 static const TCHAR* const EventMsgFile = _T( "EventMessageFile" );
 static const TCHAR* const SourceCategoryEventFormat = _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n");
-static const TCHAR* const ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0X%X");
+static const TCHAR* const ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
 static const TCHAR* const DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d\r\nOSError: %d\r\nCompiled: %s %s\n");
 
 static const UINT SubstituteStringNr = 12;
