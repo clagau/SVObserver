@@ -355,7 +355,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 			hrOk = S_FALSE;
             ASSERT(FALSE);
 			SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-			Exception.setMessage( SVMSG_SVO_76_LOAD_FILE, mFiles[l].GetFullFileName(), StdMessageParams, SvOi::Err_25049_LoadFileFailed );
+			Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), StdMessageParams, SvOi::Err_25047_LoadFileFailed );
 			Exception.Throw();
 		}
 	}

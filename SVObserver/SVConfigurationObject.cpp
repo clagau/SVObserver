@@ -3636,30 +3636,14 @@ HRESULT SVConfigurationObject::ConvertToMixedProductType( bool& rConfigColor )
 	SVIMProductEnum CurrentType( TheSVObserverApp.GetSVIMType() );
 	SVIMProductEnum ConfigType( GetProductType() );
 
-	//If compatible we need to change the product type from mono and color to mixed
+	//Need to change the product type from mono and color to mixed
 	bool ConvertType = SVHardwareManifest::IsMixedSystem( CurrentType ) && !SVHardwareManifest::IsMixedSystem( ConfigType );
 	if( ConvertType )
 	{
-		SvStl::MessageMgrDisplayAndNotify Exception(SvStl::LogAndDisplay);
+		rConfigColor = SVHardwareManifest::IsColorSystem( ConfigType );
+		SetProductType( CurrentType );
+		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
-		if( SVHardwareManifest::IsCompatible( ConfigType, CurrentType ) )
-		{
-			if( IDYES == Exception.setMessage( SVMSG_SVO_74_CONVERT_PRODUCT_TYPE, nullptr, StdMessageParams, SvOi::Err_25047_ConvertMixedType, 0, nullptr, MB_YESNO ) )
-			{
-				rConfigColor = SVHardwareManifest::IsColorSystem( ConfigType );
-				SetProductType( CurrentType );
-				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-			}
-			else
-			{
-				Result = SVMSG_SVO_74_CONVERT_PRODUCT_TYPE;
-			}
-		}
-		else
-		{
-			Result = SVMSG_SVO_75_CONFIGURATION_CONVERSION;
-			Exception.setMessage(Result , nullptr, StdMessageParams, SvOi::Err_25048_ConvertMixedType );
-		}
 	}
 	return Result;
 }
