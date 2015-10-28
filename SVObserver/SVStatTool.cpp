@@ -194,6 +194,7 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 
 	SetVariableSelected( strName );
 
+	RestoreFeatureAttributes();
 
 	return isCreated;
 }
@@ -251,6 +252,27 @@ DWORD SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 	AllocateResult (aIndex);
 
 	return 0;
+}
+
+////////////////////////////////////////////////////
+// This function restores feature attributesAllowed
+// that were previously stored in the configuration.
+////////////////////////////////////////////////////
+void SVStatisticsToolClass::RestoreFeatureAttributes()
+{
+	CString featureStr;
+	msvPersistantFeaturesEnabled.GetValue(featureStr);
+	for( int iFeature = SV_STATS_MIN_VALUE ; iFeature < SV_STATS_TOPOF_LIST ; iFeature++ )
+	{
+		if (_T('1') == featureStr.GetAt(iFeature))
+		{
+			msvValue[iFeature].ObjectAttributesAllowedRef() = msvlDefaultAttributes;
+		}
+		else
+		{
+			msvValue[iFeature].ObjectAttributesAllowedRef() &= ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+		}
+	}
 }
 
 

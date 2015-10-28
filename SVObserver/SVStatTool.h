@@ -80,6 +80,8 @@ protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
+	void RestoreFeatureAttributes();
+
 protected:
 	SVDoubleValueObjectClass    msvValue [SV_NUMBER_OF_STAT_FEATURES];
 	SVStringValueObjectClass    msvOccurenceValue;
