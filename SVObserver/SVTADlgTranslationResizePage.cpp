@@ -11,6 +11,7 @@
 #include <limits>
 #include "SVOResource\resource.h"
 #include "SVMessage\SVMessage.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "PropertyTree\PROPTREE.H"
@@ -41,7 +42,7 @@ enum {	IDC_INPUTLISTTREE = 99,
 
 SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(SVToolAdjustmentDialogSheetClass* Parent, int id)
 : CPropertyPage(id)
-, m_Tool(nullptr)
+, m_pTool(nullptr)
 , m_ParentDialog(Parent)
 , m_HeightScaleFactor(1.0)
 , m_WidthScaleFactor(1.0)
@@ -68,6 +69,26 @@ void SVTADlgTranslationResizePage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
+
+BOOL SVTADlgTranslationResizePage::OnKillActive()
+{
+	HRESULT hr = ExitTabValidation();
+
+	if (SUCCEEDED (hr))
+	{
+		if (false == CPropertyPage::OnKillActive())
+		{
+			hr = SVMSG_SVO_5077_COULDNOTVALIDATE;
+		}
+	}
+
+	bool br = SUCCEEDED (hr); // returning false should make it stay on the 
+							  // current tab.
+
+	return br;
+}
+
+
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgTranslationResizePage message handlers
 
@@ -85,9 +106,9 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 	}
 	else
 	{
-		m_Tool = static_cast <ResizeTool*> (m_ParentDialog->GetTool ());
+		m_pTool = static_cast <ResizeTool*> (m_ParentDialog->GetTool ());
 
-		if (nullptr == m_Tool)
+		if (nullptr == m_pTool)
 		{
 			hr = SVMSG_SVO_5008_NULLTOOL;
 		}
@@ -96,7 +117,9 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 			// This sets the base class 
 			//   SVTaskObjectValueInterface::m_psvTaskObject (Tool).  This is 
 			//   necessary for performing a RunOnce later.
-			SetTaskObject( m_Tool );
+			SetTaskObject( m_pTool );
+			
+			m_pTool->BackupInspectionParameters ();
 
 			hr = SetupResizePropertyTree();
 			if (S_OK == hr )
@@ -154,7 +177,7 @@ HRESULT SVTADlgTranslationResizePage::AddScaleFactors(SVRPropertyItem* pRoot)
 		{
 			pEdit->SetCtrlID( IDC_INPUTLISTTREE_WIDTHSCALEFACTOR );
 			pEdit->SetLabelText( _T("Width"));
-			pEdit->SetInfoText( _T("Width scale factor modifies the width of the image. < 1 will reduce.  > 1 will expand."));
+			pEdit->SetInfoText( _T("Width scale factor modifies the width of the image. < 1 will reduce.  > 1 will expand. Range: > 0 - 1000."));
 			pEdit = static_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem));
 			if (!pEdit)
 			{
@@ -164,7 +187,7 @@ HRESULT SVTADlgTranslationResizePage::AddScaleFactors(SVRPropertyItem* pRoot)
 			{
 				pEdit->SetCtrlID( IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR );
 				pEdit->SetLabelText( _T("Height"));
-				pEdit->SetInfoText( _T("Height scale factor modifies the height of the image. < 1 will reduce.  > 1 will expand."));
+				pEdit->SetInfoText( _T("Height scale factor modifies the height of the image. < 1 will reduce.  > 1 will expand. Range: > 0 - 1000."));
 			}
 		}
 	}
@@ -282,7 +305,7 @@ HRESULT SVTADlgTranslationResizePage::AddInterpolationMode(SVRPropertyItem* pGro
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass* interpolationMode = m_Tool->getInterpolationMode ();
+		SVEnumerateValueObjectClass* interpolationMode = m_pTool->getInterpolationMode ();
 		CString	enumeratorName;
 
 		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeAuto, enumeratorName);
@@ -324,7 +347,7 @@ HRESULT SVTADlgTranslationResizePage::AddOverScan(SVRPropertyItem* pGroupItem)
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass* overscan = m_Tool->getOverscan ();
+		SVEnumerateValueObjectClass* overscan = m_pTool->getOverscan ();
 		CString	enumeratorName;
 
 		overscan->GetEnumeratorName(SVOverscanOptions::OverscanEnable, enumeratorName);
@@ -356,7 +379,7 @@ HRESULT SVTADlgTranslationResizePage::AddPerformance(SVRPropertyItem* pGroupItem
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass* performance = m_Tool->getPerformance ();
+		SVEnumerateValueObjectClass* performance = m_pTool->getPerformance ();
 		CString	enumeratorName;
 
 		performance->GetEnumeratorName(SVPerformanceOptions::PerformanceFast, enumeratorName);
@@ -563,7 +586,7 @@ void SVTADlgTranslationResizePage::UpdateOutputImageInfo(long newOutputWidth, lo
 void SVTADlgTranslationResizePage::UpdateOtherInfo()
 {
 	SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
-	SVEnumerateValueObjectClass* interpolationMode = m_Tool->getInterpolationMode ();
+	SVEnumerateValueObjectClass* interpolationMode = m_pTool->getInterpolationMode ();
 	long oldInterpolationValue;
 	long newInterpolationValue;
 	interpolationMode->GetValue (newInterpolationValue);
@@ -574,7 +597,7 @@ void SVTADlgTranslationResizePage::UpdateOtherInfo()
 	}
 
 	comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
-	SVEnumerateValueObjectClass* overscan = m_Tool->getOverscan ();
+	SVEnumerateValueObjectClass* overscan = m_pTool->getOverscan ();
 	long oldOverscanValue;
 	long newOverscanValue;
 	overscan->GetValue (newOverscanValue);
@@ -585,7 +608,7 @@ void SVTADlgTranslationResizePage::UpdateOtherInfo()
 	}
 
 	comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
-	SVEnumerateValueObjectClass* performance = m_Tool->getPerformance ();
+	SVEnumerateValueObjectClass* performance = m_pTool->getPerformance ();
 	long oldPerformanceValue;
 	long newPerformanceValue;
 	performance->GetValue (newPerformanceValue);
@@ -599,7 +622,7 @@ void SVTADlgTranslationResizePage::UpdateOtherInfo()
 HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData ()
 {
 	SVImageExtentClass toolImageExtents;
-	HRESULT hr = m_Tool->GetImageExtent(toolImageExtents);
+	HRESULT hr = m_pTool->GetImageExtent(toolImageExtents);
 	if (S_OK == hr)
 	{
 		double newHeightScaleFactor = 0.0;
@@ -627,79 +650,157 @@ HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData ()
 
 HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 {
-	bool extentChanged = false;
-	bool embeddedChanged = false;
+	HRESULT	hr = S_OK;
+
+	bool	extentChanged =			false;
+	bool	embeddedChanged =		false;
+
+	double	oldWidthScaleFactor =	0.0;
+	double	oldHeightScaleFactor = 0.0;
+	long	oldInterpolationModeValue = 0;
+	long	oldOverscanValue = 0;
+	long	oldPerformanceValue = 0;
+
+	SVRPropertyItemEdit*	editItem = nullptr;
+	SVRPropertyItemCombo*	comboItem = nullptr;
 
 	SVImageExtentClass toolImageExtents;
-	HRESULT hr = m_Tool->GetImageExtent(toolImageExtents);
-	if (S_OK == hr)
-	{
-		SVRPropertyItemEdit* editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
 
-		double oldHeightScaleFactor = 0.0;
-		double newHeightScaleFactor = 0.0;
-		SVDoubleValueObjectClass	newHeightScaleFactorVO;
+	// Retrieve current values --------------------------------------------------
+	hr = m_pTool->GetImageExtent(toolImageExtents);
+
+	if (SUCCEEDED (hr))
+	{
 		toolImageExtents.GetExtentProperty (SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
+		toolImageExtents.GetExtentProperty (SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
+
+		SVEnumerateValueObjectClass* interpolationMode = m_pTool->getInterpolationMode ();
+		interpolationMode->GetValue (oldInterpolationModeValue);
+
+		SVEnumerateValueObjectClass* overscan = m_pTool->getOverscan ();
+		overscan->GetValue (oldOverscanValue);
+
+		SVEnumerateValueObjectClass* performance = m_pTool->getPerformance ();
+		performance->GetValue (oldPerformanceValue);
+	}
+
+	// Validate new values --------------------------------------------------
+
+	double	newHeightScaleFactor =	0.0;
+	if (SUCCEEDED (hr))
+	{
+		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
 		editItem->GetItemValue(newHeightScaleFactor);
-		if (newHeightScaleFactor != oldHeightScaleFactor) // reduces flicker.
+		hr = m_pTool->ValidateScaleFactor (newHeightScaleFactor);
+		if (!SUCCEEDED (hr))
 		{
-			toolImageExtents.SetExtentProperty (SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
-			extentChanged = true;
+			newHeightScaleFactor = oldHeightScaleFactor;
+			editItem->SetItemValue(newHeightScaleFactor);
+		}
+	}
+
+	double	newWidthScaleFactor =	0.0;
+	if (SUCCEEDED (hr))
+	{
+		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
+		editItem->GetItemValue(newWidthScaleFactor);
+		hr = m_pTool->ValidateScaleFactor (newWidthScaleFactor);
+		if (!SUCCEEDED (hr))
+		{
+			// Expected codes include...
+			//  SVMSG_SVO_5061_SFOUTSIDERANGE
+			newWidthScaleFactor = oldWidthScaleFactor;
+			editItem->SetItemValue(newWidthScaleFactor);
+		}
+	}
+
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum newInterpolationValue = 
+		SVInterpolationModeOptions::InterpolationModeInitialize;
+	
+	if (SUCCEEDED (hr))
+	{
+		SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
+		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newInterpolationValue)));
+
+		hr = m_pTool->ValidateInterpolation(newInterpolationValue);
+		if (!SUCCEEDED (hr))
+		{
+			comboItem->SetItemValue(oldInterpolationModeValue);
+		}
+	}
+
+	SVOverscanOptions::SVOverscanOptionsEnum newOverscanValue = 
+		SVOverscanOptions::OverscanInitialize;
+	if (SUCCEEDED (hr))
+	{
+		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
+		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newOverscanValue)));
+
+		hr = m_pTool->ValidateOverscan(newOverscanValue);
+		if (!SUCCEEDED (hr))
+		{
+			comboItem->SetItemValue(oldOverscanValue);
 		}
 
-		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
-		double oldWidthScaleFactor = 0.0;
-		double newWidthScaleFactor = 0.0;
-		toolImageExtents.GetExtentProperty (SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
-		editItem->GetItemValue(newWidthScaleFactor);
-		if (newWidthScaleFactor != oldWidthScaleFactor) // reduces flicker.
+	}
+
+	SVPerformanceOptions::SVPerformanceOptionsEnum newPerformanceValue = 
+		SVPerformanceOptions::PerformanceInitialize;
+	if (SUCCEEDED (hr))
+	{
+		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
+		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newPerformanceValue)));
+		hr = m_pTool->ValidatePerformance(newPerformanceValue);
+		if (!SUCCEEDED (hr))
 		{
+			comboItem->SetItemValue(oldPerformanceValue);
+		}
+	}
+
+
+	// Set new values -------------------------------------------------------
+	// Want to do as much error checking as possible before calling 
+	// AddInputRequest(), which can not be easily backed out.  Restoring from
+	// an error prior to this point is easier than restoring from an error 
+	// after this point.
+	if (SUCCEEDED (hr) && (newHeightScaleFactor != oldHeightScaleFactor)) // reduces flicker.
+	{
+		toolImageExtents.SetExtentProperty (SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+		extentChanged = true;
+	}
+
+	if (SUCCEEDED (hr) && (newWidthScaleFactor != oldWidthScaleFactor)) // reduces flicker.
+	{
 			toolImageExtents.SetExtentProperty (SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
 			extentChanged = true;
-		}
+	}
 
-		SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
-		SVEnumerateValueObjectClass* interpolationMode = m_Tool->getInterpolationMode ();
-		long oldInterpolationValue;
-		long newInterpolationValue;
-		interpolationMode->GetValue (oldInterpolationValue);
-		comboItem->GetItemValue(newInterpolationValue);
-		if (newInterpolationValue != oldInterpolationValue)
-		{
-			SVValueObjectClass*	interpolationModeVO = m_Tool->getInterpolationMode();
-			AddInputRequest(interpolationModeVO, newInterpolationValue);
-			embeddedChanged = true;
-		}
+	if (SUCCEEDED (hr) && (static_cast <long> (newInterpolationValue) != oldInterpolationModeValue))
+	{
+		SVValueObjectClass*	interpolationModeVO = m_pTool->getInterpolationMode();
+		AddInputRequest(interpolationModeVO, newInterpolationValue);
+		embeddedChanged = true;
+	}
 
-		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
-		SVEnumerateValueObjectClass* overscan = m_Tool->getOverscan ();
-		long oldOverscanValue;
-		long newOverscanValue;
-		overscan->GetValue (oldOverscanValue);
-		comboItem->GetItemValue(newOverscanValue);
-		if (newOverscanValue != oldOverscanValue)
-		{
-			SVValueObjectClass*	overscanVO = m_Tool->getOverscan();
-			AddInputRequest(overscanVO, newOverscanValue);
-			embeddedChanged = true;
-		}
+	if (SUCCEEDED (hr) && (newOverscanValue != oldOverscanValue))
+	{
+		SVValueObjectClass*	overscanVO = m_pTool->getOverscan();
+		AddInputRequest(overscanVO, newOverscanValue);
+		embeddedChanged = true;
+	}
 
-		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
-		SVEnumerateValueObjectClass* performance = m_Tool->getPerformance ();
-		long oldPerformanceValue;
-		long newPerformanceValue;
-		performance->GetValue (oldPerformanceValue);
-		comboItem->GetItemValue(newPerformanceValue);
-		if (newPerformanceValue != oldPerformanceValue)
-		{
-			SVValueObjectClass*	performanceVO = m_Tool->getPerformance();
-			AddInputRequest(performanceVO, newPerformanceValue);
-			embeddedChanged = true;
-		}
+	if (SUCCEEDED (hr) && (newPerformanceValue != oldPerformanceValue))
+	{
+		SVValueObjectClass*	performanceVO = m_pTool->getPerformance();
+		AddInputRequest(performanceVO, newPerformanceValue);
+		embeddedChanged = true;
+	}
 
+	if (SUCCEEDED (hr))
+	{
 		if (true == extentChanged)
 		{
-			HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_Tool, toolImageExtents);
+			HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pTool, toolImageExtents);
 		}
 
 		if (true == embeddedChanged)
@@ -709,12 +810,135 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 
 		if ((true == extentChanged) || (true == embeddedChanged))
 		{
-			RunOnce(m_Tool);
-			hr = UpdateImages();
+			hr = RunOnce(m_pTool);
+			if (S_FALSE == hr)
+			{
+				hr = SVMSG_SVO_5066_CATCHRUNONCESFALSE;
+			}
+
+			if (SUCCEEDED (hr))
+			{
+				hr = UpdateImages();
+			}
+
+			if (SUCCEEDED (hr))
+			{
+				m_pTool->BackupInspectionParameters();
+			}
 		}
 	}
+
 	return hr;
 }
+
+
+bool	SVTADlgTranslationResizePage::QueryAllowExit()
+{
+	HRESULT hr = ExitTabValidation();
+	
+	bool br = SUCCEEDED (hr); // returning false should make it stay on the 
+							  // current tab.
+	return br;
+}
+
+
+HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
+{
+	HRESULT		hr =		S_OK;
+	HRESULT		hrTemp =	S_OK;
+	BOOL		br =		FALSE;
+	LRESULT		lr =		S_OK; // not used.
+	bool		alreadyDisplayed = false;
+
+	SVString	tString;
+
+	SVRPropertyItem* item = m_Tree.GetFocusedItem ();
+
+	// if changes in the property are pending, CommitChanges() will fire off 
+	// OnItemChanged(). Because OnItemChanged() will in turn go into 
+	// RunOnce() and ResetObject() logic, we will attempt to retrieve 
+	// we will only be able to track results from the Run Error Code.
+	m_pTool->ClearRunError();
+	item->CommitChanges();  
+
+	hr = m_pTool->GetRunErrorCode();
+	tString = m_pTool->GetRunErrorData();
+	
+	// above validates the parameters from the translation tab.
+	// below validates the whole tool.
+
+	if (SUCCEEDED (hr))
+	{
+		br = m_pTool->Validate();
+		hr = m_pTool->GetValidationErrorCode();
+		if ((TRUE == br) != SUCCEEDED (hr))
+		{
+			hr = SVMSG_SVO_5078_INCONSISTENTDATA;
+		}
+		else
+			if (!SUCCEEDED (hr))
+			{
+				tString = m_pTool->GetValidationErrorData();
+			}
+	}
+	else
+	{
+		// anything that failed during the commit should have already been 
+		// displayed.
+		alreadyDisplayed = true;
+	}
+
+	if (SUCCEEDED (hr))
+	{
+
+		hr = RunOnce(m_pTool);
+		hrTemp = m_pTool->GetRunErrorCode();
+		if (hr == hrTemp)
+		{
+			tString = m_pTool->GetRunErrorData();
+		}
+	}
+
+	if (!SUCCEEDED (hr))
+	{
+		DisplayRunError(hr, tString, 5068);
+	}
+
+	return hr;
+}
+
+
+HRESULT		SVTADlgTranslationResizePage::DisplayRunError (HRESULT errorCode, SVString errorString, unsigned long programCode)
+{
+	HRESULT hr = S_OK;
+
+	HRESULT runError = m_pTool->GetRunErrorCode ();
+	bool	displayed = m_pTool->GetRunDisplayed ();
+
+	if (errorCode == runError)
+	{
+		if (true == displayed)
+		{
+			// do nothing, this error message has already been displayed.
+		}
+		else
+		{
+			// this is the Run Error and should be displayed.
+			SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
+			Exception.setMessage( errorCode, errorString.c_str(), StdMessageParams, programCode);
+			hr = m_pTool->SetRunDisplayed(true);
+		}
+	}
+	else
+	{
+		// this is not the Run Error and should always be displayed.
+		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
+		Exception.setMessage( errorCode, errorString.c_str(), StdMessageParams, programCode);
+	}
+
+	return hr;
+}
+
 
 HRESULT SVTADlgTranslationResizePage::SetupResizeImageControl()
 {
@@ -744,7 +968,7 @@ HRESULT SVTADlgTranslationResizePage::UpdateImages()
 
 	SVSmartHandlePointer inputImageHandle;
 
-	SVImageClass* inputImage = m_Tool->getInputImage();
+	SVImageClass* inputImage = m_pTool->getInputImage();
 	if (nullptr == inputImage)
 	{
 		// if (nullptr == inputImage) should not need checked here.
@@ -755,7 +979,7 @@ HRESULT SVTADlgTranslationResizePage::UpdateImages()
 	}
 	else
 	{
-		SVImageClass* logicalROIImage = m_Tool->getLogicalROIImage();
+		SVImageClass* logicalROIImage = m_pTool->getLogicalROIImage();
 		if (nullptr == logicalROIImage)
 		{
 			// if (nullptr == logicalROIImage) should not need checked here.
@@ -766,7 +990,7 @@ HRESULT SVTADlgTranslationResizePage::UpdateImages()
 		}
 		else
 		{
-			SVImageClass* outputImage = m_Tool->getOutputImage();
+			SVImageClass* outputImage = m_pTool->getOutputImage();
 			if (!outputImage)
 			{
 				hr = SVMSG_SVO_5041_COULDNOTGETOUTPUTIMAGE;
@@ -783,65 +1007,150 @@ HRESULT SVTADlgTranslationResizePage::UpdateImages()
 	return hr;
 }
 
-static bool ValidScalefactor(const CString& strValue)
-{
-	bool bRetVal = true;
-	double val = atof(strValue);
-	if (val < std::numeric_limits<double>::epsilon())
-	{
-		bRetVal = false;
-	}
-	return bRetVal;
-}
 
 void SVTADlgTranslationResizePage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	LPNMPROPTREE pNMPropTree = reinterpret_cast< LPNMPROPTREE >(pNotifyStruct);
-	*plResult = FALSE;
+	*plResult = S_OK;  // the OS (DefWindowProc) is not required to process this 
+					   // message.
+
+	HRESULT hr = ValidateCurrentTreeData (pNMPropTree->pItem);
+}
+
+
+HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* item)
+{
+//	bool bValid = true;
+
+	SVString tString;
+	HRESULT hrTemp = S_OK;
+
+	// Some items are checked before the RunOnce, and then the RunOnce is 
+	// bypassed.  So the clear must be explicitly called.
+	m_pTool->ClearRunError();
+	m_pTool->ClearValidationError();
+
+	HRESULT	hr = SetInspectionData();
+
+	if (!SUCCEEDED (hr))
+	{
+		// SetInspectionData() ends up calling RunOnce and ResetObjects.  
+		// Error handling within these processes is not complete. The 
+		// maintains members to help pass error data outside these 
+		// operations.
+		HRESULT hrTemp = m_pTool->GetRunErrorCode();
+
+		if (((SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr) ||
+			 (SVMSG_SVO_5061_SFOUTSIDERANGE == hr)) &&
+			(nullptr != item))
+		{
+			if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
+			{
+				// more specific message for this context.
+				hr = SVMSG_SVO_5070_IMAGEALLOCATIONFAILED;
+			}
+
+			tString = item->GetLabelText();
+		}
+		else
+		if (hr == hrTemp)
+		{
+			tString = m_pTool->GetRunErrorData();
+		}
+
+		DisplayRunError(hr, tString.c_str(), SvOi::ProgCode_5067_ValidateCurrentTreeData);
+	}
+
+	hrTemp = hr;
+
+
+	if (!SUCCEEDED (hr))
+	{
+		if (item)
+		{
+			// Attempt to restore to previous values.
+			RestorePropertyTreeItemFromBackup (item);
+		}
+
+		// It is understood that we are loosing the previous error.
+		hr = SetInspectionData ();
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		hr = UpdatePropertyTreeData();
+
+		if (SUCCEEDED (hr))
+		{
+			// if there was an error setting the properties the first time,
+			// and there was no error setting the properties back to the 
+			// original values, then preserve the first error (which was 
+			// displayed).
+			m_pTool->SetRunErrorCode (hrTemp);
+			m_pTool->SetRunErrorData (tString);
+			m_pTool->SetRunDisplayed(true);
+		}
+	}
+
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::RestorePropertyTreeItemFromBackup (SVRPropertyItem* pItem)
+{
 	HRESULT hr = S_OK;
-	bool bValid = true;
 
-	if (pNMPropTree->pItem)
+	UINT controlID = pItem->GetCtrlID();
+
+	double	oldWidthScaleFactor =	0.0;
+	double	oldHeightScaleFactor = 0.0;
+	long	oldInterpolationModeValue = 0;
+	long	oldOverscanValue = 0;
+	long	oldPerformanceValue = 0;
+
+	SVRPropertyItemEdit* editItem = nullptr;
+
+	m_pTool->GetBackupInspectionParameters (	&oldHeightScaleFactor,
+		&oldWidthScaleFactor,
+		&oldInterpolationModeValue,
+		&oldOverscanValue,
+		&oldPerformanceValue);
+
+	switch (controlID)
 	{
-		SVRPropertyItem* pItem = pNMPropTree->pItem;
-
-		if (IDC_INPUTLISTTREE_WIDTHSCALEFACTOR == pItem->GetCtrlID())
+	case IDC_INPUTLISTTREE_WIDTHSCALEFACTOR:
 		{
-			CString value;
-			m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR)->GetItemValue(value);
-			value.Trim();
-			
-			bValid = ValidScalefactor(value);
-			if (!bValid)
-			{ 
-				CString strVal;
-				strVal.Format("%0.2lf", m_WidthScaleFactor);
-				m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR)->SetItemValue(strVal);
-			}
+			pItem->SetItemValue(oldWidthScaleFactor);
+			break;
 		}
-		if (IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR == pItem->GetCtrlID())
+	case IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR:
 		{
-			CString value;
-			m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR)->GetItemValue(value);
-			value.Trim();
-			
-			bValid = ValidScalefactor(value);
-			if (!bValid)
-			{ 
-				CString strVal;
-				strVal.Format("%0.2lf", m_HeightScaleFactor);
-				m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR)->SetItemValue(strVal);
-			}
+			pItem->SetItemValue(oldHeightScaleFactor);
+			break;
+		}
+	case IDC_INPUTLISTTREE_INTERPOLATIONMODE:
+		{
+			pItem->SetItemValue(oldInterpolationModeValue);
+			break;
+		}
+	case IDC_INPUTLISTTREE_OVERSCAN:
+		{
+			pItem->SetItemValue(oldOverscanValue);
+			break;
+		}
+
+	case IDC_INPUTLISTTREE_PERFORMANCE:
+		{
+			pItem->SetItemValue(oldPerformanceValue);
+			break;
+		}
+	default:
+		{
+			//  ingore for now.
+			break;
 		}
 	}
-	if (bValid)
-	{
-		hr = SetInspectionData();
-		if (SUCCEEDED(hr))
-		{
-			hr = UpdatePropertyTreeData();
-		}
-	}
+
+	return hr;
 }
 
 

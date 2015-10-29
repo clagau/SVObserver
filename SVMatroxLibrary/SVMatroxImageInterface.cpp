@@ -2163,51 +2163,14 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Resize( const SVMat
 			long matroxOverscan				= 0;
 			long matroxPerformance			= 0;
 
-			switch (interpolationMode)
-			{
-			case	SVInterpolationModeOptions::InterpolationModeAuto:	
-			case	SVInterpolationModeOptions::InterpolationModeBilinear:	
-			case	SVInterpolationModeOptions::InterpolationModeBicubic:	
-			// Average will only work with values less than 1.  Auto will 
-			// already use Average for values less than 1.
-			case	SVInterpolationModeOptions::InterpolationModeNearestNeighbor:
-				 {
-					// valid parameter
-					 l_Code = SVInterpolationModeOptions::m_Convertor.ConvertBitSetToMatroxType(interpolationMode, matroxInterpolationMode);
-
-					break;
-				 }
-			default:
-				{
-					// invalid parameter
-				    l_Code = SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE;
-					break;
-				}
-
-			}
+			l_Code = SVInterpolationModeOptions::m_Convertor.ConvertBitSetToMatroxType(interpolationMode, matroxInterpolationMode);
 
 			if (SVMEE_STATUS_OK != l_Code)
 			{
 				break;
 			}
 
-			switch (overscan)
-			{
-			case	SVOverscanOptions::OverscanEnable:	
-			case	SVOverscanOptions::OverscanDisable:
-				{
-					// valid parameter
-					l_Code = SVOverscanOptions::m_Convertor.ConvertBitSetToMatroxType(overscan, matroxOverscan);
-					break;
-				}
-			default:
-				{
-					// invalid parameter
-					l_Code = SVMSG_SVO_5045_INVALIDOVERSCAN;
-					break;
-				}
-
-			} 
+			l_Code = SVOverscanOptions::m_Convertor.ConvertBitSetToMatroxType(overscan, matroxOverscan);
 
 			if (SVMEE_STATUS_OK != l_Code)
 			{

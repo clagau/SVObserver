@@ -43,6 +43,9 @@ HRESULT SVCommandInspectionRunOnce::Execute()
 		l_pObject = SVObjectManagerClass::Instance().GetObject( m_ToolId );
 		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( l_pObject );
 
+		// RunOnce returns true(1) for success and false(0) for error.
+		// It's being inverted here for use as an HRESULT, but this code should 
+		// probably not use S_FALSE.
 		l_Status = pInspection->RunOnce( l_pTool ) ? S_OK : S_FALSE;
 	}
 	else

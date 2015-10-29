@@ -22,6 +22,7 @@
 #include "SVToolSet.h"
 #include "ToolSizeAdjustTask.h"
 
+
 SV_IMPLEMENT_CLASS( SVToolClass, SVToolClassGuid );
 
 SVToolClass::SVToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/ )
@@ -367,6 +368,9 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 
 	ToolTime.Start();
 
+	SetRunErrorCode(0);
+	ClearRunErrorData();
+
 	if( !GetInspection()->GetNewDisableMethod() )
 	{
 		// First Set the old stuff forward for the counts
@@ -652,6 +656,8 @@ BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 
 BOOL SVToolClass::Validate()
 {
+	ClearValidationError();
+
 	if( !IsEnabled() )
 	{
 		SetDisabled();
@@ -663,8 +669,26 @@ BOOL SVToolClass::Validate()
 
 BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
+	// We get away with clearing the Validation error info in the onRun 
+	// instead of the Run because it is immediately converted from a 
+	// Validate error code to a Run error code.  Also, OnValidate is 
+	// called from the SVTaskObject onRun level.
+	ClearValidationError();
+
 	BOOL bRetVal = SVTaskObjectListClass::onRun( RRunStatus );
-	if( bRetVal )
+
+	if (SUCCEEDED (m_RunError.m_MessageCode))
+	{
+		m_RunError.m_MessageCode = m_ValidationError.m_MessageCode;
+		m_RunError.m_AdditionalText = m_ValidationError.m_AdditionalText;
+	}
+
+	if ((false == bRetVal) && (SUCCEEDED (m_RunError.m_MessageCode)))
+	{
+		m_RunError.m_MessageCode = SVMSG_SVO_5075_INCONSISTENTDATA;
+	}
+
+	if( SUCCEEDED (m_RunError.m_MessageCode) )
 	{
 		if( (extentTop.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES) != SV_NO_ATTRIBUTES )
 			bRetVal = ( extentTop.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) == S_OK ) && bRetVal;
@@ -679,6 +703,11 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 		if( (extentHeightScaleFactor.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES) != SV_NO_ATTRIBUTES )
 			bRetVal = ( extentHeightScaleFactor.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) == S_OK ) && bRetVal;
 
+		if (false == bRetVal)
+		{
+			m_RunError.m_MessageCode = SVMSG_SVO_5076_EXTENTSNOTCOPIED;
+		}
+
 		// Friends were running, validation was successfully
 		// Check conditional execution
 		if ( !getConditionalResult() )
@@ -686,6 +715,8 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 			RRunStatus.SetDisabledByCondition();
 		}
 	}
+
+	bRetVal = SUCCEEDED (m_RunError.m_MessageCode);
 
 	return bRetVal;
 }
@@ -738,7 +769,7 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 			HRESULT l_ResetStatus = ResetObject();
 			if( l_ResetStatus != S_OK )
 			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
+//				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
 				DwResult |= SVMR_NO_SUCCESS;
 			}
@@ -1436,6 +1467,122 @@ bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location 
 
 	}
 	return ret;
+}
+
+HRESULT		SVToolClass::ClearRunError()
+{
+	HRESULT hr = S_OK;
+
+	m_RunError.clear();
+
+	return hr;
+}
+
+
+
+HRESULT		SVToolClass::SetRunErrorData (const SVString errorString)
+{
+	HRESULT hr = S_OK;
+
+	m_RunError.m_AdditionalText = errorString;
+
+	return hr;
+}
+
+HRESULT		SVToolClass::ClearRunErrorData ()
+{
+	HRESULT hr = S_OK;
+
+	m_RunError.clear();
+
+	return hr;
+}
+
+SVString SVToolClass::GetRunErrorData ()
+{
+	return m_RunError.m_AdditionalText;
+}
+
+
+HRESULT		SVToolClass::SetRunErrorCode (const HRESULT	errorCode)
+{
+	HRESULT hr = S_OK;
+
+	m_RunError.m_MessageCode = errorCode;
+
+	return hr;
+}
+
+
+HRESULT		SVToolClass::GetRunErrorCode ()
+{
+	return m_RunError.m_MessageCode;
+}
+
+
+bool		SVToolClass::GetRunDisplayed ()
+{
+	return m_RunError.m_Displayed;
+}
+
+HRESULT		SVToolClass::SetRunDisplayed (bool displayed)
+{
+	HRESULT	hr = S_OK;
+
+	m_RunError.m_Displayed = displayed;
+
+	return hr;
+}
+
+
+
+HRESULT		SVToolClass::ClearValidationError()
+{
+	HRESULT hr = S_OK;
+
+	m_ValidationError.clear();
+
+	return hr;
+}
+
+
+HRESULT		SVToolClass::SetValidationErrorData (const SVString	errorString)
+{
+	HRESULT hr = S_OK;
+
+	m_ValidationError.m_AdditionalText = errorString;
+
+	return hr;
+}
+
+HRESULT		SVToolClass::ClearValidationErrorData ()
+{
+	HRESULT hr = S_OK;
+
+	m_ValidationError.clear();
+
+	return hr;
+}
+
+SVString SVToolClass::GetValidationErrorData ()
+{
+	return m_ValidationError.m_AdditionalText;
+}
+
+
+HRESULT		SVToolClass::SetValidationErrorCode (const HRESULT	errorCode)
+{
+	HRESULT hr = S_OK;
+
+	m_ValidationError.m_MessageCode = errorCode;
+
+	return hr;
+}
+
+
+HRESULT		SVToolClass::GetValidationErrorCode ()
+{
+	return m_ValidationError.m_MessageCode;
 }
 
 

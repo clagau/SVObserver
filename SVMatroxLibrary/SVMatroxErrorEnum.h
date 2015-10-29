@@ -18,8 +18,13 @@
 @SVObjectOverview This enum is used to hold basic errors for the Matrox interface.
 
 @SVObjectOperations None
-
 */
+
+//@WARNING [Jim] It makes no sense to abstract the Matrox library and then 
+// check Matrox specific codes outside that wrapper.  The following codes 
+// should only be explicitly used within the Matrox wrapper.  Any value that
+// is being checked outside the wrapper should be mapped to the standard 
+// SVO error codes.
 enum SVMatroxErrorEnum
 {
 	SVMEE_STATUS_OK					= 0x00000000,
@@ -36,6 +41,8 @@ enum SVMatroxErrorEnum
 	SVMEE_MATROX_ERROR				= 0xcf000000,
 
 	SVMEE_INTERNAL_CONVERSION_ERROR	= 0xcf000bad,
+
+	SVMEE_MBUF_ALLOCATION_FAILED	= 0xcf00c678
 };
 
 #endif

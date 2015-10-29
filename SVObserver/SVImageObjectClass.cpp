@@ -18,6 +18,11 @@
 #include "SVFileNameClass.h"
 #include "SVGlobal.h"
 #include "SVImageProcessingClass.h"
+#include "SVTool.h"
+#include "SVStatusLibrary\MessageManagerResource.h"  // Use SvStl::MessageMgrDisplayAndNotify
+#include "ObjectInterfaces\ErrorNumbers.h"
+
+
 
 SVImageObjectClass::SVImageObjectClass()
 : m_LastUpdate()
@@ -103,7 +108,8 @@ HRESULT SVImageObjectClass::ResetObject()
 
 	if ( ! CreateBufferArrays() )
 	{
-		l_hrOk = S_FALSE;
+		//@WARNING  S_FALSE should probably not be used here.
+		l_hrOk = S_FALSE;  
 	}
 
 	if( l_hrOk == S_OK )
@@ -727,15 +733,37 @@ BOOL SVImageObjectClass::DestroyBufferArrays()
 BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle )
 {
 	BOOL bOk = true;
+	HRESULT hr = S_OK;
 	
 	DestroyImageBuffer( p_Handle );
 
 	SVImageObjectElementPtr l_IndexHandle;
 	SVSmartHandlePointer l_Handle;
 
-	SVImageProcessingClass::Instance().CreateImageBuffer( rInfo, l_Handle );
+	hr = SVImageProcessingClass::Instance().CreateImageBuffer( rInfo, l_Handle );
+	if (S_FALSE == hr)
+	{
+		hr = SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER;
+	}
+	else
+	if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
+	{
+		SVToolClass*	parentTool = static_cast <SVToolClass*> (rInfo.GetOwner());
 
-	bOk = !( l_Handle.empty() );
+		if (parentTool == nullptr)
+		{
+			// Image does not have a Tool for a parent. Not sure if this can 
+			// happen.
+			SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
+			Exception.setMessage( hr, nullptr, StdMessageParams, SvOi::ProgCode_5066_CreateImageBuffer);
+		}
+		else
+		{
+			parentTool->SetRunErrorCode(hr);
+		}
+	}
+
+	bOk = !( l_Handle.empty() ) && SUCCEEDED (hr);
 
 	if( bOk )
 	{

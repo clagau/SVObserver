@@ -115,6 +115,7 @@ public:
 	// This function replaces MimWatershed
 	static SVStatusCode Watershed( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rMarker, long p_lMinVariation, SVImageWaterShedEnum p_lControlFlag);
 	// This function replaces MimResize
+	// It is assumed that parameters are verified before entering Resize.  They are not checked again inside Resize.
 	static SVStatusCode Resize( const SVMatroxBuffer& p_rDest, 
 								const SVMatroxBuffer& p_rSource, 
 								const double p_dScaleFactorX, 

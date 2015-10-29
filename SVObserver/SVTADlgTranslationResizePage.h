@@ -13,6 +13,7 @@
 #include "SVTaskObjectInterfaceClass.h"
 #include "PropertyTree/PROPTREE.H"
 #include "SVOGui/PictureDisplay.h"
+#include "SVOGui\ISVPropertyPageDialog.h"  // for QueryAllowExit()
 #pragma endregion Includes
 
 class ResizeTool;
@@ -20,13 +21,18 @@ class SVToolAdjustmentDialogSheetClass;
 class SVRPropertyItem;
 class SVImageExtentClass;
 
-class SVTADlgTranslationResizePage : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVTADlgTranslationResizePage : 
+	public CPropertyPage, 
+	public SvOg::ISVPropertyPageDialog, 
+	private SVTaskObjectInterfaceClass
 {
 public:
 	SVTADlgTranslationResizePage( SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
 	virtual ~SVTADlgTranslationResizePage();
 
 	virtual HRESULT SetInspectionData() override;
+
+	bool	QueryAllowExit() override;
 
 protected:
 	HRESULT AddScaleFactors(SVRPropertyItem* pRoot);
@@ -38,6 +44,13 @@ protected:
 	HRESULT AddPerformance(SVRPropertyItem* pGroupItem);
 	HRESULT SetupResizePropertyTree();
 	HRESULT SetupResizeImageControl();
+	HRESULT	ExitTabValidation();
+	HRESULT ValidateCurrentTreeData (SVRPropertyItem* item);
+	// DisplayRunError () is intended to deal with scenarios where an error 
+	// may have already been displayed earlier in the tracking. 
+	HRESULT	DisplayRunError (HRESULT errorCode, SVString errorString, unsigned long programCode);
+
+
 // Note:
 //	UpdateImages () ------------------------------------------------------------
 //  OnInitDialog () must be called first in order to initialize members.
@@ -47,6 +60,7 @@ protected:
 //	UpdatePropertyTreeData () ------------------------------------------------------------
 //  OnInitDialog () must be called first in order to initialize members.
 	HRESULT UpdatePropertyTreeData();
+	HRESULT RestorePropertyTreeItemFromBackup (SVRPropertyItem* pItem);
 
 	void UpdateScaleFactors(double widthScaleFactor, double heightScaleFactor);
 	void UpdateInputImageInfo(long width, long height);
@@ -56,7 +70,7 @@ protected:
 	SVToolAdjustmentDialogSheetClass* m_ParentDialog;
 
 //	The Tool can not be destroyed while the Tool Adjustment Dialog exists.
-	ResizeTool*	m_Tool;
+	ResizeTool*	m_pTool;
 
 	double m_HeightScaleFactor;
 	double m_WidthScaleFactor;
@@ -83,6 +97,7 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	virtual BOOL OnSetActive() override;
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnKillActive() override;
 	//}}AFX_VIRTUAL
 #pragma endregion AFX Virtual Methods
 

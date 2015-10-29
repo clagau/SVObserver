@@ -16,6 +16,9 @@
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
 #include "SVValueObjectImpl.h"
+#include "SVStatusLibrary\MessageManager.h"			// SvStl::DataOnly
+#include "SVStatusLibrary\MessageManagerResource.h" // SvStl::MessageMgrDisplayAndNotify(),
+#include "SVUtilityLibrary/SVString.h"
 
 class SVAnalyzerClass;
 class SVExtentClass;
@@ -376,8 +379,82 @@ protected:
 
 private:
 	void init();
-	
 
+#pragma region Run Error helper functionality
+	// @HACK
+	// This Run Error helper functionality IS NOT THREAD SAFE!!!  Probably
+	// not a problem because it is not expected that anybody will be running 
+	// the same object (Tool) from different threads at the same time. 
+	//
+	// It is desired for Error Data to be able to be passed out during the Run. 
+	// It is understood that this implementation competes with a similarly 
+	// intended implementation for validation that is used in the Archive 
+	// Tool.  It is my [Jim] belief that both implementations need replaced 
+	// with a more robust common component.
+	// 
+	// The developer who intends to use this error information must ensure 
+	// that it was cleared (ClearRunError()) prior to the period they are 
+	// concerned with. The error code clearing is done automatically within 
+	// the SVToolClass::Run() function, which will cover the required clearing for
+	// many of the use cases.  
+	//
+	// In general, the Run Error data will track through the OnRun() and 
+	// ResetObject() logic.
+public:
+	HRESULT		ClearRunError ();
+
+	HRESULT		SetRunErrorData (const SVString	errorString);
+	HRESULT		ClearRunErrorData ();
+
+	SVString	GetRunErrorData ();
+
+	HRESULT		SetRunErrorCode (const HRESULT	errorCode);
+	HRESULT		GetRunErrorCode ();
+
+	bool		GetRunDisplayed ();
+	HRESULT		SetRunDisplayed (const bool displayed);
+
+protected:
+	SvStl::MessageData m_RunError;
+
+#pragma endregion Run Error helper functionality
+
+#pragma region Validation Error helper functionality
+	// @HACK
+	// This Validate Error helper functionality IS NOT THREAD SAFE!!!  
+	// Probably not a problem because it is not expected that anybody will be 
+	// running validation on the same object (Tool) from different threads at
+	// the same time. 
+	//
+	// It is desired for Error Data to be able to be passed out during the 
+	// Validation process. It is understood that this implementation competes 
+	// with a similarly intended implementation for validation that is used 
+	// in the Archive Tool.  It is my [Jim] belief that both implementations 
+	// need replaced with a more robust common component.
+	// 
+	// The developer who intends to use this error information must ensure 
+	// that it was cleared (ClearValidationError () prior to the period they 
+	// are concerned with. 
+	
+	
+	// The error code clearing is done automatically within the 
+	// SVToolClass::onRun() function and the SVToolClass::Validate() 
+	// function, which will cover the required clearing for many of the use 
+	// cases.
+public:
+	HRESULT		ClearValidationError ();
+	HRESULT		SetValidationErrorData (const SVString errorString);
+	HRESULT		ClearValidationErrorData ();
+
+	SVString	GetValidationErrorData ();
+
+	HRESULT		SetValidationErrorCode (const HRESULT	errorCode);
+	HRESULT		GetValidationErrorCode ();
+
+protected:
+	SvStl::MessageData m_ValidationError;
+
+#pragma endregion Validation Error helper functionality
 };
 
 #endif

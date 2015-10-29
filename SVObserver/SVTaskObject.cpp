@@ -78,6 +78,7 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 	return l_hrOk;
 }
 
+
 //******************************************************************************
 // Destructor(s):
 //******************************************************************************
@@ -1473,10 +1474,12 @@ BOOL SVTaskObjectClass::Run(SVRunStatusClass& RRunStatus)
 
 BOOL SVTaskObjectClass::onRun(SVRunStatusClass& RRunStatus)
 {
+	SVToolClass* pTool = GetTool();
+
 	// set error display
-	if( GetTool() )
+	if(nullptr != pTool)
 	{
-		msvError.m_bDisplayError = GetTool()->msvError.m_bDisplayError;
+		msvError.m_bDisplayError = pTool->msvError.m_bDisplayError;
 	}
 
 	// Run first friends...

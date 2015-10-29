@@ -358,7 +358,7 @@ BOOL SVTaskObjectListClass::Validate()
 			{
 				BOOL l_bTemp = pTaskObject->Validate();
 
-				ASSERT( l_bTemp );
+//				ASSERT( l_bTemp );
 
 				retVal &= l_bTemp;
 			}

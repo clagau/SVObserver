@@ -89,6 +89,11 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVImageInfoClass&
 		hrOk = CreateImageBuffer(l_iPixelDepth, l_iBandNumber, l_lWidth, l_lHeight, format, rHandle);
 	}
 
+	if (SVMEE_MBUF_ALLOCATION_FAILED == hrOk)
+	{
+		hrOk = SVMSG_SVO_5067_IMAGEALLOCATIONFAILED;
+	}
+	else
 	if ( S_OK != hrOk && !bDisplayedErrorMessage )
 	{
 		ASSERT(FALSE);

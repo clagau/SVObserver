@@ -598,6 +598,7 @@ HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck )
 			hr = l_Temp;
 		}
 
+		// but we still update children?
 		l_Temp = UpdateChildren();
 
 		if( S_OK == hr )
@@ -682,6 +683,11 @@ HRESULT SVImageClass::UpdateFromParentInformation()
 		{
 			l_Status = UpdateFromToolInformation();
 		}
+	}
+
+	if (S_FALSE == l_Status)
+	{
+		l_Status = E_FAIL;
 	}
 
 	return l_Status;
@@ -2537,7 +2543,10 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 
 HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT		l_Status = S_OK;
+	HRESULT		hrTemp = S_OK;
+	SVString	sTemp;
+	bool		displayedTemp;
 
 	if ((SVImageTypeLogicalAndPhysical == m_ImageType ||
 		 SVImageTypeLogical == m_ImageType) &&
@@ -2605,7 +2614,58 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 
 				if( l_Reset )
 				{
+//					SVToolClass*	parentTool = static_cast <SVToolClass*> (GetOwner());
+					SVToolClass*	parentTool = GetTool();
+					if (nullptr == parentTool)
+					{
+						// this image does not belong to a Tool.  
+					}
+					else
+					{
+						// Because m_BufferArrayPtr->ResetObject() only 
+						// returns an S_FALSE, error data will be tracked 
+						// through the owning Tool (if present).
+						hrTemp = parentTool->GetRunErrorCode();
+						sTemp = parentTool->GetRunErrorData();
+						displayedTemp = parentTool->GetRunDisplayed();
+						parentTool->ClearRunError();
+					}
+
 					l_Status = m_BufferArrayPtr->ResetObject();
+					if (S_FALSE == l_Status)
+					{
+						l_Status = SVMSG_SVO_5069_RESETOBJECTFAILED;
+					}
+
+					HRESULT	hrRun = S_OK;
+
+					if (nullptr != parentTool)
+					{
+						hrRun = parentTool->GetRunErrorCode();
+					}
+
+					if ((S_OK == l_Status) && (S_OK != hrRun))
+					{
+						l_Status = SVMSG_SVO_5068_INCONSISTENTDATA;
+					}
+					else
+					{
+						l_Status = hrRun;
+					}
+
+					if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == l_Status)
+					{
+						SVString	tString1 = GetCompleteName();
+						std::string tString2 = tString1.c_str();
+						parentTool->SetRunErrorData(tString2);
+					}
+
+					if ((nullptr != parentTool && SUCCEEDED (parentTool->GetRunErrorCode())))
+					{
+						parentTool->SetRunErrorCode(hrTemp);
+						parentTool->SetRunErrorData(sTemp);
+						parentTool->SetRunDisplayed(displayedTemp);
+					}
 				}
 				else
 				{
@@ -2617,6 +2677,11 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 		{
 			l_Status = E_FAIL;
 		}
+	}
+
+	if (S_FALSE == l_Status)
+	{
+		l_Status = E_FAIL;
 	}
 	
 	return l_Status;

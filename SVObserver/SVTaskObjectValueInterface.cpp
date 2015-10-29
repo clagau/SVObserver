@@ -170,6 +170,20 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( InspectionId, l_CommandPtr );
 
 		l_hrOk = l_Command.Execute( 120000 );
+
+		if ((nullptr != p_psvTool) && (SUCCEEDED (l_hrOk) || E_FAIL == l_hrOk))
+		{
+			HRESULT	hrTemp = S_OK;
+
+			hrTemp = p_psvTool->GetRunErrorCode();
+
+			if (!SUCCEEDED (hrTemp))
+			{
+				// overwrite hrOk only if hrTemp contains error information.
+				l_hrOk = hrTemp;
+			}
+		}
+
 	}
 	catch( ... )
 	{

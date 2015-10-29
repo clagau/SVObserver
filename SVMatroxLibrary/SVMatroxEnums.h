@@ -776,6 +776,7 @@ class SVInterpolationModeOptions
 public:
 	enum SVInterpolationModeOptionsEnum
 	{
+		InterpolationModeInitialize				= 0,			// for initialization only
 		InterpolationModeAuto					= 0x00000004L,  // M_INTERPOLATE
 		InterpolationModeBilinear				= 0x00000008L,	// M_BILINEAR 
 		InterpolationModeBicubic				= 0x00000010L,	// M_BICUBIC
@@ -794,6 +795,7 @@ class SVOverscanOptions
 public:
 	enum SVOverscanOptionsEnum
 	{
+		OverscanInitialize					= 0,			// for initialization only
 		OverscanEnable						= 0x00008000L, // M_OVERSCAN_ENABLE
 		OverscanDisable						= 0x00080000L  // M_OVERSCAN_DISABLE
 	};
@@ -809,6 +811,7 @@ class SVPerformanceOptions
 public:
 	enum SVPerformanceOptionsEnum
 	{
+		PerformanceInitialize				= 0,			// for initialization only
 		PerformanceFast						= 0x00002000L, // M_FAST
 		PerformancePresice					= 0x00020000L  // M_REGULAR
 	};

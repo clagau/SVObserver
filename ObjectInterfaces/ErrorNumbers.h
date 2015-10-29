@@ -15,6 +15,10 @@
 
 namespace Seidenader { namespace ObjectInterfaces
 {
+	// Jim Brown Program code.
+	static const unsigned long ProgCode_5066_CreateImageBuffer = 5066;
+	static const unsigned long ProgCode_5067_ValidateCurrentTreeData = 5067;
+
 	//Marc Ziegler error base
 	static const int Maz_ErrorBase = 10000;
 	//SVGuiExtentUpdater

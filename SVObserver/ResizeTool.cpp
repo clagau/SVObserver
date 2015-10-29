@@ -15,6 +15,12 @@
 
 SV_IMPLEMENT_CLASS( ResizeTool, SVResizeToolGuid );
 
+const long ResizeTool::MinScaleFactorThreshold = 0; // Scale Factor may not 
+													// be less than or equal 
+													// to 0.
+const long ResizeTool::MaxScaleFactor = 1000;       // Maximum allowed Scale Factor. 
+
+
 ResizeTool::ResizeTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int stringResourceID )
 : SVToolClass( bCreateDefaultTaskList, pOwner, stringResourceID )
 {
@@ -307,7 +313,7 @@ SVTaskObjectClass* ResizeTool::GetObjectAtPoint( const SVExtentPointStruct &p_rs
 // Set String value object for Source Image Names
 HRESULT ResizeTool::CollectInputImageNames(SVRunStatusClass& RRunStatus)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT hr = E_FAIL;
 	SVImageClass* pInputImage = getInputImage();
 	if (pInputImage)
 	{
@@ -333,12 +339,18 @@ HRESULT ResizeTool::GetInputImageNames( SVStringValueObjectClass*& p_pSourceName
 HRESULT ResizeTool::ResetObject()
 {
 	HRESULT	hr  = S_OK;
-	
-	SVImageClass*	inputImage = getInputImage();
 
-	if (nullptr == inputImage)
+	hr = OnValidate(RemotelyAndInspectionSettable);
+
+	SVImageClass* inputImage = nullptr;
+	if (SUCCEEDED (hr))
 	{
-		hr = SVMSG_SVO_5047_GETINPUTIMAGEFAILED;
+		inputImage = getInputImage();
+
+		if (nullptr == inputImage)
+		{
+			hr = SVMSG_SVO_5047_GETINPUTIMAGEFAILED;
+		}
 	}
 		
 	if (SUCCEEDED(hr))		
@@ -400,193 +412,479 @@ BOOL ResizeTool::IsValid()
 }
 
 
-BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
+BOOL ResizeTool::Validate()
 {
-	BOOL returnValue =	false;
+	BOOL	br = TRUE; // BOOL Result
+
+	// base class Validate MUST be called before using m_ValidationErrorCode.
+	// That's where m_ValidationErrorCode gets initialized for this tool.
+	br = SVToolClass::Validate();
+
+	if ((FALSE == br) && SUCCEEDED (m_ValidationError.m_MessageCode))
+	{
+		m_ValidationError.m_MessageCode = SVMSG_SVO_5072_INCONSISTENTDATA;
+	}
+
+	if (SUCCEEDED (m_ValidationError.m_MessageCode))
+	{
+		m_ValidationError.m_MessageCode = ValidateOfflineParameters();
+	}
+
+	if (SUCCEEDED (m_ValidationError.m_MessageCode))
+	{
+		m_ValidationError.m_MessageCode = ValidateRemotelySettableParameters();
+	}
+
+	if (!SUCCEEDED(m_ValidationError.m_MessageCode))
+	{
+		br = FALSE;
+	}
+
+	return br;
+}
+
+
+BOOL ResizeTool::OnValidate()
+{
+	HRESULT hr = E_FAIL;
+	BOOL	br = FALSE; // BOOL Result
+
+	if (SUCCEEDED (m_ValidationError.m_MessageCode))
+	{
+		br = SVToolClass::OnValidate();
+		if (SUCCEEDED (m_ValidationError.m_MessageCode) && (false == br))
+		{
+			m_ValidationError.m_MessageCode = SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED; 
+		}
+	}
+
+	if (SUCCEEDED (m_ValidationError.m_MessageCode))
+	{
+		// The setting of hr should not matter.  m_ValidationErrorCode should 
+		// contain the same error.  In the case where OnValidate might 
+		// contain a subsequent error, we want the first error which is 
+		// assumed to be in m_ValidationErrorCode.
+		hr = OnValidate (InspectionSettable);
+		if (SUCCEEDED (hr) != SUCCEEDED (m_ValidationError.m_MessageCode))
+		{
+			m_ValidationError.m_MessageCode = SVMSG_SVO_5073_INCONSISTENTDATA;
+		}
+	}
+
+	br = SUCCEEDED (m_ValidationError.m_MessageCode);
+
+	return br;
+}
+
+
+HRESULT	ResizeTool::OnValidate (ValidationLevelEnum validationLevel)
+{
+	if (SUCCEEDED (m_ValidationError.m_MessageCode))
+	{
+		m_ValidationError.m_MessageCode = ValidateInspectionSettableParameters ();
+	}
+
+	if (SUCCEEDED (m_ValidationError.m_MessageCode) && 
+		((RemotelyAndInspectionSettable == validationLevel) ||
+		 (AllParameters == validationLevel)))
+	{
+		m_ValidationError.m_MessageCode = ValidateRemotelySettableParameters ();			
+	}
+
+	if (SUCCEEDED (m_ValidationError.m_MessageCode) && 
+	    (AllParameters == validationLevel))
+	{
+		m_ValidationError.m_MessageCode = ValidateOfflineParameters ();
+	}
+
+	return m_ValidationError.m_MessageCode;
+}
+
+
+HRESULT	ResizeTool::ValidateInspectionSettableParameters ()
+{
 	HRESULT	hr = S_OK;
+	// Possibly should include ROI extents (top, bottom, height, width), but 
+	// I think Extents are checked elsewhere.
+	return hr;
+}
+
+
+HRESULT	ResizeTool::ValidateRemotelySettableParameters ()
+{
+	HRESULT	hr = S_OK;
+
+	SVImageExtentClass toolImageExtents;
+
+	hr = GetImageExtent(toolImageExtents);
+	if (S_FALSE == hr)
+	{
+		hr = SVMSG_SVO_5071_CAPTUREDSFALSE;
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		double newWidthScaleFactor = 0.0;
+		toolImageExtents.GetExtentProperty(SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+		hr = ValidateScaleFactor(newWidthScaleFactor);
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		double newHeightScaleFactor = 0.0;
+		toolImageExtents.GetExtentProperty(SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+		hr = ValidateScaleFactor(newHeightScaleFactor);
+	}
+
+	return hr;
+}
+
+
+HRESULT	ResizeTool::ValidateOfflineParameters ()
+{
+	HRESULT	hr = S_OK;
+
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationValue;
+	SVEnumerateValueObjectClass* interpolationMode = getInterpolationMode ();
+	interpolationMode->GetValue (*(reinterpret_cast <long*> (&interpolationValue)));
+	hr = ValidateInterpolation(interpolationValue);
+	if (SUCCEEDED(hr))
+	{
+		SVOverscanOptions::SVOverscanOptionsEnum overscanValue;
+		SVEnumerateValueObjectClass* overscan = getOverscan ();
+		overscan->GetValue (*(reinterpret_cast <long*> (&overscanValue)));
+		hr = ValidateOverscan(overscanValue);
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		SVPerformanceOptions::SVPerformanceOptionsEnum performanceValue;
+		SVEnumerateValueObjectClass* performance = getPerformance ();
+		performance->GetValue (*(reinterpret_cast <long*> (&performanceValue)));
+		hr = ValidatePerformance(performanceValue);
+	}
+
+	return hr;
+}
+
+
+HRESULT	ResizeTool::ValidateInterpolation (SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode)
+{
+	HRESULT hr = S_OK;
+
+	switch (interpolationMode)
+	{
+	case	SVInterpolationModeOptions::InterpolationModeAuto:	
+	case	SVInterpolationModeOptions::InterpolationModeBilinear:	
+	case	SVInterpolationModeOptions::InterpolationModeBicubic:	
+		// Average will only work with values less than 1.  Auto will 
+		// already use Average for values less than 1.
+	case	SVInterpolationModeOptions::InterpolationModeNearestNeighbor:
+		{
+			break;
+		}
+	default:
+		{
+			// invalid parameter
+			hr = SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE;
+			break;
+		}
+	}
+
+	return hr;
+}
+
+
+HRESULT	ResizeTool::ValidateOverscan (const SVOverscanOptions::SVOverscanOptionsEnum overscan)
+{
+	HRESULT hr = S_OK;
+
+	switch (overscan)
+	{
+	case	SVOverscanOptions::OverscanEnable:	
+	case	SVOverscanOptions::OverscanDisable:
+		{
+			break;
+		}
+	default:
+		{
+			// invalid parameter
+			hr = SVMSG_SVO_5045_INVALIDOVERSCAN;
+			break;
+		}
+	} 
+
+	return hr;
+}
+
+
+HRESULT	ResizeTool::ValidatePerformance (const SVPerformanceOptions::SVPerformanceOptionsEnum performance)
+{
+	HRESULT hr = S_OK;
+
+	switch (performance)
+	{
+	case	SVPerformanceOptions::PerformanceFast:	
+	case	SVPerformanceOptions::PerformancePresice:
+		{
+			break;
+		}
+	default:
+		{
+			// invalid parameter
+			hr = SVMSG_SVO_5046_INVALIDPERFORMANCE;
+			break;
+		}
+	}
+
+	return hr;
+}
+
+
+HRESULT ResizeTool::ValidateScaleFactor(const double value)
+{
+	HRESULT hr = S_OK;
+
+	// Arbitrary high end scale factor limit of 1000.
+	if ((value <= MinScaleFactorThreshold) ||
+		(value > MaxScaleFactor))
+	{
+		hr = SVMSG_SVO_5061_SFOUTSIDERANGE;
+	}
+
+	return hr;
+}
+
+
+HRESULT	ResizeTool::BackupInspectionParameters ()
+{
+	SVImageExtentClass toolImageExtents;
+
+	HRESULT hr = GetImageExtent(toolImageExtents);
+	//  Embedded functions such as SVImageExtentClass::SetExtentProperty can return
+	//  S_FALSE.  This violates the HRESULT standard.
+	if (S_FALSE == hr)
+	{
+		hr = SVMSG_SVO_5063_ERRORGETTINGIMAGEEXTENTS;
+	}
 
 	if (SUCCEEDED (hr))
 	{
-		hr = CollectInputImageNames(RRunStatus); // So that source image name value object gets populated
-		if (hr != S_OK)
+		toolImageExtents.GetExtentProperty (SVExtentPropertyHeightScaleFactor, m_ResizeHeightSF_Backup);
+		toolImageExtents.GetExtentProperty (SVExtentPropertyWidthScaleFactor, m_ResizeWidthSF_Backup);
+		m_ResizeInterpolationMode.GetValue (m_ResizeInterpolationMode_Backup);
+		m_ResizeOverscan.GetValue (m_ResizeOverscan_Backup);
+		m_ResizePerformance.GetValue (m_ResizePerformance_Backup);
+	}
+
+	return hr;
+}
+
+
+HRESULT	ResizeTool::GetBackupInspectionParameters (	double*	oldHeightScaleFactor,
+													double*	oldWidthScaleFactor,
+													long*	oldInterpolationMode,
+													long*	oldOverscan,
+													long*	oldPerformance)
+{
+	HRESULT hr = S_OK;
+
+	*oldHeightScaleFactor = m_ResizeHeightSF_Backup;
+	*oldWidthScaleFactor = m_ResizeWidthSF_Backup;
+	*oldInterpolationMode = m_ResizeInterpolationMode_Backup;
+	*oldOverscan = m_ResizeOverscan_Backup;
+	*oldPerformance = m_ResizePerformance_Backup;
+
+	return hr;
+}
+
+
+BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
+{
+	BOOL returnValue =	false;
+
+	if (SUCCEEDED (m_RunError.m_MessageCode))
+	{
+		m_RunError.m_MessageCode = CollectInputImageNames(RRunStatus); // So that source image name value object gets populated
+		if (S_FALSE == m_RunError.m_MessageCode)
 		{
 			// CollectInputImageNames only returns an S_FALSE on a failure.
-			hr = SVMSG_SVO_5019_COULDNOTCOLLECTINPUTIMAGENAMES;
+			m_RunError.m_MessageCode = SVMSG_SVO_5019_COULDNOTCOLLECTINPUTIMAGENAMES;
 		}
 	}
-	
-	if (SUCCEEDED (hr))
+
+	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{ 
 		returnValue = SVToolClass::onRun( RRunStatus );
-		if (TRUE != returnValue)
+		if (SUCCEEDED (m_RunError.m_MessageCode) && (TRUE != returnValue))
 		{
-			hr = SVMSG_SVO_5020_BASECLASSONRUNFAILED;
+			m_RunError.m_MessageCode = SVMSG_SVO_5020_BASECLASSONRUNFAILED;
 		}
 	}
 	
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{
 		// Update the index for the Output Image
 		returnValue = m_OutputImage.SetImageHandleIndex(RRunStatus.Images);
 		if (!returnValue)
 		{
-			hr = SVMSG_SVO_5021_SETIMAGEHANDLEFAILED;
+			m_RunError.m_MessageCode = SVMSG_SVO_5021_SETIMAGEHANDLEFAILED;
 		}
 	}
 
 	SVSmartHandlePointer	roiImageHandle;
 
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{
 		// The following logic was extrapolated from the StdImageOperatorList Run method.
 		// It corrects an issue where the output image is black while running when using the toolset image.
 		if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage()->GetLastResetTimeStamp())
 		{
-			hr = UpdateImageWithExtent(RRunStatus.m_lResultDataIndex);
+			m_RunError.m_MessageCode = UpdateImageWithExtent(RRunStatus.m_lResultDataIndex);
 
-			if (!SUCCEEDED (hr))
+			if (!SUCCEEDED (m_RunError.m_MessageCode))
 			{
-				hr = SVMSG_SVO_5022_UPDATEIMAGEEXTENTSFAILED;
+				m_RunError.m_MessageCode = SVMSG_SVO_5022_UPDATEIMAGEEXTENTSFAILED;
 			}
 		}
 	}
 		
 	//-----	Execute this objects run functionality. -----------------------------
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{
 		m_LogicalROIImage.GetImageHandle(roiImageHandle);
 		if (roiImageHandle.empty())
 		{
-			hr = SVMSG_SVO_5023_ROIGETIMAGEHANDLEFAILED;
+			m_RunError.m_MessageCode = SVMSG_SVO_5023_ROIGETIMAGEHANDLEFAILED;
 		}
 	}
 
 	SVImageBufferHandleImage roiMilHandle;
 
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{
 		roiImageHandle->GetData(roiMilHandle);
 		if (roiMilHandle.empty())
 		{
-			hr = SVMSG_SVO_5024_ROIGETDATAFAILED;
+			m_RunError.m_MessageCode = SVMSG_SVO_5024_ROIGETDATAFAILED;
 		}
 	}
 
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{
 		const SVMatroxBuffer& roiMilBuffer = roiMilHandle.GetBuffer();
 
 		if (roiMilBuffer.empty())
 		{
-			hr = SVMSG_SVO_5025_ROIGETBUFFERFAILED;
+			m_RunError.m_MessageCode = SVMSG_SVO_5025_ROIGETBUFFERFAILED;
 		}
 
 		SVSmartHandlePointer outputImageHandle;
 
-		if (SUCCEEDED (hr))
+		if (SUCCEEDED (m_RunError.m_MessageCode))
 		{
 			m_OutputImage.GetImageHandle(outputImageHandle);
 			if (outputImageHandle.empty())
 			{
-				hr = SVMSG_SVO_5026_OUTPUTGETIMAGEHANDLEFAILED;
+				m_RunError.m_MessageCode = SVMSG_SVO_5026_OUTPUTGETIMAGEHANDLEFAILED;
 			}
 		}
 
 		SVImageBufferHandleImage outputMilHandle;
 
-		if (SUCCEEDED (hr))
+		if (SUCCEEDED (m_RunError.m_MessageCode))
 		{
 			outputImageHandle->GetData(outputMilHandle);
 
 			if (outputMilHandle.empty())
 			{
-				hr = SVMSG_SVO_5027_OUTPUTGETDATAFAILED;
+				m_RunError.m_MessageCode = SVMSG_SVO_5027_OUTPUTGETDATAFAILED;
 			}
 
-			if (SUCCEEDED (hr))
+			if (SUCCEEDED (m_RunError.m_MessageCode))
 			{
 				const SVMatroxBuffer& outputMilBuffer = outputMilHandle.GetBuffer();
 
 				if (outputMilBuffer.empty())
 				{
-					hr = SVMSG_SVO_5028_OUTPUTGETBUFFERFAILED;
+					m_RunError.m_MessageCode = SVMSG_SVO_5028_OUTPUTGETBUFFERFAILED;
 				}
 
 				SVImageExtentClass toolImageExtents;
 
-				if (SUCCEEDED (hr))
+				if (SUCCEEDED (m_RunError.m_MessageCode))
 				{
-					hr = GetImageExtent(toolImageExtents);
+					m_RunError.m_MessageCode = GetImageExtent(toolImageExtents);
 
-					if (!SUCCEEDED  (hr))
+					if (!SUCCEEDED  (m_RunError.m_MessageCode))
 					{
-						hr = SVMSG_SVO_5029_GETEXTENTSFAILED;
+						m_RunError.m_MessageCode = SVMSG_SVO_5029_GETEXTENTSFAILED;
 					}
 				}
 
 				double heightScaleFactor = 0.0;
 				
-				if (SUCCEEDED (hr))
+				if (SUCCEEDED (m_RunError.m_MessageCode))
 				{
-					hr = toolImageExtents.GetExtentProperty(SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+					m_RunError.m_MessageCode = toolImageExtents.GetExtentProperty(SVExtentPropertyHeightScaleFactor, heightScaleFactor);
 
-					if (!SUCCEEDED  (hr))
+					if (!SUCCEEDED  (m_RunError.m_MessageCode))
 					{
-						hr = SVMSG_SVO_5030_GETHEIGHTSFFAILED;
+						m_RunError.m_MessageCode = SVMSG_SVO_5030_GETHEIGHTSFFAILED;
 					}
 				}
 
 				double widthScaleFactor = 0.0;
 
-				if (SUCCEEDED (hr))
+				if (SUCCEEDED (m_RunError.m_MessageCode))
 				{
-					hr = toolImageExtents.GetExtentProperty(SVExtentPropertyWidthScaleFactor, widthScaleFactor);
+					m_RunError.m_MessageCode = toolImageExtents.GetExtentProperty(SVExtentPropertyWidthScaleFactor, widthScaleFactor);
 
-					if (!SUCCEEDED  (hr))
+					if (!SUCCEEDED  (m_RunError.m_MessageCode))
 					{
-						hr = SVMSG_SVO_5031_GETWIDTHSFFAILED;
+						m_RunError.m_MessageCode = SVMSG_SVO_5031_GETWIDTHSFFAILED;
 					}
 				}
 
 				long interpolationMode = 0;
 
-				if (SUCCEEDED (hr))
+				if (SUCCEEDED (m_RunError.m_MessageCode))
 				{
-					hr = m_ResizeInterpolationMode.GetValue(interpolationMode);
+					m_RunError.m_MessageCode = m_ResizeInterpolationMode.GetValue(interpolationMode);
 
-					if (!SUCCEEDED  (hr))
+					if (!SUCCEEDED  (m_RunError.m_MessageCode))
 					{
-						hr = SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED;
+						m_RunError.m_MessageCode = SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED;
 					}
 				}
 				
 				long overscan = 0;
 
-				if (SUCCEEDED (hr))
+				if (SUCCEEDED (m_RunError.m_MessageCode))
 				{
-					hr = m_ResizeOverscan.GetValue(overscan);
+					m_RunError.m_MessageCode = m_ResizeOverscan.GetValue(overscan);
 
-					if (!SUCCEEDED  (hr))
+					if (!SUCCEEDED  (m_RunError.m_MessageCode))
 					{
-						hr = SVMSG_SVO_5033_GETOVERSCANFAILED;
+						m_RunError.m_MessageCode = SVMSG_SVO_5033_GETOVERSCANFAILED;
 					}
 				}
 
 				long performance = 0;
 
-				if (SUCCEEDED (hr))
+				if (SUCCEEDED (m_RunError.m_MessageCode))
 				{
-					hr = m_ResizePerformance.GetValue(performance);
+					m_RunError.m_MessageCode = m_ResizePerformance.GetValue(performance);
 
-					if (!SUCCEEDED  (hr))
+					if (!SUCCEEDED  (m_RunError.m_MessageCode))
 					{
-						hr = SVMSG_SVO_5034_GETPERFORMANCEFAILED;
+						m_RunError.m_MessageCode = SVMSG_SVO_5034_GETPERFORMANCEFAILED;
 					}
 				}
 
-				if (SUCCEEDED (hr))
+				if (SUCCEEDED (m_RunError.m_MessageCode))
 				{
-					hr = SVMatroxImageInterface::Resize (outputMilBuffer,
+					m_RunError.m_MessageCode = SVMatroxImageInterface::Resize (outputMilBuffer,
 						roiMilBuffer,
 						widthScaleFactor,
 						heightScaleFactor,
@@ -598,13 +896,15 @@ BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
 		}
 	}
 
-	if (returnValue && !SUCCEEDED (hr))
+	if (returnValue && !SUCCEEDED (m_RunError.m_MessageCode))
 	{
 		returnValue = false;
 	}
+
 	if (!returnValue)
 	{
 		RRunStatus.SetInvalid();
 	}
+
 	return returnValue;
 }
