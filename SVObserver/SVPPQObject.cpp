@@ -97,7 +97,13 @@ HRESULT CALLBACK SVFinishCameraCallback( void *pOwner, void *pCaller, void *pRes
 	}
 }
 
-HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
+		HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
+/// Used in data completion mode, but not in next trigger mode.
+/// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
+/// from m_ppPPQPositions via GetProductInfoStruct()
+/// If the delay time is already over, calls ProcessTimeDelay/AndDataComplete/Outputs().
+/// from where WriteOutputs() will be called.
+/// Otherwise, puts the trigger count back into the outputs delay queue, 
 {
 	HRESULT l_Status = S_OK;
 
@@ -3342,6 +3348,9 @@ BOOL SVPPQObject::RecycleProductInfo( SVProductInfoStruct *pProduct )
 }// end RecycleProductInfo
 
 HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rElement )
+	/// Either gets the appropriate product information (if available) or increments the pending image indicator.
+	/// If product information is available: 
+	/// Adds the process count to the cameras queue and signals the asynchronous procedure
 {
 	HRESULT l_Status = S_OK;
 
@@ -4001,11 +4010,17 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 {
 	HRESULT		l_Status = S_OK;
 
+	/// Works through the queued triggers (e.g., pushed by FinishTrigger()).
+	/// This is done by taking a SVTriggerQueueElement from the head of m_oTriggerQueue 
+	/// and using the information in the SVTriggerInfoStruct therein to "create" a new product
+	/// (the ProcessCount of which will be added to m_oNotifyInspectionsSet).
+	/// In NextTriggerMode the results of the oldest product will be output through IndexPPQ().
+	/// m_CameraInputData will contain trigger-data including the data index 
 	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
 
 	if( p_rProcessed )
 	{
-		SVTriggerQueueElement l_TriggerInfo;
+		SVTriggerQueueElement l_TriggerInfo; ///would it not be preferable to call this variable "QueueElement"?
 
 		if( m_oTriggerQueue.PopHead( l_TriggerInfo ) == S_OK )
 		{
@@ -4076,6 +4091,8 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 
 HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 {
+	/// Does nothing if the trigger queue is nonempty or the m_oNotifyInspectionsSet is empty.
+	/// Otherwise works through m_oNotifyInspectionsSet trying to notify one (and only one) inspection.
 	HRESULT l_Status = S_OK;
 
 	size_t	triggerQueueSize = m_oTriggerQueue.size();
@@ -4154,6 +4171,10 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 }
 
 HRESULT SVPPQObject::ProcessInspections( bool& p_rProcessed )
+	/// Does nothing if there is at least one trigger in the trigger queue.
+	/// Otherwise, extracts all the GUIDs from m_ProcessInspectionsSet and starts the 
+	/// corresponding inspections via StartInspection().
+	/// They will be completed asynchronously in the class SVInspectionProcess.
 {
 	HRESULT l_Status = S_OK;
 
@@ -4179,6 +4200,12 @@ HRESULT SVPPQObject::ProcessInspections( bool& p_rProcessed )
 }
 
 HRESULT SVPPQObject::ProcessResetOutputs( bool& p_rProcessed )
+	/// Removes the "head process count" from the outputs reset queue
+	/// and determines from it the corresponding product pointer.
+	/// If there is a new "head process count" in the outputs reset queue:
+	/// Determines if the corresponding product's m_EndResetDelay has already been reached.
+	/// If so, calls ResetOutputs().
+	/// If not, puts the original "head process count" back onto the outputs reset queue
 {
 	HRESULT l_Status = S_OK;
 
@@ -4261,6 +4288,11 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& p_rProcessed )
 }
 
 HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
+	/// If camera responses pending AND trigger queue empty:
+	/// Removes camera responses from m_PendingCameraResponses and tries to process them
+	/// until the first processing succeeds.
+	/// If no responses processed: Removes the head of m_CameraResponseQueue and processes that
+	/// until one processing attempt is successful or m_CameraResponseQueue is empty.
 {
 	HRESULT l_Status = S_OK;
 	size_t	triggerQueueSize = 0;
@@ -4323,6 +4355,9 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
 }
 
 HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
+	/// If possible, removes the first item from m_oCamerasQueue and gets its product information.
+	/// Sets the product information's bFinishAcquisition member to true.
+	/// Adds the product's process count to m_oNotifyInspectionsSet.
 {
 	HRESULT l_Status = S_OK;
 	long	cameraCount = -1;
@@ -4393,6 +4428,17 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 }
 
 HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
+	/// Does nothing unless m_oTriggerQueue is empty and m_oInspectionQueue is non-empty.
+	/// If so, gets all SVInspectionInfoPairs from m_oInspectionQueue and inserts all
+	/// inspection GUIDs into m_ProcessInspectionsSet.
+	/// If m_ProcessInspectionsSet then is non-empty, calls ProcessInspection(false),
+	/// so the next product (if any) can be inspected,
+	/// then extracts the first valid SVInspectionInfoPair form m_oInspectionQueue
+	/// and gets a pointer to the corresponding SVProductInfoStruct.
+	/// If m_EndProcess == 0.0 SVInspectionInfoStruct::ClearIndexes() and then 
+	/// SetInspectionComplete() are called.
+	/// The product is then set to complete and all products further back in m_ppPPQPositions
+	/// are set to incomplete.
 {
 	HRESULT l_Status = S_OK;
 
@@ -4504,6 +4550,11 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 }
 
 HRESULT SVPPQObject::ProcessProductRequests( bool& p_rProcessed )
+	/// Does nothing unless both m_oTriggerQueue and m_ProductRequests are nonempty.
+	/// Otherwise extracts the first SVProductRequestPair from m_ProductRequests,
+	/// gets the SVProductInfoStruct specified in the request.
+	/// Then copies the SVProductInfoStruct into the m_pProduct member of the SVProductInfoRequestStruct
+	/// contained in the request pair.
 {
 	HRESULT l_Status = S_OK;
 

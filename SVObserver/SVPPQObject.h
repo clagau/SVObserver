@@ -153,7 +153,21 @@ public:
 	BOOL GetAllOutputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
 	BOOL AddDefaultOutputs();
 
+	//************************************
+	/// Writes DataResponse and Camera into the camera response queue
+
+	/// \param pCaller [unused]
+	/// \param p_rTriggerInfo [in]
+	//************************************
 	BOOL FinishCamera( void *pCaller, SVODataResponseClass* pResponse );
+
+	//************************************
+	/// Writes trigger information into SVTriggerInfoQueue m_oTriggerQueue;
+	/// Calls ResetOutputs() if in SVPPQTimeDelayMode or SVPPQTimeDelayAndDataCompleteMode
+
+	/// \param pCaller [unused]
+	/// \param p_rTriggerInfo [in] the trigger information to be queued
+	//************************************
 	BOOL FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerInfo );
 
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
@@ -267,14 +281,63 @@ protected:
 
 	HRESULT NotifyProcessTimerOutputs();
 
+	//************************************
+	/// Processes the first element (if available) in the trigger queue and creates a product from it
+	/// \param p_rProcessed [out] false if the trigger queue empty, otherwise true.
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessTrigger( bool& p_rProcessed );
+
+	//************************************
+	/// Extracts the first valid entry in in m_oNotifyInspectionsSet and calls NotifyInspections()
+	/// \param p_rProcessed [out] true if one inspection was successfully notified, otherwise false.
+	/// \returns S_OK (or E_FAIL if NotifyInspections failed)
+	//************************************
 	HRESULT ProcessNotifyInspections( bool& p_rProcessed );
+
+	//************************************
+	/// Empties m_ProcessInspectionsSet and starts all Inspections that were contained in it
+	/// \param p_rProcessed [out] true if an item was removed from m_oCamerasQueue, otherwise false
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessInspections( bool& p_rProcessed );
+
+	//************************************
+	/// Controls the output of completed results that require a delay before they are output.
+	/// \param p_rProcessed [out] true if a SVProductInfoStruct was processed
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessDelayOutputs( bool& p_rProcessed );
+
+	//************************************
+	/// If at least two entries in m_oOutputsResetQueue: removes the head and calls ResetOutputs()
+	/// \param p_rProcessed [out] true if ResetOutputs() was called
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessResetOutputs( bool& p_rProcessed );
+	//************************************
+	/// If possible, processes one camera response (either from the pending camera responses or directly from the trigger queue)
+	/// \param p_rProcessed [out] true if a camera response was processed successfully
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessCameraResponses( bool& p_rProcessed );
+	//************************************
+	/// Checks whether all camera acquisitions are complete for the first item in m_oCamerasQueue. If so, moves it into m_oNotifyInspectionsSet
+	/// \param p_rProcessed [out] true if an item was removed from m_oCamerasQueue
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessCameraInputs( bool& p_rProcessed );
+	//************************************
+	/// If all inspections for a product are done, sets the product to complete
+	/// \param p_rProcessed [out] true m_oTriggerQueue is empty or if a product has been set to complete
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessCompleteInspections( bool& p_rProcessed );
+	//************************************
+	/// Possibly used when results are requested via remote
+	/// \param p_rProcessed [out] true if false otherwise
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessProductRequests( bool& p_rProcessed );
 
 	HRESULT ProcessTimeDelayOutputs( SVProductInfoStruct& p_rProduct );
@@ -305,6 +368,11 @@ protected:
 
 	HRESULT DisplayGoOnlineError(const CString& sReason, HRESULT hr = S_OK);
 
+	//************************************
+	/// Processes a single camera queue event
+	/// \param p_rElement [in] is the camera queue element to be looked at
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
 	HRESULT ProcessCameraResponse( const SVCameraQueueElement& p_rElement );
 
 	HRESULT BuildCameraInfos( SVStdMapSVVirtualCameraPtrSVCameraInfoStruct& p_rCameraInfos ) const;
@@ -318,7 +386,7 @@ protected:
 	SVClock::SVTimeStamp m_NextOutputResetTimestamp;
 
 	// Queues for the PPQ's threads to store incoming objects to be processed
-	SVTriggerInfoQueue m_oTriggerQueue;
+	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SVTriggerInfoStruct s and SVVariantBoolVector s
 	SVProcessCountQueue m_oCamerasQueue;
 	SVInspectionInfoQueue m_oInspectionQueue;
 	SVProcessCountQueue m_oOutputsDelayQueue;
