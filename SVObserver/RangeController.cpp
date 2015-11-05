@@ -209,7 +209,7 @@ void RangeController::FillObjectSelector()
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, PPQNameSelector, NoSelector, ToolSetItemSelector<false, RangeSelectorFilter>>(m_InspectionID, m_TaskObjectID);
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, NoSelector, ToolSetItemSelector<false, RangeSelectorFilter>>(m_InspectionID, m_TaskObjectID);
 }
 
 SVString RangeController::GetOwnerName() const
