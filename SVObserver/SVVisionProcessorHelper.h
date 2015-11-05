@@ -112,6 +112,7 @@ public:
 	HRESULT QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT ActivateMonitorList( const SVString& rListName, bool bActivate );
 	HRESULT QueryMonitorListNames( SVNameSet& rNames ) const;
+	HRESULT GetInspectionNames( SVNameSet& rNames ) const;
 	HRESULT SetProductFilter( const SVString& rListName, SVProductFilterEnum filter );
 	HRESULT GetProductFilter( const SVString& rListName, SVProductFilterEnum& filter ) const;
 	HRESULT RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );

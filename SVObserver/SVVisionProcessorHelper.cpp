@@ -1026,6 +1026,29 @@ HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName,
 	return hr;
 }
 
+
+HRESULT SVVisionProcessorHelper::GetInspectionNames( SVNameSet& rNames ) const
+{
+	SVConfigurationObject* pConfig = nullptr;
+
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		SVInspectionProcessPtrList Inspections;
+		pConfig->GetInspections(Inspections);
+
+		for (SVInspectionProcessPtrList::iterator it = Inspections.begin();it != Inspections.end();++it)
+		{
+			rNames.insert((*it)->GetName());
+		}
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
 HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) const
 {
 	SVConfigurationObject* pConfig = nullptr;

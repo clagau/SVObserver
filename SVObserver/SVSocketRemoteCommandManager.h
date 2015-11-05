@@ -106,6 +106,7 @@ protected:
 	static HRESULT QueryRejectCondList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryFailStatusList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryMonitorListNames( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT GetInspectionNames( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT GetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT SetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults );
 

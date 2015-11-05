@@ -58,6 +58,8 @@ SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Async
 (SVRC::cmdName::qryRjct, &SVRemoteCommandFunctions::QueryRejectCondList)
 (SVRC::cmdName::qryFail, &SVRemoteCommandFunctions::QueryFailStatusList)
 (SVRC::cmdName::qryMonListNames, &SVRemoteCommandFunctions::QueryMonitorListNames)
+(SVRC::cmdName::getInspectionNames, &SVRemoteCommandFunctions::GetInspectionNames)
+
 (SVRC::cmdName::shutdownSVIM, &SVRemoteCommandFunctions::Shutdown)
 ;
 
@@ -2031,6 +2033,33 @@ HRESULT SVRemoteCommandFunctions::QueryFailStatusList( const std::string& rJsonC
 
 	return hr;
 }
+
+
+HRESULT SVRemoteCommandFunctions::GetInspectionNames( const std::string& rJsonCommand, std::string& rJsonResults )
+{
+	Json::Value EntryArray(Json::arrayValue);
+	SVNameSet names;
+
+	HRESULT hr = SVVisionProcessorHelper::Instance().GetInspectionNames(names);
+	if( S_OK == hr )
+	{
+		for( SVNameSet::const_iterator it = names.begin();it != names.end();++it)
+		{
+			Json::Value Element(Json::objectValue);
+			Element = (*it).c_str();
+			EntryArray.append(Element);
+		}
+	}
+
+	// need to set the results even on an error...
+	Json::Value Results(Json::objectValue);
+	Results[ SVRC::result::names ] = EntryArray;
+	std::string FileName = "C:\\temp\\GetInspectionNames-rsp";
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+
+	return hr;
+}
+
 
 HRESULT SVRemoteCommandFunctions::QueryMonitorListNames( const std::string& rJsonCommand, std::string& rJsonResults )
 {

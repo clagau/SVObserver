@@ -51,6 +51,7 @@ namespace SVRC
 		const std::string actvMonList = "ActivateMonitorList";
 		const std::string shutdownSVIM = "Shutdown";
 		const std::string qryMonListNames = "QueryMonitorListNames";
+		const std::string getInspectionNames = "GetInspectionNames";
 		const std::string getProductFilter = "GetProductFilter";
 		const std::string setProductFilter = "SetProductFilter";
 	}
