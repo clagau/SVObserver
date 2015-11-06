@@ -157,12 +157,16 @@ BOOL ResizeTool::CloseObject()
 
 	if ( isCreated )
 	{
-		isCreated = FALSE;
+//		This statement should not be necessary because it should be set within 
+//		the base class.  
+//		isCreated = FALSE;
 
 		bRetVal = m_LogicalROIImage.CloseObject();
 
 		bRetVal = m_OutputImage.CloseObject() && bRetVal;
 
+		// This should end up setting isCreated to FALSE within 
+		// SVObjectClass::CloseObject().
 		bRetVal = SVToolClass::CloseObject() && bRetVal;
 	}
 
@@ -211,6 +215,10 @@ BOOL ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 	bOk &= (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this, true, true, true)); 
 
 	m_svSourceImageName.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+
+	SVString	inputImageName = inputImage->GetCompleteName();
+
+	bOk &= (S_OK == m_svSourceImageName.SetValue(1, inputImageName.c_str()));
 
 	isCreated = bOk;
 
@@ -310,19 +318,6 @@ SVTaskObjectClass* ResizeTool::GetObjectAtPoint( const SVExtentPointStruct &p_rs
 	return l_psvObject;
 }
 
-// Set String value object for Source Image Names
-HRESULT ResizeTool::CollectInputImageNames(SVRunStatusClass& RRunStatus)
-{
-	HRESULT hr = E_FAIL;
-	SVImageClass* pInputImage = getInputImage();
-	if (pInputImage)
-	{
-		CString strName = pInputImage->GetCompleteObjectName();
-		m_svSourceImageName.SetValue(RRunStatus.m_lResultDataIndex, 0, strName);
-		hr = S_OK;
-	}
-	return hr;
-}
 
 bool ResizeTool::DoesObjectHaveExtents() const
 {
@@ -702,16 +697,6 @@ HRESULT	ResizeTool::GetBackupInspectionParameters (	double*	oldHeightScaleFactor
 BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
 {
 	BOOL returnValue =	false;
-
-	if (SUCCEEDED (m_RunError.m_MessageCode))
-	{
-		m_RunError.m_MessageCode = CollectInputImageNames(RRunStatus); // So that source image name value object gets populated
-		if (S_FALSE == m_RunError.m_MessageCode)
-		{
-			// CollectInputImageNames only returns an S_FALSE on a failure.
-			m_RunError.m_MessageCode = SVMSG_SVO_5019_COULDNOTCOLLECTINPUTIMAGENAMES;
-		}
-	}
 
 	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{ 

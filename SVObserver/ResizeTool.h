@@ -50,13 +50,6 @@ public:
 	///  Retrieves source image name from m_svSourceImageName.
 	virtual HRESULT GetInputImageNames(SVStringValueObjectClass*& pSourceNames) override;
 
-	/// CollectInputImageNames
-	///  Sets the Tools m_svSourceImageName to the name retrieved from the 
-	///  Source Image object itself.
-	///
-	///  Set String value object for Source Image Names
-	virtual HRESULT CollectInputImageNames(SVRunStatusClass& RRunStatus) override;
-
 	virtual HRESULT	ResetObject() override;
 	virtual BOOL	IsValid() override;
 	virtual BOOL	OnValidate() override;
@@ -108,11 +101,18 @@ protected:
 	// Performance - embedded
 	HRESULT InitializePerformanceMember();
 
-	// Source Image Name - embedded
-	SVStringValueObjectClass m_svSourceImageName;
 #pragma endregion Protected Methods
 
 #pragma region Protected Members
+	// Source Image Name - embedded
+	// It is desired for the Input Image name to be exposed as a value 
+	// object, but it is not desired for it to be buckettized.  It can not 
+	// change while in Run Mode and buckettized data is all reset when going 
+	// online.  If the Input Image is changed, Output Image buffers will all 
+	// be destroyed and recreated anyway.
+	SVStringValueObjectClass m_svSourceImageName;
+	//SVStaticStringValueObjectClass m_svSourceImageName;
+
 	// Output Image - embedded
 	SVImageClass m_OutputImage;
 	SVImageClass m_LogicalROIImage;

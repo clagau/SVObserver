@@ -292,23 +292,34 @@ void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1()
 
 	int index = ( int ) availableSourceImageListBox.GetItemData( availableSourceImageListBox.GetCurSel() );
 
+	SVToolClass*	pTool = pParentDialog->GetTool();
 
 	if( pImageInputInfo && pImageInputInfo->PObject && index != LB_ERR && index >= 0 && index < imageList.GetSize() )
 	{
-		bool l_bIsValid = pParentDialog->GetTool()->IsValid() != FALSE;
+		bool l_bIsValid = pTool->IsValid() != FALSE;
 
 		// Get new input...
 		pCurrentSourceImage = imageList.GetAt( index );
 
-		pParentDialog->GetTool()->ConnectToImage( pImageInputInfo, pCurrentSourceImage );
+		pTool->ConnectToImage( pImageInputInfo, pCurrentSourceImage );
 
 		pCurrentSourceImage = dynamic_cast<SVImageClass*>( pImageInputInfo->GetInputObjectInfo().PObject );
 
 		dialogImage.setImage( pCurrentSourceImage );
 
+		SVStringValueObjectClass* toolsImageNameObject;
+		pTool->GetInputImageNames(toolsImageNameObject);
+
+		SVString	inputImageName = pCurrentSourceImage->GetCompleteName();
+
+		AddInputRequest(toolsImageNameObject, inputImageName.c_str());
+
+		HRESULT hr = AddInputRequestMarker();
+
+		// RunOnce occurs within refresh()
 		refresh();
 
-		if( l_bIsValid && ! pParentDialog->GetTool()->IsValid() )
+		if( l_bIsValid && ! pTool->IsValid() )
 		{
 			AfxMessageBox( "Changing image source has placed the tool "
 				"outside of the selected source image.  Please either: "

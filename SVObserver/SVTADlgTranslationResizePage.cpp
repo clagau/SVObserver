@@ -859,7 +859,13 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 	// RunOnce() and ResetObject() logic, we will attempt to retrieve 
 	// we will only be able to track results from the Run Error Code.
 	m_pTool->ClearRunError();
-	item->CommitChanges();  
+
+	// It is possible for no item to be in focus if the table was not clicked 
+	// on.  In which case nothing has changed.
+	if (nullptr != item)
+	{
+		item->CommitChanges();  
+	}
 
 	hr = m_pTool->GetRunErrorCode();
 	tString = m_pTool->GetRunErrorData();
