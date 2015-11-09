@@ -172,6 +172,19 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 	msvVariableGUID_OBSOLETE.ObjectAttributesAllowedRef() = SV_HIDDEN;
 	msvVariableName.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
+	// Override base class exposure of the drawflag
+	// This value will not be exposed for the Statistics Tool.
+	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
+
+	// Override base class exposure of the auxillaryextent variables
+	// These values will not be exposed for the Statistics Tool.
+	m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+
 	CString strName;
 	msvVariableName.GetValue(strName);
 

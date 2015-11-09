@@ -135,16 +135,13 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	const SVObjectTypeInfoStruct& rToolType = GetTool()->GetObjectInfo().ObjectTypeInfo;
 	switch( rToolType.SubType )
 	{
-	case SVToolAcquisitionObjectType:
-		AddPage( new SVToolAdjustmentDialogAcquisitionSourcePageClass( this ) );
-		// NOTE:
-		// No Conditional Execution for Acquisition Tool !!!!
-		delete pConditionalDlg;
-		pConditionalDlg = nullptr;
-		// NOTE:
-		// No General page for acquisition tool!
-		// AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
-		break;
+		case SVToolAcquisitionObjectType:
+			AddPage( new SVToolAdjustmentDialogAcquisitionSourcePageClass( this ) );
+			// NOTE:
+			// No Conditional Execution for Acquisition Tool !!!!
+			delete pConditionalDlg;
+			pConditionalDlg = nullptr;
+			break;
 
 		case SVToolImageObjectType:	// Image Tool
 			AddPage( new SVToolAdjustmentDialogTwoImagePageClass( this ) );
@@ -211,7 +208,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		case SVToolArchiveObjectType:   // Archive tool
 			AddPage( new SVToolAdjustmentArchivePage( this) ); 
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;
 
 		case SVMathToolObjectType:
@@ -220,18 +216,15 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 				AddPage( new SVFormulaEditorPageClass( m_InspectionID, m_TaskObjectID, new FormulaController(m_InspectionID, m_TaskObjectID, info), false ) );
 				AddPage( new SVToolAdjustmentDialogPassFailPageClass( m_InspectionID, m_TaskObjectID) );
 				AddPage( pConditionalDlg );
-				AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			}
 			break;
 
 		case SVStatisticsToolObjectType:
 			AddPage( new SVToolAdjustmentDialogStatisticsPageClass( GetTool() ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;
 
 		case SVShiftToolObjectType:
-			
 			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
 			if(bHasSize)
 			{
@@ -298,7 +291,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		case SVRemoteInputToolObjectType:
 			AddPage( new SVTADlgRemoteInputToolPage( this ));
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;
 
 		case SVRingBufferToolObjectType:

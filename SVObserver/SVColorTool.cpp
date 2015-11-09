@@ -106,6 +106,19 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
+	// Override base class exposure of the drawflag
+	// This value will not be exposed for the Color Tool.
+	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
+
+	// Override base class exposure of the auxillaryextent variables
+	// These values will not be exposed for the Color Tool.
+	m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxilliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+
 	isCreated = bOk;
 
 	return bOk;
