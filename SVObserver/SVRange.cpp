@@ -279,35 +279,29 @@ void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
 {
 
 	double dres(0);
-	if( nullptr != m_ValueObjectReferences[range].Object() )
+	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[range].Object()) )
 	{
-		
-		if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[range].Object()) )
+
+		if(m_ValueObjectReferences[range].IsIndexPresent())
 		{
+			int index = m_ValueObjectReferences[range].ArrayIndex(false);
+			int LastSet =  pValueObject->GetLastSetIndex();
+			pValueObject->GetValue(LastSet,index,dres);
 
-			if(m_ValueObjectReferences[range].IsIndexPresent())
-			{
-				int index = m_ValueObjectReferences[range].ArrayIndex(false);
-				int LastSet =  pValueObject->GetLastSetIndex();
-				pValueObject->GetValue(LastSet,index,dres);
-
-			}
-			else
-			{
-				pValueObject->GetValue( dres );
-			}
-
-			
-			
-		
 		}
-		else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[range].Object()) )
+		else
 		{
-			pBasicValueObject->getValue( dres );
+			pValueObject->GetValue( dres );
 		}
+
+		GetRange(range).SetValue( bucket,dres );	
+
+	}
+	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[range].Object()) )
+	{
+		pBasicValueObject->getValue( dres );
 		GetRange(range).SetValue( bucket,dres );
 	}
-	
 }
 
 
@@ -324,49 +318,61 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 
 	if(ret)
 	{
-			
-			double InputValue,failHigh(0), failLow(0),warnLow(0),warnHigh(0);
-			getInputValue(InputValue);
+
+		double InputValue,failHigh(0), failLow(0),warnLow(0),warnHigh(0);
+		getInputValue(InputValue);
 
 
-			
+		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailLow].Object() )
+		{
 			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_FailLow );
-			FailLow.GetValue(failLow);
-			
-
-			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_FailHigh );
-			FailHigh.GetValue(failHigh);
-
-
-			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnLow );
-			WarnLow.GetValue(warnLow);
-			
-
-			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnHigh );
-			WarnHigh.GetValue(warnHigh);
-	 
-			
-			
-
-			bool isFailed = ( InputValue < failLow || InputValue > failHigh );
-			bool isWarned = ( !isFailed && ( InputValue < warnLow || InputValue > warnHigh ) );
-
-
-			if( isFailed )
-			{
-				RRunStatus.SetFailed();
-			}
-
-			if( isWarned )
-			{
-				RRunStatus.SetWarned();
-			}
-
-			if( !isFailed && !isWarned )
-			{
-				RRunStatus.SetPassed();
-			}
 		}
+		FailLow.GetValue(failLow);
+
+
+		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailHigh ].Object() )
+		{
+			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_FailHigh );
+		}
+		FailHigh.GetValue(failHigh);
+
+		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_WarnLow  ].Object() )
+		{
+			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnLow );
+		}
+
+
+		WarnLow.GetValue(warnLow);
+
+		if( nullptr != m_ValueObjectReferences[ RangeEnum::ER_WarnHigh  ].Object() )
+		{
+			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnHigh );
+		}
+
+		WarnHigh.GetValue(warnHigh);
+
+
+
+
+		bool isFailed = ( InputValue < failLow || InputValue > failHigh );
+		bool isWarned = ( !isFailed && ( InputValue < warnLow || InputValue > warnHigh ) );
+
+
+		if( isFailed )
+		{
+			RRunStatus.SetFailed();
+		}
+
+		if( isWarned )
+		{
+			RRunStatus.SetWarned();
+		}
+
+		if( !isFailed && !isWarned )
+		{
+			RRunStatus.SetPassed();
+		}
+	}
 
 	return ret;
 }
@@ -615,24 +621,30 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
 {
 	if(m_isValidRange)
 	{
-		
-		UpdateRange(bucket, RangeEnum::ER_FailLow );
-		
+
+		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailLow  ].Object() )
+		{
+			UpdateRange(bucket, RangeEnum::ER_FailLow );
+		}
+
+
 	}
 	return FailLow;
 }
 
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
 {
-	
+
 	if(m_isValidRange)
 	{
-
-		UpdateRange(bucket, RangeEnum::ER_FailHigh );
+		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailHigh ].Object() )
+		{
+			UpdateRange(bucket, RangeEnum::ER_FailHigh );
+		}
 
 	}
 
-	
+
 	return FailHigh;
 }
 //******************************************************************************
