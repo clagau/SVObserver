@@ -318,55 +318,9 @@ BOOL SVUnaryImageOperatorListClass::OnValidate()
 	return bRetVal;
 }
 
-bool SVUnaryImageOperatorListClass::copyBuffer( const SVSmartHandlePointer input, SVSmartHandlePointer output )
-{
-	bool bRetVal = true;
-	SVImageBufferHandleImage sourceMilHandle;
-	SVImageBufferHandleImage destinationMilHandle;
-
-	input->GetData( sourceMilHandle );
-	output->GetData( destinationMilHandle );
-
-	bRetVal = bRetVal && !( sourceMilHandle.empty() );
-	bRetVal = bRetVal && !( destinationMilHandle.empty() );
-
-	if( bRetVal )
-	{
-		SVMatroxBufferInterface::SVStatusCode  l_Code = SVMatroxBufferInterface::CopyBuffer( destinationMilHandle.GetBuffer(), sourceMilHandle.GetBuffer() );
-		bRetVal = (SVMEE_STATUS_OK == l_Code);
-	}	
-
-	return bRetVal;
-}
 
 
-DWORD_PTR SVUnaryImageOperatorListClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = NULL;
 
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-
-	return( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) );
-}
 
 
 
@@ -568,8 +522,8 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			//set tmp variable
 			SVSmartHandlePointer sourceImage = m_milTmpImageObjectInfo1;
 			SVSmartHandlePointer destinationImage = m_milTmpImageObjectInfo2;
-			bRetVal = bRetVal && !( sourceImage.empty() ) && !( sourceImage->empty() );
-			bRetVal = bRetVal && !( destinationImage.empty() ) && !( destinationImage->empty() );
+			bRetVal = bRetVal && !( sourceImage->empty() );
+			bRetVal = bRetVal && !( destinationImage->empty() );
 			bRetVal = bRetVal && copyBuffer( input, sourceImage );
 
 			if (bRetVal)
@@ -630,7 +584,7 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			if( bRetVal )
 			{
 				bRetVal = copyBuffer(sourceImage, output);
-			} 
+			} // if( bFirstFlag ) 
 		}
 	}
 	
@@ -667,6 +621,34 @@ BOOL SVStdImageOperatorListClass::OnValidate()
 	return FALSE;
 }
 
+DWORD_PTR SVStdImageOperatorListClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+{
+	DWORD_PTR DwResult = NULL;
+
+	// Try to process message by yourself...
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+	switch( dwPureMessageID )
+	{
+	case SVMSGID_RESET_ALL_OBJECTS:
+		{
+			HRESULT l_ResetStatus = ResetObject();
+			if( l_ResetStatus != S_OK )
+			{
+				ASSERT( SUCCEEDED( l_ResetStatus ) );
+
+				DwResult = SVMR_NO_SUCCESS;
+			}
+			else
+			{
+				DwResult = SVMR_SUCCESS;
+			}
+			break;
+		}
+	}
+
+	return( SVUnaryImageOperatorListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) );
+}
+
 // Set String value object for Source Image Names
 HRESULT SVStdImageOperatorListClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
 {
@@ -688,6 +670,38 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames( SVRunStatusClass& R
 	}
 	return l_hr;
 }
+
+bool SVStdImageOperatorListClass::copyBuffer( const SVSmartHandlePointer input, SVSmartHandlePointer output )
+{
+	bool bRetVal = true;
+	SVImageBufferHandleImage sourceMilHandle;
+	SVImageBufferHandleImage destinationMilHandle;
+
+	input->GetData( sourceMilHandle );
+	output->GetData( destinationMilHandle );
+
+	bRetVal = bRetVal && !( sourceMilHandle.empty() );
+	bRetVal = bRetVal && !( destinationMilHandle.empty() );
+
+	if( bRetVal )
+	{
+		SVMatroxBufferInterface::SVStatusCode  l_Code = SVMatroxBufferInterface::CopyBuffer( destinationMilHandle.GetBuffer(), sourceMilHandle.GetBuffer() );
+		bRetVal = (SVMEE_STATUS_OK == l_Code);
+	}	
+	
+	return bRetVal;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
@@ -787,27 +801,6 @@ BOOL SVInPlaceImageOperatorListClass::OnValidate()
 	return FALSE;
 }
 
-HRESULT SVInPlaceImageOperatorListClass::ResetObject()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( SVUnaryImageOperatorListClass::ResetObject() != S_OK )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	//create tmp mil buffer for operator
-	SVImageClass* pImage = getInputImage();
-	if (nullptr != pImage)
-	{
-		SVImageInfoClass imageInfo = pImage->GetImageInfo();
-		imageInfo.setDibBufferFlag(false);
-		SVMatroxImageProcessingClass::Instance().CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo1);
-		SVMatroxImageProcessingClass::Instance().CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo2);
-	}
-
-	return l_hrOk;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Run
@@ -822,8 +815,8 @@ HRESULT SVInPlaceImageOperatorListClass::ResetObject()
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 {
-	// Use input image for in- and output.
-	SVSmartHandlePointer inOutput;
+	SVSmartHandlePointer input;
+	SVSmartHandlePointer output;
 
 	SVRunStatusClass ChildRunStatus;
 	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
@@ -841,15 +834,12 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 	if( bRetVal )
 	{
+		// Use input image for in- and output.
 		// Image must be a Physical type!!! ( Is already checked in OnValidate() )
-		getInputImage()->GetImageHandle( inOutput );
-
-		//set tmp variable
-		SVSmartHandlePointer sourceImage = m_milTmpImageObjectInfo1;
-		SVSmartHandlePointer destinationImage = m_milTmpImageObjectInfo2;
-		bRetVal = bRetVal && !( sourceImage.empty() ) && !( sourceImage->empty() );
-		bRetVal = bRetVal && !( destinationImage.empty() ) && !( destinationImage->empty() );
-		bRetVal = bRetVal && copyBuffer( inOutput, sourceImage );
+		getInputImage()->GetImageHandle( input );
+		getInputImage()->GetImageHandle( output );
+		
+		bool bFirstFlag = true;
 
 		// Run children...
 		for( int i = 0; i < GetSize(); i++ )
@@ -863,12 +853,25 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 			if( pOperator )
 			{
-				if( pOperator->Run( true, sourceImage, destinationImage, ChildRunStatus ) )
+				if( pOperator->Run( bFirstFlag, input, output, ChildRunStatus ) )
 				{
-					//switch image buffer for next run
-					SVSmartHandlePointer tmpImage = sourceImage;
-					sourceImage = destinationImage;
-					destinationImage = tmpImage;
+					// Switch first flag off ( FALSE )...
+					bFirstFlag = false;
+
+					// NOTE:
+					// If operator returns FALSE, he was not running ( may be deactivated )
+					// So, don't switch first flag off, so that a following operator knows
+					// he is the first one or the 'no operator was running' check can do his job!!!
+					// RO_22Mar2000
+
+					// WARNING:
+					// Do not set bRetVal automatically to FALSE, if operator was not running !!!
+					// ChildRunStatus keeps information about, if an error occured while running !!!
+
+					// NOTE: 
+					// Since we do here an in place process, that means input and output image is
+					// the same, bFirstFlag is not really necessary, but supported for sanity.
+					// But if no operator exists, we don't have to copy input to output anymore!
 				}
 			}
 			else
@@ -893,12 +896,6 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			if( ChildRunStatus.IsCriticalFailure() )
 				RRunStatus.SetCriticalFailure();
 		}
-
-		//copy last image to output
-		if( bRetVal )
-		{
-			bRetVal = copyBuffer(sourceImage, inOutput);
-		} 
   }
 	
 	if( ! bRetVal )
