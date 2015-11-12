@@ -253,6 +253,8 @@ void CSVOCameraDlg::OnBtnPropVc()
 				*pCameraObj = rTmpObj;
 				m_pParent->SetModified(TRUE);
 				m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
+				CString strDigName = m_pParent->BuildDigName( *pCameraObj );
+				SVDigitizerProcessingClass::Instance().SelectDigitizer( strDigName );
 			}
 			else
 			{

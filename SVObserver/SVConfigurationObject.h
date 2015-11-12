@@ -305,7 +305,7 @@ private:
 	//! \param rConfigType <out> a reference to obtain the configuration color
 	//! \returns S_OK on success or the error number
 	//************************************
-	HRESULT ConvertToMixedProductType( bool& rConfigType );
+	HRESULT ConvertColorToStandardProductType( bool& rConfigType );
 
 	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass& svFileArray );
 

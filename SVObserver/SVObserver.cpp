@@ -4737,21 +4737,6 @@ BOOL SVObserverApp::CheckSVIMType() const
 				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
 				break;
 			}
-		case SVIM_PRODUCT_X2_GD1A_MIXED:
-		case SVIM_PRODUCT_X2_GD8A_MIXED:
-			{
-				Result |= ProductType == SVIM_PRODUCT_X2_GD1A;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD2A;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD4A;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD8A;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD1A_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD2A_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD4A_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR;
-				break;
-			}
 
 		default:
 			{
@@ -4805,7 +4790,7 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	}
 	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A) == 0 )
 	{
-		eType = SVIM_PRODUCT_X2_GD1A_MIXED;
+		eType = SVIM_PRODUCT_X2_GD1A;
 	}
 	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD2A) == 0 )
 	{
@@ -4817,7 +4802,7 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	}
 	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A) == 0 )
 	{
-		eType = SVIM_PRODUCT_X2_GD8A_MIXED;
+		eType = SVIM_PRODUCT_X2_GD8A;
 	}
 	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A_NONIO) == 0 )
 	{

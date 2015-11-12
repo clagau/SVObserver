@@ -9,13 +9,10 @@
 //* .Check In Date   : $Date:   18 Sep 2014 13:42:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include <set>
 #include "SVOPropertyPageDlg.h"
 #include "SVObserver.h"
-#include "SVFileSystemLibrary/SVFileInfo.h"
-#include "SVFileSystemLibrary/SVFileInfoComparator.h"
-#include "SVFileSystemLibrary/SVFileSystemScanner.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -41,6 +38,7 @@
 #include "SVSoftwareTriggerDefaults.h"
 #include "SVPPQConstants.h"
 #include "SVHardwareManifest.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -725,43 +723,25 @@ void CSVOPropertyPageDlg::UpdateFileImageSize()
 
 bool CSVOPropertyPageDlg::ScanForImageSize(SIZE& size)
 {
-	bool bRetVal = false;
-	SVString fileName = m_CameraObj.GetImageFilename();
-	SVString dirName = m_CameraObj.GetImageDirectoryName();
+	bool Result( false );
+	SVImageFile FileImage;
+	SVString Name;
 
-	long fileMode = m_CameraObj.GetFileLoadingMode();
-	if (!fileMode) // use File
+	if ( 0 == m_CameraObj.GetFileLoadingMode() ) // use File
 	{
-		if (!fileName.empty())
-		{
-			SVImageFile image;
-			SVImageFileLoader::Load(fileName.ToString(), image);
-			
-			size = image.GetSize();
-			bRetVal = true;
-		}
+		Name = m_CameraObj.GetImageFilename();
 	}
-	else // use Directory
+	else
 	{
-		if (!dirName.empty())
-		{
-			typedef std::set<SVFileInfo, SVFileInfoComparator> SVFileList;
-			typedef SVFileList::const_iterator FileListIterator;
-			typedef std::insert_iterator<SVFileList> Insertor;
+		Name = m_CameraObj.GetImageDirectoryName();
+	}
 
-			SVFileList fileList;
-			SVFileSystemScanner<Insertor>::ScanForFiles(dirName.ToString(), _T("*.bmp"), Insertor(fileList, fileList.end()));
-			FileListIterator it = fileList.begin();
-			if (it != fileList.end())
-			{
-				SVImageFile image;
-				SVImageFileLoader::Load(it->filename.ToString(), image);
-				size = image.GetSize();
-				bRetVal = true;
-			}
-		}
+	if( S_OK == SVImageFileLoader::LoadFirstFile( Name.c_str(), _T("*.bmp"), FileImage ) )
+	{
+		size = FileImage.GetSize();
+		Result = true;
 	}
-	return bRetVal;
+	return Result;
 }
 
 void CSVOPropertyPageDlg::SetImageSizeEditAttributes()
@@ -2254,7 +2234,6 @@ bool CSVOPropertyPageDlg::IsGigeSystem() const
 {
 	return ( m_eProduct == SVIM_PRODUCT_X2_GD1A 
 		|| m_eProduct == SVIM_PRODUCT_X2_GD1A_COLOR
-		|| m_eProduct == SVIM_PRODUCT_X2_GD1A_MIXED
 		|| m_eProduct == SVIM_PRODUCT_X2_GD2A 
 		|| m_eProduct == SVIM_PRODUCT_X2_GD2A_COLOR
 		|| m_eProduct == SVIM_PRODUCT_X2_GD4A 
@@ -2262,8 +2241,7 @@ bool CSVOPropertyPageDlg::IsGigeSystem() const
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A 
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_COLOR
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO 
-		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR
-		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_MIXED) ? true : false;
+		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR) ? true : false;
 }
 
 //******************************************************************************

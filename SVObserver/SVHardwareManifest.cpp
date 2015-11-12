@@ -47,18 +47,16 @@ const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap = boost:
 	( SVIM_PRODUCT_D2_HUB,        SVIMTypeInfoStruct( false,     3,			3 ) )
 	( SVIM_PRODUCT_D3_HUB,        SVIMTypeInfoStruct( false,     3,			3 ) )
 	( SVIM_PRODUCT_X1_HUB,        SVIMTypeInfoStruct( false,     3,			3 ) )
-	( SVIM_PRODUCT_X2_GD1A,       SVIMTypeInfoStruct( false,      1,			1 ) )
-	( SVIM_PRODUCT_X2_GD1A_COLOR, SVIMTypeInfoStruct( false,      1,			1 ) )
-	( SVIM_PRODUCT_X2_GD1A_MIXED, SVIMTypeInfoStruct( true,      1,			1 ) )
+	( SVIM_PRODUCT_X2_GD1A,       SVIMTypeInfoStruct( true,      1,			1 ) )
+	( SVIM_PRODUCT_X2_GD1A_COLOR, SVIMTypeInfoStruct( false,     1,			1 ) )
 	( SVIM_PRODUCT_X2_GD2A,       SVIMTypeInfoStruct( false,     2,			2 ) )
 	( SVIM_PRODUCT_X2_GD2A_COLOR, SVIMTypeInfoStruct( false,     2,			2 ) )
 	( SVIM_PRODUCT_X2_GD4A,       SVIMTypeInfoStruct( false,     4,			3 ) )
 	( SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct( false,     4,			3 ) )
-	( SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct( false,      8,			3 ) )
-	( SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct( false,      8,			3 ) )
-//	( SVIM_PRODUCT_X2_GD8A_NONIO, SVIMTypeInfoStruct( true,      8,			3 ) )
-//	( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVIMTypeInfoStruct( true, 8,			3 ) )
-	( SVIM_PRODUCT_X2_GD8A_MIXED, SVIMTypeInfoStruct( true,      8,			3 ) )
+	( SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct( true,      8,			3 ) )
+	( SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct( false,     8,			3 ) )
+	//	( SVIM_PRODUCT_X2_GD8A_NONIO, SVIMTypeInfoStruct( true,      8,			3 ) )
+	//	( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVIMTypeInfoStruct( true, 8,			3 ) )
 	;
 	
 SVHardwareManifest& SVHardwareManifest::Instance()
@@ -257,15 +255,14 @@ bool SVHardwareManifest::IsCompatible( SVIMProductEnum ConfigType, SVIMProductEn
 	(SVIM_PRODUCT_X1, boost::assign::list_of(SVIM_PRODUCT_X2))
 	(SVIM_PRODUCT_X3, boost::assign::list_of(SVIM_PRODUCT_X2))
 
-	(SVIM_PRODUCT_X2_GD1A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD1A_MIXED))
-	(SVIM_PRODUCT_X2_GD2A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A_MIXED))
-	(SVIM_PRODUCT_X2_GD4A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A_MIXED))
-	(SVIM_PRODUCT_X2_GD8A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A_MIXED))
+	(SVIM_PRODUCT_X2_GD1A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
+	(SVIM_PRODUCT_X2_GD2A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
+	(SVIM_PRODUCT_X2_GD4A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
+	(SVIM_PRODUCT_X2_GD8A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
 
-	(SVIM_PRODUCT_X2_GD1A, boost::assign::list_of(SVIM_PRODUCT_X2_GD1A_MIXED))
-	(SVIM_PRODUCT_X2_GD2A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A_MIXED))
-	(SVIM_PRODUCT_X2_GD4A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A_MIXED))
-	(SVIM_PRODUCT_X2_GD8A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A_MIXED))
+	(SVIM_PRODUCT_X2_GD1A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
+	(SVIM_PRODUCT_X2_GD2A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
+	(SVIM_PRODUCT_X2_GD4A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
 	;
 
 	bool l_bRet = false;
@@ -307,22 +304,11 @@ bool SVHardwareManifest::IsColorSystem(SVIMProductEnum p_ProductType)
 	return (it != l_ColorList.end());
 }
 
-bool SVHardwareManifest::IsMixedSystem(SVIMProductEnum p_ProductType)
-{
-	static SVIMProductEnumSet MixedList = boost::assign::list_of
-		(SVIM_PRODUCT_X2_GD1A_MIXED)
-		(SVIM_PRODUCT_X2_GD8A_MIXED)
-		;
-	SVIMProductEnumSet::const_iterator it = MixedList.find(p_ProductType);
-	return (it != MixedList.end());
-}
-
 bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum p_ProductType)
 {
 	static SVIMProductEnumSet l_GigeList = boost::assign::list_of
 	(SVIM_PRODUCT_X2_GD1A)
 	(SVIM_PRODUCT_X2_GD1A_COLOR)
-	(SVIM_PRODUCT_X2_GD1A_MIXED)
 	(SVIM_PRODUCT_X2_GD2A)
 	(SVIM_PRODUCT_X2_GD2A_COLOR)
 	(SVIM_PRODUCT_X2_GD4A)
@@ -331,7 +317,6 @@ bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum p_ProductType)
 	(SVIM_PRODUCT_X2_GD8A_COLOR)
 	(SVIM_PRODUCT_X2_GD8A_NONIO)
 	(SVIM_PRODUCT_X2_GD8A_NONIO_COLOR)
-	(SVIM_PRODUCT_X2_GD8A_MIXED)
 	;
 	SVIMProductEnumSet::const_iterator it = l_GigeList.find(p_ProductType);
 	return (it != l_GigeList.end());
@@ -358,7 +343,6 @@ bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum p_ProductType)
 	(SVIM_PRODUCT_X3_COLOR)
 	(SVIM_PRODUCT_X2_GD1A)
 	(SVIM_PRODUCT_X2_GD1A_COLOR)
-	(SVIM_PRODUCT_X2_GD1A_MIXED)
 	(SVIM_PRODUCT_X2_GD2A)
 	(SVIM_PRODUCT_X2_GD2A_COLOR)
 	(SVIM_PRODUCT_X2_GD4A)
@@ -367,7 +351,6 @@ bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum p_ProductType)
 	(SVIM_PRODUCT_X2_GD8A_COLOR)
 	(SVIM_PRODUCT_X2_GD8A_NONIO)
 	(SVIM_PRODUCT_X2_GD8A_NONIO_COLOR)
-	(SVIM_PRODUCT_X2_GD8A_MIXED)
 	;
 	SVIMProductEnumSet::const_iterator it = l_DigitalList.find(p_ProductType);
 	return (it != l_DigitalList.end());
@@ -385,14 +368,12 @@ bool SVHardwareManifest::IsProductTypeRAID(SVIMProductEnum p_ProductType)
 	(SVIM_PRODUCT_X2_COLOR)
 	(SVIM_PRODUCT_X2_GD1A)
 	(SVIM_PRODUCT_X2_GD1A_COLOR)
-	(SVIM_PRODUCT_X2_GD1A_MIXED)
 	(SVIM_PRODUCT_X2_GD2A)
 	(SVIM_PRODUCT_X2_GD2A_COLOR)
 	(SVIM_PRODUCT_X2_GD8A)
 	(SVIM_PRODUCT_X2_GD8A_COLOR)
 	(SVIM_PRODUCT_X2_GD8A_NONIO)
 	(SVIM_PRODUCT_X2_GD8A_NONIO_COLOR)
-	(SVIM_PRODUCT_X2_GD8A_MIXED)
 	;
 	SVIMProductEnumSet::const_iterator it = l_RaidList.find(p_ProductType);
 	return (it != l_RaidList.end());

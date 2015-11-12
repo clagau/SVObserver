@@ -18,6 +18,8 @@
 #include "SVOConfigAssistantDlg.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
+#include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary/SVFileAcquisitionLoadingModeEnum.h"
@@ -51,6 +53,8 @@ namespace
 {
 	int MAX_NUM_DIGITIZERS_1394_HUB=3;
 }
+
+static const int GrayScaleBitDepth = 8;
 
 // Defines for Camera File extensions
 static const CString CorecoCameraFileDefExt = _T(".cca");
@@ -141,6 +145,7 @@ static const CString MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY ( _T("The Image 
 static const CString MESSAGE_FILE_ACQUISITION_MISSING_FILENAME ( _T("The Image Filename must be specified.") );
 static const CString MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY ( _T("The Image Directory must be specified.") );
 static const CString MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The Image Size is Invalid.") );
+static const CString MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
 static const CString MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
 
 const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap = boost::assign::map_list_of< SVIMProductEnum, CString >
@@ -167,7 +172,6 @@ const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_Produ
 	( SVIM_PRODUCT_X1_HUB, SYSTEM_SVIM_X1_HUB_STRING )
 	( SVIM_PRODUCT_X2_GD1A, SYSTEM_SVIM_X2_GD1A )
 	( SVIM_PRODUCT_X2_GD1A_COLOR, SYSTEM_SVIM_X2_GD1A_COLOR )
-	( SVIM_PRODUCT_X2_GD1A_MIXED, SYSTEM_SVIM_X2_GD1A_MIXED )
 	( SVIM_PRODUCT_X2_GD2A, SYSTEM_SVIM_X2_GD2A )
 	( SVIM_PRODUCT_X2_GD2A_COLOR, SYSTEM_SVIM_X2_GD2A_COLOR )
 	( SVIM_PRODUCT_X2_GD4A, SYSTEM_SVIM_X2_GD4A )
@@ -176,7 +180,6 @@ const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_Produ
 	( SVIM_PRODUCT_X2_GD8A_COLOR, SYSTEM_SVIM_X2_GD8A_COLOR )
 	//( SVIM_PRODUCT_X2_GD8A_NONIO, SYSTEM_SVIM_X2_GD8A_NONIO )
 	//( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SYSTEM_SVIM_X2_GD8A_NONIO_COLOR );
-	( SVIM_PRODUCT_X2_GD8A_MIXED, SYSTEM_SVIM_X2_GD8A_MIXED )
 	;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -565,7 +568,6 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			case SVIM_PRODUCT_X1_COLOR:
 			case SVIM_PRODUCT_X2_GD1A:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
-			case SVIM_PRODUCT_X2_GD1A_MIXED:
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			{
@@ -578,7 +580,6 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			case SVIM_PRODUCT_X2_COLOR:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_MIXED:
 			{
 				CreateDefaultForSVIMDigital(2, TRIGGER_FIXED_NAME);
 				break;
@@ -1075,14 +1076,12 @@ CString CSVOConfigAssistantDlg::BuildTrgDig( const SVOTriggerObj& rTriggerObj) c
 			case SVIM_PRODUCT_X1_HUB:
 			case SVIM_PRODUCT_X2_GD1A:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
-			case SVIM_PRODUCT_X2_GD1A_MIXED:
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_MIXED:
 			{
 				sDigName = SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig).ToString();
 				break;
@@ -1165,10 +1164,6 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			{
-				sDigName.Format("%s%s%d%s%d", SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum);
-				break;
-			}
 			case SVIM_PRODUCT_D1_COLOR:
 			case SVIM_PRODUCT_D2_COLOR:
 			case SVIM_PRODUCT_D3_COLOR:
@@ -1180,13 +1175,6 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
-			{
-				sDigName.Format("%s%s%d%s", SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING/*, iBandNum*/);
-				break;
-			}
-
-			case SVIM_PRODUCT_X2_GD1A_MIXED:
-			case SVIM_PRODUCT_X2_GD8A_MIXED:
 			{
 				if( !isColor )
 				{
@@ -1218,13 +1206,11 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 			{
 				if( m_lConfigurationType == SVIM_PRODUCT_RGB_COLOR || bIsAcqDev )
 				{
-					sDigName.Format("%s%s%d%s"
-						,SVIM_BOARD_RGB_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING); 
+					sDigName.Format("%s%s%d%s", SVIM_BOARD_RGB_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING); 
 				}
 				else
 				{
-					sDigName.Format("%s%s%d%s%d"
-						,SVIM_BOARD_RGB_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum); 
+					sDigName.Format("%s%s%d%s%d", SVIM_BOARD_RGB_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum); 
 				}
 				break;
 			}
@@ -1240,7 +1226,6 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 			case SVIM_PRODUCT_X1_HUB:
 			{
 				sDigName.Format("%s%s%d%s%d", SVIM_BOARD_1394_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum);
-
 				break;
 			}
 			case SVIM_PRODUCT_D1_COLOR:
@@ -1251,7 +1236,6 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 			case SVIM_PRODUCT_X3_COLOR:
 			{
 				sDigName.Format("%s%s%d%s", SVIM_BOARD_1394_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING/*, iBandNum*/);
-
 				break;
 			}
 
@@ -1260,23 +1244,11 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			{
-				sDigName.Format("%s%s%d%s%d", SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum);
-				break;
-			}
-
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
-			{
-				sDigName.Format("%s%s%d%s", SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING);
-				break;
-			}
-
-			case SVIM_PRODUCT_X2_GD1A_MIXED:
-			case SVIM_PRODUCT_X2_GD8A_MIXED:
 			{
 				if( !isColor )
 				{
@@ -1357,7 +1329,7 @@ void CSVOConfigAssistantDlg::SetConfigurationSystem(long lSysValue)
 		case SVIM_PRODUCT_INVALID_TYPE:
 		case SVIM_PRODUCT_TYPE_UNKNOWN:
 		{
-			m_lConfigurationType = SVIM_PRODUCT_X2_GD8A_MIXED;
+			m_lConfigurationType = SVIM_PRODUCT_X2_GD8A;
 			break;
 		}
 	}
@@ -4374,6 +4346,7 @@ void CSVOConfigAssistantDlg::RemoveFileAcquisitionMessages( const CString& rCame
 	CString sInvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, rCameraName, MESSAGE_FILE_ACQUISITION_INVALID_FILE);
 	CString sInvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, rCameraName, MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
 	CString sInvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, rCameraName, MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
+	CString sColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, rCameraName, MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
 
 	RemoveMessageFromList(sFileAcquisitionNotAllowedMessage);
 	RemoveMessageFromList(sEmptyFileNameMessage);
@@ -4381,6 +4354,7 @@ void CSVOConfigAssistantDlg::RemoveFileAcquisitionMessages( const CString& rCame
 	RemoveMessageFromList(sInvalidFileMessage);
 	RemoveMessageFromList(sInvalidDirMessage);
 	RemoveMessageFromList(sInvalidImageSizeMessage);
+	RemoveMessageFromList(sColorMismatchMessage);
 }
 
 HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFileParameters )
@@ -4389,6 +4363,8 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 	RemoveFileAcquisitionMessages( CameraName );
 
 	CString sDigName = BuildDigName( rCameraObj, true );
+	SVDigitizerProcessingClass::Instance().SelectDigitizer( sDigName );
+
 	if( rCameraObj.IsFileAcquisition())
 	{
 		CString sEmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
@@ -4396,6 +4372,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 		CString sInvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_FILE);
 		CString sInvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
 		CString sInvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
+		CString sColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
 
 		// check that image size is not zero
 		const SIZE& size = rCameraObj.GetFileImageSize();
@@ -4449,13 +4426,32 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 				}
 			}
 		}
+
+		SVImageFile FileImage;
+		SVString Name;
+
+		if ( 0 == rCameraObj.GetFileLoadingMode() )
+		{
+			Name = rCameraObj.GetImageFilename();
+		}
+		else
+		{
+			Name = rCameraObj.GetImageDirectoryName();
+		}
+
+		if( S_OK == SVImageFileLoader::LoadFirstFile( Name.c_str(), _T("*.bmp"), FileImage ) )
+		{
+			bool isColorImage = FileImage.GetBitDepth() > GrayScaleBitDepth;
+
+			if ( rCameraObj.IsColor() != isColorImage )
+			{
+				AddMessageToList( CAMERA_DLG,sColorMismatchMessage );
+			}
+		}
 	}
 	else
 	{
-		SVAcquisitionClassPtr pDevice;
-
-		SVDigitizerProcessingClass::Instance().SelectDigitizer( sDigName );
-		pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
+		SVAcquisitionClassPtr pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
 		if( !( pDevice.empty() ) )
 		{
 			SVDeviceParamCollection DeviceParams;

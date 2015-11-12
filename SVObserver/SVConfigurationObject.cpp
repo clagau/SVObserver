@@ -908,7 +908,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 				int iType = svValue;
 				SetProductType( (SVIMProductEnum) iType );
 
-				Result = ConvertToMixedProductType( ConfigurationColor );
+				Result = ConvertColorToStandardProductType( ConfigurationColor );
 				if( S_OK != Result )
 				{
 					//This causes the loading to stop but not to show any messages
@@ -3629,22 +3629,22 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 	rWriter.EndElement(); //CTAG_GLOBAL_CONSTANTS
 }
 
-HRESULT SVConfigurationObject::ConvertToMixedProductType( bool& rConfigColor )
+HRESULT SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigColor )
 {
 	HRESULT Result( S_OK );
 
 	SVIMProductEnum CurrentType( TheSVObserverApp.GetSVIMType() );
 	SVIMProductEnum ConfigType( GetProductType() );
 
-	//Need to change the product type from mono and color to mixed
-	bool ConvertType = SVHardwareManifest::IsMixedSystem( CurrentType ) && !SVHardwareManifest::IsMixedSystem( ConfigType );
-	if( ConvertType )
+	//Need to change the product type from color to standard product type
+	bool isColor = SVHardwareManifest::IsColorSystem( ConfigType );
+	if( isColor )
 	{
-		rConfigColor = SVHardwareManifest::IsColorSystem( ConfigType );
+		rConfigColor = isColor;
 		SetProductType( CurrentType );
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-
 	}
+
 	return Result;
 }
 
