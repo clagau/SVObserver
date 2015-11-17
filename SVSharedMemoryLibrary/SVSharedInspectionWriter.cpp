@@ -211,9 +211,45 @@ HRESULT SVSharedInspectionWriter::CopyLastInspectedToReject(long index, long rej
 		const SVSharedData& rLastInspected = GetLastInspectedSlot(index);
 		SVSharedData& rReject = GetRejectSlot(rejectIndex);
 		rReject.m_TriggerCount = rLastInspected.m_TriggerCount;
+		
+
+#ifdef TRACERUNREJECT 
+		std::stringstream debugstream;
+		debugstream << "Trigger Count: " <<  rLastInspected.m_TriggerCount <<  " Index: " <<   index << " Reject Index: " << rejectIndex << std::endl;
+		::OutputDebugStringA(debugstream.str().c_str());
+#endif 
 		for (SVSharedValueMap::const_iterator it = rLastInspected.m_Values.begin();it != rLastInspected.m_Values.end();++it)
 		{
-			rReject.m_Values.insert(SVSharedValuePair(it->first, it->second));
+
+
+			std::pair< SVSharedValueMap::iterator,bool>  mRet; 	
+			mRet = rReject.m_Values.insert(SVSharedValuePair(it->first, it->second));
+			if(false == mRet.second)
+			{
+				mRet.first->second = it->second;
+
+			}
+
+#ifdef TRACERUNREJECT 
+			std::string  myStringIn = it->first.c_str();
+			std::string myResultIn = it->second.m_Result.c_str();			
+			
+			std::string myStringOut =  mRet.first->first.c_str(); 
+			std::string  myResultout =  mRet.first->second.m_Result.c_str();
+
+			std::stringstream dstream;
+			dstream <<  "Insert in SharedValueMap(  "  << myStringIn << " " << myResultIn <<  " ) ret " << mRet.second << std::endl;
+			::OutputDebugStringA(dstream.str().c_str());
+
+			if(myStringOut.compare(myStringIn)  || myResultout.compare(myResultIn) )
+			{
+				std::stringstream dstream;
+				dstream << "ERROR: in SharedValueMap " << myStringOut <<  " : " << myResultout <<  std::endl;
+				::OutputDebugStringA(dstream.str().c_str());
+
+			}
+#endif
+			
 		}
 		for (SVSharedImageMap::const_iterator it = rLastInspected.m_Images.begin();it != rLastInspected.m_Images.end();++it)
 		{

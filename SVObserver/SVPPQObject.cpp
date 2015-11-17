@@ -5128,8 +5128,36 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 			for (SVGUIDSVInspectionInfoStructMap::const_iterator it = rProduct.m_svInspectionInfos.begin();it != rProduct.m_svInspectionInfos.end();++it)
 			{
 				const SVString& rShareName = rWriter[it->first].GetShareName();
-				rSharedProduct.m_Inspections.insert(SVSharedInspectionPair(char_string(rShareName.c_str(), rSharedProduct.m_Allocator), 
-						SVSharedInspection(rShareName.c_str(), it->second.m_lastInspectedSlot, rSharedProduct.m_Allocator)));
+				std::pair< SVSharedInspectionMap::iterator,bool>  mRet; 	
+				mRet = rSharedProduct.m_Inspections.insert(SVSharedInspectionPair(char_string(rShareName.c_str(), rSharedProduct.m_Allocator), 
+				SVSharedInspection(rShareName.c_str(), it->second.m_lastInspectedSlot, rSharedProduct.m_Allocator)));
+
+
+#ifdef TRACERUNREJECT 
+
+				bool bRet = mRet.second;
+				std::string  string1In   = rShareName.c_str();
+				std::string  string2In = rShareName.c_str();
+				int IndexIn =  	it->second.m_lastInspectedSlot;
+				
+				std::string string1Out = mRet.first->first.c_str();
+				std::string string2Out = mRet.first->second.m_ShareName.c_str();
+				int IndexOut = mRet.first->second.m_Index;
+
+
+				std::stringstream debugStream;
+				debugStream << "Insert to SVSharedInspectionMap(CommitSharedMemory)"  <<  string1In.c_str() <<  " , "  << string2In.c_str()   <<  " , "    << IndexIn ;
+				debugStream  << " mRet: " << mRet.second << endl;
+				::OutputDebugStringA(debugStream.str().c_str());
+
+				if(string1In.compare(string1Out) || string2In.compare(string2Out) ||  IndexIn != IndexOut)
+				{
+					debugStream << "ERROR: in SVSharedInspectionMap "  << string1In.c_str()  <<  " , "  <<   string2In.c_str() <<  " , "  <<  IndexIn << endl;;
+					::OutputDebugStringA(debugStream.str().c_str());
+				}
+#endif
+
+
 			}
 			// A Reject Depth of Zero is allowed and means we aren't keeping any rejects
 			// Check for Reject - if Reject copy Last Inspected to reject (this includes images(file copies))

@@ -4631,8 +4631,31 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 		{
 			hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		}
-		rSharedValues.insert(SVSharedValuePair(char_string(ValueIter->first.c_str(), rData.m_Allocator), 
+		
+		
+		std::pair< SVSharedValueMap::iterator,bool>  mRet; 	
+		mRet = rSharedValues.insert(SVSharedValuePair(char_string(ValueIter->first.c_str(), rData.m_Allocator), 
 					SVSharedValue(SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator)));
+
+#ifdef TRACERUNREJECT 
+		std::string  myStringIn = ValueIter->first.c_str();
+		std::string myResultIn = value;
+		std::string myStringOut =  mRet.first->first.c_str(); 
+		std::string  myResultout =  mRet.first->second.m_Result.c_str();
+
+		std::stringstream dstream;
+		dstream <<  "Insert in SharedValueMap(FillSharedData) (  "  << myStringIn << " " << myResultIn <<  " ) ret " << mRet.second << std::endl;
+		::OutputDebugStringA(dstream.str().c_str());
+
+		if(myStringOut.compare(myStringIn)  || myResultout.compare(myResultIn) )
+		{
+			std::stringstream dstream;
+			dstream << "ERROR: in SharedValueMap " << myStringOut <<  " : " << myResultout <<  std::endl;
+			::OutputDebugStringA(dstream.str().c_str());
+
+		}
+#endif 
+
 	}
 
 	for (SVFilterElementMap::const_iterator imageIter = rImages.begin(); imageIter != rImages.end(); ++imageIter)

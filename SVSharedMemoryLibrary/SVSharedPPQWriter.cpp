@@ -218,7 +218,28 @@ namespace SeidenaderVision
 			hr = rInspectionWriter.CopyLastInspectedToReject(it->second.m_Index, rejectIndex);
 			if (hr == S_OK)
 			{
-				rRejectProduct.m_Inspections.insert(SVSharedInspectionPair(it->second.m_ShareName, SVSharedInspection(it->second.m_ShareName.c_str(), rejectIndex, rRejectProduct.m_Allocator)));
+				
+				std::pair< SVSharedInspectionMap::iterator,bool>  mRet; 	
+				mRet = rRejectProduct.m_Inspections.insert(SVSharedInspectionPair(it->second.m_ShareName, SVSharedInspection(it->second.m_ShareName.c_str(), rejectIndex, rRejectProduct.m_Allocator)));
+
+#ifdef TRACERUNREJECT 
+				std::string  StringIn = it->second.m_ShareName.c_str();
+				int IntIn = rejectIndex;
+				std::stringstream dStream;
+				dStream << "Insert to SharedInspectionMap(CopyLastInspectedToReject) : ( " << StringIn << " , " <<  StringIn << " , " << rejectIndex <<  ", Mret: " << mRet.second << std::endl;
+				::OutputDebugStringA(dStream.str().c_str());
+				std::string  StringOut1 = mRet.first->first.c_str();
+				std::string  StringOut2 = mRet.first->second.m_ShareName.c_str();
+				int  Intout = mRet.first->second.m_Index;
+
+
+				if(Intout != IntIn || StringOut1.compare(StringIn) || StringOut2.compare(StringIn) )
+				{
+					std::stringstream dStream;
+					dStream << "Error In SharedInspectionMap: ( " << StringOut1 << " , " <<  StringOut2 << " , " << Intout  << std::endl;
+					::OutputDebugStringA(dStream.str().c_str());
+				}
+#endif
 			}
 		}
 		ReleaseReject(rRejectProduct);
