@@ -34,7 +34,6 @@ public:
 	//{{AFX_DATA(SVDriveInitDlg)
 	enum { IDD = IDD_SVDRIVEINIT_DIALOG };
 	CButton	m_cb1394Hub;
-	CButton	m_ColorCheck;
 	CButton m_SingleCamera;
 	CEdit	m_model_number;
 	CComboBox	m_type;
@@ -77,7 +76,6 @@ protected:
 private:
 	bool GetProductId();
 	
-	bool GetRegistryInfo();
 	bool GetOEMInfo();
 	bool GetSysPrepInfo();
 

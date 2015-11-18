@@ -105,7 +105,6 @@ void SVDriveInitDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(SVDriveInitDlg)
-    DDX_Control(pDX, IDC_COLOR_CHECK, m_ColorCheck);
 	DDX_Control(pDX, IDC_SINGLECAMERA_CHECK, m_SingleCamera);
     DDX_Control(pDX, ID_MODEL_NUMBER, m_model_number);
     DDX_Control(pDX, IDC_TYPE, m_type);
@@ -217,8 +216,6 @@ BOOL SVDriveInitDlg::OnInitDialog()
     // Get Info from OEMINFO.ini
     GetOEMInfo();
 
-    GetRegistryInfo();
-    
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -361,50 +358,6 @@ bool SVDriveInitDlg::GetProductId()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// Get the SVObserver Registry Info
-////////////////////////////////////////////////////////////////////////////////////////
-bool SVDriveInitDlg::GetRegistryInfo()
-{
-    bool l_bOk = true;
-    
-    DWORD l_dwState = 0;
-    
-    HKEY l_hKey = NULL;
-    
-    int l_iErrorStatus = RegOpenKeyEx( HKEY_CURRENT_USER, g_tszSVOSettings, 0, KEY_QUERY_VALUE,	&l_hKey );
-    
-    if ( l_iErrorStatus == ERROR_SUCCESS )
-    {
-        // Read the ProductId
-        DWORD l_dwType;
-        DWORD l_dwSize = sizeof l_dwState;
-        
-        l_iErrorStatus = RegQueryValueEx( l_hKey, _T( "Color SVIM Mode Active" ), NULL, &l_dwType, (unsigned char *)&l_dwState, &l_dwSize );
-        
-        if( l_iErrorStatus != ERROR_SUCCESS)
-        {
-            AfxMessageBox( IDS_GET_CHECK_COLOR_FAILED );
-            
-            l_bOk = false;
-        }
-        RegFlushKey ( l_hKey );
-        
-        RegCloseKey( l_hKey );
-    }
-    
-    if ( l_dwState )
-    {
-        m_ColorCheck.SetCheck( BST_CHECKED );
-    }
-    else
-    {
-        m_ColorCheck.SetCheck( BST_UNCHECKED );
-    }
-    
-    return l_bOk;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
 // Get the OEM Specific info from the oeminfo.ini file
 ////////////////////////////////////////////////////////////////////////////////////////
 bool SVDriveInitDlg::GetOEMInfo()
@@ -512,40 +465,6 @@ bool SVDriveInitDlg::GetSysPrepInfo()
 bool SVDriveInitDlg::UpdateRegistryInfo()
 {
 	bool l_bOk = true;
-	
-	HKEY l_hKey = NULL;
-	
-	int l_iErrorStatus = RegOpenKeyEx( HKEY_CURRENT_USER, g_tszSVOSettings, 0, KEY_SET_VALUE,	&l_hKey );
-	
-	if ( l_iErrorStatus != ERROR_SUCCESS )
-	{
-		unsigned long l_ulValue = 0;
-		
-		l_iErrorStatus = RegCreateKeyEx( HKEY_CURRENT_USER, 
-			g_tszSVOSettings,
-			NULL,
-			_T(""), 
-			REG_OPTION_NON_VOLATILE,
-			KEY_ALL_ACCESS,
-			(SECURITY_ATTRIBUTES *) NULL,
-			&l_hKey,
-			&l_ulValue );
-	}
-	
-	if ( l_iErrorStatus == ERROR_SUCCESS )
-	{
-		DWORD l_dwTemp = m_ColorCheck.GetCheck() == BST_CHECKED;
-		
-		l_iErrorStatus = RegSetValueEx( l_hKey, _T( "Color SVIM Mode Active" ), NULL, REG_DWORD, (unsigned char *)&l_dwTemp, sizeof l_dwTemp );
-		
-		l_bOk = l_iErrorStatus == ERROR_SUCCESS;
-		
-		RegFlushKey ( l_hKey );
-		
-		RegCloseKey( l_hKey );
-		
-		l_hKey = NULL;
-	}
 	
 	// Check if model number has been entered
 	if( m_model_number.GetModify() )

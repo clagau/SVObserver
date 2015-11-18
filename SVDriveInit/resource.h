@@ -25,7 +25,6 @@
 #define IDC_PRODUCTID                   1010
 #define IDC_TYPE                        1011
 #define IDC_EDIT1                       1012
-#define IDC_COLOR_CHECK                 1013
 #define IDC_PRODUCT_INFO                1014
 #define IDC_SINGLECAMERA_CHECK          1015
 #define IDC_1394_HUB                    1016
