@@ -16,8 +16,8 @@
 namespace SeidenaderVision
 {
 	SVSharedPPQWriter::SVSharedPPQWriter()
-	: sh(nullptr)
-	, rsh(nullptr)
+		: sh(nullptr)
+		, rsh(nullptr)
 	{
 	}
 
@@ -116,7 +116,7 @@ namespace SeidenaderVision
 			// Allocate product store
 			ProductStoreAllocator salloc = shm->get_allocator<SVSharedProductStore>();
 			shm->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str())(salloc, p_rSettings.NumProductSlots());
-		
+
 			// Adjust Number of Reject slots
 			long numRejectSlots = p_rSettings.NumRejectSlots();
 			if (numRejectSlots)
@@ -132,10 +132,10 @@ namespace SeidenaderVision
 				InspectionIDs::const_iterator it = inspections.begin();
 				std::for_each(m_writers.begin(), m_writers.end(), 
 					[&it, &settings](SVSharedInspectionWriter & wr) 
-					{ 
-						if (wr.Create(it->first, it->second, settings) != S_OK) throw std::exception("Failed to create inspection writer");
-						++it;
-					});
+				{ 
+					if (wr.Create(it->first, it->second, settings) != S_OK) throw std::exception("Failed to create inspection writer");
+					++it;
+				});
 			}
 			catch (std::exception & e)
 			{
@@ -185,7 +185,7 @@ namespace SeidenaderVision
 	{
 		InspectionWriters::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
 			[&shareName](SVSharedInspectionWriter & iw)->bool 
-			{ return iw.GetShareName() == shareName; });
+		{ return iw.GetShareName() == shareName; });
 		if (it != m_writers.end())
 		{
 			return *it;
@@ -197,7 +197,7 @@ namespace SeidenaderVision
 	{
 		InspectionWriters::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
 			[&guid](SVSharedInspectionWriter & iw)->bool 
-			{ return std::memcmp(&iw.GetGuid(), &guid, sizeof(GUID)) == 0; });
+		{ return std::memcmp(&iw.GetGuid(), &guid, sizeof(GUID)) == 0; });
 		if (it != m_writers.end())
 		{
 			return *it;
@@ -211,35 +211,18 @@ namespace SeidenaderVision
 		long rejectIndex = 0;
 		SVSharedProduct& rRejectProduct = RequestNextRejectSlot(rejectIndex);
 		rRejectProduct.m_TriggerCount = rProduct.m_TriggerCount;
-		
+
 		for (SVSharedInspectionMap::const_iterator it = rProduct.m_Inspections.begin();it != rProduct.m_Inspections.end() && S_OK == hr;++it)
 		{
 			SVSharedInspectionWriter & rInspectionWriter = (*this)[it->second.m_ShareName.c_str()];
 			hr = rInspectionWriter.CopyLastInspectedToReject(it->second.m_Index, rejectIndex);
 			if (hr == S_OK)
 			{
-				
+
 				std::pair< SVSharedInspectionMap::iterator,bool>  mRet; 	
 				mRet = rRejectProduct.m_Inspections.insert(SVSharedInspectionPair(it->second.m_ShareName, SVSharedInspection(it->second.m_ShareName.c_str(), rejectIndex, rRejectProduct.m_Allocator)));
 
-#ifdef TRACERUNREJECT 
-				std::string  StringIn = it->second.m_ShareName.c_str();
-				int IntIn = rejectIndex;
-				std::stringstream dStream;
-				dStream << "Insert to SharedInspectionMap(CopyLastInspectedToReject) : ( " << StringIn << " , " <<  StringIn << " , " << rejectIndex <<  ", Mret: " << mRet.second << std::endl;
-				::OutputDebugStringA(dStream.str().c_str());
-				std::string  StringOut1 = mRet.first->first.c_str();
-				std::string  StringOut2 = mRet.first->second.m_ShareName.c_str();
-				int  Intout = mRet.first->second.m_Index;
 
-
-				if(Intout != IntIn || StringOut1.compare(StringIn) || StringOut2.compare(StringIn) )
-				{
-					std::stringstream dStream;
-					dStream << "Error In SharedInspectionMap: ( " << StringOut1 << " , " <<  StringOut2 << " , " << Intout  << std::endl;
-					::OutputDebugStringA(dStream.str().c_str());
-				}
-#endif
 			}
 		}
 		ReleaseReject(rRejectProduct);

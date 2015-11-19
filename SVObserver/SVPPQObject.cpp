@@ -97,13 +97,13 @@ HRESULT CALLBACK SVFinishCameraCallback( void *pOwner, void *pCaller, void *pRes
 	}
 }
 
-		HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
-/// Used in data completion mode, but not in next trigger mode.
-/// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
-/// from m_ppPPQPositions via GetProductInfoStruct()
-/// If the delay time is already over, calls ProcessTimeDelay/AndDataComplete/Outputs().
-/// from where WriteOutputs() will be called.
-/// Otherwise, puts the trigger count back into the outputs delay queue, 
+HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
+	/// Used in data completion mode, but not in next trigger mode.
+	/// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
+	/// from m_ppPPQPositions via GetProductInfoStruct()
+	/// If the delay time is already over, calls ProcessTimeDelay/AndDataComplete/Outputs().
+	/// from where WriteOutputs() will be called.
+	/// Otherwise, puts the trigger count back into the outputs delay queue, 
 {
 	HRESULT l_Status = S_OK;
 
@@ -171,21 +171,21 @@ HRESULT CALLBACK SVFinishCameraCallback( void *pOwner, void *pCaller, void *pRes
 		{
 			switch( oOutputMode )
 			{
-				case SVPPQTimeDelayMode:
-				case SVPPQExtendedTimeDelayMode:
+			case SVPPQTimeDelayMode:
+			case SVPPQExtendedTimeDelayMode:
 				{
 					l_Status = ProcessTimeDelayOutputs( *l_pProduct );
 
 					break;
 				}
-				case SVPPQTimeDelayAndDataCompleteMode:
-				case SVPPQExtendedTimeDelayAndDataCompleteMode:
+			case SVPPQTimeDelayAndDataCompleteMode:
+			case SVPPQExtendedTimeDelayAndDataCompleteMode:
 				{
 					l_Status = ProcessTimeDelayAndDataCompleteOutputs( *l_pProduct, p_rProcessed );
 
 					break;
 				}
-				default:
+			default:
 				{
 					l_Status = E_FAIL;
 
@@ -261,23 +261,23 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct
 
 #pragma region Constructor
 SVPPQObject::SVPPQObject( LPCSTR ObjectName )
-: SVObjectClass( ObjectName )
-, m_oTriggerQueue( 10 )
-, m_NAKCount( 0 )
-, m_conditionalOutputName( PPQ_CONDITIONAL_OUTPUT_ALWAYS )
-, m_bActiveMonitorList(false)
-, m_AttributesAllowedFilterForFillChildObjectList( 0 )
+	: SVObjectClass( ObjectName )
+	, m_oTriggerQueue( 10 )
+	, m_NAKCount( 0 )
+	, m_conditionalOutputName( PPQ_CONDITIONAL_OUTPUT_ALWAYS )
+	, m_bActiveMonitorList(false)
+	, m_AttributesAllowedFilterForFillChildObjectList( 0 )
 {
 	init();
 }
 
 SVPPQObject::SVPPQObject( SVObjectClass* POwner, int StringResourceID )
-: SVObjectClass( POwner, StringResourceID )
-, m_oTriggerQueue( 10 )
-, m_NAKCount( 0 )
-, m_conditionalOutputName ( PPQ_CONDITIONAL_OUTPUT_ALWAYS ) 
-, m_bActiveMonitorList(false)
-, m_AttributesAllowedFilterForFillChildObjectList( 0 )
+	: SVObjectClass( POwner, StringResourceID )
+	, m_oTriggerQueue( 10 )
+	, m_NAKCount( 0 )
+	, m_conditionalOutputName ( PPQ_CONDITIONAL_OUTPUT_ALWAYS ) 
+	, m_bActiveMonitorList(false)
+	, m_AttributesAllowedFilterForFillChildObjectList( 0 )
 {
 	init();
 }
@@ -406,7 +406,7 @@ HRESULT SVPPQObject::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectN
 
 	return l_Status;
 }
-	
+
 HRESULT SVPPQObject::ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData )
 {
 	HRESULT l_Status = S_OK;
@@ -1155,11 +1155,11 @@ HRESULT SVPPQObject::DisplayGoOnlineError(const CString& sReason, HRESULT hr)
 {
 	const bool bDisplayError = TheSVObserverApp.GetProfileInt(_T("Debug"), _T("ReportGoOnlineFailure"), 0) != 0;
 	TheSVObserverApp.WriteProfileInt(_T("Debug"), _T("ReportGoOnlineFailure"), (int) bDisplayError);
-	
+
 	if ( bDisplayError )
 	{
 		CString sMsg;
-		
+
 		if ( hr != S_OK )
 		{
 			sMsg.Format(_T("%s\nError code = %x"), sReason, hr);
@@ -1518,7 +1518,7 @@ HRESULT SVPPQObject::GoOnline()
 		// Create the PPQ's threads
 		l_hrOk = m_AsyncProcedure.Create( &SVPPQObject::APCThreadProcess, boost::bind(&SVPPQObject::ThreadProcess, this, _1), GetName(), SVAffinityPPQ );
 	}
-	
+
 	if ( l_hrOk == S_OK )
 	{
 		// Kick the threads up a notch, for real!
@@ -1716,7 +1716,7 @@ BOOL SVPPQObject::GoOffline()
 	{
 		QuieseSharedMemory();
 	}
-	
+
 	lSize = m_arInspections.GetSize();
 	for( i = 0; i < lSize; i++ )
 	{
@@ -1980,7 +1980,7 @@ class FindIOEntry
 public:
 	FindIOEntry(const CompareTo& data, CompareFunc func)
 		: m_data(data), m_compareFunc(func)	{}
-	
+
 	bool operator()(SVIOEntryHostStructPtr ioEntry) const
 	{
 		return m_compareFunc(ioEntry, m_data);
@@ -2275,11 +2275,11 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 	bool l_ACK = false;
 	bool l_NAK = true;
 
-	#ifdef _DEBUG
-	#ifdef SHOW_PPQ_STATE
-		SVString l_ProductState;
-	#endif
-	#endif
+#ifdef _DEBUG
+#ifdef SHOW_PPQ_STATE
+	SVString l_ProductState;
+#endif
+#endif
 
 	m_OutputToggle = ! m_OutputToggle;
 
@@ -2297,11 +2297,11 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 			SetProductIncomplete( *pProduct );
 		}
 
-		#ifdef _DEBUG
-		#ifdef SHOW_PPQ_STATE
-			l_ProductState = pProduct->m_ProductState;
-		#endif
-		#endif
+#ifdef _DEBUG
+#ifdef SHOW_PPQ_STATE
+		l_ProductState = pProduct->m_ProductState;
+#endif
+#endif
 	}
 
 	bool bWriteOutputs = true;
@@ -2355,7 +2355,7 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 		if (bWriteOutputs)
 		{
 			bRet = m_pOutputList->WriteOutputs( m_UsedOutputs, lDataIndex, l_ACK, l_NAK );
-		
+
 			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
@@ -2381,15 +2381,15 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 		bRet = false;
 	}
 
-	#ifdef _DEBUG
-	#ifdef SHOW_PPQ_STATE
-		if( !( l_ProductState.empty() ) )
-		{
-			l_ProductState += _T( "\n" );
-			OutputDebugString( l_ProductState.c_str() );
-		}
-	#endif
-	#endif
+#ifdef _DEBUG
+#ifdef SHOW_PPQ_STATE
+	if( !( l_ProductState.empty() ) )
+	{
+		l_ProductState += _T( "\n" );
+		OutputDebugString( l_ProductState.c_str() );
+	}
+#endif
+#endif
 
 	if( l_NAK )
 	{
@@ -2463,7 +2463,7 @@ BOOL SVPPQObject::RebuildOutputList()
 				l_csOldName = pOldOutput->m_pValueObject->GetCompleteObjectName();
 
 				if ( pNewOutput->m_ObjectType == pOldOutput->m_ObjectType &&
-				     l_csNewName == l_csOldName )
+					l_csNewName == l_csOldName )
 				{
 					// Copy information to new Output object
 					l_pObject->SetName( l_csOldName );
@@ -2759,19 +2759,19 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SVTriggerInfoStruct& p_rTriggerInfo 
 		}
 	}
 
-	#ifdef _DEBUG
-		if( TheSVObserverApp.GetLogDataManager() )
-		{
-			SVString l_ProductStates;
+#ifdef _DEBUG
+	if( TheSVObserverApp.GetLogDataManager() )
+	{
+		SVString l_ProductStates;
 
-			l_ProductStates += GetName();
-			l_ProductStates += _T( "|SVPPQObject::IndexPPQ\n" );
+		l_ProductStates += GetName();
+		l_ProductStates += _T( "|SVPPQObject::IndexPPQ\n" );
 
-			m_ppPPQPositions.GetProductStates( l_ProductStates );
+		m_ppPPQPositions.GetProductStates( l_ProductStates );
 
-			::OutputDebugString( l_ProductStates.c_str() );
-		}
-	#endif
+		::OutputDebugString( l_ProductStates.c_str() );
+	}
+#endif
 
 	return l_pNewProduct;
 }
@@ -2787,7 +2787,7 @@ BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const S
 	// Begin preparing the IO
 	// Get Next available indexes from THE Data Manager
 	hr = GetNextAvailableIndexes( p_pNewProduct->oPPQInfo, SV_PPQ );
-	
+
 	// ************************************************************************
 	// Now we need to get the IO ready for this Product. Make sure that all locks are set
 	// and that all indexes are set correctly
@@ -2827,7 +2827,7 @@ BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const S
 HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 {
 	HRESULT l_Status = S_OK; 
-	
+
 	// ************************************************************************
 	// Now we need to check if any inspections were waiting on inputs read after
 	// the first position. Only check the products at positions that have a input set
@@ -2919,13 +2919,13 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 			l_Count = std::min< size_t >( 2, m_ppPPQPositions.size() );
 		}
 
-		#ifdef _DEBUG
-			SVString l_String;
+#ifdef _DEBUG
+		SVString l_String;
 
-			l_String.Format( _T( "%s:NAK=%ld\n" ), GetName(), l_NAKCount );
+		l_String.Format( _T( "%s:NAK=%ld\n" ), GetName(), l_NAKCount );
 
-			::OutputDebugString( l_String.c_str() );
-		#endif
+		::OutputDebugString( l_String.c_str() );
+#endif
 	}
 
 	// Begin checking inspections to start processing
@@ -2939,7 +2939,7 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 			{
 				SVInspectionInfoStruct& l_rInfo = pTempProduct->m_svInspectionInfos[ p_rInspectionID ];
 
-				
+
 				if( l_rInfo.m_CanProcess &&				// all inputs are available and inspection can start
 					!( l_rInfo.m_InProcess ) &&			// inspection in not currently running
 					!( l_rInfo.m_HasBeenQueued ) )		// This flag prevents the inspection from getting queued more than once
@@ -2966,19 +2966,19 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 		m_PPQTracking.IncrementCount( l_Title, l_ProductIndex );
 #endif
 
-		#ifdef _DEBUG
-			if( TheSVObserverApp.GetLogDataManager() )
-			{
-				SVString l_ProductStates;
+#ifdef _DEBUG
+		if( TheSVObserverApp.GetLogDataManager() )
+		{
+			SVString l_ProductStates;
 
-				l_ProductStates += GetName();
-				l_ProductStates += _T( "|SVPPQObject::StartInspection\n" );
+			l_ProductStates += GetName();
+			l_ProductStates += _T( "|SVPPQObject::StartInspection\n" );
 
-				m_ppPPQPositions.GetProductStates( l_ProductStates );
+			m_ppPPQPositions.GetProductStates( l_ProductStates );
 
-				::OutputDebugString( l_ProductStates.c_str() );
-			}
-		#endif
+			::OutputDebugString( l_ProductStates.c_str() );
+		}
+#endif
 	}
 
 	return l_Status;
@@ -3364,7 +3364,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 		long	ppqSize = static_cast<long> (m_ppPPQPositions.size());
 
 		l_svIter = m_Cameras.find( p_rElement.m_pCamera );
-					
+
 		if( l_svIter != m_Cameras.end() )
 		{
 			l_CameraPositionOnPPQ = l_svIter->second.m_CameraPPQIndex;
@@ -3375,7 +3375,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 		if( l_CameraPositionOnPPQ < ppqSize )
 		{
 			long l_Position = -1; // gets initialized to ppq size (default) by 
-			                      // GetProductIndex (). 
+			// GetProductIndex (). 
 
 			// Attempts for find the trigger (which may not have happened 
 			// yet) that correlates to this image, based on image time stamp.
@@ -3421,7 +3421,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 			SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svIter1;
 
 			l_svIter1 = l_pProduct->m_svCameraInfos.find( p_rElement.m_pCamera );
-			
+
 			if( l_svIter1 != l_pProduct->m_svCameraInfos.end() )
 			{
 				SVClock::SVTimeStamp	priorCameraSF = l_svIter1->second.m_StartFrameTimeStamp;
@@ -3437,7 +3437,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 					SVClock::SVTimeStamp iEF=0;
 
 					p_rElement.m_Data.GetEndTick( iEF );
-	
+
 					if( p_rElement.m_Data.IsComplete() )
 					{
 						l_svIter1->second.Assign( l_StartTick, iEF, p_rElement.m_Data.mDMHandle, SV_PPQ );
@@ -3524,9 +3524,9 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 
 					l_Title += p_rElement.m_pCamera->GetName();
 
-	#ifdef EnableTracking
+#ifdef EnableTracking
 					m_PPQTracking.IncrementCount( l_Title );
-	#endif
+#endif
 
 
 				}
@@ -3559,7 +3559,7 @@ HRESULT SVPPQObject::BuildCameraInfos( SVStdMapSVVirtualCameraPtrSVCameraInfoStr
 		{
 			p_rCameraInfos[ l_Iter->first ].pCamera = l_Iter->first;
 		}
-		
+
 		++l_Iter;
 	}
 
@@ -3599,8 +3599,8 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerI
 
 		switch( m_oOutputMode )
 		{
-			case SVPPQTimeDelayMode :
-			case SVPPQTimeDelayAndDataCompleteMode :
+		case SVPPQTimeDelayMode :
+		case SVPPQTimeDelayAndDataCompleteMode :
 			{
 				ResetOutputs();
 				break;
@@ -3642,7 +3642,7 @@ DWORD_PTR SVPPQObject::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 	{
 		//@WARNING [gra][7.20][06.07.2015] This seems to not do anything can be removed
 		// handle renaming of toolset variables with regards to outputs
-		case SVMSGID_OBJECT_RENAMED:
+	case SVMSGID_OBJECT_RENAMED:
 		{
 			SVObjectClass* pObject = (SVObjectClass*) DwMessageValue;
 			CString strOldName = (LPCTSTR) DwMessageContext;
@@ -3695,7 +3695,7 @@ HRESULT SVPPQObject::GetProductIndex( long& p_rIndex, SVClock::SVTimeStamp p_Tim
 	HRESULT l_Status = S_OK;
 
 	bool l_SkipUpperThreshold = false;
-	
+
 	l_SkipUpperThreshold = l_SkipUpperThreshold || ( GetPPQLength() == 1 );
 	l_SkipUpperThreshold = l_SkipUpperThreshold || ( m_oOutputMode == SVPPQExtendedTimeDelayAndDataCompleteMode );
 	l_SkipUpperThreshold = l_SkipUpperThreshold || ( ( m_oOutputMode == SVPPQNextTriggerMode ) && ( GetPPQLength() == 2 ) );
@@ -3768,7 +3768,7 @@ BOOL SVPPQObject::ReserveNextRunOnceProductInfoStruct( SVProductInfoStruct& p_rs
 	}// end for
 
 	l_bOk = ( l_svProduct.GetNextAvailableIndexes( p_LockType ) == S_OK );
-	
+
 	if( l_bOk )
 	{
 		p_rsvProduct = l_svProduct;
@@ -3908,7 +3908,7 @@ void CALLBACK SVPPQObject::APCThreadProcess( DWORD_PTR dwParam )
 void SVPPQObject::ThreadProcess( bool& p_WaitForEvents )
 {
 	bool l_Processed = false;
-	
+
 	// will only execute if 0 < m_oTriggerQueue.size().
 	// will then pop trigger queue.
 	// pushes onto notify inspection queue.
@@ -4037,7 +4037,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 						m_voTriggerCount.SetValue( lDataIndex, l_TriggerInfo.m_TriggerInfo.lTriggerCount );
 
 						m_oNotifyInspectionsSet.insert( pProduct->ProcessCount() );
-						
+
 						if (!l_TriggerInfo.m_TriggerInfo.m_Data.empty())
 						{
 							m_CameraInputData.Set(lDataIndex, boost::any_cast<SVMaterials>(l_TriggerInfo.m_TriggerInfo.m_Data));
@@ -4083,7 +4083,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 	} // if( p_rProcessed )
 	/*else
 	{
-		// there are no triggers on the trigger queue. not processed.
+	// there are no triggers on the trigger queue. not processed.
 	}*/
 
 	return l_Status;
@@ -4140,15 +4140,15 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 						l_Iter = m_oNotifyInspectionsSet.erase( l_Iter );
 					}
 					else
-					if (S_FALSE == l_Status)
-					{
-						// this means that inspection was not notified 
-						// because inputs or image were not ready.  
-						// proceed to next inspection.
-						l_Iter++;
-						p_rProcessed = false;
-						l_Status = S_OK;
-					}
+						if (S_FALSE == l_Status)
+						{
+							// this means that inspection was not notified 
+							// because inputs or image were not ready.  
+							// proceed to next inspection.
+							l_Iter++;
+							p_rProcessed = false;
+							l_Status = S_OK;
+						}
 				}
 				else // of offset for element is outside PPQ (fell off/dead).
 				{
@@ -4159,8 +4159,8 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 				}
 
 			} while ((true != p_rProcessed) && 
-					 (l_Iter != m_oNotifyInspectionsSet.end ()) &&
-					 SUCCEEDED (l_Status));
+				(l_Iter != m_oNotifyInspectionsSet.end ()) &&
+				SUCCEEDED (l_Status));
 
 
 		} // if there is an item on the notify inspection queue.
@@ -4464,7 +4464,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 					}
 				}
 			}
- 
+
 			if( !( m_ProcessInspectionsSet.empty() ) )
 			{
 				bool l_Processed = false;
@@ -4657,9 +4657,9 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 	rWriter.StartElement(CTAG_INPUT);
 
 	GetAllInputs( ppIOEntries );
-	
+
 	long lCount = static_cast<long>(ppIOEntries.size());
-	
+
 	for(long lInput = 0; lInput < lCount; lInput++ )
 	{
 		SVIOEntryHostStructPtr pIOEntry = ppIOEntries[lInput];
@@ -4671,7 +4671,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 
 			switch (pIOEntry->m_ObjectType)
 			{
-				case IO_DIGITAL_INPUT:
+			case IO_DIGITAL_INPUT:
 				{
 					l_svValue.SetString( _T("Digital") );
 					rWriter.WriteAttribute(CTAG_IO_TYPE, l_svValue);
@@ -4691,7 +4691,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 				}
 				break;
 
-				case IO_REMOTE_INPUT:
+			case IO_REMOTE_INPUT:
 				{
 					l_svValue.SetString( _T("Remote") );
 					rWriter.WriteAttribute(CTAG_IO_TYPE, l_svValue);
@@ -4728,7 +4728,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 				}
 				break;
 
-				default:
+			default:
 				{
 					break; // Do nothing.
 				}
@@ -4783,14 +4783,14 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 		SVSharedMemorySingleton::Instance().SetRejectDepth(rActiveList.second.rejectDepth);
 		SVSharedMemorySingleton::Instance().SetProductDepth(GetPPQLength(), g_lPPQExtraBufferSize);
 		const SVMonitorList& rList = rActiveList.second.monitorList;
-	
+
 		// separate the list by Inspection and send to each Inspection
 		const SVMonitorItemList& valList = rList.GetDataList();
 		const SVMonitorItemList& imgList = rList.GetImageList();
 		const SVMonitorItemList& rejectCondList = rList.GetConditionalDataList();
 
 		typedef std::pair<SVMonitorItemList::const_iterator, SVMonitorItemList::const_iterator> Bounds;
-  
+
 		for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
 		{
 			SVInspectionProcess* pInspection = (*it);
@@ -4801,8 +4801,8 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 				Bounds imgBounds = std::equal_range(imgList.begin(), imgList.end(), inspectionName, CompareInspectionName);
 
 				SVMonitorList inspectionMonitorList(SVMonitorItemList(valBounds.first, valBounds.second),
-													SVMonitorItemList(imgBounds.first, imgBounds.second),
-													SVMonitorItemList(), SVMonitorItemList(), SVMonitorItemList());
+					SVMonitorItemList(imgBounds.first, imgBounds.second),
+					SVMonitorItemList(), SVMonitorItemList(), SVMonitorItemList());
 
 				hr = pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
 			}
@@ -4863,14 +4863,14 @@ void SVPPQObject::SetConditionalOutputName(const SVString& conditionalOutputName
 
 #pragma region SVTriggerQueueElement Constructor
 SVPPQObject::SVTriggerQueueElement::SVTriggerQueueElement()
-: m_TriggerInfo()
-, m_Inputs()
+	: m_TriggerInfo()
+	, m_Inputs()
 {
 }
 
 SVPPQObject::SVTriggerQueueElement::SVTriggerQueueElement( const SVTriggerQueueElement& p_rObject )
-: m_TriggerInfo( p_rObject.m_TriggerInfo )
-, m_Inputs( p_rObject.m_Inputs )
+	: m_TriggerInfo( p_rObject.m_TriggerInfo )
+	, m_Inputs( p_rObject.m_Inputs )
 {
 }
 
@@ -4881,20 +4881,20 @@ SVPPQObject::SVTriggerQueueElement::~SVTriggerQueueElement()
 
 #pragma region SVCameraQueueElement Constructor
 SVPPQObject::SVCameraQueueElement::SVCameraQueueElement()
-: m_pCamera( nullptr )
-, m_Data()
+	: m_pCamera( nullptr )
+	, m_Data()
 {
 }
 
 SVPPQObject::SVCameraQueueElement::SVCameraQueueElement( const SVCameraQueueElement& rObject )
-: m_pCamera( rObject.m_pCamera )
-, m_Data( rObject.m_Data )
+	: m_pCamera( rObject.m_pCamera )
+	, m_Data( rObject.m_Data )
 {
 }
 
 SVPPQObject::SVCameraQueueElement::SVCameraQueueElement( SVVirtualCamera* pCamera, const SVODataResponseClass& rData )
-: m_pCamera( pCamera )
-, m_Data( rData )
+	: m_pCamera( pCamera )
+	, m_Data( rData )
 {
 }
 
@@ -4905,16 +4905,16 @@ SVPPQObject::SVCameraQueueElement::~SVCameraQueueElement()
 
 #pragma region SVCameraInfoElement Constructor
 SVPPQObject::SVCameraInfoElement::SVCameraInfoElement()
-: m_CameraPPQIndex( -1 )
-, m_IOEntryPtr()
-, m_ToggleState( true )
+	: m_CameraPPQIndex( -1 )
+	, m_IOEntryPtr()
+	, m_ToggleState( true )
 {
 }
 
 SVPPQObject::SVCameraInfoElement::SVCameraInfoElement( const SVCameraInfoElement& p_rObject )
-: m_CameraPPQIndex( p_rObject.m_CameraPPQIndex )
-, m_IOEntryPtr( p_rObject.m_IOEntryPtr )
-, m_ToggleState( p_rObject.m_ToggleState )
+	: m_CameraPPQIndex( p_rObject.m_CameraPPQIndex )
+	, m_IOEntryPtr( p_rObject.m_IOEntryPtr )
+	, m_ToggleState( p_rObject.m_ToggleState )
 {
 }
 
@@ -4926,12 +4926,12 @@ SVPPQObject::SVCameraInfoElement::~SVCameraInfoElement()
 #ifdef EnableTracking
 #pragma region SVPPQTrackingElement Constructor
 SVPPQObject::SVPPQTrackingElement::SVPPQTrackingElement()
-: m_TrackedCounts()
+	: m_TrackedCounts()
 {
 }
 
 SVPPQObject::SVPPQTrackingElement::SVPPQTrackingElement( const SVPPQTrackingElement& p_rObject )
-: m_TrackedCounts( p_rObject.m_TrackedCounts )
+	: m_TrackedCounts( p_rObject.m_TrackedCounts )
 {
 }
 
@@ -4964,19 +4964,19 @@ void SVPPQObject::SVPPQTrackingElement::IncrementCount( size_t p_Index, size_t p
 
 #pragma region SVPPQTracking Constructor
 SVPPQObject::SVPPQTracking::SVPPQTracking()
-: m_QueueLength( 0 )
-, m_Counts()
-, m_QueueCounts()
-, m_QueueWriteTimeCounts()
+	: m_QueueLength( 0 )
+	, m_Counts()
+	, m_QueueCounts()
+	, m_QueueWriteTimeCounts()
 {
 }
 
 SVPPQObject::SVPPQTracking::SVPPQTracking( const SVPPQTracking& p_rObject )
-: m_QueueLength( p_rObject.m_QueueLength )
-, m_Counts( p_rObject.m_Counts )
-, m_QueueCounts( p_rObject.m_QueueCounts )
-, m_TimeLength( p_rObject.m_TimeLength)
-, m_QueueWriteTimeCounts( p_rObject.m_QueueWriteTimeCounts )
+	: m_QueueLength( p_rObject.m_QueueLength )
+	, m_Counts( p_rObject.m_Counts )
+	, m_QueueCounts( p_rObject.m_QueueCounts )
+	, m_TimeLength( p_rObject.m_TimeLength)
+	, m_QueueWriteTimeCounts( p_rObject.m_QueueWriteTimeCounts )
 {
 }
 
@@ -5025,7 +5025,7 @@ static SVGUID GetInspectionGuid(const SVString& rName)
 {
 	SVGUID guid;
 	SVDottedName dottedName(rName.c_str());
-	
+
 	if (dottedName.size())
 	{
 		guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(dottedName[0]);
@@ -5085,7 +5085,7 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 			SeidenaderVision::SVSharedProduct& rSharedProduct = rWriter.GetProductSlot(rProduct.m_lastInspectedSlot);
 			rSharedProduct.m_TriggerCount = -1;
 			rSharedProduct.m_Inspections.clear();
-			
+
 			rWriter.ReleaseProduct(rSharedProduct);
 		}
 		catch (const std::exception& e)
@@ -5130,34 +5130,7 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 				const SVString& rShareName = rWriter[it->first].GetShareName();
 				std::pair< SVSharedInspectionMap::iterator,bool>  mRet; 	
 				mRet = rSharedProduct.m_Inspections.insert(SVSharedInspectionPair(char_string(rShareName.c_str(), rSharedProduct.m_Allocator), 
-				SVSharedInspection(rShareName.c_str(), it->second.m_lastInspectedSlot, rSharedProduct.m_Allocator)));
-
-
-#ifdef TRACERUNREJECT 
-
-				bool bRet = mRet.second;
-				std::string  string1In   = rShareName.c_str();
-				std::string  string2In = rShareName.c_str();
-				int IndexIn =  	it->second.m_lastInspectedSlot;
-				
-				std::string string1Out = mRet.first->first.c_str();
-				std::string string2Out = mRet.first->second.m_ShareName.c_str();
-				int IndexOut = mRet.first->second.m_Index;
-
-
-				std::stringstream debugStream;
-				debugStream << "Insert to SVSharedInspectionMap(CommitSharedMemory)"  <<  string1In.c_str() <<  " , "  << string2In.c_str()   <<  " , "    << IndexIn ;
-				debugStream  << " mRet: " << mRet.second << endl;
-				::OutputDebugStringA(debugStream.str().c_str());
-
-				if(string1In.compare(string1Out) || string2In.compare(string2Out) ||  IndexIn != IndexOut)
-				{
-					debugStream << "ERROR: in SVSharedInspectionMap "  << string1In.c_str()  <<  " , "  <<   string2In.c_str() <<  " , "  <<  IndexIn << endl;;
-					::OutputDebugStringA(debugStream.str().c_str());
-				}
-#endif
-
-
+					SVSharedInspection(rShareName.c_str(), it->second.m_lastInspectedSlot, rSharedProduct.m_Allocator)));
 			}
 			// A Reject Depth of Zero is allowed and means we aren't keeping any rejects
 			// Check for Reject - if Reject copy Last Inspected to reject (this includes images(file copies))
@@ -5239,7 +5212,7 @@ HRESULT SVPPQObject::CheckRejectCondition(const SVProductInfoStruct& rProduct, S
 }
 
 SVPPQObject::SVSharedMemoryFilters::SVSharedMemoryFilters()
-: m_RejectConditionValues()
+	: m_RejectConditionValues()
 {
 }
 
