@@ -107,6 +107,10 @@ namespace Seidenader { namespace SVObserver
 		_T("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.");
 	const TCHAR* const AP_NotEnoughHandlesForSImages = 
 		_T("There are not enough Available Archive Image Memory Handles for %s images in Change Mode. Available\nArchive Image Memory Handles are the result of the selected images and the Max Images number.\nThe selection will be reset.");
+	const TCHAR* const  Remote_Input= _T("Remote Input");
+	const TCHAR* const  DIOInput= _T("DIO.Input");
+
+
 } /* namespace SVObserver */ } /* namespace Seidenader */
 
 namespace SvO = Seidenader::SVObserver;

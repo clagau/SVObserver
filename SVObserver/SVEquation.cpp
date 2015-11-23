@@ -25,6 +25,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -38,7 +39,10 @@ static char THIS_FILE[] = __FILE__;
 
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
-	SetAvailableLists( NULL, NULL );
+	m_ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
+	m_ToolSetName +=  "."; 
+	m_DIOInputName = SvO::DIOInput;
+	m_RemoteInputName = SvO::Remote_Input;
 }
 
 SVEquationSymbolTableClass::~SVEquationSymbolTableClass()
@@ -74,227 +78,120 @@ void SVEquationSymbolTableClass::ClearAll()
 	//RemoveAll();
 }
 
-/////////////////////////////////////////////////////////////////
-// Set pointers to Available Lists
-/////////////////////////////////////////////////////////////////
-void SVEquationSymbolTableClass::SetAvailableLists(SVOutputInfoListClass* PAvailInputSymbols, SVOutputInfoListClass* PAvailToolSetSymbols )
-{
-	m_pAvailInputSymbols = PAvailInputSymbols;
-	m_pAvailToolSetSymbols = PAvailToolSetSymbols;
 
-	ASSERT( m_pAvailToolSetSymbols == NULL || 0 < m_pAvailToolSetSymbols->GetSize() );
-}
 
 /////////////////////////////////////////////////////////////////
 // Find a Symbol based on name
 /////////////////////////////////////////////////////////////////
 int SVEquationSymbolTableClass::FindSymbol( LPCTSTR name )
 {
-	int index = -1;
-	int l_iCount = GetSize();
-
-	for( int i = 0; i < l_iCount; i++ )
+	for( const_iterator it = begin(); it != end(); it++ )
 	{
-		SVEquationSymbolStruct* pSymbolStruct = GetAt( i );
-		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
+		if( !_tcscmp(name, (*it)->Name ) )
 		{
-			if( !_tcscmp(name, pSymbolStruct->Name ) )
-			{
-				index = i;
-				break;
-			}
-		}
-		else if ( pSymbolStruct->Type == SV_TOOLSET_SYMBOL_TYPE )
-		{
-			if( !_tcscmp(name, pSymbolStruct->Name ) )
-			{
-				index = i;
-				break;
-			}
-		}
+			return static_cast<int> (it - begin());
+		}	
 	}
-	return index;
+	return -1; 
 }
 
-/////////////////////////////////////////////////////////////////
-// Add a input (e.g. PPQ) or ToolSet Symbol based on name
-/////////////////////////////////////////////////////////////////
-int SVEquationSymbolTableClass::AddSymbol( LPCTSTR name, SVObjectClass* pRequestor )
+void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 {
-	// Strip off Double Quotes
-	CString nameStr = name;
-	nameStr.Remove( _T( '\"' ) );
-
-	// Find the name in the Input Available list (e.g. PPQ parameter or modes)
-	int index = findInputSymbol( nameStr );
-
-	if( index != -1 ) // found in Input Available List
+	
+	SVInspectionProcess *pInspection(nullptr);
+	SVObjectAppClass* pAppClass = dynamic_cast<SVObjectAppClass*>(pRequestor);
+	if(pAppClass != nullptr)
 	{
-		index = addInputSymbol( nameStr, index, pRequestor );
+		pInspection = 	pAppClass->GetInspection();
+	}
+	if(pInspection)
+	{
+		m_InspectionName = pInspection->GetName();
+		m_InspectionName += "."; 
+		
+	}	
+}
+
+
+int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequestor )
+{
+	
+	// Strip off Double Quotes
+	CString csName = name;
+	//csName.Remove( _T( '\"' ) );
+	csName.Trim(_T("\"" ) );
+
+	SVEquationSymbolTypeEnum Type = SV_INPUT_SYMBOL_TYPE; 
+	
+	
+	int symbolIndex = FindSymbol( csName ); 
+	if(symbolIndex != -1)
+	{
+		///it is already in the vector
+		return symbolIndex;
+	}
+	
+	CString strLookUpName;
+	
+	if(0== csName.Left(m_ToolSetName.GetLength()).Compare(m_ToolSetName))
+	{
+		Type = SV_TOOLSET_SYMBOL_TYPE;
+		strLookUpName = m_InspectionName;
+		strLookUpName += csName;
+	}
+	else if ( 0== csName.Left(m_DIOInputName.GetLength()).Compare(m_DIOInputName) 
+			||  0== csName.Left(m_RemoteInputName.GetLength()).Compare(m_RemoteInputName) )
+	{
+		strLookUpName = m_InspectionName;
+		strLookUpName += csName;
 	}
 	else
 	{
-		// Find the name in the ToolSet Available list
-		index = findToolSetSymbol( nameStr );
-
-		if( index != -1 ) // found in Available ToolSet OutputList
-		{
-			index = addToolSetSymbol( nameStr, index, pRequestor );
-		}
+		strLookUpName = csName;
 	}
-	return index;
-}
 
-/////////////////////////////////////////////////////////////////
-// Add a Input Symbol
-/////////////////////////////////////////////////////////////////
-int SVEquationSymbolTableClass::addInputSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor )
-{
-	SVEquationSymbolStruct* pSymbolStruct;
-	int symbolIndex = -1;
+	
+	
+	SVObjectReference ObjectReference;
 
-	if( m_pAvailInputSymbols )
+	HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( strLookUpName.GetString(), ObjectReference );
+	if(hr != S_OK)
 	{
-		SVOutObjectInfoStruct* pObjInfo = m_pAvailInputSymbols->GetAt( index );
-		if( pObjInfo )
-		{
-			// Add to combined symbol table if not already there
-			symbolIndex = FindSymbol( name );
-			if( symbolIndex == -1 )
-			{
-				pSymbolStruct = new SVEquationSymbolStruct();
-				pSymbolStruct->Type = SV_INPUT_SYMBOL_TYPE;
-				pSymbolStruct->Name = name;
-				pSymbolStruct->IsValid = TRUE;
-				// Set who wants to use the variable
-				pSymbolStruct->InObjectInfo.SetObject( pRequestor->GetObjectInfo() );
+		return -1;
+	}
 
-				// Set the variable to be used
-				pSymbolStruct->InObjectInfo.SetInputObjectType( pObjInfo->ObjectTypeInfo );
-				pSymbolStruct->InObjectInfo.SetInputObject( pObjInfo->UniqueObjectID );
+	if(FALSE == (ObjectReference.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ))
+	{
+		return -1;
+	}
 
-				// Try to Connect at this point
-				DWORD_PTR rc = ::SVSendMessage(pObjInfo->UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&pSymbolStruct->InObjectInfo), NULL);
+	// Add to combined symbol table if not already there
+	// Objects will be deletet in ClearAll() called by the ~SVEquationSymbolTableClass:;
+	SVEquationSymbolStruct* pSymbolStruct = new SVEquationSymbolStruct();	
+	pSymbolStruct->Type = Type;
+	pSymbolStruct->Name = name;
+	// Set who wants to use the variable
+	pSymbolStruct->InObjectInfo.SetObject( pRequestor->GetObjectInfo() );
 
-				symbolIndex = Add( pSymbolStruct );
-				m_toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
-			}
+	// Set the variable to be used
+	pSymbolStruct->InObjectInfo.SetInputObjectType( ObjectReference->GetObjectOutputInfo().ObjectTypeInfo);
+	pSymbolStruct->InObjectInfo.SetInputObject( ObjectReference->GetObjectOutputInfo().UniqueObjectID );
 
-		}// end if
-
-	}// end if
+	// Try to Connect at this point
+	DWORD_PTR rc = ::SVSendMessage(ObjectReference->GetObjectOutputInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&pSymbolStruct->InObjectInfo), NULL);
+	if( rc == SVMR_SUCCESS )
+	{
+		pSymbolStruct->IsValid = TRUE;
+	}
+		
+	ASSERT(rc == SVMR_SUCCESS);
+	
+	symbolIndex = Add( pSymbolStruct );
+	// add it to the top
+	m_toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
 	return symbolIndex;
 }
-
-/////////////////////////////////////////////////////////////////
-// Add a ToolSet Symbol
-/////////////////////////////////////////////////////////////////
-int SVEquationSymbolTableClass::addToolSetSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor )
-{
-	SVEquationSymbolStruct* pSymbolStruct;
-	int symbolIndex = -1;
-
-	if( m_pAvailToolSetSymbols )
-	{
-		SVOutObjectInfoStruct* pOutObjectInfo = m_pAvailToolSetSymbols->GetAt( index );
-		if( pOutObjectInfo )
-		{
-			// Add to combined symbol table if not already there
-			symbolIndex = FindSymbol( name );
-
-			if( symbolIndex == -1 )
-			{
-
-				pSymbolStruct = new SVEquationSymbolStruct();
-
-				pSymbolStruct->Type = SV_TOOLSET_SYMBOL_TYPE;
-				pSymbolStruct->Name = name;
-
-				// Set who wants to use the variable
-				pSymbolStruct->InObjectInfo.SetObject( pRequestor->GetObjectInfo() );
-
-				// Set the variable to be used
-				pSymbolStruct->InObjectInfo.SetInputObjectType( pOutObjectInfo->ObjectTypeInfo );
-				pSymbolStruct->InObjectInfo.SetInputObject( pOutObjectInfo->UniqueObjectID );
-			
-				// Try to Connect at this point
-				DWORD_PTR rc = ::SVSendMessage(pOutObjectInfo->UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&pSymbolStruct->InObjectInfo), NULL);
-				if( rc == SVMR_SUCCESS )
-				{
-					pSymbolStruct->IsValid = TRUE;
-				}
-				else
-				{
-					ASSERT(0);
-				}
-				symbolIndex = Add( pSymbolStruct );
-				// add it to the top
-				m_toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
-			}
-		}
-	}
-	return symbolIndex;
-}
-
-/////////////////////////////////////////////////////////////////
-// Find a Input Symbol
-/////////////////////////////////////////////////////////////////
-int SVEquationSymbolTableClass::findInputSymbol( LPCTSTR name )
-{
-	int index = -1;
-
-	if( m_pAvailInputSymbols )
-	{
-		// Find DataLinkInfo in Available List by name
-		for( int i = m_pAvailInputSymbols->GetSize() - 1; i >= 0; i-- )
-		{
-			SVOutObjectInfoStruct *pObjInfo = m_pAvailInputSymbols->GetAt( i );
-
-			//search for name in the complete object name
-			SVString temp = pObjInfo->PObject->GetCompleteObjectName();
-			size_t position = temp.find( name );
-			if( SVString::npos != position && position + strlen(name) >= temp.size() )
-			{
-				index = i;
-				break;
-			}
-		}
-	}
-	return index;
-}
-
-/////////////////////////////////////////////////////////////////
-// Find a Local Symbol
-/////////////////////////////////////////////////////////////////
-int SVEquationSymbolTableClass::findToolSetSymbol( LPCTSTR name )
-{
-	int index = -1;
-
-	if( m_pAvailToolSetSymbols )
-	{
-		// Find the name in the ToolSet Available Output List
-		int l_iCount = m_pAvailToolSetSymbols->GetSize();
-
-		for( int i = l_iCount - 1; i >= 0; i-- )
-		{
-			SVOutObjectInfoStruct* pOutObjectInfo = m_pAvailToolSetSymbols->GetAt( i );
-			if( pOutObjectInfo->PObject ) 
-			{
-				SVObjectClass* pObject = pOutObjectInfo->PObject;
-
-				// Get the 'dotted' name including the Object Type name selected for the 'root'.
-				CString csCompleteName = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType );
-				if( !_tcscmp( csCompleteName, name ) )
-				{
-					index = i;
-					break;
-				}
-			}
-		}
-	}
-
-	return index;
-}
+	
 
 /////////////////////////////////////////////////////////////////
 // Get the ToolSet Symbol table
@@ -313,7 +210,18 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, lo
 	{
 		SVEquationSymbolStruct* pSymbolStruct = GetAt( iSymbolIndex );
 
-		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
+		if( pSymbolStruct->Type == SV_TOOLSET_SYMBOL_TYPE )
+		{
+			// Get the Data
+			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
+			{
+				SVValueObjectClass* pValueObject = static_cast <SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
+				HRESULT hr = pValueObject->GetValue( value );
+				return hr;
+			}
+		}
+
+		else	
 		{
 			// Get the Data
 			SVObjectClass *object = pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject;
@@ -328,16 +236,7 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, lo
 			else
 				return S_FALSE;
 		}
-		else if( pSymbolStruct->Type == SV_TOOLSET_SYMBOL_TYPE )
-		{
-			// Get the Data
-			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
-			{
-				SVValueObjectClass* pValueObject = static_cast <SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
-				HRESULT hr = pValueObject->GetValue( value );
-				return hr;
-			}
-		}
+
 	}
 	return S_FALSE;
 }
@@ -795,24 +694,16 @@ SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
 
 	if( HasCondition() && IsEnabled() )
 	{
-		// *** // ***
+		
 		SVOutputInfoListClass arInputAvailList;
-		addPPQVariableToList( arInputAvailList );
-		addOldPPQDigitizerVariableToList( arInputAvailList );
-		addPPQ_XParameterToList( arInputAvailList );
-		addRootChildrenToList( arInputAvailList );
-
-		// Get Available ToolSet Variables
-		// Get Known ToolSet Outputs ( selectable for equation )
-		SVTaskObjectClass* pToolSet = GetInspection()->GetToolSet();
-		SVOutputInfoListClass l_OutputList;
-		pToolSet->GetOutputList( l_OutputList );
+		
 		SVOutputInfoListClass toolSetPickList;
-		l_OutputList.GetAllowedAttributesList( SV_SELECTABLE_FOR_EQUATION, &toolSetPickList );
+		
 	
 		// Clear the symbol Tables
 		symbols.ClearAll();
-		symbols.SetAvailableLists( &arInputAvailList, &toolSetPickList );
+		symbols.Init(this);
+		
 
 		CString equationText;
 		GetEquationText( equationText );
@@ -885,9 +776,7 @@ SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
 		}
 		equationText.ReleaseBuffer();
 		
-		// Clear the pointers to the Available Lists
-		symbols.SetAvailableLists( NULL, NULL );
-
+		
 		isObjectValid.SetValue( 1, ret.bPassed );
 	}
 	// return true if no equation or disabled
@@ -1332,157 +1221,7 @@ HRESULT SVEquationClass::ResetObject()
 	return l_hrOk;
 }
 
-void SVEquationClass::addOldPPQDigitizerVariableToList( SVOutputInfoListClass &rOutputInfoList ) const
-{
-	SVPPQObject* pPPQ = GetInspection()->GetPPQ();
 
-	// Check for old variables that were shared across the PPQ/Digitizer
-	CString strEquation;
-	GetEquationText( strEquation );
-	CString strTemp = strEquation;
-	CString strTempName = "";
-	CString strName;
-	strTemp.MakeUpper();
-
-	int iWhere1 = -1;
-	int iWhere2 = -1;
-	int iWhere3 = -1;
-	int iWhere4 = -1;
-	int iWhere5 = -1;
-	int iWhere6 = -1;
-	bool bDone = false;
-	while( !bDone )
-	{
-		bool bFound = false;
-
-		iWhere1 = strTemp.Find( "VIPER QUAD", iWhere1 + 1 );
-		if( !bFound && iWhere1 != -1 )
-		{
-			iWhere2 = strTemp.Find( ". ", iWhere1 );
-			if( iWhere2 != -1 )
-			{
-				strName     = strEquation.Mid( iWhere1, iWhere2 - iWhere1 + 2 );
-				strTempName = strEquation.Mid( iWhere1 + 17, iWhere2 - iWhere1 - 17 );
-
-				bFound = TRUE;
-			}// end if
-
-		}// end if
-
-		iWhere3 = strTemp.Find( "VIPER DUAL", iWhere3 + 1 );
-		if( !bFound && iWhere3 != -1 )
-		{
-			iWhere4 = strTemp.Find( ". ", iWhere3 );
-			if( iWhere4 != -1 )
-			{
-				strName     = strEquation.Mid( iWhere3, iWhere4 - iWhere3 + 2 );
-				strTempName = strEquation.Mid( iWhere3 + 17, iWhere4 - iWhere3 - 17 );
-
-				bFound = TRUE;
-			}// end if
-
-		}// end if
-
-		iWhere5 = strTemp.Find( "VIPER RGB", iWhere5 + 1 );
-		if( !bFound && iWhere5 != -1 )
-		{
-			iWhere6 = strTemp.Find( ". ", iWhere5 );
-			if( iWhere6 != -1 )
-			{
-				strName     = strEquation.Mid( iWhere5, iWhere6 - iWhere5 + 2 );
-				strTempName = strEquation.Mid( iWhere5 + 16, iWhere6 - iWhere5 - 16 );
-
-				bFound = TRUE;
-			}// end if
-		}// end if
-
-		if( bFound )
-		{
-			long lSize = 0;
-			// Right now an inspection can have only one PPQ
-			//If pointer is null then size will be 0
-			if( nullptr != pPPQ){ pPPQ->GetInspectionCount( lSize ); }
-			SVObjectClass* pObject( nullptr );
-			SVInspectionProcess* pInspection( nullptr );
-			for( long l = 0; l < lSize; l++ )
-			{
-				pPPQ->GetInspection( l, pInspection );
-				if( nullptr != pInspection )
-				{
-					pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage( pInspection->GetToolSet(), 
-						( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
-						reinterpret_cast<DWORD_PTR>( static_cast<LPCSTR>( strTempName )), NULL ) );
-				}
-
-				if( pObject != NULL )
-					break;
-			}// end for
-
-			//Would it make sense to add an Info object when the object does not exist
-			if( nullptr != pObject )
-			{
-				rOutputInfoList.Add( &(pObject->GetObjectOutputInfo()) );
-			}
-
-			continue;
-		}// end if
-
-		bDone = true;
-	}// end while
-}
-
-void SVEquationClass::addPPQVariableToList(  SVOutputInfoListClass &rOutputInfoList ) const
-{
-	SVIOEntryStruct pIOEntry;
-	SVInspectionProcess* pInspection = GetInspection();
-
-	size_t Size = 0;
-	//If pointer is nullptr then Size 0
-	if( nullptr != pInspection ){ Size = pInspection->m_PPQInputs.size(); }
-	for( size_t i = 0; pInspection && i < Size ; i++ )
-	{
-		pIOEntry = pInspection->m_PPQInputs[i];
-
-		if( pIOEntry.m_IOEntryPtr.empty() || !pIOEntry.m_IOEntryPtr->m_Enabled )
-			continue;
-
-		if( nullptr !=  pIOEntry.m_IOEntryPtr->m_pValueObject)
-		{
-			rOutputInfoList.Add( &(pIOEntry.m_IOEntryPtr->m_pValueObject->GetObjectOutputInfo()) );
-		}
-	}// end for
-}
-
-void SVEquationClass::addPPQ_XParameterToList(  SVOutputInfoListClass &rOutputInfoList ) const
-{
-	//add PPQ_X parameter to the equation selection list
-	SVInspectionProcess* pInspection( GetInspection() );
-	SVPPQObject* pPPQ( nullptr );
-	if( nullptr != pInspection )
-	{
-		pPPQ = 	pInspection->GetPPQ();
-	}
-	if ( nullptr != pPPQ )
-	{
-		SVObjectPtrDeque objectList;
-		pPPQ->fillChildObjectList(objectList, SV_SELECTABLE_FOR_EQUATION);
-		for(SVObjectPtrDeque::const_iterator iter = objectList.begin(); iter != objectList.end(); ++iter) 
-		{
-			rOutputInfoList.Add( &((*iter)->GetObjectOutputInfo()) );
-		}
-	}
-}
-
-void SVEquationClass::addRootChildrenToList( SVOutputInfoListClass &rOutputInfoList ) const
-{
-	BasicValueObjects::ValueVector list;
-
-	RootObject::getRootChildObjectList( list,  _T(""), SV_SELECTABLE_FOR_EQUATION );
-	for(BasicValueObjects::ValueVector::const_iterator iter = list.begin(); iter != list.end(); ++iter) 
-	{
-		rOutputInfoList.Add( &((*iter)->GetObjectOutputInfo()) );
-	}
-}
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

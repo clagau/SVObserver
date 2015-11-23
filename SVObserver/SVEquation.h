@@ -71,8 +71,15 @@ public:
 	~SVEquationSymbolTableClass();
 
 	int FindSymbol( LPCTSTR name );					// Find Input or ToolSet Symbol
-	int AddSymbol( LPCTSTR name, SVObjectClass* pRequestor );	// Add Input or ToolSet Symbol
-
+	
+	//************************************
+	//! This adds a symbol into the list of used symbol
+	//! \param name [in] symbolname 
+	//! \param pRequestor [in]  who wants to use the variable
+	//! \returns int the index of the used symbols list
+	//************************************
+	int AddSymbol(LPCTSTR name, SVObjectClass* pRequestor );
+	
 	SVInputInfoListClass& GetToolSetSymbolTable();	// Get the ToolSet Symbol table
 
 	HRESULT GetData(int iSymbolIndex, double& value, long lBufferIndex );		// Get the Data Value
@@ -80,32 +87,23 @@ public:
 	HRESULT GetData(int iSymbolIndex, std::vector<double>& values, long lBufferIndex );		// Get the Data Value
 
 	void ClearAll();
-	void SetAvailableLists( SVOutputInfoListClass* PAvailInputSymbols, SVOutputInfoListClass* PAvailToolSetSymbols );
+	//************************************
+	//! init the inspectionName 
+	//! \param pRequestor [in] the tool who wants to use the variable
+	//! \returns void
+	//************************************
+	void Init(SVObjectClass* pRequestor);
+
 	
 protected:
-	int findInputSymbol( LPCTSTR name );					// Find Input Symbol
-	int findToolSetSymbol( LPCTSTR name );				// Find ToolSet Symbol
-
-	//************************************
-	//! This adds a non-toolset symbol into the list of used symbols
-	//! \param name <in> the symbol name
-	//! \param index <in> the corresponding index out of the whole list of non-toolset symbols
-	//! \returns the index of the used symbols list
-	//************************************
-	int addInputSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor );
-
-	//************************************
-	//! This adds a toolset symbol into the list of used symbols
-	//! \param name <in> the symbol name
-	//! \param index <in> the corresponding index out of the whole list of toolset symbols
-	//! \returns the index of the used symbols list
-	//************************************
-	int addToolSetSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor );
-
-protected:
 	SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
-	SVOutputInfoListClass* m_pAvailToolSetSymbols;	// List of Available ToolSet symbols
-	SVOutputInfoListClass* m_pAvailInputSymbols;			// List of Available Input symbols
+	CString m_InspectionName;
+
+	CString  m_ToolSetName;
+	CString m_DIOInputName;
+	CString  m_RemoteInputName;
+	
+
 };
 
 /**
@@ -252,39 +250,7 @@ protected:
 private:
 	SVEquationTestResult lexicalScan( LPSTR buffer );		// perform lexical scan
 
-	//************************************
-	// Method:    addOldPPQDigitizerVariableToList
-	// Description:  Add the old PPQ-digitizer-variable to the list. Will maybe obsolete later on.
-	// Parameter: SVOutputInfoListClass &rOutputInfoList
-	// Returns:   void
-	//************************************
-	void addOldPPQDigitizerVariableToList( SVOutputInfoListClass &rOutputInfoList ) const;
-
-	//************************************
-	// Method:    addPPQVariableToList
-	// Description:  Add the PPQ-variable to the list.
-	// Parameter: SVOutputInfoListClass &rOutputInfoList
-	// Returns:   void
-	//************************************
-	void addPPQVariableToList( SVOutputInfoListClass &rOutputInfoList ) const;
-
-	//************************************
-	// Method:    addPPQ_XParameterToList
-	// Description:  Add the PPQ_X-parameter to the list (e.g. PPQ_1.Length).
-	// Parameter: SVOutputInfoListClass &rOutputInfoList
-	// Returns:   void
-	//************************************
-	void addPPQ_XParameterToList( SVOutputInfoListClass &rOutputInfoList ) const;
-
-	//************************************
-	// Method:    addRootChildrenToList
-	// Description:  Add the root children to the list
-	// Parameter: SVOutputInfoListClass &rOutputInfoList
-	// Returns:   void
-	//************************************
-	void addRootChildrenToList( SVOutputInfoListClass &rOutputInfoList ) const;
-
-protected:
+	protected:
 	SVEquationLexClass lex;					// scanner class
 	SVEquationYaccClass yacc;				// parser class
 
