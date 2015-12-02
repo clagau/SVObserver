@@ -12,6 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVImageView.h"
+#ifdef PROFILE_IMAGE_UPDATES
+#include "SVTimerLibrary/SVProfiler.h"
+#endif
 #include "SVImageLibrary/SVDrawContext.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -935,17 +938,31 @@ void SVImageViewClass::OnDraw( CDC* p_pDC )
 	else
 	{
 		//TRACE( _T( "SVImageView::OnDraw %s\n" ), m_imageName );
+#ifdef PROFILE_IMAGE_UPDATES
+		SvTl::SVProfiler profiler;
+		profiler.Start();
+#endif
+		HRESULT hr = UpdateSurface();
 
-		HRESULT hr = S_OK;
-
-		hr = UpdateSurface();
-
+#ifdef PROFILE_IMAGE_UPDATES
+		profiler.End();
+		double updateTime = profiler.ElapsedMilliSeconds();
+		TRACE("UpdateSurface elaped time = %0.2lf ms\n", updateTime);
+#endif
 		if( hr == S_OK )
 		{
 			//::Sleep( 0 );
 			//m_ThreadWait.Sleep();
-
+#ifdef PROFILE_IMAGE_UPDATES
+			profiler.Start();
+#endif
 			hr = DisplaySurface();
+
+#ifdef PROFILE_IMAGE_UPDATES
+			profiler.End();
+			double displayTime = profiler.ElapsedMilliSeconds();
+			TRACE("DisplaySurface elaped time = %0.2lf ms\n", displayTime);
+#endif
 		}
 		
 		NotifyIPDocDisplayComplete();

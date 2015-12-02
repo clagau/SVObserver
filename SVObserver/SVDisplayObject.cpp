@@ -372,21 +372,24 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 
 			if( l_Process )
 			{
-				long l_Indicator = 0;
-
-				if( 0 < SVObjectManagerClass::Instance().GetShortPPQIndicator() )
+				if( 0 < SVObjectManagerClass::Instance().GetShortPPQIndicator() ) // Get the number of PPQs with a length < 3
 				{
-					l_Indicator += SVObjectManagerClass::Instance().GetProductIndicator();
-					l_Indicator -= SVObjectManagerClass::Instance().GetPendingImageIndicator();
+					long productIndicator = SVObjectManagerClass::Instance().GetProductIndicator(); // Get the number of active products
+					productIndicator -= SVObjectManagerClass::Instance().GetPendingImageIndicator(); // Get the number of pending images (whatever that means)
+
+					long inspectionIndicator = SVObjectManagerClass::Instance().GetInspectionIndicator(); // Get the number of active inspections
+					// this section of logic used to just use the number of active products minus the number of pending images
+					// but this would cause the display to freeze (not update) when there is more than one PPQ and one of the PPQs has a length < 3
+					// So now we also check if there are any inspections active as well (just like the section in the else below)
+					l_Process = l_Process && ( 0 == productIndicator || 0 == inspectionIndicator );
 				}
 				else
 				{
-					l_Indicator += SVObjectManagerClass::Instance().GetInspectionIndicator();
+					long inspectionIndicator = SVObjectManagerClass::Instance().GetInspectionIndicator(); // Get the number of active inspections
+					l_Process = l_Process && ( 0 == inspectionIndicator );
 				}
-
 				l_Process = l_Process && ( m_PendingTrigger < 0 );
-				l_Process = l_Process && ( l_Indicator == 0 );
-
+				
 				if( !l_Process )
 				{
 					m_FrameRate = 1;

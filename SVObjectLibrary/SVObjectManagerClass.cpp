@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include <assert.h>
 #include "SVObjectManagerClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 
@@ -1338,6 +1339,7 @@ void SVObjectManagerClass::IncrementShortPPQIndicator()
 void SVObjectManagerClass::DecrementShortPPQIndicator()
 {
 	::InterlockedDecrement( &m_ShortPPQIndicator );
+	assert(m_ShortPPQIndicator >= 0);
 }
 
 long SVObjectManagerClass::GetProductIndicator() const
@@ -1358,11 +1360,13 @@ void SVObjectManagerClass::IncrementProductIndicator()
 void SVObjectManagerClass::DecrementProductIndicator()
 {
 	::InterlockedDecrement( &m_ProductIndicator );
+	assert(m_ProductIndicator >= 0);
 }
 
 void SVObjectManagerClass::AdjustProductIndicator( long p_Amount )
 {
 	::InterlockedExchangeAdd( &m_ProductIndicator, p_Amount );
+	assert(m_ProductIndicator >= 0);
 }
 
 long SVObjectManagerClass::GetPendingImageIndicator() const
@@ -1383,11 +1387,13 @@ void SVObjectManagerClass::IncrementPendingImageIndicator()
 void SVObjectManagerClass::DecrementPendingImageIndicator()
 {
 	::InterlockedDecrement( &m_PendingImageIndicator );
+	assert(m_PendingImageIndicator >= 0);
 }
 
 void SVObjectManagerClass::AdjustPendingImageIndicator( long p_Amount )
 {
 	::InterlockedExchangeAdd( &m_PendingImageIndicator, p_Amount );
+	assert(m_PendingImageIndicator >= 0);
 }
 
 long SVObjectManagerClass::GetInspectionIndicator() const
@@ -1408,11 +1414,13 @@ void SVObjectManagerClass::IncrementInspectionIndicator()
 void SVObjectManagerClass::DecrementInspectionIndicator()
 {
 	::InterlockedDecrement( &m_InspectionIndicator );
+	assert(m_InspectionIndicator >= 0);
 }
 
 void SVObjectManagerClass::AdjustInspectionIndicator( long p_Amount )
 {
 	::InterlockedExchangeAdd( &m_InspectionIndicator, p_Amount );
+	assert(m_InspectionIndicator >= 0);
 }
 
 long SVObjectManagerClass::GetNextFrameRate( long p_LastFrameRate )
