@@ -9,24 +9,19 @@
 //* .Check In Date   : $Date:   15 May 2014 12:50:40  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgGeneralPage.h"
-
+#include "GuiCommands\GetDependencies.h"
+#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 
 #include "SVGageTool.h"
-
+#include "SVShowDependentsDialog.h"
+#pragma endregion
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -158,6 +153,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogGeneralPageClass, CPropertyPage)
 	ON_CBN_SELCHANGE(IDC_DRAW_TOOL_COMBO, OnSelchangeDrawToolCombo)
 	ON_BN_CLICKED(IDC_ENABLE_AUXILIARY_EXTENTS, OnUpdateAuxilliaryExtents)
 	ON_CBN_SELCHANGE(IDC_SOURCE_IMAGE_COMBO, OnSelchangeSourceImageCombo)
+	ON_BN_CLICKED(ID_SHOW_RELATIONS, OnShowRelations)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -286,6 +282,20 @@ void SVToolAdjustmentDialogGeneralPageClass::OnSelchangeSourceImageCombo()
 	}
 
 	refresh();
+}
+
+void SVToolAdjustmentDialogGeneralPageClass::OnShowRelations() 
+{
+	SVToolClass* pTool = nullptr;
+
+	if (pSheet && (pTool = pSheet->GetTool()))
+	{
+		SVGUID toolId = pTool->GetUniqueObjectID();
+		SVGUID inspectionID = pTool->GetInspection()->GetUniqueObjectID();
+		
+		SVShowDependentsDialog Dlg(inspectionID, toolId, false, SVToolObjectType, nullptr, SVShowDependentsDialog::DialogType::Show);
+		Dlg.DoModal();
+	}
 }
 
 BOOL SVToolAdjustmentDialogGeneralPageClass::OnSetActive() 

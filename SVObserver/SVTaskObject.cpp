@@ -370,6 +370,24 @@ SvOi::IOutputInfoListClassPtr SVTaskObjectClass::GetOutputList(SvOi::IsObjectInf
 	return retVal;
 }
 
+SvOi::DependencyList SVTaskObjectClass::GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const
+{
+	SvOi::DependencyList dependents;
+	SVObjectPairVector v;
+	HRESULT hr = const_cast<SVTaskObjectClass *>(this)->GetDependentsList(v, bImagesOnly);
+	if (S_OK == hr)
+	{
+		std::for_each(v.begin(), v.end(), [&dependents, &nameToObjectType](const SVObjectPair& item)->void
+		{
+			SvOi::Relation rel(item.first->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType), 
+								item.second->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType));
+			dependents.push_back(rel);
+		}
+		);
+	}
+	return dependents;
+}
+
 #pragma endregion virtual method (ITaskObject)
 
 ////////////////////////////////////////////////////////////////////////////////

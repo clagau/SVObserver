@@ -60,5 +60,8 @@
     <ClInclude Include="GetAttributesAllowed.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GetDependencies.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

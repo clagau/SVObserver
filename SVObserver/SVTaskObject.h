@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   17 Jul 2014 20:39:34  $
 //******************************************************************************
 
-#ifndef SVTASKOBJECT_H
-#define SVTASKOBJECT_H
+#pragma once
 
+#pragma region Includes
 #include <vector>
 #include "ObjectInterfaces/ITaskObject.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
@@ -26,6 +26,7 @@
 #include "SVObjectLibrary/SVObjectListClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVTaskObjectValueInterface.h"
+#pragma endregion Includes
 
 class SVLineClass;
 class SVIPDoc;
@@ -117,6 +118,7 @@ public:
 	virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) override;
 	virtual SvOi::IOutputInfoListClassPtr GetOutputList( ) const override;
 	virtual SvOi::IOutputInfoListClassPtr GetOutputList(SvOi::IsObjectInfoAllowed func) const override;
+	virtual SvOi::DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const override;
 #pragma endregion virtual method (ITaskObject)
 
 protected:
@@ -243,14 +245,10 @@ private:
 	HRESULT LocalInitialize();
 };	// end class SVTaskObjectClass
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
-
-
-#endif // SVTASKOBJECT_H
 
 //******************************************************************************
 //* LOG HISTORY:

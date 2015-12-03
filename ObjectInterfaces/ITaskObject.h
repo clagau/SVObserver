@@ -10,6 +10,8 @@
 #pragma region Includes
 #include "IObjectAppClass.h"
 #include "IOutputInfoListClass.h"
+#include "SVObjectTypeInfoStruct.h"
+#include "DependencyList.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -44,6 +46,14 @@ namespace Seidenader
 			/// \returns Seidenader::ObjectInterfaces::IOutputInfoListClassPtr
 			//************************************
 			virtual IOutputInfoListClassPtr GetOutputList(IsObjectInfoAllowed func) const = 0;
+
+			//************************************
+			/// Return the dependency list for this task object
+			/// /param bImagesOnly <in> Only Images.
+			/// /param nameToObjectType <in> get Name to ObjectType.
+			/// \returns DependencyList
+			//************************************
+			virtual DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const = 0;
 		};
 	}
 }

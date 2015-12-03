@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="GetAttributesAllowed.h" />
     <ClInclude Include="GetCompleteObjectName.h" />
+    <ClInclude Include="GetDependencies.h" />
     <ClInclude Include="GetEquation.h" />
     <ClInclude Include="GetInstanceIDByDottedName.h" />
     <ClInclude Include="GetObjectName.h" />

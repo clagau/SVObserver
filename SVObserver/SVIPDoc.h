@@ -210,6 +210,8 @@ public:
 	afx_msg void OnAllowAdjustLightReference(CCmdUI* pCmdUI);
 	afx_msg void OnAllowAdjustLut(CCmdUI* pCmdUI);
 	afx_msg void OnAddResizetool();
+	afx_msg void OnShowToolRelations();
+	afx_msg void OnUpdateShowToolRelations(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP() // Contains "protected:"

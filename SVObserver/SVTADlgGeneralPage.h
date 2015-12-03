@@ -9,24 +9,13 @@
 //* .Check In Date   : $Date:   24 Apr 2013 11:15:06  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#ifndef SVTADLGGENERALPAGE_H
-#define SVTADLGGENERALPAGE_H
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
+#pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVTaskObjectInterfaceClass.h"
 #include "SVView.h"
 #include "SVImageListClass.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -67,6 +56,7 @@ protected:
 	afx_msg void OnSelchangeDrawToolCombo();
 	afx_msg void OnUpdateAuxilliaryExtents();
 	afx_msg void OnSelchangeSourceImageCombo();
+	afx_msg void OnShowRelations();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -114,17 +104,11 @@ protected:
 };
 
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 ////////////////////////////////////////////////////////////////////////////////
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	//	SVTADLGGENERALPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

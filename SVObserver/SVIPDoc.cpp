@@ -39,7 +39,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectScriptParser.h"
 #include "SVObserver.h"
-//#include "SVPQVariableSelectionDialog.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
@@ -73,15 +72,12 @@
 #include "SVCommandInspectionCollectImageData.h"
 #include "SVCommandInspectionRunOnce.h"
 #include "SVGuiExtentUpdater.h"
-//#include "SVAngularProfileTool.h"
 #include "SVArchiveTool.h"
 #include "SVColorTool.h"
-//#include "SVGageTool.h"
 #include "SVMathTool.h"
 #include "SVPolarTransformationTool.h"
 #include "SVTransformationTool.h"
 #include "SVToolAcquisition.h"
-//#include "SVToolBuildReference.h"
 #include "SVToolLoadImage.h"
 #include "SVToolImage.h"
 #include "SVWindowTool.h"
@@ -165,7 +161,6 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLSETDRAW_POP_BASE, OnUpdateViewToolSetDraw)
 	ON_COMMAND(ID_ADD_POLARUNWRAPTOOL, OnAddPolarUnwrapTool)
 	ON_UPDATE_COMMAND_UI(ID_APP_EXIT, OnUpdateFileExit)
-	//ON_COMMAND(ID_SELECT_PPQVARIABLE, OnSelectPPQVariable)
 	ON_COMMAND(ID_ADD_COLORTOOL, OnAddColorTool)
 	ON_COMMAND(ID_ADD_EXTERNAL_TOOL, OnAddExternalTool)
 	ON_COMMAND(ID_ADD_LINEARTOOL, OnAddLinearTool)
@@ -179,6 +174,8 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_EDIT_DATA_DEFINITION_LISTS, OnEditDataDefinitionLists)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESETCOUNTSALLIPS, OnUpdateViewResetCountsAllIPs)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESETCOUNTSCURRENTIP, OnUpdateViewResetCountsCurrentIP)
+	ON_COMMAND(ID_SHOW_RELATIONS, OnShowToolRelations)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_RELATIONS, OnUpdateShowToolRelations)
 	//}}AFX_MSG_MAP
 	ON_UPDATE_COMMAND_UI(ID_RUN_REGRESSIONTEST, OnUpdateRunRegressionTest)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_INFO, OnUpdateStatusInfo)
@@ -3068,7 +3065,48 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 			}
 		}
 	}
+	pCmdUI->Enable( Enabled );
+}
 
+void SVIPDoc::OnShowToolRelations()
+{
+	SVToolClass* pTool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(m_SelectedToolID));
+
+	if (pTool)
+	{
+		SVGUID toolID = pTool->GetUniqueObjectID();
+		SVGUID inspectionID = pTool->GetInspection()->GetUniqueObjectID();
+		
+		SVShowDependentsDialog Dlg(inspectionID, toolID, false, SVToolObjectType, nullptr, SVShowDependentsDialog::DialogType::Show);
+		Dlg.DoModal();
+	}
+}
+
+void SVIPDoc::OnUpdateShowToolRelations(CCmdUI* pCmdUI)
+{
+	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
+	// Check current user access...
+	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+	if (Enabled)
+	{
+		ToolSetView* pToolSetView = GetToolSetView();
+		if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
+		{
+			ToolListSelectionInfo ToolListInfo = pToolSetView->GetToolListSelectionInfo();
+			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
+
+			//Tool list active and valid tool
+			if (!rGuid.empty() && -1 != ToolListInfo.m_listIndex)
+			{
+				SVToolClass* Tool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
+				if (Tool)
+				{
+					//make sure m_SelectedToolID is updated to the correct tool when a right mouse click selects the tool
+					m_SelectedToolID = rGuid;
+				}
+			}
+		}
+	}
 
 	pCmdUI->Enable( Enabled );
 }

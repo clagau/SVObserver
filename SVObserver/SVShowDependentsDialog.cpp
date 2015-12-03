@@ -8,11 +8,15 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:00:16  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
-
+#include <functional>
 #include "SVShowDependentsDialog.h"
+#include "GuiCommands\GetDependencies.h"
+#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVTaskObject.h"
+#include "SVInspectionProcess.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,13 +26,57 @@ static char THIS_FILE[] = __FILE__;
 
 #define SV_NUMBER_DEPENDENTS_COLUMNS 2
 
-
-SVShowDependentsDialog::SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=NULL*/ )
-	: CDialog(SVShowDependentsDialog::IDD, pParent)
-	, m_rDependencyList( rList )
-	, m_DisplayText( DisplayText )
-	,m_DialogType( Type )
+SVShowDependentsDialog::SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
+: CDialog(SVShowDependentsDialog::IDD, pParent)
+, m_DisplayText( DisplayText )
+, m_DialogType( Type )
 {
+	ConvertList(rList);
+}
+
+SVShowDependentsDialog::SVShowDependentsDialog( const GUID& rInspectionID, const GUID& rTaskObjectID, bool bOnlyImages, SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
+: CDialog(SVShowDependentsDialog::IDD, pParent)
+, m_DisplayText( DisplayText )
+, m_DialogType( Type )
+, m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID)
+, m_bOnlyImages(bOnlyImages)
+, m_objectType(objectType)
+{
+	RetreiveList();
+}
+
+void SVShowDependentsDialog::RetreiveList()
+{
+	typedef GuiCmd::GetDependencies Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+
+	CommandPtr commandPtr = new Command(m_TaskObjectID, m_bOnlyImages, m_objectType);
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		m_dependencyList = commandPtr->Dependencies();
+	}
+}
+
+void SVShowDependentsDialog::ConvertList(const SVObjectPairVector& rList)
+{
+	SVObjectTypeEnum ObjectType(SVToolObjectType);
+
+	if (DeleteConfirmWithIP_Name == m_DialogType || ShowWithIP_Name == m_DialogType)
+	{
+		ObjectType = SVInspectionProcessType;
+	}
+	for (SVObjectPairVector::const_iterator it = rList.begin(); it != rList.end(); ++it)
+	{
+		// Who is using
+		SVString WhoName = it->first->GetCompleteObjectNameToObjectType(nullptr, ObjectType);
+
+		// Where/What object is being used
+		SVString WhatName = it->second->GetCompleteObjectNameToObjectType(nullptr, ObjectType);
+		m_dependencyList.push_back(SvOi::Relation(WhoName, WhatName));
+	}
 }
 
 /*static*/ INT_PTR SVShowDependentsDialog::StandardDialog( SVTaskObjectClass* pTaskObject, bool OnlyImages )
@@ -41,11 +89,10 @@ SVShowDependentsDialog::SVShowDependentsDialog( const SVObjectPairVector& rList,
 		CString Name( pTaskObject->GetName() );
 		DisplayText.Format( IDS_DELETE_CHECK_DEPENDENCIES, Name, Name, Name, Name);
 	
-		SVObjectPairVector DependencyList;
-
-		pTaskObject->GetDependentsList( DependencyList, OnlyImages );
-
-		SVShowDependentsDialog Dlg( DependencyList, DisplayText );
+		SVGUID taskObjectID = pTaskObject->GetUniqueObjectID();
+		SVGUID inspectionID = pTaskObject->GetInspection()->GetUniqueObjectID();
+		
+		SVShowDependentsDialog Dlg(inspectionID, taskObjectID, OnlyImages, SVToolObjectType, DisplayText);
 
 		Result = Dlg.DoModal();
 	}
@@ -60,36 +107,21 @@ void SVShowDependentsDialog::addColumnHeadings()
 	// load the Column names
 	for( int i = 0; i < SV_NUMBER_DEPENDENTS_COLUMNS; i++ )
 	{
-		//columnName.LoadString(IDS_RESULTVIEW_COLUMN_NAME0 + i );
-			
 		listCtrl.InsertColumn( i, columnName, LVCFMT_LEFT, -1, i );
 	}
 }
 
 void SVShowDependentsDialog::addItems()
 {
-	SVObjectPairVector::const_iterator iter;
-	SVObjectTypeEnum ObjectType( SVToolObjectType );
-	int iIndex = 0;
-
-	if( DeleteConfirmWithIP_Name == m_DialogType || ShowWithIP_Name == m_DialogType )
+	int index = 0;
+	CListCtrl* pCtrl = &listCtrl;
+	std::for_each(m_dependencyList.begin(),m_dependencyList.end(), [&index, &pCtrl](const SvOi::Relation& rel)->void
 	{
-		ObjectType = SVInspectionProcessType;
+		pCtrl->InsertItem(index, rel.first.c_str()); // Who is using
+		pCtrl->SetItemText(index, 1, rel.second.c_str()); // Where/What object is being used
+		++index;
 	}
-	for ( iter = m_rDependencyList.begin(); iter != m_rDependencyList.end(); ++iter )
-	{
-		CString sName;
-
-		// Insert Who is using
-		sName = iter->first->GetCompleteObjectNameToObjectType( NULL, ObjectType );
-		listCtrl.InsertItem( iIndex, sName );
-
-		// Insert Where/What object is being used
-		sName = iter->second->GetCompleteObjectNameToObjectType( NULL, ObjectType );
-		listCtrl.SetItemText( iIndex, 1, sName );
-
-		iIndex++;
-	}
+	);
 }
 
 void SVShowDependentsDialog::setColumnWidths()
@@ -129,7 +161,7 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 	CWnd* pControl(nullptr);
 	if( DeleteConfirm == m_DialogType || DeleteConfirmWithIP_Name == m_DialogType)
 	{
-		if( 0 == m_rDependencyList.size() )
+		if( 0 == m_dependencyList.size() )
 		{
 			EndDialog(IDOK);
 			return false;
@@ -165,7 +197,6 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 //******************************************************************************
 //* LOG HISTORY:

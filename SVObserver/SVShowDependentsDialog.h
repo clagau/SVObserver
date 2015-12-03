@@ -9,16 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:06:40  $
 //******************************************************************************
 
-#if !defined(AFX_SVSHOWDEPENDENTSDIALOG_H__0531515D_8233_11D3_A827_00106F000C7D__INCLUDED_)
-#define AFX_SVSHOWDEPENDENTSDIALOG_H__0531515D_8233_11D3_A827_00106F000C7D__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVShowDependentsDialog.h : header file
-//
+#pragma region Includes
+#include "SVObjectLibrary\SVOutObjectInfoStruct.h"
+#include "ObjectInterfaces\DependencyList.h"
+#pragma endregion Includes
 
-#include "SVTaskObject.h"
 class SVTaskObjectClass;
 
 class SVShowDependentsDialog : public CDialog
@@ -36,7 +32,8 @@ public:
 
 #pragma region Constructor
 public:
-	SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type = DeleteConfirm, CWnd* pParent = NULL );
+	SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr ); // old
+	SVShowDependentsDialog( const GUID& rInspectionId, const GUID& rTaskObjectID, bool bOnlyImages, SVObjectTypeEnum objectType = SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
 
 #pragma endregion Constructor
 	// Dialog Data
@@ -57,7 +54,8 @@ public:
 
 // Implementation
 protected:
-
+	void RetreiveList();
+	void ConvertList(const SVObjectPairVector& rList);
 	void addColumnHeadings();
 	void addItems();
 	void setColumnWidths();
@@ -69,15 +67,17 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	const SVObjectPairVector&  m_rDependencyList;
+	GUID m_InspectionID;
+	GUID m_TaskObjectID;
+	bool m_bOnlyImages;
+	SVObjectTypeEnum m_objectType;
+	SvOi::DependencyList m_dependencyList;
 	SVString m_DisplayText;
 	DialogType m_DialogType;
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVSHOWDEPENDENTSDIALOG_H__0531515D_8233_11D3_A827_00106F000C7D__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

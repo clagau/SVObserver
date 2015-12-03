@@ -1242,6 +1242,7 @@ BEGIN
     GROUPBOX        "Auxiliary Extents",IDC_AUXILIARY_GROUP,7,41,227,61
     COMBOBOX        IDC_SOURCE_IMAGE_COMBO,13,82,213,83,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Source Image Selection:",IDC_SOURCE_IMAGE_TEXT,13,72,89,8
+    PUSHBUTTON      "Dependencies",ID_SHOW_RELATIONS,117,13,66,24,BS_CENTER | WS_GROUP
 END
 
 IDD_TA_POLARTRANSFORM_DIALOG DIALOGEX 0, 0, 331, 231
@@ -4067,6 +4068,8 @@ BEGIN
         MENUITEM "Copy Tool",                   ID_EDIT_COPY
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
         MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
+        MENUITEM SEPARATOR
+        MENUITEM "Dependencies",                ID_SHOW_RELATIONS
     END
 END
 
