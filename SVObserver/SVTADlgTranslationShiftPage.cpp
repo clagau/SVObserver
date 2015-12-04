@@ -13,9 +13,8 @@
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVTADlgTranslationShiftPage.h"
-
 #include "SVEvaluate.h"
-#include "SVFormulaEditorSheet.h"
+#include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVIPDoc.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -35,7 +34,7 @@ enum {IDC_SHIFT_VALUE_TRUE = 100};
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(SVToolAdjustmentDialogSheetClass* Parent)
+SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVTADlgTranslationShiftPageClass::IDD)
 , StrTranslationXValue(_T(""))
 , StrTranslationYValue(_T(""))
@@ -279,15 +278,15 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedPerformTranslation()
 
 void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 {
-	if (pEvaluateTranslationX) //SEJ99 - This needs to change
+	if (pEvaluateTranslationX)
 	{
-		CString strCaption = pEvaluateTranslationX->GetName(); //SEJ99 - This needs to change
+		CString strCaption = pEvaluateTranslationX->GetName();
 		strCaption += _T(" Formula");
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationXObjectType);
-		SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
 		dlg.DoModal();
 		
 		refresh();
@@ -296,15 +295,15 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 
 void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 {
-	if (pEvaluateTranslationY) //SEJ99 - this needs to change
+	if (pEvaluateTranslationY)
 	{
-		CString strCaption = pEvaluateTranslationY->GetName(); //SEJ99 - This needs to change
+		CString strCaption = pEvaluateTranslationY->GetName();
 		strCaption += _T(" Formula");
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationYObjectType);
-		SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
 		dlg.DoModal();
 		
 		refresh();

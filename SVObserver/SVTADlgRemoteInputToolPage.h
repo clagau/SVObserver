@@ -9,12 +9,13 @@
 //* .Check In Date   : $Date:   24 Apr 2013 11:17:26  $
 //******************************************************************************
 
-#ifndef SVTADLGREMOTEINPUTTOOLPAGE_H
-#define SVTADLGREMOTEINPUTTOOLPAGE_H
+#pragma once
 
+#pragma region Includes
 #include "SVValueObjectImpl.h"
 #include "afxcmn.h"
 #include "afxwin.h"
+#pragma endregion Includes
 
 class SVRemoteInputTool;
 class SVToolAdjustmentDialogSheetClass;
@@ -35,7 +36,8 @@ class SVTADlgRemoteInputToolPage : public CPropertyPage
 public:
 	enum { IDD = IDD_TA_REMOTE_INPUT_PAGE };
 
-	SVTADlgRemoteInputToolPage( SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
+	SVTADlgRemoteInputToolPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
+	virtual ~SVTADlgRemoteInputToolPage();
 
 protected:
 	void RefreshSelectedInputName();
@@ -46,8 +48,6 @@ protected:
 	CString m_InputName;
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

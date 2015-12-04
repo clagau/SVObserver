@@ -9,32 +9,32 @@
 //* .Check In Date   : $Date:   26 Jun 2014 18:29:28  $
 //******************************************************************************
 
-#ifndef SVTOOLADJUSTMENTDIALOGMASKPAGECLASS_H
-#define SVTOOLADJUSTMENTDIALOGMASKPAGECLASS_H
+#pragma once
 
-#include "SVEnumerateCombo.h"
-#include "SVImageListClass.h"
-#include "SVObjectLibrary/SVInputInfoListClass.h"
-#include "SVTaskObjectInterfaceClass.h"
-#include "SVMFCControls/SVMaskEditor.h"
+#pragma region Includes
+#include "SVOMFCLibrary\SVFileNameClass.h"
+#include "SVMFCControls\SVMaskEditor.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "SVOGui/PictureDisplay.h"
-#include "SVView.h"
+#include "SVOGui\PictureDisplay.h"
+#include "SVOGui\AvailableObjectListComboBox.h"
+#include "SVOGui\ImageController.h"
+#include "SVOGui\BoundValue.h"
+#include "SVOGui\ValuesAccessor.h"
+#include "SVOGui\GuiController.h"
+#include "SVOGui\MaskController.h"
+#include "SVUtilityLibrary\SVGUID.h"
+#pragma endregion Includes
 
-class SVToolAdjustmentDialogSheetClass;
-class SVUnaryImageOperatorListClass;
-class SVUserMaskOperatorClass;
-
-class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage
 {
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
+	typedef SvOg::GuiController<Values, Values::value_type> ValueController;
+
 public:
-	SVToolAdjustmentDialogMaskPageClass( SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
 	virtual ~SVToolAdjustmentDialogMaskPageClass();
 
-	virtual HRESULT SetInspectionData();
-
 protected:
-
 	enum MaskTypeEnum
 	{
 		MASK_TYPE_STATIC = 0,
@@ -43,6 +43,7 @@ protected:
 	};
 
 	void initMask();
+	HRESULT SetInspectionData();
 
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogMaskPageClass)
@@ -67,7 +68,7 @@ protected:
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogMaskPageClass)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
-	virtual BOOL OnSetActive( );
+	virtual BOOL OnSetActive();
 	//}}AFX_VIRTUAL
 
 	//{{AFX_DATA(SVToolAdjustmentDialogMaskPageClass)
@@ -76,54 +77,56 @@ protected:
 	CButton	m_btnExportMask;
 	CButton	m_btnEditStaticMask;
 	CButton	m_btnEditShapeMask;
-	CEdit	m_ebFillColor;
-	CComboBox	m_cbFillOptions;
+	CEdit m_ebFillColor;
+	CComboBox m_cbFillOptions;
 	CButton	m_btnFillColorMore;
-	SVAvailableSourceImageListComboBoxClass	m_cbAvailableSourceImageList;
-	CComboBox           m_cbMaskOperator;
-	SvOg::PictureDisplay      m_dialogImage;
-	BOOL                m_bActivateMask;
-	int                 m_iMaskType;
+	SvOg::AvailableObjectListComboBox m_cbAvailableSourceImageList;
+	CComboBox m_cbMaskOperator;
+	SvOg::PictureDisplay m_dialogImage;
+	BOOL m_bActivateMask;
+	int m_iMaskType;
 	CString	m_sFillColor;
+	CComboBox m_DrawCriteriaCombo;
 	//}}AFX_DATA
 
-	SvMc::CSVMaskEditor*                     m_pMaskEditorCtl;
+	SvMc::CSVMaskEditor* m_pMaskEditorCtl;
+	SVFileNameClass	m_svfnFileName;    // SES 15-Jan-2001
 
-	SVToolAdjustmentDialogSheetClass*  m_pParentDialog;
-	SVToolClass*                       m_pTool;
-	SVUnaryImageOperatorListClass*     m_pUnaryImageOperatorList;
-	SVUserMaskOperatorClass*           m_pMask;
-
-	SVImageListClass                   m_imageList;
-	SVInObjectInfoStruct*              m_pImageInputInfo;
-	SVImageClass*                      m_pCurrentSourceImage;
-	SVEnumerateComboClass              m_DrawCriteriaCombo;
-
-	SVFileNameClass                    m_svfnFileName;    // SES 15-Jan-2001
-
-	static UINT_PTR CALLBACK ColorDlgHookFn( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
+	static UINT_PTR CALLBACK ColorDlgHookFn(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 
 private:
+	void SetupMaskOperatorComboBox();
+	void SetupFillAreaComboBox();
+	void SetupDrawCriteriaCombo();
+
+	void SetupComboBoxes();
 	void SetupImageMaskCombo();
 	void ShowControls(int iMaskType);
 	void setImages();
+	void SetData();
+	void GetData();
 
-	void RefreshComboBox(SVValueObjectClass& p_rValueObject, CComboBox* p_pComboBox);
+	void RefreshComboBox(const CString& rValue, CComboBox& rComboBox); 
 	
-	static SVToolAdjustmentDialogMaskPageClass* m_pThis;
-};
+	void RetreiveCurrentlySelectedImageNames();
+	void RetreiveResultImageNames();
 
+	static SVToolAdjustmentDialogMaskPageClass* m_pThis;
+	SVGUID m_InspectionID;
+	SVGUID m_TaskObjectID;
+	SvOg::ImageController m_ImageController;
+	ValueController m_Values;
+	SvOg::MaskController m_maskController;
+	SVString m_imageInputName;
+	SVString m_imageName;
+	SVString m_resultImageName;
+	SVGUID m_resultImageID;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
-
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	//	_SVTOOLADJUSTMENTDIALOGMASKPAGECLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:

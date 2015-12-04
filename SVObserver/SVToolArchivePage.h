@@ -25,12 +25,8 @@ class SVToolAdjustmentDialogSheetClass;
 class SVToolAdjustmentArchivePage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
-#pragma region Constructor
-// Standard constructor
-	SVToolAdjustmentArchivePage( SVToolAdjustmentDialogSheetClass* Parent );
-// Standard destructor
+	SVToolAdjustmentArchivePage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVToolAdjustmentArchivePage();
-#pragma endregion Constructor
 
 #pragma region Public Methods
 	void BuildImageList();

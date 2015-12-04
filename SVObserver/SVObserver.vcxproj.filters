@@ -164,9 +164,6 @@
     <ClCompile Include="SVClassInfoStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVClsids.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVColorThreshold.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCommandInspectionCollectImageData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCommandInspectionRunOnce.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCommandStreamManager.cpp">
@@ -317,9 +311,6 @@
     <ClCompile Include="SVExternalToolDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVExternalToolImageSelectPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVExternalToolInputSelectPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -341,9 +332,6 @@
     <ClCompile Include="SVFileNameArrayClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVFileNameClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVFileNameLockablePointerArrayClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -356,13 +344,7 @@
     <ClCompile Include="SVFillBlobDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVFormulaEditorSheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVGageTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVGigeCameraManager.cpp">
@@ -950,9 +932,6 @@
     <ClCompile Include="SVROIFigureEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSaveToolSetImageDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVSetupDialogManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -960,9 +939,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVShiftToolUtility.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVShowDependentsDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVSingleLineAnalyzer.cpp">
@@ -1013,16 +989,7 @@
     <ClCompile Include="SVTADlgColorToolPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTADlgFileImageSourcePage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTADlgGeneralPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgLUTPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTADlgPassFailPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTADlgPolarTransformPage.cpp">
@@ -1041,9 +1008,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTADlgTransformationLearnPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTADlgTransformImagePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTADlgTranslationPage.cpp">
@@ -1097,9 +1061,6 @@
     <ClCompile Include="SVToolAdjustmentDialogCommentPageClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolAdjustmentDialogImagePageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogLinearSpecialPageClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1107,9 +1068,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogSheetClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolAdjustmentDialogTwoImagePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolArchivePage.cpp">
@@ -1191,9 +1149,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVVariantValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVVirtualCamera.cpp">
@@ -1376,9 +1331,6 @@
     <ClCompile Include="SVDataDefinitionStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FormulaController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVConditional.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1538,19 +1490,10 @@
     <ClCompile Include="SVArchiveRecordsArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVFormulaEditorPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RangeController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RangeSelectorFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RangeValidator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MessageNotification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAvailableAnalyzerListComboBoxClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1704,9 +1647,6 @@
     <ClInclude Include="SVClassInfoStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVClsids.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVColorThreshold.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1714,9 +1654,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandInspectionCollectImageData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCommandInspectionRunOnce.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandStreamManager.h">
@@ -1863,9 +1800,6 @@
     <ClInclude Include="SVExternalToolDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVExternalToolImageSelectPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVExternalToolInputSelectPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1887,9 +1821,6 @@
     <ClInclude Include="SVFileNameArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVFileNameClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVFileNameLockablePointerArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1902,13 +1833,7 @@
     <ClInclude Include="SVFillBlobDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVFormulaEditorSheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVGageTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGetObjectDequeByTypeVisitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraManager.h">
@@ -2547,9 +2472,6 @@
     <ClInclude Include="SVROIFigureEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSaveToolSetImageDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVScalarValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2560,9 +2482,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVShiftToolUtility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVShowDependentsDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSingleLineAnalyzer.h">
@@ -2619,16 +2538,7 @@
     <ClInclude Include="SVTADlgColorToolPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTADlgFileImageSourcePage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTADlgGeneralPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTADlgLUTPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTADlgPassFailPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgPolarTransformPage.h">
@@ -2647,9 +2557,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgTransformationLearnPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTADlgTransformImagePage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgTranslationPage.h">
@@ -2703,9 +2610,6 @@
     <ClInclude Include="SVToolAdjustmentDialogCommentPageClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVToolAdjustmentDialogImagePageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVToolAdjustmentDialogLinearSpecialPageClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2713,9 +2617,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolAdjustmentDialogSheetClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolArchivePage.h">
@@ -2809,9 +2710,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVariantValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVirtualCamera.h">
@@ -3015,9 +2913,6 @@
     <ClInclude Include="SVDataDefinitionStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FormulaController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVConditional.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3189,43 +3084,7 @@
     <ClInclude Include="ArchiveMethodEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ValuesAccessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFormulaEditorPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GlobalSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PPQNameSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ToolSetItemSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NoSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GlobalAndToolSetSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PPQVariablesSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PublishSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeEnum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeSelectorFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeValidator.h">
+    <ClInclude Include="SVAvailableAnalyzerListComboBoxClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MessageNotification.h">

@@ -14,6 +14,7 @@
 #include <colordlg.h>	// for custom color dlg resource #defines
 #include "SVMaskShapeEditorDlg.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMaskShape.h"
 #include "SVObserver.h"
@@ -24,6 +25,7 @@
 #include "SVUserMaskOperatorClass.h"
 #include "SVOMFCLibrary/DisplayHelper.h"
 #include "SVImageLibrary/MatroxImageData.h"
+#include "SVOGui\SVColor.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -69,19 +71,22 @@ namespace	// file local
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVMaskShapeEditorDlg::SVMaskShapeEditorDlg( SVToolClass* pTool, SVUserMaskOperatorClass* pMask, CWnd* pParent /*=NULL*/)
+SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent /*=NULL*/)
 : CDialog(SVMaskShapeEditorDlg::IDD, pParent)
 , m_sFillColor( _T( "" ) )
 , m_sCoordinates( _T( "" ) )
 , m_bAutoResize( FALSE )
-, m_pTool( pTool )
-, m_pMask( pMask )
+, m_pTool( nullptr )
+, m_pMask( nullptr )
 , m_isInit( false )
 , m_currentTabNumber( 2 ) // BRW - Why is this 2?
 , m_eShapeType( SVShapeMaskHelperClass::SVMaskShapeTypeInvalid )
 {
 	m_pThis = this;
 
+	m_pTool = dynamic_cast<SVToolClass *>(SvOi::getObject(rTaskObjectID));
+	m_pMask = dynamic_cast<SVUserMaskOperatorClass *>(SvOi::getObject(rMaskOperatorID));
+	
 	for (int i = 0; i < m_numberOfTabs; i++)
 	{
 		m_handleToActiveObjects[i] = -1;
@@ -103,6 +108,43 @@ SVMaskShapeEditorDlg::~SVMaskShapeEditorDlg()
 #pragma endregion Constructor
 
 #pragma region Public Methods
+
+void SVMaskShapeEditorDlg::CheckPoint()
+{
+	GetCancelData(m_cancelData);
+}
+
+void SVMaskShapeEditorDlg::Revert()
+{
+	AddInputRequest(m_cancelData);
+	RunOnce(m_pTool);
+}
+
+long SVMaskShapeEditorDlg::getSelectedTab() // BRW - This method should be const.
+{
+	if (m_isInit)
+	{
+		m_dialogImage.GetSelectedTab(&m_currentTabNumber);
+	}
+	return m_currentTabNumber;
+}
+
+void SVMaskShapeEditorDlg::setSelectedTab(long tabNumber)
+{ 
+	m_currentTabNumber = tabNumber;
+	if (m_isInit)
+	{
+		m_dialogImage.SelectTab(m_currentTabNumber);
+	}
+}
+
+SVMaskShape* SVMaskShapeEditorDlg::GetCurrentShape()	// holds the properties and does the rendering // BRW - This method should be const.
+{
+	return m_mapShapes[m_eShapeType];
+}
+#pragma endregion Public Methods
+
+#pragma region Protected Methods
 HRESULT SVMaskShapeEditorDlg::GetCancelData(SVInputRequestStructMap& rMap)
 {
 	ASSERT( m_pMask );
@@ -134,31 +176,6 @@ HRESULT SVMaskShapeEditorDlg::SetInspectionData()
 	return S_OK;
 }
 
-long SVMaskShapeEditorDlg::getSelectedTab() // BRW - This method should be const.
-{
-	if (m_isInit)
-	{
-		m_dialogImage.GetSelectedTab(&m_currentTabNumber);
-	}
-	return m_currentTabNumber;
-}
-
-void SVMaskShapeEditorDlg::setSelectedTab(long tabNumber)
-{ 
-	m_currentTabNumber = tabNumber;
-	if (m_isInit)
-	{
-		m_dialogImage.SelectTab(m_currentTabNumber);
-	}
-}
-
-SVMaskShape* SVMaskShapeEditorDlg::GetCurrentShape()	// holds the properties and does the rendering // BRW - This method should be const.
-{
-	return m_mapShapes[m_eShapeType];
-}
-#pragma endregion Public Methods
-
-#pragma region Protected Methods
 #pragma region AFX Methods
 void SVMaskShapeEditorDlg::DoDataExchange(CDataExchange* pDX)
 {

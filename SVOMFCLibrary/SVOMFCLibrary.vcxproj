@@ -295,6 +295,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="SVFileNameClass.cpp" />
     <ClCompile Include="SVGraphix.cpp" />
     <ClCompile Include="SVi64ValueDeviceParam.cpp" />
     <ClCompile Include="SVLongValueDeviceParam.cpp" />
@@ -331,6 +332,7 @@
     <ClInclude Include="SVDeviceParamCollection.h" />
     <ClInclude Include="SVDeviceParams.h" />
     <ClInclude Include="SVFileAcquisitionLoadingModeEnum.h" />
+    <ClInclude Include="SVFileNameClass.h" />
     <ClInclude Include="SVFunctionProfiler.h" />
     <ClInclude Include="SVGraphix.h" />
     <ClInclude Include="SVi64ValueDeviceParam.h" />

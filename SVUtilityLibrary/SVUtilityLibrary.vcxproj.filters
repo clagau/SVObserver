@@ -155,6 +155,9 @@
     <ClInclude Include="NaturalStringCompare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NameGuidList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVHandleManager.inl">

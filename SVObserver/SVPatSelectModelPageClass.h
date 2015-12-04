@@ -13,7 +13,7 @@
 #define SVPATMODELPAGECLASS_H
 
 #pragma region Includes
-#include "SVLibrary/SVBitmap.h"
+#include "SVOGui/SVBitmap.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "PropertyTree/PropTree.h"

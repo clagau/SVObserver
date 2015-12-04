@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVLibrary/SVBitmap.h"
+#include "SVOGui/SVBitmap.h"
 
 class SVImageClass;
 

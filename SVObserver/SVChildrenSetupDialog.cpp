@@ -16,10 +16,10 @@
 #include "SVTaskObjectList.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-#include "SVShowDependentsDialog.h"
+#include "SVOGui/SVShowDependentsDialog.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "PublishSelector.h"
+#include "SVOGui/PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -265,7 +265,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pParentOwner->GetCompleteObjectName(), SVString( _T("") ) );
 
-	PublishSelector(m_pDocument->GetInspectionID(), m_pParentObject->GetUniqueObjectID());
+	SvOg::PublishSelector(m_pDocument->GetInspectionID(), m_pParentObject->GetUniqueObjectID());
 
 	CString PublishableResults;
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
@@ -344,13 +344,17 @@ void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR* pNMHD
 
 BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 {
-	BOOL bRetVal = TRUE;
+	BOOL bRetVal = false;
 
 	// show dependents dialog
-	INT_PTR rc = SVShowDependentsDialog::StandardDialog( pTaskObject );
+	if (pTaskObject)
+	{
+		SVGUID taskObjectID = pTaskObject->GetUniqueObjectID();
+		SVGUID inspectionID = pTaskObject->GetInspection()->GetUniqueObjectID();
+		INT_PTR rc = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), inspectionID, taskObjectID );
 
-	if( IDCANCEL == rc ) { bRetVal = FALSE; }
-
+		bRetVal = ( IDCANCEL == rc ) ? false : true;
+	}
 	return bRetVal;
 }
 

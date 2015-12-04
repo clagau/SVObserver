@@ -17,9 +17,8 @@
 #include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVDisplayObject.h"
-#include "SVFileNameClass.h"
 #include "SVPublishList.h"
 #include "SVRGBMainImage.h"
 #include "SVVirtualCamera.h"

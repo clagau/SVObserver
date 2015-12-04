@@ -12,9 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgTranslationPage.h"
-
 #include "SVEvaluate.h"
-#include "SVFormulaEditorSheet.h"
+#include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVIPDoc.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -37,7 +36,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTranslationPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPageClass(SVToolAdjustmentDialogSheetClass* Parent)
+SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVToolAdjustmentDialogTranslationPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTranslationPageClass)
@@ -53,6 +52,10 @@ SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPag
 	m_pInterpolationMode	= nullptr;
 }
 #pragma endregion
+
+SVToolAdjustmentDialogTranslationPageClass::~SVToolAdjustmentDialogTranslationPageClass()
+{
+}
 
 #pragma region Protected Methods
 #pragma region MFC Methods
@@ -153,15 +156,15 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
 
 void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton() 
 {
-	if (m_pEvaluateTranslationX) //SEJ99 - This needs to change
+	if (m_pEvaluateTranslationX)
 	{
-		CString strCaption = m_pEvaluateTranslationX->GetName(); //SEJ99 - This needs to change
+		CString strCaption = m_pEvaluateTranslationX->GetName();
 		strCaption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationXObjectType);
-		SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
 		dlg.DoModal();
 		
 		refresh();
@@ -170,15 +173,15 @@ void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton()
 
 void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton() 
 {
-	if (m_pEvaluateTranslationY) //SEJ99 - This needs to change
+	if (m_pEvaluateTranslationY)
 	{
-		CString strCaption = m_pEvaluateTranslationY->GetName(); //SEJ99 - This needs to change
+		CString strCaption = m_pEvaluateTranslationY->GetName();
 		strCaption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationYObjectType);
-		SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
 		dlg.DoModal();
 		
 		refresh();

@@ -13,6 +13,7 @@
 #include "SVUserMaskOperatorClass.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVImageLibrary/MatroxImageData.h"
 #include "SVTool.h"
 #include "SVImageProcessingClass.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
@@ -1209,6 +1210,82 @@ BOOL SVUserMaskOperatorClass::OnValidate()
 	}
 	return bValidate;
 }
+
+#pragma region IMask
+SvOi::MatroxImageSmartHandlePtr SVUserMaskOperatorClass::GetReferenceImage() const
+{
+	SvOi::MatroxImageSmartHandlePtr handlePtr;
+	SVImageClass* pImage = const_cast<SVUserMaskOperatorClass*>(this)->getReferenceImage();
+	if (pImage)
+	{
+		if (SVImageTypePhysical == pImage->GetImageType())
+		{
+			handlePtr = pImage->GetParentImageInterface()->getImageData();
+		}
+		else
+		{
+			handlePtr = pImage->getParentImageData();
+		}
+	}
+	return handlePtr;
+}
+
+SvOi::MatroxImageSmartHandlePtr SVUserMaskOperatorClass::GetMaskImage() const
+{
+	SvOi::MatroxImageSmartHandlePtr data(new MatroxImageData(m_MaskBufferHandlePtr));
+	return data;
+}
+
+HRESULT SVUserMaskOperatorClass::Import(const SVString& filename)
+{
+	HRESULT hr(S_OK);
+	CFile maskFile; 
+
+	if (maskFile.Open(filename.c_str(), CFile::modeRead))
+	{
+		CArchive archive(&maskFile, CArchive::load);
+		m_graphixObject.Serialize(archive); 
+		archive.Close();
+		maskFile.Close();
+
+		Refresh(); 
+	}
+	else
+	{
+		hr = E_INVALIDARG;
+	}
+	return hr;
+}
+
+HRESULT SVUserMaskOperatorClass::Export(const SVString& filename)
+{
+	HRESULT hr(S_OK);
+	CFile maskFile; 
+
+	if (maskFile.Open(filename.c_str(), CFile::modeCreate | CFile::modeWrite))
+	{
+		CArchive archive(&maskFile, CArchive::store);
+		m_graphixObject.Serialize(archive); 
+		archive.Close();
+		maskFile.Close();
+	}
+	else
+	{
+		hr = E_INVALIDARG;
+	}
+	return hr;
+}
+	
+HGLOBAL SVUserMaskOperatorClass::GetMaskData() const
+{
+	return m_graphixObject.GetGraphixData();
+}
+
+bool SVUserMaskOperatorClass::SetMaskData(HGLOBAL hGlobal)
+{
+	return m_graphixObject.SetGraphixData(hGlobal) ? true : false;
+}
+#pragma endregion IMask
 
 //******************************************************************************
 //* LOG HISTORY:

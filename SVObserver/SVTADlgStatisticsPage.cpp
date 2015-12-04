@@ -20,10 +20,11 @@
 #include "SVInspectionProcess.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "NoSelector.h"
-#include "ToolSetItemSelector.h"
-#include "PublishSelector.h"
+#include "SVOGui/NoSelector.h"
+#include "SVOGui/ToolSetItemSelector.h"
+#include "SVOGui/PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -56,18 +57,17 @@ void SVToolAdjustmentDialogStatisticsPageClass::DoDataExchange(CDataExchange* pD
 	//}}AFX_DATA_MAP
 }
 
-SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass( SVToolClass* p_pTool ) 
-	: CPropertyPage( SVToolAdjustmentDialogStatisticsPageClass::IDD )
+SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
+: CPropertyPage( SVToolAdjustmentDialogStatisticsPageClass::IDD )
+, m_pTool(nullptr)
+, m_pToolSet(nullptr)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogStatisticsPageClass)
 	m_strTestValue = _T( "" );
 	m_strVariableToMonitor = _T("");
 	//}}AFX_DATA_INIT
 
-	m_pTool = NULL;
-	m_pToolSet = NULL;
-
-	if( m_pTool = dynamic_cast <SVStatisticsToolClass*> (p_pTool) )
+	if( m_pTool = dynamic_cast <SVStatisticsToolClass*> (SvOi::getObject(rTaskObjectID)) )
 	{
 		m_pToolSet = dynamic_cast <SVToolSetClass*> (m_pTool->GetOwner());
 	}
@@ -290,7 +290,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, pInspection->GetToolSet()->GetCompleteObjectName(), SVString( _T("") ) );
 
-	PublishSelector(pInspection->GetUniqueObjectID(), m_pTool->GetUniqueObjectID());
+	SvOg::PublishSelector(pInspection->GetUniqueObjectID(), m_pTool->GetUniqueObjectID());
 
 	CString PublishableResults;
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
@@ -334,7 +334,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_STATISTICS );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<NoSelector, NoSelector, NoSelector, ToolSetItemSelector<>>(pInspection->GetUniqueObjectID(), m_pToolSet->GetUniqueObjectID());
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(pInspection->GetUniqueObjectID(), m_pToolSet->GetUniqueObjectID());
 
 	CString ToolsetOutput;
 	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );

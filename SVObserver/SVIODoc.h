@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   06 May 2013 20:06:22  $
 //******************************************************************************
 
-#ifndef SVIODOC_H
-#define SVIODOC_H
+#pragma once
 
-#include "SVFileNameClass.h"
+#pragma region Includes
+#include "SVOMFCLibrary/SVFileNameClass.h"
+#pragma endregion Includes
 
 class SVIOController;
 // If an io entry will be connected to the outside world or not, 
@@ -78,8 +79,6 @@ private:
 };
 
 //{{AFX_INSERT_LOCATION}}
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

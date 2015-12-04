@@ -25,7 +25,7 @@ class SVExternalToolDetailsSheet : public CPropertySheet, public ISVCancel//, pu
 
 // Construction
 public:
-	SVExternalToolDetailsSheet( LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd = NULL, UINT iSelectPage = 0 );
+	SVExternalToolDetailsSheet(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd = NULL, UINT iSelectPage = 0 );
 	HRESULT CreatePages();
 
 	SVIPDoc* GetIPDoc() const;
@@ -63,6 +63,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	void DestroyPages();
 
+	SVGUID m_InspectionID;
+	SVGUID m_TaskObjectID;
+	long m_numImages;
 };
 
 /////////////////////////////////////////////////////////////////////////////

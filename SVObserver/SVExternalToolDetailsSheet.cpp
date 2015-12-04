@@ -15,7 +15,8 @@
 #include "SVExternalToolDetailsSheet.h"
 
 #include "svobserver.h"
-#include "SVExternalToolImageSelectPage.h"
+#include "SVExternalToolTask.h"
+#include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVExternalToolInputSelectPage.h"
 #include "SVExternalToolResultPage.h"
 #include "SVExternalToolDlg.h"
@@ -40,8 +41,12 @@ BEGIN_MESSAGE_MAP(SVExternalToolDetailsSheet, CPropertySheet)
 END_MESSAGE_MAP()
 
 
-SVExternalToolDetailsSheet::SVExternalToolDetailsSheet( LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
+SVExternalToolDetailsSheet::SVExternalToolDetailsSheet( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID,long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd, UINT iSelectPage)
+: CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+, ISVCancel()
+, m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID)
+, m_numImages(numImages)
 {
 	m_pSVExternalToolDlgParent = pParentWnd;
 	m_pTask = NULL;
@@ -61,8 +66,7 @@ HRESULT SVExternalToolDetailsSheet::CreatePages()
 	ASSERT( m_pTask );
 	ASSERT( m_pTool );
 
-
-	SVExternalToolImageSelectPage* pImageDlg = new SVExternalToolImageSelectPage(this);
+	SvOg::SVExternalToolImageSelectPage* pImageDlg = new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID, m_numImages);
 	AddPage(pImageDlg);
 
 	const bool bTabbed = false;

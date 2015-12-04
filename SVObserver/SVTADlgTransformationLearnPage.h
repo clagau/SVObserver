@@ -9,22 +9,11 @@
 //* .Check In Date   : $Date:   24 Apr 2013 11:23:36  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
-#ifndef SVTADLGTRANSFORMATIONLEARNPAGE_H
-#define SVTADLGTRANSFORMATIONLEARNPAGE_H
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVImageTransformClass;
@@ -37,9 +26,9 @@ class SVToolAdjustmentDialogTransformationLearnPageClass : public CPropertyPage,
 {
 // Construction
 public:
-	SVToolAdjustmentDialogTransformationLearnPageClass( SVToolAdjustmentDialogSheetClass* Parent );
-
-	virtual HRESULT SetInspectionData();
+	SVToolAdjustmentDialogTransformationLearnPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	virtual ~SVToolAdjustmentDialogTransformationLearnPageClass();
+	virtual HRESULT SetInspectionData() override;
 
 //******************************************************************************
 // Operator(s):
@@ -126,11 +115,6 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	// SVTADLGTRANSFORMATIONLEARNPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -17,7 +17,7 @@
 #include "SVExternalTool.h"
 #include "SVExternalToolTask.h"
 #include "SVExternalToolDetailsSheet.h"
-#include "SVShowDependentsDialog.h"
+#include "SVOGui/SVShowDependentsDialog.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVMFCControls\SVFileDialog.h"
@@ -64,8 +64,10 @@ BEGIN_MESSAGE_MAP(SVExternalToolDlg, CPropertyPage)
     ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
 
-SVExternalToolDlg::SVExternalToolDlg( SVToolAdjustmentDialogSheetClass* pSheet )
-                 : CPropertyPage(IDD)
+SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
+: CPropertyPage(IDD)
+, m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID) 
 {
 	m_pSheet = pSheet;
 	m_pTool = dynamic_cast<SVExternalTool*> (pSheet->GetTool());
@@ -193,7 +195,7 @@ void SVExternalToolDlg::OnOK()
 void SVExternalToolDlg::OnDetails() 
 {
 	// Add new property sheet to adjust Input Images, Input Value Objects..
-	SVExternalToolDetailsSheet sheet( _T("External Tool Details"), this, 0);
+	SVExternalToolDetailsSheet sheet(m_InspectionID, m_TaskObjectID, m_pTask->m_Data.m_lNumInputImages, _T("External Tool Details"), this, 0);
 
 	SVCancelData* pCancelData = NULL;
 
@@ -472,7 +474,7 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 
 		m_pTask->GetDependentsList( list, DependencyList );
 
-		SVShowDependentsDialog Dlg( DependencyList, DisplayText );
+		SvOg::SVShowDependentsDialog Dlg( DependencyList, DisplayText );
 
 		Result = ( IDOK == Dlg.DoModal() );
 	}

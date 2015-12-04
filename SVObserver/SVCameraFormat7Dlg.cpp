@@ -18,6 +18,7 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVOMFCLibrary/DisplayHelper.h"
 #include "SVImageLibrary/MatroxImageData.h"
+#include "SVOGui\SVColor.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -138,14 +139,9 @@ BOOL SVCameraFormat7Dlg::OnInitDialog()
 		SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 	}
 
-	if( m_pDevice != nullptr )
-	{
-		m_pDevice->SingleGrab( m_pImageHandle );
-	}
-
 	// Set the Image
 	m_Image.AddTab("Camera image");
-	setImages();
+	OnTakePicture();
 	SetGraphicROI();
 
 	return TRUE;  // return TRUE unless you set the focus to a control

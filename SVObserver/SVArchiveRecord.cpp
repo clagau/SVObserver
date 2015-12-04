@@ -16,6 +16,7 @@
 #include "SVArchiveImageThreadClass.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVImageObjectClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
 #pragma region Constructor

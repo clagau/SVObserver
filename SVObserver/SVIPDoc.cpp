@@ -46,8 +46,8 @@
 #include "SVResultView.h"
 #include "SVResultsWrapperClass.h"
 #include "SVTool.h"
-#include "SVSaveToolSetImageDialog.h"
-#include "SVShowDependentsDialog.h"
+#include "SVOGui\SVSaveToolSetImageDialog.h"
+#include "SVOGui\SVShowDependentsDialog.h"
 #include "SVUtilities.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
@@ -70,7 +70,7 @@
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
 #include "SVDirectX.h"
 #include "SVCommandInspectionCollectImageData.h"
-#include "SVCommandInspectionRunOnce.h"
+#include "GuiCommands/InspectionRunOnce.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVArchiveTool.h"
 #include "SVColorTool.h"
@@ -98,11 +98,11 @@
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "RingBufferTool.h"
-#include "GlobalSelector.h"
-#include "PPQNameSelector.h"
-#include "PPQVariablesSelector.h"
-#include "ToolSetItemSelector.h"
-#include "PublishSelector.h"
+#include "SVOGui/GlobalSelector.h"
+#include "SVOGui/PPQNameSelector.h"
+#include "SVOGui/PPQVariablesSelector.h"
+#include "SVOGui/ToolSetItemSelector.h"
+#include "SVOGui/PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1519,13 +1519,13 @@ void SVIPDoc::OnEditToolSetCondition()
 
 void SVIPDoc::OnFileSaveImage()
 {
-	SVSVIMStateClass::AddState( SV_STATE_EDITING ); /// do this before calling validate for security as it may display a logon dialog!
-	if(TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_IMAGE ) == S_OK )
+	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_SAVE_IMAGE))
 	{
-		SVSaveToolSetImageDialogClass dlg( GetToolSet() );
+		SvOg::SVSaveToolSetImageDialogClass dlg(GetInspectionID(), GetToolSet()->GetUniqueObjectID());
 		dlg.DoModal();
 	}
-	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 //******************************************************************************
@@ -1562,7 +1562,7 @@ void SVIPDoc::OnResultsPicker()
 			csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
 
-			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, PPQNameSelector, PPQVariablesSelector, ToolSetItemSelector<>>(GetInspectionID(), GetInspectionID());
+			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQNameSelector, SvOg::PPQVariablesSelector, SvOg::ToolSetItemSelector<>>(GetInspectionID(), GetInspectionID());
 			
 			SVStringSet SelectedNames;
 			SVStringSet SelectedNamesRaw;
@@ -1638,7 +1638,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-		PublishSelector(GetInspectionID(), GetInspectionID());
+		SvOg::PublishSelector(GetInspectionID(), GetInspectionID());
 
 		CString PublishableResults;
 		PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
@@ -1840,15 +1840,20 @@ HRESULT SVIPDoc::IsToolSetListUpdated() const
 
 BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 {
-	BOOL bRetVal = true;
+	BOOL bRetVal = false;
 
 	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	// show dependents dialog
 
-	INT_PTR dlgResult = SVShowDependentsDialog::StandardDialog( pTaskObject );
+	if (pTaskObject)
+	{
+		SVGUID inspectionID = GetInspectionID();
+		SVGUID taskObjectID = pTaskObject->GetUniqueObjectID();
+	
+		INT_PTR dlgResult = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), inspectionID, taskObjectID );
 
-	if( IDCANCEL == dlgResult ) { bRetVal = false; }
-
+		bRetVal = ( IDCANCEL == dlgResult ) ? false : true;
+	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;
 }
@@ -3070,14 +3075,11 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnShowToolRelations()
 {
-	SVToolClass* pTool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(m_SelectedToolID));
-
-	if (pTool)
+	if (GUID_NULL != m_SelectedToolID)
 	{
-		SVGUID toolID = pTool->GetUniqueObjectID();
-		SVGUID inspectionID = pTool->GetInspection()->GetUniqueObjectID();
+		SVGUID inspectionID = GetInspectionID();
 		
-		SVShowDependentsDialog Dlg(inspectionID, toolID, false, SVToolObjectType, nullptr, SVShowDependentsDialog::DialogType::Show);
+		SvOg::SVShowDependentsDialog Dlg(inspectionID, m_SelectedToolID, false, SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show);
 		Dlg.DoModal();
 	}
 }
@@ -4097,10 +4099,10 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 
 		if( p_pTool != nullptr ) { l_ToolId = p_pTool->GetUniqueObjectID(); }
 
-		SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
-		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+		GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+		SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-		l_Status = ( l_Command.Execute( 120000 ) == S_OK );
+		l_Status = ( l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT ) == S_OK );
 	}
 
 	return l_Status;

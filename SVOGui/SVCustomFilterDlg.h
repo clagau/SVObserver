@@ -9,14 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:04:38  $
 //******************************************************************************
 
-#if !defined(AFX_SVCUSTOMFILTERDLG_H__INCLUDED_)
-#define AFX_SVCUSTOMFILTERDLG_H__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "ObjectInterfaces\ICustomFilter.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -78,8 +75,6 @@ namespace SvOg = Seidenader::SVOGui;
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVCUSTOMFILTERDLG_H__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

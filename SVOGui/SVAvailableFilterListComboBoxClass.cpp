@@ -13,47 +13,43 @@
 #include "ObjectInterfaces\IClassInfoStructList.h"
 #include "SVAvailableFilterListComboBoxClass.h"
 
-namespace Seidenader
+namespace Seidenader { namespace SVOGui
 {
-	namespace SVOGui
+	BEGIN_MESSAGE_MAP(SVAvailableFilterListComboBoxClass, CComboBox)
+		//{{AFX_MSG_MAP(SVAvailableFilterListComboBoxClass)
+		// HINWEIS - Der Klassen-Assistent fügt hier Zuordnungsmakros ein und entfernt diese.
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
+	SVAvailableFilterListComboBoxClass::SVAvailableFilterListComboBoxClass()
 	{
-		BEGIN_MESSAGE_MAP(SVAvailableFilterListComboBoxClass, CComboBox)
-			//{{AFX_MSG_MAP(SVAvailableFilterListComboBoxClass)
-			// HINWEIS - Der Klassen-Assistent fügt hier Zuordnungsmakros ein und entfernt diese.
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
+	}
 
-		SVAvailableFilterListComboBoxClass::SVAvailableFilterListComboBoxClass()
+	SVAvailableFilterListComboBoxClass::~SVAvailableFilterListComboBoxClass()
+	{
+	}
+
+	void SVAvailableFilterListComboBoxClass::init( SvOi::IClassInfoStructList* L )
+	{
+		ResetContent();
+
+		int index;
+		if( L->Size() <= 0 )
 		{
+			index = AddString( "(No Filter Available)" );
+			SetItemData( index, static_cast<DWORD_PTR>(-1) );
 		}
-
-		SVAvailableFilterListComboBoxClass::~SVAvailableFilterListComboBoxClass()
+		else
 		{
-		}
-
-		void SVAvailableFilterListComboBoxClass::init( SvOi::IClassInfoStructList* L )
-		{
-			ResetContent();
-
-			int index;
-			if( L->Size() <= 0 )
+			for( int i = 0; i < L->Size(); ++i )
 			{
-				index = AddString( "(No Filter Available)" );
-				SetItemData( index, static_cast<DWORD_PTR>(-1) );
+				index = AddString( L->GetClassName(i) );
+				SetItemData( index, static_cast<DWORD_PTR>(i) );
 			}
-			else
-			{
-				for( int i = 0; i < L->Size(); ++i )
-				{
-					index = AddString( L->GetClassName(i) );
-					SetItemData( index, static_cast<DWORD_PTR>(i) );
-				}
-			}
-
-			SetCurSel( 0 );
 		}
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
+		SetCurSel( 0 );
+	}
+} /* namespace SVOGui */ } /* namespace Seidenader */
 
 //******************************************************************************
 //* LOG HISTORY:

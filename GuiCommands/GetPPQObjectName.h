@@ -7,12 +7,15 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include <boost/noncopyable.hpp>
+#include <Guiddef.h>
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -28,9 +31,8 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = E_POINTER;
-				SVObjectManagerClass& rMgr = SVObjectManagerClass::Instance();
 
-				SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(rMgr.GetObject(m_InspectionID));
+				SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(m_InspectionID));
 				if (pInspection)
 				{
 					SvOi::IObjectClass* pPPQ = pInspection->GetPPQInterface();

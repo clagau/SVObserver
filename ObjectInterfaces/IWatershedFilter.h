@@ -63,7 +63,7 @@ namespace Seidenader
 			//! \param imageName [in] Name of the image
 			//! \returns HRESULT
 			//************************************
-			virtual HRESULT setMarkerImage(const SVString imageName) = 0;
+			virtual HRESULT setMarkerImage(const SVString& imageName) = 0;
 
 			//************************************
 			//! Return a list of available image to use for marker.

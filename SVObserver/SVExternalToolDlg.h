@@ -24,7 +24,7 @@ class SVExternalToolTask;
 class SVExternalToolDlg : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
-	SVExternalToolDlg(SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
+	SVExternalToolDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
 	~SVExternalToolDlg();
 
 	// ISVPropertyPageDialog
@@ -74,6 +74,8 @@ protected:
 	CString m_strLastDllPath;
 	CToolTipCtrl m_ToolTip;
 	SVCancelData* m_pCancelData;
+	SVGUID m_InspectionID;
+	SVGUID m_TaskObjectID;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVExternalToolDlg)

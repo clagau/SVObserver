@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:59:06  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCRGrayDialog.h"
 #include "SVOCRGrayMatchDlg.h"
 #include "SVOCRGrayAnalyzerResult.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -26,20 +26,20 @@ class SVToolAdjustmentDialogSheetClass;
 
 //! \brief Property Page: Position and Size for The ToolAdjustmen Dialog
 //!  has pointer to ToolSizeAdjustTask
-class SVToolAdjustmentDialogSizePage : public CPropertyPage , public SVTaskObjectInterfaceClass ,public SvOg::ISVPropertyPageDialog
+class SVToolAdjustmentDialogSizePage : public CPropertyPage, public SVTaskObjectInterfaceClass, public SvOg::ISVPropertyPageDialog
 {
 	DECLARE_DYNAMIC(SVToolAdjustmentDialogSizePage)
 
 public:
-	SVToolAdjustmentDialogSizePage(SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogSizePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent);
 	virtual ~SVToolAdjustmentDialogSizePage();
-	virtual HRESULT SetInspectionData();
-	virtual BOOL OnInitDialog();
+	virtual HRESULT SetInspectionData() override;
+	virtual BOOL OnInitDialog() override;
 	
 	// ISVPropertyPageDialog
-	virtual bool QueryAllowExit();
-	virtual BOOL OnSetActive();
-	virtual BOOL OnKillActive()override;  
+	virtual bool QueryAllowExit() override;
+	virtual BOOL OnSetActive() override;
+	virtual BOOL OnKillActive() override;  
 
 	afx_msg void OnCbnSelchangeComboPositionX();
 	afx_msg void OnCbnSelchangeComboPositionY();

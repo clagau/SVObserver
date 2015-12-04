@@ -11,6 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+#include <afxdlgs.h>
+#pragma endregion Includes
+
 namespace Seidenader
 {
 	namespace SVMFCControls

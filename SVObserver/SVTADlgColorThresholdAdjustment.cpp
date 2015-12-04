@@ -15,10 +15,9 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-
+#include "GuiCommands/InspectionRunOnce.h"
 #include "SVColorTool.h"
 #include "SVColorThreshold.h"
-#include "SVCommandInspectionRunOnce.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
@@ -347,10 +346,10 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 
 		if( nullptr != pInspection )
 		{
-			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+			GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+			SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-			l_Command.Execute( 120000 );
+			l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 		}
 
 		m_svDlgImage.ClearOverlayPoints();

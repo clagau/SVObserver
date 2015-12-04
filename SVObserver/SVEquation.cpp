@@ -445,7 +445,7 @@ BOOL SVEquationClass::HasCondition()
 	return !equationStruct.EquationBuffer.IsEmpty();
 }
 
-double SVEquationClass::GetYACCResult()
+double SVEquationClass::GetYACCResult() const
 {
 	return yacc.equationResult;
 }
@@ -684,13 +684,12 @@ BOOL SVEquationClass::IsEnabled()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
+SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 {
-	SVEquationTestResult ret;
+	SvOi::EquationTestResult ret;
 	m_lCurrentRunIndex = -1;
 	isDataValid = TRUE;
 	errStr.Empty();
-
 
 	if( HasCondition() && IsEnabled() )
 	{
@@ -711,7 +710,7 @@ SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
 		// Note Buffer must be terminated with a new line
 		LPTSTR pEquation = equationText.GetBuffer( equationText.GetLength() + 1 );
 		// Build Lexical Stack
-		SVEquationTestResult result = lexicalScan( pEquation );
+		SvOi::EquationTestResult result = lexicalScan( pEquation );
 		if( result.bPassed )
 		{
 			// Parse the equation
@@ -794,9 +793,9 @@ SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVEquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
+SvOi::EquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
 {
-	SVEquationTestResult ret;
+	SvOi::EquationTestResult ret;
 	ret.bPassed = true;
 
 	// Initialize the lexical scanner

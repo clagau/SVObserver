@@ -596,6 +596,18 @@ BOOL SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lVa
 	return bRetVal;
 }
 
+#pragma region IVEnumerateValueObject
+SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
+{
+	SvOi::NameValueList list;
+	for (int i = 0;i < m_enumStringTable.GetSize(); i++)
+	{
+		list.push_back(std::make_pair(m_enumStringTable.GetAt(i).GetString(), m_enumValueTable.GetAt(i)));
+	}
+	return list;
+}
+#pragma endregion IVEnumerateValueObject
+
 /*static*/ bool SVEnumerateValueObjectClass::ToNumber(const CString& str, long& p_rlValue)
 {
 	bool bConverted = false;

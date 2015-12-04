@@ -7,17 +7,19 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include <boost/noncopyable.hpp>
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include <Guiddef.h>
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/IEquation.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
-//#include "SVEquation.h" // commented out while SVEquationClass resides in the SVObserver project
+#pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace GuiCommand
 	{
-		template<typename Equation>
 		struct GetEquation : public boost::noncopyable
 		{
 			GetEquation(const SVGUID& rInstanceID) : m_InstanceID(rInstanceID) {}
@@ -28,9 +30,8 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
-				SVObjectManagerClass& rMgr = SVObjectManagerClass::Instance();
-
-				Equation* pEquation = dynamic_cast<Equation*>(rMgr.GetObject(m_InstanceID));
+				
+				SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(m_InstanceID));
 				if (pEquation)
 				{
 					pEquation->GetEquationText(m_Equation);

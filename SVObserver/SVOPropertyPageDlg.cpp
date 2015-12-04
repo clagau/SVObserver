@@ -25,7 +25,7 @@
 #include "SVOMFCLibrary/SVCustomDeviceParam.h"
 #include "SVOMFCLibrary/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVCameraFormat7Dlg.h"
 #include "SVGigeCameraROIDlg.h"

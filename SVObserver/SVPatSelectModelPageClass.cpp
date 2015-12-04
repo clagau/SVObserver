@@ -14,7 +14,6 @@
 #include "SVPatSelectModelPageClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
-#include "SVObserver.h"
 #include "SVPatternAnalyzerClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVTool.h"
@@ -23,6 +22,7 @@
 #include "SVOMFCLibrary\SVGraphix.h"
 #include "SVOMFCLibrary\DisplayHelper.h"
 #include "SVImageLibrary\MatroxImageData.h"
+#include "SVOGui\SVColor.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -647,14 +647,13 @@ BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)
 	UpdateData( TRUE );
 
 	svfncFileName.SetFullFileName( m_strModelName );
-
 	if ( bMode )
 	{
-		bOk = svfncFileName.SelectFile(); 
+		bOk = svfncFileName.SelectFile();
 	}
 	else
 	{
-		bOk = svfncFileName.SaveFile(); 
+		bOk = svfncFileName.SaveFile();
 	}
 
 	if ( bOk )
@@ -776,7 +775,7 @@ HRESULT SVPatModelPageClass::RefreshProperties()
 
 void SVPatModelPageClass::setImages()
 {
-	if ( m_pPatAnalyzer != NULL )
+	if ( nullptr != m_pPatAnalyzer )
 	{
 		m_dialogImage.setImage( m_pPatAnalyzer->getInputImage(), 0 );
 		MatroxImageData data(m_pPatAnalyzer->m_patBufferHandlePtr);

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   04 Feb 2014 15:21:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageArchive.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -16,6 +17,7 @@
 #include "SVObserver.h"
 #include "SVImageClass.h"
 #include "SVImageObjectClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE

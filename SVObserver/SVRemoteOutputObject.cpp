@@ -9,16 +9,17 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:52:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <comdef.h>
 #include "SVRemoteOutputObject.h"
+#include "SVObjectLibrary\SVClsIds.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVCLSIDs.h"
-#include "SVPPQObject.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVPPQObject.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputObject, SVRemoteOutputObjectGUID );
 

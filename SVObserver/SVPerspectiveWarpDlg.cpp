@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   15 May 2014 12:31:44  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPerspectiveWarpDlg.h"
 #include "svobserver.h"
 #include "SVTool.h"
 #include "SVPerspectiveTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,13 +28,18 @@ static char THIS_FILE[] = __FILE__;
 // SVPerspectiveWarpDlg dialog
 
 
-SVPerspectiveWarpDlg::SVPerspectiveWarpDlg( SVToolAdjustmentDialogSheetClass* Parent, int id ) 
-	: CPropertyPage( id )
+SVPerspectiveWarpDlg::SVPerspectiveWarpDlg( const SVGUID& rInspectionId, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id ) 
+: CPropertyPage( id )
+, pParentDialog(Parent)
 {
-	pParentDialog		= Parent;
+	
 	//{{AFX_DATA_INIT(SVPerspectiveWarpDlg)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
+}
+
+SVPerspectiveWarpDlg::~SVPerspectiveWarpDlg()
+{
 }
 
 HRESULT SVPerspectiveWarpDlg::SetInspectionData()

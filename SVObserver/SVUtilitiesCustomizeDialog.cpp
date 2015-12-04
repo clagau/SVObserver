@@ -9,13 +9,15 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:57:24  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVUtilitiesCustomizeDialog.h"
 #include "SVStatusLibrary/SVRegistry.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
 #include "SVUtilityIniClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -419,6 +421,7 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDirectorySelect()
 	SVFileNameClass	svfncWorkingDirectory;
 
 	svfncWorkingDirectory.SetFileType(SV_DEFAULT_FILE_TYPE);
+
 	if (svfncWorkingDirectory.SelectPath())
 	{
 		mszWorkingDirectory = svfncWorkingDirectory.GetPathName();

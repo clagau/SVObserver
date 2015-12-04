@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 Jan 2014 16:51:54  $
 //******************************************************************************
 
-#ifndef SVTADLGTRANSLATIONPAGE_H
-#define SVTADLGTRANSLATIONPAGE_H
+#pragma once
 
 #pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
@@ -27,10 +26,9 @@ class SVBoolValueObjectClass;
 
 class SVToolAdjustmentDialogTranslationPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-#pragma region Constructor
 public:
-	SVToolAdjustmentDialogTranslationPageClass( SVToolAdjustmentDialogSheetClass* Parent );
-#pragma endregion
+	SVToolAdjustmentDialogTranslationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	virtual ~SVToolAdjustmentDialogTranslationPageClass();
 
 #pragma region Protected Methods
 protected:
@@ -52,7 +50,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 #pragma endregion MFC Methods
-	virtual HRESULT SetInspectionData();
+	virtual HRESULT SetInspectionData() override;
 	void refresh();
 #pragma endregion
 
@@ -80,8 +78,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif	// SVTADLGTRANSLATIONPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

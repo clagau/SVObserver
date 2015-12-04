@@ -11,6 +11,8 @@
 #include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "IObjectClass.h"
+#include "IValueObject.h"
+#include "ISVImage.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -37,6 +39,19 @@ namespace Seidenader
 		//! \returns IObjectClass*
 		//************************************
 		IObjectClass* getObject( const SVGUID& rObjectID );
+
+		//************************************
+		//! Traverses the Object DataStore, starting at a certain Object.
+		//! \param ObjectVisitor [in] The visitor.
+		//! \param SVGUID [in] starting Object.
+		//! \returns HRESULT
+		//************************************
+		template<typename ObjectVisitor>
+		HRESULT visitElements(ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID = GUID_NULL);
+
+		IObjectClass* FindObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo);
+		IValueObject* FindValueObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo);
+		ISVImage* FindImageObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo);
 	}
 }
 

@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   18 Sep 2014 13:38:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBarCodeStringMatchDialog.h"
-
-#include "SVFileNameClass.h"  // SES 18-Jan-2001
+#include "SVOMFCLibrary/SVFileNameClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -197,7 +198,7 @@ void SVBarCodeStringMatchDialog::OnBarCodeSelectFile()
    SVFileNameClass   svfnFileName;
 
    svfnFileName.SetFileType ( SV_BAR_CODE_STORE_VALUE_FILE_TYPE );
-   
+
    if ( svfnFileName.SelectFile () == IDOK )
    {
       m_szStringFileName = svfnFileName.GetFullFileName ();

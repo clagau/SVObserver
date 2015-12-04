@@ -448,6 +448,8 @@ const SVGUID& SVObjectClass::GetParentID() const
 
 SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType)
 {
+	if (GetObjectType() == ancestorObjectType)
+		return this;
 	return GetAncestor(ancestorObjectType);
 }
 
@@ -459,6 +461,11 @@ SvOi::IObjectClass* SVObjectClass::GetFirstObject(const SVObjectTypeInfoStruct& 
 DWORD_PTR SVObjectClass::resetAllObjects()
 {
 	return processMessage(SVM_RESET_ALL_OBJECTS, NULL, NULL);
+}
+
+SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
+{
+	return static_cast<SVObjectSubTypeEnum>(outObjectInfo.ObjectTypeInfo.SubType);
 }
 #pragma endregion virtual method (IObjectClass)
 
@@ -980,6 +987,14 @@ void SVObjectClass::GetCompleteObjectName( CString& rString ) const
 	}
 
 	rString += GetName();
+}
+
+/*
+Get the complete object name including selected SVObjectTypeEnum value.
+*/
+SVString SVObjectClass::GetObjectNameToObjectType(LPCSTR LPSZCompleteName, SVObjectTypeEnum objectTypeToInclude) const
+{
+	return SVString(GetCompleteObjectNameToObjectType(LPSZCompleteName, objectTypeToInclude).GetString());
 }
 
 /*

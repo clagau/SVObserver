@@ -8,13 +8,15 @@
 
 #pragma once
 
+#pragma region Includes
 #include <string>
 #include <boost/noncopyable.hpp>
-#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/IEquation.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVString.h"
-//#include "SVEquation.h" // comment out while SVEquationClass resides in the SVObserver project
+#pragma endregion Includes
 
 enum
 {
@@ -25,7 +27,6 @@ namespace Seidenader
 {
 	namespace GuiCommand
 	{
-		template <typename Equation>
 		struct ValidateEquation : public boost::noncopyable
 		{
 			// Guid is the instance id of the object
@@ -39,9 +40,8 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
-				SVObjectManagerClass& rMgr = SVObjectManagerClass::Instance();
 		
-				Equation* pEquation = dynamic_cast<Equation*>(SVObjectManagerClass::Instance().GetObject(m_ownerID));
+				SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(m_ownerID));
 				if (pEquation)
 				{
 					SVString oldString;
@@ -52,7 +52,7 @@ namespace Seidenader
 					}
 					pEquation->SetEquationText(m_equation);
 
-					SVEquationTestResult testResult = pEquation->Test();
+					SvOi::EquationTestResult testResult = pEquation->Test();
 					if (testResult.bPassed)
 					{// set result and set return value to successful
 						m_result = pEquation->GetYACCResult();

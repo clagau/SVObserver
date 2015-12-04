@@ -1,0 +1,128 @@
+//*****************************************************************************
+// \copyright COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
+// All Rights Reserved
+//*****************************************************************************
+
+#pragma region Includes
+#include "stdafx.h"
+#include "MaskController.h"
+#include "GuiCommands\GetTaskObjectInstanceID.h"
+#include "GuiCommands\GetReferenceImage.h"
+#include "GuiCommands\GetMaskImage.h"
+#include "GuiCommands\ImportMask.h"
+#include "GuiCommands\ExportMask.h"
+#include "GuiCommands\GetMaskData.h"
+#include "GuiCommands\SetMaskData.h"
+#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#pragma endregion Includes
+
+namespace Seidenader { namespace SVOGui
+{
+
+	MaskController::MaskController(const GUID& rInspectionID, const GUID& rTaskObjectID)
+	: m_InspectionID(rInspectionID)
+	, m_TaskObjectID(rTaskObjectID)
+	{
+	}
+
+	void MaskController::Init()
+	{
+		// Get Instance GUID for the Mask Operator...
+		typedef GuiCmd::GetTaskObjectInstanceID Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+	
+		SVObjectTypeInfoStruct info(SVUnaryImageOperatorObjectType, SVUserMaskOperatorObjectType);
+	
+		CommandPtr commandPtr = CommandPtr(new Command(m_TaskObjectID, info));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			m_maskOperatorID = commandPtr->GetInstanceID();
+		}
+	}
+
+	// must call init before calling this method
+	const GUID& MaskController::GetInstanceID() const
+	{
+		return m_maskOperatorID;
+	}
+
+	IPictureDisp* MaskController::GetReferenceImage() const
+	{
+		typedef GuiCmd::GetReferenceImage Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		CommandPtr commandPtr = new Command(m_maskOperatorID);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			return commandPtr->Image();
+		}
+		return nullptr;
+	}
+
+	IPictureDisp* MaskController::GetMaskImage() const
+	{
+		typedef GuiCmd::GetMaskImage Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		CommandPtr commandPtr = new Command(m_maskOperatorID);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			return commandPtr->Image();
+		}
+		return nullptr;
+	}
+
+	HRESULT MaskController::ImportMask(const SVString& filename)
+	{
+		typedef GuiCmd::ImportMask Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		CommandPtr commandPtr = new Command(m_maskOperatorID, filename);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		return hr;
+	}
+
+	HRESULT MaskController::ExportMask(const SVString& filename)
+	{
+		typedef GuiCmd::ExportMask Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		CommandPtr commandPtr = new Command(m_maskOperatorID, filename);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		return hr;
+	}
+
+	HGLOBAL MaskController::GetMaskData() const
+	{
+		typedef GuiCmd::GetMaskData Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		CommandPtr commandPtr = new Command(m_maskOperatorID);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			return commandPtr->GetDataHandle();
+		}
+		return nullptr;
+	}
+
+	bool MaskController::SetMaskData(HGLOBAL hGlobal)
+	{
+		typedef GuiCmd::SetMaskData Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		CommandPtr commandPtr = new Command(m_maskOperatorID, hGlobal);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		return (S_OK == hr) ? true : false;
+	}
+} /* namespace SVOGui */ } /* namespace Seidenader */

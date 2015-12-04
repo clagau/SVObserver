@@ -8,13 +8,7 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   15 Jan 2014 16:47:56  $
 //******************************************************************************
-
-#ifndef SVTADLGROTATIONPAGE_H
-#define SVTADLGROTATIONPAGE_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
@@ -31,10 +25,9 @@ class SVBoolValueObjectClass;
 
 class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-#pragma region Constructor
 public:
-	SVToolAdjustmentDialogRotationPageClass( SVToolAdjustmentDialogSheetClass* Parent );
-#pragma endregion
+	SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	virtual ~SVToolAdjustmentDialogRotationPageClass();
 
 #pragma region Protected Methods
 protected:
@@ -58,7 +51,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 #pragma endregion MFC Methods
 
-	virtual HRESULT SetInspectionData();
+	virtual HRESULT SetInspectionData() override;
 	void refresh();
 #pragma endregion
 
@@ -97,8 +90,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif	// SVTADLGROTATIONPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

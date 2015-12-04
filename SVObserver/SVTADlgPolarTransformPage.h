@@ -13,20 +13,12 @@
 //* INCLUDE CONTROL:
 //******************************************************************************
 
-#ifndef SVTADLGPOLARTRANSFORMPAGE_H
-#define SVTADLGPOLARTRANSFORMPAGE_H
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "SVEnumerateCombo.h"
-
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -34,17 +26,11 @@ class SVEvaluateClass;
 
 class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-
-// Construction
 public:
-	SVToolAdjustmentDialogPolarTransformPageClass( SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogPolarTransformPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	virtual ~SVToolAdjustmentDialogPolarTransformPageClass();
+	virtual HRESULT SetInspectionData() override;
 
-	virtual HRESULT SetInspectionData();
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogPolarTransformPageClass)
 	protected:
@@ -52,7 +38,6 @@ public:
 	//}}AFX_VIRTUAL
 	
 protected:
-	
 	void refresh();
 
 	// Generated message map functions
@@ -116,11 +101,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	// SVTADLGPOLARTRANSFORMPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

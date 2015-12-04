@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
 #include "SVArchiveTool.h"
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVIPDoc.h"
 #include "SVImageClass.h"
 #include "SVInspectionProcess.h"
@@ -41,14 +41,11 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentArchivePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_HEADER_CHECK, &SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-SVToolAdjustmentArchivePage::SVToolAdjustmentArchivePage( 
-	SVToolAdjustmentDialogSheetClass* Parent ) 
-	: CPropertyPage(SVToolAdjustmentArchivePage::IDD)
-	, m_bUseColumnHeaders(FALSE)
+SVToolAdjustmentArchivePage::SVToolAdjustmentArchivePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent) 
+: CPropertyPage(SVToolAdjustmentArchivePage::IDD)
+, m_bUseColumnHeaders(false)
+, m_pParentDialog(Parent)
+, m_pTool(nullptr)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentArchivePage)
 	m_checkAppendArchive = 0;
@@ -57,19 +54,12 @@ SVToolAdjustmentArchivePage::SVToolAdjustmentArchivePage(
 	m_strAvailableArchiveImageMemory = _T("");
 	//}}AFX_DATA_INIT
 
-	m_pParentDialog = Parent;
-	m_pTool = NULL;
-
 	if( m_pParentDialog )
 	{
 		m_pTool = dynamic_cast <SVArchiveTool*> (m_pParentDialog->GetTool());
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 SVToolAdjustmentArchivePage::~SVToolAdjustmentArchivePage()
 {
 }
@@ -93,7 +83,6 @@ void SVToolAdjustmentArchivePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_HEADER_CHECK, m_bUseColumnHeaders);
 	//}}AFX_DATA_MAP
 }
-
 
 BOOL SVToolAdjustmentArchivePage::OnInitDialog() 
 {

@@ -9,12 +9,13 @@
 //* .Check In Date   : $Date:   24 Apr 2013 11:24:52  $
 //******************************************************************************
 
-#ifndef SVTADLGTRANSLATIONSHIFTPAGE_H
-#define SVTADLGTRANSLATIONSHIFTPAGE_H
+#pragma once
 
+#pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVTaskObjectInterfaceClass.h"
 #include "PropertyTree/PropTree.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -38,10 +39,10 @@ class SVTADlgTranslationShiftPageClass : public CPropertyPage, public SVTaskObje
 //	DECLARE_DYNAMIC(SVTADlgTranslationShiftPage)
 
 public:
-	SVTADlgTranslationShiftPageClass( SVToolAdjustmentDialogSheetClass* Parent );
+	SVTADlgTranslationShiftPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVTADlgTranslationShiftPageClass();
 
-	virtual HRESULT SetInspectionData();
+	virtual HRESULT SetInspectionData() override;
 
 // Dialog Data
 	enum { IDD = IDD_TA_TRANSLATION_SHIFT_DIALOG };
@@ -98,7 +99,7 @@ public:
 	CButton m_ctlEnableSourceImageExtents;
 	afx_msg void OnBnClickedChkEnableSourceImageExtents();
 };
-#endif	// SVTADLGTRANSLATIONSHIFTPAGE_H
+
 
 //******************************************************************************
 //* LOG HISTORY:

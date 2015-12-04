@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <comdef.h>
 #include "SVRemoteOutputGroup.h"
@@ -18,11 +19,12 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 
-#include "SVCLSIDs.h"
+#include "SVObjectLibrary\SVClsIds.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVObserver.h"
 #include "SVOutputStreamManager.h"
 #include "SVRemoteOutputObject.h"
+#pragma endregion Includes
 
 static const std::string scRemoteOutputGroupTag = "SVRemoteOutputGroup";
 static const std::string scPPQObjectTag = "SVPPQObject";

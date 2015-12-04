@@ -32,11 +32,11 @@
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "TextDefinesSvO.h"
 #include "RootObject.h"
-#include "GlobalSelector.h"
-#include "PPQNameSelector.h"
-#include "NoSelector.h"
-#include "ToolSetItemSelector.h"
-#include "RangeSelectorFilter.h"
+#include "SVOGui/GlobalSelector.h"
+#include "SVOGui/PPQNameSelector.h"
+#include "SVOGui/NoSelector.h"
+#include "SVOGui/ToolSetItemSelector.h"
+#include "SVOGui/RangeSelectorFilter.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -567,19 +567,8 @@ bool RangeClassHelper::FillObjectSelector()
 
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-/*SEJ999
-	SVStringArray nameArray;
-	typedef std::insert_iterator<SVStringArray> Inserter;
-	
-	SVStringArray objectNameList;
-	SvOi::getRootChildNameList( objectNameList, _T(""), SV_SELECTABLE_FOR_EQUATION );
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( objectNameList );
 
-	// Insert Tool Set Objects
-	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
-*/
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, NoSelector, ToolSetItemSelector<false, RangeSelectorFilter>>(pInspectionProcess->GetUniqueObjectID(), pTool->GetUniqueObjectID());
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<false, SvOg::RangeSelectorFilter>>(pInspectionProcess->GetUniqueObjectID(), pTool->GetUniqueObjectID());
 	return true;
 }
 

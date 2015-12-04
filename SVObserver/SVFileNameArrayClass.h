@@ -9,11 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:36:28  $
 //******************************************************************************
 
-#ifndef INC_SVFILENAMEARRAYCLASS_3A55CC450177_INCLUDED
-#define INC_SVFILENAMEARRAYCLASS_3A55CC450177_INCLUDED
+#pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
+#pragma endregion Includes
 
 //This class is inheirated from the CArray class.  This class 
 //maintains an array of SVFileNameClass objects.
@@ -56,8 +57,6 @@ private:
 	CString mcsFileList;
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -22,7 +22,7 @@
 #include "SVConfigurationLibrary\SVConfigurationTags.h"
 #include "SVUtilityLibrary\NaturalStringCompare.h"
 #include "SVObserver.h"
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVToolSet.h"
 #include "SVPPQObject.h"
 #include "SVTool.h"
@@ -1566,7 +1566,7 @@ BOOL SVInspectionProcess::RemoveAllInputRequests()
 // Message Operation(s):
 //******************************************************************************
 
-long SVInspectionProcess::GetGageToolCount()
+long SVInspectionProcess::GetGageToolCount() const
 {
 	return m_lGageToolCount;
 }
@@ -3041,7 +3041,7 @@ void SVInspectionProcess::SetNewDisableMethod( BOOL bNewDisableMethod )
 	m_bNewDisableMethod = bNewDisableMethod;
 }// end SetNewDisableMethod
 
-long SVInspectionProcess::GetEnableAuxiliaryExtent()
+long SVInspectionProcess::GetEnableAuxiliaryExtent() const
 {
 	long l_lTemp = 0;
 
@@ -4834,6 +4834,7 @@ long  SVInspectionProcess::GetResultDataIndex() const
 	return m_runStatus.m_lResultDataIndex; 
 }
 
+#pragma region IInspectionProcess methods
 SVStringArray SVInspectionProcess::GetPPQInputNames() const
 {
 	return getPPQVariableNames();
@@ -4843,6 +4844,12 @@ SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const
 {
 	return GetToolSet();
 }
+
+HRESULT SVInspectionProcess::RunOnce(SvOi::ITaskObject* pTask)
+{
+	return RunOnce(dynamic_cast<SVToolClass *>(pTask)) ? S_OK : E_FAIL;
+}
+#pragma endregion IInspectionProcess methods
 
 bool SVInspectionProcess::IsEnabledPPQVariable(SVValueObjectClass* pValueObject)
 {

@@ -7,13 +7,16 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include <boost/noncopyable.hpp>
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include <Guiddef.h>
+#include "ObjectInterfaces/IObjectManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -30,11 +33,11 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = E_POINTER;
-				SVObjectManagerClass& rMgr = SVObjectManagerClass::Instance();
-				SvOi::IObjectClass* pObject = rMgr.GetObject(m_InstanceID);
+
+				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
 				if (pObject)
 				{
-					SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(pObject);
+					SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject);
 					if (pTaskObject)
 					{
 						m_outputInfoList = pTaskObject->GetOutputList();
@@ -42,7 +45,7 @@ namespace Seidenader
 					}
 					else // try inspection
 					{
-						SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(pObject);
+						SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(pObject);
 						if (pInspection)
 						{
 							m_outputInfoList = pInspection->GetToolSetInterface()->GetOutputList(m_filter);

@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVResult.h"
 #include "SVInspectionProcess.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"

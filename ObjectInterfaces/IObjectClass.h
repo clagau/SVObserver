@@ -35,9 +35,19 @@ namespace Seidenader
 			virtual SVString GetCompleteName() const = 0;
 
 			/**********
+			 This method gets the complete name of this object, to a certain lineage.
+			***********/
+			virtual SVString GetObjectNameToObjectType(LPCSTR LPSZCompleteName, SVObjectTypeEnum objectTypeToInclude) const = 0;
+
+			/**********
 			 The method gets the type of this object.
 			***********/
 			virtual const SVObjectTypeEnum& GetObjectType() const = 0;
+
+			/**********
+			 The method gets the subtype of this object.
+			***********/
+			virtual SVObjectSubTypeEnum GetObjectSubType() const = 0;
 
 			/**********
 			 The method gets the parent or nullptr if no parent.

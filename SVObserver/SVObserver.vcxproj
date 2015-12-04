@@ -339,7 +339,6 @@ echo %time%
     <ClCompile Include="EQAdjustSizePositionY.cpp" />
     <ClCompile Include="EQAdjustSizeWidth.cpp" />
     <ClCompile Include="MessageNotification.cpp" />
-    <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
     <ClCompile Include="LinkedValue.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp">
@@ -357,9 +356,6 @@ echo %time%
     <ClCompile Include="MonitorListSheet.cpp" />
     <ClCompile Include="MonitorListValuesPage.cpp" />
     <ClCompile Include="RangeClassHelper.cpp" />
-    <ClCompile Include="RangeController.cpp" />
-    <ClCompile Include="RangeSelectorFilter.cpp" />
-    <ClCompile Include="RangeValidator.cpp" />
     <ClCompile Include="RangeXDialogClass.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
     <ClCompile Include="RemoteMonitorListController.cpp" />
@@ -437,7 +433,6 @@ echo %time%
     <ClCompile Include="SVFailStatusStream.cpp" />
     <ClCompile Include="SVFailStatusStreamManager.cpp" />
     <ClCompile Include="SVFilterClass.cpp" />
-    <ClCompile Include="SVFormulaEditorPage.cpp" />
     <ClCompile Include="SVGigeCameraListCtrl.cpp" />
     <ClCompile Include="SVGigeCameraROIDlg.cpp" />
     <ClCompile Include="SVGigeCameraStructInterface.cpp" />
@@ -839,16 +834,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVClsids.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVColorThreshold.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -884,7 +869,6 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="SVCommandInspectionCollectImageData.cpp" />
-    <ClCompile Include="SVCommandInspectionRunOnce.cpp" />
     <ClCompile Include="SVCommandStreamManager.cpp" />
     <ClCompile Include="SVConditionalHistory.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1255,16 +1239,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVExternalToolImageSelectPage.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVExternalToolInputSelectPage.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1317,16 +1291,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVFileNameClass.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVFileNameLockablePointerArrayClass.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1358,16 +1322,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVFormulaEditorSheet.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVGageTool.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1378,7 +1332,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp" />
     <ClCompile Include="SVGigeCameraManager.cpp" />
     <ClCompile Include="SVGigeCameraManagerDlg.cpp" />
     <ClCompile Include="SVGigeCameraStruct.cpp" />
@@ -3064,29 +3017,9 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVSaveToolSetImageDialog.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVSetupDialogManager.cpp" />
     <ClCompile Include="SVShiftTool.cpp" />
     <ClCompile Include="SVShiftToolUtility.cpp" />
-    <ClCompile Include="SVShowDependentsDialog.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVSingleLineAnalyzer.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -3211,37 +3144,7 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVTADlgFileImageSourcePage.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="SVTADlgGeneralPage.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVTADlgLUTPage.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="SVTADlgPassFailPage.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -3293,16 +3196,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVTADlgTransformationLearnPage.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="SVTADlgTransformImagePage.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -3437,16 +3330,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogCommentPageClass.cpp" />
-    <ClCompile Include="SVToolAdjustmentDialogImagePageClass.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogLinearSpecialPageClass.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -3468,16 +3351,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogSheetClass.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="SVToolAdjustmentDialogTwoImagePage.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -3730,7 +3603,7 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVVariantValueObjectClass.cpp" />
-    <ClCompile Include="SVView.cpp">
+    <ClCompile Include="SVAvailableAnalyzerListComboBoxClass.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -3819,9 +3692,7 @@ echo %time%
     <ClInclude Include="EQAdjustSizePositionY.h" />
     <ClInclude Include="EQAdjustSizeWidth.h" />
     <ClInclude Include="MessageNotification.h" />
-    <ClInclude Include="FormulaController.h" />
     <ClInclude Include="GlobalConstantView.h" />
-    <ClInclude Include="GlobalSelector.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="LinkedValue.h" />
     <ClInclude Include="ModelessMessageBox.h" />
@@ -3829,16 +3700,8 @@ echo %time%
     <ClInclude Include="MonitorListImagesPage.h" />
     <ClInclude Include="MonitorListSheet.h" />
     <ClInclude Include="MonitorListValuesPage.h" />
-    <ClInclude Include="NoSelector.h" />
     <ClInclude Include="ObjectNameHelper.h" />
-    <ClInclude Include="PPQNameSelector.h" />
-    <ClInclude Include="PPQVariablesSelector.h" />
-    <ClInclude Include="PublishSelector.h" />
     <ClInclude Include="RangeClassHelper.h" />
-    <ClInclude Include="RangeController.h" />
-    <ClInclude Include="RangeEnum.h" />
-    <ClInclude Include="RangeSelectorFilter.h" />
-    <ClInclude Include="RangeValidator.h" />
     <ClInclude Include="RangeXDialogClass.h" />
     <ClInclude Include="RemoteMonitorList.h" />
     <ClInclude Include="RemoteCommand.h" />
@@ -3850,7 +3713,6 @@ echo %time%
     <ClInclude Include="ResizeTool.h" />
     <ClInclude Include="ResultViewItemDef.h" />
     <ClInclude Include="ResultViewReferences.h" />
-    <ClInclude Include="GlobalAndToolSetSelector.h" />
     <ClInclude Include="RingBufferTool.h" />
     <ClInclude Include="RootChildren.h" />
     <ClInclude Include="RootObject.h" />
@@ -3882,7 +3744,6 @@ echo %time%
     <ClInclude Include="SVFailStatusStream.h" />
     <ClInclude Include="SVFailStatusStreamManager.h" />
     <ClInclude Include="SVFilterClass.h" />
-    <ClInclude Include="SVFormulaEditorPage.h" />
     <ClInclude Include="SVGigeCameraListCtrl.h" />
     <ClInclude Include="SVGigeCameraROIDlg.h" />
     <ClInclude Include="SVGigeCameraStructInterface.h" />
@@ -3918,7 +3779,6 @@ echo %time%
     <ClInclude Include="SVThresholdClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolGrouping.h" />
-    <ClInclude Include="ToolSetItemSelector.h" />
     <ClInclude Include="ToolSetView.h" />
     <ClInclude Include="SVTriggerConstants.h" />
     <ClInclude Include="SVTriggerSelectionDlg.h" />
@@ -3972,12 +3832,10 @@ echo %time%
     <ClInclude Include="SVCharValueObjectClass.h" />
     <ClInclude Include="SVChildrenSetupDialog.h" />
     <ClInclude Include="SVClassInfoStruct.h" />
-    <ClInclude Include="SVClsids.h" />
     <ClInclude Include="SVColorThreshold.h" />
     <ClInclude Include="SVColorTool.h" />
     <ClInclude Include="SVCommand.h" />
     <ClInclude Include="SVCommandInspectionCollectImageData.h" />
-    <ClInclude Include="SVCommandInspectionRunOnce.h" />
     <ClInclude Include="SVCommandStreamManager.h" />
     <ClInclude Include="SVConditionalHistory.h" />
     <ClInclude Include="SVConditionalHistoryBasePage.h" />
@@ -4026,7 +3884,6 @@ echo %time%
     <ClInclude Include="SVExternalTool.h" />
     <ClInclude Include="SVExternalToolDetailsSheet.h" />
     <ClInclude Include="SVExternalToolDlg.h" />
-    <ClInclude Include="SVExternalToolImageSelectPage.h" />
     <ClInclude Include="SVExternalToolInputSelectPage.h" />
     <ClInclude Include="SVExternalToolResultPage.h" />
     <ClInclude Include="SVExternalToolTask.h" />
@@ -4034,14 +3891,11 @@ echo %time%
     <ClInclude Include="SVFileAcquisitionClass.h" />
     <ClInclude Include="SVFileAcquisitionInitiator.h" />
     <ClInclude Include="SVFileNameArrayClass.h" />
-    <ClInclude Include="SVFileNameClass.h" />
     <ClInclude Include="SVFileNameLockablePointerArrayClass.h" />
     <ClInclude Include="SVFileNameManagerClass.h" />
     <ClInclude Include="SVFileNameValueObjectClass.h" />
     <ClInclude Include="SVFillBlobDlg.h" />
-    <ClInclude Include="SVFormulaEditorSheet.h" />
     <ClInclude Include="SVGageTool.h" />
-    <ClInclude Include="SVGetObjectDequeByTypeVisitor.h" />
     <ClInclude Include="SVGigeCameraManager.h" />
     <ClInclude Include="SVGigeCameraManagerDlg.h" />
     <ClInclude Include="SVGigeCameraStruct.h" />
@@ -4258,12 +4112,10 @@ echo %time%
     <ClInclude Include="SVRGBMainImage.h" />
     <ClInclude Include="SVROI.h" />
     <ClInclude Include="SVROIFigureEditor.h" />
-    <ClInclude Include="SVSaveToolSetImageDialog.h" />
     <ClInclude Include="SVScalarValue.h" />
     <ClInclude Include="SVSetupDialogManager.h" />
     <ClInclude Include="SVShiftTool.h" />
     <ClInclude Include="SVShiftToolUtility.h" />
-    <ClInclude Include="SVShowDependentsDialog.h" />
     <ClInclude Include="SVSingleLineAnalyzer.h" />
     <ClInclude Include="SVSkeletonFilter.h" />
     <ClInclude Include="SVSoftwareTriggerClass.h" />
@@ -4282,17 +4134,13 @@ echo %time%
     <ClInclude Include="SVTADlgColorThresholdROI.h" />
     <ClInclude Include="SVTADlgColorThresholdSheet.h" />
     <ClInclude Include="SVTADlgColorToolPage.h" />
-    <ClInclude Include="SVTADlgFileImageSourcePage.h" />
-    <ClInclude Include="SVTADlgGeneralPage.h" />
     <ClInclude Include="SVTADlgLUTPage.h" />
-    <ClInclude Include="SVTADlgPassFailPage.h" />
     <ClInclude Include="SVTADlgPolarTransformPage.h" />
     <ClInclude Include="SVTADlgRemoteInputToolPage.h" />
     <ClInclude Include="SVTADlgRotationpage.h" />
     <ClInclude Include="SVTADlgStatisticsPage.h" />
     <ClInclude Include="SVTADlgThresholdPage.h" />
     <ClInclude Include="SVTADlgTransformationLearnPage.h" />
-    <ClInclude Include="SVTADlgTransformImagePage.h" />
     <ClInclude Include="SVTADlgTranslationPage.h" />
     <ClInclude Include="SVTADlgTranslationShiftPage.h" />
     <ClInclude Include="SVTaskObject.h" />
@@ -4310,11 +4158,9 @@ echo %time%
     <ClInclude Include="SVToolAcquisition.h" />
     <ClInclude Include="SVToolAdjustmentDialogAnalyzerPageClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogCommentPageClass.h" />
-    <ClInclude Include="SVToolAdjustmentDialogImagePageClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogLinearSpecialPageClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogMaskPageClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogSheetClass.h" />
-    <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h" />
     <ClInclude Include="SVToolArchivePage.h" />
     <ClInclude Include="SVToolExtentClass.h" />
     <ClInclude Include="SVToolExtentPropertiesClass.h" />
@@ -4346,7 +4192,7 @@ echo %time%
     <ClInclude Include="SVValueObjectReference.h" />
     <ClInclude Include="SVVariantResultClass.h" />
     <ClInclude Include="SVVariantValueObjectClass.h" />
-    <ClInclude Include="SVView.h" />
+    <ClInclude Include="SVAvailableAnalyzerListComboBoxClass.h" />
     <ClInclude Include="SVVirtualCamera.h" />
     <ClInclude Include="SVWaterShedFilter.h" />
     <ClInclude Include="SVWindowTool.h" />
@@ -4354,7 +4200,6 @@ echo %time%
     <ClInclude Include="ToolClipboard.h" />
     <ClInclude Include="ToolSizeAdjustTask.h" />
     <ClInclude Include="UseTypeExceptMatch.h" />
-    <ClInclude Include="ValuesAccessor.h" />
     <ClInclude Include="ZoomHelperEx.h" />
     <ClInclude Include="ZoomToolBar.h" />
   </ItemGroup>

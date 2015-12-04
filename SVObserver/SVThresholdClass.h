@@ -9,12 +9,13 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:30:08  $
 //******************************************************************************
 
-#ifndef SVTHRESHOLDCLASS_H
-#define SVTHRESHOLDCLASS_H
+#pragma once
 
+#pragma region Incudes
 #include "SVUnaryImageOperatorClass.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxImageResult.h"
+#pragma endregion Incudes
 
 class SVThresholdClass : public SVUnaryImageOperatorClass
 {
@@ -29,7 +30,7 @@ public:
 
 	virtual HRESULT ResetObject();
 
-	SVBoolValueObjectClass& GetTresholdActivateAttribute();
+	SVBoolValueObjectClass& GetThresholdActivateAttribute();
 
 	virtual HRESULT Rebuild();
 	virtual BOOL OnValidate();
@@ -82,8 +83,6 @@ public:
 	bool saveHistogram;
 
 };
-
-#endif	//	SVTHRESHOLDCLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:

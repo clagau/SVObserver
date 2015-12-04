@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:36:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVFileNameLockablePointerArrayClass.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
+#pragma endregion Includes
 
 //##ModelId=3A54D7EC0251
 SVFileNameLockablePointerArrayClass::SVFileNameLockablePointerArrayClass()

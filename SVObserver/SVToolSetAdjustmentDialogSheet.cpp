@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   14 Jan 2014 12:32:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
-#include "FormulaController.h"
+#include "SVOGui/FormulaController.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -55,8 +57,8 @@ SVToolSetAdjustmentDialogSheetClass::~SVToolSetAdjustmentDialogSheetClass()
 
 void SVToolSetAdjustmentDialogSheetClass::init( SVConditionalClass& rCondition )
 {
-	m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(m_InspectionID, m_TaskObjectID, 
-		new FormulaController(m_InspectionID, m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType, SVConditionalObjectType), false),
+	m_formulaPage = FormulaEditorPagePtr(new SvOg::SVFormulaEditorPageClass(m_InspectionID, m_TaskObjectID, 
+		new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType, SVConditionalObjectType), false),
 								true, IDS_CONDITIONAL_STRING, IDS_CLASSNAME_SVTOOLSET));
 
 	addPages();
@@ -97,7 +99,6 @@ void SVToolSetAdjustmentDialogSheetClass::OnDestroy()
 
 void SVToolSetAdjustmentDialogSheetClass::OnOK()
 {
-	//SEJ99 - refactor...
 	// Try to validate the Conditional
 	if( m_formulaPage->validateAndSetEquation() )
 	{

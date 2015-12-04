@@ -9,22 +9,15 @@
 //* .Check In Date   : $Date:   26 Jun 2014 18:29:26  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
-#ifndef _SVTOOLADJUSTMENTDIALOGFILTERPAGECLASS_H
-#define _SVTOOLADJUSTMENTDIALOGFILTERPAGECLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "ObjectInterfaces\IClassInfoStructList.h"
 #include "ObjectInterfaces\ITaskObjectListClass.h"
 #include "PictureDisplay.h"
 #include "SVFilterListBoxClass.h"
 #include "SVAvailableFilterListComboBoxClass.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -48,21 +41,10 @@ namespace Seidenader
 
 			DECLARE_MESSAGE_MAP()
 
-			//******************************************************************************
-			// Constructor(s):
-			//******************************************************************************
 		public:
-			// Standard constructor
-			SVToolAdjustmentDialogFilterPageClass( SvOi::ITaskObjectListClass& rTool );
+			SVToolAdjustmentDialogFilterPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+			virtual ~SVToolAdjustmentDialogFilterPageClass();
 
-			//******************************************************************************
-			// Destructor(s):
-			//******************************************************************************
-		public:
-			// Standard destructor
-			~SVToolAdjustmentDialogFilterPageClass();
-
-			virtual HRESULT SetInspectionData();
 			//************************************
 			// Method:    setImages
 			// Description: Set image to the activeX-control. 
@@ -70,10 +52,8 @@ namespace Seidenader
 			//************************************
 			bool setImages();
 
-			//******************************************************************************
-			// Operation(s) Of Writing Access And Data Exchange:
-			//******************************************************************************
 		protected:
+			HRESULT SetInspectionData();
 			void refresh();
 
 			//******************************************************************************
@@ -90,7 +70,7 @@ namespace Seidenader
 			// Access:    public 
 			// Returns:   BOOL 
 			//************************************
-			virtual BOOL OnSetActive( );
+			virtual BOOL OnSetActive();
 
 			//******************************************************************************
 			// Class Wizard Generated Dialog Data:
@@ -100,9 +80,9 @@ namespace Seidenader
 			enum { IDD = IDD_TA_FILTER_DIALOG };
 			CButton	m_btnProperties;
 			CButton	insertFilter;
-			SVFilterListBoxClass	filterListBox;
+			SVFilterListBoxClass filterListBox;
 			PictureDisplay	dialogImage;
-			SVAvailableFilterListComboBoxClass	availableFilterListBox;
+			SVAvailableFilterListComboBoxClass availableFilterListBox;
 			//}}AFX_DATA
 
 			//******************************************************************************
@@ -120,8 +100,6 @@ namespace SvOg = Seidenader::SVOGui;
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // _SVTOOLADJUSTMENTDIALOGFILTERPAGECLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:

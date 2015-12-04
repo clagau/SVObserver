@@ -65,7 +65,6 @@ class SVInspectionProcess :
 	public SVObserverTemplate< SVDeleteTool >,
 	public SVObserverTemplate< SVRenameObject >
 {
-	friend class SVCommandInspectionRunOnce;
 	friend class SVCommandInspectionExtentUpdater;
 	friend class SVConditionalHistory;
 
@@ -126,6 +125,7 @@ public:
 	virtual void SetDefaultInputs() override;
 	virtual SVStringArray GetPPQInputNames() const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
+	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
 #pragma region virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const CString& p_rName ) const;
@@ -173,8 +173,8 @@ public:
 	BOOL GetNewDisableMethod();
 	void SetNewDisableMethod( BOOL bNewDisableMethod ); 
 
-	long GetEnableAuxiliaryExtent();
-	void SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents );
+	virtual long GetEnableAuxiliaryExtent() const override;
+	virtual void SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents ) override;
 
 	//new GetOverlay method for use with the ActiveX
 	HRESULT CollectOverlayData(SVImageClass *p_pImage, SVImageOverlayClass *p_pOverlayData);
@@ -195,7 +195,7 @@ public:
 	SVImageClass* GetRGBMainImage();
 	SVImageClass* GetHSIMainImage();
 
-	long GetGageToolCount();
+	long GetGageToolCount() const;
 
 	void GageToolCountInc();
 	void GageToolCountDec();

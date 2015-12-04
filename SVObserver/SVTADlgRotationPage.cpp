@@ -12,8 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgRotationPage.h"
-
-#include "SVFormulaEditorSheet.h"
+#include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVEvaluate.h"
 #include "SVIPDoc.h"
 #include "SVTool.h"
@@ -47,7 +46,7 @@ END_MESSAGE_MAP()
 //* Note(s)    : Property Page
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 #pragma region Constructor
-SVToolAdjustmentDialogRotationPageClass::SVToolAdjustmentDialogRotationPageClass( SVToolAdjustmentDialogSheetClass* Parent )
+SVToolAdjustmentDialogRotationPageClass::SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent )
 	: CPropertyPage(SVToolAdjustmentDialogRotationPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogRotationPageClass)
@@ -70,6 +69,10 @@ SVToolAdjustmentDialogRotationPageClass::SVToolAdjustmentDialogRotationPageClass
 	m_pInterpolationMode	= nullptr;
 }
 #pragma endregion
+
+SVToolAdjustmentDialogRotationPageClass::~SVToolAdjustmentDialogRotationPageClass()
+{
+}
 
 #pragma region Protected Methods
 #pragma region MFC Methods
@@ -211,15 +214,15 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 
 void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton() 
 {
-	if( m_pEvaluateRotationAngle ) //SEJ99 - This needs to change
+	if( m_pEvaluateRotationAngle )
 	{
-		CString strCaption = m_pEvaluateRotationAngle->GetName(); //SEJ99 - This needs to change
+		CString strCaption = m_pEvaluateRotationAngle->GetName();
 		strCaption += _T( " Formula" );
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationAngleObjectType);
-		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
 		refresh();
@@ -228,15 +231,15 @@ void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton()
 
 void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton() 
 {
-	if( m_pEvaluateRotationX ) //SEJ99 - This needs to change
+	if( m_pEvaluateRotationX )
 	{
-		CString strCaption = m_pEvaluateRotationX->GetName(); //SEJ99 - This needs to change
+		CString strCaption = m_pEvaluateRotationX->GetName();
 		strCaption += _T( " Formula" );
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationXObjectType);
-		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
 		refresh();
@@ -245,15 +248,15 @@ void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton()
 
 void SVToolAdjustmentDialogRotationPageClass::OnYFormulaButton() 
 {
-	if( m_pEvaluateRotationY ) //SEJ99 - This needs to change
+	if( m_pEvaluateRotationY )
 	{
-		CString strCaption = m_pEvaluateRotationY->GetName(); //SEJ99 - This needs to change
+		CString strCaption = m_pEvaluateRotationY->GetName();
 		strCaption += _T( " Formula" );
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationYObjectType);
-		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
 		refresh();

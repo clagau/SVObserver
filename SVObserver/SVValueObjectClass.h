@@ -9,17 +9,18 @@
 //* .Check In Date   : $Date:   15 May 2014 15:08:08  $
 //******************************************************************************
 
-#ifndef SVVALUEOBJECTCLASS_H
-#define SVVALUEOBJECTCLASS_H
+#pragma once
 
+#pragma region Includes
 #include <set>
 #include "SVMessage/SVMessage.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVArrayValueHolder.h"
-#include "SVFileNameClass.h"
 #include "SVObjectAppClass.h"
 #include "SVScalarValue.h"
+#pragma endregion Includes
 
 enum SVResetItemEnum // used with Embedded Object registration.
 {
@@ -50,7 +51,7 @@ enum SVResetItemEnum // used with Embedded Object registration.
 @SVObjectOperations This object contains the operators for creating, reseting, updating, and extracting the value information contained within this object.
 
 */
-class SVValueObjectClass : public SVObjectAppClass  
+class SVValueObjectClass : public SVObjectAppClass, public SvOi::IValueObject 
 {
 //	SV_DECLARE_CLASS( SVValueObjectClass );
 public:
@@ -75,7 +76,12 @@ public:
 	HRESULT GetResultSize(int iBucket, int& riResultSize) const;
 	int       GetResultSize() const;
 	HRESULT SetResultSize(int iBucket, int  riResultSize);
-
+	
+	#pragma region IValueObject
+	virtual HRESULT SetValue( const _variant_t& rValue ) override { return SetValue(m_iLastSetIndex, 0, SVString(rValue).ToString()); }
+	virtual HRESULT GetValue( _variant_t& rValue ) const override { return GetValue(*(rValue.GetAddress())); }
+	#pragma endregion IValueObject
+	
 	// NVI pattern : public interface
 	HRESULT SetValue( int iBucket, LPCTSTR value )                { return SetValueAtConvert(iBucket, 0, value); }
 	HRESULT SetValue( int iBucket, int iIndex, LPCTSTR value )    { return SetValueAtConvert(iBucket, iIndex, value); }
@@ -92,7 +98,7 @@ public:
 
 	HRESULT GetValue( double&  rValue ) const               { return GetValueAt(m_iLastSetIndex, 0, rValue); }
 	HRESULT GetValue( CString& rValue ) const               { return GetValueAt(m_iLastSetIndex, 0, rValue); }
-	HRESULT GetValue( VARIANT& rValue ) const               { return GetValueAt(m_iLastSetIndex, 0, rValue); }
+	HRESULT GetValue( VARIANT& rValue ) const				{ return GetValueAt(m_iLastSetIndex, 0, rValue); }
 
 	HRESULT GetValue( int iBucket, double&  rValue ) const  { return GetValueAt(iBucket, 0, rValue); }
 	HRESULT GetValue( int iBucket, CString& rValue ) const  { return GetValueAt(iBucket, 0, rValue); }
@@ -189,8 +195,6 @@ private:
 
 typedef SVVector< SVValueObjectClass* > SVValueObjectArray;
 typedef std::set< SVValueObjectClass* > SVValueObjectClassPtrSet;
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

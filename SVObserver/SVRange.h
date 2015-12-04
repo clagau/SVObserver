@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
-#include "RangeEnum.h"
+#include "ObjectInterfaces\RangeEnum.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////

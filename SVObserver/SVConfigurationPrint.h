@@ -9,13 +9,12 @@
 //* .Check In Date   : $Date:   06 Jan 2015 10:21:34  $
 //******************************************************************************
 
-#ifndef SVCONFIGURATIONPRINT_H
-#define SVCONFIGURATIONPRINT_H
+#pragma once
 
 #pragma region Includes
-#include "SVFileNameClass.h"  // SES 11-Jan-2001
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVInfoStructs.h"
-#pragma region Includes
+#pragma endregion Includes
 
 #pragma region Declarations
 enum
@@ -146,8 +145,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

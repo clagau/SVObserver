@@ -9,8 +9,11 @@
 //* .Check In Date   : $Date:   24 Apr 2013 11:22:48  $
 //******************************************************************************
 
-#ifndef SVTADLGSTATISTICSPAGE_H
-#define SVTADLGSTATISTCISPAGE_H
+#pragma once
+
+#pragma region Includes
+#include "SVUtilityLibrary\SVGUID.h"
+#pragma endregion Includes
 
 class SVStatisticsToolClass;
 class SVToolClass;
@@ -19,8 +22,8 @@ class SVToolSetClass;
 class SVToolAdjustmentDialogStatisticsPageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogStatisticsPageClass( SVToolClass* PTool );
-	~SVToolAdjustmentDialogStatisticsPageClass();
+	SVToolAdjustmentDialogStatisticsPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+	virtual ~SVToolAdjustmentDialogStatisticsPageClass();
 
 	void UpdateStatisticsParameters();
 	void OnOK();
@@ -69,7 +72,6 @@ protected:
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif	//	SVTADLGSTATISTICSPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

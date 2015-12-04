@@ -156,7 +156,7 @@ SVString SVWatershedFilterClass::getMarkerImage() const
 	return retValueString;
 }
 
-HRESULT SVWatershedFilterClass::setMarkerImage(const SVString imageName)
+HRESULT SVWatershedFilterClass::setMarkerImage(const SVString& imageName)
 {
 	HRESULT retVal = E_FAIL;
 	SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass*> ( GetAncestor( SVToolSetObjectType ) );

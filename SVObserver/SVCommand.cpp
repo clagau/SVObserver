@@ -58,7 +58,7 @@
 #include "SVTool.h"
 #include "SVCommandStreamManager.h"
 #include "SVCommandInspectionCollectImageData.h"
-#include "SVCommandInspectionRunOnce.h"
+#include "GuiCommands/InspectionRunOnce.h"
 
 #include "SVOlicenseManager/SVOLicenseManager.h"
 #include "RemoteCommand.h"
@@ -3989,10 +3989,10 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	{
 		if( SVConfigurationObject::GetInspection( W2T(bstrName), pInspection) )
 		{
-			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+			GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+			SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-			hrResult = l_Command.Execute( 120000 );
+			hrResult = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 		}
 	}// end if
 	else

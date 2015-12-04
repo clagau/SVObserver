@@ -66,7 +66,7 @@ public:
 	void ResetPrivateInputInterface();
 	
 	virtual BOOL ConnectAllInputs();
-	virtual HRESULT ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo, SVImageClass* p_psvNewImage );
+	virtual HRESULT ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo, SVImageClass* p_psvNewImage ); // SEJ - why is this virtual ?
 
 	virtual BOOL IsValid();
 
@@ -109,8 +109,6 @@ public:
 
 	virtual HRESULT IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo ); 
 
-	HRESULT FindNextInputImageInfo( SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = NULL );
-
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
 
 #pragma region virtual method (ITaskObject)
@@ -119,6 +117,9 @@ public:
 	virtual SvOi::IOutputInfoListClassPtr GetOutputList( ) const override;
 	virtual SvOi::IOutputInfoListClassPtr GetOutputList(SvOi::IsObjectInfoAllowed func) const override;
 	virtual SvOi::DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const override;
+	virtual HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = nullptr) override;
+	virtual HRESULT ConnectToImage(const SVString& rInputName, const SVGUID& rNewID) override;
+	virtual bool IsObjectValid() const override;
 #pragma endregion virtual method (ITaskObject)
 
 protected:

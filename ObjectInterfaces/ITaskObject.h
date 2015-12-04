@@ -11,6 +11,7 @@
 #include "IObjectAppClass.h"
 #include "IOutputInfoListClass.h"
 #include "SVObjectTypeInfoStruct.h"
+#include "SVObjectLibrary/SVInObjectInfoStruct.h"
 #include "DependencyList.h"
 #pragma endregion Includes
 
@@ -54,6 +55,24 @@ namespace Seidenader
 			/// \returns DependencyList
 			//************************************
 			virtual DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const = 0;
+
+			//************************************
+			/// Return the InObjectInfoStruct for the image input.
+			/// \returns a pointer to a SVInObjectInfoStruct
+			//************************************
+			virtual HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& rpsvFoundInfo, const SVInObjectInfoStruct* psvLastInfo) = 0;
+
+			//************************************
+			/// Connects the Image to the Object.
+			/// \returns the status as a HRESULT
+			//************************************
+			virtual HRESULT ConnectToImage(const SVString& rInputName, const SVGUID& rNewID) = 0;
+
+			//************************************
+			/// Check if the object if valid.
+			/// \returns the valid state as a boolean
+			//************************************
+			virtual bool IsObjectValid() const = 0;
 		};
 	}
 }

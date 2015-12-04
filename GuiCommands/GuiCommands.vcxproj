@@ -19,22 +19,42 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AreAuxiliaryExtentsAvailable.h" />
+    <ClInclude Include="ConnectToObject.h" />
+    <ClInclude Include="ExportMask.h" />
     <ClInclude Include="GetAttributesAllowed.h" />
+    <ClInclude Include="GetAuxSourceImage.h" />
+    <ClInclude Include="GetAvailableAuxSourceImages.h" />
+    <ClInclude Include="GetAvailableObjects.h" />
     <ClInclude Include="GetCompleteObjectName.h" />
     <ClInclude Include="GetDependencies.h" />
+    <ClInclude Include="GetConnectedObjects.h" />
     <ClInclude Include="GetEquation.h" />
+    <ClInclude Include="GetImage.h" />
     <ClInclude Include="GetInstanceIDByDottedName.h" />
+    <ClInclude Include="GetMaskImage.h" />
+    <ClInclude Include="GetMaskData.h" />
     <ClInclude Include="GetObjectName.h" />
+    <ClInclude Include="GetObjectTypeInfo.h" />
     <ClInclude Include="GetPPQObjectName.h" />
     <ClInclude Include="GetPPQVariablesNames.h" />
+    <ClInclude Include="GetReferenceImage.h" />
+    <ClInclude Include="GetResultImage.h" />
     <ClInclude Include="GetTaskObjectInstanceID.h" />
     <ClInclude Include="GetOutputList.h" />
+    <ClInclude Include="ImportMask.h" />
+    <ClInclude Include="InspectionRunOnce.h" />
+    <ClInclude Include="IsValid.h" />
     <ClInclude Include="ResetObject.h" />
+    <ClInclude Include="SaveImage.h" />
+    <ClInclude Include="SetAuxSourceImage.h" />
     <ClInclude Include="SetDefaultInputs.h" />
     <ClInclude Include="SetEquation.h" />
+    <ClInclude Include="SetMaskData.h" />
     <ClInclude Include="TaskObjectGetEmbeddedValues.h" />
     <ClInclude Include="TaskObjectSetEmbeddedValues.h" />
     <ClInclude Include="ValidateEquation.h" />
+    <ClInclude Include="ValueObjectGetEnums.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A505841E-F43F-472B-B6E0-D1110479621C}</ProjectGuid>

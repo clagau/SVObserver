@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:07:42  $
 //******************************************************************************
 
-#ifndef SVOIPDOCCLASS_H
-#define SVOIPDOCCLASS_H
+#pragma once
 
-#include "SVFileNameClass.h"
+#pragma region Includes
+#include "SVOMFCLibrary/SVFileNameClass.h"
+#pragma endregion Includes
 
 class SVOIPDocClass : public COleServerDoc
 {
@@ -53,8 +54,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

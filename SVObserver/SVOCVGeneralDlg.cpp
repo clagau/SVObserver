@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:03:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCVDialog.h"
 #include "SVOCVGeneralDlg.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVOCVAnalyzerResult.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -138,7 +140,6 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 	UpdateData( TRUE );
 
 	svfncFileName.SetFullFileName( m_fontFilename );
-
 	if ( svfncFileName.SelectFile() )
 	{
 		CString csTemp = svfncFileName.GetFullFileName();
@@ -206,7 +207,6 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 	UpdateData( TRUE );
 
 	svfncFileName.SetFullFileName( m_fontFilename );
-
 	if ( svfncFileName.SelectFile() )
 	{
 		CString csTemp = svfncFileName.GetFullFileName();
@@ -275,7 +275,6 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 	UpdateData( TRUE );
 
 	svfncFileName.SetFullFileName( m_fontFilename );
-
 	if ( svfncFileName.SelectFile() )
 	{
 		CString csTemp = svfncFileName.GetFullFileName();

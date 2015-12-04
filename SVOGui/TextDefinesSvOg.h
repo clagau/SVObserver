@@ -16,6 +16,8 @@ namespace Seidenader { namespace SVOGui
 	const TCHAR* const GlobalConflictHeader[] = {_T( "" ), _T( "Current Name" ), _T( "Current Type" ), _T( "Current Value" ), _T(""),  _T( "Imported name" ), _T( "Imported Type" ), _T( "Imported Value" ) };
 	const TCHAR* const RegExp_AllRealNumbers = _T( "[-+]?([0-9]{1,16})([.][0-9]{1,6})?" );
 	const TCHAR* const RegExp_Name = _T( "[a-zA-Z][0-9a-zA-Z_ ]*" );
+	const TCHAR* const RangeValue_EmptyString = _T( "Empty String in %s." );
+	const TCHAR* const RangeValue_WrongRange = _T( "%s must between %d and %d." );
 } /* namespace SVOGui */ } /* namespace Seidenader */
 
 namespace SvOg = Seidenader::SVOGui;

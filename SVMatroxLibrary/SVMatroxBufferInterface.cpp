@@ -1337,7 +1337,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo( SV
 	{
 		p_rBitmapInfo.Assign( *l_pBitmapInfo );
 	}
-	else if( !( p_rBuffer.empty() ) )
+	else if( !( p_rBuffer.empty() ) ) // no DIB available...
 	{
 		long l_Width = 0;
 		long l_Height = 0;
@@ -1380,7 +1380,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo( SV
 
 		if( l_Status  == SVMEE_STATUS_OK )
 		{
-			p_rBitmapInfo = SVBitmapInfo( static_cast< long >( l_Width ), static_cast< long >( l_Height ), l_BitCount, SVBitmapInfo::GetDefaultColorTable( l_BitCount ) );
+			p_rBitmapInfo = SVBitmapInfo( static_cast< long >( l_Width ), static_cast< long >( -l_Height ), l_BitCount, SVBitmapInfo::GetDefaultColorTable( l_BitCount ) );
 		}
 	}
 	else

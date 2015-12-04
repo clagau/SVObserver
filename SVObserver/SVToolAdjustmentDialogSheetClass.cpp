@@ -12,42 +12,42 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVOGui\ISVPropertyPageDialog.h"
-#include "SVFormulaEditorPage.h"
-#include "SVCylindricalWarpDlg.h"
-#include "SVExternalToolDlg.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
+#include "SVTool.h"
+#include "SVCylindricalWarpDlg.h"
+#include "SVExternalToolDlg.h"
 #include "SVPerspectiveWarpDlg.h"
 #include "SVTADlgAcquisitionSourcePage.h"
 #include "SVTADlgColorToolPage.h"
-#include "SVTADlgFileImageSourcePage.h"
-#include "SVTADlgGeneralPage.h"
 #include "SVTADlgLUTPage.h"
-#include "SVTADlgPassFailPage.h"
 #include "SVTADlgPolarTransformPage.h"
 #include "SVTADlgRemoteInputToolPage.h"
 #include "SVTADlgRotationPage.h"
 #include "SVTADlgStatisticsPage.h"
 #include "SVTADlgThresholdPage.h"
 #include "SVTADlgTransformationLearnPage.h"
-#include "SVTADlgTransformImagePage.h"
 #include "SVTADlgTranslationPage.h"
-#include "SVTool.h"
-#include "SVToolAdjustmentDialogAnalyzerPageClass.h"
-#include "SVOGui\SVToolAdjustmentDialogFilterPageClass.h"
-#include "SVOGui\TADialogRingBufferParameterPage.h"
-#include "SVToolAdjustmentDialogImagePageClass.h"
 #include "SVToolAdjustmentDialogLinearSpecialPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
-#include "SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVToolArchivePage.h"
 #include "SVToolAdjustmentDialogCommentPageClass.h"
 #include "SVTADlgTranslationShiftPage.h"
 #include "SVTADlgTranslationResizePage.h"
 #include "SVToolAdjustmentDialogSizePage.h"
+#include "SVToolAdjustmentDialogAnalyzerPageClass.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
+#include "SvOGui\SVTADlgGeneralPage.h"
+#include "SVOGui\SVTADlgPassFailPage.h"
+#include "SvOGui\SVFormulaEditorPage.h"
+#include "SVOGui\SVToolAdjustmentDialogFilterPageClass.h"
+#include "SVOGui\TADialogRingBufferParameterPage.h"
+#include "SVOGui\SVToolAdjustmentDialogImagePageClass.h"
+#include "SVOGui\SVToolAdjustmentDialogTwoImagePage.h"
+#include "SVOGui\SVTADlgTransformImagePage.h"
+#include "SVOGui\SVTADlgFileImageSourcePage.h"
+#include "SVOGui\GlobalAndToolSetSelector.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "GlobalAndToolSetSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -110,7 +110,7 @@ SVToolAdjustmentDialogSheetClass::~SVToolAdjustmentDialogSheetClass()
 
 void SVToolAdjustmentDialogSheetClass::addPages()
 {
-	SVFormulaEditorPageClass* pConditionalDlg = new SVFormulaEditorPageClass( m_InspectionID, m_TaskObjectID, new FormulaController(m_InspectionID, m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType, SVConditionalObjectType), false), true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING );
+	SvOg::SVFormulaEditorPageClass* pConditionalDlg = new SvOg::SVFormulaEditorPageClass( m_InspectionID, m_TaskObjectID, new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType, SVConditionalObjectType), false), true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING );
 
 	// Get LUT Operator...RO_22Mar2000
 	BOOL bHasLUT = FALSE;
@@ -135,167 +135,170 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	const SVObjectTypeInfoStruct& rToolType = GetTool()->GetObjectInfo().ObjectTypeInfo;
 	switch( rToolType.SubType )
 	{
-		case SVToolAcquisitionObjectType:
-			AddPage( new SVToolAdjustmentDialogAcquisitionSourcePageClass( this ) );
-			// NOTE:
-			// No Conditional Execution for Acquisition Tool !!!!
-			delete pConditionalDlg;
-			pConditionalDlg = nullptr;
-			break;
+	case SVToolAcquisitionObjectType:
+		AddPage( new SVToolAdjustmentDialogAcquisitionSourcePageClass( m_InspectionID, m_TaskObjectID, this ) );
+		// NOTE:
+		// No Conditional Execution for Acquisition Tool !!!!
+		delete pConditionalDlg;
+		pConditionalDlg = nullptr;
+		// NOTE:
+		// No General page for acquisition tool!
+		// AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
+		break;
 
 		case SVToolImageObjectType:	// Image Tool
-			AddPage( new SVToolAdjustmentDialogTwoImagePageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogTwoImagePageClass( m_InspectionID, m_TaskObjectID ) );
 			if(bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(this));
+				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
 			}
 			if( bHasLUT )
 			{
 				// New image tool has also this pages...RO_22Mar2000
-				AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( *GetTool() ) );
-				AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
-				AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
+				AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( m_InspectionID, m_TaskObjectID ) );
+				AddPage( new SVToolAdjustmentDialogThresholdPageClass( m_InspectionID, m_TaskObjectID, this ) );
+				AddPage( new SVToolAdjustmentDialogMaskPageClass( m_InspectionID, m_TaskObjectID ) );
 				AddPage( new SVToolAdjustmentDialogLUTPageClass( m_InspectionID, m_TaskObjectID, this ) );
 			}
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVWindowToolObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
 			if(bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(this));
+				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
 			}
-			AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( *GetTool() ) );
-			AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SVToolAdjustmentDialogThresholdPageClass( m_InspectionID, m_TaskObjectID, this ) );
+			AddPage( new SVToolAdjustmentDialogMaskPageClass( m_InspectionID, m_TaskObjectID ) );
 			if( bHasLUT )
 			{
 				// To be compatible to old Window Tool...RO_22Mar2000
 				AddPage( new SVToolAdjustmentDialogLUTPageClass( m_InspectionID, m_TaskObjectID, this ) );
 			}
-			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( this ) );
+			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVLinearToolObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
 			if(bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(this));
+				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
 			}
-			AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( *GetTool() ) );
-			AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SVToolAdjustmentDialogThresholdPageClass( m_InspectionID, m_TaskObjectID, this ) );
+			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( m_InspectionID, m_TaskObjectID, this ) );
 			//add the new page.
-			AddPage( new SVToolAdjustmentDialogLinearSpecialPageClass(this) );
+			AddPage( new SVToolAdjustmentDialogLinearSpecialPageClass(m_InspectionID, m_TaskObjectID, this) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVToolLoadImageObjectType:
-			AddPage( new SVToolAdjustmentDialogFileImageSourcePageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogFileImageSourcePageClass( m_InspectionID, m_TaskObjectID ) );
 			if(bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(this));
+				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
 			}
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVToolArchiveObjectType:   // Archive tool
-			AddPage( new SVToolAdjustmentArchivePage( this) ); 
+			AddPage( new SVToolAdjustmentArchivePage( m_InspectionID, m_TaskObjectID, this) ); 
 			AddPage( pConditionalDlg );
 			break;
 
 		case SVMathToolObjectType:
 			{
 				SVObjectTypeInfoStruct info(SVEquationObjectType, SVMathEquationObjectType);
-				AddPage( new SVFormulaEditorPageClass( m_InspectionID, m_TaskObjectID, new FormulaController(m_InspectionID, m_TaskObjectID, info), false ) );
-				AddPage( new SVToolAdjustmentDialogPassFailPageClass( m_InspectionID, m_TaskObjectID) );
+				AddPage( new SvOg::SVFormulaEditorPageClass( m_InspectionID, m_TaskObjectID, new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, info), false ) );
+				AddPage( new SvOg::SVToolAdjustmentDialogPassFailPageClass( m_InspectionID, m_TaskObjectID) );
 				AddPage( pConditionalDlg );
 			}
 			break;
 
 		case SVStatisticsToolObjectType:
-			AddPage( new SVToolAdjustmentDialogStatisticsPageClass( GetTool() ) );
+			AddPage( new SVToolAdjustmentDialogStatisticsPageClass( m_InspectionID, m_TaskObjectID ) );
 			AddPage( pConditionalDlg );
 			break;
 
 		case SVShiftToolObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
 			if(bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(this));
+				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
 			}			
-			AddPage( new SVTADlgTranslationShiftPageClass( this ) );
+			AddPage( new SVTADlgTranslationShiftPageClass( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVResizeToolObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			if(bHasSize)
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
+			if (bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(this));
+				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
 			}
-			AddPage( new SVTADlgTranslationResizePage( this ) );
+			AddPage( new SVTADlgTranslationResizePage( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVTransformationToolObjectType:
-			AddPage( new SVToolAdjustmentDialogTransformImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogTranslationPageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogRotationPageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogTransformationLearnPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogTransformImagePageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SVToolAdjustmentDialogTranslationPageClass( m_InspectionID, m_TaskObjectID, this ) );
+			AddPage( new SVToolAdjustmentDialogRotationPageClass( m_InspectionID, m_TaskObjectID, this ) );
+			AddPage( new SVToolAdjustmentDialogTransformationLearnPageClass( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVPolarTransformationToolObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogPolarTransformPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SVToolAdjustmentDialogPolarTransformPageClass( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVColorToolObjectType:
-			AddPage( new SVTADlgColorToolPageClass( GetTool() ) );
+			AddPage( new SVTADlgColorToolPageClass( m_InspectionID, m_TaskObjectID ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVToolCylindricalObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVCylindricalWarpDlg( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SVCylindricalWarpDlg( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVPerspectiveToolObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVPerspectiveWarpDlg( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SVPerspectiveWarpDlg( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVExternalToolObjectType:
-			AddPage( new SVExternalToolDlg( this ));
+			AddPage( new SVExternalToolDlg( m_InspectionID, m_TaskObjectID, this ));
 			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
 
 		case SVRemoteInputToolObjectType:
-			AddPage( new SVTADlgRemoteInputToolPage( this ));
+			AddPage( new SVTADlgRemoteInputToolPage( m_InspectionID, m_TaskObjectID, this ) );
 			AddPage( pConditionalDlg );
 			break;
 
 		case SVRingBufferToolObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SvOg::TADialogRingBufferParameterPage( dynamic_cast<SvOi::IRingBufferTool&>(*GetTool()), boost::bind(GlobalAndToolSetSelector, _1, _2) ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SvOg::TADialogRingBufferParameterPage( dynamic_cast<SvOi::IRingBufferTool&>(*GetTool()), boost::bind(SvOg::GlobalAndToolSetSelector, _1, _2) ) );
 			AddPage( pConditionalDlg );
 			break;
 
@@ -361,7 +364,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			CPropertyPage* pPage = GetPage(i);
 			if( pPage && pPage->GetSafeHwnd() ) 
 			{
-				if( SVFormulaEditorPageClass* l_pFormulaEditor = dynamic_cast <SVFormulaEditorPageClass*> ( pPage ) )
+				if( SvOg::SVFormulaEditorPageClass* l_pFormulaEditor = dynamic_cast <SvOg::SVFormulaEditorPageClass*> ( pPage ) )
 				{
 					if( !l_pFormulaEditor->validateAndSetEquation() )
 					{

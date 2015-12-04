@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-
 #include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
@@ -20,13 +19,11 @@
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVRemoteFontManager.h"
 #include "SVOIntelRAIDStatusClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
-
 #include "SVConfigurationLibrary/SVObserverEnums.h"
 #pragma endregion Includes
 

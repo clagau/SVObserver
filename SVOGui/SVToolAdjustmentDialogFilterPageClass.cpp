@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   24 Oct 2014 11:45:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogFilterPageClass.h"
 
@@ -23,6 +24,7 @@
 #include "SVThickeningFilterDlg.h"
 #include "Custom2FilterDlg.h"
 #include "SVWatershedFilterDlg.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -46,13 +48,12 @@ namespace Seidenader
 			//}}AFX_MSG_MAP
 		END_MESSAGE_MAP()
 
-		SVToolAdjustmentDialogFilterPageClass::SVToolAdjustmentDialogFilterPageClass( SvOi::ITaskObjectListClass& rTool) 
-			: CPropertyPage(SVToolAdjustmentDialogFilterPageClass::IDD)
-			,availableFilters( SvOi::createSVClassInfoStructList() )
-			,m_rTool(rTool)
+		SVToolAdjustmentDialogFilterPageClass::SVToolAdjustmentDialogFilterPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
+		: CPropertyPage(SVToolAdjustmentDialogFilterPageClass::IDD)
+		, availableFilters( SvOi::createSVClassInfoStructList() )
+		, m_rTool(*(dynamic_cast<SvOi::ITaskObjectListClass *>(SvOi::getObject(rTaskObjectID))))
+		, m_pUnaryImageOperatorList(nullptr)
 		{
-			m_pUnaryImageOperatorList = nullptr;
-
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVUnaryImageOperatorListObjectType;
 
@@ -87,6 +88,7 @@ namespace Seidenader
 
 			return l_hrOk;
 		}
+		
 		bool SVToolAdjustmentDialogFilterPageClass::setImages()
 		{
 			ISVImage* pImage = m_rTool.getFirstImage();
@@ -413,7 +415,6 @@ namespace Seidenader
 				refresh();
 			}
 		}
-
 	}  //end namespace SVOGUI
 }  //end namespace Seidenader
 

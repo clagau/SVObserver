@@ -9,9 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:36:38  $
 //******************************************************************************
 
-// SVToolAdjustmentDialogLinearSpecialPageClass.cpp : implementation file
-//
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogLinearSpecialPageClass.h"
 
@@ -19,6 +17,7 @@
 #include "SVIPDoc.h"
 #include "SVLinearToolClass.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,21 +25,15 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVToolAdjustmentDialogLinearSpecialPageClass property page
 
-IMPLEMENT_DYNCREATE(SVToolAdjustmentDialogLinearSpecialPageClass, CPropertyPage)
-
-SVToolAdjustmentDialogLinearSpecialPageClass::SVToolAdjustmentDialogLinearSpecialPageClass( SVToolAdjustmentDialogSheetClass* PParent ) : CPropertyPage(SVToolAdjustmentDialogLinearSpecialPageClass::IDD)
+SVToolAdjustmentDialogLinearSpecialPageClass::SVToolAdjustmentDialogLinearSpecialPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* PParent ) 
+: CPropertyPage(SVToolAdjustmentDialogLinearSpecialPageClass::IDD)
+, m_pParentDialog(PParent)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogLinearSpecialPageClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-
-	m_pParentDialog = PParent;
-
 }
-
 
 SVToolAdjustmentDialogLinearSpecialPageClass::~SVToolAdjustmentDialogLinearSpecialPageClass()
 {

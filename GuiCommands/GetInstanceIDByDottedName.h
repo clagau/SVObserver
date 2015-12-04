@@ -7,9 +7,12 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include <boost/noncopyable.hpp>
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include <Guiddef.h>
+#include "ObjectInterfaces/IObjectManager.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -25,8 +28,16 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
-				SVObjectManagerClass& rMgr = SVObjectManagerClass::Instance();
-				rMgr.GetObjectByDottedName(m_Name.c_str(), m_InstanceID);
+
+				SvOi::IObjectClass* pObject = SvOi::getObjectByDottedName(m_Name.c_str());
+				if (pObject)
+				{
+					m_InstanceID = pObject->GetUniqueObjectID();
+				}
+				else
+				{
+					hr = E_POINTER;
+				}
 				return hr;
 			}
 			bool empty() const { return false; }

@@ -9,28 +9,25 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:05:10  $
 //******************************************************************************
 
-#ifndef SVCYLINDRICALWARPDLG_H_
-#define SVCYLINDRICALWARPDLG_H_
 #pragma once
 
+#pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVValueObjectImpl.h"
 
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 
-/////////////////////////////////////////////////////////////////////////////
-// SVCylindricalWarpDlg dialog
-
 class SVCylindricalWarpDlg : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-// Construction
 public:
 	long m_lLastWarpType;
-	SVCylindricalWarpDlg( SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
 
-	virtual HRESULT SetInspectionData();
+	SVCylindricalWarpDlg( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
+	virtual ~SVCylindricalWarpDlg();
+	virtual HRESULT SetInspectionData() override;
 
 // Dialog Data
 	//{{AFX_DATA(SVCylindricalWarpDlg)
@@ -39,7 +36,6 @@ public:
 	SVEnumerateComboClass	m_cbOrientation;
 	double	m_dWarpAngle;
 	//}}AFX_DATA
-
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -70,8 +66,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // #ifndef SVCYLINDRICALWARPDLG_H_
 
 //******************************************************************************
 //* LOG HISTORY:

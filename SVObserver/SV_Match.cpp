@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:18:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SV_match.h"
 #include "SVOCRDialog.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVOCRAnalyzerResult.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -231,7 +233,6 @@ void SVOCRMatchDlg::OnMatchStringFileBrowseCmd()
 
 	m_matchFilenameEdit.GetWindowText( csTemp );
 	svfncFileName.SetFullFileName( csTemp );
-
 	if ( svfncFileName.SelectFile() )
 	{
 		AfxGetApp()->WriteProfileString( _T( "Settings" ),

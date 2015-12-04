@@ -9,20 +9,20 @@
 //* .Check In Date   : $Date:   01 Oct 2013 14:31:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <assert.h> // (VS2010)
 #include "SVImageObjectClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVGlobal.h"
 #include "SVImageProcessingClass.h"
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManagerResource.h"  // Use SvStl::MessageMgrDisplayAndNotify
 #include "ObjectInterfaces\ErrorNumbers.h"
-
-
+#pragma endregion Includes
 
 SVImageObjectClass::SVImageObjectClass()
 : m_LastUpdate()

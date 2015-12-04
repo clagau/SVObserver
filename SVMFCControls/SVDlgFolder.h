@@ -10,7 +10,9 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVFileDialog.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {

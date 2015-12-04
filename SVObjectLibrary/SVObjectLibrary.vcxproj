@@ -240,6 +240,8 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="SVClsids.cpp" />
+    <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp" />
     <ClCompile Include="SVInObjectInfoStruct.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -411,6 +413,8 @@
     <ClInclude Include="SVAnalyzerLevelCreateStruct.h" />
     <ClInclude Include="SVClassRegisterClass.h" />
     <ClInclude Include="SVClassRegisterListClass.h" />
+    <ClInclude Include="SVClsids.h" />
+    <ClInclude Include="SVGetObjectDequeByTypeVisitor.h" />
     <ClInclude Include="SVGetObjectListVisitor.h" />
     <ClInclude Include="SVInObjectInfoStruct.h" />
     <ClInclude Include="SVInputInfoListClass.h" />

@@ -12,7 +12,7 @@
 #include "afxdialogex.h"
 #include "ToolSizeAdjustTask.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVFormulaEditorSheet.h"
+#include "SvOGui/SVFormulaEditorSheet.h"
 #include "EQAdjustSizePositionX.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "EQAdjustSize.h"
@@ -33,10 +33,10 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNAMIC(SVToolAdjustmentDialogSizePage, CPropertyPage)
 
-SVToolAdjustmentDialogSizePage::SVToolAdjustmentDialogSizePage(SVToolAdjustmentDialogSheetClass* Parent)
+SVToolAdjustmentDialogSizePage::SVToolAdjustmentDialogSizePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVToolAdjustmentDialogSizePage::IDD)
 , m_pParentDialog(Parent)
-, m_pTool(nullptr) //SEJ99 - needs to go
+, m_pTool(nullptr)
 {
 	for( int i =0 ; i < ToolSizeAdjustTask::TSValuesCount; i++)
 	{
@@ -92,10 +92,8 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		SetTaskObject( m_pTool );
 		// Get ToolSizeAdjustTask 
 		SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-		//ToolSizeAdjustTaskInfo.EmbeddedID = ToolSizeAdjustTaskGuid;
 		ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
 		
-		//SEJ99 - this needs to change
 		m_pToolSizeAdjustTask = reinterpret_cast<ToolSizeAdjustTask*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&ToolSizeAdjustTaskInfo) ));
 		if( m_pToolSizeAdjustTask )
 		{
@@ -116,7 +114,6 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 			}
 		}
 		
-		//SEJ99 - this needs to change
 		// Get the Evaluate Objects..
 		SVObjectTypeInfoStruct evaluateObjectInfo;
 		evaluateObjectInfo.ObjectType = SVEquationObjectType;
@@ -324,15 +321,14 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(ToolSizeAdjustTask
 	}
 	if (m_pEQAdjustSize[mode])
 	{
-		CString strCaption = m_pEQAdjustSize[mode]->GetName(); //SEJ99 - This needs to change
+		CString strCaption = m_pEQAdjustSize[mode]->GetName();
 		strCaption += _T(" Formula");
 
 		SVObjectTypeInfoStruct info(m_pEQAdjustSize[mode]->GetObjectType(), m_pEQAdjustSize[mode]->GetObjectSubType());
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pEQAdjustSize[mode]->GetUniqueObjectID(); //SEJ99 - This needs to change
-		//MEC next line does not work after closing the Editor the  ResetObject from toolSizeAdjust is called but not from the Friends and not from Equation class   
-		//const GUID& rObjectID = m_pParentDialog->GetToolID(); //SEJ99 - maybe - test!  
-		SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		const GUID& rObjectID = m_pEQAdjustSize[mode]->GetUniqueObjectID();
+
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
 		dlg.DoModal();
 		Refresh(true);
 	}

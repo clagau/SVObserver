@@ -16,7 +16,7 @@
 #include "StdAfx.h"
 #include <afxctl.h>
 #include "PictureDisplay.h"
-
+#include "SVColor.h"
 //for image copy
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVOMFCLibrary\DisplayHelper.h"
@@ -33,21 +33,16 @@ namespace Seidenader
 #pragma region Contructor
 		PictureDisplay::~PictureDisplay()
 		{
-			for (unsigned int i = 0; i < m_dibVector.size(); i++)
-			{
-				m_dibVector[i]->DeleteObject();
-				delete m_dibVector[i];
-			}
-			m_dibVector.clear();
 		}
 #pragma endregion Contructor
 
 #pragma region Public Methods
+		// only called for mask and threshold - SEJ888 - needs to go!
 		void PictureDisplay::setImageFromParent( SvOi::ISVImage* pImage, long tabNumber )
 		{
 			if (nullptr != pImage)
 			{
-				SvOi::MatroxImageSmartHandlePointer data;
+				SvOi::MatroxImageSmartHandlePtr data;
 				if( pImage->GetImageType() == SVImageTypePhysical )
 				{
 					data = pImage->GetParentImageInterface()->getImageData();
@@ -64,74 +59,74 @@ namespace Seidenader
 		{
 			if (nullptr != pImage)
 			{
-				SvOi::MatroxImageSmartHandlePointer data = pImage->getImageData();
+				SvOi::MatroxImageSmartHandlePtr data = pImage->getImageData();
 				setImage( data.get(), tabNumber );
 			}
 		}
 
+		//SEJ888 - needs to go!
 		void PictureDisplay::setImage( const SvOi::IMatroxImageData *imageData, long tabNumber )
 		{
-			ASSERT( static_cast< long >( m_dibVector.size() ) > tabNumber );
-
 			if( nullptr != imageData && !( imageData->empty() ) )
 			{
 				SVBitmapInfo dibInfo = imageData->getBitmapInfo();
 				BYTE* pMilBuffer = static_cast< BYTE* >( imageData->getBufferAddress() );
-
 				if (nullptr != pMilBuffer)
 				{
-					//copy the image buffer
+					//copy the image buffer - because the UnaryImageOperatorList/StdImageOperatorList does not support DIB!
 					SVMatroxBuffer newBuffer;
 					SVMatroxBuffer oldBuffer;
 					imageData->GetBuffer(oldBuffer);
 
-					SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Create( newBuffer, oldBuffer );
-					if( S_OK == l_Code )
+					SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
+					if (S_OK == l_Code)
 					{
-						l_Code = SVMatroxBufferInterface::CopyBuffer( newBuffer, oldBuffer );
-						l_Code = SVMatroxBufferInterface::GetBitmapInfo( dibInfo, newBuffer );
-						l_Code = SVMatroxBufferInterface::GetHostAddress( &pMilBuffer, newBuffer );
+						l_Code = SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);
+						l_Code = SVMatroxBufferInterface::GetBitmapInfo(dibInfo, newBuffer);
+						l_Code = SVMatroxBufferInterface::GetHostAddress(&pMilBuffer, newBuffer);
 					}
-
-					if( nullptr != pMilBuffer && !( dibInfo.empty() ) )
+				
+					if (nullptr != pMilBuffer && !dibInfo.empty())
 					{
-						m_dibVector[tabNumber]->DeleteObject();
-
-						// @WARNING:  Result of LoadDIBitmap is never checked.
-						HRESULT hr = m_dibVector[tabNumber]->LoadDIBitmap( dibInfo.GetBitmapInfo(), pMilBuffer );
+						SVBitmap bitmap;
+						HRESULT hr = bitmap.LoadDIBitmap(dibInfo.GetBitmapInfo(), pMilBuffer);
+					
+						if (S_OK == hr)
+						{
+							//convert the hbitmap to an IPictureDisp for the activeX-control.
+							CPictureHolder pic;
+							BOOL bRet = pic.CreateFromBitmap(static_cast<HBITMAP>(bitmap.Detach()));
+							if (bRet)
+							{
+								LPPICTUREDISP pDispatch = pic.GetPictureDispatch();
+								setImage(pDispatch, tabNumber);
+							}
+						}
+						newBuffer.clear();
 					}
-
-					//convert the hbitmap to a useable dispatch for the activeX-control.
-					CPictureHolder pic;
-					BOOL bRet = pic.CreateFromBitmap( static_cast< HBITMAP >( *m_dibVector[ tabNumber ] ) );
-					if ( bRet )
-					{
-						LPDISPATCH pDispatch = pic.GetPictureDispatch();
-
-						//color is ignored when dynamic adjustment of size is active
-						COLORREF color = SVColor::WhiteSmoke;
-
-						SetPicture( tabNumber, pDispatch, color );
-						pDispatch->Release();
-					}
-					newBuffer.clear();
 				}
 			}
 		}
 
+		// This is the preferred method
+		void PictureDisplay::setImage(IPictureDisp* pImage, long tabNumber)
+		{
+			CComPtr<IPictureDisp> pic(pImage);
+			//color is ignored when dynamic adjustment of size is active
+			COLORREF color = SVColor::WhiteSmoke;
+			SetPicture(tabNumber, pic, color);
+		}
+
 		SCODE PictureDisplay::AddTab( LPCTSTR Text )
 		{
-			long handle =0;
-			m_dibVector.push_back(new SVBitmap);
+			long handle = 0;
 			return CDSVPictureDisplay::AddTab(Text, &handle);
 		}
 
 		SCODE PictureDisplay::AddTab( LPCTSTR Text, LONG *handle )
 		{
-			m_dibVector.push_back(new SVBitmap);
 			return CDSVPictureDisplay::AddTab(Text, handle);
 		}
-
 
 		SCODE PictureDisplay::AddOverlay( long Tab, VARIANT* ParameterList, VARIANT* ParameterValues, long* pHandle )
 		{

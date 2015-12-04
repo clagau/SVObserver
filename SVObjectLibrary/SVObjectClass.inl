@@ -47,14 +47,6 @@ inline const SVObjectTypeEnum& SVObjectClass::GetObjectType() const
 #pragma endregion virtual method (IObjectClass)
 
 /*
-This method returns the object's subtype.
-*/
-inline long SVObjectClass::GetObjectSubType() const
-{
-	return outObjectInfo.ObjectTypeInfo.SubType;
-}
-
-/*
 This metthod return the pointer to the owner object.
 */
 inline SVObjectClass* SVObjectClass::GetOwner() const

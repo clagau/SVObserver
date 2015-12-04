@@ -1852,15 +1852,6 @@ HRESULT SVImageClass::LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svTo
 	return l_hrOk;
 }
 
-long SVImageClass::getPixelDepth()
-{
-	long pixelDepth;
-
-	m_ImageInfo.GetImageProperty( SVImagePropertyPixelDepth, pixelDepth);
-
-	return pixelDepth;
-}
-
 /*
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
@@ -1878,10 +1869,10 @@ SVImageClass* SVImageClass::GetRootImage()
 	return pRootImage;
 }
 
-CString SVImageClass::getDisplayedName() const
+SVString SVImageClass::getDisplayedName() const
 {
 	const SVObjectTypeInfoStruct& rObjectTypeInfo = GetObjectInfo().ObjectTypeInfo;
-	CString strName;
+	SVString strName;
 	switch( rObjectTypeInfo.SubType )
 	{
 	case SVRGBMainImageObjectType:	// RGBMain image - Not selectable
@@ -2815,10 +2806,10 @@ SvOi::ISVImage* SVImageClass::GetParentImageInterface() const
 	return GetParentImage();
 }
 
-SvOi::MatroxImageSmartHandlePointer SVImageClass::getImageData()
+SvOi::MatroxImageSmartHandlePtr SVImageClass::getImageData()
 {
 	SVSmartHandlePointer handle;
-	SvOi::MatroxImageSmartHandlePointer dataSmartPointer;
+	SvOi::MatroxImageSmartHandlePtr dataSmartPointer;
 
 
 	if ((SVImageTypeLogical == m_ImageType) ||
@@ -2850,10 +2841,10 @@ SvOi::MatroxImageSmartHandlePointer SVImageClass::getImageData()
 	return dataSmartPointer;
 }
 
-SvOi::MatroxImageSmartHandlePointer SVImageClass::getParentImageData()
+SvOi::MatroxImageSmartHandlePtr SVImageClass::getParentImageData()
 {
 	SVSmartHandlePointer handle;
-	SvOi::MatroxImageSmartHandlePointer dataSmartPointer;
+	SvOi::MatroxImageSmartHandlePtr dataSmartPointer;
 	if (S_OK == GetParentImageHandle(handle))
 	{
 		MatroxImageData *data = new MatroxImageData(handle);
@@ -2862,6 +2853,74 @@ SvOi::MatroxImageSmartHandlePointer SVImageClass::getParentImageData()
 	}
 	return dataSmartPointer;
 }
+
+SvOi::IObjectClass* SVImageClass::getOwner() const
+{
+	return m_ImageInfo.GetOwner();
+}
+
+long SVImageClass::getBands() const
+{
+	long bandNumber = 0;
+	m_ImageInfo.GetImageProperty(SVImagePropertyBandNumber, bandNumber);
+	return bandNumber;
+}
+
+long SVImageClass::getPixelDepth() const
+{
+	long pixelDepth = 0;
+	m_ImageInfo.GetImageProperty(SVImagePropertyPixelDepth, pixelDepth);
+	return pixelDepth;
+}
+
+HRESULT SVImageClass::Save(const SVString& rFilename)
+{
+	HRESULT hr = S_OK;
+	
+	// Get output buffer handle...
+	SVSmartHandlePointer hBuffer;
+	if (GetImageHandle(hBuffer) && !hBuffer.empty())
+	{
+		SVImageBufferHandleImage MilHandle;
+		hBuffer->GetData(MilHandle);
+
+		SVString ext;
+		size_t pos = rFilename.find_last_of(".");
+		if (SVString::npos != pos)
+		{
+			ext = rFilename.substr(pos, rFilename.size() - pos);
+		}
+		SVMatroxFileTypeEnum efileformat = SVFileUnknown;
+		if (0 == ext.CompareNoCase(_T(".mim")))
+		{
+			efileformat = SVFileMIL;
+		}
+		else if (0 == ext.CompareNoCase(_T(".tif")))
+		{
+			efileformat = SVFileTiff;
+		}
+		else if (0 == ext.CompareNoCase(_T(".bmp")))
+		{
+			efileformat = SVFileBitmap;
+		}
+	
+		if (efileformat != SVFileUnknown)
+		{
+			SVMatroxString strPath = rFilename.ToString();
+			SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Export(MilHandle.GetBuffer(), strPath, efileformat);
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+	else
+	{
+		hr = E_HANDLE;
+	}
+	return hr;
+}
+
 #pragma endregion virtual method (ISVImage)
 
 BOOL SVImageClass::OnValidate()

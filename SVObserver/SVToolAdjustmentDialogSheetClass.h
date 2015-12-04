@@ -11,7 +11,10 @@
 
 #pragma once
 
-#include "FormulaController.h"
+#pragma region Includes
+#include "SvOGui/FormulaController.h"
+#pragma endregion Includes
+
 class SVIPDoc;
 class SVToolClass;
 
@@ -40,11 +43,10 @@ public:
 	virtual ~SVToolAdjustmentDialogSheetClass();
 
 	SVIPDoc* GetIPDoc() const;
-	SVToolClass* GetTool() const; //SEJ99 - this needs to go
+	SVToolClass* GetTool() const;
 	const GUID& GetInspectionID() const;
 	const GUID& GetToolID() const;
 	
-	//SEJ99 - This needs to go
 	template< typename SVToolType >
 	HRESULT GetToolByType( SVToolType*& rpTool ) const
 	{
@@ -68,7 +70,7 @@ private:
 	GUID m_InspectionID;
 	GUID m_TaskObjectID;
 
-	typedef SVSharedPtr<FormulaController> ControllerPtr;
+	typedef SVSharedPtr<SvOg::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;
 };
 

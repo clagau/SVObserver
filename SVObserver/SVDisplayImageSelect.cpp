@@ -13,7 +13,7 @@
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 

@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:56:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCRGrayDialog.h"
 #include "SVOCRGrayGeneralDlg.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVOCRGrayAnalyzerResult.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -136,7 +138,6 @@ void SVOCRGrayGeneralDlg::OnFontBrowseCmd()
 	UpdateData( TRUE );
 
 	svfncFileName.SetFullFileName( m_fontFilename );
-
 	if ( svfncFileName.SelectFile() )
 	{
 		CString csTemp = svfncFileName.GetFullFileName();

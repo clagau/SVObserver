@@ -119,7 +119,7 @@ void SVImageToolClass::init()
 			// Activated by default!
 			// We don't want to use this operator by default.
 			// So deactivate it...
-			pThresholdOperator->GetTresholdActivateAttribute().SetDefaultValue( FALSE, TRUE );
+			pThresholdOperator->GetThresholdActivateAttribute().SetDefaultValue( FALSE, TRUE );
 			pOperatorList->Add( pThresholdOperator );
 		}
 

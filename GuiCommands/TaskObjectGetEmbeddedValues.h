@@ -8,21 +8,21 @@
 
 #pragma once
 
+#pragma region Includes
 #include <boost/noncopyable.hpp>
+#include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IObjectClass.h"
-#include "SVObjectLibrary\SVObjectLibrary.h"
-#include "SVObjectLibrary\SVObjectLibrary.h"
+#include "ObjectInterfaces\IValueObject.h"
 #include "SVOGUI/BoundValue.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
-//#include "SVValueObjectClass.h" // commented out while SVValueObjectClass resides in the SVObserver project
+#pragma endregion Includes
 
 namespace Seidenader
 { 
 	namespace GuiCommand
 	{
-		// while SVValueObjectClass resides in the SVObserver project, use the ValueObject template parameter
-		template<typename Items, typename ValueObject>
+		template<typename Items>
 		struct TaskObjectGetEmbeddedValues : public boost::noncopyable
 		{
 			TaskObjectGetEmbeddedValues(const SVGUID& ownerID, const Items& items) : m_ownerID(ownerID), m_Items(items) {}
@@ -34,7 +34,6 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
-				SVObjectManagerClass& rMgr = SVObjectManagerClass::Instance();
 				for (Items::iterator it = m_Items.begin();S_OK == hr && it != m_Items.end();++it)
 				{
 					SVObjectTypeInfoStruct objectInfo;
@@ -46,17 +45,29 @@ namespace Seidenader
 					GUID parentID = m_ownerID;
 					while (!bFound && GUID_NULL != parentID)
 					{
-						ValueObject* pValueObject = reinterpret_cast<ValueObject*>(::SVSendMessage(parentID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)));
+						DWORD flags = SVM_GETFIRST_OBJECT;
+
+						const SVObjectTypeInfoStruct& ownerInfo = it->second.GetOwnerInfo();
+						if (SVNotSetObjectType != ownerInfo.ObjectType)
+						{
+							flags &= ~SVM_NOTIFY_FRIENDS;
+						}
+						SvOi::IValueObject* pValueObject = SvOi::FindValueObject(parentID, objectInfo);
 						if (pValueObject)
 						{
-							_variant_t value;
-							pValueObject->GetValue(*(value.GetAddress()));
-							it->second = Items::mapped_type(pValueObject->GetEmbeddedID(), pValueObject->GetUniqueObjectID(), value);
 							bFound = true;
+
+							_variant_t value;
+							hr = pValueObject->GetValue(value);
+							if (S_OK == hr)
+							{
+								SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass *>(pValueObject);
+								it->second = Items::mapped_type(objectInfo.EmbeddedID, pObject->GetUniqueObjectID(), value, ownerInfo, it->second.isReadOnly());
+							}
 						}
 						else
 						{
-							SvOi::IObjectClass* pParent = SVObjectManagerClass::Instance().GetObject(parentID);
+							SvOi::IObjectClass* pParent = SvOi::getObject(parentID);
 							if (pParent)
 							{
 								parentID = pParent->GetParentID();

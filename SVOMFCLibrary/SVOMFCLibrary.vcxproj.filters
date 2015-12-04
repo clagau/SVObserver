@@ -86,6 +86,9 @@
     <ClCompile Include="SVDlgGraph.cpp">
       <Filter>Control Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVFileNameClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Regexp.h">
@@ -177,6 +180,9 @@
     </ClInclude>
     <ClInclude Include="SVDlgGraph.h">
       <Filter>Control Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFileNameClass.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

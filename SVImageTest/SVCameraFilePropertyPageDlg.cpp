@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 09:20:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "resource.h"
 #include <math.h>
@@ -16,7 +17,7 @@
 #include "SVCameraFilePropertyPageDlg.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVImageTest.h"
-//#include "SVFileNameClass.h"
+//#include "SVOMFCLibrary/SVFileNameClass.h"
 //#include "SVCameraFormat7Dlg.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
@@ -27,6 +28,7 @@
 
 #include "SV1394CameraFileLibrary/SV1394CameraParamValidateClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

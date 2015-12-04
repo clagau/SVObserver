@@ -54,7 +54,7 @@ public:
 
 	virtual SVImageClass* GetParentImage() const;
 	virtual const GUID& GetParentImageID() const;
-	virtual const SVImageInfoClass& GetImageInfo() const;
+	virtual const SVImageInfoClass& GetImageInfo() const; //@TODO: Change the logic so that this is never needed outside this class
 
 	virtual HRESULT InitializeImage( SVImageTypeEnum p_ImageType );
 	virtual HRESULT InitializeImage( SVImageClass* p_pParentImage );
@@ -128,11 +128,7 @@ public:
 
 	virtual SVImageIndexStruct GetSourceImageIndex( SVProductInfoStruct* pProduct );
 
-	long getPixelDepth(); //@TODO:  Change method to const?
-
 	SVImageClass* GetRootImage(); //@TODO:  Change method to const?
-	CString getDisplayedName() const; //@TODO:  Consider changing method to use SVString instead of CString.
-
 	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SVExtentPointStruct p_InPt, SVExtentPointStruct& p_OutPt); //@TODO:  Change method to const?
 
 	void GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const;
@@ -140,8 +136,13 @@ public:
 #pragma region virtual method (ISVImage)
 	virtual SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
-	virtual SvOi::MatroxImageSmartHandlePointer getImageData() override;
-	virtual SvOi::MatroxImageSmartHandlePointer getParentImageData() override;
+	virtual SvOi::MatroxImageSmartHandlePtr getImageData() override;
+	virtual SvOi::MatroxImageSmartHandlePtr getParentImageData() override;
+	virtual SVString getDisplayedName() const override;
+	virtual SvOi::IObjectClass* getOwner() const override; // Gets the owner from the ImageInfo
+	virtual long getBands() const override;
+	virtual long getPixelDepth() const override;
+	virtual HRESULT Save(const SVString& rFilename) override; 
 #pragma region virtual method (ISVImage)
 
 protected:

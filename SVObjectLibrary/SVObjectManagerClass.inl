@@ -9,14 +9,16 @@
 //* .Check In Date   : $Date:   17 Mar 2014 14:18:34  $
 //******************************************************************************
 
-#ifndef SVOBJECTMANAGERCLASS_INL
-#define SVOBJECTMANAGERCLASS_INL
+#pragma once
 
+#pragma region Includes
 #include "SVObjectManagerClass.h"
 #include "SVObserverTemplate.h"
 #include "SVObjectClass.h"
 #include "SVObjectNotifyTemplate.h"
 #include "GlobalConst.h"
+#include "ObjectInterfaces\IObjectManager.h"
+#pragma endregion Includes
 
 template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& p_rClassID, SVObjectTypeName*& p_rpObject )
@@ -293,7 +295,11 @@ HRESULT SVObjectManagerClass::UpdateObservers( const SVString& p_rSubjectDataNam
 	return l_Status;
 }
 
-#endif
+template<typename ObjectVisitor>
+HRESULT SvOi::visitElements(ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID)
+{
+	return SVObjectManagerClass::Instance().VisitElements(rVisitor, rStartingObjectID);
+}
 
 //******************************************************************************
 //* LOG HISTORY:

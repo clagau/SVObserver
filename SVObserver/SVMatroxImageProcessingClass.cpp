@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 15:24:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxImageProcessingClass.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -16,10 +17,11 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVBarCodeBuffer.h"
 #include "SVDataBuffer.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVGlobal.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
+#pragma endregion Includes
 
 SVMatroxImageProcessingClass& SVMatroxImageProcessingClass::Instance()
 {

@@ -9,39 +9,16 @@
 //* .Check In Date   : $Date:   17 Jul 2014 20:58:12  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
-#ifndef _SVTOOLADJUSTMENTDIALOGDIALOGANALYZERPAGECLASS_H
-#define _SVTOOLADJUSTMENTDIALOGDIALOGANALYZERPAGECLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-//{{AFX_INCLUDES()
+#pragma region Includes
 #include "SVMFCControls\svmaskeditor.h"
-//}}AFX_INCLUDES
-
 #include "SVClassInfoStruct.h"
-#include "SVView.h"
+#include "SVAvailableAnalyzerListComboBoxClass.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "SVOGui/PictureDisplay.h"
-#include "SVImageListClass.h"
+#include "SVOGui\PictureDisplay.h"
 #include "SVEnumerateCombo.h"
-
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
+#pragma endregion Includes
 
 class SVAnalyzerClass;
 class SVToolAdjustmentDialogSheetClass;
@@ -49,10 +26,8 @@ class SVUnaryImageOperatorListClass;
 
 struct SVToolPropertyEntryStruct;
 
-
 class SVToolAdjustmentDialogAnalyzerPageClass : public CPropertyPage
 {
-
 	//******************************************************************************
 	// Class Wizard Generated Message Map Entries:
 	//******************************************************************************
@@ -68,19 +43,9 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	//******************************************************************************
-	// Constructor(s):
-	//******************************************************************************
 public:
-	// Standard constructor
-	SVToolAdjustmentDialogAnalyzerPageClass( SVToolAdjustmentDialogSheetClass* pParent );
-
-	//******************************************************************************
-	// Destructor(s):
-	//******************************************************************************
-public:
-	// Standard destructor
-	~SVToolAdjustmentDialogAnalyzerPageClass();
+	SVToolAdjustmentDialogAnalyzerPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent );
+	virtual ~SVToolAdjustmentDialogAnalyzerPageClass();
 
 protected:
 	void updateButtons();
@@ -128,17 +93,12 @@ protected:
 	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
 	SVToolClass*                    m_pTool;
 	SVAnalyzerClass*				m_pCurrentAnalyzer;
-
 	SVClassInfoStructListClass availableAnalyzers;
-
 	int								oldIndex;
-
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // _SVTOOLADJUSTMENTDIALOGDIALOGANALYZERPAGECLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:

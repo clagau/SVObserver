@@ -164,12 +164,7 @@ HRESULT SVThresholdClass::ResetObject()
 	return l_hrOk;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetTresholdActivateAttribute
-// -----------------------------------------------------------------------------
-// .Description : Returns reference to threshold activate flag.
-////////////////////////////////////////////////////////////////////////////////
-SVBoolValueObjectClass& SVThresholdClass::GetTresholdActivateAttribute()
+SVBoolValueObjectClass& SVThresholdClass::GetThresholdActivateAttribute()
 {
 	return m_threshActivate;
 }

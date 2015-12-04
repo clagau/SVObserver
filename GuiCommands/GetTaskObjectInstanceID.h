@@ -6,13 +6,16 @@
 // This is the Command for getting the TaskObect Instance GUID.
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include <boost/noncopyable.hpp>
-#include <comdef.h>
+#include <Guiddef.h>
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces/ObjectDefines.h"
-#include "SVObjectLibrary/SVObjectLibrary.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -28,7 +31,8 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
-				SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage(m_ownerID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&m_info)));
+
+				SvOi::IObjectClass* pObject = SvOi::FindObject(m_ownerID, m_info);
 				if (pObject)
 				{
 					m_instanceID = pObject->GetUniqueObjectID();

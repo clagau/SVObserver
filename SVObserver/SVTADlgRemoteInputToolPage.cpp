@@ -20,9 +20,9 @@
 #include "SVToolset.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "RootObject.h"
-#include "GlobalSelector.h"
-#include "NoSelector.h"
-#include "ToolSetItemSelector.h"
+#include "SVOGui/GlobalSelector.h"
+#include "SVOGui/NoSelector.h"
+#include "SVOGui/ToolSetItemSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -32,11 +32,15 @@
 #endif
 #pragma endregion Declarations
 
-SVTADlgRemoteInputToolPage::SVTADlgRemoteInputToolPage( SVToolAdjustmentDialogSheetClass* Parent, int id ) 
+SVTADlgRemoteInputToolPage::SVTADlgRemoteInputToolPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id ) 
 : CPropertyPage( id )
 , m_pParentDialog( Parent )
-, m_pTool( NULL )
+, m_pTool( nullptr )
 , m_InputName( _T( "" ) )
+{
+}
+
+SVTADlgRemoteInputToolPage::~SVTADlgRemoteInputToolPage()
 {
 }
 
@@ -114,7 +118,7 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, NoSelector, ToolSetItemSelector<>>(pToolSet->GetInspection()->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(pToolSet->GetInspection()->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
 
 	if( nullptr !=  m_pTool->GetInputObject() )
 	{

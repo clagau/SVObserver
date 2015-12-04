@@ -106,8 +106,7 @@ void ObjectTreeGenerator::insertTreeObjects( const SVStringArray& rLocationList 
 	std::for_each(rLocationList.begin(), rLocationList.end(), [this](const SVString &rLocation){ insertTreeObject(rLocation); });
 }
 
-/// SEJ999 - THIS NEEDS TO CHANGE!!!
-/// Prvivate
+/// Private
 void ObjectTreeGenerator::insertTreeObject( const SVObjectReference& rObjectRef )
 {
 	SvTrl::ObjectSelectorItem SelectorItem;
@@ -146,8 +145,7 @@ void ObjectTreeGenerator::insertTreeObject( const SVObjectReference& rObjectRef 
 	m_TreeContainer.insertLeaf( Location, SelectorItem );
 }
 
-/// Prvivate
-/// SEJ999 - THIS NEEDS TO CHANGE!!!
+/// Private
 void ObjectTreeGenerator::insertTreeObject( const SVString& rLocation )
 {
 	SVObjectReference objectRef;

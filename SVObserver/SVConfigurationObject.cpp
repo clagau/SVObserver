@@ -14,6 +14,7 @@
 #include <comdef.h>
 #include "SVConfigurationObject.h"
 
+#include "GuiCommands/InspectionRunOnce.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectAsynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
@@ -49,7 +50,6 @@
 #include "SVAcquisitionInitiator.h"
 #include "SVTriggerProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVCommandInspectionRunOnce.h"
 #include "SVConfigurationTreeWriter.h"
 #include "SVCameraTriggerClass.h"
 #include "SVHardwareManifest.h"
@@ -3830,10 +3830,10 @@ BOOL SVConfigurationObject::Activate()
 	{
 		SVInspectionProcess* l_pInspection = m_arInspectionArray[l];
 
-		SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID() );
-		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
+		GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( l_pInspection->GetUniqueObjectID() );
+		SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-		l_Command.Execute( 120000 );
+		l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 	}
 
 	return bOk;
@@ -4842,10 +4842,10 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 				if( nullptr != pInspection )
 				{
-					SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
-					SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+					GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+					SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-					l_Command.Execute( 120000 );
+					l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 				}
 			}
 		}
@@ -4976,10 +4976,10 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 				if( nullptr != pInspection )
 				{
-					SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
-					SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+					GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+					SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-					l_Command.Execute( 120000 );
+					l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 				}
 			}
 		}

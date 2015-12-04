@@ -15,10 +15,10 @@
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "GuiCommands/InspectionRunOnce.h"
 
 #include "SVAnalyzer.h"
 #include "SVChildrenSetupDialog.h"
-#include "SVCommandInspectionRunOnce.h"
 #include "SVGlobal.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
@@ -27,7 +27,7 @@
 #include "SVToolSet.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "PublishSelector.h"
+#include "SVOGui/PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -46,12 +46,12 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogAnalyzerPageClass, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass( SVToolAdjustmentDialogSheetClass* pParent ) : CPropertyPage( SVToolAdjustmentDialogAnalyzerPageClass::IDD )
+SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent ) 
+: CPropertyPage( SVToolAdjustmentDialogAnalyzerPageClass::IDD )
+, m_pParentDialog(pParent)
+, m_pTool(nullptr)
+, m_pCurrentAnalyzer(nullptr)
 {
-	m_pParentDialog = pParent;
-	m_pTool = NULL;
-	m_pCurrentAnalyzer = NULL;
-
 	if( m_pParentDialog )
 	{
 		m_pTool = m_pParentDialog->GetTool();
@@ -197,10 +197,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 					l_ToolId = m_pTool->GetUniqueObjectID();
 				}
 
-				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
-				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+				GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-				l_Command.Execute( 120000 );
+				l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 			}
 		}
 	}
@@ -295,10 +295,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				l_ToolId = m_pTool->GetUniqueObjectID();
 			}
 
-			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+			GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+			SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-			l_Command.Execute( 120000 );
+			l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 		}
 	}
 
@@ -323,12 +323,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 
 		m_pCurrentAnalyzer = NULL;
 	}
-
 }
 
 BOOL SVToolAdjustmentDialogAnalyzerPageClass::setImages()
 {
-
 	// Get the Image for this tool
 	SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>( ::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
 	if( pImageInfo )
@@ -431,7 +429,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pTool->GetCompleteObjectName(), SVString( _T("") ) );
 
-	PublishSelector(pInspection->GetUniqueObjectID(), m_pCurrentAnalyzer->GetUniqueObjectID());
+	SvOg::PublishSelector(pInspection->GetUniqueObjectID(), m_pCurrentAnalyzer->GetUniqueObjectID());
 
 	CString PublishableResults;
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );

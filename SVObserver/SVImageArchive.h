@@ -9,12 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:48:52  $
 //******************************************************************************
 
-#ifndef SVIMAGEARCHIVE_H
-#define SVIMAGEARCHIVE_H
+#pragma once
 
+#pragma region Includes
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVImageObjectClass.h"
+#pragma endregion Includes
 
 class SVImageClass;
 
@@ -50,8 +51,6 @@ private:
   void Init (CString &szStartFileName);
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

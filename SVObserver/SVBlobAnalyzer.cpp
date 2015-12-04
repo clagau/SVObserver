@@ -19,7 +19,7 @@
 #include "SVInspectionProcess.h"
 #include "SVBlobAnalyzerDialog.h"
 #include "SVGlobal.h"
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVResultDouble.h"
 #include "SVResultLong.h"
 #include "SVRange.h"

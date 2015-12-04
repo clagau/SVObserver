@@ -9,9 +9,10 @@
 //* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
 
-#ifndef SVTOOL_H
-#define SVTOOL_H
+#pragma once
 
+#pragma region Includes
+#include "ObjectInterfaces\ITool.h"
 #include "SVTaskObjectList.h"
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
@@ -19,6 +20,7 @@
 #include "SVStatusLibrary\MessageManager.h"			// SvStl::DataOnly
 #include "SVStatusLibrary\MessageManagerResource.h" // SvStl::MessageMgrDisplayAndNotify(),
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVAnalyzerClass;
 class SVExtentClass;
@@ -176,7 +178,7 @@ enum EAutoSize
 	EnableAll  =  	0x3 | 0x4
 };
 
-class SVToolClass : public SVTaskObjectListClass
+class SVToolClass : public SVTaskObjectListClass, public SvOi::ITool
 {
 	SV_DECLARE_CLASS( SVToolClass );
 
@@ -258,8 +260,8 @@ public:
 	void UpdateTaskObjectOutputListAttributes( SVObjectReference refTarget, UINT uAttributes );
 
 	// Auxiliary Source Image functions
-	HRESULT GetSourceImages( SVImageListClass* p_psvImageList );
-	SVImageClass* GetAuxSourceImage();
+	HRESULT GetSourceImages( SVImageListClass* p_psvImageList ) const;
+	SVImageClass* GetAuxSourceImage() const;
 	HRESULT SetAuxSourceImage( SVImageClass* p_psvImage );
 
 	virtual HRESULT IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo ); 
@@ -271,7 +273,6 @@ public:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
 	virtual HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
 
-	
 	//************************************
 	//!  Return false  if the input location 
 	//! is not allowed for the tool 
@@ -280,8 +281,6 @@ public:
 	//! \returns bool
 	//************************************
 	virtual bool IsAllowedLocation(const SVExtentLocationPropertyEnum Location, SVExtentDirectionsEnum Direction  = SVExtentDirectionBoth ) const;
-	
-
 
 	//************************************
 	//! Calculates bottom and Right 
@@ -301,6 +300,13 @@ public:
 	SVInObjectInfoStruct		m_AuxSourceImageObjectInfo;
 
 	SVValueObjectClass*  GetToolComment();
+
+#pragma region ITool methods
+	virtual bool areAuxExtentsAvailable() const override;
+	virtual SvUl::NameGuidList getAvailableAuxSourceImages() const override;
+	virtual SvUl::NameGuidPair getAuxSourceImage() const override;
+	virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) override;
+#pragma endregion ITool methods
 
 protected:
 	virtual BOOL Run( SVRunStatusClass& RRunStatus );
@@ -456,8 +462,6 @@ protected:
 
 #pragma endregion Validation Error helper functionality
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

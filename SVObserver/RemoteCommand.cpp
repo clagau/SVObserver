@@ -12,12 +12,12 @@
 #pragma region includes
 #include "stdafx.h"
 #include "RemoteCommand.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVSVIMStateClass.h"
 #include "SVGlobal.h"
-#include "SVIMCommand\SVIMCommand.h"
+#include "SVIMCommand/SVIMCommand.h"
 #pragma endregion includes
 
 #pragma region Global functions

@@ -9,13 +9,15 @@
 //* .Check In Date   : $Date:   26 Jun 2014 18:21:16  $
 //******************************************************************************
 
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorToolPage.h"
 #include "SVColorTool.h"
 #include "SVValueObject.h"
 #include "SVIPDoc.h"
 #include "SVSetupDialogManager.h"
+#include "ObjectInterfaces\IObjectManager.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,14 +28,18 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgColorToolPageClass property page
 
-SVTADlgColorToolPageClass::SVTADlgColorToolPageClass( SVToolClass* PTool ) : CPropertyPage(SVTADlgColorToolPageClass::IDD)
+SVTADlgColorToolPageClass::SVTADlgColorToolPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID ) 
+: CPropertyPage(SVTADlgColorToolPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVTADlgColorToolPageClass)
 	m_convertToHSI = FALSE;
 	//}}AFX_DATA_INIT
 
-	m_pTool = (SVColorToolClass *)PTool;
-	m_pConvertToHSI = m_pTool->GetConvertToHSIVariable();
+	m_pTool = dynamic_cast<SVColorToolClass *>(SvOi::getObject(rTaskObjectID));
+	if (m_pTool)
+	{
+		m_pConvertToHSI = m_pTool->GetConvertToHSIVariable();
+	}
 }
 
 SVTADlgColorToolPageClass::~SVTADlgColorToolPageClass()
@@ -50,19 +56,18 @@ HRESULT SVTADlgColorToolPageClass::SetInspectionData()
 
 		l_hrOk = AddInputRequest( m_pConvertToHSI, m_convertToHSI );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( m_pTool );
 		}
 
 		UpdateData( FALSE );
 	}
-
 	return l_hrOk;
 }
 
@@ -74,7 +79,6 @@ void SVTADlgColorToolPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CONVERT_TO_HSI, m_convertToHSI);
 	//}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(SVTADlgColorToolPageClass, CPropertyPage)
 	//{{AFX_MSG_MAP(SVTADlgColorToolPageClass)
@@ -135,7 +139,6 @@ void SVTADlgColorToolPageClass::setImages()
 		}
 	}
 }
-
 
 //******************************************************************************
 //* LOG HISTORY:

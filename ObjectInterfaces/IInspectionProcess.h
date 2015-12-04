@@ -34,7 +34,22 @@ namespace Seidenader
 			***********/
 			virtual SVStringArray GetPPQInputNames() const = 0;
 
+			/***********
+			This method gets the Interface to the Tool Set
+			***********/
 			virtual ITaskObject* GetToolSetInterface() const = 0;
+
+			/***********
+			This method gets the enable state for the AuxiliaryExtent (which is not a value object)
+			***********/
+			virtual long GetEnableAuxiliaryExtent() const = 0;
+
+			/***********
+			This method sets the enable state for the AuxiliaryExtent (which is not a value object)
+			***********/
+			virtual void SetEnableAuxiliaryExtent(long enabled) = 0;
+
+			virtual HRESULT RunOnce(ITaskObject* pTask) = 0;
 		};
 	}
 }

@@ -9,32 +9,25 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:22:22  $
 //******************************************************************************
 
-#if !defined(AFX_SVPERSPECTIVEWARPDLG_H__49C41C4E_B381_440B_AAC7_EA6BEDE2A517__INCLUDED_)
-#define AFX_SVPERSPECTIVEWARPDLG_H__49C41C4E_B381_440B_AAC7_EA6BEDE2A517__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVPerspectiveWarpDlg.h : header file
-//
-#include "SVEnumerateCombo.h"
-#include "SVValueObjectImpl.h"	// Added by ClassView
 
+#pragma region Includes
+#include "SVEnumerateCombo.h"
+#include "SVValueObjectImpl.h"
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
-
-/////////////////////////////////////////////////////////////////////////////
-// SVPerspectiveWarpDlg dialog
 
 class SVPerspectiveWarpDlg : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
 // Construction
 public:
 	long m_lLastWarpType;
-	SVPerspectiveWarpDlg( SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
+	SVPerspectiveWarpDlg( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
+	virtual ~SVPerspectiveWarpDlg();
 
-	virtual HRESULT SetInspectionData();
+	virtual HRESULT SetInspectionData() override;
 
 // Dialog Data
 	//{{AFX_DATA(SVPerspectiveWarpDlg)
@@ -42,7 +35,6 @@ public:
 	SVEnumerateComboClass	m_FunctionCombo;
 	SVEnumerateComboClass	m_cbInterpolation;
 	//}}AFX_DATA
-
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -53,7 +45,6 @@ public:
 
 // Implementation
 protected:
-
 	SVToolClass* m_pTool;
 	SVEnumerateValueObjectClass* m_pWarpType;
 	SVEnumerateValueObjectClass* m_pInterpolationMode;
@@ -71,8 +62,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVPERSPECTIVEWARPDLG_H__49C41C4E_B381_440B_AAC7_EA6BEDE2A517__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

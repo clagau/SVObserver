@@ -20,7 +20,7 @@
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 
 #include "SVAnalyzer.h"
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVInspectionProcess.h"
 #include "SVLine.h"
 #include "SVObserver.h"
@@ -651,11 +651,50 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 	return l_bOk;
 }
 
+bool SVTaskObjectClass::IsObjectValid() const
+{ 
+	return const_cast<SVTaskObjectClass*>(this)->IsValid() ? true : false; 
+}
+
+struct CompareInputName
+{
+	SVString m_Name;
+	CompareInputName(const SVString& rName) : m_Name(rName) {}
+	bool operator()(const SVInObjectInfoStruct* pInfo) const { return pInfo->GetInputName() == m_Name; }
+};
+
+HRESULT SVTaskObjectClass::ConnectToImage(const SVString& rInputName, const SVGUID& newImageGUID)
+{
+	HRESULT hr = S_OK;
+
+	SVInputInfoListClass toolInputList;
+	::SVSendMessage( this, SVM_GET_INPUT_INTERFACE | SVM_NOTIFY_FRIENDS, reinterpret_cast<DWORD_PTR>(&toolInputList), NULL );
+	// Find SVInObjectInfoStruct that has this name
+	SVVector<SVInObjectInfoStruct*>::const_iterator it = std::find_if(toolInputList.begin(), toolInputList.end(), CompareInputName(rInputName));
+	if (it != toolInputList.end())
+	{
+		SVImageClass* pNewImage = dynamic_cast<SVImageClass *>(SVObjectManagerClass::Instance().GetObject(newImageGUID));
+		if (pNewImage)
+		{
+			hr = ConnectToImage((*it), pNewImage);
+		}
+		else
+		{
+			hr = E_POINTER;
+		}
+	}
+	else
+	{
+		hr = E_INVALIDARG;
+	}
+	return hr;
+}
+
 HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo, SVImageClass* p_psvNewImage )
 {
 	HRESULT l_svOk = S_OK;
 
-	if( p_psvInputInfo != NULL )
+	if( nullptr != p_psvInputInfo )
 	{
 		const GUID l_guidOldInputObjectID = p_psvInputInfo->GetInputObjectInfo().UniqueObjectID;
 		SVImageClass* l_psvOldImage = dynamic_cast<SVImageClass*>( SVObjectManagerClass::Instance().GetObject( l_guidOldInputObjectID ) );
@@ -664,8 +703,7 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 		if( p_psvInputInfo->IsConnected() )
 		{
 			// Send to the Object we are using
-			::SVSendMessage( l_guidOldInputObjectID, SVM_DISCONNECT_OBJECT_INPUT, 
-				reinterpret_cast<DWORD_PTR>(p_psvInputInfo), NULL );
+			::SVSendMessage( l_guidOldInputObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), NULL );
 		}
 
 		// Set new input...
@@ -681,10 +719,14 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 				CString strMessage;
 				CString strItem;
 				if( p_psvNewImage )
+				{
 					strItem = p_psvNewImage->GetName();
+				}
 				else
+				{
 					strItem.LoadString( IDS__UNKNOWN__STRING ); 
-
+				}
+				// Should we really be doing this here?
 				AfxFormatString1( strMessage, IDS_CRITICAL_UNABLE_TO_CONNECT_TO, strItem );
 				AfxMessageBox( strMessage );
 
@@ -2014,12 +2056,17 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 
 DWORD_PTR SVTaskObjectClass::OutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = FriendOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
+
+	if ((DwMessageID & SVM_NOTIFY_FRIENDS) == SVM_NOTIFY_FRIENDS)
+	{
+		DwResult = FriendOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	}
 
 	// Try to send message to outputObjectList members, if not already processed...
-	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
+	if ((DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
 	{
-		if( ! DwResult )
+		if (!DwResult)
 		{
 			DwResult = EmbeddedOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
 		}
@@ -2028,7 +2075,6 @@ DWORD_PTR SVTaskObjectClass::OutputListProcessMessage( DWORD DwMessageID, DWORD_
 	{
 		DwResult = EmbeddedOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
 	}
-	
 	return DwResult;
 }
 

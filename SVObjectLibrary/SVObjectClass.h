@@ -166,7 +166,6 @@ public:
 	int GetCompleteObjectNameLength( int Length ) const;
 	int GetResourceID() const;
 	SVObjectClass* GetOwner() const;
-	long GetObjectSubType() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 	
 	const SVGUID& GetEmbeddedID() const;
@@ -176,7 +175,9 @@ public:
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
 	virtual SVString GetCompleteName() const override;
+	virtual SVString GetObjectNameToObjectType(LPCSTR LPSZCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType) const override;
 	virtual const SVObjectTypeEnum& GetObjectType() const override;
+	virtual SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
 	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) override;
@@ -184,6 +185,7 @@ public:
 	virtual bool is_Created() const override { return IsCreated() ? true : false; }
 	virtual DWORD_PTR resetAllObjects() override;
 #pragma endregion virtual method (IObjectClass)
+
 	const SVObjectInfoStruct& GetOwnerInfo() const;
 	const SVObjectInfoStruct& GetObjectInfo() const;
 	const SVObjectInfoArrayClass& GetFriendList() const;

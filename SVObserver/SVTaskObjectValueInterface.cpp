@@ -14,7 +14,7 @@
 
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 
-#include "SVCommandInspectionRunOnce.h"
+#include "GuiCommands/InspectionRunOnce.h"
 #include "SVInspectionProcess.h"
 #include "SVTaskObject.h"
 #include "SVTool.h"
@@ -166,10 +166,10 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 			l_ToolId = p_psvTool->GetUniqueObjectID();
 		}
 
-		SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( InspectionId, l_ToolId );
-		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( InspectionId, l_CommandPtr );
+		GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( InspectionId, l_ToolId );
+		SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( InspectionId, l_CommandPtr );
 
-		l_hrOk = l_Command.Execute( 120000 );
+		l_hrOk = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 
 		if ((nullptr != p_psvTool) && (SUCCEEDED (l_hrOk) || E_FAIL == l_hrOk))
 		{

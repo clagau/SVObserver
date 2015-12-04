@@ -84,7 +84,7 @@
 // Global includes that everyone needs
 #include "resource.h"
 #include "SVObserver/SVGlobal.h"
-#include "SVObserver/SVClsIds.h"
+#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVErrorClass.h"
 
 #include <atlbase.h>

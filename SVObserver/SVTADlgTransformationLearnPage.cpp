@@ -9,14 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 13:07:14  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgTransformationLearnPage.h"
 
@@ -25,15 +18,7 @@
 #include "SVIPDoc.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-
-////////////////////////////////////////////////////////////////////////////////
-// Prototyping
-////////////////////////////////////////////////////////////////////////////////
-
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,17 +26,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVToolAdjustmentDialogTransformationLearnPageClass
-//* Note(s)    : Property Page
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransformationLearnPageClass( SVToolAdjustmentDialogSheetClass* Parent )
-	: CPropertyPage(SVToolAdjustmentDialogTransformationLearnPageClass::IDD)
+SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransformationLearnPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent )
+: CPropertyPage(SVToolAdjustmentDialogTransformationLearnPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformationLearnPageClass)
 	StrTranslationXValue = _T("");
@@ -94,6 +70,10 @@ SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransf
 	pLearnedRotationX		= NULL;
 	pLearnedRotationY		= NULL;
 	pLearnedRotationAngle	= NULL;
+}
+
+SVToolAdjustmentDialogTransformationLearnPageClass::~SVToolAdjustmentDialogTransformationLearnPageClass()
+{
 }
 
 HRESULT SVToolAdjustmentDialogTransformationLearnPageClass::SetInspectionData()

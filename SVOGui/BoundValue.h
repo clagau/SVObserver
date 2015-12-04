@@ -14,6 +14,7 @@
 #include <string>
 #include <comdef.h>
 #include <guiddef.h>
+#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -25,15 +26,23 @@ namespace Seidenader
 		private:
 			GUID m_embeddedID; // maybe use SVObjectTypeInfo instead ?
 			GUID m_instanceID;
+			SVObjectTypeInfoStruct m_ownerInfo; // to access an object within the heirarchy owned at a certain level
 			mutable boost::any m_value;
 			bool m_bReadOnly;
 			mutable bool m_bModified;
 
 		public:
 			BoundValue() : m_embeddedID(GUID_NULL), m_instanceID(GUID_NULL), m_bReadOnly(false), m_bModified(false) {} // for map...
-			BoundValue(const GUID& rEmbeddedID, bool bReadOnly = false) : m_embeddedID(rEmbeddedID), m_instanceID(GUID_NULL), m_bReadOnly(bReadOnly), m_bModified(false) {}
-			BoundValue(const GUID& rEmbeddedID, const GUID& rInstanceID, const boost::any& value, bool bReadOnly = false) 
-			: m_embeddedID(rEmbeddedID), m_instanceID(rInstanceID), m_value(value), m_bReadOnly(bReadOnly), m_bModified(false) {}
+			
+			BoundValue(const GUID& rEmbeddedID, bool bReadOnly = false) 
+			: m_embeddedID(rEmbeddedID), m_instanceID(GUID_NULL), m_bReadOnly(bReadOnly), m_bModified(false) {}
+
+			BoundValue(const GUID& rEmbeddedID, const SVObjectTypeInfoStruct& ownerInfo, bool bReadOnly = false) 
+			: m_embeddedID(rEmbeddedID), m_instanceID(GUID_NULL), m_ownerInfo(ownerInfo), m_bReadOnly(bReadOnly), m_bModified(false) {}
+
+			BoundValue(const GUID& rEmbeddedID, const GUID& rInstanceID, const boost::any& value, const SVObjectTypeInfoStruct& ownerInfo, bool bReadOnly = false) 
+			: m_embeddedID(rEmbeddedID), m_instanceID(rInstanceID),  m_value(value), m_ownerInfo(ownerInfo), m_bReadOnly(bReadOnly), m_bModified(false) {}
+			
 			~BoundValue() { m_value.clear(); }
 
 			const boost::any& GetValue() const { return m_value; }
@@ -41,6 +50,7 @@ namespace Seidenader
 
 			const GUID& GetEmbeddedID() const { return m_embeddedID; }
 			const GUID& GetObjectID() const { return m_instanceID; }
+			const SVObjectTypeInfoStruct& GetOwnerInfo() const { return m_ownerInfo; }
 
 			bool isReadOnly() const { return m_bReadOnly; }
 			bool isModified() const { return m_bModified; }
@@ -77,6 +87,17 @@ namespace Seidenader
 				throw std::out_of_range(name.c_str()); 
 			}
 
+			GUID GetObjectID(const std::string& name) const 
+			{ 
+				GUID objectID = GUID_NULL;
+				Container::const_iterator it = m_values.find(name);
+				if (it != m_values.end())
+				{
+					objectID = it->second.GetObjectID();
+				}
+				return objectID;
+			}
+
 			iterator begin() { return m_values.begin(); }
 			iterator end() { return m_values.end(); }
 			const_iterator begin() const { return m_values.begin(); }
@@ -90,4 +111,4 @@ namespace Seidenader
 	}
 }
 
-namespace SvoGui = Seidenader::SVOGui;
+namespace SvOg = Seidenader::SVOGui;

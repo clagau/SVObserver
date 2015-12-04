@@ -27,10 +27,10 @@
 #include "SVPPQObject.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
-#include "GlobalSelector.h"
-#include "PPQNameSelector.h"
-#include "ToolSetItemSelector.h"
-#include "NoSelector.h"
+#include "SVOGui/GlobalSelector.h"
+#include "SVOGui/PPQNameSelector.h"
+#include "SVOGui/ToolSetItemSelector.h"
+#include "SVOGui/NoSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -296,7 +296,7 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, PPQNameSelector, NoSelector, ToolSetItemSelector<>>(pToolSet->GetInspection()->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQNameSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(pToolSet->GetInspection()->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
 
 	SVStringSet Items;
 

@@ -99,9 +99,9 @@
 #include "SVOutputStreamManager.h"
 #include "SVCommandStreamManager.h"
 #include "SVFailStatusStreamManager.h"
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVSystemLibrary\SVVersionInfo.h"
-#include "SVCommandInspectionRunOnce.h"
+#include "GuiCommands/InspectionRunOnce.h"
 #include "SVConfigurationTreeWriter.h"
 #include "SVOLicenseManager\SVOLicenseManager.h"
 #include "SVSocketRemoteCommandManager.h"
@@ -4869,10 +4869,10 @@ void SVObserverApp::ResetAllCounts()
 
 			if( nullptr != pInspection )
 			{
-				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
-				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+				GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
+				SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-				l_Command.Execute( 120000 );
+				l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 			}
 
 		}

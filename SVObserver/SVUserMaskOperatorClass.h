@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:31:16  $
 //******************************************************************************
 
-#ifndef SVUSERMASKOPERATORCLASS_H
-#define SVUSERMASKOPERATORCLASS_H
+#pragma once
 
+#pragma region Includes
+#include "ObjectInterfaces\IMask.h"
 #include "SVUnaryImageOperatorClass.h"
 #include "ISVCancel.h"
+#pragma endregion Includes
 
 class SVShapeMaskHelperClass;
 struct SVMaskFillPropertiesStruct;
@@ -44,7 +46,7 @@ struct SVMaskOperatorCancelData : public SVCancelData
 	}
 };
 
-class SVUserMaskOperatorClass : public SVUnaryImageOperatorClass, public ISVCancel, public ISVCancel2
+class SVUserMaskOperatorClass : public SVUnaryImageOperatorClass, public SvOi::IMask, public ISVCancel, public ISVCancel2
 {
 	SV_DECLARE_CLASS( SVUserMaskOperatorClass );
 public:
@@ -61,7 +63,7 @@ public:
 	BOOL Refresh();
 	HRESULT GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct );
 
-	SVImageClass*      getMaskInputImage();
+	SVImageClass* getMaskInputImage();
 
 #ifdef USE_OBJECT_SCRIPT
 	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
@@ -76,14 +78,21 @@ public:
 
 	SVShapeMaskHelperClass* GetShapeHelper();
 
-	// ISVCancel
+#pragma region IMask
+	virtual SvOi::MatroxImageSmartHandlePtr GetReferenceImage() const;
+	virtual SvOi::MatroxImageSmartHandlePtr GetMaskImage() const;
+	virtual HRESULT Import(const SVString& filename);
+	virtual HRESULT Export(const SVString& filename);
+	virtual HGLOBAL GetMaskData() const;
+	virtual bool SetMaskData(HGLOBAL hGlobal);
+#pragma endregion IMask
+// ISVCancel
 	virtual bool CanCancel();
 	virtual HRESULT GetCancelData(SVCancelData*& rpData);
 	virtual HRESULT SetCancelData(SVCancelData* pData);
 
 	// ISVCancel2
 	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap);
-
 
 	enum SVDrawCriteriaEnum 
 	{
@@ -96,27 +105,16 @@ protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 	virtual BOOL OnValidate();
 	
-	SVImageInfoClass           m_MaskBufferInfo;
+	SVImageInfoClass      m_MaskBufferInfo;
 	SVSmartHandlePointer  m_MaskBufferHandlePtr;
 
 	mutable SVGraphixClass m_graphixObject;
-	//SVShapeMaskHelperClass     m_ShapeHelper;
 
 	SVMaskOperatorCancelData   m_Data;
-	/*
-	SVEnumerateValueObjectClass  m_currentMaskOperator;
-	SVBoolValueObjectClass       m_bActivated;
-	SVDWordValueObjectClass      m_dwvoMaskType;
-	SVEnumerateValueObjectClass  m_evoFillArea;
-	SVEnumerateValueObjectClass  m_evoShape;
-	SVEnumerateValueObjectClass  m_evoMaskArea;
-	SVLongValueObjectClass       m_lvoFillColor;
-	SVEnumerateValueObjectClass  m_evoDrawCriteria;
-	//*/
 
-	SVInObjectInfoStruct         m_inObjectInfo;
-	SVExtentMultiLineStruct	     m_MultiLine;
-	GUID                         m_guidShapeHelper;
+	SVInObjectInfoStruct       m_inObjectInfo;
+	SVExtentMultiLineStruct	   m_MultiLine;
+	GUID                       m_guidShapeHelper;
 
 	enum
 	{
@@ -126,7 +124,6 @@ protected:
 	};
 
 private:
-
 	HRESULT AddLine(int p_iCol, int p_iRow, SVExtentPointStruct& p_svStartPoint, SVImageExtentClass& p_svExtent, SVExtentLineStruct& p_Line, SVExtentMultiLineStruct& p_MultiLine );
 	HRESULT BuildMaskLines( SVExtentMultiLineStruct& p_MultiLine );
 	HRESULT CreateLocalImageBuffer();
@@ -134,13 +131,9 @@ private:
 
 	void init();
 
-	friend class SVToolAdjustmentDialogMaskPageClass;
 	friend class SVMaskShapeEditorDlg;
 	friend class SVShapeMaskHelperClass;
-
 };
-
-#endif	//	SVUSERMASKOPERATORCLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:

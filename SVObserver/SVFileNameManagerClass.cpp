@@ -9,14 +9,15 @@
 //* .Check In Date   : $Date:   01 Oct 2013 14:19:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include "SVFileNameManagerClass.h"
-#include "SVFileNameClass.h"
-#include "SVFileNameLockablePointerArrayClass.h"
-
 #include <io.h>
 #include <direct.h>
 #include <sys/stat.h>
+#include "SVFileNameManagerClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVFileNameLockablePointerArrayClass.h"
+#pragma endregion Includes
 
 // Global Configuration Path Name variable for DLL
 CString gcsConfigurationPathName;

@@ -9,36 +9,21 @@
 //* .Check In Date   : $Date:   26 Jun 2014 18:21:16  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
-#ifndef SVTADLGTHRESHOLDPAGE_H
-#define SVTADLGTHRESHOLDPAGE_H
-
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-//{{AFX_INCLUDES()
-//}}AFX_INCLUDES
-
+#pragma once
+#pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
 #include "SVTaskObjectInterfaceClass.h"
 #include "svhistogram.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
 class SVUnaryImageOperatorListClass;
 class SVThresholdClass;
 class SVBoolValueObjectClass;
-
-//******************************************************************************
-//* FUNCTION DECLARATION(S):
-//******************************************************************************
+class SVImageClass;
 
 // Threshold Dialog
 void AFXAPI DDX_SVThresholdText( CDataExchange* pDX, int nIDC, DWORD& Value );
@@ -47,10 +32,8 @@ BOOL GetThreshold( HWND hWnd, DWORD& Value );
 void SetThreshold( CWnd* pWnd, DWORD Value );
 void SetThreshold( HWND hWnd, DWORD Value );
 
-
 class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-
 	//******************************************************************************
 	// Class Wizard Generated Message Map Entries:
 	//******************************************************************************
@@ -81,25 +64,14 @@ class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage, public SV
 
 	void UpdateLowerThresholdFromFormula();
 	void UpdateUpperThresholdFromFoumula();
-	//******************************************************************************
-	// Friend Declaration(s):
-	//******************************************************************************
 
-	//******************************************************************************
-	// Constructor(s):
-	//******************************************************************************
+	SVImageClass* getReferenceImage(SVToolClass* pTool, SVThresholdClass* pCurrentThreshold);
+
 public:
-	// Standard constructor
-	SVToolAdjustmentDialogThresholdPageClass( SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogThresholdPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent);
+	virtual ~SVToolAdjustmentDialogThresholdPageClass();
 
-	//******************************************************************************
-	// Destructor(s):
-	//******************************************************************************
-public:
-	// Standard destructor
-	~SVToolAdjustmentDialogThresholdPageClass();
-
-	virtual HRESULT SetInspectionData();
+	virtual HRESULT SetInspectionData() override;
 
 	//************************************
 	// Method:    setImages
@@ -107,15 +79,9 @@ public:
 	// Access:    public 
 	// Returns:   void
 	//************************************
-
 	void setImages();
 
-	//******************************************************************************
-	// Operator(s):
-	//******************************************************************************
-public:
 	void initThreshold();
-
 
 	//******************************************************************************
 	// Class Wizard Generated Virtual Function(s):
@@ -123,6 +89,7 @@ public:
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogThresholdPageClass)
 public:
 	virtual BOOL OnSetActive();
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
 	//}}AFX_VIRTUAL
@@ -133,56 +100,47 @@ protected:
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogThresholdPageClass)
 	enum { IDD = IDD_TA_THRESHOLD_DIALOG };
-	SvMc::CEditNumbers	editLowerThres;
-	SvMc::CEditNumbers	editUpperThres;
-	SvMc::CEditNumbersFloat	editAutoThreshold;
-	CButton	autoThresholdWhiteRadio;
-	CButton	autoThresholdBlackRadio;
-	CSliderCtrl	autoThresholdCtrl;
-	SvOg::PictureDisplay	dialogImage;
-	CSliderCtrl	lowerThreshold;
-	CSliderCtrl	upperThreshold;
-	BOOL	upperThresholdActive;
-	BOOL	thresholdActive;
-	BOOL	lowerThresholdActive;
-	CString	strWhitePixel;
-	BOOL	bUseAutoThreshold;
-	CString	csEditAutoThreshold;
-	CString	csUpperThres;
-	CString	csLowerThres;
-	BOOL	bUseExternATM;
-	BOOL	bUseExternLT;
-	BOOL	bUseExternUT;
+	SvMc::CEditNumbers	m_editLowerThres;
+	SvMc::CEditNumbers	m_editUpperThres;
+	SvMc::CEditNumbersFloat	m_editAutoThreshold;
+	CButton	m_autoThresholdWhiteRadio;
+	CButton	m_autoThresholdBlackRadio;
+	CSliderCtrl	m_autoThresholdCtrl;
+	SvOg::PictureDisplay m_dialogImage;
+	CSliderCtrl	m_lowerThreshold;
+	CSliderCtrl	m_upperThreshold;
+	BOOL	m_upperThresholdActive;
+	BOOL	m_thresholdActive;
+	BOOL	m_lowerThresholdActive;
+	CString	m_strWhitePixel;
+	BOOL	m_bUseAutoThreshold;
+	CString	m_csEditAutoThreshold;
+	CString	m_csUpperThres;
+	CString	m_csLowerThres;
+	BOOL	m_bUseExternATM;
+	BOOL	m_bUseExternLT;
+	BOOL	m_bUseExternUT;
 	//}}AFX_DATA
 
-	//******************************************************************************
-	// Debug Operation(s):
-	//******************************************************************************
 public:
-
-	//******************************************************************************
-	// Data Element(s):
-	//******************************************************************************
-public:
-	SVToolAdjustmentDialogSheetClass* pParentDialog;
-	BOOL isEdit;
+	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
+	BOOL m_isEdit;
 
 protected:
-	SVToolClass* pTool;
-	SVUnaryImageOperatorListClass* pUnaryImageOperatorList;
-	SVThresholdClass* pCurrentThreshold;
+	SVToolClass* m_pTool;
+	SVThresholdClass* m_pCurrentThreshold;
 
-	SVBoolValueObjectClass* pUseExternATM;
-	SVBoolValueObjectClass* pUseExternLT;
-	SVBoolValueObjectClass* pUseExternUT;
+	SVBoolValueObjectClass* m_pUseExternATM;
+	SVBoolValueObjectClass* m_pUseExternLT;
+	SVBoolValueObjectClass* m_pUseExternUT;
 
 private:
-	long lo;		// storage of slider pos, if deactivated...
-	long up;		// storage of slider pos, if deactivated...
-	double dAutoThreshold;
-	long upperThres;	// current slider pos...
-	long lowerThres;	// current slider pos...
-	long histState;
+	long m_lo;		// storage of slider pos, if deactivated...
+	long m_up;		// storage of slider pos, if deactivated...
+	double m_dAutoThreshold;
+	long m_upperThres;	// current slider pos...
+	long m_lowerThres;	// current slider pos...
+	long m_histState;
 
 public:
 	SVHistogram m_histogram;
@@ -193,10 +151,6 @@ public:
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	//	SVTADLGTHRESHOLDPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

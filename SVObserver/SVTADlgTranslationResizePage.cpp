@@ -40,7 +40,7 @@ enum {	IDC_INPUTLISTTREE = 99,
 };
 #pragma endregion Properry Tree Items Enum
 
-SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(SVToolAdjustmentDialogSheetClass* Parent, int id)
+SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id)
 : CPropertyPage(id)
 , m_pTool(nullptr)
 , m_ParentDialog(Parent)

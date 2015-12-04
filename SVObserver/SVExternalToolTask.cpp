@@ -18,9 +18,8 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOMFCLibrary\SVOINIClass.h"
 #include "SVStatusLibrary\MessageContainer.h"
-
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVExternalTool.h"
-#include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVGlobal.h"
 #include "SVInspectionProcess.h"
 #include "SVRange.h"

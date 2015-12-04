@@ -9,12 +9,13 @@
 // * .Check In Date   : $Date:   13 Aug 2013 10:32:08  $
 // ******************************************************************************
 
-#ifndef SVWATERSHEDFILTERS_H
-#define SVWATERSHEDFILTERS_H
+#pragma once
 
+#pragma region Includes
 #include "ObjectInterfaces\IWatershedFilter.h"
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVWatershedFilterClass
@@ -56,7 +57,7 @@ public:
 			virtual bool isMarkerUsed() const override;
 
 			virtual SVString getMarkerImage() const override;
-			virtual HRESULT setMarkerImage(const SVString imageName) override;
+			virtual HRESULT setMarkerImage(const SVString& imageName) override;
 
 			virtual std::vector<SVString> getAvailableMarkerImageNames() override;
 #pragma region virtual method (IWatershedFilter)
@@ -111,8 +112,6 @@ protected:
 //******************************************************************************
 protected:
 };
-
-#endif // SVWATERSHEDFILTERS_H
 
 // ******************************************************************************
 // * LOG HISTORY:

@@ -17,7 +17,7 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		typedef SVSharedPtr< IMatroxImageData > MatroxImageSmartHandlePointer;
+		typedef SVSharedPtr< IMatroxImageData > MatroxImageSmartHandlePtr;
 		//this class is a interface. It should only have pure virtual public method and new member parameter
 		class ISVImage : virtual public IObjectAppClass
 		{
@@ -38,15 +38,45 @@ namespace Seidenader
 
 			//************************************
 			/// Return the data of the image.
-			/// \returns MatroxImageSmartHandlePointer
+			/// \returns MatroxImageSmartHandlePtr
 			//************************************
-			virtual MatroxImageSmartHandlePointer getImageData() = 0;
+			virtual MatroxImageSmartHandlePtr getImageData() = 0;
 
 			//************************************
 			/// Return the data of the parent image.
-			/// \returns MatroxImageSmartHandlePointer
+			/// \returns MatroxImageSmartHandlePtr
 			//************************************
-			virtual MatroxImageSmartHandlePointer getParentImageData() = 0;
+			virtual MatroxImageSmartHandlePtr getParentImageData() = 0;
+
+			//************************************
+			/// Return the display name the image.
+			/// \returns SVString
+			//************************************
+			virtual SVString getDisplayedName() const = 0;
+
+			//************************************
+			/// Get the Owner Object for the Image.
+			/// \returns SvOi::IObjectClass*
+			//************************************
+			virtual SvOi::IObjectClass* getOwner() const = 0;
+
+			//************************************
+			/// Get the Number of bands in the image.
+			/// \returns long
+			//************************************
+			virtual long getBands() const = 0;
+
+			//************************************
+			/// Get the pixel depth of the image.
+			/// \returns long
+			//************************************
+			virtual long getPixelDepth() const = 0;
+
+			//************************************
+			/// Save an Image to a File.
+			/// \returns HRESULT
+			//************************************
+			virtual HRESULT Save(const SVString& rFilename) = 0; 
 		};
 	}
 }

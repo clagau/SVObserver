@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:16:26  $
 //******************************************************************************
 
-#ifndef SVTADLGACQUISITIONSOURCEPAGE_H
-#define SVTADLGACQUISITIONSOURCEPAGE_H
+#pragma once
 
+#pragma region Includes
 #include "SVMFCControls/SVDottedNameTreeCtrl.h"
+#include "SVUtilityLibrary\SVGUID.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -21,7 +23,7 @@ class SVCameraImageTemplate;
 class SVToolAdjustmentDialogAcquisitionSourcePageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogAcquisitionSourcePageClass( SVToolAdjustmentDialogSheetClass* PSheet );
+	SVToolAdjustmentDialogAcquisitionSourcePageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* PSheet );
 
 	virtual ~SVToolAdjustmentDialogAcquisitionSourcePageClass();
 
@@ -65,8 +67,6 @@ protected:
 	int availableBandLink;
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:
@@ -154,4 +154,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgAcq
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-//** EOF **

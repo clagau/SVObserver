@@ -9,15 +9,14 @@
 //* .Check In Date   : $Date:   15 May 2014 11:12:42  $
 //******************************************************************************
 
-// SVCylindricalWarpDlg.cpp : implementation file
-//
-
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVTool.h"
 #include "SVCylindricalWarpDlg.h"
 #include "SVCylindricalWarpTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,17 +24,17 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVCylindricalWarpDlg dialog
-
-
-SVCylindricalWarpDlg::SVCylindricalWarpDlg( SVToolAdjustmentDialogSheetClass* Parent, int id ) 
-	: CPropertyPage( id )
+SVCylindricalWarpDlg::SVCylindricalWarpDlg( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id ) 
+: CPropertyPage( id )
+, m_pParentDialog(Parent)
 {
-	m_pParentDialog		= Parent;
 	//{{AFX_DATA_INIT(SVCylindricalWarpDlg)
 	m_dWarpAngle = 0.0;
 	//}}AFX_DATA_INIT
+}
+
+SVCylindricalWarpDlg::~SVCylindricalWarpDlg() 
+{
 }
 
 HRESULT SVCylindricalWarpDlg::SetInspectionData()

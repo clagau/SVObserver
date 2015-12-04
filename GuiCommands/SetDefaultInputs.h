@@ -7,11 +7,14 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include <boost/noncopyable.hpp>
+#include <Guiddef.h>
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -28,9 +31,8 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
-				SVObjectManagerClass& rMgr = SVObjectManagerClass::Instance();
 
-				TaskObject* pTask = dynamic_cast<TaskObject*>(rMgr.GetObject(m_InstanceID));
+				TaskObject* pTask = dynamic_cast<TaskObject *>(SvOi::getObject(m_InstanceID));
 				if (pTask)
 				{
 					pTask->SetDefaultInputs();

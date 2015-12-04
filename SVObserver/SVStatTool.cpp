@@ -15,7 +15,7 @@
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
-#include "SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVGlobal.h"
 #include "SVInspectionProcess.h"
 #include "SVResultDouble.h"

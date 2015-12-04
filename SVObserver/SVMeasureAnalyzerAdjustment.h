@@ -14,7 +14,7 @@
 
 #include "SVEdge.h"
 #include "SVValueBaseNormalizerClass.h"
-#include "SVView.h"
+#include "SVAvailableAnalyzerListComboBoxClass.h"
 
 #include "SVValueObjectImpl.h"
 

@@ -13,8 +13,8 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVFormulaEditorPage.h"
-#include "SVConditional.h" //SEJ99 - this needs to go
+#include "SvOGui/SVFormulaEditorPage.h"
+#include "SVConditional.h"
 #pragma endregion Includes
 
 class SVToolSetAdjustmentDialogSheetClass : public CPropertySheet
@@ -65,9 +65,9 @@ private:
 	GUID m_InspectionID;
 	GUID m_TaskObjectID;
 
-	typedef SVSharedPtr<SVFormulaEditorPageClass> FormulaEditorPagePtr;
+	typedef SVSharedPtr<SvOg::SVFormulaEditorPageClass> FormulaEditorPagePtr;
 	FormulaEditorPagePtr m_formulaPage;
-	SVToolSetClass* m_pToolSet; //SEJ99 - this needs to go
+	SVToolSetClass* m_pToolSet;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

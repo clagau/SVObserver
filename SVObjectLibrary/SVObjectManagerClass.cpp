@@ -14,9 +14,11 @@
 #include <assert.h>
 #include "SVObjectManagerClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
-
+#include "ObjectInterfaces/IObjectClass.h"
+#include "ObjectInterfaces/IValueObject.h"
+#include "ObjectInterfaces/ISVImage.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
-
+#include "SVImageLibrary\SVImageInfoClass.h"
 #include "SVClassRegisterListClass.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectSubmitCommandFacade.h"
@@ -1937,7 +1939,27 @@ SvOi::IObjectClass* SvOi::getObject( const SVGUID& rObjectID )
 	return pObject;
 }
 
+SvOi::IObjectClass* SvOi::FindObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
+{
+	SVObjectClass* pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&rInfo)));
+	return dynamic_cast<SvOi::IObjectClass *>(pObject);
+}
+
+SvOi::IValueObject* SvOi::FindValueObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
+{
+	SVObjectClass* pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&rInfo)));
+	
+	return dynamic_cast<SvOi::IValueObject *>(pObject);
+}
+
+SvOi::ISVImage* SvOi::FindImageObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
+{
+	SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&rInfo)));
+	
+	return dynamic_cast<SvOi::ISVImage *>(pObject);
+}
 #pragma endregion IObjectManager-function
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

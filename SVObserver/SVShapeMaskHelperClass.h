@@ -9,12 +9,13 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:28:58  $
 //******************************************************************************
 
-#ifndef SVSHAPEMASKHELPERCLASS_H
-#define SVSHAPEMASKHELPERCLASS_H
+#pragma once
 
+#pragma region Includes
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
 #include "SVMaskShape.h"
+#pragma endregion Includes
 
 struct SVMaskShapeCancelData : public SVCancelData
 {
@@ -78,12 +79,9 @@ protected:
 private:
 	void init();
 
-	friend class SVToolAdjustmentDialogMaskPageClass;
 	friend class SVMaskShapeEditorDlg;
 	friend class SVUserMaskOperatorClass;
 };
-
-#endif	//	SVSHAPEMASKHELPERCLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:

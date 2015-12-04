@@ -9,35 +9,22 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:36:50  $
 //******************************************************************************
 
-#if !defined(AFX_SVTOOLADJUSTMENTDIALOGLINEARSPECIALPAGECLASS_H__357B0B09_DB58_4022_A197_7B121038A8DE__INCLUDED_)
-#define AFX_SVTOOLADJUSTMENTDIALOGLINEARSPECIALPAGECLASS_H__357B0B09_DB58_4022_A197_7B121038A8DE__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVToolAdjustmentDialogLinearSpecialPageClass.h : header file
-//
 
+#pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 
-
-/////////////////////////////////////////////////////////////////////////////
-// SVToolAdjustmentDialogLinearSpecialPageClass dialog
-
 class SVToolAdjustmentDialogLinearSpecialPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-	DECLARE_DYNCREATE(SVToolAdjustmentDialogLinearSpecialPageClass)
-
-// Construction
 public:
-	SVToolAdjustmentDialogLinearSpecialPageClass( SVToolAdjustmentDialogSheetClass* PParent = NULL);
+	SVToolAdjustmentDialogLinearSpecialPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* PParent = nullptr);
+	virtual ~SVToolAdjustmentDialogLinearSpecialPageClass();
 
-	~SVToolAdjustmentDialogLinearSpecialPageClass();
-
-	virtual HRESULT SetInspectionData();
+	virtual HRESULT SetInspectionData() override;
 
 // Dialog Data
 	//{{AFX_DATA(SVToolAdjustmentDialogLinearSpecialPageClass)
@@ -68,8 +55,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVTOOLADJUSTMENTDIALOGLINEARSPECIALPAGECLASS_H__357B0B09_DB58_4022_A197_7B121038A8DE__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

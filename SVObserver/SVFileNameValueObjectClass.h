@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:38:34  $
 //******************************************************************************
 
-#ifndef SVFILENAMEVALUEOBJECTCLASS_H
-#define SVFILENAMEVALUEOBJECTCLASS_H
+#pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVFileNameValueObjectClass : public SVValueObjectClassImpl <CString>  
 {
@@ -73,8 +75,6 @@ private:
 	SVFileNameClass m_svFileName;
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

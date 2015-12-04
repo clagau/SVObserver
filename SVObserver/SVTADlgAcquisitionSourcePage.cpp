@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   21 May 2014 12:24:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgAcquisitionSourcePage.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -20,6 +21,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,7 +29,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisitionSourcePageClass( SVToolAdjustmentDialogSheetClass* PSheet ) : CPropertyPage(SVToolAdjustmentDialogAcquisitionSourcePageClass::IDD)
+SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisitionSourcePageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* PSheet ) 
+: CPropertyPage(SVToolAdjustmentDialogAcquisitionSourcePageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogAcquisitionSourcePageClass)
 	StrSelectedDigitizer = _T("");

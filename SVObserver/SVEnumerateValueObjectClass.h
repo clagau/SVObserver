@@ -17,11 +17,12 @@
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#include "ObjectInterfaces\IEnumerateValueObject.h"
 
 typedef std::pair<CString, long> SVEnumeratePair;
 typedef std::vector<SVEnumeratePair> SVEnumerateVector;
 
-class SVEnumerateValueObjectClass : public SVValueObjectClassImpl <long>
+class SVEnumerateValueObjectClass : public SVValueObjectClassImpl <long>, public SvOi::IEnumerateValueObject
 {
 	SV_DECLARE_CLASS( SVEnumerateValueObjectClass );
 public:
@@ -56,7 +57,11 @@ public:
 
 	//using base::SetDefaultValue;// does not work in VC6; write a forwarding function
 	HRESULT SetDefaultValue( long lValue, bool bResetAll ) {return base::SetDefaultValue(lValue, bResetAll);}
-	
+
+#pragma region IEnumerateValueObject
+	virtual SvOi::NameValueList GetEnumList() const override;
+#pragma endregion IEnumerateValueObject
+
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 	// this function should move to a library!

@@ -27,7 +27,7 @@ class SVTADlgTranslationResizePage :
 	private SVTaskObjectInterfaceClass
 {
 public:
-	SVTADlgTranslationResizePage( SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
+	SVTADlgTranslationResizePage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
 	virtual ~SVTADlgTranslationResizePage();
 
 	virtual HRESULT SetInspectionData() override;

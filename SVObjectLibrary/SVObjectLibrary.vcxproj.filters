@@ -83,6 +83,12 @@
     <ClCompile Include="SVToolLevelCreateStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVClsids.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -215,6 +221,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectInfoArrayClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGetObjectDequeByTypeVisitor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVClsids.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

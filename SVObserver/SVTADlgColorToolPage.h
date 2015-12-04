@@ -9,18 +9,13 @@
 //* .Check In Date   : $Date:   26 Jun 2014 18:21:16  $
 //******************************************************************************
 
-#if !defined(SVTADLGCOLORTOOLPAGE_H)
-#define SVTADLGCOLORTOOLPAGE_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVTADlgColorToolPage.h : header file
-//
 
+#pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
+#pragma endregion Includes
 
 class SVColorToolClass;
 class SVToolClass;
@@ -31,13 +26,11 @@ class SVBoolValueObjectClass;
 
 class SVTADlgColorToolPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-	
-// Construction
 public:
-	SVTADlgColorToolPageClass( SVToolClass* PTool );
-	~SVTADlgColorToolPageClass();
+	SVTADlgColorToolPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID );
+	virtual ~SVTADlgColorToolPageClass();
 
-	virtual HRESULT SetInspectionData();
+	virtual HRESULT SetInspectionData() override;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
@@ -73,7 +66,6 @@ protected:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(SVTADLGCOLORTOOLPAGE_H)
 
 //******************************************************************************
 //* LOG HISTORY:

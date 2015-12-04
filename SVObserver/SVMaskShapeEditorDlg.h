@@ -20,25 +20,20 @@
 #include "PropertyTree/PropTree.h"
 #include "ISVCancel.h"
 #include "SVTaskObjectInterfaceClass.h"
+#include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 class SVMaskShapeEditorDlg : public CDialog, public ISVCancel2, public SVTaskObjectInterfaceClass
 {
 #pragma region Construction
 public:
-	SVMaskShapeEditorDlg( SVToolClass* pTool, SVUserMaskOperatorClass* pMask, CWnd* pParent = NULL);   // standard constructor
+	SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent = NULL);   // standard constructor
 	~SVMaskShapeEditorDlg();
 #pragma endregion Construction
 
 #pragma region Public Methods
-#pragma region Virtual
-public:
-	// ISVCancel2
-	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap);
-
-	// SVTaskObjectInterfaceClass
-	virtual HRESULT SetInspectionData();
-#pragma endregion Virtual
+	void CheckPoint();
+	void Revert();
 
 	//************************************
 	// Method:    getSelectedTab
@@ -61,6 +56,11 @@ public:
 
 #pragma region Protected Methods
 protected:
+	// ISVCancel2
+	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap);
+
+	// SVTaskObjectInterfaceClass
+	virtual HRESULT SetInspectionData();
 
 #pragma region AFX Methods
 	// ClassWizard generated virtual function overrides
@@ -149,7 +149,7 @@ private:
 	CString	m_sFillColor;
 	CString	m_sCoordinates;
 	BOOL	m_bAutoResize;
-	SvOg::PictureDisplay       m_dialogImage;
+	SvOg::PictureDisplay m_dialogImage;
 	SVRPropTree          m_Tree;
 	//}}AFX_DATA
 
@@ -163,8 +163,9 @@ private:
 	long m_currentTabNumber; //only use until m_isInit is true
 	long m_handleToActiveObjects[m_numberOfTabs];
 	SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
-	SVToolClass*                       m_pTool;
-	SVUserMaskOperatorClass*           m_pMask;
+	SVToolClass* m_pTool;
+	SVUserMaskOperatorClass* m_pMask;
+	SVInputRequestStructMap m_cancelData;
 #pragma endregion Member Variables
 };
 

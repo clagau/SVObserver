@@ -8,18 +8,19 @@
 
 #pragma once
 
+#pragma region Includes
 #include <boost/noncopyable.hpp>
-#include "SVObjectLibrary/SVObjectLibrary.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-//#include "SVValueObjectClass.h"  // commented out while SVValueObjectClass resides in the SVObserver project
+#pragma endregion Includes
 
 namespace Seidenader
 { 
 	namespace GuiCommand
 	{
-		// while SVValueObjectClass resides in the SVObserver project, use the ValueObject template parameter
-		template<typename Items, typename ValueObject>
+		template<typename Items>
 		struct TaskObjectSetEmbeddedValues : public boost::noncopyable
 		{
 			TaskObjectSetEmbeddedValues(const Items& items) : m_Items(items) {}
@@ -30,19 +31,18 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
-				SVObjectManagerClass& rMgr = SVObjectManagerClass::Instance();
-		
+	
 				for (Items::const_iterator it = m_Items.begin();it != m_Items.end() && S_OK == hr;++it)
 				{
-					ValueObject* pObject = dynamic_cast<ValueObject *>(SVObjectManagerClass::Instance().GetObject(it->second.GetObjectID()));
+					SvOi::IValueObject* pObject = dynamic_cast<SvOi::IValueObject *>(SvOi::getObject(it->second.GetObjectID()));
 					if (pObject)
 					{
 						if (!it->second.isReadOnly() && it->second.isModified())
 						{
 							// SEJ999 - need to handle arrays here...
-							// This needs to be more robust, nmore like ProcessInputRequests method of SVInspectionProcess...
-							SVString stringValue = boost::any_cast<_variant_t>(it->second.GetValue());
-							hr = pObject->SetValue(pObject->GetLastSetIndex(), stringValue.c_str());
+							// This needs to be more robust, more like ProcessInputRequests method of SVInspectionProcess...
+							_variant_t value = boost::any_cast<_variant_t>(it->second.GetValue());
+							hr = pObject->SetValue(value);
 						}
 					}
 					else

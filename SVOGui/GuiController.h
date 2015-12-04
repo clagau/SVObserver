@@ -9,7 +9,9 @@
 
 #pragma region Includes
 #include <boost/any.hpp>
+#include <boost/noncopyable.hpp>
 #include <string>
+#include "ObjectInterfaces\NameValueList.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -17,7 +19,7 @@ namespace Seidenader
 	namespace SVOGui
 	{
 		template <typename Command, typename Model>
-		class GuiController : public Command
+		class GuiController : public Command, public boost::noncopyable
 		{
 			mutable Model m_Data;
 		
@@ -43,12 +45,17 @@ namespace Seidenader
 				m_Data.SetValue(name, boost::any(v));
 			}
 
-			HRESULT Commit()
+			SvOi::NameValueList GetEnumTypes(const std::string& name) const
 			{
-				return SetValues(m_Data);
+				return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(name));
+			}
+
+			HRESULT Commit(bool bReset = false)
+			{
+				return SetValues(m_Data, bReset);
 			}
 		};
 	}
 }
 
-namespace SvoGui = Seidenader::SVOGui;
+namespace SvOg = Seidenader::SVOGui;

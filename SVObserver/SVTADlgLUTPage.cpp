@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgLUTPage.h"
-#include "SVFormulaEditorSheet.h"
+#include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVIPDoc.h"
 #include "SVLutOperator.h"
 #include "SVLutEquation.h"
@@ -208,7 +208,6 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 		m_upperSlider.SetRange( 0, 255 );
 		m_lowerSlider.SetRange( 0, 255 );
 
-		 //SEJ99 - this needs to change
 		// Get LUT Operator...
 		SVObjectTypeInfoStruct lutObjectInfo;
 		lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
@@ -332,19 +331,19 @@ void SVToolAdjustmentDialogLUTPageClass::OnSelChangeLutModeCombo()
 
 void SVToolAdjustmentDialogLUTPageClass::OnLUTFormulaButton()
 {
-	if( m_pLUTEquation ) //SEJ99 - this needs to change
+	if( m_pLUTEquation )
 	{
 		CString l_Temp;
 		l_Temp.LoadString( IDS_FORMULA_STRING );
 
 		CString strCaption;
-		strCaption = m_pLUTEquation->GetName(); //SEJ99 - this needs to change
+		strCaption = m_pLUTEquation->GetName();
 		strCaption += _T( " " );
 		strCaption += l_Temp;
 
-		const GUID& rObjectID = m_pLUTOperator->GetUniqueObjectID(); //SEJ99 - this needs to change
+		const GUID& rObjectID = m_pLUTOperator->GetUniqueObjectID();
 		SVObjectTypeInfoStruct info(SVEquationObjectType, SVLUTEquationObjectType);
-		SVFormulaEditorSheetClass dlg( m_InspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( m_InspectionID, rObjectID, info, strCaption );
 
 		dlg.DoModal();
 

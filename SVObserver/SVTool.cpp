@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVTool.h"
 #include "SVImageLibrary/SVDrawContext.h"
+#include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "SVAnalyzer.h"
@@ -1255,25 +1256,23 @@ void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTar
 }
 
 // Auxiliary Source Image Functions
-HRESULT SVToolClass::GetSourceImages( SVImageListClass* p_psvImageList )
+HRESULT SVToolClass::GetSourceImages( SVImageListClass* p_psvImageList ) const
 {
 	HRESULT l_hr = S_OK;
 
-
-	SVImageClass* l_psvImageParent = NULL;
-	SVToolClass* l_psvTool = this;
+	SVImageClass* l_psvImageParent = nullptr;
+	const SVToolClass* l_psvTool = this;
 	if( m_svToolExtent.GetToolImage() )
 	{
 		l_psvImageParent = m_svToolExtent.GetToolImage()->GetParentImage();
-		if( l_psvImageParent != NULL )
+		if( nullptr != l_psvImageParent )
 		{
 			 l_psvTool = l_psvImageParent->GetTool(); //dynamic_cast<SVToolClass*>( l_psvImageParent->GetTool() );
 
-			 if( l_psvTool != NULL && l_psvTool != this )
+			 if( nullptr != l_psvTool && l_psvTool != this )
 			 {
 				 l_psvTool->GetSourceImages( p_psvImageList );
 			 }
-
 			 p_psvImageList->Add( l_psvImageParent );
 		}
 	}
@@ -1281,15 +1280,16 @@ HRESULT SVToolClass::GetSourceImages( SVImageListClass* p_psvImageList )
 	{
 		l_hr = -77001;
 	}
-
 	return l_hr;
 }
 
-SVImageClass* SVToolClass::GetAuxSourceImage()
+SVImageClass* SVToolClass::GetAuxSourceImage() const
 {
-	SVImageClass* l_pImage = NULL;
+	SVImageClass* l_pImage = nullptr;
 	if( m_AuxSourceImageObjectInfo.IsConnected() && m_AuxSourceImageObjectInfo.GetInputObjectInfo().PObject )
-		l_pImage = static_cast<SVImageClass*>(m_AuxSourceImageObjectInfo.GetInputObjectInfo().PObject) ;
+	{
+		l_pImage = static_cast<SVImageClass*>(m_AuxSourceImageObjectInfo.GetInputObjectInfo().PObject);
+	}
 	return l_pImage;
 }
 
@@ -1344,6 +1344,58 @@ HRESULT SVToolClass::IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo )
 
 	return l_hrOk;
 }
+
+#pragma region ITool methods
+bool SVToolClass::areAuxExtentsAvailable() const
+{
+	bool bRetVal = true;
+	// check inspection, not gauge tool, and has image input!
+	if (nullptr == GetToolImage() || 
+		outObjectInfo.ObjectTypeInfo.SubType == SVGageToolObjectType  || 
+		0 == GetInspection()->GetEnableAuxiliaryExtent())
+	{
+		bRetVal = false;
+	}
+	return bRetVal;
+}
+
+SvUl::NameGuidList SVToolClass::getAvailableAuxSourceImages() const
+{
+	SvUl::NameGuidList list;
+	SVImageListClass ImageList;
+	HRESULT hr = GetSourceImages(&ImageList);
+	if (S_OK == hr)
+	{
+		for (SVImageListClass::const_iterator it = ImageList.begin();it != ImageList.end();++it)
+		{
+			list.push_back(std::make_pair((*it)->getDisplayedName(), (*it)->GetUniqueObjectID()));
+		}
+	}
+	return list;
+}
+
+SvUl::NameGuidPair SVToolClass::getAuxSourceImage() const
+{
+	SvUl::NameGuidPair result;
+	SVImageClass* pImage = GetAuxSourceImage();
+	if (pImage)
+	{
+		result = std::make_pair(pImage->getDisplayedName(), pImage->GetUniqueObjectID());
+	}
+	return result;
+}
+
+HRESULT SVToolClass::setAuxSourceImage(const SVGUID& rObjectID)
+{
+	HRESULT hr = E_POINTER;
+	SVImageClass* pImage = dynamic_cast<SVImageClass *>(SvOi::getObject(rObjectID));
+	if (pImage)
+	{
+		hr = SetAuxSourceImage(pImage);
+	}
+	return hr;
+}
+#pragma endregion ITool methods
 
 HRESULT SVToolClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
 {

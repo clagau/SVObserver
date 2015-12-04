@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:23:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SV_OMD.h"
 #include "SVOCRDialog.h"
 #include "SVOCRAnalyzerResult.h"
-#include "SVFileNameClass.h"
+#include "SVOMFCLibrary/SVFileNameClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -207,7 +209,6 @@ void SVOCRMiscDlg::OnFontBrowseCmd()
 
 	m_fontFileNameEdit.GetWindowText( csTemp );
 	svfncFileName.SetFullFileName( csTemp );
-
 	if ( svfncFileName.SelectFile() )
 	{
 		csTemp = svfncFileName.GetFullFileName();

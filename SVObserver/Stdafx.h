@@ -93,8 +93,9 @@
 #include <math.h>
 
 // Global includes that everyone needs
+//@ Not every module needs these includes - fix this - SEJ
 #include "SVOResource\resource.h"
-#include "SVClsIds.h"
+#include "SVObjectLibrary\SVClsIds.h"
 
 
 //******************************************************************************

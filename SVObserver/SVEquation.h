@@ -9,14 +9,17 @@
 //* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
 //******************************************************************************
 
-#ifndef SVEQUATIONCLASS_H
-#define SVEQUATIONCLASS_H
+#pragma once
 
+#pragma region Includes
+#include "ObjectInterfaces/EquationTestResult.h"
+#include "ObjectInterfaces/IEquation.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVEquationLibrary/SVEquationBase.h"
 #include "SVEquationLibrary/SVEquationLex.h"
 #include "SVEquationLibrary/SVEquationYacc.h"
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Equation Symbol Type Enumeration
@@ -107,27 +110,6 @@ protected:
 };
 
 /**
-@SVObjectName Equation Test Result
-
-@SVObjectOverview This object holds the result information of the test operation.
-
-@SVObjectOperations This object has no operations.
-
-*/
-class SVEquationTestResult
-{
-public:
-	bool bPassed;
-	int iPositionFailed;
-
-	SVEquationTestResult()
-	{
-		bPassed = false;
-		iPositionFailed=0;
-	}
-};
-
-/**
 @SVObjectName Equation
 
 @SVObjectOverview This object is the interface between the LEX and YACC parsers and the application.  This object is also responsible for executing the list of operations necessary to get the result of the supplied equation string.
@@ -143,9 +125,7 @@ The Get Subscripted Property Value operator returns the value at a particular su
 The Get Array Values operator fills the provided array with the values of the specified token by its symbol index.
 
 */
-class SVEquationClass : 
-	public SVTaskObjectClass,
-	public SVEquationBase
+class SVEquationClass : public SVTaskObjectClass, public SVEquationBase, public SvOi::IEquation
 {
 	SV_DECLARE_CLASS( SVEquationClass );
 
@@ -195,7 +175,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 
-	double GetYACCResult();
+
 
 	// For Conditional
 	BOOL NeedsConditionalPPQData();
@@ -203,15 +183,18 @@ public:
 	BOOL HasCondition();
 
 	void GetEquationText(CString& text) const;
-	void GetEquationText(SVString& text) const;
 	void SetEquationText(const CString& text);
-	void SetEquationText(const SVString& text);
+
+#pragma region IEquation
+	virtual void GetEquationText(SVString& text) const override;
+	virtual void SetEquationText(const SVString& text) override;
+	virtual SvOi::EquationTestResult Test( bool DisplayErrorMessage = true ) override;
+	virtual double GetYACCResult() const override;
+#pragma endregion IEquation
 
 	virtual int AddSymbol( LPCTSTR name );
 
 	virtual BOOL DisconnectToolSetSymbol( SVInObjectInfoStruct* pInObjectInfo );
-
-	virtual SVEquationTestResult Test( BOOL DisplayErrorMessage = TRUE );
 
 	virtual BOOL OnValidate();
 
@@ -248,7 +231,7 @@ protected:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	
 private:
-	SVEquationTestResult lexicalScan( LPSTR buffer );		// perform lexical scan
+	SvOi::EquationTestResult lexicalScan( LPSTR buffer );		// perform lexical scan
 
 	protected:
 	SVEquationLexClass lex;					// scanner class
@@ -264,8 +247,6 @@ private:
 	long m_lCurrentRunIndex;				// pointer to the run status for the current run
 											// it is needed to get the result data index for PPQ inputs
 };
-
-#endif	// SVEQUATIONCLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:

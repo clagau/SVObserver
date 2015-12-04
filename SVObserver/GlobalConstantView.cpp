@@ -23,7 +23,7 @@
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVOGui/GlobalConstantDlg.h"
-#include "SVShowDependentsDialog.h"
+#include "SVOGui/SVShowDependentsDialog.h"
 #pragma endregion Includes
 
 
@@ -463,13 +463,13 @@ bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool C
 			++Iter;
 		}
 		
-		SVShowDependentsDialog::DialogType Type( SVShowDependentsDialog::ShowWithIP_Name );
+		SvOg::SVShowDependentsDialog::DialogType Type( SvOg::SVShowDependentsDialog::ShowWithIP_Name );
 		if( ConfirmDelete )
 		{
-			Type =  SVShowDependentsDialog::DeleteConfirmWithIP_Name;
+			Type =  SvOg::SVShowDependentsDialog::DeleteConfirmWithIP_Name;
 		}
 
-		SVShowDependentsDialog DependentsDialog( DependencyList, DisplayText, Type );
+		SvOg::SVShowDependentsDialog DependentsDialog( DependencyList, DisplayText, Type );
 
 		if( IDCANCEL == DependentsDialog.DoModal() )
 		{
