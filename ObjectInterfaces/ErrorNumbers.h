@@ -132,8 +132,30 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_16038_EmptyFormula = Mec_ErrorBase + 38;
 	static const int Err_16039_NegativePosition = Mec_ErrorBase + 39;
 	static const int Err_16040_ToLargePosition = Mec_ErrorBase + 40;
-
 	static const int LastErrorAdjustTool  = Mec_ErrorBase + 40;
+	///Errornumbers load Configuration 
+	static const int Err_16041_ErrroDestroyingConfig  = Mec_ErrorBase + 41;
+	static const int Err_16042_ConvertColorToStandardProduct  = Mec_ErrorBase + 42;
+	static const int  Err_16043 = Mec_ErrorBase + 43;
+	static const int  Err_16044_CreateInputList  = Mec_ErrorBase + 44;
+	static const int Err_16045_MissingTag = Mec_ErrorBase + 45;
+	static const int  Err_16046_LOAD_IO_FAILED =  Mec_ErrorBase + 46;
+	static const int  Err_16047_CreateOutputList =  Mec_ErrorBase + 47;
+	static const int Err_16048_ErrrorCreatePPQObject  =  Mec_ErrorBase + 48;
+	static const int Err_16049_ErrorMissingInpuTag  =  Mec_ErrorBase + 49;
+	static const int Err_16050_ConstructObjectInspection  =  Mec_ErrorBase + 50;
+	static const int Err_16051_ErrorMissingIOTypeTag =  Mec_ErrorBase + 51;
+	static const int 	Err_16052_ErrorMissingItemNameTag =  Mec_ErrorBase + 52;
+	static const int	Err_16053_ErrorMissingIOTypeTag =  Mec_ErrorBase + 53; 
+	static const int	Err_16054_ErrorMissingPPQPOsitionTag =  Mec_ErrorBase + 54; 
+	static const int Err_16055_ErrorMissingRemoteIndexTag =  Mec_ErrorBase + 55;
+	static const int 	Err_16056_ErrorMissingPPQPOsitionTag =  Mec_ErrorBase + 56;
+	static const int 	Err_16057_ErrorMissingItemNameTag =  Mec_ErrorBase + 57;
+	static const int 	Err_16058_ErrorMissingRemoteIndexTag =  Mec_ErrorBase + 58;
+	static const int	Err_16059_ErrorMissingItemNameTag   =  Mec_ErrorBase + 59;
+	static const int 	Err_16060_IOEntryIsMissing=  Mec_ErrorBase + 60;
+	static const int 	Err_16061_EnviromentTagIsMissing =  Mec_ErrorBase + 61;
+	
 	
 
 	// Ben Walter

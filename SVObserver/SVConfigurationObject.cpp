@@ -68,6 +68,8 @@
 #include "SVIPDoc.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "TextDefinesSvO.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -85,7 +87,7 @@ SV_IMPLEMENT_CLASS( SVConfigurationObject, SVConfigurationObjectGuid );
 
 #pragma region Constructor
 SVConfigurationObject::SVConfigurationObject( LPCSTR ObjectName )
-: SVObjectClass( ObjectName )
+	: SVObjectClass( ObjectName )
 {
 	m_pIOController = new SVIOController;
 	m_pInputObjectList	= NULL;
@@ -102,7 +104,7 @@ SVConfigurationObject::SVConfigurationObject( LPCSTR ObjectName )
 }
 
 SVConfigurationObject::SVConfigurationObject( SVObjectClass* POwner, int StringResourceID )
-: SVObjectClass( POwner, StringResourceID )
+	: SVObjectClass( POwner, StringResourceID )
 {
 	m_pIOController = new SVIOController;
 	m_pInputObjectList	= NULL;
@@ -261,10 +263,10 @@ SVTriggerObject* SVConfigurationObject::GetTrigger( long lIndex ) const
 }// end GetTrigger
 
 BOOL SVConfigurationObject::AddAcquisitionDevice( LPCTSTR szName, 
-																								 SVFileNameArrayClass& rsvFiles,
-																								 SVLightReference& rsvLight,
-																								 SVLut& rLut,
-																								 const SVDeviceParamCollection* pDeviceParams )
+	SVFileNameArrayClass& rsvFiles,
+	SVLightReference& rsvLight,
+	SVLut& rLut,
+	const SVDeviceParamCollection* pDeviceParams )
 {
 	BOOL bOk = FALSE;
 	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = NULL;
@@ -879,1528 +881,1632 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 	return hr;
 }
 
-HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
+void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &ConfigurationColor)
 {
-	HRESULT	Result( S_OK );
+	SVTreeType::SVBranchHandle htiChild = NULL;
+	BOOL bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_ENVIRONMENT, NULL, htiChild );
 
-	BOOL bOk = DestroyConfiguration();
-	if ( bOk )
+	if (bOk != TRUE)
 	{
-		SVTreeType::SVBranchHandle htiChild = NULL;
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_SVO_82_NO_ENVIROMENT_TAG,nullptr,StdMessageParams, SvOi::Err_16061_EnviromentTagIsMissing);
+		throw MsgCont;
+	}
 
-		CString l_sBoardName;
-		long l_lNumBoardDig=0;
-		long l_lNumCameras=0;
-		bool ConfigurationColor( false );
+	_variant_t svValue;
+
+	if ( SVNavigateTreeClass::GetItem( rTree, CTAG_CONFIGURATION_TYPE, htiChild, svValue ) )
+	{
+
+		int iType = svValue;
+		SetProductType( (SVIMProductEnum) iType );
+
+		ConvertColorToStandardProductType( ConfigurationColor );
+		
+	}
 
 
-		bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_ENVIRONMENT, NULL, htiChild );
-		if (bOk != TRUE)
+
+	if(false == SVNavigateTreeClass::GetItem( rTree, CTAG_VERSION_NUMBER, htiChild, svValue ))
+	{
+
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_SVO_77_LOAD_VERSION_NUMBER_FAILED,CTAG_VERSION_NUMBER,StdMessageParams, SvOi::Err_16043);
+		throw MsgCont;
+	}
+
+	TheSVObserverApp.setLoadingVersion( svValue );
+
+	m_ulVersion = TheSVObserverApp.getLoadingVersion();
+
+
+	//This is the deprecated tag and has changed to CTAG_IMAGE_UPDATE and CTAG_RESULT_UPDATE
+	//Needs to be read for older configurations and becomes the standard default
+	bool Value = true;
+	if (SVNavigateTreeClass::GetItem( rTree, CTAG_ONLINE_DISPLAY, htiChild, svValue) )
+	{
+		Value = svValue;
+	}
+
+	if (SVNavigateTreeClass::GetItem( rTree, CTAG_IMAGE_DISPLAY_UPDATE, htiChild, svValue) )
+	{
+		Value = svValue;
+	}
+	RootObject::setRootChildValue( ::EnvironmentImageUpdate, Value );
+
+	if (SVNavigateTreeClass::GetItem( rTree, CTAG_RESULT_DISPLAY_UPDATE, htiChild, svValue) )
+	{
+		Value = svValue;
+	}
+	RootObject::setRootChildValue( ::EnvironmentResultUpdate, Value );
+
+	// Thread Affinity Setup
+	SVTreeType::SVBranchHandle htiThreadSetup = NULL;
+	CString strThreadTag;
+	CString strName;
+	int iThreadNum = 1;
+	bool bThreadOk = true;
+	while( bThreadOk )
+	{
+		long lAffinity;
+		strThreadTag.Format(_T("%s_%d"), CTAG_THREAD_SETUP, iThreadNum);
+		bThreadOk = SVNavigateTreeClass::GetItemBranch( rTree, strThreadTag, htiChild, htiThreadSetup );
+		if( bThreadOk )
 		{
-			Result = -1797;
+			bThreadOk = SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_AFFINITY, htiThreadSetup, svValue);
+			lAffinity = svValue;
+			bThreadOk &= SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_NAME, htiThreadSetup, svValue);
+			strName = svValue;
+			if( bThreadOk  )
+			{
+				SVThreadManager::Instance().Setup( strName, lAffinity );
+			}
+			else
+			{
+				bThreadOk = FALSE;
+			}
 		}
+		iThreadNum++;
+	}
+
+	// Thread Manager Enable
+	BOOL bThreadMgrEnable = FALSE;
+	if (SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_MGR_ENABLE, htiChild, svValue) )
+	{
+		bThreadMgrEnable = svValue;
+	}
+	SVThreadManager::Instance().SetThreadAffinityEnabled(bThreadMgrEnable);
+
+}
+
+bool SVConfigurationObject::LoadIO(SVTreeType& rTree )
+{
+	SVTreeType::SVBranchHandle htiChild = NULL;
+
+
+	BOOL bOk  =  SVNavigateTreeClass::GetItemBranch( rTree, CTAG_IO, NULL, htiChild );
+	if (bOk != TRUE)
+	{
+
+		return false;
+
+	}
+
+
+	_variant_t svVariant;
+	_variant_t svValue;
+	CString strEntry;
+
+	SVInputObjectList *pInputsList = new SVInputObjectList;
+	SVOutputObjectList *pOutputsList = new SVOutputObjectList;
+	pInputsList->SetName( SvO::InputObjectList);
+	pOutputsList->SetName( SvO::OutputObjectList );
+	if(pInputsList == NULL  || FALSE == pInputsList->Create())
+	{
+		
+		CString msg;
+		msg.Format(SvO::Create_S_Failed,SvO::InputObjectList );
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_SVO_78_LOAD_IO_FAILED,msg.GetString(),StdMessageParams, SvOi::Err_16044_CreateInputList);
+		throw MsgCont;
+
+	}
+	if(pOutputsList == NULL || pOutputsList->Create() == FALSE)
+	{
+		CString msg;
+		msg.Format(SvO::Create_S_Failed,SvO::OutputObjectList );
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_SVO_78_LOAD_IO_FAILED,msg.GetString(),StdMessageParams, SvOi::Err_16047_CreateOutputList);
+		throw MsgCont;
+	}
+
+
+
+	SVTreeType::SVBranchHandle htiSubChild;
+	long lIOSize = 0;
+	long i;
+
+
+	if (FALSE == SVNavigateTreeClass::GetItem( rTree, CTAG_NUMBER_OF_IO_ENTRIES, htiChild, svValue ))
+	{
+		
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_SVO_78_LOAD_IO_FAILED,SvO::NumberOfIosMissing ,StdMessageParams, SvOi::Err_16045_MissingTag);
+		throw MsgCont;
+	}
+
+	lIOSize = svValue;
+
+	SVGUID l_ModuleReadyId;
+	SVGUID l_RaidErrorId;
+
+	// Loop through all the "IO EntryXXX"
+	for( i = 0; i < lIOSize; i++ )
+	{
+		strEntry.Format( CTAGF_IO_ENTRY_X, i );
+		if(FALSE == SVNavigateTreeClass::GetItemBranch( rTree, strEntry, htiChild, htiSubChild ))
+		{
+			
+			
+			SvStl::MessageContainer MsgCont;
+			MsgCont.setMessage(SVMSG_SVO_78_LOAD_IO_FAILED,SvO::IOEntryIsMissingMissing,StdMessageParams, SvOi::Err_16060_IOEntryIsMissing);
+			throw MsgCont;
+		}
+
+
+		_variant_t svoData;
+		CString strName;
+		bool	bOutput;
+		DWORD	dwChannel;
+		bool	bForced;
+		DWORD	dwForcedValue;
+		bool	bInverted;
+		bool	bCombined;
+		bool	bCombinedACK;
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IO_ENTRY_NAME, htiSubChild, svoData );
+
+		if( bOk )
+		{
+			strName = svoData;
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_OUTPUT, htiSubChild, svoData );
+
+		if( bOk )
+		{
+			bOutput = svoData;
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_CHANNEL, htiSubChild, svoData );
+
+		if( bOk )
+		{
+			dwChannel = svoData;
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_FORCED, htiSubChild, svoData );
+
+		if( bOk )
+		{
+			bForced = svoData;
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_FORCED_VALUE, htiSubChild, svoData );
+
+		if( bOk )
+		{
+			dwForcedValue = static_cast< bool >( svoData );
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_INVERTED, htiSubChild, svoData );
+
+		if( bOk )
+		{
+			bInverted = svoData;
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_FORCED, htiSubChild, svoData );
+
+		if( bOk )
+		{
+			bForced = svoData;
+		}// end if
+
+		BOOL bCheck;
+		bCheck = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_COMBINED, htiSubChild, svoData );
+		if( bCheck )
+		{
+			bCombined = svoData;
+		}// end if
 		else
 		{
-			_variant_t svValue;
+			bCombined = false;
+		}// end else
 
-			if ( SVNavigateTreeClass::GetItem( rTree, CTAG_CONFIGURATION_TYPE, htiChild, svValue ) )
-			{
-				int iType = svValue;
-				SetProductType( (SVIMProductEnum) iType );
-
-				Result = ConvertColorToStandardProductType( ConfigurationColor );
-				if( S_OK != Result )
-				{
-					//This causes the loading to stop but not to show any messages
-					Result = E_FAIL;
-					bOk = false;
-					//Return now to avoid further loading this needs to be cleaned when breaking this method up
-					return Result;
-				}
-			}
-
-			if( bOk )
-			{
-				bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_VERSION_NUMBER, htiChild, svValue );
-			}
-
-			if( bOk )
-			{
-				TheSVObserverApp.setLoadingVersion( svValue );
-
-				m_ulVersion = TheSVObserverApp.getLoadingVersion();
-			}
-
-			//This is the deprecated tag and has changed to CTAG_IMAGE_UPDATE and CTAG_RESULT_UPDATE
-			//Needs to be read for older configurations and becomes the standard default
-			bool Value = true;
-			if (SVNavigateTreeClass::GetItem( rTree, CTAG_ONLINE_DISPLAY, htiChild, svValue) )
-			{
-				Value = svValue;
-			}
-
-			if (SVNavigateTreeClass::GetItem( rTree, CTAG_IMAGE_DISPLAY_UPDATE, htiChild, svValue) )
-			{
-				Value = svValue;
-			}
-			RootObject::setRootChildValue( ::EnvironmentImageUpdate, Value );
-
-			if (SVNavigateTreeClass::GetItem( rTree, CTAG_RESULT_DISPLAY_UPDATE, htiChild, svValue) )
-			{
-				Value = svValue;
-			}
-			RootObject::setRootChildValue( ::EnvironmentResultUpdate, Value );
-
-			// Thread Affinity Setup
-			SVTreeType::SVBranchHandle htiThreadSetup = NULL;
-			CString strThreadTag;
-			CString strName;
-			int iThreadNum = 1;
-			bool bThreadOk = true;
-			while( bThreadOk )
-			{
-				long lAffinity;
-				strThreadTag.Format(_T("%s_%d"), CTAG_THREAD_SETUP, iThreadNum);
-				bThreadOk = SVNavigateTreeClass::GetItemBranch( rTree, strThreadTag, htiChild, htiThreadSetup );
-				if( bThreadOk )
-				{
-					bThreadOk = SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_AFFINITY, htiThreadSetup, svValue);
-					lAffinity = svValue;
-					bThreadOk &= SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_NAME, htiThreadSetup, svValue);
-					strName = svValue;
-					if( bThreadOk  )
-					{
-						SVThreadManager::Instance().Setup( strName, lAffinity );
-					}
-					else
-					{
-						bThreadOk = FALSE;
-					}
-				}
-				iThreadNum++;
-			}
-
-			// Thread Manager Enable
-			BOOL bThreadMgrEnable = FALSE;
-			if (SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_MGR_ENABLE, htiChild, svValue) )
-			{
-				bThreadMgrEnable = svValue;
-			}
-			SVThreadManager::Instance().SetThreadAffinityEnabled(bThreadMgrEnable);
-
-
-		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_ENVIRONMENT, NULL, &htiChild ) )
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		if (bOk && SVNavigateTreeClass::GetItemBranch( rTree, CTAG_IO, NULL, htiChild ) )
+		bCheck = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_COMBINED_ACK, htiSubChild, svoData );
+		if( bCheck )
 		{
-			_variant_t svVariant;
-			_variant_t svValue;
-			CString strEntry;
+			bCombinedACK = svoData;
+		}// end if
+		else
+		{
+			bCombinedACK = false;
+		}// end else
 
-			SVInputObjectList *pInputsList = new SVInputObjectList;
-			SVOutputObjectList *pOutputsList = new SVOutputObjectList;
-			pInputsList->SetName( _T( "Input Object List" ) );
-			pOutputsList->SetName( _T( "Output Object List" ) );
-			bOk &= pInputsList != NULL && pInputsList->Create();
-			bOk &= pOutputsList != NULL && pOutputsList->Create();
-
-			SVTreeType::SVBranchHandle htiSubChild;
-			long lIOSize = 0;
-			long i;
-
-			if( bOk )
-			{
-				bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_NUMBER_OF_IO_ENTRIES, htiChild, svValue );
-
-				if( bOk )
-				{
-					lIOSize = svValue;
-				}// end if
-
-			}// end if
-
-			SVGUID l_ModuleReadyId;
-			SVGUID l_RaidErrorId;
-
-			// Loop through all the "IO EntryXXX"
-			for( i = 0; bOk && i < lIOSize; i++ )
-			{
-				strEntry.Format( CTAGF_IO_ENTRY_X, i );
-				bOk = SVNavigateTreeClass::GetItemBranch( rTree, strEntry, htiChild, htiSubChild );
-
-				if ( bOk )
-				{
-					_variant_t svoData;
-					CString strName;
-					bool	bOutput;
-					DWORD	dwChannel;
-					bool	bForced;
-					DWORD	dwForcedValue;
-					bool	bInverted;
-					bool	bCombined;
-					bool	bCombinedACK;
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IO_ENTRY_NAME, htiSubChild, svoData );
-
-					if( bOk )
-					{
-						strName = svoData;
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_OUTPUT, htiSubChild, svoData );
-
-					if( bOk )
-					{
-						bOutput = svoData;
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_CHANNEL, htiSubChild, svoData );
-
-					if( bOk )
-					{
-						dwChannel = svoData;
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_FORCED, htiSubChild, svoData );
-
-					if( bOk )
-					{
-						bForced = svoData;
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_FORCED_VALUE, htiSubChild, svoData );
-
-					if( bOk )
-					{
-						dwForcedValue = static_cast< bool >( svoData );
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_INVERTED, htiSubChild, svoData );
-
-					if( bOk )
-					{
-						bInverted = svoData;
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_FORCED, htiSubChild, svoData );
-
-					if( bOk )
-					{
-						bForced = svoData;
-					}// end if
-
-					BOOL bCheck;
-					bCheck = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_COMBINED, htiSubChild, svoData );
-					if( bCheck )
-					{
-						bCombined = svoData;
-					}// end if
-					else
-					{
-						bCombined = false;
-					}// end else
-
-					bCheck = SVNavigateTreeClass::GetItem( rTree, CTAG_IS_COMBINED_ACK, htiSubChild, svoData );
-					if( bCheck )
-					{
-						bCombinedACK = svoData;
-					}// end if
-					else
-					{
-						bCombinedACK = false;
-					}// end else
-
-					if( (long)dwChannel > (long)-1 )
-					{
-						if( bOutput )
-						{
-							SVDigitalOutputObject* pOutput = NULL;
-
-							pOutputsList->GetOutputFlyweight( strName, pOutput );
-
-							if( pOutput != NULL )
-							{
-								pOutput->SetChannel( dwChannel );
-								pOutput->Force( bForced, ( dwForcedValue != FALSE ) );
-								pOutput->Invert( bInverted );
-								pOutput->Combine( bCombined, bCombinedACK );
-
-								if( strName.Compare( _T("Module Ready") ) == 0 )
-								{
-									l_ModuleReadyId = pOutput->GetUniqueObjectID();
-								}
-								else if( strName.Compare( _T("Raid Error Indicator") ) == 0 )
-								{
-									l_RaidErrorId = pOutput->GetUniqueObjectID();
-								}
-							}
-						}// end if
-						else
-						{
-							SVDigitalInputObject* pInput = NULL;
-
-							pInputsList->GetInputFlyweight( static_cast< LPCTSTR >( strName ), pInput );
-
-							if( pInput != NULL )
-							{
-								pInput->SetChannel( dwChannel );
-								pInput->Force( bForced, dwForcedValue != FALSE );
-								pInput->Invert( bInverted );							
-							}
-						}// end else
-					}// end if
-
-				}// end if
-				else
-				{					
-					bOk = false;
-					break;
-				}// end else
-
-			}// end for
-
-			if ( bOk )
-			{
-				if( m_pInputObjectList != NULL )
-				{
-					delete m_pInputObjectList;
-				}
-
-				m_pInputObjectList  = pInputsList;
-
-				if( m_pOutputObjectList != NULL )
-				{
-					delete m_pOutputObjectList;
-				}
-
-				m_pOutputObjectList = pOutputsList;
-			}// end if
-
-			if ( bOk )
-			{
-				if ( m_pIOController != NULL )
-				{
-					delete m_pIOController;
-					m_pIOController = NULL;
-				}
-
-				m_pIOController = new SVIOController;
-				if ( m_pIOController != NULL )
-				{
-					m_pIOController->SetParameters( rTree, htiChild );
-				}
-			}// end if
-
-			if( bOk && l_ModuleReadyId.empty() )
+		if( (long)dwChannel > (long)-1 )
+		{
+			if( bOutput )
 			{
 				SVDigitalOutputObject* pOutput = NULL;
 
-				m_pOutputObjectList->GetOutputFlyweight( "Module Ready", pOutput );
+				pOutputsList->GetOutputFlyweight( strName, pOutput );
 
 				if( pOutput != NULL )
 				{
-					l_ModuleReadyId = pOutput->GetUniqueObjectID();
-				}
-			}
+					pOutput->SetChannel( dwChannel );
+					pOutput->Force( bForced, ( dwForcedValue != FALSE ) );
+					pOutput->Invert( bInverted );
+					pOutput->Combine( bCombined, bCombinedACK );
 
-			m_pIOController->GetModuleReady()->m_IOId = l_ModuleReadyId;
-			m_pIOController->GetRaidErrorBit()->m_IOId = l_RaidErrorId;
-		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_IO, NULL, &htiChild ) )
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		if ( bOk && SVNavigateTreeClass::GetItemBranch( rTree, CTAG_ACQUISITION_DEVICE, NULL, htiChild ) )
-		{
-			SVTreeType::SVBranchHandle htiBoardChild = NULL;
-			
-			rTree.GetFirstBranch( htiChild, htiBoardChild );
-
-			while ( bOk && htiBoardChild != NULL )
-			{
-				_bstr_t BoardName;
-			
-				rTree.GetBranchName( htiBoardChild, BoardName.GetBSTR() );
-
-				CString csBoardName = static_cast< LPCTSTR >( BoardName );
-				l_sBoardName = csBoardName;
-
-				long lNumAcqDig=0;
-
-				// test for File Acquisition, since there is no LUT, Light, or DeviceParams
-				if (l_sBoardName == _T("File")) 
-				{
-					Result = LoadFileAcquisitionConfiguration(rTree, htiBoardChild, lNumAcqDig);
-				}
-				else
-				{
-					SVTreeType::SVBranchHandle htiDigChild = NULL;
-					
-					rTree.GetFirstBranch( htiBoardChild, htiDigChild );
-
-					while ( bOk && htiDigChild != NULL )
+					if( strName.Compare( _T("Module Ready") ) == 0 )
 					{
-						++lNumAcqDig;
+						l_ModuleReadyId = pOutput->GetUniqueObjectID();
+					}
+					else if( strName.Compare( _T("Raid Error Indicator") ) == 0 )
+					{
+						l_RaidErrorId = pOutput->GetUniqueObjectID();
+					}
+				}
+			}// end if
+			else
+			{
+				SVDigitalInputObject* pInput = NULL;
 
-						bool bFileDone = false;
-						bool bLightDone = false;
-						bool bLutDone = false;
-						bool bLutCreated = false;
+				pInputsList->GetInputFlyweight( static_cast< LPCTSTR >( strName ), pInput );
 
-						_variant_t l_Variant;
-						SVLightReference svLight;
-						SVFileNameArrayClass svFileArray;
-						SVLut lut;
-						SVDeviceParamCollection svDeviceParams;
+				if( pInput != NULL )
+				{
+					pInput->SetChannel( dwChannel );
+					pInput->Force( bForced, dwForcedValue != FALSE );
+					pInput->Invert( bInverted );							
+				}
+			}// end else
+		}// end if
 
-						_bstr_t DigName;
+		if(!bOk)
+		{
+			SvStl::MessageContainer MsgCont;
+			MsgCont.setMessage(SVMSG_SVO_78_LOAD_IO_FAILED,nullptr,StdMessageParams, SvOi::Err_16046_LOAD_IO_FAILED);
+			throw MsgCont;
+		}
 
-						rTree.GetBranchName( htiDigChild, DigName.GetBSTR() );
+	}// end for
 
-						CString csDigName = static_cast< LPCTSTR >( DigName );
 
-						SVTreeType::SVBranchHandle htiDataChild = NULL;
-						
-						rTree.GetFirstBranch( htiDigChild, htiDataChild );
+	if( m_pInputObjectList != NULL )
+	{
+		delete m_pInputObjectList;
+	}
 
-						bFileDone = SVNavigateTreeClass::GetItem( rTree, CTAG_ACQUISITION_DEVICE_FILE_NAME, htiDigChild, l_Variant );
+	m_pInputObjectList  = pInputsList;
 
-						if( bFileDone )
+	if( m_pOutputObjectList != NULL )
+	{
+		delete m_pOutputObjectList;
+	}
+
+	m_pOutputObjectList = pOutputsList;
+
+
+
+	if ( m_pIOController != NULL )
+	{
+		delete m_pIOController;
+		m_pIOController = NULL;
+	}
+
+	m_pIOController = new SVIOController;
+	if ( m_pIOController != NULL )
+	{
+		m_pIOController->SetParameters( rTree, htiChild );
+	}
+
+
+	if(  l_ModuleReadyId.empty() )
+	{
+		SVDigitalOutputObject* pOutput = NULL;
+
+		m_pOutputObjectList->GetOutputFlyweight( "Module Ready", pOutput );
+
+		if( pOutput != NULL )
+		{
+			l_ModuleReadyId = pOutput->GetUniqueObjectID();
+		}
+	}
+	m_pIOController->GetModuleReady()->m_IOId = l_ModuleReadyId;
+	m_pIOController->GetRaidErrorBit()->m_IOId = l_RaidErrorId;
+	return true;
+}
+
+
+bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, CString& csBoardName, long &lNumBordDig )
+{
+	SVTreeType::SVBranchHandle htiChild = NULL;
+
+
+	BOOL bOk  =  SVNavigateTreeClass::GetItemBranch( rTree, CTAG_ACQUISITION_DEVICE, NULL, htiChild );
+
+
+
+
+	SVTreeType::SVBranchHandle htiBoardChild = NULL;
+
+	rTree.GetFirstBranch( htiChild, htiBoardChild );
+
+	while ( bOk && htiBoardChild != NULL )
+	{
+		_bstr_t BoardName;
+
+		rTree.GetBranchName( htiBoardChild, BoardName.GetBSTR() );
+
+		csBoardName = static_cast< LPCTSTR >( BoardName );
+	
+
+		long lNumAcqDig=0;
+
+		// test for File Acquisition, since there is no LUT, Light, or DeviceParams
+		if (csBoardName == _T("File")) 
+		{
+			HRESULT Result = LoadFileAcquisitionConfiguration(rTree, htiBoardChild, lNumAcqDig);
+		}
+		else
+		{
+			SVTreeType::SVBranchHandle htiDigChild = NULL;
+
+			rTree.GetFirstBranch( htiBoardChild, htiDigChild );
+
+			while ( bOk && htiDigChild != NULL )
+			{
+				++lNumAcqDig;
+
+				bool bFileDone = false;
+				bool bLightDone = false;
+				bool bLutDone = false;
+				bool bLutCreated = false;
+
+				_variant_t l_Variant;
+				SVLightReference svLight;
+				SVFileNameArrayClass svFileArray;
+				SVLut lut;
+				SVDeviceParamCollection svDeviceParams;
+
+				_bstr_t DigName;
+
+				rTree.GetBranchName( htiDigChild, DigName.GetBSTR() );
+
+				CString csDigName = static_cast< LPCTSTR >( DigName );
+
+				SVTreeType::SVBranchHandle htiDataChild = NULL;
+
+				rTree.GetFirstBranch( htiDigChild, htiDataChild );
+
+				bFileDone = SVNavigateTreeClass::GetItem( rTree, CTAG_ACQUISITION_DEVICE_FILE_NAME, htiDigChild, l_Variant );
+
+				if( bFileDone )
+				{
+					_bstr_t l_String( l_Variant );
+
+					svFileArray.SetFileNameList( static_cast< LPCTSTR >( l_String ) );
+				}
+
+				if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_LIGHT_REFERENCE_ARRAY, htiDigChild, htiDataChild ) )
+				{
+					_variant_t svValue;
+
+					if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiDataChild, svValue ) )
+					{
+						int iBands = svValue;
+
+						ASSERT( iBands > 0 );
+
+						if ( svLight.Create( iBands ) )
 						{
-								_bstr_t l_String( l_Variant );
-
-								svFileArray.SetFileNameList( static_cast< LPCTSTR >( l_String ) );
-						}
-
-						if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_LIGHT_REFERENCE_ARRAY, htiDigChild, htiDataChild ) )
-						{
-							_variant_t svValue;
-
-							if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiDataChild, svValue ) )
+							for ( int i = 0; i < iBands; i++ )
 							{
-								int iBands = svValue;
+								CString csBand;
 
-								ASSERT( iBands > 0 );
+								SVTreeType::SVBranchHandle htiBand = NULL;
 
-								if ( svLight.Create( iBands ) )
+								csBand.Format( CTAGF_BAND_X, i );
+
+								if ( SVNavigateTreeClass::GetItemBranch( rTree, (LPCTSTR)csBand, htiDataChild, htiBand ) )
 								{
-									for ( int i = 0; i < iBands; i++ )
+									if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiBand, svValue ) )
 									{
-										CString csBand;
+										int iSize = svValue;
 
-										SVTreeType::SVBranchHandle htiBand = NULL;
-
-										csBand.Format( CTAGF_BAND_X, i );
-
-										if ( SVNavigateTreeClass::GetItemBranch( rTree, (LPCTSTR)csBand, htiDataChild, htiBand ) )
+										if ( svLight.Band( i ).Create( iSize ) )
 										{
-											if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiBand, svValue ) )
+											for ( int j = 0; j < iSize; j++ )
 											{
-												int iSize = svValue;
+												CString csLight;
 
-												if ( svLight.Band( i ).Create( iSize ) )
+												SVTreeType::SVBranchHandle htiLight = NULL;
+
+												csBand.Format( CTAGF_LIGHTREFERENCE_X, j );
+
+												if ( SVNavigateTreeClass::GetItemBranch( rTree, (LPCTSTR)csBand, htiBand, htiLight ) )
 												{
-													for ( int j = 0; j < iSize; j++ )
+													if ( SVNavigateTreeClass::GetItem( rTree, CTAG_NAME, htiLight, svValue ) )
 													{
-														CString csLight;
+														_bstr_t l_String( svValue );
 
-														SVTreeType::SVBranchHandle htiLight = NULL;
-
-														csBand.Format( CTAGF_LIGHTREFERENCE_X, j );
-
-														if ( SVNavigateTreeClass::GetItemBranch( rTree, (LPCTSTR)csBand, htiBand, htiLight ) )
+														svLight.Band( i ).Attribute( j ).strName = static_cast< LPCTSTR >( l_String );
+														//Legacy: changed name from Contrast to Gain
+														if( SVString( CameraContrast ) == svLight.Band( i ).Attribute( j ).strName )
 														{
-															if ( SVNavigateTreeClass::GetItem( rTree, CTAG_NAME, htiLight, svValue ) )
-															{
-																_bstr_t l_String( svValue );
-
-																svLight.Band( i ).Attribute( j ).strName = static_cast< LPCTSTR >( l_String );
-																//Legacy: changed name from Contrast to Gain
-																if( SVString( CameraContrast ) == svLight.Band( i ).Attribute( j ).strName )
-																{
-																	svLight.Band( i ).Attribute( j ).strName = CameraGain;
-																}
-															}
-															if ( SVNavigateTreeClass::GetItem( rTree, CTAG_RESOURCE_ID, htiLight, svValue ) )
-															{
-																svLight.Band( i ).Attribute( j ).iIDCaption = svValue;
-															}
-															if ( SVNavigateTreeClass::GetItem( rTree, CTAG_TYPE, htiLight, svValue ) )
-															{
-																svLight.Band( i ).Attribute( j ).dwType = svValue;
-																ConvertLightReferenceEnum(svLight.Band( i ).Attribute( j ).dwType);
-															}
-															if ( SVNavigateTreeClass::GetItem( rTree, CTAG_VALUE, htiLight, svValue ) )
-															{
-																svLight.Band( i ).Attribute( j ).lValue = svValue;
-															}
-
-															bLightDone = true;
+															svLight.Band( i ).Attribute( j ).strName = CameraGain;
 														}
-													}// end for ( int j = 0; j < iSize; j++ )
-												}// end if ( svLight.Band( i ).Create( iSize ) )
-											}
-										}
-									}// end for ( int i = 0; i < iBands; i++ )
-								}// end if ( svLight.Create( iBands ) )
-							}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiDataChild, svValue ) )
+													}
+													if ( SVNavigateTreeClass::GetItem( rTree, CTAG_RESOURCE_ID, htiLight, svValue ) )
+													{
+														svLight.Band( i ).Attribute( j ).iIDCaption = svValue;
+													}
+													if ( SVNavigateTreeClass::GetItem( rTree, CTAG_TYPE, htiLight, svValue ) )
+													{
+														svLight.Band( i ).Attribute( j ).dwType = svValue;
+														ConvertLightReferenceEnum(svLight.Band( i ).Attribute( j ).dwType);
+													}
+													if ( SVNavigateTreeClass::GetItem( rTree, CTAG_VALUE, htiLight, svValue ) )
+													{
+														svLight.Band( i ).Attribute( j ).lValue = svValue;
+													}
+
+													bLightDone = true;
+												}
+											}// end for ( int j = 0; j < iSize; j++ )
+										}// end if ( svLight.Band( i ).Create( iSize ) )
+									}
+								}
+							}// end for ( int i = 0; i < iBands; i++ )
+						}// end if ( svLight.Create( iBands ) )
+					}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiDataChild, svValue ) )
+				}
+
+				if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_LUT, htiDigChild, htiDataChild ) )
+				{
+					_variant_t svValue;
+					SVLutInfo lutinfo;
+
+					if ( SVNavigateTreeClass::GetItem( rTree, CTAG_MAX_VALUE, htiDataChild, svValue ) )
+					{
+						UINT uiMax = svValue;
+
+						lutinfo.SetMaxValue( uiMax );
+					}
+
+					if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiDataChild, svValue ) )
+					{
+						int iBands = svValue;
+
+						if ( lutinfo.MaxValue() == 0 )	// legacy analog support
+						{
+							if ( iBands == 3 )
+								lutinfo.SetMaxValue( 1023 );
+							else
+								lutinfo.SetMaxValue( 255 );
 						}
 
-						if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_LUT, htiDigChild, htiDataChild ) )
+						lutinfo.SetBands( iBands );
+						lutinfo.SetTransform(SVDefaultLutTransform());
+
+						bLutCreated = false;
+
+						if ( true ) //SVLut.Create( iBands ) )
 						{
-							_variant_t svValue;
-							SVLutInfo lutinfo;
-
-							if ( SVNavigateTreeClass::GetItem( rTree, CTAG_MAX_VALUE, htiDataChild, svValue ) )
+							for ( int iBand = 0; iBand < iBands; iBand++ )
 							{
-								UINT uiMax = svValue;
+								CString csBand;
+								SVTreeType::SVBranchHandle htiBand = NULL;
 
-								lutinfo.SetMaxValue( uiMax );
+								csBand.Format( CTAGF_BAND_X, iBand );
+
+								SVLutTransformParameters param;
+
+								if ( SVNavigateTreeClass::GetItemBranch( rTree, (LPCTSTR)csBand, htiDataChild, htiBand ) )
+								{
+									SVSAFEARRAY l_BandData;
+
+									if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_BAND_DATA, htiBand, svValue ) )
+									{
+										l_BandData = svValue;
+
+										int lSize = static_cast< int >( l_BandData.size() );
+
+										if (!bLutCreated)
+										{
+											lutinfo.SetBandSize(lSize);
+											lut.Create(lutinfo);
+											bLutCreated = true;
+										}
+									}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_BAND_DATA, htiBand, svValue ) )
+
+									if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_TRANSFORM_PARAMETERS, htiBand, svValue ) )
+									{
+										SVSAFEARRAY l_Param( svValue );
+
+										long lSize = static_cast< long >( l_Param.size() );
+										// copy safearray to SVLutTransformParameters
+										for (long l=0; l < lSize; l++)
+										{
+											_variant_t lVal;
+
+											l_Param.GetElement( l, lVal );
+
+											param.Add(lVal);
+										}
+									}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_TRANSFORM_PARAMETERS, htiBand, svValue ) )
+
+									if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_TRANSFORM_OPERATION, htiBand, svValue ) )
+									{
+										long lTransformOperation = svValue;
+
+										const SVLutTransformOperation* pOperation = SVLutTransform::GetEquivalentType((SVLutTransformOperationEnum)lTransformOperation);
+										ASSERT(pOperation);
+										if (pOperation)
+										{
+											lut(iBand).SetTransformOperation(*pOperation);
+											lut(iBand).Transform(param);
+										}
+									}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_TRANSFORM_OPERATION, htiBand, svValue ) )
+
+									if( bLutCreated && 0 < l_BandData.size() )
+									{
+										bool bSetData = lut(iBand).SetBandData( l_BandData );
+									}
+
+								}
+							}// end for ( int i = 0; i < iBands; i++ )
+							bLutDone = true;
+						}// end if 
+					}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiDataChild, svValue ) )
+				}
+
+				if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_DEVICE_PARAM_LIST, htiDigChild, htiDataChild ) )
+				{
+					LoadDeviceParameters(rTree, htiDataChild, svDeviceParams);
+				}
+
+				bOk = bFileDone && bLightDone;
+				if ( bOk )
+				{
+					long l_BandCount = 1;
+
+					// get camera format from DeviceParams
+					const SVCameraFormatsDeviceParam* pParam = svDeviceParams.Parameter( DeviceParamCameraFormats ).DerivedValue( pParam );
+					if ( pParam )
+					{
+						SVCameraFormat cf;
+
+						cf.ParseAndAssignCameraFormat( pParam->strValue.ToString() );
+
+						// Band number depends on video type...
+						switch( cf.eImageType )
+						{
+						case SVImageFormatRGB8888:  // RGB
+							{
+								l_BandCount = 3;
+								break;
 							}
+						}
+					}
 
-							if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiDataChild, svValue ) )
+					long lNumLRBands = 0;
+					long lBand = 0;
+
+					lNumLRBands = svLight.NumBands();    // if (svLight.NumBands() == 1)
+					// one band (viper quad / ?rgb_mono?)
+					// if (svLight.NumBands() == 3) 
+					// may need to change to handle RGB mono
+
+					do
+					{
+						CString csFullName;
+
+						SVAcquisitionClassPtr psvDevice;
+
+						if ( 1 < lNumLRBands )
+						{
+							lNumLRBands = 1;
+						}
+
+						if ( 1 < l_BandCount )
+						{
+							csFullName.Format( "%s.%s.Ch_All", csBoardName, csDigName );
+						}
+						else
+						{
+							csFullName.Format( "%s.%s.Ch_%d", csBoardName, csDigName, lBand );
+						}
+
+						if ( ! bLutDone || ! bLutCreated )
+						{
+							psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( csFullName );
+							bOk = nullptr != psvDevice;
+							ASSERT( bOk );
+							if ( bOk )
 							{
-								int iBands = svValue;
-
+								psvDevice->GetLut(lut);
+								// create default lut
+								SVLutInfo lutinfo = lut.Info();
 								if ( lutinfo.MaxValue() == 0 )	// legacy analog support
 								{
-									if ( iBands == 3 )
+									if ( lutinfo.Bands() == 3 )
 										lutinfo.SetMaxValue( 1023 );
 									else
 										lutinfo.SetMaxValue( 255 );
 								}
-
-								lutinfo.SetBands( iBands );
 								lutinfo.SetTransform(SVDefaultLutTransform());
-
-								bLutCreated = false;
-
-								if ( true ) //SVLut.Create( iBands ) )
-								{
-									for ( int iBand = 0; iBand < iBands; iBand++ )
-									{
-										CString csBand;
-										SVTreeType::SVBranchHandle htiBand = NULL;
-
-										csBand.Format( CTAGF_BAND_X, iBand );
-
-										SVLutTransformParameters param;
-
-										if ( SVNavigateTreeClass::GetItemBranch( rTree, (LPCTSTR)csBand, htiDataChild, htiBand ) )
-										{
-											SVSAFEARRAY l_BandData;
-
-											if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_BAND_DATA, htiBand, svValue ) )
-											{
-												l_BandData = svValue;
-
-												int lSize = static_cast< int >( l_BandData.size() );
-
-												if (!bLutCreated)
-												{
-													lutinfo.SetBandSize(lSize);
-													lut.Create(lutinfo);
-													bLutCreated = true;
-												}
-											}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_BAND_DATA, htiBand, svValue ) )
-
-											if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_TRANSFORM_PARAMETERS, htiBand, svValue ) )
-											{
-												SVSAFEARRAY l_Param( svValue );
-
-												long lSize = static_cast< long >( l_Param.size() );
-												// copy safearray to SVLutTransformParameters
-												for (long l=0; l < lSize; l++)
-												{
-													_variant_t lVal;
-
-													l_Param.GetElement( l, lVal );
-
-													param.Add(lVal);
-												}
-											}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_TRANSFORM_PARAMETERS, htiBand, svValue ) )
-
-											if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_TRANSFORM_OPERATION, htiBand, svValue ) )
-											{
-												long lTransformOperation = svValue;
-
-												const SVLutTransformOperation* pOperation = SVLutTransform::GetEquivalentType((SVLutTransformOperationEnum)lTransformOperation);
-												ASSERT(pOperation);
-												if (pOperation)
-												{
-													lut(iBand).SetTransformOperation(*pOperation);
-													lut(iBand).Transform(param);
-												}
-											}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_LUT_TRANSFORM_OPERATION, htiBand, svValue ) )
-
-											if( bLutCreated && 0 < l_BandData.size() )
-											{
-												bool bSetData = lut(iBand).SetBandData( l_BandData );
-											}
-
-										}
-									}// end for ( int i = 0; i < iBands; i++ )
-									bLutDone = true;
-								}// end if 
-							}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiDataChild, svValue ) )
+								lutinfo.SetTransformOperation(SVLutTransformOperationNormal());	// as a default
+								lut.Create(lutinfo);
+								lut.Transform();
+							}
 						}
-
-						if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_DEVICE_PARAM_LIST, htiDigChild, htiDataChild ) )
-						{
-								LoadDeviceParameters(rTree, htiDataChild, svDeviceParams);
-						}
-
-						bOk = bFileDone && bLightDone;
+						SVString strNewAcquisitionDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csFullName);
+						SVDigitizerProcessingClass::Instance().SelectDigitizer( strNewAcquisitionDeviceName.c_str() );
+						psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strNewAcquisitionDeviceName.c_str() );
+						bOk = nullptr != psvDevice;
 						if ( bOk )
 						{
-							long l_BandCount = 1;
+							SVImageInfoClass svImageInfo;
 
-							// get camera format from DeviceParams
-							const SVCameraFormatsDeviceParam* pParam = svDeviceParams.Parameter( DeviceParamCameraFormats ).DerivedValue( pParam );
-							if ( pParam )
+							psvDevice->LoadFiles( svFileArray ); // @WARNING:  May crash if svFileArray is empty.
+
+							if( 1 < svLight.Band( 0 ).NumAttributes() )
 							{
-								SVCameraFormat cf;
+								// This is what old configurations (SEC) set contrast to. 
+								// now read the values from the camera files and save as 
+								// the configuration values.
 
-								cf.ParseAndAssignCameraFormat( pParam->strValue.ToString() );
-
-								// Band number depends on video type...
-								switch( cf.eImageType )
+								if( svLight.Band( 0 ).Attribute( 1 /*LR_CONTRAST*/ ).lValue == -999999999L )
 								{
-									case SVImageFormatRGB8888:  // RGB
+									psvDevice->LoadLightReference( svLight );
+								}// end if
+							}
+
+							// set the camera file metadata for each device param
+							SVDeviceParamCollection rCamFileParams;
+							psvDevice->GetCameraFileParameters( rCamFileParams );
+
+							SVDeviceParamMap::const_iterator iter;
+							for (iter = rCamFileParams.mapParameters.begin(); iter != rCamFileParams.mapParameters.end(); ++iter)
+							{
+								const SVDeviceParamWrapper& wCamFileParam = iter->second;
+								if ( wCamFileParam.IsValid() )
+								{
+									SVDeviceParamWrapper& wParam = svDeviceParams.GetParameter( wCamFileParam->Type() );
+									if ( wParam.IsValid() )
 									{
-										l_BandCount = 3;
-										break;
+										wParam->SetMetadata(wCamFileParam);
 									}
 								}
 							}
 
-							long lNumLRBands = 0;
-							long lBand = 0;
 
-							lNumLRBands = svLight.NumBands();    // if (svLight.NumBands() == 1)
-							// one band (viper quad / ?rgb_mono?)
-							// if (svLight.NumBands() == 3) 
-							// may need to change to handle RGB mono
+							psvDevice->SetDeviceParameters( svDeviceParams );	// needs to come before LR (quick fix for now)
+							psvDevice->SetLightReference( svLight );
+							psvDevice->SetLut( lut );
+							psvDevice->GetImageInfo( &svImageInfo );
+							psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
 
-							do
+							// set the trigger and strobe polarity in the I/O board based on Acq. device params
+							// must get from the acq device instead of using svDeviceParams because the
+							// device may set defaults in LoadFiles
+
+							SVDeviceParamCollection params;
+							psvDevice->GetDeviceParameters(params);
+
+							// trigger
+							if ( params.ParameterExists( DeviceParamAcquisitionTriggerEdge ) )
 							{
-								CString csFullName;
+								int iDigNum = psvDevice->DigNumber();
+								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pParam);
+								SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
+							}
 
-								SVAcquisitionClassPtr psvDevice;
+							// strobe
+							if ( params.ParameterExists( DeviceParamAcquisitionStrobeEdge ) )
+							{
+								int iDigNum = psvDevice->DigNumber();
+								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
+								SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
+							}
+							// SEJ - Get Combined parameters
+							psvDevice->GetDeviceParameters(svDeviceParams);
+							bOk = AddAcquisitionDevice( csFullName, svFileArray, svLight, lut, &svDeviceParams );
+						}
+					}// end do
+					while ( ++lBand < lNumLRBands );
+				}// end if bFileDone && bLightDone
+				rTree.GetNextBranch( htiBoardChild, htiDigChild );
+			}// end while ( bOk && htiDigChild != NULL )
+		}
+		lNumBordDig = __max( lNumBordDig, lNumAcqDig );
 
-								if ( 1 < lNumLRBands )
-								{
-									lNumLRBands = 1;
-								}
-
-								if ( 1 < l_BandCount )
-								{
-									csFullName.Format( "%s.%s.Ch_All", csBoardName, csDigName );
-								}
-								else
-								{
-									csFullName.Format( "%s.%s.Ch_%d", csBoardName, csDigName, lBand );
-								}
-
-								if ( ! bLutDone || ! bLutCreated )
-								{
-									psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( csFullName );
-									bOk = nullptr != psvDevice;
-									ASSERT( bOk );
-									if ( bOk )
-									{
-										psvDevice->GetLut(lut);
-										// create default lut
-										SVLutInfo lutinfo = lut.Info();
-										if ( lutinfo.MaxValue() == 0 )	// legacy analog support
-										{
-											if ( lutinfo.Bands() == 3 )
-												lutinfo.SetMaxValue( 1023 );
-											else
-												lutinfo.SetMaxValue( 255 );
-										}
-										lutinfo.SetTransform(SVDefaultLutTransform());
-										lutinfo.SetTransformOperation(SVLutTransformOperationNormal());	// as a default
-										lut.Create(lutinfo);
-										lut.Transform();
-									}
-								}
-								SVString strNewAcquisitionDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csFullName);
-								SVDigitizerProcessingClass::Instance().SelectDigitizer( strNewAcquisitionDeviceName.c_str() );
-								psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strNewAcquisitionDeviceName.c_str() );
-								bOk = nullptr != psvDevice;
-								if ( bOk )
-								{
-									SVImageInfoClass svImageInfo;
-
-									psvDevice->LoadFiles( svFileArray ); // @WARNING:  May crash if svFileArray is empty.
-
-									if( 1 < svLight.Band( 0 ).NumAttributes() )
-									{
-										// This is what old configurations (SEC) set contrast to. 
-										// now read the values from the camera files and save as 
-										// the configuration values.
-
-										if( svLight.Band( 0 ).Attribute( 1 /*LR_CONTRAST*/ ).lValue == -999999999L )
-										{
-											psvDevice->LoadLightReference( svLight );
-										}// end if
-									}
-
-									// set the camera file metadata for each device param
-									SVDeviceParamCollection rCamFileParams;
-									psvDevice->GetCameraFileParameters( rCamFileParams );
-
-									SVDeviceParamMap::const_iterator iter;
-									for (iter = rCamFileParams.mapParameters.begin(); iter != rCamFileParams.mapParameters.end(); ++iter)
-									{
-										const SVDeviceParamWrapper& wCamFileParam = iter->second;
-										if ( wCamFileParam.IsValid() )
-										{
-											SVDeviceParamWrapper& wParam = svDeviceParams.GetParameter( wCamFileParam->Type() );
-											if ( wParam.IsValid() )
-											{
-												wParam->SetMetadata(wCamFileParam);
-											}
-										}
-									}
+		rTree.GetNextBranch( htiChild, htiBoardChild );
+	}// end while ( bOk && htiBoardChild != NULL )
+	return true;
+}
 
 
-									psvDevice->SetDeviceParameters( svDeviceParams );	// needs to come before LR (quick fix for now)
-									psvDevice->SetLightReference( svLight );
-									psvDevice->SetLut( lut );
-									psvDevice->GetImageInfo( &svImageInfo );
-									psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
+bool  SVConfigurationObject::LoadCameras(SVTreeType&  rTree, long& lNumCameras, bool ConfigurationColor)
+{
 
-									// set the trigger and strobe polarity in the I/O board based on Acq. device params
-									// must get from the acq device instead of using svDeviceParams because the
-									// device may set defaults in LoadFiles
+	SVTreeType::SVBranchHandle htiChild = NULL;
+	BOOL bOk  =  SVNavigateTreeClass::GetItemBranch( rTree, CTAG_CAMERA, NULL, htiChild );
+	if (bOk != TRUE)
+	{
+		return false;
+	}
 
-									SVDeviceParamCollection params;
-									psvDevice->GetDeviceParameters(params);
 
-									// trigger
-									if ( params.ParameterExists( DeviceParamAcquisitionTriggerEdge ) )
-									{
-										int iDigNum = psvDevice->DigNumber();
-										const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pParam);
-										SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
-									}
+	SVTreeType::SVBranchHandle htiSubChild = NULL;
 
-									// strobe
-									if ( params.ParameterExists( DeviceParamAcquisitionStrobeEdge ) )
-									{
-										int iDigNum = psvDevice->DigNumber();
-										const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
-										SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
-									}
-									// SEJ - Get Combined parameters
-									psvDevice->GetDeviceParameters(svDeviceParams);
-									bOk = AddAcquisitionDevice( csFullName, svFileArray, svLight, lut, &svDeviceParams );
-								}
-							}// end do
-							while ( ++lBand < lNumLRBands );
-						}// end if bFileDone && bLightDone
-						rTree.GetNextBranch( htiBoardChild, htiDigChild );
-					}// end while ( bOk && htiDigChild != NULL )
-				}
-				l_lNumBoardDig = __max( l_lNumBoardDig, lNumAcqDig );
+	rTree.GetFirstBranch( htiChild, htiSubChild );
 
-				rTree.GetNextBranch( htiChild, htiBoardChild );
-			}// end while ( bOk && htiBoardChild != NULL )
-		}// end if ( SVNavigateTreeClass::.GetItem( rTree, CTAG_ACQUISITION_DEVICE, NULL, &htiChild ) )
+	while ( bOk && htiSubChild != NULL )
+	{
+		++lNumCameras;
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		_bstr_t ItemName;
 
-		if ( bOk && SVNavigateTreeClass::GetItemBranch( rTree, CTAG_CAMERA, NULL, htiChild ) )
+		rTree.GetBranchName( htiSubChild, ItemName.GetBSTR() );
+
+		CString csItemName = static_cast< LPCTSTR >( ItemName );
+
+		SVVirtualCamera *pCamera = new SVVirtualCamera;
+		pCamera->SetName( csItemName );
+		bOk = pCamera != NULL;
+		if ( bOk )
 		{
-			SVTreeType::SVBranchHandle htiSubChild = NULL;
-			
-			rTree.GetFirstBranch( htiChild, htiSubChild );
+			_variant_t svValue;
+			long lBandLink = 0;
+			CString csDeviceName;
 
-			while ( bOk && htiSubChild != NULL )
+			SVTreeType::SVBranchHandle htiDataChild = NULL;
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_ACQUISITION_DEVICE, htiSubChild, svValue ) )
 			{
-				++l_lNumCameras;
+				_bstr_t l_String( svValue );
 
-				_bstr_t ItemName;
+				csDeviceName = static_cast< LPCTSTR >( l_String );
 
-				rTree.GetBranchName( htiSubChild, ItemName.GetBSTR() );
-
-				CString csItemName = static_cast< LPCTSTR >( ItemName );
-
-				SVVirtualCamera *pCamera = new SVVirtualCamera;
-				pCamera->SetName( csItemName );
-				bOk = pCamera != NULL;
-				if ( bOk )
+				if ( csDeviceName.Find( "Ch_All"  ) >  -1 )
 				{
-					_variant_t svValue;
-					long lBandLink = 0;
-					CString csDeviceName;
-
-					SVTreeType::SVBranchHandle htiDataChild = NULL;
-					
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_ACQUISITION_DEVICE, htiSubChild, svValue ) )
+					lBandLink = 0;
+					pCamera->SetBandLink( lBandLink );
+				}
+				else
+				{
+					int iPos = csDeviceName.Find("Ch_");
+					if (iPos > -1)
 					{
-						_bstr_t l_String( svValue );
-
-						csDeviceName = static_cast< LPCTSTR >( l_String );
-
-						if ( csDeviceName.Find( "Ch_All"  ) >  -1 )
+						int iChannel = (int)(csDeviceName.GetAt( iPos + 3 ) - '0');
+						ASSERT( iChannel >=0 && iChannel <= 9 );  // sanity check
+						if ( 0 <= iChannel && iChannel <= 9)
 						{
-							lBandLink = 0;
+							lBandLink = iChannel;
 							pCamera->SetBandLink( lBandLink );
 						}
-						else
-						{
-							int iPos = csDeviceName.Find("Ch_");
-							if (iPos > -1)
-							{
-								int iChannel = (int)(csDeviceName.GetAt( iPos + 3 ) - '0');
-								ASSERT( iChannel >=0 && iChannel <= 9 );  // sanity check
-								if ( 0 <= iChannel && iChannel <= 9)
-								{
-									lBandLink = iChannel;
-									pCamera->SetBandLink( lBandLink );
-								}
-							}
-						}
 					}
+				}
+			}
 
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiSubChild, svValue ) )
-					{
-						SVGUID l_Guid( svValue );
-
-						SVObjectManagerClass::Instance().CloseUniqueObjectID( pCamera );
-
-						pCamera->outObjectInfo.UniqueObjectID = l_Guid;
-
-						SVObjectManagerClass::Instance().OpenUniqueObjectID( pCamera );
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_BAND_LINK, htiSubChild, svValue ) )
-					{
-						pCamera->SetBandLink( svValue );
-					}
-
-					//If color not available then we need to set it using the global color which comes from the product type
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_COLOR, htiSubChild, svValue ) )
-					{
-						pCamera->SetIsColor( svValue );
-					}
-					else
-					{
-						pCamera->SetIsColor( ConfigurationColor );
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_MODE, htiSubChild, svValue ) )
-					{
-						pCamera->SetFileAcquisitionMode( svValue );
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_IMAGE_FILENAME, htiSubChild, svValue ) )
-					{
-						SVString filename(svValue);
-						pCamera->SetImageFilename(filename);
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_IMAGE_DIRECTORYNAME, htiSubChild, svValue ) )
-					{
-						SVString dirName(svValue);
-						pCamera->SetImageDirectoryName(dirName);
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_LOADINGMODE, htiSubChild, svValue ) )
-					{
-						pCamera->SetFileLoadingMode(svValue);
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_IMAGE_SIZE_EDIT_MODE, htiSubChild, svValue ) )
-					{
-						pCamera->SetFileImageSizeEditModeFileBased(svValue);
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_FILE_IMAGE_WIDTH, htiSubChild, svValue ) )
-					{
-						pCamera->SetFileImageWidth(svValue);
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_FILE_IMAGE_HEIGHT, htiSubChild, svValue ) )
-					{
-						pCamera->SetFileImageHeight(svValue);
-					}
-
-					bOk = ! csDeviceName.IsEmpty();
-
-					if ( bOk )
-					{
-						SVString strRemappedDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csDeviceName);
-						bOk = pCamera->Create( strRemappedDeviceName.c_str() );
-					}
-
-					if ( bOk )
-					{
-						bOk = AddCamera( pCamera );
-					}
-
-					rTree.GetNextBranch( htiChild, htiSubChild );
-				}// end if pCamera != NULL
-			}// end while ( bOk && htiSubChild != NULL )
-		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_CAMERA, NULL, &htiChild ) )
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		if ( bOk && SVNavigateTreeClass::GetItemBranch( rTree, CTAG_TRIGGER, NULL, htiChild ) )
-		{
-			SVTreeType::SVBranchHandle htiSubChild = NULL;
-			
-			rTree.GetFirstBranch( htiChild, htiSubChild );
-
-			while ( bOk && htiSubChild != NULL )
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiSubChild, svValue ) )
 			{
-				_bstr_t ItemName;
+				SVGUID l_Guid( svValue );
 
-				rTree.GetBranchName( htiSubChild, ItemName.GetBSTR() );
+				SVObjectManagerClass::Instance().CloseUniqueObjectID( pCamera );
 
-				CString csItemName = static_cast< LPCTSTR >( ItemName );
+				pCamera->outObjectInfo.UniqueObjectID = l_Guid;
 
-				SVTriggerObject *pTrigger = new SVTriggerObject;
-				pTrigger->SetName( csItemName );
-				bOk = pTrigger != NULL;
+				SVObjectManagerClass::Instance().OpenUniqueObjectID( pCamera );
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_BAND_LINK, htiSubChild, svValue ) )
+			{
+				pCamera->SetBandLink( svValue );
+			}
+
+			//If color not available then we need to set it using the global color which comes from the product type
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_COLOR, htiSubChild, svValue ) )
+			{
+				pCamera->SetIsColor( svValue );
+			}
+			else
+			{
+				pCamera->SetIsColor( ConfigurationColor );
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_MODE, htiSubChild, svValue ) )
+			{
+				pCamera->SetFileAcquisitionMode( svValue );
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_IMAGE_FILENAME, htiSubChild, svValue ) )
+			{
+				SVString filename(svValue);
+				pCamera->SetImageFilename(filename);
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_IMAGE_DIRECTORYNAME, htiSubChild, svValue ) )
+			{
+				SVString dirName(svValue);
+				pCamera->SetImageDirectoryName(dirName);
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_LOADINGMODE, htiSubChild, svValue ) )
+			{
+				pCamera->SetFileLoadingMode(svValue);
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_IMAGE_SIZE_EDIT_MODE, htiSubChild, svValue ) )
+			{
+				pCamera->SetFileImageSizeEditModeFileBased(svValue);
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_FILE_IMAGE_WIDTH, htiSubChild, svValue ) )
+			{
+				pCamera->SetFileImageWidth(svValue);
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_FILEACQUISITION_FILE_IMAGE_HEIGHT, htiSubChild, svValue ) )
+			{
+				pCamera->SetFileImageHeight(svValue);
+			}
+
+			bOk = ! csDeviceName.IsEmpty();
+
+			if ( bOk )
+			{
+				SVString strRemappedDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csDeviceName);
+				bOk = pCamera->Create( strRemappedDeviceName.c_str() );
+			}
+
+			if ( bOk )
+			{
+				bOk = AddCamera( pCamera );
+			}
+
+			rTree.GetNextBranch( htiChild, htiSubChild );
+		}// end if pCamera != NULL
+	}// end while ( bOk && htiSubChild != NULL )
+
+	return true;
+}
+
+bool SVConfigurationObject::LoadTrigger(SVTreeType& rTree )
+{
+	SVTreeType::SVBranchHandle htiChild = NULL;
+	BOOL bOk  = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_TRIGGER, NULL, htiChild ) ;
+	if (bOk != TRUE)
+	{
+		return false;
+	}
+
+	SVTreeType::SVBranchHandle htiSubChild = NULL;
+
+	rTree.GetFirstBranch( htiChild, htiSubChild );
+
+	while ( bOk && htiSubChild != NULL )
+	{
+		_bstr_t ItemName;
+
+		rTree.GetBranchName( htiSubChild, ItemName.GetBSTR() );
+
+		CString csItemName = static_cast< LPCTSTR >( ItemName );
+
+		SVTriggerObject *pTrigger = new SVTriggerObject;
+		pTrigger->SetName( csItemName );
+		bOk = pTrigger != NULL;
+		if ( bOk )
+		{
+			_variant_t svValue;
+			CString csDeviceName;
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_TRIGGER_DEVICE, htiSubChild, svValue ) )
+			{
+				_bstr_t l_String( svValue );
+
+				csDeviceName = static_cast< LPCTSTR >( l_String );
+
+				// legacy conversion
+				StringMunge::ReplaceStrings( &csDeviceName, 1, _T("NI_6527"), _T("IO_Board") );
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_SOFTWARETRIGGER_DEVICE, htiSubChild, svValue ) )
+			{
+				pTrigger->SetSoftwareTrigger( svValue );
+			}
+
+			if( SVNavigateTreeClass::GetItem( rTree, CTAG_SOFTWARETRIGGER_PERIOD, htiSubChild, svValue ) )
+			{
+				pTrigger->SetSoftwareTriggerPeriod( svValue );
+			}
+
+			bOk = ! csDeviceName.IsEmpty();
+
+			if ( bOk )
+			{
+				SVTriggerClass *psvDevice = SVTriggerProcessingClass::Instance().GetTrigger( csDeviceName );
+
+				if ( psvDevice != NULL )
+				{
+					bOk = pTrigger->Create( psvDevice );
+				}
+			}
+
+			if ( bOk )
+			{
+				bOk = AddTrigger( pTrigger );
+			}
+
+			rTree.GetNextBranch( htiChild, htiSubChild );
+		}// end if pTrigger != NULL
+	}// end while ( bOk && htiSubChild != NULL )
+	return true;
+}
+
+bool SVConfigurationObject::LoadInspection(SVTreeType& rTree )
+{
+	SVTreeType::SVBranchHandle htiChild = NULL;
+	BOOL bOk  = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INSPECTION, NULL, htiChild ) ;
+	if (bOk != TRUE)
+	{
+
+		return false;
+	}
+
+	SVTreeType::SVBranchHandle htiSubChild = NULL;
+
+	rTree.GetFirstBranch( htiChild, htiSubChild );
+
+	while ( bOk && htiSubChild != NULL )
+	{
+		_bstr_t ItemName;
+
+		rTree.GetBranchName( htiSubChild, ItemName.GetBSTR() );
+
+		CString csItemName = static_cast< LPCTSTR >( ItemName );
+
+		SVInspectionProcess* pInspection( nullptr );
+
+		SVObjectManagerClass::Instance().ConstructObject( SVInspectionProcessGuid, pInspection );
+		if(nullptr == pInspection)
+		{
+			
+			SvStl::MessageContainer MsgCont;
+			MsgCont.setMessage(SVMSG_SVO_80_LOAD_INSPECTION_FAILED,nullptr,StdMessageParams, SvOi::Err_16050_ConstructObjectInspection);
+			throw MsgCont;
+		}
+
+		_variant_t svValue;
+		CString csIPName;
+		CString csToolsetName;
+		CString csNewDisableMethod;
+		CString csEnableAuxiliaryExtent;
+
+		pInspection->SetName( csItemName );
+
+		pInspection->SetDeviceName( csItemName );
+
+		SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
+		SVTreeType::SVBranchHandle htiSVInspectionProcess = NULL;
+
+		if( SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION_FILE_NAME, htiSubChild, svValue ) )
+		{
+			_bstr_t l_String( svValue );
+
+			csIPName = static_cast< LPCTSTR >( l_String );
+		}
+
+		SVNavigateTreeClass::GetItemBranch( rTree, CTAG_SVIPDOC, htiSubChild, htiSVIPDoc );
+
+		SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INSPECTION_PROCESS, htiSubChild, htiSVInspectionProcess );
+
+		if( SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION_TOOLSET_IMAGE, htiSubChild, svValue ) )
+		{
+			_bstr_t l_String( svValue );
+
+			csToolsetName = static_cast< LPCTSTR >( l_String );
+		}
+
+		bOk = htiSVIPDoc != NULL && ! csIPName.IsEmpty();
+
+		if ( bOk )
+		{
+			_variant_t svVariant;
+
+			SVTreeType::SVBranchHandle htiTempIPItem = htiSubChild;
+			SVTreeType::SVBranchHandle htiTempIPObjectItem = htiSVIPDoc;
+
+			if( htiSVInspectionProcess != NULL )
+			{
+				htiTempIPItem = htiSVInspectionProcess;
+				htiTempIPObjectItem = htiSVInspectionProcess;
+			}
+
+			bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION_NEW_DISABLE_METHOD, htiTempIPItem, svVariant );
+			if ( bOk )
+			{
+				csNewDisableMethod = svVariant;
+			}
+
+			bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, htiTempIPItem, svVariant );
+			if ( bOk )
+			{
+				csEnableAuxiliaryExtent = svVariant;
+			}
+
+			bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiTempIPObjectItem, svVariant );
+			if ( bOk )
+			{
+				SVGUID ObjectID( svVariant );
+
+				SVObjectManagerClass::Instance().CloseUniqueObjectID( pInspection );
+
+				pInspection->outObjectInfo.UniqueObjectID = ObjectID;
+
+				SVObjectManagerClass::Instance().OpenUniqueObjectID( pInspection );
+			}
+		}
+
+		if ( bOk )
+		{
+			SVFileNameClass svFileName;
+
+			svFileName.SetFullFileName( csIPName );
+
+			pInspection->SetToolsetImage( csToolsetName );
+
+			bOk = pInspection->CreateInspection( svFileName.GetFileNameOnly() );
+			if ( bOk )
+			{
+				pInspection->SetNewDisableMethod( csNewDisableMethod == _T( "1" ) );
+				pInspection->SetEnableAuxiliaryExtent( csEnableAuxiliaryExtent == _T("1") );
+
+				SVTreeType::SVBranchHandle htiDataChild = NULL;
+
+				if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_VIEWED_INPUTS, htiSubChild, htiDataChild ) )
+				{
+					SVTreeType::SVBranchHandle htiViewed;
+
+					rTree.GetFirstBranch( htiDataChild, htiViewed );
+
+					while( htiViewed != NULL )
+					{	
+						_bstr_t Name;
+
+						rTree.GetBranchName( htiViewed, Name.GetBSTR() );
+
+						CString strName = static_cast< LPCTSTR >( Name );
+
+						pInspection->m_arViewedInputNames.Add( strName );
+
+						rTree.GetNextBranch( htiDataChild, htiViewed );
+					}// end while
+
+				}// end if
+			}
+		}
+
+		if ( bOk )
+		{
+			bOk = AddInspection( pInspection );
+		}
+		rTree.GetNextBranch( htiChild, htiSubChild );
+		//}// end if pInspection != NULL
+	}// end while ( bOk && htiSubChild != NULL )
+	return true;
+}
+
+bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree )
+{
+	SVTreeType::SVBranchHandle htiChild = NULL;
+	BOOL bOk  = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_PPQ, NULL, htiChild );
+	if (bOk != TRUE)
+	{
+		return false;
+	}
+	SVTreeType::SVBranchHandle htiSubChild = NULL;
+
+	rTree.GetFirstBranch( htiChild, htiSubChild );
+
+	while ( bOk && htiSubChild != NULL )
+	{
+		_bstr_t ItemName;
+
+		rTree.GetBranchName( htiSubChild, ItemName.GetBSTR() );
+
+		CString csItemName = static_cast< LPCTSTR >( ItemName );
+
+		SVPPQObject* pPPQ = new SVPPQObject;
+		if(pPPQ == nullptr)
+		{
+			SvStl::MessageContainer MsgCont;
+			MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,SvO::CreationOfPPQFailed,StdMessageParams, SvOi::Err_16048_ErrrorCreatePPQObject);
+			throw MsgCont;
+		}
+		pPPQ->SetName( csItemName );
+		SVTreeType::SVBranchHandle htiDeviceChild;
+		SVTreeType::SVBranchHandle htiDataChild;
+		_variant_t svValue;
+		long lMode = 0;
+		long lLength = 0;
+		long lDelay = 0;
+		long lCount = 0;
+		long lPosition = 0;
+		bool bMaintainSrcImg = false;
+		long lInspectionTimeout = 0;
+
+		// Set the IO lists
+		pPPQ->m_pInputList = GetInputObjectList( );
+		pPPQ->m_pOutputList = GetOutputObjectList( );
+
+		// Update source to remove SVOVariant
+		// Load the Unique Reference ID for the PPQ
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiSubChild, svValue );
+
+		if( bOk )
+		{
+			SVGUID ObjectID = svValue;
+
+			SVObjectManagerClass::Instance().CloseUniqueObjectID( pPPQ );
+
+			pPPQ->outObjectInfo.UniqueObjectID = ObjectID;
+
+			SVObjectManagerClass::Instance().OpenUniqueObjectID( pPPQ );
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_MODE, htiSubChild, svValue );
+
+		if( bOk )
+		{
+			lMode = svValue;
+
+			bOk = pPPQ->SetPPQOutputMode( (SVPPQOutputModeEnum)lMode );
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_LENGTH, htiSubChild, svValue );
+
+		if( bOk )
+		{
+			lLength = svValue;
+
+			bOk = pPPQ->SetPPQLength( lLength );
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_OUTPUT_RESET_DELAY_TIME, htiSubChild, svValue );
+
+		if( bOk )
+		{
+			lDelay = svValue;
+
+			bOk = pPPQ->SetResetDelay( lDelay );
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_OUTPUT_DELAY_TIME, htiSubChild, svValue );
+
+		if( bOk )
+		{
+			lDelay = svValue;
+
+			bOk = pPPQ->SetOutputDelay( lDelay );
+		}// end if
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_MAINTAIN_SRC_IMAGE, htiSubChild, svValue );
+
+		if ( bOk )
+		{
+			bMaintainSrcImg = svValue;
+
+			bOk = pPPQ->SetMaintainSourceImages(bMaintainSrcImg);
+		}
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_INSPECTION_TIMEOUT, htiSubChild, svValue );
+
+		if ( bOk )
+		{
+			lInspectionTimeout = svValue;
+
+			bOk = pPPQ->SetInspectionTimeout(lInspectionTimeout);
+		}
+
+		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_CONDITIONAL_OUTPUT, htiSubChild, svValue );
+		if ( bOk )	// Conditional Output.
+		{
+			SVString condition(svValue);
+			if (!condition.empty())
+			{
+				pPPQ->SetConditionalOutputName(condition);
+			}
+		}
+		// Update source to remove SVOVariant
+		// PPQ State Variable
+		// Load the Unique Reference ID for the PPQ
+		BOOL bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_STATE_UNIQUEID, htiSubChild, svValue );
+
+		if( bTmp )
+		{
+			SVGUID ObjectID = svValue;
+
+			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voOutputState );
+
+			pPPQ->m_voOutputState.outObjectInfo.UniqueObjectID = ObjectID;
+
+			SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voOutputState );
+		}// end if
+
+		bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_TRIGGER_COUNT_ID, htiSubChild, svValue );
+		if ( bTmp )
+		{
+			SVGUID l_TriggercountId = svValue;
+
+			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voTriggerCount );
+
+			pPPQ->m_voTriggerCount.outObjectInfo.UniqueObjectID = l_TriggercountId;
+
+			SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voTriggerCount );
+		}
+
+		bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_TRIGGER, htiSubChild, htiDeviceChild );
+
+		if( bOk )
+		{
+			rTree.GetFirstBranch( htiDeviceChild, htiDataChild );
+
+			while ( bOk && htiDataChild != NULL )
+			{
+				lCount = GetTriggerCount( );
+
+				_bstr_t DataName;
+
+				rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
+
+				CString csDataName = static_cast< LPCTSTR >( DataName );
+
+				for ( long l = 0; bOk && l < lCount; l++ )
+				{
+					SVTriggerObject *pTrigger = GetTrigger( l );
+
+					//Returns true when pointer valid
+					bOk = (nullptr != pTrigger);
+					if ( bOk )
+					{
+						CString csDeviceName = pTrigger->GetName();
+
+						if ( csDeviceName == csDataName )
+						{
+							bOk = pPPQ->AttachTrigger( pTrigger );
+
+							break;
+						}
+					}// end if
+				}// end for
+
+				rTree.GetNextBranch( htiDeviceChild, htiDataChild );
+			}// end while ( bOk && htiDataChild != NULL )
+		}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_TRIGGER, htiSubChild, &htiDeviceChild )
+		bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_CAMERA, htiSubChild, htiDeviceChild );
+
+		if( bOk )
+		{
+			rTree.GetFirstBranch( htiDeviceChild, htiDataChild );
+
+			while ( bOk && htiDataChild != NULL )
+			{
+				lCount = GetCameraCount( );
+
+				_bstr_t DataName;
+
+				rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
+
+				CString csDataName = static_cast< LPCTSTR >( DataName );
+
+				bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_POSITION, htiDataChild, svValue );
+
 				if ( bOk )
 				{
-					_variant_t svValue;
-					CString csDeviceName;
+					lPosition = svValue;
+				}// end if
 
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_TRIGGER_DEVICE, htiSubChild, svValue ) )
-					{
-								_bstr_t l_String( svValue );
-
-								csDeviceName = static_cast< LPCTSTR >( l_String );
-
-								// legacy conversion
-								StringMunge::ReplaceStrings( &csDeviceName, 1, _T("NI_6527"), _T("IO_Board") );
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_SOFTWARETRIGGER_DEVICE, htiSubChild, svValue ) )
-					{
-						pTrigger->SetSoftwareTrigger( svValue );
-					}
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_SOFTWARETRIGGER_PERIOD, htiSubChild, svValue ) )
-					{
-						pTrigger->SetSoftwareTriggerPeriod( svValue );
-					}
-
-					bOk = ! csDeviceName.IsEmpty();
-
-					if ( bOk )
-					{
-						SVTriggerClass *psvDevice = SVTriggerProcessingClass::Instance().GetTrigger( csDeviceName );
-
-						if ( psvDevice != NULL )
-						{
-							bOk = pTrigger->Create( psvDevice );
-						}
-					}
-
-					if ( bOk )
-					{
-						bOk = AddTrigger( pTrigger );
-					}
-
-					rTree.GetNextBranch( htiChild, htiSubChild );
-				}// end if pTrigger != NULL
-			}// end while ( bOk && htiSubChild != NULL )
-		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_TRIGGER, NULL, &htiChild ) )
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		if ( bOk &&  SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INSPECTION, NULL, htiChild ) )
-		{
-			SVTreeType::SVBranchHandle htiSubChild = NULL;
-			
-			rTree.GetFirstBranch( htiChild, htiSubChild );
-
-			while ( bOk && htiSubChild != NULL )
-			{
-				_bstr_t ItemName;
-
-				rTree.GetBranchName( htiSubChild, ItemName.GetBSTR() );
-
-				CString csItemName = static_cast< LPCTSTR >( ItemName );
-
-				SVInspectionProcess* pInspection( nullptr );
-
-				SVObjectManagerClass::Instance().ConstructObject( SVInspectionProcessGuid, pInspection );
-
-				bOk = nullptr != pInspection;
-				if ( bOk )
+				for ( long l = 0; bOk && l < lCount; l++ )
 				{
-					_variant_t svValue;
-					CString csIPName;
-					CString csToolsetName;
-					CString csNewDisableMethod;
-					CString csEnableAuxiliaryExtent;
+					SVVirtualCamera* pCamera =GetCamera( l );
 
-					pInspection->SetName( csItemName );
-
-					pInspection->SetDeviceName( csItemName );
-
-					SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
-					SVTreeType::SVBranchHandle htiSVInspectionProcess = NULL;
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION_FILE_NAME, htiSubChild, svValue ) )
-					{
-						_bstr_t l_String( svValue );
-
-						csIPName = static_cast< LPCTSTR >( l_String );
-					}
-
-					SVNavigateTreeClass::GetItemBranch( rTree, CTAG_SVIPDOC, htiSubChild, htiSVIPDoc );
-
-					SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INSPECTION_PROCESS, htiSubChild, htiSVInspectionProcess );
-
-					if( SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION_TOOLSET_IMAGE, htiSubChild, svValue ) )
-					{
-						_bstr_t l_String( svValue );
-
-						csToolsetName = static_cast< LPCTSTR >( l_String );
-					}
-
-					bOk = htiSVIPDoc != NULL && ! csIPName.IsEmpty();
-
+					bOk = (nullptr != pCamera);
 					if ( bOk )
 					{
-						_variant_t svVariant;
+						CString csDeviceName = pCamera->GetName();
 
-						SVTreeType::SVBranchHandle htiTempIPItem = htiSubChild;
-						SVTreeType::SVBranchHandle htiTempIPObjectItem = htiSVIPDoc;
-
-						if( htiSVInspectionProcess != NULL )
+						if ( csDeviceName == csDataName )
 						{
-							htiTempIPItem = htiSVInspectionProcess;
-							htiTempIPObjectItem = htiSVInspectionProcess;
-						}
+							bOk = pPPQ->AttachCamera( pCamera, lPosition );
 
-						bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION_NEW_DISABLE_METHOD, htiTempIPItem, svVariant );
-						if ( bOk )
-						{
-							csNewDisableMethod = svVariant;
-						}
+							break;
+						}// end if
+					}// end if
+				}// end for
 
-						bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, htiTempIPItem, svVariant );
-						if ( bOk )
-						{
-							csEnableAuxiliaryExtent = svVariant;
-						}
+				rTree.GetNextBranch( htiDeviceChild, htiDataChild );
+			}// end while ( bOk && htiDataChild != NULL )
+		}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_CAMERA, htiSubChild, &htiDeviceChild );
 
-						bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiTempIPObjectItem, svVariant );
-						if ( bOk )
-						{
-							SVGUID ObjectID( svVariant );
+		bOk = TRUE;
 
-							SVObjectManagerClass::Instance().CloseUniqueObjectID( pInspection );
-
-							pInspection->outObjectInfo.UniqueObjectID = ObjectID;
-
-							SVObjectManagerClass::Instance().OpenUniqueObjectID( pInspection );
-						}
-					}
-
-					if ( bOk )
-					{
-						SVFileNameClass svFileName;
-
-						svFileName.SetFullFileName( csIPName );
-
-						pInspection->SetToolsetImage( csToolsetName );
-
-						bOk = pInspection->CreateInspection( svFileName.GetFileNameOnly() );
-						if ( bOk )
-						{
-							pInspection->SetNewDisableMethod( csNewDisableMethod == _T( "1" ) );
-							pInspection->SetEnableAuxiliaryExtent( csEnableAuxiliaryExtent == _T("1") );
-
-							SVTreeType::SVBranchHandle htiDataChild = NULL;
-					
-							if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_VIEWED_INPUTS, htiSubChild, htiDataChild ) )
-							{
-								SVTreeType::SVBranchHandle htiViewed;
-
-								rTree.GetFirstBranch( htiDataChild, htiViewed );
-
-								while( htiViewed != NULL )
-								{	
-									_bstr_t Name;
-
-									rTree.GetBranchName( htiViewed, Name.GetBSTR() );
-
-									CString strName = static_cast< LPCTSTR >( Name );
-
-									pInspection->m_arViewedInputNames.Add( strName );
-
-									rTree.GetNextBranch( htiDataChild, htiViewed );
-								}// end while
-
-							}// end if
-						}
-					}
-
-					if ( bOk )
-					{
-						bOk = AddInspection( pInspection );
-					}
-
-					rTree.GetNextBranch( htiChild, htiSubChild );
-				}// end if pInspection != NULL
-			}// end while ( bOk && htiSubChild != NULL )
-		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION, NULL, &htiChild ) )
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		if ( bOk &&  SVNavigateTreeClass::GetItemBranch( rTree, CTAG_PPQ, NULL, htiChild ) )
+		if(SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INSPECTION, htiSubChild, htiDeviceChild ))
 		{
-			SVTreeType::SVBranchHandle htiSubChild = NULL;
+			rTree.GetFirstBranch( htiDeviceChild, htiDataChild );
+
+			while ( bOk && htiDataChild != NULL )
+			{
+				lCount = GetInspectionCount( );
+				_bstr_t DataName;
+
+				rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
+
+				CString csDataName = static_cast< LPCTSTR >( DataName );
+
+				for ( long l = 0; bOk && l < lCount; l++ )
+				{
+					SVInspectionProcess* pInspection = GetInspection( l );
+
+					bOk = (nullptr != pInspection);
+					if ( bOk )
+					{
+						CString csDeviceName = pInspection->GetDeviceName();
+
+						if ( csDeviceName == csDataName )
+						{
+							bOk = pPPQ->AttachInspection( pInspection );
+
+							break;
+						}// end if
+					}// end if
+				}// end for
+
+				rTree.GetNextBranch( htiDeviceChild, htiDataChild );
+			}// end while ( bOk && htiDataChild != NULL )
+		}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION, htiSubChild, &htiDeviceChild )
+
+
+		if(false ==  SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INPUT, htiSubChild, htiDeviceChild ))
+		{
+			
+			SvStl::MessageContainer MsgCont;
+			MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,SvO::InputIsMissing,StdMessageParams, SvOi::Err_16049_ErrorMissingInpuTag);
+			throw MsgCont;
+		}
+
+		
+		rTree.GetFirstBranch( htiDeviceChild, htiDataChild );
+
+		while ( bOk && htiDataChild != NULL )
+		{
+			_bstr_t DataName;
+
+			rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
+
+			CString csDataName = static_cast< LPCTSTR >( DataName );
+
+			CString csValueName = csDataName;
+
+			SVRemoteInputObject *pRemoteInput = NULL;
+			SVValueObjectClass *pObject = NULL;
+			_variant_t svValue;
+			CString strName;
+			CString strType;
+			long lIndex;
+			long lPPQPosition=0;
+
+			if(false ==  SVNavigateTreeClass::GetItem( rTree, CTAG_IO_TYPE, htiDataChild, svValue ))
+			{
 				
-			rTree.GetFirstBranch( htiChild, htiSubChild );
+				SvStl::MessageContainer MsgCont;
+				MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,SvO::MsgIOTypeIsMissing,StdMessageParams, SvOi::Err_16053_ErrorMissingIOTypeTag);
+				throw MsgCont;
+			}
+			strType = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
 
-			while ( bOk && htiSubChild != NULL )
-			{
-				_bstr_t ItemName;
 
-				rTree.GetBranchName( htiSubChild, ItemName.GetBSTR() );
-
-				CString csItemName = static_cast< LPCTSTR >( ItemName );
-
-				SVPPQObject* pPPQ = new SVPPQObject;
-				pPPQ->SetName( csItemName );
-
-				bOk = nullptr != pPPQ;
-				if ( bOk )
+			// This means it is a Digital input
+			if( _T("Digital") == strType )
+			{								
+				if(false == SVNavigateTreeClass::GetItem( rTree, CTAG_ITEM_NAME, htiDataChild, svValue ))
 				{
-					SVTreeType::SVBranchHandle htiDeviceChild;
-					SVTreeType::SVBranchHandle htiDataChild;
-					_variant_t svValue;
-					long lMode = 0;
-					long lLength = 0;
-					long lDelay = 0;
-					long lCount = 0;
-					long lPosition = 0;
-					bool bMaintainSrcImg = false;
-					long lInspectionTimeout = 0;
-
-					// Set the IO lists
-					pPPQ->m_pInputList = GetInputObjectList( );
-					pPPQ->m_pOutputList = GetOutputObjectList( );
-
-					// Update source to remove SVOVariant
-					// Load the Unique Reference ID for the PPQ
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiSubChild, svValue );
-
-					if( bOk )
-					{
-						SVGUID ObjectID = svValue;
-
-						SVObjectManagerClass::Instance().CloseUniqueObjectID( pPPQ );
-
-						pPPQ->outObjectInfo.UniqueObjectID = ObjectID;
-
-						SVObjectManagerClass::Instance().OpenUniqueObjectID( pPPQ );
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_MODE, htiSubChild, svValue );
-
-					if( bOk )
-					{
-						lMode = svValue;
-
-						bOk = pPPQ->SetPPQOutputMode( (SVPPQOutputModeEnum)lMode );
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_LENGTH, htiSubChild, svValue );
-
-					if( bOk )
-					{
-						lLength = svValue;
-
-						bOk = pPPQ->SetPPQLength( lLength );
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_OUTPUT_RESET_DELAY_TIME, htiSubChild, svValue );
-
-					if( bOk )
-					{
-						lDelay = svValue;
-
-						bOk = pPPQ->SetResetDelay( lDelay );
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_OUTPUT_DELAY_TIME, htiSubChild, svValue );
-
-					if( bOk )
-					{
-						lDelay = svValue;
-
-						bOk = pPPQ->SetOutputDelay( lDelay );
-					}// end if
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_MAINTAIN_SRC_IMAGE, htiSubChild, svValue );
-
-					if ( bOk )
-					{
-						bMaintainSrcImg = svValue;
-
-						bOk = pPPQ->SetMaintainSourceImages(bMaintainSrcImg);
-					}
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_INSPECTION_TIMEOUT, htiSubChild, svValue );
-
-					if ( bOk )
-					{
-						lInspectionTimeout = svValue;
-
-						bOk = pPPQ->SetInspectionTimeout(lInspectionTimeout);
-					}
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_CONDITIONAL_OUTPUT, htiSubChild, svValue );
-					if ( bOk )	// Conditional Output.
-					{
-						SVString condition(svValue);
-						if (!condition.empty())
-						{
-							pPPQ->SetConditionalOutputName(condition);
-						}
-					}
-					// Update source to remove SVOVariant
-					// PPQ State Variable
-					// Load the Unique Reference ID for the PPQ
-					BOOL bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_STATE_UNIQUEID, htiSubChild, svValue );
-
-					if( bTmp )
-					{
-						SVGUID ObjectID = svValue;
-
-						SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voOutputState );
-
-						pPPQ->m_voOutputState.outObjectInfo.UniqueObjectID = ObjectID;
-
-						SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voOutputState );
-					}// end if
-
-					bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_TRIGGER_COUNT_ID, htiSubChild, svValue );
-					if ( bTmp )
-					{
-						SVGUID l_TriggercountId = svValue;
-
-						SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voTriggerCount );
-
-						pPPQ->m_voTriggerCount.outObjectInfo.UniqueObjectID = l_TriggercountId;
-
-						SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voTriggerCount );
-					}
-
-					bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_TRIGGER, htiSubChild, htiDeviceChild );
-
-					if( bOk )
-					{
-						rTree.GetFirstBranch( htiDeviceChild, htiDataChild );
-
-						while ( bOk && htiDataChild != NULL )
-						{
-							lCount = GetTriggerCount( );
-
-							_bstr_t DataName;
-
-							rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
-
-							CString csDataName = static_cast< LPCTSTR >( DataName );
-
-							for ( long l = 0; bOk && l < lCount; l++ )
-							{
-								SVTriggerObject *pTrigger = GetTrigger( l );
-
-								//Returns true when pointer valid
-								bOk = (nullptr != pTrigger);
-								if ( bOk )
-								{
-									CString csDeviceName = pTrigger->GetName();
-
-									if ( csDeviceName == csDataName )
-									{
-										bOk = pPPQ->AttachTrigger( pTrigger );
-
-										break;
-									}
-								}// end if
-							}// end for
-
-							rTree.GetNextBranch( htiDeviceChild, htiDataChild );
-						}// end while ( bOk && htiDataChild != NULL )
-					}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_TRIGGER, htiSubChild, &htiDeviceChild )
-
-					bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_CAMERA, htiSubChild, htiDeviceChild );
-
-					if( bOk )
-					{
-						rTree.GetFirstBranch( htiDeviceChild, htiDataChild );
-
-						while ( bOk && htiDataChild != NULL )
-						{
-							lCount = GetCameraCount( );
-
-							_bstr_t DataName;
-
-							rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
-
-							CString csDataName = static_cast< LPCTSTR >( DataName );
-
-							bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_POSITION, htiDataChild, svValue );
-
-							if ( bOk )
-							{
-								lPosition = svValue;
-							}// end if
-
-							for ( long l = 0; bOk && l < lCount; l++ )
-							{
-								SVVirtualCamera* pCamera =GetCamera( l );
-
-								bOk = (nullptr != pCamera);
-								if ( bOk )
-								{
-									CString csDeviceName = pCamera->GetName();
-
-									if ( csDeviceName == csDataName )
-									{
-										bOk = pPPQ->AttachCamera( pCamera, lPosition );
-
-										break;
-									}// end if
-								}// end if
-							}// end for
-
-							rTree.GetNextBranch( htiDeviceChild, htiDataChild );
-						}// end while ( bOk && htiDataChild != NULL )
-					}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_CAMERA, htiSubChild, &htiDeviceChild );
-
-					bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INSPECTION, htiSubChild, htiDeviceChild );
-
-					if( bOk )
-					{
-						rTree.GetFirstBranch( htiDeviceChild, htiDataChild );
-
-						while ( bOk && htiDataChild != NULL )
-						{
-							lCount = GetInspectionCount( );
-							_bstr_t DataName;
-
-							rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
-
-							CString csDataName = static_cast< LPCTSTR >( DataName );
-
-							for ( long l = 0; bOk && l < lCount; l++ )
-							{
-								SVInspectionProcess* pInspection = GetInspection( l );
-
-								bOk = (nullptr != pInspection);
-								if ( bOk )
-								{
-									CString csDeviceName = pInspection->GetDeviceName();
-
-									if ( csDeviceName == csDataName )
-									{
-										bOk = pPPQ->AttachInspection( pInspection );
-
-										break;
-									}// end if
-								}// end if
-							}// end for
-
-							rTree.GetNextBranch( htiDeviceChild, htiDataChild );
-						}// end while ( bOk && htiDataChild != NULL )
-					}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION, htiSubChild, &htiDeviceChild )
-					else
-					{
-						// It is OK to not have an inspection attached to the PPQ
-						bOk = TRUE;
-					}
-
-					bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_INPUT, htiSubChild, htiDeviceChild );
-
-					if( bOk )
-					{
-						rTree.GetFirstBranch( htiDeviceChild, htiDataChild );
-
-						while ( bOk && htiDataChild != NULL )
-						{
-							_bstr_t DataName;
-
-							rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
-
-							CString csDataName = static_cast< LPCTSTR >( DataName );
-
-							CString csValueName = csDataName;
-
-							SVRemoteInputObject *pRemoteInput = NULL;
-							SVValueObjectClass *pObject = NULL;
-							_variant_t svValue;
-							CString strName;
-							CString strType;
-							long lIndex;
-							long lPPQPosition=0;
-
-							bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IO_TYPE, htiDataChild, svValue );
-							if ( bOk )
-							{
-								strType = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
-							}// end if
-
-							// This means it is a Digital input
-							if( _T("Digital") == strType )
-							{								
-								bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_ITEM_NAME, htiDataChild, svValue );
-
-								if ( bOk )
-								{
-									csDataName = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
-								}// end if
-
-								bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_POSITION, htiDataChild, svValue );
-
-								if ( bOk )
-								{
-									lPPQPosition = svValue;
-								}// end if
-
-								// Add Digital Input to the PPQ
-								AddDigitalInput(pPPQ, csDataName, lPPQPosition); //Arvid 150108 should this really be called if bOk == false?
-																				 //Arvid 150108 if so: what value of lPPQPosition should be used
-							}// end if
-
-							// This means it is a Remote input
-							if( _T("Remote") == strType )
-							{								
-								_variant_t l_Variant = 0.0;
-
-								bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_ITEM_NAME, htiDataChild, svValue );
-
-								if ( bOk )
-								{
-									csDataName = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
-								}// end if
-
-								bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_POSITION, htiDataChild, svValue );
-
-								if ( bOk )
-								{
-									lPPQPosition = svValue;
-								}// end if
-
-								bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_REMOTE_INDEX, htiDataChild, svValue );
-
-								if ( bOk )
-								{
-									lIndex = svValue;
-								}// end if
-
-								if( SVNavigateTreeClass::GetItem( rTree, CTAG_REMOTE_INITIAL_VALUE, htiDataChild, svValue ) )
-								{
-									l_Variant = svValue;
-								}// end if
-
-								// Add Remote Inputs to the InputObjectList
-								//first check to see if remote input is there, check by name...
-								AddRemoteInput(pPPQ, csDataName, lPPQPosition, lIndex, l_Variant);
-							}// end if
-
-							rTree.GetNextBranch( htiDeviceChild, htiDataChild );
-
-						}// end while ( bOk && htiDataChild != NULL )
-					}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_INPUT, htiSubChild, &htiDeviceChild )
-
-					if ( bOk )
-					{
-						bOk = pPPQ->Create();
-
-						bOk &= pPPQ->RebuildInputList(HasCameraTrigger(pPPQ));
-
-						bOk &= pPPQ->RebuildOutputList();
-
-						if ( bOk )
-						{
-							bOk = AddPPQ( pPPQ );
-						}
-					}// end if
-				}// end if pPPQ != NULL
-
-				rTree.GetNextBranch( htiChild, htiSubChild );
-			}// end while ( bOk && htiSubChild != NULL )
-		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ, NULL, &htiChild ) )
-
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+					
+					SvStl::MessageContainer MsgCont;
+					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,SvO::MsgIONameIsMissing,StdMessageParams, SvOi::Err_16052_ErrorMissingItemNameTag);
+					throw MsgCont;
+				}
+
+
+				csDataName = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
+
+				if(false == SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_POSITION, htiDataChild, svValue ))
+				{
+					
+					SvStl::MessageContainer MsgCont;
+					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,SvO::MsgPPQPOsitionIsMissing,StdMessageParams, SvOi::Err_16054_ErrorMissingPPQPOsitionTag);
+					throw MsgCont;
+				}
+				lPPQPosition = svValue;
+
+
+				// Add Digital Input to the PPQ
+				AddDigitalInput(pPPQ, csDataName, lPPQPosition); 
+
+			}
+
+			// This means it is a Remote input
+			else if( _T("Remote") == strType )
+			{								
+				_variant_t l_Variant = 0.0;
+				if(false == SVNavigateTreeClass::GetItem( rTree, CTAG_ITEM_NAME, htiDataChild, svValue ))
+				{
+					LPCTSTR pMsgDet = _T("Item Name is missing"); 
+					SvStl::MessageContainer MsgCont;
+					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,pMsgDet,StdMessageParams, SvOi::Err_16059_ErrorMissingItemNameTag);
+					throw MsgCont;
+				}
+
+				csDataName = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
+				if(false == SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_POSITION, htiDataChild, svValue ))
+				{
+					LPCTSTR pMsgDet = _T("PPQ Position is missing") ;
+					SvStl::MessageContainer MsgCont;
+					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,pMsgDet,StdMessageParams, SvOi::Err_16056_ErrorMissingPPQPOsitionTag);
+					throw MsgCont;
+				}
+
+				lPPQPosition = svValue;
+
+				if(false == SVNavigateTreeClass::GetItem( rTree, CTAG_REMOTE_INDEX, htiDataChild, svValue ))
+				{
+					
+					SvStl::MessageContainer MsgCont;
+					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,SvO::MsgRemoteIndexIsMissing,StdMessageParams, SvOi::Err_16058_ErrorMissingRemoteIndexTag);
+					throw MsgCont;
+				}
+				lIndex = svValue;
+
+
+				if( SVNavigateTreeClass::GetItem( rTree, CTAG_REMOTE_INITIAL_VALUE, htiDataChild, svValue ) )
+				{
+					l_Variant = svValue;
+				}// end if
+
+				// Add Remote Inputs to the InputObjectList
+				//first check to see if remote input is there, check by name...
+				AddRemoteInput(pPPQ, csDataName, lPPQPosition, lIndex, l_Variant);
+			}// end if
+
+			rTree.GetNextBranch( htiDeviceChild, htiDataChild );
+
+		}// end while ( bOk && htiDataChild != NULL )
+		
+
+		if ( bOk )
+		{
+			bOk = pPPQ->Create();
+
+			bOk &= pPPQ->RebuildInputList(HasCameraTrigger(pPPQ));
+
+			bOk &= pPPQ->RebuildOutputList();
+
+			if ( bOk )
+			{
+				bOk = AddPPQ( pPPQ );
+			}
+		}
+		rTree.GetNextBranch( htiChild, htiSubChild );
+	}// end while ( bOk && htiSubChild != NULL )
+	return true;
+
+}
+
+
+void SVConfigurationObject::CalculateProductType(CString csBoardName, long numCameras, long lNumBoardDig)
+{
+	// figure out what kind of configuration we have ( support for old configurations without CTAG_CONFIGURATION_TYPE )
+	if ( GetProductType() != SVIM_PRODUCT_TYPE_UNKNOWN )
+		return;
+	bool bViperRGB = false;
+	bool bViperRGBMono = false;
+	bool bViperQuad = false;
+	bool bMatrox1394 = false;
+
+	if ( csBoardName.Find(_T("RGB")) != -1 )
+	{
+		bViperRGB = true;
+		if ( numCameras > 1 )	// RGB Color doesn't have channel information
+		{
+			bViperRGBMono = true;
+		}
+	}
+	else if ( csBoardName.Find(_T("Quad")) != -1 )
+	{
+		bViperQuad = true;
+	}
+	else if ( csBoardName.Find(_T("1394")) != -1 )
+		bMatrox1394 = true;
+
+	if ( bViperRGB )
+	{
+		if ( bViperRGBMono )
+			SetProductType( SVIM_PRODUCT_RGB_MONO );
+		else
+			SetProductType( SVIM_PRODUCT_RGB_COLOR );
+	}
+	else if ( bViperQuad )
+	{
+		if ( lNumBoardDig <= 2 )
+		{
+			SetProductType( SVIM_PRODUCT_05 );
+		}
+		else
+		{
+			SetProductType( SVIM_PRODUCT_FULL );
+		}
+	}
+	else if ( bMatrox1394 )
+	{
+		SetProductType( SVIM_PRODUCT_D3 );
+	}
+
+}
+
+
+HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
+{
+
+	HRESULT	Result( S_OK );
+
+	if(TRUE != DestroyConfiguration())
+	{
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_SVO_75_DESTROY_CONFIGURATION_FAILED,nullptr,StdMessageParams, SvOi::Err_16041_ErrroDestroyingConfig);
+		throw MsgCont;
+	}
+
+
+	CString csBoardName;
+	long lNumBoardDig(0);
+	long lNumCameras(0);
+	bool ConfigurationColor( false ); 
+
+	try
+	{
+		LoadEnviroment(rTree,ConfigurationColor); 
+		LoadIO(rTree);
+		LoadAcquisitionDevice(rTree, csBoardName,lNumBoardDig);
+		LoadCameras(rTree,lNumCameras, ConfigurationColor);
+		LoadTrigger(rTree);
+		LoadInspection(rTree);
+		LoadPPQ(rTree);
 		// EB 20031203
 		// a temp solution
 		// the better solution is to have the acqs subscribe and the triggers provide
 		HRESULT hrAttach = AttachAcqToTriggers();
-
-		// figure out what kind of configuration we have ( support for old configurations without CTAG_CONFIGURATION_TYPE )
-		if ( bOk && GetProductType() == SVIM_PRODUCT_TYPE_UNKNOWN )
-		{
-			bool bViperRGB = false;
-			bool bViperRGBMono = false;
-			bool bViperQuad = false;
-			bool bMatrox1394 = false;
-
-			if ( l_sBoardName.Find(_T("RGB")) != -1 )
-			{
-				bViperRGB = true;
-				if ( l_lNumCameras > 1 )	// RGB Color doesn't have channel information
-				{
-					bViperRGBMono = true;
-				}
-			}
-			else if ( l_sBoardName.Find(_T("Quad")) != -1 )
-			{
-				bViperQuad = true;
-			}
-			else if ( l_sBoardName.Find(_T("1394")) != -1 )
-				bMatrox1394 = true;
-
-			if ( bViperRGB )
-			{
-				if ( bViperRGBMono )
-					SetProductType( SVIM_PRODUCT_RGB_MONO );
-				else
-					SetProductType( SVIM_PRODUCT_RGB_COLOR );
-			}
-			else if ( bViperQuad )
-			{
-				if ( l_lNumBoardDig <= 2 )
-				{
-					SetProductType( SVIM_PRODUCT_05 );
-				}
-				else
-				{
-					SetProductType( SVIM_PRODUCT_FULL );
-				}
-			}
-			else if ( bMatrox1394 )
-			{
-				SetProductType( SVIM_PRODUCT_D3 );
-			}
-		}// end if ( GetProductType() == SVIM_PRODUCT_TYPE_UNKNOWN )
-
-		if ( ! bOk )
-		{
-			DestroyConfiguration();
-		}
-		else
-		{
-			m_bConfigurationValid = true;
-		}
-	}// end if DestroyConfiguration()
+		CalculateProductType(csBoardName, lNumCameras,lNumBoardDig);
+	}
+	catch (	const SvStl::MessageContainer& rMsgCont )
+	{
+		DestroyConfiguration();
+		throw rMsgCont;
+	}
+	m_bConfigurationValid = true;
 
 	return Result;
 }
@@ -2486,7 +2592,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 
 		if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_DEVICE_PARAM_LIST, htiDigChild, htiDataChild ) )
 		{
-				LoadDeviceParameters(rTree, htiDataChild, svDeviceParams);
+			LoadDeviceParameters(rTree, htiDataChild, svDeviceParams);
 		}
 
 		if( hr == S_OK )
@@ -2577,7 +2683,7 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial( SVTreeType& rTree, SVTree
 
 	switch ( pParam->Type() )
 	{
-		case DeviceParamCameraFormats:	
+	case DeviceParamCameraFormats:	
 		{
 			SVCameraFormatsDeviceParam* pcf = dynamic_cast<SVCameraFormatsDeviceParam*> (pParam);
 			CString sOptionTag;
@@ -3305,7 +3411,7 @@ void SVConfigurationObject::SaveTrigger(SVObjectXMLWriter& rWriter) const
 	for ( long l = 0; l < lCount; l++ )
 	{
 		SVTriggerObject *pTrigger = GetTrigger( l );
-		
+
 		if ( nullptr != pTrigger )
 		{
 			rWriter.StartElement( pTrigger->GetName() );
@@ -3365,7 +3471,7 @@ void SVConfigurationObject::SaveInspection(SVObjectXMLWriter& rWriter) const
 #endif
 			//Inspection Process
 			pInspection->Persist(rWriter);
-			
+
 			//SVIPDoc
 			SVIPDoc* pDoc =  SVObjectManagerClass::Instance().GetIPDoc(pInspection->GetUniqueObjectID());
 			if (pDoc)
@@ -3385,11 +3491,11 @@ void SVConfigurationObject::SaveInspection(SVObjectXMLWriter& rWriter) const
 void SVConfigurationObject::SavePPQ(SVObjectXMLWriter& rWriter) const
 {
 	rWriter.StartElement(CTAG_PPQ);
-	
+
 	SVString strName;
 	SVPPQObject* pPPQ( nullptr );
 	long lPPQCount = GetPPQCount();
-	
+
 	for( long lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
 	{
 		pPPQ = this->GetPPQ( lPPQ );
@@ -3477,7 +3583,7 @@ void SVConfigurationObject::SavePPQ_Attributes( SVObjectXMLWriter &rWriter, cons
 	rWriter.WriteAttribute( CTAG_PPQ_CONDITIONAL_OUTPUT, svValue );
 	svValue.Clear();
 
-				// Save State Objects unique ID
+	// Save State Objects unique ID
 	ObjectGuid = rPPQ.m_voOutputState.GetUniqueObjectID();
 	svValue = ObjectGuid.ToVARIANT();
 	rWriter.WriteAttribute( CTAG_PPQ_STATE_UNIQUEID, svValue );
@@ -3548,13 +3654,13 @@ bool SVConfigurationObject::SaveRemoteMonitorList( SVObjectXMLWriter &rWriter ) 
 	{
 		const SVString& strName = iterMonitorList->first;
 		rWriter.StartElement( strName.c_str() );
-		
+
 		_variant_t svValue;
 		const RemoteMonitorNamedList& monitorList = iterMonitorList->second;
 		svValue.SetString( monitorList.GetPPQName().ToString() );
 		rWriter.WriteAttribute( CTAG_PPQ_NAME, svValue );
 		svValue.Clear();
-		
+
 		svValue = monitorList.GetRejectDepthQueue();			
 		rWriter.WriteAttribute( CTAG_REJECT_QUEUE_DEPTH, svValue );
 		svValue.Clear();
@@ -3629,10 +3735,8 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 	rWriter.EndElement(); //CTAG_GLOBAL_CONSTANTS
 }
 
-HRESULT SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigColor )
+void SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigColor )
 {
-	HRESULT Result( S_OK );
-
 	SVIMProductEnum CurrentType( TheSVObserverApp.GetSVIMType() );
 	SVIMProductEnum ConfigType( GetProductType() );
 
@@ -3644,8 +3748,6 @@ HRESULT SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigC
 		SetProductType( CurrentType );
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 	}
-
-	return Result;
 }
 
 BOOL SVConfigurationObject::SaveConfiguration(SVObjectXMLWriter& rWriter) const
@@ -3704,7 +3806,7 @@ void SVConfigurationObject::SaveDeviceParameters( SVObjectXMLWriter& rWriter, co
 					CString strParam;
 					strParam.Format( CTAGF_DEVICE_PARAM_X, ++i );
 					rWriter.StartElement( strParam );
-					
+
 					_variant_t svVariant;
 					svVariant = SVDeviceParam::GetParameterName( pParam->Type() );
 					rWriter.WriteAttribute( CTAG_NAME, svVariant );
@@ -3743,7 +3845,7 @@ void SVConfigurationObject::SaveDeviceParamSpecial( SVObjectXMLWriter& rWriter, 
 
 	switch ( pParam->Type() )
 	{
-		case DeviceParamCameraFormats:	
+	case DeviceParamCameraFormats:	
 		{
 			const SVCameraFormatsDeviceParam* pcf = dynamic_cast<const SVCameraFormatsDeviceParam*> (pParam);
 			CString strParam( CTAG_OPTIONS );
@@ -3840,7 +3942,7 @@ BOOL SVConfigurationObject::Activate()
 }
 
 BOOL SVConfigurationObject::RebuildInputOutputLists()
-// called after Environment is edited
+	// called after Environment is edited
 {
 	BOOL bOk = TRUE;
 
@@ -3862,7 +3964,6 @@ BOOL SVConfigurationObject::RebuildInputOutputLists()
 	{
 		m_pIOController->RebuildOutputList();
 	}
-
 	return bOk;
 }
 
@@ -3996,7 +4097,7 @@ void SVConfigurationObject::SetupCameraTrigger(SVCameraTriggerClass* pTriggerDev
 
 		SVSoftwareTriggerClass* pSoftwareTriggerDevice = dynamic_cast<SVSoftwareTriggerClass*>(psvDevice);
 		pTriggerDevice->SetSoftwareTriggerDevice(pSoftwareTriggerDevice);
-		
+
 		SetupSoftwareTrigger(pSoftwareTriggerDevice, iDigNum, triggerPeriod, pPPQ);
 	}
 	else
@@ -4112,47 +4213,47 @@ void SVConfigurationObject::ConvertLightReferenceEnum(DWORD &dwType)
 {
 	switch ( dwType )
 	{
-		case SVCorLightReferenceTypeBrightness :
+	case SVCorLightReferenceTypeBrightness :
 		{
 			dwType = SVLightReferenceTypeBrightness;
 			break;
 		}
-		case SVCorLightReferenceTypeBrightnessRed :   
+	case SVCorLightReferenceTypeBrightnessRed :   
 		{	
 			dwType = SVLightReferenceTypeBrightnessRed;
 			break;
 		}
-		case SVCorLightReferenceTypeBrightnessGreen :
+	case SVCorLightReferenceTypeBrightnessGreen :
 		{
 			dwType = SVLightReferenceTypeBrightnessGreen;
 			break;
 		}
-		case SVCorLightReferenceTypeBrightnessBlue :
+	case SVCorLightReferenceTypeBrightnessBlue :
 		{
 			dwType = SVLightReferenceTypeBrightnessBlue;
 			break;
 		}
-		case SVCorLightReferenceTypeContrast :
+	case SVCorLightReferenceTypeContrast :
 		{
 			dwType = SVLightReferenceTypeContrast;
 			break;
 		}
-		case SVCorLightReferenceTypeContrastRed : 
+	case SVCorLightReferenceTypeContrastRed : 
 		{
 			dwType = SVLightReferenceTypeContrastRed;
 			break;
 		}
-		case SVCorLightReferenceTypeContrastGreen :
+	case SVCorLightReferenceTypeContrastGreen :
 		{
 			dwType = SVLightReferenceTypeContrastGreen;
 			break;
 		}
-		case SVCorLightReferenceTypeContrastBlue :
+	case SVCorLightReferenceTypeContrastBlue :
 		{
 			dwType = SVLightReferenceTypeContrastBlue;
 			break;
 		}
-		default:
+	default:
 		{
 			break;
 		}
@@ -5146,7 +5247,7 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 void SVConfigurationObject::updateConfTreeToNewestVersion(SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle &rToolset)
 {
 	SVXMLMaterialsTree::SVBranchHandle lutEquationBranch;
-	
+
 	//look in all children of the toolset if it had to add information
 	SVTreeType::SVBranchHandle htiSubChild = nullptr;
 	rTree.GetFirstBranch( rToolset, htiSubChild );
@@ -5460,7 +5561,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 			Result = true;
 		}
 	}
-	
+
 	return Result;
 }
 
@@ -5469,1960 +5570,1960 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
- * 
- *    Rev 1.37   19 Dec 2014 15:01:46   mEichengruen
- * Project:  SVObserver
- * Change Request (SCR) nbr:  979
- * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
- * Checked in by:  mEichengruen;  Marcus Eichengruen
- * Change Description:  
- *   check if it is allowed to set indirectdirect values for range Object
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.36   17 Dec 2014 07:08:54   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  941
- * SCR Title:  Update SVObserver Version Number for the 7.10 Release
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Added Thread Manager Enable.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.35   12 Dec 2014 13:08:58   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  918
- * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Changed ReplaceOrAddMonitorList to send a message so that the IO page will add/show the Monitor List tab.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.34   01 Dec 2014 13:07:48   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added thread manager serialization.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.33   20 Nov 2014 05:01:58   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  918
- * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   add method ReplaceOrAddMonitorList
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.32   13 Nov 2014 10:10:12   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  932
- * SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   use inspection-object instead of ID and SVObjectClass instead of SVGUID in method GetInspectionItems
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.31   29 Aug 2014 17:49:04   jHanebach
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added support for get/set product filter.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.30   29 Aug 2014 15:43:14   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  934
- * SCR Title:  Add Remote Access to Environment.Mode Parameters
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Removed GetMode.  Use SVSVIMStateClass::GetMode instead.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.29   04 Aug 2014 07:24:08   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  893
- * SCR Title:  Fix Camera Index Issue for Digital Cameras (e115)
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added GetRe-ordered Cameras function to insure the correct camera order when they are re-ordered with the camera manager.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.28   17 Jul 2014 18:35:56   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  909
- * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Removed namespaces and code review changes
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.27   08 Jul 2014 09:01:42   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Revised SaveMonitoredObjectList to use RemoteMonitorListHelper.
- * Revised LoadMonitoredObjectList to use RemoteMonitorListHelper.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.26   18 Jun 2014 11:28:14   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Conditionally added the PLC code for 32bit platform.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.25   02 Jun 2014 09:34:28   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  900
- * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Added loading and saving the Image and Result display update flags into the configuration.
- * Set the default and conversion (CTAG_ONLINE_DISPLAY)  values for the flags when loading.
- * Optimize the LoopStatus for the method SetCameraItems.
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.24   15 May 2014 11:10:28   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Revised SVSendMessage to use DWORD_PTR
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.23   28 Apr 2014 14:22:10   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added BuildPPQMonitorList method.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.22   24 Apr 2014 10:47:34   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Revised the GetActiveRemoteMonitorList method to use a reference rather than return a copy of the list.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.21   23 Apr 2014 10:39:32   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added ActivateRemoteMonitorList and GetActiveRemoteMonitorList methods.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.20   22 Apr 2014 09:44:38   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added ValidateRemoteMonitorList method.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.19   17 Apr 2014 16:58:36   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   added new methods for the Remote Monitor List
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.18   17 Mar 2014 15:20:24   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  869
- * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Changed ModifyAcquisitionDevice, LoadConfiguration,  GetChildObject, GetInspectionItems, GetRemoteInputItems, SetInspectionItems, SetRemoteInputItems for new objects.
- *   Added method SetCameraItems.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.17   07 Mar 2014 18:09:38   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  884
- * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Added regions.
- *   Added DEBUG_NEW.
- *   Removed empty method DetachAcqFromTriggers.
- *   Made methods const.
- *   Various code changes to better follow coding guidelines.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.16   01 Feb 2014 10:23:10   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Changed sendmessage to use LONG_PTR instead of DWORD.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.15   31 Jan 2014 17:16:26   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  884
- * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Changed to follow guidelines more closely.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.14   30 Oct 2013 10:45:18   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added #ifndef _WIN64 to prevent depricated PLC code from compiling in 64bit.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.13   01 Oct 2013 12:16:24   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Add x64 platform.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.12   07 Aug 2013 13:31:58   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  809
- * SCR Title:  Non I/O SVIM
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Renamed SVIOEntryHostStructPtrVector to SVIOEntryHostStructPtrList.
- * Added HasCameraTrigger method
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.11   01 Aug 2013 10:36:24   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  849
- * SCR Title:  Modify the Remove Unused Outputs function to check PPQ names
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added SVOutputObjectList StringVect typedef to ValidateOutputList for consistancy.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.10   30 Jul 2013 13:07:02   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  849
- * SCR Title:  Modify the Remove Unused Outputs function to check PPQ names
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added parameter (list of valid PPQs)to the function RemoveUnusedOutputs. This allows us to remove outputs  associated with a deleted PPQ.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.9   09 Jul 2013 13:28:12   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Merged with svo_src label SVO 6.10 Beta 023.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.147   03 Jul 2013 13:45:28   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  809
- * SCR Title:  Non I/O SVIM
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised AttachAcqToTriggers method to not call the trigger object's SetAcquisitionTriggered method.
- * Revised SetupCameraTrigger to assign the digitizer handle to the trigger handle.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.8   05 Jul 2013 15:01:26   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Merged with svo_src label SVO 6.10 Beta 021.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.146   14 Jun 2013 13:58:00   jHanebach
- * Project:  SVObserver
- * Change Request (SCR) nbr:  824
- * SCR Title:  Add Remote Access to SVObserver Application Configuration Variables
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Fixed invalid iterator in GetInspectionItems.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.7   12 Jun 2013 15:19:42   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Merged with svo_src label SVO 6.10 Beta 018.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.145   23 May 2013 08:51:12   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  824
- * SCR Title:  Add Remote Access to SVObserver Application Configuration Variables
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated set remote inputs method to assign correct status code to each elements.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.6   11 Jun 2013 15:26:00   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Merged with svo_src label SVO 6.10 Beta 017.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.144   21 May 2013 15:45:52   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  824
- * SCR Title:  Add Remote Access to SVObserver Application Configuration Variables
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated get child object method to not set error status when object is found.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.5   13 May 2013 12:15:56   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Merged with svo_src label SVO 6.10 Beta 014.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.143   21 May 2013 13:00:04   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  824
- * SCR Title:  Add Remote Access to SVObserver Application Configuration Variables
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated configuration object to include the new naming requirements found in IF00100.9401.003.  Also add new funcitonality to get and set remote inputs.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.142   07 May 2013 13:20:00   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  830
- * SCR Title:  Consolidate all Time Stamp and Clock Functionality
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to use new SVClock conversions functions, which will clarify timing tolerance checks.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.4   08 May 2013 16:02:10   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 012.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.141   29 Apr 2013 14:06:48   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  830
- * SCR Title:  Consolidate all Time Stamp and Clock Functionality
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to use the new SVClock::SVTimeStamp type for all time stamp variables.  Update to use new SVClock::GetTimeStamp() function to get the time stamp value in milliseconds.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.3   07 May 2013 08:20:24   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Merged with svo_src label SVO 6.10 Beta 011.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.140   19 Apr 2013 13:19:00   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  822
- * SCR Title:  Remove DDE Input and Output functionality from SVObserver
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Fixed SavePPQ by putting back pPPQ->PersistInputs.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.2   06 May 2013 20:05:54   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Merged with svo_src label SVO 6.10 Beta 010.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.139   16 Apr 2013 14:15:06   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  822
- * SCR Title:  Remove DDE Input and Output functionality from SVObserver
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Removed DDE functionality from the source code.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   06 May 2013 14:38:10   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Merged with svo_src label SVO 6.10 Beta 009.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.138   10 Apr 2013 11:20:30   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  812
- * SCR Title:  Add New Remote Command Functionality
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code to fix error status of methods that did not get changed correctly when the Inspection Process Add Inputs methods were changed.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   23 Apr 2013 10:02:36   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.137   05 Apr 2013 12:26:04   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  812
- * SCR Title:  Add New Remote Command Functionality
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated method that uses inspection method with changed return type from BOOL to HRESULT.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.136   20 Mar 2013 14:11:52   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  817
- * SCR Title:  Import/Export of Inspections
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised AddImportedDDEInput to only adjust an existing input if it's not enabled.
- * Revised AddImportedRemoteInput to only adjust an existing input if it's not enabled.
- * Revised AddImportedDigitalInput to only adjust an existing input if it's not enabled.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.135   20 Mar 2013 13:36:50   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  817
- * SCR Title:  Import/Export of Inspections
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised AddImportedDDEInput to only import the input if it's not used.
- * Revised AddImportedDigitalInput to only import the input if it's not used.
- * Revised AddImportedRemoteInput to only import the input if it's not used.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.134   19 Mar 2013 14:45:26   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  817
- * SCR Title:  Import/Export of Inspections
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Renamed AddOrUpdateDigitalInput to AddImportedDigitalInput.
- * Renamed AddOrUpdateDDEInput to AddImportedDDEInput.
- * Renamed AddOrUpdateRemoteInput to AddImportedRemoteInput.
- * Revised AddImportedDigitalInput to only add the input is it doesn't already exists.
- * Revised AddImportedDDEInput to only add the input is it doesn't already exists.
- * Revised AddImportedRemoteInput to only add the input is it doesn't already exists.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.133   15 Mar 2013 13:03:32   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  809
- * SCR Title:  Non I/O SVIM
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised AttachAcqToTrigger to remove dead code
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.132   18 Feb 2013 13:25:12   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  812
- * SCR Title:  Add New Remote Command Functionality
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code to allow the socket interface to process the set items command.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.131   14 Feb 2013 11:04:54   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  812
- * SCR Title:  Add New Remote Command Functionality
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Update configuration object get configuraiton items method to use the new asynchrous fucntionality to get the data from the inspections.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.130   11 Feb 2013 14:16:40   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  812
- * SCR Title:  Add New Remote Command Functionality
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to use the new framework for the remote socket interface.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.129   21 Jan 2013 10:50:04   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  809
- * SCR Title:  Non I/O SVIM
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Added GetPPQByName method
- * Added AddCameraDataInput method
- * Added SetupSoftwareTrigger method
- * Added SetupCameraTrigger method
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.128   16 Jan 2013 16:02:02   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  802
- * SCR Title:  Add new product type GD1A
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Migrating branch code into primary code base.  
- * 
- * Consolidated adding and updating inputs to configuration elements to configuratoin object.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.127   11 Oct 2012 10:54:16   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated include information based on the navigate tree class moving to the XML library.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.126   11 Oct 2012 10:49:18   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Change from post to pre incrementer.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.125   28 Sep 2012 14:33:26   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Upated code to use new templated classes.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.124   25 Sep 2012 15:16:42   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated to use new tree type.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.123   18 Sep 2012 18:19:14   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code to use the templated XML objects that moved from the SVLibrary to the new XML Library and to the Configuration Library.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.122   06 Sep 2012 09:54:04   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated Load Configuration and Save Configuration methods to restructure the data in the configuration file.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.121   04 Sep 2012 15:27:20   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated Navigate Tree class to not force the programmer to create an instance of the class to use it.  Converted all functionality to static.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.120   30 Aug 2012 09:37:40   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  786
- * SCR Title:  Fix Problems with IEEE 1394 Light Reference and LUT Camera Parameters
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated the Load Configuration method in the Configuration object to synchronize camara parameters with acquisition device.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.119   15 Aug 2012 14:30:26   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  779
- * SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to use the new Singlton version of the SVIOConfigurationInterfaceClass.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.118   14 Aug 2012 15:56:12   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  779
- * SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated output list functionality to only allow unique elements to the output list and notify user when duplicates are detected.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.117   13 Aug 2012 14:24:56   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  779
- * SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code to change the functionality associated with the Input Object List to use a new method to get the input from the input list.  If the input does not exist in the input list, a NULL pointer is returned.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.116   07 Aug 2012 10:44:34   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  779
- * SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated Load Configuration method to fix an issue with the object assignment of the DDE Inputs and DDE Outputs.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.115   01 Aug 2012 11:44:42   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  769
- * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Added new command functionality to allow for synchronous command execution through the inspection thread.  This will fix problems with race conditions with the inspection process.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.114   17 Jul 2012 15:47:34   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  771
- * SCR Title:  Upgrade to the Next Version of Matrox Imaging Library (MIL)
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   SaveConfiguration( CTreeCtrl ):  Removed unnecessary ASSERTs.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.113   02 Jul 2012 16:39:50   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  769
- * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to promote new display functionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.112   28 Jun 2012 17:40:12   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  768
- * SCR Title:  Add the display time-out and throttling options for 5.50
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Reverted timeout value back to original value.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.111   18 Jun 2012 18:15:46   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  744
- * SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Centralized the location of the configuration object identifier and removed synchronization problems.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.110   16 May 2012 18:57:42   jHanebach
- * Project:  SVObserver
- * Change Request (SCR) nbr:  763
- * SCR Title:  Add the display time-out and throttling options.
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Merge 5.43 changes
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.109   13 Mar 2012 13:23:26   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  745
- * SCR Title:  Fix contention issue during load process and display
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Updated Activate method to move the message call to a dialog scope.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.108   05 Mar 2012 13:46:38   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  755
- * SCR Title:  Fix saving of "forced outputs"
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added bool cast to the temperary value of type _variant _t  where it is assigned to the dword forced value.  This will prevent an illegal value from being assigned.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.107   31 Jan 2012 15:24:26   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  748
- * SCR Title:  Add Remote Output Steams to SVObserver
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   Fixed GetRemoteOutputCount
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.106   30 Jan 2012 11:09:30   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  748
- * SCR Title:  Add Remote Output Steams to SVObserver
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   Modified source code to consolidate PLC and New Output stream functionality to I/O Controller.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.105   20 Dec 2011 14:55:56   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  741
- * SCR Title:  Fix IO List when changing Inspection Name
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added function calls to rename the output list when inspection name has been changed.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.104   19 Dec 2011 15:41:34   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  744
- * SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated the configuration object to handle new functionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.103.1.0   14 May 2012 14:12:44   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  763
- * SCR Title:  Add the display time-out and throttling options.
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Support saving new display setting
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.103   28 Sep 2011 12:54:20   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  730
- * SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Updated source code to fix issues with camera image interface and methodology.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.102   16 Sep 2011 15:50:00   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  730
- * SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Updated camera management functionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.101   26 Jul 2011 07:49:30   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  733
- * SCR Title:  fix bug with Remote Inputs not being avaliable
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   fixed issues with Remote Inputs being put into the list multiple times. 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.100   07 Jun 2011 11:32:04   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated loading process to store correct object ids in the iocontroller object.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.99   06 Jun 2011 13:06:16   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  722
- * SCR Title:  Fix a problem with Raid Error Information on X2 systems
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to correct issues with the RAID error information associated with the X2 products.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.98   29 Apr 2011 08:06:50   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code to allow for inspection to for the display to give up when an inspection get queued.  The display is now regulated to a maximum of 10 frames per second.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.97   19 Apr 2011 16:07:16   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code to fix issues with IO Assignment.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.96   18 Apr 2011 09:22:12   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code to move the shared data for the IO Entry data to a different class to fix issues with PPQ and Inspection shared data.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.95   30 Mar 2011 15:56:04   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to clairify construction functionality and add clean-up functionality to remove memory leaks.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.94   22 Mar 2011 07:45:10   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated static global classes to singletons to promote proper and defined construction and destruction.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.93   16 Mar 2011 09:22:52   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  715
- * SCR Title:  Change the reset functionality for Input Object in the Inspection Process
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source to include change in reset requirements for input value objects.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.92   18 Feb 2011 09:58:02   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  700
- * SCR Title:  Remove String Buffer Problems
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source to remove duplicate string class, and fixed string conversion issues.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.91   15 Dec 2010 09:49:54   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to fix connections and synchronization issues with the IO Sub-system.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.90   13 Dec 2010 11:15:08   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Change the usage of _variant_t to clear the variable after use to eliminate invalid variant type for assignment.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.89   08 Dec 2010 07:51:20   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to include changes in notification functionality using the Observer Design Pattern.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.88   09 Nov 2010 16:09:26   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  704
- * SCR Title:  Upgrade SVObserver Version for 5.33 Release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to remove duplicate container objects.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.87   05 Nov 2010 10:29:00   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  703
- * SCR Title:  Allow SVObserver to Change Remote Input Values
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to remove redundent data objects.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.86   04 Nov 2010 13:30:44   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to fix issues with image processing and display image processing classes and associated includes.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.85   21 Oct 2010 11:02:18   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  703
- * SCR Title:  Allow SVObserver to Change Remote Input Values
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to change internal value object to variant value object from double value object.  Added persistance to configuration object.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.84   01 Jun 2010 10:34:40   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  693
- * SCR Title:  Fix Performance Issue with Inspection Process
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code to remove redundent methodologies and fix missing or incorrect calling functionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.83   15 Feb 2010 12:25:32   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  686
- * SCR Title:  Update Laptop version to load all valid configurations
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated classes to remove the generations of board image processing classes from the system.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.82   15 Dec 2009 15:13:48   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  677
- * SCR Title:  Fix problem in camera notify thread
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated include information and comments.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.81   30 Jul 2009 11:18:02   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  665
- * SCR Title:  Fix unrecoverable failure when processing acquisitions at high speed
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Merged branced changes into current code branch with appropriate updates.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.80   03 Jun 2009 09:51:00   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  650
- * SCR Title:  Integrate Gigabit ethernet cameras
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised Include file definitions due to changes in SVDeviceParams
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.79   06 Feb 2009 09:21:10   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  634
- * SCR Title:  Implement a File Acquistion Device
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised LoadConfiguration to correct a problem setting whether file acquisition should be used or not, which affected the camera manager behavior.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.78   04 Dec 2008 09:33:32   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  615
- * SCR Title:  Integrate PLC Classes into SVObserver Outputs
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added Load Configuration changes to support PLC
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.77   14 Nov 2008 13:54:44   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  615
- * SCR Title:  Integrate PLC Classes into SVObserver Outputs
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added code to save PLC Outputs
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.76   14 Nov 2008 12:07:24   jbrown
- * Project:  SVObserver
- * Change Request (SCR) nbr:  641
- * SCR Title:  BoundsChecker results
- * Checked in by:  JimAdmin;  James A. Brown
- * Change Description:  
- *   For
- * SVConfigurationObject::LoadConfiguration ()
- * SVConfigurationObject::LoadAcquisitionDeviceFile ()
- * SVConfigurationObject::LoadDeviceParamSpecial ()
- * 
- * Replace delete of character string from SVOVariantClass, with SVOString::StaticDestroy ()
- * 
- * For 
- * SVConfigurationObject::FinishIPDoc ()
- *   Changed to use delete [] pbValidate instead of delete 
- *   pbValidate.
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.75   23 Oct 2008 17:51:02   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  634
- * SCR Title:  Implement a File Acquistion Device
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised AttachAcqToTrigger method to reset TriggerRelay for File Acquisition if Software Trigger
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.74   17 Oct 2008 10:32:12   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  612
- * SCR Title:  Implement a timer trigger object
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Removed call to EnableInternalTrigger (now done in SVPPQObject)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.73   08 Oct 2008 09:33:46   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  634
- * SCR Title:  Implement a File Acquistion Device
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised AttachAcqToTriggers to use hardware based triggers with File Acquisition
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.72   03 Oct 2008 17:29:20   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  612
- * SCR Title:  Implement a timer trigger object
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Changed Frequency to Period for the Software Timer Trigger
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.71   16 Sep 2008 14:33:48   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  634
- * SCR Title:  Implement a File Acquistion Device
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Added SaveFileAcquisitionConfiguration method.
- * Added LoadFileAcquisitionConfiguration method.
- * Revised LoadConfiguration to handle FileAquisition settings.
- * Revised SaveConfiguration to handle FileAquisition settings.
- * Revised call to getDigitizerSubsystem to use device name in support of multiple acquisition devices.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.70   10 Sep 2008 16:55:02   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  612
- * SCR Title:  Implement a timer trigger object
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Added SaveAcquisitionDeviceFilename
- * Added LoadAcquisitionDeviceFilename
- * Added SaveDeviceParameters
- * Added LoadDeviceParameters
- * Revised Loading/Saving to support Software Trigger aprameters
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.69   30 Oct 2007 15:00:14   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  609
- * SCR Title:  Fix GDI and Handle Leaks that limit the number of configuration loads.
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   added code to free allocated memory in SaveConfiguration.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.68   21 Jun 2007 12:01:26   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  598
- * SCR Title:  Upgrade SVObserver to compile using vc++ in VS2005
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   These changes include modification based on fixing compiler-based and project-based differences between VC6 and VC8.  These changes mainly include casting issues, but some include type conversion and assignment of new compiler controlling defines.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.67.1.1   14 Jul 2009 12:44:30   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  665
- * SCR Title:  Fix unrecoverable failure when processing acquisitions at high speed
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Udated code to use the new data manager objects and signal processing.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.67.1.0   30 Oct 2007 09:17:24   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  609
- * SCR Title:  Fix GDI and Handle Leaks that limit the number of configuration loads.
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Free Allocated memory - added deleted ppIOEntries to Saveconfiguration.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.67   09 Apr 2007 11:54:14   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  588
- * SCR Title:  Add the RAID Error Bit for the digital IO
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   added new method to determine if the configuration is of a RAID type
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.66   22 Jan 2007 09:29:06   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  587
- * SCR Title:  Add Timeout Threshold to Extended Time Delay Mode
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   added code for the new Inspection Timeout Threshold for the Extended Time Delay Mode.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.65   17 Jan 2006 10:00:46   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  529
- * SCR Title:  Add Conditional Product History
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   added GetInspections
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.64   10 Nov 2005 06:44:12   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  516
- * SCR Title:  Allow SVObserver to use the Intek 1394 driver for camera acquisition
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Update code to rename member variable for more clarity.  Used new SVObserverApp method to determine type of hardware.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.63   24 Oct 2005 09:40:18   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  510
- * SCR Title:  Add source image extents to all image using tools
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Changes to support adding a flag to the Inspection that will enable Auxiliary Extents.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.62   08 Sep 2005 13:29:26   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  504
- * SCR Title:  Fix lock-up problem when pending product count is larger than PPQ size
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Changed refresh when activating configuration to a RunOnce.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.61   31 Aug 2005 08:34:30   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  500
- * SCR Title:  Reduce delay when adjusting tool parameters with a large toolset
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Update source code call to handle new refresh methodology.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.60   22 Aug 2005 10:09:12   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  504
- * SCR Title:  Fix lock-up problem when pending product count is larger than PPQ size
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated methods to include changes to SVProductInfoStruct and supporting classes to handle proper assignment and copy construction.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.59   29 Jun 2005 07:37:32   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  493
- * SCR Title:  Fix Bug in SVOutputObjectList
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added ValidateOutputList Function
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.58   09 Mar 2005 06:43:04   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  456
- * SCR Title:  Update Image and Tool Objects to use the new Extent Classes
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Removed ASSERT in debug mode when camera does not have a LUT table.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.57   21 Feb 2005 10:24:44   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  452
- * SCR Title:  Upgrade SVObserver to version 4.50
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   removed unnecessary ASSERT
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.56   17 Feb 2005 13:28:04   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  456
- * SCR Title:  Update Image and Tool Objects to use the new Extent Classes
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Update class with new methodologies based on new base object, extents and reset structure.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.55   16 Feb 2005 13:18:50   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  440
- * SCR Title:  Create Internal Tool Object to Managing Tool Extents and Result Extents
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   updated header files
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.54   19 Jan 2005 14:50:24   jBrown
- * Project:  SVObserver
- * Change Request (SCR) nbr:  375
- * SCR Title:  Remodel XML usage for configuration storage and SIAC transfers.
- * Checked in by:  JimAdmin;  James A. Brown
- * Change Description:  
- *   The function 
- * 
- * SVConfigurationObject::LoadConfiguration()
- * 
- * was modified to better conform to HRESULT vs BOOL standards.
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.54   19 Jan 2005 14:50:16   jBrown
- * Project:  SVObserver
- * Change Request (SCR) nbr:  375
- * SCR Title:  Remodel XML usage for configuration storage and SIAC transfers.
- * Checked in by:  JimAdmin;  James A. Brown
- * Change Description:  
- *   The function 
- * 
- * SVConfigurationObject::LoadConfiguration()
- * 
- * was modified to better conform to HRESULT vs BOOL standards.
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.53   20 Oct 2004 15:41:42   jBrown
- * Project:  SVObserver
- * Change Request (SCR) nbr:  375
- * SCR Title:  Remodel XML usage for configuration storage and SIAC transfers.
- * Checked in by:  JimAdmin;  James A. Brown
- * Change Description:  
- *   The return type of SVConfigurationObject::LoadConfiguration(CTreeCtrl &rTree) was changed from BOOL to HRESULT in order to better debug loading problems.
- * 
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.52   12 Jul 2004 12:53:44   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  428
- * SCR Title:  Improve Load Configuration time
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   implemented get file version information
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.51   11 Jun 2004 14:10:02   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  410
- * SCR Title:  Fix DDE IO
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Updated LoadConfiguration method to fix issue with loading DDE output PPQ_x.State variable.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.50   11 Jun 2004 07:50:58   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  410
- * SCR Title:  Fix DDE IO
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Fixed problem with DDE State.  State will now appear as a PPQ variable PPQ_X.State
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.49   25 May 2004 08:26:08   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  421
- * SCR Title:  Allow SVObserver to get the Trigger Edge and Strobe Edge from the Camera File
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated LoadConfiguration method to set the trigger edge and strobe edge data into the system from the camera file data.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.48   11 Feb 2004 17:30:26   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  352
- * SCR Title:  Update SVObserver to Version 4.30 Release
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   removed compiler warnings
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.47   09 Feb 2004 14:04:52   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   fixed legacy support for lut MaxValue
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.46   04 Feb 2004 12:49:22   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  399
- * SCR Title:  Increase 1394 SVIM Performance
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   made change to field name
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.45   03 Feb 2004 17:21:24   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  399
- * SCR Title:  Increase 1394 SVIM Performance
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added support for named device params
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.44   22 Jan 2004 12:26:14   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  399
- * SCR Title:  Increase 1394 SVIM Performance
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   name changed of called function
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.43   21 Jan 2004 15:28:08   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  399
- * SCR Title:  Increase 1394 SVIM Performance
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   made strobe start frame (un)registration conditional
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.42   16 Jan 2004 07:48:26   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  399
- * SCR Title:  Increase 1394 SVIM Performance
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   added temporary functions to connect acquisitionclass objects to trigger signals (including the strobe start frame)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.41   12 Jan 2004 10:43:14   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  404
- * SCR Title:  Change Camera Parameters that represent time to use standard units
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Changes to LoadConfiguration( to store Metadata in ConfigurationDeviceParams from CameraDeviceParams
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.40   15 Dec 2003 11:57:18   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   added hack to store "native" units for device params
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.39   10 Dec 2003 09:16:38   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   added convert function for Light Refernece values from the Coreco values to SVObservers ENUMS
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.38   21 Nov 2003 09:54:50   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   set strobe polarity on IO board based on Acq Device param
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.37   21 Nov 2003 09:45:52   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   workaround for LR loading problem on 1394
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.36   12 Nov 2003 13:43:26   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  396
- * SCR Title:  Add New Product Types for 1394 SVIM
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   changed enumeration names
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.35   13 Oct 2003 11:28:16   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  386
- * SCR Title:  Change Light Reference handling to match earlier versions of SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Added code to loading a configuration to create a default LUT if one wasn't loaded from the file.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.34   02 Oct 2003 10:48:52   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  386
- * SCR Title:  Change Light Reference handling to match earlier versions of SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Add new code to handle the defaulting of unset light reference values to the values in the camera files.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.33   25 Sep 2003 14:29:06   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  381
- * SCR Title:  Combine PPQ Data to Inspection Data for a Digital Output
- * Checked in by:  rSchock;  Rosco Schock
- * Change Description:  
- *   Add code to support the combining of digital outputs with PPQ values.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.32   24 Sep 2003 07:48:32   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   added LUT MaxValue support
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.31   17 Sep 2003 08:59:22   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   added legacy (beta) conversion from old trigger names
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.30   16 Sep 2003 09:26:00   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  322
- * SCR Title:  Add Additional Digital IO Resources to SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Updated LoadConfiguration method to use new trigger member variable.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.29   29 Aug 2003 13:13:50   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   don't save Null device parameters
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.28   18 Aug 2003 15:35:06   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  322
- * SCR Title:  Add Additional Digital IO Resources to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Updated LoadConfiguration method to fix IO Configuration Interface.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.27   07 Aug 2003 12:45:12   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   modified CreateBuffers to use GetSourceImageDepth in response to request by Emhart
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.26   05 Aug 2003 13:50:34   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  373
- * SCR Title:  Add a new disable method that doesn't copy forward all result values
- * Checked in by:  rSchock;  Rosco Schock
- * Change Description:  
- *   Made changes to the saving/loading/editing of configurations to add a new property for the inspection's disable method.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.25   31 Jul 2003 09:48:38   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   added #include "SVImagingDeviceParams.h"
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.24   28 Jul 2003 10:44:26   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   added support for specialized DeviceParams
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.23   08 Jul 2003 11:47:22   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  322
- * SCR Title:  Add Additional Digital IO Resources to SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Added DeviceParam load/save for Digital
- * SVLightReferenceArray --> SVLighrReference
- * changed Digital IO / DDE handling
- * changed BOOL to HRESULT for Image Processing functions (mpsvImaging)
- * 
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.22   08 Jul 2003 09:15:46   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  374
- * SCR Title:  Add check before changing tool parameters when processing input list
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Added call to BuildValueObjectMap to the loading process.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.21   11 Jun 2003 13:49:12   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  359
- * SCR Title:  Version Check on Configurations that are saved with  SVX extensions
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   added new method to return the SVX version before the configuration is loaded.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.20   22 May 2003 10:37:24   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  355
- * SCR Title:  Save tool freeform LUT with the configuration
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Fixed bug with the SetLut function not setting the transform method correctly and that it gets saved correctly
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.19   07 May 2003 15:09:40   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  341
- * SCR Title:  DDE Input and Outputs are no longer working correctly
- * Checked in by:  rSchock;  Rosco Schock
- * Change Description:  
- *   Modified code so that some inputs that were being exposed as outputs were removed.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.18   25 Apr 2003 11:25:42   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  341
- * SCR Title:  DDE Input and Outputs are no longer working correctly
- * Checked in by:  rSchock;  Rosco Schock
- * Change Description:  
- *   Fixed several problems so that the DDE inputs and outputs will work like they used to in pre SVO 4.00 versions.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.17   17 Apr 2003 17:20:26   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  341
- * SCR Title:  DDE Input and Outputs are no longer working correctly
- * Checked in by:  rSchock;  Rosco Schock
- * Change Description:  
- *   Modified configuration load to add inputs as available outputs so they can be echoed through the system.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.16   17 Apr 2003 17:16:56   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  346
- * SCR Title:  Update SVObserver to Version 4.21 Release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.15   28 Mar 2003 12:31:28   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  318
- * SCR Title:  Image Transfer Compression
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Added support for knowing if the configuration is valid (loaded) - IsConfigurationLoaded, SetConfigurationLoaded, m_bIsConfigurationValid
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.14   20 Mar 2003 09:28:00   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  336
- * SCR Title:  Change Light Reference and LUT dialogs on RGB mono system
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   fixed problem with Configuration type recognition
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.13   20 Mar 2003 07:14:06   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  336
- * SCR Title:  Change Light Reference and LUT dialogs on RGB mono system
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   fixed uninitialized m_eProductType in constructor
- * changed all access to this variable to use Get / Set
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.12   19 Mar 2003 15:20:28   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  332
- * SCR Title:  Module Ready not available after being unassigned and other small I/O bugs
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Fixed some problems with input/outputs and the Go online/Go offline process. Also, made changes to force the PPQ to always have valid inputs and outputs even without an inspection attached.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.11   14 Mar 2003 07:04:34   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  336
- * SCR Title:  Change Light Reference and LUT dialogs on RGB mono system
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Added awareness of configuration type
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.10   13 Mar 2003 14:30:50   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  335
- * SCR Title:  Fix Light Reference and LUT problems with RGB Mono systems
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   during the save if the board is an RGB it will only write out the device Viper_RGB_1_Dig_0.Ch_All.  It will not use the individual channels.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.9   10 Feb 2003 13:17:46   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  316, 321
- * SCR Title:  Add option to extent acquisition image source buffers to the length of the PPQ
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   changed how the PPQ's input list is generated.  After reading in the PPQ, it will now rebuild the input list.   
- * 
- * Also added a section in the load/save of the configuration of the PPQ's for the new property 'Maintain Source Images'
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.8   05 Feb 2003 17:29:52   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  301
- * SCR Title:  Implement Result Image Circle Buffer
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Made modifications to the display logic to display the current source and result images indexes, respectively. This should make it work correctly regardless of whether it is online or performing RunOnce/Regression.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.7   13 Jan 2003 14:44:06   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  307
- * SCR Title:  Implement the ability to remotely change Tool parameters on the SVIM
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Fixed code segment that was mis merged.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.6   13 Jan 2003 11:27:14   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  307
- * SCR Title:  Implement the ability to remotely change Tool parameters on the SVIM
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added new code to fully enable Remote Inputs in the system.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.5   10 Jan 2003 18:29:48   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  305
- * SCR Title:  Implement the ability to perform RunOnce from a SIAC client
- * Checked in by:  rSchock;  Rosco Schock
- * Change Description:  
- *   Made changes to how the images are displayed while running and while doing a RunOnce operation to use the image that is specified in the SVProductInfoStruct.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.4   10 Jan 2003 09:42:10   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  306
- * SCR Title:  Implement the ability for the SIAC to remotely setup the RGB LUT for a camera
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Changed use of class name SVAcquisitionDevice to SVConfigurationAcquisitionDeviceInfoStuct
- * Changed AcquisitionDevice functions to use Lut
- * Added Lut to SaveConfiguration and LoadConfiguration
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.3   18 Dec 2002 09:13:14   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  231
- * SCR Title:  Update OCR Font Editor code to be stable & prevent crash when close SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   08 Dec 2002 21:35:20   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  311
- * SCR Title:  Fix Light Reference save for RGB Mono
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated LoadConfiguration and SaveConfiguration methods of the SVConfigurationObject to reflect changes in references of SVAcquisitionClass member variables to accessor functions
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   15 Nov 2002 12:51:50   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  226
- * SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   This is the first revision of this file.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.37   19 Dec 2014 15:01:46   mEichengruen
+* Project:  SVObserver
+* Change Request (SCR) nbr:  979
+* SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+* Checked in by:  mEichengruen;  Marcus Eichengruen
+* Change Description:  
+*   check if it is allowed to set indirectdirect values for range Object
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.36   17 Dec 2014 07:08:54   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  941
+* SCR Title:  Update SVObserver Version Number for the 7.10 Release
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Added Thread Manager Enable.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.35   12 Dec 2014 13:08:58   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  918
+* SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+* Checked in by:  mZiegler;  Marc Ziegler
+* Change Description:  
+*   Changed ReplaceOrAddMonitorList to send a message so that the IO page will add/show the Monitor List tab.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.34   01 Dec 2014 13:07:48   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  960
+* SCR Title:  Pipe/core management
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added thread manager serialization.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.33   20 Nov 2014 05:01:58   mziegler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  918
+* SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+* Checked in by:  mZiegler;  Marc Ziegler
+* Change Description:  
+*   add method ReplaceOrAddMonitorList
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.32   13 Nov 2014 10:10:12   mziegler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  932
+* SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
+* Checked in by:  mZiegler;  Marc Ziegler
+* Change Description:  
+*   use inspection-object instead of ID and SVObjectClass instead of SVGUID in method GetInspectionItems
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.31   29 Aug 2014 17:49:04   jHanebach
+* Project:  SVObserver
+* Change Request (SCR) nbr:  886
+* SCR Title:  Add RunReject Server Support to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Added support for get/set product filter.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.30   29 Aug 2014 15:43:14   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  934
+* SCR Title:  Add Remote Access to Environment.Mode Parameters
+* Checked in by:  mZiegler;  Marc Ziegler
+* Change Description:  
+*   Removed GetMode.  Use SVSVIMStateClass::GetMode instead.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.29   04 Aug 2014 07:24:08   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  893
+* SCR Title:  Fix Camera Index Issue for Digital Cameras (e115)
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added GetRe-ordered Cameras function to insure the correct camera order when they are re-ordered with the camera manager.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.28   17 Jul 2014 18:35:56   gramseier
+* Project:  SVObserver
+* Change Request (SCR) nbr:  909
+* SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+* Checked in by:  gRamseier;  Guido Ramseier
+* Change Description:  
+*   Removed namespaces and code review changes
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.27   08 Jul 2014 09:01:42   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  886
+* SCR Title:  Add RunReject Server Support to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Revised SaveMonitoredObjectList to use RemoteMonitorListHelper.
+* Revised LoadMonitoredObjectList to use RemoteMonitorListHelper.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.26   18 Jun 2014 11:28:14   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Conditionally added the PLC code for 32bit platform.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.25   02 Jun 2014 09:34:28   gramseier
+* Project:  SVObserver
+* Change Request (SCR) nbr:  900
+* SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+* Checked in by:  gRamseier;  Guido Ramseier
+* Change Description:  
+*   Added loading and saving the Image and Result display update flags into the configuration.
+* Set the default and conversion (CTAG_ONLINE_DISPLAY)  values for the flags when loading.
+* Optimize the LoopStatus for the method SetCameraItems.
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.24   15 May 2014 11:10:28   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Revised SVSendMessage to use DWORD_PTR
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.23   28 Apr 2014 14:22:10   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  886
+* SCR Title:  Add RunReject Server Support to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Added BuildPPQMonitorList method.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.22   24 Apr 2014 10:47:34   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  886
+* SCR Title:  Add RunReject Server Support to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Revised the GetActiveRemoteMonitorList method to use a reference rather than return a copy of the list.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.21   23 Apr 2014 10:39:32   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  886
+* SCR Title:  Add RunReject Server Support to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Added ActivateRemoteMonitorList and GetActiveRemoteMonitorList methods.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.20   22 Apr 2014 09:44:38   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  886
+* SCR Title:  Add RunReject Server Support to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Added ValidateRemoteMonitorList method.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.19   17 Apr 2014 16:58:36   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  886
+* SCR Title:  Add RunReject Server Support to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   added new methods for the Remote Monitor List
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.18   17 Mar 2014 15:20:24   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  869
+* SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Changed ModifyAcquisitionDevice, LoadConfiguration,  GetChildObject, GetInspectionItems, GetRemoteInputItems, SetInspectionItems, SetRemoteInputItems for new objects.
+*   Added method SetCameraItems.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.17   07 Mar 2014 18:09:38   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  884
+* SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Added regions.
+*   Added DEBUG_NEW.
+*   Removed empty method DetachAcqFromTriggers.
+*   Made methods const.
+*   Various code changes to better follow coding guidelines.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.16   01 Feb 2014 10:23:10   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Changed sendmessage to use LONG_PTR instead of DWORD.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.15   31 Jan 2014 17:16:26   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  884
+* SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Changed to follow guidelines more closely.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.14   30 Oct 2013 10:45:18   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added #ifndef _WIN64 to prevent depricated PLC code from compiling in 64bit.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.13   01 Oct 2013 12:16:24   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Add x64 platform.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.12   07 Aug 2013 13:31:58   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  809
+* SCR Title:  Non I/O SVIM
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Renamed SVIOEntryHostStructPtrVector to SVIOEntryHostStructPtrList.
+* Added HasCameraTrigger method
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.11   01 Aug 2013 10:36:24   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  849
+* SCR Title:  Modify the Remove Unused Outputs function to check PPQ names
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added SVOutputObjectList StringVect typedef to ValidateOutputList for consistancy.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.10   30 Jul 2013 13:07:02   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  849
+* SCR Title:  Modify the Remove Unused Outputs function to check PPQ names
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added parameter (list of valid PPQs)to the function RemoveUnusedOutputs. This allows us to remove outputs  associated with a deleted PPQ.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.9   09 Jul 2013 13:28:12   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Merged with svo_src label SVO 6.10 Beta 023.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.147   03 Jul 2013 13:45:28   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  809
+* SCR Title:  Non I/O SVIM
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Revised AttachAcqToTriggers method to not call the trigger object's SetAcquisitionTriggered method.
+* Revised SetupCameraTrigger to assign the digitizer handle to the trigger handle.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.8   05 Jul 2013 15:01:26   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Merged with svo_src label SVO 6.10 Beta 021.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.146   14 Jun 2013 13:58:00   jHanebach
+* Project:  SVObserver
+* Change Request (SCR) nbr:  824
+* SCR Title:  Add Remote Access to SVObserver Application Configuration Variables
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Fixed invalid iterator in GetInspectionItems.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.7   12 Jun 2013 15:19:42   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Merged with svo_src label SVO 6.10 Beta 018.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.145   23 May 2013 08:51:12   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  824
+* SCR Title:  Add Remote Access to SVObserver Application Configuration Variables
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated set remote inputs method to assign correct status code to each elements.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.6   11 Jun 2013 15:26:00   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Merged with svo_src label SVO 6.10 Beta 017.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.144   21 May 2013 15:45:52   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  824
+* SCR Title:  Add Remote Access to SVObserver Application Configuration Variables
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated get child object method to not set error status when object is found.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.5   13 May 2013 12:15:56   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Merged with svo_src label SVO 6.10 Beta 014.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.143   21 May 2013 13:00:04   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  824
+* SCR Title:  Add Remote Access to SVObserver Application Configuration Variables
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated configuration object to include the new naming requirements found in IF00100.9401.003.  Also add new funcitonality to get and set remote inputs.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.142   07 May 2013 13:20:00   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  830
+* SCR Title:  Consolidate all Time Stamp and Clock Functionality
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to use new SVClock conversions functions, which will clarify timing tolerance checks.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.4   08 May 2013 16:02:10   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 012.)
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.141   29 Apr 2013 14:06:48   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  830
+* SCR Title:  Consolidate all Time Stamp and Clock Functionality
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to use the new SVClock::SVTimeStamp type for all time stamp variables.  Update to use new SVClock::GetTimeStamp() function to get the time stamp value in milliseconds.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.3   07 May 2013 08:20:24   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Merged with svo_src label SVO 6.10 Beta 011.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.140   19 Apr 2013 13:19:00   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  822
+* SCR Title:  Remove DDE Input and Output functionality from SVObserver
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Fixed SavePPQ by putting back pPPQ->PersistInputs.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.2   06 May 2013 20:05:54   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Merged with svo_src label SVO 6.10 Beta 010.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.139   16 Apr 2013 14:15:06   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  822
+* SCR Title:  Remove DDE Input and Output functionality from SVObserver
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Removed DDE functionality from the source code.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.1   06 May 2013 14:38:10   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Merged with svo_src label SVO 6.10 Beta 009.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.138   10 Apr 2013 11:20:30   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  812
+* SCR Title:  Add New Remote Command Functionality
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated code to fix error status of methods that did not get changed correctly when the Inspection Process Add Inputs methods were changed.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.0   23 Apr 2013 10:02:36   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.137   05 Apr 2013 12:26:04   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  812
+* SCR Title:  Add New Remote Command Functionality
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated method that uses inspection method with changed return type from BOOL to HRESULT.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.136   20 Mar 2013 14:11:52   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  817
+* SCR Title:  Import/Export of Inspections
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Revised AddImportedDDEInput to only adjust an existing input if it's not enabled.
+* Revised AddImportedRemoteInput to only adjust an existing input if it's not enabled.
+* Revised AddImportedDigitalInput to only adjust an existing input if it's not enabled.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.135   20 Mar 2013 13:36:50   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  817
+* SCR Title:  Import/Export of Inspections
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Revised AddImportedDDEInput to only import the input if it's not used.
+* Revised AddImportedDigitalInput to only import the input if it's not used.
+* Revised AddImportedRemoteInput to only import the input if it's not used.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.134   19 Mar 2013 14:45:26   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  817
+* SCR Title:  Import/Export of Inspections
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Renamed AddOrUpdateDigitalInput to AddImportedDigitalInput.
+* Renamed AddOrUpdateDDEInput to AddImportedDDEInput.
+* Renamed AddOrUpdateRemoteInput to AddImportedRemoteInput.
+* Revised AddImportedDigitalInput to only add the input is it doesn't already exists.
+* Revised AddImportedDDEInput to only add the input is it doesn't already exists.
+* Revised AddImportedRemoteInput to only add the input is it doesn't already exists.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.133   15 Mar 2013 13:03:32   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  809
+* SCR Title:  Non I/O SVIM
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Revised AttachAcqToTrigger to remove dead code
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.132   18 Feb 2013 13:25:12   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  812
+* SCR Title:  Add New Remote Command Functionality
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated code to allow the socket interface to process the set items command.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.131   14 Feb 2013 11:04:54   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  812
+* SCR Title:  Add New Remote Command Functionality
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Update configuration object get configuraiton items method to use the new asynchrous fucntionality to get the data from the inspections.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.130   11 Feb 2013 14:16:40   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  812
+* SCR Title:  Add New Remote Command Functionality
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to use the new framework for the remote socket interface.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.129   21 Jan 2013 10:50:04   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  809
+* SCR Title:  Non I/O SVIM
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Added GetPPQByName method
+* Added AddCameraDataInput method
+* Added SetupSoftwareTrigger method
+* Added SetupCameraTrigger method
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.128   16 Jan 2013 16:02:02   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  802
+* SCR Title:  Add new product type GD1A
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Migrating branch code into primary code base.  
+* 
+* Consolidated adding and updating inputs to configuration elements to configuratoin object.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.127   11 Oct 2012 10:54:16   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  602
+* SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated include information based on the navigate tree class moving to the XML library.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.126   11 Oct 2012 10:49:18   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  602
+* SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Change from post to pre incrementer.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.125   28 Sep 2012 14:33:26   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  602
+* SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Upated code to use new templated classes.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.124   25 Sep 2012 15:16:42   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  602
+* SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated to use new tree type.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.123   18 Sep 2012 18:19:14   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  602
+* SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated code to use the templated XML objects that moved from the SVLibrary to the new XML Library and to the Configuration Library.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.122   06 Sep 2012 09:54:04   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  602
+* SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated Load Configuration and Save Configuration methods to restructure the data in the configuration file.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.121   04 Sep 2012 15:27:20   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  602
+* SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated Navigate Tree class to not force the programmer to create an instance of the class to use it.  Converted all functionality to static.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.120   30 Aug 2012 09:37:40   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  786
+* SCR Title:  Fix Problems with IEEE 1394 Light Reference and LUT Camera Parameters
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated the Load Configuration method in the Configuration object to synchronize camara parameters with acquisition device.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.119   15 Aug 2012 14:30:26   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  779
+* SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to use the new Singlton version of the SVIOConfigurationInterfaceClass.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.118   14 Aug 2012 15:56:12   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  779
+* SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated output list functionality to only allow unique elements to the output list and notify user when duplicates are detected.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.117   13 Aug 2012 14:24:56   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  779
+* SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated code to change the functionality associated with the Input Object List to use a new method to get the input from the input list.  If the input does not exist in the input list, a NULL pointer is returned.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.116   07 Aug 2012 10:44:34   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  779
+* SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated Load Configuration method to fix an issue with the object assignment of the DDE Inputs and DDE Outputs.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.115   01 Aug 2012 11:44:42   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  769
+* SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Added new command functionality to allow for synchronous command execution through the inspection thread.  This will fix problems with race conditions with the inspection process.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.114   17 Jul 2012 15:47:34   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  771
+* SCR Title:  Upgrade to the Next Version of Matrox Imaging Library (MIL)
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   SaveConfiguration( CTreeCtrl ):  Removed unnecessary ASSERTs.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.113   02 Jul 2012 16:39:50   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  769
+* SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to promote new display functionality.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.112   28 Jun 2012 17:40:12   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  768
+* SCR Title:  Add the display time-out and throttling options for 5.50
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Reverted timeout value back to original value.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.111   18 Jun 2012 18:15:46   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  744
+* SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Centralized the location of the configuration object identifier and removed synchronization problems.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.110   16 May 2012 18:57:42   jHanebach
+* Project:  SVObserver
+* Change Request (SCR) nbr:  763
+* SCR Title:  Add the display time-out and throttling options.
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Merge 5.43 changes
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.109   13 Mar 2012 13:23:26   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  745
+* SCR Title:  Fix contention issue during load process and display
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Updated Activate method to move the message call to a dialog scope.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.108   05 Mar 2012 13:46:38   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  755
+* SCR Title:  Fix saving of "forced outputs"
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added bool cast to the temperary value of type _variant _t  where it is assigned to the dword forced value.  This will prevent an illegal value from being assigned.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.107   31 Jan 2012 15:24:26   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  748
+* SCR Title:  Add Remote Output Steams to SVObserver
+* Checked in by:  jSpila;  Joseph Spila
+* Change Description:  
+*   Fixed GetRemoteOutputCount
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.106   30 Jan 2012 11:09:30   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  748
+* SCR Title:  Add Remote Output Steams to SVObserver
+* Checked in by:  jSpila;  Joseph Spila
+* Change Description:  
+*   Modified source code to consolidate PLC and New Output stream functionality to I/O Controller.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.105   20 Dec 2011 14:55:56   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  741
+* SCR Title:  Fix IO List when changing Inspection Name
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added function calls to rename the output list when inspection name has been changed.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.104   19 Dec 2011 15:41:34   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  744
+* SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated the configuration object to handle new functionality.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.103.1.0   14 May 2012 14:12:44   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  763
+* SCR Title:  Add the display time-out and throttling options.
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Support saving new display setting
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.103   28 Sep 2011 12:54:20   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  730
+* SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Updated source code to fix issues with camera image interface and methodology.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.102   16 Sep 2011 15:50:00   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  730
+* SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Updated camera management functionality.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.101   26 Jul 2011 07:49:30   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  733
+* SCR Title:  fix bug with Remote Inputs not being avaliable
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   fixed issues with Remote Inputs being put into the list multiple times. 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.100   07 Jun 2011 11:32:04   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated loading process to store correct object ids in the iocontroller object.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.99   06 Jun 2011 13:06:16   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  722
+* SCR Title:  Fix a problem with Raid Error Information on X2 systems
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to correct issues with the RAID error information associated with the X2 products.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.98   29 Apr 2011 08:06:50   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated code to allow for inspection to for the display to give up when an inspection get queued.  The display is now regulated to a maximum of 10 frames per second.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.97   19 Apr 2011 16:07:16   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated code to fix issues with IO Assignment.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.96   18 Apr 2011 09:22:12   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated code to move the shared data for the IO Entry data to a different class to fix issues with PPQ and Inspection shared data.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.95   30 Mar 2011 15:56:04   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to clairify construction functionality and add clean-up functionality to remove memory leaks.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.94   22 Mar 2011 07:45:10   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated static global classes to singletons to promote proper and defined construction and destruction.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.93   16 Mar 2011 09:22:52   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  715
+* SCR Title:  Change the reset functionality for Input Object in the Inspection Process
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source to include change in reset requirements for input value objects.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.92   18 Feb 2011 09:58:02   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  700
+* SCR Title:  Remove String Buffer Problems
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source to remove duplicate string class, and fixed string conversion issues.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.91   15 Dec 2010 09:49:54   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to fix connections and synchronization issues with the IO Sub-system.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.90   13 Dec 2010 11:15:08   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Change the usage of _variant_t to clear the variable after use to eliminate invalid variant type for assignment.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.89   08 Dec 2010 07:51:20   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to include changes in notification functionality using the Observer Design Pattern.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.88   09 Nov 2010 16:09:26   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  704
+* SCR Title:  Upgrade SVObserver Version for 5.33 Release
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to remove duplicate container objects.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.87   05 Nov 2010 10:29:00   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  703
+* SCR Title:  Allow SVObserver to Change Remote Input Values
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to remove redundent data objects.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.86   04 Nov 2010 13:30:44   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to fix issues with image processing and display image processing classes and associated includes.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.85   21 Oct 2010 11:02:18   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  703
+* SCR Title:  Allow SVObserver to Change Remote Input Values
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to change internal value object to variant value object from double value object.  Added persistance to configuration object.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.84   01 Jun 2010 10:34:40   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  693
+* SCR Title:  Fix Performance Issue with Inspection Process
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated code to remove redundent methodologies and fix missing or incorrect calling functionality.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.83   15 Feb 2010 12:25:32   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  686
+* SCR Title:  Update Laptop version to load all valid configurations
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated classes to remove the generations of board image processing classes from the system.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.82   15 Dec 2009 15:13:48   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  677
+* SCR Title:  Fix problem in camera notify thread
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated include information and comments.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.81   30 Jul 2009 11:18:02   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  665
+* SCR Title:  Fix unrecoverable failure when processing acquisitions at high speed
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Merged branced changes into current code branch with appropriate updates.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.80   03 Jun 2009 09:51:00   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  650
+* SCR Title:  Integrate Gigabit ethernet cameras
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Revised Include file definitions due to changes in SVDeviceParams
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.79   06 Feb 2009 09:21:10   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  634
+* SCR Title:  Implement a File Acquistion Device
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Revised LoadConfiguration to correct a problem setting whether file acquisition should be used or not, which affected the camera manager behavior.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.78   04 Dec 2008 09:33:32   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  615
+* SCR Title:  Integrate PLC Classes into SVObserver Outputs
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added Load Configuration changes to support PLC
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.77   14 Nov 2008 13:54:44   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  615
+* SCR Title:  Integrate PLC Classes into SVObserver Outputs
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added code to save PLC Outputs
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.76   14 Nov 2008 12:07:24   jbrown
+* Project:  SVObserver
+* Change Request (SCR) nbr:  641
+* SCR Title:  BoundsChecker results
+* Checked in by:  JimAdmin;  James A. Brown
+* Change Description:  
+*   For
+* SVConfigurationObject::LoadConfiguration ()
+* SVConfigurationObject::LoadAcquisitionDeviceFile ()
+* SVConfigurationObject::LoadDeviceParamSpecial ()
+* 
+* Replace delete of character string from SVOVariantClass, with SVOString::StaticDestroy ()
+* 
+* For 
+* SVConfigurationObject::FinishIPDoc ()
+*   Changed to use delete [] pbValidate instead of delete 
+*   pbValidate.
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.75   23 Oct 2008 17:51:02   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  634
+* SCR Title:  Implement a File Acquistion Device
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Revised AttachAcqToTrigger method to reset TriggerRelay for File Acquisition if Software Trigger
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.74   17 Oct 2008 10:32:12   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  612
+* SCR Title:  Implement a timer trigger object
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Removed call to EnableInternalTrigger (now done in SVPPQObject)
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.73   08 Oct 2008 09:33:46   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  634
+* SCR Title:  Implement a File Acquistion Device
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Revised AttachAcqToTriggers to use hardware based triggers with File Acquisition
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.72   03 Oct 2008 17:29:20   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  612
+* SCR Title:  Implement a timer trigger object
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Changed Frequency to Period for the Software Timer Trigger
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.71   16 Sep 2008 14:33:48   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  634
+* SCR Title:  Implement a File Acquistion Device
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Added SaveFileAcquisitionConfiguration method.
+* Added LoadFileAcquisitionConfiguration method.
+* Revised LoadConfiguration to handle FileAquisition settings.
+* Revised SaveConfiguration to handle FileAquisition settings.
+* Revised call to getDigitizerSubsystem to use device name in support of multiple acquisition devices.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.70   10 Sep 2008 16:55:02   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  612
+* SCR Title:  Implement a timer trigger object
+* Checked in by:  sJones;  Steve Jones
+* Change Description:  
+*   Added SaveAcquisitionDeviceFilename
+* Added LoadAcquisitionDeviceFilename
+* Added SaveDeviceParameters
+* Added LoadDeviceParameters
+* Revised Loading/Saving to support Software Trigger aprameters
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.69   30 Oct 2007 15:00:14   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  609
+* SCR Title:  Fix GDI and Handle Leaks that limit the number of configuration loads.
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   added code to free allocated memory in SaveConfiguration.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.68   21 Jun 2007 12:01:26   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  598
+* SCR Title:  Upgrade SVObserver to compile using vc++ in VS2005
+* Checked in by:  jSpila;  Joseph Spila
+* Change Description:  
+*   These changes include modification based on fixing compiler-based and project-based differences between VC6 and VC8.  These changes mainly include casting issues, but some include type conversion and assignment of new compiler controlling defines.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.67.1.1   14 Jul 2009 12:44:30   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  665
+* SCR Title:  Fix unrecoverable failure when processing acquisitions at high speed
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Udated code to use the new data manager objects and signal processing.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.67.1.0   30 Oct 2007 09:17:24   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  609
+* SCR Title:  Fix GDI and Handle Leaks that limit the number of configuration loads.
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Free Allocated memory - added deleted ppIOEntries to Saveconfiguration.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.67   09 Apr 2007 11:54:14   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  588
+* SCR Title:  Add the RAID Error Bit for the digital IO
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   added new method to determine if the configuration is of a RAID type
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.66   22 Jan 2007 09:29:06   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  587
+* SCR Title:  Add Timeout Threshold to Extended Time Delay Mode
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   added code for the new Inspection Timeout Threshold for the Extended Time Delay Mode.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.65   17 Jan 2006 10:00:46   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  529
+* SCR Title:  Add Conditional Product History
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   added GetInspections
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.64   10 Nov 2005 06:44:12   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  516
+* SCR Title:  Allow SVObserver to use the Intek 1394 driver for camera acquisition
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Update code to rename member variable for more clarity.  Used new SVObserverApp method to determine type of hardware.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.63   24 Oct 2005 09:40:18   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  510
+* SCR Title:  Add source image extents to all image using tools
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Changes to support adding a flag to the Inspection that will enable Auxiliary Extents.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.62   08 Sep 2005 13:29:26   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  504
+* SCR Title:  Fix lock-up problem when pending product count is larger than PPQ size
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Changed refresh when activating configuration to a RunOnce.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.61   31 Aug 2005 08:34:30   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  500
+* SCR Title:  Reduce delay when adjusting tool parameters with a large toolset
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Update source code call to handle new refresh methodology.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.60   22 Aug 2005 10:09:12   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  504
+* SCR Title:  Fix lock-up problem when pending product count is larger than PPQ size
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated methods to include changes to SVProductInfoStruct and supporting classes to handle proper assignment and copy construction.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.59   29 Jun 2005 07:37:32   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  493
+* SCR Title:  Fix Bug in SVOutputObjectList
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added ValidateOutputList Function
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.58   09 Mar 2005 06:43:04   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  456
+* SCR Title:  Update Image and Tool Objects to use the new Extent Classes
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Removed ASSERT in debug mode when camera does not have a LUT table.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.57   21 Feb 2005 10:24:44   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  452
+* SCR Title:  Upgrade SVObserver to version 4.50
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   removed unnecessary ASSERT
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.56   17 Feb 2005 13:28:04   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  456
+* SCR Title:  Update Image and Tool Objects to use the new Extent Classes
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Update class with new methodologies based on new base object, extents and reset structure.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.55   16 Feb 2005 13:18:50   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  440
+* SCR Title:  Create Internal Tool Object to Managing Tool Extents and Result Extents
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   updated header files
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.54   19 Jan 2005 14:50:24   jBrown
+* Project:  SVObserver
+* Change Request (SCR) nbr:  375
+* SCR Title:  Remodel XML usage for configuration storage and SIAC transfers.
+* Checked in by:  JimAdmin;  James A. Brown
+* Change Description:  
+*   The function 
+* 
+* SVConfigurationObject::LoadConfiguration()
+* 
+* was modified to better conform to HRESULT vs BOOL standards.
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.54   19 Jan 2005 14:50:16   jBrown
+* Project:  SVObserver
+* Change Request (SCR) nbr:  375
+* SCR Title:  Remodel XML usage for configuration storage and SIAC transfers.
+* Checked in by:  JimAdmin;  James A. Brown
+* Change Description:  
+*   The function 
+* 
+* SVConfigurationObject::LoadConfiguration()
+* 
+* was modified to better conform to HRESULT vs BOOL standards.
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.53   20 Oct 2004 15:41:42   jBrown
+* Project:  SVObserver
+* Change Request (SCR) nbr:  375
+* SCR Title:  Remodel XML usage for configuration storage and SIAC transfers.
+* Checked in by:  JimAdmin;  James A. Brown
+* Change Description:  
+*   The return type of SVConfigurationObject::LoadConfiguration(CTreeCtrl &rTree) was changed from BOOL to HRESULT in order to better debug loading problems.
+* 
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.52   12 Jul 2004 12:53:44   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  428
+* SCR Title:  Improve Load Configuration time
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   implemented get file version information
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.51   11 Jun 2004 14:10:02   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  410
+* SCR Title:  Fix DDE IO
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Updated LoadConfiguration method to fix issue with loading DDE output PPQ_x.State variable.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.50   11 Jun 2004 07:50:58   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  410
+* SCR Title:  Fix DDE IO
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Fixed problem with DDE State.  State will now appear as a PPQ variable PPQ_X.State
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.49   25 May 2004 08:26:08   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  421
+* SCR Title:  Allow SVObserver to get the Trigger Edge and Strobe Edge from the Camera File
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated LoadConfiguration method to set the trigger edge and strobe edge data into the system from the camera file data.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.48   11 Feb 2004 17:30:26   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  352
+* SCR Title:  Update SVObserver to Version 4.30 Release
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   removed compiler warnings
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.47   09 Feb 2004 14:04:52   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   fixed legacy support for lut MaxValue
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.46   04 Feb 2004 12:49:22   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  399
+* SCR Title:  Increase 1394 SVIM Performance
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   made change to field name
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.45   03 Feb 2004 17:21:24   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  399
+* SCR Title:  Increase 1394 SVIM Performance
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Added support for named device params
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.44   22 Jan 2004 12:26:14   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  399
+* SCR Title:  Increase 1394 SVIM Performance
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   name changed of called function
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.43   21 Jan 2004 15:28:08   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  399
+* SCR Title:  Increase 1394 SVIM Performance
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   made strobe start frame (un)registration conditional
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.42   16 Jan 2004 07:48:26   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  399
+* SCR Title:  Increase 1394 SVIM Performance
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   added temporary functions to connect acquisitionclass objects to trigger signals (including the strobe start frame)
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.41   12 Jan 2004 10:43:14   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  404
+* SCR Title:  Change Camera Parameters that represent time to use standard units
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Changes to LoadConfiguration( to store Metadata in ConfigurationDeviceParams from CameraDeviceParams
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.40   15 Dec 2003 11:57:18   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   added hack to store "native" units for device params
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.39   10 Dec 2003 09:16:38   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   added convert function for Light Refernece values from the Coreco values to SVObservers ENUMS
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.38   21 Nov 2003 09:54:50   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   set strobe polarity on IO board based on Acq Device param
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.37   21 Nov 2003 09:45:52   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   workaround for LR loading problem on 1394
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.36   12 Nov 2003 13:43:26   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  396
+* SCR Title:  Add New Product Types for 1394 SVIM
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   changed enumeration names
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.35   13 Oct 2003 11:28:16   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  386
+* SCR Title:  Change Light Reference handling to match earlier versions of SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   Added code to loading a configuration to create a default LUT if one wasn't loaded from the file.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.34   02 Oct 2003 10:48:52   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  386
+* SCR Title:  Change Light Reference handling to match earlier versions of SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   Add new code to handle the defaulting of unset light reference values to the values in the camera files.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.33   25 Sep 2003 14:29:06   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  381
+* SCR Title:  Combine PPQ Data to Inspection Data for a Digital Output
+* Checked in by:  rSchock;  Rosco Schock
+* Change Description:  
+*   Add code to support the combining of digital outputs with PPQ values.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.32   24 Sep 2003 07:48:32   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   added LUT MaxValue support
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.31   17 Sep 2003 08:59:22   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   added legacy (beta) conversion from old trigger names
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.30   16 Sep 2003 09:26:00   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  322
+* SCR Title:  Add Additional Digital IO Resources to SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   Updated LoadConfiguration method to use new trigger member variable.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.29   29 Aug 2003 13:13:50   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   don't save Null device parameters
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.28   18 Aug 2003 15:35:06   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  322
+* SCR Title:  Add Additional Digital IO Resources to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Updated LoadConfiguration method to fix IO Configuration Interface.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.27   07 Aug 2003 12:45:12   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   modified CreateBuffers to use GetSourceImageDepth in response to request by Emhart
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.26   05 Aug 2003 13:50:34   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  373
+* SCR Title:  Add a new disable method that doesn't copy forward all result values
+* Checked in by:  rSchock;  Rosco Schock
+* Change Description:  
+*   Made changes to the saving/loading/editing of configurations to add a new property for the inspection's disable method.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.25   31 Jul 2003 09:48:38   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   added #include "SVImagingDeviceParams.h"
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.24   28 Jul 2003 10:44:26   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  320
+* SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   added support for specialized DeviceParams
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.23   08 Jul 2003 11:47:22   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  322
+* SCR Title:  Add Additional Digital IO Resources to SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   Added DeviceParam load/save for Digital
+* SVLightReferenceArray --> SVLighrReference
+* changed Digital IO / DDE handling
+* changed BOOL to HRESULT for Image Processing functions (mpsvImaging)
+* 
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.22   08 Jul 2003 09:15:46   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  374
+* SCR Title:  Add check before changing tool parameters when processing input list
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Added call to BuildValueObjectMap to the loading process.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.21   11 Jun 2003 13:49:12   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  359
+* SCR Title:  Version Check on Configurations that are saved with  SVX extensions
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   added new method to return the SVX version before the configuration is loaded.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.20   22 May 2003 10:37:24   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  355
+* SCR Title:  Save tool freeform LUT with the configuration
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Fixed bug with the SetLut function not setting the transform method correctly and that it gets saved correctly
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.19   07 May 2003 15:09:40   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  341
+* SCR Title:  DDE Input and Outputs are no longer working correctly
+* Checked in by:  rSchock;  Rosco Schock
+* Change Description:  
+*   Modified code so that some inputs that were being exposed as outputs were removed.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.18   25 Apr 2003 11:25:42   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  341
+* SCR Title:  DDE Input and Outputs are no longer working correctly
+* Checked in by:  rSchock;  Rosco Schock
+* Change Description:  
+*   Fixed several problems so that the DDE inputs and outputs will work like they used to in pre SVO 4.00 versions.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.17   17 Apr 2003 17:20:26   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  341
+* SCR Title:  DDE Input and Outputs are no longer working correctly
+* Checked in by:  rSchock;  Rosco Schock
+* Change Description:  
+*   Modified configuration load to add inputs as available outputs so they can be echoed through the system.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.16   17 Apr 2003 17:16:56   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  346
+* SCR Title:  Update SVObserver to Version 4.21 Release
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.15   28 Mar 2003 12:31:28   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  318
+* SCR Title:  Image Transfer Compression
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   Added support for knowing if the configuration is valid (loaded) - IsConfigurationLoaded, SetConfigurationLoaded, m_bIsConfigurationValid
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.14   20 Mar 2003 09:28:00   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  336
+* SCR Title:  Change Light Reference and LUT dialogs on RGB mono system
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   fixed problem with Configuration type recognition
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.13   20 Mar 2003 07:14:06   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  336
+* SCR Title:  Change Light Reference and LUT dialogs on RGB mono system
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   fixed uninitialized m_eProductType in constructor
+* changed all access to this variable to use Get / Set
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.12   19 Mar 2003 15:20:28   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  332
+* SCR Title:  Module Ready not available after being unassigned and other small I/O bugs
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   Fixed some problems with input/outputs and the Go online/Go offline process. Also, made changes to force the PPQ to always have valid inputs and outputs even without an inspection attached.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.11   14 Mar 2003 07:04:34   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  336
+* SCR Title:  Change Light Reference and LUT dialogs on RGB mono system
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   Added awareness of configuration type
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.10   13 Mar 2003 14:30:50   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  335
+* SCR Title:  Fix Light Reference and LUT problems with RGB Mono systems
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   during the save if the board is an RGB it will only write out the device Viper_RGB_1_Dig_0.Ch_All.  It will not use the individual channels.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.9   10 Feb 2003 13:17:46   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  316, 321
+* SCR Title:  Add option to extent acquisition image source buffers to the length of the PPQ
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   changed how the PPQ's input list is generated.  After reading in the PPQ, it will now rebuild the input list.   
+* 
+* Also added a section in the load/save of the configuration of the PPQ's for the new property 'Maintain Source Images'
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.8   05 Feb 2003 17:29:52   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  301
+* SCR Title:  Implement Result Image Circle Buffer
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Made modifications to the display logic to display the current source and result images indexes, respectively. This should make it work correctly regardless of whether it is online or performing RunOnce/Regression.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.7   13 Jan 2003 14:44:06   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  307
+* SCR Title:  Implement the ability to remotely change Tool parameters on the SVIM
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Fixed code segment that was mis merged.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.6   13 Jan 2003 11:27:14   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  307
+* SCR Title:  Implement the ability to remotely change Tool parameters on the SVIM
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Added new code to fully enable Remote Inputs in the system.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.5   10 Jan 2003 18:29:48   rschock
+* Project:  SVObserver
+* Change Request (SCR) nbr:  305
+* SCR Title:  Implement the ability to perform RunOnce from a SIAC client
+* Checked in by:  rSchock;  Rosco Schock
+* Change Description:  
+*   Made changes to how the images are displayed while running and while doing a RunOnce operation to use the image that is specified in the SVProductInfoStruct.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.4   10 Jan 2003 09:42:10   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  306
+* SCR Title:  Implement the ability for the SIAC to remotely setup the RGB LUT for a camera
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   Changed use of class name SVAcquisitionDevice to SVConfigurationAcquisitionDeviceInfoStuct
+* Changed AcquisitionDevice functions to use Lut
+* Added Lut to SaveConfiguration and LoadConfiguration
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.3   18 Dec 2002 09:13:14   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  231
+* SCR Title:  Update OCR Font Editor code to be stable & prevent crash when close SVObserver
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.1   08 Dec 2002 21:35:20   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  311
+* SCR Title:  Fix Light Reference save for RGB Mono
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated LoadConfiguration and SaveConfiguration methods of the SVConfigurationObject to reflect changes in references of SVAcquisitionClass member variables to accessor functions
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.0   15 Nov 2002 12:51:50   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  226
+* SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   This is the first revision of this file.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
 */

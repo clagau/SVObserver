@@ -93,7 +93,84 @@ public:
 
 	BOOL SaveConfiguration(SVObjectXMLWriter& rWriter) const;
 
+	//************************************
+	//! Load Configuration 
+	//! \param rTree [in ]  with contents of cfg file 
+	//! \returns HRESULT
+	//! \throw  MessageContainer
+	//************************************
 	HRESULT LoadConfiguration(SVTreeType& rTree);
+
+	//************************************
+	//! Load Enviroment section of configuration
+	//! \param rTree [in]
+	//! \param rConfigurationColor [out]
+	//! \throw  MessageContainer
+	//! \returns void
+	//************************************
+	void LoadEnviroment(SVTreeType& rTree, bool &rConfigurationColor);
+	
+	//************************************
+	//! Load IO sectiom 
+	//! \param rTree [in]
+	//! \throw  MessageContainer
+	//! \returns false if no io section was found 
+	//************************************
+	bool LoadIO(SVTreeType& rTree);
+	//************************************
+	//! Load AcquisitionDevice
+	//! \param rTree [in]
+	//! \param csBoardName [out]
+	//! \param lNumBordDig out]
+	//! \throw  MessageContainer
+	//! \returns true if AcquisitionDevice section was found 
+	//************************************
+	bool LoadAcquisitionDevice(SVTreeType& rTree, CString &csBoardName, long &lNumBordDig );
+	
+	//************************************
+	//! Load Camera 
+	//! \param rTree [in]
+	//! \param lNumCameras [out]
+	//! \param rConfigurationColor [in]
+	//! \throw  MessageContainer
+	//! \returns true if camerasection was found 
+	//************************************
+	bool LoadCameras(SVTreeType&  rTree, long& lNumCameras,bool ConfigurationColor);
+	
+	//************************************
+	//! Load Trigger section 
+	//! \param rTree [in]
+	//! \throw  MessageContainer
+	//! \returns true  if trigger section was found 
+	//************************************
+	bool LoadTrigger(SVTreeType& rTree );
+	
+	//************************************
+	//! Load Inspection 
+	//! \param rTree [in]
+	//! \throw  MessageContainer
+	//! \returns bool
+	//************************************
+	bool LoadInspection(SVTreeType& rTree );
+	//************************************
+	
+	//! Load PPQ 
+	//! \param rTree [in]
+	//! \throw  MessageContainer
+	//! \returns bool
+	//************************************
+	bool LoadPPQ(SVTreeType& rTree );
+
+	//************************************
+	//! Set the Producttype  if no Producttype is set
+	//! \param csboardname [in]
+	//! \param numCameras [in]
+	//! \param NumBoardDig [in]
+	//! \throw  MessageContainer
+	//! \returns void
+	//************************************
+	void CalculateProductType(CString csboardname, long numCameras,long NumBoardDig);
+
 
 	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT GetRemoteInputItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
@@ -303,9 +380,8 @@ private:
 	//************************************
 	//! The method checks and if necessary converts the product type to a mixed type
 	//! \param rConfigType <out> a reference to obtain the configuration color
-	//! \returns S_OK on success or the error number
 	//************************************
-	HRESULT ConvertColorToStandardProductType( bool& rConfigType );
+	void ConvertColorToStandardProductType( bool& rConfigType );
 
 	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass& svFileArray );
 

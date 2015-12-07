@@ -109,6 +109,18 @@ namespace Seidenader { namespace SVObserver
 		_T("There are not enough Available Archive Image Memory Handles for %s images in Change Mode. Available\nArchive Image Memory Handles are the result of the selected images and the Max Images number.\nThe selection will be reset.");
 	const TCHAR* const  Remote_Input= _T("Remote Input");
 	const TCHAR* const  DIOInput= _T("DIO.Input");
+	///Defines for SVConfigurationObjects
+	const TCHAR* const  NumberOfIosMissing = _T("the Number of Ios Entries is missing.");
+	const TCHAR* const  IOEntryIsMissingMissing =  _T("an IO Entry is missing.");
+	const TCHAR* const  CreationOfPPQFailed =  _T("The PPQ Object could not be created.");
+	const TCHAR* const  InputIsMissing =  _T("an Input tag is missing");
+	const TCHAR* const MsgIONameIsMissing = _T("an Item Name is missing"); 
+	const TCHAR* const MsgPPQPOsitionIsMissing   = _T("a PPQ Position is missing"); 
+	const TCHAR* const MsgIOTypeIsMissing = _T("an IO Type is missing") ;
+	const TCHAR* const MsgRemoteIndexIsMissing = _T("a Remote Index is missing") ;
+	const TCHAR* const  InputObjectList = _T( "Input Object List");
+	const TCHAR* const  OutputObjectList =  _T( "Output Object List" );
+	const TCHAR* const Create_S_Failed = _T("Create %s failed") ;
 
 
 } /* namespace SVObserver */ } /* namespace Seidenader */
