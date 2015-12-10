@@ -15,9 +15,6 @@
 #include <algorithm>
 #include "SVIPDoc.h"
 
-#ifdef PROFILE_IMAGE_UPDATES
-#include "SVTimerLibrary/SVProfiler.h"
-#endif
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -2114,10 +2111,6 @@ void SVIPDoc::RefreshDocument()
 			}
 		}
 	}
-#ifdef PROFILE_IMAGE_UPDATES
-	SvTl::SVProfiler profiler;
-	profiler.Start();
-#endif
 	SVCommandInspectionCollectImageDataPtr l_DataPtr = new SVCommandInspectionCollectImageData( m_InspectionID, l_ImageIds );
 	SVObjectSynchronousCommandTemplate< SVCommandInspectionCollectImageDataPtr > l_Command( m_InspectionID, l_DataPtr );
 
@@ -2134,10 +2127,6 @@ void SVIPDoc::RefreshDocument()
 			pWnd->PostMessage( SV_MDICHILDFRAME_UPDATE_ALL_DATA );
 		}
 	}
-#ifdef PROFILE_IMAGE_UPDATES
-	profiler.End();
-	TRACE("RefreshDocument elapsed time %0.2lf ms\n", profiler.ElapsedMilliSeconds());
-#endif
 }
 
 void SVIPDoc::RecreateImageSurfaces()
