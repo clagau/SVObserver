@@ -3,27 +3,38 @@
 /// All Rights Reserved 
 /// \Author	Arvid Breitenbach
 //*****************************************************************************
-/// Contains the class AutoSaver which contains all functionality to 
-/// control automatic backups of the current configuration
+/// Contains the class ExtrasEngine which contains all functionality for menu entries 
+/// in the Mainframe Pull-down Menu "Extras".
+/// Currently: 
+///		- Control of automatic backups of the current configuration
+///		- Control of the File Based Write Filter
 //******************************************************************************
 #pragma once
 
-class AutoSaver
+
+typedef ULONG	(__stdcall *FbwfIsFilterEnabledPtr) (PULONG currentSession, PULONG nextSession);
+
+
+class ExtrasEngine
 {
 #pragma region Constructor
+private:
+
+	ExtrasEngine(ExtrasEngine&); // no copy allowed, i.e. '= delete' in C++11;
+
 public:
 
-	AutoSaver();
+	ExtrasEngine();
 
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
 	//************************************
-	/// Poor man's Singleton: provides access to the one and only AutoSaver object
-	/// \returns AutoSaver& the one and only AutoSaver object
+	/// Poor man's Singleton: provides access to the one and only ExtrasEngine object
+	/// \returns ExtrasEngine& the one and only ExtrasEngine object
 	//************************************
-	static AutoSaver& Instance();
+	static ExtrasEngine& Instance();
 
 	//************************************
 	/// sets the new delta time
@@ -35,8 +46,20 @@ public:
 	/// toggles the enable status
 	//************************************
 	void ToggleEnable(){m_AutoSaveEnabled=!m_AutoSaveEnabled;}
-	bool IsEnabled(){return m_AutoSaveEnabled;}
+	bool IsEnabled() const {return m_AutoSaveEnabled;}
 	void SetEnabled(bool enabled){m_AutoSaveEnabled = enabled;}
+
+	/// toggles the FBWF status set for after next reboot (and displays appropriate message boxes)
+	void ToggleEnableFbwf();
+
+	/// toggles the FBWF status (current and after reboot) using the fbwf api function FbwfIsFilterEnabled()
+	void ReadCurrentFbwfSettings(bool onStart = false);
+
+	bool IsFbwfAvailable() const {return m_FbwfAvailable;}		//AB simple getter 
+	bool IsFbwfActive()    const {return m_FbwfActive;}			//AB simple getter 
+	bool IsFbwfSelected()  const {return m_IsFbwfSelected;}		//AB simple getter 
+	bool IsFbwfChanging()  const {return m_FbwfActiveChanging;} //AB simple getter 
+
 
 	//************************************
 	/// performs an automatic configuration backup if enabled and required (when always is false, 
@@ -57,18 +80,20 @@ public:
 	void CopyDirectoryToTempDirectory(const CString &rSourceDir) const ;
 
 	/// returns the full autosave temp directory path. (cf. comment to CopyDirectoryToTempDirectory())
-	CString GetTempDirectoryPath() const {return m_defaultAutoSavePath+GetTempFolderRelPath()+_T("\\");}
+	CString GetTempDirectoryPath() const;
 
 	/// returns path of the autosave temp directory path relative to the main autosave directory
-	CString GetTempFolderRelPath() const {return _T("\\Temp");}
+	CString GetTempFolderRelPath() const;
 
 	bool IsAutoSaveRequired(){return m_AutoSaveRequired;}
 	void SetAutoSaveRequired(bool required){m_AutoSaveRequired=required;}
+
 
 #pragma endregion Public Methods
 
 #pragma region Private Methods
 private:
+
 	//************************************
 	/// Determines whether the last autosave happened at least 10 minutes ago
 	/// \returns bool is the autosave timestamp old enough to warrant an autosave?
@@ -79,23 +104,26 @@ private:
 
 #pragma region Member Variables
 
+public: 
+	static HINSTANCE ms_FbwfDllInstance; ///< the handle to the DLL where m_pfnFbwfIsFilterEnabled will be looked for
 private:
 	static const int ms_defaultDeltaTimeInMinutes=10;///< the minimum (for most purposes) autosave interval in seconds, m_AutoSaveDeltaTime_s is derived from it
 	static const int ms_secondsPerMinute=60; ///< the number of seconds per minute //@TODO ideally, this should not be member of this class (the number of seconds in a minute has nothing to do with the autosave functionality) but of some module with globals constants
+	
+	static const CString ms_ObserverPath;         
 
+	FbwfIsFilterEnabledPtr m_pfnFbwfIsFilterEnabled; ///< the function pointer modelled on FbwfIsFilterEnabled() in fbwfapi.h
 	double m_AutoSaveDeltaTime_s; ///< the minimum (for most purposes) autosave interval in seconds
 	time_t  m_lastAutoSaveTimestamp; ///< when was the latest automatic configuration backup done?
 	bool m_AutoSaveEnabled; ///< is automatic saving of configurations enabled?
 	bool m_AutoSaveRequired ; ///< should an autosave be performed at the next appropriate time?
 
-	const CString m_SVObserverDirectoryPath; ///< the SVObserver directory (not the main one but the one on drive D:)
-	const CString m_defaultAutoSavePath; ///< the SVObserver autosave directory
+	bool m_FbwfAvailable;		///< is FBWF functionality available (i..e installed and DLL found)? 
+	bool m_IsFbwfSelected;		///< is FBWF functionality selected to be available after the next bootup
+	bool m_FbwfActive;			///< is FBWF functionality currently active?
+	bool m_FbwfActiveChanging;	///< will FBWF functionality be active after the next reboot?
 
 
 #pragma endregion Member Variables
 };
-
-
-
-
 

@@ -53,14 +53,59 @@ void SVStatusBar::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 
 					break;
 				}
+				case ID_INDICATOR_FBWF:
+				{
+					COLORREF l_oldBKColor = dc.SetBkColor( m_lFbwfBKColor );
+					COLORREF l_oldForeColor = dc.SetTextColor( m_lFbwfForeColor );
+					dc.TextOut(lpDrawItemStruct->rcItem.left + 1, lpDrawItemStruct->rcItem.top, m_strFbwfText );
+					dc.SetBkColor( l_oldBKColor );
+					dc.SetTextColor( l_oldForeColor );
+					break;
+				}
 				default:
 				{
+					//do nothing 
+					break;
 				}
 			}
 		}
 		dc.Detach();
 	}
 }
+
+
+void SVStatusBar::SetFbwfInfo(UINT PaneIndex,bool FbwfAvailable, bool FbwfActive, bool FbwfChanging)
+{
+	if(FbwfAvailable)
+	{				
+		if(FbwfChanging)
+		{
+			m_lFbwfBKColor = FbwfActive ? RGB( 255, 200, 255) : RGB( 100, 100, 255);
+			m_lFbwfForeColor = RGB( 0, 0, 0 );
+
+			m_strFbwfText = FbwfActive ? "Disk protection will be inactive after reboot" : "Disk protection will be active after reboot";
+		}
+		else
+		{
+			m_lFbwfBKColor = FbwfActive ? RGB( 100, 255, 100) : RGB( 255, 100, 100);
+			m_lFbwfForeColor = RGB( 0, 0, 0 );
+
+			m_strFbwfText = FbwfActive ? "Disk protection active" : "Disk protection inactive";
+		}
+	}
+	else
+	{
+		m_lFbwfBKColor = RGB( 192, 128, 128 );
+		m_lFbwfForeColor = RGB( 255, 255, 255);
+		m_strFbwfText = "Disk protection not available!";
+	}
+
+	CClientDC DC( NULL );
+	int l_Width = DC.GetTextExtent(m_strFbwfText ).cx - (3*m_strFbwfText.GetLength())/2;
+	SetPaneInfo( PaneIndex,ID_INDICATOR_FBWF,SBPS_DISABLED ,l_Width);
+
+}
+
 
 //******************************************************************************
 //* LOG HISTORY:

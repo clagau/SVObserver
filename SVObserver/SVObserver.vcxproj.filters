@@ -956,9 +956,6 @@
     <ClCompile Include="SVStatTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVStatusBar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVStreamCommandFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1436,9 +1433,6 @@
     <ClCompile Include="SVFailStatusStreamManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AutoSaver.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ResizeTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1494,6 +1488,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVAvailableAnalyzerListComboBoxClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtrasEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2502,9 +2499,6 @@
     <ClInclude Include="SVStatTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVStatusBar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVStreamCommandFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3024,9 +3018,6 @@
     <ClInclude Include="SVFailStatusStreamManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AutoSaver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TextDefinesSvO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3088,6 +3079,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MessageNotification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtrasEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

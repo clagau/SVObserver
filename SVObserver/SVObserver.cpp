@@ -51,7 +51,7 @@
 #include "SVMessageWindow.h"
 #include "SVIO.h"
 #include "SVToolSet.h"
-#include "AutoSaver.h"
+#include "ExtrasEngine.h"
 
 #include "SVInputObjectList.h"
 #include "SVOutputObjectList.h"
@@ -661,7 +661,7 @@ void SVObserverApp::OnFileOpenSVC()
 					{
 						TheSVOLicenseManager().ShowLicenseManagerErrors();
 					}
-					AutoSaver::Instance().ResetAutoSaveInformation(); //Arvid: reset autosave timestamp after configuration was loaded
+					ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: reset autosave timestamp after configuration was loaded
 				}
 			}
 			if( !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
@@ -738,7 +738,7 @@ void SVObserverApp::OnEditEnvironment()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnTestMode() 
 {
-	AutoSaver::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: before entering test mode: perform autosave
+	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: before entering test mode: perform autosave
 
 	SetTestMode();
 }
@@ -1912,7 +1912,7 @@ void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI )
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnGoOnline() 
 {
-	AutoSaver::Instance().ExecuteAutoSaveIfAppropriate(true);
+	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(true);
 
 	//clear the tool error map. will be filled when the inspections/tools gets validated
 	SVVisionProcessorHelper::Instance().ClearToolErrorMap();
@@ -2957,6 +2957,9 @@ BOOL SVObserverApp::InitInstance()
 		exit(-SvOi::Err_10009_LoadOfResourceDllFailed);
 	}
 
+	// load File based write filter DLL. SVObserver will function normally (except for FBWF functionally, of course) if "fbwflib.dll" is not found
+	SvUl::LoadDll::Instance().getDll( SvO::FbwfDllName, ExtrasEngine::ms_FbwfDllInstance);
+
 	//Set the resource instance to the resource dll
 	AfxSetResourceHandle( ResourceInstance );
 
@@ -3360,7 +3363,7 @@ BOOL SVObserverApp::InitInstance()
 		AutoSaveValue = 1;
 	}
 
-	AutoSaver::Instance().SetEnabled(AutoSaveValue != 0);
+	ExtrasEngine::Instance().SetEnabled(AutoSaveValue != 0);
 	unsigned short defaultPortNo = -1;
 	m_RemoteCommandsPortNumber = INI().GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), defaultPortNo );
 	if ( m_RemoteCommandsPortNumber == defaultPortNo )
@@ -7723,6 +7726,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP,    _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN,      _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION, _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION, _T("") );
 		m_svSecurityMgr.SVProtectData( SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER ); // Sets Flag that will prevent data from being changed.
 	}
 
@@ -7846,8 +7850,8 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 			// save are skipped, 
 			// e.g. the configuration name must not be added to the LRU list
 			
-			AutoSaver::Instance().CopyDirectoryToTempDirectory(Seidenader::SVObserver::RunFolder + CString("\\"));
-			AutoSaver::Instance().ResetAutoSaveInformation(); //Arvid: update autosave timestamp
+			ExtrasEngine::Instance().CopyDirectoryToTempDirectory(Seidenader::SVObserver::RunFolder + CString("\\"));
+			ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: update autosave timestamp
 
 			SVNavigateTreeClass::DeleteAllItems( m_XMLTree ); //Arvid 150625: this appears to be necessary for AutoSave as well
 		}
@@ -7871,7 +7875,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 						AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
 							"\\" + getConfigFileName() );
 				}
-				AutoSaver::Instance().ResetAutoSaveInformation(); //Arvid: configuration successfully saved: update autosave timestamp
+				ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: configuration successfully saved: update autosave timestamp
 			}
 
 			( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);

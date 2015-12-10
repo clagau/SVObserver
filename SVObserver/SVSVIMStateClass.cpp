@@ -14,7 +14,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVVisionProcessorHelper.h"
 #include "RootObject.h"
-#include "AutoSaver.h"
+#include "ExtrasEngine.h"
 
 #pragma intrinsic(_InterlockedAnd)
 #pragma intrinsic(_InterlockedOr)
@@ -41,7 +41,7 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 	if( dwState & SV_STATE_MODIFIED )
 	{
 		SVVisionProcessorHelper::Instance().SetLastModifiedTime();
-		AutoSaver::Instance().SetAutoSaveRequired(true);
+		ExtrasEngine::Instance().SetAutoSaveRequired(true);
 	}
 	svModeEnum mode = GetMode();
 	CheckModeNotify(mode);

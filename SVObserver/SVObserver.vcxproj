@@ -323,7 +323,6 @@ echo %time%
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArchiveToolHelper.cpp" />
-    <ClCompile Include="AutoSaver.cpp" />
     <ClCompile Include="BasicValueObject.cpp" />
     <ClCompile Include="BasicValueObjects.cpp" />
     <ClCompile Include="Custom2Filter.cpp" />
@@ -338,6 +337,7 @@ echo %time%
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
     <ClCompile Include="EQAdjustSizePositionY.cpp" />
     <ClCompile Include="EQAdjustSizeWidth.cpp" />
+    <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="MessageNotification.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
     <ClCompile Include="LinkedValue.cpp" />
@@ -3061,16 +3061,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVStatusBar.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVStreamCommandFactory.cpp" />
     <ClCompile Include="SVStringValueObjectClass.cpp" />
     <ClCompile Include="SVSVIMStateClass.cpp" />
@@ -3682,7 +3672,6 @@ echo %time%
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="ArchiveMethodEnum.h" />
     <ClInclude Include="ArchiveToolHelper.h" />
-    <ClInclude Include="AutoSaver.h" />
     <ClInclude Include="BasicValueObject.h" />
     <ClInclude Include="BasicValueObjects.h" />
     <ClInclude Include="Custom2Filter.h" />
@@ -3691,6 +3680,7 @@ echo %time%
     <ClInclude Include="EQAdjustSizePositionX.h" />
     <ClInclude Include="EQAdjustSizePositionY.h" />
     <ClInclude Include="EQAdjustSizeWidth.h" />
+    <ClInclude Include="ExtrasEngine.h" />
     <ClInclude Include="MessageNotification.h" />
     <ClInclude Include="GlobalConstantView.h" />
     <ClInclude Include="ISVCancel.h" />
@@ -4122,7 +4112,6 @@ echo %time%
     <ClInclude Include="SVSoftwareTriggerDefaults.h" />
     <ClInclude Include="SVStartWindow.h" />
     <ClInclude Include="SVStatTool.h" />
-    <ClInclude Include="SVStatusBar.h" />
     <ClInclude Include="SVStreamCommandFactory.h" />
     <ClInclude Include="SVStringValueObjectClass.h" />
     <ClInclude Include="SVSubscriberProviderInterfaces.h" />

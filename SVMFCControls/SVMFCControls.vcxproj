@@ -228,6 +228,7 @@
     <ClCompile Include="SVOConfigNameEdit.cpp" />
     <ClCompile Include="SVOEditorWnd.cpp" />
     <ClCompile Include="SVRemoteInputDialog.cpp" />
+    <ClCompile Include="SVStatusBar.cpp" />
     <ClCompile Include="SVToolBar.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -283,6 +284,7 @@
     <ClInclude Include="SVOConfigNameEdit.h" />
     <ClInclude Include="SVOEditorWnd.h" />
     <ClInclude Include="SVRemoteInputDialog.h" />
+    <ClInclude Include="SVStatusBar.h" />
     <ClInclude Include="SVToolBar.h" />
     <ClInclude Include="SVTreeCtrl.h" />
     <ClInclude Include="SVUpDownButton.h" />

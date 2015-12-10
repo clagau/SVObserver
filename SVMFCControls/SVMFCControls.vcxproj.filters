@@ -101,6 +101,9 @@
     <ClCompile Include="SVWindowBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVStatusBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -191,6 +194,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWindowBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVStatusBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

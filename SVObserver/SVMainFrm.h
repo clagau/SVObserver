@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVPPQBar.h"
-#include "SVStatusBar.h"
+#include "SVMFCControls\SVStatusBar.h"
 #include "ZoomToolBar.h"
 #include "ZoomHelperEx.h"
 #pragma endregion Includes
@@ -69,11 +69,21 @@ private:
 	//************************************
 	afx_msg void OnExtrasEnableAutoSave();
 
+	/// called by the MFC framework when file based write filter is enabled or disabled by the user
+	afx_msg void OnExtrasEnableFbwf();
+
+
 	//************************************
 	/// called by the MFC framework
 	/// \param pCmdUI [in]
 	//************************************
 	afx_msg void OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI);
+
+	/// updates the FBWT menu entry. called by the MFC framework when the corresponding drop-down menu is drawn.
+	/// \param pCmdUI [in]
+	afx_msg void OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI);
+
+
 public:
 	afx_msg void OnUpdateStatusInfo(CCmdUI *pCmdUI);
 	afx_msg void OnViewPPQBar();

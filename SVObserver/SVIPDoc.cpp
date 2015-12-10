@@ -90,7 +90,7 @@
 #include "SVTreeLibrary/ObjectSelectorItem.h"
 #include "RootObject.h"
 #include "ToolClipboard.h"
-#include "AutoSaver.h"
+#include "ExtrasEngine.h"
 #include "TextDefinesSvO.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
@@ -1483,7 +1483,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
 				if ( IDOK == dlgResult )
 				{
-					AutoSaver::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: after tool was edited: update the autosave timestamp
+					ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: after tool was edited: update the autosave timestamp
 					SVConfigurationObject* pConfig = nullptr;
 					SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 					if( nullptr != pConfig)

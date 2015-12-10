@@ -43,7 +43,7 @@
 #include "SVImageView.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "SVIPChildFrm.h" 
-#include "AutoSaver.h"
+#include "ExtrasEngine.h"
 
 #pragma endregion Includes
 
@@ -83,7 +83,12 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_VIEW_RESULT_DISPLAY_UPDATE, OnViewResultDisplayUpdate)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESULT_DISPLAY_UPDATE, OnUpdateViewResultDisplayUpdate)
 	ON_COMMAND(ID_EXTRAS_ENABLEAUTOSAVE, OnExtrasEnableAutoSave)
+	ON_COMMAND(ID_EXTRAS_ENABLEDISKPROTECTION , OnExtrasEnableFbwf)
+	
+
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEAUTOSAVE, OnUpdateExtrasEnableAutoSave)
+	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEDISKPROTECTION, OnUpdateExtrasEnableFbwf)
+	
 	ON_WM_SIZE()
 	ON_WM_SIZING()
 	//}}AFX_MSG_MAP
@@ -92,6 +97,8 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_USER, OnUpdateStatusInfo)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_MODE, OnUpdateStatusInfo)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_GIGE_LICENSE_ERROR, OnUpdateStatusInfo)
+	ON_UPDATE_COMMAND_UI(ID_INDICATOR_FBWF, OnUpdateStatusInfo)
+
 	//ON_UPDATE_COMMAND_UI(ID_INDICATOR_FREE_MEMORY, OnUpdateStatusInfo)
 	// Globale Hilfebefehle
 	ON_COMMAND(ID_HELP_FINDER, CMDIFrameWnd::OnHelpFinder)
@@ -1104,11 +1111,21 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 			}
 			break;
 		}
-		default:
-		{
-			// Do nothing.
+		case ID_INDICATOR_FBWF:
+			{
+				auto &ai(ExtrasEngine::Instance());
+				
+				m_wndStatusBar.SetFbwfInfo(pCmdUI->m_nIndex, ai.IsFbwfAvailable(), ai.IsFbwfActive(), ai.IsFbwfChanging());
+
+				pCtrl->SetText( m_wndStatusBar.m_strFbwfText, pCmdUI->m_nIndex, SBT_OWNERDRAW );
+			}
 			break;
-		}
+
+		default:
+			{
+				// Do nothing.
+				break;
+			}
 	}
 	m_wndStatusBar.Invalidate();
 }
@@ -2011,7 +2028,7 @@ void SVMainFrame::OnExtrasEnableAutoSave()
 		return; //Arvid: not validated:do nothing
 	}
 
-	AutoSaver::Instance().ToggleEnable();
+	ExtrasEngine::Instance().ToggleEnable();
 }
 
 void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
@@ -2019,8 +2036,33 @@ void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
 
 	pCmdUI->Enable( bEnable );
-	pCmdUI->SetCheck( AutoSaver::Instance().IsEnabled()==TRUE );
+	pCmdUI->SetCheck( ExtrasEngine::Instance().IsEnabled()==TRUE );
 }
+
+
+void SVMainFrame::OnExtrasEnableFbwf()
+{
+	if( TheSVObserverApp.m_svSecurityMgr.SVValidate(
+		SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION) != S_OK )
+	{
+		return; //Arvid: not validated:do nothing
+	}
+
+	ExtrasEngine::Instance().ToggleEnableFbwf();
+}
+
+
+void SVMainFrame::OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI)
+{
+	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
+
+	pCmdUI->Enable( bEnable );
+
+	pCmdUI->Enable(ExtrasEngine::Instance().IsFbwfAvailable()==true);
+
+	pCmdUI->SetCheck( ExtrasEngine::Instance().IsFbwfSelected()==true);
+}
+
 
 BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 {

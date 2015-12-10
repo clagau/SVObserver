@@ -2217,7 +2217,7 @@
 #define IDC_BUTTON_TA_HEIGHT            16087
 #define IDC_BUTTON_POSITION_Y           16088
 #define IDC_COMBO_TA_SIZE_MODE_POSITIONY 16089
-#define IDC_BUTTON_PROPAGATE               16090
+#define IDC_BUTTON_PROPAGATE            16090
 #define IDC_BUT_EDIT_TOOL               16091
 #define IDC_EDIT_RING_DEPTH             16092
 #define IDC_BUTTON_RING_DEPTH           16093
@@ -2394,6 +2394,7 @@
 #define ID_EDIT_EDITTOOLTAB1            20347
 #define ID_ADD_RESIZETOOL               20348
 #define ID_RESIZETOOL_CTRL              20349
+#define ID_EXTRAS_ENABLEDISKPROTECTION  20350
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2427,6 +2428,7 @@
 #define ID_INDICATOR_GIGE_LICENSE_ERROR 61467
 #define IDS_BLOB_FEATURE_DEFAULT_VALUE  61468
 #define IDS_REGTEST_SETTING             61469
+#define ID_INDICATOR_FBWF               61470
 
 // Next default values for new objects
 // 
@@ -2434,7 +2436,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11135
-#define _APS_NEXT_COMMAND_VALUE         20350
+#define _APS_NEXT_COMMAND_VALUE         20351
 #define _APS_NEXT_CONTROL_VALUE         16103
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
