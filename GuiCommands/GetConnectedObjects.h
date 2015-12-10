@@ -60,7 +60,7 @@ namespace Seidenader
 											m_list.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(name, pObject->GetUniqueObjectID())));
 										}
 									}
-									if (m_list.size() < m_maxRequested)
+									if (static_cast<int>(m_list.size()) < m_maxRequested)
 									{
 										psvLastImageInfo = psvImageInfo;
 										psvImageInfo = nullptr;
