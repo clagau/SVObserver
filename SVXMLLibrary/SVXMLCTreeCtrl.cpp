@@ -13,543 +13,427 @@
 #include <comdef.h>
 #include "SVXMLCTreeCtrl.h"
 
-SVXMLCTreeCtrl::SVXMLCTreeCtrl( CTreeCtrl& p_rTree )
-: m_rTree( p_rTree ), m_Root( TVI_ROOT )
+namespace Seidenader { namespace SVXMLLibrary
 {
-}
-
-SVXMLCTreeCtrl::SVXMLCTreeCtrl( CTreeCtrl& p_rTree, HTREEITEM& p_rBranch )
-: m_rTree( p_rTree ), m_Root( p_rBranch )
-{
-}
-
-SVXMLCTreeCtrl::SVXMLCTreeCtrl( SVXMLCTreeCtrl& p_rTree )
-: m_rTree( p_rTree.m_rTree ), m_Root( p_rTree.m_Root )
-{
-}
-
-SVXMLCTreeCtrl::SVXMLCTreeCtrl( SVXMLCTreeCtrl& p_rTree, SVXMLCTreeCtrl::SVBranchHandle& p_rBranch )
-: m_rTree( p_rTree.m_rTree ), m_Root( p_rBranch )
-{
-}
-
-SVXMLCTreeCtrl::~SVXMLCTreeCtrl()
-{
-}
-
-size_t SVXMLCTreeCtrl::GetCount() const
-{
-	return m_rTree.GetCount();
-}
-
-// GetRootNode () -----------------------------------------------------------
-//  If this function is called, and the root doesn't yet exist, then it 
-//	 should be created.  The root element of the tree MUST be a node that does
-//  not contain data. DoesNodeHaveData () must return false for the root 
-//  node.
-HRESULT SVXMLCTreeCtrl::GetRoot( SVBranchHandle& p_rRoot )
-{
-	HRESULT l_Status( S_OK );
-
-	p_rRoot = m_Root;
-
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::IsRoot( const SVBranchHandle& p_rBranch )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rBranch != m_Root )
+	SVXMLCTreeCtrl::SVXMLCTreeCtrl( CTreeCtrl& rTree )
+	: m_rTree( rTree ), m_Root( TVI_ROOT )
 	{
-		l_Status = S_FALSE;
 	}
 
-	return l_Status;
-}
-
-// DoesNodeHaveChildren () --------------------------------------------------
-//		0 - Has children
-//    1 - No children
-HRESULT SVXMLCTreeCtrl::DoesBranchHaveBranches( const SVBranchHandle& p_rBranch )
-{
-	HRESULT l_Status( S_OK );
-
-	SVBranchHandle l_Child;
-
-	l_Status = GetFirstBranch( p_rBranch, l_Child );
-
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::GetParentBranch( const SVBranchHandle& p_rChild, SVBranchHandle& p_rParent )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rChild != NULL )
+	SVXMLCTreeCtrl::SVXMLCTreeCtrl( CTreeCtrl& rTree, SVBranchHandle pBranch )
+	: m_rTree( rTree ), m_Root( pBranch )
 	{
-		p_rParent = m_rTree.GetParentItem( p_rChild );
-	}
-	else
-	{
-		p_rParent = NULL;
-
-		l_Status = E_FAIL;
 	}
 
-	return l_Status;
-}
-
-// GetFirstBranch () -----------------------------------------------------
-//  This function must return S_OK if there are children.
-HRESULT SVXMLCTreeCtrl::GetFirstBranch( const SVBranchHandle& p_rParent, SVBranchHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	p_rChild = m_rTree.GetChildItem( p_rParent );
-
-	while( p_rChild != NULL && m_rTree.GetItemData( p_rChild ) != NULL )
+	SVXMLCTreeCtrl::SVXMLCTreeCtrl( SVXMLCTreeCtrl& rTree )
+	: m_rTree( rTree.m_rTree ), m_Root( rTree.m_Root )
 	{
-		p_rChild = m_rTree.GetNextItem( p_rChild, TVGN_NEXT );
 	}
 
-	if( p_rChild == NULL )
+	SVXMLCTreeCtrl::SVXMLCTreeCtrl( SVXMLCTreeCtrl& rTree, SVBranchHandle pBranch )
+	: m_rTree( rTree.m_rTree ), m_Root( pBranch )
 	{
-		l_Status = S_FALSE;
 	}
 
-	return l_Status;
-}
-
-// GetNextBranch () ----------------------------------------------------
-//  This function must return S_OK if there are more siblings.
-HRESULT SVXMLCTreeCtrl::GetNextBranch( const SVBranchHandle& p_rParent, SVBranchHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rChild != NULL )
+	SVXMLCTreeCtrl::~SVXMLCTreeCtrl()
 	{
-		do
+	}
+
+	size_t SVXMLCTreeCtrl::getCount() const
+	{
+		return m_rTree.GetCount();
+	}
+
+	SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getRoot()
+	{
+		return m_Root;
+	}
+
+	bool SVXMLCTreeCtrl::isRoot( const SVBranchHandle pBranch ) const
+	{
+		return pBranch == m_Root;
+	}
+
+	bool SVXMLCTreeCtrl::hasBranches( const SVBranchHandle pBranch )
+	{
+		SVBranchHandle pChild( nullptr );
+
+		pChild = getFirstBranch( pBranch );
+
+		return (nullptr != pChild);
+	}
+
+	SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getParentBranch( const SVBranchHandle pChild )
+	{
+		SVBranchHandle pResult( nullptr );
+
+		if( nullptr != pChild )
 		{
-			p_rChild = m_rTree.GetNextItem( p_rChild, TVGN_NEXT );
+			pResult = m_rTree.GetParentItem( pChild );
 		}
-		while( p_rChild != NULL && m_rTree.GetItemData( p_rChild ) != NULL );
 
-		if( p_rChild == NULL )
+		return pResult;
+	}
+
+	SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getFirstBranch( const SVBranchHandle pParent )
+	{
+		SVBranchHandle pResult( nullptr );
+
+		pResult = m_rTree.GetChildItem( pParent );
+
+		while( nullptr != pResult && NULL != m_rTree.GetItemData( pResult ) )
 		{
-			l_Status = S_FALSE;
+			pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
 		}
-	}
-	else
-	{
-		l_Status = S_FALSE;
+
+		return pResult;
 	}
 
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::FindBranch( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVBranchHandle& p_rChild )
-{
-	HRESULT hrOk = S_OK;
-
-	p_rChild = NULL;
-
-	_bstr_t l_Name = p_rName;
-
-	SVBranchHandle l_Branch = m_rTree.GetChildItem( p_rParent );
-
-	while( p_rChild == NULL && l_Branch != NULL )
+	SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getNextBranch( const SVBranchHandle pParent, const SVBranchHandle pBranch )
 	{
-		CString csName = m_rTree.GetItemText( l_Branch );
+		SVBranchHandle pResult( pBranch );
 
-		if( m_rTree.GetItemData( l_Branch ) == NULL && csName.Compare( l_Name ) == 0 )
+		if( nullptr != pResult )
 		{
-			p_rChild = l_Branch;
-		}
-		else
-		{
-			l_Branch = m_rTree.GetNextItem( l_Branch, TVGN_NEXT );
-		}
-	}
-
-	if( p_rChild == NULL )
-	{
-		hrOk = S_FALSE;
-	}
-
-	return hrOk;
-}
-
-HRESULT	SVXMLCTreeCtrl::IsValidBranch( const SVBranchHandle& p_rParent )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rParent == NULL )
-	{
-		l_Status = S_FALSE;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::CreateBranch( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVBranchHandle* p_pChild )
-{
-	HRESULT l_Status( S_OK );
-
-	_bstr_t l_Name( p_rName );
-	
-	SVBranchHandle l_Branch( m_rTree.InsertItem( l_Name, p_rParent, TVI_LAST ) );
-
-	if( l_Branch != NULL )
-	{
-		if( ! m_rTree.SetItemData( l_Branch, NULL ) )
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	if( p_pChild != NULL )
-	{
-		( *p_pChild ) = l_Branch;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::DeleteBranch( SVBranchHandle& p_rBranch )
-{
-	HRESULT l_Status( S_OK );
-
-	HTREEITEM l_Child = m_rTree.GetChildItem( p_rBranch );
-
-	while( l_Child != NULL )
-	{
-		HTREEITEM l_DeleteChild( l_Child );
-
-		l_Child = m_rTree.GetNextItem( l_Child, TVGN_NEXT );
-
-		if( m_rTree.GetItemData( l_DeleteChild ) != NULL )
-		{
-			if( DeleteLeaf( p_rBranch, l_DeleteChild ) != S_OK )
+			do
 			{
-				l_Status = S_FALSE;
+				pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
+			}
+			while( nullptr != pResult && NULL != m_rTree.GetItemData( pResult ) );
+
+		}
+
+		return pResult;
+	}
+
+	SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::findBranch( const SVBranchHandle pParent, LPCTSTR Name )
+	{
+		SVBranchHandle pResult( nullptr );
+
+		SVBranchHandle pBranch = m_rTree.GetChildItem( pParent );
+
+		while( nullptr == pResult && nullptr != pBranch )
+		{
+			CString BranchName = m_rTree.GetItemText( pBranch );
+
+			if( m_rTree.GetItemData( pBranch ) == NULL && BranchName.Compare( Name ) == 0 )
+			{
+				pResult = pBranch;
+			}
+			else
+			{
+				pBranch = m_rTree.GetNextItem( pBranch, TVGN_NEXT );
 			}
 		}
-		else
+
+		return pResult;
+	}
+
+	bool SVXMLCTreeCtrl::isValidBranch( const SVBranchHandle pParent )
+	{
+		return (nullptr != pParent);
+	}
+
+	HRESULT SVXMLCTreeCtrl::createBranch( const SVBranchHandle pParent, LPCTSTR Name, SVBranchHandle* ppBranch )
+	{
+		HRESULT Result( S_OK );
+
+		SVBranchHandle pNewBranch( m_rTree.InsertItem( Name, pParent, TVI_LAST ) );
+
+		if( nullptr != pNewBranch )
 		{
-			if( DeleteBranch( l_DeleteChild ) != S_OK )
+			m_rTree.SetItemData( pNewBranch, NULL );
+		}
+
+		if( nullptr != ppBranch)
+		{
+			*ppBranch = pNewBranch;
+		}
+
+		return Result;
+	}
+
+	HRESULT SVXMLCTreeCtrl::deleteBranch( SVBranchHandle& rpBranch )
+	{
+		HRESULT l_Status( S_OK );
+
+		HTREEITEM pChild = m_rTree.GetChildItem( rpBranch );
+
+		while( nullptr != pChild )
+		{
+			HTREEITEM pDeleteChild( pChild );
+
+			pChild = m_rTree.GetNextItem( pChild, TVGN_NEXT );
+
+			if( m_rTree.GetItemData( pDeleteChild ) != NULL )
 			{
-				l_Status = S_FALSE;
-			}
-		}
-	}
-
-	if( IsRoot( p_rBranch ) != S_OK )
-	{
-		if( ! m_rTree.DeleteItem( p_rBranch ) )
-		{
-			l_Status = S_FALSE;
-		}
-
-		p_rBranch = NULL;
-	}
-
-	return l_Status;
-}
-
-// GetBranchName () -----------------------------------------------------------
-//
-// 	GetBranchName () function needs to understand that the calling function 
-//    will destroy the returned BSTR at its whim.  Usually, the derived 
-//    GetNodeName () function will need to create the BSTR with SysAlloc () 
-//    (or similar function), and will copy the node name from the actual tree
-//    location.
-HRESULT SVXMLCTreeCtrl::GetBranchName( const SVBranchHandle& p_rBranch, BSTR& p_rName )
-{
-	HRESULT l_Status( S_OK );
-
-	_bstr_t l_String;
-
-	l_String.Attach( p_rName );
-
-	if( IsRoot( p_rBranch ) == S_OK )
-	{
-		l_String = "Base";
-	}
-	else
-	{
-		l_String = m_rTree.GetItemText( p_rBranch );
-	}
-
-	p_rName = l_String.Detach();
-
-	return l_Status;
-}
-
-// DoesNodeHaveData () ------------------------------------------------------
-//		0 - Has Data
-//    1 - No Data
-HRESULT SVXMLCTreeCtrl::DoesBranchHaveLeaves( const SVBranchHandle& p_rBranch )
-{
-	HRESULT l_Status( S_OK );
-
-	SVLeafHandle l_Child;
-
-	l_Status = GetFirstLeaf( p_rBranch, l_Child );
-
-	return l_Status;
-}
-
-// GetFirstLeaf () -----------------------------------------------------
-//  This function must return S_OK if there are children.
-HRESULT SVXMLCTreeCtrl::GetFirstLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	p_rChild = m_rTree.GetChildItem( p_rParent );
-
-	while( p_rChild != NULL && m_rTree.GetItemData( p_rChild ) == NULL )
-	{
-		p_rChild = m_rTree.GetNextItem( p_rChild, TVGN_NEXT );
-	}
-
-	if( p_rChild == NULL )
-	{
-		l_Status = S_FALSE;
-	}
-
-	return l_Status;
-}
-
-// GetNextLeaf () -----------------------------------------------------
-//  This function must return S_OK if there is another child.
-HRESULT SVXMLCTreeCtrl::GetNextLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rChild != NULL )
-	{
-		do
-		{
-			p_rChild = m_rTree.GetNextItem( p_rChild, TVGN_NEXT );
-		}
-		while( p_rChild != NULL && m_rTree.GetItemData( p_rChild ) == NULL );
-
-		if( p_rChild == NULL )
-		{
-			l_Status = S_FALSE;
-		}
-	}
-	else
-	{
-		l_Status = S_FALSE;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::FindLeaf( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVLeafHandle& p_rChild )
-{
-	HRESULT hrOk = S_OK;
-
-	p_rChild = NULL;
-
-	_bstr_t l_Name = p_rName;
-
-	SVBranchHandle l_Branch = m_rTree.GetChildItem( p_rParent );
-
-	while( p_rChild == NULL && l_Branch != NULL )
-	{
-		CString csName = m_rTree.GetItemText( l_Branch );
-
-		if( m_rTree.GetItemData( l_Branch ) != NULL && csName.Compare( l_Name ) == 0 )
-		{
-			p_rChild = l_Branch;
-		}
-		else
-		{
-			l_Branch = m_rTree.GetNextItem( l_Branch, TVGN_NEXT );
-		}
-	}
-
-	if( p_rChild == NULL )
-	{
-		hrOk = S_FALSE;
-	}
-
-	return hrOk;
-}
-
-HRESULT	SVXMLCTreeCtrl::IsValidLeaf( const SVBranchHandle& p_rParent, const SVLeafHandle& p_rLeaf )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rParent != NULL )
-	{
-		if( p_rLeaf == NULL )
-		{
-			l_Status = S_FALSE;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::CreateLeaf( const SVBranchHandle& p_rParent, const BSTR& p_rName, const VARIANT& p_rData, SVLeafHandle* p_pChild )
-{
-	HRESULT l_Status( S_OK );
-
-	_bstr_t l_Name( p_rName );
-	
-	SVBranchHandle l_Branch( m_rTree.InsertItem( l_Name, p_rParent, TVI_LAST ) );
-
-	if( l_Branch != NULL )
-	{
-		VARIANT* l_pVariant( new VARIANT );
-		
-		if( l_pVariant != NULL )
-		{
-			::VariantInit( l_pVariant );
-
-			l_Status = ::VariantCopy( l_pVariant, const_cast< VARIANT * >( &p_rData ) );
-
-			if( l_Status == S_OK )
-			{
-				DWORD_PTR l_pData( reinterpret_cast< DWORD_PTR >( l_pVariant ) );
-
-				if( ! m_rTree.SetItemData( l_Branch, l_pData ) )
+				if( deleteLeaf( pDeleteChild ) != S_OK )
 				{
-					l_Status = E_FAIL;
+					l_Status = S_FALSE;
+				}
+			}
+			else
+			{
+				if( deleteBranch( pDeleteChild ) != S_OK )
+				{
+					l_Status = S_FALSE;
+				}
+			}
+		}
+
+		if( isRoot( rpBranch ) )
+		{
+			if( ! m_rTree.DeleteItem( rpBranch ) )
+			{
+				l_Status = S_FALSE;
+			}
+
+			rpBranch = nullptr;
+		}
+
+		return l_Status;
+	}
+
+	std::string SVXMLCTreeCtrl::getBranchName( const SVBranchHandle pBranch ) const
+	{
+		std::string Result;
+
+		if( isRoot( pBranch ) )
+		{
+			Result = _T("Base");
+		}
+		else
+		{
+			Result = m_rTree.GetItemText( pBranch );
+		}
+
+		return Result;
+	}
+
+	bool SVXMLCTreeCtrl::hasLeaves( const SVBranchHandle pBranch )
+	{
+		SVLeafHandle pChild( nullptr );
+
+		pChild = getFirstLeaf( pBranch );
+
+		return (nullptr != pChild);
+	}
+
+	SVXMLCTreeCtrl::SVLeafHandle SVXMLCTreeCtrl::getFirstLeaf( const SVBranchHandle pParent )
+	{
+		SVLeafHandle pResult( nullptr );
+
+		pResult = m_rTree.GetChildItem( pParent );
+
+		while( nullptr != pResult && NULL == m_rTree.GetItemData( pResult ) )
+		{
+			pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
+		}
+
+		return pResult;
+	}
+
+	SVXMLCTreeCtrl::SVLeafHandle SVXMLCTreeCtrl::getNextLeaf( const SVBranchHandle pParent, const SVLeafHandle pLeaf )
+	{
+		SVLeafHandle pResult( pLeaf );
+
+		if( nullptr != pResult )
+		{
+			do
+			{
+				pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
+			}
+			while( nullptr != pResult && NULL == m_rTree.GetItemData( pResult ) );
+		}
+
+		return pResult;
+	}
+
+	SVXMLCTreeCtrl::SVLeafHandle SVXMLCTreeCtrl::findLeaf( const SVBranchHandle pParent, LPCTSTR Name )
+	{
+		SVLeafHandle pResult( nullptr );
+
+		SVBranchHandle pBranch = m_rTree.GetChildItem( pParent );
+
+		while( nullptr == pResult && nullptr != pBranch )
+		{
+			CString BranchName = m_rTree.GetItemText( pBranch );
+
+			if( NULL != m_rTree.GetItemData( pBranch ) && BranchName.Compare( Name ) == 0 )
+			{
+				pResult = pBranch;
+			}
+			else
+			{
+				pBranch = m_rTree.GetNextItem( pBranch, TVGN_NEXT );
+			}
+		}
+
+		return pResult;
+	}
+
+	bool SVXMLCTreeCtrl::isValidLeaf( const SVBranchHandle pParent, const SVLeafHandle pLeaf )
+	{
+		bool Result( false );
+
+		if( nullptr != pParent )
+		{
+			SVLeafHandle pTestLeaf;
+			pTestLeaf = m_rTree.GetChildItem( pParent );
+
+			while( nullptr != pTestLeaf && !Result )
+			{
+				if( pLeaf == pTestLeaf )
+				{
+					Result = true;
+				}
+				pTestLeaf = m_rTree.GetNextItem( pTestLeaf, TVGN_NEXT );
+			}
+		}
+
+		return Result;
+	}
+
+	HRESULT SVXMLCTreeCtrl::createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const VARIANT& rData, SVLeafHandle* ppLeaf )
+	{
+		HRESULT Result( S_OK );
+
+		SVLeafHandle pNewLeaf( nullptr );
+		VARIANT* pVariant( new VARIANT );
+
+		if( nullptr != pVariant )
+		{
+			::VariantInit( pVariant );
+
+			if( S_OK == ::VariantCopy( pVariant, const_cast< VARIANT * >( &rData ) ) )
+			{
+				pNewLeaf = m_rTree.InsertItem( Name, pParent, TVI_LAST );
+
+				if( nullptr != pNewLeaf )
+				{
+					DWORD_PTR pData( reinterpret_cast< DWORD_PTR >( pVariant ) );
+					if( !m_rTree.SetItemData( pNewLeaf, pData ) )
+					{
+						Result = E_FAIL;
+					}
+				}
+				else
+				{
+					Result = E_FAIL;
 				}
 			}
 		}
 		else
 		{
-			l_Status = E_FAIL;
+			Result = E_FAIL;
 		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
 
-	if( p_pChild != NULL )
-	{
-		( *p_pChild ) = l_Branch;
+		if( nullptr != ppLeaf )
+		{
+			*ppLeaf = pNewLeaf;
+		}
+
+		return Result;
 	}
 
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::DeleteLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rChild != NULL )
+	HRESULT SVXMLCTreeCtrl::deleteLeaf( const SVLeafHandle pLeaf )
 	{
-		DWORD_PTR l_pData( m_rTree.GetItemData( p_rChild ) );
+		HRESULT l_Status( S_OK );
+
+		if( nullptr != pLeaf )
+		{
+			DWORD_PTR pData( m_rTree.GetItemData( pLeaf ) );
 		
-		if( ! m_rTree.DeleteItem( p_rChild ) )
-		{
-			l_Status = S_FALSE;
-		}
+			if( ! m_rTree.DeleteItem( pLeaf ) )
+			{
+				l_Status = S_FALSE;
+			}
 
-		if( l_pData != NULL )
-		{
-			VARIANT* l_pVariant( reinterpret_cast< VARIANT* >( l_pData ) );
+			if( pData != NULL )
+			{
+				VARIANT* pVariant( reinterpret_cast< VARIANT* >( pData ) );
 
-			::VariantClear( l_pVariant );
+				::VariantClear( pVariant );
 
-			delete l_pVariant;
+				delete pVariant;
+			}
+			else
+			{
+				l_Status = S_FALSE;
+			}
 		}
 		else
 		{
 			l_Status = S_FALSE;
 		}
-	}
-	else
-	{
-		l_Status = S_FALSE;
+
+		return l_Status;
 	}
 
-	p_rChild = NULL;
-
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::GetLeafName( const SVLeafHandle& p_rLeaf, BSTR& p_rName )
-{
-	HRESULT l_Status( S_OK );
-
-	_bstr_t l_String( m_rTree.GetItemText( p_rLeaf ) );
-
-	p_rName = l_String.Detach();
-
-	return l_Status;
-}
-
-HRESULT SVXMLCTreeCtrl::GetLeafData( const SVLeafHandle& p_rLeaf, VARIANT& p_rData )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rLeaf != NULL )
+	std::string SVXMLCTreeCtrl::getLeafName( const SVLeafHandle pLeaf ) const
 	{
-		DWORD_PTR l_pData( m_rTree.GetItemData( p_rLeaf ) );
-		
-		if( l_pData != NULL )
+		std::string Result;
+
+		Result = m_rTree.GetItemText( pLeaf );
+
+		return Result;
+	}
+
+	VARIANT SVXMLCTreeCtrl::getLeafData( const SVLeafHandle pLeaf ) const
+	{
+		VARIANT Result;
+
+		::VariantInit( &Result );
+
+		if( nullptr != pLeaf )
 		{
-			VARIANT* l_pVariant( reinterpret_cast< VARIANT* >( l_pData ) );
+			DWORD_PTR pData( m_rTree.GetItemData( pLeaf ) );
+		
+			if( pData != NULL )
+			{
+				VARIANT* pVariant( reinterpret_cast< VARIANT* >( pData ) );
 
-			l_Status = ::VariantCopy( &p_rData, l_pVariant );
+				::VariantCopy( &Result, pVariant );
+			}
 		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
+
+		return Result;
 	}
 
-	return l_Status;
-}
-
-// SetLeafData () -----------------------------------------------------------
-//  All data will be Copied for the tree.  The original VARIANT and any 
-//  associated (BSTR) data will not be alterred.
-HRESULT SVXMLCTreeCtrl::SetLeafData( const SVLeafHandle& p_rLeaf, const VARIANT& p_rData )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rLeaf != NULL )
+	VARIANT SVXMLCTreeCtrl::getLeafData( const SVBranchHandle pParent, LPCTSTR Name )
 	{
-		VARIANT* l_pVariant( NULL );
+		return 	getLeafData( findLeaf( pParent, Name ) );
+	}
 
-		DWORD_PTR l_pData( m_rTree.GetItemData( p_rLeaf ) );
-		
-		if( l_pData != NULL )
+	HRESULT SVXMLCTreeCtrl::setLeafData( const SVLeafHandle pLeaf, const VARIANT& rData )
+	{
+		HRESULT l_Status( S_OK );
+
+		if( nullptr != pLeaf )
 		{
-			l_pVariant = reinterpret_cast< VARIANT* >( l_pData );
+			DWORD_PTR pData( m_rTree.GetItemData( pLeaf ) );
+		
+			if( pData != NULL )
+			{
+				VARIANT* pVariant = reinterpret_cast< VARIANT* >( pData );
 
-			l_Status = ::VariantCopy( l_pVariant, const_cast< VARIANT * >( &p_rData ) );
+				l_Status = ::VariantCopy( pVariant, &rData );
+			}
+			else
+			{
+				l_Status = E_FAIL;
+			}
 		}
 		else
 		{
 			l_Status = E_FAIL;
 		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
+
+		return l_Status;
 	}
 
-	return l_Status;
-}
+} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+
 
 //******************************************************************************
 //* LOG HISTORY:

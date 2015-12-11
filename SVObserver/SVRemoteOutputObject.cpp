@@ -15,7 +15,7 @@
 #include "SVRemoteOutputObject.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVPPQObject.h"
@@ -79,74 +79,13 @@ bool SVRemoteOutputObject::GetParameters( SVObjectXMLWriter& rWriter ) const
 	return true;
 }
 
-HRESULT SVRemoteOutputObject::GetMaterials( SVMaterialsTreeAdapter& p_rMaterials, SVMaterialsTreeAdapter::SVTreeContainer* p_pParent )
-{
-	HRESULT l_hr = S_FALSE;
-	SVMaterials l_Materials;
-
-	_variant_t l_vVariant;
-
-	SVGUID l_GUID( outObjectInfo.UniqueObjectID );
-	l_vVariant = l_GUID.ToVARIANT();
-	l_hr = l_Materials.UpdateMaterial( CTAG_UNIQUE_REFERENCE_ID, l_vVariant );
-	l_vVariant.Clear();
-
-	l_GUID = m_InputObjectId;
-	l_vVariant =  l_GUID.ToVARIANT();
-	l_hr = l_Materials.UpdateMaterial( CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, l_vVariant );
-	l_vVariant.Clear();
-
-	l_vVariant = m_strGroupID.ToVARIANT();
-	l_hr = l_Materials.UpdateMaterial( CTAG_REMOTE_GROUP_ID, l_vVariant );
-	l_vVariant.Clear();
-
-
-	SVMaterialsTreeAdapter::SVTreeElement l_Element( CTAG_REMOTE_OUTPUT_PARAMETERS, l_Materials );
-	p_pParent->insert( p_pParent->end(), l_Element );
-
-	return l_hr;
-}
-
-HRESULT SVRemoteOutputObject::Update( SVMaterialsTreeAdapter& p_rMaterialsTree )
-{
-	HRESULT l_hr = S_FALSE;
-	SVMaterialsTreeAdapter::SVTreeElement* l_pElement = p_rMaterialsTree.get();
-	SVMaterials l_Materials = l_pElement->second;
-
-	_variant_t l_vVariant;
-
-	// Unique GUID for this object.
-	l_hr = l_Materials.GetMaterial( CTAG_UNIQUE_REFERENCE_ID, l_vVariant );
-	if ( l_hr == S_OK )
-	{
-		SVGUID l_ObjectID(l_vVariant);
-
-		SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
-
-		outObjectInfo.UniqueObjectID = l_ObjectID;
-
-		SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
-	}
-
-	KeepPrevError( l_hr, l_Materials.GetMaterial( CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, l_vVariant ));
-	if( l_hr == S_OK )
-	{
-		SVGUID l_guid( l_vVariant );
-		m_InputObjectId = l_guid;
-	}
-
-
-	return l_hr;
-}
-
-
 // Sets parameters from Tree Control
 BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
 {
 	BOOL bOk = FALSE;
 	_variant_t svVariant;
 
-	bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
+	bOk = SVNavigateTree::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
 	if ( bOk )
 	{
 		SVGUID ObjectID = svVariant;
@@ -169,7 +108,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 	{
 		if ( bOk )
 		{
-			bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, htiParent, svVariant );
+			bOk = SVNavigateTree::GetItem( rTree, CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, htiParent, svVariant );
 			if ( bOk )
 			{
 				m_InputObjectId = SVGUID( svVariant );
@@ -178,7 +117,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 		if ( bOk )
 		{
-			bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_REMOTE_GROUP_ID, htiParent, svVariant );
+			bOk = SVNavigateTree::GetItem( rTree, CTAG_REMOTE_GROUP_ID, htiParent, svVariant );
 			if ( bOk )
 			{
 				m_strGroupID = svVariant;
@@ -187,7 +126,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 		if ( bOk )
 		{
-			bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_REMOTE_OUTPUT_NAME, htiParent, svVariant );
+			bOk = SVNavigateTree::GetItem( rTree, CTAG_REMOTE_OUTPUT_NAME, htiParent, svVariant );
 			if ( bOk )
 			{
 				m_strObjectName = svVariant;

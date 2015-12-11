@@ -15,7 +15,6 @@
 #include <vector>
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVValueObject.h"
-#include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVObjectLibrary/SVObjectXMLWriter.h"
 
@@ -36,13 +35,9 @@ public:
 
 	SVString GetGroupID( ) const ;
 
-	typedef SVXMLMaterialsTree SVTreeType;
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 	bool GetParameters( SVObjectXMLWriter& rWriter ) const;
-
-	HRESULT GetMaterials( SVMaterialsTreeAdapter& p_rMaterials, SVMaterialsTreeAdapter::SVTreeContainer* p_pParent );
-	HRESULT Update( SVMaterialsTreeAdapter& p_rMaterials );
-
 
 	// Set Functions
 	HRESULT SetInputObject( SVValueObjectClass* p_pObject );

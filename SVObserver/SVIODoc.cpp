@@ -28,7 +28,7 @@
 #include "SVMessage\SVMessage.h"
 #include "SVFileNameManagerClass.h"
 #include "SVSVIMStateClass.h"
-#include "SVXMLLibrary\SVNavigateTreeClass.h"
+#include "SVXMLLibrary\SVNavigateTree.h"
 #include "SVConfigurationLibrary\SVConfigurationTags.h"
 #include "GlobalConstantView.h"
 #include "SVMainFrm.h"

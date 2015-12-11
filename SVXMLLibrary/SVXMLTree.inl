@@ -10,41 +10,41 @@
 //******************************************************************************
 
 
-template<typename SVT_TREE, typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
-SVXMLTree< SVT_TREE, SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::SVXMLTree()
-: svmlRefCount( 0 )
+namespace Seidenader { namespace SVXMLLibrary
 {
-}
-
-template<typename SVT_TREE, typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
-SVXMLTree< SVT_TREE, SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::~SVXMLTree()
-{
-}
-
-// Clear () -----------------------------------------------------------------
-//  This function incorporates a framework that will clear the tree as long 
-//  as the required virtual functions have been developed.  If there is 
-//  already a function in the supported derived tree to clear itself, then 
-//  this function should be overridden in the derived class, and the virtual 
-//  functions required only to implement this function are not neccessary.
-//  
-//  Virtual functions used only through calls to Clear ():
-//    DeleteNode ()
-template<typename SVT_TREE, typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
-HRESULT SVXMLTree< SVT_TREE, SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::Clear()
-{
-	HRESULT	l_Status( S_OK );
-
-	SVBranchHandle l_Branch;
-
-	l_Status = GetRoot( l_Branch );
-
-	if( l_Status == S_OK )
+	template<typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
+	SVXMLTree< SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::SVXMLTree()
 	{
-		l_Status = DeleteBranch( l_Branch );
 	}
-	return l_Status;
-}
+
+	template<typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
+	SVXMLTree< SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::~SVXMLTree()
+	{
+	}
+
+	// Clear () -----------------------------------------------------------------
+	//  This function incorporates a framework that will clear the tree as long 
+	//  as the required virtual functions have been developed.  If there is 
+	//  already a function in the supported derived tree to clear itself, then 
+	//  this function should be overridden in the derived class, and the virtual 
+	//  functions required only to implement this function are not neccessary.
+	//  
+	//  Virtual functions used only through calls to Clear ():
+	//    DeleteNode ()
+	template<typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
+	HRESULT SVXMLTree< SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::Clear()
+	{
+		HRESULT	l_Status( S_OK );
+
+		SVBranchHandle pBranch( getRoot() );
+
+		if( nullptr != pBranch )
+		{
+			l_Status = deleteBranch( pBranch );
+		}
+		return l_Status;
+	}
+} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
 
 //******************************************************************************
 //* LOG HISTORY:

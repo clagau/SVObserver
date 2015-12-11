@@ -9,72 +9,230 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:50:52  $
 //******************************************************************************
 
-#ifndef SVXMLCTREECTRL_H
-#define SVXMLCTREECTRL_H
+#pragma once
 
+#pragma region Includes
 #include "SVXMLTree.h"
+#pragma endregion Includes
 
-class SVXMLCTreeCtrl : public SVXMLTree< CTreeCtrl, HTREEITEM, HTREEITEM >  
+namespace Seidenader { namespace SVXMLLibrary
 {
-public:
-	SVXMLCTreeCtrl( CTreeCtrl& p_rTree );
-	SVXMLCTreeCtrl( CTreeCtrl& p_rTree, SVBranchHandle& p_rBranch );
-	SVXMLCTreeCtrl( SVXMLCTreeCtrl& p_rTree );
-	SVXMLCTreeCtrl( SVXMLCTreeCtrl& p_rTree, SVBranchHandle& p_rBranch );
+	class SVXMLCTreeCtrl : public SVXMLTree< HTREEITEM, HTREEITEM >  
+	//Note in this case the Template arguments HTREEITEM = SVBranchHandle and HTREEITEM = SVLeafHandle
+	{
+	#pragma region Constructor
+	public:
+		//************************************
+		//! The class constructor
+		//! \param rTree [in] reference to a copy of the tree to create
+		//************************************
+		SVXMLCTreeCtrl( CTreeCtrl& rTree );
 
-	virtual ~SVXMLCTreeCtrl();
+		//************************************
+		//! The class constructor
+		//! \param rTree [in] reference to a copy of the tree to create
+		//! \param pBranch [in] handle to the root branch
+		//************************************
+		SVXMLCTreeCtrl( CTreeCtrl& rTree, SVBranchHandle pBranch );
 
-	virtual size_t GetCount() const;
+		//************************************
+		//! The class constructor
+		//! \param rTree [in] reference to a copy of the tree to create
+		//************************************
+		SVXMLCTreeCtrl( SVXMLCTreeCtrl& rTree );
 
-	virtual HRESULT	GetRoot( SVBranchHandle& p_rRoot );
+		//************************************
+		//! The class constructor
+		//! \param rTree [in] reference to a copy of the tree to create
+		//! \param pBranch [in] handle to the root branch
+		//************************************
+		SVXMLCTreeCtrl( SVXMLCTreeCtrl& rTree, SVBranchHandle pBranch );
 
-	virtual HRESULT	IsRoot( const SVBranchHandle& p_rBranch );
+		virtual ~SVXMLCTreeCtrl();
+	#pragma endregion Constructor
 
-	virtual HRESULT	DoesBranchHaveBranches( const SVBranchHandle& p_rBranch );
+	#pragma region Public Methods
+	public:
+		//************************************
+		//! Method to get the total count of leafs and nodes
+		//! \returns the count of the tree elements
+		//************************************
+		virtual size_t getCount() const;
 
-	virtual HRESULT	GetParentBranch( const SVBranchHandle& p_rChild, SVBranchHandle& p_rParent );
+		//************************************
+		//! Method to get main parent branch
+		//! \returns a handle to the main branch
+		//************************************
+		virtual SVBranchHandle getRoot();
 
-	virtual HRESULT	GetFirstBranch( const SVBranchHandle& p_rParent, SVBranchHandle& p_rChild );
+		//************************************
+		//! Method to determine if the branch is the root branch
+		//! \param pBranch [in] handle to the branch to check
+		//! \returns true if branch is root
+		//************************************
+		virtual bool isRoot( const SVBranchHandle pBranch ) const;
 
-	virtual HRESULT	GetNextBranch( const SVBranchHandle& p_rParent, SVBranchHandle& p_rChild );
+		//************************************
+		//! Method to determine if the branch has branch children
+		//! \param pBranch [in] handle to the branch to check
+		//! \returns true if branch has children branches
+		//************************************
+		virtual bool hasBranches( const SVBranchHandle pBranch );
 
-	virtual HRESULT	IsValidBranch( const SVBranchHandle& p_rParent );
+		//************************************
+		//! Method to get the parent branch
+		//! \param pBranch [in] handle to the branch to check
+		//! \returns handle to the parent branch
+		//************************************
+		virtual SVBranchHandle getParentBranch( const SVBranchHandle pChild );
 
-	virtual HRESULT	FindBranch( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVBranchHandle& p_rChild );
+		//************************************
+		//! Method to get the first child branch
+		//! \param pBranch [in] handle to the branch to check
+		//! \returns handle to the corresponding branch
+		//************************************
+		virtual SVBranchHandle getFirstBranch( const SVBranchHandle pParent );
 
-	virtual HRESULT	CreateBranch( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVBranchHandle* p_pChild = NULL );
+		//************************************
+		//! Method to get the next child branch
+		//! \param pParent [in] handle to the parent branch
+		//! \param pBranch [in] handle to the current branch
+		//! \returns handle to the next branch
+		//************************************
+		virtual SVBranchHandle getNextBranch( const SVBranchHandle pParent, const SVBranchHandle pChild );
 
-	virtual HRESULT DeleteBranch( SVBranchHandle& p_rBranch );
+		//************************************
+		//! Method to find a child branch
+		//! \param pParent [in] handle to the parent branch
+		//! \param Name [in] name of child branch to search for
+		//! \returns handle to the found branch
+		//************************************
+		virtual SVBranchHandle findBranch( const SVBranchHandle pParent, LPCTSTR Name );
 
-	virtual HRESULT	GetBranchName( const SVBranchHandle& p_rBranch, BSTR& p_rName );
+		//************************************
+		//! Method to check if branch is valid
+		//! \param pParent [in] handle to the parent branch
+		//! \returns true if valid
+		//************************************
+		virtual bool isValidBranch( const SVBranchHandle pBranch );
 
-	virtual HRESULT	DoesBranchHaveLeaves( const SVBranchHandle& p_rBranch );
+		//************************************
+		//! Method to create a new child branch
+		//! \param pParent [in] handle to the parent branch
+		//! \param Name [in] name of child branch to create
+		//! \param ppBranch [out] pointer to the resulting child handle (default is nullptr)
+		//! \returns S_OK on success
+		//************************************
+		virtual HRESULT createBranch( const SVBranchHandle pParent, LPCTSTR Name, SVBranchHandle* ppBranch=nullptr  );
 
-	virtual HRESULT	GetFirstLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild );
+		//************************************
+		//! Method to delete a branch
+		//! \param pBranch [in] handle to the branch to delete
+		//! \returns S_OK on success
+		//************************************
+		virtual HRESULT deleteBranch( SVBranchHandle& rpBranch );
 
-	virtual HRESULT	GetNextLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild );
+		//************************************
+		//! Method to get the branch name
+		//! \param pBranch [in] handle to the branch
+		//! \returns the branch name
+		//************************************
+		virtual std::string	getBranchName( const SVBranchHandle pBranch ) const;
 
-	virtual HRESULT	FindLeaf( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVLeafHandle& p_rChild );
+		//************************************
+		//! Method to determine if the branch has child leaves
+		//! \param pBranch [in] handle to the branch to check
+		//! \returns true if branch has leaves
+		//************************************
+		virtual bool hasLeaves( const SVBranchHandle pBranch );
 
-	virtual HRESULT	IsValidLeaf( const SVBranchHandle& p_rParent, const SVLeafHandle& p_rLeaf );
+		//************************************
+		//! Method to get the first child leaf
+		//! \param pBranch [in] handle to the branch to check
+		//! \returns handle to the corresponding leaf
+		//************************************
+		virtual SVLeafHandle getFirstLeaf( const SVBranchHandle pParent );
 
-	virtual HRESULT	CreateLeaf( const SVBranchHandle& p_rParent, const BSTR& p_rName, const VARIANT& p_rData, SVLeafHandle* p_pChild = NULL );
+		//************************************
+		//! Method to get the next child leaf
+		//! \param pParent [in] handle to the parent branch
+		//! \param pLeaf [in] handle to the current leaf
+		//! \returns handle to the next leaf
+		//************************************
+		virtual SVLeafHandle getNextLeaf( const SVBranchHandle pParent, const SVLeafHandle pLeaf );
 
-	virtual HRESULT DeleteLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild );
+		//************************************
+		//! Method to find a child leaf
+		//! \param pParent [in] handle to the parent branch
+		//! \param Name [in] name of child leaf to search for
+		//! \returns handle to the found leaf
+		//************************************
+		virtual SVLeafHandle findLeaf( const SVBranchHandle pParent, LPCTSTR Name );
 
-	virtual HRESULT	GetLeafName( const SVLeafHandle& p_rLeaf, BSTR& p_rName );
+		//************************************
+		//! Method to check if leaf is valid
+		//! \param pParent [in] handle to the parent branch
+		//! \param pLeaf [in] handle to leaf to check
+		//! \returns true if valid
+		//************************************
+		virtual bool isValidLeaf( const SVBranchHandle pParent, const SVLeafHandle pLeaf );
 
-	virtual HRESULT	GetLeafData( const SVLeafHandle& p_rLeaf, VARIANT& p_rData );
+		//************************************
+		//! Method to create a new child leaf
+		//! \param pParent [in] handle to the parent branch
+		//! \param Name [in] name of child leaf to create
+		//! \param ppLeaf [out] pointer to the resulting child leaf (default is nullptr)
+		//! \returns S_OK on success
+		//************************************
+		virtual HRESULT createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const VARIANT& rData, SVLeafHandle* ppLeaf=nullptr );
 
-	virtual HRESULT	SetLeafData( const SVLeafHandle& p_rLeaf, const VARIANT& p_rData );
+		//************************************
+		//! Method to delete a leaf
+		//! \param pLeaf [in] handle to the leaf
+		//! \returns S_OK on success
+		//************************************
+		virtual HRESULT deleteLeaf( const SVLeafHandle pLeaf );
 
-protected:
-	CTreeCtrl& m_rTree;
-	HTREEITEM m_Root;
+		//************************************
+		//! Method to get the leaf name
+		//! \param pLeaf [in] handle to the leaf
+		//! \returns the leaf name
+		//************************************
+		virtual std::string	getLeafName( const SVLeafHandle pLeaf ) const;
 
-};
+		//************************************
+		//! Method to get the leaf data
+		//! \param pLeaf [in] handle to the leaf
+		//! \returns the leaf data as a variant
+		//************************************
+		virtual VARIANT	getLeafData( const SVLeafHandle pLeaf ) const;
 
-#endif // #ifndef SVXMLCTREECTRL_H
+		//************************************
+		//! Method to get the leaf data
+		//! \param pParent [in] handle to the parent branch
+		//! \param Name [in] name of child leaf to get the data
+		//! \returns the leaf data as a variant
+		//************************************
+		virtual VARIANT	getLeafData( const SVBranchHandle pParent, LPCTSTR Name );
+
+		//************************************
+		//! Method to set the leaf data
+		//! \param pLeaf [in] handle to the leaf
+		//! \param rData [in] reference to the data to set
+		//! \returns S_OK on success
+		//************************************
+		virtual HRESULT	setLeafData( const SVLeafHandle pLeaf, const VARIANT& rData );
+	#pragma endregion Public Methods
+
+	#pragma region Member variables
+	private:
+		CTreeCtrl& m_rTree;		//The tree control
+		HTREEITEM m_Root;		//Handle to the root item
+	#pragma endregion Member variables
+	};
+} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+
+namespace SvXml = Seidenader::SVXMLLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

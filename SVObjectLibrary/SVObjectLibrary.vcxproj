@@ -443,15 +443,11 @@
     <ClInclude Include="SVObjectThreadCommandTemplate.h" />
     <ClInclude Include="SVObjectWriter.h" />
     <ClInclude Include="SVObjectXMLWriter.h" />
-    <ClInclude Include="SVObserverConnectData.h" />
-    <ClInclude Include="SVObserverDisconnectData.h" />
     <ClInclude Include="SVObserverNotificationFunctor.h" />
     <ClInclude Include="SVObserverTemplate.h" />
     <ClInclude Include="SVOutObjectInfoStruct.h" />
     <ClInclude Include="SVOutputInfoListClass.h" />
     <ClInclude Include="SVPublicAttributeEntryStruct.h" />
-    <ClInclude Include="SVSubjectConnectData.h" />
-    <ClInclude Include="SVSubjectDisconnectData.h" />
     <ClInclude Include="SVToolLevelCreateStruct.h" />
     <ClInclude Include="SVToolsetScriptTags.h" />
   </ItemGroup>

@@ -32,18 +32,6 @@
     <ClInclude Include="SVCompareKeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTreeAdapter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTreeIterator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTreeLibraryEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IObjectSelectorItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -53,12 +41,12 @@
     <ClInclude Include="ObjectTreeItems.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVTree.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVTreeAdapter.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

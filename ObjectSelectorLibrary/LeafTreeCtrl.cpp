@@ -66,26 +66,26 @@ void LeafTreeCtrl::loadTree()
 
 	if( getParentPropPage().getTreeContainer().end() != Iter )
 	{
-		SvTrl::ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
-		while( Iter.GetChildTree()->end() != IterChild )
+		SvTrl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
+		while( Iter.node()->end() != IterChild )
 		{
-			if( IterChild->second.isLeaf() )
+			if( IterChild->second->isLeaf() )
 			{
 
 				HTREEITEM Item;
 
 				Item = InsertItem(TVIF_TEXT | TVIF_IMAGE | TVIF_STATE | TVIF_PARAM, 
-					IterChild->second.getName().c_str(),
-					IterChild->second.getIconNumber(),
-					IterChild->second.getIconNumber(),
+					IterChild->second->getName().c_str(),
+					IterChild->second->getIconNumber(),
+					IterChild->second->getIconNumber(),
 					0,
 					0,
 					reinterpret_cast<LPARAM> (&IterChild->first),
 					NULL,
 					TVI_LAST);
 
-				SetItemState( Item, INDEXTOSTATEIMAGEMASK( IterChild->second.getCheckedState() ),  TVIS_STATEIMAGEMASK );
-				IterChild->second.setTreeItem( Item );
+				SetItemState( Item, INDEXTOSTATEIMAGEMASK( IterChild->second->getCheckedState() ),  TVIS_STATEIMAGEMASK );
+				IterChild->second->setTreeItem( Item );
 			}
 			++IterChild;
 		}
@@ -105,12 +105,12 @@ void LeafTreeCtrl::updateTree()
 
 		if( getParentPropPage().getTreeContainer().end() != Iter )
 		{
-			SvTrl::ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
-			while( Iter.GetChildTree()->end() != IterChild )
+			SvTrl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
+			while( Iter.node()->end() != IterChild )
 			{
-				if( IterChild->second.isLeaf() )
+				if( IterChild->second->isLeaf() )
 				{
-					IterChild->second.setTreeItem( NULL );
+					IterChild->second->setTreeItem( NULL );
 				}
 
 				++IterChild;
@@ -130,18 +130,18 @@ void LeafTreeCtrl::updateTree()
 
 	if( getParentPropPage().getTreeContainer().end() != Iter )
 	{
-		SvTrl::ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
-		while( Iter.GetChildTree()->end() != IterChild )
+		SvTrl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
+		while( Iter.node()->end() != IterChild )
 		{
-			if( IterChild->second.isLeaf() && (NULL != IterChild->second.getTreeItem()) )
+			if( IterChild->second->isLeaf() && (NULL != IterChild->second->getTreeItem()) )
 			{
 				SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState( SvTrl::IObjectSelectorItem::EmptyEnabled );
 				//The checked state is saved in the upper nibble of the item state (Filtered with 0xF000) and must be shifted by 12 to get the required value
-				CheckedState = static_cast<SvTrl::IObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second.getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
+				CheckedState = static_cast<SvTrl::IObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second->getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
 				//Check if state has changed
-				if( IterChild->second.getCheckedState() != CheckedState )
+				if( IterChild->second->getCheckedState() != CheckedState )
 				{
-					SetItemState( IterChild->second.getTreeItem(), INDEXTOSTATEIMAGEMASK( IterChild->second.getCheckedState() ),  TVIS_STATEIMAGEMASK );
+					SetItemState( IterChild->second->getTreeItem(), INDEXTOSTATEIMAGEMASK( IterChild->second->getCheckedState() ),  TVIS_STATEIMAGEMASK );
 				}
 			}
 			++IterChild;

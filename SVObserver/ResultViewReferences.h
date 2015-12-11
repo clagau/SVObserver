@@ -37,9 +37,11 @@ class SVValueObjectClass;
 class ResultViewReferences
 {
 public:
-#pragma region Constructor
 	typedef std::deque< SVIPResultItemDefinition > SVResultDefinitionDeque;
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
+#pragma region Constructor
+public:
 	//************************************
 	//! constructor for the ResultViewReferences class.
 	//! \param tagname [in] default tagname for entrie in cfg file 
@@ -63,11 +65,11 @@ public:
 	//************************************
 	// Description:  Load GUIDs and references from the configuration file.
 	// Parameter:  rTree:  
-	// Parameter:  htiParent:  
+	// Parameter:  hParent:  
 	// Parameter:  tagname tagname in cfgfile 
 	// Returns:  bool: return true if the tagnane was found in the cfg file   
 	//************************************
-	virtual bool Load( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle htiParent, LPCTSTR tagname = nullptr );
+	virtual bool Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR tagname = nullptr );
 
 	
 	//************************************
@@ -155,10 +157,10 @@ protected:
 	//************************************
 	// Description:  Helper function for Load.  Loads a single item.
 	// Parameter:  rTree:  
-	// Parameter:  htiLeaf:  
+	// Parameter:  hLeaf:  
 	// Returns:  bool:  
 	//************************************
-	bool LoadResultViewItemDef( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVLeafHandle htiLeaf );
+	bool LoadResultViewItemDef( SVTreeType& rTree, SVTreeType::SVLeafHandle hLeaf );
 #pragma endregion Protected Methods
 
 #pragma region Member Variables

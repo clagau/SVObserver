@@ -9,12 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:46:32  $
 //******************************************************************************
 
-#ifndef SVREMOTEOUTPUTDATACONTROLLER_H
-#define SVREMOTEOUTPUTDATACONTROLLER_H
-
+#pragma once
 #include <map>
 
-#include "SVMaterialsLibrary\SVMaterialsTree.h"
 #include "svobjectlibrary\svobjectclass.h"
 #include "SVObjectLibrary/SVObjectNotifyTemplate.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
@@ -45,14 +42,11 @@ public:
 	size_t GetItemCount( const CString& p_strRemoteGroupId );
 	HRESULT GetItem( const CString& p_strRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem );
 
-	typedef SVXMLMaterialsTree SVTreeType;
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 	bool GetParameters( SVObjectXMLWriter& rWriter );
 
 	BOOL SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent );
-
-	HRESULT GetMaterials( SVMaterialsTreeAdapter& p_rMaterialsTree, SVMaterialsTreeAdapter::SVTreeContainer* p_pParent );
-	HRESULT Update( SVMaterialsTreeAdapter& p_rMaterialsTree );
 
 	void Destroy();
 
@@ -92,19 +86,12 @@ public:
 	// returns a pointer to a SVRemoteOutputGroup class based on the Remote Group ID.
 	HRESULT GetControlPar( const CString& p_strRemoteGroupID, SVRemoteOutputGroup*& p_pControl );
 
-	// Gets the data associated with a RemoteOutput into a SVMaterials.
-	HRESULT GetRemoteOutputControlData( SVMaterials& p_rMaterials, const CString& p_strRemoteGroupID );
-	// Sets the RemoteOutputControlPar with a SVmaterials data.
-	HRESULT SetRemoteOutputControlData( SVMaterials& p_rMaterials, const CString& p_strRemoteGroupID );
-
 	// Sets the SVRemoteOutputGroup associated with RemoteOutputID with a copy of a SVRemoteOutputGroup
 	HRESULT SetControlPar( const CString& p_strRemoteGroupID, SVRemoteOutputGroup* p_RemoteOutputControl );
 
 	// Adds the defaults to a SVRemoteOutputGroup object
 	HRESULT AddDefaultOutputs( CString p_strRemoteGroupID, SVPPQObject* p_pPPQ );
 
-//	void SetupRemoteOutputPPQs(SVConfigurationObject* p_pConfig, std::vector<CString>& p_rOriginalList);
-	
 	void SetupRemoteOutput(SVConfigurationObject* p_pConfig );
 
 	void SetupRemoteOutputGroup(SVConfigurationObject* p_pConfig, SVGroupDefVect& p_rOriginalList );
@@ -122,10 +109,6 @@ public:
 	HRESULT ClearUnUsedData( );
 
 private:
-	HRESULT AddBranch(SVMaterialsTreeAdapter& p_rTree, 
-					LPCTSTR lpszName, 
-					SVMaterialsTreeAdapter::SVTreeContainer* p_pParent, 
-					SVMaterialsTreeAdapter::SVTreeContainer*& p_rpBranch);
 	HRESULT GetValueObjectData( void* l_mem, long p_lNumBytes, SVValueObjectClass* p_ValueObject, long p_lProductIndex );
 	HRESULT GetValueObjectDataConvert2String( CString& p_rStringOut, SVValueObjectClass* p_pValueObject, long p_lProductIndex );
 
@@ -133,8 +116,6 @@ private:
 	SVRemoteOutputGroupMap m_RemoteGroupParameters;	// Map of RemoteOutput parameters based on RemoteOutput ID
 
 };
-
-#endif // SVREMOTEOUTPUTDATACONTROLLER_H
 
 
 //******************************************************************************

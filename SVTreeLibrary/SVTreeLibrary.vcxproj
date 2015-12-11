@@ -162,13 +162,9 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVCompareKeys.h" />
     <ClInclude Include="SVTree.h" />
-    <ClInclude Include="SVTreeAdapter.h" />
-    <ClInclude Include="SVTreeIterator.h" />
-    <ClInclude Include="SVTreeLibraryEnums.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVTree.inl" />
-    <None Include="SVTreeAdapter.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

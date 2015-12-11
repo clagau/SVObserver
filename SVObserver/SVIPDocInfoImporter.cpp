@@ -12,21 +12,18 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVIPDoc.h"
 #include "SVImportedInspectionInfo.h"
 
 void SVIPDocInfoImporter::Import(SVIPDoc* pDoc, const SVImportedInspectionInfo& info)
 {
 	// Copy from Materials Tree
-	SVMaterialsTreeAdapter l_Adapter = info.m_materialsTree;
-	SVXMLMaterialsTree l_Tree( l_Adapter );
+	SvXml::SVXMLMaterialsTree l_Tree( info.m_materialsTree );
 	
-	SVXMLMaterialsTree::SVBranchHandle hItem;
+	SvXml::SVXMLMaterialsTree::SVBranchHandle hItem( l_Tree.getRoot() );
 	
-	l_Tree.GetRoot( hItem );
-
-	if (l_Tree.IsValidBranch( hItem ) == S_OK)
+	if( l_Tree.isValidBranch( hItem ) )
 	{
 		pDoc->SetParameters(l_Tree, hItem);
 	}

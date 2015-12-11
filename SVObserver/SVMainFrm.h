@@ -116,7 +116,7 @@ public:
 	virtual ~SVMainFrame();
 #pragma endregion Constructor
 
-	typedef SVXMLMaterialsTree SVTreeType;
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 	HRESULT ParseToolsetScripts( SVTreeType& p_rTree );
 

@@ -33,7 +33,7 @@
 #include "SVRegressionRunDlg.h"
 #include "SVDirectX.h"
 #include "ModelessMessageBox.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVObjectScriptParserSVX.h"	// new speedy
 #include "SVInspectionTreeParser.h"		// new Inspection XML (NOT object script)
@@ -1414,14 +1414,14 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 	SVTreeType::SVBranchHandle hItemToolset = nullptr;
 	SVTreeType::SVBranchHandle htiChild = nullptr;
 
-	if( SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_INSPECTION, nullptr, htiChild ) )
+	if( SVNavigateTree::GetItemBranch( p_rTree, CTAG_INSPECTION, nullptr, htiChild ) )
 	{
 		// Set the Caption
 		CString title = _T( "Loading Toolset(s) ..." );
 		SVParserProgressDialog l_ParserProgressDialog( title, this );
 
-		SVTreeType::SVBranchHandle htiSubChild = nullptr;
-		p_rTree.GetFirstBranch( htiChild, htiSubChild );
+		SVTreeType::SVBranchHandle htiSubChild( p_rTree.getFirstBranch( htiChild ) );
+		;
 		while( l_Status == S_OK && nullptr != htiSubChild )
 		{
 			SVSharedPtr<CString> pToolsetScript = new CString;
@@ -1429,33 +1429,31 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 			SVInspectionProcess* pInspect( nullptr );
 			SVTreeType::SVBranchHandle htiSVIPDoc = nullptr;
-			SVTreeType::SVBranchHandle htiDataChild = nullptr;
-			p_rTree.GetFirstBranch( htiSubChild, htiDataChild );
+			SVTreeType::SVBranchHandle htiDataChild( p_rTree.getFirstBranch( htiSubChild ) );
+			;
 
 			while( nullptr != htiDataChild )
 			{
-				_bstr_t DataName;
-				p_rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
-				CString csDataName = DataName;
+				SVString DataName = p_rTree.getBranchName( htiDataChild );
 
-				if ( csDataName.Compare( CTAG_INSPECTION_PROCESS ) == 0 )
+				if ( DataName.Compare( CTAG_INSPECTION_PROCESS ) == 0 )
 				{
-					if( SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
+					if( SVNavigateTree::GetItemBranch( p_rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
 					{
 						_variant_t svVariant;
 
-						if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiDataChild, svVariant ) )
+						if( SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiDataChild, svVariant ) )
 						{
 							ownerGuid = svVariant;
 						}
 					}
 				}
-				else if ( csDataName.Compare( CTAG_SVIPDOC ) == 0 )
+				else if ( DataName.Compare( CTAG_SVIPDOC ) == 0 )
 				{
 					htiSVIPDoc = htiDataChild;
 				}
 
-				p_rTree.GetNextBranch( htiSubChild, htiDataChild );
+				htiDataChild = p_rTree.getNextBranch( htiSubChild, htiDataChild );
 			}
 
 			if( nullptr != htiSVIPDoc )
@@ -1464,7 +1462,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 				if( ownerGuid.empty() )
 				{
-					if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiSVIPDoc, svVariant ) )
+					if( SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiSVIPDoc, svVariant ) )
 					{
 						ownerGuid = svVariant;
 					}
@@ -1476,7 +1474,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 				if( S_OK == l_Status )
 				{
-					if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
+					if( SVNavigateTree::GetItem( p_rTree, CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
 					{
 						CString newString;
 						newString.LoadString(IDS_OBJECTNAME_PAT_DELTAPOS);
@@ -1570,7 +1568,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 					}
 				}
 			}
-			p_rTree.GetNextBranch( htiChild, htiSubChild );
+			htiSubChild = p_rTree.getNextBranch( htiChild, htiSubChild );
 		}
 
 		if( S_OK == l_Status )

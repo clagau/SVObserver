@@ -14,7 +14,7 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "BasicValueObject.h"
 #include "ResultViewReferences.h"
 #include "SVIPResultData.h"
@@ -49,40 +49,38 @@ bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
 	return (objectRef.ObjectAttributesAllowed() & SV_VIEWABLE);
 }
 
-bool ResultViewReferences::Load( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle htiParent, LPCTSTR TagName )
+bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR TagName )
 {
 
 	CString csTagName =  TagName == nullptr?  m_TagName: TagName;
-	SVXMLMaterialsTree::SVBranchHandle htiVariables = nullptr;
-	bool bOK = SVNavigateTreeClass::GetItemBranch(rTree, csTagName, htiParent, htiVariables);
+	SVTreeType::SVBranchHandle hVariables = nullptr;
+	bool bOK = SVNavigateTree::GetItemBranch(rTree, csTagName, hParent, hVariables);
 
 	if (bOK)
 	{
-		SVXMLMaterialsTree::SVLeafHandle htiVariable;
-		bool bContinue = (S_OK == rTree.GetFirstLeaf(htiVariables, htiVariable));
+		SVTreeType::SVLeafHandle hVariable( rTree.getFirstLeaf(hVariables) );
+		bool bContinue = rTree.isValidLeaf( hVariables, hVariable );
 
 		while (bContinue)
 		{
-			bContinue = LoadResultViewItemDef(rTree, htiVariable);
-			bContinue = bContinue && (S_OK == rTree.GetNextLeaf(htiVariables, htiVariable));
+			bContinue = LoadResultViewItemDef(rTree, hVariable);
+			hVariable  =rTree.getNextLeaf(hVariables, hVariable);
+			bContinue = bContinue && rTree.isValidLeaf( hVariables, hVariable );
 		}
 	}
 	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
 	return bOK;
 }
 
-bool ResultViewReferences::LoadResultViewItemDef( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVLeafHandle htiLeaf )
+bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType::SVLeafHandle htiLeaf )
 {
-	_bstr_t name;
-	HRESULT hr = rTree.GetLeafName(htiLeaf, name.GetBSTR());
-	bool bOK = ( hr == S_OK );
+	SVString Name( rTree.getLeafName( htiLeaf ) );
 
-	SVString compareName( name );
-	bOK = bOK && ( compareName.Compare( CTAG_COMPLETENAME ) == 0 );
+	bool bOK = ( Name.Compare( CTAG_COMPLETENAME ) == 0 );
 
 	_variant_t svValue;
-
-	bOK = bOK && (S_OK == rTree.GetLeafData(htiLeaf, svValue));
+	svValue = rTree.getLeafData( htiLeaf );
+	bOK = bOK && ( VT_EMPTY == svValue.vt);
 	if ( bOK )
 	{
 		SVObjectReference objRef;

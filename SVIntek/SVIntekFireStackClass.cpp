@@ -10,8 +10,8 @@
 // ******************************************************************************
 
 #include "stdafx.h"
+#include <map>
 #include "SVIntekFireStackClass.h"
-
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVIntek.h"
 #include "SVConvert.h"
@@ -4054,11 +4054,12 @@ void SVIntekFireStackClass::DoAcquisitionTrigger(const SVIntekCameraStruct& p_rC
 		const SVCallbackStruct& callback = p_rCamera.GetTriggerCallback();
 		if (callback.m_pCallback)
 		{
-			SVMaterials materials;
-			materials.AddMaterial("Timestamp", _variant_t(timestamp));
-			materials.AddMaterial("LineState", _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE));
+			typedef  std::map<SVString, _variant_t> NameVariantMap;
+			NameVariantMap Settings;
+			Settings[_T("Timestamp")] = _variant_t(timestamp);
+			Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
 			
-			callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&materials));
+			callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&Settings));
 		}
 	}
 }

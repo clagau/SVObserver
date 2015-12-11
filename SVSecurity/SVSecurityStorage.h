@@ -9,14 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:04:52  $
 //******************************************************************************
 
-#ifndef SVSECURITYSTORAGE_H
-#define SVSECURITYSTORAGE_H
+#pragma once
 
 #include <vector>
-
-#include "SVMaterialsLibrary/SVMaterialsTree.h"
-#include "SVMaterialsLibrary/SVMaterialsTreeAdapter.h"
-
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVAccessPointNode.h"
 
 class SVSecurityStorage
@@ -58,13 +54,13 @@ public:
 protected:
 	typedef std::vector < SVAccessPointNode > SVAccessPointNodeVectorArray;
 
-	HRESULT GetMaterialsTree( SVMaterialsTree& p_rMaterialsTree ) const;
-	HRESULT GetChildMaterialsTree( SVMaterialsTreeAdapter& p_rMaterialsTree, SVAccessPointNodeVectorArray::const_iterator& p_rNodeIter ) const;
+	HRESULT GetMaterialsTree( SVMaterialsTree::SVTreeContainer& rTree ) const;
+	HRESULT GetChildMaterialsTree( SVMaterialsTree::SVTreeContainer& rTree, SVAccessPointNodeVectorArray::const_iterator& p_rNodeIter ) const;
 
-	HRESULT ProcessMaterialsTree( SVAccessPointNodeVectorArray& p_rNewArray, const SVMaterialsTree& p_rMaterialsTree );
-	HRESULT ProcessChild( SVAccessPointNodeVectorArray& p_rNewArray, const SVMaterialsTreeAdapter& p_rMaterialsTree );
+	HRESULT ProcessMaterialsTree( SVAccessPointNodeVectorArray& p_rNewArray, const SVMaterialsTree::SVTreeContainer& rTree );
+	HRESULT ProcessChild( SVAccessPointNodeVectorArray& p_rNewArray, const SVMaterialsTree::SVTreeContainer& rTree );
 
-	HRESULT ProcessRoot( const SVMaterialsTree& p_rMaterialsTree );
+	HRESULT ProcessRoot( const SVMaterialsTree::SVTreeContainer& rTree );
 
 
 	// Manage Data to tree...
@@ -85,8 +81,6 @@ protected:
 	CString m_strCurrentPW;
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

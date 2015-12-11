@@ -11,7 +11,6 @@
 #ifndef INCL_SVCAMERATRIGGERDATA_H
 #define INCL_SVCAMERATRIGGERDATA_H
 
-#include "SVMaterialsLibrary/SVMaterials.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVDoubleValueObjectClass.h"
 #include "SVBoolValueObjectClass.h"
@@ -19,6 +18,9 @@
 
 class SVCameraTriggerData : public SVObjectClass 
 {
+public:
+	typedef  std::map<SVString, _variant_t> NameVariantMap;
+
 private:
 	SVDoubleValueObjectClass m_timestamp;
 	SVBoolValueObjectClass m_lineInState;
@@ -33,7 +35,7 @@ public:
 	SVString GetTimestampName() const;
 	SVString GetLineStateName() const;
 
-	void Set(long index, const SVMaterials& rMaterials);
+	void Set(long index, const NameVariantMap& rSettings);
 
 private:
 	void init();

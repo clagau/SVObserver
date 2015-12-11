@@ -12,7 +12,7 @@
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectXMLWriter.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVXML2TreeConverter.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #pragma endregion Includes
@@ -40,13 +40,13 @@ void writeElement( SVObjectXMLWriter& rXmlWriter, UINT ResourceID, variant_t Val
 // Parameter: ResourceID <in> Resource ID containing the tag to the value in the branch
 // Return: The value read from the XML entry as a variant
 //************************************
-variant_t readElement( SVXMLMaterialsTree& rTree, const SVXMLMaterialsTree::SVBranchHandle& rBranch, UINT ResourceID )
+variant_t readElement( SvXml::SVXMLMaterialsTree& rTree, const SvXml::SVXMLMaterialsTree::SVBranchHandle& rBranch, UINT ResourceID )
 {
 	variant_t Value;
 
 	CString Label;
 	Label.LoadString( ResourceID );
-	if( !SVNavigateTreeClass::GetItem( rTree, Label, rBranch, Value ) )
+	if( !SVNavigateTree::GetItem( rTree, Label, rBranch, Value ) )
 	{
 		Value.Clear();
 	}
@@ -64,7 +64,7 @@ variant_t readElement( SVXMLMaterialsTree& rTree, const SVXMLMaterialsTree::SVBr
 //! \param kernelArray [out]
 //! \returns bool
 //************************************
-bool readCustom2FilterBranch( SVXMLMaterialsTree& rTree,
+bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 	long &kernelWidth, 
 	long &kernelHeight, 	
 	long &normalizationFactor, 
@@ -72,12 +72,12 @@ bool readCustom2FilterBranch( SVXMLMaterialsTree& rTree,
 	BOOL &clippingEnabled,
 	ICustom2Filter::LongArray &kernelArray)
 {
-	SVXMLMaterialsTree::SVBranchHandle Branch;
+	SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
 	CString Label;
 	bool Result(false);
 
 	Label.LoadString( IDS_CLASSNAME_CUSTOM2FILTER );
-	if ( SVNavigateTreeClass::GetItemBranch( rTree, Label, NULL, Branch ) )
+	if ( SVNavigateTree::GetItemBranch( rTree, Label, NULL, Branch ) )
 	{
 		_variant_t Value;
 
@@ -89,18 +89,18 @@ bool readCustom2FilterBranch( SVXMLMaterialsTree& rTree,
 
 		Label.LoadString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
 		SVTreeType::SVBranchHandle Elements = NULL;
-		if ( SVNavigateTreeClass::GetItemBranch( rTree, Label, Branch, Elements ) )
+		if ( SVNavigateTree::GetItemBranch( rTree, Label, Branch, Elements ) )
 		{
 			SVTreeType::SVLeafHandle Leaf;
 
-			rTree.GetFirstLeaf( Elements, Leaf );
+			Leaf = rTree.getFirstLeaf( Elements );
 
 			kernelArray.clear();
-			while ( S_OK == rTree.IsValidLeaf( Elements, Leaf ) )
+			while ( rTree.isValidLeaf( Elements, Leaf ) )
 			{
-				rTree.GetLeafData( Leaf, Value );
+				Value = rTree.getLeafData( Leaf );
 				kernelArray.push_back( Value );
-				rTree.GetNextLeaf( Elements, Leaf );
+				Leaf = rTree.getNextLeaf( Elements, Leaf );
 			}
 		}
 		Result = true;
@@ -186,8 +186,7 @@ HRESULT SvOi::importCustom2Filter(const SVString &filePath,
 	BOOL &clippingEnabled,
 	ICustom2Filter::LongArray &kernelArray)
 {
-	SVMaterialsTree LocalTree;
-	SVXMLMaterialsTree Tree( LocalTree );
+	SvXml::SVXMLMaterialsTree Tree;
 	SVXMLClass Xml;
 
 	::CoInitialize(NULL);
@@ -205,12 +204,12 @@ HRESULT SvOi::importCustom2Filter(const SVString &filePath,
 
 			if ( S_OK == Result )
 			{
-				SVXMLMaterialsTree::SVBranchHandle Branch;
-				if ( SVNavigateTreeClass::GetItemBranch( Tree, CTAG_ENVIRONMENT, NULL, Branch ) )
+				SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
+				if ( SVNavigateTree::GetItemBranch( Tree, CTAG_ENVIRONMENT, NULL, Branch ) )
 				{
 					_variant_t Value;
 					//At this moment in time we just check that the version number tag is in the file but do not worry which version saved the file
-					if ( SVNavigateTreeClass::GetItem( Tree, CTAG_VERSION_NUMBER, Branch, Value ) )
+					if ( SVNavigateTree::GetItem( Tree, CTAG_VERSION_NUMBER, Branch, Value ) )
 					{
 						if( !readCustom2FilterBranch( Tree, kernelWidth, kernelHeight, normalizationFactor, absoluteValue, clippingEnabled, kernelArray ) )
 						{

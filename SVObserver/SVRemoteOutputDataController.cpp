@@ -22,7 +22,7 @@
 
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
 #include "SVOutputStreamManager.h"
 #include "SVSVIMStateClass.h"
@@ -196,20 +196,6 @@ SVRemoteOutputGroup* SVRemoteOutputDataController::GetControlPar( const CString&
 	return l_pPars;
 }
 
-// Gets the data associated with a Remote Group Id into a SVMaterials.
-HRESULT SVRemoteOutputDataController::GetRemoteOutputControlData( SVMaterials& p_rMaterials, const CString& p_strGroupID )
-{
-	HRESULT l_hr = S_FALSE;
-	l_hr = m_RemoteGroupParameters[p_strGroupID]->GetData( p_rMaterials );
-	return l_hr;
-}
-
-// Sets the RemoteOutputGroupPar with a SVmaterials data.
-HRESULT SVRemoteOutputDataController::SetRemoteOutputControlData( SVMaterials& p_rMaterials, const CString& p_strRemoteGroup )
-{
-	return m_RemoteGroupParameters[p_strRemoteGroup]->SetData( p_rMaterials );
-}
-
 // Get the RemoteOutputGroupPar associated with the Remote Group Id.
 HRESULT SVRemoteOutputDataController::GetControlPar( const CString& p_strRemoteGroup, SVRemoteOutputGroup*& p_pControl )
 {
@@ -296,11 +282,11 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 
 	SVTreeType::SVBranchHandle htiIORemoteOutput = NULL;
 
-	BOOL l_bTmp = SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_REMOTE_OUTPUT_PARAMETERS,p_htiParent, htiIORemoteOutput ) ;
+	BOOL l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, CTAG_REMOTE_OUTPUT_PARAMETERS,p_htiParent, htiIORemoteOutput ) ;
 
 	if( l_bTmp )
 	{
-		bOk = SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
+		bOk = SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
 		if ( bOk )
 		{
 			SVOutputStreamManager::Instance().EraseOutputController();
@@ -328,7 +314,7 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 				CString l_strGroupID;
 
 				l_strEntry.Format( "%s_%d", CTAG_REMOTE_GROUP_ID, ++l_lEntryNum );
-				l_bTmp = SVNavigateTreeClass::GetItemBranch( p_rTree, l_strEntry, htiIORemoteOutput, htiBranch );
+				l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, l_strEntry, htiIORemoteOutput, htiBranch );
 
 				if ( l_bTmp )
 				{
@@ -351,142 +337,6 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 
 	return bOk;
 }
-
-// Add Branch is used to build a new branch into a MaterialsTreeAdapter.
-HRESULT SVRemoteOutputDataController::AddBranch(SVMaterialsTreeAdapter& p_rTree, 
-																LPCTSTR lpszName, 
-																SVMaterialsTreeAdapter::SVTreeContainer* p_pParent, 
-																SVMaterialsTreeAdapter::SVTreeContainer*& p_rpBranch)
-{
-	HRESULT hrOk = S_OK;
-
-	if( p_pParent != NULL )
-	{
-		SVMaterialsTreeAdapter l_Parent( *p_pParent );
-		SVMaterialsTreeAdapter::SVTreeElement l_Element( lpszName, SVMaterials() );
-		SVMaterialsTreeAdapter::iterator l_Iter;
-
-		l_Iter = l_Parent.insert( l_Element, l_Parent.end() );
-
-		if( l_Iter != l_Parent.end() )
-		{
-			p_rpBranch = l_Iter.GetChildTree();
-		}
-		else
-		{
-			p_rpBranch = NULL;
-
-			hrOk = S_FALSE;
-		}
-	}
-	else
-	{
-		p_rpBranch = NULL;
-
-		hrOk = E_FAIL;
-	}
-
-	return hrOk;
-}
-// GetMaterials Gets saves data from this class to the SVTreeContainer parent.
-HRESULT SVRemoteOutputDataController::GetMaterials( SVMaterialsTreeAdapter& p_rMaterialsTree, 
-										  SVMaterialsTreeAdapter::SVTreeContainer* p_pParent )
-{
-	HRESULT l_hr = S_OK;
-	_variant_t l_vVariant;
-	
-	ClearUnUsedData();	// clears unused data
-
-	SVMaterialsTreeAdapter::SVTreeContainer* l_pBranch = NULL;
-
-	SVMaterials l_Materials;
-
-
-	if ( AddBranch( p_rMaterialsTree, CTAG_REMOTE_OUTPUT_PARAMETERS, p_pParent, l_pBranch ) == S_OK )
-	{
-		SVMaterialsTreeAdapter::SVTreeElement l_Element( CTAG_REMOTE_OUTPUT_PARAMETERS, l_Materials );
-		l_pBranch->insert(l_pBranch->end(), l_Element );
-
-		// Remote Output Parameters
-		SVRemoteOutputGroupMap::iterator l_it;
-
-		long lIndex = 0;
-		for( l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end() ; ++l_it )
-		{
-			CString l_strBranch;
-			lIndex++;
-			l_strBranch.Format( "%s_%d",CTAG_REMOTE_OUTPUT_PAR_NUM, lIndex );
-			SVMaterialsTreeAdapter::SVTreeContainer* l_pSubBranch;
-
-			if ( AddBranch( p_rMaterialsTree, l_strBranch, l_pBranch, l_pSubBranch ) == S_OK )
-			{
-				l_it->second->GetMaterials( p_rMaterialsTree,  l_pSubBranch);
-			}
-		}
-
-	}
-	return l_hr;
-}
-
-// Update updates this class from a materials tree.
-HRESULT SVRemoteOutputDataController::Update( SVMaterialsTreeAdapter& p_rMaterialsTree )
-{
-	_variant_t l_vVariant;
-
-	HRESULT l_hr = S_OK;
-	// RemoteOutputDataController Object ID
-	
-	SVMaterialsTreeAdapter::iterator l_it = p_rMaterialsTree.find( CTAG_REMOTE_OUTPUT_PARAMETERS);
-	if( l_it != p_rMaterialsTree.end() )
-	{
-		// Get the materials
-		SVMaterials& l_rMaterials = l_it->second;
-
-		// Unique GUID for this object.
-		l_hr = l_rMaterials.GetMaterial( CTAG_UNIQUE_REFERENCE_ID, l_vVariant );
-		SVString l_strTmp = l_vVariant;
-		
-		// A new tree branch....
-		SVMaterialsTreeAdapter::SVTreeContainer* l_pTreeContainer = l_it.GetChildTree( );
-		if( l_pTreeContainer != NULL )
-		{
-			SVMaterialsTreeAdapter l_rmtaBranch( *l_pTreeContainer );
-
-			long l_lEntryNum = 0;
-			bool l_bDone = false;
-			while( l_bDone == false )
-			{
-				SVString l_strEntry;
-
-				// Remote Group Parameters
-				l_strEntry.Format( "%s_%d", CTAG_REMOTE_OUTPUT_PAR_NUM, ++l_lEntryNum );
-				l_it = l_rmtaBranch.find( l_strEntry );
-				if( l_it != l_rmtaBranch.end() )
-				{
-					l_pTreeContainer = l_it.GetChildTree();
-					SVMaterialsTreeAdapter l_rmtaChannelBranch( *l_pTreeContainer );
-
-					SVRemoteOutputGroup* l_ControlParameter = new SVRemoteOutputGroup;
-					KeepPrevError( l_hr, l_ControlParameter->Update( l_rmtaChannelBranch ));
-					if( l_hr == S_OK )
-					{
-						CString l_strGroup = l_ControlParameter->GetGroupName().c_str();
-						m_RemoteGroupParameters[ l_strGroup ] = l_ControlParameter;
-					}
-				}
-				else
-				{
-					l_bDone = true;
-				}
-			}
-		}			
-	}
-
-	return l_hr;
-}
-
-
-
 
 // Write Outputs with the supplied PPQ name.
 HRESULT SVRemoteOutputDataController::WriteOutputs( const CString& p_strRemoteGroupID, SVProductInfoStruct *pProduct)

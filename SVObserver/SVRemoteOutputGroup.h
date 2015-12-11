@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVObjectLibrary/SVObjectNotifyTemplate.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
@@ -46,17 +45,11 @@ public:
 	BOOL Clear();
 	BOOL AttachStreamManager();
 
-	typedef SVXMLMaterialsTree SVTreeType;
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
 	BOOL GetParameters( SVObjectXMLWriter& rWriter ) const;
-
-	HRESULT GetMaterials( SVMaterialsTreeAdapter& p_rMaterialsTree, SVMaterialsTreeAdapter::SVTreeContainer* p_pParent );
-	HRESULT Update( SVMaterialsTreeAdapter& p_rMaterialsTree );
-
-	HRESULT GetData( SVMaterials& p_rMaterials );
-	HRESULT SetData( SVMaterials& p_rMaterials );
 
 	// RemoteOutput Identifier and new output object will be managed by SVRemoteOutputGroup
 	HRESULT AddOutput( SVRemoteOutputObject* p_pOutputEntry );

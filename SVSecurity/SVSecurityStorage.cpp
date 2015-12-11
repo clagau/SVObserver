@@ -126,15 +126,14 @@ USES_CONVERSION;
 	BSTR l_bstrFormat = NULL;
 	BSTR l_bstrFileName = NULL;
 
-	SVMaterialsTree l_Tree;
-	SVXMLMaterialsTree l_XMLTree( l_Tree );
+	SvXml::SVXMLMaterialsTree XMLTree ;
 	SVXMLClass svX;
 
 	hr = S_OK;
 
 	while (1)
 	{
-		hr = GetMaterialsTree( l_Tree );
+		hr = GetMaterialsTree( XMLTree.getTree() );
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
@@ -162,7 +161,7 @@ USES_CONVERSION;
 			break;
 		}
 
-		hr = svX.CopyTreeToXMLFile(l_XMLTree, 1, l_bstrFormat, NULL, l_bstrFileName);
+		hr = svX.CopyTreeToXMLFile(XMLTree, 1, l_bstrFormat, NULL, l_bstrFileName);
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
@@ -213,8 +212,7 @@ HRESULT SVSecurityStorage::SetUseAutoEdit( bool p_bAutoEdit )
 
 HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
 {
-	SVMaterialsTree l_Tree;
-	SVXMLMaterialsTree l_XMLTree( l_Tree );
+	SvXml::SVXMLMaterialsTree XMLTree;
 	SVXMLClass svX;
 
 	HRESULT hr = svX.Initialize();
@@ -227,7 +225,7 @@ HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
 	BSTR bstChangeHist = NULL;
 
 	BSTR l_bstName = sFileName.AllocSysString();
-	hr = svX.CopyXMLFileToTree(l_XMLTree, 1, l_bstName, &bstRevHist , &bstChangeHist );
+	hr = svX.CopyXMLFileToTree(XMLTree, 1, l_bstName, &bstRevHist , &bstChangeHist );
 
 	SysFreeString( l_bstName );
 	SysFreeString( bstRevHist );
@@ -237,7 +235,7 @@ HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
 	{
 		SVAccessPointNodeVectorArray l_aNodes;
 
-		hr = ProcessMaterialsTree( l_aNodes, l_Tree );
+		hr = ProcessMaterialsTree( l_aNodes, XMLTree.getTree() );
 
 		if( hr == S_OK )
 		{
@@ -256,53 +254,30 @@ HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
 				}
 			}
 
-			hr = ProcessRoot( l_Tree );
+			hr = ProcessRoot( XMLTree.getTree() );
 		}
 	}
 
 	return hr;
 }
 
-HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree& p_rMaterialsTree ) const
+HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& rTree ) const
 {
 	HRESULT l_Status( S_OK );
 
-	p_rMaterialsTree.Clear();
+	rTree.clear();
 
 	if( m_aNodes.size() != 0 )
 	{
-		SVMaterialsTree::iterator l_RootIter( p_rMaterialsTree.end() );
-
 		if( l_Status == S_OK )
 		{
-			SVMaterials l_Materials;
+			rTree.set( SVMaterialsTree::SVTreeElement( _T( "Root" ), SVMaterialDataPtr( nullptr ) ) );
 
-			l_Status = l_Materials.UpdateMaterial( _T("Use Logon"), GetUseLogon() );
-
-			if( l_Status == S_OK )
-			{
-				l_Status = l_Materials.UpdateMaterial( _T("Logon Timeout"), GetUserTimeout() );
-			}
-
-			if( l_Status == S_OK )
-			{
-				l_Status = l_Materials.UpdateMaterial( _T("Current User"), _variant_t( GetCurrentUser() ) );
-			}
-
-			if( l_Status == S_OK )
-			{
-				l_Status = l_Materials.UpdateMaterial( _T("Current PW"), _variant_t( GetCurrentPassword() ) );
-			}
-
-			if( l_Status == S_OK )
-			{
-				l_Status = l_Materials.UpdateMaterial( _T("Use Auto Edit"), GetAutoEdit() );
-			}
-
-			if( l_Status == S_OK )
-			{
-				p_rMaterialsTree.set( SVMaterialsTree::SVTreeElement( _T( "Root" ), l_Materials ) );
-			}
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Logon") ), new SVMaterialData( _variant_t( GetUseLogon() ) ) ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Logon Timeout") ), new SVMaterialData( _variant_t( GetUserTimeout() ) ) ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current User") ), new SVMaterialData( _variant_t( GetCurrentUser() ) ) ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current PW") ), new SVMaterialData( _variant_t( GetCurrentPassword() ) ) ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Auto Edit") ), new SVMaterialData( _variant_t( GetAutoEdit() ) ) ) );
 		}
 
 		if( l_Status == S_OK )
@@ -313,16 +288,13 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree& p_rMaterialsTree )
 			{
 				if( !l_NodeIter->m_bHasData )
 				{
-					SVMaterials l_NodeMaterials;
 					SVString l_Name( l_NodeIter->m_strName );
-					SVMaterialsTreeAdapter::SVMaterialsElement l_Element( l_Name, l_NodeMaterials );
-					SVMaterialsTreeAdapter::iterator l_Iter( p_rMaterialsTree.insert( l_Element, p_rMaterialsTree.end() ) );
+					SVMaterialsTree::SVTreeElement Element( l_Name, SVMaterialDataPtr(nullptr) );
+					SVMaterialsTree::iterator l_Iter( rTree.insert( Element ) );
 
-					if( l_Iter != p_rMaterialsTree.end() && l_Iter.GetChildTree() != NULL )
+					if( l_Iter != rTree.end() && l_Iter.node() != NULL )
 					{
-						SVMaterialsTreeAdapter l_ChildTree( *( l_Iter.GetChildTree() ) );
-
-						l_Status = GetChildMaterialsTree( l_ChildTree, ++l_NodeIter );
+						l_Status = GetChildMaterialsTree( *l_Iter.node(), ++l_NodeIter );
 					}
 				}
 				else
@@ -336,86 +308,91 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree& p_rMaterialsTree )
 	return l_Status;
 }
 
-HRESULT SVSecurityStorage::GetChildMaterialsTree( SVMaterialsTreeAdapter& p_rMaterialsTree, SVAccessPointNodeVectorArray::const_iterator& p_rNodeIter ) const
+HRESULT SVSecurityStorage::GetChildMaterialsTree( SVMaterialsTree::SVTreeContainer& rTree, SVAccessPointNodeVectorArray::const_iterator& p_rNodeIter ) const
 {
 	HRESULT l_Status( S_OK );
 
 	while( l_Status == S_OK && p_rNodeIter != m_aNodes.end() && p_rNodeIter->m_bHasData )
 	{
-		SVMaterials l_NodeMaterials;
-
-		l_Status = l_NodeMaterials.UpdateMaterial( _T( "Force Prompt" ), p_rNodeIter->m_bForcePrompt );
-
-		if( l_Status == S_OK )
-		{
-			l_Status = l_NodeMaterials.UpdateMaterial( _T( "NT Group" ), _variant_t( p_rNodeIter->m_strNTGroup ) );
-		}
-
-		if( l_Status == S_OK )
-		{
-			l_Status = l_NodeMaterials.UpdateMaterial( _T( "ID" ), p_rNodeIter->m_lID );
-		}
-
+		SVMaterialsTree::SVTreeContainer* pNode( nullptr );
 		if( l_Status == S_OK )
 		{
 			SVString l_Name( p_rNodeIter->m_strName );
-			SVMaterialsTreeAdapter::SVMaterialsElement l_Element( l_Name, l_NodeMaterials );
-			SVMaterialsTreeAdapter::iterator l_Iter( p_rMaterialsTree.insert( l_Element, p_rMaterialsTree.end() ) );
+			SVMaterialsTree::SVTreeElement Element( l_Name, SVMaterialDataPtr(nullptr) );
+			SVMaterialsTree::iterator Iter( rTree.insert( Element ) );
 
-			if( l_Iter != p_rMaterialsTree.end() )
+			if( rTree.end() != Iter )
 			{
-				++p_rNodeIter;
+				pNode = Iter.node();
 			}
 			else
 			{
 				l_Status = E_FAIL;
 			}
+
 		}
+		if( nullptr != pNode )
+		{
+			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("Force Prompt") ), new SVMaterialData( _variant_t( p_rNodeIter->m_bForcePrompt ) ) ) );
+			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("NT Group") ), new SVMaterialData( _variant_t( p_rNodeIter->m_strNTGroup ) ) ) );
+			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("ID") ), new SVMaterialData( _variant_t( p_rNodeIter->m_lID ) ) ) );
+		}
+		
+		++p_rNodeIter;
 	}
 
 	return l_Status;
 }
 
-HRESULT SVSecurityStorage::ProcessMaterialsTree( SVAccessPointNodeVectorArray& p_rNewArray, const SVMaterialsTree& p_rMaterialsTree )
+HRESULT SVSecurityStorage::ProcessMaterialsTree( SVAccessPointNodeVectorArray& p_rNewArray, const SVMaterialsTree::SVTreeContainer& rTree )
 {
 	HRESULT l_Status( S_OK );
 
 	p_rNewArray.clear();
 
-	SVMaterialsTree& l_Tree( const_cast< SVMaterialsTree& >( p_rMaterialsTree ) );
+	SVMaterialsTree::const_iterator Iter( rTree.begin() );
 
-	SVMaterialsTree::iterator l_Iter( l_Tree.begin() );
-
-	while( l_Status == S_OK && l_Iter != l_Tree.end() && l_Iter.GetChildTree() != NULL )
+	while( l_Status == S_OK && Iter != rTree.end() && nullptr != Iter.node() )
 	{
-		SVMaterialsTreeAdapter l_ChildTree( *( l_Iter.GetChildTree() ) );
+		//Process only nodes not leaves
+		if( Iter->second.empty() )
+		{
+			l_Status = ProcessChild( p_rNewArray, *Iter.node() );
+		}
 
-		l_Status = ProcessChild( p_rNewArray, l_ChildTree );
-
-		++l_Iter;
+		++Iter;
 	}
 
 	return l_Status;
 }
 
-HRESULT SVSecurityStorage::ProcessChild( SVAccessPointNodeVectorArray& p_rNewArray, const SVMaterialsTreeAdapter& p_rMaterialsTree )
+HRESULT SVSecurityStorage::ProcessChild( SVAccessPointNodeVectorArray& p_rNewArray, const SVMaterialsTree::SVTreeContainer& rTree )
 {
 	HRESULT l_Status( S_OK );
 
-	SVMaterialsTreeAdapter& l_Tree( const_cast< SVMaterialsTreeAdapter& >( p_rMaterialsTree ) );
-
-	if( l_Tree.get() != NULL )
+	if( rTree.get() != NULL )
 	{
-		SVString l_Name( l_Tree.get()->first );
-		const SVMaterials& l_rMaterials( l_Tree.get()->second );
+		SVString l_Name( rTree.get()->first );
 
+		SVMaterialsTree::ElementData Value;
 		_variant_t l_ID;
 		_variant_t l_ForcePrompt;
 		_variant_t l_NTGroup;
-
-		if( l_rMaterials.GetMaterial( _T( "ID" ), l_ID ) == S_OK &&
-			l_rMaterials.GetMaterial( _T( "Force Prompt" ), l_ForcePrompt ) == S_OK &&
-			l_rMaterials.GetMaterial( _T( "NT Group" ), l_NTGroup ) == S_OK )
+		if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("ID") ), Value ) )
+		{
+			l_ID = Value;
+		}
+		Value.clear();
+		if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("Force Prompt") ), Value ) )
+		{
+			l_ForcePrompt = Value;
+		}
+		Value.clear();
+		if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("NT Group") ), Value ) )
+		{
+			l_NTGroup = Value;
+		}
+		if( VT_EMPTY != l_ID.vt && VT_EMPTY != l_ForcePrompt.vt && VT_EMPTY != l_NTGroup.vt )
 		{
 			SVAccessPointNode l_Node( l_ID, l_Name.c_str(), static_cast< _bstr_t >( l_NTGroup ), l_ForcePrompt );
 
@@ -435,15 +412,14 @@ HRESULT SVSecurityStorage::ProcessChild( SVAccessPointNodeVectorArray& p_rNewArr
 		l_Status = E_FAIL;
 	}
 
-	SVMaterialsTreeAdapter::iterator l_Iter( l_Tree.begin() );
+	SVMaterialsTree::const_iterator l_Iter( rTree.begin() );
 
-	while( l_Status == S_OK && l_Iter != l_Tree.end() )
+	while( l_Status == S_OK && l_Iter != rTree.end() )
 	{
-		if( l_Iter.GetChildTree() != NULL )
+		//Process only nodes not leaves
+		if( nullptr != l_Iter.node() && l_Iter->second.empty() )
 		{
-			SVMaterialsTreeAdapter l_ChildTree( *( l_Iter.GetChildTree() ) );
-
-			l_Status = ProcessChild( p_rNewArray, l_ChildTree );
+			l_Status = ProcessChild( p_rNewArray, *l_Iter.node() );
 		}
 
 		++l_Iter;
@@ -452,68 +428,46 @@ HRESULT SVSecurityStorage::ProcessChild( SVAccessPointNodeVectorArray& p_rNewArr
 	return l_Status;
 }
 
-HRESULT SVSecurityStorage::ProcessRoot( const SVMaterialsTree& p_rMaterialsTree )
+HRESULT SVSecurityStorage::ProcessRoot( const SVMaterialsTree::SVTreeContainer& rTree )
 {
 	HRESULT l_Status( S_OK );
 
-	SVMaterialsTree& l_Tree( const_cast< SVMaterialsTree& >( p_rMaterialsTree ) );
+	SVMaterialsTree::ElementData MaterialData;
+	_variant_t Value;
 
-	if( l_Tree.get() != NULL )
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("Use Logon") ), MaterialData ) )
 	{
-		_variant_t l_Data;
-
-		const SVMaterials& l_rMaterials( l_Tree.get()->second );
-
-		l_Status = l_rMaterials.GetMaterial( _T( "Use Logon" ), l_Data );
-
-		if( l_Status == S_OK )
-		{
-			l_Status = SetUseLogon( l_Data );
-		}
-
-		if( l_Status == S_OK )
-		{
-			l_Status = l_rMaterials.GetMaterial( _T( "Logon Timeout" ), l_Data );
-
-			if( l_Status == S_OK )
-			{
-				l_Status = SetUserTimeout( l_Data );
-			}
-		}
-
-		if( l_Status == S_OK )
-		{
-			l_Status = l_rMaterials.GetMaterial( _T( "Current User" ), l_Data );
-
-			if( l_Status == S_OK )
-			{
-				m_strCurrentUser = l_Data;
-			}
-		}
-
-		if( l_Status == S_OK )
-		{
-			l_Status = l_rMaterials.GetMaterial( _T( "Current PW" ), l_Data );
-
-			if( l_Status == S_OK )
-			{
-				m_strCurrentPW = l_Data;
-			}
-		}
-
-		if( l_Status == S_OK )
-		{
-			l_Status = l_rMaterials.GetMaterial( _T( "Use Auto Edit" ), l_Data );
-
-			if( l_Status == S_OK )
-			{
-				l_Status = SetUseAutoEdit( l_Data );
-			}
-		}
+		Value = MaterialData;
+		l_Status = SetUseLogon( Value );
 	}
-	else
+		
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("Logon Timeout") ), MaterialData ) )
 	{
-		l_Status = E_FAIL;
+		Value = MaterialData;
+		l_Status = SetUserTimeout( Value );
+	}
+
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("Current User") ), MaterialData ) )
+	{
+		Value = MaterialData;
+		m_strCurrentUser = Value;
+	}
+
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("Current PW") ), MaterialData ) )
+	{
+		Value = MaterialData;
+		m_strCurrentPW = Value;
+	}
+
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("Use Auto Edit") ), MaterialData ) )
+	{
+		Value = MaterialData;
+		l_Status = SetUseAutoEdit( Value );
 	}
 
 	return l_Status;

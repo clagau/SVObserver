@@ -11,9 +11,9 @@
 
 #include "stdafx.h"
 #include "SVCameraTriggerClass.h"
+#include "SVCameraTriggerData.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-#include "SVMaterialsLibrary/SVMaterials.h"
 
 SVCameraTriggerClass::SVCameraTriggerClass(LPCTSTR deviceName)
 : SVTriggerClass(deviceName)
@@ -45,16 +45,21 @@ HRESULT CALLBACK SVCameraTriggerClass::TriggerCallback(void* p_pvOwner, void* p_
 		SVOResponseClass l_Response;
 
 		SVCameraTriggerClass *pDevice = reinterpret_cast<SVCameraTriggerClass *>(p_pvOwner);
-		SVMaterials* pMaterials = reinterpret_cast<SVMaterials *>(p_pvData);
+		SVCameraTriggerData::NameVariantMap* pSettings = reinterpret_cast<SVCameraTriggerData::NameVariantMap*> (p_pvData);
 
 		_variant_t startVal;
-		pMaterials->GetMaterial("StartFrameTimestamp", startVal);
+		SVCameraTriggerData::NameVariantMap::const_iterator Iter( pSettings->end() );
+		Iter = pSettings->find( _T("StartFrameTimestamp") );
+		if( pSettings->end() != Iter )
+		{
+			startVal = Iter->second;
+		}
 		l_Response.Reset();
 		l_Response.SetIsValid( TRUE );
 		l_Response.SetIsComplete( TRUE );
 		l_Response.SetStartTick(startVal);
 
-		boost::any holder(*pMaterials);
+		boost::any holder(*pSettings);
 		l_Response.SetExtraData(holder);
 		hr = pDevice->Notify( l_Response );
 

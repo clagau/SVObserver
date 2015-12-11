@@ -21,10 +21,6 @@
 #include "SVClassRegisterListClass.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectSubmitCommandFacade.h"
-#include "SVObserverConnectData.h"
-#include "SVObserverDisconnectData.h"
-#include "SVSubjectConnectData.h"
-#include "SVSubjectDisconnectData.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -764,11 +760,6 @@ HRESULT SVObjectManagerClass::GetObserverIds( const SVString& rSubjectDataName, 
 
 HRESULT SVObjectManagerClass::AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID )
 {
-	return AttachObserver( rSubjectDataName, rSubjectID, rObserverID, SVMaterials() );
-}
-
-HRESULT SVObjectManagerClass::AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID, const SVMaterials& rAttributes )
-{
 	HRESULT l_Status = S_OK;
 
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
@@ -789,9 +780,6 @@ HRESULT SVObjectManagerClass::AttachObserver( const SVString& rSubjectDataName, 
 
 			pSubjectObject->m_DataNameSubjectObservers[ rSubjectDataName ].m_SubjectObservers[ rObserverID ] = 1;
 			pObserverObject->m_SubjectIDs[ rSubjectDataName ] = rSubjectID;
-
-			Notify( rSubjectID, SVSubjectConnectData( rSubjectDataName, rObserverID, rAttributes ) );
-			Notify( rObserverID, SVObserverConnectData( rSubjectDataName, rSubjectID, rAttributes ) );
 		}
 		else
 		{
@@ -978,8 +966,6 @@ HRESULT SVObjectManagerClass::DetachObserver( const SVString& rSubjectDataName, 
 		
 		if( !( pObserverObject.empty() ) )
 		{
-			Notify( rObserverID, SVObserverDisconnectData( rSubjectDataName, rSubjectID ) );
-
 			pObserverObject->m_SubjectIDs.erase( rSubjectDataName );
 		}
 
@@ -987,8 +973,6 @@ HRESULT SVObjectManagerClass::DetachObserver( const SVString& rSubjectDataName, 
 		
 		if( !( pSubjectObject.empty() ) )
 		{
-			Notify( rSubjectID, SVSubjectDisconnectData( rSubjectDataName, rObserverID ) );
-
 			pSubjectObject->m_DataNameSubjectObservers[ rSubjectDataName ].m_SubjectObservers.erase( rObserverID );
 		}
 	}

@@ -9,50 +9,51 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:47:32  $
 //******************************************************************************
 
-#ifndef SVNAVIGATETREECLASS_H
-#define SVNAVIGATETREECLASS_H
+#pragma once
 
+#pragma region Includes
 #include <comdef.h>
+#pragma endregion Includes
 
-class SVNavigateTreeClass  
+class SVNavigateTree  
 {
 private:
-	SVNavigateTreeClass();
-	~SVNavigateTreeClass();
+	SVNavigateTree();
+	~SVNavigateTree();
 
 public:
 	template< typename SVTreeType >
-	static bool AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, LPCTSTR szName, _variant_t &rsvVariant, typename SVTreeType::SVLeafHandle* phtiItem = NULL );
+	static bool AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem = nullptr );
 
 	template< typename SVTreeType >
-	static bool SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, LPCTSTR szName, _variant_t &rsvVariant, typename SVTreeType::SVLeafHandle* phtiItem = NULL );
+	static bool SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem = nullptr );
 
 	template< typename SVTreeType >
-	static bool AddBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, LPCTSTR szName, typename SVTreeType::SVBranchHandle* phtiItem = NULL );
+	static bool AddBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, typename SVTreeType::SVBranchHandle* ppItem = nullptr );
 
 	template< typename SVTreeType >
-	static bool SetBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, LPCTSTR szName, typename SVTreeType::SVBranchHandle* phtiItem = NULL );
+	static bool SetBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, typename SVTreeType::SVBranchHandle* ppItem = nullptr );
 
 	template< typename SVTreeType >
-	static bool GetItemBranch( SVTreeType &rTree, LPCTSTR lpszName, typename SVTreeType::SVBranchHandle htiParent, typename SVTreeType::SVBranchHandle& htiItem );
+	static bool GetItemBranch( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVBranchHandle& rpItem );
 
 	template< typename SVTreeType >
-	static bool GetItemLeaf( SVTreeType &rTree, LPCTSTR lpszName, typename SVTreeType::SVBranchHandle htiParent, typename SVTreeType::SVLeafHandle& htiItem );
+	static bool GetItemLeaf( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle& rpItem );
 
 	template< typename SVTreeType >
-	static bool GetItem( SVTreeType &rTree, LPCTSTR lpszName, typename SVTreeType::SVBranchHandle htiParent, _variant_t& rsvVariant );
+	static bool GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, _variant_t& rVariant );
 
 	template< typename SVTreeType >
-	static bool DeleteItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiItem );
+	static bool DeleteItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pItem );
 
 	template< typename SVTreeType >
-	static bool DeleteItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, typename SVTreeType::SVLeafHandle htiItem );
+	static bool DeleteItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle pItem );
 
 	template< typename SVTreeType >
 	static bool DeleteAllItems( SVTreeType &rTree );
 
 	template< typename SVTreeType >
-	static bool HasChildren(SVTreeType& rTree, typename SVTreeType::SVBranchHandle hItem);
+	static bool HasChildren(SVTreeType& rTree, typename SVTreeType::SVBranchHandle pItem);
 
 	template< typename SVTreeType, typename SVPredicate >
 	static bool FindBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle startBranch, const SVPredicate& rPredicate, typename SVTreeType::SVBranchHandle& rFoundItem );
@@ -62,9 +63,7 @@ public:
 
 };
 
-#include "SVNavigateTreeClass.inl"
-
-#endif
+#include "SVNavigateTree.inl"
 
 //******************************************************************************
 //* LOG HISTORY:

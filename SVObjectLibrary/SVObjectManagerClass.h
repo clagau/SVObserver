@@ -16,7 +16,6 @@
 #include <map>
 #include <set>
 #include "SVCommandLibrary/SVCommandTemplate.h"
-#include "SVMaterialsLibrary/SVMaterials.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
@@ -124,7 +123,6 @@ public:
 	HRESULT GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, GuidSet& rObserverIds );
 
 	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID, const SVMaterials& rAttributes );
 	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long p_Cookie );
 
 	HRESULT EnableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );

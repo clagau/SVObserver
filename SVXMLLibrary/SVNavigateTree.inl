@@ -9,151 +9,150 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:47:48  $
 //******************************************************************************
 
-#ifndef SVNAVIGATETREECLASS_INL
-#define SVNAVIGATETREECLASS_INL
-
-#include "SVNavigateTreeClass.h"
+#include "SVNavigateTree.h"
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, LPCTSTR szName, _variant_t &rsvVariant, typename SVTreeType::SVLeafHandle* phtiItem )
+bool SVNavigateTree::AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem )
 {
-	bool bOk = false;
+	bool Result( false );
 
-	SVTreeType::SVLeafHandle l_Leaf;
+	SVTreeType::SVLeafHandle pLeaf;
 
-	bOk = rTree.CreateLeaf( htiParent, _bstr_t( szName ), rsvVariant, &l_Leaf ) == S_OK;
+	Result = rTree.createLeaf( pParent, Name, rVariant, &pLeaf ) == S_OK;
 
-	if( phtiItem != NULL )
+	if( nullptr != ppItem )
 	{
-		*phtiItem = l_Leaf;
+		*ppItem = pLeaf;
 	}
 
-	return bOk;
+	return Result;
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, LPCTSTR szName, _variant_t &rsvVariant, typename SVTreeType::SVLeafHandle* phtiItem )
+bool SVNavigateTree::SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem )
 {
-	bool bOk = false;
+	bool Result( false );
 
-	SVTreeType::SVLeafHandle l_Leaf;
+	SVTreeType::SVLeafHandle pLeaf;
 
-	bOk = GetItemLeaf( rTree, szName, htiParent, l_Leaf );
+	Result = GetItemLeaf( rTree, Name, pParent, pLeaf );
 
-	if ( ! bOk )
+	if ( !Result )
 	{
-		bOk = AddItem( rTree, htiParent, szName, rsvVariant, &l_Leaf );
+		Result = AddItem( rTree, pParent, szName, rVariant, &l_Leaf );
 	}
 	else
 	{
-		bOk = rTree.SetLeafData( l_Leaf, rsvVariant ) == S_OK;
+		Result = rTree.setLeafData( l_Leaf, rVariant ) == S_OK;
 	}
 
-	if( phtiItem != NULL )
+	if( nullptr != ppItem )
 	{
-		*phtiItem = l_Leaf;
+		*ppItem = l_Leaf;
 	}
 
-	return bOk;
+	return Result;
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::AddBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, LPCTSTR szName, typename SVTreeType::SVBranchHandle* phtiItem )
+bool SVNavigateTree::AddBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, typename SVTreeType::SVBranchHandle* ppItem )
 {
-	bool bOk = false;
+	bool Result( false );
 
-	SVTreeType::SVBranchHandle l_Branch;
+	SVTreeType::SVBranchHandle pBranch( nullptr );
 
-	bOk = ( rTree.CreateBranch( htiParent, _bstr_t( szName ), &l_Branch ) == S_OK );
+	Result = rTree.createBranch( pParent, Name, &pBranch ) == S_OK;
 
-	if( phtiItem != NULL )
+	if( nullptr != ppItem )
 	{
-		*phtiItem = l_Branch;
+		*ppItem = pBranch;
 	}
 
-	return bOk;
+	return Result;
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::SetBranch(SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, LPCTSTR szName, typename SVTreeType::SVBranchHandle *phtiItem)
+bool SVNavigateTree::SetBranch(SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, typename SVTreeType::SVBranchHandle *ppItem)
 {
 	bool bOk = false;
 
-	SVTreeType::SVBranchHandle l_Branch;
+	SVTreeType::SVBranchHandle pBranch( nullptr );
 
-	bOk = GetItemBranch( rTree, szName, htiParent, l_Branch );
+	bOk = GetItemBranch( rTree, Name, pParent, pBranch );
 
 	if ( ! bOk )
 	{
-		bOk = AddBranch( rTree, htiParent, szName, &l_Branch );
+		bOk = AddBranch( rTree, pParent, Name, pBranch );
 	}
 
-	if( phtiItem != NULL )
+	if( nullptr != ppItem )
 	{
-		*phtiItem = l_Branch;
+		*ppItem = pBranch;
 	}
 
 	return bOk;
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::GetItemBranch( SVTreeType &rTree, LPCTSTR lpszName, typename SVTreeType::SVBranchHandle htiParent, typename SVTreeType::SVBranchHandle& htiItem )
+bool SVNavigateTree::GetItemBranch( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVBranchHandle& rpBranch )
 {
-	bool bOk = ( rTree.FindBranch( htiParent, _bstr_t( lpszName ), htiItem ) == S_OK );
-	return bOk;
+	rpBranch = rTree.findBranch( pParent, Name );
+	return (nullptr != rpBranch);
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::GetItemLeaf( SVTreeType &rTree, LPCTSTR lpszName, typename SVTreeType::SVBranchHandle htiParent, typename SVTreeType::SVLeafHandle& htiItem )
+bool SVNavigateTree::GetItemLeaf( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle& rpItem )
 {
-	bool bOk = ( rTree.FindLeaf( htiParent, _bstr_t( lpszName ), htiItem ) == S_OK );
-	return bOk;
+	rpItem = rTree.findLeaf( pParent, Name );
+	return rTree.isValidLeaf(pParent, rpItem);
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::GetItem( SVTreeType &rTree, LPCTSTR lpszName, typename SVTreeType::SVBranchHandle htiParent, _variant_t &rsvVariant )
+bool SVNavigateTree::GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, _variant_t &rVariant )
 {
-	SVTreeType::SVLeafHandle l_Leaf;
+	bool Result( false );
+	SVTreeType::SVLeafHandle pLeaf;
 
-	rsvVariant.Clear();
+	rVariant.Clear();
 
-	bool bOk = GetItemLeaf( rTree, lpszName, htiParent, l_Leaf );
-	if ( bOk )
+	Result = GetItemLeaf( rTree, Name, pParent, pLeaf );
+	if ( Result )
 	{
-		bOk = ( rTree.GetLeafData( l_Leaf, rsvVariant.GetVARIANT() ) == S_OK );
+		rVariant = rTree.getLeafData( pLeaf );
 	}
-	return bOk;
+
+	return Result;
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::DeleteItem(SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiItem)
+bool SVNavigateTree::DeleteItem(SVTreeType &rTree, typename SVTreeType::SVBranchHandle pItem)
 {
-	bool bOk = ( rTree.DeleteBranch( htiItem ) == S_OK );
+	bool bOk = ( rTree.deleteBranch( pItem ) == S_OK );
 	return bOk;
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::DeleteItem(SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent, typename SVTreeType::SVLeafHandle htiItem)
+bool SVNavigateTree::DeleteItem(SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle pItem)
 {
-	bool bOk = ( rTree.DeleteLeaf( htiParent, htiItem ) == S_OK );
+	bool bOk = ( rTree.deleteLeaf( pParent, pItem ) == S_OK );
 	return bOk;
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::DeleteAllItems( SVTreeType &rTree )
+bool SVNavigateTree::DeleteAllItems( SVTreeType &rTree )
 {
 	bool bOk = ( rTree.Clear() == S_OK );
 	return bOk;
 }
 
 template< typename SVTreeType >
-bool SVNavigateTreeClass::HasChildren(SVTreeType& rTree, typename SVTreeType::SVBranchHandle hItem)
+bool SVNavigateTree::HasChildren(SVTreeType& rTree, typename SVTreeType::SVBranchHandle pItem)
 {
-	return ( rTree.DoesBranchHaveBranches( hItem ) == S_OK || rTree.DoesBranchHaveLeaves( hItem ) == S_OK );
+	return ( rTree.hasBranches( pItem ) || rTree.hasLeaves( pItem ) );
 }
 
 template< typename SVTreeType, typename SVPredicate >
-bool SVNavigateTreeClass::FindBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle startBranch, const SVPredicate& rPredicate, typename SVTreeType::SVBranchHandle& rFoundItem )
+bool SVNavigateTree::FindBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle startBranch, const SVPredicate& rPredicate, typename SVTreeType::SVBranchHandle& rFoundItem )
 {
 	bool status = rPredicate( startBranch );
 
@@ -173,14 +172,13 @@ bool SVNavigateTreeClass::FindBranch( SVTreeType &rTree, typename SVTreeType::SV
 
 		while( ! status && l_Iter != l_ProcessHandles.end() )
 		{
-			SVTreeType::SVBranchHandle childBranch;
 			SVTreeType::SVBranchHandle localBranch = *l_Iter;
 
 			l_ProcessHandles.erase( l_Iter );
 
-			rTree.GetFirstBranch( localBranch, childBranch );
+			SVTreeType::SVBranchHandle childBranch( rTree.getFirstBranch( localBranch ) );
 
-			while( ! status && ( rTree.IsValidBranch( childBranch ) == S_OK ) )
+			while( ! status && rTree.isValidBranch( childBranch ) )
 			{
 				status = rPredicate( childBranch );
 
@@ -192,7 +190,7 @@ bool SVNavigateTreeClass::FindBranch( SVTreeType &rTree, typename SVTreeType::SV
 				{
 					l_ProcessHandles.push_back( childBranch );
 
-					rTree.GetNextBranch( localBranch, childBranch );
+					childBranch = rTree.getNextBranch( localBranch, childBranch );
 				}
 			}
 
@@ -204,78 +202,55 @@ bool SVNavigateTreeClass::FindBranch( SVTreeType &rTree, typename SVTreeType::SV
 }
 
 template< typename SVToTreeType, typename SVFromTreeType >
-bool SVNavigateTreeClass::Copy( SVToTreeType &rToTree, typename SVToTreeType::SVBranchHandle toParent, const SVFromTreeType &rFromTree, typename SVFromTreeType::SVBranchHandle fromBranch )
+bool SVNavigateTree::Copy( SVToTreeType &rToTree, typename SVToTreeType::SVBranchHandle toParent, const SVFromTreeType &rFromTree, typename SVFromTreeType::SVBranchHandle fromBranch )
 {
 	bool ok = true;
 
-	typename SVFromTreeType::SVBranchHandle fromChild;
+	typename SVFromTreeType::SVBranchHandle fromChildBranch( nullptr );
 
 	SVFromTreeType& fromTree( const_cast< SVFromTreeType& >( rFromTree ) );
 
-	HRESULT status = fromTree.GetFirstBranch( fromBranch, fromChild );
+	fromChildBranch = fromTree.getFirstBranch( fromBranch );
 
-	while( status == S_OK )
+	while( nullptr != fromChildBranch )
 	{
-		_bstr_t l_Name;
+		SVString Name;
 
-		status = fromTree.GetBranchName( fromChild, l_Name.GetBSTR() );
+		Name = fromTree.getBranchName( fromChildBranch );
 
-		if( status == S_OK )
+		typename SVToTreeType::SVBranchHandle toChildBranch;
+
+		 rToTree.createBranch( toParent, Name.c_str(), &toChildBranch );
+
+		if( nullptr != toChildBranch )
 		{
-			typename SVToTreeType::SVBranchHandle toChild;
-
-			status = rToTree.CreateBranch( toParent, l_Name, &toChild );
-
-			if( status == S_OK )
-			{
-				status = ( Copy( rToTree, toChild, rFromTree, fromChild ) ) ? S_OK : S_FALSE;
-			}
+			Copy( rToTree, toChildBranch, rFromTree, fromChildBranch );
 		}
 
-		if( status == S_OK )
-		{
-			status = fromTree.GetNextBranch( fromBranch, fromChild );
-		}
+		fromChildBranch = fromTree.getNextBranch( fromBranch, fromChildBranch );
 	}
 
-	ok = SUCCEEDED( status );
+	typename SVFromTreeType::SVLeafHandle fromChildLeaf;
 
-	if( ok )
+	fromChildLeaf = fromTree.getFirstLeaf( fromBranch );
+
+	while( fromTree.isValidLeaf( fromBranch, fromChildLeaf ) )
 	{
-		typename SVFromTreeType::SVLeafHandle fromChild;
+		SVString Name;
 
-		status = fromTree.GetFirstLeaf( fromBranch, fromChild );
+		_variant_t Data;
 
-		while( status == S_OK )
-		{
-			_bstr_t l_Name;
-			_variant_t l_Data;
+		Name = fromTree.getLeafName( fromChildLeaf );
 
-			status = fromTree.GetLeafName( fromChild, l_Name.GetBSTR() );
+		Data = fromTree.getLeafData( fromChildLeaf );
 
-			if( status == S_OK )
-			{
-				status = fromTree.GetLeafData( fromChild, l_Data );
+		rToTree.createLeaf( toParent, Name.c_str(), Data );
 
-				if( status == S_OK )
-				{
-					status = rToTree.CreateLeaf( toParent, l_Name, l_Data );
-				}
-			}
-
-			if( status == S_OK )
-			{
-				status = fromTree.GetNextLeaf( fromBranch, fromChild );
-			}
-		}
-
-		ok = SUCCEEDED( status );
+		fromChildLeaf = fromTree.getNextLeaf( fromBranch, fromChildLeaf );
 	}
 
 	return ok;
 }
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

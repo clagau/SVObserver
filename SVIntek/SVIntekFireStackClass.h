@@ -46,7 +46,6 @@
 #include "SVIntekCameraParamManager.h"
 #include "SVTriggerLibrary/SVInternalTrigger.h"
 #include "SVTriggerLibrary/SVTriggerCallbackMap.h"
-#include "SVMaterialsLibrary/SVMaterials.h"
 
 class SVAcquisitionBufferInterface;
 struct SVCallbackStruct;

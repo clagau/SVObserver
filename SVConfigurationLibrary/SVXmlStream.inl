@@ -34,7 +34,7 @@ SVXmlStream< SVTreeType >::SVXmlStream(SVTreeType& Tree)
 	m_Parent( NULL ),
 	m_VarType( VT_EMPTY )
 {	// Constructor
-	m_Tree.GetRoot( m_Parent );
+	m_Parent = m_Tree.getRoot();
 
 	// Init our members
 	//
@@ -145,20 +145,20 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 	{
 		m_Tree.Clear();
 
-		m_Tree.GetRoot( m_Parent );
+		m_Parent = m_Tree.getRoot();
 	}
 
 	if (tag == _T("<NODE>"))
 	{
 		if( !( m_LeafName.IsEmpty() ) )
 		{
-			m_Tree.CreateLeaf( m_Parent, _bstr_t( m_LeafName ), m_Variant );
+			m_Tree.createLeaf( m_Parent, m_LeafName, m_Variant );
 
 			m_LeafName.Empty();
 			m_Variant.Clear();
 		}
 
-		m_Tree.CreateBranch( m_Parent, _bstr_t( name ), &m_Parent );
+		m_Tree.createBranch( m_Parent, name, &m_Parent );
 	}
 	else 	if (tag == _T("<DATA>"))
 	{
@@ -166,7 +166,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 
 		if( !( m_LeafName.IsEmpty() ) )
 		{
-			m_Tree.CreateLeaf( m_Parent, _bstr_t( m_LeafName ), m_Variant );
+			m_Tree.createLeaf( m_Parent, m_LeafName, m_Variant );
 
 			m_LeafName.Empty();
 			m_Variant.Clear();
@@ -1153,13 +1153,13 @@ void SVXmlStream< SVTreeType >::ParseEndTag(CString& endtag)
 	{
 		if( !( m_LeafName.IsEmpty() ) )
 		{
-			m_Tree.CreateLeaf( m_Parent, _bstr_t( m_LeafName ), m_Variant );
+			m_Tree.createLeaf( m_Parent, m_LeafName, m_Variant );
 
 			m_LeafName.Empty();
 			m_Variant.Clear();
 		}
 
-		m_Tree.GetParentBranch( m_Parent, m_Parent );
+		m_Parent = m_Tree.getParentBranch( m_Parent );
 	}
 }
 

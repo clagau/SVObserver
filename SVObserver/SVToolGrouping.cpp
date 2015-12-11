@@ -12,7 +12,7 @@
 #include "SVToolGrouping.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVGlobal.h"
 
 #pragma endregion Includes
@@ -448,29 +448,20 @@ HRESULT SVToolGrouping::LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 	{
 		// Get the Tools
 		SVToolGrouping::SVTreeType::SVLeafHandle htiLeaf;
-		HRESULT hrTemp = rTree.GetFirstLeaf(htiTools, htiLeaf);
-		while (S_OK == hr && S_OK == hrTemp)
+		htiLeaf = rTree.getFirstLeaf( htiTools );
+		while (S_OK == hr && rTree.isValidLeaf( htiTools, htiLeaf ) )
 		{
-			_bstr_t name;
-			hr = rTree.GetLeafName(htiLeaf, name.GetBSTR());
-			if (S_OK == hr)
+			String leafName = rTree.getLeafName( htiLeaf );
+			if (CTAG_TOOL == leafName)
 			{
-				String leafName = static_cast<LPCTSTR>(name);
-				if (CTAG_TOOL == leafName)
+				_variant_t svValue;
+				svValue = rTree.getLeafData( htiLeaf );
+				if( VT_EMPTY != svValue.vt )
 				{
-					_variant_t svValue;
-					hr = rTree.GetLeafData(htiLeaf, svValue);
-					if (S_OK == hr)
+					String toolName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+					if (!toolName.empty())
 					{
-						String toolName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
-						if (!toolName.empty())
-						{
-							rGroupings.m_list.insert(rGroupings.m_list.end(), std::make_pair(toolName, ToolGroupData(ToolGroupData::Tool, toolName)));
-						}
-						else
-						{
-							hr = SVMSG_SVO_49_LOAD_CONFIGURATION_TOOLGROUPING;
-						}
+						rGroupings.m_list.insert(rGroupings.m_list.end(), std::make_pair(toolName, ToolGroupData(ToolGroupData::Tool, toolName)));
 					}
 					else
 					{
@@ -486,7 +477,7 @@ HRESULT SVToolGrouping::LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 			{
 				hr = SVMSG_SVO_49_LOAD_CONFIGURATION_TOOLGROUPING;
 			}
-			hrTemp = rTree.GetNextLeaf(htiTools, htiLeaf);
+			htiLeaf = rTree.getNextLeaf(htiTools, htiLeaf);
 		}
 	}
 	return  hr;
@@ -498,77 +489,68 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 	HRESULT hr = S_OK;
 	SVToolGrouping groupings;
 	SVTreeType::SVBranchHandle htiChild = nullptr;
-	if (SVNavigateTreeClass::GetItemBranch(rTree, CTAG_TOOLGROUPINGS, htiParent, htiChild))
+	if (SVNavigateTree::GetItemBranch(rTree, CTAG_TOOLGROUPINGS, htiParent, htiChild))
 	{
 		_variant_t svValue;
-		SVTreeType::SVBranchHandle htiSubChild = nullptr;
-		rTree.GetFirstBranch(htiChild, htiSubChild);
+		SVTreeType::SVBranchHandle htiSubChild( rTree.getFirstBranch( htiChild ) );
+		;
 		while (S_OK == hr && nullptr != htiSubChild)
 		{
-			_bstr_t name;
 			// Will be either Tools or Group
-			hr = rTree.GetBranchName(htiSubChild, name.GetBSTR());
-			if (S_OK == hr)
+			String name = rTree.getBranchName( htiSubChild );
+			if (CTAG_GROUP == name)
 			{
-				if (CTAG_GROUP == String(static_cast<LPCTSTR>(name)))
+				// Read the Group data
+				if (SVNavigateTree::GetItem(rTree, CTAG_STARTGROUP, htiSubChild, svValue))
 				{
-					// Read the Group data
-					if (SVNavigateTreeClass::GetItem(rTree, CTAG_STARTGROUP, htiSubChild, svValue))
+					String groupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+					String endGroupName;
+					String startGroupComment;
+					String endGroupComment;
+					bool bCollapsed = false;
+					if (SVNavigateTree::GetItem(rTree, CTAG_COLLAPSED, htiSubChild, svValue))
 					{
-						String groupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
-						String endGroupName;
-						String startGroupComment;
-						String endGroupComment;
-						bool bCollapsed = false;
-						if (SVNavigateTreeClass::GetItem(rTree, CTAG_COLLAPSED, htiSubChild, svValue))
-						{
-							bCollapsed = (VARIANT_TRUE == svValue.boolVal);
+						bCollapsed = (VARIANT_TRUE == svValue.boolVal);
 
-							if (SVNavigateTreeClass::GetItem(rTree, CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
+						if (SVNavigateTree::GetItem(rTree, CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
+						{
+							CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
+							::SVRemoveEscapedSpecialCharacters(tmp, true);
+							startGroupComment = static_cast<LPCTSTR>(tmp);
+						}
+						if (SVNavigateTree::GetItem(rTree, CTAG_ENDGROUP, htiSubChild, svValue))
+						{
+							endGroupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+							if (SVNavigateTree::GetItem(rTree, CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
 							{
 								CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
 								::SVRemoveEscapedSpecialCharacters(tmp, true);
-								startGroupComment = static_cast<LPCTSTR>(tmp);
-							}
-							if (SVNavigateTreeClass::GetItem(rTree, CTAG_ENDGROUP, htiSubChild, svValue))
-							{
-								endGroupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
-								if (SVNavigateTreeClass::GetItem(rTree, CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
-								{
-									CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
-									::SVRemoveEscapedSpecialCharacters(tmp, true);
-									endGroupComment = static_cast<LPCTSTR>(tmp);
-								}
-							}
-							groupings.m_list.insert(groupings.m_list.end(), std::make_pair(groupName, ToolGroupData(ToolGroupData::StartOfGroup, groupName, endGroupName, bCollapsed)));
-							// Update Comments
-							if (!startGroupComment.empty())
-							{
-								groupings.SetComment(groupName, startGroupComment);
-							}
-							// Get The Tools...
-							SVTreeType::SVBranchHandle htiTools = nullptr;
-							rTree.GetFirstBranch(htiSubChild, htiTools);
-							if (htiTools)
-							{
-								hr = LoadTools(rTree, htiTools, groupings);
-							}
-							if (S_OK == hr)
-							{
-								// End Group is optional
-								if (!endGroupName.empty())
-								{
-									groupings.m_list.insert(groupings.m_list.end(), std::make_pair(endGroupName, ToolGroupData(ToolGroupData::EndOfGroup, groupName, endGroupName, false)));
-									if (!endGroupComment.empty())
-									{
-										groupings.SetComment(endGroupName, endGroupComment);
-									}
-								}
+								endGroupComment = static_cast<LPCTSTR>(tmp);
 							}
 						}
-						else
+						groupings.m_list.insert(groupings.m_list.end(), std::make_pair(groupName, ToolGroupData(ToolGroupData::StartOfGroup, groupName, endGroupName, bCollapsed)));
+						// Update Comments
+						if (!startGroupComment.empty())
 						{
-							hr = SVMSG_SVO_49_LOAD_CONFIGURATION_TOOLGROUPING;
+							groupings.SetComment(groupName, startGroupComment);
+						}
+						// Get The Tools...
+						SVTreeType::SVBranchHandle htiTools( rTree.getFirstBranch( htiSubChild ) );
+						if (nullptr != htiTools)
+						{
+							hr = LoadTools(rTree, htiTools, groupings);
+						}
+						if (S_OK == hr)
+						{
+							// End Group is optional
+							if (!endGroupName.empty())
+							{
+								groupings.m_list.insert(groupings.m_list.end(), std::make_pair(endGroupName, ToolGroupData(ToolGroupData::EndOfGroup, groupName, endGroupName, false)));
+								if (!endGroupComment.empty())
+								{
+									groupings.SetComment(endGroupName, endGroupComment);
+								}
+							}
 						}
 					}
 					else
@@ -576,13 +558,17 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 						hr = SVMSG_SVO_49_LOAD_CONFIGURATION_TOOLGROUPING;
 					}
 				}
-				else if (CTAG_TOOLS == String(static_cast<LPCTSTR>(name)))
+				else
 				{
-					// Read The Tools
-					hr = LoadTools(rTree, htiSubChild, groupings);
+					hr = SVMSG_SVO_49_LOAD_CONFIGURATION_TOOLGROUPING;
 				}
 			}
-			rTree.GetNextBranch(htiChild, htiSubChild);
+			else if (CTAG_TOOLS == name)
+			{
+				// Read The Tools
+				hr = LoadTools(rTree, htiSubChild, groupings);
+			}
+			htiSubChild = rTree.getNextBranch(htiChild, htiSubChild);
 		}
 		if (S_OK == hr)
 		{

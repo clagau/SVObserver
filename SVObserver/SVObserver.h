@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
@@ -75,7 +74,7 @@ enum SVHardwareErrorEnums
 	SV_GO_ONLINE_FAILURE_ALL             = 0xC01F0000L, // this is all the above combined
 };
 
-typedef SVXMLMaterialsTree SVTreeType;
+typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
 class SVObserverApp : public CWinApp
@@ -439,11 +438,8 @@ public:
 
 	typedef std::map<UINT, SVUtilityIniClass> UtilityMenuMap;
 	UtilityMenuMap m_UtilityMenu;
-	//@WARNING m_MaterialsTree MUST be before m_XMLTree in this file, 
-	// because it must be initialized in this order. (m_XMLTree need m_MaterialsTree in the constructor)
-	SVMaterialsTree m_MaterialsTree;
-	SVXMLMaterialsTree m_XMLTree;
-	SVXMLMaterialsTree::SVBranchHandle m_Inspection;
+	SvXml::SVXMLMaterialsTree m_XMLTree;
+	SvXml::SVXMLMaterialsTree::SVBranchHandle m_Inspection;
 
 
 #pragma endregion Public Member variables

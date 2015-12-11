@@ -28,7 +28,7 @@
 #include "SVInspectionTreeParser.h"
 #include "SVObjectScriptParser.h"
 #include "SVParserProgressDialog.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVInspectionProcess.h"
 #include "SVXMLLibrary/SVXML2TreeConverter.h"
 #include "SVConfigurationObject.h"
@@ -148,46 +148,35 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 	bool bOk = true;
 	
 	SVTreeType::SVBranchHandle hItem;
-	if (SVNavigateTreeClass::GetItemBranch(rTree, CTAG_PPQ, NULL, hItem))
+	if (SVNavigateTree::GetItemBranch(rTree, CTAG_PPQ, NULL, hItem))
 	{
 		SVTreeType::SVBranchHandle hItemInputs;
-		if (SVNavigateTreeClass::GetItemBranch(rTree, CTAG_INPUT, hItem , hItemInputs))
+		if (SVNavigateTree::GetItemBranch(rTree, CTAG_INPUT, hItem , hItemInputs))
 		{
-			SVTreeType::SVBranchHandle htiDataChild = NULL;
+			SVTreeType::SVBranchHandle htiDataChild( nullptr );
 				
-			rTree.GetFirstBranch(hItemInputs, htiDataChild);
+			htiDataChild = rTree.getFirstBranch(hItemInputs);
 
-			while (bOk && htiDataChild != NULL)
+			while (bOk && nullptr != htiDataChild )
 			{
-				_bstr_t DataName;
+				SVString DataName( rTree.getBranchName(htiDataChild) );
 				
-				rTree.GetBranchName(htiDataChild, DataName.GetBSTR());
-
-				SVTreeType::SVBranchHandle htiValueChild = NULL;
-
-				rTree.GetFirstBranch(htiDataChild, htiValueChild);
-
-				_bstr_t ValueName;
-				
-				rTree.GetBranchName(htiValueChild, ValueName.GetBSTR());
-
 				long l_PPQPosition = -1;
 				_variant_t svValue;
-				CString strName;
 				CString strType;
 				long l_Index;
 
-				bOk = SVNavigateTreeClass::GetItem(rTree, CTAG_IO_TYPE, htiDataChild, svValue);
+				bOk = SVNavigateTree::GetItem(rTree, CTAG_IO_TYPE, htiDataChild, svValue);
 				if (bOk)
 				{
 					strType = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
 				}
-				bOk = SVNavigateTreeClass::GetItem(rTree, CTAG_ITEM_NAME, htiDataChild, svValue);
+				bOk = SVNavigateTree::GetItem(rTree, CTAG_ITEM_NAME, htiDataChild, svValue);
 				if (bOk)
 				{
 					DataName = svValue;
 				}
-				bOk = SVNavigateTreeClass::GetItem(rTree, CTAG_PPQ_POSITION, htiDataChild, svValue);
+				bOk = SVNavigateTree::GetItem(rTree, CTAG_PPQ_POSITION, htiDataChild, svValue);
 				if (bOk)
 				{
 					l_PPQPosition = svValue;
@@ -204,12 +193,12 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 					{								
 						_variant_t l_Variant = 0.0;
 
-						bOk = SVNavigateTreeClass::GetItem(rTree, CTAG_REMOTE_INDEX, htiDataChild, svValue);
+						bOk = SVNavigateTree::GetItem(rTree, CTAG_REMOTE_INDEX, htiDataChild, svValue);
 						if (bOk)
 						{
 							l_Index = svValue;
 						}
-						if (SVNavigateTreeClass::GetItem(rTree, CTAG_REMOTE_INITIAL_VALUE, htiDataChild, svValue))
+						if (SVNavigateTree::GetItem(rTree, CTAG_REMOTE_INITIAL_VALUE, htiDataChild, svValue))
 						{
 							l_Variant = svValue;
 						}
@@ -217,7 +206,7 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 						insertor = boost::any(SVImportedRemoteInput(DataName, l_PPQPosition, l_Index, l_Variant));
 					}
 				}
-				rTree.GetNextBranch(hItemInputs, htiDataChild);
+				htiDataChild = rTree.getNextBranch(hItemInputs, htiDataChild);
 			}
 		}
 	}
@@ -230,28 +219,26 @@ static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSe
 	bool Result( true );
 
 	SVTreeType::SVBranchHandle hItem;
-	if (SVNavigateTreeClass::GetItemBranch( rTree, CTAG_GLOBAL_CONSTANTS, NULL, hItem ))
+	if (SVNavigateTree::GetItemBranch( rTree, CTAG_GLOBAL_CONSTANTS, NULL, hItem ))
 	{
-		SVTreeType::SVBranchHandle hItemChild( NULL );
+		SVTreeType::SVBranchHandle hItemChild( nullptr );
 
-		rTree.GetFirstBranch( hItem, hItemChild );
+		hItemChild = rTree.getFirstBranch( hItem );
 
-		while( Result && NULL != hItemChild )
+		while( Result && nullptr != hItemChild )
 		{
 			SvOi::GlobalConstantData GlobalData;
 			_variant_t Value;
-			_bstr_t Name;
 
-			rTree.GetBranchName( hItemChild, Name.GetBSTR() );
-			GlobalData.m_DottedName = Name;
+			GlobalData.m_DottedName = rTree.getBranchName( hItemChild );
 
-			Result = SVNavigateTreeClass::GetItem( rTree, CTAG_VALUE, hItemChild, Value );
+			Result = SVNavigateTree::GetItem( rTree, CTAG_VALUE, hItemChild, Value );
 			if( Result )
 			{
 				GlobalData.m_Value = Value;
 			}
 			Value.Clear();
-			Result = SVNavigateTreeClass::GetItem( rTree, CTAG_DESCRIPTION, hItemChild, Value );
+			Result = SVNavigateTree::GetItem( rTree, CTAG_DESCRIPTION, hItemChild, Value );
 			if( Result )
 			{
 				CString Description;
@@ -262,7 +249,7 @@ static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSe
 			}
 			rImportedGlobals.insert( GlobalData );
 			
-			rTree.GetNextBranch( hItem, hItemChild );
+			hItemChild = rTree.getNextBranch( hItem, hItemChild );
 		}
 	}
 
@@ -336,8 +323,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	_bstr_t bstrChangedNode;
 	CWnd* pParentWnd = AfxGetApp()->GetMainWnd();
 
-	SVMaterialsTree l_LocalTree;
-	SVXMLMaterialsTree tree( l_LocalTree );
+	SvXml::SVXMLMaterialsTree XmlTree;
 	SVXMLClass xml;
 	SvOi::GlobalConstantDataSet ImportedGlobals;
 
@@ -351,7 +337,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 		hr = xml.CopyXMLFileToDOM(filename.ToBSTR(), bstrRevisionHistory.GetAddress());
 		if (S_OK == hr)
 		{
-			hr = SVXML2TreeConverter::CopyToTree(xml, tree, L"Base", false);
+			hr = SVXML2TreeConverter::CopyToTree(xml, XmlTree, L"Base", false);
 		
 			if (S_OK == hr)
 			{
@@ -367,23 +353,23 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 				rProgress.UpdateProgress(++currentOp, numOperations);
 
 				InputListInsertor insertor(inspectionInfo.m_inputList, inspectionInfo.m_inputList.begin());
-				ImportPPQInputs(tree, insertor);
+				ImportPPQInputs(XmlTree, insertor);
 
 				msg = _T("Importing Global Constants...");
 				rProgress.UpdateText(msg.c_str());
 				rProgress.UpdateProgress(++currentOp, numOperations);
 
-				importGlobalConstants( tree, ImportedGlobals );
+				importGlobalConstants( XmlTree, ImportedGlobals );
 
 				msg = _T("Creating Inspection object...");
 				rProgress.UpdateText(msg.c_str());
 				rProgress.UpdateProgress(++currentOp, numOperations);
 
-				SVXMLMaterialsTree::SVBranchHandle hItem;
-				if ( SVNavigateTreeClass::GetItemBranch( tree, CTAG_INSPECTION_PROCESS, nullptr, hItem ) )
+				SvXml::SVXMLMaterialsTree::SVBranchHandle hItem;
+				if ( SVNavigateTree::GetItemBranch( XmlTree, CTAG_INSPECTION_PROCESS, nullptr, hItem ) )
 				{
-					SVXMLMaterialsTree::SVBranchHandle hItemToolset;
-					if ( SVNavigateTreeClass::GetItemBranch( tree, CTAG_TOOLSET_SET, hItem, hItemToolset ) )
+					SvXml::SVXMLMaterialsTree::SVBranchHandle hItemToolset;
+					if ( SVNavigateTree::GetItemBranch( XmlTree, CTAG_TOOLSET_SET, hItem, hItemToolset ) )
 					{
 						rProgress.UpdateProgress(++currentOp, numOperations);
 
@@ -394,7 +380,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 						unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
 						// Create Inspection process - leave unattached for now
-						hr = SVInspectionTreeParser< SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionGuid, tree, hItem);
+						hr = SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionGuid, XmlTree, hItem);
 						if (S_OK == hr)
 						{
 							msg = _T("Creating Toolset objects...");
@@ -413,10 +399,10 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 								rProgress.UpdateText(msg.c_str());
 								rProgress.UpdateProgress(++currentOp, numOperations);
 
-								SVConfigurationObject::updateConfTreeToNewestVersion(tree, hItemToolset);
+								SVConfigurationObject::updateConfTreeToNewestVersion(XmlTree, hItemToolset);
 
 								// Launch parser progress
-								SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVXMLMaterialsTree >(tree, hItemToolset, parserHandle, inspectionInfo.m_inspectionGuid, pInspection, &l_ParserProgressDialog));
+								SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >(XmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionGuid, pInspection, &l_ParserProgressDialog));
 								if ( nullptr != pParser )
 								{
 									// Set the Parser Object
@@ -460,17 +446,17 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	{
 		checkGlobalConstants( ImportedGlobals, rGlobalConflicts);
 
-		SVXMLMaterialsTree::SVBranchHandle l_Root;
-		SVXMLMaterialsTree::SVBranchHandle l_IPDocItem;
-		SVXMLMaterialsTree toTree( inspectionInfo.m_materialsTree );
+		SvXml::SVXMLMaterialsTree::SVBranchHandle l_Root( nullptr );
+		SvXml::SVXMLMaterialsTree::SVBranchHandle l_IPDocItem( nullptr );
+		SvXml::SVXMLMaterialsTree toTree( inspectionInfo.m_materialsTree );
 
-		tree.GetRoot( l_Root );
-		if( SVNavigateTreeClass::FindBranch( tree, l_Root, SVFindPredicate( tree, CTAG_SVIPDOC ), l_IPDocItem ) )
+		l_Root = XmlTree.getRoot();
+		if( SVNavigateTree::FindBranch( XmlTree, l_Root, SVFindPredicate( XmlTree, CTAG_SVIPDOC ), l_IPDocItem ) )
 		{
 			toTree.Clear();
-			toTree.GetRoot( l_Root );
+			l_Root = toTree.getRoot(  );
 
-			if( !( SVNavigateTreeClass::Copy( toTree, l_Root, tree, l_IPDocItem ) ) )
+			if( !( SVNavigateTree::Copy( toTree, l_Root, XmlTree, l_IPDocItem ) ) )
 			{
 				hr = E_FAIL;
 			}

@@ -15,6 +15,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
 
 //Forward declarations
@@ -22,13 +23,12 @@ class SVGUID;
 class SVInspectionProcess;
 class SVToolClass;
 class SVObjectXMLWriter;
-class SVXMLMaterialsTree;
 
 class ToolClipboard
 {
 public:
 #pragma region Declarations
-
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
 public:
@@ -132,14 +132,14 @@ protected:
 	// Parameter: rTree <out> Reference to the tree to store the XML conversion
 	// Return: S_OK on success
 	//************************************
-	HRESULT convertXmlToTree( const SVString& rXmlData, SVXMLMaterialsTree& rTree ) const;
+	HRESULT convertXmlToTree( const SVString& rXmlData, SVTreeType& rTree ) const;
 
 	//************************************
 	// Description: This method checks the clipboard SVObserver version to the current SVObserver version
 	// Parameter: rTree <in> Reference to the tree
 	// Return: S_OK on success
 	//************************************
-	HRESULT checkVersion( SVXMLMaterialsTree& rTree ) const;
+	HRESULT checkVersion( SVTreeType& rTree ) const;
 
 	//************************************
 	// Description: This method validates Guids and replaces the image if required
@@ -147,7 +147,7 @@ protected:
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rTree, int ToolListindex ) const;
+	HRESULT validateGuids( SVString& rXmlData, SVTreeType& rTree, int ToolListindex ) const;
 
 	//************************************
 	// Description: This method replaces the tool name
@@ -155,7 +155,7 @@ protected:
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT replaceToolName( SVString& rXmlData, SVXMLMaterialsTree& rTree ) const;
+	HRESULT replaceToolName( SVString& rXmlData, SVTreeType& rTree ) const;
 
 	//************************************
 	// Description: This method replaces all the unique Guids
@@ -163,7 +163,7 @@ protected:
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT replaceUniqueGuids( SVString& rXmlData, SVXMLMaterialsTree& rTree ) const;
+	HRESULT replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree ) const;
 
 	//************************************
 	// Description: This method parses the tree and generates the tool
@@ -171,7 +171,7 @@ protected:
 	// Parameter: rToolGuid <out> Reference to the tool GUID generated
 	// Return: S_OK on success
 	//************************************
-	HRESULT parseTreeToTool( SVXMLMaterialsTree& rTree, SVGUID& rToolGuid );
+	HRESULT parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid );
 
 #pragma endregion Protected Methods
 

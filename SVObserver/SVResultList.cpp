@@ -21,7 +21,7 @@
 #include "SVInspectionProcess.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVToolSet.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 
 #pragma endregion Includes
 
@@ -106,7 +106,7 @@ bool SVResultListClass::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBra
 	SVTreeType::SVBranchHandle htiChild = nullptr;
 
 
-	if (SVNavigateTreeClass::GetItemBranch(rTree, CTAG_VIEWEDVARIABLES, htiParent, htiChild))
+	if (SVNavigateTree::GetItemBranch(rTree, CTAG_VIEWEDVARIABLES, htiParent, htiChild))
 	{
 
 		SevenTwoCfg = m_ResultViewReferences.Load( rTree, htiChild );

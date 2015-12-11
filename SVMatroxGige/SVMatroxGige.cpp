@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "StdAfx.h"
+#include <map>
 #include "SVMatroxGige.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h" // for SV_CURRENT_MIL_VERSION define
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
@@ -29,7 +30,6 @@
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVMaterialsLibrary/SVMaterials.h"
 
 // helpers for System/Digitizer Handles
 #define SV_MAKE_MATROXGIGE_SYSTEM_DIGITIZER_HANDLE( SystemHandle, DigitizerHandle ) \
@@ -219,12 +219,13 @@ void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera,
 		const SVCallbackStruct& callback = p_rCamera.GetTriggerCallback();
 		if (callback.m_pCallback)
 		{
-			SVMaterials materials;
-			materials.AddMaterial("Timestamp", _variant_t(timestamp));
-			materials.AddMaterial("LineState", _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE));
-			materials.AddMaterial("StartFrameTimestamp", _variant_t(p_rCamera.m_StartFrameTimeStamp));
+			typedef  std::map<SVString, _variant_t> NameVariantMap;
+			NameVariantMap Settings;
+			Settings[_T("Timestamp")] = _variant_t(timestamp);
+			Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
+			Settings[_T("StartFrameTimestamp")] = _variant_t(p_rCamera.m_StartFrameTimeStamp);
 			
-			callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&materials));
+			callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&Settings));
 		}
 	}
 	else

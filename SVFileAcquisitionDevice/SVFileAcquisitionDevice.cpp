@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include <map>
 #include "SVFileAcquisitionDevice.h"
 #include <boost/bind.hpp>
 #include "SVFileAcquisitionDeviceParamEnum.h"
@@ -23,7 +24,6 @@
 #include "SVTriggerLibrary/SVTriggerCallbackFunc.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVMaterialsLibrary/SVMaterials.h"
 
 static const long MaxFileCameras = 12;
 
@@ -955,12 +955,13 @@ void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
 	const SVCallbackStruct& callback = p_rCamera.GetTriggerCallback();
 	if (callback.m_pCallback)
 	{
-		SVMaterials materials;
-		materials.AddMaterial("Timestamp", _variant_t(timestamp));
-		materials.AddMaterial("LineState", _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE));
-		materials.AddMaterial("StartFrameTimestamp", _variant_t(p_rCamera.m_StartTimeStamp));
+		typedef  std::map<SVString, _variant_t> NameVariantMap;
+		NameVariantMap Settings;
+		Settings[_T("Timestamp")] = _variant_t(timestamp);
+		Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
+		Settings[_T("StartFrameTimestamp")] = _variant_t(p_rCamera.m_StartTimeStamp);
 			
-		callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&materials));
+		callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&Settings));
 	}
 }
 

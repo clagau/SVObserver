@@ -28,7 +28,7 @@
 #include "SVImageViewScroll.h"
 #include "SVIPDoc.h"
 #include "SVLineAnalyzer.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
 #include "SVSetupDialogManager.h"
 #include "SVToolLoadImage.h"
@@ -1981,7 +1981,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	bool l_bUseImageView = false;
 
-	l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, l_svVariant );
+	l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, l_svVariant );
 	if( l_bOk )
 	{
 		l_bUseImageView = l_svVariant;
@@ -1989,7 +1989,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	if( l_bOk )
 	{
-		bZoomExOK = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, l_svVariant );
+		bZoomExOK = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, l_svVariant );
 		if(bZoomExOK)
 		{
 			double dZoom = l_svVariant;
@@ -2002,7 +2002,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	if( l_bOk && !bZoomExOK )
 	{
-		l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, l_svVariant );
+		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, l_svVariant );
 		if( l_bOk )
 		{
 			long l_index = 0;
@@ -2027,7 +2027,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	if( l_bOk && l_bUseImageView )
 	{
-		l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, l_svVariant );
+		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, l_svVariant );
 		if( l_bOk )
 		{
 			_bstr_t l_String( l_svVariant );
@@ -2059,7 +2059,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 	bool l_bUseImageView = false;
 	bool bZoomExOK = false;
 
-	l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, l_svVariant );
+	l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, l_svVariant );
 	if( l_bOk )
 	{
 		l_bUseImageView = l_svVariant;
@@ -2067,7 +2067,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 	if( l_bOk )
 	{
-		bZoomExOK = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, l_svVariant );
+		bZoomExOK = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, l_svVariant );
 		if(bZoomExOK)
 		{
 			double dZoom = l_svVariant;
@@ -2084,7 +2084,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 	if( l_bOk && !bZoomExOK )
 	{
-		l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, l_svVariant );
+		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, l_svVariant );
 		if( l_bOk )
 		{
 			long l_index = 0;
@@ -2112,7 +2112,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 	if( l_bOk && l_bUseImageView )
 	{
-		l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, l_svVariant );
+		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, l_svVariant );
 		if( l_bOk )
 		{
 			_bstr_t l_String( l_svVariant );

@@ -22,16 +22,19 @@ SVCameraTriggerData::~SVCameraTriggerData()
 	destroy();
 }
 
-void SVCameraTriggerData::Set(long index, const SVMaterials& rMaterials)
+void SVCameraTriggerData::Set(long index, const NameVariantMap& rSettings)
 {
 	_variant_t timeStamp;
 	_variant_t lineState;
-	HRESULT hr = rMaterials.GetMaterial(_T("Timestamp"), timeStamp);
-	if (hr == S_OK)
+	NameVariantMap::const_iterator Iter( rSettings.end() );
+	Iter = rSettings.find( _T("Timestamp") );
+	if( rSettings.end() != Iter  )
 	{
-		hr = rMaterials.GetMaterial(_T("LineState"), lineState); // optional ?
-		if (hr == S_OK)
+		timeStamp = Iter->second;
+		Iter = rSettings.find( _T("LineState") );
+		if( rSettings.end() != Iter  )
 		{
+			lineState = Iter->second;
 			SetLineState(index, timeStamp.dblVal, (lineState.boolVal == VARIANT_TRUE) ? true : false);
 		}
 	}

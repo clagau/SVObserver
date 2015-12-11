@@ -61,7 +61,7 @@ void NodeTreeCtrl::loadTree()
 	HTREEITEM ParentItem = nullptr;
 	TreeItemSet CurrentItems;
 
-	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
+	SvTrl::ObjectTreeItems::pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
 
 	while( getParentPropPage().getTreeContainer().pre_order_end() != Iter )
 	{
@@ -72,28 +72,28 @@ void NodeTreeCtrl::loadTree()
 		}
 		if(NULL != Iter.node()->parent())
 		{
-			ParentItem = Iter.node()->parent()->get()->second.getTreeItem();
+			ParentItem = Iter.node()->parent()->get()->second->getTreeItem();
 		}
-		if( Iter->second.isNode() )
+		if( Iter->second->isNode() )
 		{
 			HTREEITEM Item = NULL;
 			Item = InsertItem( TVIF_TEXT | TVIF_STATE | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM, 
-				Iter->second.getName().c_str(),
-				Iter->second.getIconNumber(),
-				Iter->second.getIconNumber(),
+				Iter->second->getName().c_str(),
+				Iter->second->getIconNumber(),
+				Iter->second->getIconNumber(),
 				0,
 				0,
 				reinterpret_cast<LPARAM> (&Iter->first),
 				ParentItem,
 				TVI_LAST );
 
-			SetItemState( Item, INDEXTOSTATEIMAGEMASK( Iter->second.getCheckedState() ), TVIS_STATEIMAGEMASK );
-			Iter->second.setTreeItem( Item );
+			SetItemState( Item, INDEXTOSTATEIMAGEMASK( Iter->second->getCheckedState() ), TVIS_STATEIMAGEMASK );
+			Iter->second->setTreeItem( Item );
 		}
 		//On initial load check if leaf value selected when in single object selection mode
-		if( isSingleSelect() && Iter->second.isLeaf() && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
+		if( isSingleSelect() && Iter->second->isLeaf() && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() )
 		{
-			setCurrentSelection( Iter->second.getDisplayLocation() );
+			setCurrentSelection( Iter->second->getDisplayLocation() );
 			CurrentItems.insert( ParentItem );
 		}
 		++Iter;
@@ -122,7 +122,7 @@ void NodeTreeCtrl::updateTree()
 
 		if( rTreeItems.end() != Iter )
 		{
-			UpdateNode(Iter->second);
+			UpdateNode(*Iter->second);
 		}
 		++IterName;
 	}
@@ -132,23 +132,23 @@ void NodeTreeCtrl::updateTree()
 
 void NodeTreeCtrl::UpdateAllNodes()
 {
-	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator i( getParentPropPage().getTreeContainer().pre_order_begin() );
+	SvTrl::ObjectTreeItems::pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
 
-	while( getParentPropPage().getTreeContainer().pre_order_end() != i )
+	while( getParentPropPage().getTreeContainer().pre_order_end() != Iter )
 	{
-		if( i.node()->is_root() )
+		if( Iter.node()->is_root() )
 		{
-			++i;
+			++Iter;
 			continue;
 		}
 
-		UpdateNode(i->second);
+		UpdateNode(*Iter->second);
 
-		if( isSingleSelect() && i->second.isLeaf() && SvTrl::IObjectSelectorItem::CheckedEnabled == i->second.getCheckedState() )
+		if( isSingleSelect() && Iter->second->isLeaf() && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() )
 		{
-			setCurrentSelection( i->second.getDisplayLocation() );
+			setCurrentSelection( Iter->second->getDisplayLocation() );
 		}
-		++i;
+		++Iter;
 	}
 }
 #pragma endregion Public Methods
@@ -336,18 +336,18 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 	getRootItems( Items );
 	expandAll( Items, TVE_COLLAPSE );
 
-	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
+	SvTrl::ObjectTreeItems::pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
 
 	while( getParentPropPage().getTreeContainer().pre_order_end() != Iter )
 	{
-		if( Iter->second.isNode() )
+		if( Iter->second->isNode() )
 		{
-			SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState = Iter->second.getCheckedState();
+			SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState = Iter->second->getCheckedState();
 			bool Checked =  SvTrl::IObjectSelectorItem::CheckedEnabled == CheckedState || SvTrl::IObjectSelectorItem::CheckedDisabled == CheckedState;
 			bool Tristate = SvTrl::IObjectSelectorItem::TriStateEnabled == CheckedState || SvTrl::IObjectSelectorItem::TriStateDisabled == CheckedState;
 			if( Checked || Tristate )
 			{
-				Expand( Iter->second.getTreeItem(), TVE_EXPAND );
+				Expand( Iter->second->getTreeItem(), TVE_EXPAND );
 				Result = true;
 			}
 		}

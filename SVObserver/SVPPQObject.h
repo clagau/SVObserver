@@ -16,7 +16,6 @@
 #include <boost/function.hpp>
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
-#include "SVMaterialsLibrary/SVMaterials.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVObjectLibrary/SVObjectClass.h"

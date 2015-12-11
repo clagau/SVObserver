@@ -15,7 +15,6 @@
 #include "SVContainerLibrary/SVMap.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
-#include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
@@ -37,7 +36,7 @@
 class SVDeviceParamCollection;
 class SVDeviceParam;
 class SVIOController;
-class SVNavigateTreeClass;
+class SVNavigateTree;
 class SVRemoteOutputGroup;
 class SVRemoteOutputObject;
 class SVCameraTriggerClass;
@@ -46,29 +45,31 @@ class SVPPQObject;
 
 struct SVConfigurationAcquisitionDeviceInfoStruct;
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessPtrList;
+typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
 struct SVFindPredicate
 {
-	SVXMLMaterialsTree& m_rTree;
+	SVTreeType& m_rTree;
 	SVString m_Name;
 
-	SVFindPredicate( SVXMLMaterialsTree& p_rTree, const SVString& p_rName ) : m_rTree( p_rTree ), m_Name( p_rName ) {}
-	SVFindPredicate( SVXMLMaterialsTree& p_rTree, int StringResourceID ) : m_rTree( p_rTree ) 
+	SVFindPredicate( SVTreeType& rTree, const SVString& p_rName ) : m_rTree( rTree ), m_Name( p_rName ) {}
+	SVFindPredicate( SVTreeType& rTree, int StringResourceID ) : m_rTree( rTree ) 
 	{
 		CString tmp;
 		tmp.Format(StringResourceID);
 		m_Name = tmp;
 	}
 
-	bool operator()( const SVXMLMaterialsTree::SVBranchHandle& p_rRight ) const
+	bool operator()( const SVTreeType::SVBranchHandle& p_rRight ) const
 	{
-		_bstr_t l_Name;
+		bool Result( false );
+		SVString Name;
 
-		bool ok = ( m_rTree.GetBranchName( p_rRight, l_Name.GetBSTR() ) == S_OK );
-		ok = ok && ( m_Name == SVString( l_Name ) );
+		Name = m_rTree.getBranchName( p_rRight);
+		Result = ( m_Name == Name );
 
-		return ok;
+		return Result;
 	}
 };
 
@@ -86,8 +87,6 @@ public:
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
 
 	virtual HRESULT ObserverUpdate( const SVRenameObject& p_rData );
-
-	typedef SVXMLMaterialsTree SVTreeType;
 
 	unsigned long GetSVXFileVersion(SVTreeType& rTree);
 
@@ -120,12 +119,12 @@ public:
 	//************************************
 	//! Load AcquisitionDevice
 	//! \param rTree [in]
-	//! \param csBoardName [out]
+	//! \param BoardName [out]
 	//! \param lNumBordDig out]
 	//! \throw  MessageContainer
 	//! \returns true if AcquisitionDevice section was found 
 	//************************************
-	bool LoadAcquisitionDevice(SVTreeType& rTree, CString &csBoardName, long &lNumBordDig );
+	bool LoadAcquisitionDevice(SVTreeType& rTree, SVString &BoardName, long &lNumBordDig );
 	
 	//************************************
 	//! Load Camera 
@@ -163,13 +162,13 @@ public:
 
 	//************************************
 	//! Set the Producttype  if no Producttype is set
-	//! \param csboardname [in]
+	//! \param Boardname [in]
 	//! \param numCameras [in]
 	//! \param NumBoardDig [in]
 	//! \throw  MessageContainer
 	//! \returns void
 	//************************************
-	void CalculateProductType(CString csboardname, long numCameras,long NumBoardDig);
+	void CalculateProductType(const SVString& rBoardname, long numCameras, long NumBoardDig);
 
 
 	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
@@ -194,7 +193,7 @@ public:
 	SVOutputObjectList* GetOutputObjectList( ) const;
 	HRESULT RebuildOutputObjectList();
 
-	BOOL AddAcquisitionDevice( LPCTSTR szName, SVFileNameArrayClass& rsvFiles,
+	bool AddAcquisitionDevice( LPCTSTR szName, SVFileNameArrayClass& rsvFiles,
                                SVLightReference& rsvLight,
 							   SVLut& rLut,
 							   const SVDeviceParamCollection* rpDeviceParams );
@@ -217,27 +216,27 @@ public:
 										SVLut*& rpLut,
 										SVDeviceParamCollection*& rpDeviceParams ) const;
 
-	BOOL AddTrigger( SVTriggerObject* pTrigger );
-	BOOL RemoveTrigger( SVTriggerObject* pTrigger );
+	bool AddTrigger( SVTriggerObject* pTrigger );
+	bool RemoveTrigger( SVTriggerObject* pTrigger );
 	long GetTriggerCount( ) const;
 	SVTriggerObject* GetTrigger( long lIndex ) const;
 	BOOL GetChildObjectByName( LPCTSTR tszName, SVTriggerObject** ppTrigger ) const;
 
-	BOOL AddPPQ( SVPPQObject* pPPQ );
-	BOOL RemovePPQ( SVPPQObject* pPPQ );
+	bool AddPPQ( SVPPQObject* pPPQ );
+	bool RemovePPQ( SVPPQObject* pPPQ );
 	long GetPPQCount() const;
 	SVPPQObject* GetPPQ( long lIndex ) const;
 	BOOL GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const;
 	bool GetPPQByName( LPCTSTR name, SVPPQObject** ppPPQ ) const;
 
-	BOOL AddCamera( SVVirtualCamera* pCamera );
-	BOOL RemoveCamera( SVVirtualCamera* pCamera );
+	bool AddCamera( SVVirtualCamera* pCamera );
+	bool RemoveCamera( SVVirtualCamera* pCamera );
 	long GetCameraCount( ) const;
 	SVVirtualCamera* GetCamera( long lIndex ) const;
 	BOOL GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const;
 
-	BOOL AddInspection( SVInspectionProcess* pInspection );
-	BOOL RemoveInspection( SVInspectionProcess* pInspection );
+	bool AddInspection( SVInspectionProcess* pInspection );
+	bool RemoveInspection( SVInspectionProcess* pInspection );
 	long GetInspectionCount( ) const;
 	SVInspectionProcess* GetInspection( long lIndex ) const;
 	BOOL GetInspections( std::vector<SVInspectionProcess*>& rvecInspections ) const;
@@ -329,7 +328,7 @@ public:
 	/// \param rTree [in,out] The whole tree of the xml-configuration.
 	/// \param rToolset [in,out] The branch of the tool set which should be updated.
 	//************************************
-	static void updateConfTreeToNewestVersion(SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle &rToolset);
+	static void updateConfTreeToNewestVersion(SVTreeType &rTree, SVTreeType::SVBranchHandle &rToolset);
 
 protected:
 	BOOL FinishIPDoc( SVInspectionProcess* pInspection );
@@ -383,7 +382,7 @@ private:
 	//************************************
 	void ConvertColorToStandardProductType( bool& rConfigType );
 
-	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass& svFileArray );
+	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SVFileNameArrayClass& rFileArray );
 
 	void SaveFileAcquisitionConfiguration( SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
 	HRESULT LoadFileAcquisitionConfiguration( SVTreeType& rTree, SVTreeType::SVBranchHandle htiBoardChild, long& lNumAcqDig );

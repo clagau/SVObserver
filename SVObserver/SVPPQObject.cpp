@@ -4040,7 +4040,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 
 						if (!l_TriggerInfo.m_TriggerInfo.m_Data.empty())
 						{
-							m_CameraInputData.Set(lDataIndex, boost::any_cast<SVMaterials>(l_TriggerInfo.m_TriggerInfo.m_Data));
+							m_CameraInputData.Set(lDataIndex, boost::any_cast<SVCameraTriggerData::NameVariantMap>(l_TriggerInfo.m_TriggerInfo.m_Data));
 						}
 						// Get Shared Memory Slot
 						if (HasActiveMonitorList())

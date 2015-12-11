@@ -63,7 +63,7 @@
 
 #include "SVOConfigAssistantDlg.h"
 
-#include "SVXMLLibrary\SVNavigateTreeClass.h"
+#include "SVXMLLibrary\SVNavigateTree.h"
 
 #include "SVConfigurationObject.h"
 // BRW - SVImageCompression has been removed for x64.
@@ -355,8 +355,7 @@ SVObserverApp::SVObserverApp()
 	  , m_OutputStreamPortNumber( OutputStreamPortNumber )
 	  , m_FailStatusStreamPortNumber( FailStatusStreamPortNumber )
 	  , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
-	  , m_XMLTree( m_MaterialsTree )
-	  , m_MaterialsTree()
+	  , m_XMLTree()
 {
 	free((void*)m_pszHelpFilePath);
 	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
@@ -7853,7 +7852,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 			ExtrasEngine::Instance().CopyDirectoryToTempDirectory(Seidenader::SVObserver::RunFolder + CString("\\"));
 			ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: update autosave timestamp
 
-			SVNavigateTreeClass::DeleteAllItems( m_XMLTree ); //Arvid 150625: this appears to be necessary for AutoSave as well
+			SVNavigateTree::DeleteAllItems( m_XMLTree ); //Arvid 150625: this appears to be necessary for AutoSave as well
 		}
 		else 
 		{
@@ -7862,7 +7861,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 			svFileManager.RemoveUnusedFiles();
 
 			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
-			SVNavigateTreeClass::DeleteAllItems( m_XMLTree );
+			SVNavigateTree::DeleteAllItems( m_XMLTree );
 
 			if ( bOk )
 			{
@@ -8026,13 +8025,13 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 
 	SVTreeType::SVBranchHandle htiChild = NULL;
 
-	if( SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_IO, NULL, htiChild ) )
+	if( SVNavigateTree::GetItemBranch( p_rTree, CTAG_IO, NULL, htiChild ) )
 	{
 		SVIOController* pIOController( NULL );
 
 		_variant_t svVariant;
 
-		if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiChild, svVariant ) )
+		if( SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiChild, svVariant ) )
 		{
 			SVGUID ObjectID( svVariant );
 
@@ -8080,20 +8079,20 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 		l_Status = E_FAIL;
 	}
 
-	if( l_Status == S_OK && SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_INSPECTION, NULL, htiChild ) )
+	if( l_Status == S_OK && SVNavigateTree::GetItemBranch( p_rTree, CTAG_INSPECTION, NULL, htiChild ) )
 	{
-		SVTreeType::SVBranchHandle htiSubChild = NULL;
+		SVTreeType::SVBranchHandle htiSubChild( nullptr );
 
-		p_rTree.GetFirstBranch( htiChild, htiSubChild );
+		htiSubChild = p_rTree.getFirstBranch( htiChild );
 
-		while( l_Status == S_OK && htiSubChild != NULL )
+		while( l_Status == S_OK && nullptr != htiSubChild )
 		{
 			SVInspectionProcess* pInspection( nullptr );
 			SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
 			SVTreeType::SVBranchHandle htiSVInspectionProcess = NULL;
 
-			SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_INSPECTION_PROCESS, htiSubChild, htiSVInspectionProcess );
-			SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_SVIPDOC, htiSubChild, htiSVIPDoc );
+			SVNavigateTree::GetItemBranch( p_rTree, CTAG_INSPECTION_PROCESS, htiSubChild, htiSVInspectionProcess );
+			SVNavigateTree::GetItemBranch( p_rTree, CTAG_SVIPDOC, htiSubChild, htiSVIPDoc );
 
 			SVGUID docObjectID;
 
@@ -8108,7 +8107,7 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 			{
 				_variant_t svVariant;
 
-				if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiTempItem, svVariant ) )
+				if( SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiTempItem, svVariant ) )
 				{
 					SVGUID docObjectID = svVariant;
 
@@ -8166,7 +8165,7 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 				}
 			}
 
-			p_rTree.GetNextBranch( htiChild, htiSubChild );
+			htiSubChild = p_rTree.getNextBranch( htiChild, htiSubChild );
 		}
 	}
 	else

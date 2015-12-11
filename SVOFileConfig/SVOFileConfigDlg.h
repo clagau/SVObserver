@@ -27,7 +27,7 @@ public:
 
 	virtual ~SVOFileConfigDlg();
 
-	SVXMLCTreeCtrl m_XMLCTree;
+	SvXml::SVXMLCTreeCtrl m_XMLCTree;
 
 	//{{AFX_DATA(SVOFileConfigDlg)
 	enum { IDD = IDD_SVOFILECONFIG_DIALOG };

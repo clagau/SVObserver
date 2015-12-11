@@ -48,15 +48,15 @@
     <ClCompile Include="SVXMLSVRSchemaClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVMaterialData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVNavigateTreeClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVariantConverter.h">
@@ -95,11 +95,14 @@
     <ClInclude Include="SVXMLTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVMaterialData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVNavigateTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVNavigateTreeClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="SVXML2TreeConverter.inl">
       <Filter>Header Files</Filter>
     </None>
@@ -107,6 +110,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVXMLTree.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVNavigateTree.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

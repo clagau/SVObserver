@@ -13,7 +13,7 @@
 #define INCL_SVIMPORTEDINSPECTIONINFO_H
 
 #include <deque>
-#include "SVMaterialsLibrary/SVMaterialsTree.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVImportedInputList.h"
 
 class SVImportedInspectionInfo

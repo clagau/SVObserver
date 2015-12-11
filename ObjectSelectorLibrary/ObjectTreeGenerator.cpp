@@ -68,7 +68,7 @@ void ObjectTreeGenerator::Clear( bool ClearAll )
 	{
 		m_Results.clear();
 	}
-	m_TreeContainer.Clear();
+	m_TreeContainer.clear();
 	m_LocationInputFilters.clear();
 	m_LocationOutputFilters.clear();
 	m_AttributesSetFilter = 0;
@@ -273,7 +273,7 @@ bool ObjectTreeGenerator::setCheckItems( const SVStringSet& rItems )
 
 	while( rItems.end() != IterName )
 	{
-		SvTrl::ObjectTreeItems::SVTree_iterator Iter( m_TreeContainer.begin() );
+		SvTrl::ObjectTreeItems::iterator Iter( m_TreeContainer.begin() );
 		//Need to check if input filters are used
 		SVString Location = getFilteredLocation( m_LocationInputFilters,  *IterName );
 		//If an array we need the extra branch
@@ -293,7 +293,7 @@ bool ObjectTreeGenerator::setCheckItems( const SVStringSet& rItems )
 		Iter = m_TreeContainer.findItem( Location );
 		if( m_TreeContainer.end() != Iter )
 		{
-			Iter->second.setCheckedState( SvTrl::IObjectSelectorItem::CheckedEnabled );
+			Iter->second->setCheckedState( SvTrl::IObjectSelectorItem::CheckedEnabled );
 			Result = true;
 		}
 		++IterName;
@@ -456,22 +456,22 @@ bool ObjectTreeGenerator::checkModifiedItems()
 	bool Result( false );
 
 	m_Results.clear();
-	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter( m_TreeContainer.pre_order_begin() );
+	SvTrl::ObjectTreeItems::pre_order_iterator Iter( m_TreeContainer.pre_order_begin() );
 
 	while( m_TreeContainer.pre_order_end() != Iter )
 	{
-		bool Modified( Iter->second.getCheckedState() != Iter->second.getOrgCheckedState() );
+		bool Modified( Iter->second->getCheckedState() != Iter->second->getOrgCheckedState() );
 		if( Modified )
 		{
-			Iter->second.setModified( Modified );
+			Iter->second->setModified( Modified );
 			Result = true;
 		}
 		//Place items into the checked list when using Single or Multiple object
 		if( TypeSingleObject == (TypeSingleObject & m_SelectorType) || TypeMultipleObject == (TypeMultipleObject & m_SelectorType) )
 		{
-			if( SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
+			if( SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() )
 			{
-				m_Results.push_back( Iter->second );
+				m_Results.push_back( *Iter->second );
 			}
 		}
 		++Iter;
@@ -489,15 +489,15 @@ bool ObjectTreeGenerator::checkModifiedItems()
 
 void ObjectTreeGenerator::setItemAttributes()
 {
-	SvTrl::ObjectTreeItems::SVTree_const_pre_order_iterator Iter( m_TreeContainer.pre_order_begin() );
+	SvTrl::ObjectTreeItems::const_pre_order_iterator Iter( m_TreeContainer.pre_order_begin() );
 
 	while( m_TreeContainer.pre_order_end() != Iter )
 	{
 		//only leafs are of interest to set the attributes
-		if( Iter->second.isLeaf() && Iter->second.isModified() )
+		if( Iter->second->isLeaf() && Iter->second->isModified() )
 		{
 			//The tree item key is the object GUID
-			SVGUID ObjectGuid( Iter->second.getItemKey() );
+			SVGUID ObjectGuid( Iter->second->getItemKey() );
 
 			SVObjectClass* pObject(NULL);
 			SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
@@ -506,13 +506,13 @@ void ObjectTreeGenerator::setItemAttributes()
 			{
 				SVObjectReference ObjectRef = pObject;
 				//If an array must set the index
-				if( Iter->second.isArray() )
+				if( Iter->second->isArray() )
 				{
-					ObjectRef.SetArrayIndex( Iter->second.getArrayIndex() );
+					ObjectRef.SetArrayIndex( Iter->second->getArrayIndex() );
 				}
 				UINT AttributesSet = ObjectRef.ObjectAttributesSet();
 
-				switch( Iter->second.getCheckedState() )
+				switch( Iter->second->getCheckedState() )
 				{
 				case SvTrl::IObjectSelectorItem::CheckedEnabled:
 					AttributesSet |= m_AttributesSetFilter;

@@ -1,84 +1,80 @@
+//*****************************************************************************
+/// \copyright (c) 2015,2015 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved 
+//*****************************************************************************
+/// This is a tree template with key, data pairs as node
 //******************************************************************************
-//* COPYRIGHT (c) 2008 by Seidenader Vision Inc., Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVTree
-//* .File Name       : $Workfile:   SVTree.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:49:24  $
-//******************************************************************************
+#pragma once
 
-#ifndef INCL_SVTREE_H
-#define INCL_SVTREE_H
+#pragma region Includes
+#include <utility>
+#include <sequential_tree.h>
+#include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
-/**
-@SVObjectName Tree
-
-@SVObjectOverview This file defines the SVAdapter type and the interface to the SVTree class.
-
-@SVObjectOperations Available operations include a constructor and a virtual destructor.
-
-*/
-template< class SVT_TREE_ADAPTER >
-class SVTree :
-	public SVT_TREE_ADAPTER
+namespace Seidenader { namespace SVTreeLibrary
 {
-public:
-	typedef SVT_TREE_ADAPTER SVAdapter;
-	typedef typename SVAdapter::SVTreeContainer SVTreeContainer;
+	template <typename Key, typename Data>
+	class SVTree: public tcl::sequential_tree< std::pair<Key, SVSharedPtr<Data> > >
+	{
+	#pragma region Declarations
+	public:
+		typedef Data ElementData;
+		typedef SVSharedPtr< Data > DataPtr;
+		typedef std::pair<Key, DataPtr > SVTreeElement;
+		typedef tcl::sequential_tree< SVTreeElement > SVTreeContainer;
+	#pragma endregion Declarations
 
-	SVTree( bool bUseUniqueKey = false );
-	SVTree( const SVTree& p_rTree );
-	SVTree operator=( const SVTree& p_rTree );
-	virtual ~SVTree();
+	#pragma region Constructor
+	public:
+		SVTree();
 
-protected:
-	explicit SVTree( const SVTreeContainer& l_rTree, bool bUseUniqueKey = false );
+		//************************************
+		//! The class constructor
+		//! \param rTree [in] reference to a copy of the tree to create
+		//************************************
+		SVTree( const SVTreeContainer& rTree );
 
-	SVTreeContainer m_tree;
+		virtual ~SVTree();
+	#pragma endregion Constructor
 
-private:
-	void copy( const SVTree& p_rTree );
-};
+	#pragma region Public Methods
+	public:
+		//************************************
+		//! Static method to get the total count of leafs and nodes
+		//! \param rTree [in] reference to the tree to get the total
+		//! \returns the size of the tree elements
+		//************************************
+		static size_t getCount( const SVTreeContainer& rTree );
+
+		//************************************
+		//! Static method to get the element data of a child corresponding to the key
+		//! \param rTree [in] reference to the tree parent node
+		//! \param rKey [in] reference to the key to search for in the children's list
+		//! \param rData [out] reference to the data to fill 
+		//! \returns S_OK when data found
+		//************************************
+		static HRESULT getData( const SVTreeContainer& rTree, const Key& rKey, ElementData& rData );
+
+		//************************************
+		//! Static method to find the element of a child corresponding to the key
+		//! \param rTree [in] reference to the tree parent node
+		//! \param rKey [in] reference to the key to search for in the children's list
+		//! \returns iterator to the corresponding element
+		//************************************
+		static iterator find( SVTreeContainer& rTree, const Key& rKey );
+
+		//************************************
+		//! Static method to find the element of a child corresponding to the key
+		//! \param rTree [in] reference to the tree parent node
+		//! \param rKey [in] reference to the key to search for in the children's list
+		//! \returns a constant iterator to the corresponding element
+		//************************************
+		static const_iterator find( const SVTreeContainer& rTree, const Key& rKey );
+	#pragma endregion Public Methods
+	};
+} /* namespace SVTreeLibrary */ } /* namespace Seidenader */
 
 #include "SVTree.inl"
 
-#endif
-
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVTreeLibrary\SVTree.h_v  $
- * 
- *    Rev 1.0   25 Apr 2013 18:49:24   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   05 Dec 2008 15:27:40   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  634
- * SCR Title:  Implement a File Acquistion Device
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised to upgrade to TCL 5.3.0
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   17 Nov 2008 07:24:46   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  615
- * SCR Title:  Integrate PLC Classes into SVObserver Outputs
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial Check-in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/
+namespace SvTrl = Seidenader::SVTreeLibrary;

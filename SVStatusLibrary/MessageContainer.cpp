@@ -345,6 +345,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 		catch(  MessageContainer& mh  )
 		{
+			UNREFERENCED_PARAMETER(mh);
 			//do nothing;
 		}
 

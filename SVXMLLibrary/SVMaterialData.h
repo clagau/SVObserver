@@ -3,91 +3,61 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVMaterialData
-//* .File Name       : $Workfile:   SVMaterialData.cpp  $
+//* .File Name       : $Workfile:   SVMaterialData.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:14:24  $
+//* .Check In Date   : $Date:   22 Apr 2013 14:14:28  $
 //******************************************************************************
 
-#include "stdafx.h"
-#include "SVMaterialData.h"
+#pragma once
 
-#include "SVUtilityLibrary/SVGUID.h"
+#include <comdef.h>
+#include "SVUtilityLibrary/SVSharedPtr.h"
 
-SVMaterialData::SVMaterialData()
-: m_Variant()
+/**
+@SVObjectName Material Data
+
+@SVObjectOverview
+
+@SVObjectOperations
+
+*/
+class SVMaterialData
 {
-}
+public:
+	SVMaterialData();
+	SVMaterialData( const SVMaterialData& p_rObject );
+	SVMaterialData( const VARIANT& p_rVariant );
 
-SVMaterialData::SVMaterialData( const SVMaterialData& p_rObject )
-: m_Variant()
-{
-	*this = p_rObject;
-}
+	virtual ~SVMaterialData();
 
-SVMaterialData::SVMaterialData( const VARIANT& p_rVariant )
-: m_Variant()
-{
-	*this = p_rVariant;
-}
+	bool empty() const;
 
-SVMaterialData::~SVMaterialData()
-{
-	m_Variant.Clear();
-}
+	void clear();
 
-bool SVMaterialData::empty() const
-{
-	return m_Variant.vt == VT_EMPTY;
-}
+	operator const _variant_t & () const;
 
-void SVMaterialData::clear()
-{
-	m_Variant.Clear();
-}
+	const SVMaterialData& operator=( const SVMaterialData& p_rObject );
+	const SVMaterialData& operator=( const VARIANT& p_rVariant );
 
-SVMaterialData::operator const _variant_t & () const
-{
-	return m_Variant;
-}
+  bool operator==( const SVMaterialData& p_rObject ) const;
 
-const SVMaterialData& SVMaterialData::operator=( const SVMaterialData& p_rObject )
-{
-	if( this != &p_rObject )
-	{
-		m_Variant = p_rObject.m_Variant;
-	}
+  bool operator!=( const SVMaterialData& p_rObject ) const;
 
-	return *this;
-}
+protected:
+	_variant_t m_Variant;
 
-const SVMaterialData& SVMaterialData::operator=( const VARIANT& p_rVariant )
-{
-	if( &m_Variant != &p_rVariant )
-	{
-		m_Variant = p_rVariant;
-	}
+};
 
-	return *this;
-}
-
-bool SVMaterialData::operator==( const SVMaterialData& p_rObject ) const
-{
-	return m_Variant == p_rObject.m_Variant;
-}
-
-bool SVMaterialData::operator!=( const SVMaterialData& p_rObject ) const
-{
-	return m_Variant != p_rObject.m_Variant;
-}
+typedef SVSharedPtr< SVMaterialData > SVMaterialDataPtr;
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaterialsLibrary\SVMaterialData.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaterialsLibrary\SVMaterialData.h_v  $
  * 
- *    Rev 1.0   22 Apr 2013 14:14:24   bWalter
+ *    Rev 1.0   22 Apr 2013 14:14:28   bWalter
  * Project:  SVObserver
  * Change Request (SCR) nbr:  814
  * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010

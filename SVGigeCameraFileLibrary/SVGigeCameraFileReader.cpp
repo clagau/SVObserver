@@ -23,7 +23,7 @@
 #include "SVOMFCLibrary/SVStringValueDeviceParam.h"
 #include "SVOMFCLibrary/SVi64ValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVMaterialsLibrary/SVMaterialsTree.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVCustomParameterBuilder.h"
 
 // section headings
@@ -80,38 +80,37 @@ static const int MAX_STRING_BUFFER = 128;
 // For Custom params
 static LPCTSTR scValue = _T("Value");
 
-static SVMaterialsTreeAdapter::iterator GetBaseNode(SVMaterialsTree& rTree, const std::string& key)
+static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const std::string& key)
 {
-	SVMaterialsTreeAdapter::iterator it(rTree.find(key.c_str()));
+	SVString SearchKey(key.c_str() );
+	SVMaterialsTree::iterator it( SVMaterialsTree::find( rTree, SearchKey ));
 	if (it == rTree.end())
 	{
-		SVMaterialsTreeAdapter::SVMaterialsElement l_Element(SVString(key.c_str()), SVMaterials());
-		SVMaterialsTreeAdapter::iterator l_Iter(rTree.insert(l_Element, rTree.end()));
-		return l_Iter;
+		SVMaterialsTree::SVTreeElement Element( SearchKey, SVMaterialDataPtr( nullptr ) );
+		SVMaterialsTree::iterator Iter( rTree.insert(Element) );
+		return Iter;
 	}
 	return it;
 }
 
-static SVMaterialsTreeAdapter::iterator GetOptionNode(SVMaterialsTree& rTree, const std::string& key, const std::string& optionKey)
+static SVMaterialsTree::iterator GetOptionNode(SVMaterialsTree& rTree, const std::string& key, const std::string& optionKey)
 {
-	SVMaterialsTreeAdapter::iterator itBase = GetBaseNode(rTree, key);
+	SVMaterialsTree::iterator itBase = GetBaseNode(rTree, key);
 	
 	if (itBase != rTree.end())
 	{
-		SVMaterialsTreeAdapter::SVTreeContainer* pTree = itBase.GetChildTree();
-		if (pTree)
+		SVMaterialsTree::SVTreeContainer* pTree = itBase.node();
+		if( nullptr != pTree)
 		{
-			SVMaterialsTreeAdapter rChildTree(*pTree);
-			
-			// Find or insert Option Node
-			SVMaterialsTreeAdapter::iterator optIt(rChildTree.find(optionKey.c_str()));
-			if (optIt == rChildTree.end())
+			SVString Key( optionKey.c_str());
+			SVMaterialsTree::iterator OptionIt( SVMaterialsTree::find( rTree, Key) );
+			if (OptionIt == pTree->end())
 			{
-				SVMaterialsTreeAdapter::SVMaterialsElement l_Element(SVString(optionKey.c_str()), SVMaterials());
-				SVMaterialsTreeAdapter::iterator l_Iter(rChildTree.insert(l_Element, rChildTree.end()));
+				SVMaterialsTree::SVTreeElement Element(Key, SVMaterialDataPtr( nullptr ) );
+				SVMaterialsTree::iterator l_Iter(pTree->insert( Element ));
 				return l_Iter;
 			}
-			return optIt;
+			return OptionIt;
 		}
 	}
 	return rTree.end();
@@ -263,33 +262,45 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 				{
 					case 2: // Value
 					{
-						SVMaterialsTreeAdapter::iterator it = GetBaseNode(customParams, splitContainer[0]);
-						SVMaterials& rMaterials = it->second;
-						rMaterials.AddMaterial(scValue, splitContainer[1].c_str());
+						SVMaterialsTree::iterator it = GetBaseNode(customParams, splitContainer[0]);
+						if( customParams.end() != it )
+						{
+							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[1].c_str() ) );
+							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(scValue), pMaterial ));
+						}
 					}
 					break;
 
 					case 3: // Attribute
 					{
-						SVMaterialsTreeAdapter::iterator it = GetBaseNode(customParams, splitContainer[0]);
-						SVMaterials& rMaterials = it->second;
-						rMaterials.AddMaterial(splitContainer[1].c_str(), splitContainer[2].c_str());
+						SVMaterialsTree::iterator it = GetBaseNode(customParams, splitContainer[0]);
+						if( customParams.end() != it )
+						{
+							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[2].c_str() ) );
+							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(splitContainer[1].c_str()), pMaterial ));
+						}
 					}
 					break;
 
 					case 4: // Option Value
 					{
-						SVMaterialsTreeAdapter::iterator it = GetOptionNode(customParams, splitContainer[0], splitContainer[1] + "_" + splitContainer[2]);
-						SVMaterials& rMaterials = it->second;
-						rMaterials.AddMaterial(scValue, splitContainer[3].c_str());
+						SVMaterialsTree::iterator it = GetOptionNode(customParams, splitContainer[0], splitContainer[1] + "_" + splitContainer[2]);
+						if( customParams.end() != it )
+						{
+							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[3].c_str() ) );
+							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(scValue), pMaterial ));
+						}
 					}
 					break;
 
 					case 5: // Option Attribute (desc)
 					{
-						SVMaterialsTreeAdapter::iterator it = GetOptionNode(customParams, splitContainer[0], splitContainer[1] + "_" + splitContainer[2]);
-						SVMaterials& rMaterials = it->second;
-						rMaterials.AddMaterial(splitContainer[3].c_str(), splitContainer[4].c_str());
+						SVMaterialsTree::iterator it = GetOptionNode(customParams, splitContainer[0], splitContainer[1] + "_" + splitContainer[2]);
+						if( customParams.end() != it )
+						{
+							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[4].c_str() ) );
+							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(splitContainer[3].c_str()), pMaterial ));
+						}
 					}
 					break;
 				}

@@ -17,7 +17,7 @@
 #include <boost/assign/list_of.hpp>
 #include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVConfigurationTreeWriter.h"
 
 template< typename SVTreeType >
@@ -39,7 +39,7 @@ void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(const SVString& rNa
 		SVTreeType::SVBranchHandle hItem = m_nodes[0];
 		_variant_t v(value);
 		
-		SVNavigateTreeClass::AddItem(m_rTree, hItem, rName.c_str(), v);
+		SVNavigateTree::AddItem(m_rTree, hItem, rName.c_str(), v);
 	}
 	else
 	{
@@ -61,7 +61,7 @@ void SVConfigurationTreeWriter< SVTreeType >::StartElement(const SVString& rName
 {
 	SVTreeType::SVBranchHandle hItem;
 	SVTreeType::SVBranchHandle hParentItem = (m_nodes.size()) ? m_nodes[0] : m_htiParent;
-	SVNavigateTreeClass::AddBranch(m_rTree, hParentItem, rName.c_str(), &hItem);
+	SVNavigateTree::AddBranch(m_rTree, hParentItem, rName.c_str(), &hItem);
 	m_nodes.push_front(hItem);
 }
 

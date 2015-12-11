@@ -67,7 +67,7 @@ public:
 
 	BOOL GetParameters(SVObjectWriter& rWriter);
 
-	typedef SVXMLMaterialsTree SVTreeType;
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 	BOOL SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent );
 

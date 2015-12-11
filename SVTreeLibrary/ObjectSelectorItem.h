@@ -17,6 +17,7 @@
 #include <comdef.h>
 #include <deque>
 #include "IObjectSelectorItem.h"
+#include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -252,6 +253,7 @@ namespace Seidenader
 		#pragma endregion Member Variables
 		};
 
+		typedef SVSharedPtr< ObjectSelectorItem > ObjectSelectorItemPtr;
 		typedef std::deque<ObjectSelectorItem> ObjectSelectorItems;
 	} //namespace SVTreeLibrary
 } //namespace Seidenader

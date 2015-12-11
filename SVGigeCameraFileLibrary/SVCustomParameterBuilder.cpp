@@ -13,8 +13,6 @@
 #include <boost/config.hpp>
 #include <boost/assign/list_of.hpp>
 #include "SVCustomParameterBuilder.h"
-#include "SVMaterialsLibrary/SVMaterials.h"
-#include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVUtilityLibrary/SVString.h"
 
@@ -116,22 +114,25 @@ SVDeviceParamDataTypeEnum GetDataTypeEnumFromString(const SVString& tag)
 	return dataTypeEnum;
 }
 
-SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam(const SVMaterials& rMaterials, const SVMaterialsTreeAdapter::SVTreeContainer* pOptions)
+SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVMaterialsTree::SVTreeContainer& rOptions )
 {
-	SVCustomDeviceParam* pCustomDeviceParam = NULL;
+	SVCustomDeviceParam* pCustomDeviceParam = nullptr;
 	
+	SVMaterialsTree::ElementData MaterialData;
 	_variant_t customID;
 
 	// Get Custom Id
-	HRESULT hr = rMaterials.GetMaterial(scCustomID, customID);
-	if (hr == S_OK)
+	if( S_OK == SVMaterialsTree::getData( rOptions, scCustomID, MaterialData ) )
 	{
+		customID = MaterialData;
 		SVDeviceParamEnum paramEnum = GetEnumFromCustomID(customID.bstrVal);
 		_variant_t dataType;
 		// Get Data Type
-		hr = rMaterials.GetMaterial(scDataType, dataType);
-		if (hr == S_OK)
+		MaterialData.clear();
+		if( S_OK == SVMaterialsTree::getData( rOptions, scDataType, MaterialData ) )
 		{
+			dataType = MaterialData;
+			
 			SVDeviceParamDataTypeEnum dataTypeEnum = GetDataTypeEnumFromString(dataType.bstrVal);
 			switch (dataTypeEnum)
 			{
@@ -139,7 +140,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam(const SVMa
 				{
 					SVLongValueDeviceParam l_Param(paramEnum);
 					l_Param.SetName(SVString(customID));
-					SVCustomParameterBuilder::BuildLongParam(&l_Param, rMaterials, pOptions);
+					SVCustomParameterBuilder::BuildLongParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
 				break;
@@ -148,7 +149,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam(const SVMa
 				{
 					SVi64ValueDeviceParam l_Param(paramEnum);
 					l_Param.SetName(SVString(customID));
-					SVCustomParameterBuilder::BuildInt64Param(&l_Param, rMaterials);
+					SVCustomParameterBuilder::BuildInt64Param(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
 				break;
@@ -157,7 +158,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam(const SVMa
 				{
 					SVBoolValueDeviceParam l_Param(paramEnum);
 					l_Param.SetName(SVString(customID));
-					SVCustomParameterBuilder::BuildBoolParam(&l_Param, rMaterials, pOptions);
+					SVCustomParameterBuilder::BuildBoolParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
 				break;
@@ -166,7 +167,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam(const SVMa
 				{
 					SVStringValueDeviceParam l_Param(paramEnum);
 					l_Param.SetName(SVString(customID));
-					SVCustomParameterBuilder::BuildStringParam(&l_Param, rMaterials, pOptions);
+					SVCustomParameterBuilder::BuildStringParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
 				break;
@@ -180,30 +181,29 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam(const SVMa
 	return pCustomDeviceParam;
 }
 
-void SVCustomParameterBuilder::BuildOptions(SVDeviceParam* pParam, const SVMaterialsTreeAdapter::SVTreeContainer* pOptions)
+void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions )
 {
-	if (pOptions)
-	{
-		SVString strValue;
-		SVString description;
+	SVString strValue;
+	SVString description;
 
-		for (SVMaterialsTree::const_iterator it = pOptions->begin();it!= pOptions->end();++it)
+	for (SVMaterialsTree::const_iterator it = rOptions.begin();it!= rOptions.end();++it)
+	{
+		//If this is a branch generate parameters
+		if( it->second.empty() )
 		{
-			const SVString& rName = it->first;
-			const SVMaterials& rMaterials = it->second;
-			_variant_t value;
+			const SVMaterialsTree::SVTreeContainer& rTree( *it.node() );
+			SVMaterialsTree::ElementData MaterialData;
 
 			// Get Value
-			HRESULT hr = rMaterials.GetMaterial(scValue, value);
-			if (hr == S_OK)
+			if( S_OK == SVMaterialsTree::getData( rTree, scValue, MaterialData ) )
 			{
-				strValue = value;
+				strValue = static_cast<const _variant_t> (MaterialData);
 			}
 			// Get Description
-			hr = rMaterials.GetMaterial(scDESCRIPTION, value);
-			if (hr == S_OK)
+			MaterialData.clear();
+			if( S_OK == SVMaterialsTree::getData( rTree, scDESCRIPTION, MaterialData ) )
 			{
-				description = value;
+				strValue = static_cast<const _variant_t> (MaterialData);
 			}
 
 			switch (pParam->DataType())
@@ -238,116 +238,117 @@ void SVCustomParameterBuilder::BuildOptions(SVDeviceParam* pParam, const SVMater
 	}
 }
 
-void SVCustomParameterBuilder::BuildCommonAttributes(SVDeviceParam* pParam, const SVMaterials& rMaterials)
+void SVCustomParameterBuilder::BuildCommonAttributes( SVDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions )
 {
-	_variant_t value;
+	SVMaterialsTree::ElementData MaterialData;
+	_variant_t Value;
 	// Get Visual name
-	HRESULT hr = rMaterials.GetMaterial(scVISUALNAME, value);
-	if (hr == S_OK)
+	if( S_OK == SVMaterialsTree::getData( rOptions, scVISUALNAME, MaterialData ) )
 	{
-		pParam->SetVisualName(SVString(value));
+		Value = MaterialData;
+		pParam->SetVisualName(SVString(Value));
 	}
 	// Get Description
-	hr = rMaterials.GetMaterial(scDESCRIPTION, value);
-	if (hr == S_OK)
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rOptions, scDESCRIPTION, MaterialData ) )
 	{
-		pParam->SetDescription(SVString(value));
+		Value = MaterialData;
+		pParam->SetDescription( SVString(Value) );
 	}
 	// Get Order
-	hr = rMaterials.GetMaterial(scORDER, value);
-	if (hr == S_OK)
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rOptions, scORDER, MaterialData ) )
 	{
-		int order = atoi(SVString(value).ToString());
+		Value = MaterialData;
+		int order = atoi( SVString(Value).ToString());
 		pParam->SetOrder(order);
 	}
 	// Get Detail Level
-	hr = rMaterials.GetMaterial(scDETAILLEVEL, value);
-	if (hr == S_OK)
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rOptions, scDETAILLEVEL, MaterialData ) )
 	{
-		long level = atol(SVString(value).ToString());
+		Value = MaterialData;
+		long level = atol( SVString(Value).ToString());
 		pParam->SetDetailLevel(level);
 	}
 }
 
-void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, const SVMaterials& rMaterials, const SVMaterialsTreeAdapter::SVTreeContainer* pOptions)
+void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions)
 {
-	SVCustomParameterBuilder::BuildCommonAttributes(pParam, rMaterials);
+	SVCustomParameterBuilder::BuildCommonAttributes(pParam, rOptions);
 	// now load options
-	SVCustomParameterBuilder::BuildOptions(pParam, pOptions);
+	SVCustomParameterBuilder::BuildOptions(pParam, rOptions);
 	
-	_variant_t value;
+	SVMaterialsTree::ElementData MaterialData;
+	_variant_t Value;
 	// Get Min
-	HRESULT hr = rMaterials.GetMaterial(scMIN, value);
-	if (hr == S_OK)
+	if( S_OK == SVMaterialsTree::getData( rOptions, scMIN, MaterialData ) )
 	{
-		long iVal = atol(SVString(value).ToString());
-		pParam->info.min = iVal;
+		Value = MaterialData;
+		pParam->info.min = atol( SVString(Value).ToString() );
 	}
 	// Get Max
-	hr = rMaterials.GetMaterial(scMAX, value);
-	if (hr == S_OK)
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rOptions, scMAX, MaterialData ) )
 	{
-		long iVal = atol(SVString(value).ToString());
-		pParam->info.max = iVal;
+		Value = MaterialData;
+		pParam->info.max = atol( SVString(Value).ToString() );
 	}
 	// Get Offset (optional ?)
-	hr = rMaterials.GetMaterial(scOFFSET, value);
-	if (hr == S_OK)
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rOptions, scOFFSET, MaterialData ) )
 	{
-		long iVal = atol(SVString(value).ToString());
-		pParam->info.offset = iVal;
+		Value = MaterialData;
+		pParam->info.offset = atol( SVString(Value).ToString() );
 	}
 	// Get Multiplier
 	pParam->info.multiplier = DefaultMultiplier;
-	hr = rMaterials.GetMaterial(scMULTIPLIER, value);
-	if (hr == S_OK)
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rOptions, scMULTIPLIER, MaterialData ) )
 	{
-		pParam->info.multiplier = atof(SVString(value).ToString());
+		Value = MaterialData;
+		pParam->info.multiplier = atof( SVString(Value).ToString() );
 		if (pParam->info.multiplier == 0) // don't you mean < epsilon ?
 		{
-			pParam->info.multiplier = 1.0;
+			pParam->info.multiplier = DefaultMultiplier;
 		}
 	}
 	// Get Divisor
 	pParam->info.unit_divisor = DefaultDivisor;
-	hr = rMaterials.GetMaterial(scUNIT_DIVISOR, value);
-	if (hr == S_OK)
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rOptions, scUNIT_DIVISOR, MaterialData ) )
 	{
-		pParam->info.unit_divisor = atof(SVString(value).ToString());
+		Value = MaterialData;
+		pParam->info.unit_divisor = atof( SVString(Value).ToString() );
 		if (pParam->info.unit_divisor == 0) // don't you mean < epsilon ?
 		{
 			pParam->info.unit_divisor = 1.0;
 		}
 	}
-	// Get Units
-	pParam->info.sUnits = scDEFAULTUNIT;
-	hr = rMaterials.GetMaterial(scUNIT, value);
-	if (hr == S_OK)
-	{
-		pParam->info.sUnits = SVString(value).ToString();	
-	}
 	// Get Value
-	hr = rMaterials.GetMaterial(scValue, value);
-	if (hr == S_OK)
+	MaterialData.clear();
+	if( S_OK == SVMaterialsTree::getData( rOptions, scValue, MaterialData ) )
 	{
-		long lVal = atol(SVString(value).ToString());
-		pParam->lValue = lVal;
+		Value = MaterialData;
+		pParam->lValue = atol( SVString(Value).ToString() );
 	}
 }
 
-void SVCustomParameterBuilder::BuildInt64Param(SVi64ValueDeviceParam* pParam, const SVMaterials& rMaterials)
+void SVCustomParameterBuilder::BuildInt64Param(SVi64ValueDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions)
 {
-	SVCustomParameterBuilder::BuildCommonAttributes(pParam, rMaterials);
+	SVCustomParameterBuilder::BuildCommonAttributes(pParam, rOptions);
 
 	// Get Value
-	_variant_t value;
-	HRESULT hr = rMaterials.GetMaterial(scValue, value);
-	if (hr == S_OK)
+	SVMaterialsTree::ElementData MaterialData;
+	_variant_t Value;
+
+	if( S_OK == SVMaterialsTree::getData( rOptions, scValue, MaterialData ) )
 	{
+		Value = MaterialData;
 		try
 		{
-			value.ChangeType(VT_I8);
-			pParam->SetValue(value);
+			Value.ChangeType( VT_I8 );
+			pParam->SetValue( Value );
 		}
 		catch(_com_error& e)
 		{
@@ -356,31 +357,33 @@ void SVCustomParameterBuilder::BuildInt64Param(SVi64ValueDeviceParam* pParam, co
 	}
 }
 
-void SVCustomParameterBuilder::BuildStringParam(SVStringValueDeviceParam* pParam, const SVMaterials& rMaterials, const SVMaterialsTreeAdapter::SVTreeContainer* pOptions)
+void SVCustomParameterBuilder::BuildStringParam(SVStringValueDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions)
 {
-	SVCustomParameterBuilder::BuildCommonAttributes(pParam, rMaterials);
-	SVCustomParameterBuilder::BuildOptions(pParam, pOptions);
+	SVCustomParameterBuilder::BuildCommonAttributes(pParam, rOptions);
+	SVCustomParameterBuilder::BuildOptions(pParam, rOptions);
 
 	// Get Value
-	_variant_t value;
-	HRESULT hr = rMaterials.GetMaterial(scValue, value);
-	if (hr == S_OK)
+	SVMaterialsTree::ElementData MaterialData;
+	_variant_t Value;
+	if( S_OK == SVMaterialsTree::getData( rOptions, scValue, MaterialData ) )
 	{
-		pParam->strValue = SVString(value).ToString();
+		Value = MaterialData;
+		pParam->strValue = SVString(Value).ToString();
 	}
 }
 
-void SVCustomParameterBuilder::BuildBoolParam(SVBoolValueDeviceParam* pParam, const SVMaterials& rMaterials, const SVMaterialsTreeAdapter::SVTreeContainer* pOptions)
+void SVCustomParameterBuilder::BuildBoolParam(SVBoolValueDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions)
 {
-	SVCustomParameterBuilder::BuildCommonAttributes(pParam, rMaterials);
-	SVCustomParameterBuilder::BuildOptions(pParam, pOptions);
+	SVCustomParameterBuilder::BuildCommonAttributes(pParam, rOptions);
+	SVCustomParameterBuilder::BuildOptions(pParam, rOptions);
 
 	// Get Value
-	_variant_t value;
-	HRESULT hr = rMaterials.GetMaterial(scValue, value);
-	if (hr == S_OK)
+	SVMaterialsTree::ElementData MaterialData;
+	_variant_t Value;
+	if( S_OK == SVMaterialsTree::getData( rOptions, scValue, MaterialData ) )
 	{
-		long lVal = atol(SVString(value).ToString());
+		Value = MaterialData;
+		long lVal = atol(SVString(Value).ToString());
 		pParam->bValue = lVal != 0;
 	}
 }

@@ -15,7 +15,7 @@
 #include <boost/config.hpp>
 #include <boost/assign.hpp>
 #include "SVInspectionTreeParser.h"
-#include "SVXMLLibrary\SVNavigateTreeClass.h"
+#include "SVXMLLibrary\SVNavigateTree.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVConfigurationLibrary\SVConfigurationTags.h"
@@ -57,7 +57,7 @@ SVInspectionTreeParser< SVTreeType >::SVInspectionTreeParser(SVTreeType& rTreeCt
 , m_count(0)
 , m_ReplaceUniqueID(true)
 {
-	m_totalSize = m_rTree.GetCount();
+	m_totalSize = m_rTree.getCount();
 }
 
 template< typename SVTreeType >
@@ -86,7 +86,7 @@ template< typename SVTreeType >
 bool SVInspectionTreeParser< SVTreeType >::GetItemValue(const SVString& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& value)
 {
 	m_count++;
-	return SVNavigateTreeClass::GetItem(m_rTree, tag.c_str(), hItem, value) ? true : false;
+	return SVNavigateTree::GetItem(m_rTree, tag.c_str(), hItem, value) ? true : false;
 }
 
 template< typename SVTreeType >
@@ -94,26 +94,26 @@ bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBran
 {
 	bool bRetVal = false;
 
-	SVTreeType::SVBranchHandle hValues = NULL;
-	SVNavigateTreeClass::GetItemBranch(m_rTree, tag.c_str(), hItem, hValues);
-	if (hValues)
+	SVTreeType::SVBranchHandle hBranch = NULL;
+	SVNavigateTree::GetItemBranch(m_rTree, tag.c_str(), hItem, hBranch);
+	if(nullptr != hBranch)
 	{
 		bRetVal = true;
 		SVTreeType::SVLeafHandle hValue;
-		m_rTree.GetFirstLeaf(hValues, hValue);
+		hValue = m_rTree.getFirstLeaf(hBranch);
 		do
 		{
-			if (m_rTree.IsValidLeaf(hValues, hValue) == S_OK)
+			if( m_rTree.isValidLeaf(hBranch, hValue) )
 			{
 				m_count++;
 				_variant_t value;
 
-				m_rTree.GetLeafData(hValue, value);
+				value = m_rTree.getLeafData(hValue);
 				list.push_back(value);
 
-				m_rTree.GetNextLeaf(hValues, hValue);
+				hValue = m_rTree.getNextLeaf(hBranch, hValue);
 			}
-		} while (m_rTree.IsValidLeaf(hValues, hValue) == S_OK);
+		} while( m_rTree.isValidLeaf(hBranch, hValue) );
 	}
 	return bRetVal;
 }
@@ -123,26 +123,24 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 {
 	HRESULT hr = S_OK;
 
-	_bstr_t name;
-
-	m_rTree.GetBranchName(hItem, name.GetBSTR());
+	SVString name( m_rTree.getBranchName(hItem) );
 	m_count++;
 
-	if (scAttributesSetTag != static_cast< LPCTSTR >( name ) )
+	if (scAttributesSetTag != name.c_str() )
 	{
 		_variant_t objectName;
 		_variant_t classID;
 		_variant_t uniqueID;
 		
-		SVNavigateTreeClass::GetItem(m_rTree, scObjectNameTag, hItem, objectName);
+		SVNavigateTree::GetItem(m_rTree, scObjectNameTag, hItem, objectName);
 		m_count++;
 
-		SVNavigateTreeClass::GetItem(m_rTree, scClassIDTag, hItem, classID);
+		SVNavigateTree::GetItem(m_rTree, scClassIDTag, hItem, classID);
 		m_count++;
 
 		if( m_ReplaceUniqueID )
 		{
-			SVNavigateTreeClass::GetItem(m_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
+			SVNavigateTree::GetItem(m_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
 		}
 		m_count++;
 		
@@ -186,53 +184,49 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeTyp
 
 	_variant_t value;
 
-	if (SVNavigateTreeClass::GetItem(m_rTree, scEquationBufferTag, hParentItem, value))
+	if (SVNavigateTree::GetItem(m_rTree, scEquationBufferTag, hParentItem, value))
 	{
 		hr = ProcessEquation(ownerID, value);
 	}
 
-	if (SVNavigateTreeClass::GetItem(m_rTree, scMaskDataTag, hParentItem, value))
+	if (SVNavigateTree::GetItem(m_rTree, scMaskDataTag, hParentItem, value))
 	{
 		hr = ProcessMaskData(ownerID, value);
 	}
 
 	// iterate thru nodes and process
-	SVTreeType::SVBranchHandle hItem = NULL;
-	m_rTree.GetFirstBranch(hParentItem, hItem);
+	SVTreeType::SVBranchHandle hItem( nullptr );
+	hItem = m_rTree.getFirstBranch(hParentItem);
 	do
 	{
 		if (hItem)
 		{
 			UpdateProgress(++m_count, m_totalSize);
 
-			_bstr_t l_Temp;
+			SVString Name = m_rTree.getBranchName(hItem);
 
-			m_rTree.GetBranchName(hItem, l_Temp.GetBSTR());
-
-			CString text = static_cast< LPCTSTR >( l_Temp );
-
-			if (text == scFriendsTag)
+			if (Name.c_str() == scFriendsTag)
 			{
 				hr = ProcessFriends(hItem, ownerID);
 			}
-			else if (text == scEmbeddedsTag)
+			else if (Name.c_str() == scEmbeddedsTag)
 			{
 				hr = ProcessEmbeddeds(hItem, ownerID);
 			}
-			else if (text == scInputsTag)
+			else if (Name.c_str() == scInputsTag)
 			{
 				hr = ProcessInputs(hItem, ownerID);
 			}
 			else 
 			{
 				// process this node
-				if (SVNavigateTreeClass::HasChildren(m_rTree, hItem))
+				if (SVNavigateTree::HasChildren(m_rTree, hItem))
 				{
 					hr = Process(hItem, ownerID);
 				}
 			}
 
-			m_rTree.GetNextBranch(hParentItem, hItem);
+			hItem = m_rTree.getNextBranch(hParentItem, hItem);
 		}
 	}
 	while (hItem);
@@ -247,15 +241,15 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriends(typename SVTreeType
 	// Destroy Friends
 	SVObjectBuilder::DestroyFriends(ownerID);
 
-	SVTreeType::SVBranchHandle hItem = NULL;
-	m_rTree.GetFirstBranch(hFriends, hItem);
+	SVTreeType::SVBranchHandle hItem( nullptr );
+	hItem = m_rTree.getFirstBranch(hFriends);
 	do
 	{
 		if (hItem)
 		{
 			UpdateProgress(++m_count, m_totalSize); 
 			hr = ProcessFriend(hItem, ownerID);
-			m_rTree.GetNextBranch(hFriends, hItem);
+			hItem = m_rTree.getNextBranch(hFriends, hItem);
 		}
 	} while (hItem);
 	return hr;
@@ -271,9 +265,9 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	_variant_t uniqueID;
 	_variant_t attributesAllowed;
 
-	_bstr_t name;
+	SVString Name;
 		
-	m_rTree.GetBranchName(hItem, name.GetBSTR());
+	Name = m_rTree.getBranchName(hItem);
 	
 	GetItemValue(scObjectNameTag, hItem, objectName);
 	GetItemValue(scClassIDTag, hItem, classID);
@@ -283,7 +277,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 
 	// Build the Object
 	GUID objectID = StringToGUID(uniqueID);
-	hr = SVObjectBuilder::CreateFriendObject(StringToGUID(classID), objectID, name, objectName, ownerID);
+	hr = SVObjectBuilder::CreateFriendObject(StringToGUID(classID), objectID, Name.c_str(), objectName, ownerID);
 	if (hr == S_OK)
 	{
 		// this will be different for embeddeds, it will use the owning object ID and the embedded object ID
@@ -303,15 +297,15 @@ template< typename SVTreeType >
 HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hEmbeddeds, const GUID& ownerID)
 {
 	HRESULT hr = S_OK;
-	SVTreeType::SVBranchHandle hItem = NULL;
-	m_rTree.GetFirstBranch(hEmbeddeds, hItem);
+	SVTreeType::SVBranchHandle hItem( nullptr );
+	hItem = m_rTree.getFirstBranch(hEmbeddeds);
 	do
 	{
 		if (hItem)
 		{
 			UpdateProgress(++m_count, m_totalSize); 
 			hr = ProcessEmbedded(hItem, ownerID);
-			m_rTree.GetNextBranch(hEmbeddeds, hItem);
+			hItem = m_rTree.getNextBranch(hEmbeddeds, hItem);
 		}
 	} while (hItem);
 	return hr;
@@ -327,9 +321,9 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	_variant_t attributesAllowed;
 	_variant_t defaultValue;
 
-	_bstr_t name;
+	SVString Name;
 		
-	m_rTree.GetBranchName(hItem, name.GetBSTR());
+	Name = m_rTree.getBranchName(hItem);
 	
 	GetItemValue(scObjectNameTag, hItem, objectName);
 	GetItemValue(scEmbeddedIDTag, hItem, embeddedID);
@@ -338,7 +332,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	UpdateProgress(m_count, m_totalSize);
 
 	GUID objectID = StringToGUID(uniqueID);
-	hr = SVObjectBuilder::CreateEmbeddedObject(StringToGUID(embeddedID), objectID, name, objectName, ownerID);
+	hr = SVObjectBuilder::CreateEmbeddedObject(StringToGUID(embeddedID), objectID, Name.c_str(), objectName, ownerID);
 	if (hr == S_OK)
 	{
 		SVObjectScriptDataObjectTypeEnum dataType;
@@ -396,40 +390,40 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 {
 	HRESULT hr = S_OK;
 
-	if( hItem != NULL && SVNavigateTreeClass::HasChildren( m_rTree, hItem ) )
+	if( hItem != NULL && SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
-		SVTreeType::SVBranchHandle hValue = NULL;
+		SVTreeType::SVBranchHandle hValue( nullptr );
 
-		m_rTree.GetFirstBranch(hItem, hValue);
+		hValue = m_rTree.getFirstBranch(hItem);
 
-		while( hr == S_OK && m_rTree.IsValidBranch( hValue ) == S_OK )
+		while( hr == S_OK && m_rTree.isValidBranch( hValue ) )
 		{
 			SVVariantList values;
 
-			_bstr_t l_DataName;
+			SVString DataName;
 
-			m_rTree.GetBranchName(hValue, l_DataName.GetBSTR());
+			DataName = m_rTree.getBranchName(hValue);
 
-			if( g_ObjectAttributeFilter.find( l_DataName ) == g_ObjectAttributeFilter.end() )
+			if( g_ObjectAttributeFilter.find( DataName.c_str() ) == g_ObjectAttributeFilter.end() )
 			{
-				if( SVNavigateTreeClass::HasChildren( m_rTree, hValue ) )
+				if( SVNavigateTree::HasChildren( m_rTree, hValue ) )
 				{
 					SVTreeType::SVLeafHandle hChildValue;
 
-					m_rTree.GetFirstLeaf(hValue, hChildValue);
+					hChildValue = m_rTree.getFirstLeaf(hValue);
 
 					do
 					{
-						if (m_rTree.IsValidLeaf(hValue, hChildValue) == S_OK)
+						if (m_rTree.isValidLeaf(hValue, hChildValue))
 						{
 							_variant_t value;
 
-							m_rTree.GetLeafData(hChildValue, value );
+							value = m_rTree.getLeafData(hChildValue);
 							values.push_back(value);
 
-							m_rTree.GetNextLeaf(hValue, hChildValue);
+							hChildValue = m_rTree.getNextLeaf(hValue, hChildValue);
 						}
-					} while (m_rTree.IsValidLeaf(hValue, hChildValue) == S_OK);
+					} while (m_rTree.isValidLeaf(hValue, hChildValue));
 				}
 
 				SVObjectScriptDataObjectTypeEnum l_Type = SV_UNKNOWN_Type;
@@ -437,7 +431,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 				// The attribute object type table is needed to convert string type to point or double point type.
 				// This functionality is not necessary for the RotationPoint and Translation elements because they are nto being persisted.
 				// It is an example of what could be done to convert to a specific dastionation data type.
-				SVObjectAttributeTypeMap::const_iterator l_Iter = g_ObjectAttributeType.find( l_DataName );
+				SVObjectAttributeTypeMap::const_iterator l_Iter = g_ObjectAttributeType.find( DataName.c_str() );
 
 				if( l_Iter != g_ObjectAttributeType.end() )
 				{
@@ -445,10 +439,10 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 				}
 				//End of attribute object type section
 
-				hr = SVObjectBuilder::SetObjectValue(objectID, objectID, l_DataName, values, l_Type);
+				hr = SVObjectBuilder::SetObjectValue(objectID, objectID, DataName.c_str(), values, l_Type);
 			}
 
-			m_rTree.GetNextBranch(hItem, hValue);
+			hValue = m_rTree.getNextBranch(hItem, hValue);
 		}
 	}
 	else
@@ -464,25 +458,23 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 {
 	HRESULT hr = S_OK;
 
-	if( hItem != NULL && SVNavigateTreeClass::HasChildren( m_rTree, hItem ) )
+	if( hItem != NULL && SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
-		SVTreeType::SVLeafHandle hValue;
+		SVTreeType::SVLeafHandle hValue( m_rTree.getFirstLeaf(hItem) );
 
-		m_rTree.GetFirstLeaf(hItem, hValue);
-
-		while( hr == S_OK && m_rTree.IsValidLeaf(hItem, hValue) == S_OK )
+		while( hr == S_OK && m_rTree.isValidLeaf(hItem, hValue) )
 		{
 			SVVariantList values;
 
-			_bstr_t l_DataName;
+			SVString DataName;
 
-			m_rTree.GetLeafName(hValue, l_DataName.GetBSTR());
+			DataName = m_rTree.getLeafName(hValue);
 
-			if( g_ObjectAttributeFilter.find( l_DataName ) == g_ObjectAttributeFilter.end() )
+			if( g_ObjectAttributeFilter.find( DataName.c_str() ) == g_ObjectAttributeFilter.end() )
 			{
 				_variant_t value;
 
-				m_rTree.GetLeafData(hValue, value);
+				value = m_rTree.getLeafData(hValue);
 				values.push_back(value);
 
 				SVObjectScriptDataObjectTypeEnum l_Type = SV_UNKNOWN_Type;
@@ -490,7 +482,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 				// The attribute object type table is needed to convert string type to point or double point type.
 				// This functionality is not necessary for the RotationPoint and Translation elements because they are nto being persisted.
 				// It is an example of what could be done to convert to a specific dastionation data type.
-				SVObjectAttributeTypeMap::const_iterator l_Iter = g_ObjectAttributeType.find( l_DataName );
+				SVObjectAttributeTypeMap::const_iterator l_Iter = g_ObjectAttributeType.find( DataName.c_str() );
 
 				if( l_Iter != g_ObjectAttributeType.end() )
 				{
@@ -498,10 +490,10 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 				}
 				//End of attribute object type section
 
-				hr = SVObjectBuilder::SetObjectValue(objectID, objectID, l_DataName, values, l_Type);
+				hr = SVObjectBuilder::SetObjectValue(objectID, objectID, DataName.c_str(), values, l_Type);
 			}
 
-			m_rTree.GetNextLeaf(hItem, hValue);
+			hValue = m_rTree.getNextLeaf(hItem, hValue);
 		}
 	}
 	else
@@ -548,8 +540,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType:
 {
 	HRESULT hr = S_OK;
 	SVNameGuidList inputList;
-	SVTreeType::SVBranchHandle hInput = NULL;
-	m_rTree.GetFirstBranch(hInputs, hInput);
+	SVTreeType::SVBranchHandle hInput( nullptr );
+	hInput = m_rTree.getFirstBranch(hInputs);
 	do
 	{
 		if (hInput)
@@ -566,7 +558,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType:
 				GUID inputID = StringToGUID(value.bstrVal);
 				inputList.insert(std::make_pair(name.bstrVal, inputID));
 			}
-			m_rTree.GetNextBranch(hInputs, hInput);
+			hInput = m_rTree.getNextBranch(hInputs, hInput);
 		}
 	} while (hInput);
 
@@ -582,15 +574,23 @@ bool SVInspectionTreeParser< SVTreeType >::HasTag(typename SVTreeType::SVBranchH
 {
 	bool l_Status = true;
 
-	SVTreeType::SVBranchHandle hValues = NULL;
+	SVTreeType::SVBranchHandle hValues( nullptr );
 
-	l_Status = ( m_rTree.FindBranch(hItem, tag.ToBSTR(), hValues) == S_OK );
+	hValues = m_rTree.findBranch(hItem, tag.c_str());
 
-	if( !l_Status )
+	if( nullptr != hValues )
 	{
 		SVTreeType::SVLeafHandle hLeaf;
 
-		l_Status = ( m_rTree.FindLeaf(hItem, tag.ToBSTR(), hLeaf) == S_OK );
+		hLeaf = m_rTree.findLeaf(hItem, tag.c_str());
+		if( !m_rTree.isValidLeaf(hItem, hLeaf) )
+		{
+			l_Status = false;
+		}
+	}
+	else
+	{
+		l_Status = false;
 	}
 
 	return l_Status;
@@ -608,19 +608,19 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 	_variant_t uniqueID;
 	_variant_t newDisableMethod;
 	_variant_t enableAuxiliaryExtent;
-	_bstr_t name;
+	SVString name;
 
-	p_rTree.GetBranchName(hItem, name.GetBSTR());
-	SVNavigateTreeClass::GetItem(p_rTree, scObjectNameTag, hItem, objectName);
-	SVNavigateTreeClass::GetItem(p_rTree, scClassIDTag, hItem, classID);
-	SVNavigateTreeClass::GetItem(p_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
-	SVNavigateTreeClass::GetItem(p_rTree, CTAG_INSPECTION_NEW_DISABLE_METHOD, hItem, newDisableMethod);
-	SVNavigateTreeClass::GetItem(p_rTree, CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, hItem, enableAuxiliaryExtent);
+	name = p_rTree.getBranchName(hItem);
+	SVNavigateTree::GetItem(p_rTree, scObjectNameTag, hItem, objectName);
+	SVNavigateTree::GetItem(p_rTree, scClassIDTag, hItem, classID);
+	SVNavigateTree::GetItem(p_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
+	SVNavigateTree::GetItem(p_rTree, CTAG_INSPECTION_NEW_DISABLE_METHOD, hItem, newDisableMethod);
+	SVNavigateTree::GetItem(p_rTree, CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, hItem, enableAuxiliaryExtent);
 
 	SVString sNewDisableMethod = newDisableMethod;
 	SVString sEnableAuxiliaryExtent = enableAuxiliaryExtent;
 
-	hr = SVObjectBuilder::CreateObject(StringToGUID(classID), StringToGUID(uniqueID), name, objectName, ownerGuid);
+	hr = SVObjectBuilder::CreateObject(StringToGUID(classID), StringToGUID(uniqueID), name.c_str(), objectName, ownerGuid);
 	if (hr == S_OK)
 	{
 		inspectionGuid = StringToGUID(uniqueID);

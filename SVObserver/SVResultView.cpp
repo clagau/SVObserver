@@ -19,7 +19,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVIPChildFrm.h"
 #include "RootObject.h"
@@ -576,7 +576,7 @@ BOOL SVResultViewClass::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	_variant_t svVariant;
 
-	bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_CELL_HEIGHT, htiParent, svVariant );
+	bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_HEIGHT, htiParent, svVariant );
 	if ( bOk )
 	{
 		l_Size.cy = svVariant;
@@ -584,7 +584,7 @@ BOOL SVResultViewClass::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_CELL_WIDTH, htiParent, svVariant );
+		bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_WIDTH, htiParent, svVariant );
 		if ( bOk )
 		{
 			l_Size.cx = svVariant;
@@ -611,7 +611,7 @@ BOOL SVResultViewClass::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	GetWindowRect( l_cRect );
 
-	bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_CELL_HEIGHT, htiParent, svVariant );
+	bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_HEIGHT, htiParent, svVariant );
 	if ( bOk )
 	{
 		l_Size.cy = svVariant;
@@ -619,7 +619,7 @@ BOOL SVResultViewClass::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_CELL_WIDTH, htiParent, svVariant );
+		bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_WIDTH, htiParent, svVariant );
 		if ( bOk )
 		{
 			l_Size.cx = svVariant;

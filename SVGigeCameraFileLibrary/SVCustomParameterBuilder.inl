@@ -8,22 +8,13 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   13 May 2013 11:04:18  $
 //******************************************************************************
-#ifndef INCL_SVCUSTOMPARAMETERBUILDER_INL
-#define INCL_SVCUSTOMPARAMETERBUILDER_INL
-
-#include <memory>
-#include "SVCustomParameterBuilder.h"
-#include "SVMaterialsLibrary/SVMaterials.h"
 
 template<typename Insertor>
-void SVCustomParameterBuilder::BuildCustomDeviceParams(const SVMaterialsTree& rTree, Insertor insertor)
+void SVCustomParameterBuilder::BuildCustomDeviceParams(const SVMaterialsTree::SVTreeContainer& rTree, Insertor insertor)
 {
 	for (SVMaterialsTree::const_iterator it = rTree.begin();it!= rTree.end();++it)
 	{
-		// Get Option branches as well here
-		const SVMaterialsTree::SVTreeContainer* pChildTree = it.GetChildTree();
-
-		std::auto_ptr<SVCustomDeviceParam> pParam(SVCustomParameterBuilder::BuildCustomDeviceParam(it->second, pChildTree));
+		std::auto_ptr<SVCustomDeviceParam> pParam(SVCustomParameterBuilder::BuildCustomDeviceParam( *it.node() ));
 		if (pParam.get())
 		{
 			// Add to list (makes a copy)
@@ -31,8 +22,6 @@ void SVCustomParameterBuilder::BuildCustomDeviceParams(const SVMaterialsTree& rT
 		}
 	}
 }
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

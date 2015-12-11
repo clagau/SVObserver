@@ -23,7 +23,7 @@
 #include "SVObserver.h"
 #include "SVOutputObjectList.h"
 #include "SVOutputStreamManager.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVSVIMStateClass.h"
 
 SV_IMPLEMENT_CLASS( SVIOController, SVIOControllerGuid );
@@ -140,10 +140,10 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 	_variant_t svVariant;
 
 	SVTreeType::SVBranchHandle htiIODoc = NULL;
-	BOOL bTmp = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_IODOC, htiParent, htiIODoc );
+	BOOL bTmp = SVNavigateTree::GetItemBranch( rTree, CTAG_IODOC, htiParent, htiIODoc );
 	if( bTmp )
 	{
-		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiIODoc, svVariant );
+		bOk = SVNavigateTree::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiIODoc, svVariant );
 		if ( bOk )
 		{
 			SVGUID ObjectID( svVariant );

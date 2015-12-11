@@ -33,7 +33,7 @@ protected:
 
 public:
 	SVOFileConfigDlg *pdlg;
-	SVXMLCTreeCtrl::SVBranchHandle m_Inspection;
+	SvXml::SVXMLCTreeCtrl::SVBranchHandle m_Inspection;
 	unsigned long ulVersion;
 	virtual void LoadIODoc( LPCTSTR szFileName );
 	virtual void LoadIPDoc( LPCTSTR szFileName );

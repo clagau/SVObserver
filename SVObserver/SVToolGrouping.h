@@ -61,7 +61,7 @@ public:
 	String FindCandidateStartGroup(const String& rName) const;
 	String FindGroup(const String& rName) const;
 
-	typedef SVXMLMaterialsTree SVTreeType;
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 	HRESULT SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent); // Load
 	bool GetParameters(SVObjectWriter& rWriter); // Save
 

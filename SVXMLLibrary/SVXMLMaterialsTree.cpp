@@ -9,772 +9,614 @@
 //* .Check In Date   : $Date:   19 Dec 2014 04:46:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVXMLMaterialsTree.h"
+#pragma endregion Includes
 
-SVXMLMaterialsTree::SVXMLMaterialsTree( SVMaterialsTreeAdapter& p_rTree )
-: m_rTree( p_rTree )
+namespace Seidenader { namespace SVXMLLibrary
 {
-}
-
-SVXMLMaterialsTree::SVXMLMaterialsTree( SVMaterialsTreeAdapter& p_rTree, SVMaterialsTreeAdapter::SVTreeContainer*& p_rBranch )
-: m_rTree( *p_rBranch )
-{
-}
-
-SVXMLMaterialsTree::SVXMLMaterialsTree( SVXMLMaterialsTree& p_rTree )
-: m_rTree( p_rTree.m_rTree )
-{
-}
-
-SVXMLMaterialsTree::SVXMLMaterialsTree( SVXMLMaterialsTree& p_rTree, SVXMLMaterialsTree::SVBranchHandle& p_rBranch )
-: m_rTree( *p_rBranch )
-{
-}
-
-SVXMLMaterialsTree::~SVXMLMaterialsTree()
-{
-}
-
-size_t SVXMLMaterialsTree::GetCount() const
-{
-	return SVMaterialsTreeAdapter::GetCount( m_rTree );
-}
-
-// GetRootNode () -----------------------------------------------------------
-//  If this function is called, and the root doesn't yet exist, then it 
-//	 should be created.  The root element of the tree MUST be a node that does
-//  not contain data. DoesNodeHaveData () must return false for the root 
-//  node.
-HRESULT SVXMLMaterialsTree::GetRoot( SVBranchHandle& p_rRoot )
-{
-	HRESULT l_Status( S_OK );
-
-	p_rRoot = m_rTree;
-
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::IsRoot( const SVBranchHandle& p_rBranch )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rBranch != m_rTree )
+	#pragma region Constructor
+	SVXMLMaterialsTree::SVXMLMaterialsTree() :
+	 m_pCurrentParent( nullptr )
 	{
-		l_Status = S_FALSE;
 	}
 
-	return l_Status;
-}
-
-// DoesNodeHaveChildren () --------------------------------------------------
-//		0 - Has children
-//    1 - No children
-HRESULT SVXMLMaterialsTree::DoesBranchHaveBranches( const SVBranchHandle& p_rBranch )
-{
-	HRESULT l_Status( S_OK );
-
-	SVBranchHandle l_Parent = p_rBranch;
-
-	if( l_Parent == NULL )
+	SVXMLMaterialsTree::SVXMLMaterialsTree(  const SVMaterialsTree::SVTreeContainer& rTree ) :
+	 m_Tree( rTree )
+	,m_pCurrentParent( nullptr )
 	{
-		GetRoot( l_Parent );
 	}
 
-	if( l_Parent == NULL || l_Parent->begin() == l_Parent->end() )
+	SVXMLMaterialsTree::~SVXMLMaterialsTree()
 	{
-		l_Status = S_FALSE;
+	}
+	#pragma endregion Constructor
+
+	#pragma region Public Methods
+	size_t SVXMLMaterialsTree::getCount() const
+	{
+		return SVMaterialsTree::getCount( m_Tree );
 	}
 
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::GetParentBranch( const SVBranchHandle& p_rChild, SVBranchHandle& p_rParent )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rChild != NULL )
+	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::getRoot()
 	{
-		p_rParent = p_rChild->parent();
-	}
-	else
-	{
-		p_rParent = NULL;
+		SVBranchHandle pResult( &m_Tree );
 
-		l_Status = E_FAIL;
+		return pResult;
 	}
 
-	return l_Status;
-}
-
-// GetFirstBranch () -----------------------------------------------------
-//  This function must return S_OK if there are children.
-HRESULT SVXMLMaterialsTree::GetFirstBranch( const SVBranchHandle& p_rParent, SVBranchHandle& p_rChild )
-{
-	HRESULT l_Status = S_OK;
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
+	bool SVXMLMaterialsTree::isRoot( const SVBranchHandle pBranch ) const
 	{
-		GetRoot( l_Parent );
+		return (*pBranch == m_Tree);
 	}
 
-	l_Status = DoesBranchHaveBranches( l_Parent );
-
-	if( SUCCEEDED( l_Status ) )
+	bool SVXMLMaterialsTree::hasBranches( const SVBranchHandle pParent )
 	{
-		if( l_Status == S_OK )
+		bool Result( false );
+
+		SVBranchHandle  pBranch( pParent );
+
+		if( nullptr == pBranch )
 		{
-			SVBranchHandle l_pBranch( const_cast< SVBranchHandle >( p_rParent ) );
+			pBranch = getRoot();
+		}
 
-			SVMaterialsTreeAdapter::SVTreeContainer::iterator l_Iter( l_pBranch->begin() );
-
-			if( l_Iter != l_pBranch->end() )
+		if( nullptr != pBranch )
+		{
+			if( setChildren( pBranch ) && 0 < m_ChildBranches.size() )
 			{
-				p_rChild = l_Iter.node();
-			}
-			else
-			{
-				p_rChild = NULL;
-
-				l_Status = S_FALSE;
+				Result = true;
 			}
 		}
-		else
+
+		return Result;
+	}
+
+	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::getParentBranch( const SVBranchHandle pChild )
+	{
+		SVBranchHandle pResult( nullptr );
+
+		if( nullptr != pChild )
 		{
-			p_rChild = NULL;
+			pResult = pChild->parent();
 		}
-	}
-	else
-	{
-		p_rChild = NULL;
+
+		return pResult;
 	}
 
-	return l_Status;
-}
-
-// GetNextBranch () ----------------------------------------------------
-//  This function must return S_OK if there are more siblings.
-HRESULT SVXMLMaterialsTree::GetNextBranch( const SVBranchHandle& p_rParent, SVBranchHandle& p_rChild )
-{
-	HRESULT l_Status = S_OK;
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
+	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::getFirstBranch( const SVBranchHandle pParent )
 	{
-		GetRoot( l_Parent );
-	}
+		SVBranchHandle pResult( nullptr );
 
-	l_Status = DoesBranchHaveBranches( l_Parent );
+		SVBranchHandle pBranch( pParent );
 
-	if( l_Status == S_OK )
-	{
-		SVBranchHandle l_pBranch( const_cast< SVBranchHandle >( l_Parent ) );
-
-		SVMaterialsTreeAdapter::SVTreeContainer::iterator l_Iter( l_pBranch->end() );
-
-		if( p_rChild != NULL )
+		if( nullptr == pBranch )
 		{
-			for( l_Iter = l_pBranch->begin(); l_Iter != l_pBranch->end(); ++l_Iter )
+			pBranch = getRoot();
+		}
+
+		if( setChildren( pBranch ) )
+		{
+			SVBranches::iterator Iter( m_ChildBranches.begin() );
+			if( m_ChildBranches.end() != Iter )
 			{
-				if( l_Iter.node() == p_rChild )
+				pResult = *Iter;
+			}
+		}
+
+		return pResult;
+	}
+
+	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::getNextBranch( const SVBranchHandle pParent, const SVBranchHandle pChild )
+	{
+		SVBranchHandle pResult( nullptr );
+
+		SVBranchHandle pBranch( pParent );
+
+		if( nullptr == pBranch )
+		{
+			pBranch = getRoot();
+		}
+
+		if( setChildren( pBranch ) )
+		{
+			for( SVBranches::iterator Iter( m_ChildBranches.begin() ); nullptr == pResult && m_ChildBranches.end() != Iter; ++Iter )
+			{
+				//Find the current child branch
+				if( pChild == *Iter )
 				{
-					++l_Iter;
-
-					break;
-				}
-			}
-		}
-
-		if( l_Iter != l_pBranch->end() )
-		{
-			p_rChild = l_Iter.node();
-		}
-		else
-		{
-			p_rChild = NULL;
-
-			l_Status = S_FALSE;
-		}
-	}
-	else
-	{
-		p_rChild = NULL;
-
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::FindBranch( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVBranchHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	p_rChild = NULL;
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
-	{
-		GetRoot( l_Parent );
-	}
-
-	if( l_Parent != NULL )
-	{
-		SVBranchHandle l_pBranch( const_cast< SVBranchHandle >( l_Parent ) );
-
-		SVMaterialsTreeAdapter::sv_tree_iterator l_Iter;
-
-		for( l_Iter = l_pBranch->begin(); p_rChild == NULL && l_Iter != l_pBranch->end(); ++l_Iter )
-		{
-			if( l_Iter->first == p_rName )
-			{
-				p_rChild = l_Iter.GetChildTree();
-			}
-		}
-
-		if( p_rChild == NULL )
-		{
-			l_Status = S_FALSE;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT	SVXMLMaterialsTree::IsValidBranch( const SVBranchHandle& p_rParent )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rParent == NULL )
-	{
-		l_Status = S_FALSE;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::CreateBranch( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVBranchHandle* p_pChild )
-{
-	HRESULT l_Status( S_OK );
-	SVBranchHandle l_Handle( NULL );
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
-	{
-		GetRoot( l_Parent );
-	}
-
-	if( l_Parent != NULL )
-	{
-		SVMaterials l_Data;
-		SVMaterialsTreeAdapter::SVTreeElement l_Element( p_rName, l_Data );
-		SVMaterialsTreeAdapter::iterator l_Iter( l_Parent->insert( l_Element ) );
-
-		if( l_Iter != l_Parent->end() )
-		{
-			l_Handle = l_Iter.GetChildTree();
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	if( p_pChild != NULL )
-	{
-		( *p_pChild ) = l_Handle;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::DeleteBranch( SVBranchHandle& p_rBranch )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rBranch != NULL )
-	{
-		if( IsRoot( p_rBranch ) == S_OK )
-		{
-			m_rTree.Clear();
-		}
-		else
-		{
-			SVBranchHandle l_pParent( p_rBranch->parent() );
-
-			if( l_pParent != NULL )
-			{
-				SVMaterialsTreeAdapter::SVTreeContainer::iterator l_Iter( l_pParent->end() );
-
-				for( l_Iter = l_pParent->begin(); l_Iter != l_pParent->end(); ++l_Iter )
-				{
-					if( l_Iter.node() == p_rBranch )
+					++Iter;
+					//Check if the next branch child is valid
+					if( m_ChildBranches.end() != Iter )
 					{
+						pResult = *Iter;
+					}
+					else
+					{
+						//exit the loop no further branches found
 						break;
 					}
 				}
+			}
+		}
 
-				if( l_Iter != l_pParent->end() )
+		return pResult;
+	}
+
+	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::findBranch( const SVBranchHandle pParent, LPCTSTR Name )
+	{
+		SVBranchHandle pResult( nullptr );
+
+		SVBranchHandle pBranch( pParent );
+
+		if( nullptr == pBranch )
+		{
+			pBranch = getRoot();
+		}
+
+		if( setChildren( pBranch ) )
+		{
+			for( SVBranches::iterator Iter( m_ChildBranches.begin() ); nullptr == pResult && m_ChildBranches.end() != Iter; ++Iter )
+			{
+				//Find the current child branch
+				if( (*Iter)->get()->first == Name )
 				{
-					l_pParent->erase( l_Iter );
+					pResult = *Iter;
 				}
 			}
 		}
 
-		p_rBranch = NULL;
+		return pResult;
 	}
 
-	return l_Status;
-}
-
-// GetBranchName () -----------------------------------------------------------
-//
-// 	GetBranchName () function needs to understand that the calling function 
-//    will destroy the returned BSTR at its whim.  Usually, the derived 
-//    GetNodeName () function will need to create the BSTR with SysAlloc () 
-//    (or similar function), and will copy the node name from the actual tree
-//    location.
-HRESULT SVXMLMaterialsTree::GetBranchName( const SVBranchHandle& p_rBranch, BSTR& p_rName )
-{
-	HRESULT l_Status( S_OK );
-
-	if( p_rBranch != NULL )
+	bool SVXMLMaterialsTree::isValidBranch( const SVBranchHandle pParent )
 	{
-		_bstr_t l_String;
+		return (nullptr != pParent);
+	}
 
-		l_String.Attach( p_rName );
+	HRESULT SVXMLMaterialsTree::createBranch( const SVBranchHandle pParent, LPCTSTR Name, SVBranchHandle* ppBranch )
+	{
+		HRESULT Result( S_OK );
 
-		if( IsRoot( p_rBranch ) == S_OK )
+		SVBranchHandle pBranch( pParent );
+		SVBranchHandle pNewBranch( nullptr );
+		SVString BranchName( Name );
+
+		if( nullptr == pBranch )
 		{
-			l_String = "Base";
+			pBranch = getRoot();
 		}
-		else
-		{
-			const SVMaterialsTreeAdapter::SVTreeElement* l_pElement( p_rBranch->get() );
 
-			if( l_pElement != NULL )
+		if( nullptr != pBranch )
+		{
+			//When creating a branch the data pointer is set to nullptr
+			SVMaterialsTree::iterator Iter = pBranch->insert( SVMaterialsTree::SVTreeElement( BranchName, SVMaterialDataPtr(nullptr) ) );
+			if( pBranch->end() != Iter )
 			{
-				l_String = l_pElement->first.ToBSTR();
-			}
-			else
-			{
-				l_String = "";
+				pNewBranch = Iter.node();
 
-				l_Status = E_FAIL;
-			}
-		}
-
-		p_rName = l_String.Detach();
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-// DoesNodeHaveData () ------------------------------------------------------
-//		0 - Has Data
-//    1 - No Data
-HRESULT SVXMLMaterialsTree::DoesBranchHaveLeaves( const SVBranchHandle& p_rBranch )
-{
-	HRESULT l_Status( S_OK );
-
-	SVBranchHandle l_Parent = p_rBranch;
-
-	if( l_Parent == NULL )
-	{
-		GetRoot( l_Parent );
-	}
-
-	if( l_Parent != NULL )
-	{
-		const SVMaterialsTreeAdapter::SVTreeElement* l_pElement( l_Parent->get() );
-
-		if( l_pElement != NULL )
-		{
-			if( l_pElement->second.empty() )
-			{
-				l_Status = S_FALSE;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-// GetFirstLeaf () -----------------------------------------------------
-//  This function must return S_OK if there are children.
-HRESULT SVXMLMaterialsTree::GetFirstLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
-	{
-		GetRoot( l_Parent );
-	}
-
-	if( l_Parent != NULL )
-	{
-		SVMaterialsTreeAdapter::SVTreeElement* l_pElement( NULL );
-
-		l_pElement = const_cast< SVMaterialsTreeAdapter::SVTreeElement* >( l_Parent->get() );
-
-		if( l_pElement != NULL )
-		{
-			p_rChild = l_pElement->second.begin();
-
-			if(	p_rChild == l_pElement->second.end() )
-			{
-				l_Status = S_FALSE;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-// GetNextLeaf () -----------------------------------------------------
-//  This function must return S_OK if there is another child.
-HRESULT SVXMLMaterialsTree::GetNextLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
-	{
-		GetRoot( l_Parent );
-	}
-
-	if( l_Parent != NULL )
-	{
-		SVMaterialsTreeAdapter::SVTreeElement* l_pElement( NULL );
-
-		l_pElement = const_cast< SVMaterialsTreeAdapter::SVTreeElement* >( l_Parent->get() );
-
-		if( l_pElement != NULL )
-		{
-			if( p_rChild != l_pElement->second.end() )
-			{
-				++p_rChild;
-
-				if( p_rChild == l_pElement->second.end() )
+				if( nullptr == pNewBranch )
 				{
-					l_Status = S_FALSE;
+					Result = E_FAIL;
 				}
 			}
+		}
+		else
+		{
+			Result = E_FAIL;
+		}
+	
+		if( nullptr != ppBranch )
+		{
+			*ppBranch = pNewBranch;
+		}
+
+		return Result;
+	}
+
+	HRESULT SVXMLMaterialsTree::deleteBranch( SVBranchHandle& rpBranch )
+	{
+		HRESULT Result( S_OK );
+
+		if( nullptr != rpBranch )
+		{
+			if( isRoot( rpBranch ) )
+			{
+				m_Tree.clear();
+			}
 			else
 			{
-				l_Status = S_FALSE;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
+				SVBranchHandle pParent( rpBranch->parent() );
 
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::FindLeaf( const SVBranchHandle& p_rParent, const BSTR& p_rName, SVLeafHandle& p_rChild )
-{
-	HRESULT l_Status = S_OK;
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
-	{
-		GetRoot( l_Parent );
-	}
-
-	if( l_Parent != NULL )
-	{
-		SVMaterialsTreeAdapter::SVTreeElement* l_pElement( NULL );
-
-		l_pElement = const_cast< SVMaterialsTreeAdapter::SVTreeElement* >( l_Parent->get() );
-
-		if( l_pElement != NULL )
-		{
-			p_rChild = l_pElement->second.find( p_rName );
-
-			if( p_rChild == l_pElement->second.end() )
-			{
-				l_Status = S_FALSE;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::IsValidLeaf( const SVBranchHandle& p_rParent, const SVLeafHandle& p_rLeaf )
-{
-	HRESULT l_Status = S_OK;
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
-	{
-		GetRoot( l_Parent );
-	}
-
-	if( l_Parent != NULL )
-	{
-		const SVMaterialsTreeAdapter::SVTreeElement* l_pElement( NULL );
-
-		l_pElement = l_Parent->get();
-
-		if( l_pElement != NULL )
-		{
-			if( p_rLeaf == l_pElement->second.end() )
-			{
-				l_Status = S_FALSE;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::CreateLeaf( const SVBranchHandle& p_rParent, const BSTR& p_rName, const VARIANT& p_rData, SVLeafHandle* p_pChild )
-{
-	HRESULT l_Status( S_OK );
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
-	{
-		GetRoot( l_Parent );
-	}
-
-	if( l_Parent != NULL )
-	{
-		SVMaterialsTreeAdapter::SVTreeElement* l_pElement( NULL );
-
-		l_pElement = const_cast< SVMaterialsTreeAdapter::SVTreeElement* >( l_Parent->get() );
-
-		if( l_pElement != NULL )
-		{
-			l_Status = l_pElement->second.AddMaterial( p_rName, p_rData );
-
-			if( l_Status == S_OK )
-			{
-				if( p_pChild != NULL )
+				if( nullptr != pParent )
 				{
-					( *p_pChild ) = l_pElement->second.find( p_rName );
+					SVMaterialsTree::iterator Iter( pParent->begin() );
 
-					if( ( *p_pChild ) == l_pElement->second.end() )
+					for( ; Iter != pParent->end(); ++Iter )
 					{
-						l_Status = E_FAIL;
+						if( Iter.node() == rpBranch )
+						{
+							pParent->erase( Iter );
+							break;
+						}
+					}
+				}
+			}
+
+			rpBranch = nullptr;
+		}
+
+		return Result;
+	}
+
+	std::string SVXMLMaterialsTree::getBranchName( const SVBranchHandle pBranch ) const
+	{
+		std::string Result;
+
+		if( nullptr != pBranch )
+		{
+			if( isRoot( pBranch ) )
+			{
+				Result = _T( "Base" );
+			}
+			else
+			{
+				const SVMaterialsTree::SVTreeElement* pElement( pBranch->get() );
+
+				if( nullptr != pElement )
+				{
+					Result = pElement->first.c_str();
+				}
+			}
+		}
+
+		return Result;
+	}
+
+	bool SVXMLMaterialsTree::hasLeaves( const SVBranchHandle pBranch )
+	{
+		bool Result( false );
+
+		SVBranchHandle pParent = pBranch;
+
+		if( nullptr == pParent )
+		{
+			pParent = getRoot();
+		}
+
+		if( nullptr != pParent )
+		{
+			if( setChildren( pParent ) && 0 < m_ChildLeaves.size() )
+			{
+				Result = true;
+			}
+		}
+
+		return Result;
+	}
+
+	SVXMLMaterialsTree::SVLeafHandle SVXMLMaterialsTree::getFirstLeaf( const SVBranchHandle pParent )
+	{
+		SVLeafHandle pResult( m_Tree.end() );
+
+		SVBranchHandle pBranch( pParent );
+
+		if( nullptr == pBranch )
+		{
+			pBranch = getRoot();
+		}
+
+		if( nullptr != pBranch )
+		{
+			if( setChildren( pBranch ) )
+			{
+				SVLeaves::iterator Iter( m_ChildLeaves.begin() );
+				if( m_ChildLeaves.end() != Iter )
+				{
+					pResult = *Iter;
+				}
+			}
+		}
+
+		return pResult;
+	}
+
+	SVXMLMaterialsTree::SVLeafHandle SVXMLMaterialsTree::getNextLeaf( const SVBranchHandle pParent, const SVLeafHandle pLeaf )
+	{
+		SVLeafHandle pResult( m_Tree.end() );
+
+		SVBranchHandle pBranch( pParent );
+
+		if( nullptr == pBranch )
+		{
+			pBranch = getRoot();
+		}
+
+		if( nullptr != pBranch )
+		{
+			if( setChildren( pBranch ) )
+			{
+				for( SVLeaves::iterator Iter( m_ChildLeaves.begin() ); m_ChildLeaves.end() != Iter; ++Iter )
+				{
+					//Find the current child branch
+					if( pLeaf == *Iter )
+					{
+						++Iter;
+						//Check if the next branch child is valid
+						if( m_ChildLeaves.end() != Iter )
+						{
+							pResult = *Iter;
+						}
+						else
+						{
+							//exit the loop no further leaves found
+							break;
+						}
 					}
 				}
 			}
 		}
+
+		return pResult;
+	}
+
+	SVXMLMaterialsTree::SVLeafHandle SVXMLMaterialsTree::findLeaf( const SVBranchHandle pParent, LPCTSTR Name )
+	{
+		SVLeafHandle pResult( m_Tree.end() );
+
+		SVBranchHandle pBranch( pParent );
+
+		if( nullptr == pBranch )
+		{
+			pBranch = getRoot();
+		}
+
+		if( nullptr != pBranch )
+		{
+			if( setChildren( pBranch ) )
+			{
+				for( SVLeaves::iterator Iter( m_ChildLeaves.begin() ); m_ChildLeaves.end() != Iter; ++Iter )
+				{
+					//Find the current child branch
+					if( (*Iter)->first == Name )
+					{
+						pResult = *Iter;
+						break;
+					}
+				}
+			}
+		}
+
+		return pResult;
+	}
+
+	bool SVXMLMaterialsTree::isValidLeaf( const SVBranchHandle pParent, const SVLeafHandle pChild )
+	{
+		bool Result( false );
+
+		SVBranchHandle pBranch( pParent );
+
+		if( nullptr == pBranch )
+		{
+			pBranch = getRoot();
+		}
+
+		if( nullptr != pBranch )
+		{
+			if( setChildren( pBranch ) )
+			{
+				for( SVLeaves::iterator Iter( m_ChildLeaves.begin() ); m_ChildLeaves.end() != Iter; ++Iter )
+				{
+					//Find the current child branch
+					if( pChild == *Iter )
+					{
+						Result = true;
+						break;
+					}
+				}
+			}
+		}
+
+		return Result;
+	}
+
+	HRESULT SVXMLMaterialsTree::createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const VARIANT& rData, SVLeafHandle* ppLeaf )
+	{
+		HRESULT Result( S_OK );
+		SVBranchHandle pBranch( pParent );
+		SVString LeafName( Name );
+
+		if( nullptr == pBranch )
+		{
+			pBranch = getRoot();
+		}
+
+		if( nullptr != pBranch )
+		{
+			SVLeafHandle pNewLeaf;
+			pNewLeaf = pBranch->insert( SVMaterialsTree::SVTreeElement( LeafName, new SVMaterialData( rData ) ) );
+
+			if( pBranch->end() != pNewLeaf )
+			{
+				if( nullptr != ppLeaf )
+				{
+					*ppLeaf = pNewLeaf;
+				}
+			}
+			else
+			{
+				Result = E_FAIL;
+			}
+		}
 		else
 		{
-			l_Status = E_FAIL;
+			Result = E_FAIL;
 		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
+
+		return Result;
 	}
 
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::DeleteLeaf( const SVBranchHandle& p_rParent, SVLeafHandle& p_rChild )
-{
-	HRESULT l_Status( S_OK );
-
-	SVBranchHandle l_Parent = p_rParent;
-
-	if( l_Parent == NULL )
+	HRESULT SVXMLMaterialsTree::deleteLeaf( const SVLeafHandle pLeaf )
 	{
-		GetRoot( l_Parent );
-	}
+		HRESULT Result( E_FAIL );
 
-	if( l_Parent != NULL )
-	{
-		SVMaterialsTreeAdapter::SVTreeElement* l_pElement( NULL );
-
-		l_pElement = const_cast< SVMaterialsTreeAdapter::SVTreeElement* >( l_Parent->get() );
-
-		if( l_pElement != NULL )
+		if( m_Tree.end() != pLeaf )
 		{
-			SVMaterials::iterator l_Iter( p_rChild );
-
-			p_rChild = l_pElement->second.erase( p_rChild );
+			SVBranchHandle pParent( pLeaf.node()->parent() );
+			if ( nullptr != pParent )
+			{
+				pParent->erase( pLeaf );
+			}
+			Result = S_OK;
 		}
-		else
+
+
+		return Result;
+	}
+
+	std::string SVXMLMaterialsTree::getLeafName( const SVLeafHandle pLeaf ) const
+	{
+		std::string Result;
+
+		if( m_Tree.end() != pLeaf )
 		{
-			l_Status = E_FAIL;
+			Result = pLeaf->first.c_str();
 		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
+
+		return Result;
 	}
 
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::GetLeafName( const SVLeafHandle& p_rLeaf, BSTR& p_rName )
-{
-	HRESULT l_Status( S_OK );
-
-	_bstr_t l_String;
-
-	l_String.Attach( p_rName );
-
-	l_String = p_rLeaf->first.ToBSTR();
-
-	p_rName = l_String.Detach();
-
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::GetLeafData( const SVLeafHandle& p_rLeaf, VARIANT& p_rData )
-{
-	HRESULT l_Status( S_OK );
-
-	_variant_t l_Variant;
-
-	l_Variant.Attach( p_rData );
-
-	l_Variant = static_cast< const _variant_t & >( p_rLeaf->second );
-
-	p_rData = l_Variant.Detach();
-
-	return l_Status;
-}
-
-// SetLeafData () -----------------------------------------------------------
-//  All data will be Copied for the tree.  The original VARIANT and any 
-//  associated (BSTR) data will not be alterred.
-HRESULT SVXMLMaterialsTree::SetLeafData( const SVLeafHandle& p_rLeaf, const VARIANT& p_rData )
-{
-	HRESULT l_Status( S_OK );
-
-	p_rLeaf->second = p_rData;
-
-	return l_Status;
-}
-
-HRESULT SVXMLMaterialsTree::ReplaceName( const SVBranchHandle& rParent, const VARIANT& rSearchName, const VARIANT& rReplaceName )
-{
-	HRESULT Result( S_OK );
-	SVLeafHandle Leaf;
-
-	GetFirstLeaf( rParent, Leaf);
-	while( S_OK == IsValidLeaf( rParent, Leaf ) )
+	VARIANT SVXMLMaterialsTree::getLeafData( const SVLeafHandle pLeaf ) const
 	{
-		_variant_t Value;
-		GetLeafData( Leaf, Value );
-		if( Value == rSearchName )
+		_variant_t Result;
+
+		if( m_Tree.end() != pLeaf )
 		{
-			Value = rReplaceName;
-			SetLeafData( Leaf, Value );
+			Result = static_cast< const _variant_t> ( *pLeaf->second );
 		}
 
-		GetNextLeaf( rParent, Leaf);
+		return Result.Detach();
 	}
 
-	SVBranchHandle ChildBranch;
-	GetFirstBranch( rParent, ChildBranch );
-	while( S_OK == IsValidBranch( ChildBranch ) )
+	VARIANT SVXMLMaterialsTree::getLeafData( const SVBranchHandle pParent, LPCTSTR Name )
 	{
-		ReplaceName( ChildBranch, rSearchName, rReplaceName );
-		GetNextBranch( rParent, ChildBranch );
+		return getLeafData( findLeaf( pParent, Name ) );
 	}
 
-	return Result;
-}
-
-HRESULT SVXMLMaterialsTree::getLeafValues( const SVBranchHandle& rParent, const SVString& rSearchName, SVStringSet& rLeafValues )
-{
-	HRESULT Result( S_OK );
-	SVLeafHandle Leaf;
-
-	GetFirstLeaf( rParent, Leaf);
-	while( S_OK == IsValidLeaf( rParent, Leaf ) )
+	HRESULT SVXMLMaterialsTree::setLeafData( const SVLeafHandle pLeaf, const VARIANT& rData )
 	{
-		_bstr_t LeafName;
-		GetLeafName( Leaf, LeafName.GetBSTR() );
-		if( rSearchName == SVString( LeafName) )
+		HRESULT Result( E_FAIL );
+
+		if( m_Tree.end() != pLeaf )
+		{
+			SVLeafHandle pSetData( pLeaf );
+			if( !pSetData->second.empty() )
+			{
+				*pSetData->second = rData;
+			}
+			Result = S_OK;
+		}
+
+		return Result;
+	}
+
+	HRESULT SVXMLMaterialsTree::replaceName( const SVBranchHandle pParent, const VARIANT& rSearchName, const VARIANT& rReplaceName )
+	{
+		HRESULT Result( S_OK );
+		SVLeafHandle pLeaf;
+
+		pLeaf =  getFirstLeaf( pParent );
+		while( isValidLeaf( pParent, pLeaf ) )
 		{
 			_variant_t Value;
-			GetLeafData( Leaf, Value );
-			rLeafValues.insert( SVString(Value) );
+			Value = getLeafData( pLeaf );
+			if( Value == rSearchName )
+			{
+				Value = rReplaceName;
+				setLeafData( pLeaf, Value );
+			}
+
+			pLeaf = getNextLeaf( pParent, pLeaf);
 		}
 
-		GetNextLeaf( rParent, Leaf);
+		SVBranchHandle pBranch( getFirstBranch( pParent ) );
+		while( isValidBranch( pBranch ) )
+		{
+			replaceName( pBranch, rSearchName, rReplaceName );
+			pBranch = getNextBranch( pParent, pBranch );
+		}
+
+		return Result;
 	}
 
-	SVBranchHandle ChildBranch;
-	GetFirstBranch( rParent, ChildBranch );
-	while( S_OK == IsValidBranch( ChildBranch ) )
+	HRESULT SVXMLMaterialsTree::getLeafValues( const SVBranchHandle pParent, const SVString& rSearchName, SVStringSet& rLeafValues )
 	{
-		getLeafValues( ChildBranch, rSearchName, rLeafValues );
-		GetNextBranch( rParent, ChildBranch );
-	}
+		HRESULT Result( S_OK );
 
-	return Result;
-}
+		SVLeafHandle pLeaf( getFirstLeaf( pParent ) );
+		while( isValidLeaf( pParent, pLeaf ) )
+		{
+			SVString LeafName = getLeafName( pLeaf );
+			if( rSearchName == LeafName )
+			{
+				_variant_t Value;
+				Value = getLeafData( pLeaf );
+				rLeafValues.insert( SVString(Value) );
+			}
+
+			pLeaf = getNextLeaf( pParent, pLeaf);
+		}
+
+		SVBranchHandle pBranch( getFirstBranch( pParent ) );
+		while( isValidBranch( pBranch ) )
+		{
+			getLeafValues( pBranch, rSearchName, rLeafValues );
+			pBranch = getNextBranch( pParent, pBranch );
+		}
+
+		return Result;
+	}
+	#pragma endregion Public Methods
+
+	#pragma region Private Methods
+	bool SVXMLMaterialsTree::setChildren( const SVBranchHandle pParent ) const
+	{
+		bool Result( false );
+
+		if( nullptr != pParent )
+		{
+			if( pParent == m_pCurrentParent )
+			{
+				Result = true;
+			}
+			else
+			{
+				m_pCurrentParent = nullptr;
+				m_ChildBranches.clear();
+				m_ChildLeaves.clear();
+				for( SVMaterialsTree::iterator Iter( pParent->begin() ); pParent->end() != Iter; ++Iter )
+				{
+					//If smart pointer empty then it is a branch
+					if( Iter->second.empty() )
+					{
+						m_ChildBranches.push_back( Iter.node() );
+					}
+					else
+					{
+						m_ChildLeaves.push_back( Iter );
+					}
+				}
+				Result = true;
+				m_pCurrentParent = pParent;
+			}
+		}
+
+		return Result;
+	}
+	#pragma endregion Private Methods
+} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -69,7 +69,7 @@ HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersi
 		{
 			BSTR bstrChangedNode( NULL );
 
-			SVTreeType l_XMLTree( p_rTree );
+//			SVTreeType l_XMLTree( p_rTree );
 			SVXMLClass l_XMLTreeBuilder;
 
 			hr = l_XMLTreeBuilder.Initialize();
@@ -87,7 +87,7 @@ HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersi
 
 				if( SUCCEEDED( hr ) )
 				{
-					hr = SVXML2TreeConverter::CopyToTree( l_XMLTreeBuilder, l_XMLTree, L"Base", false );
+					hr = SVXML2TreeConverter::CopyToTree( l_XMLTreeBuilder, p_rTree, L"Base", false );
 				}
 			}
 

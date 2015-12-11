@@ -16,7 +16,7 @@
 #include <fstream>
 #include "ToolClipboard.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"
-#include "SVXMLLibrary\SVNavigateTreeClass.h"
+#include "SVXMLLibrary\SVNavigateTree.h"
 #include "SVXMLLibrary\SVXML2TreeConverter.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\SVInspectionLevelCreateStruct.h"
@@ -151,8 +151,7 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 			::DeleteFile( FileName.c_str() );
 		}
 
-		SVMaterialsTree LocalTree;
-		SVXMLMaterialsTree Tree( LocalTree );
+		SVTreeType Tree;
 
 		if( S_OK == Result )
 		{
@@ -445,7 +444,7 @@ void ToolClipboard::readFileToString( const SVString& rFileName, SVString& rFile
 	}
 }
 
-HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVXMLMaterialsTree& rTree ) const
+HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVTreeType& rTree ) const
 {
 	HRESULT Result( S_OK );
 
@@ -474,17 +473,17 @@ HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVXMLMaterial
 	return Result;
 }
 
-HRESULT ToolClipboard::checkVersion( SVXMLMaterialsTree& rTree ) const
+HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 {
 	HRESULT Result( S_FALSE );
 
 	SVTreeType::SVBranchHandle EnvironmentItem = NULL;
 
-	if( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_ENVIRONMENT, NULL, EnvironmentItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, CTAG_ENVIRONMENT, NULL, EnvironmentItem ) )
 	{
 		_variant_t ClipboardVersion;
 
-		SVNavigateTreeClass::GetItem( rTree, CTAG_VERSION_NUMBER, EnvironmentItem, ClipboardVersion );
+		SVNavigateTree::GetItem( rTree, CTAG_VERSION_NUMBER, EnvironmentItem, ClipboardVersion );
 
 		//Clipboard SVObserver version and current version must be the same
 		if ( VT_UI4 == ClipboardVersion.vt && TheSVObserverApp.getCurrentVersion() == ClipboardVersion.ulVal )
@@ -502,21 +501,21 @@ HRESULT ToolClipboard::checkVersion( SVXMLMaterialsTree& rTree ) const
 	return Result;
 }
 
-HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rTree, int ToolListindex ) const
+HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int ToolListindex ) const
 {
 	HRESULT Result( S_OK );
 
 	SVTreeType::SVBranchHandle ToolsItem = NULL;
 
-	if( SVNavigateTreeClass::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
 	{
 		_variant_t Inspection;
 		_variant_t ToolType;
 		_variant_t ToolImage;
 
-		SVNavigateTreeClass::GetItem( rTree, m_rInspection.GetObjectName(), ToolsItem, Inspection );
-		SVNavigateTreeClass::GetItem( rTree, ToolTypeTag, ToolsItem, ToolType );
-		SVNavigateTreeClass::GetItem( rTree, ToolImageTag, ToolsItem, ToolImage );
+		SVNavigateTree::GetItem( rTree, m_rInspection.GetObjectName(), ToolsItem, Inspection );
+		SVNavigateTree::GetItem( rTree, ToolTypeTag, ToolsItem, ToolType );
+		SVNavigateTree::GetItem( rTree, ToolImageTag, ToolsItem, ToolImage );
 
 		SVGUID InspectionGuid( StringToGUID( Inspection ) );
 		SVGUID ToolTypeGuid( StringToGUID( ToolType ) );
@@ -578,23 +577,23 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rT
 	return Result;
 }
 
-HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVXMLMaterialsTree& rTree ) const
+HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) const
 {
 	HRESULT Result( S_FALSE );
 
-	SVTreeType::SVBranchHandle ToolsItem = NULL;
+	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 
-	if( SVNavigateTreeClass::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
 	{
-		SVTreeType::SVBranchHandle ToolItem = NULL;
+		SVTreeType::SVBranchHandle ToolItem( nullptr );
 
-		rTree.GetFirstBranch( ToolsItem, ToolItem );
+		ToolItem = rTree.getFirstBranch( ToolsItem );
 
-		if ( S_OK == rTree.IsValidBranch( ToolItem ) )
+		if( rTree.isValidBranch( ToolItem ) )
 		{
 			_variant_t ObjectName;
 
-			SVNavigateTreeClass::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
+			SVNavigateTree::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
 			SVString ToolName( ObjectName.bstrVal );
 			SVString NewName;
 
@@ -622,13 +621,13 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVXMLMaterialsTree& 
 	return Result;
 }
 
-HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVXMLMaterialsTree& rTree ) const
+HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree ) const
 {
 	HRESULT Result( S_FALSE );
 
 	SVTreeType::SVBranchHandle ToolsItem = NULL;
 
-	if( SVNavigateTreeClass::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
 	{
 		SVStringSet UniqueIDList;
 
@@ -657,23 +656,23 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVXMLMaterialsTre
 	return Result;
 }
 
-HRESULT ToolClipboard::parseTreeToTool( SVXMLMaterialsTree& rTree, SVGUID& rToolGuid )
+HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 {
 	HRESULT Result( S_FALSE );
 
-	SVTreeType::SVBranchHandle ToolsItem = NULL;
+	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 
-	if( SVNavigateTreeClass::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
 	{
-		SVTreeType::SVBranchHandle ToolItem = NULL;
+		SVTreeType::SVBranchHandle ToolItem( nullptr );
 
-		rTree.GetFirstBranch( ToolsItem, ToolItem );
+		ToolItem = rTree.getFirstBranch( ToolsItem );
 
-		if ( S_OK == rTree.IsValidBranch( ToolItem ) )
+		if ( rTree.isValidBranch( ToolItem ) )
 		{
 			_variant_t UniqueID;
 
-			SVNavigateTreeClass::GetItem( rTree, scUniqueReferenceIDTag, ToolItem, UniqueID);
+			SVNavigateTree::GetItem( rTree, scUniqueReferenceIDTag, ToolItem, UniqueID);
 
 			SVToolSetClass* pToolset( m_rInspection.GetToolSet() );
 			if( nullptr != pToolset )

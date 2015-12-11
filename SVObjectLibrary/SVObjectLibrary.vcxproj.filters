@@ -199,18 +199,6 @@
     <ClInclude Include="SVToolLevelCreateStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVObserverConnectData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObserverDisconnectData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSubjectConnectData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSubjectDisconnectData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -9,34 +9,29 @@
 //* .Check In Date   : $Date:   25 Apr 2013 18:49:10  $
 //******************************************************************************
 
-#ifndef SVCOMPAREKEYS_H
-#define SVCOMPAREKEYS_H
+#pragma once
 
-/**
-@SVObjectName Compare Keys
-
-@SVObjectOverview
-
-@SVObjectOperations
-
-*/
-template<typename ElementKey, typename ElementType>
-class SVCompareKeys : public std::unary_function< std::pair<ElementKey, ElementType>, bool>
+namespace Seidenader { namespace SVTreeLibrary
 {
-	typedef std::pair<ElementKey, ElementType> Element;
-
-public:
-	SVCompareKeys(const ElementKey& elementKey) : m_elementKey(elementKey) {}
-	
-	bool operator()(const Element& element) const 
+	template<typename Key, typename Data>
+	class SVCompareKeys : public std::unary_function< std::pair<Key, Data >, bool>
 	{
-		return (m_elementKey == element.first);
-	}
-private:
-	ElementKey m_elementKey;
-};
+		typedef std::pair<Key, Data > Element;
 
-#endif
+	public:
+		SVCompareKeys(const Key& elementKey) : m_elementKey(elementKey) {}
+	
+		bool operator()(const Element& element) const 
+		{
+			return (m_elementKey == element.first);
+		}
+	private:
+		Key m_elementKey;
+	};
+} /* namespace SVTreeLibrary */ } /* namespace Seidenader */
+
+namespace SvTrl = Seidenader::SVTreeLibrary;
+
 
 //******************************************************************************
 //* LOG HISTORY:

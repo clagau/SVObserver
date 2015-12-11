@@ -98,12 +98,12 @@ BOOL ObjectFilterPpg::OnInitDialog()
 	m_checkedControl.SetCurSel(0);
 
 	std::set<SVString> typeSet;
-	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
+	SvTrl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 	while( m_rTreeContainer.pre_order_end() != Iter )
 	{
-		if( Iter->second.isLeaf() )
+		if( Iter->second->isLeaf() )
 		{
-			typeSet.insert(Iter->second.getItemTypeName());
+			typeSet.insert(Iter->second->getItemTypeName());
 		}
 		++Iter;
 	}
@@ -278,19 +278,19 @@ void ObjectFilterPpg::loadGridCtrl()
 	SVString filterLocationUpper(m_FilterLocationControl.getEditText());
 	filterNameUpper.MakeUpper();
 	filterLocationUpper.MakeUpper();
-	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
+	SvTrl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 	while( m_rTreeContainer.pre_order_end() != Iter )
 	{
-		if( Iter->second.isLeaf() )
+		if( Iter->second->isLeaf() )
 		{
-			if (m_SingleSelect && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
+			if (m_SingleSelect && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() )
 			{
 				m_CheckedLocation = Iter->first;
 			}
 			int checkSelection = m_checkedControl.GetCurSel();
 			int typeSelection = m_TypeControl.GetCurSel();
-			SVString nameUpper(Iter->second.getName());
-			SVString locationUpper(Iter->second.getLocation());
+			SVString nameUpper(Iter->second->getName());
+			SVString locationUpper(Iter->second->getLocation());
 			nameUpper.MakeUpper();
 			locationUpper.MakeUpper();
 			bool isNameValid = nameUpper.isSubmatch(filterNameUpper);
@@ -299,14 +299,14 @@ void ObjectFilterPpg::loadGridCtrl()
 			m_TypeControl.GetLBText(typeSelection, typeText);
 			if ( (isNameValid && isLocationValid) &&
 				 (0 == checkSelection || 
-					( 1 == checkSelection && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState()) || 
-					( 2 == checkSelection && SvTrl::IObjectSelectorItem::CheckedEnabled != Iter->second.getCheckedState()) ) &&
-				 (0 == typeSelection || Iter->second.getItemTypeName().c_str() == typeText ))
+					( 1 == checkSelection && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState()) || 
+					( 2 == checkSelection && SvTrl::IObjectSelectorItem::CheckedEnabled != Iter->second->getCheckedState()) ) &&
+				 (0 == typeSelection || Iter->second->getItemTypeName().c_str() == typeText ))
 			{
 				m_Grid.SetRowCount(i + 1);
-				m_Grid.SetItemText(i, NameColumn, Iter->second.getName().c_str());
+				m_Grid.SetItemText(i, NameColumn, Iter->second->getName().c_str());
 				m_Grid.SetItemState(i, NameColumn, m_Grid.GetItemState(i, 0) | GVIS_READONLY);
-				m_Grid.SetItemText(i, LocationColumn, Iter->second.getLocation().c_str());
+				m_Grid.SetItemText(i, LocationColumn, Iter->second->getLocation().c_str());
 				m_Grid.SetItemState(i, LocationColumn, m_Grid.GetItemState(i, LocationColumn) | GVIS_READONLY);
 				m_Grid.SetItemData(i, LocationColumn, reinterpret_cast<LPARAM> (&Iter->first) );
 				//We need to use the using here because the macro RUNTIME_CLASS cannot handle namespaces
@@ -315,7 +315,7 @@ void ObjectFilterPpg::loadGridCtrl()
 				SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
 				if (nullptr != cell)
 				{
-					if (SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState())
+					if (SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState())
 					{
 						cell->SetCheck( TRUE );
 						if (m_SingleSelect)
@@ -329,7 +329,7 @@ void ObjectFilterPpg::loadGridCtrl()
 					}
 				}
 
-				m_Grid.SetItemText(i, TypeColumn, Iter->second.getItemTypeName().c_str());
+				m_Grid.SetItemText(i, TypeColumn, Iter->second->getItemTypeName().c_str());
 				m_Grid.SetItemState(i, TypeColumn, m_Grid.GetItemState(i, TypeColumn) | GVIS_READONLY);
 				i++;
 			}
@@ -367,8 +367,8 @@ void Seidenader::ObjectSelectorLibrary::ObjectFilterPpg::changeCheckState( const
 	SvTrl::ObjectTreeItems::iterator iter = m_rTreeContainer.findItem(rLocation);
 	if( m_rTreeContainer.end() != iter )
 	{
-		if (iter->second.isLeaf() && 
-			(iter->second.getCheckedState() == SvTrl::IObjectSelectorItem::CheckedEnabled) != isChecked)
+		if (iter->second->isLeaf() && 
+			(iter->second->getCheckedState() == SvTrl::IObjectSelectorItem::CheckedEnabled) != isChecked)
 		{
 			if (m_SingleSelect)
 			{
@@ -393,7 +393,7 @@ void Seidenader::ObjectSelectorLibrary::ObjectFilterPpg::changeCheckState( const
 				}
 			}
 
-			iter->second.setCheckedState(isChecked?SvTrl::IObjectSelectorItem::CheckedEnabled:SvTrl::IObjectSelectorItem::UncheckedEnabled);
+			iter->second->setCheckedState(isChecked?SvTrl::IObjectSelectorItem::CheckedEnabled:SvTrl::IObjectSelectorItem::UncheckedEnabled);
 			m_rTreeContainer.setParentState(iter);
 		}
 	}

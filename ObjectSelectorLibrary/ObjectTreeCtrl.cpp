@@ -239,7 +239,7 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, SvTrl::IObj
 			//If no defined state then we want to toggle the state
 			if( SvTrl::IObjectSelectorItem::EmptyEnabled == CheckedState )
 			{
-				switch( Iter->second.getCheckedState() )
+				switch( Iter->second->getCheckedState() )
 				{
 				case SvTrl::IObjectSelectorItem::UncheckedEnabled:
 					CheckedState =  SvTrl::IObjectSelectorItem::CheckedEnabled;
@@ -260,13 +260,13 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, SvTrl::IObj
 				}
 			}
 
-			Iter->second.setCheckedState( CheckedState );
+			Iter->second->setCheckedState( CheckedState );
 			SetItemState( *ParentIter, INDEXTOSTATEIMAGEMASK( CheckedState ), TVIS_STATEIMAGEMASK );
 			m_UpdateItems.insert( Iter->first );
 
 			SVStringSet updateItems = getParentPropPage().getTreeContainer().setParentState( Iter );
 			m_UpdateItems.insert(updateItems.begin(), updateItems.end());
-			if( Iter->second.isNode() )
+			if( Iter->second->isNode() )
 			{
 				setChildrenState( Iter, CheckedState );
 			}
@@ -281,13 +281,13 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, SvTrl::IObj
 
 void ObjectTreeCtrl::setChildrenState( SvTrl::ObjectTreeItems::iterator& rIter, SvTrl::IObjectSelectorItem::CheckedStateEnum& rCheckedState )
 {
-	SvTrl::ObjectTreeItems::iterator ChildIter = rIter.GetChildTree()->begin();
-	while( rIter.GetChildTree()->end() != ChildIter )
+	SvTrl::ObjectTreeItems::iterator ChildIter = rIter.node()->begin();
+	while( rIter.node()->end() != ChildIter )
 	{
 		bool TriState = SvTrl::IObjectSelectorItem::TriStateEnabled == rCheckedState || SvTrl::IObjectSelectorItem::TriStateDisabled == rCheckedState;
-		if( !TriState || ChildIter->second.isNode() )
+		if( !TriState || ChildIter->second->isNode() )
 		{
-			ChildIter->second.setCheckedState( rCheckedState );
+			ChildIter->second->setCheckedState( rCheckedState );
 			m_UpdateItems.insert( ChildIter->first );
 			setChildrenState(ChildIter, rCheckedState);
 		}
@@ -312,7 +312,7 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 				if( getParentPropPage().getTreeContainer().end() != Iter )
 				{
 					//If it is unchecked then it will be checked after this method
-					if( SvTrl::IObjectSelectorItem::UncheckedEnabled == Iter->second.getCheckedState() )
+					if( SvTrl::IObjectSelectorItem::UncheckedEnabled == Iter->second->getCheckedState() )
 					{
 						m_CurrentSelection = *pLocation;
 					}

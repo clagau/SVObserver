@@ -9,10 +9,8 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:50:26  $
 //******************************************************************************
 
-#ifndef SVCAMERATRIGGERCLASS_H
-#define SVCAMERATRIGGERCLASS_H
+#pragma once
 
-#include "SVMaterialsLibrary/SVMaterials.h"
 #include "SVSoftwareTriggerClass.h"
 
 class SVCameraTriggerClass : public SVTriggerClass
@@ -42,8 +40,6 @@ public:
 	static HRESULT CALLBACK SoftwareTriggerCompleteCallback(void *p_pvOwner, void *p_pvData, void * p_pvResponse);
 	static HRESULT CALLBACK TriggerCallback(void *p_pvOwner, void *p_pvData);
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

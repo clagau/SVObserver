@@ -53,7 +53,7 @@
 #include "SVAcquisitionClass.h"
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
@@ -2479,12 +2479,12 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 	if( pInspection == nullptr ) { return false; }
 
-	bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_HEIGHT_RESULT_VIEW, htiParent, svVariant );
+	bOk = SVNavigateTree::GetItem( rTree, CTAG_HEIGHT_RESULT_VIEW, htiParent, svVariant );
 	if ( bOk )
 	{
 		m_nHeightResultView = svVariant;
 
-		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_WIDTH_TOOLSET_VIEW, htiParent, svVariant );
+		bOk = SVNavigateTree::GetItem( rTree, CTAG_WIDTH_TOOLSET_VIEW, htiParent, svVariant );
 		if ( bOk )
 		{
 			m_nWidthToolSetView = svVariant;
@@ -2495,7 +2495,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 	if ( bOk )
 	{
 		SVTreeType::SVBranchHandle htiCH = NULL;
-		BOOL bTemp = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_CONDITIONAL_HISTORY, htiParent, htiCH );
+		BOOL bTemp = SVNavigateTree::GetItemBranch( rTree, CTAG_CONDITIONAL_HISTORY, htiParent, htiCH );
 		if ( bTemp )
 		{
 			// iterate through all sub items
@@ -2503,26 +2503,25 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			SVScalarValueVectorType vecProperties;
 			SVTreeType::SVLeafHandle htiChild;
 
-			rTree.GetFirstLeaf( htiCH, htiChild );
+			htiChild = rTree.getFirstLeaf( htiCH );
 
-			while( rTree.IsValidLeaf( htiCH, htiChild ) == S_OK )
+			while( rTree.isValidLeaf( htiCH, htiChild ) )
 			{
-				_bstr_t Name;
+				CString Name;
 				_variant_t Value;
 
-				rTree.GetLeafName( htiChild, Name.GetBSTR() );
-				rTree.GetLeafData( htiChild, Value.GetVARIANT() );
+				Name = rTree.getLeafName( htiChild ).c_str();
+				Value = rTree.getLeafData( htiChild );
 
 				if ( Value.vt == VT_BSTR )
 				{
-					CString strName = static_cast< LPCTSTR >( Name );
 					CString strValue = static_cast< LPCTSTR >( _bstr_t( Value ) );
 
-					SVScalarValue l_Value = SVScalarValue( strName, strValue );
+					SVScalarValue l_Value = SVScalarValue( Name, strValue );
 					vecProperties.push_back( l_Value );
 				}
 
-				rTree.GetNextLeaf( htiCH, htiChild );
+				htiChild = rTree.getNextLeaf( htiCH, htiChild );
 			}
 
 			pInspection->SetConditionalHistoryProperties( vecProperties );
@@ -2535,21 +2534,21 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 		SVTreeType::SVBranchHandle htiWindow = NULL;
 
-		bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_WINDOW_PLACEMENT, htiParent, htiWindow );
+		bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_WINDOW_PLACEMENT, htiParent, htiWindow );
 		if ( bOk )
 		{
-			bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_LENGTH, htiWindow, svVariant );
+			bOk = SVNavigateTree::GetItem( rTree, CTAG_LENGTH, htiWindow, svVariant );
 			if ( bOk ) { wndpl.length = svVariant; }
 
 			if ( bOk )
 			{
-				bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_FLAGS, htiWindow, svVariant );
+				bOk = SVNavigateTree::GetItem( rTree, CTAG_FLAGS, htiWindow, svVariant );
 				if ( bOk ) { wndpl.flags = svVariant; }
 			}
 
 			if ( bOk )
 			{
-				bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_SHOW_COMMAND, htiWindow, svVariant );
+				bOk = SVNavigateTree::GetItem( rTree, CTAG_SHOW_COMMAND, htiWindow, svVariant );
 				if ( bOk ) { wndpl.showCmd = svVariant; }
 			}
 
@@ -2557,15 +2556,15 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			{
 				SVTreeType::SVBranchHandle htiData = NULL;
 
-				bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_MINIMUM_POSITION, htiWindow, htiData );
+				bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_MINIMUM_POSITION, htiWindow, htiData );
 				if ( bOk )
 				{
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_X, htiData, svVariant );
+					bOk = SVNavigateTree::GetItem( rTree, CTAG_X, htiData, svVariant );
 					if ( bOk ) { wndpl.ptMinPosition.x = svVariant; }
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_Y, htiData, svVariant );
+						bOk = SVNavigateTree::GetItem( rTree, CTAG_Y, htiData, svVariant );
 						if ( bOk ) { wndpl.ptMinPosition.y = svVariant; }
 					}
 				}
@@ -2575,15 +2574,15 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			{
 				SVTreeType::SVBranchHandle htiData = NULL;
 
-				bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_MAXIMUM_POSITION, htiWindow, htiData );
+				bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_MAXIMUM_POSITION, htiWindow, htiData );
 				if ( bOk )
 				{
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_X, htiData, svVariant );
+					bOk = SVNavigateTree::GetItem( rTree, CTAG_X, htiData, svVariant );
 					if ( bOk ) { wndpl.ptMaxPosition.x = svVariant; }
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_Y, htiData, svVariant );
+						bOk = SVNavigateTree::GetItem( rTree, CTAG_Y, htiData, svVariant );
 						if ( bOk ) { wndpl.ptMaxPosition.y = svVariant; }
 					}
 				}
@@ -2593,27 +2592,27 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			{
 				SVTreeType::SVBranchHandle htiData = NULL;
 
-				bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_NORMAL_POSITION, htiWindow, htiData );
+				bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_NORMAL_POSITION, htiWindow, htiData );
 				if ( bOk )
 				{
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_LEFT, htiData, svVariant );
+					bOk = SVNavigateTree::GetItem( rTree, CTAG_LEFT, htiData, svVariant );
 					if ( bOk ) { wndpl.rcNormalPosition.left = svVariant; }
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_TOP, htiData, svVariant );
+						bOk = SVNavigateTree::GetItem( rTree, CTAG_TOP, htiData, svVariant );
 						if ( bOk ) { wndpl.rcNormalPosition.top = svVariant; }
 					}
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_RIGHT, htiData, svVariant );
+						bOk = SVNavigateTree::GetItem( rTree, CTAG_RIGHT, htiData, svVariant );
 						if ( bOk ) { wndpl.rcNormalPosition.right = svVariant; }
 					}
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_BOTTOM, htiData, svVariant );
+						bOk = SVNavigateTree::GetItem( rTree, CTAG_BOTTOM, htiData, svVariant );
 						if ( bOk ) { wndpl.rcNormalPosition.bottom = svVariant; }
 					}
 				}
@@ -2657,13 +2656,13 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 		SVTreeType::SVBranchHandle htiIPViews = NULL;
 		SVTreeType::SVBranchHandle htiViews = NULL;
 
-		bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_IPDOC_VIEWS, htiParent, htiIPViews );
+		bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_IPDOC_VIEWS, htiParent, htiIPViews );
 		if ( bOk )
 		{
 			// Serialze View Data...
 			mbInitImagesByName = TRUE;
 			POSITION vPos;
-			CString csName;
+			SVString Name;
 			_variant_t svVariant;
 
 			long lViewNumber = 0;
@@ -2671,25 +2670,21 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 			SVTreeType::SVBranchHandle htiBranch = NULL;
 
-			bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_VIEWS, htiIPViews, htiViews );
+			bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_VIEWS, htiIPViews, htiViews );
 			if ( bOk )
 			{
-				SVTreeType::SVBranchHandle htiItem; 
+				SVTreeType::SVBranchHandle htiItem( nullptr ); 
 
-				rTree.GetFirstBranch( htiViews, htiItem );
+				htiItem = rTree.getFirstBranch( htiViews );
 
-				while ( bOk && htiItem != NULL )
+				while ( bOk && nullptr != htiItem )
 				{
-					_bstr_t Name;
-
-					rTree.GetBranchName( htiItem, Name.GetBSTR() );
-
-					csName = static_cast< LPCTSTR >( Name );
+					Name = rTree.getBranchName( htiItem );
 
 					// The class SVToolSetTabView was changed to ToolSetView when the Tool Set Tree View was removed.
-					csName.Replace( CTAG_SVTOOLSET_TAB_VIEW_CLASS, CTAG_TOOLSET_VIEW );
+					Name.replace( CTAG_SVTOOLSET_TAB_VIEW_CLASS, CTAG_TOOLSET_VIEW );
 
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_VIEW_NUMBER, htiItem, svVariant );
+					bOk = SVNavigateTree::GetItem( rTree, CTAG_VIEW_NUMBER, htiItem, svVariant );
 					if ( bOk ) { lViewNumber = svVariant; }
 
 					if ( bOk )
@@ -2709,11 +2704,11 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 							// if there were not enough views or the view found is the
 							// wrong class, find the first matching view
 							if ( !View.pView || 
-								csName.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
+								Name.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
 								while( ( View.pView = GetNextView( vPos ) ) && 
-									( csName.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
+									( Name.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
 							}
 
 							if (View.pView)  // this should never fail, but if it does, we'll try to continue
@@ -2737,26 +2732,22 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 							}
 						}
 					}
-					rTree.GetNextBranch( htiViews, htiItem );
+					htiItem = rTree.getNextBranch( htiViews, htiItem );
 				}
 			}
 
-			bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_VIEWS, htiIPViews, htiViews );
+			bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_VIEWS, htiIPViews, htiViews );
 			if ( bOk )
 			{
-				SVTreeType::SVBranchHandle htiItem;
+				SVTreeType::SVBranchHandle htiItem( nullptr );
 
-				rTree.GetFirstBranch( htiViews, htiItem );
+				htiItem = rTree.getFirstBranch( htiViews );
 
-				while ( bOk && htiItem != NULL )
+				while ( bOk && nullptr != htiItem )
 				{
-					_bstr_t Name;
+					Name = rTree.getBranchName( htiItem );
 
-					rTree.GetBranchName( htiItem, Name.GetBSTR() );
-
-					csName = static_cast< LPCTSTR >( Name );
-
-					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_VIEW_NUMBER, htiItem, svVariant );
+					bOk = SVNavigateTree::GetItem( rTree, CTAG_VIEW_NUMBER, htiItem, svVariant );
 					if ( bOk ) { lViewNumber = svVariant; }
 
 					if ( bOk )
@@ -2776,11 +2767,11 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 							// if there were not enough views or the view found is the
 							// wrong class, find the first matching view
 							if ( !View.pView || 
-								csName.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
+								Name.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
 								while( ( View.pView = GetNextView( vPos ) ) && 
-									( csName.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
+									( Name.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
 							}
 
 							if (View.pView)  // this should never fail, but if it does, we'll try to continue
@@ -2804,7 +2795,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 							}
 						}
 					}
-					rTree.GetNextBranch( htiViews, htiItem );
+					htiItem = rTree.getNextBranch( htiViews, htiItem );
 				}
 			}
 		}

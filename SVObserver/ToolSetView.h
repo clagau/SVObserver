@@ -78,7 +78,7 @@ public:
 	SVIPDoc* GetIPDoc() const;
 	BOOL GetParameters(SVObjectWriter& rWriter);
 
-	typedef SVXMLMaterialsTree SVTreeType;
+	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 	BOOL SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 	BOOL CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);

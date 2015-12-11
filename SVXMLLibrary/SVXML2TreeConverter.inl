@@ -12,7 +12,7 @@
 #ifndef INCL_SVXML2TREECONVERTER_INL
 #define INCL_SVXML2TREECONVERTER_INL
 
-#include "SVNavigateTreeClass.h"
+#include "SVNavigateTree.h"
 
 template<typename SVT_TREE>
 HRESULT SVXML2TreeConverter::CopyToChildTree(SVXMLClass& rXml, MSXML2::IXMLDOMNodeListPtr pChildren, SVT_TREE& rTree, typename SVT_TREE::SVBranchHandle& parent)
@@ -36,7 +36,7 @@ HRESULT SVXML2TreeConverter::CopyToChildTree(SVXMLClass& rXml, MSXML2::IXMLDOMNo
 						hr = SVXML2TreeConverter::getValue(rXml, pChild, value);
 						if (hr == S_OK)
 						{
-							SVNavigateTreeClass::AddItem(rTree, parent, name.ToString(), value);
+							SVNavigateTree::AddItem(rTree, parent, name.ToString(), value);
 						}
 					}
 				}
@@ -54,7 +54,7 @@ HRESULT SVXML2TreeConverter::CopyToChildTree(SVXMLClass& rXml, MSXML2::IXMLDOMNo
 						}
 						else
 						{
-							SVNavigateTreeClass::AddBranch(rTree, parent, name.ToString(), &branch);
+							SVNavigateTree::AddBranch(rTree, parent, name.ToString(), &branch);
 							MSXML2::IXMLDOMNodeListPtr pChildList = pChild->childNodes;
 							if (pChildList)
 							{
@@ -78,7 +78,7 @@ HRESULT SVXML2TreeConverter::CopySafeArrayToTree(SVXMLClass& rXml, MSXML2::IXMLD
 	if (hr == S_OK)
 	{
 		typename SVT_TREE::SVLeafHandle leaf;
-		SVNavigateTreeClass::AddItem(rTree, parent, rName.ToString(), arrayValues, &leaf);
+		SVNavigateTree::AddItem(rTree, parent, rName.ToString(), arrayValues, &leaf);
 	}
 	else if( SUCCEEDED( hr ) )
 	{
@@ -96,7 +96,7 @@ HRESULT SVXML2TreeConverter::CopyToTree(SVXMLClass& rXml, SVT_TREE& rTree, const
 	MSXML2::IXMLDOMNodePtr pNode = SVXML2TreeConverter::GetStartingNode(rXml, nodeName);
 	if (pNode)
 	{
-		typename SVT_TREE::SVBranchHandle branch;
+		typename SVT_TREE::SVBranchHandle Branch( nullptr );
 
 		if (bInclusive)
 		{
@@ -111,24 +111,24 @@ HRESULT SVXML2TreeConverter::CopyToTree(SVXMLClass& rXml, SVT_TREE& rTree, const
 				}
 				else
 				{
-					SVNavigateTreeClass::AddBranch(rTree, NULL, name.ToString(), &branch);
+					SVNavigateTree::AddBranch(rTree, NULL, name.ToString(), &Branch);
 							
 					MSXML2::IXMLDOMNodeListPtr pChildList = pNode->childNodes;
 					if (pChildList)
 					{
-						hr = SVXML2TreeConverter::CopyToChildTree(rXml, pChildList, rTree, branch);
+						hr = SVXML2TreeConverter::CopyToChildTree(rXml, pChildList, rTree, Branch);
 					}
 				}
 			}
 		}
 		else
 		{
-			rTree.GetRoot( branch );
+			Branch = rTree.getRoot();
 
 			MSXML2::IXMLDOMNodeListPtr pChildren = pNode->childNodes;
 			if (pChildren)
 			{
-				hr = CopyToChildTree(rXml, pChildren, rTree, branch);
+				hr = CopyToChildTree(rXml, pChildren, rTree, Branch);
 			}
 			/*
 			for (int i = 0;i < pChildren->length;i++)

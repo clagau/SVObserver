@@ -16,7 +16,7 @@
 #include "SVVariantCustomTypes.h"
 #include "SVVariantConverter.h"
 #include "SVXMLSafeArrayConverter.h"
-#include "SVNavigateTreeClass.h"
+#include "SVNavigateTree.h"
 
 typedef std::map<_bstr_t, long> SVVariantTypeNameTable;
 SVVariantTypeNameTable vtTable = boost::assign::map_list_of<_bstr_t, long>

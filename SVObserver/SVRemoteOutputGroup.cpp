@@ -20,7 +20,7 @@
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 
 #include "SVObjectLibrary\SVClsIds.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
 #include "SVOutputStreamManager.h"
 #include "SVRemoteOutputObject.h"
@@ -366,96 +366,13 @@ BOOL SVRemoteOutputGroup::GetParameters( SVObjectXMLWriter& rWriter ) const
 	return bOk;
 }
 
-// Sets the SVMaterialsTree with data from this class.
-HRESULT SVRemoteOutputGroup::GetMaterials( SVMaterialsTreeAdapter& p_rMaterialsTree, SVMaterialsTreeAdapter::SVTreeContainer* p_pParent )
-{
-	HRESULT	l_hr = S_OK;
-	_variant_t l_vVariant;
-
-	SVMaterials l_Materials;
-
-	// Remote Output elements 
-	for( size_t i = 0 ; i < m_RemoteOutputs.size(); i++ )
-	{
-		SVString l_strBranch;
-		l_strBranch.Format( "%s_%d",CTAG_REMOTE_OUTPUT_ENTRY, i + 1 );
-
-		SVMaterialsTreeAdapter::SVTreeContainer* l_pBranch;
-		// This code snippet is to create a branch.
-		SVMaterialsTreeAdapter l_Parent( *p_pParent );
-		SVMaterialsTreeAdapter::SVTreeElement l_Element( l_strBranch, SVMaterials() );
-		SVMaterialsTreeAdapter::iterator l_Iter;
-		l_Iter = l_Parent.insert( l_Element, l_Parent.end() );
-		l_pBranch = l_Iter.GetChildTree();
-		// ***********************************************
-		if( l_pBranch )
-		{
-			KeepPrevError( l_hr, m_RemoteOutputs[i]->GetMaterials( p_rMaterialsTree, l_pBranch ));
-		}
-	}
-
-	SVMaterialsTreeAdapter::SVTreeElement l_Element( CTAG_REMOTE_OUTPUT_PARAMETERS, l_Materials );
-	p_pParent->insert( p_pParent->end(), l_Element );
-
-	return l_hr;
-}
-
-// Sets the data of this class with the MaterialsTree.
-HRESULT SVRemoteOutputGroup::Update( SVMaterialsTreeAdapter& p_rMaterialsTree )
-{
-	HRESULT l_hr = S_OK;
-
-	SVMaterialsTreeAdapter::SVTreeElement* l_pElement = p_rMaterialsTree.get();
-
-	SVMaterials l_Materials = l_pElement->second;
-
-	// Remote Output List
-	HRESULT l_hrTmp = S_OK;
-	SVRemoteOutputObject* l_TmpOutput = nullptr;
-	long l_lEntryNum = 0;
-	while( S_OK == l_hrTmp )
-	{
-		SVString l_strEntry;
-		l_strEntry.Format( "%s_%d", CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum );
-		SVMaterialsTreeAdapter::iterator l_it;
-		l_it = p_rMaterialsTree.find( l_strEntry );
-		if ( l_it != p_rMaterialsTree.end() )
-		{
-			// A new tree branch....
-			SVMaterialsTreeAdapter::SVTreeContainer* l_pTreeContainer = l_it.GetChildTree( );
-			if( nullptr != l_pTreeContainer )
-			{
-				SVMaterialsTreeAdapter l_rmtaBranch( *l_pTreeContainer );
-
-				l_TmpOutput = new SVRemoteOutputObject;
-				l_hrTmp = l_TmpOutput->Update( l_rmtaBranch );
-				if( S_OK == l_hrTmp )
-				{
-					m_RemoteOutputs.push_back( l_TmpOutput );
-				}
-				else
-				{
-					// delete the tmp object because something failed now we are done with it.
-					delete l_TmpOutput;
-				}
-			}
-		}
-		else
-		{
-			l_hrTmp = S_FALSE;
-		}
-	}
-
-	return l_hr;
-}
-
 // Sets parameters from Tree Control ( Restore )
 BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle htiParent )
 {
 	BOOL bOk = TRUE;
 	_variant_t svVariant;
 
-	bOk = SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
+	bOk = SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
 	if ( bOk )
 	{
 		SVGUID ObjectID = svVariant;
@@ -477,7 +394,7 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 	if ( bOk )
 	{
 		// Remote Output PPQ ID..
-		bOk = SVNavigateTreeClass::GetItem( p_rTree, CTAG_REMOTE_GROUP_PPQ, htiParent, svVariant );
+		bOk = SVNavigateTree::GetItem( p_rTree, CTAG_REMOTE_GROUP_PPQ, htiParent, svVariant );
 		if( bOk )
 		{
 			m_PPQObjectId = svVariant;
@@ -495,7 +412,7 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 			SVTreeType::SVBranchHandle htiBranch = nullptr;
 			CString l_strEntry;
 			l_strEntry.Format( "%s_%d", CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum );
-			l_bTmp = SVNavigateTreeClass::GetItemBranch( p_rTree, l_strEntry, htiParent, htiBranch );
+			l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, l_strEntry, htiParent, htiBranch );
 			if ( l_bTmp )
 			{
 				l_TmpOutput = new SVRemoteOutputObject;
@@ -638,22 +555,6 @@ SVRemoteOutputObject* SVRemoteOutputGroup::GetFirstObject( )
 		return *m_RemoteOutputs.begin();
 	}
 	return nullptr;
-}
-
-// This class creates the materials tree.
-HRESULT SVRemoteOutputGroup::GetData( SVMaterials& p_rMaterials )
-{
-	HRESULT l_hr = S_OK;
-
-	return l_hr;
-}
-
-// The materials tree sets this data class.
-HRESULT SVRemoteOutputGroup::SetData( SVMaterials& p_rMaterials )
-{
-	HRESULT l_hr = S_OK;
-
-	return l_hr;
 }
 
 // This function finds the objects index from the Object list.

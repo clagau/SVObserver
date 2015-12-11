@@ -126,7 +126,7 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 {
 	HRESULT hr = 0;
 
-	typename SVT_TREE::SVBranchHandle l_TreeRootHandle;
+	typename SVT_TREE::SVBranchHandle l_TreeRootHandle( nullptr );
 
 	SVXML::IXMLDOMElementPtr oDOMRootPtr;
 	SVXML::IXMLDOMElementPtr oDOMDestinationBranchPtr;
@@ -202,8 +202,8 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 			}
 		}
 
-		hr = rTree.GetRoot( l_TreeRootHandle );
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
+		l_TreeRootHandle = rTree.getRoot();
+		if( nullptr == l_TreeRootHandle )
 		{
 			break;
 		}
@@ -283,9 +283,10 @@ HRESULT SVXMLClass::CopyDOMToTree (SVT_TREE& rTree, long alSVOAppVersionFromConf
 			break;
 		}
 
-		hr = rTree.GetRoot( l_TreeRootHandle );
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
+		l_TreeRootHandle = rTree.getRoot();
+		if( nullptr == l_TreeRootHandle )
 		{
+			hr = -1754;
 			break;
 		}
 
@@ -317,13 +318,11 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 	{
 		_bstr_t bstrTreeNodeName;
 
-		l_Status = rTree.GetBranchName( alTreeNodeHandle, bstrTreeNodeName.GetBSTR() );
+		bstrTreeNodeName = rTree.getBranchName( alTreeNodeHandle ).c_str();
 
 		if( l_Status == S_OK )
 		{
-			l_Status = rTree.IsRoot( alTreeNodeHandle );
-
-			if( SUCCEEDED( l_Status ) )
+			if( rTree.isRoot( alTreeNodeHandle ) )
 			{
 				if( l_Status == S_OK )
 				{
@@ -344,21 +343,19 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 
 	if( l_Status == S_OK )
 	{
-		l_Status = rTree.DoesBranchHaveLeaves( alTreeNodeHandle );
-
-		if( SUCCEEDED( l_Status ) )
+		if( rTree.hasLeaves( alTreeNodeHandle ) )
 		{
 			if( l_Status == S_OK )
 			{
-				SVT_TREE::SVLeafHandle l_Leaf;
+				SVT_TREE::SVLeafHandle pLeaf;
 
-				l_Status = rTree.GetFirstLeaf( alTreeNodeHandle, l_Leaf );
+				pLeaf = rTree.getFirstLeaf( alTreeNodeHandle );
 
-				while( l_Status == S_OK )
+				while( rTree.isValidLeaf( alTreeNodeHandle, pLeaf ) )
 				{
 					SVXML::IXMLDOMElementPtr oDOMNewChildElementPtr;
 
-					l_Status = CopyTreeDataToDOMData( rTree, l_Leaf, oDOMNewChildElementPtr );
+					l_Status = CopyTreeDataToDOMData( rTree, pLeaf, oDOMNewChildElementPtr );
 
 					if( l_Status == S_OK )
 					{
@@ -372,7 +369,7 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 
 					if( l_Status == S_OK )
 					{
-						l_Status = rTree.GetNextLeaf( alTreeNodeHandle, l_Leaf );
+						pLeaf = rTree.getNextLeaf( alTreeNodeHandle, pLeaf );
 					}
 				}
 
@@ -390,18 +387,16 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 
 	if( l_Status == S_OK )
 	{
-		l_Status = rTree.DoesBranchHaveBranches( alTreeNodeHandle );
-
-		if( SUCCEEDED( l_Status ) )
+		if( rTree.hasBranches( alTreeNodeHandle ) )
 		{
 			if( l_Status == S_OK )
 			{
-				SVT_TREE::SVBranchHandle l_Child;
+				SVT_TREE::SVBranchHandle l_Child( nullptr );
 				SVT_TREE::SVBranchHandle l_Parent( alTreeNodeHandle );
 
-				l_Status = rTree.GetFirstBranch( l_Parent, l_Child );
+				l_Child = rTree.getFirstBranch( l_Parent );
 
-				while( l_Status == S_OK )
+				while( nullptr != l_Child )
 				{
 					SVXML::IXMLDOMElementPtr oDOMNewChildElementPtr;
 
@@ -419,7 +414,7 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 
 					if( l_Status == S_OK )
 					{
-						l_Status = rTree.GetNextBranch( l_Parent, l_Child );
+						l_Child = rTree.getNextBranch( l_Parent, l_Child );
 					}
 				}
 
@@ -450,7 +445,7 @@ HRESULT SVXMLClass::CopyTreeDataToDOMData (SVT_TREE& rTree, const typename SVT_T
 
 	VARIANT vTreeNodeData;
 
-	BSTR bstrTreeNodeName = NULL;
+	_bstr_t TreeNodeName;
 
 	SVXML::IXMLDOMElementPtr oDOMDataPtr;
 
@@ -458,14 +453,14 @@ HRESULT SVXMLClass::CopyTreeDataToDOMData (SVT_TREE& rTree, const typename SVT_T
 
 	while (1)
 	{
-		hr = rTree.GetLeafName( alNodeHandle, bstrTreeNodeName );
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
+		TreeNodeName = rTree.getLeafName( alNodeHandle ).c_str();
+		if( 0 == TreeNodeName.length() )
 		{
 			break;
 		}
 
-		hr = rTree.GetLeafData( alNodeHandle, vTreeNodeData );
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
+		vTreeNodeData = rTree.getLeafData( alNodeHandle  );
+		if( VT_EMPTY == vTreeNodeData.vt )
 		{
 			break;
 		}
@@ -477,11 +472,11 @@ HRESULT SVXMLClass::CopyTreeDataToDOMData (SVT_TREE& rTree, const typename SVT_T
 		{
 //-		oDOMDataPtr will come back as a node element; not a data 
 //-		element.
-			hr = SVXMLSafeArrayConverter::CopySafeArrayToDOMNode( *this, bstrTreeNodeName, vTreeNodeData.parray, oDOMDataPtr );
+			hr = SVXMLSafeArrayConverter::CopySafeArrayToDOMNode( *this, TreeNodeName, vTreeNodeData.parray, oDOMDataPtr );
 		}
 		else
 		{
-			hr = CreateDOMData( oDOMDataPtr, bstrTreeNodeName, &vTreeNodeData );
+			hr = CreateDOMData( oDOMDataPtr, TreeNodeName, &vTreeNodeData );
 		}
 
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -491,7 +486,6 @@ HRESULT SVXMLClass::CopyTreeDataToDOMData (SVT_TREE& rTree, const typename SVT_T
 		break;
 	}
 
-	SysFreeString( bstrTreeNodeName );
 	VariantClear( &vTreeNodeData );
 
 	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -553,27 +547,28 @@ HRESULT SVXMLClass::CreateTreeChildNodeFromDOMNode( SVXML::IXMLDOMElementPtr aDO
 			{
 				if( l_Status == S_OK )
 				{
-					l_Status = rTree.CreateLeaf( alTreeParentNodeHandle, bstrDOMElementName, vDOMElementData );
+
+					l_Status = rTree.createLeaf( alTreeParentNodeHandle, SVString( bstrDOMElementName ).c_str(), vDOMElementData );
 				}
 				else
 				{
 					if( ( vDOMElementData.vt & VT_ARRAY ) == VT_ARRAY && vDOMElementData.vt != VT_ARRAY )
 					{
-						l_Status = rTree.CreateLeaf( alTreeParentNodeHandle, bstrDOMElementName, vDOMElementData );
+						l_Status = rTree.createLeaf( alTreeParentNodeHandle, SVString( bstrDOMElementName ).c_str(), vDOMElementData );
 					}
 					else
 					{
 						SVXML::IXMLDOMElementPtr oDOMChildElementPtr;
 
-						SVT_TREE::SVBranchHandle l_Branch;
+						SVT_TREE::SVBranchHandle l_Branch( nullptr );
 
 						if( vDOMElementData.vt == VT_SVBASENODE )
 						{
-							l_Status = rTree.GetRoot( l_Branch );
+							l_Branch = rTree.getRoot();
 						}
 						else
 						{
-							l_Status = rTree.CreateBranch( alTreeParentNodeHandle, bstrDOMElementName, &l_Branch );
+							l_Status = rTree.createBranch( alTreeParentNodeHandle, SVString(bstrDOMElementName).c_str(), &l_Branch );
 						}
 
 						oDOMChildElementPtr = GetFirstElementChild(aDOMElementPtr);

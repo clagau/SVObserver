@@ -162,6 +162,7 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
+    <ClCompile Include="SVMaterialData.cpp" />
     <ClCompile Include="SVVariantConverter.cpp" />
     <ClCompile Include="SVXML2TreeConverter.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MultiProcessorCompilation>
@@ -200,7 +201,8 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVDom.h" />
-    <ClInclude Include="SVNavigateTreeClass.h" />
+    <ClInclude Include="SVMaterialData.h" />
+    <ClInclude Include="SVNavigateTree.h" />
     <ClInclude Include="SVVariantConverter.h" />
     <ClInclude Include="SVVariantCustomTypes.h" />
     <ClInclude Include="SVXML2TreeConverter.h" />
@@ -215,7 +217,7 @@
     <ClInclude Include="SVXMLTree.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVNavigateTreeClass.inl" />
+    <None Include="SVNavigateTree.inl" />
     <None Include="SVXML2TreeConverter.inl" />
     <None Include="SVXMLClass.inl" />
     <None Include="SVXMLTree.inl" />
