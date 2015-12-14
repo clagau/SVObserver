@@ -84,14 +84,6 @@
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.ocx</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <CustomBuildStep>
-      <Message>Registering ActiveX Control...</Message>
-      <Command>echo "regsvr32 "$(TargetPath)""
-regsvr32 /c /s "$(TargetPath)"
-echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
-</Command>
-      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
-    </CustomBuildStep>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>true</MkTypLibCompatible>
@@ -143,12 +135,11 @@ echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <CustomBuildStep>
-      <Message>Registering ActiveX Control...</Message>
-      <Command>echo "regsvr32 "$(TargetPath)""
-regsvr32 /c /s "$(TargetPath)"
-echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
-</Command>
-      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
+      <Message>Performing Custom Build Step</Message>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>

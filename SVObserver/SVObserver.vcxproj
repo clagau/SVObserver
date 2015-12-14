@@ -84,11 +84,6 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <CustomBuildStep>
-      <Message>Registering Com Server</Message>
-      <Command>SVOBuildPostProcess.cmd $(TargetPath) $(OutDir)</Command>
-      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
-    </CustomBuildStep>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>true</MkTypLibCompatible>
@@ -142,9 +137,11 @@ echo %time%
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <CustomBuildStep>
-      <Message>Registering Com Server</Message>
-      <Command>SVOBuildPostProcess.cmd $(TargetPath) $(OutDir)</Command>
-      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
+      <Message>Performing Custom Build Step</Message>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -197,9 +194,11 @@ echo %time%
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <CustomBuildStep>
-      <Message>Registering Com Server</Message>
-      <Command>SVOBuildPostProcess.cmd $(TargetPath) $(OutDir)</Command>
-      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
+      <Message>Performing Custom Build Step</Message>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -261,9 +260,11 @@ echo %time%
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <CustomBuildStep>
-      <Message>Registering Com Server</Message>
-      <Command>SVOBuildPostProcess.cmd $(TargetPath) $(OutDir)</Command>
-      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
+      <Message>Performing Custom Build Step</Message>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>

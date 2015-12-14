@@ -189,11 +189,6 @@
       <AdditionalDependencies>SVOMFCLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:nafxcw.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
-    <CustomBuildStep>
-      <Command>echo "regsvr32 "$(TargetPath)""</Command>
-      <Message>Registering ActiveX Control...</Message>
-      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
-    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
@@ -229,9 +224,11 @@
       <AdditionalOptions>/NODEFAULTLIB:nafxcw.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <CustomBuildStep>
-      <Command>echo "regsvr32 "$(TargetPath)""</Command>
-      <Message>Registering ActiveX Control...</Message>
-      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
+      <Message>Performing Custom Build Step</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
