@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVOCMArchive.h"
 #include "SVXmlStream.h"
 #include "SVOLibrary/SVOLibrary.h"
@@ -21,6 +22,7 @@
 #include "SVLibrary/SVBStr.h"
 #include "SVXMLLibrary/SVXML2TreeConverter.h"
 #include "SVObserverEnums.h"
+#pragma endregion Includes
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +71,6 @@ HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersi
 		{
 			BSTR bstrChangedNode( NULL );
 
-//			SVTreeType l_XMLTree( p_rTree );
 			SVXMLClass l_XMLTreeBuilder;
 
 			hr = l_XMLTreeBuilder.Initialize();
@@ -81,8 +82,6 @@ HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersi
 
 			if( SUCCEEDED( hr ) )
 			{
-				//hr = l_XMLTreeBuilder.CopyXMLFileToTree( l_XMLTree, ulSVOVersion, bstrFilename, &bstrRevisionHistory, &bstrChangedNode );
-
 				hr = l_XMLTreeBuilder.CopyXMLFileToDOM( bstrFilename, &bstrRevisionHistory );
 
 				if( SUCCEEDED( hr ) )
@@ -90,18 +89,6 @@ HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersi
 					hr = SVXML2TreeConverter::CopyToTree( l_XMLTreeBuilder, p_rTree, L"Base", false );
 				}
 			}
-
-			/*
-			if( !SUCCEEDED( hr ) )
-			{
-				cstrMessage.Format("WARNING: Configuration has been changed.  \
-													 The last changed node is (other nodes may also have been changed) - %s. \
-													 Configuration loading will continue.",
-													 W2T (bstrChangedNode));
-
-				AfxMessageBox(cstrMessage);
-			}
-			*/
 		}
 		else
 		{

@@ -16,8 +16,7 @@
 	
    ************************************************************************************************ */
 
-#ifndef XML_PARSER_H
-#define XML_PARSER_H
+#pragma once
 
 // -- Load MSXML library --
 // 
@@ -30,7 +29,7 @@ class SVXmlStream
 public:
 	// -- Constructor --
 	//
-	SVXmlStream(SVTreeType& Tree);
+	SVXmlStream(SVTreeType& rTree);
 
 	// -- Destructor --
 	//
@@ -165,7 +164,7 @@ private:
 	void ParseEndTag(CString& endtag);
 
 private:
-	SVTreeType m_Tree;
+	SVTreeType& m_rTree;
 	typename SVTreeType::SVBranchHandle m_Parent;
 
 	CString m_LeafName;
@@ -177,8 +176,6 @@ private:
 };
 
 #include "SVXmlStream.inl"
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:

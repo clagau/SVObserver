@@ -9,15 +9,14 @@
 // * .Check In Date   : $Date:   23 May 2014 07:19:04  $
 // ******************************************************************************
 
-#ifndef SVXMLSTREAM_INL
-#define SVXMLSTREAM_INL
-
+#pragma region Includes
 #include <atlbase.h>
 #include <fstream>
 
 #include "SVXmlStream.h"
 #include "SVOLibrary/SVOLibrary.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
+#pragma endregion Includes
 
 static LPCTSTR EncodeString(CString& strVal)
 {
@@ -29,12 +28,12 @@ static LPCTSTR EncodeString(CString& strVal)
 
 
 template< typename SVTreeType >
-SVXmlStream< SVTreeType >::SVXmlStream(SVTreeType& Tree)
-: m_Tree( Tree ),
-	m_Parent( NULL ),
+SVXmlStream< SVTreeType >::SVXmlStream(SVTreeType& rTree)
+: m_rTree( rTree ),
+	m_Parent( nullptr ),
 	m_VarType( VT_EMPTY )
 {	// Constructor
-	m_Parent = m_Tree.getRoot();
+	m_Parent = m_rTree.getRoot();
 
 	// Init our members
 	//
@@ -143,22 +142,22 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 
 	if (tag == _T("<Configuration>"))
 	{
-		m_Tree.Clear();
+		m_rTree.Clear();
 
-		m_Parent = m_Tree.getRoot();
+		m_Parent = m_rTree.getRoot();
 	}
 
 	if (tag == _T("<NODE>"))
 	{
 		if( !( m_LeafName.IsEmpty() ) )
 		{
-			m_Tree.createLeaf( m_Parent, m_LeafName, m_Variant );
+			m_rTree.createLeaf( m_Parent, m_LeafName, m_Variant );
 
 			m_LeafName.Empty();
 			m_Variant.Clear();
 		}
 
-		m_Tree.createBranch( m_Parent, name, &m_Parent );
+		m_rTree.createBranch( m_Parent, name, &m_Parent );
 	}
 	else 	if (tag == _T("<DATA>"))
 	{
@@ -166,7 +165,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 
 		if( !( m_LeafName.IsEmpty() ) )
 		{
-			m_Tree.createLeaf( m_Parent, m_LeafName, m_Variant );
+			m_rTree.createLeaf( m_Parent, m_LeafName, m_Variant );
 
 			m_LeafName.Empty();
 			m_Variant.Clear();
@@ -1153,13 +1152,13 @@ void SVXmlStream< SVTreeType >::ParseEndTag(CString& endtag)
 	{
 		if( !( m_LeafName.IsEmpty() ) )
 		{
-			m_Tree.createLeaf( m_Parent, m_LeafName, m_Variant );
+			m_rTree.createLeaf( m_Parent, m_LeafName, m_Variant );
 
 			m_LeafName.Empty();
 			m_Variant.Clear();
 		}
 
-		m_Parent = m_Tree.getParentBranch( m_Parent );
+		m_Parent = m_rTree.getParentBranch( m_Parent );
 	}
 }
 
@@ -1169,8 +1168,6 @@ void SVXmlStream< SVTreeType >::ReleaseTreeItemData( SVTreeType& Tree )
 {
 	Tree.Clear();
 }
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:
