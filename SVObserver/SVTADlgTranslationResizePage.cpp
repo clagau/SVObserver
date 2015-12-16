@@ -19,6 +19,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVGuiExtentUpdater.h"
 #include "ResizeTool.h"
+#include "SVGlobal.h"
 #pragma endregion Includes
 
 #pragma region Properry Tree Items Enum
@@ -650,16 +651,39 @@ HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData ()
 
 HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 {
-	HRESULT	hr = S_OK;
+	HRESULT	hr1 = S_OK;
+	HRESULT	hr2 = S_OK;
 
-	bool	extentChanged =			false;
-	bool	embeddedChanged =		false;
+	bool	extentChanged =					false;
+	bool	embeddedChanged =				false;
+	bool	heightScaleFactorSucceeded =	false;
+	bool	widthScaleFactorSucceeded =		false;
+	bool	interpolationModeSucceeded =	false;
+	bool	overscanSucceeded =				false;
+	bool	performanceSucceeded =			false;
+	
 
 	double	oldWidthScaleFactor =	0.0;
 	double	oldHeightScaleFactor = 0.0;
-	long	oldInterpolationModeValue = 0;
-	long	oldOverscanValue = 0;
-	long	oldPerformanceValue = 0;
+
+	long	longOldInterpolationValue = 0;
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum oldInterpolationValue = 
+		SVInterpolationModeOptions::InterpolationModeInitialize;	
+	long	longDefaultInterpolationValue = 0;
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum defaultInterpolationValue = 
+		SVInterpolationModeOptions::InterpolationModeInitialize;
+	long	longOldOverscanValue = 0;
+	SVOverscanOptions::SVOverscanOptionsEnum oldOverscanValue = 
+		SVOverscanOptions::OverscanInitialize;
+	long	longDefaultOverscanValue = 0;
+	SVOverscanOptions::SVOverscanOptionsEnum defaultOverscanValue = 
+		SVOverscanOptions::OverscanInitialize;
+	long	longOldPerformanceValue = 0;
+	SVPerformanceOptions::SVPerformanceOptionsEnum oldPerformanceValue = 
+		SVPerformanceOptions::PerformanceInitialize;
+	long	longDefaultPerformanceValue = 0;
+	SVPerformanceOptions::SVPerformanceOptionsEnum defaultPerformanceValue = 
+		SVPerformanceOptions::PerformanceInitialize;
 
 	SVRPropertyItemEdit*	editItem = nullptr;
 	SVRPropertyItemCombo*	comboItem = nullptr;
@@ -667,94 +691,178 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 	SVImageExtentClass toolImageExtents;
 
 	// Retrieve current values --------------------------------------------------
-	hr = m_pTool->GetImageExtent(toolImageExtents);
+	hr1 = m_pTool->GetImageExtent(toolImageExtents);
 
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (hr1))
 	{
 		toolImageExtents.GetExtentProperty (SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
 		toolImageExtents.GetExtentProperty (SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
 
 		SVEnumerateValueObjectClass* interpolationMode = m_pTool->getInterpolationMode ();
-		interpolationMode->GetValue (oldInterpolationModeValue);
+		interpolationMode->GetValue (longOldInterpolationValue);
+		oldInterpolationValue = 
+			static_cast <SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longOldInterpolationValue);
+		interpolationMode->GetDefaultValue(longDefaultInterpolationValue);
+		defaultInterpolationValue = 
+			static_cast <SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longDefaultInterpolationValue);
 
 		SVEnumerateValueObjectClass* overscan = m_pTool->getOverscan ();
-		overscan->GetValue (oldOverscanValue);
+		overscan->GetValue (longOldOverscanValue);
+		oldOverscanValue = 
+			static_cast <SVOverscanOptions::SVOverscanOptionsEnum> (longOldOverscanValue);
+		overscan->GetDefaultValue(longDefaultOverscanValue);
+		defaultOverscanValue = 
+			static_cast <SVOverscanOptions::SVOverscanOptionsEnum> (longDefaultOverscanValue);
 
 		SVEnumerateValueObjectClass* performance = m_pTool->getPerformance ();
-		performance->GetValue (oldPerformanceValue);
+		performance->GetValue (longOldPerformanceValue);
+		oldPerformanceValue = 
+			static_cast <SVPerformanceOptions::SVPerformanceOptionsEnum> (longOldPerformanceValue);
+		performance->GetDefaultValue(longDefaultPerformanceValue);
+		defaultPerformanceValue = 
+			static_cast <SVPerformanceOptions::SVPerformanceOptionsEnum> (longDefaultPerformanceValue);
 	}
 
 	// Validate new values --------------------------------------------------
 
 	double	newHeightScaleFactor =	0.0;
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (hr1))
 	{
 		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
 		editItem->GetItemValue(newHeightScaleFactor);
-		hr = m_pTool->ValidateScaleFactor (newHeightScaleFactor);
-		if (!SUCCEEDED (hr))
+		hr1 = m_pTool->ValidateScaleFactor (newHeightScaleFactor);
+		if (!SUCCEEDED (hr1))
 		{
 			newHeightScaleFactor = oldHeightScaleFactor;
+			hr2 = m_pTool->ValidateScaleFactor (newHeightScaleFactor);
+			if (!SUCCEEDED (hr2))
+			{
+				// old values were also invalid.  Currently this can happen 
+				// with corruption or with Remote Access putting in an 
+				// invalid value.
+				newHeightScaleFactor = SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR;
+			}
+
 			editItem->SetItemValue(newHeightScaleFactor);
+		}
+
+		if (newHeightScaleFactor != oldHeightScaleFactor)
+		{
+			heightScaleFactorSucceeded = true;
 		}
 	}
 
 	double	newWidthScaleFactor =	0.0;
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (hr1))
 	{
 		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
 		editItem->GetItemValue(newWidthScaleFactor);
-		hr = m_pTool->ValidateScaleFactor (newWidthScaleFactor);
-		if (!SUCCEEDED (hr))
+		hr1 = m_pTool->ValidateScaleFactor (newWidthScaleFactor);
+		if (!SUCCEEDED (hr1))
 		{
 			// Expected codes include...
 			//  SVMSG_SVO_5061_SFOUTSIDERANGE
 			newWidthScaleFactor = oldWidthScaleFactor;
+			hr2 = m_pTool->ValidateScaleFactor (newWidthScaleFactor);
+			if (!SUCCEEDED (hr2))
+			{
+				// old values were also invalid.  Currently this can happen 
+				// with corruption or with Remote Access putting in an 
+				// invalid value.
+				newWidthScaleFactor = SV_DEFAULT_WINDOWTOOL_WIDTHSCALEFACTOR;
+			}
 			editItem->SetItemValue(newWidthScaleFactor);
+		}
+
+		if (newWidthScaleFactor != oldWidthScaleFactor)
+		{
+			widthScaleFactorSucceeded = true;
 		}
 	}
 
 	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum newInterpolationValue = 
 		SVInterpolationModeOptions::InterpolationModeInitialize;
 	
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (hr1))
 	{
 		SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newInterpolationValue)));
 
-		hr = m_pTool->ValidateInterpolation(newInterpolationValue);
-		if (!SUCCEEDED (hr))
+		hr1 = m_pTool->ValidateInterpolation(newInterpolationValue);
+		if (!SUCCEEDED (hr1))
 		{
-			comboItem->SetItemValue(oldInterpolationModeValue);
+			newInterpolationValue = oldInterpolationValue;
+			hr2 = m_pTool->ValidateInterpolation(newInterpolationValue);
+			if (!SUCCEEDED (hr2))
+			{
+				// old values were also invalid.  Currently this can happen 
+				// with corruption or with Remote Access putting in an 
+				// invalid value.
+				newInterpolationValue = defaultInterpolationValue;
+			}
+			comboItem->SetItemValue(newInterpolationValue);
+		}
+
+		if (newInterpolationValue != oldInterpolationValue)
+		{
+			interpolationModeSucceeded = true;
 		}
 	}
 
 	SVOverscanOptions::SVOverscanOptionsEnum newOverscanValue = 
 		SVOverscanOptions::OverscanInitialize;
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (hr1))
 	{
 		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newOverscanValue)));
 
-		hr = m_pTool->ValidateOverscan(newOverscanValue);
-		if (!SUCCEEDED (hr))
+		hr1 = m_pTool->ValidateOverscan(newOverscanValue);
+		if (!SUCCEEDED (hr1))
 		{
-			comboItem->SetItemValue(oldOverscanValue);
+			newOverscanValue = oldOverscanValue;
+			hr2 = m_pTool->ValidateOverscan(newOverscanValue);
+			if (!SUCCEEDED (hr2))
+			{
+				// old values were also invalid.  Currently this can happen 
+				// with corruption or with Remote Access putting in an 
+				// invalid value.
+				newOverscanValue = defaultOverscanValue;
+			}
+			comboItem->SetItemValue(newOverscanValue);
 		}
 
+		if (newOverscanValue != oldOverscanValue)
+		{
+			overscanSucceeded = true;
+		}
 	}
 
 	SVPerformanceOptions::SVPerformanceOptionsEnum newPerformanceValue = 
 		SVPerformanceOptions::PerformanceInitialize;
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (hr1))
 	{
 		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newPerformanceValue)));
-		hr = m_pTool->ValidatePerformance(newPerformanceValue);
-		if (!SUCCEEDED (hr))
+		hr1 = m_pTool->ValidatePerformance(newPerformanceValue);
+		if (!SUCCEEDED (hr1))
 		{
+			newPerformanceValue = oldPerformanceValue;
+			hr2 = m_pTool->ValidatePerformance(newPerformanceValue);
+			if (!SUCCEEDED (hr2))
+			{
+				// old values were also invalid.  Currently this can happen 
+				// with corruption or with Remote Access putting in an 
+				// invalid value.
+				newPerformanceValue = defaultPerformanceValue;
+			}
 			comboItem->SetItemValue(oldPerformanceValue);
 		}
+
+		if (newPerformanceValue != oldPerformanceValue)
+		{
+			performanceSucceeded = true;
+		}
+
 	}
 
 
@@ -763,72 +871,76 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 	// AddInputRequest(), which can not be easily backed out.  Restoring from
 	// an error prior to this point is easier than restoring from an error 
 	// after this point.
-	if (SUCCEEDED (hr) && (newHeightScaleFactor != oldHeightScaleFactor)) // reduces flicker.
+	if (heightScaleFactorSucceeded) // reduces flicker.
 	{
 		toolImageExtents.SetExtentProperty (SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
 		extentChanged = true;
 	}
 
-	if (SUCCEEDED (hr) && (newWidthScaleFactor != oldWidthScaleFactor)) // reduces flicker.
+	if (widthScaleFactorSucceeded) // reduces flicker.
 	{
 			toolImageExtents.SetExtentProperty (SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
 			extentChanged = true;
 	}
 
-	if (SUCCEEDED (hr) && (static_cast <long> (newInterpolationValue) != oldInterpolationModeValue))
+	if (interpolationModeSucceeded)
 	{
 		SVValueObjectClass*	interpolationModeVO = m_pTool->getInterpolationMode();
 		AddInputRequest(interpolationModeVO, newInterpolationValue);
 		embeddedChanged = true;
 	}
 
-	if (SUCCEEDED (hr) && (newOverscanValue != oldOverscanValue))
+	if (overscanSucceeded)
 	{
 		SVValueObjectClass*	overscanVO = m_pTool->getOverscan();
 		AddInputRequest(overscanVO, newOverscanValue);
 		embeddedChanged = true;
 	}
 
-	if (SUCCEEDED (hr) && (newPerformanceValue != oldPerformanceValue))
+	if (performanceSucceeded)
 	{
 		SVValueObjectClass*	performanceVO = m_pTool->getPerformance();
 		AddInputRequest(performanceVO, newPerformanceValue);
 		embeddedChanged = true;
 	}
 
-	if (SUCCEEDED (hr))
+	if (true == extentChanged)
 	{
-		if (true == extentChanged)
+		HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pTool, toolImageExtents);
+	}
+
+	if (true == embeddedChanged)
+	{
+		HRESULT hr = AddInputRequestMarker();
+	}
+
+	if ((true == extentChanged) || (true == embeddedChanged))
+	{
+		hr2 = RunOnce(m_pTool);
+		if (S_FALSE == hr2)
 		{
-			HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pTool, toolImageExtents);
+			hr2 = SVMSG_SVO_5066_CATCHRUNONCESFALSE;
 		}
 
-		if (true == embeddedChanged)
+		if (SUCCEEDED (hr2))
 		{
-			HRESULT hr = AddInputRequestMarker();
+			hr2 = UpdateImages();
 		}
 
-		if ((true == extentChanged) || (true == embeddedChanged))
+		if (SUCCEEDED (hr2))
 		{
-			hr = RunOnce(m_pTool);
-			if (S_FALSE == hr)
-			{
-				hr = SVMSG_SVO_5066_CATCHRUNONCESFALSE;
-			}
+			m_pTool->BackupInspectionParameters();
+		}
 
-			if (SUCCEEDED (hr))
-			{
-				hr = UpdateImages();
-			}
-
-			if (SUCCEEDED (hr))
-			{
-				m_pTool->BackupInspectionParameters();
-			}
+		if (SUCCEEDED (hr1))
+		{
+			// if there was no hr1 error prior to attempting the RunOnce, 
+			// then flag the hr2 error.
+			hr1 = hr2;
 		}
 	}
 
-	return hr;
+	return hr1;
 }
 
 

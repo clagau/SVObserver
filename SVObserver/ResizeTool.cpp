@@ -398,11 +398,6 @@ BOOL ResizeTool::IsValid()
 		bValid = pToolSizeAdjustTask->OnValidate();
 	}
 
-	for (SVTaskObjectPtrVector::iterator it = m_aTaskObjects.begin(); it != m_aTaskObjects.end(); ++it)
-	{
-		SVTaskObjectClass* pTask = *it;
-		bValid &= pTask->OnValidate();
-	}
 	return SVToolClass::IsValid() && bValid;
 }
 
