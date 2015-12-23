@@ -48,7 +48,14 @@ namespace Seidenader { namespace SVXMLLibrary
 
 	bool SVXMLMaterialsTree::isRoot( const SVBranchHandle pBranch ) const
 	{
-		return (*pBranch == m_Tree);
+		bool Result( false );
+
+		if( nullptr != pBranch )
+		{
+			Result = pBranch->is_root();
+		}
+
+		return Result;
 	}
 
 	bool SVXMLMaterialsTree::hasBranches( const SVBranchHandle pParent )

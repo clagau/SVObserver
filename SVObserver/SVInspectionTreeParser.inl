@@ -578,7 +578,7 @@ bool SVInspectionTreeParser< SVTreeType >::HasTag(typename SVTreeType::SVBranchH
 
 	hValues = m_rTree.findBranch(hItem, tag.c_str());
 
-	if( nullptr != hValues )
+	if( nullptr == hValues )
 	{
 		SVTreeType::SVLeafHandle hLeaf;
 

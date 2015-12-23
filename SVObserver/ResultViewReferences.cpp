@@ -80,7 +80,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 
 	_variant_t svValue;
 	svValue = rTree.getLeafData( htiLeaf );
-	bOK = bOK && ( VT_EMPTY == svValue.vt);
+	bOK = bOK && ( VT_EMPTY != svValue.vt);
 	if ( bOK )
 	{
 		SVObjectReference objRef;

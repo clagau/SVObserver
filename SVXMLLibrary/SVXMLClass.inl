@@ -320,24 +320,18 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 
 		bstrTreeNodeName = rTree.getBranchName( alTreeNodeHandle ).c_str();
 
+		if( rTree.isRoot( alTreeNodeHandle ) )
+		{
+			l_Status = CreateDOMNode( oDOMNewParentElementPtr, bstrTreeNodeName, VT_SVBASENODE );
+		}
+		else
+		{
+			l_Status = CreateDOMNode( oDOMNewParentElementPtr, bstrTreeNodeName ); 
+		}
+
 		if( l_Status == S_OK )
 		{
-			if( rTree.isRoot( alTreeNodeHandle ) )
-			{
-				if( l_Status == S_OK )
-				{
-					l_Status = CreateDOMNode( oDOMNewParentElementPtr, bstrTreeNodeName, VT_SVBASENODE );
-				}
-				else
-				{
-					l_Status = CreateDOMNode( oDOMNewParentElementPtr, bstrTreeNodeName ); 
-				}
-
-				if( l_Status == S_OK )
-				{
-					l_Status = AppendCarriageReturnToDOMNode( oDOMNewParentElementPtr );
-				}
-			}
+			l_Status = AppendCarriageReturnToDOMNode( oDOMNewParentElementPtr );
 		}
 	}
 
