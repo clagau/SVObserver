@@ -193,7 +193,7 @@ HRESULT ToVariant( bool bValue, VARIANT& rv )
 	::VariantClear( &rv );
 
 	rv.vt = VT_BOOL;
-	rv.boolVal = (VARIANT_BOOL) bValue;
+	rv.boolVal = bValue ? VARIANT_TRUE : VARIANT_FALSE;
 
 	return hr;
 }

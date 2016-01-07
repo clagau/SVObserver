@@ -37,8 +37,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE. 
 */ 
 
-#ifndef XML_WRITER_HPP
-#define XML_WRITER_HPP
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -53,16 +52,15 @@ namespace xml
 	// xml::writer class
 	class writer
 	{
-		public:
+		friend element;
+	public:
 		// writer must be bound to an ostream
-		writer(std::ostream& os) : os(os), need_header(true) {}
+		writer(std::ostream& os) : os(os), need_header(true), m_NewLine(true) {}
 		~writer(void) { assert(elements.empty()); }
 
-		private:
-		std::ostream& os; // output stream
-		bool need_header; // have we written an XML header yet?
-		std::stack<element*> elements; // stack of open element tags
+		void setNewLine(bool NewLine){ m_NewLine = NewLine; };
 
+	private:
 		// write XML header, if necessary
 		writer& header()
 		{
@@ -87,7 +85,12 @@ namespace xml
 			os << str;
 			return *this;
 		}
-		friend element;
+
+	private:
+		std::ostream& os; // output stream
+		bool need_header; // have we written an XML header yet?
+		std::stack<element*> elements; // stack of open element tags
+		bool m_NewLine;
 	};
 
 	// xml::element class
@@ -111,9 +114,17 @@ namespace xml
 			{
 				wr.elements.pop();
 				if (tagopen)
-					wr.puts("/>\n");
+				{
+					wr.puts("/>");
+				}
 				else
-					wr.puts("</").puts(name).puts(">\n");
+				{
+					wr.puts("</").puts(name).puts(">");
+				}
+				if( wr.m_NewLine )
+				{
+					wr.putc('\n');
+				}
 			}
 		}
 
@@ -178,10 +189,6 @@ namespace xml
 		element& cdata(const std::string& str) { return cdata(str.c_str()); }
 
 	private:
-		writer& wr; // bound XML writer
-		const char* name; // name of current element
-		bool tagopen; // is the element tag for this element still open?
-
 		// write a string quoting characters which have meaning in xml
 		element& qputs(const char* str)
 		{
@@ -203,7 +210,7 @@ namespace xml
 		{
 			if (!wr.elements.empty() && wr.elements.top()->tagopen)
 			{
-				if(NewLine)
+				if(NewLine && wr.m_NewLine)
 					wr.puts(">\n");
 				else
 					wr.putc('>');
@@ -211,10 +218,13 @@ namespace xml
 				wr.elements.top()->tagopen = false;
 			}
 		}
+
+	private:
+		writer& wr; // bound XML writer
+		const char* name; // name of current element
+		bool tagopen; // is the element tag for this element still open?
 	};
 }
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

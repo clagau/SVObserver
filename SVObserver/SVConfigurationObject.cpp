@@ -3691,8 +3691,10 @@ void SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigColo
 BOOL SVConfigurationObject::SaveConfiguration(SVObjectXMLWriter& rWriter) const
 {
 	BOOL bOk = true;
-	SVString rootNodeName(SvOl::FqnRoot);
-	rWriter.WriteRootElement(rootNodeName);
+	SVString RootName( SvOl::FqnRoot );
+	//We set the new line off to have forward compatibility
+	rWriter.setNewLine( false );
+	rWriter.WriteRootElement( RootName );
 	rWriter.WriteSchema();
 
 	DWORD versionNumber = TheSVObserverApp.getCurrentVersion();
@@ -3700,6 +3702,7 @@ BOOL SVConfigurationObject::SaveConfiguration(SVObjectXMLWriter& rWriter) const
 	versionString.Format("%d.%d", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
 	rWriter.WriteRevisionHistory(versionString.c_str(), 1);
 	rWriter.WriteStartOfBase();
+	rWriter.setNewLine( true );
 
 	SaveEnvironment(rWriter);
 	SaveIO(rWriter);

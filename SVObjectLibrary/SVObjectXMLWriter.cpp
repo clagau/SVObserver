@@ -38,7 +38,7 @@ static VariantTypeToStringLookup var_types = boost::assign::map_list_of<>
 (VT_NULL, Stringtize(VT_NULL))		// SQL style Null
 (VT_I2, Stringtize(VT_I2))			// 2 byte signed int
 (VT_I4, Stringtize(VT_I4))			// 4 byte signed int
-(VT_INT, Stringtize(VT_I4))			// 4 byte signed int
+(VT_INT, Stringtize(VT_INT))			// 4 byte signed int
 (VT_R4, Stringtize(VT_R4))			// 4 byte real
 (VT_R8, Stringtize(VT_R8))			// 8 byte real
 // not allowed (VT_CY, Stringtize(VT_CY))		// currency
@@ -58,8 +58,6 @@ static VariantTypeToStringLookup var_types = boost::assign::map_list_of<>
 (VT_UINT, Stringtize(VT_UI4))		// unsigned long
 (VT_I8, Stringtize(VT_I8))			// signed 64-bit int
 (VT_UI8, Stringtize(VT_UI8))		// unsigned 64-bit int
-// not allowed (VT_INT, Stringtize(VT_INT)	// signed machine int
-// not allowed (VT_UINT, Stringtize(VT_UINT)	// unsigned machine int
 ;
 
 static std::string BSTRToUTF8(BSTR value)
@@ -106,7 +104,6 @@ static std::string VariantToString(_variant_t value)
 		break;
 
 	case VT_BOOL:
-		//strValue.Format("%s", value.boolVal);
 		strValue.Format("%s", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
 		break;
 
@@ -449,6 +446,14 @@ void SVObjectXMLWriter::WriteRevisionHistory(const _variant_t formatVersionValue
 	pRevisionNode.reset();
 
 	pRevisionHistoryNode.reset();
+}
+
+void SVObjectXMLWriter::setNewLine( bool NewLine )
+{
+	if( nullptr != m_pWriter )
+	{
+		m_pWriter->setNewLine( NewLine );
+	}
 }
 
 //******************************************************************************

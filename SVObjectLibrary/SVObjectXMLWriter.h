@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   19 Dec 2014 02:47:46  $
 //******************************************************************************
-#ifndef INCL_SVOBJECTXMLWRITER_H
-#define INCL_SVOBJECTXMLWRITER_H
 
+#pragma once
+
+#pragma region Includes
 #include <deque>
 #include <ostream>
 #include <boost/function.hpp>
@@ -19,17 +20,16 @@
 #include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/XMLwriter.h"
 #include "SVObjectWriter.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 typedef std::tr1::shared_ptr<xml::writer> XMLWriterPtr;
 typedef std::tr1::shared_ptr<xml::element> XMLElementPtr;
 typedef std::deque<XMLElementPtr> Elements;
+#pragma endregion Declarations
 
 class SVObjectXMLWriter : public SVObjectWriter
 {
-private:
-	XMLWriterPtr m_pWriter;
-	Elements m_elements;
-
 public:
 	SVObjectXMLWriter(std::ostream& os);
 	~SVObjectXMLWriter();
@@ -56,9 +56,19 @@ public:
 	/// \param revisionValue [in] The revision value.
 	//************************************
 	void WriteRevisionHistory(const _variant_t formatVersionValue, const _variant_t revisionValue);
+
+	//************************************
+	/// Sets if a new line character is inserted for each line inserted in the file
+	/// \param NewLine [in] true if a new line character should be inserted
+	//************************************
+	void setNewLine( bool NewLine );
+
+private:
+	XMLWriterPtr m_pWriter;
+	Elements m_elements;
+
 };
 
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:
