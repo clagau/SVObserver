@@ -108,8 +108,12 @@ struct SVOutputsInfoStruct
 	SVOutputObjectList *pOutputsList;
 	long lOutputDelay;
 	long lResetDelay;
+	long lDataValidDelay;
+	bool DataValidResult;
+	bool OutputToggleResult;
 	SVClock::SVTimeStamp m_EndOutputDelay;
 	SVClock::SVTimeStamp m_EndResetDelay;
+	SVClock::SVTimeStamp m_EndDataValidDelay;
 	SVClock::SVTimeStamp m_BeginProcess;
 	SVClock::SVTimeStamp m_EndProcess;
 };

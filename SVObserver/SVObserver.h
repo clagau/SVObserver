@@ -360,6 +360,7 @@ public:
 	DWORD getCurrentVersion() const { return m_CurrentVersion; }
 	DWORD getLoadingVersion() const { return m_LoadingVersion; }
 	void setLoadingVersion(DWORD version) { m_LoadingVersion = version; }
+	long getDataValidDelay() const { return m_DataValidDelay; }
 #pragma endregion
 #pragma endregion Public Methods
 
@@ -559,6 +560,8 @@ private:
 	unsigned short m_OutputStreamPortNumber;
 	unsigned short m_RemoteCommandsPortNumber;
 	unsigned short m_FailStatusStreamPortNumber;
+
+	long m_DataValidDelay;
 #pragma endregion Member variables
 };
 

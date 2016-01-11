@@ -312,11 +312,14 @@ SVPPQObject::~SVPPQObject()
 	SetPPQLength(StandardPpqLength);
 	m_lOutputDelay               = 100;
 	m_lResetDelay                = 0;
+	m_DataValidDelay			 = 0;
 
 	m_ProcessingOutputDelay = 0;
 	m_NextOutputDelayTimestamp = 0;
 	m_ProcessingOutputReset = 0;
 	m_NextOutputResetTimestamp = 0;
+	m_ProcessingDataValidDelay = 0;
+	m_NextDataValidDelayTimestamp = 0;
 
 	m_pTriggerToggle.clear();
 	m_pOutputToggle.clear();
@@ -339,6 +342,7 @@ void SVPPQObject::init()
 	m_lInspectionTimeoutMillisec = 0;
 	m_lOutputDelay               = 100;
 	m_lResetDelay                = 0;
+	m_DataValidDelay			 = TheSVObserverApp.getDataValidDelay();
 
 	m_ProcessingOutputDelay = 0;
 	m_NextOutputDelayTimestamp = 0;
@@ -523,6 +527,7 @@ BOOL SVPPQObject::Create()
 	m_bCreated &= m_oInspectionQueue.Create();
 	m_bCreated &= m_oOutputsDelayQueue.Create();
 	m_bCreated &= m_oOutputsResetQueue.Create();
+	m_bCreated &= m_DataValidDelayQueue.Create();
 	m_bCreated &= m_ProductRequests.Create();
 
 	m_oNotifyInspectionsSet.clear();
@@ -693,6 +698,7 @@ BOOL SVPPQObject::Destroy()
 	}
 
 	m_ProductRequests.Destroy();
+	m_DataValidDelayQueue.Destroy();
 	m_oOutputsDelayQueue.Destroy();
 	m_oOutputsResetQueue.Destroy();
 	m_oInspectionQueue.Destroy();
@@ -1504,9 +1510,10 @@ HRESULT SVPPQObject::GoOnline()
 		return S_FALSE;
 	}
 
-	//The timer should start when not "Next Trigger Mode" or when reset delay is not 0
+	//The timer should start when not "Next Trigger Mode" or when reset or data valid delay are not 0
 	bool StartTimer( SVPPQNextTriggerMode != m_oOutputMode );
 	StartTimer |= 0 < m_lResetDelay;
+	StartTimer |= 0 < m_DataValidDelay;
 	if( StartTimer )
 	{
 		m_uOutputTimer = ::timeSetEvent( 1, 0, SVPPQObject::OutputTimerCallback, reinterpret_cast<DWORD_PTR>(this),
@@ -2360,13 +2367,27 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 
-			if( !m_pDataValid.empty() )
+			bool l_bValue=false;
+			m_voDataValid.GetValue(lDataIndex, l_bValue);
+			if( 0 == m_DataValidDelay )
 			{
-				bool l_bValue=false;
-				m_voDataValid.GetValue(lDataIndex, l_bValue);
-				m_pOutputList->WriteOutputValue( m_pDataValid, l_bValue );
+				if( !m_pDataValid.empty() )
+				{
+					m_pOutputList->WriteOutputValue( m_pDataValid, l_bValue );
+				}
+				if( !m_pOutputToggle.empty() )
+				{
+					m_pOutputList->WriteOutputValue( m_pOutputToggle, m_OutputToggle );
+				}
 			}
-			m_pOutputList->WriteOutputValue( m_pOutputToggle, m_OutputToggle );
+			else
+			{
+				pProduct->oOutputsInfo.DataValidResult = l_bValue;
+				pProduct->oOutputsInfo.OutputToggleResult = m_OutputToggle;
+				// Set output data valid expire time
+				pProduct->oOutputsInfo.m_EndDataValidDelay = SVClock::GetTimeStamp() + pProduct->oOutputsInfo.lDataValidDelay;
+				m_DataValidDelayQueue.AddTail( pProduct->ProcessCount() );
+			}
 		}
 		pProduct->oTriggerInfo.m_PushedOutputs = SVClock::GetTimeStamp();
 		long l_lTime = static_cast<long>(pProduct->oTriggerInfo.m_PushedOutputs - pProduct->oTriggerInfo.m_ToggleTimeStamp);
@@ -2993,8 +3014,10 @@ BOOL SVPPQObject::StartOutputs( SVProductInfoStruct* p_pProduct )
 		p_pProduct->oOutputsInfo.m_BeginProcess = SVClock::GetTimeStamp();
 		p_pProduct->oOutputsInfo.lOutputDelay = m_lOutputDelay;
 		p_pProduct->oOutputsInfo.lResetDelay  = m_lResetDelay;
+		p_pProduct->oOutputsInfo.lDataValidDelay  = m_DataValidDelay;
 		p_pProduct->oOutputsInfo.m_EndOutputDelay = SVClock::GetMinTimeStamp();
 		p_pProduct->oOutputsInfo.m_EndResetDelay  = SVClock::GetMinTimeStamp();
+		p_pProduct->oOutputsInfo.m_EndDataValidDelay  = SVClock::GetMinTimeStamp();
 
 		switch( m_oOutputMode )
 		{
@@ -3006,7 +3029,7 @@ BOOL SVPPQObject::StartOutputs( SVProductInfoStruct* p_pProduct )
 				p_pProduct->oOutputsInfo.m_EndProcess = SVClock::GetTimeStamp();
 
 				// Check if we should fire up the reset outputs thread
-				if( m_lResetDelay )
+				if( 0 < m_lResetDelay )
 				{
 					// Set output reset expire time
 					p_pProduct->oOutputsInfo.m_EndResetDelay = p_pProduct->oOutputsInfo.m_EndProcess + 
@@ -3636,8 +3659,8 @@ DWORD_PTR SVPPQObject::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
 	{
-		//@WARNING [gra][7.20][06.07.2015] This seems to not do anything can be removed
-		// handle renaming of toolset variables with regards to outputs
+	//@WARNING [gra][7.20][06.07.2015] This seems to not do anything can be removed
+	// handle renaming of toolset variables with regards to outputs
 	case SVMSGID_OBJECT_RENAMED:
 		{
 			SVObjectClass* pObject = (SVObjectClass*) DwMessageValue;
@@ -3922,6 +3945,11 @@ void SVPPQObject::ThreadProcess( bool& p_WaitForEvents )
 
 	if( ! l_Processed )
 	{
+		ProcessDataValidDelay( l_Processed );
+	}
+
+	if( ! l_Processed )
+	{
 		// Inserts items onto the m_oCamerasQueue.
 		ProcessCameraResponses( l_Processed );
 	}
@@ -3966,7 +3994,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	bool l_Process = false;
 
-	if( ::InterlockedCompareExchange( &( m_ProcessingOutputDelay ), 1, 0 ) == 0 )
+	if( 0 < m_lOutputDelay && ::InterlockedCompareExchange( &( m_ProcessingOutputDelay ), 1, 0 ) == 0 )
 	{
 		SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
 
@@ -3980,7 +4008,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 		}
 	}
 
-	if( ::InterlockedCompareExchange( &( m_ProcessingOutputReset ), 1, 0 ) == 0 )
+	if( 0 < m_lResetDelay && ::InterlockedCompareExchange( &( m_ProcessingOutputReset ), 1, 0 ) == 0 )
 	{
 		SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
 
@@ -3994,6 +4022,20 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 		}
 	}
 
+	if( 0 < m_DataValidDelay && ::InterlockedCompareExchange( &( m_ProcessingDataValidDelay ), 1, 0 ) == 0 )
+	{
+		SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
+
+		if( 0 < m_DataValidDelayQueue.GetCount() || ( 0 < m_NextDataValidDelayTimestamp && m_NextDataValidDelayTimestamp <= l_CurrentTime ) )
+		{
+			l_Process = true;
+		}
+		else
+		{
+			::InterlockedExchange( &( m_ProcessingDataValidDelay ), 0 );
+		}
+	}
+
 	if( l_Process )
 	{
 		m_AsyncProcedure.Signal( NULL );
@@ -4004,7 +4046,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 {
-	HRESULT		l_Status = S_OK;
+	HRESULT l_Status = S_OK;
 
 	/// Works through the queued triggers (e.g., pushed by FinishTrigger()).
 	/// This is done by taking a SVTriggerQueueElement from the head of m_oTriggerQueue 
@@ -4077,10 +4119,6 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 			l_Status = E_FAIL;
 		}
 	} // if( p_rProcessed )
-	/*else
-	{
-	// there are no triggers on the trigger queue. not processed.
-	}*/
 
 	return l_Status;
 }
@@ -4135,16 +4173,15 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 						// Processed is already set to true.
 						l_Iter = m_oNotifyInspectionsSet.erase( l_Iter );
 					}
-					else
-						if (S_FALSE == l_Status)
-						{
-							// this means that inspection was not notified 
-							// because inputs or image were not ready.  
-							// proceed to next inspection.
-							l_Iter++;
-							p_rProcessed = false;
-							l_Status = S_OK;
-						}
+					else if (S_FALSE == l_Status)
+					{
+						// this means that inspection was not notified 
+						// because inputs or image were not ready.  
+						// proceed to next inspection.
+						l_Iter++;
+						p_rProcessed = false;
+						l_Status = S_OK;
+					}
 				}
 				else // of offset for element is outside PPQ (fell off/dead).
 				{
@@ -4155,8 +4192,8 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 				}
 
 			} while ((true != p_rProcessed) && 
-				(l_Iter != m_oNotifyInspectionsSet.end ()) &&
-				SUCCEEDED (l_Status));
+				 (l_Iter != m_oNotifyInspectionsSet.end ()) &&
+				 SUCCEEDED (l_Status));
 
 
 		} // if there is an item on the notify inspection queue.
@@ -4281,6 +4318,89 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& p_rProcessed )
 	}
 
 	return l_Status;
+}
+
+HRESULT SVPPQObject::ProcessDataValidDelay( bool& rProcessed )
+{
+	HRESULT Status = S_OK;
+
+	rProcessed = ( 0 < m_oTriggerQueue.size() );
+
+	if( !rProcessed )
+	{
+		rProcessed = ( 0 < m_DataValidDelayQueue.GetCount() );
+
+		if( rProcessed )
+		{
+			SVProductInfoStruct* pProduct(nullptr);
+
+			SVClock::SVTimeStamp CurrentTime = SVClock::GetTimeStamp();
+
+			while( 0 < m_DataValidDelayQueue.GetCount() && nullptr == pProduct )
+			{
+				long ProcessCount = 0;
+
+				if( m_DataValidDelayQueue.RemoveHead( &ProcessCount ) )
+				{
+					GetProductInfoStruct( pProduct, ProcessCount );
+				}
+				else
+				{
+					Status = E_FAIL;
+					break;
+				}
+
+				if( nullptr != pProduct  && 0 < m_DataValidDelayQueue.GetCount() )
+				{
+					SVProductInfoStruct* pNextProduct( nullptr );
+
+					if( m_DataValidDelayQueue.GetHead( &ProcessCount ) )
+					{
+						GetProductInfoStruct( pNextProduct, ProcessCount );
+					}
+					if( nullptr != pNextProduct && pNextProduct->oOutputsInfo.m_EndDataValidDelay <= CurrentTime )
+					{
+						pProduct = nullptr;
+					}
+				}
+
+				if( nullptr != pProduct )
+				{
+					if( CurrentTime < pProduct->oOutputsInfo.m_EndDataValidDelay )
+					{
+						m_NextOutputDelayTimestamp = pProduct->oOutputsInfo.m_EndDataValidDelay;
+
+						m_DataValidDelayQueue.AddHead( pProduct->ProcessCount() );
+
+						pProduct = nullptr;
+						break;
+					}
+				}
+			}
+
+			rProcessed = ( nullptr != pProduct );
+
+			if( rProcessed )
+			{
+				if( !m_pDataValid.empty() )
+				{
+					m_pOutputList->WriteOutputValue( m_pDataValid,  pProduct->oOutputsInfo.DataValidResult );
+				}
+				if( !m_pOutputToggle.empty() )
+				{
+					m_pOutputList->WriteOutputValue( m_pOutputToggle,  pProduct->oOutputsInfo.OutputToggleResult );
+				}
+			}
+			else
+			{
+				Status = E_FAIL;
+			}
+
+			::InterlockedExchange( &( m_ProcessingDataValidDelay ), 0 );
+		}
+	}
+
+	return Status;
 }
 
 HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )

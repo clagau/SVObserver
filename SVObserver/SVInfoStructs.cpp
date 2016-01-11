@@ -110,8 +110,12 @@ SVOutputsInfoStruct::SVOutputsInfoStruct()
 : pOutputsList( NULL )
 , lOutputDelay( 0 )
 , lResetDelay( 0 )
+, lDataValidDelay( 0 )
+, DataValidResult( false )
+, OutputToggleResult( false )
 , m_EndOutputDelay( 0 )
 , m_EndResetDelay( 0 )
+, m_EndDataValidDelay( 0 )
 , m_BeginProcess( 0 )
 , m_EndProcess( 0 )
 {
@@ -121,8 +125,12 @@ SVOutputsInfoStruct::SVOutputsInfoStruct( const SVOutputsInfoStruct& p_rsvObject
 : pOutputsList( p_rsvObject.pOutputsList )
 , lOutputDelay( p_rsvObject.lOutputDelay )
 , lResetDelay( p_rsvObject.lResetDelay )
+, lDataValidDelay( p_rsvObject.lDataValidDelay )
+, DataValidResult( p_rsvObject.DataValidResult )
+, OutputToggleResult( p_rsvObject.OutputToggleResult )
 , m_EndOutputDelay( p_rsvObject.m_EndOutputDelay )
 , m_EndResetDelay( p_rsvObject.m_EndResetDelay )
+, m_EndDataValidDelay( p_rsvObject.m_EndDataValidDelay )
 , m_BeginProcess( p_rsvObject.m_BeginProcess )
 , m_EndProcess( p_rsvObject.m_EndProcess )
 {
@@ -140,8 +148,12 @@ const SVOutputsInfoStruct& SVOutputsInfoStruct::operator=( const SVOutputsInfoSt
 		pOutputsList = p_rsvObject.pOutputsList;
 		lOutputDelay = p_rsvObject.lOutputDelay;
 		lResetDelay = p_rsvObject.lResetDelay;
+		lDataValidDelay = p_rsvObject.lDataValidDelay;
+		DataValidResult = p_rsvObject.DataValidResult;
+		OutputToggleResult = p_rsvObject.OutputToggleResult;
 		m_EndOutputDelay = p_rsvObject.m_EndOutputDelay;
 		m_EndResetDelay = p_rsvObject.m_EndResetDelay;
+		m_EndDataValidDelay = p_rsvObject.m_EndDataValidDelay;
 		m_BeginProcess = p_rsvObject.m_BeginProcess;
 		m_EndProcess = p_rsvObject.m_EndProcess;
 	}
@@ -154,16 +166,22 @@ void SVOutputsInfoStruct::Reset()
 	pOutputsList	= NULL;
 	lOutputDelay	= 0;
 	lResetDelay		= 0;
+	lDataValidDelay	= 0;
+	DataValidResult = false;
+	OutputToggleResult = false;
 	m_EndOutputDelay			= 0;
 	m_EndResetDelay				= 0;
+	m_EndDataValidDelay			= 0;
 	m_BeginProcess				= 0;
 	m_EndProcess				= 0;
 }// end Reset
 
 void SVOutputsInfoStruct::Init()
 {
+	//Init only initializes these values because the rest of the values are required for the next process cycle
 	m_EndOutputDelay			= 0;
 	m_EndResetDelay				= 0;
+	m_EndDataValidDelay			= 0;
 	m_BeginProcess				= 0;
 	m_EndProcess				= 0;
 }// end Init

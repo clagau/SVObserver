@@ -314,6 +314,14 @@ protected:
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
 	HRESULT ProcessResetOutputs( bool& p_rProcessed );
+
+	//************************************
+	/// If data valid delay is set then processes when the signals are to be set
+	/// \param p_rProcessed [out] true if Data Valid Delay processed
+	/// \returns S_OK on success, otherwise E_FAIL
+	//************************************
+	HRESULT ProcessDataValidDelay( bool& p_rProcessed );
+
 	//************************************
 	/// If possible, processes one camera response (either from the pending camera responses or directly from the trigger queue)
 	/// \param p_rProcessed [out] true if a camera response was processed successfully
@@ -384,12 +392,16 @@ protected:
 	long m_ProcessingOutputReset;
 	SVClock::SVTimeStamp m_NextOutputResetTimestamp;
 
+	long m_ProcessingDataValidDelay;
+	SVClock::SVTimeStamp m_NextDataValidDelayTimestamp;
+
 	// Queues for the PPQ's threads to store incoming objects to be processed
 	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SVTriggerInfoStruct s and SVVariantBoolVector s
 	SVProcessCountQueue m_oCamerasQueue;
 	SVInspectionInfoQueue m_oInspectionQueue;
 	SVProcessCountQueue m_oOutputsDelayQueue;
 	SVProcessCountQueue m_oOutputsResetQueue;
+	SVProcessCountQueue m_DataValidDelayQueue;
 	mutable SVProductRequestQueue m_ProductRequests;
 
 	SVCameraResponseQueue m_CameraResponseQueue;
@@ -503,6 +515,7 @@ private:
 	SVPPQOutputModeEnum m_oOutputMode;
 	long				m_lOutputDelay;
 	long				m_lResetDelay;
+	long				m_DataValidDelay;
 	bool				m_bMaintainSourceImages;
 	long                m_lInspectionTimeoutMillisec;
 	BOOL				m_bCreated;

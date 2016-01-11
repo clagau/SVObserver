@@ -356,6 +356,7 @@ SVObserverApp::SVObserverApp()
 	  , m_FailStatusStreamPortNumber( FailStatusStreamPortNumber )
 	  , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
 	  , m_XMLTree()
+	  , m_DataValidDelay( 0 )
 {
 	free((void*)m_pszHelpFilePath);
 	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
@@ -3395,6 +3396,8 @@ BOOL SVObserverApp::InitInstance()
 
 		INI().SetValue(_T( "Settings" ),_T( "FailStatusStreamPortNumber" ), m_FailStatusStreamPortNumber );
 	}
+
+	m_DataValidDelay = static_cast<long> ( INI().GetValueInt( _T("Settings"), _T("DataValidDelay"), 0 ) );
 
 	SVSocketRemoteCommandManager::Instance().Startup( m_RemoteCommandsPortNumber );
 	SVInputStreamManager::Instance().Startup( m_InputStreamPortNumber );
