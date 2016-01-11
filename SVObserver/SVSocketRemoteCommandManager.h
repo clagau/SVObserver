@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   20 Nov 2014 05:05:16  $
 //******************************************************************************
 
-#ifndef SVSOCKETREMOTECOMMANDMANAGER_H
-#define SVSOCKETREMOTECOMMANDMANAGER_H
+#pragma once
 
+#pragma region Includes
 #include <map>
 #include <string>
 #include <boost/function.hpp>
@@ -19,6 +19,7 @@
 #include "SVJsonCommandServerLibrary/SVJsonCommandManager.h"
 #include "SVStorageResult.h"
 #include "SVDataDefinitionStruct.h"
+#pragma endregion Includes
 
 namespace Json
 {
@@ -130,8 +131,6 @@ private:
 };
 
 typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandManager;
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

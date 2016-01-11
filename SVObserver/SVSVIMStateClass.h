@@ -42,6 +42,7 @@
 #define SV_STATE_RAID_FAILURE	0x00000020
 
 #define SV_STATE_MODIFIED		0x00000001
+#define SV_STATE_REMOTE_CMD		0x00000002
 
 //This class manages the state variable and uses a lock to 
 //

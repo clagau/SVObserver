@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   20 Nov 2014 05:05:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/assign.hpp>
@@ -29,6 +30,8 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "SVSVIMStateClass.h"
+#pragma endregion Includes
 
 #define SV_DATA_TO_CONTENTS
 //#define SV_OUTPUT_JSON
@@ -90,7 +93,9 @@ HRESULT SVRemoteCommandFunctions::ProcessCommand( const std::string& p_rJsonComm
 
 	if( l_Iter != m_Functions.end() )
 	{
+		SVSVIMStateClass::AddState( SV_STATE_REMOTE_CMD );
 		l_Status = (l_Iter->second)( p_rJsonCommand, p_rJsonResults );
+		SVSVIMStateClass::RemoveState( SV_STATE_REMOTE_CMD );
 	}
 	else
 	{
@@ -112,7 +117,9 @@ HRESULT SVRemoteCommandFunctions::ProcessAsyncCommand( const std::string& p_rJso
 
 	if( l_Iter != m_AsyncFunctions.end() )
 	{
+		SVSVIMStateClass::AddState( SV_STATE_REMOTE_CMD );
 		l_Status = (l_Iter->second)( p_rJsonCommand, p_rJsonResults );
+		SVSVIMStateClass::RemoveState( SV_STATE_REMOTE_CMD );
 	}
 	else
 	{

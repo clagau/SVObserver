@@ -414,7 +414,7 @@ HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( const SVDe
 HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( int iBand, const SVLongValueDeviceParam* pParam )
 {
 	HRESULT hr = S_FALSE;
-	if( mLightReference.m_aLightReferenceBand.size() == 0 )
+	if( mLightReference.m_aLightReferenceBand.size() == 0 || nullptr == pParam )
 	{
 		return hr;
 	}
@@ -432,9 +432,10 @@ HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( int iBand,
 	else
 	{
 		SVLightReferenceAttributeInfo attribute;
-
-		switch ( pParam->Type() )
+		if( nullptr !=  pCFParam )
 		{
+			switch ( pParam->Type() )
+			{
 			case DeviceParamGamma:
 				attribute.strName = pCFParam->VisualName();
 				break;
@@ -455,18 +456,19 @@ HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( int iBand,
 			case DeviceParamWhiteBalanceVR:
 				attribute.strName = _T("White Balance");
 				break;
+			}
+
+			attribute.dwType = (DWORD) pParam->Type();
+			attribute.lStep = 1;
+			attribute.lValue = pParam->lValue;
+			if ( pCFParam )
+			{
+				attribute.lMax = pCFParam->info.max;
+				attribute.lMin = pCFParam->info.max;
+			}
+			mLightReference.Band(iBand).AddAttribute( attribute );
+			hr = S_OK;
 		}
-		
-		attribute.dwType = (DWORD) pParam->Type();
-		attribute.lStep = 1;
-		attribute.lValue = pParam->lValue;
-		if ( pCFParam )
-		{
-			attribute.lMax = pCFParam->info.max;
-			attribute.lMin = pCFParam->info.max;
-		}
-		mLightReference.Band(iBand).AddAttribute( attribute );
-		hr = S_OK;
 	}
 
 	return hr;

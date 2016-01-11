@@ -28,6 +28,8 @@
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVSVIMStateClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -334,7 +336,8 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 
 HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 {
-	HRESULT hrOk = S_OK;
+	HRESULT Result = S_OK;
+	bool LogOnly( false );
 
 	long l( 0 );
 
@@ -348,20 +351,40 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 	mFiles = rArray;
 	m_CameraFileDeviceParams.Clear();
 
-	for ( l = 0; hrOk == S_OK && l < mFiles.GetSize(); l++ )
+	for ( l = 0; Result == S_OK && l < mFiles.GetSize(); l++ )
 	{
 		if ( ! svFileMgr.AddItem( &(mFiles[l]) ) )
 		{
-			hrOk = S_FALSE;
-            ASSERT(FALSE);
-			SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-			Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), StdMessageParams, SvOi::Err_25047_LoadFileFailed );
-			Exception.Throw();
+			if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
+			{
+				LogOnly = true;
+			}
+			if( LogOnly )
+			{
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), StdMessageParams, SvOi::Err_25047_LoadFileFailed );
+			}
+			else
+			{
+				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), StdMessageParams, SvOi::Err_25047_LoadFileFailed, 0, nullptr, MB_YESNO ) )
+				{
+					//All other missing files will only be logged
+					LogOnly = true;
+				}
+				else
+				{
+					//This stops loading without any further messages
+					SvStl::MessageContainer MsgCont;
+					MsgCont.setMessage( SVMSG_SVO_NO_ERROR, nullptr, StdMessageParams );
+					throw MsgCont;
+				}
+			}
 		}
 	}
 
 	rArray = mFiles;
-	return hrOk;
+	return Result;
 }
 
 SVImageObjectClassPtr SVAcquisitionClass::GetCircleBuffer()

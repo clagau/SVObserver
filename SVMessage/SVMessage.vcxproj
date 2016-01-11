@@ -212,7 +212,7 @@ mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$((IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

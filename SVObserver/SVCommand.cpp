@@ -1236,6 +1236,9 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 	{
 		return SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
+
+	SVSVIMStateClass::AddState( SV_STATE_REMOTE_CMD );
+
 	do
 	{
 		hrResult = S_OK;
@@ -1348,6 +1351,8 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 		}
 		break;
 	} while (0);
+
+	SVSVIMStateClass::RemoveState( SV_STATE_REMOTE_CMD );
 
 	return hrResult;
 }// end SVPutSVIMConfig
@@ -1559,6 +1564,9 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 	{
 		return SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
+
+	SVSVIMStateClass::AddState( SV_STATE_REMOTE_CMD );
+
 	do
 	{
 		hrResult = S_OK;
@@ -1638,6 +1646,8 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 		}
 		break;
 	} while (0);
+
+	SVSVIMStateClass::RemoveState( SV_STATE_REMOTE_CMD );
 
 	return hrResult;
 }
