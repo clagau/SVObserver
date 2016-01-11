@@ -287,7 +287,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 						CString strDigName = m_pParent->BuildDigName( *pCameraObj );
 						SVDigitizerProcessingClass::Instance().SelectDigitizer( strDigName );
 						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strDigName ) );
-						if ( nullptr == psvDevice )
+						if ( nullptr != psvDevice )
 						{
 							SVFileNameArrayClass svFiles;
 							SVFileNameClass svFile;
@@ -338,9 +338,11 @@ void CSVOCameraDlg::SetCameraPropForAll(CString sCurrentCamera)
     int iCamCnt = m_pParent->GetCameraListCount();
     SVOCameraObjPtr pObj;
     CString sFileName;
+	bool isColorCamera( false );
 
     pObj = m_pParent->GetCameraObjectByName(sCurrentCamera);
     sFileName = pObj->GetCameraFile();
+	isColorCamera = pObj->IsColor();
 
     for (int i = 0; i < iCamCnt; i++)
     {
@@ -349,6 +351,7 @@ void CSVOCameraDlg::SetCameraPropForAll(CString sCurrentCamera)
         if (sCurrentCamera != pObj->GetCameraDisplayName())
         {
             pObj->SetCameraFile(sFileName);
+			pObj->SetIsColor( isColorCamera );
 			pObj->SetCameraFileChanged();
             m_pParent->ItemChanged(CAMERA_DLG,pObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
         }
