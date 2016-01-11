@@ -3520,15 +3520,11 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 
 					SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
 
-					SVString l_Title = _T( "Pending " );
-
-					l_Title += p_rElement.m_pCamera->GetName();
-
 #ifdef EnableTracking
+					SVString l_Title = _T( "Pending " );
+					l_Title += p_rElement.m_pCamera->GetName();
 					m_PPQTracking.IncrementCount( l_Title );
 #endif
-
-
 				}
 			} // if( l_svIter1 != l_pProduct->m_svCameraInfos.end() )
 			else
