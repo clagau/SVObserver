@@ -24,11 +24,11 @@ namespace Seidenader
 		{
 			// Construction
 		public:
-			// @cmember Constructor
-			CSVOEditorWnd( CListBox* pLB );
+			//Constructor
+			CSVOEditorWnd( CListBox& rListBox, LPCTSTR ExcludeChar );
 
 		protected:
-			// @cmember Destructor
+			//Destructor
 			virtual ~CSVOEditorWnd();
 
 			// Attributes
@@ -36,7 +36,7 @@ namespace Seidenader
 
 			// Operations
 		public:
-			// @cmember Starts editing
+			// Starts editing
 			bool Edit( int n );
 
 			void WaitForDoneEditing();
@@ -50,13 +50,6 @@ namespace Seidenader
 
 			// Generated message map functions
 		protected:
-			// @cmember Index of item being edited
-			int m_edit_index;
-			// @cmember List box containing item being edited
-			CListBox* m_pLB ;
-			// @cmember Flag to prevent EndEditing() from executing more than once
-			bool m_edit_ended ;
-
 			// @cmember Ends edit sequence, optionally updating the list box
 			void EndEditing( bool b = true );
 
@@ -76,8 +69,11 @@ namespace Seidenader
 
 			void YieldMessages();
 
-			bool m_bDoneEditing;
-
+			CListBox& m_rListBox;		//Reference to list box containing item being edited
+			CString m_ExcludeChar;		//List of characters to exclude
+			int m_edit_index;			//Index of item being edited
+			bool m_edit_ended ;			//Flag to prevent EndEditing() from executing more than once
+			bool m_bDoneEditing;		//Flag to indicate editing is done
 
 			DECLARE_MESSAGE_MAP()
 		};

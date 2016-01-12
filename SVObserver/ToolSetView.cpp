@@ -536,41 +536,15 @@ void ToolSetView::ValidateLabelText(CString& newText)
 	// strip leading and trailing spaces
 	newText.Trim();
 
-	// The characters we do not want in the label.
-	static const CString csUndesirables = SvO::SVEXCLUDECHARS_TOOL_NAME;
+	SVString newName( newText );
 
-	int nCount = csUndesirables.GetLength();
-	for (int i = 0;i < nCount;i++)
+	newName.RemoveCharacters( SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+
+	if( 0 < newName.size() )
 	{
-		TCHAR t = csUndesirables.GetAt(i);
-
-		bool bDone = false;
-		while (true != bDone)
-		{
-			int nIndex = newText.Find(t);
-			if (nIndex > -1)
-			{
-				CString csTemp;
-				if (nIndex > 0)
-				{
-					csTemp = newText.Left(nIndex);
-				}
-				int nLength = newText.GetLength();
-				if (nIndex < (nLength - 1))
-				{
-					csTemp += newText.Right((nLength - 1) - nIndex);
-				}
-				newText = csTemp;
-			}
-			else
-			{
-				bDone = true; // Exit while loop
-			}
-		}
+		newText = newName.c_str();
 	}
-
-	// Do we have anything left?
-	if (newText.GetLength() < 1)
+	else
 	{
 		ASSERT(m_csLabelSaved.GetLength() > 0);
 		newText = m_csLabelSaved;

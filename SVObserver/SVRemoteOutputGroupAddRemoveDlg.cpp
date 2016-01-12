@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   14 Jul 2014 15:38:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
-
+#include "TextDefinesSvO.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 // SVRemoteOutputGroupAddRemoveDlg dialog
 #define ONE_OUTPUT_GROUP_PER_PPQ 
@@ -335,6 +338,11 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 
 		//trim white space from left and right of the new name
 		newName.Trim();
+
+		//Remove any excluded characters from the name
+		SVString checkName( newName );
+		checkName.RemoveCharacters( SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+		newName = checkName.c_str();
 
 		//don't all blank strings
 		if ( !newName.IsEmpty() )

@@ -883,6 +883,14 @@ void SVString::Remove(SVElementType ch)
 	m_String.erase(std::remove ( m_String.begin(), m_String.end(), ch ), m_String.end());
 }
 
+void SVString::RemoveCharacters(LPCTSTR ExcludeCharacters)
+{
+	for(unsigned int i=0; i < strlen(ExcludeCharacters); i++)
+	{
+		Remove( ExcludeCharacters[i] );
+	}
+}
+
 bool SVString::isSubmatch(SVString searchString, size_t offsetSource, size_t offsetSearch )
 {
 	bool retVal = false;

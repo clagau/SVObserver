@@ -18,7 +18,6 @@
 #include "SVMFCControls/SVDlgFolder.h"
 #pragma endregion Includes
 
-//##ModelId=3A4B50DE029F
 SVFileNameClass::SVFileNameClass()
 {
 	Init();
@@ -28,7 +27,6 @@ SVFileNameClass::~SVFileNameClass()
 {
 }
 
-//##ModelId=3A55D6E1003E
 SVFileNameClass::SVFileNameClass(LPCTSTR szFullFileName)
 {
 	Init();
@@ -36,7 +34,6 @@ SVFileNameClass::SVFileNameClass(LPCTSTR szFullFileName)
 	SetFullFileName( szFullFileName );
 }
 
-//##ModelId=3A4B51590128
 SVFileNameClass::SVFileNameClass(SVFileNameClass * svFileName)
 {
 	if ( svFileName )
@@ -49,133 +46,118 @@ SVFileNameClass::SVFileNameClass(SVFileNameClass * svFileName)
 	}
 }
 
-//##ModelId=3A4CA55C0213
 SVFileNameClass::SVFileNameClass(const SVFileNameClass& orig)
 {
 	*this = orig;
 }
 
-//##ModelId=3A4CA55C033C
 const SVFileNameClass& SVFileNameClass::operator=(const SVFileNameClass& rhs)
 {
-	SetFileType( rhs.mdwFileType );
-	SetPathName( rhs.mcsPathName );
-	SetFileNameOnly( rhs.mcsFileNameOnly );
-	SetExtension( rhs.mcsExtension );
-	SetFileSelectDialogTitle( rhs.mcsFileSelectDialogTitle );
-	SetFileSaveDialogTitle( rhs.mcsFileSaveDialogTitle );
-	SetDefaultPathName( rhs.mcsDefaultPathName );
-	SetDefaultFileName( rhs.mcsDefaultFileName );
-	SetDefaultFileExtension( rhs.mcsDefaultFileExtension );
-	SetFileSelectFlags( rhs.mdwFileSelectFlags );
-	SetFileSaveFlags( rhs.mdwFileSaveFlags );
-	SetFileExtensionFilterList( rhs.mcsFileExtensionFilterList );
+	SetFileType( rhs.m_FileType );
+	SetPathName( rhs.m_PathName );
+	SetFileNameOnly( rhs.m_FileNameOnly );
+	SetExtension( rhs.m_Extension );
+	SetFileSelectDialogTitle( rhs.m_FileSelectDialogTitle );
+	SetFileSaveDialogTitle( rhs.m_FileSaveDialogTitle );
+	SetDefaultPathName( rhs.m_DefaultPathName );
+	SetDefaultFileName( rhs.m_DefaultFileName );
+	SetDefaultFileExtension( rhs.m_DefaultFileExtension );
+	SetFileSelectFlags( rhs.m_FileSelectFlags );
+	SetFileSaveFlags( rhs.m_FileSaveFlags );
+	SetFileExtensionFilterList( rhs.m_FileExtensionFilterList );
+	setExcludeCharacters( rhs.m_ExcludeChar );
 
 	return *this;
 }
 
-//##ModelId=3A4B5FC800EA
-DWORD SVFileNameClass::GetFileType()
+DWORD SVFileNameClass::GetFileType() const
 {
-	return mdwFileType;
+	return m_FileType;
 }
 
-//##ModelId=3A436F020157
-LPCTSTR SVFileNameClass::GetPathName()
+LPCTSTR SVFileNameClass::GetPathName() const
 {
-	return mcsPathName;
+	return m_PathName;
 }
 
-//##ModelId=3A436F340186
 LPCTSTR SVFileNameClass::GetFileName()
 {
-	mcsFileName = mcsFileNameOnly + mcsExtension;
+	m_FileName = m_FileNameOnly + m_Extension;
 
-	return mcsFileName;
+	return m_FileName;
 }
 
-//##ModelId=3A54E7370138
-LPCTSTR SVFileNameClass::GetFileNameOnly()
+LPCTSTR SVFileNameClass::GetFileNameOnly() const
 {
-	return mcsFileNameOnly;
+	return m_FileNameOnly;
 }
 
-//##ModelId=3A54E747000F
-LPCTSTR SVFileNameClass::GetExtension()
+LPCTSTR SVFileNameClass::GetExtension() const
 {
-	return mcsExtension;
+	return m_Extension;
 }
 
-//##ModelId=3A4B6AFD0148
 LPCTSTR SVFileNameClass::GetFullFileName()
 {
-	mcsFullFileName.Empty();
+	m_FullFileName.Empty();
 	
-	mcsFullFileName = GetFileName();
+	m_FullFileName = GetFileName();
 
-	if ( !mcsPathName.IsEmpty() )
+	if ( !m_PathName.IsEmpty() )
 	{
-		mcsFullFileName = mcsPathName + "\\" + mcsFullFileName;
+		m_FullFileName = m_PathName + "\\" + m_FullFileName;
 	}
 
-	return mcsFullFileName;
+	return m_FullFileName;
 }
 
-//##ModelId=3A4B60170290
-LPCTSTR SVFileNameClass::GetFileSelectDialogTitle()
+LPCTSTR SVFileNameClass::GetFileSelectDialogTitle() const
 {
-	return mcsFileSelectDialogTitle;
+	return m_FileSelectDialogTitle;
 }
 
-//##ModelId=3A4B6046036B
-LPCTSTR SVFileNameClass::GetFileSaveDialogTitle()
+LPCTSTR SVFileNameClass::GetFileSaveDialogTitle() const
 {
-	return mcsFileSaveDialogTitle;
+	return m_FileSaveDialogTitle;
 }
 
-LPCTSTR SVFileNameClass::GetDefaultPathName()
+LPCTSTR SVFileNameClass::GetDefaultPathName() const
 {
-	return mcsDefaultPathName;
+	return m_DefaultPathName;
 }
 
-//##ModelId=3A4B607C032C
-LPCTSTR SVFileNameClass::GetDefaultFileName()
+LPCTSTR SVFileNameClass::GetDefaultFileName() const
 {
-	return mcsDefaultFileName;
+	return m_DefaultFileName;
 }
 
-//##ModelId=3A4B60600213
-LPCTSTR SVFileNameClass::GetDefaultFileExtension()
+LPCTSTR SVFileNameClass::GetDefaultFileExtension() const
 {
-	return mcsDefaultFileExtension;
+	return m_DefaultFileExtension;
 }
 
-//##ModelId=3A4B6099003E
-DWORD SVFileNameClass::GetFileSelectFlags()
+DWORD SVFileNameClass::GetFileSelectFlags() const
 {
-	return mdwFileSelectFlags;
+	return m_FileSelectFlags;
 }
 
-//##ModelId=3A4B60B601C5
-DWORD SVFileNameClass::GetFileSaveFlags()
+DWORD SVFileNameClass::GetFileSaveFlags() const
 {
-	return mdwFileSaveFlags;
+	return m_FileSaveFlags;
 }
 
-//##ModelId=3A4B60D6006D
-LPCTSTR SVFileNameClass::GetFileExtensionFilterList()
+LPCTSTR SVFileNameClass::GetFileExtensionFilterList() const
 {
-	return mcsFileExtensionFilterList;
+	return m_FileExtensionFilterList;
 }
 
-//##ModelId=3A4B5FE50222
 BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 {
 	BOOL bOk = FALSE;
 
-	mdwFileType = dwFileType;
+	m_FileType = dwFileType;
 
-	switch (mdwFileType)
+	switch (m_FileType)
 	{
 		case SV_DEFAULT_FILE_TYPE:
 		{
@@ -326,7 +308,6 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 	return bOk;
 }
 
-//##ModelId=3A4B6B11006D
 BOOL SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
 {
 	CString csFullName = szFullName;
@@ -359,18 +340,16 @@ BOOL SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
 	return TRUE;
 }
 
-//##ModelId=3A4373E400BB
 BOOL SVFileNameClass::SetPathName(LPCTSTR szPathName)
 {
-	mcsPathName = szPathName;
+	m_PathName = szPathName;
 
-	mcsPathName.Replace('/','\\');
-	mcsPathName.TrimRight( '\\' );
+	m_PathName.Replace('/','\\');
+	m_PathName.TrimRight( '\\' );
 
 	return TRUE;
 }
 
-//##ModelId=3A437439001F
 BOOL SVFileNameClass::SetFileName(LPCTSTR szFileName)
 {
 	CString csFullFileName = GetPathName();
@@ -388,35 +367,31 @@ BOOL SVFileNameClass::SetFileName(LPCTSTR szFileName)
 	return SetFullFileName( csFullFileName );
 }
 
-//##ModelId=3A71AAF90239
 BOOL SVFileNameClass::SetFileNameOnly(LPCTSTR szFileName)
 {
-	mcsFileNameOnly = szFileName;
-	mcsFileNameOnly.TrimRight();
+	m_FileNameOnly = szFileName;
+	m_FileNameOnly.TrimRight();
 
 	return TRUE;
 }
 
-//##ModelId=3A54E9090119
 BOOL SVFileNameClass::SetExtension(LPCTSTR szExtension)
 {
-	mcsExtension = szExtension;
+	m_Extension = szExtension;
 
 	return TRUE;
 }
 
-//##ModelId=3A4B6DD80186
 BOOL SVFileNameClass::SetFileSelectDialogTitle(LPCTSTR szTitle)
 {
-	mcsFileSelectDialogTitle = szTitle;
+	m_FileSelectDialogTitle = szTitle;
 
 	return TRUE;
 }
 
-//##ModelId=3A4B6E11031C
 BOOL SVFileNameClass::SetFileSaveDialogTitle(LPCTSTR szTitle)
 {
-	mcsFileSaveDialogTitle = szTitle;
+	m_FileSaveDialogTitle = szTitle;
 
 	return TRUE;
 }
@@ -455,55 +430,49 @@ BOOL SVFileNameClass::SetDefaultFullFileName(LPCTSTR szFullName)
 
 BOOL SVFileNameClass::SetDefaultPathName(LPCTSTR szPathName)
 {
-	mcsDefaultPathName = szPathName;
+	m_DefaultPathName = szPathName;
 
-	mcsDefaultPathName.Replace('/','\\');
-	mcsDefaultPathName.TrimRight( '\\' );
+	m_DefaultPathName.Replace('/','\\');
+	m_DefaultPathName.TrimRight( '\\' );
 
 	return TRUE;
 }
 
-//##ModelId=3A4B6E8002CE
 BOOL SVFileNameClass::SetDefaultFileName(LPCTSTR szName)
 {
-	mcsDefaultFileName = szName;
+	m_DefaultFileName = szName;
 
 	return TRUE;
 }
 
-//##ModelId=3A4B6E4701D4
 BOOL SVFileNameClass::SetDefaultFileExtension(LPCTSTR szExtension)
 {
-	mcsDefaultFileExtension = szExtension;
+	m_DefaultFileExtension = szExtension;
 
 	return TRUE;
 }
 
-//##ModelId=3A4B6EA502EE
 BOOL SVFileNameClass::SetFileSelectFlags(DWORD dwFlags)
 {
-	mdwFileSelectFlags = dwFlags;
+	m_FileSelectFlags = dwFlags;
 
 	return TRUE;
 }
 
-//##ModelId=3A4B6EC9036B
 BOOL SVFileNameClass::SetFileSaveFlags(DWORD dwFlags)
 {
-	mdwFileSaveFlags = dwFlags;
+	m_FileSaveFlags = dwFlags;
 
 	return TRUE;
 }
 
-//##ModelId=3A4B6EE7007D
 BOOL SVFileNameClass::SetFileExtensionFilterList(LPCTSTR szFilter)
 {
-	mcsFileExtensionFilterList = szFilter;
+	m_FileExtensionFilterList = szFilter;
 
 	return TRUE;
 }
 
-//##ModelId=3A4B6F52004E
 BOOL SVFileNameClass::SelectPath()
 {
 	BOOL bOk = FALSE;
@@ -527,7 +496,6 @@ BOOL SVFileNameClass::SelectPath()
 	return bOk;
 }
 
-//##ModelId=3A4B6F2B002E
 BOOL SVFileNameClass::SelectFile()
 {
 	BOOL bOk = FALSE;
@@ -582,7 +550,6 @@ BOOL SVFileNameClass::SelectFile()
 	return bOk;
 }
 
-//##ModelId=3A4B6F40034B
 BOOL SVFileNameClass::SaveFile()
 {
 	BOOL bOk = FALSE;
@@ -634,9 +601,10 @@ BOOL SVFileNameClass::SaveFile()
 
 		if ( ! bDone )
 		{
-			bOk = SetFullFileName( dlg.GetPathName() );
-		
-			SetDefaultFullFileName( dlg.GetPathName() );
+			CString PathName = checkFileName( dlg.GetPathName(), dlg.GetFileName() );
+
+			bOk = SetFullFileName( PathName );
+			SetDefaultFullFileName( PathName );
 
 			bDone = GetFileType() != SV_SVX_CONFIGURATION_FILE_TYPE ;
 
@@ -681,22 +649,53 @@ BOOL SVFileNameClass::SaveFile()
 
 void SVFileNameClass::Init()
 {
-	mdwFileType = 0;
-	mcsFullFileName.Empty();
-	mcsPathName.Empty();
-	mcsFileName.Empty();
-	mcsFileNameOnly.Empty();
-	mcsExtension.Empty();
-	mcsFileSelectDialogTitle = "Select File";
-	mcsFileSaveDialogTitle = "Save File";
-	mcsDefaultFileExtension.Empty();
-	mcsDefaultFileName.Empty();
-	mcsDefaultPathName.Empty();
-	mdwFileSelectFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER;
-	mdwFileSaveFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER;
-	mcsFileExtensionFilterList = "All Files (*.*)|*.*||";
+	m_FileType = 0;
+	m_FullFileName.Empty();
+	m_PathName.Empty();
+	m_FileName.Empty();
+	m_FileNameOnly.Empty();
+	m_Extension.Empty();
+	m_FileSelectDialogTitle = "Select File";
+	m_FileSaveDialogTitle = "Save File";
+	m_DefaultFileExtension.Empty();
+	m_DefaultFileName.Empty();
+	m_DefaultPathName.Empty();
+	m_FileSelectFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER;
+	m_FileSaveFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER;
+	m_FileExtensionFilterList = "All Files (*.*)|*.*||";
 }
 
+CString SVFileNameClass::checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const
+{
+	CString Result( PathName );
+
+	if( !m_ExcludeChar.IsEmpty() )
+	{
+		bool NameChanged( false );
+		CString NewFileName( FileName );
+
+		for( int i=0; i < m_ExcludeChar.GetLength(); i++ )
+		{
+			if( 0 < NewFileName.Remove( m_ExcludeChar[i] ) )
+			{
+				NameChanged =  true;
+			}
+		}
+
+		if( NewFileName.IsEmpty() || NewFileName == m_DefaultFileExtension )
+		{
+			NewFileName = GetDefaultFileName();
+			NameChanged = true;
+		}
+
+		if( NameChanged )
+		{
+			Result.Replace( FileName, NewFileName );
+		}
+	}
+
+	return Result;
+}
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

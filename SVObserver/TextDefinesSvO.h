@@ -48,8 +48,8 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const EndListDelimiter = _T( "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------" );
 	const TCHAR* const ColorToolMustBeFirstMessage = _T( "A Color Tool must ALWAYS be\n the first tool on a color system." );
 	const TCHAR* const SVTOOLPARAMETERLIST_MARKER = _T( "** SVSetToolParameterList MARKER **" );
-	const TCHAR* const SVEXCLUDECHARS_CONFIG_NAME = _T( "\\/:*\"<>|;&$@`[]{}()^~!#%" );
-	const TCHAR* const SVEXCLUDECHARS_TOOL_NAME = _T( "\\/:*\";,.+-$@'[]{}()<>|!%&~^\327\367" );
+	const TCHAR* const SVEXCLUDECHARS_CONFIG_NAME =  _T( "\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#" );
+	const TCHAR* const SVEXCLUDECHARS_TOOL_IP_NAME = _T( "\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7" );
 	const TCHAR* const SizeAdjustTextNone = _T( "Manual" );
 	const TCHAR* const AmountOfSystemMemoryText = _T("Amount of physical memory = %d");
 	const TCHAR* const SizeAdjustTextFormula = _T( "Formula" );

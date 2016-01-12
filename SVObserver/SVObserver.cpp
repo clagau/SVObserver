@@ -420,6 +420,7 @@ SVObserverApp::SVObserverApp()
 	m_pFastOcr = nullptr;
 
 	m_ConfigFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
+	m_ConfigFileName.setExcludeCharacters( SvO::SVEXCLUDECHARS_CONFIG_NAME );
 
 	SVFileNameManagerClass svFileManager;
 	svFileManager.AddItem( &m_ConfigFileName );

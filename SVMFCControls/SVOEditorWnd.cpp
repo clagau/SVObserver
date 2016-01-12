@@ -24,12 +24,12 @@ namespace Seidenader
 {
 	namespace SVMFCControls
 	{
-		CSVOEditorWnd::CSVOEditorWnd( 
-			CListBox* pLB	// @parm Pointer to list box containing item to edit
-			)
+		CSVOEditorWnd::CSVOEditorWnd( CListBox& rListBox, LPCTSTR ExcludeChar ) :
+			m_rListBox( rListBox )
+		,	m_ExcludeChar( ExcludeChar )
+		,	m_edit_ended( false )
+		,	m_bDoneEditing( false )
 		{
-			m_pLB = pLB ;
-			m_edit_ended = false ;
 		}
 
 		/*
@@ -62,14 +62,12 @@ namespace Seidenader
 		*		@rdesc True if editing was started. False if n is not a valid index for the
 		*			list box being edited
 		*/
-		bool CSVOEditorWnd::Edit(
-			int n		// @parm Index of item in list box to edit
-			)
+		bool CSVOEditorWnd::Edit( int n	)
 		{
 			// 
 			//	Invalid index, return false, deletes object
 			//
-			if ( n < 0 || n >= m_pLB->GetCount() )
+			if ( n < 0 || n >= m_rListBox.GetCount() )
 			{
 				delete this ;
 				return false ;
@@ -79,14 +77,14 @@ namespace Seidenader
 			m_edit_index = n ;
 
 			CString s ;
-			m_pLB->GetText( n, s ) ;
+			m_rListBox.GetText( n, s ) ;
 
 			CRect r ;
-			m_pLB->GetItemRect( n, &r ) ;
+			m_rListBox.GetItemRect( n, &r ) ;
 			r.InflateRect( 1, 1 ) ;
 
-			Create( WS_BORDER | WS_CHILD | WS_VISIBLE | ES_WANTRETURN, r, m_pLB, 1 ) ;
-			SetFont( m_pLB->GetFont()) ;
+			Create( WS_BORDER | WS_CHILD | WS_VISIBLE | ES_WANTRETURN, r, &m_rListBox, 1 ) ;
+			SetFont( m_rListBox.GetFont()) ;
 
 			SetWindowText( s ) ;
 			SetCapture() ;
@@ -194,13 +192,13 @@ namespace Seidenader
 				//
 				CString s ;
 				GetWindowText( s ) ;
-				if ( m_pLB->FindStringExact(-1,s) == LB_ERR )
+				if ( m_rListBox.FindStringExact(-1,s) == LB_ERR )
 				{
-					DWORD_PTR pointer = m_pLB->GetItemData(m_edit_index);
-					m_pLB->DeleteString( m_edit_index ) ;
-					m_pLB->InsertString( m_edit_index, s ) ;
-					m_pLB->SetItemData(m_edit_index, pointer);
-					m_pLB->SetCurSel( m_edit_index ) ;
+					DWORD_PTR pointer = m_rListBox.GetItemData(m_edit_index);
+					m_rListBox.DeleteString( m_edit_index ) ;
+					m_rListBox.InsertString( m_edit_index, s ) ;
+					m_rListBox.SetItemData(m_edit_index, pointer);
+					m_rListBox.SetCurSel( m_edit_index ) ;
 				}
 			}
 
@@ -232,7 +230,6 @@ namespace Seidenader
 
 		void CSVOEditorWnd::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
-			CString sExcludedChars = _T("\\/:*\"<>|.");
 			switch (nChar)
 			{
 			case VK_BACK:
@@ -241,7 +238,7 @@ namespace Seidenader
 				}
 			default:
 				{
-					if (::_tcschr(sExcludedChars,nChar) )
+					if (::_tcschr(m_ExcludeChar, nChar) )
 					{
 						return;
 					}

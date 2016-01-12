@@ -423,7 +423,7 @@ void CSVOInspectionSourceDlg::OnSelchangeLstIpdList()
 	{
 		m_iEditingSel = iCurSel;
 		m_ctlIPDlist.GetText(iCurSel,sCurrentTxt);
-		SvMc::CSVOEditorWnd *pEditor = new SvMc::CSVOEditorWnd(&m_ctlIPDlist);
+		SvMc::CSVOEditorWnd *pEditor = new SvMc::CSVOEditorWnd( m_ctlIPDlist, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 		pEditor->Edit(iCurSel);
 		pEditor->WaitForDoneEditing();
 		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurSel);

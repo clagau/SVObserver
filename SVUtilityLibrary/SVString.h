@@ -116,6 +116,12 @@ public:
 	void Remove(SVElementType ch);
 
 	//************************************
+	//! Method to remove a list of characters
+	//! \param ExcludeCharacters [in] the characters to remove
+	//************************************
+	void RemoveCharacters(LPCTSTR ExcludeCharacters);
+
+	//************************************
 	// Description:  Check if searchString is found in this string. For the searchString wildcard "*" can be used.
 	// Parameter:  searchString <in>:  the string to look for
 	// Parameter:  offsetSource <in>:  offset where the search in this string will started.  Default is 0 (the beginning).
