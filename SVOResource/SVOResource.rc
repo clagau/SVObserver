@@ -6384,8 +6384,17 @@ END
 
 STRINGTABLE
 BEGIN
+    IDS_LATEST_PPQ_INDEX_AT_COMPLETION "PPQ Position at Completion"
+    IDS_TRIGGER_DELTA              "Trigger Delta"
+    IDS_TRIGGER_TO_COMPLETION_TIME "Trigger To Completion Time"
+	IDS_TRIGGER_TO_START_TIME      "Trigger To Start Time"
+END
+
+STRINGTABLE
+BEGIN
     ID_ZOOM_PLUS            "zoom plus\nZoom +"
 END
+
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

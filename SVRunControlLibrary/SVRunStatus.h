@@ -13,8 +13,10 @@
 #define SVRUNSTATUS_H
 
 #include "SVImageIndexStruct.h"
+#include "ProductWorkloadInformation.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include <deque>
+
 
 class SVRunStatusClass
 {
@@ -36,7 +38,7 @@ private:
 			unsigned int run                 : 1;	// did it run ? (inspection started)
 			unsigned int disabled            : 1;	// not enabled ?
 			unsigned int disabledByCondition : 1;	// disabled because of condition
-			unsigned int criticalFailure     : 1;	// a critical error occured and will NAK the inspection
+			unsigned int criticalFailure     : 1;	// a critical error occurred and will NAK the inspection
 		} status;
 		unsigned int state;		// did anything run ?
 	} run;
@@ -44,7 +46,9 @@ private:
 public:
 	SVRunStatusClass();
 
-	void ClearAll();
+	void ResetRunStatus();
+	void ResetRunStateAndToolSetTimes(); 
+	void ResetTriggerInformation(); ///< clears trigger-related information
 
 	void SetPassed();
 	void SetFailed();
@@ -77,7 +81,10 @@ public:
 	double m_ToolSetEndTime;
 	double m_ToolSetAvgTime;
 
+	double m_PreviousTriggerTime; ///< time stamp at which the previous Inspection was started
+	double m_CurrentTriggerTime; ///< time stamp at which the current Inspection was started
 
+	ProductWorkloadInformation m_WorkLoadCurrentProduct;
 };
 
 inline void SVRunStatusClass::SetPassed() 

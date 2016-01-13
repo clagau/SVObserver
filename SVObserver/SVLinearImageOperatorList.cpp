@@ -191,7 +191,7 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				// Run children...
 				for( int i = 0; i < GetSize(); i++ )
 				{
-					ChildRunStatus.ClearAll();
+					ChildRunStatus.ResetRunStateAndToolSetTimes();
 					
 					SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass *>(GetAt( i ));
 					if( pOperator )

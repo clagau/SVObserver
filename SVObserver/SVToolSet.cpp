@@ -65,6 +65,12 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject( &drawFlag, SVConditionalToolSetDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoResetCounts, SVResetInspectionCountsGuid, IDS_OBJECTNAME_RESET_COUNTS, false, SVResetItemIP );
 	RegisterEmbeddedObject( &m_lvoTriggerCount, SVTriggerCountGuid, IDS_OBJECTNAME_TRIGGER_COUNT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_latestCompletionPPQIndex, SVLatestCompletionPPQIndexGuid, IDS_LATEST_PPQ_INDEX_AT_COMPLETION, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_TriggerDelta, SVTriggerDeltaGuid, IDS_TRIGGER_DELTA, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_LastTriggerToPPQCompletion, SVLastTriggerToPPQCompletionGuid, IDS_TRIGGER_TO_COMPLETION_TIME, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_LastTriggerToStart, SVLastTriggerToStartGuid, IDS_TRIGGER_TO_START_TIME, false, SVResetItemNone );
+
+	
 
 	// Set Embedded defaults
 	enabled.SetDefaultValue( TRUE, TRUE );
@@ -93,6 +99,10 @@ void SVToolSetClass::init()
 	drawFlag.SetEnumTypes( IDS_TOOLSETDRAW_ENUMOBJECT_LIST );
 	drawFlag.SetDefaultValue( ( const long ) 0, TRUE ); // 0 Should be show 'All Tools'
 	m_lvoTriggerCount.SetDefaultValue( 0, TRUE );
+	m_latestCompletionPPQIndex.SetDefaultValue( 0, TRUE );
+	m_TriggerDelta.SetDefaultValue( 0, TRUE );
+	m_LastTriggerToPPQCompletion.SetDefaultValue( 0, TRUE );
+	m_LastTriggerToStart.SetDefaultValue( 0, TRUE );
 
 	// Set local defaults
 	m_StartTime = 0.0;
@@ -163,6 +173,10 @@ BOOL SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	ToolTime.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_bvoResetCounts.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_EMBEDABLE;
 	m_lvoTriggerCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_latestCompletionPPQIndex.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_TriggerDelta.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_LastTriggerToPPQCompletion.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_LastTriggerToStart.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
 	m_svMinToolsetTime.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_svMaxToolsetTime.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
@@ -844,9 +858,21 @@ BOOL SVToolSetClass::OnValidate()
 //	 Date		Author		Comment
 //  :13.09.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
+
+
 BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	m_lvoTriggerCount.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_lTriggerCount > 0 ? RRunStatus.m_lTriggerCount : 0 );
+
+	m_latestCompletionPPQIndex.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkLoadCurrentProduct.m_PPQIndexAtCompletion);
+	double TriggerDelta_us = c_MicrosecondsPerMilisecond * (RRunStatus.m_CurrentTriggerTime - RRunStatus.m_PreviousTriggerTime);
+	m_TriggerDelta.SetValue( RRunStatus.m_lResultDataIndex, TriggerDelta_us);
+
+	m_LastTriggerToPPQCompletion.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkLoadCurrentProduct.TriggerToCompletionInMicroseconds());
+	m_LastTriggerToStart.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkLoadCurrentProduct.TriggerToStartInMicroseconds());
+	
+
+
 	BOOL bRetVal = SVTaskObjectListClass::onRun( RRunStatus );
 	if( bRetVal )
 	{
@@ -892,7 +918,6 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 	{
 		SVRunStatusClass ToolRunStatus;
 
-		ToolRunStatus.ClearAll();
 		ToolRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
 		ToolRunStatus.Images = RRunStatus.Images;
 		ToolRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
@@ -919,6 +944,8 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 			++setNumber;
 
 			SVClock::SVTimeStamp l_Timer = SVClock::GetTimeStamp();
+
+			RRunStatus.m_WorkLoadCurrentProduct.m_CompletionTime = l_Timer;
 
 			ToolTime.Start();
 
@@ -950,7 +977,7 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 				{
 					if( GetAt( i ) )
 					{
-						ToolRunStatus.ClearAll();
+						ToolRunStatus.ResetRunStateAndToolSetTimes();
 						ToolRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
 
 						bRetVal = GetAt( i )->Run( ToolRunStatus ) && bRetVal;
@@ -1148,7 +1175,7 @@ BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 	BOOL bDisabled = FALSE;
 
 	SVRunStatusClass ToolRunStatus;
-	ToolRunStatus.ClearAll();
+
 	ToolRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
 	ToolRunStatus.Images = RRunStatus.Images;
 	ToolRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
@@ -1192,7 +1219,7 @@ BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 				{
 					if( GetAt( l ) )
 					{
-						ToolRunStatus.ClearAll();
+						ToolRunStatus.ResetRunStateAndToolSetTimes();
 						bRetVal = GetAt( l )->Run( ToolRunStatus ) && bRetVal;
 
 						// Update the ToolSet Run Status

@@ -21,6 +21,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
+#include "SVRunControlLibrary/ProductWorkloadInformation.h"
 #include "SVSharedMemorySingleton.h"
 #include "SVInfoStructs.h"
 #include "SVPPQEnums.h"
@@ -53,8 +54,9 @@ public:
 	SVPPQObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVPPQOBJECT );
 
 	virtual ~SVPPQObject();
-private:
-	void init();
+
+	ProductWorkloadInformation GetProductWorkloadInformation(){return m_WorkLoadCurrentProduct;}
+
 public:
 
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
@@ -453,12 +455,18 @@ protected:
 	SVCameraInfoMap m_Cameras;
 
 private:
+
+	ProductWorkloadInformation m_WorkLoadCurrentProduct;
+
+	SVString m_conditionalOutputName; // persist this
+	SVGUID m_conditionalOutputValueID; // do not persist this
+
 	void AssignCameraToAcquisitionTrigger();
 	bool ResolveConditionalOutput();
 	bool AlwaysWriteOutputs() const;
 	bool EvaluateConditionalOutput(long dataIndex) const;
-	SVString m_conditionalOutputName; // persist this
-	SVGUID m_conditionalOutputValueID; // do not persist this
+	void init();
+
 
 #ifdef EnableTracking
 	struct SVPPQTrackingElement

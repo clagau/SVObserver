@@ -768,7 +768,7 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 			SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
 			if ( pTaskObject != NULL )
 			{
-				ChildRunStatus.ClearAll();
+				ChildRunStatus.ResetRunStateAndToolSetTimes();
 				
 				BOOL l_bTemp = pTaskObject->Run(ChildRunStatus);
 

@@ -12,7 +12,8 @@
 #ifndef SVTOOLSET_H
 #define SVTOOLSET_H
 
-#include "ObjectInterfaces\IToolSet.h"
+#include "ObjectInterfaces/IToolSet.h"
+
 #include "SVMainImageClass.h"
 #include "SVResultList.h"
 #include "SVTaskObjectList.h"
@@ -111,7 +112,7 @@ public:
 	SVClock::SVTimeStamp m_TimeStampEnd;
 
 	SVBoolValueObjectClass enabled;
-	SVBoolValueObjectClass m_bvoResetCounts;	
+	SVBoolValueObjectClass m_bvoResetCounts;
 	SVLongValueObjectClass m_lvoTriggerCount;
 
 protected:
@@ -165,6 +166,12 @@ protected:
 	SVMainImageClass		mainImageObject;	// Embedded
 
 private:
+
+	SVLongValueObjectClass m_latestCompletionPPQIndex; // the PPQ position at which the most recently completed product was located when it was completed
+	SVTimerValueObjectClass m_TriggerDelta; ///< The time interval between the two most recent triggers
+	SVTimerValueObjectClass m_LastTriggerToPPQCompletion; ///< for the most recently completed product: The time interval between the trigger that started the product and inspection completion
+	SVTimerValueObjectClass m_LastTriggerToStart; ///< for the most recently completed product: The time interval between the trigger that started the product and the start of the inspection
+
 	void init();
 
 };

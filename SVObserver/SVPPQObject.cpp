@@ -1853,7 +1853,7 @@ BOOL SVPPQObject::AssignInputs( const SVVariantBoolVector& p_rInputValues )
 					l_pIOEntry.m_EntryValid = true;
 				}
 
-				// @Warning - I believe this is redundent.  AssignInputs () 
+				// @Warning - I believe this is redundant.  AssignInputs () 
 				// is only processed through ProcessTrigger (), where it is 
 				// also inserted.  Should not cause a problem because it is an
 				// std::set, but only needs done in one place and that should
@@ -2830,6 +2830,7 @@ BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const S
 	// Begin reading the inputs
 	p_pNewProduct->oInputsInfo.m_BeginProcess = SVClock::GetTimeStamp();
 
+
 	if( !AssignInputs( p_rInputValues ) )
 	{
 		p_pNewProduct->hrPPQStatus = -12387;
@@ -2960,9 +2961,10 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 			{
 				SVInspectionInfoStruct& l_rInfo = pTempProduct->m_svInspectionInfos[ p_rInspectionID ];
 
+				m_WorkLoadCurrentProduct.m_ProcessingStartTime = SVClock::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
 
 				if( l_rInfo.m_CanProcess &&				// all inputs are available and inspection can start
-					!( l_rInfo.m_InProcess ) &&			// inspection in not currently running
+					!( l_rInfo.m_InProcess ) &&			// inspection is not currently running
 					!( l_rInfo.m_HasBeenQueued ) )		// This flag prevents the inspection from getting queued more than once
 				{
 					l_pProduct = pTempProduct; // product info
@@ -3254,8 +3256,15 @@ bool SVPPQObject::SetProductComplete( long p_PPQIndex )
 
 	if( l_Status )
 	{
+		// record the current time and PPQ position for later display
+		m_WorkLoadCurrentProduct.m_PPQIndexAtCompletion = p_PPQIndex;
+		m_WorkLoadCurrentProduct.m_CompletionTime = SVClock::GetTimeStamp();
+
+		m_WorkLoadCurrentProduct.m_TriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
+
 		CommitSharedMemory(*pProduct);
 		l_Status = SetProductComplete( *pProduct );
+
 
 #ifdef EnableTracking
 		m_PPQTracking.IncrementCount( _T( "Product Complete" ), p_PPQIndex );
@@ -3296,6 +3305,7 @@ bool SVPPQObject::SetProductComplete( SVProductInfoStruct& p_rProduct )
 
 		p_rProduct.oPPQInfo.m_ResultImagePublishedDMIndexHandle.clear();
 	}
+
 	p_rProduct.SetProductComplete();
 
 	p_rProduct.m_ProductState += _T( "|COMPLETE" );
@@ -4152,8 +4162,8 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 			SVProcessCountSet::iterator l_Iter( m_oNotifyInspectionsSet.begin() );
 
 			// if the offset is outside the range of the PPQ, then execute 
-			// this while statement.  The offset is initialliy forced outside 
-			// the range inorder to force the first execution.  
+			// this while statement.  The offset is initially forced outside 
+			// the range in order to force the first execution.  
 			do 
 			{
 				long l_ProcessCount = *l_Iter;
@@ -4642,7 +4652,9 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 
 				if( l_pPPQProduct->bDataComplete )
 				{
-					SetProductComplete( l_PPQIndex );
+
+					SetProductComplete( l_PPQIndex ); 
+
 
 					for( size_t i = l_PPQIndex + 1; i < m_ppPPQPositions.size(); ++i )
 					{

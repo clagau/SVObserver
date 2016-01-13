@@ -2429,6 +2429,11 @@
 #define IDS_BLOB_FEATURE_DEFAULT_VALUE  61468
 #define IDS_REGTEST_SETTING             61469
 #define ID_INDICATOR_FBWF               61470
+#define IDS_LATEST_PPQ_INDEX_AT_COMPLETION  61471
+#define IDS_TRIGGER_DELTA               61480
+#define IDS_TRIGGER_TO_COMPLETION_TIME  61481
+#define IDS_TRIGGER_TO_START_TIME       61482
+
 
 // Next default values for new objects
 // 

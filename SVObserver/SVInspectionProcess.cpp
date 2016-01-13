@@ -2332,7 +2332,6 @@ BOOL SVInspectionProcess::RunOnce( SVToolClass *p_psvTool )
 		if( bRet )
 		{
 			SVRunStatusClass runStatus;
-			runStatus.ClearAll();
 
 			l_Product.GetResultImageIndex( runStatus.Images, GetUniqueObjectID() );
 
@@ -4044,7 +4043,11 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 	// Get the info struct for this inspection
 	SVInspectionInfoStruct& l_rIPInfo = pProduct->m_svInspectionInfos[ GetUniqueObjectID() ];
 
-	m_runStatus.ClearAll();
+	m_runStatus.ResetRunStateAndToolSetTimes();
+
+	m_runStatus.m_PreviousTriggerTime = m_runStatus.m_CurrentTriggerTime;
+	m_runStatus.m_CurrentTriggerTime  = pProduct->oTriggerInfo.m_BeginProcess;
+
 	m_runStatus.m_lResultDataIndex = lResultDataIndex;
 	m_runStatus.Images = svResultImageIndex;
 	m_runStatus.m_lTriggerCount = pProduct->oTriggerInfo.lTriggerCount;
@@ -4101,7 +4104,7 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 		l_bRestMainImage = TRUE;
 	}
 
-	// Tool set is disabled! // Put out tool set diabled...
+	// Tool set is disabled! // Put out tool set disabled...
 	if( !GetToolSet()->IsEnabled() )
 	{
 		l_rIPInfo.oInspectedState = PRODUCT_INSPECTION_DISABLED;
@@ -4145,6 +4148,10 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 
 	l_rIPInfo.m_ToolSetAvgTime = m_runStatus.m_ToolSetAvgTime;
 	l_rIPInfo.m_ToolSetEndTime = m_runStatus.m_ToolSetEndTime;
+
+	SVPPQObject *pPPQ = GetPPQ();
+
+	m_runStatus.m_WorkLoadCurrentProduct = (nullptr != pPPQ) ? pPPQ->GetProductWorkloadInformation() : ProductWorkloadInformation();
 
 	return l_bOk;
 

@@ -1222,6 +1222,11 @@ extern /*const*/ GUID SVEdgeBUpperThresholdValueGuid;
 extern /*const*/ GUID SVDrawCriteriaObjectGuid;
 extern /*const*/ GUID SVResetInspectionCountsGuid;
 extern /*const*/ GUID SVTriggerCountGuid;
+extern /*const*/ GUID SVLatestCompletionPPQIndexGuid;
+extern /*const*/ GUID SVTriggerDeltaGuid;
+extern /*const*/ GUID SVLastTriggerToPPQCompletionGuid;
+extern /*const*/ GUID SVLastTriggerToStartGuid;
+
 
 ///////////////////////////////////////////////////
 // GUIDs for the ResizeTool

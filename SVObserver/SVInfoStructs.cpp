@@ -17,6 +17,7 @@
 #include "SVPPQObject.h"
 #include "SVSVIMStateClass.h"
 
+
 SVIOEntryStruct::SVIOEntryStruct()
 : m_IOEntryPtr()
 , m_EntryValid( false )
@@ -682,6 +683,7 @@ const SVDataManagerHandle& SVCameraInfoStruct::GetSourceImageDMIndexHandle() con
 SVProductInfoStruct::SVProductInfoStruct()
 : m_ProductActive( 0 )
 , m_lastInspectedSlot(-1)
+
 {
 	Reset();
 }

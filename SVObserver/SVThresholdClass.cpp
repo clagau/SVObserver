@@ -291,7 +291,7 @@ BOOL SVThresholdClass::onRun( BOOL First,
 		{
 			// Run equation friends...
 			SVRunStatusClass runStatus;
-			runStatus.ClearAll();
+
 			runStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
 			runStatus.Images = RRunStatus.Images;
 			runStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;

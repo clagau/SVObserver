@@ -140,7 +140,6 @@ struct SVPPQInfoStruct
 	SVDataManagerHandle m_ResultImagePublishedDMIndexHandle;
 
 	SVIOEntryStructVector m_InputData;
-
 };
 
 

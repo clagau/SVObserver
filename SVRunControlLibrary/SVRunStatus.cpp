@@ -14,20 +14,38 @@
 #include "SVRunControlLibrary.h"
 
 SVRunStatusClass::SVRunStatusClass()
-: m_UpdateCounters( true ), m_ToolSetEndTime( 0.0 ), m_ToolSetAvgTime( 0.0 )
-{ 
-	ClearAll(); 
+{
+	ResetRunStatus(); 
 	m_lResultDataIndex  = 1;
 	m_lTriggerCount = -1;
 }
 
-void SVRunStatusClass::ClearAll() 
+
+void SVRunStatusClass::ResetRunStatus()
+{
+	ResetRunStateAndToolSetTimes();
+	ResetTriggerInformation();
+}
+
+
+void SVRunStatusClass::ResetTriggerInformation()
+{
+	m_PreviousTriggerTime = 0.0;
+	m_CurrentTriggerTime = 0.0;
+
+	m_WorkLoadCurrentProduct.Reset();
+}
+
+
+
+void SVRunStatusClass::ResetRunStateAndToolSetTimes()
 { 
 	run.state = SV_INVALID;
 
 	run.status.valid = true;
 
 	m_UpdateCounters = true;
+
 	m_ToolSetEndTime = 0.0;
 	m_ToolSetAvgTime = 0.0;
 }

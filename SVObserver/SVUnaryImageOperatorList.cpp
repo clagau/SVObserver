@@ -531,7 +531,7 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				// Run children...
 				for( int i = 0; i < GetSize(); i++ )
 				{
-					ChildRunStatus.ClearAll();
+					ChildRunStatus.ResetRunStateAndToolSetTimes();
 
 					SVUnaryImageOperatorClass*  pOperator = ( SVUnaryImageOperatorClass* )GetAt( i );
 
@@ -844,7 +844,7 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 		// Run children...
 		for( int i = 0; i < GetSize(); i++ )
 		{
-			ChildRunStatus.ClearAll();
+			ChildRunStatus.ResetRunStateAndToolSetTimes();
 
 			SVObjectClass* pObject = GetAt( i );
 			

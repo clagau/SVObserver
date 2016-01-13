@@ -35,5 +35,8 @@
     <ClInclude Include="SVRunStatus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProductWorkloadInformation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
