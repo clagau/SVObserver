@@ -3690,8 +3690,8 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					catch ( const SvStl::MessageContainer& rSvE )
 					{
 						hr = E_FAIL;
-						//SVMSG_SVO_NO_ERROR can be used to stop the loading but not display any messages
-						if( SVMSG_SVO_NO_ERROR != rSvE.getMessage().m_MessageCode )
+						//SVMSG_SVO_IGNORE_EXCEPTION can be used to stop the loading but not display any messages
+						if( SVMSG_SVO_IGNORE_EXCEPTION != rSvE.getMessage().m_MessageCode )
 						{
 							SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 							Exception.setMessage( rSvE.getMessage() );
