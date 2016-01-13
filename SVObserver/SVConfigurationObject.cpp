@@ -3259,7 +3259,10 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SVObjectXMLWriter& rWrit
 		SAFEARRAY* psaBandData = nullptr;
 		bool bGotData = rLut(iBand).GetBandData(psaBandData);
 		svVariant = SVSAFEARRAY( psaBandData );
+		//@WARNING [gra][7.30][13.01.2016] We set the new line off to have forward compatibility with version 7.20 can be removed in next version
+		rWriter.setNewLine( false );
 		rWriter.WriteAttribute( CTAG_LUT_BAND_DATA, svVariant );
+		rWriter.setNewLine( true );
 		svVariant.Clear();
 		rWriter.EndElement(); // csBand
 	}
@@ -3692,7 +3695,7 @@ BOOL SVConfigurationObject::SaveConfiguration(SVObjectXMLWriter& rWriter) const
 {
 	BOOL bOk = true;
 	SVString RootName( SvOl::FqnRoot );
-	//We set the new line off to have forward compatibility
+	//@WARNING [gra][7.30][13.01.2016] We set the new line off to have forward compatibility with version 7.20 can be removed in next version
 	rWriter.setNewLine( false );
 	rWriter.WriteRootElement( RootName );
 	rWriter.WriteSchema();
