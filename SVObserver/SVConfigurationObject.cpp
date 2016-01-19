@@ -2833,7 +2833,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 {
 	HRESULT l_Status = S_OK;
 
-	rpObject = NULL;
+	rpObject = nullptr;
 
 	if( 0 < rNameInfo.m_NameArray.size() )
 	{
@@ -2850,7 +2850,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 			}
 		}
 
-		if( rpObject == NULL )
+		if( nullptr == rpObject )
 		{
 			SVInspectionProcessVector::const_iterator l_InspectIter;
 
@@ -2866,13 +2866,13 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 			}
 		}
 
-		if( rpObject == NULL )
+		if( nullptr == rpObject )
 		{
 			if( rNameInfo.m_NameArray[ 0 ].Left( 3 ) == _T( "PPQ" ) )
 			{
 				SVPPQObjectArray::const_iterator l_PPQIter;
 
-				for( l_PPQIter = m_arPPQArray.begin(); rpObject == NULL && l_PPQIter != m_arPPQArray.end(); ++l_PPQIter )
+				for( l_PPQIter = m_arPPQArray.begin(); nullptr == rpObject && l_PPQIter != m_arPPQArray.end(); ++l_PPQIter )
 				{
 					SVPPQObject* pPPQ = ( *l_PPQIter );
 
@@ -2886,7 +2886,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 			{
 				SVVirtualCameraArray::const_iterator l_CameraIter;
 
-				for( l_CameraIter = m_arCameraArray.begin(); rpObject == NULL && l_CameraIter != m_arCameraArray.end(); ++l_CameraIter )
+				for( l_CameraIter = m_arCameraArray.begin(); nullptr == rpObject && l_CameraIter != m_arCameraArray.end(); ++l_CameraIter )
 				{
 					SVVirtualCamera* pCamera = ( *l_CameraIter );
 
@@ -2900,7 +2900,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 			{
 				SVTriggerObjectArray::const_iterator l_TriggerIter;
 
-				for( l_TriggerIter = m_arTriggerArray.begin(); rpObject == NULL && l_TriggerIter != m_arTriggerArray.end(); ++l_TriggerIter )
+				for( l_TriggerIter = m_arTriggerArray.begin(); nullptr == rpObject && l_TriggerIter != m_arTriggerArray.end(); ++l_TriggerIter )
 				{
 					SVTriggerObject* pTrigger = ( *l_TriggerIter );
 

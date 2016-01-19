@@ -477,6 +477,23 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 	return l_Status;
 }
 
+static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemoteInputRequest)
+{
+	bool bRemoteInput = false;
+	bValidRemoteInputRequest = false;
+
+	if (0 < rInfo.m_NameArray.size())
+	{
+		size_t pos = rInfo.m_NameArray[rInfo.m_NameArray.size() - 1].find_first_of("Remote Input");
+		if (0 == pos)
+		{
+			bRemoteInput = true;
+			bValidRemoteInputRequest = (SVString(SvOl::FqnRemoteInputs) == rInfo.m_NameArray[0]);
+		}
+	}
+	return bRemoteInput;
+}
+
 HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems, bool isOneBased )
 {
 	typedef std::map< SVString, SVNameStorageMap > SVStringNameStorageMap;
@@ -486,7 +503,6 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 	SVStringNameStorageMap l_NameStorageItems;
 
 	std::map<SVString,SVString> Internal_DisplayNameMap;
-
 
 	for( SVNameStorageMap::const_iterator l_Iter = p_rItems.begin(); l_Iter != p_rItems.end(); ++l_Iter )
 	{
@@ -502,24 +518,32 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 			SVObjectNameInfo::IncrementIndex(l_Info, *pInputName, Increment , InputName  );
 			pInputName =  &(InputName);
 			Internal_DisplayNameMap[InputName] =   l_Iter->first;
-			
 		}
 
 		if( l_LoopStatus == S_OK )
 		{
 			if( 0 < l_Info.m_NameArray.size() )
 			{
-				SVSetItemsFunctorMap::const_iterator l_FunctorIter = m_SetItemsFunctors.find( l_Info.m_NameArray[ 0 ] );
-
-				if( l_FunctorIter != m_SetItemsFunctors.end() )
+				// Check for Remote Input as it must only be set via "RemoteInputs.Remote N" and Not Inspections.InspectionName.Remote Input N ...
+				// Even though Inspections.InspectionName.Remote Input N will find the correct value object to set, 
+				// the RemoteInput Object is what really needs to be set because all Inspections can access the Remote Input.
+				bool bValidRemoteInputRequest = false;
+				if (IsRemoteInputRequest(l_Info, bValidRemoteInputRequest) && !bValidRemoteInputRequest)
 				{
-					//l_NameStorageItems[ l_FunctorIter->first ].insert( *l_Iter );
-					l_NameStorageItems[ l_FunctorIter->first ].insert(  pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );
+					rStatusOfItems[ l_Iter->first.c_str() ] = SVMSG_OBJECT_WRONG_TYPE;//SVMSG_OBJECT_NOT_PROCESSED;
 				}
 				else
 				{
-					//l_NameStorageItems[ StandardItems ].insert( *l_Iter );
-					l_NameStorageItems[ StandardItems ].insert(  pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );;
+					SVSetItemsFunctorMap::const_iterator l_FunctorIter = m_SetItemsFunctors.find( l_Info.m_NameArray[ 0 ] );
+
+					if( l_FunctorIter != m_SetItemsFunctors.end() )
+					{
+						l_NameStorageItems[ l_FunctorIter->first ].insert(  pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );
+					}
+					else
+					{
+						l_NameStorageItems[ StandardItems ].insert(  pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );;
+					}
 				}
 			}
 			else
@@ -619,6 +643,10 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& p_rNames, SV
 					ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
 					LoopStatus = S_OK;
 				}
+				else // This is an error, was a request for a basic value object node.
+				{
+					LoopStatus = SVMSG_OBJECT_WRONG_TYPE;
+				}
 			}
 			else
 			{
@@ -633,6 +661,10 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& p_rNames, SV
 						ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
 						LoopStatus = S_OK;
 					}
+				}
+				else // This is an error, was a request for a non value object.
+				{
+					LoopStatus = SVMSG_OBJECT_WRONG_TYPE;
 				}
 			}
 		}

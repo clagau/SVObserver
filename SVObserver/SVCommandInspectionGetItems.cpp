@@ -29,8 +29,10 @@
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVCommandInspectionGetItems::SVCommandInspectionGetItems(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames)
-: m_Inspection( &p_rInspection ), m_ItemNames( p_rItemNames ), m_ResultItems()
+SVCommandInspectionGetItems::SVCommandInspectionGetItems(const SVInspectionProcess& rInspection, const SVNameObjectSet& rItemNames)
+: m_Inspection(&rInspection)
+, m_ItemNames(rItemNames )
+, m_ResultItems()
 {
 }
 
@@ -41,58 +43,64 @@ SVCommandInspectionGetItems::~SVCommandInspectionGetItems()
 
 HRESULT SVCommandInspectionGetItems::Execute()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	if( nullptr != m_Inspection )
+	if (nullptr != m_Inspection)
 	{
-		SVProductInfoStruct l_Product = m_Inspection->LastProductGet( SV_OTHER );
-		unsigned long l_TriggerCount = l_Product.ProcessCount();
+		SVProductInfoStruct Product = m_Inspection->LastProductGet(SV_OTHER);
+		unsigned long TriggerCount = Product.ProcessCount();
 
-		for( SVNameObjectSet::const_iterator l_Iter = m_ItemNames.begin(); SUCCEEDED( l_Status ) && l_Iter != m_ItemNames.end(); ++l_Iter )
+		for (SVNameObjectSet::const_iterator Iter = m_ItemNames.begin(); SUCCEEDED(Status) && Iter != m_ItemNames.end(); ++Iter)
 		{
-			SVObjectReference ref = l_Iter->second;
+			SVObjectReference ref = Iter->second;
 
-			if( nullptr != ref.Object() )
+			if (nullptr != ref.Object())
 			{
-				HRESULT l_TempStatus = S_OK;
+				HRESULT TempStatus = S_OK;
 
-				if( nullptr != dynamic_cast< SVValueObjectClass* >( ref.Object() ) )
+				// Check if it's a ValueObject or an ImageObject
+				// as these are the only items that can be gotten from the inspection remotely, currently
+				if (nullptr != dynamic_cast<SVValueObjectClass*>(ref.Object()))
 				{
-					l_TempStatus = UpdateResultsWithValueData( l_Iter->first, ref, l_TriggerCount );
+					TempStatus = UpdateResultsWithValueData(Iter->first, ref, TriggerCount);
+				}
+				else if (nullptr != dynamic_cast<SVImageObjectClass*>(ref.Object()))
+				{
+					TempStatus = UpdateResultsWithImageData(Iter->first, ref, TriggerCount);
 				}
 				else
 				{
-					l_TempStatus = UpdateResultsWithImageData( l_Iter->first, ref, l_TriggerCount );
+					 TempStatus = UpdateResultsWithErrorData(Iter->first, SVMSG_OBJECT_WRONG_TYPE, TriggerCount);
 				}
 
-				if( l_Status == S_OK )
+				if (S_OK == Status)
 				{
-					l_Status = l_TempStatus;
+					Status = TempStatus;
 				}
 			}
-			else if( l_Status == S_OK )
+			else if (S_OK == Status)
 			{
-				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+				Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 			}
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		Status = E_FAIL;
 	}
 
-	return l_Status;
+	return Status;
 }
 
 bool SVCommandInspectionGetItems::empty() const
 {
-	bool l_Status = true;
+	bool Status = true;
 
-	l_Status = l_Status && ( nullptr == m_Inspection );
-	l_Status = l_Status && ( m_ItemNames.empty() );
-	l_Status = l_Status && ( m_ResultItems.empty() );
+	Status = Status && (nullptr == m_Inspection);
+	Status = Status && (m_ItemNames.empty());
+	Status = Status && (m_ResultItems.empty());
 
-	return l_Status;
+	return Status;
 }
 
 const SVCommandInspectionGetItems::SVNameObjectSet& SVCommandInspectionGetItems::GetItemNames() const
@@ -105,125 +113,131 @@ const SVNameStorageResultMap& SVCommandInspectionGetItems::GetResultItems() cons
 	return m_ResultItems;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData( const SVString& p_rItemName, const SVObjectReference& p_rImageRef, unsigned long p_TriggerCount )
+HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( p_rImageRef.Object() );
+	SVImageClass* pImage = dynamic_cast<SVImageClass*>(rImageRef.Object());
 
-	if( l_pImage != NULL )
+	if (nullptr != pImage)
 	{
-		HRESULT l_GetStatus = S_OK;
+		HRESULT GetStatus = S_OK;
 
-		SVStorage l_Storage;
-		SVSmartHandlePointer l_ImageHandlePtr;
-		unsigned long l_TriggerCount = p_TriggerCount;
+		SVStorage Storage;
+		SVSmartHandlePointer ImageHandlePtr;
+		unsigned long TriggerCount = TriggerCnt;
 
 		// Special check for Color Tool's RGBMainImage which is HSI
-		if( dynamic_cast< SVRGBMainImageClass* >( l_pImage ) != NULL )
+		if (nullptr != dynamic_cast<SVRGBMainImageClass*>(pImage))
 		{
-			SVSmartHandlePointer l_TempHandlePtr;
+			SVSmartHandlePointer TempHandlePtr;
 
-			l_pImage->GetImageHandle( l_TempHandlePtr );
+			pImage->GetImageHandle(TempHandlePtr);
 
-			if( !( l_TempHandlePtr.empty() ) )
+			if (!(TempHandlePtr.empty()))
 			{
-				SVImageProcessingClass::Instance().CreateImageBuffer( l_TempHandlePtr, SVImageHLSToRGB, l_ImageHandlePtr );
+				SVImageProcessingClass::Instance().CreateImageBuffer(TempHandlePtr, SVImageHLSToRGB, ImageHandlePtr);
 			}
 		}
 		else
 		{
-			l_pImage->GetImageHandle( l_ImageHandlePtr );
+			pImage->GetImageHandle(ImageHandlePtr);
 		}
 
-		if( !( l_ImageHandlePtr.empty() ) )
+		if (!(ImageHandlePtr.empty()))
 		{
-			SVString l_FileName;
+			SVString FileName;
 
-			l_FileName.Format( _T( "V:\\%ld-%s.bmp" ), l_TriggerCount, l_pImage->GetUniqueObjectID().ToString().c_str() );
+			FileName.Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
 
-			l_GetStatus = SVImageProcessingClass::Instance().SaveImageBuffer( l_FileName.c_str(), l_ImageHandlePtr );
+			GetStatus = SVImageProcessingClass::Instance().SaveImageBuffer(FileName.c_str(), ImageHandlePtr);
 
-			if( l_GetStatus == S_OK )
+			if (S_OK == GetStatus)
 			{
-				l_Storage.m_StorageType = SVVisionProcessor::SVStorageImageFileName;
-				l_Storage.m_Variant = l_FileName.ToVARIANT();
+				Storage.m_StorageType = SVVisionProcessor::SVStorageImageFileName;
+				Storage.m_Variant = FileName.ToVARIANT();
 			}
 			else
 			{
-				l_TriggerCount = 0;
-
-				l_Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+				TriggerCount = 0;
+				Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 			}
 		}
 		else
 		{
-			l_TriggerCount = 0;
-
-			l_GetStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-			l_Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+			TriggerCount = 0;
+			GetStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+			Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		}
 
-		m_ResultItems[ p_rItemName ] = SVStorageResult( l_Storage, l_GetStatus, l_TriggerCount );
+		m_ResultItems[rItemName] = SVStorageResult(Storage, GetStatus, TriggerCount);
 	}
 	else
 	{
-		l_Status = E_UNEXPECTED;
+		Status = E_UNEXPECTED;
 	}
 
-	return l_Status;
+	return Status;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData( const SVString& p_rItemName, const SVValueObjectReference& p_rValueRef, unsigned long p_TriggerCount )
+HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const SVString& rItemName, const SVValueObjectReference& rValueRef, unsigned long TriggerCnt)
 {
-	HRESULT l_Status = S_OK;
-	HRESULT l_GetStatus = S_OK;
+	HRESULT Status = S_OK;
+	HRESULT GetStatus = S_OK;
 
-	SVStorage l_Storage;
-	unsigned long l_TriggerCount = p_TriggerCount;
-
-	if ( !p_rValueRef.IsEntireArray() )
+	SVStorage Storage;
+	unsigned long TriggerCount = TriggerCnt;
+	
+	if (!rValueRef.IsEntireArray())
 	{
 		///if this is an Array this is Zerro based!!!!
-		l_GetStatus = p_rValueRef.GetValue( l_Storage.m_Variant.GetVARIANT() );
+		GetStatus = rValueRef.GetValue(Storage.m_Variant.GetVARIANT());
 
-		if( l_GetStatus == S_OK )
+		if (S_OK == GetStatus)
 		{
-			l_Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
+			Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
 		}
 		else
 		{
-			l_TriggerCount = 0;
-
-			l_Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+			TriggerCount = 0;
+			Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		}
 	}
 	else
 	{
-		std::vector< _variant_t > l_Value;
+		std::vector<_variant_t> Value;
 
-		l_GetStatus = p_rValueRef.GetValues( l_Value ); 
+		GetStatus = rValueRef.GetValues(Value); 
 
-		if( l_GetStatus == S_OK )
+		if (S_OK == GetStatus)
 		{
-			SVSAFEARRAY l_SafeArray;
+			SVSAFEARRAY SafeArray;
 
-			l_SafeArray.assign( l_Value.begin(), l_Value.end() );
+			SafeArray.assign(Value.begin(), Value.end());
 
-			l_Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
-			l_Storage.m_Variant = l_SafeArray;
+			Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
+			Storage.m_Variant = SafeArray;
 		}
 		else 
 		{
-			l_TriggerCount = 0;
-
-			l_Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+			TriggerCount = 0;
+			Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		}
 	}
 
-	m_ResultItems[ p_rItemName ] = SVStorageResult( l_Storage, l_GetStatus, l_TriggerCount );
+	m_ResultItems[rItemName] = SVStorageResult(Storage, GetStatus, TriggerCount);
 
-	return l_Status;
+	return Status;
+}
+
+HRESULT SVCommandInspectionGetItems::UpdateResultsWithErrorData(const SVString& rItemName, HRESULT errorStatus, unsigned long triggerCount)
+{
+	HRESULT Status = S_OK;
+	SVStorage storage;
+		
+	m_ResultItems[rItemName] = SVStorageResult(storage, errorStatus, triggerCount);
+
+	return Status;
 }
 
 //******************************************************************************

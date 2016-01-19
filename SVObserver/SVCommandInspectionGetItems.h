@@ -9,15 +9,16 @@
 //* .Check In Date   : $Date:   13 Nov 2014 10:09:08  $
 //******************************************************************************
 
-#ifndef SVCOMMANDINSPECTIONGETITEMS_H
-#define SVCOMMANDINSPECTIONGETITEMS_H
+#pragma once
 
+#pragma region Includes
 #include <set>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVStorageResult.h"
 #include "SVInspectionProcess.h"
+#pragma endregion Includes
 
 class SVObjectReference;
 class SVValueObjectReference;
@@ -25,7 +26,7 @@ class SVValueObjectReference;
 struct SVCommandInspectionGetItems
 {
 	typedef std::pair<SVString, SVObjectReference> SVFullNameObjectPair;
-	typedef std::set< SVFullNameObjectPair > SVNameObjectSet;
+	typedef std::set<SVFullNameObjectPair> SVNameObjectSet;
 
 	SVCommandInspectionGetItems(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames);
 
@@ -39,19 +40,17 @@ struct SVCommandInspectionGetItems
 	const SVNameStorageResultMap& GetResultItems() const;
 
 protected:
-	HRESULT UpdateResultsWithImageData( const SVString& p_rItemName, const SVObjectReference& p_rImageRef, unsigned long p_TriggerCount );
-	HRESULT UpdateResultsWithValueData( const SVString& p_rItemName, const SVValueObjectReference& p_rValueRef, unsigned long p_TriggerCount );
+	HRESULT UpdateResultsWithImageData(const SVString& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount);
+	HRESULT UpdateResultsWithValueData(const SVString& rItemName, const SVValueObjectReference& rValueRef, unsigned long TriggerCount);
+	HRESULT UpdateResultsWithErrorData(const SVString& rItemName, HRESULT errorStatus, unsigned long TriggerCount);
 
 private:
 	const SVInspectionProcess* m_Inspection;
 	SVNameObjectSet m_ItemNames;
 	SVNameStorageResultMap m_ResultItems;
-
 };
 
-typedef SVSharedPtr< SVCommandInspectionGetItems > SVCommandInspectionGetItemsPtr;
-
-#endif
+typedef SVSharedPtr<SVCommandInspectionGetItems> SVCommandInspectionGetItemsPtr;
 
 //******************************************************************************
 //* LOG HISTORY:
