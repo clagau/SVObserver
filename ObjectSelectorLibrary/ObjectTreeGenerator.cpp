@@ -177,20 +177,6 @@ void ObjectTreeGenerator::insertTreeObjects( const SVObjectReferenceVector& rObj
 	);
 }
 
-/*SEJ99 Not called - obsolete?
-void ObjectTreeGenerator::insertTreeObject( const SvTrl::ObjectSelectorItem& rObjectItem )
-{
-	SvTrl::ObjectSelectorItem SelectorItem(rObjectItem);
-	SvTrl::IObjectSelectorItem::AttributeEnum Attribute( static_cast<SvTrl::IObjectSelectorItem::AttributeEnum> (SvTrl::IObjectSelectorItem::Leaf | SvTrl::IObjectSelectorItem::Checkable) );
-
-	SelectorItem.setAttibute( Attribute );
-	SelectorItem.setCheckedState( SvTrl::IObjectSelectorItem::UncheckedEnabled );
-	//Make copy of location because reference is const
-	SVString DisplayLocation = getFilteredLocation( m_LocationInputFilters, SelectorItem.getLocation() );
-	m_TreeContainer.insertLeaf( DisplayLocation, SelectorItem );
-}
-*/
-
 void ObjectTreeGenerator::insertOutputList( SvOi::IOutputInfoListClass& rOutputList )
 {
 	CWaitCursor Wait;
@@ -532,26 +518,29 @@ void ObjectTreeGenerator::setItemAttributes()
 
 SVString ObjectTreeGenerator::getFilteredLocation( const TranslateMap& rFilters, const SVString& rLocation ) const
 {
-	TranslateMap::const_iterator Iter( rFilters.begin() );
-	SVString rFilterLocation(rLocation);
+	std::string rFilterLocation(rLocation.c_str());
+	bool bFound = false;
 
-	while( rFilters.end() != Iter )
+	for (TranslateMap::const_iterator Iter = rFilters.begin(); rFilters.end() != Iter && !bFound; ++Iter)
 	{
 		SVString Filter = Iter->first;
 
-		if( 0 == rFilterLocation.find( Filter.c_str() ) )
+		// find the filter at the first position of the string
+		size_t pos = rFilterLocation.find( Filter.c_str() );
+		if (0 == pos)
 		{
+			bFound = true;
 			//if the dot is not at the end of the filter add it
 			if( Filter.size() != Filter.rfind( _T(".") ))
 			{
 				Filter += _T(".");
 			}
-
-			rFilterLocation.replace( Filter.c_str(), Iter->second.c_str() );
+			// Do not use SVString::replace as it will replace all occurrences!
+			// Use std::string to just replace the first occurrence at the found position (position 0 in this case)
+			rFilterLocation.replace( pos, Filter.size(), Iter->second.c_str() );
 		}
-		++Iter;
 	}
-	return rFilterLocation;
+	return rFilterLocation.c_str();
 }
 
 void ObjectTreeGenerator::convertLocation()
