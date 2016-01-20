@@ -4021,6 +4021,9 @@ BEGIN
         MENUITEM "Show Analyzer Result",        ID_ANALYZER_RESULT
         MENUITEM "Adjust Tool Size and Position", ID_ADJUST_POSITION
         MENUITEM "Select Display Image",        ID_SELECT_DISPLAY_IMAGE
+        MENUITEM "Save View with Overlays",               ID_SAVEVIEW_WITHOVERLAYS
+        MENUITEM "Save View without Overlays",            ID_SAVEVIEW_WITHOUTOVERLAYS
+        MENUITEM "Save Full Image without Overlays",            ID_SAVEIMAGE_WITHOUTOVERLAYS
     END
 END
 

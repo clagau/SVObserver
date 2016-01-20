@@ -107,19 +107,19 @@ namespace Seidenader { namespace SVObserver
 		_T("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.");
 	const TCHAR* const AP_NotEnoughHandlesForSImages = 
 		_T("There are not enough Available Archive Image Memory Handles for %s images in Change Mode. Available\nArchive Image Memory Handles are the result of the selected images and the Max Images number.\nThe selection will be reset.");
-	const TCHAR* const  Remote_Input= _T("Remote Input");
-	const TCHAR* const  DIOInput= _T("DIO.Input");
+	const TCHAR* const Remote_Input= _T("Remote Input");
+	const TCHAR* const DIOInput= _T("DIO.Input");
 	///Defines for SVConfigurationObjects
-	const TCHAR* const  NumberOfIosMissing = _T("the Number of Ios Entries is missing.");
-	const TCHAR* const  IOEntryIsMissingMissing =  _T("an IO Entry is missing.");
-	const TCHAR* const  CreationOfPPQFailed =  _T("The PPQ Object could not be created.");
-	const TCHAR* const  InputIsMissing =  _T("an Input tag is missing");
+	const TCHAR* const NumberOfIosMissing = _T("the Number of Ios Entries is missing.");
+	const TCHAR* const IOEntryIsMissingMissing =  _T("an IO Entry is missing.");
+	const TCHAR* const CreationOfPPQFailed =  _T("The PPQ Object could not be created.");
+	const TCHAR* const InputIsMissing =  _T("an Input tag is missing");
 	const TCHAR* const MsgIONameIsMissing = _T("an Item Name is missing"); 
 	const TCHAR* const MsgPPQPOsitionIsMissing   = _T("a PPQ Position is missing"); 
 	const TCHAR* const MsgIOTypeIsMissing = _T("an IO Type is missing") ;
 	const TCHAR* const MsgRemoteIndexIsMissing = _T("a Remote Index is missing") ;
-	const TCHAR* const  InputObjectList = _T( "Input Object List");
-	const TCHAR* const  OutputObjectList =  _T( "Output Object List" );
+	const TCHAR* const InputObjectList = _T( "Input Object List");
+	const TCHAR* const OutputObjectList =  _T( "Output Object List" );
 	const TCHAR* const Create_S_Failed = _T("Create %s failed") ;
 
 	const TCHAR* const ActivatingDiskProtection = 
@@ -138,6 +138,9 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const SVObserverAutosavePath = _T("D:\\SVObserver\\Autosave\\");///< the SVObserver autosave directory
 	const TCHAR* const NoneString= 	_T("<none>");
 	const TCHAR* const FbwfDllName= _T("fbwflib.dll");///< the name of the DLL providing the file based write filter functionality
+	const TCHAR* const ContextMenuImageSaveLocation = _T("D:\\SVObserver\\Image.bmp"); ///< this is the default location for images that are saved using a context menu
+	const TCHAR* const DisplayedImageIsUnavailable  = _T("Displayed image is unavailable");
+
 
 } /* namespace SVObserver */ } /* namespace Seidenader */
 

@@ -204,6 +204,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ImageFileUtilities.cpp" />
     <ClCompile Include="MatroxImageData.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -396,6 +397,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ImageFileUtilities.h" />
     <ClInclude Include="MatroxImageData.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAcquisitionBufferInterface.h" />

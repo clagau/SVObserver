@@ -14,8 +14,11 @@
 #include "SVImageView.h"
 #include "SVImageLibrary/SVDrawContext.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVImageLibrary/ImageFileUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVSVIMStateClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVAdjustToolSizePositionDlg.h"
@@ -39,6 +42,8 @@
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "SVGuiExtentUpdater.h"
+#include "TextDefinesSvO.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -48,6 +53,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
+
+
 
 static void UpdatePaletteForLut(bool bLut, LPDIRECTDRAWSURFACE7 pSurface)
 {
@@ -697,12 +704,32 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			SelectDisplayImage();
 			break;
 		}
+		case ID_SAVEVIEW_WITHOVERLAYS:
+		{
+			//Save view with overlays
+			SaveViewOrImageToDisk(true, true);
+			break;
+		}
+		case ID_SAVEVIEW_WITHOUTOVERLAYS:
+		{
+			//save view without overlays
+			SaveViewOrImageToDisk(true, false);
+			break;
+		}
+
+		case ID_SAVEIMAGE_WITHOUTOVERLAYS:
+		{
+			//save underlying image
+			SaveViewOrImageToDisk(false, false);
+			break;
+		}
 
 		default:
 		{
 			SetZoomIndex(EZOOM_NORMAL);
 			break;
 		}
+
 	}// end switch (wParam)
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
@@ -713,6 +740,43 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 	}
 
 	return CView::OnCommand( p_wParam, p_lParam );
+}
+
+
+void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
+{
+	SVFileNameClass	Filename(SvO::ContextMenuImageSaveLocation);
+
+	Filename.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
+
+	BOOL bResult = Filename.SaveFile(); // Show Save File Dialog
+	CString Filepath = Filename.GetFullFileName();
+
+
+	if(ViewOnly)
+	{
+		CRect SourceRect;
+		CRect DestRect;
+
+		auto Status = GetRectInfo( SourceRect, DestRect );
+
+		Status = BlitToScaledSurface( SourceRect, DestRect, Filepath, showOverlays);
+	}
+	else // showOverlays is ignored for underlying images: there was no easy way to mark underlying images with overlays
+	{
+		auto pCurrentImage =  GetImage();
+
+		if(pCurrentImage)
+		{
+			pCurrentImage->Save(Filepath);
+		}
+		else
+		{
+			SvStl::MessageMgrDisplayAndNotify NullImageWarning( SvStl::LogAndDisplay );
+			NullImageWarning.setMessage(SVMSG_SVO_5018_NULLIMAGE, SvO::DisplayedImageIsUnavailable, StdMessageParams, SvOi::Err_30000_NullImageOnSave);
+		}
+	}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -729,7 +793,8 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 {
 	CMenu l_menu;
 	CMenu* l_pPopup( nullptr );
-	bool RunOrTestMode( false );
+	bool
+ RunOrTestMode( false );
 
 	RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
 
@@ -2472,7 +2537,7 @@ HRESULT SVImageViewClass::UpdateScaledSurfaceWithExtremeLUT()
 }
 */
 
-HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect )
+HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, CString Filepath, bool showOverlays)
 {
 	HRESULT l_Status = S_OK;
 
@@ -2515,7 +2580,16 @@ HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rD
 				//m_ThreadWait.Sleep();
 			}
 
-			UpdateOverlays( scaledDC, p_rSourceRect.left, p_rSourceRect.top );
+			if(showOverlays)
+			{
+				UpdateOverlays( scaledDC, p_rSourceRect.left, p_rSourceRect.top );
+			}
+
+			if (Filepath!="")
+			{
+				CreateBmpFileFromHdc(Filepath,scaledDC,l_ScaledRect);
+			}
+
 
 			m_pDDScaledImageSurface->ReleaseDC( scaledDC );
 		}

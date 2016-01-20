@@ -167,6 +167,12 @@ public:
 	//************************************
 	void UpdateZoomToolbar();
 
+	/// Saves either the current view (with or without overlays) or the underlying image to disk.
+	/// The filepath used is chosen interactively by the user
+	/// \param ViewOnly save the view if true, otherwise the underlying image
+	/// \param showOverlays show overlays in saved image. ignored if ViewOnly is false
+	void SaveViewOrImageToDisk(bool ViewOnly,bool showOverlays);
+
 protected:
 	void Initialize();
 	bool GetScrollPosition( CPoint& p_point );
@@ -199,7 +205,7 @@ protected:
 	HRESULT UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo );
 	HRESULT CopyBitsToSurface( const CRect& p_rSourceRect, const SVBitmapInfo& p_rBitmapInfo, const unsigned char* p_pBitmapBits );
 
-	HRESULT BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect );
+	HRESULT BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, CString Filepath = "", bool showOverlays = true);
 	HRESULT BlitToPrimarySurface( CRect& p_rDestRect );
 	HRESULT RecreateLostSurface();
 

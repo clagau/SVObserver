@@ -265,6 +265,10 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_25046_InvalidImage = Gra_ErrorBase + 46;
 	static const int Err_25047_LoadFileFailed = Gra_ErrorBase + 47;
 
+	//Arvid Breitenbach error base
+	static const int Abc_ErrorBase = 30000;
+	static const int Err_30000_NullImageOnSave = Abc_ErrorBase + 0;
+
 	//Robert Yoho error base
 	static const int Rpy_ErrorBase = 45000;
 	static const int Err_45000 = Rpy_ErrorBase + 0;
