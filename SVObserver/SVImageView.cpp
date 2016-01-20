@@ -793,8 +793,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 {
 	CMenu l_menu;
 	CMenu* l_pPopup( nullptr );
-	bool
- RunOrTestMode( false );
+	bool RunOrTestMode( false );
 
 	RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
 

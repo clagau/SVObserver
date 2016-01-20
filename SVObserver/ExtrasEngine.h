@@ -49,7 +49,7 @@ public:
 	bool IsEnabled() const {return m_AutoSaveEnabled;}
 	void SetEnabled(bool enabled){m_AutoSaveEnabled = enabled;}
 
-	/// toggles the FBWF status set for after next reboot (and displays appropriate message boxes)
+	/// toggles the FBWF status that will be active after the next reboot (and displays appropriate message boxes)
 	void ToggleEnableFbwf();
 
 	/// toggles the FBWF status (current and after reboot) using the fbwf api function FbwfIsFilterEnabled()

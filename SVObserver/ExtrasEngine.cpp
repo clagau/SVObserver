@@ -16,6 +16,7 @@
 #include "SVCmnLib\Utilities.h"
 #include "SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
 
 
 #pragma endregion Includes
@@ -47,10 +48,6 @@ const TCHAR* const FbwfEnableBatchName=
 	_T("fbwf Enable for next session.bat");///< name of the batch file that enables the file based write filter after the next reboot
 const TCHAR* const FbwfDisableBatchName= 
 	_T("fbwf Disable for next session.bat");///< name of the batch file that disables the file based write filter after the next reboot
-
-
-
-
 
 
 #pragma region Constructor
@@ -194,7 +191,8 @@ void ExtrasEngine::ToggleEnableFbwf()
 		m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
 	}
 
-	AfxMessageBox(msg);
+	SvStl::MessageMgrDisplayAndNotify toggleFbwfMessage( SvStl::LogAndDisplay );
+	toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msg, StdMessageParams );
 
 	ReadCurrentFbwfSettings();
 } 
