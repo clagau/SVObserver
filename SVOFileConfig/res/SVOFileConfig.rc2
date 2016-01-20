@@ -6,8 +6,42 @@
 	#error this file is not editable by Microsoft Visual C++
 #endif //APSTUDIO_INVOKED
 
+#include "..\AutoBuild\autoBuild.h"
+
 
 /////////////////////////////////////////////////////////////////////////////
-// Add manually edited resources here...
+//
+// Version
+//
 
-/////////////////////////////////////////////////////////////////////////////
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION FILEVER
+ PRODUCTVERSION PRODUCTVER
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "SVOFileConfig MFC Application"
+            VALUE "FileVersion", STRFILEVER
+            VALUE "InternalName", "SVOFileConfig"
+            VALUE "LegalCopyright", "Copyright (C) 2002"
+            VALUE "OriginalFilename", "SVOFileConfig.EXE"
+            VALUE "ProductName", "SVOFileConfig Application"
+            VALUE "ProductVersion", STRPRODUCTVER
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

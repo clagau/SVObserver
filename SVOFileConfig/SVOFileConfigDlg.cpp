@@ -24,6 +24,7 @@
 #include "SVOLibrary/SVOLibrary.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "AutoBuild/AutoBuild.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -79,7 +80,8 @@ BOOL SVOFileConfigDlg::OnInitDialog()
 	m_ulCurrentVersion = 0x00050100; // initialize version with 501.
 	CString l_Text;
 	GetWindowText( l_Text );
-	l_Text += " - With Detect and Repair IOEntries - version 1.0.0.3";
+	l_Text += " - With Detect and Repair IOEntries - version";
+	l_Text +=  STRPRODUCTVER;
 	SetWindowText( l_Text );
 	m_strLastDirectory = "c:\\Run";
 	return TRUE;  // return TRUE  unless you set the focus to a control

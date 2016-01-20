@@ -17,7 +17,7 @@
 #include "ToolClipboard.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"
 #include "SVXMLLibrary\SVNavigateTree.h"
-#include "SVXMLLibrary\SVXML2TreeConverter.h"
+
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\SVInspectionLevelCreateStruct.h"
 #include "SVConfigurationLibrary\SVConfigurationTags.h"
@@ -35,6 +35,7 @@
 #include "SVIPDoc.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
+#include "SVXMLLibrary/SaxXMLHandler.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -446,25 +447,9 @@ void ToolClipboard::readFileToString( const SVString& rFileName, SVString& rFile
 
 HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVTreeType& rTree ) const
 {
-	HRESULT Result( S_OK );
-
-	SVXMLClass Xml;
-
-	::CoInitialize(NULL);
-	Result = Xml.Initialize( 0, 0 );
-	if( S_OK == Result )
-	{
-		Xml.PreserveWhitespace( true );
-
-		Result = Xml.CopyXMLTextToDOM( rXmlData.ToBSTR() );
-		if ( S_OK == Result )
-		{
-			Result = SVXML2TreeConverter::CopyToTree( Xml, rTree, BaseTag, false );
-		}
-	}
-	::CoUninitialize();
-
-	if( S_OK != Result )
+	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
+	HRESULT	Result =SaxHandler.BuildFromXMLString (&rTree, rXmlData.ToVARIANT());
+	if( false == SUCCEEDED(Result))
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
 		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ClipboardDataConverionFailed, StdMessageParams, SvOi::Err_25004_ClipboardDataConversion );

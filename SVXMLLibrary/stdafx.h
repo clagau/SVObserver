@@ -50,6 +50,13 @@
 
 #include <algorithm>
 
+#include <afxwin.h>         // MFC core and standard components
+#include <msxml6.h>
+#include <string>
+#include <map>
+
+
+
 #endif // #ifndef STDAFX_H
 
 //******************************************************************************

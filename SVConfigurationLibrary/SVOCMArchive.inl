@@ -20,10 +20,10 @@
 #include "SVConfigurationTags.h"
 #include "SVXMLLibrary/SVXMLClass.h"
 #include "SVLibrary/SVBStr.h"
-#include "SVXMLLibrary/SVXML2TreeConverter.h"
 #include "SVObserverEnums.h"
+#include <msxml6.h>
+#include "SVXMLLibrary/SaxXMLHandler.h"
 #pragma endregion Includes
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Primitives section
@@ -70,25 +70,9 @@ HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersi
 		else if( 0x00043200 <= ulConfigVersion )
 		{
 			BSTR bstrChangedNode( NULL );
-
-			SVXMLClass l_XMLTreeBuilder;
-
-			hr = l_XMLTreeBuilder.Initialize();
-
-			if( SUCCEEDED( hr ) )
-			{
-				hr = l_XMLTreeBuilder.PreserveWhitespace( true );
-			}
-
-			if( SUCCEEDED( hr ) )
-			{
-				hr = l_XMLTreeBuilder.CopyXMLFileToDOM( bstrFilename, &bstrRevisionHistory );
-
-				if( SUCCEEDED( hr ) )
-				{
-					hr = SVXML2TreeConverter::CopyToTree( l_XMLTreeBuilder, p_rTree, L"Base", false );
-				}
-			}
+			SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
+			hr = SaxHandler.BuildFromXMLFile(&p_rTree, bstrFilename);
+			
 		}
 		else
 		{

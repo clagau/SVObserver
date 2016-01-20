@@ -24,9 +24,6 @@
     <ClCompile Include="SVVariantConverter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVXML2TreeConverter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVXMLClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,6 +48,21 @@
     <ClCompile Include="SVMaterialData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SaxTreeElement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SaxParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VariantHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SaxContentHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SaxErrorHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -63,9 +75,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVariantCustomTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVXML2TreeConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVXMLBase.h">
@@ -101,11 +110,29 @@
     <ClInclude Include="SVNavigateTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ISaxElementHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaxTreeElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VariantHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaxParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaxContentHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaxErrorHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaxXMLHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVXML2TreeConverter.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="SVXMLClass.inl">
       <Filter>Header Files</Filter>
     </None>
@@ -113,6 +140,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVNavigateTree.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SaxXMLHandler.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

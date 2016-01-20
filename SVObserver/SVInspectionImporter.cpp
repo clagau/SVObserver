@@ -30,11 +30,12 @@
 #include "SVParserProgressDialog.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVInspectionProcess.h"
-#include "SVXMLLibrary/SVXML2TreeConverter.h"
+
 #include "SVConfigurationObject.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVGlobal.h"
 #include "RootObject.h"
+#include "SVXMLLibrary/SaxXMLHandler.h"
 #pragma endregion Includes
 
 static LPCTSTR scRunDirectory = _T("C:\\Run");
@@ -324,125 +325,119 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	CWnd* pParentWnd = AfxGetApp()->GetMainWnd();
 
 	SvXml::SVXMLMaterialsTree XmlTree;
-	SVXMLClass xml;
 	SvOi::GlobalConstantDataSet ImportedGlobals;
 
-	HRESULT hr = xml.Initialize(0,	0);
-	if (S_OK == hr)
+
+	SVString msg = _T("Loading Inspection XML...");
+	rProgress.UpdateText(msg.c_str());
+
+	CA2W  pwXmlFilename(filename.ToString()); 
+	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
+	HRESULT	hr =  SaxHandler.BuildFromXMLFile(&XmlTree, pwXmlFilename);
+	
+	
+	if (SUCCEEDED(hr))
 	{
-		xml.PreserveWhitespace(true);
-		SVString msg = _T("Loading Inspection XML...");
+		msg = _T("Importing Dependent Files...");
 		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateProgress(++currentOp, numOperations);
 
-		hr = xml.CopyXMLFileToDOM(filename.ToBSTR(), bstrRevisionHistory.GetAddress());
-		if (S_OK == hr)
+		SVStringSet Files;
+		ZipHelper::unzipAll( zipFilename, SVString( scRunDirectory ), Files );
+
+		msg = _T("Importing PPQ Inputs...");
+		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateProgress(++currentOp, numOperations);
+
+		InputListInsertor insertor(inspectionInfo.m_inputList, inspectionInfo.m_inputList.begin());
+		ImportPPQInputs(XmlTree, insertor);
+
+		msg = _T("Importing Global Constants...");
+		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateProgress(++currentOp, numOperations);
+
+		importGlobalConstants( XmlTree, ImportedGlobals );
+
+		msg = _T("Creating Inspection object...");
+		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateProgress(++currentOp, numOperations);
+
+		SvXml::SVXMLMaterialsTree::SVBranchHandle hItem;
+		if ( SVNavigateTree::GetItemBranch( XmlTree, CTAG_INSPECTION_PROCESS, nullptr, hItem ) )
 		{
-			hr = SVXML2TreeConverter::CopyToTree(xml, XmlTree, L"Base", false);
-		
-			if (S_OK == hr)
+			SvXml::SVXMLMaterialsTree::SVBranchHandle hItemToolset;
+			if ( SVNavigateTree::GetItemBranch( XmlTree, CTAG_TOOLSET_SET, hItem, hItemToolset ) )
 			{
-				msg = _T("Importing Dependent Files...");
-				rProgress.UpdateText(msg.c_str());
 				rProgress.UpdateProgress(++currentOp, numOperations);
 
-				SVStringSet Files;
-				ZipHelper::unzipAll( zipFilename, SVString( scRunDirectory ), Files );
+				// Set the Caption
+				SVString title = _T( "Loading Inspection(s) ..." );
+				SVParserProgressDialog l_ParserProgressDialog(title.c_str());
 
-				msg = _T("Importing PPQ Inputs...");
-				rProgress.UpdateText(msg.c_str());
-				rProgress.UpdateProgress(++currentOp, numOperations);
+				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
-				InputListInsertor insertor(inspectionInfo.m_inputList, inspectionInfo.m_inputList.begin());
-				ImportPPQInputs(XmlTree, insertor);
-
-				msg = _T("Importing Global Constants...");
-				rProgress.UpdateText(msg.c_str());
-				rProgress.UpdateProgress(++currentOp, numOperations);
-
-				importGlobalConstants( XmlTree, ImportedGlobals );
-
-				msg = _T("Creating Inspection object...");
-				rProgress.UpdateText(msg.c_str());
-				rProgress.UpdateProgress(++currentOp, numOperations);
-
-				SvXml::SVXMLMaterialsTree::SVBranchHandle hItem;
-				if ( SVNavigateTree::GetItemBranch( XmlTree, CTAG_INSPECTION_PROCESS, nullptr, hItem ) )
+				// Create Inspection process - leave unattached for now
+				hr = SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionGuid, XmlTree, hItem);
+				if (S_OK == hr)
 				{
-					SvXml::SVXMLMaterialsTree::SVBranchHandle hItemToolset;
-					if ( SVNavigateTree::GetItemBranch( XmlTree, CTAG_TOOLSET_SET, hItem, hItemToolset ) )
+					msg = _T("Creating Toolset objects...");
+					rProgress.UpdateText(msg.c_str());
+					rProgress.UpdateProgress(++currentOp, numOperations);
+
+					SVObjectClass* pObject = nullptr;
+					SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionInfo.m_inspectionGuid, pObject);
+					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
+					if ( nullptr != pInspection )
 					{
+						pInspection->SetToolsetImage(cameraName.c_str());
+						pInspection->CreateInspection(inspectionName.c_str());
+
+						msg = _T("Setting Inspection Camera name...");
+						rProgress.UpdateText(msg.c_str());
 						rProgress.UpdateProgress(++currentOp, numOperations);
 
-						// Set the Caption
-						SVString title = _T( "Loading Inspection(s) ..." );
-						SVParserProgressDialog l_ParserProgressDialog(title.c_str());
+						SVConfigurationObject::updateConfTreeToNewestVersion(XmlTree, hItemToolset);
 
-						unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
-
-						// Create Inspection process - leave unattached for now
-						hr = SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionGuid, XmlTree, hItem);
-						if (S_OK == hr)
+						// Launch parser progress
+						SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >(XmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionGuid, pInspection, &l_ParserProgressDialog));
+						if ( nullptr != pParser )
 						{
-							msg = _T("Creating Toolset objects...");
+							// Set the Parser Object
+							l_ParserProgressDialog.AddParser(parserHandle, pParser);
+
+							// Show the Dialog
+							l_ParserProgressDialog.DoModal();
+
+							::SVSendMessage( pInspection, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+
+							msg = _T("Parsing Complete.");
 							rProgress.UpdateText(msg.c_str());
 							rProgress.UpdateProgress(++currentOp, numOperations);
-
-							SVObjectClass* pObject = nullptr;
-							SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionInfo.m_inspectionGuid, pObject);
-							SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
-							if ( nullptr != pInspection )
-							{
-								pInspection->SetToolsetImage(cameraName.c_str());
-								pInspection->CreateInspection(inspectionName.c_str());
-
-								msg = _T("Setting Inspection Camera name...");
-								rProgress.UpdateText(msg.c_str());
-								rProgress.UpdateProgress(++currentOp, numOperations);
-
-								SVConfigurationObject::updateConfTreeToNewestVersion(XmlTree, hItemToolset);
-
-								// Launch parser progress
-								SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >(XmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionGuid, pInspection, &l_ParserProgressDialog));
-								if ( nullptr != pParser )
-								{
-									// Set the Parser Object
-									l_ParserProgressDialog.AddParser(parserHandle, pParser);
-
-									// Show the Dialog
-									l_ParserProgressDialog.DoModal();
-
-									::SVSendMessage( pInspection, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
-
-									msg = _T("Parsing Complete.");
-									rProgress.UpdateText(msg.c_str());
-									rProgress.UpdateProgress(++currentOp, numOperations);
-								}
-								else
-								{
-									hr = -SvOi::Err_15013;
-								}
-							}
-							else
-							{
-								hr = -SvOi::Err_15019;
-							}
+						}
+						else
+						{
+							hr = -SvOi::Err_15013;
 						}
 					}
 					else
 					{
-						hr = -SvOi::Err_15014;
+						hr = -SvOi::Err_15019;
 					}
 				}
-				else
-				{
-					hr = -SvOi::Err_15015;
-				}
-
+			}
+			else
+			{
+				hr = -SvOi::Err_15014;
 			}
 		}
+		else
+		{
+			hr = -SvOi::Err_15015;
+		}
+
 	}
 
-	if( S_OK == hr )
+	if( SUCCEEDED(hr) )
 	{
 		checkGlobalConstants( ImportedGlobals, rGlobalConflicts);
 
@@ -466,7 +461,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 			hr = E_FAIL;
 		}
 	}
-
+	
 	return hr;
 }
 

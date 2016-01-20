@@ -15,7 +15,7 @@
 #include <map>
 #include <vector>
 
-#include "SVXMLLibrary/SVXMLCTreeCtrl.h"
+
 
 class SVOFileConfigDlg : public CDialog
 {

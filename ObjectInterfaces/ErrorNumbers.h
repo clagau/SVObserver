@@ -155,9 +155,23 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int	Err_16059_ErrorMissingItemNameTag   =  Mec_ErrorBase + 59;
 	static const int 	Err_16060_IOEntryIsMissing=  Mec_ErrorBase + 60;
 	static const int 	Err_16061_EnviromentTagIsMissing =  Mec_ErrorBase + 61;
+	///New Errornumbers SAX PARSER
+	static const int 	Err_16062_TODO =  Mec_ErrorBase + 62;
+	static const int 	Err_16063_SAXPARSER =  Mec_ErrorBase + 63;
+	static const int 	Err_16064_RESTOREVARIANT =  Mec_ErrorBase + 64;
+	static const int 	Err_16065_TRANSLATEVARIANT =  Mec_ErrorBase + 65;
+	static const int 	Err_16066_TOVARIANT =  Mec_ErrorBase + 66;
+	static const int 	Err_16067_OnStartElement =  Mec_ErrorBase + 67;
+	static const int 	Err_16068_OnElementData =  Mec_ErrorBase + 68;
+	static const int 	Err_16069_INVALIDPOINTER =  Mec_ErrorBase + 69;
+	static const int 	Err_16070_INVALIDPOINTER =  Mec_ErrorBase + 70;
+	static const int 	Err_16071_INVALIDPOINTER =  Mec_ErrorBase + 71;
+	static const int 	Err_16072_INVALID_ARRAYELEMENT =  Mec_ErrorBase + 72;
+	static const int 	Err_16073_COINITIALIZE_ =  Mec_ErrorBase + 73;
+	static const int 	Err_16074_InvalidArrayElement =  Mec_ErrorBase + 74;
 	
 	
-
+	
 	// Ben Walter
 	static const int BRW_ErrorBase = 17000;
 	static const int Err_17000_ErrorGettingPPQ = BRW_ErrorBase;

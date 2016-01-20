@@ -14,7 +14,7 @@
 
 #import <msxml6.dll> // MSXML
 
-using namespace MSXML2;
+//using namespace MSXML2;
 
 #define SVXML MSXML2
 

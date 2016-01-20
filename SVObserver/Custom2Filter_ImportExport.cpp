@@ -13,8 +13,8 @@
 #include "SVObjectLibrary/SVObjectXMLWriter.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVXMLLibrary/SVXML2TreeConverter.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
+#include "SVXMLLibrary/SaxXMLHandler.h"
 #pragma endregion Includes
 
 using namespace SvOi;
@@ -187,48 +187,36 @@ HRESULT SvOi::importCustom2Filter(const SVString &filePath,
 	ICustom2Filter::LongArray &kernelArray)
 {
 	SvXml::SVXMLMaterialsTree Tree;
-	SVXMLClass Xml;
+	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
 
-	::CoInitialize(NULL);
-	HRESULT Result = Xml.Initialize( 0, 0 );
-	if( S_OK == Result )
+	CA2W  pwXmlFilename(filePath.ToString()); 
+	HRESULT Result  = SaxHandler.BuildFromXMLFile(&Tree,  pwXmlFilename );	
+	
+	if(SUCCEEDED(Result))
 	{
-		_bstr_t RevisionHistory;
-
-		Xml.PreserveWhitespace( true );
-
-		Result = Xml.CopyXMLFileToDOM( filePath.ToBSTR(), RevisionHistory.GetAddress() );
-		if ( S_OK == Result )
+		SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
+		if ( SVNavigateTree::GetItemBranch( Tree, CTAG_ENVIRONMENT, NULL, Branch ) )
 		{
-			Result = SVXML2TreeConverter::CopyToTree( Xml, Tree, L"Base", false );
-
-			if ( S_OK == Result )
+			_variant_t Value;
+			//At this moment in time we just check that the version number tag is in the file but do not worry which version saved the file
+			if ( SVNavigateTree::GetItem( Tree, CTAG_VERSION_NUMBER, Branch, Value ) )
 			{
-				SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
-				if ( SVNavigateTree::GetItemBranch( Tree, CTAG_ENVIRONMENT, NULL, Branch ) )
-				{
-					_variant_t Value;
-					//At this moment in time we just check that the version number tag is in the file but do not worry which version saved the file
-					if ( SVNavigateTree::GetItem( Tree, CTAG_VERSION_NUMBER, Branch, Value ) )
-					{
-						if( !readCustom2FilterBranch( Tree, kernelWidth, kernelHeight, normalizationFactor, absoluteValue, clippingEnabled, kernelArray ) )
-						{
-							Result = E_CUSTOM_IMPORT_FORMAT_INVALID;
-						}
-					}
-					else
-					{
-						Result = E_CUSTOM_IMPORT_VERSION_MISMATCH;
-					}
-				}
-				else
+				if( !readCustom2FilterBranch( Tree, kernelWidth, kernelHeight, normalizationFactor, absoluteValue, clippingEnabled, kernelArray ) )
 				{
 					Result = E_CUSTOM_IMPORT_FORMAT_INVALID;
 				}
 			}
+			else
+			{
+				Result = E_CUSTOM_IMPORT_VERSION_MISMATCH;
+			}
 		}
+		else
+		{
+			Result = E_CUSTOM_IMPORT_FORMAT_INVALID;
+		}
+
 	}
-	::CoUninitialize();
 	return Result;
 }
 #pragma endregion function-implementation of ICustom2Filter

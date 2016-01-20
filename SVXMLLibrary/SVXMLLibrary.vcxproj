@@ -150,6 +150,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SaxParser.cpp" />
+    <ClCompile Include="SaxTreeElement.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -163,13 +165,9 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="SVMaterialData.cpp" />
+    <ClCompile Include="SaxContentHandler.cpp" />
+    <ClCompile Include="SaxErrorHandler.cpp" />
     <ClCompile Include="SVVariantConverter.cpp" />
-    <ClCompile Include="SVXML2TreeConverter.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
     <ClCompile Include="SVXMLClass.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
@@ -197,15 +195,21 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
+    <ClCompile Include="VariantHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ISaxElementHandler.h" />
+    <ClInclude Include="SaxParser.h" />
+    <ClInclude Include="SaxTreeElement.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVDom.h" />
     <ClInclude Include="SVMaterialData.h" />
     <ClInclude Include="SVNavigateTree.h" />
+    <ClInclude Include="SaxContentHandler.h" />
+    <ClInclude Include="SaxErrorHandler.h" />
+    <ClInclude Include="SaxXMLHandler.h" />
     <ClInclude Include="SVVariantConverter.h" />
     <ClInclude Include="SVVariantCustomTypes.h" />
-    <ClInclude Include="SVXML2TreeConverter.h" />
     <ClInclude Include="SVXMLBase.h" />
     <ClInclude Include="SVXMLClass.h" />
     <ClInclude Include="SVXMLCTreeCtrl.h" />
@@ -215,10 +219,11 @@
     <ClInclude Include="SVXMLSafeArrayConverter.h" />
     <ClInclude Include="SVXMLSVRSchemaClass.h" />
     <ClInclude Include="SVXMLTree.h" />
+    <ClInclude Include="VariantHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVNavigateTree.inl" />
-    <None Include="SVXML2TreeConverter.inl" />
+    <None Include="SaxXMLHandler.inl" />
     <None Include="SVXMLClass.inl" />
     <None Include="SVXMLTree.inl" />
   </ItemGroup>

@@ -3705,6 +3705,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				}
 
 				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
+				wait.Restore();
 
 				if (nullptr != pConfig)
 				{
