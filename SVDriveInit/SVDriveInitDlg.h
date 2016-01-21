@@ -9,26 +9,16 @@
 //* .Check In Date   : $Date:   17 Sep 2014 15:03:26  $
 //******************************************************************************
 
-#ifndef SVDRIVEINITDLG_H
-#define SVDRIVEINITDLG_H
+#pragma once
 
+#pragma region Includes
 #include "SVProductId.h"
-
-#define PRODUCTID_PART_SIZE	5
-#define OEMKEYWORD_SIZE			3
-
-#define REGISTRYPRODUCTID_SIZE 23  
-#define CDPRODUCTID_SIZE 29  
-
-#define OEMINFO_SIZE		80	// max size of entry in OEMSpecific section in oeminfo.ini
-#define SERIALNUMBER_SIZE	20
-#define MODELNUMBER_SIZE	8
-
+#pragma endregion Includes
 
 class SVDriveInitDlg : public CDialog
 {
 public:
-	SVDriveInitDlg(CWnd* pParent = NULL);	// standard constructor
+	SVDriveInitDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(SVDriveInitDlg)
@@ -74,11 +64,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	bool GetProductId();
+	void OnChangeCdkey(CEdit& rEdit);
+	bool IsValidModelNumber() const;
+
+	bool GetProductId() const;
 	
 	bool GetOEMInfo();
 	bool GetSysPrepInfo();
-
 
 	bool UpdateRegistryInfo();
 	bool UpdateOEMInfo();
@@ -87,21 +79,19 @@ private:
 
 	HRESULT BackupBootIni();
 
-	HRESULT UpdateIOInterfaceDLL( LPCTSTR p_szIOBoard );
+	HRESULT UpdateIOInterfaceDLL(LPCTSTR p_szIOBoard);
 
-	HRESULT UpdateMatrox( LPCTSTR p_szDigitizer );
-	HRESULT UpdateMatroxRegistryMaxMem( size_t& p_rMaxSize, size_t p_MILSize );
-	HRESULT AddMatroxBootIniMaxMem( size_t p_MILSize );
+	HRESULT UpdateMatrox(LPCTSTR p_szDigitizer);
+	HRESULT UpdateMatroxRegistryMaxMem(size_t& p_rMaxSize, size_t p_MILSize);
+	HRESULT AddMatroxBootIniMaxMem(size_t p_MILSize);
 	HRESULT RemoveMatroxBootIniMaxMem();
-	HRESULT AddCommandBeforeSVObserver( LPCTSTR p_strNewCommand, bool p_bRemove );
+	HRESULT AddCommandBeforeSVObserver(LPCTSTR p_strNewCommand, bool p_bRemove);
 
 	SVProductId m_CDKey;
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:
