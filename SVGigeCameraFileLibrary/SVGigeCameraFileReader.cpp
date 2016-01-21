@@ -95,25 +95,32 @@ static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const std::
 
 static SVMaterialsTree::iterator GetOptionNode(SVMaterialsTree& rTree, const std::string& key, const std::string& optionKey)
 {
+	SVMaterialsTree::iterator Result( rTree.end() );
 	SVMaterialsTree::iterator itBase = GetBaseNode(rTree, key);
 	
 	if (itBase != rTree.end())
 	{
-		SVMaterialsTree::SVTreeContainer* pTree = itBase.node();
-		if( nullptr != pTree)
+		SVMaterialsTree::SVTreeContainer* pSubTree = itBase.node();
+		if( nullptr != pSubTree)
 		{
 			SVString Key( optionKey.c_str());
-			SVMaterialsTree::iterator OptionIt( SVMaterialsTree::find( rTree, Key) );
-			if (OptionIt == pTree->end())
+			SVMaterialsTree::iterator FindIt( SVMaterialsTree::find( *pSubTree, Key) );
+			if( FindIt != pSubTree->end() )
+			{
+				Result = FindIt;
+			}
+			else
 			{
 				SVMaterialsTree::SVTreeElement Element(Key, SVMaterialDataPtr( nullptr ) );
-				SVMaterialsTree::iterator l_Iter(pTree->insert( Element ));
-				return l_Iter;
+				SVMaterialsTree::iterator NewIter( pSubTree->insert( Element ) );
+				if( pSubTree->end() != NewIter )
+				{
+					Result =  NewIter;
+				}
 			}
-			return OptionIt;
 		}
 	}
-	return rTree.end();
+	return Result;
 }
 
 SVGigeCameraFileReader::SVGigeCameraFileReader(SVGigeCameraFileInfoStruct& rInfo) 

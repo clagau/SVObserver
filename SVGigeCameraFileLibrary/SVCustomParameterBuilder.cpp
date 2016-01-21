@@ -183,8 +183,8 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 
 void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMaterialsTree::SVTreeContainer& rOptions )
 {
-	SVString strValue;
-	SVString description;
+	SVString Value;
+	SVString Description;
 
 	for (SVMaterialsTree::const_iterator it = rOptions.begin();it!= rOptions.end();++it)
 	{
@@ -197,21 +197,21 @@ void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMate
 			// Get Value
 			if( S_OK == SVMaterialsTree::getData( rTree, scValue, MaterialData ) )
 			{
-				strValue = static_cast<const _variant_t> (MaterialData);
+				Value = static_cast<const _variant_t> (MaterialData);
 			}
 			// Get Description
 			MaterialData.clear();
 			if( S_OK == SVMaterialsTree::getData( rTree, scDESCRIPTION, MaterialData ) )
 			{
-				strValue = static_cast<const _variant_t> (MaterialData);
+				Description = static_cast<const _variant_t> (MaterialData);
 			}
 
 			switch (pParam->DataType())
 			{
 				case DeviceDataTypeLong:
 				{
-					int iVal = atoi(strValue.ToString());
-					SVLongValueDeviceParam::OptionType option(iVal, description.ToString());
+					int iVal = atoi(Value.c_str());
+					SVLongValueDeviceParam::OptionType option(iVal, Description.c_str());
 					SVLongValueDeviceParam* pLongDeviceParam = dynamic_cast<SVLongValueDeviceParam *>(pParam);
 					pLongDeviceParam->info.options.push_back(option);
 				}
@@ -219,8 +219,8 @@ void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMate
 
 				case DeviceDataTypeBool:
 				{
-					int iVal = atoi(strValue.ToString());
-					SVBoolValueDeviceParam::OptionType option(iVal != 0, description.ToString());
+					int iVal = atoi(Value.c_str());
+					SVBoolValueDeviceParam::OptionType option(iVal != 0, Description.c_str());
 					SVBoolValueDeviceParam* pBoolDeviceParam = dynamic_cast<SVBoolValueDeviceParam *>(pParam);
 					pBoolDeviceParam->info.options.push_back(option);
 				}
@@ -228,7 +228,7 @@ void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMate
 				
 				case DeviceDataTypeString:
 				{
-					SVStringValueDeviceParam::OptionType option(strValue.ToString(), description.ToString());
+					SVStringValueDeviceParam::OptionType option(Value.c_str(), Description.c_str());
 					SVStringValueDeviceParam* pStringDeviceParam = dynamic_cast<SVStringValueDeviceParam *>(pParam);
 					pStringDeviceParam->info.options.push_back(option);
 				}
