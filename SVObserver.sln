@@ -80,6 +80,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVCmnLib", "SVCmnLib\SVCmnL
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVDriveInit", "SVDriveInit\SVDriveInit.vcxproj", "{B42D9E2D-91B9-44AC-9060-4500C7F56115}"
+	ProjectSection(ProjectDependencies) = postProject
+		{88204352-9BA7-43F1-ABAB-C75A485171E3} = {88204352-9BA7-43F1-ABAB-C75A485171E3}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVIMCommand", "SVIMCommand\SVIMCommand.vcxproj", "{B5EF6A55-CD25-4CFF-A6D6-16D0470AEF65}"
 	ProjectSection(ProjectDependencies) = postProject
