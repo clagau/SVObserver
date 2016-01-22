@@ -169,6 +169,8 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int 	Err_16072_INVALID_ARRAYELEMENT =  Mec_ErrorBase + 72;
 	static const int 	Err_16073_COINITIALIZE_ =  Mec_ErrorBase + 73;
 	static const int 	Err_16074_InvalidArrayElement =  Mec_ErrorBase + 74;
+	///New Errornumbers Archive_Tool
+	static const int 	Err_16075_ImageNrToBig =  Mec_ErrorBase + 75;
 	
 	
 	

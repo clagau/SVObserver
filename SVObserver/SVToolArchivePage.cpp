@@ -30,6 +30,9 @@
 #include "SVStatusLibrary/MessageManagerResource.h"
 #pragma endregion Includes
 
+
+const int SVToolAdjustmentArchivePage::s_UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
+
 BEGIN_MESSAGE_MAP(SVToolAdjustmentArchivePage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVToolAdjustmentArchivePage)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
@@ -434,6 +437,16 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	m_editMaxImages.GetWindowText(s);
 	DWORD dwTemp = atol((LPCTSTR)s);
 	m_lImagesToArchive = dwTemp;
+	if(dwTemp > s_UpperLimitImageNumbers)
+	{
+		SVString svTemp;
+		svTemp.Format(	SvO::Error_you_have_Selected_X_Must_less_then_Y, dwTemp, s_UpperLimitImageNumbers);
+		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, svTemp.c_str(), StdMessageParams, SvOi::Err_16075_ImageNrToBig  );
+		return FALSE;
+
+	}
+	
 	if(dwTemp > 100L)
 	{
 		CString csTemp;

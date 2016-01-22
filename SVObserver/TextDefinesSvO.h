@@ -142,6 +142,7 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const DisplayedImageIsUnavailable  = _T("Displayed image is unavailable");
 
 
+	const TCHAR* const   Error_you_have_Selected_X_Must_less_then_Y =  _T("Error: You have selected %ld for the Max Images count. The image count must be less then %ld"); 
 } /* namespace SVObserver */ } /* namespace Seidenader */
 
 namespace SvO = Seidenader::SVObserver;

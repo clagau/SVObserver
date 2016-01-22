@@ -37,6 +37,7 @@ public:
 	
 #pragma region Public Members
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
+	static const int s_UpperLimitImageNumbers;
 #pragma endregion Public Members
 
 #pragma region Protected Methods
