@@ -59,7 +59,7 @@ protected:
 	Concurrency::critical_section m_Protect;
 	SvStl::NotificationEnum m_MessageType;
 	int m_MessageNumber;
-	std::string m_MessageText;
+	SVString m_MessageText;
 
 };
 
