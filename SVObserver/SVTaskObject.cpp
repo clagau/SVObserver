@@ -601,9 +601,11 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 						// Then ask owner...
 						if (! bSuccess)
 						{
+							//GetInspection is still nullptr because in SVToolSetClass::createAllObjectsFromChild SetDefaultInputs is called before CreateObject !
+							//To still get the appropriate inspection we call GetAncestor
+							SVInspectionProcess* pInspection =  dynamic_cast< SVInspectionProcess* > (GetAncestor( SVInspectionObjectType ));
 							while (pOwner)
 							{
-								SVInspectionProcess* pInspection =  GetInspection();
 								// if color system & pOwner == SVToolSetClass
 								if (nullptr != pInspection && pInspection->IsColorCamera() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && info.ObjectType == SVImageObjectType)
 								{
