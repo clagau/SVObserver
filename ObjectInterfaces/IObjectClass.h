@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "SVObjectTypeInfoStruct.h"
+#include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -81,11 +82,12 @@ namespace Seidenader
 			*/
 			virtual bool is_Created() const = 0;
 
-			/*
-			This method reset all object. 
-			(By now it calls processMessage with SVM_RESET_ALL_OBJECT, that is the reason why the return value is DWORD_PTR)
-			*/
-			virtual DWORD_PTR resetAllObjects() = 0;
+			//************************************
+			/// This method return a list of name/GUID(classID) pairs of classes which are creatable form this object.
+			/// \param pObjectTypeInfo [in] A object type info to filter the result list.
+			/// \returns SvUl::NameGuidList A list of Name and ClassID pairs
+			//************************************
+			virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const = 0;
 		};
 	}
 }

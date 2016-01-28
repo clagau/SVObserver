@@ -3230,9 +3230,6 @@
     <None Include="ObjectNameHelper.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Custom2Filter.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="RootObject.inl">
       <Filter>Header Files</Filter>
     </None>

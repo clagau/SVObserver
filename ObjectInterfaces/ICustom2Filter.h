@@ -6,82 +6,21 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "ISVFilter.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		class ICustom2Filter: virtual public ISVFilter
+		class ICustom2Filter
 		{
 		public:
 			typedef std::vector<long> LongArray;
 
 			static const long StandardKernelSize = 3;
 			static const int MaxKernelSize = 21;
-
-			virtual ~ICustom2Filter() {}
-
-			/**********
-			 The method add a input request for the kernel width parameter to the IP. 
-			 Add the end of setting the input request, you have to set AddInputRequestMarker.
-			 /param value <in> the new value.
-			***********/
-			virtual HRESULT addKernelWidthRequest(long value) = 0;
-			/**********
-			 The method gets the kernel width value.
-			***********/
-			virtual long getKernelWidth() const = 0;
-			/**********
-			 The method add a input request for the kernel height parameter to the IP. 
-			 Add the end of setting the input request, you have to set AddInputRequestMarker.
-			 /param value <in> the new value.
-			***********/
-			virtual HRESULT addKernelHeightRequest(long value) = 0;
-			/**********
-			 The method gets the kernel height value.
-			***********/
-			virtual long getKernelHeight() const = 0;
-			/**********
-			 The method add a input request for the clipping enabled parameter to the IP. 
-			 Add the end of setting the input request, you have to set AddInputRequestMarker.
-			 /param value <in> the new value.
-			***********/
-			virtual HRESULT addClippingEnabledRequest(bool value) = 0;
-			/**********
-			 The method gets the clipping enabled value.
-			***********/
-			virtual bool isClippingEnabled() const = 0;
-			/**********
-			 The method add a input request for the absolute parameter to the IP. 
-			 Add the end of setting the input request, you have to set AddInputRequestMarker.
-			 /param value <in> the new value.
-			***********/
-			virtual HRESULT addAbsoluteValueRequest(bool value) = 0;
-			/**********
-			 The method gets the bool-value of absolute value.
-			***********/
-			virtual bool isAbsoluteValue() const = 0;
-			/**********
-			 The method add a input request for the normalization factor parameter to the IP. 
-			 Add the end of setting the input request, you have to set AddInputRequestMarker.
-			 /param value <in> the new value.
-			***********/
-			virtual HRESULT addNormalizationFactorRequest(long value) = 0;
-			/**********
-			 The method gets the normalization factor value.
-			***********/
-			virtual long getNormalizationFactor() const = 0;
-			/**********
-			 The method add a input request for the kernel parameter to the IP. 
-			 Add the end of setting the input request, you have to set AddInputRequestMarker.
-			 /param value <in> the new value.
-			***********/
-			virtual HRESULT addKernelValueRequest(LongArray value) = 0;
-			/**********
-			 The method gets the value of the kernel.
-			***********/
-			virtual LongArray getKernelValues() const = 0;
 		};
 
 

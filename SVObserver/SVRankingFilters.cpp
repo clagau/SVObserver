@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:39:36  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRankingFilters.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageProcessingClass.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // Other Necessary Include File(s) - Module Link(s)
@@ -61,6 +62,8 @@ SVRankingFilterClass::~SVRankingFilterClass()
 void SVRankingFilterClass::init()
 {
 	long l( 0 );
+
+	outObjectInfo.ObjectTypeInfo.SubType = SVRankingFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoCell01, SVRankingFilterCell01Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL01, false, SVResetItemOwner );
 	RegisterEmbeddedObject( &m_lvoCell02, SVRankingFilterCell02Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL02, false, SVResetItemOwner );
@@ -350,62 +353,6 @@ BOOL SVRankingFilterClass::RebuildRanking()
 
 	return TRUE;
 }
-
-#pragma region virtual method (IRankingFilter)
-HRESULT SVRankingFilterClass::addWidthRequest(long value)
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_lvoRankingWidth, value );
-}
-
-long SVRankingFilterClass::getWidth() const
-{ 
-	long value = 0;
-	m_lvoRankingWidth.GetValue(value);
-	return value;
-}
-
-HRESULT SVRankingFilterClass::addHeightRequest(long value) 
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_lvoRankingHeight, value );
-}
-
-long SVRankingFilterClass::getHeight() const
-{ 
-	long value = 0;
-	m_lvoRankingHeight.GetValue(value);
-	return value;
-}
-
-HRESULT SVRankingFilterClass::addRankValueRequest(long value)
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_lvoRankingRank, value );
-}
-
-long SVRankingFilterClass::getRankValue() const
-{ 
-	long value = 0;
-	m_lvoRankingRank.GetValue(value);
-	return value;
-}
-
-HRESULT SVRankingFilterClass::addCellValueRequest(int cellIndex, long value)
-{
-	HRESULT retValue = S_FALSE;
-	if (cellIndex >= 0 && cellIndex < cellSize)
-	{
-		retValue = m_taskObjectValueInterface.AddInputRequest( m_plvoRankingCells[cellIndex], value );
-	}
-	return retValue;
-}
-
-long SVRankingFilterClass::getCellValue(int cellIndex) const 
-{ 
-	long value = 0;
-	ASSERT(cellIndex >= 0 && cellIndex < cellSize);
-	m_plvoRankingCells[cellIndex]->GetValue(value);
-	return value;
-}
-#pragma endregion virtual method (ICustomFilter)
 
 //******************************************************************************
 // Operation(s) Of Process:

@@ -27,6 +27,12 @@ namespace Seidenader
 
 			void Init(const SvUl::NameGuidList& List, const SVString& rSelectedItem, const SVString& rEmptyListText);
 
+			//************************************
+			/// Return the guid of the selected item. If no item selected or an error it return SVInvalidGUID.
+			/// \returns SVGUID
+			//************************************
+			SVGUID getSelectedGUID() const;
+
 		protected:
 			//{{AFX_MSG(AvailableObjectListComboBox)
 			//}}AFX_MSG
@@ -35,6 +41,9 @@ namespace Seidenader
 
 			//{{AFX_VIRTUAL(AvailableObjectListComboBox)
 			//}}AFX_VIRTUAL
+
+		private:
+			SvUl::NameGuidList m_List;
 		};
 	}
 }

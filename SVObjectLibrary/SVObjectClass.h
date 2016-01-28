@@ -9,9 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 02:45:14  $
 //******************************************************************************
 
-#ifndef SVOBJECTCLASS_H
-#define SVOBJECTCLASS_H
-
+#pragma once
 #pragma region Includes
 #include <set>
 #include <vector>
@@ -28,6 +26,7 @@
 #include "SVObjectAttributeShim.h"
 #include "SVObjectWriter.h"
 #include "SVObjectInfoArrayClass.h"
+#include "SVUtilityLibrary/NameGuidList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -183,7 +182,7 @@ public:
 	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) override;
 	virtual const SVGUID& GetUniqueObjectID() const override;
 	virtual bool is_Created() const override { return IsCreated() ? true : false; }
-	virtual DWORD_PTR resetAllObjects() override;
+	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
@@ -265,13 +264,6 @@ typedef SVVector< SVObjectClass* > SVObjectClassPtrArray;
 #pragma region Declarations
 
 #include "SVObjectClass.inl"
-
-////////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

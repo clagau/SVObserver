@@ -17,6 +17,8 @@
 #include <vector>
 #include "GridCtrlLibrary\GridCtrl.h"
 #include "ObjectInterfaces\ICustom2Filter.h"
+#include "ValuesAccessor.h"
+#include "GuiController.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -46,7 +48,7 @@ namespace Seidenader
 			/// \param rFilterClass [in] the interface to the filter class.
 			/// \param pParent [in]
 			//************************************
-			Custom2FilterDlg(SvOi::ICustom2Filter& rFilterClass, CWnd* pParent = nullptr );
+			Custom2FilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr );
 
 			//************************************
 			// Description: The class destructor
@@ -185,7 +187,11 @@ namespace Seidenader
 			CString m_EditCell;								//Edit cell value
 			CString m_GridStatus;							//Grid status string
 
-			SvOi::ICustom2Filter& m_rCustom2Filter;
+			const SVGUID& m_rInspectionID;
+			const SVGUID& m_filterID;
+			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+			Controller m_Values;
 #pragma endregion Member Variables
 		};
 	}  //end namespace SVOGUI

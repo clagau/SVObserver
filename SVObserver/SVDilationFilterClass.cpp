@@ -8,16 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 11:57:06  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDilationFilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVDilationFilterClass, SVDilationFilterClassGuid )
 
 SVDilationFilterClass::SVDilationFilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVDilationFilterObjectType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

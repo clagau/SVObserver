@@ -14,6 +14,7 @@
 #include "Custom2Filter.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageProcessingClass.h"
+#include "ObjectInterfaces/ICustom2Filter.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -88,7 +89,7 @@ BOOL Custom2Filter::RebuildKernel()
 	CreateStruct.m_lSizeY = Height;
 	StatusCode = SVMatroxBufferInterface::Create( m_milKernel, CreateStruct );
 
-	LongArray KernelArray;
+	SvOi::ICustom2Filter::LongArray KernelArray;
 	m_KernelArray.GetValues( KernelArray );
 	long unsigned Index(0);
 
@@ -189,12 +190,12 @@ BOOL Custom2Filter::OnValidate()
 	m_NormalizationFactor.GetValue( NormalizationFactor );
 	
 	//Check that Width and Height are odd and between 1 and MaxKernelSize
-	if( 1 != Width % 2 || 1 > Width || MaxKernelSize < Width )
+	if( 1 != Width % 2 || 1 > Width || SvOi::ICustom2Filter::MaxKernelSize < Width )
 	{
 		Result = FALSE;
 	}
 
-	if( 1 != Height % 2 || 1 > Height || MaxKernelSize < Height )
+	if( 1 != Height % 2 || 1 > Height || SvOi::ICustom2Filter::MaxKernelSize < Height )
 	{
 		Result = FALSE;
 	}
@@ -217,6 +218,8 @@ BOOL Custom2Filter::OnValidate()
 #pragma region Private Methods
 void Custom2Filter::init()
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVCustom2FilterObjectType;
+
 	RegisterEmbeddedObject( &m_KernelArray, Custom2FilterKernelGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SVResetItemOwner );
 
 	RegisterEmbeddedObject( &m_KernelWidth, SVCustomFilterKernelWidthGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, false, SVResetItemOwner );
@@ -225,14 +228,14 @@ void Custom2Filter::init()
 	RegisterEmbeddedObject( &m_AbsoluteValue, SVCustomFilterAbsoluteGuid, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, false, SVResetItemOwner );
 	RegisterEmbeddedObject( &m_ClippingEnabled, SVCustomFilterClippingGuid, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SVResetItemOwner );
 
-	m_KernelArray.SetArraySize( StandardKernelSize*StandardKernelSize );
+	m_KernelArray.SetArraySize( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize );
 	m_KernelArray.SetDefaultValue( 1, TRUE );
 
-	m_KernelWidth.SetDefaultValue( StandardKernelSize, TRUE );
-	m_KernelHeight.SetDefaultValue( StandardKernelSize, TRUE );
+	m_KernelWidth.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize, TRUE );
+	m_KernelHeight.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize, TRUE );
 	m_ClippingEnabled.SetDefaultValue( TRUE, TRUE );
 	m_AbsoluteValue.SetDefaultValue( TRUE, TRUE );
-	m_NormalizationFactor.SetDefaultValue( StandardKernelSize*StandardKernelSize, TRUE );
+	m_NormalizationFactor.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize, TRUE );
 
 	m_KernelArray.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 
@@ -262,9 +265,9 @@ long Custom2Filter::validateKernelSize( SVLongValueObjectClass& rKernelSize )
 	{
 		Size = 1;
 	}
-	else if( MaxKernelSize < Size )
+	else if( SvOi::ICustom2Filter::MaxKernelSize < Size )
 	{
-		Size = MaxKernelSize; 
+		Size = SvOi::ICustom2Filter::MaxKernelSize; 
 	}
 	rKernelSize.SetValue( 1, Size );
 

@@ -458,14 +458,16 @@ SvOi::IObjectClass* SVObjectClass::GetFirstObject(const SVObjectTypeInfoStruct& 
 	return reinterpret_cast<SVObjectClass*>(processMessage(SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&type) ));
 }
 
-DWORD_PTR SVObjectClass::resetAllObjects()
-{
-	return processMessage(SVM_RESET_ALL_OBJECTS, NULL, NULL);
-}
-
 SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
 {
 	return static_cast<SVObjectSubTypeEnum>(outObjectInfo.ObjectTypeInfo.SubType);
+}
+
+SvUl::NameGuidList SVObjectClass::GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const
+{
+	SvUl::NameGuidList list;
+
+	return list;
 }
 #pragma endregion virtual method (IObjectClass)
 

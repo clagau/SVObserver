@@ -213,6 +213,7 @@
     <ClCompile Include="GlobalConstantDlg.cpp" />
     <ClCompile Include="ImageController.cpp" />
     <ClCompile Include="MaskController.cpp" />
+    <ClCompile Include="ObjectsListBox.cpp" />
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
     <ClCompile Include="RangeSelectorFilter.cpp" />
@@ -231,11 +232,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVAvailableFilterListComboBoxClass.cpp" />
     <ClCompile Include="SVBitmap.cpp" />
     <ClCompile Include="SVCustomFilterDlg.cpp" />
     <ClCompile Include="SVExternalToolImageSelectPage.cpp" />
-    <ClCompile Include="SVFilterListBoxClass.cpp" />
     <ClCompile Include="SVFormulaEditorPage.cpp" />
     <ClCompile Include="SVFormulaEditorSheet.cpp" />
     <ClCompile Include="SVRankingFilterDlg.cpp" />
@@ -254,6 +253,7 @@
     <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="AuxiliaryExtentsController.h" />
     <ClInclude Include="AvailableObjectListComboBox.h" />
     <ClInclude Include="BoundValue.h" />
@@ -269,6 +269,7 @@
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="MaskController.h" />
     <ClInclude Include="NoSelector.h" />
+    <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="PPQNameSelector.h" />
     <ClInclude Include="PPQVariablesSelector.h" />
@@ -277,12 +278,10 @@
     <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="RangeValidator.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVAvailableFilterListComboBoxClass.h" />
     <ClInclude Include="SVBitmap.h" />
     <ClInclude Include="SVColor.h" />
     <ClInclude Include="SVCustomFilterDlg.h" />
     <ClInclude Include="SVExternalToolImageSelectPage.h" />
-    <ClInclude Include="SVFilterListBoxClass.h" />
     <ClInclude Include="SVFormulaEditorPage.h" />
     <ClInclude Include="SVFormulaEditorSheet.h" />
     <ClInclude Include="SVRankingFilterDlg.h" />

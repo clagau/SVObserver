@@ -12,6 +12,8 @@
 #include "ObjectInterfaces\IRingBufferTool.h"
 #include "ISVPropertyPageDialog.h"
 #include "PictureDisplay.h"
+#include "ValuesAccessor.h"
+#include "GuiController.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -31,7 +33,7 @@ namespace Seidenader
 #pragma region Constructor
 		public:
 			// Standard constructor
-			TADialogRingBufferParameterPage( SvOi::IRingBufferTool& rTool, RingBufferSelectorFunc func );
+			TADialogRingBufferParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID, RingBufferSelectorFunc func );
 
 			// Standard destructor
 			virtual ~TADialogRingBufferParameterPage();
@@ -77,15 +79,18 @@ namespace Seidenader
 
 #pragma region Private Methods
 		private:
+			GUID GetToolSetGUID() const;
+			SVString GetInspectionName() const;
+			SVString GetPPQName() const;
 			HRESULT SetPageData();
-			HRESULT SetInspectionData();
 			HRESULT SetRingDepth();
 			HRESULT SetImageIndex(int indexNumber);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 		private:
-			SvOi::IRingBufferTool& m_rTool;
+			GUID m_InspectionID;
+			GUID m_TaskObjectID;
 
 			CEdit m_EditRingDepth;
 			CEdit m_EditImageIndex[2];
@@ -94,6 +99,9 @@ namespace Seidenader
 			CButton m_ButtonImageIndex2;
 			CBitmap m_downArrowBitmap;
 			RingBufferSelectorFunc m_selectorFunc;
+			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+			Controller m_Values;
 #pragma endregion Member Variables
 		};
 	}

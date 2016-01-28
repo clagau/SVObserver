@@ -12,7 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\ICustomFilter.h"
+#include "ValuesAccessor.h"
+#include "GuiController.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -25,8 +26,8 @@ namespace Seidenader
 		{
 			// Construction
 		public:
-			SVCustomFilterDlg(SvOi::ICustomFilter& rFilterClass, CWnd* pParent = nullptr);   // standard constructor
-			~SVCustomFilterDlg();
+			SVCustomFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+			virtual ~SVCustomFilterDlg();
 
 		protected:
 
@@ -66,7 +67,11 @@ namespace Seidenader
 
 		private:	
 			long	m_lKernelCells[49];
-			SvOi::ICustomFilter& m_pCustomFilterClass;
+			const SVGUID& m_rInspectionID;
+			const SVGUID& m_filterID;
+			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+			Controller m_Values;
 		};
 	}  //end namespace SVOGUI
 }  //end namespace Seidenader

@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:04:46  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCustomFilters.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageProcessingClass.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // Other Necessary Include File(s) - Module Link(s)
@@ -61,6 +62,8 @@ SVCustomFilterClass::~SVCustomFilterClass()
 void SVCustomFilterClass::init()
 {
 	long l( 0 );
+
+	outObjectInfo.ObjectTypeInfo.SubType = SVCustomFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoCell01, SVCustomFilterCell01Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL01, false, SVResetItemOwner );
 	RegisterEmbeddedObject( &m_lvoCell02, SVCustomFilterCell02Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL02, false, SVResetItemOwner );
@@ -226,86 +229,6 @@ HRESULT SVCustomFilterClass::ResetObject()
 
 	return l_hrOk;
 }
-
-#pragma region virtual method (ICustomFilter)
-	HRESULT SVCustomFilterClass::addKernelWidthRequest(long value)
-	{
-		return m_taskObjectValueInterface.AddInputRequest( &m_lvoKernelWidth, value );
-	}
-	
-	long SVCustomFilterClass::getKernelWidth() const
-	{ 
-		long value = 0;
-		m_lvoKernelWidth.GetValue(value);
-		return value;
-	}
-	
-	HRESULT SVCustomFilterClass::addKernelHeightRequest(long value) 
-	{
-		return m_taskObjectValueInterface.AddInputRequest( &m_lvoKernelHeight, value);
-	}
-
-	long SVCustomFilterClass::getKernelHeight() const
-	{ 
-		long value = 0;
-		m_lvoKernelHeight.GetValue(value);
-		return value;
-	}
-
-	HRESULT SVCustomFilterClass::addClippingOnRequest(bool value)
-	{
-		return m_taskObjectValueInterface.AddInputRequest( &m_bvoClippingOn, value);
-	}
-	
-	bool SVCustomFilterClass::isClippingOn() const
-	{ 
-		bool value = 0;
-		m_bvoClippingOn.GetValue(value);
-		return value;
-	}
-
-	HRESULT SVCustomFilterClass::addAbsoluteValueRequest(bool value)
-	{
-		return m_taskObjectValueInterface.AddInputRequest( &m_bvoAbsoluteValue, value);
-	}
-
-	bool SVCustomFilterClass::isAbsoluteValue() const
-	{ 
-		bool value = 0;
-		m_bvoAbsoluteValue.GetValue(value);
-		return value;
-	}
-
-	HRESULT SVCustomFilterClass::addTransformationFactorRequest(long value)
-	{
-		return m_taskObjectValueInterface.AddInputRequest( &m_lvoTransformationFactor, value);
-	}
-
-	long SVCustomFilterClass::getTransformationFactor() const 
-	{ 
-		long value = 0;
-		m_lvoTransformationFactor.GetValue(value);
-		return value;
-	}
-
-	HRESULT SVCustomFilterClass::addKernelCellRequest(int cellIndex, long value)
-	{
-		HRESULT retValue = S_FALSE;
-		if (cellIndex >= 0 && cellIndex < cellSize)
-		{
-			retValue = m_taskObjectValueInterface.AddInputRequest( m_plvoKernelCells[cellIndex], value );
-		}
-		return retValue;
-	}
-
-	long SVCustomFilterClass::getKernelCellValue(int cellIndex) const 
-	{ 
-		long value = 0;
-		ASSERT(cellIndex >= 0 && cellIndex < cellSize);
-		m_plvoKernelCells[cellIndex]->GetValue(value);
-		return value;
-	}
-#pragma endregion virtual method (ICustomFilter)
 
 BOOL SVCustomFilterClass::OnValidate()
 {

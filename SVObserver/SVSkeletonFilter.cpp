@@ -8,11 +8,12 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   23 Apr 2013 15:07:18  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVSkeletonFilter.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageProcessingClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,6 +26,7 @@ SV_IMPLEMENT_CLASS( SVSkeletonFilterClass, SVSkeletonFilterClassGuid )
 SVSkeletonFilterClass::SVSkeletonFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVSkeletonFilterObjectType;
 }
 
 SVSkeletonFilterClass::~SVSkeletonFilterClass()

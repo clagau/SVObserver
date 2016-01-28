@@ -8,25 +8,23 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   23 Apr 2013 16:31:00  $
 // ******************************************************************************
-
-#if !defined(AFX_SVWATERSHEDFILTERDLG_H__INCLUDED_)
-#define AFX_SVWATERSHEDFILTERDLG_H__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
-#include "ObjectInterfaces\IWatershedFilter.h"
+#pragma region Includes
+#include "ValuesAccessor.h"
+#include "GuiController.h"
+#include "ImageController.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace SVOGui
 	{
-		class SVWatershedFilterDlg : public CDialog
+		class SVWatershedFilterDlg : public CDialog, protected SvOg::ImageController
 		{
 			// Construction
 		public:
-			SVWatershedFilterDlg(SvOi::IWatershedFilter& rFilterClass, CWnd* pParent = nullptr);   // standard constructor
+			SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+			virtual ~SVWatershedFilterDlg();
 
 			virtual HRESULT SetInspectionData();
 
@@ -66,17 +64,17 @@ namespace Seidenader
 		private:
 			std::vector<SVString*>    m_AvailableImages;
 
-			SvOi::IWatershedFilter& m_rFilterClass;
+			const SVGUID& m_rInspectionID;
+			const SVGUID& m_rTaskObjectID;
+			const SVGUID& m_filterID;
+			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+			Controller m_Values;
 		};
 	}  //end namespace SVOGUI
 }  //end namespace Seidenader
 
 namespace SvOg = Seidenader::SVOGui;
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVWATERSHEDFILTERDLG_H__INCLUDED_)
 
 // ******************************************************************************
 // * LOG HISTORY:

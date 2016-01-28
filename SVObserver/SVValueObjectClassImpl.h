@@ -8,12 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   02 Oct 2013 08:24:44  $
 //******************************************************************************
+#pragma once
 
-#ifndef SVVALUEOBJECTCLASSIMPL_H
-#define SVVALUEOBJECTCLASSIMPL_H
-
+#pragma region Includes
 #include "UseTypeExceptMatch.h"
 #include "SVValueObjectClass.h"
+#pragma endregion Includes
 
 // implement default behavior for most of the types
 // derived classes should override the virtuals needed for type-specific behavior.
@@ -247,8 +247,6 @@ namespace std
 //*/
 
 #include "SVValueObjectClassImpl.inl"
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

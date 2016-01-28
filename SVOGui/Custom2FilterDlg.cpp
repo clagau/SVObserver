@@ -12,10 +12,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include <limits.h>
+#include <boost/assign/list_of.hpp>
 #include "Custom2FilterDlg.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVObjectLibrary\SVClsids.h"
+#include "GuiValueHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -52,6 +55,12 @@ namespace Seidenader
 		static const TCHAR DataInvalidKernelHeight[] = _T("The Kernel Height is not valid [%d], it must be odd and be between the limits including 1 and %d");
 		static const TCHAR DataInvalidNormalizationFactor[] = _T("The Normalization Factor is not allowed to be 0 or negative");
 
+		static const std::string KernelWidthTag("KernelWidth");
+		static const std::string KernelHeidghtTag("KernelHeight");
+		static const std::string IsClippingTag("IsClipping");
+		static const std::string IsAbsoluteValueTag("IsAbsoluteValue");
+		static const std::string NormalizationFactorTag("NormalizationFactor");
+		static const std::string KernelValueTag("KernelValue");
 		using namespace SvOi;
 #pragma endregion Declarations
 
@@ -71,7 +80,7 @@ namespace Seidenader
 		END_MESSAGE_MAP()
 
 #pragma region Constructor
-		Custom2FilterDlg::Custom2FilterDlg( SvOi::ICustom2Filter& rFilterClass, CWnd* pParent )
+		Custom2FilterDlg::Custom2FilterDlg( const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent )
 			: CDialog( Custom2FilterDlg::IDD, pParent )
 			, m_KernelWidth( 0 )
 			, m_KernelHeight( 0 )
@@ -83,7 +92,15 @@ namespace Seidenader
 			, m_ClippingEnabled( FALSE )
 			, m_EditCell( _T("") )
 			, m_GridStatus( _T("") )
-			,m_rCustom2Filter(rFilterClass)
+			,m_filterID(rFilterID)
+			,m_rInspectionID(rInspectionID)
+			, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
+			(KernelWidthTag, SVCustomFilterKernelWidthGuid)
+			(KernelHeidghtTag, SVCustomFilterKernelHeightGuid)
+			(IsClippingTag, SVCustomFilterClippingGuid)
+			(IsAbsoluteValueTag, SVCustomFilterAbsoluteGuid)
+			(NormalizationFactorTag, SVCustomFilterTransformGuid)
+			(KernelValueTag, Custom2FilterKernelGuid)))
 		{
 		}
 
@@ -97,45 +114,14 @@ namespace Seidenader
 		{
 			HRESULT Result = S_OK;
 
-			if( Result == S_OK )
-			{
-				Result = m_rCustom2Filter.addKernelWidthRequest( m_KernelWidth );
-			}
-
-			if( Result == S_OK )
-			{
-				Result = m_rCustom2Filter.addKernelHeightRequest( m_KernelHeight );
-			}
-
-			if( Result == S_OK )
-			{
-				Result = m_rCustom2Filter.addNormalizationFactorRequest( m_NormalizationFactor );
-			}
-
-			if( Result == S_OK )
-			{
-				Result = m_rCustom2Filter.addAbsoluteValueRequest( TRUE == m_AbsoluteValue );
-			}
-
-			if( Result == S_OK )
-			{
-				Result = m_rCustom2Filter.addClippingEnabledRequest( TRUE ==m_ClippingEnabled );
-			}
-
-			if( Result == S_OK )
-			{
-				Result = m_rCustom2Filter.addKernelValueRequest( m_KernelArray );
-			}
-
-			if( Result == S_OK )
-			{
-				Result = m_rCustom2Filter.AddInputRequestMarker();
-			}
-
-			if( Result == S_OK )
-			{
-				Result = m_rCustom2Filter.RunOnce( m_rCustom2Filter.GetToolInterface() );
-			}
+			m_Values.Set<long>(KernelWidthTag, m_KernelWidth);
+			m_Values.Set<long>(KernelHeidghtTag, m_KernelHeight);
+			m_Values.Set<long>(NormalizationFactorTag, m_NormalizationFactor);
+			m_Values.Set<bool>(IsAbsoluteValueTag, TRUE == m_AbsoluteValue);
+			m_Values.Set<bool>(IsClippingTag, TRUE == m_ClippingEnabled);
+			_variant_t value = ConvertVectorToVariantSafeArray<LongArray>(m_KernelArray);
+			m_Values.Set<_variant_t>(KernelValueTag, value);
+			m_Values.Commit(true);
 
 			return Result;
 		}
@@ -340,7 +326,7 @@ namespace Seidenader
 			DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
 			SvMc::SVFileDialog FileDlg( TRUE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
 
-			if( FileDlg.DoModal() == IDOK )
+			if( IDOK == FileDlg.DoModal() )
 			{
 				SVString Message;
 
@@ -412,7 +398,7 @@ namespace Seidenader
 			bool FullAccess = isUnrestrictedFileAccess();
 			DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
 			SvMc::SVFileDialog FileDlg(FALSE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
-			if( FileDlg.DoModal() == IDOK )
+			if( IDOK == FileDlg.DoModal() )
 			{
 				try
 				{
@@ -444,14 +430,15 @@ namespace Seidenader
 
 		void Custom2FilterDlg::initializeFilter()
 		{
-			m_KernelWidth = m_rCustom2Filter.getKernelWidth();
-			m_KernelHeight = m_rCustom2Filter.getKernelHeight();
-			m_NormalizationFactor = m_rCustom2Filter.getNormalizationFactor();
-			m_AbsoluteValue = m_rCustom2Filter.isAbsoluteValue();
-			m_ClippingEnabled = m_rCustom2Filter.isClippingEnabled();
+			m_Values.Init();
+			m_KernelWidth = m_Values.Get<long>(KernelWidthTag);
+			m_KernelHeight = m_Values.Get<long>(KernelHeidghtTag);
+			m_NormalizationFactor = m_Values.Get<long>(NormalizationFactorTag);
+			m_AbsoluteValue = m_Values.Get<bool>(IsAbsoluteValueTag);
+			m_ClippingEnabled = m_Values.Get<bool>(IsClippingTag);
 
 			m_KernelArray.clear();
-			m_KernelArray = m_rCustom2Filter.getKernelValues();
+			m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(KernelValueTag));
 		}
 
 		BOOL Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )

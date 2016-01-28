@@ -1455,18 +1455,6 @@ DWORD_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessa
 }
 
 #pragma region virtual methods (ITaskObjectListClass)
-bool SVTaskObjectListClass::getAvailableObjects(SvOi::IClassInfoStructList& list, const SVObjectTypeInfoStruct objectType) const
-{
-	bool retVal = false;
-
-	SVClassInfoStructListClass* pList = dynamic_cast<SVClassInfoStructListClass*>(&list);
-	if (nullptr != pList)
-	{
-		retVal = (getAvailableObjects(pList, const_cast<SVObjectTypeInfoStruct*>(&objectType)) == TRUE);
-	}
-	return retVal;
-}
-
 SvOi::ISVImage* SVTaskObjectListClass::getFirstImage()
 {
 	SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>(processMessage(SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
@@ -1476,6 +1464,24 @@ SvOi::ISVImage* SVTaskObjectListClass::getFirstImage()
 		pImageInfo->GetOwnerImage(image);
 	}
 	return image;
+}
+
+SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const
+{
+	SvUl::NameGuidList list = SVTaskObjectClass::GetCreatableObjects(pObjectTypeInfo);
+
+	for (int i = 0; i < availableChildren.GetSize(); i++)
+	{
+		SVClassInfoStruct classInfo = availableChildren.GetAt(i);
+		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo.ObjectType &&
+			(pObjectTypeInfo.SubType == SVNotSetSubObjectType ||
+			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
+			)
+		{
+			list.push_back(std::make_pair(classInfo.ClassName, classInfo.ClassId));
+		}
+	}
+	return list;
 }
 #pragma endregion virtual methods (ITaskObjectListClass)
 

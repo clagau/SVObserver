@@ -8,11 +8,12 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   24 Apr 2013 11:36:40  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVThickeningFilter.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageProcessingClass.h" 
+#include "SVImageProcessingClass.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // Other Necessary Include File(s) - Module Link(s)
@@ -57,11 +58,10 @@ SVThickeningFilterClass::~SVThickeningFilterClass()
 
 void SVThickeningFilterClass::init()
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVThickeningFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoItterations, SVThickeningFilterItterationsGuid, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoGrayOn, SVThickeningFilterGrayOnGuid, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SVResetItemNone );
-
-
 
 	m_lvoItterations.SetDefaultValue( 1L, TRUE );
 	m_bvoGrayOn.SetDefaultValue( FALSE, TRUE );
@@ -91,32 +91,6 @@ BOOL SVThickeningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateSt
 
 	return bOk;
 }
-
-#pragma region virtual method (IThinningFilter)
-HRESULT SVThickeningFilterClass::addGrayOnRequest(bool value)
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_bvoGrayOn, value );
-}
-
-bool SVThickeningFilterClass::isGrayOn() const
-{ 
-	bool value = 0;
-	m_bvoGrayOn.GetValue(value);
-	return value;
-}
-
-HRESULT SVThickeningFilterClass::addIterationRequest(long value) 
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_lvoItterations, value );
-}
-
-long SVThickeningFilterClass::getIteration() const
-{ 
-	long value = 0;
-	m_lvoItterations.GetValue(value);
-	return value;
-}
-#pragma endregion virtual method (IThinningFilter)
 
 //******************************************************************************
 // Operation(s) Of Process:

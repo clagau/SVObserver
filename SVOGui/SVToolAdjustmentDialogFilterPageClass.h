@@ -12,11 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\IClassInfoStructList.h"
-#include "ObjectInterfaces\ITaskObjectListClass.h"
 #include "PictureDisplay.h"
-#include "SVFilterListBoxClass.h"
-#include "SVAvailableFilterListComboBoxClass.h"
+#include "AvailableObjectListComboBox.h"
+#include "ImageController.h"
+#include "ObjectsListBox.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -80,18 +79,19 @@ namespace Seidenader
 			enum { IDD = IDD_TA_FILTER_DIALOG };
 			CButton	m_btnProperties;
 			CButton	insertFilter;
-			SVFilterListBoxClass filterListBox;
+			ObjectsListBox m_filterListBox;
 			PictureDisplay	dialogImage;
-			SVAvailableFilterListComboBoxClass availableFilterListBox;
+			AvailableObjectListComboBox m_availableFilterCB;
 			//}}AFX_DATA
 
 			//******************************************************************************
 			// Data Element(s):
 			//******************************************************************************
 		protected:
-			SvOi::ITaskObjectListClass& m_rTool;
-			SvOi::ITaskObjectListClass* m_pUnaryImageOperatorList;
-			SvOi::IClassInfoStructList*	availableFilters;
+			const SVGUID m_InspectionID;
+			const SVGUID m_TaskObjectID;
+			SVGUID m_UnaryImageOperatorID;
+			ImageController m_ImageController;
 		};
 	}
 }

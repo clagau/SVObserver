@@ -8,12 +8,11 @@
 // * .Current Version : $Revision:   1.1  $
 // * .Check In Date   : $Date:   13 Aug 2013 10:37:28  $
 // ******************************************************************************
+#pragma once
 
-#ifndef SVTHINNINGFILTERS_H
-#define SVTHINNINGFILTERS_H
-
-#include "ObjectInterfaces\IThinningFilter.h"
+#pragma region Includes
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVThinningFilterClass
@@ -26,8 +25,7 @@
 // .History
 //	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
-class SVThinningFilterClass : virtual public SvOi::IThinningFilter
-	,public SVFilterClass
+class SVThinningFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVThinningFilterClass );
 
@@ -44,14 +42,6 @@ public:
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
-
-#pragma region virtual method (IThinningFilter)
-public:
-	virtual HRESULT addGrayOnRequest(bool value) override;
-	virtual bool isGrayOn() const override;
-	virtual HRESULT addIterationRequest(long value) override;
-	virtual long getIteration() const override;
-#pragma endregion virtual method (IThinningFilter)
 
 private:
 	void init();
@@ -87,8 +77,6 @@ protected:
 //******************************************************************************
 protected:
 };
-
-#endif // SVTHINNINGFILTERS_H
 
 // ******************************************************************************
 // * LOG HISTORY:

@@ -8,16 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 11:56:44  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVClosingFilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVClosingFilterClass, SVClosingFilterClassGuid )
 
 SVClosingFilterClass::SVClosingFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVClosingFilterObjectType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

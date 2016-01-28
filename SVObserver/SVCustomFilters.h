@@ -9,12 +9,12 @@
 //* .Check In Date   : $Date:   13 Aug 2013 09:59:02  $
 //******************************************************************************
 
-#ifndef SVCUSTOMFILTERS_H
-#define SVCUSTOMFILTERS_H
+#pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "ObjectInterfaces/ICustomFilter.h"
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVCustomFilterClass
@@ -27,8 +27,7 @@
 // .History
 //	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
-class SVCustomFilterClass : virtual public SvOi::ICustomFilter
-	, public SVFilterClass
+class SVCustomFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVCustomFilterClass );
 
@@ -47,22 +46,6 @@ public:
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
-
-#pragma region virtual method (ICustomFilter)
-public:
-	virtual HRESULT addKernelWidthRequest(long value) override;
-	virtual long getKernelWidth() const override;
-	virtual HRESULT addKernelHeightRequest(long value) override;
-	virtual long getKernelHeight() const override;
-	virtual HRESULT addClippingOnRequest(bool value) override;
-	virtual bool isClippingOn() const override;
-	virtual HRESULT addAbsoluteValueRequest(bool value) override;
-	virtual bool isAbsoluteValue() const override;
-	virtual HRESULT addTransformationFactorRequest(long value) override;
-	virtual long getTransformationFactor() const override;
-	virtual HRESULT addKernelCellRequest(int cellIndex, long value) override;
-	virtual long getKernelCellValue(int cellIndex) const override;
-#pragma endregion virtual method (ICustomFilter)
 
 private:
 	void init();
@@ -156,8 +139,6 @@ protected:
 //******************************************************************************
 protected:
 };
-
-#endif // SVCUSTOMFILTERS_H
 
 //******************************************************************************
 //* LOG HISTORY:

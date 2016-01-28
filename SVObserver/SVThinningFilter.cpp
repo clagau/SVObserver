@@ -8,11 +8,12 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   24 Apr 2013 11:37:36  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVThinningFilter.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageProcessingClass.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // Other Necessary Include File(s) - Module Link(s)
@@ -57,11 +58,10 @@ SVThinningFilterClass::~SVThinningFilterClass()
 
 void SVThinningFilterClass::init()
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVThinningFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoItterations, SVThinningFilterItterationsGuid, IDS_OBJECTNAME_THINNINGFILTER_ITTERATIONS, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoGrayOn, SVThinningFilterGrayOnGuid, IDS_OBJECTNAME_THINNINGFILTER_GRAYON, false, SVResetItemNone );
-
-
 
 	m_lvoItterations.SetDefaultValue( 1L, TRUE );
 	m_bvoGrayOn.SetDefaultValue( FALSE, TRUE );
@@ -91,32 +91,6 @@ BOOL SVThinningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 
 	return bOk;
 }
-
-#pragma region virtual method (IThinningFilter)
-HRESULT SVThinningFilterClass::addGrayOnRequest(bool value)
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_bvoGrayOn, value );
-}
-
-bool SVThinningFilterClass::isGrayOn() const
-{ 
-	bool value = 0;
-	m_bvoGrayOn.GetValue(value);
-	return value;
-}
-
-HRESULT SVThinningFilterClass::addIterationRequest(long value) 
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_lvoItterations, value );
-}
-
-long SVThinningFilterClass::getIteration() const
-{ 
-	long value = 0;
-	m_lvoItterations.GetValue(value);
-	return value;
-}
-#pragma endregion virtual method (IThinningFilter)
 
 //******************************************************************************
 // Operation(s) Of Process:

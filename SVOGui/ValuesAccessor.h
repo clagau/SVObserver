@@ -9,7 +9,6 @@
 
 #pragma region Includes
 #include <guiddef.h>
-#include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/NameValueList.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "GuiCommands/TaskObjectGetEmbeddedValues.h"

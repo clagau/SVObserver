@@ -8,16 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 12:01:22  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVSharpen2FilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVSharpen2FilterClass, SVSharpen2FilterClassGuid )
 
 SVSharpen2FilterClass::SVSharpen2FilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVSharpen2FilterObjectType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -8,7 +8,7 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   23 Apr 2013 16:30:20  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -18,6 +18,8 @@
 #include "SVToolSet.h"
 #include "SVTool.h"
 #include "SVWaterShedFilter.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // Other Necessary Include File(s) - Module Link(s)
@@ -62,6 +64,7 @@ SVWatershedFilterClass::~SVWatershedFilterClass()
 
 void SVWatershedFilterClass::init()
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVWatershedFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoMinVariation,		SVWatershedFilterMinVariationGuid, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_lvoControlFlag,		SVWatershedFilterControlFlagGuid, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SVResetItemNone );
@@ -80,7 +83,7 @@ void SVWatershedFilterClass::init()
 
 	m_MarkerImageInfo.SetInputObjectType( SVImageObjectType );
 	m_MarkerImageInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_MarkerImageInfo, _T( "WatershedFilterMarkerImage" ) );
+	RegisterInputObject( &m_MarkerImageInfo, SvOi::WatershedMarkerImageConnectionName );
 
 	
 	// Set default inputs and outputs
@@ -104,102 +107,6 @@ BOOL SVWatershedFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 
 	return bOk;
 }
-
-#pragma region virtual method (IWatershedFilter)
-HRESULT SVWatershedFilterClass::addControlFlagRequest(long value)
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_lvoControlFlag, value );
-}
-
-long SVWatershedFilterClass::getControlFlag() const
-{ 
-	long value = 0;
-	m_lvoControlFlag.GetValue(value);
-	return value;
-}
-
-HRESULT SVWatershedFilterClass::addMinVariationRequest(long value) 
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_lvoMinVariation, value );
-}
-
-long SVWatershedFilterClass::getMinVariation() const
-{ 
-	long value = 0;
-	m_lvoMinVariation.GetValue(value);
-	return value;
-}
-
-HRESULT SVWatershedFilterClass::addMarkerUsedRequest(bool value) 
-{
-	return m_taskObjectValueInterface.AddInputRequest( &m_bvoUseMarker, value );
-}
-
-bool SVWatershedFilterClass::isMarkerUsed() const
-{ 
-	bool value = 0;
-	m_bvoUseMarker.GetValue(value);
-	return value;
-}
-
-SVString SVWatershedFilterClass::getMarkerImage() const
-{
-	SVString retValueString;
-	if( m_MarkerImageInfo.IsConnected() )
-	{
-		SVImageClass *pCurrentSourceImage = dynamic_cast< SVImageClass* >( m_MarkerImageInfo.GetInputObjectInfo().PObject );
-		if (nullptr != pCurrentSourceImage)
-		{
-			retValueString = pCurrentSourceImage->getDisplayedName();
-		}
-	}
-	return retValueString;
-}
-
-HRESULT SVWatershedFilterClass::setMarkerImage(const SVString& imageName)
-{
-	HRESULT retVal = E_FAIL;
-	SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass*> ( GetAncestor( SVToolSetObjectType ) );
-	if( nullptr != pToolSet )
-	{
-		SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque objects = getAvailableSourceImage(pToolSet->GetUniqueObjectID());
-		for( SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter = objects.begin(); l_Iter != objects.end(); ++l_Iter )
-		{
-			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-			if( isValidMarkerImage( pImage, *pToolSet ) && SVString( pImage->getDisplayedName() ) == imageName )
-			{
-				retVal = ConnectToImage( &m_MarkerImageInfo, pImage );
-				break;
-			}
-		}
-	}
-
-	return retVal;
-}
-
-std::vector<SVString> SVWatershedFilterClass::getAvailableMarkerImageNames()
-{
-	std::vector<SVString> retImageNames;
-
-	SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass*> ( GetAncestor( SVToolSetObjectType ) );
-	if( nullptr != pToolSet && nullptr != pToolSet->getCurrentImage() )
-	{
-		SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque objects = getAvailableSourceImage(pToolSet->GetUniqueObjectID());
-		for( SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter = objects.begin(); l_Iter != objects.end(); ++l_Iter )
-		{
-			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-			if( isValidMarkerImage( pImage, *pToolSet ) )
-			{
-				retImageNames.push_back( pImage->getDisplayedName() );
-			}			
-		}
-	}
-	return retImageNames;
-}
-#pragma endregion virtual method (IWatershedFilter)
-
 
 BOOL SVWatershedFilterClass::OnValidate()
 {

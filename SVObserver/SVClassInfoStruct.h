@@ -9,12 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:53:34  $
 //******************************************************************************
 
-#ifndef SVCLASSINFOSTRUCT_H
-#define SVCLASSINFOSTRUCT_H
+#pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
-#include "ObjectInterfaces/IClassInfoStructList.h"
+#pragma endregion Includes
 
 class SVObjectClass;
 
@@ -46,8 +46,7 @@ struct SVClassInfoStruct
 	SVInterfaceListClass	DesiredInputInterface;
 };
 
-class SVClassInfoStructListClass : virtual public SvOi::IClassInfoStructList,
-	public SVVector< SVClassInfoStruct >
+class SVClassInfoStructListClass : public SVVector< SVClassInfoStruct >
 {
 public:
 	SVClassInfoStructListClass();
@@ -57,15 +56,8 @@ public:
 public:
 	virtual int Find( const GUID& ClassID ); 
 
-#pragma region virtual methods (IClassInfoStructList)
-	virtual long Size() const override;
-	virtual CString GetClassName(int index) const override;
-	virtual GUID GetClassID(int index) const override;
-#pragma endregion virtual methods (IClassInfoStructList)
 #pragma endregion public methods
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

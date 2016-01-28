@@ -14,11 +14,9 @@
 #pragma region Includes
 #include "SVFilterClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "ObjectInterfaces/ICustom2Filter.h"
 #pragma endregion Includes
 
-class Custom2Filter : virtual public SvOi::ICustom2Filter
-	,public SVFilterClass
+class Custom2Filter : public SVFilterClass
 {
 public:
 #pragma region Declarations
@@ -60,22 +58,8 @@ public:
 	// Return: True as it should always reset
 	//************************************
 	virtual bool shouldResetInspection() const override { return true; }
-#pragma region virtual method (IFilter)
+#pragma endregion virtual method (IFilter)
 
-#pragma region virtual method (ICustom2Filter)
-	virtual HRESULT addKernelWidthRequest(long value) override;
-	virtual long getKernelWidth() const override;
-	virtual HRESULT addKernelHeightRequest(long value) override;
-	virtual long getKernelHeight() const override;
-	virtual HRESULT addClippingEnabledRequest(bool value) override;
-	virtual bool isClippingEnabled() const  override;
-	virtual HRESULT addAbsoluteValueRequest(bool value) override;
-	virtual bool isAbsoluteValue() const override;
-	virtual HRESULT addNormalizationFactorRequest(long value) override;
-	virtual long getNormalizationFactor() const override;
-	virtual HRESULT addKernelValueRequest(LongArray value) override;
-	virtual LongArray getKernelValues() const override;
-#pragma endregion virtual method (ICustom2Filter)
 #pragma endregion Public Methods
 
 protected:
@@ -130,10 +114,6 @@ private:
 	SVMatroxBuffer m_milKernel;						//The Matrox buffer for the filter
 #pragma endregion Member Variables
 };
-
-#pragma region Inline
-#include "Custom2Filter.inl"
-#pragma endregion Inline
 
 //******************************************************************************
 //* LOG HISTORY:

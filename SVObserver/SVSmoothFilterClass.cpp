@@ -8,16 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 12:03:36  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVSmoothFilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVSmoothFilterClass, SVSmoothFilterClassGuid )
 
 SVSmoothFilterClass::SVSmoothFilterClass( SVObjectClass* POwner, int StringResourceID )
 					:SVFilterClass( POwner, StringResourceID ) 
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVSmoothFilterObjectType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

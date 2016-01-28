@@ -8,16 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 12:00:38  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOpeningFilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVOpeningFilterClass, SVOpeningFilterClassGuid )
 
 SVOpeningFilterClass::SVOpeningFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVOpeningFilterObjectType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

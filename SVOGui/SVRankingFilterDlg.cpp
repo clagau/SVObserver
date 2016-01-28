@@ -8,9 +8,13 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   02 Oct 2013 07:12:22  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
+#include <boost/assign/list_of.hpp> 
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVRankingFilterDlg.h"
+#include "SVObjectLibrary/SVClsids.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,11 +28,79 @@ namespace Seidenader
 {
 	namespace SVOGui
 	{
+		static const std::string WidthTag("Width");
+		static const std::string HeidghtTag("Height");
+		static const std::string RankValueTag("RankValue");
+		static const std::string CellValueTag("CellValue");
+
+		static const std::vector<std::string> CellValueTagList = 
+			boost::assign::list_of(CellValueTag+"1") (CellValueTag+"2") (CellValueTag+"3") (CellValueTag+"4") (CellValueTag+"5") (CellValueTag+"6") (CellValueTag+"7")
+									(CellValueTag+"8")  (CellValueTag+"9")  (CellValueTag+"10") (CellValueTag+"11") (CellValueTag+"12") (CellValueTag+"13") (CellValueTag+"14")
+									(CellValueTag+"15") (CellValueTag+"16") (CellValueTag+"17") (CellValueTag+"18") (CellValueTag+"19") (CellValueTag+"20") (CellValueTag+"21")
+									(CellValueTag+"22") (CellValueTag+"23") (CellValueTag+"24") (CellValueTag+"25") (CellValueTag+"26") (CellValueTag+"27") (CellValueTag+"28")
+									(CellValueTag+"29") (CellValueTag+"30") (CellValueTag+"31") (CellValueTag+"32") (CellValueTag+"33") (CellValueTag+"34") (CellValueTag+"35")
+									(CellValueTag+"36") (CellValueTag+"37") (CellValueTag+"38") (CellValueTag+"39") (CellValueTag+"40") (CellValueTag+"41") (CellValueTag+"42")
+									(CellValueTag+"43") (CellValueTag+"44") (CellValueTag+"45") (CellValueTag+"46") (CellValueTag+"47") (CellValueTag+"48") (CellValueTag+"49");
+
 		/////////////////////////////////////////////////////////////////////////////
 		// SVRankingFilterDlg dialog
-		SVRankingFilterDlg::SVRankingFilterDlg(SvOi::IRankingFilter& rFilterClass, CWnd* pParent): 
+		SVRankingFilterDlg::SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent): 
 	CDialog(SVRankingFilterDlg::IDD, pParent)
-		,m_pRankFilterClass(rFilterClass)
+		,m_filterID(rFilterID)
+		,m_rInspectionID(rInspectionID)
+		, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
+		(WidthTag, SVRankingFilterRankingWidthGuid)
+		(HeidghtTag, SVRankingFilterRankingHeightGuid)
+		(RankValueTag, SVRankingFilterRankingRankGuid)
+		(CellValueTagList[0],  SVRankingFilterCell01Guid)
+		(CellValueTagList[1],  SVRankingFilterCell02Guid)
+		(CellValueTagList[2],  SVRankingFilterCell03Guid)
+		(CellValueTagList[3],  SVRankingFilterCell04Guid)
+		(CellValueTagList[4],  SVRankingFilterCell05Guid)
+		(CellValueTagList[5],  SVRankingFilterCell06Guid)
+		(CellValueTagList[6],  SVRankingFilterCell07Guid)
+		(CellValueTagList[7],  SVRankingFilterCell08Guid)
+		(CellValueTagList[8],  SVRankingFilterCell09Guid)
+		(CellValueTagList[9],  SVRankingFilterCell10Guid)
+		(CellValueTagList[10], SVRankingFilterCell11Guid)
+		(CellValueTagList[11], SVRankingFilterCell12Guid)
+		(CellValueTagList[12], SVRankingFilterCell13Guid)
+		(CellValueTagList[13], SVRankingFilterCell14Guid)
+		(CellValueTagList[14], SVRankingFilterCell15Guid)
+		(CellValueTagList[15], SVRankingFilterCell16Guid)
+		(CellValueTagList[16], SVRankingFilterCell17Guid)
+		(CellValueTagList[17], SVRankingFilterCell18Guid)
+		(CellValueTagList[18], SVRankingFilterCell19Guid)
+		(CellValueTagList[19], SVRankingFilterCell20Guid)
+		(CellValueTagList[20], SVRankingFilterCell21Guid)
+		(CellValueTagList[21], SVRankingFilterCell22Guid)
+		(CellValueTagList[22], SVRankingFilterCell23Guid)
+		(CellValueTagList[23], SVRankingFilterCell24Guid)
+		(CellValueTagList[24], SVRankingFilterCell25Guid)
+		(CellValueTagList[25], SVRankingFilterCell26Guid)
+		(CellValueTagList[26], SVRankingFilterCell27Guid)
+		(CellValueTagList[27], SVRankingFilterCell28Guid)
+		(CellValueTagList[28], SVRankingFilterCell29Guid)
+		(CellValueTagList[29], SVRankingFilterCell30Guid)
+		(CellValueTagList[30], SVRankingFilterCell31Guid)
+		(CellValueTagList[31], SVRankingFilterCell32Guid)
+		(CellValueTagList[32], SVRankingFilterCell33Guid)
+		(CellValueTagList[33], SVRankingFilterCell34Guid)
+		(CellValueTagList[34], SVRankingFilterCell35Guid)
+		(CellValueTagList[35], SVRankingFilterCell36Guid)
+		(CellValueTagList[36], SVRankingFilterCell37Guid)
+		(CellValueTagList[37], SVRankingFilterCell38Guid)
+		(CellValueTagList[38], SVRankingFilterCell39Guid)
+		(CellValueTagList[39], SVRankingFilterCell40Guid)
+		(CellValueTagList[40], SVRankingFilterCell41Guid)
+		(CellValueTagList[41], SVRankingFilterCell42Guid)
+		(CellValueTagList[42], SVRankingFilterCell43Guid)
+		(CellValueTagList[43], SVRankingFilterCell44Guid)
+		(CellValueTagList[44], SVRankingFilterCell45Guid)
+		(CellValueTagList[45], SVRankingFilterCell46Guid)
+		(CellValueTagList[46], SVRankingFilterCell47Guid)
+		(CellValueTagList[47], SVRankingFilterCell48Guid)
+		(CellValueTagList[48], SVRankingFilterCell49Guid)))
 	{
 		//{{AFX_DATA_INIT(SVRankingFilterDlg)
 		m_lRankingWidth = 3;
@@ -41,48 +113,32 @@ namespace Seidenader
 
 	}// end ctor
 
+	SVRankingFilterDlg::~SVRankingFilterDlg()
+	{
+	}
+
 	HRESULT SVRankingFilterDlg::SetInspectionData()
 	{
 		HRESULT l_hrOk = S_OK;
 
 		UpdateData( TRUE ); // get data from dialog
 
+		m_Values.Set<long>(WidthTag, m_lRankingWidth);
+		m_Values.Set<long>(HeidghtTag, m_lRankingHeight);
+		m_Values.Set<long>(RankValueTag, m_lRankingRank);
 
-		if( l_hrOk == S_OK )
+		for( long j = 0; S_OK == l_hrOk && j < m_lRankingWidth; j++ )
 		{
-			l_hrOk = m_pRankFilterClass.addWidthRequest( m_lRankingWidth );
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_pRankFilterClass.addHeightRequest( m_lRankingHeight );
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_pRankFilterClass.addRankValueRequest( m_lRankingRank );
-		}
-
-		for( long j = 0; l_hrOk == S_OK && j < m_lRankingWidth; j++ )
-		{
-			for( long k = 0; l_hrOk == S_OK && k < m_lRankingHeight; k++ )
+			for( long k = 0;S_OK == l_hrOk && k < m_lRankingHeight; k++ )
 			{
 				long l_lKernelIndex = k * m_lRankingWidth + j;
 				long l_lDialogIndex = ( k + ( ( 7 - m_lRankingHeight ) / 2 ) ) * 7 + ( j + ( ( 7 - m_lRankingWidth ) / 2 ) );
 
-				l_hrOk = m_pRankFilterClass.addCellValueRequest( l_lKernelIndex, m_lRankingCells[ l_lDialogIndex ] );
+				m_Values.Set<long>( CellValueTagList[l_lKernelIndex], m_lRankingCells[ l_lDialogIndex ] );
 			}// end for
 		}// end for
 
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_pRankFilterClass.AddInputRequestMarker();
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_pRankFilterClass.RunOnce( m_pRankFilterClass.GetToolInterface() );
-		}
+		m_Values.Commit(true);
 
 		UpdateData( FALSE );
 
@@ -121,17 +177,20 @@ namespace Seidenader
 	BOOL SVRankingFilterDlg::OnInitDialog()
 	{
 		CDialog::OnInitDialog();
-
+		
 		CString strTemp;
-		m_lRankingWidth = m_pRankFilterClass.getWidth();
+		
+		m_Values.Init();
+		
+		m_lRankingWidth = m_Values.Get<long>(WidthTag);
 		strTemp.Format( "%d", m_lRankingWidth );
 		m_ctlRankingWidth.SelectString( -1, strTemp );
 
-		m_lRankingHeight = m_pRankFilterClass.getHeight();
+		m_lRankingHeight = m_Values.Get<long>(HeidghtTag);
 		strTemp.Format( "%d", m_lRankingHeight );
 		m_ctlRankingHeight.SelectString( -1, strTemp );
 
-		m_lRankingRank = m_pRankFilterClass.getRankValue();
+		m_lRankingRank = m_Values.Get<long>(RankValueTag);
 		m_ctlRankingRank.SetCurSel(m_lRankingRank);
 
 		EnableCells();
@@ -142,7 +201,7 @@ namespace Seidenader
 			{
 				long l_lKernelIndex = i * m_lRankingWidth + h;
 				long l_lDialogIndex = ( i + ( ( 7 - m_lRankingHeight ) / 2 ) ) * 7 + ( h + ( ( 7 - m_lRankingWidth ) / 2 ) );
-				long lValue = m_pRankFilterClass.getCellValue(l_lKernelIndex);
+				long lValue = m_Values.Get<long>(CellValueTagList[l_lKernelIndex]);
 				m_lRankingCells[ l_lDialogIndex ] = ( lValue == 1 ? 1 : 0 );
 			}// end for
 		}// end for
@@ -157,7 +216,7 @@ namespace Seidenader
 	{
 		long lIndex = m_ctlRankingWidth.GetCurSel();
 
-		if( lIndex != LB_ERR )
+		if( LB_ERR != lIndex )
 		{
 			UpdateData();
 			EnableCells();
@@ -169,7 +228,7 @@ namespace Seidenader
 	{
 		long lIndex = m_ctlRankingHeight.GetCurSel();
 
-		if( lIndex != LB_ERR )
+		if( LB_ERR != lIndex )
 		{
 			UpdateData();
 			EnableCells();
@@ -181,7 +240,7 @@ namespace Seidenader
 	{
 		long lIndex = m_ctlRankingRank.GetCurSel();
 
-		if( lIndex != LB_ERR )
+		if( LB_ERR != lIndex )
 		{
 			m_lRankingRank = static_cast<long>(m_ctlRankingRank.GetItemData( lIndex ));
 		}// end if
@@ -226,7 +285,7 @@ namespace Seidenader
 			m_ctlRankingRank.SetItemData( m_ctlRankingRank.AddString( strTemp ), j + 1 );
 		}// end for
 
-		if( m_lRankingRank == SVValueMedian )
+		if( SVValueMedian == m_lRankingRank )
 		{
 			strTemp.Format( "MEDIAN" );
 			m_ctlRankingRank.SelectString( -1, strTemp );

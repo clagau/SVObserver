@@ -12,11 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogFilterPageClass.h"
-
-#include "ObjectInterfaces/IObjectManager.h"
-#include "ObjectInterfaces/ISVFilter.h"
-#include "ObjectInterfaces/ISVImage.h"
-#include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "SVCustomFilterDlg.h"
 #include "SVRankingFilterDlg.h"
@@ -24,6 +19,16 @@
 #include "SVThickeningFilterDlg.h"
 #include "Custom2FilterDlg.h"
 #include "SVWatershedFilterDlg.h"
+#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "TextDefinesSvOg.h"
+#include "GuiCommands/GetCreatableObjects.h"
+#include "GuiCommands/GetTaskObjectInstanceID.h"
+#include "GuiCommands/GetAvailableObjects.h"
+#include "GuiCommands/InspectionRunOnce.h"
+#include "GuiCommands/GetObjectTypeInfo.h"
+#include "GuiCommands/ConstructAndInsertTaskObject.h"
+#include "GuiCommands/DestroyChildObject.h"
+#include "GuiCommands/ShouldInspectionReset.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -50,83 +55,105 @@ namespace Seidenader
 
 		SVToolAdjustmentDialogFilterPageClass::SVToolAdjustmentDialogFilterPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
 		: CPropertyPage(SVToolAdjustmentDialogFilterPageClass::IDD)
-		, availableFilters( SvOi::createSVClassInfoStructList() )
-		, m_rTool(*(dynamic_cast<SvOi::ITaskObjectListClass *>(SvOi::getObject(rTaskObjectID))))
-		, m_pUnaryImageOperatorList(nullptr)
+		, m_ImageController(rInspectionID, rTaskObjectID)
+		, m_InspectionID(rInspectionID)
+		, m_TaskObjectID(rTaskObjectID)
 		{
-			SVObjectTypeInfoStruct info;
-			info.ObjectType = SVUnaryImageOperatorListObjectType;
+			// Get Instance GUID for the Mask Operator...
+			typedef GuiCmd::GetTaskObjectInstanceID Command;
+			typedef SVSharedPtr<Command> CommandPtr;
 
-			// Get The UnaryImageOperatorList
-			IObjectClass *pTmpObject = m_rTool.GetFirstObject(info);
-			m_pUnaryImageOperatorList = dynamic_cast<ITaskObjectListClass*>(pTmpObject);
+			SVObjectTypeInfoStruct info(SVUnaryImageOperatorListObjectType/*SVUnaryImageOperatorObjectType*/, SVNotSetSubObjectType);
 
-			if( m_pUnaryImageOperatorList )
+			CommandPtr commandPtr = CommandPtr(new Command(m_TaskObjectID, info));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
 			{
-				info.ObjectType = SVFilterObjectType;
-				m_pUnaryImageOperatorList->getAvailableObjects(*availableFilters, info);
+				m_UnaryImageOperatorID = commandPtr->GetInstanceID();
 			}
 		}
 
 		SVToolAdjustmentDialogFilterPageClass::~SVToolAdjustmentDialogFilterPageClass()
 		{
-			deleteSVClassInfoStructList(availableFilters);
 		}
 
 		HRESULT SVToolAdjustmentDialogFilterPageClass::SetInspectionData()
 		{
-			HRESULT l_hrOk = S_OK;
-
 			UpdateData( TRUE ); // get data from dialog
 
-			if( l_hrOk == S_OK )
-			{
-				l_hrOk = m_rTool.RunOnce( &m_rTool );
-			}
+			GuiCmd::InspectionRunOncePtr commandPtr = new GuiCmd::InspectionRunOnce( m_InspectionID, m_TaskObjectID );
+			SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > command( m_InspectionID, commandPtr );
+
+			HRESULT hrOk = command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 
 			UpdateData( FALSE );
 
-			return l_hrOk;
+			return hrOk;
 		}
 		
 		bool SVToolAdjustmentDialogFilterPageClass::setImages()
 		{
-			ISVImage* pImage = m_rTool.getFirstImage();
-			// Set dialog image...
-			dialogImage.setImage(pImage);
-			dialogImage.Refresh();
+			bool retVal = false;
+			const SvUl::NameGuidList guidList = m_ImageController.GetResultImages();
 
-			return (nullptr != pImage);
+			if (guidList.size()>0)
+			{
+				IPictureDisp* pResultImage = m_ImageController.GetImage(guidList[0].second.ToGUID());
+				// Set dialog image...
+				dialogImage.setImage(pResultImage);
+				dialogImage.Refresh();
+				retVal = true;
+			}
+
+			return retVal;
 		}
 
 		void SVToolAdjustmentDialogFilterPageClass::refresh()
 		{
+			typedef GuiCmd::GetAvailableObjects Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			SvUl::NameGuidList availableList;
+			CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SVObjectTypeInfoStruct(SVFilterObjectType, SVNotSetSubObjectType));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				availableList = commandPtr->AvailableObjects();
+			}
+
 			// Populate filter list box and run filter...
-			filterListBox.init( m_pUnaryImageOperatorList );
+			m_filterListBox.init( availableList, Filter_NoFilter );
 
 			SetInspectionData();
 
 			// Refresh dialog image...
 			setImages();
-
 		}
 
 		void SVToolAdjustmentDialogFilterPageClass::OnSelchangeList1() 
 		{
-			int index	= filterListBox.GetCurSel();
-			if( index != LB_ERR ) 
+			int index = m_filterListBox.GetCurSel();
+			SVGUID filterGUID	= m_filterListBox.getGUID(index);
+			if( SVInvalidGUID != filterGUID ) 
 			{
-				if( nullptr != m_pUnaryImageOperatorList )
-				{ 
-					IObjectClass* pOperator = reinterpret_cast<IObjectClass*>(filterListBox.GetItemData( index ));
-
-					m_btnProperties.EnableWindow( SV_IS_KIND_OF( pOperator, ICustomFilter ) 
-						|| SV_IS_KIND_OF( pOperator, ICustom2Filter )
-						|| SV_IS_KIND_OF( pOperator, IRankingFilter )
-						|| SV_IS_KIND_OF( pOperator, IThinningFilter )
-						|| SV_IS_KIND_OF( pOperator, IThickeningFilter )
-						|| SV_IS_KIND_OF( pOperator, IWatershedFilter ) );
-				}// end if
+				typedef GuiCmd::GetObjectTypeInfo Command;
+				typedef SVSharedPtr<Command> CommandPtr;
+				CommandPtr commandPtr = new Command(filterGUID);
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				if (S_OK == hr)
+				{
+					SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
+				
+					m_btnProperties.EnableWindow( SVCustomFilterObjectType == info.SubType 
+					|| SVCustom2FilterObjectType == info.SubType
+					|| SVRankingFilterObjectType == info.SubType
+					|| SVThinningFilterObjectType == info.SubType
+					|| SVThickeningFilterObjectType == info.SubType
+					|| SVWatershedFilterObjectType == info.SubType );
+				}
 			}// end if
 		}// end OnSelchangeList1
 
@@ -136,15 +163,14 @@ namespace Seidenader
 			//{{AFX_DATA_MAP(SVToolAdjustmentDialogFilterPageClass)
 			DDX_Control(pDX, IDC_BUTTON4, m_btnProperties);
 			DDX_Control(pDX, IDC_BUTTON1, insertFilter);
-			DDX_Control(pDX, IDC_LIST1, filterListBox);
+			DDX_Control(pDX, IDC_LIST1, m_filterListBox);
 			DDX_Control(pDX, IDC_DIALOGIMAGE, dialogImage);
-			DDX_Control(pDX, IDC_COMBO1, availableFilterListBox);
+			DDX_Control(pDX, IDC_COMBO1, m_availableFilterCB);
 			//}}AFX_DATA_MAP
 		}
 
 		BOOL SVToolAdjustmentDialogFilterPageClass::OnSetActive() 
 		{
-
 			setImages();
 			return CPropertyPage::OnSetActive();
 		}
@@ -156,22 +182,29 @@ namespace Seidenader
 			m_btnProperties.EnableWindow( FALSE );
 
 			dialogImage.AddTab(_T("Tool Result"));  
+			m_ImageController.Init();
 
-			if( nullptr != m_pUnaryImageOperatorList)
+			bool res = setImages();
+			if(res)
 			{
+				typedef GuiCmd::GetCreatableObjects Command;
+				typedef SVSharedPtr<Command> CommandPtr;
 
-				bool res = setImages();
-				if(res)
+				SvUl::NameGuidList availableList;
+				CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SVObjectTypeInfoStruct(SVFilterObjectType, SVNotSetSubObjectType));
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				if (S_OK == hr)
 				{
-					availableFilterListBox.init( availableFilters );
-
-					UpdateData( FALSE );
-					// Populate filter list box and run filter...
-					filterListBox.init( m_pUnaryImageOperatorList );
-
-					SetInspectionData();
-					return TRUE;
+					availableList = commandPtr->AvailableObjects();
 				}
+
+				m_availableFilterCB.Init(availableList, _T(""), Filter_NoFilterAvailable );
+
+				UpdateData( FALSE );
+
+				refresh();
+				return TRUE;
 			}
 
 			// Not valid call...
@@ -197,58 +230,30 @@ namespace Seidenader
 		////////////////////////////////////////////////////////////////////////////////
 		void SVToolAdjustmentDialogFilterPageClass::OnButtonInsertNewFilter() 
 		{ 
-			int sourceIndex = availableFilterListBox.GetCurSel();
-			if( sourceIndex != LB_ERR )
+			const SVGUID classID = m_availableFilterCB.getSelectedGUID();
+
+			if( SVInvalidGUID != classID )
 			{
-				sourceIndex = ( int )availableFilterListBox.GetItemData( sourceIndex );
-				if(  sourceIndex != -1 )
+				int destinyIndex	= m_filterListBox.GetCurSel();
+
+				if( LB_ERR == destinyIndex  ) // First Entryitem
 				{
-					int destinyIndex	= filterListBox.GetCurSel();
-
-					if( destinyIndex == LB_ERR ) // First Entryitem
-						destinyIndex = 0;
-
-					// Construct and Create the Filter Class Object
-
-					// Rebuild the List of selected Filters
-					if ( nullptr != m_pUnaryImageOperatorList )
-					{
-						// create a new filter and add it the List (before the Threshold object)
-						// and now Instantiate a new Object
-						ISVFilter* pFilter = dynamic_cast<ISVFilter*> (SvOi::ConstructObject( availableFilters->GetClassID( sourceIndex )) );
-
-						if( nullptr != pFilter )
-						{
-							// Need to add before the Threshold Object
-							m_pUnaryImageOperatorList->InsertAt( destinyIndex, *pFilter );
-
-							// And last - Create (initialize) it
-
-							//if( ! pFilter->IsCreated() )
-							if( ! pFilter->is_Created() )
-							{
-								// SEJ 
-								// And finally try to create the child object...
-								if( m_pUnaryImageOperatorList->CreateChildObject( *pFilter, SVMFResetObject ) != SVMR_SUCCESS )
-								{
-									AfxMessageBox("Creation of Filter Failed");
-
-									// What should we really do here ??? SEJ
-
-									// Remove it from the Tool TaskObjectList ( Destruct it )
-									GUID objectID = pFilter->GetUniqueObjectID();
-									if( objectID != SVInvalidGUID )
-										m_pUnaryImageOperatorList->Delete( objectID );
-									else
-										delete pFilter;
-								}
-							}
-						}
-					}
-
-					// Refresh Dialog...
-					refresh();
+					destinyIndex = 0;
 				}
+
+				// Construct and Create the Filter Class Object
+				typedef GuiCmd::ConstructAndInsertTaskObject Command;
+				typedef SVSharedPtr<Command> CommandPtr;
+				CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, classID, destinyIndex);
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				if (S_OK != hr)
+				{
+					AfxMessageBox("Creation of Filter Failed");
+				}
+
+				// Refresh Dialog...
+				refresh();
 			}
 		}
 
@@ -265,39 +270,50 @@ namespace Seidenader
 		void SVToolAdjustmentDialogFilterPageClass::OnButtonClearAll() 
 		{
 			// For all Items in the Selected (Instantiated) Filter list
+			typedef GuiCmd::GetAvailableObjects Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+			SvUl::NameGuidList availableList;
+			CommandPtr commandPtr = new Command(m_UnaryImageOperatorID, SVObjectTypeInfoStruct(SVFilterObjectType, SVNotSetSubObjectType));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				availableList = commandPtr->AvailableObjects();
+			}
 
 			// Delete them
-			if( nullptr != m_pUnaryImageOperatorList )
+			bool bReset = false;
+
+			// remove all filter items (instantiated)
+			size_t listSize = availableList.size();
+			for (int i=0; i<listSize; ++i)
 			{
-				CWaitCursor l_cwcMouse;
-
-				bool l_bReset = false;
-
-				// remove all filter items (instantiated)
-				for( int i = m_pUnaryImageOperatorList->GetSize()-1; i >= 0; --i )
+				SVGUID filterGUID = availableList[i].second;
+				if( SVInvalidGUID != filterGUID )
 				{
-					ISVFilter *l_pFilter = dynamic_cast<ISVFilter*>( m_pUnaryImageOperatorList->GetInterfaceAt( i ) );
+					typedef GuiCmd::ShouldInspectionReset ResetCommand;
+					typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
+					ResetCommandPtr resetCommandPtr = new ResetCommand(filterGUID);
+					SVObjectSynchronousCommandTemplate<ResetCommandPtr> resetCmd(m_InspectionID, resetCommandPtr);
+					HRESULT hr = resetCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+					bReset |= resetCommandPtr->shouldResetInspection();
 
-					if( l_pFilter != NULL )
+					GuiCmd::DestroyChildObject::FlagEnum flag = GuiCmd::DestroyChildObject::Flag_None;
+					//if last object and it should be reset, set flag
+					if (bReset && listSize-1==i )
 					{
-						l_bReset |= l_pFilter->shouldResetInspection();
-
-						// Close, Disconnect and Delete it
-						m_pUnaryImageOperatorList->DestroyChildObject( *l_pFilter, 0);
+						flag = GuiCmd::DestroyChildObject::Flag_SetDefaultInputs_And_ResetInspection;
 					}
+					// Close, Disconnect and Delete it
+					typedef GuiCmd::DestroyChildObject DestroyCommand;
+					typedef SVSharedPtr<DestroyCommand> DestroyCommandPtr;
+					DestroyCommandPtr destroyCommandPtr = new DestroyCommand(m_UnaryImageOperatorID, filterGUID, flag);
+					SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
+					destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				}
-
-				if( l_bReset )
-				{
-					// Refresh Dependencies
-					IInspectionProcess* pIPClass = dynamic_cast<IInspectionProcess*>(m_rTool.GetAncestorInterface(SVInspectionObjectType));
-
-					pIPClass->SetDefaultInputs();
-					pIPClass->resetAllObjects();
-				}
-
-				filterListBox.SetCurSel( -1 );
 			}
+
+			m_filterListBox.SetCurSel( -1 );
 
 			// Refresh Dialog...
 			refresh();
@@ -315,38 +331,31 @@ namespace Seidenader
 		////////////////////////////////////////////////////////////////////////////////
 		void SVToolAdjustmentDialogFilterPageClass::OnButtonDeleteCurrentFilter() 
 		{
-			int index	= filterListBox.GetCurSel();
-			if( index != LB_ERR ) 
+			int index = m_filterListBox.GetCurSel();
+			SVGUID filterGUID = m_filterListBox.getGUID(index);
+			if( SVInvalidGUID != filterGUID ) 
 			{
-				if( nullptr != m_pUnaryImageOperatorList )
-				{ 
-					ISVFilter *l_pFilter = dynamic_cast<ISVFilter*>( (IObjectClass *)filterListBox.GetItemData( index ) );
+				typedef GuiCmd::ShouldInspectionReset ResetCommand;
+				typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
+				ResetCommandPtr resetCommandPtr = new ResetCommand(filterGUID);
+				SVObjectSynchronousCommandTemplate<ResetCommandPtr> resetCmd(m_InspectionID, resetCommandPtr);
+				HRESULT hr = resetCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 
-					if( l_pFilter != NULL )
+				if( S_OK == hr )
+				{
+					GuiCmd::DestroyChildObject::FlagEnum flag = GuiCmd::DestroyChildObject::Flag_None;
+
+					if( resetCommandPtr->shouldResetInspection() )
 					{
-						CWaitCursor l_cwcMouse;
-
-						DWORD l_Context = 0;
-
-						if( l_pFilter->shouldResetInspection() )
-						{
-							l_Context = SVMFSetDefaultInputs | SVMFResetInspection;
-						}
-
-						// Close, Disconnect and Delete it
-						m_pUnaryImageOperatorList->DestroyChildObject( *l_pFilter, l_Context);
+						flag = GuiCmd::DestroyChildObject::Flag_SetDefaultInputs_And_ResetInspection;
 					}
 
-					// Do not delete empty item '(No Filter)'
-					if( index == filterListBox.GetCount() - 1 )
-					{
-						// Do not delete end marker '--------------------------'
-						filterListBox.DeleteString( --index ); 
-					}
-					else
-					{
-						filterListBox.DeleteString( index ); 
-					}
+					// Close, Disconnect and Delete it
+					typedef GuiCmd::DestroyChildObject DestroyCommand;
+					typedef SVSharedPtr<DestroyCommand> DestroyCommandPtr;
+					DestroyCommandPtr destroyCommandPtr = new DestroyCommand(m_UnaryImageOperatorID, filterGUID, flag);
+					SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
+					destroyCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				}
 
 				// Refresh Dialog...
@@ -365,55 +374,65 @@ namespace Seidenader
 		////////////////////////////////////////////////////////////////////////////////
 		void SVToolAdjustmentDialogFilterPageClass::OnButtonProperties() 
 		{
-			int index	= filterListBox.GetCurSel();
-			if( index != LB_ERR ) 
+			int index = m_filterListBox.GetCurSel();
+			SVGUID filterGUID	= m_filterListBox.getGUID(index);
+			if( SVInvalidGUID != filterGUID ) 
 			{
-				if( nullptr != m_pUnaryImageOperatorList )
-				{ 
-					IObjectClass* l_pOperator = reinterpret_cast<IObjectClass*>(filterListBox.GetItemData( index ));
+				typedef GuiCmd::GetObjectTypeInfo Command;
+				typedef SVSharedPtr<Command> CommandPtr;
+				CommandPtr commandPtr = new Command(filterGUID);
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				if (S_OK == hr)
+				{
+					SVObjectTypeInfoStruct info = commandPtr->GetTypeInfo();
 
-					ICustomFilter *l_pCustomFilter = dynamic_cast<ICustomFilter*>( l_pOperator );
-					ICustom2Filter *l_pCustom2Filter = dynamic_cast<ICustom2Filter *>( l_pOperator );
-					IRankingFilter *l_pRankingFilter = dynamic_cast<IRankingFilter*>( l_pOperator );
-					IThinningFilter *l_pThinningFilter = dynamic_cast<IThinningFilter*>( l_pOperator );
-					IThickeningFilter *l_pThickeningFilter = dynamic_cast<IThickeningFilter*>( l_pOperator );
-					IWatershedFilter *l_pWatershedFilter = dynamic_cast<IWatershedFilter*>( l_pOperator );
+					switch (info.SubType)
+					{
+					case SVCustomFilterObjectType:
+						{
+							SVCustomFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
+							l_svDlg.DoModal();
+						}
+						break;
+					case SVCustom2FilterObjectType:
+						{
+							Custom2FilterDlg l_svDlg( m_InspectionID, filterGUID, this );
+							l_svDlg.DoModal();
+						}
+						break;
+					case SVRankingFilterObjectType:
+						{
+							SVRankingFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
+							l_svDlg.DoModal();
+						}
+						break;
+					case SVThinningFilterObjectType:
+						{
+							SVThinningFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
+							l_svDlg.DoModal();
+						}
+						break;
+					case SVThickeningFilterObjectType:
+						{
+							SVThickeningFilterDlg l_svDlg( m_InspectionID, filterGUID, this );
+							l_svDlg.DoModal();
+						}
+						break;
+					case SVWatershedFilterObjectType:
+						{
+							SVWatershedFilterDlg l_svDlg( m_InspectionID, m_TaskObjectID, filterGUID, this );
+							l_svDlg.DoModal();
+						}
+						break;
+					default: //nothing to do
+						break;
+					} 
+				}
+			}// end if
 
-					if( l_pCustomFilter != NULL )
-					{
-						SVCustomFilterDlg l_svDlg( *l_pCustomFilter, this );
-						l_svDlg.DoModal();
-					}// end if
-					if( l_pCustom2Filter != NULL )
-					{
-						Custom2FilterDlg l_svDlg( *l_pCustom2Filter, this );
-						l_svDlg.DoModal();
-					}// end if
-					else if( l_pRankingFilter != NULL )
-					{
-						SVRankingFilterDlg l_svDlg( *l_pRankingFilter, this );
-						l_svDlg.DoModal();
-					}// end else if
-					else if( l_pThinningFilter != NULL )
-					{
-						SVThinningFilterDlg l_svDlg( *l_pThinningFilter, this );
-						l_svDlg.DoModal();
-					}// end if
-					else if( l_pThickeningFilter != NULL )
-					{
-						SVThickeningFilterDlg l_svDlg( *l_pThickeningFilter, this );
-						l_svDlg.DoModal();
-					}// end if
-					else if( l_pWatershedFilter != NULL )
-					{
-						SVWatershedFilterDlg l_svDlg( *l_pWatershedFilter, this );
-						l_svDlg.DoModal();
-					}// end if
-				}// end if
-
-				// Refresh Dialog...
-				refresh();
-			}
+			// Refresh Dialog...
+			refresh();
 		}
 	}  //end namespace SVOGUI
 }  //end namespace Seidenader

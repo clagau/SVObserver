@@ -25,10 +25,20 @@ namespace Seidenader
 {
 	namespace GuiCommand
 	{
+		// This function object return always true if object != nullptr
+		struct IsValidObject 
+		{
+			bool operator()(SvOi::IObjectClass* pObject, bool& bStop) const
+			{
+				return (nullptr != pObject);
+			}
+		};
+
 		typedef boost::function<bool (SvOi::IObjectClass*, bool& bStop)> IsAllowedFunc; 
 		struct GetAvailableObjects: public boost::noncopyable
 		{
-			GetAvailableObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, IsAllowedFunc func) : m_InstanceID(rObjectID), m_typeInfo(typeInfo), IsAllowed(func) {}
+			GetAvailableObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, IsAllowedFunc func = IsValidObject() )
+				: m_InstanceID(rObjectID), m_typeInfo(typeInfo), IsAllowed(func) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -50,11 +60,24 @@ namespace Seidenader
 						{
 							if (IsAllowed(pObject, bStop))
 							{
-								SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(pObject);
-								if (pImage)
+								switch (m_typeInfo.ObjectType)
 								{
-									SVString name = pImage->getDisplayedName();
-									m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+								case SVImageObjectType:
+									{
+										SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(pObject);
+										if (pImage)
+										{
+											SVString name = pImage->getDisplayedName();
+											m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+										}
+									}
+									break;
+								default:
+									{
+										SVString name = pObject->GetName();
+										m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+									}
+									break;
 								}
 							}
 						}

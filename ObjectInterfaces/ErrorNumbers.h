@@ -45,6 +45,13 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10018_RingBuffer_InvalidRingDepth = Maz_ErrorBase + 18;
 	static const int Err_10019_RingBuffer_InvalidImageIndex = Maz_ErrorBase + 19;
 
+	static const int Err_10020_InsertTaskObject_InvalidParameter = Maz_ErrorBase + 20;
+	static const int Err_10021_InsertTaskObject_CreateObjectFailed = Maz_ErrorBase + 21;
+	static const int Err_10022_ConstructTaskObject_Failed = Maz_ErrorBase + 22;
+	static const int Err_10023_ConstructTaskObject_InvalidObjectID = Maz_ErrorBase + 23;
+	static const int Err_10024_DestroyChildObject_InvalidParameter = Maz_ErrorBase + 24;
+	static const int Err_10025_ShouldResetInspection_InvalidParameter = Maz_ErrorBase + 25;
+
 	//Steve Jones error base
 	static const int Sej_ErrorBase = 15000;
 	static const int Err_15000 = Sej_ErrorBase + 0;

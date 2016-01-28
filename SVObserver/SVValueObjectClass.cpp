@@ -8,13 +8,13 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   15 May 2014 15:08:10  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVValueObjectClass.h"
 
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
-
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -337,6 +337,49 @@ void SVValueObjectClass::Initialize()
 	ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;// | SV_CH_VALUE | SV_CH_CONDITIONAL;	// These are included in the DEFAULT
 }
 
+#pragma region IValueObject
+HRESULT SVValueObjectClass::SetValue( const _variant_t& rValue )
+{
+	HRESULT hr = S_OK;
+	if (!IsArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
+	{
+		hr = SetValue(m_iLastSetIndex, 0, SVString(rValue).ToString()); 
+	}
+	else
+	{
+		SVSAFEARRAY safeArray( rValue );
+
+		for (int i=0; i<safeArray.size(); i++)
+		{
+			variant_t tmpVar;
+			HRESULT tempHr = safeArray.GetElement( i, tmpVar );
+			if (S_OK == hr)
+			{
+				hr = tempHr;
+			}
+			
+			tempHr = SetValue(m_iLastSetIndex, i, SVString(tmpVar).ToString()); 
+			if (S_OK == hr)
+			{
+				hr = tempHr;
+			}
+		}
+	}
+
+	return hr;
+}
+HRESULT SVValueObjectClass::GetValue( _variant_t& rValue ) const
+{ 
+	if (!IsArray())
+	{
+		return GetValue(*(rValue.GetAddress())); 
+	}
+	else
+	{
+		return GetValues(*(rValue.GetAddress())); 
+	}
+}
+#pragma endregion IValueObject
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

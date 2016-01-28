@@ -155,7 +155,6 @@
     <ClInclude Include="EquationTestResult.h" />
     <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="ICustom2Filter.h" />
-    <ClInclude Include="ICustomFilter.h" />
     <ClInclude Include="IEnumerateValueObject.h" />
     <ClInclude Include="IEquation.h" />
     <ClInclude Include="IInObjectInfoStruct.h" />
@@ -169,8 +168,6 @@
     <ClInclude Include="IRootObject.h" />
     <ClInclude Include="ISVFilter.h" />
     <ClInclude Include="IFormulaController.h" />
-    <ClInclude Include="IRankingFilter.h" />
-    <ClInclude Include="IClassInfoStructList.h" />
     <ClInclude Include="ISVImage.h" />
     <ClInclude Include="IInspectionProcess.h" />
     <ClInclude Include="IObjectAppClass.h" />
@@ -178,18 +175,16 @@
     <ClInclude Include="ISVOApp_Helper.h" />
     <ClInclude Include="ITaskObjectListClass.h" />
     <ClInclude Include="ITaskObject.h" />
-    <ClInclude Include="IThickeningFilter.h" />
-    <ClInclude Include="IThinningFilter.h" />
     <ClInclude Include="ITool.h" />
     <ClInclude Include="IToolSet.h" />
     <ClInclude Include="IValueObject.h" />
-    <ClInclude Include="IWatershedFilter.h" />
     <ClInclude Include="NameValueList.h" />
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="RangeEnum.h" />
     <ClInclude Include="SVImageEnums.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />
     <ClInclude Include="SVUserMessage.h" />
+    <ClInclude Include="TextDefineSvOi.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DataStructures.inl" />

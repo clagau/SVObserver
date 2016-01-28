@@ -8,16 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 11:59:34  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLaplacianEdge2FilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLaplacianEdge2FilterClass, SVLaplacianEdge2FilterClassGuid )
 
 SVLaplacianEdge2FilterClass::SVLaplacianEdge2FilterClass( SVObjectClass* POwner, int StringResourceID )
 						    :SVFilterClass( POwner, StringResourceID ) 
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVLaplacianEdge2FilterObjectType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

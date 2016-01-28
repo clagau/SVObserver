@@ -8,16 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   12 Aug 2013 16:22:42  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVHorizEdgeFilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVHorizEdgeFilterClass, SVHorizEdgeFilterClassGuid )
 
 SVHorizEdgeFilterClass::SVHorizEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 					   :SVFilterClass( POwner, StringResourceID ) 
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVHorzEdgeFilterObjectType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

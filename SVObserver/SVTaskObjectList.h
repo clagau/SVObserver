@@ -8,16 +8,16 @@
 //* .Current Version : $Revision:   1.6  $
 //* .Check In Date   : $Date:   19 Dec 2014 04:22:30  $
 //******************************************************************************
+#pragma once
 
-#ifndef SVTASKOBJECTLIST_H
-#define SVTASKOBJECTLIST_H
-
+#pragma region Includes
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVClassInfoStruct.h"
 #include "SVValueObject.h"
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 class SVTaskObjectListClass : public SVTaskObjectClass, virtual public SvOi::ITaskObjectListClass
 {
@@ -55,13 +55,13 @@ public:
 	const SVClock::SVTimeStamp& GetLastListUpdateTimestamp() const;
 
 #pragma region virtual methods (ITaskObjectListClass)
-	virtual bool getAvailableObjects(SvOi::IClassInfoStructList& list, const SVObjectTypeInfoStruct objectType) const override;
 	virtual int GetSize() const override;
 	virtual SvOi::IObjectClass* GetInterfaceAt( int index ) const {return GetAt( index );}
 	virtual void Delete(GUID& objectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
 	virtual DWORD_PTR DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context) override;
 	virtual SvOi::ISVImage* getFirstImage() override;
+	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
 #pragma endregion public methods	
 
@@ -148,8 +148,6 @@ protected:
 	SVTaskObjectPtrVector m_aTaskObjects;
 
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -39,7 +39,6 @@ namespace Seidenader
 					{
 						if (!it->second.isReadOnly() && it->second.isModified())
 						{
-							// SEJ999 - need to handle arrays here...
 							// This needs to be more robust, more like ProcessInputRequests method of SVInspectionProcess...
 							_variant_t value = boost::any_cast<_variant_t>(it->second.GetValue());
 							hr = pObject->SetValue(value);

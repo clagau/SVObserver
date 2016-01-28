@@ -68,7 +68,7 @@ namespace Seidenader { namespace SVOGui
 			return bRetVal;
 		}
 
-		bool IsBeforeOwnerTool(SvOi::IObjectClass* pObject) const
+		bool IsObjectCurrentTask(SvOi::IObjectClass* pObject) const
 		{
 			bool bRetVal = true;
 			SvOi::IObjectClass* pImageOwnerTool = pObject->GetAncestorInterface(SVToolObjectType);
@@ -79,7 +79,6 @@ namespace Seidenader { namespace SVOGui
 				SvOi::IToolSet* pToolSet = dynamic_cast<SvOi::IToolSet *>(pImageOwnerTool->GetAncestorInterface(SVToolSetObjectType));
 				if (pToolSet)
 				{
-					//if (!pToolSet->IsToolPreviousToSelected(ownerID) || ownerID == m_TaskObjectID)
 					if (ownerID == m_TaskObjectID) // stop at this tool...
 					{
 						bRetVal = false;
@@ -99,7 +98,7 @@ namespace Seidenader { namespace SVOGui
 			{
 				if (SVToolImageObjectType != m_subType)
 				{
-					bStop = !IsBeforeOwnerTool(pObject);
+					bStop = !IsObjectCurrentTask(pObject);
 					bUseImage = !bStop && !IsHidden(pObject) && !IsOwnerGageTool(pImage) && HasOneBand(pImage);
 				}
 				else

@@ -8,9 +8,12 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   24 Apr 2013 12:25:06  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
+#include <boost/assign/list_of.hpp>
 #include "SVThinningFilterDlg.h"
+#include "SVObjectLibrary\SVClsids.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,16 +27,27 @@ namespace Seidenader
 {
 	namespace SVOGui
 	{
+		static const std::string GrayOnTag("GrayOn");
+		static const std::string IterationTag("Iteration");
+
 		/////////////////////////////////////////////////////////////////////////////
 		// SVThinningFilterDlg dialog
-	SVThinningFilterDlg::SVThinningFilterDlg(SvOi::IThinningFilter& rFilterClass, CWnd* pParent): 
-		CDialog(SVThinningFilterDlg::IDD, pParent)
-		,m_pFilterClass(rFilterClass)
+		SVThinningFilterDlg::SVThinningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) : 
+			CDialog(SVThinningFilterDlg::IDD, pParent)
+			,m_filterID(rFilterID)
+			,m_rInspectionID(rInspectionID)
+			, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
+			(GrayOnTag, SVThinningFilterGrayOnGuid)
+			(IterationTag, SVThinningFilterItterationsGuid)))
 	{
 		//{{AFX_DATA_INIT(SVThinningFilterDlg)
 		m_bGrayScale = FALSE;
 		m_lIterations = 0;
 		//}}AFX_DATA_INIT
+	}
+
+	SVThinningFilterDlg::~SVThinningFilterDlg()
+	{
 	}
 
 	HRESULT SVThinningFilterDlg::SetInspectionData()
@@ -42,22 +56,9 @@ namespace Seidenader
 
 		UpdateData( TRUE ); // get data from dialog
 
-		l_hrOk = m_pFilterClass.addGrayOnRequest( TRUE == m_bGrayScale );
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_pFilterClass.addIterationRequest( m_lIterations );
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_pFilterClass.AddInputRequestMarker();
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_pFilterClass.RunOnce( m_pFilterClass.GetToolInterface() );
-		}
+		m_Values.Set<bool>(GrayOnTag, TRUE == m_bGrayScale);
+		m_Values.Set<long>(IterationTag, m_lIterations);
+		m_Values.Commit();
 
 		UpdateData( FALSE );
 
@@ -85,8 +86,9 @@ namespace Seidenader
 	{
 		CDialog::OnInitDialog();
 
-		m_bGrayScale = m_pFilterClass.isGrayOn();
-		m_lIterations = m_pFilterClass.getIteration();
+		m_Values.Init();
+		m_bGrayScale = m_Values.Get<bool>(GrayOnTag);
+		m_lIterations = m_Values.Get<long>(IterationTag);
 
 		UpdateData( FALSE );
 

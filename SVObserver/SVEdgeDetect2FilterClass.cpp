@@ -8,16 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 11:57:26  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVEdgeDetect2FilterClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVEdgeDetect2FilterClass, SVEdgeDetect2FilterClassGuid )
 
 SVEdgeDetect2FilterClass::SVEdgeDetect2FilterClass( SVObjectClass* POwner, int StringResourceID )
 						 :SVFilterClass( POwner, StringResourceID ) 
 {
+	outObjectInfo.ObjectTypeInfo.SubType = SVEdgeDetect2FilterObjectType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

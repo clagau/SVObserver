@@ -9,10 +9,14 @@
 // * .Check In Date   : $Date:   15 May 2014 15:01:46  $
 // ******************************************************************************
 
-
+#pragma region Includes
 #include "stdafx.h"
+#include <boost/assign/list_of.hpp>
 #include "SVMatroxLibrary\SVMatroxEnums.h"
 #include "SVWatershedFilterDlg.h"
+#include "SVObjectLibrary\SVClsids.h"
+#include "ObjectInterfaces\TextDefineSvOi.h"
+#pragma region Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,15 +25,31 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 using namespace SvOi;
+enum
+{
+	OffVarRadioEnum_Off = 0,
+	OffVarRadioEnum_Minimum,
+	OffVarRadioEnum_Varation
+} OffVarRadioEnum;
 
 namespace Seidenader
 {
 	namespace SVOGui
 	{
+		static const std::string ControlFlagTag("ControlFlag");
+		static const std::string MinVariationTag("MinVariation");
+		static const std::string UseMarkerTag("UseMarker");
 
-		SVWatershedFilterDlg::SVWatershedFilterDlg(SvOi::IWatershedFilter& rFilterClass, CWnd* pParent): 
+		SVWatershedFilterDlg::SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent): 
 				CDialog(SVWatershedFilterDlg::IDD, pParent)
-				,m_rFilterClass(rFilterClass)
+				,m_filterID(rFilterID)
+				,m_rInspectionID(rInspectionID)
+				,m_rTaskObjectID(rTaskObjectID)
+				, SvOg::ImageController(rInspectionID, rTaskObjectID)
+				, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
+				(ControlFlagTag, SVWatershedFilterControlFlagGuid)
+				(MinVariationTag, SVWatershedFilterMinVariationGuid)
+				(UseMarkerTag, SVWatershedFilterUseMarkerGuid)))
 	{
 
 		//{{AFX_DATA_INIT(SVWatershedFilterDlg)
@@ -45,16 +65,17 @@ namespace Seidenader
 		//}}AFX_DATA_INIT
 	}
 
+	SVWatershedFilterDlg::~SVWatershedFilterDlg()
+	{
+	}
+
 	HRESULT SVWatershedFilterDlg::SetInspectionData()
 	{
 		HRESULT l_hrOk = S_OK;
 
 		UpdateData( TRUE ); // get data from dialog
 
-		long lControlFlag;
-		long lMinVariation;
-
-		lControlFlag =0;
+		long lControlFlag = 0;
 		lControlFlag |= m_bSkipLastLevel ? SVImageSkipLastLevel : 0;
 		lControlFlag |= m_bUseBasin ? SVImageWSBasin : 0;
 		lControlFlag |= m_bUseWatershed ? SVImageWSWatershed : 0;
@@ -63,29 +84,10 @@ namespace Seidenader
 		lControlFlag |= m_iMinFillBasin ? SVImageWSMaximaFill  : 0;
 		lControlFlag |= m_iRegularWatershedLines ? SVImageWSStraight : 0;
 
-		lMinVariation = m_iVariationType < 2 ? m_iVariationType : m_lMinVariation;
-
-		l_hrOk = m_rFilterClass.addControlFlagRequest( lControlFlag );
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_rFilterClass.addMinVariationRequest( m_lMinVariation );
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_rFilterClass.addMarkerUsedRequest( TRUE == m_bUseMarker );
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_rFilterClass.AddInputRequestMarker();
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = m_rFilterClass.RunOnce( m_rFilterClass.GetToolInterface() );
-		}
+		m_Values.Set<long>(ControlFlagTag, lControlFlag);
+		m_Values.Set<long>(MinVariationTag, m_lMinVariation);
+		m_Values.Set<bool>(UseMarkerTag, TRUE == m_bUseMarker);
+		m_Values.Commit(true);
 
 		UpdateData( FALSE );
 
@@ -125,38 +127,41 @@ namespace Seidenader
 	BOOL SVWatershedFilterDlg::OnInitDialog()
 	{
 		CDialog::OnInitDialog();
-
-		long lControlFlag;
-		long lMinVariation;
-
-		lMinVariation = m_rFilterClass.getMinVariation();
-		lControlFlag = m_rFilterClass.getControlFlag();
+		Init(); //ImageController
+		m_Values.Init();
+		long lControlFlag =  m_Values.Get<long>(ControlFlagTag);
+		long lMinVariation =  m_Values.Get<long>(MinVariationTag);;
 
 		// Check Boxes
 		m_bSkipLastLevel = (lControlFlag & SVImageSkipLastLevel) == SVImageSkipLastLevel;
 		m_bUseBasin = (lControlFlag & SVImageWSBasin) == SVImageWSBasin;
 		m_bUseWatershed = (lControlFlag & SVImageWSWatershed) == SVImageWSWatershed;
-		m_bUseMarker = m_rFilterClass.isMarkerUsed();
+		m_bUseMarker = m_Values.Get<bool>(UseMarkerTag);
 
 		// Radios
 		m_iEightWatershedLines = (lControlFlag & SVImage8Connected)  == SVImage8Connected ;
 		m_iMinFillBasin = (lControlFlag & SVImageWSMaximaFill  )  == SVImageWSMaximaFill   ;
 		m_iRegularWatershedLines = (lControlFlag & SVImageWSStraight  )  == SVImageWSStraight;
 
-		m_iVariationType = lMinVariation < 2 ? lMinVariation : 2 ;
+		m_iVariationType = lMinVariation < OffVarRadioEnum_Varation ? lMinVariation : OffVarRadioEnum_Varation ;
 
 		// Edit Box
 		m_lMinVariation = lMinVariation;
 
-		GetDlgItem( IDC_VARIATION_EDIT )->EnableWindow( m_iVariationType == 2 );
+		GetDlgItem( IDC_VARIATION_EDIT )->EnableWindow( OffVarRadioEnum_Varation == m_iVariationType );
 
-		std::vector<SVString> availableImages = m_rFilterClass.getAvailableMarkerImageNames();
-		for (int i=0; i<static_cast<int>(availableImages.size()); ++i)
+		const SvUl::NameGuidList& availImages = GetAvailableImageList();
+		for (SvUl::NameGuidList::const_iterator it = availImages.begin(); availImages.end() != it; ++it)
 		{
-			m_SVSourceImageCombo.AddString(availableImages[i].c_str());
+			m_SVSourceImageCombo.AddString(it->first.c_str());
 		}
-
-		SVString currentMarkerImageName = m_rFilterClass.getMarkerImage();
+		
+		const SvUl::InputNameGuidPairList& connectedImageList = GetConnectedImageList(m_filterID);
+		SVString currentMarkerImageName; 
+		if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvOi::WatershedMarkerImageConnectionName)
+		{
+			currentMarkerImageName = connectedImageList.begin()->second.first;
+		}
 		m_SVSourceImageCombo.SelectString(-1, currentMarkerImageName.c_str());
 
 		UpdateData( FALSE ); // set data to dialog
@@ -183,8 +188,8 @@ namespace Seidenader
 	void SVWatershedFilterDlg::OnSETVarRadio() 
 	{
 		UpdateData();
-		GetDlgItem( IDC_VARIATION_EDIT )->EnableWindow( m_iVariationType == 2 );
-		if( m_iVariationType < 2 )
+		GetDlgItem( IDC_VARIATION_EDIT )->EnableWindow( OffVarRadioEnum_Varation == m_iVariationType );
+		if( OffVarRadioEnum_Varation > m_iVariationType )
 		{
 			m_lMinVariation = m_iVariationType;
 			UpdateData(FALSE);
@@ -202,7 +207,7 @@ namespace Seidenader
 
 		if( !currentImageName.IsEmpty() )
 		{
-			m_rFilterClass.setMarkerImage(currentImageName);
+			ConnectToImage(SvOi::WatershedMarkerImageConnectionName, currentImageName, m_filterID);
 		}
 	}
 	}  //end namespace SVOGUI

@@ -18,6 +18,8 @@ namespace Seidenader { namespace SVOGui
 	const TCHAR* const RegExp_Name = _T( "[a-zA-Z][0-9a-zA-Z_ ]*" );
 	const TCHAR* const RangeValue_EmptyString = _T( "Empty String in %s." );
 	const TCHAR* const RangeValue_WrongRange = _T( "%s must between %d and %d." );
+	const TCHAR* const Filter_NoFilterAvailable = _T( "(No Filter Available)" );
+	const TCHAR* const Filter_NoFilter = _T( "(No Filter)" );
 } /* namespace SVOGui */ } /* namespace Seidenader */
 
 namespace SvOg = Seidenader::SVOGui;

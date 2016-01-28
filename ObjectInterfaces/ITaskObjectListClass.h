@@ -8,7 +8,6 @@
 #pragma once
 #pragma region Includes
 #include "ITaskObject.h"
-#include "IClassInfoStructList.h"
 #include "ISVImage.h"
 #pragma endregion Includes
 
@@ -23,13 +22,6 @@ namespace Seidenader
 		{
 		public:
 			virtual ~ITaskObjectListClass() {}
-
-			/**********
-			 The method gets a list of available objects.
-			 \param list <out>: list of available objects
-			 \param objectTypes <in>: defined the types of object returning this method.
-			***********/
-			virtual bool getAvailableObjects(IClassInfoStructList& list, const SVObjectTypeInfoStruct objectType) const = 0;
 
 			/**********
 			 The method gets the size of tasks.

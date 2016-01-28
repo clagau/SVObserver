@@ -8,12 +8,11 @@
 // * .Current Version : $Revision:   1.1  $
 // * .Check In Date   : $Date:   13 Aug 2013 10:37:30  $
 // ******************************************************************************
+#pragma once
 
-#ifndef SVTHICKENINGFILTERS_H
-#define SVTHICKENINGFILTERS_H
-
-#include "ObjectInterfaces\IThickeningFilter.h"
+#pragma region Includes
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVThickeningFilterClass
@@ -26,8 +25,7 @@
 // .History
 //	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
-class SVThickeningFilterClass : virtual public SvOi::IThickeningFilter
-	,public SVFilterClass
+class SVThickeningFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVThickeningFilterClass );
 
@@ -44,14 +42,6 @@ public:
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
-
-#pragma region virtual method (IThickenningFilter)
-public:
-	virtual HRESULT addGrayOnRequest(bool value) override;
-	virtual bool isGrayOn() const override;
-	virtual HRESULT addIterationRequest(long value) override;
-	virtual long getIteration() const override;
-#pragma endregion virtual method (IThickenningFilter)
 
 private:
 	void init();
@@ -87,8 +77,6 @@ protected:
 //******************************************************************************
 protected:
 };
-
-#endif // SVTHICKENINGFILTERS_H
 
 // ******************************************************************************
 // * LOG HISTORY:

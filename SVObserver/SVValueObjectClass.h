@@ -78,8 +78,8 @@ public:
 	HRESULT SetResultSize(int iBucket, int  riResultSize);
 	
 	#pragma region IValueObject
-	virtual HRESULT SetValue( const _variant_t& rValue ) override { return SetValue(m_iLastSetIndex, 0, SVString(rValue).ToString()); }
-	virtual HRESULT GetValue( _variant_t& rValue ) const override { return GetValue(*(rValue.GetAddress())); }
+	virtual HRESULT SetValue( const _variant_t& rValue ) override;
+	virtual HRESULT GetValue( _variant_t& rValue ) const override;
 	#pragma endregion IValueObject
 	
 	// NVI pattern : public interface

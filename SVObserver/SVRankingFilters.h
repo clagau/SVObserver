@@ -8,13 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   13 Aug 2013 09:58:58  $
 //******************************************************************************
+#pragma once
 
-#ifndef SVRANKINGFILTERS_H
-#define SVRANKINGFILTERS_H
-
+#pragma region Includes
 #include "SVFilterClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "ObjectInterfaces/IRankingFilter.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVRankingFilterClass
@@ -27,8 +26,7 @@
 // .History
 //	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
-class SVRankingFilterClass : virtual public SvOi::IRankingFilter
-	, public SVFilterClass
+class SVRankingFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVRankingFilterClass );
 
@@ -49,18 +47,6 @@ public:
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
-
-#pragma region virtual method (ICustomFilter)
-public:
-	virtual HRESULT addWidthRequest(long value) override;
-	virtual long getWidth() const override;
-	virtual HRESULT addHeightRequest(long value) override;
-	virtual long getHeight() const override;
-	virtual HRESULT addRankValueRequest(long value) override;
-	virtual long getRankValue() const override;
-	virtual HRESULT addCellValueRequest(int cellIndex, long value) override;
-	virtual long getCellValue(int cellIndex) const override;
-#pragma endregion virtual method (ICustomFilter)
 
 private:
 	void init();
@@ -150,8 +136,6 @@ protected:
 //******************************************************************************
 protected:
 };
-
-#endif // SVRANKINGFILTERS_H
 
 //******************************************************************************
 //* LOG HISTORY:

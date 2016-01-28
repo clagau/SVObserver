@@ -21,12 +21,14 @@
   <ItemGroup>
     <ClInclude Include="AreAuxiliaryExtentsAvailable.h" />
     <ClInclude Include="ConnectToObject.h" />
+    <ClInclude Include="DestroyChildObject.h" />
     <ClInclude Include="ExportMask.h" />
     <ClInclude Include="GetAttributesAllowed.h" />
     <ClInclude Include="GetAuxSourceImage.h" />
     <ClInclude Include="GetAvailableAuxSourceImages.h" />
     <ClInclude Include="GetAvailableObjects.h" />
     <ClInclude Include="GetCompleteObjectName.h" />
+    <ClInclude Include="GetCreatableObjects.h" />
     <ClInclude Include="GetDependencies.h" />
     <ClInclude Include="GetConnectedObjects.h" />
     <ClInclude Include="GetEquation.h" />
@@ -40,9 +42,11 @@
     <ClInclude Include="GetPPQVariablesNames.h" />
     <ClInclude Include="GetReferenceImage.h" />
     <ClInclude Include="GetResultImage.h" />
+    <ClInclude Include="GetRingbufferIndexValue.h" />
     <ClInclude Include="GetTaskObjectInstanceID.h" />
     <ClInclude Include="GetOutputList.h" />
     <ClInclude Include="ImportMask.h" />
+    <ClInclude Include="ConstructAndInsertTaskObject.h" />
     <ClInclude Include="InspectionRunOnce.h" />
     <ClInclude Include="IsValid.h" />
     <ClInclude Include="ResetObject.h" />
@@ -51,6 +55,8 @@
     <ClInclude Include="SetDefaultInputs.h" />
     <ClInclude Include="SetEquation.h" />
     <ClInclude Include="SetMaskData.h" />
+    <ClInclude Include="SetRingbufferIndexValue.h" />
+    <ClInclude Include="ShouldInspectionReset.h" />
     <ClInclude Include="TaskObjectGetEmbeddedValues.h" />
     <ClInclude Include="TaskObjectSetEmbeddedValues.h" />
     <ClInclude Include="ValidateEquation.h" />

@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:53:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVClassInfoStruct.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -141,35 +143,6 @@ int SVClassInfoStructListClass::Find( const GUID& ClassID )
 	return -1;
 };
 
-
-long SVClassInfoStructListClass::Size() const
-{
-	return GetSize();
-}
-
-CString SVClassInfoStructListClass::GetClassName(int index) const
-{
-	return GetAt(index).ClassName;
-}
-
-GUID SVClassInfoStructListClass::GetClassID(int index) const
-{
-	return GetAt(index).ClassId;
-}
-
-SvOi::IClassInfoStructList* SvOi::createSVClassInfoStructList()
-{
-	return new SVClassInfoStructListClass();
-}
-
-void SvOi::deleteSVClassInfoStructList( SvOi::IClassInfoStructList* pObject )
-{
-	SVClassInfoStructListClass *pOb = dynamic_cast<SVClassInfoStructListClass*>(pObject);
-	if (nullptr != pOb)
-	{
-		delete pOb;
-	}
-}
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

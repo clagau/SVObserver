@@ -524,6 +524,7 @@ HRESULT SVValueObjectClassImpl<T>::GetArrayValuesAsVariant( int iBucket, VARIANT
 		}
 		else
 		{
+			hrOk = S_OK;
 			for( int i = 0; i < static_cast< int >( Array( iBucket ).size() ); ++i )
 			{
 				_variant_t l_Variant;

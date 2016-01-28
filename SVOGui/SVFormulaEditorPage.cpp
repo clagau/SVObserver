@@ -12,9 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include <boost/assign/list_of.hpp>
-#include "ObjectInterfaces/IInspectionProcess.h"
-#include "ObjectInterfaces/IRootObject.h"
-#include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
@@ -45,10 +42,6 @@ namespace Seidenader { namespace SVOGui
 
 		SV_EQUATION_BUFFER_SIZE = 4096, //This enumeration defines the Equation Buffer Size.
 	};
-
-	static const std::string EquationTag("Equation");
-	static const std::string EnabledTag("Enabled");
-	static const std::string ToolEnabledTag("Tool.Enabled");
 
 	BEGIN_MESSAGE_MAP(SVFormulaEditorPageClass, CPropertyPage)
 		//{{AFX_MSG_MAP(SVFormulaEditorPageClass)

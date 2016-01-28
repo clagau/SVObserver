@@ -12,7 +12,7 @@
 #include <boost/noncopyable.hpp>
 #include <string>
 #include <comdef.h>
-#include "ObjectInterfaces\IMask.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader

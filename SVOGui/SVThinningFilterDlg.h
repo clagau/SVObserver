@@ -8,15 +8,11 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   24 Apr 2013 12:25:20  $
 // ******************************************************************************
-
-#if !defined(AFX_SVTHINNINGFILTERDLG_H__INCLUDED_)
-#define AFX_SVTHINNINGFILTERDLG_H__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
-#include "ObjectInterfaces\IThinningFilter.h"
+#pragma region Includes
+#include "ValuesAccessor.h"
+#include "GuiController.h"
+#pragma region Includes
 
 namespace Seidenader
 {
@@ -28,7 +24,8 @@ namespace Seidenader
 		{
 			// Construction
 		public:
-			SVThinningFilterDlg(SvOi::IThinningFilter& rFilterClass, CWnd* pParent = nullptr);   // standard constructor
+			SVThinningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+			virtual ~SVThinningFilterDlg();
 
 			virtual HRESULT SetInspectionData();
 
@@ -58,17 +55,16 @@ namespace Seidenader
 			DECLARE_MESSAGE_MAP()
 
 		private:
-			SvOi::IThinningFilter& m_pFilterClass;
+			const SVGUID& m_rInspectionID;
+			const SVGUID& m_filterID;
+			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+			Controller m_Values;
 		};
 	}  //end namespace SVOGUI
 }  //end namespace Seidenader
 
 namespace SvOg = Seidenader::SVOGui;
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVTHINNINGFILTERDLG_H__INCLUDED_)
 
 // ******************************************************************************
 // * LOG HISTORY:

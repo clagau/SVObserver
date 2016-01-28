@@ -298,7 +298,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVRingBufferToolObjectType:
 			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
-			AddPage( new SvOg::TADialogRingBufferParameterPage( dynamic_cast<SvOi::IRingBufferTool&>(*GetTool()), boost::bind(SvOg::GlobalAndToolSetSelector, _1, _2) ) );
+			AddPage( new SvOg::TADialogRingBufferParameterPage( m_InspectionID, m_TaskObjectID, boost::bind(SvOg::GlobalAndToolSetSelector, _1, _2) ) );
 			AddPage( pConditionalDlg );
 			break;
 

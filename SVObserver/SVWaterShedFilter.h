@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\IWatershedFilter.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVFilterClass.h"
 #pragma endregion Includes
@@ -28,8 +27,7 @@
 // .History
 //	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
-class SVWatershedFilterClass : virtual public SvOi::IWatershedFilter
-	,public SVFilterClass
+class SVWatershedFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVWatershedFilterClass );
 
@@ -46,21 +44,6 @@ public:
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
-
-#pragma region virtual method (IWatershedFilter)
-public:
-			virtual HRESULT addControlFlagRequest(long value) override;
-			virtual long getControlFlag() const override;
-			virtual HRESULT addMinVariationRequest(long value) override;
-			virtual long getMinVariation() const override;
-			virtual HRESULT addMarkerUsedRequest(bool value) override;
-			virtual bool isMarkerUsed() const override;
-
-			virtual SVString getMarkerImage() const override;
-			virtual HRESULT setMarkerImage(const SVString& imageName) override;
-
-			virtual std::vector<SVString> getAvailableMarkerImageNames() override;
-#pragma region virtual method (IWatershedFilter)
 
 private:
 	void init();

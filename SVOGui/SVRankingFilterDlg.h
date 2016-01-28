@@ -8,15 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:39:24  $
 //******************************************************************************
-
-#if !defined(AFX_SVRANKINGFILTERDLG_H__INCLUDED_)
-#define AFX_SVRANKINGFILTERDLG_H__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
-#include "ObjectInterfaces\IRankingFilter.h"
+#pragma region Includes
+#include "ValuesAccessor.h"
+#include "GuiController.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -28,7 +24,8 @@ namespace Seidenader
 		{
 			// Construction
 		public:
-			SVRankingFilterDlg(SvOi::IRankingFilter& rFilterClass, CWnd* pParent = nullptr);   // standard constructor
+			SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+			virtual ~SVRankingFilterDlg();
 
 			virtual HRESULT SetInspectionData();
 			void EnableCells();
@@ -65,17 +62,16 @@ namespace Seidenader
 
 		private:
 			long m_lRankingCells[49];
-			SvOi::IRankingFilter& m_pRankFilterClass;
+			const SVGUID& m_rInspectionID;
+			const SVGUID& m_filterID;
+			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+			Controller m_Values;
 		};
 	}  //end namespace SVOGUI
 }  //end namespace Seidenader
 
 namespace SvOg = Seidenader::SVOGui;
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVRANKINGFILTERDLG_H__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

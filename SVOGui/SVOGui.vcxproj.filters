@@ -35,12 +35,6 @@
     <ClCompile Include="SVToolAdjustmentDialogFilterPageClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAvailableFilterListComboBoxClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFilterListBoxClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVWaterShedFilterDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -116,6 +110,9 @@
     <ClCompile Include="SVShowDependentsDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectsListBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -140,12 +137,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolAdjustmentDialogFilterPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAvailableFilterListComboBoxClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFilterListBoxClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWaterShedFilterDlg.h">
@@ -263,6 +254,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVShowDependentsDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectsListBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiValueHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

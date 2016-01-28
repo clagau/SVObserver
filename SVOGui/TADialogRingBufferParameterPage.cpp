@@ -8,18 +8,24 @@
 //* .Current Version : $Revision:   1.4  $
 //* .Check In Date   : $Date:   24 Oct 2014 11:45:54  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
+#include <boost/assign/list_of.hpp>
 #include "TADialogRingBufferParameterPage.h"
 
 #include "ObjectInterfaces/ObjectDefines.h"
-#include "ObjectInterfaces/IInspectionProcess.h"
-#include "ObjectInterfaces/IToolSet.h"
-#include "ObjectInterfaces/IRootObject.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "SVMessage/SVMessage.h"
 #include "TextDefinesSvOg.h"
+#include "GuiCommands/GetObjectName.h"
+#include "GuiCommands/GetPPQObjectName.h"
+#include "GuiCommands/GetTaskObjectInstanceID.h"
+#include "GuiCommands/SetRingbufferIndexValue.h"
+#include "GuiCommands/GetRingbufferIndexValue.h"
+#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVObjectLibrary/SVClsids.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +39,8 @@ namespace Seidenader
 {
 	namespace SVOGui
 	{
+		static const std::string RingDepthTag("RingDepth");
+
 		BEGIN_MESSAGE_MAP(TADialogRingBufferParameterPage, CPropertyPage)
 			//{{AFX_MSG_MAP(TADialogRingBufferParameterPage)
 			//ON_BN_CLICKED(IDC_BUTTON_RING_DEPTH, OnButtonBufferDepth)
@@ -42,10 +50,12 @@ namespace Seidenader
 		END_MESSAGE_MAP()
 
 #pragma region Constructor
-		TADialogRingBufferParameterPage::TADialogRingBufferParameterPage( SvOi::IRingBufferTool& rTool, RingBufferSelectorFunc func) 
+		TADialogRingBufferParameterPage::TADialogRingBufferParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID, RingBufferSelectorFunc func) 
 			: CPropertyPage(TADialogRingBufferParameterPage::IDD)
-			,m_rTool(rTool)
+			, m_InspectionID(rInspectionID)
+			, m_TaskObjectID(rTaskObjectID)
 			, m_selectorFunc(func)
+			, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(RingDepthTag, RingBuffer_DepthGuid)))
 		{
 		}
 
@@ -80,23 +90,43 @@ namespace Seidenader
 		{
 			CPropertyPage::OnInitDialog();
 
+			m_Values.Init();
+
 			// Put the Down Arrow on the Button
 			m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
 
-			//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
-			m_ButtonRingDepth.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-			m_ButtonImageIndex1.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-			m_ButtonImageIndex2.SetBitmap( ( HBITMAP )m_downArrowBitmap );
+			m_ButtonRingDepth.SetBitmap( static_cast<HBITMAP>(m_downArrowBitmap) );
+			m_ButtonImageIndex1.SetBitmap( static_cast<HBITMAP>(m_downArrowBitmap) );
+			m_ButtonImageIndex2.SetBitmap( static_cast<HBITMAP>(m_downArrowBitmap) );
 
+			typedef GuiCmd::GetRingbufferIndexValue Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			CommandPtr commandPtr(new Command(m_TaskObjectID, 0));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hResult = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			SVString indexString1("");
+			SVString indexString2("");
+			if(S_OK == hResult)
+			{
+				indexString1 = commandPtr->getValue();
+			}
+			CommandPtr command2Ptr(new Command(m_TaskObjectID, 1));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd2(m_InspectionID, command2Ptr);
+			hResult = cmd2.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if(S_OK == hResult)
+			{
+				indexString2 = command2Ptr->getValue();
+			}
 			//set edit controls
-			m_EditRingDepth.SetWindowText(m_rTool.getRingBufferDepthString().c_str());
-			m_EditImageIndex[0].SetWindowText(m_rTool.getImageIndex(0).c_str());
-			m_EditImageIndex[1].SetWindowText(m_rTool.getImageIndex(1).c_str());
+			CString depthString;
+			depthString.Format("%d", m_Values.Get<long>(RingDepthTag));
+			m_EditRingDepth.SetWindowText(depthString);
+			m_EditImageIndex[0].SetWindowText(indexString1.c_str());
+			m_EditImageIndex[1].SetWindowText(indexString2.c_str());
 
 			//[MZA]: this button is not used yet, but it will needed for the next version which can set the depth per global variables.
 			m_ButtonRingDepth.ShowWindow( HIDE_WINDOW );
-
-			SetInspectionData();
 
 			return TRUE;  // return TRUE unless you set the focus to a control
 			// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
@@ -154,21 +184,8 @@ namespace Seidenader
 		bool TADialogRingBufferParameterPage::ShowObjectSelector(CString& name, const CString& Title)
 		{
 			bool result = false;
-			SVString InspectionName = "";
-			SVString PPQName = "";
-			SvOi::IInspectionProcess* inspection = dynamic_cast<IInspectionProcess*>(m_rTool.GetAncestorInterface(SVInspectionObjectType));
-			SvOi::IToolSet* pToolSet = dynamic_cast<IToolSet*>(m_rTool.GetAncestorInterface(SVToolSetObjectType));
-			if (nullptr == pToolSet || nullptr == inspection)
-			{
-				return false;
-			}
-			
-			InspectionName = inspection->GetName();
-			IObjectClass *ppq = inspection->GetPPQInterface();
-			if (nullptr != ppq)
-			{
-				PPQName = ppq->GetName();
-			}
+			SVString InspectionName = GetInspectionName();
+			SVString PPQName = GetPPQName();
 
 			SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
@@ -176,9 +193,10 @@ namespace Seidenader
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
 
-			m_selectorFunc(inspection->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
+			GUID toolsetGUID = GetToolSetGUID();
+			m_selectorFunc(m_InspectionID, toolsetGUID);
 
-			if(name.GetLength() > 0)
+			if(0 < name.GetLength())
 			{
 				SVStringSet nameSet;
 				nameSet.insert(name);
@@ -203,6 +221,57 @@ namespace Seidenader
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
+		GUID TADialogRingBufferParameterPage::GetToolSetGUID() const
+		{
+			GUID toolsetGUID = GUID_NULL;
+
+			typedef GuiCmd::GetTaskObjectInstanceID Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			SVObjectTypeInfoStruct info(SVToolSetObjectType);
+			CommandPtr commandPtr = CommandPtr(new Command(m_InspectionID, info));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				toolsetGUID = commandPtr->GetInstanceID();
+			}
+
+			return toolsetGUID;
+		}
+
+		SVString TADialogRingBufferParameterPage::GetInspectionName() const
+		{
+			SVString inspectionName;
+			typedef GuiCmd::GetObjectName Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			CommandPtr commandPtr(new Command(m_InspectionID));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				inspectionName = commandPtr->GetName();
+			}
+			return inspectionName;
+		}
+
+		SVString TADialogRingBufferParameterPage::GetPPQName() const
+		{
+			SVString PPQName;
+			typedef GuiCmd::GetPPQObjectName Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			CommandPtr commandPtr(new Command(m_InspectionID));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				PPQName = commandPtr->GetName();
+			}
+			return PPQName;
+		}
+
 		HRESULT TADialogRingBufferParameterPage::SetPageData()
 		{
 			HRESULT hResult = SetRingDepth();
@@ -219,29 +288,22 @@ namespace Seidenader
 			return hResult;
 		}
 
-		HRESULT TADialogRingBufferParameterPage::SetInspectionData()
-		{
-			HRESULT l_hrOk = S_OK;
-
-			UpdateData( TRUE ); // get data from dialog
-
-			if( l_hrOk == S_OK )
-			{
-				l_hrOk = m_rTool.RunOnce( &m_rTool );
-			}
-
-			UpdateData( FALSE );
-
-			return l_hrOk;
-		}
-
 		HRESULT TADialogRingBufferParameterPage::SetRingDepth()
 		{
 			CString csText;
 			m_EditRingDepth.GetWindowText(csText);
-			HRESULT hResult = m_rTool.setRingDepth(csText);
-			if(S_OK != hResult)
+			SVString value = csText;
+			long depth = 0;
+			bool isNumber = value.Convert2Number(depth, true);
+			HRESULT hResult = S_OK;
+			if (isNumber && SvOi::IRingBufferTool::m_minRingBufferDepth <= depth && SvOi::IRingBufferTool::m_maxRingBufferDepth >= depth)
 			{
+				m_Values.Set<long>(RingDepthTag, depth);
+				hResult = m_Values.Commit();
+			}
+			else
+			{
+				hResult = S_FALSE;
 				m_EditRingDepth.SetFocus();
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 				CString strText;
@@ -255,7 +317,12 @@ namespace Seidenader
 		{
 			CString csText;
 			m_EditImageIndex[indexNumber].GetWindowText(csText);
-			HRESULT hResult = m_rTool.setImageIndex(indexNumber, csText);
+			typedef GuiCmd::SetRingbufferIndexValue Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			CommandPtr commandPtr(new Command(m_TaskObjectID, indexNumber, csText));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hResult = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if(S_OK != hResult)
 			{
 				m_EditImageIndex[indexNumber].SetFocus();

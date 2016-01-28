@@ -8,6 +8,7 @@
 
 #pragma region Includes
 #include "Stdafx.h"
+#include <algorithm>
 #include "AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
@@ -30,6 +31,8 @@ namespace Seidenader { namespace SVOGui
 	{
 		// Clear list...
 		ResetContent();
+
+		m_List = rList;
 	
 		// Generate new list...
 		for (SvUl::NameGuidList::const_iterator it = rList.begin(); it != rList.end();++it)
@@ -48,7 +51,34 @@ namespace Seidenader { namespace SVOGui
 		}
 		else
 		{
-			SelectString(0, rSelectedItem.c_str());
+			int nIndex = SelectString(0, rSelectedItem.c_str());
+			if (LB_ERR == nIndex)
+			{//if string not found, take first item
+				SetCurSel(0);
+			}
 		}
+	}
+
+	SVGUID AvailableObjectListComboBox::getSelectedGUID() const
+	{
+		SVGUID retValue = SVInvalidGUID;
+		int index = GetCurSel();
+		
+		if (CB_ERR != index)
+		{
+			CString name;
+			GetLBText(index, name);
+			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool 
+			{ 
+				return (!rVal.first.empty() && 0 == rVal.first.Compare(name)); 
+			} );
+
+			if (m_List.cend() != iter)
+			{
+				retValue = iter->second;
+			}
+		}
+
+		return retValue;
 	}
 } /* namespace SVOGui */ } /* namespace Seidenader */
