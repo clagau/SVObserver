@@ -745,13 +745,21 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 {
+	auto pCurrentImage = GetImage();
+
+	if (nullptr == pCurrentImage)
+	{
+		SvStl::MessageMgrDisplayAndNotify NullImageWarning( SvStl::LogAndDisplay );
+		NullImageWarning.setMessage(SVMSG_SVO_5018_NULLIMAGE, SvO::DisplayedImageIsUnavailable, StdMessageParams, SvOi::Err_30000_NullImageOnSave);
+		return;
+	}
+
 	SVFileNameClass	Filename(SvO::ContextMenuImageSaveLocation);
 
 	Filename.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 
 	BOOL bResult = Filename.SaveFile(); // Show Save File Dialog
 	CString Filepath = Filename.GetFullFileName();
-
 
 	if(ViewOnly)
 	{
@@ -764,17 +772,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 	}
 	else // showOverlays is ignored for underlying images: there was no easy way to mark underlying images with overlays
 	{
-		auto pCurrentImage =  GetImage();
-
-		if(pCurrentImage)
-		{
-			pCurrentImage->Save(Filepath);
-		}
-		else
-		{
-			SvStl::MessageMgrDisplayAndNotify NullImageWarning( SvStl::LogAndDisplay );
-			NullImageWarning.setMessage(SVMSG_SVO_5018_NULLIMAGE, SvO::DisplayedImageIsUnavailable, StdMessageParams, SvOi::Err_30000_NullImageOnSave);
-		}
+		pCurrentImage->Save(Filepath);
 	}
 
 }
@@ -814,6 +812,15 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 			{
 				l_pPopup->DeleteMenu( 0, MF_BYPOSITION );  // delete Zoom
 			}
+
+		
+			if (nullptr == GetImage())
+			{
+				l_pPopup->DeleteMenu( ID_SAVEVIEW_WITHOVERLAYS, MF_BYCOMMAND );
+				l_pPopup->DeleteMenu( ID_SAVEVIEW_WITHOUTOVERLAYS, MF_BYCOMMAND );
+				l_pPopup->DeleteMenu( ID_SAVEIMAGE_WITHOUTOVERLAYS, MF_BYCOMMAND );
+			}
+
 
 			if( !m_mouseIsOverTool || RunOrTestMode )
 			{
