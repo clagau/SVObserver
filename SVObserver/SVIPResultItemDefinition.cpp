@@ -13,17 +13,17 @@
 #include "SVIPResultItemDefinition.h"
 
 SVIPResultItemDefinition::SVIPResultItemDefinition()
-: m_ObjectID(), m_IndexPresent( false ), m_Index()
+: m_ObjectID(), m_IndexPresent( false ), m_Index(0)
 {
 }
 
 SVIPResultItemDefinition::SVIPResultItemDefinition( const SVGUID& p_rObjectID )
-: m_ObjectID( p_rObjectID ), m_IndexPresent( false ), m_Index()
+: m_ObjectID( p_rObjectID ), m_IndexPresent( false ), m_Index(0)
 {
 }
 
-SVIPResultItemDefinition::SVIPResultItemDefinition( const SVGUID& p_rObjectID, const SVString& p_rIndex )
-: m_ObjectID( p_rObjectID ), m_IndexPresent( true ), m_Index( p_rIndex )
+SVIPResultItemDefinition::SVIPResultItemDefinition( const SVGUID& p_rObjectID, int index )
+: m_ObjectID( p_rObjectID ), m_IndexPresent( true ), m_Index( index )
 {
 }
 
@@ -44,10 +44,8 @@ bool SVIPResultItemDefinition::operator<( const SVIPResultItemDefinition& p_rObj
 			{
 				if( m_IndexPresent )
 				{
-					long l_Left = ::atol( m_Index.c_str() );
-					long l_Right = ::atol( p_rObject.m_Index.c_str() );
 
-					l_Status = ( l_Left < l_Right );
+					l_Status = ( m_Index < p_rObject.m_Index );
 				}
 			}
 			else
@@ -81,7 +79,7 @@ bool SVIPResultItemDefinition::GetIndexPresent() const
 	return m_IndexPresent;
 }
 
-const SVString& SVIPResultItemDefinition::GetIndex() const
+ int SVIPResultItemDefinition::GetIndex() const
 {
 	return m_Index;
 }

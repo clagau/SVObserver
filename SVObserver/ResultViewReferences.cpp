@@ -88,16 +88,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 		bOK = (SVObjectManagerClass::Instance().GetObjectByDottedName( dottedName, objRef ) == S_OK);
 		if ( bOK && objRef.Object() )
 		{
-			if( objRef.IsIndexPresent() )
-			{
-				/*The index in the config file is one-based.  Decrement the index to become zero-based.*/
-				long index = objRef.ArrayIndex(true);
-				if(index > 0)
-				{
-					objRef.SetArrayIndex(--index);
-				}
-
-			}
+		
 			if (IsViewable(objRef))
 			{
 				ResultViewItemDef itemDef(objRef);
@@ -116,15 +107,6 @@ bool ResultViewReferences::Insert( const SVString &dottedName )
 
 	if ( bOK && objRef.Object() )
 	{
-		if( objRef.IsIndexPresent() )
-		{
-			/*The index in the config file is one-based.  Decrement the index to become zero-based.*/
-			long index = objRef.ArrayIndex(true);
-			if(index > 0)
-			{
-				objRef.SetArrayIndex(--index);
-			}
-		}
 
 		ResultViewItemDef itemDef(objRef);
 		m_ResultViewItemDefList.push_back(itemDef);
@@ -224,16 +206,7 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 
 		if( it->IsIndexPresent() )
 		{
-			if( it->IsEntireArray() )
-			{
-				itemDef = SVIPResultItemDefinition( it->Guid(), SVString() );
-			}
-			else
-			{
-				///TODO_MEC_SVO_475_CHECK this optimization
-				//l_Def = SVIPResultItemDefinition( ref.Guid(), _variant_t( ref.ArrayIndex(true) ) );
-				itemDef = SVIPResultItemDefinition( it->Guid(), it->GetIndex() );
-			}
+			itemDef = SVIPResultItemDefinition( it->Guid(), it->ArrayIndex() );
 		}
 		else
 		{
@@ -312,14 +285,7 @@ HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rD
 
 			if( ref.IsIndexPresent() )
 			{
-				if( ref.IsEntireArray() )
-				{
-					Def = SVIPResultItemDefinition( ref.Guid(), SVString() );
-				}
-				else
-				{
-					Def = SVIPResultItemDefinition( ref.Guid(), ref.GetIndex() );
-				}
+				Def = SVIPResultItemDefinition( ref.Guid(), ref.ArrayIndex() );
 			}
 			else
 			{

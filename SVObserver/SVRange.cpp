@@ -284,7 +284,7 @@ void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
 
 		if(m_ValueObjectReferences[range].IsIndexPresent())
 		{
-			int index = m_ValueObjectReferences[range].ArrayIndex(false);
+			int index = m_ValueObjectReferences[range].ArrayIndex();
 			int LastSet =  pValueObject->GetLastSetIndex();
 			pValueObject->GetValue(LastSet,index,dres);
 

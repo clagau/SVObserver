@@ -27,6 +27,8 @@ inline void SVObjectReference::init()
 	m_pObject = NULL;
 	m_Guid = SVInvalidGUID;
 	m_NameInfo.clear();
+	m_ArrayIndex = -1;
+	m_IsArray = false; 
 }
 
 inline SVObjectReference::SVObjectReference( const SVObjectReference& rhs )
@@ -36,7 +38,8 @@ inline SVObjectReference::SVObjectReference( const SVObjectReference& rhs )
 
 inline bool SVObjectReference::operator == ( const SVObjectReference& rhs ) const
 {
-	return (m_pObject == rhs.m_pObject) && (m_NameInfo.m_Index == rhs.m_NameInfo.m_Index) && (m_NameInfo.m_IndexPresent == rhs.m_NameInfo.m_IndexPresent);
+	bool res = (m_pObject == rhs.m_pObject) && (m_ArrayIndex == m_ArrayIndex) && (m_IsArray == rhs.m_IsArray);
+	return res;
 }
 
 inline SVObjectClass* SVObjectReference::operator -> ()
@@ -56,27 +59,29 @@ inline SVObjectClass* SVObjectReference::Object() const
 
 inline bool SVObjectReference::IsIndexPresent() const
 {
-	return m_NameInfo.m_IndexPresent;
+	return m_IsArray;
 }
 
-inline long SVObjectReference::ArrayIndex(bool p_bZeroBased ) const
+inline long SVObjectReference::ArrayIndex() const
 {
-	long l_Index = -1;
-	if( m_NameInfo.m_IndexPresent && !( m_NameInfo.m_Index.empty() ) )
+	long Index = -1;
+	if(m_IsArray && m_ArrayIndex > -1)
 	{
-		l_Index = ::atol( m_NameInfo.m_Index.c_str()) - (p_bZeroBased ? 0 : 1) ;
+		Index = m_ArrayIndex ;
 	}
-	return l_Index;
+	
+	return Index;
 }
 
 inline CString SVObjectReference::DefaultValue() const
 {
-	return m_NameInfo.m_DefaultValue.c_str();
+	return m_NameInfo.GetDefaultValue().c_str();
 }
 
 inline bool SVObjectReference::IsEntireArray() const
 {
-	return m_NameInfo.m_IndexPresent && m_NameInfo.m_Index.empty();
+	return m_IsArray && m_ArrayIndex == -1;
+	
 }
 
 inline GUID SVObjectReference::Guid() const
@@ -86,7 +91,7 @@ inline GUID SVObjectReference::Guid() const
 
 inline bool SVObjectReference::operator < ( const SVObjectReference& rhs ) const
 {
-	return (m_pObject < rhs.m_pObject) || ((m_pObject == rhs.m_pObject) && (::atol( m_NameInfo.m_Index.c_str() ) < ::atol( rhs.m_NameInfo.m_Index.c_str() ) ) );
+	return (m_pObject < rhs.m_pObject) || ((m_pObject == rhs.m_pObject) && (m_ArrayIndex < rhs.m_ArrayIndex));
 }
 
 inline const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference& rhs )
@@ -94,6 +99,8 @@ inline const SVObjectReference& SVObjectReference::operator = ( const SVObjectRe
 	m_pObject = rhs.m_pObject;
 	m_Guid = rhs.m_Guid != SVInvalidGUID ? rhs.m_Guid : (m_pObject ? GetObjectGuid( m_pObject ) : SVInvalidGUID);
 	m_NameInfo = rhs.m_NameInfo;
+	m_IsArray = rhs.m_IsArray;
+	m_ArrayIndex = rhs.m_ArrayIndex;
 	return *this;
 }
 
@@ -144,10 +151,13 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 		{
 			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
 		}
-		m_NameInfo.m_IndexPresent = true;
-		m_NameInfo.m_Index = _variant_t( lArrayIndex );
-		m_NameInfo.m_DefaultValuePresent = true;
-		m_NameInfo.m_DefaultValue = static_cast< LPCTSTR >( strDefaultValue );
+		m_NameInfo.SetIsIndexPresent(true);
+		m_NameInfo.SetIndex(_variant_t( lArrayIndex ));
+		m_NameInfo.SetIsDefaultValuePresent(true);
+		m_NameInfo.SetDefaultValue( static_cast< LPCTSTR >( strDefaultValue ));
+
+		m_IsArray = true;
+		m_ArrayIndex = lArrayIndex;
 	}
 	else
 	{
@@ -167,10 +177,12 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, long l
 		{
 			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
 		}
-		m_NameInfo.m_IndexPresent = true;
+		m_NameInfo.SetIsIndexPresent(true);
 		m_NameInfo.m_Index = _variant_t( lArrayIndex );
 		m_NameInfo.m_DefaultValuePresent = true;
 		m_NameInfo.m_DefaultValue = static_cast< LPCTSTR >( strDefaultValue );
+		m_IsArray = true;
+		m_ArrayIndex = lArrayIndex;
 	}
 	else
 	{
@@ -187,11 +199,15 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 	{
 		m_Guid = m_pObject->GetUniqueObjectID();
 		m_NameInfo = p_rNameInfo;
+		m_IsArray = p_rNameInfo.IsIndexPresent();
+		m_ArrayIndex = p_rNameInfo.GetIndexValue();
 	}
 	else
 	{
 		m_Guid = SVInvalidGUID;
 		m_NameInfo.clear();
+		m_IsArray = false;
+		m_ArrayIndex = -1;
 	}
 }
 
@@ -203,11 +219,15 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, const 
 	{
 		m_Guid = m_pObject->GetUniqueObjectID();
 		m_NameInfo = p_rNameInfo;
+		m_IsArray = p_rNameInfo.IsIndexPresent();
+		m_ArrayIndex = p_rNameInfo.GetIndexValue();
 	}
 	else
 	{
 		m_Guid = SVInvalidGUID;
 		m_NameInfo.clear();
+		m_IsArray = false;
+		m_ArrayIndex = -1;
 	}
 }
 

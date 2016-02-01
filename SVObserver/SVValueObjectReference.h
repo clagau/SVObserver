@@ -28,28 +28,28 @@ public:
 	SVValueObjectReference( const SVObjectReference& rhs ) : base(rhs) {}
 	const SVValueObjectReference& operator = ( const SVObjectReference& rhs ) { base::operator = (rhs); return *this; }
 
+
 	//interface into value object using internal array index
 	template <typename T>
 	__forceinline HRESULT SetValue(int iBucket, T value)
 	{
-//		return Object()->SetValue(iBucket, m_lArrayIndex, value);
-		return (static_cast<SVValueObjectClass*>(m_pObject))->SetValueAtConvert(iBucket, ::atol( m_NameInfo.m_Index.c_str() ), value);
+		return (static_cast<SVValueObjectClass*>(m_pObject))->SetValueAtConvert(iBucket,  GetArrayIndexNotNegative(), value);
 	}
 
-	//ZeroBased Index 
+
 	template <typename T>
 	__forceinline HRESULT GetValue(T& rValue) const
 	{
-//		return Object()->GetValue(Object()->GetLastSetIndex(), m_lArrayIndex, rValue);
-		return (static_cast<SVValueObjectClass*>(m_pObject))->GetValueAt((static_cast<SVValueObjectClass*>(m_pObject))->m_iLastSetIndex, ::atol( m_NameInfo.m_Index.c_str() ), rValue);
+
+		return (static_cast<SVValueObjectClass*>(m_pObject))->GetValueAt((static_cast<SVValueObjectClass*>(m_pObject))->m_iLastSetIndex,GetArrayIndexNotNegative(), rValue);
+
 	}
 
-	//OneBased Index  
+
 	template <typename T>
 	__forceinline HRESULT GetValue(int iBucket, T& rValue) const
 	{
-//		return Object()->GetValue(iBucket, m_lArrayIndex, rValue);
-		return (static_cast<SVValueObjectClass*>(m_pObject))->GetValueAt(iBucket, ArrayIndex() > -1 ? ArrayIndex() : 0, rValue);
+		return (static_cast<SVValueObjectClass*>(m_pObject))->GetValueAt(iBucket, GetArrayIndexNotNegative(), rValue);
 	}
 
 	__forceinline HRESULT GetValues(std::vector< _variant_t >&  rValue) const
@@ -87,6 +87,12 @@ public:
 		typedef typename Cont::const_iterator Iter;
 		return SetArrayValues<Type, Iter>(iBucket, cont.begin(), cont.end());
 	}
+private :
+	int 	GetArrayIndexNotNegative() const 
+	{ 
+		return  ((m_IsArray && (m_ArrayIndex > -1) )?   m_ArrayIndex : 0); 
+	}
+
 };
 
 typedef std::vector<SVValueObjectReference> SVValueObjectReferenceVector;

@@ -190,9 +190,9 @@ bool SVObjectInfoStruct::operator == ( const SVObjectInfoStruct& rhs ) const
 	}
 	*/
 
-	if( m_ObjectNameInfo.m_IndexPresent )
+	if( m_ObjectNameInfo.IsIndexPresent() )
 	{
-		l_Status = m_ObjectNameInfo.m_Index == rhs.m_ObjectNameInfo.m_Index;
+		l_Status = m_ObjectNameInfo.GetIndex() == rhs.m_ObjectNameInfo.GetIndex();
 	}
 
 	return l_Status;
@@ -213,9 +213,9 @@ bool SVObjectInfoStruct::operator == ( const SVObjectReference& rhs ) const
 		}
 		*/
 
-		if( m_ObjectNameInfo.m_IndexPresent )
+		if( m_ObjectNameInfo.IsIndexPresent() )
 		{
-			l_Status = m_ObjectNameInfo.m_Index == rhs.GetObjectNameInfo().m_Index;
+			l_Status = m_ObjectNameInfo.GetIndex() == rhs.GetObjectNameInfo().GetIndex();
 		}
 	}
 	else
@@ -244,7 +244,7 @@ SVObjectReference SVObjectInfoStruct::GetObjectReference() const
 	}
 	*/
 
-	if( m_ObjectNameInfo.m_IndexPresent )
+	if( m_ObjectNameInfo.IsIndexPresent() )
 	{
 		long l_Index = m_ObjectNameInfo.GetIndexValue();
 

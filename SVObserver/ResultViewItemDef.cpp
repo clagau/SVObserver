@@ -18,16 +18,18 @@
 ResultViewItemDef::ResultViewItemDef()
 : m_ObjectID( SV_GUID_NULL )
 , m_hasIndex(false)
+,m_Index(0)
 {
 }
 
 ResultViewItemDef::ResultViewItemDef(const SVGUID& guid)
 : m_ObjectID(guid)
 , m_hasIndex(false)
+,m_Index(0)
 {
 }
 
-ResultViewItemDef::ResultViewItemDef(const SVGUID& guid, const SVString& index)
+ResultViewItemDef::ResultViewItemDef(const SVGUID& guid, int index)
 : m_ObjectID(guid)
 , m_hasIndex(true)
 , m_Index(index)
@@ -38,7 +40,7 @@ ResultViewItemDef::ResultViewItemDef(const SVObjectReference& objRef)
 {
 	m_ObjectID = objRef.Guid();
 	m_hasIndex = objRef.IsIndexPresent();
-	m_Index = objRef.GetIndex();
+	m_Index = objRef.ArrayIndex();
 }
 
 ResultViewItemDef::~ResultViewItemDef()
@@ -47,7 +49,7 @@ ResultViewItemDef::~ResultViewItemDef()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ResultViewItemDef::setIndex(const SVString& index)
+void ResultViewItemDef::setIndex(int  index)
 {
 	m_hasIndex = true;
 	m_Index = index;
@@ -63,7 +65,7 @@ long ResultViewItemDef::getIndexValue() const
 	long ret = 0;
 	if(m_hasIndex)
 	{
-		ret = atol( m_Index.c_str() );
+		ret = m_Index;
 	}
 
 	return ret;

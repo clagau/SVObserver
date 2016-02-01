@@ -21,25 +21,7 @@ static void StripSpaces(std::string& rStr)
 }
 
 
-int  SVObjectNameInfo::IncrementIndex(SVObjectNameInfo& rNameInfo, const SVString& rObjectName, int delta, SVString& rNewObjectName  )
-{
 
-	long Index(-1);
-	rNewObjectName = rObjectName;
-	if(rNameInfo.m_IndexPresent)
-	{
-		Index = ::atol( rNameInfo.m_Index.c_str() ); 
-		SVString From;
-		From.Format("[%i]",Index);
-		Index += delta;
-		SVString To;
-		To.Format("[%i]",Index);
-		rNewObjectName.replace(From.c_str(),To.c_str());
-		rNameInfo.m_Index.Format("%i",Index );
-	}
-
-	return Index;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // indexes are one-based and specified with []
@@ -76,7 +58,7 @@ HRESULT SVObjectNameInfo::ParseObjectName( SVObjectNameInfo& p_rNameInfo, const 
 
 				if( l_NextIndex != SVString::npos )
 				{
-					p_rNameInfo.m_IndexPresent = true;
+					p_rNameInfo.SetIsIndexPresent(true);
 					// ignore whitespace
 					std::string indexStr = p_rObjectName.Mid( l_Index + 1, l_NextIndex - ( l_Index + 1 ) ).c_str();
 					StripSpaces(indexStr);
@@ -163,7 +145,7 @@ SVObjectNameInfo::SVObjectNameInfo( const SVNameDeque& p_rNameArray, const SVStr
 
 SVObjectNameInfo::SVObjectNameInfo( const SVObjectNameInfo& p_rObject )
 :	m_NameArray( p_rObject.m_NameArray ), 
-	m_IndexPresent( p_rObject.m_IndexPresent ), 
+	m_IndexPresent( p_rObject.IsIndexPresent() ), 
 	m_Index( p_rObject.m_Index ), 
 	m_DefaultValuePresent( p_rObject.m_DefaultValuePresent ), 
 	m_DefaultValue( p_rObject.m_DefaultValue )

@@ -48,9 +48,24 @@ public:
 	const SVObjectClass* operator -> () const;
 
 	SVObjectClass* Object() const;
+	
+	//************************************
+	//! True if Index is used 
+	//! \returns bool
+	//************************************
 	bool IsIndexPresent() const;
-	long ArrayIndex(bool p_bZeroBased = false) const;
+	
+	//************************************
+	//! returns the 0 based Index. If Index is not used or the the whole array is referenced -1 is returned.
+	//! \returns long
+	//************************************
+	long ArrayIndex() const;
 	CString DefaultValue() const;
+	
+	//************************************
+	//! returns true if the whole array is referenced 
+	//! \returns bool
+	//************************************
 	bool IsEntireArray() const;
 	GUID Guid() const;
 
@@ -76,16 +91,20 @@ public:
 
 	CString GetOneBasedIndexString() const;
 	CString GetZeroBasedIndexString() const;
+
+	
+protected:	
 	const SVString& GetIndex() const;
-
-protected:
 	static GUID GetObjectGuid( SVObjectClass* );	// for compilation dependency separation
+	
 	void init();
-
 	SVObjectClass* m_pObject;
 	GUID m_Guid;
-
 	SVObjectNameInfo m_NameInfo;
+
+	int m_ArrayIndex; // zerobased Arrayindex  -1 and true for IsArray indicates reference to whole array
+	bool m_IsArray; 
+
 };
 
 typedef std::vector<SVObjectReference> SVObjectReferenceVector;

@@ -20,7 +20,7 @@ class SVIPResultItemDefinition
 public:
 	SVIPResultItemDefinition();
 	SVIPResultItemDefinition( const SVGUID& p_rObjectID );
-	SVIPResultItemDefinition( const SVGUID& p_rObjectID, const SVString& p_rIndex );
+	SVIPResultItemDefinition( const SVGUID& p_rObjectID, int Index );
 	SVIPResultItemDefinition( const SVIPResultItemDefinition& p_rObject );
 
 	bool operator<( const SVIPResultItemDefinition& p_rObject ) const;
@@ -28,13 +28,15 @@ public:
 
 	const SVGUID& GetObjectID() const;
 	bool GetIndexPresent() const;
-	const SVString& GetIndex() const;
+	
+	int GetIndex() const;
 
 protected:
 	SVGUID m_ObjectID;
 
 	bool m_IndexPresent;
-	SVString m_Index;
+	int m_Index;
+	
 
 };
 

@@ -39,7 +39,7 @@ public:
 	// Parameter:  guid <in>:  Initial value for the object ID.
 	// Parameter:  index <in>:  Initial value for the index.
 	//************************************
-	ResultViewItemDef(const SVGUID& guid, const SVString& index);
+	ResultViewItemDef(const SVGUID& guid, int index);
 
 	//************************************
 	// Description:  Constructor for the ResultViewItemDef class.
@@ -58,14 +58,9 @@ public:
 	// Description:  Sets the member variable m_Index.
 	// Parameter:  index <in>:  The desired value for the index.
 	//************************************
-	void setIndex(const SVString& index);
+	void setIndex(int index);
 
-	//************************************
-	// Description:  Gets the member variable m_Index.
-	// Returns:  const SVString&:  the value of the member variable m_Index
-	//************************************
-	const SVString& getIndex() const;
-
+	
 	//************************************
 	// Description:  Gets the value of the member variable m_Index as a long
 	// Returns:  long:  the value of the member variable m_Index, if possible.  0 otherwise.
@@ -89,7 +84,7 @@ protected:
 #pragma region Member Variables
 	SVGUID m_ObjectID;
 	bool m_hasIndex;
-	SVString m_Index;
+	int m_Index;
 #pragma endregion Member Variables
 };
 

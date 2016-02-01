@@ -326,7 +326,7 @@ int ObjectTreeGenerator::convertObjectArrayName( const SVObjectReference& rObjec
 		{
 			rLocation.insert( Pos, Name.c_str() );
 		}
-		Result = rObjectRef.ArrayIndex( true );
+		Result = rObjectRef.ArrayIndex();
 	}
 
 	return Result;

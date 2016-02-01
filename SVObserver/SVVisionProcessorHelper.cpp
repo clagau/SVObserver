@@ -379,13 +379,6 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 		
 		HRESULT l_LoopStatus = SVObjectNameInfo::ParseObjectName( l_Info, *pInputName );
 
-		if(isOneBased && l_Info.m_IndexPresent)
-		{
-			int Increment = -1;
-			SVObjectNameInfo::IncrementIndex(l_Info, *pInputName, Increment , InputName  );
-			pInputName =  &(InputName);
-			Internal_DisplayNameMap[InputName] =   *l_Iter;
-		}
 		
 		if( l_LoopStatus == S_OK )
 		{
@@ -511,14 +504,6 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 		HRESULT l_LoopStatus = SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
 		const SVString* pInputName = &( l_Iter->first);
-		SVString InputName;
-		if(isOneBased && l_Info.m_IndexPresent)
-		{
-			int Increment = -1;
-			SVObjectNameInfo::IncrementIndex(l_Info, *pInputName, Increment , InputName  );
-			pInputName =  &(InputName);
-			Internal_DisplayNameMap[InputName] =   l_Iter->first;
-		}
 
 		if( l_LoopStatus == S_OK )
 		{
