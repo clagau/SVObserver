@@ -520,7 +520,7 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 		//run through the checking of disk space.
 		if (iSize > 0)
 		{
-			if((m_uiValidateCount % 10 == 0) || (m_uiValidateCount == 0))
+			if (m_uiValidateCount % 10 == 0)
 			{
 				CString csImagePath;
 				GetImageArchivePath( csImagePath );
