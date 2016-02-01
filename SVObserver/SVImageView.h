@@ -263,6 +263,11 @@ protected:
 	CRect m_LastRect;
 
 	SVThreadWait m_ThreadWait;
+
+private:
+	
+	SVFileNameClass m_ViewOrImageFilename; /// filepath under which the last view or image was saved
+
 #pragma endregion Member variables
 };
 

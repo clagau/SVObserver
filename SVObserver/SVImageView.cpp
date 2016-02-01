@@ -159,6 +159,7 @@ SVImageViewClass::SVImageViewClass()
 , m_sourceImageHeight( 0 )
 , m_sourceBitCount( 0 )
 , m_hActionIcon(NULL)
+, m_ViewOrImageFilename(SvO::ContextMenuImageSaveLocation)
 {
 	Initialize();
 }
@@ -754,12 +755,10 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 		return;
 	}
 
-	SVFileNameClass	Filename(SvO::ContextMenuImageSaveLocation);
+	m_ViewOrImageFilename.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 
-	Filename.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
-
-	BOOL bResult = Filename.SaveFile(); // Show Save File Dialog
-	CString Filepath = Filename.GetFullFileName();
+	BOOL bResult = m_ViewOrImageFilename.SaveFile(); // Show Save File Dialog
+	CString Filepath = m_ViewOrImageFilename.GetFullFileName();
 
 	if(ViewOnly)
 	{
