@@ -28,6 +28,8 @@
 #include "SVOMFCLibrary/SVCustomDeviceParam.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVMatroxGigeAcquisitionClass.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvO.h"
 #pragma warning (pop)
 
 typedef std::map<SVDeviceParamEnum, SVGigeParameterEnum> DeviceParamToGigeParamAssoc;
@@ -1003,8 +1005,6 @@ HRESULT SVMatroxGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollect
 
 HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
 {
-	HRESULT l_hrOk = S_OK;
-
 	if( hDigitizer != NULL && pDigitizer != NULL &&
 		rDeviceParams.ParameterExists( DeviceParamVendorName ) )
 	{
@@ -1012,9 +1012,10 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 
 		if( pDigitizer != NULL && pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) == S_OK )
 		{
-			SVString l_csVenderName( l_oValue.bstrVal );
+			SVString venderNameHardware( l_oValue.bstrVal );
+			SVString venderName( StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) );
 
-			if( l_csVenderName == StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) )
+			if( venderNameHardware == venderName )
 			{
 				if( rDeviceParams.ParameterExists( DeviceParamModelName ) &&
 					pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) == S_OK )
@@ -1025,17 +1026,25 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 
 					if ( sHardwareModel != _T("") && sModel != _T("") && sHardwareModel.CompareNoCase(sModel) != 0 )
 					{
-						l_hrOk = S_FALSE;
+						SVString Message;
+						Message.Format(SvO::Error_WrongCameraModel, sModel, sHardwareModel);
+						SvStl::MessageMgrNoDisplay Exception(SvStl::DataOnly);
+						Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, Message.c_str(), StdMessageParams, SvOi::Err_10020_GoOnline_WrongCameraModel );
+						Exception.Throw();
 					}
 				}
 			}
 			else
 			{
-				l_hrOk = S_FALSE;
+				SVString Message;
+				Message.Format(SvO::Error_WrongCameraVendor, venderName.c_str(), venderNameHardware.c_str());
+				SvStl::MessageMgrNoDisplay Exception(SvStl::DataOnly);
+				Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, Message.c_str(), StdMessageParams, SvOi::Err_10021_GoOnline_WrongCameraVender );
+				Exception.Throw();
 			}
 		}
 	}
-	return l_hrOk;
+	return S_OK;
 }
 
 bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)

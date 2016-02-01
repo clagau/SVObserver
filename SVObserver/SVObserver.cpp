@@ -121,6 +121,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -751,7 +752,16 @@ void SVObserverApp::OnModeTestBtn()
 
 void SVObserverApp::OnRunMode() 
 {
-	Start();
+	try
+	{
+		Start();
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		//Log exception, (do not display the error because it is called from remote)
+		SvStl::MessageMgrNoDisplay  Exception( SvStl::LogOnly );
+		Exception.setMessage( rExp.getMessage() );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1913,6 +1923,7 @@ void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI )
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnGoOnline() 
 {
+	SvStl::MessageContainer exceptionContainer;
 	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(true);
 
 	//clear the tool error map. will be filled when the inspections/tools gets validated
@@ -1954,7 +1965,15 @@ void SVObserverApp::OnGoOnline()
 				{
 					CWaitCursor wait;
 
-					l_hrStatus = Start();
+					try
+					{
+						l_hrStatus = Start();
+					}
+					catch (const SvStl::MessageContainer& rExp)
+					{
+						exceptionContainer = rExp;
+						l_hrStatus = SV_CAN_GO_ONLINE_FAILURE_ACQUISITION;
+					}
 				}
 				else
 				{
@@ -2030,8 +2049,7 @@ void SVObserverApp::OnGoOnline()
 				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_ACQUISITION ) == 
 					SV_CAN_GO_ONLINE_FAILURE_ACQUISITION )
 				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a Camera when the system attempted to enter Run." );
+					l_csMessage =  _T( "Configuration cannot enter Run.  Cannot connect to camera when the system attempted to enter Run." );
 				}
 				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_INSPECTION ) == 
 					SV_CAN_GO_ONLINE_FAILURE_INSPECTION )
@@ -2070,8 +2088,7 @@ void SVObserverApp::OnGoOnline()
 				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_ACQUISITION ) == 
 					SV_GO_ONLINE_FAILURE_ACQUISITION )
 				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a Camera when the system was going online." );
+					l_csMessage =  _T( "Configuration cannot enter Run.  Cannot reach camera when the system was going online." );
 				}
 				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_TRIGGER ) == 
 					SV_GO_ONLINE_FAILURE_TRIGGER )
@@ -2086,8 +2103,14 @@ void SVObserverApp::OnGoOnline()
 				}
 				INT_PTR Res(0);
 				SvStl::MessageMgrDisplayAndNotify Exception(SvStl::LogAndDisplay);
-
-				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdMessageParams, SvOi::Err_45000);
+				if (0 == exceptionContainer.getMessage().m_MessageCode)
+				{
+					Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdMessageParams, SvOi::Err_45000);
+				}
+				else
+				{
+					Res = Exception.setMessage(exceptionContainer.getMessage());
+				}
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 		}
@@ -5207,8 +5230,17 @@ HRESULT SVObserverApp::SetMode( unsigned long p_lNewMode )
 		if( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) &&
 			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 		{
-			if( Start() != S_OK )
+			try
+			{
+				if( Start() != S_OK )
+					l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
+			}
+			catch (const SvStl::MessageContainer& rExp)
+			{ //Log exception, (do not display the error because it is called from remote)
+				SvStl::MessageMgrNoDisplay  Exception( SvStl::LogOnly );
+				Exception.setMessage( rExp.getMessage() );
 				l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
+			}
 		}
 		else
 		{

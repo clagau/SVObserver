@@ -143,6 +143,8 @@ namespace Seidenader { namespace SVObserver
 
 
 	const TCHAR* const   Error_you_have_Selected_X_Must_less_then_Y =  _T("Error: You have selected %ld for the Max Images count. The image count must be less then %ld"); 
+	const TCHAR* const   Error_WrongCameraModel =  _T("Wrong camera model: Expected %s, Current %s"); 
+	const TCHAR* const   Error_WrongCameraVendor =  _T("Wrong camera vendor: Expected %s, Current %s"); 
 } /* namespace SVObserver */ } /* namespace Seidenader */
 
 namespace SvO = Seidenader::SVObserver;

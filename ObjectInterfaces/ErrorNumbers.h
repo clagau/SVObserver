@@ -44,6 +44,9 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10017_LinkedValueConnectInput_ResetFailed = Maz_ErrorBase + 17;
 	static const int Err_10018_RingBuffer_InvalidRingDepth = Maz_ErrorBase + 18;
 	static const int Err_10019_RingBuffer_InvalidImageIndex = Maz_ErrorBase + 19;
+	//GoOnline
+	static const int Err_10020_GoOnline_WrongCameraModel = Maz_ErrorBase + 20;
+	static const int Err_10021_GoOnline_WrongCameraVender = Maz_ErrorBase + 21;
 
 	static const int Err_10020_InsertTaskObject_InvalidParameter = Maz_ErrorBase + 20;
 	static const int Err_10021_InsertTaskObject_CreateObjectFailed = Maz_ErrorBase + 21;

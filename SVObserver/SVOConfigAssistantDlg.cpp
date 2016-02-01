@@ -4475,7 +4475,14 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 				// do this only if True SVIM type matches selected product type - do warning
 				if( bDisplayWarnings )
 				{
-					if( pDevice->IsValidCameraFileParameters( DeviceParams ) != S_OK )
+					try
+					{
+						if( pDevice->IsValidCameraFileParameters( DeviceParams ) != S_OK )
+						{
+							AddMessageToList( CAMERA_DLG, sMessageIncorrectCamFile );
+						}
+					}
+					catch( const SvStl::MessageContainer& )
 					{
 						AddMessageToList( CAMERA_DLG, sMessageIncorrectCamFile );
 					}
