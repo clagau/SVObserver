@@ -55,6 +55,8 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10026_GoOnline_WrongCameraModel = Maz_ErrorBase + 26;
 	static const int Err_10027_GoOnline_WrongCameraVender = Maz_ErrorBase + 27;
 
+	static const int Err_10028_LoadOfScintillaDllFailed = Maz_ErrorBase + 28;
+
 	//Steve Jones error base
 	static const int Sej_ErrorBase = 15000;
 	static const int Err_15000 = Sej_ErrorBase + 0;

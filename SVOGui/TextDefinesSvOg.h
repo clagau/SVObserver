@@ -20,6 +20,7 @@ namespace Seidenader { namespace SVOGui
 	const TCHAR* const RangeValue_WrongRange = _T( "%s must between %d and %d." );
 	const TCHAR* const Filter_NoFilterAvailable = _T( "(No Filter Available)" );
 	const TCHAR* const Filter_NoFilter = _T( "(No Filter)" );
+	const TCHAR* const ScintillaControlName = _T("Scintilla");
 } /* namespace SVOGui */ } /* namespace Seidenader */
 
 namespace SvOg = Seidenader::SVOGui;

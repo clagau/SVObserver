@@ -133,8 +133,6 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const SVObserverDirectoryPath = _T("C:\\SVOBserver\\");///< the path of the SvObserver directory.
 	const TCHAR* const SecondSVObserverDirectoryPath = 
 		_T("D:\\SVOBserver\\");///< the path of SVObserver directory (not the main one but the one on drive D:)
-	const TCHAR* const SVObserverExecutableDirectoryPath = 
-		_T("C:\\SVOBserver\\bin\\");///< the path of the Directory containing SvObserver executables.
 	const TCHAR* const SVObserverAutosavePath = _T("D:\\SVObserver\\Autosave\\");///< the SVObserver autosave directory
 	const TCHAR* const NoneString= 	_T("<none>");
 	const TCHAR* const FbwfDllName= _T("fbwflib.dll");///< the name of the DLL providing the file based write filter functionality

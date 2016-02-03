@@ -11,6 +11,8 @@
 namespace Seidenader { namespace ObjectInterfaces
 {
 	const TCHAR* const WatershedMarkerImageConnectionName = _T( "WatershedFilterMarkerImage" );
+	const TCHAR* const SVObserverExecutableDirectoryPath = 
+		_T("C:\\SVOBserver\\bin\\");///< the path of the Directory containing SvObserver executables.
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 
 namespace SvOi = Seidenader::ObjectInterfaces;

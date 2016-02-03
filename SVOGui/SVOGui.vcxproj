@@ -277,6 +277,9 @@
     <ClInclude Include="RangeController.h" />
     <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="RangeValidator.h" />
+    <ClInclude Include="SciLexer.h" />
+    <ClInclude Include="Scintilla.h" />
+    <ClInclude Include="Sci_Position.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVBitmap.h" />
     <ClInclude Include="SVColor.h" />

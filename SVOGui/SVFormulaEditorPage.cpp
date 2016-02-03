@@ -18,6 +18,14 @@
 #include "SVTreeLibrary/ObjectSelectorItem.h"
 #include "SVFormulaEditorPage.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "SVUtilityLibrary/LoadDll.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVMessage/SVMessage.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "Scintilla.h"
+#include "SciLexer.h"
+#include "TextDefinesSvOg.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -50,7 +58,7 @@ namespace Seidenader { namespace SVOGui
 		ON_BN_CLICKED(IDC_LOCAL_VARIABLE_SELECT, OnLocalVariableSelect)
 		ON_BN_CLICKED(IDC_DISABLE_EQUATION, OnDisable)
 		ON_BN_CLICKED(IDC_DISABLE_TOOL, OnDisable)
-		ON_EN_CHANGE(IDC_MATHCOND_RICHEDIT, OnEquationFieldChanged)
+		ON_NOTIFY(SCN_UPDATEUI, IDC_MATHCOND_EDITOR, OnEquationFieldChanged)
 		ON_WM_HELPINFO()
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
@@ -65,7 +73,6 @@ namespace Seidenader { namespace SVOGui
 	, m_strToolsetOutputVariable( _T( "" ) )
 	, m_equationDisabled( false )
 	, m_ownerDisabled( false )
-	, m_numChars( 0 )
 	{
 	}
 
@@ -95,7 +102,6 @@ namespace Seidenader { namespace SVOGui
 	DDX_Control(pDX, IDC_DECIMAL, m_decimalRadioButton);
 	DDX_Control(pDX, IDC_HEXADECIMAL, m_hexadecimalRadioButton);
 	DDX_Control(pDX, IDC_BINARY, m_binaryRadioButton);
-	DDX_Control(pDX, IDC_MATHCOND_RICHEDIT, m_MathRichEditCtrl);
 	DDX_Control(pDX, IDC_DISABLE_EQUATION, m_DisableEquationCtrl);
 	DDX_Control(pDX, IDC_DISABLE_TOOL, m_DisableToolCtrl);
 	DDX_Text(pDX, IDC_CONSTANT_EDIT, m_StrConstantValue);
@@ -110,11 +116,24 @@ namespace Seidenader { namespace SVOGui
 	{
 		CPropertyPage::OnInitDialog();
 
+		HINSTANCE ScintillaInstance( NULL );
+
+		SVString scintillaPath = SvOi::SVObserverExecutableDirectoryPath;
+		scintillaPath +=  SvUl::ScintillaDll;
+		//Load Scintilla dll explicitly
+		HRESULT hOK = SvUl::LoadDll::Instance().getDll( scintillaPath, ScintillaInstance );
+		if (S_OK != hOK || nullptr == ScintillaInstance)
+		{
+			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+			Exception.setMessage( SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, nullptr, StdMessageParams, SvOi::Err_10028_LoadOfScintillaDllFailed );
+			return FALSE;
+		}
+
+		createScintillaControl();
+
 		// Put the Down Arrow on the Button
 		m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
 		m_ToolsetOutputSelectButton.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-
-		m_MathRichEditCtrl.LimitText( SV_EQUATION_BUFFER_SIZE );
 
 		createToolbars();
 
@@ -284,83 +303,63 @@ namespace Seidenader { namespace SVOGui
 		return retVal;
 	}
 
-	void SVFormulaEditorPageClass::insertIntoRichEdit( LPCTSTR tszValue )
+	void SVFormulaEditorPageClass::insertIntoEditor( LPCTSTR tszValue )
 	{
-		int nStart, nEnd;
+		m_EditWnd.SendMessage( SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>( tszValue ) );
 
-		m_MathRichEditCtrl.GetSel( nStart, nEnd );
-
-		m_MathRichEditCtrl.ReplaceSel( tszValue );
-		enableUndoButton();
-
-		//Update the text Count
-		m_numChars += lstrlen(tszValue);
-	}
-
-	void SVFormulaEditorPageClass::backspaceRichEdit( long Pos )
-	{
-		int nStart, nEnd;
-
-		m_MathRichEditCtrl.GetSel( nStart, nEnd );
-
-		m_MathRichEditCtrl.SetSel( nEnd - Pos, nEnd - Pos );
 		enableUndoButton();
 	}
 
-	void SVFormulaEditorPageClass::advanceRichEdit( long Pos )
+	void SVFormulaEditorPageClass::backspaceInEditor( long Pos )
 	{
-		int nStart, nEnd;
-
-		m_MathRichEditCtrl.GetSel( nStart, nEnd );
-
-		m_MathRichEditCtrl.SetSel( nEnd + Pos, nEnd + Pos );
+		int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
+		m_EditWnd.SendMessage(SCI_GOTOPOS, nStart - Pos);
 		enableUndoButton();
 	}
 
-	void SVFormulaEditorPageClass::deleteRichEdit( long Pos )
+	void SVFormulaEditorPageClass::advanceInEditor( long Pos )
 	{
-		int nStart, nEnd;
+		int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
+		m_EditWnd.SendMessage(SCI_GOTOPOS, nStart + Pos);
+		enableUndoButton();
+	}
 
-		m_MathRichEditCtrl.GetSel(nStart, nEnd);
+	void SVFormulaEditorPageClass::deleteInEditor( long Pos )
+	{
+		int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETSELECTIONSTART));
+		int nEnd =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETSELECTIONEND));
 
-		// Delete Selection
-		if (nStart != nEnd)
-		{
-			m_MathRichEditCtrl.ReplaceSel("");
-			m_numChars -= (nEnd - nStart);
-		}
-		else
-		{
-			if (nEnd == m_numChars) // Backspace
+		if (nStart == nEnd)
+		{  //add an one character selection
+			int length =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETLENGTH));
+			if (nEnd == length) // Backspace
 			{
-				m_MathRichEditCtrl.SetSel(nEnd-1,nEnd);
+				m_EditWnd.SendMessage(SCI_SETSEL, nEnd-1, nEnd);
 			}
 			else // Delete a character
 			{
-				m_MathRichEditCtrl.SetSel(nEnd,nEnd+1);
+				m_EditWnd.SendMessage(SCI_SETSEL, nEnd, nEnd+1);
 			}
-			m_MathRichEditCtrl.ReplaceSel("");
-			m_numChars--;
 		}
+
+		// Delete Selection
+		m_EditWnd.SendMessage( SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>( _T("") ) );
 		enableUndoButton();
 	}
 
 	CString SVFormulaEditorPageClass::getEquationText() const
 	{
-		int startPos = 0;
-		int endPos = 0;
-		CString equationText( "" );
-		m_MathRichEditCtrl.GetSel( startPos, endPos );
-		m_MathRichEditCtrl.GetWindowText( equationText );
+		CString equationText("");
+		equationText.GetBufferSetLength(SV_EQUATION_BUFFER_SIZE);
+		m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( equationText.GetBuffer() ) );
 		return equationText;
 	}
 
 	void SVFormulaEditorPageClass::setEquationText()
 	{
-		// Get text from EquationStruct and place into RichEdit
+		// Get text from EquationStruct and place into Editor
 		SVString equationText = m_FormulaController->GetEquationText();
-		m_MathRichEditCtrl.SetWindowText( equationText.ToString() );
-		m_numChars = lstrlen(equationText.ToString());
+		m_EditWnd.SendMessage( SCI_SETTEXT, 0, reinterpret_cast<LPARAM>( equationText.ToString() ) );
 
 		bool ownerEnabled = false; 
 		bool equationEnabled = false; 
@@ -433,13 +432,13 @@ namespace Seidenader { namespace SVOGui
 				sIndex = sIndex.Mid( 1, sIndex.GetLength() - 2 );	// strip off [ ]
 				//CString sName = QUOTE + sRootName + QUOTE + _T("[ ") + sIndex + _T(" {-1} ]");
 				CString sName = QUOTE + sRootName + QUOTE + _T("[ ") + sIndex + _T(" ]");
-				insertIntoRichEdit( sName );
+				insertIntoEditor( sName );
 			}
 			else
 			{
 				// Variables are delimited by double qoutes
 				CString sName = QUOTE + m_strToolsetOutputVariable + QUOTE;
-				insertIntoRichEdit( sName );
+				insertIntoEditor( sName );
 			}
 		}
 	}
@@ -466,7 +465,7 @@ namespace Seidenader { namespace SVOGui
 				//Do nothing.
 				break;
 			}
-			insertIntoRichEdit( ( LPCTSTR )TempString );
+			insertIntoEditor( ( LPCTSTR )TempString );
 		}
 	}
 
@@ -492,146 +491,146 @@ namespace Seidenader { namespace SVOGui
 		{
 			// Condition operators
 		case ID_LESSBUTTON:
-			insertIntoRichEdit(" LT ");
+			insertIntoEditor(" LT ");
 			break;
 		case ID_GREATERBUTTON:
-			insertIntoRichEdit(" GT ");
+			insertIntoEditor(" GT ");
 			break;
 		case ID_LESSEQUALBUTTON:
-			insertIntoRichEdit(" LTE ");
+			insertIntoEditor(" LTE ");
 			break;
 		case ID_GREATEREQUALBUTTON:
-			insertIntoRichEdit(" GTE ");
+			insertIntoEditor(" GTE ");
 			break;
 		case ID_EQUALBUTTON:
-			insertIntoRichEdit(" EQ ");
+			insertIntoEditor(" EQ ");
 			break;
 
 			// Logical operators
 		case ID_NOTEQUALBUTTON:
-			insertIntoRichEdit(" NE ");
+			insertIntoEditor(" NE ");
 			break;
 		case ID_ANDBUTTON:
-			insertIntoRichEdit(" AND ");
+			insertIntoEditor(" AND ");
 			break;
 		case ID_ORBUTTON:
-			insertIntoRichEdit(" OR ");
+			insertIntoEditor(" OR ");
 			break;
 		case ID_NOTBUTTON:
-			insertIntoRichEdit(" NOT ");
+			insertIntoEditor(" NOT ");
 			break;
 		case ID_XORBUTTON:
-			insertIntoRichEdit(" XOR ");
+			insertIntoEditor(" XOR ");
 			break;
 
 			// Arithmetic Operators
 		case ID_PLUSBUTTON:
-			insertIntoRichEdit(" + ");
+			insertIntoEditor(" + ");
 			break;
 		case ID_MINUSBUTTON:
-			insertIntoRichEdit(" - ");
+			insertIntoEditor(" - ");
 			break;
 		case ID_TIMESBUTTON:
-			insertIntoRichEdit(" * ");
+			insertIntoEditor(" * ");
 			break;
 		case ID_DIVIDEBUTTON:
-			insertIntoRichEdit(" / ");
+			insertIntoEditor(" / ");
 			break;
 
 			// Trig operators
 		case ID_SINBUTTON:
-			insertIntoRichEdit(" SIN() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" SIN() ");
+			backspaceInEditor(2);
 			break;
 		case ID_COSBUTTON:
-			insertIntoRichEdit(" COS() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" COS() ");
+			backspaceInEditor(2);
 			break;
 		case ID_TANBUTTON:
-			insertIntoRichEdit(" TAN() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" TAN() ");
+			backspaceInEditor(2);
 			break;
 		case ID_ARCSINBUTTON:
-			insertIntoRichEdit(" ASIN() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" ASIN() ");
+			backspaceInEditor(2);
 			break;
 		case ID_ARCCOSBUTTON:
-			insertIntoRichEdit(" ACOS() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" ACOS() ");
+			backspaceInEditor(2);
 			break;
 		case ID_ARCTANBUTTON:
-			insertIntoRichEdit(" ATAN() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" ATAN() ");
+			backspaceInEditor(2);
 			break;
 
 			// Misc Operators
 		case ID_MODBUTTON:
-			insertIntoRichEdit(" MOD(,) ");
-			backspaceRichEdit(3);
+			insertIntoEditor(" MOD(,) ");
+			backspaceInEditor(3);
 			break;
 		case ID_ABSBUTTON:
-			insertIntoRichEdit(" ABS() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" ABS() ");
+			backspaceInEditor(2);
 			break;
 		case ID_SQRBUTTON:
-			insertIntoRichEdit(" SQR() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" SQR() ");
+			backspaceInEditor(2);
 			break;
 		case ID_SQRTBUTTON:
-			insertIntoRichEdit(" SQRT() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" SQRT() ");
+			backspaceInEditor(2);
 			break;
 		case ID_TRUNCBUTTON:
-			insertIntoRichEdit(" TRUNC() ");
-			backspaceRichEdit(2);
+			insertIntoEditor(" TRUNC() ");
+			backspaceInEditor(2);
 			break;
 
 			// Statistics Operators
 		case ID_MINBUTTON:
-			insertIntoRichEdit(" MIN(,) ");
-			backspaceRichEdit(3);
+			insertIntoEditor(" MIN(,) ");
+			backspaceInEditor(3);
 			break;
 		case ID_MAXBUTTON:
-			insertIntoRichEdit(" MAX(,) ");
-			backspaceRichEdit(3);
+			insertIntoEditor(" MAX(,) ");
+			backspaceInEditor(3);
 			break;
 		case ID_AVERAGEBUTTON:
-			insertIntoRichEdit(" AVG(,) ");
-			backspaceRichEdit(3);
+			insertIntoEditor(" AVG(,) ");
+			backspaceInEditor(3);
 			break;
 		case ID_MEDIANBUTTON:
-			insertIntoRichEdit(" MED(,) ");
-			backspaceRichEdit(3);
+			insertIntoEditor(" MED(,) ");
+			backspaceInEditor(3);
 			break;
 		case ID_SUM_BUTTON:
-			insertIntoRichEdit(" SUM(,) ");
-			backspaceRichEdit(3);
+			insertIntoEditor(" SUM(,) ");
+			backspaceInEditor(3);
 			break;
 		case ID_STD_DEV_BUTTON:
-			insertIntoRichEdit(" STDDEV(,) ");
-			backspaceRichEdit(3);
+			insertIntoEditor(" STDDEV(,) ");
+			backspaceInEditor(3);
 			break;
 
 			// Punctuation Bar
 		case ID_FORMULA_LPARENBUTTON:
-			insertIntoRichEdit("(");
+			insertIntoEditor("(");
 			break;
 		case ID_FORMULA_RPARENBUTTON:
-			insertIntoRichEdit(")");
+			insertIntoEditor(")");
 			break;
 		case ID_FORMULA_COMMABUTTON:
-			insertIntoRichEdit(",");
+			insertIntoEditor(",");
 			break;
 
 			// Cursor Bar
 		case ID_FORMULA_LARROWBUTTON:
-			backspaceRichEdit(1);
+			backspaceInEditor(1);
 			break;
 		case ID_FORMULA_RARROWBUTTON:
-			advanceRichEdit(1);
+			advanceInEditor(1);
 			break;
 		case ID_FORMULA_DELETEBUTTON:
-			deleteRichEdit(1);
+			deleteInEditor(1);
 			break;
 		case ID_FORMULA_TEST:
 			onValidate();
@@ -696,8 +695,19 @@ namespace Seidenader { namespace SVOGui
 		enableUndoButton();
 	}
 
-	void SVFormulaEditorPageClass::OnEquationFieldChanged()
+	void SVFormulaEditorPageClass::OnEquationFieldChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 	{
+		int length =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETLENGTH));
+		if(SV_EQUATION_BUFFER_SIZE<=length)
+		{ //text too long, remove the chars they are too many
+			int numberOfDelete = length-SV_EQUATION_BUFFER_SIZE+1;
+			int pos = static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
+			
+			// Delete characters
+			m_EditWnd.SendMessage( SCI_DELETERANGE, pos-numberOfDelete, numberOfDelete );
+		}
+
+		CheckBrace();
 		enableUndoButton();
 	}
 
@@ -729,13 +739,15 @@ namespace Seidenader { namespace SVOGui
 
 	void SVFormulaEditorPageClass::HandleValidateError( int posFailed )
 	{
-		m_MathRichEditCtrl.SetSel( posFailed, posFailed );
+		m_EditWnd.SendMessage(SCI_SETSEL, posFailed+1, posFailed+1);
 	}
 
 	void SVFormulaEditorPageClass::enableUndoButton()
 	{
 		CString equationText("");
-		m_MathRichEditCtrl.GetWindowText( equationText );
+		equationText.GetBufferSetLength(SV_EQUATION_BUFFER_SIZE);
+		m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( equationText.GetBuffer() ) );
+
 		if (equationText == m_FormulaController->GetEquationText().c_str() )
 		{
 			m_validateBar.EnableButton(ID_FORMULA_UNDO, false);
@@ -780,7 +792,7 @@ namespace Seidenader { namespace SVOGui
 		m_hexadecimalRadioButton.EnableWindow( state );
 		m_binaryRadioButton.EnableWindow( state );
 
-		m_MathRichEditCtrl.EnableWindow( state );
+		m_EditWnd.EnableWindow( state );
 
 		m_logicalOperatorBar.EnableWindow( state );
 		m_conditionalOperatorBar.EnableWindow( state );
@@ -791,6 +803,78 @@ namespace Seidenader { namespace SVOGui
 		m_punctuationBar.EnableWindow( state );
 		m_statisticsOperatorBar.EnableWindow( state );
 	}
+
+	void SVFormulaEditorPageClass::createScintillaControl()
+	{
+		m_EditWnd.Create(ScintillaControlName, "", WS_CHILD|WS_VISIBLE|WS_TABSTOP|WS_CLIPCHILDREN, CRect(327, 13, 665, 362), this, IDC_MATHCOND_EDITOR);
+
+		// Use Default as Default for all styles
+		m_EditWnd.SendMessage(SCI_STYLECLEARALL);
+
+		// Set Lexer
+		m_EditWnd.SendMessage( SCI_SETLEXER, SCLEX_SVO);
+
+		m_EditWnd.SendMessage( SCI_SETWRAPMODE, SC_WRAP_WHITESPACE);
+		m_EditWnd.SendMessage( SCI_SETHSCROLLBAR, false);
+		m_EditWnd.SendMessage( SCI_SETVSCROLLBAR, true);
+
+		// set end of line mode to CRLF
+		m_EditWnd.SendMessage( SCI_CONVERTEOLS, 0);
+		m_EditWnd.SendMessage( SCI_SETEOLMODE, 0);
+	}
+
+	bool SVFormulaEditorPageClass::IsBrace( int c )
+	{
+		switch (c)
+		{
+		case '(':
+		case ')':
+		case '[':
+		case ']':
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	void SVFormulaEditorPageClass::CheckBrace()
+	{
+		int curpos = -1;
+		int bracePos1 = -1;
+		int bracePos2 = -1;
+
+		curpos =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
+
+		// check for bracket on right 
+		if ( 0 <= curpos && IsBrace(static_cast<int>(m_EditWnd.SendMessage(SCI_GETCHARAT, curpos)) ) )
+		{
+			bracePos1 = curpos;
+		}
+		// no bracket on right, check left
+		else if ( 0 < curpos && IsBrace(static_cast<int>(m_EditWnd.SendMessage(SCI_GETCHARAT, curpos - 1)) ) ) 
+		{
+			bracePos1 = curpos - 1 ; 
+		}
+
+		if (0 <= bracePos1 )
+		{
+			// Find the matching brace
+			bracePos2 =  static_cast<int>(m_EditWnd.SendMessage(SCI_BRACEMATCH, bracePos1, 0));
+			if (-1 == bracePos2 )
+			{
+				m_EditWnd.SendMessage(SCI_BRACEBADLIGHT, bracePos1);
+			}
+			else
+			{
+				m_EditWnd.SendMessage(SCI_BRACEHIGHLIGHT, bracePos1, bracePos2);
+			}
+		}
+		else
+		{
+			m_EditWnd.SendMessage(SCI_BRACEHIGHLIGHT, -1, -1);
+		}
+	}
+
 } /* namespace SVOGui */ } /* namespace Seidenader */
 
 //******************************************************************************

@@ -11,6 +11,7 @@
 #include "stdafx.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "TextDefinesSvO.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
 #include "SVObserver.h" //Arvid: needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
 #include "SVCmnLib\Utilities.h"
@@ -181,7 +182,7 @@ void ExtrasEngine::ToggleEnableFbwf()
 	}
 
 	CString BatchfilePath;
-	BatchfilePath.Format("\"%s%s\"",SvO::SVObserverExecutableDirectoryPath,RequiredBatchFileName);
+	BatchfilePath.Format("\"%s%s\"",SvOi::SVObserverExecutableDirectoryPath,RequiredBatchFileName);
 	auto ret = system(BatchfilePath);
 	if(ret)
 	{

@@ -36,7 +36,7 @@ namespace Seidenader
 			CEdit	m_ConstantEditCtrl;
 			CButton	m_AddLocalVariableCtrl;
 			CButton	m_AddConstantCtrl;
-			CEdit	m_MathRichEditCtrl;
+			CWnd m_EditWnd;
 			CString	m_StrConstantValue;
 			int		m_constantType;
 			CButton m_decimalRadioButton;
@@ -51,10 +51,10 @@ namespace Seidenader
 			//}}AFX_DATA
 
 		protected:
-			void backspaceRichEdit( long Pos );
-			void insertIntoRichEdit( LPCTSTR tszValue );
-			void advanceRichEdit( long Pos );
-			void deleteRichEdit( long Pos );
+			void backspaceInEditor( long Pos );
+			void insertIntoEditor( LPCTSTR tszValue );
+			void advanceInEditor( long Pos );
+			void deleteInEditor( long Pos );
 			CString getEquationText() const;
 			void setEquationText();
 			BOOL createToolbars();
@@ -86,10 +86,14 @@ namespace Seidenader
 			virtual BOOL OnInitDialog();
 			afx_msg void OnLocalVariableSelect();
 			afx_msg void OnDisable();
-			afx_msg void OnEquationFieldChanged();
+			afx_msg void OnEquationFieldChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
 			virtual BOOL OnKillActive( );
 			//}}AFX_MSG
 			DECLARE_MESSAGE_MAP()
+
+			void createScintillaControl();
+			bool IsBrace( int c );
+			void CheckBrace();
 
 		protected:
 			SvMc::SVToolBarClass m_logicalOperatorBar;
@@ -104,7 +108,6 @@ namespace Seidenader
 
 		private:
 			SvOi::IFormulaControllerPtr m_FormulaController;
-			int m_numChars;
 			bool m_isConditionalPage;
 			UINT m_disableExtentionID;
 			CBitmap m_downArrowBitmap;
