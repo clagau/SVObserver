@@ -107,7 +107,13 @@ protected:
 
 	void ToggleExpandCollapse(int item);
 
-	bool CheckName(const CString& name) const;
+	//************************************
+	//! Searches the name in the list of all tool and group names case insensitive 
+	//! \param name [in ]
+	//! \param lpExclude [in] if not null and the name is found (case sensitive)  this is ignored 
+	//! \returns bool  bool true if the name is unique 
+	//************************************
+	bool CheckName(const CString& name, LPCTSTR lpExclude = nullptr) const;
 	bool EditToolGroupingComment();
 
 	bool m_isLabeling;

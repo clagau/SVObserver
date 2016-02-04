@@ -33,14 +33,21 @@ String SVToolGrouping::GetDefaultName() const
 	return name;
 }
 
-bool SVToolGrouping::IsNameUnique(const String& rName) const
+bool SVToolGrouping::IsNameUnique(const String& rName, LPCTSTR pExclude) const
 {
 	String nameLower;
 	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), ::tolower);
 
 	bool bRetVal = std::none_of(m_list.begin(), m_list.end(), 
-		[&nameLower](const ToolGroup& rGroup)->bool 
+		[&nameLower, pExclude, rName](const ToolGroup& rGroup)->bool 
 	{ 
+		if(pExclude != nullptr)
+		{
+			if(rGroup.first.compare(pExclude) == 0 )
+			{
+				return  false;
+			}
+		}
 		// case insensitive compare
 		String itemNameLower;
 		std::transform(rGroup.first.begin(), rGroup.first.end(), std::back_inserter(itemNameLower), ::tolower);

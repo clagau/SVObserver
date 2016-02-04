@@ -775,7 +775,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 					if (nullptr != pToolSet && nullptr != pTool)
 					{
 						// Check for duplicate name and show message if Duplicate
-						bool bNameOk = CheckName(newText);
+						bool bNameOk = CheckName(newText, m_csLabelSaved.GetString());
 						if (bNameOk)
 						{
 							pTool->SetName(newText);
@@ -790,7 +790,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 				}
 				else // renaming a Group label
 				{
-					if (!CheckName(newText))
+					if (!CheckName(newText, m_csLabelSaved.GetString()))
 					{
 						bDoReEdit = ShowDuplicateNameMessage(newText);
 						newText = m_csLabelSaved; // reset it back to original
@@ -1063,14 +1063,14 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 	return bRetVal;
 }
 
-bool ToolSetView::CheckName(const CString& name) const
+bool ToolSetView::CheckName(const CString& name , LPCTSTR pExclude) const
 {
 	bool bNameOk = true;
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
 	{
 		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		bNameOk = rGroupings.IsNameUnique(static_cast<LPCTSTR>(name));
+		bNameOk = rGroupings.IsNameUnique(static_cast<LPCTSTR>(name),pExclude );
 	}
 	return bNameOk;
 }

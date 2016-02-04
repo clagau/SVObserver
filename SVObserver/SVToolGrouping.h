@@ -45,7 +45,13 @@ class SVToolGrouping
 
 public:
 	String GetDefaultName() const;
-	bool IsNameUnique(const String& rName) const;
+	//************************************
+	//! Searches the name in the list of all tool and group names case insensitive
+	//! \param rName [in]
+	//! \param pExclude [in] if not null and the name is found (case sensitive)  this is ignored 
+	//! \returns bool true if the name is unique 
+	//************************************
+	bool IsNameUnique(const String& rName, LPCTSTR pExclude = nullptr) const;
 
 	String MakeNumericUniqueName(const String& rName) const;
 	String GetToolToInsertBefore(const String& rName) const;
