@@ -64,7 +64,7 @@ HRESULT SVCommandInspectionGetItems::Execute()
 				{
 					TempStatus = UpdateResultsWithValueData(Iter->first, ref, TriggerCount);
 				}
-				else if (nullptr != dynamic_cast<SVImageObjectClass*>(ref.Object()))
+				else if (nullptr != dynamic_cast<SVImageClass*>(ref.Object()))
 				{
 					TempStatus = UpdateResultsWithImageData(Iter->first, ref, TriggerCount);
 				}
