@@ -14,7 +14,7 @@
 #include <Guiddef.h>
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IObjectManager.h"
-#include "SVOGui\SVBitmap.h"
+#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -37,30 +37,26 @@ namespace Seidenader
 				{
 					SvOi::MatroxImageSmartHandlePtr data = pImage->getImageData();
 					SvOi::IMatroxImageData* pImageData = data.get();
-					if( nullptr != pImageData && !pImageData->empty())
+					if (nullptr != pImageData && !pImageData->empty())
 					{
-						SVBitmapInfo dibInfo = pImageData->getBitmapInfo();
-						BYTE* pMilBuffer = static_cast<BYTE *>(pImageData->getBufferAddress());
-
-						if (nullptr != pMilBuffer && !dibInfo.empty())
+						HBITMAP hBitmap = pImageData->GetHBitmap();
+						if (hBitmap)
 						{
-							SVBitmap bitmap;
-							HRESULT hr = bitmap.LoadDIBitmap(dibInfo.GetBitmapInfo(), pMilBuffer);
-					
-							if (S_OK == hr)
+							//convert the hbitmap to an IPictureDisp for the activeX-control.
+							CPictureHolder pic;
+							BOOL bRet = pic.CreateFromBitmap(hBitmap);
+							if (bRet)
 							{
-								//convert the hbitmap to an IPictureDisp.
-								CPictureHolder pic;
-								BOOL bRet = pic.CreateFromBitmap(static_cast<HBITMAP>(bitmap.Detach()));
-								if (bRet)
-								{
-									m_picture = pic.GetPictureDispatch();
-								}
-								else
-								{
-									hr = E_HANDLE;
-								}
+								m_picture = pic.GetPictureDispatch();
 							}
+							else
+							{
+								hr = E_HANDLE;
+							}
+						}
+						else
+						{
+							hr = E_HANDLE;
 						}
 					}
 				}

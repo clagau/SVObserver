@@ -44,6 +44,12 @@ namespace Seidenader
 			//! \returns bool If matrox buffer is set, return value is true.
 			//************************************
 			virtual bool GetBuffer(SVMatroxBuffer& buffer) const = 0;
+
+			//************************************
+			//! GetHBitmap - convert matrox buffer into a HBITMAP
+			//! \returns a HBITMAP handle.
+			//************************************
+			virtual HBITMAP GetHBitmap() const =0;
 		};
 	}
 }

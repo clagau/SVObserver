@@ -66,6 +66,17 @@ bool MatroxImageData::GetBuffer(SVMatroxBuffer& buffer) const
 	
 	return retValue; 
 }
+
+HBITMAP MatroxImageData::GetHBitmap() const
+{
+	SVImageBufferHandleImage BufferHandle;
+	m_ImageHandle->GetData(BufferHandle);
+	const SVMatroxBuffer& buffer = BufferHandle.GetBuffer();
+	HBITMAP hBitmap = nullptr;
+	SVMatroxBufferInterface::SVStatusCode status = SVMatroxBufferInterface::Create(hBitmap, buffer);
+
+	return hBitmap;
+}
 #pragma endregion virtual method (IMatroxImageData)
 #pragma endregion Public Methods
 

@@ -35,6 +35,8 @@ public:
 	virtual BYTE* getBufferAddress() const override;
 
 	virtual bool GetBuffer(SVMatroxBuffer& buffer) const override;
+
+	virtual HBITMAP GetHBitmap() const override;
 #pragma endregion virtual method (IMatroxImageData)
 
 	void setImageHandle(SVSmartHandlePointer imageHandle) { m_ImageHandle = imageHandle; };

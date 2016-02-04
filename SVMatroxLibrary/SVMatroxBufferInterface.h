@@ -9,9 +9,8 @@
 // * .Check In Date   : $Date:   01 Oct 2013 11:08:10  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_BUFFER_INTERFACE_H
-#define SV_MATROX_BUFFER_INTERFACE_H
-
+#pragma once
+#pragma region Includes
 #include "SVUtilityLibrary/SVPOINT.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
@@ -24,6 +23,7 @@
 #include "SVMatroxBufferCreateLineStruct.h"
 #include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxSystem.h"
+#pragma endregion Includes
 
 class SVImageCopyUtility;
 /**
@@ -67,8 +67,6 @@ public:
 	SVMatroxBufferInterface();
 
 	virtual ~SVMatroxBufferInterface();
-
-
 
 	//******* Create Functions *********
 	// MbuffAlloc1d or Line
@@ -130,7 +128,6 @@ public:
 
 	static SVStatusCode GetLine( SVMatroxBuffer& p_rBuf, SVMatroxIdentifier p_lXStart, SVMatroxIdentifier p_lYStart, SVMatroxIdentifier p_lXEnd, SVMatroxIdentifier p_lYEnd, SVMatroxIdentifier& p_rlNbrPixels, void* p_pUserArray );
 
-
 	// ****** Get and Set Functions **********
 	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& p_rdResult );
 	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& p_rlResult );
@@ -168,6 +165,10 @@ public:
 	//! \returns SVMatroxBufferInterface::SVStatusCode  SVMEE_STATUS_OK if no error ocurrs 
 	//************************************
 	static SVStatusCode GetImageSize(const SVMatroxString& rFileName, long &rWidth, long &rHeight);
+
+	static bool IsChildBuffer(const SVMatroxBuffer& p_rBuffer);
+	static bool IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer);
+
 protected:
 	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From );
 	static SVStatusCode CopyBuffer( SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom );
@@ -178,10 +179,7 @@ private:
 	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum p_eType ) ;
 	static long Convert2MatroxType   ( SVMatroxBufferTypeEnum p_eType ) ;
 	static long Convert2MatroxType   ( SVMatroxBufferInfoEnum p_eType ) ;
-	
 };
-
-#endif // SV_MATROX_BUFFER_INTERFACE_H
 
 // ******************************************************************************
 // * LOG HISTORY:
