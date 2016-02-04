@@ -1554,6 +1554,7 @@ void SVIPDoc::OnResultsPicker()
 
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
 			SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
+			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
 			CString csRootName;
 			csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
