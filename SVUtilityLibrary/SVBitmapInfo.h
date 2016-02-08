@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:20:24  $
 //******************************************************************************
 
-#ifndef SVBITMAPINFO_H
-#define SVBITMAPINFO_H
+#pragma once
 
+#pragma region Includes
 #include <vector>
+#pragma endregion Includes
 
 class SVBitmapInfo
 {
@@ -68,14 +69,10 @@ public:
 protected:
 	size_t m_BufferSize;
 	unsigned char* m_pBuffer;
-
 };
 
 bool operator==( const BITMAPINFO& p_rLeft, const SVBitmapInfo& p_rRight );
 bool operator==( const BITMAPINFOHEADER& p_rLeft, const SVBitmapInfo& p_rRight );
-
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

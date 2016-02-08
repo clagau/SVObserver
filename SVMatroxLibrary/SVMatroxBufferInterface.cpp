@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include <assert.h>
-#include <boost/scoped_array.hpp>
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxImageBuffer.h"
@@ -710,6 +709,11 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 				if (p_CreateChildStruct.m_lParentBandCount > 1)
 				{
+					// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
+					// Valid index values are from 0 to (number of bands of the buffer - 1). 
+					// Band 0 corresponds to: the red band (for RGB parent buffers), the hue band (for HSL parent buffers), and the Y band (for YUV parent buffers). 
+					// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
+					// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
 					childBufID = MbufChildColor2d(parentBufID,
 						p_CreateChildStruct.m_lBand,
 						p_CreateChildStruct.m_lOffX,
@@ -1113,38 +1117,65 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(HBITMAP& p
 			}
 			else
 			{
-				// it was either a child buffer or the MIL buffer wasn't created with the M_DIB attribute
-				// color bands are handled special, since the color band data needs to be extracted 
-				if (IsColorBandBuffer(p_rFromId))
+				LPVOID pHostBuffer = reinterpret_cast<LPVOID>(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
+				if (pHostBuffer)
 				{
+					// No BitmapInfo from MIL, it was either a child buffer or the MIL buffer wasn't created with the M_DIB attribute
 					long width = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_X, M_NULL));
 					long height = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_Y, M_NULL));
-					SVBitmapInfo bmpInfo(width, -height, Pixel8, SVBitmapInfo::GetDefaultColorTable(Pixel8));
+					unsigned short pixelDepth = IsColorBuffer(p_rFromId) ? Pixel32 : Pixel8;
+					SVBitmapInfo bmpInfo(width, -height, pixelDepth, SVBitmapInfo::GetDefaultColorTable(pixelDepth));
 					BITMAPINFO* pbmInfo = bmpInfo.GetBitmapInfo();
+					if (pbmInfo)
+					{
+						// It was either a child buffer or the MIL buffer wasn't created with the M_DIB attribute
+						// Color bands are handled special, since the Color band data needs to be extracted...
+						if (IsColorBandBuffer(p_rFromId))
+						{
+							// Get Pitch and Pizel Size
+							// The Host Address is on the parent color image, so use M_PITCH_BYTE for the pitch/stride.
+							long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH_BYTE, M_NULL));
+							long pixelSize = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_BIT, M_NULL));
 
-					long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH, M_NULL));
-					boost::scoped_array<unsigned char> srcPixels(new unsigned char[pitch * abs(pbmInfo->bmiHeader.biHeight)]);
-					unsigned char* pSrc = srcPixels.get();
-					MbufGetColor(p_rFromId.GetIdentifier(), M_SINGLE_BAND, 0, pSrc);
-					p_rHbm = SVImageConvertorGDI::CreateDIB(pbmInfo, pSrc, pitch);
-					if (!p_rHbm)
-					{
-						l_Code = E_HANDLE;
+							// Calculate Bytes per Pixel
+							long bitCount = 0;
+							MIL_INT dataFormat = MbufInquire(p_rFromId.GetIdentifier(), M_DATA_FORMAT, M_NULL);
+							NB_OF_BITS_PER_PIXEL(dataFormat, bitCount);
+							long bytesPerPixel = bitCount / pixelSize;
+
+							// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
+							// Valid index values are from 0 to (number of bands of the buffer - 1). 
+							// Band 0 corresponds to: the red band (for RGB parent buffers), the hue band (for HSL parent buffers), and the Y band (for YUV parent buffers). 
+							// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
+							// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
+
+							// For a BGR format, the band number has to be inverted (RGB)
+							long pixelOffset = (MaxColorBands - 1) - static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_ANCESTOR_OFFSET_BAND, M_NULL));
+
+							// The Host Address is on the parent color image, so only copy the pixels for the band.
+							p_rHbm = SVImageConvertorGDI::CreateDIB(pbmInfo, pHostBuffer, pitch, pixelOffset, bytesPerPixel);
+							if (!p_rHbm)
+							{
+								l_Code = E_HANDLE;
+							}
+						}
+						else if (IsChildBuffer(p_rFromId))
+						{
+							long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH, M_NULL));
+							p_rHbm = SVImageConvertorGDI::CreateDIB(pbmInfo, pHostBuffer, pitch);
+							if (!p_rHbm)
+							{
+								l_Code = E_HANDLE;
+							}
+						}
+						else
+						{
+							l_Code = E_NOTIMPL;
+						}
 					}
-				}
-				else if (IsChildBuffer(p_rFromId))
-				{
-					SVBitmapInfo bmpInfo;
-					GetBitmapInfo(bmpInfo, p_rFromId);
-					BITMAPINFO* pbmInfo = bmpInfo.GetBitmapInfo();
-					long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH, M_NULL));
-					boost::scoped_array<unsigned char> srcPixels(new unsigned char[pitch * abs(pbmInfo->bmiHeader.biHeight)]);
-					unsigned char* pSrc = srcPixels.get();
-					MbufGetColor(p_rFromId.GetIdentifier(), M_SINGLE_BAND, 0, pSrc);
-					p_rHbm = SVImageConvertorGDI::CreateDIB(pbmInfo, pSrc, pitch);
-					if (!p_rHbm)
+					else
 					{
-						l_Code = E_HANDLE;
+						l_Code = E_POINTER;
 					}
 				}
 				else
@@ -1525,6 +1556,15 @@ bool SVMatroxBufferInterface::IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer)
 		}
 	}
 	return bIsColorBand;
+}
+
+bool SVMatroxBufferInterface::IsColorBuffer(const SVMatroxBuffer& p_rBuffer)
+{
+	bool bIsColor = false;
+	long numBands = static_cast<long>(MbufInquire(p_rBuffer.GetIdentifier(), M_SIZE_BAND, M_NULL));
+	bIsColor = (MaxColorBands == numBands) ? true : false;
+	
+	return bIsColor;
 }
 
 /**

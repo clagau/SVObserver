@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:20:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBitmapInfo.h"
+#pragma endregion Includes
 
 SVBitmapInfo::SVColorTable SVBitmapInfo::GetDefaultColorTable( unsigned short p_BitCount )
 {
@@ -125,7 +127,7 @@ unsigned long SVBitmapInfo::GetImageStrideInBytes( long p_Width, unsigned short 
 	unsigned long l_Width = ::labs( p_Width );
 	unsigned long l_BitCount = p_BitCount;
 
-	if( l_Width != 0 && l_BitCount != 0 )
+	if( 0 != l_Width && 0 != l_BitCount )
 	{
 		l_Stride = l_Width;           //Start with Image Width
 		l_Stride *= l_BitCount / 8;   //Multiply width by byte count of pixel
@@ -145,15 +147,15 @@ unsigned long SVBitmapInfo::GetImageSizeInBytes( long p_Width, long p_Height, un
 
 SVBitmapInfo::SVBitmapInfo()
 :	m_BufferSize( 0 )
-, m_pBuffer( NULL )
+, m_pBuffer( nullptr )
 {
 }
 
 SVBitmapInfo::SVBitmapInfo( const SVBitmapInfo& p_rObject )
 :	m_BufferSize( 0 )
-, m_pBuffer( NULL )
+, m_pBuffer( nullptr )
 {
-	if( p_rObject.m_pBuffer != NULL )
+	if( nullptr != p_rObject.m_pBuffer )
 	{
 		Assign( *( p_rObject.GetBitmapInfo() ) );
 	}
@@ -161,14 +163,14 @@ SVBitmapInfo::SVBitmapInfo( const SVBitmapInfo& p_rObject )
 
 SVBitmapInfo::SVBitmapInfo( const BITMAPINFO& p_rObject )
 :	m_BufferSize( 0 )
-, m_pBuffer( NULL )
+, m_pBuffer( nullptr )
 {
 	Assign( p_rObject );
 }
 
 SVBitmapInfo::SVBitmapInfo( long p_Width, long p_Height, unsigned short p_BitCount, const SVColorTable& p_rColorTable )
 :	m_BufferSize( 0 )
-, m_pBuffer( NULL )
+, m_pBuffer( nullptr )
 {
 	Assign( p_Width, p_Height, p_BitCount, p_rColorTable );
 }
@@ -180,17 +182,17 @@ SVBitmapInfo::~SVBitmapInfo()
 
 bool SVBitmapInfo::empty() const
 {
-	return ( m_pBuffer == NULL );
+	return ( nullptr == m_pBuffer );
 }
 
 void SVBitmapInfo::clear()
 {
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		delete[] m_pBuffer;
 
 		m_BufferSize = 0;
-		m_pBuffer = NULL;
+		m_pBuffer = nullptr;
 	}
 }
 
@@ -198,13 +200,13 @@ size_t SVBitmapInfo::GetBitmapInfoSizeInBytes() const
 {
 	size_t l_Size = 0;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
 		size_t l_ColorCount = l_pBitmapInfo->bmiHeader.biClrUsed;
 
-		if( l_ColorCount == 0 )
+		if( 0 == l_ColorCount )
 		{
 			l_ColorCount = GetColorTableSize( l_pBitmapInfo->bmiHeader.biBitCount, l_pBitmapInfo->bmiHeader.biCompression );
 		}
@@ -219,7 +221,7 @@ size_t SVBitmapInfo::GetBitmapImageSizeInBytes() const
 {
 	size_t l_Size = 0;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -233,7 +235,7 @@ size_t SVBitmapInfo::GetBitmapImageStrideInBytes() const
 {
 	size_t l_Size = 0;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -248,7 +250,7 @@ long SVBitmapInfo::GetWidth() const
 {
 	long l_Size = 0;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -262,7 +264,7 @@ long SVBitmapInfo::GetHeight() const
 {
 	long l_Size = 0;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -276,7 +278,7 @@ unsigned short SVBitmapInfo::GetBitCount() const
 {
 	unsigned short l_Size = 0;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -290,7 +292,7 @@ unsigned long SVBitmapInfo::GetColorTableSize() const
 {
 	unsigned long l_Size = 0;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -302,9 +304,9 @@ unsigned long SVBitmapInfo::GetColorTableSize() const
 
 RGBQUAD* SVBitmapInfo::GetColorTable() const
 {
-	RGBQUAD* l_pColorTable = NULL;
+	RGBQUAD* l_pColorTable = nullptr;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -318,7 +320,7 @@ SVBitmapInfo::SVPaletteTable SVBitmapInfo::GetPaletteTable() const
 {
 	SVPaletteTable l_PaletteTable;
 
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -352,7 +354,7 @@ const BITMAPINFO* SVBitmapInfo::GetBitmapInfo() const
 
 void SVBitmapInfo::FlipHeight()
 {
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
@@ -371,12 +373,12 @@ void SVBitmapInfo::Assign( const BITMAPINFO& p_rObject )
 
 	size_t l_Size = sizeof( BITMAPINFOHEADER ) + ( l_ColorCount * sizeof( RGBQUAD ) );
 
-	if( m_pBuffer != NULL && m_BufferSize < l_Size )
+	if( nullptr != m_pBuffer && m_BufferSize < l_Size )
 	{
 		clear();
 	}
 
-	if( m_pBuffer == NULL )
+	if( nullptr == m_pBuffer )
 	{
 		m_pBuffer = new unsigned char[ l_Size ];
 		m_BufferSize = l_Size;
@@ -389,12 +391,12 @@ void SVBitmapInfo::Assign( long p_Width, long p_Height, unsigned short p_BitCoun
 {
 	size_t l_Size = sizeof( BITMAPINFOHEADER ) + ( p_rColorTable.size() * sizeof( RGBQUAD ) );
 
-	if( m_pBuffer != NULL && m_BufferSize < l_Size )
+	if( nullptr != m_pBuffer && m_BufferSize < l_Size )
 	{
 		clear();
 	}
 
-	if( m_pBuffer == NULL )
+	if( nullptr == m_pBuffer )
 	{
 		m_pBuffer = new unsigned char[ l_Size ];
 		m_BufferSize = l_Size;
@@ -426,7 +428,7 @@ const SVBitmapInfo& SVBitmapInfo::operator=( const SVBitmapInfo& p_rObject )
 {
 	if( this != &p_rObject )
 	{
-		if( p_rObject.m_pBuffer != NULL )
+		if( nullptr != p_rObject.m_pBuffer )
 		{
 			Assign( *( p_rObject.GetBitmapInfo() ) );
 		}
@@ -446,13 +448,13 @@ bool SVBitmapInfo::operator==( const SVBitmapInfo& p_rObject ) const
 	const BITMAPINFO* l_pLeftInfo = GetBitmapInfo();
 	const BITMAPINFO* l_pRightInfo = p_rObject.GetBitmapInfo();
 
-	l_Status = l_Status && ( l_pLeftInfo != NULL ) && ( l_pRightInfo != NULL );
+	l_Status = l_Status && ( nullptr != l_pLeftInfo ) && ( nullptr != l_pRightInfo );
 
 	if( l_Status )
 	{
 		size_t l_ColorCount = l_pLeftInfo->bmiHeader.biClrUsed;
 
-		if( l_ColorCount == 0 )
+		if( 0 == l_ColorCount )
 		{
 			l_ColorCount = GetColorTableSize( l_pLeftInfo->bmiHeader.biBitCount, l_pLeftInfo->bmiHeader.biCompression );
 		}
@@ -482,7 +484,7 @@ bool SVBitmapInfo::operator==( const BITMAPINFO& p_rObject ) const
 
 	size_t l_ColorCount = p_rObject.bmiHeader.biClrUsed;
 
-	if( l_ColorCount == 0 )
+	if( 0 == l_ColorCount )
 	{
 		l_ColorCount = GetColorTableSize( p_rObject.bmiHeader.biBitCount, p_rObject.bmiHeader.biCompression );
 	}
@@ -491,7 +493,7 @@ bool SVBitmapInfo::operator==( const BITMAPINFO& p_rObject ) const
 
 	const BITMAPINFO* l_pBitmapInfo = reinterpret_cast< const BITMAPINFO* >( m_pBuffer );
 
-	l_Status = l_Status && ( l_pBitmapInfo != NULL );
+	l_Status = l_Status && ( nullptr != l_pBitmapInfo );
 
 	if( l_Status )
 	{
@@ -520,11 +522,11 @@ bool SVBitmapInfo::operator==( const BITMAPINFOHEADER& p_rObject ) const
 
 	const BITMAPINFO* l_pBitmapInfo = reinterpret_cast< const BITMAPINFO* >( m_pBuffer );
 
-	l_Status = l_Status && ( l_pBitmapInfo != NULL );
+	l_Status = l_Status && ( nullptr != l_pBitmapInfo );
 
 	if( l_Status )
 	{
-		l_Status = ( ::memcmp( l_pBitmapInfo, &p_rObject, l_Size ) == 0 );
+		l_Status = ( 0 == ::memcmp( l_pBitmapInfo, &p_rObject, l_Size ) );
 
 		if( !l_Status )
 		{
@@ -562,7 +564,7 @@ bool operator==( const BITMAPINFO& p_rLeft, const SVBitmapInfo& p_rRight )
 
 	size_t l_ColorCount = p_rLeft.bmiHeader.biClrUsed;
 
-	if( l_ColorCount == 0 )
+	if( 0 == l_ColorCount )
 	{
 		l_ColorCount = SVBitmapInfo::GetColorTableSize( p_rLeft.bmiHeader.biBitCount, p_rLeft.bmiHeader.biCompression );
 	}
@@ -571,7 +573,7 @@ bool operator==( const BITMAPINFO& p_rLeft, const SVBitmapInfo& p_rRight )
 
 	const BITMAPINFO* l_pRightInfo = p_rRight.GetBitmapInfo();
 
-	l_Status = l_Status && ( l_pRightInfo != NULL );
+	l_Status = l_Status && ( nullptr != l_pRightInfo );
 
 	if( l_Status )
 	{
@@ -600,7 +602,7 @@ bool operator==( const BITMAPINFOHEADER& p_rLeft, const SVBitmapInfo& p_rRight )
 
 	const BITMAPINFO* l_pRightInfo = p_rRight.GetBitmapInfo();
 
-	l_Status = l_Status && ( l_pRightInfo != NULL );
+	l_Status = l_Status && ( nullptr != l_pRightInfo );
 
 	if( l_Status )
 	{

@@ -526,7 +526,68 @@ HRESULT SVImageConvertorGDI::CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBi
 	return l_Status;
 }
 
+HRESULT SVImageConvertorGDI::CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBits, long srcPitch, long pixelOffset, long bytesPerPixel, HBITMAP& rDestBitmap)
+{
+	HRESULT l_Status = S_OK;
 
+	if (nullptr != pSrcInfo && nullptr != pSrcBits && nullptr != rDestBitmap)
+	{
+		DIBSECTION dib;
+
+		if (0 != ::GetObject(rDestBitmap, sizeof(dib), &dib))
+		{
+			l_Status = CopyDIBits(pSrcInfo, pSrcBits, srcPitch, pixelOffset, bytesPerPixel, &(dib.dsBmih), dib.dsBm.bmBits);
+		}
+		else
+		{
+			l_Status = E_FAIL;
+		}
+	}
+	else
+	{
+		l_Status = E_INVALIDARG;
+	}
+	return l_Status;
+}
+
+HRESULT SVImageConvertorGDI::CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBits, long srcPitch, long pixelOffset, long bytesPerPixel, BITMAPINFOHEADER* pDstInfo, void* pDstBits)
+{
+	HRESULT l_Status = S_OK;
+
+	if (nullptr != pSrcInfo && nullptr != pSrcBits && nullptr != pDstInfo && nullptr != pDstBits)
+	{
+		bool l_FormatMatches = (0 != pSrcInfo->biHeight);
+		l_FormatMatches &= (abs(pSrcInfo->biHeight) == abs(pDstInfo->biHeight));
+		l_FormatMatches &= (pSrcInfo->biWidth == pDstInfo->biWidth);
+		
+		if (l_FormatMatches)
+		{
+			long dstPitch = ((((pDstInfo->biWidth * pDstInfo->biBitCount) + 31) & ~31) >> 3);
+
+			const BYTE* pSrc = reinterpret_cast<BYTE*>(pSrcBits);
+			BYTE* pDst = reinterpret_cast<BYTE*>(pDstBits);
+
+			for (int row = 0; row < abs(pSrcInfo->biHeight); row++)
+			{
+				for (int col = 0; col < pSrcInfo->biWidth; col++)
+				{
+					*(pDst + col) = *(pSrc + ((col * bytesPerPixel) + pixelOffset));
+				}
+				pSrc += srcPitch;
+				pDst += dstPitch;
+			}
+		}
+		else
+		{
+			l_Status = E_INVALIDARG;
+		}
+	}
+	else
+	{
+		l_Status = E_INVALIDARG;
+	}
+	return l_Status;
+}
 
 HRESULT SVImageConvertorGDI::CopyDIBitsFlip(HDC hDC, HBITMAP hDIB, void* pSrcBits, BITMAPINFO* pbmInfo)
 {
@@ -723,12 +784,35 @@ HBITMAP SVImageConvertorGDI::CreateDIB(BITMAPINFO* pbmInfo, void* pSrc, long src
 	HDC hDC = ::CreateCompatibleDC(nullptr);
 	if (hDC)
 	{
-		//pbmhInfo->biHeight = abs(pbmhInfo->biHeight);	// always make positive
 		hBitmap = ::CreateDIBSection(hDC, pbmInfo, DIB_RGB_COLORS, &pBits, nullptr, 0);
 		::DeleteDC(hDC);
 		if (hBitmap)
 		{
 			HRESULT hr = SVImageConvertorGDI::CopyDIBits(pbmhInfo, pSrc, srcPitch, hBitmap);
+			if (S_OK != hr)
+			{
+				::DeleteObject(hBitmap);
+				hBitmap = nullptr;
+			}
+		}
+	}
+	return hBitmap;
+}
+
+HBITMAP SVImageConvertorGDI::CreateDIB(BITMAPINFO* pbmInfo, void* pSrc, long srcPitch, long pixelOffset, long bytesPerPixel)
+{
+	void* pBits = nullptr;
+	HBITMAP hBitmap = nullptr;
+	BITMAPINFOHEADER* pbmhInfo = &(pbmInfo->bmiHeader);
+	// Create DC and a DIB bitmap
+	HDC hDC = ::CreateCompatibleDC(nullptr);
+	if (hDC)
+	{
+		hBitmap = ::CreateDIBSection(hDC, pbmInfo, DIB_RGB_COLORS, &pBits, nullptr, 0);
+		::DeleteDC(hDC);
+		if (hBitmap)
+		{
+			HRESULT hr = SVImageConvertorGDI::CopyDIBits(pbmhInfo, pSrc, srcPitch, pixelOffset, bytesPerPixel, hBitmap);
 			if (S_OK != hr)
 			{
 				::DeleteObject(hBitmap);

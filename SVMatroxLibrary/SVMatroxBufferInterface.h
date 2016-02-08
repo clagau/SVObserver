@@ -168,6 +168,7 @@ public:
 
 	static bool IsChildBuffer(const SVMatroxBuffer& p_rBuffer);
 	static bool IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer);
+	static bool IsColorBuffer(const SVMatroxBuffer& p_rBuffer);
 
 protected:
 	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From );
@@ -176,9 +177,9 @@ protected:
 	static SVStatusCode CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxIdentifier& p_rFrom );
 
 private:
-	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum p_eType ) ;
-	static long Convert2MatroxType   ( SVMatroxBufferTypeEnum p_eType ) ;
-	static long Convert2MatroxType   ( SVMatroxBufferInfoEnum p_eType ) ;
+	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum p_eType );
+	static long Convert2MatroxType   ( SVMatroxBufferTypeEnum p_eType );
+	static long Convert2MatroxType   ( SVMatroxBufferInfoEnum p_eType );
 };
 
 // ******************************************************************************

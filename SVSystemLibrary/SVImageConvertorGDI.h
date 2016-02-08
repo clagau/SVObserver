@@ -39,6 +39,8 @@ public:
 	// For Copying Child Buffer
 	static HRESULT CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBits, long srcPicth, HBITMAP& rDestBitmap);
 	static HRESULT CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBits, long srcPitch, BITMAPINFOHEADER* pDstInfo, void* pDstBits);
+	static HRESULT CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBits, long srcPitch, long pixelOffset, long bytesPerPixel, HBITMAP& rDestBitmap);
+	static HRESULT CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBits, long srcPitch, long pixelOffset, long bytesPerPixel, BITMAPINFOHEADER* pDstInfo, void* pDstBits);
 
 	static HRESULT CopyDIBitsFlip(HDC hDC, HBITMAP hDIB, void* pSrcBits, BITMAPINFO* pbmInfo);
 	static HRESULT CopyDIBitsFlip(HBITMAP SrcBitmap, BITMAPINFOHEADER* p_pDestInfo, void* p_pDestBits);
@@ -50,6 +52,7 @@ public:
 
 	static HBITMAP CreateDIB(BITMAPINFO* pbmInfo, void* pSrc);
 	static HBITMAP CreateDIB(BITMAPINFO* pBmpInfo, void* pSrc, long srcPitch);
+	static HBITMAP CreateDIB(BITMAPINFO* pBmpInfo, void* pSrc, long srcPitch, long pixelOffset, long bytesPerPixel);
 
 	static HRESULT WriteBStrImageToFile(const _bstr_t& rFileName, BSTR Image);
 };
