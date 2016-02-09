@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   26 Jun 2014 17:41:18  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageClass.h"
 #include "SVImageLibrary/SVDrawContext.h"
@@ -34,6 +35,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVStatusLibrary\MessageManager.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -61,8 +63,8 @@ BOOL SVImageClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 
 	RegisterAsSubObject();
 
-	l_bOk &= ( UpdateFromToolInformation() == S_OK );
-	l_bOk &= ( UpdateBufferArrays() == S_OK );
+	l_bOk &= ( S_OK == UpdateFromToolInformation() );
+	l_bOk &= ( S_OK == UpdateBufferArrays() );
 
 	ObjectAttributesAllowedRef() |= SV_PUBLISH_RESULT_IMAGE | SV_CH_IMAGE | SV_DD_IMAGE;	// add this on older configs
 	
@@ -75,11 +77,11 @@ BOOL SVImageClass::CloseObject()
 {
 	BOOL rc = TRUE;
 	
-	rc = ( ClearParentConnection() == S_OK );
+	rc = ( S_OK == ClearParentConnection() );
 
-	if( GetTool() != NULL )
+	if( nullptr != GetTool() )
 	{
-		GetTool()->SetToolImage( NULL );
+		GetTool()->SetToolImage( nullptr );
 	}
 
 	if ( isCreated )
@@ -106,23 +108,23 @@ The Parent Image attribute should not be used unless it is validated first.
 */
 SVImageClass *SVImageClass::GetParentImage() const
 {
-	SVImageClass* l_pParent = NULL;
+	SVImageClass* l_pParent = nullptr;
 		
 	if( ! m_ParentImageInfo.first.empty() )
 	{
 		if( SVObjectManagerClass::Instance().GetState() == SVObjectManagerClass::ReadOnly )
 		{
-			if( m_ParentImageInfo.second == NULL )
+			if( nullptr == m_ParentImageInfo.second )
 			{
 				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( m_ParentImageInfo.first );
 
-				if( l_pObject != NULL )
+				if( nullptr != l_pObject )
 				{
 					m_ParentImageInfo.second = dynamic_cast< SVImageClass* >( l_pObject );
 				}
 			}
 
-			if( m_ParentImageInfo.second != NULL )
+			if( nullptr != m_ParentImageInfo.second )
 			{
 				l_pParent = m_ParentImageInfo.second;
 			}
@@ -131,12 +133,12 @@ SVImageClass *SVImageClass::GetParentImage() const
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( m_ParentImageInfo.first );
 
-			if( l_pObject != NULL )
+			if( nullptr != l_pObject )
 			{
 				l_pParent = dynamic_cast< SVImageClass* >( l_pObject );
 			}
 
-			m_ParentImageInfo.second = NULL;
+			m_ParentImageInfo.second = nullptr;
 		}
 	}
 
@@ -171,7 +173,7 @@ void SVImageClass::init()
 	// need to remove the PUBLISH attribute.
 	ObjectAttributesAllowedRef() = SV_ARCHIVABLE_IMAGE | SV_PUBLISH_RESULT_IMAGE | SV_CH_IMAGE | SV_DD_IMAGE;
 
-	m_ParentImageInfo.second = NULL;
+	m_ParentImageInfo.second = nullptr;
 
 	m_ImageInfo.SetOwnerImage( GetUniqueObjectID() );
 		
@@ -223,11 +225,11 @@ BOOL SVImageClass::DestroyImage()
 
 		if ( bOk )
 		{
-			bOk = ( ClearParentConnection() == S_OK );
+			bOk = ( S_OK == ClearParentConnection() );
 
 			ASSERT( bOk );
 
-			bOk = RemoveChildren() == S_OK && bOk;
+			bOk = S_OK == RemoveChildren() && bOk;
 
 			ASSERT( bOk );
 
@@ -274,7 +276,7 @@ HRESULT SVImageClass::InitializeImage( SVImageClass* p_pParentImage )
 
 	SVGUID l_ImageID;
 
-	if( p_pParentImage != NULL )
+	if( nullptr != p_pParentImage )
 	{
 		l_ImageID = p_pParentImage->GetUniqueObjectID();
 	}
@@ -293,7 +295,7 @@ HRESULT SVImageClass::InitializeImage( const GUID& p_rParentID )
 		ClearParentConnection();
 
 		m_ParentImageInfo.first = p_rParentID;
-		m_ParentImageInfo.second = NULL;
+		m_ParentImageInfo.second = nullptr;
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
@@ -314,7 +316,7 @@ HRESULT SVImageClass::InitializeImage( const GUID& p_rParentID, const SVImageInf
 			ClearParentConnection();
 
 			m_ParentImageInfo.first = p_rParentID;
-			m_ParentImageInfo.second = NULL;
+			m_ParentImageInfo.second = nullptr;
 		}
 
 		m_ImageInfo = p_rImageInfo;
@@ -336,7 +338,7 @@ HRESULT SVImageClass::UpdateImage( const SVImageExtentClass& p_rExtent, bool p_E
 	{
 		HRESULT l_Temp = m_ImageInfo.SetExtents( p_rExtent );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -345,7 +347,7 @@ HRESULT SVImageClass::UpdateImage( const SVImageExtentClass& p_rExtent, bool p_E
 
 		l_Temp = RebuildStorage( p_ExcludePositionCheck );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -380,7 +382,7 @@ HRESULT SVImageClass::UpdateImage( const GUID& p_rParentID )
 		ClearParentConnection();
 
 		m_ParentImageInfo.first = p_rParentID;
-		m_ParentImageInfo.second = NULL;
+		m_ParentImageInfo.second = nullptr;
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
@@ -401,12 +403,12 @@ HRESULT SVImageClass::UpdateImage( const GUID& p_rParentID, const SVImageExtentC
 			ClearParentConnection();
 
 			m_ParentImageInfo.first = p_rParentID;
-			m_ParentImageInfo.second = NULL;
+			m_ParentImageInfo.second = nullptr;
 		}
 
 		HRESULT l_Temp = m_ImageInfo.SetExtents( p_rExtent );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -415,7 +417,7 @@ HRESULT SVImageClass::UpdateImage( const GUID& p_rParentID, const SVImageExtentC
 
 		l_Temp = ResetObject();
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -435,7 +437,7 @@ HRESULT SVImageClass::UpdateImage( const GUID& p_rParentID, const SVImageInfoCla
 			ClearParentConnection();
 
 			m_ParentImageInfo.first = p_rParentID;
-			m_ParentImageInfo.second = NULL;
+			m_ParentImageInfo.second = nullptr;
 		}
 
 		m_ImageInfo = p_rImageInfo;
@@ -497,7 +499,7 @@ HRESULT SVImageClass::UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rP
 			ClearParentConnection();
 
 			m_ParentImageInfo.first = p_rParentID;
-			m_ParentImageInfo.second = NULL;
+			m_ParentImageInfo.second = nullptr;
 		}
 
 		m_LastUpdate = SVClock::GetTimeStamp();
@@ -521,7 +523,7 @@ HRESULT SVImageClass::UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rP
 			ClearParentConnection();
 
 			m_ParentImageInfo.first = p_rParentID;
-			m_ParentImageInfo.second = NULL;
+			m_ParentImageInfo.second = nullptr;
 		}
 
 		m_ImageInfo = p_rImageInfo;
@@ -545,7 +547,7 @@ BOOL SVImageClass::SetImageDepth( long lDepth )
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_bOk &= ( ResetObject() == S_OK );
+		l_bOk &= ( S_OK == ResetObject() );
 	}
 
 	return l_bOk;
@@ -641,7 +643,7 @@ HRESULT SVImageClass::UpdateFromParentInformation()
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		if( l_pParentImage != NULL && ( m_LastReset < l_pParentImage->GetLastResetTimeStamp() || m_LastReset < m_LastUpdate ) )
+		if( nullptr != l_pParentImage && ( m_LastReset < l_pParentImage->GetLastResetTimeStamp() || m_LastReset < m_LastUpdate ) )
 		{
 			SVImageExtentClass l_ImageExtent = GetImageExtents();
 			SVImagePropertiesClass l_ImageProperties = m_ImageInfo.GetImageProperties();
@@ -659,18 +661,18 @@ HRESULT SVImageClass::UpdateFromParentInformation()
 
 				l_Status = l_Position.SetExtentProperty( SVExtentPropertyPositionPoint, 0.0 );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_ImageExtent.SetPosition( l_Position );
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_ImageInfo.SetExtents( l_ImageExtent );
 			}
 	
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				m_ImageInfo = l_ImageInfo;
 
@@ -700,24 +702,24 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 	SVGUID l_ToolID;
 	SVImageExtentClass l_ToolExtent = m_ImageInfo.GetExtents();
 
-	// When initialized from CreateObject(), tool is NULL.
- 	if( ( m_ImageType != SVImageTypeRGBMain ) && ( GetTool() != NULL ) )
+	// When initialized from CreateObject(), tool is nullptr.
+ 	if( ( m_ImageType != SVImageTypeRGBMain ) && ( nullptr != GetTool() ) )
 	{
 		SVImageExtentClass l_TempExtent;
 
-		if( ( m_ImageType != SVImageTypeMain ) && 
-			( m_ImageType != SVImageTypeFixed ) && 
-			( m_ImageType != SVImageTypeIndependent ) && 
-			( m_ImageType != SVImageTypeDependent ) && 
-			( m_ImageType != SVImageTypeVirtual ) && 
-			( GetTool()->GetImageExtent( l_TempExtent ) == S_OK ) )
+		if( ( SVImageTypeMain != m_ImageType ) && 
+			( SVImageTypeFixed != m_ImageType ) && 
+			( SVImageTypeIndependent != m_ImageType ) && 
+			( SVImageTypeDependent != m_ImageType ) && 
+			( SVImageTypeVirtual != m_ImageType ) && 
+			( S_OK == GetTool()->GetImageExtent( l_TempExtent ) ) )
 		{
 
 
 			RECT l_Rect;
 
-			if ((m_ImageType == SVImageTypeLogicalAndPhysical)|| 
-				(m_ImageType == SVImageTypeLogical))
+			if (( SVImageTypeLogicalAndPhysical == m_ImageType)|| 
+				(SVImageTypeLogical == m_ImageType))
 			{
 				// @Hack
 				// It does not make sense that a logical buffer is not a 1:1 
@@ -744,9 +746,9 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			}
 		}
 
-		if( m_ImageType != SVImageTypeFixed && 
-			m_ImageType != SVImageTypeIndependent && 
-			m_ImageType != SVImageTypeDependent)
+		if( SVImageTypeFixed != m_ImageType && 
+			SVImageTypeIndependent != m_ImageType && 
+			SVImageTypeDependent != m_ImageType )
 		{
 			GetTool()->SetToolImage( this );
 		}
@@ -762,16 +764,15 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 		m_LastUpdate = SVClock::GetTimeStamp();
 	}
 
-	if( ( m_ImageType != SVImageTypeMain ) && ( m_ImageType != SVImageTypeIndependent ) )
+	if( ( SVImageTypeMain != m_ImageType ) && ( SVImageTypeIndependent != m_ImageType ) )
 	{
 		l_Status = m_ImageInfo.SetExtents( l_ToolExtent );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			m_LastUpdate = SVClock::GetTimeStamp();
 		}
 	}
-
 	return l_Status;
 }
 
@@ -793,15 +794,15 @@ HRESULT SVImageClass::IsValidChild( const GUID& p_rChildID, SVImageInfoClass p_s
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType || 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		ASSERT( l_pParentImage != NULL );
+		ASSERT( nullptr != l_pParentImage );
 
-		if( l_pParentImage != NULL && l_pParentImage != this )
+		if( nullptr != l_pParentImage && l_pParentImage != this )
 		{
 			SVImageInfoClass l_svImageInfo = p_svImageInfo;
 			SVImagePropertiesClass l_svImageProperties = m_ImageInfo.GetImageProperties();
@@ -837,7 +838,6 @@ HRESULT SVImageClass::IsValidChild( const GUID& p_rChildID, SVImageInfoClass p_s
 			l_hrOk = S_FALSE;
 		}
 	}
-
 	return l_hrOk;
 }
 
@@ -851,15 +851,15 @@ HRESULT SVImageClass::UpdateChild( const GUID& p_rChildID, SVImageInfoClass p_sv
 
 	if ( Lock() )
 	{
-		if( m_ImageType == SVImageTypeDependent || 
-			m_ImageType == SVImageTypeVirtual ||
-			m_ImageType == SVImageTypeLogical)
+		if( SVImageTypeDependent == m_ImageType || 
+			SVImageTypeVirtual == m_ImageType ||
+			SVImageTypeLogical == m_ImageType )
 		{
 			SVImageClass* l_pParentImage = GetParentImage();
 
-			ASSERT( l_pParentImage != NULL );
+			ASSERT( nullptr != l_pParentImage );
 
-			if( l_pParentImage != NULL && l_pParentImage != this )
+			if( nullptr != l_pParentImage && l_pParentImage != this )
 			{
 				SVImageInfoClass l_svImageInfo = p_svImageInfo;
 				SVImagePropertiesClass l_svImageProperties = m_ImageInfo.GetImageProperties();
@@ -921,20 +921,20 @@ HRESULT SVImageClass::RemoveChild( const GUID& p_rChildID )
 
 		if( l_Iter != m_ChildArrays.end() )
 		{
-			SVImageClass* l_pImage = NULL;
+			SVImageClass* l_pImage = nullptr;
 
 			l_Iter->second.m_ImageInfo.GetOwnerImage( l_pImage );
 
-			if( l_pImage != NULL )
+			if( nullptr != l_pImage )
 			{
 				l_hrOk = l_pImage->RemoveObjectConnection( GetUniqueObjectID() );
 			}
 
-			if( l_Iter->second.m_pImageHandles != NULL )
+			if( nullptr != l_Iter->second.m_pImageHandles )
 			{
 				l_Iter->second.m_pImageHandles.clear();
 				
-				l_Iter->second.m_pImageHandles = NULL;
+				l_Iter->second.m_pImageHandles = nullptr;
 			}
 
 			l_Iter->second.m_ImageInfo.Initialize();
@@ -942,11 +942,11 @@ HRESULT SVImageClass::RemoveChild( const GUID& p_rChildID )
 			m_ChildArrays.erase( l_Iter );
 		}
 
-		m_ParentImageInfo.second = NULL;
+		m_ParentImageInfo.second = nullptr;
 
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		if( l_pParentImage != NULL && l_pParentImage != this )
+		if( nullptr != l_pParentImage && l_pParentImage != this )
 		{
 			l_hrOk = l_pParentImage->RemoveChild( p_rChildID );
 		}
@@ -960,7 +960,6 @@ HRESULT SVImageClass::RemoveChild( const GUID& p_rChildID )
 	{
 		l_hrOk = S_FALSE;
 	}
-
 	return l_hrOk;
 }
 
@@ -972,13 +971,13 @@ HRESULT SVImageClass::GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClas
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType || 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		if( l_pParentImage != NULL && l_pParentImage != this )
+		if( nullptr != l_pParentImage && l_pParentImage != this )
 		{
 			l_hrOk = l_pParentImage->GetChildImageInfo( p_rChildID, p_rImageInfo );
 		}
@@ -993,7 +992,7 @@ HRESULT SVImageClass::GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClas
 
 		if( l_Iter != m_ChildArrays.end() )
 		{
-			if( l_Iter->second.m_pImageHandles != NULL )
+			if( nullptr != l_Iter->second.m_pImageHandles )
 			{
 				p_rImageInfo = l_Iter->second.m_pImageHandles->GetImageInfo();
 
@@ -1001,7 +1000,6 @@ HRESULT SVImageClass::GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClas
 			}
 		}
 	}
-
 	return l_hrOk;
 }
 
@@ -1013,28 +1011,28 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType|| 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		if( l_pParentImage != NULL && l_pParentImage != this )
+		if( nullptr != l_pParentImage && l_pParentImage != this )
 		{
 			l_hrOk = l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle );
-			if ( l_hrOk == S_FALSE )
+			if ( S_FALSE == l_hrOk )
 			{
 				CString sMsgStr;
-				sMsgStr.Format("l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle ) == S_FALSE");
+				sMsgStr.Format("S_FALSE == l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle )");
 
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_5053_CHILDIMAGEHANDLESFALSE, sMsgStr, StdMessageParams );
 			}
 		}
-		else
+		else // really? there are 2 conditions to the if statement above...
 		{
 			CString sMsgStr;
-			sMsgStr.Format("l_pParentImage == NULL");
+			sMsgStr.Format("nullptr == l_pParentImage");
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5054_NULLPARENTIMAGE, sMsgStr, StdMessageParams );
@@ -1048,7 +1046,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 
 		if( l_Iter != m_ChildArrays.end() )
 		{
-			if( l_Iter->second.m_pImageHandles != NULL )
+			if( nullptr != l_Iter->second.m_pImageHandles )
 			{
 				if( l_Iter->second.m_pImageHandles->GetImageHandle( p_rsvBufferHandle ) )
 				{
@@ -1062,11 +1060,9 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_5055_NULLCHILDHANDLE, sMsgStr, StdMessageParams );
 				}
-
 			}
 		}
 	}
-
 	return l_hrOk;
 }
 
@@ -1078,29 +1074,29 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType || 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		if( l_pParentImage != NULL && l_pParentImage != this )
+		if( nullptr != l_pParentImage && l_pParentImage != this )
 		{
 			l_hrOk = l_pParentImage->GetChildImageHandle( p_rChildID, p_svBufferIndex, p_rsvBufferHandle );
-			if ( l_hrOk == S_FALSE )
+			if ( S_FALSE == l_hrOk )
 			{
 				CString sMsgStr;
-				sMsgStr.Format("l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle ) == S_FALSE");
+				sMsgStr.Format("S_FALSE == l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle )");
 
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_5056_CHILDIMAGEHANDLESFALSE, sMsgStr, StdMessageParams );
 			}
 
 		}
-		else
+		else  // really? there are 2 conditions to the if statement above...
 		{
 			CString sMsgStr;
-			sMsgStr.Format("l_pParentImage == NULL");
+			sMsgStr.Format("nullptr == l_pParentImage");
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5057_NULLPARENTIMAGE, sMsgStr, StdMessageParams );
@@ -1113,7 +1109,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 
 		if( l_Iter != m_ChildArrays.end() )
 		{
-			if( l_Iter->second.m_pImageHandles != NULL )
+			if( nullptr != l_Iter->second.m_pImageHandles )
 			{
 				SVDataManagerHandle l_Handle;
 
@@ -1126,19 +1122,16 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 				else
 				{
 					CString sMsgStr;
-					sMsgStr.Format("l_Iter->second.m_pImageHandles->GetImageHandle( l_Handle.GetIndex(), p_rsvBufferHandle ) == NULL");
+					sMsgStr.Format("null ptr == l_Iter->second.m_pImageHandles->GetImageHandle( l_Handle.GetIndex(), p_rsvBufferHandle )");
 
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_5058_NULLCHILDHANDLE, sMsgStr, StdMessageParams );
 				}
-
 			}
 		}
 	}
-
 	return l_hrOk;
 }
-
 
 /*
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
@@ -1151,18 +1144,16 @@ HRESULT SVImageClass::GetParentImageHandle( SVSmartHandlePointer &p_rsvBufferHan
 
 	SVImageClass* l_pParentImage = GetParentImage();
 
-	if( l_pParentImage != NULL && l_pParentImage != this )
+	if( nullptr != l_pParentImage && l_pParentImage != this )
 	{
 		l_hrOk = l_pParentImage->GetChildImageHandle( GetUniqueObjectID(), p_rsvBufferHandle );
 
-		if( l_hrOk != S_OK )
+		if( S_OK != l_hrOk )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5059_GETCHILDERROR, nullptr, StdMessageParams );
 		}
-
 	}
-	
 	return l_hrOk;
 }
 
@@ -1176,11 +1167,11 @@ HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, 
 
 	SVImageClass* l_pParentImage = GetParentImage();
 
-	if( l_pParentImage != NULL && l_pParentImage != this )
+	if( nullptr != l_pParentImage && l_pParentImage != this )
 	{
 		l_hrOk = l_pParentImage->GetChildImageHandle( GetUniqueObjectID(), p_svBufferIndex, p_rsvBufferHandle );
 
-		if( l_hrOk != S_OK )
+		if( S_OK != l_hrOk )
 		{
 			CString sMsgStr;
 			sMsgStr.Format("ERROR: Cannot Get Indexed Child Image Handle");
@@ -1189,7 +1180,6 @@ HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, 
 			Exception.setMessage( SVMSG_SVO_5060_GETCHILDERROR, sMsgStr, StdMessageParams );
 		}
 	}
-
 	return l_hrOk;
 }
 // JMS - New Image Object methods */
@@ -1207,13 +1197,13 @@ BOOL SVImageClass::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType|| 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		if( l_pParentImage != NULL && l_pParentImage != this )
+		if( nullptr != l_pParentImage && l_pParentImage != this )
 		{
 			bOk = l_pParentImage->GetImageHandleIndex( rsvIndex );
 		}
@@ -1234,12 +1224,15 @@ BOOL SVImageClass::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
 			bOk = m_BufferArrayPtr->GetCurrentIndex( l_DMIndexHandle );
 			bool bIsPublished = (ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE) > 0;
 			if ( bIsPublished )
+			{
 				rsvIndex.m_PublishedResultDMIndexHandle.Assign( l_DMIndexHandle, l_DMIndexHandle.GetLockType() );
+			}
 			else
+			{
 				rsvIndex.m_ResultDMIndexHandle.Assign( l_DMIndexHandle, l_DMIndexHandle.GetLockType() );
+			}
 		}
 	}
-	
 	return bOk;
 }
 
@@ -1251,11 +1244,11 @@ BOOL SVImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType|| 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
-		bOk = GetParentImage() != NULL && GetParentImage() != this;
+		bOk = nullptr != GetParentImage() && GetParentImage() != this;
 	}
 	else
 	{
@@ -1282,7 +1275,6 @@ BOOL SVImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 			++l_Iter;
 		}
 	}
-	
 	return bOk;
 }
 
@@ -1294,13 +1286,13 @@ BOOL SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType|| 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		if( l_pParentImage != NULL && l_pParentImage != this )
+		if( nullptr != l_pParentImage && l_pParentImage != this )
 		{
 			SVImageIndexStruct l_svIndex;
 
@@ -1326,7 +1318,7 @@ BOOL SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 
 		while( l_Iter != m_ChildArrays.end() )
 		{
-			if( l_Iter->second.m_pImageHandles != NULL )
+			if( nullptr != l_Iter->second.m_pImageHandles )
 			{
 				bOk &= l_Iter->second.m_pImageHandles->CopyValue( l_Handle );
 			}
@@ -1334,7 +1326,6 @@ BOOL SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 			++l_Iter;
 		}
 	}
-	
 	return bOk;
 }
 
@@ -1342,11 +1333,11 @@ BOOL SVImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType|| 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
-		bOk = ( GetParentImageHandle( p_rHandlePtr ) == S_OK );
+		bOk = ( S_OK == GetParentImageHandle( p_rHandlePtr ) );
 	}
 	else
 	{
@@ -1357,7 +1348,6 @@ BOOL SVImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 			bOk = m_BufferArrayPtr->GetImageHandle( p_rHandlePtr );
 		}
 	}
-	
 	return bOk;
 }
 
@@ -1365,11 +1355,11 @@ BOOL SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePoin
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType || 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
-		bOk = ( GetParentImageHandle( svIndex, rHandle ) == S_OK );
+		bOk = ( S_OK == GetParentImageHandle( svIndex, rHandle ) );
 	}
 	else
 	{
@@ -1384,7 +1374,6 @@ BOOL SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePoin
 			bOk = m_BufferArrayPtr->GetImageHandle( l_Handle.GetIndex(), rHandle );
 		}
 	}
-	
 	return bOk;
 }
 
@@ -1396,7 +1385,6 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVSmartHandlePointer &p_rHandle )
 	{
 		if ( Lock() )
 		{
-			
 			SVMatroxBufferInterface::SVStatusCode l_Code;
 
 			SVImageBufferHandleImage l_ToMilHandle;
@@ -1418,10 +1406,9 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVSmartHandlePointer &p_rHandle )
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && l_Code == SVMEE_STATUS_OK;
+			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
 		}
 	}
-	
 	return l_bOk;
 }
 
@@ -1433,7 +1420,6 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVSm
 	{
 		if ( Lock() )
 		{
-			
 			SVMatroxBufferInterface::SVStatusCode l_Code;
 
 			SVImageBufferHandleImage l_ToMilHandle;
@@ -1455,10 +1441,9 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVSm
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && l_Code == SVMEE_STATUS_OK;
+			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
 		}
 	}
-	
 	return l_bOk;
 }
 
@@ -1468,7 +1453,7 @@ BOOL SVImageClass::SafeImageCopyToBSTR( SVImageIndexStruct p_svFromIndex, BSTR &
 	
 	if ( Lock() )
 	{
-		BITMAPINFO* pbmInfo = NULL;
+		BITMAPINFO* pbmInfo = nullptr;
 
 		SVSmartHandlePointer l_svOrigHandle;
 		SVSmartHandlePointer l_svCopyHandle;
@@ -1476,7 +1461,7 @@ BOOL SVImageClass::SafeImageCopyToBSTR( SVImageIndexStruct p_svFromIndex, BSTR &
 		SVSmartHandlePointer l_psvHandle;
 
 		l_bOk = GetImageHandle( p_svFromIndex, l_svOrigHandle ) &&
-			!( l_svOrigHandle.empty() ) && l_svOrigHandle->GetBufferAddress() != NULL;
+			!( l_svOrigHandle.empty() ) && nullptr != l_svOrigHandle->GetBufferAddress();
 
 		if( l_bOk )
 		{
@@ -1484,10 +1469,10 @@ BOOL SVImageClass::SafeImageCopyToBSTR( SVImageIndexStruct p_svFromIndex, BSTR &
 		}
 		else
 		{
-			l_bOk = SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, l_svCopyHandle ) == S_OK;
+			l_bOk = S_OK == SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, l_svCopyHandle );
 
 			l_bOk = l_bOk && SafeImageCopyToHandle( p_svFromIndex, l_svCopyHandle );
-			l_bOk = l_bOk && !( l_svCopyHandle.empty() ) && l_svCopyHandle->GetBufferAddress() != NULL;
+			l_bOk = l_bOk && !( l_svCopyHandle.empty() ) && nullptr != l_svCopyHandle->GetBufferAddress();
 
 			if( l_bOk )
 			{
@@ -1535,14 +1520,14 @@ BOOL SVImageClass::SafeImageCopyToBSTR( SVImageIndexStruct p_svFromIndex, BSTR &
 			lBufSize += l_lColorTableSize;
 			lBufSize += l_lDIBSize;
 			
-			if( p_rbstrData != NULL )
+			if( nullptr != p_rbstrData )
 			{
 				::SysFreeString( p_rbstrData );
 
-				p_rbstrData = NULL;
+				p_rbstrData = nullptr;
 			}
 
-			p_rbstrData = ::SysAllocStringByteLen(NULL, lBufSize);
+			p_rbstrData = ::SysAllocStringByteLen(nullptr, lBufSize);
 
 			unsigned char *l_pucStart = (unsigned char *)(p_rbstrData);
 			BITMAPINFO *l_pbmiInfo = (BITMAPINFO *)(p_rbstrData);
@@ -1565,7 +1550,6 @@ BOOL SVImageClass::SafeImageCopyToBSTR( SVImageIndexStruct p_svFromIndex, BSTR &
 
 		l_bOk = Unlock() && l_bOk;
 	}
-	
 	return l_bOk;
 }
 
@@ -1598,10 +1582,9 @@ BOOL SVImageClass::SafeImageCopyColorToHandle( SVSmartHandlePointer &p_rHandle, 
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && l_Code == SVMEE_STATUS_OK;
+			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
 		}
 	}
-	
 	return l_bOk;
 }
 
@@ -1634,10 +1617,9 @@ BOOL SVImageClass::SafeImageCopyColorToHandle( SVImageIndexStruct p_svFromIndex,
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && l_Code == SVMEE_STATUS_OK;
+			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
 		}
 	}
-	
 	return l_bOk;
 }
 
@@ -1670,10 +1652,9 @@ BOOL SVImageClass::SafeImageCopyClipToHandle( SVSmartHandlePointer &p_rHandle, l
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && l_Code == SVMEE_STATUS_OK;
+			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
 		}
 	}
-	
 	return l_bOk;
 }
 
@@ -1706,10 +1687,9 @@ BOOL SVImageClass::SafeImageCopyClipToHandle( SVImageIndexStruct p_svFromIndex, 
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && l_Code == SVMEE_STATUS_OK;
+			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
 		}
 	}
-	
 	return l_bOk;
 }
 
@@ -1742,10 +1722,9 @@ BOOL SVImageClass::SafeImageConvertToHandle( SVSmartHandlePointer &p_rHandle, SV
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && l_Code == SVMEE_STATUS_OK;
+			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
 		}
 	}
-	
 	return l_bOk;
 }
 
@@ -1781,7 +1760,6 @@ BOOL SVImageClass::SafeImageConvertToHandle( SVImageIndexStruct p_svFromIndex, S
 			l_bOk = Unlock() && l_bOk;
 		}
 	}
-	
 	return l_bOk;
 }
 
@@ -1801,7 +1779,6 @@ HRESULT SVImageClass::LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClas
 			}
 		}
 	}
-
 	return l_hrOk;
 }
 
@@ -1830,7 +1807,7 @@ HRESULT SVImageClass::LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svTo
 
 			while( l_Iter != m_ChildArrays.end() )
 			{
-				if( l_Iter->second.m_pImageHandles != NULL )
+				if( nullptr != l_Iter->second.m_pImageHandles )
 				{
 					SVDataManagerHandle l_Handle;
 
@@ -1843,11 +1820,13 @@ HRESULT SVImageClass::LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svTo
 			}
 
 			ASSERT( bOk );
-			if ( l_hrOk == S_OK )
+			if ( S_OK == l_hrOk )
+			{
 				l_hrOk = bOk ? S_OK : S_FALSE;
+			}
 
 		}// end if( Lock() )
-	}// end if ( m_BufferArrayPtr != NULL )
+	}// end if ( !( m_BufferArrayPtr.empty() ) )
 
 	return l_hrOk;
 }
@@ -1861,7 +1840,7 @@ SVImageClass* SVImageClass::GetRootImage()
 	SVImageClass* pRootImage = this;
 	SVImageClass* pParentImage = GetParentImage();
 
-	if( pParentImage != NULL && pParentImage != this )
+	if( nullptr != pParentImage && pParentImage != this )
 	{
 		pRootImage = pParentImage->GetRootImage();
 	}
@@ -1891,7 +1870,7 @@ SVString SVImageClass::getDisplayedName() const
 			SVImageInfoClass imageInfo = GetImageInfo();
 			if( imageInfo.GetOwner() )
 			{
-				strName = GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
+				strName = GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 			}
 			break;
 		}// end default:
@@ -1901,7 +1880,7 @@ SVString SVImageClass::getDisplayedName() const
 
 DWORD_PTR SVImageClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = 0;
 
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 
@@ -1913,7 +1892,7 @@ DWORD_PTR SVImageClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -1926,7 +1905,6 @@ DWORD_PTR SVImageClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 			break;
 		}
 	}
-
 	return DwResult | SVObjectAppClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
 }
 
@@ -2012,7 +1990,6 @@ bool SVImageClass::Unlock() const
 
 	ASSERT( l_bOk == true );
 
-
 	return l_bOk;
 }
 
@@ -2025,7 +2002,7 @@ HRESULT SVImageClass::RemoveObjectConnection( const GUID& p_rObjectID )
 	if( m_ParentImageInfo.first == l_ObjectID )
 	{
 		m_ParentImageInfo.first.clear();
-		m_ParentImageInfo.second = NULL;
+		m_ParentImageInfo.second = nullptr;
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 	}
@@ -2033,7 +2010,6 @@ HRESULT SVImageClass::RemoveObjectConnection( const GUID& p_rObjectID )
 	{
 		l_Status = RemoveChild( p_rObjectID );
 	}
-
 	return l_Status;
 }
 
@@ -2041,13 +2017,13 @@ SVImageObjectClassPtr SVImageClass::GetBufferArrayPtr() const
 {
 	SVImageObjectClassPtr l_ArrayPtr;
 
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeDependent == m_ImageType || 
+		SVImageTypeVirtual == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		if( l_pParentImage != NULL )
+		if( nullptr != l_pParentImage )
 		{
 			l_ArrayPtr = l_pParentImage->GetBufferArrayPtr();
 		}
@@ -2236,7 +2212,6 @@ HRESULT SVImageClass::SetObjectValue( const SVString& p_rValueName, const _varia
 	{
 		hr = SVObjectAppClass::SetObjectValue( p_rValueName, p_rVariantValue );
 	}
-
 	return hr;
 }
 
@@ -2255,7 +2230,7 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 //@HACK ?? JAB 26.03.15 - Not sure why these properties are being 
 // 		itteratively set to each array element. It looks to me like the 
 //		final value will alway be svDoubleArray [GetSize() - 1].  Don't have 
-//		time to look into now.  Many identicle cases in this method.
+//		time to look into now.  Many identical cases in this method.
 		for ( int i = 0; i < svDoubleArray.GetSize(); i++ )
 		{
 			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldPositionPointX, svDoubleArray[i] );
@@ -2409,12 +2384,12 @@ HRESULT SVImageClass::UpdatePosition()
 	
 	m_ParentImageInfo.second = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ParentImageInfo.first ) );
 
-	if( m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeLogicalAndPhysical || 
-		m_ImageType == SVImageTypeLogical ||
-		m_ImageType == SVImageTypeVirtual )
+	if( SVImageTypeDependent == m_ImageType || 
+		SVImageTypeLogicalAndPhysical == m_ImageType || 
+		SVImageTypeLogical == m_ImageType ||
+		SVImageTypeVirtual == m_ImageType )
 	{
-		if( m_ParentImageInfo.second != NULL )
+		if( nullptr != m_ParentImageInfo.second )
 		{
 			l_Status = m_ParentImageInfo.second->UpdateChild( GetUniqueObjectID(), m_ImageInfo );
 		}
@@ -2441,7 +2416,7 @@ HRESULT SVImageClass::UpdateChildren()
 
 		while( l_Iter != m_ChildArrays.end() )
 		{
-			if( UpdateChild( l_Iter->first, l_Iter->second.m_ImageInfo ) != S_OK )
+			if( S_OK != UpdateChild( l_Iter->first, l_Iter->second.m_ImageInfo ) )
 			{
 				l_hrOk = S_FALSE;
 			}
@@ -2458,7 +2433,6 @@ HRESULT SVImageClass::UpdateChildren()
 	{
 		l_hrOk = S_FALSE;
 	}
-
 	return l_hrOk;
 }
 
@@ -2472,7 +2446,7 @@ HRESULT SVImageClass::RemoveChildren()
 
 		while( l_Iter != m_ChildArrays.end() )
 		{
-			if( RemoveChild( l_Iter->first ) != S_OK )
+			if( S_OK != RemoveChild( l_Iter->first ) )
 			{
 				l_hrOk = S_FALSE;
 			}
@@ -2489,7 +2463,6 @@ HRESULT SVImageClass::RemoveChildren()
 	{
 		l_hrOk = S_FALSE;
 	}
-
 	return l_hrOk;
 }
 
@@ -2506,7 +2479,7 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 		{
 			l_Size = GetImageDepth();
 
-			if( ( ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE ) == SV_PUBLISH_RESULT_IMAGE )
+			if( SV_PUBLISH_RESULT_IMAGE == ( ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE ) )
 			{
 				l_Size = TheSVObserverApp.GetSourceImageDepth();
 			}
@@ -2527,7 +2500,6 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 	{
 		l_Status = E_FAIL;
 	}
-
 	return l_Status;
 }
 // JMS - New Image Object methods */
@@ -2541,7 +2513,7 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 
 	if ((SVImageTypeLogicalAndPhysical == m_ImageType ||
 		 SVImageTypeLogical == m_ImageType) &&
-		m_ParentImageInfo.second == nullptr)
+		nullptr == m_ParentImageInfo.second)
 	{
 		// If the image type is logical, there MUST be a parent before 
 		// attempting to set up image buffers.
@@ -2551,11 +2523,11 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 	bool	clear = false;
 	SVGUID	parentGuid;
 	parentGuid = m_ImageInfo.GetOwnerImageID ();
-	if( m_ImageType == SVImageTypeUnknown || 
-		m_ImageType == SVImageTypeDependent || 
-		m_ImageType == SVImageTypeVirtual || 
-		m_ImageType == SVImageTypeMain  ||
-		m_ImageType == SVImageTypeLogical)
+	if( SVImageTypeUnknown == m_ImageType || 
+		SVImageTypeDependent == m_ImageType || 
+		SVImageTypeVirtual == m_ImageType || 
+		SVImageTypeMain == m_ImageType ||
+		SVImageTypeLogical == m_ImageType )
 		
 	{
 		m_BufferArrayPtr.clear();
@@ -2571,7 +2543,7 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 		{
 			size_t l_Size = GetImageDepth();
 
-			if( ( ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE ) == SV_PUBLISH_RESULT_IMAGE )
+			if( SV_PUBLISH_RESULT_IMAGE == ( ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE ) )
 			{
 				l_Size = TheSVObserverApp.GetSourceImageDepth();
 			}
@@ -2646,13 +2618,13 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 
 					if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == l_Status)
 					{
-						SVString	tString1 = GetCompleteName();
-						std::string tString2 = tString1.c_str();
-						parentTool->SetRunErrorData(tString2);
+						const SVString& tString1 = GetCompleteName();
+						parentTool->SetRunErrorData(tString1.c_str());
 					}
 
 					if ((nullptr != parentTool && SUCCEEDED (parentTool->GetRunErrorCode())))
 					{
+						// Why three (3) function calls to set this data?
 						parentTool->SetRunErrorCode(hrTemp);
 						parentTool->SetRunErrorData(sTemp);
 						parentTool->SetRunDisplayed(displayedTemp);
@@ -2674,7 +2646,6 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 	{
 		l_Status = E_FAIL;
 	}
-	
 	return l_Status;
 }
 
@@ -2682,11 +2653,10 @@ HRESULT SVImageClass::ValidateAgainstAllExtents( SVImageExtentClass& p_rsvExtent
 {
 	HRESULT l_hrOk = ValidateAgainstParentExtents( p_rsvExtent );
 	
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = ValidateAgainstChildrenExtents( p_rsvExtent );
 	}
-
 	return l_hrOk;
 }
 
@@ -2700,11 +2670,10 @@ HRESULT SVImageClass::ValidateAgainstParentExtents( SVImageExtentClass& p_rsvExt
 
 	SVImageClass* l_pParentImage = GetParentImage();
 
-	if( l_pParentImage != NULL && l_pParentImage != this )
+	if( nullptr != l_pParentImage && l_pParentImage != this )
 	{
 		l_hrOk = l_pParentImage->ValidateAgainstOutputExtents( p_rsvExtent );
 	}
-	
 	return l_hrOk;
 }
 
@@ -2723,13 +2692,13 @@ HRESULT SVImageClass::ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvE
 
 		while( l_Iter != m_ChildArrays.end() )
 		{
-			if ( p_rsvExtent.ValidateAgainstOutputSpace( l_Iter->second.m_ImageInfo.GetExtents() ) != S_OK )
+			if ( S_OK != p_rsvExtent.ValidateAgainstOutputSpace( l_Iter->second.m_ImageInfo.GetExtents() ) )
 			{
-				SVImageClass* l_pImage = NULL;
+				SVImageClass* l_pImage = nullptr;
 
 				l_Iter->second.m_ImageInfo.GetOwnerImage( l_pImage );
 
-				if( l_pImage == NULL || m_ImageType != SVImageTypeDependent || l_pImage->GetImageType() != SVImageTypeVirtual )
+				if( nullptr == l_pImage || SVImageTypeDependent != m_ImageType || SVImageTypeVirtual != l_pImage->GetImageType() )
 				{
 					l_hrOk = S_FALSE;
 				}
@@ -2747,7 +2716,6 @@ HRESULT SVImageClass::ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvE
 	{
 		l_hrOk = S_FALSE;
 	}
-
 	return l_hrOk;
 }
 
@@ -2761,7 +2729,7 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SV
 
 	p_OutPt.Initialize();
 
-	if( p_pImage != NULL )
+	if( nullptr != p_pImage )
 	{
 		SVImageClass* l_pImage = this;
 		SVImageExtentClass l_Extents;
@@ -2811,7 +2779,6 @@ SvOi::MatroxImageSmartHandlePtr SVImageClass::getImageData()
 	SVSmartHandlePointer handle;
 	SvOi::MatroxImageSmartHandlePtr dataSmartPointer;
 
-
 	if ((SVImageTypeLogical == m_ImageType) ||
 		(SVImageTypeDependent == m_ImageType) ||
 		(SVImageTypeVirtual == m_ImageType))
@@ -2831,13 +2798,11 @@ SvOi::MatroxImageSmartHandlePtr SVImageClass::getImageData()
 		// For all other buffer types, images are retrieved from 
 		// SVImageObjectClass.
 
-
 		if (GetImageHandle(handle))
 		{
 			dataSmartPointer = new MatroxImageData(handle);
 		}
 	}
-
 	return dataSmartPointer;
 }
 
@@ -2845,6 +2810,7 @@ SvOi::MatroxImageSmartHandlePtr SVImageClass::getParentImageData()
 {
 	SVSmartHandlePointer handle;
 	SvOi::MatroxImageSmartHandlePtr dataSmartPointer;
+
 	if (S_OK == GetParentImageHandle(handle))
 	{
 		MatroxImageData *data = new MatroxImageData(handle);
@@ -2935,7 +2901,7 @@ BOOL SVImageClass::OnValidate()
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
-				isObjectValid = isObjectValid && ( l_BufferPtr != NULL );
+				isObjectValid = isObjectValid && ( nullptr != l_BufferPtr );
 				isObjectValid = isObjectValid && ( m_ImageInfo == l_BufferPtr->GetImageInfo() );
 
 				break;
@@ -2944,13 +2910,13 @@ BOOL SVImageClass::OnValidate()
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
-				isObjectValid = isObjectValid && ( l_BufferPtr != NULL );
+				isObjectValid = isObjectValid && ( nullptr != l_BufferPtr );
 				isObjectValid = isObjectValid && ( m_ImageInfo == l_BufferPtr->GetImageInfo() );
 
 				SVImageClass* l_pParent = GetParentImage();
 
-				isObjectValid = isObjectValid && ( l_pParent != NULL );
-				isObjectValid = isObjectValid && ( l_pParent->IsValidChild( GetUniqueObjectID(), m_ImageInfo ) == S_OK );
+				isObjectValid = isObjectValid && ( nullptr != l_pParent );
+				isObjectValid = isObjectValid && ( S_OK == l_pParent->IsValidChild( GetUniqueObjectID(), m_ImageInfo ) );
 
 				break;
 			}
@@ -2960,12 +2926,12 @@ BOOL SVImageClass::OnValidate()
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
-				isObjectValid = isObjectValid && ( l_BufferPtr != NULL );
+				isObjectValid = isObjectValid && ( nullptr != l_BufferPtr );
 
 				SVImageClass* l_pParent = GetParentImage();
 
-				isObjectValid = isObjectValid && ( l_pParent != NULL );
-				isObjectValid = isObjectValid && ( l_pParent->IsValidChild( GetUniqueObjectID(), m_ImageInfo ) == S_OK );
+				isObjectValid = isObjectValid && ( nullptr != l_pParent );
+				isObjectValid = isObjectValid && ( S_OK == l_pParent->IsValidChild( GetUniqueObjectID(), m_ImageInfo ) );
 
 				break;
 			}
@@ -2973,7 +2939,7 @@ BOOL SVImageClass::OnValidate()
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
-				isObjectValid = isObjectValid && ( l_BufferPtr != NULL );
+				isObjectValid = isObjectValid && ( nullptr != l_BufferPtr );
 
 				break;
 			}
@@ -2981,7 +2947,7 @@ BOOL SVImageClass::OnValidate()
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
-				isObjectValid = isObjectValid && ( l_BufferPtr != NULL );
+				isObjectValid = isObjectValid && ( nullptr != l_BufferPtr );
 				isObjectValid = isObjectValid && ( m_ImageInfo == l_BufferPtr->GetImageInfo() );
 
 				break;
@@ -2992,7 +2958,6 @@ BOOL SVImageClass::OnValidate()
 			}
 		}
 	}
-
 	return isObjectValid;
 }
 
@@ -3008,7 +2973,6 @@ HRESULT SVImageClass::GetImageIndex( SVDataManagerHandle& p_rHandle, const SVIma
 	{
 		l_Status = p_rHandle.Assign( rIndex.m_ResultDMIndexHandle, rIndex.m_ResultDMIndexHandle.GetLockType() );
 	}
-
 	return l_Status;
 }
 
@@ -3016,16 +2980,15 @@ HRESULT SVImageClass::RegisterAsSubObject()
 {
 	HRESULT l_Status = S_OK;
 
-	if( GetTool() != NULL )
+	if( nullptr != GetTool() )
 	{
 		GetTool()->RegisterSubObject( this );
 	}
 	
-	if( GetInspection() != NULL )
+	if( nullptr != GetInspection() )
 	{
 		GetInspection()->RegisterSubObject( this );
 	}
-
 	return l_Status;
 }
 
@@ -3033,12 +2996,12 @@ HRESULT SVImageClass::UnregisterAsSubObject()
 {
 	HRESULT l_Status = S_OK;
 
-	if( GetInspection() != NULL )
+	if( nullptr != GetInspection() )
 	{
 		GetInspection()->UnregisterSubObject( this );
 	}
 
-	if( GetTool() != NULL )
+	if( nullptr != GetTool() )
 	{
 		GetTool()->UnregisterSubObject( this );
 	}

@@ -559,13 +559,15 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(const SVMa
 					if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
 					{
 						l_lAttrib |= M_PLANAR;
+						if (M_DIB == (l_lAttrib & M_DIB)) 
+						{
+							// Remove M_DIB as it is not allowed with M_PLANAR
+							l_lAttrib ^= M_DIB;
+						}
 					}
 
-                    // MIL 9.0 has a problem using this flag with MbufAllocColor.
 					if (M_DIB == (l_lAttrib & M_DIB)) 
 					{
-						// Remove the existing M_DIB and replace it with M_PACKED and M_BGR32.
-						l_lAttrib ^= M_DIB;
 						l_lAttrib |= M_PACKED + M_BGR32;
 					}
 
@@ -640,6 +642,8 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 					if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
 					{
 						l_lAttrib |= M_PLANAR;
+						// Planar cannot be used with DIB
+						l_lAttrib &= ~M_DIB;
 					}
 					l_NewBuf = MbufAllocColor(M_DEFAULT_HOST,
 						p_CreateStruct.m_lSizeBand,
@@ -1818,8 +1822,16 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 			// Get the BITMAPINFO from MIL
 			BITMAPINFO* pbmInfoMil = reinterpret_cast<LPBITMAPINFO>(MbufInquire(p_rMilId.GetIdentifier(), M_BITMAPINFO, M_NULL));
 			LPVOID pHostBuffer = reinterpret_cast<LPVOID>(MbufInquire(p_rMilId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
-
-			l_Code = SVImageConvertorGDI::CopyDIBits(&(dib.dsBmih), dib.dsBm.bmBits, &(pbmInfoMil->bmiHeader), pHostBuffer);
+			if (pbmInfoMil && pHostBuffer)
+			{
+				l_Code = SVImageConvertorGDI::CopyDIBits(&(dib.dsBmih), dib.dsBm.bmBits, &(pbmInfoMil->bmiHeader), pHostBuffer);
+			}
+			else 
+			{
+				// No BitmapInfo, either it wasn't created with M_DIB or it is a child buffer on a color/mono image
+				// Don't copy into a child buffer, as it will also update the parent ?
+				l_Code = S_FALSE;
+			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS
@@ -1878,8 +1890,64 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(HBITMA
 		{
 			BITMAPINFO* pbmInfo = reinterpret_cast<LPBITMAPINFO>(MbufInquire(p_rFromId.GetIdentifier(), M_BITMAPINFO, M_NULL));
 			LPVOID pHostBuffer = reinterpret_cast<LPVOID>(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
+			if (pbmInfo && pHostBuffer)
+			{
+				l_Code = SVImageConvertorGDI::CopyDIBits(&(pbmInfo->bmiHeader), pHostBuffer, &(dib.dsBmih), dib.dsBm.bmBits);
+			}
+			else
+			{
+				// No BitmapInfo from MIL, either it wasn't created with M_DIB or it is a child buffer on a color/mono image
+				if (pHostBuffer)
+				{
+					long width = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_X, M_NULL));
+					long height = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_Y, M_NULL));
+					unsigned short pixelDepth = IsColorBuffer(p_rFromId) ? Pixel32 : Pixel8;
+					SVBitmapInfo bmpInfo(width, -height, pixelDepth, SVBitmapInfo::GetDefaultColorTable(pixelDepth));
+					pbmInfo = bmpInfo.GetBitmapInfo();
 
-			l_Code = SVImageConvertorGDI::CopyDIBits( &( pbmInfo->bmiHeader ), pHostBuffer, &( dib.dsBmih ), dib.dsBm.bmBits );
+					if (pbmInfo)
+					{
+						// Determine if dealing with a single band of a color image
+						if (IsColorBandBuffer(p_rFromId))
+						{
+							// Get Pitch and Pizel Size
+							long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH_BYTE, M_NULL));
+							long pixelSize = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_BIT, M_NULL));
+							
+							// Calculate Bytes per Pixel
+							long bitCount = 0;
+							MIL_INT dataFormat = MbufInquire(p_rFromId.GetIdentifier(), M_DATA_FORMAT, M_NULL);
+							NB_OF_BITS_PER_PIXEL(dataFormat, bitCount);
+							long bytesPerPixel = bitCount / pixelSize;
+
+							// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
+							// Valid index values are from 0 to (number of bands of the buffer - 1). 
+							// Band 0 corresponds to: the red band (for RGB parent buffers), the hue band (for HSL parent buffers), and the Y band (for YUV parent buffers). 
+							// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
+							// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
+
+							// For a BGR format, the band number has to be inverted (RGB)
+							long pixelOffset = (MaxColorBands - 1) - static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_ANCESTOR_OFFSET_BAND, M_NULL));
+
+							// The Host Address is on the parent color image, so only copy the pixels for the band.
+							// Copying from a Color Child buffer has to be done a Byte at a time.
+							l_Code = SVImageConvertorGDI::CopyDIBits(&(pbmInfo->bmiHeader), pHostBuffer, pitch, pixelOffset, bytesPerPixel, &(dib.dsBmih), dib.dsBm.bmBits);
+						}
+						else
+						{
+							l_Code = SVImageConvertorGDI::CopyDIBits(&(pbmInfo->bmiHeader), pHostBuffer, &(dib.dsBmih), dib.dsBm.bmBits);
+						}
+					}
+					else
+					{
+						l_Code = E_POINTER;
+					}
+				}
+				else
+				{
+					l_Code = E_POINTER;
+				}
+			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS

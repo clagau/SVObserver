@@ -9,9 +9,8 @@
 //* .Check In Date   : $Date:   26 Jun 2014 17:41:18  $
 //******************************************************************************
 
-#ifndef SVIMAGECLASS_H
-#define SVIMAGECLASS_H
-
+#pragma once
+#pragma region Includes
 #include <set>
 #include "ObjectInterfaces/ISVImage.h"
 #include "SVContainerLibrary/SVVector.h"
@@ -25,6 +24,7 @@
 #include "SVImageChildStruct.h"
 #include "SVImageObjectClass.h"
 #include "SVObjectAppClass.h"
+#pragma endregion Includes
 
 class SVExtentClass;
 class SVIPDoc;
@@ -36,8 +36,7 @@ struct SVProductInfoStruct;
 
 typedef SVVector< long > SVImageChildIndexCArray;
 
-class SVImageClass : virtual public SvOi::ISVImage
-	,public SVObjectAppClass
+class SVImageClass : virtual public SvOi::ISVImage, public SVObjectAppClass
 {
 	SV_DECLARE_CLASS( SVImageClass );
 
@@ -207,7 +206,6 @@ private:
 
 	mutable bool m_bCriticalSectionCreated;
 	mutable CRITICAL_SECTION m_hCriticalSection;
-	
 };
 
 typedef SVVector <SVImageClass*, SVImageClass*> SVImageClassArray;
@@ -216,14 +214,12 @@ typedef std::set<SVImageClass *> SVImageClassPtrSet;
 
 class SVRGBImageClass : public SVImageClass
 {
+public:
+	virtual ~SVRGBImageClass() {}
+
+	//Child Buffers on Color Images do not support DIB
+	void setDibBufferFlag(bool flag=false) { m_ImageInfo.setDibBufferFlag(flag); }
 };
-
-////////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

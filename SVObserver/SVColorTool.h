@@ -9,27 +9,28 @@
 //* .Check In Date   : $Date:   26 Jun 2014 17:26:46  $
 //******************************************************************************
 
-#ifndef SVCOLORTOOL_H
-#define SVCOLORTOOL_H
-
+#pragma once
+#pragma region Includes
 #include "SVImageClass.h"
 #include "SVTool.h"
+#pragma endregion Includes
 
 class SVColorToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVColorToolClass );
 
 public:
-	SVColorToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVCOLORTOOL );
+	SVColorToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCOLORTOOL );
 
 	virtual ~SVColorToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 	virtual bool DoesObjectHaveExtents() const override;
+	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames ) override;
 
 	SVImageClass* GetRGBImage();
 	SVImageClass* GetHSIImage();
@@ -37,13 +38,11 @@ public:
 	SVBoolValueObjectClass* GetConvertToHSIVariable();
 
 protected:
-	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
-
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
 
 	BOOL createBandChildLayer( SVImageClass& p_rOutputImage, SVImageClass* p_pInputImage, long p_BandLink );
-
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	// Embeddeds
 	SVRGBImageClass band0Image;
@@ -54,19 +53,10 @@ protected:
 	// String value object for Source Image Names
 	SVStringValueObjectClass m_svSourceImageNames;
 
-public:
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
-
 private:
-	virtual void init();
-
-	virtual HRESULT CollectInputImageNames();
+	void init();
+	HRESULT CollectInputImageNames();
 };
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif //SVCOLORTOOL_H
 
 //******************************************************************************
 //* LOG HISTORY:

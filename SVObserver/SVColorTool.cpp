@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:07:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVColorTool.h"
@@ -16,11 +17,19 @@
 #include "SVColorThreshold.h"
 #include "SVGlobal.h"
 #include "SVRGBMainImage.h"
+#pragma endregion Includes
+
+enum BandNUmberEnum
+{
+	Band0 = 0,
+	Band1 = 1,
+	Band2 = 2
+};
 
 SV_IMPLEMENT_CLASS( SVColorToolClass, SVColorToolClassGuid );
 
 SVColorToolClass::SVColorToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-				  :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+: SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	init();
 }
@@ -41,7 +50,6 @@ void SVColorToolClass::init()
 	// Register SourceImageNames Value Object
 	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
 
-
 	band0Image.InitializeImage( SVImageTypeDependent );
 	band1Image.InitializeImage( SVImageTypeDependent );
 	band2Image.InitializeImage( SVImageTypeDependent );
@@ -54,7 +62,9 @@ void SVColorToolClass::init()
 	// Add the Color Threshold class object
 	SVColorThresholdClass* pColorThreshold = new SVColorThresholdClass;
 	if( pColorThreshold )
+	{
 		Add( pColorThreshold );
+	}
 }
 
 SVColorToolClass::~SVColorToolClass()
@@ -68,7 +78,7 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	if( SVToolClass::CreateObject( PCreateStructure ) )
 	{
 		// Create 3 output images, one for each band...
-		SVImageClass* pInputImage = NULL;
+		SVImageClass* pInputImage = nullptr;
 
 		BOOL useHSI = TRUE;
 		// Create HSI Image if required
@@ -85,8 +95,12 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 
 		if( pInputImage )
 		{
-			// Create 3 child layers...
+			band0Image.setDibBufferFlag(false);
+			band1Image.setDibBufferFlag(false);
+			band2Image.setDibBufferFlag(false);
 
+			// Create 3 child layers...
+			
 			// Create band 0 Layer
 			bOk = createBandChildLayer( band0Image, pInputImage, 0 );
 
@@ -134,7 +148,7 @@ HRESULT SVColorToolClass::ResetObject()
 	HRESULT l_hrOk = S_OK;
 
 	// Create 3 output images, one for each band...
-	SVImageClass* pInputImage = NULL;
+	SVImageClass* pInputImage = nullptr;
 
 	BOOL useHSI = TRUE;
 
@@ -150,21 +164,24 @@ HRESULT SVColorToolClass::ResetObject()
 		pInputImage = GetRGBImage();
 	}
 
-	createBandChildLayer( band0Image, pInputImage, 0 );
+	// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
+	// Valid index values are from 0 to (number of bands of the buffer - 1). 
+	// Band 0 corresponds to: the red band (for RGB parent buffers), the hue band (for HSL parent buffers), and the Y band (for YUV parent buffers). 
+	// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
+	// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
 
+	createBandChildLayer( band0Image, pInputImage, Band0 );
 	band0Image.ResetObject();
 
 	// Create Band 1 Layer
-	createBandChildLayer( band1Image, pInputImage, 1 );
-
+	createBandChildLayer( band1Image, pInputImage, Band1 );
 	band1Image.ResetObject();
 
 	// Create Band 2 Layer...
-	createBandChildLayer( band2Image, pInputImage, 2 );
-
+	createBandChildLayer( band2Image, pInputImage, Band2 );
 	band2Image.ResetObject();
 
-	if( SVToolClass::ResetObject() != S_OK )
+	if( S_OK != SVToolClass::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -193,7 +210,7 @@ HRESULT SVColorToolClass::UpdateImageWithExtent( unsigned long p_Index )
 BOOL SVColorToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	// Create 3 output images, one for each band...
-	SVImageClass* pInputImage = NULL;
+	SVImageClass* pInputImage = nullptr;
 
 	BOOL useHSI = TRUE;
 
@@ -209,7 +226,7 @@ BOOL SVColorToolClass::onRun( SVRunStatusClass& RRunStatus )
 		pInputImage = GetRGBImage();
 	}
 
-	if( pInputImage != NULL )
+	if( nullptr != pInputImage )
 	{
 		if( band0Image.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 		{
@@ -237,7 +254,7 @@ BOOL SVColorToolClass::createBandChildLayer( SVImageClass& p_rOutputImage, SVIma
 	SVGUID l_InputID;
 	SVImageInfoClass ImageInfo;
 
-	if( p_pInputImage != NULL )
+	if( nullptr != p_pInputImage )
 	{
 		l_InputID = p_pInputImage->GetUniqueObjectID();
 		ImageInfo = p_pInputImage->GetImageInfo();
@@ -258,14 +275,14 @@ BOOL SVColorToolClass::createBandChildLayer( SVImageClass& p_rOutputImage, SVIma
 	// So Shadowed Extents get Updated
 			
 	// Try to create image object...
-	l_bOk = ( p_rOutputImage.InitializeImage( l_InputID, ImageInfo ) == S_OK );
+	l_bOk = ( S_OK == p_rOutputImage.InitializeImage( l_InputID, ImageInfo ) );
 
 	return l_bOk;
 }
 
 SVImageClass* SVColorToolClass::GetRGBImage()
 {
-	SVImageClass* pImage = NULL;
+	SVImageClass* pImage = nullptr;
 
 	// Ask the Document for this directly...
 
@@ -280,7 +297,7 @@ SVImageClass* SVColorToolClass::GetRGBImage()
 
 SVImageClass* SVColorToolClass::GetHSIImage()
 {
-	SVImageClass* pImage = NULL;
+	SVImageClass* pImage = nullptr;
 
 	// Ask the Document for this directly...
 
@@ -300,7 +317,7 @@ SVBoolValueObjectClass* SVColorToolClass::GetConvertToHSIVariable()
 
 DWORD_PTR SVColorToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = 0;
 	
 	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
@@ -309,10 +326,10 @@ DWORD_PTR SVColorToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessa
 HRESULT SVColorToolClass::CollectInputImageNames( )
 {
 	CString l_strName;
-	SVImageClass* l_pImage;
+	SVImageClass* l_pImage = nullptr;
 	bool l_bConvertToHSI;
 	HRESULT l_hr = convertToHSI.GetValue( l_bConvertToHSI );
-	if( l_hr == S_OK )
+	if( S_OK == l_hr )
 	{
 		if( l_bConvertToHSI )
 		{
@@ -322,7 +339,7 @@ HRESULT SVColorToolClass::CollectInputImageNames( )
 		{
 			l_pImage = GetRGBImage();
 		}
-		if( l_pImage != NULL )
+		if( nullptr != l_pImage )
 		{
 			l_strName = l_pImage->GetCompleteObjectName();
 			m_svSourceImageNames.SetDefaultValue( l_strName, true );
