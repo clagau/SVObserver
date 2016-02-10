@@ -33,6 +33,22 @@
 
 const int SVToolAdjustmentArchivePage::s_UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
 
+// this function will check the existence of the drive
+// szPath paramter should be in the form of c:\xxxxxx\xxxx\xx\xxx etc
+static bool ValidateDrive(LPCTSTR szFilePath, CString& szDrv)
+{
+	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
+
+	//Get the drive text
+	_tsplitpath(szFilePath, szDrive, szDir, szFName, szExt);
+
+	if (szDrv)
+	{
+		szDrv = szDrive;
+	}
+	return ( _access( szDrive, 0 ) ) ? false : true;
+}
+
 BEGIN_MESSAGE_MAP(SVToolAdjustmentArchivePage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVToolAdjustmentArchivePage)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
@@ -357,7 +373,7 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 		SVCheckPathDir( csArchiveFileName, TRUE );
 	}
 	
-	if(!m_pTool->ValidateDrive(csArchiveFileName,szDrive) || csArchiveFileName.IsEmpty())
+	if( !ValidateDrive( csArchiveFileName, szDrive ) || csArchiveFileName.IsEmpty() )
 	{
 		CString temp;
 		temp.Format ("Invalid drive:  %s", szDrive);
@@ -397,7 +413,7 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	}
 
 	//check for valid drive for image archive
-	if(!m_pTool->ValidateDrive(csImageFolder,szDrive ) || csImageFolder.IsEmpty())
+	if( !ValidateDrive( csImageFolder, szDrive ) || csImageFolder.IsEmpty() )
 	{
 		CString temp;
 		temp.Format ("Invalid drive:  %s", szDrive);

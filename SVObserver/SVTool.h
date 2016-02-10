@@ -75,99 +75,6 @@ class SVToolClass;
 
 struct AllowResizeToParent{};
 
-struct SVToolMoveStruct
-{
-	SVToolMoveStruct()
-	{
-		Init();
-	};// end ctor
-
-	SVToolMoveStruct( SVToolMoveStruct& p_rCopyStruct )
-	{
-		pTool		 = p_rCopyStruct.pTool;
-		pAnalyzer	 = p_rCopyStruct.pAnalyzer;
-		strToolName	 = p_rCopyStruct.strToolName;
-		dLeft		 = p_rCopyStruct.dLeft;
-		dTop		 = p_rCopyStruct.dTop;
-		dWidth		 = p_rCopyStruct.dWidth;
-		dHeight		 = p_rCopyStruct.dHeight;
-		dX1			 = p_rCopyStruct.dX1;
-		dY1			 = p_rCopyStruct.dY1;
-		dX2			 = p_rCopyStruct.dX2;
-		dY2			 = p_rCopyStruct.dY2;
-		dCenterX	 = p_rCopyStruct.dCenterX;
-		dCenterY	 = p_rCopyStruct.dCenterY;
-		dStartRadius = p_rCopyStruct.dStartRadius;
-		dEndRadius	 = p_rCopyStruct.dEndRadius;
-		dStartAngle  = p_rCopyStruct.dStartAngle;
-		dEndAngle	 = p_rCopyStruct.dEndAngle;
-	};// end copy ctor
-
-	SVToolMoveStruct operator=( SVToolMoveStruct& p_rAssignStruct )
-	{
-		pTool		 = p_rAssignStruct.pTool;
-		pAnalyzer	 = p_rAssignStruct.pAnalyzer;
-		strToolName	 = p_rAssignStruct.strToolName;
-		dLeft		 = p_rAssignStruct.dLeft;
-		dTop		 = p_rAssignStruct.dTop;
-		dWidth		 = p_rAssignStruct.dWidth;
-		dHeight		 = p_rAssignStruct.dHeight;
-		dX1			 = p_rAssignStruct.dX1;
-		dY1			 = p_rAssignStruct.dY1;
-		dX2			 = p_rAssignStruct.dX2;
-		dY2			 = p_rAssignStruct.dY2;
-		dCenterX	 = p_rAssignStruct.dCenterX;
-		dCenterY	 = p_rAssignStruct.dCenterY;
-		dStartRadius = p_rAssignStruct.dStartRadius;
-		dEndRadius	 = p_rAssignStruct.dEndRadius;
-		dStartAngle  = p_rAssignStruct.dStartAngle;
-		dEndAngle	 = p_rAssignStruct.dEndAngle;
-
-		return( *this );
-	};// end =
-
-	void Init( void )
-	{
-		pTool		 = NULL;
-		pAnalyzer	 = NULL;
-		strToolName	 = _T( "" );
-		dLeft		 = -999999.999F;
-		dTop		 = -999999.999F;
-		dWidth		 = -999999.999F;
-		dHeight		 = -999999.999F;
-		dX1			 = -999999.999F;
-		dY1			 = -999999.999F;
-		dX2			 = -999999.999F;
-		dY2			 = -999999.999F;
-		dCenterX	 = -999999.999F;
-		dCenterY	 = -999999.999F;
-		dStartRadius = -999999.999F;
-		dEndRadius	 = -999999.999F;
-		dStartAngle  = -999999.999F;
-		dEndAngle	 = -999999.999F;
-	};// end Init
-
-	SVToolClass *pTool;
-	SVAnalyzerClass *pAnalyzer;
-	CString strToolName;
-	double	dLeft;
-	double	dTop;
-	double	dWidth;
-	double	dHeight;
-	double	dX1;
-	double	dY1;
-	double	dX2;
-	double	dY2;
-	double	dCenterX;
-	double	dCenterY;
-	double	dStartRadius;
-	double	dEndRadius;
-	double	dStartAngle;
-	double	dEndAngle;
-
-};// end SVToolMoveStruct
-
-
 enum EAutoSize 
 {
 	EnableNone = 0x0, 
@@ -209,7 +116,6 @@ public:
 	bool WasEnabled() const;
 
 	virtual BOOL isFreeMoveable();
-
 
 	//************************************
 	//! return Flag with enabled Autosize
@@ -253,8 +159,6 @@ public:
 	virtual bool getConditionalResult() const;
 	virtual bool getConditionalResult(long p_lIndex) const;
 
-	BOOL ValidateDrive(LPCTSTR szFilePath, CString& szDrv);
-
 	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
 	void UpdateTaskObjectOutputListAttributes( SVObjectReference refTarget, UINT uAttributes );
@@ -293,13 +197,13 @@ public:
 	// 26 Jan 2000 - frb.
 	//
 	SVBoolValueObjectClass ToolSelectedForOperatorMove;
-	SVConditionalClass		*m_pToolConditional;
+	SVConditionalClass* m_pToolConditional;
 
 	SVBoolValueObjectClass enabled;
 
-	SVInObjectInfoStruct		m_AuxSourceImageObjectInfo;
+	SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
 
-	SVValueObjectClass*  GetToolComment();
+	SVValueObjectClass* GetToolComment();
 
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
@@ -326,13 +230,13 @@ protected:
 	// and returns the result of this message.
 	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
 
-	SVToolSetClass*					pCurrentToolSet;
+	SVToolSetClass* pCurrentToolSet;
 
-	SVClassInfoStructListClass		availableAnalyzerList;
-	SVClassInfoStructListClass		availableFilterList;
+	SVClassInfoStructListClass availableAnalyzerList;
+	SVClassInfoStructListClass availableFilterList;
 
-	SVToolPropertyEntryStruct*		pPropertyArray;
-	int								propertyCount;
+	SVToolPropertyEntryStruct* pPropertyArray;
+	int propertyCount;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
 	SVBoolValueObjectClass	passed;
@@ -351,11 +255,11 @@ protected:
 	SVLongValueObjectClass processedCount;
 
 	// Conditional input
-	SVInObjectInfoStruct		inputConditionBoolObjectInfo;
+	SVInObjectInfoStruct inputConditionBoolObjectInfo;
 
 	// Conditional tool set drawing flag.
 	SVEnumerateValueObjectClass	drawToolFlag;
-	SVTimerValueObjectClass		ToolTime;
+	SVTimerValueObjectClass ToolTime;
 
 	// Embedded Objects for Extents
 	SVDoubleValueObjectClass extentLeft;
@@ -407,18 +311,18 @@ private:
 	// In general, the Run Error data will track through the OnRun() and 
 	// ResetObject() logic.
 public:
-	HRESULT		ClearRunError ();
+	HRESULT	ClearRunError();
 
-	HRESULT		SetRunErrorData (const SVString	errorString);
-	HRESULT		ClearRunErrorData ();
+	HRESULT	SetRunErrorData(const SVString& errorString);
+	HRESULT	ClearRunErrorData();
 
-	SVString	GetRunErrorData ();
+	SVString GetRunErrorData() const;
 
-	HRESULT		SetRunErrorCode (const HRESULT	errorCode);
-	HRESULT		GetRunErrorCode ();
+	HRESULT	SetRunErrorCode(const HRESULT errorCode);
+	HRESULT	GetRunErrorCode() const;
 
-	bool		GetRunDisplayed ();
-	HRESULT		SetRunDisplayed (const bool displayed);
+	bool GetRunDisplayed() const;
+	HRESULT	SetRunDisplayed(const bool displayed);
 
 protected:
 	SvStl::MessageData m_RunError;
@@ -448,14 +352,14 @@ protected:
 	// function, which will cover the required clearing for many of the use 
 	// cases.
 public:
-	HRESULT		ClearValidationError ();
-	HRESULT		SetValidationErrorData (const SVString errorString);
-	HRESULT		ClearValidationErrorData ();
+	HRESULT ClearValidationError();
+	HRESULT SetValidationErrorData(const SVString& errorString);
+	HRESULT ClearValidationErrorData();
 
-	SVString	GetValidationErrorData ();
+	SVString GetValidationErrorData() const;
 
-	HRESULT		SetValidationErrorCode (const HRESULT	errorCode);
-	HRESULT		GetValidationErrorCode ();
+	HRESULT SetValidationErrorCode(const HRESULT errorCode);
+	HRESULT GetValidationErrorCode() const;
 
 protected:
 	SvStl::MessageData m_ValidationError;
