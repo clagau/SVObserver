@@ -80,6 +80,8 @@ SVConditionalHistory::ParseName( const CString& strName )
 			HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strName ), object );
 			if ( hr == S_OK )
 			{
+				/// names  are zero based!!!				
+				object.IncrementIndex();	
 				return std::pair<SVObjectReference, SVInspectionProcess*>(object, pInspection);
 			}
 		}

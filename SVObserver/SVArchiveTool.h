@@ -97,6 +97,7 @@ public:
 	SVStringValueObjectClass    m_stringArchiveImageGuids_OBSOLETE;
 	SVStringValueObjectClass    m_stringArchiveResultGuids_OBSOLETE;
 	SVStringValueObjectClass    m_svoArchiveImageNames;
+	/// This variable holds an array of result names with an Zero based Index (In the svx  files these names have also a zero based index). 
 	SVStringValueObjectClass    m_svoArchiveResultNames;
 
 	SVDWordValueObjectClass     m_dwAppendArchiveFile;

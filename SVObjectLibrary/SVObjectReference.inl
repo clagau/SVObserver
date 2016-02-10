@@ -38,7 +38,7 @@ inline SVObjectReference::SVObjectReference( const SVObjectReference& rhs )
 
 inline bool SVObjectReference::operator == ( const SVObjectReference& rhs ) const
 {
-	bool res = (m_pObject == rhs.m_pObject) && (m_ArrayIndex == m_ArrayIndex) && (m_IsArray == rhs.m_IsArray);
+	bool res = (m_pObject == rhs.m_pObject) && (m_ArrayIndex == rhs.m_ArrayIndex) && (m_IsArray == rhs.m_IsArray);
 	return res;
 }
 

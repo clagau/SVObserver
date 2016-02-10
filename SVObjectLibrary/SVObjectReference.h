@@ -93,6 +93,14 @@ public:
 	CString GetZeroBasedIndexString() const;
 
 	
+	//************************************
+	//! Increments the array index if the reference points to a single array variable. 
+	//! Used to correct the index where zero-based name strings are used. 
+	//! (Zero-based name strings are only used in deprecated code)
+	//! \returns int the new arrayIndex 
+	//************************************
+	int IncrementIndex();
+
 protected:	
 	const SVString& GetIndex() const;
 	static GUID GetObjectGuid( SVObjectClass* );	// for compilation dependency separation
@@ -102,7 +110,7 @@ protected:
 	GUID m_Guid;
 	SVObjectNameInfo m_NameInfo;
 
-	int m_ArrayIndex; // zerobased Arrayindex  -1 and true for IsArray indicates reference to whole array
+	int m_ArrayIndex; // zero based Array index.   -1 and true for IsArray indicates reference to whole array
 	bool m_IsArray; 
 
 };

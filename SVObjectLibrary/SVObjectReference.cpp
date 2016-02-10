@@ -213,6 +213,17 @@ GUID SVObjectReference::GetObjectGuid( SVObjectClass* pObject )
 	return pObject->GetUniqueObjectID();
 }
 
+int SVObjectReference::IncrementIndex()
+{
+	if(m_IsArray && m_ArrayIndex > -1) 
+	{
+
+		m_ArrayIndex++;
+	}
+
+	return m_ArrayIndex;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
