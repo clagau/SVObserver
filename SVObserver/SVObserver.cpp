@@ -133,6 +133,8 @@ static const int AsyncDefault16GB = 200;
 static const int GoOfflineDefault4GB = 300;
 static const int GoOfflineDefault16GB = 2000;
 
+static const HRESULT ErrorMatroxServiceNotRunning = 0xcf00116f;
+
 LPCTSTR const FRAME_GRABBER_VIPER_DIGITAL                 = (_T("03"));
 
 extern bool g_bUseCorrectListRecursion;
@@ -7489,16 +7491,21 @@ HRESULT SVObserverApp::LoadAcquisitionTriggerDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( ! m_csAcquisitionTriggerDLL .IsEmpty() )
+	if ( ! m_csAcquisitionTriggerDLL.IsEmpty() )
 	{
-		if ( m_svDLLAcquisitionTriggers.Open( m_csAcquisitionTriggerDLL ) != S_OK )
+		HRESULT ResultLoadDLL( m_svDLLAcquisitionTriggers.Open( m_csAcquisitionTriggerDLL ) );
+		//Do not care about the Matrox service here as it will be handled in the LoadAcquisitionDLL
+		if( S_OK != ResultLoadDLL && ErrorMatroxServiceNotRunning != ResultLoadDLL )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
 		}
 
-		if ( SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) != S_OK )
+		if( S_OK == ResultLoadDLL )
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
+			if( SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) != S_OK )
+			{
+				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
+			}
 		}
 	}
 	return l_hrOk;
@@ -7511,27 +7518,39 @@ HRESULT SVObserverApp::LoadAcquisitionDLL()
 
 	if( ! m_csDigitizerDLL.IsEmpty() )
 	{
-		if( m_svDLLDigitizers.Open( m_csDigitizerDLL ) != S_OK )
+		HRESULT ResultLoadDLL( m_svDLLDigitizers.Open( m_csDigitizerDLL ) );
+		if( S_OK != ResultLoadDLL )
 		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-		}
-
-		if( SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLDigitizers ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-		}
-
-		if( IsCoreco() )
-		{
-			if( ! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_Quad_1.Dig_0" ) ) &&
-				! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_RGB_1.Dig_0" ) ) )
+			//This is the error result which indicates that the Matrox Gige service is not running
+			if( ErrorMatroxServiceNotRunning == ResultLoadDLL )
+			{
+				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+				Exception.setMessage( SVMSG_SVO_90_MATROX_SERVICE_NOT_RUNNING, m_csDigitizerDLL, StdMessageParams, SvOi::Err_25048_NoMatroxService );
+			}
+			else
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
 			}
 		}
 		else
 		{
-			l_hrOk = l_hrOk;
+			if( SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLDigitizers ) != S_OK )
+			{
+				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+			}
+
+			if( IsCoreco() )
+			{
+				if( ! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_Quad_1.Dig_0" ) ) &&
+					! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_RGB_1.Dig_0" ) ) )
+				{
+					l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+				}
+			}
+			else
+			{
+				l_hrOk = l_hrOk;
+			}
 		}
 	}
 	else

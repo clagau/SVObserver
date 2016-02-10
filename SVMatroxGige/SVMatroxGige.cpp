@@ -288,7 +288,11 @@ HRESULT SVMatroxGige::CreateSystems()
 					}
 					else // GIGE system (dongle ?)
 					{
-						AddSystem(l_Name, gigeSystemID++);
+						l_Code = AddSystem(l_Name, gigeSystemID++);
+						if ( SVMEE_STATUS_OK != l_Code )
+						{
+							hr = l_Code;
+						}
 					}
 				}
 			}
@@ -339,7 +343,7 @@ HRESULT SVMatroxGige::AddSystem(const SVMatroxString& rName, long SystemNumber)
 				}
 				else
 				{
-					hr = S_FALSE;
+					hr = l_Code;
 				}
 			}
 		}
