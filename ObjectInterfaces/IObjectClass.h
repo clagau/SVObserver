@@ -72,6 +72,21 @@ namespace Seidenader
 			***********/
 			virtual const UINT ObjectAttributesAllowed() const = 0;
 
+			/**********
+			This method gets the attributes set for the object.
+			***********/
+			virtual const UINT ObjectAttributesSet(int iIndex=0) const = 0;
+
+			/**********
+			This method returns true if object is an array
+			***********/
+			virtual bool IsArray() const = 0;
+
+			/**********
+			This method returns the array size
+			***********/
+			virtual int GetArraySize() const = 0;
+
 			/*
 			This method returns the object's Global Unique Identifier (GUID) of this object instance.
 			*/

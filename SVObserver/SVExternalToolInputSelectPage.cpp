@@ -28,7 +28,7 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
 #include "SVOGui/GlobalSelector.h"
-#include "SVOGui/PPQNameSelector.h"
+#include "SVOGui/PPQSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVOGui/NoSelector.h"
 #pragma endregion Includes
@@ -293,10 +293,10 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 	}
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQNameSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(pToolSet->GetInspection()->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
+	SvOsl::SelectorOptions BuildOptions( pToolSet->GetInspection()->GetUniqueObjectID(), SV_ARCHIVABLE, pToolSet->GetUniqueObjectID() );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVStringSet Items;
 
@@ -310,15 +310,14 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 	}
 
+	CString Title;
 	CString ToolsetOutput;
-	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-	SVString Title;
-	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
-	SVString mainTabTitle = ToolsetOutput;
 	CString Filter;
+	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
+	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
 	Filter.LoadString( IDS_FILTER );
-	SVString filterTabTitle = Filter;
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
 
 	if( IDOK == Result )
 	{

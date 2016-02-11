@@ -9,7 +9,8 @@
 
 #pragma region Includes
 #include "IObjectAppClass.h"
-#include "IOutputInfoListClass.h"
+#include "IObjectInfoStruct.h"
+#include "ISelectorItemVector.h"
 #include "SVObjectTypeInfoStruct.h"
 #include "SVObjectLibrary/SVInObjectInfoStruct.h"
 #include "DependencyList.h"
@@ -37,16 +38,10 @@ namespace Seidenader
 			virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) = 0;
 
 			//************************************
-			/// Return the output list of this task object.
-			/// \returns Seidenader::ObjectInterfaces::IOutputInfoListClassPtr
-			//************************************
-			virtual IOutputInfoListClassPtr GetOutputList( ) const = 0;
-
-			//************************************
 			/// Return the output list of this task object, filtered by functor.
 			/// \returns Seidenader::ObjectInterfaces::IOutputInfoListClassPtr
 			//************************************
-			virtual IOutputInfoListClassPtr GetOutputList(IsObjectInfoAllowed func) const = 0;
+			virtual ISelectorItemVectorPtr GetSelectorList( IsObjectInfoAllowed func, bool WholeArray ) const = 0;
 
 			//************************************
 			/// Return the dependency list for this task object

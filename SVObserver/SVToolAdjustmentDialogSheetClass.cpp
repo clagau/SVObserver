@@ -30,7 +30,8 @@
 #include "SVTADlgTranslationPage.h"
 #include "SVToolAdjustmentDialogLinearSpecialPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
-#include "SVToolArchivePage.h"
+#include "SVTADlgArchiveResultsPage.h"
+#include "SVTADlgArchiveImagePage.h"
 #include "SVToolAdjustmentDialogCommentPageClass.h"
 #include "SVTADlgTranslationShiftPage.h"
 #include "SVTADlgTranslationResizePage.h"
@@ -46,7 +47,6 @@
 #include "SVOGui\SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVOGui\SVTADlgTransformImagePage.h"
 #include "SVOGui\SVTADlgFileImageSourcePage.h"
-#include "SVOGui\GlobalAndToolSetSelector.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
@@ -209,7 +209,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SVToolArchiveObjectType:   // Archive tool
-			AddPage( new SVToolAdjustmentArchivePage( m_InspectionID, m_TaskObjectID, this) ); 
+			AddPage( new SVTADlgArchiveResultsPage( m_InspectionID, m_TaskObjectID, this) );
+			AddPage( new SVTADlgArchiveImagePage( m_InspectionID, m_TaskObjectID, this) );
 			AddPage( pConditionalDlg );
 			break;
 
@@ -298,7 +299,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVRingBufferToolObjectType:
 			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
-			AddPage( new SvOg::TADialogRingBufferParameterPage( m_InspectionID, m_TaskObjectID, boost::bind(SvOg::GlobalAndToolSetSelector, _1, _2) ) );
+			AddPage( new SvOg::TADialogRingBufferParameterPage( m_InspectionID, m_TaskObjectID ) );
 			AddPage( pConditionalDlg );
 			break;
 

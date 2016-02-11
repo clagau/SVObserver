@@ -21,7 +21,6 @@
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVConditional.h"
-#include "SVDlgImagePicker.h"
 #include "SVFileNameManagerClass.h"
 #include "SVGlobal.h"
 #include "SVImageArchive.h"
@@ -95,11 +94,10 @@
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "RingBufferTool.h"
+#include "SVOGui/NoSelector.h"
 #include "SVOGui/GlobalSelector.h"
-#include "SVOGui/PPQNameSelector.h"
-#include "SVOGui/PPQVariablesSelector.h"
+#include "SVOGui/PPQSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
-#include "SVOGui/PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1246,8 +1244,8 @@ void SVIPDoc::OnEditDelete()
 						pTaskObject = nullptr;
 					}
 
-					pToolSetView->m_toolSetListCtrl.SaveScrollPos();
-					pToolSetView->m_toolSetListCtrl.Rebuild(); // do not remove as the item must be removed from the list before setting the new selection
+					pToolSetView->getListCtrl().SaveScrollPos();
+					pToolSetView->getListCtrl().Rebuild(); // do not remove as the item must be removed from the list before setting the new selection
 					if (pTaskObject)
 					{
 						m_SelectedToolID = pTaskObject->GetUniqueObjectID();
@@ -1257,8 +1255,8 @@ void SVIPDoc::OnEditDelete()
 						m_SelectedToolID = SVGUID();
 					}
 					pToolSetView->SetSelectedTool(m_SelectedToolID);
-					pToolSetView->m_toolSetListCtrl.RestoreScrollPos();
-					pToolSetView->m_toolSetListCtrl.EnsureVisible(index, true);
+					pToolSetView->getListCtrl().RestoreScrollPos();
+					pToolSetView->getListCtrl().EnsureVisible(index, true);
 
 					SetModifiedFlag();
 
@@ -1272,12 +1270,12 @@ void SVIPDoc::OnEditDelete()
 			index--;
 			m_toolGroupings.RemoveGroup(static_cast<LPCTSTR>(rInfo.m_selection));
 
-			pToolSetView->m_toolSetListCtrl.SaveScrollPos();
-			pToolSetView->m_toolSetListCtrl.Rebuild();
+			pToolSetView->getListCtrl().SaveScrollPos();
+			pToolSetView->getListCtrl().Rebuild();
 			// Select previous..
-			if (index >= 0 && index < pToolSetView->m_toolSetListCtrl.GetItemCount())
+			if (index >= 0 && index < pToolSetView->getListCtrl().GetItemCount())
 			{
-				DWORD_PTR itemData = pToolSetView->m_toolSetListCtrl.GetItemData(index);
+				DWORD_PTR itemData = pToolSetView->getListCtrl().GetItemData(index);
 				if (itemData)
 				{
 					SVTaskObjectClass* pTaskObject = reinterpret_cast<SVTaskObjectClass*>(itemData);
@@ -1290,11 +1288,11 @@ void SVIPDoc::OnEditDelete()
 						m_SelectedToolID = SVGUID();
 					}
 					pToolSetView->SetSelectedTool(m_SelectedToolID);
-					pToolSetView->m_toolSetListCtrl.SetItemState(index, LVIS_SELECTED, LVIS_SELECTED);
+					pToolSetView->getListCtrl().SetItemState(index, LVIS_SELECTED, LVIS_SELECTED);
 				}
-				pToolSetView->m_toolSetListCtrl.EnsureVisible(index, true);
+				pToolSetView->getListCtrl().EnsureVisible(index, true);
 			}
-			pToolSetView->m_toolSetListCtrl.RestoreScrollPos();
+			pToolSetView->getListCtrl().RestoreScrollPos();
 			SetModifiedFlag();
 		}
 	}
@@ -1553,14 +1551,10 @@ void SVIPDoc::OnResultsPicker()
 			SVString InspectionName( pInspection->GetName() );
 
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
-			SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-			CString csRootName;
-			csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
-
-			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQNameSelector, SvOg::PPQVariablesSelector, SvOg::ToolSetItemSelector<>>(GetInspectionID(), GetInspectionID());
+			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_VIEWABLE );
+			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 			
 			SVStringSet SelectedNames;
 			SVStringSet SelectedNamesRaw;
@@ -1580,36 +1574,31 @@ void SVIPDoc::OnResultsPicker()
 
 			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
 
+			CString Title;
 			CString ResultPicker;
-			ResultPicker.LoadString( IDS_RESULT_PICKER );
-			SVString Title;
-			Title.Format( _T("%s - %s"), ResultPicker, InspectionName.c_str() );
-			SVString mainTabTitle = ResultPicker;
 			CString Filter;
+			ResultPicker.LoadString( IDS_RESULT_PICKER ); 
+			Title.Format( _T("%s - %s"), ResultPicker, InspectionName.c_str() );
 			Filter.LoadString( IDS_FILTER );
-			SVString filterTabTitle = Filter;
-			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
+			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ResultPicker, Filter );
 
 			if( IDOK == Result )
 			{
-				const std::deque<SvTrl::ObjectSelectorItem>& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getResults();
-				std::deque<SvTrl::ObjectSelectorItem>::const_iterator it;
+				const SvOsl::SelectorItemVector& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
+				SvOsl::SelectorItemVector::const_iterator Iter;
 				pResultList->Clear();
 
-				for( it = SelectedItems.begin(); it != SelectedItems.end(); ++it )
+				for( Iter = SelectedItems.begin(); Iter != SelectedItems.end(); ++Iter )
 				{
-					if(it->isLeaf())
+					if(string::npos  != Iter->getLocation().find(SvOl::FqnPPQVariables))
 					{
-						if(string::npos  != it->getLocation().find(SvOl::FqnPPQVariables))
-						{
-							SVString string = it->getLocation();
-							string.replace(SvOl::FqnPPQVariables,InspectionName.c_str());
-							pResultList->Insert(string);
-						}
-						else
-						{
-							pResultList->Insert(it->getLocation());	
-						}
+						SVString string = Iter->getLocation();
+						string.replace(SvOl::FqnPPQVariables,InspectionName.c_str());
+						pResultList->Insert(string);
+					}
+					else
+					{
+						pResultList->Insert(Iter->getLocation());
 					}
 				}
 				// Set the Document as modified
@@ -1633,20 +1622,18 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SVString InspectionName( pInspection->GetName() );
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-		SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-		SvOg::PublishSelector(GetInspectionID(), GetInspectionID());
+		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_PUBLISHABLE );
+		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
+		CString Title;
 		CString PublishableResults;
-		PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-		SVString Title;
-		Title.Format( _T("%s - %s"), PublishableResults, InspectionName.c_str() );
-		SVString mainTabTitle = PublishableResults;
 		CString Filter;
+		PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
+		Title.Format( _T("%s - %s"), PublishableResults, InspectionName.c_str() );
 		Filter.LoadString( IDS_FILTER );
-		SVString filterTabTitle = Filter;
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title,PublishableResults, Filter );
 
 		if( IDOK == Result )
 		{
@@ -1686,32 +1673,39 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 	if( nullptr != pInspection ) 
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-		SVDlgImagePicker dlg;
-		CString publishedResultString;
 
-		dlg.m_uAttributesDesired = SV_PUBLISH_RESULT_IMAGE;
-		dlg.m_pToolSet = GetToolSet();
+		SVString InspectionName( pInspection->GetName() );
 
-		publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULT_IMAGES );
-		CString inspectionName = pInspection->GetName();
-		CString title;
-		title.Format( _T("%s - %s"), publishedResultString, inspectionName );
-		dlg.SetCaptionTitle(title);
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 
-		INT_PTR dlgResult = dlg.DoModal();
-		if( dlgResult == IDOK )
+		CString csRootName;
+		csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
+
+		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_PUBLISH_RESULT_IMAGE );
+		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
+
+		CString Title;
+		CString PublishedResult;
+		CString Filter;
+		PublishedResult.LoadString( IDS_PUBLISHABLE_RESULT_IMAGES );
+		Title.Format( _T("%s - %s"), PublishedResult, InspectionName.c_str() );
+		Filter.LoadString( IDS_FILTER );
+		
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, PublishedResult, Filter );
+
+		if( IDOK == Result )
 		{
-			std::set<SVObjectReference> setChanged;
-			dlg.m_treeImageList.GetChangedObjects( setChanged );
-
 			SetModifiedFlag();
 
-			// reset all images that have changed...
-			std::set<SVObjectReference>::iterator iter;
-			for ( iter = setChanged.begin(); iter != setChanged.end(); ++iter )
+			const SvOsl::SelectorItemVector& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
+			SvOsl::SelectorItemVector::const_iterator Iter;
+
+			for ( Iter = SelectedItems.begin(); Iter != SelectedItems.end(); ++Iter )
 			{
-				SVObjectReference object = *iter;
-				SVSendMessage ( object.Object(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+				SVGUID ObjectGuid( Iter->getItemKey() );
+
+				SVSendMessage ( ObjectGuid, SVM_RESET_ALL_OBJECTS, NULL, NULL );
 			}
 
 			SVConfigurationObject* pConfig( nullptr );
@@ -1721,7 +1715,8 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 				pConfig->ValidateRemoteMonitorList();
 				TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
 			}
-		}// end if
+		}
+
 		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
@@ -1734,7 +1729,7 @@ void SVIPDoc::OnConditionalHistory()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		CString strTitle = _T("Conditional History - ");
 		strTitle += pInspection->GetName();
-		SVConditionalHistorySheet sheet(strTitle, pInspection );
+		SVConditionalHistorySheet sheet( strTitle, *pInspection );
 
 		//remove apply button
 		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
@@ -2361,7 +2356,7 @@ void SVIPDoc::SaveConditionalHistory(SVObjectWriter& rWriter)
 		// Conditional History
 		rWriter.StartElement(CTAG_CONDITIONAL_HISTORY);
 
-		SVScalarValueVectorType vecProperties;
+		SVScalarValueVector vecProperties;
 		pInspection->GetConditionalHistoryProperties(vecProperties);
 		for (size_t i = 0;i < vecProperties.size();++i)
 		{
@@ -2501,7 +2496,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 		{
 			// iterate through all sub items
 			VARIANT* pVariant = NULL;
-			SVScalarValueVectorType vecProperties;
+			SVScalarValueVector vecProperties;
 			SVTreeType::SVLeafHandle htiChild;
 
 			htiChild = rTree.getFirstLeaf( htiCH );
@@ -3543,7 +3538,7 @@ void SVIPDoc::OnEditDataDefinitionLists()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		CString strTitle = _T("Data Definition Lists - ");
 		strTitle += pInspection->GetName();
-		SVDataDefinitionSheet sheet(strTitle, pInspection );
+		SVDataDefinitionSheet sheet(strTitle, *pInspection );
 
 		//remove apply button
 		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;

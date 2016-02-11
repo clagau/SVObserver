@@ -184,22 +184,10 @@
     <ClInclude Include="ValuesAccessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalAndToolSetSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GlobalSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NoSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PPQNameSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PPQVariablesSelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PublishSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolSetItemSelector.h">
@@ -269,6 +257,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scintilla.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PPQSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

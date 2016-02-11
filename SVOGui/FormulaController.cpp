@@ -19,7 +19,7 @@
 #include "FormulaController.h"
 #include "GuiCommands/GetObjectName.h"
 #include "GuiCommands/GetPPQObjectName.h"
-#include "GuiCommands/GetPPQVariablesNames.h"
+#include "GuiCommands/GetPPQSelectorList.h"
 #include "GuiCommands/GetTaskObjectInstanceID.h"
 #include "GuiCommands/GetEquation.h"
 #include "GuiCommands/SetEquation.h"
@@ -33,8 +33,7 @@
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOGui/BoundValue.h"
 #include "SVOGui/GlobalSelector.h"
-#include "SVOGui/PPQNameSelector.h"
-#include "SVOGui/PPQVariablesSelector.h"
+#include "SVOGui/PPQSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 
 #pragma endregion
@@ -91,7 +90,8 @@ namespace Seidenader { namespace SVOGui
 
 	void FormulaController::BuildSelectableItems()
 	{
-		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQNameSelector, SvOg::PPQVariablesSelector, SvOg::ToolSetItemSelector<>>(m_InspectionID, m_InspectionID);
+		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, m_InspectionID, true );
+		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 	}
 
 	HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const

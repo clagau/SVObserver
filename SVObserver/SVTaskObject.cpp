@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   17 Jul 2014 20:39:34  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTaskObject.h"
 
@@ -18,7 +19,6 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVOMFCLibrary/SVTemplate.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
-
 #include "SVAnalyzer.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVInspectionProcess.h"
@@ -28,16 +28,19 @@
 #include "SVToolSet.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "RootObject.h"
+#include "ObjectSelectorLibrary/SelectorItemVector.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-using namespace SvOi;
-
 SV_IMPLEMENT_CLASS(SVTaskObjectClass, SVTaskObjectClassGuid)
+#pragma endregion Declarations
+
 
 SVTaskObjectClass::SVTaskObjectClass(LPCSTR ObjectName)
 	:SVObjectAppClass(ObjectName) 
@@ -336,38 +339,75 @@ HRESULT SVTaskObjectClass::RunOnce(IObjectClass* pTool)
 	return m_taskObjectValueInterface.RunOnce(pToolClass);
 }
 
-SvOi::IOutputInfoListClassPtr SVTaskObjectClass::GetOutputList( ) const
+SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed isAllowed, bool WholeArray) const
 {
-	SVOutputInfoListClass *outputlist = new SVOutputInfoListClass();
-	SvOi::IOutputInfoListClassPtr retVal = static_cast<SvOi::IOutputInfoListClass*>(outputlist);
-	GetOutputList(*outputlist);
-	return retVal;
-}
-
-SvOi::IOutputInfoListClassPtr SVTaskObjectClass::GetOutputList(SvOi::IsObjectInfoAllowed isAllowed) const
-{
-	SVOutputInfoListClass *outputlist = new SVOutputInfoListClass();
-	SvOi::IOutputInfoListClassPtr retVal = static_cast<SvOi::IOutputInfoListClass*>(outputlist);
+	SvOsl::SelectorItemVector *pSelectorList = new SvOsl::SelectorItemVector();
+	SvOi::ISelectorItemVectorPtr Result = static_cast<SvOi::ISelectorItemVector*> (pSelectorList);
 
 	if (isAllowed)
 	{
-		SVOutputInfoListClass list;
-		GetOutputList(list);
+		SVOutputInfoListClass OutputList;
+		GetOutputList( OutputList );
+
 		// Filter the list
-		std::for_each(list.begin(), list.end(), [&outputlist, &isAllowed](SVOutputInfoListClass::value_type info)->void
+		std::for_each(OutputList.begin(), OutputList.end(), [&pSelectorList, &isAllowed, &WholeArray](SVOutputInfoListClass::value_type info)->void
 		{
-			if (isAllowed(*info))
+			SVObjectReference ObjectRef = info->GetObjectReference();
+			if( ObjectRef->IsArray() || isAllowed(*info, -1) )
 			{
-				outputlist->Add(info);
+				SvOsl::SelectorItem InsertItem;
+				
+				InsertItem.setName( ObjectRef.GetName() );
+				InsertItem.setItemKey( ObjectRef->GetUniqueObjectID().ToVARIANT() );
+				if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (ObjectRef.Object()) )
+				{
+					CString typeName = _T("");
+					pValueObject->GetTypeName( typeName );
+					InsertItem.setItemTypeName( typeName );
+				}
+				else if( const BasicValueObject* pBasicObject = dynamic_cast<const BasicValueObject*> (ObjectRef.Object()) )
+				{
+					InsertItem.setItemTypeName( pBasicObject->getTypeName().c_str() );
+				}
+
+				if( ObjectRef->IsArray() )
+				{
+					if ( WholeArray && isAllowed(*info, -1) )
+					{
+						ObjectRef.SetEntireArray();
+						InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+						InsertItem.setArrayIndex( -1 );
+						InsertItem.setArray( true );
+						pSelectorList->push_back( InsertItem );
+					}
+
+					// add array elements
+					int iArraySize = ObjectRef->GetArraySize();
+					for ( int i = 0; i < iArraySize; i++ )
+					{
+						if( isAllowed(*info, i) )
+						{
+							ObjectRef.SetArrayIndex( i );
+							InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+							InsertItem.setArrayIndex( i );
+							pSelectorList->push_back( InsertItem );
+						}
+					}
+				}
+				else
+				{
+					InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+					pSelectorList->push_back( InsertItem );
+				}
 			}
 		});
 	}
 	else
 	{
 		assert(false);
-		::OutputDebugString(_T("SVTaskObjectClass::GetOutputList - empty functor"));
+		::OutputDebugString(_T("SVTaskObjectClass::SelectorList - empty functor"));
 	}
-	return retVal;
+	return Result;
 }
 
 SvOi::DependencyList SVTaskObjectClass::GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const

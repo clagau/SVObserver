@@ -10,7 +10,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary\SVString.h"
-#include "GuiCommands\GetPPQVariablesNames.h"
+#include "GuiCommands\GetPPQSelectorList.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
 
@@ -18,24 +18,24 @@ namespace Seidenader
 {
 	namespace SVOGui
 	{
-		class PPQVariablesSelector
+		class PPQSelector
 		{
 		public:
-			SVStringArray operator()(const GUID& rInspectionID)
+			SvOi::ISelectorItemVectorPtr operator()(const GUID& rInspectionID, UINT Attribute )
 			{
-				SVStringArray list;
+				SvOi::ISelectorItemVectorPtr SelectorList;
 
-				typedef GuiCmd::GetPPQVariablesNames Command;
+				typedef GuiCmd::GetPPQSelectorList Command;
 				typedef SVSharedPtr<Command> CommandPtr;
 
-				CommandPtr commandPtr = new Command(rInspectionID);
+				CommandPtr commandPtr = new Command(rInspectionID, Attribute);
 				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK == hr)
 				{
-					list = commandPtr->GetResults();
+					SelectorList = commandPtr->GetResults();
 				}
-				return list;
+				return SelectorList;
 			}
 		};
 	}

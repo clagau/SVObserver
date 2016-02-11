@@ -25,6 +25,9 @@
 #include "GuiCommands/GetRingbufferIndexValue.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "GlobalSelector.h"
+#include "NoSelector.h"
+#include "ToolSetItemSelector.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -50,11 +53,10 @@ namespace Seidenader
 		END_MESSAGE_MAP()
 
 #pragma region Constructor
-		TADialogRingBufferParameterPage::TADialogRingBufferParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID, RingBufferSelectorFunc func) 
+		TADialogRingBufferParameterPage::TADialogRingBufferParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID ) 
 			: CPropertyPage(TADialogRingBufferParameterPage::IDD)
 			, m_InspectionID(rInspectionID)
 			, m_TaskObjectID(rTaskObjectID)
-			, m_selectorFunc(func)
 			, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(RingDepthTag, RingBuffer_DepthGuid)))
 		{
 		}
@@ -187,14 +189,13 @@ namespace Seidenader
 			SVString InspectionName = GetInspectionName();
 			SVString PPQName = GetPPQName();
 
-			SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
 
-			GUID toolsetGUID = GetToolSetGUID();
-			m_selectorFunc(m_InspectionID, toolsetGUID);
+			SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, GetToolSetGUID() );
+			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, ToolSetItemSelector<>>( BuildOptions );
 
 			if(0 < name.GetLength())
 			{

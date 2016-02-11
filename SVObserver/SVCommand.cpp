@@ -6117,7 +6117,7 @@ HRESULT CSVCommand::ReleaseEventObserver( DWORD dwCookie, CComPtr< CSVCommand > 
 
 namespace local
 {
-	HRESULT SafeArrayToScalarValueVector( SAFEARRAY* psaNames, SAFEARRAY* psaValues, std::vector<SVScalarValue>& rvec )
+	HRESULT SafeArrayToScalarValueVector( SAFEARRAY* psaNames, SAFEARRAY* psaValues, SVScalarValueVector& rvec )
 	{
 		HRESULT hr = S_FALSE;
 		long lNumberOfElements = psaNames->rgsabound[0].cElements;
@@ -6141,7 +6141,7 @@ namespace local
 		return hr;
 	}// end SafeArrayToScalarValueVector
 
-	HRESULT ScalarValueVectorToSafeArray( std::vector<SVScalarValue>& rvec, SAFEARRAY** ppsaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus )
+	HRESULT ScalarValueVectorToSafeArray( SVScalarValueVector& rvec, SAFEARRAY** ppsaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus )
 	{
 		HRESULT hr = S_FALSE;
 
@@ -6187,7 +6187,7 @@ namespace local
 		}
 		hr = S_OK;
 		return hr;
-	}// end ScalarValueVectorToSafeArray ( std::vector<SVScalarValue>& )
+	}
 
 	HRESULT VectorLongToSafeArray( std::vector<long>& rvec, SAFEARRAY** ppsaProcessCount )
 	{
@@ -6212,9 +6212,9 @@ namespace local
 		}
 		hr = S_OK;
 		return hr;
-	}// end ScalarValueVectorToSafeArray ( std::vector<SVScalarValue>& )
+	}
 
-	HRESULT ScalarValueVectorToSafeArray( std::vector < std::vector<SVScalarValue> >& rvec, SAFEARRAY** ppsaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus )
+	HRESULT ScalarValueVectorToSafeArray( std::vector < SVScalarValueVector >& rvec, SAFEARRAY** ppsaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus )
 	{
 		HRESULT hr = S_FALSE;
 
@@ -6246,7 +6246,7 @@ namespace local
 		for ( long lEntry = 0; lEntry < lNumEntries; ++lEntry )
 		{
 			alDimIndex[1] = lEntry;
-			std::vector<SVScalarValue>& rvecValues = rvec.at(lEntry);
+			SVScalarValueVector& rvecValues = rvec.at(lEntry);
 			ASSERT( rvecValues.size() == lNumValues );
 
 			for ( long lIndex = 0; lIndex < static_cast<long>(rvecValues.size()); ++lIndex )
@@ -6275,7 +6275,7 @@ namespace local
 		}// end for ( long lEntry = 0; lEntry < lNumEntries; ++lEntry )
 		hr = S_OK;
 		return hr;
-	}// end ScalarValueVectorToSafeArray ( std::vector < std::vector<SVScalarValue> >& )
+	}
 
 	HRESULT ImageBufferVectorToSafeArray( std::vector<SVImageBufferStruct>& rvec, long lCompression, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus )
 	{
@@ -6474,7 +6474,7 @@ namespace local
 		return hr;
 	}// end ImageBufferVectorToSafeArray ( std::vector < std::vector<SVImageBufferStruct> >& rvec )
 
-	HRESULT SetStatus( std::vector<SVScalarValue>& rvec, SAFEARRAY* psaStatus )
+	HRESULT SetStatus( SVScalarValueVector& rvec, SAFEARRAY* psaStatus )
 	{
 		HRESULT hr = S_FALSE;
 		long lNumberOfElements = psaStatus->rgsabound[0].cElements;
@@ -6500,7 +6500,7 @@ STDMETHODIMP CSVCommand::SVSetConditionalHistoryProperties(BSTR bstrInspectionNa
 
 	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
-		SVScalarValueVectorType vecProperties;
+		SVScalarValueVector vecProperties;
 		hr = local::SafeArrayToScalarValueVector( psaNames, psaValues, vecProperties );
 		if ( hr == S_OK )
 		{
@@ -6529,7 +6529,7 @@ STDMETHODIMP CSVCommand::SVGetConditionalHistoryProperties(BSTR bstrInspectionNa
 
 	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
-		SVScalarValueVectorType vecProperties;
+		SVScalarValueVector vecProperties;
 
 		hr = pInspection->GetConditionalHistoryProperties( vecProperties );
 
@@ -6554,12 +6554,12 @@ STDMETHODIMP CSVCommand::SVSetConditionalHistoryList(BSTR bstrInspectionName, SA
 
 	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
-		SVScalarValueVectorType vecValues, vecImages, vecConditionals;
+		SVScalarValueVector vecValues, vecImages, vecConditionals;
 
 		// These params are optional, so pass NULL in SetConditionalHistoryList if not supplied
-		SVScalarValueVectorType* pvecValues = NULL;
-		SVScalarValueVectorType* pvecImages = NULL;
-		SVScalarValueVectorType* pvecConditionals = NULL;
+		SVScalarValueVector* pvecValues = NULL;
+		SVScalarValueVector* pvecImages = NULL;
+		SVScalarValueVector* pvecConditionals = NULL;
 
 		if ( psaValueNames )
 		{
@@ -6615,7 +6615,7 @@ STDMETHODIMP CSVCommand::SVGetConditionalHistoryList( BSTR bstrInspectionName, S
 
 	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
-		SVScalarValueVectorType vecValues, vecImages, vecConditionals;
+		SVScalarValueVector vecValues, vecImages, vecConditionals;
 
 		hr = pInspection->GetConditionalHistoryList( vecValues, vecImages, vecConditionals );
 
@@ -6652,7 +6652,7 @@ STDMETHODIMP CSVCommand::SVGetConditionalHistoryAndClear(
 		bool bOnline = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 		if ( bOnline )
 		{
-			std::vector<SVScalarValueVectorType> vecValues, vecConditionals;
+			std::vector<SVScalarValueVector> vecValues, vecConditionals;
 			std::vector<SVImageBufferStructVectorType> vecImages;
 			std::vector<long> vecProcessCount;
 
@@ -6709,7 +6709,7 @@ STDMETHODIMP CSVCommand::SVGetMostRecentConditionalHistory(
 		bool bOnline = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 		if ( bOnline )
 		{
-			SVScalarValueVectorType vecValues, vecConditionals;
+			SVScalarValueVector vecValues, vecConditionals;
 			SVImageBufferStructVectorType vecImages;
 			long lProcessCount = -1;
 

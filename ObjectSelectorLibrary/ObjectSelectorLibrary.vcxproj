@@ -169,6 +169,7 @@
     <ClCompile Include="ObjectTreeCtrl.cpp" />
     <ClCompile Include="ObjectTreeGenerator.cpp" />
     <ClCompile Include="ResizablePropertySheet.cpp" />
+    <ClCompile Include="SelectorItem.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -185,6 +186,9 @@
     <ClInclude Include="ObjectTreeCtrl.h" />
     <ClInclude Include="ObjectTreeGenerator.h" />
     <ClInclude Include="ResizablePropertySheet.h" />
+    <ClInclude Include="SelectorItem.h" />
+    <ClInclude Include="SelectorItemVector.h" />
+    <ClInclude Include="SelectorOptions.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TextDefinesSvOsl.h" />
   </ItemGroup>

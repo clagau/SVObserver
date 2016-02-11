@@ -18,7 +18,6 @@
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "GlobalSelector.h"
-#include "PPQNameSelector.h"
 #include "NoSelector.h"
 #include "ToolSetItemSelector.h"
 #include "RangeSelectorFilter.h"
@@ -205,14 +204,14 @@ namespace Seidenader { namespace SVOGui
 		SVString InspectionName = GetInspectionName();
 		SVString PPQName = GetPPQName();
 
-		SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
 
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
 
-		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<false, RangeSelectorFilter>>(m_InspectionID, m_TaskObjectID);
+		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, m_TaskObjectID );
+		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<RangeSelectorFilter>>( BuildOptions );
 	}
 
 	SVString RangeController::GetOwnerName() const

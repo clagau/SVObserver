@@ -9,7 +9,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
+#include "ObjectInterfaces\ISelectorItemVector.h"
 #include "ObjectInterfaces\IRootObject.h"
 #pragma endregion Includes
 
@@ -20,11 +20,9 @@ namespace Seidenader
 		class GlobalSelector
 		{
 		public:
-			SVStringArray operator()(UINT attribute)
+			SvOi::ISelectorItemVectorPtr operator()(UINT attribute)
 			{
-				SVStringArray ObjectNameList;
-				SvOi::getRootChildNameList(ObjectNameList, _T(""), attribute);
-				return ObjectNameList;
+				return SvOi::getRootChildSelectorList(_T(""), attribute);
 			}
 		};
 	}

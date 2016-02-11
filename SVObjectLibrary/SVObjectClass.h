@@ -111,9 +111,6 @@ public:
 	virtual void Persist( SVObjectWriter& rWriter );
 	virtual void PersistAttributes( SVObjectWriter& rWriter );
 
-	virtual bool IsArray() const;
-	virtual int GetArraySize() const;
-
 	virtual BOOL ReinitObjectInfos();
 
 	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
@@ -180,6 +177,10 @@ public:
 	virtual const SVGUID& GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
 	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) override;
+	virtual const UINT ObjectAttributesAllowed() const override;
+	virtual const UINT ObjectAttributesSet(int iIndex=0) const override;
+	virtual bool IsArray() const;
+	virtual int GetArraySize() const;
 	virtual const SVGUID& GetUniqueObjectID() const override;
 	virtual bool is_Created() const override { return IsCreated() ? true : false; }
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
@@ -205,8 +206,6 @@ public:
 	//This attribute holds the object level error information.
 	SVErrorClass msvError;
 
-	const UINT ObjectAttributesAllowed() const;
-	const UINT ObjectAttributesSet(int iIndex=0) const;
 	UINT& ObjectAttributesAllowedRef();
 	SVObjectAttributeShim ObjectAttributesSetRef(int iIndex=0);
 	void SetObjectAttributesSet(UINT uAttributes, int iIndex=0, UINT WhichBits = SET_ALL_BITS);

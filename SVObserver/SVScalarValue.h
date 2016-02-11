@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:02:34  $
 //******************************************************************************
 
-#ifndef SVSCALARVALUE_H
-#define SVSCALARVALUE_H
+#pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectReference.h"
+#pragma endregion Includes
 
 class SVValueObjectClass;
 
@@ -26,16 +27,14 @@ public:
 	unsigned long      status;
 
 	SVScalarValue() : status(0) {}
-	explicit SVScalarValue( SVObjectReference& rhs ) : status(0) { object = rhs; strName = object.GetCompleteObjectName(); }
+	explicit SVScalarValue( const SVObjectReference& rhs ) : status(0) { object = rhs; strName = object.GetCompleteObjectName(); }
 	SVScalarValue(const CString& p_rstrName, const CString& p_rstrValue, const SVObjectReference& p_Object = SVObjectReference(), const CString& p_rstrType=CString())
 		: strName(p_rstrName), strValue(p_rstrValue), strType(p_rstrType), object(p_Object), status(0) {}
 	void clear() { strName.Empty(); strValue.Empty(); strType.Empty(); object=SVObjectReference(); status=0; }
 };
 
-typedef std::map    <CString, SVScalarValue>  SVScalarValueMapType;
-typedef std::vector <SVScalarValue>           SVScalarValueVectorType;
-
-#endif
+typedef std::map<CString, SVScalarValue>  SVScalarValueMapType;
+typedef std::vector<SVScalarValue>        SVScalarValueVector;
 
 //******************************************************************************
 //* LOG HISTORY:

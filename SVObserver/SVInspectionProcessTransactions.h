@@ -20,7 +20,6 @@ enum SVInspectionMessageEnum
 	SVInspectionMessageGetCHList,
 	SVInspectionMessageGetCHandClear,
 	SVInspectionMessageGetCHMostRecent,
-	SVInspectionMessageResetCH,
 };
 
 struct SVInspectionMessageDataStruct
@@ -33,10 +32,10 @@ struct SVInspectionMessageDataStruct
 
 struct SVInspectionMessageDataStruct_CHProperties : public SVInspectionMessageDataStruct
 {
-	SVScalarValueVectorType* pvecProperties;
+	SVScalarValueVector* pvecProperties;
 	bool bResetObject;
 
-	SVInspectionMessageDataStruct_CHProperties(SVScalarValueVectorType* p_pvecProperties, bool p_bResetObject)
+	SVInspectionMessageDataStruct_CHProperties(SVScalarValueVector* p_pvecProperties, bool p_bResetObject)
 		: pvecProperties(p_pvecProperties), bResetObject(p_bResetObject) {}
 };
 

@@ -52,14 +52,14 @@ BEGIN_MESSAGE_MAP(ObjectFilterPpg, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-ObjectFilterPpg::ObjectFilterPpg( SvTrl::ObjectTreeItems& treeContainer, const SVString& title, bool singleSelect /*= true*/ )
+ObjectFilterPpg::ObjectFilterPpg( SvTrl::ObjectTreeItems& treeContainer, LPCTSTR title, bool singleSelect /*= true*/ )
 	: CPropertyPage( ObjectFilterPpg::IDD )
 	, m_rTreeContainer( treeContainer )
 	, m_SingleSelect( singleSelect )
 	, m_CheckedLocation( _T("") )
 	, m_CheckedRow( -1 ) 
 {
-	m_psp.pszTitle = title.c_str();
+	m_psp.pszTitle = title;
 	m_psp.dwFlags |= PSP_USETITLE;
 }
 

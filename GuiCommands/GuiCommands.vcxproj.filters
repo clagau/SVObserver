@@ -36,19 +36,10 @@
     <ClInclude Include="GetObjectName.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GetPPQObjectName.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ResetObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GetPPQVariablesNames.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SetDefaultInputs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GetOutputList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetCompleteObjectName.h">
@@ -139,6 +130,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SetRingbufferIndexValue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetSelectorList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetPPQSelectorList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetPPQObjectName.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,9 +21,9 @@ namespace Seidenader
 {
 	namespace GuiCommand
 	{
-		struct GetPPQVariablesNames: public boost::noncopyable
+		struct GetPPQSelectorList: public boost::noncopyable
 		{
-			GetPPQVariablesNames(const SVGUID& rInstanceID) : m_InstanceID(rInstanceID) {}
+			GetPPQSelectorList(const SVGUID& rInstanceID, UINT Attribute) : m_InstanceID(rInstanceID), m_Attribute(Attribute) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -35,16 +35,17 @@ namespace Seidenader
 				SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(m_InstanceID));
 				if (pInspection)
 				{
-					m_Names = pInspection->GetPPQInputNames();
+					m_SelectorList = pInspection->GetPPQSelectorList( m_Attribute );
 				}
 				return hr;
 			}
 			bool empty() const { return false; }
-			const SVStringArray& GetResults() const { return m_Names; }
+			SvOi::ISelectorItemVectorPtr GetResults() const { return m_SelectorList; }
 
 		private:
 			SVGUID m_InstanceID;
-			SVStringArray m_Names;
+			UINT m_Attribute;
+			SvOi::ISelectorItemVectorPtr m_SelectorList;
 		};
 	}
 }

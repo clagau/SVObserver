@@ -478,13 +478,6 @@ HRESULT SVInspectionProcess::ProcessTransaction( SVInspectionTransactionStruct p
 			hr = m_ConditionalHistory.GetMostRecentHistory( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals), *(pData->plProcessCount) );
 			break;
 		}
-		case SVInspectionMessageResetCH:
-		{
-			SVInspectionMessageDataStruct_CHReset* pData = dynamic_cast <SVInspectionMessageDataStruct_CHReset*> (p_Message.pData);
-			ASSERT( pData );
-			hr = m_ConditionalHistory.ResetObject();
-			break;
-		}
 	}// end switch ( p_Message.dwMessage )
 	}// end try
 	#ifndef _DEBUG
@@ -3283,7 +3276,7 @@ void SVInspectionProcess::DumpDMInfo( LPCTSTR p_szName ) const
 	}
 }
 
-HRESULT SVInspectionProcess::SetConditionalHistoryProperties( SVScalarValueVectorType& p_rvecProperties, bool p_bResetObject )
+HRESULT SVInspectionProcess::SetConditionalHistoryProperties( SVScalarValueVector& p_rvecProperties, bool p_bResetObject )
 {
 	HANDLE hEvent = NULL;
 	SVInspectionMessageDataStruct_CHProperties data( &p_rvecProperties, p_bResetObject );
@@ -3310,7 +3303,7 @@ HRESULT SVInspectionProcess::SetConditionalHistoryProperties( SVScalarValueVecto
 	}
 }
 
-HRESULT SVInspectionProcess::GetConditionalHistoryProperties( SVScalarValueVectorType& p_rvecProperties )
+HRESULT SVInspectionProcess::GetConditionalHistoryProperties( SVScalarValueVector& p_rvecProperties )
 {
 	HANDLE hEvent = NULL;
 	hEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
@@ -3331,7 +3324,7 @@ HRESULT SVInspectionProcess::GetConditionalHistoryProperties( SVScalarValueVecto
 HRESULT SVInspectionProcess::GetConditionalHistoryProperties( SVScalarValueMapType& rmapProperties )
 {
 	rmapProperties.clear();
-	SVScalarValueVectorType vecProperties;
+	SVScalarValueVector vecProperties;
 	HRESULT hr = GetConditionalHistoryProperties( vecProperties );
 	if ( hr == S_OK )
 	{
@@ -3428,24 +3421,6 @@ HRESULT SVInspectionProcess::GetMostRecentConditionalHistory( std::vector <SVSca
 	}
 }
 
-HRESULT SVInspectionProcess::ResetConditionalHistory()
-{
-	HANDLE hEvent = NULL;
-	hEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
-
-	SVInspectionMessageDataStruct_CHReset data;
-	SVInspectionTransactionStruct message( SVInspectionMessageResetCH, hEvent, &data );
-	AddTransaction( message );
-
-	DWORD dwReturn = ::WaitForSingleObjectEx( hEvent, m_dwCHTimeout, TRUE );
-
-	::CloseHandle( hEvent );
-	if ( dwReturn == WAIT_OBJECT_0 )
-		return S_OK;
-	else
-		return (HRESULT) dwReturn;
-}
-
 HRESULT SVInspectionProcess::BuildConditionalHistoryListAfterLoad()
 {
 	// build lists from value object attributes. Must happen after BuildValueObjectMap.
@@ -3454,9 +3429,9 @@ HRESULT SVInspectionProcess::BuildConditionalHistoryListAfterLoad()
 	SVTaskObjectListClass* pToolSet = static_cast <SVTaskObjectListClass*> ( m_pCurrentToolset );
 	if( pToolSet != NULL )
 	{
-		std::vector<SVScalarValue> vecValues;
-		std::vector<SVScalarValue> vecConditionals;
-		std::vector<SVScalarValue> vecImages;
+		SVScalarValueVector vecValues;
+		SVScalarValueVector vecConditionals;
+		SVScalarValueVector vecImages;
 		// VALUE OBJECTS
 		{
 			std::vector<SVValueObjectReference> vecObjects;
@@ -4842,9 +4817,92 @@ long  SVInspectionProcess::GetResultDataIndex() const
 }
 
 #pragma region IInspectionProcess methods
-SVStringArray SVInspectionProcess::GetPPQInputNames() const
+SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList( const UINT Attribute ) const
 {
-	return getPPQVariableNames();
+	SvOsl::SelectorItemVector *pSelectorList = new SvOsl::SelectorItemVector();
+	SvOi::ISelectorItemVectorPtr Result = static_cast<SvOi::ISelectorItemVector*> (pSelectorList);
+
+	SVPPQObject *pPPQ = GetPPQ();
+	if( nullptr != pPPQ )
+	{
+		SVString PpqName( pPPQ->GetName() );
+
+		SVObjectReferenceVector ObjectList;
+		SVObjectManagerClass::Instance().getTreeList( PpqName, ObjectList, Attribute );
+
+		std::for_each( ObjectList.begin(), ObjectList.end(), [&pSelectorList](const SVObjectReference& rObjectRef)->void
+		{
+			SvOsl::SelectorItem InsertItem;
+
+			InsertItem.setName( rObjectRef.GetName() );
+			InsertItem.setItemKey( rObjectRef->GetUniqueObjectID().ToVARIANT() );
+			if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (rObjectRef.Object()) )
+			{
+				CString typeName = _T("");
+				pValueObject->GetTypeName( typeName );
+				InsertItem.setItemTypeName( typeName );
+			}
+			else if( const BasicValueObject* pBasicObject = dynamic_cast<const BasicValueObject*> (rObjectRef.Object()) )
+			{
+				InsertItem.setItemTypeName( pBasicObject->getTypeName().c_str() );
+			}
+			if( rObjectRef->IsArray() )
+			{
+				// add array elements
+				int iArraySize = rObjectRef->GetArraySize();
+				for ( int i = 0; i < iArraySize; i++ )
+				{
+					//We make a copy to be able to set the index rObjectRef is const
+					SVObjectReference ArrayObjectRef( rObjectRef );
+					ArrayObjectRef.SetArrayIndex( i );
+					InsertItem.setLocation( ArrayObjectRef.GetCompleteOneBasedObjectName() );
+					InsertItem.setArrayIndex( i );
+					pSelectorList->push_back( InsertItem );
+				}
+			}
+			else
+			{
+				InsertItem.setLocation( rObjectRef.GetCompleteOneBasedObjectName() );
+				pSelectorList->push_back( InsertItem );
+			}
+		});
+	}
+
+	
+	SVString InspectionName = GetName();
+
+	SVObjectVector PpqVariables;
+	PpqVariables = getPPQVariables();
+	std::for_each( PpqVariables.begin(), PpqVariables.end(), [&pSelectorList, &InspectionName, &Attribute](SVObjectClass* pObject)->void
+	{
+		if( nullptr != pObject )
+		{
+			//Check if the attribute of the object is allowed
+			if( 0 != (Attribute & pObject->ObjectAttributesAllowed())  )
+			{
+				SVObjectReference ObjectRef( pObject );
+				SvOsl::SelectorItem InsertItem;
+
+				//Need to replace the inspection name with the PPQ Variables name
+				// Only DIO and Remote Input, but is all that is in this list?
+				SVString Location( ObjectRef.GetCompleteOneBasedObjectName() );
+				Location.replace(InspectionName.c_str(), SvOl::FqnPPQVariables);
+				InsertItem.setName( ObjectRef.GetName() );
+				InsertItem.setLocation( Location.c_str() );
+				InsertItem.setItemKey( ObjectRef->GetUniqueObjectID().ToVARIANT() );
+				if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
+				{
+					CString typeName = _T("");
+					pValueObject->GetTypeName( typeName );
+					InsertItem.setItemTypeName( typeName );
+				}
+
+				pSelectorList->push_back( InsertItem );
+			}
+		}
+	});
+
+	return Result;
 }
 
 SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const
@@ -4891,11 +4949,12 @@ bool SVInspectionProcess::IsDisabledPPQVariable(SVValueObjectClass* pValueObject
 	return false;
 }
 
-SVStringArray SVInspectionProcess::getPPQVariableNames() const
+SVObjectVector SVInspectionProcess::getPPQVariables() const
 {
-	std::vector<SVString> retVals;
+	SVObjectVector Result;
+	std::map< SVString, SVObjectClass* > NameObjectMap;
+	SVStringArray PpqVariableNames;
 
-	SVIOEntryHostStructPtrList PPQVariables;
 	for( size_t i = 0; i < m_PPQInputs.size(); i++ )
 	{	
 		SVIOEntryHostStructPtr ioEntryPtr = m_PPQInputs[i].m_IOEntryPtr;
@@ -4903,22 +4962,25 @@ SVStringArray SVInspectionProcess::getPPQVariableNames() const
 		//check if input is enable for this inspection
 		if( ioEntryPtr->m_Enabled )
 		{
-			retVals.push_back(ioEntryPtr.get()->m_pValueObject->GetCompleteObjectName());
+			SVObjectClass* pObject( ioEntryPtr.get()->m_pValueObject );
+			if( nullptr != pObject )
+			{
+				SVString Name( pObject->GetCompleteObjectName() );
+				NameObjectMap[Name] = pObject;
+				PpqVariableNames.push_back( Name );
+			}
 		}
 	}// end for
 
-	//Need to replace the inspection name with the PPQ Variables name
-	// Only DIO and Remote Input, but is all that is in this list?
-	SVString InspectionName = GetName();
-	std::transform(retVals.begin(), retVals.end(), retVals.begin(), [&InspectionName](const SVString& Name)->SVString 
+	//Sort the PPQ variable names and return the respective SVObjectClass pointers in order
+	std::sort( PpqVariableNames.begin(), PpqVariableNames.end(), SvUl::NaturalStringCompare<SVString>()); // sort strings
+	std::for_each(PpqVariableNames.begin(), PpqVariableNames.end(), [&Result, &NameObjectMap](const SVString& rItem)->void
 	{
-		SVString newName(Name);
-		newName.replace(InspectionName.c_str(), SvOl::FqnPPQVariables);
-		return newName;
-	});
+		Result.push_back( NameObjectMap[rItem] );
+	}
+	);
 
-	std::sort( retVals.begin(), retVals.end(), SvUl::NaturalStringCompare<SVString>()); // sort strings
-	return retVals;
+	return Result;
 }
 
 DWORD SVInspectionProcess::GetObjectColor() const

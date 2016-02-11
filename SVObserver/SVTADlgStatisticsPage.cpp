@@ -24,7 +24,6 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
-#include "SVOGui/PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -287,21 +286,19 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, pInspection->GetToolSet()->GetCompleteObjectName(), SVString( _T("") ) );
 
-	SvOg::PublishSelector(pInspection->GetUniqueObjectID(), m_pTool->GetUniqueObjectID());
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
 
+	CString Title;
 	CString PublishableResults;
-	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-	SVString Title;
-	SVString ToolName( m_pTool->GetName() );
-	Title.Format( _T("%s - %s"), PublishableResults, ToolName.c_str() );
-	SVString mainTabTitle = PublishableResults;
 	CString Filter;
+	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
+	Title.Format( _T("%s - %s"), PublishableResults, m_pTool->GetName() );
 	Filter.LoadString( IDS_FILTER );
-	SVString filterTabTitle = Filter;
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+	
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, PublishableResults, Filter, this );
 
 	if( IDOK == Result )
 	{
@@ -331,20 +328,19 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvOsl::ObjectTreeGenerator::SelectorTypeEnum SelectorType;
 	SelectorType = static_cast<SvOsl::ObjectTreeGenerator::SelectorTypeEnum>(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
-	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_STATISTICS );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(pInspection->GetUniqueObjectID(), m_pToolSet->GetUniqueObjectID());
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
+	CString Title;
 	CString ToolsetOutput;
-	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-	SVString Title;
-	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
-	SVString mainTabTitle = ToolsetOutput;
 	CString Filter;
+	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
+	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
 	Filter.LoadString( IDS_FILTER );
-	SVString filterTabTitle = Filter;
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
 
 	if( IDOK == Result )
 	{

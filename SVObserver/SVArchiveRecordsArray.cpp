@@ -83,11 +83,12 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 				CString sNewName = p_pToolArchive->GetInspection()->GetName();
 				sNewName += sName.Mid(iPos); 
 				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sNewName ), ref );
-				if( hrGetObject == S_OK)  
-				{	
+				if( S_OK == hrGetObject )
+				{
 					/// names in m_svoArchiveResultNames are zero based!!!
 					ref.IncrementIndex();
-					if(sNewName != sName)
+
+					if( sNewName != sName )
 					{
 						// Set value with new inspection name.
 						p_svoObjects.SetValue(l_lIndex, i, sNewName);
@@ -95,7 +96,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 				}
 			}
 			else
-			{	// We should always find a dotted name here.
+			{				// We should always find a dotted name here.
 				ASSERT(FALSE);
 			}
 

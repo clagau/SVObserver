@@ -37,14 +37,14 @@ BEGIN_MESSAGE_MAP(ObjectSelectorPpg, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-ObjectSelectorPpg::ObjectSelectorPpg( SvTrl::ObjectTreeItems& rTreeContainer, const SVString& rTitle, bool SingleSelect )
+ObjectSelectorPpg::ObjectSelectorPpg( SvTrl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect )
 	: CPropertyPage( ObjectSelectorPpg::IDD )
 	, m_rTreeContainer( rTreeContainer )
 	, m_NodeTree( *this, SingleSelect )
 	, m_LeafTree( *this, SingleSelect )
 	, m_HelpID(0)
 {
-	m_psp.pszTitle = rTitle.c_str();
+	m_psp.pszTitle = Title;
 	m_psp.dwFlags |= PSP_USETITLE;
 }
 

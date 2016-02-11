@@ -20,7 +20,6 @@ namespace Seidenader
 {
 	namespace SVOGui
 	{
-		typedef boost::function<void(const GUID&, const GUID&)> RingBufferSelectorFunc;
 		class TADialogRingBufferParameterPage : public CPropertyPage, public ISVPropertyPageDialog
 		{
 #pragma region Declarations
@@ -33,7 +32,7 @@ namespace Seidenader
 #pragma region Constructor
 		public:
 			// Standard constructor
-			TADialogRingBufferParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID, RingBufferSelectorFunc func );
+			TADialogRingBufferParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID );
 
 			// Standard destructor
 			virtual ~TADialogRingBufferParameterPage();
@@ -98,7 +97,6 @@ namespace Seidenader
 			CButton m_ButtonImageIndex1;
 			CButton m_ButtonImageIndex2;
 			CBitmap m_downArrowBitmap;
-			RingBufferSelectorFunc m_selectorFunc;
 			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
 			Controller m_Values;

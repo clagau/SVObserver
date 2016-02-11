@@ -35,10 +35,10 @@ namespace Seidenader
 			//**********
 			// Descripion:  The preferred constructor
 			// Parameter:  treeContainer <in>:  reference to the tree to display
-			// Parameter:  title <in>:  reference to the text for the page title
+			// Parameter:  title <in>: const string for page title
 			// Parameter:  singleSelect <in>:  true for single selection mode (default).  Multi-select otherwise.
 			//***********
-			ObjectFilterPpg( SvTrl::ObjectTreeItems& treeContainer, const SVString& title, bool singleSelect = true );
+			ObjectFilterPpg( SvTrl::ObjectTreeItems& treeContainer, LPCTSTR title, bool singleSelect = true );
 
 			//**********
 			// Descripion:  The virtual destructor

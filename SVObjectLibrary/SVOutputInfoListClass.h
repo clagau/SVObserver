@@ -15,11 +15,10 @@
 #pragma warning( disable : 4786 )
 
 #pragma region Includes
-#include "ObjectInterfaces\IOutputInfoListClass.h"
 #include "SVOutObjectInfoStruct.h"
 #pragma endregion Includes
 
-class SVOutputInfoListClass : public SvOi::IOutputInfoListClass
+class SVOutputInfoListClass
 {
 public:
 	typedef SVOutObjectInfoStructPtrArray::value_type value_type;
@@ -39,10 +38,7 @@ public:
 
 	BOOL CheckExistence( int Index = -1 );
 
-#pragma region virtual method (IOutputInfoListClass)
-	virtual int GetSize() const override;
-	virtual SvOi::IObjectInfoStruct* GetInterfaceAt( int p_iIndex ) override;
-#pragma region virtual method (IOutputInfoListClass)
+	virtual int GetSize() const;
 
 	virtual SVOutObjectInfoStruct* GetAt( int p_iIndex );
 

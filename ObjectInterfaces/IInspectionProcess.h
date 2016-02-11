@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "IObjectClass.h"
 #include "ITaskObject.h"
+#include "ISelectorItemVector.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -30,9 +31,9 @@ namespace Seidenader
 			virtual void SetDefaultInputs() = 0;
 
 			/***********
-			This method gets the names of the PPQ inputs
+			This method gets the PPQ Variables selector list
 			***********/
-			virtual SVStringArray GetPPQInputNames() const = 0;
+			virtual ISelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const = 0;
 
 			/***********
 			This method gets the Interface to the Tool Set

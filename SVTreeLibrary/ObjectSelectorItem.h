@@ -254,7 +254,6 @@ namespace Seidenader
 		};
 
 		typedef SVSharedPtr< ObjectSelectorItem > ObjectSelectorItemPtr;
-		typedef std::deque<ObjectSelectorItem> ObjectSelectorItems;
 	} //namespace SVTreeLibrary
 } //namespace Seidenader
 

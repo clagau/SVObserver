@@ -385,11 +385,9 @@ namespace Seidenader { namespace SVOGui
 		tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
 
 		ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::TypeSingleObject );
-		ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
 		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, SVString( _T("") ) );
-		ObjectTreeGenerator::Instance().setAllowWholeArrays( true );
 
 		// Insert the Names of the objects selecteable for an Equation
 		m_FormulaController->BuildSelectableItems();
@@ -398,15 +396,14 @@ namespace Seidenader { namespace SVOGui
 		Items.insert( SVString(m_strToolsetOutputVariable) );
 		ObjectTreeGenerator::Instance().setCheckItems( Items );
 
+		CString Title;
 		CString ToolsetOutput;
-		ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-		SVString Title;
-		Title.Format( _T("%s - %s"), ToolsetOutput, InspectionName.c_str() );
-		SVString mainTabTitle = ToolsetOutput;
 		CString Filter;
+		ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
+		Title.Format( _T("%s - %s"), ToolsetOutput, InspectionName.c_str() );
 		Filter.LoadString( IDS_FILTER );
-		SVString filterTabTitle = Filter;
-		INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+
+		INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
 
 		if( IDOK == Result )
 		{

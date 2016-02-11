@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVToolSetListCtrl.h"
-#include "SVOutputInfoListTreeCtrl.h"
 #pragma endregion Includes
 
 #define ID_EDIT_LABEL_ENDS 40000
@@ -28,51 +27,10 @@ class SVObjectWriter;
 
 class ToolSetView : public CFormView
 {
-protected:
-	DECLARE_DYNCREATE(ToolSetView)
-
-public:
-	//{{AFX_DATA(ToolSetView)
-	enum { IDD = IDD_TOOLSET_VIEW };
-	SVOutputInfoListTreeCtrlClass m_outputTreeCtrl;
-	SVToolSetListCtrl m_toolSetListCtrl;
-	//}}AFX_DATA
-
-	// Generated message map functions
-	//{{AFX_MSG(ToolSetView)
-	//afx_msg void OnSelchangeToolsetTab(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEditLabelEnds();
-	afx_msg void OnSelectComment();
-	afx_msg void OnSelectToolComment();
-	afx_msg void OnSelectToolSetReference();
-	afx_msg void OnSelectToolNormalize();
-	afx_msg void OnEditToolName();
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRunOnce();
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-	#ifdef _DEBUG
-		virtual void AssertValid() const;
-		virtual void Dump(CDumpContext& dc) const;
-	#endif
-
-	//{{AFX_VIRTUAL(ToolSetView)
-	virtual void OnInitialUpdate();
-
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual void OnDraw(CDC* pDC);
-	//}}AFX_VIRTUAL
+#pragma region Constructor
+	ToolSetView(); // protected constructor used by dynamic creation
+	virtual ~ToolSetView();
+#pragma endregion Constructor
 
 public:
 	SVIPDoc* GetIPDoc() const;
@@ -93,20 +51,44 @@ public:
 	void HandleExpandCollapse(const CString& name, bool bCollapse);
 	bool IsEndToolGroupAllowed() const;
 	CString GetSelectedGroup() const;
-	//bool IsToolsetListCtrlActive() const; // BRW - Without Tool Set Tree View, the List Ctrl is always active.
+
+	SVToolSetListCtrl& getListCtrl() { return m_toolSetListCtrl; };
 
 protected:
-#pragma region Constructor
-	ToolSetView(); // protected constructor used by dynamic creation
-	virtual ~ToolSetView();
-#pragma endregion Constructor
+	DECLARE_DYNCREATE(ToolSetView)
+	enum { IDD = IDD_TOOLSET_VIEW };
+
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEditLabelEnds();
+	afx_msg void OnSelectComment();
+	afx_msg void OnSelectToolComment();
+	afx_msg void OnSelectToolSetReference();
+	afx_msg void OnSelectToolNormalize();
+	afx_msg void OnEditToolName();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnRunOnce();
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+
+	DECLARE_MESSAGE_MAP()
+
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext& dc) const;
+#endif
+
+	virtual void OnInitialUpdate();
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 
 	void ValidateLabelText(CString& newText);
-
 	void RenameItem(int item, const CString& oldName, const CString& newName);
-
 	void ToggleExpandCollapse(int item);
-
 	//************************************
 	//! Searches the name in the list of all tool and group names case insensitive 
 	//! \param name [in ]
@@ -116,15 +98,17 @@ protected:
 	bool CheckName(const CString& name, LPCTSTR lpExclude = nullptr) const;
 	bool EditToolGroupingComment();
 
-	bool m_isLabeling;
-	int m_labelingIndex;
-	CString m_csLabelSaved;    // To restore label if necessary during editing.
-	CString m_csLabelEdited;
-
 private:
 #pragma region Private Methods
 	bool ShowDuplicateNameMessage(const CString& rName) const;
 #pragma endregion Private Methods
+
+	SVToolSetListCtrl m_toolSetListCtrl;
+
+	bool m_isLabeling;
+	int m_labelingIndex;
+	CString m_csLabelSaved;    // To restore label if necessary during editing.
+	CString m_csLabelEdited;
 };
 
 //******************************************************************************

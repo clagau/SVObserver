@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVString.h"
+#include "ObjectInterfaces\ISelectorItemVector.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -18,13 +18,13 @@ namespace Seidenader
 		class NoSelector
 		{
 		public:
-			SVStringArray operator()(const GUID& rGuid)
+			SvOi::ISelectorItemVectorPtr operator()(const GUID& rGuid, UINT attribute)
 			{
-				return SVStringArray();
+				return SvOi::ISelectorItemVectorPtr();
 			}
-			SVStringArray operator()(UINT attribute)
+			SvOi::ISelectorItemVectorPtr operator()(UINT attribute)
 			{
-				return SVStringArray();
+				return SvOi::ISelectorItemVectorPtr();
 			}
 		};
 	}

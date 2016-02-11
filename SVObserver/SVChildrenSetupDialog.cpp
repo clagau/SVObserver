@@ -19,7 +19,8 @@
 #include "SVOGui/SVShowDependentsDialog.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVOGui/PublishSelector.h"
+#include "SVOGui/NoSelector.h"
+#include "SVOGui/ToolSetItemSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -262,21 +263,18 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pParentOwner->GetCompleteObjectName(), SVString( _T("") ) );
 
-	SvOg::PublishSelector(m_pDocument->GetInspectionID(), m_pParentObject->GetUniqueObjectID());
+	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
+	CString Title;
 	CString PublishableResults;
-	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-	SVString Title;
-	SVString ToolName( m_pParentOwner->GetName() );
-	Title.Format( _T("%s - %s"), PublishableResults, ToolName.c_str() );
-	SVString mainTabTitle = PublishableResults;
 	CString Filter;
+	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
+	Title.Format( _T("%s - %s"), PublishableResults, m_pParentOwner->GetName() );
 	Filter.LoadString( IDS_FILTER );
-	SVString filterTabTitle = Filter;
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, PublishableResults, Filter, this );
 
 	if( IDOK == Result )
 	{

@@ -123,7 +123,7 @@ public:
 #pragma region virtual method (IInspectionProcess)
 	virtual SvOi::IObjectClass* GetPPQInterface() const override;
 	virtual void SetDefaultInputs() override;
-	virtual SVStringArray GetPPQInputNames() const override;
+	virtual SvOi::ISelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
 #pragma region virtual method (IInspectionProcess)
@@ -157,14 +157,13 @@ public:
 	HRESULT AddInputImageRequest( SVInputImageRequestInfoStructPtr p_InRequestPtr );
 	HRESULT AddInputImageRequestByCameraName(CString sCameraName, CString sFileName);
 
-	HRESULT SetConditionalHistoryProperties( SVScalarValueVectorType& rmapProperties, bool bResetObject = true );
-	HRESULT GetConditionalHistoryProperties( SVScalarValueVectorType& rmapProperties );
+	HRESULT SetConditionalHistoryProperties( SVScalarValueVector& rmapProperties, bool bResetObject = true );
+	HRESULT GetConditionalHistoryProperties( SVScalarValueVector& rmapProperties );
 	HRESULT GetConditionalHistoryProperties( SVScalarValueMapType& rmapProperties );
 	HRESULT SetConditionalHistoryList( std::vector <SVScalarValue>* pvecData, std::vector <SVScalarValue>* pvecImages, std::vector <SVScalarValue>* pvecConditionals, bool bResetObject = true );// parameters not const because status will be returned
 	HRESULT GetConditionalHistoryList( std::vector <SVScalarValue>& rvecData, std::vector <SVScalarValue>& rvecImages, std::vector <SVScalarValue>& rvecConditionals );
 	HRESULT GetConditionalHistoryAndClear( std::vector < std::vector <SVScalarValue> >& rvecData, std::vector < std::vector <SVImageBufferStruct> >& rvecImages, std::vector < std::vector <SVScalarValue> >& rvecConditionals, std::vector<long>& rvecProcessCount );
 	HRESULT GetMostRecentConditionalHistory( std::vector <SVScalarValue>& rvecData, std::vector <SVImageBufferStruct>& rvecImages, std::vector <SVScalarValue>& rvecConditionals, long& rlProcessCount );
-	HRESULT ResetConditionalHistory();
 	HRESULT BuildConditionalHistoryListAfterLoad();
 
 	BOOL DisconnectToolSetMainImage();
@@ -243,11 +242,10 @@ public:
 	long GetResultDataIndex() const;
 
 	//************************************
-	//! Get names of all active ppqVarable for the used inspection.
-	/// fuction was moved from class FormulaController 
-	//! \returns vector of names
+	//! Get all active ppqVariables for the used inspection.
+	//! \returns vector of objects
 	//************************************
-	SVStringArray getPPQVariableNames() const;
+	SVObjectVector getPPQVariables() const;
 	
 	//************************************
 	//! Check if the pValueObject is a active ppqVarable for the used inspection.

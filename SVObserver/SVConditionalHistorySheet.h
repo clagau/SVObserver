@@ -13,53 +13,58 @@
 
 #pragma region Includes
 #include "SVPropertySheetCancelImpl.h"
-#include "SVExternalTool.h"
-#include <map>
+#include "ObjectSelectorLibrary\SelectorItemVector.h"
+#include "SelectedObjectsPage.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
 
-class SVConditionalHistorySheet : public CPropertySheet, public ISVCancel//, public SVPropertySheetCancelImpl
+class SVConditionalHistorySheet : public CPropertySheet, public ISVCancel
 {
 	DECLARE_DYNAMIC(SVConditionalHistorySheet)
-
-// Construction
-public:
 #pragma region Constructor
-	SVConditionalHistorySheet( LPCTSTR pszCaption, SVInspectionProcess* pInspection, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
+public:
+	SVConditionalHistorySheet( LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
 	virtual ~SVConditionalHistorySheet();
 #pragma endregion Constructor
 
-	HRESULT CreatePages();
-
+#pragma region Public Methods
+public:
 	// ISVCancel
 	virtual bool CanCancel();
 	virtual HRESULT GetCancelData(SVCancelData*& rpData);
 	virtual HRESULT SetCancelData(SVCancelData* pData);
+#pragma endregion Public Methods
 
-// Attributes
-	SVInspectionProcess* m_pInspection; // @WARNING:  bad practice making members public
-
-	CString    m_strInspection; // @WARNING:  bad practice making members public
-	CString    m_strMaxHistory; // @WARNING:  bad practice making members public
-	BOOL       m_bOverwrite; // @WARNING:  bad practice making members public
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVConditionalHistorySheet)
-
-	virtual BOOL OnInitDialog();
-	//}}AFX_VIRTUAL
-	void OnOK();
-
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SVConditionalHistorySheet)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+#pragma region Private Methods
+private:
 	DECLARE_MESSAGE_MAP()
 
+	HRESULT CreatePages();
 	void DestroyPages();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL OnInitDialog();
+	void OnOK();
+
+	bool setChangedData( SelectedObjectsPage* const pPage );
+	SvOsl::SelectorItemVector ConvertList( const SVScalarValueVector& rSelectedList ) const;
+	SVScalarValueVector ConvertList( const SvOsl::SelectorItemVector& rSelectedList ) const;
+#pragma endregion Private Methods
+
+#pragma region Member variables
+private:
+	SVInspectionProcess& m_rInspection;		//Reference to the respective inspection object
+	SvOsl::SelectorItemVector m_Values;		//List of value objects
+	SvOsl::SelectorItemVector m_Images;		//List of image objects
+	SvOsl::SelectorItemVector m_Conditionals; //List of conditional objects
+	CEdit m_MaxHistoryCtrl;					//Maximum history control
+	CStatic m_MaxHistoryLabel;				//Maximum history label
+	CButton m_OverwriteCtrl;				//Overwrite control
+	int  m_MaxHistory;						//Maximum history number
+	BOOL m_Overwrite;						//Flag to overwrite
+	int  m_MaxHistoryOriginal;				//Maximum history number original
+	BOOL m_OverwriteOriginal;				//Flag to overwrite original 
+#pragma endregion Member variables
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,8 @@
 #include "SVToolSet.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVOGui/PublishSelector.h"
+#include "SVOGui/NoSelector.h"
+#include "SVOGui/ToolSetItemSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -426,21 +427,19 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pTool->GetCompleteObjectName(), SVString( _T("") ) );
 
-	SvOg::PublishSelector(pInspection->GetUniqueObjectID(), m_pCurrentAnalyzer->GetUniqueObjectID());
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID() );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
+	CString Title;
 	CString PublishableResults;
-	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-	SVString Title;
-	SVString ToolName( m_pTool->GetName() );
-	Title.Format( _T("%s - %s"), PublishableResults, ToolName.c_str() );
-	SVString mainTabTitle = PublishableResults;
 	CString Filter;
+	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
+	Title.Format( _T("%s - %s"), PublishableResults, m_pTool->GetName() );
 	Filter.LoadString( IDS_FILTER );
-	SVString filterTabTitle = Filter;
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, PublishableResults, Filter, this );
 
 	if( IDOK == Result )
 	{

@@ -10,8 +10,7 @@
 #pragma region Includes
 #include <set>
 #include "ObjectInterfaces\IObjectInfoStruct.h"
-#include "ObjectInterfaces\IOutputInfoListClass.h"
-#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "ObjectSelectorLibrary\SelectorOptions.h"
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
@@ -22,12 +21,13 @@ namespace Seidenader
 		class RangeSelectorFilter
 		{
 		private:
-			std::set<SVObjectTypeEnum> m_filter; 
+			std::set<SVObjectTypeEnum> m_filter;
+			const SvOsl::SelectorOptions& m_rOptions;
 			SVString m_excludePath;
 
 		public:
-			RangeSelectorFilter(const GUID& rInspectionID, const GUID& rInstanceID);
-			bool operator()(const SvOi::IObjectInfoStruct& rInfo) const;
+			RangeSelectorFilter( const SvOsl::SelectorOptions& rOptions );
+			bool operator()(const SvOi::IObjectInfoStruct& rInfo, int ArrayIndex) const;
 		};
 	}
 }

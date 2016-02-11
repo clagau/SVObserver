@@ -138,6 +138,7 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const FbwfDllName= _T("fbwflib.dll");///< the name of the DLL providing the file based write filter functionality
 	const TCHAR* const ContextMenuImageSaveLocation = _T("D:\\SVObserver\\Image.bmp"); ///< this is the default location for images that are saved using a context menu
 	const TCHAR* const DisplayedImageIsUnavailable  = _T("Displayed image is unavailable");
+	const TCHAR* const AvailableArchiveImageMemory  = _T( "Available Archive Image Memory:  %8.1f MB" );
 
 
 	const TCHAR* const   Error_you_have_Selected_X_Must_less_then_Y =  _T("Error: You have selected %ld for the Max Images count. The image count must be less then %ld"); 

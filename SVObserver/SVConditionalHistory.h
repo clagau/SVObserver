@@ -64,8 +64,8 @@ public:
 	HRESULT Validate( std::vector <SVScalarValue>& rvecValues, std::vector <SVScalarValue>& rvecImages, std::vector <SVScalarValue>& rvecConditionals );
 	virtual HRESULT ResetObject();
 
-	HRESULT SetProperties( SVScalarValueVectorType& rvecProperties, bool bResetObject = true );
-	HRESULT GetProperties( SVScalarValueVectorType& rvecProperties );
+	HRESULT SetProperties( SVScalarValueVector& rvecProperties, bool bResetObject = true );
+	HRESULT GetProperties( SVScalarValueVector& rvecProperties );
 	HRESULT SetList( std::vector <SVScalarValue>* pvecValues, std::vector <SVScalarValue>* pvecImages, std::vector <SVScalarValue>* pvecConditionals, bool bResetObject = true );	// vectors not const because we return status info
 	HRESULT GetList( std::vector <SVScalarValue>& rvecValues, std::vector <SVScalarValue>& rvecImages, std::vector <SVScalarValue>& rvecConditionals );
 	HRESULT GetHistoryAndClear( std::vector < std::vector <SVScalarValue> >& rvecValues, std::vector < std::vector <SVImageBufferStruct> >& rvecImages, std::vector < std::vector <SVScalarValue> >& rvecConditionals, std::vector<long>& rvecProcessCount );

@@ -21,6 +21,7 @@
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "ObjectSelectorLibrary/SelectorItemVector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -270,6 +271,31 @@ void SvOi::getRootChildNameList( SVStringArray& rObjectNameList, LPCTSTR Path, U
 {
 	//To have the function available without knowing the class RootObject
 	RootObject::getRootChildNameList( rObjectNameList, Path, AttributesAllowedFilter );
+}
+
+SvOi::ISelectorItemVectorPtr SvOi::getRootChildSelectorList( LPCTSTR Path, UINT AttributesAllowedFilter )
+{
+	SvOsl::SelectorItemVector *pSelectorList = new SvOsl::SelectorItemVector();
+	SvOi::ISelectorItemVectorPtr Result = static_cast<SvOi::ISelectorItemVector*> (pSelectorList);
+	BasicValueObjects::ValueVector ObjectList;
+	
+	//To have the function available without knowing the class RootObject
+	RootObject::getRootChildObjectList( ObjectList, Path, AttributesAllowedFilter );
+	BasicValueObjects::ValueVector::const_iterator Iter;
+	for( Iter = ObjectList.begin(); ObjectList.end() != Iter; ++Iter )
+	{
+		SvOsl::SelectorItem InsertItem;
+
+		InsertItem.setName( (*Iter)->GetName() );
+		InsertItem.setLocation( (*Iter)->GetCompleteObjectName() );
+		InsertItem.setItemKey( (*Iter)->GetUniqueObjectID().ToVARIANT() );
+		InsertItem.setItemTypeName( (*Iter)->getTypeName().c_str() );
+
+		pSelectorList->push_back( InsertItem );
+
+	}
+
+	return Result;
 }
 #pragma endregion IRootObject-function
 

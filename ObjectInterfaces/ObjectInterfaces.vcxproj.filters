@@ -54,9 +54,6 @@
     <ClInclude Include="IInObjectInfoStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IOutputInfoListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IObjectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -118,6 +115,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextDefineSvOi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ISelectorItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ISelectorItemVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

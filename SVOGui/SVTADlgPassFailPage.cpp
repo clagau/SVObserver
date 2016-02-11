@@ -240,7 +240,7 @@ namespace Seidenader { namespace SVOGui
 		CString FilterTab;
 		FilterTab.LoadString(IDS_FILTER);
 
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title, mainTabTitle, FilterTab, this);
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), mainTabTitle, FilterTab, this );
 
 		if (IDOK == Result)
 		{

@@ -37,10 +37,10 @@ namespace Seidenader
 			//************************************
 			// Description:  The class constructor
 			// Parameter:  rTreeContainer <in>:  a reference to the tree to display
-			// Parameter:  rTitle <in>:  a reference to the page title
+			// Parameter:  Title <in>:  const string for page title
 			// Parameter:  SingleSelect <in>:  true for single selection mode (default)
 			//************************************
-			ObjectSelectorPpg( SvTrl::ObjectTreeItems& rTreeContainer, const SVString& rTitle, bool SingleSelect = true );
+			ObjectSelectorPpg( SvTrl::ObjectTreeItems& rTreeContainer, LPCTSTR Title, bool SingleSelect = true );
 
 			//************************************
 			// Description:  The virtual destructor

@@ -80,8 +80,8 @@ SVConditionalHistory::ParseName( const CString& strName )
 			HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strName ), object );
 			if ( hr == S_OK )
 			{
-				/// names  are zero based!!!				
-				object.IncrementIndex();	
+				/// names  are zero based!!!
+				object.IncrementIndex();
 				return std::pair<SVObjectReference, SVInspectionProcess*>(object, pInspection);
 			}
 		}
@@ -94,7 +94,7 @@ HRESULT SVConditionalHistory::Validate( std::vector <SVScalarValue>& p_rvec )
 {
 	HRESULT hr = S_OK;
 
-	std::vector<SVScalarValue>::iterator iter;
+	SVScalarValueVector::iterator iter;
 	for ( iter = p_rvec.begin(); iter != p_rvec.end(); ++iter )
 	{
 		SVScalarValue& rValue = *iter;
@@ -184,7 +184,7 @@ HRESULT SVConditionalHistory::ResetObject()
 	// VALIDATE AND GET OBJECTS AS SPECIFIED IN THE INPUTS
 
 	// copy image buffer struct vector temporarily to ScalarValue vector
-	std::vector<SVScalarValue> l_vecImages;
+	SVScalarValueVector l_vecImages;
 	std::copy( l_Data.vecImages.begin(), l_Data.vecImages.end(), std::inserter( l_vecImages, l_vecImages.begin() ) );
 
 	hr = Validate( l_Data.vecValues, l_vecImages, l_Data.vecConditionals );
@@ -309,7 +309,7 @@ HRESULT SVConditionalHistory::ResetObject()
 	return hr;
 }
 
-HRESULT SVConditionalHistory::SetProperties( SVScalarValueVectorType& rvecProperties, bool p_bResetObject )
+HRESULT SVConditionalHistory::SetProperties( SVScalarValueVector& rvecProperties, bool p_bResetObject )
 {
 	HRESULT hr = S_OK;
 
@@ -318,7 +318,7 @@ HRESULT SVConditionalHistory::SetProperties( SVScalarValueVectorType& rvecProper
 	bool bOverwriteChanged = false;
 	bool bSizeChanged = false;
 
-	SVScalarValueVectorType::iterator iter;
+	SVScalarValueVector::iterator iter;
 
 	for ( iter = rvecProperties.begin(); iter != rvecProperties.end(); ++iter )
 	{
@@ -387,7 +387,7 @@ HRESULT SVConditionalHistory::SetProperties( SVScalarValueVectorType& rvecProper
 	return hr;
 }
 
-HRESULT SVConditionalHistory::GetProperties( SVScalarValueVectorType& rvecProperties )
+HRESULT SVConditionalHistory::GetProperties( SVScalarValueVector& rvecProperties )
 {
 	HRESULT hr = S_OK;
 	rvecProperties.clear();
@@ -407,7 +407,7 @@ HRESULT SVConditionalHistory::SetList( std::vector <SVScalarValue>* p_pvecValues
 {
 	HRESULT hr = S_OK;
 
-	std::vector<SVScalarValue> vecDummy;
+	SVScalarValueVector vecDummy;
 
 	// yes, vecDummy may be passed multiple times.
 	// It doesn't matter, it will be empty so therefore no validation will occur.
@@ -428,7 +428,7 @@ HRESULT SVConditionalHistory::SetList( std::vector <SVScalarValue>* p_pvecValues
 	std::set<CString> setNewImages;
 
 	{// begin block: copy vectors to sets
-		std::vector<SVScalarValue>::const_iterator iter;
+		SVScalarValueVector::const_iterator iter;
 
 		for ( iter = m_vecValues.begin(); iter != m_vecValues.end(); ++iter )
 			setCurrentValues.insert( iter->strName );
@@ -512,7 +512,7 @@ HRESULT SVConditionalHistory::GetList( std::vector <SVScalarValue>& rvecData, st
 	std::vector<SVImageBufferStruct>::iterator iter;
 	for ( iter = m_Data.vecImages.begin(); iter != m_Data.vecImages.end(); ++iter )
 	{
-		rvecImages.push_back( SVScalarValue( iter->strName, _T("") ) );
+		rvecImages.push_back( SVScalarValue( iter->strName, _T(""), iter->object ) );
 	}
 	//*/
 	return S_OK;

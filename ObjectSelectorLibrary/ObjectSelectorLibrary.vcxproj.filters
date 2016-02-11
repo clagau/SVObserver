@@ -28,6 +28,9 @@
     <ClCompile Include="ObjectFilterPpg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SelectorItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTreeGenerator.h">
@@ -58,6 +61,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvOsl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectorItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectorItemVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectorOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

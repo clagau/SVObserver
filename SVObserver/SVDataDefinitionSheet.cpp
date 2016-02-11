@@ -8,67 +8,70 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:07:26  $
 //******************************************************************************
-// SVDataDefinitionSheet.cpp : implementation file
-//
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVDataDefinitionSheet.h"
 
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
-#include "SVDataDefinitionPage.h"
 #include "SVIPDoc.h"
+#pragma endregion Includes
 
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVDataDefinitionSheet
-
 IMPLEMENT_DYNAMIC(SVDataDefinitionSheet, CPropertySheet)
 
+BEGIN_MESSAGE_MAP(SVDataDefinitionSheet, CPropertySheet)
+	ON_COMMAND(IDOK,OnOK)
+END_MESSAGE_MAP()
+#pragma endregion Declarations
 
-SVDataDefinitionSheet::SVDataDefinitionSheet(LPCTSTR pszCaption, SVInspectionProcess* p_pInspection, CWnd* pParentWnd, UINT iSelectPage)
+#pragma region Constructor
+SVDataDefinitionSheet::SVDataDefinitionSheet(LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
+,	m_rInspection( rInspection )
 {
-	m_pInspection = p_pInspection;
-
-	m_strInspection = p_pInspection->GetName();
-
 	CreatePages();
 }
 
 SVDataDefinitionSheet::~SVDataDefinitionSheet()
 {
 	DestroyPages();
-	m_pInspection = nullptr;
+}
+#pragma endregion Constructor
+
+#pragma region Public Methods
+bool SVDataDefinitionSheet::CanCancel()
+{
+	return true;
 }
 
+HRESULT SVDataDefinitionSheet::GetCancelData(SVCancelData*& rpData)
+{
+	return E_NOTIMPL;
+}
 
-BEGIN_MESSAGE_MAP(SVDataDefinitionSheet, CPropertySheet)
-	//{{AFX_MSG_MAP(SVDataDefinitionSheet)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
-	ON_COMMAND(IDOK,OnOK)
-END_MESSAGE_MAP()
+HRESULT SVDataDefinitionSheet::SetCancelData(SVCancelData* pData)
+{
+	return E_NOTIMPL;
+}
+#pragma endregion Public Methods
 
-/////////////////////////////////////////////////////////////////////////////
-// SVDataDefinitionSheet message handlers
-
-
+#pragma region Private Methods
 HRESULT SVDataDefinitionSheet::CreatePages()
 {
-	ASSERT( m_pInspection );
+	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_rInspection, _T("Value Names"), m_ValueList, SV_DD_VALUE );
+	AddPage(pValuesDlg);
 
-	SVDataDefinitionPage* pDataDlg = new SVDataDefinitionPage( this, CString(_T("Value Names")) );
-	AddPage(pDataDlg);
-
-	SVDataDefinitionPage* pImagesDlg = new SVDataDefinitionPage( this, CString(_T("Image Names")) );
+	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_rInspection, _T("Image Names"), m_ImageList, SV_DD_IMAGE );
 	AddPage(pImagesDlg);
 
 	return S_OK;
@@ -81,15 +84,12 @@ void SVDataDefinitionSheet::DestroyPages()
 	{
 		pPage = GetPage( i );
 		RemovePage( i );
-		if( pPage )
+		if( nullptr != pPage )
 		{
 			delete pPage;
 		}
 	}
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// SVDataDefinitionSheet message handlers
 
 BOOL SVDataDefinitionSheet::OnInitDialog() 
 {
@@ -124,29 +124,7 @@ void SVDataDefinitionSheet::OnOK()
 		}
 	}
 
-
 	EndDialog(IDOK);
-}
-
-bool SVDataDefinitionSheet::CanCancel()
-{
-	return true;
-	ASSERT(m_pInspection);
-	//return m_pPPQ->CanCancel();
-}
-
-HRESULT SVDataDefinitionSheet::GetCancelData(SVCancelData*& rpData)
-{
-	return E_NOTIMPL;
-	ASSERT(m_pInspection);
-	//return m_pPPQ->GetCancelData(rpData);
-}
-
-HRESULT SVDataDefinitionSheet::SetCancelData(SVCancelData* pData)
-{
-	return E_NOTIMPL;
-	ASSERT(m_pInspection);
-	//return m_pPPQ->SetCancelData(pData);
 }
 
 //******************************************************************************

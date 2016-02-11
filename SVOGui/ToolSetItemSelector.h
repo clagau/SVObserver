@@ -10,9 +10,11 @@
 
 #pragma region Includes
 #include <boost\bind.hpp>
-#include "ObjectInterfaces\IOutputInfoListClass.h"
+#include "ObjectInterfaces\IObjectInfoStruct.h"
+#include "ObjectInterfaces\ISelectorItemVector.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
-#include "GuiCommands\GetOutputList.h"
+#include "GuiCommands\GetSelectorList.h"
+#include "ObjectSelectorLibrary\SelectorOptions.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
 
@@ -20,36 +22,103 @@ namespace Seidenader
 {
 	namespace SVOGui
 	{
-		struct AllowAll
+		class AttributeAllowedFilter
 		{
-			AllowAll(const GUID& rInspectionID, const GUID& rInstanceID){}
-			bool operator()(const SvOi::IObjectInfoStruct& rInfo) const { return true; }
+		private:
+			UINT m_Attribute;
+
+		public:
+			AttributeAllowedFilter( const SvOsl::SelectorOptions& rOptions ): m_Attribute(rOptions.getAttributesFilter()) {}
+			bool operator()(const SvOi::IObjectInfoStruct& rInfo, int ArrayIndex) const
+			{
+				bool Result(false);
+
+				if( m_Attribute == 0 )
+				{
+					Result = true;
+				}
+				else
+				{
+					SvOi::IObjectClass* pObject = rInfo.getObject();
+					if( nullptr != pObject)
+					{
+						if( 0 != (pObject->ObjectAttributesAllowed() & m_Attribute) )
+						{
+							Result = true;
+						}
+					}
+				}
+
+				return Result;
+			}
 		};
 
-		template<bool bInstance=true, typename Filter=AllowAll>
+		class AttributeSetFilter
+		{
+		private:
+			UINT m_Attribute;
+
+		public:
+			AttributeSetFilter( const SvOsl::SelectorOptions& rOptions ): m_Attribute(rOptions.getAttributesFilter()) {}
+			bool operator()(const SvOi::IObjectInfoStruct& rInfo, int ArrayIndex) const
+			{
+				bool Result(false);
+
+				if( m_Attribute == 0 )
+				{
+					Result = true;
+				}
+				else
+				{
+					SvOi::IObjectClass* pObject = rInfo.getObject();
+					if( nullptr != pObject)
+					{
+						if( pObject->IsArray() )
+						{
+							if( 0 != (pObject->ObjectAttributesSet( ArrayIndex ) & m_Attribute) )
+							{
+								Result = true;
+							}
+						}
+						else
+						{
+							if( 0 != (pObject->ObjectAttributesSet() & m_Attribute) )
+							{
+								Result = true;
+							}
+						}
+					}
+				}
+
+				return Result;
+			}
+		};
+
+		//Note the default filter uses the object attribute if in rOptions if it is 0 then all objects are listed
+		template<typename Filter=AttributeAllowedFilter>
 		class ToolSetItemSelector
 		{
 			typedef Filter FilterImpl;
 		public:
-			SvOi::IOutputInfoListClassPtr operator()(const GUID& rInspectionID, const GUID& rInstanceID)
+			SvOi::ISelectorItemVectorPtr operator()( const SvOsl::SelectorOptions& rOptions )
 			{
-				FilterImpl filter(rInspectionID, rInstanceID);
-				SvOi::IOutputInfoListClassPtr outputInfoList;
+				FilterImpl filter( rOptions );
+				SvOi::ISelectorItemVectorPtr SelectorList;
 
-				typedef GuiCmd::GetOutputList<SvOi::IsObjectInfoAllowed, SvOi::IOutputInfoListClassPtr> Command;
+				typedef GuiCmd::GetSelectorList<SvOi::IsObjectInfoAllowed, SvOi::ISelectorItemVectorPtr> Command;
 				typedef SVSharedPtr<Command> CommandPtr;
 		
-				SvOi::IsObjectInfoAllowed func = boost::bind(&FilterImpl::operator(), &filter, _1);
+				SvOi::IsObjectInfoAllowed func = boost::bind(&FilterImpl::operator(), &filter, _1, _2);
 
-				const GUID& rGuid = (bInstance) ? rInstanceID : rInspectionID;
-				CommandPtr commandPtr(new Command(rGuid, func));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
+				const SVGUID& rGuid = (rOptions.getInstanceID() != GUID_NULL) ? rOptions.getInstanceID() : rOptions.getInspectionID();
+				CommandPtr commandPtr(new Command(rGuid, func, rOptions.getWholeArray()));
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rOptions.getInspectionID(), commandPtr);
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK == hr)
 				{
-					outputInfoList = commandPtr->GetResults();
+					SelectorList = commandPtr->GetResults( );
 				}
-				return outputInfoList;
+				return SelectorList;
 			}
 		};
 	}

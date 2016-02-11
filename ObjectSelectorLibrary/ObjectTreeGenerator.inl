@@ -10,28 +10,23 @@
 //******************************************************************************
 
 #pragma region Public Methods
-inline void ObjectTreeGenerator::setAllowWholeArrays( bool AllowWholeArrays )
+inline const  SelectorItemVector& ObjectTreeGenerator::getSelectedObjects() const
 {
-	m_AllowWholeArray = AllowWholeArrays;
+	return m_SelectedObjects;
 }
 
-inline bool ObjectTreeGenerator::getAllowWholeArrays() const
+inline const  SelectorItemVector& ObjectTreeGenerator::getModifiedObjects() const
 {
-	return m_AllowWholeArray;
+	return m_ModifiedObjects;
 }
 
-inline const SvTrl::ObjectSelectorItems& ObjectTreeGenerator::getResults() const
+inline SelectorItem ObjectTreeGenerator::getSingleObjectResult() const
 {
-	return m_Results;
-}
-
-inline SvTrl::ObjectSelectorItem ObjectTreeGenerator::getSingleObjectResult() const
-{
-	SvTrl::ObjectSelectorItem Result;
+	SelectorItem Result;
 	//If Single select then it is the first result
-	if( 0 < m_Results.size() )
+	if( 0 < m_SelectedObjects.size() )
 	{
-		Result = m_Results.at(0);
+		Result = m_SelectedObjects.at(0);
 	}
 	return Result;
 }
@@ -42,21 +37,30 @@ inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelec
 }
 
 ///SEJ99 - This method should be refactored to trim down the insert methods in the object selector to only one...
-template <typename GlobalSelector, typename PPQSelector, typename PPQVariablesSelector, typename ToolsetItemSelector>
-void ObjectTreeGenerator::BuildSelectableItems( const SVGUID& rInspectionID, const SVGUID& rInstanceID )
+template <typename GlobalSelector, typename PPQSelector, typename ToolsetItemSelector>
+void ObjectTreeGenerator::BuildSelectableItems( const SelectorOptions& rOptions )
 {
 	GlobalSelector globalSelector;
 	PPQSelector ppqSelector;
-	PPQVariablesSelector ppqVariablesSelector;
 	ToolsetItemSelector toolsetItemSelector;
 
-	insertTreeObjects(globalSelector(m_AttributesAllowedFilter));
-	insertTreeObjects(ppqSelector(rInspectionID));
-	insertTreeObjects(ppqVariablesSelector(rInspectionID));
-	SvOi::IOutputInfoListClassPtr outputList = toolsetItemSelector(rInspectionID, rInstanceID);
-	if (!outputList.empty())
+	m_AttributesFilter = rOptions.getAttributesFilter();
+	SvOi::ISelectorItemVectorPtr GlobalList = globalSelector(m_AttributesFilter);
+	if (!GlobalList.empty())
 	{
-		insertOutputList(*outputList.get());
+		insertTreeObjects( *GlobalList );
+	}
+
+	SvOi::ISelectorItemVectorPtr PpqList = ppqSelector( rOptions.getInspectionID(), m_AttributesFilter );
+	if (!PpqList.empty())
+	{
+		insertTreeObjects( *PpqList );
+	}
+
+	SvOi::ISelectorItemVectorPtr ToolsetList = toolsetItemSelector(rOptions);
+	if (!ToolsetList.empty())
+	{
+		insertTreeObjects( *ToolsetList );
 	}
 	else
 	{

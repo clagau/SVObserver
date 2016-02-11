@@ -115,32 +115,34 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	SVString InspectionName( pToolSet->GetInspection()->GetName() );
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(pToolSet->GetInspection()->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
+	SvOsl::SelectorOptions BuildOptions( pToolSet->GetInspection()->GetUniqueObjectID(), SV_ARCHIVABLE, pToolSet->GetUniqueObjectID() );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	if( nullptr !=  m_pTool->GetInputObject() )
 	{
 		SVStringSet Items;
 
+		SvOsl::SelectorItem InsertItem;
 		SVObjectReference ObjectRef( m_pTool->GetInputObject() );
-		SVString Location( ObjectRef.GetCompleteOneBasedObjectName() );
-		SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( ObjectRef, Location );
+
+		InsertItem.setName( ObjectRef.GetName() );
+		InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+
+		SVString Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( InsertItem );
 		Items.insert( Location );
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 	}
 
+	CString Title;
 	CString ToolsetOutput;
-	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-	SVString Title;
-	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
-	SVString mainTabTitle = ToolsetOutput;
 	CString Filter;
+	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
+	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
 	Filter.LoadString( IDS_FILTER );
-	SVString filterTabTitle = Filter;
 
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
 
 	if( IDOK == Result )
 	{

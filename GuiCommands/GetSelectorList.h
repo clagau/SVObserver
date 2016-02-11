@@ -23,9 +23,9 @@ namespace Seidenader
 	namespace GuiCommand
 	{
 		template <typename FilterFunc, typename Results>
-		struct GetOutputList : public boost::noncopyable
+		struct GetSelectorList : public boost::noncopyable
 		{
-			GetOutputList(const SVGUID& rInstanceID, FilterFunc filter) : m_InstanceID(rInstanceID), m_filter(filter) {}
+			GetSelectorList(const SVGUID& rInstanceID, FilterFunc filter, bool WholeArray) : m_InstanceID(rInstanceID), m_filter(filter), m_WholeArray(WholeArray) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -38,30 +38,31 @@ namespace Seidenader
 				if (pObject)
 				{
 					SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject);
-					if (pTaskObject)
-					{
-						m_outputInfoList = pTaskObject->GetOutputList();
-						hr = S_OK;
-					}
-					else // try inspection
+					if ( nullptr == pTaskObject)
 					{
 						SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(pObject);
 						if (pInspection)
 						{
-							m_outputInfoList = pInspection->GetToolSetInterface()->GetOutputList(m_filter);
-							hr = S_OK;
+							pTaskObject = pInspection->GetToolSetInterface();
 						}
+					}
+
+					if ( nullptr != pTaskObject)
+					{
+						m_SelectedList = pTaskObject->GetSelectorList( m_filter, m_WholeArray );
+						hr = S_OK;
 					}
 				}
 				return hr;
 			}
 			bool empty() const { return false; }
-			Results GetResults() const { return m_outputInfoList; }
+			Results GetResults() const { return m_SelectedList; }
 
 		private:
 			SVGUID m_InstanceID;
 			FilterFunc m_filter;
-			Results m_outputInfoList;
+			bool m_WholeArray;
+			Results m_SelectedList;
 		};
 	}
 }

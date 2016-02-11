@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolAdjustmentArchivePage
-//* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
+//* .Module Name     : SVTADlgArchiveResultsPage
+//* .File Name       : $Workfile:   SVTADlgArchiveResultsPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.15  $
 //* .Check In Date   : $Date:   10 Sep 2014 09:36:40  $
@@ -12,338 +12,74 @@
 #pragma region Includes
 #include "stdafx.h"
 #include <numeric>
-#include "SVToolArchivePage.h"
-
+#include "SVTADlgArchiveResultsPage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVArchiveTool.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
+#include "SVOGui/NoSelector.h"
+#include "SVOGui/ToolSetItemSelector.h"
 #include "SVIPDoc.h"
-#include "SVImageClass.h"
 #include "SVInspectionProcess.h"
-#include "SVMemoryManager.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
 #include "SVArchiveHeaderEditDlg.h"
 #include "ArchiveToolHelper.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
-const int SVToolAdjustmentArchivePage::s_UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
-
-// this function will check the existence of the drive
-// szPath paramter should be in the form of c:\xxxxxx\xxxx\xx\xxx etc
-static bool ValidateDrive(LPCTSTR szFilePath, CString& szDrv)
-{
-	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
-
-	//Get the drive text
-	_tsplitpath(szFilePath, szDrive, szDir, szFName, szExt);
-
-	if (szDrv)
-	{
-		szDrv = szDrive;
-	}
-	return ( _access( szDrive, 0 ) ) ? false : true;
-}
-
-BEGIN_MESSAGE_MAP(SVToolAdjustmentArchivePage, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentArchivePage)
+BEGIN_MESSAGE_MAP(SVTADlgArchiveResultsPage, CPropertyPage)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SELECTED, OnDblClickListSelected)
+	ON_BN_CLICKED(IDC_SELECT_BUTTON, OnSelectObjects)
+	ON_BN_CLICKED(IDC_BTN_CLEAR, OnRemoveItem)
+	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL, OnRemoveAllItems)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
-	ON_BN_CLICKED(IDC_BROWSE2, OnBrowse2)
-	ON_CBN_SELCHANGE(IDC_MODE_COMBO, OnSelchangeModeCombo)
-	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
-	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDC_HEADER_BTN, &SVToolAdjustmentArchivePage::OnBnClickedHeaderBtn)
-	ON_BN_CLICKED(IDC_HEADER_CHECK, &SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck)
+	ON_BN_CLICKED(IDC_HEADER_BTN, &SVTADlgArchiveResultsPage::OnBnClickedHeaderBtn)
+	ON_BN_CLICKED(IDC_HEADER_CHECK, &SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck)
 END_MESSAGE_MAP()
 
-SVToolAdjustmentArchivePage::SVToolAdjustmentArchivePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent) 
-: CPropertyPage(SVToolAdjustmentArchivePage::IDD)
-, m_bUseColumnHeaders(false)
-, m_pParentDialog(Parent)
+static const int ItemSelectedCol = 1;
+static const int ItemsSelectedWidth = 500;
+static const int IconNumber = 1;
+static const int IconGrowBy = 2;
+#pragma endregion Declarations
+
+#pragma region Constructor
+SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent) 
+: CPropertyPage(SVTADlgArchiveResultsPage::IDD)
+, m_pParent(Parent)
 , m_pTool(nullptr)
+, m_ColumnHeaders(false)
+, m_AppendArchive( 0 )
 {
-	//{{AFX_DATA_INIT(SVToolAdjustmentArchivePage)
-	m_checkAppendArchive = 0;
-	m_checkStopAtMaxImages = FALSE;
-	m_iModeIndex = -1;
-	m_strAvailableArchiveImageMemory = _T("");
-	//}}AFX_DATA_INIT
-
-	if( m_pParentDialog )
+	m_strCaption = m_psp.pszTitle;
+	if( nullptr != m_pParent )
 	{
-		m_pTool = dynamic_cast <SVArchiveTool*> (m_pParentDialog->GetTool());
+		m_pTool = dynamic_cast <SVArchiveTool*> (m_pParent->GetTool());
 	}
 }
 
-SVToolAdjustmentArchivePage::~SVToolAdjustmentArchivePage()
+SVTADlgArchiveResultsPage::~SVTADlgArchiveResultsPage()
 {
 }
+#pragma endregion Constructor
 
-void SVToolAdjustmentArchivePage::DoDataExchange(CDataExchange* pDX)
-{
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVToolAdjustmentArchivePage)
-	DDX_Control(pDX, IDC_AVAILABLE_ARCHIVE_IMAGE_MEMORY, m_wndAvailableArchiveImageMemory);
-	DDX_Control(pDX, IDC_TEXT_AVAILABLE_ARCHIVE_IMAGE_MEMORY, m_wndTxtAvailableArchiveImageMemory);
-	DDX_Control(pDX, IDC_MODE_COMBO, m_cbMode);
-	DDX_Control(pDX, IDC_EDIT_MAX_IMAGES, m_editMaxImages);
-	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEROOT, m_editImageFilesRoot);
-	DDX_Control(pDX, IDC_TREE_RESULTS, m_treeResultsList);
-	DDX_Control(pDX, IDC_TREE_IMAGES, m_treeImagesList);
-	DDX_Control(pDX, IDC_ARCHIVE_FILENAME, m_editArchiveFileName);
-	DDX_Check(pDX, IDC_CHECK_APPEND, m_checkAppendArchive);
-	DDX_Check(pDX, IDC_CHECK_STOP_AT_MAX, m_checkStopAtMaxImages);
-	DDX_CBIndex(pDX, IDC_MODE_COMBO, m_iModeIndex);
-	DDX_Text(pDX, IDC_AVAILABLE_ARCHIVE_IMAGE_MEMORY, m_strAvailableArchiveImageMemory);
-	DDX_Check(pDX, IDC_HEADER_CHECK, m_bUseColumnHeaders);
-	//}}AFX_DATA_MAP
-}
-
-BOOL SVToolAdjustmentArchivePage::OnInitDialog() 
-{
-	CWaitCursor wait;                 // 23 Nov 1999 - frb.
-	m_bInit = true;
-
-	CPropertyPage::OnInitDialog();
-	//will need to fix the call to ResetObject at a later date - RPY
-	m_pTool->ResetObject();
-
-	CDWordArray dwaIndex;
-	int iIndex=0;
-	
-	SVEnumerateVector vec;
-	m_pTool->m_evoArchiveMethod.GetEnumTypes(vec);
-	for ( size_t i=0; i < vec.size(); i++ )
-	{
-		m_cbMode.SetItemData( iIndex = m_cbMode.AddString(vec[i].first), vec[i].second );
-		dwaIndex.SetAtGrow( vec[i].second, iIndex );
-	}
-
-	unsigned long lMode;
-	m_pTool->m_evoArchiveMethod.GetValue( lMode );
-	m_eSelectedArchiveMethod = static_cast<SVArchiveMethodEnum>( lMode );
-	m_iModeIndex = dwaIndex.GetAt( lMode );
-
-	//
-	// Get a pointer to the toolset
-	//
-	SVToolSetClass* pToolSet = m_pTool->GetInspection()->GetToolSet();
-	SVTaskObjectListClass* pTaskObjectList = static_cast <SVTaskObjectListClass*> ( pToolSet );
-
-	//
-	// Get the list of already existing selected results to archive
-	// from the archive tool.
-	//
-	m_pTool->UpdateTaskObjectOutputList();
-
-	DWORD dwTemp=0;
-    m_pTool->m_dwArchiveMaxImagesCount.GetValue( dwTemp );
-	m_lImagesToArchive = dwTemp;
-	CString s;
-	s.Format(_T("%ld"),dwTemp);
-	m_editMaxImages.SetWindowText((LPCTSTR)s);
-
-	//store the MaxImageNumber
-	m_sMaxImageNumber = s;
-
-	__int64 lMemUsed = TheSVMemoryManager().ReservedBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
- 	m_lToolImageMemoryUsage = 0;
-	m_lTotalArchiveImageMemoryAvailable = TheSVMemoryManager().SizeOfPoolBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
-	m_lInitialArchiveImageMemoryUsage = lMemUsed;
-
-	m_wndAvailableArchiveImageMemory.ShowWindow( lMode == SVArchiveGoOffline );
-	m_wndTxtAvailableArchiveImageMemory.ShowWindow( lMode == SVArchiveGoOffline );
-
-	//
-	// Initialize and build the 'tree' in the tree control.
-	//
-	m_treeResultsList.InitOutputListTreeCtrl();
-	m_treeImagesList.InitOutputListTreeCtrl();
-
-	m_treeImagesList.SetCanSelectObjectCallback( SVObjectTreeCanSelectObjectCallbackFn(this, &SVToolAdjustmentArchivePage::CanSelectObjectCallback) );
-	m_treeResultsList.SetClickCallback( SVClickCallbackFn(this, &SVToolAdjustmentArchivePage::OnClickResultsTreeCtrl) );
-	//
-	// Build the output list and set the object 'attributes' to use.
-	//
-	m_treeResultsList.BuildOutputList(pTaskObjectList, SV_ARCHIVABLE);
-
-	//
-	// Get the current path to the archive file if any.
-	//
-	CString		csArchiveFileName; 
-	
-	m_pTool->GetFileArchive( csArchiveFileName );
-	m_editArchiveFileName.SetWindowText(csArchiveFileName);
-
-	CString		csImageFolder; 
-	
-	m_pTool->GetImageArchivePath( csImageFolder );
-	m_editImageFilesRoot.SetWindowText(csImageFolder);
-
-	//
-	// Set other dialog controls.
-	//
-	m_pTool->m_dwAppendArchiveFile.GetValue( dwTemp );
-	m_checkAppendArchive = (int)dwTemp;
-
-	m_pTool->m_dwArchiveStopAtMaxImages.GetValue( dwTemp );
-	m_checkStopAtMaxImages = (int)dwTemp;
-
-	bool bUseColumnHeaders = false;
-	m_pTool->m_bvoUseHeaders.GetValue( bUseColumnHeaders );
-	if(bUseColumnHeaders && m_pTool->m_arrayResultsInfoObjectsToArchive.GetSize() > 0)
-	{
-		m_bUseColumnHeaders = 1;
-		GetDlgItem(IDC_HEADER_BTN)->EnableWindow();
-	}
-	else
-	{
-		m_bUseColumnHeaders = 0;
-		GetDlgItem(IDC_HEADER_BTN)->EnableWindow(FALSE);
-	}
-
-	//
-	// Build the image list to select archivable images from.
-	//
-	BuildImageList();
-
-	UpdateData(FALSE);   // To Controls.
-
-	// calculate free mem if in SVArchiveGoOffline mode
-	if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
-	{
-		CalculateFreeMem();
-	}
-
-	m_bInit = false;
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Build a list of all archivable images.  
-// Set selected attributes if already selected, i.e. in images archive list.
-// Built the 'tree' for the tree control.
-//
-void SVToolAdjustmentArchivePage::BuildImageList()
-{
-    SVObjectTypeInfoStruct  info;
-
-	//
-	// Get a pointer to the toolset
-	//
-	SVToolSetClass* pToolSet = m_pTool->GetInspection()->GetToolSet();
-
-	SVErrorClass msvError;
-	msvError.ClearLastErrorCd ();
-
-	BOOL lDone = FALSE;
-
-	info.ObjectType = SVImageObjectType;
-	// SVMainImageObjectType  possible sub-types??
-	// SVNotSetSubObjectType
-	// SVImageROIObjectType
-	info.SubType = SVNotSetSubObjectType;
-
-	SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, pToolSet->GetUniqueObjectID() );
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
-	{
-		SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-		if( pImage != NULL )
-		{
-			m_imageListAll.Add(pImage);
-		}
-	}
-	
-	//
-	// Set the archivable attributes in images based on.
-	//
-	m_pTool->SetImageAttributesFromArchiveList(&m_imageListAll);
-	
-	//
-	// Now build the 'tree' in the tree list control.
-	//
-	m_treeImagesList.BuildImageListTree(
-		&m_imageListAll, // SVImageListClass
-		SV_ARCHIVABLE_IMAGE, // UINT Attributes we desire
-		SVNotSetObjectType   // SVObjectTypeEnum
-	);
-
-	SVObjectListClass l_ObjectList;
-	m_treeImagesList.GetCheckedObjects( &l_ObjectList );
-
-	m_mapSelectedImageMemUsage.clear();
-
-	for ( int i=0; i < l_ObjectList.GetSize(); i++ )
-	{
-		SVObjectReference refObject = l_ObjectList.GetAt(i);
-		SVImageClass* pImage = dynamic_cast <SVImageClass*> ( refObject.Object() );
-		if ( pImage )
-		{
-			m_mapSelectedImageMemUsage[ pImage ] = SVArchiveTool::CalculateImageMemory( pImage );
-		}
-	}
-
-	m_mapInitialSelectedImageMemUsage = m_mapSelectedImageMemUsage;
-
-	m_lToolImageMemoryUsage = CalculateToolMemoryUsage();
-
-	m_lInitialToolImageMemoryUsage = m_lToolImageMemoryUsage;
-
-	m_lInitialArchiveImageMemoryUsageExcludingThisTool = m_lInitialArchiveImageMemoryUsage;
-
-	if ( m_eSelectedArchiveMethod == SVArchiveGoOffline )
-	{
-		m_lInitialArchiveImageMemoryUsageExcludingThisTool -= m_lToolImageMemoryUsage;
-	}
-	return;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-// Called by Property Sheet (parent of this page) when OK button pressed.
-//
-bool SVToolAdjustmentArchivePage::QueryAllowExit() 
+#pragma region Public Methods
+bool SVTADlgArchiveResultsPage::QueryAllowExit() 
 {
 	UpdateData(TRUE); 
 
-	//check to see if mode is SVArchiveGoOffline.  
-	if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
-	{
-		//check to see if any items are selected in the image tree
-		SVObjectListClass ObjectList;
-		m_treeImagesList.GetCheckedObjects(&ObjectList);
-		int iSize = ObjectList.GetSize();
-		if (iSize > 0 )
-		{
-			//if memory usage < 0 do not all them to exit
-			__int64 FreeMemory = CalculateFreeMem();
-			if (FreeMemory < 0)
-			{
-				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::AP_NotEnoughMemoryPleaseDeselect, StdMessageParams );
-				return false;
-			}
-		}
-	}
-	//
 	// Update the file path to the archive file for associated archive tool.
-	//
 	CString csArchiveFileName;
-	m_editArchiveFileName.GetWindowText( csArchiveFileName );
+	m_ArchiveFileName.GetWindowText( csArchiveFileName );
 
 	//check for valid drive for text archive
 	CString szDrive;
@@ -372,53 +108,14 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 		//not using Keywords 
 		SVCheckPathDir( csArchiveFileName, TRUE );
 	}
-	
-	if( !ValidateDrive( csArchiveFileName, szDrive ) || csArchiveFileName.IsEmpty() )
+
+	if(!ArchiveToolHelper::ValidateDrive(csArchiveFileName,szDrive) || csArchiveFileName.IsEmpty())
 	{
 		CString temp;
 		temp.Format ("Invalid drive:  %s", szDrive);
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, temp.GetString(), StdMessageParams );
-		
-		return false; 
-	}
-	
-	//update the image path
-	CString csImageFolder;
-	m_editImageFilesRoot.GetWindowText( csImageFolder );
 
-	CString sTmpArchiveImagePath = csImageFolder;
-	ArchiveToolHelper athImagePath;
-	athImagePath.Init(csImageFolder);
-
-	if (athImagePath.isUsingKeywords())
-	{
-		if (athImagePath.isTokensValid())
-		{
-			sTmpArchiveImagePath = athImagePath.TranslatePath(csImageFolder).c_str();
-			SVCheckPathDir( sTmpArchiveImagePath, TRUE );
-		}
-		else
-		{
-			//don't allow to exit with invalid path
-			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::InvalidImagePath, StdMessageParams );
-			return false;
-		}
-	}
-	else
-	{
-		//not using Keywords 
-		SVCheckPathDir( csImageFolder, TRUE );
-	}
-
-	//check for valid drive for image archive
-	if( !ValidateDrive( csImageFolder, szDrive ) || csImageFolder.IsEmpty() )
-	{
-		CString temp;
-		temp.Format ("Invalid drive:  %s", szDrive);
-		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, temp.GetString(), StdMessageParams );
 		return false; 
 	}
 
@@ -432,7 +129,7 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	{
 		CString temp;
 		temp.Format(	_T("ERROR: Archive File is not unique in system:\nChange archive file name:\n%s"),
-							csArchiveFileName);
+			csArchiveFileName);
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, temp.GetString(), StdMessageParams );
 		return false;   // Property is ready to exit.
@@ -440,69 +137,29 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 
 	m_pTool->SetFileArchive( csArchiveFileName );
 
-	m_pTool->SetImageArchivePath( csImageFolder );
+	m_pTool->m_dwAppendArchiveFile.SetValue( 1, m_AppendArchive );
 
-	m_pTool->m_dwAppendArchiveFile.SetValue( 1, m_checkAppendArchive );
-	m_pTool->m_dwArchiveStopAtMaxImages.SetValue( 1, m_checkStopAtMaxImages );
-
-	int iCurSel = m_cbMode.GetCurSel();
-	m_eSelectedArchiveMethod = static_cast <SVArchiveMethodEnum> (m_cbMode.GetItemData(iCurSel));
-	m_pTool->m_evoArchiveMethod.SetValue( 1, static_cast <DWORD> (m_eSelectedArchiveMethod) );
-
-	CString s;
-	m_editMaxImages.GetWindowText(s);
-	DWORD dwTemp = atol((LPCTSTR)s);
-	m_lImagesToArchive = dwTemp;
-	if(dwTemp > s_UpperLimitImageNumbers)
+	SvOsl::SelectorItemVector::const_iterator Iter;
+	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 	{
-		SVString svTemp;
-		svTemp.Format(	SvO::Error_you_have_Selected_X_Must_less_then_Y, dwTemp, s_UpperLimitImageNumbers);
-		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, svTemp.c_str(), StdMessageParams, SvOi::Err_16075_ImageNrToBig  );
-		return FALSE;
+		//The tree item key is the object GUID
+		SVGUID ObjectGuid( Iter->getItemKey() );
 
+		SVObjectClass* pObject( nullptr );
+		SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
+
+		if( nullptr != pObject )
+		{
+			SVObjectReference ObjectRef( pObject );
+			if( Iter->isArray() )
+			{
+				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
+			}
+			ObjectRef.ObjectAttributesSetRef() |= SV_ARCHIVABLE;
+		}
 	}
-	
-	if(dwTemp > 100L)
-	{
-		CString csTemp;
-		csTemp.Format(	_T("WARNING: You have selected %ld for the Max Images count"),
-							dwTemp);
-		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, csTemp.GetString(), StdMessageParams );
-	}
-	if(dwTemp < 1L)
-	{
-		dwTemp = 1L;
-	}
-
-	m_pTool->m_dwArchiveMaxImagesCount.SetValue( 1, dwTemp );
-
-	//
-	// Make sure the tree 'states' are converted into 
-	// selected 'attributes'.
-	//
-	m_treeResultsList.UpdateAttributesInOutputList();
-	m_treeImagesList.UpdateAttributesInOutputList();
-
-	//
 	// Now make a list of archivable objects from the SVOutputInfoListClass.
-	//
 	m_pTool->RebuildResultsArchiveList();
-	m_pTool->RebuildImageArchiveList();
-
-	//
-	// Mark the document as 'dirty' so user will be promped to save
-	// this configuration on program exit.
-	//
-	SVIPDoc* l_pIPDoc = NULL;
-
-	l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pTool->GetInspection()->GetUniqueObjectID() );
-
-	if( l_pIPDoc != NULL )
-	{
-		l_pIPDoc->SetModifiedFlag();
-	}
 
 	// Add newly selected values to headers.
 	bool bUseHeaders = false;
@@ -517,16 +174,263 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 
 	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
 
+	// Mark the document as 'dirty' so user will be prompted to save
+	// this configuration on program exit.
+	SVIPDoc* l_pIPDoc = NULL;
+
+	l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pTool->GetInspection()->GetUniqueObjectID() );
+
+	if( l_pIPDoc != NULL )
+	{
+		l_pIPDoc->SetModifiedFlag();
+	}
+
 	return true;   // Everything is OK
 }
+#pragma endregion Public Methods
 
-void SVToolAdjustmentArchivePage::OnBrowse() 
+#pragma region Private Methods
+void SVTADlgArchiveResultsPage::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST_SELECTED, m_ItemsSelected);
+	DDX_Control(pDX, IDC_SELECT_BUTTON, m_Select);
+	DDX_Control(pDX, IDC_ARCHIVE_FILENAME, m_ArchiveFileName);
+	DDX_Check(pDX, IDC_CHECK_APPEND, m_AppendArchive);
+	DDX_Check(pDX, IDC_HEADER_CHECK, m_ColumnHeaders);
+}
+
+BOOL SVTADlgArchiveResultsPage::OnInitDialog() 
+{
+	CWaitCursor wait;
+
+	CPropertyPage::OnInitDialog();
+
+	GetWindowText( m_strCaption );
+	//will need to fix the call to ResetObject at a later date - RPY
+	m_pTool->ResetObject();
+
+	m_ItemsSelected.InsertColumn( ItemSelectedCol, _T(""), 0, ItemsSelectedWidth );
+	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
+	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_CHECKED_ENABLED ) );
+	m_ItemsSelected.SetImageList( &m_StateImageList, LVSIL_STATE );
+
+	ReadSelectedObjects();
+
+	m_TreeBitmap.LoadBitmap( IDB_TREE );
+	m_Select.SetBitmap( static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()) );
+
+	CDWordArray dwaIndex;
+	int iIndex=0;
+	
+	SVToolSetClass* pToolSet = m_pTool->GetInspection()->GetToolSet();
+
+	// Get the list of already existing selected results to archive
+	// from the archive tool.
+	m_pTool->UpdateTaskObjectOutputList();
+
+	CString		csArchiveFileName; 
+	m_pTool->GetFileArchive( csArchiveFileName );
+	m_ArchiveFileName.SetWindowText(csArchiveFileName);
+
+	DWORD dwTemp=0;
+	m_pTool->m_dwAppendArchiveFile.GetValue( dwTemp );
+	m_AppendArchive = (int)dwTemp;
+
+	bool bUseColumnHeaders = false;
+	m_pTool->m_bvoUseHeaders.GetValue( bUseColumnHeaders );
+	if(bUseColumnHeaders && m_pTool->m_arrayResultsInfoObjectsToArchive.GetSize() > 0)
+	{
+		m_ColumnHeaders = 1;
+		GetDlgItem(IDC_HEADER_BTN)->EnableWindow();
+	}
+	else
+	{
+		m_ColumnHeaders = 0;
+		GetDlgItem(IDC_HEADER_BTN)->EnableWindow(FALSE);
+	}
+
+	SvOsl::SelectorOptions BuildOptions( m_pTool->GetInspection()->GetUniqueObjectID(), SV_ARCHIVABLE );
+	SvOg::ToolSetItemSelector<SvOg::AttributeSetFilter> toolsetItemSelector;
+	SvOi::ISelectorItemVectorPtr pToolsetList =  toolsetItemSelector( BuildOptions );
+	//Copy list to member variable for easier use
+	if( !pToolsetList.empty() )
+	{
+		SvOsl::SelectorItemVector* pSelectorList = dynamic_cast<SvOsl::SelectorItemVector*> (pToolsetList.get());
+		if( nullptr != pSelectorList )
+		{
+			m_List = *pSelectorList;
+		}
+	}
+
+	ReadSelectedObjects();
+	UpdateData(FALSE);
+	return TRUE;
+}
+
+void SVTADlgArchiveResultsPage::OnDblClickListSelected( NMHDR *pNMHDR, LRESULT *pResult )
+{
+	ShowObjectSelector();
+}
+
+void SVTADlgArchiveResultsPage::OnSelectObjects()
+{
+	ShowObjectSelector();
+}
+
+void SVTADlgArchiveResultsPage::OnRemoveAllItems()
+{
+	SvOsl::SelectorItemVector::const_iterator Iter;
+	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	{
+		SVGUID ObjectGuid( Iter->getItemKey() );
+
+		SVObjectClass* pObject( nullptr );
+		SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
+
+		if( nullptr != pObject )
+		{
+			SVObjectReference ObjectRef( pObject );
+			if( Iter->isArray() )
+			{
+				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
+			}
+			ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE;
+		}
+	}
+	m_List.clear();
+	ReadSelectedObjects();
+}
+
+void SVTADlgArchiveResultsPage::OnRemoveItem()
+{
+	POSITION Pos = m_ItemsSelected.GetFirstSelectedItemPosition();
+	std::vector<int> SelectedVector;
+
+	while( nullptr != Pos )
+	{
+		int ItemIndex = m_ItemsSelected.GetNextSelectedItem( Pos );
+		SelectedVector.push_back( ItemIndex );
+	}
+
+	//Remove in reverse order
+	std::vector<int>::const_reverse_iterator Iter;
+	for( Iter = SelectedVector.crbegin(); SelectedVector.crend() != Iter; ++Iter )
+	{
+		SvOsl::SelectorItemVector::const_iterator SelectedIter( m_List.begin() + *Iter );
+	
+		SVGUID ObjectGuid( SelectedIter->getItemKey() );
+		SVObjectClass* pObject( nullptr );
+		SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
+
+		if( nullptr != pObject )
+		{
+			SVObjectReference ObjectRef( pObject );
+			if( SelectedIter->isArray() )
+			{
+				ObjectRef.SetArrayIndex( SelectedIter->getArrayIndex() );
+			}
+			ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE;
+		}
+
+		m_List.erase( SelectedIter );
+	}
+
+	ReadSelectedObjects();
+}
+
+void SVTADlgArchiveResultsPage::ReadSelectedObjects()
+{
+	m_ItemsSelected.DeleteAllItems();
+
+	CString strPrefix = m_pTool->GetInspection()->GetName();
+	strPrefix += _T(".Tool Set.");
+
+	int Index = 0;
+	SvOsl::SelectorItemVector::const_iterator Iter;
+	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	{
+		SVString Name;
+		Name = Iter->getLocation();
+		Name.replace( strPrefix, _T("") );
+
+		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
+			Index,
+			Name.c_str(),
+			INDEXTOSTATEIMAGEMASK(1),
+			LVIS_STATEIMAGEMASK,
+			1,
+			0);
+		Index++;
+	}
+}
+
+void SVTADlgArchiveResultsPage::ShowObjectSelector()
+{
+	SVString InspectionName( m_pTool->GetInspection()->GetName() );
+	SVGUID InspectionGuid( m_pTool->GetInspection()->GetUniqueObjectID() );
+
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+
+	SvOsl::SelectorOptions BuildOptions( InspectionGuid, SV_ARCHIVABLE );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
+
+	SvOsl::SelectorItemVector::const_iterator Iter;
+	SVStringSet CheckItems;
+	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
+	{
+		SVString ObjectName;
+		ObjectName = Iter->getLocation();
+		CheckItems.insert( ObjectName );
+	}
+	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
+
+	SVString Title;
+	CString Filter;
+	Title.Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
+	Filter.LoadString( IDS_FILTER );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter );
+
+	if( IDOK == Result )
+	{
+		m_List = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
+
+		ReadSelectedObjects();
+
+		//We need to remove unselected objects attributes
+		const SvOsl::SelectorItemVector& rModifiedObjects = SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects();
+		SvOsl::SelectorItemVector::const_iterator Iter;
+		for(Iter = rModifiedObjects.begin(); rModifiedObjects.end() != Iter; ++Iter )
+		{
+			if( !Iter->isSelected() )
+			{
+				SVGUID ObjectGuid( Iter->getItemKey() );
+
+				SVObjectClass* pObject( nullptr );
+				SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
+
+				if( nullptr != pObject )
+				{
+					SVObjectReference ObjectRef( pObject );
+					if( Iter->isArray() )
+					{
+						ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
+					}
+					ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE;
+				}
+			}
+		}
+	}
+}
+
+void SVTADlgArchiveResultsPage::OnBrowse() 
 {
 	SVFileNameClass	svfncArchiveFileName;
 
 	//get current path
 	CString sArchiveFullNameAndPath;
-	m_editArchiveFileName.GetWindowText( sArchiveFullNameAndPath );
+	m_ArchiveFileName.GetWindowText( sArchiveFullNameAndPath );
 
 	ArchiveToolHelper athArchivePathAndName;
 	athArchivePathAndName.Init(sArchiveFullNameAndPath); 
@@ -558,263 +462,11 @@ void SVToolAdjustmentArchivePage::OnBrowse()
 	svfncArchiveFileName.SetDefaultFullFileName(sArchiveFullNameAndPath);
 	if (svfncArchiveFileName.SelectFile())
 	{
-		m_editArchiveFileName.SetWindowText(svfncArchiveFileName.GetFullFileName());
+		m_ArchiveFileName.SetWindowText(svfncArchiveFileName.GetFullFileName());
 	}
 }
 
-void SVToolAdjustmentArchivePage::OnBrowse2() 
-{
-	SVFileNameClass	svfncImageFolder;
-	//
-	// Set the default folder to start with.
-	//
-	CString csInitialPath(_T("C:\\Temp\\"));
-
-	m_editImageFilesRoot.GetWindowText(csInitialPath);
-	if (!csInitialPath.IsEmpty())
-		svfncImageFolder.SetPathName(csInitialPath);
-
-	ArchiveToolHelper athImagePath;
-	athImagePath.Init(csInitialPath); 
-
-	bool bUsingKeywords = athImagePath.isUsingKeywords();
-	if (bUsingKeywords)
-	{
-		if (athImagePath.isTokensValid())
-		{
-			csInitialPath = athImagePath.TranslatePath(csInitialPath).c_str();
-		}
-		else
-		{
-			//don't allow to exit with invalid path
-			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::InvalidImagePath, StdMessageParams );
-			return;
-		}
-	}
-    //
-    // Select the folder to copy to..
-    //
-	svfncImageFolder.SetFileType(SV_DEFAULT_FILE_TYPE);
-	if (svfncImageFolder.SelectPath())
-    {
-		csInitialPath = svfncImageFolder.GetPathName();
-		int len = csInitialPath.GetLength();
-		if (len)
-		{
-			if (csInitialPath.GetAt(len - 1) != _T('\\'))
-			{
-				csInitialPath += _T('\\');
-			}
-		}
-    }
-	m_editImageFilesRoot.SetWindowText (csInitialPath);
-}
-
-bool SVToolAdjustmentArchivePage::CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int )
-{
-	UpdateData();
-	bool bOk = true;
-
-	SVImageClass* pImage = dynamic_cast <SVImageClass*> ( refObject.Object() );
-	ASSERT(pImage);
-
-	//Get amount of memory needed for the selected image.
-	long MemoryForSelectedImage = SVArchiveTool::CalculateImageMemory( pImage );
-	MemoryForSelectedImage *= m_lImagesToArchive;
-	
-	if (bCurrentState == false)// want to select
-	{	
-		bool bAddItem = true;
-
-		//only check for memory if in mode SVArchiveGoOffline
-		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
-		{
-			__int64 CurrentToolFreeMem = CalculateFreeMem();
-			//lDelta is the total amount of memory that will need to be allocated.  Only gets commited once the tool's reset object gets called.
-			__int64 lDelta = MemoryForSelectedImage - m_lInitialToolImageMemoryUsage + m_lToolImageMemoryUsage;			
-			__int64 Difference = CurrentToolFreeMem - MemoryForSelectedImage;
-
-			bool bCanReserve = false;
-			if (Difference >= 0)
-			{
-				bCanReserve = true;
-			}
-			
-			if (bCanReserve && (lDelta > 0))
-			{
-				bCanReserve = TheSVMemoryManager().CanReservePoolMemory( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, lDelta );
-			}
-
-			if (bCanReserve)
-			{
-				bAddItem = true;
-				m_mapSelectedImageMemUsage[ pImage ] = MemoryForSelectedImage / m_lImagesToArchive;
-				CalculateFreeMem();
-			}
-			else
-			{
-				bAddItem = false;
-				bOk = false;
-				CString strMessage;
-				strMessage.Format(_T("Not enough Archive Image Memory to select %s"), pImage->GetCompleteObjectName());
-				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, strMessage.GetString(), StdMessageParams );
-			}
-		}
-		if (bAddItem)
-		{
-			m_mapSelectedImageMemUsage[ pImage ] = MemoryForSelectedImage / m_lImagesToArchive;
-		}
-	}
-	else	// want to deselect
-	{
-		m_mapSelectedImageMemUsage.erase( pImage );
-
-		//Calculate Free Mem if in SVArchiveGoOffline mode
-		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
-		{
-			__int64 FreeMem = CalculateFreeMem();
-
-			if (FreeMem < 0)
-			{
-				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::AP_NotEnoughMemoryPleaseDeselectImage, StdMessageParams );
-
-			}
-		}
-	}
-	return bOk;
-}
-
-void SVToolAdjustmentArchivePage::OnClickResultsTreeCtrl( int par1 )
-{
-	UpdateHeaderBtn();
-}
-
-void SVToolAdjustmentArchivePage::UpdateHeaderBtn()
-{
-	UpdateData();
-	SVObjectReferenceVector refObjs;
-	m_treeResultsList.GetSelectedObjects( refObjs );
-	BOOL bEnable = refObjs.size() != 0 && m_bUseColumnHeaders;
-	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(bEnable);
-}
-
-void SVToolAdjustmentArchivePage::OnSelchangeModeCombo() 
-{
-	UpdateData();
-	int iSel = m_cbMode.GetCurSel();
-	if (iSel != CB_ERR)
-	{
-		m_eSelectedArchiveMethod = static_cast <SVArchiveMethodEnum> (m_cbMode.GetItemData( iSel ));
-		m_wndAvailableArchiveImageMemory.ShowWindow( m_eSelectedArchiveMethod == SVArchiveGoOffline );
-		m_wndTxtAvailableArchiveImageMemory.ShowWindow( m_eSelectedArchiveMethod == SVArchiveGoOffline );
-
-		//if changing to SVArchiveGoOffline mode - build m_mapSelectedImageUsage with selected items in the tree
-		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
-		{
-			SVObjectListClass l_ObjectList;
-			m_treeImagesList.GetCheckedObjects(&l_ObjectList);
-
-			m_mapSelectedImageMemUsage.clear();
-
-			for (int i=0; i < l_ObjectList.GetSize(); i++)
-			{
-				SVObjectReference refObject = l_ObjectList.GetAt(i);
-				SVImageClass* pImage = dynamic_cast <SVImageClass*> (refObject.Object());
-				if (pImage)
-				{
-					m_mapSelectedImageMemUsage[ pImage ] = SVArchiveTool::CalculateImageMemory(pImage);
-				}
-			}
-			//check to make sure they did not go over the available memory
-			__int64 FreeMem = CalculateFreeMem();
-			if (FreeMem < 0)
-			{
-				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::AP_NotEnoughMemoryInChangeMode, StdMessageParams );
-			}
-		}
-	}
-}
-
-void SVToolAdjustmentArchivePage::OnChangeEditMaxImages() 
-{
-	CString strNumImages;
-	m_editMaxImages.GetWindowText(strNumImages);
-	m_lImagesToArchive = atol(strNumImages);
-
-	if (!m_bInit)
-	{
-		//check to make sure they don't type in a value below 1
-		if ( m_lImagesToArchive > 0 )
-		{  
-			//check to make sure we don't go over the amount of free memory
-			if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
-			{
-				__int64 llFreeMem = CalculateFreeMem();
-				if (llFreeMem >= 0)
-				{
-					m_sMaxImageNumber = strNumImages;
-					m_lImagesToArchive = atol(strNumImages);
-				}
-				else
-				{
-					CString sMsg;
-					sMsg.Format("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
-					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-					Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, sMsg.GetString(), StdMessageParams );
-					m_lImagesToArchive = atol(m_sMaxImageNumber);
-					if(m_sMaxImageNumber != strNumImages)
-					{
-						m_editMaxImages.SetWindowText((LPCSTR)m_sMaxImageNumber);
-					}
-				}
-			}
-			else
-			{
-				m_sMaxImageNumber = strNumImages;
-			}
-		}
-		else
-		{
-			m_editMaxImages.SetWindowText(m_sMaxImageNumber);
-		}
-	}
-}
-
-__int64 SVToolAdjustmentArchivePage::CalculateToolMemoryUsage()
-{
-	__int64 ToolImageMemoryUsage = 0;
-
-	MapSelectedImageType::const_iterator iter;
-	for (iter = m_mapSelectedImageMemUsage.begin(); iter != m_mapSelectedImageMemUsage.end(); ++iter)
-	{
-		ToolImageMemoryUsage += iter->second;
-	}
-	ToolImageMemoryUsage *= m_lImagesToArchive;
-
-	return ToolImageMemoryUsage;
-}
-
-__int64 SVToolAdjustmentArchivePage::CalculateFreeMem()
-{
-	m_lToolImageMemoryUsage = CalculateToolMemoryUsage();
-	__int64 FreeMem = -1;
-
-	if (m_lToolImageMemoryUsage >=0)
-	{
-		FreeMem = m_lTotalArchiveImageMemoryAvailable - (m_lToolImageMemoryUsage + m_lInitialArchiveImageMemoryUsageExcludingThisTool);
-		
-		m_strAvailableArchiveImageMemory.Format( _T("%8.1f MB"), (double) FreeMem / (double) (1024 * 1024) );
-
-		UpdateData(FALSE);
-	}
-
-	return FreeMem;
-}
-bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs)
+bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs)
 {
 	bool bRet = false;
 	if( m_pTool )
@@ -823,9 +475,7 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 		// Collect and build string pair vector from header Guid and Header Label from the archive tool.
 		// but only add if Guids match the selected object Guids
 		// output a vector of Object Name / Label pairs filtered by the selected objects..
-		SVObjectReferenceVector l_aRefObj;
 		std::vector<int> vecInt;
-		m_treeResultsList.GetSelectedObjectsInTreeOrder(l_aRefObj, vecInt);
 
 		// Get Lists....
 		typedef std::vector<CString> StringVect;
@@ -843,13 +493,13 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 
 		// ... Create List from selected...
 		StringPairVect SelectedHeaderPairs;
-		for( SVObjectReferenceVector::const_iterator l_it = l_aRefObj.begin(); l_it != l_aRefObj.end() ; ++l_it)
+		SvOsl::SelectorItemVector::const_iterator Iter;
+		for( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 		{
-			SVGUID svGUIDValue;
-			svGUIDValue = l_it->Guid(); //GetCompleteObjectName();
+			SVGUID GuidValue( Iter->getItemKey() );
 
-			StrStrPair NewPair( svGUIDValue.ToString().c_str(), 
-				SVObjectManagerClass::Instance().GetObject(svGUIDValue)->GetCompleteObjectName() );
+			StrStrPair NewPair( GuidValue.ToString().c_str(), 
+			SVObjectManagerClass::Instance().GetObject(GuidValue)->GetCompleteObjectName() );
 			SelectedHeaderPairs.push_back(NewPair);
 		}
 
@@ -880,7 +530,7 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 	return bRet;
 }
 
-bool SVToolAdjustmentArchivePage::StoreHeaderValuesToTool(StringPairVect& HeaderPairs)
+bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(StringPairVect& HeaderPairs)
 {
 	bool bRet = false;
 	if( m_pTool )
@@ -901,7 +551,7 @@ bool SVToolAdjustmentArchivePage::StoreHeaderValuesToTool(StringPairVect& Header
 	return bRet;
 }
 
-void SVToolAdjustmentArchivePage::OnBnClickedHeaderBtn()
+void SVTADlgArchiveResultsPage::OnBnClickedHeaderBtn()
 {
 	// Get a collection of header name/Label pairs from this class and the tool.
 	StringPairVect l_HeaderPairs;
@@ -918,13 +568,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderBtn()
 	}
 }
 
-
-// Update tool from checkbox.
-void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
+void SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck()
 {
-	UpdateHeaderBtn();
-	m_pTool->m_bvoUseHeaders.SetValue( 1, m_bUseColumnHeaders );
+	UpdateData( TRUE );
+
+	BOOL bEnable = 0 != m_List.size() && m_ColumnHeaders;
+	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(bEnable);
+
+	m_pTool->m_bvoUseHeaders.SetValue( 1, m_ColumnHeaders );
 }
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:

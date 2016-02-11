@@ -90,10 +90,7 @@ void ToolSetView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ToolSetView)
-	DDX_Control(pDX, IDC_OUTPUT_TREE, m_outputTreeCtrl);
-	//DDX_Control(pDX, IDC_TOOLSET_TREE, m_toolSetTreeCtrl);
 	DDX_Control(pDX, IDC_TOOLSET_LIST, m_toolSetListCtrl);
-	//DDX_Control(pDX, IDC_TOOLSET_TAB, m_toolSetTabCtrl);
 	//}}AFX_DATA_MAP
 }
 
@@ -103,7 +100,6 @@ BEGIN_MESSAGE_MAP(ToolSetView, CFormView)
 	ON_WM_SIZE()
 	ON_WM_CREATE()
 	ON_NOTIFY(NM_DBLCLK, IDC_TOOLSET_LIST, OnDblClkToolSetList)
-	//ON_NOTIFY(TVN_ITEMEXPANDED, IDC_TOOLSET_TREE, OnItemexpandedToolsetTree)
 	ON_NOTIFY(LVN_BEGINLABELEDIT, IDC_TOOLSET_LIST, OnBeginLabelEditToolSetList)
 	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_TOOLSET_LIST, OnEndLabelEditToolSetList)
 	ON_NOTIFY(NM_CLICK, IDC_TOOLSET_LIST, OnClickToolSetList)
@@ -131,56 +127,14 @@ void ToolSetView::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-/////////////////////////////////////////////////////////////////////////////
-// ToolSetView message handlers
-
-/*void ToolSetView::OnSelchangeToolsetTab(NMHDR* pNMHDR, LRESULT* pResult) // BRW - No more ToolSetTabCtrl
-{
-	TC_ITEM tabCtrlItem;
-	tabCtrlItem.mask = TCIF_PARAM;
-
-	int cur = m_toolSetTabCtrl.GetCurSel();
-
-	// Hide all but the currently selected window
-	for (int i = 0; i < m_toolSetTabCtrl.GetItemCount(); ++i)
-	{
-		if (i != cur)
-		{
-			if (m_toolSetTabCtrl.GetItem(i, &tabCtrlItem))
-			{
-				CWnd* pWnd = GetDlgItem(static_cast<int>(tabCtrlItem.lParam));
-				if (pWnd)
-				{
-					pWnd->ShowWindow(SW_HIDE);
-				}
-			}
-		}
-	}
-
-	// Show the Currently Selected Window
-	if (m_toolSetTabCtrl.GetItem(cur, &tabCtrlItem))
-	{
-		CWnd* pWnd = GetDlgItem(static_cast<int>(tabCtrlItem.lParam));
-		if (pWnd)
-		{
-			pWnd->ShowWindow(SW_SHOW);
-		}
-	}
-	*pResult = 0;
-}*/
-
 void ToolSetView::OnSize(UINT nType, int cx, int cy)
 {
 	CFormView::OnSize(nType, cx, cy);
 
-	// Adjust Tab Control
 	if ( ::IsWindow( m_hWnd ) && ::IsWindow( m_toolSetListCtrl.m_hWnd ) )
 	{
-		//TC_ITEM tabCtrlItem;
-		//tabCtrlItem.mask = TCIF_PARAM;
 		RECT rect1;
 		RECT rect2;
-		//int cur = m_toolSetTabCtrl.GetCurSel();
 
 		m_toolSetListCtrl.GetWindowRect(&rect2);
 		ScreenToClient(&rect2);
@@ -190,39 +144,12 @@ void ToolSetView::OnSize(UINT nType, int cx, int cy)
 		rect2.bottom = rect1.bottom - rect2.top;
 		rect2.bottom = max(rect2.bottom, rect2.top + 1);
 		m_toolSetListCtrl.MoveWindow(&rect2, true);
-		//m_toolSetListCtrl.AdjustRect(false, &rect2);
-		/*rect2.right = max(rect2.right, rect2.left + 1);
-		rect2.bottom = max(rect2.bottom, rect2.top + 1);
-		for (int i = 0; i < m_toolSetTabCtrl.GetItemCount(); ++i)
-		{
-			if (m_toolSetTabCtrl.GetItem(i, &tabCtrlItem))
-			{
-				CWnd* pWnd = GetDlgItem(static_cast<int>(tabCtrlItem.lParam));
-				if (pWnd)
-				{
-					if (i == cur)
-					{
-						pWnd->MoveWindow(&rect2, true);
-					}
-					else
-					{
-						pWnd->MoveWindow(&rect2, false);
-					}
-				}
-			}
-		}*/
 	}
 }
 
 void ToolSetView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
-
-	// Want Pluses and Minuses
-	//m_toolSetTreeCtrl.SetHasButtonsStyle();
-
-	// Don't Allow editing of labels in Tree
-	//m_toolSetTreeCtrl.SetNoEditLabelsStyle();
 
 	// Only Single selection for List control
 	m_toolSetListCtrl.SetSingleSelect();
@@ -231,24 +158,6 @@ void ToolSetView::OnInitialUpdate()
 
 	if (nullptr != pCurrentDocument)
 	{
-		//TC_ITEM tabCtrlItem;
-		//tabCtrlItem.mask = TCIF_TEXT | TCIF_PARAM;
-		//int count = 0;
-
-		//tabCtrlItem.pszText = _T("Tool Set List");;
-		//tabCtrlItem.lParam	= static_cast<DWORD_PTR>(IDC_TOOLSET_LIST);
-		//m_toolSetTabCtrl.InsertItem(count++, &tabCtrlItem);
-
-		//tabCtrlItem.pszText = _T("Tool Set Tree");
-		//tabCtrlItem.lParam	= static_cast<DWORD_PTR>(IDC_TOOLSET_TREE);
-		//m_toolSetTabCtrl.InsertItem(count++, &tabCtrlItem);
-
-		// Set initial tab selection...
-		//m_toolSetTabCtrl.SetCurSel(0);
-
-		m_outputTreeCtrl.ShowWindow(SW_HIDE);
-
-		//m_toolSetTreeCtrl.ShowWindow(SW_HIDE);
 		m_toolSetListCtrl.ShowWindow(SW_SHOW);
 	}
 }
@@ -300,7 +209,6 @@ void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			// force the list control to position its scroll bars where they were before the rebuild.
 			m_toolSetListCtrl.RestoreScrollPos();
 		}
-		//CFormView::OnUpdate(pSender, lHint, pHint);   // This call causes flicker
 	}
 }
 
@@ -486,17 +394,6 @@ void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 	*pResult = 0;
 }
-
-/*void ToolSetView::OnItemexpandedToolsetTree(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
-
-	if (TVE_COLLAPSE == pNMTreeView->action)
-	{
-		m_toolSetTreeCtrl.SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	}
-	*pResult = 0;
-}*/
 
 void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
@@ -828,29 +725,6 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void ToolSetView::OnDraw(CDC* pDC)
-{
-	CFormView::OnDraw(pDC);
-
-	// Get the Current page and refresh it
-	TC_ITEM tabCtrlItem;
-	tabCtrlItem.mask = TCIF_PARAM;
-
-	/*int cur = m_toolSetTabCtrl.GetCurSel();
-
-	if (m_toolSetTabCtrl.GetItem(cur, &tabCtrlItem))
-	{
-		if (IDC_TOOLSET_LIST == tabCtrlItem.lParam)
-		{*/
-			m_toolSetListCtrl.BringWindowToTop();
-		/*}
-		else if (IDC_TOOLSET_TREE == tabCtrlItem.lParam)
-		{
-			m_toolSetTreeCtrl.BringWindowToTop();
-		}
-	}*/
-}
-
 void ToolSetView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// If we are editing a label, we have the mouse 'captured'.
@@ -1074,24 +948,6 @@ bool ToolSetView::CheckName(const CString& name , LPCTSTR pExclude) const
 	}
 	return bNameOk;
 }
-
-/*bool ToolSetView::IsToolsetListCtrlActive() const
-{
-	bool bRetVal = false;
-	TC_ITEM tabCtrlItem;
-	tabCtrlItem.mask = TCIF_PARAM;
-
-	int cur = m_toolSetTabCtrl.GetCurSel();
-
-	if (m_toolSetTabCtrl.GetItem(cur, &tabCtrlItem))
-	{
-		if (IDC_TOOLSET_LIST == static_cast<int>(tabCtrlItem.lParam))
-		{
-			bRetVal = true;
-		}
-	}
-	return bRetVal;
-}*/
 
 //******************************************************************************
 //* LOG HISTORY:

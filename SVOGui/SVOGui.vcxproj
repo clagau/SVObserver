@@ -260,7 +260,6 @@
     <ClInclude Include="CDSVPictureDisplay.h" />
     <ClInclude Include="Custom2FilterDlg.h" />
     <ClInclude Include="FormulaController.h" />
-    <ClInclude Include="GlobalAndToolSetSelector.h" />
     <ClInclude Include="GlobalSelector.h" />
     <ClInclude Include="GuiController.h" />
     <ClInclude Include="GlobalConstantConflictDlg.h" />
@@ -271,9 +270,7 @@
     <ClInclude Include="NoSelector.h" />
     <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="PictureDisplay.h" />
-    <ClInclude Include="PPQNameSelector.h" />
-    <ClInclude Include="PPQVariablesSelector.h" />
-    <ClInclude Include="PublishSelector.h" />
+    <ClInclude Include="PPQSelector.h" />
     <ClInclude Include="RangeController.h" />
     <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="RangeValidator.h" />

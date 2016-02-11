@@ -925,8 +925,6 @@ HRESULT SVArchiveTool::QueueArchiveString( CString strArchiveString )
 //
 void SVArchiveTool::UpdateTaskObjectOutputList()
 {
-	// INEFFICIENT N^2 IMPLEMENTATION!!!
-
 	SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
 	ASSERT( pToolSet );
 	SVOutputInfoListClass l_ToolSetOutputList;
@@ -950,28 +948,22 @@ void SVArchiveTool::UpdateTaskObjectOutputList()
 		//
 		ref.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE;
 		
-		//
-		// Iterate the current list of results to archive.
-		//
-		int nCountResults = m_arrayResultsInfoObjectsToArchive.GetSize();
-		for (int k = 0; k < nCountResults; k++)
+	}
+	//
+	// Iterate the current list of results to archive.
+	//
+	int nCountResults = m_arrayResultsInfoObjectsToArchive.GetSize();
+	for (int i = 0; i < nCountResults; i++)
+	{
+		// SVObjectInfoStruct InfoItemArchive = 
+		//	arrayResultsInfoObjectsToArchive.GetAt(k);
+		SVObjectReference ref = m_arrayResultsInfoObjectsToArchive.GetAt( i )->GetObjectReference();
+
+		if (ref.ObjectAttributesAllowed() & SV_ARCHIVABLE)
 		{
-			// SVObjectInfoStruct InfoItemArchive = 
-			//	arrayResultsInfoObjectsToArchive.GetAt(k);
-			SVArchiveRecord* pResultRecord = m_arrayResultsInfoObjectsToArchive.GetAt( k );
-			
-			//
-			// Compare and set the archivable attributes set if a match.
-			//
-			if ( pResultRecord->GetObjectReference() == ref )
-			{
-				if (ref.ObjectAttributesAllowed() & SV_ARCHIVABLE)
-				{
-					ref.ObjectAttributesSetRef() |= SV_ARCHIVABLE;
-				}
-			}
-		}// end for (int k = 0; k < nCountResults; k++)
-	}// end for (int i = 0; i < nCount; i++)
+			ref.ObjectAttributesSetRef() |= SV_ARCHIVABLE;
+		}
+	}
 }
 
 //  Called by SVToolAdjustmentArchivePage::OnOK().

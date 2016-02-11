@@ -33,7 +33,6 @@
 #include "TextDefinesSvO.h"
 #include "RootObject.h"
 #include "SVOGui/GlobalSelector.h"
-#include "SVOGui/PPQNameSelector.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVOGui/RangeSelectorFilter.h"
@@ -561,14 +560,14 @@ bool RangeClassHelper::FillObjectSelector()
 		PPQName = pPPQ->GetName();
 	}
 
-	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
 
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
-	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<false, SvOg::RangeSelectorFilter>>(pInspectionProcess->GetUniqueObjectID(), pTool->GetUniqueObjectID());
+	SvOsl::SelectorOptions BuildOptions( pInspectionProcess->GetUniqueObjectID(), SV_SELECTABLE_FOR_EQUATION );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvOg::RangeSelectorFilter>>( BuildOptions );
 	return true;
 }
 

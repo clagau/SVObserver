@@ -8,13 +8,14 @@
 #pragma once
 
 #pragma region Includes
+#include <boost\function.hpp>
 #include "IObjectClass.h"
 #pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
-	{	
+	{
 		class IObjectInfoStruct
 		{
 		public:
@@ -26,6 +27,8 @@ namespace Seidenader
 			//************************************
 			virtual IObjectClass* getObject() const = 0;
 		};
+
+		typedef boost::function<bool (const IObjectInfoStruct& rInfo, int ArrayIndex)> IsObjectInfoAllowed;
 	}
 }
 

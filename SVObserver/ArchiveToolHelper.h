@@ -61,6 +61,12 @@ public:
 	/// \returns bool – true if parsed path is valid
 	//************************************
 	bool isTokensValid();
+
+	//************************************
+	/// this function will check the existence of the drive
+	/// \returns bool – true if valid
+	//************************************
+	static bool ValidateDrive(LPCTSTR szFilePath, CString& szDrv);
 #pragma endregion Public Methods
 
 private:

@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolAdjustmentArchivePage
-//* .File Name       : $Workfile:   SVToolArchivePage.h  $
+//* .Module Name     : SVTADlgArchiveImagePage
+//* .File Name       : $Workfile:   SVTADlgArchiveImagePage.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.4  $
 //* .Check In Date   : $Date:   28 Aug 2014 07:25:48  $
@@ -13,96 +13,86 @@
 
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
-#include "SVOutputInfoListTreeCtrl.h"
+#include "ObjectSelectorLibrary\SelectorItemVector.h"
 #include "SVMFCControls\SVEditNumbers.h"
-#include "SVImageListClass.h"
 #include "SVArchiveTool.h"
 #include "SVGlobal.h"
 #pragma endregion Includes
 
+#pragma region Declarations
 class SVToolAdjustmentDialogSheetClass;
+#pragma endregion Declarations
 
-class SVToolAdjustmentArchivePage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
+class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
+	enum { IDD = IDD_TA_ARCHIVE_IMAGE_PAGE };
+
+#pragma region Constructor
 public:
-	SVToolAdjustmentArchivePage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
-	virtual ~SVToolAdjustmentArchivePage();
+	SVTADlgArchiveImagePage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent );
+	virtual ~SVTADlgArchiveImagePage();
+#pragma endregion Constructor
 
 #pragma region Public Methods
-	void BuildImageList();
-
 	// ISVPropertyPageDialog
 	bool QueryAllowExit();
 #pragma endregion Public Methods
 	
-#pragma region Public Members
-	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	static const int s_UpperLimitImageNumbers;
-#pragma endregion Public Members
-
 #pragma region Protected Methods
 protected:
-	//{{AFX_VIRTUAL(SVToolAdjustmentArchivePage)
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
-	//}}AFX_VIRTUAL
+	DECLARE_MESSAGE_MAP()
 
-	//{{AFX_DATA(SVToolAdjustmentArchivePage)
-	enum { IDD = IDD_TA_ARCHIVE_PAGE };
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL OnInitDialog();
+
+	afx_msg void OnDblClickListSelected(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnSelectObjects();
+	afx_msg void OnRemoveItem();
+	afx_msg void OnRemoveAllItems();
+	afx_msg void OnBrowse();
+	afx_msg void OnSelchangeModeCombo();
+	afx_msg void OnChangeEditMaxImages();
+
+	void BuildImageList();
+	void InitialMemoryUsage();
+	void ReadSelectedObjects();
+	void ShowObjectSelector();
+
+	bool checkImageMemory( SVGUID ImageGuid , bool bNewState );
+	__int64 CalculateToolMemoryUsage();
+	__int64 CalculateFreeMem();
+
+#pragma endregion Protected Methods
+
+#pragma region Private Members
+private:
+	SVToolAdjustmentDialogSheetClass* m_pParent; //Pointer to the Tool Adjust sheet
+	CListCtrl   m_ItemsSelected;				//The selected list control
+	SvOsl::SelectorItemVector m_List;			//The selected list
+	SVArchiveTool* m_pTool;						//Pointer to the Archive Tool
+	CImageList m_StateImageList;				//The state image list
+	CButton m_Select;							//The tree select button
+	CBitmap m_TreeBitmap;						//The bitmap for the tree button
+	CString m_sMaxImageNumber;
+
 	CStatic	m_wndAvailableArchiveImageMemory;
-	CStatic	m_wndTxtAvailableArchiveImageMemory;
-	CComboBox	m_cbMode;
-	SvMc::CEditNumbers	m_editMaxImages;
-	CEdit	m_editImageFilesRoot;
-	SVOutputInfoListTreeCtrlClass m_treeResultsList;
-	SVOutputInfoListTreeCtrlClass m_treeImagesList;
-	CEdit	m_editArchiveFileName;
-	BOOL	m_checkAppendArchive;
-	BOOL	m_checkStopAtMaxImages;
-	BOOL	m_bUseColumnHeaders;
+	CComboBox	m_Mode;
+	SvMc::CEditNumbers	m_MaxImages;
+	CEdit	m_ImageFilesRoot;
+	BOOL	m_StopAtMaxImages;
 	int		m_iModeIndex;
-	CString	m_strAvailableArchiveImageMemory;
-	//}}AFX_DATA
-	SVArchiveTool* m_pTool;
-	SVImageListClass m_imageListAll;
 	SVArchiveMethodEnum m_eSelectedArchiveMethod;
-	long m_lImagesToArchive;
-	__int64 m_lTotalArchiveImageMemoryAvailable;
-	__int64 m_lInitialArchiveImageMemoryUsage;
-	__int64 m_lInitialArchiveImageMemoryUsageExcludingThisTool;
-	__int64 m_lInitialToolImageMemoryUsage;
-	__int64 m_lToolImageMemoryUsage;
+	long m_ImagesToArchive;
+	__int64 m_TotalArchiveImageMemoryAvailable;
+	__int64 m_InitialArchiveImageMemoryUsage;
+	__int64 m_InitialArchiveImageMemoryUsageExcludingThisTool;
+	__int64 m_InitialToolImageMemoryUsage;
+	__int64 m_ToolImageMemoryUsage;
 
 	typedef std::map <SVImageClass*, long> MapSelectedImageType;
 	MapSelectedImageType m_mapSelectedImageMemUsage;
 	MapSelectedImageType m_mapInitialSelectedImageMemUsage;
 
-	__int64 CalculateToolMemoryUsage();
-	__int64 CalculateFreeMem();
-
-	// Generated message map functions
-
-	//{{AFX_MSG(SVToolAdjustmentArchivePage)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnBrowse();
-	afx_msg void OnBrowse2();
-	afx_msg void OnSelchangeModeCombo();
-	afx_msg void OnChangeEditMaxImages();
-	afx_msg void OnBnClickedHeaderCheck();
-	afx_msg void OnBnClickedHeaderBtn();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-	bool GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs );
-	bool StoreHeaderValuesToTool( StringPairVect& HeaderPairs );
-
-	bool CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int );
-	void OnClickResultsTreeCtrl( int Par1 );
-	void UpdateHeaderBtn();
-#pragma endregion Protected Methods
-
-#pragma region Private Members
-private:
-	CString m_sMaxImageNumber;
 	bool m_bInit;
 #pragma endregion Private Members
 };

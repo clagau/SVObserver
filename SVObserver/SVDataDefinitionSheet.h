@@ -8,20 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:07:34  $
 //******************************************************************************
-#ifndef SVDATADEFINITIONSHEET_H
-#define SVDATADEFINITIONSHEET_H
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVDataDefinitionSheet.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// SVDataDefinitionSheet
-
-
+#pragma region Includes
 #include "SVPropertySheetCancelImpl.h"
+#include "SelectedObjectsPage.h"
+#pragma endregion Includes
 
 class SVInspectionProcess;
 
@@ -29,57 +22,40 @@ class SVDataDefinitionSheet : public CPropertySheet, public ISVCancel//, public 
 {
 	DECLARE_DYNAMIC(SVDataDefinitionSheet)
 
-// Construction
+#pragma region Constructor
 public:
-	SVDataDefinitionSheet( LPCTSTR pszCaption, SVInspectionProcess* pInspection, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
+	SVDataDefinitionSheet( LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
 	virtual ~SVDataDefinitionSheet();
+#pragma endregion Constructor
 
-	HRESULT CreatePages();
-
+#pragma region Public Methods
+public:
 	// ISVCancel
 	virtual bool CanCancel();
 	virtual HRESULT GetCancelData(SVCancelData*& rpData);
 	virtual HRESULT SetCancelData(SVCancelData* pData);
+#pragma endregion Public Methods
 
-// Attributes
-public:
-	SVInspectionProcess* m_pInspection;
-
-	CString    m_strInspection;
-
-
-// Operations
-public:
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVDataDefinitionSheet)
-	public:
-	virtual BOOL OnInitDialog();
-	//}}AFX_VIRTUAL
-	void OnOK();
-
-
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SVDataDefinitionSheet)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+#pragma region Private Methods
+private:
 	DECLARE_MESSAGE_MAP()
 
+	HRESULT CreatePages();
 	void DestroyPages();
+	virtual BOOL OnInitDialog();
+	void OnOK();
 
+	bool setChangedData( const SelectedObjectsPage* const pPage );
+#pragma endregion Private Methods
+
+#pragma region Member variables
+private:
+	SVInspectionProcess& m_rInspection;		//Reference to the respective inspection object
+	SvOsl::SelectorItemVector m_ValueList;	//The selected value list 
+	SvOsl::SelectorItemVector m_ImageList;	//The selected image list
+#pragma endregion Member variables
 };
 
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // #ifndef SVDATADEFINITIONSHEET_H
 
 //******************************************************************************
 //* LOG HISTORY:

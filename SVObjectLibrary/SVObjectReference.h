@@ -92,7 +92,6 @@ public:
 	CString GetOneBasedIndexString() const;
 	CString GetZeroBasedIndexString() const;
 
-	
 	//************************************
 	//! Increments the array index if the reference points to a single array variable. 
 	//! Used to correct the index where zero-based name strings are used. 
