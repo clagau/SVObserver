@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include <limits>
 #include "SVDisplayObject.h"
 
 #include "SVLibrary/SVWinUtility.h"
@@ -41,6 +42,7 @@ SVDisplayObject::SVDisplayObject( LPCSTR ObjectName )
 , m_DisplayedTrigger( -1 )
 , m_IPDocDisplayComplete( 1 )
 , m_FrameRate( 10 )
+, m_LastUpdateTime(std::numeric_limits<SVClock::SVTimeStamp>::max())
 {
 	m_hStartEvent = NULL;
 	m_hStopEvent = NULL;
@@ -276,6 +278,7 @@ void SVDisplayObject::SetIPDocDisplayComplete()
 	::InterlockedExchange( &m_IPDocDisplayComplete, 1 );
 
 	::SetEvent( m_hStartEvent );
+	m_LastUpdateTime = SVClock::GetTimeStamp();
 }
 
 DWORD WINAPI SVDisplayObject::SVDisplayThreadFunc( LPVOID lpParam )
@@ -391,6 +394,16 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 				{
 					m_FrameRate = 1;
 				}
+				
+			}
+			// check if forcedUpdate is active
+			if (!l_Process && TheSVObserverApp.IsForcedImageUpdateActive())
+			{
+				double elapsed = SVClock::GetTimeStamp() - m_LastUpdateTime;
+				double interval = SVClock::ConvertFrom(SVClock::Seconds, TheSVObserverApp.GetForcedImageUpdateTimeInSeconds());
+				// check last update time and if current time is greater than last update time + ForcedImageUpdateTime then Update
+				l_Process = (elapsed >= interval);
+				TRACE("l_Process = %s\n", (l_Process ) ? "true" : "false");
 			}
 		}
 

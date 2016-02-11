@@ -361,6 +361,9 @@ public:
 	DWORD getLoadingVersion() const { return m_LoadingVersion; }
 	void setLoadingVersion(DWORD version) { m_LoadingVersion = version; }
 	long getDataValidDelay() const { return m_DataValidDelay; }
+
+	bool IsForcedImageUpdateActive() const { return (m_forcedImageUpdateTimeInSeconds) ? true : false; }
+	unsigned char GetForcedImageUpdateTimeInSeconds() const { return m_forcedImageUpdateTimeInSeconds; }
 #pragma endregion
 #pragma endregion Public Methods
 
@@ -562,6 +565,9 @@ private:
 	unsigned short m_FailStatusStreamPortNumber;
 
 	long m_DataValidDelay;
+
+	unsigned char m_forcedImageUpdateTimeInSeconds;
+
 #pragma endregion Member variables
 };
 

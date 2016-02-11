@@ -360,6 +360,7 @@ SVObserverApp::SVObserverApp()
 	  , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
 	  , m_XMLTree()
 	  , m_DataValidDelay( 0 )
+	  , m_forcedImageUpdateTimeInSeconds(0)
 {
 	free((void*)m_pszHelpFilePath);
 	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
@@ -7223,9 +7224,11 @@ HRESULT SVObserverApp::INILoad()
 	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
 	HRESULT l_hrOk = l_iniLoader.Load("C:\\SVObserver\\bin\\SVIM.INI", l_csSystemDir, "C:\\SVObserver\\bin\\HARDWARE.INI");
 
-	if (l_hrOk == S_OK)
+	if (S_OK == l_hrOk)
 	{
 		// copy settings from the SVOIniLoader class for now
+		m_forcedImageUpdateTimeInSeconds = l_iniLoader.GetForcedImageUpdateTime();
+
 		g_bUseCorrectListRecursion = l_iniLoader.m_bUseCorrectListRecursion;
 
 		RootObject::setRootChildValue( ::EnvironmentModelNumber, l_iniLoader.m_csModelNumber );
@@ -7269,16 +7272,16 @@ HRESULT SVObserverApp::INILoad()
 		m_csFirmwareArguments = l_iniLoader.m_csFirmwareArguments;
 
 		m_ShowUpdateFirmwareInMenu = FALSE;
-		if ( m_csShowUpdateFirmware.CompareNoCase("Y") == 0 )
+		if ( 0 == m_csShowUpdateFirmware.CompareNoCase("Y")  )
 		{
 			m_ShowUpdateFirmwareInMenu = TRUE;
 		}
 
 		for ( int i = 0; i < 4; i++ )
 		{
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) == 0 );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) == 0 );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) == 0 );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, 0 == l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, 0 == l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, 0 == l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) );
 		}
 
 		l_hrOk = l_hrOk | LoadDigitalDLL();
@@ -7292,14 +7295,14 @@ HRESULT SVObserverApp::INILoad()
 		{
 #ifdef _WIN64
 			TheSVOLicenseManager().SetFastOCRLicense(false);
-			if ( m_pFastOcr != NULL )
+			if ( nullptr != m_pFastOcr )
 			{
 				delete m_pFastOcr;
-				m_pFastOcr = NULL;
+				m_pFastOcr = nullptr;
 			}
 #else
 			TheSVOLicenseManager().SetFastOCRLicense(true);
-			if ( m_pFastOcr == NULL )
+			if ( nullptr != m_pFastOcr )
 			{
 				m_pFastOcr = new SVLVFastOCR();
 			}
@@ -7307,19 +7310,19 @@ HRESULT SVObserverApp::INILoad()
 		}
 		else
 		{
-			if ( m_pFastOcr != NULL )
+			if ( nullptr != m_pFastOcr )
 			{
 				delete m_pFastOcr;
-				m_pFastOcr = NULL;
+				m_pFastOcr = nullptr;
 			}
 		}
 	}
 	else
 	{
-		if (l_iniLoader.m_hrOEMFailure != S_OK)
+		if (S_OK != l_iniLoader.m_hrOEMFailure)
 		{
 			ASSERT( FALSE );
-			::MessageBox(NULL, _T("The model number specified in OEMINFO.INI is invalid."), _T("SVObserver"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+			::MessageBox(nullptr, _T("The model number specified in OEMINFO.INI is invalid."), _T("SVObserver"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 		}
 
 	}

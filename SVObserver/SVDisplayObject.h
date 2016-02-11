@@ -81,6 +81,7 @@ protected:
 
 	long m_FrameRate;
 	SVClock::SVTimeStamp m_NextDisplayEvent;
+	SVClock::SVTimeStamp m_LastUpdateTime;
 
 };
 

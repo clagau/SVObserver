@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   10 Jun 2013 18:08:06  $
 // ******************************************************************************
 
-#ifndef INCL_SVOINILOADER_H
-#define INCL_SVOINILOADER_H
+#pragma once
 
 class SVOIniLoader
 {
@@ -59,7 +58,7 @@ public:
 	
 	long m_gigePacketSize;
 	bool m_bUseCorrectListRecursion;
-
+	
 	HRESULT m_hrOEMFailure;
 		
 	SVOIniLoader();
@@ -69,12 +68,12 @@ public:
 	HRESULT LoadSVIMIni(LPCTSTR svimIniFile);
 	HRESULT LoadHardwareIni(LPCTSTR hardwareIniFile, LPCTSTR modelOptions);
 	HRESULT DecodeModelNumber(LPCTSTR modelNumber);
+	unsigned char GetForcedImageUpdateTime() const;
 
 protected:
 	bool m_bSingleCameraModel;
+	unsigned char m_forcedImageUpdateTimeInSeconds;
 };
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:
