@@ -2550,6 +2550,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 				FullName.Format( "%s.%s.Ch_All", BoardName.c_str(),	DigName.c_str() );
 			}
 
+			SVDigitizerProcessingClass::Instance().SelectDigitizer( FullName.c_str() );
 			SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( FullName.c_str() ) );
 			if ( nullptr != psvDevice )
 			{
