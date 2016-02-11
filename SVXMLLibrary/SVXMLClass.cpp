@@ -2088,16 +2088,10 @@ HRESULT SVXMLClass::GetRootNode (SVXML::IXMLDOMElementPtr& p_orDOMRootPtr)
 HRESULT SVXMLClass::AppendChildToDOMNode (SVXML::IXMLDOMNodePtr p_oParentNodePtr, SVXML::IXMLDOMNodePtr p_oChildNodePtr)
 {
 	HRESULT hr = S_OK;
-
-	while (1)
+	if(nullptr != p_oChildNodePtr)
 	{
 		hr = svmopDOM->AppendChildToDOMNode (p_oParentNodePtr, p_oChildNodePtr);
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-		break;
-	} // while (1)
+	}
 	return hr;
 }
 

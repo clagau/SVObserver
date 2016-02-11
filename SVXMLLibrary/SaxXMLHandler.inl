@@ -410,9 +410,9 @@ namespace Seidenader
 				{
 					///TODO error + bstr 
 					VARIANT variant = GetVariantArray();
-					if( (variant.vt & VT_TYPEMASK)  == VT_I4 || (variant.vt & VT_TYPEMASK) == VT_UI4  )
+					if( (variant.vt & VT_TYPEMASK)  == VT_I4 || (variant.vt & VT_TYPEMASK) == VT_UI4 || (variant.vt & VT_TYPEMASK) == VT_EMPTY  )
 					{
-						///type VT_EMPTY cause a crash in VXMLClass::CopyTreeDataToDOMData
+						
 						SVNavigateTree::AddItem( *m_pData_Tree , m_CurrentBranchHandle, CW2CT(m_ArrayName.c_str()), _variant_t(variant));
 					}
 					else
