@@ -375,9 +375,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 				else
 				{
 					//This stops loading without any further messages
-					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage( SVMSG_SVO_IGNORE_EXCEPTION, nullptr, StdMessageParams );
-					throw MsgCont;
+					return SVMSG_SVO_IGNORE_EXCEPTION;
 				}
 			}
 		}

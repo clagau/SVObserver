@@ -1548,7 +1548,13 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 						{
 							SVImageInfoClass svImageInfo;
 
-							psvDevice->LoadFiles( svFileArray ); // @WARNING:  May crash if svFileArray is empty.
+							if( SVMSG_SVO_IGNORE_EXCEPTION == psvDevice->LoadFiles( svFileArray ) )
+							{
+								//This stops loading without any further messages
+								SvStl::MessageContainer MsgCont;
+								MsgCont.setMessage( SVMSG_SVO_IGNORE_EXCEPTION, nullptr, StdMessageParams );
+								throw MsgCont;
+							}
 
 							if( 1 < svLight.Band( 0 ).NumAttributes() )
 							{
@@ -2562,7 +2568,13 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 				psvDevice->SetLut( lut );
 
 				// cause the image info to be updated for the File Acquisition device
-				psvDevice->LoadFiles( svFileArray );
+				if( SVMSG_SVO_IGNORE_EXCEPTION == psvDevice->LoadFiles( svFileArray ) )
+				{
+					//This stops loading without any further messages
+					SvStl::MessageContainer MsgCont;
+					MsgCont.setMessage( SVMSG_SVO_IGNORE_EXCEPTION, nullptr, StdMessageParams );
+					throw MsgCont;
+				}
 
 				psvDevice->GetImageInfo( &svImageInfo );
 				//psvDevice->DestroyBuffers();
