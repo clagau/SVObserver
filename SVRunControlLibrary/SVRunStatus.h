@@ -84,7 +84,7 @@ public:
 	double m_PreviousTriggerTime; ///< time stamp at which the previous Inspection was started
 	double m_CurrentTriggerTime; ///< time stamp at which the current Inspection was started
 
-	ProductWorkloadInformation m_WorkLoadCurrentProduct;
+	ProductWorkloadInformation m_WorkloadInfoRsc; ///< workload information for the most recently completed product 
 };
 
 inline void SVRunStatusClass::SetPassed() 

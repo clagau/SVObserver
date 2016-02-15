@@ -27,6 +27,7 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVIOEntryHostStruct.h"
 #include "SVValueObjectReference.h"
+#include "SVRunControlLibrary/ProductWorkloadInformation.h" 
 
 enum SVProductInspectedState
 {
@@ -278,6 +279,8 @@ struct SVProductInfoStruct
 	void SetProductActive();
 	void SetProductComplete();
 
+	ProductWorkloadInformation GetWorkloadInformation(){return m_WorkloadInfo;}
+
 	SVString m_ProductState;
 	BOOL bTriggered;
 	BOOL bStartAcquisition;
@@ -286,6 +289,8 @@ struct SVProductInfoStruct
 	BOOL bDataComplete;
 	BOOL bStreamed;
 	HRESULT hrPPQStatus;
+
+	ProductWorkloadInformation m_WorkloadInfo;
 
 	SVTriggerInfoStruct oTriggerInfo;
 	SVInputsInfoStruct oInputsInfo;

@@ -29,11 +29,16 @@ public:
 	}
 	
 /// returns the elapsed time (in microseconds) between trigger and completion of the product
-	double TriggerToCompletionInMicroseconds()	{return 1000.0 * (m_CompletionTime - m_TriggerTime);}
+	double TriggerToCompletionInMicroseconds() const {return 1000.0 * (m_CompletionTime - m_TriggerTime);}
 /// returns the elapsed time (in microseconds) between trigger and the start of processing
-	double TriggerToStartInMicroseconds()		{return 1000.0 * (m_ProcessingStartTime - m_TriggerTime);}
+	double TriggerToStartInMicroseconds() const {return 1000.0 * (m_ProcessingStartTime - m_TriggerTime);}
 
 	ProductWorkloadInformation(){Reset();}
 
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+
+	void logWorkloadInformation(const ProductWorkloadInformation &pwi, LPCSTR heading);
+
+#endif
 };
 

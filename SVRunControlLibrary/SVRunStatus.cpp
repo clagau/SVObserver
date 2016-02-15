@@ -33,7 +33,7 @@ void SVRunStatusClass::ResetTriggerInformation()
 	m_PreviousTriggerTime = 0.0;
 	m_CurrentTriggerTime = 0.0;
 
-	m_WorkLoadCurrentProduct.Reset();
+	m_WorkloadInfoRsc.Reset();
 }
 
 

@@ -21,7 +21,6 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "SVRunControlLibrary/ProductWorkloadInformation.h"
 #include "SVSharedMemorySingleton.h"
 #include "SVInfoStructs.h"
 #include "SVPPQEnums.h"
@@ -54,8 +53,6 @@ public:
 	SVPPQObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVPPQOBJECT );
 
 	virtual ~SVPPQObject();
-
-	ProductWorkloadInformation GetProductWorkloadInformation(){return m_WorkLoadCurrentProduct;}
 
 public:
 
@@ -202,6 +199,9 @@ public:
 
 
 	virtual DWORD GetObjectColor() const override;
+
+	/// \returns workload information for the most recently completed product 
+	ProductWorkloadInformation GetMostRecentWorkLoadInformation(){return m_MostRecentWorkLoadInfo;}
 
 protected:
 	typedef SVVector< SVInspectionProcess* > SVPPQInspectionProcessVector;
@@ -454,12 +454,13 @@ protected:
 	// Pointers to the Master Lists
 	SVCameraInfoMap m_Cameras;
 
-private:
 
-	ProductWorkloadInformation m_WorkLoadCurrentProduct;
+private:
 
 	SVString m_conditionalOutputName; // persist this
 	SVGUID m_conditionalOutputValueID; // do not persist this
+
+	ProductWorkloadInformation m_MostRecentWorkLoadInfo; ///< workload information for the most recently completed product
 
 	void AssignCameraToAcquisitionTrigger();
 	bool ResolveConditionalOutput();

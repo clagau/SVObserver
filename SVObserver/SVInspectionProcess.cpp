@@ -4008,6 +4008,13 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 										 SVProductInfoStruct *pProduct, 
 										 bool p_UpdateCounts )
 {
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+	auto del = SVClock::setReferenceTime();
+	CString infostring;
+	infostring.Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"),SVClock::GetRelTimeStamp(),del);
+	::OutputDebugString(infostring);
+#endif
+
 	BOOL l_bOk = FALSE;
 	BOOL l_bInputRequest = FALSE;
 	BOOL l_bImageRequest = FALSE;
@@ -4126,7 +4133,7 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 
 	SVPPQObject *pPPQ = GetPPQ();
 
-	m_runStatus.m_WorkLoadCurrentProduct = (nullptr != pPPQ) ? pPPQ->GetProductWorkloadInformation() : ProductWorkloadInformation();
+	m_runStatus.m_WorkloadInfoRsc = (nullptr != pPPQ) ? pPPQ->GetMostRecentWorkLoadInformation() : ProductWorkloadInformation();
 
 	return l_bOk;
 
@@ -5020,6 +5027,8 @@ bool   SVInspectionProcess::LoopOverTools(pToolFunc pf, int& counter )
 	}
 	return ret;
 }
+
+
 
 //******************************************************************************
 //* LOG HISTORY:

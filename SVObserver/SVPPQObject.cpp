@@ -97,6 +97,37 @@ HRESULT CALLBACK SVFinishCameraCallback( void *pOwner, void *pCaller, void *pRes
 	}
 }
 
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+
+void logWorkloadInformation(const ProductWorkloadInformation &pwi, LPCSTR heading)
+{
+	CString infostring;
+	infostring.Format(_T("!\t.%7.1lf: %s:\n"), SVClock::GetRelTimeStamp(), heading);
+	::OutputDebugString(infostring);
+	infostring.Format(_T("!\t\ttt = %7.1lf, pst = %7.1lf, ct = %7.1lf, "), 
+		pwi.m_TriggerTime - SVClock::getReferenceTime(),
+		pwi.m_ProcessingStartTime - SVClock::getReferenceTime(), 
+		pwi.m_CompletionTime - SVClock::getReferenceTime());
+	::OutputDebugString(infostring);
+	infostring.Format(_T("TtoCo = %7.1lf, TtoSt = %7.1lf\n"),
+		pwi.TriggerToCompletionInMicroseconds()/1000.0, 
+		pwi.TriggerToStartInMicroseconds()/1000.0);
+	::OutputDebugString(infostring);
+	infostring.Format(_T("!\trd\ttt = %.0lf, pst = %.0lf, ct = %.0lf, "), 
+		pwi.m_TriggerTime,
+		pwi.m_ProcessingStartTime, 
+		pwi.m_CompletionTime);
+	::OutputDebugString(infostring);
+	infostring.Format(_T("pst-tt = %7.1lf, ct-tt = %7.1lf, ct-pst= %7.1lf\n"), 
+		pwi.m_ProcessingStartTime- pwi.m_TriggerTime,
+		pwi.m_CompletionTime- pwi.m_TriggerTime,
+		pwi.m_CompletionTime- pwi.m_ProcessingStartTime);
+	::OutputDebugString(infostring);
+}
+
+#endif
+
+
 HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
 	/// Used in data completion mode, but not in next trigger mode.
 	/// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
@@ -2830,7 +2861,6 @@ BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const S
 	// Begin reading the inputs
 	p_pNewProduct->oInputsInfo.m_BeginProcess = SVClock::GetTimeStamp();
 
-
 	if( !AssignInputs( p_rInputValues ) )
 	{
 		p_pNewProduct->hrPPQStatus = -12387;
@@ -2921,6 +2951,12 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 
 HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 {
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+	CString infostring;
+	infostring.Format(_T("!\t.%7.1lf: SVPPQObject::StartInspection(%s)\n"),SVClock::GetRelTimeStamp(),p_rInspectionID.ToString().c_str());
+	::OutputDebugString(infostring);
+#endif
+
 	HRESULT l_Status = S_OK;
 
 	SVProductInfoStruct* l_pProduct = NULL;
@@ -2961,14 +2997,13 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 			{
 				SVInspectionInfoStruct& l_rInfo = pTempProduct->m_svInspectionInfos[ p_rInspectionID ];
 
-				m_WorkLoadCurrentProduct.m_ProcessingStartTime = SVClock::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
-
 				if( l_rInfo.m_CanProcess &&				// all inputs are available and inspection can start
 					!( l_rInfo.m_InProcess ) &&			// inspection is not currently running
 					!( l_rInfo.m_HasBeenQueued ) )		// This flag prevents the inspection from getting queued more than once
 				{
 					l_pProduct = pTempProduct; // product info
 					l_ProductIndex = i;
+
 				}
 			}
 			else
@@ -2980,6 +3015,16 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 
 	if( l_pProduct != NULL && l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection != NULL )
 	{
+
+		l_pProduct->m_WorkloadInfo.m_ProcessingStartTime = SVClock::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+
+		CString infostring;
+		infostring.Format(_T("set m_ProcessingStartTime, trID = %ld"),l_pProduct->ProcessCount());
+
+		logWorkloadInformation(l_pProduct->m_WorkloadInfo,infostring);
+#endif
+
 		l_Status = l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection->StartProcess( l_pProduct );
 
 		SVString l_Title = l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection->GetName();
@@ -3252,15 +3297,25 @@ bool SVPPQObject::SetInspectionComplete( long p_PPQIndex )
 bool SVPPQObject::SetProductComplete( long p_PPQIndex )
 {
 	SVProductInfoStruct* pProduct = m_ppPPQPositions.GetProductAt( p_PPQIndex );
-	bool l_Status = ( pProduct != NULL );
 
-	if( l_Status )
+	bool l_Status = false;
+
+	if( nullptr != pProduct )
 	{
 		// record the current time and PPQ position for later display
-		m_WorkLoadCurrentProduct.m_PPQIndexAtCompletion = p_PPQIndex;
-		m_WorkLoadCurrentProduct.m_CompletionTime = SVClock::GetTimeStamp();
+		pProduct->m_WorkloadInfo.m_CompletionTime = SVClock::GetTimeStamp();
+		pProduct->m_WorkloadInfo.m_PPQIndexAtCompletion = p_PPQIndex;
 
-		m_WorkLoadCurrentProduct.m_TriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
+		pProduct->m_WorkloadInfo.m_TriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
+
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+		CString infostring;
+		infostring.Format(_T("SVPPQObject::SetProductComplete(@ppq: %d) >> m_CompletionTime\n\t\t(oTriggerInfo.m_BeginProcess -> m_TriggerTime)"),
+			p_PPQIndex);
+		logWorkloadInformation(pProduct->m_WorkloadInfo,infostring);
+#endif
+
+		m_MostRecentWorkLoadInfo = pProduct->GetWorkloadInformation();
 
 		CommitSharedMemory(*pProduct);
 		l_Status = SetProductComplete( *pProduct );

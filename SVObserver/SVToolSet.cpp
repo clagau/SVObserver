@@ -864,13 +864,16 @@ BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	m_lvoTriggerCount.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_lTriggerCount > 0 ? RRunStatus.m_lTriggerCount : 0 );
 
-	m_latestCompletionPPQIndex.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkLoadCurrentProduct.m_PPQIndexAtCompletion);
+	m_latestCompletionPPQIndex.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.m_PPQIndexAtCompletion);
 	double TriggerDelta_us = c_MicrosecondsPerMilisecond * (RRunStatus.m_CurrentTriggerTime - RRunStatus.m_PreviousTriggerTime);
 	m_TriggerDelta.SetValue( RRunStatus.m_lResultDataIndex, TriggerDelta_us);
 
-	m_LastTriggerToPPQCompletion.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkLoadCurrentProduct.TriggerToCompletionInMicroseconds());
-	m_LastTriggerToStart.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkLoadCurrentProduct.TriggerToStartInMicroseconds());
-	
+	m_LastTriggerToPPQCompletion.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMicroseconds());
+	m_LastTriggerToStart.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToStartInMicroseconds());
+
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+	RRunStatus.m_WorkloadInfoRsc.logWorkloadInformation("SVToolSetClass::onRun()");
+#endif	
 
 
 	BOOL bRetVal = SVTaskObjectListClass::onRun( RRunStatus );
@@ -944,8 +947,6 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 			++setNumber;
 
 			SVClock::SVTimeStamp l_Timer = SVClock::GetTimeStamp();
-
-			RRunStatus.m_WorkLoadCurrentProduct.m_CompletionTime = l_Timer;
 
 			ToolTime.Start();
 

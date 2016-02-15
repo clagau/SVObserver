@@ -29,7 +29,13 @@ namespace SVClock
 
 	SVFrequency GetFrequency(); 
 
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+	double setReferenceTime(); ///< sets the current time as reference TimeStamp
+	double getReferenceTime(); ///< returns the reference TimeStamp
+#endif
+
 	SVTimeStamp GetTimeStamp();
+	SVTimeStamp GetRelTimeStamp();
 	SVTimeStamp GetMaxTimeStamp();
 	SVTimeStamp GetMinTimeStamp();
 

@@ -299,7 +299,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::ReleaseHookFuncti
 	SVMatroxInt l_MatroxType = 0;
 	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType( HookType, l_MatroxType );
 	if (hr == S_OK)
-	{
+{	
 		MsysHookFunction( SystemId.m_SystemIdentifier, l_MatroxType | M_UNHOOK, HookHandlerPtr, UserDataPtr);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 	}
