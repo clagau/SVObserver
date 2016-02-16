@@ -18,13 +18,16 @@ namespace Seidenader { namespace SVXMLLibrary
 {
 	#pragma region Constructor
 	SVXMLMaterialsTree::SVXMLMaterialsTree() :
-	 m_pCurrentParent( nullptr )
+	 m_Tree()
+	,m_pCurrentParent( nullptr )
+	,m_pCurrentLeaf( m_Tree.end() )
 	{
 	}
 
 	SVXMLMaterialsTree::SVXMLMaterialsTree(  const SVMaterialsTree::SVTreeContainer& rTree ) :
 	 m_Tree( rTree )
 	,m_pCurrentParent( nullptr )
+	,m_pCurrentLeaf( m_Tree.end() )
 	{
 	}
 
@@ -103,6 +106,7 @@ namespace Seidenader { namespace SVXMLLibrary
 			pBranch = getRoot();
 		}
 
+		m_pCurrentLeaf = m_Tree.end();
 		if( setChildren( pBranch ) )
 		{
 			SVBranches::iterator Iter( m_ChildBranches.begin() );
@@ -126,6 +130,7 @@ namespace Seidenader { namespace SVXMLLibrary
 			pBranch = getRoot();
 		}
 
+		m_pCurrentLeaf = m_Tree.end();
 		if( setChildren( pBranch ) )
 		{
 			for( SVBranches::iterator Iter( m_ChildBranches.begin() ); nullptr == pResult && m_ChildBranches.end() != Iter; ++Iter )
@@ -162,6 +167,7 @@ namespace Seidenader { namespace SVXMLLibrary
 			pBranch = getRoot();
 		}
 
+		m_pCurrentLeaf = m_Tree.end();
 		if( setChildren( pBranch ) )
 		{
 			for( SVBranches::iterator Iter( m_ChildBranches.begin() ); nullptr == pResult && m_ChildBranches.end() != Iter; ++Iter )
@@ -316,6 +322,7 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		if( nullptr != pBranch )
 		{
+			m_pCurrentLeaf = m_Tree.end();
 			if( setChildren( pBranch ) )
 			{
 				SVLeaves::iterator Iter( m_ChildLeaves.begin() );
@@ -342,6 +349,7 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		if( nullptr != pBranch )
 		{
+			m_pCurrentLeaf = m_Tree.end();
 			if( setChildren( pBranch ) )
 			{
 				for( SVLeaves::iterator Iter( m_ChildLeaves.begin() ); m_ChildLeaves.end() != Iter; ++Iter )
@@ -353,6 +361,7 @@ namespace Seidenader { namespace SVXMLLibrary
 						//Check if the next branch child is valid
 						if( m_ChildLeaves.end() != Iter )
 						{
+							m_pCurrentLeaf = *Iter;
 							pResult = *Iter;
 						}
 						else
@@ -381,6 +390,7 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		if( nullptr != pBranch )
 		{
+			m_pCurrentLeaf = m_Tree.end();
 			if( setChildren( pBranch ) )
 			{
 				for( SVLeaves::iterator Iter( m_ChildLeaves.begin() ); m_ChildLeaves.end() != Iter; ++Iter )
@@ -388,6 +398,7 @@ namespace Seidenader { namespace SVXMLLibrary
 					//Find the current child branch
 					if( (*Iter)->first == Name )
 					{
+						m_pCurrentLeaf = *Iter;
 						pResult = *Iter;
 						break;
 					}
@@ -402,24 +413,32 @@ namespace Seidenader { namespace SVXMLLibrary
 	{
 		bool Result( false );
 
-		SVBranchHandle pBranch( pParent );
-
-		if( nullptr == pBranch )
+		//if current leaf then is valid
+		if( pChild == m_pCurrentLeaf && m_Tree.end() != m_pCurrentLeaf )
 		{
-			pBranch = getRoot();
+			Result = true;
 		}
-
-		if( nullptr != pBranch )
+		else
 		{
-			if( setChildren( pBranch ) )
+			SVBranchHandle pBranch( pParent );
+
+			if( nullptr == pBranch )
 			{
-				for( SVLeaves::iterator Iter( m_ChildLeaves.begin() ); m_ChildLeaves.end() != Iter; ++Iter )
+				pBranch = getRoot();
+			}
+
+			if( nullptr != pBranch )
+			{
+				if( setChildren( pBranch ) )
 				{
-					//Find the current child branch
-					if( pChild == *Iter )
+					for( SVLeaves::iterator Iter( m_ChildLeaves.begin() ); m_ChildLeaves.end() != Iter; ++Iter )
 					{
-						Result = true;
-						break;
+						//Find the current child branch
+						if( pChild == *Iter )
+						{
+							Result = true;
+							break;
+						}
 					}
 				}
 			}

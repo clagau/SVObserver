@@ -248,6 +248,7 @@ namespace Seidenader { namespace SVXMLLibrary
 	private:
 		SVMaterialsTree m_Tree;						//The materials tree container
 		mutable SVBranchHandle m_pCurrentParent;	//Handle to the current branch
+		mutable SVLeafHandle m_pCurrentLeaf;		//Handle to the current Leaf
 		mutable SVBranches m_ChildBranches;			//Handle to the current child branches
 		mutable SVLeaves m_ChildLeaves;				//Handle to the current child leaves
 	#pragma endregion Member variables
