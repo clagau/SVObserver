@@ -190,8 +190,8 @@ public:
 //
 // Return Value - 
 //   1 - Failed checksum.
-	template <typename SVT_TREE>
-	HRESULT CopyXMLFileToTree(SVT_TREE& rTree, long alSVOCurrentVersion, BSTR abstrFilename, BSTR* abstrpRevisionHistory, BSTR* abstrpChangedNode);
+	
+
 
 //	CopyTreeToDOM () ---------------------------------------------------------
 //
@@ -210,57 +210,14 @@ public:
 	template <typename SVT_TREE>
 	HRESULT CopyTreeToDOM(SVT_TREE& rTree, long alSVOCurrentVersion, BSTR abstrFormat, BSTR	abstrRevisionHistory);
 
-// CopyDOMToTree () ---------------------------------------------------------
-//  This function requires that the SVTreeClass derived class already be 
-//	 attached, and that it have full access to the tree it is intended to 
-//  support.  For the SVCTreeControlClass, the CTreeControl must already be 
-//  attached to the SVTreeClass derived class.
-// 
-//  This function will call SVTreeClass::Clear () which is intended to 
-//	 destroy the existing contents of the tree.
-	template <typename SVT_TREE>
-	HRESULT CopyDOMToTree(SVT_TREE& rTree, long alSVOConfigurationVersion);
+
 
 	HRESULT CopyDOMToXMLFile(BSTR abstrFileName);
 
-	HRESULT CopyXMLFileToDOM(BSTR abstrFileName, BSTR* abstrpRevisionHistory);
+	
 
-	HRESULT CopyXMLTextToDOM(BSTR XmlText);
-
-// CopyTreeNodeToDOMNode () -------------------------------------------------
-//  A tree must previously have been attached using AttachTree ().
-//  This function does not destroy anything within the existing DOM.
-//  The entire tree branch is copied to the DOM node. Zero will not be a 
-//	 "real" tree handle.
-//	
-//	This will create the arDOMNode to be used; meaning that it is up to the 
-//	calling function to actually insert this DOM node into the DOM tree.
-//
-// alTreeRootHandle - input -
-// arDOMNodePtr - output -
-//
-// Return Value:
-//   2 - alTreeRootHandle is 0.
-//	
 	template <typename SVT_TREE>
 	HRESULT CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_TREE::SVBranchHandle& alTreeRootHandle, SVXML::IXMLDOMElementPtr& arDOMNodePtr );
-
-// CreateTreeChildNodeFromDOMNode () ----------------------------------------
-//  This function creates all tree child nodes copies the existing DOM data 
-//  into the new child elements.  
-//	
-//  The tree must alread exist and be attached.
-//
-//  aDOMElementPtr - input - 
-//  alTreeParentNodeHandle - input - 
-//
-//  Return Value:
-//   2 - aDOMElementPtr is NULL.
-//
-//  If there is an error, the error result will always be returned with 
-//	 either bit 31 or 32 set.
-	template<typename SVT_TREE>
-	HRESULT CreateTreeChildNodeFromDOMNode (SVXML::IXMLDOMElementPtr aDOMElementPtr, SVT_TREE& rTree, const typename SVT_TREE::SVBranchHandle& alTreeParentNodeHandle);
 
 	template<typename SVT_TREE>
 	HRESULT CopyTreeDataToDOMData( SVT_TREE& rTree, const typename SVT_TREE::SVLeafHandle& alNodeHandle, SVXML::IXMLDOMElementPtr& arDOMDataPtr );
@@ -486,19 +443,6 @@ public:
 protected:
 	HRESULT Init ();
 
-// LoadRevisionHistory () ---------------------------------------------------
-// Extracts the revision history from the DOM and places it in the revision
-// history property (See GetRevisionHistory ()).
-// This function is only called from within CopyXMLFileToDOM (), which is
-// only called from within CopyXMLFileToTree (), which is the external 
-//	interface access.
-//
-// Return Value - 
-//   3 - The revision history base node does not exist in the DOM.
-//
-	HRESULT LoadRevisionHistory ();
-
-	HRESULT LoadEncryption ();
 
 // BEGIN CREATE ELEMENT FUNCTIONS (SVR node or SVR data) ------------------\/
 

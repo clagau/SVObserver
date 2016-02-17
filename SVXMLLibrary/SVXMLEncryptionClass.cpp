@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#import <msxml6.dll> // MSXML
 #include "SVXMLEncryptionClass.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\SVUtilityGlobals.h"
@@ -951,6 +952,41 @@ TRACE ("SetEncryption(1) - NameSeed written - %d\n", m_ulNameSeed);
 	return hr;
 }
 
+bool SVXMLEncryptionClass::LoadEncryptionFromSaxData(LPCWSTR lpName, LPCWSTR lpContent)
+{
+
+	_bstr_t  bstrName(lpName);
+	_bstr_t bstrContent(lpContent);
+
+	SVBStr bstrDecryptedName;
+	SVBStr bstrDecryptedNameSeed;
+	unsigned long ulNameSeed=0; 
+	m_ulNameSeed =0;
+	m_lIsEncrypted = TRUE;
+	m_lEncryptionMethod = 0;
+
+
+	HRESULT hr = DecryptString (bstrName.Detach(), &bstrDecryptedName);
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
+	{
+		return false;
+	}
+
+
+	if (wcscmp (bstrDecryptedName, g_wcsNameSeed) == 0)
+	{
+		hr = DecryptString (bstrContent, &bstrDecryptedNameSeed);
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
+		{
+			return false;
+		}
+		ulNameSeed = wcstol (bstrDecryptedNameSeed, NULL, 0);
+		m_ulNameSeed = ulNameSeed;
+		TRACE ("LoadEncryptionFromSaxData - Loaded NameSeed = %d\n", m_ulNameSeed);
+		return true;	
+	}
+	return false;
+}
 
 HRESULT SVXMLEncryptionClass::LoadEncryption ()
 {

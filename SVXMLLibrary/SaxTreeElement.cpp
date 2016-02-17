@@ -300,5 +300,48 @@ namespace Seidenader
 
 			
 		}
-	}
+
+		const wchar_t* SaxTreeElement::GetSpecialAtt(LPCWSTR pAttributeName ) const
+		{
+			std::wstring toFind(pAttributeName);
+			std::map<std::wstring,std::wstring>::const_iterator it = m_SpecialAtributes.find(toFind);
+
+			if(it == m_SpecialAtributes.end())
+			{
+				return nullptr;
+			}
+			else
+			{
+				return it->second.c_str();
+			}
+		}
+	
+
+
+
+
+
+		void SaxTreeElement::SetNameAttribute(LPCWSTR name)
+		{
+			m_NameAtt = name;
+			m_bNameAtt = (m_NameAtt.size() > 0);
+		}
+
+
+		void SaxTreeElement::SetTypeAttribute(LPCWSTR name)
+		{
+			m_TypeAtt = name;	
+			m_bTypeAtt = (m_TypeAtt.size() > 0);
+			m_VarTypeAtt = VariantHelper::WCHAR2Type(name);
+		}
+
+
+		void SaxTreeElement::SetContent(LPCWSTR name)
+		{
+			m_Content = name;
+		}
+
+
+
+}
 }

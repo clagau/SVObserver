@@ -12,9 +12,6 @@
 #ifndef SVDOM_H
 #define SVDOM_H
 
-#import <msxml6.dll> // MSXML
-
-//using namespace MSXML2;
 
 #define SVXML MSXML2
 

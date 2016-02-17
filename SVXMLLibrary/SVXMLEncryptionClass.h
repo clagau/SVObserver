@@ -61,6 +61,15 @@ public:
 	virtual ~SVXMLEncryptionClass();
 
 
+	//************************************
+	//! Set the parameter for decryption 
+	//! \param lpName [in]
+	//! \param lpContent [in]
+	//! \returns HRESULT
+	//************************************
+	bool LoadEncryptionFromSaxData(LPCWSTR lpName, LPCWSTR lpContent);
+
+
 // XML Interface ----------------------------------------------------------\/
 
 	HRESULT  InitializeXMLInterface (SVXMLBase*    p_opParentXML);

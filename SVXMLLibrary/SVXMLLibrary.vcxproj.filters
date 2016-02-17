@@ -63,6 +63,9 @@
     <ClCompile Include="SaxErrorHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SaxEncryptionHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -129,6 +132,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SaxXMLHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaxEncryptionHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

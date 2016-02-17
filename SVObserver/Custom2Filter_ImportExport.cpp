@@ -7,7 +7,7 @@
 //*****************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-
+#import <msxml6.dll> // MSXML
 #include <fstream>
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectXMLWriter.h"

@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#import <msxml6.dll> // MSXML
 #include "SVXMLSVRSchemaClass.h"
 #include "SVXMLLibraryGlobals.h"
 #include "SVMessage\SVMessage.h"

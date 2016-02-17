@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#import <msxml6.dll> // MSXML
 #include <assert.h>
 #include "SVXMLClass.h"
 #include "SVLibrary/SVBStr.h"
@@ -157,64 +158,6 @@ HRESULT SVXMLClass::CopyDOMToXMLFile (BSTR abstrFileName)
 	return hr;
 }
 
-HRESULT SVXMLClass::CopyXMLFileToDOM (BSTR	abstrFileName, BSTR* abstrpRevisionHistory)
-{
-	HRESULT	hr = 0;
-
-	while (1)
-	{
-		if (svmlInitialized == 0)
-		{
-			hr = -1733;
-			break;
-		}
-
-		hr = svmopDOM->CopyXMLFileToDOM (abstrFileName);
-
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-
-		hr = LoadRevisionHistory ();
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-
-		hr = GetRevisionHistory (abstrpRevisionHistory);
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-
-		hr = LoadEncryption ();
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-		break;
-	}
-	return hr;
-}
-
-HRESULT SVXMLClass::CopyXMLTextToDOM ( BSTR	XmlText )
-{
-	HRESULT	Result = S_OK;
-
-	if (svmlInitialized == 0)
-	{
-		Result = -1733;
-	}
-
-	if( S_OK == Result)
-	{
-		Result = svmopDOM->CopyXMLTextToDOM ( XmlText );
-	}
-
-
-	return Result;
-}
 
 HRESULT SVXMLClass::CreateDOMNode (SVXML::IXMLDOMElementPtr& arDOMNewElementPtr, BSTR abstrElementName, long alType)
 {
@@ -642,154 +585,7 @@ HRESULT SVXMLClass::GetCurrentVersion (long* p_lpCurrentVersion)
 	return hr;
 }
 
-HRESULT SVXMLClass::LoadEncryption ()
-{
-	HRESULT	hr = S_OK;
 
-	while (1)
-	{
-
-		m_opEncryption->LoadEncryption ();
-
-		hr = m_opEncryption->GetIsEncrypted (&m_lIsEncrypted);
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-		break;
-	}
-	return hr;
-}
-
-HRESULT SVXMLClass::LoadRevisionHistory ()
-{
-	HRESULT hr = S_OK;
-
-	long l_lNumberOfCharacters;
-	long l_lBstrNbrOfChars;
-	long l_lBufferNbrOfChars;
-
-	unsigned long l_ulVersionNumber1;
-	unsigned long l_ulVersionNumber2;
-
-	SVXML::IXMLDOMElementPtr oNewRevElementPtr;
-	SVXML::IXMLDOMElementPtr oRootElementPtr;
-	SVXML::IXMLDOMElementPtr oRevHistoryBaseNodePtr;
-
-	SVXML::IXMLDOMElementPtr l_oRevNodePtr;
-
-	SVXML::IXMLDOMNodeListPtr oDOMNodeListPtr;
-
-	WCHAR* l_wcpTmp1;
-	WCHAR* l_wcpTmp2;
-
-	_bstr_t bstrXMLString;
-	_bstr_t	l_bstrFormatVersionAttribute;
-	_bstr_t	l_bstrRevisionAttribute;
-
-	_variant_t l_vFormatVersionValue;
-	_variant_t l_vRevisionValue;
-
-	while (1)
-	{
-		if (svmlInitialized == 0)
-		{
-			hr = -1751;
-			break;
-		}
-
-		hr = GetRevisionHistoryBaseNode (oRevHistoryBaseNodePtr);
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-
-		if (oRevHistoryBaseNodePtr == NULL)
-		{
-			hr = 3;	// No revision history section available.
-			break;
-		} // if (oRevHistoryBaseNodePtr == NULL)
-
-		bstrXMLString = oRevHistoryBaseNodePtr->Getxml ();
-		l_lBstrNbrOfChars = bstrXMLString.length ();  // number of characters
-		l_lBufferNbrOfChars = sizeof (m_wczRevisionHistory) / sizeof (WCHAR);
-		l_lNumberOfCharacters = (l_lBstrNbrOfChars < l_lBufferNbrOfChars) ? l_lBstrNbrOfChars : l_lBufferNbrOfChars;
-
-//-	It would be much more efficient to use the Detach () function, but it
-//-	hasn't been invented yet.  The Detach () member of _bstr_t will come in
-//-	the future.
-//		*abstrpRevisionHistory = bstrXMLString.copy ();
-		wcsncpy (m_wczRevisionHistory, bstrXMLString, l_lNumberOfCharacters);
-
-		m_wczRevisionHistory [l_lNumberOfCharacters - 1] = NULL;
-
-//-   This is intended to get the revision entry specified by the index value (base 1).
-		hr = GetRevisionNodeByIndex (1, l_oRevNodePtr);
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-
-		if (hr == 3)
-		{
-//-		Revision History Base node existed, but there were no revision 
-//-		nodes.
-			hr = -1921;
-			break;
-		}
-
-		l_bstrFormatVersionAttribute = g_wcsFormatVersion;
-		l_vFormatVersionValue = l_oRevNodePtr->getAttribute (l_bstrFormatVersionAttribute);
-
-		if (l_vFormatVersionValue.vt != VT_BSTR)
-		{
-			hr = -1919;
-			break;
-		}
-	
-		l_wcpTmp1 = l_vFormatVersionValue.bstrVal;
-
-//- VERSION AS ATTRIBUTE ----------------------------------------------------
-//-	Search this element entry for the Value attribute.
-//-	It's now time to read the version number!!!
-//-	A base of 0 means that the function will automatically determine the 
-//-	base (of the input string).
-		l_ulVersionNumber1 = wcstol (l_wcpTmp1, &l_wcpTmp2, 0);
-
-		if (*l_wcpTmp2 != '.')
-		{
-			hr = -1920;
-			break;
-		}
-
-		l_wcpTmp2 = l_wcpTmp2 + 1;
-
-		l_ulVersionNumber2 = wcstol (l_wcpTmp2, &l_wcpTmp1, 0);
-
-		m_lCurrentVersion = (l_ulVersionNumber1 << 16) + (l_ulVersionNumber2 << 8);
-
-		l_bstrRevisionAttribute = g_wcsRevisionAtt;
-		l_vRevisionValue = l_oRevNodePtr->getAttribute (l_bstrRevisionAttribute);
-
-		if (l_vRevisionValue.vt != VT_BSTR)
-		{
-			hr = -1923;
-			break;
-		}
-	
-		l_wcpTmp1 = l_vRevisionValue.bstrVal;
-
-//--- REVISION AS ATTRIBUTE ----------------------------------------------------
-//-	Search this element entry for the Revision attribute.
-//-	It's now time to read the revision number!!!
-//-	A base of 0 means that the function will automatically determine the 
-//-	base (of the input string).
-		m_lCurrentRevision = wcstol (l_wcpTmp1, &l_wcpTmp2, 0);
-
-		break;
-	}
-	return hr;
-}
 
 HRESULT SVXMLClass::AddRevisionHistoryBaseNode ()
 {

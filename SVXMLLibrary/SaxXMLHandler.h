@@ -11,8 +11,6 @@
 #include "SaxParser.h"
 #include "SaxTreeElement.h"
 #include <sequential_tree.h>
-#include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVXMLLibrary/SVXMLTree.h"
 #pragma endregion Includes
 
 
@@ -22,6 +20,10 @@ namespace Seidenader
 {
 	namespace  SVXMLLibrary
 	{
+
+#pragma region Declarations 
+		class SaxEncryptionHandler;
+#pragma endregion Declarations 
 
 		/// /brief Implement ISaxElementHandler 
 		/// The class holds the SaxParser and Implements ISaxElementHandler (the callback function for the sax parser)
@@ -37,6 +39,14 @@ namespace Seidenader
 			#pragma endregion Constructor
 			
 #pragma region Public Methods
+			//************************************
+			//! Set an Encryption Handler
+			//! \param pSaxEncryptionHandler [in]
+			//! \returns void
+			//************************************
+			void SetSaxEncryptionHandler(SaxEncryptionHandler *pSaxEncryptionHandler);
+
+			
 			//************************************
 			//! Callbackfunction is called when an XML Elements start
 			//! \param pwchNamespaceUri [in]
@@ -133,19 +143,42 @@ namespace Seidenader
 			void PrintConfigTree(std::wstringstream &myStream, const tcl::sequential_tree<SpTreeElement>& rtree);
 
 			//************************************
-			//! PLEASE ENTER A DESCRIPTION
+			//! clears internal variables 
 			//! \returns void
 			//************************************
 			void Clear();
 
 			
+			//************************************
+			//! clears internal vector variables 
+			//! \param newName [in,out]
+			//! \returns void
+			//************************************
 			void VectorClear(const wchar_t* newName );
 
+			//************************************
+			//! Returns the current element or null
+			//! \returns SaxTreeElement*
+			//************************************
 			SaxTreeElement* GetCurrentSaxTreeElement(); 
 			
+			//************************************
+			//! return the current array as variant
+			//! \returns VARIANT
+			//************************************
 			VARIANT GetVariantArray();
 
-
+			//************************************
+			//! return true if  an valid encryption part was read
+			//! \returns bool
+			//************************************
+			bool IsEncrypted();
+			
+			//************************************
+			//! Initialize the encryption Handler with values from  m_EncryptionTree
+			//! \returns void
+			//************************************
+			void SetDecryption();
 
 		protected:
 			int m_depth;		/// depth of the actual tree
@@ -178,10 +211,13 @@ namespace Seidenader
 			std::unique_ptr<std::vector<std::wstring>> m_spWstringVector; /// when Parsing VT_Array wstring goes here 
 			std::wstring m_ArrayName;   /// when parsing VT_Array this is the name of the array 
 
+			SaxEncryptionHandler *m_pSaxEncryptionHandler;
+
 		};
 
 	}
 }
+
 
 namespace SvXml = Seidenader::SVXMLLibrary;
 

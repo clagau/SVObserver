@@ -150,6 +150,10 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SaxEncryptionHandler.cpp">
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
+    </ClCompile>
     <ClCompile Include="SaxParser.cpp" />
     <ClCompile Include="SaxTreeElement.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -199,6 +203,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ISaxElementHandler.h" />
+    <ClInclude Include="SaxEncryptionHandler.h" />
     <ClInclude Include="SaxParser.h" />
     <ClInclude Include="SaxTreeElement.h" />
     <ClInclude Include="stdafx.h" />

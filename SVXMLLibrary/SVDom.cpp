@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include <atlbase.h>					// CComVariant
 #include <comdef.h>					// class_bstr_t
+#import <msxml6.dll> // MSXML
 #include "SVDOM.h"					// SVDOMClass, MSXML3, SVBStr (included)
 #include "SVXMLEncryptionClass.h"
 

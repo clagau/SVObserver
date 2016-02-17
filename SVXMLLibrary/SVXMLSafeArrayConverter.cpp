@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:56:42  $
 //******************************************************************************
 #include "stdafx.h"
+#import <msxml6.dll> // MSXML
 #include <atlbase.h>
 #include <comdef.h>
 #include "SVXMLSafeArrayConverter.h"

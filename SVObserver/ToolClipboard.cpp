@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#import <msxml6.dll> // MSXML
 #include <fstream>
 #include "ToolClipboard.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"

@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#import <msxml6.dll> // MSXML
 #include "SVSecurityStorage.h"
 
 #include "SVMessage/SVMessage.h"
@@ -17,6 +18,8 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVSecurity.h"
+#include "SVXMLLibrary/SaxXMLHandler.h"
+#include "SVXMLLibrary/SaxEncryptionHandler.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -212,25 +215,16 @@ HRESULT SVSecurityStorage::SetUseAutoEdit( bool p_bAutoEdit )
 
 HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
 {
-	SvXml::SVXMLMaterialsTree XMLTree;
-	SVXMLClass svX;
-
-	HRESULT hr = svX.Initialize();
 	
-	CString sFormat;
-	CString sFileName;
-	sFormat.Format(_T("Security File"));
-	sFileName.Format(pFileName);
-	BSTR bstRevHist = NULL;
-	BSTR bstChangeHist = NULL;
+	SvXml::SaxEncryptionHandler EncyptionHandler;
+	SvXml::SVXMLMaterialsTree TestTree;
+	SvXml::SVXMLMaterialsTree XMLTree;
+	SvXml::SaxXMLHandler<SvXml::SVXMLMaterialsTree>  SaxHandler;
+	SaxHandler.SetSaxEncryptionHandler(&EncyptionHandler);
 
-	BSTR l_bstName = sFileName.AllocSysString();
-	hr = svX.CopyXMLFileToTree(XMLTree, 1, l_bstName, &bstRevHist , &bstChangeHist );
-
-	SysFreeString( l_bstName );
-	SysFreeString( bstRevHist );
-	SysFreeString( bstChangeHist );	
-
+	CA2W  pwXmlFilename(pFileName); 
+	HRESULT hr  = SaxHandler.BuildFromXMLFile(&XMLTree,  pwXmlFilename );	
+	
 	if( hr == S_OK )
 	{
 		SVAccessPointNodeVectorArray l_aNodes;

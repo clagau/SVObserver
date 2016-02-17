@@ -130,7 +130,38 @@ namespace Seidenader
 			//! \returns const wchar_t*
 			//************************************
 			const wchar_t*  GetNameAtt() const;
+			
+			//************************************
+			//! Get the seecial Attribute as string
+			//! \param pAttributeName [in]
+			//! \returns const wchar_t*
+			//************************************
+			const wchar_t*  GetSpecialAtt(LPCWSTR pAttributeName) const;
 
+			
+			//************************************
+			//! Set the name Attribut 
+			//! \param name [in]
+			//! \returns void
+			//************************************
+			void SetNameAttribute(LPCWSTR name);
+
+			//************************************
+			//! Set Type attribute and calculates m_VarTypeAtt
+			//! \param name [in]
+			//! \returns void
+			//************************************
+			void SetTypeAttribute(LPCWSTR name);
+
+
+			//************************************
+			//! Set the content
+			//! \param name [in]
+			//! \returns void
+			//************************************
+			void SetContent(LPCWSTR name);
+
+			
 			//************************************
 			//! convert namestring to Etype
 			//! \param name [in]
@@ -138,6 +169,8 @@ namespace Seidenader
 			//************************************
 			static EType GetElementType(LPCWSTR name);
 		
+
+
 			///Print functions only used by the testprogramm 
 			void PrintElement(std::wstringstream& stream );
 			void PrintElementStart(std::wstringstream& stream );
