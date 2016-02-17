@@ -10,35 +10,51 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "SVTextEditDialog.h"
 
-
-
-IMPLEMENT_DYNAMIC(SVTextEditDialog, CDialog)
-
-SVTextEditDialog::SVTextEditDialog(CWnd* pParent /*=NULL*/)
-	: CDialog(SVTextEditDialog::IDD, pParent)
-	, m_strText(_T(""))
+namespace Seidenader { namespace SVOGui
 {
+	#pragma region Declarations
+	#ifdef _DEBUG
+	#define new DEBUG_NEW
+	#undef THIS_FILE
+		static char THIS_FILE[] = __FILE__;
+	#endif
 
-}
+	BEGIN_MESSAGE_MAP(SVTextEditDialog, CDialog)
+	END_MESSAGE_MAP()
 
-SVTextEditDialog::~SVTextEditDialog()
-{
-}
+	IMPLEMENT_DYNAMIC(SVTextEditDialog, CDialog)
+	#pragma endregion Declarations
 
-void SVTextEditDialog::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_TEXT_EDIT, m_strText);
-}
+	#pragma region Constructor
+	SVTextEditDialog::SVTextEditDialog( LPCTSTR Text,  CWnd* pParent /*=NULL*/)
+		: CDialog(SVTextEditDialog::IDD, pParent)
+		, m_Text( Text )
+	{
 
+	}
 
-BEGIN_MESSAGE_MAP(SVTextEditDialog, CDialog)
-END_MESSAGE_MAP()
+	SVTextEditDialog::~SVTextEditDialog()
+	{
+	}
+	#pragma endregion Constructor
 
-// SVTextEditDialog message handlers
+	#pragma region Private Methods
+	void SVTextEditDialog::DoDataExchange(CDataExchange* pDX)
+	{
+		CDialog::DoDataExchange(pDX);
+		DDX_Text(pDX, IDC_TEXT_EDIT, m_Text);
+	}
+
+	BOOL SVTextEditDialog::OnInitDialog()
+	{
+		CDialog::OnInitDialog();
+
+		return true;
+	}
+	#pragma endregion Private Methods
+} /* namespace SVOGui */ } /* namespace Seidenader */
 
 //******************************************************************************
 //* LOG HISTORY:

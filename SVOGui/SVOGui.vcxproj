@@ -244,6 +244,7 @@
     <ClCompile Include="SVTADlgGeneralPage.cpp" />
     <ClCompile Include="SVTADlgPassFailPage.cpp" />
     <ClCompile Include="SVTADlgTransformImagePage.cpp" />
+    <ClCompile Include="SVTextEditDialog.cpp" />
     <ClCompile Include="SVThickeningFilterDlg.cpp" />
     <ClCompile Include="SVThinningFilterDlg.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogFilterPageClass.cpp" />
@@ -291,6 +292,7 @@
     <ClInclude Include="SVTADlgGeneralPage.h" />
     <ClInclude Include="SVTADlgPassFailPage.h" />
     <ClInclude Include="SVTADlgTransformImagePage.h" />
+    <ClInclude Include="SVTextEditDialog.h" />
     <ClInclude Include="SVThickeningFilterDlg.h" />
     <ClInclude Include="SVThinningFilterDlg.h" />
     <ClInclude Include="SVToolAdjustmentDialogFilterPageClass.h" />

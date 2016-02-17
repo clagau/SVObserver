@@ -1010,9 +1010,6 @@
     <ClCompile Include="SVTaskObjectValueInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTextEditDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVThickeningFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2539,9 +2536,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTaskObjectValueInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTextEditDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVThickeningFilter.h">

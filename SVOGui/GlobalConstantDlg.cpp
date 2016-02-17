@@ -10,36 +10,35 @@
 #include <comutil.h>
 #include "GlobalConstantDlg.h"
 #include "TextDefinesSvOg.h"
-#include "SVUtilityLibrary\SVString.h"
-#include "SVObjectLibrary\SVObjectNameInfo.h"
-#include "SVObjectLibrary\GlobalConst.h"
-#include "SVMessage\SVMessage.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVTextEditDialog.h"
+#include "SVUtilityLibrary/SVString.h"
+#include "SVObjectLibrary/SVObjectNameInfo.h"
+#include "SVObjectLibrary/GlobalConst.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
 #pragma endregion Includes
-
-#pragma region Declarations
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
-#pragma endregion Declarations
-
 
 namespace Seidenader { namespace SVOGui
 {
-
-	IMPLEMENT_DYNAMIC(GlobalConstantDlg, CDialog)
+	#pragma region Declarations
+	#ifdef _DEBUG
+	#define new DEBUG_NEW
+	#undef THIS_FILE
+		static char THIS_FILE[] = __FILE__;
+	#endif
 
 	BEGIN_MESSAGE_MAP(GlobalConstantDlg, CDialog)
 	END_MESSAGE_MAP()
 
+	IMPLEMENT_DYNAMIC(GlobalConstantDlg, CDialog)
+	#pragma endregion Declarations
+
 	#pragma region Constructor
 	GlobalConstantDlg::GlobalConstantDlg( SvOi::GlobalConstantData& rData, CWnd* pParent /*nullptr*/ )
-		: CDialog(GlobalConstantDlg::IDD, pParent)
-	,	m_rData( rData )
-	,	m_Branch( CString(SvOl::FqnGlobal) + _T(".") )
+	  : CDialog(GlobalConstantDlg::IDD, pParent)
+	, m_rData( rData )
+	, m_Branch( CString(SvOl::FqnGlobal) + _T(".") )
 	{
 
 	}
@@ -75,7 +74,7 @@ namespace Seidenader { namespace SVOGui
 			SvOi::GlobalConstantData::DataTypeEnum CurrentType( static_cast<SvOi::GlobalConstantData::DataTypeEnum> (CurrentSelection) );
 			DDV_GlobalConstantValue( pDX, CurrentType );
 		}
-		DDX_Text(pDX, IDC_GLOBAL_DESCRIPTION, m_Descrition);
+		DDX_Text(pDX, IDC_GLOBAL_DESCRIPTION, m_Description);
 	}
 
 	BOOL GlobalConstantDlg::OnInitDialog()
@@ -132,9 +131,9 @@ namespace Seidenader { namespace SVOGui
 		{
 			m_Type.EnableWindow( FALSE );
 		}
-		m_Descrition = m_rData.m_Description.c_str();
+		m_Description = m_rData.m_Description.c_str();
 
-		UpdateData(FALSE);
+		UpdateData( false );
 		return TRUE;
 	}
 
@@ -153,7 +152,7 @@ namespace Seidenader { namespace SVOGui
 			{
 				m_rData.m_Value = m_Value;
 			}
-			m_rData.m_Description = m_Descrition.GetString();
+			m_rData.m_Description = m_Description.GetString();
 			CDialog::OnOK();
 		}
 	}

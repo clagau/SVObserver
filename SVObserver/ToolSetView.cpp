@@ -29,7 +29,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOutputObjectList.h"
-#include "SVTextEditDialog.h"
+#include "SVOGui/SVTextEditDialog.h"
 #include "SVTaskObjectValueInterface.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
@@ -516,12 +516,11 @@ bool ToolSetView::EditToolGroupingComment()
 			if (rGroupings.IsStartTag(info.m_selection.GetString()) || rGroupings.IsEndTag(info.m_selection.GetString()))
 			{
 				bRetVal = true;
-				SVTextEditDialog dlg;
-				dlg.m_strText = rGroupings.GetComment(info.m_selection.GetString()).c_str();
+				SvOg::SVTextEditDialog dlg( rGroupings.GetComment(info.m_selection.GetString()).c_str() );
 				INT_PTR rc = dlg.DoModal();
 				if (IDOK == rc)
 				{
-					rGroupings.SetComment(info.m_selection.GetString(), dlg.m_strText.GetString());
+					rGroupings.SetComment(info.m_selection.GetString(), dlg.getText().GetString());
 				}
 			}
 		}
@@ -563,14 +562,13 @@ void ToolSetView::OnSelectToolComment()
 					HRESULT hr = l_pVo->GetValue(csToolComment);
 					if (S_OK == hr )
 					{
-						SVTextEditDialog l_dlg;
-						l_dlg.m_strText = csToolComment;
-						INT_PTR l_ret = l_dlg.DoModal();
-						if (IDOK == l_ret)
+						SvOg::SVTextEditDialog Dlg( csToolComment );
+						INT_PTR Result = Dlg.DoModal();
+						if( IDOK == Result )
 						{
 							// Set 
 							SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-							pToolSet->GetInspection()->AddInputRequest(pSelectedTool->GetToolComment(), static_cast<LPCTSTR>(l_dlg.m_strText));
+							pToolSet->GetInspection()->AddInputRequest(pSelectedTool->GetToolComment(), static_cast<LPCTSTR>( Dlg.getText() ));
 							pToolSet->GetInspection()->AddInputRequestMarker();
 
 							pCurrentDocument->RunOnce(pSelectedTool);

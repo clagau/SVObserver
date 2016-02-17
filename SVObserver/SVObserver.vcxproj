@@ -3208,7 +3208,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVTaskObjectValueInterface.cpp" />
-    <ClCompile Include="SVTextEditDialog.cpp" />
     <ClCompile Include="SVThickeningFilter.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -4084,7 +4083,6 @@ echo %time%
     <ClInclude Include="SVTaskObjectList.h" />
     <ClInclude Include="SVTaskObjectListCtrl.h" />
     <ClInclude Include="SVTaskObjectValueInterface.h" />
-    <ClInclude Include="SVTextEditDialog.h" />
     <ClInclude Include="SVThickeningFilter.h" />
     <ClInclude Include="SVThinningFilter.h" />
     <ClInclude Include="SVThresholdAdjustmentPageClass.h" />

@@ -304,9 +304,9 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	m_rCtrl.SetItemText( InsertPos, TypeCol, Type.c_str() );
 	m_rCtrl.SetItemText( InsertPos, ValueCol, ValueText.c_str() );
 
-	//Replace any new line with semicolon to display in one line
+	//Replace any new line with a space to display it in one line
 	SVString Description( rpObject->getDescription() );
-	Description.replace( _T("\r\n"), _T("; ") );
+	Description.replace( _T("\r\n"), _T(" ") );
 	m_rCtrl.SetItemText( InsertPos, DescriptionCol, Description.c_str() );
 
 	return InsertPos;

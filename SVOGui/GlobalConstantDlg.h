@@ -53,7 +53,7 @@ namespace Seidenader { namespace SVOGui
 		virtual void DoDataExchange(CDataExchange* pDX);
 		virtual BOOL OnInitDialog();
 		virtual void OnOK();
-
+		
 		void DDV_GlobalConstantValue( CDataExchange* pDX, SvOi::GlobalConstantData::DataTypeEnum Type );
 		void DDV_GlobalName( CDataExchange* pDX, const SVString& rName );
 	#pragma region Private Methods
@@ -65,7 +65,7 @@ namespace Seidenader { namespace SVOGui
 		CString					m_Branch;					//The branch in which the global resides 
 		CString					m_Name;						//The global constant name
 		CComboBox				m_Type;						//The global constant type
-		CString					m_Descrition;				//The global constant description
+		CString					m_Description;				//The global constant description
 		CString					m_Value;					//The string value of the constant
 	#pragma endregion Member variables
 	};
