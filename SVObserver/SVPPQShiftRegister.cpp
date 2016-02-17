@@ -324,11 +324,6 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 		SVClock::SVTimeStamp l_LowerThreshold = p_LowerThresholdInMilliseconds;
 		SVClock::SVTimeStamp l_UpperThreshold = p_UpperThresholdInMilliseconds;
 
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
-		CString infostring;
-		infostring.Format(_T("!\t%7.1lf: GetIndexByTriggerTimeStamp()(var)\n"),SVClock::GetRelTimeStamp());
-		::OutputDebugString(infostring);
-#endif
 		l_Product.oTriggerInfo.m_BeginProcess = p_TimeStamp;
 
 		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerTimeStampCompare( l_LowerThreshold ) );

@@ -108,7 +108,6 @@ public:
 	static HINSTANCE ms_FbwfDllInstance; ///< the handle to the DLL where m_pfnFbwfIsFilterEnabled will be looked for
 private:
 	static const int ms_defaultDeltaTimeInMinutes=10;///< the minimum (for most purposes) autosave interval in seconds, m_AutoSaveDeltaTime_s is derived from it
-	static const int ms_secondsPerMinute=60; ///< the number of seconds per minute //@TODO ideally, this should not be member of this class (the number of seconds in a minute has nothing to do with the autosave functionality) but of some module with globals constants
 	
 	static const CString ms_ObserverPath;         
 

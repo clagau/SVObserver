@@ -44,6 +44,9 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVRunControlLibrary\SVRunControlLibrary.h"
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
+#include "SVTimerLibrary\SVProfiler.h"
+#endif
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -97,21 +100,22 @@ HRESULT CALLBACK SVFinishCameraCallback( void *pOwner, void *pCaller, void *pRes
 	}
 }
 
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 
 void logWorkloadInformation(const ProductWorkloadInformation &pwi, LPCSTR heading)
 {
 	CString infostring;
-	infostring.Format(_T("!\t.%7.1lf: %s:\n"), SVClock::GetRelTimeStamp(), heading);
+	infostring.Format(_T("!\t.%7.1lf: %s:\n"), SvTl::GetRelTimeStamp(), heading);
 	::OutputDebugString(infostring);
 	infostring.Format(_T("!\t\ttt = %7.1lf, pst = %7.1lf, ct = %7.1lf, "), 
-		pwi.m_TriggerTime - SVClock::getReferenceTime(),
-		pwi.m_ProcessingStartTime - SVClock::getReferenceTime(), 
-		pwi.m_CompletionTime - SVClock::getReferenceTime());
+		pwi.m_TriggerTime - SvTl::getReferenceTime(),
+		pwi.m_ProcessingStartTime - SvTl::getReferenceTime(), 
+		pwi.m_CompletionTime - SvTl::getReferenceTime());
 	::OutputDebugString(infostring);
 	infostring.Format(_T("TtoCo = %7.1lf, TtoSt = %7.1lf\n"),
-		pwi.TriggerToCompletionInMicroseconds()/1000.0, 
-		pwi.TriggerToStartInMicroseconds()/1000.0);
+		pwi.TriggerToCompletionInMilliseconds(), 
+		
+		pwi.TriggerToStartInMilliseconds());
 	::OutputDebugString(infostring);
 	infostring.Format(_T("!\trd\ttt = %.0lf, pst = %.0lf, ct = %.0lf, "), 
 		pwi.m_TriggerTime,
@@ -2951,9 +2955,9 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 
 HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 {
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 	CString infostring;
-	infostring.Format(_T("!\t.%7.1lf: SVPPQObject::StartInspection(%s)\n"),SVClock::GetRelTimeStamp(),p_rInspectionID.ToString().c_str());
+	infostring.Format(_T("!\t.%7.1lf: SVPPQObject::StartInspection(%s)\n"),SvTl::GetRelTimeStamp(),p_rInspectionID.ToString().c_str());
 	::OutputDebugString(infostring);
 #endif
 
@@ -3017,7 +3021,7 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 	{
 
 		l_pProduct->m_WorkloadInfo.m_ProcessingStartTime = SVClock::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 
 		CString infostring;
 		infostring.Format(_T("set m_ProcessingStartTime, trID = %ld"),l_pProduct->ProcessCount());
@@ -3308,7 +3312,7 @@ bool SVPPQObject::SetProductComplete( long p_PPQIndex )
 
 		pProduct->m_WorkloadInfo.m_TriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
 
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 		CString infostring;
 		infostring.Format(_T("SVPPQObject::SetProductComplete(@ppq: %d) >> m_CompletionTime\n\t\t(oTriggerInfo.m_BeginProcess -> m_TriggerTime)"),
 			p_PPQIndex);

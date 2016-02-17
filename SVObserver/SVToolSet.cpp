@@ -22,6 +22,7 @@
 #include "SVInspectionProcess.h"
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
+#include "SVTimerLibrary/SVClock.h"
 
 SV_IMPLEMENT_CLASS( SVToolSetClass, SVToolSetClassGuid );
 
@@ -865,16 +866,11 @@ BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 	m_lvoTriggerCount.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_lTriggerCount > 0 ? RRunStatus.m_lTriggerCount : 0 );
 
 	m_latestCompletionPPQIndex.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.m_PPQIndexAtCompletion);
-	double TriggerDelta_us = c_MicrosecondsPerMilisecond * (RRunStatus.m_CurrentTriggerTime - RRunStatus.m_PreviousTriggerTime);
+	double TriggerDelta_us = SVClock::c_MicrosecondsPerMillisecond * (RRunStatus.m_CurrentTriggerTime - RRunStatus.m_PreviousTriggerTime);
 	m_TriggerDelta.SetValue( RRunStatus.m_lResultDataIndex, TriggerDelta_us);
 
-	m_LastTriggerToPPQCompletion.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMicroseconds());
-	m_LastTriggerToStart.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToStartInMicroseconds());
-
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
-	RRunStatus.m_WorkloadInfoRsc.logWorkloadInformation("SVToolSetClass::onRun()");
-#endif	
-
+	m_LastTriggerToPPQCompletion.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
+	m_LastTriggerToStart.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToStartInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
 
 	BOOL bRetVal = SVTaskObjectListClass::onRun( RRunStatus );
 	if( bRetVal )

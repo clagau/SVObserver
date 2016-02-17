@@ -2,14 +2,11 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2016, 2016 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
-/// \Author	Arvid: Breitenbach
 //*****************************************************************************
 /// Contains the struct ProductWorkloadInformation for information on the workload 
 /// associated with a particular product
 //*****************************************************************************
 
-
-const double c_MicrosecondsPerMilisecond=1000.0; ///< the number of seconds per minute //@TODO ideally, this should not be member of this class (the number of seconds in a minute has nothing to do with the autosave functionality) but of some module with globals constants
 
 /// collects information on the workload associated with a particular product
 struct ProductWorkloadInformation
@@ -29,13 +26,13 @@ public:
 	}
 	
 /// returns the elapsed time (in microseconds) between trigger and completion of the product
-	double TriggerToCompletionInMicroseconds() const {return 1000.0 * (m_CompletionTime - m_TriggerTime);}
+	double TriggerToCompletionInMilliseconds() const {return m_CompletionTime - m_TriggerTime;}
 /// returns the elapsed time (in microseconds) between trigger and the start of processing
-	double TriggerToStartInMicroseconds() const {return 1000.0 * (m_ProcessingStartTime - m_TriggerTime);}
+	double TriggerToStartInMilliseconds() const {return m_ProcessingStartTime - m_TriggerTime;}
 
 	ProductWorkloadInformation(){Reset();}
 
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 
 	void logWorkloadInformation(const ProductWorkloadInformation &pwi, LPCSTR heading);
 

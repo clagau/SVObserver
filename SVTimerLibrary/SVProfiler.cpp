@@ -22,6 +22,39 @@ static char THIS_FILE[] = __FILE__;
 
 namespace Seidenader { namespace SVTimerLibrary
 {
+
+
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
+
+	SVClock::SVTimeStamp ReferenceTime = SVClock::GetTimeStamp();
+
+	double setReferenceTime()
+	{
+		SVClock::SVTimeStamp now  = SVClock::GetTimeStamp();
+		double delta = now - ReferenceTime;
+		ReferenceTime= SVClock::GetTimeStamp();
+
+		return delta;
+	}
+
+
+	SVClock::SVTimeStamp  getReferenceTime()
+	{
+		return ReferenceTime;
+	}
+
+	SVClock::SVTimeStamp GetRelTimeStamp()
+	{
+		SVClock::SVTimeStamp ts = SVClock::GetTimeStamp();
+		return ts - ReferenceTime;
+	}
+
+
+#endif
+
+
+
+
 #pragma region Constructor
 	SVProfiler::SVProfiler()
 	: m_startTime(0)

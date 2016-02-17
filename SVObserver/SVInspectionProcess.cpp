@@ -36,6 +36,10 @@
 #include "SVRunControlLibrary\SVRunControlLibrary.h"
 #ifdef COLLECT_SHAREDMEMORY_STATS
 #include "SVTimerLibrary\SVProfiler.h"
+#else
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
+#include "SVTimerLibrary\SVProfiler.h"
+#endif
 #endif
 #pragma endregion Includes
 
@@ -4008,10 +4012,10 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 										 SVProductInfoStruct *pProduct, 
 										 bool p_UpdateCounts )
 {
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
-	auto del = SVClock::setReferenceTime();
+#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
+	double del = SvTl::setReferenceTime();
 	CString infostring;
-	infostring.Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"),SVClock::GetRelTimeStamp(),del);
+	infostring.Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"),SvTl::GetRelTimeStamp(),del);
 	::OutputDebugString(infostring);
 #endif
 

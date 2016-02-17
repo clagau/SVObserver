@@ -14,6 +14,9 @@
 
 namespace SVClock
 {
+	static const double c_MicrosecondsPerMillisecond=1000.0; ///< the number of microseconds per millisecond: one thousand
+	static const int c_secondsPerMinute=60; ///< the number of seconds per minute: sixty
+
 	enum SVConversionEnum
 	{
 		Unknown = 0,
@@ -29,13 +32,7 @@ namespace SVClock
 
 	SVFrequency GetFrequency(); 
 
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
-	double setReferenceTime(); ///< sets the current time as reference TimeStamp
-	double getReferenceTime(); ///< returns the reference TimeStamp
-#endif
-
 	SVTimeStamp GetTimeStamp();
-	SVTimeStamp GetRelTimeStamp();
 	SVTimeStamp GetMaxTimeStamp();
 	SVTimeStamp GetMinTimeStamp();
 

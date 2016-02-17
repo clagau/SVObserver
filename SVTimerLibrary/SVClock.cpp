@@ -25,34 +25,6 @@ static const SVConversionFactorMap g_Conversions = boost::assign::map_list_of< S
 	( SVClock::Microseconds, 1000000.0 )
 	;
 
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 161212 this is helpful for debugging the creation of Performance Information
-
-SVClock::SVTimeStamp ReferenceTime = SVClock::GetTimeStamp();
-
-double SVClock::setReferenceTime()
-{
-	SVClock::SVTimeStamp now  = GetTimeStamp();
-	double delta = now - ReferenceTime;
-	ReferenceTime= GetTimeStamp();
-
-	return delta;
-}
-
-
-double SVClock::getReferenceTime()
-{
-	return ReferenceTime;
-}
-
-SVClock::SVTimeStamp SVClock::GetRelTimeStamp()
-{
-	SVClock::SVTimeStamp ts = SVClock::GetTimeStamp();
-	return ts - ReferenceTime;
-}
-
-
-#endif
-
 SVClock::SVFrequency SVClock::GetFrequency()
 {
 	SVFrequency l_Frequency = 0.0;

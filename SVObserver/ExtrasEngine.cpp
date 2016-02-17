@@ -18,7 +18,7 @@
 #include "SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
-
+#include "SVTimerLibrary/SVClock.h"
 
 #pragma endregion Includes
 
@@ -51,10 +51,11 @@ const TCHAR* const FbwfDisableBatchName=
 	_T("fbwf Disable for next session.bat");///< name of the batch file that disables the file based write filter after the next reboot
 
 
+
 #pragma region Constructor
 
 ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true), m_AutoSaveRequired(false), 
-	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*ms_secondsPerMinute),
+	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*SVClock::c_secondsPerMinute),
 	m_FbwfAvailable(false), m_IsFbwfSelected(false), m_FbwfActive(false), m_FbwfActiveChanging(false)
 {
 
