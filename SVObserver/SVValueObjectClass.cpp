@@ -349,20 +349,34 @@ HRESULT SVValueObjectClass::SetValue( const _variant_t& rValue )
 	{
 		SVSAFEARRAY safeArray( rValue );
 
-		for (int i=0; i<safeArray.size(); i++)
+		if (safeArray.size() > 0)
 		{
-			variant_t tmpVar;
-			HRESULT tempHr = safeArray.GetElement( i, tmpVar );
-			if (S_OK == hr)
+			//fit array size to safeArray-size
+			if (GetArraySize() != safeArray.size())
 			{
-				hr = tempHr;
+				hr = SetArraySize(static_cast<int>(safeArray.size()));
 			}
-			
-			tempHr = SetValue(m_iLastSetIndex, i, SVString(tmpVar).ToString()); 
-			if (S_OK == hr)
+
+			//set all value to array
+			for (int i=0; i<safeArray.size(); i++)
 			{
-				hr = tempHr;
+				variant_t tmpVar;
+				HRESULT tempHr = safeArray.GetElement( i, tmpVar );
+				if (S_OK == hr)
+				{
+					hr = tempHr;
+				}
+
+				tempHr = SetValue(m_iLastSetIndex, i, SVString(tmpVar).ToString()); 
+				if (S_OK == hr)
+				{
+					hr = tempHr;
+				}
 			}
+		}
+		else
+		{
+			hr = SvOi::Err_10029_ValueObject_Parameter_WrongSize;
 		}
 	}
 
