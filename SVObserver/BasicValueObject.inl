@@ -35,6 +35,8 @@ HRESULT BasicValueObject::getValue( ELEMENT_TYPE& rValue ) const
 	switch(m_Value.vt)
 	{
 	case VT_BOOL:
+		rValue = static_cast<ELEMENT_TYPE> (m_Value.boolVal ? true : false);
+		break;
 	case VT_INT:
 	case VT_I4:
 	case VT_I8:
