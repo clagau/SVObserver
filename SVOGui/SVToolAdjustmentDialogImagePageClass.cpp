@@ -27,7 +27,6 @@ namespace Seidenader { namespace SVOGui
 {
 	static LPCTSTR ImageTag = _T("Image");
 	static LPCTSTR NoImageTag = _T("(No Image Available)");
-	static LPCSTR SourceImageNamesTag = "SourceImageNames";
 
 	BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogImagePageClass, CPropertyPage)
 		//{{AFX_MSG_MAP(SVToolAdjustmentDialogImagePageClass)
@@ -38,8 +37,6 @@ namespace Seidenader { namespace SVOGui
 	SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, int id ) 
 	: CPropertyPage( id )
 	, ImageController(rInspectionID, rTaskObjectID)
-	, m_Values(BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
-	(SourceImageNamesTag, SVSourceImageNamesGuid )))
 	{
 	}
 
@@ -51,22 +48,7 @@ namespace Seidenader { namespace SVOGui
 	{
 		UpdateData(true); // get data from dialog
 
-		HRESULT hr = S_OK;
-		int index = m_availableSourceImageListBox.GetCurSel();
-		if (LB_ERR != index)
-		{
-			CString imageName;
-			m_availableSourceImageListBox.GetLBText(index, imageName);
-			if (!imageName.IsEmpty() && imageName != NoImageTag)
-			{
-				m_Values.Set<CString>(SourceImageNamesTag, imageName);
-				hr = m_Values.Commit();
-			}
-		}
-		if (S_OK == hr)
-		{
-			hr = ToolRunOnce();
-		}
+		HRESULT hr = ToolRunOnce();
 
 		UpdateData(false);
 
@@ -91,7 +73,6 @@ namespace Seidenader { namespace SVOGui
 	BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog() 
 	{
 		CPropertyPage::OnInitDialog();
-		m_Values.Init();
 		Init();
 		const SvUl::NameGuidList& rAvailableImageList = GetAvailableImageList();
 	

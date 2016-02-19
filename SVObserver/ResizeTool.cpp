@@ -712,8 +712,14 @@ BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
 		}
 	}
 
-	SVSmartHandlePointer	roiImageHandle;
+	SVImageClass* inputImage = getInputImage ();
+	if (nullptr != inputImage)
+	{
+		//Set input name to source image name to display it in result picker
+		m_svSourceImageName.SetValue( RRunStatus.m_lResultDataIndex, 0, inputImage->GetCompleteObjectName() );
+	}
 
+	SVSmartHandlePointer	roiImageHandle;
 	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{
 		// The following logic was extrapolated from the StdImageOperatorList Run method.

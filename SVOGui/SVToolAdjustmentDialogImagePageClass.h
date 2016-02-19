@@ -58,7 +58,6 @@ namespace Seidenader
 			SVGUID m_InspectionID;
 			SVGUID m_TaskObjectID;
 			SVString m_inputName;
-			ValueController m_Values;
 		};
 	}
 }
