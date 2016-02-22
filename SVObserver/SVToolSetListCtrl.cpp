@@ -582,10 +582,9 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 {
 	if (WM_KEYDOWN == pMsg->message)
 	{
-		if( VK_RETURN == pMsg->wParam && TheSVObserverApp.OkToEdit() )
+		if( VK_RETURN == pMsg->wParam )
 		{
-			GetView()->enterSelectedEntry();
-			return true; // DO NOT process further
+			return GetView()->enterSelectedEntry();
 		}
 		// When an item is being edited make sure the edit control receives certain important key strokes
 		// MFC has been designed in such a way that the parent window gets a chance at the messages using the PreTranslateMessage() virtual function. 

@@ -369,14 +369,10 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 
 void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
+	if ( enterSelectedEntry() )
 	{
-		return;
+		*pResult = 0;
 	}
-
-	enterSelectedEntry();
-
-	*pResult = 0;
 }
 
 void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
@@ -919,25 +915,33 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 	return bRetVal;
 }
 
-void ToolSetView::enterSelectedEntry()
+bool ToolSetView::enterSelectedEntry()
 {
-	SVIPDoc* pCurrentDocument = GetIPDoc();
-	if (nullptr != pCurrentDocument)
+	if ( TheSVObserverApp.OkToEdit() && !IsLabelEditing() )
 	{
-		const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-		if (!rGuid.empty())
+		SVIPDoc* pCurrentDocument = GetIPDoc();
+		if (nullptr != pCurrentDocument)
 		{
-			pCurrentDocument->OnEditTool();
-		}
-		else
-		{
-			// check if tool group is selected
-			if (!EditToolGroupingComment())
+			const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+			if (!rGuid.empty())
 			{
-				// Deselect all...
-				m_toolSetListCtrl.SetSelectedTool(SVGUID());
+				pCurrentDocument->OnEditTool();
+			}
+			else
+			{
+				// check if tool group is selected
+				if (!EditToolGroupingComment())
+				{
+					// Deselect all...
+					m_toolSetListCtrl.SetSelectedTool(SVGUID());
+				}
 			}
 		}
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 

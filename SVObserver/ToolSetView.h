@@ -52,7 +52,11 @@ public:
 	bool IsEndToolGroupAllowed() const;
 
 	SVToolSetListCtrl& getListCtrl() { return m_toolSetListCtrl; };
-	void enterSelectedEntry();
+	//************************************
+	/// Open TA-dialog for tools and comment-page for ToolGrouping.
+	/// \returns true if opening is done, false if not done.
+	//************************************
+	bool enterSelectedEntry();
 
 protected:
 	DECLARE_DYNCREATE(ToolSetView)
