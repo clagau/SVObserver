@@ -50,9 +50,9 @@ public:
 	ToolListSelectionInfo GetToolListSelectionInfo() const;
 	void HandleExpandCollapse(const CString& name, bool bCollapse);
 	bool IsEndToolGroupAllowed() const;
-	CString GetSelectedGroup() const;
 
 	SVToolSetListCtrl& getListCtrl() { return m_toolSetListCtrl; };
+	void enterSelectedEntry();
 
 protected:
 	DECLARE_DYNCREATE(ToolSetView)

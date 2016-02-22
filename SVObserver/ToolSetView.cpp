@@ -374,24 +374,8 @@ void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		return;
 	}
 
-	SVIPDoc* pCurrentDocument = GetIPDoc();
-	if (nullptr != pCurrentDocument)
-	{
-		const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-		if (!rGuid.empty())
-		{
-			pCurrentDocument->OnEditTool();
-		}
-		else
-		{
-			// check if tool group is selected
-			if (!EditToolGroupingComment())
-			{
-				// Deselect all...
-				m_toolSetListCtrl.SetSelectedTool(SVGUID());
-			}
-		}
-	}
+	enterSelectedEntry();
+
 	*pResult = 0;
 }
 
@@ -933,6 +917,28 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 		}
 	}
 	return bRetVal;
+}
+
+void ToolSetView::enterSelectedEntry()
+{
+	SVIPDoc* pCurrentDocument = GetIPDoc();
+	if (nullptr != pCurrentDocument)
+	{
+		const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+		if (!rGuid.empty())
+		{
+			pCurrentDocument->OnEditTool();
+		}
+		else
+		{
+			// check if tool group is selected
+			if (!EditToolGroupingComment())
+			{
+				// Deselect all...
+				m_toolSetListCtrl.SetSelectedTool(SVGUID());
+			}
+		}
+	}
 }
 
 bool ToolSetView::CheckName(const CString& name , LPCTSTR pExclude) const

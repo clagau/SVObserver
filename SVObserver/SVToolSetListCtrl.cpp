@@ -385,30 +385,32 @@ void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			int item = GetNextSelectedItem(pos);
 			if (item >= 0)
 			{
-				if (VK_ADD == nChar)
+				if (VK_ADD == nChar || VK_RIGHT == nChar)
 				{
 					ExpandItem(item);
+					l_bUpdate = true;
+					l_iNext = l_iSelected;
 				}
-				else if (VK_SUBTRACT == nChar)
+				else if (VK_SUBTRACT == nChar || VK_LEFT == nChar)
 				{
 					// Collapse
 					CollapseItem(item);
+					l_bUpdate = true;
+					l_iNext = l_iSelected;
 				}
 			}
 		}
 	}
 	if (l_bUpdate)
 	{
-		ToolSetView* l_pParent = static_cast< ToolSetView* >( GetParent() );
+		ToolSetView* l_pParent = GetView();
 		if (l_pParent)
 		{
 			SVIPDoc* pCurrentDocument = dynamic_cast<SVIPDoc*>(l_pParent->GetDocument());
 			if (pCurrentDocument)
 			{
 				SetItemState(l_iSelected, 0, LVIS_SELECTED); // un-select
-				// SEJ - 999 move up or down in the list
-//				SetCurrentSelection(l_iNext); // Select.
-				SetItemState(l_iNext, LVIS_SELECTED, 0); // select
+				SetItemState(l_iNext, LVIS_SELECTED, LVIS_SELECTED); // select
 				EnsureVisible(l_iNext, false);
 
 				const SVGUID& rGuid = GetSelectedTool();
@@ -580,6 +582,11 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 {
 	if (WM_KEYDOWN == pMsg->message)
 	{
+		if( VK_RETURN == pMsg->wParam && TheSVObserverApp.OkToEdit() )
+		{
+			GetView()->enterSelectedEntry();
+			return true; // DO NOT process further
+		}
 		// When an item is being edited make sure the edit control receives certain important key strokes
 		// MFC has been designed in such a way that the parent window gets a chance at the messages using the PreTranslateMessage() virtual function. 
 		// If the parent window is a CDialog or a CFormView, the ESC and the return key are handled by the parent and does not reach the control. 
