@@ -447,7 +447,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	HRESULT SVXMLMaterialsTree::createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const VARIANT& rData, SVLeafHandle* ppLeaf )
+	HRESULT SVXMLMaterialsTree::createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const _variant_t& rData, SVLeafHandle* ppLeaf )
 	{
 		HRESULT Result( S_OK );
 		SVBranchHandle pBranch( pParent );
@@ -513,24 +513,24 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	VARIANT SVXMLMaterialsTree::getLeafData( const SVLeafHandle pLeaf ) const
+	_variant_t SVXMLMaterialsTree::getLeafData( const SVLeafHandle pLeaf ) const
 	{
 		_variant_t Result;
 
 		if( m_Tree.end() != pLeaf )
 		{
-			Result = static_cast< const _variant_t> ( *pLeaf->second );
+			Result = *pLeaf->second;
 		}
 
-		return Result.Detach();
+		return Result;
 	}
 
-	VARIANT SVXMLMaterialsTree::getLeafData( const SVBranchHandle pParent, LPCTSTR Name )
+	_variant_t SVXMLMaterialsTree::getLeafData( const SVBranchHandle pParent, LPCTSTR Name )
 	{
 		return getLeafData( findLeaf( pParent, Name ) );
 	}
 
-	HRESULT SVXMLMaterialsTree::setLeafData( const SVLeafHandle pLeaf, const VARIANT& rData )
+	HRESULT SVXMLMaterialsTree::setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData )
 	{
 		HRESULT Result( E_FAIL );
 
@@ -539,6 +539,7 @@ namespace Seidenader { namespace SVXMLLibrary
 			SVLeafHandle pSetData( pLeaf );
 			if( !pSetData->second.empty() )
 			{
+				(*pSetData->second).clear();
 				*pSetData->second = rData;
 			}
 			Result = S_OK;
@@ -547,7 +548,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	HRESULT SVXMLMaterialsTree::replaceName( const SVBranchHandle pParent, const VARIANT& rSearchName, const VARIANT& rReplaceName )
+	HRESULT SVXMLMaterialsTree::replaceName( const SVBranchHandle pParent, const _variant_t& rSearchName, const _variant_t& rReplaceName )
 	{
 		HRESULT Result( S_OK );
 		SVLeafHandle pLeaf;

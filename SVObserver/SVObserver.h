@@ -442,9 +442,6 @@ public:
 
 	typedef std::map<UINT, SVUtilityIniClass> UtilityMenuMap;
 	UtilityMenuMap m_UtilityMenu;
-	SvXml::SVXMLMaterialsTree m_XMLTree;
-	SvXml::SVXMLMaterialsTree::SVBranchHandle m_Inspection;
-
 
 #pragma endregion Public Member variables
 

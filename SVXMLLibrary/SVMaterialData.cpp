@@ -17,16 +17,14 @@ SVMaterialData::SVMaterialData()
 {
 }
 
-SVMaterialData::SVMaterialData( const SVMaterialData& p_rObject )
-: m_Variant()
+SVMaterialData::SVMaterialData( const SVMaterialData& rObject )
+: m_Variant(rObject.m_Variant)
 {
-	*this = p_rObject;
 }
 
-SVMaterialData::SVMaterialData( const VARIANT& p_rVariant )
-: m_Variant()
+SVMaterialData::SVMaterialData( const _variant_t& rVariant )
+: m_Variant( rVariant )
 {
-	*this = p_rVariant;
 }
 
 SVMaterialData::~SVMaterialData()
@@ -59,11 +57,11 @@ const SVMaterialData& SVMaterialData::operator=( const SVMaterialData& p_rObject
 	return *this;
 }
 
-const SVMaterialData& SVMaterialData::operator=( const VARIANT& p_rVariant )
+const SVMaterialData& SVMaterialData::operator=( const _variant_t& rVariant )
 {
-	if( &m_Variant != &p_rVariant )
+	if( &m_Variant != &rVariant )
 	{
-		m_Variant = p_rVariant;
+		m_Variant = rVariant;
 	}
 
 	return *this;

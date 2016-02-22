@@ -12,7 +12,7 @@
 #include "SVNavigateTree.h"
 
 template< typename SVTreeType >
-bool SVNavigateTree::AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem )
+bool SVNavigateTree::AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, const _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem )
 {
 	bool Result( false );
 
@@ -29,7 +29,7 @@ bool SVNavigateTree::AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHa
 }
 
 template< typename SVTreeType >
-bool SVNavigateTree::SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem )
+bool SVNavigateTree::SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, const _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem )
 {
 	bool Result( false );
 

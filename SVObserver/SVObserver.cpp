@@ -358,7 +358,6 @@ SVObserverApp::SVObserverApp()
 	  , m_OutputStreamPortNumber( OutputStreamPortNumber )
 	  , m_FailStatusStreamPortNumber( FailStatusStreamPortNumber )
 	  , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
-	  , m_XMLTree()
 	  , m_DataValidDelay( 0 )
 	  , m_forcedImageUpdateTimeInSeconds(0)
 {
@@ -3663,7 +3662,9 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 			while (1)
 			{
-				hr = SVOCMLoadConfiguration( m_CurrentVersion, configVer, bStr, m_XMLTree );
+				SVTreeType XMLTree;
+
+				hr = SVOCMLoadConfiguration( m_CurrentVersion, configVer, bStr, XMLTree );
 				if (hr & SV_ERROR_CONDITION)
 				{
 					break;
@@ -3711,7 +3712,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				{
 					try
 					{
-						hr = pConfig->LoadConfiguration( m_XMLTree );
+						hr = pConfig->LoadConfiguration( XMLTree );
 					}
 					catch ( const SvStl::MessageContainer& rSvE )
 					{
@@ -3730,12 +3731,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					break;
 				}
 
-				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
+				GetMainFrame()->ParseToolsetScripts( XMLTree );
 				wait.Restore();
 
 				if (nullptr != pConfig)
 				{
-					hr = pConfig->LoadRemoteMonitorList(m_XMLTree);
+					hr = pConfig->LoadRemoteMonitorList(XMLTree);
 					if (hr & SV_ERROR_CONDITION)
 					{
 						break;
@@ -3744,7 +3745,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 				if (nullptr != pConfig)
 				{
-					hr = pConfig->LoadGlobalConstants(m_XMLTree);
+					hr = pConfig->LoadGlobalConstants(XMLTree);
 					if (hr & SV_ERROR_CONDITION)
 					{
 						break;
@@ -3766,7 +3767,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					}
 				}
 
-				ConstructDocuments( m_XMLTree );
+				ConstructDocuments( XMLTree );
 
 				GetMainFrame()->OnConfigurationFinishedInitializing();
 
@@ -3785,14 +3786,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			SysFreeString (bStr);
 			bStr = NULL;
 
-			m_XMLTree.Clear();
 
 			if (hr & SV_ERROR_CONDITION)
 			{
 				// If there was an error during configuration loading...
 				SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
 				SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
-				m_XMLTree.Clear();
 
 				//Use E_FAIL to stop the loading but do not show any error messages
 				if( E_FAIL != hr )
@@ -7914,8 +7913,6 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 			
 			ExtrasEngine::Instance().CopyDirectoryToTempDirectory(Seidenader::SVObserver::RunFolder + CString("\\"));
 			ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: update autosave timestamp
-
-			SVNavigateTree::DeleteAllItems( m_XMLTree ); //Arvid 150625: this appears to be necessary for AutoSave as well
 		}
 		else 
 		{
@@ -7924,7 +7921,6 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 			svFileManager.RemoveUnusedFiles();
 
 			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
-			SVNavigateTree::DeleteAllItems( m_XMLTree );
 
 			if ( bOk )
 			{

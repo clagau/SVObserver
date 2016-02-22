@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include <vector>
+#include "comutil.h"
 #pragma endregion Includes
 /**
 @SVObjectName XML Tree Base
@@ -180,10 +181,11 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! Method to create a new child leaf
 		//! \param pParent [in] handle to the parent branch
 		//! \param Name [in] name of child leaf to create
+		//! \param rData [in] reference to the data
 		//! \param ppLeaf [out] pointer to the resulting child leaf (default is nullptr)
 		//! \returns S_OK on success
 		//************************************
-		virtual HRESULT createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const VARIANT& rData, SVLeafHandle* ppLeaf=nullptr ) = 0;
+		virtual HRESULT createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const _variant_t& rData, SVLeafHandle* ppLeaf=nullptr ) = 0;
 
 		//************************************
 		//! Method to delete a leaf
@@ -204,7 +206,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param pLeaf [in] handle to the leaf
 		//! \returns the leaf data as a variant
 		//************************************
-		virtual VARIANT	getLeafData( const SVLeafHandle pLeaf ) const = 0;
+		virtual _variant_t	getLeafData( const SVLeafHandle pLeaf ) const = 0;
 
 		//************************************
 		//! Method to get the leaf data
@@ -212,7 +214,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param Name [in] name of child leaf to get the data
 		//! \returns the leaf data as a variant
 		//************************************
-		virtual VARIANT	getLeafData( const SVBranchHandle pParent, LPCTSTR Name ) = 0;
+		virtual _variant_t	getLeafData( const SVBranchHandle pParent, LPCTSTR Name ) = 0;
 
 		//************************************
 		//! Method to set the leaf data
@@ -220,7 +222,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param rData [in] reference to the data to set
 		//! \returns S_OK on success
 		//************************************
-		virtual HRESULT	setLeafData( const SVLeafHandle pLeaf, const VARIANT& rData ) = 0;
+		virtual HRESULT	setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData ) = 0;
 	#pragma endregion Public Methods
 	};
 } /* namespace SVXMLLibrary */ } /* namespace Seidenader */

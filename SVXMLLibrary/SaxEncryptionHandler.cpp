@@ -24,24 +24,18 @@ static char THIS_FILE[] = __FILE__;
 
 namespace Seidenader { namespace  SVXMLLibrary
 {
-
 	SaxEncryptionHandler::SaxEncryptionHandler() : m_IsActive(false)
 	{
-		m_pEncryptionclass =  new SVXMLEncryptionClass;
 	}
 
 	SaxEncryptionHandler::~SaxEncryptionHandler() 
 	{
-		delete m_pEncryptionclass;
-
 	}
 
 	bool SaxEncryptionHandler::SaxIsEncrypted() const
 	{
-		return m_IsActive && nullptr != m_pEncryptionclass;
+		return m_IsActive;
 	};
-
-
 
 	void SaxEncryptionHandler::DecryptAttribute(SaxTreeElement* pTreeElement)  const
 	{
@@ -49,14 +43,12 @@ namespace Seidenader { namespace  SVXMLLibrary
 		{
 			_bstr_t  bstrString(pTreeElement->GetNameAtt() );
 			SVBStr bstrDecryptedString;	
-			m_pEncryptionclass->DecryptNameAttribute(bstrString.Detach(), &bstrDecryptedString);
+			m_Encryptionclass.DecryptNameAttribute(bstrString.Detach(), &bstrDecryptedString);
 			pTreeElement->SetNameAttribute((LPCWSTR) bstrDecryptedString);
 			bstrString =  pTreeElement->GetTypeAtt();
-			m_pEncryptionclass->DecryptString(bstrString.Detach(),&bstrDecryptedString );
+			m_Encryptionclass.DecryptString(bstrString.Detach(),&bstrDecryptedString );
 			pTreeElement->SetTypeAttribute((LPCWSTR) bstrDecryptedString);
-
 		}
-
 	}
 
 	void SaxEncryptionHandler::DecryptContent(SaxTreeElement* pTreeElement)  const
@@ -65,7 +57,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		{
 			_bstr_t  bstrString(pTreeElement->GetContent() );
 			SVBStr bstrDecryptedString;	
-			m_pEncryptionclass->DecryptString(bstrString.Detach(),&bstrDecryptedString );
+			m_Encryptionclass.DecryptString(bstrString.Detach(),&bstrDecryptedString );
 			pTreeElement->SetContent((LPCWSTR) bstrDecryptedString);
 		}
 
@@ -80,13 +72,8 @@ namespace Seidenader { namespace  SVXMLLibrary
 	{
 		m_IsActive = false;
 		
+		m_IsActive = m_Encryptionclass.LoadEncryptionFromSaxData(pname,pcontent);
 
-		if(m_pEncryptionclass)
-		{
-			m_IsActive = m_pEncryptionclass->LoadEncryptionFromSaxData(pname,pcontent);
-		}
 		return m_IsActive;		
 	}
-
-}
-}
+} /* namespace SVXMLLibrary */ } /* namespace Seidenader */

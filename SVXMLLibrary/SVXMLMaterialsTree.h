@@ -171,7 +171,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param ppLeaf [out] pointer to the resulting child leaf (default is nullptr)
 		//! \returns S_OK on success
 		//************************************
-		virtual HRESULT createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const VARIANT& rData, SVLeafHandle* ppLeaf=nullptr );
+		virtual HRESULT createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const _variant_t& rData, SVLeafHandle* ppLeaf=nullptr );
 
 		//************************************
 		//! Method to delete a leaf
@@ -192,7 +192,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param pLeaf [in] handle to the leaf
 		//! \returns the leaf data as a variant
 		//************************************
-		virtual VARIANT	getLeafData( const SVLeafHandle pLeaf ) const;
+		virtual _variant_t	getLeafData( const SVLeafHandle pLeaf ) const;
 
 		//************************************
 		//! Method to get the leaf data
@@ -200,7 +200,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param Name [in] name of child leaf to get the data
 		//! \returns the leaf data as a variant
 		//************************************
-		virtual VARIANT	getLeafData( const SVBranchHandle pParent, LPCTSTR Name );
+		virtual _variant_t	getLeafData( const SVBranchHandle pParent, LPCTSTR Name );
 
 		//************************************
 		//! Method to set the leaf data
@@ -208,7 +208,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param rData [in] reference to the data to set
 		//! \returns S_OK on success
 		//************************************
-		virtual HRESULT	setLeafData( const SVLeafHandle pLeaf, const VARIANT& rData );
+		virtual HRESULT	setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData );
 
 		//************************************
 		//! Method to replace names
@@ -217,7 +217,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param rReplaceName [in] reference to the replace name
 		//! \returns S_OK on success
 		//************************************
-		virtual HRESULT	replaceName( const SVBranchHandle pParent, const VARIANT& rSearchName, const VARIANT& rReplaceName );
+		virtual HRESULT	replaceName( const SVBranchHandle pParent, const _variant_t& rSearchName, const _variant_t& rReplaceName );
 
 		//************************************
 		//! Method to get a list of leaf values

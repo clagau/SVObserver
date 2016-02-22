@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <comdef.h>
+#include <comutil.h>
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
 /**
@@ -26,8 +26,8 @@ class SVMaterialData
 {
 public:
 	SVMaterialData();
-	SVMaterialData( const SVMaterialData& p_rObject );
-	SVMaterialData( const VARIANT& p_rVariant );
+	SVMaterialData( const SVMaterialData& rObject );
+	SVMaterialData( const _variant_t& rVariant );
 
 	virtual ~SVMaterialData();
 
@@ -37,12 +37,12 @@ public:
 
 	operator const _variant_t & () const;
 
-	const SVMaterialData& operator=( const SVMaterialData& p_rObject );
-	const SVMaterialData& operator=( const VARIANT& p_rVariant );
+	const SVMaterialData& operator=( const SVMaterialData& rObject );
+	const SVMaterialData& operator=( const _variant_t& rVariant );
 
-  bool operator==( const SVMaterialData& p_rObject ) const;
+  bool operator==( const SVMaterialData& rObject ) const;
 
-  bool operator!=( const SVMaterialData& p_rObject ) const;
+  bool operator!=( const SVMaterialData& rObject ) const;
 
 protected:
 	_variant_t m_Variant;

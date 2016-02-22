@@ -6,21 +6,24 @@
 //******************************************************************************
 #pragma once
 
-
 #pragma region Includes
 #include "SVXMLEncryptionClass.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace  SVXMLLibrary
 {
-	
 	class SaxTreeElement;
-	/// \brief Class encapsulate Decryptionfunctuionality for the SAX Parser
+	/// \brief Class encapsulate Decryption functionality for the SAX Parser
 	class SaxEncryptionHandler
 	{
+	#pragma region Constructor
 	public:
 		SaxEncryptionHandler();
-		~SaxEncryptionHandler();
+		virtual ~SaxEncryptionHandler();
+	#pragma endregion Constructor
+
+	#pragma region Public Methods
+	public:
 		//************************************
 		//! returns true if encryption is active
 		//! \returns bool
@@ -44,18 +47,22 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//! \param pTreeElement [in, out]
 		//! \returns void
 		//************************************
-		void DecryptAttribute(SaxTreeElement* pTreeElement) const; 
+		void DecryptAttribute(SaxTreeElement* pTreeElement) const;
+
 		//************************************
 		//! Decrypt content in SAXTreeelemnet
 		//! \param pTreeElement [in,out]
 		//! \returns void
 		//************************************
 		void DecryptContent(SaxTreeElement* pTreeElement) const; 
+	#pragma endregion Public Methods
+
+	#pragma region Member variables
 	private:
 		bool m_IsActive;
-		SVXMLEncryptionClass* m_pEncryptionclass;
-
+		mutable SVXMLEncryptionClass m_Encryptionclass;
+	#pragma endregion Member variables
 	};
-}
-}
+} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+
 namespace SvXml = Seidenader::SVXMLLibrary;

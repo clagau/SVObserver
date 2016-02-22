@@ -21,8 +21,6 @@
 #include <sequential_tree.h>
 #pragma endregion Includes 
 
-
-
 namespace Seidenader { namespace  SVXMLLibrary
 {
 	template <typename TreeType>
@@ -39,9 +37,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		m_pCurrentNodeInEncryptionTree(nullptr),
 		m_pSaxEncryptionHandler(nullptr)
 	{
-
-		m_pSaxParser = new SvXml::SaxParser;
-		m_pSaxParser->AttachElementHandler(this); 
+		m_SaxParser.AttachElementHandler(this); 
 	}
 
 	template<typename TreeType>
@@ -61,7 +57,6 @@ namespace Seidenader { namespace  SVXMLLibrary
 	template<typename TreeType>
 	SaxXMLHandler<TreeType>::~SaxXMLHandler(void)
 	{
-		delete m_pSaxParser;
 		Clear();
 	}
 
@@ -75,7 +70,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	HRESULT SaxXMLHandler<TreeType>::BuildFromXMLString(TreeType*  dataTree , const _variant_t &var)
 	{
 		m_pData_Tree = dataTree;
-		if(m_pSaxParser->IsReady()== false)
+		if( !m_SaxParser.IsReady() )
 		{
 			return E_FAIL;
 		}
@@ -83,7 +78,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		HRESULT hr(E_FAIL);
 		try
 		{
-			hr = m_pSaxParser->ParseXml(var);
+			hr = m_SaxParser.ParseXml(var);
 		}
 		catch ( const SvStl::MessageContainer&  )
 		{
@@ -94,12 +89,11 @@ namespace Seidenader { namespace  SVXMLLibrary
 		return   hr;
 	}
 
-	///SvXml::SVXMLMaterialsTree*  dataTree
 	template<typename TreeType>
 	HRESULT  SaxXMLHandler<TreeType>::BuildFromXMLFile(TreeType*  dataTree , const wchar_t * pwstrPath)
 	{
 		m_pData_Tree = dataTree;
-		if(m_pSaxParser->IsReady()== false)
+		if( !m_SaxParser.IsReady() )
 		{
 			return E_FAIL;
 		}
@@ -108,7 +102,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		HRESULT hr(E_FAIL);
 		try
 		{
-			hr =   m_pSaxParser->ParseFile(pwstrPath);
+			hr =   m_SaxParser.ParseFile(pwstrPath);
 		}
 		catch ( const SvStl::MessageContainer&  )
 		{
@@ -123,12 +117,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	template<typename TreeType>
 	DWORD  SaxXMLHandler<TreeType>::GetParseTime(void ) const
 	{
-		if(nullptr != m_pSaxParser)
-		{
-			return m_pSaxParser->GetParsTime();
-		}
-		else
-			return 0;
+		return m_SaxParser.GetParseTime();
 	}
 
 	template<typename TreeType>
@@ -252,9 +241,6 @@ namespace Seidenader { namespace  SVXMLLibrary
 		return S_OK;
 	}
 
-
-
-
 	template<typename TreeType>
 	SaxTreeElement* SaxXMLHandler<TreeType>::GetCurrentSaxTreeElement()
 	{
@@ -269,6 +255,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		return pElement;
 
 	}
+
 	template<typename TreeType>
 	HRESULT  SaxXMLHandler<TreeType>::OnElementData( const wchar_t *pwchData,  int cchData, int depth) 
 	{
@@ -416,9 +403,9 @@ namespace Seidenader { namespace  SVXMLLibrary
 			else
 			{
 				/// insert data as new leaf
-				VARIANT var;
+				_variant_t var;
 				VariantHelper::ToVariant(m_spNewElement->GetVarTypeAtt(),m_spNewElement->GetContent(),&var);
-				SVNavigateTree::AddItem( *m_pData_Tree , m_CurrentBranchHandle, CW2CT(m_spNewElement->GetNameAtt()), _variant_t(var));
+				SVNavigateTree::AddItem( *m_pData_Tree , m_CurrentBranchHandle, CW2CT(m_spNewElement->GetNameAtt()), var );
 			}
 
 		}
@@ -427,11 +414,11 @@ namespace Seidenader { namespace  SVXMLLibrary
 			if(m_ParseArray)
 			{
 
-				VARIANT variant = GetVariantArray();
+				_variant_t variant = GetVariantArray();
 				if( VT_I4 == (variant.vt & VT_TYPEMASK)   || VT_UI4 == (variant.vt & VT_TYPEMASK)   || VT_EMPTY == (variant.vt & VT_TYPEMASK) )
 				{
 
-					SVNavigateTree::AddItem( *m_pData_Tree , m_CurrentBranchHandle, CW2CT(m_ArrayName.c_str()), _variant_t(variant));
+					SVNavigateTree::AddItem( *m_pData_Tree , m_CurrentBranchHandle, CW2CT(m_ArrayName.c_str()), variant );
 				}
 				else
 				{
@@ -447,8 +434,6 @@ namespace Seidenader { namespace  SVXMLLibrary
 			{
 				m_CurrentBranchHandle = m_pData_Tree->getParentBranch(m_CurrentBranchHandle);
 			}
-
-
 		}
 
 		return S_OK;
@@ -527,11 +512,12 @@ namespace Seidenader { namespace  SVXMLLibrary
 			break;
 		}
 
-		m_WriteTime = ::GetTickCount() -tick;
+		m_WriteTime = ::GetTickCount() - tick;
 
 		XMLFile.open( path );
 		XMLFile << mystream.str();
 		XMLFile.close();
+
 		return true;
 	}
 
@@ -545,7 +531,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	}
 
 	template<typename TreeType>
-	VARIANT  SaxXMLHandler<TreeType>::GetVariantArray()
+	_variant_t  SaxXMLHandler<TreeType>::GetVariantArray()
 	{
 		COleSafeArray saRet;
 		if(m_spIntVector.get())
@@ -619,7 +605,6 @@ namespace Seidenader { namespace  SVXMLLibrary
 		m_pSaxEncryptionHandler->SaxSetEncryption(spElement->GetNameAtt(), spElement->GetContent());
 
 		return;
-
 	}
-}
-}
+
+} /* namespace SVXMLLibrary */ } /* namespace Seidenader */

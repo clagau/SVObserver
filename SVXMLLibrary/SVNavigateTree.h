@@ -23,10 +23,10 @@ private:
 
 public:
 	template< typename SVTreeType >
-	static bool AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem = nullptr );
+	static bool AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, const _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem = nullptr );
 
 	template< typename SVTreeType >
-	static bool SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem = nullptr );
+	static bool SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, const _variant_t &rVariant, typename SVTreeType::SVLeafHandle* ppItem = nullptr );
 
 	template< typename SVTreeType >
 	static bool AddBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, LPCTSTR Name, typename SVTreeType::SVBranchHandle* ppItem = nullptr );

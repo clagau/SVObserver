@@ -294,7 +294,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	HRESULT SVXMLCTreeCtrl::createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const VARIANT& rData, SVLeafHandle* ppLeaf )
+	HRESULT SVXMLCTreeCtrl::createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const _variant_t& rData, SVLeafHandle* ppLeaf )
 	{
 		HRESULT Result( S_OK );
 
@@ -304,8 +304,8 @@ namespace Seidenader { namespace SVXMLLibrary
 		if( nullptr != pVariant )
 		{
 			::VariantInit( pVariant );
-
-			if( S_OK == ::VariantCopy( pVariant, const_cast< VARIANT * >( &rData ) ) )
+			VARIANT Value( rData );
+			if( S_OK == ::VariantCopy( pVariant, &Value ) )
 			{
 				pNewLeaf = m_rTree.InsertItem( Name, pParent, TVI_LAST );
 
@@ -379,7 +379,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	VARIANT SVXMLCTreeCtrl::getLeafData( const SVLeafHandle pLeaf ) const
+	_variant_t SVXMLCTreeCtrl::getLeafData( const SVLeafHandle pLeaf ) const
 	{
 		VARIANT Result;
 
@@ -400,12 +400,12 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	VARIANT SVXMLCTreeCtrl::getLeafData( const SVBranchHandle pParent, LPCTSTR Name )
+	_variant_t SVXMLCTreeCtrl::getLeafData( const SVBranchHandle pParent, LPCTSTR Name )
 	{
 		return 	getLeafData( findLeaf( pParent, Name ) );
 	}
 
-	HRESULT SVXMLCTreeCtrl::setLeafData( const SVLeafHandle pLeaf, const VARIANT& rData )
+	HRESULT SVXMLCTreeCtrl::setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData )
 	{
 		HRESULT l_Status( S_OK );
 
