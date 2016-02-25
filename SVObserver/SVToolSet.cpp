@@ -866,7 +866,10 @@ BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 	m_lvoTriggerCount.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_lTriggerCount > 0 ? RRunStatus.m_lTriggerCount : 0 );
 
 	m_latestCompletionPPQIndex.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.m_PPQIndexAtCompletion);
-	double TriggerDelta_us = SVClock::c_MicrosecondsPerMillisecond * (RRunStatus.m_CurrentTriggerTime - RRunStatus.m_PreviousTriggerTime);
+
+	//before calculating the trigger delta: make sure both trigger times are valid:
+	bool bothTriggersValid = (RRunStatus.m_CurrentTriggerTime * RRunStatus.m_PreviousTriggerTime > 0.1);
+	double TriggerDelta_us = bothTriggersValid ? (SVClock::c_MicrosecondsPerMillisecond * (RRunStatus.m_CurrentTriggerTime - RRunStatus.m_PreviousTriggerTime)) : 0.0;
 	m_TriggerDelta.SetValue( RRunStatus.m_lResultDataIndex, TriggerDelta_us);
 
 	m_LastTriggerToPPQCompletion.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
