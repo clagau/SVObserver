@@ -417,6 +417,10 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 			}
 		}
 	}
+	else
+	{
+		bValid = false;
+	}
 	return bValid;
 }
 
