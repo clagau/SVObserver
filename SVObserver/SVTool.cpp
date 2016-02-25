@@ -244,7 +244,7 @@ BOOL SVToolClass::CloseObject()
 
 BOOL SVToolClass::DisconnectInput( SVInObjectInfoStruct* pInObjectInfo )
 {
-	BOOL l_Status( SVTaskObjectListClass::DisconnectInput( pInObjectInfo ) && nullptr != pInObjectInfo  );
+	BOOL l_Status( SVTaskObjectListClass::DisconnectInput( pInObjectInfo ) && nullptr != pInObjectInfo );
 
 	if( nullptr != pInObjectInfo )
 	{
@@ -357,6 +357,44 @@ BOOL SVToolClass::OnValidate()
 		SetInvalid();
 	}
 	return bRetVal;
+}
+
+void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
+{
+	if( GetInspection()->GetEnableAuxiliaryExtent() )
+	{
+		BOOL l_bUpdateSourceExtents = false;
+
+		bool l_bForceOffsetReset = GetInspection()->m_bForceOffsetUpdate;
+
+		m_svToolExtent.UpdateOffsetData( l_bForceOffsetReset );
+
+		HRESULT hr = m_svUpdateAuxilliaryExtents.GetValue( l_bUpdateSourceExtents );
+		if( S_OK == hr && l_bUpdateSourceExtents )
+		{
+			SVExtentOffsetStruct l_svOffsetData;
+
+			hr = m_svToolExtent.GetSelectedOffsetData( l_svOffsetData );
+			if( S_OK != hr || ! l_svOffsetData.m_bIsLinear )
+			{
+				hr = m_svToolExtent.UpdateOffsetDataToImage( l_svOffsetData, GetAuxSourceImage() );
+			}
+
+			SVImageClass* pAuxSourceImage = GetAuxSourceImage();
+			if( nullptr != pAuxSourceImage )
+			{
+				m_svAuxilliarySourceImageName.SetValue( resultDataIndex, pAuxSourceImage->GetCompleteObjectName() );
+			}
+
+			CString l_strDrawType;
+			m_svToolExtent.GetAuxilliaryDrawTypeString( l_strDrawType );
+			m_svAuxilliaryDrawType.SetValue( resultDataIndex, l_strDrawType );
+			
+			m_svAuxilliarySourceX.SetValue( resultDataIndex, l_svOffsetData.m_svOffset.m_dPositionX );
+			m_svAuxilliarySourceY.SetValue( resultDataIndex, l_svOffsetData.m_svOffset.m_dPositionY );
+			m_svAuxilliarySourceAngle.SetValue( resultDataIndex, l_svOffsetData.m_dRotationAngle );
+		}
+	}
 }
 
 BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
@@ -484,40 +522,9 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 	//
 	if( GetInspection()->GetEnableAuxiliaryExtent() )
 	{
-		BOOL l_bUpdateSourceExtents = FALSE;
-
-		bool l_bForceOffsetReset = GetInspection()->m_bForceOffsetUpdate;
-
-		m_svToolExtent.UpdateOffsetData( l_bForceOffsetReset );
-
-		HRESULT hr = m_svUpdateAuxilliaryExtents.GetValue( l_bUpdateSourceExtents );
-		if( S_OK == hr && l_bUpdateSourceExtents )
-		{
-			SVExtentOffsetStruct l_svOffsetData;
-
-			hr = m_svToolExtent.GetSelectedOffsetData( l_svOffsetData );
-			if( S_OK != hr || ! l_svOffsetData.m_bIsLinear )
-			{
-				hr = m_svToolExtent.UpdateOffsetDataToImage( l_svOffsetData, GetAuxSourceImage() );
-			}
-
-			SVImageClass* pAuxSourceImage = GetAuxSourceImage();
-		
-			if( nullptr != pAuxSourceImage )
-			{
-				m_svAuxilliarySourceImageName.SetValue( RRunStatus.m_lResultDataIndex, pAuxSourceImage->GetCompleteObjectName() );
-			}
-
-			CString l_strDrawType;
-			m_svToolExtent.GetAuxilliaryDrawTypeString( l_strDrawType );
-			m_svAuxilliaryDrawType.SetValue( RRunStatus.m_lResultDataIndex, l_strDrawType );
-			
-			m_svAuxilliarySourceX.SetValue( RRunStatus.m_lResultDataIndex, l_svOffsetData.m_svOffset.m_dPositionX );
-			m_svAuxilliarySourceY.SetValue( RRunStatus.m_lResultDataIndex, l_svOffsetData.m_svOffset.m_dPositionY );
-			m_svAuxilliarySourceAngle.SetValue( RRunStatus.m_lResultDataIndex, l_svOffsetData.m_dRotationAngle );
-		}
+		UpdateAuxiliaryExtents(RRunStatus.m_lResultDataIndex);
 	}
-
+	
 	ToolTime.Stop( RRunStatus.m_lResultDataIndex );
 
 	return retVal;
@@ -782,7 +789,7 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 				DwResult = pToolSizeAdjustTask->ProcessResetAllObject(DwMessageID,DwMessageValue, DwMessageContext);
 			}
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 //				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -1243,7 +1250,7 @@ void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTar
 	}
 }
 
-// Auxiliary Source Image Functions
+// Source Image Functions
 HRESULT SVToolClass::GetSourceImages( SVImageListClass* p_psvImageList ) const
 {
 	HRESULT l_hr = S_OK;
@@ -1297,7 +1304,7 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
 		{
 			l_psvImage = l_svImageList.GetAt( 0 );
 
-			for( int i = l_lCount - 1; l_hr != S_OK && i > 0; i-- )
+			for( int i = l_lCount - 1; S_OK != l_hr && i > 0; i-- )
 			{
 				if( l_svImageList.GetAt( i ) == p_psvImage )
 				{
@@ -1316,6 +1323,8 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
 		{
 			GetInspection()->m_bForceOffsetUpdate = true;
 		}
+		UpdateAuxiliaryExtents(1);
+		::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
 	}
 
 	return l_hr;

@@ -46,6 +46,7 @@ namespace Seidenader
 
 		private:
 			HRESULT FindAuxSourceImages();
+			HRESULT RunOnce();
 		};
 	}
 }

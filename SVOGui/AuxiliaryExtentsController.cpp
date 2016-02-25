@@ -13,6 +13,7 @@
 #include "GuiCommands\GetAvailableAuxSourceImages.h"
 #include "GuiCommands\GetAuxSourceImage.h"
 #include "GuiCommands\SetAuxSourceImage.h"
+#include "GuiCommands\InspectionRunOnce.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
@@ -121,6 +122,10 @@ namespace Seidenader { namespace SVOGui
 			CommandPtr commandPtr(new Command(m_TaskObjectID, imageID));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (SUCCEEDED(hr))
+			{
+				hr = RunOnce();
+			}
 		}
 		return hr;
 	}
@@ -137,5 +142,15 @@ namespace Seidenader { namespace SVOGui
 			return commandPtr->SourceImage();
 		}
 		return SvUl::NameGuidPair();
+	}
+	
+	HRESULT AuxiliaryExtentsController::RunOnce()
+	{
+		typedef GuiCmd::InspectionRunOnce Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+		CommandPtr commandPtr = new Command(m_InspectionID, m_TaskObjectID);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		return hr;
 	}
 } /* namespace SVOGui */ } /* namespace Seidenader */

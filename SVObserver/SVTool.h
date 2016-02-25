@@ -213,6 +213,7 @@ public:
 #pragma endregion ITool methods
 
 protected:
+	void UpdateAuxiliaryExtents(long resultDataIndex);
 	virtual BOOL Run( SVRunStatusClass& RRunStatus );
 	virtual BOOL RunWithNewDisable( SVRunStatusClass& RRunStatus );
 
