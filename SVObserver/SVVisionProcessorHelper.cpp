@@ -477,7 +477,7 @@ static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemo
 
 	if (0 < rInfo.m_NameArray.size())
 	{
-		size_t pos = rInfo.m_NameArray[rInfo.m_NameArray.size() - 1].find_first_of("Remote Input");
+		size_t pos = rInfo.m_NameArray[rInfo.m_NameArray.size() - 1].find("Remote Input");
 		if (0 == pos)
 		{
 			bRemoteInput = true;
