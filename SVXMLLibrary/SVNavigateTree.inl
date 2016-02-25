@@ -201,56 +201,6 @@ bool SVNavigateTree::FindBranch( SVTreeType &rTree, typename SVTreeType::SVBranc
 	return status;
 }
 
-template< typename SVToTreeType, typename SVFromTreeType >
-bool SVNavigateTree::Copy( SVToTreeType &rToTree, typename SVToTreeType::SVBranchHandle toParent, const SVFromTreeType &rFromTree, typename SVFromTreeType::SVBranchHandle fromBranch )
-{
-	bool ok = true;
-
-	typename SVFromTreeType::SVBranchHandle fromChildBranch( nullptr );
-
-	SVFromTreeType& fromTree( const_cast< SVFromTreeType& >( rFromTree ) );
-
-	fromChildBranch = fromTree.getFirstBranch( fromBranch );
-
-	while( nullptr != fromChildBranch )
-	{
-		SVString Name;
-
-		Name = fromTree.getBranchName( fromChildBranch );
-
-		typename SVToTreeType::SVBranchHandle toChildBranch;
-
-		 rToTree.createBranch( toParent, Name.c_str(), &toChildBranch );
-
-		if( nullptr != toChildBranch )
-		{
-			Copy( rToTree, toChildBranch, rFromTree, fromChildBranch );
-		}
-
-		fromChildBranch = fromTree.getNextBranch( fromBranch, fromChildBranch );
-	}
-
-	typename SVFromTreeType::SVLeafHandle fromChildLeaf;
-
-	fromChildLeaf = fromTree.getFirstLeaf( fromBranch );
-
-	while( fromTree.isValidLeaf( fromBranch, fromChildLeaf ) )
-	{
-		SVString Name;
-
-		_variant_t Data;
-
-		Name = fromTree.getLeafName( fromChildLeaf );
-
-		Data = fromTree.getLeafData( fromChildLeaf );
-
-		rToTree.createLeaf( toParent, Name.c_str(), Data );
-
-		fromChildLeaf = fromTree.getNextLeaf( fromBranch, fromChildLeaf );
-	}
-
-	return ok;
-}
 
 //******************************************************************************
 //* LOG HISTORY:

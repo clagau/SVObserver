@@ -58,9 +58,6 @@ public:
 	template< typename SVTreeType, typename SVPredicate >
 	static bool FindBranch( SVTreeType &rTree, typename SVTreeType::SVBranchHandle startBranch, const SVPredicate& rPredicate, typename SVTreeType::SVBranchHandle& rFoundItem );
 
-	template< typename SVToTreeType, typename SVFromTreeType >
-	static bool Copy( SVToTreeType &rToTree, typename SVToTreeType::SVBranchHandle toParent, const SVFromTreeType &rFromTree, typename SVFromTreeType::SVBranchHandle fromBranch );
-
 };
 
 #include "SVNavigateTree.inl"

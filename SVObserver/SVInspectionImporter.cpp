@@ -441,20 +441,13 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	{
 		checkGlobalConstants( ImportedGlobals, rGlobalConflicts);
 
-		SvXml::SVXMLMaterialsTree::SVBranchHandle l_Root( nullptr );
-		SvXml::SVXMLMaterialsTree::SVBranchHandle l_IPDocItem( nullptr );
-		SvXml::SVXMLMaterialsTree toTree( inspectionInfo.m_materialsTree );
+		SvXml::SVXMLMaterialsTree::SVBranchHandle Root( XmlTree.getRoot() );
+		SvXml::SVXMLMaterialsTree::SVBranchHandle IPDocItem( nullptr );
 
-		l_Root = XmlTree.getRoot();
-		if( SVNavigateTree::FindBranch( XmlTree, l_Root, SVFindPredicate( XmlTree, CTAG_SVIPDOC ), l_IPDocItem ) )
+		if( SVNavigateTree::FindBranch( XmlTree, Root, SVFindPredicate( XmlTree, CTAG_SVIPDOC ), IPDocItem ) )
 		{
-			toTree.Clear();
-			l_Root = toTree.getRoot(  );
-
-			if( !( SVNavigateTree::Copy( toTree, l_Root, XmlTree, l_IPDocItem ) ) )
-			{
-				hr = E_FAIL;
-			}
+			inspectionInfo.m_materialsTree.clear();
+			inspectionInfo.m_materialsTree = *IPDocItem;
 		}
 		else
 		{
