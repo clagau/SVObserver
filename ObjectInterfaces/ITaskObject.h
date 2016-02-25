@@ -39,9 +39,12 @@ namespace Seidenader
 
 			//************************************
 			/// Return the output list of this task object, filtered by functor.
-			/// \returns Seidenader::ObjectInterfaces::IOutputInfoListClassPtr
+			/// /param func <in> functor to check the attribute
+			/// /param Attribute <in> attribute
+			/// /param WholeArray <in> flag determines if whole arrays are used
+			/// \returns Seidenader::ObjectInterfaces::ISelectorItemVectorPtr
 			//************************************
-			virtual ISelectorItemVectorPtr GetSelectorList( IsObjectInfoAllowed func, bool WholeArray ) const = 0;
+			virtual ISelectorItemVectorPtr GetSelectorList( IsObjectInfoAllowed func, UINT Attribute, bool WholeArray ) const = 0;
 
 			//************************************
 			/// Return the dependency list for this task object

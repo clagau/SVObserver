@@ -25,7 +25,7 @@ namespace Seidenader
 		template <typename FilterFunc, typename Results>
 		struct GetSelectorList : public boost::noncopyable
 		{
-			GetSelectorList(const SVGUID& rInstanceID, FilterFunc filter, bool WholeArray) : m_InstanceID(rInstanceID), m_filter(filter), m_WholeArray(WholeArray) {}
+			GetSelectorList(const SVGUID& rInstanceID, FilterFunc filter, UINT Attribute, bool WholeArray) : m_InstanceID(rInstanceID), m_filter(filter), m_Attribute(Attribute), m_WholeArray(WholeArray) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -49,7 +49,7 @@ namespace Seidenader
 
 					if ( nullptr != pTaskObject)
 					{
-						m_SelectedList = pTaskObject->GetSelectorList( m_filter, m_WholeArray );
+						m_SelectedList = pTaskObject->GetSelectorList( m_filter, m_Attribute, m_WholeArray );
 						hr = S_OK;
 					}
 				}
@@ -61,6 +61,7 @@ namespace Seidenader
 		private:
 			SVGUID m_InstanceID;
 			FilterFunc m_filter;
+			UINT m_Attribute;
 			bool m_WholeArray;
 			Results m_SelectedList;
 		};

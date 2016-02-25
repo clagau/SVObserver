@@ -34,6 +34,8 @@ inline SelectorItem ObjectTreeGenerator::getSingleObjectResult() const
 inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelectorType )
 {
 	m_SelectorType = rSelectorType;
+	//Reset the leaf count here as this method is called at the start of inserting the objects into the selector
+	m_LeafCount = 0;
 }
 
 ///SEJ99 - This method should be refactored to trim down the insert methods in the object selector to only one...

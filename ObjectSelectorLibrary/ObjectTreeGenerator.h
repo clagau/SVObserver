@@ -202,6 +202,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		TranslateMap m_LocationOutputFilters;		//The location output filters
 		SelectorTypeEnum m_SelectorType;			//The selector type
 		UINT m_AttributesFilter;					//The attributes filter
+		long m_LeafCount;							//The number of leafs in the selector (only as debug information)
 	#pragma endregion Member Variables
 	};
 

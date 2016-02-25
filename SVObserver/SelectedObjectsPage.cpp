@@ -205,7 +205,7 @@ void SelectedObjectsPage::ShowObjectSelector()
 	CString Filter;
 	Title.Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
 	Filter.LoadString( IDS_FILTER );
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter, this );
 
 	if( IDOK == Result )
 	{

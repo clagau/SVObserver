@@ -43,6 +43,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		, m_LocationOutputFilters()
 		, m_SelectorType( ObjectTreeGenerator::TypeNone )
 		, m_AttributesFilter( 0 )
+		, m_LeafCount( 0 )
 	{
 	}
 
@@ -249,6 +250,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		//Make copy of location because reference is const
 		SVString DisplayLocation = getFilteredLocation( m_LocationInputFilters, rLocation );
 		m_TreeContainer.insertLeaf( DisplayLocation, SelectorItem );
+		m_LeafCount++;
 	}
 
 	void ObjectTreeGenerator::insertTreeObject( const SvOi::ISelectorItem& rItem )
@@ -287,6 +289,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		SelectorItem.setAttibute( Attribute );
 		Location = getFilteredLocation( m_LocationInputFilters, Location );
 		m_TreeContainer.insertLeaf( Location, SelectorItem );
+		m_LeafCount++;
 	}
 
 	bool ObjectTreeGenerator::checkModifiedItems()

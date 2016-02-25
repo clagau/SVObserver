@@ -111,7 +111,7 @@ namespace Seidenader
 				SvOi::IsObjectInfoAllowed func = boost::bind(&FilterImpl::operator(), &filter, _1, _2);
 
 				const SVGUID& rGuid = (rOptions.getInstanceID() != GUID_NULL) ? rOptions.getInstanceID() : rOptions.getInspectionID();
-				CommandPtr commandPtr(new Command(rGuid, func, rOptions.getWholeArray()));
+				CommandPtr commandPtr(new Command(rGuid, func, rOptions.getAttributesFilter(), rOptions.getWholeArray()));
 				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rOptions.getInspectionID(), commandPtr);
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK == hr)

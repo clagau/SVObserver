@@ -339,7 +339,7 @@ HRESULT SVTaskObjectClass::RunOnce(IObjectClass* pTool)
 	return m_taskObjectValueInterface.RunOnce(pToolClass);
 }
 
-SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed isAllowed, bool WholeArray) const
+SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed isAllowed, UINT Attribute, bool WholeArray) const
 {
 	SvOsl::SelectorItemVector *pSelectorList = new SvOsl::SelectorItemVector();
 	SvOi::ISelectorItemVectorPtr Result = static_cast<SvOi::ISelectorItemVector*> (pSelectorList);
@@ -350,7 +350,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 		GetOutputList( OutputList );
 
 		// Filter the list
-		std::for_each(OutputList.begin(), OutputList.end(), [&pSelectorList, &isAllowed, &WholeArray](SVOutputInfoListClass::value_type info)->void
+		std::for_each(OutputList.begin(), OutputList.end(), [&pSelectorList, &isAllowed, &Attribute, &WholeArray](SVOutputInfoListClass::value_type info)->void
 		{
 			SVObjectReference ObjectRef = info->GetObjectReference();
 			if( ObjectRef->IsArray() || isAllowed(*info, -1) )
@@ -375,9 +375,11 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 					if ( WholeArray && isAllowed(*info, -1) )
 					{
 						ObjectRef.SetEntireArray();
+						UINT AttributesSet = ObjectRef.ObjectAttributesSet();
 						InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
 						InsertItem.setArrayIndex( -1 );
 						InsertItem.setArray( true );
+						InsertItem.setSelected( (AttributesSet & Attribute) == Attribute );
 						pSelectorList->push_back( InsertItem );
 					}
 
@@ -388,15 +390,19 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 						if( isAllowed(*info, i) )
 						{
 							ObjectRef.SetArrayIndex( i );
+							UINT AttributesSet = ObjectRef.ObjectAttributesSet();
 							InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
 							InsertItem.setArrayIndex( i );
+							InsertItem.setSelected( (AttributesSet & Attribute) == Attribute );
 							pSelectorList->push_back( InsertItem );
 						}
 					}
 				}
 				else
 				{
+					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
 					InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+					InsertItem.setSelected( (AttributesSet & Attribute) == Attribute );
 					pSelectorList->push_back( InsertItem );
 				}
 			}
