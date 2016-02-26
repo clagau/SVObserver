@@ -55,21 +55,13 @@ namespace Seidenader
 			virtual HRESULT SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled) = 0;
 
 			/**********
-			Validate a string
+			Validate a string and set the value if bSetValue is true.
 			\param equationString [in] the equation string.
 			\param result [out] return the result of the equation, if the validation is successfully.
-			\param bRestore[in] boolean for determining whether to restore to the previous equation string.
+			\param bSetValue[in] boolean if true, set value and reset object, else the old value will restored.
 			\return return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
 			**********/
-			virtual int ValidateEquation(const SVString &equationString, double& result, bool bRestore) const = 0;
-			/**********
-			Validate a string and if successful it set the string to the task object..
-			\param equationString [in] the equation string.
-			\param result [out] return the result of the equation, if the validation is successfully.
-			\return return the position of the failure. If the validation and set is successful, the value will be "validateSuccessful".
-			If the validation is successful, but the set is not, the value will be "setFailed".
-			**********/
-			virtual int ValidateAndSetEquation(const SVString &equationString, double& result) = 0;
+			virtual int ValidateEquation(const SVString &equationString, double& result, bool bSetValue) const = 0;
 
 			/**********
 			/// Set the Default Inputs
@@ -81,8 +73,8 @@ namespace Seidenader
 		public:
 			// Constant for the validation is successful
 			static const int validateSuccessful = -1;
-			// Constant for the validation is successful, but the set is not
-			static const int setFailed = -2;
+			// Constant for the validation is successful, but the reset of object is not
+			static const int resetFailed = -2;
 #pragma endregion Constants
 		};
 		typedef SVSharedPtr<IFormulaController> IFormulaControllerPtr;

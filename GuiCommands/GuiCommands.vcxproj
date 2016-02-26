@@ -53,13 +53,12 @@
     <ClInclude Include="SaveImage.h" />
     <ClInclude Include="SetAuxSourceImage.h" />
     <ClInclude Include="SetDefaultInputs.h" />
-    <ClInclude Include="SetEquation.h" />
     <ClInclude Include="SetMaskData.h" />
     <ClInclude Include="SetRingbufferIndexValue.h" />
     <ClInclude Include="ShouldInspectionReset.h" />
     <ClInclude Include="TaskObjectGetEmbeddedValues.h" />
     <ClInclude Include="TaskObjectSetEmbeddedValues.h" />
-    <ClInclude Include="ValidateEquation.h" />
+    <ClInclude Include="ValidateAndSetEquation.h" />
     <ClInclude Include="ValueObjectGetEnums.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

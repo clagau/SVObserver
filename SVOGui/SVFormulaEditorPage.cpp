@@ -164,23 +164,6 @@ namespace Seidenader { namespace SVOGui
 		// EXCEPTION: OCX Property Pages should return FALSE
 	}
 
-	void SVFormulaEditorPageClass::OnOK()
-	{
-		CString equationText = getEquationText();
-
-		UpdateData( TRUE );
-		double value = 0;
-		const int result = m_FormulaController->ValidateAndSetEquation( equationText, value );
-		if( result == IFormulaController::validateSuccessful )
-		{
-			CPropertyPage::OnOK();
-		}
-		else // Equation is invalid
-		{
-			HandleValidateError( result );
-		}
-	}
-
 	void SVFormulaEditorPageClass::OnHelp()
 	{
 		if (m_isConditionalPage)
@@ -649,11 +632,11 @@ namespace Seidenader { namespace SVOGui
 			UpdateData( TRUE ); // Update the variables
 
 			double value = 0;
-			const int result = m_FormulaController->ValidateAndSetEquation( equationText, value );
+			const int result = m_FormulaController->ValidateEquation( equationText, value, true );
 			enableUndoButton();
-			//@Info (MZA): send only true if setFailed, because the set failed is maybe happen by a other page.
+			//@Info (MZA): result also true if resetFailed, because the fail of reset of the object maybe happen by a other page.
 			//By leaving the sheet it will reset objects and check if it works
-			return result == IFormulaController::validateSuccessful || result == IFormulaController::setFailed;
+			return result == IFormulaController::validateSuccessful || result == IFormulaController::resetFailed;
 		}
 		return true;
 	}
@@ -664,7 +647,7 @@ namespace Seidenader { namespace SVOGui
 
 		UpdateData( TRUE ); // Update the variables
 		double value = 0;
-		const int result = m_FormulaController->ValidateEquation( equationText, value, true );
+		const int result = m_FormulaController->ValidateEquation( equationText, value, false );
 		if( result == IFormulaController::validateSuccessful )
 		{
 			CString tmp;

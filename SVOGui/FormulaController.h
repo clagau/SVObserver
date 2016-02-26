@@ -52,11 +52,10 @@ namespace Seidenader
 			/// Validate an equationstring
 			/// \param equationString [in] the equation string.
 			/// \param result [out] return the result of the equation, if the validation is successfully.
-			/// \param bRestore[in] boolean for determining whether to restore to the previous equation string. if the string is invalid the previous equation string is restored in every case 
-			/// \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
+			/// \param bSetValue[in] boolean for determining whether to set (true) the new value or restore (false) to the previous equation string. if the string is invalid the previous equation string is restored in every case 
+			/// \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful". If the reset of the object failed the value will be "resetFailed", but the string will be set (if bSetValue == true).
 			//**********
-			virtual int ValidateEquation(const SVString &equationString, double& result, bool bRestore) const override;
-			virtual int ValidateAndSetEquation(const SVString &equationString, double& result) override;
+			virtual int ValidateEquation(const SVString &equationString, double& result, bool bSetValue) const override;
 			virtual HRESULT SetDefaultInputs();
 		#pragma endregion Virtual Methods (IFormulaController)
 		#pragma endregion Public Methods

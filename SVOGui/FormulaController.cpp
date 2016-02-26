@@ -22,8 +22,7 @@
 #include "GuiCommands/GetPPQSelectorList.h"
 #include "GuiCommands/GetTaskObjectInstanceID.h"
 #include "GuiCommands/GetEquation.h"
-#include "GuiCommands/SetEquation.h"
-#include "GuiCommands/ValidateEquation.h"
+#include "GuiCommands/ValidateAndSetEquation.h"
 #include "GuiCommands/TaskObjectGetEmbeddedValues.h"
 #include "GuiCommands/TaskObjectSetEmbeddedValues.h"
 #include "GuiCommands/ResetObject.h"
@@ -114,41 +113,21 @@ namespace Seidenader { namespace SVOGui
 		return hr;
 	}
 
-	int FormulaController::ValidateEquation( const SVString& equationString, double& result, bool bRestore ) const
+	int FormulaController::ValidateEquation( const SVString& equationString, double& result, bool bSetValue ) const
 	{
 		int retValue = validateSuccessful;
-		typedef GuiCmd::ValidateEquation Command;
+		typedef GuiCmd::ValidateAndSetEquation Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		CommandPtr commandPtr(new Command(m_EquationID, equationString, bRestore));
+		CommandPtr commandPtr(new Command(m_EquationID, equationString, bSetValue));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
 		{
 			retValue = commandPtr->GetValidateStatus();
 			result = commandPtr->GetResultValue();
-		}
-		return retValue;
-	}
 
-	int FormulaController::ValidateAndSetEquation( const SVString &equationString, double& result )
-	{
-		int retValue = ValidateEquation(equationString, result, false);
-
-		if (validateSuccessful == retValue)
-		{
-			//set new equation text and reset all objects for using the new value
-			typedef GuiCmd::SetEquation Command; // while SVEquationClass resides in the SVObserver project
-			typedef SVSharedPtr<Command> CommandPtr;
-
-			CommandPtr commandPtr(new Command(m_EquationID, equationString));
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK != hr)
-			{
-				retValue = setFailed;
-			}
-			else
+			if (validateSuccessful == retValue && bSetValue)
 			{
 				typedef GuiCmd::ResetObject ResetCommand;
 				typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
@@ -158,7 +137,7 @@ namespace Seidenader { namespace SVOGui
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK != hr)
 				{
-					retValue = setFailed; // maybe we need another value to indicate that the reset had an issue or do we ignore it?
+					retValue = resetFailed; 
 				}
 			}
 		}

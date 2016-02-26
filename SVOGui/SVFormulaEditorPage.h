@@ -78,7 +78,6 @@ namespace Seidenader
 
 			// Generated message map functions
 			//{{AFX_MSG(SVFormulaEditorPageClass)
-			virtual void OnOK();
 			afx_msg void OnHelp();
 			afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 			afx_msg void OnAddLocalVariableButton();

@@ -27,13 +27,13 @@ namespace Seidenader
 {
 	namespace GuiCommand
 	{
-		struct ValidateEquation : public boost::noncopyable
+		struct ValidateAndSetEquation : public boost::noncopyable
 		{
 			// Guid is the instance id of the object
-			ValidateEquation(const SVGUID& ownerID, const SVString& equation, bool bRestore) 
+			ValidateAndSetEquation(const SVGUID& ownerID, const SVString& equation, bool bSetValue) 
 			: m_ownerID(ownerID)
 			, m_equation(equation)
-			, m_bRestore(bRestore)
+			, m_bSetValue(bSetValue)
 			, m_retValue(validateSuccessful)
 			, m_result(0.0) {}
 
@@ -45,11 +45,8 @@ namespace Seidenader
 				if (pEquation)
 				{
 					SVString oldString;
-					if (m_bRestore)
-					{
-						//save old string
-						pEquation->GetEquationText(oldString);
-					}
+					//save old string
+					pEquation->GetEquationText(oldString);
 					pEquation->SetEquationText(m_equation);
 
 					SvOi::EquationTestResult testResult = pEquation->Test();
@@ -62,7 +59,7 @@ namespace Seidenader
 					{  // set return value to position of failed
 						m_retValue = testResult.iPositionFailed;
 					}
-					if (m_bRestore)
+					if (!m_bSetValue || validateSuccessful != m_retValue)
 					{
 						//reset old string
 						pEquation->SetEquationText(oldString);
@@ -76,7 +73,7 @@ namespace Seidenader
 		private:
 			SVGUID m_ownerID;
 			const SVString& m_equation;
-			bool m_bRestore;
+			bool m_bSetValue;
 			double m_result;
 			int m_retValue;
 		};

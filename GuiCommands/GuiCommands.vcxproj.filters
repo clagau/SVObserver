@@ -21,16 +21,10 @@
     <ClInclude Include="GetTaskObjectInstanceID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SetEquation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TaskObjectGetEmbeddedValues.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TaskObjectSetEmbeddedValues.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ValidateEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetObjectName.h">
@@ -139,6 +133,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetPPQObjectName.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ValidateAndSetEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
