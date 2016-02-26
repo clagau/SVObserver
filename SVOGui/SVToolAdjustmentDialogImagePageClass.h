@@ -15,9 +15,6 @@
 #include "SVOGui\PictureDisplay.h"
 #include "SVOGui\AvailableObjectListComboBox.h"
 #include "SVOGui\ImageController.h"
-#include "SVOGui\GUIController.h"
-#include "SVOGui\ValuesAccessor.h"
-#include "SVOGui\BoundValue.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
@@ -27,9 +24,6 @@ namespace Seidenader
 	{
 		class SVToolAdjustmentDialogImagePageClass : public CPropertyPage, protected ImageController
 		{
-			typedef ValuesAccessor<BoundValues> Values;
-			typedef GuiController<Values, Values::value_type> ValueController;
-
 		public:
 			SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
 			virtual ~SVToolAdjustmentDialogImagePageClass();
