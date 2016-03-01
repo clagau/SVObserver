@@ -184,7 +184,8 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int 	Err_16074_InvalidArrayElement =  Mec_ErrorBase + 74;
 	///New Errornumbers Archive_Tool
 	static const int 	Err_16075_ImageNrToBig =  Mec_ErrorBase + 75;
-	
+	///Errornumbers load Configuration 
+	static const int 	Err_16076_CouldNotLoadInspection =  Mec_ErrorBase + 76;
 	
 	
 	// Ben Walter

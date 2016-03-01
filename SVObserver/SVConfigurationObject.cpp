@@ -1844,14 +1844,16 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 {
 	SVTreeType::SVBranchHandle hChild( nullptr );
 	bool bOk  = SVNavigateTree::GetItemBranch( rTree, CTAG_INSPECTION, nullptr, hChild ) ;
-	if( !bOk)
+	SVTreeType::SVBranchHandle hSubChild( nullptr );
+	if(bOk)
 	{
-		return false;
+		hSubChild = rTree.getFirstBranch( hChild );
 	}
 
-	SVTreeType::SVBranchHandle hSubChild( nullptr );
-
-	hSubChild = rTree.getFirstBranch( hChild );
+	if(nullptr == hSubChild)
+	{
+		bOk= false;
+	}
 
 	while ( bOk && nullptr != hSubChild )
 	{
@@ -1973,14 +1975,20 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 			}
 		}
 
-		if ( bOk )
+		//Add invalid inspection to avoid memory leaks. The inspections will be destroyed. 
+		if( nullptr != pInspection )
 		{
-			bOk = AddInspection( pInspection );
+			bOk = AddInspection( pInspection ) && bOk;
 		}
-		
 		hSubChild = rTree.getNextBranch( hChild, hSubChild );
 	}
-
+	if(false == bOk)
+	{
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage( SVMSG_SVO_91_LOAD_INSPECTION_FAILED, nullptr, StdMessageParams, SvOi::Err_16076_CouldNotLoadInspection );
+		throw MsgCont;
+	
+	}
 	return bOk;
 }
 
