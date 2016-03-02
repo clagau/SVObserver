@@ -53,8 +53,8 @@ protected:
 	afx_msg void OnSelchangeModeCombo();
 	afx_msg void OnChangeEditMaxImages();
 
-	void BuildImageList();
-	void InitialMemoryUsage();
+	void BuildImageList() ;
+	void MemoryUsage();
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
 
@@ -84,7 +84,6 @@ private:
 	SVArchiveMethodEnum m_eSelectedArchiveMethod;
 	long m_ImagesToArchive;
 	__int64 m_TotalArchiveImageMemoryAvailable;
-	__int64 m_InitialArchiveImageMemoryUsage;
 	__int64 m_InitialArchiveImageMemoryUsageExcludingThisTool;
 	__int64 m_InitialToolImageMemoryUsage;
 	__int64 m_ToolImageMemoryUsage;
@@ -93,7 +92,7 @@ private:
 	MapSelectedImageType m_mapSelectedImageMemUsage;
 	MapSelectedImageType m_mapInitialSelectedImageMemUsage;
 
-	bool m_bInit;
+	bool m_Init;
 #pragma endregion Private Members
 };
 
