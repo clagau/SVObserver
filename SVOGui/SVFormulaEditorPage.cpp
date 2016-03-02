@@ -126,10 +126,11 @@ namespace Seidenader { namespace SVOGui
 		{
 			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 			Exception.setMessage( SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, nullptr, StdMessageParams, SvOi::Err_10028_LoadOfScintillaDllFailed );
-			return FALSE;
 		}
-
-		createScintillaControl();
+		else
+		{
+			createScintillaControl();
+		}
 
 		// Put the Down Arrow on the Button
 		m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
@@ -288,53 +289,72 @@ namespace Seidenader { namespace SVOGui
 
 	void SVFormulaEditorPageClass::insertIntoEditor( LPCTSTR tszValue )
 	{
-		m_EditWnd.SendMessage( SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>( tszValue ) );
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			m_EditWnd.SendMessage( SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>( tszValue ) );
+		}
 
 		enableUndoButton();
 	}
 
 	void SVFormulaEditorPageClass::backspaceInEditor( long Pos )
 	{
-		int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
-		m_EditWnd.SendMessage(SCI_GOTOPOS, nStart - Pos);
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
+			m_EditWnd.SendMessage(SCI_GOTOPOS, nStart - Pos);
+		}
+
 		enableUndoButton();
 	}
 
 	void SVFormulaEditorPageClass::advanceInEditor( long Pos )
 	{
-		int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
-		m_EditWnd.SendMessage(SCI_GOTOPOS, nStart + Pos);
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
+			m_EditWnd.SendMessage(SCI_GOTOPOS, nStart + Pos);
+		}
+
 		enableUndoButton();
 	}
 
 	void SVFormulaEditorPageClass::deleteInEditor( long Pos )
 	{
-		int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETSELECTIONSTART));
-		int nEnd =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETSELECTIONEND));
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			int nStart =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETSELECTIONSTART));
+			int nEnd =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETSELECTIONEND));
 
-		if (nStart == nEnd)
-		{  //add an one character selection
-			int length =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETLENGTH));
-			if (nEnd == length) // Backspace
-			{
-				m_EditWnd.SendMessage(SCI_SETSEL, nEnd-1, nEnd);
+			if (nStart == nEnd)
+			{  //add an one character selection
+				int length =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETLENGTH));
+				if (nEnd == length) // Backspace
+				{
+					m_EditWnd.SendMessage(SCI_SETSEL, nEnd-1, nEnd);
+				}
+				else // Delete a character
+				{
+					m_EditWnd.SendMessage(SCI_SETSEL, nEnd, nEnd+1);
+				}
 			}
-			else // Delete a character
-			{
-				m_EditWnd.SendMessage(SCI_SETSEL, nEnd, nEnd+1);
-			}
+
+			// Delete Selection
+			m_EditWnd.SendMessage( SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>( _T("") ) );
 		}
 
-		// Delete Selection
-		m_EditWnd.SendMessage( SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>( _T("") ) );
 		enableUndoButton();
 	}
 
 	CString SVFormulaEditorPageClass::getEquationText() const
 	{
-		CString equationText("");
-		equationText.GetBufferSetLength(SV_EQUATION_BUFFER_SIZE);
-		m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( equationText.GetBuffer() ) );
+		CString equationText;
+
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			equationText.GetBufferSetLength(SV_EQUATION_BUFFER_SIZE);
+			m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( equationText.GetBuffer() ) );
+		}
 		return equationText;
 	}
 
@@ -342,7 +362,10 @@ namespace Seidenader { namespace SVOGui
 	{
 		// Get text from EquationStruct and place into Editor
 		SVString equationText = m_FormulaController->GetEquationText();
-		m_EditWnd.SendMessage( SCI_SETTEXT, 0, reinterpret_cast<LPARAM>( equationText.ToString() ) );
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			m_EditWnd.SendMessage( SCI_SETTEXT, 0, reinterpret_cast<LPARAM>( equationText.ToString() ) );
+		}
 
 		bool ownerEnabled = false; 
 		bool equationEnabled = false; 
@@ -677,18 +700,22 @@ namespace Seidenader { namespace SVOGui
 
 	void SVFormulaEditorPageClass::OnEquationFieldChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 	{
-		int length =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETLENGTH));
-		if(SV_EQUATION_BUFFER_SIZE<=length)
-		{ //text too long, remove the chars they are too many
-			int numberOfDelete = length-SV_EQUATION_BUFFER_SIZE+1;
-			int pos = static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			int length =  static_cast<int>(m_EditWnd.SendMessage(SCI_GETLENGTH));
+			if(SV_EQUATION_BUFFER_SIZE<=length)
+			{ //text too long, remove the chars they are too many
+				int numberOfDelete = length-SV_EQUATION_BUFFER_SIZE+1;
+				int pos = static_cast<int>(m_EditWnd.SendMessage(SCI_GETCURRENTPOS));
 			
-			// Delete characters
-			m_EditWnd.SendMessage( SCI_DELETERANGE, pos-numberOfDelete, numberOfDelete );
+				// Delete characters
+				m_EditWnd.SendMessage( SCI_DELETERANGE, pos-numberOfDelete, numberOfDelete );
+			}
+			CheckBrace();
 		}
 
-		CheckBrace();
 		enableUndoButton();
+
 	}
 
 	BOOL SVFormulaEditorPageClass::OnKillActive()
@@ -719,14 +746,21 @@ namespace Seidenader { namespace SVOGui
 
 	void SVFormulaEditorPageClass::HandleValidateError( int posFailed )
 	{
-		m_EditWnd.SendMessage(SCI_SETSEL, posFailed+1, posFailed+1);
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			m_EditWnd.SendMessage(SCI_SETSEL, posFailed+1, posFailed+1);
+		}
 	}
 
 	void SVFormulaEditorPageClass::enableUndoButton()
 	{
 		CString equationText("");
-		equationText.GetBufferSetLength(SV_EQUATION_BUFFER_SIZE);
-		m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( equationText.GetBuffer() ) );
+
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			equationText.GetBufferSetLength(SV_EQUATION_BUFFER_SIZE);
+			m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( equationText.GetBuffer() ) );
+		}
 
 		if (equationText == m_FormulaController->GetEquationText().c_str() )
 		{
@@ -772,7 +806,10 @@ namespace Seidenader { namespace SVOGui
 		m_hexadecimalRadioButton.EnableWindow( state );
 		m_binaryRadioButton.EnableWindow( state );
 
-		m_EditWnd.EnableWindow( state );
+		if( nullptr != m_EditWnd.GetSafeHwnd() )
+		{
+			m_EditWnd.EnableWindow( state );
+		}
 
 		m_logicalOperatorBar.EnableWindow( state );
 		m_conditionalOperatorBar.EnableWindow( state );
@@ -786,6 +823,7 @@ namespace Seidenader { namespace SVOGui
 
 	void SVFormulaEditorPageClass::createScintillaControl()
 	{
+		//This is not called when the Scintilla DLL could not be loaded
 		m_EditWnd.Create(ScintillaControlName, "", WS_CHILD|WS_VISIBLE|WS_TABSTOP|WS_CLIPCHILDREN, CRect(327, 13, 665, 362), this, IDC_MATHCOND_EDITOR);
 
 		// Use Default as Default for all styles
