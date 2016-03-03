@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
 #include "SVTaskObjectInterfaceClass.h"
-#include "svhistogram.h"
+#include "SVMFCControls\SVHistogram.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
@@ -143,7 +143,7 @@ private:
 	long m_histState;
 
 public:
-	SVHistogram m_histogram;
+	SvMc::SVHistogram m_histogram;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

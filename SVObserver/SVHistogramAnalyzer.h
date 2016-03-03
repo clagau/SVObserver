@@ -14,7 +14,7 @@
 
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
-#include "SVHistogram.h"
+#include "SVMFCControls\SVHistogram.h"
 
 //class SVHistogramAnalyzerSetupClass;
 
@@ -90,7 +90,7 @@ private:
 	//void setHistogramOptions(SVHistogramAnalyzerSetupClass &) const;
 	//void getHistogramOptions(const SVHistogramAnalyzerSetupClass &);
 
-	SVHistogramBase m_histogram;
+	SvUl::SVHistogramBase m_histogram;
 	void AddResult(const std::pair<GUID, DWORD> &);
 	std::map<GUID, GUID> m_resultGuids;
 

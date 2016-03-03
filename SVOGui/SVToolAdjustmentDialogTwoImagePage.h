@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-#include "SVOGui\AvailableObjectListComboBox.h"
+#include "SVMFCControls\AvailableObjectListComboBox.h"
 
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
@@ -75,8 +75,8 @@ namespace Seidenader
 			CComboBox m_operatorCtrl;
 			SvOg::PictureDisplay m_secondImageCtrl;
 			SvOg::PictureDisplay m_firstImageCtrl;
-			SvOg::AvailableObjectListComboBox m_firstAvailableSourceImageListBoxCtl;
-			SvOg::AvailableObjectListComboBox m_secondAvailableSourceImageListBoxCtl;
+			SvMc::AvailableObjectListComboBox m_firstAvailableSourceImageListBoxCtl;
+			SvMc::AvailableObjectListComboBox m_secondAvailableSourceImageListBoxCtl;
 			//}}AFX_DATA
 
 		private:

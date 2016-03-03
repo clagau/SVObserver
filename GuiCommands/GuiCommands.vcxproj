@@ -38,6 +38,7 @@
     <ClInclude Include="GetMaskData.h" />
     <ClInclude Include="GetObjectName.h" />
     <ClInclude Include="GetObjectTypeInfo.h" />
+    <ClInclude Include="GetOutputRectangle.h" />
     <ClInclude Include="GetPPQObjectName.h" />
     <ClInclude Include="GetPPQSelectorList.h" />
     <ClInclude Include="GetReferenceImage.h" />
@@ -45,6 +46,7 @@
     <ClInclude Include="GetRingbufferIndexValue.h" />
     <ClInclude Include="GetTaskObjectInstanceID.h" />
     <ClInclude Include="GetSelectorList.h" />
+    <ClInclude Include="GetTaskObjects.h" />
     <ClInclude Include="ImportMask.h" />
     <ClInclude Include="ConstructAndInsertTaskObject.h" />
     <ClInclude Include="InspectionRunOnce.h" />

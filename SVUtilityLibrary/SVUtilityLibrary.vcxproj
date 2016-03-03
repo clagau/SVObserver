@@ -157,6 +157,7 @@
     <ClCompile Include="SVDottedName.cpp" />
     <ClCompile Include="SVDPointClass.cpp" />
     <ClCompile Include="SVGUID.cpp" />
+    <ClCompile Include="SVHistogramBase.cpp" />
     <ClCompile Include="SVMetrics.cpp" />
     <ClCompile Include="SVPoint.cpp" />
     <ClCompile Include="SVSafeArray.cpp" />
@@ -202,6 +203,8 @@
     <ClInclude Include="SVGUID.h" />
     <ClInclude Include="SVGuidList.h" />
     <ClInclude Include="SVHandleManager.h" />
+    <ClInclude Include="SVHistogramBase.h" />
+    <ClInclude Include="SVHistogramStats.h" />
     <ClInclude Include="SVImageCopyUtility.h" />
     <ClInclude Include="SVMetrics.h" />
     <ClInclude Include="SVNameVariantList.h" />
@@ -225,6 +228,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVHandleManager.inl" />
+    <None Include="SVHistogramBase.inl" />
     <None Include="SVSafeArray.inl" />
     <None Include="SVStringConversions.inl" />
   </ItemGroup>

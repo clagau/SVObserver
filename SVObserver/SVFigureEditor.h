@@ -9,9 +9,8 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:33:30  $
 //******************************************************************************
 
-#ifndef SVFIGUREEDITOR_H_
-#define SVFIGUREEDITOR_H_
 #pragma once
+#include <memory>
 
 
 class SVFigureEditor
@@ -76,8 +75,6 @@ protected:
 	COLORREF m_rgbInnerOutlineColor;
 	bool m_bUseInnerOutline;
 };
-
-#endif	//#ifndef SVFIGUREEDITOR_H_
 
 //******************************************************************************
 //* LOG HISTORY:

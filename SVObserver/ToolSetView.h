@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVToolSetListCtrl.h"
+#include "SVToolGrouping.h"
 #pragma endregion Includes
 
 #define ID_EDIT_LABEL_ENDS 40000
@@ -35,6 +36,7 @@ class ToolSetView : public CFormView
 public:
 	SVIPDoc* GetIPDoc() const;
 	BOOL GetParameters(SVObjectWriter& rWriter);
+	const SVToolGrouping& GetToolGroupings() const;
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 

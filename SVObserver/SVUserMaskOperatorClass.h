@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "ObjectInterfaces\IMask.h"
 #include "SVUnaryImageOperatorClass.h"
+#include "SVOMFCLibrary\SVGraphix.h"
 #include "ISVCancel.h"
 #pragma endregion Includes
 

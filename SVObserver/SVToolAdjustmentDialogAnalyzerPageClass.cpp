@@ -29,6 +29,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
+#include "GuiCommands/GetCreatableObjects.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -52,6 +53,9 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 , m_pParentDialog(pParent)
 , m_pTool(nullptr)
 , m_pCurrentAnalyzer(nullptr)
+, m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID)
+, m_additionalAnalyzerId(SVInvalidGUID)
 {
 	if( m_pParentDialog )
 	{
@@ -61,8 +65,6 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 		{
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVAnalyzerObjectType;
-
-			SVSendMessage( m_pTool, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<DWORD_PTR>(&availableAnalyzers), reinterpret_cast<DWORD_PTR>(&info) );
 
 			m_pCurrentAnalyzer = reinterpret_cast<SVAnalyzerClass *>(SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 		}
@@ -77,7 +79,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogAnalyzerPageClass)
-	DDX_Control(pDX, IDC_ANALYZER_COMBO, availableAnalyzerListBox);
+	DDX_Control(pDX, IDC_ANALYZER_COMBO, m_availableAnalyzerCombobox);
 	DDX_Control(pDX, IDC_DIALOGIMAGE, dialogImage);
 	//}}AFX_DATA_MAP
 }
@@ -135,18 +137,40 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 
 
 		// get index of Current Analyzer
-		int currentAnalyzerIndex = -1;
+		SVString analyzerSelection = "";
 		if (m_pCurrentAnalyzer)
 		{
-			currentAnalyzerIndex = availableAnalyzers.Find( m_pCurrentAnalyzer->GetClassID() );
+			analyzerSelection = m_pCurrentAnalyzer->GetObjectName();
 		}
-		oldIndex = availableAnalyzerListBox.init( &availableAnalyzers, currentAnalyzerIndex );
+
+		
+		typedef GuiCmd::GetCreatableObjects Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		SvUl::NameGuidList availableList;
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(SVAnalyzerObjectType, SVNotSetSubObjectType));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			availableList = commandPtr->AvailableObjects();
+		}
 
 		//This is to add the analyzer due to MIL License restrictions.
-		if ( currentAnalyzerIndex == -1 && m_pCurrentAnalyzer)
+		if ( m_pCurrentAnalyzer)
 		{
-			availableAnalyzerListBox.add(m_pCurrentAnalyzer->GetObjectName());
+			SvUl::NameGuidList::const_iterator iter = std::find_if(availableList.begin(), availableList.end(), [&](const SvUl::NameGuidPair& rVal)->bool 
+			{ 
+				return (!rVal.first.empty() && 0 == rVal.first.Compare(m_pCurrentAnalyzer->GetObjectName())); 
+			} );
+			if ( availableList.end() == iter )
+			{
+				availableList.push_back(SvUl::NameGuidPair(m_pCurrentAnalyzer->GetObjectName(), m_pCurrentAnalyzer->GetClassID()));
+				m_additionalAnalyzerId = m_pCurrentAnalyzer->GetClassID();
+			}
 		}
+
+		m_availableAnalyzerCombobox.Init(availableList, analyzerSelection, _T( "(No Analyzer Available)" ), _T( "(No Analyzer)" ) );
 
 		updateButtons();
 
@@ -215,13 +239,13 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 	UpdateData( TRUE ); // get data from dialog
 
-	int index = ( int ) availableAnalyzerListBox.GetItemData( availableAnalyzerListBox.GetCurSel() );
+	SVGUID classGUID = m_availableAnalyzerCombobox.getSelectedGUID();
 
 	// Check for valid selection
-	if( index != LB_ERR && index >= 0 && index < availableAnalyzers.GetSize() )
+	if( SVInvalidGUID != classGUID )
 	{
 		// Check if its the same Analyzer
-		if( m_pCurrentAnalyzer && m_pCurrentAnalyzer->GetClassID() != availableAnalyzers.GetAt( index ).ClassId )
+		if( m_pCurrentAnalyzer && m_pCurrentAnalyzer->GetClassID() != classGUID )
 		{
 			// if the Tool has an Analyzer - Close it and Delete it
 			// Why? because this dialog is currently only used for selection of a single analyzer
@@ -235,7 +259,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 		if( !m_pCurrentAnalyzer )
 		{
 			// and now Instantiate a new Object
-			SVObjectManagerClass::Instance().ConstructObject( availableAnalyzers.GetAt( index ).ClassId, m_pCurrentAnalyzer );
+			SVObjectManagerClass::Instance().ConstructObject( classGUID, m_pCurrentAnalyzer );
 
 			if( m_pCurrentAnalyzer )
 			{
@@ -276,7 +300,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			}
 		}
 	}
-	else if( index == LB_ERR ) // means No Analyzer
+	else // means No Analyzer
 	{
 		// if we had an Analyzer - delete it
 		DestroyAnalyzer();
@@ -312,10 +336,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 	if( m_pCurrentAnalyzer )
 	{
 		//This is to remove the analyzer due to MIL License restrictions.
-		int currentAnalyzerIndex = availableAnalyzers.Find( m_pCurrentAnalyzer->GetClassID() );
-		if ( currentAnalyzerIndex == -1 )
+		if ( SVInvalidGUID != m_additionalAnalyzerId && m_pCurrentAnalyzer->GetClassID() == m_additionalAnalyzerId )
 		{
-			availableAnalyzerListBox.remove(m_pCurrentAnalyzer->GetObjectName());
+			m_availableAnalyzerCombobox.remove(m_pCurrentAnalyzer->GetObjectName());
+			m_additionalAnalyzerId = SVInvalidGUID;
 		}
 
 		::SVSendMessage( m_pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), NULL );

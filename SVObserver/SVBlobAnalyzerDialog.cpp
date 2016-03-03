@@ -114,9 +114,10 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 		if( m_pCurrentAnalyzer )
 		{
 	//      List of not enabled.
-			m_lbAvailableFeatures.init( m_pCurrentAnalyzer, _T('0') );
+			initFeatureListBox(m_lbAvailableFeatures, m_pCurrentAnalyzer->getFeatureList(false));
+
 	//      List of enabled.
-			m_lbSelectedFeatures.init( m_pCurrentAnalyzer, _T('1') );
+			initFeatureListBox(m_lbSelectedFeatures, m_pCurrentAnalyzer->getFeatureList(true));
 
 	//      _tcscpy (msvszOriginalFeaturesEnabled, msvszOriginalFeaturesEnabled); 
 			m_pCurrentAnalyzer->msvSortAscending.GetValue(msvAscending);
@@ -333,10 +334,10 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonAdd()
 		m_pCurrentAnalyzer->EnableFeature ((SVBlobFeatureEnum) lAvailableIndex);
 
 //      List of not enabled.
-		m_lbAvailableFeatures.init( m_pCurrentAnalyzer, _T('0') );
+		initFeatureListBox(m_lbAvailableFeatures, m_pCurrentAnalyzer->getFeatureList(false));
 
 //      List of enabled.
-		m_lbSelectedFeatures.init( m_pCurrentAnalyzer, _T('1') );
+		initFeatureListBox(m_lbSelectedFeatures, m_pCurrentAnalyzer->getFeatureList(true));
 	}
 	EnableButtons();
 
@@ -354,10 +355,11 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 		m_pCurrentAnalyzer->msvszFeaturesEnabled [index] = _T('0');
 		m_pCurrentAnalyzer->DisableFeature ((SVBlobFeatureEnum) index);
 
-//      List of not enabled.
-		m_lbAvailableFeatures.init( m_pCurrentAnalyzer, _T('0') );
-//      List of enabled.
-		m_lbSelectedFeatures.init( m_pCurrentAnalyzer, _T('1') );
+		//      List of not enabled.
+		initFeatureListBox(m_lbAvailableFeatures, m_pCurrentAnalyzer->getFeatureList(false));
+
+		//      List of enabled.
+		initFeatureListBox(m_lbSelectedFeatures, m_pCurrentAnalyzer->getFeatureList(true));
 
 		// need to reset the sort index
 		long sortIndex;
@@ -623,6 +625,26 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties()
 			hr = m_pCurrentAnalyzer->msvValue[ eFeature ].SetDefaultValue( dlg.m_dDefaultValue, false );
 		}
 	}
+}
+
+void SVBlobAnalyzeFeatureDialogClass::initFeatureListBox(CListBox& listBox, const SvOi::NameValueList& list)
+{
+	listBox.ResetContent();
+
+	for (SvOi::NameValueList::const_iterator it = list.cbegin(); list.cend() != it; it++)
+	{
+		if (!it->first.empty())
+		{
+			listBox.SetItemData( listBox.AddString( it->first.c_str() ), static_cast<DWORD_PTR>(it->second) );
+		}
+	}
+
+	if (0 >= listBox.GetCount())
+	{
+		listBox.SetItemData( listBox.AddString( _T( "(No Feature)" ) ), LB_ERR );
+	}
+
+	listBox.SetCurSel( 0 );
 }
 
 //******************************************************************************

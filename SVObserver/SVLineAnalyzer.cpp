@@ -12,8 +12,6 @@
 #include "stdafx.h"
 #include "SVLineAnalyzer.h"
 
-#include "SVImageLibrary/SVDrawContext.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 
 #include "SVGageTool.h"

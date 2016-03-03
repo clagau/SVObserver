@@ -2887,6 +2887,12 @@ HRESULT SVImageClass::Save(const SVString& rFilename)
 	return hr;
 }
 
+CRect SVImageClass::GetOutputRectangle() const
+{
+	CRect rectTemp;
+	m_ImageInfo.GetOutputRectangle( rectTemp );
+	return rectTemp;
+}
 #pragma endregion virtual method (ISVImage)
 
 BOOL SVImageClass::OnValidate()

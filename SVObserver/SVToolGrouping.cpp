@@ -11,7 +11,6 @@
 #include <sstream>
 #include "SVToolGrouping.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVGlobal.h"
 

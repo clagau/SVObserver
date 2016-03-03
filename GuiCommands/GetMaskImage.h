@@ -15,7 +15,7 @@
 #include "ObjectInterfaces\IMask.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IObjectManager.h"
-#include "SVOGui\SVBitmap.h"
+#include "SVMFCControls\SVBitmap.h"
 #pragma endregion Includes
 
 namespace Seidenader

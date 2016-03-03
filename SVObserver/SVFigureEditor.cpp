@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVObserver.h"
+#include <vector>
 #include "SVFigureEditor.h"
 
 // default hot spot size

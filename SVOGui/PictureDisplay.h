@@ -18,7 +18,7 @@
 #include <vector>
 #include <map>
 #include "CDSVPictureDisplay.h"
-#include "SVOGui\SVBitmap.h"
+#include "SVMFCControls\SVBitmap.h"
 #include "SVPictureDisplay\DrawObject.h" // for ParamMap typedefs
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IMatroxImageData.h"

@@ -342,6 +342,29 @@ SVBlobAnalyzerClass::~SVBlobAnalyzerClass()
 	CloseObject ();
 }
 
+#pragma region IEnumerateValueObject
+SvOi::NameValueList SVBlobAnalyzerClass::getFeatureList(bool isSelected) const
+{
+	SvOi::NameValueList list;
+	for (int i = SV_AREA; i < SV_TOPOF_LIST; i++)
+	{	
+
+		if ( (msvszFeaturesEnabled[i] == '1' && isSelected) || (msvszFeaturesEnabled[i] == '0' && !isSelected))
+		{
+			//
+			// Skip the M_SUM_PIXEL blob feature if doing 'available' list.
+			//
+			if(i == SV_SUM_PIXEL && !isSelected)
+			{
+				continue;
+			}
+			list.push_back( SvOi::NameValuePair(msvValue [i].GetName(), i) );
+		}
+	}
+	return list;
+}
+#pragma endregion IEnumerateValueObject
+
 BOOL SVBlobAnalyzerClass::CloseObject ()
 {
     SVImageAnalyzerClass::CloseObject ();

@@ -154,6 +154,7 @@
     <ClInclude Include="DependencyList.h" />
     <ClInclude Include="EquationTestResult.h" />
     <ClInclude Include="ErrorNumbers.h" />
+    <ClInclude Include="IBlobAnalyzer.h" />
     <ClInclude Include="ICustom2Filter.h" />
     <ClInclude Include="IEnumerateValueObject.h" />
     <ClInclude Include="IEquation.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="NameValueList.h" />
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="RangeEnum.h" />
+    <ClInclude Include="SVGigeCameraStructInterface.h" />
     <ClInclude Include="SVImageEnums.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />
     <ClInclude Include="SVUserMessage.h" />

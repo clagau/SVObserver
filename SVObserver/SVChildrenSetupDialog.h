@@ -11,8 +11,6 @@
 
 #pragma once
 
-#include "SVTaskObjectListCtrl.h"
-
 class SVIPDoc;
 class SVTaskObjectClass;
 class SVClassInfoStructListClass;
@@ -73,7 +71,7 @@ protected:
 
 	//{{AFX_DATA(SVChildrenSetupDialogClass)
 	enum { IDD = IDD_CHILDREN_DIALOG };
-	SVTaskObjectListCtrlClass m_ChildrenListCtrl;
+	CListCtrl m_ChildrenListCtrl;
 	CListCtrl m_AvailableChildrenListCtrl;
 	//}}AFX_DATA
 };

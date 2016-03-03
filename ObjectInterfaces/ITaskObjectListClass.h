@@ -29,10 +29,9 @@ namespace Seidenader
 			virtual int GetSize() const = 0;
 
 			/**********
-			 The method gets the task object at a requested position.
-			 /param index <in> the index of the object. Must be between 0 and size-1.
+			 The method gets the name/Guid list of the task object of this taskObjectList.
 			***********/
-			virtual IObjectClass* GetInterfaceAt( int index ) const = 0;
+			virtual SvUl::NameGuidList GetTaskObjectList( ) const = 0;
 
 			/**********
 			 The method deletes one object from the this task object list object.

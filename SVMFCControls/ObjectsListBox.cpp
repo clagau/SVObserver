@@ -11,7 +11,7 @@
 
 namespace Seidenader
 {
-	namespace SVOGui
+	namespace SVMFCControls
 	{
 		BEGIN_MESSAGE_MAP(ObjectsListBox, CListBox)
 			//{{AFX_MSG_MAP(ObjectsListBox)

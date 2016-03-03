@@ -11,13 +11,10 @@
 
 #include "stdafx.h"
 #include "SVLineLinearMeasurementAnalyzer.h"
-#include "SVImageToLineProject.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVLine.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageClass.h"
 #include "SVTool.h"
 #include "SVGageTool.h"
 

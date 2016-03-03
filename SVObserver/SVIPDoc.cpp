@@ -482,13 +482,13 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 
 			if (S_OK == SVObjectManagerClass::Instance().UpdateObserver(GetInspectionID(), l_AddTool))
 			{
-				const SVGUID& rGuid = pTool->GetUniqueObjectID();
-				SetSelectedToolID(rGuid);
-
 				m_toolGroupings.AddTool(pTool->GetName(), static_cast<LPCTSTR>(info.m_selection));
 
 				// Refresh all views...
 				UpdateAllViews(nullptr);
+
+				const SVGUID& rGuid = pTool->GetUniqueObjectID();
+				SetSelectedToolID(rGuid);
 
 				SetModifiedFlag();
 
@@ -571,7 +571,7 @@ CView* SVIPDoc::getView() const
 	return retVal;
 }
 
-ToolSetView* SVIPDoc::GetToolSetView()
+ToolSetView* SVIPDoc::GetToolSetView() const
 {
 	ToolSetView* pView( nullptr );
 	POSITION pos( GetFirstViewPosition() );
@@ -1246,15 +1246,12 @@ void SVIPDoc::OnEditDelete()
 
 					pToolSetView->getListCtrl().SaveScrollPos();
 					pToolSetView->getListCtrl().Rebuild(); // do not remove as the item must be removed from the list before setting the new selection
+					SVGUID selectedToolID = SVGUID();
 					if (pTaskObject)
 					{
-						m_SelectedToolID = pTaskObject->GetUniqueObjectID();
+						selectedToolID = pTaskObject->GetUniqueObjectID();
 					}
-					else
-					{
-						m_SelectedToolID = SVGUID();
-					}
-					pToolSetView->SetSelectedTool(m_SelectedToolID);
+					pToolSetView->SetSelectedTool(selectedToolID);
 					pToolSetView->getListCtrl().RestoreScrollPos();
 					pToolSetView->getListCtrl().EnsureVisible(index, true);
 
@@ -1275,21 +1272,10 @@ void SVIPDoc::OnEditDelete()
 			// Select previous..
 			if (index >= 0 && index < pToolSetView->getListCtrl().GetItemCount())
 			{
-				DWORD_PTR itemData = pToolSetView->getListCtrl().GetItemData(index);
-				if (itemData)
-				{
-					SVTaskObjectClass* pTaskObject = reinterpret_cast<SVTaskObjectClass*>(itemData);
-					if (pTaskObject)
-					{
-						m_SelectedToolID = pTaskObject->GetUniqueObjectID();
-					}
-					else
-					{
-						m_SelectedToolID = SVGUID();
-					}
-					pToolSetView->SetSelectedTool(m_SelectedToolID);
-					pToolSetView->getListCtrl().SetItemState(index, LVIS_SELECTED, LVIS_SELECTED);
-				}
+				SVGUID selectedToolID = pToolSetView->getListCtrl().getToolGuid(index);
+
+				pToolSetView->SetSelectedTool(selectedToolID);
+				pToolSetView->getListCtrl().SetItemState(index, LVIS_SELECTED, LVIS_SELECTED);
 				pToolSetView->getListCtrl().EnsureVisible(index, true);
 			}
 			pToolSetView->getListCtrl().RestoreScrollPos();
@@ -1452,7 +1438,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 	// Check current user access...
 	if( TheSVObserverApp.OkToEdit() )
 	{
-		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
+		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetSelectedToolID() ) );
 		if( nullptr != l_pTool )
 		{
 			const SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().ObjectTypeInfo;
@@ -1477,7 +1463,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 			if( l_pTool->IsOkToEdit() )
 			{
 				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, GetInspectionID(), m_SelectedToolID, _T("Tool Adjustment"), nullptr, tab );
+				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, GetInspectionID(), GetSelectedToolID(), _T("Tool Adjustment"), nullptr, tab );
 				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
 				if ( IDOK == dlgResult )
 				{
@@ -2990,7 +2976,7 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 
 void SVIPDoc::OnEditAdjustToolPosition()
 {
-	SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
+	SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetSelectedToolID() ) );
 
 	if( l_pTool )
 	{
@@ -3026,17 +3012,13 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 		{
 			ToolListSelectionInfo ToolListInfo = pToolSetView->GetToolListSelectionInfo();
 
-			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
-			SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject(rGuid));
+			const SVGUID& rGuid = GetSelectedToolID();
 			//Tool list active and valid tool
 			if( !rGuid.empty() && -1 != ToolListInfo.m_listIndex )
 			{
 				SVToolClass* Tool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject(rGuid));
 				if (Tool)
 				{
-					//make sure m_SelectedToolID is updated to the correct tool when a right mouse click selects the tool
-					m_SelectedToolID = rGuid;
-
 					//check to see if the tool has extents
 					if ( Tool->DoesObjectHaveExtents() )
 					{
@@ -3051,11 +3033,12 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnShowToolRelations()
 {
-	if (GUID_NULL != m_SelectedToolID)
+	SVGUID selectedToolID = GetSelectedToolID();
+	if (GUID_NULL != selectedToolID)
 	{
 		SVGUID inspectionID = GetInspectionID();
 		
-		SvOg::SVShowDependentsDialog Dlg(inspectionID, m_SelectedToolID, false, SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show);
+		SvOg::SVShowDependentsDialog Dlg(inspectionID, selectedToolID, false, SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show);
 		Dlg.DoModal();
 	}
 }
@@ -3065,26 +3048,6 @@ void SVIPDoc::OnUpdateShowToolRelations(CCmdUI* pCmdUI)
 	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
 	// Check current user access...
 	Enabled = Enabled && TheSVObserverApp.OkToEdit();
-	if (Enabled)
-	{
-		ToolSetView* pToolSetView = GetToolSetView();
-		if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
-		{
-			ToolListSelectionInfo ToolListInfo = pToolSetView->GetToolListSelectionInfo();
-			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
-
-			//Tool list active and valid tool
-			if (!rGuid.empty() && -1 != ToolListInfo.m_listIndex)
-			{
-				SVToolClass* Tool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
-				if (Tool)
-				{
-					//make sure m_SelectedToolID is updated to the correct tool when a right mouse click selects the tool
-					m_SelectedToolID = rGuid;
-				}
-			}
-		}
-	}
 
 	pCmdUI->Enable( Enabled );
 }
@@ -3451,14 +3414,26 @@ bool SVIPDoc::IsRegressionTestRunning()
 	return m_bRegressionTestRunning;
 }
 
-const SVGUID& SVIPDoc::GetSelectedToolID() const
+SVGUID SVIPDoc::GetSelectedToolID() const
 {
-	return m_SelectedToolID;
+	ToolSetView* pView = GetToolSetView();
+	if (pView)
+	{
+		return pView->GetSelectedTool();
+	}
+	else
+	{
+		return SVGUID();
+	}	
 }
 
 void SVIPDoc::SetSelectedToolID( const SVGUID& p_rToolID )
 {
-	m_SelectedToolID = p_rToolID;
+	ToolSetView* pView = GetToolSetView();
+	if (pView)
+	{
+		pView->SetSelectedTool(p_rToolID);
+	}
 }
 
 bool SVIPDoc::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const

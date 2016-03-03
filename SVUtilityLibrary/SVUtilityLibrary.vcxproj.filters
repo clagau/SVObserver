@@ -60,6 +60,9 @@
     <ClCompile Include="SVStringLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVHistogramBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -158,6 +161,12 @@
     <ClInclude Include="NameGuidList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVHistogramBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVHistogramStats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVHandleManager.inl">
@@ -167,6 +176,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVStringConversions.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVHistogramBase.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

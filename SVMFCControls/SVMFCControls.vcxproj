@@ -204,9 +204,13 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AvailableObjectListComboBox.cpp" />
     <ClCompile Include="CLabel.cpp" />
     <ClCompile Include="NameSelectionTreeCtrl.cpp" />
+    <ClCompile Include="ObjectsListBox.cpp" />
+    <ClCompile Include="SVBitmap.cpp" />
     <ClCompile Include="SVDlgBitmap.cpp" />
+    <ClCompile Include="SVHistogram.cpp" />
     <ClCompile Include="SVOSelectItemListDlg.cpp" />
     <ClCompile Include="SVSlideBar.cpp" />
     <ClCompile Include="SVSliderCtrl.cpp" />
@@ -259,12 +263,17 @@
     <ClCompile Include="VisualFx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AvailableObjectListComboBox.h" />
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="CSVOCRFontTraining.h" />
     <ClInclude Include="CSVOCRGrayFontTrain.h" />
     <ClInclude Include="NameSelectionTreeCtrl.h" />
+    <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVBitmap.h" />
     <ClInclude Include="SVDlgBitmap.H" />
+    <ClInclude Include="SVHistogram.h" />
+    <ClInclude Include="SVHistogramLabels.h" />
     <ClInclude Include="SVOSelectItemListDlg.h" />
     <ClInclude Include="SVSlideBar.h" />
     <ClInclude Include="SVSliderCtrl.h" />
@@ -290,6 +299,9 @@
     <ClInclude Include="SVUpDownButton.h" />
     <ClInclude Include="SVWindowBar.h" />
     <ClInclude Include="VisualFx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SVHistogram.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

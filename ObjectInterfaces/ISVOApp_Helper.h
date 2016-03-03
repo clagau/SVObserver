@@ -20,6 +20,12 @@ namespace Seidenader
 		/// \returns bool
 		//************************************
 		bool isUnrestrictedFileAccess();
+
+		//************************************
+		/// Return if the application is ready and valid for editing.
+		/// \returns bool
+		//************************************
+		bool isOkToEdit();
 	}
 }
 

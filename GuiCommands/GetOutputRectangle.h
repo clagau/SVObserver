@@ -1,9 +1,9 @@
 //*****************************************************************************
-// \copyright COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
+// \copyright COPYRIGHT (c) 2016 by Seidenader Maschinenbau GmbH
 // All Rights Reserved
 //*****************************************************************************
 
-// This is the Command for getting the Image as an IPictureDisp or HBitmap.
+// This is the Command for getting the output rectangle of an image.
 //******************************************************************************
 #pragma once
 
@@ -14,16 +14,15 @@
 #include <Guiddef.h>
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IObjectManager.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace GuiCommand
 	{
-		struct GetImage: public boost::noncopyable
+		struct GetOutputRectangle: public boost::noncopyable
 		{
-			GetImage(const GUID& rObjectID) : m_InstanceID(rObjectID), m_hBitmap(nullptr) {}
+			GetOutputRectangle(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -35,30 +34,7 @@ namespace Seidenader
 				SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(m_InstanceID));
 				if (pImage)
 				{
-					SvOi::MatroxImageSmartHandlePtr data = pImage->getImageData();
-					SvOi::IMatroxImageData* pImageData = data.get();
-					if (nullptr != pImageData && !pImageData->empty())
-					{
-						m_hBitmap = pImageData->GetHBitmap();
-						if (m_hBitmap)
-						{
-							//convert the hbitmap to an IPictureDisp for the activeX-control.
-							CPictureHolder pic;
-							BOOL bRet = pic.CreateFromBitmap(m_hBitmap);
-							if (bRet)
-							{
-								m_picture = pic.GetPictureDispatch();
-							}
-							else
-							{
-								hr = E_HANDLE;
-							}
-						}
-						else
-						{
-							hr = E_HANDLE;
-						}
-					}
+					m_rect = pImage->GetOutputRectangle();
 				}
 				else
 				{
@@ -67,12 +43,10 @@ namespace Seidenader
 				return hr;
 			}
 			bool empty() const { return false; }
-			IPictureDisp* Image() const { return m_picture; }
-			HBITMAP ImageInHBitmap() const { return m_hBitmap; }
+			const CRect& getRectangle() const { return m_rect; }
 
 		private:
-			HBITMAP m_hBitmap;
-			CComPtr<IPictureDisp> m_picture;
+			CRect m_rect;
 			GUID m_InstanceID;
 		};
 	}

@@ -18,7 +18,7 @@
 
 
 #include "SVTaskObjectInterfaceClass.h"
-#include "svhistogram.h"
+#include "SVMFCControls\SVHistogram.h"
 #include "afxwin.h"
 #include "afxcmn.h"
 
@@ -28,7 +28,7 @@ class SVSquare: public CStatic
 {
 	DECLARE_DYNAMIC(SVSquare)
 public:
-	SVSquare():CStatic(), m_color(color::Aqua)
+	SVSquare():CStatic(), m_color(SvMc::color::Aqua)
 	{
 		RegisterWindowClass();
 	}
@@ -71,7 +71,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	SVHistogram m_histogram;
+	SvMc::SVHistogram m_histogram;
 
 	//int m_highClipEdit;
 	//int m_lowClipEdit;
@@ -125,7 +125,7 @@ public:
 
 	//BOOL UpdateData(BOOL bSaveAndValidate = TRUE);
 
-	bool setHistogram(const SVHistogramBase &);
+	bool setHistogram(const SvUl::SVHistogramBase &);
 	static const LPCTSTR c_zerosz;
 	static const LPCTSTR c_255sz;
 	static const int c_zero = 0;

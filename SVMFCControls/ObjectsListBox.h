@@ -10,7 +10,7 @@
 
 namespace Seidenader
 {
-	namespace SVOGui
+	namespace SVMFCControls
 	{
 		class ObjectsListBox : public CListBox
 		{
@@ -44,5 +44,5 @@ namespace Seidenader
 	}  //end namespace SVOGUI
 }  //end namespace Seidenader
 
-namespace SvOg = Seidenader::SVOGui;
+namespace SvMc = Seidenader::SVMFCControls;
 

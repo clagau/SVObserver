@@ -125,9 +125,6 @@
     <ClCompile Include="SVBlobAnalyzerDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVBlobAnalyzerFeatureListBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVBlobAnalyzerResultDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -231,9 +228,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVDisplayObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDlgImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVDlgImageEditor.cpp">
@@ -347,16 +341,10 @@
     <ClCompile Include="SVHardwareManifest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVHistogram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVHistogramAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVHistogramAnalyzerSetup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVHistogramBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVImageArchive.cpp">
@@ -1004,9 +992,6 @@
     <ClCompile Include="SVTaskObjectList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTaskObjectListCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTaskObjectValueInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1203,12 +1188,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVGigeCameraROIDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVGigeCameraListCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVGigeCameraStructInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SV1394CameraManager.cpp">
@@ -1463,9 +1442,6 @@
     <ClCompile Include="MessageNotification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAvailableAnalyzerListComboBoxClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ExtrasEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1587,9 +1563,6 @@
     <ClInclude Include="SVBlobAnalyzerDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVBlobAnalyzerFeatureListBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVBlobAnalyzerResultDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1696,9 +1669,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDisplayObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDlgImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDlgImageEditor.h">
@@ -1818,22 +1788,10 @@
     <ClInclude Include="SVHardwareManifest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVHistogram.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVHistogramAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVHistogramAnalyzerSetup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVHistogramBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVHistogramLabels.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVHistogramStats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVImageArchive.h">
@@ -2532,9 +2490,6 @@
     <ClInclude Include="SVTaskObjectList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTaskObjectListCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTaskObjectValueInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2758,12 +2713,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraROIDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGigeCameraStructInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGigeCameraListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVConfigXMLPrint.h">
@@ -3033,9 +2982,6 @@
     <ClInclude Include="ArchiveMethodEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVAvailableAnalyzerListComboBoxClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MessageNotification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3051,12 +2997,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDLLToolLoadLibraryClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVHistogram.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVHistogramBase.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVInputObjectList.inl">

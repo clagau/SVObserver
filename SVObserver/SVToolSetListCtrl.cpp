@@ -13,12 +13,12 @@
 #include "stdafx.h"
 #include "SVToolSetListCtrl.h"
 #include "SVToolGrouping.h"
-#include "SVTool.h"
 #include "ToolSetView.h"
-#include "SVObserver.h"
-#include "SVIPDoc.h"
-#include "SVSVIMStateClass.h"
+#include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "TextDefinesSvO.h"
+#include "GuiCommands\IsValid.h"
+#include "GuiCommands\GetTaskObjects.h"
+#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -39,7 +39,8 @@ SVToolSetListCtrl::SVToolSetListCtrl()
 , m_iTopIndex(0)
 , m_expandState(-1)
 , m_collapseState(-1)
-, m_pToolSet(nullptr)
+, m_ToolSetId(SVInvalidGUID)
+, m_InspectionId(SVInvalidGUID)
 {
 }
 
@@ -55,9 +56,10 @@ void SVToolSetListCtrl::SetSingleSelect()
 	SetWindowLong(m_hWnd, GWL_STYLE, style);
 }
 
-void SVToolSetListCtrl::SetTaskObjectList(SVTaskObjectListClass* pTaskObjectList)
+void SVToolSetListCtrl::setObjectIds(const SVGUID& toolsetId, const SVGUID& inspectionId)
 {
-	m_pToolSet = pTaskObjectList;
+	m_ToolSetId = toolsetId;
+	m_InspectionId = inspectionId;
 	int cnt = 0;
 	// Get the Header Control
 	CHeaderCtrl* pHeaderCtrl = reinterpret_cast<CHeaderCtrl*>(GetDlgItem(0));
@@ -72,7 +74,7 @@ void SVToolSetListCtrl::SetTaskObjectList(SVTaskObjectListClass* pTaskObjectList
 	{
 		DeleteColumn(0);
 	}
-	InsertColumn(0, m_pToolSet->GetName(), LVCFMT_LEFT, -1, -1);
+	InsertColumn(0, nullptr, LVCFMT_LEFT, -1, -1);
 
 	// Set the column Width
 	CRect rect;
@@ -92,73 +94,75 @@ const ToolSetView* SVToolSetListCtrl::GetView() const
 	return dynamic_cast< ToolSetView* >( GetParent() );
 }
 
-static SVToolClass* FindTool(const SVTaskObjectListClass* pToolSet, const CString& name)
-{
-	SVToolClass* pTool;
-	for (int i = 0; i < pToolSet->GetSize(); i++)
-	{
-		pTool = dynamic_cast<SVToolClass *>(pToolSet->GetAt(i));
-		if (pTool && pTool->GetName() == name)
-		{
-			return pTool;
-		}
-	}
-	return nullptr;
-}
-
 void SVToolSetListCtrl::Rebuild()
 {
 	ToolSetView* pView = GetView();
 
 	if (pView)
 	{
-		SVIPDoc* pDoc = pView->GetIPDoc();
-		if (pDoc)
+		const SVToolGrouping& groupings = pView->GetToolGroupings();
+		if (nullptr == m_ImageList.GetSafeHandle())
 		{
-			const SVToolGrouping& groupings = pDoc->GetToolGroupings();
-			if (nullptr == m_ImageList.GetSafeHandle())
-			{
-				CreateImageLists();
-			}
+			CreateImageLists();
+		}
 
-			DeleteAllItems();
+		DeleteAllItems();
 
-			int itemNo = 0;
-			bool bCollapsed = false;
-			int indent = 0;
-			for (SVToolGrouping::const_iterator it = groupings.begin(); it != groupings.end();++it)
+		typedef GuiCmd::GetTaskObjects Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		CommandPtr commandPtr = new Command(m_ToolSetId);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			m_taskList = commandPtr->TaskObjects();
+		}
+
+		int itemNo = 0;
+		bool bCollapsed = false;
+		int indent = 0;
+		for (SVToolGrouping::const_iterator it = groupings.begin(); it != groupings.end();++it)
+		{
+			if (it->second.m_type == ToolGroupData::StartOfGroup)
 			{
-				if (it->second.m_type == ToolGroupData::StartOfGroup)
-				{
-					bCollapsed = it->second.m_bCollapsed;
-					itemNo = InsertStartGroup(itemNo, it->first.c_str(), bCollapsed);
-					indent = 1;
-				}
-				else if (it->second.m_type == ToolGroupData::EndOfGroup)
-				{
-					itemNo = InsertEndGroup(itemNo, it->first.c_str(), bCollapsed);
-					bCollapsed = false;
-					indent = 0;
-				}
-				else
-				{
-					SVToolClass* pTool = FindTool(m_pToolSet, it->first.c_str());
-					if (pTool)
-					{
-						itemNo = InsertTool(itemNo, pTool, bCollapsed, indent);
-					}
-				}
+				bCollapsed = it->second.m_bCollapsed;
+				itemNo = InsertStartGroup(itemNo, it->first.c_str(), bCollapsed);
+				indent = 1;
 			}
-			if (!GetItemCount())
+			else if (it->second.m_type == ToolGroupData::EndOfGroup)
 			{
-				InsertEmptyString(itemNo);
+				itemNo = InsertEndGroup(itemNo, it->first.c_str(), bCollapsed);
+				bCollapsed = false;
+				indent = 0;
 			}
 			else
 			{
-				AddEndDelimiter();
+				int index = -1;
+				for (int i=0; i < m_taskList.size(); i++)
+				{
+					if (!m_taskList[i].first.empty() && 0 == m_taskList[i].first.Compare(it->first.c_str()))
+					{
+						index = i;
+						break;
+					}
+				}
+
+				if (-1 < index)
+				{
+					itemNo = InsertTool(itemNo, index, bCollapsed, indent);
+				}
 			}
-			RebuildImages();
 		}
+		if (!GetItemCount())
+		{
+			InsertEmptyString(itemNo);
+		}
+		else
+		{
+			AddEndDelimiter();
+		}
+		RebuildImages();
 	}
 }
 
@@ -173,7 +177,7 @@ int SVToolSetListCtrl::InsertStartGroup(int itemNo, const CString& startName, bo
 	item.iSubItem = 0;
 	item.iImage = img;
 	item.iIndent = 0;
-	item.lParam = 0;
+	item.lParam = -1;  //no Tool entry
 	index = InsertItem(&item);
 	SetItemText(index, 0, startName);
 
@@ -193,7 +197,7 @@ int SVToolSetListCtrl::InsertEndGroup(int itemNo, const CString& endName, bool b
 		item.iItem = index;
 		item.iSubItem = 0;
 		item.iIndent = 1;
-		item.lParam = 0;
+		item.lParam = -1; //no Tool entry
 		item.iImage = m_iNone;
 		index = InsertItem(&item);
 		SetItemText(index, 0, endName);
@@ -203,13 +207,15 @@ int SVToolSetListCtrl::InsertEndGroup(int itemNo, const CString& endName, bool b
 	return index;
 }
 
-int SVToolSetListCtrl::InsertTool(int itemNo, SVToolClass* pTool, bool bCollapsed, int indent)
+int SVToolSetListCtrl::InsertTool(int itemNo, int listIndex, bool bCollapsed, int indent)
 {
 	int index = itemNo;
-	if (pTool && !bCollapsed)
+	if (!bCollapsed)
 	{
 		int img = m_iNone;
-		if (!pTool->IsValid())
+		bool bValid = isToolValid(m_taskList[listIndex].second); 
+
+		if (!bValid)
 		{
 			img = m_iInvalid;
 		}
@@ -220,10 +226,10 @@ int SVToolSetListCtrl::InsertTool(int itemNo, SVToolClass* pTool, bool bCollapse
 		item.iSubItem = 0;
 		item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
 		item.iIndent = indent;
-		item.lParam = reinterpret_cast<DWORD_PTR>(pTool);
+		item.lParam = listIndex; //Tool, index in the m_taskList.
 		item.iImage = img;
 		index = InsertItem(&item);
-		SetItemText(index, 0, pTool->GetName());
+		SetItemText(index, 0, m_taskList[listIndex].first.c_str());
 		index++;
 	}
 	return index;
@@ -238,7 +244,7 @@ void SVToolSetListCtrl::AddEndDelimiter()
 	item.iItem = itemNo;
 	item.iSubItem = 0;
 	item.iIndent = 0;
-	item.lParam = 0;
+	item.lParam = -1; //no Tool entry
 	item.iImage = m_iNone;
 
 	int index = InsertItem(&item);
@@ -256,7 +262,7 @@ void SVToolSetListCtrl::InsertEmptyString(int itemNo)
 	item.iSubItem = 0;
 	item.iImage = m_iNone;
 	item.iIndent = 0;
-	item.lParam = 0;
+	item.lParam = -1; //no Tool entry
 	int index = InsertItem(&item);
 	SetItemText(index, 0, strEmpty);
 }
@@ -279,13 +285,9 @@ bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
 	const ToolSetView* pView = GetView();
 	if (pView)
 	{
-		SVIPDoc* pDoc = pView->GetIPDoc();
-		if (pDoc)
-		{
-			CString name = GetItemText(index, 0);
-			const SVToolGrouping& groups = pDoc->GetToolGroupings();
-			bRetVal = groups.IsStartTag(name.GetString(), bState);
-		}
+		CString name = GetItemText(index, 0);
+		const SVToolGrouping& groups = pView->GetToolGroupings();
+		bRetVal = groups.IsStartTag(name.GetString(), bState);
 	}
 	return bRetVal;
 }
@@ -304,28 +306,17 @@ void SVToolSetListCtrl::RebuildImages()
 	item.mask = LVIF_IMAGE;
 	for (int i = 0;i < l_iCount; i++)
 	{
-		SVToolClass* pTool = nullptr;
 		int img = m_iNone;
 		item.iItem = i;	
-		DWORD_PTR userData = GetItemData(i);
+		SVGUID toolId = getToolGuid(i);
 
-		if (userData)
+		if (SVInvalidGUID != toolId)
 		{
-			try
+			bool bValid = isToolValid(toolId);
+			
+			if (!bValid)
 			{
-				pTool = dynamic_cast<SVToolClass *>(reinterpret_cast<SVTaskObjectListClass *>(userData));
-			}
-			catch ( ... )
-			{
-				pTool = nullptr;
-			}
-	
-			if (nullptr != pTool)
-			{
-				if (!pTool->IsValid())
-				{
-					img  = m_iInvalid;
-				}
+				img  = m_iInvalid;
 			}
 		}
 		else
@@ -401,25 +392,19 @@ void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 		}
 	}
+
 	if (l_bUpdate)
 	{
 		ToolSetView* l_pParent = GetView();
 		if (l_pParent)
 		{
-			SVIPDoc* pCurrentDocument = dynamic_cast<SVIPDoc*>(l_pParent->GetDocument());
-			if (pCurrentDocument)
+			SetItemState(l_iSelected, 0, LVIS_SELECTED); // un-select
+			SetItemState(l_iNext, LVIS_SELECTED, LVIS_SELECTED); // select
+			EnsureVisible(l_iNext, false);
+
+			if ( SvOi::isOkToEdit() )
 			{
-				SetItemState(l_iSelected, 0, LVIS_SELECTED); // un-select
-				SetItemState(l_iNext, LVIS_SELECTED, LVIS_SELECTED); // select
-				EnsureVisible(l_iNext, false);
-
-				const SVGUID& rGuid = GetSelectedTool();
-				pCurrentDocument->SetSelectedToolID(rGuid);
-
-				if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && TheSVObserverApp.OkToEdit())
-				{
-					l_pParent->PostMessage(WM_COMMAND, ID_RUN_ONCE);
-				}
+				l_pParent->PostMessage(WM_COMMAND, ID_RUN_ONCE);
 			}
 		}
 	}
@@ -442,11 +427,10 @@ void SVToolSetListCtrl::RestoreScrollPos()
 	}
 }
 
-SVGUID SVToolSetListCtrl::GetSelectedTool() const
+SVGUID SVToolSetListCtrl::getToolGuid(int index) const
 {
-	SVGUID guid;
-	int index = GetNextItem(-1, LVNI_SELECTED);
-	if (index != -1)
+	SVGUID guid = SVInvalidGUID;
+	if (-1 < index )
 	{
 		LVITEM item;
 		memset(&item, '\0', sizeof(LVITEM));
@@ -455,15 +439,23 @@ SVGUID SVToolSetListCtrl::GetSelectedTool() const
 
 		if (GetItem(&item))
 		{
-			if (item.lParam)
+			int listIndex = static_cast<int>(item.lParam); //index of the m_taskList, else -1
+			if (-1 < listIndex && m_taskList.size() > listIndex)
 			{
-				SVObjectClass* pObject = reinterpret_cast<SVObjectClass *>(item.lParam);
-				if (pObject)
-				{
-					guid = pObject->GetUniqueObjectID();
-				}
+				guid = m_taskList[listIndex].second;
 			}
 		}
+	}
+	return guid;
+}
+
+SVGUID SVToolSetListCtrl::GetSelectedTool() const
+{
+	SVGUID guid = SVInvalidGUID;
+	int index = GetNextItem(-1, LVNI_SELECTED);
+	
+	{
+		guid = getToolGuid(index);
 	}
 	return guid;
 }
@@ -494,11 +486,10 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 
 		if (GetItem(&item))
 		{
-			if (item.lParam)
+			int index = static_cast<int>(item.lParam); //index of the m_taskList, else -1
+			if ( -1 < index && m_taskList.size() > index )
 			{
-				SVTaskObjectClass* pObject = reinterpret_cast<SVTaskObjectClass*>(item.lParam);
-
-				if (!rGuid.empty() && nullptr != pObject && rGuid == pObject->GetUniqueObjectID())
+				if (!rGuid.empty() && rGuid == m_taskList[index].second)
 				{
 					SetItemState(i, LVIS_SELECTED, LVIS_SELECTED);
 				}
@@ -514,7 +505,6 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 
 ToolListSelectionInfo SVToolSetListCtrl::GetToolListSelectionInfo() const
 {
-	int toolListIndex = m_pToolSet->GetSize();
 	CString itemText; 
 	int listIndex = GetNextItem(-1, LVNI_SELECTED);
 	if (-1 != listIndex)
@@ -632,7 +622,7 @@ void SVToolSetListCtrl::CollapseItem(int item)
 	GetItem(&lvItem);
 	CString name = GetItemText(item, 0);
 	// Send to View...
-	ToolSetView* pView = dynamic_cast< ToolSetView* >( GetParent() );
+	ToolSetView* pView = GetView();
 	if (pView)
 	{
 		pView->HandleExpandCollapse(name, true);
@@ -649,11 +639,26 @@ void SVToolSetListCtrl::ExpandItem(int item)
 	GetItem(&lvItem);
 	CString name = GetItemText(item, 0);
 	// Send to View...
-	ToolSetView* pView = dynamic_cast< ToolSetView* >( GetParent() );
+	ToolSetView* pView = GetView();
 	if (pView)
 	{
 		pView->HandleExpandCollapse(name, false);
 	}
+}
+
+bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
+{
+	bool isToolValid = false;
+	typedef GuiCmd::IsValid Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+	CommandPtr commandPtr = new Command(tool);
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		isToolValid = commandPtr->isValid();
+	}
+	return isToolValid;
 }
 
 //******************************************************************************

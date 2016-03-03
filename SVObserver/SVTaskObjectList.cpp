@@ -213,6 +213,20 @@ int SVTaskObjectListClass::GetSize() const
 	return static_cast< int >( m_aTaskObjects.GetSize() );
 }
 
+SvUl::NameGuidList SVTaskObjectListClass::GetTaskObjectList( ) const
+{
+	SvUl::NameGuidList list;
+	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
+	{
+		SVTaskObjectClass *pObject = m_aTaskObjects.GetAt(i);
+		if (pObject)
+		{
+			list.push_back(SvUl::NameGuidPair(pObject->GetName(), pObject->GetUniqueObjectID()));
+		}
+	}
+	return list;
+}
+
 void SVTaskObjectListClass::InsertAt(int index, SvOi::ITaskObject& rObject, int count)
 {
 	SVTaskObjectClass *pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);

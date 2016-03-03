@@ -16,7 +16,7 @@
 #include "SVMFCControls\SVMaskEditor.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
-#include "SVOGui\AvailableObjectListComboBox.h"
+#include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVOGui\ImageController.h"
 #include "SVOGui\BoundValue.h"
 #include "SVOGui\ValuesAccessor.h"
@@ -80,7 +80,7 @@ protected:
 	CEdit m_ebFillColor;
 	CComboBox m_cbFillOptions;
 	CButton	m_btnFillColorMore;
-	SvOg::AvailableObjectListComboBox m_cbAvailableSourceImageList;
+	SvMc::AvailableObjectListComboBox m_cbAvailableSourceImageList;
 	CComboBox m_cbMaskOperator;
 	SvOg::PictureDisplay m_dialogImage;
 	BOOL m_bActivateMask;

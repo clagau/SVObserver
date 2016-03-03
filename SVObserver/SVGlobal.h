@@ -20,7 +20,6 @@ typedef std::map<int, StrStrPair > IntStrPairMap;
 typedef std::vector<StrStrPair> StringPairVect;
 
 class SVImageClass;
-class SVImageInfoClass;
 class SVObserverApp;
 class SVDataManager;
 

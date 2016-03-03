@@ -17,7 +17,7 @@
 #include "SVOGui\ValuesAccessor.h"
 #include "SVOGui\GuiController.h"
 #include "SVOGui\AuxiliaryExtentsController.h"
-#include "SVOGui\AvailableObjectListComboBox.h"
+#include "SVMFCControls\AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -59,7 +59,7 @@ namespace Seidenader
 		public:
 			//{{AFX_DATA(SVToolAdjustmentDialogGeneralPageClass)
 			enum { IDD = IDD_TA_GENERAL_DIALOG };
-			SvOg::AvailableObjectListComboBox m_AvailableSourceImageCombo;
+			SvMc::AvailableObjectListComboBox m_AvailableSourceImageCombo;
 			CComboBox m_drawToolCombo;
 			BOOL m_bUpdateAuxiliaryExtents;
 			//}}AFX_DATA

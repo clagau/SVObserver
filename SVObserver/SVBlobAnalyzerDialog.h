@@ -12,7 +12,6 @@
 #ifndef __SVBLOBANALYZERDIALOG__INCLUDED
 #define __SVBLOBANALYZERDIALOG__INCLUDED
 
-#include "SVBlobAnalyzerFeatureListBox.h"
 #include "SVBlobAnalyzer.h"
 
 #include "SVTaskObjectInterfaceClass.h"
@@ -64,6 +63,9 @@ public:
 
 	void EnableButtons();
 
+private:
+	void initFeatureListBox(CListBox& listBox, const SvOi::NameValueList& list);
+
 	//{{AFX_VIRTUAL(SVBlobAnalyzeFeatureDialogClass)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
@@ -76,8 +78,8 @@ public:
 	CButton	m_chkFillBlob;
 	CButton	m_btnFillBlobs;
 	CComboBox m_cbBlobColor;
-	SVBlobAnalyzeFeatureListBoxClass	m_lbSelectedFeatures;
-	SVBlobAnalyzeFeatureListBoxClass	m_lbAvailableFeatures;
+	CListBox	m_lbSelectedFeatures;
+	CListBox	m_lbAvailableFeatures;
 	CString	msvSortFeatureEdt;
 	BOOL	msvAscending;
 	BOOL	m_bExclude;

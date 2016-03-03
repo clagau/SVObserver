@@ -9,10 +9,8 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:14:22  $
 //******************************************************************************
 
-#ifndef SVDISPLAYIMAGESELECT_H
-#define SVDISPLAYIMAGESELECT_H
-
-#include "SVImageLibrary/SVImageInfoClass.h"
+#pragma once
+#include "SVImageClass.h"
 
 class SVIPDoc;
 
@@ -45,11 +43,6 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

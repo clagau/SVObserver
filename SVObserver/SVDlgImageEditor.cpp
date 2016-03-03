@@ -20,7 +20,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-BEGIN_MESSAGE_MAP(SVDlgImageEditor, SVDlgImageClass)
+BEGIN_MESSAGE_MAP(SVDlgImageEditor, SvOg::SVDlgImageClass)
 	//{{AFX_MSG_MAP(SVDlgImageEditor)
 	ON_WM_MOUSEMOVE()
 	ON_WM_SETCURSOR()
@@ -65,8 +65,7 @@ CPoint SVDlgImageEditor::TranslateClientCoordinatesToImageCoordinates(CPoint poi
 		sizeFigure =  m_pFigureEditor->GetSize();
 	else
 	{
-		CRect rect;
-		mSourceImageInfo.GetOutputRectangle(rect);
+		CRect rect = GetOutputRectFromImage();
 		sizeFigure.cx = rect.Width();
 		sizeFigure.cy = rect.Height();
 	}
@@ -129,7 +128,7 @@ void SVDlgImageEditor::OnMouseMove(UINT nFlags, CPoint point)
 	}// end if (m_hWnd)
 
 
-	SVDlgImageClass::OnMouseMove(nFlags, point);
+	SvOg::SVDlgImageClass::OnMouseMove(nFlags, point);
 
 	//CRect rectClient;
 	//GetClientRect(&rectClient);
@@ -162,7 +161,7 @@ BOOL SVDlgImageEditor::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void SVDlgImageEditor::OnKillFocus(CWnd* pNewWnd) 
 {
-	SVDlgImageClass::OnKillFocus(pNewWnd);
+	SvOg::SVDlgImageClass::OnKillFocus(pNewWnd);
 
 	if ( m_pFigureEditor )
 		m_pFigureEditor->OnLButtonUp( 0, CPoint(0,0) );
@@ -180,7 +179,7 @@ void SVDlgImageEditor::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		SVDlgImageClass::OnLButtonDown(nFlags, point);
+		SvOg::SVDlgImageClass::OnLButtonDown(nFlags, point);
 	}
 }
 
@@ -197,7 +196,7 @@ void SVDlgImageEditor::OnLButtonUp(UINT nFlags, CPoint point)
 		m_pFigureEditor->OnLButtonUp( nFlags, ptImage );
 	}
 	
-	SVDlgImageClass::OnLButtonUp(nFlags, point);
+	SvOg::SVDlgImageClass::OnLButtonUp(nFlags, point);
 }
 
 LPCTSTR SVDlgImageEditor::GetPickCursor( UINT nHitTest )

@@ -13,8 +13,6 @@
 #include "SVLineMaximumObjectAnalyzer.h"
 #include "SVInspectionProcess.h"
 #include "SVLine.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageClass.h"
 #include "SVTool.h"
 
 SV_IMPLEMENT_CLASS( SVMaximumObjectLineAnalyzerClass, SVMaximumObjectLineAnalyzerClassGuid );

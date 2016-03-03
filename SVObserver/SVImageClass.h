@@ -142,6 +142,7 @@ public:
 	virtual long getBands() const override;
 	virtual long getPixelDepth() const override;
 	virtual HRESULT Save(const SVString& rFilename) override; 
+	virtual CRect GetOutputRectangle() const override;
 #pragma region virtual method (ISVImage)
 
 protected:

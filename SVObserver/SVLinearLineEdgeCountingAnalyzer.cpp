@@ -14,9 +14,7 @@
 #include "SVMeasureAnalyzerAdjustment.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVLinearEdgeAProcessingClass.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVGlobal.h"
-#include "SVImageClass.h"
 #include "SVTool.h"
 
 

@@ -434,9 +434,7 @@ echo %time%
     <ClCompile Include="SVFailStatusStream.cpp" />
     <ClCompile Include="SVFailStatusStreamManager.cpp" />
     <ClCompile Include="SVFilterClass.cpp" />
-    <ClCompile Include="SVGigeCameraListCtrl.cpp" />
     <ClCompile Include="SVGigeCameraROIDlg.cpp" />
-    <ClCompile Include="SVGigeCameraStructInterface.cpp" />
     <ClCompile Include="SVHorizEdgeFilterClass.cpp" />
     <ClCompile Include="SVImportedInspectionInfo.cpp" />
     <ClCompile Include="SVInputStreamManager.cpp" />
@@ -760,16 +758,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVBlobAnalyzerFeatureListBox.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVBlobAnalyzerResultDlg.cpp" />
     <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1027,16 +1015,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVDisplayObject.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="SVDlgImage.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -1308,22 +1286,8 @@ echo %time%
     </ClCompile>
     <ClCompile Include="SVGuiExtentUpdater.cpp" />
     <ClCompile Include="SVHardwareManifest.cpp" />
-    <ClCompile Include="SVHistogram.cpp">
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </AssemblerOutput>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </AssemblerOutput>
-      <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</IntrinsicFunctions>
-      <IntrinsicFunctions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IntrinsicFunctions>
-      <BufferSecurityCheck Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BufferSecurityCheck>
-      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotSet</EnableEnhancedInstructionSet>
-      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotSet</EnableEnhancedInstructionSet>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyCode</AssemblerOutput>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AssemblyCode</AssemblerOutput>
-    </ClCompile>
     <ClCompile Include="SVHistogramAnalyzer.cpp" />
     <ClCompile Include="SVHistogramAnalyzerSetup.cpp" />
-    <ClCompile Include="SVHistogramBase.cpp" />
     <ClCompile Include="SVImageArchive.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -3197,16 +3161,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVTaskObjectListCtrl.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVTaskObjectValueInterface.cpp" />
     <ClCompile Include="SVThickeningFilter.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -3543,16 +3497,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVVariantValueObjectClass.cpp" />
-    <ClCompile Include="SVAvailableAnalyzerListComboBoxClass.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVVirtualCamera.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -3684,9 +3628,7 @@ echo %time%
     <ClInclude Include="SVFailStatusStream.h" />
     <ClInclude Include="SVFailStatusStreamManager.h" />
     <ClInclude Include="SVFilterClass.h" />
-    <ClInclude Include="SVGigeCameraListCtrl.h" />
     <ClInclude Include="SVGigeCameraROIDlg.h" />
-    <ClInclude Include="SVGigeCameraStructInterface.h" />
     <ClInclude Include="SVHorizEdgeFilterClass.h" />
     <ClInclude Include="SVImportedInputList.h" />
     <ClInclude Include="SVImportedInspectionInfo.h" />
@@ -3760,7 +3702,6 @@ echo %time%
     <ClInclude Include="SVBarcodeStringMatchDialog.h" />
     <ClInclude Include="SVBlobAnalyzer.h" />
     <ClInclude Include="SVBlobAnalyzerDialog.h" />
-    <ClInclude Include="SVBlobAnalyzerFeatureListBox.h" />
     <ClInclude Include="SVBlobAnalyzerResultDlg.h" />
     <ClInclude Include="SVBlobFeaturePropertiesDlg.h" />
     <ClInclude Include="SVBoolValueObjectClass.h" />
@@ -3799,7 +3740,6 @@ echo %time%
     <ClInclude Include="SVDiscreteOutputsView.h" />
     <ClInclude Include="SVDisplayImageSelect.h" />
     <ClInclude Include="SVDisplayObject.h" />
-    <ClInclude Include="SVDlgImage.h" />
     <ClInclude Include="SVDlgImageEditor.h" />
     <ClInclude Include="SVDLLToolDefinitionStructs.h" />
     <ClInclude Include="SVDLLToolLoadLibraryClass.h" />
@@ -3839,12 +3779,8 @@ echo %time%
     <ClInclude Include="SVGlobalHandles.h" />
     <ClInclude Include="SVGuiExtentUpdater.h" />
     <ClInclude Include="SVHardwareManifest.h" />
-    <ClInclude Include="SVHistogram.h" />
     <ClInclude Include="SVHistogramAnalyzer.h" />
     <ClInclude Include="SVHistogramAnalyzerSetup.h" />
-    <ClInclude Include="SVHistogramBase.h" />
-    <ClInclude Include="SVHistogramLabels.h" />
-    <ClInclude Include="SVHistogramStats.h" />
     <ClInclude Include="SVImageArchive.h" />
     <ClInclude Include="SVImageArithmetic.h" />
     <ClInclude Include="SVImageBuffer.h" />
@@ -4081,7 +4017,6 @@ echo %time%
     <ClInclude Include="SVTaskObjectInterfaceClass.h" />
     <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h" />
     <ClInclude Include="SVTaskObjectList.h" />
-    <ClInclude Include="SVTaskObjectListCtrl.h" />
     <ClInclude Include="SVTaskObjectValueInterface.h" />
     <ClInclude Include="SVThickeningFilter.h" />
     <ClInclude Include="SVThinningFilter.h" />
@@ -4125,7 +4060,6 @@ echo %time%
     <ClInclude Include="SVValueObjectReference.h" />
     <ClInclude Include="SVVariantResultClass.h" />
     <ClInclude Include="SVVariantValueObjectClass.h" />
-    <ClInclude Include="SVAvailableAnalyzerListComboBoxClass.h" />
     <ClInclude Include="SVVirtualCamera.h" />
     <ClInclude Include="SVWaterShedFilter.h" />
     <ClInclude Include="SVWindowTool.h" />
@@ -4145,8 +4079,6 @@ echo %time%
     <None Include="SVConfigurationTreeWriter.inl" />
     <None Include="SVConfigXMLPrint.inl" />
     <None Include="SVDLLToolLoadLibraryClass.inl" />
-    <None Include="SVHistogram.inl" />
-    <None Include="SVHistogramBase.inl" />
     <None Include="SVImportProgress.inl" />
     <None Include="SVInputObjectList.inl" />
     <None Include="SVInspectionProcessResetStruct.inl" />

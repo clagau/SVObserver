@@ -12,7 +12,7 @@
 #include "AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace Seidenader { namespace SVMFCControls
 {
 	BEGIN_MESSAGE_MAP(AvailableObjectListComboBox, CComboBox)
 		//{{AFX_MSG_MAP(AvailableObjectListComboBox)
@@ -27,7 +27,7 @@ namespace Seidenader { namespace SVOGui
 	{
 	}
 
-	void AvailableObjectListComboBox::Init(const SvUl::NameGuidList& rList, const SVString& rSelectedItem, const SVString& rEmptyListText)
+	void AvailableObjectListComboBox::Init(const SvUl::NameGuidList& rList, const SVString& rSelectedItem, const SVString& rEmptyListText, const SVString& rFirstListText)
 	{
 		// Clear list...
 		ResetContent();
@@ -51,6 +51,11 @@ namespace Seidenader { namespace SVOGui
 		}
 		else
 		{
+			if (!rFirstListText.empty())
+			{
+				InsertString(0, rFirstListText.c_str());
+			}
+
 			int nIndex = SelectString(0, rSelectedItem.c_str());
 			if (LB_ERR == nIndex)
 			{//if string not found, take first item
@@ -80,5 +85,24 @@ namespace Seidenader { namespace SVOGui
 		}
 
 		return retValue;
+	}
+
+	void AvailableObjectListComboBox::remove(const SVString& rItemName)
+	{
+		int iIndex = FindString(0,rItemName.c_str());
+
+		if ( iIndex != LB_ERR )
+		{
+			DeleteString(iIndex);
+			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool 
+			{ 
+				return (!rVal.first.empty() && 0 == rVal.first.Compare(rItemName)); 
+			} );
+
+			if (m_List.cend() != iter)
+			{
+				m_List.erase(iter);
+			}
+		}
 	}
 } /* namespace SVOGui */ } /* namespace Seidenader */

@@ -14,9 +14,9 @@
 #pragma region Includes
 #include "SVMFCControls\svmaskeditor.h"
 #include "SVClassInfoStruct.h"
-#include "SVAvailableAnalyzerListComboBoxClass.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
+#include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVEnumerateCombo.h"
 #pragma endregion Includes
 
@@ -79,7 +79,7 @@ protected:
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogAnalyzerPageClass)
 	enum { IDD = IDD_TA_ANALYZER_DIALOG };
-	SVAvailableAnalyzerListComboBoxClass	availableAnalyzerListBox;
+	SvMc::AvailableObjectListComboBox	m_availableAnalyzerCombobox;
 	SvOg::PictureDisplay	dialogImage;
 	//}}AFX_DATA
 
@@ -93,8 +93,12 @@ protected:
 	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
 	SVToolClass*                    m_pTool;
 	SVAnalyzerClass*				m_pCurrentAnalyzer;
-	SVClassInfoStructListClass availableAnalyzers;
-	int								oldIndex;
+
+	/// If a analyzer additional added to the combobox, because it is normally not available but now selected, it is saved here. 
+	/// If the selection of this get lost it will deleted from the combobox
+	SVGUID m_additionalAnalyzerId; 
+	const SVGUID m_InspectionID;
+	const SVGUID m_TaskObjectID;
 };
 
 //{{AFX_INSERT_LOCATION}}

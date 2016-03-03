@@ -16,6 +16,7 @@
 #include "SVAnalyzer.h"
 #include "SVValueObjectImpl.h"
 #include "SVBlobAnalyzerResultDlg.h"
+#include "ObjectInterfaces/IBlobAnalyzer.h"
 
 class SVLongResultClass;
 
@@ -141,7 +142,7 @@ const LPCSTR g_strBlobFillTypeEnums =
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-class SVBlobAnalyzerClass : public SVImageAnalyzerClass
+class SVBlobAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IBlobAnalyzer
 {
 	SV_DECLARE_CLASS( SVBlobAnalyzerClass );
 
@@ -152,6 +153,11 @@ public:
 		                int StringResourceID = IDS_CLASSNAME_SVBLOBANALYZER);
 
 	virtual ~SVBlobAnalyzerClass();
+
+#pragma region IEnumerateValueObject
+	virtual SvOi::NameValueList getFeatureList(bool isSelected) const override;
+#pragma endregion IEnumerateValueObject
+
 	virtual BOOL CloseObject();
 
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure);

@@ -50,12 +50,6 @@
     <ClCompile Include="GlobalConstantConflictDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AvailableObjectListComboBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBitmap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImageController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -110,10 +104,13 @@
     <ClCompile Include="SVShowDependentsDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectsListBox.cpp">
+    <ClCompile Include="SVGigeCameraListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTextEditDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDlgImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,12 +170,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVColor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AvailableObjectListComboBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageController.h">
@@ -247,9 +238,6 @@
     <ClInclude Include="SVShowDependentsDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectsListBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GuiValueHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -266,6 +254,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTextEditDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGigeCameraListCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDlgImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

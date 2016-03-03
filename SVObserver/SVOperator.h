@@ -9,24 +9,9 @@
 //* .Check In Date   : $Date:   15 May 2014 11:21:50  $
 //******************************************************************************
 
-#ifndef SVOPERATOR_H
-#define SVOPERATOR_H
+#pragma once
 
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
-#include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVTaskObject.h"
-#include "SVOMFCLibrary/SVGraphix.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageClass.h"
-#include "SVValueObjectImpl.h"
-#include "ISVCancel.h"
-
-// Necessary for SVUnaryImageOperatorClass, SVFilterListBoxClass
-class SVClassInfoStructListClass;
-class SVUnaryImageOperatorListClass;
-class SVToolClass;
-class SVIPDoc;
 
 class SVOperatorClass : public SVTaskObjectClass
 {
@@ -44,8 +29,6 @@ private:
 	void init();
 
 };
-
-#endif	//	SVOPERATOR_H
 
 //******************************************************************************
 //* LOG HISTORY:

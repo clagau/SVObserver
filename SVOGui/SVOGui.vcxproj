@@ -205,7 +205,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AuxiliaryExtentsController.cpp" />
-    <ClCompile Include="AvailableObjectListComboBox.cpp" />
     <ClCompile Include="CDSVPictureDisplay.cpp" />
     <ClCompile Include="Custom2FilterDlg.cpp" />
     <ClCompile Include="FormulaController.cpp" />
@@ -213,7 +212,6 @@
     <ClCompile Include="GlobalConstantDlg.cpp" />
     <ClCompile Include="ImageController.cpp" />
     <ClCompile Include="MaskController.cpp" />
-    <ClCompile Include="ObjectsListBox.cpp" />
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
     <ClCompile Include="RangeSelectorFilter.cpp" />
@@ -232,11 +230,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVBitmap.cpp" />
     <ClCompile Include="SVCustomFilterDlg.cpp" />
+    <ClCompile Include="SVDlgImage.cpp" />
     <ClCompile Include="SVExternalToolImageSelectPage.cpp" />
     <ClCompile Include="SVFormulaEditorPage.cpp" />
     <ClCompile Include="SVFormulaEditorSheet.cpp" />
+    <ClCompile Include="SVGigeCameraListCtrl.cpp" />
     <ClCompile Include="SVRankingFilterDlg.cpp" />
     <ClCompile Include="SVSaveToolSetImageDialog.cpp" />
     <ClCompile Include="SVShowDependentsDialog.cpp" />
@@ -256,7 +255,6 @@
   <ItemGroup>
     <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="AuxiliaryExtentsController.h" />
-    <ClInclude Include="AvailableObjectListComboBox.h" />
     <ClInclude Include="BoundValue.h" />
     <ClInclude Include="CDSVPictureDisplay.h" />
     <ClInclude Include="Custom2FilterDlg.h" />
@@ -269,7 +267,6 @@
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="MaskController.h" />
     <ClInclude Include="NoSelector.h" />
-    <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="PPQSelector.h" />
     <ClInclude Include="RangeController.h" />
@@ -279,12 +276,13 @@
     <ClInclude Include="Scintilla.h" />
     <ClInclude Include="Sci_Position.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVBitmap.h" />
     <ClInclude Include="SVColor.h" />
     <ClInclude Include="SVCustomFilterDlg.h" />
+    <ClInclude Include="SVDlgImage.h" />
     <ClInclude Include="SVExternalToolImageSelectPage.h" />
     <ClInclude Include="SVFormulaEditorPage.h" />
     <ClInclude Include="SVFormulaEditorSheet.h" />
+    <ClInclude Include="SVGigeCameraListCtrl.h" />
     <ClInclude Include="SVRankingFilterDlg.h" />
     <ClInclude Include="SVSaveToolSetImageDialog.h" />
     <ClInclude Include="SVShowDependentsDialog.h" />

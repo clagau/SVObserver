@@ -47,7 +47,31 @@ void SVChildrenSetupDialogClass::redrawLists()
 {
 	if( m_pAvailableChildrenList && m_pParentObject )
 	{
-		m_ChildrenListCtrl.Rebuild();
+		m_ChildrenListCtrl.DeleteAllItems();
+
+		if( m_pParentObject )
+		{
+			if( m_pParentObject->GetSize() <= 0 )
+			{
+				CString strEmpty;
+				strEmpty.LoadString( IDS_EMPTY_STRING );
+				m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( 0, strEmpty ), NULL );
+			}
+			else
+			{
+				for( int i = 0; i < m_pParentObject->GetSize(); i++ )
+				{
+					if( m_pParentObject->GetAt( i ) )
+					{
+						m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( i, m_pParentObject->GetAt( i )->GetName() ), reinterpret_cast<DWORD_PTR>(m_pParentObject->GetAt( i )) );
+					}
+					else
+					{
+						m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( i, _T( "&&&&&&" ) ), NULL );
+					}
+				}
+			}
+		}
 
 		m_AvailableChildrenListCtrl.DeleteAllItems();
 		for( int i = 0; i < m_pAvailableChildrenList->GetSize(); ++i )
@@ -119,8 +143,6 @@ BOOL SVChildrenSetupDialogClass::OnInitDialog()
 		// Set column witdh...
 		m_ChildrenListCtrl.GetClientRect( &rect );
 		m_ChildrenListCtrl.InsertColumn( 0, _T( "" ), LVCFMT_LEFT, rect.Width(), -1 );
-		// Populate...
-		m_ChildrenListCtrl.SetTaskObjectList( m_pParentObject );
 
 		if( !StrTitle.IsEmpty() ) { SetWindowText( StrTitle ); }
 
@@ -296,15 +318,22 @@ void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESUL
 	//
 	UINT nSelectedCount = m_ChildrenListCtrl.GetSelectedCount();
 	int nItemCount = m_ChildrenListCtrl.GetItemCount();
-	BOOL bValidSelection = FALSE;
-	if(nItemCount > 0)
+	bool bValidSelection = true;
+	if( 1 == nItemCount )
 	{
-		bValidSelection = m_ChildrenListCtrl.IsValidSelection(0);
+		//
+		// Check for 'empty' string as item string.
+		//
+		CString csItemText = m_ChildrenListCtrl.GetItemText(0,0);
+		CString strEmpty;
+		strEmpty.LoadString( IDS_EMPTY_STRING );
+		if(csItemText == strEmpty)
+		{
+			bValidSelection = false;
+		}
 	}
 
-	if( (nSelectedCount == 0) ||
-		( ( (nItemCount == 1) && (nSelectedCount == 1)) &&
-		!bValidSelection ) )
+	if( 0 == nSelectedCount || !bValidSelection )
 	{
 		//
 		// Disable the inappropriate buttons.

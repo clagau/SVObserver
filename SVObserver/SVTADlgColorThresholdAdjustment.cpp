@@ -229,7 +229,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 	if( pImage )
 	{
-		m_svDlgImage.UpdateImageInfo( pImage );
+		m_svDlgImage.UpdateImageInfo( pImage->GetInspection()->GetUniqueObjectID(), pImage->GetUniqueObjectID() );
 
 		SVDlgImageOverlayOptions options;
 		options.sizeROI = CSize(255,255);

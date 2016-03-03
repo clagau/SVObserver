@@ -15,6 +15,7 @@
 #include "SVTADlgColorThresholdOutput.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "SVInspectionProcess.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -72,7 +73,7 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 
 		if( pImage )
 		{
-			m_svDlgImage.UpdateImageInfo( pImage );
+			m_svDlgImage.UpdateImageInfo( pImage->GetInspection()->GetUniqueObjectID(), pImage->GetUniqueObjectID() );
 			m_svDlgImage.refresh();
 		}
 	}

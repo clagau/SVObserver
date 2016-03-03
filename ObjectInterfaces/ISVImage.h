@@ -7,6 +7,7 @@
 
 #pragma once
 #pragma region Includes
+#include <atltypes.h>
 #include "SVImageEnums.h"
 #include "IObjectAppClass.h"
 #include "IMatroxImageData.h"
@@ -77,6 +78,11 @@ namespace Seidenader
 			/// \returns HRESULT
 			//************************************
 			virtual HRESULT Save(const SVString& rFilename) = 0; 
+
+			//************************************
+			/// Return the output rectangle
+			//************************************
+			virtual CRect GetOutputRectangle() const = 0;
 		};
 	}
 }

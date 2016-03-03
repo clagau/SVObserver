@@ -17,4 +17,9 @@ bool SvOi::isUnrestrictedFileAccess()
 {
 	return TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 }
+
+bool SvOi::isOkToEdit()
+{
+	return TheSVObserverApp.OkToEdit();
+}
 #pragma endregion implementation of methods from ISVOApp_Helper

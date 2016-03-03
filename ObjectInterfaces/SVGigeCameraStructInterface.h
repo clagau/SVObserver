@@ -2,52 +2,54 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVGigeCameraListCtrl
-//* .File Name       : $Workfile:   SVGigeCameraListCtrl.h  $
+//* .Module Name     : SVGigeCameraStructInterface
+//* .File Name       : $Workfile:   SVGigeCameraStructInterface.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   12 Jun 2013 15:48:08  $
+//* .Check In Date   : $Date:   12 Jun 2013 15:48:52  $
 //******************************************************************************
-#ifndef SVGIGECAMERALISTCTRL_H
-#define SVGIGECAMERALISTCTRL_H
+#pragma once
 
-class SVGigeCameraListCtrl : public CListCtrl
+namespace Seidenader
 {
-public:
-	SVGigeCameraListCtrl();
-	virtual ~SVGigeCameraListCtrl();
+	namespace ObjectInterfaces
+	{	
+		struct SVGigeCameraStructInterface
+		{
+			enum CameraChangeTypeEnum
+			{
+				SVUndefined,
+				SVNoChange,
+				SVNewCamera,
+				SVReplacedCamera,
+				SVCameraRemoved
+			};
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVGigeCameraListCtrl)
-	public:
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-	//}}AFX_VIRTUAL
+			SVGigeCameraStructInterface(){};
+			virtual ~SVGigeCameraStructInterface(){};
 
+			virtual bool HasSerialNumber() const=0;
+			virtual CString GetSerialNumber() const=0;
+			virtual bool HasModelName() const=0;
+			virtual CString GetModelName() const=0;
 
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SVGigeCameraListCtrl)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
+			virtual bool HasIPAddress() const=0;
+			virtual CString GetIPAddress() const=0;
 
-	DECLARE_MESSAGE_MAP()
-};
+			CameraChangeTypeEnum eChangeType;
+		};
+	}
+}
 
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // SVGIGECAMERALISTCTRL_H
+namespace SvOi = Seidenader::ObjectInterfaces;
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGigeCameraListCtrl.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGigeCameraStructInterface.h_v  $
  * 
- *    Rev 1.0   12 Jun 2013 15:48:08   bWalter
+ *    Rev 1.0   12 Jun 2013 15:48:52   bWalter
  * Project:  SVObserver
  * Change Request (SCR) nbr:  814
  * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010

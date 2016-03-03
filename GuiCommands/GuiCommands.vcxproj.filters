@@ -138,5 +138,11 @@
     <ClInclude Include="ValidateAndSetEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GetOutputRectangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetTaskObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

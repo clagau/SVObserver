@@ -24,7 +24,7 @@
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUpperThresholdEquation.h"
-#include "SVHistogram.h"
+#include "SVMFCControls\SVHistogram.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

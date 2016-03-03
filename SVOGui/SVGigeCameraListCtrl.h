@@ -2,30 +2,51 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVGigeCameraStructInterface
-//* .File Name       : $Workfile:   SVGigeCameraStructInterface.cpp  $
+//* .Module Name     : SVGigeCameraListCtrl
+//* .File Name       : $Workfile:   SVGigeCameraListCtrl.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   12 Jun 2013 15:48:30  $
+//* .Check In Date   : $Date:   12 Jun 2013 15:48:08  $
 //******************************************************************************
-#include "stdafx.h"
-#include "SVGigeCameraStructInterface.h"
+#pragma once
 
-SVGigeCameraStructInterface::SVGigeCameraStructInterface()
-{
+namespace Seidenader
+{ 
+	namespace SVOGui
+	{
+		class SVGigeCameraListCtrl : public CListCtrl
+		{
+		public:
+			SVGigeCameraListCtrl();
+			virtual ~SVGigeCameraListCtrl();
+
+			// Overrides
+			// ClassWizard generated virtual function overrides
+			//{{AFX_VIRTUAL(SVGigeCameraListCtrl)
+		public:
+			virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+			//}}AFX_VIRTUAL
+
+
+			// Generated message map functions
+		protected:
+			//{{AFX_MSG(SVGigeCameraListCtrl)
+			// NOTE - the ClassWizard will add and remove member functions here.
+			//}}AFX_MSG
+
+			DECLARE_MESSAGE_MAP()
+		};
+	}
 }
 
-SVGigeCameraStructInterface::~SVGigeCameraStructInterface()
-{
-}
-
+namespace SvOg = Seidenader::SVOGui;
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGigeCameraStructInterface.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGigeCameraListCtrl.h_v  $
  * 
- *    Rev 1.0   12 Jun 2013 15:48:30   bWalter
+ *    Rev 1.0   12 Jun 2013 15:48:08   bWalter
  * Project:  SVObserver
  * Change Request (SCR) nbr:  814
  * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010

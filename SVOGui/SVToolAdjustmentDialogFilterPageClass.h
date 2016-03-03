@@ -13,9 +13,9 @@
 
 #pragma region Includes
 #include "PictureDisplay.h"
-#include "AvailableObjectListComboBox.h"
+#include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "ImageController.h"
-#include "ObjectsListBox.h"
+#include "SVMFCControls\ObjectsListBox.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -79,9 +79,9 @@ namespace Seidenader
 			enum { IDD = IDD_TA_FILTER_DIALOG };
 			CButton	m_btnProperties;
 			CButton	insertFilter;
-			ObjectsListBox m_filterListBox;
+			SvMc::ObjectsListBox m_filterListBox;
 			PictureDisplay	dialogImage;
-			AvailableObjectListComboBox m_availableFilterCB;
+			SvMc::AvailableObjectListComboBox m_availableFilterCB;
 			//}}AFX_DATA
 
 			//******************************************************************************

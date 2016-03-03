@@ -56,7 +56,7 @@ public:
 
 #pragma region virtual methods (ITaskObjectListClass)
 	virtual int GetSize() const override;
-	virtual SvOi::IObjectClass* GetInterfaceAt( int index ) const {return GetAt( index );}
+	virtual SvUl::NameGuidList GetTaskObjectList( ) const override;
 	virtual void Delete(GUID& objectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
 	virtual DWORD_PTR DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context) override;

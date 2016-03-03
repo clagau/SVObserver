@@ -11,8 +11,6 @@
 
 #include "stdafx.h"
 #include "SVImageChildStruct.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageObjectClass.h"
 
 SVImageChildStruct::SVImageChildStruct()
 :	m_ImageInfo(),

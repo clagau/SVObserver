@@ -123,6 +123,12 @@
     <ClInclude Include="ISelectorItemVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVGigeCameraStructInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IBlobAnalyzer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="DataStructures.inl">

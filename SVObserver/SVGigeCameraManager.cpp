@@ -181,7 +181,7 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 			if( l_Iter != rSVCameraList.end() )
 			{
 				l_rCamera = l_Iter->second;
-				l_rCamera.eChangeType = SVGigeCameraStructInterface::SVNoChange;
+				l_rCamera.eChangeType = SvOi::SVGigeCameraStructInterface::SVNoChange;
 
 				rSVCameraList.erase( l_Iter );
 			}
@@ -189,7 +189,7 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 			{
 				l_rCamera.strModelName.Empty();
 				l_rCamera.strVendorName.Empty();
-				l_rCamera.eChangeType = SVGigeCameraStructInterface::SVCameraRemoved;
+				l_rCamera.eChangeType = SvOi::SVGigeCameraStructInterface::SVCameraRemoved;
 				l_rCamera.m_ulHandle = NULL;
 			}
 		}
@@ -210,12 +210,12 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 				if( l_rCamera.HasIPAddress() )
 				{
 					l_rCamera = l_Iter->second;
-					l_rCamera.eChangeType = SVGigeCameraStructInterface::SVReplacedCamera;
+					l_rCamera.eChangeType = SvOi::SVGigeCameraStructInterface::SVReplacedCamera;
 				}
 				else
 				{
 					l_rCamera = l_Iter->second;
-					l_rCamera.eChangeType = SVGigeCameraStructInterface::SVNewCamera;
+					l_rCamera.eChangeType = SvOi::SVGigeCameraStructInterface::SVNewCamera;
 				}
 
 

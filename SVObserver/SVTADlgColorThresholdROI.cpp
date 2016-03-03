@@ -15,6 +15,7 @@
 #include "SVColorThreshold.h"
 #include "SVTADlgColorThresholdROI.h"
 #include "SVTADlgColorThresholdSheet.h"
+#include "SVInspectionProcess.h"
 #include "SVValueObject.h"
 #include "SVIPDoc.h"
 
@@ -130,7 +131,7 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 			m_pSheet->m_pFigureEditor->SetImageInfo( l_ImageInfo );
 			m_pSheet->m_pFigureEditor->SetRect( m_pSheet->m_rectROI );
 
-			m_svDlgImage.UpdateImageInfo( pImage );
+			m_svDlgImage.UpdateImageInfo( pImage->GetInspection()->GetUniqueObjectID(), pImage->GetUniqueObjectID() );
 			m_svDlgImage.refresh();
 		}
 

@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:30:30  $
 //******************************************************************************
 
-#ifndef SVUNARYIMAGEOPERATORCLASS_H
-#define SVUNARYIMAGEOPERATORCLASS_H
+#pragma once
 
 #include "SVUnaryOperatorClass.h"
+#include "SVUnaryImageOperatorList.h"
 
 class SVUnaryImageOperatorClass : public SVUnaryOperatorClass
 {
@@ -40,8 +40,6 @@ private:
 	void init();
 
 };
-
-#endif	//	SVUNARYIMAGEOPERATORCLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:

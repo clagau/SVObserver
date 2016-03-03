@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOGui\PictureDisplay.h"
-#include "SVOGui\AvailableObjectListComboBox.h"
+#include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVOGui\ImageController.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
@@ -45,7 +45,7 @@ namespace Seidenader
 
 			//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)
 			enum { IDD = IDD_TA_IMAGE_DIALOG };
-			AvailableObjectListComboBox m_availableSourceImageListBox;
+			SvMc::AvailableObjectListComboBox m_availableSourceImageListBox;
 			PictureDisplay m_dialogImage;
 			//}}AFX_DATA
 	

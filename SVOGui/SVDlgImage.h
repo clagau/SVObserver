@@ -9,104 +9,87 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:15:44  $
 //******************************************************************************
 
-#ifndef SVDLGIMAGE_H
-#define SVDLGIMAGE_H
+#pragma once
 
-#include "SVImageLibrary/SVImageExtentClass.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVOGui/SVBitmap.h"
+#include "SVUtilityLibrary/SVGUID.h"
 
-class SVImageClass;
+namespace Seidenader { namespace SVOGui {
 
+	class SVDlgImageScrollBar : public CScrollBar
+	{
+	public:
+		afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+		DECLARE_MESSAGE_MAP()
+	};
 
-class SVDlgImageScrollBar : public CScrollBar
-{
-public:
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	DECLARE_MESSAGE_MAP()
-};
+	/////////////////////////////////////////////////////////////////////////////
+	// SVDlgImageClass window
 
-/////////////////////////////////////////////////////////////////////////////
-// SVDlgImageClass window
+	class SVDlgImageClass : public CStatic
+	{
+	public:
+		SVDlgImageClass();
+		virtual ~SVDlgImageClass();
 
-class SVDlgImageClass : public CStatic
-{
-public:
-	SVDlgImageClass();
-	virtual ~SVDlgImageClass();
+		void UpdateImageInfo( const SVGUID& inspectionId, const SVGUID& imageId);
+		void refresh();
 
-	void UpdateImageInfo( SVImageClass* pImage, bool bDisplayInputImage = false );
-	void UpdateImageInfo( const SVImageInfoClass* pImageInfo, SVSmartHandlePointer pImageHandle );
-	void refresh();
+		CSize   GetDisplaySize();
+		double  GetZoom();
+		HRESULT SetZoom(double dPercent);
+		HRESULT SetZoomFullSize();// scale image to size of display window
+		HRESULT SetViewportOrigin( CPoint ptOrigin, bool bRedraw = false );
+		CPoint  GetViewportOrigin();
+		HRESULT SetViewportRect( CRect rect );	// sets origin and zoom
 
-	CSize   GetDisplaySize();
-	double  GetZoom();
-	HRESULT SetZoom(double dPercent);
-	HRESULT SetZoomFullSize();// scale image to size of display window
-	HRESULT SetViewportOrigin( CPoint ptOrigin, bool bRedraw = false );
-	CPoint  GetViewportOrigin();
-	HRESULT SetViewportRect( CRect rect );	// sets origin and zoom
+	protected:
 
-protected:
+		void DestroyBuffers();
+		virtual void OnSetZoom();
+		CRect GetOutputRectFromImage();
 
-	void DestroyBuffers();
-	virtual void OnSetZoom();
+		CRect m_SourceRect;
+		CRect m_ClientRect;
+		CRect m_OriginalClientRect;
 
-	SVBitmap      m_DIB;
+		bool m_bShowScrollBars;
+		CRect m_ViewportRect;
+		double m_dZoomX;
+		double m_dZoomY;
+		double m_dFullSizeZoomFactor;
+		double m_dFullSizeZoomFactorY;
+		double m_dFullSizeZoomFactorScrollX;
+		double m_dFullSizeZoomFactorScrollY;
 
-	CRect m_SourceRect;
-	CRect m_ClientRect;
-	CRect m_OriginalClientRect;
-	
-	bool m_bShowScrollBars;
-	CRect m_ViewportRect;
-	double m_dZoomX;
-	double m_dZoomY;
-	double m_dFullSizeZoomFactor;
-	double m_dFullSizeZoomFactorY;
-	double m_dFullSizeZoomFactorScrollX;
-	double m_dFullSizeZoomFactorScrollY;
+		SVGUID m_inspectionId;
+		SVGUID m_imageId;
+		bool mbInit;
 
-	SVImageClass* mpSourceImage;
-	SVImageInfoClass mSourceImageInfo;
-	SVSmartHandlePointer mSourceImageHandle;
+		SVDlgImageScrollBar m_sbHorizontal;
+		SVDlgImageScrollBar m_sbVertical;
 
-	bool mbInit;
-	bool m_bDisplayInputImage;
+		static const int m_iScrollBarSize;
 
-	SVDlgImageScrollBar m_sbHorizontal;
-	SVDlgImageScrollBar m_sbVertical;
+	protected:
 
-	static const int m_iScrollBarSize;
+		//{{AFX_VIRTUAL(SVDlgImageClass)
+		//}}AFX_VIRTUAL
 
-protected:
+		// Generated message map functions
+		//{{AFX_MSG(SVDlgImageClass)
+		afx_msg void OnDestroy();
+		afx_msg void OnPaint();
+		//}}AFX_MSG
+		afx_msg void OnHScroll( UINT nSBCode, UINT nPos, CScrollBar* pBar );
+		afx_msg void OnVScroll( UINT nSBCode, UINT nPos, CScrollBar* pBar );
+		virtual void OnPaintOverlay(CPaintDC& dc);	// derived classes implement this to draw after picture is displayed
 
-	//{{AFX_VIRTUAL(SVDlgImageClass)
-	//}}AFX_VIRTUAL
+		DECLARE_MESSAGE_MAP()
+	};
 
-	// Generated message map functions
-	//{{AFX_MSG(SVDlgImageClass)
-	afx_msg void OnDestroy();
-	afx_msg void OnPaint();
-	//}}AFX_MSG
-	afx_msg void OnHScroll( UINT nSBCode, UINT nPos, CScrollBar* pBar );
-	afx_msg void OnVScroll( UINT nSBCode, UINT nPos, CScrollBar* pBar );
-	virtual void OnPaintOverlay(CPaintDC& dc);	// derived classes implement this to draw after picture is displayed
+}}
 
-	DECLARE_MESSAGE_MAP()
-};
-
-
-
-
-
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-
-#endif
+namespace SvOg = Seidenader::SVOGui;
 
 //******************************************************************************
 //* LOG HISTORY:

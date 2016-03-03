@@ -10,10 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "SVROIFigureEditor.h"
-#include "SVMaskShape.h"	// reuse existing shape (rectangle) drawing functions
-#include "SVImageLibrary/SVGeometryClass.h"
 
 #pragma warning ( disable : 4065 )
 

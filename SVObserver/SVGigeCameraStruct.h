@@ -13,7 +13,7 @@
 #define SVGIGECAMERASTRUCT_H
 
 #include "SVContainerLibrary/SVVector.h"
-#include "SVGigeCameraStructInterface.h"
+#include "ObjectInterfaces/SVGigeCameraStructInterface.h"
 
 /**
 @SVObjectName Gige Camera Description
@@ -23,7 +23,7 @@
 @SVObjectOperations This operator presents operations to store, clear, and compare Gige camera data.
 
 */
-struct SVGigeCameraStruct : public SVGigeCameraStructInterface
+struct SVGigeCameraStruct : public SvOi::SVGigeCameraStructInterface
 {
 	SVGigeCameraStruct();
 	virtual ~SVGigeCameraStruct();

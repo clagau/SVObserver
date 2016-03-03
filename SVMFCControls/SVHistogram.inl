@@ -11,7 +11,7 @@
 
 inline bool SVHistogram::SetScale(histogram::scale s)
 {
-	bool retval = SVHistogramBase::SetScale(s);
+	bool retval = SvUl::SVHistogramBase::SetScale(s);
 	if (retval)
 		UpdateAnchors(m_client, m_func);
 	return retval;

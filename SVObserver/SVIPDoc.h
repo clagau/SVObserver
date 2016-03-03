@@ -126,7 +126,7 @@ public:
 	RegressionRunModeEnum GetRegressionRunMode();
 	void SetRegressionTimeoutPeriod(int p_TimeoutMS);
 
-	const SVGUID& GetSelectedToolID() const;
+	SVGUID GetSelectedToolID() const;
 	void SetSelectedToolID( const SVGUID& p_rToolID );
 
 	bool IsToolPreviousToSelected( const SVGUID& p_rToolID ) const;
@@ -277,7 +277,7 @@ protected:
 	bool AddToolGrouping(bool bStartGroup = true);
 
 	CView* getView() const;
-	ToolSetView* GetToolSetView();
+	ToolSetView* GetToolSetView() const;
 	SVImageViewClass* GetImageView( int p_Index = 0 );
 	SVResultViewClass* GetResultView();
 	SVToolSetClass* GetToolSet() const;
@@ -364,8 +364,6 @@ private:
 	SVDisplayObject m_oDisplay;
 
 	CMDIChildWnd* m_pMDIChildWnd;
-
-	SVGUID m_SelectedToolID;
 	SVToolGrouping m_toolGroupings;
 };
 

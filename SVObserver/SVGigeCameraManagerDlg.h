@@ -13,7 +13,7 @@
 #define SVGIGECAMERAMANAGERDLG_H
 
 #include "SVGigeCameraManager.h"
-#include "SVGigeCameraListCtrl.h"
+#include "SVOGui\SVGigeCameraListCtrl.h"
 
 class SVGigeCameraManagerDlg : public CDialog
 {
@@ -58,7 +58,7 @@ private:
 	void UpdateListCtrl();
 
 public:
-	SVGigeCameraListCtrl m_ctlCameraList;
+	SvOg::SVGigeCameraListCtrl m_ctlCameraList;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -13,7 +13,7 @@
 #define SVDLGIMAGESHAPE_H_
 #pragma once
 
-#include "SVDlgImage.h"
+#include "SVOGui\SVDlgImage.h"
 #include "SVFigureEditor.h"
 #include "SVDrawObject.h"
 
@@ -32,7 +32,7 @@ struct SVDlgImageOverlayOptions
 	SVDlgImageOverlayOptions() : bFixed(true), bFullClient(true), bFlipVertical(false), bNormalizeY_ROI(false), bScaleX(true), bScaleY(true) {}
 };
 
-class SVDlgImageEditor : public SVDlgImageClass
+class SVDlgImageEditor : public SvOg::SVDlgImageClass
 {
 public:
 	struct OverlayStruct

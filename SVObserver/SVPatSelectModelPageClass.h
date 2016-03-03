@@ -9,13 +9,9 @@
 //* .Check In Date   : $Date:   21 Aug 2014 10:40:42  $
 //******************************************************************************
 
-#ifndef SVPATMODELPAGECLASS_H
-#define SVPATMODELPAGECLASS_H
+#pragma once
 
 #pragma region Includes
-#include "SVOGui/SVBitmap.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "PropertyTree/PropTree.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
@@ -153,8 +149,6 @@ private:
 	long m_handleToSquareOverlayObject2;
 #pragma endregion Member Variables
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -13,11 +13,10 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/NameGuidList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-class SVToolClass;
-class SVTaskObjectListClass;
 class ToolSetView;
 #pragma endregion Declarations
 
@@ -58,8 +57,9 @@ public:
 	virtual void RebuildImages();
 
 	void SetSingleSelect();
-	void SetTaskObjectList(SVTaskObjectListClass* pTaskObject);
+	void setObjectIds(const SVGUID& toolsetId, const SVGUID& inspectionId);
 	
+	SVGUID getToolGuid(int index) const;
 	SVGUID GetSelectedTool() const;
 	void SetSelectedTool(const SVGUID& rGuid);
 
@@ -79,13 +79,14 @@ protected:
 	void CreateImageLists();
 	int InsertStartGroup(int itemNo, const CString& startName, bool bCollapsed);
 	int InsertEndGroup(int itemNo, const CString& endName, bool bCollapsed);
-	int InsertTool(int itemNo, SVToolClass* pTool, bool bCollapsed, int indent);
+	int InsertTool(int itemNo, int listIndex, bool bCollapsed, int indent);
 	void AddEndDelimiter();
 	void InsertEmptyString(int itemNo);
 
 	void CollapseItem(int item);
 	void ExpandItem(int item);
 	bool IsStartGrouping(int index, bool& bState) const;
+	bool isToolValid(const SVGUID& tool) const;
 
 	CImageList m_ImageList;
 
@@ -95,7 +96,9 @@ protected:
 	int m_collapseState;
 	int m_iTopIndex;
 
-	SVTaskObjectListClass* m_pToolSet;
+	SvUl::NameGuidList m_taskList;
+	SVGUID m_ToolSetId;
+	SVGUID m_InspectionId;
 };
 
 /////////////////////////////////////////////////////////////////////////////

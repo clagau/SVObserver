@@ -34,6 +34,7 @@
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "TextDefinesSvO.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -193,8 +194,10 @@ void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 						rToolGroupings.AddTool(name.c_str(), insertAtEnd.c_str());
 					}
 				}
-				m_toolSetListCtrl.SetTaskObjectList(pCurrentDocument->GetToolSet());
-				m_toolSetListCtrl.SetSelectedTool(pCurrentDocument->GetSelectedToolID());
+
+				SVGUID selectedToolID = GetSelectedTool();
+				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->GetUniqueObjectID(), pCurrentDocument->GetToolSet()->GetInspection()->GetUniqueObjectID());
+				SetSelectedTool(selectedToolID);
 			}
 			else if (ExpandCollapseHint == lHint)
 			{
@@ -203,8 +206,6 @@ void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			else
 			{
 				m_toolSetListCtrl.RebuildImages();
-				const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-				pCurrentDocument->SetSelectedToolID(rGuid);
 			}
 			// force the list control to position its scroll bars where they were before the rebuild.
 			m_toolSetListCtrl.RestoreScrollPos();
@@ -216,7 +217,7 @@ void ToolSetView::OnEditToolName()
 {
 	CWaitCursor l_cwcMouse;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
+	if (!SvOi::isOkToEdit())
 	{
 		return;
 	}
@@ -258,27 +259,21 @@ void ToolSetView::OnClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 	}
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
+	if (!SvOi::isOkToEdit())
 	{
 		return;
 	}
 	CWaitCursor l_cwcMouse;
 
-	SVIPDoc* pCurrentDocument = GetIPDoc();
-	if (nullptr != pCurrentDocument)
-	{
-		pCurrentDocument->SetSelectedToolID(m_toolSetListCtrl.GetSelectedTool());
-
-		// Run the toolset once to update the images/results.
-		// 16 Dec 1999 - frb. (99)
-		// Post a message to do the run once so that the double click still works
-		PostMessage(WM_COMMAND, ID_RUN_ONCE);
-	}
+	// Run the toolset once to update the images/results.
+	// 16 Dec 1999 - frb. (99)
+	// Post a message to do the run once so that the double click still works
+	PostMessage(WM_COMMAND, ID_RUN_ONCE);
 }
 
 void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
+	if (!SvOi::isOkToEdit())
 	{
 		return;
 	}
@@ -380,7 +375,7 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	LV_DISPINFO* pDispInfo = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
 
 	// Don't allow editing if running.
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
+	if (!SvOi::isOkToEdit())
 	{
 		*pResult = true; // Abandon the label editing.
 		return;
@@ -436,14 +431,10 @@ void ToolSetView::RenameItem(int item, const CString& oldName, const CString& ne
 		CString name = m_toolSetListCtrl.GetItemText(m_labelingIndex, 0);
 		if (!m_toolSetListCtrl.IsEndListDelimiter(name) && !m_toolSetListCtrl.IsEmptyStringPlaceHolder(name))
 		{
-			DWORD_PTR itemData = m_toolSetListCtrl.GetItemData(m_labelingIndex);
-			if (itemData) // it's a Tool
+			SVGUID toolId = m_toolSetListCtrl.getToolGuid(m_labelingIndex);
+			if (SVInvalidGUID != toolId) // it's a Tool
 			{
-				SVTaskObjectClass* pTaskObject = reinterpret_cast<SVTaskObjectClass*>(itemData);
-				if (pTaskObject)
-				{
-					TheSVObserverApp.RenameObject(m_csLabelSaved, m_csLabelEdited, pTaskObject->GetUniqueObjectID());
-				}
+				TheSVObserverApp.RenameObject(m_csLabelSaved, m_csLabelEdited, toolId);
 			}
 			SVIPDoc* pDoc = GetIPDoc();
 			if (pDoc)
@@ -631,7 +622,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	if (nullptr != pCurrentDocument)
 	{
 		m_isLabeling = false;
-		const SVGUID& rGuid = pCurrentDocument->GetSelectedToolID();
+		const SVGUID& rGuid = GetSelectedTool();
 		CEdit* pEdit = m_toolSetListCtrl.GetEditControl();
 		if (nullptr != pEdit)
 		{
@@ -832,6 +823,11 @@ BOOL ToolSetView::GetParameters(SVObjectWriter& rWriter)
 	return bOk;
 }
 
+const SVToolGrouping& ToolSetView::GetToolGroupings() const
+{
+	return GetIPDoc()->GetToolGroupings();
+}
+
 void ToolSetView::OnSetFocus(CWnd* pOldWnd)
 {
 	CFormView::OnSetFocus(pOldWnd);
@@ -919,24 +915,25 @@ bool ToolSetView::enterSelectedEntry()
 {
 	if ( TheSVObserverApp.OkToEdit() && !IsLabelEditing() )
 	{
-		SVIPDoc* pCurrentDocument = GetIPDoc();
-		if (nullptr != pCurrentDocument)
+	SVIPDoc* pCurrentDocument = GetIPDoc();
+	if (nullptr != pCurrentDocument)
+	{
+		const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+		if (!rGuid.empty())
 		{
-			const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-			if (!rGuid.empty())
+			pCurrentDocument->OnEditTool();
+			SetSelectedTool(rGuid);
+		}
+		else
+		{
+			// check if tool group is selected
+			if (!EditToolGroupingComment())
 			{
-				pCurrentDocument->OnEditTool();
-			}
-			else
-			{
-				// check if tool group is selected
-				if (!EditToolGroupingComment())
-				{
-					// Deselect all...
-					m_toolSetListCtrl.SetSelectedTool(SVGUID());
-				}
+				// Deselect all...
+				m_toolSetListCtrl.SetSelectedTool(SVGUID());
 			}
 		}
+	}
 		return true;
 	}
 	else

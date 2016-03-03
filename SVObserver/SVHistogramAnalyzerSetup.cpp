@@ -133,9 +133,9 @@ int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_histogram.SetPixelCounts(l_arr.begin(), l_arr.end());
 	}
 
-	m_firstSquare.SetColor(color::Green);
-	m_secondSquare.SetColor(color::Crimson);
-	m_valleySquare.SetColor(color::Plum);
+	m_firstSquare.SetColor(SvMc::color::Green);
+	m_secondSquare.SetColor(SvMc::color::Crimson);
+	m_valleySquare.SetColor(SvMc::color::Plum);
 
 	return 0;
 }
@@ -254,7 +254,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeLowclip()
 {
 	BOOL l_ok = FALSE;
 	int l_low = static_cast<int>(GetDlgItemInt(IDC_LOWCLIP, &l_ok, FALSE));
-	if (l_ok && m_histogram.Clip(l_low, no_clip))
+	if (l_ok && m_histogram.Clip(l_low, SvUl::no_clip))
 	{
 		Refresh();
 	}
@@ -264,7 +264,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeHighclip()
 {
 	BOOL l_ok = FALSE;
 	int l_high = static_cast<int>(GetDlgItemInt(IDC_HIGHCLIP, &l_ok, FALSE));
-	if (l_ok && m_histogram.Clip(no_clip, l_high))
+	if (l_ok && m_histogram.Clip(SvUl::no_clip, l_high))
 	{
 		Refresh();
 	}
