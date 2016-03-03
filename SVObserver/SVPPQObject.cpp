@@ -3696,28 +3696,6 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerI
 	return l_Status;
 }
 
-DWORD_PTR SVPPQObject::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = 0;
-	// Try to process message by yourself...
-
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	//@WARNING [gra][7.20][06.07.2015] This seems to not do anything can be removed
-	// handle renaming of toolset variables with regards to outputs
-	case SVMSGID_OBJECT_RENAMED:
-		{
-			SVObjectClass* pObject = (SVObjectClass*) DwMessageValue;
-			CString strOldName = (LPCTSTR) DwMessageContext;
-
-			break;
-		}// end case
-	}// end switch
-
-	return( SVObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}// end processMessage
-
 bool SVPPQObject::IsProductAlive( long p_ProductCount ) const
 {
 	bool l_Status = ( S_OK == m_ppPPQPositions.IsProductAlive( p_ProductCount ) );

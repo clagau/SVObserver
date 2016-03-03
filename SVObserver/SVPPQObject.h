@@ -168,8 +168,6 @@ public:
 	//************************************
 	BOOL FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerInfo );
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 
 	bool IsProductAlive( long p_ProductCount ) const;
