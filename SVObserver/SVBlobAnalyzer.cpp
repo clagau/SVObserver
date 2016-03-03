@@ -320,7 +320,7 @@ void SVBlobAnalyzerClass::init()
 	m_lvoBlobSampleSize.SetDefaultValue (SV_MAX_NUMBER_OF_BLOBS, TRUE);
 	m_lvoMaxBlobDataArraySize.SetDefaultValue(1, TRUE);
 
-	msvSortFeature.SetDefaultValue (-1, TRUE);
+	msvSortFeature.SetDefaultValue (SV_AREA, TRUE);
 
 	CreateArray();
 
@@ -779,7 +779,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		// Sri	04-12-00
 		// Features Box X Max, Box X Min, Box Y Max and Box Y Min should always be enabled,
 		// since we have to draw bounding rectangles to all the blobs found.
-		for (i = SV_BOXX_MAX; i <= SV_BOXY_MIN; i = (SVBlobFeatureEnum)(i + 1))
+		for (i = SV_AREA; i <= SV_BOXY_MIN; i = (SVBlobFeatureEnum)(i + 1))
 		{
 			if (msvszFeaturesEnabled [i] != _T('1'))
 			{

@@ -284,7 +284,7 @@ void SVBlobAnalyzeFeatureDialogClass::EnableButtons()
 			int iIndex = m_lbSelectedFeatures.GetCurSel();
 			SVBlobFeatureEnum index = (SVBlobFeatureEnum) m_lbSelectedFeatures.GetItemData(iIndex);
 
-			if ( index == SV_BOXX_MAX || index == SV_BOXX_MIN || index == SV_BOXY_MAX || index == SV_BOXY_MIN )
+			if ( index == SV_AREA || index == SV_BOXX_MAX || index == SV_BOXX_MIN || index == SV_BOXY_MAX || index == SV_BOXY_MIN )
 				((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(FALSE);
 			else
 				((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(TRUE);
@@ -504,7 +504,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnDestroy()
 	// TODO: Add your message handler code here
 }
 
-// Features Box X Max, Box X Min, Box Y Max and Box Y Min should not be removed from the list. 
+// Features Area, Box X Max, Box X Min, Box Y Max and Box Y Min should not be removed from the list. 
 // So if the selection is one of these features, disable the remove button.
 void SVBlobAnalyzeFeatureDialogClass::OnSelchangeList2() 
 {
@@ -520,7 +520,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnSelchangeList2()
 
 		index = (SVBlobFeatureEnum) m_lbSelectedFeatures.GetItemData(iIndex);
 
-		if ( index == SV_BOXX_MAX || index == SV_BOXX_MIN || index == SV_BOXY_MAX || index == SV_BOXY_MIN )
+		if ( index == SV_AREA || index == SV_BOXX_MAX || index == SV_BOXX_MIN || index == SV_BOXY_MAX || index == SV_BOXY_MIN )
 			((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(FALSE);
 		else
 			((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(TRUE);
