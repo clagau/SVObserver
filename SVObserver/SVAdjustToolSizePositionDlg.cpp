@@ -29,6 +29,7 @@
 #include "ToolSizeAdjustTask.h"
 #include <array>
 #include  <functional>
+#include "GuiCommands/InspectionRunOnce.h"
 
 #pragma endregion Includes
 
@@ -265,6 +266,15 @@ void SVAdjustToolSizePositionDlg::OnOK()
 	if (m_svOriginalExtents != m_svExtents)
 	{
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+
+		if (nullptr != m_pToolTask && nullptr != m_pToolTask->GetInspection())
+		{
+			const SVGUID& inspectionId = m_pToolTask->GetInspection()->GetUniqueObjectID();
+			GuiCmd::InspectionRunOncePtr commandPtr = new GuiCmd::InspectionRunOnce( inspectionId );
+			SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > command( inspectionId, commandPtr );
+
+			command.Execute( TWO_MINUTE_CMD_TIMEOUT );
+		}
 	}
 	CDialog::OnOK();
 }
