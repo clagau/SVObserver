@@ -171,8 +171,7 @@ public:
 	virtual HRESULT IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo ); 
 
 	// Set String value object for Source Image Names
-	virtual HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+	virtual SVStaticStringValueObjectClass* GetInputImageNames( );
 
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
 	virtual HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;

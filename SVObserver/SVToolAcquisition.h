@@ -35,20 +35,18 @@ public:
 
 	SVCameraImageTemplate* GetMainImageClass();
 
-	virtual HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+	virtual SVStaticStringValueObjectClass* GetInputImageNames( ) override;
 
 protected:
 	virtual void init();
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	// Embedded Objects:
 	SVMainImageClass				mainImageObject;	// Embedded
 
 	// String value object for Source Image Names
-	SVStringValueObjectClass m_svSourceImageNames;
+	SVStaticStringValueObjectClass m_svSourceImageNames;
 
 };
 

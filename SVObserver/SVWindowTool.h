@@ -47,9 +47,12 @@ private:
 	void AddUnaryImageOperatorListAsChild ();
 
 public:
-	HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
-	SVStringValueObjectClass m_svSourceImageNames;
+	SVStaticStringValueObjectClass* GetInputImageNames( ) override;
 
+#pragma region Member Variables
+private:
+	SVStaticStringValueObjectClass m_svSourceImageNames;
+#pragma endregion Member Variables
 };
 
 #endif

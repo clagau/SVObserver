@@ -266,10 +266,9 @@ BOOL SVLinearToolClass::IsToolRotated()
 	return bRet;
 }
 
-HRESULT SVLinearToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* SVLinearToolClass::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageNames;
 }
 #pragma endregion Public Methods
 

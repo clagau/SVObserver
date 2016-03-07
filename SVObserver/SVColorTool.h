@@ -30,7 +30,7 @@ public:
 	virtual HRESULT ResetObject() override;
 
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames ) override;
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 	SVImageClass* GetRGBImage();
 	SVImageClass* GetHSIImage();
@@ -51,7 +51,7 @@ protected:
 
 	SVBoolValueObjectClass convertToHSI;
 	// String value object for Source Image Names
-	SVStringValueObjectClass m_svSourceImageNames;
+	SVStaticStringValueObjectClass m_svSourceImageNames;
 
 private:
 	void init();

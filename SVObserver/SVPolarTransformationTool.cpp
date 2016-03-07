@@ -180,10 +180,9 @@ HRESULT SVPolarTransformationToolClass::SetImageExtent( unsigned long p_ulIndex,
 }
 
 
-HRESULT SVPolarTransformationToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* SVPolarTransformationToolClass::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageNames;
 }
 
 //******************************************************************************

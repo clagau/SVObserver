@@ -114,6 +114,8 @@ HRESULT SVImageArithmeticClass::ResetObject()
 {
 	HRESULT l_hrOk = outputImageObject.InitializeImage( getInputImageA() );
 
+	CollectInputImageNames();
+
 	if ( SVTaskObjectClass::ResetObject() != S_OK )
 	{
 		l_hrOk = S_FALSE;
@@ -216,8 +218,6 @@ BOOL SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus )
 		ASSERT( pArithOperator );
 		SVImageClass*            pOutputImage   = getOutputImage();
 		ASSERT( pOutputImage );
-
-		CollectInputImageNames(RRunStatus);
 
     if ( ! pOutputImage->SetImageHandleIndex( RRunStatus.Images ) )
 		{
@@ -506,26 +506,30 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 }
 
 // Set String value object for Source Image Names
-HRESULT SVImageArithmeticClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+HRESULT SVImageArithmeticClass::CollectInputImageNames( )
 {
 	HRESULT l_hr = S_FALSE;
 	SVImageClass* l_pInputImage = getInputImageA();
-	SVImageToolClass* l_pTool = dynamic_cast<SVImageToolClass*>(GetTool());
-	if( l_pInputImage && l_pTool )
+	SVImageToolClass* pTool = dynamic_cast<SVImageToolClass*>(GetTool());
+	if (nullptr != pTool)
 	{
-		CString l_strName = l_pInputImage->GetCompleteObjectName();
+		SVStaticStringValueObjectClass* imageNames = pTool->GetInputImageNames();
+		if( l_pInputImage && nullptr != imageNames )
+		{
+			CString l_strName = l_pInputImage->GetCompleteObjectName();
 
-		l_pTool->m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
+			imageNames->SetValue( 0/*Static value, this parameter will not used*/, 0, l_strName );
 
-		l_hr = S_OK;
-	}
+			l_hr = S_OK;
+		}
 
-	l_pInputImage = getInputImageB();
-	if( l_pInputImage && l_pTool)
-	{
-		CString l_strName = l_pInputImage->GetCompleteObjectName();
+		l_pInputImage = getInputImageB();
+		if( l_pInputImage && nullptr != imageNames)
+		{
+			CString l_strName = l_pInputImage->GetCompleteObjectName();
 
-		l_pTool->m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 1, l_strName );
+			imageNames->SetValue( 0/*Static value, this parameter will not used*/, 1, l_strName );
+		}
 	}
 	return l_hr;
 }

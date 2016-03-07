@@ -900,8 +900,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 				SVToolClass* l_pTool = l_pImage->GetTool();
 				if( NULL != l_pTool )
 				{
-					SVStringValueObjectClass* l_pSourceNames=NULL;
-					l_pTool->GetInputImageNames( l_pSourceNames );
+					SVStaticStringValueObjectClass* l_pSourceNames = l_pTool->GetInputImageNames();
 					if( l_pSourceNames )
 					{
 						long l_lSize = l_pSourceNames->GetArraySize();

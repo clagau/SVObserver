@@ -84,10 +84,9 @@ bool RingBufferTool::DoesObjectHaveExtents() const
 	return false;
 }
 
-HRESULT RingBufferTool::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* RingBufferTool::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageName;
-	return S_OK;
+	return &m_svSourceImageName;
 }
 
 HRESULT RingBufferTool::ResetObject()
@@ -109,6 +108,9 @@ HRESULT RingBufferTool::ResetObject()
 		SVImageClass* inputImage = getInputImage ();
 		if (nullptr != inputImage)
 		{
+			//Set input name to source image name to display it in result picker
+			m_svSourceImageName.SetValue(0/*Static value, this parameter will not used*/, inputImage->GetCompleteObjectName() );
+
 			SVImageInfoClass imageInfo = inputImage->GetImageInfo();
 
 			if (S_OK == status)
@@ -309,9 +311,6 @@ BOOL RingBufferTool::onRun( SVRunStatusClass& RRunStatus )
 		SVImageClass* inputImage = getInputImage ();
 		if (nullptr != inputImage)
 		{
-			//Set input name to source image name to display it in result picker
-			m_svSourceImageName.SetValue( RRunStatus.m_lResultDataIndex, 0, inputImage->GetCompleteObjectName() );
-
 			SVSmartHandlePointer inputImageBuffer;
 			inputImage->GetImageHandle(inputImageBuffer);
 			if( !( inputImageBuffer.empty() ) )

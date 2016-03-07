@@ -48,8 +48,7 @@ public:
 	virtual HRESULT ResetObject();
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
-	virtual HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint );
@@ -77,7 +76,7 @@ protected:
 	SVInObjectInfoStruct m_TranslationYInput;
 	SVInObjectInfoStruct m_TranslationXInput;
 
-	SVStringValueObjectClass m_SourceImageNames;
+	SVStaticStringValueObjectClass m_SourceImageName;
 	SVLongValueObjectClass m_TranslationX;
 	SVLongValueObjectClass m_TranslationY;
 	SVDoubleValueObjectClass m_LearnedTranslationX;

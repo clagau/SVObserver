@@ -178,7 +178,7 @@ protected:
 	bool                     m_bUseImageCopies;
 	
 private:
-	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
+	HRESULT CollectInputImageNames( );
 
 public:
 	

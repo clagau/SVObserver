@@ -260,10 +260,9 @@ bool SVWindowToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-HRESULT SVWindowToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* SVWindowToolClass::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageNames;
 }
 
 HRESULT SVWindowToolClass::ResetObject()

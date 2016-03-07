@@ -42,10 +42,13 @@ private:
 	friend class SVExternalToolDlg;
 
 public:
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
+#pragma region Member Variables
+private:
 	// String value object for Source Image Names
-	SVStringValueObjectClass m_svSourceImageNames;
+	SVStaticStringValueObjectClass m_svSourceImageNames;
+#pragma endregion Member Variables
 };
 
 #endif

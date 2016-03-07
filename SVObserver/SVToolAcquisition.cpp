@@ -77,6 +77,7 @@ BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	}
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_svSourceImageNames.SetValue( 0, mainImageObject.GetCompleteObjectName() );
 
 	isCreated = bOk;
 
@@ -119,15 +120,6 @@ bool SVAcquisitionToolClass::DoesObjectHaveExtents() const
 	return false;
 }
 
-BOOL SVAcquisitionToolClass::onRun( SVRunStatusClass& RRunStatus )
-{
-	BOOL bRetVal = SVToolClass::onRun( RRunStatus );
-
-	CollectInputImageNames( RRunStatus );
-
-	return bRetVal;
-}
-
 DWORD_PTR SVAcquisitionToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
 	DWORD_PTR DwResult = NULL;
@@ -141,20 +133,9 @@ SVCameraImageTemplate* SVAcquisitionToolClass::GetMainImageClass()
 	return &mainImageObject;
 }
 
-// Set String value object for Source Image Names
-HRESULT SVAcquisitionToolClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+SVStaticStringValueObjectClass* SVAcquisitionToolClass::GetInputImageNames()
 {
-	CString l_strName = mainImageObject.GetCompleteObjectName();
-
-	m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
-
-	return S_OK;
-}
-
-HRESULT SVAcquisitionToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
-{
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageNames;
 }
 
 

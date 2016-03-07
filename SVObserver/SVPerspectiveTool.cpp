@@ -36,7 +36,7 @@ BOOL SVPerspectiveToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCreateS
 
 	l_bOk &= ( m_OutputImage.InitializeImage( GetInputImage() ) == S_OK );
 
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_svSourceImageName.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
 	isCreated = l_bOk;
 
@@ -226,6 +226,14 @@ HRESULT SVPerspectiveToolClass::ResetObject()
 		l_hrOk = S_FALSE;
 	}
 
+	SVImageClass *inputImage = GetInputImage();
+
+	if (nullptr != inputImage)
+	{
+		//Set input name to source image name to display it in result picker
+		m_svSourceImageName.SetValue( 0, inputImage->GetCompleteObjectName() );
+	}
+
 	UpdateImageWithExtent( 1 );
 
 	return l_hrOk;
@@ -299,8 +307,6 @@ BOOL SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus )
 	{
 		SVImageClass *l_pInputImage = GetInputImage();
 
-		CollectInputImageNames(p_rRunStatus);
-
 		SVImageExtentClass l_svToolExtents;
 		l_bOk = GetImageExtent(l_svToolExtents) == S_OK;
 
@@ -372,7 +378,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	RegisterEmbeddedObject( &m_svYOffset, SVTranslationYOffsetObjectGuid, IDS_Y_OFFSET, false, SVResetItemTool ); 
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_svSourceImageName, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
 
 	HRESULT l_hr = SetImageExtentProperty( SVExtentPropertyTranslationOffsetX, &m_svXOffset );
 	l_hr = SetImageExtentProperty( SVExtentPropertyTranslationOffsetY, &m_svYOffset );
@@ -554,26 +560,9 @@ HRESULT SVPerspectiveToolClass::SetImageExtent( unsigned long p_ulIndex, SVImage
 	return l_hrOk;
 }
 
-// Set String value object for Source Image Names
-HRESULT SVPerspectiveToolClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+SVStaticStringValueObjectClass* SVPerspectiveToolClass::GetInputImageNames()
 {
-	HRESULT l_hr = S_FALSE;
-	SVImageClass* l_pInputImage = GetInputImage();
-	if( l_pInputImage )
-	{
-		CString l_strName = l_pInputImage->GetCompleteObjectName();
-
-		m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
-
-		l_hr = S_OK;
-	}
-	return l_hr;
-}
-
-HRESULT SVPerspectiveToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
-{
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageName;
 }
 
 //******************************************************************************

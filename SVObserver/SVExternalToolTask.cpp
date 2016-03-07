@@ -880,9 +880,6 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 			int i;
 			HRESULT hr = S_OK;
 
-			// Data Definition List stuff
-			CollectInputImageNames(RRunStatus);
-
 			// EB 20051121
 			// check input images to see if they have resized
 			// If so, do a ResetObject here first.
@@ -1816,6 +1813,9 @@ HRESULT SVExternalToolTask::ResetObject()
 
 	InspectionInputsToVariantArray();
 
+	// Data Definition List stuff
+	CollectInputImageNames();
+
 	try
 	{
 		hr = Initialize( SVDllLoadLibraryCallbackDefault() );
@@ -2074,20 +2074,24 @@ HRESULT SVExternalToolTask::ConnectInputs()
 }
 
 
-HRESULT SVExternalToolTask::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+HRESULT SVExternalToolTask::CollectInputImageNames( )
 {
 	SVExternalTool* l_pTool = dynamic_cast<SVExternalTool*>(GetTool());
 	if( l_pTool )
 	{
-		l_pTool->m_svSourceImageNames.SetArraySize( m_Data.m_lNumInputImages );
-		for( int i = 0 ; i < m_Data.m_lNumInputImages ; i++ )
+		SVStaticStringValueObjectClass* imageNames = l_pTool->GetInputImageNames();
+		if (nullptr != imageNames)
 		{
-			SVImageClass* l_pImage = GetInputImage(i);
-			if( l_pImage )
+			imageNames->SetArraySize( m_Data.m_lNumInputImages );
+			for( int i = 0 ; i < m_Data.m_lNumInputImages ; i++ )
 			{
-				CString l_strName = l_pImage->GetCompleteObjectName();
-				
-				l_pTool->m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, i, l_strName); 
+				SVImageClass* l_pImage = GetInputImage(i);
+				if( l_pImage )
+				{
+					CString l_strName = l_pImage->GetCompleteObjectName();
+
+					imageNames->SetValue( 0/*Static value, this parameter will not used*/, i, l_strName); 
+				}
 			}
 		}
 	}

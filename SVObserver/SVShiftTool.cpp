@@ -50,7 +50,7 @@ BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	l_Status &= m_OutputImage.InitializeImage( GetImageInput() ) == S_OK;
 
-	m_SourceImageNames.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE );
+	m_SourceImageName.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE );
 	m_TranslationX.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
 	m_TranslationY.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
 	m_LearnedTranslationX.ObjectAttributesAllowedRef() |= ( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE );
@@ -89,6 +89,9 @@ HRESULT SVShiftTool::ResetObject()
 	if( l_pInputImage != NULL )
 	{
 		l_ParentGuid = l_pInputImage->GetUniqueObjectID();
+
+		//Set input name to source image name to display it in result picker
+		m_SourceImageName.SetValue( 0/*Static value, this parameter will not used*/, l_pInputImage->GetCompleteObjectName() );
 	}
 
 	m_OutputImage.UpdateImage( l_ParentGuid );
@@ -112,29 +115,9 @@ HRESULT SVShiftTool::SetImageExtentToParent( unsigned long p_ulIndex )
 	return l_hrOk;
 }
 
-HRESULT SVShiftTool::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+SVStaticStringValueObjectClass* SVShiftTool::GetInputImageNames()
 {
-	HRESULT l_hr = S_FALSE;
-
-	SVImageClass* l_pInputImage = GetImageInput();
-
-	if( l_pInputImage != NULL )
-	{
-		CString l_strName = l_pInputImage->GetCompleteObjectName();
-
-		m_SourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
-
-		l_hr = S_OK;
-	}
-
-	return l_hr;
-}
-
-HRESULT SVShiftTool::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
-{
-	p_pSourceNames = &m_SourceImageNames;
-
-	return S_OK;
+	return &m_SourceImageName;
 }
 
 HRESULT SVShiftTool::IsInputImage( SVImageClass *p_psvImage )
@@ -351,8 +334,6 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 		{
 			m_OutputImage.CopyImageTo(p_rRunStatus.Images);
 		}
-
-		CollectInputImageNames( p_rRunStatus );
 	}
 
 	return l_Status;
@@ -477,7 +458,7 @@ void SVShiftTool::LocalInitialize()
 
 	//Register Embedded Objects
 	RegisterEmbeddedObject( &m_evoShiftMode, SVShiftToolModeGuid, IDS_OBJECTNAME_SHIFT_TOOL_MODE, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_SourceImageName, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_TranslationX, SVTranslationXObjectGuid, IDS_OBJECTNAME_TRANSLATION_X_RESULT, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_TranslationY, SVTranslationYObjectGuid, IDS_OBJECTNAME_TRANSLATION_Y_RESULT, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_LearnedTranslationX, SVShiftToolReferenceXObjectGuid, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_X, false, SVResetItemNone );

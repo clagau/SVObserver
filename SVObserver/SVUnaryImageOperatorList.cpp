@@ -659,11 +659,10 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames( SVRunStatusClass& R
 	{
 		CString l_strName = l_pInputImage->GetCompleteObjectName();
 
-		SVStringValueObjectClass* l_lstrVO=NULL;
-		l_pTool->GetInputImageNames( l_lstrVO );
+		SVStaticStringValueObjectClass* l_lstrVO = l_pTool->GetInputImageNames();
 		if( l_lstrVO )
 		{
-			l_lstrVO->SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
+			l_lstrVO->SetValue( 0/*Static value, this parameter will not used*/, l_strName );
 		}
 
 		l_hr = S_OK;

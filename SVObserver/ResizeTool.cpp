@@ -216,10 +216,6 @@ BOOL ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 
 	m_svSourceImageName.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	SVString	inputImageName = inputImage->GetCompleteName();
-
-	bOk &= (S_OK == m_svSourceImageName.SetValue(1, inputImageName.c_str()));
-
 	isCreated = bOk;
 
 	return bOk;
@@ -324,10 +320,9 @@ bool ResizeTool::DoesObjectHaveExtents() const
 	return true;
 }
 
-HRESULT ResizeTool::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* ResizeTool::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageName;
-	return S_OK;
+	return &m_svSourceImageName;
 }
 
 
@@ -342,7 +337,12 @@ HRESULT ResizeTool::ResetObject()
 	{
 		inputImage = getInputImage();
 
-		if (nullptr == inputImage)
+		if (nullptr != inputImage)
+		{
+			//Set input name to source image name to display it in result picker
+			m_svSourceImageName.SetValue( 0/*Static value, this parameter will not used*/, inputImage->GetCompleteObjectName() );
+		}
+		else
 		{
 			hr = SVMSG_SVO_5047_GETINPUTIMAGEFAILED;
 		}
@@ -710,13 +710,6 @@ BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
 		{
 			m_RunError.m_MessageCode = SVMSG_SVO_5021_SETIMAGEHANDLEFAILED;
 		}
-	}
-
-	SVImageClass* inputImage = getInputImage ();
-	if (nullptr != inputImage)
-	{
-		//Set input name to source image name to display it in result picker
-		m_svSourceImageName.SetValue( RRunStatus.m_lResultDataIndex, 0, inputImage->GetCompleteObjectName() );
 	}
 
 	SVSmartHandlePointer	roiImageHandle;

@@ -128,10 +128,9 @@ HRESULT SVTransformationToolClass::UpdateImageWithExtent( unsigned long p_Index 
 	return l_Status;
 }
 
-HRESULT SVTransformationToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* SVTransformationToolClass::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageNames;
 }
 
 //******************************************************************************

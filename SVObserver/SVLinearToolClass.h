@@ -51,7 +51,7 @@ public:
 	virtual EAutoSize GetAutoSizeEnabled() override;
 	BOOL IsToolRotated();
 
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 	virtual BOOL IsValid() override;
 
@@ -60,7 +60,6 @@ public:
 	//Embedded Object : Profile Orientation
 	SVEnumerateValueObjectClass m_voProfileOrientation; // @WARNING:  bad practice making members public
 	SVBoolValueObjectClass m_voUseProfileRotation; // @WARNING:  bad practice making members public
-	SVStringValueObjectClass m_svSourceImageNames; // @WARNING:  bad practice making members public
 
 protected:
 #pragma region Protected Methods
@@ -76,6 +75,11 @@ private:
 #pragma region Private Methods
 	virtual void init();
 #pragma endregion Private Methods
+
+#pragma region Member Variables
+private:
+	SVStaticStringValueObjectClass m_svSourceImageNames;
+#pragma endregion Member Variables
 };
 
 // ******************************************************************************

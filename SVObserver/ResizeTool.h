@@ -48,7 +48,7 @@ public:
 	
 	/// GetInputImageNames
 	///  Retrieves source image name from m_svSourceImageName.
-	virtual HRESULT GetInputImageNames(SVStringValueObjectClass*& pSourceNames) override;
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 	virtual HRESULT	ResetObject() override;
 	virtual BOOL	IsValid() override;
@@ -110,9 +110,7 @@ protected:
 	// change while in Run Mode and buckettized data is all reset when going 
 	// online.  If the Input Image is changed, Output Image buffers will all 
 	// be destroyed and recreated anyway.
-	//MZA (19.02.16): For 7.30 release it used the buckettized object like all other tools, for this reason it set this value in run, but it should change (also in the other tools).
-	SVStringValueObjectClass m_svSourceImageName;
-	//SVStaticStringValueObjectClass m_svSourceImageName;
+	SVStaticStringValueObjectClass m_svSourceImageName;
 
 	// Output Image - embedded
 	SVImageClass m_OutputImage;

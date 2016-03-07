@@ -33,9 +33,7 @@ public:
 
 	virtual HRESULT ResetObject();
 
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
-	// String value object for Source Image Names
-	SVStringValueObjectClass m_svSourceImageNames;
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
 
@@ -53,7 +51,8 @@ protected:
 	SVBoolValueObjectClass		outputEnableOffsetB;
 	SVPointValueObjectClass		outputOffsetBPoint;
 	SVLongValueObjectClass		outputOperator;
-
+	// String value object for Source Image Names
+	SVStaticStringValueObjectClass m_svSourceImageNames;
 };
 
 #endif

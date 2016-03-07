@@ -1394,15 +1394,9 @@ HRESULT SVToolClass::setAuxSourceImage(const SVGUID& rObjectID)
 }
 #pragma endregion ITool methods
 
-HRESULT SVToolClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+SVStaticStringValueObjectClass* SVToolClass::GetInputImageNames( )
 {
-	return S_FALSE;
-}
-
-HRESULT SVToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
-{
-	p_pSourceNames = nullptr;
-	return S_FALSE;
+	return nullptr;
 }
 
 SVValueObjectClass* SVToolClass::GetToolComment()

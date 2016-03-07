@@ -7010,8 +7010,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 			l_vTmp.Clear();
 			if( l_pTool )
 			{
-				SVStringValueObjectClass* l_psvSourceNames=NULL;
-				l_pTool->GetInputImageNames( l_psvSourceNames );
+				SVStaticStringValueObjectClass* l_psvSourceNames = l_pTool->GetInputImageNames();
 				if( l_psvSourceNames )
 				{
 					SAFEARRAYBOUND l_rgsabound[1];

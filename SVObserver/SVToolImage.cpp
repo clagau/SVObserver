@@ -339,10 +339,9 @@ HRESULT SVImageToolClass::UpdateTranslation()
 	return l_hrOK;
 }
 
-HRESULT SVImageToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* SVImageToolClass::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageNames;
 }
 
 HRESULT SVImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )

@@ -35,7 +35,7 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames ) override;
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 	virtual HRESULT ResetObject() override;
 	virtual BOOL OnValidate() override;
@@ -104,7 +104,7 @@ private:
 	static const VARTYPE m_varType_imageIndex = VT_I4;
 
 	// Source Image Name - embedded
-	SVStringValueObjectClass	m_svSourceImageName;
+	SVStaticStringValueObjectClass m_svSourceImageName;
 	// Output Image - embedded
 	SVImageClass	m_OutputImages[m_numberOfOutputImages];
 

@@ -348,10 +348,9 @@ HRESULT SVColorToolClass::CollectInputImageNames( )
 	return l_hr;
 }
 
-HRESULT SVColorToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* SVColorToolClass::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageNames;
 }
 
 //******************************************************************************

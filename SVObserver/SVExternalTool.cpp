@@ -103,10 +103,9 @@ void SVExternalTool::Initialize()
 
 
 
-HRESULT SVExternalTool::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
+SVStaticStringValueObjectClass* SVExternalTool::GetInputImageNames()
 {
-	p_pSourceNames = &m_svSourceImageNames;	
-	return S_OK;
+	return &m_svSourceImageNames;	
 }
 
 //******************************************************************************

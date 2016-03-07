@@ -52,6 +52,9 @@ public:
 	};
 
 
+public:
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+
 protected:
 	HRESULT UpdateOutputImageExtents();
 	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
@@ -75,14 +78,10 @@ private:
 
 	SVMatroxBuffer m_LutX;
 	SVMatroxBuffer m_LutY;
+	
 private:
 	// String value object for Source Image Names
-	SVStringValueObjectClass m_svSourceImageNames;
-	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
-
-public:
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
-
+	SVStaticStringValueObjectClass m_svSourceImageName;
 };
 
 #endif // _SVPERSPECTIVETOOLCLASS_H

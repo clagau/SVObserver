@@ -30,8 +30,7 @@ public:
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
-	SVStringValueObjectClass m_svSourceImageNames;
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
@@ -44,6 +43,10 @@ private:
 	//	will be called.
 	void init();
 
+#pragma region Member Variables
+private:
+	SVStaticStringValueObjectClass m_svSourceImageNames;
+#pragma endregion Member Variables
 };
 
 

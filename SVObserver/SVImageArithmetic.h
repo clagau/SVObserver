@@ -81,7 +81,7 @@ protected:
 	// Embedded Object:
 	SVImageClass				outputImageObject;
 
-	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
+	HRESULT CollectInputImageNames( );
 
 };
 

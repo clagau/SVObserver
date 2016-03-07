@@ -48,6 +48,8 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+
 protected:
 	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
 //	virtual DWORD_PTR processMessage( DWORD p_dwMessageID, DWORD_PTR p_dwMessageValue, DWORD_PTR p_dwMessageContext );
@@ -72,11 +74,7 @@ private:
 	SVMatroxBuffer m_LutX;
 	SVMatroxBuffer m_LutY;
 	// String value object for Source Image Names
-	SVStringValueObjectClass m_svSourceImageNames;
-	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
-
-public:
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+	SVStaticStringValueObjectClass m_svSourceImageName;
 };
 
 #endif // _SVCYLINDRICALWARPTOOLCLASS_H

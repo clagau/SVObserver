@@ -43,8 +43,7 @@ public:
 
 	SVToolPropertyEntryStruct* GetSpecialPropertyList( int& RCount );
 
-	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 	virtual BOOL OnValidate();
 protected:
@@ -67,7 +66,7 @@ protected:
 
 private:
 	// String value object for Source Image Names
-	SVStringValueObjectClass m_svSourceImageNames;
+	SVStaticStringValueObjectClass m_svSourceImageNames;
 
 };
 

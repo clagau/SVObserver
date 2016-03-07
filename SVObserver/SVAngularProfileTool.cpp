@@ -489,26 +489,9 @@ BOOL SVAngularProfileToolClass::onRun( SVRunStatusClass& RRunStatus )
 	return FALSE;
 }
 
-// Set String value object for Source Image Names
-HRESULT SVAngularProfileToolClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+SVStaticStringValueObjectClass* SVAngularProfileToolClass::GetInputImageNames()
 {
-	HRESULT l_hr = S_FALSE;
-	SVImageClass* l_pInputImage = getInputImage();
-	if( l_pInputImage )
-	{
-		CString l_strName = l_pInputImage->GetCompleteObjectName();
-
-		m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
-
-		l_hr = S_OK;
-	}
-	return l_hr;
-}
-
-HRESULT SVAngularProfileToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
-{
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageNames;
 }
 BOOL SVAngularProfileToolClass::OnValidate()
 {

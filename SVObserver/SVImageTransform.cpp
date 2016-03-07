@@ -495,7 +495,7 @@ HRESULT SVImageTransformClass::CollectInputImageNames( SVRunStatusClass& runStat
 	{
 		CString l_strName = l_pInputImage->GetCompleteObjectName();
 
-		l_pTool->m_svSourceImageNames.SetValue( runStatus.m_lResultDataIndex, 0, l_strName );
+		l_pTool->GetInputImageNames()->SetValue( runStatus.m_lResultDataIndex, 0, l_strName );
 
 		l_hr = S_OK;
 	}

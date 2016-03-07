@@ -40,7 +40,7 @@ BOOL SVCylindricalWarpToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCre
 		l_bOk = LocalCreate() == S_OK;
 	}
 
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_svSourceImageName.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
 	isCreated = l_bOk;
 
@@ -71,7 +71,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	RegisterEmbeddedObject( &m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_svSourceImageName, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
 
 	m_OutputImage.InitializeImage( SVImageTypePhysical );
 
@@ -288,6 +288,13 @@ HRESULT SVCylindricalWarpToolClass::ResetObject()
 		l_hrOk = S_FALSE;
 	}
 
+	SVImageClass *inputImage = GetInputImage();
+	if (nullptr != inputImage)
+	{
+		//Set input name to source image name to display it in result picker
+		m_svSourceImageName.SetValue( 0/*Static value, this parameter will not used*/, inputImage->GetCompleteObjectName() );
+	}
+
 	UpdateImageWithExtent( 1 );
 
 	return l_hrOk;
@@ -330,7 +337,6 @@ BOOL SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus )
 	if ( SVToolClass::onRun( p_rRunStatus ) )
 	{
 		SVImageClass* l_pInputImage = GetInputImage();
-		CollectInputImageNames(p_rRunStatus);
 
 		SVImageExtentClass l_svToolExtents;
 		l_bOk = GetImageExtent(l_svToolExtents) == S_OK;
@@ -486,26 +492,9 @@ HRESULT SVCylindricalWarpToolClass::ValidateAngle(double &p_dWarpAngle )
 	return S_OK;
 }
 
-// Set String value object for Source Image Names
-HRESULT SVCylindricalWarpToolClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+SVStaticStringValueObjectClass* SVCylindricalWarpToolClass::GetInputImageNames()
 {
-	HRESULT l_hr = S_FALSE;
-	SVImageClass* l_pInputImage = GetInputImage();
-	if( l_pInputImage )
-	{
-		CString l_strName = l_pInputImage->GetCompleteObjectName();
-
-		m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
-
-		l_hr = S_OK;
-	}
-	return l_hr;
-}
-
-HRESULT SVCylindricalWarpToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
-{
-	p_pSourceNames = &m_svSourceImageNames;
-	return S_OK;
+	return &m_svSourceImageName;
 }
 
 //******************************************************************************

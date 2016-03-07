@@ -33,9 +33,8 @@ public:
 	HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
 	friend class SVImagePolarTransformClass;
 
-	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
-	SVStringValueObjectClass m_svSourceImageNames;
 	SVEnumerateValueObjectClass m_svAngularMethod;
 
 private:
@@ -46,6 +45,10 @@ private:
 	//	will be called.
 	void init();
 
+#pragma region Member Variables
+private:
+	SVStaticStringValueObjectClass m_svSourceImageNames;
+#pragma endregion Member Variables
 };
 
 
