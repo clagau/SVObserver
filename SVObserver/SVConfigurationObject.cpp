@@ -5211,36 +5211,40 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 
 void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVTreeType::SVBranchHandle &rToolset)
 {
-	SVTreeType::SVBranchHandle lutEquationBranch;
-
-	//look in all children of the toolset if it had to add information
-	SVTreeType::SVBranchHandle hSubChild( nullptr );
-	hSubChild = rTree.getFirstBranch( rToolset );
-	while ( nullptr != hSubChild )
+	DWORD version = TheSVObserverApp.getLoadingVersion();
+	if(version < 0x71400) //< 7.20  Add lut Equation  clip 
 	{
-		//check for LUT Equation clip-value
-		if ( SVNavigateTree::FindBranch( rTree, hSubChild, SVFindPredicate( rTree, IDS_CLASSNAME_SVLUTEQUATION ), lutEquationBranch ) )
+		SVTreeType::SVBranchHandle lutEquationBranch;
+
+		//look in all children of the toolset if it had to add information
+		SVTreeType::SVBranchHandle hSubChild( nullptr );
+		hSubChild = rTree.getFirstBranch( rToolset );
+		while ( nullptr != hSubChild )
 		{
-			SVTreeType::SVBranchHandle lutEquationClipBranch;
-			SVTreeType::SVBranchHandle lutEquationEmbeddedsBranch;
-			if ( SVNavigateTree::FindBranch( rTree, lutEquationBranch, SVFindPredicate( rTree, scEmbeddedsTag ), lutEquationEmbeddedsBranch ) )
+			//check for LUT Equation clip-value
+			if ( SVNavigateTree::FindBranch( rTree, hSubChild, SVFindPredicate( rTree, IDS_CLASSNAME_SVLUTEQUATION ), lutEquationBranch ) )
 			{
-				//check if clip for LUT equation is existing.
-				if ( !SVNavigateTree::FindBranch( rTree, lutEquationEmbeddedsBranch, SVFindPredicate( rTree, IDS_OBJECTNAME_LUT_EQUATION_CLIP ), lutEquationClipBranch ) )
+				SVTreeType::SVBranchHandle lutEquationClipBranch;
+				SVTreeType::SVBranchHandle lutEquationEmbeddedsBranch;
+				if ( SVNavigateTree::FindBranch( rTree, lutEquationBranch, SVFindPredicate( rTree, scEmbeddedsTag ), lutEquationEmbeddedsBranch ) )
 				{
-					//add clip value to tree, with value FALSE
-					SVConfigurationTreeWriter< SVTreeType > writer(rTree, lutEquationEmbeddedsBranch);
-					SVBoolValueObjectClass isLUTFormulaClipped;
-					isLUTFormulaClipped.SetResetOptions( false, SVResetItemTool );
-					isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, IDS_OBJECTNAME_LUT_EQUATION_CLIP);
-					isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
-					isLUTFormulaClipped.SetValue(0, FALSE);
-					isLUTFormulaClipped.Persist(writer);
+					//check if clip for LUT equation is existing.
+					if ( !SVNavigateTree::FindBranch( rTree, lutEquationEmbeddedsBranch, SVFindPredicate( rTree, IDS_OBJECTNAME_LUT_EQUATION_CLIP ), lutEquationClipBranch ) )
+					{
+						//add clip value to tree, with value FALSE
+						SVConfigurationTreeWriter< SVTreeType > writer(rTree, lutEquationEmbeddedsBranch);
+						SVBoolValueObjectClass isLUTFormulaClipped;
+						isLUTFormulaClipped.SetResetOptions( false, SVResetItemTool );
+						isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, IDS_OBJECTNAME_LUT_EQUATION_CLIP);
+						isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
+						isLUTFormulaClipped.SetValue(0, FALSE);
+						isLUTFormulaClipped.Persist(writer);
+					}
 				}
 			}
-		}
 
-		hSubChild = rTree.getNextBranch( rToolset, hSubChild );
+			hSubChild = rTree.getNextBranch( rToolset, hSubChild );
+		}
 	}
 }
 
