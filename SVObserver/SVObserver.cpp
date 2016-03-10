@@ -122,6 +122,7 @@
 #include "TextDefinesSvO.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "CommandLineArgs.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -360,6 +361,12 @@ SVObserverApp::SVObserverApp()
 	  , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
 	  , m_DataValidDelay( 0 )
 	  , m_forcedImageUpdateTimeInSeconds(0)
+	, m_SVIMIniPath(SvO::DefaultSVIMIniPath)
+	  ,m_HardwareIniPath(SvO::DefaultHardwareIniPath)
+	  ,m_SVObserverBinPath(SvO::DefaultObserverBinPath)
+	  ,m_SVObserverExternalToolPath(SvO::DefaultExternalToolPath)
+	  ,m_SVObserverRunPath(SvO::DefaultRunFolder)
+	  ,m_TempPath(SvO::DefaultRunFolder)
 {
 	free((void*)m_pszHelpFilePath);
 	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
@@ -2970,6 +2977,24 @@ void SVObserverApp::OnRCClose()
 BOOL SVObserverApp::InitInstance()
 {
 	CWinApp::InitInstance();
+
+	LPCSTR lpstring = ::GetCommandLine();
+	CommandLineArgs Args;
+	#define INFO_BUFFER_SIZE 32767
+	
+	
+	TCHAR strCurrentDirectory[INFO_BUFFER_SIZE];
+	GetCurrentDirectory(INFO_BUFFER_SIZE, strCurrentDirectory);
+	std::string start0Dir  = strCurrentDirectory;
+	std::string startDir  = Args.GetStartDirectory();
+	std::string iniDir = Args.GetIniDirectory(); 
+	
+
+	m_SVIMIniPath =  Args.GetIniDirectory();
+	m_SVIMIniPath.append("\\SVIM.INI");
+	m_HardwareIniPath = Args.GetIniDirectory();
+	m_HardwareIniPath.append("\\HARDWARE.INI"); 
+
 
 	HINSTANCE ResourceInstance( NULL );
 	//Load resource dll explicitly
@@ -7196,6 +7221,40 @@ HRESULT SVObserverApp::Start()
 	return l_hrOk;
 }
 
+
+
+
+LPCTSTR SVObserverApp::GetSVIMIniPath()
+{
+	
+	return m_SVIMIniPath.c_str();
+}
+
+LPCTSTR SVObserverApp::GetHardwareIniPath()
+{
+	return m_HardwareIniPath.c_str();
+}
+
+LPCTSTR SVObserverApp::GetSVObserverExternalToolPath()
+{
+	return m_SVObserverExternalToolPath.c_str();
+}
+LPCTSTR SVObserverApp::GetVObserverRunPath()
+{
+	return m_SVObserverRunPath.c_str();
+
+}
+LPCTSTR SVObserverApp::GetTempPath()
+{
+	return m_TempPath.c_str();
+}
+
+
+
+
+
+
+
 HRESULT SVObserverApp::INILoad()
 {
 	SVOIniLoader l_iniLoader;
@@ -7221,7 +7280,8 @@ HRESULT SVObserverApp::INILoad()
 	m_csOptions.Empty();
 
 	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
-	HRESULT l_hrOk = l_iniLoader.Load("C:\\SVObserver\\bin\\SVIM.INI", l_csSystemDir, "C:\\SVObserver\\bin\\HARDWARE.INI");
+	//HRESULT l_hrOk = l_iniLoader.Load("C:\\SVObserver\\bin\\SVIM.INI", l_csSystemDir, "C:\\SVObserver\\bin\\HARDWARE.INI");
+	HRESULT l_hrOk = l_iniLoader.Load(GetSVIMIniPath(), l_csSystemDir,GetHardwareIniPath());
 
 	if (S_OK == l_hrOk)
 	{

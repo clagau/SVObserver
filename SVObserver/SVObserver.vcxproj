@@ -326,6 +326,7 @@ echo %time%
     <ClCompile Include="ArchiveToolHelper.cpp" />
     <ClCompile Include="BasicValueObject.cpp" />
     <ClCompile Include="BasicValueObjects.cpp" />
+    <ClCompile Include="CommandLineArgs.cpp" />
     <ClCompile Include="Custom2Filter.cpp" />
     <ClCompile Include="Custom2Filter_ImportExport.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MultiProcessorCompilation>
@@ -3568,6 +3569,7 @@ echo %time%
     <ClInclude Include="ArchiveToolHelper.h" />
     <ClInclude Include="BasicValueObject.h" />
     <ClInclude Include="BasicValueObjects.h" />
+    <ClInclude Include="CommandLineArgs.h" />
     <ClInclude Include="Custom2Filter.h" />
     <ClInclude Include="EQAdjustSize.h" />
     <ClInclude Include="EQAdjustSizeHeight.h" />
