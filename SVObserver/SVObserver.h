@@ -349,16 +349,6 @@ public:
 	//Arvid 150610: isRegularSave is currently false only for AutoSaves
 	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
 
-	LPCTSTR GetSVIMIniPath();
-	LPCTSTR GetHardwareIniPath();
-	LPCTSTR GetSVObserverExternalToolPath();
-	LPCTSTR GetVObserverRunPath();
-	LPCTSTR GetTempPath();
-
-
-	
-
-
 #pragma region Encapsulation Methods
 	BOOL getShowUpdateFirmwareInMenu() const { return m_ShowUpdateFirmwareInMenu; }
 	void setShowUpdateFirmwareInMenu(BOOL val) { m_ShowUpdateFirmwareInMenu = val; }
@@ -457,20 +447,6 @@ public:
 
 #pragma region Member variables
 private:
-	
-	std::string m_SVIMIniPath;
-	std::string m_HardwareIniPath;
-	std::string m_SVObserverBinPath;
-	std::string m_SVObserverExternalToolPath;
-	std::string m_SVObserverRunPath;
-	std::string m_TempPath;
-
-	/*SVObserverBinPath=C:\SVObserver\bin
-	SVObserverExternalToolPath=C:\SVObserver\ExternalTool
-	SVObserverRunPath=C:\RUN
-	TempPath=C:\Temp
-	*/
-	
 	// *** // ***
 	HANDLE m_hAppThread;
 	// *** // ***

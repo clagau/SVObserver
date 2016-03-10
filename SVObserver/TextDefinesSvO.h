@@ -144,16 +144,6 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const   Error_you_have_Selected_X_Must_less_then_Y =  _T("Error: You have selected %ld for the Max Images count. The image count must be less then %ld"); 
 	const TCHAR* const   Error_WrongCameraModel =  _T("Wrong camera model: Expected %s, Current %s"); 
 	const TCHAR* const   Error_WrongCameraVendor =  _T("Wrong camera vendor: Expected %s, Current %s"); 
-
-
-	
-	const TCHAR* const DefaultHardwareIniPath  = _T("C:\\SVObserver\\bin\\SVIM.INI");
-	const TCHAR* const DefaultSVIMIniPath   = _T("C:\\SVObserver\\bin\\HARDWARE.INI");
-	const TCHAR* const DefaultTempFolder = _T( "C:\\Temp" );
-	const TCHAR* const DefaultRunFolder = _T( "C:\\RUN" );
-	const TCHAR* const DefaultObserverBinPath = _T( "C:\\SVObserver\\bin" );
-	const TCHAR* const DefaultExternalToolPath = _T( "C:\\SVObserver\\ExternalTool" );
-
 } /* namespace SVObserver */ } /* namespace Seidenader */
 
 namespace SvO = Seidenader::SVObserver;
