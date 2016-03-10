@@ -214,7 +214,6 @@
     <ClCompile Include="MaskController.cpp" />
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
-    <ClCompile Include="RangeSelectorFilter.cpp" />
     <ClCompile Include="RangeValidator.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -270,7 +269,6 @@
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="PPQSelector.h" />
     <ClInclude Include="RangeController.h" />
-    <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="RangeValidator.h" />
     <ClInclude Include="SciLexer.h" />
     <ClInclude Include="Scintilla.h" />

@@ -12,12 +12,12 @@
 #pragma once
 
 #pragma region Includes
-#include "SVPropertySheetCancelImpl.h"
+#include "ISVCancel.h"
 #include "ObjectSelectorLibrary\SelectorItemVector.h"
-#include "SelectedObjectsPage.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
+class SelectedObjectsPage;
 
 class SVConditionalHistorySheet : public CPropertySheet, public ISVCancel
 {

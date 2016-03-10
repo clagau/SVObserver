@@ -9,14 +9,14 @@
 //* .Check In Date   : $Date:   02 Oct 2013 12:05:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLinearLineEdgeCountingAnalyzer.h"
-#include "SVMeasureAnalyzerAdjustment.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVGlobal.h"
 #include "SVTool.h"
-
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLinearEdgeCountingLineAnalyzerClass, SVLinearEdgeCountingLineAnalyzerClassGuid );
 

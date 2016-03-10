@@ -1931,7 +1931,7 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVMeasureAnalyzerAdjustment.cpp">
+    <ClCompile Include="SVMeasureAnalyzerAdjustmentSheet.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -3584,7 +3584,6 @@ echo %time%
     <ClInclude Include="MonitorListImagesPage.h" />
     <ClInclude Include="MonitorListSheet.h" />
     <ClInclude Include="MonitorListValuesPage.h" />
-    <ClInclude Include="ObjectNameHelper.h" />
     <ClInclude Include="RangeClassHelper.h" />
     <ClInclude Include="RangeXDialogClass.h" />
     <ClInclude Include="RemoteMonitorList.h" />
@@ -3863,7 +3862,7 @@ echo %time%
     <ClInclude Include="SVMatroxGigeAcquisitionClass.h" />
     <ClInclude Include="SVMatroxGigeCameraProxy.h" />
     <ClInclude Include="SVMatroxImageProcessingClass.h" />
-    <ClInclude Include="SVMeasureAnalyzerAdjustment.h" />
+    <ClInclude Include="SVMeasureAnalyzerAdjustmentSheet.h" />
     <ClInclude Include="SVMemoryManager.h" />
     <ClInclude Include="SVMessageWindow.h" />
     <ClInclude Include="SVMultiDocTemplate.h" />
@@ -4066,6 +4065,7 @@ echo %time%
     <ClInclude Include="TextDefinesSvO.h" />
     <ClInclude Include="ToolClipboard.h" />
     <ClInclude Include="ToolSizeAdjustTask.h" />
+    <ClInclude Include="TraceWin.h" />
     <ClInclude Include="UseTypeExceptMatch.h" />
     <ClInclude Include="ZoomHelperEx.h" />
     <ClInclude Include="ZoomToolBar.h" />
@@ -4073,7 +4073,6 @@ echo %time%
   <ItemGroup>
     <None Include="BasicValueObject.inl" />
     <None Include="BasicValueObjects.inl" />
-    <None Include="ObjectNameHelper.inl" />
     <None Include="RootChildren.inl" />
     <None Include="RootObject.inl" />
     <None Include="SVConfigurationTreeWriter.inl" />

@@ -111,13 +111,14 @@ public:
 	virtual HRESULT IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo ); 
 
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
-
+	HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = nullptr);
+	
 #pragma region virtual method (ITaskObject)
 	virtual HRESULT AddInputRequestMarker() override;
 	virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) override;
 	virtual SvOi::ISelectorItemVectorPtr GetSelectorList(SvOi::IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const override;
 	virtual SvOi::DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const override;
-	virtual HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = nullptr) override;
+	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
 	virtual HRESULT ConnectToImage(const SVString& rInputName, const SVGUID& rNewID) override;
 	virtual bool IsObjectValid() const override;
 #pragma endregion virtual method (ITaskObject)

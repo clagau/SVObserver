@@ -10,7 +10,6 @@
 #pragma region Includes
 #include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
-#include "IObjectInfoStruct.h"
 #pragma endregion Includes
 
 namespace Seidenader

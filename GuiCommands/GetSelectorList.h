@@ -11,21 +11,35 @@
 #include <boost/noncopyable.hpp>
 #include <Guiddef.h>
 #include "ObjectInterfaces/IObjectManager.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
+#include "AttributesAllowedFilter.h"
+#include "AttributesSetFilter.h"
+#include "RangeSelectorFilter.h"
 #pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace GuiCommand
 	{
-		template <typename FilterFunc, typename Results>
+		enum SelectorFilterTypeEnum
+		{
+			AttributesAllowedFilterType = 1,
+			AttributesSetFilterType,
+			RangeSelectorFilterType
+		};
+
+		template <typename Results>
 		struct GetSelectorList : public boost::noncopyable
 		{
-			GetSelectorList(const SVGUID& rInstanceID, FilterFunc filter, UINT Attribute, bool WholeArray) : m_InstanceID(rInstanceID), m_filter(filter), m_Attribute(Attribute), m_WholeArray(WholeArray) {}
+			GetSelectorList(const GUID& rInstanceID, SelectorFilterTypeEnum filterType, UINT Attribute, bool WholeArray) 
+			: m_InstanceID(rInstanceID)
+			, m_filterType(filterType)
+			, m_Attribute(Attribute)
+			, m_WholeArray(WholeArray) 
+			{}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -38,7 +52,15 @@ namespace Seidenader
 				if (pObject)
 				{
 					SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject);
-					if ( nullptr == pTaskObject)
+
+					// When using the RangeSelectorFilter, the InstanceId is for the Range or Tool owning the Range
+					// which is needed to get the name for exclusion in filtering, so get the Toolset as well 
+					if (RangeSelectorFilterType == m_filterType)
+					{
+						pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject->GetAncestorInterface(SVToolSetObjectType));
+					}
+
+					if (nullptr == pTaskObject)
 					{
 						SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(pObject);
 						if (pInspection)
@@ -47,20 +69,56 @@ namespace Seidenader
 						}
 					}
 
-					if ( nullptr != pTaskObject)
+					if (nullptr != pTaskObject)
 					{
-						m_SelectedList = pTaskObject->GetSelectorList( m_filter, m_Attribute, m_WholeArray );
-						hr = S_OK;
+						switch (m_filterType)
+						{
+						case RangeSelectorFilterType:
+							{
+								SVString name;
+								hr = pObject->GetCompleteNameToType(SVToolObjectType, name);
+								if (S_OK == hr)
+								{
+									RangeSelectorFilter filter(name);
+									SvOi::IsObjectInfoAllowed func = boost::bind(&RangeSelectorFilter::operator(), &filter, _1, _2, _3);
+									m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+									hr = S_OK;
+								}
+							}
+							break;
+
+						case AttributesAllowedFilterType:
+							{
+								AttributesAllowedFilter filter;
+								SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesAllowedFilter::operator(), &filter, _1, _2, _3);
+								m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+								hr = S_OK;
+							}
+							break;
+
+						case AttributesSetFilterType:
+							{
+								AttributesSetFilter filter;
+								SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesSetFilter::operator(), &filter, _1, _2, _3);
+								m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+								hr = S_OK;
+							}
+							break;
+
+						default:
+							hr = E_INVALIDARG;
+							break;
+						}
 					}
 				}
 				return hr;
 			}
 			bool empty() const { return false; }
-			Results GetResults() const { return m_SelectedList; }
+			const Results& GetResults() const { return m_SelectedList; }
 
 		private:
-			SVGUID m_InstanceID;
-			FilterFunc m_filter;
+			GUID m_InstanceID;
+			SelectorFilterTypeEnum m_filterType;
 			UINT m_Attribute;
 			bool m_WholeArray;
 			Results m_SelectedList;

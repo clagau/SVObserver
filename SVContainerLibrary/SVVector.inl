@@ -97,12 +97,36 @@ typename SVVector< SVT_TYPE, SVT_ARG_TYPE >::iterator SVVector< SVT_TYPE, SVT_AR
 }
 
 template< typename SVT_TYPE, typename SVT_ARG_TYPE >
+typename SVVector< SVT_TYPE, SVT_ARG_TYPE >::iterator SVVector< SVT_TYPE, SVT_ARG_TYPE >::erase( const_iterator p_Where )
+{
+	return m_Vector.erase( p_Where );
+}
+
+template< typename SVT_TYPE, typename SVT_ARG_TYPE >
 void SVVector< SVT_TYPE, SVT_ARG_TYPE >::clear()
 {
 	if( ! m_Vector.empty() )
 	{
 		m_Vector.clear();
 	}
+}
+
+template< typename SVT_TYPE, typename SVT_ARG_TYPE >
+bool SVVector< SVT_TYPE, SVT_ARG_TYPE >::operator==(const SVVector< SVT_TYPE, SVT_ARG_TYPE >& rVector) const
+{
+	return (m_Vector == rVector.m_Vector);
+}
+
+template< typename SVT_TYPE, typename SVT_ARG_TYPE >
+bool SVVector< SVT_TYPE, SVT_ARG_TYPE >::operator!=(const SVVector< SVT_TYPE, SVT_ARG_TYPE >& rVector) const
+{
+	return (m_Vector != rVector.m_Vector);
+}
+
+template< typename SVT_TYPE, typename SVT_ARG_TYPE >
+void SVVector< SVT_TYPE, SVT_ARG_TYPE >::swap(SVVector< SVT_TYPE, SVT_ARG_TYPE >& rVector)
+{
+	m_Vector.swap(rVector.m_Vector);
 }
 
 template< typename SVT_TYPE, typename SVT_ARG_TYPE >

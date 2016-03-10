@@ -10,18 +10,16 @@
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "ObjectSelectorLibrary\SelectorItemVector.h"
+#include "SVUtilityLibrary\SVGUID.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
-
-#pragma region Declarations
-class SVInspectionProcess;
-#pragma endregion Declarations
 
 class SelectedObjectsPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 	enum { IDD = IDD_SELECTED_OBJECTS_PAGE };
 #pragma region Constructor
 public:
-	SelectedObjectsPage( const SVInspectionProcess& rInspection, LPCTSTR Caption, const SvOsl::SelectorItemVector& rList, UINT AttributeFilters, int id = IDD );
+	SelectedObjectsPage( const SVString& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvOsl::SelectorItemVector& rList, UINT AttributeFilters, int id = IDD );
 	virtual ~SelectedObjectsPage();
 #pragma endregion Constructor
 
@@ -55,7 +53,8 @@ private:
 
 #pragma region Member variables
 private:
-	const SVInspectionProcess& m_rInspection;	//Reference to the corresponding inspection
+	SVString m_InspectionName;					//Inspection name for title
+	SVGUID m_InspectionID;						//Unique Instance ID for the Inspection
 	SvOsl::SelectorItemVector m_List;			//The selected list makes a copy of the list in the sheet
 	CListCtrl   m_ItemsSelected;				//The selected list control
 	CImageList m_StateImageList;				//The state image list

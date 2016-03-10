@@ -70,7 +70,12 @@ public:
 
 	inline iterator insert( iterator p_Where, SVArgType p_Value );
 	inline iterator erase( iterator p_Where );
+	inline iterator erase( const_iterator p_Where );
 	inline void clear();
+
+	inline bool operator==(const SVVector<SVT_TYPE, SVT_ARG_TYPE>& rVector) const;
+	inline bool operator!=(const SVVector<SVT_TYPE, SVT_ARG_TYPE>& rVector) const;
+	inline void swap(SVVector<SVT_TYPE, SVT_ARG_TYPE>& rVector);
 
 	// MFC Style Operators
 

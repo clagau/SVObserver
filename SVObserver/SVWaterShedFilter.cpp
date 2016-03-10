@@ -219,50 +219,6 @@ BOOL SVWatershedFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImage
 	return FALSE;
 }
 
-bool SVWatershedFilterClass::isValidMarkerImage(const SVImageClass* pImage, const SVToolSetClass &rToolSet) const
-{
-	if( nullptr != pImage )
-	{
-		//is tool, is toolset or inspection
-		SVToolClass* pImageOwnerTool = dynamic_cast <SVToolClass*> ( pImage->GetAncestor( SVToolObjectType ) );
-		if ( !pImageOwnerTool )
-		{
-			if ( nullptr == pImage->GetAncestor( SVInspectionObjectType ) )
-			{
-				return false;
-			}
-		}
-		else
-		{
-			if( (!( rToolSet.IsToolPreviousToSelected( pImageOwnerTool->GetUniqueObjectID() ) )) ||
-				(GetTool() == pImageOwnerTool) )
-			{
-				return false;
-			}
-		}
-
-		SVImageInfoClass imageInfo = pImage->GetImageInfo();
-
-		long bandNumber = 1;
-		imageInfo.GetImageProperty( SVImagePropertyBandNumber, bandNumber );
-		if ( 1 == bandNumber )
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque SVWatershedFilterClass::getAvailableSourceImage(const SVGUID toolsetGUID)
-{
-	// Find all available Images...
-	SVObjectTypeInfoStruct imageObjectInfo;
-	imageObjectInfo.ObjectType = SVImageObjectType;
-
-	SVGetObjectDequeByTypeVisitor visitor( imageObjectInfo );
-	SVObjectManagerClass::Instance().VisitElements( visitor, toolsetGUID );
-	return visitor.GetObjects();
-}
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************

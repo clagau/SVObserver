@@ -3,7 +3,7 @@
 // All Rights Reserved
 //*****************************************************************************
 
-// This is the Command for getting the Image as an IPictureDisp or HBitmap.
+// This is the Command for getting the Image as an IPictureDisp.
 //******************************************************************************
 #pragma once
 
@@ -23,7 +23,7 @@ namespace Seidenader
 	{
 		struct GetImage: public boost::noncopyable
 		{
-			GetImage(const GUID& rObjectID) : m_InstanceID(rObjectID), m_hBitmap(nullptr) {}
+			GetImage(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -39,12 +39,12 @@ namespace Seidenader
 					SvOi::IMatroxImageData* pImageData = data.get();
 					if (nullptr != pImageData && !pImageData->empty())
 					{
-						m_hBitmap = pImageData->GetHBitmap();
-						if (m_hBitmap)
+						HBITMAP hBitmap = pImageData->GetHBitmap();
+						if (hBitmap)
 						{
 							//convert the hbitmap to an IPictureDisp for the activeX-control.
 							CPictureHolder pic;
-							BOOL bRet = pic.CreateFromBitmap(m_hBitmap);
+							BOOL bRet = pic.CreateFromBitmap(hBitmap);
 							if (bRet)
 							{
 								m_picture = pic.GetPictureDispatch();
@@ -68,10 +68,8 @@ namespace Seidenader
 			}
 			bool empty() const { return false; }
 			IPictureDisp* Image() const { return m_picture; }
-			HBITMAP ImageInHBitmap() const { return m_hBitmap; }
 
 		private:
-			HBITMAP m_hBitmap;
 			CComPtr<IPictureDisp> m_picture;
 			GUID m_InstanceID;
 		};

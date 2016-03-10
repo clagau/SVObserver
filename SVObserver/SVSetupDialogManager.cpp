@@ -42,7 +42,7 @@
 #include "SVLineMaximumObjectAnalyzer.h"
 #include "SVLinePixelCountingAnalyzer.h"
 #include "SVLineROI.h"
-#include "SVMeasureAnalyzerAdjustment.h"
+#include "SVMeasureAnalyzerAdjustmentSheet.h"
 #include "SVOCRAnalyzer.h"
 #include "SVOCRAnalyzerResult.h"
 #include "SVOCRDialog.h"

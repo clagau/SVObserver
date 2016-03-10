@@ -7,9 +7,9 @@
 
 #pragma once
 #pragma region Includes
-#include "ISVFilter.h"
+#include <vector>
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
-
 namespace Seidenader
 {
 	namespace ObjectInterfaces

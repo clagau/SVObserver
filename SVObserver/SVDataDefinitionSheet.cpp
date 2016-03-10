@@ -11,14 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVDataDefinitionSheet.h"
-
-#include "SVInspectionProcess.h"
-#include "SVPPQObject.h"
-#include "SVIPDoc.h"
+#include "SelectedObjectsPage.h"
 #pragma endregion Includes
-
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -35,9 +30,10 @@ END_MESSAGE_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVDataDefinitionSheet::SVDataDefinitionSheet(LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
-,	m_rInspection( rInspection )
+SVDataDefinitionSheet::SVDataDefinitionSheet(LPCTSTR pszCaption, const SVString& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd, UINT iSelectPage)
+: CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
+, m_InspectionName( rInspectionName )
+, m_InspectionID( rInspectionID )
 {
 	CreatePages();
 }
@@ -68,10 +64,10 @@ HRESULT SVDataDefinitionSheet::SetCancelData(SVCancelData* pData)
 #pragma region Private Methods
 HRESULT SVDataDefinitionSheet::CreatePages()
 {
-	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_rInspection, _T("Value Names"), m_ValueList, SV_DD_VALUE );
+	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Value Names"), m_ValueList, SV_DD_VALUE );
 	AddPage(pValuesDlg);
 
-	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_rInspection, _T("Image Names"), m_ImageList, SV_DD_IMAGE );
+	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Image Names"), m_ImageList, SV_DD_IMAGE );
 	AddPage(pImagesDlg);
 
 	return S_OK;

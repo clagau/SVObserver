@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/IObjectInfoStruct.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -22,7 +21,7 @@
 
 class SVObjectClass;
 
-struct SVObjectInfoStruct : virtual public SvOi::IObjectInfoStruct
+struct SVObjectInfoStruct
 {
 	SVObjectInfoStruct();
 	SVObjectInfoStruct( const SVObjectInfoStruct& p_rsvObject );
@@ -49,10 +48,6 @@ struct SVObjectInfoStruct : virtual public SvOi::IObjectInfoStruct
 
 	SVObjectReference GetObjectReference() const;
 	BOOL CheckExistence();
-	
-#pragma region virtual method (IObjectInfoStruct)
-	virtual SvOi::IObjectClass* getObject() const override;
-#pragma endregion virtual method (IObjectInfoStruct)
 
 	SVObjectClass* PObject;					// Where I am
 	SVGUID UniqueObjectID;					// Who I am

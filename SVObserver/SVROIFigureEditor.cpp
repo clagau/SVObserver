@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:01:18  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVROIFigureEditor.h"
+#pragma endregion Includes
 
 #pragma warning ( disable : 4065 )
 

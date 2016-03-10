@@ -251,15 +251,15 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	}
 
 	SvOsl::SelectorOptions BuildOptions( m_pTool->GetInspection()->GetUniqueObjectID(), SV_ARCHIVABLE );
-	SvOg::ToolSetItemSelector<SvOg::AttributeSetFilter> toolsetItemSelector;
-	SvOi::ISelectorItemVectorPtr pToolsetList =  toolsetItemSelector( BuildOptions );
+	SvOg::ToolSetItemSelector<GuiCmd::AttributesSetFilterType> toolsetItemSelector;
+	SvOi::ISelectorItemVectorPtr pToolsetList = toolsetItemSelector( BuildOptions );
 	//Copy list to member variable for easier use
 	if( !pToolsetList.empty() )
 	{
 		SvOsl::SelectorItemVector* pSelectorList = dynamic_cast<SvOsl::SelectorItemVector*> (pToolsetList.get());
 		if( nullptr != pSelectorList )
 		{
-			m_List = *pSelectorList;
+			m_List.swap(*pSelectorList);
 		}
 	}
 

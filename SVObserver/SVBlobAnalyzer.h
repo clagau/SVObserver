@@ -9,14 +9,14 @@
 //* .Check In Date   : $Date:   18 Nov 2014 05:07:48  $
 //******************************************************************************
 
-#ifndef SVBLOBANALYZERCLASS__INCLUDED
-#define SVBLOBANALYZERCLASS__INCLUDED
-
+#pragma once
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
 #include "SVValueObjectImpl.h"
 #include "SVBlobAnalyzerResultDlg.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
+#pragma endregion Includes
 
 class SVLongResultClass;
 
@@ -284,8 +284,6 @@ private:
 	static const int m_defaultResultNumberOfBlobsHighFail = 9999;
 	static const int m_defaultResultNumberOfBlobsHighWarn = 9999;
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

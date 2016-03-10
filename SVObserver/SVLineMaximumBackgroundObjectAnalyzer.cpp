@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:08:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLineMaximumBackgroundObjectAnalyzer.h"
 #include "SVInspectionProcess.h"
 #include "SVLine.h"
 #include "SVTool.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVMaximumBackgroundObjectLineAnalyzerClass, SVMaximumBackgroundObjectLineAnalyzerClassGuid );
 

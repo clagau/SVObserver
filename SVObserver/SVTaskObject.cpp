@@ -227,36 +227,36 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo( SVInObjectInfoStruct*& p_rpsv
 
 	long l_lCount = m_svToolInputList.GetSize();
 
-	bool l_bFoundLast = p_psvLastInfo != NULL && 0 < l_lCount &&
+	bool l_bFoundLast = nullptr != p_psvLastInfo  && 0 < l_lCount &&
 		0 <= m_lLastToolInputListIndex && m_lLastToolInputListIndex < l_lCount &&
 		p_psvLastInfo != m_svToolInputList[ m_lLastToolInputListIndex ];
 
 	if( ! l_bFoundLast )
 	{
-		l_bFoundLast = p_psvLastInfo == NULL;
+		l_bFoundLast = (nullptr == p_psvLastInfo);
 
 		m_lLastToolInputListIndex = -1;
 
 		m_svToolInputList.RemoveAll();
 
 		// Try to get input interface...
-		::SVSendMessage( this, SVM_GET_INPUT_INTERFACE | SVM_NOTIFY_FRIENDS, reinterpret_cast<DWORD_PTR>(&m_svToolInputList), NULL );
+		::SVSendMessage( this, SVM_GET_INPUT_INTERFACE | SVM_NOTIFY_FRIENDS, reinterpret_cast<DWORD_PTR>(&m_svToolInputList), 0 );
 
 		l_lCount = m_svToolInputList.GetSize();
 	}
 
-	p_rpsvFoundInfo = NULL;
+	p_rpsvFoundInfo = nullptr;
 
-	for( int i = m_lLastToolInputListIndex + 1; p_rpsvFoundInfo == NULL && i < l_lCount; ++ i )
+	for( int i = m_lLastToolInputListIndex + 1; nullptr == p_rpsvFoundInfo && i < l_lCount; ++ i )
 	{
 		SVInObjectInfoStruct* l_psvInputInfo = m_svToolInputList[ i ];
 
 		if( l_bFoundLast )
 		{
-			if( l_psvInputInfo != NULL && 
-				l_psvInputInfo->GetInputObjectInfo().ObjectTypeInfo.ObjectType == SVImageObjectType )
+			if( nullptr != l_psvInputInfo && 
+				SVImageObjectType == l_psvInputInfo->GetInputObjectInfo().ObjectTypeInfo.ObjectType  )
 			{
-				if( IsAuxInputImage( l_psvInputInfo ) == S_FALSE )
+				if( S_FALSE == IsAuxInputImage( l_psvInputInfo ) )
 				{
 					p_rpsvFoundInfo = l_psvInputInfo;
 
@@ -272,7 +272,7 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo( SVInObjectInfoStruct*& p_rpsv
 		}
 	}
 
-	if( l_svOk != S_OK )
+	if( S_OK != l_svOk )
 	{
 		m_lLastToolInputListIndex = -1;
 
@@ -353,7 +353,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 		std::for_each(OutputList.begin(), OutputList.end(), [&pSelectorList, &isAllowed, &Attribute, &WholeArray](SVOutputInfoListClass::value_type info)->void
 		{
 			SVObjectReference ObjectRef = info->GetObjectReference();
-			if( ObjectRef->IsArray() || isAllowed(*info, -1) )
+			if( ObjectRef->IsArray() || isAllowed(info->PObject, Attribute, -1) )
 			{
 				SvOsl::SelectorItem InsertItem;
 				
@@ -372,7 +372,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 
 				if( ObjectRef->IsArray() )
 				{
-					if ( WholeArray && isAllowed(*info, -1) )
+					if ( WholeArray && isAllowed(info->PObject, Attribute, -1) )
 					{
 						ObjectRef.SetEntireArray();
 						UINT AttributesSet = ObjectRef.ObjectAttributesSet();
@@ -387,7 +387,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 					int iArraySize = ObjectRef->GetArraySize();
 					for ( int i = 0; i < iArraySize; i++ )
 					{
-						if( isAllowed(*info, i) )
+						if( isAllowed(info->PObject, Attribute, i) )
 						{
 							ObjectRef.SetArrayIndex( i );
 							UINT AttributesSet = ObjectRef.ObjectAttributesSet();
@@ -434,6 +434,41 @@ SvOi::DependencyList SVTaskObjectClass::GetDependents(bool bImagesOnly, SVObject
 	return dependents;
 }
 
+void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries)
+{
+	SVInObjectInfoStruct* psvImageInfo(nullptr);
+	SVInObjectInfoStruct* psvLastImageInfo(nullptr);
+
+	while (!psvImageInfo && S_OK == FindNextInputImageInfo(psvImageInfo, psvLastImageInfo))
+	{
+		if (psvImageInfo)
+		{
+			if (psvImageInfo->IsConnected())
+			{
+				SvOi::IObjectClass* pObject = psvImageInfo->GetInputObjectInfo().PObject;
+				if (nullptr != pObject)
+				{
+					SvOi::ISVImage* pImage = dynamic_cast <SvOi::ISVImage *>(pObject);
+					if (nullptr != pImage)
+					{
+						SVString name = pImage->getDisplayedName();
+						rList.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(name, pObject->GetUniqueObjectID())));
+					}
+				}
+				if (static_cast<int>(rList.size()) < maxEntries)
+				{
+					psvLastImageInfo = psvImageInfo;
+					psvImageInfo = nullptr;
+				}
+			}
+			else // get First Connected Image Info
+			{
+				psvLastImageInfo = psvImageInfo;
+				psvImageInfo = nullptr;
+			}
+		}
+	}
+}
 #pragma endregion virtual method (ITaskObject)
 
 ////////////////////////////////////////////////////////////////////////////////

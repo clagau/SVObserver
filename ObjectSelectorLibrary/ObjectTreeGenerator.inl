@@ -8,6 +8,9 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   04 Dec 2014 03:34:44  $
 //******************************************************************************
+#pragma region Includes
+#include <assert.h>
+#pragma endregion Includes
 
 #pragma region Public Methods
 inline const  SelectorItemVector& ObjectTreeGenerator::getSelectedObjects() const
@@ -22,13 +25,12 @@ inline const  SelectorItemVector& ObjectTreeGenerator::getModifiedObjects() cons
 
 inline SelectorItem ObjectTreeGenerator::getSingleObjectResult() const
 {
-	SelectorItem Result;
 	//If Single select then it is the first result
 	if( 0 < m_SelectedObjects.size() )
 	{
-		Result = m_SelectedObjects.at(0);
+		return m_SelectedObjects[0];
 	}
-	return Result;
+	return SelectorItem();
 }
 
 inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelectorType )
@@ -38,7 +40,6 @@ inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelec
 	m_LeafCount = 0;
 }
 
-///SEJ99 - This method should be refactored to trim down the insert methods in the object selector to only one...
 template <typename GlobalSelector, typename PPQSelector, typename ToolsetItemSelector>
 void ObjectTreeGenerator::BuildSelectableItems( const SelectorOptions& rOptions )
 {
@@ -47,22 +48,25 @@ void ObjectTreeGenerator::BuildSelectableItems( const SelectorOptions& rOptions 
 	ToolsetItemSelector toolsetItemSelector;
 
 	m_AttributesFilter = rOptions.getAttributesFilter();
-	SvOi::ISelectorItemVectorPtr GlobalList = globalSelector(m_AttributesFilter);
-	if (!GlobalList.empty())
+	SvOi::ISelectorItemVectorPtr GlobalList = globalSelector( m_AttributesFilter );
+	const SelectorItemVector* pGlobalList = static_cast<const SelectorItemVector*>(GlobalList.get());
+	if (nullptr != pGlobalList)
 	{
-		insertTreeObjects( *GlobalList );
+		insertTreeObjects( *pGlobalList );
 	}
 
 	SvOi::ISelectorItemVectorPtr PpqList = ppqSelector( rOptions.getInspectionID(), m_AttributesFilter );
-	if (!PpqList.empty())
+	const SelectorItemVector* pPPQList = static_cast<const SelectorItemVector*>(PpqList.get());
+	if (nullptr != pPPQList)
 	{
-		insertTreeObjects( *PpqList );
+		insertTreeObjects( *pPPQList );
 	}
 
-	SvOi::ISelectorItemVectorPtr ToolsetList = toolsetItemSelector(rOptions);
-	if (!ToolsetList.empty())
+	SvOi::ISelectorItemVectorPtr ToolsetList = toolsetItemSelector( rOptions );
+	const SelectorItemVector* pToolsetList = static_cast<const SelectorItemVector*>(ToolsetList.get());
+	if (nullptr != pToolsetList)
 	{
-		insertTreeObjects( *ToolsetList );
+		insertTreeObjects( *pToolsetList );
 	}
 	else
 	{

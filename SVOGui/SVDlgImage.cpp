@@ -246,6 +246,7 @@ namespace Seidenader { namespace SVOGui {
 		if ( mbInit )
 		{
 			HBITMAP hbm = nullptr;
+			CComPtr<IPicture> picture;
 
 			typedef GuiCmd::GetImage Command;
 			typedef SVSharedPtr<Command> CommandPtr;
@@ -254,9 +255,20 @@ namespace Seidenader { namespace SVOGui {
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
 			{
-				hbm = commandPtr->ImageInHBitmap();
+				CComPtr<IPictureDisp> picDisp = commandPtr->Image();
+				if (picDisp)
+				{
+					picDisp.QueryInterface<IPicture>( &picture );
+					if( picture )
+					{
+						hr = picture->get_Handle( (OLE_HANDLE*)&hbm );
+						if (S_OK != hr)
+						{
+							TRACE(_T("SVDlgImageClass::OnPaint() - pPicture->get_Handle failed - %08lx\n"), hr);
+						}
+					}
+				}
 			}
-
 
 			CDC memDC;
 			memDC.CreateCompatibleDC( &dc );
@@ -264,7 +276,7 @@ namespace Seidenader { namespace SVOGui {
 			//
 			// Render the device independent bitmap (DIB) (stretching as required).
 			//
-			if ( hbm != NULL )
+			if ( nullptr != hbm )
 			{
 				HBITMAP hOld = ( HBITMAP ) ::SelectObject( memDC.m_hDC, hbm );
 				if ( m_ViewportRect.Width() * m_dFullSizeZoomFactor > m_ClientRect.Width() )

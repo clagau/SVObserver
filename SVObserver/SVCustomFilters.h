@@ -56,21 +56,8 @@ protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 	virtual BOOL OnValidate();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
-public:
+private:
 	SVMatroxBuffer m_milKernel;
-
-////////////////////////////////////////////////////////////////////////////////
-// Create Operator
-////////////////////////////////////////////////////////////////////////////////
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-public:
 	SVLongValueObjectClass m_lvoCell01;
 	SVLongValueObjectClass m_lvoCell02;
 	SVLongValueObjectClass m_lvoCell03;
@@ -128,16 +115,6 @@ public:
 	SVBoolValueObjectClass m_bvoClippingOn;
 	SVBoolValueObjectClass m_bvoAbsoluteValue;	
 	SVLongValueObjectClass m_lvoTransformationFactor;
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-protected:
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
 };
 
 //******************************************************************************

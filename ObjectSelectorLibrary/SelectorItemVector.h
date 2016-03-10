@@ -7,14 +7,14 @@
 #pragma once
 
 #pragma region Includes
-#include <vector>
 #include "ObjectInterfaces/ISelectorItemVector.h"
+#include "SVContainerLibrary/SVVector.h"
 #include "SelectorItem.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace ObjectSelectorLibrary
 {
-	class SelectorItemVector : public SvOi::ISelectorItemVector, public std::vector<SelectorItem>
+	class SelectorItemVector : public SvOi::ISelectorItemVector, public SVVector<SelectorItem> 
 	{
 	#pragma region Constructor
 	public:
@@ -22,20 +22,6 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 		virtual ~SelectorItemVector() {};
 	#pragma endregion Constructor
-
-	#pragma region Virtual Methods
-	public:
-		virtual int getSize() const override { return static_cast<int> (size()); };
-		virtual SvOi::ISelectorItem* getAt(int Index) override
-		{ 
-			SvOi::ISelectorItem *pResult( nullptr );
-			if( size() > Index ) 
-			{
-				pResult = static_cast<SvOi::ISelectorItem*> ( &at( Index ));
-			}
-			return pResult;
-		};
-	#pragma endregion Virtual Methods
 	};
 
 } /* namespace ObjectSelectorLibrary */ } /* namespace Seidenader */

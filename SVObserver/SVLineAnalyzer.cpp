@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 13:14:06  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLineAnalyzer.h"
 
@@ -20,6 +21,7 @@
 #include "SVLineROI.h"
 #include "SVTool.h"
 #include "SVInspectionProcess.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLineAnalyzerClass, SVLineAnalyzerClassGuid );
 

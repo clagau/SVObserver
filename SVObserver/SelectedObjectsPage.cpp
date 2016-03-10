@@ -7,11 +7,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SelectedObjectsPage.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVConfigurationObject.h"
-#include "SVIPDoc.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
@@ -39,9 +35,10 @@ static const int IconGrowBy = 2;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SelectedObjectsPage::SelectedObjectsPage( const SVInspectionProcess& rInspection, LPCTSTR Caption, const SvOsl::SelectorItemVector& rList, UINT AttributeFilters, int id )
+SelectedObjectsPage::SelectedObjectsPage( const SVString& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvOsl::SelectorItemVector& rList, UINT AttributeFilters, int id )
 : CPropertyPage(id)
-, m_rInspection( rInspection )
+, m_InspectionName( rInspectionName )
+, m_InspectionID ( rInspectionID )
 , m_List( rList )
 , m_AttributeFilter( AttributeFilters )
 {
@@ -142,7 +139,7 @@ void SelectedObjectsPage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
 
-	CString strPrefix = m_rInspection.GetName();
+	CString strPrefix = m_InspectionName.c_str();
 	strPrefix += _T(".Tool Set.");
 
 	int Index = 0;
@@ -182,8 +179,8 @@ void SelectedObjectsPage::ShowObjectSelector()
 		break;
 	}
 
-	SVString InspectionName( m_rInspection.GetName() );
-	SVGUID InspectionGuid( m_rInspection.GetUniqueObjectID() );
+	SVString InspectionName( m_InspectionName );
+	SVGUID InspectionGuid( m_InspectionID );
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );

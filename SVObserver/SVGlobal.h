@@ -11,15 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 #include <map>
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include <vector>
 #include "SVMessage/SVMessage.h"
+#include "SVMatroxLibrary\SVMatroxEnums.h"
+#pragma endregion Includes
 
 typedef std::pair<CString, CString> StrStrPair;
 typedef std::map<int, StrStrPair > IntStrPairMap;
 typedef std::vector<StrStrPair> StringPairVect;
 
-class SVImageClass;
 class SVObserverApp;
 class SVDataManager;
 
@@ -364,7 +366,6 @@ typedef BOOL ( CALLBACK* SVDLL_BOOL_BYTEPTR_DWORDPTR_FUNCTION ) ( BYTE*, DWORD* 
 //* CONSTANT VARIABLE(S):
 //******************************************************************************
 
-
 //******************************************************************************
 //* VARIABLE(S):
 //******************************************************************************
@@ -372,8 +373,6 @@ typedef BOOL ( CALLBACK* SVDLL_BOOL_BYTEPTR_DWORDPTR_FUNCTION ) ( BYTE*, DWORD* 
 //******************************************************************************
 //* EXTERN(S):
 //******************************************************************************
-
-extern __declspec( thread ) int tls_ObjectIndex;
 
 //******************************************************************************
 //* FUNCTION DECLARATION(S):
@@ -633,8 +632,6 @@ BOOL SVSelectListCtrlItem( CListCtrl& RListControl, int Item );
 //  :09.03.1999 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion );
-
-HBITMAP SVMilBufferToBitmap2( SVImageClass *pImage );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVCompareNoCase

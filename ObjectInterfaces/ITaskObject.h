@@ -8,11 +8,10 @@
 #pragma once
 
 #pragma region Includes
+#include <boost\function.hpp>
 #include "IObjectAppClass.h"
-#include "IObjectInfoStruct.h"
 #include "ISelectorItemVector.h"
 #include "SVObjectTypeInfoStruct.h"
-#include "SVObjectLibrary/SVInObjectInfoStruct.h"
 #include "DependencyList.h"
 #pragma endregion Includes
 
@@ -20,6 +19,8 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
+		typedef boost::function<bool (const IObjectClass* pObject, unsigned int Attribute, int ArrayIndex)> IsObjectInfoAllowed;
+
 		//this class is a interface. It should only have pure virtual public method and new member parameter
 		class ITaskObject : virtual public IObjectAppClass
 		{
@@ -55,10 +56,11 @@ namespace Seidenader
 			virtual DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const = 0;
 
 			//************************************
-			/// Return the InObjectInfoStruct for the image input.
-			/// \returns a pointer to a SVInObjectInfoStruct
+			/// Get the List of Images connected to this Task Object.
+			/// /param rList <in> The List to be populated.
+			/// /param maxEntries <in> maximum number of entries requested.
 			//************************************
-			virtual HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& rpsvFoundInfo, const SVInObjectInfoStruct* psvLastInfo) = 0;
+			virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) = 0;
 
 			//************************************
 			/// Connects the Image to the Object.

@@ -9,18 +9,13 @@
 //* .Check In Date   : $Date:   18 Nov 2014 05:09:04  $
 //******************************************************************************
 
-#ifndef __SVBLOBANALYZERDIALOG__INCLUDED
-#define __SVBLOBANALYZERDIALOG__INCLUDED
+#pragma once
 
+#pragma region Includes
 #include "SVBlobAnalyzer.h"
-
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
 class SVToolClass;
 
 class SVBlobAnalyzeFeatureDialogClass : public CDialog, public SVTaskObjectInterfaceClass
@@ -106,9 +101,6 @@ protected:
 	SVIPDoc* m_pIPDoc;
 	SVBlobAnalyzerClass* m_pCurrentAnalyzer;
 };
-
-
-#endif //__SVBLOBANALYZERDIALOG__INCLUDED
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -9,13 +9,12 @@
 // * .Check In Date   : $Date:   23 Apr 2013 09:13:38  $
 // ******************************************************************************
 
-#ifndef ISVCANCEL_H
-#define ISVCANCEL_H
 #pragma once
 
+#pragma region Includes
 #include <map>
-
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
+#pragma endregion Includes
 
 struct SVCancelData
 {
@@ -26,6 +25,7 @@ struct SVCancelData
 class ISVCancel
 {
 public:
+	virtual ~ISVCancel() {}
 	virtual bool CanCancel() = 0;
 	virtual HRESULT GetCancelData(SVCancelData*& rpData) = 0;
 	virtual HRESULT SetCancelData(SVCancelData* pData) = 0;
@@ -37,6 +37,7 @@ public:
 class ISVCancel2
 {
 public:
+	virtual ~ISVCancel2() {}
 	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap) = 0;
 };
 
@@ -69,7 +70,6 @@ inline const SVMultiCancelData& SVMultiCancelData::operator = (const SVMultiCanc
 	return *this;
 }
 
-#endif  //#ifndef ISVCANCEL_H
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************

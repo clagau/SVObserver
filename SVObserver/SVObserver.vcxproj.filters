@@ -560,9 +560,6 @@
     <ClCompile Include="SVMatroxImageProcessingClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMeasureAnalyzerAdjustment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMemoryManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1451,6 +1448,9 @@
     <ClCompile Include="SVTADlgArchiveImagePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVMeasureAnalyzerAdjustmentSheet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -2026,9 +2026,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImageProcessingClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMeasureAnalyzerAdjustment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMemoryManager.h">
@@ -2880,9 +2877,6 @@
     <ClInclude Include="SVThreadInfoDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectNameHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZoomToolBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2992,6 +2986,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgArchiveImagePage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TraceWin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMeasureAnalyzerAdjustmentSheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -3129,9 +3129,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="RootChildren.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="ObjectNameHelper.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="RootObject.inl">

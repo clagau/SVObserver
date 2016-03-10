@@ -6,15 +6,12 @@
 //******************************************************************************
 
 #pragma once
-#pragma region Includes
-#include "ITaskObject.h"
-#pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		class ISVFilter: virtual public ITaskObject
+		class ISVFilter
 		{
 		public:
 			virtual ~ISVFilter() {}

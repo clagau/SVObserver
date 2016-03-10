@@ -19,15 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AllowedImageFunc.h" />
     <ClInclude Include="AreAuxiliaryExtentsAvailable.h" />
+    <ClInclude Include="AttributesAllowedFilter.h" />
+    <ClInclude Include="AttributesSetFilter.h" />
     <ClInclude Include="ConnectToObject.h" />
     <ClInclude Include="DestroyChildObject.h" />
     <ClInclude Include="ExportMask.h" />
+    <ClInclude Include="GetAllowedImageList.h" />
     <ClInclude Include="GetAttributesAllowed.h" />
     <ClInclude Include="GetAuxSourceImage.h" />
     <ClInclude Include="GetAvailableAuxSourceImages.h" />
     <ClInclude Include="GetAvailableObjects.h" />
-    <ClInclude Include="GetCompleteObjectName.h" />
     <ClInclude Include="GetCreatableObjects.h" />
     <ClInclude Include="GetDependencies.h" />
     <ClInclude Include="GetConnectedObjects.h" />
@@ -51,6 +54,7 @@
     <ClInclude Include="ConstructAndInsertTaskObject.h" />
     <ClInclude Include="InspectionRunOnce.h" />
     <ClInclude Include="IsValid.h" />
+    <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="ResetObject.h" />
     <ClInclude Include="SaveImage.h" />
     <ClInclude Include="SetAuxSourceImage.h" />

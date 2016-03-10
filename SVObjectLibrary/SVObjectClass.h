@@ -171,11 +171,13 @@ public:
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
 	virtual SVString GetCompleteName() const override;
+	virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const override;
 	virtual SVString GetObjectNameToObjectType(LPCSTR LPSZCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType) const override;
 	virtual const SVObjectTypeEnum& GetObjectType() const override;
 	virtual SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
+	virtual const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
 	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) override;
 	virtual const UINT ObjectAttributesAllowed() const override;
 	virtual const UINT ObjectAttributesSet(int iIndex=0) const override;

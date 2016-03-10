@@ -10,8 +10,10 @@
 //******************************************************************************
 
 #pragma once
-#include <memory>
 
+#pragma region Includes
+#include <memory>
+#pragma endregion Includes
 
 class SVFigureEditor
 {

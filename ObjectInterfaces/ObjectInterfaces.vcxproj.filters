@@ -48,12 +48,6 @@
     <ClInclude Include="SVObjectTypeInfoStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IObjectInfoStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IInObjectInfoStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IObjectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>

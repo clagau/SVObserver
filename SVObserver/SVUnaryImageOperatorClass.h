@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVUnaryOperatorClass.h"
 #include "SVUnaryImageOperatorList.h"
+#pragma endregion Includes
 
 class SVUnaryImageOperatorClass : public SVUnaryOperatorClass
 {

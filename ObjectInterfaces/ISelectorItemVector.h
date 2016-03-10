@@ -22,14 +22,14 @@ namespace Seidenader { namespace ObjectInterfaces
 		//! Return the size of the list.
 		//! \returns int
 		//************************************
-		virtual int getSize() const = 0;
+		//virtual int getSize() const = 0;
 
 		//************************************
 		//! Get the interface at index position.
 		//! \param Index [in]
 		//! \returns ISelectorItem*
 		//************************************
-		virtual ISelectorItem* getAt(int Index) = 0;
+		//virtual const ISelectorItem* getAt(int Index) const = 0;
 	};
 
 	typedef SVSharedPtr<ISelectorItemVector> ISelectorItemVectorPtr;

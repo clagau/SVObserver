@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 12:50:40  $
 //******************************************************************************
 
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVColorTool.h"
 #include "SVColorThreshold.h"
@@ -18,6 +18,7 @@
 #include "SVInspectionProcess.h"
 #include "SVValueObject.h"
 #include "SVIPDoc.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

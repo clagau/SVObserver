@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   18 Nov 2014 11:13:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBlobAnalyzerDialog.h"
 
@@ -22,6 +23,7 @@
 #include "SVBlobFeaturePropertiesDlg.h"
 #include "SVValueObjectImpl.h"
 #include "SVSetupDialogManager.h"
+#pragma endregion Includes
 
 // e.g. IMPLEMENT_DYNCREATE(<ClassName>, <MFCBaseClass>)
 

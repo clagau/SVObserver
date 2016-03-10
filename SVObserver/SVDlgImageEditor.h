@@ -9,13 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:13:32  $
 //******************************************************************************
 
-#ifndef SVDLGIMAGESHAPE_H_
-#define SVDLGIMAGESHAPE_H_
 #pragma once
 
+#pragma region Includes
 #include "SVOGui\SVDlgImage.h"
 #include "SVFigureEditor.h"
 #include "SVDrawObject.h"
+#pragma endregion Includes
 
 class SVDrawObjectListClass;
 
@@ -98,9 +98,6 @@ protected:
 	HPEN m_hDefaultPen;
 
 }; // end class SVDlgImageEditor
-
-
-#endif //#ifndef SVDLGIMAGESHAPE_H_
 
 //******************************************************************************
 //* LOG HISTORY:

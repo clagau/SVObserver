@@ -1,31 +1,20 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVMeasureAnalyzerAdjustment
-//* .File Name       : $Workfile:   SVMeasureAnalyzerAdjustment.cpp  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:34:28  $
+//*****************************************************************************
+/// \copyright (c) 2016 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved 
+//*****************************************************************************
+/// Adjustment Sheet for SVMeasureAnalyzer
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include "SVMeasureAnalyzerAdjustment.h"
-#include "SVRunControlLibrary/SVRunStatus.h"
-#include "SVIPDoc.h"
-#include "SVLine.h"
-#include "SVLineAnalyzer.h"
-#include "SVSVIMStateClass.h"
-#include "SVTaskObject.h"
+#include "SVMeasureAnalyzerAdjustmentSheet.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// SVMeasureAnalyzerAdjustmentSheetClass
 
 //
 // Saved location of dialog.

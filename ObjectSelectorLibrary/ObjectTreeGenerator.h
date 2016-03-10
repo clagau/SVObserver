@@ -15,8 +15,6 @@
 
 #pragma region Includes
 #include "ObjectInterfaces\ISelectorItemVector.h"
-#include "ObjectInterfaces\IObjectClass.h"
-#include "SVObjectLibrary\SVObjectReference.h"
 #include "SVTreeLibrary\ObjectTreeItems.h"
 #include "SelectorItem.h"
 #include "SelectorItemVector.h"
@@ -77,17 +75,11 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		***********/
 		void Clear( bool ClearAll = true );
 
-		/**********
-			The method inserts tree objects using a names list
-			\param rLocationList <in> reference to the list of object locations
-		***********/
-		void insertTreeObjects( const SVStringArray& rLocationList );
-
 		//************************************
 		//! The method inserts tree items
-		//! \param rSelectedItems <in> reference to a list of selector items
+		//! \param rSelectedItems <in> const reference to a list of selector items
 		//************************************
-		void insertTreeObjects( SvOi::ISelectorItemVector& rSelectorItems );
+		void insertTreeObjects( const SelectorItemVector& rSelectorItems );
 
 		/**********
 		/// This method inserts items in the tree
@@ -156,12 +148,6 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	private:
 	#pragma region Private Methods
-		/**********
-			The method inserts an object into the tree list
-			\param rLocation <in> reference to the item location
-		***********/
-		void insertTreeObject( const SVString& rLocation );
-
 		/**********
 			The method inserts an object into the tree list
 			\param rObjectRef <in> reference to the object

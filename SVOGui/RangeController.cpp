@@ -20,7 +20,6 @@
 #include "GlobalSelector.h"
 #include "NoSelector.h"
 #include "ToolSetItemSelector.h"
-#include "RangeSelectorFilter.h"
 #include "RangeValidator.h"
 #pragma endregion Includes
 
@@ -211,7 +210,7 @@ namespace Seidenader { namespace SVOGui
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
 
 		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, m_TaskObjectID );
-		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<RangeSelectorFilter>>( BuildOptions );
+		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<GuiCmd::RangeSelectorFilterType>>( BuildOptions );
 	}
 
 	SVString RangeController::GetOwnerName() const

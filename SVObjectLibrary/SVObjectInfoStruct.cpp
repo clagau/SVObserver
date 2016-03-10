@@ -9,14 +9,16 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:50:34  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectInfoStruct.h"
 #include "SVObjectClass.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectManagerClass.h"
+#pragma endregion Includes
 
 SVObjectInfoStruct::SVObjectInfoStruct()
-: PObject( NULL ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
+: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
 {
 }
 
@@ -26,13 +28,13 @@ SVObjectInfoStruct::SVObjectInfoStruct( const SVObjectInfoStruct& O2 )
 }
 
 SVObjectInfoStruct::SVObjectInfoStruct( SVObjectClass* PO2 )
-: PObject( NULL ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
+: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
 {
 	SetObject( PO2 );
 }
 
 SVObjectInfoStruct::SVObjectInfoStruct( SVObjectReference ref )
-: PObject( NULL ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
+: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
 {
 	SetObject( ref );
 }
@@ -50,7 +52,6 @@ const SVObjectInfoStruct& SVObjectInfoStruct::operator = ( const SVObjectInfoStr
 		ObjectTypeInfo = O2.ObjectTypeInfo;
 		m_ObjectNameInfo = O2.m_ObjectNameInfo;
 	}
-
 	return *this;
 }
 
@@ -60,13 +61,11 @@ void SVObjectInfoStruct::clear()
 	UniqueObjectID.clear();
 	ObjectTypeInfo = SVInvalidObjectTypeInfo;
 	m_ObjectNameInfo.clear();
-	//m_UseIndex = false;
-	//m_ArrayIndex = 0;
 }
 
 void SVObjectInfoStruct::ClearObjectInfo()
 {
-	PObject = NULL;
+	PObject = nullptr;
 	UniqueObjectID.clear();
 }
 
@@ -77,10 +76,8 @@ HRESULT SVObjectInfoStruct::SetObject( const SVGUID& p_rObjectID )
 	if( p_rObjectID != UniqueObjectID )
 	{
 		ClearObjectInfo();
-
 		UniqueObjectID = p_rObjectID;
 	}
-
 	return l_hrOk;
 }
 
@@ -91,21 +88,16 @@ HRESULT SVObjectInfoStruct::SetObject( const SVString& p_rName )
 	if( p_rName != m_ObjectNameInfo.GetObjectArrayName() )
 	{
 		ClearObjectInfo();
-
 		l_hrOk = m_ObjectNameInfo.ParseObjectName( p_rName );
 	}
-
 	return l_hrOk;
 }
 
 HRESULT SVObjectInfoStruct::SetObject( const SVObjectTypeInfoStruct& p_rTypeInfo )
 {
 	HRESULT l_hrOk = S_OK;
-
 	clear();
-
 	ObjectTypeInfo = p_rTypeInfo;
-
 	return l_hrOk;
 }
 
@@ -117,7 +109,7 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* p_psvObject )
 	{
 		SVObjectClass* l_pTemp = dynamic_cast<SVObjectClass*>( p_psvObject );
 
-		if( l_pTemp != NULL )
+		if( nullptr != l_pTemp )
 		{
 			clear();
 
@@ -127,7 +119,7 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* p_psvObject )
 
 			UniqueObjectID = PObject->GetUniqueObjectID();
 
-			if( UniqueObjectID == SVInvalidGUID )
+			if( SVInvalidGUID == UniqueObjectID )
 			{
 				UniqueObjectID = PObject->GetObjectInfo().UniqueObjectID;
 			}
@@ -145,7 +137,6 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* p_psvObject )
 
 		l_hrOk = S_FALSE;
 	}
-
 	return l_hrOk;
 }
 
@@ -153,14 +144,11 @@ HRESULT SVObjectInfoStruct::SetObject( const SVObjectReference& p_svObject )
 {
 	HRESULT l_hrOk = SetObject( p_svObject.Object() );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		UniqueObjectID = p_svObject.Guid();
 		m_ObjectNameInfo = p_svObject.GetObjectNameInfo();
-		//m_UseIndex = p_svObject.IsIndexPresent();
-		//m_ArrayIndex = p_svObject.ArrayIndex();
 	}
-
 	return l_hrOk;
 }
 
@@ -175,26 +163,17 @@ HRESULT SVObjectInfoStruct::SetObject( const SVObjectInfoStruct& p_rObject )
 		ObjectTypeInfo = p_rObject.ObjectTypeInfo;
 		m_ObjectNameInfo = p_rObject.m_ObjectNameInfo;
 	}
-
 	return l_hrOk;
 }
 
 bool SVObjectInfoStruct::operator == ( const SVObjectInfoStruct& rhs ) const
 {
-	bool l_Status = ( UniqueObjectID == rhs.UniqueObjectID ) != FALSE;
-
-	/*
-	if( l_Status && m_UseIndex )
-	{
-		l_Status = ( m_ArrayIndex == rhs.m_ArrayIndex );
-	}
-	*/
+	bool l_Status = ( UniqueObjectID == rhs.UniqueObjectID );
 
 	if( m_ObjectNameInfo.IsIndexPresent() )
 	{
 		l_Status = m_ObjectNameInfo.GetIndex() == rhs.m_ObjectNameInfo.GetIndex();
 	}
-
 	return l_Status;
 }
 
@@ -202,16 +181,9 @@ bool SVObjectInfoStruct::operator == ( const SVObjectReference& rhs ) const
 {
 	bool l_Status = true;
 
-	if ( rhs.Object() != NULL )
+	if ( nullptr != rhs.Object() )
 	{
-		l_Status = ( UniqueObjectID == rhs->GetUniqueObjectID() ) != FALSE;
-
-		/*
-		if( l_Status && m_UseIndex )
-		{
-			l_Status = ( m_ArrayIndex == rhs.ArrayIndex() );
-		}
-		*/
+		l_Status = ( UniqueObjectID == rhs->GetUniqueObjectID() );
 
 		if( m_ObjectNameInfo.IsIndexPresent() )
 		{
@@ -220,29 +192,14 @@ bool SVObjectInfoStruct::operator == ( const SVObjectReference& rhs ) const
 	}
 	else
 	{
-		l_Status = ( UniqueObjectID == SVInvalidGUID ) != FALSE;
+		l_Status = ( SVInvalidGUID == UniqueObjectID );
 	}
-
 	return l_Status;
 }
 
 SVObjectReference SVObjectInfoStruct::GetObjectReference() const
 {
 	SVObjectReference l_Ref( PObject );
-
-	/*
-	if( m_UseIndex )
-	{
-		if( 0 <= m_ArrayIndex )
-		{
-			l_Ref.SetArrayIndex( m_ArrayIndex );
-		}
-		else
-		{
-			l_Ref.SetEntireArray();
-		}
-	}
-	*/
 
 	if( m_ObjectNameInfo.IsIndexPresent() )
 	{
@@ -257,7 +214,6 @@ SVObjectReference SVObjectInfoStruct::GetObjectReference() const
 			l_Ref.SetEntireArray();
 		}
 	}
-
 	return l_Ref;
 }
 
@@ -274,7 +230,7 @@ BOOL SVObjectInfoStruct::CheckExistence()
 		l_bOk = l_bOk && l_psvObject == PObject;
 	}
 
-	l_bOk = l_bOk && dynamic_cast<SVObjectClass *>(PObject) != NULL;
+	l_bOk = l_bOk && nullptr != dynamic_cast<SVObjectClass *>(PObject);
 
 	if( l_bOk )
 	{
@@ -282,13 +238,7 @@ BOOL SVObjectInfoStruct::CheckExistence()
 
 		l_bOk = l_bOk && l_guidId == UniqueObjectID;
 	}
-
 	return l_bOk;
-}
-
-SvOi::IObjectClass* SVObjectInfoStruct::getObject() const 
-{ 
-	return dynamic_cast<SvOi::IObjectClass*>(PObject); 
 }
 
 //******************************************************************************

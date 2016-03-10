@@ -2887,9 +2887,9 @@ HRESULT SVImageClass::Save(const SVString& rFilename)
 	return hr;
 }
 
-CRect SVImageClass::GetOutputRectangle() const
+RECT SVImageClass::GetOutputRectangle() const
 {
-	CRect rectTemp;
+	RECT rectTemp;
 	m_ImageInfo.GetOutputRectangle( rectTemp );
 	return rectTemp;
 }

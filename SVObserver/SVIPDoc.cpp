@@ -3511,9 +3511,11 @@ void SVIPDoc::OnEditDataDefinitionLists()
 	if( nullptr != pInspection )
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVString inspectionName = pInspection->GetName();
+		const SVGUID& inspectionID = pInspection->GetUniqueObjectID();
 		CString strTitle = _T("Data Definition Lists - ");
-		strTitle += pInspection->GetName();
-		SVDataDefinitionSheet sheet(strTitle, *pInspection );
+		strTitle += inspectionName.c_str();
+		SVDataDefinitionSheet sheet(strTitle, inspectionName, inspectionID );
 
 		//remove apply button
 		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;

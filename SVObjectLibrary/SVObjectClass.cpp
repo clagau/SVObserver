@@ -441,6 +441,29 @@ SVString SVObjectClass::GetCompleteName() const
 	return SVString(static_cast<LPCSTR>(name));
 }
 
+HRESULT SVObjectClass::GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const
+{
+	HRESULT hr = S_OK;
+	SVString name;
+	if (GetObjectType() == objectType)
+	{
+		rName = GetCompleteName();
+	}
+	else
+	{
+		const SvOi::IObjectClass* pObject = GetAncestorInterface(objectType);
+		if (pObject)
+		{
+			rName = pObject->GetCompleteName();
+		}
+		else
+		{
+			hr = E_POINTER;
+		}
+	}
+	return hr;
+}
+
 const SVGUID& SVObjectClass::GetParentID() const
 {
 	return GetOwnerID();
@@ -449,7 +472,18 @@ const SVGUID& SVObjectClass::GetParentID() const
 SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType)
 {
 	if (GetObjectType() == ancestorObjectType)
+	{
 		return this;
+	}
+	return GetAncestor(ancestorObjectType);
+}
+
+const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const
+{
+	if (GetObjectType() == ancestorObjectType)
+	{
+		return this;
+	}
 	return GetAncestor(ancestorObjectType);
 }
 

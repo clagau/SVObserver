@@ -9,14 +9,15 @@
 // * .Check In Date   : $Date:   01 Oct 2013 14:57:20  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLinearLineMaximumBackgroundObjectAnalyzer.h"
-#include "SVMeasureAnalyzerAdjustment.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVGlobal.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVLinearEdgeBProcessingClass.h"
 #include "SVTool.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLinearMaximumBackgroundObjectLineAnalyzerClass, SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid );
 

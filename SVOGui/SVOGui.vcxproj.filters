@@ -89,9 +89,6 @@
     <ClCompile Include="RangeValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RangeSelectorFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AuxiliaryExtentsController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -221,9 +218,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RangeValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeSelectorFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AuxiliaryExtentsController.h">

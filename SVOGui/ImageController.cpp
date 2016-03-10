@@ -12,7 +12,7 @@
 #include <boost/assign/list_of.hpp>
 #include "ImageController.h"
 #include "GuiCommands\GetImage.h"
-#include "GuiCommands\GetAvailableObjects.h"
+#include "GuiCommands\GetAllowedImageList.h"
 #include "GuiCommands\GetConnectedObjects.h"
 #include "GuiCommands\ConnectToObject.h"
 #include "GuiCommands\GetResultImage.h"
@@ -23,7 +23,6 @@
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\IToolSet.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "SVImageLibrary\SVImageInfoClass.h"
 #include "GuiController.h"
 #include "BoundValue.h"
 #include "ValuesAccessor.h"
@@ -31,85 +30,6 @@
 
 namespace Seidenader { namespace SVOGui
 {
-	struct ImageListAllowed
-	{
-		GUID m_TaskObjectID;
-		SVObjectSubTypeEnum m_subType;
-
-		ImageListAllowed(const GUID& rTaskObjectID, SVObjectSubTypeEnum subType)
-		: m_TaskObjectID(rTaskObjectID)
-		, m_subType(subType)
-		{
-		}
-	
-		bool IsHidden(SvOi::IObjectClass* pObject) const
-		{
-			return (pObject->ObjectAttributesAllowed() & SV_HIDDEN) ? true : false;
-		}
-
-		bool HasOneBand(SvOi::ISVImage* pImage) const
-		{
-			long bandNumber = pImage->getBands();
-			return (bandNumber == 1);
-		}
-
-		bool IsOwnerGageTool(SvOi::ISVImage* pImage) const
-		{
-			bool bRetVal = false;
-			// Gets the owner from the image info, why not the SVObject owner info struct?
-			// Are they the same or out of sync?
-			SvOi::IObjectClass* pImageOwnerTool = pImage->getOwner(); 
-
-			if (pImageOwnerTool)
-			{
-				SVObjectSubTypeEnum subType = pImageOwnerTool->GetObjectSubType();
-				bRetVal = (SVGageToolObjectType == subType);
-			}
-			return bRetVal;
-		}
-
-		bool IsObjectCurrentTask(SvOi::IObjectClass* pObject) const
-		{
-			bool bRetVal = true;
-			SvOi::IObjectClass* pImageOwnerTool = pObject->GetAncestorInterface(SVToolObjectType);
-
-			if (nullptr != pImageOwnerTool)
-			{
-				GUID ownerID = pImageOwnerTool->GetUniqueObjectID();
-				SvOi::IToolSet* pToolSet = dynamic_cast<SvOi::IToolSet *>(pImageOwnerTool->GetAncestorInterface(SVToolSetObjectType));
-				if (pToolSet)
-				{
-					if (ownerID == m_TaskObjectID) // stop at this tool...
-					{
-						bRetVal = false;
-					}
-				}
-			}
-			return bRetVal;
-		}
-
-		bool operator()(SvOi::IObjectClass* pObject, bool& bStop) const
-		{
-			bool bUseImage = false;
-			SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage *>(pObject);
-
-			// Ensure only image sources which are produced by tools above the current tool....
-			if (pImage)
-			{
-				if (SVToolImageObjectType != m_subType)
-				{
-					bStop = !IsObjectCurrentTask(pObject);
-					bUseImage = !bStop && !IsHidden(pObject) && !IsOwnerGageTool(pImage) && HasOneBand(pImage);
-				}
-				else
-				{
-					bUseImage = !IsHidden(pObject) && !IsOwnerGageTool(pImage) && HasOneBand(pImage);
-				}
-			}
-			return bUseImage;
-		}
-	};
-
 	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType)
 	: m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
@@ -124,10 +44,10 @@ namespace Seidenader { namespace SVOGui
 
 	HRESULT ImageController::RetrieveAvailableImageList()
 	{ 
-		typedef GuiCmd::GetAvailableObjects Command;
+		typedef GuiCmd::GetAllowedImageList Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_InspectionID, SVObjectTypeInfoStruct(SVImageObjectType, SVNotSetSubObjectType), ImageListAllowed(m_TaskObjectID, m_subType));
+		CommandPtr commandPtr = new Command(m_InspectionID, SVObjectTypeInfoStruct(SVImageObjectType, SVNotSetSubObjectType), m_TaskObjectID, m_subType);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -156,7 +76,6 @@ namespace Seidenader { namespace SVOGui
 		{
 			list = commandPtr->ResultImages();
 		}
-
 		return list;
 	}
 

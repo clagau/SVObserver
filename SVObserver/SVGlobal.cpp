@@ -9,16 +9,14 @@
 //* .Check In Date   : $Date:   14 Aug 2014 15:49:14  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <direct.h>
 #include "SVGlobal.h"
 #include "SVDataManagerLibrary/DataManager.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageClass.h"
 #include "SVObserver.h"
 #include "SVImageProcessingClass.h"
-
-__declspec( thread ) int tls_ObjectIndex = 1;
+#pragma endregion Includes
 
 TCHAR SVRCCurrentSVCPathName[ _MAX_PATH ];
 
@@ -27,7 +25,6 @@ SVDataManager TheSVDataManager;
 //******************************************************************************
 //* FUNCTION DEFINITION(S):
 //******************************************************************************
-
 
 void FormatLongerString2( CString& RString, UINT IDS, LPCTSTR LPSZFirst, LPCTSTR LPSZSecond )
 {
@@ -956,75 +953,6 @@ HBITMAP SVMilBufferToBitmap( MIL_ID MilBufferID )
 	return hResultBM;
 }
 --------------*/
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// 06 Dec 1999 - frb.
-// Try to solve a MIL problem with converting MIL image ID to Window HDC
-// handle to a device context.
-//
-HBITMAP SVMilBufferToBitmap2( SVImageClass *pImage )
-{
-	HDC hMemDC		  = NULL;
-	HBITMAP hResultBM = NULL;
-	
-	SVImageInfoClass ImageInfo;
-	SVSmartHandlePointer ImageHandle;
-	
-	if ( ! pImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
-	{
-		return NULL;
-	}
-	
-	ImageInfo = pImage->GetImageInfo();
-	
-	SVImageBufferHandleImage l_MilHandle;
-	ImageHandle->GetData( l_MilHandle );
-
-	SVMatroxBuffer MilBufferID = l_MilHandle.GetBuffer();
-	
-	if( MilBufferID.empty() )
-	{
-		return NULL;
-	}
-	
-	//
-	// Try to get device context of mil buffer...
-	// The MIL image buffer attributes may be modified to add M_DIB if
-	// necessary so that getting a HDC will succeed.
-	//
-	HDC hDC;
-	// &&&
-	hDC = SVImageProcessingClass::Instance().CreateBufferDC( ImageInfo, ImageHandle );
-	
-	//
-	// Now create the bitmap.
-	//
-	if( hMemDC = ::CreateCompatibleDC( hDC ) )
-	{
-		HBITMAP hOrgBitmap = ( HBITMAP ) ::GetCurrentObject( hDC, OBJ_BITMAP );
-		
-		// Get bitmap info...
-		BITMAP bmInfo;
-		::GetObject( hOrgBitmap, sizeof( BITMAP ), &bmInfo );
-		
-		HBITMAP hReplaceBM = ::CreateCompatibleBitmap( hDC, bmInfo.bmWidth, bmInfo.bmHeight );
-		HBITMAP hOldBM = ( HBITMAP ) ::SelectObject( hMemDC, hReplaceBM );
-		
-        // Copy source bitmap into memDC...
-		::SetStretchBltMode( hDC, COLORONCOLOR );
-		::StretchBlt( hMemDC, 0, 0, bmInfo.bmWidth, bmInfo.bmHeight, hDC, 0, 0, bmInfo.bmWidth, bmInfo.bmHeight, SRCCOPY );
-		
-		// Replace bitmap and kill memDC...
-		hResultBM = ( HBITMAP ) ::SelectObject( hMemDC, hOldBM );
-		::DeleteDC( hMemDC );
-	}
-	
-	// &&&
-	HRESULT hr = SVImageProcessingClass::Instance().DestroyBufferDC( ImageHandle, hDC );
-	
-	return hResultBM;
-}
 
 
 int SVCompareNoCase( LPCTSTR TStrString1, LPCTSTR TStrString2 )

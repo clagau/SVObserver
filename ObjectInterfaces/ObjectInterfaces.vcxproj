@@ -158,11 +158,9 @@
     <ClInclude Include="ICustom2Filter.h" />
     <ClInclude Include="IEnumerateValueObject.h" />
     <ClInclude Include="IEquation.h" />
-    <ClInclude Include="IInObjectInfoStruct.h" />
     <ClInclude Include="ImageArthimeticOperators.h" />
     <ClInclude Include="IMask.h" />
     <ClInclude Include="IMatroxImageData.h" />
-    <ClInclude Include="IObjectInfoStruct.h" />
     <ClInclude Include="IObjectManager.h" />
     <ClInclude Include="ISelectorItemVector.h" />
     <ClInclude Include="IRingBufferTool.h" />

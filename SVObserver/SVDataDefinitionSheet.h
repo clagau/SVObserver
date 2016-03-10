@@ -12,19 +12,21 @@
 #pragma once
 
 #pragma region Includes
-#include "SVPropertySheetCancelImpl.h"
-#include "SelectedObjectsPage.h"
+#include "ISVCancel.h"
+#include "SVUtilityLibrary\SVGUID.h"
+#include "SVUtilityLibrary\SVString.h"
+#include "ObjectSelectorLibrary\SelectorItemVector.h"
 #pragma endregion Includes
 
-class SVInspectionProcess;
+class SelectedObjectsPage;
 
-class SVDataDefinitionSheet : public CPropertySheet, public ISVCancel//, public SVPropertySheetCancelImpl
+class SVDataDefinitionSheet : public CPropertySheet, public ISVCancel
 {
 	DECLARE_DYNAMIC(SVDataDefinitionSheet)
 
 #pragma region Constructor
 public:
-	SVDataDefinitionSheet( LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
+	SVDataDefinitionSheet( LPCTSTR pszCaption, const SVString& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
 	virtual ~SVDataDefinitionSheet();
 #pragma endregion Constructor
 
@@ -50,12 +52,12 @@ private:
 
 #pragma region Member variables
 private:
-	SVInspectionProcess& m_rInspection;		//Reference to the respective inspection object
+	SVString m_InspectionName;				//Name of the Inspection
+	SVGUID m_InspectionID;					//UniqueID of the Inspection
 	SvOsl::SelectorItemVector m_ValueList;	//The selected value list 
 	SvOsl::SelectorItemVector m_ImageList;	//The selected image list
 #pragma endregion Member variables
 };
-
 
 //******************************************************************************
 //* LOG HISTORY:

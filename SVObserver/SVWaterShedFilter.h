@@ -52,48 +52,11 @@ protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 	virtual BOOL OnValidate();
 	
-	//************************************
-	//! Return if image a valid pointer and image for a marker for this watershed.
-	//! \param pImage [in] Pointer to the image to test. 
-	//! \param rToolSet [in] Reference of the tool set.
-	//! \returns bool
-	//************************************
-	bool isValidMarkerImage(const SVImageClass* pImage, const SVToolSetClass &rToolSet) const;
-	//************************************
-	//! Return a list of available source image for this tool.
-	//! \param toolsetGUID [in] GUID for this tool set.
-	//! \returns SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque
-	//************************************
-	static SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque getAvailableSourceImage(const SVGUID toolsetGUID);
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
-public:
+private:
 	SVInObjectInfoStruct m_MarkerImageInfo;
-
-////////////////////////////////////////////////////////////////////////////////
-// Create Operator
-////////////////////////////////////////////////////////////////////////////////
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-public:
 	SVBoolValueObjectClass m_bvoUseMarker ;
 	SVLongValueObjectClass m_lvoMinVariation;
 	SVLongValueObjectClass m_lvoControlFlag;
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-protected:
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
 };
 
 // ******************************************************************************

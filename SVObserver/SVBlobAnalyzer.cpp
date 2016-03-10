@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Jan 2015 11:20:50  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBlobAnalyzer.h"
 
@@ -25,6 +26,7 @@
 #include "SVRange.h"
 #include "SVTool.h"
 #include "SVSVIMStateClass.h"
+#pragma endregion Includes
 
 struct SVBlobFeatureConstants BlobFeatureConstants[]=
 {

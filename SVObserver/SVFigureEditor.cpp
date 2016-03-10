@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:33:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <vector>
 #include "SVFigureEditor.h"
+#pragma endregion Includes
 
 // default hot spot size
 int SVFigureEditor::f_iHotSpotSizeX = 5;  // size is twice this

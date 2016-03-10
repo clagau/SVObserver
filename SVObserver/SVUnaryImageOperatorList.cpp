@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   24 Oct 2014 11:50:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVUnaryImageOperatorList.h"
 
@@ -19,6 +20,7 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "SVTool.h"
 #include "SVMatroxImageProcessingClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

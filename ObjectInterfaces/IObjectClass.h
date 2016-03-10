@@ -37,6 +37,13 @@ namespace Seidenader
 
 			/**********
 			 This method gets the complete name of this object, to a certain lineage.
+			 Note: this method builds the name by removing the parts of the ancestry younger than the objectType.
+			***********/
+			virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const = 0;
+
+			/**********
+			 This method gets the complete name of this object, to a certain lineage.
+			 Note: this method builds the name in reverse by ancestry (meaning that the lineage is traversed by youngest to oldest)
 			***********/
 			virtual SVString GetObjectNameToObjectType(LPCSTR LPSZCompleteName, SVObjectTypeEnum objectTypeToInclude) const = 0;
 
@@ -60,6 +67,7 @@ namespace Seidenader
 			 /param ancestorObjectType <in> 
 			***********/
 			virtual IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) = 0;
+			virtual const IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const = 0;
 
 			/**********
 			The method gets the first object with the requested type.

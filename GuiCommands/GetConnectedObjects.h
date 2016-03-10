@@ -36,42 +36,18 @@ namespace Seidenader
 				HRESULT hr = S_OK;
 
 				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
-				if (pObject)
+				if (nullptr != pObject)
 				{
 					if (SVImageObjectType == m_typeInfo.ObjectType)
 					{
-						SVInObjectInfoStruct* psvImageInfo(nullptr);
-						SVInObjectInfoStruct* psvLastImageInfo(nullptr);
-
 						SvOi::ITaskObject* pTaskObject  = dynamic_cast<SvOi::ITaskObject *>(pObject);
-						while (!psvImageInfo && S_OK == pTaskObject->FindNextInputImageInfo(psvImageInfo, psvLastImageInfo))
+						if (nullptr != pTaskObject)
 						{
-							if (psvImageInfo)
-							{
-								if (psvImageInfo->IsConnected())
-								{
-									SvOi::IObjectClass* pObject = psvImageInfo->GetInputObjectInfo().PObject;
-									if (pObject)
-									{
-										SvOi::ISVImage* pImage = dynamic_cast <SvOi::ISVImage *>(pObject);
-										if (pImage)
-										{
-											SVString name = pImage->getDisplayedName();
-											m_list.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(name, pObject->GetUniqueObjectID())));
-										}
-									}
-									if (static_cast<int>(m_list.size()) < m_maxRequested)
-									{
-										psvLastImageInfo = psvImageInfo;
-										psvImageInfo = nullptr;
-									}
-								}
-								else // get First Connected Image Info
-								{
-									psvLastImageInfo = psvImageInfo;
-									psvImageInfo = nullptr;
-								}
-							}
+							pTaskObject->GetConnectedImages(m_list, m_maxRequested);
+						}
+						else
+						{
+							hr = E_POINTER;
 						}
 					}
 					else

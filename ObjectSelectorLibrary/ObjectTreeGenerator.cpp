@@ -42,7 +42,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		, m_LocationInputFilters()
 		, m_LocationOutputFilters()
 		, m_SelectorType( ObjectTreeGenerator::TypeNone )
-		, m_AttributesFilter( 0 )
+		, m_AttributesFilter( SV_NO_ATTRIBUTES )
 		, m_LeafCount( 0 )
 	{
 	}
@@ -71,25 +71,15 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		m_LocationInputFilters.clear();
 		m_LocationOutputFilters.clear();
 		m_SelectorType = ObjectTreeGenerator::TypeNone;
-		m_AttributesFilter = 0;
+		m_AttributesFilter = SV_NO_ATTRIBUTES;
 	}
-
-	void ObjectTreeGenerator::insertTreeObjects( const SVStringArray& rLocationList )
+		
+	void ObjectTreeGenerator::insertTreeObjects( const SelectorItemVector& rSelectorItems )
 	{
-		std::for_each(rLocationList.begin(), rLocationList.end(), [this](const SVString &rLocation){ insertTreeObject(rLocation); });
-	}
-
-
-	void ObjectTreeGenerator::insertTreeObjects( SvOi::ISelectorItemVector& rSelectorItems )
-	{
-		for(int i=0; i < rSelectorItems.getSize(); ++i )
+		std::for_each(rSelectorItems.begin(), rSelectorItems.end(), [this](const SelectorItem& rItem)->void
 		{
-			SvOi::ISelectorItem* pItem = rSelectorItems.getAt(i);
-			if( nullptr != pItem )
-			{
-				insertTreeObject( *pItem );
-			}
-		}
+			insertTreeObject( rItem );
+		});
 	}
 
 	INT_PTR ObjectTreeGenerator::showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent )
@@ -239,20 +229,6 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma endregion Public Methods
 
 	#pragma region Private Methods
-	void ObjectTreeGenerator::insertTreeObject( const SVString& rLocation )
-	{
-		SvTrl::ObjectSelectorItem SelectorItem;
-		SvTrl::IObjectSelectorItem::AttributeEnum Attribute( static_cast<SvTrl::IObjectSelectorItem::AttributeEnum> (SvTrl::IObjectSelectorItem::Leaf | SvTrl::IObjectSelectorItem::Checkable) );
-
-		SelectorItem.setLocation( rLocation );
-		SelectorItem.setAttibute( Attribute );
-		SelectorItem.setCheckedState( SvTrl::IObjectSelectorItem::UncheckedEnabled );
-		//Make copy of location because reference is const
-		SVString DisplayLocation = getFilteredLocation( m_LocationInputFilters, rLocation );
-		m_TreeContainer.insertLeaf( DisplayLocation, SelectorItem );
-		m_LeafCount++;
-	}
-
 	void ObjectTreeGenerator::insertTreeObject( const SvOi::ISelectorItem& rItem )
 	{
 		SvTrl::ObjectSelectorItem SelectorItem;

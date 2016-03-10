@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:03:32  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLineEdgePositionAnalyzer.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVInspectionProcess.h"
 #include "SVLine.h"
 #include "SVTool.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVEdgePositionLineAnalyzerClass, SVEdgePositionLineAnalyzerClassGuid );
 

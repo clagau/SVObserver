@@ -12,11 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVConditionalHistorySheet.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVInspectionProcess.h"
-#include "SVPPQObject.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVObjectLibrary\SVObjectReference.h"
+#include "SelectedObjectsPage.h"
+#include "SVInspectionProcess.h"
+#include "SVPPQObject.h"
 #include "SVIPDoc.h"
 #include "SVScalarValue.h"
 #pragma endregion Includes
@@ -92,14 +93,16 @@ HRESULT SVConditionalHistorySheet::SetCancelData(SVCancelData* pData)
 #pragma region Private Methods
 HRESULT SVConditionalHistorySheet::CreatePages()
 {
+	SVString name = m_rInspection.GetName();
+	const SVGUID& rInspectionID = m_rInspection.GetUniqueObjectID();
 
-	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_rInspection, _T("Values"), m_Values, SV_CH_VALUE );
+	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( name, rInspectionID, _T("Values"), m_Values, SV_CH_VALUE );
 	AddPage(pValuesDlg);
 
-	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_rInspection, _T("Images"), m_Images, SV_CH_IMAGE );
+	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( name, rInspectionID, _T("Images"), m_Images, SV_CH_IMAGE );
 	AddPage(pImagesDlg);
 
-	SelectedObjectsPage* pConditionalsDlg = new SelectedObjectsPage( m_rInspection, _T("Conditions"), m_Conditionals, SV_CH_CONDITIONAL );
+	SelectedObjectsPage* pConditionalsDlg = new SelectedObjectsPage( name, rInspectionID, _T("Conditions"), m_Conditionals, SV_CH_CONDITIONAL );
 	AddPage(pConditionalsDlg);
 
 	return S_OK;

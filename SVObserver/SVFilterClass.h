@@ -9,18 +9,18 @@
 //* .Check In Date   : $Date:   09 Aug 2013 09:54:04  $
 //******************************************************************************
 
-#ifndef SVFILTERCLASS_H
-#define SVFILTERCLASS_H
+#pragma once
 
+#pragma region Includes
 #include "ObjectInterfaces\ISVFilter.h"
 #include "SVUnaryImageOperatorClass.h"
+#pragma endregion Includes
 
-class SVFilterClass : virtual public SvOi::ISVFilter
-	,public SVUnaryImageOperatorClass
+class SVFilterClass : public SvOi::ISVFilter, public SVUnaryImageOperatorClass
 {
 	SV_DECLARE_CLASS( SVFilterClass );
 public:
-	SVFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVFILTER );
+	SVFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVFILTER );
 
 	//************************************
 	// Description: Creates the object
@@ -35,10 +35,8 @@ public:
 
 private:
 	void init();
-
 };
 
-#endif	//	SVFILTERCLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:
