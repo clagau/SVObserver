@@ -187,7 +187,7 @@ private:
 	bool copyBuffer( const SVSmartHandlePointer input, SVSmartHandlePointer output );
 
 public:
-	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
+	HRESULT CollectInputImageNames();
 
 };
 

@@ -547,7 +547,6 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 	l_bOk = l_bOk && (useFormulaInput.GetValue( l_bUseFormula ) == S_OK );
 
 	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*>( GetTool() );
-	CollectInputImageNames(RRunStatus);
 
 	if( pTool )
 	{
@@ -853,11 +852,13 @@ HRESULT SVImagePolarTransformClass::ResetObject()
 		l_hrOk = S_FALSE;
 	}
 
+	CollectInputImageNames();
+
 	return l_hrOk;
 }
 
 // Set String value object for Source Image Names
-HRESULT SVImagePolarTransformClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
 	SVImageClass* l_pInputImage = getInputImage();
@@ -866,7 +867,7 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames( SVRunStatusClass& RR
 	{
 		CString l_strName = l_pInputImage->GetCompleteObjectName();
 
-		l_pTool->m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
+		l_pTool->m_svSourceImageNames.SetValue( 0, l_strName );
 
 		l_hr = S_OK;
 	}

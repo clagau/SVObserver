@@ -157,6 +157,8 @@ HRESULT SVImageTransformClass::ResetObject( )
 
 	::KeepPrevError( l_hrOk, SVTransformClass::ResetObject() );
 
+	CollectInputImageNames();
+
 	return l_hrOk;
 }
 #pragma endregion
@@ -206,8 +208,6 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 
 	if( bRetVal )
 	{
-		CollectInputImageNames(runStatus);
-
 		SVImageExtentClass l_svExtents = m_outputImageObject.GetImageExtents();
 
 		if( l_bTranslationEnabled )
@@ -486,7 +486,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 
 #pragma region Private Methods
 // Set String value object for Source Image Names
-HRESULT SVImageTransformClass::CollectInputImageNames( SVRunStatusClass& runStatus )
+HRESULT SVImageTransformClass::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
 	SVImageClass* l_pInputImage = getInputImage();
@@ -495,7 +495,7 @@ HRESULT SVImageTransformClass::CollectInputImageNames( SVRunStatusClass& runStat
 	{
 		CString l_strName = l_pInputImage->GetCompleteObjectName();
 
-		l_pTool->GetInputImageNames()->SetValue( runStatus.m_lResultDataIndex, 0, l_strName );
+		l_pTool->GetInputImageNames()->SetValue( 0, l_strName );
 
 		l_hr = S_OK;
 	}

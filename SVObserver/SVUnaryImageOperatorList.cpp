@@ -420,6 +420,8 @@ HRESULT SVStdImageOperatorListClass::ResetObject()
 		l_hrOk = S_FALSE;
 	}
 
+	CollectInputImageNames();
+
 	//create tmp mil buffer for operator
 	SVImageClass* pImage = getOutputImage();
 	if (pImage)
@@ -485,8 +487,6 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 		if ( bRetVal )
 		{
-			CollectInputImageNames(RRunStatus);
-
 			// Check for new image type...
 			if( nullptr == pOutputImage->GetParentImage() )
 			{
@@ -652,7 +652,7 @@ DWORD_PTR SVStdImageOperatorListClass::processMessage( DWORD DwMessageID, DWORD_
 }
 
 // Set String value object for Source Image Names
-HRESULT SVStdImageOperatorListClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
 	SVImageClass* l_pInputImage = getInputImage();

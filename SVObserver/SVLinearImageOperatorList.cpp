@@ -94,6 +94,8 @@ HRESULT SVLinearImageOperatorListClass::ResetObject()
 
 	HRESULT l_hrOk = SVStdImageOperatorListClass::ResetObject();
 
+	CollectInputImageNames();
+
 	if( UpdateLineExtentData() != S_OK )
 	{
 		l_hrOk = S_FALSE;
@@ -130,10 +132,6 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 	
 	SVMatroxImageInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
-
-	// Get Input Image Names for Data Definition Lists.. Why here? because
-	// we need a run status to set value object results
-	CollectInputImageNames( RRunStatus );
 
 	if( m_bUseRotation )
 	{

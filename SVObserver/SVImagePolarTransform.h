@@ -81,7 +81,7 @@ private:
 	void SetCalculatedPrintableFlags();
 	static double g_dMaxAngularDistance;
 
-	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
+	HRESULT CollectInputImageNames();
 
 };
 

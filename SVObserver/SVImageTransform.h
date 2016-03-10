@@ -69,7 +69,7 @@ protected:
 
 #pragma region Private Methods
 private:
-	HRESULT CollectInputImageNames( SVRunStatusClass& runStatus );
+	HRESULT CollectInputImageNames();
 #pragma endregion
 
 #pragma region Member variables
