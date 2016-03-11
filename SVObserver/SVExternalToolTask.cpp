@@ -129,9 +129,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	m_Data.m_aInputImageInfo.resize(SVExternalToolTaskData::NUM_INPUT_IMAGES);
 	for ( i=0; i < m_Data.m_aInputImageInfo.size(); i++)
 	{
-		SVString l_Name;
-
-		l_Name.Format( _T( "ExternalToolTaskImage%d" ), i );
+		SVString l_Name = SvUl_SF::Format( _T( "ExternalToolTaskImage%d" ), i );
 
 		// this object will be filled in SVTaskObject::ConnectAllInputs
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
@@ -162,9 +160,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	for ( i=0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
 		// register objects
-		SVString l_Name;
-
-		l_Name.Format( _T( "ExternalToolTaskValue%d" ), i );
+		SVString l_Name = SvUl_SF::Format( _T( "ExternalToolTaskValue%d" ), i );
 
 		m_Data.m_aInputObjectInfo[i].SetObject( GetObjectInfo() );
 		RegisterInputObject( &m_Data.m_aInputObjectInfo[i], l_Name );
@@ -1719,7 +1715,7 @@ BOOL SVExternalToolTask::renameToolSetSymbol(const SVObjectClass* pObject, LPCTS
 			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
-		oldPrefix.replace( pObject->GetName(), originalName );
+		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
 
 		// loop through all inputs & rename
 		// input objects

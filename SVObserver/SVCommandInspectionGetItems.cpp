@@ -146,16 +146,14 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 
 		if (!(ImageHandlePtr.empty()))
 		{
-			SVString FileName;
-
-			FileName.Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
+			SVString FileName = SvUl_SF::Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
 
 			GetStatus = SVImageProcessingClass::Instance().SaveImageBuffer(FileName.c_str(), ImageHandlePtr);
 
 			if (S_OK == GetStatus)
 			{
 				Storage.m_StorageType = SVVisionProcessor::SVStorageImageFileName;
-				Storage.m_Variant = FileName.ToVARIANT();
+				Storage.m_Variant = _variant_t(FileName.c_str());
 			}
 			else
 			{

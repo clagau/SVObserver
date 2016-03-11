@@ -48,10 +48,6 @@ public:
 
 private:
 	// Member Variables
-
-	// The Destination where this output is going...
-	SVString m_strDestination;
-
 	// The Value Objects name.
 	SVString m_strObjectName;
 

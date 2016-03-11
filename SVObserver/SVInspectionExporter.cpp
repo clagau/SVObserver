@@ -185,8 +185,8 @@ static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& d
 				TCHAR ext[_MAX_EXT];
 				_tsplitpath(findFileData.cFileName, drive, dir, filename, ext);
 				
-				SVString extStr = ext;
-				SVString lowercaseExt = extStr.MakeLower();
+				SVString lowercaseExt = ext;
+				SvUl_SF::MakeLower(lowercaseExt);
 
 				if (lowercaseExt != scSVXConfigExt)
 				{
@@ -280,8 +280,7 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 			{
 				SVObjectXMLWriter writer(os);
 
-				SVString rootNodeName(_T("Inspection_Export"));
-				writer.WriteRootElement(rootNodeName);
+				writer.WriteRootElement(_T("Inspection_Export"));
 				writer.WriteSchema();
 				writer.WriteStartOfBase();
 				WriteVersion(writer, p_version);

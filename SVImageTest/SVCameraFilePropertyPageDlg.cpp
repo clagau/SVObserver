@@ -180,7 +180,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 						SVLongValueDeviceParam::OptionsType::const_iterator iterOption;
 						for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 						{
-							CString sText = iterOption->strDescription.ToString();
+							CString sText = iterOption->strDescription.c_str();
 							int iPos;
 							iPos = pCombo->AddString( sText );
 							pCombo->SetItemData( iPos, iterOption->value );
@@ -228,7 +228,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 					SVBoolValueDeviceParam::OptionsType::const_iterator iterOption;
 					for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 					{
-						CString sText = iterOption->strDescription.ToString();
+						CString sText = iterOption->strDescription.c_str();
 						int iPos;
 						iPos = pCombo->AddString( sText );
 						pCombo->SetItemData( iPos, (LPARAM) iterOption->value );
@@ -286,7 +286,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								{
 									if ( iterOption->second.bColor == bColorSystem )	// if camera format matches product
 									{
-										CString sText = iterOption->second.strDescription.ToString();
+										CString sText = iterOption->second.strDescription.c_str();
 										int iPos;
 										iPos = pCombo->AddString( sText );
 										pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
@@ -332,7 +332,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								int iOptionIndex=0;
 								for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 								{
-									CString sText = iterOption->strDescription.ToString();
+									CString sText = iterOption->strDescription.c_str();
 									int iPos;
 									iPos = pCombo->AddString( sText );
 									++iOption;

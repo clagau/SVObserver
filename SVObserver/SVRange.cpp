@@ -453,7 +453,7 @@ BOOL SVRangeClass::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR ori
 			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
-		oldPrefix.replace( pObject->GetName(), originalName );
+		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
 
 		RangeClassHelper rangeHelper(this);
 		rangeHelper.SetRangeTaskObject();

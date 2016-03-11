@@ -322,12 +322,6 @@ protected:
     static unsigned long  msvlStaticErrorAction;
     static unsigned long  msvlStaticDuration;
     static unsigned long  msvlStaticOutputs;
-    
-    static SVString        msvStaticFileName;
-    static SVString        msvStaticErrorData;
-    static SVString        msvStaticParam1;
-    static SVString        msvStaticParam2;
-
 
     int		Err000_009 (int *found);    // not assigned.
     int     Err010_049 (int *found);    // Jim

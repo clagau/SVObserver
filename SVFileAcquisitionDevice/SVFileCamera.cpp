@@ -59,7 +59,7 @@ void SVFileCamera::SetImageFormat(SVImageFormatEnum format)
 
 LPCTSTR SVFileCamera::GetDirectory() const
 {
-	return m_fileData.directory.ToString();
+	return m_fileData.directory.c_str();
 }
 
 void SVFileCamera::SetDirectory(const SVString& dir)
@@ -69,7 +69,7 @@ void SVFileCamera::SetDirectory(const SVString& dir)
 
 LPCTSTR SVFileCamera::GetFileName() const
 {
-	return m_fileData.fileName.ToString();
+	return m_fileData.fileName.c_str();
 }
 
 void SVFileCamera::SetFileName(const SVString& fileName)
@@ -115,7 +115,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	if (m_fileData.mode == ContinuousMode || m_fileData.mode == SingleIterationMode)
 	{
 		// Get File List
-		SVFileSystemScanner<Insertor>::ScanForFiles(m_fileData.directory.ToString(), "*.bmp", Insertor(m_fileList, m_fileList.end()));
+		SVFileSystemScanner<Insertor>::ScanForFiles(m_fileData.directory.c_str(), "*.bmp", Insertor(m_fileList, m_fileList.end()));
 	}
 	else // Single File Mode
 	{
@@ -128,7 +128,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	m_loadSequence.Init(m_fileList.begin(), m_fileList.end(), !IsSingleIterationLoadMode());
 
 	// start loader thread
-	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, boost::bind(&SVFileCamera::OnThreadEvent, this, _1), m_name.ToString(), SVAffinityAcq);
+	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, boost::bind(&SVFileCamera::OnThreadEvent, this, _1), m_name.c_str(), SVAffinityAcq);
 	return hr;
 }
 
@@ -352,7 +352,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 	SVString filename = pCamera->GetNextFilename();
 
 	// Load file
-	if (!filename.empty() && SVImageFileLoader::Load(filename.ToString(), pCamera->m_bitmap) == S_OK)
+	if (!filename.empty() && SVImageFileLoader::Load(filename.c_str(), pCamera->m_bitmap) == S_OK)
 	{
 		// fire StartFrame event
 		pCamera->m_startFrameEvent.Fire(pCamera->m_index);
@@ -367,7 +367,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 		}
 		else
 		{
-			l_csBuf.Format(_T("E: FileAcquisition::Unable to Load Image File %s"), filename.ToString());
+			l_csBuf.Format(_T("E: FileAcquisition::Unable to Load Image File %s"), filename.c_str());
 		}
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, l_csBuf, StdMessageParams );

@@ -110,7 +110,7 @@ const SVString& StringValue(const SVDeviceParamWrapper& w)
 
 SVDeviceParamWrapper DeviceParam(const SVString& s) 
 {
-	return SVStringValueDeviceParam(s.ToString());
+	return SVStringValueDeviceParam(s.c_str());
 }
 
 SVDeviceParamWrapper DeviceParam(const CString& s) 

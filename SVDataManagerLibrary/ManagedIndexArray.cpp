@@ -30,9 +30,7 @@ SVManagedIndex::SVManagedIndex()
 
 SVString SVManagedIndex::GetReferenceCounts() const
 {
-	SVString l_Temp;
-
-	l_Temp.Format( _T("ACQ=%ld-IP=%ld-PPQ=%ld-ARC=%ld-DIS=%ld-LIP=%ld-DCOM=%ld-OTH=%ld"),
+	SVString l_Temp = SvUl_SF::Format( _T("ACQ=%ld-IP=%ld-PPQ=%ld-ARC=%ld-DIS=%ld-LIP=%ld-DCOM=%ld-OTH=%ld"),
 		svmlAcquisition,
 		svmlInspection,
 		svmlPPQ,
@@ -567,9 +565,7 @@ HRESULT SVManagedIndexArray::ReleaseAllIndexes()
 
 SVString SVManagedIndexArray::GetReferenceCounts() const
 {
-	SVString l_Temp;
-
-	l_Temp.Format( _T( "%s-MC=%ld" ), GetName().c_str(), m_MessageCounter );
+	SVString l_Temp = SvUl_SF::Format( _T( "%s-MC=%ld" ), GetName().c_str(), m_MessageCounter );
 
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 
@@ -581,9 +577,7 @@ SVString SVManagedIndexArray::GetReferenceCounts() const
 
 			if( l_pIndex != NULL )
 			{
-				SVString l_Element;
-
-				l_Element.Format( _T( ":Index=%ld-" ), i );
+				SVString l_Element = SvUl_SF::Format( _T( ":Index=%ld-" ), i );
 
 				l_Temp += l_Element;
 				l_Temp += l_pIndex->GetReferenceCounts();

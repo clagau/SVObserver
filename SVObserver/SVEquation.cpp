@@ -390,7 +390,7 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 		CString conditionalString;
 		conditionalString.LoadString( IDS_CLASSNAME_SVCONDITIONAL );
 
-		if (0 == ownerName.Compare(conditionalString))
+		if (0 == ownerName.compare(conditionalString))
 		{
 			// Set / Reset Remotely Setable Flag, if owner is conditional class.
 			enabled.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
@@ -524,7 +524,7 @@ void SVEquationClass::SetEquationText(const CString& text)
 
 void SVEquationClass::SetEquationText(const SVString& text)
 {
-	SetEquationText(CString(text.ToString()));
+	SetEquationText(CString(text.c_str()));
 }
 
 #ifdef USE_OBJECT_SCRIPT
@@ -917,7 +917,7 @@ BOOL SVEquationClass::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR
 			newPrefix = _T( "\"" ) + pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
-		oldPrefix.replace( pObject->GetName(), orginalName );
+		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), orginalName );
 
 		CString equationBuff;
 		GetEquationText( equationBuff );
@@ -952,9 +952,7 @@ BOOL SVEquationClass::buildDynamicInputList()
 		// set the owner
 		pInObjectInfo->SetObject( GetObjectInfo() );
 
-		SVString l_Name;
-
-		l_Name.Format( _T( "Equation%d" ), i );
+		SVString l_Name = SvUl_SF::Format( _T( "Equation%d" ), i );
 
 		// add to the owner list of inputs
 		RegisterInputObject( pInObjectInfo, l_Name );

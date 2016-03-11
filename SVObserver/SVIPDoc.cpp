@@ -1551,9 +1551,9 @@ void SVIPDoc::OnResultsPicker()
 			{
 				SVString St(name);
 				// check for .DIO or .Remote Input
-				if (SVString::npos != St.find(".DIO") || SVString::npos != St.find(".Remote Input"))
+				if (SVString::npos != St.find(_T(".DIO")) || SVString::npos != St.find(_T(".Remote Input")))
 				{
-					St.replace( InspectionName.c_str(), SvOl::FqnPPQVariables );
+					SvUl_SF::searchAndReplace( St, InspectionName.c_str(), SvOl::FqnPPQVariables );
 				}
 				return St;
 			});
@@ -1578,9 +1578,9 @@ void SVIPDoc::OnResultsPicker()
 				{
 					if(string::npos  != Iter->getLocation().find(SvOl::FqnPPQVariables))
 					{
-						SVString string = Iter->getLocation();
-						string.replace(SvOl::FqnPPQVariables,InspectionName.c_str());
-						pResultList->Insert(string);
+						SVString locationName = Iter->getLocation();
+						SvUl_SF::searchAndReplace(locationName, SvOl::FqnPPQVariables,InspectionName.c_str());
+						pResultList->Insert(locationName);
 					}
 					else
 					{
@@ -1666,7 +1666,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 
 		CString csRootName;
 		csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(csRootName), SVString( _T("") ) );
 
 		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_PUBLISH_RESULT_IMAGE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
@@ -2664,7 +2664,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 					Name = rTree.getBranchName( htiItem );
 
 					// The class SVToolSetTabView was changed to ToolSetView when the Tool Set Tree View was removed.
-					Name.replace( CTAG_SVTOOLSET_TAB_VIEW_CLASS, CTAG_TOOLSET_VIEW );
+					SvUl_SF::searchAndReplace( Name, CTAG_SVTOOLSET_TAB_VIEW_CLASS, CTAG_TOOLSET_VIEW );
 
 					bOk = SVNavigateTree::GetItem( rTree, CTAG_VIEW_NUMBER, htiItem, svVariant );
 					if ( bOk ) { lViewNumber = svVariant; }
@@ -2686,11 +2686,11 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 							// if there were not enough views or the view found is the
 							// wrong class, find the first matching view
 							if ( !View.pView || 
-								Name.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
+								Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
 								while( ( View.pView = GetNextView( vPos ) ) && 
-									( Name.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
+									( Name.compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
 							}
 
 							if (View.pView)  // this should never fail, but if it does, we'll try to continue
@@ -2749,11 +2749,11 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 							// if there were not enough views or the view found is the
 							// wrong class, find the first matching view
 							if ( !View.pView || 
-								Name.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
+								Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
 								while( ( View.pView = GetNextView( vPos ) ) && 
-									( Name.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
+									( Name.compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
 							}
 
 							if (View.pView)  // this should never fail, but if it does, we'll try to continue

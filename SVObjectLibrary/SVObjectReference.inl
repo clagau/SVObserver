@@ -152,7 +152,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
 		}
 		m_NameInfo.SetIsIndexPresent(true);
-		m_NameInfo.SetIndex(_variant_t( lArrayIndex ));
+		m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ) );
 		m_NameInfo.SetIsDefaultValuePresent(true);
 		m_NameInfo.SetDefaultValue( static_cast< LPCTSTR >( strDefaultValue ));
 

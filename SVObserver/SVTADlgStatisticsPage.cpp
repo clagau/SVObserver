@@ -286,7 +286,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, pInspection->GetToolSet()->GetCompleteObjectName(), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(pInspection->GetToolSet()->GetCompleteObjectName()), SVString( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);

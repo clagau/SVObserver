@@ -96,7 +96,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
-		m_Message.m_AdditionalText = AdditionalText;
+		m_Message.m_AdditionalText = (nullptr != AdditionalText) ? AdditionalText : SVString();
 		m_Message.m_CompileDate = CompileDate;
 		m_Message.m_CompileTime = CompileTime;
 		m_Message.m_SourceLine = SourceLine;
@@ -104,7 +104,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_Message.m_SourceFile = SourceFile;
 		m_Message.m_ProgramCode = ProgramCode;
 		m_Message.m_OSErrorCode = OsErrorCode;
-		m_Message.m_User = User;
+		m_Message.m_User = (nullptr != User) ? User : SVString();
 
 		setMessage( m_Message, false );
 	}
@@ -143,7 +143,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_AdditionalMessages.push_back( m_Message );
 
 		m_Message.m_MessageCode = MessageCode;
-		m_Message.m_AdditionalText = AdditionalText;
+		m_Message.m_AdditionalText = (nullptr != AdditionalText) ? AdditionalText : SVString();
 		m_Message.m_CompileDate = CompileDate;
 		m_Message.m_CompileTime = CompileTime;
 		m_Message.m_SourceLine = SourceLine;
@@ -151,7 +151,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_Message.m_SourceFile = SourceFile;
 		m_Message.m_ProgramCode = ProgramCode;
 		m_Message.m_OSErrorCode = OsErrorCode;
-		m_Message.m_User = User;
+		m_Message.m_User = (nullptr != User) ? User : SVString();
 
 		setMessage( m_Message, false );
 	}
@@ -182,11 +182,10 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	void MessageContainer::logMessage()
 	{
-		SVString DebugString;
 		SVStringArray SubstituteStrings;
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
-		DebugString.Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.m_AdditionalText.c_str() );
+		SVString DebugString = SvUl_SF::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.m_AdditionalText.c_str() );
 		::OutputDebugString( DebugString.c_str() );
 
 		setSubstituteStrings( SubstituteStrings );
@@ -293,7 +292,7 @@ namespace Seidenader { namespace SVStatusLibrary
 			{
 				if (reg.GetRegistryValue( EventMsgFile, MessageDll))
 				{
-					Result.Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
+					Result = SvUl_SF::Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
 
 					HRESULT retValue = SvUl::LoadDll::Instance().getDll( MessageDll.c_str(), hMessageDll );
 					if (S_OK == retValue && nullptr != hMessageDll )
@@ -318,20 +317,20 @@ namespace Seidenader { namespace SVStatusLibrary
 							SvOl::LCID_USA, (LPTSTR) &pMessage, 11, (va_list *) pSubstituteString))
 						{
 							rMessage = (TCHAR *) pMessage;
-							rMessage.replace(_T("\r\n\r\n"), _T("\r\n") );
+							SvUl_SF::searchAndReplace(rMessage, _T("\r\n\r\n"), _T("\r\n") );
 							SVString SearchString( _T("\r\n") );
 							SearchString += DetailsToken;
 							size_t Index = rMessage.find( SearchString.c_str() );
 							if ( -1 != Index )
 							{
-								MsgDetails = rMessage.Mid( Index +  SearchString.size() );
+								MsgDetails = SvUl_SF::Mid( rMessage, Index +  SearchString.size() );
 								//Remove unnecessary new lines from the details
 								size_t Pos = MsgDetails.find_first_not_of(_T("\r\n"));
 								if ( -1 != Pos )
 								{
 									MsgDetails = MsgDetails.substr( Pos );
 								}
-								rMessage = rMessage.Left( Index );
+								rMessage = rMessage.substr( 0, Index );
 							}
 						}
 						LocalFree (pMessage);
@@ -351,9 +350,9 @@ namespace Seidenader { namespace SVStatusLibrary
 
 		if (rMessage.empty())
 		{
-			rMessage.Format( ErrorLoadingDll, m_Message.m_MessageCode);
+			rMessage = SvUl_SF::Format( ErrorLoadingDll, m_Message.m_MessageCode);
 
-			MsgDetails.Format( DefaultEventFormat,
+			MsgDetails = SvUl_SF::Format( DefaultEventFormat,
 				m_Message.m_SourceFile.c_str(),
 				m_Message.m_SourceLine,
 				m_Message.m_SourceDateTime.c_str(),
@@ -457,14 +456,14 @@ namespace Seidenader { namespace SVStatusLibrary
 		rSubstituteStrings.resize( SubstituteStringNr );
 		rSubstituteStrings[0] = _T("\r\n");
 		rSubstituteStrings[1] =  m_Message.m_SourceFile;
-		rSubstituteStrings[2].Format( _T("%d"), m_Message.m_SourceLine );
+		rSubstituteStrings[2] = SvUl_SF::Format( _T("%d"), m_Message.m_SourceLine );
 		rSubstituteStrings[3] = m_Message.m_SourceDateTime;
-		rSubstituteStrings[4].Format( _T("%d"), m_Message.m_OSErrorCode );
-		rSubstituteStrings[5].Format( _T("0x%08x"), m_Message.m_OSErrorCode );
+		rSubstituteStrings[4] = SvUl_SF::Format( _T("%d"), m_Message.m_OSErrorCode );
+		rSubstituteStrings[5] = SvUl_SF::Format( _T("0x%08x"), m_Message.m_OSErrorCode );
 		rSubstituteStrings[6] = m_Message.m_CompileDate;
 		rSubstituteStrings[7] = m_Message.m_CompileTime;
-		rSubstituteStrings[8].Format( _T("%d"), m_Message.m_ProgramCode );
-		rSubstituteStrings[9].Format( _T("0x%08x"), m_Message.m_ProgramCode );
+		rSubstituteStrings[8] = SvUl_SF::Format( _T("%d"), m_Message.m_ProgramCode );
+		rSubstituteStrings[9] = SvUl_SF::Format( _T("0x%08x"), m_Message.m_ProgramCode );
 		rSubstituteStrings[10] = m_Message.m_AdditionalText;
 		rSubstituteStrings[11] = m_Message.m_User;
 	}

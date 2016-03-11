@@ -51,7 +51,6 @@ public:
     void DoPrintConfig();
     void printConfigToStringBuffer(CString& rsBuffer);
     void printConfigToStringBuffer(SVString& rsBuffer);
-	void printConfigToStringBuffer(std::string& rsBuffer);
 #pragma endregion Public Methods
 	
 	// Overrides

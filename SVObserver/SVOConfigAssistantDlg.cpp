@@ -1036,11 +1036,11 @@ CString CSVOConfigAssistantDlg::BuildTrgDig( const SVOTriggerObj& rTriggerObj) c
 
 	if (rTriggerObj.IsAcquisitionTrigger())
 	{
-		sDigName = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).ToString();
+		sDigName = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).c_str();
 	}
 	else if (rTriggerObj.IsSoftwareTrigger())
 	{
-		sDigName = SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig).ToString();
+		sDigName = SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig).c_str();
 	}
 	else
 	{
@@ -1083,13 +1083,13 @@ CString CSVOConfigAssistantDlg::BuildTrgDig( const SVOTriggerObj& rTriggerObj) c
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			{
-				sDigName = SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig).ToString();
+				sDigName = SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig).c_str();
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				sDigName = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).ToString();
+				sDigName = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).c_str();
 				break;
 			}
 		}
@@ -2433,7 +2433,7 @@ SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const SVString
 			{
 				// What is this key (label or name)?
 				CString name = pPPQObj->GetAttachedInspection(j);
-				if (name == inspectionName.ToString())
+				if (name == inspectionName.c_str())
 				{
 					bFound = true;
 				}
@@ -2544,7 +2544,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					const CString& importFilename = pInspectionObj->GetImportFilename();
 					if (!importFilename.IsEmpty())
 					{
-						SVInspectionImportHelper importer(importFilename, sFileName, sToolsetImage);
+						SVInspectionImportHelper importer  = SVInspectionImportHelper(SVString(importFilename), SVString(sFileName), SVString(sToolsetImage));
 						SVString title = _T( "Importing Inspection..." );
 						SVImportProgress<SVInspectionImportHelper> progress(importer, title.c_str());
 						progress.DoModal();
@@ -2567,7 +2567,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 									RenameInspectionObjects(sKey, sFileName);
 									bRet = pConfig->AddInspection( pInspection );
 
-									SVOPPQObjPtr pPPQObj = GetPPQObjectByInspectionName(sFileName);
+									SVOPPQObjPtr pPPQObj = GetPPQObjectByInspectionName(SVString(sFileName));
 									if( nullptr != pPPQObj )
 									{
 										pPPQObj->SetImportedInputList(importer.info.m_inputList);

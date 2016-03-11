@@ -1227,9 +1227,9 @@ HRESULT SVMatroxBlobInterface::FillResults( const SVBlobOffsetList& p_rBlobList,
 			{
 				SVString l_Name;
 
-				l_Name.Format( _T( "Blob Result %d" ), i );
+				l_Name = SvUl_SF::Format( _T( "Blob Result %d" ), i );
 
-				l_Status = p_rResults.SetContainer( l_Name.ToBSTR(), l_Blob, true );
+				l_Status = p_rResults.SetContainer( _bstr_t(l_Name.c_str()), l_Blob, true );
 			}
 		}
 	}

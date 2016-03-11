@@ -182,7 +182,7 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLib
 
 				if ( l_hrOk == S_OK )
 				{
-					l_Name = l_bstrName;
+					l_Name = SvUl_SF::createSVString(l_bstrName);
 
 					if ( l_bstrName != NULL )
 					{
@@ -195,7 +195,7 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLib
 
 			if ( l_hrOk == S_OK )
 			{
-				l_hrOk = AddDigitizer( l_Name.ToString(), p_pDigitizerSubsystem, l_ulHandle );
+				l_hrOk = AddDigitizer( l_Name.c_str(), p_pDigitizerSubsystem, l_ulHandle );
 			}
 		}
 	}
@@ -557,7 +557,7 @@ HRESULT SVDigitizerProcessingClass::SelectDigitizer( LPCTSTR AcquisitionName )
 			SVString DigitizerName;
 			SVString PartnerAcquisitionName;
 
-			DigitizerName = Name.Left( pos );
+			DigitizerName = Name.substr( 0, pos );
 			PartnerAcquisitionName = DigitizerName;
 			if( SVString::npos != Name.find(_T("Ch_0")) )
 			{
@@ -589,9 +589,9 @@ HRESULT SVDigitizerProcessingClass::UpdateIntekDevices()
 
 	SVString deviceName = _T( "Matrox_1394.Dig_0" ); // just use the first one
 
-	if( IsValidDigitizerSubsystem( deviceName.ToString() ) )
+	if( IsValidDigitizerSubsystem( deviceName.c_str() ) )
 	{
-		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.ToString() );
+		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.c_str() );
 
 		unsigned long Count = 0;
 
@@ -658,11 +658,9 @@ HRESULT SVDigitizerProcessingClass::UpdateIntekDevices()
 
 		if( Camera.m_ulHandle != NULL )
 		{
-			SVString DigitizerName;
+			SVString DigitizerName = SvUl_SF::Format( _T("Matrox_1394.Dig_%d"), j );
 
-			DigitizerName.Format( _T("Matrox_1394.Dig_%d"), j );
-
-			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName.ToString() );
+			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName.c_str() );
 
 			if( !( pAcquisitionDevice.empty() ) )
 			{
@@ -728,9 +726,9 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 	SVString deviceName = _T("Matrox_GIGE.Dig_0"); // just use the first one
 
-	if( IsValidDigitizerSubsystem( deviceName.ToString() ) )
+	if( IsValidDigitizerSubsystem( deviceName.c_str() ) )
 	{
-		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.ToString() );
+		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.c_str() );
 
 		unsigned long Count = 0;
 
@@ -786,11 +784,9 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 		if( Camera.m_ulHandle != NULL )
 		{
-			SVString DigitizerName;
+			SVString DigitizerName = SvUl_SF::Format( _T("Matrox_GIGE.Dig_%d"), j );
 
-			DigitizerName.Format( _T("Matrox_GIGE.Dig_%d"), j );
-
-			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName.ToString() );
+			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName.c_str() );
 
 			if( !( pAcquisitionDevice.empty() ) )
 			{

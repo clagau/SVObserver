@@ -133,7 +133,7 @@ BOOL SVTCPIPConnection::GetHost(CString &szConnection, CString &szHost)
 
   BOOL l_Status = reg.GetRegistryValue( _T("Host"), l_Host );
 
-	szHost = l_Host.ToString();
+	szHost = l_Host.c_str();
 
 	return l_Status;
 }

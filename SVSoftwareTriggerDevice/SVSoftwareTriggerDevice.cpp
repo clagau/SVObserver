@@ -96,7 +96,7 @@ BSTR SVSoftwareTriggerDevice::GetTriggerName(HANDLE handle)
 	Iterator it = m_nameHandleList.get<to>().find(handle);
 	if (it != m_nameHandleList.get<to>().end())
 	{
-		_bstr_t bstrName = it->first.ToBSTR();
+		_bstr_t bstrName = _bstr_t(it->first.c_str());
 		name = bstrName.Detach();
 	}
 

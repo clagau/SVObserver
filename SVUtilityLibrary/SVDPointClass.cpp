@@ -69,16 +69,12 @@ SVDPointClass::operator POINT () const
 
 SVDPointClass::operator _variant_t () const
 {
-	return ToString().ToVARIANT();
+	return _variant_t( ToString().c_str());
 }
 
 SVString SVDPointClass::ToString() const
 {
-	SVString l_String;
-
-	l_String.Format( _T( "( %lf, %lf )" ), x, y );
-
-	return l_String;
+	return SvUl_SF::Format( _T( "( %lf, %lf )" ), x, y );
 }
 
 SVDPointClass& SVDPointClass::operator=( const POINT& Point )
@@ -102,9 +98,9 @@ SVDPointClass& SVDPointClass::operator=( const VARIANT& p_rVariant )
 	double l_x;
 	double l_y;
 
-	SVString l_String( p_rVariant );
+	SVString l_String = SvUl_SF::createSVString( p_rVariant );
 
-	if( 2 == _stscanf( l_String.ToString(), _T( "( %lf, %lf )" ), &l_x, &l_y ) )
+	if( 2 == _stscanf( l_String.c_str(), _T( "( %lf, %lf )" ), &l_x, &l_y ) )
 	{
 		x = l_x;
 		y = l_y;

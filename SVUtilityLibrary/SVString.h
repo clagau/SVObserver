@@ -12,11 +12,11 @@
 #pragma once
 #pragma region Includes
 #include <string>
-#include <tchar.h>
-#include <comdef.h>
 #include <vector>
 #include <map>
 #include <set>
+#include <comutil.h>
+#include <tchar.h>
 #pragma endregion Includes
 
 
@@ -28,98 +28,74 @@
 @SVObjectOperations This object supports the copy, assignment, and conversions to and from block array of characters and Standard Template Library (STL) wide character strings.
 
 */
-class SVString
-{
-public:
-	typedef std::string SVDataType;
-	typedef SVDataType::traits_type::_Elem SVElementType;
-	typedef SVDataType::size_type size_type;
-	typedef SVDataType::iterator iterator;
-	typedef SVDataType::const_iterator const_iterator;
-	typedef SVDataType::reference reference;
-	typedef SVDataType::const_reference const_reference;
-	typedef SVDataType::value_type value_type;
 
-public:
-	SVString();
-	SVString( const SVString& p_rString );
-	SVString( const SVDataType& p_rString );
-	SVString( SVElementType p_Char, size_type p_Count );
-	SVString( const SVElementType* p_szString );
-	SVString( const SVElementType* p_szString, size_type p_Size );
-	SVString( const wchar_t* p_szString );
-	SVString( const BSTR& p_rString );
-	SVString( const VARIANT& p_rVariant );
-	SVString( const _variant_t& p_rVariant );
+typedef std::string SVString;
+typedef std::set< SVString > SVStringSet;
+typedef std::vector< SVString > SVStringArray;
+typedef std::map< SVString, SVString > TranslateMap;
 
-	template< typename SVStringType >
-	SVString( const SVStringType& p_rString )
-	: m_String() { m_String = static_cast< const SVElementType* >( p_rString ); }
-	
-	virtual ~SVString();
+namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 
-	SVElementType& operator[](size_type p_Off);
-	const SVElementType& operator[](size_type p_Off) const;
+	//************************************
+	/// Function to create a SVString from other objects
+	/// \param pString, rString or rVariant [in] The source object
+	/// \returns SVString The created object.
+	//************************************
+	SVString createSVString( const wchar_t* pString );
+	SVString createSVString( const _bstr_t& rString );
+	SVString createSVString( const VARIANT& rVariant );
 
-	const SVString& operator=( const SVString& p_rString );
+	//************************************
+	/// Compare to strings like the std::string.comapre function, but ignore upper and lower cases.
+	/// \param rStringValue [in]
+	/// \param rStringValue2 [in]
+	/// \returns int 0 = strings are similar
+	//************************************
+	int CompareNoCase(const SVString& rStringValue, const SVString & rStringValue2);
 
-	const SVString& operator+=( SVElementType p_Char );
-	const SVString& operator+=( const SVElementType* p_szString );
-	const SVString& operator+=( const SVString& p_rString );
+	//************************************
+	/// Make all character to lower case.
+	/// \param rStringValue [in,out] The source string to be changed.
+	/// \returns SVString& Reference to rStringValue
+	//************************************
+	SVString& MakeLower(SVString& rStringValue);
+	//************************************
+	/// Make all character to upper case.
+	/// \param rStringValue [in,out] The source string to be changed.
+	/// \returns SVString& Reference to rStringValue
+	//************************************
+	SVString& MakeUpper(SVString& rStringValue);
 
-	SVString operator+( const SVElementType* p_szString ) const;
-	SVString operator+( const SVString& p_szString ) const;
+	//************************************
+	/// Trim defined character until another character is found from the left (TrimLeft), right (TrimRight) or both (Trim)
+	/// \param rStringValue [in,out] The source string to be changed.
+	/// \param pTrimChar [in,out] Character to trim.
+	/// \returns SVString& Reference to rStringValue
+	//************************************
+	SVString& Trim(SVString& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
+	SVString& TrimLeft(SVString& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
+	SVString& TrimRight(SVString& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
 
-	bool operator<( const SVString& p_rString ) const;
-	bool operator<( const SVDataType& p_rString ) const;
-	bool operator<( const SVElementType* p_szString ) const;
-
-	bool operator==( const SVString& p_rString ) const;
-	bool operator==( const SVDataType& p_rString ) const;
-	bool operator==( const SVElementType* p_szString ) const;
-
-	bool operator!=( const SVString& p_rString ) const;
-	bool operator!=( const SVDataType& p_rString ) const;
-	bool operator!=( const SVElementType* p_szString ) const;
-
-	const SVElementType* c_str() const;
-	const SVElementType* ToString() const;
-	const SVDataType& ToDataType() const;
-	_bstr_t ToBSTR() const;
-	_variant_t ToVARIANT() const;
-
-	bool IsNumber() const;
-
-	int Compare(const SVString & str) const;
-	int CompareNoCase(const SVString & str) const;
-
-	SVString& MakeLower();
-	SVString& MakeUpper();
-
-	SVString& Trim();
-	SVString& Trim(SVElementType ch);
-	SVString& Trim(const SVString & str);
-	SVString& TrimLeft();
-	SVString& TrimLeft(SVElementType ch);
-	SVString& TrimLeft(const SVString & str);
-	SVString& TrimRight();
-	SVString& TrimRight(SVElementType ch);
-	SVString& TrimRight(const SVString & str);
-
-	SVElementType GetAt(size_t index) const;
-	void SetAt(size_t index, SVElementType ch);
-
-	SVString Left( size_t count ) const;
-	SVString Mid( size_t index ) const;
-	SVString Mid( size_t index , size_t count ) const;
-	SVString Right( size_t count ) const;
-	void Remove(SVElementType ch);
+	//************************************
+	/// Copy a number of character from the mid of the string
+	/// \param rStringValue [in] The source string, will not be changed.
+	/// \param count [in] Count of character to copy. If count > size, it return a copy of rStringValue.
+	/// \returns SVString The copied string.
+	//************************************
+	SVString Mid( const SVString& rStringValue, size_t count );
+	//************************************
+	/// Copy a number of character from the right part of the string.
+	/// \param rStringValue [in] The source string, will not be changed.
+	/// \param count [in] Count of character to copy.
+	/// \returns SVString The copied string.
+	//************************************
+	SVString Right( const SVString& rStringValue, size_t count );
 
 	//************************************
 	//! Method to remove a list of characters
 	//! \param ExcludeCharacters [in] the characters to remove
 	//************************************
-	void RemoveCharacters(LPCTSTR ExcludeCharacters);
+	void RemoveCharacters(SVString& rStringValue, LPCTSTR ExcludeCharacters);
 
 	//************************************
 	// Description:  Check if searchString is found in this string. For the searchString wildcard "*" can be used.
@@ -128,64 +104,25 @@ public:
 	// Parameter:  offsetSearch <in>:  offset where from the search string is used.  Default is 0 (the beginning)
 	// Returns:  bool:  true if searchString is found
 	//************************************
-	bool isSubmatch( SVString searchString, size_t offsetSource = 0, size_t offsetSearch = 0 );
+	bool isSubmatch(const SVString& rStringValue, const SVString& rSearchString, size_t offsetSource = 0, size_t offsetSearch = 0 );
 
 	//************************************
-	//! Method to check if the string matches a regular expression
-	//! \param RegularExpression [in] the regular expression to check with
-	//! \returns true if the internal string matches the regular expression
+	/// Search in the string an substring and replace all of them with the new substring.
+	/// \param rStringValue [in,out] The source string to be changed.
+	/// \param pFromStr [in] search substring
+	/// \param pToStr [in] replace substring
+	/// \returns SVString& Reference to rStringValue
 	//************************************
-	bool matchesRegularExpression( LPCTSTR RegularExpression ) const;
+	SVString& searchAndReplace( SVString& rStringValue, const SVString::traits_type::_Elem* pFromStr, const SVString::traits_type::_Elem* pToStr );
 
-	void clear();
-
-	bool empty() const;
-
-	size_type size() const;
-	void resize( size_type p_Count, SVElementType p_Ch = SVElementType() );
-	void reserve( size_type count );
-
-	const_iterator begin() const;
-	const_iterator end() const;
-
-	const SVString& append( const SVElementType* p_szString );
-
-	const SVString& assign( const SVElementType* p_szString );
-	const SVString& assign( const SVElementType* p_szString, size_type p_Size );
-
-	SVString& erase( size_type p_Pos = 0, size_type p_Count = SVDataType::npos );
-
-	SVString substr( size_type p_Offset = 0, size_type p_Count = SVDataType::npos ) const;
-
-	size_type find_first_of( SVElementType p_Char, size_type p_Offset = 0 ) const;
-	size_type find_first_of( const SVElementType* p_szString, size_type p_Offset = 0 ) const;
-
-	size_type find_first_not_of( SVElementType p_Char, size_type p_Offset = 0 ) const;
-	size_type find_first_not_of( const SVElementType* p_szString, size_type p_Offset = 0 ) const;
-
-	size_type find_last_of( SVElementType p_Char, size_type p_Offset = SVDataType::npos ) const;
-	size_type find_last_of( const SVElementType* p_szString, size_type p_Offset = SVDataType::npos ) const;
-
-	size_type find_last_not_of( SVElementType p_Char, size_type p_Offset = SVDataType::npos ) const;
-	size_type find_last_not_of( const SVElementType* p_szString, size_type p_Offset = SVDataType::npos ) const;
-
-	size_type find( SVElementType p_Char, size_type p_Offset = 0 ) const;
-	size_type find( const SVElementType* p_szString, size_type p_Offset = 0 ) const;
-
-	size_type rfind( SVElementType p_Char, size_type p_Offset = SVDataType::npos ) const;
-	size_type rfind( const SVElementType* p_szString, size_type p_Offset = SVDataType::npos ) const;
-
-	SVString& insert( size_type p_Offset, SVElementType p_Char );
-	SVString& insert( size_type p_Offset, const SVElementType* p_szString );
-
-	SVString& replace( SVElementType p_FromChar, SVElementType p_ToChar );
-	SVString& replace( const SVElementType* p_FromStr, const SVElementType* p_ToStr );
-	
-	reference at( size_type p_Offset );
-	const_reference at( size_type p_Offset ) const;
-
-	void Format( const SVElementType* lpszFormat, ... );
-	void Format( const wchar_t* lpszFormat, ... );
+	//************************************
+	/// Converts the value of objects to strings based on the formats specified and inserts them into another string. 
+	/// \param pFormat [in] Format 
+	/// \param  [in] A list of objects
+	/// \returns SVString New created object
+	//************************************
+	SVString Format( LPCTSTR pFormat, ... );
+	SVString Format( const wchar_t* pFormat, ... );
 
 	//************************************
 	/// Check if string can convert to a number and return this if possible.
@@ -194,31 +131,14 @@ public:
 	/// \returns bool Return if convert was succeeded.
 	//************************************
 	template<typename T>
-	bool Convert2Number(T& Value, bool failIfLeftoverChars = false);
+	bool Convert2Number(const SVString& rStringValue, T& Value, bool failIfLeftoverChars = false);
 
-	static std::locale & current_locale()
-	{
-		static std::locale loc("");
-		return loc;
-	}
-	static const SVString & EmptyString()
-	{
-		static SVString emptyString(_T(""));
-		return emptyString;
-	}
-	// provide npos same as std::string
-	static const size_t npos;
+	template bool Convert2Number(const SVString& rStringValue, double&, bool);
+	template bool Convert2Number(const SVString& rStringValue, long&, bool);
+}}}
 
-protected:
-	SVDataType m_String;
-};
-
-typedef std::vector< SVString > SVStringArray;
-typedef std::set< SVString > SVStringSet;
-typedef std::map< SVString, SVString > TranslateMap;
-
-template bool SVString::Convert2Number(double&, bool);
-template bool SVString::Convert2Number(long&, bool);
+namespace SvUl = Seidenader::SVUtilityLibrary;
+namespace SvUl_SF = Seidenader::SVUtilityLibrary::StringFunctions;
 
 //******************************************************************************
 //* LOG HISTORY:

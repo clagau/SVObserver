@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include <comutil.h>
+#include <regex>
 #include "GlobalConstantDlg.h"
 #include "TextDefinesSvOg.h"
 #include "SVTextEditDialog.h"
@@ -166,7 +167,7 @@ namespace Seidenader { namespace SVOGui
 			{
 			case SvOi::GlobalConstantData::DecimalType:
 				{
-					if( !NewValue.matchesRegularExpression( RegExp_AllRealNumbers ) )
+					if( !std::regex_match( NewValue.cbegin(), NewValue.cend(), std::regex( RegExp_AllRealNumbers ) ) )
 					{
 						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, StdMessageParams, SvOi::Err_25014_GlobalConstantNumber );
@@ -202,11 +203,11 @@ namespace Seidenader { namespace SVOGui
 			}
 
 			SVString NewName( rName );
-			NewName.replace( m_Branch.GetString(), _T("") );
+			SvUl_SF::searchAndReplace( NewName, m_Branch.GetString(), _T("") );
 
 			if( !Failed )
 			{
-				if( !NewName.matchesRegularExpression( RegExp_Name ) )
+				if( !std::regex_match( NewName.cbegin(), NewName.cend(), std::regex( RegExp_Name ) ) )
 				{
 					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), StdMessageParams, SvOi::Err_25016_GlobalNameInvalid );

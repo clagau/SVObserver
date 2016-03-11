@@ -70,7 +70,7 @@ SVPOINT::operator POINT & ()
 
 SVPOINT::operator _variant_t () const
 {
-	return ToString().ToVARIANT();
+	return _variant_t( ToString().c_str());
 }
 
 BOOL SVPOINT::GetValue(POINT &Point) const
@@ -81,11 +81,7 @@ BOOL SVPOINT::GetValue(POINT &Point) const
 
 SVString SVPOINT::ToString() const
 {
-	SVString l_String;
-
-	l_String.Format( _T( "( %ld, %ld )" ), m_Point.x, m_Point.y );
-
-	return l_String;
+	return SvUl_SF::Format(_T( "( %ld, %ld )" ), m_Point.x, m_Point.y );
 }
 
 const SVPOINT& SVPOINT::operator=( const SVPOINT& p_rObject )
@@ -112,9 +108,9 @@ const SVPOINT& SVPOINT::operator=( const VARIANT& p_rVariant )
 {
 	POINT l_Point;
 
-	SVString l_String( p_rVariant );
+	SVString l_String = SvUl_SF::createSVString( p_rVariant );
 
-	if( 2 == _stscanf( l_String.ToString(), _T( "( %ld, %ld )" ), &( l_Point.x ), &( l_Point.y ) ) )
+	if( 2 == _stscanf( l_String.c_str(), _T( "( %ld, %ld )" ), &( l_Point.x ), &( l_Point.y ) ) )
 	{
 		m_Point = l_Point;
 	}

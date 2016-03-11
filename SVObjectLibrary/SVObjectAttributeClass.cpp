@@ -541,7 +541,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 			{
 				SVString csTemp;
 
-				csTemp.Format( "%x", msvByteArray[i] );
+				csTemp = SvUl_SF::Format( "%x", msvByteArray[i] );
 
 				svData.InsertAt( i, csTemp );
 			}
@@ -564,7 +564,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 			{
 				SVString csTemp;
 
-				csTemp.Format( "%f", msvDoubleArray[i] );
+				csTemp = SvUl_SF::Format( "%f", msvDoubleArray[i] );
 
 				svData.InsertAt( i, csTemp );
 			}
@@ -579,7 +579,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 			{
 				SVString csTemp;
 
-				csTemp.Format( "%lx", msvDWordArray[i] );
+				csTemp = SvUl_SF::Format( "%lx", msvDWordArray[i] );
 
 				svData.InsertAt( i, csTemp );
 			}
@@ -594,7 +594,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 			{
 				SVString csTemp;
 
-				csTemp.Format( "%ld", msvLongArray[i] );
+				csTemp = SvUl_SF::Format( "%ld", msvLongArray[i] );
 
 				svData.InsertAt( i, csTemp );
 			}
@@ -620,9 +620,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 		{
 			for ( int i = 0; i < msvDPointArray.GetSize(); i++)
 			{
-				SVString csTemp;
-
-				csTemp.Format( "(%lf,%lf)", msvDPointArray[i].x, msvDPointArray[i].y );
+				SVString csTemp = SvUl_SF::Format( "(%lf,%lf)", msvDPointArray[i].x, msvDPointArray[i].y );
 
 				svData.InsertAt( i, csTemp );
 			}
@@ -641,7 +639,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 				HRESULT hr = ::VariantChangeType( &vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
 				if(hr == S_OK)
 				{
-					csTemp = vtTemp;
+					csTemp = SvUl_SF::createSVString(vtTemp);
 				}
 				else
 				{
@@ -658,9 +656,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 		{
 			for ( int i = 0; i < msvInt64Array.GetSize(); i++)
 			{
-				SVString csTemp;
-
-				csTemp.Format( "%I64d", msvInt64Array[i] );
+				SVString csTemp = SvUl_SF::Format( "%I64d", msvInt64Array[i] );
 
 				svData.InsertAt( i, csTemp );
 			}

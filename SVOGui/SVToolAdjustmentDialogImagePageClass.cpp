@@ -109,8 +109,9 @@ namespace Seidenader { namespace SVOGui
 			m_availableSourceImageListBox.GetLBText(index, imageName);
 			if (!imageName.IsEmpty() && imageName != NoImageTag)
 			{
-				ConnectToImage(m_inputName, imageName);
-				IPictureDisp* pImage = GetImage(imageName);
+				SVString svImageName(imageName);
+				ConnectToImage(m_inputName, svImageName);
+				IPictureDisp* pImage = GetImage(svImageName);
 				m_dialogImage.setImage(pImage);
 				refresh();
 

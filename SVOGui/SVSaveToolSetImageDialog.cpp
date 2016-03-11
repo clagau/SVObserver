@@ -59,7 +59,7 @@ namespace Seidenader { namespace SVOGui
 		const SvUl::NameGuidList& availImages = m_ImageController.GetAvailableImageList();
 		for (SvUl::NameGuidList::const_iterator it = availImages.begin();it != availImages.end();++it)
 		{
-			m_availableImagesComboCtrl.AddString(it->first.ToString());
+			m_availableImagesComboCtrl.AddString(it->first.c_str());
 		}
 		m_availableImagesComboCtrl.SetCurSel(0);
 		m_currentSelectedImageCtrl.AddTab(_T("Image")); 
@@ -106,7 +106,7 @@ namespace Seidenader { namespace SVOGui
 					AfxGetApp()->WriteProfileString(_T("Settings"), _T("ImagesFilePath"), csPath);
 				
 					csPathPlusFileName = svfncImageFile.GetFullFileName();
-					HRESULT hr = m_ImageController.SaveImage(imageName, csPathPlusFileName);
+					HRESULT hr = m_ImageController.SaveImage(SVString(imageName), SVString(csPathPlusFileName));
 					if (S_OK != hr)
 					{
 						if (E_INVALIDARG == hr)
@@ -133,7 +133,7 @@ namespace Seidenader { namespace SVOGui
 			CString name;
 			m_availableImagesComboCtrl.GetLBText(index, name);
 		
-			IPictureDisp* pImage = m_ImageController.GetImage(name);
+			IPictureDisp* pImage = m_ImageController.GetImage(SVString(name));
 			m_currentSelectedImageCtrl.setImage(pImage);
 			m_currentSelectedImageCtrl.Refresh();
 		}

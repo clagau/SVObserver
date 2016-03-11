@@ -82,7 +82,7 @@ bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 
 		if( l_psvLibrary != NULL && l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &l_oValue ) == S_OK )
 		{
-			SVString l_csVenderId( l_oValue.bstrVal );
+			SVString l_csVenderId = SvUl_SF::createSVString( l_oValue.bstrVal );
 
 			bOk = l_csVenderId == StringValue( m_DeviceParams.Parameter( DeviceParamVendorId ) );
 		}

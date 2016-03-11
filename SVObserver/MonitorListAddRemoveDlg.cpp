@@ -38,11 +38,11 @@ const RemoteMonitorList& MonitorListAddRemoveDlg::GetRemoteMonitorList() const
 
 void MonitorListAddRemoveDlg::ReplaceList(const CString& oldName, const CString& newName)
 {
-	RemoteMonitorList:: iterator it = m_MonitorList.find(oldName);
+	RemoteMonitorList:: iterator it = m_MonitorList.find(SVString(oldName));
 	if (it != m_MonitorList.end())
 	{
 		RemoteMonitorNamedList namedList = it->second;
-		namedList.SetName(newName);
+		namedList.SetName(SVString(newName));
 		m_MonitorList.erase(it);
 		m_MonitorList.insert(std::make_pair(newName, namedList));
 	}
@@ -129,7 +129,7 @@ void MonitorListAddRemoveDlg::OnBnClickedAddBtn()
 			m_UsedList.SetCurSel(iInsert);
 		
 			// Add it to the master list
-			m_MonitorList.insert(std::make_pair(name, RemoteMonitorNamedList(PPQName, name)));
+			m_MonitorList.insert(std::make_pair(name, RemoteMonitorNamedList(SVString(PPQName), SVString(name))));
 
 			// Update Buttons
 			if (m_UsedList.GetCount() > 0)
@@ -199,7 +199,7 @@ void MonitorListAddRemoveDlg::OnBnClickedRemoveBtn()
 
 		// remove from master list
 		// parse out PPQ ID (PPQ_N)
-		const SVString& name = GetListNameFromDisplayName(strDelete);
+		const SVString& name = SVString(GetListNameFromDisplayName(strDelete));
 		RemoteMonitorList::iterator it = m_MonitorList.find(name);
 		if (it != m_MonitorList.end())
 		{

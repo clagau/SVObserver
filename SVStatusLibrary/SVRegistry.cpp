@@ -48,38 +48,38 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
 
-	mszKey = p_szKey;
+	mszKey = (nullptr != p_szKey) ? p_szKey : SVString();
 
 	// check if first node of key is an HKEY Value
-	if (szFullKey.Left(17) == SV_HKEY_CLASSES_ROOT)
+	if (szFullKey.substr(0, 17) == SV_HKEY_CLASSES_ROOT)
 	{
 		hBaseKey = HKEY_CLASSES_ROOT;
 		szFullKey.erase(0, 18);
 	}
 	else
 	{
-		if (szFullKey.Left(17) == SV_HKEY_CURRENT_USER)
+		if (szFullKey.substr(0, 17) == SV_HKEY_CURRENT_USER)
 		{
 			hBaseKey = HKEY_CURRENT_USER;
 			szFullKey.erase(0, 18);
 		}
 		else
 		{
-			if (szFullKey.Left(18) == SV_HKEY_LOCAL_MACHINE)
+			if (szFullKey.substr(0, 18) == SV_HKEY_LOCAL_MACHINE)
 			{
 				hBaseKey = HKEY_LOCAL_MACHINE;
 				szFullKey.erase(0, 19);
 			}
 			else
 			{
-				if (szFullKey.Left(10) == SV_HKEY_USERS)
+				if (szFullKey.substr(0, 10) == SV_HKEY_USERS)
 				{
 					hBaseKey = HKEY_USERS;
 					szFullKey.erase(0, 11);
 				}
 				else
 				{
-					if (szFullKey.Left(20) == SV_HKEY_PERFORMANCE_DATA)
+					if (szFullKey.substr(0, 20) == SV_HKEY_PERFORMANCE_DATA)
 					{
 						hBaseKey = HKEY_PERFORMANCE_DATA;
 						szFullKey.erase(0, 21);
@@ -92,7 +92,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 
 						szFullKey = SV_ROOT_KEY;
 
-						if (szKey.Left(1) != SV_BACKSLASH)
+						if (szKey.substr(0, 1) != SV_BACKSLASH)
 						{
 							szFullKey += SV_BACKSLASH;
 							mszKey += SV_BACKSLASH;
@@ -115,11 +115,11 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 
 	mhKey = (HKEY) NULL;
 
-	if (mszKey.Right(1) == SV_BACKSLASH)
+	if (SvUl_SF::Right(mszKey, 1) == SV_BACKSLASH)
 		mszKey.erase(mszKey.size() - 1);
 
 	lResult = RegOpenKeyEx (hBaseKey,
-		szFullKey.ToString(),
+		szFullKey.c_str(),
 		static_cast< DWORD >( 0 ),
 		KEY_ALL_ACCESS,
 		&mhKey );
@@ -127,7 +127,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 	if( lResult == ERROR_ACCESS_DENIED)
 	{
 		lResult = RegOpenKeyEx (hBaseKey,
-			szFullKey.ToString(),
+			szFullKey.c_str(),
 			static_cast< DWORD >( 0 ),
 			KEY_READ,
 			&mhKey );
@@ -142,7 +142,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 		if( lResult == ERROR_FILE_NOT_FOUND )
 		{
 			if( ERROR_SUCCESS != RegCreateKeyEx ( hBaseKey,
-				szFullKey.ToString(),
+				szFullKey.c_str(),
 				static_cast< DWORD >( NULL ),
 				_T( "" ),
 				REG_OPTION_NON_VOLATILE,
@@ -152,7 +152,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 				&dwDisposition ) )
 			{
 				mhKey = static_cast< HKEY >( NULL );
-				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_CREATE_FAILED, szFullKey.ToString(), StdMessageParams );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_CREATE_FAILED, szFullKey.c_str(), StdMessageParams );
 				Exception.Throw();
 			}
 
@@ -161,7 +161,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 		else
 		{
 			mhKey = (HKEY) NULL;
-			Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_OPEN_FAILED, szFullKey.ToString(), StdMessageParams );
+			Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_OPEN_FAILED, szFullKey.c_str(), StdMessageParams );
 			Exception.Throw();
 		}
 	}
@@ -182,7 +182,7 @@ SVRegistryClass& SVRegistryClass::operator=(const SVRegistryClass &svrRight)
 	if (mhKey)
 		RegCloseKey (mhKey);
 
-	InitRegistry( svrRight.mszKey.ToString() );
+	InitRegistry( svrRight.mszKey.c_str() );
 	return (*this);
 }
 
@@ -466,7 +466,7 @@ void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
 
 			if (lResult == ERROR_SUCCESS)
 			{
-				if (!(*pKeyEnumProc) (szKey.ToString(), pUserData))
+				if (!(*pKeyEnumProc) (szKey.c_str(), pUserData))
 				{
 					lResult = ERROR_NO_MORE_ITEMS;
 				}
@@ -497,10 +497,12 @@ SVRegistryClass * SVRegistryClass::OpenSubKey( LPCTSTR p_szSubKey )
 	SVString szSubKey = p_szSubKey;
 
 	szKey = mszKey;
-	if (szSubKey.Left(1) != _T("\\"))
+	if (szSubKey.substr(0,1) != _T("\\"))
+	{
 		szKey += _T("\\");
+	}
 	szKey += szSubKey;
-	return new SVRegistryClass( szKey.ToString() );
+	return new SVRegistryClass( szKey.c_str() );
 }
 
 BOOL SVRegistryClass::DeleteValue(LPCTSTR p_szValueName)
@@ -533,7 +535,7 @@ BOOL SVRegistryClass::GetDefaultShadowFileName(SVString & szShadowFile)
 		szShadowFile += szFname;
 		szShadowFile += SV_UNDERLINE;
 		szKey = mszKey;
-		szKey.replace (SV_BACKSLASH, SV_UNDERLINE);
+		SvUl_SF::searchAndReplace (szKey, SV_BACKSLASH, SV_UNDERLINE);
 		szShadowFile += szKey;
 		szShadowFile += SV_SHADOWFILEEXT;
 		return TRUE;
@@ -548,13 +550,13 @@ BOOL SVRegistryClass::Import()
 
 	if (GetShadowFileName (szShadowFile))
 	{
-		return Import (szShadowFile.ToString());
+		return Import (szShadowFile.c_str());
 	}
 	else
 	{
 		if (GetDefaultShadowFileName (szShadowFile))
 		{
-			return Import (szShadowFile.ToString());
+			return Import (szShadowFile.c_str());
 		}
 		else
 		{
@@ -608,13 +610,13 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 		{
 		case SV_ISKEY :
 			{
-				SVRegistryClass reg(szName.ToString());
+				SVRegistryClass reg(szName.c_str());
 				reg.ImportKeys (pFile);
 			}
 			break;
 
 		case SV_ISVALUE :
-			SetRegistryValue( szName.ToString(),
+			SetRegistryValue( szName.c_str(),
 				baValue,
 				dwType,
 				static_cast< DWORD >( baValue.GetSize() ) );
@@ -791,13 +793,13 @@ BOOL SVRegistryClass::Export()
 
 	if (GetShadowFileName (szShadowFile))
 	{
-		return Export (szShadowFile.ToString());
+		return Export (szShadowFile.c_str());
 	}
 	else
 	{
 		if (GetDefaultShadowFileName (szShadowFile))
 		{
-			return Export (szShadowFile.ToString());
+			return Export (szShadowFile.c_str());
 		}
 		else
 		{
@@ -859,8 +861,8 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 				try
 				{
 					szKey.insert (0, SV_BACKSLASH);
-					szKey.insert(0, mszKey.ToString());
-					SVRegistryClass reg(szKey.ToString());
+					szKey.insert(0, mszKey.c_str());
+					SVRegistryClass reg(szKey.c_str());
 					rc &= reg.ExportKeys (pFile);
 					szKey.clear();
 				}
@@ -874,7 +876,7 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 			{
 				rc = FALSE;
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_EXPORT_FAILED, szKey.ToString(), StdMessageParams );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_EXPORT_FAILED, szKey.c_str(), StdMessageParams );
 			}
 		}
 	}
@@ -984,7 +986,7 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 					szComma = _T(""); 
 					for (i = 0; i < (int) dwcbValue; i++)
 					{
-						lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.ToString() );
+						lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.c_str() );
 						szComma = _T(",");
 
 						if (lLineLen > 77)
@@ -1005,7 +1007,7 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 					dwcbValue /= sizeof (TCHAR);
 					for (i = 0; i < (int) dwcbValue; i++)
 					{
-						lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.ToString() );
+						lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.c_str() );
 						szComma = _T(",");
 
 						if (lLineLen > 77)
@@ -1024,7 +1026,7 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 			{
 				rc = FALSE;
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_LIB_REGISTRY_VALUE_EXPORT_FAILED, mszKey.ToString(), StdMessageParams );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_VALUE_EXPORT_FAILED, mszKey.c_str(), StdMessageParams );
 			}
 		}
 		delete [] pData;

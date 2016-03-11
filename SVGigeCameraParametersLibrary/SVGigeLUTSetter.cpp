@@ -23,7 +23,7 @@ HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGige
 	{
 		// Set the Selector
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString(selector.GetName().ToString()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().ToString()));
+		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
 		hr = l_Code;
 
 		if (l_Code == SVMEE_STATUS_OK)
@@ -72,7 +72,7 @@ HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGige
 											_variant_t lutValue( pData[ i ] );
 
 											// Set LUT Value at Index N
-											l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString(rFeature.GetName().ToString()), rFeature.GetType(), lutValue);
+											l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString(rFeature.GetName().c_str()), rFeature.GetType(), lutValue);
 											hr = l_Code;
 										}
 									}

@@ -12,6 +12,7 @@
 #include <map>
 #include <boost/config.hpp>
 #include <boost/assign/list_of.hpp>
+#include <comdef.h>
 #include "SVCustomParameterBuilder.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -125,7 +126,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 	if( S_OK == SVMaterialsTree::getData( rOptions, scCustomID, MaterialData ) )
 	{
 		customID = MaterialData;
-		SVDeviceParamEnum paramEnum = GetEnumFromCustomID(customID.bstrVal);
+		SVDeviceParamEnum paramEnum = GetEnumFromCustomID(SvUl_SF::createSVString(customID.bstrVal));
 		_variant_t dataType;
 		// Get Data Type
 		MaterialData.clear();
@@ -133,13 +134,13 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 		{
 			dataType = MaterialData;
 			
-			SVDeviceParamDataTypeEnum dataTypeEnum = GetDataTypeEnumFromString(dataType.bstrVal);
+			SVDeviceParamDataTypeEnum dataTypeEnum = GetDataTypeEnumFromString(SvUl_SF::createSVString(dataType.bstrVal));
 			switch (dataTypeEnum)
 			{
 				case DeviceDataTypeLong:
 				{
 					SVLongValueDeviceParam l_Param(paramEnum);
-					l_Param.SetName(SVString(customID));
+					l_Param.SetName(SvUl_SF::createSVString(customID));
 					SVCustomParameterBuilder::BuildLongParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
@@ -148,7 +149,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 				case DeviceDataTypei64:
 				{
 					SVi64ValueDeviceParam l_Param(paramEnum);
-					l_Param.SetName(SVString(customID));
+					l_Param.SetName(SvUl_SF::createSVString(customID));
 					SVCustomParameterBuilder::BuildInt64Param(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
@@ -157,7 +158,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 				case DeviceDataTypeBool:
 				{
 					SVBoolValueDeviceParam l_Param(paramEnum);
-					l_Param.SetName(SVString(customID));
+					l_Param.SetName(SvUl_SF::createSVString(customID));
 					SVCustomParameterBuilder::BuildBoolParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
@@ -166,7 +167,7 @@ SVCustomDeviceParam* SVCustomParameterBuilder::BuildCustomDeviceParam( const SVM
 				case DeviceDataTypeString:
 				{
 					SVStringValueDeviceParam l_Param(paramEnum);
-					l_Param.SetName(SVString(customID));
+					l_Param.SetName(SvUl_SF::createSVString(customID));
 					SVCustomParameterBuilder::BuildStringParam(&l_Param, rOptions);
 					pCustomDeviceParam = new SVCustomDeviceParam(&l_Param);
 				}
@@ -197,13 +198,13 @@ void SVCustomParameterBuilder::BuildOptions( SVDeviceParam* pParam, const SVMate
 			// Get Value
 			if( S_OK == SVMaterialsTree::getData( rTree, scValue, MaterialData ) )
 			{
-				Value = static_cast<const _variant_t> (MaterialData);
+				Value = SvUl_SF::createSVString(static_cast<const _variant_t> (MaterialData));
 			}
 			// Get Description
 			MaterialData.clear();
 			if( S_OK == SVMaterialsTree::getData( rTree, scDESCRIPTION, MaterialData ) )
 			{
-				Description = static_cast<const _variant_t> (MaterialData);
+				Description = SvUl_SF::createSVString(static_cast<const _variant_t> (MaterialData));
 			}
 
 			switch (pParam->DataType())
@@ -246,21 +247,21 @@ void SVCustomParameterBuilder::BuildCommonAttributes( SVDeviceParam* pParam, con
 	if( S_OK == SVMaterialsTree::getData( rOptions, scVISUALNAME, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->SetVisualName(SVString(Value));
+		pParam->SetVisualName(SvUl_SF::createSVString(Value));
 	}
 	// Get Description
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rOptions, scDESCRIPTION, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->SetDescription( SVString(Value) );
+		pParam->SetDescription( SvUl_SF::createSVString(Value) );
 	}
 	// Get Order
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rOptions, scORDER, MaterialData ) )
 	{
 		Value = MaterialData;
-		int order = atoi( SVString(Value).ToString());
+		int order = atoi( SvUl_SF::createSVString(Value).c_str());
 		pParam->SetOrder(order);
 	}
 	// Get Detail Level
@@ -268,7 +269,7 @@ void SVCustomParameterBuilder::BuildCommonAttributes( SVDeviceParam* pParam, con
 	if( S_OK == SVMaterialsTree::getData( rOptions, scDETAILLEVEL, MaterialData ) )
 	{
 		Value = MaterialData;
-		long level = atol( SVString(Value).ToString());
+		long level = atol( SvUl_SF::createSVString(Value).c_str());
 		pParam->SetDetailLevel(level);
 	}
 }
@@ -285,21 +286,21 @@ void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, scMIN, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.min = atol( SVString(Value).ToString() );
+		pParam->info.min = atol( SvUl_SF::createSVString(Value).c_str() );
 	}
 	// Get Max
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rOptions, scMAX, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.max = atol( SVString(Value).ToString() );
+		pParam->info.max = atol( SvUl_SF::createSVString(Value).c_str() );
 	}
 	// Get Offset (optional ?)
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rOptions, scOFFSET, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.offset = atol( SVString(Value).ToString() );
+		pParam->info.offset = atol( SvUl_SF::createSVString(Value).c_str() );
 	}
 	// Get Multiplier
 	pParam->info.multiplier = DefaultMultiplier;
@@ -307,7 +308,7 @@ void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, scMULTIPLIER, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.multiplier = atof( SVString(Value).ToString() );
+		pParam->info.multiplier = atof( SvUl_SF::createSVString(Value).c_str() );
 		if (pParam->info.multiplier == 0) // don't you mean < epsilon ?
 		{
 			pParam->info.multiplier = DefaultMultiplier;
@@ -319,7 +320,7 @@ void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, scUNIT_DIVISOR, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->info.unit_divisor = atof( SVString(Value).ToString() );
+		pParam->info.unit_divisor = atof( SvUl_SF::createSVString(Value).c_str() );
 		if (pParam->info.unit_divisor == 0) // don't you mean < epsilon ?
 		{
 			pParam->info.unit_divisor = 1.0;
@@ -330,7 +331,7 @@ void SVCustomParameterBuilder::BuildLongParam(SVLongValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, scValue, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->lValue = atol( SVString(Value).ToString() );
+		pParam->lValue = atol( SvUl_SF::createSVString(Value).c_str() );
 	}
 }
 
@@ -368,7 +369,7 @@ void SVCustomParameterBuilder::BuildStringParam(SVStringValueDeviceParam* pParam
 	if( S_OK == SVMaterialsTree::getData( rOptions, scValue, MaterialData ) )
 	{
 		Value = MaterialData;
-		pParam->strValue = SVString(Value).ToString();
+		pParam->strValue = SvUl_SF::createSVString(Value).c_str();
 	}
 }
 
@@ -383,7 +384,7 @@ void SVCustomParameterBuilder::BuildBoolParam(SVBoolValueDeviceParam* pParam, co
 	if( S_OK == SVMaterialsTree::getData( rOptions, scValue, MaterialData ) )
 	{
 		Value = MaterialData;
-		long lVal = atol(SVString(Value).ToString());
+		long lVal = atol(SvUl_SF::createSVString(Value).c_str());
 		pParam->bValue = lVal != 0;
 	}
 }

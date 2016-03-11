@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVUtilityLibrary/SVString.h"
 
 /**
 @SVObjectName File

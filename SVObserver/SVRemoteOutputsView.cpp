@@ -713,7 +713,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 		case IDOK:
 		{
 			pRemoteOutput->SetInputObjectId( dlg.m_InputObjectGUID );
-			pRemoteOutput->SetGroupID( dlg.m_strGroupName );
+			pRemoteOutput->SetGroupID( SVString(dlg.m_strGroupName) );
 			l_bRet = true;
 			break;
 		}

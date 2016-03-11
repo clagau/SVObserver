@@ -30,7 +30,7 @@ void writeElement( SVObjectXMLWriter& rXmlWriter, UINT ResourceID, variant_t Val
 {
 	CString Label;
 	Label.LoadString( ResourceID );
-	rXmlWriter.WriteAttribute( SVString( Label ), Value);
+	rXmlWriter.WriteAttribute( Label, Value);
 }
 
 //************************************
@@ -121,13 +121,12 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 	const ICustom2Filter::LongArray::const_iterator kernelIteratorEnd)
 {
 	std::ofstream FileStream;
-	FileStream.open( filePath.ToString() );
+	FileStream.open( filePath.c_str() );
 	if( FileStream.is_open() )
 	{
 		SVObjectXMLWriter XmlWriter( FileStream );
 
-		SVString rootNodeName( _T( "Custom2_Filter_Export") );
-		XmlWriter.WriteRootElement( rootNodeName );
+		XmlWriter.WriteRootElement( _T( "Custom2_Filter_Export") );
 		XmlWriter.WriteSchema();
 
 		_variant_t xmlnsValue;
@@ -149,7 +148,7 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 		XmlWriter.EndElement();
 		CString Label;
 		Label.LoadString( IDS_CLASSNAME_CUSTOM2FILTER );
-		XmlWriter.StartElement( SVString( Label ) );
+		XmlWriter.StartElement( Label );
 
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, kernelWidth );
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, kernelHeight );
@@ -158,7 +157,7 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, clippingEnabled );
 
 		Label.LoadString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
-		XmlWriter.StartElement( SVString( Label ) );
+		XmlWriter.StartElement( Label );
 		SVVariantList KernelArray;
 		ICustom2Filter::LongArray::const_iterator Iter( kernelIteratorBegin );
 		while( kernelIteratorEnd != Iter )
@@ -189,7 +188,7 @@ HRESULT SvOi::importCustom2Filter(const SVString &filePath,
 	SvXml::SVXMLMaterialsTree Tree;
 	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
 
-	CA2W  pwXmlFilename(filePath.ToString()); 
+	CA2W  pwXmlFilename(filePath.c_str()); 
 	HRESULT Result  = SaxHandler.BuildFromXMLFile(&Tree,  pwXmlFilename );	
 	
 	if(SUCCEEDED(Result))

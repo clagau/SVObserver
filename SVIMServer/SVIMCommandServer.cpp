@@ -375,7 +375,7 @@ BOOL SVIMCommandServer::OnSVIMError(SvStl::MessageContainer* pSVException)
 	SVString szMsg;
 
 	pSVException->Format (szMsg);
-	AfxMessageBox (szMsg.ToString(), IDOK, 0);
+	AfxMessageBox (szMsg.c_str(), IDOK, 0);
 #endif
 
 	pSVException->logMessage();

@@ -166,8 +166,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 				DotPos = Location.rfind( _T("."), BracketPos );
 				if( SVString::npos !=  DotPos)
 				{
-					SVString Name;
-					Name = Location.Mid(DotPos, BracketPos - DotPos);
+					SVString Name = Location.substr(DotPos, BracketPos - DotPos);
 					Location.insert( DotPos, Name.c_str() );
 				}
 			}
@@ -413,10 +412,10 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 			//Array name will have [ ] 
 			if( SVString::npos != (Pos = Name.rfind("[")) )
 			{
-				Name = Name.Left( Pos );
+				Name = Name.substr( 0, Pos );
 			}
 			Name += _T(".");
-			DisplayLocation.replace( Name.c_str(), _T("") );
+			SvUl_SF::searchAndReplace( DisplayLocation, Name.c_str(), _T("") );
 		}
 		if( rSelectedItem.getDisplayLocation() != DisplayLocation )
 		{

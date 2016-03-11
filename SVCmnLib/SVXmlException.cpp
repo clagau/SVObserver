@@ -249,17 +249,17 @@ BOOL SVXmlException::operator=( SvStl::MessageContainer& rhs)
 	//set the OS error code
 	if(!SetOsErrorCode( rMsg.m_OSErrorCode ))return FALSE;
 	//set the error data
-	if(!SetErrorData( rMsg.m_AdditionalText.ToBSTR().GetAddress() ))return FALSE;
+	if(!SetErrorData( _bstr_t(rMsg.m_AdditionalText.c_str()).GetAddress() ))return FALSE;
 	//set the source file 
-	if(!SetSourceFile( rMsg.m_SourceFile.ToBSTR().GetAddress() ))return FALSE;
+	if(!SetSourceFile( _bstr_t(rMsg.m_SourceFile.c_str()).GetAddress() ))return FALSE;
 	//set the source line
 	if(!SetSourceLine( rMsg.m_SourceLine ))return FALSE;
 	//set the source date & time
-	if(!SetSourceDateTime( rMsg.m_SourceDateTime.ToBSTR().GetAddress() ))return FALSE;
+	if(!SetSourceDateTime( _bstr_t(rMsg.m_SourceDateTime.c_str()).GetAddress() ))return FALSE;
 	//set the compile date
-	if(!SetCompileDate( rMsg.m_CompileDate.ToBSTR().GetAddress() ))return FALSE;
+	if(!SetCompileDate( _bstr_t(rMsg.m_CompileDate.c_str()).GetAddress() ))return FALSE;
 	//set the compile time
-	if(!SetCompileTime( rMsg.m_CompileTime.ToBSTR().GetAddress() ))return FALSE;
+	if(!SetCompileTime( _bstr_t(rMsg.m_CompileTime.c_str()).GetAddress() ))return FALSE;
 	//set logged flag
 	if(!SetLogged( rMsg.m_Logged ) )return FALSE;
 

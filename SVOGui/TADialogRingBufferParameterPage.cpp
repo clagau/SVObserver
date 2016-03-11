@@ -295,7 +295,7 @@ namespace Seidenader
 			m_EditRingDepth.GetWindowText(csText);
 			SVString value = csText;
 			long depth = 0;
-			bool isNumber = value.Convert2Number(depth, true);
+			bool isNumber = SvUl_SF::Convert2Number(value, depth, true);
 			HRESULT hResult = S_OK;
 			if (isNumber && SvOi::IRingBufferTool::m_minRingBufferDepth <= depth && SvOi::IRingBufferTool::m_maxRingBufferDepth >= depth)
 			{
@@ -321,7 +321,7 @@ namespace Seidenader
 			typedef GuiCmd::SetRingbufferIndexValue Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 
-			CommandPtr commandPtr(new Command(m_TaskObjectID, indexNumber, csText));
+			CommandPtr commandPtr(new Command(m_TaskObjectID, indexNumber, SVString(csText)));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			HRESULT hResult = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if(S_OK != hResult)

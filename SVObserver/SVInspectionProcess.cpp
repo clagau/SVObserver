@@ -76,12 +76,10 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 
 		if( !l_Process )
 		{
-			SVString l_Message;
-
-			l_Message.Format( _T( "Inspection Thread-Name=%s-Error in getting Result Image Index" ), GetName() );
+			SVString l_Message = SvUl_SF::Format( _T( "Inspection Thread-Name=%s-Error in getting Result Image Index" ), GetName() );
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( static_cast<DWORD> (hr), l_Message.ToString(), StdMessageParams );
+			Exception.setMessage( static_cast<DWORD> (hr), l_Message.c_str(), StdMessageParams );
 		}
 
 		if( l_Process )
@@ -184,9 +182,7 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 					pIPInfo->m_EndInspection = SVClock::GetTimeStamp();
 
 					#ifdef _DEBUG
-						SVString l_TempStateString;
-
-						l_TempStateString.Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
+					SVString l_TempStateString = SvUl_SF::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
 							GetName(), p_rProduct.ProcessCount() );
 
 						::OutputDebugString( l_TempStateString.c_str() );
@@ -346,16 +342,14 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 			}
 			catch (const std::exception& e)
 			{
-				SVString Message;
-				Message.Format( SvO::ErrorProcessNotifyLastInspected, e.what() );
+				SVString Message = SvUl_SF::Format( SvO::ErrorProcessNotifyLastInspected, e.what() );
 
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15023 );
 			}
 			catch (...)
 			{
-				SVString Message;
-				Message.Format( SvO::ErrorProcessNotifyLastInspected, SvO::Unknown );
+				SVString Message = SvUl_SF::Format( SvO::ErrorProcessNotifyLastInspected, SvO::Unknown );
 
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15024 );
@@ -657,11 +651,9 @@ HRESULT SVInspectionProcess::CreateResultImageIndexManager() const
 	HRESULT l_Status = S_OK;
 
 	// Create a managed index for the result data and image circle buffers
-	SVString l_Temp;
+	SVString l_Temp = SvUl_SF::Format( _T( "%s Result Image" ), GetName() );
 
-	l_Temp.Format( _T( "%s Result Image" ), GetName() );
-
-	l_Status = TheSVDataManager.CreateManagedIndexArray( m_pResultImageCircleBuffer, l_Temp.ToBSTR(), TheSVObserverApp.GetResultImageDepth() );
+	l_Status = TheSVDataManager.CreateManagedIndexArray( m_pResultImageCircleBuffer, _bstr_t(l_Temp.c_str()), TheSVObserverApp.GetResultImageDepth() );
 
 	return l_Status;
 }
@@ -1358,7 +1350,7 @@ BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequ
 
 	if( p_pInRequest->m_Value.vt == VT_BSTR )
 	{
-		l_StringValue = p_pInRequest->m_Value;
+		l_StringValue = SvUl_SF::createSVString(p_pInRequest->m_Value);
 	}
 
 	if( l_StringValue == SvO::SVTOOLPARAMETERLIST_MARKER )
@@ -2469,7 +2461,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 
 					l_SafeArray.GetElement( l_Bounds[ 0 ].lLbound, l_Variant );
 
-					l_StringValue = SVString( l_Variant );
+					l_StringValue = SvUl_SF::createSVString( l_Variant );
 				}
 				else if( 1 < l_SafeArray.size() )
 				{
@@ -2484,14 +2476,14 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 							l_StringValue += _T(",");
 						}
 						l_StringValue += _T("`");
-						l_StringValue += SVString( l_Variant );
+						l_StringValue += SvUl_SF::createSVString( l_Variant );
 						l_StringValue += _T("`");
 					}
 				}
 			}
 			else
 			{
-				l_StringValue = l_pInputRequest->m_Value;
+				l_StringValue = SvUl_SF::createSVString(l_pInputRequest->m_Value);
 			}
 
 			// New delimiter added after each SVSetToolParameterList call
@@ -2572,7 +2564,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 					double l_dValue = FALSE;
 
 					// Convert to the appropriate type of value
-					if( l_StringValue.CompareNoCase( _T( "TRUE" ) ) == 0 )
+					if( SvUl_SF::CompareNoCase( l_StringValue, _T( "TRUE" ) ) == 0 )
 					{
 						l_dValue = TRUE;
 					}// end if
@@ -4897,7 +4889,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList( const UINT
 				//Need to replace the inspection name with the PPQ Variables name
 				// Only DIO and Remote Input, but is all that is in this list?
 				SVString Location( ObjectRef.GetCompleteOneBasedObjectName() );
-				Location.replace(InspectionName.c_str(), SvOl::FqnPPQVariables);
+				SvUl_SF::searchAndReplace(Location, InspectionName.c_str(), SvOl::FqnPPQVariables);
 				InsertItem.setName( ObjectRef.GetName() );
 				InsertItem.setLocation( Location.c_str() );
 				InsertItem.setItemKey( ObjectRef->GetUniqueObjectID().ToVARIANT() );

@@ -53,15 +53,14 @@ DebugOutput::~DebugOutput()
 		::OutputDebugString( _T("\n") );
 		__int64 iTimestamp = static_cast< __int64 >( SVClock::GetTimeStamp() );
 		SVString strBegin;
-		strBegin.Format(_T("--> %s  :  %I64u\n"), m_strFunction.ToString(), iTimestamp );
-		::OutputDebugString( strBegin.ToString() );
+		strBegin = SvUl_SF::Format(_T("--> %s  :  %I64u\n"), m_strFunction.c_str(), iTimestamp );
+		::OutputDebugString( strBegin.c_str() );
 		for ( unsigned long i=0; i < m_vecLog.size(); i++ )
 		{
-			::OutputDebugString( m_vecLog[i].ToString() );
+			::OutputDebugString( m_vecLog[i].c_str() );
 		}
-		SVString strEnd;
-		strEnd.Format(_T("<-- %s\n"), m_strFunction.ToString() );
-		::OutputDebugString( strEnd.ToString() );
+		SVString strEnd = SvUl_SF::Format(_T("<-- %s\n"), m_strFunction.c_str() );
+		::OutputDebugString( strEnd.c_str() );
 	}
 }
 

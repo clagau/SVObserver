@@ -36,7 +36,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 		m_NameInfo.ParseObjectName( m_NameInfo, static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
 	}
 	m_NameInfo.SetIsIndexPresent(true);
-	m_NameInfo.SetIndex(_variant_t( lArrayIndex ));
+	m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ));
 	m_NameInfo.SetIsDefaultValuePresent(true);
 	m_NameInfo.SetDefaultValue(static_cast< LPCTSTR >( strDefaultValue ));
 	
@@ -66,7 +66,7 @@ void SVObjectReference::SetArrayIndex( long lArrayIndex )
 	m_ArrayIndex = lArrayIndex;  
 	m_IsArray = true;
 	m_NameInfo.SetIsIndexPresent(true);
-	m_NameInfo.SetIndex( _variant_t( lArrayIndex ));
+	m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ) );
 }
 
 CString SVObjectReference::GetName() const

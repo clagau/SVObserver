@@ -161,7 +161,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		{
 			SvUl::NameGuidList::const_iterator iter = std::find_if(availableList.begin(), availableList.end(), [&](const SvUl::NameGuidPair& rVal)->bool 
 			{ 
-				return (!rVal.first.empty() && 0 == rVal.first.Compare(m_pCurrentAnalyzer->GetObjectName())); 
+				return (!rVal.first.empty() && 0 == rVal.first.compare(m_pCurrentAnalyzer->GetObjectName())); 
 			} );
 			if ( availableList.end() == iter )
 			{
@@ -451,7 +451,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pTool->GetCompleteObjectName(), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pTool->GetCompleteObjectName()), SVString( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );

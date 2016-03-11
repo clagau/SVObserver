@@ -1555,7 +1555,7 @@ void SVTaskObjectClass::PersistInputs(SVObjectWriter& writer)
 				
 				const SVInObjectInfoStruct& inputInfo = *(inputList.GetAt(i));
 				value.SetString(inputInfo.GetInputObjectInfo().UniqueObjectID.ToString().c_str());
-				name = inputInfo.GetInputName().ToBSTR();
+				name = _bstr_t(inputInfo.GetInputName().c_str());
 				// hold name value pair...
 				list.insert(std::make_pair(name, value));
 				value.Clear();

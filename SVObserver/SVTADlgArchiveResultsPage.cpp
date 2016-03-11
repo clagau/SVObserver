@@ -86,13 +86,13 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 
 	CString sTmpArchiveFileName;
 	ArchiveToolHelper athArchivePathAndName;
-	athArchivePathAndName.Init(csArchiveFileName);
+	athArchivePathAndName.Init(SVString(csArchiveFileName));
 
 	if (athArchivePathAndName.isUsingKeywords())
 	{
 		if (athArchivePathAndName.isTokensValid())
 		{
-			sTmpArchiveFileName = athArchivePathAndName.TranslatePath(csArchiveFileName).c_str();
+			sTmpArchiveFileName = athArchivePathAndName.TranslatePath(SVString(csArchiveFileName)).c_str();
 			SVCheckPathDir( sTmpArchiveFileName, TRUE );
 		}
 		else
@@ -350,9 +350,8 @@ void SVTADlgArchiveResultsPage::ReadSelectedObjects()
 	SvOsl::SelectorItemVector::const_iterator Iter;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 	{
-		SVString Name;
-		Name = Iter->getLocation();
-		Name.replace( strPrefix, _T("") );
+		SVString Name = Iter->getLocation();
+		SvUl_SF::searchAndReplace( Name, strPrefix, _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
 			Index,
@@ -386,9 +385,8 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	SVString Title;
+	SVString Title = SvUl_SF::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
 	CString Filter;
-	Title.Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
 	Filter.LoadString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter, this );
 
@@ -433,14 +431,14 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	m_ArchiveFileName.GetWindowText( sArchiveFullNameAndPath );
 
 	ArchiveToolHelper athArchivePathAndName;
-	athArchivePathAndName.Init(sArchiveFullNameAndPath); 
+	athArchivePathAndName.Init(SVString(sArchiveFullNameAndPath)); 
 
 	bool bUsingKeywords = athArchivePathAndName.isUsingKeywords();
 	if (bUsingKeywords)
 	{
 		if (athArchivePathAndName.isTokensValid())
 		{
-			sArchiveFullNameAndPath = athArchivePathAndName.TranslatePath(sArchiveFullNameAndPath).c_str();
+			sArchiveFullNameAndPath = athArchivePathAndName.TranslatePath(SVString(sArchiveFullNameAndPath)).c_str();
 		}
 		else
 		{

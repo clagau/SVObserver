@@ -490,7 +490,7 @@ HRESULT SVTestIntekDCamDriverProxy::IsValidCameraFileParameters( SVDeviceParamCo
 
 		if( pDigitizer != NULL && pDigitizer->ParameterGetValue( hDigitizer, SVIntekParameterDCamVendorId, 0, &l_oValue ) == S_OK )
 		{
-			SVString l_csVenderId( l_oValue.bstrVal );
+			SVString l_csVenderId = SvUl_SF::createSVString( l_oValue.bstrVal );
 
 			if( l_csVenderId == StringValue( rDeviceParams.Parameter( DeviceParamVendorId ) ) )
 			{
@@ -499,7 +499,7 @@ HRESULT SVTestIntekDCamDriverProxy::IsValidCameraFileParameters( SVDeviceParamCo
 				{
 					CString sHardwareModel = l_oValue.bstrVal;
 
-					CString sModel = StringValue(rDeviceParams.Parameter( DeviceParamModelName )).ToString();
+					CString sModel = StringValue(rDeviceParams.Parameter( DeviceParamModelName )).c_str();
 
 					if ( sHardwareModel != _T("") && sModel != _T("") && sHardwareModel.CompareNoCase(sModel) != 0 )
 					{
@@ -528,7 +528,7 @@ bool SVTestIntekDCamDriverProxy::CameraMatchesCameraFile(const SVDeviceParamColl
 
 		if( pDigitizer->ParameterGetValue( hDigitizer, SVIntekParameterDCamVendorId, 0, &l_oValue ) == S_OK )
 		{
-			SVString l_csVenderId( l_oValue.bstrVal );
+			SVString l_csVenderId = SvUl_SF::createSVString(l_oValue.bstrVal );
 
 			l_bOk = l_csVenderId == StringValue( rCameraFileDeviceParams.Parameter( DeviceParamVendorId ) );
 
@@ -539,7 +539,7 @@ bool SVTestIntekDCamDriverProxy::CameraMatchesCameraFile(const SVDeviceParamColl
 				{
 					CString sHardwareModel( l_oValue.bstrVal, ::SysStringLen( l_oValue.bstrVal ) );
 
-					CString sModel = StringValue(rCameraFileDeviceParams.Parameter( DeviceParamModelName )).ToString();
+					CString sModel = StringValue(rCameraFileDeviceParams.Parameter( DeviceParamModelName )).c_str();
 
 					if ( sHardwareModel.CompareNoCase(sModel) != 0 )
 					{

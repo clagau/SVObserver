@@ -230,7 +230,7 @@ HRESULT SVInputStreamManager::ProcessJsonCommand( const std::string& p_rJsonComm
 		}
 		else
 		{
-			l_Status = SendCommandToInputStream( l_StreamName.ToString(), p_rJsonCommand, p_rJsonResults );
+			l_Status = SendCommandToInputStream( l_StreamName.c_str(), p_rJsonCommand, p_rJsonResults );
 		}
 	}
 

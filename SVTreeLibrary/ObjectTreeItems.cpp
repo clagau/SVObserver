@@ -176,7 +176,7 @@ namespace Seidenader { namespace SVTreeLibrary
 			}
 			else
 			{
-				Branch = rDisplayLocation.Left( Pos );
+				Branch = rDisplayLocation.substr( 0, Pos );
 			}
 			Iter = findLevelItem( IterStart, IterEnd, Branch);
 			//Branch not found so create or exit
@@ -258,7 +258,7 @@ namespace Seidenader { namespace SVTreeLibrary
 		}
 		else
 		{
-			Name = rDisplayLocation.Mid( Pos + 1 );
+			Name = SvUl_SF::Mid( rDisplayLocation, Pos + 1 );
 		}
 
 		IObjectSelectorItem::CheckedStateEnum CheckedState;

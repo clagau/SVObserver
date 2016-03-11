@@ -84,10 +84,10 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
 
 // String sizes have not yet been defined.  This will need addressed.
 
-      msvLastFileName.Format ("%.30s", fileName);
-      msvLastErrorData.Format ("%.30s", msvErrorData);
-      msvLastParam1.Format ("%.30s", msvParam1);
-      msvLastParam2.Format ("%.30s", msvParam2);
+      msvLastFileName = SvUl_SF::Format ("%.30s", fileName);
+      msvLastErrorData = SvUl_SF::Format ("%.30s", msvErrorData);
+      msvLastParam1 = SvUl_SF::Format ("%.30s", msvParam1);
+      msvLastParam2 = SvUl_SF::Format ("%.30s", msvParam2);
       msvlLastNbrParams = 0;        // If params are to be used, then 
                                 //  this needs set within the 
                                 //  specific case. Default should 
@@ -154,7 +154,7 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
 /*--- found.                                                               */
       if (lx_found == FALSE)
       {
-         msvLastErrorData. Format ("Prog.Cd = %d", msvlLastProgramCd);
+			msvLastErrorData = SvUl_SF::Format ("Prog.Cd = %d", msvlLastProgramCd);
          msvlLastProgramCd = 999;
          msvlLastFacillity = SVR;
          msvlLastMessageNbr = 0000;
@@ -182,13 +182,13 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
       if (msvlLastErrorAction & DISPLAY)
       {
 /*------- DISPLAY ERROR MESSAGE --------------------------------------------*/
-          lx_displayString.Format("Error Nbr = %d, Program Cd = %d\nFile = %s, Line Nbr = %d\nData = <%s>", 
+			lx_displayString = SvUl_SF::Format("Error Nbr = %d, Program Cd = %d\nFile = %s, Line Nbr = %d\nData = <%s>", 
                                   msvlLastErrorCd & 0x0000ffff,
                                   msvlLastProgramCd,
-                                  msvLastFileName.ToString(),
+                                  msvLastFileName.c_str(),
                                   msvlLastLineNbr,
-                                  msvLastErrorData.ToString());
-	      MessageBox(NULL, lx_displayString.ToString(), "", MB_OK);
+                                  msvLastErrorData.c_str());
+	      MessageBox(NULL, lx_displayString.c_str(), "", MB_OK);
 /*------- End of DISPLAY ERROR MESSAGE. ------------------------------------*/
       }
 
@@ -206,12 +206,12 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
 //          LogError ();
 		//************************************************
 		// Use SVException to get this information to the event log.
-		  lx_displayString.Format( "Error Nbr = %lx, Program Cd = %d\n",
+			lx_displayString = SvUl_SF::Format("Error Nbr = %lx, Program Cd = %d\n",
 			  msvlLastErrorCd ,
 			  programCd  );
 		  // log to event log.
 			SvStl::MessageContainer svE;
-			svE.setMessage (SVMSG_SVO_35_LEGACY_ERROR_TRAP, lx_displayString.ToString(), 
+			svE.setMessage (SVMSG_SVO_35_LEGACY_ERROR_TRAP, lx_displayString.c_str(), 
 				_T(__DATE__), _T(__TIME__), fileName, lineNbr, _T(__TIMESTAMP__), programCd );
 			svE.logMessage();
 		//*******************************************************
@@ -340,11 +340,11 @@ unsigned long SVErrorClass::LogError ()
 
         lx_index = lx_index + 
                    _stprintf ((_TCHAR *) (&lx_logRecord.buffer [lx_index]),
-                              msvParam1.ToString()) *
+                              msvParam1.c_str()) *
                    lx_TCHARSize;
         lx_index = lx_index + 
                    _stprintf ((_TCHAR *) (&lx_logRecord.buffer [lx_index]), 
-                              msvParam2.ToString()) *
+                              msvParam2.c_str()) *
                    lx_TCHARSize;
 
         lx_index = Next32Boundry (lx_index + 
@@ -352,7 +352,7 @@ unsigned long SVErrorClass::LogError ()
         lx_logRecord.NTDef.DataOffset = lx_index;
         lx_index = lx_index + 
                    _stprintf ((_TCHAR *) (&lx_logRecord.buffer [lx_index]), 
-                              msvErrorData.ToString()) *
+                              msvErrorData.c_str()) *
                    lx_TCHARSize;
 
         lx_logRecord.NTDef.DataLength = static_cast<DWORD>(msvErrorData.size());

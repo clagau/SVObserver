@@ -54,10 +54,10 @@ void SVDataDefinitionStruct::Clear( )
 
 void SVDataDefinitionStruct::Init( )
 {
-	m_Name = SVString::EmptyString();
+	m_Name = _T("");
 	m_Writable = false;
 	m_Published = false;
-	m_Type = SVString::EmptyString();
+	m_Type = _T("");
 	m_AdditionalInfo.clear();
 }
 

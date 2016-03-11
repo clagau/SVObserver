@@ -1436,7 +1436,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 			{
 				SVString DataName = p_rTree.getBranchName( htiDataChild );
 
-				if ( DataName.Compare( CTAG_INSPECTION_PROCESS ) == 0 )
+				if ( DataName.compare( CTAG_INSPECTION_PROCESS ) == 0 )
 				{
 					if( SVNavigateTree::GetItemBranch( p_rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
 					{
@@ -1448,7 +1448,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 						}
 					}
 				}
-				else if ( DataName.Compare( CTAG_SVIPDOC ) == 0 )
+				else if ( DataName.compare( CTAG_SVIPDOC ) == 0 )
 				{
 					htiSVIPDoc = htiDataChild;
 				}
@@ -1479,21 +1479,21 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 						CString newString;
 						newString.LoadString(IDS_OBJECTNAME_PAT_DELTAPOS);
 
-						SVString l_String( svVariant );
+						SVString l_String = SvUl_SF::createSVString( svVariant );
 
 						// Pre-Parse Typo fix.
 						// This peice of code fixes the Angel to Angle typo.
-						l_String.replace( _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
+						SvUl_SF::searchAndReplace( l_String, _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
 
 						// Pre-Parse Typo fix number two.
 						// This peice of code fixes the Principle to Principal typo.
-						l_String.replace( _T("Axis Principle Angle"), _T("Axis Principal Angle") );
+						SvUl_SF::searchAndReplace( l_String, _T("Axis Principle Angle"), _T("Axis Principal Angle") );
 
 						// Pre-Parse Type fix number three.
 						// This piece of code changes "Angle delta Positive" to "Angle Delta Positive".
-						l_String.replace( _T("Angle delta Positive"), static_cast< LPCTSTR >( newString ) );
+						SvUl_SF::searchAndReplace( l_String, _T("Angle delta Positive"), static_cast< LPCTSTR >( newString ) );
 
-						*pToolsetScript = l_String.ToString();
+						*pToolsetScript = l_String.c_str();
 					}
 					else if( nullptr == hItemToolset )
 					{

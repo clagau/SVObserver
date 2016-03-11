@@ -2026,8 +2026,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetFeature(
 						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 						if (l_Code == SVMEE_STATUS_OK)
 						{
-							SVString strValue(value);
-							FeatureValue.bstrVal = strValue.ToBSTR();
+							FeatureValue.bstrVal = _bstr_t(value);
 						}
 					}
 					break;
@@ -2159,10 +2158,10 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetFeature(
 
 				case VT_BSTR:	// String
 					{
-						SVString strValue = FeatureValue.bstrVal;
+						SVString strValue = SvUl_SF::createSVString(FeatureValue.bstrVal);
 						size_t len = strValue.size() + 1;
 						char* pValue = new char[len];
-						strcpy_s(pValue, len, strValue.ToString()); 
+						strcpy_s(pValue, len, strValue.c_str()); 
 						MdigControlFeature(DigitizerID.m_DigitizerIdentifier, M_DEFAULT, featureNameStr, l_matroxFeatureType, pValue);
 						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 						delete [] pValue;

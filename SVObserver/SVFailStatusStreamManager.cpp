@@ -237,7 +237,7 @@ HRESULT SVFailStatusStreamManager::ProcessJsonCommand(const std::string& rJsonCo
 				if (JsonCommand.isString())
 				{
 					CmdName = JsonCommand.asString(); 
-					bool bStart = CmdName == SVRC::stream::startStream.c_str();
+					bool bStart = CmdName == SVRC::stream::startStream;
 					hr = ProcessStartStopCommand(StreamName, bStart);
 				}
 			}

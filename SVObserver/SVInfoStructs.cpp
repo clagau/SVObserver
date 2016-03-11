@@ -986,7 +986,7 @@ bool SVProductInfoStruct::IsAlive() const
 
 void SVProductInfoStruct::DumpIndexInfo( SVString& p_rData )
 {
-	p_rData.Format( _T( "TriggerCount=%ld-DataComplete=%s-ResultDataIndex=%ld-PublishedImageIndex=%ld" ),
+	p_rData = SvUl_SF::Format( _T( "TriggerCount=%ld-DataComplete=%s-ResultDataIndex=%ld-PublishedImageIndex=%ld" ),
 		ProcessCount(),
 		( bDataComplete ) ? _T( "T" ) : _T( "F" ),
 		oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), 
@@ -996,9 +996,7 @@ void SVProductInfoStruct::DumpIndexInfo( SVString& p_rData )
 
 	while( l_CamIter != m_svCameraInfos.end() )
 	{
-		SVString l_Temp;
-
-		l_Temp.Format( _T( " : %s-Index=%ld" ), 
+		SVString l_Temp = SvUl_SF::Format( _T( " : %s-Index=%ld" ), 
 			( l_CamIter->first != NULL ) ? l_CamIter->first->GetName() : _T( "(null)" ), 
 			l_CamIter->second.GetIndex() );
 
@@ -1011,9 +1009,7 @@ void SVProductInfoStruct::DumpIndexInfo( SVString& p_rData )
 
 	while( l_InspectIter != m_svInspectionInfos.end() )
 	{
-		SVString l_Temp;
-
-		l_Temp.Format( _T( " : %s-State=0x%x-Index=%ld" ), 
+		SVString l_Temp = SvUl_SF::Format( _T( " : %s-State=0x%x-Index=%ld" ), 
 			( l_InspectIter->second.pInspection != NULL ) ? l_InspectIter->second.pInspection->GetName() : _T( "(null)" ), 
 			l_InspectIter->second.oInspectedState,
 			l_InspectIter->second.m_ResultImageDMIndexHandle.GetIndex() );

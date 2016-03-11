@@ -2857,22 +2857,22 @@ HRESULT SVImageClass::Save(const SVString& rFilename)
 			ext = rFilename.substr(pos, rFilename.size() - pos);
 		}
 		SVMatroxFileTypeEnum efileformat = SVFileUnknown;
-		if (0 == ext.CompareNoCase(_T(".mim")))
+		if (0 == SvUl_SF::CompareNoCase(ext, _T(".mim")))
 		{
 			efileformat = SVFileMIL;
 		}
-		else if (0 == ext.CompareNoCase(_T(".tif")))
+		else if (0 == SvUl_SF::CompareNoCase(ext, _T(".tif")))
 		{
 			efileformat = SVFileTiff;
 		}
-		else if (0 == ext.CompareNoCase(_T(".bmp")))
+		else if (0 == SvUl_SF::CompareNoCase(ext, _T(".bmp")))
 		{
 			efileformat = SVFileBitmap;
 		}
 	
 		if (efileformat != SVFileUnknown)
 		{
-			SVMatroxString strPath = rFilename.ToString();
+			SVMatroxString strPath = rFilename.c_str();
 			SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Export(MilHandle.GetBuffer(), strPath, efileformat);
 		}
 		else

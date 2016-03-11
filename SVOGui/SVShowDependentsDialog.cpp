@@ -28,7 +28,7 @@ namespace Seidenader { namespace SVOGui
 
 		SVShowDependentsDialog::SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
 		: CDialog(SVShowDependentsDialog::IDD, pParent)
-		, m_DisplayText( DisplayText )
+		, m_DisplayText( (nullptr != DisplayText) ? DisplayText : SVString() )
 		, m_DialogType( Type )
 		{
 			ConvertList(rList);
@@ -36,7 +36,7 @@ namespace Seidenader { namespace SVOGui
 
 		SVShowDependentsDialog::SVShowDependentsDialog( const GUID& rInspectionID, const GUID& rTaskObjectID, bool bOnlyImages, SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
 		: CDialog(SVShowDependentsDialog::IDD, pParent)
-		, m_DisplayText( DisplayText )
+		, m_DisplayText( (nullptr != DisplayText) ? DisplayText : SVString() )
 		, m_DialogType( Type )
 		, m_InspectionID(rInspectionID)
 		, m_TaskObjectID(rTaskObjectID)

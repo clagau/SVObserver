@@ -83,20 +83,20 @@ static std::string VariantToString(_variant_t value)
 		break;
 
 	case VT_I2:
-		strValue.Format("%d", value.iVal);
+		strValue = SvUl_SF::Format("%d", value.iVal);
 		break;
 
 	case VT_INT:
 	case VT_I4:
-		strValue.Format("%ld", value.lVal);
+		strValue = SvUl_SF::Format("%ld", value.lVal);
 		break;
 
 	case VT_R4:
-		strValue.Format("%f", value.fltVal);
+		strValue = SvUl_SF::Format("%f", value.fltVal);
 		break;
 
 	case VT_R8:
-		strValue.Format("%lf", value.dblVal);
+		strValue = SvUl_SF::Format("%lf", value.dblVal);
 		break;
 
 	case VT_BSTR:
@@ -104,32 +104,32 @@ static std::string VariantToString(_variant_t value)
 		break;
 
 	case VT_BOOL:
-		strValue.Format("%s", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
+		strValue = SvUl_SF::Format("%s", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
 		break;
 
 	case VT_I1:
-		strValue.Format("%02X", value.cVal);
+		strValue = SvUl_SF::Format("%02X", value.cVal);
 		break;
 
 	case VT_UI1:
-		strValue.Format("%02X", value.bVal);
+		strValue = SvUl_SF::Format("%02X", value.bVal);
 		break;
 
 	case VT_UI2:
-		strValue.Format("%u", value.uiVal);
+		strValue = SvUl_SF::Format("%u", value.uiVal);
 		break;
 
 	case VT_UINT:
 	case VT_UI4:
-		strValue.Format("%lu", value.ulVal);
+		strValue = SvUl_SF::Format("%lu", value.ulVal);
 		break;
 
 	case VT_I8:
-		strValue.Format("%I64d", value.llVal);
+		strValue = SvUl_SF::Format("%I64d", value.llVal);
 		break;
 
 	case VT_UI8:
-		strValue.Format("%I64u", value.ullVal);
+		strValue = SvUl_SF::Format("%I64u", value.ullVal);
 		break;
 
 	default:
@@ -149,6 +149,16 @@ static void Attribute(const SVString& name, const SVString& value, XMLElementPtr
 	pNode->attr(name.c_str(), value.c_str());
 }
 
+static void Attribute(const wchar_t* name, const SVString& value, XMLElementPtr pNode)
+{
+	pNode->attr(SvUl_SF::createSVString(name).c_str(), value.c_str());
+}
+
+static void Attribute(const wchar_t* name, const _variant_t& value, XMLElementPtr pNode)
+{
+	pNode->attr(SvUl_SF::createSVString(name).c_str(), SvUl_SF::createSVString(value).c_str());
+}
+
 SVObjectXMLWriter::SVObjectXMLWriter(std::ostream& os)
 {
 	m_pWriter = XMLWriterPtr(new xml::writer(os));
@@ -159,7 +169,7 @@ SVObjectXMLWriter::~SVObjectXMLWriter()
 	m_pWriter.reset();
 }
 
-void SVObjectXMLWriter::WriteAttribute(const SVString& rName, const variant_t& value)
+void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const variant_t& value)
 {
 	if (0 == (VT_ARRAY & value.vt))
 	{
@@ -169,7 +179,7 @@ void SVObjectXMLWriter::WriteAttribute(const SVString& rName, const variant_t& v
 		if (!varTypeStr.empty())
 		{
 			xml::element data(scDataTag.c_str(), *m_pWriter);
-			data.attr(scNameTag.c_str(), rName.c_str());
+			data.attr(scNameTag.c_str(), rName);
 			data.attr(scTypeTag.c_str(), varTypeStr.c_str());
 			data.contents(valueStr.c_str());
 		}
@@ -185,17 +195,16 @@ void SVObjectXMLWriter::WriteAttribute(const SVString& rName, const variant_t& v
 		SVSAFEARRAY arrayValue = value;
 		for (int i=0; i < arrayValue.size(); ++i)
 		{
-			SVString attName;
-			attName.Format("DataIndex_%d", i+1);
+			SVString attName = SvUl_SF::Format("DataIndex_%d", i+1);
 			_variant_t lVal;
 			arrayValue.GetElement( i, lVal );
-			WriteAttribute(attName, lVal);
+			WriteAttribute(attName.c_str(), lVal);
 		}		
 		EndElement();
 	}
 }
 
-void SVObjectXMLWriter::WriteAttribute(const SVString& rName, const SVVariantList& rValues)
+void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const SVVariantList& rValues)
 {
 	BOOST_FOREACH(_variant_t value, rValues)
 	{
@@ -203,11 +212,11 @@ void SVObjectXMLWriter::WriteAttribute(const SVString& rName, const SVVariantLis
 	}
 }
 
-void SVObjectXMLWriter::StartElement(const SVString& rName)
+void SVObjectXMLWriter::StartElement(LPCTSTR rName)
 {
 	XMLElementPtr pNode(new xml::element(scNodeTag.c_str(), *m_pWriter));
 	m_elements.push_front(pNode);
-	pNode->attr(scNameTag.c_str(), rName.c_str());
+	pNode->attr(scNameTag.c_str(), rName);
 }
 
 void SVObjectXMLWriter::EndElement()
@@ -224,14 +233,14 @@ void SVObjectXMLWriter::EndAllElements()
 	}
 }
 
-void SVObjectXMLWriter::ElementAttribute(const SVString& rAttrName, const variant_t& value)
+void SVObjectXMLWriter::ElementAttribute(LPCTSTR rAttrName, const variant_t& value)
 {
-	m_elements[0]->attr(rAttrName.c_str(), VariantToString(value));
+	m_elements[0]->attr(rAttrName, VariantToString(value));
 }
 
-void SVObjectXMLWriter::WriteRootElement(const SVString& rName)
+void SVObjectXMLWriter::WriteRootElement(LPCTSTR rName)
 {
-	XMLElementPtr pNode(new xml::element(rName.c_str(), *m_pWriter));
+	XMLElementPtr pNode(new xml::element(rName, *m_pWriter));
 	m_elements.push_front(pNode);
 }
 
@@ -438,9 +447,9 @@ void SVObjectXMLWriter::WriteRevisionHistory(const _variant_t formatVersionValue
 	XMLElementPtr pRevisionHistoryNode = Element(revisionHistoryString, *m_pWriter);
 	Attribute("xmlns", "x-schema:#SVR00001", pRevisionHistoryNode);
 
-	SVString revisionString(g_wcsRevision);
+	SVString revisionString = SvUl_SF::createSVString(g_wcsRevision);
 	XMLElementPtr pRevisionNode = Element(revisionString, *m_pWriter);
-	Attribute(g_wcsFormat, "SVObserver", pRevisionNode);
+	Attribute(g_wcsFormat, SVString("SVObserver"), pRevisionNode);
 	Attribute(g_wcsFormatVersion, formatVersionValue, pRevisionNode);
 	Attribute(g_wcsRevisionAtt, revisionValue, pRevisionNode);
 	pRevisionNode.reset();

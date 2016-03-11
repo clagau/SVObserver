@@ -37,6 +37,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -139,7 +140,7 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 			FileName += _T("\\");
 			FileName += SvO::ClipboardFileName;
 			FileName += SvO::ZipExtension;
-			writeStringToFile( FileName, ClipboardData.ToDataType(), false );
+			writeStringToFile( FileName, ClipboardData, false );
 
 			SVStringSet ZippedFiles;
 			ZipHelper::unzipAll( FileName, SVString( SvO::TempFolder ), ZippedFiles );
@@ -147,7 +148,7 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 			updateDependencyFiles( ZippedFiles );
 			
 			//Same file name just different extensions
-			FileName.replace( SvO::ZipExtension, SvO::XmlExtension );
+			SvUl_SF::searchAndReplace( FileName, SvO::ZipExtension, SvO::XmlExtension );
 			readFileToString( FileName, XmlData );
 			XmlData.append( _T("\0") );
 			::DeleteFile( FileName.c_str() );
@@ -234,7 +235,7 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 		SVObjectXMLWriter XmlWriter( MemoryStream );
 
 		SVString rootNodeName( ToolCopyTag );
-		XmlWriter.WriteRootElement( rootNodeName );
+		XmlWriter.WriteRootElement( rootNodeName.c_str() );
 		XmlWriter.WriteSchema();
 		writeBaseAndEnvironmentNodes( XmlWriter );
 
@@ -449,7 +450,7 @@ void ToolClipboard::readFileToString( const SVString& rFileName, SVString& rFile
 HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVTreeType& rTree ) const
 {
 	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
-	HRESULT	Result =SaxHandler.BuildFromXMLString (&rTree, rXmlData.ToVARIANT());
+	HRESULT	Result =SaxHandler.BuildFromXMLString (&rTree, _variant_t(rXmlData.c_str()));
 	if( false == SUCCEEDED(Result))
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
@@ -503,9 +504,9 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 		SVNavigateTree::GetItem( rTree, ToolTypeTag, ToolsItem, ToolType );
 		SVNavigateTree::GetItem( rTree, ToolImageTag, ToolsItem, ToolImage );
 
-		SVGUID InspectionGuid( StringToGUID( Inspection ) );
-		SVGUID ToolTypeGuid( StringToGUID( ToolType ) );
-		SVGUID ToolImageGuid( StringToGUID( ToolImage ) );
+		SVGUID InspectionGuid( Inspection );
+		SVGUID ToolTypeGuid( ToolType );
+		SVGUID ToolImageGuid( ToolImage );
 
 		//Color tool can not be inserted into non color system
 		if( SVColorToolClassGuid == ToolTypeGuid && !m_rInspection.IsColorCamera() )
@@ -547,7 +548,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 				{
 					SVGUID DefaultImageGuid( GUID_NULL );
 					DefaultImageGuid = m_rInspection.GetToolSetMainImage()->GetUniqueObjectID();
-					rXmlData.replace( ToolImageGuid.ToString().c_str(),  DefaultImageGuid.ToString().c_str() );
+					SvUl_SF::searchAndReplace( rXmlData, ToolImageGuid.ToString().c_str(),  DefaultImageGuid.ToString().c_str() );
 				}
 			}
 		}
@@ -580,7 +581,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 			_variant_t ObjectName;
 
 			SVNavigateTree::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
-			SVString ToolName( ObjectName.bstrVal );
+			SVString ToolName = SvUl_SF::createSVString( ObjectName.bstrVal );
 			SVString NewName;
 
 			SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc( m_rInspection.GetUniqueObjectID() );
@@ -591,7 +592,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 			}
 			if( NewName != ToolName )
 			{
-				rXmlData.replace( ToolName.c_str(), NewName.c_str() );
+				SvUl_SF::searchAndReplace( rXmlData, ToolName.c_str(), NewName.c_str() );
 			}
 			Result = S_OK;
 		}
@@ -625,7 +626,7 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree
 		while( UniqueIDList.end() != Iter )
 		{
 			CoCreateGuid( &newUniqueID );
-			rXmlData.replace( Iter->c_str(), newUniqueID.ToString().c_str() );
+			SvUl_SF::searchAndReplace( rXmlData, Iter->c_str(), newUniqueID.ToString().c_str() );
 			++Iter;
 		}
 
@@ -673,7 +674,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 					ParserProgressDialog.AddParser(parserHandle, pParser);
 					ParserProgressDialog.DoModal();
 
-					rToolGuid = StringToGUID( UniqueID );
+					rToolGuid = SVGUID( UniqueID );
 
 					Result = S_OK;
 				}

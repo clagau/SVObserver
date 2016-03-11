@@ -75,7 +75,7 @@ void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )
 				CString tmp;
 				SVGUID guid = pClass->GetClassID();
 
-				tmp.Format( "Duplicate Class encountered\n ClassName: %s\n ClassID: %s", pClass->GetClassName(), guid.ToString().ToString() );
+				tmp.Format( "Duplicate Class encountered\n ClassName: %s\n ClassID: %s", pClass->GetClassName(), guid.ToString().c_str() );
 
 				AfxMessageBox( tmp );
 			}

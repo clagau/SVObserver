@@ -44,7 +44,7 @@ HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersi
 
 	HRESULT hr( S_OK );
 
-	SVString l_FileName( bstrFilename );
+	SVString l_FileName( SvUl_SF::createSVString(bstrFilename) );
 
 	CString cstrMessage;
 	BSTR bstrRevisionHistory = NULL;

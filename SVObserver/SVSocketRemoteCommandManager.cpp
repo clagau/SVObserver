@@ -214,10 +214,9 @@ HRESULT SVRemoteCommandFunctions::GetTempFileNameFromFilePath( std::string& p_rT
 
 	if( !( l_FileName.empty() ) )
 	{
-		SVString l_TempString;
 		__int64 l_TimeStamp = static_cast< __int64 >( SVClock::GetTimeStamp() );
 
-		l_TempString.Format( "%I64d", l_TimeStamp );
+		SVString l_TempString = SvUl_SF::Format( "%I64d", l_TimeStamp );
 
 		p_rTempFileName += "V:\\";
 		p_rTempFileName += l_TempString.c_str();
@@ -316,7 +315,7 @@ HRESULT SVRemoteCommandFunctions::ConvertStorageResultImageFileToJsonValue( cons
 
 		if( l_ItemStatus == S_OK )
 		{
-			SVString l_FileName = p_rStorage.m_Storage.m_Variant;
+			SVString l_FileName = SvUl_SF::createSVString(p_rStorage.m_Storage.m_Variant);
 
 			if( !( l_FileName.empty() ) )
 			{
@@ -484,12 +483,12 @@ HRESULT SVRemoteCommandFunctions::AddJsonImagesToStorageItems( const Json::Value
 
 						l_Status = SVJsonUtilities::ConvertJsonValueToVariant( l_rFileName, l_Variant.GetVARIANT() );
 
-						SVString l_TempStr = l_Variant;
+						SVString l_TempStr = SvUl_SF::createSVString(l_Variant);
 
 						if( !( l_TempStr.empty() ) )
 						{
 							l_TempFileName += "V:\\";
-							l_TempFileName += l_TempStr.ToDataType();
+							l_TempFileName += l_TempStr;
 						}
 						else if( l_Status == S_OK )
 						{
@@ -547,7 +546,7 @@ HRESULT SVRemoteCommandFunctions::CreateJsonValueWithResultErrors( const SVNameS
 
 				Json::Value l_Error( Json::objectValue );
 
-				l_Error[ SVRC::error::name ] = l_ItemsIter->first.ToDataType();
+				l_Error[ SVRC::error::name ] = l_ItemsIter->first;
 
 				if( l_StatusIter == rItemResultStatus.end() )
 				{
@@ -676,7 +675,7 @@ HRESULT SVRemoteCommandFunctions::GetVersions( const std::string& p_rJsonCommand
 
 	Json::Value l_Results(Json::objectValue);
 
-	l_Results[ SVRC::result::SVO_ver ] = l_Version.ToDataType();
+	l_Results[ SVRC::result::SVO_ver ] = l_Version;
 
 	l_FileName = "C:\\temp\\GetVersions-rsp";
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
@@ -909,7 +908,7 @@ HRESULT SVRemoteCommandFunctions::GetItems( const std::string& p_rJsonCommand, s
 
 					if( l_LoopStatus != S_OK )
 					{
-						SVString l_FileName = l_Iter->second.m_Storage.m_Variant;
+						SVString l_FileName = SvUl_SF::createSVString(l_Iter->second.m_Storage.m_Variant);
 
 						if( !( l_FileName.empty() ) )
 						{
@@ -1088,7 +1087,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceConfigReport( const std::string& p_rJ
 
 	if( l_Status == S_OK )
 	{
-		l_Results[ SVRC::result::report ] = l_Report.ToDataType();
+		l_Results[ SVRC::result::report ] = l_Report;
 	}
 
 	l_FileName = "C:\\temp\\GetDeviceConfigReport-rsp";

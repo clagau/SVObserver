@@ -163,9 +163,8 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 				// The current version of the Json library does not support 64 bit so for now
 				// we are putting the result in a string.
 				// In the future we may put the result in a its native type.
-				SVString l_strTmp;
-				l_strTmp.Format( _T("0x%016I64x"), p_rVariant.llVal);
-				p_rJsonValue = Json::Value( SVStringConversions::to_utf8(l_strTmp.ToBSTR() ));
+				SVString l_strTmp = SvUl_SF::Format( _T("0x%016I64x"), p_rVariant.llVal);
+				p_rJsonValue = Json::Value( SVStringConversions::to_utf8(_bstr_t(l_strTmp.c_str()) ));
 				break;
 			}
 		case VT_R4:
@@ -232,7 +231,7 @@ HRESULT SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( std::string& p_rTempF
 
 	::QueryPerformanceCounter( reinterpret_cast< LARGE_INTEGER* >( &l_TimeStamp ) );
 
-	l_TempString.Format( "%I64d", l_TimeStamp );
+	l_TempString = SvUl_SF::Format( "%I64d", l_TimeStamp );
 
 	p_rTempFileName += p_rPrefix;
 	p_rTempFileName += "-";

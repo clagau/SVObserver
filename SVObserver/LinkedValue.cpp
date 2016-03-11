@@ -105,10 +105,10 @@ SVString LinkedValue::GetInputValue() const
 		HRESULT hr = ::VariantChangeTypeEx(&value, &value, SvOl::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
 		if ( hr == S_OK )
 		{
-			retValue = value.bstrVal;
+			retValue = SvUl_SF::createSVString(value.bstrVal);
 			if( oldType == VT_BOOL )
 			{
-				retValue.MakeUpper();
+				SvUl_SF::MakeUpper(retValue);
 			}
 		}
 	}
@@ -187,7 +187,7 @@ void LinkedValue::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR orig
 			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
-		oldPrefix.replace( pObject->GetName(), originalName );
+		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
 
 		SVObjectClass* pInputObject = m_inputConnectionInfo.GetInputObjectInfo().PObject;
 		// input objects

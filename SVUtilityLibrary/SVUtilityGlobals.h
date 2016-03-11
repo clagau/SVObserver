@@ -15,8 +15,6 @@
 #include <vector>
 #include <comdef.h>
 
-class SVString;
-
 typedef unsigned long SVHANDLE;
 
 typedef std::vector< unsigned char > SVByteVector;

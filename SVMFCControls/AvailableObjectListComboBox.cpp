@@ -75,7 +75,7 @@ namespace Seidenader { namespace SVMFCControls
 			GetLBText(index, name);
 			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool 
 			{ 
-				return (!rVal.first.empty() && 0 == rVal.first.Compare(name)); 
+				return (!rVal.first.empty() && 0 == rVal.first.compare(name)); 
 			} );
 
 			if (m_List.cend() != iter)
@@ -96,7 +96,7 @@ namespace Seidenader { namespace SVMFCControls
 			DeleteString(iIndex);
 			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool 
 			{ 
-				return (!rVal.first.empty() && 0 == rVal.first.Compare(rItemName)); 
+				return (!rVal.first.empty() && 0 == rVal.first.compare(rItemName)); 
 			} );
 
 			if (m_List.cend() != iter)

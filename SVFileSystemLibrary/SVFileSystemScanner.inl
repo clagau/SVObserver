@@ -17,7 +17,7 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR fil
 
 	WIN32_FIND_DATA fileData;
 	SVString fileSpec;
-	SVString dirSpec = dirName;
+	SVString dirSpec = (nullptr != dirName) ? dirName : SVString();
 	
 	// check for trailing slash
 	size_t pos = dirSpec.rfind(_T("\\"));
@@ -25,9 +25,9 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR fil
 		dirSpec += _T("\\");
 
 	fileSpec = dirSpec;
-	fileSpec += filter;
+	fileSpec += (nullptr != filter) ? filter : SVString();
 
-	HANDLE fHandle = FindFirstFile(fileSpec.ToString(), &fileData);
+	HANDLE fHandle = FindFirstFile(fileSpec.c_str(), &fileData);
 
 	if (fHandle != INVALID_HANDLE_VALUE)
 	{
@@ -69,14 +69,14 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForDirectories(LPCTSTR dirName, LPCTS
 	WIN32_FIND_DATA fileData;
 	SVString fileSpec;
 	
-	SVString dirSpec = dirName;
+	SVString dirSpec = (nullptr != dirName) ? dirName : SVString();
 	// check for trailing slash
 	size_t pos = dirSpec.rfind(_T("\\"));
 	if (pos == SVString::npos || pos != dirSpec.size() - 1)
 		dirSpec += _T("\\");
 
 	fileSpec = dirSpec;
-	fileSpec += filter;
+	fileSpec += (nullptr != filter) ? filter : SVString();
 
 	HANDLE fHandle = FindFirstFile(fileSpec, &fileData);
 

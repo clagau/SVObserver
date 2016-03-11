@@ -68,11 +68,11 @@ bool SVRemoteOutputObject::GetParameters( SVObjectXMLWriter& rWriter ) const
 	rWriter.WriteAttribute( CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, svVariant );
 	svVariant.Clear();
 
-	svVariant = m_strGroupID.ToVARIANT();
+	svVariant = _variant_t(m_strGroupID.c_str());
 	rWriter.WriteAttribute( CTAG_REMOTE_GROUP_ID, svVariant );
 	svVariant.Clear();
 
-	svVariant = m_strObjectName.ToVARIANT();
+	svVariant = _variant_t(m_strObjectName.c_str());
 	rWriter.WriteAttribute( CTAG_REMOTE_OUTPUT_NAME, svVariant );
 	svVariant.Clear();
 
@@ -120,7 +120,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 			bOk = SVNavigateTree::GetItem( rTree, CTAG_REMOTE_GROUP_ID, htiParent, svVariant );
 			if ( bOk )
 			{
-				m_strGroupID = svVariant;
+				m_strGroupID = SvUl_SF::createSVString(svVariant);
 			}
 		}
 
@@ -129,7 +129,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 			bOk = SVNavigateTree::GetItem( rTree, CTAG_REMOTE_OUTPUT_NAME, htiParent, svVariant );
 			if ( bOk )
 			{
-				m_strObjectName = svVariant;
+				m_strObjectName = SvUl_SF::createSVString(svVariant);
 			}
 		}
 

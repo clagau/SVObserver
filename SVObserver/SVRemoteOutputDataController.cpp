@@ -144,7 +144,7 @@ HRESULT SVRemoteOutputDataController::AddItem( const CString& p_strRemoteGroupId
 	if( l_pEntry )
 	{
 		l_pEntry->SetInputObjectId( p_InputObjectID );
-		l_pEntry->SetGroupID( p_strRemoteGroupId );
+		l_pEntry->SetGroupID( SVString(p_strRemoteGroupId) );
 		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectA( p_InputObjectID );
 		if( l_pObject )
 		{
@@ -170,14 +170,14 @@ HRESULT SVRemoteOutputDataController::AddItem( const CString& p_strRemoteGroupId
 			SVRemoteOutputGroup* l_par = new SVRemoteOutputGroup(p_strRemoteGroupId);
 
 			l_par->AddOutput( l_pEntry );
-			l_par->SetPPQName( p_strPPQ );
+			l_par->SetPPQName( SVString(p_strPPQ) );
 			m_RemoteGroupParameters[p_strRemoteGroupId] = l_par;
 		}
 		else
 		{
 			// Add new output to Remote Output Control Parameters map.
 			m_RemoteGroupParameters[ p_strRemoteGroupId ]->AddOutput( l_pEntry );
-			m_RemoteGroupParameters[ p_strRemoteGroupId ]->SetPPQName( p_strPPQ );
+			m_RemoteGroupParameters[ p_strRemoteGroupId ]->SetPPQName( SVString(p_strPPQ) );
 		}
 		p_pNewOutput = l_pEntry;
 		l_hr = S_OK;
@@ -882,7 +882,7 @@ bool SVRemoteOutputDataController::RenameGroup( CString oldName, CString newName
 	{
 		m_RemoteGroupParameters[newName] = l_it->second;
 
-		m_RemoteGroupParameters[newName]->SetGroupName( newName);
+		m_RemoteGroupParameters[newName]->SetGroupName( SVString(newName) );
 		m_RemoteGroupParameters.erase( l_it );
 		l_bRet = true;
 	}

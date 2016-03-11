@@ -122,12 +122,9 @@ void SV1394CameraManager::GetCameraOrder( SV1394CameraStructSet& rSVCameraList )
 	for ( int x = 0; x < iSize; x++ )
 	{
 		SV1394CameraStruct SVcs;
-		
-		SVString strKey;
 		char szGetBuf[128];
-
-		strKey.Format( "Matrox_1394.Dig_%d", x );
-		GetPrivateProfileString( "Camera Mapping", strKey.ToString(), "", szGetBuf, 128, "c:\\SVObserver\\Bin\\SVIM.ini" );
+		SVString strKey = SvUl_SF::Format( "Matrox_1394.Dig_%d", x );
+		GetPrivateProfileString( "Camera Mapping", strKey.c_str(), "", szGetBuf, 128, "c:\\SVObserver\\Bin\\SVIM.ini" );
 		SVcs.strSerialNum = szGetBuf;
 
 		SVcs.iPosition = x;

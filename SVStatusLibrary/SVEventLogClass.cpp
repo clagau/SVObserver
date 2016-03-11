@@ -37,7 +37,7 @@ HRESULT SVEventLogClass::Open( LPCTSTR p_pszName )
 
 		if( m_hHandle != NULL )
 		{
-			m_csName = p_pszName;
+			m_csName = (nullptr != p_pszName) ? p_pszName : SVString();
 		}
 		else
 		{

@@ -192,7 +192,7 @@ namespace Seidenader { namespace SVOGui
 				int curSel = 0;
 				for (SvUl::NameGuidList::const_iterator availIt = availImages.begin();availIt != availImages.end();++availIt)
 				{
-					int index = pCombo->AddString(availIt->first.ToString());
+					int index = pCombo->AddString(availIt->first.c_str());
 					size_t imageIndex = std::distance(availImages.begin(), availIt);
 					pCombo->SetItemData(index, imageIndex);
 					if (availIt->first == it->second.first)

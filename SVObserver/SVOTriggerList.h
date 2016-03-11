@@ -16,8 +16,6 @@
 #include "SVOTriggerObj.h"
 #pragma endregion Includes
 
-class SVString;
-
 class SVOTriggerList  
 {
 public:

@@ -255,7 +255,7 @@ static void BuildDataArray(SVObjectAttributeClass& dataObject, const SVString& i
 
 				case VT_BSTR:
 					{
-						SVString strVal(v);
+						SVString strVal = SvUl_SF::createSVString(v);
 						// check for Point/DPoint ??
 						if (dstDataType == SV_POINT_Type)
 						{

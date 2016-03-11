@@ -27,14 +27,14 @@ template <typename OWNERTYPE>
 class SVMemoryManager
 {
 public:
-	HRESULT CreatePool( const SVString& strPoolName, __int64 lPoolSizeKBytes );
-	HRESULT ReservePoolMemory( const SVString& strPoolName, OWNERTYPE owner, __int64 lSizeInBytes );
-	bool    CanReservePoolMemory( const SVString& strPoolName, __int64 lSizeInBytes );
-	HRESULT ReleasePoolMemory( const SVString& strPoolName, OWNERTYPE owner );
-	HRESULT ReleasePoolMemory( const SVString& strPoolName, OWNERTYPE owner, long lSizeInBytes );
-	__int64 FreeBytes( const SVString& strPoolName );
-	__int64 SizeOfPoolBytes( const SVString& strPoolName );
-	__int64 ReservedBytes( const SVString& strPoolName ){ return SizeOfPoolBytes(strPoolName) - FreeBytes(strPoolName);}
+	HRESULT CreatePool( LPCTSTR strPoolName, __int64 lPoolSizeKBytes );
+	HRESULT ReservePoolMemory( LPCTSTR strPoolName, OWNERTYPE owner, __int64 lSizeInBytes );
+	bool    CanReservePoolMemory( LPCTSTR strPoolName, __int64 lSizeInBytes );
+	HRESULT ReleasePoolMemory( LPCTSTR strPoolName, OWNERTYPE owner );
+	HRESULT ReleasePoolMemory( LPCTSTR strPoolName, OWNERTYPE owner, long lSizeInBytes );
+	__int64 FreeBytes( LPCTSTR strPoolName );
+	__int64 SizeOfPoolBytes( LPCTSTR strPoolName );
+	__int64 ReservedBytes( LPCTSTR strPoolName ){ return SizeOfPoolBytes(strPoolName) - FreeBytes(strPoolName);}
 
 private:
 

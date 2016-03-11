@@ -141,13 +141,13 @@ namespace Seidenader { namespace SVOGui
 		{
 		case VT_R8:
 			{
-				rText.Format( _T("%.06f"), rValue.dblVal );
+				rText = SvUl_SF::Format( _T("%.06f"), rValue.dblVal );
 				rType = GlobalConstantTypes[ SvOi::GlobalConstantData::DecimalType ];
 			}
 			break;
 		case VT_BSTR:
 			{
-				rText = rValue;
+				rText = SvUl_SF::createSVString(rValue);
 				rType = GlobalConstantTypes[ SvOi::GlobalConstantData::TextType ];
 			}
 			break;

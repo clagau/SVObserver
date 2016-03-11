@@ -78,21 +78,21 @@ namespace Seidenader { namespace SVOGui
 
 		if (!len)
 		{
-			rMsg.Format(SvOg::RangeValue_EmptyString, rFieldName.c_str());
+			rMsg = SvUl_SF::Format(SvOg::RangeValue_EmptyString, rFieldName.c_str());
 			hr = E_POINTER;
 		}
 		else
 		{
 			double val = 0.0;
 			SVString tmp = rValue;
-			bool isNumber = tmp.Convert2Number<double>(val, true);
+			bool isNumber = SvUl_SF::Convert2Number<double>(tmp, val, true);
 			if (isNumber)
 			{
 				const double s_RangeMax = 17000000;
 				const double s_RangeMin = -s_RangeMax;
 				if (val > s_RangeMax || val < s_RangeMin)
 				{
-					rMsg.Format(SvOg::RangeValue_WrongRange, rFieldName.c_str(), static_cast<int>(s_RangeMin), static_cast<int>(s_RangeMax));
+					rMsg = SvUl_SF::Format(SvOg::RangeValue_WrongRange, rFieldName.c_str(), static_cast<int>(s_RangeMin), static_cast<int>(s_RangeMax));
 					hr = E_INVALIDARG;
 				}		
 			}

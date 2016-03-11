@@ -23,7 +23,7 @@ SVTriggerDeviceParams::SVTriggerDeviceParams( const SVTriggerDeviceParams& p_rOb
 }
 
 SVTriggerDeviceParams::SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel )
-: m_Name( p_szName ), m_Channel( p_Channel )
+	: m_Name( (nullptr != p_szName) ? p_szName : SVString() ), m_Channel( p_Channel )
 {
 }
 

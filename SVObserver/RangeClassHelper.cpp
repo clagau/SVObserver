@@ -144,7 +144,7 @@ void RangeClassHelper::SetInternalData(RangeEnum::ERange er, LPCTSTR lp)
 	}
 
 	SVString text = lp;
-	bool isNumber = text.Convert2Number<double>(val, true);
+	bool isNumber = SvUl_SF::Convert2Number<double>(text, val, true);
 	if( isNumber )
 	{
 		csText = _T("");
@@ -560,12 +560,11 @@ SVString RangeClassHelper::GetValueString(const CString& indirectString, double 
 {
 	if(indirectString.GetLength() > 0)
 	{
-		return indirectString;
+		return SVString(indirectString);
 	}
 	else
 	{
-		SVString csText;
-		csText.Format(_T("%lf"), directValue );
+		SVString csText = SvUl_SF::Format(_T("%lf"), directValue );
 		return csText;
 	}
 }

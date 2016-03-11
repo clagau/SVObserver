@@ -276,8 +276,8 @@ void ObjectFilterPpg::loadGridCtrl()
 	m_Grid.SetRowCount(i);
 	SVString filterNameUpper(m_FilterNameControl.getEditText());
 	SVString filterLocationUpper(m_FilterLocationControl.getEditText());
-	filterNameUpper.MakeUpper();
-	filterLocationUpper.MakeUpper();
+	SvUl_SF::MakeUpper(filterNameUpper);
+	SvUl_SF::MakeUpper(filterLocationUpper);
 	SvTrl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 	while( m_rTreeContainer.pre_order_end() != Iter )
 	{
@@ -291,10 +291,11 @@ void ObjectFilterPpg::loadGridCtrl()
 			int typeSelection = m_TypeControl.GetCurSel();
 			SVString nameUpper(Iter->second->getName());
 			SVString locationUpper(Iter->second->getLocation());
-			nameUpper.MakeUpper();
-			locationUpper.MakeUpper();
-			bool isNameValid = nameUpper.isSubmatch(filterNameUpper);
-			bool isLocationValid = locationUpper.isSubmatch(filterLocationUpper);
+			SvUl_SF::MakeUpper(nameUpper);
+			SvUl_SF::MakeUpper(locationUpper);
+
+			bool isNameValid = SvUl_SF::isSubmatch(nameUpper, filterNameUpper);
+			bool isLocationValid = SvUl_SF::isSubmatch(locationUpper, filterLocationUpper);
 			CString typeText = _T("");
 			m_TypeControl.GetLBText(typeSelection, typeText);
 			if ( (isNameValid && isLocationValid) &&

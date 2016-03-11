@@ -35,7 +35,7 @@ void SVTriggerSelectionDlg::PopulateSelectionList()
 {
 	for (SVTriggerNameIdList ::const_iterator it = m_triggerList.begin();it != m_triggerList.end();++it)
 	{
-		int index = m_selectionListBox.AddString(it->first.ToString());
+		int index = m_selectionListBox.AddString(it->first.c_str());
 		m_selectionListBox.SetItemData(index, it->second);
 	}
 }

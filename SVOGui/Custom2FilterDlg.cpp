@@ -157,7 +157,7 @@ namespace Seidenader
 				//Check that its an odd value
 				if( 1 == (i % 2) )
 				{
-					Entry.Format(_T("%d"), i);
+					Entry = SvUl_SF::Format(_T("%d"), i);
 					m_WidthCtrl.AddString( Entry.c_str() );
 					m_HeightCtrl.AddString( Entry.c_str() );
 				}
@@ -329,6 +329,7 @@ namespace Seidenader
 			if( IDOK == FileDlg.DoModal() )
 			{
 				SVString Message;
+				SVString pathName = FileDlg.GetPathName();
 
 				try
 				{
@@ -341,18 +342,18 @@ namespace Seidenader
 					ICustom2Filter::LongArray KernelArray;
 					m_KernelArray.swap( KernelArray );
 
-					HRESULT Result = importCustom2Filter(FileDlg.GetPathName(), m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray);
+					HRESULT Result = importCustom2Filter(pathName, m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray);
 					SVString DataInvalidMessage;
 					if ( S_OK != Result || !isDataValid( DataInvalidMessage ))
 					{
 						if (E_CUSTOM_IMPORT_FORMAT_INVALID == Result)
 						{
-							Message.Format( ImportFailed, FileDlg.GetPathName() );
+							Message = SvUl_SF::Format( ImportFailed, pathName );
 							Message += XmlFormatInvalid;
 						}
 						else if (E_CUSTOM_IMPORT_VERSION_MISMATCH == Result)
 						{
-							Message.Format( ImportFailed, FileDlg.GetPathName() );
+							Message = SvUl_SF::Format( ImportFailed, pathName );
 							Message += VersionMismatch;
 						}
 						else
@@ -382,7 +383,7 @@ namespace Seidenader
 				}
 				catch ( ... )
 				{
-					Message.Format( ImportFailed, FileDlg.GetPathName() );
+					Message = SvUl_SF::Format( ImportFailed, pathName );
 				}
 				if( !Message.empty() )
 				{
@@ -402,7 +403,7 @@ namespace Seidenader
 			{
 				try
 				{
-					exportCustom2Filter( FileDlg.GetPathName(), m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray.cbegin(), m_KernelArray.cend() );
+					exportCustom2Filter( SVString(FileDlg.GetPathName()), m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray.cbegin(), m_KernelArray.cend() );
 				}
 				catch( ... )
 				{
@@ -883,19 +884,19 @@ namespace Seidenader
 			//Kernel array and kernel height and width must match
 			if( m_KernelArray.size() != m_KernelWidth*m_KernelHeight )
 			{
-				rMessage.Format(DataInvalidKernelSize, m_KernelArray.size(), m_KernelWidth, m_KernelHeight);
+				rMessage = SvUl_SF::Format(DataInvalidKernelSize, m_KernelArray.size(), m_KernelWidth, m_KernelHeight);
 				Result = false;
 			}
 
 			//Check that the Kernel Width and Height are odd and between 1 and MaxKernelSize
 			if( 1 != m_KernelWidth % 2 || 1 > m_KernelWidth || ICustom2Filter::MaxKernelSize < m_KernelWidth )
 			{
-				rMessage.Format( DataInvalidKernelWidth, m_KernelWidth,  ICustom2Filter::MaxKernelSize);
+				rMessage = SvUl_SF::Format( DataInvalidKernelWidth, m_KernelWidth,  ICustom2Filter::MaxKernelSize);
 				Result = false;
 			}
 			if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || ICustom2Filter::MaxKernelSize < m_KernelHeight )
 			{
-				rMessage.Format( DataInvalidKernelHeight, m_KernelHeight,  ICustom2Filter::MaxKernelSize);
+				rMessage = SvUl_SF::Format( DataInvalidKernelHeight, m_KernelHeight,  ICustom2Filter::MaxKernelSize);
 				Result = false;
 			}
 			//Normalization Factor is not allowed to be 0 or negative

@@ -175,7 +175,7 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 				bOk = SVNavigateTree::GetItem(rTree, CTAG_ITEM_NAME, htiDataChild, svValue);
 				if (bOk)
 				{
-					DataName = svValue;
+					DataName = SvUl_SF::createSVString(svValue);
 				}
 				bOk = SVNavigateTree::GetItem(rTree, CTAG_PPQ_POSITION, htiDataChild, svValue);
 				if (bOk)
@@ -327,39 +327,33 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	SvXml::SVXMLMaterialsTree XmlTree;
 	SvOi::GlobalConstantDataSet ImportedGlobals;
 
+	rProgress.UpdateText(_T("Loading Inspection XML..."));
 
-	SVString msg = _T("Loading Inspection XML...");
-	rProgress.UpdateText(msg.c_str());
-
-	CA2W  pwXmlFilename(filename.ToString()); 
+	CA2W  pwXmlFilename(filename.c_str()); 
 	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
 	HRESULT	hr =  SaxHandler.BuildFromXMLFile(&XmlTree, pwXmlFilename);
 	
 	
 	if (SUCCEEDED(hr))
 	{
-		msg = _T("Importing Dependent Files...");
-		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateText(_T("Importing Dependent Files..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
 
 		SVStringSet Files;
 		ZipHelper::unzipAll( zipFilename, SVString( scRunDirectory ), Files );
 
-		msg = _T("Importing PPQ Inputs...");
-		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateText(_T("Importing PPQ Inputs..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
 
 		InputListInsertor insertor(inspectionInfo.m_inputList, inspectionInfo.m_inputList.begin());
 		ImportPPQInputs(XmlTree, insertor);
 
-		msg = _T("Importing Global Constants...");
-		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateText(_T("Importing Global Constants..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
 
 		importGlobalConstants( XmlTree, ImportedGlobals );
 
-		msg = _T("Creating Inspection object...");
-		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateText(_T("Creating Inspection object..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
 
 		SvXml::SVXMLMaterialsTree::SVBranchHandle hItem;
@@ -371,8 +365,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 				rProgress.UpdateProgress(++currentOp, numOperations);
 
 				// Set the Caption
-				SVString title = _T( "Loading Inspection(s) ..." );
-				SVParserProgressDialog l_ParserProgressDialog(title.c_str());
+				SVParserProgressDialog l_ParserProgressDialog(_T( "Loading Inspection(s) ..." ));
 
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
@@ -380,8 +373,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 				hr = SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionGuid, XmlTree, hItem);
 				if (S_OK == hr)
 				{
-					msg = _T("Creating Toolset objects...");
-					rProgress.UpdateText(msg.c_str());
+					rProgress.UpdateText(_T("Creating Toolset objects..."));
 					rProgress.UpdateProgress(++currentOp, numOperations);
 
 					SVObjectClass* pObject = nullptr;
@@ -392,8 +384,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 						pInspection->SetToolsetImage(cameraName.c_str());
 						pInspection->CreateInspection(inspectionName.c_str());
 
-						msg = _T("Setting Inspection Camera name...");
-						rProgress.UpdateText(msg.c_str());
+						rProgress.UpdateText(_T("Setting Inspection Camera name..."));
 						rProgress.UpdateProgress(++currentOp, numOperations);
 
 						SVConfigurationObject::updateConfTreeToNewestVersion(XmlTree, hItemToolset);
@@ -410,8 +401,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 
 							::SVSendMessage( pInspection, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
 
-							msg = _T("Parsing Complete.");
-							rProgress.UpdateText(msg.c_str());
+							rProgress.UpdateText(_T("Parsing Complete."));
 							rProgress.UpdateProgress(++currentOp, numOperations);
 						}
 						else
@@ -494,8 +484,7 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 			}
 		}
 	}
-	SVString msg = _T("Transforming Inspection...");
-	rProgress.UpdateText(msg.c_str());
+	rProgress.UpdateText(_T("Transforming Inspection..."));
 
 	int rc = LaunchTransform(inFilename.c_str(), outFilename.c_str(), inspectionName.c_str());
 	if (rc == 0)
@@ -506,8 +495,7 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 		::DeleteFile(outFilename.c_str());
 
 		rProgress.UpdateProgress(++currentOp, numOperations);
-		msg = _T("Import Complete.");
-		rProgress.UpdateText(msg.c_str());
+		rProgress.UpdateText(_T("Import Complete."));
 	}
 	else
 	{
@@ -534,7 +522,7 @@ static HRESULT ExtractProperties(const SVString& filename, long& rNewDisableMeth
 	HRESULT hr = xml.Initialize(0);
 	if (hr == S_OK)
 	{
-		hr = xml.CopyXMLFileToDOM(filename.ToBSTR()); 
+		hr = xml.CopyXMLFileToDOM(_bstr_t(filename.c_str())); 
 		if (hr == S_OK)
 		{
 			_bstr_t bstrQueryNameSpace = L"xmlns:svr1=\"x-schema:#SVR00001\"";

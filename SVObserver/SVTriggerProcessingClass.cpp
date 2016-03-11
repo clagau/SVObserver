@@ -46,19 +46,19 @@ void SVTriggerProcessingClass::Startup()
 
 		if( l_Iter->m_Name.find( SV_SOFTWARE_TRIGGER_NAME ) == 0 )
 		{
-			l_pTrigger = new SVSoftwareTriggerClass( l_Iter->m_Name.ToString() );
+			l_pTrigger = new SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
 		}
 		else if( l_Iter->m_Name.find( _T( "IO_Board" ) ) == 0 )
 		{
-			l_pTrigger = new SVTriggerClass( l_Iter->m_Name.ToString() );
+			l_pTrigger = new SVTriggerClass( l_Iter->m_Name.c_str() );
 		}
 		else if( l_Iter->m_Name.find( _T( "Viper_" ) ) == 0 )
 		{
-			l_pTrigger = new SVTriggerClass( l_Iter->m_Name.ToString() );
+			l_pTrigger = new SVTriggerClass( l_Iter->m_Name.c_str() );
 		}
 		else if( l_Iter->m_Name.find( SV_CAMERA_TRIGGER_NAME ) == 0 )
 		{
-			l_pTrigger = new SVCameraTriggerClass( l_Iter->m_Name.ToString() );
+			l_pTrigger = new SVCameraTriggerClass( l_Iter->m_Name.c_str() );
 		}
 
 		if( l_pTrigger != NULL )
@@ -149,7 +149,7 @@ HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibrary
 
 				if( l_hrOk == S_OK )
 				{
-					l_Name = l_bstrName;
+					l_Name = SvUl_SF::createSVString(l_bstrName);
 
 					if ( l_bstrName != NULL )
 					{
@@ -166,7 +166,7 @@ HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibrary
 
 			if( l_hrOk == S_OK )
 			{
-				l_hrOk = AddTrigger( l_Name.ToString(), p_pDLLTrigger, l_ulHandle );
+				l_hrOk = AddTrigger( l_Name.c_str(), p_pDLLTrigger, l_ulHandle );
 			}
 		}
 	}

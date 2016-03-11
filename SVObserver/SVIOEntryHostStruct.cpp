@@ -67,11 +67,11 @@ bool SVIOEntryHostStruct::PtrGreater( SVIOEntryHostStructPtr elem1, SVIOEntryHos
 				{
 					if( Name2.size() > Pos )
 					{
-						int Compare = Name2.Left(Pos).Compare( Name1.Left( Pos ) );
+						int Compare = Name2.substr(0, Pos).compare( Name1.substr(0, Pos ) );
 						if( 0 == Compare )
 						{
-							long Value1 = atol( Name1.Mid( Pos ).c_str() );
-							long Value2 = atol( Name2.Mid( Pos ).c_str() );
+							long Value1 = atol( SvUl_SF::Mid( Name1, Pos ).c_str() );
+							long Value2 = atol( SvUl_SF::Mid( Name2, Pos ).c_str() );
 							Greater = Value2 > Value1;
 						}
 						else
@@ -81,19 +81,19 @@ bool SVIOEntryHostStruct::PtrGreater( SVIOEntryHostStructPtr elem1, SVIOEntryHos
 					}
 					else
 					{
-						int Compare = Name2.Compare( Name1 );
+						int Compare = Name2.compare( Name1 );
 						Greater = Compare > 0;
 					}
 				}
 				else
 				{
-					int Compare = Name2.Compare( Name1 );
+					int Compare = Name2.compare( Name1 );
 					Greater = Compare > 0;
 				}
 			}
 			else
 			{
-				int Compare = Name2.Compare( Name1 );
+				int Compare = Name2.compare( Name1 );
 				Greater = Compare > 0;
 			}
 		}

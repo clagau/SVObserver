@@ -175,17 +175,17 @@ HRESULT SV1394CameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollecti
 		SVStringValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
 		ASSERT( pParam );
 		pParam->strValue = sVal;
-		pParam->SetName(sKey);
+		pParam->SetName(SVString(sKey));
 
 		sVal = _T("");
 		dwLen = GetPrivateProfileString(sSection, sKey+_T("_Description"), _T(""), sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetDescription(sVal);
+		pParam->SetDescription(SVString(sVal));
 
 		sVal = _T("");
 		dwLen = GetPrivateProfileString(sSection, sKey+_T("_VisualName"), sKey, sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetVisualName(sVal);
+		pParam->SetVisualName(SVString(sVal));
 		
 		int iVal = GetPrivateProfileInt(sSection, sKey+_T("_Order"), iKEY_DOES_NOT_EXIST, sFilename);
 		if ( iVal != iKEY_DOES_NOT_EXIST )
@@ -209,7 +209,7 @@ HRESULT SV1394CameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollecti
 			dwLen = GetPrivateProfileString(sSection, sOptionKey, _T(""), sOptionDescription.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 			sOptionDescription.ReleaseBuffer(dwLen);
 			
-			SVStringValueDeviceParam::OptionType option( sVal, sOptionDescription );
+			SVStringValueDeviceParam::OptionType option = SVStringValueDeviceParam::OptionType( SVString(sVal), SVString(sOptionDescription) );
 			pParam->info.options.push_back(option);
 
 			sOptionKey.Format(_T("%s_Option_%d"), sKey, ++iOption);
@@ -234,17 +234,17 @@ HRESULT SV1394CameraFileReader::ReadCameraFileBoolParam( SVDeviceParamCollection
 		SVBoolValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
 		ASSERT( pParam );
 		pParam->bValue = iVal != 0;
-		pParam->SetName(sKey);
+		pParam->SetName(SVString(sKey));
 
 		CString sVal;
 		DWORD dwLen = GetPrivateProfileString(sSection, sKey+_T("_Description"), _T(""), sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetDescription(sVal);
+		pParam->SetDescription(SVString(sVal));
 		
 		sVal = _T("");
 		dwLen = GetPrivateProfileString(sSection, sKey+_T("_VisualName"), sKey, sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetVisualName(sVal);
+		pParam->SetVisualName(SVString(sVal));
 		
 		iVal = GetPrivateProfileInt(sSection, sKey+_T("_Order"), iKEY_DOES_NOT_EXIST, sFilename);
 		if ( iVal != iKEY_DOES_NOT_EXIST )
@@ -266,7 +266,7 @@ HRESULT SV1394CameraFileReader::ReadCameraFileBoolParam( SVDeviceParamCollection
 			DWORD dwLen = GetPrivateProfileString(sSection, sOptionKey, _T(""), sOptionDescription.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 			sOptionDescription.ReleaseBuffer(dwLen);
 			
-			SVBoolValueDeviceParam::OptionType option( iVal != 0, sOptionDescription );
+			SVBoolValueDeviceParam::OptionType option( iVal != 0, SVString(sOptionDescription) );
 			pParam->info.options.push_back(option);
 
 			sOptionKey.Format(_T("%s_Option_%d"), sKey, ++iOption);
@@ -291,17 +291,17 @@ HRESULT SV1394CameraFileReader::ReadCameraFileLongParam( SVDeviceParamCollection
 		SVLongValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
 		ASSERT( pParam );
 		pParam->lValue = iVal;
-		pParam->SetName(sKey);
+		pParam->SetName(SVString(sKey));
 		
 		CString sVal;
 		DWORD dwLen = GetPrivateProfileString(sSection, sKey+_T("_Description"), _T(""), sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetDescription(sVal);
+		pParam->SetDescription(SVString(sVal));
 
 		sVal = _T("");
 		dwLen = GetPrivateProfileString(sSection, sKey+_T("_VisualName"), sKey, sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetVisualName(sVal);
+		pParam->SetVisualName(SVString(sVal));
 		
 		iVal = GetPrivateProfileInt(sSection, sKey+_T("_Order"), iKEY_DOES_NOT_EXIST, sFilename);
 		if ( iVal != iKEY_DOES_NOT_EXIST )
@@ -345,7 +345,7 @@ HRESULT SV1394CameraFileReader::ReadCameraFileLongParam( SVDeviceParamCollection
 			DWORD dwLen = GetPrivateProfileString(sSection, sOptionKey, _T(""), sOptionDescription.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 			sOptionDescription.ReleaseBuffer(dwLen);
 			
-			SVLongValueDeviceParam::OptionType option( iVal, sOptionDescription );
+			SVLongValueDeviceParam::OptionType option( iVal, SVString(sOptionDescription) );
 			pParam->info.options.push_back(option);
 
 			sOptionKey.Format(_T("%s_Option_%d"), sKey, ++iOption);
@@ -405,17 +405,17 @@ HRESULT SV1394CameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 		SVCameraFormatsDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
 		ASSERT( pParam );
 		pParam->strValue = sVal;
-		pParam->SetName(sKey);
+		pParam->SetName(SVString(sKey));
 
 		sVal = _T("");
 		dwLen = GetPrivateProfileString(sSection, sKey+_T("_Description"), _T(""), sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetDescription(sVal);
+		pParam->SetDescription(SVString(sVal));
 		
 		sVal = _T("");
 		dwLen = GetPrivateProfileString(sSection, sKey+_T("_VisualName"), sKey, sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetVisualName(sVal);
+		pParam->SetVisualName(SVString(sVal));
 		
 		int iVal = GetPrivateProfileInt(sSection, sKey+_T("_Order"), iKEY_DOES_NOT_EXIST, sFilename);
 		if ( iVal != iKEY_DOES_NOT_EXIST )
@@ -478,7 +478,7 @@ HRESULT SV1394CameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 				cf.bOptimizedTransferRate_Y = iVal != 0;
 
 			cf.lOrder = iOption;
-			pParam->options[sOption] = cf;
+			pParam->options[SVString(sOption)] = cf;
 
 			sOptionKey.Format(_T("%s_Option_%d"), sKey, ++iOption);
 		}// end while options
@@ -532,17 +532,17 @@ HRESULT SV1394CameraFileReader::ReadCameraFileLutParam( SVDeviceParamCollection&
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 		SVLutDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
 		ASSERT( pParam );
-		pParam->SetName(sKey);
+		pParam->SetName(SVString(sKey));
 
 		sVal = _T("");
 		dwLen = GetPrivateProfileString(sSection, sKey+_T("_Description"), _T(""), sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetDescription(sVal);
+		pParam->SetDescription(SVString(sVal));
 		
 		sVal = _T("");
 		dwLen = GetPrivateProfileString(sSection, sKey+_T("_VisualName"), sKey, sVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename);
 		sVal.ReleaseBuffer(dwLen);
-		pParam->SetVisualName(sVal);
+		pParam->SetVisualName(SVString(sVal));
 		
 		int iVal = GetPrivateProfileInt(sSection, sKey+_T("_Order"), iKEY_DOES_NOT_EXIST, sFilename);
 		if ( iVal != iKEY_DOES_NOT_EXIST )

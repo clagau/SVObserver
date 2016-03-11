@@ -403,8 +403,8 @@ HRESULT SVMatroxGige::CreateDigitizer(SVMatroxGigeSystem& system, long digitizer
 	HRESULT hr = S_OK;
 
 	SVMatroxGigeDigitizer l_camera(digitizerIndex, system.m_Handle);
-	l_camera.m_Name.Format(_T("Dig_%d"), digitizerIndex);
-	l_camera.m_FullName.Format(_T("%s.%s"), system.m_Name.ToString(), l_camera.m_Name.ToString());
+	l_camera.m_Name  = SvUl_SF::Format(_T("Dig_%d"), digitizerIndex);
+	l_camera.m_FullName = SvUl_SF::Format(_T("%s.%s"), system.m_Name.c_str(), l_camera.m_Name.c_str());
 	l_camera.m_Digitizer = new SVMatroxDigitizer;
 
 	hr = AllocDigitizer(system, digitizerIndex, l_camera);
@@ -556,7 +556,7 @@ HRESULT SVMatroxGige::CameraGetName( unsigned long p_Handle, BSTR &p_rbstrName )
 
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_Handle);
 
-		p_rbstrName = l_rCamera.m_FullName.ToBSTR();
+		p_rbstrName = _bstr_t(l_rCamera.m_FullName.c_str());
 	} 
 	return hr;
 }
@@ -706,7 +706,7 @@ HRESULT SVMatroxGige::CameraSetParameter( unsigned long p_Handle, int p_iParamet
 
 				case SVGigeParameterLineInput:
 				{
-					l_rCamera.SetLineInputMoniker(p_pvarValue->bstrVal);
+					l_rCamera.SetLineInputMoniker(SvUl_SF::createSVString(p_pvarValue->bstrVal));
 					/*
 					hr = SVMatroxGigeDeviceParameterManager::SetParameter(l_rCamera, p_iParameterID, p_iParameterTypeID, p_pvarValue);
 					// Keep track of parameters sent for reconnect logic
@@ -1754,9 +1754,8 @@ HRESULT SVMatroxGige::TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName
 		}
 
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_ulHandle);
-		SVString name;
-		name.Format("CameraTrigger.Dig_%d", l_rCamera.GetDeviceNumber());
-		p_rbstrName = name.ToBSTR();
+		SVString name = SvUl_SF::Format("CameraTrigger.Dig_%d", l_rCamera.GetDeviceNumber());
+		p_rbstrName = _bstr_t(name.c_str());
 		l_Result = S_OK;
 	}
 	return l_Result;

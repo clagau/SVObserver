@@ -53,11 +53,9 @@ void SVCommandDataHolder::clear()
 
 	while( l_Iter != m_Data.end() )
 	{
-		SVString l_Data;
+		SVString l_Data = SvUl_SF::Format( _T( "SVCommandDataHolder::clear() - Erase %s\n" ), l_Iter->first.c_str() );
 
-		l_Data.Format( _T( "SVCommandDataHolder::clear() - Erase %s\n" ), l_Iter->first.ToString() );
-
-		::OutputDebugString( l_Data.ToString() );
+		::OutputDebugString( l_Data.c_str() );
 
 		l_Iter = m_Data.erase( l_Iter );
 	}
@@ -90,7 +88,7 @@ unsigned long SVCommandDataHolder::GetDataType( const _bstr_t& p_rName ) const
 {
 	unsigned long l_Type = SV_COMMAND_DATA_TYPE_UNKNOWN;
 
-	SVNameDataMap::const_iterator l_Iter = m_Data.find( p_rName );
+	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl_SF::createSVString(p_rName) );
 
 	if( l_Iter != m_Data.end() )
 	{
@@ -109,7 +107,7 @@ HRESULT SVCommandDataHolder::GetData( const _bstr_t& p_rName, SVCommandDataFacad
 
 	p_rData.clear();
 
-	SVNameDataMap::const_iterator l_Iter = m_Data.find( p_rName );
+	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl_SF::createSVString(p_rName) );
 
 	if( l_Iter != m_Data.end() )
 	{
@@ -276,8 +274,9 @@ HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_r
 HRESULT SVCommandDataHolder::SetData( const _bstr_t& p_rName, SVCommandDataFacadePtr p_Data )
 {
 	HRESULT l_Status = S_OK;
+	SVString name = SvUl_SF::createSVString(p_rName);
 
-	SVNameDataMap::iterator l_Iter = m_Data.find( p_rName );
+	SVNameDataMap::iterator l_Iter = m_Data.find( name );
 
 	if( l_Iter != m_Data.end() )
 	{
@@ -285,7 +284,7 @@ HRESULT SVCommandDataHolder::SetData( const _bstr_t& p_rName, SVCommandDataFacad
 	}
 	else
 	{
-		m_Data[ p_rName ] = p_Data;
+		m_Data[ name ] = p_Data;
 	}
 
 	return l_Status;

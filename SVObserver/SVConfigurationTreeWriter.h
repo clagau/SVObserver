@@ -27,12 +27,12 @@ public:
 	SVConfigurationTreeWriter(SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent);
 	virtual ~SVConfigurationTreeWriter();
 
-	virtual void WriteAttribute(const SVString& rName, const _variant_t& value);
-	virtual void WriteAttribute(const SVString& rName, const SVVariantList& rValues);
+	virtual void WriteAttribute(LPCTSTR pName, const _variant_t& value) override;
+	virtual void WriteAttribute(LPCTSTR pName, const SVVariantList& rValues) override;
 
-	virtual void StartElement(const SVString& rName);
+	virtual void StartElement(LPCTSTR pName) override;
 	virtual void EndElement();
-	virtual void ElementAttribute(const SVString& rAttrName, const variant_t& value);
+	virtual void ElementAttribute(LPCTSTR pAttrName, const variant_t& value) override;
 };
 
 #include "SVConfigurationTreeWriter.inl"

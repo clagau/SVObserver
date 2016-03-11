@@ -59,7 +59,7 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 	long lVal = m_Tree.GetColumn();
 	m_Tree.SetColumn(200);
 
-	RemoteMonitorList::iterator it = m_MonitorList.find(m_MonitorListName);
+	RemoteMonitorList::iterator it = m_MonitorList.find(SVString(m_MonitorListName));
 	if ( it != m_MonitorList.end() )
 	{
 		m_DisplayName = it->second.GetName().c_str();
@@ -77,7 +77,7 @@ void MonitorListPropertyDlg::ValidateLabelText(CString& newText) const
 {
 	SVString newName( newText );
 
-	newName.RemoveCharacters( SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+	SvUl_SF::RemoveCharacters( newName, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 
 	if( 0 < newName.size() )
 	{
@@ -145,12 +145,12 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 
 void MonitorListPropertyDlg::OnOK() 
 {
-	RemoteMonitorList::iterator it = m_MonitorList.find(m_MonitorListName);
+	RemoteMonitorList::iterator it = m_MonitorList.find(SVString(m_MonitorListName));
 	if ( it != m_MonitorList.end() )
 	{
 		RemoteMonitorNamedList namedList = it->second;
 
-		namedList.SetName(m_DisplayName);
+		namedList.SetName(SVString(m_DisplayName));
 		namedList.SetRejectDepthQueue(m_MonitorListRejectQueueDepth);
 		m_MonitorList.erase(it);
 		m_MonitorList.insert(std::make_pair(m_DisplayName, namedList));

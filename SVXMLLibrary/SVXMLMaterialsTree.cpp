@@ -589,7 +589,7 @@ namespace Seidenader { namespace SVXMLLibrary
 			{
 				_variant_t Value;
 				Value = getLeafData( pLeaf );
-				rLeafValues.insert( SVString(Value) );
+				rLeafValues.insert( SvUl_SF::createSVString(Value) );
 			}
 
 			pLeaf = getNextLeaf( pParent, pLeaf);

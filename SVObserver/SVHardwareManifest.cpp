@@ -224,23 +224,17 @@ SVIMTypeInfoStruct SVHardwareManifest::GetSVIMTypeInfo( SVIMProductEnum p_ID )
 
 SVString SVHardwareManifest::BuildSoftwareTriggerDeviceName(int iDig)
 {
-	SVString sDigName;
-	sDigName.Format("%s%s%d", SVIM_SOFTWARE_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
-	return sDigName;
+	return SvUl_SF::Format("%s%s%d", SVIM_SOFTWARE_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
 }
 
 SVString SVHardwareManifest::BuildAcquisitionTriggerDeviceName(int iDig)
 {
-	SVString sDigName;
-	sDigName.Format("%s%s%d", SVIM_CAMERA_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
-	return sDigName;
+	return SvUl_SF::Format("%s%s%d", SVIM_CAMERA_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
 }
 
 SVString SVHardwareManifest::BuildIOBoardTriggerDeviceName(int iDig)
 {
-	SVString sDigName;
-	sDigName.Format("%s%s%d", SVIM_TRIGGER_SOURCE_IO_BOARD_STRING, SVIM_DIG_NAME_STRING, iDig);
-	return sDigName;
+	return SvUl_SF::Format("%s%s%d", SVIM_TRIGGER_SOURCE_IO_BOARD_STRING, SVIM_DIG_NAME_STRING, iDig);
 }
 
 bool SVHardwareManifest::IsCompatible( SVIMProductEnum ConfigType, SVIMProductEnum ProductType )

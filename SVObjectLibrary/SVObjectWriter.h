@@ -21,12 +21,12 @@ public:
 	SVObjectWriter() {}
 	virtual ~SVObjectWriter() {}
 
-	virtual void WriteAttribute(const SVString& rName, const _variant_t& value)=0;
-	virtual void WriteAttribute(const SVString& rName, const SVVariantList& rValues)=0;
+	virtual void WriteAttribute(LPCTSTR rName, const _variant_t& value)=0;
+	virtual void WriteAttribute(LPCTSTR rName, const SVVariantList& rValues)=0;
 
-	virtual void StartElement(const SVString& rName)=0;
+	virtual void StartElement(LPCTSTR rName)=0;
 	virtual void EndElement()=0;
-	virtual void ElementAttribute(const SVString& rAttrName, const _variant_t& value)=0;
+	virtual void ElementAttribute(LPCTSTR rAttrName, const _variant_t& value)=0;
 };
 
 #endif

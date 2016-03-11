@@ -771,7 +771,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 	}
 	else // showOverlays is ignored for underlying images: there was no easy way to mark underlying images with overlays
 	{
-		pCurrentImage->Save(Filepath);
+		pCurrentImage->Save(SVString(Filepath));
 	}
 
 }

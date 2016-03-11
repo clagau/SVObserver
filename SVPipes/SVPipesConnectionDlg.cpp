@@ -41,8 +41,8 @@ SVPipesConnectionDlg::SVPipesConnectionDlg(CString &szConnection, CWnd* pParent 
   reg.GetRegistryValue (mszServerKey, l_Server);
   reg.GetRegistryValue (mszPipeKey, l_Pipe);
 
-	mszServer = l_Server.ToString();
-	mszPipe = l_Pipe.ToString();
+	mszServer = l_Server.c_str();
+	mszPipe = l_Pipe.c_str();
 }
 
 void SVPipesConnectionDlg::DoDataExchange(CDataExchange* pDX)
@@ -85,7 +85,7 @@ void SVPipesConnectionDlg::OnOK()
 		Exception.setMessage( SVMSG_PIPES_REQUIRED_DATA_MISSING, nullptr, StdMessageParams );
 		SVString szMsg;
 		Exception.getMessageContainer().Format( szMsg );
-		MessageBox (szMsg.ToString());
+		MessageBox (szMsg.c_str());
 	}
 }
 

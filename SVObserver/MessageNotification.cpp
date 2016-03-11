@@ -47,7 +47,7 @@ void MessageNotification::ProcessNotification()
 
 		ElementObject[SVN::MessageType] = m_MessageType;
 		ElementObject[SVN::MessageNumber] = m_MessageNumber;
-		ElementObject[SVN::MessageText] = m_MessageText.ToDataType();
+		ElementObject[SVN::MessageText] = m_MessageText;
 
 		Object[SVN::notification ] = SVN::MessageNotification;
 		Object[SVN::dataitems] = ElementObject;
@@ -66,8 +66,8 @@ void MessageNotification::SetNotification(SvStl::NotificationEnum type, int Erro
 		Concurrency::critical_section::scoped_lock   scopedLock( m_Protect);
 		m_MessageType = type;
 		m_MessageNumber = ErrorNumber;
-		m_MessageText = errormessage;
-		m_MessageText.replace("\r\n","\n");
+		m_MessageText = (nullptr != errormessage) ? errormessage : SVString();
+		SvUl_SF::searchAndReplace(m_MessageText, "\r\n","\n");
 		m_IsProcessed = false; 
 
 }

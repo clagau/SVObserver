@@ -154,7 +154,7 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 	else if (list.size())
 	{
 		SVTriggerNameIdList::const_iterator it = list.begin();
-		triggerName = it->first.ToString();
+		triggerName = it->first.c_str();
 		iDig = it->second;
 	}
 	if (!triggerName.IsEmpty())

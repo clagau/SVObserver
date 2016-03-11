@@ -42,7 +42,7 @@ namespace Seidenader
 				size_t len = excludedPath.size();
 				if (len > 0)
 				{
-					bSame = (0 == name.Left(len).Compare(excludedPath));
+					bSame = (0 == name.substr(0,len).compare(excludedPath));
 				}
 				return bSame;
 			}

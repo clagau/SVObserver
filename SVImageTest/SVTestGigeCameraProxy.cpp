@@ -153,7 +153,7 @@ HRESULT SVTestGigeCameraProxy::SetGigeFeatureOverrides(const SVString& xmlData, 
 
 	if (pDigitizer != NULL && hDigitizer != NULL)
 	{
-		_variant_t l_oValue = xmlData.ToBSTR(); // does this convert from ansi to wide ?
+		_variant_t l_oValue = xmlData.c_str(); // does this convert from ansi to wide ?
 		hr = pDigitizer->ParameterSetValue(hDigitizer, SVGigeParameterFeatureOverrides, 0, &l_oValue);
 	}
 	return hr;
@@ -1019,7 +1019,7 @@ HRESULT SVTestGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollect
 
 		if( pDigitizer != NULL && pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) == S_OK )
 		{
-			SVString l_csVenderName(l_oValue.bstrVal);
+			SVString l_csVenderName  = SvUl_SF::createSVString(l_oValue.bstrVal);
 
 			if( l_csVenderName == StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) )
 			{
@@ -1028,7 +1028,7 @@ HRESULT SVTestGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollect
 				{
 					CString sHardwareModel( l_oValue.bstrVal );
 
-					CString sModel = StringValue(rDeviceParams.Parameter( DeviceParamModelName )).ToString();
+					CString sModel = StringValue(rDeviceParams.Parameter( DeviceParamModelName )).c_str();
 
 					if ( sHardwareModel != _T("") && sModel != _T("") && sHardwareModel.CompareNoCase(sModel) != 0 )
 					{
@@ -1057,7 +1057,7 @@ bool SVTestGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollectio
 		// Check Vendor Name
 		if( pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) == S_OK )
 		{
-			SVString l_csVenderName(l_oValue.bstrVal);
+			SVString l_csVenderName = SvUl_SF::createSVString(l_oValue.bstrVal);
 
 			const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamVendorName );
 			l_bOk = l_csVenderName == StringValue( param );
@@ -1068,7 +1068,7 @@ bool SVTestGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollectio
 			// Check Model Name
 			if( pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) == S_OK )
 			{
-				SVString l_csModelName(l_oValue.bstrVal);
+				SVString l_csModelName = SvUl_SF::createSVString(l_oValue.bstrVal);
 
 				const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamModelName );
 				l_bOk = l_csModelName == StringValue( param );
@@ -1088,13 +1088,13 @@ HRESULT SVTestGigeCameraProxy::GoOnline(unsigned long hDigitizer, SVDigitizerLoa
 	// trigger first, then strobe
 	SVDeviceParamWrapper& triggerEnable = GetCameraDeviceParamNonConst( DeviceParamGigeTriggerEnable );
 	SVStringValueDeviceParam* pTriggerParam = triggerEnable.DerivedValue( pTriggerParam );
-	pTriggerParam->strValue = value.ToString();
+	pTriggerParam->strValue = value.c_str();
 	
 	SetDigitizerParameter(triggerEnable, hDigitizer, pDigitizer );
 
 	SVDeviceParamWrapper& strobeEnable = GetCameraDeviceParamNonConst( DeviceParamGigeStrobeEnable );
 	SVStringValueDeviceParam* pStrobeParam = strobeEnable.DerivedValue( pStrobeParam );
-	pStrobeParam->strValue = value.ToString();
+	pStrobeParam->strValue = value.c_str();
 	SetDigitizerParameter( strobeEnable, hDigitizer, pDigitizer );
 
 	return hr;
@@ -1110,12 +1110,12 @@ HRESULT SVTestGigeCameraProxy::GoOffline(unsigned long hDigitizer, SVDigitizerLo
 	// strobe first, then trigger
 	SVDeviceParamWrapper& strobeEnable = GetCameraDeviceParamNonConst( DeviceParamGigeStrobeEnable );
 	SVStringValueDeviceParam* pStrobeParam = strobeEnable.DerivedValue( pStrobeParam );
-	pStrobeParam->strValue = value.ToString();
+	pStrobeParam->strValue = value.c_str();
 	SetDigitizerParameter( strobeEnable, hDigitizer, pDigitizer );
 
 	SVDeviceParamWrapper& triggerEnable = GetCameraDeviceParamNonConst( DeviceParamGigeTriggerEnable );
 	SVStringValueDeviceParam* pTriggerParam = triggerEnable.DerivedValue( pTriggerParam );
-	pTriggerParam->strValue = value.ToString();
+	pTriggerParam->strValue = value.c_str();
 	SetDigitizerParameter(triggerEnable, hDigitizer, pDigitizer );
 	
 	return hr;

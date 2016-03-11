@@ -43,7 +43,7 @@ HRESULT SVFile::Open( const char* p_szFileName, UINT p_OpenFlags )
 
 	if( l_Status == S_OK )
 	{
-		m_pFile = ::_fsopen( p_szFileName, l_Mode.ToString(), l_Share );
+		m_pFile = ::_fsopen( p_szFileName, l_Mode.c_str(), l_Share );
 
 		if( m_pFile == NULL )
 		{

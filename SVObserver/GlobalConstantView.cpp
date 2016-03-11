@@ -128,7 +128,7 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		while( GlobalObjects.end() != Iter && !Iter->empty() )
 		{
 			SVString Name( (*Iter)->GetCompleteObjectName() );
-			Name.MakeUpper();
+			SvUl_SF::MakeUpper(Name);
 			m_DataList.push_back( std::make_pair( Name,  *Iter ) );
 			++Iter;
 		}
@@ -284,13 +284,13 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	case VT_R8:
 		{
 			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::DecimalType];
-			ValueText.Format( _T("%.06f"), Value.dblVal );
+			ValueText = SvUl_SF::Format( _T("%.06f"), Value.dblVal );
 		}
 		break;
 	case VT_BSTR:
 		{
 			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::TextType];
-			ValueText = Value;
+			ValueText = SvUl_SF::createSVString(Value);
 		}
 		break;
 	default:
@@ -306,7 +306,7 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 
 	//Replace any new line with a space to display it in one line
 	SVString Description( rpObject->getDescription() );
-	Description.replace( _T("\r\n"), _T(" ") );
+	SvUl_SF::searchAndReplace( Description, _T("\r\n"), _T(" ") );
 	m_rCtrl.SetItemText( InsertPos, DescriptionCol, Description.c_str() );
 
 	return InsertPos;

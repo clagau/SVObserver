@@ -68,23 +68,23 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 				#ifdef DEBUG
 					else
 					{
-						l_Message.Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-						::OutputDebugString( l_Message.ToString() );
+						l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+						::OutputDebugString( l_Message.c_str() );
 					}
 				#endif
 			}
 			#ifdef DEBUG
 				else
 				{
-					l_Message.Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-					::OutputDebugString( l_Message.ToString() );
+					l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+					::OutputDebugString( l_Message.c_str() );
 				}
 			#endif
 		}
 
 		#ifdef DEBUG
-			l_Message.Format( _T( "SVThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-			::OutputDebugString( l_Message.ToString() );
+			l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+			::OutputDebugString( l_Message.c_str() );
 		#endif
 
 		::SetEvent( pThread->m_hThreadComplete );

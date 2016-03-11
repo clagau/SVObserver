@@ -872,7 +872,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 				l_pEnumVO->GetEnumTypes( l_EnumVect );
 				for( l_EnumIter = l_EnumVect.begin(); l_EnumIter != l_EnumVect.end(); l_EnumIter++)
 				{
-					p_rDataDef.m_AdditionalInfo.push_back(l_EnumIter->first);
+					p_rDataDef.m_AdditionalInfo.push_back(SVString(l_EnumIter->first));
 				}
 			}
 		}
@@ -887,7 +887,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 				l_pBoolVO->GetValidTypes(l_StringVect);
 				for( l_StringIter = l_StringVect.begin(); l_StringIter != l_StringVect.end(); l_StringIter++)
 				{
-					p_rDataDef.m_AdditionalInfo.push_back(*l_StringIter);
+					p_rDataDef.m_AdditionalInfo.push_back(SVString(*l_StringIter));
 				}
 			}
 		}
@@ -909,7 +909,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 							HRESULT l_hr = l_pSourceNames->GetValue( l_pSourceNames->GetLastSetIndex(), l_lIndex, l_String );
 							// Prepend the "Inspections." prefix for use with SVRC.
 							l_String = _T( "Inspections." ) + l_String;
-							p_rDataDef.m_AdditionalInfo.push_back(l_String);
+							p_rDataDef.m_AdditionalInfo.push_back(SVString(l_String));
 						}
 					}
 				}

@@ -29,7 +29,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameterName(const SVMatroxGigeD
 	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SVGigeParameterEnum>(p_iParameterID));
 	if (it != gigeParameters.end())
 	{
-		*p_pBstrName = it->second.name.ToBSTR().Detach();
+		*p_pBstrName = _bstr_t(it->second.name.c_str()).Detach();
 		l_hr = S_OK;
 	}
 	else // could be custom - look in overrides
@@ -37,7 +37,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameterName(const SVMatroxGigeD
 		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SVGigeParameterEnum>(p_iParameterID));
 		if (!gigeParam.name.empty())
 		{
-			*p_pBstrName = gigeParam.name.ToBSTR().Detach();
+			*p_pBstrName = _bstr_t(gigeParam.name.c_str()).Detach();
 			l_hr = S_OK;
 		}
 	}

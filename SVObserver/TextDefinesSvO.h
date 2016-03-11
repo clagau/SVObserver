@@ -140,6 +140,8 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const DisplayedImageIsUnavailable  = _T("Displayed image is unavailable");
 	const TCHAR* const AvailableArchiveImageMemory  = _T( "Available Archive Image Memory:  %8.1f MB" );
 
+	const TCHAR* const ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");
+	const TCHAR* const ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffline");
 
 	const TCHAR* const   Error_you_have_Selected_X_Must_less_then_Y =  _T("Error: You have selected %ld for the Max Images count. The image count must be less then %ld"); 
 	const TCHAR* const   Error_WrongCameraModel =  _T("Wrong camera model: Expected %s, Current %s"); 

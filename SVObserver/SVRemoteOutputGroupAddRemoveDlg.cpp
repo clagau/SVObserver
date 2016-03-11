@@ -341,7 +341,7 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 
 		//Remove any excluded characters from the name
 		SVString checkName( newName );
-		checkName.RemoveCharacters( SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+		SvUl_SF::RemoveCharacters( checkName, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 		newName = checkName.c_str();
 
 		//don't all blank strings

@@ -343,7 +343,7 @@ HRESULT SVValueObjectClass::SetValue( const _variant_t& rValue )
 	HRESULT hr = S_OK;
 	if (!IsArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
 	{
-		hr = SetValue(m_iLastSetIndex, 0, SVString(rValue).ToString()); 
+		hr = SetValue(m_iLastSetIndex, 0, SvUl_SF::createSVString(rValue).c_str()); 
 	}
 	else
 	{
@@ -367,7 +367,7 @@ HRESULT SVValueObjectClass::SetValue( const _variant_t& rValue )
 					hr = tempHr;
 				}
 
-				tempHr = SetValue(m_iLastSetIndex, i, SVString(tmpVar).ToString()); 
+				tempHr = SetValue(m_iLastSetIndex, i, SvUl_SF::createSVString(tmpVar).c_str()); 
 				if (S_OK == hr)
 				{
 					hr = tempHr;

@@ -33,7 +33,7 @@ SVOTriggerObj::~SVOTriggerObj()
 
 LPCTSTR SVOTriggerObj::GetTriggerDisplayName() const
 {
-	return m_sTriggerDisplayName.ToString();
+	return m_sTriggerDisplayName.c_str();
 }
 
 int SVOTriggerObj::GetTriggerDigNumber() const

@@ -147,7 +147,7 @@ bool RootObject::createConfigurationObject()
 	getRootChildObjectList( ObjectList, Path, AttributesAllowedFilter );
 	for( BasicValueObjects::ValueVector::const_iterator Iter = ObjectList.cbegin(); Iter != ObjectList.cend(); ++Iter )
 	{
-		rObjectNameList.push_back( (*Iter)->GetCompleteObjectName() );
+		rObjectNameList.push_back( SVString((*Iter)->GetCompleteObjectName()) );
 	}
 }
 

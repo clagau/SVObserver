@@ -207,7 +207,7 @@ namespace Seidenader
 
 		if( !currentImageName.IsEmpty() )
 		{
-			ConnectToImage(SvOi::WatershedMarkerImageConnectionName, currentImageName, m_filterID);
+			ConnectToImage(SvOi::WatershedMarkerImageConnectionName, SVString(currentImageName), m_filterID);
 		}
 	}
 	}  //end namespace SVOGUI

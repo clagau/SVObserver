@@ -116,13 +116,13 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 					// the IDs are no longer valid... use the text instead
 					CString sTabText;
 					CString sDigName; sDigName.Format(_T("Dig.%d"), pDevice->DigNumber());
-					sTabText = pCamera->GetName() + CString(_T(" ")) + sDigName + CString(_T(" ")) + pLRBand->Attribute( iAttribute ).strName.ToString();
+					sTabText = pCamera->GetName() + CString(_T(" ")) + sDigName + CString(_T(" ")) + pLRBand->Attribute( iAttribute ).strName.c_str();
 					SVLightReferenceDialogPropertyPageClass* pPage = new SVLightReferenceDialogPropertyPageClass( sTabText );
 					pPage->mpCamera = pCamera;
 					pPage->mpDevice = pDevice;
 					pPage->mpLR = pLR;
 					pPage->miAttributeType = pLRBand->Attribute(iAttribute).dwType;
-					pPage->msAttributeName = pLRBand->Attribute(iAttribute).strName.ToString();
+					pPage->msAttributeName = pLRBand->Attribute(iAttribute).strName.c_str();
 					pPage->miCurrentBand = iBand;
 					AddPage(pPage);
 					miNumPages++;
@@ -287,7 +287,7 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 			BOOL bEnable =  miNumBands > 1 && (miBandSize > 1 || miCamBand == i);  // if there is only one band, don't enable any of the radio buttons
 			if ( i < mpLR->NumBands() )
 			{
-				if ( mpLR->Band(i).AttributeByName(CurrentName()) == NULL )
+				if ( mpLR->Band(i).AttributeByName(SVString(CurrentName())) == NULL )
 					bEnable = FALSE;
 			}
 			pWnd->EnableWindow(bEnable);
@@ -297,7 +297,7 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 	if( pWnd = GetDlgItem( IDC_CHANNEL3 ) )
 	{
 		BOOL bEnable = miNumBands > 1 && (miBandSize > 3 || miCamBand == 3);
-		if ( mpLR->Band(miCamBand).AttributeByName(CurrentName()) == NULL )
+		if ( mpLR->Band(miCamBand).AttributeByName(SVString(CurrentName())) == NULL )
 			bEnable = FALSE;
 		pWnd->EnableWindow(bEnable);
 	}
@@ -425,7 +425,7 @@ DWORD SVLightReferenceDialogPropertyPageClass::CurrentValue()
 		return pAttribute->lValue;
 	else
 	{
-		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( CurrentName() ); 
+		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( SVString(CurrentName()) ); 
 		if ( pAttribute )
 			return pAttribute->lValue;
 		else
@@ -443,7 +443,7 @@ void SVLightReferenceDialogPropertyPageClass::SetCurrentValue(DWORD dw)
 		pAttribute->lValue = (long) dw;
 	else
 	{
-		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( CurrentName() );
+		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( SVString(CurrentName()) );
 		if ( pAttribute )
 			pAttribute->lValue = (long) dw;
 		else

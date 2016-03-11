@@ -26,9 +26,6 @@
 
 #pragma endregion Includes
 
-extern const CString ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME;
-extern const CString ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME;
-
 class SVImageListClass;
 class SVArchiveRecord;
 

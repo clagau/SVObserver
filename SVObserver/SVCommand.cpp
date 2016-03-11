@@ -1966,7 +1966,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		{
 			BSTR bstrName = NULL;
 			SafeArrayGetElementNoCopy( psaNames, &i, &bstrName );
-			SVString l_Name = bstrName;
+			SVString l_Name = SvUl_SF::createSVString(bstrName);
 
 			if( nullptr != pConfig && pConfig->GetInspectionObject(l_Name.c_str(), &pInspection) && nullptr != pInspection )
 			{
@@ -4457,7 +4457,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 				Values.Add(_variant_t( bstrValue ));
 				Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
 				Parameter.m_Variant = Values;
-				ParameterObjects[Name] = Parameter;
+				ParameterObjects[SVString(Name)] = Parameter;
 			}
 			else
 			{

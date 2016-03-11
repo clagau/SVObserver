@@ -78,7 +78,7 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 					l_Index[ 0 ] = i;
 					l_Index[ 1 ] = 0;
 
-					_variant_t l_Data = l_Iter->first.ToVARIANT();
+					_variant_t l_Data = _variant_t(l_Iter->first.c_str());
 					HRESULT l_State = l_Temp.PutElement( l_Index, l_Data );
 					l_Data.Clear();
 

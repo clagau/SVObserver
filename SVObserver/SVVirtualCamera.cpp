@@ -591,7 +591,7 @@ void SVVirtualCamera::SetFileAcquisitionMode(bool bFileAcquisition)
 
 LPCTSTR SVVirtualCamera::GetImageFilename() const
 {
-	return m_imageFilename.ToString();
+	return m_imageFilename.c_str();
 }
 
 void SVVirtualCamera::SetImageFilename(const SVString& filename)
@@ -601,7 +601,7 @@ void SVVirtualCamera::SetImageFilename(const SVString& filename)
 
 LPCTSTR SVVirtualCamera::GetImageDirectoryName() const
 {
-	return m_imageDirectoryName.ToString();
+	return m_imageDirectoryName.c_str();
 }
 
 void SVVirtualCamera::SetImageDirectoryName(const SVString& directoryName)

@@ -2915,11 +2915,9 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 
 			if( l_Status == S_OK )
 			{
-				SVString l_Name;
+				SVString l_Name = SvUl_SF::Format( _T( "Character %d" ), i );
 
-				l_Name.Format( _T( "Character %d" ), i );
-
-				l_Status = l_Characters.SetContainer( l_Name.ToBSTR(), l_Character, true );
+				l_Status = l_Characters.SetContainer( _bstr_t(l_Name.c_str()), l_Character, true );
 			}
 		}
 		else
@@ -2960,12 +2958,10 @@ HRESULT SVMatroxOcrInterface::UpdateFontIdFromCharacterList( const SVCommandData
 
 		for( size_t i = 0; l_Status == S_OK && i < static_cast< size_t >( l_NumberOfCharacters ); ++i )
 		{
-			SVString l_Name;
 			SVCommandDataHolder l_Character;
+			SVString l_Name = SvUl_SF::Format( _T( "Character %d" ), i );
 
-			l_Name.Format( _T( "Character %d" ), i );
-
-			l_Status = l_Characters.GetContainer( l_Name.ToBSTR(), l_Character );
+			l_Status = l_Characters.GetContainer( _bstr_t(l_Name.c_str()), l_Character );
 
 			if( l_Status == S_OK )
 			{

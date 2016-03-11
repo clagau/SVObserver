@@ -204,7 +204,7 @@ HRESULT RingBufferTool::setRingDepth(SVString value)
 {
 	HRESULT retValue = S_OK;
 	long depth = 0;
-	bool isNumber = value.Convert2Number(depth, true);
+	bool isNumber = SvUl_SF::Convert2Number(value, depth, true);
 	
 	if (isNumber && m_minRingBufferDepth <= depth && m_maxRingBufferDepth >= depth)
 	{
@@ -228,7 +228,7 @@ SVString RingBufferTool::getRingBufferDepthString() const
 	HRESULT hValue = m_BufferDepth.GetValue(depth);
 	if (S_OK == hValue)
 	{
-		retValue.Format("%d", depth);
+		retValue = SvUl_SF::Format("%d", depth);
 	}
 
 	return retValue;

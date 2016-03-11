@@ -155,7 +155,7 @@ void SVToolAdjustmentDialogMaskPageClass::SetupMaskOperatorComboBox()
 	const SvOi::NameValueList& maskOperators = m_Values.GetEnumTypes(OperatorTag);
 	for (SvOi::NameValueList::const_iterator it = maskOperators.begin(); it != maskOperators.end();++it)
 	{
-		m_cbMaskOperator.SetItemData(m_cbMaskOperator.AddString(it->first.ToString()), it->second);
+		m_cbMaskOperator.SetItemData(m_cbMaskOperator.AddString(it->first.c_str()), it->second);
 	}
 	RefreshComboBox(maskOperator, m_cbMaskOperator);
 }
@@ -168,7 +168,7 @@ void SVToolAdjustmentDialogMaskPageClass::SetupFillAreaComboBox()
 	const SvOi::NameValueList& fillArea = m_Values.GetEnumTypes(FillAreaTag);
 	for (SvOi::NameValueList::const_iterator it = fillArea.begin(); it != fillArea.end();++it)
 	{
-		m_cbFillOptions.SetItemData(m_cbFillOptions.AddString(it->first.ToString()), it->second);
+		m_cbFillOptions.SetItemData(m_cbFillOptions.AddString(it->first.c_str()), it->second);
 	}
 	RefreshComboBox(fillAreaValue, m_cbFillOptions);
 }
@@ -182,7 +182,7 @@ void SVToolAdjustmentDialogMaskPageClass::SetupDrawCriteriaCombo()
 	// Set Combos Current Value
 	for (SvOi::NameValueList::const_iterator it = drawCriteria.begin(); it != drawCriteria.end();++it)
 	{
-		m_DrawCriteriaCombo.SetItemData(m_DrawCriteriaCombo.AddString(it->first.ToString()), it->second);
+		m_DrawCriteriaCombo.SetItemData(m_DrawCriteriaCombo.AddString(it->first.c_str()), it->second);
 	}
 	RefreshComboBox(drawCriteriaValue, m_DrawCriteriaCombo);
 }
@@ -419,7 +419,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 		}
 		CString strPathName = m_svfnFileName.GetFullFileName();
 
-		HRESULT hr = m_maskController.ExportMask(strPathName);
+		HRESULT hr = m_maskController.ExportMask(SVString(strPathName));
 		if (!SUCCEEDED(hr))
 		{
 			AfxMessageBox("Cannot open file!");

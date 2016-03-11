@@ -124,12 +124,12 @@ SVMatroxStatusInformation::SVStatusString SVMatroxStatusInformation::GetComplete
 	SVString l_Code;
 
 	l_Temp += _T( "Status Code=" );
-	l_Code.Format( _T( "%ld" ), m_StatusCode & ~( SVMEE_MATROX_ERROR ) );
-	l_Temp += l_Code.ToString();
+	l_Code = SvUl_SF::Format( _T( "%ld" ), m_StatusCode & ~( SVMEE_MATROX_ERROR ) );
+	l_Temp += l_Code.c_str();
 
 	l_Temp += _T( "-Function Code=" );
-	l_Code.Format( _T( "%ld" ), m_FunctionCode );
-	l_Temp += l_Code.ToString();
+	l_Code = SvUl_SF::Format( _T( "%ld" ), m_FunctionCode );
+	l_Temp += l_Code.c_str();
 
 	l_Temp += _T( "-Status String=" );
 	l_Temp += m_StatusString;

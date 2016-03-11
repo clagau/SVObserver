@@ -1284,7 +1284,7 @@ void SVObserverApp::OnStop()
 		return;
 	}
 
-	if ( TheSVMemoryManager().ReservedBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME ) > 0 )
+	if ( TheSVMemoryManager().ReservedBytes( SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME ) > 0 )
 	{
 		pArchiveWriteDlg = new SVArchiveWritingDlg;
 		pArchiveWriteDlg->Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
@@ -3313,15 +3313,15 @@ BOOL SVObserverApp::InitInstance()
 	{
 		iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault16GB );
 		iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault16GB);
-		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
-		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
 	}
 	else
 	{
 		iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault4GB );
 		iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault4GB );
-		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
-		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
 	}
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 #ifdef _DEBUG
@@ -3578,9 +3578,8 @@ int SVObserverApp::Run()
 		//This is the topmost catch for MessageContainer exceptions
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		//Set the error code to unhandled exception but use the rest of the data from the original exception
-		SVString OrgMessageCode;
 		SvStl::MessageData Msg( rExp.getMessage() );
-		OrgMessageCode.Format( _T("0x%08X"), Msg.m_MessageCode );
+		SVString OrgMessageCode = SvUl_SF::Format( _T("0x%08X"), Msg.m_MessageCode );
 		Msg.m_AdditionalText = OrgMessageCode;
 		Msg.m_MessageCode = SVMSG_SVO_72_UNHANDLED_EXCEPTION;
 		Result = Msg.m_MessageCode;

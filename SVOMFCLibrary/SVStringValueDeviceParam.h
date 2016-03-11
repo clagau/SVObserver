@@ -50,7 +50,7 @@ public:
 #else
 	inline SVString& StringValue(SVDeviceParamWrapper& w) {SVStringValueDeviceParam* p = w.DerivedValue(p); if (p==NULL) {w = SVStringValueDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->strValue;}
 	inline const SVString& StringValue(const SVDeviceParamWrapper& w) {const SVStringValueDeviceParam* p = w.DerivedValue(p); if (p) return p->strValue; else {ASSERT(FALSE); static SVString s(""); return s;} }
-	inline SVDeviceParamWrapper DeviceParam(const SVString& s) {return SVStringValueDeviceParam(s.ToString());}
+	inline SVDeviceParamWrapper DeviceParam(const SVString& s) {return SVStringValueDeviceParam(s.c_str());}
 	inline SVDeviceParamWrapper DeviceParam(const CString& s) {return SVStringValueDeviceParam(s);}
 #endif
 

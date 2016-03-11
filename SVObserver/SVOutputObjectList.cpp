@@ -890,7 +890,7 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 
 			SVString l_String = pOutput->GetName();
 
-			if( p_ACK || l_String.Left( 3 ).Compare( _T( "PPQ" ) ) == 0 )
+			if( p_ACK || l_String.substr( 0, 3 ).compare( _T( "PPQ" ) ) == 0 )
 			{
 				pIOEntry.m_IOEntryPtr->m_pValueObject->GetValue( lDataIndex, dValue );
 

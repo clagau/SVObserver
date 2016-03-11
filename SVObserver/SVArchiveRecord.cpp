@@ -17,6 +17,7 @@
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVImageObjectClass.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -51,12 +52,12 @@ SVArchiveRecord::SVArchiveRecord()
 
 SVArchiveRecord::~SVArchiveRecord()
 {
-	CString sPoolName;
+	LPCTSTR sPoolName;
 	if ( m_eArchiveMethod != SVArchiveSynchronous && m_eArchiveMethod != SVArchiveInvalidMethod )
 	{
 		sPoolName = m_eArchiveMethod == SVArchiveGoOffline
-				  ? ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME
-				  : ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME;
+				  ? SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME
+				  : SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME;
 		HRESULT hrAllocate = TheSVMemoryManager().ReleasePoolMemory(sPoolName, this);
 	}
 
@@ -328,10 +329,10 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 		__int64 l_lImageBufferSize = m_lImageSize * lBufferSize;
 		
 		// reserve memory
-		HRESULT hrAllocate = TheSVMemoryManager().ReleasePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
+		HRESULT hrAllocate = TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
 		if ( m_eArchiveMethod == SVArchiveGoOffline )
 		{
-			hrAllocate = TheSVMemoryManager().ReservePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this, l_lImageBufferSize );
+			hrAllocate = TheSVMemoryManager().ReservePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this, l_lImageBufferSize );
 			hr = hrAllocate;
 		}
 		else

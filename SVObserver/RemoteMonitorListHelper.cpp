@@ -50,9 +50,9 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 	SVString sObjectName;
 	size_t iLength = name.size();
 	//Check to see if first part of name is Inspections. if so remove it.
-	if ( iLength >= 12 && name.Left(12) == "Inspections." )
+	if ( iLength >= 12 && name.substr(0, 12) == "Inspections." )
 	{
-		sObjectName = name.Right(iLength - 12);
+		sObjectName = SvUl_SF::Right(name, iLength - 12);
 	}
 	else
 	{

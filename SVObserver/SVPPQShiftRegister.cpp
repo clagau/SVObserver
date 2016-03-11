@@ -375,11 +375,11 @@ HRESULT SVPPQShiftRegister::GetProductStates( SVString& p_rProductStates ) const
 
 			if( m_Products[ i ] != NULL )
 			{
-				l_TempString.Format( _T( "%d:%s\n" ), i, m_Products[ i ]->m_ProductState.ToString() );
+				l_TempString = SvUl_SF::Format( _T( "%d:%s\n" ), i, m_Products[ i ]->m_ProductState.c_str() );
 			}
 			else
 			{
-				l_TempString.Format( _T( "%d:NULL\n" ), i );
+				l_TempString = SvUl_SF::Format( _T( "%d:NULL\n" ), i );
 			}
 
 			p_rProductStates += l_TempString;

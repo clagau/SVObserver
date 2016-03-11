@@ -622,7 +622,7 @@ SVString SVRemoteOutputGroup::GetPPQName() const
 
 HRESULT SVRemoteOutputGroup::SetPPQName( const SVString& p_rPPQ )
 {
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectCompleteName( p_rPPQ.ToString() );
+	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectCompleteName( p_rPPQ.c_str() );
 
 	if( nullptr != l_pObject )
 	{

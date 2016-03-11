@@ -90,9 +90,9 @@ BOOL CALLBACK FindUtilityById (CString &szKeyName, LPVOID pVoid)
 
       pUtilInfo->bPromptForArguments = (BOOL) dwPromptForArguments;
       pUtilInfo->bUtilityFound = TRUE;
-      pUtilInfo->szCommand = l_Command.ToString();
-      pUtilInfo->szArguments = l_Arguments.ToString();
-      pUtilInfo->szWorkingDirectory = l_WorkingDirectory.ToString();
+		pUtilInfo->szCommand = l_Command.c_str();
+      pUtilInfo->szArguments = l_Arguments.c_str();
+      pUtilInfo->szWorkingDirectory = l_WorkingDirectory.c_str();
 
       return FALSE;
     }

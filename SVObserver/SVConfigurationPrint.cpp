@@ -557,15 +557,6 @@ void SVConfigurationPrint::printConfigToStringBuffer(SVString& rsBuffer)
 	rsBuffer = static_cast< LPCTSTR >( l_TempString );
 }
 
-void SVConfigurationPrint::printConfigToStringBuffer(std::string& rsBuffer)
-{
-	CString l_TempString;
-
-	printConfigToStringBuffer( l_TempString );
-
-	rsBuffer = static_cast< LPCTSTR >( l_TempString );
-}
-
 BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
@@ -2542,13 +2533,13 @@ void SVConfigurationPrint::PrintThreadAffinity(CDC* pDC, CPoint& ptCurPos, int n
 		SVString strValue;
 		if( it->m_lAffinity > 0 )
 		{
-			strValue.Format( "%d", it->m_lAffinity);
+			strValue = SvUl_SF::Format( "%d", it->m_lAffinity);
 		}
 		else
 		{
 			strValue = "Not Set";
 		}
-		strName.Format("Name: %s:", it->m_strName.c_str() );
+		strName = SvUl_SF::Format("Name: %s:", it->m_strName.c_str() );
 		PrintValueObject(pDC, ptCurPos, strName.c_str(), strValue.c_str());
 	}
 }  // end function void SVObserverApp::PrintThreadAffinity( CDC* pDC, ... )
@@ -2820,7 +2811,7 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVLongValueDeviceParam& param )
 			iterOption = std::find( pCamFileParam->info.options.begin(), pCamFileParam->info.options.end(), param.lValue );
 			if ( iterOption != pCamFileParam->info.options.end() )
 			{
-				s = iterOption->strDescription.ToString();
+				s = iterOption->strDescription.c_str();
 			}
 		}
 		if ( s.IsEmpty() )
@@ -2854,7 +2845,7 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVBoolValueDeviceParam& param )
 			iterOption = std::find( pCamFileParam->info.options.begin(), pCamFileParam->info.options.end(), param.bValue );
 			if ( iterOption != pCamFileParam->info.options.end() )
 			{
-				s = iterOption->strDescription.ToString();
+				s = iterOption->strDescription.c_str();
 			}
 		}
 		if ( s.IsEmpty() )
@@ -2869,7 +2860,7 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVStringValueDeviceParam& param )
 	const SVStringValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter( param.Type() ).DerivedValue( pCamFileParam );
 	if ( pCamFileParam )
 	{
-		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pCamFileParam->Name(), param.strValue.ToString() );
+		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pCamFileParam->Name(), param.strValue.c_str() );
 	}
 	return S_OK;
 }
@@ -2902,12 +2893,12 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVCameraFormatsDeviceParam& param
 			const SVCameraFormat& rCamFileFormat = pCamFileParam->options.find( param.strValue )->second;
 			if ( rCamFileFormat.m_strName == param.strValue )
 			{
-				s = rCamFileFormat.strDescription.ToString();
+				s = rCamFileFormat.strDescription.c_str();
 				pFormat = &rFormat;
 			}
 		}
 		if ( s.IsEmpty() )
-			s = param.strValue.ToString();
+			s = param.strValue.c_str();
 		m_pPrint->PrintValueObject(m_pDC, m_rptCurPos, pCamFileParam->Name(), s );
 
 		if ( pFormat )

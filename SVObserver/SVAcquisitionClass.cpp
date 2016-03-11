@@ -39,7 +39,7 @@
 #pragma endregion Declarations
 
 SVAcquisitionClass::SVAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
-: SVODataDeviceClass( p_rParams.m_DeviceName.ToString() )
+: SVODataDeviceClass( p_rParams.m_DeviceName.c_str() )
 {
 	mbIsBufferCreated = false;
 	mbTempOnline = false;
@@ -55,8 +55,8 @@ SVAcquisitionClass::SVAcquisitionClass( const SVAcquisitionConstructParams& p_rP
 
 	msvImageInfo.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
 
-	SetDeviceName( p_rParams.m_DeviceName.ToString() );
-	SetDigName( p_rParams.m_DigitizerName.ToString() );
+	SetDeviceName( p_rParams.m_DeviceName.c_str() );
+	SetDigName( p_rParams.m_DigitizerName.c_str() );
 	
 	SetDigNumber( p_rParams.m_DigNumber );
 	SetChannel( p_rParams.m_Channel );
@@ -747,12 +747,10 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 
 	if( hrOk != S_OK )
 	{
-		SVString l_Message;
-
-		l_Message.Format( _T( "SVAcquisitionClass::GetNextIndex-Name=%s" ), GetDeviceName() );
+		SVString l_Message = SvUl_SF::Format( _T( "SVAcquisitionClass::GetNextIndex-Name=%s" ), GetDeviceName() );
 
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (hrOk), l_Message.ToString(), StdMessageParams );
+		Exception.setMessage( static_cast<DWORD> (hrOk), l_Message.c_str(), StdMessageParams );
 	}
 	
 	return hrOk;

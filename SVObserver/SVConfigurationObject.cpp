@@ -1006,8 +1006,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 	if( nullptr == pInputsList  || !pInputsList->Create() )
 	{
 		
-		SVString msg;
-		msg.Format(SvO::Create_S_Failed,SvO::InputObjectList );
+		SVString msg = SvUl_SF::Format(SvO::Create_S_Failed,SvO::InputObjectList );
 		SvStl::MessageContainer MsgCont;
 		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, msg.c_str(), StdMessageParams, SvOi::Err_16044_CreateInputList );
 		throw MsgCont;
@@ -1015,8 +1014,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 	}
 	if( nullptr == pOutputsList || !pOutputsList->Create() )
 	{
-		SVString msg;
-		msg.Format(SvO::Create_S_Failed,SvO::OutputObjectList );
+		SVString msg = SvUl_SF::Format(SvO::Create_S_Failed,SvO::OutputObjectList );
 		SvStl::MessageContainer MsgCont;
 		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, msg.c_str(), StdMessageParams, SvOi::Err_16047_CreateOutputList );
 		throw MsgCont;
@@ -1284,7 +1282,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 
 				if( bFileDone )
 				{
-					svFileArray.SetFileNameList( SVString( l_Variant ).c_str() );
+					svFileArray.SetFileNameList( SvUl_SF::createSVString( l_Variant ).c_str() );
 				}
 
 				if( SVNavigateTree::GetItemBranch( rTree, CTAG_LIGHT_REFERENCE_ARRAY, hDigChild, hDataChild ) )
@@ -1476,7 +1474,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 					{
 						SVCameraFormat cf;
 
-						cf.ParseAndAssignCameraFormat( pParam->strValue.ToString() );
+						cf.ParseAndAssignCameraFormat( pParam->strValue.c_str() );
 
 						// Band number depends on video type...
 						switch( cf.eImageType )
@@ -1510,11 +1508,11 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 
 						if ( 1 < l_BandCount )
 						{
-							FullName.Format( "%s.%s.Ch_All", BoardName.c_str(), DigName.c_str() );
+							FullName = SvUl_SF::Format( "%s.%s.Ch_All", BoardName.c_str(), DigName.c_str() );
 						}
 						else
 						{
-							FullName.Format( "%s.%s.Ch_%d", BoardName.c_str(), DigName.c_str(), lBand );
+							FullName = SvUl_SF::Format( "%s.%s.Ch_%d", BoardName.c_str(), DigName.c_str(), lBand );
 						}
 
 						if ( ! bLutDone || ! bLutCreated )
@@ -1722,13 +1720,13 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 
 			if( SVNavigateTree::GetItem( rTree, CTAG_FILEACQUISITION_IMAGE_FILENAME, hSubChild, svValue ) )
 			{
-				SVString filename(svValue);
+				SVString filename = SvUl_SF::createSVString(svValue);
 				pCamera->SetImageFilename(filename);
 			}
 
 			if( SVNavigateTree::GetItem( rTree, CTAG_FILEACQUISITION_IMAGE_DIRECTORYNAME, hSubChild, svValue ) )
 			{
-				SVString dirName(svValue);
+				SVString dirName = SvUl_SF::createSVString(svValue);
 				pCamera->SetImageDirectoryName(dirName);
 			}
 
@@ -2103,7 +2101,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		bOk = SVNavigateTree::GetItem( rTree, CTAG_PPQ_CONDITIONAL_OUTPUT, hSubChild, svValue );
 		if ( bOk )	// Conditional Output.
 		{
-			SVString condition(svValue);
+			SVString condition= SvUl_SF::createSVString(svValue);
 			if (!condition.empty())
 			{
 				pPPQ->SetConditionalOutputName(condition);
@@ -2505,7 +2503,7 @@ HRESULT SVConfigurationObject::LoadAcquisitionDeviceFilename(SVTreeType& rTree, 
 
 	if( SVNavigateTree::GetItem( rTree, CTAG_ACQUISITION_DEVICE_FILE_NAME, hDig, l_Variant ) )
 	{
-		rFileArray.SetFileNameList( SVString( l_Variant ).c_str() );
+		rFileArray.SetFileNameList( SvUl_SF::createSVString( l_Variant ).c_str() );
 
 		hr = S_OK;
 	}
@@ -2557,11 +2555,11 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 			pParam->GetValue(var);
 			if (var.lVal == SVImageFormatMono8)
 			{
-				FullName.Format( "%s.%s.Ch_0", BoardName.c_str(), DigName.c_str() );
+				FullName = SvUl_SF::Format( "%s.%s.Ch_0", BoardName.c_str(), DigName.c_str() );
 			}
 			else
 			{
-				FullName.Format( "%s.%s.Ch_All", BoardName.c_str(),	DigName.c_str() );
+				FullName = SvUl_SF::Format( "%s.%s.Ch_All", BoardName.c_str(),	DigName.c_str() );
 			}
 
 			SVDigitizerProcessingClass::Instance().SelectDigitizer( FullName.c_str() );
@@ -2657,7 +2655,7 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial( SVTreeType& rTree, SVTree
 					{
 						CString sName( static_cast< LPCTSTR >( static_cast< _bstr_t >( svVariant ) ) );
 
-						SVCameraFormat& rcf = pcf->options[sName];
+						SVCameraFormat& rcf = pcf->options[SVString(sName)];
 						rcf.ParseAndAssignCameraFormat( sName );
 						if ( SVNavigateTree::GetItem( rTree, CTAG_VARIABLE_CAMERA_FORMAT, hParam, svVariant ) )
 							rcf.bVariableROI = svVariant;
@@ -2889,7 +2887,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 
 		if( nullptr == rpObject )
 		{
-			if( rNameInfo.m_NameArray[ 0 ].Left( 3 ) == _T( "PPQ" ) )
+			if( rNameInfo.m_NameArray[ 0 ].substr( 0, 3 ) == _T( "PPQ" ) )
 			{
 				SVPPQObjectArray::const_iterator l_PPQIter;
 
@@ -2903,7 +2901,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 					}
 				}
 			}
-			else if( rNameInfo.m_NameArray[ 0 ].Left( 6 ) == _T( "Camera" ) )
+			else if( rNameInfo.m_NameArray[ 0 ].substr( 0, 6 ) == _T( "Camera" ) )
 			{
 				SVVirtualCameraArray::const_iterator l_CameraIter;
 
@@ -2917,7 +2915,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 					}
 				}
 			}
-			else if( rNameInfo.m_NameArray[ 0 ].Left( 7 ) == _T( "Trigger" ) )
+			else if( rNameInfo.m_NameArray[ 0 ].substr( 0, 7 ) == _T( "Trigger" ) )
 			{
 				SVTriggerObjectArray::const_iterator l_TriggerIter;
 
@@ -3226,7 +3224,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SVObjectXMLWriter& rWrit
 
 			rWriter.StartElement( csRef );
 
-			svVariant.SetString( rLight.Band( i ).Attribute( j ).strName.ToString() );
+			svVariant.SetString( rLight.Band( i ).Attribute( j ).strName.c_str() );
 			rWriter.WriteAttribute( CTAG_NAME, svVariant );
 			svVariant.Clear();
 
@@ -3541,7 +3539,7 @@ void SVConfigurationObject::SavePPQ_Attributes( SVObjectXMLWriter &rWriter, cons
 
 	// Conditional Output.
 	const SVString& l_condition = rPPQ.GetConditionalOutputName();
-	svValue.SetString(l_condition.ToString());
+	svValue.SetString(l_condition.c_str());
 	rWriter.WriteAttribute( CTAG_PPQ_CONDITIONAL_OUTPUT, svValue );
 	svValue.Clear();
 
@@ -3619,7 +3617,7 @@ bool SVConfigurationObject::SaveRemoteMonitorList( SVObjectXMLWriter &rWriter ) 
 
 		_variant_t svValue;
 		const RemoteMonitorNamedList& monitorList = iterMonitorList->second;
-		svValue.SetString( monitorList.GetPPQName().ToString() );
+		svValue.SetString( monitorList.GetPPQName().c_str() );
 		rWriter.WriteAttribute( CTAG_PPQ_NAME, svValue );
 		svValue.Clear();
 
@@ -3718,12 +3716,11 @@ BOOL SVConfigurationObject::SaveConfiguration(SVObjectXMLWriter& rWriter) const
 	SVString RootName( SvOl::FqnRoot );
 	//@WARNING [gra][7.30][13.01.2016] We set the new line off to have forward compatibility with version 7.20 can be removed in next version
 	rWriter.setNewLine( false );
-	rWriter.WriteRootElement( RootName );
+	rWriter.WriteRootElement( RootName.c_str() );
 	rWriter.WriteSchema();
 
 	DWORD versionNumber = TheSVObserverApp.getCurrentVersion();
-	SVString versionString;
-	versionString.Format("%d.%d", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
+	SVString versionString = SvUl_SF::Format("%d.%d", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
 	rWriter.WriteRevisionHistory(versionString.c_str(), 1);
 	rWriter.WriteStartOfBase();
 	rWriter.setNewLine( true );
@@ -3824,7 +3821,7 @@ void SVConfigurationObject::SaveDeviceParamSpecial( SVObjectXMLWriter& rWriter, 
 				strParam.Format( CTAGF_OPTION_X, ++iOption );
 				rWriter.StartElement( strParam );
 
-				svVariant.SetString( rcf.m_strName.ToString() );
+				svVariant.SetString( rcf.m_strName.c_str() );
 				rWriter.WriteAttribute( CTAG_NAME, svVariant );
 				svVariant.Clear();
 
@@ -4053,7 +4050,7 @@ void SVConfigurationObject::SetupCameraTrigger(SVCameraTriggerClass* pTriggerDev
 
 	if (bSoftwareTrigger)
 	{
-		CString sDeviceName = SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDigNum).ToString();
+		CString sDeviceName = SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDigNum).c_str();
 		SVTriggerClass* psvDevice = SVTriggerProcessingClass::Instance().GetTrigger( sDeviceName );
 		if (psvDevice)
 		{
@@ -4528,7 +4525,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 					}
 					else
 					{
-						p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
+						p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
 
 						if( S_OK == l_Status )
 						{
@@ -4538,7 +4535,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 				}
 				else
 				{
-					p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
+					p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
 
 					if( S_OK == l_Status )
 					{
@@ -4548,7 +4545,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 			}
 			else
 			{
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
+				p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
 
 				if( S_OK == l_Status )
 				{
@@ -4681,11 +4678,11 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 
 					if( l_TempStatus == S_OK )
 					{
-						p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage( SVVisionProcessor::SVStorageValue, l_Value ), S_OK, 0 );
+						p_rItems[ *l_Iter ] = SVStorageResult( SVStorage( SVVisionProcessor::SVStorageValue, l_Value ), S_OK, 0 );
 					}
 					else
 					{
-						p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), E_INVALIDARG, 0 );
+						p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), E_INVALIDARG, 0 );
 
 						if( l_Status == S_OK )
 						{
@@ -4695,7 +4692,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 				}
 				else
 				{
-					p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
+					p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
 
 					if( l_Status == S_OK )
 					{
@@ -4705,7 +4702,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 			}
 			else
 			{
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
+				p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
 
 				if( l_Status == S_OK )
 				{
@@ -4818,7 +4815,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 								if( l_pImage != nullptr )
 								{
-									p_rStatus[ l_Iter->first ] = pInspection->AddInputImageFileNameRequest( l_pImage, l_Iter->second.m_Variant );
+									p_rStatus[ l_Iter->first ] = pInspection->AddInputImageFileNameRequest( l_pImage, SvUl_SF::createSVString(l_Iter->second.m_Variant) );
 								}
 								else
 								{

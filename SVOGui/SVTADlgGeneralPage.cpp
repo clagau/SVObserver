@@ -109,7 +109,7 @@ namespace Seidenader { namespace SVOGui
 		const SvOi::NameValueList& flags = m_Values.GetEnumTypes(DrawFlagTag);
 		for (SvOi::NameValueList::const_iterator it = flags.begin(); it != flags.end();++it)
 		{
-			m_drawToolCombo.SetItemData(m_drawToolCombo.AddString(it->first.ToString()), it->second);
+			m_drawToolCombo.SetItemData(m_drawToolCombo.AddString(it->first.c_str()), it->second);
 		}
 		m_drawToolCombo.SelectString(-1, drawFlag);
 	}
@@ -122,7 +122,7 @@ namespace Seidenader { namespace SVOGui
 			const SvUl::NameGuidList& availImages = m_AuxExtentsController.GetAvailableImageList();
 			for (SvUl::NameGuidList::const_iterator it = availImages.begin();it != availImages.end();++it)
 			{
-				m_AvailableSourceImageCombo.AddString(it->first.ToString());
+				m_AvailableSourceImageCombo.AddString(it->first.c_str());
 			}
 			CString name = m_AuxExtentsController.GetAuxSourceImageName().c_str();
 			if (!name.IsEmpty())

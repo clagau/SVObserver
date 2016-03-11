@@ -81,11 +81,11 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue )
 			//If it is VT_BSTR then we need to copy the text otherwise we get just a pointer to the string
 			if( TempValue.vt == VT_BSTR )
 			{
-				SVString Temp( TempValue );
+				SVString Temp = SvUl_SF::createSVString( TempValue );
 				Lock();
 				m_Value.Clear();
 				m_Value.vt = VT_BSTR;
-				m_Value.bstrVal = Temp.ToBSTR().copy();
+				m_Value.bstrVal = _bstr_t(Temp.c_str()).copy();
 				Unlock();
 			}
 			else
@@ -137,7 +137,7 @@ HRESULT BasicValueObject::getValue( SVString& rValue ) const
 	{
 	case VT_BSTR:
 		{
-			rValue = m_Value.bstrVal;
+			rValue = SvUl_SF::createSVString(m_Value.bstrVal);
 		}
 		break;
 	case VT_BOOL:
@@ -153,22 +153,22 @@ HRESULT BasicValueObject::getValue( SVString& rValue ) const
 		break;
 	case VT_I4:
 		{
-			rValue.Format( _T("%d"), m_Value.lVal );
+			rValue = SvUl_SF::Format( _T("%d"), m_Value.lVal );
 		}
 		break;
 	case VT_I8:
 		{
-			rValue.Format( _T("%d"), m_Value.llVal );
+			rValue = SvUl_SF::Format( _T("%d"), m_Value.llVal );
 		}
 		break;
 	case VT_R4:
 		{
-			rValue.Format( _T("%f"), m_Value.fltVal );
+			rValue = SvUl_SF::Format( _T("%f"), m_Value.fltVal );
 		}
 		break;
 	case VT_R8:
 		{
-			rValue.Format( _T("%f"), m_Value.dblVal );
+			rValue = SvUl_SF::Format( _T("%f"), m_Value.dblVal );
 		}
 		break;
 	default:
@@ -438,28 +438,28 @@ HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 		if(VT_BSTR == rValue.vt)
 		{
 			SVString StringValue;
-			StringValue = rValue.bstrVal;
+			StringValue = SvUl_SF::createSVString(rValue.bstrVal);
 			rValue.Clear();
 			rValue.vt = m_Value.vt;
 			switch(m_Value.vt)
 			{
 			case VT_BSTR:
-				rValue.bstrVal = StringValue.ToBSTR();
+				rValue.bstrVal = bstr_t(StringValue.c_str());
 				break;
 			case VT_BOOL:
-				if( 0 == StringValue.CompareNoCase( _T("True") ))
+				if( 0 == SvUl_SF::CompareNoCase( StringValue, _T("True") ))
 				{
 					rValue.boolVal = TRUE;
 				}
-				else if( 0 == StringValue.CompareNoCase( _T("False") ) )
+				else if( 0 == SvUl_SF::CompareNoCase( StringValue, _T("False") ) )
 				{
 					rValue.boolVal = FALSE;
 				}
-				else if( 0 == StringValue.Compare( _T("0") ) )
+				else if( 0 == StringValue.compare( _T("0") ) )
 				{
 					rValue.boolVal = FALSE;
 				}
-				else if( 0 == StringValue.Compare( _T("1") ) )
+				else if( 0 == StringValue.compare( _T("1") ) )
 				{
 					rValue.boolVal = TRUE;
 				}

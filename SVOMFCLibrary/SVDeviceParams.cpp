@@ -205,7 +205,7 @@ HRESULT ToVariant( const SVString& sValue, VARIANT& rv )
 	::VariantClear( &rv );
 
 	rv.vt = VT_BSTR;
-	rv.bstrVal = sValue.ToBSTR().Detach();
+	rv.bstrVal = _bstr_t(sValue.c_str()).Detach();
 
 	return hr;
 }

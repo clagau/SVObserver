@@ -30,7 +30,7 @@ HRESULT SVGigeCameraProxy::ReadCameraFileImpl( SVGigeCameraFileInfoStruct& p_rIn
 	HRESULT hr = S_OK;
 
 	CStdioFile file;
-	if ( file.Open( p_rInfo.sFilename.ToString(), CFile::modeRead | CFile::shareDenyWrite ) )
+	if ( file.Open( p_rInfo.sFilename.c_str(), CFile::modeRead | CFile::shareDenyWrite ) )
 	{
 		file.Close();
 

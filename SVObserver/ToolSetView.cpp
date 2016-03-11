@@ -410,7 +410,7 @@ void ToolSetView::ValidateLabelText(CString& newText)
 
 	SVString newName( newText );
 
-	newName.RemoveCharacters( SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+	SvUl_SF::RemoveCharacters( newName, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 
 	if( 0 < newName.size() )
 	{
@@ -434,7 +434,7 @@ void ToolSetView::RenameItem(int item, const CString& oldName, const CString& ne
 			SVGUID toolId = m_toolSetListCtrl.getToolGuid(m_labelingIndex);
 			if (SVInvalidGUID != toolId) // it's a Tool
 			{
-				TheSVObserverApp.RenameObject(m_csLabelSaved, m_csLabelEdited, toolId);
+				TheSVObserverApp.RenameObject(SVString(m_csLabelSaved), SVString(m_csLabelEdited), toolId);
 			}
 			SVIPDoc* pDoc = GetIPDoc();
 			if (pDoc)

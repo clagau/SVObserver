@@ -8,37 +8,34 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 17:25:00  $
 //******************************************************************************
-#ifndef INCL_SVTOOLSETSCRIPT_TAGS_H
-#define INCL_SVTOOLSETSCRIPT_TAGS_H
+#pragma once
 
 namespace 
 {
-	const CString scAttributesAllowedTag(_T( "AttributesAllowed" ));
-	const CString scAttributesSetTag(_T( "AttributesSet" ));
-	const CString scAttributeTag(_T( "Attribute" ));
-	const CString scDefaultTag(_T("Default"));
-	const CString scArrayElementsTag(_T("Array_Elements"));
-	const CString scElementTag(_T("Element"));
+	const TCHAR* const scAttributesAllowedTag(_T( "AttributesAllowed" ));
+	const TCHAR* const scAttributesSetTag(_T( "AttributesSet" ));
+	const TCHAR* const scAttributeTag(_T( "Attribute" ));
+	const TCHAR* const scDefaultTag(_T("Default"));
+	const TCHAR* const scArrayElementsTag(_T("Array_Elements"));
+	const TCHAR* const scElementTag(_T("Element"));
 
-	const CString scNameTag(_T( "Name" ));
-	const CString scObjectNameTag(_T( "ObjectName" ));
-	const CString scUniqueReferenceIDTag(_T( "UniqueReferenceID" ));
-	const CString scEmbeddedIDTag(_T( "EmbeddedID" ));
-	const CString scClassIDTag(_T( "ClassID" ));
-	const CString scFriendsTag(_T( "Friends" ));
-	const CString scEmbeddedsTag(_T( "Embeddeds" ));
-	const CString scInputsTag(_T( "Inputs" ));
-	const CString scInputTag(_T( "Input" ));
-	const CString scEquationBufferTag(_T("EquationBuffer"));
-	const CString scDigitizerIDTag(_T("DigitizerID"));
-	const CString scPixelDepthTag(_T( "PixelDepth" ));
-	const CString scBandNumberTag(_T( "BandNumber" ));
-	const CString scBandLinkTag(_T( "BandLink" ));
-	const CString scMaskDataTag(_T( "MaskData" ));
-	const CString scValueTag(_T( "Value" ));
+	const TCHAR* const scNameTag(_T( "Name" ));
+	const TCHAR* const scObjectNameTag(_T( "ObjectName" ));
+	const TCHAR* const scUniqueReferenceIDTag(_T( "UniqueReferenceID" ));
+	const TCHAR* const scEmbeddedIDTag(_T( "EmbeddedID" ));
+	const TCHAR* const scClassIDTag(_T( "ClassID" ));
+	const TCHAR* const scFriendsTag(_T( "Friends" ));
+	const TCHAR* const scEmbeddedsTag(_T( "Embeddeds" ));
+	const TCHAR* const scInputsTag(_T( "Inputs" ));
+	const TCHAR* const scInputTag(_T( "Input" ));
+	const TCHAR* const scEquationBufferTag(_T("EquationBuffer"));
+	const TCHAR* const scDigitizerIDTag(_T("DigitizerID"));
+	const TCHAR* const scPixelDepthTag(_T( "PixelDepth" ));
+	const TCHAR* const scBandNumberTag(_T( "BandNumber" ));
+	const TCHAR* const scBandLinkTag(_T( "BandLink" ));
+	const TCHAR* const scMaskDataTag(_T( "MaskData" ));
+	const TCHAR* const scValueTag(_T( "Value" ));
 }
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

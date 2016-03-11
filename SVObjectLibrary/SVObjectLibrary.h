@@ -75,7 +75,7 @@ class SVObjectClass;
 				{ \
 				SVClassRegisterListClass::Instance().Add( this ); \
 					OutputDebugString( "SV_IMPLEMENT: " #XCLASSNAME ", " ); \
-					OutputDebugString( SVGUID( XCLASSID ).ToString().ToString() ); \
+					OutputDebugString( SVGUID( XCLASSID ).ToString().c_str() ); \
 					OutputDebugString( _T( "\n" ) ); \
 				} \
 				virtual SVGUID GetClassID() { return XCLASSID; } \

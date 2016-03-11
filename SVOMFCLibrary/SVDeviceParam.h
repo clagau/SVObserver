@@ -37,13 +37,13 @@ public:
 	virtual HRESULT SetValue( const VARIANT& rv );
 	virtual HRESULT SetMetadata(const SVDeviceParam* pBaseParam );
 
-	const char* Name() const {return m_strName.ToString();}
+	const char* Name() const {return m_strName.c_str();}
 	HRESULT SetName( const SVString& strName);
 
-	const char* VisualName() const {return m_strVisualName.ToString();}
+	const char* VisualName() const {return m_strVisualName.c_str();}
 	HRESULT SetVisualName( const SVString& strName);
 
-	const char* Description() const { return m_strDescription.ToString();}
+	const char* Description() const { return m_strDescription.c_str();}
 	HRESULT SetDescription( const SVString& strDescription );
 
 	long DetailLevel() const { return m_lDetailLevel;}

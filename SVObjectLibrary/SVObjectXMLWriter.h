@@ -34,15 +34,15 @@ public:
 	SVObjectXMLWriter(std::ostream& os);
 	~SVObjectXMLWriter();
 
-	void WriteAttribute(const SVString& rName, const _variant_t& value);
-	void WriteAttribute(const SVString& rName, const SVVariantList& rValues);
+	void WriteAttribute(LPCTSTR rName, const _variant_t& value) override;
+	void WriteAttribute(LPCTSTR rName, const SVVariantList& rValues) override;
 
-	void StartElement(const SVString& rName);
+	void StartElement(LPCTSTR rName) override;
 	void EndElement();
 	void EndAllElements();
-	void ElementAttribute(const SVString& rAttrName, const _variant_t& value);
+	void ElementAttribute(LPCTSTR rAttrName, const _variant_t& value);
 
-	void WriteRootElement(const SVString& rName);
+	void WriteRootElement(LPCTSTR rName);
 	void WriteSchema();
 
 	//************************************

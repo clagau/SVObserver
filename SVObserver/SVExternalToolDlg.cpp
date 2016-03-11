@@ -419,7 +419,7 @@ void SVExternalToolDlg::InitializeDll()
 		SvStl::Messages::const_iterator iter;
 		for (iter = AdditionalMessages.begin(); iter != AdditionalMessages.end(); ++iter)
 		{
-			m_strStatus += iter->m_AdditionalText.ToString();
+			m_strStatus += iter->m_AdditionalText.c_str();
 			m_strStatus += CRLF;
 		}
 		UpdateData(FALSE);

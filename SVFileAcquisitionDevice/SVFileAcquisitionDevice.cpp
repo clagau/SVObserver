@@ -67,8 +67,7 @@ HRESULT SVFileAcquisitionDevice::Create()
 		m_cameras.resize(MaxFileCameras);
 		for (int i = 0;i < MaxFileCameras;i++)
 		{
-			SVString camName;
-			camName.Format("File.Dig_%d", i);
+			SVString camName = SvUl_SF::Format("File.Dig_%d", i);
 			m_cameras[i].SetName(camName);
 		}
 		// Allocate Max Buffers ?
@@ -143,7 +142,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetName( unsigned long p_ulIndex, BSTR &p
 			p_rbstrName = NULL;
 		}
 
-		p_rbstrName = m_cameras[p_ulIndex].GetName().ToBSTR();
+		p_rbstrName = _bstr_t(m_cameras[p_ulIndex].GetName().c_str());
 	} 
 	return l_hrOk;
 }
@@ -428,14 +427,14 @@ HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long p_ulIndex, in
 
 			case SVFileAcquisitionParameterFilename:
 			{
-				rCamera.SetFileName(p_pvarValue->bstrVal);
+				rCamera.SetFileName(SvUl_SF::createSVString(p_pvarValue->bstrVal));
 				l_hrOk = S_OK;
 				break;
 			}
 
 			case SVFileAcquisitionParameterDirectory:
 			{
-				rCamera.SetDirectory(p_pvarValue->bstrVal);
+				rCamera.SetDirectory(SvUl_SF::createSVString(p_pvarValue->bstrVal));
 				l_hrOk = S_OK;
 				break;
 			}
@@ -745,9 +744,8 @@ HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long p_ulHandle, BSTR& 
 		}
 
 		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
-		SVString name;
-		name.Format("CameraTrigger.Dig_%d", p_ulHandle);
-		p_rbstrName = name.ToBSTR();
+		SVString name = SvUl_SF::Format("CameraTrigger.Dig_%d", p_ulHandle);
+		p_rbstrName = _bstr_t(name.c_str());
 		l_Result = S_OK;
 	}
 	return l_Result;

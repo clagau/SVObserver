@@ -20,12 +20,12 @@ HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerRef Digitizer, const SV
 	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetGigeIPAddress(*(Digitizer.get()), value);
 	if (l_Code == SVMEE_STATUS_OK)
 	{
-		sTmp.Format("%u.%u.%u.%u", 
+		sTmp = SvUl_SF::Format("%u.%u.%u.%u", 
 					static_cast<unsigned char>(value),
 					static_cast<unsigned char>(value >> 8) & 0xFF,
 					static_cast<unsigned char>(value >> 16) & 0xFF,
 					static_cast<unsigned char>(value >> 24) & 0xFF);
-		rValue = sTmp.ToBSTR().Detach();
+		rValue = _bstr_t(sTmp.c_str()).Detach();
 	}
 	return l_Code;
 }

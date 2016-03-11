@@ -285,7 +285,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pParentOwner->GetCompleteObjectName(), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pParentOwner->GetCompleteObjectName()), SVString( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );

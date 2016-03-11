@@ -157,7 +157,7 @@ bool SVMatroxGigeDigitizer::HasLineInput() const
 
 void SVMatroxGigeDigitizer::SetLineInputMoniker(const SVString& moniker)
 {
-	m_lineInputMoniker = moniker.ToString();
+	m_lineInputMoniker = moniker.c_str();
 	m_lineInputRisingEventName = GetLineInputRisingEventName();
 	m_lineInputFallingEventName = GetLineInputFallingEventName();
 }
@@ -171,7 +171,7 @@ SVMatroxString SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 	{
 		deviceParamStruct.accessor.feature.GetGigeFeatureString(m_lineInputMoniker + " Rising", featureName);
 	}
-	return featureName.ToString();
+	return featureName.c_str();
 }
 
 SVMatroxString SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
@@ -183,7 +183,7 @@ SVMatroxString SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
 	{
 		deviceParamStruct.accessor.feature.GetGigeFeatureString(m_lineInputMoniker + " Falling", featureName);
 	}
-	return featureName.ToString();
+	return featureName.c_str();
 }
 
 bool SVMatroxGigeDigitizer::IsAcquisitionTriggered() const

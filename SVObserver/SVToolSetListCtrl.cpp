@@ -141,7 +141,7 @@ void SVToolSetListCtrl::Rebuild()
 				int index = -1;
 				for (int i=0; i < m_taskList.size(); i++)
 				{
-					if (!m_taskList[i].first.empty() && 0 == m_taskList[i].first.Compare(it->first.c_str()))
+					if (!m_taskList[i].first.empty() && 0 == m_taskList[i].first.compare(it->first.c_str()))
 					{
 						index = i;
 						break;

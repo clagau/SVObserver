@@ -425,7 +425,7 @@ BOOL SVPipeConnection::GetServerName (CString &szConnection, CString &szServer)
 
   BOOL l_Status = reg.GetRegistryValue(_T("Server"), l_Server);
 
-	szServer = l_Server.ToString();
+	szServer = l_Server.c_str();
 
 	return l_Status;
 }
@@ -437,7 +437,7 @@ BOOL SVPipeConnection::GetPipeName (CString &szConnection, CString &szPipe)
 
 	BOOL l_Status = reg.GetRegistryValue(_T("PipeName"), l_Pipe);
 
-	szPipe = l_Pipe.ToString();
+	szPipe = l_Pipe.c_str();
 
 	return l_Status;
 }

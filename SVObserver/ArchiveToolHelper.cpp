@@ -48,26 +48,20 @@ SVString ArchiveToolHelper::TranslatePath(const SVString& sPath)
 	SYSTEMTIME stime;
 	memset( &stime, 0, sizeof( SYSTEMTIME));
 	::GetLocalTime( &stime );
-	SVString sDay;
-	sDay.Format("%02d", stime.wDay);
-	SVString sMonth;
-	sMonth.Format("%02d", stime.wMonth);
-	SVString sYear;
-	sYear.Format("%04d", stime.wYear);
-	SVString sHour;
-	sHour.Format("%02d", stime.wHour);
-	SVString sMin;
-	sMin.Format("%02d", stime.wMinute);
-	SVString sSec;
-	sSec.Format("%02d", stime.wSecond);
+	SVString sDay = SvUl_SF::Format("%02d", stime.wDay);
+	SVString sMonth = SvUl_SF::Format("%02d", stime.wMonth);
+	SVString sYear = SvUl_SF::Format("%04d", stime.wYear);
+	SVString sHour = SvUl_SF::Format("%02d", stime.wHour);
+	SVString sMin = SvUl_SF::Format("%02d", stime.wMinute);
+	SVString sSec = SvUl_SF::Format("%02d", stime.wSecond);
 	
 	//replace all Keywords
-	sReturnPath = sReturnPath.replace(KW_DAY.c_str(),sDay.c_str());
-	sReturnPath = sReturnPath.replace(KW_MONTH.c_str(), sMonth.c_str());
-	sReturnPath = sReturnPath.replace(KW_YEAR.c_str(), sYear.c_str());
-	sReturnPath = sReturnPath.replace(KW_HOUR.c_str(), sHour.c_str());
-	sReturnPath = sReturnPath.replace(KW_MINUTE.c_str(), sMin.c_str());
-	sReturnPath = sReturnPath.replace(KW_SECONDS.c_str(), sSec.c_str());
+	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_DAY.c_str(),sDay.c_str());
+	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_MONTH.c_str(), sMonth.c_str());
+	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_YEAR.c_str(), sYear.c_str());
+	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_HOUR.c_str(), sHour.c_str());
+	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_MINUTE.c_str(), sMin.c_str());
+	sReturnPath = SvUl_SF::searchAndReplace(sReturnPath, KW_SECONDS.c_str(), sSec.c_str());
 
 	return sReturnPath;
 }
@@ -93,7 +87,7 @@ void ArchiveToolHelper::ParseTokens(const SVString& sPath)
 	SVString::size_type iPos = -1;
 	bool bDone = false;
 	
-	SVString::size_type BeginToken = SVString::SVDataType::npos;
+	SVString::size_type BeginToken = SVString::npos;
 
 	SVString::size_type EndToken = -1;
 	
@@ -108,14 +102,14 @@ void ArchiveToolHelper::ParseTokens(const SVString& sPath)
 
 		BeginToken = sPath.find('"',iPos+1);
 
-		if ( BeginToken != SVString::SVDataType::npos )
+		if ( BeginToken != SVString::npos )
 		{
 			//if the path contains a " then keywords are being used
 			m_IsUsingKeyWords = true;
 			bBeginQuote = true;
 
 			EndToken = sPath.find('"',BeginToken+1);
-			if ( EndToken != SVString::SVDataType::npos )
+			if ( EndToken != SVString::npos )
 			{
 				bEndQuote = true;
 				sToken = sPath.substr(BeginToken,(EndToken-BeginToken+1));

@@ -906,9 +906,7 @@ BOOL SVPPQObject::AttachCamera( SVVirtualCamera* pCamera, long lPosition, bool p
 	}
 	else
 	{
-		SVString l_Name;
-
-		l_Name.Format( _T( "%s Toggle" ), pCamera->GetName() );
+		SVString l_Name = SvUl_SF::Format( _T( "%s Toggle" ), pCamera->GetName() );
 
 		m_Cameras[ pCamera ].m_CameraPPQIndex = lPosition;
 		m_Cameras[ pCamera ].m_ToggleState = true;
@@ -1327,8 +1325,7 @@ HRESULT SVPPQObject::CanGoOnline()
 		l_hrOk = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), sharedInspectionWriterCreationInfo);
 		if (S_OK != l_hrOk)
 		{
-			SVString Message;
-			Message.Format( SvO::ErrorNotEnoughDiskSpace, GetName() );
+			SVString Message = SvUl_SF::Format( SvO::ErrorNotEnoughDiskSpace, GetName() );
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, Message.c_str(), StdMessageParams, SvOi::Err_15025 );
@@ -2754,9 +2751,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SVTriggerInfoStruct& p_rTriggerInfo 
 			l_pNewProduct->oTriggerInfo.m_PreviousTrigger = l_pPrevProduct->oTriggerInfo.m_BeginProcess;
 		}
 
-		SVString l_TriggerCount;
-
-		l_TriggerCount.Format( _T( "%ld" ), p_rTriggerInfo.lTriggerCount );
+		SVString l_TriggerCount = SvUl_SF::Format( _T( "%ld" ), p_rTriggerInfo.lTriggerCount );
 
 		l_pNewProduct->bTriggered = TRUE;
 		l_pNewProduct->m_ProductState += _T( "|" );
@@ -2958,9 +2953,7 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 		}
 
 #ifdef _DEBUG
-		SVString l_String;
-
-		l_String.Format( _T( "%s:NAK=%ld\n" ), GetName(), l_NAKCount );
+		SVString l_String = SvUl_SF::Format( _T( "%s:NAK=%ld\n" ), GetName(), l_NAKCount );
 
 		::OutputDebugString( l_String.c_str() );
 #endif
@@ -4118,16 +4111,14 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 							}
 							catch (const std::exception& e)
 							{
-								SVString Message;
-								Message.Format( SvO::ProcessTrigger, e.what() );
+								SVString Message = SvUl_SF::Format( SvO::ProcessTrigger, e.what() );
 
 								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15026 );
 							}
 							catch (...)
 							{
-								SVString Message;
-								Message.Format( SvO::ProcessTrigger, SvO::Unknown );
+								SVString Message = SvUl_SF::Format( SvO::ProcessTrigger, SvO::Unknown );
 
 								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15027 );
@@ -4807,7 +4798,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 		if( !pIOEntry.empty() 
 			&& pIOEntry->m_ObjectType != IO_CAMERA_DATA_INPUT ) 
 		{
-			l_svName.Format(CTAGF_INPUT_X, lInput);
+			l_svName = SvUl_SF::Format(CTAGF_INPUT_X, lInput);
 			rWriter.StartElement(l_svName.c_str());
 
 			switch (pIOEntry->m_ObjectType)
@@ -4896,7 +4887,7 @@ static bool CompareInspectionName(const SVString& name, const SVString& dottedNa
 	if (parsedName.size())
 	{
 		SVString inspectionName = parsedName[0];
-		int cmp = inspectionName.Compare(name);
+		int cmp = inspectionName.compare(name);
 		return (cmp > 0) ? true : false;
 	}
 	return false;
@@ -5231,16 +5222,14 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 		}
 		catch (const std::exception& e)
 		{
-			SVString Message;
-			Message.Format( SvO::ReleaseProduct, e.what() );
+			SVString Message = SvUl_SF::Format( SvO::ReleaseProduct, e.what() );
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15029 );
 		}
 		catch (...)
 		{
-			SVString Message;
-			Message.Format( SvO::ReleaseProduct, SvO::Unknown );
+			SVString Message = SvUl_SF::Format( SvO::ReleaseProduct, SvO::Unknown );
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15030 );
@@ -5289,16 +5278,14 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 		}
 		catch (const std::exception& e)
 		{
-			SVString Message;
-			Message.Format( SvO::CommitSharedMemory, e.what() );
+			SVString Message = SvUl_SF::Format( SvO::CommitSharedMemory, e.what() );
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15032 );
 		}
 		catch (...)
 		{
-			SVString Message;
-			Message.Format( SvO::CommitSharedMemory, SvO::Unknown );
+			SVString Message = SvUl_SF::Format( SvO::CommitSharedMemory, SvO::Unknown );
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15033 );

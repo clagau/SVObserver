@@ -46,11 +46,11 @@ HRESULT SVObjectNameInfo::ParseObjectName( SVObjectNameInfo& p_rNameInfo, const 
 
 		if( l_Index != SVString::npos )
 		{
-			p_rNameInfo.m_NameArray.push_back( p_rObjectName.Left( l_Index ) );
+			p_rNameInfo.m_NameArray.push_back( p_rObjectName.substr(0, l_Index ) );
 
 			if( p_rObjectName[ l_Index ] == _T( '.' ) )
 			{
-				l_Status = ParseObjectName( p_rNameInfo, p_rObjectName.Mid( l_Index + 1 ) );
+				l_Status = ParseObjectName( p_rNameInfo, SvUl_SF::Mid( p_rObjectName, l_Index + 1 ) );
 			}
 			else
 			{
@@ -60,13 +60,13 @@ HRESULT SVObjectNameInfo::ParseObjectName( SVObjectNameInfo& p_rNameInfo, const 
 				{
 					p_rNameInfo.SetIsIndexPresent(true);
 					// ignore whitespace
-					std::string indexStr = p_rObjectName.Mid( l_Index + 1, l_NextIndex - ( l_Index + 1 ) ).c_str();
+					std::string indexStr = p_rObjectName.substr( l_Index + 1, l_NextIndex - ( l_Index + 1 ) ).c_str();
 					StripSpaces(indexStr);
 					p_rNameInfo.m_Index = indexStr.c_str();
 
 					if( p_rObjectName[ l_NextIndex ] == _T( ']' ) )
 					{
-						if( !( p_rObjectName.Mid( l_NextIndex + 1 ).empty() ) )
+						if( !( SvUl_SF::Mid( p_rObjectName, l_NextIndex + 1 ).empty() ) )
 						{
 							l_Status = E_FAIL;
 						}
@@ -79,9 +79,9 @@ HRESULT SVObjectNameInfo::ParseObjectName( SVObjectNameInfo& p_rNameInfo, const 
 						if( l_BraceIndex != SVString::npos && l_BracketIndex != SVString::npos )
 						{
 							p_rNameInfo.m_DefaultValuePresent = true;
-							p_rNameInfo.m_DefaultValue = p_rObjectName.Mid( l_NextIndex + 1, l_BraceIndex - ( l_NextIndex + 1 ) );
+							p_rNameInfo.m_DefaultValue = p_rObjectName.substr( l_NextIndex + 1, l_BraceIndex - ( l_NextIndex + 1 ) );
 
-							if( !( p_rObjectName.Mid( l_BracketIndex + 1 ).empty() ) )
+							if( !( SvUl_SF::Mid( p_rObjectName, l_BracketIndex + 1 ).empty() ) )
 							{
 								l_Status = E_FAIL;
 							}

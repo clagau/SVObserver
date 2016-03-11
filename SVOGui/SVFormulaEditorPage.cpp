@@ -364,7 +364,7 @@ namespace Seidenader { namespace SVOGui
 		SVString equationText = m_FormulaController->GetEquationText();
 		if( nullptr != m_EditWnd.GetSafeHwnd() )
 		{
-			m_EditWnd.SendMessage( SCI_SETTEXT, 0, reinterpret_cast<LPARAM>( equationText.ToString() ) );
+			m_EditWnd.SendMessage( SCI_SETTEXT, 0, reinterpret_cast<LPARAM>( equationText.c_str() ) );
 		}
 
 		bool ownerEnabled = false; 
@@ -392,7 +392,7 @@ namespace Seidenader { namespace SVOGui
 
 		ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::TypeSingleObject );
 		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
+		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, SVString(tmp), SVString( _T("") ) );
 		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, SVString( _T("") ) );
 
 		// Insert the Names of the objects selecteable for an Equation
@@ -655,7 +655,7 @@ namespace Seidenader { namespace SVOGui
 			UpdateData( TRUE ); // Update the variables
 
 			double value = 0;
-			const int result = m_FormulaController->ValidateEquation( equationText, value, true );
+			const int result = m_FormulaController->ValidateEquation( SVString(equationText), value, true );
 			enableUndoButton();
 			//@Info (MZA): result also true if resetFailed, because the fail of reset of the object maybe happen by a other page.
 			//By leaving the sheet it will reset objects and check if it works

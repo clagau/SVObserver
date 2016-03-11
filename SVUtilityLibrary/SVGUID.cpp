@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "SVGUID.h"
+#include "SVString.h"
 
 const GUID  SVInvalidGUID = { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
@@ -85,12 +86,12 @@ GUID& SVGUID::ToGUID()
 
 _variant_t SVGUID::ToVARIANT() const
 {
-	return ToString().ToVARIANT();
+	return _variant_t( ToString().c_str());
 }
 
 _bstr_t SVGUID::ToBSTR() const
 {
-	return ToString().ToBSTR();
+	return _bstr_t( ToString().c_str() );
 }
 
 SVString SVGUID::ToString() const
@@ -114,16 +115,12 @@ SVString SVGUID::ToString() const
 	}
 	*/
 
-	SVString guidStr;
-	
 	// Make the String Representation have Enclosing Braces and All Hex Upper case
-	guidStr.Format("{%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+	return SvUl_SF::Format("{%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
 		m_Guid.Data1, m_Guid.Data2, m_Guid.Data3,
 		m_Guid.Data4[0], m_Guid.Data4[1], m_Guid.Data4[2], m_Guid.Data4[3],
 		m_Guid.Data4[4], m_Guid.Data4[5], m_Guid.Data4[6], m_Guid.Data4[7]
 		);
-
-	return guidStr;
 }
 
 

@@ -39,8 +39,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const CString ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");
-const CString ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffline");
 #pragma endregion Declarations
 
 
@@ -343,13 +341,13 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 	}
 
 	ArchiveToolHelper athFile;
-	athFile.Init(csFileArchivePath);
+	athFile.Init(SVString(csFileArchivePath));
 
 	if (athFile.isUsingKeywords())
 	{
 		if(athFile.isTokensValid())
 		{
-			csFileArchivePath = athFile.TranslatePath(csFileArchivePath).c_str();
+			csFileArchivePath = athFile.TranslatePath(SVString(csFileArchivePath)).c_str();
 		}
 		else
 		{
@@ -472,10 +470,10 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 	GetImageArchivePath( csImagePath );
 
 	ArchiveToolHelper athImage;
-	athImage.Init(csImagePath);
+	athImage.Init(SVString(csImagePath));
 	if (athImage.isUsingKeywords() && athImage.isTokensValid())
 	{
-		csImagePath = athImage.TranslatePath(csImagePath).c_str();
+		csImagePath = athImage.TranslatePath(SVString(csImagePath)).c_str();
 		m_ImageTranslatedPath = csImagePath;
 		m_ArchiveImagePathUsingKW = true;
 	}
@@ -496,8 +494,8 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 	if (m_bDriveError)
 	{	
 		//Display message that the Archive Tool path is full
-		CString sMessage;
-		sMessage.Format(" %s - drive is full.", csImagePath.GetString());
+		SVString sMessage;
+		sMessage = SvUl_SF::Format(" %s - drive is full.", csImagePath.GetString());
 		//GetUniqueObjectID()
 		SVVisionProcessorHelper::Instance().AddToolError(GetUniqueObjectID(),sMessage);
 	}
@@ -528,11 +526,11 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 				if ( !SVSVIMStateClass::CheckState(SV_STATE_RUNNING) )
 				{
 					ArchiveToolHelper athImage;
-					athImage.Init(csImagePath);
+					athImage.Init(SVString(csImagePath));
 
 					if (athImage.isUsingKeywords() && athImage.isTokensValid())
 					{
-						csImagePath = athImage.TranslatePath(csImagePath).c_str();
+						csImagePath = athImage.TranslatePath(SVString(csImagePath)).c_str();
 						m_ImageTranslatedPath = csImagePath;
 						m_ArchiveImagePathUsingKW = true;
 
@@ -734,11 +732,11 @@ HRESULT SVArchiveTool::initializeOnRun()
 
 	GetImageArchivePath( csTemp );
 	ArchiveToolHelper athImage;
-	athImage.Init(csTemp);
+	athImage.Init(SVString(csTemp));
 	
 	if (athImage.isUsingKeywords() && athImage.isTokensValid())
 	{
-		csTemp = athImage.TranslatePath(csTemp).c_str();
+		csTemp = athImage.TranslatePath(SVString(csTemp)).c_str();
 	}
 	
 
@@ -1301,7 +1299,7 @@ BOOL SVArchiveTool::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR o
 			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
-		oldPrefix.replace( pObject->GetName(), originalName );
+		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
 
 		int iSize = m_svoArchiveResultNames.GetResultSize();
 		int iLastSet = m_svoArchiveResultNames.GetLastSetIndex();

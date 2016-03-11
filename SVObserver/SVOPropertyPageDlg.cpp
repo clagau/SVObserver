@@ -274,7 +274,7 @@ void CSVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 			dirName = FileName.GetDefaultPathName();
 			m_CameraObj.SetImageDirectoryName(dirName);
 		}
-		pFile->SetItemValue(dirName.ToString());
+		pFile->SetItemValue(dirName.c_str());
 	}
 }
 
@@ -503,7 +503,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 						SVLongValueDeviceParam::OptionsType::const_iterator iterOption;
 						for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 						{
-							CString sText = iterOption->strDescription.ToString();
+							CString sText = iterOption->strDescription.c_str();
 							int iPos = pCombo->AddString( sText );
 							pCombo->SetItemData( iPos, iterOption->value );
 						}
@@ -554,7 +554,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 					SVBoolValueDeviceParam::OptionsType::const_iterator iterOption;
 					for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 					{
-						CString sText = iterOption->strDescription.ToString();
+						CString sText = iterOption->strDescription.c_str();
 						int iPos = pCombo->AddString( sText );
 						pCombo->SetItemData( iPos, (LPARAM) iterOption->value );
 					}
@@ -594,7 +594,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 								{
 									if ( iterOption->second.bColor == ColorCamera )
 									{
-										CString sText = iterOption->second.strDescription.ToString();
+										CString sText = iterOption->second.strDescription.c_str();
 										int iPos = pCombo->AddString( sText );
 										pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
 										if ( pCamDeviceParam->strValue == iterOption->second.m_strName )
@@ -635,7 +635,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 								int iOptionIndex = 0;
 								for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 								{
-									CString sText = iterOption->strDescription.ToString();
+									CString sText = iterOption->strDescription.c_str();
 									int iPos;
 									iPos = pCombo->AddString( sText );
 									++iOption;
@@ -1080,7 +1080,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 			for (SVNameGuidPairList::const_iterator it = list.begin();it != list.end();++it)
 			{
 				SVString name = it->first;
-				nIndex = pCombo->AddString(name.ToString());
+				nIndex = pCombo->AddString(name.c_str());
 				pCombo->SetItemData(nIndex, nIndex);
 				if (name == condition)
 				{
@@ -1348,7 +1348,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 											SVStringValueDeviceParam::OptionsType::const_iterator iterOption;
 											for (iterOption = pParam->info.options.begin(); iterOption != pParam->info.options.end(); ++iterOption)
 											{
-												CString sText = iterOption->strDescription.ToString();
+												CString sText = iterOption->strDescription.c_str();
 
 												if( l_Desc == sText )
 												{
@@ -1771,7 +1771,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					{
 						CString Value;
 						pCombo->GetLBText(lIndex, Value);
-						m_PPQObj.SetConditionalOutputName(Value);
+						m_PPQObj.SetConditionalOutputName(SVString(Value));
 					}
 					break;
 				}

@@ -32,14 +32,14 @@ SVConfigurationTreeWriter< SVTreeType >::~SVConfigurationTreeWriter()
 }
 
 template< typename SVTreeType >
-void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(const SVString& rName, const _variant_t& value)
+void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, const _variant_t& value)
 {
-	if (!rName.empty() && (value.vt != VT_NULL || value.vt != VT_EMPTY))
+	if (nullptr != pName && (value.vt != VT_NULL || value.vt != VT_EMPTY))
 	{
 		SVTreeType::SVBranchHandle hItem = m_nodes[0];
 		_variant_t v(value);
 		
-		SVNavigateTree::AddItem(m_rTree, hItem, rName.c_str(), v);
+		SVNavigateTree::AddItem(m_rTree, hItem, pName, v);
 	}
 	else
 	{
@@ -48,20 +48,20 @@ void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(const SVString& rNa
 }
 
 template< typename SVTreeType >
-void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(const SVString& rName, const SVVariantList& rValues)
+void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, const SVVariantList& rValues)
 {
 	BOOST_FOREACH(variant_t value, rValues)
 	{
-		WriteAttribute(rName, value);
+		WriteAttribute(pName, value);
 	}
 }
 
 template< typename SVTreeType >
-void SVConfigurationTreeWriter< SVTreeType >::StartElement(const SVString& rName)
+void SVConfigurationTreeWriter< SVTreeType >::StartElement(LPCTSTR pName)
 {
 	SVTreeType::SVBranchHandle hItem;
 	SVTreeType::SVBranchHandle hParentItem = (m_nodes.size()) ? m_nodes[0] : m_htiParent;
-	SVNavigateTree::AddBranch(m_rTree, hParentItem, rName.c_str(), &hItem);
+	SVNavigateTree::AddBranch(m_rTree, hParentItem, pName, &hItem);
 	m_nodes.push_front(hItem);
 }
 
@@ -72,10 +72,10 @@ void SVConfigurationTreeWriter< SVTreeType >::EndElement()
 }
 
 template< typename SVTreeType >
-void SVConfigurationTreeWriter< SVTreeType >::ElementAttribute(const SVString& rAttrName, const variant_t& value)
+void SVConfigurationTreeWriter< SVTreeType >::ElementAttribute(LPCTSTR pAttrName, const variant_t& value)
 {
-	WriteAttribute(rAttrName, value);
-	//m_elements[0]->attr(rAttrName.c_str(), VariantToString(value));
+	WriteAttribute(pAttrName, value);
+	//m_elements[0]->attr(pAttrName.c_str(), VariantToString(value));
 }
 
 #endif

@@ -281,7 +281,7 @@ void SVOCameraObj::SetFileImageSize(const SIZE& size)
 
 LPCTSTR SVOCameraObj::GetImageFilename() const
 {
-	return m_imageFilename.ToString();
+	return m_imageFilename.c_str();
 }
 
 void SVOCameraObj::SetImageFilename(const SVString& filename)
@@ -291,7 +291,7 @@ void SVOCameraObj::SetImageFilename(const SVString& filename)
 
 LPCTSTR SVOCameraObj::GetImageDirectoryName() const
 {
-	return m_imageDirectory.ToString();
+	return m_imageDirectory.c_str();
 }
 
 void SVOCameraObj::SetImageDirectoryName(const SVString& directoryName)

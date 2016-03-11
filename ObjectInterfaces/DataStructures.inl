@@ -25,10 +25,10 @@ namespace Seidenader { namespace ObjectInterfaces
 		switch( m_Value.vt )
 		{
 		case VT_R8:
-			LhsValue.Format(_T("%.06f"), m_Value.dblVal );
+			LhsValue = SvUl_SF::Format(_T("%.06f"), m_Value.dblVal );
 			break;
 		case VT_BSTR:
-			LhsValue = m_Value;
+			LhsValue = SvUl_SF::createSVString(m_Value);
 			break;
 		default:
 			break;
@@ -36,10 +36,10 @@ namespace Seidenader { namespace ObjectInterfaces
 		switch( Rhs.m_Value.vt )
 		{
 		case VT_R8:
-			RhsValue.Format(_T("%.06f"), Rhs.m_Value.dblVal );
+			RhsValue = SvUl_SF::Format(_T("%.06f"), Rhs.m_Value.dblVal );
 			break;
 		case VT_BSTR:
-			RhsValue = Rhs.m_Value;
+			RhsValue = SvUl_SF::createSVString(Rhs.m_Value);
 			break;
 		default:
 			break;

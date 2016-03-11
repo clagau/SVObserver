@@ -28,7 +28,7 @@ static BOOL CALLBACK EnumChildKeys(LPCTSTR p_szKey, void* ptr)
 	obj->m_key.MakeLower();
 	SVRegistryClass reg(obj->m_key);
 	if (reg.GetRegistryValue(_T("groups"), value))
-		obj->m_map.SetAt(obj->m_key, value.ToString());
+		obj->m_map.SetAt(obj->m_key, value.c_str());
 
 	return TRUE;
 }
@@ -92,7 +92,7 @@ CString SVSecuredObject::Lookup(LPCTSTR szApp, int nParent, int nChild, BOOL bCr
 
 			reg.GetRegistryValue(_T("groups"), l_Temp);
 
-			value = l_Temp.ToString();
+			value = l_Temp.c_str();
 		}
 	}
 	else

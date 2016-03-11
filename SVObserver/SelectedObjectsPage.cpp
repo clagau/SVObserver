@@ -148,7 +148,7 @@ void SelectedObjectsPage::ReadSelectedObjects()
 	{
 		SVString Name;
 		Name = Iter->getLocation();
-		Name.replace( strPrefix, _T("") );
+		SvUl_SF::searchAndReplace( Name, strPrefix, _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
 									Index,
@@ -198,9 +198,8 @@ void SelectedObjectsPage::ShowObjectSelector()
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	SVString Title;
+	SVString Title = SvUl_SF::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
 	CString Filter;
-	Title.Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
 	Filter.LoadString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter, this );
 

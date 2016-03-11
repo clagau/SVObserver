@@ -165,7 +165,7 @@ void CSVOInspectionSourceDlg::EnableDisableExport()
 			{
 				SVObjectClass *pObject;
 				SVString ipName = sName;
-				HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName(ipName.c_str(), pObject);
+				HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName(ipName, pObject);
 				if ( hr == S_OK )
 				{
 					m_ctlExportIPDbtn.EnableWindow(TRUE);
@@ -284,7 +284,7 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 			long l_NewDisableMethod = 0;
 			long l_EnableAuxExtents = 0;
 			unsigned long l_VersionNumber = 0;
-			HRESULT hr = SVInspectionImporter::GetProperties(pathName, l_NewDisableMethod, l_EnableAuxExtents, l_VersionNumber);
+			HRESULT hr = SVInspectionImporter::GetProperties(SVString(pathName), l_NewDisableMethod, l_EnableAuxExtents, l_VersionNumber);
 			if (hr == S_OK && nullptr != pInspectionObj )
 			{
 				bool shouldLoad = l_VersionNumber <= TheSVObserverApp.getCurrentVersion();
@@ -351,7 +351,7 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 				SvMc::SVFileDialog dlg(false, bFullAccess, fileExt, ipName.c_str(), dwFlags, fileFilters, this);
 				if (dlg.DoModal() == IDOK)
 				{
-					CString pathName = dlg.GetPathName();
+					SVString pathName = SVString(dlg.GetPathName());
 			   
 					// Create XML file
 					hr = SVInspectionExporter::Export( pathName, ipName, TheSVObserverApp.getCurrentVersion(), IsColor );
