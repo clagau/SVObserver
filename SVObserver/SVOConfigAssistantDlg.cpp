@@ -3591,6 +3591,8 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					RemoveMessageFromList(sMessage);
 					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, TOOLSET_IMAGE_ERROR);
 					RemoveMessageFromList(sMessage);
+					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, MESSAGE_INSPECTION_CAMERA_COLOR);
+					RemoveMessageFromList( sMessage );
 					InspectionDeletedCheckAgainstPPQ(sLabelName);
 					break;
 				}// end case ITEM_ACTION_DELETE:
@@ -3602,7 +3604,10 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					{
 						CString sInspect( pInspectionObj->GetInspectionName() );
 						CString sToolsetImage( pInspectionObj->GetToolsetImage() );
-						RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, sInspect, TOOLSET_IMAGE_ERROR));
+						if( !sToolsetImage.IsEmpty() )
+						{
+							RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, sInspect, TOOLSET_IMAGE_ERROR));
+						}
 						pCameraObj = GetCameraObjectByName(sToolsetImage);
 						if( nullptr != pCameraObj )
 						{
