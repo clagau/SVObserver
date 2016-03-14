@@ -109,31 +109,3 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 }
 #pragma endregion Private Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObjects.inl_v  $
- * 
- *    Rev 1.1   02 Jun 2014 08:55:52   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  900
- * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Added method getValue.
- * Changed return type, parameter type for setValueObject.
- * setValueObject generates required nodes automatically.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   17 Mar 2014 15:10:22   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  869
- * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

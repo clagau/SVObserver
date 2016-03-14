@@ -77,19 +77,3 @@ bool ResultViewItemDef::hasIndex() const
 }
 #pragma endregion Public Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ResultViewItemDef.cpp_v  $
- * 
- *    Rev 1.0   07 Jan 2015 17:35:06   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  980
- * SCR Title:  Add Non-Inspection Objects to the Result View
- * Checked in by:  mEichengruen;  Marcus Eichengruen
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -255,29 +255,3 @@ inline bool SVSpinGroup::Increment(int val) //, boost::function<int ()> total)
 	return true;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SoftwareTriggerDlg.h_v  $
- * 
- *    Rev 1.1   09 Dec 2013 12:16:04   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  878
- * SCR Title:  Fix Software Trigger Dialog
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Fixed GetSoftwareTriggerPeriod to return m_period if m_paused.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   23 Apr 2013 09:17:32   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

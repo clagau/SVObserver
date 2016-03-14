@@ -52,29 +52,3 @@ HRESULT SVTriggerRelayClass<TriggerHandler>::UnregisterTriggerRelay()
 	return l_hr;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTriggerRelayClass.inl_v  $
- * 
- *    Rev 1.0   23 Apr 2013 15:52:06   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   07 Oct 2008 16:28:42   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  634
- * SCR Title:  Implement a File Acquistion Device
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

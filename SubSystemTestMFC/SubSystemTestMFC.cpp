@@ -73,29 +73,3 @@ BOOL CSubSystemTestMFCApp::InitInstance()
 	return FALSE;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SubSystemTestMFC\SubSystemTestMFC.cpp_v  $
- * 
- *    Rev 1.1   30 Sep 2013 14:10:00   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Add x64 platforms.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   18 Apr 2013 17:16:02   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

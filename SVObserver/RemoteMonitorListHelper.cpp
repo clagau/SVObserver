@@ -77,39 +77,3 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 	return obj;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListHelper.cpp_v  $
- * 
- *    Rev 1.2   16 Dec 2014 10:01:22   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  918
- * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   checked to make sure the length was at least 12 before checking to see if the first 12 characters were Inspections.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   12 Dec 2014 13:06:44   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  918
- * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   changed GetMonitoredObjectFromName to remove "Inspections." if it exists.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   08 Jul 2014 08:47:10   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Initial checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

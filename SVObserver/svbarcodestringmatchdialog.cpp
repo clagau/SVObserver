@@ -244,39 +244,3 @@ void SVBarCodeStringMatchDialog::OnBcMultiSelectfile()
 	}
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\svbarcodestringmatchdialog.cpp_v  $
- * 
- *    Rev 1.1   18 Sep 2014 13:38:22   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  944
- * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Revised to use SV_BAR_CODE_STORE_VALUE_FILE_TYPE
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   23 Apr 2013 09:43:04   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 3.3   17 Apr 2003 16:54:12   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  346
- * SCR Title:  Update SVObserver to Version 4.21 Release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

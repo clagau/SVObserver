@@ -48,29 +48,3 @@ private:
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImportProgress.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 10:55:26   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   05 Mar 2013 15:30:04   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  817
- * SCR Title:  Import/Export of Inspections
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

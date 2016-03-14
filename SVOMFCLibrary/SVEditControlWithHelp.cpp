@@ -140,29 +140,3 @@ namespace Seidenader
 }
 #pragma endregion Public Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVEditControlWithHelp.cpp_v  $
- * 
- *    Rev 1.1   19 Dec 2014 01:54:16   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  933
- * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   bugfix: setEditWindow have to set WindowText also if control is not in focus
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   16 Dec 2014 18:08:28   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  933
- * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

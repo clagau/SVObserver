@@ -53,39 +53,3 @@
 
 #endif // !defined(AFX_STDAFX_H__B2AAD072_1DC5_4100_BE8D_9528C46E0F5A__INCLUDED_)
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVGigeCameraFileLibrary\StdAfx.h_v  $
- * 
- *    Rev 1.0   22 Apr 2013 09:41:44   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   21 Mar 2012 13:47:38   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  748
- * SCR Title:  Add Remote Output Steams to SVObserver
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Fixed issues with project parameters and compilier switches.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   16 Jun 2009 16:51:06   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  650
- * SCR Title:  Integrate Gigabit ethernet cameras
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

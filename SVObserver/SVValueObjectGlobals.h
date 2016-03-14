@@ -73,39 +73,3 @@ inline VALUETYPE GetValue( VALUEOBJECTCLASS& valueobject, int iBucket, int iInde
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVValueObjectGlobals.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 16:17:46   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   28 Oct 2010 14:27:54   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  704
- * SCR Title:  Upgrade SVObserver Version for 5.33 Release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to remove duplicate definition of HRESULT.  The SVHRESULT definition will be removed in place of the Microsoft defined HRESULT.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   18 Apr 2008 14:59:18   JSpila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  616
- * SCR Title:  Add Server-side Configuration Data Def Lists to the SVObserver program
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Updated source to split the value objects into individual files.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -43,19 +43,3 @@
 #include <afxcmn.h>                     // MFC-Unterstützung für allgemeine Windows-Steuerelemente
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOResource\stdafx.h_v  $
- * 
- *    Rev 1.0   17 Jul 2014 13:56:08   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  909
- * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

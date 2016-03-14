@@ -196,32 +196,3 @@ STDAPI DllUnregisterServer(void)
 #pragma managed(pop)
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMessage\SVMessage.cpp_v  $
- * 
- *    Rev 1.0   22 Apr 2013 15:56:26   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   22 Jun 2007 09:13:06   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  598
- * SCR Title:  Upgrade SVObserver to compile using vc++ in VS2005
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   These changes include removal of all VC6 constraints, project files, and workspace files.  The new VC8 project and solution files will replace the VC6 files with the new tighter compilation rules.
- * 
- * Also added funtions to DLL to self register.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/
-

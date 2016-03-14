@@ -68,29 +68,3 @@ BOOL SVBlobFeaturePropertiesDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBlobFeaturePropertiesDlg.cpp_v  $
- * 
- *    Rev 1.0   23 Apr 2013 09:45:08   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.2   28 Jul 2005 13:10:30   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  469
- * SCR Title:  Add array capability to the Blob Analyzer
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   added PVCS header
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

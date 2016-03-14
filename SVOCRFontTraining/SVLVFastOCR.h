@@ -99,19 +99,3 @@ private:
 
 #endif // !defined(AFX_SVLVFASTOCR_H__36354615_21B6_11D4_A8B7_00106F0309AB__INCLUDED_)
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOCRFontTraining\SVLVFastOCR.h_v  $
- * 
- *    Rev 1.0   24 Apr 2013 16:36:38   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

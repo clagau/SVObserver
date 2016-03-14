@@ -34,39 +34,3 @@ struct SVShareControl
 
 typedef boost::interprocess::allocator<SVShareControl, segment_manager_t> SVShareControlAllocator;
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedControl.h_v  $
- * 
- *    Rev 1.2   28 Aug 2014 18:37:56   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added productFilterChanged variable
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   21 Aug 2014 12:09:28   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Revised to move the m_ack member variable to the end of the structure to reduce padding
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   14 Aug 2014 17:07:18   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

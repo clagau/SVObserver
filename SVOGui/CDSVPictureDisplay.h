@@ -383,30 +383,3 @@ void SetHideTabControl(BOOL propVal)
 };
 
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\CDSVPictureDisplay.h_v  $
- * 
- *    Rev 1.1   18 Jul 2014 03:58:52   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  902
- * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   rename enum-values of ROISubType_Graph and add ImageArea_ScalePerParameter
- * add P_SubType_X and P_SubType_Y to enum _ParameterType
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   26 Jun 2014 16:46:30   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  885
- * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

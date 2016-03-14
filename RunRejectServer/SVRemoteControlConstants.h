@@ -151,37 +151,3 @@ namespace SVRC
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\SVRemoteControlConstants.h_v  $
- * 
- *    Rev 1.1   29 Aug 2014 17:35:56   jHanebach
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added support for product filter, bug fixes, refactoring.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   15 Aug 2014 14:51:30   jHanebach
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Initial Check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   14 May 2013 14:33:32   jHanebach
- * Project: SVRemoteControl
- * Change Request (SCR) nbr: 4
- * SCR Title: Changes for 2.01 version
- * Checked in by: jHanebach; Jack Hanebach
- * Change Description: Initial Check-In
- * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-*/

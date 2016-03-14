@@ -28,19 +28,3 @@ typedef std::deque<NameDepthPair> NameDepthPairList;
 // 1st is PPQ name, 2nd is a list of MonitorListNames and their Reject Depth
 typedef std::map<SVString, NameDepthPairList> PPQNameListNames;
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorList.h_v  $
- * 
- *    Rev 1.0   17 Apr 2014 16:26:12   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   first iteration of file
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -52,39 +52,3 @@ private:
 //******************************************************************************
 #endif	// SVLINELINEARMEASUREMENTANALYZER_H
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLinearMeasurementAnalyzerClass.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 12:04:12   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   08 Aug 2005 16:07:16   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  500
- * SCR Title:  Reduce delay when adjusting tool parameters with a large toolset
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated objects and dialogs to use the ActiveX Interface to update inspection data.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   18 Feb 2005 10:49:44   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  463
- * SCR Title:  Add new Linear Measurement Tool to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Adding new files for the new linear tool.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

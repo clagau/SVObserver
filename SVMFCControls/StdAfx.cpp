@@ -15,10 +15,3 @@
 #define SV_STRINGIZE( x ) SV_EXPAND( x )
 #pragma message( "_WIN32_WINNT=" SV_STRINGIZE( _WIN32_WINNT ) )
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMFCControls\StdAfx.cpp_v  $
- * 
-*/

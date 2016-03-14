@@ -89,19 +89,3 @@ protected:
 #pragma endregion Member variables
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ZoomToolBar.h_v  $
- * 
- *    Rev 1.0   14 Aug 2014 13:14:22   mEichengruen
- * Project:  SVObserver
- * Change Request (SCR) nbr:  921
- * SCR Title:  Add more complete zoom functionality. (runpage)
- * Checked in by:  mEichengruen;  Marcus Eichengruen
- * Change Description:  
- *   Initial check in 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

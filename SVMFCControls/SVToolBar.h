@@ -66,29 +66,3 @@ namespace SvMc = Seidenader::SVMFCControls;
 
 #endif // !defined(AFX_SVToolbar_H__3BD1EE4E_079D_11D3_A74F_00106F000C78__INCLUDED_)
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolBar.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 15:42:02   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 3.2   22 Apr 2003 16:47:06   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  346
- * SCR Title:  Update SVObserver to Version 4.21 Release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

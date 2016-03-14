@@ -62,39 +62,3 @@ public:
 	BOOL m_bManagerEnable;
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVThreadInfoDlg.h_v  $
- * 
- *    Rev 1.2   17 Dec 2014 07:08:52   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  941
- * SCR Title:  Update SVObserver Version Number for the 7.10 Release
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Added Thread Manager Enable.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   02 Dec 2014 09:53:22   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Include SVThreadManager.h
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   01 Dec 2014 13:11:08   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial check in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

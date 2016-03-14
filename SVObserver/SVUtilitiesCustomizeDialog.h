@@ -84,39 +84,3 @@ protected:
 
 #endif // !defined(AFX_SVUTILITIESCUSTOMIZEDIALOG_H__0011F4F0_9C37_11D3_A80B_00106F010A93__INCLUDED_)
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVUtilitiesCustomizeDialog.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 15:57:38   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 3.3   02 Mar 2007 06:27:40   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  595
- * SCR Title:  Fix issues with Utility Menu when switching products
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   changed the utilities to use the ini files instead of the registry
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 3.2   22 Apr 2003 17:17:56   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  346
- * SCR Title:  Update SVObserver to Version 4.21 Release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

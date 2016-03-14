@@ -72,29 +72,3 @@ namespace Seidenader { namespace SVUtilityLibrary
 
 namespace SvUl = Seidenader::SVUtilityLibrary;
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVSystemLibrary\LoadDll.h_v  $
- * 
- *    Rev 1.1   18 Feb 2015 03:20:46   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  984
- * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Changed to use short namespace names
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   17 Jul 2014 16:05:34   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  909
- * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

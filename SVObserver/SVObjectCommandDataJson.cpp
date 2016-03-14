@@ -134,39 +134,3 @@ HRESULT SVObjectCommandDataJson::GetWaitHandle( HANDLE& p_rHandle ) const
 	return l_Status;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVObjectCommandDataJson.cpp_v  $
- * 
- *    Rev 1.0   23 Apr 2013 12:40:16   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   10 Feb 2012 09:35:28   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  747
- * SCR Title:  Add New Remote Input Tool to SVObserver
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   Updated functionality to remove bugs associated with the remote input tool and communications to that tool.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   16 Jan 2012 15:29:48   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  747
- * SCR Title:  Add New Remote Input Tool to SVObserver
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   Updated main application and create the command data holder for the JSON commands used with the socket and the remote input tool.  Updated source code to initialize, start and stop the scoket for sending and receiving data.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -401,19 +401,3 @@ void Seidenader::ObjectSelectorLibrary::ObjectFilterPpg::changeCheckState( const
 }
 #pragma endregion Protected Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectFilterPpg.cpp_v  $
- * 
- *    Rev 1.0   16 Dec 2014 17:34:30   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  933
- * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

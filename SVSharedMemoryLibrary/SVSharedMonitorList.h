@@ -72,29 +72,3 @@ namespace SeidenaderVision
 	typedef boost::interprocess::allocator<SVSharedMonitorList, segment_manager_t> MonitorListAllocator;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedMonitorList.h_v  $
- * 
- *    Rev 1.1   28 Aug 2014 18:36:36   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added SVProductFilterEnum m_filter member variable 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   14 Aug 2014 17:09:18   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

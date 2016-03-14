@@ -187,39 +187,3 @@ private:
 #pragma endregion private Member variables
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\DrawObject.h_v  $
- * 
- *    Rev 1.0   26 Jun 2014 16:26:38   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  885
- * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   03 May 2010 07:06:48   tbair
- * Project:  SVEZConfig
- * Change Request (SCR) nbr:  3
- * SCR Title:  Develop Picture Display Control
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Changed move functions to return true if they can be resized or moved. There is now a limit on minimum size.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   15 Mar 2010 13:24:02   jspila
- * Project:  SVEZConfig
- * Change Request (SCR) nbr:  1
- * SCR Title:  Initial Check-in of Prototype
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Initial Check-in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

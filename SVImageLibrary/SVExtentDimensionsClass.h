@@ -63,39 +63,3 @@ private:
 
 #endif // _SVEXTENTDIMENTIONSCLASS_H
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVExtentDimensionsClass.h_v  $
- * 
- *    Rev 1.0   22 Apr 2013 10:37:02   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   16 Mar 2011 13:13:38   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  712
- * SCR Title:  Fix issues with black images when using command interface (SIAC)
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated extent functionality and renamed extent methods to correct extent issues and add clarity to the logical flow.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   15 Feb 2005 14:01:54   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  440
- * SCR Title:  Create Internal Tool Object to Managing Tool Extents and Result Extents
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   First Iteration of File
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

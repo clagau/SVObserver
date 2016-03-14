@@ -792,19 +792,3 @@ LRESULT CGridCellBase::SendMessageToParent(int nRow, int nCol, int nMessage)
         return 0;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\GridCtrlLibrary\GridCellBase.cpp_v  $
- * 
- *    Rev 1.0   24 Oct 2014 10:35:16   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  942
- * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

@@ -41,19 +41,3 @@ SVWinHandle<HBITMAP>::~SVWinHandle() {::DeleteObject(m_t);}
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\SVWinHandle.h_v  $
- * 
- *    Rev 1.0   24 Sep 2013 16:31:12   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  860
- * SCR Title:  Resize Icons Should Change Based on a Tool's Rotation
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

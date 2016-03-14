@@ -1815,19 +1815,3 @@ void SVLptIOImpl::HandleIRQ()
 #endif
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLptIO\SVLptIOImpl.cpp_v  $
- * 
- *    Rev 1.0   17 Sep 2014 15:57:36   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  943
- * SCR Title:  Parallel Port I/O for 64 Bit and Windows 7
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

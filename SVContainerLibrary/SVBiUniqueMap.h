@@ -50,39 +50,3 @@ struct SVBiUniqueMap
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVContainerLibrary\SVBiUniqueMap.h_v  $
- * 
- *    Rev 1.0   22 Apr 2013 07:44:04   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   16 Jan 2012 14:41:04   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  747
- * SCR Title:  Add New Remote Input Tool to SVObserver
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   Updated containers to update data structure to be more discriptive and not dependent on std::pair.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   04 Apr 2011 11:17:08   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  712
- * SCR Title:  Fix issues with black images when using command interface (SIAC)
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Added new container to fix issues with performance problems.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

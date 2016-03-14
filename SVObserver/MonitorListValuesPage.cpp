@@ -78,30 +78,3 @@ void MonitorListValuesPage::InitPage()
 	m_Tree.Populate(m_nameList);
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListValuesPage.cpp_v  $
- * 
- *    Rev 1.1   08 Jul 2014 09:15:30   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Revsied MonitorListValuesPage constructor.
- * Revised OnInitDialog to support wholeArray selection.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   17 Apr 2014 16:24:06   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   first iteration of file
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -2427,39 +2427,3 @@ BOOL __stdcall setChildEnabled(HWND hwnd, LPARAM lparam)
   return TRUE;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\VisualFx.cpp_v  $
- * 
- *    Rev 1.1   02 Oct 2013 08:39:00   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Add x64 platform.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   23 Apr 2013 16:32:36   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   14 Nov 2008 14:10:36   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  615
- * SCR Title:  Integrate PLC Classes into SVObserver Outputs
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial Check-in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

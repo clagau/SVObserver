@@ -160,39 +160,3 @@ HRESULT SVAcquisitionInitiator::Exec()
 	return hr;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVAcquisitionInitiator.cpp_v  $
- * 
- *    Rev 1.0   23 Apr 2013 09:24:12   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   15 Dec 2009 14:55:22   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  677
- * SCR Title:  Fix problem in camera notify thread
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated include information and comments.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   10 Sep 2008 11:19:10   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  612
- * SCR Title:  Implement a timer trigger object
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial CheckIn
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

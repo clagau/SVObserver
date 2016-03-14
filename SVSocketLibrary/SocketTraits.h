@@ -50,27 +50,3 @@ namespace Seidenader
 	}
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SocketTraits.h_v  $
- * 
- *    Rev 1.1   15 Aug 2014 14:12:32   jHanebach
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Syncing with svrc code base
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   05 Jun 2014 11:33:14   jHanebach
- * Project: SVRemoteControl
- * Change Request (SCR) nbr: 10
- * SCR Title: Add reject/run page server connection and commands
- * Checked in by: jHanebach; Jack Hanebach
- * Change Description: Added pvcs headers/footers.
- * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-*/

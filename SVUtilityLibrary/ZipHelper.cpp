@@ -98,19 +98,3 @@ void ZipHelper::unzipAll( const SVString& rZipFileName, const SVString& rDestina
 }
 #pragma endregion Public Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\ZipHelper.cpp_v  $
- * 
- *    Rev 1.0   19 Dec 2014 04:37:14   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  978
- * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

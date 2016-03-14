@@ -115,20 +115,3 @@ public:
 #pragma endregion Public
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListView.h_v  $
- * 
- *    Rev 1.0   17 Apr 2014 16:25:20   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   first iteration of file
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/
-

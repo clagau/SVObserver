@@ -89,29 +89,3 @@ void FramedSplitterWnd::RefreshSplitBars()
 }
 #pragma endregion Protected Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\FramedSplitterWnd.cpp_v  $
- * 
- *    Rev 1.1   02 Sep 2014 12:10:06   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  921
- * SCR Title:  Add more complete zoom functionality. (runpage)
- * Checked in by:  mEichengruen;  Marcus Eichengruen
- * Change Description:  
- *   Updated method OnDrawSplitter to avoid drawing blue frame when mode is run or test.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   14 Aug 2014 13:23:06   mEichengruen
- * Project:  SVObserver
- * Change Request (SCR) nbr:  921
- * SCR Title:  Add more complete zoom functionality. (runpage)
- * Checked in by:  mEichengruen;  Marcus Eichengruen
- * Change Description:  
- *   Initial Check in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

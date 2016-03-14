@@ -68,30 +68,3 @@ void SVHandleManager<NumBits, HandleType, InvalidHandle>::clear()
 	m_handleList.reset();
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVUtilityLibrary\SVHandleManager.inl_v  $
- * 
- *    Rev 1.0   25 Apr 2013 19:22:12   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   03 Jun 2009 07:54:06   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  650
- * SCR Title:  Integrate Gigabit ethernet cameras
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/
-

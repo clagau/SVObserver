@@ -75,30 +75,3 @@ void ObjectTreeGenerator::BuildSelectableItems( const SelectorOptions& rOptions 
 }
 #pragma endregion Public Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.inl_v  $
- * 
- *    Rev 1.1   04 Dec 2014 03:34:44   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  965
- * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Added Methds getResults
- * Changed getSingleObjectResult gets the first item of the results list
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   17 Jul 2014 11:16:26   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  909
- * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

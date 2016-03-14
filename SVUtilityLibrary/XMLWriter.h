@@ -226,29 +226,3 @@ namespace xml
 	};
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\XMLWriter.h_v  $
- * 
- *    Rev 1.2   13 Nov 2014 08:58:44   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  942
- * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Changed EOL from \r\n to \n as the Text file format adds the \r automatically
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   24 Oct 2014 12:00:08   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  942
- * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Added end of line for the XML
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

@@ -74,29 +74,3 @@ private:
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVStaticStringValueObjectClass.h_v  $
- * 
- *    Rev 1.1   18 Nov 2013 13:26:12   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  872
- * SCR Title:  Add Archive Tool Headers to Archive File
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Corrected error; now derived from the correct base class.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   11 Nov 2013 09:32:36   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  872
- * SCR Title:  Add Archive Tool Headers to Archive File
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial check-in static value object to support Archive tool headers and tool comments.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -35,29 +35,3 @@ typedef boost::interprocess::allocator< SVSharedImagePair, segment_manager_t > S
 typedef boost::interprocess::map< char_string, SVSharedImage, std::less< char_string >, SVSharedImagePairAllocator > SVSharedImageMap;
 typedef boost::interprocess::allocator< SVSharedImageMap, segment_manager_t > SVSharedImageMapAllocator;
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedImage.h_v  $
- * 
- *    Rev 1.0   14 Aug 2014 17:08:36   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   19 Dec 2011 13:39:32   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  744
- * SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Initial check-in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

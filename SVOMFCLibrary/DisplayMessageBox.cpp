@@ -364,19 +364,3 @@ void DisplayMessageBox::SetDisplayMessageBoxFont()
 }
 #pragma endregion Private Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\DisplayMessageBox.cpp_v  $
- * 
- *    Rev 1.0   18 Feb 2015 02:56:04   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  984
- * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

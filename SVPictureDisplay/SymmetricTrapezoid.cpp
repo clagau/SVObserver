@@ -382,19 +382,3 @@ void SymmetricTrapezoid::NormOffset()
 }
 #pragma endregion Protected Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SymmetricTrapezoid.cpp_v  $
- * 
- *    Rev 1.0   26 Jun 2014 16:28:58   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  885
- * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

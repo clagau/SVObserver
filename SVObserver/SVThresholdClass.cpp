@@ -584,29 +584,3 @@ HRESULT SVThresholdClass::Rebuild()
 	return l_hrOk;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVThresholdClass.cpp_v  $
- * 
- *    Rev 1.1   08 Oct 2014 07:26:54   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  956
- * SCR Title:  Threshold Off by default on tools using threshold. (SVO-167)
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Changed the default value for m_threshActivate to FALSE.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   09 Aug 2013 12:03:58   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Created from SVOperator.cpp.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

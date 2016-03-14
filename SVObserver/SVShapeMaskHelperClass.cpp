@@ -462,19 +462,3 @@ HRESULT SVShapeMaskHelperClass::GetCancelData(SVInputRequestStructMap& rMap)
 	return hr;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVShapeMaskHelperClass.cpp_v  $
- * 
- *    Rev 1.0   13 Aug 2013 09:28:02   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Created from SVOperator.cpp.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

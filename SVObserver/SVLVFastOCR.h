@@ -91,39 +91,3 @@ private:
 
 #endif   // SVLVFASTOCR_H
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLVFastOCR.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 12:25:44   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   22 Apr 2003 11:06:56   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  346
- * SCR Title:  Update SVObserver to Version 4.21 Release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   28 Aug 2000 16:03:22   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  177
- * SCR Title:  Fix Automatic Load Last SEC Problem
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Update FastOCR to prevent memory access violations.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

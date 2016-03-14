@@ -84,19 +84,3 @@ namespace Seidenader
 
 namespace SvOml = Seidenader::SVOMFCLibrary;
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVEditControlWithHelp.h_v  $
- * 
- *    Rev 1.0   16 Dec 2014 18:08:28   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  933
- * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

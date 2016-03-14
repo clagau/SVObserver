@@ -65,19 +65,3 @@ private:
 	#pragma endregion
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFailStatusStream.h_v  $
- * 
- *    Rev 1.0   18 Feb 2015 10:51:10   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  975
- * SCR Title:  Add Fail Status Stream (SVO-354)
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

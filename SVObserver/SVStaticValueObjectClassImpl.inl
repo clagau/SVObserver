@@ -559,29 +559,3 @@ inline void SVStaticValueObjectClassImpl<T>::swap( SVStaticValueObjectClassImpl<
 	}
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVStaticValueObjectClassImpl.inl_v  $
- * 
- *    Rev 1.1   19 Nov 2013 09:24:20   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  872
- * SCR Title:  Add Archive Tool Headers to Archive File
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Modified last set index to always be zero.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   11 Nov 2013 09:32:34   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  872
- * SCR Title:  Add Archive Tool Headers to Archive File
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial check-in static value object to support Archive tool headers and tool comments.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

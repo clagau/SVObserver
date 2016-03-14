@@ -103,39 +103,3 @@ const SVAcquisitionConstructParams& SVAcquisitionConstructParams::operator=( con
 }
 
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVAcquisitionConstructParams.cpp_v  $
- * 
- *    Rev 1.0   23 Apr 2013 09:23:42   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   16 Sep 2011 15:37:50   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  730
- * SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Updated acquisition device classes to handle new data management and callback fucntionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   15 Feb 2010 12:15:12   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  686
- * SCR Title:  Update Laptop version to load all valid configurations
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Initial check-in of single line construction functionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

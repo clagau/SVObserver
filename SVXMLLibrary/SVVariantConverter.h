@@ -39,29 +39,3 @@ private:
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVXMLLibrary\SVVariantConverter.h_v  $
- * 
- *    Rev 1.0   25 Apr 2013 19:48:20   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   11 Oct 2012 10:40:02   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code and projects to fix whitespace issues in the XML file and consolidate functionality for load and saving to this library.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -163,29 +163,3 @@ private:
 #include "RootObject.inl"
 #pragma endregion Inline
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RootObject.h_v  $
- * 
- *    Rev 1.1   17 Jul 2014 17:56:30   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  909
- * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Removed namespaces and code review changes
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   17 Mar 2014 15:10:24   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  869
- * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

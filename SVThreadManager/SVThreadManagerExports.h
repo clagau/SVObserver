@@ -52,29 +52,3 @@ HRESULT WINAPI SVStopAffinityMgmt();
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVThreadManager\SVThreadManagerExports.h_v  $
- * 
- *    Rev 1.1   17 Dec 2014 07:31:18   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added startAffinityMgnt and stopAffinityMgnt functions.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   01 Dec 2014 11:21:48   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial Check-in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

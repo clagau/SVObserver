@@ -73,39 +73,3 @@ protected:
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVExternalToolResultPage.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 10:32:56   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.2   16 Dec 2009 10:18:26   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  677
- * SCR Title:  Fix problem in camera notify thread
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Fix issues with includes and comments.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   08 Jul 2004 12:32:30   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  406
- * SCR Title:  Implement External Tool
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   first iteration
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

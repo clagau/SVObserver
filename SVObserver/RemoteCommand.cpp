@@ -179,29 +179,3 @@ BOOL GlobalRCCloseConfiguration()
 }
 #pragma endregion Global functions
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteCommand.cpp_v  $
- * 
- *    Rev 1.2   29 Aug 2014 15:42:32   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  934
- * SCR Title:  Add Remote Access to Environment.Mode Parameters
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Changed GlobalRCGetMode to call SVSVIMStateClass::GetMode.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   17 Jul 2014 17:56:28   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  909
- * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Removed namespaces and code review changes
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -24,19 +24,3 @@ BasicValueObjectPtr RootChildren::setValue( LPCSTR DottedName, const ELEMENT_TYP
 
 #pragma endregion Public Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.inl_v  $
- * 
- *    Rev 1.0   02 Jun 2014 08:47:08   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  900
- * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

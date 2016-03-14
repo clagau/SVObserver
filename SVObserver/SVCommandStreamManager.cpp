@@ -279,39 +279,3 @@ HRESULT SVCommandStreamManager::CommandCallback( const SVInspectionCompleteInfoS
 	return l_Status;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCommandStreamManager.cpp_v  $
- * 
- *    Rev 1.0   23 Apr 2013 09:56:50   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   11 Feb 2013 14:13:06   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  812
- * SCR Title:  Add New Remote Command Functionality
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated code that uses the subject/observer design patten as part of the object manager with the new parameter.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   02 Jul 2012 16:39:48   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  769
- * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to promote new display functionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -56,29 +56,3 @@ protected:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogLinearSpecialPageClass.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 15:36:50   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   09 Aug 2005 08:45:02   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  500
- * SCR Title:  Reduce delay when adjusting tool parameters with a large toolset
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated objects and dialogs to use the ActiveX Interface to update inspection data.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

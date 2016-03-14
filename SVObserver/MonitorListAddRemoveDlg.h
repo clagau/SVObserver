@@ -64,32 +64,3 @@ private:
 #pragma region Private Members
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListAddRemoveDlg.h_v  $
- * 
- *    Rev 1.1   18 Aug 2014 16:09:06   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Removed OnUsedListEditFinished method.
- * Removed IsValidName method.
- * Changed m_UsedList from SVEditableListBox to CListBox.
- * Renamed OnLbnDblclkUsedList to OnDblClickUsedList.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   17 Apr 2014 16:22:52   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   first iteration of file
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

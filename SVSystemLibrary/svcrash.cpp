@@ -255,30 +255,3 @@ LPCTSTR __stdcall InternalGetStackTraceString( EXCEPTION_POINTERS *pExPtrs )
     return ( szRet );
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\svcrash.cpp_v  $
- * 
- *    Rev 1.0   25 Apr 2013 17:49:22   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   05 Oct 2001 09:46:58   rschock
- * Project:  SVObserver
- * Change Request (SCR) nbr:  228
- * SCR Title:  Add context information to help the debugging of multi-threaded code
- * Checked in by:  rSchock;  Rosco Schock
- * Change Description:  
- *   New code to store thread type identifiers in the TIB block for each thread that is run.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
-*/

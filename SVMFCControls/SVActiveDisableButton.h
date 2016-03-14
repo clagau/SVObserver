@@ -53,29 +53,3 @@ namespace Seidenader
 
 namespace SvMc = Seidenader::SVMFCControls;
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVActiveDisableButton.h_v  $
- * 
- *    Rev 1.0   25 Apr 2013 12:58:54   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   08 Jul 2004 11:35:00   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  406
- * SCR Title:  Implement External Tool
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   first iteration
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

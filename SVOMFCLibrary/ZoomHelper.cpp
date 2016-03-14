@@ -221,19 +221,3 @@ void ZoomHelper::ZoomChanged()
 }
 #pragma endregion Public Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\ZoomHelper.cpp_v  $
- * 
- *    Rev 1.0   13 Aug 2014 17:19:56   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  902
- * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

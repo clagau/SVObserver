@@ -60,29 +60,3 @@ void SVPictureDisplayPropPage::DoDataExchange(CDataExchange* pDX)
 
 // SVPictureDisplayPropPage message handlers
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SVPictureDisplayPropPage.cpp_v  $
- * 
- *    Rev 1.0   26 Jun 2014 16:27:56   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  885
- * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   15 Mar 2010 13:25:28   jspila
- * Project:  SVEZConfig
- * Change Request (SCR) nbr:  1
- * SCR Title:  Initial Check-in of Prototype
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Initial Check-in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -80,19 +80,3 @@ protected:
 	RangeClassHelper m_RangeClassHelper;
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeXDialogClass.h_v  $
- * 
- *    Rev 1.0   19 Dec 2014 13:53:40   mEichengruen
- * Project:  SVObserver
- * Change Request (SCR) nbr:  979
- * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
- * Checked in by:  mEichengruen;  Marcus Eichengruen
- * Change Description:  
- *   Initial Check In for SCR 979 Indirect Range Objects 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

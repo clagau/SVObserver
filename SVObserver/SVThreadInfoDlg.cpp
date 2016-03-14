@@ -334,39 +334,3 @@ void SVThreadInfoDlg::OnEnableCheck()
 	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVThreadInfoDlg.cpp_v  $
- * 
- *    Rev 1.2   19 Dec 2014 06:50:38   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Updated pipe combo pick list as per document.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   17 Dec 2014 07:08:56   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  941
- * SCR Title:  Update SVObserver Version Number for the 7.10 Release
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Added Thread Manager Enable.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   01 Dec 2014 13:11:10   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial check in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

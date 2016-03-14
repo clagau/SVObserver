@@ -82,29 +82,3 @@ STDAPI DllUnregisterServer(void)
 	return NOERROR;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOCRGrayFontTrain\SVOCRGrayFontTrain.cpp_v  $
- * 
- *    Rev 1.0   25 Apr 2013 10:30:14   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   16 May 2000 15:07:24   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  133, 132
- * SCR Title:  Add OCR Gray Scale to SVObserver and Create OCR Gray Scale Font Training
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Upgrade Logical Vision WiT v5.3 to Logical Vision FastOCR v1.2.  Completely changed headers, libraries, and variable name types.  Functionality still the same as prior version.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

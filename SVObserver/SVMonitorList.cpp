@@ -68,19 +68,3 @@ void SVMonitorList::Clear()
 	m_conditionalDataList.clear();
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMonitorList.cpp_v  $
- * 
- *    Rev 1.1   22 Apr 2014 09:24:22   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Revised to correct issue with PVCS log section.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -93,39 +93,3 @@ unsigned long __stdcall SVSAXContentHandlerImpl::Release()
     return 0;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVSAXContentHandlerImpl.cpp_v  $
- * 
- *    Rev 1.0   25 Apr 2013 17:52:44   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   02 Jun 2010 08:47:20   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  695
- * SCR Title:  Upgrade Acq to Allow for LUT, Light Reference, and Model Updates for GigE
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Fixed include issues with SVSystemLibrary.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   02 Jun 2010 07:48:24   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  695
- * SCR Title:  Upgrade Acq to Allow for LUT, Light Reference, and Model Updates for GigE
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to include changes to allow for GigE Light Reference and LUT to work.  Added functionality to read GigE camera database from camera file to allow for changes to camera functionality to be externalized.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

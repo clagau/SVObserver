@@ -55,19 +55,3 @@ private:
 
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveHeaderEditDlg.h_v  $
- * 
- *    Rev 1.0   11 Nov 2013 09:25:08   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  872
- * SCR Title:  Add Archive Tool Headers to Archive File
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added dialog to edit archive tool headers
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -84,39 +84,3 @@ struct SVExtentOffsetStruct
 
 #endif //_SVEXTENTOFFSETSTRUCT_H
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVExtentOffsetStruct.h_v  $
- * 
- *    Rev 1.0   22 Apr 2013 10:40:00   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   16 Jan 2006 16:49:56   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  534
- * SCR Title:  Add Image Select for Auxiliary Extent Source
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated SVImageExtentClass to use new SVExtentOffsetStruct for managing the extent offset data. Fixed check in problem.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   16 Jan 2006 16:40:38   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  534
- * SCR Title:  Add Image Select for Auxiliary Extent Source
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated SVImageExtentClass to use new SVExtentOffsetStruct for managing the extent offset data.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -505,39 +505,3 @@ public:
 };
 
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\VisualFx.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 16:32:50   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   21 Sep 2011 09:53:20   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  730
- * SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Updated container delclariation to clairify namespace of object type.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   14 Nov 2008 14:10:34   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  615
- * SCR Title:  Integrate PLC Classes into SVObserver Outputs
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial Check-in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

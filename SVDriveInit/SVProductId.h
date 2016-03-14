@@ -38,39 +38,3 @@ private:
 
 #endif
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVDriveInit\SVProductId.h_v  $
- * 
- *    Rev 1.0   22 Apr 2013 08:33:32   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   09 Nov 2009 09:41:44   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  668
- * SCR Title:  Upgrade SVObserver version for Barracuda release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated software to fix issues with FBReseal.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   04 Nov 2009 18:46:10   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  668
- * SCR Title:  Upgrade SVObserver version for Barracuda release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated drive init program to fix issues associated with new functionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

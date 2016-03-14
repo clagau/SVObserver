@@ -121,19 +121,3 @@ void SVJsonStreamPacket::Reset()
 	m_count = 0;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVJsonStreamPacket.cpp_v  $
- * 
- *    Rev 1.0   02 Oct 2014 10:40:48   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  949
- * SCR Title:  Repeatedly Calling PutConfig Causes SVObserver to Stop Responding
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

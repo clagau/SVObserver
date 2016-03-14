@@ -199,29 +199,3 @@ namespace Seidenader
 
 namespace SvOg = Seidenader::SVOGui;
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Custom2FilterDlg.h_v  $
- * 
- *    Rev 1.1   17 Nov 2014 09:11:14   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  942
- * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Added Method inputGridCtrlCharacter and inputGridCtrlKey
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   24 Oct 2014 11:15:00   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  942
- * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

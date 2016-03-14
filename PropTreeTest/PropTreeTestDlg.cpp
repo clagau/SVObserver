@@ -253,19 +253,3 @@ afx_msg void CPropTreeTestDlg::OnItemChanged( NMHDR* p_NotifyStruct, LRESULT* p_
 	}
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropTreeTest\PropTreeTestDlg.cpp_v  $
- * 
- *    Rev 1.0   03 Oct 2013 14:43:30   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial Check-in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

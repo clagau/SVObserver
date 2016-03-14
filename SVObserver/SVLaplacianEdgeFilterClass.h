@@ -26,19 +26,3 @@ protected:
 
 #endif	//	SVLAPLACIANEDGEFILTERCLASS_H
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLaplacianEdgeFilterClass.h_v  $
- * 
- *    Rev 1.0   09 Aug 2013 09:55:38   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Created from SVOperator.h.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

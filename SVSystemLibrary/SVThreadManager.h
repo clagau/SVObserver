@@ -113,39 +113,3 @@ private:
 #pragma endregion
 };
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVThreadManager.h_v  $
- * 
- *    Rev 1.3   17 Dec 2014 08:18:16   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added Critical Section to protect threading issues in add and remove functions.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   10 Dec 2014 16:49:50   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added Get and SetThreadAffinityEnable methods.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   01 Dec 2014 14:05:58   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  960
- * SCR Title:  Pipe/core management
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   initial check in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

@@ -275,19 +275,3 @@ long Custom2Filter::validateKernelSize( SVLongValueObjectClass& rKernelSize )
 }
 #pragma endregion Private Methods
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Custom2Filter.cpp_v  $
- * 
- *    Rev 1.0   24 Oct 2014 11:14:58   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  942
- * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */

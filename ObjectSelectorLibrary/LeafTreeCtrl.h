@@ -91,39 +91,3 @@ namespace Seidenader
 
 namespace SvOsl = Seidenader::ObjectSelectorLibrary;
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\LeafTreeCtrl.h_v  $
- * 
- *    Rev 1.2   16 Dec 2014 17:30:58   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  933
- * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   Updated class comment.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   18 Aug 2014 07:46:18   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  909
- * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Coding guidline changes using const object for get and is methods
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   17 Jul 2014 11:12:20   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  909
- * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

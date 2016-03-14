@@ -260,39 +260,3 @@ HRESULT SVMatroxGigeBufferManager<BufferCreator, BufferStrategy, BufferCollectio
 	return hr;
 }
 
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxGige\SVMatroxGigeBufferManager.inl_v  $
- * 
- *    Rev 1.0   22 Apr 2013 14:39:22   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   24 May 2010 14:03:34   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  693
- * SCR Title:  Fix Performance Issue with Inspection Process
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated include file due to changes in the data manager include path update.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   16 Jun 2009 17:18:10   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  650
- * SCR Title:  Integrate Gigabit ethernet cameras
- * Checked in by:  sJones;  Steve Jones
- * Change Description:  
- *   Initial Checkin
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/
