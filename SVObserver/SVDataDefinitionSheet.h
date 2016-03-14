@@ -47,7 +47,9 @@ private:
 	virtual BOOL OnInitDialog();
 	void OnOK();
 
-	bool setChangedData( const SelectedObjectsPage* const pPage );
+	void initSelectedList( SvOsl::SelectorItemVector* pList, UINT Attribute );
+	bool setChangedData( SelectedObjectsPage* const pPage );
+	void setAttributes( const SvOsl::SelectorItemVector& rList, UINT Attribute, bool Clear ) const;
 #pragma endregion Private Methods
 
 #pragma region Member variables

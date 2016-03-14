@@ -54,8 +54,8 @@ private:
 #pragma region Member variables
 private:
 	SVInspectionProcess& m_rInspection;		//Reference to the respective inspection object
-	SvOsl::SelectorItemVector m_Values;		//List of value objects
-	SvOsl::SelectorItemVector m_Images;		//List of image objects
+	SvOsl::SelectorItemVector m_ValueList;	//List of value objects
+	SvOsl::SelectorItemVector m_ImageList;	//List of image objects
 	SvOsl::SelectorItemVector m_Conditionals; //List of conditional objects
 	CEdit m_MaxHistoryCtrl;					//Maximum history control
 	CStatic m_MaxHistoryLabel;				//Maximum history label

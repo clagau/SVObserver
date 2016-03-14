@@ -43,14 +43,14 @@ SVConditionalHistorySheet::SVConditionalHistorySheet( LPCTSTR pszCaption, SVInsp
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
 ,	m_rInspection( rInspection )
 {
-	SVScalarValueVector CurrentValues;
-	SVScalarValueVector CurrentImages;
+	SVScalarValueVector CurrentValueList;
+	SVScalarValueVector CurrentImageList;
 	SVScalarValueVector CurrentConditionals;
 
-	m_rInspection.GetConditionalHistoryList( CurrentValues, CurrentImages, CurrentConditionals );
+	m_rInspection.GetConditionalHistoryList( CurrentValueList, CurrentImageList, CurrentConditionals );
 
-	m_Values = ConvertList( CurrentValues );
-	m_Images = ConvertList( CurrentImages );
+	m_ValueList = ConvertList( CurrentValueList );
+	m_ImageList = ConvertList( CurrentImageList );
 	m_Conditionals = ConvertList( CurrentConditionals );
 
 	SVScalarValueMapType mapProperties;
@@ -96,10 +96,10 @@ HRESULT SVConditionalHistorySheet::CreatePages()
 	SVString name = m_rInspection.GetName();
 	const SVGUID& rInspectionID = m_rInspection.GetUniqueObjectID();
 
-	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( name, rInspectionID, _T("Values"), m_Values, SV_CH_VALUE );
+	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( name, rInspectionID, _T("Values"), m_ValueList, SV_CH_VALUE );
 	AddPage(pValuesDlg);
 
-	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( name, rInspectionID, _T("Images"), m_Images, SV_CH_IMAGE );
+	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( name, rInspectionID, _T("Images"), m_ImageList, SV_CH_IMAGE );
 	AddPage(pImagesDlg);
 
 	SelectedObjectsPage* pConditionalsDlg = new SelectedObjectsPage( name, rInspectionID, _T("Conditions"), m_Conditionals, SV_CH_CONDITIONAL );
@@ -169,7 +169,7 @@ BOOL SVConditionalHistorySheet::OnInitDialog()
 		}
 	}
 
-	UpdateData( FALSE );
+	UpdateData( false );
 	return bResult;
 }
 
@@ -178,24 +178,22 @@ void SVConditionalHistorySheet::OnOK()
 	int iNumPages = GetPageCount();
 	bool Changed( false );
 	bool ListsChanged( false );
-	int i=0;
 
-	UpdateData( TRUE );
+	UpdateData( true );
 
-	for( i = 0; i < iNumPages; i++ )
+	for( int i = 0; i < iNumPages; i++ )
 	{
-		if ( SvOg::ISVPropertyPageDialog* pIDlg = dynamic_cast <SvOg::ISVPropertyPageDialog*> ( GetPage(i) ) )
+		SelectedObjectsPage* pPage = dynamic_cast <SelectedObjectsPage*> ( GetPage(i) );
+		if ( nullptr != pPage )
 		{
-			if ( false == pIDlg->QueryAllowExit() )
+			if( false == pPage->QueryAllowExit() )
 			{
 				return;
 			}
-		}
-
-		SelectedObjectsPage* pPage = dynamic_cast <SelectedObjectsPage*> ( GetPage(i) );
-		if( setChangedData( pPage ) )
-		{
-			ListsChanged = true;
+			if( setChangedData( pPage ) )
+			{
+				ListsChanged = true;
+			}
 		}
 	}
 
@@ -215,8 +213,8 @@ void SVConditionalHistorySheet::OnOK()
 		SVScalarValueVector CurrentImages;
 		SVScalarValueVector CurrentConditionals;
 
-		CurrentValues = ConvertList( m_Values );
-		CurrentImages = ConvertList( m_Images );
+		CurrentValues = ConvertList( m_ValueList );
+		CurrentImages = ConvertList( m_ImageList );
 		CurrentConditionals = ConvertList( m_Conditionals );
 		m_rInspection.SetConditionalHistoryList( &CurrentValues, &CurrentImages, &CurrentConditionals );
 		Changed = true;
@@ -241,7 +239,7 @@ bool SVConditionalHistorySheet::setChangedData( SelectedObjectsPage* const pPage
 	bool Result( false );
 	SvOsl::SelectorItemVector* pList( nullptr);
 
-	if( nullptr != pPage && NULL != pPage->GetSafeHwnd() )
+	if( nullptr != pPage && nullptr != pPage->GetSafeHwnd() )
 	{
 		CPropertyPage* pActivePage = GetActivePage();
 		if( pPage == pActivePage )
@@ -252,10 +250,10 @@ bool SVConditionalHistorySheet::setChangedData( SelectedObjectsPage* const pPage
 		switch( pPage->getAttributeFilter() )
 		{
 		case SV_CH_VALUE:
-			pList = &m_Values;
+			pList = &m_ValueList;
 			break;
 		case SV_CH_IMAGE:
-			pList = &m_Images;
+			pList = &m_ImageList;
 			break;
 		case SV_CH_CONDITIONAL:
 			pList = &m_Conditionals;
