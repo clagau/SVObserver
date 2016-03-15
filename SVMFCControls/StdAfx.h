@@ -66,10 +66,3 @@
 
 #endif // !defined(AFX_STDAFX_H__B2A0D072_1DC5_4100_BE8D_9528C46E0F5A__INCLUDED_)
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMFCControls\StdAfx.h_v  $
- * 
-*/

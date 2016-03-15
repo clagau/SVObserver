@@ -230,35 +230,3 @@ DWORD SVConnectionControl::GetState()
   return 0;
 }
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIPC\SVConnectionControl.cpp_v  $
- * 
- *    Rev 1.0   22 Apr 2013 13:09:30   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.2   15 Dec 2009 10:29:58   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  677
- * SCR Title:  Fix problem in camera notify thread
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated include information and comments.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   Mar 23 2000 16:34:12   mike
- * Fixed memory leak
- * 
- *    Rev 1.0   Mar 22 2000 17:25:16   mike
- * Initial revision.
-*/

@@ -83,29 +83,3 @@ private:
 
 #endif /* _INC_SVSTATELOCKABLECLASS_3B24DD3301E4_INCLUDED */
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVCmnLib\SVStateLockableClass.h_v  $
- * 
- *    Rev 1.0   18 Apr 2013 18:10:08   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   14 Jun 2001 10:09:58   Joe
- * Project:  SVFocusNT
- * Change Request (SCR) nbr:  92
- * SCR Title:  Do not clear current inspection configuration when returning to Logo Screen
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Empty classes created by Rational Rose.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

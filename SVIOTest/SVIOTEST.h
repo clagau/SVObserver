@@ -54,39 +54,3 @@ public:
 
 #endif
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIOTest\SVIOTEST.h_v  $
- * 
- *    Rev 1.0   22 Apr 2013 12:50:16   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.3   15 Aug 2012 14:27:26   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  779
- * SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to use the new Singlton version of the SVIOConfigurationInterfaceClass.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.2   15 Dec 2009 12:22:08   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  677
- * SCR Title:  Fix problem in camera notify thread
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated include information and comments.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

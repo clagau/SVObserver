@@ -83,29 +83,3 @@ HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long p_ulHandle, SVDevicePa
 
 #endif
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVEmptyIO\SVEmptyIOExports.h_v  $
- * 
- *    Rev 1.0   22 Apr 2013 09:13:44   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   12 Jul 2010 09:40:44   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  694
- * SCR Title:  Upgrade SVObserver version for Chromis release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Adding files for Empty I/O functionality for laptop demo systems.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

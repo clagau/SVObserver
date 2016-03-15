@@ -60,29 +60,3 @@ private:
 
 #endif // !defined(AFX_SVREGRESSIONEXITDLG_H__C1DC1B01_722F_4792_9506_7321D69DE4ED__INCLUDED_)
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRegressionExitDlg.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 14:41:08   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   30 Aug 2005 11:14:40   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  462
- * SCR Title:  Redo the fuctionality of the Regression Test
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   First iteration of file
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

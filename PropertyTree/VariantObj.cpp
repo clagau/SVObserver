@@ -1330,39 +1330,3 @@ CVariantObj::~CVariantObj()
 
 #pragma warning(pop)
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\PropertyTree\VariantObj.cpp_v  $
- * 
- *    Rev 1.0   18 Apr 2013 16:43:22   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   19 Jun 2007 12:20:58   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  598
- * SCR Title:  Upgrade SVObserver to compile using vc++ in VS2005
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   These changes include modification based on fixing compiler-based and project-based differences between VC6 and VC8.  These changes mainly include casting issues, but some include type conversion and assignment of new compiler controlling defines.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   15 Nov 2002 15:41:40   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  226
- * SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   first version of the files
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

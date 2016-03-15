@@ -146,39 +146,3 @@ SVMatroxStatusInformation::SVStatusString SVMatroxStatusInformation::GetComplete
 }
 
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxStatusInformation.cpp_v  $
- * 
- *    Rev 1.0   22 Apr 2013 15:27:16   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   23 Jul 2010 08:12:28   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  695
- * SCR Title:  Upgrade Acq to Allow for LUT, Light Reference, and Model Updates for GigE
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated status information sent to event log to be more specific on error information.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   23 Jul 2007 15:22:38   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  597
- * SCR Title:  Upgrade Matrox Imaging Library to version 8.0
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Initial Check-in
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

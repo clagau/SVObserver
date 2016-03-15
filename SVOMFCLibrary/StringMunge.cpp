@@ -381,39 +381,3 @@
 	return dScore;	// final score
 	}
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\StringMunge.cpp_v  $
- * 
- *    Rev 1.1   02 Oct 2013 08:55:16   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Add x64 platform.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   25 Apr 2013 12:58:06   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   07 Jul 2003 10:19:16   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   transfered from SVObserver project
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

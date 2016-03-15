@@ -91,39 +91,3 @@ class StringMunge
 
 #endif
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\StringMunge.h_v  $
- * 
- *    Rev 1.0   25 Apr 2013 12:58:22   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   05 Nov 2010 10:26:20   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  703
- * SCR Title:  Allow SVObserver to Change Remote Input Values
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to remove redundent data objects.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   07 Jul 2003 10:19:18   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   transfered from SVObserver project
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

@@ -39,19 +39,3 @@ SVMachineTypeEnum SVDLLToolLoadLibraryClass::CheckBitness( LPCTSTR p_szFile )
 		return l_machineType;
 }
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDLLToolLoadLibraryClass.cpp_v  $
- * 
- *    Rev 1.0   21 Oct 2013 08:35:56   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added CheckBitness function to support 64bit external tools.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

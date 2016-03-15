@@ -54,22 +54,3 @@ public:
 
 #endif // !defined(AFX_SVIPC_H__00F9EF49_EAEC_11D3_A886_00106F000C7C__INCLUDED_)
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIPC\SVIPC.h_v  $
- * 
- *    Rev 1.0   22 Apr 2013 13:09:54   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   Mar 22 2000 17:25:28   mike
- * Initial revision.
-*/

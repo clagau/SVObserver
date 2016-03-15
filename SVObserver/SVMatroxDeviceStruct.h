@@ -98,29 +98,3 @@ typedef CStdArray < SVMatroxDeviceStruct, SVMatroxDeviceStruct& > SVMatroxDevice
 
 #endif// #ifndef __SVMATROXDEVICESTRUCT_H__
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMatroxDeviceStruct.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 12:33:16   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   07 Jul 2003 11:21:46   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  320
- * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   Added files to support Matrox acquisition devices
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

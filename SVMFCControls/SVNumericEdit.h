@@ -64,29 +64,3 @@ namespace SvMc = Seidenader::SVMFCControls;
 
 #endif // !defined(AFX_SVOCONFIGNAMEEDIT_H__CA45AA39_C2A2_4DED_918E_07A55DB442FA__INCLUDED_)
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVNumericEdit.h_v  $
- * 
- *    Rev 1.0   23 Apr 2013 12:37:40   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   25 Jun 2003 14:58:18   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  349
- * SCR Title:  Fix Bug I0001101 Enter text in minimum scale field
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   first version of file
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

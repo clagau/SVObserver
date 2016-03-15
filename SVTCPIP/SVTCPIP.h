@@ -56,32 +56,3 @@ public:
 
 #endif // !defined(AFX_SVTCPIP_H__A3F9E7F6_B6F2_11D3_A843_00106F000C7C__INCLUDED_)
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVTCPIP\SVTCPIP.h_v  $
- * 
- *    Rev 1.0   25 Apr 2013 18:11:10   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   13 Jun 2001 13:54:24   ed
- * Project:  SVObserver
- * Change Request (SCR) nbr:  200
- * SCR Title:  Update code to implement SVIM COM Server
- * Checked in by:  Ed;  Ed Chobanoff
- * Change Description:  
- *   Revised Include directives.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   Mar 22 2000 17:33:10   mike
- * Initial revision.
-*/

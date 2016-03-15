@@ -65,39 +65,3 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM );
 
 #endif // !defined(AFX_SVMASKEDITOR_H__C87C9B7A_E6DC_11D2_A77B_00106F000C7D__INCLUDED)
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditor.h_v  $
- * 
- *    Rev 1.1   16 Jan 2014 10:31:38   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Multi Platform Path Changes
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   26 Apr 2013 14:06:48   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 3.1   24 Jul 2007 10:18:50   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  597
- * SCR Title:  Upgrade Matrox Imaging Library to version 8.0
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Upgrade to Matrox Imaging Library 8.0
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-*/

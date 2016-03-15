@@ -41,19 +41,3 @@ typedef std::vector<SVDataDefinitionStruct> SVDataDefinitionStructArray;
 
 #endif
 
-// ******************************************************************************
-// * LOG HISTORY:
-// ******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDataDefinitionStruct.h_v  $
- * 
- *    Rev 1.0   04 Nov 2013 14:35:26   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  866
- * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- */
