@@ -47,9 +47,15 @@ public:
 #pragma region Public Methods
 	//************************************
 	//! The method creates the configuration object
-	//! \return SOK on success
+	//! \return true on success
 	//************************************
 	bool createConfigurationObject();
+
+	//************************************
+	//! The method destroys the configuration object
+	//! \return true on success
+	//************************************
+	void destroyConfigurationObject();
 
 	//! The method finds the object corresponding to the name
 	//! \param rpObject <out> a reference pointer to the object being searched

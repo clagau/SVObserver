@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   20 Nov 2014 05:06:18  $
 //******************************************************************************
 
-#ifndef SVVISIONPROCESSORHELPER_H
-#define SVVISIONPROCESSORHELPER_H
+#pragma once
 
 #pragma region Includes
 #include <comdef.h>
@@ -212,6 +211,4 @@ private:   //Data
 	MessageNotification m_MessageNotification;
 #pragma endregion Private Members
 };
-
-#endif
 

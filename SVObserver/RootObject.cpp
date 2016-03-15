@@ -113,6 +113,14 @@ bool RootObject::createConfigurationObject()
 	return true;
 }
 
+void RootObject::destroyConfigurationObject()
+{
+	if( !m_pConfigurationObject.empty() )
+	{
+		m_pConfigurationObject.clear();
+	}
+}
+
 /*static*/ BasicValueObjectPtr RootObject::getRootChildObjectValue( LPCSTR DottedName )
 {
 	RootObject* pRoot( nullptr );
@@ -202,12 +210,7 @@ bool RootObject::Initialize()
 	//The Root object should have an empty name
 	SetName(_T(""));
 
-	//@WARNING [gra][7.20][02.07.2015] This should be removed that the Configuration Object is only created when needed
-	Result = createConfigurationObject();
-	if( Result )
-	{
-		Result = createRootChildren();
-	}
+	Result = createRootChildren();
 
 	return Result;
 }

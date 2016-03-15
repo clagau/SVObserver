@@ -4279,6 +4279,13 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 				{
 					pConfig->ClearRemoteMonitorList();
 					bOk = pConfig->DestroyConfiguration();
+
+					RootObject *pRoot = nullptr;
+					SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+					if(nullptr != pRoot)
+					{
+						pRoot->destroyConfigurationObject();
+					}
 				}
 
 				wait.Restore();
@@ -4319,6 +4326,13 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 		{
 			pConfig->ClearRemoteMonitorList();
 			bOk = pConfig->DestroyConfiguration();
+
+			RootObject *pRoot = nullptr;
+			SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+			if(nullptr != pRoot)
+			{
+				pRoot->destroyConfigurationObject();
+			}
 		}
 
 		(( SVMainFrame* )m_pMainWnd)->SetStatusInfoText(_T(""));

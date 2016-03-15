@@ -224,17 +224,15 @@ HRESULT SVVisionProcessorHelper::SetConfigurationMode( unsigned long p_Mode )
 
 	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	//@WARNING [gra][7.20][02.07.2015] This should be removed as the configuration object is not needed but needs testing
 	if( nullptr != pConfig )
 	{
 		//Note this needs to be done using SendMessage due to this being a worker thread
 		l_Status = static_cast< HRESULT >( SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_Mode ) );
 	}
-	else if( l_Status == S_OK )
+	else
 	{
-		l_Status = E_UNEXPECTED;
+		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
-
 
 	return l_Status;
 }
@@ -678,7 +676,7 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& p_rNames, 
 	}
 	else if( l_Status == S_OK )
 	{
-		l_Status = E_UNEXPECTED;
+		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 
 	return l_Status;
@@ -698,7 +696,7 @@ HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& p_rNames,
 	}
 	else if( l_Status == S_OK )
 	{
-		l_Status = E_UNEXPECTED;
+		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 
 	return l_Status;
@@ -777,7 +775,7 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& p_r
 	}
 	else if( l_Status == S_OK )
 	{
-		l_Status = E_UNEXPECTED;
+		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 
 	return l_Status;
@@ -797,7 +795,7 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& p_
 	}
 	else if( l_Status == S_OK )
 	{
-		l_Status = E_UNEXPECTED;
+		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 
 	return l_Status;
@@ -817,7 +815,7 @@ HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& p_rItem
 	}
 	else if( l_Status == S_OK )
 	{
-		l_Status = E_UNEXPECTED;
+		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 
 	return l_Status;
@@ -958,7 +956,7 @@ HRESULT SVVisionProcessorHelper::QueryProductList( const SVString& rListName, SV
 	}
 	else
 	{
-		hr = E_POINTER;
+		hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 	return hr;
 }
@@ -984,7 +982,7 @@ HRESULT SVVisionProcessorHelper::QueryRejectCondList( const SVString& rListName,
 	}
 	else
 	{
-		hr = E_POINTER;
+		hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 	return hr;
 }
@@ -1010,7 +1008,7 @@ HRESULT SVVisionProcessorHelper::QueryFailStatusList( const SVString& rListName,
 	}
 	else
 	{
-		hr = E_POINTER;
+		hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 	return hr;
 }
@@ -1032,7 +1030,7 @@ HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName,
 		}
 		else
 		{
-			hr = E_POINTER;
+			hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 		}
 	}
 	else
@@ -1060,7 +1058,7 @@ HRESULT SVVisionProcessorHelper::GetInspectionNames( SVNameSet& rNames ) const
 	}
 	else
 	{
-		hr = E_POINTER;
+		hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 	return hr;
 }
@@ -1081,7 +1079,7 @@ HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) cons
 	}
 	else
 	{
-		hr = E_POINTER;
+		hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 	return hr;
 }
@@ -1097,7 +1095,7 @@ HRESULT SVVisionProcessorHelper::SetProductFilter(const SVString& rListName, SVP
 	}
 	else
 	{
-		hr = E_POINTER;
+		hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 	return  hr;
 }
@@ -1113,7 +1111,7 @@ HRESULT SVVisionProcessorHelper::GetProductFilter(const SVString& rListName, SVP
 	}
 	else
 	{
-		hr = E_POINTER;
+		hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
 	return  hr;
 }
@@ -1152,9 +1150,9 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList( const SVString& rListName,
 				hr = SVMSG_NO_PPQ_FOUND;
 			}
 		}
-		else if( hr == S_OK )
+		else
 		{
-			hr = E_UNEXPECTED;
+			hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 		}
 	}
 	else
