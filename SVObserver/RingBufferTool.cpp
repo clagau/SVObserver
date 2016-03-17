@@ -67,12 +67,12 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the RingBuffer Tool.
-	m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxilliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxilliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxilliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxilliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxilliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxiliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxiliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
 
 	isCreated = bOk;
 

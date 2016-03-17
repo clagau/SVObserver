@@ -20,14 +20,14 @@
 
 namespace Seidenader { namespace SVOGui
 {
-	static LPCSTR UpdateAuxilliaryExtentsTag = "UpdateAuxilliaryExtents";
+	static LPCSTR UpdateAuxiliaryExtentsTag = "UpdateAuxiliaryExtents";
 
 	AuxiliaryExtentsController::AuxiliaryExtentsController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
 	: m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	, m_ImageController(rInspectionID, rTaskObjectID)
 	, m_Values(BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
-			(UpdateAuxilliaryExtentsTag, SVUpdateAuxilliaryExtentsObjectGuid)))
+			(UpdateAuxiliaryExtentsTag, SVUpdateAuxiliaryExtentsObjectGuid)))
 	{
 	}
 
@@ -64,12 +64,12 @@ namespace Seidenader { namespace SVOGui
 
 	bool AuxiliaryExtentsController::IsUpdateAuxExtentsEnabled() const
 	{
-		return m_Values.Get<bool>(UpdateAuxilliaryExtentsTag);
+		return m_Values.Get<bool>(UpdateAuxiliaryExtentsTag);
 	}
 
 	void AuxiliaryExtentsController::EnableAuxExtents(bool bEnable)
 	{
-		m_Values.Set<bool>(UpdateAuxilliaryExtentsTag, bEnable);
+		m_Values.Set<bool>(UpdateAuxiliaryExtentsTag, bEnable);
 	}
 
 	const SvUl::NameGuidList& AuxiliaryExtentsController::GetAvailableImageList() const

@@ -86,12 +86,12 @@ void SVToolClass::init()
 
 	RegisterEmbeddedObject( &drawToolFlag, SVConditionalToolDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_svUpdateAuxilliaryExtents, SVUpdateAuxilliaryExtentsObjectGuid, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_svAuxilliarySourceX, SVAuxilliarySourceXObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SVResetItemNone, _T("Extent X") );
-	RegisterEmbeddedObject( &m_svAuxilliarySourceY, SVAuxilliarySourceYObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SVResetItemNone, _T("Extent Y") );
-	RegisterEmbeddedObject( &m_svAuxilliarySourceAngle, SVAuxilliarySourceAngleObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_ANGLE, false, SVResetItemNone, _T("Extent Angle") );
-	RegisterEmbeddedObject( &m_svAuxilliarySourceImageName, SVAuxilliarySourceImageNameObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_IMAGE_NAME, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_svAuxilliaryDrawType, SVAuxilliaryDrawTypeObjectGuid, IDS_OBJECTNAME_AUXILIARY_DRAW_TYPE_NAME, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svUpdateAuxiliaryExtents, SVUpdateAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_svAuxiliarySourceX, SVAuxiliarySourceXObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SVResetItemNone, _T("Extent X") );
+	RegisterEmbeddedObject( &m_svAuxiliarySourceY, SVAuxiliarySourceYObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SVResetItemNone, _T("Extent Y") );
+	RegisterEmbeddedObject( &m_svAuxiliarySourceAngle, SVAuxiliarySourceAngleObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_ANGLE, false, SVResetItemNone, _T("Extent Angle") );
+	RegisterEmbeddedObject( &m_svAuxiliarySourceImageName, SVAuxiliarySourceImageNameObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_IMAGE_NAME, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svAuxiliaryDrawType, SVAuxiliaryDrawTypeObjectGuid, IDS_OBJECTNAME_AUXILIARY_DRAW_TYPE_NAME, false, SVResetItemNone );
 	// Tool Comment...
 	RegisterEmbeddedObject( &m_svToolComment, SVToolCommentTypeObjectGuid, IDS_OBJECTNAME_TOOL_COMMENT, false, SVResetItemNone );
 	
@@ -140,13 +140,13 @@ void SVToolClass::init()
 	drawToolFlag.SetEnumTypes( IDS_TOOLDRAW_ENUMOBJECT_LIST );
 	drawToolFlag.SetDefaultValue( ( const long ) 0, TRUE ); // 0 Should be show tool 'Always'
 
-	m_svUpdateAuxilliaryExtents.SetDefaultValue( FALSE, TRUE );
+	m_svUpdateAuxiliaryExtents.SetDefaultValue( FALSE, TRUE );
 
-	m_svAuxilliarySourceX.SetDefaultValue( 0.0, TRUE );
-	m_svAuxilliarySourceY.SetDefaultValue( 0.0, TRUE );
-	m_svAuxilliarySourceAngle.SetDefaultValue( 0.0, TRUE );
-	m_svAuxilliarySourceImageName.SetDefaultValue( "", TRUE );
-	m_svAuxilliaryDrawType.SetDefaultValue( "", TRUE );
+	m_svAuxiliarySourceX.SetDefaultValue( 0.0, TRUE );
+	m_svAuxiliarySourceY.SetDefaultValue( 0.0, TRUE );
+	m_svAuxiliarySourceAngle.SetDefaultValue( 0.0, TRUE );
+	m_svAuxiliarySourceImageName.SetDefaultValue( "", TRUE );
+	m_svAuxiliaryDrawType.SetDefaultValue( "", TRUE );
 
 	pCurrentToolSet = nullptr;
 	pPropertyArray = nullptr;
@@ -221,7 +221,7 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	extentHeightScaleFactor.ObjectAttributesAllowedRef() &=(~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES);
 
 	// Auxiliary Tool Source Extent
-	m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 	
 	drawToolFlag.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
@@ -369,7 +369,7 @@ void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 
 		m_svToolExtent.UpdateOffsetData( l_bForceOffsetReset );
 
-		HRESULT hr = m_svUpdateAuxilliaryExtents.GetValue( l_bUpdateSourceExtents );
+		HRESULT hr = m_svUpdateAuxiliaryExtents.GetValue( l_bUpdateSourceExtents );
 		if( S_OK == hr && l_bUpdateSourceExtents )
 		{
 			SVExtentOffsetStruct l_svOffsetData;
@@ -383,16 +383,23 @@ void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 			SVImageClass* pAuxSourceImage = GetAuxSourceImage();
 			if( nullptr != pAuxSourceImage )
 			{
-				m_svAuxilliarySourceImageName.SetValue( resultDataIndex, pAuxSourceImage->GetCompleteObjectName() );
+				m_svAuxiliarySourceImageName.SetValue( resultDataIndex, pAuxSourceImage->GetCompleteObjectName() );
 			}
 
 			CString l_strDrawType;
-			m_svToolExtent.GetAuxilliaryDrawTypeString( l_strDrawType );
-			m_svAuxilliaryDrawType.SetValue( resultDataIndex, l_strDrawType );
+			m_svToolExtent.GetAuxiliaryDrawTypeString( l_strDrawType );
+			m_svAuxiliaryDrawType.SetValue( resultDataIndex, l_strDrawType );
 			
-			m_svAuxilliarySourceX.SetValue( resultDataIndex, l_svOffsetData.m_svOffset.m_dPositionX );
-			m_svAuxilliarySourceY.SetValue( resultDataIndex, l_svOffsetData.m_svOffset.m_dPositionY );
-			m_svAuxilliarySourceAngle.SetValue( resultDataIndex, l_svOffsetData.m_dRotationAngle );
+			SVExtentPointStruct pt;
+			SVImageClass* pImage = m_svToolExtent.GetToolImage();
+			if (pImage && pAuxSourceImage)
+			{
+				pImage->TranslateFromOutputSpaceToImage(pAuxSourceImage, pt, pt);
+			}
+			m_svAuxiliarySourceX.SetValue( resultDataIndex, pt.m_dPositionX );
+			m_svAuxiliarySourceY.SetValue( resultDataIndex, pt.m_dPositionY );
+
+			m_svAuxiliarySourceAngle.SetValue( resultDataIndex, l_svOffsetData.m_dRotationAngle );
 		}
 	}
 }
@@ -905,7 +912,7 @@ HRESULT SVToolClass::TranslatePointToSource( SVExtentPointStruct p_svIn, SVExten
 	return m_svToolExtent.TranslatePointToSource( p_svIn, p_rsvOut );
 }
 
-HRESULT SVToolClass::EnableAuxilliaryExtents( bool p_bEnable )
+HRESULT SVToolClass::EnableAuxiliaryExtents( bool p_bEnable )
 {
 	HRESULT l_hr = S_OK;
 
@@ -917,37 +924,37 @@ HRESULT SVToolClass::EnableAuxilliaryExtents( bool p_bEnable )
 
 	if( p_bEnable )
 	{
-		m_svAuxilliarySourceX.ObjectAttributesAllowedRef() |= l_dwAttributes;
-		m_svAuxilliarySourceY.ObjectAttributesAllowedRef() |= l_dwAttributes;
-		m_svAuxilliarySourceAngle.ObjectAttributesAllowedRef() |= l_dwAttributes;
-		m_svAuxilliaryDrawType.ObjectAttributesAllowedRef() |= l_dwAttributes;
-		m_svAuxilliarySourceImageName.ObjectAttributesAllowedRef() |= l_dwAttributes;
+		m_svAuxiliarySourceX.ObjectAttributesAllowedRef() |= l_dwAttributes;
+		m_svAuxiliarySourceY.ObjectAttributesAllowedRef() |= l_dwAttributes;
+		m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() |= l_dwAttributes;
+		m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() |= l_dwAttributes;
+		m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() |= l_dwAttributes;
 
-		SetBits( m_svAuxilliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SetBits( m_svAuxilliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SetBits( m_svAuxilliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SetBits( m_svAuxilliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SetBits( m_svAuxilliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SetBits( m_svAuxiliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SetBits( m_svAuxiliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SetBits( m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SetBits( m_svAuxiliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SetBits( m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
 	}
 	else
 	{
-		m_svAuxilliarySourceX.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
-		m_svAuxilliarySourceY.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
-		m_svAuxilliarySourceAngle.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
-		m_svAuxilliaryDrawType.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
-		m_svAuxilliarySourceImageName.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
+		m_svAuxiliarySourceX.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
+		m_svAuxiliarySourceY.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
+		m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
+		m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
+		m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
 
-		m_svAuxilliarySourceX.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
-		m_svAuxilliarySourceY.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
-		m_svAuxilliarySourceAngle.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
-		m_svAuxilliaryDrawType.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
-		m_svAuxilliarySourceImageName.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
+		m_svAuxiliarySourceX.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
+		m_svAuxiliarySourceY.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
+		m_svAuxiliarySourceAngle.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
+		m_svAuxiliaryDrawType.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
+		m_svAuxiliarySourceImageName.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
 
-		SetBits( m_svAuxilliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SetBits( m_svAuxilliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SetBits( m_svAuxilliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SetBits( m_svAuxilliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SetBits( m_svAuxilliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SetBits( m_svAuxiliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SetBits( m_svAuxiliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SetBits( m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SetBits( m_svAuxiliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SetBits( m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
 	}
 	return l_hr;
 }
@@ -981,38 +988,38 @@ HRESULT SVToolClass::ResetObject()
 		UpdateBottomAndRight();
 	}
 
-	// Auxilliary Extents
+	// Auxiliary Extents
 	double l_dValue = 0;
 	
 	if( GetInspection()->GetEnableAuxiliaryExtent() )
 	{
-		m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() |=  SV_VIEWABLE 
+		m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() |=  SV_VIEWABLE 
 			| SV_ARCHIVABLE
 			| SV_SELECTABLE_FOR_EQUATION
 			| SV_SELECTABLE_FOR_STATISTICS 
 			| SV_PUBLISHABLE;
-		m_svUpdateAuxilliaryExtents.GetValue( l_dValue );
+		m_svUpdateAuxiliaryExtents.GetValue( l_dValue );
 
-		SetBits( m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SetBits( m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
 	}
 	else
 	{
-		m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() &= ~( SV_VIEWABLE 
+		m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() &= ~( SV_VIEWABLE 
 			| SV_ARCHIVABLE
 			| SV_SELECTABLE_FOR_EQUATION
 			| SV_SELECTABLE_FOR_STATISTICS 
 			| SV_PUBLISHABLE);
 
-		m_svUpdateAuxilliaryExtents.ObjectAttributesSetRef() &= ~( SV_VIEWABLE 
+		m_svUpdateAuxiliaryExtents.ObjectAttributesSetRef() &= ~( SV_VIEWABLE 
 			| SV_ARCHIVABLE
 			| SV_SELECTABLE_FOR_EQUATION
 			| SV_SELECTABLE_FOR_STATISTICS 
 			| SV_PUBLISHABLE);
 
-		SetBits( m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SetBits( m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
 	}
 
-	EnableAuxilliaryExtents( l_dValue > 0 );
+	EnableAuxiliaryExtents( l_dValue > 0 );
 
 	return l_hrOk;
 }

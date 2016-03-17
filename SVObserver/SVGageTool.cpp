@@ -161,7 +161,7 @@ BOOL SVGageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 
 	isCreated = bOk;
 
-	RemoveEmbeddedObject( &m_svUpdateAuxilliaryExtents );
+	RemoveEmbeddedObject( &m_svUpdateAuxiliaryExtents );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();

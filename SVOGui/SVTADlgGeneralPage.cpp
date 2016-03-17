@@ -171,10 +171,10 @@ namespace Seidenader { namespace SVOGui
 		SetupDrawFlagComboBox();
 		m_bAuxExtentsAvailable = CheckAuxiliaryExtentsAvailable();
 
-		// Get tool's Update Auxilliary Extents...
+		// Get tool's Update Auxiliary Extents...
 		if (!m_bAuxExtentsAvailable)
 		{
-			// Disable Auxilliary Extents
+			// Disable Auxiliary Extents
 			GetDlgItem(IDC_ENABLE_AUXILIARY_EXTENTS)->ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_AUXILIARY_GROUP)->ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_SOURCE_IMAGE_TEXT)->ShowWindow(SW_HIDE);
@@ -183,7 +183,7 @@ namespace Seidenader { namespace SVOGui
 		}
 		else
 		{
-			// Enable Auxilliary Extents
+			// Enable Auxiliary Extents
 			GetDlgItem(IDC_ENABLE_AUXILIARY_EXTENTS)->ShowWindow(SW_SHOW);
 			GetDlgItem(IDC_AUXILIARY_GROUP)->ShowWindow(SW_SHOW);
 			GetDlgItem(IDC_SOURCE_IMAGE_TEXT)->ShowWindow(SW_SHOW);

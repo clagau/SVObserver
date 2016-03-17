@@ -1098,12 +1098,12 @@ extern /*const*/ GUID SVExtentHeightScaleFactorObjectGuid;
 extern /*const*/ GUID SVExtentWidthScaleFactorObjectGuid;
 
 // GUIDs for Exposed Source Image Extents (primarily Images/Tools)
-extern /*const*/ GUID SVUpdateAuxilliaryExtentsObjectGuid;
-extern /*const*/ GUID SVAuxilliarySourceXObjectGuid;
-extern /*const*/ GUID SVAuxilliarySourceYObjectGuid;
-extern /*const*/ GUID SVAuxilliarySourceAngleObjectGuid;
-extern /*const*/ GUID SVAuxilliarySourceImageNameObjectGuid;
-extern /*const*/ GUID SVAuxilliaryDrawTypeObjectGuid;
+extern /*const*/ GUID SVUpdateAuxiliaryExtentsObjectGuid;
+extern /*const*/ GUID SVAuxiliarySourceXObjectGuid;
+extern /*const*/ GUID SVAuxiliarySourceYObjectGuid;
+extern /*const*/ GUID SVAuxiliarySourceAngleObjectGuid;
+extern /*const*/ GUID SVAuxiliarySourceImageNameObjectGuid;
+extern /*const*/ GUID SVAuxiliaryDrawTypeObjectGuid;
 
 // GUIDs for Exposed Extents (primarily Lines)
 extern /*const*/ GUID SVExtentRelativeX1PositionObjectGuid;

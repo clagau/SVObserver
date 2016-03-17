@@ -144,7 +144,7 @@ public:
 	virtual HRESULT GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData );
 	virtual HRESULT UpdateOffsetData( SVImageClass* p_svToolImage );
 	virtual HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
-	virtual HRESULT EnableAuxilliaryExtents( bool p_bEnable );
+	virtual HRESULT EnableAuxiliaryExtents( bool p_bEnable );
 
 	virtual HRESULT ResetObject();
 
@@ -272,13 +272,13 @@ protected:
 	SVDoubleValueObjectClass extentHeightScaleFactor;
 
 	//***** New source image extent value objects
-	SVBoolValueObjectClass m_svUpdateAuxilliaryExtents;
+	SVBoolValueObjectClass m_svUpdateAuxiliaryExtents;
 
-	SVDoubleValueObjectClass m_svAuxilliarySourceX;
-	SVDoubleValueObjectClass m_svAuxilliarySourceY;
-	SVDoubleValueObjectClass m_svAuxilliarySourceAngle;
-	SVStringValueObjectClass m_svAuxilliaryDrawType;
-	SVStringValueObjectClass m_svAuxilliarySourceImageName;
+	SVDoubleValueObjectClass m_svAuxiliarySourceX;
+	SVDoubleValueObjectClass m_svAuxiliarySourceY;
+	SVDoubleValueObjectClass m_svAuxiliarySourceAngle;
+	SVStringValueObjectClass m_svAuxiliaryDrawType;
+	SVStringValueObjectClass m_svAuxiliarySourceImageName;
 	//***** New source image extent value objects
 
 	// Tool Comments

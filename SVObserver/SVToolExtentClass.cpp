@@ -944,7 +944,7 @@ HRESULT SVToolExtentClass::TranslatePositionPointToSource( SVExtentPointStruct& 
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::GetAuxilliaryDrawTypeString( CString& p_strDrawType )
+HRESULT SVToolExtentClass::GetAuxiliaryDrawTypeString( CString& p_strDrawType )
 {
 	HRESULT l_hrOk = S_OK;
 

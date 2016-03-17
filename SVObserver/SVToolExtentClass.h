@@ -100,7 +100,7 @@ public:
 	virtual HRESULT UpdateOffsetData( bool p_bForceUpdate, SVImageClass* p_svToolImage );
 	virtual HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
 	virtual HRESULT TranslatePositionPointToSource( SVExtentPointStruct& p_rsvOut );
-	virtual HRESULT GetAuxilliaryDrawTypeString( CString& p_strDrawType );
+	virtual HRESULT GetAuxiliaryDrawTypeString( CString& p_strDrawType );
 
 	// ******* End Source Extent Data
 
