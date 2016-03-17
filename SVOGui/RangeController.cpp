@@ -65,7 +65,7 @@ namespace Seidenader { namespace SVOGui
 	void RangeController::Commit()
 	{
 		m_indirectRangeValues.Commit();
-		m_directRangeValues.Commit();
+		m_directRangeValues.Commit(true);
 	}
 
 	std::string RangeController::Get(const std::string& rName) const
