@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEdge.h"
 #include "SVValueBaseNormalizerClass.h"
 #include "SVValueObjectImpl.h"
 #include "SVTaskObjectInterfaceClass.h"

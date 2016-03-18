@@ -83,9 +83,6 @@
     <ClCompile Include="SVAnalyzerResultDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAngularProfileTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVArchiveTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -251,13 +248,7 @@
     <ClCompile Include="SVDrawObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDualLineAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDWordValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEdge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp">
@@ -318,9 +309,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFillBlobDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVGageTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVGigeCameraManager.cpp">
@@ -486,27 +474,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVLinearToolClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLineEdgeCountingAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLineEdgePositionAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLineLinearMeasurementAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLineMaximumBackgroundObjectAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLineMaximumForegroundObjectAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLineMaximumObjectAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLinePixelCountingAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVLineROI.cpp">
@@ -905,9 +872,6 @@
     <ClCompile Include="SVShiftToolUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSingleLineAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVSkeletonFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -998,9 +962,6 @@
     <ClCompile Include="SVThinningFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVThresholdAdjustmentPageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTimerValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1038,9 +999,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolLoadImage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolProfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolSet.cpp">
@@ -1518,9 +1476,6 @@
     <ClInclude Include="SVAnalyzerResultDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVAngularProfileTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVArchiveTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1695,13 +1650,7 @@
     <ClInclude Include="SVDrawObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDualLineAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVDWordValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEdge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h">
@@ -1762,9 +1711,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFillBlobDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGageTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraManager.h">
@@ -1954,27 +1900,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVLinearToolClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLineEdgeCountingAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLineEdgePositionAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLineLinearMeasurementAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLineMaximumBackgroundObjectAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLineMaximumForegroundObjectAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLineMaximumObjectAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLinePixelCountingAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVLineROI.h">
@@ -2397,9 +2322,6 @@
     <ClInclude Include="SVShiftToolUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSingleLineAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVSkeletonFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2496,9 +2418,6 @@
     <ClInclude Include="SVThinningFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVThresholdAdjustmentPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTimerValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2536,9 +2455,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolLoadImage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolProfile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolSet.h">

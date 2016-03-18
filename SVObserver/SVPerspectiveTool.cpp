@@ -15,7 +15,6 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVImageProcessingClass.h"
-#include "SVGageTool.h"
 
 SV_IMPLEMENT_CLASS( SVPerspectiveToolClass, SVPerspectiveToolClassGuid )
 

@@ -15,7 +15,6 @@
 
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 
-#include "SVGageTool.h"
 #include "SVImageClass.h"
 #include "SVImageToLineProject.h"
 #include "SVLineROI.h"
@@ -88,7 +87,7 @@ BOOL SVLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 
 	bOk = bOk && l_psvLine != NULL && GetTool() != NULL;
 
-	if( bOk && dynamic_cast<SVGageToolClass *>( GetTool() ) == NULL )
+	if( bOk )
 	{
 		SVImageExtentClass l_svExtents;
 
@@ -190,34 +189,13 @@ void SVLineAnalyzerClass::addLineAnalyzerFriend()
 		if( friendList.size() <= 0 )
 		{
 			const SVObjectTypeInfoStruct& rOwnerType = pOwner->GetObjectInfo().ObjectTypeInfo;
-			switch( rOwnerType.SubType )
-			{
-				case SVToolProfileObjectType:
-				{
-					SVImageToLineProjectClass* pProject = new SVImageToLineProjectClass;
-					if( pProject )
-					{
-						pProject->SetObjectOwner( this );
-						AddFriend( pProject->GetUniqueObjectID() );
-							
-						// Remove Embedded Extents
-						// for old profile tool
-						if( pOwner->GetClassID() == SVProfileToolClassGuid )
-							removeEmbeddedExtents();
-					}
-					break;
-				}
 
-				default:
-				{
-					SVLineROIClass* pROI = new SVLineROIClass;
-					if( pROI )
-					{
-						pROI->SetObjectOwner( this );
-						AddFriend( pROI->GetUniqueObjectID() );
-					}
-				}
-			};
+			SVLineROIClass* pROI = new SVLineROIClass;
+			if( pROI )
+			{
+				pROI->SetObjectOwner( this );
+				AddFriend( pROI->GetUniqueObjectID() );
+			}
 
 			// Add Default Inputs and Outputs
 			addDefaultInputObjects();
@@ -263,50 +241,45 @@ BOOL SVLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 	if( GetTool() != NULL )
 	{
-		SVGageToolClass *l_psvGageTool = dynamic_cast<SVGageToolClass *>( GetTool() );
+		SVImageExtentClass l_svExtents;
+		SVExtentFigureStruct l_svFigure;
 
-		if( l_psvGageTool == NULL )
+		double l_dValue = 0.0;
+
+		if ( GetTool()->GetImageExtent( l_svExtents ) == S_OK &&
+			l_svExtents.GetFigure( l_svFigure ) == S_OK )
 		{
-			SVImageExtentClass l_svExtents;
-			SVExtentFigureStruct l_svFigure;
-
-			double l_dValue = 0.0;
-
-			if ( GetTool()->GetImageExtent( l_svExtents ) == S_OK &&
-					 l_svExtents.GetFigure( l_svFigure ) == S_OK )
+			if( extentX1.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
 			{
-				if( extentX1.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
-				{
-					long l_lValue = static_cast<long>(l_svFigure.m_svCenterLeft.m_dPositionX);
+				long l_lValue = static_cast<long>(l_svFigure.m_svCenterLeft.m_dPositionX);
 
-					extentX1.SetValue( RRunStatus.m_lResultDataIndex, l_lValue );
-				}
-				
-				if( extentY1.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
-				{
-					long l_lValue = static_cast<long>(l_svFigure.m_svCenterLeft.m_dPositionY);
-
-					extentY1.SetValue( RRunStatus.m_lResultDataIndex, l_lValue );
-				}
-
-				if( extentX2.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
-				{
-					long l_lValue = static_cast<long>(l_svFigure.m_svCenterRight.m_dPositionX);
-
-					extentX2.SetValue( RRunStatus.m_lResultDataIndex, l_lValue );
-				}
-				
-				if( extentY2.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
-				{
-					long l_lValue = static_cast<long>(l_svFigure.m_svCenterRight.m_dPositionY);
-
-					extentY2.SetValue( RRunStatus.m_lResultDataIndex, l_lValue );
-				}
+				extentX1.SetValue( RRunStatus.m_lResultDataIndex, l_lValue );
 			}
-			else
+
+			if( extentY1.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
 			{
-				l_bOk = false;
+				long l_lValue = static_cast<long>(l_svFigure.m_svCenterLeft.m_dPositionY);
+
+				extentY1.SetValue( RRunStatus.m_lResultDataIndex, l_lValue );
 			}
+
+			if( extentX2.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+			{
+				long l_lValue = static_cast<long>(l_svFigure.m_svCenterRight.m_dPositionX);
+
+				extentX2.SetValue( RRunStatus.m_lResultDataIndex, l_lValue );
+			}
+
+			if( extentY2.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+			{
+				long l_lValue = static_cast<long>(l_svFigure.m_svCenterRight.m_dPositionY);
+
+				extentY2.SetValue( RRunStatus.m_lResultDataIndex, l_lValue );
+			}
+		}
+		else
+		{
+			l_bOk = false;
 		}
 	}
 	else
@@ -673,119 +646,27 @@ HRESULT SVLineAnalyzerClass::GetImageExtent( SVImageExtentClass &p_rsvImageExten
 	return l_hrOk;
 }
 
-HRESULT SVLineAnalyzerClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	SVGageToolClass *l_psvGage = dynamic_cast<SVGageToolClass *>( GetTool() );
-
-	if( l_psvGage != NULL )
-	{
-		SVImageClass *l_psvImage = l_psvGage->getInputImage();
-
-		if ( l_psvImage != NULL && l_psvImage->IsCreated() )
-		{
-			SVImageExtentClass l_svExtents;
-
-			if( m_svLineExtent.GetImageExtent( l_svExtents ) == S_OK )
-			{
-				if( l_psvImage->ValidateAgainstOutputExtents( l_svExtents ) == S_OK )
-				{
-					l_hrOk = l_psvImage->ValidateAgainstOutputExtents( p_svImageExtent );
-				}
-				else
-				{
-					l_hrOk = S_OK;
-				}
-
-				if ( l_hrOk == S_OK )
-				{
-					l_hrOk = m_svLineExtent.SetImageExtent( p_ulIndex, p_svImageExtent );
-				}
-			}
-		}
-		else
-		{
-			l_hrOk = m_svLineExtent.SetImageExtent( p_ulIndex, p_svImageExtent );
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVLineAnalyzerClass::SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	SVGageToolClass *l_psvGage = dynamic_cast<SVGageToolClass *>( GetTool() );
-
-	if( l_psvGage != NULL )
-	{
-		SVImageClass *l_psvImage = l_psvGage->getInputImage();
-
-		if ( l_psvImage != NULL && l_psvImage->IsCreated() )
-		{
-			SVImageExtentClass l_svExtents;
-
-			l_hrOk = l_psvImage->GetImageExtentsToFit( p_svImageExtent, p_svImageExtent );
-
-			if ( l_hrOk == S_OK )
-			{
-				l_hrOk = m_svLineExtent.SetImageExtent( p_ulIndex, p_svImageExtent );
-			}
-		}
-		else
-		{
-			l_hrOk = m_svLineExtent.SetImageExtent( p_ulIndex, p_svImageExtent );
-		}
-	}
-
-	return l_hrOk;
-}
-
 HRESULT SVLineAnalyzerClass::GetRelativePositionPoints( SVExtentPointStruct &p_rsvPoint1, SVExtentPointStruct &p_rsvPoint2 )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if( p_rsvPoint1.Initialize() == S_OK && p_rsvPoint2.Initialize() == S_OK )
 	{
-		if ( dynamic_cast<SVGageToolClass *>( GetTool() ) == NULL )
+		SVImageExtentClass l_svExtents;
+
+		if ( GetTool() != NULL && GetTool()->GetImageExtent( l_svExtents ) == S_OK )
 		{
-			SVImageExtentClass l_svExtents;
+			long l_lHeight = 0;
+			long l_lWidth = 0;
 
-			if ( GetTool() != NULL && GetTool()->GetImageExtent( l_svExtents ) == S_OK )
+			if( l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_lHeight ) == S_OK &&
+				l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_lWidth ) == S_OK )
 			{
-				long l_lHeight = 0;
-				long l_lWidth = 0;
+				p_rsvPoint1.m_dPositionX = 0.0;
+				p_rsvPoint1.m_dPositionY = l_lHeight / 2;
 
-				if( l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_lHeight ) == S_OK &&
-				    l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_lWidth ) == S_OK )
-				{
-					p_rsvPoint1.m_dPositionX = 0.0;
-					p_rsvPoint1.m_dPositionY = l_lHeight / 2;
-
-					p_rsvPoint2.m_dPositionX = l_lWidth;
-					p_rsvPoint2.m_dPositionY = l_lHeight / 2;
-
-					l_hrOk = S_OK;
-				}
-			}
-		}
-		else
-		{
-			long l_lX1 = 0;
-			long l_lY1 = 0;
-			long l_lX2 = 0;
-			long l_lY2 = 0;
-
-			if( ( extentX1.GetValue( l_lX1 ) == S_OK ) && ( extentY1.GetValue( l_lY1 ) == S_OK ) &&
-			    ( extentX2.GetValue( l_lX2 ) == S_OK ) && ( extentY2.GetValue( l_lY2 ) == S_OK ) )
-			{
-				p_rsvPoint1.m_dPositionX = l_lX1;
-				p_rsvPoint1.m_dPositionY = l_lY1;
-
-				p_rsvPoint2.m_dPositionX = l_lX2;
-				p_rsvPoint2.m_dPositionY = l_lY2;
+				p_rsvPoint2.m_dPositionX = l_lWidth;
+				p_rsvPoint2.m_dPositionY = l_lHeight / 2;
 
 				l_hrOk = S_OK;
 			}
@@ -797,20 +678,7 @@ HRESULT SVLineAnalyzerClass::GetRelativePositionPoints( SVExtentPointStruct &p_r
 
 SVTaskObjectClass *SVLineAnalyzerClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {
-	SVTaskObjectClass *l_psvObject = NULL;
-
-	if ( dynamic_cast<SVGageToolClass *>( GetTool() ) != NULL )
-	{
-		SVImageExtentClass l_svExtents;
-
-		if( m_svLineExtent.GetImageExtent( l_svExtents ) == S_OK &&
-				l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SVExtentLocationPropertyUnknown )
-		{
-			l_psvObject = this;
-		}
-	}
-
-	return l_psvObject;
+	return nullptr;
 }
 
 //** EOF **

@@ -462,18 +462,6 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 	{
 		case ID_CONFIG_ANALYZER:
 		{
-			SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
-			if( l_psvTool )
-			{
-				const SVObjectTypeInfoStruct& rToolType = l_psvTool->GetObjectInfo().ObjectTypeInfo;
-
-				if ( (rToolType.SubType == SVGageToolObjectType) || (rToolType.SubType == SVToolProfileObjectType) )
-				{
-					AfxMessageBox("This tool is now obsolete and the analyzer can not be edited.");
-					break;
-				}
-			}
-
 			if( TheSVObserverApp.OkToEdit() )
 			{
 				OnRButtonDblClk( 0, m_mousePoint );
@@ -626,23 +614,9 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 				case SVToolObjectType:
 				{
-					switch( l_svTypeInfo.SubType )
-					{
-						case SVToolProfileObjectType:
-						{
-							DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
-							SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
-							dlg.DoModal();
-							break;
-						}
-						default:
-						{
-							DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
-							SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
-							dlg.DoModal();
-							break;
-						}
-					}
+					DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
+					SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
+					dlg.DoModal();
 					break;
 				}
 

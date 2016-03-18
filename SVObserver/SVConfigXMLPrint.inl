@@ -987,9 +987,7 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 			}
 		}
 
-		SVImageInfoClass* pImageInfo = NULL;
-		if (ts->GetObjectName() != pApp->GetStringResource(IDS_CLASSNAME_SVGAGETOOL))
-			pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL) );
+		SVImageInfoClass* pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL) );
 		
 		if (pImageInfo)
 		{

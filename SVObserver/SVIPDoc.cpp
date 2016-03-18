@@ -1443,20 +1443,6 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		{
 			const SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().ObjectTypeInfo;
 
-			if ( (rToolType.SubType == SVGageToolObjectType) || (rToolType.SubType == SVToolProfileObjectType) )
-			{
-				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-				AfxMessageBox(_T("This tool is now obsolete.  Please replace with a Linear Tool."));
-				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-				return;
-			}
-			if (rToolType.SubType == SVToolBuildReferenceObjectType)
-			{
-				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-				AfxMessageBox(_T("This tool is now obsolete. Please replace with either a Shift Tool or Transformation Tool"));
-				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-				return;
-			}
 			// Check if can Edit this Tool
 			// Primarily for the Build Reference Tool
 			// to check if anyone is using the output image

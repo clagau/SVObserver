@@ -114,10 +114,10 @@
 
 			// Tool Subtypes:
 			SVWindowToolObjectType						= 0x00000010,
-			SVGageToolObjectType						= 0x00000011,
+			//SVGageToolObjectType						= 0x00000011,
 			SVMathToolObjectType						= 0x00000012,
-			SVToolBuildReferenceObjectType				= 0x00000013,
-			SVToolProfileObjectType						= 0x00000014,
+			//SVToolBuildReferenceObjectType				= 0x00000013,
+			//SVToolProfileObjectType						= 0x00000014,
 			SVToolImageObjectType						= 0x00000015,
 			SVToolArchiveObjectType                     = 0x00000016,
 			SVToolLoadImageObjectType					= 0x00000017,

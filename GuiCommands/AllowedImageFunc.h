@@ -35,21 +35,6 @@ namespace Seidenader
 				return (1 == bandNumber);
 			}
 
-			bool IsOwnerGageTool(SvOi::ISVImage* pImage) const
-			{
-				bool bRetVal = false;
-				// Gets the owner from the image info, why not the SVObject owner info struct?
-				// Are they the same or out of sync?
-				SvOi::IObjectClass* pImageOwnerTool = pImage->getOwner(); 
-
-				if (pImageOwnerTool)
-				{
-					SVObjectSubTypeEnum subType = pImageOwnerTool->GetObjectSubType();
-					bRetVal = (SVGageToolObjectType == subType);
-				}
-				return bRetVal;
-			}
-
 			bool IsObjectCurrentTask(SvOi::IObjectClass* pObject) const
 			{
 				bool bRetVal = true;
@@ -88,11 +73,11 @@ namespace Seidenader
 					if (SVToolImageObjectType != m_subType)
 					{
 						bStop = !IsObjectCurrentTask(pObject);
-						bUseImage = !bStop && !IsHidden(pObject) && !IsOwnerGageTool(pImage) && HasOneBand(pImage);
+						bUseImage = !bStop && !IsHidden(pObject) && HasOneBand(pImage);
 					}
 					else
 					{
-						bUseImage = !IsHidden(pObject) && !IsOwnerGageTool(pImage) && HasOneBand(pImage);
+						bUseImage = !IsHidden(pObject) && HasOneBand(pImage);
 					}
 				}
 				return bUseImage;

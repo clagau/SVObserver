@@ -103,7 +103,6 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		// Set Result/Publish button...
 		switch( rToolType.SubType )
 		{
-		case SVToolProfileObjectType:  // fall through...
 			case SVLinearToolObjectType:
 				if( pWnd = GetDlgItem( IDC_PUBLISH_BUTTON ) )
 				{

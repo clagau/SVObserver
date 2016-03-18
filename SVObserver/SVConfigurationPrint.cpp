@@ -29,7 +29,6 @@
 #include "SVObjectLibrary\SVObjectClass.h"
 
 #include "SVValueObject.h"
-#include "SVEdge.h"
 #include "SVEquation.h"
 #include "SVImageClass.h"
 #include "SVLine.h"
@@ -852,9 +851,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 					}
 				}
 
-				SVImageInfoClass* pImageInfo = NULL;
-				if (pObj->GetObjectName() != pApp->GetStringResource(IDS_CLASSNAME_SVGAGETOOL))
-					pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL) );
+				SVImageInfoClass* pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL) );
 				
 				if (pImageInfo)
 				{

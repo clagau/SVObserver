@@ -37,22 +37,15 @@ protected:
 	static HRESULT SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVColorToolClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVEdgeCountingLineAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVEdgePositionLineAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVHistogramAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVLinearAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVLinearMeasurementLineAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVLineROIClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVLuminanceAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVMaximumBackgroundObjectLineAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVMaximumForegroundObjectLineAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVMaximumObjectLineAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVOCRGrayAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVPatternAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* pParentWnd );
 	static HRESULT SVPixelAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVPixelCountingLineAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVResultClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 
 	SVSetupDialogMap m_SetupDialogs;

@@ -1355,7 +1355,6 @@ bool SVToolClass::areAuxExtentsAvailable() const
 	bool bRetVal = true;
 	// check inspection, not gauge tool, and has image input!
 	if (nullptr == GetToolImage() || 
-		SVGageToolObjectType == outObjectInfo.ObjectTypeInfo.SubType || 
 		0 == GetInspection()->GetEnableAuxiliaryExtent())
 	{
 		bRetVal = false;

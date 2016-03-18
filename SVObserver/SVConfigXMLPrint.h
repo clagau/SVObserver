@@ -32,7 +32,6 @@
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
-#include "SVEdge.h"
 #include "SVEquation.h"
 #include "SVImageClass.h"
 #include "SVLine.h"	// Sri 2/21/00

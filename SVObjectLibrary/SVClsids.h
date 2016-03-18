@@ -598,12 +598,6 @@ extern /*const*/ GUID SVMathEquationClassGuid;
 // GUID for the Embedded Objects in the SVMathEquationClass
 extern /*const*/ GUID SVMathEquationResultObjectGuid;
 
-// GUID for the SVGageToolClass
-extern /*const*/ GUID SVGageToolClassGuid;
-
-// GUID for the SVPixelCountingLineAnalyzerClass
-extern /*const*/ GUID SVPixelCountingLineAnalyzerClassGuid;
-
 //GUID for the SVLinearPixelCountingLineAnalyzerClass
 extern /*const*/ GUID SVLinearPixelCountingLineAnalyzerClassGuid;
 
@@ -625,20 +619,11 @@ extern /*const*/ GUID SVOutputLineObjectGuid;
 // GUID for the SVLineAnalyzerClass
 extern /*const*/ GUID SVLineAnalyzerClassGuid;
 
-// GUID for the SVEdgeCountingLineAnalyzerClass
-extern /*const*/ GUID SVEdgeCountingLineAnalyzerClassGuid;
-
 // GUID for the SVLinearEdgeCountingLineAnalyzerClass
 extern /*const*/ GUID SVLinearEdgeCountingLineAnalyzerClassGuid;
 
-// GUID for the SVEdgePositionLineAnalyzerClass
-extern /*const*/ GUID SVEdgePositionLineAnalyzerClassGuid;
-
 // GUID for the SVLinearEdgePositionLineAnalyzerClass
 extern /*const*/ GUID SVLinearEdgePositionLineAnalyzerClassGuid;
-
-// GUID for the SVLinearMeasurementLineAnalyzerClass
-extern /*const*/ GUID SVLinearMeasurementLineAnalyzerClassGuid;
 
 // GUID for the SVLinearMeasurmentAnalyzerClassGuid
 extern /*const*/ GUID SVLinearMeasurementAnalyzerClassGuid;
@@ -708,20 +693,11 @@ extern /*const*/ GUID SVWarnedCountObjectGuid;
 extern /*const*/ GUID SVEnabledCountObjectGuid;
 extern /*const*/ GUID SVProcessedCountObjectGuid;
 
-// GUID for the SVMaximumBackgroundObjectLineAnalyzerClass
-extern /*const*/ GUID SVMaximumBackgroundObjectLineAnalyzerClassGuid;
-
 // GUID for the SVLinearMaximumBackgroundObjectLineAnalzerClass
 extern /*const*/ GUID SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid;
 
-// GUID for the SVMaximumForegroundObjectLineAnalyzerClass
-extern /*const*/ GUID SVMaximumForegroundObjectLineAnalyzerClassGuid;
-
 // GUID for the SVLinearMaximumForegroundObjectLineAnalyzerClass
 extern /*const*/ GUID SVLinearMaximumForegroundObjectLineAnalyzerClassGuid;
-
-// GUID for the SVMaximumObjectLineAnalyzerClass
-extern /*const*/ GUID SVMaximumObjectLineAnalyzerClassGuid;
 
 // GUID for the SVLinearMaximumObjectLineAnalyzerClass
 extern /*const*/ GUID SVLinearMaximumObjectLineAnalyzerClassGuid;
@@ -735,17 +711,11 @@ extern /*const*/ GUID SVEdgeCountObjectGuid;
 extern /*const*/ GUID SVColorObjectGuid;
 extern /*const*/ GUID SVStatusObjectGuid;
 
-// GUID for the SVBuildReferenceToolClass
-extern /*const*/ GUID SVBuildReferenceToolClassGuid;
-
 // GUID for the SVImageToLineProjectClass
 extern /*const*/ GUID SVImageToLineProjectClassGuid;
 
 // GUID for the SVLinearImageToLineProjectClassGuid
 extern /*const*/ GUID SVLinearImageToLineProjectClassGuid;
-
-// GUID for the SVProfileToolClass
-extern /*const*/ GUID SVProfileToolClassGuid;
 
 // GUID for Embedded Object
 extern /*const*/ GUID SVProjectAngleObjectGuid;
@@ -951,9 +921,6 @@ extern /*const*/ GUID SVThresholdMinObjectGuid;
 
 extern /*const*/ GUID SVLinearThresholdMaxObjectGuid;
 extern /*const*/ GUID SVLinearThresholdMinObjectGuid;
-
-extern /*const*/ GUID SVSingleLineAnalyzerClassGuid;
-extern /*const*/ GUID SVDualLineAnalyzerClassGuid;
 
 // GUID for the SVTransformationToolClass
 extern /*const*/ GUID SVTransformationToolClassGuid;
@@ -1162,9 +1129,6 @@ extern /*const*/ GUID SVpatResultYObjectGuid;
 extern /*const*/ GUID SVpatResultAngleObjectGuid;
 
 extern /*const*/ GUID SVpatResultNumFoundOccurancesObjectGuid;
-
-// GUIDs for Angular Profile Tool
-extern /*const*/ GUID SVAngularProfileToolClassGuid;
 
 // GUIDs for Linear   Tool 
 extern /*const*/ GUID SVLinearToolClassGuid;

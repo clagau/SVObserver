@@ -35,8 +35,6 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent );
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
-	virtual HRESULT SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
 
 	virtual HRESULT GetRelativePositionPoints( SVExtentPointStruct &p_rsvPoint1, SVExtentPointStruct &p_rsvPoint2 );
 
