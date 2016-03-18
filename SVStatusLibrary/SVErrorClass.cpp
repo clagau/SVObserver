@@ -72,9 +72,6 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
       if ((msvlErrorCd & 0xffff0000) == 0xffff0000)
       {
          msvlErrorCd = (-((signed long) msvlErrorCd)) | SV_ERROR_CONDITION;
-//         x.Format ("2error nbr = %x\n", msvlErrorCd);
-//AfxMessageBox (x);
-
       }
 /*--- End RECONFIGURING SHORTHAND ERROR CODES. ----------------------------*/
 

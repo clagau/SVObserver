@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:53:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageListClass.h"
+#pragma endregion Includes
 
 SVImageListClass::SVImageListClass()
 {
@@ -19,12 +21,6 @@ SVImageListClass::SVImageListClass()
 SVImageListClass::~SVImageListClass()
 {
 	RemoveAll();
-}
-
-BOOL SVImageListClass::RemoveImage( SVImageClass* PImage )
-{
-	AfxMessageBox( "BOOL SVImageListClass::RemoveImage( SVImageClass* PImage );\n\nDo not use this function!\nOut of use!" );
-	return FALSE;
 }
 
 SVImageClass * SVImageListClass::GetAtByTool(int nIndex)   // 25 Jun 1999 - frb.

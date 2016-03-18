@@ -4521,20 +4521,11 @@ END
 
 STRINGTABLE
 BEGIN
-    IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
-END
-
-STRINGTABLE
-BEGIN
     IDS_USER_QUESTION_CLOSE_CONFIG 
                             "Are you sure you want to close the current SVObserver application  %1?\n\nALL CURRENT RUNNING INSPECTIONS WILL BE STOPPED!"
     IDS_USER_QUESTION_SAVE_CHANGES "Save changes to %1?"
     IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE 
                             "No access during Test or Run Mode!"
-    IDS_USER_INFORMATION_NO_ANALYZER_DETAILS 
-                            "No Analyzer Details available!\nTry to select an Analyzer first.\nNOTICE: Some Tools don´t have an Analyzer!"
-    IDS_USER_INFORMATION_WRONG_PATHNAME_ENTERED 
-                            "Invalid path or file name found\n\nCheck your  inputs and try it again!"
     IDS_STATTOOL_INVALID_VARIABLE 
                             "Error - The Selected Variable To Monitor does not exist."
     IDS_EQUATION_PARSER_ERROR "Syntax Error at position %d\n"
@@ -5198,7 +5189,6 @@ BEGIN
     IDS_PAT_INVALID_FILENAME "Not a Valid Model file"
     IDS_OBJECTNAME_PAT_RESULTANGLE "Result Angle"
     IDS_PAT_MODEL_SIZE_ERROR "Invalid Model Size"
-    IDS_PAT_THRESHOLD_ERROR "Invalid Threshold Value"
     IDS_PAT_ALLOC_MODEL_FAILED "Pattern Model Allocation Failed."
     IDS_OBJECTNAME_CENTER_X "Center X"
 END
@@ -5296,15 +5286,12 @@ STRINGTABLE
 BEGIN
     IDS_INVALID_CONDITION_FORMULA 
                             "An Invalid Conditional formula has been detected.\nThe Conditional formula must be valid or disabled to exit this dialog."
-    IDS_INVALID_FORMULA     "An Invalid Formula has been detected.\nThe Formula must be valid to exit this dialog."
     IDS_DIALOG_TITLE_BARCODEPROPERTIES "Bar Code Analyzer Properties"
     IDS_RESULTVIEW_COLUMN_NAME0 "Name"
     IDS_RESULTVIEW_COLUMN_NAME1 "Value"
     IDS_RESULTVIEW_COLUMN_NAME2 "Location"
     IDS_RESULTVIEW_COLUMN_NAME3 "Index"
     IDS_RESULTVIEW_COLUMN_NAME4 "Faults"
-    IDS_CRITICAL_NO_TOOL_ADJUSTMENT_DIALOG 
-                            "Unable to open Tool Adjustment Dialog!"
     IDS_CRITICAL_UNABLE_TO_CONNECT_TO "Unable to connect to %1"
     IDS_CRITICAL_CREATION_OF_FAILED "Creation of %1 Failed"
 END
@@ -5546,7 +5533,6 @@ BEGIN
     IDS_RANGEOFANGLES       "Range of angles"
     IDS_OCR_PARAMETERS      "OCR Parameters"
     IDS_FONTTRAINING_BUTTON "Create/Edit Font File"
-    IDS_UNKNOWN_FILE_FORMAT_STRING "Unknown File Format!"
     IDS_RESULT_ATTRIBUTE_VALUE_STRING " "
 END
 

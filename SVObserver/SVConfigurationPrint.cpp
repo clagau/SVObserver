@@ -331,8 +331,10 @@ void SVConfigurationPrint::DoPrintConfig()
 				
 				if (m_printInfo.m_pPD->m_pd.hDC == NULL)
 				{
-					AfxMessageBox(AFX_IDP_FAILED_TO_START_PRINT);
-					
+					CString message;
+					message.Format(AFX_IDP_FAILED_TO_START_PRINT);
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10238 );
 					return;
 				}  // end if( printInfo.m_pPD->m_pd.hDC == NULL )
 			}  // end if( pCmdInfo->m_nShellCommand == CCommandLineInfo::FilePrintTo )
@@ -435,8 +437,10 @@ void SVConfigurationPrint::DoPrintConfig()
 			
 			m_printDC.Detach();   // will be cleaned up by CPrintInfo destructor
 			
-			AfxMessageBox(AFX_IDP_FAILED_TO_START_PRINT);
-			
+			CString message;
+			message.Format(AFX_IDP_FAILED_TO_START_PRINT);
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10239 );
 			return;
 		}  // end if( printDC.StartDoc( &docInfo ) == SP_ERROR )
 		

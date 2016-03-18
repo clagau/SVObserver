@@ -26,6 +26,8 @@
 #include "SVRange.h"
 #include "SVTool.h"
 #include "SVSVIMStateClass.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 struct SVBlobFeatureConstants BlobFeatureConstants[]=
@@ -452,7 +454,8 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 			// And finally try to create the child object...
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), NULL ) != SVMR_SUCCESS )
 			{
-				AfxMessageBox("Creation of Blob Analyzer Result Failed");
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10041 ); 
 					
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
@@ -543,7 +546,8 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 			// And finally try to create the child object...
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pResultBlob), NULL ) != SVMR_SUCCESS )
 			{
-				AfxMessageBox("Creation of Blob Analyzer Result Failed");
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10042 ); 
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = m_pResultBlob->GetUniqueObjectID();

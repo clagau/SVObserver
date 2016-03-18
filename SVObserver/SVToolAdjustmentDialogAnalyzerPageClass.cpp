@@ -30,6 +30,9 @@
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "GuiCommands/GetCreatableObjects.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -229,7 +232,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 		}
 	}
 	else
-		AfxMessageBox( IDS_USER_INFORMATION_NO_ANALYZER_DETAILS, MB_ICONINFORMATION );
+	{
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::Error_NoAnalyzerDetails, StdMessageParams, SvOi::Err_10210 );
+	}
 }
 
 void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
@@ -278,7 +284,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 					// And finally try to create the child object...
 					if( ::SVSendMessage( m_pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
-						AfxMessageBox("Creation of Analyzer Failed");
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_AnalyzerCreationFailed, StdMessageParams, SvOi::Err_10211 );
 
 						// What should we really do here ??? SEJ
 
@@ -295,7 +302,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			}
 			else
 			{
-				AfxMessageBox("Instantiation of Analyzer Failed");
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_AnalyzerInstantiationFailed, StdMessageParams, SvOi::Err_10212 );
 			}
 		}
 	}

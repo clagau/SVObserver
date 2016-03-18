@@ -130,35 +130,17 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
     {
         while( 1 )
         {
-//AfxMessageBox( "Hi1" );
-            // Try to get a mil app handle...
-//            MappAlloc( M_THREAD_CURRENT + M_QUIET /*+ M_DEFAULT*/, &milApplication );
-            //if( MappAlloc( M_THREAD_CURRENT + M_QUIET /*+ M_DEFAULT*/, &milApplication ) == M_NULL )
-            //    break;
-//AfxMessageBox( "Hi2" );
-            
-/*			// Try to get a mil VGA system handle...
-#ifdef _DEBUG
-            if( ( milSystem = MsysAlloc( M_SYSTEM_VGA, M_DEFAULT, M_NO_DDRAW, M_NULL ) ) == M_NULL )
-                break;
-#else
-            if( ( milSystem = MsysAlloc( M_SYSTEM_VGA, M_DEFAULT, M_DEFAULT, M_NULL ) ) == M_NULL )
-                break;
-#endif
-*/
-//AfxMessageBox( "Hi3" );
             // Try to get a mil image buffer handle...
             if( ( milImageBuffer = SVBitmapToMilBuffer( HImageBitmap )).empty() )
                 break;
-//AfxMessageBox( "Hi4" );
             // Try to get a mil display handle...
 			l_Code = l_DispIntf.Create( milDisplay );
 			if( l_Code != SVMEE_STATUS_OK )
 			{
 				break;
 			}
-//AfxMessageBox( "Hi5" );
-            // Try to get a mil display buffer handle...
+
+			// Try to get a mil display buffer handle...
 			long width;
 			long height;
 
@@ -170,16 +152,15 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 			{
 				break;
 			}
-//AfxMessageBox( "Hi6" );
-            // Try to get a mil mask buffer handle...
+
+			// Try to get a mil mask buffer handle...
 			l_Code = l_BufIntf.Create( milMaskBuffer, milImageBuffer );
 			if( l_Code != SVMEE_STATUS_OK )
 			{
 				break;
 			}
-//AfxMessageBox( "Hi7" );
 
-            // Set mil display features...
+			// Set mil display features...
 			l_Code = l_DispIntf.Set( milDisplay, SVDispWindowScrollbar,(long) SVValueEnable);
 			l_Code = l_DispIntf.Set( milDisplay, SVDispWindowZoom,(long) SVValueEnable);
 			l_Code = l_DispIntf.Set( milDisplay, SVDispUpdate,(long) SVValueEnable);

@@ -21,6 +21,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -191,7 +192,8 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					{
 						CString strMessage;
 						AfxFormatString1( strMessage, IDS_CRITICAL_CREATION_OF_FAILED, pObject->GetName() );
-						AfxMessageBox( strMessage );
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, strMessage, StdMessageParams, SvOi::Err_10043 ); 
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = pObject->GetUniqueObjectID();

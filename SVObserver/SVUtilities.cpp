@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   31 Jan 2014 17:16:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVUtilities.h"
 #include "SVStatusLibrary/SVRegistry.h"
@@ -17,6 +18,10 @@
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVObserver.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/SVMessage.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -165,7 +170,8 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
       msg.Format (_T("Unable to start %s\n(%s).\n\nCheck Utility Properties."),
                   utilInfo.szUtilityName,
                   utilInfo.szCommand);
-      ::MessageBox (HWND_DESKTOP, msg, "Failure", MB_OK);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msg, StdMessageParams, SvOi::Err_10237 );
     }
   }
 }

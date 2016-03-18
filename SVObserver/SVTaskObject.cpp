@@ -29,6 +29,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "RootObject.h"
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -811,7 +812,8 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 				}
 				// Should we really be doing this here?
 				AfxFormatString1( strMessage, IDS_CRITICAL_UNABLE_TO_CONNECT_TO, strItem );
-				AfxMessageBox( strMessage );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, strMessage, StdMessageParams, SvOi::Err_10203 ); 
 
 				// Try to recover old state...
 				if( l_psvOldImage != NULL )
@@ -1200,7 +1202,8 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedOb
 			{
 				if (pObject->GetEmbeddedID() == REmbeddedID)
 				{
-					AfxMessageBox("Error - Duplicate Embedded ID found");
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_DuplicateEmbeddedId, StdMessageParams, SvOi::Err_10204 ); 
 					return FALSE;
 				}
 			}

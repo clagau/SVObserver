@@ -1671,8 +1671,8 @@ HRESULT SVInspectionProcess::RebuildInspection()
 			{
 				l_Status = E_FAIL;
 
-				ASSERT(FALSE);
-				AfxMessageBox(_T("Color camera not attached to this IPDoc"));
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::IPDoc_NoCameraColorAttached, StdMessageParams, SvOi::Err_10052 ); 
 			}
 		}
 		else

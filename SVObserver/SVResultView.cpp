@@ -23,6 +23,9 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVIPChildFrm.h"
 #include "RootObject.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -86,7 +89,8 @@ void SVResultViewClass::OnInitialUpdate()
 {
 	if( GetIPDoc() == NULL )
 	{
-		AfxMessageBox( "Failed to init inspection result view!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ResultView_InitFailed, StdMessageParams, SvOi::Err_10197 ); 
 		return;
 	}
 

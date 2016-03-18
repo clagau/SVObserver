@@ -15,6 +15,9 @@
 #include "SVOCVGeneralDlg.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVOCVAnalyzerResult.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -145,7 +148,8 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 		CString csTemp = svfncFileName.GetFullFileName();
 		if ( csTemp.IsEmpty() )
 		{
-			AfxMessageBox(_T("ERROR: No Font File Specified"));
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontFileSpec, StdMessageParams, SvOi::Err_10171 ); 
 		}
 		else
 		{
@@ -153,9 +157,9 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
 			{
 				CString s;
-				s.Format( _T( "ERROR: Font File Requires '.mfo' Extension: %s" ),
-					        svfncFileName.GetFullFileName() );
-				AfxMessageBox(s);
+				s.Format( SvO::Error_FontNotMfoExt, svfncFileName.GetFullFileName() );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10172 ); 
 			}
 			else
 			{
@@ -166,16 +170,16 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
 				{
 					CString s;
-					s.Format( _T( "ERROR: Font File Does Not Exist: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					s.Format( SvO::Error_FontFileNotExist, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10173 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
 					CString s;
-					s.Format( _T( "ERROR: Font File Empty: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					s.Format( SvO::Error_FontFileEmpty, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10174 );
 				}
 				else
 				{
@@ -212,7 +216,8 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 		CString csTemp = svfncFileName.GetFullFileName();
 		if ( csTemp.IsEmpty() )
 		{
-			AfxMessageBox(_T("ERROR: No Font Constraints File Specified"));
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontConstraintsFileSpec, StdMessageParams, SvOi::Err_10175 ); 
 		}
 		else
 		{
@@ -220,9 +225,9 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
 			{
 				CString s;
-				s.Format( _T( "ERROR: Font Constraints File Requires '.mfo' Extension: %s" ),
-					        svfncFileName.GetFullFileName() );
-				AfxMessageBox(s);
+				s.Format( SvO::Error_FontConstraintsRequiredMfoExt, svfncFileName.GetFullFileName() );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10176 ); 
 			}
 			else
 			{
@@ -233,16 +238,16 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
 				{
 					CString s;
-					s.Format( _T( "ERROR: Font Constraints File Does Not Exist: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					s.Format( SvO::Error_FontConstraintsFileNotExist, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10177 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
 					CString s;
-					s.Format( _T( "ERROR: Font Constraints File Empty: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					s.Format( SvO::Error_FontConstraintsFileEmpty, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10178 ); 
 				}
 				else
 				{
@@ -280,7 +285,8 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 		CString csTemp = svfncFileName.GetFullFileName();
 		if ( csTemp.IsEmpty() )
 		{
-			AfxMessageBox(_T("ERROR: No Font Controls File Specified"));
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontControlsFileSpec, StdMessageParams, SvOi::Err_10179 ); 
 		}
 		else
 		{
@@ -288,9 +294,9 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
 			{
 				CString s;
-				s.Format( _T( "ERROR: Font Controls File Requires '.mfo' Extension: %s" ),
-					        svfncFileName.GetFullFileName() );
-				AfxMessageBox(s);
+				s.Format( SvO::Error_FontControlsRequiredMfoExt, svfncFileName.GetFullFileName() );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10180 ); 
 			}
 			else
 			{
@@ -301,16 +307,16 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
 				{
 					CString s;
-					s.Format( _T( "ERROR: Font Controls File Does Not Exist: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					s.Format( SvO::Error_FontControlsFileNotExist, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10181 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
 					CString s;
-					s.Format( _T( "ERROR: Font Controls File Empty: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					s.Format( SvO::Error_FontControlsFileEmpty, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10182 ); 
 				}
 				else
 				{

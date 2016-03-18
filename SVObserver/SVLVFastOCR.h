@@ -8,21 +8,17 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:25:44  $
 //******************************************************************************
-
-#ifndef SVLVFASTOCR_H
-#define SVLVFASTOCR_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
-struct SVOCRParamStruct;
-struct SVOCRGrayParamStruct;
-
 #define _wAlign_h  // remove once wAlignUsr.h exists
 #define _corObjObsolete_h
+
+#pragma region Includes
 #include "wFast.h"
+#pragma region Includes
+
 //#undef freeData
+struct SVOCRParamStruct;
+struct SVOCRGrayParamStruct;
 
 class SVLVFastOCR  
 {
@@ -79,7 +75,8 @@ private:
 
 	void *GetFunctionAddress( LPCSTR szFunctionName );
 
-	BOOL LoadLVDLLs();
+	bool loadDlls(LPCTSTR pDllString);
+	bool LoadLVDLLs();
 	BOOL LoadLVFunctionAddresses();
 
 	BOOL UnloadLVDLLs();
@@ -88,6 +85,4 @@ private:
 	BOOL ConnectToLVFastOCR();
 	BOOL DisconnectFromLVFastOCR();
 };
-
-#endif   // SVLVFASTOCR_H
 

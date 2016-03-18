@@ -21,6 +21,8 @@
 #include "SVResultDouble.h"
 #include "SVToolSet.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -379,7 +381,8 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 			// And finally try to create the child object...
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), NULL ) != SVMR_SUCCESS )
 			{
-				AfxMessageBox("Creation of Statistics Result Failed");
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::StatTool_ResultFailed, StdMessageParams, SvOi::Err_10200 ); 
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
@@ -835,7 +838,8 @@ DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR Dw
 
 				if( !SilentReset && !m_errStr.IsEmpty() )
 				{
-					AfxMessageBox( m_errStr );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errStr, StdMessageParams, SvOi::Err_10201 ); 
 				}
 				DwResult = SVMR_NO_SUCCESS;
 			}

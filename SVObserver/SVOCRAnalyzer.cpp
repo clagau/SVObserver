@@ -111,19 +111,6 @@ SVResultClass* SVOCRAnalyzerClass::GetResultObject()
 	// Find the result Object in Our List
 	pAnalyzerResult = (SVResultClass *)GetAt(0);
 
-	//ASSERT( GetTool() != NULL );
-	//if( pAnalyzerResult == NULL )
-	//{
-	//	if( pAnalyzerResult	= new SVWhitePixelAnalyzeResultClass( this ) )
-	//	{
-	//		if( ! pAnalyzerResult->Create( this, GetTool() ) )
-	//		{
-	//			AfxMessageBox( "Unable to create white pixel Analyze result!" );
-	//			pAnalyzerResult->Destroy();
-	//			pAnalyzerResult = NULL;
-	//		}
-	//	}
-	//}
 	return( pAnalyzerResult );
 }
 

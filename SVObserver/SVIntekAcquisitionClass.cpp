@@ -29,6 +29,8 @@
 #include "SVIntek/SVIntekEnums.h"
 #include "SV1394CameraStruct.h"
 #include "SV1394CameraManager.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -835,7 +837,8 @@ HRESULT SVIntekAcquisitionClass::GetCameraImageInfo( SVImageInfoClass* pImageInf
 
 	if ( hrOk != S_OK )
 	{
-		AfxMessageBox( "Failed to get acquisition source information!", MB_ICONEXCLAMATION );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Acquisition_SourceInformationFailed, StdMessageParams, SvOi::Err_10053 );
 	}
 
 	return hrOk;

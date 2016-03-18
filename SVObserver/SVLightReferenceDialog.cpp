@@ -9,11 +9,15 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:46:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLightReferenceDialog.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVAcquisitionClass.h"
-
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVLightReferenceDialogPropertySheetClass, CPropertySheet)
 
@@ -97,9 +101,9 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 				{
 					sCaption = pCamera->GetName();
 				}
-				CString s;
-				s.Format(_T("Light Reference not available for %s"), sCaption);
-				AfxMessageBox(s);
+				SVString s = SvUl_SF::Format(SvO::LightReference_NotAvailable, sCaption);
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s.c_str(), StdMessageParams, SvOi::Err_10059 );
 				DestroyAllPages();
 				return false;
 			}

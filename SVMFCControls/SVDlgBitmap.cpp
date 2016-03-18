@@ -12,6 +12,10 @@
 #include "stdafx.h"
 #include "SVDlgBitmap.h"
 #include <io.h>
+#include "SVObserver\TextDefinesSvO.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVMessage\SVMessage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -293,7 +297,8 @@ namespace Seidenader
 			}
 			else
 			{
-				MessageBox( "No device context available!" );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoDeviceContext, StdMessageParams, SvOi::Err_10233 );
 			}
 
 

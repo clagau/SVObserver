@@ -558,7 +558,6 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 				if (wcscmp (abstrElementName, l_bstrDebugDecryptedString) != 0)
 				{
 		//-		Source and decrypted string not equal.
-//AfxMessageBox(_T("Write Compare Failed1"));
 					ASSERT (0);
 				}
 
@@ -666,12 +665,6 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 
 					if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 					{	
-//AfxMessageBox(_T("Calling the dump2"));
-//l_bstrDebugDecryptedString.CharHexDump (l_csHexDump, sizeof (l_csHexDump));
-//fwrite ("Decrypted buffer\n", 17, 1, hFile);
-//fwrite (l_csHexDump, strlen (l_csHexDump), 1, hFile);
-//fwrite ("\n", 1, 1, hFile);			
-
 						if (hr == -1933)
 						{
 							hr = -1954;
@@ -772,18 +765,6 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 					{
 						if (hr == -1933)
 						{
-
-//AfxMessageBox(_T("Calling the dump1"));
-//l_bstrElementType.CharHexDump (l_csHexDump, sizeof (l_csHexDump));
-//fwrite ("Encrypted buffer\n", 17, 1, hFile);
-//fwrite (l_csHexDump, strlen (l_csHexDump), 1, hFile);
-//fwrite ("\n", 1, 1, hFile);		
-
-//l_bstrDebugDecryptedString.CharHexDump (l_csHexDump, sizeof (l_csHexDump));
-//fwrite ("Decrypted buffer\n", 17, 1, hFile);
-//fwrite (l_csHexDump, strlen (l_csHexDump), 1, hFile);
-//fwrite ("\n", 1, 1, hFile);		
-	
 							hr = -1955;
 						}
 
@@ -793,7 +774,6 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 					if (wcscmp (bstrType, l_bstrDebugDecryptedString) != 0)
 					{
 			//-		Source and decrypted string not equal.
-//AfxMessageBox(_T("Write Type Failed1"));
 						ASSERT (0);
 					}
 #endif

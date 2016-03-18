@@ -817,8 +817,8 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 
 				CString sMsg;
 				sMsg.Format("Creation of %s \"%s\" failed.", GetObjectName(), GetCompleteObjectName());
-				ASSERT(FALSE);  // this makes it easier to get to this point in the code in the debugger
-				AfxMessageBox(sMsg);
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, sMsg, StdMessageParams, SvOi::Err_10209 );
 
 				DwResult = SVMR_NO_SUCCESS;
 			}

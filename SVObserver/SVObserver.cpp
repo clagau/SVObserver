@@ -1981,22 +1981,18 @@ void SVObserverApp::OnGoOnline()
 				{
 					CString l_csMessage;
 
-					l_csMessage.Format( _T( "Configuration cannot enter Run.  The "
-						"current configuration hardware does not match system hardware.  "
-						"The system's Model Number is ( Model # %s %s %s %s ).  "
-						"Please verify that the shown model number is correct "
-						"and contact your system administrator." ),
+					l_csMessage.Format( SvO::SVObserver_CannotRun_WrongModelNumber,
 						m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions );
 
-					::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, l_csMessage, StdMessageParams, SvOi::Err_10121 );
 					SVSVIMStateClass::AddState( l_lPrevState );
 				}
 			}
 			else
 			{
 				CString l_csItem;
-				CString l_csMessage;
-
+				
 				if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
 				{
 					l_csItem = GetDigitalBoardName();
@@ -2022,15 +2018,11 @@ void SVObserverApp::OnGoOnline()
 					l_csItem = _T( "Unknown Item" );
 				}
 
-				l_csMessage.Format( _T( "Hardware configuration error. The SVIM hardware "
-					"does not match the Model Number ( Model # %s %s %s %s ).  "
-					"%s is either not available or malfunctioning.  "
-					"Please verify that the shown model number is correct "
-					"and contact your system administrator." ),
-					m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions,
-					l_csItem );
+				SVString l_csMessage = SvUl_SF::Format( SvO::SVObserver_WrongModelNumber,
+					m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions, l_csItem );
 
-				::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, l_csMessage.c_str(), StdMessageParams, SvOi::Err_10122 );
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 
@@ -2394,7 +2386,8 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 	}
 	else
 	{
-		AfxMessageBox( _T( "Authorization Failed.\n\nUtility Modification requires 'User Manager' privilege." ), MB_OK );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::SVObserver_AuthorizationFailed_Modification, StdMessageParams, SvOi::Err_10123 );
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
@@ -2456,7 +2449,8 @@ void SVObserverApp::OnRunUtility( UINT uiId )
 	}
 	else
 	{
-		AfxMessageBox( _T("Authorization Failed.\n\nUtility Execution requires 'User Manager' privilege."), MB_OK );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::SVObserver_AuthorizationFailed_Execution, StdMessageParams, SvOi::Err_10124 );
 	}
 }
 
@@ -2999,8 +2993,8 @@ BOOL SVObserverApp::InitInstance()
 	// OLE-Bibliotheken initialisieren
 	if( !AfxOleInit() )
 	{
-		AfxMessageBox( IDP_OLE_INIT_FAILED );
-
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::SVObserver_OleInitFailed, StdMessageParams, SvOi::Err_10125 );
 		return FALSE;
 	}
 
@@ -3165,7 +3159,6 @@ BOOL SVObserverApp::InitInstance()
 	if ( l_hrLoad != S_OK )
 	{
 		CString l_csItem;
-		CString l_csMessage;
 
 		if ( ( l_hrLoad & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
 		{
@@ -3192,13 +3185,8 @@ BOOL SVObserverApp::InitInstance()
 			l_csItem = _T( "Unknown Item" );
 		}
 
-		l_csMessage.Format( _T( "Hardware configuration error. The SVIM hardware "
-			"does not match the Model Number ( Model # %s %s %s %s ).  "
-			"%s is either not available or malfunctioning.  "
-			"Please verify that the shown model number is correct "
-			"and contact your system administrator." ),
-			m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions,
-			l_csItem );
+		SVString l_csMessage = SvUl_SF::Format( SvO::SVObserver_WrongModelNumber,
+			m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions, l_csItem );
 
 		#ifndef _DEBUG                    // 23 Mar 1999 - frb.
 		#ifndef _MINDEBUG
@@ -3206,7 +3194,8 @@ BOOL SVObserverApp::InitInstance()
 		#endif
 		#endif //_DEBUG                  // 23 Mar 1999 - frb.
 
-		::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, l_csMessage.c_str(), StdMessageParams, SvOi::Err_10126 );
 	}
 
 	//check to see what licenses are available before setting up any documents
@@ -3438,7 +3427,8 @@ BOOL SVObserverApp::InitInstance()
 
 	if ( TheSVOLicenseManager().HasMatroxLicense() && !TheSVOLicenseManager().HasMatroxGigELicense() && IsMatroxGige() )
 	{
-		AfxMessageBox("Matrox GigE License not found");
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::SVObserver_MatroxGigELicenseNotFound, StdMessageParams, SvOi::Err_10127 );
 	}
 
 	
@@ -3675,14 +3665,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 					::SVGetVersionString( strApp, m_CurrentVersion );
 					::SVGetVersionString( strFile, configVer );
-					strText.Format( _T( "This configuration was created by SVObserver %s.\n"
-						"You are currently running SVObserver %s.\n"
-						"This configuration version may be incompatible with\n"
-						"the version of SVObserver that you are running.\n"
-						"Are you sure you wish to continue ?" ), 
+					strText.Format( SvO::SVObserver_WrongVersionNumber, 
 						strFile, strApp );
 
-					if( AfxMessageBox( strText, MB_YESNO ) == IDNO )
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, strText, StdMessageParams, SvOi::Err_10128, NULL, nullptr, MB_YESNO );
+					if( IDNO == result )
 					{
 						hr = E_FAIL;
 						break;
@@ -3796,10 +3784,9 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				if( E_FAIL != hr )
 				{
 					CString strText;
-					strText.Format( _T( "The configuration could not successfully load.\n"
-									"hr = %d.\n"), hr);
-
-					AfxMessageBox( strText, MB_OK );
+					strText.Format( SvO::SVObserver_ConfigurationLoadFailed, hr);
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, strText, StdMessageParams, SvOi::Err_10129 );
 				}
 				return S_FALSE;
 			} // if (hr & 0xc000)
@@ -4180,7 +4167,9 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 		else
 		{
 			AfxFormatString1( message, IDS_USER_QUESTION_CLOSE_CONFIG, getConfigFileName() ); 
-			bClose = AfxMessageBox( message, MB_YESNO | MB_ICONQUESTION ) == IDYES;
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, message, StdMessageParams, SvOi::Err_10130, NULL, nullptr, MB_YESNO | MB_ICONQUESTION );
+			bClose = IDYES == result;
 			if (bClose == FALSE)
 				hr = ERROR_CANCELLED;
 		}
@@ -4198,7 +4187,9 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 				if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
 				{
 					AfxFormatString1( message, IDS_USER_QUESTION_SAVE_CHANGES, getConfigFileName() ); 
-					switch( AfxMessageBox( message, MB_YESNOCANCEL | MB_ICONQUESTION ) )
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, message, StdMessageParams, SvOi::Err_10131, NULL, nullptr, MB_YESNOCANCEL | MB_ICONQUESTION );
+					switch( result )
 					{
 					case IDNO:
 						{
@@ -4228,7 +4219,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 							bClose = FALSE;
 							break;
 						}
-					}// end switch( AfxMessageBox( message, MB_YESNOCANCEL | MB_ICONQUESTION ) )
+					}// end switch( result )
 				}// end if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
 			}
 			else
@@ -5559,8 +5550,8 @@ BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction
 					sMsg.Format(_T("Unable to %s configuration %s !"),
 						dwAction == LOAD_CONFIG ? _T("load") : _T("save"),
 						m_ConfigFileName.GetPathName());
-					ASSERT(FALSE);
-					AfxMessageBox(sMsg);
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, sMsg, StdMessageParams, SvOi::Err_10132 );
 				}
 			}
 		}
@@ -6989,7 +6980,7 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 			Exception.setMessage( SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, l_strDrive, StdMessageParams );
 		
 #ifndef _DEBUG
-			AfxMessageBox( l_strDrive );
+			ASSERT( false ); //l_strDrive );
 #else
 			::OutputDebugString(l_strDrive);
 #endif
@@ -7334,7 +7325,8 @@ HRESULT SVObserverApp::INILoad()
 		if (S_OK != l_iniLoader.m_hrOEMFailure)
 		{
 			ASSERT( FALSE );
-			::MessageBox(nullptr, _T("The model number specified in OEMINFO.INI is invalid."), _T("SVObserver"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::SVObserver_ModelNumberInvalid, StdMessageParams, SvOi::Err_10236 );
 		}
 
 	}
@@ -7809,7 +7801,8 @@ HRESULT SVObserverApp::InitializeSecurity()
 
 	if( m_svSecurityMgr.SVLoad(szGetBuf) != S_OK )
 	{
-		AfxMessageBox("Security File Failed to Load\n Using Default Security" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::SVObserver_SecurityFileLoadFailed, StdMessageParams, SvOi::Err_10133 );
 	}
 
 	FreeLibrary (hMessageDll);
@@ -7955,7 +7948,8 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 	}// end if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	else
 	{
-		AfxMessageBox( IDS_USER_INFORMATION_WRONG_PATHNAME_ENTERED );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::SVObserver_WrongPathnameEntered, StdMessageParams, SvOi::Err_10134 );
 	}
 	SVSVIMStateClass::RemoveState( SV_STATE_SAVING );
 }
@@ -8474,25 +8468,20 @@ BOOL SVObserverApp::InitATL()
 #ifdef _DEBUG
 		if( ! l_AppRegister && ! l_AppUnregister )
 		{
-			szTemp.Format( _T( "(hr=0x%08X), "
-				"Unable to register class objects. "
-				"COM interface ISVCommand unavailable. "
-				"Do you want to exit?"), 
-				l_Status );
+			szTemp.Format( SvO::SVObserver_RegisterClassObjectsFailed, l_Status );
+			szTemp += _T("Do you want to exit?");
 
-			if( AfxMessageBox( szTemp, MB_YESNO ) == IDYES )
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, szTemp, StdMessageParams, SvOi::Err_10135, NULL, nullptr, MB_YESNO );
+			if( IDYES == result )
 				return FALSE;
 		}
 		else
 #endif
 		{
-			szTemp.Format( _T( "(hr=0x%08X), "
-				"Unable to register class objects. "
-				"COM interface ISVCommand unavailable."),
-				l_Status );
-
-			AfxMessageBox(szTemp);
-
+			szTemp.Format( SvO::SVObserver_RegisterClassObjectsFailed, l_Status );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, szTemp, StdMessageParams, SvOi::Err_10136 );
 			return FALSE;
 		}
 	}

@@ -43,6 +43,8 @@
 #include "SVHardwareManifest.h"
 #include "TextDefinesSvO.h"
 #include "SVOGui\GlobalConstantConflictDlg.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -432,8 +434,9 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			if ((SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && !SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)) ||
 				(!SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
 			{
-				// need to check if
-				if ( AfxMessageBox(_T("By switching the system (product) the camera, trigger, inspection and ppq data will be reset, do you wish to continue?"),MB_YESNO) == IDYES)
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::Config_SwitchResetQuestion, StdMessageParams, SvOi::Err_10138, NULL, nullptr, MB_YESNO);
+				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
 					m_bModified = TRUE;
@@ -442,7 +445,9 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			}
 			else
 			{
-				if ( AfxMessageBox(_T("By switching the system (product) the camera files will become invalid, do you wish to continue?"),MB_YESNO) == IDYES)
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::Config_SwitchInvalidQuestion, StdMessageParams, SvOi::Err_10139, NULL, nullptr, MB_YESNO);
+				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
 
@@ -2583,8 +2588,9 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						else
 						{
 							CString msg;
-							msg.Format(_T("Inspection Import failed. Error = %d"), hr);
-							AfxMessageBox(msg);
+							msg.Format(SvO::Config_InspectionImportFailed, hr);
+							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msg, StdMessageParams, SvOi::Err_10140);
 						}
 						pInspectionObj->ClearImportFilename();
 					}

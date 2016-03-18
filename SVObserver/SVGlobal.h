@@ -160,22 +160,6 @@ enum SVGetPathInfo
 		}
 
 
-// GUID Messagebox
-#define SV_GUID_TO_MESSAGE( XGUID )	\
-		{	\
-			if( sizeof( GUID ) == sizeof( XGUID ) )	 \
-			{	 \
-				TCHAR szBuf[ _MAX_PATH ];	\
-				_stprintf( szBuf, "{%x-%x-%x-%x %x %x %x %x %x %x %x}", \
-						   ( XGUID ).Data1, ( XGUID ).Data2, ( XGUID ).Data3, \
-						   ( XGUID ).Data4[0], ( XGUID ).Data4[1], ( XGUID ).Data4[2], ( XGUID ).Data4[3], \
-						   ( XGUID ).Data4[4], ( XGUID ).Data4[5], ( XGUID ).Data4[6], ( XGUID ).Data4[7] ); \
-				AfxMessageBox( szBuf );	\
-			}	 \
-		}
-#define SV_GET_PIXELDEPTH( XMILPIXELDEPTH )		( 1 << ( ( XMILPIXELDEPTH ) & SVBufferSize ) )
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // DLL Handling:
 ////////////////////////////////////////////////////////////////////////////////
@@ -190,44 +174,6 @@ enum SVGetPathInfo
 	#define SVLoadLibrary( X )		AfxLoadLibrary( X )
 	#define SVFreeLibrary( X )		AfxFreeLibrary( X )
 #endif
-
-////////////////////////////////////////////////////////////////////////////////
-// Special MessageBox Macros:
-////////////////////////////////////////////////////////////////////////////////
-#ifdef SV_DEV_STATE
-	#define SV_MESSAGE_OK( x, t )			::MessageBox( NULL, x, t, MB_OK )
-	#define SV_MESSAGE_WARNING( x, t )		::MessageBox( NULL, x, t, MB_ICONWARNING )
-	#define SV_MESSAGE_STOP( x, t )			::MessageBox( NULL, x, t, MB_ICONSTOP )
-#else
-	#define SV_MESSAGE_OK( x, t )			
-	#define SV_MESSAGE_WARNING( x, t )
-	#define SV_MESSAGE_STOP( x, t )
-#endif
-
-// Formatted Messageboxes 
-#define SV_FORMAT_MESSAGE( T, P )	\
-{	\
-	TCHAR text[ _MAX_PATH ];	\
-	_stprintf( text, _T( T ), _T( P ) );	\
-	AfxMessageBox( text );	\
-};
-
-#define SV_FORMAT_MESSAGE_5( T, P1, P2, P3, P4, P5 ) \
-{	\
-	TCHAR text[ _MAX_PATH ];	\
-	_stprintf( text, _T( T ), _T( P1 ), _T( P2 ), _T( P3 ), _T( P4 ), _T( P5 ) );	\
-	AfxMessageBox( text );	\
-};
-
-#define SV_FORMAT_DEBUG_OUTPUT( T, P )	\
-{	\
-	TCHAR text[ _MAX_PATH ];	\
-	_stprintf( text, _T( T ), _T( P ) );	\
-	OutputDebugString( text );	\
-};
-
-#define SV_FORMAT_MESSAGE_FRB( T, P )
-#define SV_FORMAT_MESSAGE_5_FRB( T, P1, P2, P3, P4, P5 )
 
 ////////////////////////////////////////////////////////////////////////////////
 //	Global Application Defines

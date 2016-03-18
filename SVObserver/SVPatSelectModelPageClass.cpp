@@ -23,6 +23,8 @@
 #include "SVOMFCLibrary\DisplayHelper.h"
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVOGui\SVColor.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -85,12 +87,17 @@ void SVPatModelPageClass::OnOK()
 	}
 	else
 	{
-		AfxMessageBox(nMsgID);
+		CString message;
+		message.Format(nMsgID);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10244 );
 	}
 	m_bAllowExit = true;
 	if (!m_pPatAnalyzer->IsValidSize())
 	{
-		if (AfxMessageBox("Model is larger than the ROI of the Window Tool. Do you want to change Model (Yes) or leave dialog (No)?",MB_YESNO ) == IDYES)
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Pattern_Model2Large, StdMessageParams, SvOi::Err_10184, NULL, nullptr, MB_YESNO ); 
+		if (IDYES == result)
 		{
 			m_bAllowExit = false;
 			return;
@@ -136,7 +143,10 @@ BOOL SVPatModelPageClass::OnKillActive()
 	UINT nMsgID = 0;
 	if (!ValidateModelParameters(nMsgID))
 	{
-		AfxMessageBox(nMsgID);
+		CString message;
+		message.Format(nMsgID);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10245 );
 		return FALSE;
 	}
 
@@ -205,6 +215,8 @@ void SVPatModelPageClass::OnCreateModel()
 {
 	UpdateData();
 
+	UINT nMsgID = 0;
+
 	if ( m_pPatAnalyzer != nullptr && GetModelFile( FALSE ) ) // @TODO:  Explain the "FALSE".
 	{
 		m_pPatAnalyzer->SetModelExtents(static_cast<long>(m_nXPos), static_cast<long>(m_nYPos), m_lModelWidth, m_lModelHeight);
@@ -247,26 +259,29 @@ void SVPatModelPageClass::OnCreateModel()
 				if (l_Code == SVMEE_STATUS_OK)
 				{
 					
-					UINT nMsgID = RestoreModelFromFile();
-					if (nMsgID)
-					{
-						AfxMessageBox(nMsgID);
-					}
+					nMsgID = RestoreModelFromFile();
 				}
 				else
 				{
-					AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
+					nMsgID = IDS_PAT_ALLOC_MODEL_FAILED;
 				}
 			}
 			else
 			{
-				AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
+				nMsgID = IDS_PAT_ALLOC_MODEL_FAILED;
 			}
 		}
 		else
 		{
-			AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
+			nMsgID = IDS_PAT_ALLOC_MODEL_FAILED;
 		}
+	}
+	if (0 != nMsgID)
+	{
+		CString message;
+		message.Format(nMsgID);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10246 );
 	}
 }
 
@@ -585,9 +600,12 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 		}
 	}
 
-	if (nMsgID)
+	if (0 != nMsgID)
 	{
-		AfxMessageBox(nMsgID);
+		CString message;
+		message.Format(nMsgID);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10247 );
 		GetDlgItem(nId)->SetFocus();
 		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
 		return FALSE;

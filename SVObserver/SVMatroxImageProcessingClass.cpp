@@ -21,6 +21,10 @@
 #include "SVGlobal.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvO.h"
+#include "SVOGui/TextDefinesSvOg.h"
 #pragma endregion Includes
 
 SVMatroxImageProcessingClass& SVMatroxImageProcessingClass::Instance()
@@ -98,8 +102,8 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVImageInfoClass&
 	else
 	if ( S_OK != hrOk && !bDisplayedErrorMessage )
 	{
-		ASSERT(FALSE);
-		AfxMessageBox( "Failed to create an image buffer!", MB_ICONEXCLAMATION );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::CreateBufferFailed, StdMessageParams, SvOi::Err_10064 );
 	}
 
 	return hrOk;
@@ -328,7 +332,8 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 					"again.");
 			}
 
-			AfxMessageBox(sMsg);
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, sMsg, StdMessageParams, SvOi::Err_10065 );
 		}
 
 
@@ -398,8 +403,8 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 
 	if ( hrOk != S_OK )
 	{
-		ASSERT(FALSE);
-		AfxMessageBox( "Failed to create a child buffer!", MB_ICONEXCLAMATION );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::CreateBufferFailed, StdMessageParams, SvOi::Err_10066 );
 	}
 
 	return hrOk;
@@ -553,295 +558,278 @@ HRESULT SVMatroxImageProcessingClass::InitBuffer( SVSmartHandlePointer rHandle, 
 
 HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName, SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle, BOOL bBrowseIfNotExists )
 {
-	HRESULT hrOk = S_OK;
+	SVFileNameClass	svfncImageFile(tstrImagePathName);
+	CString strImagePathName = svfncImageFile.GetFullFileName();
 
-	try
+	if( tstrImagePathName != NULL )
 	{
-		SVFileNameClass	svfncImageFile(tstrImagePathName);
-		CString strImagePathName = svfncImageFile.GetFullFileName();
-
-		if( tstrImagePathName != NULL )
+		if( ! ::SVFileExists( strImagePathName ) )
 		{
-			if( ! ::SVFileExists( strImagePathName ) )
+			if( ! bBrowseIfNotExists )
 			{
-				if( ! bBrowseIfNotExists )
-					throw S_FALSE;
-
-				CString strMessage;
-				strMessage.Format( _T( "Unable to locate image file:\n%s\n\nBrowse..." ), strImagePathName );
-				AfxMessageBox( strMessage );
-				// Browse...
-				//
-				// Try to read the current image file path name from registry...
-				//
-				CString csPath = AfxGetApp()->GetProfileString( _T( "Settings" ),
-					_T( "ImagesFilePath" ), 
-					_T( "C:\\Images" ) );
-				svfncImageFile.SetPathName(csPath);
-				svfncImageFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
-				if( svfncImageFile.SelectFile() )
-				{
-					// Extract the file path...
-					csPath = svfncImageFile.GetPathName();
-					//
-					// Write this path name back to registry...to initialize registry.
-					//
-					AfxGetApp()->WriteProfileString( _T( "Settings" ), _T( "ImagesFilePath" ), csPath );
-				}
+				return S_FALSE;
 			}
 
-
-			SVMatroxFileTypeEnum fileformat = SVFileUnknown;
-			CString strExtension = svfncImageFile.GetExtension();
-			if( strExtension.CompareNoCase(_T( ".mim" )) == 0 )
-				fileformat = SVFileMIL;
-
-			if( strExtension.CompareNoCase(_T( ".tif" )) == 0 )
-				fileformat = SVFileTiff;
-
-			if( strExtension.CompareNoCase(_T( ".bmp" )) == 0 )
-				fileformat = SVFileBitmap;
-
-			strImagePathName = svfncImageFile.GetFullFileName();
-			if( fileformat != -1 && ::SVFileExists( strImagePathName ) )
+			SVString strMessage = SvUl_SF::Format( SvO::MatroxImage_UnableToFindFile, strImagePathName );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, strMessage.c_str(), StdMessageParams, SvOi::Err_10067 );
+			// Browse...
+			//
+			// Try to read the current image file path name from registry...
+			//
+			CString csPath = AfxGetApp()->GetProfileString( _T( "Settings" ),
+				_T( "ImagesFilePath" ), 
+				_T( "C:\\Images" ) );
+			svfncImageFile.SetPathName(csPath);
+			svfncImageFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
+			if( svfncImageFile.SelectFile() )
 			{
-
-				SVMatroxBufferInterface::SVStatusCode l_Code;
-				SVMatroxString l_strPath = strImagePathName;
-
-				if( !rHandle.empty() )
-				{
-					SVImageBufferHandleImage l_MilHandle;
-					rHandle->GetData( l_MilHandle );
-
-					// Load...
-
-					l_Code = SVMatroxBufferInterface::Import(l_MilHandle.GetBuffer(), l_strPath, fileformat );
-					if( l_Code == SVMEE_STATUS_OK )
-					{
-						throw S_OK;
-					}
-					else
-					{
-						throw S_FALSE;
-					}
-				}
-
-				// Restore
-				SVMatroxBuffer newBuffer;
-				l_Code = SVMatroxBufferInterface::Import( newBuffer, l_strPath, fileformat, true );
-				if( !newBuffer.empty() )
-				{
-					// Get buffer data...
-					long l_lSizeX = 0;
-					long l_lSizeY = 0;
-					long l_lBandSize = 0;
-					long l_lPixelDepth = 0;
-					long l_DataFormat = 0;
-
-					l_Code = SVMatroxBufferInterface::Get( newBuffer, SVSizeX, l_lSizeX );
-					l_Code = SVMatroxBufferInterface::Get( newBuffer, SVSizeY, l_lSizeY );
-					l_Code = SVMatroxBufferInterface::Get( newBuffer, SVType, l_lPixelDepth );
-					l_Code = SVMatroxBufferInterface::Get( newBuffer, SVSizeBand, l_lBandSize );
-					l_Code = SVMatroxBufferInterface::Get( newBuffer, SVDataFormat, l_DataFormat );
-
-					if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR24, l_DataFormat ) )
-					{
-						rInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatRGB888 );
-					}
-					else if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR32, l_DataFormat ) )
-					{
-						rInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatRGB8888 );
-					}
-
-					rInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
-					rInfo.SetExtentProperty( SVExtentPropertyWidth, l_lSizeX );
-					rInfo.SetExtentProperty( SVExtentPropertyHeight, l_lSizeY );
-
-					rInfo.SetImageProperty( SVImagePropertyBandNumber, l_lBandSize );
-					rInfo.SetImageProperty( SVImagePropertyPixelDepth, l_lPixelDepth );
-
-					newBuffer.clear();
-
-					ASSERT( l_Code == SVMEE_STATUS_OK );
-					if( S_OK == CreateImageBuffer( rInfo, rHandle ) && 
-						S_OK == LoadImageBuffer( strImagePathName, rInfo, rHandle, FALSE ) )
-					{
-						throw S_OK;
-					}
-				}
+				// Extract the file path...
+				csPath = svfncImageFile.GetPathName();
+				//
+				// Write this path name back to registry...to initialize registry.
+				//
+				AfxGetApp()->WriteProfileString( _T( "Settings" ), _T( "ImagesFilePath" ), csPath );
 			}
-
-			AfxMessageBox( IDS_UNKNOWN_FILE_FORMAT_STRING );
 		}
 
-		AfxMessageBox( "Failed to load an image!", MB_ICONEXCLAMATION );
-	}
-	catch ( int hr )
-	{
-		hrOk = (HRESULT) hr;
-	}
-	catch ( HRESULT hr)
-	{
-		hrOk = hr;
+
+		SVMatroxFileTypeEnum fileformat = SVFileUnknown;
+		CString strExtension = svfncImageFile.GetExtension();
+		if( strExtension.CompareNoCase(_T( ".mim" )) == 0 )
+			fileformat = SVFileMIL;
+
+		if( strExtension.CompareNoCase(_T( ".tif" )) == 0 )
+			fileformat = SVFileTiff;
+
+		if( strExtension.CompareNoCase(_T( ".bmp" )) == 0 )
+			fileformat = SVFileBitmap;
+
+		strImagePathName = svfncImageFile.GetFullFileName();
+		if( fileformat != -1 && ::SVFileExists( strImagePathName ) )
+		{
+
+			SVMatroxBufferInterface::SVStatusCode l_Code;
+			SVMatroxString l_strPath = strImagePathName;
+
+			if( !rHandle.empty() )
+			{
+				SVImageBufferHandleImage l_MilHandle;
+				rHandle->GetData( l_MilHandle );
+
+				// Load...
+
+				l_Code = SVMatroxBufferInterface::Import(l_MilHandle.GetBuffer(), l_strPath, fileformat );
+				if( l_Code == SVMEE_STATUS_OK )
+				{
+					return S_OK;
+				}
+				else
+				{
+					return S_FALSE;
+				}
+			}
+
+			// Restore
+			SVMatroxBuffer newBuffer;
+			l_Code = SVMatroxBufferInterface::Import( newBuffer, l_strPath, fileformat, true );
+			if( !newBuffer.empty() )
+			{
+				// Get buffer data...
+				long l_lSizeX = 0;
+				long l_lSizeY = 0;
+				long l_lBandSize = 0;
+				long l_lPixelDepth = 0;
+				long l_DataFormat = 0;
+
+				l_Code = SVMatroxBufferInterface::Get( newBuffer, SVSizeX, l_lSizeX );
+				l_Code = SVMatroxBufferInterface::Get( newBuffer, SVSizeY, l_lSizeY );
+				l_Code = SVMatroxBufferInterface::Get( newBuffer, SVType, l_lPixelDepth );
+				l_Code = SVMatroxBufferInterface::Get( newBuffer, SVSizeBand, l_lBandSize );
+				l_Code = SVMatroxBufferInterface::Get( newBuffer, SVDataFormat, l_DataFormat );
+
+				if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR24, l_DataFormat ) )
+				{
+					rInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatRGB888 );
+				}
+				else if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR32, l_DataFormat ) )
+				{
+					rInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatRGB8888 );
+				}
+
+				rInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
+				rInfo.SetExtentProperty( SVExtentPropertyWidth, l_lSizeX );
+				rInfo.SetExtentProperty( SVExtentPropertyHeight, l_lSizeY );
+
+				rInfo.SetImageProperty( SVImagePropertyBandNumber, l_lBandSize );
+				rInfo.SetImageProperty( SVImagePropertyPixelDepth, l_lPixelDepth );
+
+				newBuffer.clear();
+
+				ASSERT( l_Code == SVMEE_STATUS_OK );
+				if( S_OK == CreateImageBuffer( rInfo, rHandle ) && 
+					S_OK == LoadImageBuffer( strImagePathName, rInfo, rHandle, FALSE ) )
+				{
+					return S_OK;
+				}
+			}
+		}
+
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::UnKnownFileFormat, StdMessageParams, SvOi::Err_10068 );
 	}
 
-	return hrOk;
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::FailedToLoadImage, StdMessageParams, SvOi::Err_10069 );
+
+	return S_FALSE;
 }
 
 HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( void* pBuffer, SVImageInfoClass& rBufferInfo, SVSmartHandlePointer& rBufferHandle, SVImageInfoClass& rCameraInfo )
 {
-	HRESULT hrOk = S_OK;
+	BOOL l_bCreateBuffer = FALSE;
 
-	try
+	BITMAPINFOHEADER* pbmhInfo;
+	BITMAPINFO* pbmInfo;
+	BYTE* pBits;
+
+	// Make sure color table size is calculated
+	pbmInfo  = (BITMAPINFO*) (BYTE*)pBuffer;
+	pbmhInfo = (BITMAPINFOHEADER*) &pbmInfo->bmiHeader;
+
+	long l_lBitmapHeaderSize = sizeof( BITMAPINFOHEADER );
+	long l_lDIBSize = pbmhInfo->biSizeImage;
+
+	long l_lColorTableSize = 0;
+
+	if( 0 < pbmhInfo->biClrUsed )
 	{
-		BOOL l_bCreateBuffer = FALSE;
-
-		BITMAPINFOHEADER* pbmhInfo;
-		BITMAPINFO* pbmInfo;
-		BYTE* pBits;
-
-		// Make sure color table size is calculated
-		pbmInfo  = (BITMAPINFO*) (BYTE*)pBuffer;
-		pbmhInfo = (BITMAPINFOHEADER*) &pbmInfo->bmiHeader;
-
-		long l_lBitmapHeaderSize = sizeof( BITMAPINFOHEADER );
-		long l_lDIBSize = pbmhInfo->biSizeImage;
-
-		long l_lColorTableSize = 0;
-
-		if( 0 < pbmhInfo->biClrUsed )
+		if( pbmhInfo->biBitCount < 16 )
 		{
-			if( pbmhInfo->biBitCount < 16 )
-			{
-				l_lColorTableSize = pbmhInfo->biClrUsed * sizeof( RGBQUAD );
-			}
-			else
-			{
-				l_lColorTableSize = pbmhInfo->biClrUsed * sizeof( RGBQUAD );
-
-				if( pbmhInfo->biBitCount == 16 || pbmhInfo->biBitCount == 32 )
-				{
-					l_lColorTableSize += 3 * sizeof( DWORD );
-				}
-			}
+			l_lColorTableSize = pbmhInfo->biClrUsed * sizeof( RGBQUAD );
 		}
-
-		pBits = (BYTE*)( pBuffer ) + l_lBitmapHeaderSize + l_lColorTableSize;
-
-		if( !rBufferHandle.empty() )
-		{
-			SVImageFormatEnum l_eFormat;
-			int l_iBandNumber = 0;
-			int l_iBandLink = 0;
-			int l_iPixelDepth = 0;
-			long l_lWidth = 0;
-			long l_lHeight = 0;
-
-			bool l_bOk = GetOutputImageCreateData( rBufferInfo, l_eFormat, l_iPixelDepth, l_iBandNumber, l_iBandLink, l_lWidth, l_lHeight ) == S_OK;
-
-			if( ! l_bOk || 
-				l_lWidth != pbmhInfo->biWidth ||
-				l_lHeight != abs( pbmhInfo->biHeight )	||
-				l_iPixelDepth != pbmhInfo->biBitCount )
-				// Buffer is of the wrong size
-				throw S_FALSE;
-		}// end if
 		else
 		{
-			// no buffer is available
-			rBufferInfo = rCameraInfo;
-			// Get Image type from the input image for this temperary image so the buffer data will be correct
-			// and the pBits will fit.
-			if( pbmInfo->bmiHeader.biBitCount == 32 )
+			l_lColorTableSize = pbmhInfo->biClrUsed * sizeof( RGBQUAD );
+
+			if( pbmhInfo->biBitCount == 16 || pbmhInfo->biBitCount == 32 )
 			{
-				rBufferInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatRGB8888 );
+				l_lColorTableSize += 3 * sizeof( DWORD );
 			}
-			if( pbmInfo->bmiHeader.biBitCount == 24 )
-			{
-				rBufferInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatRGB888 );
-			}
-
-			if( S_OK != CreateImageBuffer( rBufferInfo, rBufferHandle ) )
-				throw S_FALSE;
-
-			l_bCreateBuffer = TRUE;
-		}// end else
-
-		SVImageInfoClass oTempInfo;
-		SVSmartHandlePointer oTempHandle;
-
-		oTempInfo = rBufferInfo;
-
-		oTempInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
-		oTempInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
-		oTempInfo.SetImageProperty( SVImagePropertyPixelDepth, 8 );
-
-		oTempInfo.SetExtentProperty( SVExtentPropertyHeight, abs(pbmhInfo->biHeight) );
-		oTempInfo.SetExtentProperty( SVExtentPropertyWidth, pbmhInfo->biWidth );
-
-		if ( 8 < pbmhInfo->biBitCount )
-		{
-			oTempInfo.SetImageProperty( SVImagePropertyBandNumber, 3 );
 		}
+	}
 
-		if( S_OK != CreateImageBuffer( oTempInfo, oTempHandle ) )
-		{
-			rBufferHandle.clear();
+	pBits = (BYTE*)( pBuffer ) + l_lBitmapHeaderSize + l_lColorTableSize;
 
-			throw S_FALSE;
-		}
-
+	if( !rBufferHandle.empty() )
+	{
+		SVImageFormatEnum l_eFormat;
 		int l_iBandNumber = 0;
 		int l_iBandLink = 0;
+		int l_iPixelDepth = 0;
+		long l_lWidth = 0;
+		long l_lHeight = 0;
 
-		if ( rCameraInfo.GetImageProperty( SVImagePropertyBandNumber, l_iBandNumber ) != S_OK || 
-			rCameraInfo.GetImageProperty( SVImagePropertyBandLink, l_iBandLink ) != S_OK )
+		bool l_bOk = GetOutputImageCreateData( rBufferInfo, l_eFormat, l_iPixelDepth, l_iBandNumber, l_iBandLink, l_lWidth, l_lHeight ) == S_OK;
+
+		if( ! l_bOk || 
+			l_lWidth != pbmhInfo->biWidth ||
+			l_lHeight != abs( pbmhInfo->biHeight )	||
+			l_iPixelDepth != pbmhInfo->biBitCount )
 		{
-			throw S_FALSE;
+			// Buffer is of the wrong size
+			return S_FALSE;
+		}
+	}// end if
+	else
+	{
+		// no buffer is available
+		rBufferInfo = rCameraInfo;
+		// Get Image type from the input image for this temperary image so the buffer data will be correct
+		// and the pBits will fit.
+		if( pbmInfo->bmiHeader.biBitCount == 32 )
+		{
+			rBufferInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatRGB8888 );
+		}
+		if( pbmInfo->bmiHeader.biBitCount == 24 )
+		{
+			rBufferInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatRGB888 );
 		}
 
-		// Copy the bits into the image object
-		if( pBits != NULL && !oTempHandle.empty()  && !rBufferHandle.empty() )
+		if( S_OK != CreateImageBuffer( rBufferInfo, rBufferHandle ) )
 		{
-			SVImageBufferHandleImage l_TempMilHandle;
-			SVImageBufferHandleImage l_MilHandle;
-
-			oTempHandle->GetData( l_TempMilHandle );
-			rBufferHandle->GetData( l_MilHandle );
-
-			// Set buffer data...
-			memcpy( oTempHandle->GetBufferAddress(), pBits, pbmhInfo->biSizeImage );
-
-
-			SVMatroxBufferInterface::SVStatusCode l_Code;
-
-			if( 8 < pbmhInfo->biBitCount && l_iBandNumber == 3 )
-			{
-				l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), l_TempMilHandle.GetBuffer() );
-			}
-			else
-			{
-				l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), l_TempMilHandle.GetBuffer(), l_iBandLink );
-			}
-
-			throw S_OK;
+			return S_FALSE;
 		}
 
+		l_bCreateBuffer = TRUE;
+	}// end else
+
+	SVImageInfoClass oTempInfo;
+	SVSmartHandlePointer oTempHandle;
+
+	oTempInfo = rBufferInfo;
+
+	oTempInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
+	oTempInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
+	oTempInfo.SetImageProperty( SVImagePropertyPixelDepth, 8 );
+
+	oTempInfo.SetExtentProperty( SVExtentPropertyHeight, abs(pbmhInfo->biHeight) );
+	oTempInfo.SetExtentProperty( SVExtentPropertyWidth, pbmhInfo->biWidth );
+
+	if ( 8 < pbmhInfo->biBitCount )
+	{
+		oTempInfo.SetImageProperty( SVImagePropertyBandNumber, 3 );
+	}
+
+	if( S_OK != CreateImageBuffer( oTempInfo, oTempHandle ) )
+	{
 		rBufferHandle.clear();
 
-		AfxMessageBox( "Failed to load an image!", MB_ICONEXCLAMATION );
-	}
-	catch ( int hr )
-	{
-		hrOk = (HRESULT) hr;
-	}
-	catch ( HRESULT hr)
-	{
-		hrOk = hr;
+		return S_FALSE;
 	}
 
-	return hrOk;
+	int l_iBandNumber = 0;
+	int l_iBandLink = 0;
+
+	if ( rCameraInfo.GetImageProperty( SVImagePropertyBandNumber, l_iBandNumber ) != S_OK || 
+		rCameraInfo.GetImageProperty( SVImagePropertyBandLink, l_iBandLink ) != S_OK )
+	{
+		return S_FALSE;
+	}
+
+	// Copy the bits into the image object
+	if( pBits != NULL && !oTempHandle.empty()  && !rBufferHandle.empty() )
+	{
+		SVImageBufferHandleImage l_TempMilHandle;
+		SVImageBufferHandleImage l_MilHandle;
+
+		oTempHandle->GetData( l_TempMilHandle );
+		rBufferHandle->GetData( l_MilHandle );
+
+		// Set buffer data...
+		memcpy( oTempHandle->GetBufferAddress(), pBits, pbmhInfo->biSizeImage );
+
+
+		SVMatroxBufferInterface::SVStatusCode l_Code;
+
+		if( 8 < pbmhInfo->biBitCount && l_iBandNumber == 3 )
+		{
+			l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), l_TempMilHandle.GetBuffer() );
+		}
+		else
+		{
+			l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), l_TempMilHandle.GetBuffer(), l_iBandLink );
+		}
+
+		return S_OK;
+	}
+
+	rBufferHandle.clear();
+
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::FailedToLoadImage, StdMessageParams, SvOi::Err_10070 );
+
+	return S_FALSE;
 }
 
 HRESULT SVMatroxImageProcessingClass::SaveImageBuffer( LPCTSTR tstrImagePathName, const SVSmartHandlePointer& rHandle )

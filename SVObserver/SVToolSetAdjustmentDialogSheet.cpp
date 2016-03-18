@@ -13,6 +13,9 @@
 #include "stdafx.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
 #include "SVOGui/FormulaController.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVOGui/TextDefinesSvOg.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -108,9 +111,8 @@ void SVToolSetAdjustmentDialogSheetClass::OnOK()
 	else
 	{
 		// Equation must be valid or disabled
-		CString tmp;
-		tmp.LoadString(IDS_INVALID_CONDITION_FORMULA);
-		AfxMessageBox(tmp);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::Error_InvalidFormula, StdMessageParams, SvOi::Err_10220 );
 	}
 }
 

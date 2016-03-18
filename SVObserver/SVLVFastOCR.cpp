@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   06 May 2013 14:38:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLVFastOCR.h"
 #include "SVContainerLibrary/SVVector.h"
@@ -18,6 +19,10 @@
 #include "SVOMFCLibrary/SVTemplate.h"
 
 #include "SVOLicenseManager/SVOLicenseManager.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -180,7 +185,8 @@ int __cdecl LVopStatusCallback(CorOpRtn lvcorStatusCode, char *szMessage)
 
 	if ( !bOk )
 	{
-		AfxMessageBox ( szBuffer );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, szBuffer, StdMessageParams, SvOi::Err_10061 );
 	}
 
 	return bOk;
@@ -893,32 +899,7 @@ BOOL SVLVFastOCR::RunLVOCRGray(CorImage *pTarget, CorObj *pROI, CorFontModelGray
 	{
 		DWORD threadId = GetCurrentThreadId();
 		TRACE1("Thread %d -- cor_ocrGrayRun\n",threadId);
-/*
-		CString csFileName;
-		CorObj lvcoWrite = {0};
 
-		csFileName.Format( _T( "C:\\TEMP\\CorImage%d.wit" ), threadId );
-		CorObj_type(&lvcoWrite) = GetLVObjectType("CorImage");
-		CorObj_user(&lvcoWrite) = pTarget;
-		if ( !WriteLVObjectToFile( &lvcoWrite, csFileName ) )
-		{
-			AfxMessageBox( _T( "Error writing file:\n" ) + csFileName );
-		}
-
-		csFileName.Format( _T( "C:\\TEMP\\CorObj%d.wit" ), threadId );
-		if ( !WriteLVObjectToFile( pROI, csFileName ) )
-		{
-			AfxMessageBox( _T( "Error writing file:\n" ) + csFileName );
-		}
-
-		csFileName.Format( _T( "C:\\TEMP\\CorFontModelGray%d.wit" ), threadId );
-		CorObj_type(&lvcoWrite) = GetLVObjectType("CorFontModelGray");
-		CorObj_user(&lvcoWrite) = pFontModel;
-		if ( !WriteLVObjectToFile( &lvcoWrite, csFileName ) )
-		{
-			AfxMessageBox( _T( "Error writing file:\n" ) + csFileName );
-		}
-*/
 		glvcorLVLastStatusCode = COR_OP_OK;
 		gszLVLastStatusMessage = NULL;
 
@@ -955,32 +936,7 @@ BOOL SVLVFastOCR::RunLVOCRPerim(CorImage *pTarget, CorObj *pROI, CorFontModel *p
 	{
 		DWORD threadId = GetCurrentThreadId();
 		TRACE1("Thread %d -- cor_ocrPerimRun\n",threadId);
-/*
-		CString csFileName;
-		CorObj lvcoWrite = {0};
 
-		csFileName.Format( _T( "C:\\TEMP\\CorImage%d.wit" ), threadId );
-		CorObj_type(&lvcoWrite) = GetLVObjectType("CorImage");
-		CorObj_user(&lvcoWrite) = pTarget;
-		if ( !WriteLVObjectToFile( &lvcoWrite, csFileName ) )
-		{
-			AfxMessageBox( _T( "Error writing file:\n" ) + csFileName );
-		}
-
-		csFileName.Format( _T( "C:\\TEMP\\CorObj%d.wit" ), threadId );
-		WriteLVObjectToFile( pROI, csFileName );
-		{
-			AfxMessageBox( _T( "Error writing file:\n" ) + csFileName );
-		}
-
-		csFileName.Format( _T( "C:\\TEMP\\CorFontModel%d.wit" ), threadId );
-		CorObj_type(&lvcoWrite) = GetLVObjectType("CorFontModel");
-		CorObj_user(&lvcoWrite) = pFontModel;
-		if ( !WriteLVObjectToFile( &lvcoWrite, csFileName ) )
-		{
-			AfxMessageBox( _T( "Error writing file:\n" ) + csFileName );
-		}
-*/
 		glvcorLVLastStatusCode = COR_OP_OK;
 		gszLVLastStatusMessage = NULL;
 
@@ -1026,34 +982,18 @@ void *SVLVFastOCR::GetFunctionAddress(LPCSTR szFunctionName)
 
 	if ( pvFunctionAddress == NULL )
 	{
-		CString csMessage = _T("Unable to find the function address for:\n");
-		csMessage += szFunctionName;
-		AfxMessageBox( csMessage );
+		SVString csMessage = SvUl_SF::Format(SvO::FastOCR_functionAddressNotFound, szFunctionName);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, csMessage.c_str(), StdMessageParams, SvOi::Err_10062 );
 	}
 
 	return pvFunctionAddress;
 }
 
-BOOL SVLVFastOCR::LoadLVDLLs()
+bool SVLVFastOCR::loadDlls(LPCTSTR pDllString)
 {
-	BOOL bOk = FALSE;
-	HINSTANCE hDLL = NULL;
-	CString csLVDllPath;
-
-/*
-	CString csLVDllPath += _tgetenv( _T( "LVHOME" ) );
-
-	if ( !csLVDllPath.IsEmpty() )
-	{
-		#ifdef _DEBUG
-			csLVDllPath += _T( "\\bin\\debug\\" );
-		#else   // _DEBUG
-			csLVDllPath += _T( "\\bin\\" );
-		#endif   // _DEBUG
-	}
-*/
-
-	bOk = (hDLL = SVLoadLibrary( csLVDllPath + _T( "wobj.dll" ) ) ) != NULL;
+	HINSTANCE hDLL = SVLoadLibrary( pDllString );
+	bool bOk = (nullptr != hDLL);
 	// This sleep(0) was added after the LoadLibrary to fix a bug where the system ran out of resources.
 	Sleep(0);
 	if ( bOk )
@@ -1062,60 +1002,29 @@ BOOL SVLVFastOCR::LoadLVDLLs()
 	}
 	else
 	{
-		CString csMessage = _T( "Unable to load DLL:\n" );
-		csMessage += csLVDllPath;
-		AfxMessageBox( csMessage + _T( "wobj.dll" ) );
+		SVString csMessage = SvUl_SF::Format(SvO::FastOCR_LoadDllFailed, pDllString);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, csMessage.c_str(), StdMessageParams, SvOi::Err_10063 );
+	}
+	return bOk;
+}
+
+bool SVLVFastOCR::LoadLVDLLs()
+{
+	bool bOk = loadDlls(_T( "wobj.dll" ));
+	if ( bOk )
+	{
+		bOk = loadDlls(_T( "wobjman.dll" ));
 	}
 
 	if ( bOk )
 	{
-		bOk = (hDLL = SVLoadLibrary( csLVDllPath + _T( "wobjman.dll" ) ) ) != NULL;
-		// This sleep(0) was added after the LoadLibrary to fix a bug where the system ran out of resources.
-		Sleep(0);
-		if ( bOk )
-		{
-			gsvacDLLHandleArray.Add( hDLL );
-		}
-		else
-		{
-			CString csMessage = _T( "Unable to load DLL:\n" );
-			csMessage += csLVDllPath;
-			AfxMessageBox( csMessage + _T( "wobjman.dll" ) );
-		}
+		bOk = loadDlls(_T( "wsystem.dll" ));
 	}
 
 	if ( bOk )
 	{
-		bOk = (hDLL = SVLoadLibrary( csLVDllPath + _T( "wsystem.dll" ) ) ) != NULL;
-		// This sleep(0) was added after the LoadLibrary to fix a bug where the system ran out of resources.
-		Sleep(0);
-		if ( bOk )
-		{
-			gsvacDLLHandleArray.Add( hDLL );
-		}
-		else
-		{
-			CString csMessage = _T( "Unable to load DLL:\n" );
-			csMessage += csLVDllPath;
-			AfxMessageBox( csMessage + _T( "wsystem.dll" ) );
-		}
-	}
-
-	if ( bOk )
-	{
-		bOk = (hDLL = LoadLibrary( csLVDllPath + _T( "wocr.dll" ) ) ) != NULL;
-		// This sleep(0) was added after the LoadLibrary to fix a bug where the system ran out of resources.
-		Sleep(0);
-		if ( bOk )
-		{
-			gsvacDLLHandleArray.Add( hDLL );
-		}
-		else
-		{
-			CString csMessage = _T( "Unable to load DLL:\n" );
-			csMessage += csLVDllPath;
-			AfxMessageBox( csMessage + _T( "wocr.dll" ) );
-		}
+		bOk = loadDlls(_T( "wocr.dll" ));
 	}
 
 	if ( !bOk )

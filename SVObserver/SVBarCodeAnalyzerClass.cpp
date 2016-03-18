@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 03:59:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <algorithm>
 #include "SVBarCodeAnalyzerClass.h"
@@ -24,6 +25,9 @@
 #include "SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -589,11 +593,12 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
 		{
 			TRACE( "Exception : File = %s -- Line = %d\n", _T(__FILE__), __LINE__ );
 
-			errStr = _T("Bar Code Analyzer was unable to read\nthe match string from file. Check the\nanalyzer settings for proper match string.");
+			errStr = SvO::BarCode_UnableToRead;
 
 			if( DisplayErrorMessage )
 			{
-				AfxMessageBox( errStr );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, errStr, StdMessageParams, SvOi::Err_10038 ); 
 			}
 			return FALSE;
 		}
@@ -633,11 +638,12 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
 		}
 		CATCH (CFileException, e)
 		{
-			errStr = _T("Bar Code Analyzer was unable to save\nthe match string to file. Check the\nanalyzer settings for proper match string.");
+			errStr = SvO::BarCode_UnableToSave;
 
 			if( DisplayErrorMessage )
 			{
-				AfxMessageBox( errStr );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, errStr, StdMessageParams, SvOi::Err_10039 ); 
 			}
 			return FALSE;
 		}
@@ -661,7 +667,8 @@ DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR Dw
 
 				if( !SilentReset && !errStr.IsEmpty() )
 				{
-					AfxMessageBox( errStr );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, errStr, StdMessageParams, SvOi::Err_10040 ); 
 				}
 				dwResult = SVMR_NO_SUCCESS;
 			}

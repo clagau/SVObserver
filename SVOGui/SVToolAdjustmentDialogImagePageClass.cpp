@@ -15,6 +15,10 @@
 #include <afxctl.h>
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #include "SVObjectLibrary\SVClsIDs.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "TextDefinesSvOg.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -117,11 +121,8 @@ namespace Seidenader { namespace SVOGui
 
 				if (bIsValid && !IsToolValid())
 				{
-					AfxMessageBox( "Changing image source has placed the tool "
-						"outside of the selected source image.  Please either: "
-						"select a new image source, resize the image source "
-						"to contain this tool, or resize/position this tool "
-						"to fit on the source image.", MB_ICONEXCLAMATION | MB_OK );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::Error_ToolPositionError, StdMessageParams, SvOi::Err_10232 );
 				}
 			}
 		}

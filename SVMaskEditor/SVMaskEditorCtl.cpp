@@ -323,32 +323,9 @@ void SVMaskEditorCtrl::OnPaint()
 
 void SVMaskEditorCtrl::Refresh() 
 {
-//AfxMessageBox( _T( "Refresh" ) );
 	// TODO: Add your dispatch handler code here
 
 }
-
-void SVMaskEditorCtrl::OnClick(USHORT iButton) 
-{
-AfxMessageBox( _T( "OnClick" ) );	
-
-	// Start Mask Editor Dialog...
-    maskEditorDlg.HImageBitmap = HBITMAP( bitmap );
-    if( ! HBITMAP( bitmap ) )
-    {
-        maskEditorDlg.HImageBitmap =  ( HBITMAP ) ::LoadImage( AfxGetInstanceHandle(), 
-		        											   MAKEINTRESOURCE( IDB_BITMAP1 ), //nIDResource ),
-				        									   IMAGE_BITMAP,
-						       								   0,
-							        						   0,
-															   LR_DEFAULTCOLOR | LR_CREATEDIBSECTION );
-    }
-
-    maskEditorDlg.DoModal();
-
-	COleControl::OnClick(iButton);
-}
-
 
 long SVMaskEditorCtrl::GetMaskOperator() 
 {

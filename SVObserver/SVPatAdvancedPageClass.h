@@ -104,11 +104,11 @@ protected:
 	BOOL ProcessOnKillfocus(UINT nId);
 	
 	// Validation
-	bool ValidateEditableParameters(UINT nMsgID);
-	bool ValidateAdditionalCandidatesValue(UINT nMsgID);
-	bool ValidatePreliminaryAcceptanceThreshold(UINT nMsgID);
-	bool ValidateCandidatesSpacingXMinValue(UINT nMsgID);
-	bool ValidateCandidatesSpacingYMinValue(UINT nMsgID);
+	UINT ValidateEditableParameters();
+	UINT ValidateAdditionalCandidatesValue();
+	UINT ValidatePreliminaryAcceptanceThreshold();
+	UINT ValidateCandidatesSpacingXMinValue();
+	UINT ValidateCandidatesSpacingYMinValue();
 
 	// Generated message map functions
 	//{{AFX_MSG(SVPatAdvancedPageClass)

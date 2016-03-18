@@ -48,6 +48,10 @@
 #include "SVOGui\SVTADlgTransformImagePage.h"
 #include "SVOGui\SVTADlgFileImageSourcePage.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVOGui\TextDefinesSvOg.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -304,7 +308,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		default:
-			AfxMessageBox( IDS_CRITICAL_NO_TOOL_ADJUSTMENT_DIALOG );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_CannotOpenTADlg, StdMessageParams, SvOi::Err_10218 );
 			delete pConditionalDlg;
 			pConditionalDlg = nullptr;
 			break;
@@ -370,9 +375,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 					if( !l_pFormulaEditor->validateAndSetEquation() )
 					{
 						// Equation must be valid or disabled
-						CString tmp;
-						tmp.LoadString(IDS_INVALID_FORMULA);
-						AfxMessageBox(tmp);
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::Error_InvalidFormula, StdMessageParams, SvOi::Err_10219 );
 						return;
 					}
 				}

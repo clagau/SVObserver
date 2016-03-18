@@ -9,12 +9,17 @@
 //* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <cmath>
 #include <cstdlib>
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVGlobal.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -444,13 +449,14 @@ BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId)
 	{
 		case IDC_PAT_ADDITIONAL_CANDIDATES_VALUE:
 		{
-			ValidateAdditionalCandidatesValue(nMsgID);
+			nMsgID = ValidateAdditionalCandidatesValue();
 			break;
 		}
 
 		case IDC_PAT_ACCEPTANCE_THRESHOLD_VALUE:
 		{
-			if (ValidatePreliminaryAcceptanceThreshold(nMsgID))
+			nMsgID = ValidatePreliminaryAcceptanceThreshold();
+			if (0 == nMsgID)
 			{
 				AdjustSliderPreliminaryAcceptanceThreshold();
 			}
@@ -459,20 +465,23 @@ BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId)
 
 		case IDC_PAT_CANDIDATES_SPACING_XMIN_VALUE:
 		{
-			ValidateCandidatesSpacingXMinValue(nMsgID);
+			nMsgID = ValidateCandidatesSpacingXMinValue();
 			break;
 		}
 
 		case IDC_PAT_CANDIDATES_SPACING_YMIN_VALUE:
 		{
-			ValidateCandidatesSpacingYMinValue(nMsgID);
+			nMsgID = ValidateCandidatesSpacingYMinValue();
 			break;
 		}
 	}
 	
-	if (nMsgID)
+	if (0 != nMsgID)
 	{
-		AfxMessageBox(nMsgID);
+		CString message;
+		message.Format(nMsgID);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10241 );
 		GetDlgItem(nId)->SetFocus();
 		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
 		return FALSE;
@@ -480,110 +489,106 @@ BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId)
 	return TRUE;
 }
 
-bool SVPatAdvancedPageClass::ValidateEditableParameters(UINT nMsgID)
+UINT SVPatAdvancedPageClass::ValidateEditableParameters()
 {
-	bool bRetVal = ValidateAdditionalCandidatesValue(nMsgID);
-	if (bRetVal)
+	UINT nMsgID = ValidateAdditionalCandidatesValue();
+	if (0 == nMsgID)
 	{
-		bRetVal = ValidateCandidatesSpacingXMinValue(nMsgID);
+		nMsgID = ValidateCandidatesSpacingXMinValue();
 	}
-	if (bRetVal)
+	if (0 == nMsgID)
 	{
-		bRetVal = ValidateCandidatesSpacingYMinValue(nMsgID);
+		nMsgID = ValidateCandidatesSpacingYMinValue();
 	}
-	if (bRetVal)
+	if (0 == nMsgID)
 	{
-		bRetVal = ValidatePreliminaryAcceptanceThreshold(nMsgID);
+		nMsgID = ValidatePreliminaryAcceptanceThreshold();
 	}
-	return bRetVal;
+	return nMsgID;
 }
 
-bool SVPatAdvancedPageClass::ValidateAdditionalCandidatesValue(UINT nMsgID)
+UINT SVPatAdvancedPageClass::ValidateAdditionalCandidatesValue()
 {
+	UINT nMsgID = 0;
 	UpdateData(true);
 
-	bool bRetVal = true;
 	if (m_AdditionalCandidatesAutoCheckBox.GetCheck() == BST_UNCHECKED)
 	{
 		long lAdditionalCandidates = _ttol(m_AdditionalCandidatesStr);
 
-		bRetVal = (lAdditionalCandidates >= 1 && lAdditionalCandidates <= 100);
-		if (!bRetVal)
-		{
-			nMsgID = IDS_PAT_ADDITIONALCANDIDATES_ERROR;
-		}
-		else
+		if (lAdditionalCandidates >= 1 && lAdditionalCandidates <= 100)
 		{
 			m_lAdditionalCandidates = lAdditionalCandidates;
 		}
+		else
+		{
+			nMsgID = IDS_PAT_ADDITIONALCANDIDATES_ERROR;
+		}
 	}
-	return bRetVal;
+	return nMsgID;
 }
 
-bool SVPatAdvancedPageClass::ValidateCandidatesSpacingXMinValue(UINT nMsgID)
+UINT SVPatAdvancedPageClass::ValidateCandidatesSpacingXMinValue()
 {
+	UINT nMsgID = 0;
 	UpdateData(true);
 	
-	bool bRetVal = true;
 	if (m_CandidateSpacingXMinAutoCheckBox.GetCheck() == BST_UNCHECKED)
 	{
 		double dCandidateSpacingXMin = _tstof(m_CandidateSpacingXMinStr);
 
-		bRetVal = (dCandidateSpacingXMin >= 1.0 && dCandidateSpacingXMin <= 100.0);
-		if (!bRetVal)
-		{
-			nMsgID = IDS_PAT_CANDIDATE_SPACING_ERROR;
-		}
-		else
+		if (dCandidateSpacingXMin >= 1.0 && dCandidateSpacingXMin <= 100.0)
 		{
 			m_dCandidateSpacingXMin = dCandidateSpacingXMin;
 		}
+		else
+		{
+			nMsgID = IDS_PAT_CANDIDATE_SPACING_ERROR;
+		}
 	}
-	return bRetVal;
+	return nMsgID;
 }
 
-bool SVPatAdvancedPageClass::ValidateCandidatesSpacingYMinValue(UINT nMsgID)
+UINT SVPatAdvancedPageClass::ValidateCandidatesSpacingYMinValue()
 {
+	UINT nMsgID = 0;
 	UpdateData(true);
 	
-	bool bRetVal = true;
 	if (m_CandidateSpacingYMinAutoCheckBox.GetCheck() == BST_UNCHECKED)
 	{
 		double dCandidateSpacingYMin = _tstof(m_CandidateSpacingYMinStr);
 
-		bRetVal = (dCandidateSpacingYMin >= 1.0 && dCandidateSpacingYMin <= 100.0);
-		if (!bRetVal)
-		{
-			nMsgID = IDS_PAT_CANDIDATE_SPACING_ERROR;
-		}
-		else
+		if (dCandidateSpacingYMin >= 1.0 && dCandidateSpacingYMin <= 100.0)
 		{
 			m_dCandidateSpacingYMin = dCandidateSpacingYMin;
 		}
+		else
+		{
+			nMsgID = IDS_PAT_CANDIDATE_SPACING_ERROR;
+		}
 	}
-	return bRetVal;
+	return nMsgID;
 }
 
-bool SVPatAdvancedPageClass::ValidatePreliminaryAcceptanceThreshold(UINT nMsgID)
+UINT SVPatAdvancedPageClass::ValidatePreliminaryAcceptanceThreshold()
 {
+	UINT nMsgID = 0;
 	UpdateData(true);
 	
-	bool bRetVal = true;
 	if (m_PreliminaryAcceptanceThresholdAutoCheckBox.GetCheck() == BST_UNCHECKED)
 	{
 		double dPreliminaryAcceptanceThreshold = _tstof(m_PreliminaryAcceptanceThresholdStr);
 
-		bRetVal = (dPreliminaryAcceptanceThreshold >= 1.0 && dPreliminaryAcceptanceThreshold <= 100.0);
-		if (!bRetVal)
-		{
-			nMsgID = IDS_PAT_PRELIMINARYACCEPTANCETHRESHOLD_ERROR;
-		}
-		else
+		if (dPreliminaryAcceptanceThreshold >= 1.0 && dPreliminaryAcceptanceThreshold <= 100.0)
 		{
 			m_dPreliminaryAcceptanceThreshold = dPreliminaryAcceptanceThreshold;
 		}
+		else
+		{
+			nMsgID = IDS_PAT_PRELIMINARYACCEPTANCETHRESHOLD_ERROR;
+		}
 	}
-	return bRetVal;
+	return nMsgID;
 }
 
 void SVPatAdvancedPageClass::AdjustSliderPreliminaryAcceptanceThreshold() 
@@ -608,14 +613,17 @@ void SVPatAdvancedPageClass::OnCancel()
 
 void SVPatAdvancedPageClass::OnOK() 
 {
-	UINT nMsgID = 0;
-	if (ValidateEditableParameters(nMsgID))
+	UINT nMsgID = ValidateEditableParameters();
+	if (0 == nMsgID)
 	{
 		CPropertyPage::OnOK();
 	}
 	else
 	{
-		AfxMessageBox(nMsgID);
+		CString message;
+		message.Format(nMsgID);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10242 );
 	}
 }
 
@@ -684,10 +692,13 @@ void SVPatAdvancedPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScr
 
 BOOL SVPatAdvancedPageClass::OnKillActive()
 {
-	UINT nMsgID = 0;
-	if (!ValidateEditableParameters(nMsgID))
+	UINT nMsgID = ValidateEditableParameters();
+	if (0 != nMsgID)
 	{
-		AfxMessageBox(nMsgID);
+		CString message;
+		message.Format(nMsgID);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10243 );
 		return false;
 	}
 	return true;

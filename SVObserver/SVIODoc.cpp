@@ -37,6 +37,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -218,10 +219,11 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 	}
 	
 	if (!bCanClose)
-		AfxMessageBox(_T("Invalid Operation!\n")
-						  _T("The IO Dialog can not be closed without\n")
-						  _T("closing the whole configuration."), MB_OK|MB_ICONSTOP, 0);
-		
+	{
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::SVIODoc_ClosingImpossible, StdMessageParams, SvOi::Err_10054 );
+	}
+
 	return bCanClose;
 }
 

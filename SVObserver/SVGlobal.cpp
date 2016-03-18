@@ -418,9 +418,6 @@ BOOL SVCheckPathDir( LPCTSTR TStrPathName, BOOL BCreateIfNotExists )
 		_tsplitpath( pLast, drive, dir, fname, ext );
 		if( _tcslen( drive ) == 0 && _tcschr( pLast, _TCHAR( ':' ) ) != NULL )
 		{
-			// Error, invalid drive
-			//::MessageBox( NULL, "Invalid Drive Name!\n\nINVALID DRIVE", NULL, MB_ICONEXCLAMATION | MB_OK );
-
 			// Restore settings...
 			_tchdir( curPath );
 			return FALSE;
@@ -430,7 +427,7 @@ BOOL SVCheckPathDir( LPCTSTR TStrPathName, BOOL BCreateIfNotExists )
 		{
 			_tcsncpy( path, TStrPathName, pLast++ - TStrPathName + 1 );
 			path[ pLast - TStrPathName ] = _TCHAR( '\0' );
-//::MessageBox( NULL, path, NULL, MB_SYSTEMMODAL | MB_ICONEXCLAMATION | MB_OK );
+
 			if( _tchdir( path ) != 0 )
 			{
 				// Check for creation...
@@ -444,9 +441,6 @@ BOOL SVCheckPathDir( LPCTSTR TStrPathName, BOOL BCreateIfNotExists )
 				// We have to make a new directory
 				if( _tmkdir( path ) != 0 || _tchdir( path ) != 0 )
 				{
-					// Error unable to create the directoy
-					//::MessageBox( NULL, "Unable To Create Directory!", NULL, MB_ICONEXCLAMATION | MB_OK );
-
 					// Restore settings...
 					_tchdir( curPath );
 					return FALSE;
@@ -1398,7 +1392,7 @@ LPCTSTR SVRCGetSVCPathName()
 		pszBuff = NULL;
 		FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 					   NULL, dwResult, 0, (char *) &pszBuff, 0, NULL);
-		AfxMessageBox( pszBuff );
+		ASSERT( false );// pszBuff
 		LocalFree (pszBuff);
 #endif
 	}

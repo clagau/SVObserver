@@ -563,11 +563,6 @@ BOOL SVUserMaskOperatorClass::Refresh()
 				dc = SVImageProcessingClass::Instance().CreateBufferDC( m_MaskBufferInfo, m_MaskBufferHandlePtr );
 				if(dc != (HDC)0)        // && dc != (HDC)-1)
 				{
-	#ifdef _DEBUG //999
-					if(dc == (HDC)(-1))
-					{
-					}
-	#endif //_DEBUG
 					// Draw mask...
 					RECT rect;
 

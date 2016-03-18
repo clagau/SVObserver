@@ -42,9 +42,8 @@
 #define _SECURE_SCL 0
 #endif
 
-#include <windows.h>
+#include <afxwin.h>
 #include <assert.h>
-
 #include <algorithm>
 
 #endif

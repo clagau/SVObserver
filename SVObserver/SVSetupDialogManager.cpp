@@ -829,7 +829,8 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog( const SVGUID&
 HRESULT SVSetupDialogManager::SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
 {
 #ifdef _WIN64
-	AfxMessageBox("OCR OCV Analyzer is not supported on this platform.");
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, _T("OCR OCV Analyzer is not supported on this platform."), StdMessageParams, SvOi::Err_10198 ); 
 	return E_FAIL;
 #else
 	HRESULT l_Status = S_OK;
@@ -916,7 +917,8 @@ HRESULT SVSetupDialogManager::SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rOb
 HRESULT SVSetupDialogManager::SVOCRGrayAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
 {
 #ifdef _WIN64
-	AfxMessageBox("OCR OCV Gray Scale Analyzer is not supported on this platform.");
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, _T("OCR OCV Gray Scale Analyzer is not supported on this platform."), StdMessageParams, SvOi::Err_10199 ); 
 	return E_FAIL;
 #else
 	HRESULT l_Status = S_OK;

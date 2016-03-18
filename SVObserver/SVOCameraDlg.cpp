@@ -22,6 +22,8 @@
 #include "SVAcquisitionClass.h"
 #include "SVHardwareManifest.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -270,7 +272,9 @@ void CSVOCameraDlg::OnBtnPropVc()
 						m_bModified = TRUE;
 						if (m_pParent->GetCameraListCount() > 1)
 						{
-							if (AfxMessageBox("Would you like to use this camera file for all camera choices?",MB_YESNO) == IDYES)
+							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::Camera_UseQuestion, StdMessageParams, SvOi::Err_10137, NULL, nullptr, MB_YESNO );
+							if (IDYES == result)
 							{
 								SetCameraPropForAll(pCameraObj->GetCameraDisplayName());
 							}

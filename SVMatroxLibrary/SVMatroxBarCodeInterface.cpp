@@ -9,12 +9,16 @@
 // * .Check In Date   : $Date:   23 Oct 2013 08:50:48  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxBarCodeInterface.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
 #include "SVBufferResource.h"
-#include <assert.h>
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
+#pragma endregion Includes
 
 /**
 @SVOperationName Default Constructor
@@ -528,25 +532,29 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 					else
 					{
 						l_Code = SVMEE_STRING_TOO_LARGE;
-						::MessageBox(NULL, "SVMEE_STRING_TOO_LARGE", NULL, MB_OK);
+						SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_STRING_TOO_LARGE", StdMessageParams, SvOi::Err_10250 );
 					}
 				}
 				else
 				{
 					l_Code = SVMEE_INVALID_PARAMETER;
-					::MessageBox(NULL, "SVMEE_INVALID_PARAMETER", NULL, MB_OK);
+					SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_PARAMETER", StdMessageParams, SvOi::Err_10251 );
 				}
 			}
 			else
 			{
 				l_Code = SVMEE_WRONG_PARAMETER;
-				::MessageBox(NULL, "SVMEE_WRONG_PARAMETER", NULL, MB_OK);
+				SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_WRONG_PARAMETER", StdMessageParams, SvOi::Err_10252 );
 			}
 		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
-			::MessageBox(NULL, "SVMEE_INVALID_HANDLE", NULL, MB_OK);
+			SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_HANDLE", StdMessageParams, SvOi::Err_10253 );
 		}
 	}
 #ifdef USE_TRY_BLOCKS
@@ -554,7 +562,8 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
-		::MessageBox(NULL, "Exception",NULL, MB_OK);
+		SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "Exception", StdMessageParams, SvOi::Err_10253 );
 	}
 #endif
 	assert(l_Code == SVMEE_STATUS_OK );

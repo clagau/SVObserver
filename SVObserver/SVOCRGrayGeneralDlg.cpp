@@ -15,6 +15,9 @@
 #include "SVOCRGrayGeneralDlg.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVOCRGrayAnalyzerResult.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -143,7 +146,8 @@ void SVOCRGrayGeneralDlg::OnFontBrowseCmd()
 		CString csTemp = svfncFileName.GetFullFileName();
 		if ( csTemp.IsEmpty() )
 		{
-			AfxMessageBox(_T("ERROR: No Font File Specified"));
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontFileSpec, StdMessageParams, SvOi::Err_10165);
 		}
 		else
 		{
@@ -151,9 +155,9 @@ void SVOCRGrayGeneralDlg::OnFontBrowseCmd()
 			if ( csTemp.CompareNoCase( _T( ".wit" ) ) != 0 )
 			{
 				CString s;
-				s.Format( _T( "ERROR: Font File Requires '.Wit' Extension: %s" ),
-					        svfncFileName.GetFullFileName() );
-				AfxMessageBox(s);
+				s.Format( SvO::Error_OMD_FontNotWitExt, svfncFileName.GetFullFileName() );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10166);
 			}
 			else
 			{
@@ -164,16 +168,16 @@ void SVOCRGrayGeneralDlg::OnFontBrowseCmd()
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
 				{
 					CString s;
-					s.Format( _T( "ERROR: Font File Does Not Exist: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					s.Format( SvO::Error_FontFileNotExist, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10167);
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
 					CString s;
-					s.Format( _T( "ERROR: Font File Empty: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					s.Format( SvO::Error_FontFileEmpty, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10168);
 				}
 				else
 				{

@@ -23,6 +23,9 @@
 #include "SVTool.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -858,7 +861,8 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						//
 						// No MIL image buffer handle..
 						//
-						AfxMessageBox( _T("ERROR: No Mil Host Buffer Pointer") );
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoMilHostBuffer, StdMessageParams, SvOi::Err_10169);
 					}
 					else
 					{
@@ -871,8 +875,9 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						if ( imageTypeMil != 8)  // (8L + M_UNSIGNED) )
 						{
 							CString s;
-							s.Format("ERROR: MIL Image Type Not 8 Bit Unsigned: %x",imageTypeMil);
-							AfxMessageBox(s);
+							s.Format(SvO::Error_MilImageTypeInvalid,imageTypeMil);
+							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10170);
 						}
 					}
 				}

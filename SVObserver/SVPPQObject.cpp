@@ -47,6 +47,7 @@
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 #include "SVTimerLibrary\SVProfiler.h"
 #endif
+#include "SVStatusLibrary\MessageManagerResource.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1184,7 +1185,8 @@ HRESULT SVPPQObject::DisplayGoOnlineError(const CString& sReason, HRESULT hr)
 			sMsg.Format(_T("%s"), sReason);
 		}
 
-		AfxMessageBox(sMsg, MB_OK);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, sMsg, StdMessageParams, SvOi::Err_10185 ); 
 	}
 
 	return S_OK;

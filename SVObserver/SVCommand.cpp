@@ -444,7 +444,7 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		if( szConfigFile.IsEmpty() )
 		{
 #ifdef _DEBUG
-			AfxMessageBox( _T( "No config file found!" ) );
+			ASSERT(false); //_T( "No config file found!" ) 
 #endif
 			hrException = SVMSG_NO_CONFIGURATION_FOUND; //No Config file in Packed File
 			goto error;
@@ -1179,7 +1179,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 #ifdef _DEBUG
 			CString szFormatted = _T("ERROR - ");
 			szFormatted += szCause;
-			AfxMessageBox(szFormatted);
+			ASSERT(false);// szFormatted
 #endif
 			hrResult = SVMSG_CMDCOMSRV_MEMORY_ERROR;
 			bHrSet = TRUE;
@@ -1192,7 +1192,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 #ifdef _DEBUG
 			CString szFormatted = _T("ERROR - ");
 			szFormatted += szCause;
-			AfxMessageBox(szFormatted);
+			ASSERT(false);//szFormatted
 #endif
 			hrResult = SVMSG_CMDCOMSRV_FILE_ERROR;
 			bHrSet = TRUE;
@@ -1333,7 +1333,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 #ifdef _DEBUG
 			CString sFormatted = _T("Error - ");
 			sFormatted += szCause;
-			AfxMessageBox(sFormatted);
+			ASSERT(false);//sFormatted
 #endif
 			hrResult = theEx->m_lOsError;
 			theEx->Delete();

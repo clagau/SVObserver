@@ -26,6 +26,8 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
 #include "TextDefinesSvO.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -784,7 +786,8 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 
 	if( DisplayErrorMessage && !ret.bPassed )
 	{
-		AfxMessageBox( errStr );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, errStr, StdMessageParams, SvOi::Err_10046 ); 
 	}
 
 	return ret;
@@ -1160,7 +1163,8 @@ DWORD_PTR SVEquationClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 
 				if( !SilentReset && !errStr.IsEmpty() )
 				{
-					AfxMessageBox( errStr );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, errStr, StdMessageParams, SvOi::Err_10047 ); 
 				}
 				DwResult = SVMR_NO_SUCCESS;
 			}

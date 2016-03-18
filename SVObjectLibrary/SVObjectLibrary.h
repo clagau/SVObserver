@@ -8,14 +8,14 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 09:42:28  $
 //******************************************************************************
+#pragma once
 
-#ifndef SVOBJECTLIBRARY_H
-#define SVOBJECTLIBRARY_H
-
+#pragma region Includes
 #include "SVStatusLibrary/SVStatusLibrary.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVClassRegisterListClass.h"
 #include "ObjectInterfaces/ObjectDefines.h"
+#pragma endregion Includes
 
 class SVObjectClass;
 
@@ -49,15 +49,6 @@ class SVObjectClass;
 				_tcsncpy( XLPSZSTRING, szBuf, min( ( XLENGTH ), 100 ) - 1 ); \
 			} \
 		}
-
-
-#define SV_MESSAGE( ID, VALUE, CONTEXT, SUBTEXT )	\
-		{   \
-			char text[ _MAX_PATH ]; \
-			sprintf( text, "Receiver: %s\nMessage ID: %x\nMessage Value: %x\nMessage Context: %x\n%s", GetName(), ( ID ), ( VALUE ), ( CONTEXT ), ( SUBTEXT ) ); \
-			::MessageBox( NULL, text, "Message Hint:", MB_ICONINFORMATION ); \
-		}
-
 
 // Should be in the class definition...
 #define SV_DECLARE_CLASS( XCLASSNAME )					\
@@ -123,15 +114,4 @@ typedef DWORD SVProductCountType;
 
 DWORD_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 DWORD_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
-//******************************************************************************
-//* CONSTANT VARIABLE(S):
-//******************************************************************************
-
-//******************************************************************************
-//* VARIABLE(S):
-//******************************************************************************
-
-
-#endif  // SVOBJECTLIBRARY_H
 

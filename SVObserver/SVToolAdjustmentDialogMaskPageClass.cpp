@@ -18,6 +18,9 @@
 #include "SVMFCControls\SVMaskEditor.h"
 #include "ObjectInterfaces\NameValueList.h"
 #include "SVObserver.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -324,7 +327,8 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			delete m_pMaskEditorCtl;
 			m_pMaskEditorCtl = nullptr;
 			
-			AfxMessageBox(_T("Static Mask Editor OCX Failed to Start"));
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::MaskPage_StartOCXFailed, StdMessageParams, SvOi::Err_10215 );
 			return;
 		}
 	}
@@ -422,7 +426,8 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 		HRESULT hr = m_maskController.ExportMask(SVString(strPathName));
 		if (!SUCCEEDED(hr))
 		{
-			AfxMessageBox("Cannot open file!");
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_CannotOpenFile, StdMessageParams, SvOi::Err_10216 );
 		}
 	}
 	// Refresh image view...
@@ -439,7 +444,8 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 		HRESULT hr = m_maskController.ImportMask(m_svfnFileName.GetFullFileName());
 		if (!SUCCEEDED(hr))
 		{
-			AfxMessageBox("Cannot open file!");
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_CannotOpenFile, StdMessageParams, SvOi::Err_10217 );
 		}
 	}
 	// Refresh image view...

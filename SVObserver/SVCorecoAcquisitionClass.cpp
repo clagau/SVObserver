@@ -22,6 +22,9 @@
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -152,8 +155,8 @@ HRESULT SVCorecoAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 						hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->LoadCameraFiles( m_hDigitizer, psaNames );
 						if( hrOk != S_OK )
 						{
-							ASSERT(FALSE);
-							AfxMessageBox( "Unable to load cca/cvi files" );
+							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::CorecoAcq_UnableToLoad, StdMessageParams, SvOi::Err_10044 ); 
 						}
 
 						SafeArrayDestroy(psaNames);
@@ -764,7 +767,8 @@ HRESULT SVCorecoAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInf
 
 	if ( hrOk != S_OK )
 	{
-		AfxMessageBox( "Failed to get acquisition source information!", MB_ICONEXCLAMATION );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Acquisition_SourceInformationFailed, StdMessageParams, SvOi::Err_10045 ); 
 	}
 
 	return hrOk;

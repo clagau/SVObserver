@@ -41,7 +41,6 @@ public:
 	virtual void DoPropExchange(CPropExchange* pPX);
 	virtual void OnResetState();
 	virtual DWORD GetControlFlags();
-	virtual void OnClick(USHORT iButton);
 	//}}AFX_VIRTUAL
 
 // Implementation

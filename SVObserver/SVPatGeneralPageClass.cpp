@@ -9,11 +9,16 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:19:14  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPatGeneralPageClass.h"
 #include "SVPatternAnalyzerClass.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -398,7 +403,8 @@ BOOL SVPatGeneralPageClass::ProcessOnKillfocus(UINT nId)
 			double	dThreshold = atof(strValue.Left(10));
 			if(dThreshold > 100 || strValue.IsEmpty())
 			{
-				AfxMessageBox(IDS_PAT_THRESHOLD_ERROR);
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_InvalidThresholdValue, StdMessageParams, SvOi::Err_10183 ); 
 				GetDlgItem(nId)->SetFocus();
 				((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
 				return FALSE;

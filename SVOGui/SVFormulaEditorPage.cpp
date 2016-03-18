@@ -26,6 +26,7 @@
 #include "SciLexer.h"
 #include "TextDefinesSvOg.h"
 #include "ObjectInterfaces/TextDefineSvOi.h"
+#include "TextDefinesSvOg.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -684,7 +685,8 @@ namespace Seidenader { namespace SVOGui
 			{
 				tmp.Format("Formula Validated Successfully\n Value = %lf", value); 
 			}
-			AfxMessageBox(tmp);
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, tmp, StdMessageParams, SvOi::Err_10223 );
 		}
 		else // Something is wrong
 		{
@@ -723,9 +725,8 @@ namespace Seidenader { namespace SVOGui
 		if( !validateAndSetEquation() )
 		{
 			// Equation must be valid or disabled
-			CString tmp;
-			tmp.LoadString(IDS_INVALID_FORMULA);
-			AfxMessageBox(tmp);
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::Error_InvalidFormula, StdMessageParams, SvOi::Err_10222 );
 			return FALSE;
 		}
 		else

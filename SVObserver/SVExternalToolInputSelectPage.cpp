@@ -31,6 +31,7 @@
 #include "SVOGui/PPQSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVOGui/NoSelector.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -459,9 +460,8 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 
 	if ( hr != S_OK )
 	{
-		//MessageBeep(MB_ICONASTERISK);
-		CString sMessage(_T("Invalid Data"));
-		AfxMessageBox(sMessage, MB_OK );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::InvalidData, StdMessageParams, SvOi::Err_10048 ); 
 	}
 	else
 	{
@@ -472,7 +472,8 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 			BSTR bstrMessage = NULL;
 			m_pTask->m_dll.GetMessageString(hr, &bstrMessage);
 			CString sMessage(bstrMessage);
-			AfxMessageBox(sMessage, MB_OK );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, sMessage, StdMessageParams, SvOi::Err_10049 ); 
 			::SysFreeString(bstrMessage);
 		}
 	}

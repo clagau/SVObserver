@@ -16,6 +16,8 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -190,7 +192,8 @@ namespace Seidenader { namespace SVOGui
 		HRESULT retVal = SetInspectionData(errorMsg);
 		if (S_OK != retVal)
 		{
-			AfxMessageBox(errorMsg.c_str(), MB_OK | MB_ICONERROR);
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, errorMsg.c_str(), StdMessageParams, SvOi::Err_10229 );
 			bRetVal = false;
 		}
 		else
@@ -198,8 +201,8 @@ namespace Seidenader { namespace SVOGui
 			retVal = Validate(errorMsg, AfxGetResourceHandle());
 			if (S_OK != retVal)
 			{
-				// Show error msg
-				AfxMessageBox(errorMsg.c_str(), MB_OK | MB_ICONERROR);
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, errorMsg.c_str(), StdMessageParams, SvOi::Err_10230 );
 				bRetVal = false;
 			}
 			else

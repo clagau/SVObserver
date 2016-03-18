@@ -450,6 +450,7 @@
     <ClInclude Include="SVPublicAttributeEntryStruct.h" />
     <ClInclude Include="SVToolLevelCreateStruct.h" />
     <ClInclude Include="SVToolsetScriptTags.h" />
+    <ClInclude Include="TextDefinesSvOl.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVGetObjectListVisitor.inl" />

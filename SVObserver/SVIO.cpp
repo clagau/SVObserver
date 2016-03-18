@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:06:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVIO.h"
 #include "SVSVIMStateClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 	#define new DEBUG_NEW
@@ -573,10 +575,6 @@ void SVIOEntryListClass::Refresh()
 				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( pIOEntryArray[ i ]->IOObjectID );
 				if( pObject )
 				{
-// H E L L O !
-// Only for debugging purpose, must not be integrated in Tracking System.
-// AfxMessageBox( pObject->GetName() );
-// RO, 15. Sep. 1999
 					if( pIOEntryArray[ i ]->IOObjectAttribute >= 0 )
 						lpName = pObject->GetCompleteObjectName2( TheSVObserverApp.GetStringResource( IDS_RESULT_ATTRIBUTE_VALUE_STRING + pIOEntryArray[ i ]->IOObjectAttribute ) );
 					else

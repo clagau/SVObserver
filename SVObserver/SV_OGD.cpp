@@ -9,10 +9,15 @@
 //* .Check In Date   : $Date:   02 Oct 2013 12:05:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SV_OGD.h"
 #include "SVOCRDialog.h"
 #include "SVOCRAnalyzerResult.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -218,7 +223,8 @@ BOOL SVOCRGeometryDlg::UpdateOCRParameters ()
 	float fTmpVal = (float) atof (tmp);
 	if ( fTmpVal <= 0.0099 )
 	{
-		AfxMessageBox("Minimum Scale Value must be greater then 0.0099");
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_OGD_ScaleValueToLow, StdMessageParams, SvOi::Err_10035 ); 
 		l_bRet = FALSE;
 	}
 	POCRParameters->fminScale = (float) atof (tmp);

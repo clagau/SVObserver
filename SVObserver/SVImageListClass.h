@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:53:16  $
 //******************************************************************************
 
-#ifndef _SVIMAGELISTCLASS_H
-#define _SVIMAGELISTCLASS_H
+#pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
+#pragma endregion Includes
 
 class SVImageClass;
 
@@ -23,11 +24,7 @@ public:
 
 	virtual ~SVImageListClass();
 
-	BOOL RemoveImage( SVImageClass* PImage );
-
 	SVImageClass * GetAtByTool(int nIndex);             // 25 Jun 1999 - frb.
 
 };
-
-#endif   // _SVIMAGELISTCLASS_H
 

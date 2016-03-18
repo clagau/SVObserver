@@ -18,6 +18,7 @@
 #include "SVInspectionProcess.h"
 #include "SVTaskObject.h"
 #include "SVTool.h"
+#include "TextDefinesSvO.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,7 +65,8 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_sv
 	}
 	catch( ... )
 	{
-		::AfxMessageBox( "ERROR: Cannot Add Input Request (LPCTSTR) .\nPlease contact technical support specialist.", MB_ICONERROR | MB_OK );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_CannotAddInputRequest, StdMessageParams, SvOi::Err_10205 );
 	}
 
 	return l_hrOk;
@@ -85,7 +87,8 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_sv
 	}
 	catch( ... )
 	{
-		::AfxMessageBox( "ERROR: Cannot Add Input Request (double).\nPlease contact technical support specialist.", MB_ICONERROR | MB_OK );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_CannotAddInputRequest, StdMessageParams, SvOi::Err_10206 );
 	}
 
 	return l_hrOk;
@@ -140,7 +143,8 @@ HRESULT SVTaskObjectValueInterface::AddInputRequestMarker()
 	}
 	catch( ... )
 	{
-		::AfxMessageBox( "ERROR: Cannot Add Input Request Marker.\nPlease contact technical support specialist.", MB_ICONERROR | MB_OK );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_CannotAddInputRequestMarker, StdMessageParams, SvOi::Err_10207 );
 	}
 
 	return l_hrOk;
@@ -187,7 +191,8 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 	}
 	catch( ... )
 	{
-		::AfxMessageBox( "ERROR: Cannot Run Once.\nPlease contact technical support specialist.", MB_ICONERROR | MB_OK );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_CannotRunOnce, StdMessageParams, SvOi::Err_10208 );
 	}
 
 	return l_hrOk;

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 04:14:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectScriptParserSVX.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -20,6 +21,9 @@
 #include "SVBarCodeAnalyzerClass.h"
 #include "SVOMFCLibrary/SVFunctionProfiler.h"
 #include "SVObjectLibrary/GlobalConst.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -82,19 +86,6 @@ void SVStringFromGUID( CString& RString, const GUID& RGUID )
 }
 
 //}// end NS_ObjectScriptParserSVX
-
-#define SV_PARSE_MESSAGE( XFORMATSTRING, XCOMMANDSTRING )	\
-		{	\
-			CString strMessage, strString;	\
-			strString = ( XCOMMANDSTRING );	\
-			int in = strString.Find( TCHAR( ';' ) );	\
-			if( in > 0 )	strString = strString.Left( in + 1 );	\
-			strMessage.Format( ( XFORMATSTRING ), strString );	\
-			AfxMessageBox( strMessage );	\
-		}
-
-
-
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -661,7 +652,8 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 		{	
 			if( type != NOP )
 			{
-				AfxMessageBox( "Parser Error:\nName expression expected, valid names must not contain keywords!" );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_NameMustNotContainKeyword, StdMessageParams, SvOi::Err_10073 );
 				return FALSE;
 			}
 
@@ -688,11 +680,13 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					return TRUE;
 				}
 				
-				AfxMessageBox( "Parser Error:\nOut of memory!" );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10074 );
 				return FALSE;
 			}
 
-			AfxMessageBox( "Parser Error:\nName expression expected!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_NameExpressionExpected, StdMessageParams, SvOi::Err_10075 );
 			return FALSE;
 		}
 
@@ -711,7 +705,8 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 						ownerInfo = ownerInfo.PObject->GetObjectInfo();
 					else
 					{
-						AfxMessageBox( "Parser Error:\nOwner doesn't exist, cannot access member!" );
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OwnerNotExist, StdMessageParams, SvOi::Err_10076 );
 						return FALSE;
 					}
 
@@ -727,7 +722,8 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					return EvaluateOperandExpression( OperandType, ownerInfo, emptyAliasTable, rOperand, rExpressionStack, ++riIndex, emptyAliasTable );
 				}
 			}
-			AfxMessageBox( "Parser Error:\nUnexpected member access operator!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnexpectedMember, StdMessageParams, SvOi::Err_10077 );
 			return FALSE;
 		}
 		else
@@ -775,16 +771,19 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					}
 					rOperand.CleanUp();
 
-					AfxMessageBox( "Parser Error:\nCannot read GUID!" );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_CannotReadGuid, StdMessageParams, SvOi::Err_10078 );
 					return FALSE;
 				}
 
-				AfxMessageBox( "Parser Error:\nOut of memory!" );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10079 );
 				return FALSE;
 			}
 			else
 			{
-				AfxMessageBox( "Parser Error:\nExpression expected!" );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_ExpressionExpected, StdMessageParams, SvOi::Err_10080 );
 				return FALSE;
 			}
 		}
@@ -826,7 +825,8 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					
 					rOperand.CleanUp();
 
-					AfxMessageBox( "Parser Error:\nOut of memory!" );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10081 );
 					return FALSE;
 				}
 				else
@@ -870,7 +870,8 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			}
 			else
 			{
-				AfxMessageBox( "Parser Error:\nExpression expected!" );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_ExpressionExpected, StdMessageParams, SvOi::Err_10082 );
 				return FALSE;
 			}
 		}
@@ -952,7 +953,9 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					}
 					rOperand.CleanUp();
 
-					AfxMessageBox( "Parser Error:\nOut of memory!" );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10083 );
+
 					return FALSE;
 				}
 				else // must be member name ???
@@ -962,16 +965,19 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			}
 			else
 			{
-				AfxMessageBox( "Parser Error:\nExpression expected!" );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_ExpressionExpected, StdMessageParams, SvOi::Err_10084 );
 				return FALSE;
 			}
 		}
 
-		AfxMessageBox( "Parser Error:\nUnknown expression!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnknownExpression, StdMessageParams, SvOi::Err_10085 );
 		return FALSE;
 	}
 	
-	AfxMessageBox( "Parser Error:\nUnexpected end of command!" );
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10086 );
 	return FALSE;
 }
 
@@ -1731,7 +1737,10 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 								if( ! tStrNewParsPos  )
 								{
 									ASSERT(FALSE);
-									SV_FORMAT_MESSAGE( "%s parse was not successful", pObject->GetName() );
+									SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+									SVString errorText = SvUl_SF::Format(SvO::Error_ScriptParseFailed, pObject->GetName());
+									Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, errorText.c_str(), StdMessageParams, SvOi::Err_10030 ); 
+									
 									currentParseState = PARSER_ERROR;
 								}
 								else
@@ -1878,7 +1887,8 @@ void SVObjectScriptParserSVXClass::RemoveExternalDependencies( CString& script )
 		else
 		{
 			// really bad !!!
-			AfxMessageBox("Critical Error removing external dependencies");
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_CriticalErrorRemovingDependencies, StdMessageParams, SvOi::Err_10087 );
 		}
 		startIndex = endGuidPos;
 	}
@@ -2410,7 +2420,8 @@ bool SVObjectScriptParserSVXClass::GetStringToken( SVExpressionStack& rExpressio
 		}
 	}
 	// Error, unexpected end of parse string...
-	AfxMessageBox( "ParserState: READ_STRING\nParser Error, unexpected end of parse string while reading string..." );
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnexpectedEndOfParse, StdMessageParams, SvOi::Err_10088 );
 	return false;
 }
 
@@ -2466,7 +2477,8 @@ bool SVObjectScriptParserSVXClass::GetNameStringToken( SVExpressionStack& rExpre
 		}
 	}	
 	// Error, unexpected end of parse string...
-	AfxMessageBox( "ParserState: READ_NAME_STRING\nParser Error, unexpected end of name string while parsing ..." );
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnexpectedEndOfName, StdMessageParams, SvOi::Err_10089 );
 	return false;
 }
 
@@ -2503,11 +2515,13 @@ bool SVObjectScriptParserSVXClass::GetGuidStringToken( SVExpressionStack& rExpre
 			
 		}
 
-		AfxMessageBox( "ParserState: READ_GUID_STRING\nParser Error, empty token found..." );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_EmptyToken, StdMessageParams, SvOi::Err_10090 );
 		return false;
 	}
 
-	AfxMessageBox( "ParserState: READ_GUID_STRING\nParser Error, GUID expression cannot be evaluated..." );
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_GuidCannotEvaluated, StdMessageParams, SvOi::Err_10091 );
 	return false;
 }
 
@@ -2536,14 +2550,16 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 		! operand1.Value() 
 	  )
 	{
-		AfxMessageBox( "Parser Error:\nName operand expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_NameOperandExpected, StdMessageParams, SvOi::Err_10092 );
 		return rc;
 	}
 
 	// must be operator =
 	if( ++index >= numberOfExpressions || _tcscmp( rExpressionStack.GetAt( index ), _T( "=" ) ) )
 	{
-		AfxMessageBox( "Parser Error:\nOperator = expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OperatorExpected, StdMessageParams, SvOi::Err_10093 );
 		return rc;
 	}
 
@@ -2553,21 +2569,24 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 		! operand2.Value() 
 	  )
 	{
-		AfxMessageBox( "Parser Error:\nObject operand, class operand or embedded operand expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OperandExpected, StdMessageParams, SvOi::Err_10094 );
 		return rc;
 	}
 
 	// Check for operator ; 
 	if(	++index >= numberOfExpressions || _tcscmp( rExpressionStack.GetAt( index ), _T( ";" ) ) )
 	{
-		AfxMessageBox( "Parser Error:\nCommand termination expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_CommandTerminationExpected, StdMessageParams, SvOi::Err_10095 );
 		return rc;
 	}
 
 	// Now we must be at the end of the stack...
 	if(	index != rExpressionStack.GetUpperBound() )
 	{
-		AfxMessageBox( "Parser Error:\nToo many expressions found!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_TooManyExpressions, StdMessageParams, SvOi::Err_10096 );
 		return rc;
 	}
 
@@ -2651,7 +2670,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 			! classOperand.Value()
 		  )
 		{
-			AfxMessageBox( "Parser Error:\nClass operand expected!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_ClassOperandExpected, StdMessageParams, SvOi::Err_10097 );
 			return pObject;
 		}
 	}
@@ -2664,14 +2684,16 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		! nameOperand.Value()
 	  )
 	{
-		AfxMessageBox( "Parser Error:\nName operand expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_NameOperandExpected, StdMessageParams, SvOi::Err_10098 );
 		return pObject;
 	}
 
 	// must be operator =
 	if( ++index >= rExpressionStack.GetSize() || _tcscmp( rExpressionStack.GetAt( index ), _T( "=" ) ) )
 	{
-		AfxMessageBox( "Parser Error:\nOperator = expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OperatorExpected, StdMessageParams, SvOi::Err_10099 );
 		return pObject;
 	}
 
@@ -2681,14 +2703,15 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		! objectOperand.Value()
 	  )
 	{
-		AfxMessageBox( "Parser Error:\nOperator operand expected!" );
-//		SV_PARSE_MESSAGE( "Parser Error:\nObject operand expected!\n\n*%s*", tStrParseEnd );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OperatorOperand, StdMessageParams, SvOi::Err_10100 );
 		return pObject;
 	}
 
 	if( ++index >= rExpressionStack.GetSize() )
 	{
-		AfxMessageBox( "Parser Error:\nUnexpected end of command found!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10101 );
 		return pObject;
 	}
 
@@ -2700,7 +2723,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 			! objectOwnerOperand.Value()
 		  )
 		{
-			AfxMessageBox( "Parser Error:\nObject operand expected!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_ObjectOperandExpected, StdMessageParams, SvOi::Err_10102 );
 			return pObject;
 		}
 		objectOwnerOperand.Type() = OBJECT_OWNER;
@@ -2711,7 +2735,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 
 		if( ++index >= rExpressionStack.GetSize() )
 		{
-			AfxMessageBox( "Parser Error:\nUnexpected end of command found!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10103 );
 			return pObject;
 		}
 	}
@@ -2734,7 +2759,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		}
 		else
 		{
-			AfxMessageBox( "Parser Error:\nOut of memory!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10104 );
 			return pObject;
 		}
 	}
@@ -2745,7 +2771,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	{
 		if( ! ReadOperandList( rLocalOwnerInfo, rAliasTable, inputOperandList, rExpressionStack, index ) )
 		{
-			AfxMessageBox( "Parser Error:\nUnable to read input list!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnableToReadInputList, StdMessageParams, SvOi::Err_10105 );
 			return pObject;
 		}
 
@@ -2755,7 +2782,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 
 		if( ++index >= rExpressionStack.GetSize() )
 		{
-			AfxMessageBox( "Parser Error:\nUnexpected end of command found!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10106 );
 			return pObject;
 		}
 	}
@@ -2765,7 +2793,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		_tcscmp( rExpressionStack.GetAt( index ), _T( "{" ) ) 
 	  )
 	{
-		AfxMessageBox( "Parser Error:\nCommand termination or object member definition expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_CommandTerminationOrObjectMemberExpected, StdMessageParams, SvOi::Err_10107 );
 		return pObject;
 	}
 
@@ -2779,7 +2808,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		// Now we must be at the end of the stack...
 		if(	index != rExpressionStack.GetUpperBound() )
 		{
-			AfxMessageBox( "Parser Error:\nToo many expressions found!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_TooManyExpressions, StdMessageParams, SvOi::Err_10108 );
 			return pObject;
 		}
 	}
@@ -2795,7 +2825,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 
 	if( ! ownerObjectInfo.PObject )
 	{
-		AfxMessageBox( "Parser Error:\n No valid object owner given!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_NoValidObjectOwner, StdMessageParams, SvOi::Err_10109 );
 		return pObject;
 	}
 
@@ -2824,7 +2855,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		}
 		else
 		{
-			AfxMessageBox( "Parser Error:\n Wrong embedded values!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_WrongEmbeddedValues, StdMessageParams, SvOi::Err_10110 );
 			return pObject;
 		}
 	}
@@ -2856,7 +2888,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		}
 		else
 		{
-			AfxMessageBox( "Parser Error:\n Cannot construct new object!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_CannotConstructObject, StdMessageParams, SvOi::Err_10111 );
 			return pObject;
 		
 		}
@@ -2928,7 +2961,8 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	int i = index - 2;
 	if( i < 0 )
 	{
-		AfxMessageBox( "Parser Error:\nObject required for Member!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_ObjectRequired, StdMessageParams, SvOi::Err_10112 );
 		return rc;
 	}
 	
@@ -2938,8 +2972,8 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 		! objectOperand.Value()
 	  )
 	{
-		AfxMessageBox( "Parser Error:\nOperator operand expected!" );
-		//SV_PARSE_MESSAGE( "Parser Error:\nObject operand expected!\n\n*%s*", tStrParseEnd );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OperatorOperand, StdMessageParams, SvOi::Err_10113 );
 		return rc;
 	}
 	
@@ -2948,14 +2982,16 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	// must be operator =
 	if( ++index >= rExpressionStack.GetSize() || _tcscmp( rExpressionStack.GetAt( index ), _T( "=" ) ) )
 	{
-		AfxMessageBox( "Parser Error:\nOperator = expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_OperatorExpected, StdMessageParams, SvOi::Err_10114 );
 		return rc;
 	}
 	// skip past operator =
 	
 	if( ++index >= rExpressionStack.GetSize() )
 	{
-		AfxMessageBox( "Parser Error:\nUnexpected end of command found!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10115 );
 		return rc;
 	}
 
@@ -2964,14 +3000,16 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 
 	if( ! ReadValues( dataObject, rExpressionStack, index ) )
 	{
-		AfxMessageBox( "Parser Error:\nValues expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_ValuesExpected, StdMessageParams, SvOi::Err_10116 );
 		return rc;
 	}
 
 	// Check for operator ;
 	if(	_tcscmp( rExpressionStack.GetAt( index ), _T( ";" ) ) )
 	{
-		AfxMessageBox( "Parser Error:\nCommand termination or object member definition expected!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_CommandTerminationOrObjectMemberExpected, StdMessageParams, SvOi::Err_10117 );
 		return rc;
 	}
 	
@@ -2987,7 +3025,8 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 
 	if( ! objectInfo.PObject )
 	{
-		AfxMessageBox( "Parser Error:\n No valid object given!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_NoValidObject, StdMessageParams, SvOi::Err_10118 );
 		return rc;
 	}
 	
@@ -2996,7 +3035,8 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 
 	if( ! ownerObjectInfo.PObject )
 	{
-		AfxMessageBox( "Parser Error:\n No valid object owner given!" );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_NoValidObjectOwner, StdMessageParams, SvOi::Err_10119 );
 		return rc;
 	}
 	
@@ -3013,7 +3053,8 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 		// Note:: Send this message to the Object's Owner
 		if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<DWORD_PTR>(&objectInfo.UniqueObjectID), reinterpret_cast<DWORD_PTR>(&dataObject) ) != SVMR_SUCCESS )
 		{
-			AfxMessageBox( "Parser Error:\n Set Object Member Value failed!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_SetObjectMemberFailed, StdMessageParams, SvOi::Err_10120 );
 			return rc;
 		}
 		rc = true;

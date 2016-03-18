@@ -299,24 +299,24 @@ BOOL SVXml::IsXmlDocValid()
 
 	//validate the doc
 	if(lReadyState == 4)//LOADING = 1,LOADED = 2,INTERACTIVE = 3,COMPLETED = 4 
-		{
+	{
 		CString szTemp;
 		if(m_pDoc->validate(&errorObj) != S_OK)
-			{
+		{
 #ifdef _DEBUG
 			GetXmlParserError(errorObj, szTemp);
+			AfxMessageBox(szTemp);	
 #else
 			GetXmlParserError(errorObj);
 #endif
-			AfxMessageBox(szTemp);	
 			goto CleanUp;
-			}
+		}
 		else
-			{
+		{
 			//szTemp = _T("Document is valid");
 			//AfxMessageBox(szTemp);	
-			}
 		}
+	}
 
 CleanUp:
 	CheckXmlParserError(hr);

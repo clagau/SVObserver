@@ -19,6 +19,9 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "GuiValueHelper.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -236,7 +239,8 @@ namespace Seidenader
 			UpdateData( TRUE );
 			if( 0 == m_KernelSum )
 			{
-				AfxMessageBox( DataInvalidNormalizationFactor );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, DataInvalidNormalizationFactor, StdMessageParams, SvOi::Err_10225 );
 			}
 			else
 			{
@@ -387,7 +391,8 @@ namespace Seidenader
 				}
 				if( !Message.empty() )
 				{
-					AfxMessageBox( Message.c_str() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, Message.c_str(), StdMessageParams, SvOi::Err_10226 );
 				}
 			}
 		}
@@ -407,7 +412,8 @@ namespace Seidenader
 				}
 				catch( ... )
 				{
-					AfxMessageBox( ExportFailed );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, ExportFailed, StdMessageParams, SvOi::Err_10227 );
 				}
 			}
 		}
@@ -425,7 +431,8 @@ namespace Seidenader
 			}
 			else
 			{
-				AfxMessageBox( DataInvalidMessage.c_str() );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, DataInvalidMessage.c_str(), StdMessageParams, SvOi::Err_10228 );
 			}
 		}
 

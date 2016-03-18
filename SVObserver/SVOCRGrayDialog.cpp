@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:04:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCRGrayDialog.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -18,6 +19,10 @@
 #include "SVTool.h"
 #include "SVUnaryImageOperatorList.h"
 #include "SVOCRGrayAnalyzerResult.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -178,9 +183,6 @@ void SVOCRGrayDialogClass::OnFontTraining()
 	SVFileNameClass	svfncFontFile;
     CString csPathImageFile;
     BOOL bResult;
-
-    //AfxMessageBox("OnFontTraining");
-
     //
     // Check to make sure we have a satisfactory file and path for the font
     // parmeters as result of font training operation.
@@ -195,19 +197,12 @@ void SVOCRGrayDialogClass::OnFontTraining()
     csPathFontFile = m_GeneralParamsDlg.m_fontFilename;
 	svfncFontFile.SetFullFileName(csPathFontFile);
 
-#ifdef _DEBUG999
-{
-    CString s;
-		s.Format("Font File Path: %s", csPathFontFile);
-    AfxMessageBox(s);
-}
-#endif //_DEBUG
-
 	if (csPathFontFile.IsEmpty())
-    {
-        AfxMessageBox("ERROR: No Font file name specified");
-        return;
-    }
+	{
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontFileSpec, StdMessageParams, SvOi::Err_10160);
+		return;
+	}
 
     //
     // Other output font file path checking...TBD
@@ -236,34 +231,37 @@ void SVOCRGrayDialogClass::OnFontTraining()
 	m_GeneralParamsDlg.UpdateData(FALSE);
 	m_GeneralParamsDlg.UpdateOCRParameters();
 
-    //
-    // Get the MIL image, convert to WIT image and the write to witImage type file
-    //
-    if(!pTool)
-    {
-       AfxMessageBox("ERROR: Font Training Setup: No TOOL specified");
-       return;
-    }
+	//
+	// Get the MIL image, convert to WIT image and the write to witImage type file
+	//
+	if(!pTool)
+	{
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::OCR_NoToolSpecified, StdMessageParams, SvOi::Err_10161);
+		return;
+	}
 
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVUnaryImageOperatorListObjectType;
 	SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( 
 		pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( ! SV_IS_KIND_OF( pObject, SVUnaryImageOperatorListClass ) )
-    {
-       AfxMessageBox( _T( "ERROR: Font Training Setup: No OperatorList specified" ));
-       return;
-    }
+	{
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::OCR_NoOperatorListSpecified, StdMessageParams, SvOi::Err_10162);
+		return;
+	}
 
 	info.ObjectType = SVImageObjectType;
 	pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( 
 		pObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
 	if( nullptr == pImage )
-    {
-       AfxMessageBox( _T( "ERROR: Font Training Setup: No Image specified" ));
-       return;
-    }
+	{
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::OCR_NoImageSpecified, StdMessageParams, SvOi::Err_10163);
+		return;
+	}
 
   SVSmartHandlePointer ImageHandle;
 
@@ -286,10 +284,6 @@ void SVOCRGrayDialogClass::OnFontTraining()
 		l_Code = SVMatroxBufferInterface::Export( milBuffer, l_strTmp, SVFileBitmap );
 		//MbufExport((char*)(LPCTSTR)csPathImageFile, M_BMP, milBuffer);
 
-#ifdef _DEBUG999
-    AfxMessageBox("MIL to BMP completed");
-#endif //_DEBUG
-
     //
     // Create the Font Training OCX 'connection' via IDispatch OLE interface.
     //
@@ -303,11 +297,12 @@ void SVOCRGrayDialogClass::OnFontTraining()
 		this,							//CWnd* pParentWnd, 
 		2 );
 
-    if(!bResult)
-    {
-       AfxMessageBox("Font Training Failed to Start");
-       return;
-    }
+	if(!bResult)
+	{
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::OCR_FontTrainFailedToStart, StdMessageParams, SvOi::Err_10164);
+		return;
+	}
 
     //
     // Run the Font Training OCX.
@@ -328,8 +323,7 @@ void SVOCRGrayDialogClass::OnFontTraining()
     // Delete the temporary file use for the image.
     //
 	CFile::Remove((const char *)csPathImageFile);
-    //AfxMessageBox("OCX Returned");
-  }
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

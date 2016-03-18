@@ -609,7 +609,8 @@ bool ToolSetView::ShowDuplicateNameMessage(const CString& rName) const
 {
 	CString msg("A duplicate name was found for the item being renamed\n");
 	msg += rName;
-	int rc = AfxMessageBox(msg, MB_RETRYCANCEL);
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	INT_PTR rc = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msg, StdMessageParams, SvOi::Err_10221, NULL, nullptr, MB_RETRYCANCEL );
 	return (IDRETRY == rc);
 }
 

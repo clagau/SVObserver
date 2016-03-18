@@ -9,13 +9,17 @@
 // * .Check In Date   : $Date:   04 Sep 2014 12:44:38  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionFileSelectDlg.h"
 #include "SVCameraImageTemplate.h"
 #include "SVVirtualCamera.h"
-
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -139,13 +143,16 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionBadList:
 		{
-			AfxMessageBox("Selection Error:  Lists must be the same size.  Please select again.");
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_WrongListSize, StdMessageParams, SvOi::Err_10188 ); 
 			ClearRegressionList();
 			return;
 		}
 		case SelectionInvalid:
 		{
-			if ( AfxMessageBox("Selection Error: \"Use single file\" is selected for one of the cameras but a file was not selected. Select again?",MB_YESNO ) == IDYES )
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_NoFileSelected, StdMessageParams, SvOi::Err_10189, NULL, nullptr, MB_YESNO ); 
+			if ( IDYES == result )
 			{
 				return;
 			}
@@ -158,7 +165,9 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionEmptyList:
 		{
-			if ( AfxMessageBox("Selection Error: \"Use list of files\" selected, but the file name does not match\n the acceptable format (<file name>_<sequence number>.bmp). Select again?",MB_YESNO ) == IDYES )
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10190, NULL, nullptr, MB_YESNO ); 
+			if ( IDYES == result )
 			{
 				ClearRegressionList();
 				return;
@@ -172,7 +181,9 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionInvalidMask:
 		{
-			if ( AfxMessageBox("Selection Error: \"Use list of files\" selected, but the file name does not match\n the acceptable format (<file name>_<sequence number>.bmp). Select again?",MB_YESNO ) == IDYES )
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10191, NULL, nullptr, MB_YESNO ); 
+			if ( IDYES == result )
 			{
 				return;
 			}
@@ -185,7 +196,9 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionNoFiles:
 		{
-			if ( AfxMessageBox("Selection Error:  \"No files\" selected.  Select again?",MB_YESNO ) == IDYES )
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_NoFilesSelected, StdMessageParams, SvOi::Err_10192, NULL, nullptr, MB_YESNO ); 
+			if ( IDYES == result )
 			{
 				return;
 			}
@@ -199,7 +212,9 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionFileNotExist:
 		{
-			if ( AfxMessageBox("Selection Error:  File does not exist.  Select again?",MB_YESNO ) == IDYES )
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_FileNotExist, StdMessageParams, SvOi::Err_10193, NULL, nullptr, MB_YESNO ); 
+			if ( IDYES == result )
 			{
 				return;
 			}

@@ -8,6 +8,8 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 09:42:24  $
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
 #pragma warning (push)
 #pragma warning (disable : 4996)
@@ -22,7 +24,12 @@
 #include "SVObjectAttributeClass.h"
 #include "SVInputInfoListClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVMessage/SVMessage.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvOl.h"
 #pragma warning (pop)
+#pragma endregion Includes
 
 typedef std::vector<std::string> split_vector_type;
 
@@ -333,7 +340,8 @@ HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectI
 
 		if (::SVSendMessage(pOwnerObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<DWORD_PTR>(&objectID), reinterpret_cast<DWORD_PTR>(&dataObject)) != SVMR_SUCCESS)
 		{
-			AfxMessageBox( "SVObjectBuilder::SetObjectValue Error:\n Set Object Member Value failed!" );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOl::ObjectBuilder_SetObjectValueError, StdMessageParams, SvOi::Err_10248 );
 		}
 	}
 	return hr;

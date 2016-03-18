@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Oct 2014 14:43:32  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCRAnalyzerResult.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
@@ -18,6 +19,9 @@
 #include "SVImageClass.h"
 #include "SVTool.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -343,7 +347,8 @@ BOOL SVOCRAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCreateSt
 
 			if ( ! bOk )
 			{
-				AfxMessageBox("ERROR: Failed to Load OCR Library");   // 24 Jun 1999 - frb.
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::OCRAnalyzer_DLLLoadFailed, StdMessageParams, SvOi::Err_10141);
 			}
 		}
 
@@ -366,7 +371,8 @@ BOOL SVOCRAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCreateSt
 	}
 	else
 	{
-		AfxMessageBox("Error: OCR OCV Analyzer is not supported on this platform. The tool will become invalid.");
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::OCRAnalyzer_Unsupported, StdMessageParams, SvOi::Err_10142);
 	}
 
 	// Set / Reset Printable Flag
@@ -883,7 +889,8 @@ BOOL SVOCRAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						//
 						// No MIL image buffer handle..
 						//
-						AfxMessageBox( _T("ERROR: No Mil Host Buffer Pointer") );
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_NoMilHostBuffer, StdMessageParams, SvOi::Err_10143);
 					}
 					else
 					{
@@ -896,8 +903,9 @@ BOOL SVOCRAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						if ( imageTypeMil != 8 )
 						{
 							CString s;
-							s.Format("ERROR: MIL Image Type Not 8 Bit Unsigned: %x",imageTypeMil);
-							AfxMessageBox(s);
+							s.Format(SvO::Error_MilImageTypeInvalid,imageTypeMil);
+							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, s, StdMessageParams, SvOi::Err_10144);
 						}
 
 						//
@@ -911,7 +919,8 @@ BOOL SVOCRAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						if ( ! bOk )
 						{
 							// Mil image PITCH and Width error
-							AfxMessageBox( _T("ERROR: Mil image Pitch and Width Error") );
+							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							INT_PTR result = Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_MilPitchAndWidthError, StdMessageParams, SvOi::Err_10145);
 						}
 					}
 				}
@@ -1038,7 +1047,8 @@ BOOL SVOCRAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						//
 						// Wit convert from wit object to char string failed.
 						//
-						AfxMessageBox( _T("OCR data convert failed") );
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_OCRDataConvertFailed, StdMessageParams, SvOi::Err_10146);
 					}
 					else
 					{
@@ -1049,7 +1059,8 @@ BOOL SVOCRAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 							//
 							// Data re-organizing failed.
 							//
-							AfxMessageBox( _T("OCR data formating failed") );
+							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_OCRDataFormatingFailed, StdMessageParams, SvOi::Err_10147);
 						}
 					}
 

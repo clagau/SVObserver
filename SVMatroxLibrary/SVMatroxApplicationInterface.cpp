@@ -9,6 +9,7 @@
 // * .Check In Date   : $Date:   01 Oct 2013 11:08:08  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxEnums.h"
@@ -16,8 +17,8 @@
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
-
-#include <assert.h>
+#include "SVStatusLibrary\MessageManagerResource.h"
+#pragma endregion Includes
 
 static const long MATROX_FILTER_EVENT = 2622995;
 static const long MATROX_FILTER_EVENT_STATUS_CODE = 4455;
@@ -483,9 +484,9 @@ void SVMatroxApplicationInterface::LocalInitialize()
 					_T("SVObserver needs MIL %4.2f. The installed version is %4.2f"),
 					SV_CURRENT_MIL_VERSION, 
 					l_MilVersion );
-
-				::MessageBox( NULL, l_szMsg, _T("SVObserver"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL );
-
+				
+				SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, l_szMsg, StdMessageParams, SvOi::Err_10249 );
 				::exit( EXIT_FAILURE );
 			}
 		}

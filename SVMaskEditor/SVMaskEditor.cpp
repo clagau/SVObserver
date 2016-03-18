@@ -111,13 +111,7 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
     bm.Detach();
 
     bmInfo.bmBitsPixel = ( bmInfo.bmBitsPixel < 8 ) ? 8 : bmInfo.bmBitsPixel;
-/*
-CString strText;
-strText.Format( _T( "Planes: %d" ), bmInfo.bmPlanes );
-AfxMessageBox( strText );
-strText.Format( _T( "BitsPerPixel: %d" ), bmInfo.bmBitsPixel );
-AfxMessageBox( strText );
-*/
+
     // Try to create mil buffer...
 	SVMatroxBufferInterface l_BufIntf;
 	SVMatroxBufferInterface::SVStatusCode l_Code;

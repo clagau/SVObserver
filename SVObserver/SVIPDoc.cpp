@@ -468,7 +468,8 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 					if (pNextTool && SV_IS_KIND_OF(pNextTool, SVColorToolClass) &&
 									!SV_IS_KIND_OF(pTool, SVColorToolClass))
 					{
-						AfxMessageBox( SvO::ColorToolMustBeFirstMessage, MB_OK );
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::ColorToolMustBeFirstMessage, StdMessageParams, SvOi::Err_10055 );
 						return false;
 					}
 				}
@@ -695,9 +696,8 @@ BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 
 	if (!bCanClose)
 	{
-		AfxMessageBox(_T("Invalid Operation!\n")
-			_T("If You wish to remove this inspection\n")
-			_T("Go to the Edit menu and Select Edit Configuration."), MB_OK|MB_ICONSTOP, 0);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::SVIPDoc_ClosingImpossible, StdMessageParams, SvOi::Err_10056 );
 	}
 
 	return bCanClose;
@@ -1215,7 +1215,8 @@ void SVIPDoc::OnEditDelete()
 					if( pFirstTaskObject && SV_IS_KIND_OF(pFirstTaskObject, SVColorToolClass) &&
 						pNextTool && !SV_IS_KIND_OF(pNextTool, SVColorToolClass))
 					{
-						AfxMessageBox( SvO::ColorToolMustBeFirstMessage, MB_OK );
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::ColorToolMustBeFirstMessage, StdMessageParams, SvOi::Err_10057 );
 						return;
 					}
 				}
@@ -1907,7 +1908,8 @@ void SVIPDoc::RunRegressionTest()
 	}
 	else
 	{
-		AfxMessageBox("Inspection is unable to go into Regression Test Mode.  There is an unknown error with the inspection.");
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::SVIPDoc_GoIntoRegTestFailed, StdMessageParams, SvOi::Err_10058 );
 	}
 }
 

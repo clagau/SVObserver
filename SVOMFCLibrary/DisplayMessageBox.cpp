@@ -14,6 +14,7 @@
 #include "stdafx.h"
 #include "SVOResource\resource.h"
 #include "DisplayMessageBox.h"
+#include "SVUtilityLibrary\LoadDll.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -82,17 +83,44 @@ DisplayMessageBox::~DisplayMessageBox()
 #pragma region Public Methods
 INT_PTR DisplayMessageBox::showDialog( HWND hParent, LPCTSTR Message, LPCTSTR MessageDetails, UINT Type )
 {
+	static HINSTANCE ResourceInstance( nullptr );
 	INT_PTR Result( IDCANCEL );
+	HINSTANCE currentResourceInstance( AfxGetResourceHandle() );
 
-	//The setting for hParent can influence the behavior of modal dialogs which call this method to display a message (eg. setting hParent to the main window)
-	CWnd* pParent( nullptr );
-	if( NULL != hParent )
+	if (nullptr == ResourceInstance)
 	{
-		pParent = CWnd::FromHandle( hParent );
+		//Load resource dll explicitly
+		SvUl::LoadDll::Instance().getDll( SvUl::SVOResourceDll, ResourceInstance );
 	}
 	
-	DisplayMessageBox ErrorMsgBox( pParent, Message, MessageDetails, Type );
-	Result = ErrorMsgBox.DoModal();
+	if (nullptr != ResourceInstance)
+	{
+		if (currentResourceInstance != ResourceInstance)
+		{
+			//Set the resource instance to the resource dll
+			AfxSetResourceHandle( ResourceInstance );
+		}
+
+		//The setting for hParent can influence the behavior of modal dialogs which call this method to display a message (eg. setting hParent to the main window)
+		CWnd* pParent( nullptr );
+		if( NULL != hParent )
+		{
+			pParent = CWnd::FromHandle( hParent );
+		}
+
+		DisplayMessageBox ErrorMsgBox( pParent, Message, MessageDetails, Type );
+		Result = ErrorMsgBox.DoModal();
+
+		if (currentResourceInstance != ResourceInstance)
+		{
+			//Set the resource instance back to the old value
+			AfxSetResourceHandle( currentResourceInstance );
+		}
+	}
+	else
+	{
+		Result = -1;
+	}
 
 	return Result;
 }

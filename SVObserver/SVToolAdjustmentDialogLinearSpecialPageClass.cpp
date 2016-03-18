@@ -17,6 +17,9 @@
 #include "SVIPDoc.h"
 #include "SVLinearToolClass.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#include "TextDefinesSvO.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -160,7 +163,9 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 
 			if ( sTxt == "Vertical" )
 			{
-				l_bUpdateRotation = AfxMessageBox("Tool profile orientation is at vertical.  By turning rotaion on the profile orientation will be set to horizontal. Do you wish to continue",MB_YESNO) == IDYES;
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::LinearSpecial_OrientationVertical, StdMessageParams, SvOi::Err_10213, NULL, nullptr, MB_YESNO );
+				l_bUpdateRotation = (IDYES == result);
 
 				if( ! l_bUpdateRotation )
 				{
@@ -178,8 +183,9 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 			{
 				if ( bIsRotated )
 				{
-					l_bUpdateRotation = AfxMessageBox("Tool is currently rotated.  By turning off rotation the figure will be drawn at a rotation angle of 0. Do you wish to continue",MB_YESNO) == IDYES;
-
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::LinearSpecial_IsRotated, StdMessageParams, SvOi::Err_10214, NULL, nullptr, MB_YESNO );
+					l_bUpdateRotation = (IDYES == result);
 					if( ! l_bUpdateRotation )
 					{
 						l_bValue = TRUE;

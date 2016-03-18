@@ -9,28 +9,29 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:19:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
+#include <algorithm>
+#include <typeinfo.h>
 #include "SVLutDlg.h"
+#include "SVAcquisitionClass.h"
+#include "ObjectInterfaces/SVUserMessage.h"
+#include "SVObserver.h"	// TEMP HACK for 1394 detection
+#include "SVConfigurationObject.h"	// TEMP HACK for 1394 detection
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#pragma endregion Includes
+
 
 // Undefine min/max, so can use std::min/max
 #if defined(min)
-	#undef min
+#undef min
 #endif
 
 #if defined(max)
-	#undef max
+#undef max
 #endif
-
-#include <algorithm>
-
-#include <typeinfo.h>
-
-#include "SVAcquisitionClass.h"
-#include "ObjectInterfaces/SVUserMessage.h"
-
-#include "SVObserver.h"	// TEMP HACK for 1394 detection
-#include "SVConfigurationObject.h"	// TEMP HACK for 1394 detection
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -85,7 +86,8 @@ bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
 
 	if( GetPageCount() < 1 )
 	{
-		AfxMessageBox( _T("LUT not available for camera(s)") );
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::LUT_NotAvailable, StdMessageParams, SvOi::Err_10060 );
 
 		DestroyAllPages();
 
@@ -925,8 +927,9 @@ void SVLutDlgPage::OnColorBandRed()
 void SVLutDlgPage::OnColorBandSync() 
 {
 	// we will have to adjust this once we implement the "All" option... All -> Sync??? disable Sync if all is selected
-	if (IDYES == MessageBox(_T("Selecting this option will overwrite all bands with the currently displayed LUT information. Continue?"), _T("Warning"),
-					MB_YESNO | MB_ICONEXCLAMATION) )
+	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::LUT_ShouldOverwriteAllBands, StdMessageParams, SvOi::Err_10235, NULL, nullptr, MB_YESNO );
+	if (IDYES == result )
 	{
 		// copy current band data to all other bands
 		if ( miCurrentBand != -1 )

@@ -169,8 +169,6 @@ namespace Seidenader
 			CRect borderRect = GetBorders();
 			if( ( m_dwStyle & CBRS_ALIGN_TOP ) || ( m_dwStyle & CBRS_ALIGN_LEFT ) )
 			{
-				// AFX_IDW_DOCKBAR_TOP
-				//AfxMessageBox( "h1" );
 				borderRect.bottom = 6;
 				borderRect.top	  = 1;
 				SetBorders( &borderRect );
@@ -178,7 +176,6 @@ namespace Seidenader
 			else
 				if( ( m_dwStyle & CBRS_ALIGN_BOTTOM ) || ( m_dwStyle & CBRS_ALIGN_RIGHT ) )
 				{
-					//AfxMessageBox( "h2" );
 					borderRect.bottom = 1;
 					borderRect.top	  = 6;
 					SetBorders( &borderRect );

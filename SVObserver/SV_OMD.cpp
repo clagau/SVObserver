@@ -15,6 +15,9 @@
 #include "SVOCRDialog.h"
 #include "SVOCRAnalyzerResult.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -214,17 +217,17 @@ void SVOCRMiscDlg::OnFontBrowseCmd()
 		csTemp = svfncFileName.GetFullFileName();
 		if ( csTemp.IsEmpty() )
 		{
-			AfxMessageBox(_T("ERROR: No Font File Specified"));
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontFileSpec, StdMessageParams, SvOi::Err_10031 ); 
 		}
 		else
 		{
 			csTemp = svfncFileName.GetExtension();
 			if ( csTemp.CompareNoCase( _T( ".wit" ) ) != 0 )
 			{
-				CString s;
-				s.Format( _T( "ERROR: Font File Requires '.Wit' Extension: %s" ),
-					        svfncFileName.GetFullFileName() );
-				AfxMessageBox(s);
+				SVString s = SvUl_SF::Format( SvO::Error_OMD_FontNotWitExt, svfncFileName.GetFullFileName() );
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s.c_str(), StdMessageParams, SvOi::Err_10032 ); 
 			}
 			else
 			{
@@ -234,17 +237,15 @@ void SVOCRMiscDlg::OnFontBrowseCmd()
 				CFileStatus rStatus;
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
 				{
-					CString s;
-					s.Format( _T( "ERROR: Font File Does Not Exist: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					SVString s = SvUl_SF::Format( SvO::Error_FontFileNotExist, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s.c_str(), StdMessageParams, SvOi::Err_10033 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					CString s;
-					s.Format( _T( "ERROR: Font File Empty: %s" ),
-					          svfncFileName.GetFullFileName() );
-					AfxMessageBox(s);
+					SVString s = SvUl_SF::Format( SvO::Error_FontFileEmpty, svfncFileName.GetFullFileName() );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s.c_str(), StdMessageParams, SvOi::Err_10034 ); 
 				}
 				else
 				{

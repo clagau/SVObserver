@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:35:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVClassRegisterListClass.h"
 
 #include "SVClassRegisterClass.h"
 #include "SVObjectClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -77,14 +79,14 @@ void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )
 
 				tmp.Format( "Duplicate Class encountered\n ClassName: %s\n ClassID: %s", pClass->GetClassName(), guid.ToString().c_str() );
 
-				AfxMessageBox( tmp );
+				ASSERT(false);//( tmp );
 			}
 		#endif
 	}
 	#ifdef _DEBUG
 	else
 	{
-		AfxMessageBox("Invalid Class encountered\n");
+		ASSERT(false);//("Invalid Class encountered\n");
 	}
 	#endif
 }

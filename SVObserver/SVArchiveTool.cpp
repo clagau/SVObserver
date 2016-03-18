@@ -30,6 +30,7 @@
 #include "SVArchiveHeaderEditDlg.h"
 #include "SVVisionProcessorHelper.h"
 #include "BasicValueObject.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -396,9 +397,9 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 
 	if(!bResult)
 	{
-		CString s;
-		s.Format("ERROR: Create Archive File: %s Failed",	(LPCTSTR)csFileArchivePath);
-		AfxMessageBox(s);
+		SVString s = SvUl_SF::Format(SvO::Error_ArchiveTool_CreateFileFailed,	(LPCTSTR)csFileArchivePath);
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s.c_str(), StdMessageParams, SvOi::Err_10036 ); 
 		return FALSE;
 	}
 	
@@ -571,9 +572,9 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 
 					if ( msvError.msvlErrorCd == -3 )
 					{ //should not ever get here since the path is validated above
-						CString temp;
-						temp.Format ("Path/File not found:  %s", csImagePath);
-						AfxMessageBox (temp);
+						SVString temp = SvUl_SF::Format (SvO::Error_PathFileNotFound, csImagePath);
+						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, temp.c_str(), StdMessageParams, SvOi::Err_10037 ); 
 
 						bOk = FALSE;
 					}

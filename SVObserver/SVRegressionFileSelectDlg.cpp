@@ -9,10 +9,15 @@
 // * .Check In Date   : $Date:   08 Oct 2014 13:46:16  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVRegressionFileSelectDlg.h"
 #include "SVMFCControls/SVFileDialog.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -99,7 +104,8 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 		{
 			if (0 != m_sRegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
 			{
-				AfxMessageBox(_T("Selection Error:  A .bmp file must be selected."));
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_NoBmpFileSelected, StdMessageParams, SvOi::Err_10187 ); 
 				m_sRegTestFiles = _T("");
 			}
 

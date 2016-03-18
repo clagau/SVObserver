@@ -77,7 +77,8 @@ void RangeXDialogClass::OnBnClickedOk()
 		if( S_OK != hres)
 		{
 			bOK = false;
-			AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, errorMsg, StdMessageParams, hres); 
 		}
 	}
 

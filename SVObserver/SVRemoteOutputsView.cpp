@@ -29,6 +29,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteOutputsView, CListView )
@@ -573,12 +574,14 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				int pos = static_cast<int>(pRemoteOutput->GetInputValueObjectName().find(_T("Trigger Count") ));
 				if( bFirst && pos != SVString::npos )
 				{
-					AfxMessageBox(_T("Trigger Count Cannot Be deleted"),MB_OK );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RemoteOutput_TriggerCountDeleteError, StdMessageParams, SvOi::Err_10194 ); 
 				}
 				else
 				{
-					int l_iResponse = AfxMessageBox(_T("Are You Sure you want to delete this Output?"), MB_YESNO );
-					if( l_iResponse == IDYES )
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::RemoteOutput_DeletingOutput, StdMessageParams, SvOi::Err_10195, NULL, nullptr, MB_YESNO ); 
+					if( IDYES == result )
 					{
 						pConfig->DeleteRemoteOutputEntry( l_strRemoteGroup, pRemoteOutput );
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
@@ -603,9 +606,10 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				{
 					CString l_strGroup = pOutputGroup->GetGroupName().c_str();
 					CString l_strMsg;
-					l_strMsg.Format( _T("Are you sure you want to delete All Entries for %s"), l_strGroup );
-					int imbRet = AfxMessageBox( l_strMsg, MB_YESNO );
-					if( imbRet == IDYES )
+					l_strMsg.Format( SvO::RemoteOutput_DeletingAllOutput, l_strGroup );
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, l_strMsg, StdMessageParams, SvOi::Err_10196, NULL, nullptr, MB_YESNO ); 
+					if( IDYES == result )
 					{
 						// Delete all DLL entries
 						pConfig->DeleteRemoteOutput( l_strGroup );

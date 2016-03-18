@@ -21,6 +21,12 @@ namespace Seidenader { namespace SVOGui
 	const TCHAR* const Filter_NoFilterAvailable = _T( "(No Filter Available)" );
 	const TCHAR* const Filter_NoFilter = _T( "(No Filter)" );
 	const TCHAR* const ScintillaControlName = _T("Scintilla");
+	const TCHAR* const   Error_InvalidFormula = _T("An Invalid Formula has been detected.\nThe Formula must be valid to exit this dialog.");
+	const TCHAR* const   Error_CreationFilterFailed = _T("Creation of Filter Failed");
+	const TCHAR* const   Error_ToolPositionError = _T("Changing image source has placed the tool outside of the selected source image.  Please either: "
+		"select a new image source, resize the image source to contain this tool, or resize/position this tool to fit on the source image.");
+	const TCHAR* const   UnKnownFileFormat = _T("Unknown File Format!");
+	const TCHAR* const   FailedToSaveImage = _T("Unable to Save Image");
 } /* namespace SVOGui */ } /* namespace Seidenader */
 
 namespace SvOg = Seidenader::SVOGui;

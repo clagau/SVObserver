@@ -30,6 +30,9 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -244,7 +247,8 @@ BOOL SVImageClass::DestroyImage()
 
 		if ( ! bOk )
 		{
-			AfxMessageBox( "Failed to destroy the image object!", MB_ICONEXCLAMATION );
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::ImageClass_DestroyError, StdMessageParams, SvOi::Err_10051 ); 
 		}
 	}
 

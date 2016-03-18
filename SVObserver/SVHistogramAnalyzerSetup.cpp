@@ -16,6 +16,9 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
 
 IMPLEMENT_DYNAMIC(SVSquare, CStatic)
 
@@ -197,9 +200,14 @@ inline void SVHistogramAnalyzerSetupClass::SetResultRange(const GUID & resultGui
 {
 	SVResultClass * pAnalyzerResult = m_pAnalyzer->GetResultObject(resultGuid);
 	if (pAnalyzerResult)
+	{
 		SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this );
+	}
 	else
-		MessageBox(_T("Cannot find the Result Object"), _T("Error"), MB_OK|MB_ICONEXCLAMATION);
+	{
+		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoResultObject, StdMessageParams, SvOi::Err_10234 );
+	}
 }
 
 void SVHistogramAnalyzerSetupClass::OnBnClickedValleyRange()
