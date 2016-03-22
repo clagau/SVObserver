@@ -10,10 +10,9 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <math.h>
 #include "SVExtentMultiLineStruct.h"
 #include "SVImageExtentClass.h"
-
-#include <math.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

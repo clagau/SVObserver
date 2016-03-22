@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:32:22  $
 //******************************************************************************
 
-#ifndef USETYPEEXCEPTMATCH_H
-#define USETYPEEXCEPTMATCH_H
+#pragma once
 
 #include "SVLoki/TypeTraits.h"
 
@@ -26,6 +25,4 @@ struct UseTypeExceptMatch
 {
 	typedef typename Loki::Select< Loki::IsEqualType<TYPE, EXCEPT>::value, Loki::Type2Type<TYPE>, TYPE >::Result type;
 };
-
-#endif
 

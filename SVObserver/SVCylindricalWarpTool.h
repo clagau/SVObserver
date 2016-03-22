@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:13:42  $
 //******************************************************************************
 
-#ifndef SVCYLINDRICALWARPTOOLCLASS_H
-#define SVCYLINDRICALWARPTOOLCLASS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageClass.h"
@@ -76,6 +75,4 @@ private:
 	// String value object for Source Image Names
 	SVStaticStringValueObjectClass m_svSourceImageName;
 };
-
-#endif // _SVCYLINDRICALWARPTOOLCLASS_H
 

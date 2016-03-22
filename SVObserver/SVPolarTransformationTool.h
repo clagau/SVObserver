@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
 
-#ifndef SVPOLARTRANSFORMATIONTOOL_H
-#define SVPOLARTRANSFORMATIONTOOL_H
+#pragma once
 
 #include "SVTool.h"
 #include "SVValueObjectImpl.h"
@@ -51,6 +50,4 @@ private:
 #pragma endregion Member Variables
 };
 
-
-#endif
 

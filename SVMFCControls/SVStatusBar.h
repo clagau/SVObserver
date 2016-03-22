@@ -9,22 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:13:48  $
 //******************************************************************************
 
-#ifndef SVSTATUSBAR_H
-#define SVSTATUSBAR_H
+#pragma once
 
-/*
-static UINT indicators[] =
-{
-	ID_SEPARATOR,
-	ID_INDICATOR_INFO,
-	ID_INDICATOR_MODE,
-	ID_INDICATOR_USER,
-	ID_INDICATOR_FREE_MEMORY,
-	ID_INDICATOR_CAPS,
-	ID_INDICATOR_NUM,
-	ID_INDICATOR_SCRL,
-};
-*/
+#include "SVOResource\resource.h"
 
 static UINT indicators[] =
 {
@@ -58,6 +45,4 @@ public:
 	CString m_strFbwfText; ///< for file based write filter information
 
 };
-
-#endif
 

@@ -10,13 +10,12 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/assign/list_inserter.hpp>
-
-#include <functional>
-#include <algorithm>
-#include <string>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/assign/list_inserter.hpp>
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <string>
 #include "SVSoftwareTriggerDevice.h"
 #include "SVTimerLibrary/SVMMTimer.h"
 

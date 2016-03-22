@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:32:58  $
 // ******************************************************************************
 
-#ifndef INCL_SVDCAMACQUISITIONPROXY_H
-#define INCL_SVDCAMACQUISITIONPROXY_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 
@@ -36,5 +35,4 @@ public:
 
 	virtual bool IsCameraOnline() const=0;
 };
-#endif
 

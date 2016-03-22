@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:42:30  $
 //******************************************************************************
 
-#ifndef _SVEVENTLOGCLASS_H
-#define _SVEVENTLOGCLASS_H
+#pragma once
 
 #include "SVEventRecordStruct.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -47,5 +46,4 @@ private:
 	unsigned char* m_pucCurrent;
 };
 
-#endif
 

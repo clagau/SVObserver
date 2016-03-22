@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:16:16  $
 //******************************************************************************
 
-#ifndef SVIPRESULTITEMDATA_H
-#define SVIPRESULTITEMDATA_H
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 
@@ -36,5 +35,4 @@ protected:
 
 };
 
-#endif
 

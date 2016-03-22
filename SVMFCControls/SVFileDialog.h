@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <afxdlgs.h>
+//Moved to precompiled header: #include <afxdlgs.h>
 #pragma endregion Includes
 
 namespace Seidenader

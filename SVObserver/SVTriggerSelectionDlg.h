@@ -8,12 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:52:32  $
 //******************************************************************************
-#ifndef INCL_SVTRIGGERSELECTIONDLG_H
-#define INCL_SVTRIGGERSELECTIONDLG_H
 
-#include <map>
+#pragma once
+
+//Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
-#include "afxwin.h"
 
 typedef std::map<SVString, int> SVTriggerNameIdList;
 
@@ -47,6 +46,3 @@ private:
 public:
 	afx_msg void OnLbnDblclkTriggerList();
 };
-
-#endif
-

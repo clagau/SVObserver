@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:57:10  $
 //******************************************************************************
 
-#ifndef SVUTILITIES_H
-#define SVUTILITIES_H
+#pragma once
 
-#include <deque>
+//Moved to precompiled header: #include <deque>
 #include "SVSecurity/SVSecurityManager.h"
 
 class SVUtilitiesClass  
@@ -34,6 +33,4 @@ private:
 	BOOL ClearMenu (CMenu *pMenu);
 
 };
-
-#endif
 

@@ -8,11 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:36:40  $
 //******************************************************************************
-#ifndef SVTIMERCALLBACKIMPL_H
-#define SVTIMERCALLBACKIMPL_H
 
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+#pragma once
+
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVTimerCallback.h"
 
 template <typename T, typename R>
@@ -34,6 +34,4 @@ public:
 	void Bind(T* pObj, MemFunc func) { m_func = func; m_pObj = pObj; }
 	virtual void Notify(const SVString& listenerTag) { if (m_pObj) m_func(m_pObj, listenerTag); }
 };
-
-#endif
 

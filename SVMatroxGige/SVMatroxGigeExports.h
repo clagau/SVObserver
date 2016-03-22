@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:18  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGEEXPORTS_H
-#define SVMATROXGIGEEXPORTS_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
@@ -74,6 +73,4 @@ HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, S
 HRESULT WINAPI SVDigitizerInternalTriggerUnregisterAll( unsigned long p_ulHandle );
 
 HRESULT WINAPI SVDigitizerScanForCameras();
-
-#endif
 

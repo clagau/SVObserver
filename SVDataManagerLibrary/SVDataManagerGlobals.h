@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:53:46  $
 //******************************************************************************
 
-#ifndef SVDATAMANAGERGLOBALS_H
-#define SVDATAMANAGERGLOBALS_H
+#pragma once
 
 #define SV_DATAMANAGER_MAXNAME_LENGTH 128
 #define MAXIMUM_DATAMANAGER_DEPTH   50000
@@ -20,5 +19,4 @@
 #define SV_NBRCHARS(x)  sizeof (x) /  sizeof (TCHAR)
 
 
-#endif // #ifndef SVDATAMANAGERGLOBALS_H
 

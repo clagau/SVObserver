@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:48:00  $
 //******************************************************************************
 
-#ifndef _INC_SVREMOTEINPUTOBJECT_INCLUDED
-#define _INC_SVREMOTEINPUTOBJECT_INCLUDED
+#pragma once
 
 #include "SVInputObject.h"
 
@@ -40,6 +39,3 @@ private:
 	CRITICAL_SECTION	m_hCriticalSection;
 	_variant_t				m_vtRemoteCache;
 };
-
-#endif /* _INC_SVREMOTEINPUTOBJECT_INCLUDED */
-

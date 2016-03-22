@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:40:00  $
 //******************************************************************************
 
-#ifndef _SVEXTENTOFFSETSTRUCT_H
-#define _SVEXTENTOFFSETSTRUCT_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVExtentPointStruct.h"
 
@@ -81,6 +76,4 @@ struct SVExtentOffsetStruct
 
 	double m_dRotationAngle;
 };
-
-#endif //_SVEXTENTOFFSETSTRUCT_H
 

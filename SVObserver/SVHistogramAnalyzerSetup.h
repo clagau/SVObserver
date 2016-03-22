@@ -9,13 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:46:44  $
 //******************************************************************************
 
-#ifndef SVANALYZERHISTOGRAMSETUPCLASS_H
-#define SVANALYZERHISTOGRAMSETUPCLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
 
 #include "SVTaskObjectInterfaceClass.h"
 #include "SVMFCControls\SVHistogram.h"
@@ -135,5 +129,4 @@ public:
 	SVSquare m_secondSquare;
 	SVSquare m_valleySquare;
 };
-#endif
 

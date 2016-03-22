@@ -17,14 +17,12 @@
 *
 ****/
 
-#if _MSC_VER > 1000
 #pragma once
-#endif
 
 #if !defined(_INC_VARIANTOBJ)
 #define _INC_VARIANTOBJ
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 
 #pragma warning(push)
 #pragma warning(disable:4290)

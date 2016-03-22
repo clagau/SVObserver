@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
 //******************************************************************************
 
-#ifndef SVBARCODEANALYZERCLASS_H
-#define SVBARCODEANALYZERCLASS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
@@ -86,6 +85,4 @@ private:
 
 	bool m_bHasLicenseError;
 };
-
-#endif // !defined(AFX_SVBARCODEANALYZERCLASS_H__A8960E74_74C9_11D3_A7C8_00106F010A93__INCLUDED_)
 

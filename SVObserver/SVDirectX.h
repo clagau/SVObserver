@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:10:24  $
 //******************************************************************************
 
-#ifndef SVDIRECTX_H
-#define SVDIRECTX_H
+#pragma once
 
-#include <ddraw.h>
+//Moved to precompiled header: #include <ddraw.h>
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 
 class SVDirectX
@@ -59,6 +58,3 @@ private:
 
 	void LocalClear();
 };
-
-#endif
-

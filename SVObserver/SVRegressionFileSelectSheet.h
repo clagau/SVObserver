@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   23 Apr 2013 14:41:56  $
 // ******************************************************************************
 
-#ifndef SVREGRESSIONFILESELECTSHEET_H
-#define SVREGRESSIONFILESELECTSHEET_H
+#pragma once
 
 #include "SVRegressionTestStruct.h"
 #include "SVVirtualCamera.h"
@@ -71,11 +70,4 @@ private: //data members
 	CList<RegressionTestStruct*,RegressionTestStruct*> *m_pRegressionList;
 
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   08 May 2013 15:22:46  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGECALLBACKSTRUCT_H
-#define SVMATROXGIGECALLBACKSTRUCT_H
+#pragma once
 
-#include <deque>
+//Moved to precompiled header: #include <deque>
 #include "SVTimerLibrary/SVClock.h"
 
 struct SVMatroxGigeCallbackStruct
@@ -29,6 +28,4 @@ public:
 };
 
 typedef std::deque<SVMatroxGigeCallbackStruct*> SVMatroxGigeCallbackStructPtrArray;
-
-#endif
 

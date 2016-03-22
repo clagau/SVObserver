@@ -77,9 +77,6 @@
     <ClInclude Include="SVRegistry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVStatusLibrary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MessageManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>

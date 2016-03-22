@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:18:30  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_IMAGE_INTERFACE_H
-#define SV_MATROX_IMAGE_INTERFACE_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVMatroxEnums.h"
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
@@ -133,6 +132,4 @@ private:
 	static void AdaptiveThreshold( unsigned char* input, unsigned char* bin, int width, int height, int stride, float interval );
 
 };
-
-#endif // SV_MATROX_IMAGE_INTERFACE_H
 

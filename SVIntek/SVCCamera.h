@@ -9,10 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:32:26  $
 // ******************************************************************************
 
-#ifndef _SVCCAMERA_H
-#define _SVCCAMERA_H
+#pragma once
 
 #include "Intek\camera.h"
-
-#endif // _SVCCAMERA_H
 

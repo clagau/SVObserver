@@ -8,8 +8,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/bind.hpp>
-#include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "ImageController.h"
 #include "GuiCommands\GetImage.h"
 #include "GuiCommands\GetAllowedImageList.h"

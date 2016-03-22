@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 12:40:02  $
 //******************************************************************************
 
-#ifndef SVSTATISTICSTOOL_H
-#define SVSTATISTICSTOOL_H
+#pragma once
 
 #include "SVTool.h"
 
@@ -100,6 +99,4 @@ protected:
 	SVInObjectInfoStruct        m_inputObjectInfo;
 
 };
-
-#endif	//#ifndef SVSTATISTICSTOOL_H
 

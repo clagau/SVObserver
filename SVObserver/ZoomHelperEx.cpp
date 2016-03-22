@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "ZoomHelperEx.h"
 #include "SVOMFCLibrary\ZoomHelper.h"
-#include <algorithm>
+//Moved to precompiled header: #include <algorithm>
 #pragma endregion Includes
 
 int ZoomHelperEx::s_InstanceCount = 0;

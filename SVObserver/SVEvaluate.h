@@ -9,20 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:21:38  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
-#ifndef SVEVALUATE_H
-#define SVEVALUATE_H
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMathContainer.h"
 
@@ -198,13 +185,4 @@ class SVEvaluateEndAngleClass : public SVEvaluateClass
 public:
 	SVEvaluateEndAngleClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVEVALUATE_END_ANGLE );
 };
-
-
-
-
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	// SVEVALUATE_H
 

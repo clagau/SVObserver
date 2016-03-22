@@ -8,13 +8,13 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   17 Dec 2014 07:31:18  $
 //******************************************************************************
-#ifndef _THREADMANAGEREXPORTS_
-#define _THREADMANAGEREXPORTS_
 
-#include <comdef.h>
+#pragma once
+
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <list>
+//Moved to precompiled header: #include <string>
 #include "SVThreadManagerImpl.h"
-#include <list>
-#include <string>
 
 // GetThreadInfo will create a list of information about each thread.
 // the list will be a comma seperated list of number, name, priority, Affinity
@@ -48,7 +48,4 @@ HRESULT WINAPI SVRemove( HANDLE p_hThread );
 HRESULT WINAPI SVStartAffinityMgnt();
 // Stop resets affinities to all processors and kills the dummy.
 HRESULT WINAPI SVStopAffinityMgmt();
-
-
-#endif
 

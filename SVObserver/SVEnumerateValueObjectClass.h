@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:26:50  $
 //******************************************************************************
 
-#ifndef SVENUMERATEVALUEOBJECTCLASS_H
-#define SVENUMERATEVALUEOBJECTCLASS_H
+#pragma once
 
-#include <vector>
-#include <utility>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
@@ -93,6 +92,4 @@ private:
 	SvCl::SVObjectCStringArrayClass m_enumStringTable;
 #pragma endregion Member Variables
 };
-
-#endif
 

@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   08 May 2013 15:28:14  $
 // ******************************************************************************
 
-#ifndef SVOREQUESTCLASS_H
-#define SVOREQUESTCLASS_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVOResponseClass.h"
@@ -80,6 +79,4 @@ private:
 	SVOResponseClass mResponse;
 
 };
-
-#endif
 

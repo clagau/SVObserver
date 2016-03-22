@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:17:48  $
 //******************************************************************************
 
-#ifndef SVMATROXGRAPHICSINTERFACE_H
-#define SVMATROXGRAPHICSINTERFACE_H
+#pragma once
 
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
@@ -39,6 +38,4 @@ public:
 	static SVStatusCode Destroy( SVMatroxGraphics& p_rGraphicsID );
 
 };
-
-#endif
 

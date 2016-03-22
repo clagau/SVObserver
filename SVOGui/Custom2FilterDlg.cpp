@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <limits.h>
-#include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <limits.h>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "Custom2FilterDlg.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVMFCControls/SVFileDialog.h"

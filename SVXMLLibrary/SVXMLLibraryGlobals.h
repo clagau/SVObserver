@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:52:22  $
 //******************************************************************************
 
-#ifndef SVXMLLIBRARYGLOBALS_H
-#define SVXMLLIBRARYGLOBALS_H
+#pragma once
 
 // CalculateNodeCheckSums
 extern const long g_lXMLCheckSumCreate;
@@ -34,8 +33,4 @@ extern const WCHAR*	g_wcsIsActive;
 extern const WCHAR* g_wcsFormatVersion;
 extern const WCHAR* g_wcsRevisionAtt;
 extern const char*  g_csCheckSum;
-
-// Other
-
-#endif // #ifndef SVXMLLIBRARYGLOBALS_H
 

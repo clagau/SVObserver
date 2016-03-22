@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:49:04  $
 //******************************************************************************
 
-#ifndef SVCAMERADATAINPUTOBJECT_H
-#define SVCAMERADATAINPUTOBJECT_H
+#pragma once
 
 #include "SVInputObject.h"
 
@@ -24,6 +23,4 @@ public:
 
 	virtual HRESULT Read(_variant_t& p_rValue);
 };
-
-#endif
 

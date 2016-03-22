@@ -9,58 +9,7 @@
 // * .Check In Date   : $Date:   26 Apr 2013 14:52:32  $
 // ******************************************************************************
 
-#ifndef _SVINTEKENUMS_H
-#define _SVINTEKENUMS_H
-
-/*
-	DeviceParamDeviceDigNum         = 100,  // SVObserver Parameter
-	DeviceParamDeviceName           = 101,  // SVObserver Parameter
-	DeviceParamDeviceChannelName    = 102,  // SVObserver Parameter
-
-	DeviceParamVendorId             = 103,  // DLL Parameter
-	DeviceParamVendorName           = 104,  // DLL Parameter
-	DeviceParamModelName            = 105,  // DLL Parameter
-
-	// physical camera params
-	DeviceParamSerialNumber         = 1000,  // DLL Parameter
-	DeviceParamSerialNumberString   = 1001,  // DLL Parameter
-	DeviceParamRegisters            = 1006,
-	DeviceParamSizeBands            = 1009,
-	DeviceParamFormatStrings        = 1011,
-	DeviceParamFormat7Support       = 1012,
-	DeviceParamOutputStrobePulse    = 1014,
-	DeviceParamStrobePulseDelay     = 1015,
-	DeviceParamStrobePulseDuration  = 1016,
-	DeviceParamCameraTriggerPin     = 1017,
-	DeviceParamCameraStrobePin      = 1018,
-	DeviceParamTriggerMode          = 1021,
-	DeviceParamNumCameraQueuedTriggers = 1022,
-	DeviceParamTestPattern          = 1023,
-	DeviceParamShutterDelay			= 1024,
-	DeviceParamStrobeStartMode      = 1025,
-	DeviceParamTriggerQueueMode     = 1026,
-	DeviceParamStrobePulseAdvance   = 1027,
-	DeviceParamStrobePulseMultiplier= 1033,
-	DeviceParamNumCameraBuffers     = 1034,
-
-	// Imaging parameters
-	DeviceParamCameraFormats  = 4000,
-	DeviceParamLightReference = 4001,
-	DeviceParamLut            = 4002,
-
-	// Acquisition I/O parameters
-	DeviceParamAcquisitionTriggerSelection = 5000,	// ?? not used
-	DeviceParamAcquisitionTriggerType      = 5001,	// external, software, software grab
-	DeviceParamAcquisitionTriggerName      = 5002,	// NOT USED YET; will when connecting triggers with acquisition devices
-
-	DeviceParamAcquisitionTriggerEdge      = 5003,  // Internal Parameters Only - Rising or Falling
-	DeviceParamAcquisitionStrobeEdge       = 5013,  // Internal Parameters Only - Rising or Falling
-
-	DeviceParamIOStrobeInvert = 5100,
-	DeviceParamIOTriggerInvert = 5101,
-
-	DeviceParamCameraTriggerMode = 5200,
-//*/
+#pragma once
 
 enum SVIntekParameterDCamEnum
 {
@@ -120,6 +69,4 @@ enum SVIntekParameterDCamEnum
 	SVIntekBeginTrackParameters = 99998,
 	SVIntekEndTrackParameters	= 99999
 };
-
-#endif // _SVINTEKENUMS_H
 

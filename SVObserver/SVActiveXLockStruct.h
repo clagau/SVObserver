@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:26:50  $
 //******************************************************************************
 
-#ifndef SVACTIVEXLOCKSTRUCT_H
-#define SVACTIVEXLOCKSTRUCT_H
+#pragma once
 
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 
@@ -34,6 +33,4 @@ struct SVActiveXLockStruct
 	SVSmartHandlePointer m_ImageHandlePtr;
 
 };
-
-#endif
 

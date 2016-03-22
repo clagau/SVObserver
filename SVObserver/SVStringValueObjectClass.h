@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:15:24  $
 //******************************************************************************
 
-#ifndef SVSTRINGVALUEOBJECTCLASS_H
-#define SVSTRINGVALUEOBJECTCLASS_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
@@ -68,6 +67,4 @@ private:
 	void LocalInitialize();
 
 };
-
-#endif
 

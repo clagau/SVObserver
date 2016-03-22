@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
 //******************************************************************************
 
-#ifndef SVJSONCOMMANDSERVERSOCKET_H
-#define SVJSONCOMMANDSERVERSOCKET_H
+#pragma once
 
-#include <deque>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVSocketLibrary/SVJsonPacket.h"
 #include "SVSocketLibrary/SVServerSocket.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
@@ -65,6 +64,4 @@ private:
 	SVWriteDeque m_WriteQueue;
 
 };
-
-#endif
 

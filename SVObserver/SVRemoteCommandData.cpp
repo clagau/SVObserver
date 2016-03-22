@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <Objidl.h>
+//Moved to precompiled header: #include <Objidl.h>
 #include "SVObserver.h"
 #include "SVObserver_i.h"
 #include "SVRemoteCommandData.h"

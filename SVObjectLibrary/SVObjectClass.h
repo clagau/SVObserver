@@ -11,8 +11,8 @@
 
 #pragma once
 #pragma region Includes
-#include <set>
-#include <vector>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <vector>
 
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVStatusLibrary/SVErrorClass.h"

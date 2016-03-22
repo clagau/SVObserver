@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 07:16:32  $
 //******************************************************************************
 
-#ifndef SVACQUISITIONBUFFERINTERFACE_H
-#define SVACQUISITIONBUFFERINTERFACE_H
+#pragma once
 
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageBufferInterface.h"
@@ -30,6 +29,4 @@ public:
 	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer ) = 0;
 
 };
-
-#endif
 

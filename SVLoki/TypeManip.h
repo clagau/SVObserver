@@ -26,10 +26,9 @@
 
 // Last update: Oct 17, 2002
 
-#include "static_check.h"
+#pragma once
 
-#ifndef TYPEMANIP_INC_
-#define TYPEMANIP_INC_
+#include "static_check.h"
 
 #pragma warning (push)
 #pragma warning (disable : 4244)
@@ -280,6 +279,4 @@ struct TypeTag
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma warning (pop)
-
-#endif // TYPEMANIP_INC_
 

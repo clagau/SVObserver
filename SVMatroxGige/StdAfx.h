@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:36:26  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 #pragma warning( disable: 4995 )	// deprecated warnings
@@ -22,11 +21,11 @@
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINNT WINVER	// Change this to the appropriate value to target other versions of Windows.
 #endif						
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows XP or later.
-#define _WIN32_WINDOWS 0x0501 // Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINDOWS WINVER // Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
@@ -46,35 +45,35 @@
 #define _SECURE_SCL 0
 #endif
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>         // MFC core and standard components
+#include <afxcmn.h>			// MFC support for Windows Common Controls
+#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>
 
-#ifndef _AFX_NO_OLE_SUPPORT
-#include <afxole.h>         // MFC OLE classes
-#include <afxodlgs.h>       // MFC OLE dialog classes
-#include <afxdisp.h>        // MFC Automation classes
-#endif // _AFX_NO_OLE_SUPPORT
+#include <ctime>			//Used by static library
+#include <comdef.h>
+#include <deque>
+#include <list>				//Used by static library
+#include <map>
+#include <set>				//Used by static library
+#include <stack>
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <utility>
+#include <vector>
 
+#include <boost/assign/list_of.hpp>
+#include <boost/config.hpp>
+#include <boost/function.hpp>							//Used by static library
+#include <boost/multi_index_container.hpp>				//Used by static library
+#include <boost/multi_index/member.hpp>					//Used by static library
+#include <boost/multi_index/ordered_index.hpp>			//Used by static library
+#include <boost/utility.hpp>
 
-#ifndef _AFX_NO_DB_SUPPORT
-#include <afxdb.h>			// MFC ODBC database classes
-#endif // _AFX_NO_DB_SUPPORT
-
-#ifndef _AFX_NO_DAO_SUPPORT
-#include <afxdao.h>			// MFC DAO database classes
-#endif // _AFX_NO_DAO_SUPPORT
-
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
-#ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
-#endif // _AFX_NO_AFXCMN_SUPPORT
-
-#include <algorithm>
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-
+#pragma endregion Precompiled Headers

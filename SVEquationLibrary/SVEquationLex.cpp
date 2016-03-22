@@ -13,8 +13,8 @@
 #include "SVEquationLex.h"
 #include "SVEquationBase.h"
 
-#include <iostream>
-
+//Moved to precompiled header: #include <iostream>
+// Using namespace is required for the lex.yy.cc
 using namespace std;
 
 #pragma warning( push )

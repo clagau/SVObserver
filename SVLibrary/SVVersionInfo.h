@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   22 Apr 2013 13:51:48  $
 // ******************************************************************************
 
-#ifndef VERSIONINFO_H
-#define VERSIONINFO_H
+#pragma once
 
-#include <shlwapi.h>
+//Moved to precompiled header: #include <shlwapi.h>
 
 #pragma comment(lib, "shlwapi")
 
@@ -73,6 +72,4 @@ public:
 
 	static BOOL DllGetVersion(LPCTSTR ModuleName, DLLVERSIONINFO& dvi);
 };
-
-#endif
 

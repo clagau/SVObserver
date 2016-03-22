@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:52:48  $
 //******************************************************************************
-#ifndef INCL_SVCAMERATRIGGERDATA_H
-#define INCL_SVCAMERATRIGGERDATA_H
+
+#pragma once
 
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVDoubleValueObjectClass.h"
@@ -42,6 +42,4 @@ private:
 	void destroy();
 	void SetLineState(long index, double timeStamp, bool state);
 };
-
-#endif
 

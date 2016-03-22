@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:20:30  $
 //******************************************************************************
 
-#ifndef SVOBSERVERTEMPLATE_H
-#define SVOBSERVERTEMPLATE_H
+#pragma once
 
 template< typename SVDataType >
 class SVObserverTemplate
@@ -20,5 +19,4 @@ public:
 
 };
 
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:38:36  $
 //******************************************************************************
 
-#ifndef SVPUBLISHLIST_H
-#define SVPUBLISHLIST_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
@@ -44,5 +43,4 @@ protected:
 
 };
 
-#endif
 

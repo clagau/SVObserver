@@ -9,12 +9,11 @@
 // * .Check In Date   : $Date:   15 May 2013 19:42:32  $
 // ******************************************************************************
 
-#ifndef __SVDEVICEPARAMS_H__
-#define __SVDEVICEPARAMS_H__
+#pragma once
 
-#include <vector>
-#include <map>
-#include <algorithm>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <algorithm>
 #include "SVDeviceParamCollection.h"
 
 class SVDeviceParamStructTestCases
@@ -469,6 +468,3 @@ HRESULT FromVariant( __int64& riValue, const VARIANT& rv );
 HRESULT FromVariant( bool& rlValue, const VARIANT& rv );
 HRESULT FromVariant( SVString& rlValue, const VARIANT& rv );
 HRESULT FromVariant( CString& rlValue, const VARIANT& rv );
-
-#endif //#ifndef __SVDEVICEPARAMS_H__
-

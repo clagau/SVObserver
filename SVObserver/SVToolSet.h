@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 04:24:36  $
 //******************************************************************************
 
-#ifndef SVTOOLSET_H
-#define SVTOOLSET_H
+#pragma once
 
 #include "ObjectInterfaces/IToolSet.h"
 
@@ -175,6 +174,4 @@ private:
 	void init();
 
 };
-
-#endif
 

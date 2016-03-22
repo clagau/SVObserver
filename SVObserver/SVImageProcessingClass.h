@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:54:12  $
 //******************************************************************************
 
-#ifndef AFX_SVIMAGEPROCESSINGCLASS_H
-#define AFX_SVIMAGEPROCESSINGCLASS_H
+#pragma once
 
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -74,6 +73,4 @@ private:
 	const SVImageProcessingClass& operator=( const SVImageProcessingClass& p_rObject );
 
 };
-
-#endif
 

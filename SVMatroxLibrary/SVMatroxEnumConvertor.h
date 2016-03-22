@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:13:00  $
 //******************************************************************************
 
-#ifndef SVMATROXENUMCONVERTOR_H
-#define SVMATROXENUMCONVERTOR_H
+#pragma once
 
 #include "SVContainerLibrary/SVBidirectionalMap.h"
 
@@ -46,6 +45,4 @@ public:
 };
 
 #include "SVMatroxEnumConvertor.inl"
-
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:39:52  $
 //******************************************************************************
 
-#ifndef SVEXTENTLINESTRUCT_H
-#define SVEXTENTLINESTRUCT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVExtentPointStruct.h"
@@ -34,5 +33,4 @@ struct SVExtentLineStruct
 
 typedef SVVector< SVExtentLineStruct > SVExtentLineStructCArray;
 
-#endif
 

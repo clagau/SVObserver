@@ -12,13 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "resource.h"
-#include <math.h>
+//Moved to precompiled header: #include <math.h>
 #pragma warning (disable : 4786)
 #include "SVCameraFilePropertyPageDlg.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVImageTest.h"
-//#include "SVOMFCLibrary/SVFileNameClass.h"
-//#include "SVCameraFormat7Dlg.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary/SVi64ValueDeviceParam.h"

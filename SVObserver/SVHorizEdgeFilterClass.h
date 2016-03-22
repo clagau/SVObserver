@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   09 Aug 2013 09:54:46  $
 //******************************************************************************
 
-#ifndef SVHORIZEDGEFILTERCLASS_H
-#define SVHORIZEDGEFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -24,5 +23,4 @@ protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
 
-#endif	//	SVHORIZEDGEFILTERCLASS_H
 

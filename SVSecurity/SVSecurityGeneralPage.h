@@ -8,8 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 17:02:58  $
 //******************************************************************************
-#ifndef SVSECURITYGENERAL_H
-#define SVSECURITYGENERAL_H
+#pragma once
 
 #define INFO_BUFFER_SIZE 32767
 
@@ -51,9 +50,3 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-

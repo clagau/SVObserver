@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #pragma endregion Includes
 
 class SVNavigateTree  

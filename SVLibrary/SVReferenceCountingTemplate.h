@@ -9,8 +9,6 @@
 // * .Check In Date   : $Date:   22 Apr 2013 13:46:28  $
 // ******************************************************************************
 
-#ifndef SVREFERENCECOUNTINGTEMPLATE_H_
-#define SVREFERENCECOUNTINGTEMPLATE_H_
 #pragma once
 
 // policy interface for RESOURCEMANAGER
@@ -79,6 +77,4 @@ namespace std	// yes this is legal and good practice; see Effective C++ 3rd ed. 
 };
 
 #include "SVReferenceCountingTemplate.inl"
-
-#endif	//#ifndef SVREFERENCECOUNTINGTEMPLATE_H_
 

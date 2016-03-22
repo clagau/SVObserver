@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:18:16  $
 //******************************************************************************
-#ifndef INCL_SVPARSERPROGRESSSTRUCT_H
-#define INCL_SVPARSERPROGRESSSTRUCT_H
+
+#pragma once
 
 struct SVParserProgressStruct
 {
@@ -23,5 +23,4 @@ struct SVParserProgressStruct
 	}
 };
 
-#endif
 

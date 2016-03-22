@@ -10,6 +10,10 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
+#include "SVOResource/resource.h"
+#pragma endregion Includes
+
 namespace Seidenader { namespace SVOGui
 {
 	class SVTextEditDialog : public CDialog

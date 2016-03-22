@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:46:26  $
 //******************************************************************************
 
-#ifndef _SVANALYZERHISTOGRAM_H
-#define _SVANALYZERHISTOGRAM_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
@@ -118,6 +117,4 @@ protected:
 	bool m_accumulate;
 	bool m_dynamicHeight;
 };
-
-#endif   // _SVANALYZERHISTOGRAM_H
 

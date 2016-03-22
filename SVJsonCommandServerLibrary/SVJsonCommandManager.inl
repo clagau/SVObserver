@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Dec 2014 12:22:52  $
 //******************************************************************************
 
-#ifndef SVJSONCOMMANDMANAGER_INL
-#define SVJSONCOMMANDMANAGER_INL
+#pragma once
 
 #include <boost/bind.hpp>
 
@@ -150,6 +149,4 @@ void SVJsonCommandManager< SVCommandProcessor >::ThreadProcess( bool& p_WaitForE
 
 	p_WaitForEvents = true;
 }
-
-#endif
 

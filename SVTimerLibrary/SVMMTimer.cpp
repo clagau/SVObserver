@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <mmsystem.h>
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <mmsystem.h>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVMMTimer.h"
 
 SVMMTimer::SVMMTimer()

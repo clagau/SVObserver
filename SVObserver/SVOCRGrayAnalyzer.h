@@ -9,10 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:55:32  $
 //******************************************************************************
 
-// 19 Ju 1999 - frb.
-//
-#ifndef SVOCRGRAYANALYZER_H
-#define SVOCRGRAYANALYZER_H
+#pragma once
 
 #include "SVAnalyzer.h"
 
@@ -67,6 +64,4 @@ public:
 	virtual	void DisplayAnalyzerResult( void);
 
 };
-
-#endif //__SVOCRGRAYANALYZER_H__
 

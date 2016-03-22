@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:28:42  $
 //******************************************************************************
-#ifndef SVFILECAMERASTRUCT_H
-#define SVFILECAMERASTRUCT_H
+
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
@@ -30,6 +30,4 @@ struct SVFileCameraStruct
 		imageSize.cy = 480;
 	}
 };
-
-#endif
 

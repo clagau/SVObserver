@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   07 Mar 2014 18:15:32  $
 //******************************************************************************
 
-#ifndef SVFILEACQUISITIONCLASS_H
-#define SVFILEACQUISITIONCLASS_H
+#pragma once
 
 #include "SVAcquisitionClass.h"
 
@@ -54,6 +53,4 @@ protected:
 private:
 	bool mbIsFilesLoaded;
 };
-
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Jun 2013 15:02:02  $
 //******************************************************************************
 
-#ifndef SVGIGEREADIPADDRESS_H
-#define SVGIGEREADIPADDRESS_H
+#pragma once
 
 #include <comdef.h>
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
@@ -22,6 +21,4 @@ struct SVGigeReadIPAddress
 	// Getter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const;
 };
-
-#endif
 

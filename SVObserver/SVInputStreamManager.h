@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:01:40  $
 //******************************************************************************
 
-#ifndef SVINPUTSTREAMMANAGER_H
-#define SVINPUTSTREAMMANAGER_H
+#pragma once
 
-#include <map>
-#include <string>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <string>
 
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVJsonCommandServerLibrary/SVJsonCommandServer.h"
@@ -71,6 +70,4 @@ private:
 	const SVInputStreamManager& operator=( const SVInputStreamManager& p_rObject );
 
 };
-
-#endif
 

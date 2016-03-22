@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:17:54  $
 //******************************************************************************
 
-#ifndef SVIPRESULTDATA_H
-#define SVIPRESULTDATA_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 
 #include "SVIPResultItemData.h"
 #include "SVIPResultItemDefinition.h"
@@ -36,6 +35,4 @@ struct SVIPResultData
 	double m_ToolSetTime;
 
 };
-
-#endif
 

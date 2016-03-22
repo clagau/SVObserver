@@ -13,8 +13,8 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
-#include <comutil.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <comutil.h>
 #include "SVPictureDisplay\DrawObject.h" // for ParamMap typedefs
 #pragma endregion Includes
 

@@ -7,14 +7,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#pragma endregion Includes
-
-
-#include <stdint.h>
-#include <fstream>
-
-
+//Moved to precompiled header: #include <fstream>
 #include "ImageFileUtilities.h"
+#pragma endregion Includes
 
 bool CreateBmpFileFromHdc(const char* FilePath, HDC Context, RECT Area, uint16_t BitsPerPixel)
 {

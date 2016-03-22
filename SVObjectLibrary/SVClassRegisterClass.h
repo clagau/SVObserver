@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:35:22  $
 //******************************************************************************
 
-#ifndef SVCLASSREGISTERCLASS_H
-#define SVCLASSREGISTERCLASS_H
+#pragma once
 
 #include "SVUtilityLibrary/SVGUID.h"
 
@@ -27,6 +26,4 @@ public:
 
 	virtual LPCTSTR GetClassName();
 };	
-
-#endif
 

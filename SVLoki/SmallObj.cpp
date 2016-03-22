@@ -26,9 +26,9 @@
 
 // Last update: March 20, 2001
 #include "StdAfx.h"
+//Moved to precompiled header: #include <cassert>
+//Moved to precompiled header: #include <algorithm>
 #include "SmallObj.h"
-#include <cassert>
-#include <algorithm>
 using namespace Loki;
 
 ////////////////////////////////////////////////////////////////////////////////

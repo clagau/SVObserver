@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <winuser.h>
+//Moved to precompiled header: #include <winuser.h>
 #include "resource.h"
 #include "SVSecuritySetupPage.h"
 #include "SVAccessClass.h"

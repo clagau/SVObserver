@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   19 Dec 2014 04:14:46  $
 //******************************************************************************
 
-#ifndef SVOBJECTSCRIPTPARSERSVX_H
-#define SVOBJECTSCRIPTPARSERSVX_H
+#pragma once
 
+//Moved to precompiled header: #include <map>
 #include "SVObjectScriptParser.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -316,7 +316,6 @@ void std::allocator<NS_ObjectScriptParserSVX::SVObjectScriptAliasStruct>::deallo
 //namespace NS_ObjectScriptParserSVX	// continue namespace
 //{
 
-#include <map>
 
 class SVObjectScriptAliasListClass
 {
@@ -419,14 +418,4 @@ struct SVObjectScriptInputObjectTokenStruct
 	CString strGuid;	// the input object's Guid as a String
 	int iIndex;			// index to access the script stack
 };
-
-
-//******************************************************************************
-//* EXTERN(S):
-//******************************************************************************
-
-
-//}// end namespace NS_ObjectScriptParserSVX
-
-#endif 
 

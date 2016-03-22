@@ -6,8 +6,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 16:04:24  $
 //******************************************************************************
 
-#ifndef CPPTL_JSON_H_INCLUDED
-# define CPPTL_JSON_H_INCLUDED
+#pragma once
 
 # include "forwards.h"
 # include <string>
@@ -1073,6 +1072,4 @@ public: // overridden from ValueArrayAllocator
 
 } // namespace Json
 
-
-#endif // CPPTL_JSON_H_INCLUDED
 

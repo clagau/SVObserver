@@ -7,8 +7,10 @@
 #pragma once
 
 #pragma region Includes
-#include <utility>
-#include <sequential_tree.h>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <sequential_tree.h>
+#include "SVCompareKeys.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 

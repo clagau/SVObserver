@@ -11,12 +11,10 @@
 
 #pragma once
 
-
 // SVTestIODlg dialog
 #include "resource.h"
-#include "afxwin.h"
-#include <map>
-#include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "SVTestIOCallback.h"
 #include "SVTestIOExports.h"
 

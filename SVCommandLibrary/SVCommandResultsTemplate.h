@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:31:42  $
 //******************************************************************************
 
-#ifndef SVCOMMANDRESULTSTEMPLATE_H
-#define SVCOMMANDRESULTSTEMPLATE_H
+#pragma once
 
 #include "SVCommandResultsFacade.h"
 
@@ -36,5 +35,4 @@ protected:
 
 #include "SVCommandResultsTemplate.inl"
 
-#endif
 

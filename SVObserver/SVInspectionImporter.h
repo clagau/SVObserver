@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:02:16  $
 //******************************************************************************
 
-#ifndef INCL_SVINSPECTIONIMPORTER_H
-#define INCL_SVINSPECTIONIMPORTER_H
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVIProgress.h"
@@ -49,5 +48,4 @@ struct SVInspectionImportHelper
 	}
 };
 
-#endif
 

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/ITaskObject.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
@@ -246,9 +246,4 @@ protected:
 private:
 	HRESULT LocalInitialize();
 };	// end class SVTaskObjectClass
-
-////////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
 

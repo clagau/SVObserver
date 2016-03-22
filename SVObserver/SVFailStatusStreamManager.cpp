@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "Stdafx.h"
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVFailStatusStreamManager.h"
 #include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"

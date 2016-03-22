@@ -10,10 +10,10 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <atlbase.h>					// CComVariant
-#include <comdef.h>					// class_bstr_t
-#import <msxml6.dll> // MSXML
-#include "SVDOM.h"					// SVDOMClass, MSXML3, SVBStr (included)
+//Moved to precompiled header: #include <atlbase.h>
+//Moved to precompiled header: #include <comdef.h>	
+#import <msxml6.dll>
+#include "SVDOM.h"
 #include "SVXMLEncryptionClass.h"
 
 #include "SVUtilityLibrary\SVUtilityGlobals.h"

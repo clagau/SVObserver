@@ -14,6 +14,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVOResource\resource.h"
 #include "SVTreeLibrary\ObjectTreeItems.h"
 #include "GridCtrlLibrary\GridCtrl.h"
 #include "SVOMFCLibrary\SVEditControlWithHelp.h"

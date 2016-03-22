@@ -14,12 +14,11 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <algorithm>
 #include "SVDeviceParamCollection.h"
 #include "SVDeviceParams.h"
 #include "SVCustomDeviceParam.h"
-//#include "SVObserverEnums.h"
 #include "SVOMFCLibraryGlobals.h"
-#include <algorithm>
 
 SVDeviceParamIndexer::SVDeviceParamIndexer(const SVDeviceParamMap& map) : m_mapIndexed(map)
 {

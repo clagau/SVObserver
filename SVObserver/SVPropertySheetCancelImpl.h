@@ -9,8 +9,6 @@
 // * .Check In Date   : $Date:   23 Apr 2013 14:38:12  $
 // ******************************************************************************
 
-#ifndef SVPROPERTYSHEETCANCELIMPL_H
-#define SVPROPERTYSHEETCANCELIMPL_H
 #pragma once
 
 #include "ISVCancel.h"
@@ -22,6 +20,4 @@ public:
 	virtual HRESULT GetCancelData(SVCancelData*& ppData);
 	virtual HRESULT SetCancelData(SVCancelData* pData);
 };
-
-#endif  //#ifndef SVPROPERTYSHEETCANCELIMPL_H
 

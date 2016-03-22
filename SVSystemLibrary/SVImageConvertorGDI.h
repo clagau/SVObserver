@@ -10,8 +10,9 @@
 //******************************************************************************
 
 #pragma once
+
 #pragma region Includes
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #pragma endregion Includes
 

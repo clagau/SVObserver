@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 12:07:16  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -19,11 +18,11 @@
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINNT WINVER	// Change this to the appropriate value to target other versions of Windows.
 #endif						
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows XP or later.
-#define _WIN32_WINDOWS 0x0501 // Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINDOWS WINVER // Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
@@ -42,36 +41,26 @@
 #define _SECURE_SCL 0
 #endif
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>         // MFC core and standard components
+#include <afxcmn.h>			// MFC support for Windows Common Controls
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>
 #include <afxpriv.h>
-
-#ifndef _AFX_NO_OLE_SUPPORT
-#include <afxole.h>         // MFC OLE classes
-#include <afxodlgs.h>       // MFC OLE dialog classes
-#include <afxdisp.h>        // MFC Automation classes
-#endif // _AFX_NO_OLE_SUPPORT
-
-
-#ifndef _AFX_NO_DB_SUPPORT
-#include <afxdb.h>			// MFC ODBC database classes
-#endif // _AFX_NO_DB_SUPPORT
-
-#ifndef _AFX_NO_DAO_SUPPORT
-#include <afxdao.h>			// MFC DAO database classes
-#endif // _AFX_NO_DAO_SUPPORT
-
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
-#ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
-#endif // _AFX_NO_AFXCMN_SUPPORT
-
 #include <afxmt.h>
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_STDAFX_H__FB049B2C_049F_11D4_A89D_00106F000C7C__INCLUDED_)
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
+#include <list>				//Used by static library
+#include <map>				//Used by static library
+#include <set>				//Used by static library
+#include <stdio.h>
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <vector>			//Used by static library
+#pragma endregion Precompiled Headers
 

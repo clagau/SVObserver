@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 13:14:26  $
 //******************************************************************************
 
-#ifndef SVJSONCOMMANDDATA_H
-#define SVJSONCOMMANDDATA_H
+#pragma once
 
 #include <string>
 #include "SVUtilityLibrary/SVSharedPtr.h"
@@ -43,6 +42,4 @@ private:
 };
 
 typedef SVSharedPtr< SVJsonCommandData > SVJsonCommandDataPtr;
-
-#endif
 

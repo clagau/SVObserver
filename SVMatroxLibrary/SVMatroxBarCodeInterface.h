@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 14:56:48  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_BAR_CODE_INTERFACE_H
-#define SV_MATROX_BAR_CODE_INTERFACE_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxEnums.h"
 #include "SVMatroxBuffer.h"
@@ -74,6 +69,4 @@ private:
 	static long Convert2MatroxType(SVBarCodeTypesEnum p_eType) ;
 
 };
-
-#endif // SV_MATROX_BAR_CODE_INTERFACE_H
 

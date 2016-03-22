@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:12:42  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_DISPLAY_BUFFER_H
-#define SV_MATROX_DISPLAY_BUFFER_H
+#pragma once
 
 #include "SVMatroxBufferInterface.h"
 
@@ -45,6 +44,4 @@ protected:
 	SVMatroxBufferPtr m_DisplayBufferPtr;
 
 };
-
-#endif // SV_MATROX_DISPLAY_BUFFER_H
 

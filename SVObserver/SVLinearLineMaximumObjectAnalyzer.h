@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:58:48  $
 //******************************************************************************
 
-#ifndef SVLINEARLINEMAXIMUMOBJECTANALYZER_H
-#define SVLINEARLINEMAXIMUMOBJECTANALYZER_H
+#pragma once
 
 #include "SVLinearAnalyzerClass.h"
 #include "SVValueObjectImpl.h"
@@ -46,5 +45,4 @@ private:
 
 };
 
-#endif
 

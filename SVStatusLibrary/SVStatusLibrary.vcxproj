@@ -177,7 +177,6 @@
     <ClInclude Include="SVEventRecordStruct.h" />
     <ClInclude Include="MessageContainer.h" />
     <ClInclude Include="SVRegistry.h" />
-    <ClInclude Include="SVStatusLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MessageManager.inl" />

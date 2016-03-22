@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:48  $
 //******************************************************************************
 
-#ifndef SVGIGEFEATURE_H
-#define SVGIGEFEATURE_H
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
@@ -59,6 +58,4 @@ private:
 	SVGigeFeatureSelector m_selector;
 	SVGigeFeatureStringEnumList m_stringEnums;
 };
-
-#endif
 

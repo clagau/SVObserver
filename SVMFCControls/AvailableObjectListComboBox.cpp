@@ -8,7 +8,7 @@
 
 #pragma region Includes
 #include "Stdafx.h"
-#include <algorithm>
+//Moved to precompiled header: #include <algorithm>
 #include "AvailableObjectListComboBox.h"
 #pragma endregion Includes
 

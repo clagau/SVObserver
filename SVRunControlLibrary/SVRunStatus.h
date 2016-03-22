@@ -9,14 +9,12 @@
 //* .Check In Date   : $Date:   25 Apr 2013 16:21:36  $
 //******************************************************************************
 
-#ifndef SVRUNSTATUS_H
-#define SVRUNSTATUS_H
+#pragma once
 
+//Moved to precompiled header: #include <deque>
 #include "SVImageIndexStruct.h"
 #include "ProductWorkloadInformation.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include <deque>
-
 
 class SVRunStatusClass
 {
@@ -178,6 +176,4 @@ inline DWORD SVRunStatusClass::GetState()
 {
 	return run.state;
 }
-
-#endif
 

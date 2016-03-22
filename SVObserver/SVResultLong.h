@@ -9,20 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:56:52  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
-#ifndef SVRESULTLONG_H
-#define SVRESULTLONG_H
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVResult.h"
 #include "SVValueObject.h"
@@ -66,7 +53,4 @@ inline const GUID & SVLongResultClass::GetInputEmbeddedID() const
 		return SVInvalidGUID;
 	}
 }
-
-
-#endif	// SVRESULTLONG_H
 

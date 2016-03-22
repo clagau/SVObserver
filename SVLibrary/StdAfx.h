@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Sep 2014 13:21:38  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -45,6 +44,10 @@
 #define _SECURE_SCL 0
 #endif
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>
 #include <afxcmn.h>
@@ -54,16 +57,17 @@
 #include <afxdlgs.h>
 #include <afxcoll.h>
 #include <afxext.h>         // MFC extensions
-#include <direct.h>
+
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
+#include <deque>
+#include <iterator>
 #include <lm.h>
-#include <oleauto.h>
-#include <shlobj.h>
-#include <stdlib.h>
+#include <map>				//Used by static library
+#include <set>				//Used by static library
+#include <shlwapi.h>
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <vector>
 
-#include <algorithm>
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-
+#pragma endregion Precompiled Headers

@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 12:59:26  $
 //******************************************************************************
-#ifndef SVBOOLVALUEDEVICEPARAM_H
-#define SVBOOLVALUEDEVICEPARAM_H
+
+#pragma once
 
 #include "SVDeviceParams.h"
 
@@ -52,7 +52,5 @@ public:
 	inline bool& BoolValue(SVDeviceParamWrapper& w) {SVBoolValueDeviceParam* p = w.DerivedValue(p); if (p==NULL) {w = SVBoolValueDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->bValue;}
 	inline bool BoolValue(const SVDeviceParamWrapper& w) {const SVBoolValueDeviceParam* p = w.DerivedValue(p); if (p) return p->bValue; else {ASSERT(FALSE); return 0;} }
 	inline SVDeviceParamWrapper DeviceParam(bool b) {return SVBoolValueDeviceParam(b);}
-#endif
-
 #endif
 

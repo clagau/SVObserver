@@ -12,9 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include <deque>
-#include <stack>
-#include <vector>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <stack>
+//Moved to precompiled header: #include <vector>
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"

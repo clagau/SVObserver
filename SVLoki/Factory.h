@@ -29,12 +29,11 @@
 // 
 // The default error policy is no longer a template-class
 
-#ifndef FACTORY_INC_
-#define FACTORY_INC_
+#pragma once
 
+//Moved to precompiled header: #include <exception>
 #include "LokiTypeInfo.h"
 #include "AssocVector.h"
-#include <exception>
 
 namespace Loki
 {
@@ -147,17 +146,4 @@ namespace Loki
         IdToProductMap associations_;
     };
 } // namespace Loki
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// May 08, 2002: replaced const_iterator with iterator so that self-modifying
-//      ProductCreators are supported. Also, added a throw() spec to what().
-//      Credit due to Jason Fischl.
-// Oct 24, 2002: ported to MSVC 6 by Benjamin Kaufmann.
-//				 Note: The default error policy is no longer a template-class.
-// Feb 22, 2003: Added missing parameter to OnUnknownType B.K.
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // FACTORY_INC_
 

@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:46:36  $
 // ******************************************************************************
 
-#ifndef SVIODIGITALARRAYCLASS_H
-#define SVIODIGITALARRAYCLASS_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVIODigitalStruct.h"
@@ -21,6 +20,4 @@ public:
 	SVIODigitalArrayClass();
 	virtual ~SVIODigitalArrayClass();
 };
-
-#endif
 

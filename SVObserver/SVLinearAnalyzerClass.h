@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   10 Jul 2014 17:44:52  $
 // ******************************************************************************
 
-#ifndef _SVLINEARANALYZERCLASS_H
-#define _SVLINEARANALYZERCLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVAnalyzer.h"
 #include "SVValueBaseNormalizerClass.h"
@@ -80,6 +75,4 @@ protected:
 	SVValueBaseNormalizerClass m_svNormalizer;
 
 };
-
-#endif // _SVLINEARANALYZERCLASS_H
 

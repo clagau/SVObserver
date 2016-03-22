@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVMessage/SVMessage.h"
 
 class SVOCMArchive

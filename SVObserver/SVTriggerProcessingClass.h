@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   23 Jul 2013 18:06:38  $
 //******************************************************************************
 
-#ifndef SVTRIGGERPROCESSINGCLASS_H
-#define SVTRIGGERPROCESSINGCLASS_H
+#pragma once
 
-#include <map>
-#include <set>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVString.h"
 
 class SVTriggerClass;
@@ -61,6 +60,3 @@ private:
 	SVNameTriggerSubsystemMap m_TriggerSubsystems;
 
 };
-
-#endif
-

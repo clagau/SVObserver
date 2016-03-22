@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:52:30  $
 //******************************************************************************
 
-#ifndef SVMEMORYCHECKER_H
-#define SVMEMORYCHECKER_H
+#pragma once
 
 #pragma comment( lib, "Psapi" )
 
@@ -26,5 +25,4 @@ private:
 
 };
 
-#endif
 

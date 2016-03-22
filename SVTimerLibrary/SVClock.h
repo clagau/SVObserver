@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   13 May 2013 11:56:20  $
 //******************************************************************************
 
-#ifndef SVCLOCK_H
-#define SVCLOCK_H
+#pragma once
 
 namespace SVClock
 {
@@ -40,6 +39,4 @@ namespace SVClock
 	SVTimeStamp ConvertFrom( SVConversionEnum p_Units, double p_Time );
 
 };
-
-#endif 
 

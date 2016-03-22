@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:58:56  $
 // ******************************************************************************
 
-#ifndef SVSAPERAMANAGER_H
-#define SVSAPERAMANAGER_H
+#pragma once
 
-#include <corapi.h>
+//Moved to precompiled header: #include <corapi.h>
 
 #include "SVUtilityLibrary/SVString.h"
 
@@ -257,6 +256,4 @@ private:
 	const SVSaperaManager& operator=( const SVSaperaManager& p_rObject );
 
 };
-
-#endif
 

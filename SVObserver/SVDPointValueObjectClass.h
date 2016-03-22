@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:20:56  $
 //******************************************************************************
 
-#ifndef SVDPOINTVALUEOBJECTCLASS_H
-#define SVDPOINTVALUEOBJECTCLASS_H
+#pragma once
 
-#include <assert.h>
-#include <atltypes.h>
+//Moved to precompiled header: #include <assert.h>
+//Moved to precompiled header: #include <atltypes.h>
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVValueObjectClassImpl.h"
@@ -67,6 +66,4 @@ private:
 	void LocalInitialize();
 
 };
-
-#endif
 

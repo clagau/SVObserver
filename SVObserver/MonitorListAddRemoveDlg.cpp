@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <set>
+//Moved to precompiled header: #include <set>
 #include "MonitorListAddRemoveDlg.h"
 #include "MonitorListPropertyDlg.h"
 #pragma endregion Includes

@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   08 May 2013 14:55:54  $
 // ******************************************************************************
 
-#ifndef SVINTEKBUFFERSTRUCT_H
-#define SVINTEKBUFFERSTRUCT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -58,6 +57,4 @@ public:
 This specialization of the CArray template creates a container class that holds a group of SVIntekBufferStructs.
 */
 typedef SVVector< SVIntekBufferStruct > SVIntekBufferStructCArray;
-
-#endif
 

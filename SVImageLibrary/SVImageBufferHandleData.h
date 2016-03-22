@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:44:28  $
 //******************************************************************************
 
-#ifndef SVIMAGEBUFFERHANDLEDATA_H
-#define SVIMAGEBUFFERHANDLEDATA_H
+#pragma once
 
 struct SVImageBufferHandleStruct;
 
@@ -22,6 +21,4 @@ public:
 
 	virtual HRESULT SetHandleData( const SVImageBufferHandleStruct& p_rObject ) = 0;
 };
-
-#endif
 

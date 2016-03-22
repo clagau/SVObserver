@@ -11,8 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#undef max
-#include <limits>
+//Moved to precompiled header: #include <limits>
 #include "SVMetrics.h"
 #pragma endregion Includes
 
@@ -56,4 +55,3 @@ void SVMetrics::Update(double elapsed)
 
 	if (bAvg) { avgTime /= 2.0; }
 }
-

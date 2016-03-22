@@ -11,11 +11,11 @@
 
 #include "stdafx.h"
 #include "SVHardwareManifest.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/assign/list_inserter.hpp>
-#include <map>
-#include <set>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/assign/list_inserter.hpp>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <set>
 
 static const CString SVIM_TRIGGER_SOURCE_IO_BOARD_STRING   ( _T("IO_Board_1") );
 static const CString SVIM_SOFTWARE_TRIGGER_SOURCE_STRING   ( _T("SoftwareTrigger_1") );

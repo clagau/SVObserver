@@ -9,14 +9,17 @@
 //* .Check In Date   : $Date:   19 Dec 2014 04:44:28  $
 //******************************************************************************
 
-#ifndef SVXMLCLASS_H
-#define SVXMLCLASS_H
-
+#pragma once
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
-#include <typeinfo>
+//Moved to precompiled header: #include <typeinfo>
+//Moved to precompiled header: #include <assert.h>
+
+#include "SVVariantCustomTypes.h"
+#include "SVXMLLibraryGlobals.h"
 #include "SVXMLBase.h"
 #include "SVXMLTree.h"
+#include "SVUtilityLibrary\SVUtilityGlobals.h"
 
 class SVXMLEncryptionClass;
 
@@ -572,6 +575,4 @@ protected:
 };
 
 #include "SVXMLClass.inl"
-
-#endif // #ifndef SVXML2_H
 

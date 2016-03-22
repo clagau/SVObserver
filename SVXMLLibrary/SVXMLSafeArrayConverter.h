@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:56:58  $
 //******************************************************************************
-#ifndef INCL_SVXMLSAFEARRAYCONVERTER_H
-#define INCL_SVXMLSAFEARRAYCONVERTER_H
+
+#pragma once
 
 #include "SVXMLClass.h"
 
@@ -28,6 +28,4 @@ private:
 
 	static HRESULT CreateDOMChildSafeArrayNodes(SVXMLClass& rXml, SVXML::IXMLDOMElementPtr& p_roDOMParentElementPtr, long p_lDimension, long* p_plIndices, SAFEARRAY* p_InputSafeArray);
 };
-
-#endif
 

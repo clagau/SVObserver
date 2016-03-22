@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:50:16  $
 // ******************************************************************************
 
-#ifndef SVIOTEST_H
-#define SVIOTEST_H
+#pragma once
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
@@ -45,12 +44,3 @@ public:
 
 	SVIOTriggerLoadLibraryClass m_svTriggers;
 };
-
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-

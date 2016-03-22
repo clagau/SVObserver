@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   25 Apr 2013 19:09:00  $
 // ******************************************************************************
 
-#ifndef _SVTVICLPTEXPORTS_H
-#define _SVTVICLPTEXPORTS_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVTVicLptCallback.h"
 typedef HRESULT ( CALLBACK *SVTVicLptCallbackPtr )( void *,   /* Owner */
                                                void * ); /* Data */ 
@@ -50,5 +49,4 @@ HRESULT WINAPI SVSetParameterValue( unsigned long p_ulIndex, VARIANT *p_pvarValu
 HRESULT WINAPI SVGetParameterCount( unsigned long *p_pulCount );
 HRESULT WINAPI SVGetParameterName( unsigned long p_ulIndex, BSTR *p_pbstrName );
 HRESULT WINAPI SVGetParameterValue( unsigned long p_ulIndex, VARIANT *p_pvarValue );
-#endif    // _SVTVICLPTEXPORTS_H
 

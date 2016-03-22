@@ -11,12 +11,8 @@
 
 #pragma once
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
-#include <float.h>
-#include <math.h>
+//Moved to precompiled header: #include <float.h>
+//Moved to precompiled header: #include <math.h>
 
 #define SVHANDLE_DEFINED
 typedef unsigned long SVHANDLE;

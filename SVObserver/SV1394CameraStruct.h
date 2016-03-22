@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:18:30  $
 //******************************************************************************
 
-#ifndef SV1394CAMERASTRUCT_H
-#define SV1394CAMERASTRUCT_H
+#pragma once
 
 #include "SVCameraStructInterface.h"
 #include "SVContainerLibrary/SVVector.h"
@@ -51,6 +50,4 @@ struct SV1394CameraStruct : public SVCameraStructInterface
 };
 
 typedef SVVector< SV1394CameraStruct > SV1394CameraStructSet;
-
-#endif
 

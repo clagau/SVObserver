@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:34:56  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -19,11 +18,11 @@
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINNT WINVER	// Change this to the appropriate value to target other versions of Windows.
 #endif						
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows XP or later.
-#define _WIN32_WINDOWS 0x0501 // Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINDOWS WINVER // Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
@@ -43,14 +42,35 @@
 #define _SECURE_SCL 0
 #endif
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>
 #include <afxdisp.h>
 
-// TODO: reference additional headers your program requires here
+#include <concrt.h>			//Used by static library
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
+#include <deque>
+#include <guiddef.h>
+#include <map>
+#include <ostream>
+#include <set>
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <typeinfo>
+#include <utility>
+#include <vector>
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_STDAFX_H__BC908BAF_B04B_4CAC_904C_B9F3F299976A__INCLUDED_)
-
+#include <boost/algorithm/string.hpp>
+#include <boost/assign.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/config.hpp>
+#include <boost/foreach.hpp>
+#include <boost/function.hpp>
+#include <boost/scoped_array.hpp>						//Used by static library
+#include <boost/tokenizer.hpp>
+#include <boost/tr1/memory.hpp>
+#pragma endregion Precompiled Headers

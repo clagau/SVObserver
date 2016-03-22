@@ -6,8 +6,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 16:04:22  $
 //******************************************************************************
 
-#ifndef JSON_AUTOLINK_H_INCLUDED
-# define JSON_AUTOLINK_H_INCLUDED
+#pragma once
 
 # include "config.h"
 
@@ -23,6 +22,4 @@
 #  endif
 #  include "autolink.h"
 # endif
-
-#endif // JSON_AUTOLINK_H_INCLUDED
 

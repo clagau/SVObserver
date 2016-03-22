@@ -11,11 +11,11 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <map>
-#include <boost/config.hpp>
-#include <boost/any.hpp>
-#include <iterator>
-#include <deque>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/any.hpp>
+//Moved to precompiled header: #include <iterator>
+//Moved to precompiled header: #include <deque>
 #import <msxml6.dll>					// MSXML
 #include "shellapi.h"
 #include "SVInspectionImporter.h"

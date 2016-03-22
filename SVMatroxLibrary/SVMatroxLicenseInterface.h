@@ -9,9 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:22:12  $
 //******************************************************************************
 
-#ifndef SV_MATROX_LICENSE_INTERFACE
-#define SV_MATROX_LICENSE_INTERFACE
-//#pragma once
+#pragma once
 
 class SVMatroxLicenseInterface
 {
@@ -29,5 +27,3 @@ private:
 	bool m_bMatroxIdentificationLicense;
 	bool m_bMatroxGigELicense;
 };
-
-#endif

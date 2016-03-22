@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVIODoc.h"
 #include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
 #include "SVUtilityLibrary\SVGUID.h"

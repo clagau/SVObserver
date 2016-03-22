@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:30:48  $
 //******************************************************************************
 
-#ifndef SVPPQBAR_H
-#define SVPPQBAR_H
+#pragma once
 
 #include "SVMFCControls\SVWindowBar.h"
 
@@ -107,18 +106,4 @@ protected:
 	CTabCtrl	pqTabCtrl;
 
 };
-
-
-
-
-
-
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio fügt zusätzliche Deklarationen unmittelbar vor der vorhergehenden Zeile ein.
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	// SVPPQBAR_H
 

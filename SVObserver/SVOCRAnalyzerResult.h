@@ -8,12 +8,8 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   15 May 2014 10:44:26  $
 //******************************************************************************
-#ifndef SV_OCR_ANALYZER_RESULT_H
-#define SV_OCR_ANALYZER_RESULT_H
 
-//******************************************************************************
-// Include(s):
-//******************************************************************************
+#pragma once
 
 #include "SVSystemLibrary/SVLockableClass.h"
 #include "SVLVFastOCR.h"
@@ -189,6 +185,4 @@ private:
 	bool m_bHasLicenseError;
 
 };
-
-#endif   // SV_OCR_ANALYZER_RESULT_H
 

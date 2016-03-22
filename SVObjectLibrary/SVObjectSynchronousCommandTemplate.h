@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:00:54  $
 //******************************************************************************
 
-#ifndef SVOBJECTSYNCHRONOUSCOMMANDTEMPLATE_H
-#define SVOBJECTSYNCHRONOUSCOMMANDTEMPLATE_H
+#pragma once
 
 #include "SVUtilityLibrary/SVGUID.h"
 template< typename SVCommandPtr >
@@ -36,6 +35,4 @@ enum
 };
 
 #include "SVObjectSynchronousCommandTemplate.inl"
-
-#endif
 

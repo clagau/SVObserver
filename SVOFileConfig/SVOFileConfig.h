@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 11:31:38  $
 //******************************************************************************
 
-#ifndef SVOFILECONFIG_H
-#define SVOFILECONFIG_H
+#pragma once
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
@@ -58,11 +57,4 @@ public:
 };
 
 extern SVOFileConfigApp theApp;
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

@@ -8,10 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:30:58  $
 //******************************************************************************
-#ifndef INCL_SVPPQCONSTANTS_H
-#define INCL_SVPPQCONSTANTS_H
+#pragma once
 
 #define PPQ_CONDITIONAL_OUTPUT_ALWAYS (_T("Always"))
-
-#endif
 

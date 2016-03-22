@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVObjectAttributeShim.h"
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVObjectNameInfo.h"

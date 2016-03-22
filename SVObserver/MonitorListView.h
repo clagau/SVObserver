@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

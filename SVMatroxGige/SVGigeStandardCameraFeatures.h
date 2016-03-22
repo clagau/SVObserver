@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:36:58  $
 //******************************************************************************
 
-#ifndef SVGIGESTANDARDCAMERAFEATURES_H
-#define SVGIGESTANDARDCAMERAFEATURES_H
+#pragma once
 
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 
@@ -23,6 +22,4 @@ private:
 	SVGigeStandardCameraFeatures();
 	~SVGigeStandardCameraFeatures();
 };
-
-#endif
 

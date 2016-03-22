@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:23:50  $
 //******************************************************************************
 
-#ifndef SVACQUISITIONCONSTRUCTPARAMS_H
-#define SVACQUISITIONCONSTRUCTPARAMS_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVImageLibrary/SVLut.h"
 #include "SVUtilityLibrary/SVString.h"
 
@@ -49,6 +48,4 @@ struct SVAcquisitionConstructParams
 };
 
 typedef std::vector< SVAcquisitionConstructParams > SVAcquisitionConstructParamsVector;
-
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:39:38  $
 //******************************************************************************
 
-#ifndef SVEXTENTPOSITIONCLASS_H
-#define SVEXTENTPOSITIONCLASS_H
+#pragma once
 
 #include "SVExtentEnums.h"
 #include "SVExtentPointStruct.h"
@@ -59,6 +58,4 @@ private:
 	SVExtentPointStruct m_svOldRotationPoint;
 	SVExtentPointStruct m_svOldTranslationOffset;
 };
-
-#endif // _SVEXTENTPOSITIONCLASS_H
 

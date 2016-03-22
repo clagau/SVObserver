@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:02:04  $
 //******************************************************************************
 
-#ifndef SVMATROXBUFFERFACADE_H
-#define SVMATROXBUFFERFACADE_H
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVMatroxTypedefs.h"
@@ -40,6 +39,4 @@ protected:
 };
 
 typedef SVSharedPtr< SVMatroxBufferFacade > SVMatroxBufferPtr;
-
-#endif
 

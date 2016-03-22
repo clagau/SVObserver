@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVDisplayPicture.h"
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "afxwin.h"
 #include "afxcmn.h"
 #pragma endregion Includes

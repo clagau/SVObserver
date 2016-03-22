@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   09 Aug 2013 09:52:00  $
 //******************************************************************************
 
-#ifndef SVCLOSINGFILTERCLASS_H
-#define SVCLOSINGFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -23,5 +22,4 @@ protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
 
-#endif	//	SVCLOSINGFILTERCLASS_H
 

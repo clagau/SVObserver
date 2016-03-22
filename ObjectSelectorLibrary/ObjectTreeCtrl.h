@@ -14,6 +14,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <set>
 #include "SVTreeLibrary\ObjectTreeItems.h"
 #pragma endregion Includes
 

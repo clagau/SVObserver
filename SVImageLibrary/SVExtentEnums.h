@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   26 May 2014 10:23:38  $
 //******************************************************************************
 
-#ifndef _SVTOOLEXTENTENUMS_H
-#define _SVTOOLEXTENTENUMS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 enum SVExtentPropertyEnum
 {
@@ -222,5 +217,4 @@ enum SVExtentDirectionsEnum
 	SVExtentDirectionHorizontal            = 1,
 	SVExtentDirectionVertical           = 2
 };
-#endif // _SVTOOLEXTENTENUMS_H
 

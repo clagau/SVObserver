@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:54:10  $
 // ******************************************************************************
 
-#ifndef SVOCALLBACKCLASS_H
-#define SVOCALLBACKCLASS_H
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVORequestClass.h"
@@ -54,6 +53,4 @@ public:
 
 typedef SVSharedPtr< SVOCallbackClass > SVOCallbackClassPtr;
 typedef SVTQueueObject< SVOCallbackClassPtr > SVCallbackClassPtrQueue;
-
-#endif
 

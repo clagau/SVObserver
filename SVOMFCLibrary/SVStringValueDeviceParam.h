@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 13:14:34  $
 //******************************************************************************
-#ifndef SVSTRINGVALUEDEVICEPARAM_H
-#define SVSTRINGVALUEDEVICEPARAM_H
+
+#pragma once
 
 #include "SVDeviceParams.h"
 
@@ -54,5 +54,4 @@ public:
 	inline SVDeviceParamWrapper DeviceParam(const CString& s) {return SVStringValueDeviceParam(s);}
 #endif
 
-#endif
 

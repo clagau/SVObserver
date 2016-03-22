@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:29:58  $
 //******************************************************************************
 
-#ifndef SVMATHTOOL_H
-#define SVMATHTOOL_H
+#pragma once
 
 #include "SVTool.h"
 
@@ -34,5 +33,3 @@ protected:
 
 	SVMathEquationClass* pMathEquation;
 };
-
-#endif

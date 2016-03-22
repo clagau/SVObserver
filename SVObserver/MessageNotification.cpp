@@ -5,7 +5,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <string>
+//Moved to precompiled header: #include <string>
 #include "MessageNotification.h"
 #include "JsonLib\include\writer.h"
 #include "SVRemoteControlConstants.h"

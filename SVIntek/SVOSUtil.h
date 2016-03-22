@@ -9,10 +9,7 @@
 // * .Check In Date   : $Date:   26 Apr 2013 14:54:52  $
 // ******************************************************************************
 
-#ifndef _SVOSUTILS_H
-#define _SVOSUTILS_H
+#pragma once
 
 #include "osutil.h"
-
-#endif // _SVOSUTILS_H
 

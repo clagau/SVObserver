@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   13 May 2013 11:03:58  $
 //******************************************************************************
 #include "stdafx.h"
-#include <map>
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVCustomParameterBuilder.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVUtilityLibrary/SVString.h"

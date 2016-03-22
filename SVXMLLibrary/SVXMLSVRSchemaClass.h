@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:57:28  $
 //******************************************************************************
 
-#ifndef SVXMLSVRSCHEMACLASS_H
-#define SVXMLSVRSCHEMACLASS_H
+#pragma once
 
 #include "SVDOM.h"		//	SVXML, SVBStr, SVDOMClass
 
@@ -110,6 +109,4 @@ protected:
 
 
 };
-
-#endif // !defined(AFX_SVXMLSVRSCHEMACLASS_H__D0F4B83A_1F86_4F26_B769_74C6B866CED3__INCLUDED_)
 

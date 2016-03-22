@@ -8,10 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   26 Jun 2014 18:29:24  $
 //******************************************************************************
-#pragma once
-#pragma region Includes
-#include "SVMFCControls\AvailableObjectListComboBox.h"
 
+#pragma once
+
+#pragma region Includes
+#include "SVOResource/resource.h"
+#include "SVMFCControls\AvailableObjectListComboBox.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
 #include "SVOGui\ImageController.h"

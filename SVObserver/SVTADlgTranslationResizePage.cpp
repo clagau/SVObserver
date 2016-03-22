@@ -6,9 +6,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <afxctl.h>
-#include <afxdialogex.h>
-#include <limits>
+//Moved to precompiled header: #include <limits>
 #include "SVOResource\resource.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ErrorNumbers.h"

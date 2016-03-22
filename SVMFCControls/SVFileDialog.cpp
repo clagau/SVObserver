@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <Dlgs.h>
+//Moved to precompiled header: #include <Dlgs.h>
 #include "SVFileDialog.h"
 
 #ifdef _DEBUG

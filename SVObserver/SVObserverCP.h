@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:44:12  $
 //******************************************************************************
 
-#ifndef SVOBSERVERCP_H_
-#define SVOBSERVERCP_H_
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 
 /**
 @SVObjectName COM Command Events
@@ -335,5 +334,4 @@ protected:
 	SVInterfacePointerMap m_Interface;
 
 };
-#endif
 

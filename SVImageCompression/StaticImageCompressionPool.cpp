@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <memory>
+//Moved to precompiled header: #include <memory>
 #include "SVImageCompression.h"
 #include "StaticImageCompressionPool.h"
 #include "SVLibrary/SVBStr.h"

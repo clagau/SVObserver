@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <cmath>
+//Moved to precompiled header: #include <cmath>
 #include "SVPatternAnalyzerClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMessage/SVMessage.h"

@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 14:03:24  $
 // ******************************************************************************
 
-#ifndef SVPIPESCONNECTIONDLG_H
-#define SVPIPESCONNECTIONDLG_H
+#pragma once
 
 #include "resource.h"
 #include "SVLibrary/SVDialog.h"
@@ -51,9 +50,4 @@ private:
 	CString mszServerKey;
 	CString GetRegistryKey (CString &szConnection);
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVPIPESCONNECTIONDLG_H__F7A37B0F_CDC6_11D3_A859_00106F000C7C__INCLUDED_)
 

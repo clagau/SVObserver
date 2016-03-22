@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:26:46  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_PATTERN_MODEL_H
-#define SV_MATROX_PATTERN_MODEL_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxTypedefs.h"
 
@@ -45,6 +40,4 @@ protected:
 	void LocalClear();
 
 };
-
-#endif // #ifndef SV_MATROX_PATTERN_MODEL_H
 

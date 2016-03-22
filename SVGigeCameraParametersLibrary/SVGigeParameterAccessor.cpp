@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:57:04  $
 //******************************************************************************
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVGigeParameterAccessor.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"

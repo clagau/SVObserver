@@ -10,6 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <string>
 #include "SVIOTEST.h"
 #include "SVIOTESTDlg.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"

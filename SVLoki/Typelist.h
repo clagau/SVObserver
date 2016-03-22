@@ -38,8 +38,7 @@
 // are all conforming to the C++ Standard.
 
 
-#ifndef TYPELIST_INC_
-#define TYPELIST_INC_
+#pragma once
 
 #include "Nulltype.h"
 #include "TypeManip.h"
@@ -1150,15 +1149,3 @@ namespace Private
 
 	}	// end of namespace TL
 }	// end of namespace Loki
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 09, 2001: Fix bug in parameter list of macros TYPELIST_23 to TYPELIST_27
-//      (credit due to Dave Taylor)
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// May  10, 2002: ported by Rani Sharoni to VC7 (RTM - 9466)
-// Sept 29, 2002: ported by Benjamin Kaufmann to MSVC 6.0
-// Feb	24, 2003: renamed MakeTypeList to MakeTypelist. Fixed a bug in
-//					DerivedToFront.
-////////////////////////////////////////////////////////////////////////////////
-#endif // TYPELIST_INC_
-

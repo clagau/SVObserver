@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <algorithm>
+//Moved to precompiled header: #include <algorithm>
 #include "SVHorizListBox.h"
 
 //undefine max to be able to use std::max instead of a macro

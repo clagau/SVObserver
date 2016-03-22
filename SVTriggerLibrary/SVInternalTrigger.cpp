@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   01 Dec 2014 14:15:24  $
 //******************************************************************************
 #include "stdafx.h"
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVInternalTrigger.h"
-#include <boost/bind.hpp>
 #include "SVSystemLibrary/SVThreadManager.h"
 
 SVInternalTrigger::SVInternalTrigger()

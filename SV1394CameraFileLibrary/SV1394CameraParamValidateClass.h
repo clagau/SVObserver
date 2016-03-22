@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 17:32:58  $
 //******************************************************************************
 
-#ifndef SV1394CAMERAPARAMVALIDATECLASS_H
-#define SV1394CAMERAPARAMVALIDATECLASS_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
@@ -26,6 +25,4 @@ public:
 	HRESULT UpdateParams( SVDeviceParamCollection& p_rFileParams, SVDeviceParamCollection& p_rDeviceParams );
 
 };
-
-#endif
 

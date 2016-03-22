@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   15 May 2014 11:21:44  $
 //******************************************************************************
 
-#ifndef INC_SVOUTPUTOBJECTLIST_INCLUDED
-#define INC_SVOUTPUTOBJECTLIST_INCLUDED
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 
 #include "SVOutputObject.h"
 #include "SVInfoStructs.h"
@@ -74,6 +73,4 @@ private:
 };
 
 #include "SVOutputObjectList.inl"
-
-#endif
 

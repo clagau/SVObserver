@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #pragma once
-#include "afxwin.h"
 
 // CSubSystemTestMFCDlg dialog
 class CSubSystemTestMFCDlg : public CDialog

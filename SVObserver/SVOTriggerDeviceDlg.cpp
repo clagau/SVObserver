@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <map>
-#include <memory>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <memory>
 #include "SVOTriggerDeviceDlg.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVOPropertyPageDlg.h"

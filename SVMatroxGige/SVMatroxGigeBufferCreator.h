@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:39:06  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGEBUFFERCREATOR_H
-#define SVMATROXGIGEBUFFERCREATOR_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
@@ -31,6 +30,4 @@ public:
 };
 
 #include "SVMatroxGigeBufferCreator.inl"
-
-#endif
 

@@ -13,7 +13,7 @@
 #include "SVShapeMaskHelperClass.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVUserMaskOperatorClass.h"
-#include <algorithm>    // std::min, std::max
+//Moved to precompiled header: #include <algorithm>
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 
 SV_IMPLEMENT_CLASS( SVShapeMaskHelperClass, SVShapeMaskHelperClassGuid )

@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:56:50  $
 //******************************************************************************
-#ifndef SVTRIGGERACTIVATORFUNCINTERFACE_H
-#define SVTRIGGERACTIVATORFUNCINTERFACE_H
+
+#pragma once
 
 class SVTriggerActivatorFuncInterface
 {
@@ -17,6 +17,4 @@ public:
 	virtual ~SVTriggerActivatorFuncInterface() {}
 	virtual HRESULT operator()(unsigned long handle) const=0;
 };
-
-#endif
 

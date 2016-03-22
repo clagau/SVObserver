@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:55:12  $
 //******************************************************************************
 
-#ifndef SVRESETSTRUCT_H
-#define SVRESETSTRUCT_H
+#pragma once
 
 enum SVResetStateEnum : unsigned long
 {
@@ -35,5 +34,4 @@ struct SVResetStruct
 
 };
 
-#endif
 

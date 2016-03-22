@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVImageBufferHandleStruct.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageBufferHandleData.h"
 
 SVImageBufferHandleStruct::SVImageBufferHandleStruct()

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:42:58  $
 //******************************************************************************
 
-#ifndef SVREMOTECOMMAND_H
-#define SVREMOTECOMMAND_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #include "SVCommandLibrary/SVCommandTemplate.h"
@@ -55,6 +54,4 @@ protected:
 };
 
 OBJECT_ENTRY_AUTO( __uuidof( SVRemoteCommand ), SVRemoteCommand ) 
-
-#endif
 

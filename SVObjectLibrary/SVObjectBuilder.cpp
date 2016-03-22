@@ -13,10 +13,10 @@
 #include "stdafx.h"
 #pragma warning (push)
 #pragma warning (disable : 4996)
-#include <boost/config.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/assign.hpp>
-#include <boost/foreach.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/tokenizer.hpp>
+//Moved to precompiled header: #include <boost/assign.hpp>
+//Moved to precompiled header: #include <boost/foreach.hpp>
 #include "SVObjectBuilder.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectManagerClass.h"

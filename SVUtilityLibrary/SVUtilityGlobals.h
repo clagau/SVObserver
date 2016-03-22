@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:39:26  $
 //******************************************************************************
 
-#ifndef SVUTILITYGLOBALS_H
-#define SVUTILITYGLOBALS_H
+#pragma once
 
-#include <vector>
-#include <comdef.h>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <comdef.h>
 
 typedef unsigned long SVHANDLE;
 
@@ -59,6 +58,4 @@ void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 HRESULT KeepPrevErrorReturnPrev( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 HRESULT KeepPrevErrorReturnNew( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 
-
-#endif // #ifndef SVUTILITYGLOBALS_H
 

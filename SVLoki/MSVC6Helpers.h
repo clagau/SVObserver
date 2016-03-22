@@ -14,8 +14,8 @@
 // Added qualification ::Loki::Private:: to types from the Private-Namespace
 // Thanks to Adi Shavit
 
-#ifndef MSVC6HELPERS__H
-#define MSVC6HELPERS__H
+#pragma once
+
 /*
 #if !defined (_MSC_VER) || _MSC_VER >= 1300
 #error "please use this header only with MSVC 6.0"
@@ -189,5 +189,4 @@ namespace Loki
 
 
 }
-#endif
 

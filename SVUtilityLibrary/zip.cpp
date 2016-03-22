@@ -1,6 +1,6 @@
-#include <windows.h>
-#include <stdio.h>
-#include <tchar.h>
+#include "stdafx.h"
+//Moved to precompiled header: #include <stdio.h>
+//Moved to precompiled header: #include <tchar.h>
 #include "zip.h"
 
 

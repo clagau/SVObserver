@@ -15,7 +15,7 @@
 	#pragma message( "Including " __FILE__ )
 #endif
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVVector.h"
 
 namespace Seidenader
@@ -85,5 +85,4 @@ namespace Seidenader
 } //Seidenader
 
 namespace SvCl = Seidenader::SVContainerLibrary;
-
 

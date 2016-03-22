@@ -8,8 +8,8 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   22 Apr 2013 15:17:54  $
 // ******************************************************************************
-#ifndef SVMATROXIDENTIFIERENUM_H
-#define SVMATROXIDENTIFIERENUM_H
+
+#pragma once
 
 enum SVMatroxIdentifierEnum
 {
@@ -30,5 +30,4 @@ enum SVMatroxIdentifierEnum
 	SVSystemID,
 	SVIdentifierCount,
 };
-#endif
 

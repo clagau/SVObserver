@@ -14,8 +14,8 @@
 #pragma once
 
 #pragma region Includes
-#include <comdef.h>
-#include <deque>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <deque>
 #include "IObjectSelectorItem.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes

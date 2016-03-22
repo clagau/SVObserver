@@ -9,11 +9,9 @@
 //* .Check In Date   : $Date:   02 Oct 2013 10:00:50  $
 // ******************************************************************************
 
-#define SECURITY_WIN32
-
 #include "stdafx.h"
+//Moved to precompiled header: #include <lm.h>
 #include "SVSecuritySetupSheet.h"
-#include <lm.h>
 #include "SVStatusLibrary/SVRegistry.h"
 #include "resource.h"
 #include "SVAccessClass.h"

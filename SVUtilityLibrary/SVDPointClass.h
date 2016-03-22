@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:20:56  $
 //******************************************************************************
 
-#ifndef _SVDPOINTCLASS_H
-#define _SVDPOINTCLASS_H
+#pragma once
 
 #include "SVString.h"
 
@@ -53,6 +52,4 @@ public:
 private:
 	void local_initialize();
 };
-
-#endif // _SVDPOINTCLASS_H
 

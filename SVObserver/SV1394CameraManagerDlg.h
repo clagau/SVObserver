@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:18:14  $
 //******************************************************************************
 
-#ifndef SV1394CAMERAMANAGERDLG_H
-#define SV1394CAMERAMANAGERDLG_H
+#pragma once
 
 #include "SV1394CameraManager.h"
 #include "SVCameraListBox.h"
@@ -57,9 +56,4 @@ protected:
 	HRESULT Refresh();
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

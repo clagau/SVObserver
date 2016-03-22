@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:39:02  $
 //******************************************************************************
 
-#if !defined(SVMATROXGIGEAPP_H)
-#define SVMATROXGIGEAPP_H
+#pragma once
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
@@ -41,11 +40,3 @@ public:
 };
 
 extern CSVMatroxGigeApp g_svTheApp;
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-

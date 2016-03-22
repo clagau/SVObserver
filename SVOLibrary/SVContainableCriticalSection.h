@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:52:36  $
 // ******************************************************************************
 
-#ifndef SVCONTAINABLECRITICALSECTION_H_
-#define SVCONTAINABLECRITICALSECTION_H_
 #pragma once
 
+//Moved to precompiled header: #include <assert.h>
 #include "SVMultithread.h"
 
 // this class should look mostly like CCriticalSection
@@ -69,6 +68,4 @@ namespace std	// yes this is legal and good practice; see Effective C++ 3rd ed. 
 };
 
 #include "SVContainableCriticalSection.inl"
-
-#endif	//#ifndef SVCONTAINABLECRITICALSECTION_H_
 

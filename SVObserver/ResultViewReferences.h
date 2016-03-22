@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <list>
+//Moved to precompiled header: #include <list>
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVTimerLibrary/SVClock.h"

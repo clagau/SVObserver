@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   26 Mar 2014 09:43:24  $
 //******************************************************************************
 
-#ifndef SVDRAWOBJECT_H
-#define SVDRAWOBJECT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVImageLibrary/SVExtentFigureStruct.h"
@@ -215,10 +214,4 @@ public:
 protected:
 	SVDrawObjectClassArray m_svDrawObjectArray;
 };
-
-/////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

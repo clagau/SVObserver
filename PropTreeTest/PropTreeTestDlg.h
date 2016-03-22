@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   03 Oct 2013 14:43:30  $
 //******************************************************************************
 
-#ifndef PROPTREETESTDLG_H
-#define PROPTREETESTDLG_H
+#pragma once
 
 #include "PropertyTree/PROPTREE.H" // for SVRPropTree
 
@@ -41,6 +40,4 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 };
-
-#endif
 

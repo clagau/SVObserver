@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #pragma once
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 typedef boost::function<void()> IrqHandler;
 

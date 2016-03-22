@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   07 Mar 2014 18:17:04  $
 //******************************************************************************
 
-#ifndef SVINTEKACQUISITIONCLASS_H
-#define SVINTEKACQUISITIONCLASS_H
+#pragma once
 
 #pragma region Includes
 #include "SVAcquisitionClass.h"
@@ -114,6 +113,4 @@ private:
 	SVIntekDCamAcquisitionProxy m_DCamAcqProxy;
 	SVIntekDCamDriverProxy m_cameraDriverProxy;
 };
-
-#endif
 

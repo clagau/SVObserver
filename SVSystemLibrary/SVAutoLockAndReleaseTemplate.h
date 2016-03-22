@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:48:54  $
 //******************************************************************************
 
-#ifndef SVAUTOLOCKANDRELEASETEMPLATE_H
-#define SVAUTOLOCKANDRELEASETEMPLATE_H
+#pragma once
 
 template< typename SVLockType >
 class SVAutoLockAndReleaseTemplate
@@ -29,5 +28,4 @@ protected:
 
 #include "SVAutoLockAndReleaseTemplate.inl"
 
-#endif
 

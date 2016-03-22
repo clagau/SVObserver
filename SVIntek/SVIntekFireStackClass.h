@@ -9,32 +9,7 @@
 // * .Check In Date   : $Date:   26 Apr 2013 14:53:34  $
 // ******************************************************************************
 
-#ifndef SVINTEKFIRESTACKCLASS_H
-#define SVINTEKFIRESTACKCLASS_H
-
-/* Image Formats for FireStack
-
-	SVImageFormatUnknown
-	SVImageFormatMono8      CM_Y8
-	SVImageFormatMono16     CM_Y16
-	SVImageFormatMono32     
-	SVImageFormatRGB5551    
-	SVImageFormatRGB565     
-	SVImageFormatRGB888     CM_RGB8
-	SVImageFormatRGB8888    
-	SVImageFormatRGB101010  
-	SVImageFormatRGB161616  CM_RGB16
-	SVImageFormatRGBP8      
-	SVImageFormatRGBP16     
-	SVImageFormatUYVY       
-	SVImageFormatYUY2       
-	SVImageFormatYVYU       
-	SVImageFormatYUYV       
-	SVImageFormatY411       CM_YUV411 
-	SVImageFormatY422       CM_YUV422
-	SVImageFormatY444       CM_YUV444
-
-//*/
+#pragma once
 
 #include "SVIntekExports.h"
 #include "SVIntekEnums.h"
@@ -164,6 +139,4 @@ private:
 	//This attribute holds all of the callback information for the non-hardware based triggers.
 	SVTriggerCallbackMap m_triggerMap;
 };
-
-#endif
 

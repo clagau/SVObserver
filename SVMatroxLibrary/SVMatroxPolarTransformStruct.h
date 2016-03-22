@@ -9,14 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:26:58  $
 // ******************************************************************************
 
-
-#ifndef SV_MATROX_POLAR_TRANSFORM_STRUCT_H
-#define SV_MATROX_POLAR_TRANSFORM_STRUCT_H
-
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxBuffer.h"
 #include "SVMatroxEnums.h"
@@ -48,7 +41,4 @@ public:
 	double						m_dDestSizeY;
 
 };
-
-#endif // #ifndef SV_MATROX_POLAR_TRANSFORM_STRUCT_H
-
 

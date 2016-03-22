@@ -39,8 +39,7 @@
 // The MSVC 6.0 does not allow void to be a default value for a template parameter.
 // I therefore changed all defaults to int.
 
-#ifndef VISITOR_INC_
-#define VISITOR_INC_
+#pragma once
 
 #include "Typelist.h"
 #include "HierarchyGenerators.h"
@@ -518,15 +517,4 @@ struct DefaultCatchAllVoidWrapper
     { guest.GenericVisit(*this); }
 
 } // namespace Loki
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// March 20: add default argument DefaultCatchAll to BaseVisitable
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// Oct  27, 2002: ported by Benjamin Kaufmann to MSVC 6.0
-// Feb	23, 2003: Removed superfluous implementation classes and added Loki::
-//		qualification to Accept's Paramter (in the macro) B.K.
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // VISITOR_INC_
 

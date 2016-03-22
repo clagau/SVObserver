@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 13:06:30  $
 //******************************************************************************
 
-#ifndef SVGRAPHIX_H
-#define SVGRAPHIX_H
+#pragma once
 
 #include "SVTemplate.h"
 
@@ -659,5 +658,4 @@ protected:
 	CArray< SVGraphixDrawObjectClass*, SVGraphixDrawObjectClass* > drawObjectArray;
 };
 
-#endif
 

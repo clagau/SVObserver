@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <fstream>
+//Moved to precompiled header: #include <fstream>
 #include "SVTriggerClass.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"

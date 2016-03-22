@@ -11,6 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <typeinfo>
 #include "SVOutputInfoListClass.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVTimerLibrary/SVClock.h"

@@ -10,12 +10,10 @@
 //******************************************************************************
 
 #pragma once
-#include "afxcmn.h"
-#include "afxwin.h"
+//Moved to precompiled header: #include <limits>
+//Moved to precompiled header: #include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVMFCControls\SVKnobControl.h"
-#include <limits>
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
 #include "SVTriggerObject.h"
 
 // SoftwareTriggerDlg dialog

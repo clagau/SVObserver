@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 13:10:48  $
 //******************************************************************************
 
-#ifndef SVTOOLACQUISITION_H
-#define SVTOOLACQUISITION_H
+#pragma once
 
 #include "SVTool.h"
 #include "SVMainImageClass.h"
@@ -49,6 +48,4 @@ protected:
 	SVStaticStringValueObjectClass m_svSourceImageNames;
 
 };
-
-#endif
 

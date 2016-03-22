@@ -10,7 +10,7 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include <assert.h>
+//Moved to precompiled header: #include <assert.h>
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxImageBuffer.h"

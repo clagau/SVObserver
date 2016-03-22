@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:27:36  $
 //******************************************************************************
 #include "stdafx.h"
+//Moved to precompiled header: #include #include <boost/config.hpp>
+//Moved to precompiled header: #include #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include #include <mil.h>
 #include "SVMatroxDigitizerGrabEnums.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <mil.h>
 
 // Assign mappings for Grab Mode Types
 SVMatroxDigitizerGrab::SVGrabModeEnumMap SVMatroxDigitizerGrab::m_GrabModeEnumConvertor = boost::assign::map_list_of<>

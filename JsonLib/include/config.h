@@ -6,8 +6,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 16:04:22  $
 //******************************************************************************
 
-#ifndef JSON_CONFIG_H_INCLUDED
-# define JSON_CONFIG_H_INCLUDED
+#pragma once
 
 /// If defined, indicates that json library is embedded in CppTL library.
 //# define JSON_IN_CPPTL 1
@@ -47,6 +46,4 @@
 # else
 #  define JSON_API
 # endif
-
-#endif // JSON_CONFIG_H_INCLUDED
 

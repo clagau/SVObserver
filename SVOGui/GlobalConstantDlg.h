@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include <comutil.h>
+//Moved to precompiled header: #include <comutil.h>
 #include "SVOResource\resource.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "ObjectInterfaces\DataStructures.h"

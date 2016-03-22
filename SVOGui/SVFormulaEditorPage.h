@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "SVMFCControls/SVToolBar.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes

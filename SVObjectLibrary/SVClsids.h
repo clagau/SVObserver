@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <Guiddef.h>
+//Moved to precompiled header: #include <guiddef.h>
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////

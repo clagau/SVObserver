@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 14:19:28  $
 //******************************************************************************
 
-#ifndef SVIMAGEBUFFER_H
-#define SVIMAGEBUFFER_H
+#pragma once
 
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"
@@ -175,6 +174,4 @@ private:
 	long m_lBufferSize;
 	BYTE *m_pBuffer;
 };
-
-#endif
 

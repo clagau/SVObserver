@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <string>
+//Moved to precompiled header: #include <string>
 
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVObjectLibrary/SVObserverNotificationFunctor.h"

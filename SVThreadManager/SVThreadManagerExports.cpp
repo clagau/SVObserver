@@ -8,11 +8,11 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   17 Dec 2014 07:31:18  $
 //******************************************************************************
+
 #include "stdafx.h"
+//Moved to precompiled header: #include <sstream>
 #include "SVThreadManagerExports.h"
 #include "SVThreadManagerImpl.h"
-#include <sstream>
-
 
 SVThreadManagerImpl gThreadManager;
 

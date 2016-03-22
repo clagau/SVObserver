@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:00:10  $
 //******************************************************************************
 
-#ifndef SVACCESSCLASS_H
-#define SVACCESSCLASS_H
+#pragma once
 
+//Moved to precompiled header: #include <string>
 #include "SVAccessPointNode.h"
 #include "SVSecurityStorage.h"
 
@@ -91,6 +91,4 @@ protected:
 	SVSecurityStorage m_svStorage;
 
 };
-
-#endif
 

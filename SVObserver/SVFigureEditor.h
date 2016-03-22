@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <memory>
+//Moved to precompiled header: #include <memory>
 #pragma endregion Includes
 
 class SVFigureEditor

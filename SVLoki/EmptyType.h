@@ -26,8 +26,7 @@
 
 // Last update: June 20, 2001
 
-#ifndef EMPTYTYPE_INC_
-#define EMPTYTYPE_INC_
+#pragma once
 
 namespace Loki
 {
@@ -39,11 +38,4 @@ namespace Loki
 
     class EmptyType {};
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // EMPTYTYPE_INC_
 

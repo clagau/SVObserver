@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:10:58  $
 //******************************************************************************
 
-#ifndef SVIHBITMAPUTILITIES_H_
-#define SVIHBITMAPUTILITIES_H_
+#pragma once
 
 #include "SVImageDefinitionStruct.h"
 
@@ -132,8 +131,4 @@ struct SVColorTable <SVImageFormatRGB8888>
 	SVColorTable() {}
 };
 
-
-
-
-#endif	//#ifndef SVIHBITMAPUTILITIES_H_
 

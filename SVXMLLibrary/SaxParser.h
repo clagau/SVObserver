@@ -10,12 +10,12 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <comutil.h>
+#include <msxml6.h>
 #include "ISaxElementHandler.h"
-#include <string>
 #include "SaxContentHandler.h"
 #include "SaxErrorHandler.h"
-#include <comutil.h>
-#include <msxml6.h>
 #pragma endregion Includes
 
 namespace Seidenader { namespace  SVXMLLibrary

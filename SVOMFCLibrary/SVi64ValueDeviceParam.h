@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 13:07:02  $
 //******************************************************************************
-#ifndef SVI64VALUEDEVICEPARAM_H
-#define SVI64VALUEDEVICEPARAM_H
+
+#pragma once
 
 #include "SVDeviceParams.h"
 
@@ -57,5 +57,4 @@ private:
 	inline SVDeviceParamWrapper DeviceParam(__int64 i) {return SVi64ValueDeviceParam(i);}
 #endif
 
-#endif
 

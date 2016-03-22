@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:56:34  $
 //******************************************************************************
-#ifndef SVTRIGGERACTIVATORFUNC_H
-#define SVTRIGGERACTIVATORFUNC_H
+
+#pragma once
 
 #include "SVTriggerActivatorFuncInterface.h"
 
@@ -44,6 +44,4 @@ public:
 		return hr;
 	}
 };
-
-#endif
 

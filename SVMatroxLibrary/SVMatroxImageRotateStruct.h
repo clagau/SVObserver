@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:21:30  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_IMAGE_ROTATE_STRUCT_H
-#define SV_MATROX_IMAGE_ROTATE_STRUCT_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxBuffer.h"
 #include "SVMatroxEnums.h"
@@ -41,6 +36,4 @@ public:
 	double					m_dDstCenY;
 	SVImageOperationTypeEnum m_eInterpolation;
 };
-
-#endif // #ifndef SV_MATROX_IMAGE_ROTATE_STRUCT_H
 

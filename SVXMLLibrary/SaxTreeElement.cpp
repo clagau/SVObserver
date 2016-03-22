@@ -9,12 +9,11 @@
 
 #pragma region Includes
 #include "StdAfx.h"
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <iostream>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <sstream>
 #include "SaxTreeElement.h"
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <msxml2.h>
 #include "VariantHelper.h"
 #pragma endregion Includes
 

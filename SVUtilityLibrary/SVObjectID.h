@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:23:12  $
 //******************************************************************************
 
-#ifndef SVOBJECTID_H
-#define SVOBJECTID_H
+#pragma once
 
 // Begin - To use SVUniqueObjectID as SVObjectID use the following section
 #include "SVUniqueObjectID.h"
@@ -28,6 +27,4 @@
 
 */
 typedef SVUniqueIdGenerator< SVObjectID, SVInvalidObject, SVGetNextObjectID > SVIDGenerator;
-
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Nov 2013 13:26:12  $
 //******************************************************************************
 
-#ifndef SVStaticStringValueObjectClass_H
-#define SVStaticStringValueObjectClass_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVStaticValueObjectClassImpl.h"
@@ -71,6 +70,4 @@ private:
 	void LocalInitialize();
 
 };
-
-#endif
 

@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   23 Jun 2014 07:30:52  $
 //******************************************************************************
 
-#ifndef SVStaticValueObjectClassImpl_H
-#define SVStaticValueObjectClassImpl_H
+#pragma once
 
+//Moved to precompiled header: #include <assert.h>
+#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "UseTypeExceptMatch.h"
 #include "SVValueObjectClass.h"
 
@@ -247,6 +249,4 @@ namespace std
 //*/
 
 #include "SVStaticValueObjectClassImpl.inl"
-
-#endif
 

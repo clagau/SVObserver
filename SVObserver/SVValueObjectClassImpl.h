@@ -11,6 +11,9 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <assert.h>
+#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "UseTypeExceptMatch.h"
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
@@ -233,18 +236,6 @@ inline void swap ( SVValueObjectClassImpl<T>& lhs, SVValueObjectClassImpl<T>& rh
 {
 	lhs.swap(rhs);
 }
-
-// should we provide this????
-/*
-namespace std
-{
-	template < typename T >
-	inline void swap( SVValueObjectClassImpl<T>& lhs, SVValueObjectClassImpl<T>& rhs )
-	{
-		lhs.swap(rhs);
-	}
-};
-//*/
 
 #include "SVValueObjectClassImpl.inl"
 

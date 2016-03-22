@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:12:32  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_DISPLAY_H
-#define SV_MATROX_DISPLAY_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxTypedefs.h"
 
@@ -50,6 +45,4 @@ private:
 	void LocalClear();
 
 };
-
-#endif // SV_MATROX_DISPLAY_H
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:59:58  $
 //******************************************************************************
 
-#ifndef SVOCRGRAYPARAMSTRUCT_H
-#define SVOCRGRAYPARAMSTRUCT_H
+#pragma once
 
 class SVOCRGrayAnalyzeResultClass;
 
@@ -44,6 +43,4 @@ struct SVOCRGrayParamStruct
 
 	SVOCRGrayAnalyzeResultClass *psvOCRResult;
 };
-
-#endif   // SVOCRGRAYPARAMSTRUCT_H
 

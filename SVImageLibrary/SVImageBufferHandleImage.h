@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:44:36  $
 //******************************************************************************
 
-#ifndef SVIMAGEBUFFERHANDLEIMAGE_H
-#define SVIMAGEBUFFERHANDLEIMAGE_H
+#pragma once
 
 #include "SVImageBufferHandleData.h"
 #include "SVImageBufferHandleStruct.h"
@@ -33,6 +32,4 @@ protected:
 	SVMatroxBuffer m_Buffer;
 
 };
-
-#endif
 

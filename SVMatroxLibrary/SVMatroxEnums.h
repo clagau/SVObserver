@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:13:12  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_ENUMS_H
-#define SV_MATROX_ENUMS_H
+#pragma once
 
 #include "SVMatroxEnumConvertor.h" //SVMatroxEnumConvertor 
 
@@ -979,6 +978,4 @@ enum SVFilterOperationEnum
 	SVFilterOpSmooth 			= SVImageDefaultKernel + 0L,	// M_SMOOTH 
 	SVFilterOpVertEdge			= SVImageDefaultKernel + 6L,	// M_VERT_EDGE 
 };
-
-#endif // SV_MATROX_ENUMS_H
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:11:30  $
 //******************************************************************************
 
-#ifndef _INC_SVDIGITALOUTPUTOBJECT_3C8FAEA4006D_INCLUDED
-#define _INC_SVDIGITALOUTPUTOBJECT_3C8FAEA4006D_INCLUDED
+#pragma once
 
 #include "SVOutputObject.h"
 
@@ -55,6 +54,4 @@ private:
 	bool m_bForcedValue;
 	bool m_bCombinedACK;
 };
-
-#endif /* _INC_SVDIGITALOUTPUTOBJECT_3C8FAEA4006D_INCLUDED */
 

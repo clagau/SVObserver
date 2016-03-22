@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <comdef.h>
-#include <map>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <map>
 #include "SVPictureDisplayIdl.h"
 #include "DrawObject.h" // for ParamMap typedefs
 #pragma endregion Includes

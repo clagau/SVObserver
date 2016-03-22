@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 15:00:04  $
 //******************************************************************************
-#ifndef SVMATROXBUFFERARRAY_H
-#define SVMATROXBUFFERARRAY_H
+
+#pragma once
 
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxSystem.h"
@@ -49,5 +49,3 @@ protected:
 private:
 	void LocalClear();
 };
-
-#endif

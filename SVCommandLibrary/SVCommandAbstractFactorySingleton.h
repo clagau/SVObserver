@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:24:08  $
 //******************************************************************************
 
-#ifndef SVCOMMANDABSTRACTFACTORYSINGLETON_H
-#define SVCOMMANDABSTRACTFACTORYSINGLETON_H
+#pragma once
 
 #include "SVCommandAbstractFactoryTemplate.h"
 
@@ -43,6 +42,4 @@ private:
 };
 
 #include "SVCommandAbstractFactorySingleton.inl"
-
-#endif
 

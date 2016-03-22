@@ -11,9 +11,9 @@
 
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <typeinfo.h>
 #include "SVLutTransform.h"
 #include "SVLut.h"
-#include <typeinfo.h>
 
 SVLutTransformOperationMap SVLutTransform::mMapTypes;
 

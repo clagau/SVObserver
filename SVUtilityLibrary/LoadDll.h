@@ -10,8 +10,9 @@
 //******************************************************************************
 
 #pragma once
+
 #pragma region Includes
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVString.h"
 #pragma endregion Includes
 

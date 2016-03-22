@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   06 May 2013 19:38:10  $
 //******************************************************************************
 
-#ifndef SVCRASH_H
-#define SVCRASH_H
+#pragma once
 
 //===========================================================
 // Taken from ....
@@ -120,6 +119,4 @@ extern long GetThreadType( void );
 
 extern BOOL __stdcall EnableCrashFilter();
 extern BOOL __stdcall DisableCrashFilter();
-
-#endif
 

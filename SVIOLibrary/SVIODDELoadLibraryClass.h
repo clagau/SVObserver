@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:43:50  $
 // ******************************************************************************
 
-#ifndef SVIODDELOADLIBRARYCLASS_H
-#define SVIODDELOADLIBRARYCLASS_H
+#pragma once
 
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 
@@ -43,6 +42,4 @@ private:
 };
 
 #include "SVIODDELoadLibraryClass.inl"
-
-#endif
 

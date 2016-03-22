@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 16:43:22  $
 // ******************************************************************************
 
-#ifndef SVRPROPTREESTATE_H
-#define SVRPROPTREESTATE_H
+#pragma once
 
 #include <map>
 
@@ -47,7 +46,4 @@ pj = &i;			// NOT OK; reassigning the pointer
 
 #endif
 
-
-
-#endif
 

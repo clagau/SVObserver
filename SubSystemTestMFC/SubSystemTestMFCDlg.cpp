@@ -10,10 +10,15 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "resource.h"
 #include "SubSystemTestMFC.h"
 #include "SubSystemTestMFCDlg.h"
 #include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
 #include "SVImageLibrary\SVDigitizerLoadLibraryClass.h"
+#include "SVObserver/SVGlobal.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVErrorClass.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:30:54  $
 //******************************************************************************
 
-#ifndef SVUNARYOPERATORCLASS_H
-#define SVUNARYOPERATORCLASS_H
+#pragma once
 
 #include "SVOperator.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -24,6 +23,4 @@ public:
 private:
 	void init();
 };
-
-#endif	//	SVUNARYOPERATORCLASS_H
 

@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <Windows.h>
 #include "SVObserver.h"
 #include "RangeXDialogClass.h"
 #include "afxdialogex.h"

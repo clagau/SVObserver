@@ -25,7 +25,23 @@
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
-#include <winsock2.h>
-#include <windows.h>
-#include <tchar.h>
+#define NOMINMAX			// Exclude min/max macros
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
+#include <windows.h>
+
+#include <algorithm>
+#include <comdef.h>
+#include <cstdio>
+#include <sstream>
+#include <string>
+#include <tchar.h>
+#include <vector>
+
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/shared_array.hpp>
+#pragma endregion Precompiled Headers

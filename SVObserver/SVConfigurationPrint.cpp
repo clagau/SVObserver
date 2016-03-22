@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost\algorithm\string.hpp>
-#include <boost\algorithm\string\replace.hpp>
+//Moved to precompiled header: #include <boost\algorithm\string.hpp>
+//Moved to precompiled header: #include <boost\algorithm\string\replace.hpp>
 #include "SVConfigurationPrint.h"
 #include "SVConfigurationObject.h"
 

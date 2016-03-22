@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   13 Nov 2014 10:00:04  $
 //******************************************************************************
 
-#ifndef SVOBJECTASYNCHRONOUSCOMMANDTEMPLATE_H
-#define SVOBJECTASYNCHRONOUSCOMMANDTEMPLATE_H
+#pragma once
 
 #include "SVObjectCommandWrapperTemplate.h"
 
@@ -40,6 +39,4 @@ private:
 };
 
 #include "SVObjectAsynchronousCommandTemplate.inl"
-
-#endif
 

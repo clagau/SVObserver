@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:32:56  $
 //******************************************************************************
 
-#ifndef SVEXTERNALTOOLRESULTPAGE_H
-#define SVEXTERNALTOOLRESULTPAGE_H
+#pragma once
 
 class SVExternalToolDetailsSheet;
 class SVExternalTool;
@@ -67,9 +66,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

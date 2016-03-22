@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:02:06  $
 //******************************************************************************
 
-#ifndef SVCONDITIONALHISTORY_H
-#define SVCONDITIONALHISTORY_H
+#pragma once
 
 #include "SVObjectAppClass.h"
 #include "SVScalarValue.h"
@@ -119,11 +118,4 @@ private:
 };
 
 
-
-// SIAC function needs to have a crit sec?
-
-
-
-
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:44:42  $
 //******************************************************************************
 
-#ifndef SVIMAGEBUFFERHANDLEINTERFACE_H
-#define SVIMAGEBUFFERHANDLEINTERFACE_H
+#pragma once
 
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/SVPOINT.h"
@@ -45,6 +44,4 @@ private:
 };
 
 typedef SVSharedPtr< SVImageBufferHandleInterface > SVSmartHandlePointer;
-
-#endif
 

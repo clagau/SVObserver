@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:18:28  $
 //******************************************************************************
 
-#ifndef SVLONGVALUEOBJECTCLASS_H
-#define SVLONGVALUEOBJECTCLASS_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
@@ -49,6 +48,4 @@ private:
 	void LocalInitialize();
 
 };
-
-#endif
 

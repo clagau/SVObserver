@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   24 Apr 2013 12:27:14  $
 //******************************************************************************
 
-#ifndef SVTRANSFORMATIONTOOL_H
-#define SVTRANSFORMATIONTOOL_H
+#pragma once
 
 #include "SVTool.h"
 
@@ -48,10 +47,4 @@ private:
 	SVStaticStringValueObjectClass m_svSourceImageNames;
 #pragma endregion Member Variables
 };
-
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif //SVTRANSFORMATIONTOOL_H
 

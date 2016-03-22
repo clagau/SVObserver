@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:11:24  $
 //******************************************************************************
 
-#ifndef SVIMAGE_FORMAT_ENUM_H
-#define SVIMAGE_FORMAT_ENUM_H
 #pragma once
 
 
@@ -36,6 +34,4 @@ enum SVImageFormatEnum           // Matrox Image Format Definitions
 	SVImageFormatY422       = 150, // M_YUV16+M_PACKED
 	SVImageFormatY444       = 160,
 };
-
-#endif SVIMAGE_FORMAT_ENUM_H
 

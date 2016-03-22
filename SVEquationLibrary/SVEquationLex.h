@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:23:00  $
 //******************************************************************************
 
-#ifndef SVEQUATIONLEX_H
-#define SVEQUATIONLEX_H
+#pragma once
 
 #include "SVPARSERSCRIPTS/FlexLexer.h"
 
@@ -73,6 +72,4 @@ protected:
 	SVEquationBase* pEquation;
 
 };
-
-#endif // #ifndef SVEQUATIONLEX_H
 

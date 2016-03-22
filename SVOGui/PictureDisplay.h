@@ -15,8 +15,8 @@
 #pragma once
 
 #pragma region Includes
-#include <vector>
-#include <map>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <map>
 #include "CDSVPictureDisplay.h"
 #include "SVMFCControls\SVBitmap.h"
 #include "SVPictureDisplay\DrawObject.h" // for ParamMap typedefs

@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 13:02:04  $
 // ******************************************************************************
 
-#ifndef SVDEVICEPARAM_H
-#define SVDEVICEPARAM_H
+#pragma once
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
@@ -85,5 +84,4 @@ private:
 typedef TTemporaryPointerWrapper<SVDeviceParam> SVDeviceParamTempWrapper;
 typedef TValueSemantics<SVDeviceParam> SVDeviceParamWrapper;
 
-#endif
 

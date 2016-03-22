@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVJsonCommandServerSocket.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVSystemLibrary/SVThreadManager.h"

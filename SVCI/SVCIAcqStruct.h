@@ -9,11 +9,10 @@
 // * .Check In Date   : $Date:   07 May 2013 19:56:56  $
 // ******************************************************************************
 
-#ifndef SVCIACQSTRUCT_H
-#define SVCIACQSTRUCT_H
+#pragma once
 
-#include <vector>
-#include <corapi.h>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <corapi.h>
 
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVOMFCLibrary/SVCallbackListClass.h"
@@ -127,6 +126,4 @@ public:
 This specialization of the CArray template creates a container object to hold the SVCIAcqStruct objects.
 */
 typedef std::vector< SVCIAcqStruct > SVCIAcqStructVector;
-
-#endif
 

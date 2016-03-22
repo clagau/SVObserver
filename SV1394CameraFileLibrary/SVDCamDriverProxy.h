@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:36:38  $
 // ******************************************************************************
 
-#ifndef INCL_SVDCAMDRIVERPROXY_H
-#define INCL_SVDCAMDRIVERPROXY_H
+#pragma once
 
 #include "SV1394CameraFileReader.h"
 
@@ -53,5 +52,4 @@ public:
 	virtual bool CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)=0;
 };
 
-#endif
 

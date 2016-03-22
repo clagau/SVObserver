@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:14:12  $
 //******************************************************************************
 
-#ifndef SVSTORAGE_H
-#define SVSTORAGE_H
+#pragma once
 
-#include <comdef.h>
-#include <map>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVVisionProcessorConstants.h"
 
@@ -28,6 +27,4 @@ struct SVStorage
 
 typedef std::map< SVString, SVStorage > SVNameStorageMap;
 typedef std::map< SVString, HRESULT > SVNameStatusMap;
-
-#endif
 

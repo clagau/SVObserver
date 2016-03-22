@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <algorithm>
-#include <typeinfo.h>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <typeinfo.h>
 #include "SVLutDlg.h"
 #include "SVAcquisitionClass.h"
 #include "ObjectInterfaces/SVUserMessage.h"

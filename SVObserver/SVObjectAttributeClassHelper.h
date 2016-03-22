@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:40:04  $
 //******************************************************************************
 
-#ifndef SVOBJECTATTRIBUTECLASSHELPER_H_
-#define SVOBJECTATTRIBUTECLASSHELPER_H_
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 
@@ -37,6 +36,4 @@ public:
 		return pDataObject->GetAttributeData(szName, svData);
 	}
 };
-
-#endif
 

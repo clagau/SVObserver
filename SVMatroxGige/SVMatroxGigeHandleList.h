@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:24  $
 //******************************************************************************
-#ifndef SVMATROXGIGEHANDLELIST_H
-#define SVMATROXGIGEHANDLELIST_H
 
-#include <map>
+#pragma once
+
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <utility>
 #include "SVUtilityLibrary/SVHandleManager.h"
 
 template <int MaxHandles, typename HandleType, HandleType InvalidHandle, typename value_type>
@@ -51,6 +52,4 @@ public:
 };
 
 #include "SVMatroxGigeHandleList.inl"
-
-#endif
 

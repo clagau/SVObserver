@@ -9,10 +9,8 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:32:48  $
 // ******************************************************************************
 
-#ifndef _SVCLINK_H
-#define _SVCLINK_H
+#pragma once
 
 #include "clink.h"
 
-#endif // _SVCLINK_H
 

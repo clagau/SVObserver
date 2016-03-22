@@ -5,10 +5,12 @@
 //*****************************************************************************
 /// Property page for the tool adjustment sheet for parameter in the RingBuffer-tool.
 //*****************************************************************************
+
 #pragma once
 
 #pragma region Includes
-#include <boost\function.hpp>
+//Moved to precompiled header: #include <boost\function.hpp>
+#include "SVOResource/resource.h"
 #include "ObjectInterfaces\IRingBufferTool.h"
 #include "ISVPropertyPageDialog.h"
 #include "PictureDisplay.h"

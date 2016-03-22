@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <float.h>
+//Moved to precompiled header: #include <float.h>
 #include "SVEquation.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"

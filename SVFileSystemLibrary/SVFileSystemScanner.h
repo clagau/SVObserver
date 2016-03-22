@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:37:58  $
 //******************************************************************************
-#ifndef SVFILESYSTEMSCANNER_H
-#define SVFILESYSTEMSCANNER_H
+
+#pragma once
 
 template<typename Insertor>
 class SVFileSystemScanner
@@ -20,6 +20,4 @@ public:
 };
 
 #include "SVFileSystemScanner.inl"
-
-#endif
 

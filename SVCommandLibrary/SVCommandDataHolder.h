@@ -9,18 +9,15 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:30:32  $
 //******************************************************************************
 
-#ifndef SVCOMMANDDATAHOLDER_H
-#define SVCOMMANDDATAHOLDER_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVCommandDataFacade.h"
 #include "SVCommandAttributesFacade.h"
 #include "SVCommandResultsFacade.h"
 
-/*
-*/
 class SVCommandDataHolder
 {
 public:
@@ -60,5 +57,4 @@ protected:
 
 };
 
-#endif
 

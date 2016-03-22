@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:26:04  $
 //******************************************************************************
 
-#ifndef SVFILEACQUISITIONDEVICE_H
-#define SVFILEACQUISITIONDEVICE_H
+#pragma once
 
 #include "SVTriggerLibrary/SVInternalTrigger.h"
 #include "SVTriggerLibrary/SVTriggerCallbackMap.h"
@@ -102,6 +101,4 @@ private:
 	HRESULT IsAcquisitionTriggered(unsigned long p_ulHandle, bool& bAcquisitionTriggered) const;
 	HRESULT SetAcquisitionTriggered(unsigned long p_ulHandle, bool bAcquisitionTriggered);
 };
-
-#endif
 

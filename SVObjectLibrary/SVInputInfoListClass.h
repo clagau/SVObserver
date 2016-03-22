@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:37:34  $
 //******************************************************************************
 
-#ifndef SVINPUTINFOLISTCLASS_H
-#define SVINPUTINFOLISTCLASS_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 
@@ -34,7 +33,4 @@ protected:
 	virtual bool checkDuplicates( SVInObjectInfoStruct* PInObjectInfo );
 
 };
-
-
-#endif
 

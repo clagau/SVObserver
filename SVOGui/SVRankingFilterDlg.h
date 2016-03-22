@@ -8,8 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:39:24  $
 //******************************************************************************
+
 #pragma once
+
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "ValuesAccessor.h"
 #include "GuiController.h"
 #pragma endregion Includes

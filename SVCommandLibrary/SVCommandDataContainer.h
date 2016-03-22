@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:30:28  $
 //******************************************************************************
 
-#ifndef SVCOMMANDDATACONTAINER_H
-#define SVCOMMANDDATACONTAINER_H
+#pragma once
 
 #include "SVCommandDataHolder.h"
 #include "SVCommandDataTemplate.h"
@@ -18,5 +17,4 @@
 
 typedef SVCommandDataTemplate< SV_COMMAND_DATA_TYPE_CONTAINER, SVCommandDataHolder > SVCommandDataContainer;
 
-#endif
 

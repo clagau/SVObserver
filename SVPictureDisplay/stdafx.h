@@ -11,10 +11,6 @@
 
 #pragma once
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently,
-// but are changed infrequently
-
 #ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #endif
@@ -42,29 +38,24 @@
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
 
-#include <afxctl.h>         // MFC support for ActiveX Controls
-#include <afxext.h>         // MFC extensions
-#ifndef _AFX_NO_OLE_SUPPORT
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Comon Controls
-#endif
-#ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
-#endif // _AFX_NO_AFXCMN_SUPPORT
-
-// Delete the two includes below if you do not wish to use the MFC
-//  database classes
-#ifndef _WIN64
-
-#ifndef _AFX_NO_DB_SUPPORT
-#include <afxdb.h>			// MFC ODBC database classes
-#endif // _AFX_NO_DB_SUPPORT
-
-#ifndef _AFX_NO_DAO_SUPPORT
-#include <afxdao.h>			// MFC DAO database classes
-#endif // _AFX_NO_DAO_SUPPORT
-
-#endif // _WIN64
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afxwin.h>
+#include <afxctl.h>         // MFC support for ActiveX Controls
+#include <afxcmn.h>			// MFC support for Windows Common Controls
+#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
+#include <afxext.h>         // MFC extensions
+#include <afxtempl.h>
 
+#include <cmath>
+#include <comdef.h>
+#include <comutil.h>
+#include <map>
+#include <string>
 #include <vector>
 
+#include <boost/config.hpp>
+#include <boost/shared_ptr.hpp>
+#pragma endregion Precompiled Headers

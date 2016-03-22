@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:59:04  $
 // ******************************************************************************
 
-#ifndef SVCICALLBACKSTRUCT_H
-#define SVCICALLBACKSTRUCT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 
@@ -37,5 +36,4 @@ This specialization of the CArray template creates a container object to hold po
 */
 typedef SVVector< SVCICallbackStruct * > SVCICallbackStructPtrCArray;
 
-#endif
 

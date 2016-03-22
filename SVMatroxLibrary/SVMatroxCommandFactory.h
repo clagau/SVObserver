@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:12:20  $
 //******************************************************************************
 
-#ifndef SVMATROXCOMMANDFACTORY_H
-#define SVMATROXCOMMANDFACTORY_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandAbstractFactorySingleton.h"
 #include "SVCommandLibrary/SVCommandAbstractFactoryTemplate.h"
@@ -28,6 +27,4 @@ public:
 };
 
 typedef SVCommandAbstractFactorySingleton< SVMatroxCommandFactory > SVMatroxCommandFactorySingleton;
-
-#endif
 

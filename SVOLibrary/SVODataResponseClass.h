@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   08 May 2013 15:28:06  $
 // ******************************************************************************
 
-#ifndef SVODATARESPONSECLASS_H
-#define SVODATARESPONSECLASS_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
 
@@ -71,6 +70,4 @@ private:
 	unsigned long mulExtraData;
 
 };
-
-#endif
 

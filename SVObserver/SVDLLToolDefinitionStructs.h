@@ -9,11 +9,10 @@
 // * .Check In Date   : $Date:   23 Apr 2013 10:18:32  $
 // ******************************************************************************
 
-#ifndef SVDLLTOOLDEFINITIONSTRUCTS_H
-#define SVDLLTOOLDEFINITIONSTRUCTS_H
+#pragma once
 
-#include <comdef.h>
-#include <vector>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <vector>
 
 #pragma pack (push, 1)
 struct InputValueDefinitionStruct
@@ -55,6 +54,4 @@ private:
 #pragma pack (pop)
 
 typedef std::vector<ResultValueDefinitionStruct> ResultValueDefinitionStructArray;
-
-#endif
 

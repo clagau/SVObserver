@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <io.h>
+//Moved to precompiled header: #include <io.h>
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveTool.h"
 #include "SVArchiveImageThreadClass.h"

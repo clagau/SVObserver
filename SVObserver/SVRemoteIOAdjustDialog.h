@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:49:12  $
 //******************************************************************************
 
-#ifndef SVREMOTEIOADJUSTDIALOG_H
-#define SVREMOTEIOADJUSTDIALOG_H
+#pragma once
 
 class SVRemoteIOAdjustDialog : public CDialog
 {
@@ -41,6 +40,4 @@ protected:
 	double m_EditValue;
 
 };
-
-#endif
 

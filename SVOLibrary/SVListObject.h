@@ -9,11 +9,10 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:53:22  $
 // ******************************************************************************
 
-#ifndef INC_SVLISTOBJECT_INCLUDED
-#define INC_SVLISTOBJECT_INCLUDED
+#pragma once
 
-#include <deque>
-#include <comdef.h>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <comdef.h>
 
 class SVListObject
 {
@@ -49,6 +48,4 @@ private:
 	BOOL m_bCreated;
 
 };
-
-#endif /* _INC_SVLISTOBJECT_INCLUDED */
 

@@ -8,14 +8,12 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   01 Oct 2013 06:14:50  $
 //******************************************************************************
-#ifndef SVFILECAMERA_H
-#define SVFILECAMERA_H
-
-#include <vector>
-#include <set>
-#include <iterator>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+#pragma once
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <iterator>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVFileCameraStruct.h"
 #include "SVEventHandler.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
@@ -116,6 +114,4 @@ public:
 };
 
 typedef std::vector<SVFileCamera> SVFileCameraList;
-
-#endif
 

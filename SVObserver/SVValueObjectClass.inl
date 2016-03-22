@@ -44,22 +44,21 @@ inline HRESULT SVValueObjectClass::ValidateIndexes(int iBucket, int iArrayIndex)
 inline void SVValueObjectClass::swap( SVValueObjectClass& rhs )
 {
 	ASSERT( typeid( *this ) == typeid( rhs ) );
-	using std::swap;
 
 	if ( this != &rhs )
 	{
-		swap( m_iNumberOfBuckets, rhs.m_iNumberOfBuckets );
-		swap( m_iLastSetIndex, rhs.m_iLastSetIndex );
-		swap( m_iArraySize, rhs.m_iArraySize );
+		std::swap( m_iNumberOfBuckets, rhs.m_iNumberOfBuckets );
+		std::swap( m_iLastSetIndex, rhs.m_iLastSetIndex );
+		std::swap( m_iArraySize, rhs.m_iArraySize );
 		//swap( m_aiResultSize, rhs.m_aiResultSize );	// not sure if VC6 implements redirection to vector member function
 		m_aiResultSize.swap( rhs.m_aiResultSize );
 
-		swap( m_pBuckets, rhs.m_pBuckets );// assumes rhs was allocated in the same memory space!
+		std::swap( m_pBuckets, rhs.m_pBuckets );// assumes rhs was allocated in the same memory space!
 
-		swap( m_bLegacyVectorObjectCompatibility, rhs.m_bLegacyVectorObjectCompatibility );
+		std::swap( m_bLegacyVectorObjectCompatibility, rhs.m_bLegacyVectorObjectCompatibility );
 
-		swap( m_bResetAlways, m_bResetAlways );
-		swap( m_eResetItem, m_eResetItem );
+		std::swap( m_bResetAlways, m_bResetAlways );
+		std::swap( m_eResetItem, m_eResetItem );
 
 		//SVObjectAppClass::swap( rhs );	// no, we will only swap data for now, not identity
 	}

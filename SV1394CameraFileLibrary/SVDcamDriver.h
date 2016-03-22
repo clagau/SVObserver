@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 17:36:38  $
 //******************************************************************************
 
-#ifndef SVDCAMDRIVER_H
-#define SVDCAMDRIVER_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 
@@ -64,6 +63,4 @@ private:
 	SVDCamAcquisitionProxy* m_pOwner;
 
 };
-
-#endif
 

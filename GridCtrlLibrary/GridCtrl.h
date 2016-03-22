@@ -41,8 +41,8 @@
 #pragma region Includes
 #include "CellRange.h"
 #include "GridCell.h"
-#include <afxtempl.h>
-#include <vector>
+//Moved to precompiled header: #include <afxtempl.h>
+//Moved to precompiled header: #include <vector>
 #pragma endregion Includes
 
 #pragma region Declarations

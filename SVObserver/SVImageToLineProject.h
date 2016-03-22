@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 12:44:06  $
 //******************************************************************************
 
-#ifndef SVIMAGETOLINEPROJECT_H
-#define SVIMAGETOLINEPROJECT_H
+#pragma once
 
 #include "SVImageLibrary/SVExtentLineStruct.h"
 
@@ -63,6 +62,4 @@ protected:
 	SVDWordValueObjectClass thresholdMax;
 
 };
-
-#endif
 

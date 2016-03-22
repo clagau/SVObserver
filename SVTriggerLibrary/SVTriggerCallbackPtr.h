@@ -8,10 +8,9 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:58:36  $
 //******************************************************************************
-#ifndef SVTRIGGERCALLBACKPTR_H
-#define SVTRIGGERCALLBACKPTR_H
+
+#pragma once
 
 typedef HRESULT ( CALLBACK *SVTriggerCallbackPtr )( void* pOwner, void* pData );
 
-#endif
 

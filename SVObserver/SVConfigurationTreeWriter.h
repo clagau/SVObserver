@@ -8,9 +8,16 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:03:08  $
 //******************************************************************************
-#ifndef INCL_SVCONFIGURATIONTREEWRITER_H
-#define INCL_SVCONFIGURATIONTREEWRITER_H
 
+#pragma once
+
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/foreach.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
+#include "SVConfigurationTreeWriter.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 
 template< typename SVTreeType >
@@ -36,6 +43,4 @@ public:
 };
 
 #include "SVConfigurationTreeWriter.inl"
-
-#endif
 

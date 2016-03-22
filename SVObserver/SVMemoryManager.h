@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   23 Jul 2014 11:36:32  $
 //******************************************************************************
 
-#ifndef SVMEMORYMANAGER_H
-#define SVMEMORYMANAGER_H
+#pragma once
 
-#include <string>
-#include <map>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <map>
 #include "SVOLibrary/SVContainableCriticalSection.h"
 #include "SVOMFCLibrary/SVTemplate.h"	// for singleton
 #include "SVMessage/SVMessage.h"
@@ -211,7 +210,4 @@ private:
 typedef TBasicSingletonHolder < SVMemoryManager<void*> > SVMemoryManagerSingleton;
 
 inline SVMemoryManager<void*>& TheSVMemoryManager() {return SVMemoryManagerSingleton::Instance();}
-
-
-#endif
 

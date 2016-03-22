@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:57:24  $
 //******************************************************************************
 
-#ifndef SVOBJECTLISTCLASS_H
-#define SVOBJECTLISTCLASS_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVOMFCLibrary/SVTemplate.h"
@@ -55,11 +54,4 @@ public:
 	const GUID&	GetUniqueObjectIDAt( int Index ) const;
 
 };
-
-////////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
-
-#endif
 

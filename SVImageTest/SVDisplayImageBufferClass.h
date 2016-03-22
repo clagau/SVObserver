@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:08:34  $
 // ******************************************************************************
 
-#ifndef SVDISPLAYIMAGEBUFFERCLASS_H
-#define SVDISPLAYIMAGEBUFFERCLASS_H
+#pragma once
 
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 
@@ -36,6 +35,4 @@ public:
 	unsigned char *m_pucImageData;
 
 };
-
-#endif
 

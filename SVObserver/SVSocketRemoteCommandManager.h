@@ -12,9 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
-#include <string>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVJsonCommandServerLibrary/SVJsonCommandManager.h"
 #include "SVStorageResult.h"

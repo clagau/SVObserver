@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:46:04  $
 //******************************************************************************
 
-#ifndef SVIPROGRESS_H
-#define SVIPROGRESS_H
+#pragma once
 
 class SVIProgress
 {
@@ -23,5 +22,4 @@ public:
 	virtual HRESULT UpdateText(LPCTSTR text) = 0;
 };
 
-#endif
 

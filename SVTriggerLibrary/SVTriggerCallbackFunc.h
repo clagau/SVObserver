@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:57:36  $
 //******************************************************************************
-#ifndef SVTRIGGERCALLBACKFUNC_H
-#define SVTRIGGERCALLBACKFUNC_H
+
+#pragma once
 
 #include "SVTriggerCallbackFuncInterface.h"
 
@@ -42,6 +42,4 @@ public:
 		return hr;
 	}
 };
-
-#endif
 

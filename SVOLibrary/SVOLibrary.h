@@ -9,14 +9,9 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:56:16  $
 // ******************************************************************************
 
-#if !defined(AFX_SVOLIBRARY_H__52D66EC9_2595_455A_9093_4D8DF3829D47__INCLUDED_)
-#define AFX_SVOLIBRARY_H__52D66EC9_2595_455A_9093_4D8DF3829D47__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 
 enum SVOVariantTypeEnum
 {
@@ -51,6 +46,3 @@ enum SVOVariantTypeEnum
 	SVUnsignedLongArrayType = VT_UI4 | VT_ARRAY,
 	SVClsIdArrayType = VT_CLSID | VT_ARRAY
 };
-
-#endif // !defined(AFX_SVOLIBRARY_H__52D66EC9_2595_455A_9093_4D8DF3829D47__INCLUDED_)
-

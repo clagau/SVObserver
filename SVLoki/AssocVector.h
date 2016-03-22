@@ -24,13 +24,12 @@
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ASSOCVECTOR_INC_
-#define ASSOCVECTOR_INC_
+#pragma once
 
-#include <algorithm>
-#include <functional>
-#include <vector>
-#include <utility>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <utility>
 
 namespace Loki
 {
@@ -219,11 +218,10 @@ namespace Loki
 
         void swap(AssocVector& other)
         {
-            using std::swap;
             Base::swap(other);
             MyCompare& me = *this;
             MyCompare& rhs = other;
-            swap(me, rhs);
+            std::swap(me, rhs);
         }
         
         void clear()
@@ -332,16 +330,4 @@ namespace Loki
     { lhs.swap(rhs); }
     
 } // namespace Loki
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// May 20, 2001: change operator= - credit due to Cristoph Koegl
-// June 11, 2001: remove paren in equal_range - credit due to Cristoph Koegl
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// January 22, 2002: fixed operator= - credit due to Tom Hyer
-// June 25, 2002: fixed template insert() - credit due to Robert Minsk
-// June 27, 2002: fixed member swap() - credit due to David Brookman
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // ASSOCVECTOR_INC_
 

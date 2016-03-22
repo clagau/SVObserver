@@ -9,11 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 18:10:06  $
 // ******************************************************************************
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1000)
 #pragma once
-#endif
-#ifndef _INC_SVSTATECLASS_3AC0E41A034B_INCLUDED
-#define _INC_SVSTATECLASS_3AC0E41A034B_INCLUDED
 
 //##ModelId=3AC0E41A034B
 class SVStateClass 
@@ -63,6 +59,4 @@ private:
 	DWORD mdwState;
 
 };
-
-#endif /* _INC_SVSTATECLASS_3AC0E41A034B_INCLUDED */
 

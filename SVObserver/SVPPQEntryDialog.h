@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   28 Feb 2014 08:31:08  $
 //******************************************************************************
 
-#ifndef SVPPQENTRYDIALOG_H
-#define SVPPQENTRYDIALOG_H
+#pragma once
 
 #include "SVPPQEntryDialogDigInPage.h"
 #include "SVPPQEntryDialogRemotePage.h"
@@ -235,6 +234,4 @@ protected:
 	SVPPQEntryDialogDigInPageClass		m_oDigitalPage;
 	SVPPQEntryDialogRemotePageClass		m_oRemotePage;
 };
-
-#endif	// SVPPQENTRYDIALOG_H
 

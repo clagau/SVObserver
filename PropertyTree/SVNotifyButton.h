@@ -10,8 +10,6 @@
 // ******************************************************************************
 
 #pragma once
-#ifndef __NOTIFYBUTTON_H__
-#define __NOTIFYBUTTON_H__
 
 class SVNotifyButton : public CButton
 {
@@ -19,7 +17,4 @@ class SVNotifyButton : public CButton
 	afx_msg void OnKillFocus( CWnd* pNewWnd );
 	DECLARE_MESSAGE_MAP()
 };
-
-
-#endif	//#ifndef __NOTIFYBUTTON_H__
 

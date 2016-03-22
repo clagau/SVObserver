@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <fstream>
+//Moved to precompiled header: #include <fstream>
 #include "SVJsonUtilities.h"
 
 #include "SVUtilityLibrary/SVSAFEARRAY.h"

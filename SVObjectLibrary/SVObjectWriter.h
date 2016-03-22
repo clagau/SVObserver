@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 17:00:14  $
 //******************************************************************************
-#ifndef INCL_SVOBJECTWRITER_H
-#define INCL_SVOBJECTWRITER_H
+
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVVariantList.h"
@@ -28,6 +28,4 @@ public:
 	virtual void EndElement()=0;
 	virtual void ElementAttribute(LPCTSTR rAttrName, const _variant_t& value)=0;
 };
-
-#endif
 

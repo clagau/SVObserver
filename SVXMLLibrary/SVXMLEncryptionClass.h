@@ -9,12 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:51:22  $
 //******************************************************************************
 
-#ifndef SVXMLENCRYPTIONCLASS_H
-#define SVXMLENCRYPTIONCLASS_H
-
+#pragma once
 #pragma warning (disable: 4786)	// identifier truncation 255 chars
 
-#include <map>				// std::map
+//Moved to precompiled header: #include <map>
 
 // SVDOM.h must be included to get the SVXML define!
 #include "SVDOM.h"		//	SVXML, SVBStr, SVDOMClass
@@ -288,7 +286,3 @@ protected:
 
 
 extern const WCHAR*	g_wcsNameSeed;
-
-
-#endif
-

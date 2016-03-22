@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 11:10:10  $
 //******************************************************************************
 
-#ifndef SVTESTGIGEACQUISITIONCLASS_H
-#define SVTESTGIGEACQUISITIONCLASS_H
+#pragma once
 
 #include "SVTestAcquisitionClass.h"
 #include "SVTestGigeCameraProxy.h"
@@ -39,6 +38,4 @@ public:
 	virtual bool StartAcquire(SVCameraPage& p_rDisplay);
 	virtual void StopAcquire();
 };
-
-#endif
 

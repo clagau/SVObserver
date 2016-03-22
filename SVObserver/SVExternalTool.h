@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:21:46  $
 //******************************************************************************
 
-#ifndef SVEXTERNALTOOL_H
-#define SVEXTERNALTOOL_H
+#pragma once
 
 #include "SVTool.h"
 
@@ -50,6 +49,4 @@ private:
 	SVStaticStringValueObjectClass m_svSourceImageNames;
 #pragma endregion Member Variables
 };
-
-#endif
 

@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 10:37:20  $
 // ******************************************************************************
 
-#ifndef SVDIGITIZERLOADLIBRARYCLASS_H
-#define SVDIGITIZERLOADLIBRARYCLASS_H
+#pragma once
 
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVOMFCLibrary/SVOMFCLibrary.h"
@@ -165,5 +164,3 @@ private:
 };
 
 #include "SVDigitizerLoadLibraryClass.inl"
-
-#endif // _SVDIGITIZERLOADLIBRARYCLASS_H

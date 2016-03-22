@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <set>
 #include "ObjectFilterPpg.h"
 
 #include "TextDefinesSvOsl.h"

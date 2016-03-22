@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 17:33:00  $
 //******************************************************************************
 
-#ifndef SVDCAMBASLERDRIVER_H
-#define SVDCAMBASLERDRIVER_H
+#pragma once
 
 #include "SVDCamStandardDriver.h"
 
@@ -47,6 +46,4 @@ protected:
 	virtual unsigned long GetDCAMTriggerOnOff() const;
 
 };
-
-#endif
 

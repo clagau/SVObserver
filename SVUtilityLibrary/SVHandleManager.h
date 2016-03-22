@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:21:56  $
 //******************************************************************************
-#ifndef SVHANDLEMANAGER_H
-#define SVHANDLEMANAGER_H
+
+#pragma once
 
 #include <bitset>
 
@@ -35,6 +35,3 @@ public:
 };
 
 #include "SVHandleManager.inl"
-
-#endif
-

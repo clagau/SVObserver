@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:08:46  $
 //******************************************************************************
 
-#ifndef SVSOFTWARETRIGGERCLASS_H
-#define SVSOFTWARETRIGGERCLASS_H
+#pragma once
 
 #include "SVTriggerClass.h"
 #include "SVAcquisitionInitiator.h"
@@ -36,5 +35,4 @@ public:
 	virtual HRESULT FireAcquisitionTrigger();
 };
 
-#endif
 

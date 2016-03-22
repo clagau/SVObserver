@@ -8,10 +8,10 @@
 // * .Current Version : $Revision:   1.2  $
 // * .Check In Date   : $Date:   03 Jun 2014 14:14:10  $
 // ******************************************************************************
-#ifndef SVMATROXRESOURCEMONITOR_H
-#define SVMATROXRESOURCEMONITOR_H
 
-#include <set>
+#pragma once
+
+//Moved to precompiled header: #include <set>
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVMatroxStatusInformation.h"
@@ -43,5 +43,4 @@ private:
 	SVMatroxResourceMonitor( const SVMatroxResourceMonitor& p_rObject );
 	const SVMatroxResourceMonitor& operator=( const SVMatroxResourceMonitor& p_rObject );
 };
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:27:42  $
 //******************************************************************************
 
-#ifndef SVMATROXDIGITIZERGRABENUMS_H
-#define SVMATROXDIGITIZERGRABENUMS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
@@ -241,6 +240,4 @@ struct SVMatroxDigitizerGrab
 	typedef SVMatroxEnumConvertor<SVGrabEnum, long> SVGrabEnumMap;
 	static SVGrabEnumMap m_GrabEnumConvertor;
 };
-
-#endif
 

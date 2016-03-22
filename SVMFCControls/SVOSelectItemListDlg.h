@@ -10,6 +10,7 @@
 //******************************************************************************
 #pragma once
 
+#include "SVOResource\resource.h"
 #include "SVContainerLibrary/SVList.h"
 
 namespace Seidenader

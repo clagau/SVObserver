@@ -57,40 +57,107 @@
 #pragma warning( disable: 4250 )	// disable warning for dominance of inherits (need e.g. for ISVObjectClass)
 
 #define OEMRESOURCE	// OEM resource to use nicer cursors...
+
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
+#include <afxctl.h>
+#include <afxcmn.h>			// MFC-Unterstützung für gängige Windows-Steuerelemente
 #include <afxext.h>         // MFC-Erweiterungen
 #include <afxole.h>         // MFC OLE-Klassen
 #include <afxodlgs.h>       // MFC OLE-Dialogfeldklassen
 #include <afxdisp.h>        // MFC OLE-Automatisierungsklassen
 #include <afxcview.h>		// MFC CListView Support
 #include <afxtempl.h>		// MFC Templates
-#include <AFXMT.H>
+#include <afxmt.h>
 #include <afxcoll.h>
-
-#ifndef _AFX_NO_DB_SUPPORT
-#include <afxdb.h>			// MFC ODBC-Datenbankklassen
-#endif // _AFX_NO_DB_SUPPORT
-
-#ifndef _AFX_NO_DAO_SUPPORT
-#include <afxdao.h>			// MFC DAO-Datenbankklassen
-#endif // _AFX_NO_DAO_SUPPORT
-
-#ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC-Unterstützung für gängige Windows-Steuerelemente
-#endif // _AFX_NO_AFXCMN_SUPPORT
-
-#include <AFXPRIV.H>
-
+#include <afxpriv.h>
 #include <atlbase.h>
 #include <atlcom.h>
+#include <atltypes.h>
+//#include <afxdialogex.h>
+
+#include <algorithm>
+#include <array>
+#include <functional>
+#include <assert.h>
+#include <cmath>
+#include <colordlg.h>
 #include <comdef.h>
+#include <cstdio>				//Used by static library
+#include <ctime>				//Used by static library
+#include <concrt.h>
 #include <crtdbg.h>
+#include <cstdlib>
+#include <ddraw.h>
+#include <deque>
 #include <direct.h>
 #include <float.h>
+#include <fstream>
 #include <io.h>
+#include <iostream>
 #include <initguid.h>
+#include <intrin.h>
+#include <iterator>
+#include <limits>
+#include <list>
+#include <map>
 #include <math.h>
+#include <memory>
+#include <Mmsystem.h>
+#include <numeric>
+#include <Objidl.h>
+#include <sequential_tree.h>
+#include <set>
+#include <sstream>
+#include <string>
+#include <sys/stat.h>
+#include <typeinfo.h>
+#include <utility>
+#include <vector>
+
+#include <boost\algorithm\string.hpp>
+#include <boost\algorithm\string\replace.hpp>
+#include <boost/any.hpp>
+#include <boost/assign.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/assign/list_inserter.hpp>
+#include <boost/bind.hpp>
+#include <boost/config.hpp>
+#define BOOST_DATE_TIME_NO_LIB
+#include <boost/date_time.hpp>
+#include <boost/foreach.hpp>
+#include <boost/function.hpp>
+#include <boost/fusion/container.hpp>
+#include <boost/fusion/algorithm.hpp>
+#define BOOST_INTERPROCESS_SHARED_DIR_PATH "V:/boost_interprocess"
+#define BOOST_DATE_TIME_NO_LIB
+#include <boost/interprocess/detail/shared_dir_helpers.hpp>	//Used by static library
+#include <boost/interprocess/file_mapping.hpp>				//Used by static library
+#include <boost/interprocess/mapped_region.hpp>				//Used by static library
+#include <boost/interprocess/managed_shared_memory.hpp>		//Used by static library
+#include <boost/interprocess/allocators/allocator.hpp>		//Used by static library
+#include <boost/interprocess/containers/map.hpp>			//Used by static library
+#include <boost/interprocess/containers/flat_map.hpp>		//Used by static library
+#include <boost/interprocess/containers/string.hpp>			//Used by static library
+#include <boost/interprocess/containers/vector.hpp>			//Used by static library
+#include <boost/interprocess/offset_ptr.hpp>				//Used by static library
+#include <boost/interprocess/sync/interprocess_mutex.hpp>	//Used by static library
+#include <boost/interprocess/sync/scoped_lock.hpp>			//Used by static library
+#include <boost/lexical_cast.hpp>
+#include <boost/math/special_functions/round.hpp>
+#include <boost/multi_index_container.hpp>					//Used by static library
+#include <boost/multi_index/member.hpp>						//Used by static library
+#include <boost/multi_index/ordered_index.hpp>				//Used by static library
+#include <boost/scoped_array.hpp>							//Used by static library
+#include <boost/shared_array.hpp>							//Used by static library
+#include <boost/tokenizer.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/utility.hpp>
+#pragma endregion Precompiled Headers
 
 // Global includes that everyone needs
 //@ Not every module needs these includes - fix this - SEJ

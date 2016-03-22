@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:47:04  $
 //******************************************************************************
 
-#ifndef SVOBSERVERDIALOG_H
-#define SVOBSERVERDIALOG_H
+#pragma once
 
 #include "SVVirtualCamera.h"
 #include "SVAcquisitionClass.h"
@@ -114,10 +113,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
-
-#endif	//	SVLIGHTREFERENCEDIALOG_H
 

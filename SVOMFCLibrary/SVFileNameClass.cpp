@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <io.h>
+//Moved to precompiled header: #include <io.h>
 #include "SVFileNameClass.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVMessage/SVMessage.h"

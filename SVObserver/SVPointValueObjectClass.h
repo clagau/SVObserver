@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:29:38  $
 //******************************************************************************
 
-#ifndef SVPOINTVALUEOBJECTCLASS_H
-#define SVPOINTVALUEOBJECTCLASS_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVUtilityLibrary/SVPOINT.h"
@@ -54,6 +53,4 @@ private:
 	void LocalInitialize();
 
 };
-
-#endif
 

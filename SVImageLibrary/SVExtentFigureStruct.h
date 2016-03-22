@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:39:46  $
 //******************************************************************************
 
-#ifndef SVEXTENTFIGURESTRUCT_H
-#define SVEXTENTFIGURESTRUCT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVExtentEnums.h"
@@ -64,6 +63,4 @@ struct SVExtentFigureStruct
 };
 
 typedef SVVector< SVExtentFigureStruct > SVExtentFigureStructCArray;
-
-#endif
 

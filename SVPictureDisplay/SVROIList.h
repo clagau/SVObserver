@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #pragma once
+
 #pragma region Includes
-#include <afxtempl.h>
 #include "SVROI.h"
 #pragma endregion Includes
 /////////////////////////////////////////////////////////////////////////////

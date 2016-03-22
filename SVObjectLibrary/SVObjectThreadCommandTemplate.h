@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:01:08  $
 //******************************************************************************
 
-#ifndef SVOBJECTTHREADCOMMANDTEMPLATE_H
-#define SVOBJECTTHREADCOMMANDTEMPLATE_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandTemplate.h"
 
@@ -30,6 +29,4 @@ private:
 };
 
 #include "SVObjectThreadCommandTemplate.inl"
-
-#endif
 

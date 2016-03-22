@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Dec 2014 15:17:52  $
 //******************************************************************************
 
-#ifndef SVTASKOBJECTVALUEINTERFACE_H
-#define SVTASKOBJECTVALUEINTERFACE_H
+#pragma once
 
 #include "SVValueObjectReference.h"
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
@@ -64,6 +63,4 @@ public:
 private:
 	SVTaskObjectClass *m_psvTaskObject;
 };
-
-#endif
 

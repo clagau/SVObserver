@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:37:04  $
 //******************************************************************************
 
-#ifndef INC_SVLOCKABLEFILENAMEARRAYCLASS_3A5357EC02CE_INCLUDED
-#define INC_SVLOCKABLEFILENAMEARRAYCLASS_3A5357EC02CE_INCLUDED
+#pragma once
 
 class SVFileNameClass;
 
@@ -59,5 +58,4 @@ private:
 
 };
 
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 12:40:08  $
 //******************************************************************************
 
-#ifndef SVROI_H
-#define SVROI_H
+#pragma once
 
 #include "SVTaskObject.h"
 
@@ -39,6 +38,4 @@ protected:
 	SVInObjectInfoStruct		inputImageObjectInfo;
 
 };
-
-#endif	// SVROI_H
 

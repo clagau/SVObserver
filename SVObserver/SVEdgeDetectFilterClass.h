@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   09 Aug 2013 09:53:14  $
 //******************************************************************************
 
-#ifndef SVEDGEDETECTFILTERCLASS_H
-#define SVEDGEDETECTFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -23,6 +22,4 @@ public:
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
-
-#endif	//	SVEDGEDETECTFILTERCLASS_H
 

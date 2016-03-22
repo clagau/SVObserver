@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 17:36:36  $
 //******************************************************************************
 
-#ifndef SVDCAMDRAGONFLYDRIVER_H
-#define SVDCAMDRAGONFLYDRIVER_H
+#pragma once
 
 #include "SVDCamStandardDriver.h"
 
@@ -64,6 +63,4 @@ protected:
 	ULONG m_ulGPIO_XTRA;
 
 };
-
-#endif
 

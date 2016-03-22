@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:41:08  $
 //******************************************************************************
 
-#ifndef INCL_SVOBJECTSCRIPTPARSERBASE_H
-#define INCL_SVOBJECTSCRIPTPARSERBASE_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectClass.h"
 
@@ -38,6 +37,4 @@ protected:
 
 	unsigned long m_parserHandle;
 };
-
-#endif
 

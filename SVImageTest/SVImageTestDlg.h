@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:10:30  $
 // ******************************************************************************
 
-#ifndef SVIMAGETESTDLG_H
-#define SVIMAGETESTDLG_H
+#pragma once
 
 #include "SVCameraPage.h"
 
@@ -68,8 +67,4 @@ protected:
 
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   02 Sep 2014 13:18:18  $
 //******************************************************************************
 #include "StdAfx.h"
-#include <cmath>
+//Moved to precompiled header: #include <cmath>
 #include "SVSharedPPQWriter.h"
 #include "SVSharedConfiguration.h"
 

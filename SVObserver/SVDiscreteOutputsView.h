@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:02:22  $
 //******************************************************************************
 
-#ifndef SVDISCRETEOUTPUTSVIEW_H
-#define SVDISCRETEOUTPUTSVIEW_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
@@ -65,6 +64,4 @@ private:
 inline SVIODoc* SVDiscreteOutputsView::GetDocument()
    { return (SVIODoc*)m_pDocument; }
 #endif
-
-#endif	// SVDISCRETEOUTPUTSVIEW_H
 

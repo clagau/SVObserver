@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:07:28  $
 //******************************************************************************
 
-#ifndef SVOCVANALYZERCLASS_H
-#define SVOCVANALYZERCLASS_H
+#pragma once
 
 #include "SVAnalyzer.h"
 
@@ -48,6 +47,4 @@ private:
 	bool m_bHasLicenseError;
 
 };
-
-#endif
 

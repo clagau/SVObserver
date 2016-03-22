@@ -9,11 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:38:16  $
 //******************************************************************************
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1000)
 #pragma once
-#endif
-#ifndef _INC_SVFILENAMEMANAGERCLASS_3A4A12C60196_INCLUDED
-#define _INC_SVFILENAMEMANAGERCLASS_3A4A12C60196_INCLUDED
 
 class SVFileNameClass;
 
@@ -147,5 +143,4 @@ private:
 	//static SVFileNameLockablePointerArrayClass gsvFileNameArray;
 };
 
-#endif /* _INC_SVFILENAMEMANAGERCLASS_3A4A12C60196_INCLUDED */
 

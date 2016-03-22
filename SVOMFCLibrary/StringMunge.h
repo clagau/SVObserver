@@ -26,8 +26,7 @@
 //
 
 
-#ifndef STRINGMUNGE_H
-#define STRINGMUNGE_H
+#pragma once
 
 class StringMunge
 {
@@ -88,6 +87,4 @@ class StringMunge
 	//      ReplaceStrings(&sString, 1, _T("¥"), _T("abcdef"));
 	//
 };
-
-#endif
 

@@ -6,13 +6,12 @@
 //* .Check In Date   : $Date:   18 Apr 2013 16:13:54  $
 //******************************************************************************
 
-#ifndef JSONCPP_BATCHALLOCATOR_H_INCLUDED
-# define JSONCPP_BATCHALLOCATOR_H_INCLUDED
+#pragma once
 
-# include <stdlib.h>
-# include <assert.h>
+#include <stdlib.h>
+#include <assert.h>
 
-# ifndef JSONCPP_DOC_EXCLUDE_IMPLEMENTATION
+#ifndef JSONCPP_DOC_EXCLUDE_IMPLEMENTATION
 
 namespace Json {
 
@@ -128,6 +127,4 @@ private:
 } // namespace Json
 
 # endif // ifndef JSONCPP_DOC_INCLUDE_IMPLEMENTATION
-
-#endif // JSONCPP_BATCHALLOCATOR_H_INCLUDED
 

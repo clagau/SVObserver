@@ -9,13 +9,10 @@
 // * .Check In Date   : $Date:   03 Feb 2014 17:07:36  $
 // ******************************************************************************
 
-#ifndef SVOFILECONFIGDLG_H
-#define SVOFILECONFIGDLG_H
+#pragma once
 
-#include <map>
-#include <vector>
-
-
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 
 class SVOFileConfigDlg : public CDialog
 {
@@ -73,9 +70,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVOFILECONFIGDLG_H__BC7C3A47_497B_4C81_B529_7827DD5F422A__INCLUDED_)
 

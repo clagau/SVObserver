@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:24:52  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_OCR_INTERFACE_H
-#define SV_MATROX_OCR_INTERFACE_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVMatroxEnums.h"
 #include "SVMatroxStatusInformation.h"
@@ -135,6 +134,4 @@ private:
 	static HRESULT ThicknessCalculation( SVMatroxBuffer p_ThresholdImage, BYTE p_BackgroundType, long& p_rThickness );
 
 };
-
-#endif // SV_MATROX_OCR_INTERFACE_H
 

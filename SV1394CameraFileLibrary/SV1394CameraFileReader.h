@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 17:32:56  $
 //******************************************************************************
 
-#ifndef SV1394CAMERAFILEREADER_H
-#define SV1394CAMERAFILEREADER_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
@@ -47,6 +46,4 @@ protected:
 
 	SV1394CameraFileInfoStruct& m_rInfo;
 };
-
-#endif
 

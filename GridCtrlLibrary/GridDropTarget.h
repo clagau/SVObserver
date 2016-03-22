@@ -38,9 +38,7 @@
 
 #pragma once
 
-#pragma region Includes
-#include <afxole.h>
-#pragma endregion Includes
+//Moved to precompiled header:  #include <afxole.h>
 
 
 namespace Seidenader

@@ -9,12 +9,11 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:29:50  $
 //******************************************************************************
 
-#ifndef SVSOFTWARETRIGGER_H
-#define SVSOFTWARETRIGGER_H
+#pragma once
 
-#include <comdef.h>
-#include <map>
-#include <deque>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <deque>
 #include "SVTimerLibrary/SVTimerCallbackImpl.h"
 #include "SVTriggerLibrary/SVTriggerCallbackStruct.h"
 #include "SVContainerLibrary/SVBidirectionalMap.h"
@@ -93,6 +92,4 @@ private:
 	static void DispatchTrigger(const SVSoftwareTriggerStruct& triggerListener);
 	SVCriticalSection m_CritSec;
 };
-
-#endif
 

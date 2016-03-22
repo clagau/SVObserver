@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 14:01:28  $
 // ******************************************************************************
 
-#ifndef SVPIPECONNECTION_H
-#define SVPIPECONNECTION_H
+#pragma once
 
 #ifdef BUILD_SVPIPESCONNECTION_DLL
 	#define SV_CONNECTION_EXTERN __declspec (dllexport)
@@ -96,5 +95,4 @@ private:
 };
 
 #undef SV_CONNECTION_EXTERN
-#endif
 

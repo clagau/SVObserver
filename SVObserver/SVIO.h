@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:06:10  $
 //******************************************************************************
 
-#ifndef SVIO_H
-#define SVIO_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVGlobal.h"
@@ -170,5 +169,4 @@ protected:
 extern BOOL IsIOControlValid;
 extern SVIOClass IOControl;
 
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:55:26  $
 //******************************************************************************
 
-#ifndef INCL_SVIMPORTPROGRESS_H
-#define INCL_SVIMPORTPROGRESS_H
+#pragma once
 
 #include "SVIProgress.h"
 #include "SVProgressDialog.h"
@@ -45,6 +44,3 @@ private:
 };
 
 #include "SVImportProgress.inl"
-
-#endif
-

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   09 Aug 2013 09:55:38  $
 //******************************************************************************
 
-#ifndef SVLAPLACIANEDGEFILTERCLASS_H
-#define SVLAPLACIANEDGEFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -24,5 +23,4 @@ protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
 
-#endif	//	SVLAPLACIANEDGEFILTERCLASS_H
 

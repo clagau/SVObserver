@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   13 Aug 2013 09:47:24  $
 //******************************************************************************
 
-#ifndef SVCOLORTHRESHOLD_H
-#define SVCOLORTHRESHOLD_H
+#pragma once
 
 #include "SVDrawObject.h"
 #include "SVImageClass.h"
@@ -120,6 +119,4 @@ private:
 	SVDrawObjectListClass thresholdBarFigures[3];
 
 };
-
-#endif
 

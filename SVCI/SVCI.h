@@ -10,8 +10,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:58:58  $
 // ******************************************************************************
 
-#ifndef SVCI_H
-#define SVCI_H
+#pragma once
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
@@ -40,12 +39,4 @@ public:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

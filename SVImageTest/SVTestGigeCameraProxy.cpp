@@ -12,12 +12,12 @@
 #include "stdafx.h"
 #pragma warning (push)
 #pragma warning (disable : 4996)
-#include <deque>
-#include <string>
-#include <comdef.h>
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/algorithm/string.hpp>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVTestGigeCameraProxy.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"

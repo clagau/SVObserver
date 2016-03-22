@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:33:34  $
 //******************************************************************************
 
-#ifndef ARRAYVALUEHOLDER_H
-#define ARRAYVALUEHOLDER_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVLoki/TypeManip.h"	// Loki
 
 class SVArrayValueHolderBase
@@ -97,6 +96,4 @@ bool SVArrayValueHolder<T,D>::IsArray() const
 {
 	return ! Loki::IsEqualType< value_type, default_type >::value;
 }
-
-#endif
 

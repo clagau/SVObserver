@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVIntekDCamDriverProxy.h"
 #include "SV1394CameraFileLibrary/SVDCamDriver.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"

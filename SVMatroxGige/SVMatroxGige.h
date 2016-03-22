@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:49:00  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGE_H
-#define SVMATROXGIGE_H
+#pragma once
 
 #include "SVImageLibrary/SVLut.h"
 #include "SVImageLibrary/SVLightReference.h"
@@ -170,6 +169,4 @@ private:
 	static SVMatroxIdentifier __stdcall CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
 	static SVMatroxIdentifier __stdcall LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
 };
-
-#endif
 

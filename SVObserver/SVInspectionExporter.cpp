@@ -11,14 +11,14 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
-#include <string>
-#include <fstream>
-#include <set>
-#include <iterator>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/foreach.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <iterator>
 #include "SVInspectionExporter.h"
 #include "SVObjectLibrary/SVObjectXMLWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

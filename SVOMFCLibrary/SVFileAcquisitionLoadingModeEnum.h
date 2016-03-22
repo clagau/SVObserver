@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 13:05:42  $
 //******************************************************************************
-#ifndef SVFILEACQUISITONLOADINGMODEENUM_H
-#define SVFILEACQUISITONLOADINGMODEENUM_H
+
+#pragma once
 
 enum SVFileAcquisitonLoadingModeEnum
 { 
@@ -18,5 +18,4 @@ enum SVFileAcquisitonLoadingModeEnum
 	SingleIterationMode
 };
 
-#endif
 

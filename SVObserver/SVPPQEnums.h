@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:32:54  $
 //******************************************************************************
 
-#ifndef SVPPQENUMS_H
-#define SVPPQENUMS_H
+#pragma once
 
 enum SVPPQOutputModeEnum
 {
@@ -30,6 +29,4 @@ enum SVPPQOutputModeEnum
 	SVPPQExtendedTimeDelayAndDataCompleteMode = 4,  // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
 	                                                // Aborts waiting if product leaves PPQ.
 };
-
-#endif
 

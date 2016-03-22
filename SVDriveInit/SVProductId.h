@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 08:33:32  $
 //******************************************************************************
 
-#ifndef SVPRODUCTID_H
-#define SVPRODUCTID_H
+#pragma once
 
 class SVProductId
 {
@@ -35,6 +34,4 @@ private:
 
 
 };
-
-#endif
 

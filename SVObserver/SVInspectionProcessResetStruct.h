@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:02:48  $
 //******************************************************************************
 
-#ifndef SVINSPECTIONPROCESSRESETSTRUCT_H
-#define SVINSPECTIONPROCESSRESETSTRUCT_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVObjectLibrary/SVObjectClass.h"
 
 struct SVInspectionProcessResetStruct
@@ -32,6 +31,4 @@ struct SVInspectionProcessResetStruct
 typedef std::map< SVToolClass *, SVInspectionProcessResetStruct > SVStdMapSVToolClassPtrSVInspectionProcessResetStruct;
 
 #include "SVInspectionProcessResetStruct.inl"
-
-#endif
 

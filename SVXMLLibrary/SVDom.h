@@ -9,9 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:47:18  $
 //******************************************************************************
 
-#ifndef SVDOM_H
-#define SVDOM_H
-
+#pragma once
 
 #define SVXML MSXML2
 
@@ -177,6 +175,4 @@ extern const WCHAR*	g_wcsBaseNode;
 
 extern const char*	g_csValue;
 extern const char*	g_csXMLNS;
-
-#endif
 

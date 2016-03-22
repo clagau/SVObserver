@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:24:12  $
 //******************************************************************************
 
-#ifndef SVSAFEARRAY_H
-#define SVSAFEARRAY_H
+#pragma once
 
-#include <comdef.h>
-#include <vector>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <vector>
 
 /**
 @SVObjectName Safe Array
@@ -83,6 +82,4 @@ private:
 };
 
 #include "SVSAFEARRAY.inl"
-
-#endif
 

@@ -9,20 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:44:08  $
 //******************************************************************************
 
-#ifndef SVDEQUE_H
-#define SVDEQUE_H
+#pragma once
 
-#include <deque>
-#include <BaseTsd.h>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <BaseTsd.h>
 
-/**
-@SVObjectName Seidenader Vision Inc. List
-
-@SVObjectOverview This file defines the interface for the SVDeque class.
-
-@SVObjectOperations This file defines the types SVDequeBase, interator, SVType, and SVArgType.  Available operations include multiple constructors, a virtual destructor, multiple address of operators, multiple assignment operators, an empty function, and a push_back function.
-
-*/
 template<typename SVT_TYPE>
 class SVDeque
 {
@@ -86,6 +77,4 @@ protected:
 };
 
 #include "SVDeque.inl"
-
-#endif
 

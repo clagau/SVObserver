@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   18 Apr 2013 17:36:40  $
 //******************************************************************************
 
-#ifndef SVDCAMFLEA2DRIVER_H
-#define SVDCAMFLEA2DRIVER_H
+#pragma once
 
+//Moved to precompiled header: #include <vector>
 #include "SVDCamStandardDriver.h"
 
 class SVDCamFlea2Driver : public SVDCamStandardDriver
@@ -134,8 +134,3 @@ protected:
 	virtual unsigned long GetDCAMTriggerPolarity() const;
 
 };
-
-
-
-#endif
-

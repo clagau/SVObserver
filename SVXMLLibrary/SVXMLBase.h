@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:49:36  $
 //******************************************************************************
 
-#ifndef SVXMLBASE_H
-#define SVXMLBASE_H
+#pragma once
 
 #include "SVDOM.h"
 
@@ -34,5 +33,4 @@ public:
 
 };
 
-#endif // #ifndef SVXMLBASE_H
 

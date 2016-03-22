@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 13:12:46  $
 //******************************************************************************
 
-#ifndef SVLINE_H
-#define SVLINE_H
+#pragma once
 
 #include "SVDataBuffer.h"
 #include "SVValueBaseNormalizerClass.h"
@@ -110,6 +109,4 @@ protected:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 };
-
-#endif
 

@@ -6,8 +6,8 @@
 #pragma once
 
 #pragma region Inlcudes
-#include <deque>
-#include <vector>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <vector>
 #include "SVImageClass.h"
 #include "SVImageListClass.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"

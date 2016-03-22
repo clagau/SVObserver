@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <algorithm>
 #include "ZoomHelper.h"
-#include <algorithm>
 #pragma endregion Includes
 
 #undef max

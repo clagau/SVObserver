@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:12:54  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_DISPLAY_INTERFACE_H
-#define SV_MATROX_DISPLAY_INTERFACE_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxEnums.h"
 #include "SVMatroxBufferCreateStruct.h"
@@ -94,6 +89,4 @@ public:
 	static long Convert2MatroxType( SVDisplayCntrlEnum p_eDisp) ;
 
 };
-
-#endif // SV_MATROX_DISPLAY_INTERFACE_H
 

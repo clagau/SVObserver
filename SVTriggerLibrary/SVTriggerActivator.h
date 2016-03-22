@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:56:20  $
 //******************************************************************************
-#ifndef SVTRIGGERACTIVATOR_H
-#define SVTRIGGERACTIVATOR_H
+
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVTriggerActivatorFuncInterface.h"
@@ -26,6 +26,4 @@ public:
 
 	HRESULT Exec(unsigned long handle) const;
 };
-
-#endif
 

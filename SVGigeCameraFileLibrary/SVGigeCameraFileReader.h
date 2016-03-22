@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:42:02  $
 //******************************************************************************
 
-#ifndef SVGIGECAMERAFILEREADER_H
-#define SVGIGECAMERAFILEREADER_H
+#pragma once
 
-#include <iostream>
+//Moved to precompiled header: #include <iostream>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
@@ -42,6 +41,3 @@ private:
 
 	SVGigeCameraFileInfoStruct& m_rInfo;
 };
-
-#endif
-

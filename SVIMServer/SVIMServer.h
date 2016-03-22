@@ -9,11 +9,7 @@
 // * .Check In Date   : $Date:   03 Feb 2014 16:31:02  $
 // ******************************************************************************
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1000)
 #pragma once
-#endif
-#ifndef _INC_SVIMServer_38BD7095002E_INCLUDED
-#define _INC_SVIMServer_38BD7095002E_INCLUDED
 
 #ifdef SV_BUILD_SVIMSERVER
 #define SV_EXPORTDLL __declspec (dllexport)
@@ -151,6 +147,4 @@ private:
 	//##ModelId=38E8FF8A0272
 	CFile * mpFile;
 };
-
-#endif /* _INC_SVIMServer_38BD7095002E_INCLUDED */
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 
-#ifndef SVMATROXDIGITIZERCONTROLENUMS_H
-#define SVMATROXDIGITIZERCONTROLENUMS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
@@ -110,6 +109,4 @@ struct SVMatroxDigitizerFormat
 	long bitDepth;
 	long numBands;
 };
-
-#endif
 

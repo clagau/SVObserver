@@ -8,9 +8,9 @@
 #pragma once
 
 #pragma region Includes
-#include <list>
-#include <string>
-#include <utility>
+//Moved to precompiled header: #include <list>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <utility>
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"

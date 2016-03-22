@@ -12,6 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "resource.h"
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <io.h>
+//Moved to precompiled header: #include <iostream>
+//Moved to precompiled header: #include <string>
+
 #include "SVOMFCLibrary\SVOIniLoader.h"
 #include "SVDriveInitDlg.h"
 #include "cpassdlg.h"

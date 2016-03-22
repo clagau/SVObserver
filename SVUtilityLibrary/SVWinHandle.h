@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   24 Sep 2013 16:31:12  $
 //******************************************************************************
 
-#ifndef SVWINHANDLE_H
-#define SVWINHANDLE_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 
 template < typename T >
 struct SVWinHandle	// implements RAII for windows handles
@@ -37,7 +36,4 @@ SVWinHandle<HICON>::~SVWinHandle() {::DestroyIcon(m_t);}
 
 template <>
 SVWinHandle<HBITMAP>::~SVWinHandle() {::DeleteObject(m_t);}
-
-
-#endif
 

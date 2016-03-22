@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 13:10:48  $
 //******************************************************************************
-#ifndef SVPARAMLISTDEVICEPARAM_H
-#define SVPARAMLISTDEVICEPARAM_H
+
+#pragma once
 
 #include "SVDeviceParams.h"
 
@@ -26,6 +26,4 @@ public:
 	static SVDeviceParam* CreateNew() { return new SVParamListDeviceParam; }
 	DEFINE_VISITABLE()
 };
-
-#endif
 

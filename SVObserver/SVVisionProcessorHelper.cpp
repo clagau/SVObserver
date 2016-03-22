@@ -11,9 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/assign.hpp>
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVVisionProcessorHelper.h"
 
 #include "JsonLib/include/json.h"

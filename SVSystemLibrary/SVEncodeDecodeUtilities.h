@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:50:34  $
 //******************************************************************************
 
-#ifndef SVENCODEDECODEUTILITIES_H
-#define SVENCODEDECODEUTILITIES_H
+#pragma once
 
-#include <string>
+//Moved to precompiled header: #include <string>
 #include "SVUtilityLibrary/SVString.h"
 
 namespace SVEncodeDecodeUtilities
@@ -25,6 +24,4 @@ namespace SVEncodeDecodeUtilities
 	HRESULT Base64DecodeToByteBufferFromString( int& p_rOutputBufferSize, unsigned char* p_pOutput, const std::string& p_rInput );
 	HRESULT Base64DecodeToFileFromString( const SVString& p_rFileName, const std::string& p_rInput );
 }
-
-#endif
 

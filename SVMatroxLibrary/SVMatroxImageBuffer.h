@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:18:06  $
 //******************************************************************************
 
-#ifndef SVMATROXIMAGEBUFFER_H
-#define SVMATROXIMAGEBUFFER_H
+#pragma once
 
 #include "SVMatroxBufferTemplate.h"
 
@@ -28,6 +27,4 @@ protected:
 	SVMatroxImageBuffer( SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName );
 
 };
-
-#endif
 

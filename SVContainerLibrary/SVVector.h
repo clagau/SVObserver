@@ -9,20 +9,12 @@
 //* .Check In Date   : $Date:   30 Sep 2013 14:41:50  $
 //******************************************************************************
 
-#ifndef SVVECTOR_H
-#define SVVECTOR_H
+#pragma once
 
-#include <vector>
-#include <BaseTsd.h>
+//Moved to precompiled header: #include <iterator>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <BaseTsd.h>
 
-/**
-@SVObjectName Seidenader Vision Inc. Vector
-
-@SVObjectOverview
-
-@SVObjectOperations
-
-*/
 template< typename SVT_TYPE, typename SVT_ARG_TYPE = const SVT_TYPE& >
 class SVVector
 {
@@ -123,6 +115,4 @@ protected:
 };
 
 #include "SVVector.inl"
-
-#endif // #ifndef SVVECTOR_H
 

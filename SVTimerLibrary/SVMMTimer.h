@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   02 Oct 2013 10:18:18  $
 //******************************************************************************
 
-#ifndef SVMMTIMER_H
-#define SVMMTIMER_H
+#pragma once
 
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVMMTimerEventHandler.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
@@ -47,6 +46,4 @@ private:
 	void Dispatch( bool& p_WaitForEvents );
 	SVCriticalSection m_CritSec;
 };
-
-#endif
 

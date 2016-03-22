@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVAccessPointNode.h"
 

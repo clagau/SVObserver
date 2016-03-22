@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:49:48  $
 //******************************************************************************
 
-#ifndef SVIMAGEBUFFERSTRUCT_H_
-#define SVIMAGEBUFFERSTRUCT_H_
+#pragma once
 
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -51,6 +50,4 @@ typedef SVReferenceCountingTemplate < SVImageBufferStruct, SVImageBufferStructRe
 
 typedef std::vector <SVImageBufferStruct>  SVImageBufferStructVectorType;
 typedef std::vector <SVRefCountImageBufferStruct> SVRefCountImageBufferStructVectorType;
-
-#endif
 

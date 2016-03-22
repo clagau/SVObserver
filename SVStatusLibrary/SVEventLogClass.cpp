@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <exception>
+//Moved to precompiled header: #include <exception>
 #include "SVEventLogClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 

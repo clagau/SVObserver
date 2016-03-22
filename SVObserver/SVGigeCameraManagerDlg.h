@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   05 Jul 2013 09:11:06  $
 //******************************************************************************
 
-#ifndef SVGIGECAMERAMANAGERDLG_H
-#define SVGIGECAMERAMANAGERDLG_H
+#pragma once
 
 #include "SVGigeCameraManager.h"
 #include "SVOGui\SVGigeCameraListCtrl.h"
@@ -61,8 +60,4 @@ public:
 	SvOg::SVGigeCameraListCtrl m_ctlCameraList;
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

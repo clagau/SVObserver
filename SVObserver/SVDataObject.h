@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:07:50  $
 //******************************************************************************
 
-#ifndef AFX_SVDATAOBJECT_H__BBF5FB61_0041_11D2_AEC4_444553540000__INCLUDED_
-#define AFX_SVDATAOBJECT_H__BBF5FB61_0041_11D2_AEC4_444553540000__INCLUDED_
+#pragma once
 
 union SVDataUnion
 {
@@ -123,10 +122,4 @@ protected:
 	int				objectType;
 	SVDataListClass dataList;
 };
-
-/////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio fügt zusätzliche Deklarationen unmittelbar vor der vorhergehenden Zeile ein.
-
-#endif // AFX_SVDATAOBJECT_H__BBF5FB61_0041_11D2_AEC4_444553540000__INCLUDED_
 

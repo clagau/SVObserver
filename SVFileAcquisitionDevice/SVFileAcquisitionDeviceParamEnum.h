@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:28:52  $
 //******************************************************************************
-#ifndef SVFILEACQUISITIONDEVICEPARAMENUM_H
-#define SVFILEACQUISITIONDEVICEPARAMENUM_H
+
+#pragma once
 
 enum SVFileAcquisitionDeviceParamEnum
 {
@@ -22,5 +22,4 @@ enum SVFileAcquisitionDeviceParamEnum
 	SVFileAcquisitionParameterSize
 };
 
-#endif
 

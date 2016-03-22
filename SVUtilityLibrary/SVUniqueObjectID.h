@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:26:16  $
 //******************************************************************************
 
-#ifndef SVUNIQUEOBJECTID_H
-#define SVUNIQUEOBJECTID_H
+#pragma once
+
 #include <list>
 /**
 @SVObjectName Unique Object Identifier
@@ -60,6 +60,4 @@ struct SVGetNextUniqueObjectID
 typedef SVUniqueObjectID SVObjectID;
 typedef SVGetNextUniqueObjectID SVGetNextObjectID;
 typedef std::list<SVObjectID> SVObjectIDList;
-
-#endif
 

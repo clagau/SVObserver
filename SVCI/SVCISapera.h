@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:59:06  $
 // ******************************************************************************
 
-#ifndef SVCISAPERA_H
-#define SVCISAPERA_H
+#pragma once
 
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVCIAcqStruct.h"
@@ -62,6 +61,4 @@ HRESULT g_CIAcqSoftwareTrigger( unsigned long p_ulIndex );
 
 extern SVCIAcqStructVector g_caAcqs;
 extern SVCIBufferStructCArray g_caBuffers;
-
-#endif
 

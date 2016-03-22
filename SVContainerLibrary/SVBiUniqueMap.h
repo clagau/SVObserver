@@ -9,13 +9,13 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:44:04  $
 //******************************************************************************
 
-#ifndef SVBIUNIQUEMAP_H
-#define SVBIUNIQUEMAP_H
+#pragma once
 
-#include <boost/config.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/multi_index/ordered_index.hpp>
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/multi_index_container.hpp>
+//Moved to precompiled header: #include <boost/multi_index/member.hpp>
+//Moved to precompiled header: #include <boost/multi_index/ordered_index.hpp>
 #include "SVBimapDeclarations.h"
 
 // The class template bidirectional_map wraps the specification
@@ -47,6 +47,4 @@ struct SVBiUniqueMap
 		>
 	> type;
 };
-
-#endif
 

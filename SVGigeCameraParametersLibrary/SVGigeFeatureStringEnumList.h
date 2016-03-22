@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:58  $
 //******************************************************************************
-#ifndef SVGIGEFEATURESTRINGENUM_H
-#define SVGIGEFEATURESTRINGENUM_H
+
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVContainerLibrary/SVBidirectionalMap.h"
@@ -38,6 +38,4 @@ public:
 };
 
 #include "SVGigeFeatureStringEnumList.inl"
-
-#endif
 

@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/config.hpp>
-#include <boost/assign.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVInspectionTreeParser.h"
 #include "SVXMLLibrary\SVNavigateTree.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"

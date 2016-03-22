@@ -9,12 +9,11 @@
 //* .Check In Date   : $Date:   01 Oct 2013 14:31:00  $
 //******************************************************************************
 
-#ifndef SVIMAGEOBJECTCLASS_H
-#define SVIMAGEOBJECTCLASS_H
+#pragma once
 
-#include <set>
-#include <map>
-#include <vector>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
@@ -154,6 +153,4 @@ private:
 
 typedef SVSharedPtr< SVImageObjectClass > SVImageObjectClassPtr;
 typedef SVVector< SVImageObjectClassPtr > SVImageObjectClassPtrVector;
-
-#endif
 

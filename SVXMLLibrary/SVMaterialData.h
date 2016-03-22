@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <comutil.h>
+//Moved to precompiled header: #include <comutil.h>
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
 /**

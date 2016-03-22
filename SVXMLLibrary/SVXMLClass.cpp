@@ -11,16 +11,14 @@
 
 #include "stdafx.h"
 #import <msxml6.dll> // MSXML
-#include <assert.h>
+//Moved to precompiled header: #include <assert.h>
 #include "SVXMLClass.h"
 #include "SVLibrary/SVBStr.h"
 
-#include "SVXMLLibraryGlobals.h"
 #include "SVXMLEncryptionClass.h"
 #include "SVXMLSVRSchemaClass.h"
-#include "SVXMLSafeArrayConverter.h"
 #include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary\SVUtilityGlobals.h"
+
 
 SVXMLClass::SVXMLClass()
 : svmlUseRevisionHistoryInfo(0)

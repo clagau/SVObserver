@@ -1908,7 +1908,7 @@ DWORD_PTR SVImageClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 }
 
 #ifdef _DEBUG
-#include <map>
+//Moved to precompiled header: #include <map>
 namespace
 {
 	std::map<DWORD, long> f_mapCritSec;

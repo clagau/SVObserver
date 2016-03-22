@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   22 Apr 2013 10:51:32  $
 // ******************************************************************************
 
-#ifndef __SVIMAGINGDEVICEPARAMS_H__
-#define __SVIMAGINGDEVICEPARAMS_H__
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVLut.h"
 #include "SVLightReference.h"
 #include "SVCameraFormat.h"
@@ -83,6 +82,4 @@ public:
 	static SVDeviceParam* CreateNew() { return new SVCameraFormatsDeviceParam; }
 	DEFINE_VISITABLE()
 };
-
-#endif
 

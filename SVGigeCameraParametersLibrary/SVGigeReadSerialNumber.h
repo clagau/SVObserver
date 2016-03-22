@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:56:56  $
 //******************************************************************************
 
-#ifndef SVGIGEREADSERIALNUMBER_H
-#define SVGIGEREADSERIALNUMBER_H
+#pragma once
 
 #include <comdef.h>
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
@@ -22,6 +21,4 @@ struct SVGigeReadSerialNumber
 	// Getter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const;
 };
-
-#endif
 

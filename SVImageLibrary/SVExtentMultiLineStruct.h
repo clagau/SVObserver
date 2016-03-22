@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:39:58  $
 //******************************************************************************
 
-#ifndef SVEXTENTMULTILINESTRUCT_H
-#define SVEXTENTMULTILINESTRUCT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -51,6 +50,4 @@ struct SVExtentMultiLineStruct
 };
 
 typedef SVVector< SVExtentMultiLineStruct > SVExtentMultiLineStructCArray;
-
-#endif
 

@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:51:40  $
 //******************************************************************************
 
-#ifndef SVLIGHTREFERENCE_H
-#define SVLIGHTREFERENCE_H
+#pragma  once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
+#include "ImageFileUtilities.h"
 #include "SVUtilityLibrary/SVString.h"
 
 class SVLightReferenceAttributeInfo
@@ -93,6 +93,4 @@ public:
 protected:
 	int						m_iNumBands;    // the number of bands (channels)
 };
-
-#endif //SVLIGHTREFERENCE_H
 

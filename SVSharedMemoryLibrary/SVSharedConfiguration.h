@@ -10,8 +10,8 @@
 //******************************************************************************
 #pragma once
 
-#include <string>
-#include <fstream>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <fstream>
 
 namespace SeidenaderVision
 {

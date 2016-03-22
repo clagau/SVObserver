@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:48  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGECAMERAPARAM_H
-#define SVMATROXGIGECAMERAPARAM_H
+#pragma  once
 
-#include <deque>
-#include <comdef.h>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <comdef.h>
 
 struct SVMatroxGigeCameraParam
 {
@@ -31,6 +30,4 @@ struct SVMatroxGigeCameraParam
 
 // List of Camera Parameters (SetParameters)
 typedef std::deque<SVMatroxGigeCameraParam> SVMatroxGigeCameraParamDeque;
-
-#endif
 

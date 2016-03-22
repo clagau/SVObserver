@@ -9,14 +9,12 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:31:36  $
 //******************************************************************************
 
-#ifndef SVCOMMANDDATAVALUE_H
-#define SVCOMMANDDATAVALUE_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVCommandLibraryEnums.h"
 #include "SVCommandDataTemplate.h"
 
 typedef SVCommandDataTemplate< SV_COMMAND_DATA_TYPE_VALUE, _variant_t > SVCommandDataValue;
 
-#endif
 

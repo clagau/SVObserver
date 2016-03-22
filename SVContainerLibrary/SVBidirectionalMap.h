@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 07:44:02  $
 //******************************************************************************
-#ifndef SVBIDIRECTIONALMAP_H
-#define SVBIDIRECTIONALMAP_H
 
-#include <boost/config.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/multi_index/ordered_index.hpp>
+#pragma once
+
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/multi_index_container.hpp>
+//Moved to precompiled header: #include <boost/multi_index/member.hpp>
+//Moved to precompiled header: #include <boost/multi_index/ordered_index.hpp>
 #include "SVBimapDeclarations.h"
 
 // The class template bidirectional_map wraps the specification
@@ -46,6 +47,4 @@ struct SVBidirectionalMap
 		>
 	> type;
 };
-
-#endif
 

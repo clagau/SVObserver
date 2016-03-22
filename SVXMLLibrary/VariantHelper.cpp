@@ -6,19 +6,19 @@
 //*****************************************************************************
 #pragma region Includes
 #include "StdAfx.h"
+//Moved to precompiled header: #include <comutil.h>
+//Moved to precompiled header: #include <iosfwd>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <sstream>
+//Moved to precompiled header: #include <boost/assign/std/map.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "VariantHelper.h"
 #include "SVXMLLibrary/SVVariantCustomTypes.h"
-#include <comutil.h>
-#include <iosfwd>
-#include <string>
-#include <sstream>
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVXMLLibrary/SVVariantConverter.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
-#include <boost/assign/std/map.hpp>
-#include <boost/assign/list_of.hpp>
 #pragma endregion Includes
 
 #pragma region Declarations

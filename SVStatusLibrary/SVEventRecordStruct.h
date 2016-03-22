@@ -8,9 +8,10 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   25 Apr 2013 17:43:00  $
 // ******************************************************************************
-#include <string>
-#ifndef _SVEVENTRECORDCLASS_H
-#define _SVEVENTRECORDCLASS_H
+
+#pragma once
+
+//Moved to precompiled header: #include <string>
 
 static const unsigned long SV_EVENT_RECORD_STRUCT_RECORD_SIZE = 0x0008000;
 
@@ -46,6 +47,3 @@ private:
   LPCTSTR m_szCurrentString;
 	unsigned long m_ulStringIndex;
 };
-
-#endif
-

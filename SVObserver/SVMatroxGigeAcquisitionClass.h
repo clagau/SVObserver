@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   19 Nov 2014 03:35:08  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGEACQUISITIONCLASS_H
-#define SVMATROXGIGEACQUISITIONCLASS_H
+#pragma once
 
 #pragma region Includes
 #include "SVAcquisitionClass.h"
@@ -113,6 +112,4 @@ private:
 
 	HRESULT SetGigeFeatureOverrides(const SVString& featureOverrides);
 };
-
-#endif
 

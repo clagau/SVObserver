@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:45:26  $
 //******************************************************************************
 #include "stdafx.h"
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <mil.h>
 #include "SVMatroxDigitizerControlEnums.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <mil.h>
 
 // Assign mappings for Control Camera Types
 SVMatroxDigitizerControl::SVCameraEnumMap SVMatroxDigitizerControl::m_CameraEnumConvertor = boost::assign::map_list_of<>

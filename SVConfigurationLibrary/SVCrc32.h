@@ -13,8 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef SVCRC32_H
-#define SVCRC32_H
+#pragma once
 
 class  SVCrc32
 {
@@ -33,6 +32,4 @@ private:
 
 // Methods
 };
-
-#endif
 

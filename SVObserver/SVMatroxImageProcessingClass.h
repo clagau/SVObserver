@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:34:18  $
 //******************************************************************************
 
-#ifndef SVMATROXIMAGEPROCESSINGCLASS_H
-#define SVMATROXIMAGEPROCESSINGCLASS_H
+#pragma once
 
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
@@ -105,6 +104,4 @@ private:
 	const SVMatroxImageProcessingClass& operator=( const SVMatroxImageProcessingClass& p_rObject );
 
 };
-
-#endif
 

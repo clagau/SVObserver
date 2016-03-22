@@ -7,10 +7,11 @@
 //*********
 
 #pragma once
+
 #pragma region Includes
-#include <string>
-#include <memory> 
-#include <map>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <memory> 
+//Moved to precompiled header: #include <map>
 #include <msxml2.h>
 #pragma endregion Includes
 

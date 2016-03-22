@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:17:24  $
 //******************************************************************************
 
-#ifndef SVIPIMAGEDATAELEMENT_H
-#define SVIPIMAGEDATAELEMENT_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
@@ -27,6 +26,4 @@ struct SVIPImageDataElement
 };
 
 typedef std::map< SVGUID, SVIPImageDataElement > SVIPImageDataElementMap;
-
-#endif
 

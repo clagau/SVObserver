@@ -9,11 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:42:16  $
 //******************************************************************************
 
-#ifndef SVGETOBJECTDEQUEBYTYPEVISITOR_H
-#define SVGETOBJECTDEQUEBYTYPEVISITOR_H
+#pragma once
 
-#include <deque>
-
+//Moved to precompiled header: #include <deque>
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 
 class SVObjectClass;
@@ -38,6 +36,4 @@ private:
 	SVGetObjectDequeByTypeVisitor();
 
 };
-
-#endif
 

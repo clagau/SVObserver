@@ -9,14 +9,11 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:30:28  $
 //******************************************************************************
 
-#ifndef SVCOMMANDDATABLOCK_H
-#define SVCOMMANDDATABLOCK_H
+#pragma once
 
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVCommandLibraryEnums.h"
 #include "SVCommandDataTemplate.h"
 
 typedef SVCommandDataTemplate< SV_COMMAND_DATA_TYPE_BLOCK, SVByteVector > SVCommandDataBlock;
-
-#endif
 

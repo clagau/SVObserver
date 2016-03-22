@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <intrin.h> // to force the header not to be included elsewhere
+//Moved to precompiled header: #include <intrin.h>
 #include "SVSharedInspectionReader.h"
 #include "SVSharedConfiguration.h"
 

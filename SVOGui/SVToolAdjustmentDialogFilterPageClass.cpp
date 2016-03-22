@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVOResource/resource.h"
 #include "SVToolAdjustmentDialogFilterPageClass.h"
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "SVCustomFilterDlg.h"

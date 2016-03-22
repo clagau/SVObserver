@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   23 Apr 2013 11:05:32  $
 // ******************************************************************************
 
-#ifndef INCL_SVINTEKDCAMACQUISITIONPROXY_H
-#define INCL_SVINTEKDCAMACQUISITIONPROXY_H
+#pragma once
 
 #include "SV1394CameraFileLibrary/SVDCamAcquisitionProxy.h"
 #include "SVAcquisitionClass.h"
@@ -38,5 +37,4 @@ public:
 	virtual bool IsCameraOnline() const;
 };
 
-#endif
 

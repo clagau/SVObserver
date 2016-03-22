@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:40  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGESYSTEM_H
-#define SVMATROXGIGESYSTEM_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxSystemRef.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -43,6 +42,4 @@ public:
 	SVString m_Name;
 	SVMatroxSystemRef m_System;
 };
-
-#endif
 

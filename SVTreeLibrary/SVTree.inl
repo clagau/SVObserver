@@ -9,12 +9,6 @@
 //* .Check In Date   : $Date:   17 Jul 2014 16:54:28  $
 //******************************************************************************
 
-
-#pragma region Includes
-#include <algorithm>
-#include "SVCompareKeys.h"
-#pragma endregion Includes
-
 namespace Seidenader { namespace SVTreeLibrary
 {
 	template<typename Key, typename Data>

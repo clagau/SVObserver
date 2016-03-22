@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Jul 2013 18:04:40  $
 //******************************************************************************
 
-#ifndef SVREMOTEFONTMANAGER_H
-#define SVREMOTEFONTMANAGER_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -83,6 +82,4 @@ private:
 	
 	static DWORD WINAPI SVRemoteFontCleanupThread( LPVOID lpParam );
 };
-
-#endif
 

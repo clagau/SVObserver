@@ -8,8 +8,8 @@
 #pragma once
 
 #pragma region Includes
-#include <vector>
-#include <ctime>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <ctime>
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

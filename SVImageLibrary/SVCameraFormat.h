@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 10:37:18  $
 // ******************************************************************************
 
-#ifndef SVCAMERAFORMAT_H
-#define SVCAMERAFORMAT_H
+#pragma once
 
 #include "SVOMFCLibrary/SVTemplate.h"
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
@@ -62,6 +61,4 @@ private:
 	void init();
 };
 
-
-#endif
 

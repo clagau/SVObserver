@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   30 Sep 2014 15:42:52  $
 //******************************************************************************
 
-#ifndef SVEXTERNALTOOLTASK_H
-#define SVEXTERNALTOOLTASK_H
+#pragma once
 
 #pragma warning (push)
 #pragma warning (disable : 4290)
@@ -191,6 +190,4 @@ public:
 
 };
 #pragma warning (pop)
-
-#endif	// _SVIMAGESHIFTCLASS_H
 

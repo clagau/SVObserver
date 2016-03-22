@@ -10,10 +10,10 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <boost/utility.hpp>
-#include <boost/fusion/container.hpp>
-#include <boost/fusion/algorithm.hpp>
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/utility.hpp>
+//Moved to precompiled header: #include <boost/fusion/container.hpp>
+//Moved to precompiled header: #include <boost/fusion/algorithm.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVHistogramAnalyzer.h"
 
 #include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"

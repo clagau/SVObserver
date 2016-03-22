@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "SVOGui/PictureDisplay.h"
 #include "SVOGui/ImageController.h"
 #pragma endregion Includes

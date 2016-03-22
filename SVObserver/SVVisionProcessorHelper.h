@@ -12,11 +12,11 @@
 #pragma once
 
 #pragma region Includes
-#include <comdef.h>
-#include <map>
-#include <set>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <direct.h>
+//Moved to precompiled header: #include <direct.h>
 #include "SVGlobal.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVObserver.h"

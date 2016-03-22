@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:35:36  $
 //******************************************************************************
 
-#ifndef SVCLASSREGISTERLISTCLASS_H
-#define SVCLASSREGISTERLISTCLASS_H
+#pragma once
 
 #include "SVContainerLibrary/SVMap.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -48,6 +47,4 @@ private:
 	const SVClassRegisterListClass& operator=( const SVClassRegisterListClass& p_rObject );
 
 };
-
-#endif
 

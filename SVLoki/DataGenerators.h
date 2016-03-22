@@ -24,8 +24,8 @@
 // Last update: Mar 04, 2003
 // MSVC 6.0 version
 
-#ifndef DATAGENERATORS_H
-#define DATAGENERATORS_H
+#pragma once
+
 #include "Typelist.h"
 #include "MSVC6Helpers.h"
 namespace Loki
@@ -150,13 +150,3 @@ namespace Private
 		}
 	}//ns TL
 }//ns Loki
-
-#endif //DATAGENERATORS_H
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// 9/20/02 Named changed from GenData to IterateTypes
-// 10/8/02 insertion iterators are passed-by-value, not by-reference (oops)
-// 03/04/03 ported by Benjamin Kaufmann to MSVC 6.0 
-// 03/06/03 added protected destructors to private implementation classes B.K.
-////////////////////////////////////////////////////////////////////////////////
-

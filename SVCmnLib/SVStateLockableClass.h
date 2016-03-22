@@ -9,11 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 18:10:08  $
 // ******************************************************************************
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1000)
 #pragma once
-#endif
-#ifndef _INC_SVSTATELOCKABLECLASS_3B24DD3301E4_INCLUDED
-#define _INC_SVSTATELOCKABLECLASS_3B24DD3301E4_INCLUDED
 
 #include "SVStateClass.h"
 
@@ -80,6 +76,4 @@ private:
 	HANDLE mhStateLock;
 
 };
-
-#endif /* _INC_SVSTATELOCKABLECLASS_3B24DD3301E4_INCLUDED */
 

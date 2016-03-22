@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
-#include <set>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <set>
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
 #include "SVImageLibrary\SVImageInfoClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"

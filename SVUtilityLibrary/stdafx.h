@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   03 Jul 2014 16:27:30  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -44,10 +43,42 @@
 #define _SECURE_SCL 0
 #endif
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <windows.h>
+#include <atltypes.h>
 
+#include <algorithm>
 #include <assert.h>
+#include <cassert>
 #include <comdef.h>
+#include <comutil.h>
+#include <deque>
+#include <iostream>
+#include <guiddef.h>
+#include <limits>
+#include <list>
+#include <locale>
+#include <map>
+#include <memory>
+#include <numeric>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <tchar.h>
+#include <utility>
+#include <vector>
 
-#endif // #ifndef STDAFX_H
-
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/config.hpp>
+#include <boost/function.hpp>
+#include <boost/scoped_array.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/tr1/memory.hpp>
+#pragma endregion Precompiled Headers

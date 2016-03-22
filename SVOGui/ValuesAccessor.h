@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include <guiddef.h>
+//Moved to precompiled header: #include <guiddef.h>
 #include "ObjectInterfaces/NameValueList.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "GuiCommands/TaskObjectGetEmbeddedValues.h"

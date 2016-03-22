@@ -10,10 +10,10 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <stdio.h>
-#include <comdef.h>
-#include <algorithm>
-#include <set>
+//Moved to precompiled header: #include <stdio.h>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <set>
 
 #include "SVOFileConfig.h"
 #include "SVOFileConfigDlg.h"

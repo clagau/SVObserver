@@ -7,7 +7,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "Stdafx.h"
-#include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "AuxiliaryExtentsController.h"
 #include "GuiCommands\AreAuxiliaryExtentsAvailable.h"
 #include "GuiCommands\GetAvailableAuxSourceImages.h"

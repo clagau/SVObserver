@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/assign.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
 #include "SVInspectionProcess.h"

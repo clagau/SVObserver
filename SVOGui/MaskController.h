@@ -8,10 +8,10 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/any.hpp>
-#include <boost/noncopyable.hpp>
-#include <string>
-#include <comdef.h>
+//Moved to precompiled header: #include <boost/any.hpp>
+//Moved to precompiled header: #include <boost/noncopyable.hpp>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 

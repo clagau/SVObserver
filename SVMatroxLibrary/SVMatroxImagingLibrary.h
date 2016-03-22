@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   16 Jan 2014 10:40:58  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_IMAGING_LIBRARY_H
-#define SV_MATROX_IMAGING_LIBRARY_H
+#pragma once
 
 #define SV_DESIRED_MIL_VERSION 0x0900
 
@@ -49,5 +48,4 @@
 	#error ****** INVALID MIL VERSION : Current version does not match desired version.
 #endif
 
-#endif // SV_MATROX_IMAGING_LIBRARY_H
 

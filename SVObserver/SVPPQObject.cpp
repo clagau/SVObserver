@@ -11,11 +11,11 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <Mmsystem.h>
-#include <fstream>
-#include <algorithm>
-#include <limits>
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <mmsystem.h>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <limits>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVPPQObject.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"

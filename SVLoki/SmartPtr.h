@@ -65,10 +65,6 @@
 // Many thanks to Nelson Elói for pointing that out and for providing me
 // with this solution
 
-
-#ifndef SMARTPTR_INC_
-#define SMARTPTR_INC_
-
 ////////////////////////////////////////////////////////////////////////////////
 // IMPORTANT NOTE
 // Due to threading issues, the OwnershipPolicy has been changed as follows:
@@ -77,14 +73,15 @@
 //     IsUnique() was removed
 ////////////////////////////////////////////////////////////////////////////////
 
+#pragma once
 
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <stdexcept>
+//Moved to precompiled header: #include <cassert>
 #include "SmallObj.h"
 #include "TypeManip.h"
 #include "MSVC6Helpers.h"
 #include "static_check.h"
-#include <functional>
-#include <stdexcept>
-#include <cassert>
 
 namespace Loki
 {
@@ -1477,15 +1474,3 @@ namespace std	\
 #define SMARTPTR_SPECIALIZE_LESS(T) \
 	SMARTPTR_SPECIALIZE_LESS_5(T, RefCountedWrapper, DisallowConversion, AssertCheckWrapper, DefaultSPStorageWrapper)
 #endif
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// December 09, 2001: Included <cassert>
-// Oct  26, 2002: ported by Benjamin Kaufmann to MSVC 6.0
-// Feb	24, 2003: ported RefCountedMT. In NoCopy replaced CT_ASSERT with 
-//					STATIC_CHECK. B.K.
-// Mar	06, 2003: added helper-macros for specializing std::less for
-//					Smart-Pointers.
-////////////////////////////////////////////////////////////////////////////////
-#endif // SMARTPTR_INC_
-

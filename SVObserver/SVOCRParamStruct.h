@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:00:20  $
 //******************************************************************************
 
-#ifndef SVOCRPARAMSTRUCT_H
-#define SVOCRPARAMSTRUCT_H
+#pragma once
 
 class SVOCRAnalyzeResultClass;
 
@@ -110,6 +109,4 @@ struct SVOCRParamStruct
 
 	SVOCRAnalyzeResultClass *psvOCRResult;
 };
-
-#endif   /* SVOCRPARAMSTRUCT_H */
 

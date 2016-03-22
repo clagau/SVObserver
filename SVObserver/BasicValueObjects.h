@@ -14,7 +14,7 @@
 #pragma once
 
 #pragma region Includes
-#include <sequential_tree.h>
+//Moved to precompiled header: #include <sequential_tree.h>
 #include "BasicValueObject.h"
 #pragma endregion Includes
 

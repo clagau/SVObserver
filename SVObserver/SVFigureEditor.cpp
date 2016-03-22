@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVFigureEditor.h"
 #pragma endregion Includes
 

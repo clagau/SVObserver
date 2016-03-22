@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:03:46  $
 //******************************************************************************
 
-#ifndef SVShiftToolUtility_H
-#define SVShiftToolUtility_H
+#pragma once
 
 class SVShiftTool;
 
@@ -23,4 +22,3 @@ private:
 	SVShiftToolUtility();
 	~SVShiftToolUtility();
 };
-#endif

@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   04 Dec 2014 03:34:44  $
 //******************************************************************************
 #pragma region Includes
-#include <assert.h>
+//Moved to precompiled header: #include <assert.h>
 #pragma endregion Includes
 
 #pragma region Public Methods

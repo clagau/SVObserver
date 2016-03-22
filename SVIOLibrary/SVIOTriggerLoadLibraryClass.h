@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:48:18  $
 // ******************************************************************************
 
-#ifndef SVIOTRIGGERLOADLIBRARYCLASS_H
-#define SVIOTRIGGERLOADLIBRARYCLASS_H
+#pragma once
 
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 
@@ -71,6 +70,4 @@ private:
 };
 
 #include "SVIOTriggerLoadLibraryClass.inl"
-
-#endif
 

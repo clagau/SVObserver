@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   02 Oct 2013 08:24:40  $
 //******************************************************************************
 
-#ifndef SVVALUEOBJECTREFERENCE_H_
-#define SVVALUEOBJECTREFERENCE_H_
+#pragma once
 
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVObjectLibrary/SVObjectReference.h"
@@ -97,5 +96,4 @@ private :
 
 typedef std::vector<SVValueObjectReference> SVValueObjectReferenceVector;
 
-#endif
 

@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   03 Dec 2014 19:41:32  $
 //******************************************************************************
-#ifndef SVLONGVALUEDEVICEPARAM_H
-#define SVLONGVALUEDEVICEPARAM_H
+
+#pragma once
 
 #include "SVDeviceParams.h"
 
@@ -63,5 +63,4 @@ private:
 	inline SVDeviceParamWrapper DeviceParam(short i) {return SVLongValueDeviceParam(i);}
 #endif
 
-#endif
 

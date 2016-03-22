@@ -9,104 +9,9 @@
 //* .Check In Date   : $Date:   12 Jun 2013 15:01:36  $
 //******************************************************************************
 
-#ifndef SVGIGEENUMS_H
-#define SVGIGEENUMS_H
+#pragma once
 
-/*
-	DeviceParamDeviceDigNum         = 100,  // SVObserver Parameter
-	DeviceParamDeviceName           = 101,  // SVObserver Parameter
-	DeviceParamDeviceChannelName    = 102,  // SVObserver Parameter
-
-	DeviceParamVendorId             = 103,  // DLL Parameter
-	DeviceParamVendorName           = 104,  // DLL Parameter
-	DeviceParamModelName            = 105,  // DLL Parameter
-
-	// physical camera params
-	DeviceParamSerialNumber         = 1000,  // DLL Parameter
-	DeviceParamSerialNumberString   = 1001,  // DLL Parameter
-	DeviceParamRegisters            = 1006,
-	DeviceParamSizeBands            = 1009,
-	DeviceParamFormatStrings        = 1011,
-	DeviceParamFormat7Support       = 1012,
-	DeviceParamOutputStrobePulse    = 1014,
-	DeviceParamStrobePulseDelay     = 1015,
-	DeviceParamStrobePulseDuration  = 1016,
-	DeviceParamCameraTriggerPin     = 1017,
-	DeviceParamCameraStrobePin      = 1018,
-	DeviceParamTriggerMode          = 1021,
-	DeviceParamNumCameraQueuedTriggers = 1022,
-	DeviceParamTestPattern          = 1023,
-	DeviceParamShutterDelay			= 1024,
-	DeviceParamStrobeStartMode      = 1025,
-	DeviceParamTriggerQueueMode     = 1026,
-	DeviceParamStrobePulseAdvance   = 1027,
-	DeviceParamStrobePulseMultiplier= 1033,
-	DeviceParamNumCameraBuffers     = 1034,
-
-	// Custom parameters
-	DeviceParamGigeCustom1      = 3050,
-	DeviceParamGigeCustom2      = 3051,
-	DeviceParamGigeCustom3      = 3052,
-	DeviceParamGigeCustom4      = 3053,
-	DeviceParamGigeCustom5      = 3054,
-	DeviceParamGigeCustom6      = 3055,
-	DeviceParamGigeCustom7      = 3056,
-	DeviceParamGigeCustom8      = 3057,
-	DeviceParamGigeCustom9      = 3058,
-	DeviceParamGigeCustom10     = 3059,
-	DeviceParamGigeCustom11     = 3060,
-	DeviceParamGigeCustom12     = 3061,
-	DeviceParamGigeCustom13     = 3062,
-	DeviceParamGigeCustom14     = 3063,
-	DeviceParamGigeCustom15     = 3064,
-	DeviceParamGigeCustom16     = 3065,
-	DeviceParamGigeCustom17     = 3066,
-	DeviceParamGigeCustom18     = 3067,
-	DeviceParamGigeCustom19     = 3068,
-	DeviceParamGigeCustom20     = 3069,
-	DeviceParamGigeCustom21     = 3070,
-	DeviceParamGigeCustom22     = 3071,
-	DeviceParamGigeCustom23     = 3072,
-	DeviceParamGigeCustom24     = 3073,
-	DeviceParamGigeCustom25     = 3074,
-	DeviceParamGigeCustom26     = 3075,
-	DeviceParamGigeCustom27     = 3076,
-	DeviceParamGigeCustom28     = 3077,
-	DeviceParamGigeCustom29     = 3078,
-	DeviceParamGigeCustom30     = 3079,
-
-	// Imaging parameters
-	DeviceParamCameraFormats  = 4000,
-	DeviceParamLightReference = 4001,
-	DeviceParamLut            = 4002,
-
-	// Acquisition I/O parameters
-	DeviceParamAcquisitionTriggerSelection = 5000,	// ?? not used
-	DeviceParamAcquisitionTriggerType      = 5001,	// external, software, software grab
-	DeviceParamAcquisitionTriggerName      = 5002,	// NOT USED YET; will when connecting triggers with acquisition devices
-
-	DeviceParamAcquisitionTriggerEdge      = 5003,  // Internal Parameters Only - Rising or Falling
-	DeviceParamAcquisitionStrobeEdge       = 5013,  // Internal Parameters Only - Rising or Falling
-
-	DeviceParamCameraInput				= 5050,
-
-	DeviceParamIOStrobeInvert = 5100,
-	DeviceParamIOTriggerInvert = 5101,
-
-	DeviceParamCameraTriggerMode = 5200,
-
-	DeviceParamGigeTriggerSource		= 6000,
-	DeviceParamGigeTriggerEdge			= 6001,
-	DeviceParamGigeTriggerLine			= 6002,
-	DeviceParamGigeTriggerEnable		= 6003,
-	
-	DeviceParamGigeStrobeSource			= 6050,
-	DeviceParamGigeStrobeEdge			= 6051,
-	DeviceParamGigeStrobeLine			= 6052,
-	DeviceParamGigeStrobeEnable			= 6053,
-
-	DeviceParamGigePacketSize			= 6100,
-*/
+//Device Parameters are now in the SVDeviceParams.h file
 
 enum SVGigeParameterEnum
 {
@@ -195,5 +100,4 @@ enum SVGigeParameterEnum
 	SVGigeEndTrackParameters	= 99999		// Internal use only
 };
 
-#endif
 

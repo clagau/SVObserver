@@ -9,15 +9,10 @@
 // * .Check In Date   : $Date:   23 Oct 2013 08:50:46  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_TYPEDEFS_H
-#define SV_MATROX_TYPEDEFS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#include <string>
-#include <vector>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <vector>
 
 /**
 @SVObjectName Matrox Identifier
@@ -107,7 +102,4 @@ typedef std::vector<long> SVMatroxLongArray;
 
 */
 typedef std::vector<BYTE> SVMatroxByteArray;
-
-
-#endif // SV_MATROX_TYPEDEFS_H
 

@@ -9,19 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:44:14  $
 //******************************************************************************
 
-#ifndef SVMAP_H
-#define SVMAP_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 
-/**
-@SVObjectName Map
-
-@SVObjectOverview This is the Seidenader Vision Inc. wrapper for map.
-
-@SVObjectOperations Available operations include multiple constructors, a virtual destructor, address of operators, assignment operators, begin and end interators, MFC style operators (including IsEmpty, GetCount, and GetSize), GetStartPosition, GetNextAssoc, Lookup, SetAt, the [] operator, RemoveKey, and RemoveAll operations.
-
-*/
 template <typename SVT_KEY, typename SVT_VALUE>
 class SVMap
 {
@@ -98,6 +89,3 @@ protected:
 };
 
 #include "SVMap.inl"
-
-#endif // #ifndef SVMAP_H
-

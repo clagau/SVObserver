@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:57:50  $
 //******************************************************************************
-#ifndef SVTRIGGERCALLBACKFUNCINTERFACE_H
-#define SVTRIGGERCALLBACKFUNCINTERFACE_H
+
+#pragma once
 
 class SVTriggerCallbackFuncInterface
 {
@@ -18,5 +18,4 @@ public:
 	virtual HRESULT operator()(unsigned long handle) const=0;
 };
 
-#endif
 

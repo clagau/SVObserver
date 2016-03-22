@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:40:26  $
 //******************************************************************************
 
-#ifndef SVOBJECTCOMMANDDATAJSON_H
-#define SVOBJECTCOMMANDDATAJSON_H
+#pragma once
 
-#include <string>
+//Moved to precompiled header: #include <string>
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
 struct SVObjectCommandDataJson
@@ -43,6 +42,3 @@ private:
 };
 
 typedef SVSharedPtr< SVObjectCommandDataJson > SVObjectCommandDataJsonPtr;
-
-#endif
-

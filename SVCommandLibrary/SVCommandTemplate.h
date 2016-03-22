@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:31:34  $
 //******************************************************************************
 
-#ifndef SVCOMMANDTEMPLATE_H
-#define SVCOMMANDTEMPLATE_H
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
@@ -39,6 +38,4 @@ private:
 };
 
 typedef SVSharedPtr< SVCommandTemplate > SVCommandTemplatePtr;
-
-#endif
 

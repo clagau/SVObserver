@@ -9,11 +9,8 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:31:40  $
 //******************************************************************************
 
-#ifndef SVCOMMANDLIBRARYENUMS_H
-#define SVCOMMANDLIBRARYENUMS_H
+#pragma once
 
-/*
-*/
 enum SVCommandType
 {
 	SV_COMMAND_TYPE_UNKNOWN = 0x00000000,
@@ -32,5 +29,4 @@ enum SVCommandDataType
 	SV_COMMAND_DATA_TYPE_IMAGE     = 0x00000008,
 };
 
-#endif
 

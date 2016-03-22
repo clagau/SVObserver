@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:36:04  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGECAMERAPARAMTRACKER_H
-#define SVMATROXGIGECAMERAPARAMTRACKER_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxGigeCameraParam.h"
 #include "SVMatroxGigeCameraParamList.h"
@@ -40,6 +39,4 @@ public:
 private:	
 	HRESULT ReloadCameraParamList(const SVMatroxGigeCameraParamDeque& list, SVMatroxGigeDigitizer& p_rCamera);
 };
-
-#endif
 

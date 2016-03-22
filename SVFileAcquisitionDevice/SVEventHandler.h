@@ -8,11 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:25:54  $
 //******************************************************************************
-#ifndef SVEVENTHANDLER_H
-#define SVEVENTHANDLER_H
 
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+#pragma once
+
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 template <typename T>
 class SVEventHandler
@@ -31,6 +31,4 @@ public:
 };
 
 #include "SVEventhandler.inl"
-
-#endif
 

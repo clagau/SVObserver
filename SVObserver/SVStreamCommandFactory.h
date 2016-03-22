@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:14:58  $
 //******************************************************************************
 
-#ifndef SVSTREAMCOMMANDFACTORY_H
-#define SVSTREAMCOMMANDFACTORY_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandAbstractFactorySingleton.h"
 #include "SVCommandLibrary/SVCommandAbstractFactoryTemplate.h"
@@ -34,6 +33,4 @@ public:
 };
 
 typedef SVCommandAbstractFactorySingleton< SVStreamCommandFactory > SVStreamCommandFactorySingleton;
-
-#endif
 

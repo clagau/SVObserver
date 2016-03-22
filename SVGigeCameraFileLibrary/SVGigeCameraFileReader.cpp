@@ -10,12 +10,13 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#define _SCL_SECURE_NO_WARNINGS
-#include <boost/config.hpp>
-#include <boost/algorithm/string.hpp>
-#include <fstream>
-#include <string>
-#include <deque>
+
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <iterator>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVGigeCameraFileReader.h"
 #include "SVMessage/SVMessage.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"

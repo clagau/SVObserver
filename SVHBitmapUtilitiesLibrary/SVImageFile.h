@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 10:11:16  $
 //******************************************************************************
-#ifndef SVIMAGEFILE_H
-#define SVIMAGEFILE_H
+
+#pragma once
 
 class SVImageFile
 {
@@ -30,6 +30,4 @@ public:
 
 	void Destroy();
 };
-
-#endif
 

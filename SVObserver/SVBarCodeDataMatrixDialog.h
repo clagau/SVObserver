@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:41:12  $
 //******************************************************************************
 
-#ifndef SVBARCODEDATAMATRIXDIALOG_H
-#define SVBARCODEDATAMATRIXDIALOG_H
+#pragma once
 
 #include "SVValueObjectImpl.h"
 
@@ -72,9 +71,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVBARCODEDATAMATRIXDIALOG_H__AF5FDD6B_7BE0_11D3_A7D0_00106F010A93__INCLUDED_)
 

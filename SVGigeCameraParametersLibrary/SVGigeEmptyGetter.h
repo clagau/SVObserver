@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:46:06  $
 //******************************************************************************
-#ifndef SVGIGEEMPTYGETTER_H
-#define SVGIGEEMPTYGETTER_H
+
+#pragma once
 
 #include <comdef.h>
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
@@ -20,6 +20,4 @@ struct SVGigeEmptyGetter
 	//Getter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const;
 };
-
-#endif
 

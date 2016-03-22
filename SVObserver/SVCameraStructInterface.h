@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:50:12  $
 //******************************************************************************
-#ifndef SVCAMERASTRUCTINTERFACE_H
-#define SVCAMERASTRUCTINTERFACE_H
+
+#pragma once
 
 struct SVCameraStructInterface
 {
@@ -32,6 +32,4 @@ struct SVCameraStructInterface
 
 	CameraChangeTypeEnum eChangeType;
 };
-
-#endif
 

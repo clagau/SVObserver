@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   07 Mar 2014 18:12:44  $
 //******************************************************************************
 
-#ifndef SVCORECOACQUISITIONCLASS_H
-#define SVCORECOACQUISITIONCLASS_H
+#pragma once
 
 #pragma region Includes
 #include "SVAcquisitionClass.h"
@@ -68,6 +67,4 @@ private:
 		DEFAULT_BRIGHTNESS        = 0
 	};
 };
-
-#endif
 

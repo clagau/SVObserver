@@ -10,7 +10,8 @@
 //******************************************************************************
 
 #pragma once
-#include <map>
+
+//Moved to precompiled header: #include <map>
 
 #include "svobjectlibrary\svobjectclass.h"
 #include "SVObjectLibrary/SVObjectNotifyTemplate.h"

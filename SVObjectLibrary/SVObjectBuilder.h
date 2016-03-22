@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 16:46:40  $
 //******************************************************************************
-#ifndef INCL_SVOBJECTBUILDER_H
-#define INCL_SVOBJECTBUILDER_H
+
+#pragma once
 
 #include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/SVGuidList.h"
@@ -30,6 +30,4 @@ public:
 
 	static HRESULT GetObjectDataType(const GUID& ownerID, const GUID& objectID, SVObjectScriptDataObjectTypeEnum& dataType);
 };
-
-#endif
 

@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:52:42  $
 //******************************************************************************
 
-#ifndef SVREMOTEOUTPUTOBJECT_H
-#define SVREMOTEOUTPUTOBJECT_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVValueObject.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
@@ -62,6 +61,4 @@ private:
 };
 
 typedef std::vector<SVRemoteOutputObject*> SVRemoteOutputObjectList;
-
-#endif
 

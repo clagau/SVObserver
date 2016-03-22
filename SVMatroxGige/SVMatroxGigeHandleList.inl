@@ -45,7 +45,6 @@ HRESULT SVMatroxGigeHandleList<MaxHandles, HandleType, InvalidHandle, value_type
 	return hr;
 }
 
-#include <deque>
 template <int MaxHandles, typename HandleType, HandleType InvalidHandle, typename value_type>
 value_type& SVMatroxGigeHandleList<MaxHandles, HandleType, InvalidHandle, value_type>::Get(HandleType handle, HRESULT& status)
 {

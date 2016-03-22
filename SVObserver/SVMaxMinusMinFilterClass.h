@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:28:14  $
 //******************************************************************************
 
-#ifndef SVMAXMINUSMINFILTERCLASS_H
-#define SVMAXMINUSMINFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -34,6 +33,4 @@ protected:
 private:
 	void init();
 };
-		
-#endif	//	SVMAXMINUSMINFILTERCLASS_H
 

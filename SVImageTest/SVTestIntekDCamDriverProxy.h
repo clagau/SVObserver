@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   02 Oct 2013 11:47:20  $
 // ******************************************************************************
 
-#ifndef INCL_SVTESTINTEKDCAMDRIVERPROXY_H
-#define INCL_SVTESTINTEKDCAMDRIVERPROXY_H
+#pragma once
 
 #include "SV1394CameraFileLibrary/SV1394CameraFileReader.h"
 #include "SV1394CameraFileLibrary/SVDCamDriverProxy.h"
@@ -49,6 +48,4 @@ public:
 	HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
 	bool CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
 };
-
-#endif
 

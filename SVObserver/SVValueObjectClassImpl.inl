@@ -9,10 +9,6 @@
 //* .Check In Date   : $Date:   02 Oct 2013 08:24:40  $
 //******************************************************************************
 
-#include <assert.h>
-#include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
-
 template <typename T>
 SVValueObjectClassImpl<T>::~SVValueObjectClassImpl()
 {
@@ -597,11 +593,10 @@ template <typename T>
 inline void SVValueObjectClassImpl<T>::swap( SVValueObjectClassImpl<T>& rhs )
 {
 	ASSERT( typeid( *this ) == typeid( rhs ) );
-	using std::swap;
 
 	if ( this != &rhs )
 	{
-		swap( m_DefaultValue, rhs.m_DefaultValue );
+		std::swap( m_DefaultValue, rhs.m_DefaultValue );
 		//swap( m_ScalarBuckets, rhs.m_ScalarBuckets );// not sure if VC6 implements redirection to vector member function
 		m_ScalarBuckets.swap( rhs.m_ScalarBuckets );
 

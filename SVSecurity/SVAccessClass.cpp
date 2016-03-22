@@ -10,13 +10,12 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <lm.h>
+//Moved to precompiled header: #include <time.h>
+//Moved to precompiled header: #include <io.h>
+//Moved to precompiled header: #include <FCNTL.H>
+
 #include "SVAccessClass.h"
-
-#include <lm.h>
-#include <time.h>
-#include <io.h>
-#include <FCNTL.H>
-
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 

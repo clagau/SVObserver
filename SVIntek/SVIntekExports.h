@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   26 Apr 2013 14:53:02  $
 // ******************************************************************************
 
-#ifndef SVINTEKEXPORTS_H
-#define SVINTEKEXPORTS_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
@@ -72,6 +71,4 @@ HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long p_ulHandle );
 HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SVIntekCallbackPtr& callback, void* pOwner, void* pData );
 HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, SVIntekCallbackPtr& callback, void* pOwner, void* pData );
 HRESULT WINAPI SVDigitizerInternalTriggerUnregisterAll( unsigned long p_ulHandle );
-
-#endif
 

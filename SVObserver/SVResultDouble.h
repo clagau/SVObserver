@@ -9,24 +9,9 @@
 //* .Check In Date   : $Date:   01 Jul 2014 15:15:22  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
-#ifndef SVRESULTDOUBLE_H
-#define SVRESULTDOUBLE_H
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVResult.h"
-
-
 
 class SVDoubleResultClass : public SVResultClass  
 {
@@ -50,8 +35,4 @@ protected:
 	// Output
 	SVDoubleValueObjectClass		value;
 };
-
-
-
-#endif	// SVRESULTDOUBLE_H
 

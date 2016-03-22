@@ -11,10 +11,10 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <iterator>
-#include <boost/assign.hpp>
-#include <sys/stat.h>
-#include <io.h>
+//Moved to precompiled header: #include <iterator>
+//Moved to precompiled header: #include <boost/assign.hpp>
+//Moved to precompiled header: #include <sys/stat.h>
+//Moved to precompiled header: #include <io.h>
 #include "SVOConfigAssistantDlg.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:16:48  $
 //******************************************************************************
 
-#ifndef SVMAINIMAGECLASS_H
-#define SVMAINIMAGECLASS_H
+#pragma once
 
 #include "SVTimerLibrary/SVClock.h"
 #include "SVCameraImageTemplate.h"
@@ -46,6 +45,4 @@ private:
 	void init();
 
 };
-
-#endif
 

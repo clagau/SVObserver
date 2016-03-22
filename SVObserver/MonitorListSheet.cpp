@@ -11,10 +11,10 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <set>
-#include <algorithm>
-#include <boost/function.hpp>
-#include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "MonitorListSheet.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "MonitorListValuesPage.h"

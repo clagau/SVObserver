@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <assert.h>
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxEnums.h"
 #include "SVMatroxImagingLibrary.h"

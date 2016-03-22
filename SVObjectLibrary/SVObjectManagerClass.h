@@ -9,12 +9,11 @@
 //* .Check In Date   : $Date:   13 Nov 2014 10:01:18  $
 //******************************************************************************
 
-#ifndef SVOBJECTMANAGERCLASS_H
-#define SVOBJECTMANAGERCLASS_H
+#pragma once
 
 #pragma region Includes
-#include <map>
-#include <set>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <set>
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -295,6 +294,4 @@ private:
 };
 
 #include "SVObjectManagerClass.inl"
-
-#endif
 

@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma once
 
-#include <memory>
+//Moved to precompiled header: #include <memory>
 #include "SVSharedLastInspectedCache.h"
 #include "SVSharedRejectCache.h"
 #include "SVSharedMemorySettings.h"

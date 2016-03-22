@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <deque>
-#include <vector>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <vector>
 
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVTool.h"

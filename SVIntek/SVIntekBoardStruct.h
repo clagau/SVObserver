@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   26 Apr 2013 14:50:42  $
 // ******************************************************************************
 
-#ifndef SVINTEKBOARDSTRUCT_H
-#define SVINTEKBOARDSTRUCT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVCFireBus.h"
@@ -35,6 +34,4 @@ public:
 };
 
 typedef SVVector< SVIntekBoardStruct* > SVIntekBoardStructPtrCArray;
-
-#endif
 

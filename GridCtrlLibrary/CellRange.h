@@ -38,7 +38,8 @@
 
 #pragma once
 
-#include <algorithm>
+//Moved to precompiled header: #include <algorithm>
+
 // The code contained in this file is based on the original
 // WorldCom Grid control written by Joe Willcoxson,
 //      mailto:chinajoe@aol.com

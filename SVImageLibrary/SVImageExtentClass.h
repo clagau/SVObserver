@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:53:38  $
 //******************************************************************************
 
-#ifndef SVIMAGEEXTENTCLASS_H
-#define SVIMAGEEXTENTCLASS_H
+#pragma once
 
-#include <map>
-#include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "SVExtentDimensionsClass.h"
 #include "SVExtentEnums.h"
 #include "SVExtentFigureStruct.h"
@@ -142,6 +141,4 @@ private:
 	// Output Attributes
 	SVExtentFigureStruct m_svFigure;
 };
-
-#endif
 

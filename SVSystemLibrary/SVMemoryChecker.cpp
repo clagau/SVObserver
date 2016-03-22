@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <Psapi.h>
+//Moved to precompiled header: #include <Psapi.h>
 #include "SVMemoryChecker.h"
 
 size_t SVMemoryChecker::GetFreeProcessMemorySize()

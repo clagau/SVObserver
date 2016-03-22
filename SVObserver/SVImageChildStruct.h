@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:48:16  $
 //******************************************************************************
 
-#ifndef SVIMAGECHILDSTRUCT_H
-#define SVIMAGECHILDSTRUCT_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVImageObjectClass.h"
@@ -31,6 +30,4 @@ struct SVImageChildStruct
 };
 
 typedef std::map< GUID, SVImageChildStruct > SVGuidImageChildMap;
-
-#endif
 

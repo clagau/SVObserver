@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <colordlg.h>	// for custom color dlg resource #defines
+//Moved to precompiled header: #include <colordlg.h>
 #include "SVMaskShapeEditorDlg.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/IObjectManager.h"

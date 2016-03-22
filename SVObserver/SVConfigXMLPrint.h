@@ -9,14 +9,13 @@
 //* .Check In Date   : $Date:   16 Jul 2014 07:54:54  $
 //******************************************************************************
 
-#ifndef SVCONFIGXMLPRINT_H
-#define SVCONFIGXMLPRINT_H
+#pragma once
 
-#include <string>
-#include <sstream>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <sstream>
+//Moved to precompiled header: #define BOOST_DATE_TIME_NO_LIB
+//Moved to precompiled header: #include <boost/date_time.hpp>
 #include "xmllite.h"
-#define BOOST_DATE_TIME_NO_LIB
-#include <boost/date_time.hpp>
 
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
@@ -169,6 +168,4 @@ namespace sv_xml
 }
 
 #include "SVConfigXMLPrint.inl"
-
-#endif
 

@@ -9,12 +9,10 @@
 // * .Check In Date   : $Date:   08 May 2013 15:33:38  $
 // ******************************************************************************
 
-#ifndef SVFUNCTIONPROFILER_H
-#define SVFUNCTIONPROFILER_H
 #pragma once
 
-#include <iostream>
-#include <map>
+//Moved to precompiled header: #include <iostream>
+//Moved to precompiled header: #include <map>
 #include "SVTimerLibrary/SVClock.h"
 
 #if 0
@@ -150,6 +148,3 @@ inline void SVSizeProfiler::Add(int iSize)
 {
 	m_mapSizeCounter[iSize]++;
 }
-
-#endif //__SVFUNCTIONPROFILER__
-

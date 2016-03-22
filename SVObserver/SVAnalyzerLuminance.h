@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:26:22  $
 //******************************************************************************
 
-#ifndef SVANALYZERLUMINANCE_H
-#define SVANALYZERLUMINANCE_H
+#pragma once
 
 #include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #include "SVAnalyzer.h"
@@ -98,8 +97,3 @@ protected:
 /*- End of USED BY Run (). ----------------------------------*/
 
 };
-
-
-
-#endif   // _SVANALYZERLUMINANCE_H
-

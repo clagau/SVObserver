@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:50:48  $
 //******************************************************************************
 
-#ifndef SVEVENTTHREAD_H
-#define SVEVENTTHREAD_H
+#pragma once
 
-#include <string>
+//Moved to precompiled header: #include <string>
+#include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
+#include "SVThreadManager.h"
 
 /*
 SVEventThreadSignalHandler must have the following prototype:
@@ -55,6 +58,4 @@ public:
 };
 
 #include "SVEventThread.inl"
-
-#endif
 

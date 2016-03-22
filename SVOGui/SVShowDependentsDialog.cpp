@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include <functional>
+//Moved to precompiled header: #include <functional>
 #include "SVShowDependentsDialog.h"
 #include "GuiCommands\GetDependencies.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"

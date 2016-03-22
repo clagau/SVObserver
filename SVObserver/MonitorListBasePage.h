@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <utility>
-#include <deque>
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <deque>
 #include "SVMFCControls\SVHorizListBox.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls\NameSelectionTreeCtrl.h"

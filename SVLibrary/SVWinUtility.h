@@ -9,13 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 13:51:16  $
 //******************************************************************************
 
-#ifndef SVWINUTILITY_H_
-#define SVWINUTILITY_H_
 #pragma once
 
 void SVYieldMessages(HWND hWnd = NULL);
 void SVYieldPaintMessages(HWND hWnd = NULL );
-
-
-#endif	//#ifndef SVWINUTILITY_H_
-

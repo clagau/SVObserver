@@ -8,10 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:16  $
 //******************************************************************************
-#ifndef SVMATROXGIGEDEVICEPARAMETERMANAGER_H
-#define SVMATROXGIGEDEVICEPARAMETERMANAGER_H
 
-#include <map>
+#pragma once
+
+//Moved to precompiled header: #include <map>
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 
 class SVMatroxGigeDigitizer;
@@ -27,6 +27,4 @@ public:
 	static HRESULT SetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int p_piParameterTypeID, VARIANT *p_pvarValue);
 	static HRESULT IsParameterSupported(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID);
 };
-
-#endif
 

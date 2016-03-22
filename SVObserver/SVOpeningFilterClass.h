@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:28:36  $
 //******************************************************************************
 
-#ifndef SVOPENINGFILTERCLASS_H
-#define SVOPENINGFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -23,5 +22,4 @@ protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
 
-#endif	//	SVOPERATOR_H
 

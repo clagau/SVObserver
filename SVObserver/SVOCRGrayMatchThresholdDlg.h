@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:59:36  $
 //******************************************************************************
 
-#ifndef SVOCRGRAYMATCHTHRESHOLDDLG_H
-#define SVOCRGRAYMATCHTHRESHOLDDLG_H
+#pragma once
 
 class SVOCRGrayMatchThresholdDlg : public CPropertyPage
 {
@@ -68,8 +67,4 @@ protected:
 
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

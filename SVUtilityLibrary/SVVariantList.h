@@ -8,13 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:40:12  $
 //******************************************************************************
-#ifndef INCL_SVVARIANTLIST_H
-#define INCL_SVVARIANTLIST_H
 
-#include <deque>
-#include <comdef.h>
+#pragma once
+
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <comdef.h>
 
 typedef std::deque<_variant_t> SVVariantList;
 
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:24:12  $
 //******************************************************************************
 
-#ifndef SVCOMMANDATTRIBUTESTEMPLATE_H
-#define SVCOMMANDATTRIBUTESTEMPLATE_H
+#pragma once
 
 #include "SVCommandAttributesFacade.h"
 
@@ -40,6 +39,4 @@ protected:
 };
 
 #include "SVCommandAttributesTemplate.inl"
-
-#endif
 

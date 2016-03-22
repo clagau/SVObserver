@@ -9,8 +9,9 @@
 //* .Check In Date   : $Date:   19 Jun 2014 17:36:58  $
 //******************************************************************************
 #pragma once
-#include <set>
-#include <map>
+
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <map>
 #include "SVutilityLibrary/SVString.h"
 
 typedef std::set<SVString> SVMonitorItemList;

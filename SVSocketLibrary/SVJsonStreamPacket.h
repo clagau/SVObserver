@@ -9,8 +9,9 @@
 //* .Check In Date   : $Date:   02 Oct 2014 10:40:48  $
 //******************************************************************************
 #pragma once
-#include <string>
-#include <sstream>
+
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <sstream>
 
 class SVJsonStreamPacket
 {

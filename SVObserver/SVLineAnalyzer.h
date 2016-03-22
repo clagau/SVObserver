@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 13:14:08  $
 //******************************************************************************
 
-#ifndef SVLINEANALYZER_H
-#define SVLINEANALYZER_H
+#pragma once
 
 #include "SVAnalyzer.h"
 #include "SVToolExtentClass.h"
@@ -107,6 +106,4 @@ private:
 	void addLineAnalyzerFriend();
 	
 };
-
-#endif
 

@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:15:22  $
 // ******************************************************************************
 
-#ifndef INCL_SVTESTINTEKACQUISITIONSUBSYSTEM_H
-#define INCL_SVTESTINTEKACQUISITIONSUBSYSTEM_H
+#pragma once
 
 #include "SVTestAcquisitionSubsystem.h"
 
@@ -23,6 +22,4 @@ public:
 	virtual SVTestAcquisitionClass* GetAcquisitionDevice( long selectedCamera );
 
 };
-
-#endif
 

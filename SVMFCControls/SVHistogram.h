@@ -10,12 +10,11 @@
 //******************************************************************************
 #pragma once
 
-#include <algorithm>
-#include <math.h>
-#include <numeric>
-#include <vector>
-
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <math.h>
+//Moved to precompiled header: #include <numeric>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVUtilityLibrary\SVHistogramBase.h"
 #include "SVHistogramLabels.h"

@@ -39,11 +39,12 @@
 // visitor classes for the return type void, define the macro
 // USE_VISITOR_OLD_VERSION.
 //
+
+#pragma once
+
 #ifdef USE_VISITOR_OLD_VERSION
 #include "VisitorOld.h"
 #else
-#ifndef VISITOR_INC_
-#define VISITOR_INC_
 
 #include "Typelist.h"
 #include "HierarchyGenerators.h"
@@ -516,17 +517,5 @@ namespace Private
 
 } // namespace Loki
 
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// March 20: add default argument DefaultCatchAll to BaseVisitable
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// Oct  27, 2002: ported by Benjamin Kaufmann to MSVC 6.0
-// Feb	23, 2003: Removed special visitor classes for return type void.
-//		Added Loki:: qualification to Accept's Paramter (in the macro) B.K.
-// Mar	06, 2003: Changed default values for return types to void.
-//				  Added protected destructors to private implementation classes B.K.				
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // VISITOR_INC_
 #endif
 

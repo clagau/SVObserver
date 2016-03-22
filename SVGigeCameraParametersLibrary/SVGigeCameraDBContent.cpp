@@ -10,13 +10,12 @@
 //******************************************************************************
 #include "StdAfx.h"
 #import <msxml6.dll> raw_interfaces_only 
-#include <boost/config.hpp>
-#include <boost/assign.hpp>
-#include <string>
-#include <vector>
-#include <map>
-#include <AtlBase.h>
-#include <AtlConv.h>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVGigeDeviceParameterStruct.h"
 #include "SVGigeEmptyGetter.h"
 #include "SVGigeEmptySetter.h"

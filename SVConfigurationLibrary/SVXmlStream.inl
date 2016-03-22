@@ -10,8 +10,7 @@
 // ******************************************************************************
 
 #pragma region Includes
-#include <atlbase.h>
-#include <fstream>
+//Moved to precompiled header: #include <fstream>
 
 #include "SVXmlStream.h"
 #include "SVOLibrary/SVOLibrary.h"

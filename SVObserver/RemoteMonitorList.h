@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
-#include <deque>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <deque>
 #include "RemoteMonitorNamedList.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

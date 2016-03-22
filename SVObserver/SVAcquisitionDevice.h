@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:24:04  $
 //******************************************************************************
 
-#ifndef SVACQUISITIONDEVICE_H
-#define SVACQUISITIONDEVICE_H
+#pragma once
 
 #include "SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
@@ -29,6 +28,4 @@ public:
 	SVDeviceParamCollection mDeviceParams;
 
 };
-
-#endif
 

@@ -10,7 +10,9 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <assert.h>
+//Moved to precompiled header: #include <assert.h>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVMatroxImageInterface.h"
 
 #include "SVCommandLibrary/SVCommandDataHolder.h"
@@ -21,8 +23,6 @@
 #include "SVMatroxCommandDataImage.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
 
 
 SVInterpolationModeOptions::SVInterpolationModeOptionsEnumMap SVInterpolationModeOptions::m_Convertor = boost::assign::map_list_of<>

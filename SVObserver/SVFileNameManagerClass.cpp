@@ -11,9 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <io.h>
-#include <direct.h>
-#include <sys/stat.h>
+//Moved to precompiled header: #include <io.h>
+//Moved to precompiled header: #include <direct.h>
+//Moved to precompiled header: #include <sys/stat.h>
 #include "SVFileNameManagerClass.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVFileNameLockablePointerArrayClass.h"

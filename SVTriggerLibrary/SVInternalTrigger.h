@@ -8,11 +8,11 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   01 Dec 2014 14:15:24  $
 //******************************************************************************
-#ifndef SVINTERNALTRIGGER_H
-#define SVINTERNALTRIGGER_H
 
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+#pragma once
+
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVTriggerHandler.h"
 #include "SVSystemLibrary/SVThread.h"
 
@@ -40,5 +40,4 @@ private:
 	void Dispatch( bool& p_WaitForEvents );
 };
 
-#endif
 

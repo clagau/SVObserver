@@ -11,8 +11,7 @@
 
 #include "SVTaskObject.h"
 
-#ifndef SVOCVBLOBRECORD_H
-#define SVOCVBLOBRECORD_H
+#pragma once
 
 class SVOCVCharacterResultClass : public SVTaskObjectClass
 {
@@ -48,5 +47,4 @@ public:
 };
 typedef SVVector< SVOCVCharacterResultClass* > SVOCVCharacterResultArray;
 
-#endif   /* SVOCVBLOBRECORD_H */
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:22:32  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -19,11 +18,11 @@
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINNT WINVER	// Change this to the appropriate value to target other versions of Windows.
 #endif						
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows XP or later.
-#define _WIN32_WINDOWS 0x0501 // Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINDOWS WINVER // Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
@@ -41,21 +40,28 @@
 #define _SECURE_SCL 0
 #endif
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afx.h>
 #include <afxctl.h>         // MFC support for ActiveX Controls
+#include <afxcmn.h>			// MFC support for Windows Common Controls
+#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>		// MFC Templates
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Comon Controls
-#ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
-#endif // _AFX_NO_AFXCMN_SUPPORT
 
-// Delete the two includes below if you do not wish to use the MFC
-//  database classes
-#include <afxdb.h>			// MFC database classes
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
+#include <deque>			//Used by static library
+#include <list>				//Used by static library
+#include <map>				//Used by static library
+#include <set>				//Used by static library
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <vector>			//Used by static library
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_STDAFX_H__C87C9B78_E6DC_11D2_A77B_00106F000C7D__INCLUDED_)
-
+#include <boost/multi_index_container.hpp>				//Used by static library
+#include <boost/multi_index/member.hpp>					//Used by static library
+#include <boost/multi_index/ordered_index.hpp>			//Used by static library
+#pragma endregion Precompiled Headers

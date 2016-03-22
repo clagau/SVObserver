@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:33:24  $
 // ******************************************************************************
 
-#ifndef SVOIODOCCLASS_H
-#define SVOIODOCCLASS_H
+#pragma once
 
 class SVOIODocClass : public COleServerDoc
 {
@@ -46,5 +45,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#endif
 

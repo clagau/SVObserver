@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:41:48  $
 //******************************************************************************
 
-#ifndef SVERRORCLASS_H
-#define SVERRORCLASS_H
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 
@@ -334,5 +333,4 @@ protected:
 
 };
 
-#endif
 

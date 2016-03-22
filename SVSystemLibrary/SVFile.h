@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:51:32  $
 //******************************************************************************
 
-#ifndef SVFILE_H
-#define SVFILE_H
+#pragma once
 
-#include <stdio.h>
+//Moved to precompiled header: #include <stdio.h>
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary/SVString.h"
 
@@ -74,6 +73,4 @@ private:
 	FILE* m_pFile;
 
 };
-
-#endif
 

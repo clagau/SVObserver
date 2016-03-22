@@ -9,14 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:16:28  $
 //******************************************************************************
 
-#ifndef SVVALUEOBJECT_H
-#define SVVALUEOBJECT_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVValueObjectImpl.h"
-
-#endif
 

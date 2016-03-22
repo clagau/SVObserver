@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "SVOResource\resource.h"
 #include "SVKnobControl.h"
 
 namespace Seidenader

@@ -26,11 +26,10 @@
 
 // Last update: June 20, 2001
 
-#ifndef LOKITYPEINFO_INC_
-#define LOKITYPEINFO_INC_
+#pragma once
 
-#include <typeinfo>
-#include <cassert>
+//Moved to precompiled header: #include <typeinfo>
+//Moved to precompiled header: #include <cassert>
 #include "Typelist.h"
 
 namespace Loki
@@ -108,11 +107,4 @@ namespace Loki
     inline bool operator>=(const TypeInfo& lhs, const TypeInfo& rhs)
     { return !(lhs < rhs); }
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // LOKITYPEINFO_INC_
 

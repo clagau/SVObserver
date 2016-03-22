@@ -9,10 +9,8 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:32:32  $
 // ******************************************************************************
 
-#ifndef _SVCFIREBUS_H
-#define _SVCFIREBUS_H
+#pragma once
 
 #include "Intek\firebus.h"
 
-#endif // _SVCFIREBUS_H
 

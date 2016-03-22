@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:36:40  $
 // ******************************************************************************
 
-#ifndef INCL_SVDCAMFACTORYREGISTRAR_H
-#define INCL_SVDCAMFACTORYREGISTRAR_H
+#pragma once
 
 #include "SVDCamDriver.h"
 
@@ -21,5 +20,4 @@ class SVDCamFactoryRegistrar
 public:
 	static void Register();
 };
-#endif
 

@@ -9,11 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:22  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGEBUFFERSTRUCT_H
-#define SVMATROXGIGEBUFFERSTRUCT_H
+#pragma once
 
-#include <deque>
-//#include <vector>
+//Moved to precompiled header: #include <deque>
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
@@ -40,7 +38,4 @@ public:
 };
 
 typedef std::deque<SVMatroxGigeBufferStruct> SVMatroxGigeBufferStructArray;
-//typedef std::vector<SVMatroxGigeBufferStruct> SVMatroxGigeBufferStructArray;
-
-#endif
 

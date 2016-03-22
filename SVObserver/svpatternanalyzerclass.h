@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   17 Jul 2014 06:38:48  $
 //******************************************************************************
 
-#ifndef SVPATTERNANALYZERCLASS_H
-#define SVPATTERNANALYZERCLASS_H
+#pragma once
 
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
@@ -126,5 +125,4 @@ private:
 
 };
 
-#endif
 

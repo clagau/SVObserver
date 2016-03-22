@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:17:34  $
 //******************************************************************************
 
-#ifndef SVIPPRODUCTSTRUCT_H
-#define SVIPPRODUCTSTRUCT_H
+#pragma once
 
 #include "SVIPImageDataElement.h"
 #include "SVIPResultData.h"
@@ -26,5 +25,4 @@ struct SVIPProductStruct
 	void clear() { m_TriggerCount = 0; m_ImageData.clear(); m_ResultData.clear(); }
 };
 
-#endif
 

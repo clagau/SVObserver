@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:12:08  $
 //******************************************************************************
 
-#ifndef SVMATROXERRORENUM_H
-#define SVMATROXERRORENUM_H
+#pragma once
 
 /**
 @SVObjectName Matrox Error Enum
@@ -44,6 +43,4 @@ enum SVMatroxErrorEnum
 
 	SVMEE_MBUF_ALLOCATION_FAILED	= 0xcf00c678
 };
-
-#endif
 

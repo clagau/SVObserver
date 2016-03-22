@@ -33,11 +33,10 @@
 // and removed the ugly #pragma warning(disable:4291)"
 // Thanks to M.Yamada for the hint
 
-#ifndef SMALLOBJ_INC_
-#define SMALLOBJ_INC_
+#pragma once
 
-#include <cstddef>
-#include <vector>
+//Moved to precompiled header: #include <cstddef>
+//Moved to precompiled header: #include <vector>
 #include "Threads.h"
 #include "Singleton.h"
 #include "MSVC6Helpers.h"		// for apply-template
@@ -211,12 +210,4 @@ namespace Loki
     };
 
 } // namespace Loki
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// Oct	11, 2002: ported by Benjamin Kaufmann to MSVC 6.0
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // SMALLOBJ_INC_
 

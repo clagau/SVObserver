@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <memory>
+//Moved to precompiled header: #include <memory>
 #include "SVOIntelRAIDStatusClass.h"
 #include "ModelessMessageBox.h"
 #include "SVStatusLibrary/SVEventLogClass.h"

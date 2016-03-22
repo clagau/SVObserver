@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 12:57:50  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -19,11 +18,11 @@
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINNT WINVER	// Change this to the appropriate value to target other versions of Windows.
 #endif						
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows XP or later.
-#define _WIN32_WINDOWS 0x0501 // Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINDOWS WINVER // Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
@@ -42,20 +41,47 @@
 #endif
 
 #define OEMRESOURCE	// OEM resource to use nicer cursors...
+
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>
-#include <oleauto.h>
 #include <afxtempl.h>
 #include <afxcmn.h>
+#include <afxctl.h>
 #include <afxdlgs.h>
 #include <afxdisp.h>        // MFC OLE-Automatisierungsklassen
+#include <WinDef.h>
 
-#include "SVOResource/resource.h"
+#include <algorithm>
+#include <atlsafe.h>
+#include <comdef.h>
+#include <concrt.h>										//Used by static library
+#include <comutil.h>
+#include <ctime>			//Used by static library
+#include <functional>
+#include <guiddef.h>
+#include <limits.h>
+#include <map>
+#include <oleauto.h>
+#include <regex>
+#include <sequential_tree.h> //Used by static library
+#include <set>				//Used by static library
+#include <sstream>
+#include <string>
+#include <tchar.h>			//Used by static library
+#include <vector>
 
-// TODO: reference additional headers your program requires here
+#include <boost/any.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/multi_index_container.hpp>				//Used by static library
+#include <boost/multi_index/member.hpp>					//Used by static library
+#include <boost/multi_index/ordered_index.hpp>			//Used by static library
+#include <boost/noncopyable.hpp>
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_STDAFX_H__B2A0D072_1DC5_4100_BE8D_9528C46E0F5A__INCLUDED_)
-
+#pragma endregion Precompiled Headers

@@ -9,12 +9,6 @@
 //* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
-#include <tchar.h>
-#include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
-#include "SVThreadManager.h"
-
 template<typename SVEventThreadSignalHandler>
 SVEventThread<SVEventThreadSignalHandler>::SVEventThread()
 : m_hShutdown( 0 )
@@ -71,23 +65,23 @@ DWORD WINAPI SVEventThread<SVEventThreadSignalHandler>::ThreadProc( LPVOID lpPar
 				#ifdef DEBUG
 					else
 					{
-						l_Message.Format( _T( "SVEventThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-						::OutputDebugString( l_Message.ToString() );
+						l_Message = SvUl_SF::Format( _T( "SVEventThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+						::OutputDebugString( l_Message.c_str() );
 					}
 				#endif
 			}
 			#ifdef DEBUG
 				else
 				{
-					l_Message.Format( _T( "SVEventThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-					::OutputDebugString( l_Message.ToString() );
+					l_Message = SvUl_SF::Format( _T( "SVEventThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+					::OutputDebugString( l_Message.c_str() );
 				}
 			#endif
 		}
 
 		#ifdef DEBUG
-			l_Message.Format( _T( "SVEventThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-			::OutputDebugString( l_Message.ToString() );
+			l_Message = SvUl_SF::Format( _T( "SVEventThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+			::OutputDebugString( l_Message.c_str() );
 		#endif
 
 		::SetEvent( pThread->m_hThreadComplete );

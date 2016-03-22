@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 12:46:30  $
 //******************************************************************************
-#ifndef SVIMAGEPOLARTRANSFORM_H
-#define SVIMAGEPOLARTRANSFORM_H
+
+#pragma once
 
 #include "SVImageClass.h"
 #include "SVPolarTransform.h"
@@ -84,9 +84,4 @@ private:
 	HRESULT CollectInputImageNames();
 
 };
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	// SVIMAGEPOLARTRANSFORM_H
 

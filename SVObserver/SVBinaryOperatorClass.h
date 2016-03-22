@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   09 Aug 2013 09:51:40  $
 //******************************************************************************
 
-#ifndef SVBINARYOPERATORCLASS_H
-#define SVBINARYOPERATORCLASS_H
+#pragma once
 
 #include "SVOperator.h"
 
@@ -23,6 +22,4 @@ public:
 private:
 	void init();
 };
-
-#endif	//	SVBINARYOPERATORCLASS_H
 

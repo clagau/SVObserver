@@ -9,11 +9,10 @@
 // * .Check In Date   : $Date:   22 Apr 2013 10:11:12  $
 // ******************************************************************************
 
-#ifndef SVIMAGE_DEFINITION_STRUCT_H
-#define SVIMAGE_DEFINITION_STRUCT_H
+#pragma once
 
-#include <vector>
-#include <comdef.h>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVImageFormatEnum.h"
 
 #pragma pack (push, 1)
@@ -35,6 +34,4 @@ private:
 #pragma pack (pop)
 
 typedef std::vector<SVImageDefinitionStruct> SVImageDefinitionStructArray;
-
-#endif // SVIMAGE_DEFINITION_STRUCT_H
 

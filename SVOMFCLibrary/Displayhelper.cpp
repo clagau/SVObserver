@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <afxole.h>
 #include "DisplayHelper.h"
 #pragma endregion Includes
 

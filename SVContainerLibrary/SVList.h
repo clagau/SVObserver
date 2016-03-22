@@ -9,19 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:44:12  $
 //******************************************************************************
 
-#ifndef SVLIST_H
-#define SVLIST_H
+#pragma once
 
-#include <list>
+//Moved to precompiled header: #include <list>
+//Moved to precompiled header: #include <iterator>
 
-/**
-@SVObjectName Seidenader Vision Inc. List
-
-@SVObjectOverview
-
-@SVObjectOperations
-
-*/
 template<typename SVT_TYPE>
 class SVList
 {
@@ -88,49 +80,10 @@ public:
 	virtual SVType& GetAt( iterator position );
 	virtual const SVType& GetAt( const_iterator position ) const;
 
-	/*
-	// Attributes (head and tail)
-	// count of elements
-	virtual INT_PTR GetSize() const;
-
-	// peek at head or tail
-	virtual SVType& GetHead();
-	virtual const SVType& GetHead() const;
-	virtual SVType& GetTail();
-	virtual const SVType& GetTail() const;
-
-	// Operations
-	// get head or tail (and remove it) - don't call on empty list !
-	virtual SVType RemoveHead();
-	virtual SVType RemoveTail();
-
-	// add before head or after tail
-	virtual iterator AddHead( SVArgType newElement );
-
-	// add another list of elements before head or after tail
-	virtual void AddHead( SVList* pNewList );
-	virtual void AddTail( SVList* pNewList );
-
-	// iteration
-	virtual iterator GetTailPosition() const;
-	virtual SVType& GetPrev( iterator& rPosition ); // return *Position--
-	virtual const SVType& GetPrev( iterator& rPosition ) const; // return *Position--
-
-	// inserting before or after a given position
-	virtual iterator InsertBefore( iterator position, SVArgType newElement );
-	virtual iterator InsertAfter( iterator position, SVArgType newElement );
-
-	// helper functions (note: O(n) speed)
-	// defaults to starting at the HEAD, returns Position equal to NotFound() if not found
-	virtual iterator Find( SVArgType searchValue, iterator startAfter = NULL ) const;
-	*/
-
 protected:
 	SVListBase m_List;
 
 };
 
 #include "SVList.inl"
-
-#endif
 

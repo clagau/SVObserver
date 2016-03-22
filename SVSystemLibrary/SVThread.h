@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   01 Dec 2014 13:59:06  $
 //******************************************************************************
 
-#ifndef SVTHREAD_H
-#define SVTHREAD_H
+#pragma once
 
-#include <string>
+//Moved to precompiled header: #include <string>
+#include "SVThreadManager.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
 #include "SVThreadManager.h"
 /*
 SVThreadSignalHandler must have the following prototype:
@@ -57,6 +60,4 @@ public:
 };
 
 #include "SVThread.inl"
-
-#endif
 

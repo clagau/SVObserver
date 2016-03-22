@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:04:52  $
 //******************************************************************************
 
-#ifndef SVINT64VALUEOBJECTCLASS_H
-#define SVINT64VALUEOBJECTCLASS_H
+#pragma once
 
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
@@ -44,5 +43,4 @@ private:
 
 };
 
-#endif
 

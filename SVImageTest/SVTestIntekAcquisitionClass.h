@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:13:18  $
 // ******************************************************************************
 
-#ifndef INCL_SVTESTINTEKACQUISITIONCLASS_H
-#define INCL_SVTESTINTEKACQUISITIONCLASS_H
+#pragma once
 
 #include "SVTestAcquisitionClass.h"
 #include "SVTestIntekDCamDriverProxy.h"
@@ -47,6 +46,4 @@ public:
 private:
 	void DestroyDCamDriver();
 };
-
-#endif
 

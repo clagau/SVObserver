@@ -9,15 +9,12 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:24:12  $
 //******************************************************************************
 
-#ifndef SVCOMMANDABSTRACTFACTORYTEMPLATE_H
-#define SVCOMMANDABSTRACTFACTORYTEMPLATE_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVCommandFactoryTemplate.h"
 
-/*
-*/
 class SVCommandAbstractFactoryTemplate
 {
 public:
@@ -43,6 +40,4 @@ private:
 };
 
 typedef SVSharedPtr< SVCommandAbstractFactoryTemplate > SVCommandAbstractFactoryTemplatePtr;
-
-#endif
 

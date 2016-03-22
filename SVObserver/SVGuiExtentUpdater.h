@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   12 Feb 2015 03:00:46  $
 //******************************************************************************
-#ifndef INCL_SVGUIEXTENTUPDATER_H
-#define INCL_SVGUIEXTENTUPDATER_H
+
+#pragma once
 
 #include "SVTaskObject.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
@@ -34,6 +34,4 @@ public:
 private:
 	static const int TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS = 120000;
 };
-
-#endif
 

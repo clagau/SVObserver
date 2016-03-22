@@ -12,12 +12,12 @@
 //#define INITIALIZE_IO_SUBSYSTEM // for InitializeIOSubsystem Application
 
 #include "stdafx.h"
-#include <fstream>
-#include <time.h>
-#include <boost/bind.hpp>
-#include <functional>
-#include <algorithm>
-#include <string>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <time.h>
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVLptIOImpl.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SVTimerLibrary\SVClock.h"

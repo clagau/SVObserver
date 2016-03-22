@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   22 Apr 2013 13:59:56  $
 //******************************************************************************
 
-#ifndef THREADS_H_
-#define THREADS_H_
+#pragma once
+
 ////////////////////////////////////////////////////////////////////////////////
 // macro DEFAULT_THREADING
 // Selects the default threading model for certain components of Loki
@@ -230,13 +230,4 @@ namespace Loki
     
 //#endif    #ifdef _WINDOWS_
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// Oct	06,	2002: ported by Benjamin Kaufmann to MSVC 6.0
-// Feb	20, 2003: corrected constructor parameter in ObjectLevelLockable::Lock
-////////////////////////////////////////////////////////////////////////////////
-
-#endif
 

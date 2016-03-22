@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 18:58:50  $
 //******************************************************************************
 
-#ifndef SVTRIGGERCALLBACKSTRUCT_H
-#define SVTRIGGERCALLBACKSTRUCT_H
+#pragma once
 
-#include <map>
-#include <deque>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <deque>
 #include "SVTriggerCallbackPtr.h"
 
 struct SVTriggerCallbackStruct
@@ -29,6 +28,4 @@ struct SVTriggerCallbackStruct
 //
 ///////////////////////////////////////////////////////////////////////
 typedef std::deque<SVTriggerCallbackStruct> SVTriggerCallbackList;
-
-#endif
 

@@ -12,8 +12,7 @@
 // undefine to use 4 axis blob sorts - right,left,up, and down
 ///#define __SORT_BLOBS_X_AXIS_ONLY    // X axis OCR blob sort only - 18 Oct 1999 - frb.
 
-#ifndef _SV_OCR_BLOB_RECORD_
-#define _SV_OCR_BLOB_RECORD_
+#pragma once
 
 #include "wFast.h"
 
@@ -87,5 +86,4 @@ public:
 
 #endif // not __SORT_BLOBS_X_AXIS_ONLY
 
-#endif   /* _SV_OCR_BLOB_RECORD_ */
 

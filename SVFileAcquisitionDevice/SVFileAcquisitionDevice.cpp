@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVFileAcquisitionDevice.h"
 #include <boost/bind.hpp>
 #include "SVFileAcquisitionDeviceParamEnum.h"

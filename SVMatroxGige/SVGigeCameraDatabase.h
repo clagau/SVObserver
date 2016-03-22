@@ -8,12 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:36:48  $
 //******************************************************************************
-#ifndef SVGIGECAMERADATABASE_H
-#define SVGIGECAMERADATABASE_H
 
-#include <map>
-#include <deque>
-#include <comdef.h>
+#pragma once
+
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
 
@@ -34,6 +34,4 @@ public:
 	static long GetFeatureCount();
 	static HRESULT GetFeatureNames(SVGigeEnumNameList& list);
 };
-
-#endif
 

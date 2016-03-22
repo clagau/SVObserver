@@ -10,8 +10,8 @@
 //******************************************************************************
 #include "stdafx.h"
 
-#include <string>
-#include <deque>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <deque>
 #include "SVMonitorList.h"
 
 SVMonitorList::SVMonitorList()

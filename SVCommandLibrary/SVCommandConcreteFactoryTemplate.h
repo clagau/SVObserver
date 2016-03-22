@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:24:14  $
 //******************************************************************************
 
-#ifndef SVCOMMANDCONCRETEFACTORYTEMPLATE_H
-#define SVCOMMANDCONCRETEFACTORYTEMPLATE_H
+#pragma once
 
 #include "SVCommandFactoryTemplate.h"
 #include "SVCommandConcreteTemplate.h"
@@ -34,6 +33,4 @@ protected:
 };
 
 #include "SVCommandConcreteFactoryTemplate.inl"
-
-#endif
 

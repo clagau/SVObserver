@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:49:34  $
 //******************************************************************************
 
-#ifndef SVCAMERAIMAGETEMPLATE_H
-#define SVCAMERAIMAGETEMPLATE_H
+#pragma once
 
-#include <set>
+//Moved to precompiled header: #include <set>
 
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
@@ -86,6 +85,4 @@ protected:
 };
 
 typedef std::set< SVCameraImageTemplate* > SVCameraImagePtrSet;
-
-#endif
 

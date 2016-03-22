@@ -10,9 +10,9 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <atlenc.h>
-#include <boost/config.hpp>
-#include <boost/scoped_array.hpp>
+//Moved to precompiled header: #include <atlenc.h>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/scoped_array.hpp>
 #include "SVEncodeDecodeUtilities.h"
 
 HRESULT SVEncodeDecodeUtilities::Base64EncodeToByteBufferFromByteBuffer( int& p_rOutputBufferSize, char* p_pOutput, size_t p_InputBufferSize, const unsigned char* p_pInput )

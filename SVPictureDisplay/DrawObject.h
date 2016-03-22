@@ -12,9 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
-#include <comutil.h>
-#include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <comutil.h>
+//Moved to precompiled header: #include <vector>
 #pragma endregion Includes
 
 #pragma region Declarations

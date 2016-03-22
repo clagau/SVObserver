@@ -8,10 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:59:36  $
 //******************************************************************************
-#ifndef SVTRIGGERHANDLER_H
-#define SVTRIGGERHANDLER_H
 
-#include <map>
+#pragma once
+
+//Moved to precompiled header: #include <map>
 #include "SVTriggerActivator.h"
 #include "SVTriggerCallback.h"
 
@@ -36,6 +36,4 @@ public:
 };
 
 typedef std::map<unsigned long, SVTriggerHandler> SVTriggerHandlerList;
-
-#endif
 

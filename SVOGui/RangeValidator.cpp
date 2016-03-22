@@ -6,7 +6,8 @@
 //******************************************************************************
 #pragma region Includes
 #include "Stdafx.h"
-#include <boost\assign\list_of.hpp>
+//Moved to precompiled header: #include <boost\assign\list_of.hpp>
+#include "SVOResource/resource.h"
 #include "RangeValidator.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "GuiCommands\GetInstanceIDByDottedName.h"

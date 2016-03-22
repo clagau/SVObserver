@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:19:24  $
 //******************************************************************************
 
-#ifndef SVPATGENERALPAGECLASS_H
-#define SVPATGENERALPAGECLASS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
@@ -96,8 +95,4 @@ protected:
 
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVPATGENERALPAGECLASS_H__CFE15012_F9AB_11D3_A89C_00106F021742__INCLUDED_)
 

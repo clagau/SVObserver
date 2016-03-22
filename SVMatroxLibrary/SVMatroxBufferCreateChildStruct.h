@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:00:16  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_BUFFER_CREATE_CHILD_STRUCT_H
-#define SV_MATROX_BUFFER_CREATE_CHILD_STRUCT_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxBuffer.h"
 
@@ -61,7 +56,5 @@ public:
 	long m_lSizeY; 
 
 };
-
-#endif // #ifndef SV_MATROX_BUFFER_CREATE_CHILD_STRUCT_H
 
 

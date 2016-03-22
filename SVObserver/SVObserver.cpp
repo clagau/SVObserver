@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <iostream>
+//Moved to precompiled header: #include <iostream>
 #include "SVObserver.h"
 
 #include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"

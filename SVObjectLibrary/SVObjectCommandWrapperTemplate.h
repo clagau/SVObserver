@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:47:14  $
 //******************************************************************************
 
-#ifndef SVOBJECTCOMMANDWRAPPERTEMPLATE_H
-#define SVOBJECTCOMMANDWRAPPERTEMPLATE_H
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
@@ -41,6 +40,4 @@ private:
 };
 
 #include "SVObjectCommandWrapperTemplate.inl"
-
-#endif
 

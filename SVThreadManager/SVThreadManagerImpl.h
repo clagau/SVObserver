@@ -10,9 +10,10 @@
 //******************************************************************************
 
 #pragma once
+
 #pragma region Includes
-#include <map>
-#include <list>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <list>
 #include "SVThreadAttribute.h"
 #pragma endregion
 

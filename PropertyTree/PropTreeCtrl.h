@@ -28,12 +28,7 @@
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 
-#if !defined(AFX_PROPERTYTREECTRL_H__2E09E831_09F5_44AA_B41D_9C4BF495873C__INCLUDED_)
-#define AFX_PROPERTYTREECtrl_H__2E09E831_09F5_44AA_B41D_9C4BF495873C__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 class SVRPropTree;
 
@@ -103,11 +98,4 @@ public:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	DECLARE_MESSAGE_MAP()
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PROPERTYTREECTRL_H__2E09E831_09F5_44AA_B41D_9C4BF495873C__INCLUDED_)
 

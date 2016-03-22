@@ -9,12 +9,11 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:24:42  $
 //******************************************************************************
 
-#ifndef SVSHAREDPTR_H
-#define SVSHAREDPTR_H
+#pragma once
 
-#include <boost/config.hpp> // put this first to suppress some VC++ warnings
-#include <boost/tr1/memory.hpp>
-#include <memory>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/tr1/memory.hpp>
+//Moved to precompiled header: #include <memory>
 #include "SVNullDeleter.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +68,4 @@ public:
 	template<typename T>
 	operator std::tr1::shared_ptr<T>() const { return boost::dynamic_pointer_cast<T, Type>(this); }
 };
-
-#endif
 

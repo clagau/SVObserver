@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   01 Oct 2013 09:21:30  $
 // ******************************************************************************
 
-#ifndef SVIOTESTDLG_H
-#define SVIOTESTDLG_H
+#pragma once
 
 #include "SVTimerLibrary/SVClock.h"
 
@@ -173,8 +172,4 @@ public:
 	long m_lFanFreq4;
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVIOTESTDLG_H__8F1A2A93_E92E_410A_BF9A_A6E98B13BFD7__INCLUDED_)
 

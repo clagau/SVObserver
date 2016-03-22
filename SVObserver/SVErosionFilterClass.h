@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:27:28  $
 //******************************************************************************
 
-#ifndef SVEROSIONFILTERCLASS_H
-#define SVEROSIONFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -22,6 +21,4 @@ public:
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
-
-#endif	//	SVEROSIONFILTERCLASS_H
 

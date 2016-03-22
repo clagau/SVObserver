@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:58:50  $
 //******************************************************************************
 
-#ifndef SVIMSERVERWRAPPER_H
-#define SVIMSERVERWRAPPER_H
+#pragma once
 
 #include "SVIMServer/SVIMServer.h"
 
@@ -22,6 +21,4 @@ public:
 	virtual ~SVIMServerWrapper();
 
 };
-
-#endif
 

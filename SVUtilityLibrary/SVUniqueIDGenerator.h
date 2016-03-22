@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:26:00  $
 //******************************************************************************
 
-#ifndef SVUNIQUEIDGENERATOR_H
-#define SVUNIQUEIDGENERATOR_H
+#pragma once
 
 #include <assert.h>
 
@@ -54,6 +53,4 @@ Type SVUniqueIdGenerator<Type, InvalidID, GetNext>::m_lastID = InvalidID();
 
 template <typename Type, typename InvalidID, class GetNext>
 bool SVUniqueIdGenerator<Type, InvalidID, GetNext>::m_bOverflow = false;
-
-#endif
 

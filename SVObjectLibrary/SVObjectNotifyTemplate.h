@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:58:12  $
 //******************************************************************************
 
-#ifndef SVOBJECTNOTIFYTEMPLATE_H
-#define SVOBJECTNOTIFYTEMPLATE_H
+#pragma once
 
 template< typename SVNotifyData >
 class SVObjectNotifyTemplate
@@ -19,6 +18,4 @@ public:
 	virtual HRESULT ProcessNotifyData( SVNotifyData& p_rData ) = 0;
 
 };
-
-#endif
 

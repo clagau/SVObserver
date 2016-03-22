@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:29:28  $
 //******************************************************************************
 
-#ifndef SVMATROXDIGITIZERLIGHTREFERENCEENUMS_H
-#define SVMATROXDIGITIZERLIGHTREFERENCEENUMS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
@@ -39,6 +38,4 @@ struct SVMatroxDigitizerLightReference
 	typedef SVMatroxEnumConvertor<SVLightReferenceEnum, long> SVLightReferenceEnumMap;
 	static SVLightReferenceEnumMap m_LightReferenceEnumConvertor;
 };
-
-#endif
 

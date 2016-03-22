@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:03:06  $
 //******************************************************************************
 
-#ifndef SVINSPECTIONPROCESSTRANSACTIONS_H
-#define SVINSPECTIONPROCESSTRANSACTIONS_H
+#pragma once
 
 enum SVInspectionMessageEnum
 {
@@ -86,5 +85,4 @@ struct SVInspectionTransactionStruct
 	SVInspectionTransactionStruct(DWORD p_dwMessage, HANDLE p_hCompletionEvent, SVInspectionMessageDataStruct* p_pData) : dwMessage(p_dwMessage), hCompletionEvent(p_hCompletionEvent), pData(p_pData) {}
 };
 
-#endif
 

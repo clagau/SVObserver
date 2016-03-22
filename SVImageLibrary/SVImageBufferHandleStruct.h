@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:53:24  $
 //******************************************************************************
 
-#ifndef SVIMAGEBUFFERHANDLESTRUCT_H
-#define SVIMAGEBUFFERHANDLESTRUCT_H
+#pragma once
 
 #include "SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary\SVMatroxLibrary.h"
@@ -39,6 +38,4 @@ private:
 	void LocalClear();
 
 };
-
-#endif
 

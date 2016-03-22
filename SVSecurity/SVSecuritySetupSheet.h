@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   02 Oct 2013 10:00:52  $
 //******************************************************************************
 
-#ifndef SECURITYSETUPSHEET_H
-#define SECURITYSETUPSHEET_H
+#pragma once
 
 //	item - A pointer to another branch off the tree (NULL if none).
 //	name - The string the TreeCtrl displays for that node.
@@ -97,9 +96,4 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 
 BOOL CALLBACK EnumResNameProc(HANDLE hModule, LPCTSTR lpszType, LPTSTR lpszName, LONG lParam);
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SECURITYSETUPSHEET_H__FB876D1A_4765_11D4_A8FD_00106F0309AB__INCLUDED_)
 

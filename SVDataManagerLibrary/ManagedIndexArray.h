@@ -9,11 +9,9 @@
 // * .Check In Date   : $Date:   07 May 2013 19:59:28  $
 // ******************************************************************************
 
-#ifndef _INC_MANAGEDINDEXARRAY_3C8E8C340067_INCLUDED
-#define _INC_MANAGEDINDEXARRAY_3C8E8C340067_INCLUDED
+#pragma once
 
-#include <set>
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -151,6 +149,4 @@ private:
 	const SVManagedIndexArray& operator=( const SVManagedIndexArray& p_rObject );
 
 };
-
-#endif
 

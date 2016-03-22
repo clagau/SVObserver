@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   13 Aug 2013 10:08:54  $
 //******************************************************************************
 
-#ifndef SVLUTOPERATOR_H
-#define SVLUTOPERATOR_H
+#pragma once
 
 #include "SVUnaryImageOperatorClass.h"
 #include "SVValueObjectImpl.h"
@@ -77,13 +76,4 @@ protected:
 
 	bool m_bForceLUTRecalc;
 };
-
-
-
-
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	//	SVLUTOPERATOR_H
 

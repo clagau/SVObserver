@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:27:32  $
 //******************************************************************************
 
-#ifndef SVMATROXDIGITIZERFEATUREENUMS_H
-#define SVMATROXDIGITIZERFEATUREENUMS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
@@ -41,6 +40,4 @@ struct SVMatroxDigitizerFeature
 	typedef SVMatroxEnumConvertor<SVFeatureTypeEnum, long> SVFeatureTypeEnumMap;
 	static SVFeatureTypeEnumMap m_FeatureTypeEnumConvertor;
 };
-
-#endif
 

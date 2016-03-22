@@ -6,8 +6,7 @@
 #pragma once
 
 #pragma region Includes
-#include <afx.h>
-#include <boost/assign.hpp>
+//Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 

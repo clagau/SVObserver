@@ -10,9 +10,10 @@
 //******************************************************************************
 #include "stdafx.h"
 #import <msxml6.dll> // MSXML
-#include <atlbase.h>
-#include <comdef.h>
+//Moved to precompiled header: #include <atlbase.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVXMLSafeArrayConverter.h"
+#include "SVXMLLibraryGlobals.h"
 #include "SVVariantCustomTypes.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\SVUtilityGlobals.h"

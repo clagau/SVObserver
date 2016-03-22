@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 11:15:32  $
 //******************************************************************************
 
-#ifndef SVMATROXSYSTEMENUMS_H
-#define SVMATROXSYSTEMENUMS_H
+#pragma once
 
 #include "SVMatroxTypedefs.h"
 #include "SVMatroxEnumConvertor.h"
@@ -277,6 +276,4 @@ struct SVMatroxSystemHookInfo
 	typedef SVMatroxEnumConvertor< SVMatroxSystemHookInfoEnum, SVMatroxInt > SVMatroxSystemHookInfoEnumMap;
 	static SVMatroxSystemHookInfoEnumMap m_convertor;
 };
-
-#endif
 

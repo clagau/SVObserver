@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   17 Sep 2014 15:57:32  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -40,7 +39,27 @@
 #define _SECURE_SCL 0
 #endif
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <windows.h>
 
-#endif
+#include <algorithm>
+#include <comdef.h>
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
+#include <fstream>
+#include <functional>
+#include <map>
+#include <set>				//Used by static library
+#include <string>
+#include <tchar.h>			//Used by static library
+#include <time.h>
+#include <vector>
+
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#pragma endregion Precompiled Headers
+
 

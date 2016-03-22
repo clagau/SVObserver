@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:50:48  $
 //******************************************************************************
 
-#ifndef SVOCRANALYZER_H
-#define SVOCRANALYZER_H
+#pragma once
 
 #include "SVAnalyzer.h"
 
@@ -61,6 +60,4 @@ protected:
 	virtual BOOL onRun(  SVRunStatusClass& RRunStatus );
 
 };
-
-#endif //__SVOCRANALYZER_H__
 

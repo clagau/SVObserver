@@ -9,17 +9,19 @@
 //* .Check In Date   : $Date:   28 Oct 2014 10:45:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include <conio.h>
-#include <Psapi.h>
-#include <tlhelp32.h>
-#include <process.h>
-#include <string>
-#include <fstream>
-#include <list>
-#include <boost/scoped_array.hpp>
-#include <boost/any.hpp>
-#include <atlenc.h>
+//Moved to precompiled header: #include <conio.h>
+//Moved to precompiled header: #include <Psapi.h>
+//Moved to precompiled header: #include <tlhelp32.h>
+//Moved to precompiled header: #include <process.h>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <list>
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <boost/scoped_array.hpp>
+//Moved to precompiled header: #include <boost/any.hpp>
 #include "SVSocketLibrary\SVSocketLibrary.h"
 #include "SVSocketLibrary\SVServerSocket.h"
 #include "SVRemoteControlConstants.h"
@@ -28,6 +30,7 @@
 #include "SVSharedMemoryLibrary\SVMonitorListReader.h"
 #include "SVSharedMemoryLibrary\SVShareControlHandler.h"
 #include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
+#pragma endregion Includes
 
 bool g_bQuit = false;
 

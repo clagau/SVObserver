@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"

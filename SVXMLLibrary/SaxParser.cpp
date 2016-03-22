@@ -9,8 +9,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <comutil.h>
 #include "SaxParser.h"
-#include <comutil.h>
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"

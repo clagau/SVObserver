@@ -9,13 +9,12 @@
 // * .Check In Date   : $Date:   04 Nov 2013 14:35:26  $
 // ******************************************************************************
 
-#ifndef SVDATADEFINITIONSTRUCT_H
-#define SVDATADEFINITIONSTRUCT_H
+#pragma once
 
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <string>
 #include "SVUtilityLibrary/SVString.h"
-#include <comdef.h>
-#include <vector>
-#include <string>
 
 #pragma pack (push, 1)
 struct SVDataDefinitionStruct
@@ -38,6 +37,4 @@ private:
 #pragma pack (pop)
 
 typedef std::vector<SVDataDefinitionStruct> SVDataDefinitionStructArray;
-
-#endif
 

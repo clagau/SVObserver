@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/algorithm/string.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVDottedName.h"
 #pragma endregion Includes
 

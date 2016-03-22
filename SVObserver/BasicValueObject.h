@@ -15,7 +15,7 @@
 #pragma once
 
 #pragma region Includes
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVUtilityLibrary\SVString.h"

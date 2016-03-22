@@ -8,10 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 15:27:34  $
 //******************************************************************************
-#ifndef SVMATROXSYSTEM_H
-#define SVMATROXSYSTEM_H
 
-#include <boost/utility.hpp>
+#pragma once
+
+//Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVMatroxTypedefs.h"
 
 class SVMatroxSystemInterface;
@@ -47,6 +47,4 @@ protected:
 private:
 	void LocalClear();
 };
-
-#endif
 

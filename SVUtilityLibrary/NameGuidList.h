@@ -5,9 +5,9 @@
 #pragma once
 
 #pragma region Includes
-#include <deque>
-#include <map>
-#include <Guiddef.h>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <guiddef.h>
 #include "SVString.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes

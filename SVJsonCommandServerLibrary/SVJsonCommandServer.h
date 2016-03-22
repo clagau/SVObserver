@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   18 Feb 2015 11:00:08  $
 //******************************************************************************
 
-#ifndef SVJSONCOMMANDSERVER_H
-#define SVJSONCOMMANDSERVER_H
+#pragma once
 
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVJsonCommandServerSocket.h"
 
 class SVJsonCommandServer
@@ -39,6 +38,4 @@ private:
 	SVJsonCommandServerSocket m_ServerSocket;
 
 };
-
-#endif
 

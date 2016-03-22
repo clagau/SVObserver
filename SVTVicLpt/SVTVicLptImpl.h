@@ -9,14 +9,12 @@
 // * .Check In Date   : $Date:   25 Apr 2013 19:09:30  $
 // ******************************************************************************
 
-#ifndef SVTVICLPTIMPL_H
-#define SVTVICLPTIMPL_H
-
+#pragma once
 #pragma warning (disable : 4786)
 
-#include <comdef.h>
-#include <map>
-#include <vector>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "VicLpt.h"
 #include "SVTVicLptCallback.h"
 #include "SVOLibrary/SVQueueObject.h"
@@ -175,6 +173,3 @@ public:
 	// IRQ Interrupt handler
 	void FireLptInterrupt(unsigned short DataReg, unsigned short StatusReg, unsigned long LoTime, unsigned long HiTime);
 };
-
-#endif
-

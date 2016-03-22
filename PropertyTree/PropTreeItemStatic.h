@@ -26,9 +26,7 @@
 // 
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
-
-#if !defined(AFX_PROPERTYITEMSTATIC_H__22BD9C18_A68C_4BB8_B7FC_C4A7DA0E1EBF__INCLUDED_)
-#define AFX_PROPERTYITEMSTATIC_H__22BD9C18_A68C_4BB8_B7FC_C4A7DA0E1EBF__INCLUDED_
+#pragma once
 
 #include "PropTreeItem.h"
 
@@ -52,11 +50,4 @@ public:
 protected:
 	CString		m_sAttribute;
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PROPERTYITEMSTATIC_H__22BD9C18_A68C_4BB8_B7FC_C4A7DA0E1EBF__INCLUDED_)
 

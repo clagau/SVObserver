@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 16:20:12  $
 //******************************************************************************
 
-#ifndef SVIMAGEINDEXSTRUCT_H
-#define SVIMAGEINDEXSTRUCT_H
+#pragma once
 
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 
@@ -83,5 +82,4 @@ struct SVImageIndexStruct
 	}
 };
 
-#endif
 

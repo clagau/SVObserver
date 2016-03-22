@@ -17,14 +17,7 @@
 //============   http://www.entechtaiwan.com/tools.htm   =============
 //====================================================================
 
-
-
-#ifndef _VICLPT_H_
-#define _VICLPT_H_
-
-#include <winsvc.h>
-
-
+#pragma once
 
 #define MAX_SHARED_BUFFER_LENGTH  255
 
@@ -592,9 +585,4 @@ public:
 	 virtual void FireLptInterrupt(USHORT DataValue, USHORT StatusValue, ULONG LoTimeStamp, ULONG HiTimeStamp);
 	
 };
-
-
-
-
-#endif
 

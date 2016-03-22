@@ -11,6 +11,7 @@
 
 #include "StdAfx.h"
 #include "SVCISapera.h"
+//Moved to precompiled header: #include <iterator>
 
 #include "ObjectInterfaces/SVImageEnums.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"

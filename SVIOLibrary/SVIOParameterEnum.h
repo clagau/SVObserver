@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:47:02  $
 // ******************************************************************************
 
-#ifndef SVIOPARAMETERENUM_H
-#define SVIOPARAMETERENUM_H
+#pragma once
 
 // Parameter Enum
 enum SVIOParameterEnum
@@ -47,6 +46,4 @@ enum
 	READ_RTC = 0X63,
 	WRITE_LOG = 0x64,
 };
-
-#endif // SVIOPARAMETERENUM_H
 

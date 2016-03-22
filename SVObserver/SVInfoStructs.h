@@ -9,16 +9,15 @@
 //* .Check In Date   : $Date:   10 Dec 2014 06:44:10  $
 //******************************************************************************
 
-#ifndef INC_SVINFOSTRUCTS_INCLUDED
-#define INC_SVINFOSTRUCTS_INCLUDED
+#pragma once
 
 #ifndef _DEBUG
 	#define DebugBreak() NULL
 #endif
 
-#include <map>
-#include <vector>
-#include <boost/any.hpp>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <boost/any.hpp>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
@@ -499,5 +498,3 @@ private:
 	HANDLE m_WaitHandle;
 
 };
-
-#endif /* _INC_SVINFOSTRUCTS_INCLUDED */

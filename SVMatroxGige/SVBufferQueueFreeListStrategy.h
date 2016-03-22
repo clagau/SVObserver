@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:36:36  $
 //******************************************************************************
-#ifndef SVBUFFERQUEUEFREELISTSTRATEGY_H
-#define SVBUFFERQUEUEFREELISTSTRATEGY_H
+
+#pragma once
 
 #include "SVOLibrary/SVQueueObject.h"
 
@@ -23,6 +23,4 @@ public:
 	bool SetInUse(unsigned long& handle);
 	bool SetAvailable(long handle);
 };
-
-#endif
 

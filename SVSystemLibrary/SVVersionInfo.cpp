@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   01 Oct 2014 06:08:38  $
 //******************************************************************************
 #include "stdafx.h"
-#include <iomanip>
-#include <sstream>
+//Moved to precompiled header: #include <iomanip>
+//Moved to precompiled header: #include <sstream>
 #include "SVVersionInfo.h"
 
 #pragma comment (lib, "version.lib")

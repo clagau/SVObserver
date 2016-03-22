@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost\config.hpp>
-#include <boost\bind.hpp>
+//Moved to precompiled header: #include <boost\config.hpp>
+//Moved to precompiled header: #include <boost\bind.hpp>
 #include "SVRemoteOutputsView.h"
 
 #include "SVObjectLibrary\SVObjectManagerClass.h"

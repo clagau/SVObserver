@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <boost/assign.hpp>
+//Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVSetupDialogManager.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"

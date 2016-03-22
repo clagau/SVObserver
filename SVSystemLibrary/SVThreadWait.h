@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVEventThread.h"
 

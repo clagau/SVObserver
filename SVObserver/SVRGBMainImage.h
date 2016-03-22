@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:00:42  $
 //******************************************************************************
 
-#ifndef SVRGBMAINIMAGE_H
-#define SVRGBMAINIMAGE_H
+#pragma once
 
 #include "SVCameraImageTemplate.h"
 
@@ -38,5 +37,4 @@ protected:
 
 };
 
-#endif
 

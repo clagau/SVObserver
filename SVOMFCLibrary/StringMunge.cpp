@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <math.h>			// for ApproxMatch
+//Moved to precompiled header: #include <math.h>
 
 #include "StringMunge.h"
 

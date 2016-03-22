@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   05 Jul 2013 09:11:02  $
 //******************************************************************************
 
-#ifndef SVGIGECAMERAMANAGER_H
-#define SVGIGECAMERAMANAGER_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVGigeCameraStruct.h"
 
 class SVGigeCameraManager  
@@ -55,6 +54,4 @@ protected:
 };
 
 #define TheSVGigeCameraManager SVGigeCameraManager::Instance()
-
-#endif
 

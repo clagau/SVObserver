@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:59:00  $
 //******************************************************************************
 
-#ifndef SVLINEARLINEEDGECOUNTINGANALYZER_H
-#define SVLINEARLINEEDGECOUNTINGANALYZER_H
+#pragma once
 
 #include "SVLinearAnalyzerClass.h"
 #include "SVValueObject.h"
@@ -40,5 +39,4 @@ private:
 
 };
 
-#endif
 

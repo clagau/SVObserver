@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <cmath>
-#include <cstdlib>
+//Moved to precompiled header: #include <cmath>
+//Moved to precompiled header: #include <cstdlib>
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVGlobal.h"

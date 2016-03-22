@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:15:36  $
 //******************************************************************************
 
-#ifndef SVSUBSCRIBERPROVIDERINTERFACES_H
-#define SVSUBSCRIBERPROVIDERINTERFACES_H
+#pragma once
 
 #include "SVOLibrary/SVOCallbackClass.h"
 
@@ -29,5 +28,4 @@ class SVProviderInterface
 {
 };
 
-#endif
 

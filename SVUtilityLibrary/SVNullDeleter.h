@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:22:58  $
 //******************************************************************************
-#ifndef SVNULLDELETER_H
-#define SVNULLDELETER_H
+
+#pragma once
 
 /**
 @SVObjectName Null Deleter
@@ -26,6 +26,4 @@ struct SVNullDeleter
     {
     }
 };
-
-#endif
 

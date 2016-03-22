@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:51:44  $
 //******************************************************************************
 
-#ifndef SVLUT_H
-#define SVLUT_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVLutTransform.h"
@@ -186,14 +185,10 @@ inline const T& SVLutValue<T>::operator = (const T& rhs)
 	return value;
 }
 
-
-
-
 class SVLutTestCases
 {
 public:
 	SVLutTestCases();
 };
 
-#endif
 

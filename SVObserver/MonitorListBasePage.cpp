@@ -10,8 +10,8 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include <vector>
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "svobserver.h"
 #include "MonitorListBasePage.h"
 #include "MonitorListSheet.h"

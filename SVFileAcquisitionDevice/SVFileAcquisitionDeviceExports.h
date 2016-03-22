@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:28:50  $
 //******************************************************************************
 
-#ifndef SVFILEACQUISITIONDEVICEEXPORTS_H
-#define SVFILEACQUISITIONDEVICEEXPORTS_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 
 class SVAcquisitionBufferInterface;
@@ -73,5 +72,4 @@ HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SVF
 HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, SVFileAcquisitionCallbackPtr& callback, void* pOwner, void* pData );
 HRESULT WINAPI SVDigitizerInternalTriggerUnregisterAll( unsigned long p_ulHandle );
 
-#endif
 

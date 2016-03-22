@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   07 May 2013 20:14:46  $
 //******************************************************************************
 
-#ifndef SVIMAGEBUFFERINTERFACE_H
-#define SVIMAGEBUFFERINTERFACE_H
+#pragma once
 
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -49,6 +48,4 @@ struct SVImageBufferInterface
 };
 
 typedef SVSharedPtr< SVImageBufferInterface > SVImageBufferPointer;
-
-#endif
 

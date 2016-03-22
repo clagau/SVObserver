@@ -9,17 +9,12 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:01:30  $
 //******************************************************************************
 
-#ifndef SVMATROXCOMMANDDATAIMAGE_H
-#define SVMATROXCOMMANDDATAIMAGE_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandDataImage.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxBufferCreateStruct.h"
 
-
-
-/*
-*/
 class SVMatroxCommandDataImage : public SVCommandDataImage::SVCommandDataInterface
 {
 public:
@@ -47,6 +42,4 @@ protected:
 	SVMatroxBuffer m_Buffer;
 
 };
-
-#endif
 

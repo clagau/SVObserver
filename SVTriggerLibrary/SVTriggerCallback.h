@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:57:20  $
 //******************************************************************************
-#ifndef SVTRIGGERCALLBACK_H
-#define SVTRIGGERCALLBACK_H
+
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVTriggerCallbackFuncInterface.h"
@@ -26,6 +26,4 @@ public:
 
 	HRESULT Notify(unsigned long handle) const;
 };
-
-#endif
 

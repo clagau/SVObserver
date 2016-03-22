@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <set>
+//Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVString.h"

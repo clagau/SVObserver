@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:29:22  $
 //******************************************************************************
 #include "stdafx.h"
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <mil.h>
 #include "SVMatroxDigitizerLightReferenceEnums.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <mil.h>
 
 // Assign mappings for Light Reference Types
 SVMatroxDigitizerLightReference::SVLightReferenceEnumMap SVMatroxDigitizerLightReference::m_LightReferenceEnumConvertor = boost::assign::map_list_of<>

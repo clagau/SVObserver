@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   02 Jul 2014 13:08:04  $
 //******************************************************************************
 
-#ifndef _SVEDGEMARKERADJUSTMENTPAGECLASS_H
-#define _SVEDGEMARKERADJUSTMENTPAGECLASS_H
+#pragma once
 
 #include "SVMFCControls\SVEditNumbers.h"
 #include "SVValueBaseNormalizerClass.h"
@@ -141,8 +140,4 @@ protected:
 
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio fügt zusätzliche Deklarationen unmittelbar vor der vorhergehenden Zeile ein.
-
-#endif	// _SVEDGEMARKERADJUSTMENTPAGECLASS_H
 

@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:32:28  $
 //******************************************************************************
 
-#ifndef SVANALYZERLUMINANCESETUPCLASS_H
-#define SVANALYZERLUMINANCESETUPCLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVTaskObjectInterfaceClass.h"
 
@@ -63,9 +58,3 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVANALYZERLUMINANCESETUPCLASS_H__FCF01565_CE72_11D3_A87A_00106F000C7D__INCLUDED_)
-

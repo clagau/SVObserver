@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:59:04  $
 // ******************************************************************************
 
-#ifndef SVCIEXPORTS_H
-#define SVCIEXPORTS_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 
@@ -70,6 +69,4 @@ HRESULT WINAPI SVDigitizerSetParameters( unsigned long p_ulHandle, const SVDevic
 HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDeviceParamWrapper* p_pParameter );
 HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter );
 HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long p_ulHandle, SVDeviceParamWrapper* p_pParameter );
-
-#endif
 

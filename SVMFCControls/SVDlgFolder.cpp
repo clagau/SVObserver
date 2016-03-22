@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <Dlgs.h>
-#include <afxdlgs.h>
+//Moved to precompiled header: #include <Dlgs.h>
+//Moved to precompiled header: #include <afxdlgs.h>
 #include "SVDlgFolder.h"
 
 namespace Seidenader

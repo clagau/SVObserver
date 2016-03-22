@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   22 Apr 2013 11:08:10  $
 //******************************************************************************
 
-#ifndef INCL_SVCAMERAFILEPROPERTYPAGEDLG_H
-#define INCL_SVCAMERAFILEPROPERTYPAGEDLG_H
+#pragma once
+
 //defines for the properties for each dlg
 enum PROPERTY_PAGE_PROPERTY
 {
@@ -76,9 +76,4 @@ private:
 
 	bool IsGigeSystem() const;
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif 
 

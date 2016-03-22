@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   08 May 2013 14:55:56  $
 // ******************************************************************************
 
-#ifndef SVINTEKCAMERASTRUCT_H
-#define SVINTEKCAMERASTRUCT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
@@ -141,6 +140,4 @@ public:
 This class is the data class for each camera available for use.
 */
 typedef SVVector< SVIntekCameraStruct > SVIntekCameraStructCArray;
-
-#endif // _SVINTEKCAMERASTRUCT_H
 

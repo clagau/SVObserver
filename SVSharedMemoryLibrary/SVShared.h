@@ -9,40 +9,30 @@
 //* .Check In Date   : $Date:   14 Aug 2014 17:07:38  $
 //******************************************************************************
 #pragma once
-#ifdef min
-#undef min
-#endif
-#ifdef max
-#undef max
-#endif
-#include <vector>
-#include <deque>
-#include <string>
-#include <iostream>
-#include <iomanip>
-#include <limits>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <iostream>
+//Moved to precompiled header: #include <iomanip>
+//Moved to precompiled header: #include <limits>
 
 //#define BOOST_USE_WINDOWS_H // does not work correctly // for boost 1_56_0
-#define BOOST_INTERPROCESS_SHARED_DIR_PATH "V:/boost_interprocess"
-#define BOOST_DATE_TIME_NO_LIB
 
-#include <boost/interprocess/detail/shared_dir_helpers.hpp>
-#include <boost/interprocess/file_mapping.hpp>
-#include <boost/interprocess/mapped_region.hpp>
-#include <boost/interprocess/managed_shared_memory.hpp>
-#include <boost/interprocess/allocators/allocator.hpp>
-#include <boost/interprocess/containers/map.hpp>
-#include <boost/interprocess/containers/flat_map.hpp>
-#include <boost/interprocess/containers/string.hpp>
-#include <boost/interprocess/containers/vector.hpp>
-#include <boost/interprocess/offset_ptr.hpp>
-#include <boost/interprocess/sync/interprocess_mutex.hpp>
-#include <boost/interprocess/sync/scoped_lock.hpp>
+//Moved to precompiled header: #include <boost/interprocess/detail/shared_dir_helpers.hpp>
+//Moved to precompiled header: #include <boost/interprocess/file_mapping.hpp>
+//Moved to precompiled header: #include <boost/interprocess/mapped_region.hpp>
+//Moved to precompiled header: #include <boost/interprocess/managed_shared_memory.hpp>
+//Moved to precompiled header: #include <boost/interprocess/allocators/allocator.hpp>
+//Moved to precompiled header: #include <boost/interprocess/containers/map.hpp>
+//Moved to precompiled header: #include <boost/interprocess/containers/flat_map.hpp>
+//Moved to precompiled header: #include <boost/interprocess/containers/string.hpp>
+//Moved to precompiled header: #include <boost/interprocess/containers/vector.hpp>
+//Moved to precompiled header: #include <boost/interprocess/offset_ptr.hpp>
+//Moved to precompiled header: #include <boost/interprocess/sync/interprocess_mutex.hpp>
+//Moved to precompiled header: #include <boost/interprocess/sync/scoped_lock.hpp>
 
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
-//#include <vld.h>
+//Moved to precompiled header: #include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 
 //Typedefs of allocators and containers
 typedef boost::interprocess::managed_shared_memory::segment_manager                       segment_manager_t;

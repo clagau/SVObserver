@@ -9,12 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:46:32  $
 //******************************************************************************
 
-#ifndef SVGIGEDEVICEPARAMETERSTRUCT_H
-#define SVGIGEDEVICEPARAMETERSTRUCT_H
+#pragma once
 
-#include <map>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVGigeEnums.h"
 #include "SVGigeParameterAccessor.h"
@@ -32,5 +31,4 @@ struct SVGigeDeviceParameterStruct
 
 typedef std::map<SVGigeParameterEnum, SVGigeDeviceParameterStruct> SVGigeDeviceParameterMap;
 
-#endif
 

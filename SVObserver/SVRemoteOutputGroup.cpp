@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVRemoteOutputGroup.h"
 #include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"

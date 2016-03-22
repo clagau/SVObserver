@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/assign/list_of.hpp>
-#include <colordlg.h>	// for custom color dlg resource #defines
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <colordlg.h>
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "SVMaskShapeEditorDlg.h"
 #include "SVMFCControls\SVMaskEditor.h"

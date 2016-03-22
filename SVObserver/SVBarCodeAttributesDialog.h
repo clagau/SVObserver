@@ -9,12 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:40:44  $
 //******************************************************************************
 
-#ifndef SVBARCODEATTRIBUTESDIALOG_H
-#define SVBARCODEATTRIBUTESDIALOG_H
+#pragma once
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVValueObjectImpl.h"
 
@@ -92,9 +91,3 @@ public:
 
 	
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVBARCODEATTRIBUTESDIALOG_H__AF5FDD69_7BE0_11D3_A7D0_00106F010A93__INCLUDED_)
-

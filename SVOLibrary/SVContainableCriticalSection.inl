@@ -8,7 +8,6 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   25 Apr 2013 11:52:52  $
 // ******************************************************************************
-#include <assert.h>
 
 inline SVContainableCriticalSection::SVContainableCriticalSection( const SVContainableCriticalSection& rhs )
 : m_dwSpinCount(0)

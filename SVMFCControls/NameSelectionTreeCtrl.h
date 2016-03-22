@@ -10,8 +10,9 @@
 //******************************************************************************
 
 #pragma once
-#include <boost/function.hpp>
-#include <map>
+
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVUtilityLibrary/NameSelectionList.h"
 
 class CTreeCtrl;

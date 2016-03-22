@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <comdef.h>
 #include "SVTestGigeAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"

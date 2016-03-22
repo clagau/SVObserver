@@ -9,14 +9,10 @@
 // * .Check In Date   : $Date:   25 Apr 2013 13:08:22  $
 // ******************************************************************************
 
-#ifndef _SVOINICLASS_H
-#define _SVOINICLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif
 
-#include <string>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <io.h>
 
 class SVOINIClass  
 {
@@ -62,6 +58,4 @@ protected:
 };
 
 #include "SVOINIClass.inl"
-
-#endif // _SVOINICLASS_H
 

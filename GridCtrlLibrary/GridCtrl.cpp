@@ -135,11 +135,10 @@
 #include "stdafx.h"
 #include "GridMemDC.h"
 #include "GridCtrl.h"
-#include <algorithm>
 
-// OLE stuff for clipboard operations
-#include <afxadv.h>            // For CSharedFile
-#include <afxconv.h>           // For LPTSTR -> LPSTR macros
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <afxadv.h>            // For CSharedFile
+//Moved to precompiled header: #include <afxconv.h>           // For LPTSTR -> LPSTR macros
 #pragma endregion Includes
 
 #pragma region Declarations

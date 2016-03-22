@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVXMLCTreeCtrl.h"
 
 namespace Seidenader { namespace SVXMLLibrary

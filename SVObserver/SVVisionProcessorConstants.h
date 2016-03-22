@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:24:52  $
 //******************************************************************************
 
-#ifndef SVVISIONPROCESSORCONSTANTS_H
-#define SVVISIONPROCESSORCONSTANTS_H
+#pragma once
 
 namespace SVVisionProcessor
 {
@@ -21,6 +20,4 @@ namespace SVVisionProcessor
 		SVStorageImageFileName = 2,
 	};
 }
-
-#endif
 

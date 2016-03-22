@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "PictureDisplay.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "ImageController.h"

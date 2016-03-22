@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   09 Aug 2013 09:52:22  $
 //******************************************************************************
 
-#ifndef SVDILATIONFILTERCLASS_H
-#define SVDILATIONFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -22,6 +21,4 @@ public:
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
-
-#endif	//	SVDILATIONFILTERCLASS_H
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:50:06  $
 //******************************************************************************
 
-#ifndef SVCRITICALSECTION_H
-#define SVCRITICALSECTION_H
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
@@ -46,6 +45,4 @@ private:
 };
 
 typedef SVSharedPtr< SVCriticalSection > SVCriticalSectionPtr;
-
-#endif
 

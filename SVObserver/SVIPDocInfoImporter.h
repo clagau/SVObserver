@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:17:16  $
 //******************************************************************************
 
-#ifndef INCL_SVINSPECTIONIMPORTER_H
-#define INCL_SVINSPECTIONIMPORTER_H
+#pragma once
 
 class SVIPDoc;
 class SVImportedInspectionInfo;
@@ -25,5 +24,4 @@ private:
 	~SVIPDocInfoImporter();
 };
 
-#endif
 

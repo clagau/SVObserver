@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:20:56  $
 //******************************************************************************
 
-#ifndef SVOUTPUTINFOLISTCLASS_H
-#define SVOUTPUTINFOLISTCLASS_H
+#pragma once
 
 #pragma warning( disable : 4786 )
 
@@ -65,6 +64,4 @@ protected:
 	SVOutObjectInfoStructPtrArray m_svObjectArray;
 	SVStdSetSVOutObjectInfoStructPtr m_svObjectSet;
 };
-
-#endif
 

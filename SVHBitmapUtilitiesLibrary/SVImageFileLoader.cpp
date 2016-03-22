@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <set>
-#include <iterator>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <iterator>
 #include "SVImageFileLoader.h"
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"

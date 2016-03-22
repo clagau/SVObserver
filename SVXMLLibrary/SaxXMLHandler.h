@@ -7,10 +7,21 @@
 
 #pragma once
 #pragma region Includes
+//Moved to precompiled header: #include <iosfwd>
+//Moved to precompiled header: #include <iostream>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <sstream>
+//Moved to precompiled header: #include <memory>
+//Moved to precompiled header: #include <sequential_tree.h>
 #include "ISaxElementHandler.h"
 #include "SaxParser.h"
 #include "SaxTreeElement.h"
-#include <sequential_tree.h>
+#include "SaxEncryptionHandler.h"
+#include "SVXMLLibrary\SVNavigateTree.h"
+#include "SVXMLLibrary\VariantHelper.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace  SVXMLLibrary

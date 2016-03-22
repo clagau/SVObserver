@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   04 Sep 2014 12:45:20  $
 // ******************************************************************************
 
-#ifndef _SV_REGRESSION_TEST_STRUCT
-#define _SV_REGRESSION_TEST_STRUCT
+#pragma once
 
 enum RegressionFileEnum
 {
@@ -74,6 +73,4 @@ enum RegressionFileSelectCode
 	SelectionFileNotExist	= 5,
 	SelectionEmptyList		= 6
 };
-
-#endif
 

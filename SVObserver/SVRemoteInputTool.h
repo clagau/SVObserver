@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 12:40:04  $
 //******************************************************************************
 
-#ifndef SVREMOTEINPUTTOOL_H
-#define SVREMOTEINPUTTOOL_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
@@ -96,6 +95,4 @@ protected:
 	SVDataContainer m_Elements;
 
 };
-
-#endif
 

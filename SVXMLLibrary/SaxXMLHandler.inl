@@ -4,22 +4,6 @@
 //*****************************************************************************
 /// class SVSaxXMLHandler
 //******************************************************************************
-#pragma region Includes
-#include "StdAfx.h"
-#include <iosfwd>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <memory>
-#include "SaxXMLHandler.h"
-#include "SaxEncryptionHandler.h"
-#include "SVXMLLibrary\SVNavigateTree.h"
-#include "SVXMLLibrary\VariantHelper.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVMessage/SVMessage.h"
-#include <sequential_tree.h>
-#pragma endregion Includes 
 
 namespace Seidenader { namespace  SVXMLLibrary
 {

@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVFileCamera.h"
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVFileSystemLibrary/SVFileSystemScanner.h"

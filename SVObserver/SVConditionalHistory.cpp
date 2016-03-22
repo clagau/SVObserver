@@ -36,7 +36,6 @@ namespace local
 
 void SVConditionalHistoryData::swap( SVConditionalHistoryData& rhs )
 {
-	using std::swap;
 
 	if ( this != &rhs )
 	{

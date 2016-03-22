@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   17 Mar 2014 14:19:08  $
 //******************************************************************************
 
-#ifndef SVOBJECTNAMEINFO_H
-#define SVOBJECTNAMEINFO_H
+#pragma once
 
 #pragma region Includes
-#include <deque>
+//Moved to precompiled header: #include <deque>
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -102,6 +101,4 @@ private:
 	bool m_DefaultValuePresent;
 	SVString m_DefaultValue;
 };
-
-#endif
 

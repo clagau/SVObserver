@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:35:54  $
 //******************************************************************************
-#ifndef SVFILEACQUISITIONINITIATOR_H
-#define SVFILEACQUISITIONINITIATOR_H
+
+#pragma once
 
 #include "SVAcquisitionInitiator.h"
 
@@ -31,5 +31,4 @@ public:
 	static HRESULT CALLBACK TriggerCallback( void *p_pvOwner, void *p_pvData );
 };
 
-#endif
 

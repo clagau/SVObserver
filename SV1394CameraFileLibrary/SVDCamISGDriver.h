@@ -9,12 +9,10 @@
 //* .Check In Date   : $Date:   18 Apr 2013 17:36:42  $
 //******************************************************************************
 
-#ifndef __SVDCAMISGDRIVER_H__
-#define __SVDCAMISGDRIVER_H__
 #pragma once
 
 #include "SVDCamStandardDriver.h"
-#include <map>
+//Moved to precompiled header: #include <map>
 
 class SVDCamISGDriver : public SVDCamStandardDriver
 {
@@ -120,6 +118,4 @@ public:
 protected:
 	void init();
 };
-
-#endif	//#ifndef __SVDCAMISGDRIVER_H__
 

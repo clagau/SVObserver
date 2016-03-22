@@ -6,8 +6,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 16:04:24  $
 //******************************************************************************
 
-#ifndef JSON_WRITER_H_INCLUDED
-# define JSON_WRITER_H_INCLUDED
+#pragma once
 
 # include "value.h"
 # include <vector>
@@ -177,7 +176,4 @@ namespace Json {
 
 } // namespace Json
 
-
-
-#endif // JSON_WRITER_H_INCLUDED
 

@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
 //******************************************************************************
 
-#ifndef SVJSONCOMMANDMANAGER_H
-#define SVJSONCOMMANDMANAGER_H
+#pragma once
 
-#include <string>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -63,6 +65,3 @@ private:
 };
 
 #include "SVJsonCommandManager.inl"
-
-#endif
-

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:53:32  $
 //******************************************************************************
 
-#ifndef SVDATAMANAGERHANDLE_H
-#define SVDATAMANAGERHANDLE_H
+#pragma once
 
 #include "SVDataManagerEnums.h"
 #include "SVDataManagerIndexArrayHandle.h"
@@ -51,5 +50,4 @@ protected:
 
 };
 
-#endif
 

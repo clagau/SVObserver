@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   18 Apr 2013 18:10:12  $
 // ******************************************************************************
 
-#ifndef __UTILITIES_H
-#define __UTILITIES_H
+#pragma once
 
-#include <errno.h>
+//Moved to precompiled header: #include <errno.h>
 
 BOOL CreateDirPath(CString szPath);
 HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg); ///< also in SVDriveInitDlg.cpp
@@ -33,6 +32,4 @@ void moveContainedDirectory(const CString &containingDirectoryPath,const CString
 /// \param path [in] path of the directory to be removed
 //************************************
 void deleteTree(const CString &path);
-
-#endif
 

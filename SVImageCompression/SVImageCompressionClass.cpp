@@ -24,7 +24,7 @@
 #include "SVMessage/SVMessage.h"
 
 #include "SVLibrary/SVBStr.h"       // SVBstr
-#include "SVOGui/SVBitmap.h"        // SVBitmap
+#include "SVMFCControls\SVBitmap.h" // SVBitmap
 #include "picture.h"                // CPicture
 
 #include <L_OCX40.H>                // Format defines

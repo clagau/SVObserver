@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   24 Apr 2013 12:28:10  $
 //******************************************************************************
 
-#ifndef SVTRIGGERCLASS_H
-#define SVTRIGGERCLASS_H
+#pragma once
 
 #include "SVOLibrary/SVODeviceClass.h"
 #include "SVOLibrary/SVQueueObject.h"
@@ -47,6 +46,4 @@ protected:
 	#endif
 
 };
-
-#endif
 

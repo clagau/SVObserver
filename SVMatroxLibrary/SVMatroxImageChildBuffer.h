@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:18:18  $
 //******************************************************************************
 
-#ifndef SVMATROXIMAGECHILDBUFFER_H
-#define SVMATROXIMAGECHILDBUFFER_H
+#pragma once
 
 #include "SVMatroxBufferTemplate.h"
 
@@ -29,6 +28,4 @@ protected:
 	SVMatroxBufferPtr m_ParentPtr;
 
 };
-
-#endif
 

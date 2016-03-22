@@ -9,27 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:09:22  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#ifndef SVSTARTWINDOWCLASS_H
-#define SVSTARTWINDOWCLASS_H
-
-//#ifndef AFX_SVSTARTWINDOWCLASS_H__533A2501_5881_11D1_AEC4_444553540000__INCLUDED_
-//#define AFX_SVSTARTWINDOWCLASS_H__533A2501_5881_11D1_AEC4_444553540000__INCLUDED_
-
-// SVStartWindow.h : Header-Datei
-//
-
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// Includes which are necessary to declare or define types, constants and macros
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma once
 
 #include "SVMFCControls\SVDlgBitmap.h"
 
@@ -137,17 +117,4 @@ public:
 //******************************************************************************
 
 };
-
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio fügt zusätzliche Deklarationen unmittelbar vor der vorhergehenden Zeile ein.
-
-//#endif // AFX_SVSTARTWINDOWCLASS_H__533A2501_5881_11D1_AEC4_444553540000__INCLUDED_
-
-/**************************************************************************/
-/* INCLUDE CONTROL:                                                        */
-/**************************************************************************/
-#endif	// SVSTARTWINDOWCLASS_H
-
-//** EOF **
 

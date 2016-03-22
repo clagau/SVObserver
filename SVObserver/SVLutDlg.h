@@ -10,8 +10,7 @@
 //******************************************************************************
 
 
-#ifndef __SVLUTDLG_H__
-#define __SVLUTDLG_H__
+#pragma once
 
 #include "SVEnumerateCombo.h"
 #include "SVOMFCLibrary\SVDlgGraph.h"
@@ -148,12 +147,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 };
-
-
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-
-#endif	//#ifndef __SVLUTDLG_H__
 

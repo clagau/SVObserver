@@ -9,12 +9,10 @@
 //* .Check In Date   : $Date:   06 May 2013 20:06:08  $
 //******************************************************************************
 
-#ifndef INCL_SVIMPORTEDINPUTLIST_H
-#define INCL_SVIMPORTEDINPUTLIST_H
-
-#include <boost/config.hpp>
-#include <boost/any.hpp>
-#include <deque>
+#pragma once
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/any.hpp>
+//Moved to precompiled header: #include <deque>
 
 #include "SVUtilityLibrary/SVString.h"
 
@@ -41,6 +39,4 @@ struct SVImportedRemoteInput : SVImportedInput
 	{
 	}
 };
-
-#endif
 

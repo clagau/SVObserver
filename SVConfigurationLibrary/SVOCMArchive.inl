@@ -21,7 +21,7 @@
 #include "SVXMLLibrary/SVXMLClass.h"
 #include "SVLibrary/SVBStr.h"
 #include "SVObserverEnums.h"
-#include <msxml6.h>
+//Moved to precompiled header: #include <msxml6.h>
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #pragma endregion Includes
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

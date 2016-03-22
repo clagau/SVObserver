@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   24 Apr 2013 11:33:52  $
 //******************************************************************************
 
-#ifndef SVTASKOBJECTINTERFACEINPUTREQUESTSTRUCT_H
-#define SVTASKOBJECTINTERFACEINPUTREQUESTSTRUCT_H
+#pragma once
 
 #include "SVValueObjectReference.h"
 
@@ -36,6 +35,4 @@ struct SVInputRequestStructMap : public std::map <SVTaskObjectInterfaceInputRequ
 };
 
 #include "SVTaskObjectInterfaceInputRequestStruct.inl"
-
-#endif
 

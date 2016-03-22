@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:27:10  $
 //******************************************************************************
 
-#ifndef SVMATROXDIGITIZER_H
-#define SVMATROXDIGITIZER_H
+#pragma once
 
-#include <boost/utility.hpp>
+//Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 
 class SVMatroxDigitizerInterface;
@@ -44,6 +43,4 @@ protected:
 private:
 	void LocalClear();
 };
-
-#endif
 

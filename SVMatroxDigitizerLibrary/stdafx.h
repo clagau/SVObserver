@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:27:00  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -19,11 +18,11 @@
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINNT WINVER	// Change this to the appropriate value to target other versions of Windows.
 #endif						
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows XP or later.
-#define _WIN32_WINDOWS 0x0501 // Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINDOWS WINVER // Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
@@ -43,7 +42,32 @@
 #define _SECURE_SCL 0
 #endif
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <windows.h>
 
-#endif
+#include <comdef.h>
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
+#include <map>
+#include <set>				//Used by static library
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <vector>			//Used by static library
 
+#include <boost/assign/list_of.hpp>
+#include <boost/config.hpp>
+#include <boost/utility.hpp>
+#include <boost/multi_index_container.hpp>				//Used by static library
+#include <boost/multi_index/member.hpp>					//Used by static library
+#include <boost/multi_index/ordered_index.hpp>			//Used by static library
+
+#define SV_DESIRED_MIL_VERSION 0x0900
+
+#if SV_DESIRED_MIL_VERSION == 0x0900
+#define M_MIL_USE_SAFE_TYPE 0
+#endif
+#include <mil.h>
+#pragma endregion Precompiled Headers

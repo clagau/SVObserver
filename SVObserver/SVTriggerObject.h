@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   24 Apr 2013 12:29:22  $
 //******************************************************************************
 
-#ifndef SVTRIGGEROBJECT_H
-#define SVTRIGGEROBJECT_H
+#pragma once
 
 #include "SVInfoStructs.h"
 #include "SVOLibrary/SVQueueObject.h"
@@ -65,6 +64,3 @@ private:
 
 };
 typedef SVVector< SVTriggerObject* > SVTriggerObjectArray;
-
-#endif /* _INC_SVTRIGGEROBJECT_INCLUDED */
-

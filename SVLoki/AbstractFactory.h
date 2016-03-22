@@ -36,15 +36,12 @@
 //
 // Covariant return types had to go, too.
 
-#ifndef ABSTRACTFACTORY_INC_
-#define ABSTRACTFACTORY_INC_
 
+//Moved to precompiled header: #include <cassert>
 #include "Typelist.h"
 #include "TypeManip.h"
 #include "HierarchyGenerators.h"
 #include "MSVC6Helpers.h"
-
-#include <cassert>
 
 #define  ETAS_HELPER(Type) (::Loki::Type2Type<Type>())
 
@@ -221,13 +218,4 @@ namespace Loki
     };
 
 } // namespace Loki
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// Oct  24, 2002: ported by Benjamin Kaufmann to MSVC 6.0
-// Feb	20, 2003: replaced pointer-dummy parameters with Type2Type-parameters. B.K.
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // ABSTRACTFACTORY_INC_
 

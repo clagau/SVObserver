@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 13:30:36  $
 // ******************************************************************************
 
-#ifndef SECUREDOBJECT_H
-#define SECUREDOBJECT_H
+#pragma once
 
 class SVSecuredObject : public CObject
 {
@@ -40,6 +39,4 @@ private:
 	CString				m_szParentKey;
 
 };
-
-#endif
 

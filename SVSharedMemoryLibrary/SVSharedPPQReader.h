@@ -9,8 +9,9 @@
 //* .Check In Date   : $Date:   15 Oct 2014 17:49:58  $
 //******************************************************************************
 #pragma once
-#include <map>
-#include <string>
+
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <string>
 #include "SVSharedProductStore.h"
 #include "SVSharedMonitorList.h"
 #include "SVSharedMemorySettings.h"

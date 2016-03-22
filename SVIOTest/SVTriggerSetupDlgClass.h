@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:49:58  $
 // ******************************************************************************
 
-#ifndef SVTRIGGERSETUPDLGCLASS_H
-#define SVTRIGGERSETUPDLGCLASS_H
+#pragma once
 
 // SVTriggerSetupDlgClass.h : header file
 //
@@ -67,9 +66,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVTRIGGERSETUPDLGCLASS_H__6CBFA59C_1364_4CE9_9EF2_9540F5D32737__INCLUDED_)
 

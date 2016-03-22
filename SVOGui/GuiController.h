@@ -8,9 +8,9 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/any.hpp>
-#include <boost/noncopyable.hpp>
-#include <string>
+//Moved to precompiled header: #include <boost/any.hpp>
+//Moved to precompiled header: #include <boost/noncopyable.hpp>
+//Moved to precompiled header: #include <string>
 #include "ObjectInterfaces\NameValueList.h"
 #pragma endregion Includes
 

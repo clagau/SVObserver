@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:53:46  $
 //******************************************************************************
 
-#ifndef SVIMAGEINFOCLASS_H
-#define SVIMAGEINFOCLASS_H
+#pragma once
 
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVImagePropertiesClass.h"
@@ -96,6 +95,4 @@ private:
 };
 
 #include "SVImageInfoClass.inl"
-
-#endif
 

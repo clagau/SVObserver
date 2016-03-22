@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <assert.h> // (VS2010)
+//Moved to precompiled header: #include <assert.h>
 #include "SVImageObjectClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"

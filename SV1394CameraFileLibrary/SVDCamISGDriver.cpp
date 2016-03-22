@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <vector>
 #include "SVDCamISGDriver.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"

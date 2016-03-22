@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 16:20:30  $
 //******************************************************************************
 
-#ifndef SVRUNCONTROLLIBRARY_H
-#define SVRUNCONTROLLIBRARY_H
+#pragma once
 
 // Default drawing color settings...
 const COLORREF SV_DEFAULT_TEXT_COLOR                        = RGB( 0, 0, 0 );       // Black
@@ -24,5 +23,4 @@ const COLORREF SV_DEFAULT_WHITE_COLOR                       = RGB( 255, 255, 255
 const COLORREF SV_DEFAULT_BLACK_COLOR                       = RGB( 0, 0, 0 );       // Black
 const COLORREF SV_DEFAULT_DISABLED_COLOR                    = RGB( 128, 128, 128 ); // Grey
 
-#endif
 

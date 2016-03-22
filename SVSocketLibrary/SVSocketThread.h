@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include <comdef.h>
-#include <string>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <string>
 #include "SVSystemLibrary/SVThreadManager.h"
 
 /*

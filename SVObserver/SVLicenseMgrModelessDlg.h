@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   06 May 2013 14:38:20  $
 //******************************************************************************
 
-#ifndef LICMGRMODELESSDLG_H_
-#define LICMGRMODELESSDLG_H_
+#pragma once
 
 #include "SVOLicenseManager\SVOLicenseManager.h"
 #include "SVOResource\resource.h"
@@ -92,10 +91,4 @@ public:
 	CString m_sMessageTitle;
 	CListBox m_ctlErrorList;
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif
-
 

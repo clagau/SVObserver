@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <set>
+//Moved to precompiled header: #include <set>
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"

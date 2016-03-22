@@ -11,9 +11,9 @@
 
 #include "stdafx.h"
 #include "SVEquationYacc.h"
-#include <algorithm>
-#include <math.h>
-#include <vector>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <math.h>
+//Moved to precompiled header: #include <vector>
 #include "SVEquationBase.h"
 #include "SVMessage/SVMessage.h"
 

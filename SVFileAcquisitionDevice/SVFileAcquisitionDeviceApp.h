@@ -9,9 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:28:46  $
 //******************************************************************************
 
-#if !defined(SVFILEACQUISITIONDEVICEAPP_H)
-#define SVFILEACQUISITIONDEVICEAPP_H
-
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
 #endif
@@ -46,11 +43,3 @@ public:
 };
 
 extern SVFileAcquisitionDeviceApp g_svTheApp;
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-

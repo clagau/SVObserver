@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 12:22:22  $
 // ******************************************************************************
 
-#ifndef SVPROCESSFUNCTOR_H
-#define SVPROCESSFUNCTOR_H
+#pragma once
 
 template< typename SVT_CLASS >
 class SVProcessFunctor
@@ -30,6 +29,4 @@ protected:
 };
 
 #include "SVProcessFunctor.inl"
-
-#endif
 

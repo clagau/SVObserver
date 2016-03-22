@@ -10,10 +10,10 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <limits>
-#include <map>
-#include "boost/config.hpp"
-#include "boost/assign.hpp"
+//Moved to precompiled header: #include <limits>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include "boost/config.hpp"
+//Moved to precompiled header: #include "boost/assign.hpp"
 #include "SVClock.h"
 
 typedef std::map< SVClock::SVConversionEnum, double > SVConversionFactorMap;

@@ -11,11 +11,11 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <locale>
+//Moved to precompiled header: #include <sstream>
+//Moved to precompiled header: #include <boost\algorithm\string\case_conv.hpp>
 #include "SVString.h"
-#include <algorithm>
-#include <locale>
-#include <sstream>
-#include <boost\algorithm\string\case_conv.hpp>
 #pragma endregion Includes
 
 

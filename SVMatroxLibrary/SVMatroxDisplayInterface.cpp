@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <assert.h>
+//Moved to precompiled header: #include <assert.h>
 #include "SVMatroxDisplayInterface.h"
 #include "SVMatroxBufferTemplate.h"
 #include "SVMatroxImageBuffer.h"

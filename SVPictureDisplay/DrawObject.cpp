@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "StdAfx.h"
+//Moved to precompiled header: #include <vector>
 #include "DrawObject.h"
-#include <vector>
 #include "SVPictureDisplayidl.h"
 #pragma endregion Includes
 

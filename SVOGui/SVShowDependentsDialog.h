@@ -11,6 +11,7 @@
 
 #pragma once
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "SVObjectLibrary\SVOutObjectInfoStruct.h"
 #include "ObjectInterfaces\DependencyList.h"
 #pragma endregion Includes

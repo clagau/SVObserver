@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:51:26  $
 //******************************************************************************
 
-#ifndef SVIMAGEPROPERTIESCLASS_H
-#define SVIMAGEPROPERTIESCLASS_H
+#pragma once
 
 #include "ObjectInterfaces\SVImageEnums.h"
 
@@ -44,6 +43,4 @@ private:
 	int m_iBandNumber;
 	int m_iBandLink;
 };
-
-#endif
 

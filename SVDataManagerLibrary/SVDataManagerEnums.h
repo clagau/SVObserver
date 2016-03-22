@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:53:46  $
 //******************************************************************************
 
-#ifndef SVDATAMANAGERENUMS_H
-#define SVDATAMANAGERENUMS_H
+#pragma once
 
 enum SVDataManagerLockTypeEnum
 {
@@ -38,5 +37,4 @@ enum SVLogType
 	SVLogDMOther = 256,
 };
 
-#endif
 

@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:44:16  $
 //******************************************************************************
 
-#ifndef SVRINGBUFFER_H
-#define SVRINGBUFFER_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 
 struct SVElementDoNothing
 {
@@ -93,6 +92,4 @@ private:
 };
 
 #include "SVRingBuffer.inl"
-
-#endif
 

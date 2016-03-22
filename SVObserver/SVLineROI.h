@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 13:12:42  $
 //******************************************************************************
 
-#ifndef SVLINEROI_H
-#define SVLINEROI_H
+#pragma once
 
 #include "SVROI.h"
 #include "SVLine.h"
@@ -38,6 +37,4 @@ protected:
 	SVLineClass outputLineObject; // Embedded
 
 };
-
-#endif	// SVLINEROI_H
 

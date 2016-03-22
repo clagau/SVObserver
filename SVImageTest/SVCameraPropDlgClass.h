@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:08:28  $
 // ******************************************************************************
 
-#ifndef SVCAMERAPROPDLGCLASS_H
-#define SVCAMERAPROPDLGCLASS_H
+#pragma once
 
 #include "SVMFCControls\SVListCtrl.h"
 
@@ -43,9 +42,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

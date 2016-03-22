@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:01:32  $
 //******************************************************************************
 
-#ifndef SVROIFIGUREEDITOR_H_
-#define SVROIFIGUREEDITOR_H_
 #pragma once
 
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -81,17 +79,4 @@ protected:
 
 	SVROIShape* m_pShape;
 };
-
-/*
-class SVMaskShapeRectangleFigureEditor : public SVMaskShapeFigureEditor
-{
-protected:
-	virtual HRESULT MouseMove(UINT nFlags, CPoint point);
-	virtual SVHitTestStruct HitTest( CPoint point );	// for cursor display
-
-};
-*/
-
-
-#endif	//#ifndef SVMASKSHAPEFIGUREEDITORS_H_
 

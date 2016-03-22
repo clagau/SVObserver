@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   25 Jun 2014 11:57:24  $
 //******************************************************************************
 
-#ifndef SVPARSERPROGRESSDIALOG_H_INCLUDED_
-#define SVPARSERPROGRESSDIALOG_H_INCLUDED_
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVProgressDialog.h"
 #include "SVSystemLibrary/SVLockableClass.h"
@@ -95,6 +94,4 @@ private:
 	int m_originalWidth;
 	BOOL m_scrollBarShown;
 };
-
-#endif
 

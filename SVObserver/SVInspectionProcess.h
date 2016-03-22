@@ -12,10 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/function.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/type_traits.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/tokenizer.hpp>
+//Moved to precompiled header: #include <boost/lexical_cast.hpp>
+//Moved to precompiled header: #include <boost/type_traits.hpp>
 
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVCommandLibrary/SVCommandTemplate.h"

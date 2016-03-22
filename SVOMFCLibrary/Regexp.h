@@ -6,8 +6,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 12:57:18  $
 //******************************************************************************
 
-#ifndef __REGEXP_H__
-#define __REGEXP_H__
+#pragma once
 
 // http://www.codeguru.com/Cpp/Cpp/string/regex/article.php/c2779
 //
@@ -49,5 +48,4 @@ private:
 	int safeIndex( unsigned int i ) const;
 };
 
-#endif
 

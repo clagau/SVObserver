@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 
-#ifndef SVMATROXDIGITIZERHOOKENUMS_H
-#define SVMATROXDIGITIZERHOOKENUMS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
@@ -131,6 +130,4 @@ struct SVMatroxDigitizerHook
 	typedef SVMatroxEnumConvertor< SVHookInfoEnum, SVMatroxInt > SVHookInfoEnumMap;
 	static SVHookInfoEnumMap m_HookInfoEnumConvertor;
 };
-
-#endif
 

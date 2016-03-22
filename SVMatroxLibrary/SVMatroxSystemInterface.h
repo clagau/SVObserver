@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 11:15:32  $
 //******************************************************************************
 
-#ifndef SVMATROXSYSTEMINTERFACE_H
-#define SVMATROXSYSTEMINTERFACE_H
+#pragma once
 
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxSystem.h"
@@ -38,6 +37,4 @@ public:
 	static SVStatusCode GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value);
 	static SVStatusCode GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value);
 };
-
-#endif
 

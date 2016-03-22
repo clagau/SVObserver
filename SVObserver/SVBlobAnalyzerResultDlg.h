@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:45:00  $
 //******************************************************************************
 
-#ifndef SVBLOBANALYZERRESULTDLG_H
-#define SVBLOBANALYZERRESULTDLG_H
+#pragma once
 
 class SVBlobAnalyzerClass;
 
@@ -42,6 +41,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-#endif
 

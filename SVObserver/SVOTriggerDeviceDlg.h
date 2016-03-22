@@ -8,9 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:12:50  $
 //******************************************************************************
-#ifndef SVOTRIGGERDEVICEDLG_H
-#define SVOTRIGGERDEVICEDLG_H
 
+#pragma once
 
 #include "SVTriggerSelectionDlg.h"
 
@@ -64,9 +63,4 @@ private:
 	void DisablePropertyEdit();
 	void GetNextAvailableTriggerList(SVTriggerNameIdList& rList) const;
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVOTRIGGERDEVICEDLG_H__2EA120CE_BE74_45B5_9774_E88E9903DCA9__INCLUDED_)
 

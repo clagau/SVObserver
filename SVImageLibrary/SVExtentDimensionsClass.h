@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:37:02  $
 //******************************************************************************
 
-#ifndef SVEXTENTDIMENSIONSCLASS_H
-#define SVEXTENTDIMENSIONSCLASS_H
+#pragma once
 
 #include "SVExtentEnums.h"
 
@@ -60,6 +59,4 @@ private:
 	long m_lOutputWidth;
 	long m_lOutputHeight;
 };
-
-#endif // _SVEXTENTDIMENTIONSCLASS_H
 

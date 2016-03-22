@@ -9,13 +9,6 @@
 //* .Check In Date   : $Date:   30 Jul 2013 13:27:12  $
 //******************************************************************************
 
-#include "stdafx.h"
-
-#include <comdef.h>
-#include <boost/config.hpp>
-#include <boost/scoped_array.hpp>
-#include "SVStringConversions.h"
-
 namespace SVStringConversions
 {
 	template<>

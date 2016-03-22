@@ -35,12 +35,28 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
+#pragma warning ( disable : 4503 )
+
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
+#include <afxcmn.h>         // MFC support for Windows Common Controls
 
-#include <afxcmn.h>             // MFC support for Windows Common Controls
-
-// Global includes that everyone needs
-#include "SVOResource\resource.h"
+#include <algorithm>
+#include <assert.h>
+#include <comdef.h>
+#include <comutil.h>		//Used by static library
+#include <concrt.h>			//Used by static library
+#include <ctime>			//Used by static library
+#include <list>				//Used by static library
+#include <map>				//Used by static library
+#include <sequential_tree.h> //Used by static library
+#include <set>
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <vector>			//Used by static library
+#pragma endregion Precompiled Headers
 

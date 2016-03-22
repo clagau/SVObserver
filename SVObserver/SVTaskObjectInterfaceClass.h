@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   24 Apr 2013 11:25:48  $
 //******************************************************************************
 
-#ifndef SVTASKOBJECTINTERFACECLASS_H
-#define SVTASKOBJECTINTERFACECLASS_H
+#pragma once
 
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
 #include "SVTaskObjectValueInterface.h"
@@ -29,5 +28,4 @@ public:
 	virtual HRESULT SetInspectionData() = 0;
 };
 
-#endif
 

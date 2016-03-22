@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:26:36  $
 //******************************************************************************
 
-#ifndef SVACQUISITIONSOURCE_H
-#define SVACQUISITIONSOURCE_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVImageLibrary/SVLightReference.h"
@@ -69,5 +68,4 @@ public:
 
 };
 
-#endif
 

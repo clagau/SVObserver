@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:20:02  $
 //******************************************************************************
 
-#ifndef SVVARIANTVALUEOBJECTCLASS_H
-#define SVVARIANTVALUEOBJECTCLASS_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
@@ -68,5 +67,4 @@ private:
 
 };
 
-#endif
 

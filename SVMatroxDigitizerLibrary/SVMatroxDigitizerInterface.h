@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:45:30  $
 //******************************************************************************
 
-#ifndef SVMATROXDIGITIZERINTERFACE_H
-#define SVMATROXDIGITIZERINTERFACE_H
+#pragma once
 
-#include <map>
-#include <comdef.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVMatroxLibrary/SVMatroxStatusInformation.h"
 #include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
@@ -159,6 +158,4 @@ public:
 	static SVStatusCode SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const SVMatroxString& name, const SVMatroxString& value);
 	static SVStatusCode GetGigeEventList(const SVMatroxDigitizer& DigitizerID, SVGigeEventList& list);
 };
-
-#endif
 

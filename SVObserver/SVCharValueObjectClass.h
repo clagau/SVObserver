@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:53:02  $
 //******************************************************************************
 
-#ifndef SVCHARVALUEOBJECTCLASS_H
-#define SVCHARVALUEOBJECTCLASS_H
+#pragma once
 
 #pragma warning (push)
 #pragma warning (disable : 4244)
@@ -52,5 +51,4 @@ private:
 };
 
 #pragma warning (pop)
-#endif
 

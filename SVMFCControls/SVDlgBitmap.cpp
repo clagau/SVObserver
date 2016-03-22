@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <io.h>
 #include "SVDlgBitmap.h"
-#include <io.h>
 #include "SVObserver\TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManagerResource.h"

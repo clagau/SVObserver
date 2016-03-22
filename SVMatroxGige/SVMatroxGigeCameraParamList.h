@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:58  $
 //******************************************************************************
-#ifndef SVMATROXGIGECAMERAPARAMLIST_H
-#define SVMATROXGIGECAMERAPARAMLIST_H
+
+#pragma once
 
 #include "SVMatroxGigeCameraParam.h"
 
@@ -25,6 +25,4 @@ struct SVMatroxGigeCameraParamList
 	SVMatroxGigeCameraParamList();
 	void clear();
 };
-
-#endif
 

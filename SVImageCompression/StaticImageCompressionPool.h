@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 10:19:42  $
 // ******************************************************************************
 
-#ifndef STATICIMAGECOMPRESSIONPOOL_H
-#define STATICIMAGECOMPRESSIONPOOL_H
+#pragma once
 
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVCompressionDlg.h"
@@ -83,6 +82,4 @@ public:
 	HGLOBAL                    svmghDIBInputBuffer;
 	
 };
-
-#endif
 

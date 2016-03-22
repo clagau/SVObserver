@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:51:54  $
 //******************************************************************************
 
-#ifndef SVTRIGGERRELAYCLASS_H
-#define SVTRIGGERRELAYCLASS_H
+#pragma once
 
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
@@ -32,6 +31,4 @@ public:
 };
 
 #include "SVTriggerRelayClass.inl"
-
-#endif
 

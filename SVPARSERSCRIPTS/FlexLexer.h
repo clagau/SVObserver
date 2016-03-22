@@ -50,9 +50,7 @@
 //	#include <FlexLexer.h>
 //	...
 
-#ifndef __FLEX_LEXER_H
-// Never included before - need to define base class.
-#define __FLEX_LEXER_H
+#pragma once
 #include <iostream>
 
 extern "C++" {
@@ -112,7 +110,6 @@ protected:
 };
 
 }
-#endif // #ifndef __FLEX_LEXER_H
 
 #if defined(yyFlexLexer) || ! defined(yyFlexLexerOnce)
 // Either this is the first time through (yyFlexLexerOnce not defined),

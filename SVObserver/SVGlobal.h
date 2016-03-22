@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
-#include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "SVMessage/SVMessage.h"
 #include "SVMatroxLibrary\SVMatroxEnums.h"
 #pragma endregion Includes

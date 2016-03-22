@@ -11,10 +11,11 @@
 
 
 #pragma once
+
 #pragma region Includes
-#include <map>
-#include <list>
-#include <comdef.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <list>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVThreadManager\SVThreadAttribute.h"
 
 #pragma endregion

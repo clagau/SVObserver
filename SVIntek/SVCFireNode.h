@@ -9,10 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:32:40  $
 // ******************************************************************************
 
-#ifndef _SVCFIRENODE_H
-#define _SVCFIRENODE_H
+#pragma once
 
 #include "firenode.h"
-
-#endif // _SVCFIRENODE_H
 

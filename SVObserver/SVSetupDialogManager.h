@@ -9,12 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:02:58  $
 //******************************************************************************
 
-#ifndef SVSETUPDIALOGMANAGER_H
-#define SVSETUPDIALOGMANAGER_H
+#pragma once
 
-#include <map>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVUtilityLibrary/SVGUID.h"
 
@@ -55,6 +54,4 @@ private:
 	const SVSetupDialogManager& operator=( const SVSetupDialogManager& p_rObject );
 
 };
-
-#endif
 

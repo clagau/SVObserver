@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   28 Feb 2014 08:05:20  $
 //******************************************************************************
 
-#ifndef SVCOMMAND_H
-#define SVCOMMAND_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
@@ -709,7 +708,5 @@ private:
 };// end class CSVCommand
 
 OBJECT_ENTRY_AUTO( __uuidof(SVCommand), CSVCommand ) 
-
-#endif //__SVCOMMAND_H_
 
 		

@@ -9,13 +9,12 @@
 // * .Check In Date   : $Date:   26 Apr 2013 14:51:44  $
 // ******************************************************************************
 
-#ifndef INCL_SVINTEKCAMERAPARAMMANAGER_H
-#define INCL_SVINTEKCAMERAPARAMMANAGER_H
+#pragma once
 
-#include <map>
-#include <deque>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <fctlArgs.h>
 #include "camera.h"
-#include <fctlArgs.h>
 
 struct SVIntekCameraParam
 {
@@ -139,6 +138,4 @@ public:
 	HRESULT SetIntekCameraParams(__int64 cameraID, const CAMPARMS& params);
 	HRESULT GetIntekCameraParams(__int64 cameraID, CAMPARMS& params);
 };
-
-#endif
 

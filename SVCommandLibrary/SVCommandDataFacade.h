@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:30:30  $
 //******************************************************************************
 
-#ifndef SVCOMMANDDATAFACADE_H
-#define SVCOMMANDDATAFACADE_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
 /*
@@ -35,6 +34,4 @@ private:
 };
 
 typedef SVSharedPtr< SVCommandDataFacade > SVCommandDataFacadePtr;
-
-#endif
 

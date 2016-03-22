@@ -7,10 +7,10 @@
 #pragma once
 
 #pragma region Includes
-#include <ppl.h>
-#include <concrt.h>
-#include <deque>
-#include <iterator>
+//Moved to precompiled header: #include <ppl.h>
+//Moved to precompiled header: #include <concrt.h>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <iterator>
 #pragma endregion Includes
 
 template<typename type>

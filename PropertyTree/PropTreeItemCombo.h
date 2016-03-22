@@ -27,18 +27,9 @@
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 
-#if !defined(AFX_PROPERTYITEMCOMBO_H__9916BC6F_751F_4B15_996F_3C9F6334A259__INCLUDED_)
-#define AFX_PROPERTYITEMCOMBO_H__9916BC6F_751F_4B15_996F_3C9F6334A259__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "PropTreeItem.h"
-
-/////////////////////////////////////////////////////////////////////////////
-// SVRPropertyItemCombo window
-
 #include "SVNotifyButton.h"
 
 class SVRPropertyItemCombo : public CComboBox, public SVRPropertyItem
@@ -140,11 +131,4 @@ private:
 	bool m_bEnableButton;
 
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PROPTREEITEMCOMBO_H__9916BC6F_751F_4B15_996F_3C9F6334A259__INCLUDED_)
 

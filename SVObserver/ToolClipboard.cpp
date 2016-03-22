@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #import <msxml6.dll> // MSXML
-#include <fstream>
+//Moved to precompiled header: #include <fstream>
 #include "ToolClipboard.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"
 #include "SVXMLLibrary\SVNavigateTree.h"

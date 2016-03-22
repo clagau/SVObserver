@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:37:52  $
 //******************************************************************************
 
-#ifndef SVFILESYSTEMCOMMANDFACTORY_H
-#define SVFILESYSTEMCOMMANDFACTORY_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandAbstractFactorySingleton.h"
 #include "SVCommandLibrary/SVCommandAbstractFactoryTemplate.h"
@@ -32,5 +31,4 @@ public:
 
 typedef SVCommandAbstractFactorySingleton< SVFileSystemCommandFactory > SVFileSystemCommandFactorySingleton;
 
-#endif
 

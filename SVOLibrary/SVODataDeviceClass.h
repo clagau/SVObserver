@@ -9,11 +9,10 @@
 // * .Check In Date   : $Date:   02 Oct 2013 08:47:28  $
 // ******************************************************************************
 
-#ifndef SVODATADEVICECLASS_H
-#define SVODATADEVICECLASS_H
+#pragma once
 
-#include <comdef.h>
-#include <string>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <string>
 
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 
@@ -113,6 +112,4 @@ private:
 	SVDataResponseQueue mUsedQueue;
 
 };
-
-#endif
 

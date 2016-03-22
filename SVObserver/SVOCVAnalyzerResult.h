@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:07:30  $
 //******************************************************************************
 
-#ifndef SVOCVANALYZERESULTCLASS_H
-#define SVOCVANALYZERESULTCLASS_H
+#pragma once
 
 #include "SVSystemLibrary/SVLockableClass.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
@@ -129,6 +128,4 @@ public:
 private:
 	bool m_bHasLicenseError;
 };
-
-#endif //#ifndef SVOCVANALYZERESULTCLASS_H
 

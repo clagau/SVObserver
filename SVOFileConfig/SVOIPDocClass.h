@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:34:58  $
 // ******************************************************************************
 
-#ifndef SVOIPDOCCLASS_H
-#define SVOIPDOCCLASS_H
+#pragma once
 
 class SVOIPDocClass : public COleServerDoc
 {
@@ -44,6 +43,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-#endif
 

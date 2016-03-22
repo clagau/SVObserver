@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
-#ifndef SVASYNCPROCEDURE_H
-#define SVASYNCPROCEDURE_H
+
+#pragma once
 
 #include "SVThread.h"
 
@@ -43,5 +43,4 @@ public:
 
 #include "SVAsyncProcedure.inl"
 
-#endif
 

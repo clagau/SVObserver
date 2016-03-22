@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:57:06  $
 //******************************************************************************
 
-#ifndef INCL_SVIMPORTEDINSPECTIONINFO_H
-#define INCL_SVIMPORTEDINSPECTIONINFO_H
+#pragma once
 
-#include <deque>
+//Moved to precompiled header: #include <deque>
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVImportedInputList.h"
 
@@ -31,6 +30,4 @@ public:
 };
 
 typedef std::deque<SVImportedInspectionInfo> SVImportedInspectionInfoList;
-
-#endif
 

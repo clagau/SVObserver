@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:51:24  $
 //******************************************************************************
 
-#ifndef SVLUTTRANSFORM_H
-#define SVLUTTRANSFORM_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 
@@ -175,9 +174,3 @@ public:
 	virtual HRESULT Transform(SVLutTransformOperationFreeform& t, SVLutBand& data, const SVLutTransformParameters& param);
 	virtual HRESULT Transform(SVLutTransformOperationTwoKnee& t, SVLutBand& data, const SVLutTransformParameters& param);
 };
-
-
-
-
-#endif
-

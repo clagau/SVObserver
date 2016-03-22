@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVOResource/resource.h"
 #include "SVFormulaEditorSheet.h"
 #include "FormulaController.h"
 #include "SVStatusLibrary\MessageManagerResource.h"

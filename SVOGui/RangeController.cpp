@@ -7,10 +7,10 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include <string>
-#include <sstream>
-#include <boost/assign/list_of.hpp>
-#include <boost/lexical_cast.hpp>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <sstream>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/lexical_cast.hpp>
 #include "RangeController.h"
 #include "GuiCommands\GetObjectName.h"
 #include "GuiCommands\GetPPQObjectName.h"

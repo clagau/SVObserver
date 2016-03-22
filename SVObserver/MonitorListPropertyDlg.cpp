@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <algorithm>
+//Moved to precompiled header: #include <algorithm>
 #include "MonitorListPropertyDlg.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/SVString.h"

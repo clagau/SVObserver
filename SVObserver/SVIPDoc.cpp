@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"		// SVClids.h
-#include <comdef.h>
-#include <algorithm>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <algorithm>
 #include "SVIPDoc.h"
 
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"

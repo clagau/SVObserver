@@ -26,16 +26,15 @@
 
 // Last update: Feb 24, 2003
 
-#ifndef SINGLETON_INC_
-#define SINGLETON_INC_
+#pragma once
 
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <stdexcept>
+//Moved to precompiled header: #include <cassert>
+//Moved to precompiled header: #include <cstdlib>
+//Moved to precompiled header: #include <new>
 #include "Threads.h"
 #include "MSVC6Helpers.h"		// for apply-template
-#include <algorithm>
-#include <stdexcept>
-#include <cassert>
-#include <cstdlib>
-#include <new>
 
 #if _MSC_VER <= 1200
 #define VC_BROKEN_STD
@@ -495,16 +494,4 @@ namespace Loki
         destroyed_ = true;
     }
 } // namespace Loki
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// May 21, 2001: Correct the volatile qualifier - credit due to Darin Adler
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// Oct	06	2002: ported by Benjamin Kaufmann to MSVC 6.0
-// Feb	24, 2003: changed parameter name of CreateUsingMalloc::Create, 
-//					changed SingletonHolder::MakeInstance in accordance with 
-//					Bug-report #691687 B.K.
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // SINGLETON_INC_
 

@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:23:22  $
 //******************************************************************************
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1000)
 #pragma once
-#endif
-
-#ifndef _SVABOUTDIALOGCLASS_H
-#define _SVABOUTDIALOGCLASS_H
 
 #ifdef SV_SHOW_INCLUDES
 	#pragma message( "Including " __FILE__ )
@@ -61,6 +56,4 @@ protected:
 protected:
 	HBITMAP logoBmp;
 };
-
-#endif   // _SVABOUTDIALOGCLASS_H
 

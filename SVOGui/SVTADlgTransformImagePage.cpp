@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVTADlgTransformImagePage.h"
 #include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes

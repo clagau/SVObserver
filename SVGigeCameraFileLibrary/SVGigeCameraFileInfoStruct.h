@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:41:54  $
 //******************************************************************************
 
-#ifndef SVGIGECAMERAFILEINFOSTRUCT_H
-#define SVGIGECAMERAFILEINFOSTRUCT_H
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 
@@ -29,5 +28,4 @@ struct SVGigeCameraFileInfoStruct
 	SVGigeCameraFileInfoStruct() : bColorSystem(false) {}
 };
 
-#endif
 

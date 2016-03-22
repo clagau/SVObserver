@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:58:18  $
 //******************************************************************************
 
-#ifndef SV_RESULTS_WRAPPER
-#define SV_RESULTS_WRAPPER
+#pragma once
 
 #include "SVCmnLib/SVXmlCmd.h"
 
@@ -122,6 +121,4 @@ public:
 private:
 	SVXmlCmd* m_pSVXmlCmd;
 };
-
-#endif
 

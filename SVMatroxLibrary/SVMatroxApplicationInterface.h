@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   01 Oct 2013 11:08:08  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_APPLICATION_INTERFACE_H
-#define SV_MATROX_APPLICATION_INTERFACE_H
+#pragma once
 
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxTypedefs.h"
@@ -59,6 +58,4 @@ private:
 	SVMatroxApplicationInterface( const SVMatroxApplicationInterface& p_rObject );
 	const SVMatroxApplicationInterface& operator=( const SVMatroxApplicationInterface& p_rObject );
 };
-
-#endif // SV_MATROX_APPLICATION_INTERFACE_H
 

@@ -39,11 +39,11 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <stack>
-#include <cassert>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <iostream>
+//Moved to precompiled header: #include <sstream>
+//Moved to precompiled header: #include <stack>
+//Moved to precompiled header: #include <cassert>
 
 namespace xml
 {

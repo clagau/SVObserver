@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   01 Oct 2013 08:25:48  $
 // ******************************************************************************
 
-#ifndef INCL_SVTESTACQUISITIONCLASS_H
-#define INCL_SVTESTACQUISITIONCLASS_H
+#pragma once
 
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
@@ -69,6 +68,4 @@ protected:
 	unsigned long m_hDigitizer;
 	bool m_bOnline;
 };
-
-#endif
 

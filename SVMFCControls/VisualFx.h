@@ -31,12 +31,8 @@
 
 #pragma warning(disable: 4786)
 
-#ifndef __AFXEXT_H__
-#include <afxext.h>
-#endif
-
-#include <list>
-#include <map>
+//Moved to precompiled header: #include <list>
+//Moved to precompiled header: #include <map>
 
 using namespace std;
 

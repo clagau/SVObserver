@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   25 Apr 2013 18:36:08  $
 //******************************************************************************
 
-#ifndef SVMMTIMEREVENTHANDLER_H
-#define SVMMTIMEREVENTHANDLER_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVTimerCallback.h"
 #include "SVUtilityLibrary/SVString.h"
 
@@ -55,6 +54,4 @@ struct SVMMTimerEventHandler
 };
 
 typedef std::map<SVString, SVMMTimerEventHandler> SVTimerEventListeners;
-
-#endif
 

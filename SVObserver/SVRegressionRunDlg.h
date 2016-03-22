@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Nov 2014 20:32:06  $
 // ******************************************************************************
 
-#ifndef SVREGRESSIONRUNDLG_H
-#define SVREGRESSIONRUNDLG_H
+#pragma once
 
 #pragma region Includes
 #include "SVMFCControls/SVSliderCtrl.h"
@@ -115,9 +114,4 @@ private:
 	int	m_timeDelayInMS;
 #pragma endregion Member variables
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVREGRESSIONRUNDLG_H__3AE6579A_1F58_4209_BAF7_84E524EF5D21__INCLUDED_)
 

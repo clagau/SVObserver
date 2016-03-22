@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:35:42  $
 //******************************************************************************
 
-#ifndef INCL_SVGETOBJECTLISTVISITOR_H
-#define INCL_SVGETOBJECTLISTVISITOR_H
+#pragma once
 
 class SVObjectClass;
 
@@ -29,6 +28,4 @@ private:
 };
 
 #include "SVGetObjectListVisitor.inl"
-
-#endif
 

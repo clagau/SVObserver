@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:53:38  $
 // ******************************************************************************
 
-#ifndef SVMULTITHREAD_H_
-#define SVMULTITHREAD_H_
+#pragma once
 
 class SVSyncObject
 {
@@ -81,5 +80,4 @@ inline SVSingleLockT<SYNC_OBJECT>::~SVSingleLockT()
 
 typedef SVSingleLockT<SVCriticalSectionAdapter> SVCriticalSectionSingleLock;
 
-#endif
 

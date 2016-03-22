@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 Jan 2014 11:30:30  $
 //******************************************************************************
 
-#ifndef SVDRAWCONTEXT_H
-#define SVDRAWCONTEXT_H
+#pragma once
 
 extern const GUID  SVInvalidGUID;
 
@@ -78,5 +77,4 @@ public:
 	void Initialize();
 };
 
-#endif
 

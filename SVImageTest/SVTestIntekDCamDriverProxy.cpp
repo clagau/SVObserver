@@ -10,7 +10,6 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <comdef.h>
 #include "SVTestIntekDCamDriverProxy.h"
 #include "SV1394CameraFileLibrary/SVDCamDriver.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"

@@ -8,10 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:58:22  $
 //******************************************************************************
-#ifndef SVTRIGGERCALLBACKMAP_H
-#define SVTRIGGERCALLBACKMAP_H
 
-#include <map>
+#pragma once
+
+//Moved to precompiled header: #include <map>
 #include "SVTriggerCallbackStruct.h"
 
 typedef std::map<unsigned long, SVTriggerCallbackList> TriggerCallbackMap;
@@ -28,6 +28,4 @@ public:
 
 	HRESULT Dispatch(unsigned long p_ulIndex);
 };
-
-#endif
 

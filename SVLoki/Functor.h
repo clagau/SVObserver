@@ -9,17 +9,17 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:05:30  $
 //******************************************************************************
 
+#pragma once
+
 #ifdef USE_FUNCTOR_OLD_VERSION
 #include "FunctorOld.h"
 #else
-#ifndef FUNCTOR_INC_
-#define FUNCTOR_INC_
+//Moved to precompiled header: #include <typeinfo>
+//Moved to precompiled header: #include <memory>
 #include "Typelist.h"
 #include "EmptyType.h"
 #include "SmallObj.h"
 #include "TypeTraits.h"
-#include <typeinfo>
-#include <memory>
 #include "MSVC6Helpers.h"
 
 namespace Loki
@@ -2632,23 +2632,6 @@ namespace Private
 
 } // namespace Loki
 
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// May  10, 2002: ported by Rani Sharoni to VC7 (RTM - 9466)
-// Oct	12, 2002: ported by Benjamin Kaufmann to MSVC 6
-// Feb	22, 2003: corrected the return type template paramter of functors constructors
-//					for function pointers. 
-//					Added Loki::Disambiguate parameter to the template conversion ctor.
-//					changed the implementation of BindFirst to circumvent
-//					C1001-Internal-Compiler errors.
-//					Replaced the void return workaround.
-//					B.K.
-// Feb	25, 2003: added conversion unspecified_bool_type. B.K.
-// Mar	06, 2003: added protected destructors to private implementation classes B.K.
-// May  19, 2004: Eric Beyeler - added DefaultFunctor<> and Functor::operator == 
-////////////////////////////////////////////////////////////////////////////////
-#endif  // FUNCTOR_INC_
 #endif	// #ifdef USE_FUNCTOR_OLD_VERSION
 
 ////////////////////////////////////////////////////////////////////////////////

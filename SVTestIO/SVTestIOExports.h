@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   16 Jul 2013 13:22:16  $
 // ******************************************************************************
 
-#ifndef SVTestIOEXPORTS_H
-#define SVTestIOEXPORTS_H
+#pragma once
 
 #include "SVTestIOCallback.h"
 
@@ -47,6 +46,4 @@ HRESULT WINAPI SVTriggerGetParameterName( unsigned long p_ulHandle, unsigned lon
 HRESULT WINAPI SVTriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 HRESULT WINAPI SVTriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
-
-#endif
 

@@ -8,12 +8,12 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/noncopyable.hpp>
-#include <boost/any.hpp>
-#include <map>
-#include <string>
-#include <comdef.h>
-#include <guiddef.h>
+//Moved to precompiled header: #include <boost/noncopyable.hpp>
+//Moved to precompiled header: #include <boost/any.hpp>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <guiddef.h>
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 

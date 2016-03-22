@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <limits>
+//Moved to precompiled header: #include <limits>
 #include "SVDisplayObject.h"
 
 #include "SVLibrary/SVWinUtility.h"

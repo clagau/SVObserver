@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <utility>
-#include <deque>
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <deque>
 #include "SVString.h"
 #pragma endregion Includes
 

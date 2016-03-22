@@ -9,7 +9,9 @@
 // * .Check In Date   : $Date:   23 Apr 2013 16:31:00  $
 // ******************************************************************************
 #pragma once
+
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "ValuesAccessor.h"
 #include "GuiController.h"
 #include "ImageController.h"

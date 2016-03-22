@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 17:36:36  $
 //******************************************************************************
 
-#ifndef SVDCAMSTANDARDDRIVER_H
-#define SVDCAMSTANDARDDRIVER_H
+#pragma once
 
 #include "SVDCamDriver.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
@@ -176,6 +175,4 @@ protected:
 	HRESULT SetDeviceParamAcquisitionTriggerEdge();
 
 };
-
-#endif
 

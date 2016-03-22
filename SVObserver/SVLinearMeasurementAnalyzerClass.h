@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:04:12  $
 //******************************************************************************
 
-#ifndef SVLINEARMEASUREMENTANALYZER_H
-#define SVLINEARMEASUREMENTANALYZER_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVLinearAnalyzerClass.h"
 #include "SVValueObjectImpl.h"
@@ -47,8 +42,4 @@ private:
 	void init();
 };
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	// SVLINELINEARMEASUREMENTANALYZER_H
 

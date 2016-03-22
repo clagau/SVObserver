@@ -6,7 +6,7 @@
 
 #pragma once
 #pragma region Includes
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVTool.h"  // SVToolClass
 #include "ObjectInterfaces\IRingBufferTool.h"
 #include "LinkedValue.h"

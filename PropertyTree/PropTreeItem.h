@@ -27,13 +27,7 @@
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 
-#if !defined(AFX_PROPERTYITEM_H__22BD9C18_A68C_4BB8_B7FC_C4A7DA0E1EBF__INCLUDED_)
-#define AFX_PROPERTYITEM_H__22BD9C18_A68C_4BB8_B7FC_C4A7DA0E1EBF__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
 
 class SVRPropTree;
 
@@ -274,11 +268,4 @@ protected:
 	bool m_bBold;
 	long m_lHeight;
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PROPERTYITEM_H__22BD9C18_A68C_4BB8_B7FC_C4A7DA0E1EBF__INCLUDED_)
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:17:36  $
 //******************************************************************************
 
-#ifndef SVMATROXGRAPHICS_H
-#define SVMATROXGRAPHICS_H
+#pragma once
 
 #include "SVMatroxTypedefs.h"
 
@@ -43,6 +42,4 @@ protected:
 private:
 	void LocalClear();
 };
-
-#endif
 

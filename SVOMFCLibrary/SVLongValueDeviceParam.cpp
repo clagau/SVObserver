@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   03 Dec 2014 19:41:32  $
 //******************************************************************************
 #include "Stdafx.h"
-#include <cmath>
+//Moved to precompiled header: #include <cmath>
 #include "SVLongValueDeviceParam.h"
 
 SVLongValueDeviceParam::SVLongValueDeviceParam()

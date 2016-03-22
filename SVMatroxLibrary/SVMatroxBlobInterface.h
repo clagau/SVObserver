@@ -9,12 +9,11 @@
 // * .Check In Date   : $Date:   12 Nov 2014 08:24:36  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_BLOB_INTERFACE_H
-#define SV_MATROX_BLOB_INTERFACE_H
+#pragma once
 
-#include <deque>
-#include <vector>
-#include <comdef.h>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVMatroxEnums.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxBlobFeatureList.h"
@@ -152,6 +151,4 @@ private:
 	static bool IsValidCandidate(const SVBlob& rBlob, const SIZE& size, const POINT& offset);
 
 };
-
-#endif // SV_MATROX_BLOB_INTERFACE_H
 

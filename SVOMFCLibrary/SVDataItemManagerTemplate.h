@@ -9,12 +9,11 @@
 // * .Check In Date   : $Date:   02 Oct 2013 08:55:16  $
 // ******************************************************************************
 
-#ifndef SVDATAITEMMANAGERTEMPLATE_H
-#define SVDATAITEMMANAGERTEMPLATE_H
+#pragma once
 
-#include <map>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 template< typename SVItemData, typename SVIndexType = int >
 class SVDataItemManagerTemplate
@@ -61,6 +60,4 @@ protected:
 };
 
 #include "SVDataItemManagerTemplate.inl"
-
-#endif
 

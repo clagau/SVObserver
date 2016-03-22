@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <io.h>
-#include <share.h>
+//Moved to precompiled header: #include <io.h>
+//Moved to precompiled header: #include <share.h>
 #include "SVFile.h"
 #include "SVUtilityLibrary/SVString.h"
 

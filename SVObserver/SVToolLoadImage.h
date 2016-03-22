@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   07 May 2013 08:29:18  $
 //******************************************************************************
 
-#ifndef SVTOOLLOADIMAGE_H
-#define SVTOOLLOADIMAGE_H
+#pragma once
 
 #include "SVTool.h"
 #include "SVImageClass.h"
@@ -59,6 +58,4 @@ protected:
 	bool                            m_bResetFileImage;
 
 };
-
-#endif
 

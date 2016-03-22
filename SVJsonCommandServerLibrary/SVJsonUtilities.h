@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 13:15:10  $
 //******************************************************************************
 
-#ifndef SVJSONUTILITIES_H
-#define SVJSONUTILITIES_H
+#pragma once
 
 #include <comdef.h>
 #include <set>
@@ -38,6 +37,4 @@ namespace SVJsonUtilities
 }
 
 #include "SVJsonUtilities.inl"
-
-#endif
 

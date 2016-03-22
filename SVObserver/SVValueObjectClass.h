@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <set>
+//Moved to precompiled header: #include <set>
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"

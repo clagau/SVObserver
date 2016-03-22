@@ -8,12 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:57:06  $
 //******************************************************************************
-#ifndef SVGIGEPARAMETERACCESSOR_H
-#define SVGIGEPARAMETERACCESSOR_H
 
-#include <comdef.h>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+#pragma once
+
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVGigeFeature.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
 
@@ -40,6 +40,4 @@ struct SVGigeParameterAccessor
 	static HRESULT GetFeature(SVMatroxDigitizerRef digitizer, const SVGigeFeature& feature, _variant_t& value);
 	static HRESULT SetFeature(SVMatroxDigitizerRef digitizer, const SVGigeFeature& feature, const _variant_t& value);
 };
-
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:16:38  $
 //******************************************************************************
 
-#ifndef SVIOADJUSTDIALOG_H
-#define SVIOADJUSTDIALOG_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
@@ -73,12 +72,4 @@ private:
 	SVDataItemManager m_Items;
 
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio fügt zusätzliche Deklarationen unmittelbar vor der vorhergehenden Zeile ein.
-
-/**************************************************************************/
-/* INCLUDE CONTROL:                                                        */
-/**************************************************************************/
-#endif	// SVIOADJUSTDIALOG_H
 

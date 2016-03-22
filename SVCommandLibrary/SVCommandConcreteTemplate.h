@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:24:06  $
 //******************************************************************************
 
-#ifndef SVCOMMANDCONCRETETEMPLATE_H
-#define SVCOMMANDCONCRETETEMPLATE_H
+#pragma once
 
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVCommandAttributesTemplate.h"
 #include "SVCommandTemplate.h"
 #include "SVCommandDataHolder.h"
@@ -46,6 +45,4 @@ protected:
 };
 
 #include "SVCommandConcreteTemplate.inl"
-
-#endif
 

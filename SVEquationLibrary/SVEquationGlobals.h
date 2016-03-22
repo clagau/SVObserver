@@ -9,9 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:22:56  $
 //******************************************************************************
 
-#ifndef SVPARSERSCRIPTSGLOBALS_H
-#define SVPARSERSCRIPTSGLOBALS_H
-
 #pragma once
 
 #ifndef Y_TAB_H
@@ -51,6 +48,4 @@ struct SVLEX_STACK
 const double PI = 3.1415926535;
 const double svDegreesToRadians = PI / 180.0;
 const double svRadiansToDegrees = 180.0 / PI;
-
-#endif // #ifndef SVPARSERSCRIPTSGLOBALS_H
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:31:02  $
 //******************************************************************************
 
-#ifndef SVSOFTWARETRIGGEREXPORTS_H
-#define SVSOFTWARETRIGGEREXPORTS_H
+#pragma once
 
 #include "SVTriggerLibrary/SVTriggerCallbackPtr.h"
 
@@ -29,6 +28,4 @@ HRESULT WINAPI SVTriggerGetParameterCount( unsigned long p_ulHandle, unsigned lo
 HRESULT WINAPI SVTriggerGetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName );
 HRESULT WINAPI SVTriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 HRESULT WINAPI SVTriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-
-#endif
 

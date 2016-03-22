@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:59:32  $
 //******************************************************************************
 
-#ifndef SVCONDITIONALCLASS_H
-#define SVCONDITIONALCLASS_H
+#pragma once
 
 #include "SVEquation.h"
 
@@ -37,5 +36,4 @@ protected:
 	SVBoolValueObjectClass result;			// resultant value
 };
 
-#endif
 

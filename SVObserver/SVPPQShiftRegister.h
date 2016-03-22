@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   08 May 2013 16:31:16  $
 //******************************************************************************
 
-#ifndef SVPPQSHIFTREGISTER_H
-#define SVPPQSHIFTREGISTER_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
 
@@ -53,6 +52,4 @@ private:
 	long m_TailTriggerCount;
 
 };
-
-#endif
 

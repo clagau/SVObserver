@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:11:12  $
 //******************************************************************************
 
-#ifndef SVDIGITALINPUTOBJECT_H
-#define SVDIGITALINPUTOBJECT_H
+#pragma once
 
 #include "SVInputObject.h"
 
@@ -51,5 +50,4 @@ private:
 	bool m_bForcedValue;
 };
 
-#endif /* _INC_SVDIGITALINPUTOBJECT_INCLUDED */
 

@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:21:26  $
 //******************************************************************************
 
-#ifndef SVGUID_H
-#define SVGUID_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 
 #include "SVString.h"
 #include "SVUtilityGlobals.h"
@@ -87,6 +86,4 @@ inline bool operator>( const GUID& p_rLeft, const SVGUID& p_rRight )
 {
 	return ( p_rRight < p_rLeft );
 }
-
-#endif // #ifndef SVGUID_H
 

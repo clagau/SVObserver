@@ -27,22 +27,19 @@
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 
-#if !defined(AFX_PROPT_H__386AA426_6FB7_4B4B_9563_C4CC045BB0C9__INCLUDED_)
-#define AFX_PROPT_H__386AA426_6FB7_4B4B_9563_C4CC045BB0C9__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "PropTreeCtrl.h"
 #include "PropTreeInfo.h"
-
 #include "PropTreeItem.h"
 #include "PropTreeItemStatic.h"
 #include "PropTreeItemEdit.h"
 #include "PropTreeItemCombo.h"
 #include "PropTreeItemFile.h"
 #include "SVRPropTreeState.h"
+#pragma endregion Includes
+
 class SVRPropTree;
 
 typedef bool (CALLBACK* ENUMPROPITEMPROC)(SVRPropTree*, SVRPropertyItem*, LPARAM);
@@ -290,10 +287,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-/////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PROPT_H__386AA426_6FB7_4B4B_9563_C4CC045BB0C9__INCLUDED_)
 

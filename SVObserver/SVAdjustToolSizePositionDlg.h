@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   26 May 2014 10:49:56  $
 //******************************************************************************
 
-#ifndef SVADJUSTTOOLSIZEPOSITIONDLG_H
-#define SVADJUSTTOOLSIZEPOSITIONDLG_H
+#pragma once
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVWinHandle.h"
@@ -162,5 +161,4 @@ private:
 	CString m_sTitle;
 #pragma endregion Member variables
 };	// end class SVAdjustToolSizePositionDlg
-#endif
 

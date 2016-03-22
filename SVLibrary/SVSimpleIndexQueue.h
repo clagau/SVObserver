@@ -8,12 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 13:51:30  $
 //******************************************************************************
-#ifndef SVSIMPLEINDEXQUEUE_H_
-#define SVSIMPLEINDEXQUEUE_H_
 #pragma once
 
-#include <deque>
-#include <vector>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <vector>
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 
 class SVSimpleIndexQueue
@@ -40,6 +38,4 @@ private:
 	std::deque<long> m_Available;
 	std::deque<long> m_Used;
 };
-
-#endif
 

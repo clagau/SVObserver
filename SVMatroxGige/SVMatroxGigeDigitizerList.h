@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:06  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGEDIGITIZERLIST_H
-#define SVMATROXGIGEDIGITIZERLIST_H
+#pragma once
 
 #include "SVMatroxGigeDigitizer.h"
 #include "SVMatroxGigeHandleList.h"
@@ -25,6 +24,4 @@ namespace
 
 // allow up to 32 Matrox Gige Digitizer per System 
 typedef SVMatroxGigeHandleList<32, unsigned char, INVALID_SVMATROXGIGEDIGITIZER_HANDLE, SVMatroxGigeDigitizer> SVMatroxGigeDigitizerList;
-
-#endif
 

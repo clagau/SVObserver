@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   08 May 2013 16:43:36  $
 //******************************************************************************
 
-#ifndef SVREMOTEOUTPUTEDITDIALOG_H
-#define SVREMOTEOUTPUTEDITDIALOG_H
+#pragma once
 
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
@@ -57,6 +56,4 @@ private:
 	SVDataItemManager m_Items;
 
 };
-
-#endif // SVRemoteOutputEditDialog_H
 

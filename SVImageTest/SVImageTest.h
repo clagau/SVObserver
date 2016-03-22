@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:07:48  $
 // ******************************************************************************
 
-#ifndef SVIMAGETEST_H
-#define SVIMAGETEST_H
+#pragma once
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
@@ -58,11 +57,4 @@ private:
 
 	bool ReadSVIMModelNo();
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:58:58  $
 //******************************************************************************
 
-#ifndef SVIMTYPEINFOSTRUCT_H
-#define SVIMTYPEINFOSTRUCT_H
+#pragma once
 
 struct SVIMTypeInfoStruct
 {
@@ -25,6 +24,4 @@ struct SVIMTypeInfoStruct
 	{
 	}
 };
-
-#endif
 

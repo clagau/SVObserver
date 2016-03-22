@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Jun 2013 15:19:56  $
 //******************************************************************************
 
-#ifndef SVGIGECAMERASTRUCT_H
-#define SVGIGECAMERASTRUCT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "ObjectInterfaces/SVGigeCameraStructInterface.h"
@@ -58,5 +57,4 @@ struct SVGigeCameraStruct : public SvOi::SVGigeCameraStructInterface
 
 typedef SVVector< SVGigeCameraStruct > SVGigeCameraStructSet;
 
-#endif
 

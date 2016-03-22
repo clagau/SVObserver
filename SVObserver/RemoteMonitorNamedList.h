@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include <deque>
+//Moved to precompiled header: #include <deque>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"

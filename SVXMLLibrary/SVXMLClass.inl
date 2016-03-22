@@ -9,16 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:50:20  $
 //******************************************************************************
 
-#include <assert.h>
-
-#include "SVLibrary/SVBStr.h"		// SVBStr
-
-#include "SVXMLLibraryGlobals.h"	// SVXMLLibraryGlobals
-#include "SVXMLEncryptionClass.h"	// SVXMLEncryptionClass
-#include "SVXMLSVRSchemaClass.h"	// SVXMLSVRSchemaClass
-#include "SVVariantCustomTypes.h"
-#include "SVXMLSafeArrayConverter.h"
-#include "SVUtilityLibrary\SVUtilityGlobals.h"
+#include "SVXMLSafeArrayConverter.h"	//Can not be placed in SVXMLClass.h because it uses the class as well
 
 template<typename SVT_TREE>
 HRESULT SVXMLClass::CopyTreeToXMLFile (SVT_TREE& rTree, long alSVOCurrentVersion, BSTR abstrFormat, BSTR abstrRevisionHistory, BSTR abstrFileName)

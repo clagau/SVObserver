@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include <map>
-#include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 
 // SVRemoteOutputsView view
 class SVIODoc;

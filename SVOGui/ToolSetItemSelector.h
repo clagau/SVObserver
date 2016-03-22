@@ -9,7 +9,7 @@
 #pragma once
 
 #pragma region Includes
-#include <boost\bind.hpp>
+//Moved to precompiled header: #include <boost\bind.hpp>
 #include "ObjectInterfaces\ISelectorItemVector.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #include "SVUtilityLibrary\SVString.h"

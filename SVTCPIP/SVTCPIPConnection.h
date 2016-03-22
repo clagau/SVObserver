@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 18:12:08  $
 // ******************************************************************************
 
-#ifndef SVTCPIPCONNECTION_H
-#define SVTCPIPCONNECTION_H
+#pragma once
 
 #ifdef BUILD_SVTCPIPCONNECTION_DLL
 	#define SV_CONNECTION_EXTERN __declspec (dllexport)
@@ -80,5 +79,4 @@ private:
 
 #undef SV_CONNECTION_EXTERN
 #pragma warning ( pop )
-#endif
 

@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <intrin.h>
+//Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
 #include "SVVisionProcessorHelper.h"
 #include "RootObject.h"

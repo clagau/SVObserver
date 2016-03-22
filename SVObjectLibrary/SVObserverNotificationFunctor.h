@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:20:22  $
 //******************************************************************************
 
-#ifndef SVOBSERVERNOTIFICATIONFUNCTOR_H
-#define SVOBSERVERNOTIFICATIONFUNCTOR_H
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
@@ -25,6 +24,4 @@ protected:
 };
 
 typedef SVSharedPtr< SVObserverNotificationFunctor > SVObserverNotificationFunctorPtr;
-
-#endif
 

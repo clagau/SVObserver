@@ -9,7 +9,8 @@
 //* .Check In Date   : $Date:   14 Aug 2014 17:08:32  $
 //******************************************************************************
 #pragma once
-#include <memory>
+
+//Moved to precompiled header: #include <memory>
 #include "SVSharedImage.h"
 #include "SVSharedValue.h"
 

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Dec 2014 13:10:18  $
 //******************************************************************************
 
-#ifndef SVIOCONTROLLER_H
-#define SVIOCONTROLLER_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
@@ -109,5 +108,4 @@ private:
 	void LocalDestroy();
 };
 
-#endif
 

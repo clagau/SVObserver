@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:59:52  $
 //******************************************************************************
 
-#ifndef SV_MATROX_BUFFER_H
-#define SV_MATROX_BUFFER_H
+#pragma once
 
 #include "SVMatroxBufferFacade.h"
 
@@ -62,6 +61,3 @@ protected:
 	SVMatroxBufferPtr m_BufferPtr;
 
 };
-
-#endif
-

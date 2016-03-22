@@ -8,9 +8,8 @@
 #pragma once
 
 #pragma region Includes
-#include <afxwin.h>
-#include <map>
-#include <Guiddef.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <Guiddef.h>
 #include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes

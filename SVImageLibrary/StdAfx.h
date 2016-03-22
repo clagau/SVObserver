@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:37:08  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
@@ -19,11 +18,11 @@
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINNT WINVER	// Change this to the appropriate value to target other versions of Windows.
 #endif						
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows XP or later.
-#define _WIN32_WINDOWS 0x0501 // Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINDOWS WINVER // Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
@@ -44,14 +43,31 @@
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 #pragma warning( 4: 4786 )
 
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>
 #include <afxtempl.h>
 
-// TODO: reference additional headers your program requires here
+#include <concrt.h>			//Used by static library
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
+#include <deque>			//Used by static library
+#include <fstream>
+#include <math.h>
+#include <map>
+#include <set>				//Used by static library
+#include <stdint.h>
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <typeinfo.h>
+#include <vector>
+#include <utility>			//Used by static library
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_STDAFX_H__33E89338_6C37_4E37_A6D2_CC08786C8B5B__INCLUDED_)
-
+#include <boost/function.hpp>							//Used by static library
+#include <boost/multi_index_container.hpp>				//Used by static library
+#include <boost/multi_index/member.hpp>					//Used by static library
+#include <boost/multi_index/ordered_index.hpp>			//Used by static library
+#pragma endregion Precompiled Headers

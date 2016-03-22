@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:37:42  $
 //******************************************************************************
-#ifndef SVFILEINFO_H
-#define SVFILEINFO_H
+
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 
@@ -20,6 +20,4 @@ struct SVFileInfo
 	FILETIME creationDate;
 	FILETIME modifiedDate;
 };
-
-#endif
 

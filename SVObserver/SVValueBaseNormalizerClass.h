@@ -9,20 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:55:34  $
 //******************************************************************************
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1000)
 #pragma once
-#endif
 
 #ifdef SV_SHOW_INCLUDES
 	#pragma message( "Including " __FILE__ )
 #endif
 
-#ifndef _SVVALUEBASENORMALIZERCLASS_H
-#define _SVVALUEBASENORMALIZERCLASS_H
-
-//******************************************************************************
-//* OBJECT DEFINITION
-//******************************************************************************
 class SVValueBaseNormalizerClass
 {
 public:
@@ -64,6 +56,3 @@ protected:
 	double rangeStep;
 	double rangeBaseSize;
 };
-
-#endif   // _SVVALUEBASENORMALIZERCLASS_H
-

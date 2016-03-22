@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:02:26  $
 //******************************************************************************
 
-#ifndef INC_SVDISPLAYOBJECT_INCLUDED
-#define INC_SVDISPLAYOBJECT_INCLUDED
+#pragma once
 
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -84,6 +83,4 @@ protected:
 	SVClock::SVTimeStamp m_LastUpdateTime;
 
 };
-
-#endif
 

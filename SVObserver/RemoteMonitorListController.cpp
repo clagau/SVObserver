@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <algorithm>
-#include <comdef.h>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <comdef.h>
 #include "RemoteMonitorListController.h"
 #include "RemoteMonitorList.h"
 #include "MonitorListAddRemoveDlg.h"

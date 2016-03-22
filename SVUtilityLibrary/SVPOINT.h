@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:23:42  $
 //******************************************************************************
 
-#ifndef SVPOINT_H
-#define SVPOINT_H
+#pragma once
 
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 
 #include "SVString.h"
 
@@ -55,6 +54,4 @@ protected:
 	POINT m_Point;
 
 };
-
-#endif // #ifndef SVPOINT_H
 

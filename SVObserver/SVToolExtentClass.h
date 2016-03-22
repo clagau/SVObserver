@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   07 May 2013 08:21:22  $
 //******************************************************************************
 
-#ifndef _SVTOOLEXTENTCLASS_H
-#define _SVTOOLEXTENTCLASS_H
+#pragma once
 
-#include <set>
+//Moved to precompiled header: #include <set>
 #include "ObjectInterfaces/SVImageEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVToolExtentPropertiesClass.h"
@@ -142,6 +141,4 @@ private:
 };
 
 #include "SVToolExtentClass.inl"
-
-#endif
 

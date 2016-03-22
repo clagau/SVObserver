@@ -9,11 +9,10 @@
 // * .Check In Date   : $Date:   08 May 2013 15:28:20  $
 // ******************************************************************************
 
-#ifndef SVORESPONSECLASS_H
-#define SVORESPONSECLASS_H
+#pragma once
 
-#include <comdef.h>
-#include <boost/any.hpp>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <boost/any.hpp>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
 
@@ -70,6 +69,4 @@ private:
 	boost::any mExtraData;
 
 };
-
-#endif
 

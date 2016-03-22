@@ -15,10 +15,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef SVTEMPLATE_H
-#define SVTEMPLATE_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <sstream>
 
 #ifndef SV_INLINE
 #define SV_INLINE __forceinline
@@ -353,12 +354,6 @@ SINGLETON& TBasicSingletonHolder<SINGLETON>::Instance(...)	// the vararg is to p
 	return obj;
 }
 
-//#pragma inline_depth()
-//#pragma auto_inline (on) // restore default inlining
-
-
-#include <map>
-#include <sstream>
 
 template <typename TYPEID, class FACTORYBASE> class TFactory
 {
@@ -594,11 +589,3 @@ public:
 	typedef TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE> factoryclass;
 	typedef TBasicSingletonHolder<factoryclass> factory;
 };
-// example of usage:
-// typedef TFactorySingleton<SVDeviceParamEnum, CString, SVDeviceParam>::factory TheDeviceParamFactory;
-
-
-
-
-#endif // SVTEMPLATE_H
-

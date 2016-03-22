@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:37:18  $
 //******************************************************************************
 
-#ifndef AFX_SVMULTIDOCTEMPLATE_H__E9410A61_1E4B_11D2_AEC4_444553540000__INCLUDED_
-#define AFX_SVMULTIDOCTEMPLATE_H__E9410A61_1E4B_11D2_AEC4_444553540000__INCLUDED_
+#pragma once
 
 /////////////////////////////////////////////////////////////////////////////
 // SVMultiDocTemplateClass 
@@ -36,8 +35,4 @@ public:
 #endif //_DEBUG
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio fügt zusätzliche Deklarationen unmittelbar vor der vorhergehenden Zeile ein.
-
-#endif // AFX_SVMULTIDOCTEMPLATE_H__E9410A61_1E4B_11D2_AEC4_444553540000__INCLUDED_
 

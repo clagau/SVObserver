@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:37:48  $
 //******************************************************************************
 
-#ifndef SVINSPECTIONLEVELCREATESTRUCT_H
-#define SVINSPECTIONLEVELCREATESTRUCT_H
+#pragma once
 
 #include "SVObjectLevelCreateStruct.h"
 
@@ -23,11 +22,4 @@ struct SVInspectionLevelCreateStruct : public SVObjectLevelCreateStruct
 
 	SVObjectInfoStruct InspectionObjectInfo;
 };
-
-////////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
-
-#endif
 

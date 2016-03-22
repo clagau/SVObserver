@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:01:06  $
 //******************************************************************************
 
-#ifndef SVPASSWORDDLG_H
-#define SVPASSWORDDLG_H
+#pragma once
 
 class SVPasswordDlg : public CDialog
 {
@@ -41,9 +40,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVPASSWORDDLG_H__30EC8AFC_7AC6_4E01_8491_2F1AB88C7072__INCLUDED_)
 

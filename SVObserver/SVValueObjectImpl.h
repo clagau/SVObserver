@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   11 Nov 2013 07:42:24  $
 //******************************************************************************
 
-#ifndef SVVALUEOBJECTIMPL_H
-#define SVVALUEOBJECTIMPL_H
+#pragma once
 
 #include "SVBoolValueObjectClass.h"
 #include "SVByteValueObjectClass.h"
@@ -27,6 +26,4 @@
 #include "SVStaticStringValueObjectClass.h"
 #include "SVTimerValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
-
-#endif // _SVVALUEOBJECTIMPL_H
 

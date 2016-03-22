@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 13:09:26  $
 // ******************************************************************************
 
-#ifndef SVOMFCLIBRARY_H
-#define SVOMFCLIBRARY_H
+#pragma once
 
 #include "SVOMFCLibraryGlobals.h"
 
@@ -29,5 +28,4 @@ const CString SVO_PRODUCT_KONTRON_X2_GD4A   ( _T("SVIM X2-GD4A") );
 const CString SVO_PRODUCT_KONTRON_X2_GD8A   ( _T("SVIM X2-GD8A") );
 const CString SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ( _T("SVIM Non I/O") );
 
-#endif
 

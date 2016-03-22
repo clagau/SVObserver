@@ -11,11 +11,10 @@
 
 #pragma once
 
-#include <vector>
-#include <numeric>
-#include <atltypes.h>  // needed for CRect
-
-#include <boost/function.hpp>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <numeric>
+//Moved to precompiled header: #include <atltypes.h>
+//Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVHistogramStats.h"
 

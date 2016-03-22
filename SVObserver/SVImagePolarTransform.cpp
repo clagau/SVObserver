@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <float.h>
+//Moved to precompiled header: #include <float.h>
 #include "SVImagePolarTransform.h"
 
 #include "SVImageLibrary/SVDrawContext.h"

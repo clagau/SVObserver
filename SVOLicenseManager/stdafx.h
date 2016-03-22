@@ -9,13 +9,7 @@
 //* .Check In Date   : $Date:   06 May 2013 14:15:44  $
 //******************************************************************************
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 #pragma warning( disable: 4995 )	// deprecated warnings
@@ -27,11 +21,11 @@
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINNT WINVER	// Change this to the appropriate value to target other versions of Windows.
 #endif						
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows XP or later.
-#define _WIN32_WINDOWS 0x0501 // Change this to the appropriate value to target other versions of Windows.
+#define _WIN32_WINDOWS WINVER // Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
@@ -39,9 +33,6 @@
 #endif
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
-
-#include <afx.h>
-#include <afxwin.h>
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
 
@@ -60,8 +51,21 @@
 #define _SECURE_SCL 0
 #endif
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
+#include <afx.h>
+#include <afxwin.h>
 
-#endif
-
+#include <concrt.h>			//Used by static library
+#include <comutil.h>		//Used by static library
+#include <ctime>			//Used by static library
+#include <deque>			//Used by static library
+#include <list>				//Used by static library
+#include <map>				//Used by static library
+#include <set>
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <vector>			//Used by static library
+#pragma endregion Precompiled Headers

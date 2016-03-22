@@ -1,8 +1,8 @@
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <tchar.h>
+#include "stdafx.h"
+//Moved to precompiled header: #include <stdio.h>
+//Moved to precompiled header: #include <stdlib.h>
+//Moved to precompiled header: #include <string.h>
+//Moved to precompiled header: #include <tchar.h>
 #include "unzip.h"
 
 // THIS FILE is almost entirely based upon code by Jean-loup Gailly

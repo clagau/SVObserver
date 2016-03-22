@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   10 Jun 2013 16:43:58  $
 //******************************************************************************
 
-#ifndef SVOBSERVERENUMS_H
-#define SVOBSERVERENUMS_H
+#pragma once
 
-#include <deque>
+//Moved to precompiled header: #include <deque>
 
 enum
 {
@@ -69,6 +68,4 @@ enum SVIMProductEnum
 };
 
 typedef std::deque<SVIMProductEnum> SVIMProductEnumList;
-
-#endif
 

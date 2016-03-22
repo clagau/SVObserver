@@ -8,14 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:30:48  $
 //******************************************************************************
-#ifndef SVEXTERNALTOOLDETAILS_H
-#define SVEXTERNALTOOLDETAILS_H
 
-/////////////////////////////////////////////////////////////////////////////
-// SVExternalToolDetailsSheet
+#pragma once
+
+//Moved to precompiled header: #include <map>
 #include "SVPropertySheetCancelImpl.h"
 #include "SVExternalTool.h"
-#include <map>
 
 class SVExternalToolTask;
 
@@ -67,11 +65,3 @@ protected:
 	SVGUID m_TaskObjectID;
 	long m_numImages;
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-

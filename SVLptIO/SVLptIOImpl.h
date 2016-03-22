@@ -13,13 +13,11 @@
 
 #pragma warning (disable : 4786)
 
-#include <comdef.h>
-#include <map>
-#include <vector>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 #include "SVLptIO.h"
 #include "SVLptIOCallback.h"
-//#include "SVOLibrary/SVQueueObject.h"
-//#include "SVUtilityLibrary/SVString.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

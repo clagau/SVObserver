@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:07:24  $
 // ******************************************************************************
 
-#ifndef INC_SVIMCOMMANDSERVER_38B56AEB0243_INCLUDED
-#define INC_SVIMCOMMANDSERVER_38B56AEB0243_INCLUDED
+#pragma once
 
 #include "SVPipes/SVPipeConnection.h"
 #include "SVIMCommand/SVIMCommand.h"
@@ -131,6 +130,3 @@ private:
 	SvStl::MessageContainer mSVIMLastException;
 
 };
-
-#endif
-

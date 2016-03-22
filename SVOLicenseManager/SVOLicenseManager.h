@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   06 May 2013 14:15:48  $
 //******************************************************************************
 
-#ifndef SVO_LICENSE_MANAGER
-#define SVO_LICENSE_MANAGER
+#pragma once
 
+//Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVGUID.h"
-#include <set>
 
 typedef std::set< SVGUID > SVLicenseErrorListSet;
 
@@ -55,6 +54,4 @@ protected:
 };
 
 inline SVOLicenseManager& TheSVOLicenseManager() {return SVOLicenseManager::Instance();}
-
-#endif
 

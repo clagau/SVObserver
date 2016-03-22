@@ -7,8 +7,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <comutil.h>
-#include <regex>
+//Moved to precompiled header: #include <comutil.h>
+//Moved to precompiled header: #include <regex>
 #include "GlobalConstantDlg.h"
 #include "TextDefinesSvOg.h"
 #include "SVTextEditDialog.h"

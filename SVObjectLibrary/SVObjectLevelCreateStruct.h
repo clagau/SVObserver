@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:51:02  $
 //******************************************************************************
 
-#ifndef SVOBJECTLEVELCREATESTRUCT_H
-#define SVOBJECTLEVELCREATESTRUCT_H
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include "SVObjectInfoStruct.h"
 
@@ -63,11 +58,4 @@ protected:
 
 	const char* strCreateStructName;
 };
-
-////////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
-
-#endif	//	SVOBJECTLEVELCREATESTRUCT_H
 

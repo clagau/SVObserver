@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   27 Jan 2014 15:50:42  $
 //******************************************************************************
 
-#ifndef SVTADLGLUTPAGE_H
-#define SVTADLGLUTPAGE_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #pragma region Includes
 #include "SVEnumerateCombo.h"
@@ -166,5 +161,3 @@ private:
 	GUID m_TaskObjectID;
 #pragma endregion Member variables
 };
-
-#endif	// SVTADLGLUTPAGE_H

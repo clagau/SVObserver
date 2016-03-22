@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <algorithm> //for min
+//Moved to precompiled header: #include <algorithm>
 #include "SVDlgImage.h"
 #include "GuiCommands/GetImage.h"
 #include "GuiCommands/GetOutputRectangle.h"

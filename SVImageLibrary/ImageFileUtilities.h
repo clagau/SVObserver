@@ -5,6 +5,9 @@
 /// Contains declarations of utility functions for image file operations
 //******************************************************************************
 
+#pragma once
+
+//Moved to precompiled header: #include <stdint.h>
 
 /// \param FilePath full file path of the bitmap file 
 /// \param Context device context from which the bitmap file is to be created

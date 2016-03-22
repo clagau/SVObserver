@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:00:34  $
 //******************************************************************************
 
-#ifndef _SVOBJECTSCRIPTENUMS_H
-#define _SVOBJECTSCRIPTENUMS_H
+#pragma once
 
 #ifdef SV_SHOW_INCLUDES
 	#pragma message( "Including " __FILE__ )
@@ -47,6 +46,4 @@ enum SVObjectScriptDataObjectTypeEnum
 	SV_VARIANT_Type,
 	SV_INT64_Type,
 };
-
-#endif   /* _SVOBJECTSCRIPTENUMS_H */
 

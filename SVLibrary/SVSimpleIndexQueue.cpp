@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <iterator> // for std::inserter (VS2010)
+//Moved to precompiled header: #include <iterator>
 #include "SVSimpleIndexQueue.h"
 
 SVSimpleIndexQueue::SVSimpleIndexQueue()

@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:23:08  $
 //******************************************************************************
 
-#ifndef SVEQUATIONYACC_H
-#define SVEQUATIONYACC_H
+#pragma once
 
 #include "SVEquationGlobals.h"
 
@@ -87,6 +86,4 @@ protected:
 	void InitCurrentList();
 
 }; // end class SVEquationYaccClass
-
-#endif
 

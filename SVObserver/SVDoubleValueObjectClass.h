@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:20:40  $
 //******************************************************************************
 
-#ifndef SVDOUBLEVALUEOBJECTCLASS_H
-#define SVDOUBLEVALUEOBJECTCLASS_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
@@ -52,6 +51,4 @@ private:
 	void LocalInitialize();
 
 };
-
-#endif
 

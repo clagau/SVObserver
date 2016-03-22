@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:22:46  $
 //******************************************************************************
 
-#ifndef SVPIXELANALYZER_H
-#define SVPIXELANALYZER_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"     // Required by PixelAnalyzer.h
@@ -84,11 +83,4 @@ protected:
 
 };
 
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	// SVPIXELANALYZER_H
-
-//** EOF **
 

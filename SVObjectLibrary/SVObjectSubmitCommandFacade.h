@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:00:48  $
 //******************************************************************************
 
-#ifndef SVOBJECTSUBMITCOMMANDFACADE_H
-#define SVOBJECTSUBMITCOMMANDFACADE_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandTemplate.h"
 
@@ -22,6 +21,4 @@ protected:
 	virtual HRESULT SubmitCommand( const SVCommandTemplatePtr& p_rCommandPtr ) = 0;
 
 };
-
-#endif
 

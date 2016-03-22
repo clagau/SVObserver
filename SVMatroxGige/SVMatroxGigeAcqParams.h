@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:38:50  $
 //******************************************************************************
-#ifndef SVMATROXGIGEACQPARAMS_H
-#define SVMATROXGIGEACQPARAMS_H
+
+#pragma once
 
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerGrabEnums.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
@@ -50,6 +50,4 @@ struct SVMatroxGigeAcqParams
 	, bAcquisitionTriggered(false)
 	{}
 };
-
-#endif
 

@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:14:36  $
 //******************************************************************************
 
-#ifndef SVSTORAGERESULT_H
-#define SVSTORAGERESULT_H
+#pragma once
 
-#include <set>
+//Moved to precompiled header: #include <set>
 #include "SVStorage.h"
 
 struct SVStorageResult
@@ -27,6 +26,3 @@ struct SVStorageResult
 
 typedef std::set< SVString > SVNameSet;
 typedef std::map< SVString, SVStorageResult > SVNameStorageResultMap;
-
-#endif
-

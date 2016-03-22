@@ -9,13 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:19:56  $
 //******************************************************************************
 
-#ifndef SVTADLGCOLORTHRESHOLDBASEPAGE_H_
-#define SVTADLGCOLORTHRESHOLDBASEPAGE_H_
 #pragma once
-
-
-/////////////////////////////////////////////////////////////////////////////
-// SVTADlgColorThresholdBasePage dialog
 
 #include "SVDlgImageEditor.h"
 #include "SVROIFigureEditor.h"
@@ -72,6 +66,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-#endif //SVTADLGCOLORTHRESHOLDBASEPAGE_H_
 

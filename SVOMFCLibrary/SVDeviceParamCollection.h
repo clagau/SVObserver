@@ -9,13 +9,12 @@
 // * .Check In Date   : $Date:   15 May 2013 19:42:26  $
 // ******************************************************************************
 
-#ifndef SVDEVICEPARAMCOLLECTION_H
-#define SVDEVICEPARAMCOLLECTION_H
+#pragma once
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
-#include <map>
-#include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 
 #include "SVLibrary/SVVisitor.h"
 #include "SVTemplate.h"
@@ -170,6 +169,3 @@ private:
 	};
 	const SVDeviceParamMap& m_mapIndexed;
 };
-
-#endif
-

@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   08 May 2013 16:44:06  $
 //******************************************************************************
 
-#ifndef SVTOOLEXTENTPROPERTIESCLASS_H
-#define SVTOOLEXTENTPROPERTIESCLASS_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVImageLibrary/SVExtentEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -48,6 +47,4 @@ private:
 	SVToolExtentPropertiesMap m_svProperties;
 
 };
-
-#endif
 

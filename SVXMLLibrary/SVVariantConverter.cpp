@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:48:02  $
 //******************************************************************************
 #include "stdafx.h"
-#include <atlbase.h>
-#include <comdef.h>
+//Moved to precompiled header: #include <atlbase.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "SVVariantConverter.h"
 #include "SVVariantCustomTypes.h"
 #include "SVLibrary/SVBStr.h"

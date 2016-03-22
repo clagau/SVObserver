@@ -9,17 +9,6 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:03:16  $
 //******************************************************************************
 
-#ifndef INCL_SVCONFIGURATIONTREEWRITER_INL
-#define INCL_SVCONFIGURATIONTREEWRITER_INL
-
-#include <map>
-#include <boost/foreach.hpp>
-#include <boost/assign/list_of.hpp>
-#include "SVUtilityLibrary/SVStringConversions.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVConfigurationTreeWriter.h"
-
 template< typename SVTreeType >
 SVConfigurationTreeWriter< SVTreeType >::SVConfigurationTreeWriter(SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent)
 : m_rTree(rTree), m_htiParent(htiParent)
@@ -77,6 +66,4 @@ void SVConfigurationTreeWriter< SVTreeType >::ElementAttribute(LPCTSTR pAttrName
 	WriteAttribute(pAttrName, value);
 	//m_elements[0]->attr(pAttrName.c_str(), VariantToString(value));
 }
-
-#endif
 

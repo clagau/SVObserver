@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "StdAfx.h"
-#include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVOutputStreamManager.h"
 #include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"

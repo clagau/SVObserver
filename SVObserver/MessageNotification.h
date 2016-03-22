@@ -8,18 +8,15 @@
 //******************************************************************************
 #pragma once
 
-
 #pragma region Includes
-#include <string>
-#include "concrt.h" 
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <concrt.h>
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVOMFCLibrary\DisplayMessageBox.h"
-
 #pragma endregion Includes
 
 
 #pragma region Declarations
-
 
 #pragma endregion Declarations
 

@@ -11,13 +11,12 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <boost/math/special_functions/round.hpp>
 #include "SVShiftTool.h"
-
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ToolSizeAdjustTask.h"
-#include <boost/math/special_functions/round.hpp>
 #pragma endregion Includes
 
 #pragma region Declarations

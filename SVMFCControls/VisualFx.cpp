@@ -32,8 +32,6 @@
 #############################################################################*/
 
 #include "stdafx.h"
-#include <afxpriv.h>        // Needed for WM_SIZEPARENT
-
 #include "VisualFx.h"
 
 #ifdef _DEBUG

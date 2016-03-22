@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:15:50  $
 //******************************************************************************
 
-#ifndef INC_SVOUTPUTOBJECT_INCLUDED
-#define INC_SVOUTPUTOBJECT_INCLUDED
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVObjectLibrary/SVObjectClass.h"
 
 class SVOutputObject : public SVObjectClass
@@ -37,6 +36,4 @@ public:
 
 typedef SVVector< SVOutputObject* > SVOutputObjectArray;
 typedef std::map< SVGUID, SVOutputObject* > SVGuidSVOutputObjectPtrMap;
-
-#endif
 

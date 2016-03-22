@@ -26,8 +26,7 @@
 
 // Last update: June 20, 2001
 
-#ifndef STATIC_CHECK_INC_
-#define STATIC_CHECK_INC_
+#pragma once
 
 namespace Loki
 {
@@ -66,13 +65,4 @@ typedef ::Loki::Private::static_assert_test<sizeof(::Loki::Private::SizeError	\
 #define FILE_SCOPE_STATIC_CHECK(expr, msg) \
 struct check_##msg{ check_##msg() {Loki::CompileTimeError<((expr) != 0)> ERROR_##msg; (void)ERROR_##msg;} }; 
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// March 20, 2001: add extra parens to STATIC_CHECK - it looked like a fun 
-//     definition
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // STATIC_CHECK_INC_
 

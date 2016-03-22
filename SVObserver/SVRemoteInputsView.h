@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:31:24  $
 //******************************************************************************
 
-#ifndef SVREMOTEINPUTSVIEW_H
-#define SVREMOTEINPUTSVIEW_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
@@ -56,6 +55,3 @@ private:
 inline SVIODoc* SVRemoteInputsView::GetDocument()
    { return (SVIODoc*)m_pDocument; }
 #endif
-
-#endif
-

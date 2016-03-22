@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   01 Oct 2013 08:25:58  $
 // ******************************************************************************
 
-#ifndef SVCAMERAPAGE_H
-#define SVCAMERAPAGE_H
+#pragma once
 
 #include "DisplayPicture.h"
 
@@ -111,9 +110,3 @@ private:
 
 	UINT_PTR m_timerID;
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVCAMERAPAGE_H__0F2C8D2E_CE74_4048_A054_C2B833166EC5__INCLUDED_)
-

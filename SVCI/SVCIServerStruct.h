@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   18 Apr 2013 17:59:08  $
 // ******************************************************************************
 
-#ifndef SVCISERVERSTRUCT_H
-#define SVCISERVERSTRUCT_H
+#pragma once
 
-#include <corapi.h>
+//Moved to precompiled header: #include <corapi.h>
 #include "SVContainerLibrary/SVVector.h"
 
 /*
@@ -39,5 +38,4 @@ This specialization of the CArray template creates a container object to hold th
 */
 typedef SVVector< SVCIServerStruct > SVCIServerStructCArray;
 
-#endif
 

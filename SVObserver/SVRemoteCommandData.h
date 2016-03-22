@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:43:32  $
 //******************************************************************************
 
-#ifndef SVREMOTECOMMANDDATA_H
-#define SVREMOTECOMMANDDATA_H
+#pragma once
 
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 
@@ -63,6 +62,4 @@ protected:
 };
 
 OBJECT_ENTRY_AUTO( __uuidof( SVRemoteCommandData ), SVRemoteCommandData ) 
-
-#endif
 

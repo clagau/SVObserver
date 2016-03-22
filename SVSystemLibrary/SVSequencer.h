@@ -8,10 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:01:48  $
 //******************************************************************************
-#ifndef SVSEQUENCER_H
-#define SVSEQUENCER_H
 
-#include <iterator>
+#pragma once
+
+//Moved to precompiled header: #include <iterator>
 
 template<typename IteratorType>
 struct SVSequencer
@@ -31,6 +31,4 @@ struct SVSequencer
 };
 
 #include "SVSequencer.inl"
-
-#endif
 

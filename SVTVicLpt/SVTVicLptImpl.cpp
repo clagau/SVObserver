@@ -10,11 +10,11 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <fstream>
-#include <time.h>
-#include <functional>
-#include <algorithm>
-#include <string>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <time.h>
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <string>
 #include "SVTVicLptImpl.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SVStatusLibrary\MessageManager.h"

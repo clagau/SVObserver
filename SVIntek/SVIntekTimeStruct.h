@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   08 May 2013 14:56:02  $
 // ******************************************************************************
 
-#ifndef SVINTEKTIMESTRUCT_H
-#define SVINTEKTIMESTRUCT_H
+#pragma once
 
 /*
 This object is used to work with time values received from the IEEE 1394 clock.
@@ -100,6 +99,4 @@ struct SVIntekTimeStruct
 	long m_lCycleOffset;
 
 };
-
-#endif
 

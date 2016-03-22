@@ -9,13 +9,12 @@
 // * .Check In Date   : $Date:   25 Apr 2013 12:23:08  $
 // ******************************************************************************
 
-#ifndef _INC_SVQUEUEOBJECT_INCLUDED
-#define _INC_SVQUEUEOBJECT_INCLUDED
+#pragma once
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
-#include <comdef.h>
-#include <deque>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <deque>
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMultithread.h"
@@ -113,6 +112,4 @@ typedef SVSingleLockT<SVQueueObject> SVQueueObjectLock;
 #endif
 
 #include "SVTQueueObject.inl"
-
-#endif
 

@@ -9,17 +9,6 @@
 //* .Check In Date   : $Date:   28 Oct 2014 10:46:28  $
 //******************************************************************************
 
-#define NOMINMAX
-#ifdef min
-#undef min
-#endif
-#include <algorithm>
-#include <sstream>
-#include <cstdio>
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-#include "ws2tcpip.h"
-
 #pragma warning(push)
 #pragma warning(disable: 4482)
 

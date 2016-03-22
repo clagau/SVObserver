@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   01 Oct 2013 11:15:30  $
 //******************************************************************************
 #include "stdafx.h"
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <mil.h>
 #include "SVMatroxSystemEnums.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
-#include <mil.h>
 
 // Assign mappings for Control Types
 SVMatroxSystemControl::SVMatroxSystemControlEnumMap SVMatroxSystemControl::m_convertor = boost::assign::map_list_of<>

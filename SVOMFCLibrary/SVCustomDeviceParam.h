@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   28 Feb 2014 09:35:22  $
 //******************************************************************************
-#ifndef INCL_SVCUSTOMDEVICEPARAM_H
-#define INCL_SVCUSTOMDEVICEPARAM_H
+
+#pragma once
 
 #include "Stdafx.h"
 
@@ -60,5 +60,3 @@ public:
 
 	DEFINE_VISITABLE()
 };
-
-#endif

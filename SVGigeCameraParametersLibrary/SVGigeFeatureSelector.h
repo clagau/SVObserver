@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:54  $
 //******************************************************************************
-#ifndef SVGIGEFEATURESELECTOR_H
-#define SVGIGEFEATURESELECTOR_H
+
+#pragma once
 
 #include <comdef.h>
 #include "SVUtilityLibrary/SVString.h"
@@ -31,6 +31,4 @@ public:
 	const SVString& GetValue() const;
 	const SVString& GetName() const;
 };
-
-#endif
 

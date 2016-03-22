@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:44:14  $
 //******************************************************************************
 
-#ifndef SVEXTENTSIZESTRUCT_H_
-#define SVEXTENTSIZESTRUCT_H_
 #pragma once
 
 struct SVExtentSizeStruct
@@ -34,7 +32,4 @@ struct SVExtentSizeStruct
 	double m_dCX;
 	double m_dCY;
 };
-
-
-#endif // #ifndef SVEXTENTSIZESTRUCT_H_
 

@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <assert.h>
 #include "SVMatroxBarCodeInterface.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"

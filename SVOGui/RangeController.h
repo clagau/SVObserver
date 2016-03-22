@@ -8,8 +8,8 @@
 #pragma once
 
 #pragma region Includes
-#include <string>
-#include <guiddef.h>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <guiddef.h>
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
 #include "GuiController.h"

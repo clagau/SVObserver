@@ -11,14 +11,20 @@
 
 #pragma once
 
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <sstream>
+//Moved to precompiled header: #include <cstdio>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <boost/function.hpp>
+//Moved to precompiled header: #include <boost/bind.hpp>
+//Moved to precompiled header: #include <boost/shared_array.hpp>
 #include <winsock2.h>
-#include <boost/shared_array.hpp>
-#include <string>
-#include <vector>
 #include "TcpApi.h"
 #include "UdpApi.h"
 #include "SVSocketError.h"
 #include "SocketTraits.h"
+#include "ws2tcpip.h"
 
 typedef boost::shared_array<BYTE> bytes;
 

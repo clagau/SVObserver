@@ -10,6 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <fctlArgs.h>
 #include <map>
 #include "SVIntekFireStackClass.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
@@ -3844,9 +3845,8 @@ HRESULT SVIntekFireStackClass::TriggerGetName(unsigned long p_ulHandle, BSTR& p_
 		}
 
 		SVIntekCameraStruct& l_rCamera = GetDigitizer(p_ulHandle);
-		SVString name;
-		name.Format("CameraTrigger.Dig_%d", p_ulHandle);
-		p_rbstrName = name.ToBSTR();
+		SVString name = SvUl_SF::Format("CameraTrigger.Dig_%d", p_ulHandle);
+		p_rbstrName = _bstr_t(name.c_str());
 		l_Result = S_OK;
 	}
 	return l_Result;

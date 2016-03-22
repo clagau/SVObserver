@@ -9,12 +9,6 @@
 //* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
-#include <tchar.h>
-#include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
-#include "SVThreadManager.h"
-
 template<typename SVThreadSignalHandler>
 SVThread<SVThreadSignalHandler>::SVThread()
 : m_hShutdown( 0 )

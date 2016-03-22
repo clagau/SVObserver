@@ -121,7 +121,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FlexLexer.h" />
-    <ClInclude Include="unistd.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.txt" />

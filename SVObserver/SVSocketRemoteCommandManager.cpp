@@ -11,10 +11,10 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/assign.hpp>
-#include <fstream>
-#include <io.h>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign.hpp>
+//Moved to precompiled header: #include <fstream>
+//Moved to precompiled header: #include <io.h>
 #include "SVSocketRemoteCommandManager.h"
 #include "SVTimerLibrary\SVClock.h"
 #include "JsonLib/include/json.h"

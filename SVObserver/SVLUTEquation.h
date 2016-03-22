@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   27 Jan 2014 15:44:20  $
 //******************************************************************************
 
-#ifndef SVLUTEQUATION_H
-#define SVLUTEQUATION_H
+#pragma once
 
 #include "SVEquation.h"
 #include "SVValueObject.h"
@@ -54,6 +53,4 @@ protected:
 	// can be replaced with a vector with 256 elements [0...255].
 	SVLongValueObjectClass	m_lutIndex;
 };
-
-#endif	// SVLUTEQUATION_H
 

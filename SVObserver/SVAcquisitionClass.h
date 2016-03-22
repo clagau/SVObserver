@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   07 Mar 2014 18:05:22  $
 //******************************************************************************
 
-#ifndef SVACQUISITIONCLASS_H
-#define SVACQUISITIONCLASS_H
+#pragma once
 
 #pragma region Includes
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
@@ -219,6 +218,4 @@ private:
 };
 
 typedef SVSharedPtr< SVAcquisitionClass > SVAcquisitionClassPtr;
-
-#endif
 

@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   07 May 2013 19:56:58  $
 // ******************************************************************************
 
-#ifndef SVCIBUFFERSTRUCT_H
-#define SVCIBUFFERSTRUCT_H
+#pragma once
 
-#include <corapi.h>
+//Moved to precompiled header: #include <corapi.h>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVTimerLibrary/SVClock.h"
 
@@ -58,6 +57,4 @@ public:
 This specialization of the CArray template creates a container object to hold the SVCIBufferStruct objects.
 */
 typedef SVVector< SVCIBufferStruct > SVCIBufferStructCArray;
-
-#endif
 

@@ -6,8 +6,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 16:04:24  $
 //******************************************************************************
 
-#ifndef CPPTL_JSON_READER_H_INCLUDED
-# define CPPTL_JSON_READER_H_INCLUDED
+#pragma once
 
 # include "features.h"
 # include "value.h"
@@ -201,5 +200,4 @@ namespace Json {
 
 } // namespace Json
 
-#endif // CPPTL_JSON_READER_H_INCLUDED
 

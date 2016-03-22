@@ -9,7 +9,9 @@
 //* .Check In Date   : $Date:   25 Apr 2013 18:04:00  $
 //******************************************************************************
 #pragma once
-#include <string>
+
+//Moved to precompiled header: #include <string>
+
 namespace SeidenaderVision
 {
 	class SVVersionInfo

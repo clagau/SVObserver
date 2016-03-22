@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 14:55:52  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_BLOB_FEATURE_LIST_H
-#define SV_MATROX_BLOB_FEATURE_LIST_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxTypedefs.h"
 
@@ -43,6 +38,4 @@ protected:
 private:
 	void LocalClear();
 };
-
-#endif // #ifndef SV_MATROX_BLOB_FEATURE_LIST_H
 

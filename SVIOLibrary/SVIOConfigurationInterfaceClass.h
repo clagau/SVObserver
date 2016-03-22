@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   06 May 2013 19:13:20  $
 // ******************************************************************************
 
-#ifndef SVIOCONFIGURATIONINTERFACECLASS_H
-#define SVIOCONFIGURATIONINTERFACECLASS_H
+#pragma once
 
 #include "SVIODigitalArrayClass.h"
 #include "SVIODigitalLoadLibraryClass.h"
@@ -95,6 +94,4 @@ private:
 };
 
 #include "SVIOConfigurationInterfaceClass.inl"
-
-#endif
 

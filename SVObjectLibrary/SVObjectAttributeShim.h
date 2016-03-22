@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:46:20  $
 //******************************************************************************
 
-#ifndef SVOBJECTATTRIBUTESHIM_H_
-#define SVOBJECTATTRIBUTESHIM_H_
 #pragma once
 
 // This class is intended to allow the SVObjectClass::ObjectAttributesSetRef
@@ -74,7 +72,4 @@ inline const SVObjectAttributeShim& SVObjectAttributeShim::operator |= ( UINT uA
 	m_rAttribute |= uAttribute;
 	return *this;
 }
-
-
-#endif	// #ifndef SVOBJECTATTRIBUTESHIM_H_
 

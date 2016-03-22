@@ -14,7 +14,7 @@
 
 #pragma region Includes
 #include "StdAfx.h"
-#include <afxctl.h>
+//Moved to precompiled header: #include <afxctl.h>
 #include "PictureDisplay.h"
 #include "SVColor.h"
 //for image copy

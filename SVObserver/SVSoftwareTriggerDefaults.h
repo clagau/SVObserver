@@ -8,13 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:08:58  $
 //******************************************************************************
-#ifndef SVSOFTWARETRIGGERDEFAULTS_H
-#define SVSOFTWARETRIGGERDEFAULTS_H
+
+#pragma once
 
 namespace SVSoftwareTriggerDefaults
 {
 	static const long TimerPeriod = 200;
 	static const long MinTimerPeriod = 20;
 };
-
-#endif

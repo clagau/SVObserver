@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   07 May 2013 08:29:14  $
 //******************************************************************************
 
-#ifndef SVTOOLIMAGE_H
-#define SVTOOLIMAGE_H
+#pragma once
 
 #include "SVTool.h"
 #include "SVValueObject.h"
@@ -54,6 +53,4 @@ protected:
 	// String value object for Source Image Names
 	SVStaticStringValueObjectClass m_svSourceImageNames;
 };
-
-#endif
 

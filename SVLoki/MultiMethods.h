@@ -68,8 +68,7 @@
 //	obj.Add(yourFun, Type2Type<Type1>(), Type2Type<Type2>());
 
 
-#ifndef MULTIMETHODS_INC_
-#define MULTIMETHODS_INC_
+#pragma once
 
 #include "Typelist.h"
 #include "LokiTypeInfo.h"
@@ -839,22 +838,4 @@ namespace Private
 		
     };
 } // namespace Loki
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// May  10, 2002: ported by Rani Sharoni to VC7 (RTM - 9466)
-// Oct  28, 2002: ported by Benjamin Kaufmann to MSVC 6
-// Feb	19, 2003: replaced pointer-Dummies with Type2Type-Parameters and added 
-//					support for return type void. B.K.
-// Mar	06, 2003: Changed default values for return types to void.
-//				  Added protected destructors to private implementation classes B.K.
-// Mar	20. 2003: Fixed Bugs in FnDispatcherHelperBase, FnDispatcher::Add and
-//					FunctorDispatcher::Add.
-//					New Interface for FnDispatcher::Add.B.K.
-// Mar	21, 2003: Added new explicit template argument specification workaround
-//					for FnDispatcher::Add B.K.
-////////////////////////////////////////////////////////////////////////////////
-
-#endif
 

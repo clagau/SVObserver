@@ -7,9 +7,11 @@
 /// The comparision used is also case insensitive.
 //******************************************************************************
 #pragma once
+
 #pragma region Includes
-#include <algorithm>
+//Moved to precompiled header: #include <algorithm>
 #pragma endregion Includes
+
 namespace Seidenader
 {
 	namespace SVUtilityLibrary

@@ -10,8 +10,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <functional>
-#include <algorithm>
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <algorithm>
 #include "SVTestIO.h"
 #include "SVTestIODlg.h"
 

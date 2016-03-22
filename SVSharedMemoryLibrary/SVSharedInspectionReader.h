@@ -10,8 +10,8 @@
 //******************************************************************************
 #pragma once
 
-#include <memory>
-#include <boost/utility.hpp>
+//Moved to precompiled header: #include <memory>
+//Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVSharedLastInspectedCache.h"
 #include "SVSharedRejectCache.h"
 //#include "Stats.h"

@@ -46,14 +46,13 @@
 // This is because the VC 6 does not differentiate
 // between void, const void, volatile void and const volatile void.
 
-#ifndef TYPETRAITS_INC_
-#define TYPETRAITS_INC_
+#pragma once
 
 //
 // Ignore forcing value to bool 'true' or 'false' (performance warning)
 //
 #ifdef _MSC_VER
-#include <cctype>				// for wchar_t
+//Moved to precompiled header: #include <cctype>				// for wchar_t
 #pragma warning (disable: 4800)
 #endif
 
@@ -464,20 +463,4 @@ namespace Loki
 #ifdef _MSC_VER
 #pragma warning (default: 4800)
 #endif
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// May  10, 2002: ported by Rani Sharoni to VC7 (RTM - 9466)
-// Oct	05, 2002: ported by Benjamin Kaufmann to MSVC 6
-// Jan	31, 2003: fixed bugs in scalar and array detection.
-//					Added isMemberFuncPointer and isEnum. B.K.
-//
-// Feb	16,	2003: fixed bug in reference-Detection. Renamed isMemberFuncPointer
-//					to isMemberFunctionPointer. Added isFunctionPointer, replaced
-//					all occurrences of Private::Wrap with Loki::Type2Type and
-//					cleaned up the TypeTraits-class.	B.K.					
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // TYPETRAITS_INC_
 

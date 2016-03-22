@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:54:30  $
 //******************************************************************************
 
-#ifndef SVDATAMANAGERINDEXARRAYHANDLE_H
-#define SVDATAMANAGERINDEXARRAYHANDLE_H
+#pragma once
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVDataManagerEnums.h"
@@ -53,5 +52,4 @@ private:
 
 typedef SVSharedPtr< SVDataManagerIndexArrayHandle > SVSmartIndexArrayHandlePtr;
 
-#endif
 

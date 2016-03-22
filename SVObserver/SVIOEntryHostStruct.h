@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   27 Aug 2014 01:24:38  $
 //******************************************************************************
 
-#ifndef SVIOENTRYHOSTSTRUCT_H
-#define SVIOENTRYHOSTSTRUCT_H
+#pragma once
 
-#include <deque>
+//Moved to precompiled header: #include <deque>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 
@@ -57,6 +56,4 @@ private:
 
 typedef SVSharedPtr< SVIOEntryHostStruct > SVIOEntryHostStructPtr;
 typedef std::deque< SVIOEntryHostStructPtr > SVIOEntryHostStructPtrList;
-
-#endif
 

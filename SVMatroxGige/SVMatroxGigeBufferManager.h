@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:39:18  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGEBUFFERMANAGER_H
-#define SVMATROXGIGEBUFFERMANAGER_H
+#pragma once
 
-#include <boost/config.hpp>
-#include <boost/utility.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVMatroxLibrary/SVMatroxSystem.h"
 
 // Need to manage both Acquisition Buffers and Image Processing Buffers...
@@ -56,6 +55,4 @@ public:
 };
 
 #include "SVMatroxGigeBufferManager.inl"
-
-#endif
 

@@ -9,11 +9,8 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:24:12  $
 //******************************************************************************
 
-#ifndef SVCOMMANDATTRIBUTESFACADE_H
-#define SVCOMMANDATTRIBUTESFACADE_H
+#pragma once
 
-/*
-*/
 template< typename SVAttributeCollection >
 class SVCommandAttributesFacade
 {
@@ -24,6 +21,4 @@ public:
 	virtual HRESULT SetAttributes( const SVAttributeCollection& p_rAttributes ) = 0;
 
 };
-
-#endif
 

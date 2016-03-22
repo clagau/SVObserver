@@ -8,8 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:48:20  $
 //******************************************************************************
-#ifndef INCL_SVVARIANTCONVERTER_H
-#define INCL_SVVARIANTCONVERTER_H
+#pragma once
 
 class SVVariantConverter
 {
@@ -36,6 +35,4 @@ private:
 	SVVariantConverter(); // Non constructable
 	~SVVariantConverter();
 };
-
-#endif
 

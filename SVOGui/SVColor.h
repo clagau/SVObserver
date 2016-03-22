@@ -5,7 +5,7 @@
 #pragma once
 
 #pragma region Includes
-#include <WinDef.h>
+//Moved to precompiled header: #include <WinDef.h>
 #pragma endregion Includes
 
 namespace SVColor	// define standard color names

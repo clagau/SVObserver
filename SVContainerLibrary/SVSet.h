@@ -9,19 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:44:20  $
 //******************************************************************************
 
-#ifndef SVSET_H
-#define SVSET_H
+#pragma once
 
-#include <set>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <utility>
 
-/**
-@SVObjectName Seidenader Vision Inc. Set
-
-@SVObjectOverview
-
-@SVObjectOperations
-
-*/
 template<typename SVT_KEY>
 class SVSet
 {
@@ -88,6 +80,4 @@ protected:
 };
 
 #include "SVSet.inl"
-
-#endif
 

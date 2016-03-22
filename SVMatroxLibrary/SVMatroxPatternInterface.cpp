@@ -10,8 +10,8 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <assert.h>
-#include <cmath>
+//Moved to precompiled header: #include <assert.h>
+//Moved to precompiled header: #include <cmath>
 
 #include "SVMatroxPatternInterface.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes

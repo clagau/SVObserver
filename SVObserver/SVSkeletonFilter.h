@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   13 Aug 2013 10:32:12  $
 // ******************************************************************************
 
-#ifndef SVSKELETONFILTERS_H
-#define SVSKELETONFILTERS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -69,5 +68,4 @@ protected:
 protected:
 };
 
-#endif // SVSKELETONFILTERS_H
 

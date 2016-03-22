@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 13:09:34  $
 // ******************************************************************************
 
-#ifndef _INC_SVCONNECTIONCLASS_3879E54B01F4_INCLUDED
-#define _INC_SVCONNECTIONCLASS_3879E54B01F4_INCLUDED
+#pragma once
 
 #include "SVStatusLibrary/SVRegistry.h"
 #include "SVPipes/SVPipeConnection.h"
@@ -116,5 +115,4 @@ private:
 };
 
 #undef SV_CONNECTION_EXTERN
-#endif
 

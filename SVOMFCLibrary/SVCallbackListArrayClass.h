@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 12:59:58  $
 // ******************************************************************************
 
-#ifndef SVCALLBACKLISTARRAYCLASS_H
-#define SVCALLBACKLISTARRAYCLASS_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVCallbackListClass.h"
@@ -24,5 +23,4 @@ public:
 	bool m_bIsStarted;
 };
 
-#endif
 

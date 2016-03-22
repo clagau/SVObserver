@@ -10,9 +10,9 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <algorithm>
-#include <comdef.h>
-#include <iterator>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <iterator>
 #include "SVRemoteOutputDataController.h"
 
 #include "JsonLib/include/json.h"

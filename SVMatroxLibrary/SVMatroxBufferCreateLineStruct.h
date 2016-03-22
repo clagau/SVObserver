@@ -9,12 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:01:42  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_BUFFER_CREATE_LINE_STRUCT_H
-#define SV_MATROX_BUFFER_CREATE_LINE_STRUCT_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVMatroxEnums.h"
 
@@ -39,7 +34,5 @@ public:
 	SVMatroxBufferAttributeEnum	m_eAttribute;
 
 };
-
-#endif // #ifndef SV_MATROX_BUFFER_CREATE_LINE_STRUCT_H
 
 

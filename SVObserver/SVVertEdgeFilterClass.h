@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Aug 2013 16:31:40  $
 //******************************************************************************
 
-#ifndef SVVERTEDGEFILTERCLASS_H
-#define SVVERTEDGEFILTERCLASS_H
+#pragma once
 
 #include "SVFilterClass.h"
 
@@ -23,6 +22,4 @@ public:
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
-
-#endif	//	SVVERTEDGEFILTERCLASS_H
 

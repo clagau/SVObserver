@@ -9,12 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:22:54  $
 //******************************************************************************
 
-#ifndef SVEQUATIONBASE_H
-#define SVEQUATIONBASE_H
-
 #pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 
 /**
 @SVObjectName Equation Base
@@ -45,6 +42,4 @@ public:
 	virtual HRESULT GetArrayValues( int iSymbolIndex, std::vector< double >& values ) = 0;
 
 };
-
-#endif	// SVEQUATIONBASE_H
 

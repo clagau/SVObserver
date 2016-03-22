@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   06 May 2013 20:06:06  $
 //******************************************************************************
 
-#ifndef SVENVIRONMENTSETTINGSDIALOG_H
-#define SVENVIRONMENTSETTINGSDIALOG_H
+#pragma once
 
 class SVEnvironmentSettingsDialogClass : public CDialog
 {
@@ -46,6 +45,4 @@ protected:
 	void UpdateRemoteCommandSetupButton();
 
 };
-
-#endif	// SVENVIRONMENTSETTINGSDIALOG_H
 

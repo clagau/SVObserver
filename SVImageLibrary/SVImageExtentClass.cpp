@@ -10,11 +10,9 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <math.h>
+//Moved to precompiled header: #include <map>
 #include "SVImageExtentClass.h"
-
-#include <math.h>
-#include <map>
-
 #include "SVGeometryClass.h"
 
 struct ExtentPropertyMapInit

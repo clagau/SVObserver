@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:31:02  $
 //******************************************************************************
 
-#ifndef SVPPQENTRYDIALOGDIGINPAGE_H
-#define SVPPQENTRYDIALOGDIGINPAGE_H
+#pragma once
 
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
@@ -62,6 +61,4 @@ private:
 	SVDataItemManager m_SelectedItems;
 
 };
-
-#endif
 

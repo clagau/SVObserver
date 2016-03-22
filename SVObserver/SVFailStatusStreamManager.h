@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include <string>
-#include <map>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <map>
 
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVObjectLibrary/SVObserverNotificationFunctor.h"

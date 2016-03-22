@@ -6,8 +6,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 16:04:22  $
 //******************************************************************************
 
-#ifndef CPPTL_JSON_FEATURES_H_INCLUDED
-# define CPPTL_JSON_FEATURES_H_INCLUDED
+#pragma once
 
 # include "forwards.h"
 
@@ -47,5 +46,4 @@ namespace Json {
 
 } // namespace Json
 
-#endif // CPPTL_JSON_FEATURES_H_INCLUDED
 

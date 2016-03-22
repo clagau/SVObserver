@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:32:04  $
 //******************************************************************************
 
-#ifndef SVEXTERNALTOOLDLG_H
-#define SVEXTERNALTOOLDLG_H
+#pragma once
 
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
@@ -92,9 +91,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

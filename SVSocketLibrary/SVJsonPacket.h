@@ -9,7 +9,8 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:14:52  $
 //******************************************************************************
 #pragma once
-#include <string>
+
+//Moved to precompiled header: #include <string>
 
 class SVJsonPacket
 {

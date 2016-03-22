@@ -9,10 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 12:32:54  $
 // ******************************************************************************
 
-#ifndef _SVCONVERT_H
-#define _SVCONVERT_H
+#pragma once
 
 #include "Intek\convert.h"
-
-#endif // _SVCONVERT_H
 

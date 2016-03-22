@@ -10,10 +10,10 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/foreach.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVObjectXMLWriter.h"
-#include <map>
-#include <boost/foreach.hpp>
-#include <boost/assign/list_of.hpp>
 #include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVXMLLibrary/SVXMLLibraryGlobals.h"
 #include "SVUtilityLibrary/SVSafeArray.h"

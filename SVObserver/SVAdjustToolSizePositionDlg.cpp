@@ -11,7 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <limits>
+//Moved to precompiled header: #include <limits>
+//Moved to precompiled header: #include <array>
+//Moved to precompiled header: #include <functional>
 #include "SVAdjustToolSizePositionDlg.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "svobserver.h"
@@ -27,8 +29,6 @@
 #include "SVExtentPropertiesInfoStruct.h"
 #include "SVMainFrm.h"
 #include "ToolSizeAdjustTask.h"
-#include <array>
-#include  <functional>
 #include "GuiCommands/InspectionRunOnce.h"
 
 #pragma endregion Includes

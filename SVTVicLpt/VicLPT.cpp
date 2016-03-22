@@ -17,19 +17,12 @@
 //============   http://www.entechtaiwan.com/tools.htm   =============
 //====================================================================
 
-#define WINVER 0x0500		// WIN2K
-#define _CRT_SECURE_NO_DEPRECATE 
-#define _AFX_SECURE_NO_DEPRECATE
-#define _ATL_SECURE_NO_DEPRECATE
-#define _CRT_NON_CONFORMING_SWPRINTFS
-
-#include <windows.h>
-#include <winioctl.h>
-#include <winsvc.h>
-#include <stdio.h>
+#include "stdafx.h"
+//Moved to precompiled header: #include <winioctl.h>
+//Moved to precompiled header: #include <winsvc.h>
+//Moved to precompiled header: #include <tchar.h>
 
 #include "VicLPT.h"
-#include "tchar.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 
 static ULONG InstanceOpened[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};

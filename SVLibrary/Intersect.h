@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 13:30:26  $
 //******************************************************************************
 
-#ifndef INCL_INTERSECT_H
-#define INCL_INTERSECT_H
+#pragma once
 
 class Intersect
 {
@@ -27,6 +26,4 @@ public:
 	static LineResultEnum Lines(const POINT& pt1a, const POINT& pt1b, const POINT& pt2a, const POINT& pt2b, POINT& rptIntersect);
 	static bool RectRect(const RECT& rect1, const RECT& rect2);
 };
-
-#endif
 

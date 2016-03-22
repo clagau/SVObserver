@@ -9,10 +9,9 @@
 // * .Check In Date   : $Date:   22 Apr 2013 14:56:14  $
 // ******************************************************************************
 
-#ifndef SVBUFFERRESOURCE_H
-#define SVBUFFERRESOURCE_H
+#pragma once
 
-#include "mil.h"
+//Moved to precompiled header: #include #include <mil.h>
 
 // This class is used to provide a MIL_TEXT_CHAR buffer for use with mil functions.
 class SVBufferResource
@@ -26,5 +25,4 @@ public:
 	MIL_TEXT_CHAR* m_pBuffer;
 };
 
-#endif // SVBUFFERRESOURCE_H
 

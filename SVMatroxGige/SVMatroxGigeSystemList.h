@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:43:50  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGESYSTEMLIST_H
-#define SVMATROXGIGESYSTEMLIST_H
+#pragma once
 
 #include "SVMatroxGigeSystem.h"
 #include "SVMatroxGigeHandleList.h"
@@ -25,6 +24,4 @@ namespace
 
 // allow up to 16 Matrox Gige Systems 
 typedef SVMatroxGigeHandleList< 16, unsigned char, INVALID_SVMATROXGIGESYSTEM_HANDLE, SVMatroxGigeSystem> SVMatroxGigeSystemList;
-
-#endif
 

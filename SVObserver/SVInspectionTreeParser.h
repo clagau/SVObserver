@@ -8,8 +8,8 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   19 Dec 2014 04:10:42  $
 //******************************************************************************
-#ifndef INCL_SVINSPECTIONTREEPARSER_H
-#define INCL_SVINSPECTIONTREEPARSER_H
+
+#pragma once
 
 #include "SVObjectScriptParserBase.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
@@ -64,6 +64,4 @@ private:
 };
 
 #include "SVInspectionTreeParser.inl"
-
-#endif
 

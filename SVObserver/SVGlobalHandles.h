@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   11 Jun 2013 15:26:10  $
 //******************************************************************************
 
-#ifndef SVGLOBALHANDLES_H
-#define SVGLOBALHANDLES_H
+#pragma once
 
 #ifndef SV_INLINE
 #define SV_INLINE __forceinline
@@ -163,24 +162,4 @@ struct SVBarCodeBufferHandleStruct
 	SVMatroxBarCode	milBarCode;		// MIL Buffer Handle, if available...
 	SVHANDLE	COR;			// Digitizer Buffer Handle, if available...
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif //SVGLOBALHANDLES_H
-
-//** EOF **
 

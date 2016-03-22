@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:40:48  $
 //******************************************************************************
 
-#ifndef SVOBJECTSCRIPTPARSER_H
-#define SVOBJECTSCRIPTPARSER_H
+#pragma once
 
 #include "SVObjectScriptParserBase.h"
 
@@ -34,6 +33,4 @@ public:
 protected:	
 	SVObjectScriptParserBase* m_pParser;
 };
-
-#endif
 

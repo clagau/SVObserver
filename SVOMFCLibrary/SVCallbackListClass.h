@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 13:00:28  $
 // ******************************************************************************
 
-#ifndef SVCALLBACKLISTCLASS_H
-#define SVCALLBACKLISTCLASS_H
+#pragma once
 
 #include "SVContainerLibrary/SVList.h"
 #include "SVCallbackStruct.h"
@@ -25,6 +24,4 @@ public:
 
 	bool m_bIsStarted;
 };
-
-#endif
 

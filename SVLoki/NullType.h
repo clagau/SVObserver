@@ -26,8 +26,7 @@
 
 // Last update: June 20, 2001
 
-#ifndef NULLTYPE_INC_
-#define NULLTYPE_INC_
+#pragma once
 
 namespace Loki
 {
@@ -39,11 +38,4 @@ namespace Loki
 
     class NullType {};
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // NULLTYPE_INC_
 

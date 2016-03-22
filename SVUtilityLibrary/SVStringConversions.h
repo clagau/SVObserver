@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   30 Jul 2013 13:27:10  $
 //******************************************************************************
 
-#ifndef SVSTRINGCONVERSIONS_H
-#define SVSTRINGCONVERSIONS_H
+#pragma once
 
-#include <string>
-#include <boost/static_assert.hpp>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/static_assert.hpp>
+//Moved to precompiled header: #include <boost/scoped_array.hpp>
 
 namespace SVStringConversions
 {
@@ -30,6 +32,4 @@ namespace SVStringConversions
 }
 
 #include "SVStringConversions.inl"
-
-#endif
 

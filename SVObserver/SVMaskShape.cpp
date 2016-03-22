@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <algorithm>
+//Moved to precompiled header: #include <algorithm>
 #include "SVMaskShape.h"
 #include "SVLibrary/Intersect.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add SVColor declaration.

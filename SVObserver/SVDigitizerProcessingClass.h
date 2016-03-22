@@ -12,9 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
-#include <set>
-#include <utility>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <utility>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
 #pragma endregion Includes

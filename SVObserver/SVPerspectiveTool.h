@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
 
-#ifndef SVPERSPECTIVETOOLCLASS_H
-#define SVPERSPECTIVETOOLCLASS_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageClass.h"
@@ -84,5 +83,4 @@ private:
 	SVStaticStringValueObjectClass m_svSourceImageName;
 };
 
-#endif // _SVPERSPECTIVETOOLCLASS_H
 

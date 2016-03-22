@@ -9,9 +9,6 @@
 // * .Check In Date   : $Date:   23 Apr 2013 09:12:36  $
 // ******************************************************************************
 
-#ifndef MODELESSMESSAGEBOX_H_
-#define MODELESSMESSAGEBOX_H_
-
 #pragma once
 
 class CModelessMsgBox;
@@ -84,9 +81,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // #ifndef MODELESSMESSAGEBOX_H_
 

@@ -10,8 +10,8 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <atlconv.h>
-#include <math.h>
+//Moved to precompiled header: #include <atlconv.h>
+//Moved to precompiled header: #include <math.h>
 #include "VariantObj.h"
 
 #ifdef _DEBUG

@@ -10,24 +10,16 @@
 //******************************************************************************
 
 #pragma once
+
 #pragma region Includes
-#include <string>
-#include <vector>
-#include <map>
-#include <set>
-#include <comutil.h>
-#include <tchar.h>
+//Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <comutil.h>
+//Moved to precompiled header: #include <tchar.h>
 #pragma endregion Includes
 
-
-/**
-@SVObjectName String
-
-@SVObjectOverview This object encapsulates the storage and operations for dealing with strings.  Strings are a complex type like images.  They can either be an array of character or a string.
-
-@SVObjectOperations This object supports the copy, assignment, and conversions to and from block array of characters and Standard Template Library (STL) wide character strings.
-
-*/
 
 typedef std::string SVString;
 typedef std::set< SVString > SVStringSet;

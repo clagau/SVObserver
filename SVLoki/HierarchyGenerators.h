@@ -26,9 +26,7 @@
 
 // Last update: Mar 08, 2003
 
-
-#ifndef HIERARCHYGENERATORS_INC_
-#define HIERARCHYGENERATORS_INC_
+#pragma once
 
 #define IS_TYPELIST(TList) TL::Private::IsTypelist<TList>
 
@@ -512,21 +510,5 @@ namespace Private
 	Field<Nr>(Obj)
 #endif
 
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// September 16, 2002: Fixed dependent template, using "::template" syntax. T.S.
-// Oct  24, 2002: ported by Benjamin Kaufmann to MSVC 6 
-// Dec	08, 2002: Fixed problems with MSVC6-Version of GenScatterHierarchy when
-//					used with typelists containing equal types. B.K.
-//					New Version is ugly :-(
-// Dec	08, 2002: Interface changed for Field-Function. The old version does not
-//					work correctly due to the "Explicitly Specified Template 
-//					Functions Not Overloaded Correctly"-Bug 
-//					(Microsoft KB Article - 240871). B.K.
-// Mar	08, 2003: New transparent workaround for Field-Functions. The FIELD-Macro
-//					is no longer needed. B.K.
-////////////////////////////////////////////////////////////////////////////////
 #undef IS_TYPELIST
-#endif // HIERARCHYGENERATORS_INC_
 

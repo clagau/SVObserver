@@ -9,10 +9,8 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:34:44  $
 //******************************************************************************
 
-#ifndef SVINOBJECTINFOSTRUCT_H
-#define SVINOBJECTINFOSTRUCT_H
+#pragma once
 
-#include <vector>
 #include "SVcontainerLibrary/SVVector.h" 
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -57,8 +55,5 @@ protected:
 
 };
 
-typedef std::vector<SVInObjectInfoStruct> SVStdVectorSVInObjectInfoStruct;
 typedef SVVector < SVInObjectInfoStruct, SVInObjectInfoStruct& > SVVectorSVInObjectInfoStruct; 
-
-#endif
 

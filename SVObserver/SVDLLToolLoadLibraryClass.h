@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   21 Oct 2013 08:21:26  $
 // ******************************************************************************
 
-#ifndef SVDLLToolLOADLIBRARYCLASS_H
-#define SVDLLToolLOADLIBRARYCLASS_H
+#pragma once
 
 #pragma warning (push)
 #pragma warning (disable : 4290)
@@ -141,5 +140,4 @@ private:
 #include "SVDLLToolLoadLibraryClass.inl"
 
 #pragma warning (pop)
-#endif // _SVDLLToolLOADLIBRARYCLASS_H
 

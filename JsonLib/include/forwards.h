@@ -6,8 +6,7 @@
 //* .Check In Date   : $Date:   18 Apr 2013 16:04:22  $
 //******************************************************************************
 
-#ifndef JSON_FORWARDS_H_INCLUDED
-# define JSON_FORWARDS_H_INCLUDED
+#pragma once
 
 # include "config.h"
 
@@ -43,6 +42,4 @@ namespace Json {
 
 } // namespace Json
 
-
-#endif // JSON_FORWARDS_H_INCLUDED
 

@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   10 Jul 2014 17:46:18  $
 // ******************************************************************************
 
-#ifndef SVLINEAREDGEPROCESSINGCLASS_H
-#define SVLINEAREDGEPROCESSINGCLASS_H
+#pragma once
 
 #include "SVTaskObject.h"
 #include "SVValueObjectImpl.h"
@@ -116,6 +115,4 @@ protected:
 	COLORREF m_cfHistogram;
 	COLORREF m_cfEdges;
 };
-
-#endif
 

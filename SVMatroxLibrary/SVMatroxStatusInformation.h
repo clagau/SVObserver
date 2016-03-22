@@ -9,16 +9,11 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:27:22  $
 // ******************************************************************************
 
-#ifndef SV_MATROX_STATUS_INFORMATION_H
-#define SV_MATROX_STATUS_INFORMATION_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+//Moved to precompiled header: #include <string>
 #include "SVMatroxTypedefs.h"
 
-#include <string>
 
 /**
 @SVObjectName Matrox Status Information
@@ -61,6 +56,4 @@ public:
 	SVStatusString m_StatusSubString[ 3 ];
 
 };
-
-#endif // SV_MATROX_STATUS_INFORMATION_H
 

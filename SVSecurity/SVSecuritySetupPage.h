@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:03:54  $
 //******************************************************************************
 
-#ifndef SECURITYSETUPPAGE_H
-#define SECURITYSETUPPAGE_H
+#pragma once
 
 class SVAccessClass;
 class SVSecuritySetupSheet;
@@ -89,10 +88,4 @@ protected:
 //	SVDlgTemplate		DlgTemplate;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SECURITYSETUPPAGE_H__FB876D1A_4765_11D4_A8FD_00106F0309AB__INCLUDED_)
 

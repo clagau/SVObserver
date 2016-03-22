@@ -9,11 +9,9 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:44:26  $
 //******************************************************************************
 
-#ifndef SVGEOMETRYCLASS_H__
-#define SVGEOMETRYCLASS_H__
 #pragma once
 
-#include <math.h>
+//Moved to precompiled header: #include <math.h>
 //const double g_svPI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679;
 //const double g_svRadian = 180.0 / g_svPI;
 
@@ -89,6 +87,3 @@ private:
 };
 
 extern SVGeometryClass g_svPi;
-
-#endif	//#ifndef SVGEOMETRYCLASS_H__
-

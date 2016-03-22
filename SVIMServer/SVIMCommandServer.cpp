@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include <stdio.h>
+//Moved to precompiled header: #include <stdio.h>
 #include "SVIMCommandServer.h"
 #include "SVIMCommand/SVIMCommand.h"
 #include "SVLibrary/SVLibrary.h"

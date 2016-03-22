@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 10:22:02  $
 // ******************************************************************************
 
-#ifndef SVIMAGECOMPRESSIONCLASS_H
-#define SVIMAGECOMPRESSIONCLASS_H
+#pragma once
 
 class SVCompressionDlg;
 
@@ -73,6 +72,4 @@ private:
 
 };
 
-
-#endif // !defined(AFX_SVIMAGECOMPRESSIONCLASS_H__17BC8A0D_5C0D_4D9D_A61E_4841D0293075__INCLUDED_)
 

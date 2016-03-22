@@ -10,8 +10,9 @@
 //******************************************************************************
 
 #pragma once
+
 #pragma region Includes
-#include <set>
+//Moved to precompiled header: #include <set>
 #include "ObjectInterfaces/ISVImage.h"
 #include "SVContainerLibrary/SVVector.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"

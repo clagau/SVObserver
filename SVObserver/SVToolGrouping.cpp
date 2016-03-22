@@ -7,8 +7,8 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include <algorithm>
-#include <sstream>
+//Moved to precompiled header: #include <algorithm>
+//Moved to precompiled header: #include <sstream>
 #include "SVToolGrouping.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

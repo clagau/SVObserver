@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:33:58  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGECAMERAPROXY_H
-#define SVMATROXGIGECAMERAPROXY_H
+#pragma once
 
 #include "SVGigeCameraFileLibrary/SVGigeCameraFileReader.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraProxy.h"
@@ -63,6 +62,4 @@ public:
 
 	HRESULT SVLUTToSafeArray(const SVLut& lut, _variant_t& output);
 };
-
-#endif
 

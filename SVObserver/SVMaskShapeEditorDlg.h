@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   26 Jun 2014 17:52:12  $
 //******************************************************************************
 
-#ifndef SVMASKSHAPEEDITORDLG_H
-#define SVMASKSHAPEEDITORDLG_H
+#pragma once
 
 #pragma region Includes
 #include "SVShapeMaskHelperClass.h"
@@ -168,9 +167,3 @@ private:
 	SVInputRequestStructMap m_cancelData;
 #pragma endregion Member Variables
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVMASKSHAPEEDITORDLG_H__130C38BF_EF89_4F9A_B654_09012A0524CD__INCLUDED_)
-

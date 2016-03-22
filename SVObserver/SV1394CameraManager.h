@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:18:00  $
 //******************************************************************************
 
-#ifndef SV1394CAMERAMANAGER_H
-#define SV1394CAMERAMANAGER_H
+#pragma once
 
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SV1394CameraStruct.h"
 
 class SV1394CameraManager  
@@ -48,6 +47,4 @@ protected:
 };
 
 #define TheSV1394CameraManager SV1394CameraManager::Instance()
-
-#endif
 

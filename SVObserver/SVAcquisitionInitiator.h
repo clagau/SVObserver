@@ -8,11 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:22:54  $
 //******************************************************************************
-#ifndef SVACQUISITIONINITIATOR_H
-#define SVACQUISITIONINITIATOR_H
 
-#include <vector>
-#include <map>
+#pragma once
+
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <map>
 
 struct SVCallbackStruct;
 class SVDigitizerLoadLibraryClass;
@@ -37,6 +37,4 @@ public:
 	HRESULT UnRegisterCallback(SVCallbackStruct& p_rCallback );
 	HRESULT UnRegisterAllCallbacks();
 };
-
-#endif
 

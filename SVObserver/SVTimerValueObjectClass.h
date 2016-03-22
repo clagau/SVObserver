@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:43:58  $
 //******************************************************************************
 
-#ifndef SVTIMERVALUEOBJECTCLASS_H
-#define SVTIMERVALUEOBJECTCLASS_H
+#pragma once
 
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInt64ValueObjectClass.h"
@@ -38,5 +37,4 @@ private:
 
 };
 
-#endif
 

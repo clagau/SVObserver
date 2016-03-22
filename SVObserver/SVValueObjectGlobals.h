@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:17:46  $
 //******************************************************************************
 
-#ifndef SVVALUEOBJECTGLOBALS_H
-#define SVVALUEOBJECTGLOBALS_H
+#pragma once
 
 #define IMPLEMENT_VALUE_OBJECT_GET_SET_NO_T() \
 	template <typename FROMTYPE>\
@@ -70,6 +69,4 @@ inline VALUETYPE GetValue( VALUEOBJECTCLASS& valueobject, int iBucket, int iInde
 	ASSERT( bOk );
 	return value;
 }
-
-#endif
 

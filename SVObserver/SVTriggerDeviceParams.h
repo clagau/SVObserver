@@ -9,10 +9,9 @@
 //* .Check In Date   : $Date:   24 Apr 2013 12:28:54  $
 //******************************************************************************
 
-#ifndef SVTRIGGERDEVICEPARAMS_H
-#define SVTRIGGERDEVICEPARAMS_H
+#pragma once
 
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVUtilityLibrary/SVString.h"
 
 struct SVTriggerDeviceParams
@@ -26,6 +25,4 @@ struct SVTriggerDeviceParams
 };
 
 typedef std::vector< SVTriggerDeviceParams > SVTriggerDeviceParamsVector;
-
-#endif
 

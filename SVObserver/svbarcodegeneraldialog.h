@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:42:26  $
 //******************************************************************************
 
-#ifndef SVBARCODEANALYZERDIALOG_H
-#define SVBARCODEANALYZERDIALOG_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVValueObjectImpl.h"
@@ -165,8 +164,4 @@ public:
 	afx_msg void OnBnClickedChkUnevenGrid();
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVBARCODEANALYZERDIALOG_H__AF5FDD68_7BE0_11D3_A7D0_00106F010A93__INCLUDED_)
 

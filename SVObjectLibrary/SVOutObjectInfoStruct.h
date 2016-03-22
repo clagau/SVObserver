@@ -9,12 +9,11 @@
 //* .Check In Date   : $Date:   01 Oct 2013 11:29:20  $
 //******************************************************************************
 
-#ifndef SVOUTOBJECTINFOSTRUCT_H
-#define SVOUTOBJECTINFOSTRUCT_H
+#pragma once
 
 #pragma warning( disable : 4786 )
 
-#include <set>
+//Moved to precompiled header: #include <set>
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVInObjectInfoStruct.h"
 
@@ -57,6 +56,4 @@ private:
 
 typedef std::set<SVOutObjectInfoStruct*> SVStdSetSVOutObjectInfoStructPtr;
 typedef SVVector< SVOutObjectInfoStruct* > SVOutObjectInfoStructPtrArray;
-
-#endif
 
