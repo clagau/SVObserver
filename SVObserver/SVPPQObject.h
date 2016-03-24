@@ -56,7 +56,7 @@ public:
 
 public:
 
-	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
+	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
 	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData );
 

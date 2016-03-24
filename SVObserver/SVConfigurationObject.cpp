@@ -2848,7 +2848,7 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 	return l_Status;
 }
 
-HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
+HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -2873,14 +2873,16 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 		{
 			SVInspectionProcessVector::const_iterator l_InspectIter;
 
-			//@WARNING [gra][7.20][07.07.2015] This is very dangerous when a name starting with just "Tool Set." it will find the first matching name in all inspections
 			for( l_InspectIter = m_arInspectionArray.begin(); rpObject == NULL && l_InspectIter != m_arInspectionArray.end(); ++l_InspectIter )
 			{
 				SVInspectionProcess* pInspection = ( *l_InspectIter );
 
 				if( nullptr != pInspection )
 				{
-					l_Status = pInspection->GetChildObject( rpObject, rNameInfo, Index );
+					if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == pInspection->GetName() )
+					{
+						l_Status = pInspection->GetChildObject( rpObject, rNameInfo, Index );
+					}
 				}
 			}
 		}

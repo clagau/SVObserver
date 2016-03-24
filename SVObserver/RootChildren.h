@@ -57,7 +57,7 @@ public:
 	//! \param Index <in> the index of the name to search for
 	//! \return SOK on success
 	//************************************
-	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index = 0 ) const;
+	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const;
 
 	//************************************
 	//! The method gets the value object given a name

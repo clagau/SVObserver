@@ -148,14 +148,14 @@ BOOL SVVirtualCamera::Destroy()
 	return bOk;
 }// end Destroy	
 
-HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
+HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
 	rpObject = nullptr;
 	HRESULT l_Status = SVObjectClass::GetChildObject( rpObject, rNameInfo, Index );
 
 	if( S_OK != l_Status )
 	{
-		if( 0 < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
+		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[Index] == GetName() )
 		{
 			BasicValueObjectPtr pBasicValueObject = m_CameraValues.getValueObject( rNameInfo.GetObjectArrayName( Index + 1 ).c_str() );
 

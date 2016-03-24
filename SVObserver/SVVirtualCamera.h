@@ -84,7 +84,7 @@ public:
 	HRESULT GetLut( SVLut& lut ) const;
 
 	HRESULT GetSourceImageIndex( SVDataManagerHandle& p_rHandle, const SVProductInfoStruct& p_rProduct ) const;
-	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
+	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
 	HRESULT ReserveNextImageHandleIndex( SVDataManagerHandle& p_rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType = SV_ACQUISITION ) const;
 	virtual BOOL ReserveImageHandleIndex( const SVDataManagerHandle& p_rDMIndexHandle ) const;

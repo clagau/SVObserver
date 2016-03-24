@@ -399,21 +399,21 @@ void SVPPQObject::init()
 	m_childObjectsForFillChildObjectList = m_childObjects;
 }
 
-HRESULT SVPPQObject::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index ) const
+HRESULT SVPPQObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
-	HRESULT l_Status = SVObjectClass::GetChildObject( p_rpObject, p_rNameInfo, p_Index );
+	HRESULT l_Status = SVObjectClass::GetChildObject( rpObject, rNameInfo, Index );
 
 	if( S_OK != l_Status  )
 	{
-		if( 0 < p_rNameInfo.m_NameArray.size() && p_rNameInfo.m_NameArray[ p_Index ] == GetName() )
+		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[Index] == GetName() )
 		{
-			if( ( p_Index + 1 ) == ( p_rNameInfo.m_NameArray.size() - 1 ) )
+			if( static_cast<const size_t> ( Index + 1 ) == ( rNameInfo.m_NameArray.size() - 1 ) )
 			{
 				SVObjectPtrDeque::const_iterator iter = m_childObjects.cbegin();
-				while (iter != m_childObjects.cend() && nullptr == p_rpObject )
+				while (iter != m_childObjects.cend() && nullptr == rpObject )
 				{
 					const SVObjectClass* pObject = *iter;
-					l_Status = pObject->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
+					l_Status = pObject->GetChildObject( rpObject, rNameInfo, Index + 1 );
 					++iter;
 				}
 			}

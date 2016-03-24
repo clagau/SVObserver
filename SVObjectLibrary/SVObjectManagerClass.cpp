@@ -16,11 +16,15 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "ObjectInterfaces/ISVImage.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVImageLibrary\SVImageInfoClass.h"
 #include "SVClassRegisterListClass.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectSubmitCommandFacade.h"
+#include "TextDefinesSvOl.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -344,6 +348,16 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, SVObjectReference& rReference ) const
 {
 	HRESULT Result = S_OK;
+
+	if( 0 == rFullName.find( SvOl::ToolSetName ) )
+	{
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), StdMessageParams, SvOi::Err_25049_DottedName );
+		ASSERT(false);
+		Result = E_FAIL;
+		rReference = SVObjectReference();
+		return Result;
+	}
 
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 	BOOL l_Status = !( rFullName.empty() );

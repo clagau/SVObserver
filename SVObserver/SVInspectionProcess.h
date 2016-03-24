@@ -88,7 +88,7 @@ public:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
 
-	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
+	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );

@@ -2141,33 +2141,23 @@ HRESULT SVInspectionProcess::FindPPQInputObjectByName( SVObjectClass*& p_rpObjec
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index ) const
+HRESULT SVInspectionProcess::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
-	HRESULT l_Status = SVObjectClass::GetChildObject( p_rpObject, p_rNameInfo, p_Index );
+	HRESULT l_Status = SVObjectClass::GetChildObject( rpObject, rNameInfo, Index );
 
 	if( l_Status != S_OK )
 	{
-		if( 0 < p_rNameInfo.m_NameArray.size() && p_rNameInfo.m_NameArray[ p_Index ] == GetName() )
+		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[Index] == GetName() )
 		{
-			SVString l_ObjectName = p_rNameInfo.GetObjectName( p_Index );
+			SVString l_ObjectName = rNameInfo.GetObjectName( Index );
 
-			l_Status = FindPPQInputObjectByName( p_rpObject, l_ObjectName.c_str() );
+			l_Status = FindPPQInputObjectByName( rpObject, l_ObjectName.c_str() );
 
 			if( l_Status != S_OK )
 			{
 				if( GetToolSet() )
 				{
-					l_Status = GetToolSet()->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-			}
-		}
-		else
-		{
-			if( 0 < p_rNameInfo.m_NameArray.size() && p_rNameInfo.m_NameArray[ p_Index ] == _T( "Tool Set" ) )
-			{
-				if( GetToolSet() )
-				{
-					l_Status = GetToolSet()->GetChildObject( p_rpObject, p_rNameInfo, p_Index );
+					l_Status = GetToolSet()->GetChildObject( rpObject, rNameInfo, Index + 1 );
 				}
 			}
 		}

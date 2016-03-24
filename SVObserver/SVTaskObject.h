@@ -110,7 +110,7 @@ public:
 
 	virtual HRESULT IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo ); 
 
-	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
+	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = nullptr);
 	
 #pragma region virtual method (ITaskObject)

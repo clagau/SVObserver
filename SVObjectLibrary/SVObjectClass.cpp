@@ -1682,19 +1682,15 @@ BOOL SVObjectClass::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** 
 	return bReturn;
 }
 
-HRESULT SVObjectClass::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index ) const
+HRESULT SVObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_Index == ( p_rNameInfo.m_NameArray.size() - 1 ) )
+	if( Index == ( rNameInfo.m_NameArray.size() - 1 ) )
 	{
-		SVObjectNameInfo::SVNameDeque::const_iterator l_Iter = p_rNameInfo.m_NameArray.begin();
-
-		std::advance( l_Iter, p_Index );
-
-		if( ( *l_Iter ) == GetName() )
+		if( rNameInfo.m_NameArray[Index] == GetName() )
 		{
-			p_rpObject = const_cast< SVObjectClass* >( this );
+			rpObject = const_cast< SVObjectClass* >( this );
 		}
 		else
 		{

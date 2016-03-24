@@ -38,7 +38,7 @@ RootChildren::~RootChildren()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT RootChildren::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
+HRESULT RootChildren::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
 	rpObject =  dynamic_cast<SVObjectClass*> ( m_RootChildrenValues.getValueObject( rNameInfo.GetObjectArrayName( Index ).c_str() ).get() );
 

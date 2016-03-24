@@ -63,7 +63,7 @@ public:
 	//! \param Index <in> the index of the name to search for
 	//! \return SOK on success
 	//************************************
-	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
+	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, const long p_Index = 0 ) const override;
 
 	//************************************
 	//! The method gets the Root Children object

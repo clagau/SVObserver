@@ -283,33 +283,33 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo( SVInObjectInfoStruct*& p_rpsv
 	return l_svOk;
 }
 
-HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index ) const
+HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
-	HRESULT l_Status = SVObjectAppClass::GetChildObject( p_rpObject, p_rNameInfo, p_Index );
+	HRESULT l_Status = SVObjectAppClass::GetChildObject( rpObject, rNameInfo, Index );
 
 	if( l_Status != S_OK )
 	{
-		if( 0 < p_rNameInfo.m_NameArray.size() && p_rNameInfo.m_NameArray[ p_Index ] == GetName() )
+		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
 		{
 			// Notify friends...
-			for (size_t i = 0; nullptr == p_rpObject && i < friendList.size(); ++ i)
+			for (size_t i = 0; nullptr == rpObject && i < friendList.size(); ++ i)
 			{
 				const SVObjectInfoStruct& rfriend = friendList[i];
-				if (rfriend.PObject)
+				if( nullptr != rfriend.PObject)
 				{
-					l_Status = rfriend.PObject->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
+					l_Status = rfriend.PObject->GetChildObject( rpObject, rNameInfo, Index + 1 );
 				}
 			}
 
-			if( ( l_Status != S_OK ) && ( ( p_Index + 1 ) == ( p_rNameInfo.m_NameArray.size() - 1 ) ) )
+			if( ( l_Status != S_OK ) && ( ( Index + 1 ) == ( rNameInfo.m_NameArray.size() - 1 ) ) )
 			{
-				for( long j = 0; nullptr == p_rpObject && j < embeddedList.GetSize(); j++ )
+				for( long j = 0; nullptr == rpObject && j < embeddedList.GetSize(); j++ )
 				{
 					SVObjectClass *l_pObject = embeddedList.GetAt(j);
 
-					if( l_pObject != NULL )
+					if( nullptr != l_pObject )
 					{
-						l_Status = l_pObject->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
+						l_Status = l_pObject->GetChildObject( rpObject, rNameInfo, Index + 1 );
 					}
 				}
 			}

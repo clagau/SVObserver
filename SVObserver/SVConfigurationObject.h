@@ -84,7 +84,7 @@ public:
 	SVConfigurationObject( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT );
 	virtual ~SVConfigurationObject();
 
-	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
+	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
 	virtual HRESULT ObserverUpdate( const SVRenameObject& p_rData );
 

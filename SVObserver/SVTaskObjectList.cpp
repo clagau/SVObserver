@@ -898,20 +898,20 @@ BOOL SVTaskObjectListClass::CloseObject()
 	return retVal;
 }
 
-HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index ) const
+HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
-	HRESULT l_Status = SVTaskObjectClass::GetChildObject( p_rpObject, p_rNameInfo, p_Index );
+	HRESULT l_Status = SVTaskObjectClass::GetChildObject( rpObject, rNameInfo, Index );
 
 	if( l_Status != S_OK )
 	{
-		if( 0 < p_rNameInfo.m_NameArray.size() && p_rNameInfo.m_NameArray[ p_Index ] == GetName() )
+		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
 		{
-			for (int i = 0; p_rpObject == NULL && i < m_aTaskObjects.GetSize(); i++)
+			for (int i = 0; nullptr == rpObject && i < m_aTaskObjects.GetSize(); i++)
 			{
 				SVTaskObjectClass* l_pTask = m_aTaskObjects.GetAt(i);
-				if( l_pTask != NULL )
+				if( nullptr != l_pTask )
 				{
-					l_Status = l_pTask->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
+					l_Status = l_pTask->GetChildObject( rpObject, rNameInfo, Index + 1 );
 				}
 			}
 		}

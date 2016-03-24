@@ -11,6 +11,8 @@
 namespace Seidenader { namespace SVObjectLibrary
 {
 	const TCHAR* const   ObjectBuilder_SetObjectValueError = _T("SVObjectBuilder::SetObjectValue Error:\n Set Object Member Value failed!");
+	const TCHAR* const	 ToolSetName = _T("Tool Set");
+
 } /* namespace SVObjectLibrary */ } /* namespace Seidenader */
 
 namespace SvOl = Seidenader::SVObjectLibrary;
