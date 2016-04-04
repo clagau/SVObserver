@@ -3682,6 +3682,11 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 		rWriter.WriteAttribute( CTAG_VALUE, Value );
 		Value.Clear();
 
+		//@WARNING [gra][7.30][04.04.2016] The attribute is still saved into the configuration for forward compatibility with version 7.20 can be removed in next version
+		Value = (*Iter)->ObjectAttributesAllowedRef();
+		Value.ChangeType(VT_UI4);
+		rWriter.WriteAttribute( scAttributesAllowedTag, Value );
+		Value.Clear();
 
 		CString Description( (*Iter)->getDescription() );
 		//This is needed to remove any CR LF in the description
