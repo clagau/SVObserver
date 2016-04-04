@@ -285,7 +285,6 @@ HRESULT SVImageExtentClass::SetTranslation( SVExtentTranslationEnum p_eTranslati
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
 		case SVExtentTranslationPolarUnwrap:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
@@ -333,7 +332,6 @@ HRESULT SVImageExtentClass::SetDimensions( SVExtentDimensionsClass p_svDimension
 		case SVExtentTranslationProfileShift:
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
@@ -382,7 +380,6 @@ HRESULT SVImageExtentClass::SetPosition( SVExtentPositionClass p_svPosition )
 		case SVExtentTranslationProfileShift:
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
@@ -1436,7 +1433,6 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace( SVExtentLocationPropertyEnum 
 		case SVExtentTranslationRotate:
 		case SVExtentTranslationProfileShift:
 		case SVExtentTranslationFlippedRotate:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationDoubleHeight:
 		case SVExtentTranslationResize:
 		case SVExtentTranslationFlipHorizontal:
@@ -1807,7 +1803,6 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace( SVExtentPointStruct p_svValu
 			}
 			case SVExtentTranslationRotate:
 			case SVExtentTranslationProfile:
-			case SVExtentTranslationBuildReference:
 			case SVExtentTranslationLinear:
 			{
 				SVExtentPointStruct l_svRotation;
@@ -2330,7 +2325,6 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentPointStruct p_svVa
 			}
 			case SVExtentTranslationRotate:
 			case SVExtentTranslationProfile:
-			case SVExtentTranslationBuildReference:
 			case SVExtentTranslationLinear:
 			{
 				SVExtentPointStruct l_svRotation;
@@ -2812,7 +2806,6 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentFigureStruct p_svV
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
 		case SVExtentTranslationPolarUnwrap:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
@@ -3154,7 +3147,6 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentLineStruct p_svVal
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
 		case SVExtentTranslationPolarUnwrap:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
@@ -3295,7 +3287,6 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentMultiLineStruct p_
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
 		case SVExtentTranslationPolarUnwrap:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
@@ -3373,7 +3364,6 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace( SVExtentPointStruct p_
 			case SVExtentTranslationRotate:
 			case SVExtentTranslationProfile:
 			case SVExtentTranslationTransformRotate:
-			case SVExtentTranslationBuildReference:
 			case SVExtentTranslationLinear:
 			{
 				double l_dAngle = 0.0;
@@ -3623,7 +3613,6 @@ HRESULT SVImageExtentClass::UpdateSourceOffset( SVExtentOffsetStruct& p_rsvOffse
 		}// end case multiple
 		case SVExtentTranslationRotate:
 		case SVExtentTranslationProfile:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLinear:
 		{
 			SVExtentPointStruct l_svRotation;
@@ -4297,7 +4286,6 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			case SVExtentTranslationNone:
 			case SVExtentTranslationShift:
 			case SVExtentTranslationProfileShift:
-			case SVExtentTranslationBuildReference:
 			case SVExtentTranslationTransformShift:
 			case SVExtentTranslationFlipVertical:
 			case SVExtentTranslationFlipHorizontal:
@@ -4798,7 +4786,6 @@ HRESULT SVImageExtentClass::BuildFigure()
 			case SVExtentTranslationFlippedRotate:
 			case SVExtentTranslationProfile:
 			case SVExtentTranslationProfileShift:
-			case SVExtentTranslationBuildReference:
 			{
 				double l_dWidth = 0.0;
 				double l_dHeight = 0.0;
@@ -5288,7 +5275,6 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVExtentPointStruct &p_svTitlePoint) c
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
 		case SVExtentTranslationPolarUnwrap:
-		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationProfile:

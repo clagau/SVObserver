@@ -1001,11 +1001,6 @@ HRESULT SVToolExtentClass::GetAuxiliaryDrawTypeString( CString& p_strDrawType )
 			p_strDrawType = _T("Translation Polar Unwrap");
 			break;
 		}
-		case SVExtentTranslationBuildReference :
-		{
-			p_strDrawType = _T("Translation Build Reference");
-			break;
-		}
 		case SVExtentTranslationLine :
 		{
 			p_strDrawType = _T("Translation Line");

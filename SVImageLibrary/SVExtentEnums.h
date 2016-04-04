@@ -188,7 +188,6 @@ enum SVExtentTranslationEnum
 	SVExtentTranslationTransformShift  = 50,
 	SVExtentTranslationTransformRotate = 51,
 	SVExtentTranslationPolarUnwrap     = 60,
-	SVExtentTranslationBuildReference  = 70,
 	SVExtentTranslationLine            = 80,
 
 	/// SVExtentTranslationResize - Does a position, height, and width, 
