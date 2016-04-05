@@ -2117,7 +2117,6 @@
 #define IDC_TRANSLATIONY_EDIT           16005
 #define IDC_COMBO_SHIFT_MODE            16006
 #define IDC_SHIFT_TOOL_VALUES           16008
-#define IDC_CHK_ENABLE_SOURCE_IMAGE_EXTENTS 16009
 #define IDC_TRIGGER_LIST                16010
 #define IDC_LST_TOOL_ERRORS             16011
 #define IDC_STATIC_TITLE                16012

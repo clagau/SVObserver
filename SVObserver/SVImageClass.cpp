@@ -185,10 +185,6 @@ void SVImageClass::init()
 									SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR );
 }
 
-/*
-Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
-The Parent Image attribute should not be used unless it is validated first.
-*/
 SVImageClass::~SVImageClass()
 {
 	CloseObject();
@@ -207,10 +203,6 @@ SVImageClass::~SVImageClass()
 	}
 }
 
-/*
-Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
-The Parent Image attribute should not be used unless it is validated first.
-*/
 BOOL SVImageClass::DestroyImage()
 {
 	BOOL bOk = TRUE;
@@ -621,15 +613,9 @@ SVImageExtentClass SVImageClass::GetImageExtents()
 	return m_ImageInfo.GetExtents();
 }
 
-/*
-Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
-The Parent Image attribute should not be used unless it is validated first.
-*/
 HRESULT SVImageClass::GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent )
 {
-	HRESULT l_hrOk = S_OK;
-
-	l_hrOk = m_ImageInfo.GetImageExtentsToFit( p_svInExtent, p_rsvOutExtent );
+	HRESULT l_hrOk = m_ImageInfo.GetImageExtentsToFit( p_svInExtent, p_rsvOutExtent );
 	
 	return l_hrOk;
 }
@@ -2373,10 +2359,6 @@ SVImageIndexStruct SVImageClass::GetSourceImageIndex( SVProductInfoStruct* pProd
 
 //* JMS - New Image Object methods
 
-/*
-Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
-The Parent Image attribute should not be used unless it is validated first.
-*/
 HRESULT SVImageClass::UpdatePosition()
 {
 	HRESULT l_Status = S_OK;
@@ -2401,10 +2383,6 @@ HRESULT SVImageClass::UpdatePosition()
 	return l_Status;
 }
 
-/*
-Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
-The Parent Image attribute should not be used unless it is validated first.
-*/
 HRESULT SVImageClass::UpdateChildren()
 {
 	HRESULT l_hrOk = S_OK;
@@ -2576,7 +2554,6 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 
 				if( l_Reset )
 				{
-//					SVToolClass*	parentTool = static_cast <SVToolClass*> (GetOwner());
 					SVToolClass*	parentTool = GetTool();
 					if (nullptr == parentTool)
 					{

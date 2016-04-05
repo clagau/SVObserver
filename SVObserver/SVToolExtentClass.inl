@@ -9,14 +9,16 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:40:18  $
 //******************************************************************************
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
+#pragma endregion Includes
 
 inline HRESULT SVToolExtentClass::Initialize()
 {
 	HRESULT l_svOk = S_OK;
 
-	m_psvTool = NULL;
-	m_psvToolImage = NULL;
+	m_psvTool = nullptr;
+	m_psvToolImage = nullptr;
 
 	m_eImageType = SVImageTypeUnknown;
 
@@ -27,7 +29,7 @@ inline HRESULT SVToolExtentClass::Initialize()
 
 	m_bAlwaysUpdate = true;
 
-	m_psvSelectedImage = NULL;
+	m_psvSelectedImage = nullptr;
 
 	KeepPrevError( l_svOk, m_svRootOffsetData.Initialize() );
 	KeepPrevError( l_svOk, m_svSelectedOffsetData.Initialize() );

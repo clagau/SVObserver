@@ -61,9 +61,7 @@ void SVTADlgTranslationShiftPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_LEARN, m_btnSetReference);
 	DDX_Control(pDX, IDC_BTN_NORMALIZE, m_btnNormalize);
 	DDX_Control(pDX, IDC_SHIFT_TOOL_VALUES, m_ShiftValueStatic);
-	DDX_Control(pDX, IDC_CHK_ENABLE_SOURCE_IMAGE_EXTENTS, m_ctlEnableSourceImageExtents);
 }
-
 
 BEGIN_MESSAGE_MAP(SVTADlgTranslationShiftPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_BTN_LEARN, &SVTADlgTranslationShiftPageClass::OnBnClickedBtnLearn)
@@ -72,9 +70,7 @@ BEGIN_MESSAGE_MAP(SVTADlgTranslationShiftPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_TRANSLATION_X_FORMULA_BUTTON, &SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton)
 	ON_BN_CLICKED(IDC_TRANSLATION_Y_FORMULA_BUTTON, &SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton)
 	ON_CBN_SELCHANGE(IDC_COMBO_SHIFT_MODE, &SVTADlgTranslationShiftPageClass::OnCbnSelchangeComboShiftMode)
-	ON_BN_CLICKED(IDC_CHK_ENABLE_SOURCE_IMAGE_EXTENTS, &SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents)
 END_MESSAGE_MAP()
-
 
 // SVTADlgTranslationShiftPage message handlers
 
@@ -94,13 +90,13 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
-		pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
 		
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
-		pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
 
-		SVShiftTool* l_pTool = NULL;
+		SVShiftTool* l_pTool = nullptr;
 
 		pParentDialog->GetToolByType( l_pTool );
 
@@ -115,13 +111,6 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		m_ctlShiftModeCombo.SelectString(-1,svCurrentShiftType);
 
 		m_lShiftType = m_ctlShiftModeCombo.GetCurSel();
-
-		m_pvoEnableSourceImageExtents = &l_pTool->m_EnableSourceImageExtents;
-		BOOL bEnableValue;
-		m_pvoEnableSourceImageExtents->GetValue(bEnableValue);
-		m_ctlEnableSourceImageExtents.SetCheck(bEnableValue);
-
-
 
 		//put in the Property Tree for the properties for the Shift Tool Values
 		CRect rc;
@@ -139,10 +128,9 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		m_Tree.SetColumn(200);
 
 		// Check...
-		if( pEvaluateTranslationX != NULL && pEvaluateTranslationY != NULL )
+		if( nullptr != pEvaluateTranslationX && nullptr != pEvaluateTranslationY )
 		{
 			_variant_t l_Variant = 0;
-
 
 			UpdateData(FALSE);
 			UpdateControls();
@@ -151,9 +139,7 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 			
 			return TRUE;
 		}
-
 	}
-
 	return TRUE;
 }
 
@@ -166,7 +152,7 @@ HRESULT SVTADlgTranslationShiftPageClass::SetInspectionData()
 	{
 		UpdateData( TRUE ); // get data from dialog
 
-		SVShiftTool* l_pTool = NULL;
+		SVShiftTool* l_pTool = nullptr;
 
 		pParentDialog->GetToolByType( l_pTool );
 
@@ -175,7 +161,7 @@ HRESULT SVTADlgTranslationShiftPageClass::SetInspectionData()
 		{
 			long lValue = ( long ) m_ctlShiftModeCombo.GetItemData( iCurSel );
 
-			if( AddInputRequest( m_pvoShiftMode, lValue ) == S_OK )
+			if( S_OK == AddInputRequest( m_pvoShiftMode, lValue ) )
 			{
 				l_bRequestAdded = true;
 				l_hrOk = S_OK;
@@ -184,28 +170,14 @@ HRESULT SVTADlgTranslationShiftPageClass::SetInspectionData()
 			{
 				l_hrOk = S_FALSE;
 			}
-
-			BOOL bValue = FALSE;
-			if ( m_ctlEnableSourceImageExtents.GetCheck() )
-			{
-				bValue = TRUE;
-			}
-
-			if ( AddInputRequest(m_pvoEnableSourceImageExtents, bValue) == S_OK )
-			{
-				l_bRequestAdded = true;
-				l_hrOk = S_OK;
-			}
-
 		}
-		
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( pTool );
 		}
@@ -220,15 +192,13 @@ void SVTADlgTranslationShiftPageClass::refresh()
 {
 	if (pTool)
 	{
-		CWnd* pWnd = NULL;
-
 		SetInspectionData();
 
 		FillShiftProperties();
 
 		_variant_t l_Variant;
 
-		if( GetValue( pTool->GetUniqueObjectID(), SVTranslationXObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+		if( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTranslationXObjectGuid, l_Variant.GetVARIANT() ) )
 		{
 			StrTranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
 		}
@@ -237,7 +207,7 @@ void SVTADlgTranslationShiftPageClass::refresh()
 			StrTranslationXValue = _T("");
 		}
 		
-		if( GetValue( pTool->GetUniqueObjectID(), SVTranslationYObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+		if( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTranslationYObjectGuid, l_Variant.GetVARIANT() ) )
 		{
 			StrTranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
 		}
@@ -245,15 +215,13 @@ void SVTADlgTranslationShiftPageClass::refresh()
 		{
 			StrTranslationYValue = _T("");
 		}
-		
 		UpdateData(FALSE); // set data to dialog
 	}
-
 }
  
 void SVTADlgTranslationShiftPageClass::OnBnClickedBtnLearn()
 {
-	SVShiftTool* l_pTool = NULL;
+	SVShiftTool* l_pTool = nullptr;
 
 	pParentDialog->GetToolByType( l_pTool );
 	SVShiftToolUtility::SetToolSetReference(l_pTool);
@@ -263,7 +231,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedBtnLearn()
 
 void SVTADlgTranslationShiftPageClass::OnBnClickedBtnNormalize()
 {
-	SVShiftTool* l_pTool = NULL;
+	SVShiftTool* l_pTool = nullptr;
 
 	pParentDialog->GetToolByType( l_pTool );
 	SVShiftToolUtility::SetToolNormalize(l_pTool);
@@ -332,18 +300,17 @@ void SVTADlgTranslationShiftPageClass::UpdateControls()
 			m_btnSetReference.ShowWindow(SW_HIDE);
 			m_btnNormalize.ShowWindow(SW_HIDE);
 			m_ShiftValueStatic.ShowWindow(SW_HIDE);
-			m_ctlEnableSourceImageExtents.EnableWindow(FALSE);
+
 			GetDlgItem(IDC_SHIFT_TOOL_VALUES)->ShowWindow(SW_HIDE);
 			m_Tree.ShowWindow(SW_HIDE);
 			break;
 		}
 
-		case 1: // absolue
+		case 1: // absolute
 		{
 			//enable formula buttons
 			m_btnFormulaX.EnableWindow(TRUE);
 			m_btnFormulaY.EnableWindow(TRUE);
-			m_ctlEnableSourceImageExtents.EnableWindow(TRUE);
 
 			//hide reference controls
 			m_btnSetReference.ShowWindow(SW_HIDE);
@@ -356,11 +323,9 @@ void SVTADlgTranslationShiftPageClass::UpdateControls()
 
 		case 2: // reference
 		{
-
 			//enable formula buttons
 			m_btnFormulaX.EnableWindow(TRUE);
 			m_btnFormulaY.EnableWindow(TRUE);
-			m_ctlEnableSourceImageExtents.EnableWindow(TRUE);
 
 			//show reference controls
 			m_btnSetReference.ShowWindow(SW_SHOW);
@@ -370,8 +335,7 @@ void SVTADlgTranslationShiftPageClass::UpdateControls()
 			m_Tree.ShowWindow(SW_SHOW);
 			break;
 		}
-	}//end of swithc iCurSel
-
+	}//end of switch iCurSel
 }
 
 void SVTADlgTranslationShiftPageClass::SetupShiftPropertyTree()
@@ -428,7 +392,6 @@ void SVTADlgTranslationShiftPageClass::SetupShiftPropertyTree()
 			pPropItem->SetCtrlID(PROP_SHIFT_RESULT_LEFT);
 		}
 
-
 		pRoot->Select(true);
 		pRoot->Expand();
 	}
@@ -436,19 +399,19 @@ void SVTADlgTranslationShiftPageClass::SetupShiftPropertyTree()
 
 void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 {
-	SVRPropertyItemStatic* pPropItem = NULL;
+	SVRPropertyItemStatic* pPropItem = nullptr;
 	_variant_t l_Variant;
 	CString sVal;
 
 	//get each value and put into property tree
 
-	if ( GetValue( pTool->GetUniqueObjectID(), SVShiftToolReferenceYObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVShiftToolReferenceYObjectGuid, l_Variant.GetVARIANT() ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_TRANS_Y);
 		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
 	}
 
-	if ( GetValue( pTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, l_Variant.GetVARIANT() ) )
 	{
 		pPropItem = dynamic_cast<SVRPropertyItemStatic*>(m_Tree.FindItem(PROP_SHIFT_TRANS_X));
 		if ( pPropItem )
@@ -457,22 +420,22 @@ void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 		}
 	}
 
-	if ( GetValue( pTool->GetUniqueObjectID(), SVImageTransformDisplacementXGuid, l_Variant.GetVARIANT() ) == S_OK )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVImageTransformDisplacementXGuid, l_Variant.GetVARIANT() ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_DISP_X);
 		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
 	}
-	if ( GetValue( pTool->GetUniqueObjectID(), SVImageTransformDisplacementYGuid, l_Variant.GetVARIANT() ) == S_OK )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVImageTransformDisplacementYGuid, l_Variant.GetVARIANT() ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_DISP_Y);
 		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
 	}
-	if ( GetValue( pTool->GetUniqueObjectID(), SVTopResultObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTopResultObjectGuid, l_Variant.GetVARIANT() ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_RESULT_TOP);
 		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
 	}
-	if ( GetValue( pTool->GetUniqueObjectID(), SVLeftResultObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVLeftResultObjectGuid, l_Variant.GetVARIANT() ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_RESULT_LEFT);
 		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
@@ -481,15 +444,6 @@ void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 	m_Tree.RefreshItems();
 }
 
-void SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents()
-{
-	refresh();
-	if( m_ctlEnableSourceImageExtents.GetCheck()==0)
-	{
-		SvStl::MessageMgrDisplayAndNotify e( SvStl::LogAndDisplay );
-		e.setMessage( SVMSG_SVO_60_SHIFT_TOOL_SOURCE_IMAGE_EXTENTS_DISABLED, nullptr, StdMessageParams, SvOi::Err_17053_Shift_Tool_Source_Image_Extents_Disabled );
-	}
-}
 BOOL SVTADlgTranslationShiftPageClass::OnSetActive()
 {
 	refresh();

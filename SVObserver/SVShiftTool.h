@@ -27,9 +27,6 @@ enum SV_SHIFT_ENUM
 	SV_SHIFT_REFERENCE	= 2
 };
 
-// Add String for SVEnumerateValueObjectClass
-const LPCSTR g_strShiftToolEnum = 
-                _T( "None=0,Absolute=1,Reference=2" );
 #pragma endregion Declarations
 
 class SVShiftTool : public SVToolClass,
@@ -39,7 +36,7 @@ public AllowResizeToParent
 
 public:
 #pragma region Constructor
-	SVShiftTool( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVSHIFTTOOL );
+	SVShiftTool( BOOL BCreateDefaultTaskList = false, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSHIFTTOOL );
 	virtual ~SVShiftTool();
 #pragma endregion Constructor
 
@@ -65,7 +62,6 @@ protected:
 #pragma region Protected Methods
 	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
 	virtual BOOL OnValidate();
-	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
 	SVImageClass* GetImageInput() const;
 	SVDoubleValueObjectClass* GetTranslationXInput() const;
 	SVDoubleValueObjectClass* GetTranslationYInput() const;
@@ -86,10 +82,10 @@ protected:
 	SVDoubleValueObjectClass m_LeftResult;
 	SVDoubleValueObjectClass m_TopResult;
 	SVImageClass m_OutputImage;
+	SVBoolValueObjectClass m_EnableSourceImageExtents; // this value object is obsolete (perhaps it can be removed at some future date)
 
 public:
 	SVEnumerateValueObjectClass m_evoShiftMode; // @WARNING:  bad practice making members public
-	SVBoolValueObjectClass m_EnableSourceImageExtents;// @WARNING:  bad practice making members public
 #pragma endregion Member Variables
 
 private:

@@ -84,7 +84,6 @@ public:
 
 public:
 	SVEnumerateValueObjectClass *m_pvoShiftMode;
-	SVBoolValueObjectClass *m_pvoEnableSourceImageExtents;
 	afx_msg void OnCbnSelchangeComboShiftMode();
 	CButton m_btnFormulaX;
 	CButton m_btnFormulaY;
@@ -95,9 +94,6 @@ public:
 
 private:
 	long m_lShiftType;
-public:
-	CButton m_ctlEnableSourceImageExtents;
-	afx_msg void OnBnClickedChkEnableSourceImageExtents();
 };
 
 

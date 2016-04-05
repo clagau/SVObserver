@@ -11,10 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <set>
 #include "ObjectInterfaces/SVImageEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVToolExtentPropertiesClass.h"
+#pragma endregion Includes
 
 class SVImageClass;
 class SVToolClass;
@@ -28,7 +30,6 @@ public:
 		SVToolExtent               = 1,
 		SVTransformationToolExtent = 2,
 		SVColorToolExtent          = 3,
-		SVRebuildOnResizeToolExtent = 4,
 	};
 
 	SVToolExtentClass();
