@@ -164,8 +164,6 @@ public:
 protected:
 	static DWORD WINAPI SingleGrabHelperFn(LPVOID lpParameter);
 
-	friend class SVMatroxDCamAcquisitionProxy;	// to access these protected functions
-	friend class SVIntekDCamAcquisitionProxy;	// to access these protected functions
 	friend class SVMatroxGigeCameraProxy;		// to access these protected functions
 
 	virtual HRESULT WriteCameraRegister( unsigned long ulAddress, unsigned long ulValue );
@@ -212,9 +210,7 @@ private:
 	SVAcquisitionClass();
 
 	unsigned long mulSize;
-
 	bool m_ImageAquired;
-
 };
 
 typedef SVSharedPtr< SVAcquisitionClass > SVAcquisitionClassPtr;

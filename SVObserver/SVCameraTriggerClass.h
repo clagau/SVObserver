@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVSoftwareTriggerClass.h"
+#pragma endregion Includes
 
 class SVCameraTriggerClass : public SVTriggerClass
 {

@@ -8,27 +8,19 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:32:42  $
 //******************************************************************************
-
-#if !defined(SVANALYZERRESULTDLG_H)
-#define SVANALYZERRESULTDLG_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Inlcudes
 #include "SVOCVBlobRecord.h"
-/////////////////////////////////////////////////////////////////////////////
-// SVAnalyzerResultDlg dialog
-
-class SVOCRBlobRecordArray;
+#pragma endregion Inlcudes
 
 class SVAnalyzerResultDlg : public CDialog
 {
 // Construction
 public:
-	SVAnalyzerResultDlg(CWnd* pParent = NULL);   // standard constructor
+	SVAnalyzerResultDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVAnalyzerResultDlg();
 
-	SVOCRBlobRecordArray *svocrbraResults;
 	SVOCVCharacterResultArray *psvocvResultArray;
 
 // Dialog Data
@@ -57,6 +49,4 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVANALYZERRESULTDLG_H)
 

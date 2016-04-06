@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:52:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVDoubleValueObjectClass.h"
 #include "SVBoolValueObjectClass.h"
 #include "SVIOEntryHostStruct.h"
+#pragma endregion Includes
 
 class SVCameraTriggerData : public SVObjectClass 
 {

@@ -21,10 +21,11 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS( EQAdjustSizeWidth, EQAdjustSizeWidthGuid );
 
-
 EQAdjustSizeWidth::EQAdjustSizeWidth( SVObjectClass* POwner, int StringResourceID )
-	:EQAdjustSize( EQSizeWidthType,EQAdjustSizeWidthResultGuid, POwner, StringResourceID )
+: EQAdjustSize( EQSizeWidthType, EQAdjustSizeWidthResultGuid, POwner, StringResourceID )
 {
-	
 }
 
+EQAdjustSizeWidth::~EQAdjustSizeWidth()
+{
+}

@@ -11,11 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVImageLibrary/SVExtentFigureStruct.h"
 #include "SVImageLibrary/SVExtentLineStruct.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVImageLibrary/SVDrawContext.h"
+#pragma endregion Includes
 
 //******************************************************************************
 //* FUNCTION DECLARATION(S):
@@ -214,4 +216,3 @@ public:
 protected:
 	SVDrawObjectClassArray m_svDrawObjectArray;
 };
-

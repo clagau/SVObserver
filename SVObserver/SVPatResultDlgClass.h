@@ -9,14 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:19:48  $
 //******************************************************************************
 
-#if !defined(AFX_SVPATRESULTDLGCLASS_H__33CECE3C_FF27_11D3_A8A2_00106F021742__INCLUDED_)
-#define AFX_SVPATRESULTDLGCLASS_H__33CECE3C_FF27_11D3_A8A2_00106F021742__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVPatResultDlgClass.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // SVPatResultDlgClass dialog
@@ -25,7 +18,8 @@ class SVPatResultDlgClass : public CDialog
 {
 // Construction
 public:
-	SVPatResultDlgClass(CWnd* pParent = NULL);   // standard constructor
+	SVPatResultDlgClass(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVPatResultDlgClass();
 
 // Dialog Data
 	//{{AFX_DATA(SVPatResultDlgClass)
@@ -56,6 +50,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVPATRESULTDLGCLASS_H__33CECE3C_FF27_11D3_A8A2_00106F021742__INCLUDED_)
-

@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <vector>
+#pragma endregion Includes
 
 /**
 @SVObjectName Matrox Identifier
@@ -22,13 +24,8 @@
 @SVObjectOperations None
 
 */
-#ifdef _WIN64
-   typedef long long SVMatroxIdentifier;
-   typedef long long SVMatroxInt;
-#else
-   typedef long SVMatroxIdentifier;
-   typedef long SVMatroxInt;
-#endif
+typedef long long SVMatroxIdentifier;
+typedef long long SVMatroxInt;
 
 
 /**
@@ -102,4 +99,3 @@ typedef std::vector<long> SVMatroxLongArray;
 
 */
 typedef std::vector<BYTE> SVMatroxByteArray;
-

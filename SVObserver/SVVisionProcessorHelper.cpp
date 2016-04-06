@@ -1035,7 +1035,7 @@ HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName,
 	}
 	else
 	{
-		hr = SVMSG_SVF_ACCESS_DENIED;
+		hr = SVMSG_SVO_ACCESS_DENIED;
 	}
 	return hr;
 }
@@ -1157,7 +1157,7 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList( const SVString& rListName,
 	}
 	else
 	{
-		hr = SVMSG_SVF_ACCESS_DENIED;
+		hr = SVMSG_SVO_ACCESS_DENIED;
 	}
 	return hr;
 }

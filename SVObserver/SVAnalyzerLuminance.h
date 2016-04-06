@@ -11,71 +11,40 @@
 
 #pragma once
 
+#pragma region Inlcudes
 #include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #include "SVAnalyzer.h"
+#pragma endregion Inlcudes
 
-////////////////////////////////////////////////////////////////////////////////
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVLuminanceAnalyzerClass
-//* Note(s)    : Luminance Analyzer.
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Class SVLuminanceAnalyzerClass
-// -----------------------------------------------------------------------------
-// .Description : e.g. This base class capsules an Image and provides its ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 class SVLuminanceAnalyzerClass : public SVImageAnalyzerClass
 {
 	SV_DECLARE_CLASS( SVLuminanceAnalyzerClass );
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
 	SVLuminanceAnalyzerClass( LPCSTR ObjectName /* = "Luminace Analyzer" */ );
-	SVLuminanceAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
+	SVLuminanceAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
 
-public:
-   long             msvlHistValueArraySize;
+	virtual ~SVLuminanceAnalyzerClass();
 
-   SVLongValueObjectClass msvLuminanceValue;
-
-	SVDoubleValueObjectClass msvVarianceValue;
-	SVDoubleValueObjectClass msvStdDevValue;
-	SVBoolValueObjectClass msvCalcStdDevValue;
-
-	virtual        ~SVLuminanceAnalyzerClass();
-
-	virtual BOOL   CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 
 /*- CloseObject () ------------------------------------------*/
 /*- This function should only be called from the destructor  */
 /*- and from derived functions CloseObject () functions. ----*/
-	virtual BOOL   CloseObject();
+	virtual BOOL  CloseObject();
 
     SVResultClass* GetResultObject();
    
-	virtual BOOL   OnValidate ();
+	virtual BOOL OnValidate();
 
+public:
+	long msvlHistValueArraySize;
+
+	SVLongValueObjectClass msvLuminanceValue;
+
+	SVDoubleValueObjectClass msvVarianceValue;
+	SVDoubleValueObjectClass msvStdDevValue;
+	SVBoolValueObjectClass msvCalcStdDevValue;
 
 private:
 /*- USED BY CONSTRUCTORS ------------------------------------*/
@@ -86,7 +55,7 @@ private:
 protected:
 	virtual double calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares );
 
-   virtual BOOL   onRun( SVRunStatusClass& RRunStatus );
+   virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
 /*- USED BY onRun () ------------------------------------------*/
 /*- These values are only used by the Run () function, and   */
@@ -95,5 +64,4 @@ protected:
     SVMatroxImageResult        msvHistResultID;
 	SVMatroxLongArray          msvplHistValues;
 /*- End of USED BY Run (). ----------------------------------*/
-
 };

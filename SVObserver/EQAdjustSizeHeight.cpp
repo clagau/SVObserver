@@ -19,15 +19,13 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-
-
 SV_IMPLEMENT_CLASS( EQAdjustSizeHeight, EQAdjustSizeHeightGuid );
 
-
 EQAdjustSizeHeight::EQAdjustSizeHeight( SVObjectClass* POwner, int StringResourceID )
-	:EQAdjustSize( EQSizeHeightType , EQAdjustSizeHeightResultGuid ,POwner, StringResourceID )
+: EQAdjustSize( EQSizeHeightType, EQAdjustSizeHeightResultGuid, POwner, StringResourceID )
 {
 }
 
-
-
+EQAdjustSizeHeight::~EQAdjustSizeHeight()
+{
+}

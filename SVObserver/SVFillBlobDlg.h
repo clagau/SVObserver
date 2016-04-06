@@ -9,28 +9,20 @@
 // * .Check In Date   : $Date:   12 Nov 2014 07:05:36  $
 // ******************************************************************************
 
-#if !defined(AFX_SVFILLBLOBDLG_H__96BD7895_131C_4186_8793_AFD7A234D0B0__INCLUDED_)
-#define AFX_SVFILLBLOBDLG_H__96BD7895_131C_4186_8793_AFD7A234D0B0__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVFillBlobDlg.h : header file
-//
+
+#pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVValueObjectImpl.h"
 
 #include "SVTaskObjectInterfaceClass.h"
-
-/////////////////////////////////////////////////////////////////////////////
-// SVFillBlobDlg dialog
+#pragma endregion Includes
 
 class SVFillBlobDlg : public CDialog, public SVTaskObjectInterfaceClass
 {
-// Construction
 public:
-	SVFillBlobDlg(CWnd* pParent = NULL);   // standard constructor
-
+	SVFillBlobDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVFillBlobDlg();
 	virtual HRESULT SetInspectionData();
 
 // Dialog Data
@@ -69,6 +61,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVFILLBLOBDLG_H__96BD7895_131C_4186_8793_AFD7A234D0B0__INCLUDED_)
-

@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:16:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTimerLibrary/SVClock.h"
 #include "SVCameraImageTemplate.h"
+#pragma endregion Includes
 
 class SVMainImageClass : public SVCameraImageTemplate 
 {
@@ -21,7 +22,7 @@ class SVMainImageClass : public SVCameraImageTemplate
 
 public:
 	SVMainImageClass( LPCSTR ObjectName );
-	SVMainImageClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVMAINIMAGE );
+	SVMainImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMAINIMAGE );
 
 	virtual ~SVMainImageClass();
 
@@ -43,6 +44,5 @@ protected:
 
 private:
 	void init();
-
 };
 

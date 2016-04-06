@@ -9,14 +9,7 @@
 // * .Check In Date   : $Date:   23 Apr 2013 09:33:26  $
 // ******************************************************************************
 
-#if !defined(AFX_SVARCHIVEWRITINGDLG_H__14920633_2FBE_48F8_A610_979694FA267D__INCLUDED_)
-#define AFX_SVARCHIVEWRITINGDLG_H__14920633_2FBE_48F8_A610_979694FA267D__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVArchiveWritingDlg.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // SVArchiveWritingDlg dialog
@@ -25,7 +18,8 @@ class SVArchiveWritingDlg : public CDialog
 {
 // Construction
 public:
-	SVArchiveWritingDlg(CWnd* pParent = NULL);   // standard constructor
+	SVArchiveWritingDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVArchiveWritingDlg();
 
 // Dialog Data
 	//{{AFX_DATA(SVArchiveWritingDlg)
@@ -53,6 +47,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVARCHIVEWRITINGDLG_H__14920633_2FBE_48F8_A610_979694FA267D__INCLUDED_)
-

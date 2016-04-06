@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   24 Apr 2013 12:28:10  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVOLibrary/SVODeviceClass.h"
 #include "SVOLibrary/SVQueueObject.h"
+#pragma endregion Includes
 
 class SVIOTriggerLoadLibraryClass;
 
@@ -44,6 +45,5 @@ protected:
 	#ifdef SV_LOG_STATUS_INFO
 		SVStatusDeque m_StatusLog;
 	#endif
-
 };
 

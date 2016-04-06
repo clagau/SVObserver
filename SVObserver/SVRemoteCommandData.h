@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:43:32  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVCommandLibrary/SVCommandDataHolder.h"
+#pragma endregion Includes
 
 class ATL_NO_VTABLE SVRemoteCommandData
 :	public CComObjectRootEx< CComSingleThreadModel >
@@ -58,7 +59,6 @@ public:
 
 protected:
 	SVCommandDataHolder m_Data;
-
 };
 
 OBJECT_ENTRY_AUTO( __uuidof( SVRemoteCommandData ), SVRemoteCommandData ) 

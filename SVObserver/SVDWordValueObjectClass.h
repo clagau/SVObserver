@@ -14,9 +14,11 @@
 #pragma warning (push)
 #pragma warning (disable : 4244)
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVDWordValueObjectClass : public SVValueObjectClassImpl <DWORD>
 {
@@ -24,14 +26,11 @@ class SVDWordValueObjectClass : public SVValueObjectClassImpl <DWORD>
 
 public:
 	SVDWordValueObjectClass( LPCTSTR ObjectName );
-	SVDWordValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVDWORDVALUEOBJECT );
+	SVDWordValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDWORDVALUEOBJECT );
 	SVDWordValueObjectClass( const SVDWordValueObjectClass& rhs );
 	const SVDWordValueObjectClass& operator = ( const SVDWordValueObjectClass& rhs );
 
 	virtual ~SVDWordValueObjectClass();
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
@@ -47,7 +46,6 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
 
 #pragma warning (pop)

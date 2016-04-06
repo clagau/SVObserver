@@ -46,6 +46,10 @@ SVOperatorClass::SVOperatorClass( SVObjectClass* POwner, int StringResourceID )
 	init();
 }
 
+SVOperatorClass::~SVOperatorClass()
+{
+}
+
 BOOL SVOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL bOk = FALSE;

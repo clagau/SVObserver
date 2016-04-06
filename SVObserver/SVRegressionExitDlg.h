@@ -9,23 +9,14 @@
 // * .Check In Date   : $Date:   23 Apr 2013 14:41:08  $
 // ******************************************************************************
 
-#if !defined(AFX_SVREGRESSIONEXITDLG_H__C1DC1B01_722F_4792_9506_7321D69DE4ED__INCLUDED_)
-#define AFX_SVREGRESSIONEXITDLG_H__C1DC1B01_722F_4792_9506_7321D69DE4ED__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVRegressionExitDlg.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// SVRegressionExitDlg dialog
 
 class SVRegressionExitDlg : public CDialog
 {
 // Construction
 public:
-	SVRegressionExitDlg(CWnd* pParent = NULL);   // standard constructor
+	SVRegressionExitDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVRegressionExitDlg();
 
 // Dialog Data
 	//{{AFX_DATA(SVRegressionExitDlg)
@@ -57,6 +48,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVREGRESSIONEXITDLG_H__C1DC1B01_722F_4792_9506_7321D69DE4ED__INCLUDED_)
-

@@ -14,16 +14,13 @@
 // SVTemplate.h: interface for the SVArrayClass class.
 //
 //////////////////////////////////////////////////////////////////////
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <sstream>
-
-#ifndef SV_INLINE
-#define SV_INLINE __forceinline
-#endif
+#pragma endregion Includes
 
 // ignore allocators for now
 template < class T >
@@ -581,7 +578,6 @@ const typename TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::TypeMapSecondary& T
 {
 	return mapSecondaryType;
 }
-
 
 template<typename TYPEID, typename TYPEID2, class FACTORYBASE> class TDoubleFactorySingleton
 {

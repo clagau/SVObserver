@@ -22,6 +22,10 @@ SVHorizEdgeFilterClass::SVHorizEdgeFilterClass( SVObjectClass* POwner, int Strin
 	outObjectInfo.ObjectTypeInfo.SubType = SVHorzEdgeFilterObjectType;
 }
 
+SVHorizEdgeFilterClass::~SVHorizEdgeFilterClass()
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

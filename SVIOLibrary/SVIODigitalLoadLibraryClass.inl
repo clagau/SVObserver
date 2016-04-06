@@ -71,7 +71,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 			m_psvGetOutputPortValue = (SVOutputGetPortValuePtr)::GetProcAddress( m_hmHandle, "SVOutputGetPortValue" );
 			m_psvSetOutputPortValue = (SVOutputSetPortValuePtr)::GetProcAddress( m_hmHandle, "SVOutputSetPortValue" );
 
-			// Proc Addresses for Parameters.  These are only implemented in TVicLpt DLLs.
+			// Proc Addresses for Parameters.  These are only implemented in the SVLptIO DLL.
 			m_psvSetParameterValue = (SVSetParameterValuePtr)::GetProcAddress( m_hmHandle, "SVSetParameterValue");
 			m_psvGetParameterValue = (SVGetParameterValuePtr)::GetProcAddress( m_hmHandle, "SVGetParameterValue" );
 			m_psvGetParameterName = (SVGetParameterNamePtr)::GetProcAddress( m_hmHandle, "SVGetParameterName" );

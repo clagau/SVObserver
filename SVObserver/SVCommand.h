@@ -11,15 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVActiveXLockStruct.h"	// Added by ClassView
 #include "SVInfoStructs.h"
+#pragma endregion Includes
 
-// BRW - SVImageCompression has been deprecated.
-#ifndef _WIN64
-class SVImageCompressionClass;
-#endif
 class SVValueObjectClass;
 class SVInspectionProcess;
 
@@ -40,7 +38,7 @@ struct StreamDataStruct
 	long arrayIndex;
 
 	StreamDataStruct()
-	: pValueObject( NULL ), m_InspectionID(), strValueName(), arrayIndex( 0 ) {}
+	: pValueObject( nullptr ), m_InspectionID(), strValueName(), arrayIndex( 0 ) {}
 };
 
 struct PacketDataStruct
@@ -51,7 +49,7 @@ struct PacketDataStruct
 
 	PacketDataStruct()
 	{
-		pValueObject = NULL;
+		pValueObject = nullptr;
 		strValue.Empty();
 		lState = PRODUCT_NOT_INSPECTED;
 	}// end ctor
@@ -72,7 +70,6 @@ struct ProductDataStruct
 };
 
 #include "SVObserverCP.h"
-#define SERVER_COMPRESSION_POOL_SIZE 5
 
 /**
 @SVObjectName COM Command Server
@@ -652,31 +649,15 @@ public:
 public:
 	static BOOL ResetStreamingDataAndLockedImages();
 
-//protected:
-//  ImageToBSTR () - If alCompression = 0, then image compression will not 
-//  be used.  More importantly the apCompressionObject will not be used, so if
-//  alCompression = 0, then it is acceptable for apCompressionObject to equal 
-//  NULL.	
-	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SVSmartHandlePointer ImageHandle, BSTR *pbstr
-						// BRW - SVImageCompression has been deprecated.
-#ifndef _WIN64
-		, long alCompression, SVImageCompressionClass *apCompressionObject);
-#else
-		);
-#endif
+	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SVSmartHandlePointer ImageHandle, BSTR *pbstr);
+	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr);
 
-	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr
-						// BRW - SVImageCompression has been deprecated.
-#ifndef _WIN64
-		, long alCompression, SVImageCompressionClass *apCompressionObject);
-#else
-		);
-#endif
 	static HRESULT BSTRToImage(bool bCreateNew, BSTR bstr, SVImageInfoClass& rImageInfo,SVSmartHandlePointer &rImageHandle);
 	static SVMatroxBuffer CreateImageFromBSTR( BSTR bstrImage );
-public:
+
     static HRESULT SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);
     static HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);
+
 protected:
     static HRESULT SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv);
 
@@ -708,5 +689,4 @@ private:
 };// end class CSVCommand
 
 OBJECT_ENTRY_AUTO( __uuidof(SVCommand), CSVCommand ) 
-
 		

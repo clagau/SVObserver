@@ -8,18 +8,20 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   05 Jul 2013 09:11:06  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVGigeCameraManager.h"
 #include "SVOGui\SVGigeCameraListCtrl.h"
+#pragma endregion Includes
 
 class SVGigeCameraManagerDlg : public CDialog
 {
 public:
 	SVGigeCameraStructSet m_CamList;
 	SVGigeCameraStructSet m_OriginalIniCameraList;
-	SVGigeCameraManagerDlg(CWnd* pParent = NULL);   // standard constructor
+	SVGigeCameraManagerDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVGigeCameraManagerDlg();
 
 // Dialog Data
 	//{{AFX_DATA(SVGigeCameraManagerDlg)

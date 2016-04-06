@@ -11,14 +11,12 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <map>
+#pragma region Includes
 #include "SVObjectScriptParser.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVOMFCLibrary/SVFunctionProfiler.h"
+#pragma endregion Includes
 
-//namespace NS_ObjectScriptParserSVX
-//{
 
 	enum ParserOperandTypeEnum
 	{
@@ -74,7 +72,7 @@ struct SVObjectScriptKeywordStruct
 
 struct SVObjectScriptOperandStruct
 {
-	inline SVObjectScriptOperandStruct( void* pVal = NULL, ParserOperandTypeEnum eType = NOP, int iSize = 0 );
+	inline SVObjectScriptOperandStruct( void* pVal = nullptr, ParserOperandTypeEnum eType = NOP, int iSize = 0 );
 	inline SVObjectScriptOperandStruct( const SVObjectScriptOperandStruct& rhs );
 	
 	inline ~SVObjectScriptOperandStruct();
@@ -100,8 +98,6 @@ protected:
 
 inline SVObjectScriptOperandStruct::SVObjectScriptOperandStruct( void* pVal, ParserOperandTypeEnum eType, int iSize )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptOperandStruct::SVObjectScriptOperandStruct(void, int, int)"));
-	//SVFunctionProfilerLocal profiler(profile);
 	m_pValue	= pVal;
 	m_eType	= eType;
 	m_iValueSize = iSize;
@@ -110,8 +106,6 @@ inline SVObjectScriptOperandStruct::SVObjectScriptOperandStruct( void* pVal, Par
 
 inline SVObjectScriptOperandStruct::SVObjectScriptOperandStruct( const SVObjectScriptOperandStruct& rhs )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptOperandStruct::SVObjectScriptOperandStruct copy constructor"));
-	//SVFunctionProfilerLocal profiler(profile);
 	m_iValueSize	= rhs.m_iValueSize;
 	m_eType		= rhs.m_eType;
 	m_bDirty = true;
@@ -130,23 +124,15 @@ inline SVObjectScriptOperandStruct::SVObjectScriptOperandStruct( const SVObjectS
 	}
 	else
 	{
-		m_pValue = NULL;
+		m_pValue = nullptr;
 	}
 }
 
 inline SVObjectScriptOperandStruct& SVObjectScriptOperandStruct::operator=( const SVObjectScriptOperandStruct& rExp )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptOperandStruct::operator ="));
-	//static SVFunctionProfiler profileCopyOnly(_T("SVObjectScriptOperandStruct::operator = copy only "));
-	//static SVFunctionProfiler profileReallocate(_T("SVObjectScriptOperandStruct::operator = reallocate"));
-	//static SVFunctionProfiler profileMemoryManagement(_T("SVObjectScriptOperandStruct::operator = memory management"));
-	//static SVFunctionProfiler profileMemcpy(_T("SVObjectScriptOperandStruct::operator = memcpy"));
-	//SVFunctionProfilerLocal profiler(profile);
 	m_bDirty = true;
 	if ( m_iValueSize == rExp.m_iValueSize )// no need to free and reallocate
 	{
-		//SVFunctionProfilerLocal profiler(profileCopyOnly);
-		//m_iValueSize	= rExp.m_iValueSize;
 		m_eType		= rExp.m_eType;
 		//  Make a copy of the data
 		if( m_iValueSize && rExp.m_pValue && m_pValue )
@@ -156,7 +142,6 @@ inline SVObjectScriptOperandStruct& SVObjectScriptOperandStruct::operator=( cons
 	}
 	else
 	{
-		//SVFunctionProfilerLocal profiler(profileReallocate);
 		m_iValueSize	= rExp.m_iValueSize;
 		m_eType		= rExp.m_eType;
 
@@ -165,7 +150,6 @@ inline SVObjectScriptOperandStruct& SVObjectScriptOperandStruct::operator=( cons
 		{
 			void* newValue;
 			{// begin block
-				//SVFunctionProfilerLocal profiler(profileMemoryManagement);
 				#ifndef SMALLMEMORYMANAGER
 					newValue = malloc( m_iValueSize );
 				#else
@@ -180,12 +164,11 @@ inline SVObjectScriptOperandStruct& SVObjectScriptOperandStruct::operator=( cons
 						SmallMemoryFree( m_pValue , m_iValueSize);
 					#endif
 
-					m_pValue = NULL;
+					m_pValue = nullptr;
 				}
 			}// end block
 
 			{// begin block
-				//SVFunctionProfilerLocal profiler(profileMemcpy);
 				memcpy( newValue, rExp.m_pValue, m_iValueSize );
 			}// end block
 
@@ -198,10 +181,6 @@ inline SVObjectScriptOperandStruct& SVObjectScriptOperandStruct::operator=( cons
 
 inline void SVObjectScriptOperandStruct::CleanUp()
 {
-	//static SVSizeProfiler sizeprofile(_T("SVObjectScriptOperandStruct::CleanUp"));
-	//sizeprofile.Add(ValueSize);
-	//static SVFunctionProfiler profile(_T("SVObjectScriptOperandStruct::CleanUp"));
-	//SVFunctionProfilerLocal profiler(profile);
 	if( m_pValue )
 #ifndef SMALLMEMORYMANAGER
 		free( m_pValue );
@@ -209,7 +188,7 @@ inline void SVObjectScriptOperandStruct::CleanUp()
 		SmallMemoryFree( m_pValue, m_iValueSize);
 #endif
 	
-	m_pValue     = NULL;
+	m_pValue     = nullptr;
 	m_eType      = NOP;
 	m_iValueSize = 0;
 	m_bDirty     = true;
@@ -217,8 +196,6 @@ inline void SVObjectScriptOperandStruct::CleanUp()
 
 inline void SVObjectScriptOperandStruct::SetValue( void* pValue_, int iSize_, ParserOperandTypeEnum eType_ )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptOperandStruct::SetValue(3)"));
-	//SVFunctionProfilerLocal profiler(profile);
 	CleanUp();
 	m_pValue = pValue_;
 	m_iValueSize = iSize_;
@@ -228,8 +205,6 @@ inline void SVObjectScriptOperandStruct::SetValue( void* pValue_, int iSize_, Pa
 
 inline void SVObjectScriptOperandStruct::SetValue( void* pValue_, int iSize_ )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptOperandStruct::SetValue(2)"));
-	//SVFunctionProfilerLocal profiler(profile);
 	CleanUp();
 	m_pValue = pValue_;
 	m_iValueSize = iSize_;
@@ -238,8 +213,6 @@ inline void SVObjectScriptOperandStruct::SetValue( void* pValue_, int iSize_ )
 
 inline SVObjectScriptOperandStruct::~SVObjectScriptOperandStruct()
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptOperandStruct::~SVObjectScriptOperandStruct"));
-	//SVFunctionProfilerLocal profiler(profile);
 	if( m_pValue )
 #ifndef SMALLMEMORYMANAGER
 		free( m_pValue );
@@ -249,11 +222,7 @@ inline SVObjectScriptOperandStruct::~SVObjectScriptOperandStruct()
 	// don't bother setting to null
 }
 
-
-
 typedef SVVector< SVObjectScriptOperandStruct > SVObjectScriptOperandList;
-
-
 
 struct SVObjectScriptAliasStruct
 {
@@ -279,39 +248,14 @@ struct SVObjectScriptAliasStruct
 		return( *this );
 	};
 
-
 	CString						tstrAlias;
 	SVObjectScriptOperandStruct SubstituteOperand;
 };
 
-//typedef SVArrayClass< LPTSTR, LPTSTR >	SVExpressionStack;	// should be a cstring
-//typedef SVArrayClass< CString, CString >	SVExpressionStack;
 typedef CStringArray SVExpressionStack;
 
 //}// temporary end namespace NS_ObjectScriptParserSVX
 
-/*
-// these can't belong in the namespace scope
-char* std::allocator<NS_ObjectScriptParserSVX::SVObjectScriptAliasStruct>::_Charalloc(size_t _N)
-{
-	//_N = 36;//sizeof(SVObjectScriptAliasStruct);
-	#ifndef SMALLMEMORYMANAGER
-		return (char*) malloc( _N );
-	#else
-		return (char*) SmallMemoryMalloc( 40 );
-	#endif
-}
-
-void std::allocator<NS_ObjectScriptParserSVX::SVObjectScriptAliasStruct>::deallocate(void* _P, size_t _N)
-{
-	//_N = 36;//sizeof(SVObjectScriptAliasStruct);
-	#ifndef SMALLMEMORYMANAGER
-		free( _P );
-	#else
-		SmallMemoryFree( _P, 40 );
-	#endif
-}
-//*/
 
 //namespace NS_ObjectScriptParserSVX	// continue namespace
 //{
@@ -342,7 +286,7 @@ public:
 	virtual HRESULT DoParse();
 	
 protected:
-	LPCTSTR Parse( SVObjectClass* POwner, LPCTSTR TStrParseString, SVObjectScriptAliasListClass* PExternalAliasTable = NULL );
+	LPCTSTR Parse( SVObjectClass* POwner, LPCTSTR TStrParseString, SVObjectScriptAliasListClass* PExternalAliasTable = nullptr );
 
 	CString ExtractToken( LPCTSTR TStrTokenString, int TokenStringLength );
 	CString ExtractGUIDToken( LPCTSTR TStrTokenString, int& rCount );

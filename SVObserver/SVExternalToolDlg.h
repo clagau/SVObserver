@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:32:04  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls/SVActiveDisableButton.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVExternalTool;
@@ -24,7 +25,7 @@ class SVExternalToolDlg : public CPropertyPage, public SvOg::ISVPropertyPageDial
 {
 public:
 	SVExternalToolDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
-	~SVExternalToolDlg();
+	virtual ~SVExternalToolDlg();
 
 	// ISVPropertyPageDialog
 	bool QueryAllowExit();

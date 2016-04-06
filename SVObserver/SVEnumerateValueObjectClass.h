@@ -11,12 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <utility>
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #include "ObjectInterfaces\IEnumerateValueObject.h"
+#pragma endregion Includes
 
 typedef std::pair<CString, long> SVEnumeratePair;
 typedef std::vector<SVEnumeratePair> SVEnumerateVector;
@@ -26,15 +28,12 @@ class SVEnumerateValueObjectClass : public SVValueObjectClassImpl <long>, public
 	SV_DECLARE_CLASS( SVEnumerateValueObjectClass );
 public:
 	SVEnumerateValueObjectClass( LPCTSTR ObjectName );
-	SVEnumerateValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVENUMERATEVALUEOBJECT );
+	SVEnumerateValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVENUMERATEVALUEOBJECT );
 	const SVEnumerateValueObjectClass& operator = (const SVEnumerateValueObjectClass& rhs);
 
 	virtual ~SVEnumerateValueObjectClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rStrScript, CString& rStrAliasTable, int Indent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
@@ -92,4 +91,3 @@ private:
 	SvCl::SVObjectCStringArrayClass m_enumStringTable;
 #pragma endregion Member Variables
 };
-

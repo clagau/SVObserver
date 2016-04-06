@@ -11,14 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVObjectAppClass.h"
 #include "SVGlobalHandles.h"
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
+#pragma endregion Includes
 
 class SVToolClass;
 class SVIPDoc;
@@ -36,31 +32,11 @@ class SVIPDoc;
 ////////////////////////////////////////////////////////////////////////////////
 class SVDataBufferInfoClass
 {
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
 	SVDataBufferInfoClass();
 	SVDataBufferInfoClass( SVDataBufferInfoClass& S2 );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 	SVDataBufferInfoClass operator=( SVDataBufferInfoClass& S2 );
 
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-public:
 	SVToolClass*				POwnerTool;
 	long						Length;
 	DWORD						Type;
@@ -76,10 +52,7 @@ public:
 		SVHistResult		= 0x0400,
 		SVContainsFloatData = 0x4000
 	};
-
 };
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVDataBufferClass 
@@ -101,57 +74,20 @@ class SVDataBufferClass : public SVObjectAppClass
 {
 	SV_DECLARE_CLASS( SVDataBufferClass );
 
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-	SVDataBufferClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVDATABUFFER );
-
-protected:
-	void init();
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
+	SVDataBufferClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDATABUFFER );
 	virtual ~SVDataBufferClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
 	virtual BOOL Resize( int NewLength );
 
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-public:
 	SVDataBufferInfoClass&		GetDataBufferInfo();
 	SVDataBufferHandleStruct&	GetDataBufferHandle();
 
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
 protected:
+	void init();
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
 	SVDataBufferInfoClass dataInfo;
 };

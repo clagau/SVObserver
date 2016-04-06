@@ -382,23 +382,17 @@ bool SVRPropertyItemCombo::GetItemValue(VARIANT& vtVal)
 	StoreItemData();
 	::VariantClear(&vtVal);
 
-#ifdef _WIN64
 	V_VT( &vtVal ) = VT_I8;
 	V_I8( &vtVal ) = m_lComboData;
-#else
-	V_VT( &vtVal ) = VT_I4;
-	V_I4( &vtVal ) = m_lComboData;
-#endif
 
 	return true;
 }
-
 
 bool SVRPropertyItemCombo::SetItemValue(const LPARAM lparam)
 {
 	m_lComboData = lparam;
 	OnRefresh();
-	//DisplayButton();
+
 	return true;
 }
 

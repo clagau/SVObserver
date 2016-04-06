@@ -67,7 +67,7 @@ static void UpdatePaletteForLut(bool bLut, LPDIRECTDRAWSURFACE7 pSurface)
 	{
 		LPDIRECTDRAWPALETTE pPalette;
 		HRESULT hr = pSurface->GetPalette(&pPalette);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			if (bLut)
 			{
@@ -106,11 +106,11 @@ static void CalcLut(BYTE* p_pFrom, BYTE* p_pTo, unsigned long p_Width, unsigned 
 
 			unsigned long l_Value = *l_pSrcPixel;
 
-			if( ( l_Value | ( ~p_Mask ) ) == 0xFFFFFFFF )
+			if( 0xFFFFFFFF == ( l_Value | ( ~p_Mask ) )  )
 			{
 				*l_pDstPixel = ( l_Value & ( ~p_Mask ) ) | p_UpperValue;
 			}
-			else if( ( l_Value & p_Mask ) == 0x00000000 )
+			else if( 0x00000000 == ( l_Value & p_Mask )  )
 			{
 				*l_pDstPixel = l_Value | p_LowerValue;
 			}
@@ -158,7 +158,7 @@ SVImageViewClass::SVImageViewClass()
 , m_sourceImageWidth( 0 )
 , m_sourceImageHeight( 0 )
 , m_sourceBitCount( 0 )
-, m_hActionIcon(NULL)
+, m_hActionIcon(nullptr)
 , m_ViewOrImageFilename(SvO::ContextMenuImageSaveLocation)
 {
 	Initialize();
@@ -170,7 +170,7 @@ void SVImageViewClass::Initialize()
 
 	m_showExtremeLUT = false;
 
-	m_psvObject = NULL;
+	m_psvObject = nullptr;
 
 	m_svLocation = SVExtentLocationPropertyUnknown;
 
@@ -178,8 +178,8 @@ void SVImageViewClass::Initialize()
 
 	m_mouseIsOverTool = FALSE;
 
-	m_pDDImageSurface = NULL;
-	m_pDDScaledImageSurface = NULL;
+	m_pDDImageSurface = nullptr;
+	m_pDDScaledImageSurface = nullptr;
 
 	m_isPicked = FALSE;
 
@@ -195,10 +195,10 @@ SVImageViewClass::~SVImageViewClass()
 		DeleteObject( m_hWindowBackgroundColor );
 	}
 
-	if( (HICON) NULL != m_hActionIcon)
+	if( (HICON) nullptr != m_hActionIcon)
 	{
 		::DestroyIcon( m_hActionIcon );
-		m_hActionIcon = (HICON) NULL;
+		m_hActionIcon = (HICON) nullptr;
 	}
 }
 
@@ -213,18 +213,18 @@ void SVImageViewClass::ReleaseImageSurface()
 		m_OverlayData.clear();
 	}
 
-	if( m_pDDImageSurface != NULL )
+	if( nullptr != m_pDDImageSurface )
 	{
 		m_pDDImageSurface->Release();
 
-		m_pDDImageSurface = NULL;
+		m_pDDImageSurface = nullptr;
 	}
 
-	if( m_pDDScaledImageSurface != NULL )
+	if( nullptr != m_pDDScaledImageSurface )
 	{
 		m_pDDScaledImageSurface->Release();
 
-		m_pDDScaledImageSurface = NULL;
+		m_pDDScaledImageSurface = nullptr;
 	}
 }
 
@@ -234,18 +234,18 @@ HRESULT SVImageViewClass::UpdateToolExtents( SVExtentLocationPropertyEnum p_svLo
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		SVImageExtentClass l_svExtents;
 
 		l_hrOk = GetToolExtents( l_svExtents );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = l_svExtents.UpdateFromOutputSpace( p_svLocation, static_cast< long >( p_x ), static_cast< long >( p_y ) );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = UpdateToolExtents( l_svExtents );
 		}
@@ -264,7 +264,7 @@ HRESULT SVImageViewClass::UpdateToolExtents( const SVImageExtentClass& p_rExtent
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		l_hrOk = l_pIPDoc->UpdateExtents( m_psvObject, p_rExtents );
 	}
@@ -280,18 +280,18 @@ HRESULT SVImageViewClass::UpdateToolExtents( SVExtentLocationPropertyEnum p_svLo
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( p_svLocation == SVExtentLocationPropertyRotate )
+	if( SVExtentLocationPropertyRotate == p_svLocation )
 	{
 		SVImageExtentClass l_svExtents;
 
 		l_hrOk = GetToolExtents( l_svExtents );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = l_svExtents.SetExtentProperty( SVExtentPropertyRotationAngle, p_angle );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = UpdateToolExtents( l_svExtents );
 		}
@@ -306,7 +306,7 @@ HRESULT SVImageViewClass::UpdateToolExtentsToFit( const SVImageExtentClass& p_rE
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		l_hrOk = l_pIPDoc->UpdateExtentsToFit( m_psvObject, p_rExtents );
 	}
@@ -322,7 +322,7 @@ HRESULT SVImageViewClass::GetToolExtents( SVImageExtentClass& p_svToolExtents )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( m_psvObject != NULL )
+	if( nullptr != m_psvObject )
 	{
 		l_hrOk = m_psvObject->GetImageExtent( p_svToolExtents );
 	}
@@ -340,7 +340,7 @@ void SVImageViewClass::AttachToImage( const SVGUID& p_rImageId )
 	{
 		SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( p_rImageId.ToGUID() ) );
 
-		if( l_pImage != NULL )
+		if( nullptr != l_pImage )
 		{
 			m_ImageId = l_pImage->GetUniqueObjectID();
 			m_imageName = l_pImage->GetCompleteObjectName();
@@ -381,11 +381,11 @@ void SVImageViewClass::AttachToImage( LPCTSTR p_imageName )
 
 	if( ! l_imageName.IsEmpty() )
 	{
-		SVImageClass* l_psvImage = NULL;
+		SVImageClass* l_psvImage = nullptr;
 
 		l_psvImage = GetImageByName( l_imageName );
 
-		if( l_psvImage != NULL )
+		if( nullptr != l_psvImage )
 		{
 			l_ImageId = l_psvImage->GetUniqueObjectID();
 			l_attach = TRUE;
@@ -404,7 +404,7 @@ void SVImageViewClass::DetachFromImage()
 {
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		GetIPDoc()->UnregisterImageView( this );
 	}
@@ -430,7 +430,7 @@ void SVImageViewClass::GetImageRect( CRect& p_rect )
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL && l_pIPDoc->m_bAllowRefresh )
+	if( nullptr != l_pIPDoc && l_pIPDoc->m_bAllowRefresh )
 	{
 		SVBitmapInfo l_BitmapInfo = GetBitmapInfo();
 
@@ -472,7 +472,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 		{
 			SVIPDoc* l_psvIPDoc = GetIPDoc();
 
-			if( l_psvIPDoc != NULL )
+			if( nullptr != l_psvIPDoc )
 			{
 				SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
 				if( l_psvTool )
@@ -480,7 +480,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					SVObjectTypeInfoStruct l_svInfo;
 					l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-					SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+					SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
 					if( l_psvAnalyzer )
 					{
 						CPoint l_point;
@@ -509,7 +509,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			}
 
 			SVIPDoc* l_psvIPDoc = GetIPDoc();
-			SVToolClass* l_psvTool = NULL;
+			SVToolClass* l_psvTool = nullptr;
 			CPoint l_mousePoint;
 
 			SVObjectInfoStruct l_svInfo;
@@ -519,9 +519,9 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 			TransformFromViewSpace( l_mousePoint );
 			SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
-			SVDrawContext drawContext( NULL, l_pImage );
+			SVDrawContext drawContext( nullptr, l_pImage );
 
-			if( l_psvIPDoc != NULL )
+			if( nullptr != l_psvIPDoc )
 			{
 				l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
 			}
@@ -804,7 +804,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 			else
 			{
 				BOOL l_resultFound = FALSE;
-				SVAnalyzerClass* l_psvAnalyzer = NULL;
+				SVAnalyzerClass* l_psvAnalyzer = nullptr;
 				SVIPDoc *l_psvIPDoc = GetIPDoc();
 
 				if( nullptr != l_psvIPDoc )
@@ -827,7 +827,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 								SVObjectTypeInfoStruct l_svInfo;
 								l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-								l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+								l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
 								if( l_psvAnalyzer )
 								{
 									l_resultFound = l_psvAnalyzer->IsPtOverResult( l_point );
@@ -861,7 +861,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 void SVImageViewClass::TransformToViewSpace( CPoint& p_point )
 {
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
-	SVDrawContext l_svDrawContext( NULL, l_pImage, m_ZoomHelper.GetZoom() );
+	SVDrawContext l_svDrawContext( nullptr, l_pImage, m_ZoomHelper.GetZoom() );
 
 	l_svDrawContext.Transform( &p_point, &p_point, 1 );
 }
@@ -869,7 +869,7 @@ void SVImageViewClass::TransformToViewSpace( CPoint& p_point )
 void SVImageViewClass::TransformFromViewSpace( CPoint& p_point )
 {
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
-	SVDrawContext l_svDrawContext( NULL, l_pImage, m_ZoomHelper.GetZoom() );
+	SVDrawContext l_svDrawContext( nullptr, l_pImage, m_ZoomHelper.GetZoom() );
 
 	l_svDrawContext.InverseTransform( &p_point, &p_point, 1 );
 }
@@ -880,7 +880,7 @@ void SVImageViewClass::SelectDisplayImage()
 	
 	l_svDlg.m_pDoc = GetIPDoc();
 
-	if( l_svDlg.m_pDoc != NULL )
+	if( nullptr != l_svDlg.m_pDoc )
 	{
 		SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
 		l_svDlg.m_pCurrentImage = l_pImage;
@@ -911,10 +911,10 @@ SVImageClass* SVImageViewClass::GetImage()
 
 SVImageClass* SVImageViewClass::GetImageByName( CString& p_imageName ) const
 {
-	SVImageClass* l_pImage = NULL;
+	SVImageClass* l_pImage = nullptr;
 	SVIPDoc* l_pDocument = GetIPDoc();
 
-	if( l_pDocument != NULL )
+	if( nullptr != l_pDocument )
 	{
 		l_pImage = l_pDocument->GetImageByName( p_imageName );
 	}
@@ -931,11 +931,11 @@ HRESULT SVImageViewClass::RecreateImageSurface()
 	{
 		hr = SVDirectX::CreateSurface( l_BitmapInfo, &m_pDDImageSurface );
 
-		if (hr != DD_OK)
+		if (DD_OK != hr)
 		{
 			TRACE( _T( "SVImageViewClass::RecreateImageSurface - CreateSurface failed (%08lx)\n" ), hr );
 		}
-		if (hr == DD_OK)
+		if (DD_OK == hr)
 		{
 			SIZE l_Size;
 
@@ -943,7 +943,7 @@ HRESULT SVImageViewClass::RecreateImageSurface()
 
 			hr = SVDirectX::CreateSurface(l_Size.cx, l_Size.cy, &m_pDDScaledImageSurface);
 
-			if (hr != DD_OK)
+			if (DD_OK != hr)
 			{
 				TRACE( _T( "SVImageViewClass::RecreateImageSurface - CreateSurface failed (%08lx)\n" ), hr );
 			}
@@ -981,13 +981,10 @@ void SVImageViewClass::OnDraw( CDC* p_pDC )
 		//TRACE( _T( "SVImageView::OnDraw %s\n" ), m_imageName );
 		HRESULT hr = UpdateSurface();
 
-		if( hr == S_OK )
+		if( S_OK == hr)
 		{
-			//::Sleep( 0 );
-			//m_ThreadWait.Sleep();
 			hr = DisplaySurface();
 		}
-		
 		NotifyIPDocDisplayComplete();
 	}
 }
@@ -1037,7 +1034,7 @@ void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pH
 		CView::OnUpdate( p_pSender, p_lHint, p_pHint );
 	}
 
-	if( GetUpdateRect( NULL ) == 0 )
+	if( 0 == GetUpdateRect( nullptr ) )
 	{
 		NotifyIPDocDisplayComplete();
 	}
@@ -1057,13 +1054,13 @@ void SVImageViewClass::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 		l_text.Format( " X: %d, Y: %d ", l_point.x, l_point.y );
 		TheSVObserverApp.SetStatusText( l_text );
 
-		if( !( m_ImageId.empty() ) && l_psvIPDoc != NULL )
+		if( !( m_ImageId.empty() ) && nullptr != l_psvIPDoc )
 		{
 			SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
 
 			if( l_psvTool )
 			{
-				if( l_psvTool->GetObjectAtPoint( l_point ) != NULL )
+				if( nullptr != l_psvTool->GetObjectAtPoint( l_point ) )
 				{
 					l_psvIPDoc->OnEditTool();
 				}
@@ -1088,7 +1085,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 		l_text.Format( " X: %d, Y: %d ", l_point.x, l_point.y );
 		TheSVObserverApp.SetStatusText( l_text );
 		
-		if( l_psvIPDoc != NULL && !( m_ImageId.empty() ) )
+		if( nullptr != l_psvIPDoc && !( m_ImageId.empty() ) )
 		{
 			SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
 			if( l_psvTool )
@@ -1106,7 +1103,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 					SVObjectTypeInfoStruct l_svInfo;
 					l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-					SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+					SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
 					if( l_psvAnalyzer )
 					{
 						// Set Display Flag so Errors will be displayed on dialog.
@@ -1152,10 +1149,10 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 				long l_width = 0;
 				long l_height = 0;
 
-				if( GetToolExtents( l_svExtents ) == S_OK &&
-					l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_tempPoint ) == S_OK &&
-					l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_width ) == S_OK &&
-					l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_height ) == S_OK )
+				if( S_OK == GetToolExtents( l_svExtents ) &&
+					S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_tempPoint ) &&
+					S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_width ) &&
+					S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_height ) )
 				{
 					l_text.Format( " X: %d, Y: %d    cX: %d, cY: %d ", l_tempPoint.x, l_tempPoint.y, l_width, l_height );
 				}
@@ -1223,7 +1220,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 		// Status Text: Mouse Pos and Color
 		l_text.Format( " Col: %d, Row: %d    RGB: %u/%u/%u ", l_point.x, l_point.y, redValue, greenValue, blueValue ); 
 
-		HICON l_hCursor = NULL;
+		HICON l_hCursor = nullptr;
 
 		SVImageExtentClass l_svExtents;
 
@@ -1231,7 +1228,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 
 		if (m_isPicked)
 		{
-			if( l_pIPDoc != NULL && m_isPicked && GetToolExtents( l_svExtents ) == S_OK )
+			if( nullptr != l_pIPDoc && m_isPicked && S_OK == GetToolExtents( l_svExtents ) )
 			{
 				CPoint l_startPoint = m_lastMouseMovePoint;
 
@@ -1241,17 +1238,17 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 
 				l_hCursor = GetObjectCursor( m_svMousePickLocation, l_point );
 
-				if( ( m_svMousePickLocation == SVExtentLocationPropertyRotate ||
+				if( ( SVExtentLocationPropertyRotate == m_svMousePickLocation ||
 					m_svMousePickLocation == l_svExtents.GetLocationPropertyAt( l_startPoint ) ) &&
-					l_svTempExtents.Update( m_svMousePickLocation, l_startPoint, l_point ) == S_OK )
+					S_OK == l_svTempExtents.Update( m_svMousePickLocation, l_startPoint, l_point ) )
 				{
 					bool l_bUpdate = false;
 
-					l_bUpdate = l_pIPDoc->UpdateExtents( m_psvObject, l_svTempExtents ) == S_OK;
+					l_bUpdate = S_OK == l_pIPDoc->UpdateExtents( m_psvObject, l_svTempExtents );
 
 					if( l_bUpdate || l_rect.PtInRect( l_clientPoint ) )
 					{
-						l_bUpdate = l_bUpdate || l_pIPDoc->UpdateExtentsToFit( m_psvObject, l_svTempExtents ) == S_OK;
+						l_bUpdate = l_bUpdate || S_OK == l_pIPDoc->UpdateExtentsToFit( m_psvObject, l_svTempExtents );
 					}
 
 					if( l_bUpdate )
@@ -1283,7 +1280,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 		}
 
 		//If no icon returned then use standard arrow
-		if(NULL == l_hCursor)
+		if (nullptr == l_hCursor)
 		{
 			m_mouseIsOverTool = FALSE;
 			l_hCursor = AfxGetApp()->LoadStandardCursor( IDC_ARROW );
@@ -1342,7 +1339,7 @@ void SVImageViewClass::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageViewClass::OnCaptureChanged( CWnd* p_pWnd )
 {
-	TheSVObserverApp.SetStatusText( NULL );
+	TheSVObserverApp.SetStatusText( nullptr );
 
 	CWnd::OnCaptureChanged( p_pWnd );
 }
@@ -1360,7 +1357,7 @@ void SVImageViewClass::OnCaptureChanged( CWnd* p_pWnd )
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageViewClass::OnNcMouseMove( UINT p_hitTest, CPoint p_point )
 {
-	TheSVObserverApp.SetStatusText( NULL );
+	TheSVObserverApp.SetStatusText( nullptr );
 
 	CWnd::OnNcMouseMove( p_hitTest, p_point );
 }
@@ -1408,11 +1405,11 @@ bool SVImageViewClass::GetScrollPosition( CPoint& p_point )
 {
 	bool l_bOk = false;
 
-	if( GetSafeHwnd() != NULL )
+	if( nullptr != GetSafeHwnd() )
 	{
 		SVImageViewScroll* l_psvScroll = dynamic_cast< SVImageViewScroll* >( GetParent() );
 
-		l_bOk = l_psvScroll != NULL;
+		l_bOk = nullptr != l_psvScroll;
 
 		if( l_bOk )
 		{
@@ -1427,11 +1424,11 @@ bool SVImageViewClass::SetScrollPosition( CPoint& p_point )
 {
 	bool l_bOk = false;
 
-	if( GetSafeHwnd() != NULL )
+	if( nullptr != GetSafeHwnd() )
 	{
 		SVImageViewScroll *l_psvScroll = dynamic_cast< SVImageViewScroll * >( GetParent() );
 
-		l_bOk = l_psvScroll != NULL;
+		l_bOk = nullptr != l_psvScroll;
 
 		if( l_bOk )
 		{
@@ -1453,7 +1450,7 @@ bool SVImageViewClass::CalculateZoomFit()
 
 	SVIPDoc* pIPDoc = GetIPDoc();
 
-	if( pIPDoc != NULL && pIPDoc->m_bAllowRefresh && GetSafeHwnd() != NULL )
+	if( nullptr != pIPDoc && pIPDoc->m_bAllowRefresh && nullptr != GetSafeHwnd() )
 	{
 		CSize ImageSize;
 		SVBitmapInfo BitmapInfo = GetBitmapInfo();
@@ -1545,7 +1542,7 @@ double SVImageViewClass::SetZoom( EZoom zoom, double value, bool bSetZoomSlider 
 
 bool SVImageViewClass::SetZoomIndex( EZoomMode eZoom, unsigned  scaleIndex, bool bSetZoomSlider )
 {
-	if(eZoom == EZOOM_VALUE)
+	if (EZOOM_VALUE == eZoom)
 	{
 		if( scaleIndex >= m_ZoomHelper.GetScaleCount() )
 		{
@@ -1555,18 +1552,17 @@ bool SVImageViewClass::SetZoomIndex( EZoomMode eZoom, unsigned  scaleIndex, bool
 
 	bool bZoomChanged = m_ZoomHelper.ChangeScaleIndex(eZoom, scaleIndex);
 
-	if(bZoomChanged)
+	if (bZoomChanged)
 	{
 		CRect l_rect;
 		GetImageRect( l_rect );
 		SetImageRect( l_rect );
 		SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
-		if(pFrame && bSetZoomSlider)
+		if (pFrame && bSetZoomSlider)
 		{
 			pFrame->SetZoomToolbar(m_ZoomHelper);
 		}
 	}
-
 	return true;
 }
 
@@ -1579,18 +1575,17 @@ bool SVImageViewClass::SetImageRect( CRect& p_rect )
 {
 	bool l_bOk = false;
 
-	if( GetSafeHwnd() != NULL )
+	if( nullptr != GetSafeHwnd() )
 	{
 		SVImageViewScroll* l_psvScroll = dynamic_cast< SVImageViewScroll* >( GetParent() );
 
-		l_bOk = l_psvScroll != NULL;
+		l_bOk = nullptr != l_psvScroll;
 
 		if( l_bOk )
 		{
 			l_psvScroll->SetImageSize( p_rect.Size() );
 		}
 	}
-
 	return l_bOk;
 }
 
@@ -1600,7 +1595,7 @@ HRESULT SVImageViewClass::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLin
 
 	SVGUID l_SelectedID;
 
-	if( GetIPDoc() != NULL )
+	if( nullptr != GetIPDoc() )
 	{
 		l_SelectedID = GetIPDoc()->GetSelectedToolID();
 	}
@@ -1709,7 +1704,7 @@ HRESULT SVImageViewClass::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLin
 
 void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& p_rMultiLine )
 {
-	BOOL bDrawAllowed = ( ( PDrawContext != NULL ) && ( ShouldDraw( p_rMultiLine ) == S_OK ) );
+	BOOL bDrawAllowed = ( ( nullptr != PDrawContext ) && ( S_OK == ShouldDraw( p_rMultiLine ) ) );
 
 	if( bDrawAllowed )
 	{
@@ -1722,7 +1717,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 
 		SVGUID l_SelectedID;
 
-		if( GetIPDoc() != NULL )
+		if( nullptr != GetIPDoc() )
 		{
 			l_SelectedID = GetIPDoc()->GetSelectedToolID();
 		}
@@ -1765,7 +1760,7 @@ void SVImageViewClass::UpdateOverlays( HDC p_hDC, long p_X, long p_Y )
 {
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
 
-	if( l_pImage != NULL )
+	if( nullptr != l_pImage )
 	{
 		// Get drawing device context...
 		::SetBkMode( p_hDC, TRANSPARENT );
@@ -1792,7 +1787,7 @@ void SVImageViewClass::UpdateOverlays( HDC p_hDC, long p_X, long p_Y )
 
 HICON SVImageViewClass::GetObjectCursor( POINT p_point )
 {
-	HICON l_hCursor = NULL;
+	HICON l_hCursor = nullptr;
 
 	if( GetObjectAtPoint( p_point ) )
 	{
@@ -1804,7 +1799,7 @@ HICON SVImageViewClass::GetObjectCursor( POINT p_point )
 
 HICON SVImageViewClass::GetObjectCursor( SVExtentLocationPropertyEnum p_svLocation, POINT p_point )
 {
-	HICON l_hCursor = NULL;
+	HICON l_hCursor = nullptr;
 
 	LPCTSTR l_cursorId = IDC_ARROW;
 	LPCTSTR l_cursorLeftRight = IDC_SIZEWE;
@@ -1814,31 +1809,31 @@ HICON SVImageViewClass::GetObjectCursor( SVExtentLocationPropertyEnum p_svLocati
 	LPCTSTR l_cursorMove = IDC_SIZEALL;
 
 	//If action icon is loaded then need to clean it up before next icon
-	if( (HICON) NULL != m_hActionIcon)
+	if( (HICON) nullptr != m_hActionIcon)
 	{
 		::DestroyIcon( m_hActionIcon  );
-		m_hActionIcon = (HICON) NULL;
+		m_hActionIcon = (HICON) nullptr;
 	}
 
 	SVImageExtentClass l_svExtents;
 	//Check the rotation angle to determine icon symbols
-	if( GetToolExtents( l_svExtents ) == S_OK )
+	if( S_OK == GetToolExtents( l_svExtents ) )
 	{
 		double l_dRotationAngle = 0.0;
 		//Check that this is the Linear tool with rotation
-		if( l_svExtents.GetTranslation() == SVExtentTranslationProfile )
+		if( SVExtentTranslationProfile == l_svExtents.GetTranslation() )
 		{
-			if( l_svExtents.GetExtentProperty( SVExtentPropertyRotationAngle, l_dRotationAngle) == S_OK)
+			if( S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyRotationAngle, l_dRotationAngle) )
 			{
 				l_dRotationAngle = fmod(l_dRotationAngle, 180.0);
 			}
 		}
 		//Check that this is the Polar Unwrap tool with rotation
-		else if( l_svExtents.GetTranslation() == SVExtentTranslationPolarUnwrap )
+		else if( SVExtentTranslationPolarUnwrap == l_svExtents.GetTranslation() )
 		{
 			SVExtentPointStruct l_svCenter;
 			SVExtentPointStruct l_svMouse(p_point);
-			if( l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_svCenter) == S_OK)
+			if( S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_svCenter) )
 			{
 				//Polar unwrap needs an offset of 90° for the displayed cursor to be correct
 				l_dRotationAngle = SVGetRotationAngle(l_svCenter, l_svMouse) + 90.0;
@@ -1920,7 +1915,7 @@ HICON SVImageViewClass::GetObjectCursor( SVExtentLocationPropertyEnum p_svLocati
 			break;
 		}
 	}
-	if( l_cursorId == IDC_ARROW && p_svLocation != SVExtentLocationPropertyDisabled)
+	if( IDC_ARROW == l_cursorId && SVExtentLocationPropertyDisabled != p_svLocation )
 	{
 		m_mouseIsOverTool = FALSE;
 	}
@@ -1929,11 +1924,10 @@ HICON SVImageViewClass::GetObjectCursor( SVExtentLocationPropertyEnum p_svLocati
 		m_mouseIsOverTool = TRUE;
 	}
 	//If no special resource icon call standard windows icon
-	if( NULL == l_hCursor)
+	if( nullptr == l_hCursor)
 	{
 		l_hCursor = AfxGetApp()->LoadStandardCursor( l_cursorId );
 	}
-	
 	return l_hCursor;
 }
 
@@ -1951,26 +1945,25 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 {
 	BOOL l_bOk = FALSE;
 
-	m_psvObject = NULL;
+	m_psvObject = nullptr;
 
 	m_svLocation = SVExtentLocationPropertyUnknown;
 
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
-	SVToolClass* l_psvTool = NULL;
+	SVToolClass* l_psvTool = nullptr;
 
-	if( GetIPDoc() != NULL )
+	if( nullptr != GetIPDoc() )
 	{
 		l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
 	}
 
-	//if( l_psvTool != NULL && l_psvTool->ShouldDraw() == S_OK && l_psvTool->IsInputImage( l_pImage ) == S_OK )
-	if( l_psvTool != NULL && l_psvTool->IsInputImage( l_pImage ) == S_OK )
+	if( nullptr != l_psvTool && S_OK == l_psvTool->IsInputImage( l_pImage ) )
 	{
 		SVImageExtentClass l_svExtents;
 
 		m_psvObject = l_psvTool->GetObjectAtPoint( p_point );
 
-		if( GetToolExtents( l_svExtents ) == S_OK )
+		if( S_OK == GetToolExtents( l_svExtents ) )
 		{
 			m_svLocation = l_svExtents.GetLocationPropertyAt( p_point );
 		}
@@ -1984,7 +1977,7 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 		
 	}
 
-	l_bOk = m_psvObject != NULL;
+	l_bOk = nullptr != m_psvObject;
 
 	return l_bOk;
 }
@@ -1997,7 +1990,7 @@ BOOL SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
 
-	l_svVariant = ( l_pImage != NULL );
+	l_svVariant = ( nullptr != l_pImage );
 	rWriter.WriteAttribute(CTAG_VIEW_INITIALIZED, l_svVariant);
 	l_svVariant.Clear();
 
@@ -2006,9 +1999,9 @@ BOOL SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(CTAG_IMAGE_ZOOM_FACTOR_EX, l_svVariant);
 	l_svVariant.Clear();
 
-	if( l_pImage != NULL )
+	if( nullptr != l_pImage )
 	{
-		l_svVariant = l_pImage->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
+		l_svVariant = l_pImage->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 		rWriter.WriteAttribute(CTAG_IMAGE_NAME, l_svVariant);
 		l_svVariant.Clear();
 	}
@@ -2148,7 +2141,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 			{
 				if( !SetZoomIndex( EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2 + l_index, false ) )
 				{
-				SetZoomIndex( EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2, false );
+					SetZoomIndex( EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2, false );
 				}
 			}
 		}
@@ -2203,7 +2196,7 @@ SVBitmapInfo SVImageViewClass::GetBitmapInfo() const
 	{
 		const BITMAPINFO* l_pBitmapInfo = reinterpret_cast< const BITMAPINFO* >( &( m_ImageDIB[ 0 ] ) );
 
-		if( l_pBitmapInfo != NULL )
+		if( nullptr != l_pBitmapInfo )
 		{
 			l_Info.Assign( *l_pBitmapInfo );
 		}
@@ -2212,7 +2205,7 @@ SVBitmapInfo SVImageViewClass::GetBitmapInfo() const
 	{
 		SVIPDoc* l_pIPDoc = GetIPDoc();
 
-		if( l_pIPDoc != NULL )
+		if( nullptr != l_pIPDoc )
 		{
 			l_pIPDoc->GetBitmapInfo( m_ImageId, l_Info );
 		}
@@ -2230,7 +2223,7 @@ const unsigned char* SVImageViewClass::GetBitmapBits() const
 		return &( m_ImageDIB[ l_Info.GetBitmapInfoSizeInBytes() ] );
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo )
@@ -2242,7 +2235,7 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 		if( m_sourceImageWidth != p_rBitmapInfo.GetWidth() ||
 			m_sourceImageHeight != ::labs( p_rBitmapInfo.GetHeight() ) ||
 			m_sourceBitCount != p_rBitmapInfo.GetBitCount() ||
-			m_pDDImageSurface == NULL || m_pDDScaledImageSurface == NULL )
+			nullptr == m_pDDImageSurface || nullptr == m_pDDScaledImageSurface )
 		{
 			m_sourceImageWidth = p_rBitmapInfo.GetWidth();
 			m_sourceImageHeight = ::labs( p_rBitmapInfo.GetHeight() );
@@ -2250,7 +2243,7 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 
 			l_Status = SVDirectX::CreateSurface( p_rBitmapInfo, &m_pDDImageSurface );
 			
-			if( l_Status == DD_OK )
+			if( DD_OK == l_Status )
 			{
 				SIZE l_Size;
 
@@ -2270,7 +2263,7 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 		l_Status = E_FAIL;
 	}
 
-	if( l_Status != DD_OK )
+	if( DD_OK != l_Status )
 	{
 		ReleaseImageSurface();
 
@@ -2284,14 +2277,14 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( p_rBitmapInfo.empty() ) && ( p_pBitmapBits != NULL ) && ( m_pDDImageSurface != NULL ) )
+	if( !( p_rBitmapInfo.empty() ) && ( nullptr != p_pBitmapBits ) && ( nullptr != m_pDDImageSurface ) )
 	{
 		DDSURFACEDESC2 l_ddSurfaceDesc;
 		memset( &l_ddSurfaceDesc, 0, sizeof( l_ddSurfaceDesc ) );
 		l_ddSurfaceDesc.dwSize = sizeof( l_ddSurfaceDesc );
 
-		l_Status = m_pDDImageSurface->Lock( NULL, &l_ddSurfaceDesc, DDLOCK_NOSYSLOCK | DDLOCK_WAIT | DDLOCK_WRITEONLY, NULL );
-		if( l_Status == DD_OK )
+		l_Status = m_pDDImageSurface->Lock( nullptr, &l_ddSurfaceDesc, DDLOCK_NOSYSLOCK | DDLOCK_WAIT | DDLOCK_WRITEONLY, nullptr );
+		if( DD_OK == l_Status )
 		{
 			unsigned short l_BitmapBitCount = p_rBitmapInfo.GetBitCount();
 			unsigned long l_BitmapWidth = p_rBitmapInfo.GetWidth();
@@ -2341,9 +2334,9 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 
 			// preserve the error set if the image widths/pitch are different 
 			// (meaning that we didn't copy the image data)
-			HRESULT l_Temp = m_pDDImageSurface->Unlock( NULL );
+			HRESULT l_Temp = m_pDDImageSurface->Unlock( nullptr );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -2442,99 +2435,26 @@ void SVImageViewClass::OnZoomSliderMoved()
 	SetZoom( EZoomValue, val );
 }
 
-/* Obsolete - Replaced due to performance reasons
-HRESULT SVImageViewClass::UpdateScaledSurfaceWithExtremeLUT()
-{
-	HRESULT l_Status = S_OK;
-
-	if( m_showExtremeLUT )
-	{
-		if( m_pDDScaledImageSurface != NULL )
-		{
-			DDSURFACEDESC2 l_ddSurfaceDesc;
-			memset( &l_ddSurfaceDesc, 0, sizeof( l_ddSurfaceDesc ) );
-			l_ddSurfaceDesc.dwSize = sizeof( l_ddSurfaceDesc );
-
-			l_Status = m_pDDScaledImageSurface->Lock( NULL, &l_ddSurfaceDesc, DDLOCK_NOSYSLOCK | DDLOCK_WAIT, NULL );
-			if( l_Status == DD_OK )
-			{
-				size_t l_PixelWidth = l_ddSurfaceDesc.ddpfPixelFormat.dwRGBBitCount / 8;
-
-				if( 1 < l_PixelWidth )
-				{
-					unsigned long l_Mask = l_ddSurfaceDesc.ddpfPixelFormat.dwRBitMask | l_ddSurfaceDesc.ddpfPixelFormat.dwGBitMask | l_ddSurfaceDesc.ddpfPixelFormat.dwBBitMask;
-					unsigned long l_UpperValue = l_ddSurfaceDesc.ddpfPixelFormat.dwGBitMask;
-					unsigned long l_LowerValue = l_ddSurfaceDesc.ddpfPixelFormat.dwBBitMask;
-
-					BYTE* l_pBits = static_cast< BYTE* >( l_ddSurfaceDesc.lpSurface );
-
-					for( size_t l_row = 0; l_row < l_ddSurfaceDesc.dwHeight; ++l_row )
-					{
-						for( size_t l_col = 0; l_col < l_ddSurfaceDesc.dwWidth; ++l_col )
-						{
-							BYTE* l_pBitsPixel = l_pBits + ( l_col * l_PixelWidth );
-							unsigned long* l_pPixel = reinterpret_cast< unsigned long* >( l_pBitsPixel );
-
-							if( ( ( *l_pPixel ) | ( ~l_Mask ) ) == 0xFFFFFFFF )
-							{
-								( *l_pPixel ) = ( ( *l_pPixel ) & ( ~l_Mask ) ) | l_UpperValue;
-							}
-							else if( ( ( *l_pPixel ) & ( l_Mask ) ) == 0x00000000 )
-							{
-								( *l_pPixel ) = ( *l_pPixel ) | l_LowerValue;
-							}
-						}
-
-						l_pBits += l_ddSurfaceDesc.lPitch;
-
-						//::Sleep( 0 );
-						//m_ThreadWait.Sleep();
-					}
-				}
-				else
-				{
-					l_Status = E_FAIL;
-				}
-
-				// preserve the error set if the image widths/pitch are different 
-				// (meaning that we didn't copy the image data)
-				HRESULT l_Temp = m_pDDScaledImageSurface->Unlock( NULL );
-
-				if( l_Status == S_OK )
-				{
-					l_Status = l_Temp;
-				}
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-
-	return l_Status;
-}
-*/
 
 HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, CString Filepath, bool showOverlays)
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDDImageSurface != NULL && m_pDDScaledImageSurface != NULL )
+	if( nullptr != m_pDDImageSurface && nullptr != m_pDDScaledImageSurface )
 	{
-		HDC scaledDC = NULL;
+		HDC scaledDC = nullptr;
 
 		CRect l_ScaledRect( 0, 0, p_rDestRect.Width(), p_rDestRect.Height() );
 
 		l_Status = m_pDDScaledImageSurface->GetDC( &scaledDC );
 
-		if( l_Status == DD_OK )
+		if( DD_OK == l_Status )
 		{
-			HDC surfaceDC = NULL;
+			HDC surfaceDC = nullptr;
 
 			l_Status = m_pDDImageSurface->GetDC( &surfaceDC );
 
-			if( l_Status == DD_OK )
+			if( DD_OK == l_Status )
 			{
 				int iStretchMode = ::SetStretchBltMode( scaledDC, STRETCH_DELETESCANS );
 
@@ -2554,30 +2474,22 @@ HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rD
 				::SetStretchBltMode( scaledDC, iStretchMode );
 
 				m_pDDImageSurface->ReleaseDC( surfaceDC );
-
-				//Sleep( 0 );
-				//m_ThreadWait.Sleep();
 			}
 
-			if(showOverlays)
+			if (showOverlays)
 			{
 				UpdateOverlays( scaledDC, p_rSourceRect.left, p_rSourceRect.top );
 			}
 
-			if (Filepath!="")
+			if (Filepath != "")
 			{
 				CreateBmpFileFromHdc(Filepath,scaledDC,l_ScaledRect);
 			}
 
-
 			m_pDDScaledImageSurface->ReleaseDC( scaledDC );
 		}
 
-		if( l_Status == DD_OK )
-		{
-//			l_Status = UpdateScaledSurfaceWithExtremeLUT();
-		}
-		else
+		if( DD_OK != l_Status)
 		{
 			TRACE(_T( "SVImageViewClass::UpdateImage - Surface Blit failed %08lx\n" ), l_Status );
 		}
@@ -2594,35 +2506,32 @@ HRESULT SVImageViewClass::BlitToPrimarySurface( CRect& p_rDestRect )
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDDScaledImageSurface != NULL )
+	if( nullptr != m_pDDScaledImageSurface )
 	{
 		CRect l_ScaledRect( 0, 0, p_rDestRect.Width(), p_rDestRect.Height() );
 
 		SVDirectX::Instance().SetClipperHWnd( 0, m_hWnd );
 
+		// @Note: the following loop can result in an infinite cycle
 		do
 		{
 			l_Status = SVDirectX::Instance().GetBltStatus( DDGBS_CANBLT );
 
-			if( l_Status != S_OK )
+			if( S_OK != l_Status )
 			{
 				Sleep( 0 );
-				//m_ThreadWait.Sleep();
 			}
 		}
-		while( l_Status != S_OK && l_Status != E_FAIL );
+		while( S_OK != l_Status && E_FAIL != l_Status );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
-			//Sleep( 0 );
-			//m_ThreadWait.Sleep();
-
 			l_Status = SVDirectX::Instance().Blt(
 					&p_rDestRect,            // destination rectangle
 					m_pDDScaledImageSurface, // source surface
 					&l_ScaledRect,           // source rectangle
 					DDBLT_WAIT,              // DDBLT_DONOTWAIT| DDBLT_ASYNC, // Flag <<<<<<<<<<<<<<<<<<<<<<
-					NULL );                  // Pointer to DDBLTFX Structure
+					nullptr );                  // Pointer to DDBLTFX Structure
 		}
 	}
 	else
@@ -2637,26 +2546,26 @@ HRESULT SVImageViewClass::RecreateLostSurface()
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDDImageSurface != NULL )
+	if( nullptr != m_pDDImageSurface )
 	{
 		// preserve the DDERR_SURFACELOST error so the overlays don't get drawn
-		if( m_pDDImageSurface->IsLost() == DDERR_SURFACELOST )
+		if( DDERR_SURFACELOST == m_pDDImageSurface->IsLost() )
 		{
 			HRESULT l_hrRestore = m_pDDImageSurface->Restore();
 
-			if (l_hrRestore == DDERR_WRONGMODE)
+			if (DDERR_WRONGMODE == l_hrRestore)
 			{
 				// Destroy and Recreate surface
 				l_hrRestore = RecreateImageSurface();
 				
-				if (l_hrRestore != DD_OK)
+				if (DD_OK != l_hrRestore)
 				{
 					TRACE( _T( "SVImageViewClass::UpdateImage - CreateSurface failed\n" ) );
 				}
 			}
 
 			// cause a Repaint if Surface was Rrestored/Recreated
-			if( l_hrRestore == DD_OK )
+			if( DD_OK == l_hrRestore )
 			{
 				if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 				{
@@ -2680,7 +2589,7 @@ HRESULT SVImageViewClass::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect 
 	SVBitmapInfo l_BitmapInfo = GetBitmapInfo();
 	CWnd* l_pParent = GetParent(); // The parent of ImageView window is ImageViewScroll.
 
-	if( !( l_BitmapInfo.empty() ) && ( l_pParent != NULL ) )
+	if( !( l_BitmapInfo.empty() ) && ( nullptr != l_pParent ) )
 	{
 		CRect l_parentRect;
 		CRect l_imageRect;
@@ -2720,13 +2629,13 @@ HRESULT SVImageViewClass::UpdateBufferFromIPDoc()
 	HRESULT l_Status = S_OK;
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
-		if( l_pIPDoc->IsImageDataUpdated( m_ImageId, this ) == S_FALSE )
+		if( S_FALSE == l_pIPDoc->IsImageDataUpdated( m_ImageId, this ) )
 		{
 			l_Status = l_pIPDoc->GetImageData( m_ImageId, m_ImageDIB, m_OverlayData );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_pIPDoc->MarkImageDataUpdated( m_ImageId, this );
 			}
@@ -2751,25 +2660,25 @@ HRESULT SVImageViewClass::UpdateSurface()
 		const unsigned char* l_pBitmapBits = GetBitmapBits();
 		CWnd* l_pParent = GetParent(); // The parent of ImageView window is ImageViewScroll.
 
-		if( !( l_BitmapInfo.empty() ) && ( l_pBitmapBits != NULL ) && ( l_pParent != NULL ) )
+		if( !( l_BitmapInfo.empty() ) && ( nullptr != l_pBitmapBits ) && ( nullptr != l_pParent ) )
 		{
 			l_Status = UpdateImageSurfaces( l_BitmapInfo );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				CRect l_SourceRect;
 				CRect l_DestRect;
 
 				l_Status = GetRectInfo( l_SourceRect, l_DestRect );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = CopyBitsToSurface( l_SourceRect, l_BitmapInfo, l_pBitmapBits );
 				}
 			}
 
 			// check for lost surfaces
-			if( l_Status == DDERR_SURFACELOST )
+			if( DDERR_SURFACELOST == l_Status )
 			{
 				TRACE( _T( "SVImageViewClass::UpdateImage - DDERR_SURFACELOST\n" ) );
 
@@ -2799,25 +2708,25 @@ HRESULT SVImageViewClass::DisplaySurface()
 		SVBitmapInfo l_BitmapInfo = GetBitmapInfo();
 		CWnd* l_pParent = GetParent(); // The parent of ImageView window is ImageViewScroll.
 
-		if( !( l_BitmapInfo.empty() ) && ( l_pParent != NULL ) )
+		if( !( l_BitmapInfo.empty() ) && ( nullptr != l_pParent ) )
 		{
 			CRect l_SourceRect;
 			CRect l_DestRect;
 
 			l_Status = GetRectInfo( l_SourceRect, l_DestRect );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = BlitToScaledSurface( l_SourceRect, l_DestRect );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = BlitToPrimarySurface( l_DestRect );
 			}
 
 			// check for lost surfaces
-			if( l_Status == DDERR_SURFACELOST )
+			if( DDERR_SURFACELOST == l_Status )
 			{
 				TRACE( _T( "SVImageViewClass::UpdateImage - DDERR_SURFACELOST\n" ) );
 
@@ -2842,7 +2751,7 @@ HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 	HRESULT l_Status = S_OK;
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		l_Status = l_pIPDoc->MarkImageDataDisplayed( m_ImageId, this );
 	}
@@ -2880,7 +2789,6 @@ void SVImageViewClass::OnSetFocus(CWnd* pOldWnd)
 	{
 		pFrame->SetZoomToolbar(GetZoomHelper());
 	}
-	
 }
 
 void SVImageViewClass::OnKillFocus(CWnd* pNewWnd)

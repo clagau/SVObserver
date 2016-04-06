@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   02 Oct 2013 08:24:40  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 class SVValueObjectReference : public SVCheckedObjectReference<SVValueObjectClass>
 {
@@ -91,9 +92,7 @@ private :
 	{ 
 		return  ((m_IsArray && (m_ArrayIndex > -1) )?   m_ArrayIndex : 0); 
 	}
-
 };
 
 typedef std::vector<SVValueObjectReference> SVValueObjectReferenceVector;
-
 

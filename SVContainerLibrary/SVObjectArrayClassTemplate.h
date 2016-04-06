@@ -11,12 +11,10 @@
 
 #pragma once
 
-#ifdef SV_SHOW_INCLUDES
-	#pragma message( "Including " __FILE__ )
-#endif
-
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 #include "SVVector.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {

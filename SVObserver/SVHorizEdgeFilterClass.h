@@ -11,13 +11,16 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 class SVHorizEdgeFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVHorizEdgeFilterClass );
 public:
-	SVHorizEdgeFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVHORIZEDGEFILTER );
+	SVHorizEdgeFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVHORIZEDGEFILTER );
+	virtual ~SVHorizEdgeFilterClass();
 
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );

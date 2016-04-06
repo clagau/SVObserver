@@ -8,18 +8,19 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:11:54  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDirectX.h"
+#pragma endregion Includes
 
 SVDirectX::~SVDirectX()
 {
 	LocalClear();
 
-	if( m_pDDObject != NULL )
+	if( nullptr != m_pDDObject )
 	{
 		m_pDDObject->Release();
-		m_pDDObject = NULL;
+		m_pDDObject = nullptr;
 	}
 }
 
@@ -34,8 +35,8 @@ bool SVDirectX::empty() const
 {
 	bool l_Empty = true;
 
-	l_Empty = l_Empty && ( m_pDDDisplaySurface == NULL );
-	l_Empty = l_Empty && ( m_pDDClipper == NULL );
+	l_Empty = l_Empty && ( nullptr == m_pDDDisplaySurface );
+	l_Empty = l_Empty && ( nullptr == m_pDDClipper );
 
 	return l_Empty;
 }
@@ -54,21 +55,21 @@ HRESULT SVDirectX::Initialize()
 	this->~SVDirectX();
 
 	// Create the DirectDraw Object.
-	l_Retval = DirectDrawCreateEx( reinterpret_cast< LPGUID >( NULL ),
+	l_Retval = DirectDrawCreateEx( reinterpret_cast< LPGUID >( 0 ),
 		reinterpret_cast< LPVOID* >( &m_pDDObject ),
 		IID_IDirectDraw7,
-		NULL );
+		nullptr );
 
-	if( l_Retval == DD_OK )
+	if( DD_OK == l_Retval )
 	{
-		l_Retval = m_pDDObject->SetCooperativeLevel( NULL, DDSCL_NORMAL | DDSCL_FPUPRESERVE );
-		if( l_Retval != DD_OK )
+		l_Retval = m_pDDObject->SetCooperativeLevel( nullptr, DDSCL_NORMAL | DDSCL_FPUPRESERVE );
+		if( DD_OK != l_Retval )
 		{
 			TRACE( _T( "SVDirectX::InitializeObject was unable to set DirectDraw cooperative level." ) );
 		}
-		else if( m_pDDObject != NULL )
+		else if( nullptr != m_pDDObject )
 		{
-			if( m_pDDDisplaySurface == NULL )
+			if( nullptr == m_pDDDisplaySurface )
 			{
 				l_Retval = CreatePrimarySurface();
 			}
@@ -78,10 +79,10 @@ HRESULT SVDirectX::Initialize()
 	{
 		TRACE( _T( "SVDirectX::InitializeObject was unable to create the DirectDraw object." ) );
 
-		if( m_pDDObject != NULL )
+		if( nullptr != m_pDDObject )
 		{
 			m_pDDObject->Release();
-			m_pDDObject = NULL;
+			m_pDDObject = nullptr;
 		}
 	}
 
@@ -92,7 +93,7 @@ HRESULT SVDirectX::RestoreAllSurfaces()
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDDObject != NULL )
+	if( nullptr != m_pDDObject )
 	{
 		l_Status = m_pDDObject->RestoreAllSurfaces();
 	}
@@ -108,7 +109,7 @@ HRESULT SVDirectX::SetClipperHWnd( DWORD p_Flags, HWND p_Handle )
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDDClipper != NULL )
+	if( nullptr != m_pDDClipper )
 	{
 		l_Status = m_pDDClipper->SetHWnd( p_Flags, p_Handle );
 	}
@@ -124,7 +125,7 @@ HRESULT SVDirectX::Blt( RECT* p_pDestRect, IDirectDrawSurface7* p_pDDSurface, RE
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDDDisplaySurface != NULL )
+	if( nullptr != m_pDDDisplaySurface )
 	{
 		l_Status = m_pDDDisplaySurface->Blt( p_pDestRect, p_pDDSurface, p_pSourceRect, p_Flags, p_pDDBltFx );
 	}
@@ -140,7 +141,7 @@ HRESULT SVDirectX::GetBltStatus( DWORD p_Flags )
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDDDisplaySurface != NULL )
+	if( nullptr != m_pDDDisplaySurface )
 	{
 		l_Status = m_pDDDisplaySurface->GetBltStatus( p_Flags );
 	}
@@ -156,7 +157,7 @@ HRESULT SVDirectX::IsLost()
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDDDisplaySurface != NULL )
+	if( nullptr != m_pDDDisplaySurface )
 	{
 		l_Status = m_pDDDisplaySurface->IsLost();
 	}
@@ -169,9 +170,9 @@ HRESULT SVDirectX::IsLost()
 }
 
 SVDirectX::SVDirectX()
-: m_pDDObject( NULL )
-, m_pDDClipper( NULL )
-, m_pDDDisplaySurface( NULL )
+: m_pDDObject( nullptr )
+, m_pDDClipper( nullptr )
+, m_pDDDisplaySurface( nullptr )
 {
 }
 
@@ -180,23 +181,23 @@ HRESULT SVDirectX::CreatePrimarySurface()
 	HRESULT l_Retval = E_FAIL;
 
 	SVDirectX& rDirectX = SVDirectX::Instance();
-	if (rDirectX.m_pDDDisplaySurface != NULL)
+	if (nullptr != rDirectX.m_pDDDisplaySurface)
 	{
-		rDirectX.m_pDDDisplaySurface->SetClipper( NULL );
+		rDirectX.m_pDDDisplaySurface->SetClipper( nullptr );
 	}
 
-	if (rDirectX.m_pDDClipper != NULL)
+	if (nullptr != rDirectX.m_pDDClipper )
 	{
 		rDirectX.m_pDDClipper->Release();
-		rDirectX.m_pDDClipper = NULL;
+		rDirectX.m_pDDClipper = nullptr;
 	}
-	if (rDirectX.m_pDDDisplaySurface != NULL)
+	if (nullptr != rDirectX.m_pDDDisplaySurface)
 	{
 		rDirectX.m_pDDDisplaySurface->Release();
-		rDirectX.m_pDDDisplaySurface = NULL;
+		rDirectX.m_pDDDisplaySurface = nullptr;
 	}
 
-	if (rDirectX.m_pDDObject != NULL)
+	if (nullptr != rDirectX.m_pDDObject)
 	{
 		DDSURFACEDESC2 l_ddSurfaceDesc;
 		memset( &l_ddSurfaceDesc, 0, sizeof( l_ddSurfaceDesc ) );
@@ -205,14 +206,14 @@ HRESULT SVDirectX::CreatePrimarySurface()
 		l_ddSurfaceDesc.dwFlags = DDSD_CAPS;
 		l_ddSurfaceDesc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
-		l_Retval = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, &rDirectX.m_pDDDisplaySurface, NULL );
-		if( l_Retval != DD_OK )
+		l_Retval = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, &rDirectX.m_pDDDisplaySurface, nullptr );
+		if( DD_OK != l_Retval )
 		{
 			TRACE( _T( "SVDirectX::InitializeSurface was unable to create the display surface." ) );
 		}
-		else if( rDirectX.m_pDDClipper == NULL && rDirectX.m_pDDDisplaySurface != NULL )
+		else if( nullptr == rDirectX.m_pDDClipper && nullptr != rDirectX.m_pDDDisplaySurface )
 		{
-			if( DD_OK == rDirectX.m_pDDObject->CreateClipper( 0, &rDirectX.m_pDDClipper, NULL ) )
+			if( DD_OK == rDirectX.m_pDDObject->CreateClipper( 0, &rDirectX.m_pDDClipper, nullptr ) )
 			{
 				if( DD_OK != rDirectX.m_pDDDisplaySurface->SetClipper( rDirectX.m_pDDClipper ) )
 				{
@@ -233,13 +234,13 @@ HRESULT SVDirectX::CreateSurface(long width, long height, IDirectDrawSurface7** 
 	HRESULT l_hr = E_FAIL;
 	SVDirectX& rDirectX = SVDirectX::Instance();
 
-	if( ( rDirectX.m_pDDObject != NULL ) && ( rDirectX.m_pDDDisplaySurface != NULL ) )
+	if( ( nullptr != rDirectX.m_pDDObject ) && ( nullptr != rDirectX.m_pDDDisplaySurface ) )
 	{
 		DDPIXELFORMAT l_PixelFormat;
 		ZeroMemory( &l_PixelFormat, sizeof( l_PixelFormat ) );
 		l_PixelFormat.dwSize = sizeof( l_PixelFormat );
 		l_hr = rDirectX.m_pDDDisplaySurface->GetPixelFormat( &l_PixelFormat );
-		if( l_hr == DD_OK )
+		if( DD_OK == l_hr )
 		{
 			DDSURFACEDESC2 l_ddSurfaceDesc;
 			memset( &l_ddSurfaceDesc, 0, sizeof( l_ddSurfaceDesc ) );
@@ -252,14 +253,14 @@ HRESULT SVDirectX::CreateSurface(long width, long height, IDirectDrawSurface7** 
 			l_ddSurfaceDesc.ddpfPixelFormat = l_PixelFormat;
 
 			//BRW - Release the surface if it already exists or CreateSurface will fail.
-			if( ppDDSurface != NULL && *ppDDSurface != NULL )
+			if( nullptr != ppDDSurface && nullptr != *ppDDSurface)
 			{
 				(*ppDDSurface)->Release();
-				*ppDDSurface = NULL;
+				*ppDDSurface = nullptr;
 			}
 
 			l_hr = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, ppDDSurface, NULL );
-			if (l_hr != DD_OK)
+			if (DD_OK != l_hr)
 			{
 				TRACE( _T( "SVDirectX::CreateSurface failed (%08lx)\n" ), l_hr );
 			}
@@ -274,7 +275,7 @@ HRESULT SVDirectX::CreateSurface(const SVBitmapInfo& p_rBitmapInfo, IDirectDrawS
 
 	SVDirectX& rDirectX = SVDirectX::Instance();
 
-	if( ( ppDDSurface != NULL ) && ( rDirectX.m_pDDObject != NULL ) && ( rDirectX.m_pDDDisplaySurface != NULL ) && !( p_rBitmapInfo.empty() ) )
+	if( ( nullptr != ppDDSurface ) && ( nullptr != rDirectX.m_pDDObject ) && ( nullptr != rDirectX.m_pDDDisplaySurface ) && !( p_rBitmapInfo.empty() ) )
 	{
 		DDSURFACEDESC2 l_ddSurfaceDesc;
 
@@ -342,19 +343,19 @@ HRESULT SVDirectX::CreateSurface(const SVBitmapInfo& p_rBitmapInfo, IDirectDrawS
 		}
 
 		//BRW - Release the surface if it already exists or CreateSurface will fail.
-		if( ( *ppDDSurface ) != NULL )
+		if( nullptr != ( *ppDDSurface ) )
 		{
 			( *ppDDSurface )->Release();
-			( *ppDDSurface ) = NULL;
+			( *ppDDSurface ) = nullptr;
 		}
 
-		l_hr = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, ppDDSurface, NULL );
-		if (l_hr != DD_OK)
+		l_hr = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, ppDDSurface, nullptr );
+		if (DD_OK != l_hr )
 		{
 			TRACE( _T( "SVDirectX::CreateSurface failed (%08lx)\n" ), l_hr );
 		}
 
-		if (l_hr == DD_OK)
+		if (DD_OK == l_hr)
 		{
 			DWORD l_Flags = 0;
 
@@ -386,20 +387,20 @@ HRESULT SVDirectX::CreateSurface(const SVBitmapInfo& p_rBitmapInfo, IDirectDrawS
 				}
 			}
 
-			if( l_Flags != 0 && ( *ppDDSurface ) != NULL )
+			if( l_Flags != 0 && nullptr != ( *ppDDSurface ) )
 			{
-				IDirectDrawPalette* l_pPalette = NULL;
+				IDirectDrawPalette* l_pPalette = nullptr;
 				SVBitmapInfo::SVPaletteTable l_PaletteTable = p_rBitmapInfo.GetPaletteTable();
 
-				l_hr = rDirectX.m_pDDObject->CreatePalette( l_Flags, &( l_PaletteTable[ 0 ] ), &l_pPalette, NULL );
+				l_hr = rDirectX.m_pDDObject->CreatePalette( l_Flags, &( l_PaletteTable[ 0 ] ), &l_pPalette, nullptr );
 
-				if( l_pPalette != NULL )
+				if( nullptr != l_pPalette )
 				{
 					l_hr = ( *ppDDSurface )->SetPalette( l_pPalette );
 
 					l_pPalette->Release();
 
-					l_pPalette = NULL;
+					l_pPalette = nullptr;
 				}
 			}
 		}
@@ -425,7 +426,7 @@ HRESULT SVDirectX::GetPrimarySurfaceResolution(SIZE& rSize)
 		l_ddSurfaceDesc.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
 
 		hr = rDirectX.m_pDDDisplaySurface->GetSurfaceDesc(&l_ddSurfaceDesc);
-		if (hr == DD_OK)
+		if (DD_OK == hr)
 		{
 			rSize.cx = l_ddSurfaceDesc.dwWidth;
 			rSize.cy = l_ddSurfaceDesc.dwHeight;
@@ -449,7 +450,7 @@ HRESULT SVDirectX::GetPrimarySurfacePixelDepth(int& rPixelDepth)
 		ZeroMemory( &l_pPixelFormat, sizeof( l_pPixelFormat ) );
 		l_pPixelFormat.dwSize = sizeof( l_pPixelFormat );
 		hr = rDirectX.m_pDDDisplaySurface->GetPixelFormat( &l_pPixelFormat );
-		if (hr == DD_OK)
+		if (DD_OK == hr)
 		{
 			rPixelDepth = l_pPixelFormat.dwRGBBitCount / 8;
 		}
@@ -465,7 +466,7 @@ HRESULT SVDirectX::TestCooperativeLevel()
 {
 	HRESULT hr = E_POINTER;
 	SVDirectX& rDirectX = SVDirectX::Instance();
-	if (rDirectX.m_pDDObject != NULL)
+	if (nullptr != rDirectX.m_pDDObject)
 	{
 		hr = rDirectX.m_pDDObject->TestCooperativeLevel();
 	}
@@ -474,17 +475,17 @@ HRESULT SVDirectX::TestCooperativeLevel()
 
 void SVDirectX::LocalClear()
 {
-	if( m_pDDDisplaySurface != NULL )
+	if( nullptr!= m_pDDDisplaySurface )
 	{
-		m_pDDDisplaySurface->SetClipper( NULL );
+		m_pDDDisplaySurface->SetClipper( nullptr );
 		m_pDDDisplaySurface->Release();
-		m_pDDDisplaySurface = NULL;
+		m_pDDDisplaySurface = nullptr;
 	}
 
-	if( m_pDDClipper != NULL )
+	if( nullptr != m_pDDClipper )
 	{
 		m_pDDClipper->Release();
-		m_pDDClipper = NULL;
+		m_pDDClipper = nullptr;
 	}
 }
 

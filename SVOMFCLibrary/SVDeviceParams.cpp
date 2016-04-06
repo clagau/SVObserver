@@ -9,6 +9,7 @@
 // * .Check In Date   : $Date:   15 May 2013 19:42:28  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDeviceParams.h"
 #include "SVNullDeviceParam.h"
@@ -18,6 +19,7 @@
 #include "SVStringValueDeviceParam.h"
 #include "SVCustomDeviceParam.h"
 #include "SVParamListDeviceParam.h"
+#pragma endregion Includes
 
 namespace	// create unnamed namespace for the variables to live in
 {
@@ -44,10 +46,7 @@ namespace	// create unnamed namespace for the variables to live in
 	REGISTER_DEVICE_PARAM( DeviceParamHue,                 DeviceParamHue_String,                     SVLongValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamSaturation,          DeviceParamSaturation_String,              SVLongValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamRegisters,           DeviceParamRegisters_String,               SVParamListDeviceParam );
-	//REGISTER_DEVICE_PARAM( DeviceParamWidth,               DeviceParamWidth_String,                   SVLongValueDeviceParam );	// obsolete
-	//REGISTER_DEVICE_PARAM( DeviceParamHeight,              DeviceParamHeight_String,                  SVLongValueDeviceParam );	// obsolete
 	REGISTER_DEVICE_PARAM( DeviceParamSizeBands,           DeviceParamSizeBands_String,               SVLongValueDeviceParam );
-	//REGISTER_DEVICE_PARAM( DeviceParamNumFormats,          DeviceParamNumFormats_String,              SVLongValueDeviceParam );	// obsolete
 	REGISTER_DEVICE_PARAM( DeviceParamFormatStrings,       DeviceParamFormatStrings_String,           SVStringValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamFormat7Support,      DeviceParamFormat7Support_String,          SVBoolValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamTriggerEdge,         DeviceParamTriggerEdge_String,             SVLongValueDeviceParam );
@@ -65,28 +64,7 @@ namespace	// create unnamed namespace for the variables to live in
 	REGISTER_DEVICE_PARAM( DeviceParamTriggerQueueMode,    DeviceParamTriggerQueueMode_String,        SVLongValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamStrobePulseAdvance,  DeviceParamStrobePulseAdvance_String,      SVLongValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamNumCameraBuffers,    DeviceParamNumCameraBuffers_String,        SVLongValueDeviceParam );
-
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister1,     DeviceParamCameraRegister1_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister2,     DeviceParamCameraRegister2_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister3,     DeviceParamCameraRegister3_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister4,     DeviceParamCameraRegister4_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister5,     DeviceParamCameraRegister5_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister6,     DeviceParamCameraRegister6_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister7,     DeviceParamCameraRegister7_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister8,     DeviceParamCameraRegister8_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister9,     DeviceParamCameraRegister9_String,         SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister10,    DeviceParamCameraRegister10_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister11,    DeviceParamCameraRegister11_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister12,    DeviceParamCameraRegister12_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister13,    DeviceParamCameraRegister13_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister14,    DeviceParamCameraRegister14_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister15,    DeviceParamCameraRegister15_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister16,    DeviceParamCameraRegister16_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister17,    DeviceParamCameraRegister17_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister18,    DeviceParamCameraRegister18_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister19,    DeviceParamCameraRegister19_String,        SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamCameraRegister20,    DeviceParamCameraRegister20_String,        SVLongValueDeviceParam );
-
+	
 	REGISTER_DEVICE_PARAM( DeviceParamGigeCustom1,	DeviceParamGigeCustom1_String,  SVCustomDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamGigeCustom2,	DeviceParamGigeCustom2_String,  SVCustomDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamGigeCustom3,	DeviceParamGigeCustom3_String,  SVCustomDeviceParam );
@@ -134,11 +112,11 @@ namespace	// create unnamed namespace for the variables to live in
 
 	// File Acquisition parameters
 	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageFileName, DeviceParamFileAcqImageFileName_String, SVStringValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageDirName, DeviceParamFileAcqImageDirName_String, SVStringValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamFileAcqLoadingMode, DeviceParamFileAcqLoadingMode_String, SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageWidth, DeviceParamFileAcqImageWidth_String, SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageHeight, DeviceParamFileAcqImageHeight_String, SVLongValueDeviceParam );
-	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageFormat, DeviceParamFileAcqImageFormat_String, SVLongValueDeviceParam );
+	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageDirName,  DeviceParamFileAcqImageDirName_String,  SVStringValueDeviceParam );
+	REGISTER_DEVICE_PARAM( DeviceParamFileAcqLoadingMode,   DeviceParamFileAcqLoadingMode_String,   SVLongValueDeviceParam );
+	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageWidth,    DeviceParamFileAcqImageWidth_String,    SVLongValueDeviceParam );
+	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageHeight,   DeviceParamFileAcqImageHeight_String,   SVLongValueDeviceParam );
+	REGISTER_DEVICE_PARAM( DeviceParamFileAcqImageFormat,   DeviceParamFileAcqImageFormat_String,   SVLongValueDeviceParam );
 
 	// GIGE Acquisition parameters
 	REGISTER_DEVICE_PARAM( DeviceParamGigeTriggerSource,	DeviceParamAcquisitionTriggerType_String,	SVStringValueDeviceParam );

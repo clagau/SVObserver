@@ -10,15 +10,16 @@
 //******************************************************************************
 
 #pragma once
-
+#pragma region Includes
 #include "SVResult.h"
+#pragma endregion Includes
 
 class SVDoubleResultClass : public SVResultClass  
 {
 	SV_DECLARE_CLASS( SVDoubleResultClass );
 
 public:
-	SVDoubleResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_RESULT_DOUBLE );
+	SVDoubleResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_DOUBLE );
 	virtual ~SVDoubleResultClass();
 
 public:

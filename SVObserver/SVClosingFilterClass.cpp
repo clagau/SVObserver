@@ -22,6 +22,10 @@ SVClosingFilterClass::SVClosingFilterClass( SVObjectClass* POwner, int StringRes
 	outObjectInfo.ObjectTypeInfo.SubType = SVClosingFilterObjectType;
 }
 
+SVClosingFilterClass::~SVClosingFilterClass() 
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

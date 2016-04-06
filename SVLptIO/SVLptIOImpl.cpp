@@ -3,10 +3,6 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVIMPL
-//* .File Name       : $Workfile:   SVLptIOImpl.cpp  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Sep 2014 15:57:36  $
 //******************************************************************************
 
 //#define INITIALIZE_IO_SUBSYSTEM // for InitializeIOSubsystem Application

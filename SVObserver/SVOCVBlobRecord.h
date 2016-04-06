@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 11:07:26  $
 //******************************************************************************
-
-#include "SVTaskObject.h"
-
 #pragma once
+
+#pragma region Includes
+#include "SVTaskObject.h"
+#pragma endregion Includes
 
 class SVOCVCharacterResultClass : public SVTaskObjectClass
 {
@@ -20,8 +21,8 @@ protected:
 
 public:
 	SVOCVCharacterResultClass(LPCSTR ObjectName );
-	SVOCVCharacterResultClass(SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVOCVCHARACTERRESULTOBJECT );
-	~SVOCVCharacterResultClass();
+	SVOCVCharacterResultClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVCHARACTERRESULTOBJECT );
+	virtual ~SVOCVCharacterResultClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
@@ -45,6 +46,7 @@ public:
 
 	SVDoubleValueObjectClass m_dvoMatchScore;
 };
+
 typedef SVVector< SVOCVCharacterResultClass* > SVOCVCharacterResultArray;
 
 

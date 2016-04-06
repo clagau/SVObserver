@@ -8,20 +8,17 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:15:36  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVOLibrary/SVOCallbackClass.h"
-
-// temp hack
-//typedef HRESULT (*SVSUBSCRIBERCALLBACKFNPTR) (ULONG);
+#pragma region Includes
 
 class SVSubscriberInterface
 {
 public:
 	// temp hack
 	virtual SVOCallbackPtr GetCallbackFunction(const CString& sType) const = 0;
-
 };
 
 class SVProviderInterface

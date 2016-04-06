@@ -11,61 +11,19 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVSkeletonFilterClass
-// -----------------------------------------------------------------------------
-// .Description : Base class for all kinds of Skeleton filters
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-////////////////////////////////////////////////////////////////////////////////
 class SVSkeletonFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVSkeletonFilterClass );
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-// Standard constructor
-	SVSkeletonFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVSKELETONFILTER );
+	SVSkeletonFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSKELETONFILTER );
 	virtual ~SVSkeletonFilterClass();
 	
-private:
-
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
-public:
-
-////////////////////////////////////////////////////////////////////////////////
-// Create Operator
-////////////////////////////////////////////////////////////////////////////////
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-public:
-
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-protected:
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
 };
-
 

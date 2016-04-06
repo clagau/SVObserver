@@ -35,18 +35,6 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SV_Match.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SV_OCMD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SV_OGD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SV_OMD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVAboutDialogClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -134,12 +122,6 @@
     <ClCompile Include="SVByteValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVCalibration.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCameraFormat7Dlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVCameraImageTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -182,9 +164,6 @@
     <ClCompile Include="SVConfigurationPrint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVCorecoAcquisitionClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVCustomFilters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -198,9 +177,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVDataDefinitionSheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDataObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVDigitalInputObject1.cpp">
@@ -494,9 +470,6 @@
     <ClCompile Include="SVLUTOperator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVLVFastOCR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMainFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -570,45 +543,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOConfigAssistantDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRAnalyzerResult.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRBlobRecord.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRGrayAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRGrayAnalyzerResult.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRGrayCandidateDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRGrayDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRGrayGeneralDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRGrayMatchDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRGrayMatchThresholdDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRGrayParamStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOCRParamStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOCVAnalyzer.cpp">
@@ -1076,9 +1010,6 @@
     <ClCompile Include="SVCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIMServerWrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTriggerSelectionDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1109,24 +1040,6 @@
     <ClCompile Include="SVCameraDataInputObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SV1394CameraManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SV1394CameraManagerDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SV1394CameraStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVIntekAcquisitionClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVIntekDCamAcquisitionProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVIntekDCamDriverProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVImportedInspectionInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1143,15 +1056,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVGigeCameraROIDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SV1394CameraManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SV1394CameraManagerDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SV1394CameraStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVBinaryOperatorClass.cpp">
@@ -1215,15 +1119,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVVertEdgeFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVIntekAcquisitionClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVIntekDCamAcquisitionProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVIntekDCamDriverProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVStaticStringValueObjectClass.cpp">
@@ -1428,18 +1323,6 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SV_Match.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SV_OCMD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SV_OGD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SV_OMD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVAboutDialogClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1530,12 +1413,6 @@
     <ClInclude Include="SVByteValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVCalibration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCameraFormat7Dlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVCameraImageTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1581,9 +1458,6 @@
     <ClInclude Include="SVConfigurationTreeWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVCorecoAcquisitionClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVCustomFilters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1597,9 +1471,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDataDefinitionSheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDataObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDigitalInputObject1.h">
@@ -1920,9 +1791,6 @@
     <ClInclude Include="SVLUTOperator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVLVFastOCR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVMainFrm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2002,45 +1870,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOConfigAssistantDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRAnalyzerResult.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRBlobRecord.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRGrayAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRGrayAnalyzerResult.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRGrayCandidateDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRGrayDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRGrayGeneralDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRGrayMatchDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRGrayMatchThresholdDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRGrayParamStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOCRParamStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOCVAnalyzer.h">
@@ -2547,9 +2376,6 @@
     <ClInclude Include="SVCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIMServerWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTriggerSelectionDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2586,24 +2412,6 @@
     <ClInclude Include="SVVisionProcessorHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SV1394CameraManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SV1394CameraManagerDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SV1394CameraStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIntekAcquisitionClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIntekDCamAcquisitionProxy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIntekDCamDriverProxy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVIPDocInfoImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2629,24 +2437,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVConfigXMLPrint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SV1394CameraManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SV1394CameraManagerDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SV1394CameraStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIntekAcquisitionClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIntekDCamAcquisitionProxy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIntekDCamDriverProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ISVCancel.h">

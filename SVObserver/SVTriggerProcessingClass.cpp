@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   24 Apr 2013 12:29:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTriggerProcessingClass.h"
 #include "SVHardwareManifest.h"
@@ -17,6 +18,7 @@
 #include "SVSoftwareTriggerClass.h"
 #include "SVCameraTriggerClass.h"
 #include "SVTriggerConstants.h"
+#pragma endregion Includes
 
 SVTriggerProcessingClass& SVTriggerProcessingClass::Instance()
 {
@@ -42,9 +44,9 @@ void SVTriggerProcessingClass::Startup()
 
 	while( l_Iter != l_rTriggerParams.end() )
 	{
-		SVTriggerClass* l_pTrigger = NULL;
+		SVTriggerClass* l_pTrigger = nullptr;
 
-		if( l_Iter->m_Name.find( SV_SOFTWARE_TRIGGER_NAME ) == 0 )
+		if( 0 == l_Iter->m_Name.find( SV_SOFTWARE_TRIGGER_NAME ) )
 		{
 			l_pTrigger = new SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
 		}
@@ -52,16 +54,12 @@ void SVTriggerProcessingClass::Startup()
 		{
 			l_pTrigger = new SVTriggerClass( l_Iter->m_Name.c_str() );
 		}
-		else if( l_Iter->m_Name.find( _T( "Viper_" ) ) == 0 )
-		{
-			l_pTrigger = new SVTriggerClass( l_Iter->m_Name.c_str() );
-		}
-		else if( l_Iter->m_Name.find( SV_CAMERA_TRIGGER_NAME ) == 0 )
+		else if( 0 == l_Iter->m_Name.find( SV_CAMERA_TRIGGER_NAME ) )
 		{
 			l_pTrigger = new SVCameraTriggerClass( l_Iter->m_Name.c_str() );
 		}
 
-		if( l_pTrigger != NULL )
+		if( nullptr != l_pTrigger )
 		{
 			l_pTrigger->miChannelNumber = l_Iter->m_Channel;
 
@@ -84,7 +82,7 @@ void SVTriggerProcessingClass::Shutdown()
 		{
 			SVTriggerClass* l_pTrigger = l_Iter->second;
 
-			if( l_pTrigger != NULL )
+			if( nullptr != l_pTrigger )
 			{
 				delete l_pTrigger;
 			}
@@ -102,12 +100,11 @@ void SVTriggerProcessingClass::clear()
 
 		while( l_Iter != m_Triggers.end() )
 		{
-			if( l_Iter->second != NULL )
+			if( nullptr != l_Iter->second )
 			{
-				l_Iter->second->m_pDLLTrigger = NULL;
-				l_Iter->second->m_ulHandle = NULL;
+				l_Iter->second->m_pDLLTrigger = nullptr;
+				l_Iter->second->m_ulHandle = 0;
 			}
-
 			++l_Iter;
 		}
 	}
@@ -127,7 +124,7 @@ HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibrary
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_pDLLTrigger != NULL )
+	if (nullptr != p_pDLLTrigger )
 	{
 		unsigned long l_ulSize = 0;
 
@@ -137,25 +134,25 @@ HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibrary
 		{
 			SVString l_Name;
 
-			unsigned long l_ulHandle = NULL;
+			unsigned long l_ulHandle = 0;
 
 			l_hrOk = p_pDLLTrigger->GetHandle( &l_ulHandle, i );
 
-			if ( l_hrOk == S_OK )
+			if ( S_OK == l_hrOk )
 			{
-				BSTR l_bstrName = NULL;
+				BSTR l_bstrName = nullptr;
 
 				l_hrOk = p_pDLLTrigger->GetName( l_ulHandle, &l_bstrName );
 
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_Name = SvUl_SF::createSVString(l_bstrName);
 
-					if ( l_bstrName != NULL )
+					if ( nullptr != l_bstrName )
 					{
 						::SysFreeString( l_bstrName );
 
-						l_bstrName = NULL;
+						l_bstrName = nullptr;
 					}
 				}
 			}
@@ -164,7 +161,7 @@ HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibrary
 				l_hrOk = S_FALSE;
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddTrigger( l_Name.c_str(), p_pDLLTrigger, l_ulHandle );
 			}
@@ -180,7 +177,7 @@ HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibrary
 
 SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const
 {
-	SVTriggerClass* l_pTrigger = NULL;
+	SVTriggerClass* l_pTrigger = nullptr;
 
 	SVNameTriggerMap::const_iterator l_Iter = m_Triggers.find( szName );
 
@@ -198,7 +195,7 @@ HRESULT SVTriggerProcessingClass::AddTrigger( LPCTSTR p_szName, SVIOTriggerLoadL
 
 	SVNameTriggerMap::iterator l_Iter = m_Triggers.find( p_szName );
 
-	if( l_Iter != m_Triggers.end() && l_Iter->second != NULL )
+	if( l_Iter != m_Triggers.end() && nullptr != l_Iter->second )
 	{
 		if( l_Iter->second->m_pDLLTrigger != p_pTriggerSubsystem )
 		{

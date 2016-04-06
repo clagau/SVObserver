@@ -11,11 +11,6 @@
 
 #pragma once
 
-#ifdef SV_SHOW_INCLUDES
-	#pragma message( "Including " __FILE__ )
-#endif
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVObjectScriptDataObjectTypeEnum
 // -----------------------------------------------------------------------------

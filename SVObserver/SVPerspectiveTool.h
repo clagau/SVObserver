@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageClass.h"
 #include "SVTool.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 const CString PERSPECTIVE_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
 const CString PERSPECTIVE_WARP_TYPE_VERTICAL = _T("Vertical Warp");
@@ -57,7 +58,6 @@ public:
 protected:
 	HRESULT UpdateOutputImageExtents();
 	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
-//	virtual DWORD_PTR processMessage( DWORD p_dwMessageID, DWORD_PTR p_dwMessageValue, DWORD_PTR p_dwMessageContext );
 
 private:
 	void LocalInitialize();

@@ -33,7 +33,6 @@ class SVInspectionProcess;
 class SVIOController;
 class SVIODoc;
 class SVIPDoc;
-class SVLVFastOCR;
 class SVMainFrame;
 class SVMessageWindowClass;
 class SVTriggerObject;
@@ -260,12 +259,6 @@ public:
 	BOOL Logout( BOOL BForceLogout = FALSE );
 	BOOL InitPath( LPCTSTR TStrPathName, BOOL BCreateIfNotExists = TRUE, BOOL BDeleteContents = TRUE );
 
-	BOOL InitSVIMServer();
-	void DestroySVIMServer();
-	BOOL IsSVIMServerEnabled() const;
-
-	bool IsMatrox1394() const;
-	bool IsCoreco() const;
 	bool IsMatroxGige() const;
 
 	BOOL CheckSVIMType() const;
@@ -302,7 +295,6 @@ public:
 	BOOL IsMonochromeImageAvailable();
 	void SVGetCurrentConfigName( CString &ConfigName ) const;
 	void OnRCOpenCurrentSVX();
-	void SetupSVIMServer();
 	void UpdateAllMenuExtrasUtilities();
 
 	long GetSourceImageDepth() const;
@@ -350,8 +342,6 @@ public:
 	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
 
 #pragma region Encapsulation Methods
-	BOOL getShowUpdateFirmwareInMenu() const { return m_ShowUpdateFirmwareInMenu; }
-	void setShowUpdateFirmwareInMenu(BOOL val) { m_ShowUpdateFirmwareInMenu = val; }
 	long getGigePacketSize() const { return m_gigePacketSize; }
 	long getOfflineCount() const { return m_OfflineCount; }
 	SVIPDoc* getCurrentDocument() const { return m_pCurrentDocument; }
@@ -431,11 +421,6 @@ private:
 
 #pragma region Public member variables
 public:
-	//firmware command strings
-	CString m_csFirmwareCommand;
-	CString m_csFirmwareWorkingDir;
-	CString m_csFirmwareArguments;
-
 	SVSecurityManager m_svSecurityMgr;	// Security
 	// For managing remotely created/edited fonts through the SIAC
 	SVRemoteFontManager m_mgrRemoteFonts;
@@ -453,7 +438,6 @@ private:
 
 	SVOIntelRAIDStatusClass m_IntelRAID;
 
-	SVLVFastOCR* m_pFastOcr;
 	SVIPDoc* m_pCurrentDocument;
 	long m_OfflineCount;
 	BOOL m_ShouldRunLastEnvironmentAutomatically;
@@ -489,8 +473,6 @@ private:
 
 	long m_gigePacketSize; 
 
-	CString m_csShowUpdateFirmware;
-	BOOL m_ShowUpdateFirmwareInMenu;
 	std::set<SVTriggerObject*> m_dirty_triggers;
 
 	// The Standard Configuration Execution Directory
@@ -552,7 +534,6 @@ private:
 	HRESULT m_hrHardwareFailure;
 
 	SVOINIClass m_SvimIni;
-	BOOL m_bImageCompressionStarted;
 	HMENU m_hAddMenu;
 	HANDLE m_hEvent;
 

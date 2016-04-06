@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:52:42  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVValueObject.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVObjectLibrary/SVObjectXMLWriter.h"
+#pragma endregion Includes
 
 class SVRemoteOutputObject : public SVObjectClass
 {
@@ -57,7 +58,6 @@ private:
 	SVGUID m_InputObjectId;	
 
 	SVString m_strGroupID;	// Which Output Group this output belongs to.
-
 };
 
 typedef std::vector<SVRemoteOutputObject*> SVRemoteOutputObjectList;

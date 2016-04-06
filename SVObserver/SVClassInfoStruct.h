@@ -23,9 +23,8 @@ class SVInterfaceListClass : public SVVector< SVObjectTypeInfoStruct >
 public:
 	SVInterfaceListClass();
 	SVInterfaceListClass( const SVInterfaceListClass& RIn );
-
+	virtual ~SVInterfaceListClass();
 	SVInterfaceListClass operator=( const SVInterfaceListClass& RIn );
-
 };
 
 struct SVClassInfoStruct

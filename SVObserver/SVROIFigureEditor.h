@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
 
 #include "SVFigureEditor.h"
+#pragma endregion Includes
 
 // MODELLED AFTER THE MASK SHAPE SYSTEM
 
@@ -27,14 +29,10 @@ public:
 	CRect GetParentImageRect();
 	HRESULT SetImageInfo( const SVImageInfoClass& svImageInfo );
 	HRESULT GetImageInfo( SVImageInfoClass& svImageInfo ) const;
-//	HRESULT Refresh();
+
 protected:
 
 	HRESULT TranslateToDisplay( CRect rectViewport, CRect rectDisplay, CRect& rectShape );
-
-	// always render on supplied DC, don't need these
-	//SVDIBITMAPINFO m_dib;
-	//CDC m_RenderDC;
 
 	CRect m_Rect;
 	SVImageInfoClass m_svImageInfo;
@@ -58,7 +56,6 @@ public:
 	//*
 	virtual CRect GetRect();	// in SVFigureEditor
 	void  SetRect( const CRect& rect );
-	//HRESULT Refresh();
 
 	HRESULT SetImageInfo( const SVImageInfoClass& svImageInfo );
 	HRESULT GetImageInfo( SVImageInfoClass& svImageInfo ) const;
@@ -75,7 +72,6 @@ protected:
 	virtual SVHitTestStruct HitTest( CPoint point );	// for cursor display
 
 	CSize CalculateDeltaPos(CPoint point);
-
 
 	SVROIShape* m_pShape;
 };

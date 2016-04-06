@@ -11,14 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVOperator.h"
+#pragma endregion Includes
 
 class SVBinaryOperatorClass : public SVOperatorClass
 {
 	SV_DECLARE_CLASS( SVBinaryOperatorClass );
 public:
-	SVBinaryOperatorClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVBINARYOPERATOR );
-	
+	SVBinaryOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBINARYOPERATOR );
+	virtual ~SVBinaryOperatorClass();
+
 private:
 	void init();
 };

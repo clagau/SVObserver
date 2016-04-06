@@ -8,18 +8,19 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 13:12:42  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVROI.h"
 #include "SVLine.h"
+#pragma endregion Includes
 
 class SVLineROIClass : public SVROIClass
 {
 	SV_DECLARE_CLASS( SVLineROIClass )
 
 public:
-	SVLineROIClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVLINEROI );
+	SVLineROIClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEROI );
 	virtual ~SVLineROIClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -35,6 +36,5 @@ protected:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	SVLineClass outputLineObject; // Embedded
-
 };
 

@@ -11,65 +11,29 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 class SVIPDoc;
 class SVToolClass;
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
-
 
 class SVMathContainerClass : public SVTaskObjectClass
 {
 	SV_DECLARE_CLASS( SVMathContainerClass )
 
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-	SVMathContainerClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVMATHCONTAINER );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
+	SVMathContainerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHCONTAINER );
 	virtual ~SVMathContainerClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
+	virtual BOOL OnValidate();
 
 protected:
 	SVDoubleValueObjectClass*	getInputMathResult();
 
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-protected:
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-public:
-	virtual BOOL OnValidate();
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
 protected:
 	SVInObjectInfoStruct		inputMathResult;
-
 };
 

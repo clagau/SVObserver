@@ -24,6 +24,9 @@
     <ClCompile Include="SVOCMArchive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ObsoleteItemChecker.inl">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVConfigurationTags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObsoleteItemChecker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

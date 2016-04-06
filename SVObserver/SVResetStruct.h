@@ -31,7 +31,5 @@ struct SVResetStruct
 
 	void AddState( unsigned long p_State ) { m_State = ( m_State | p_State ); }
 	void RemoveState( unsigned long p_State ) { m_State = ( m_State & ~( p_State ) ); }
-
 };
-
 

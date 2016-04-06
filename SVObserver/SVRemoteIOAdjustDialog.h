@@ -16,7 +16,7 @@ class SVRemoteIOAdjustDialog : public CDialog
 	DECLARE_DYNAMIC(SVRemoteIOAdjustDialog)
 
 public:
-	SVRemoteIOAdjustDialog(CWnd* pParent = NULL);   // standard constructor
+	SVRemoteIOAdjustDialog(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRemoteIOAdjustDialog();
 
 	enum { IDD = IDD_REMOTE_IOADJUST_DIALOG };
@@ -38,6 +38,5 @@ protected:
 	CString m_Name;
 	_variant_t m_Value;
 	double m_EditValue;
-
 };
 

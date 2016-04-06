@@ -14,9 +14,11 @@
 #pragma warning (push)
 #pragma warning (disable : 4290)
 
+#pragma region Includes
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVDLLToolDefinitionStructs.h"
 #include "SVLoki/functor.h"
+#pragma endregion Includes
 
 struct SVImageDefinitionStruct;
 
@@ -140,4 +142,5 @@ private:
 #include "SVDLLToolLoadLibraryClass.inl"
 
 #pragma warning (pop)
+
 

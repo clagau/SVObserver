@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:55:26  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVIProgress.h"
 #include "SVProgressDialog.h"
+#pragma endregion Includes
 
 class SVImportTask;
 

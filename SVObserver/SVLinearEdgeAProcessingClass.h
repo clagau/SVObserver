@@ -11,14 +11,16 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVLinearEdgeProcessingClass.h"
+#pragma endregion Includes
 
 class SVLinearEdgeAProcessingClass : public SVLinearEdgeProcessingClass  
 {
 	SV_DECLARE_CLASS( SVLinearEdgeAProcessingClass );
 
 public:
-	SVLinearEdgeAProcessingClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEAPROCESSING );
+	SVLinearEdgeAProcessingClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEAPROCESSING );
 	virtual ~SVLinearEdgeAProcessingClass();
 };
 

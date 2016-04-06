@@ -17,7 +17,8 @@ class CSVOCameraDlg : public CPropertyPage
 {
 // Construction
 public:
-	CSVOCameraDlg(CWnd* pParent = NULL);   // standard constructor
+	CSVOCameraDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CSVOCameraDlg();
 
     void SetupList();
 	void DisableAdvanceBtn();

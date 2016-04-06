@@ -11,10 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <algorithm>
 #include "SVDeviceParamCollection.h"
+#pragma endregion Includes
 
 class SVDeviceParamStructTestCases
 {
@@ -67,10 +69,7 @@ enum SVDeviceParamEnum	// do not change exitsing param numbers!
 	DeviceParamBrightness           = 1004,
 	DeviceParamGain                 = 1005,
 	DeviceParamRegisters            = 1006,
-	//DeviceParamWidth                = 1007,	// obsolete
-	//DeviceParamHeight               = 1008,	// obsolete
 	DeviceParamSizeBands            = 1009,
-	//DeviceParamNumFormats           = 1010,	// obsolete
 	DeviceParamFormatStrings        = 1011,
 	DeviceParamFormat7Support       = 1012,
 	DeviceParamTriggerEdge          = 1013,
@@ -97,27 +96,6 @@ enum SVDeviceParamEnum	// do not change exitsing param numbers!
 
 	DeviceParamHorizontalBinning	= 1100, // must be less than DeviceParamCameraFormats (so it gets set before)
 	DeviceParamVerticalBinning		= 1101, // must be less than DeviceParamCameraFormats (so it gets set before)
-
-	DeviceParamCameraRegister1      = 3001,
-	DeviceParamCameraRegister2      = 3002,
-	DeviceParamCameraRegister3      = 3003,
-	DeviceParamCameraRegister4      = 3004,
-	DeviceParamCameraRegister5      = 3005,
-	DeviceParamCameraRegister6      = 3006,
-	DeviceParamCameraRegister7      = 3007,
-	DeviceParamCameraRegister8      = 3008,
-	DeviceParamCameraRegister9      = 3009,
-	DeviceParamCameraRegister10     = 3010,
-	DeviceParamCameraRegister11     = 3011,
-	DeviceParamCameraRegister12     = 3012,
-	DeviceParamCameraRegister13     = 3013,
-	DeviceParamCameraRegister14     = 3014,
-	DeviceParamCameraRegister15     = 3015,
-	DeviceParamCameraRegister16     = 3016,
-	DeviceParamCameraRegister17     = 3017,
-	DeviceParamCameraRegister18     = 3018,
-	DeviceParamCameraRegister19     = 3019,
-	DeviceParamCameraRegister20     = 3020,
 
 	DeviceParamGigeCustom1      = 3050,
 	DeviceParamGigeCustom2      = 3051,
@@ -198,8 +176,6 @@ LPCTSTR const DeviceParamVendorName_String      = (_T("VendorName"));
 LPCTSTR const DeviceParamModelName_String       = (_T("CameraModel"));
 LPCTSTR const DeviceParamFirmware_String        = (_T("Firmware"));
 
-
-
 	// physical camera params
 LPCTSTR const DeviceParamSerialNumber_String         = (_T("SerialNumber"));
 LPCTSTR const DeviceParamSerialNumberString_String   = (_T("SerialNumberString"));
@@ -236,27 +212,6 @@ LPCTSTR const DeviceParamSaturation_String           = (_T("Saturation"));
 LPCTSTR const DeviceParamStrobePulseMultiplier_String = (_T("StrobePulseMultiplier"));
 LPCTSTR const DeviceParamNumCameraBuffers_String     = (_T("NumCameraBuffers"));
 
-LPCTSTR const DeviceParamCameraRegister1_String      = (_T("Register1"));
-LPCTSTR const DeviceParamCameraRegister2_String      = (_T("Register2"));
-LPCTSTR const DeviceParamCameraRegister3_String      = (_T("Register3"));
-LPCTSTR const DeviceParamCameraRegister4_String      = (_T("Register4"));
-LPCTSTR const DeviceParamCameraRegister5_String      = (_T("Register5"));
-LPCTSTR const DeviceParamCameraRegister6_String      = (_T("Register6"));
-LPCTSTR const DeviceParamCameraRegister7_String      = (_T("Register7"));
-LPCTSTR const DeviceParamCameraRegister8_String      = (_T("Register8"));
-LPCTSTR const DeviceParamCameraRegister9_String      = (_T("Register9"));
-LPCTSTR const DeviceParamCameraRegister10_String     = (_T("Register10"));
-LPCTSTR const DeviceParamCameraRegister11_String     = (_T("Register11"));
-LPCTSTR const DeviceParamCameraRegister12_String     = (_T("Register12"));
-LPCTSTR const DeviceParamCameraRegister13_String     = (_T("Register13"));
-LPCTSTR const DeviceParamCameraRegister14_String     = (_T("Register14"));
-LPCTSTR const DeviceParamCameraRegister15_String     = (_T("Register15"));
-LPCTSTR const DeviceParamCameraRegister16_String     = (_T("Register16"));
-LPCTSTR const DeviceParamCameraRegister17_String     = (_T("Register17"));
-LPCTSTR const DeviceParamCameraRegister18_String     = (_T("Register18"));
-LPCTSTR const DeviceParamCameraRegister19_String     = (_T("Register19"));
-LPCTSTR const DeviceParamCameraRegister20_String     = (_T("Register20"));
-
 LPCTSTR const DeviceParamGigeCustom1_String      = (_T("Custom1"));
 LPCTSTR const DeviceParamGigeCustom2_String      = (_T("Custom2"));
 LPCTSTR const DeviceParamGigeCustom3_String      = (_T("Custom3"));
@@ -289,22 +244,21 @@ LPCTSTR const DeviceParamGigeCustom29_String     = (_T("Custom29"));
 LPCTSTR const DeviceParamGigeCustom30_String     = (_T("Custom30"));
 
 	// Imaging parameters
-LPCTSTR const DeviceParamCameraFormats_String          = (_T("CameraFormats"));
-LPCTSTR const DeviceParamLightReference_String         = (_T("LightReference"));
-LPCTSTR const DeviceParamLut_String                    = (_T("Lut"));
+LPCTSTR const DeviceParamCameraFormats_String    = (_T("CameraFormats"));
+LPCTSTR const DeviceParamLightReference_String   = (_T("LightReference"));
+LPCTSTR const DeviceParamLut_String              = (_T("Lut"));
 
 	// Acquisition I/O parameters
-LPCTSTR const DeviceParamAcquisitionTriggerSelection_String     = (_T("TriggerSelection"));
-LPCTSTR const DeviceParamAcquisitionTriggerType_String          = (_T("TriggerSource"));
-LPCTSTR const DeviceParamAcquisitionTriggerName_String          = (_T("TriggerName"));
-LPCTSTR const DeviceParamAcquisitionTriggerEdge_String          = (_T("ExpectedTriggerEdge"));
-
-LPCTSTR const DeviceParamAcquisitionStrobeEdge_String           = (_T("ExpectedStrobeEdge"));
+LPCTSTR const DeviceParamAcquisitionTriggerSelection_String = (_T("TriggerSelection"));
+LPCTSTR const DeviceParamAcquisitionTriggerType_String      = (_T("TriggerSource"));
+LPCTSTR const DeviceParamAcquisitionTriggerName_String      = (_T("TriggerName"));
+LPCTSTR const DeviceParamAcquisitionTriggerEdge_String      = (_T("ExpectedTriggerEdge"));
+LPCTSTR const DeviceParamAcquisitionStrobeEdge_String       = (_T("ExpectedStrobeEdge"));
 
 LPCTSTR const DeviceParamIOStrobeInvert_String           = (_T("StrobeInvert"));
 LPCTSTR const DeviceParamIOTriggerInvert_String          = (_T("TriggerInvert"));
 
-LPCTSTR const DeviceParamCameraTriggerMode_String          = (_T("CameraTriggerMode"));
+LPCTSTR const DeviceParamCameraTriggerMode_String        = (_T("CameraTriggerMode"));
 
 	// File Acquisition parameters
 LPCTSTR const DeviceParamFileAcqImageFileName_String	= (_T("Image Filename"));
@@ -318,7 +272,7 @@ LPCTSTR const DeviceParamFileAcqImageHeight_String		= (_T("Image Height"));
 LPCTSTR const DeviceParamFileAcqImageFormat_String		= (_T("Image Format"));
 
 	// GIGE Acquisition parameters
-LPCTSTR const DeviceParamCameraInput_String		= (_T("Input"));
+LPCTSTR const DeviceParamCameraInput_String			= (_T("Input"));
 LPCTSTR const DeviceParamGigeTriggerLine_String		= (_T("TriggerLine"));
 LPCTSTR const DeviceParamGigeTriggerEnable_String	= (_T("TriggerEnable"));
 LPCTSTR const DeviceParamGigeStrobeSource_String	= (_T("StrobeSource"));
@@ -389,7 +343,9 @@ template<typename TYPE> struct TDeviceParamInfo
 		bool bRet = false;
 		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
 		if (it != options.end())
+		{
 			bRet = true;
+		}
 		return bRet;
 	}
 };
@@ -427,7 +383,9 @@ template<> struct TDeviceParamInfo<long>
 		bool bRet = false;
 		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
 		if (it != options.end())
+		{
 			bRet = true;
+		}
 		return bRet;
 	}
 };
@@ -452,7 +410,9 @@ template<> struct TDeviceParamInfo<__int64>
 		bool bRet = false;
 		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
 		if (it != options.end())
+		{
 			bRet = true;
+		}
 		return bRet;
 	}
 };

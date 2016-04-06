@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:16:16  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVIPResultItemData
 {
@@ -32,7 +33,6 @@ protected:
 
 	bool m_IOTypePresent;
 	long m_IOType;
-
 };
 
 

@@ -8,13 +8,14 @@
 // * .Current Version : $Revision:   1.6  $
 // * .Check In Date   : $Date:   15 May 2014 11:21:44  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 
 #include "SVOutputObject.h"
 #include "SVInfoStructs.h"
+#pragma endregion Includes
 
 class SVOutputObjectList : public SVObjectClass
 {
@@ -69,7 +70,6 @@ private:
 	CRITICAL_SECTION m_hCriticalSection;
 
 	SVGuidSVOutputObjectPtrMap m_OutputObjects;
-
 };
 
 #include "SVOutputObjectList.inl"

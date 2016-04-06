@@ -8,15 +8,16 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:43:36  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
 #include "SVInfoStructs.h"
+#pragma endregion Includes
 
 class SVRemoteOutputObject;
 
@@ -41,7 +42,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVRemoteOutputEditDialog(CWnd* pParent = NULL);   // standard constructor
+	SVRemoteOutputEditDialog(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRemoteOutputEditDialog();
 
 	GUID m_InputObjectGUID;
@@ -54,6 +55,5 @@ private:
 	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
 
 	SVDataItemManager m_Items;
-
 };
 

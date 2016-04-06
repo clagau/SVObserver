@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageClass.h"
 #include "SVTool.h"
+#pragma endregion Includes
 
 const CString CYLINDRICAL_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
 const CString CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
@@ -24,7 +26,7 @@ class SVCylindricalWarpToolClass : public SVToolClass
 
 public:
 	SVCylindricalWarpToolClass( BOOL p_bCreateDefaultTaskList = FALSE, 
-	                            SVObjectClass* p_pOwner = NULL, 
+	                            SVObjectClass* p_pOwner = nullptr, 
 	                            int p_iStringResourceID = IDS_CLASSNAME_SVCYLINDRICALTOOL );
 	virtual ~SVCylindricalWarpToolClass();
 

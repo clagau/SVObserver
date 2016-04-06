@@ -29,7 +29,7 @@ class SVAdjustToolSizePositionDlg : public CDialog
 #pragma region Constructor
 public:
 	SVAdjustToolSizePositionDlg(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, SVTaskObjectClass* pToolTask = nullptr);
-	~SVAdjustToolSizePositionDlg();
+	virtual ~SVAdjustToolSizePositionDlg();
 #pragma endregion Constructor
 
 #pragma region Protected Methods
@@ -43,11 +43,8 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVAdjustToolSizePositionDlg)
-#ifdef _WIN64
 #define UINT_CUSTOM UINT_PTR
-#else
-#define UINT_CUSTOM UINT
-#endif
+
 	afx_msg LRESULT OnNotifyLButtonDown( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnNotifyLButtonUp( WPARAM wParam, LPARAM lParam );
 	afx_msg void OnTimer(UINT_CUSTOM nIDEvent);
@@ -161,4 +158,5 @@ private:
 	CString m_sTitle;
 #pragma endregion Member variables
 };	// end class SVAdjustToolSizePositionDlg
+
 

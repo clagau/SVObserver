@@ -11,13 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVCommandLibrary/SVCommandAbstractFactorySingleton.h"
 #include "SVCommandLibrary/SVCommandAbstractFactoryTemplate.h"
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#pragma endregion Includes
 
-/*
-*/
+
 class SVStreamCommandFactory : public SVCommandAbstractFactoryTemplate
 {
 public:
@@ -29,7 +30,6 @@ public:
 
 	SVStreamCommandFactory();
 	virtual ~SVStreamCommandFactory();
-
 };
 
 typedef SVCommandAbstractFactorySingleton< SVStreamCommandFactory > SVStreamCommandFactorySingleton;

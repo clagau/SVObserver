@@ -23,7 +23,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVInterfaceListClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,6 +33,10 @@ SVInterfaceListClass::SVInterfaceListClass()
 SVInterfaceListClass::SVInterfaceListClass( const SVInterfaceListClass& RIn )
 {
 	Copy( RIn );
+}
+
+SVInterfaceListClass::~SVInterfaceListClass()
+{
 }
 
 SVInterfaceListClass SVInterfaceListClass::operator=( const SVInterfaceListClass& RIn )

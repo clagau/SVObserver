@@ -8,7 +8,7 @@
 //* .Current Version : $Revision:   1.9  $
 //* .Check In Date   : $Date:   07 Jan 2015 17:52:44  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolSet.h"
 
@@ -23,6 +23,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
 #include "SVTimerLibrary/SVClock.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVToolSetClass, SVToolSetClassGuid );
 
@@ -241,42 +242,6 @@ void SVToolSetClass::DestroyAt( int I )
 	ASSERT( 0 );
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : DeleteAt
-// -----------------------------------------------------------------------------
-// .Description : Calls the base class 
-//				: SVTaskObjectListClass::DeleteAt( Index, Count ) 
-//				: and resets the current tool pointer and index.
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:int				Index
-//	:int				Count
-// .Return Value
-//	:None 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :17.02.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-void SVToolSetClass::DeleteAt( int Index, int Count )
-{
-	SVTaskObjectListClass::DeleteAt( Index, Count );
-
-	if( currentIndex >= GetSize() )
-		setCurrent( GetSize() - 1 );
-	else
-		setCurrent( currentIndex );
-
-	if( GetSize() <= 0 )
-	{
-		currentTool		= NULL;
-		currentIndex	= -1;
-	}
-}
-*/
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Check the Enabled State
@@ -320,98 +285,6 @@ bool SVToolSetClass::WasEnabled() const
 
 	return bEnabled;
 }
-
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Set Current Array Member member function of class
-//              : SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Sets the current array member attribute to the given 
-//              : SVToolClass* argument
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:SVToolClass*
-// .Return Value
-//	:None
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-BOOL SVToolSetClass::setCurrent( SVToolClass* Tool )
-{
-	int i = GetIndex( Tool );
-	if( i >= 0 )
-	{
-		currentIndex = i;
-		currentTool = Tool;
-		return TRUE;
-	}
-	return FALSE;
-}
-*/
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Set Current Array Member member function of class
-//              : SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Sets the current array member attribute to the given int index
-//              : argument
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:int
-// .Return Value
-//	:None
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-BOOL SVToolSetClass::setCurrent( int Index )
-{
-	if( Index >= 0 && Index <= GetUpperBound() )
-	{
-		currentIndex = Index;
-		currentTool = GetToolAt( Index );
-		return TRUE;
-	}
-	return FALSE;
-}
-*/
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Reset Current Array Member member function of class
-//              : SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Sets the current array member attribute to the given int index
-//              : argument
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:int
-// .Return Value
-//	:None
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :21.07.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-void SVToolSetClass::ResetCurrent()
-{
-	currentIndex = -1;
-	currentTool  = NULL;
-}
-*/
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : InsertAt
@@ -466,151 +339,12 @@ void SVToolSetClass::SetDefaultInputs()
 	// Try to get all inputs and outputs...
 	GetAllInputObjects();
 
-	::SVSendMessage( this, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+	::SVSendMessage( this, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
 	// SEJ Aug 24,1999
 	// Rebuild ResultList from the toolset level
 	m_ResultList.Refresh( this );
 }
-
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Get First Array Member member function of class SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Gets the first array member
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:SVToolClass* 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-SVToolClass* SVToolSetClass::getFirst()
-{
-	return( setCurrent( 0 ) == TRUE ? currentTool : NULL );
-}
-*/
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Get Last Array Member member function of class SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Gets the last array member
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:SVToolClass* 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-SVToolClass* SVToolSetClass::getLast()
-{
-	return( setCurrent( GetUpperBound() ) == TRUE ? currentTool : NULL );
-}
-*/
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Get Next Array Member member function of class SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Gets the next array member regarding the current member 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:SVToolClass* 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-SVToolClass* SVToolSetClass::getNext()
-{
-	return( setCurrent( currentIndex + 1 ) == TRUE ? currentTool : NULL );
-}
-*/
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Get Previous Array Member member function of class
-//              : SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Gets the previous array member regarding the current member 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:SVToolClass* 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-SVToolClass* SVToolSetClass::getPrevious()
-{
-	return( setCurrent( currentIndex - 1 ) == TRUE ? currentTool : NULL );
-}
-*/
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Get Current Array Member member function of class
-//              : SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Gets the current array member
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:SVToolClass* 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-SVToolClass* SVToolSetClass::getCurrent()
-{
-	return( currentTool );
-}
-*/
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Get Current Array Member Index member function of class
-//              : SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Gets the index of the current array member
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:int 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-/*
-int SVToolSetClass::getCurrentIndex()
-{
-	return( currentIndex );
-}
-*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Get Index Of Given Tool member function of class 
@@ -667,9 +401,8 @@ SVToolClass* SVToolSetClass::GetToolAt( int nIndex ) const
 	ASSERT( nIndex >= 0 && nIndex < GetSize() );
 	if( nIndex >= 0 && nIndex < GetSize() )
 		return( ( SVToolClass* )GetAt( nIndex ) ); 
-	return NULL;
+	return nullptr;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Get Current Result List member function of class
@@ -692,7 +425,6 @@ SVResultListClass* SVToolSetClass::GetResultList()
 	return &m_ResultList;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Get Current Image member function of class
 //              : SVToolSetClass
@@ -713,14 +445,6 @@ SVImageClass* SVToolSetClass::getCurrentImage()
 {
 	return &mainImageObject;
 }
-
-/*
-int SVToolSetClass::GetDigitizer()
-{
-	return digitizer;
-}
-*/
-
 
 bool SVToolSetClass::getConditionalResult(long p_lIndex) const
 {
@@ -765,16 +489,6 @@ SVEnumerateValueObjectClass* SVToolSetClass::GetDrawFlagObject()
 	return &drawFlag;
 }
 
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// Drawing Operations(s)
-////////////////////////////////////////////////////////////////////////////////
-
-
 SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
 {
 	SVConditionalClass* l_pConditional( nullptr );
@@ -795,7 +509,7 @@ void SVToolSetClass::GetToolIds( SVToolIdDeque& p_rToolIds ) const
 	{
 		SVTaskObjectClass* l_pTask = ( *l_Iter );
 
-		if( l_pTask != NULL )
+		if( nullptr != l_pTask )
 		{
 			p_rToolIds.push_back( l_pTask->GetUniqueObjectID() );
 		}
@@ -1356,7 +1070,7 @@ void SVToolSetClass::SetInvalid()
 
 	SVConditionalClass* l_pConditional = GetToolSetConditional();
 
-	if( l_pConditional != NULL )
+	if( nullptr != l_pConditional )
 	{
 		l_pConditional->SetInvalid();
 	}
@@ -1366,14 +1080,14 @@ HRESULT SVToolSetClass::ResetObject()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( SVTaskObjectListClass::ResetObject() != S_OK )
+	if( S_OK != SVTaskObjectListClass::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
 	bool l_bReset = false;
 
-	if( m_bvoResetCounts.GetValue( l_bReset ) == S_OK && l_bReset )
+	if( S_OK == m_bvoResetCounts.GetValue( l_bReset ) && l_bReset )
 	{
 		// Reset Counters...
 		passedCount.SetDefaultValue( 0, TRUE );
@@ -1442,7 +1156,7 @@ HRESULT SVToolSetClass::ClearResetCounts()
 
 DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = 0;
 
 	SVAnalyzerLevelCreateStruct createStruct;
 
@@ -1453,7 +1167,7 @@ DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -1491,7 +1205,7 @@ DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 
 	case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
-			if( ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) != S_OK )
+			if( S_OK != ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
 			{
 				ASSERT( FALSE );
 
@@ -1531,7 +1245,7 @@ DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 			createStruct.OwnerObjectInfo        = this;
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
 		}
 		break;
 	}
@@ -1539,52 +1253,6 @@ DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 	return( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
 
-
-/*
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Edit Current Tool member function of class SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Calls the current tool Tool Adjustment Dialog
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:30.07.1997 RO			Last Changes, always new allocation of the 
-//                          toolAdjustmentDialog
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVToolSetClass::Edit()
-{
-	if( currentTool )
-	{	
-		// Check if can Edit this Tool
-		// Primarily for the Build Reference Tool
-		// to check if anyone is using the output image
-		if( ! currentTool->IsOkToEdit() )
-			return FALSE;
-
-		// SEJ (July 14,1999) - Get UniqueObjectID
-		GUID currentToolID = currentTool->GetUniqueObjectID();
-
-		toolAdjustmentDialog = new SVToolAdjustmentDialogSheetClass( this->getCurrent(), "Tool Adjustment", parent );
-		toolAdjustmentDialog->DoModal();
-		delete( toolAdjustmentDialog );
-		toolAdjustmentDialog = NULL;
-
-		// SEJ (July 14,1999) - Set currentTool
-		currentTool = ( SVToolClass * )SVObjectManagerClass::Instance().GetObject( currentToolID );
-
-		return TRUE;
-	}
-	
-	return FALSE;
-}
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -1613,7 +1281,7 @@ void SVToolSetClass::CheckForExistingName(
 		{
 			SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( *l_Iter );
 
-			if( l_pTool != NULL )
+			if( nullptr != l_pTool )
 			{
 				CString toolName = l_pTool->GetName();
 				toolName.MakeUpper();
@@ -1669,5 +1337,5 @@ DWORD_PTR SVToolSetClass::createAllObjectsFromChild( SVObjectClass* pChildObject
 	createStruct.OwnerObjectInfo        = this;
 	createStruct.InspectionObjectInfo	= GetInspection();
 
-	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
 }

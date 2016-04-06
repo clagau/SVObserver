@@ -8,7 +8,6 @@
 //* .Current Version : $Revision:   1.5  $
 //* .Check In Date   : $Date:   19 Dec 2014 04:14:46  $
 //******************************************************************************
-
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObjectScriptParserSVX.h"
@@ -31,10 +30,6 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-#ifdef _DEBUG
-//#define SVOBJECTSCRIPTPARSER_DEBUG
-#endif
-
 //namespace NS_ObjectScriptParserSVX
 //{
 const TCHAR* const TSTR_RIGHT_BRACE = _T( "}" );
@@ -44,8 +39,6 @@ const TCHAR* const TSTR_RIGHT_BRACE = _T( "}" );
 // Otherwise it returns NULL.
 LPTSTR SVStringFromGUID( const GUID& RGUID )
 {
-//	static SVFunctionProfiler profile(_T("SVStringFromGUID(GUID)"));
-//	SVFunctionProfilerLocal profiler(profile);
 	TCHAR szGUID[ 256 ];
 	_stprintf( szGUID, _T( "{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}" ),
 			   RGUID.Data1, 
@@ -68,8 +61,6 @@ LPTSTR SVStringFromGUID( const GUID& RGUID )
 // CString& RString receives GUID String.
 void SVStringFromGUID( CString& RString, const GUID& RGUID )
 {
-//	static SVFunctionProfiler profile(_T("SVStringFromGUID(CString, GUID)"));
-//	SVFunctionProfilerLocal profiler(profile);
 	RString.Format( _T( "{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}" ),
 					RGUID.Data1, 
 					RGUID.Data2, 
@@ -91,35 +82,23 @@ void SVStringFromGUID( CString& RString, const GUID& RGUID )
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-
-
 SVObjectScriptAliasListClass::SVObjectScriptAliasListClass()
 {
-
 }
 
 SVObjectScriptAliasListClass::~SVObjectScriptAliasListClass()
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptAliasListClass::~SVObjectScriptAliasListClass"));
-	//SVFunctionProfilerLocal profiler(profile);
 	CleanUp();
 }
 
 SVObjectScriptAliasListClass::SVObjectScriptAliasListClass(const SVObjectScriptAliasListClass& rhs)
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptAliasListClass::SVObjectScriptAliasListClass copy constructor"));
-	//SVFunctionProfilerLocal profiler(profile);
 	m_mapAlias = rhs.m_mapAlias;
 }
 
 void SVObjectScriptAliasListClass::CleanUp()
 {
-	//static SVSizeProfiler sizeprofile(_T("SIZE SVObjectScriptAliasListClass::CleanUp"));
-	//sizeprofile.Add(m_mapAlias.size());
-	//static SVFunctionProfiler profile(_T("SVObjectScriptAliasListClass::CleanUp"));
-	//SVFunctionProfilerLocal profiler(profile);
 	m_mapAlias.clear();
-	//RemoveAll();
 }
 
 SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, SVSharedPtr<CString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
@@ -335,8 +314,6 @@ double SVObjectScriptParserSVXClass::TStrToDouble( LPCTSTR tstrInput )
 // Cut leading and successor whitespaces away...
 CString SVObjectScriptParserSVXClass::ExtractToken( LPCTSTR TStrTokenString, int TokenStringLength )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::Extract"));
-	//SVFunctionProfilerLocal profiler(profile);
 	CString strReturn;
 
 	if( TStrTokenString )
@@ -355,8 +332,6 @@ CString SVObjectScriptParserSVXClass::ExtractToken( LPCTSTR TStrTokenString, int
 
 BOOL SVObjectScriptParserSVXClass::CheckAliasTable( const SVObjectScriptAliasListClass& rCurrentAliasTable, LPCTSTR TStrTokenString )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::CheckAliasTable(2)"));
-	//SVFunctionProfilerLocal profiler(profile);
 	if( TStrTokenString )
 	{
 		CString sToken(TStrTokenString);
@@ -364,36 +339,14 @@ BOOL SVObjectScriptParserSVXClass::CheckAliasTable( const SVObjectScriptAliasLis
 		iter = rCurrentAliasTable.m_mapAlias.find(sToken);
 		if ( iter != rCurrentAliasTable.m_mapAlias.end() )
 		{
-			//rOperand = iter->second.SubstituteOperand;
 			return TRUE;
 		}
-		/*
-		// Check alias table...
-		for( int i = 0; i < rCurrentAliasTable.GetSize(); ++ i )
-		{
-			SVObjectScriptAliasStruct& aliasEntry = rCurrentAliasTable.GetAt( i );
-			if( ! _tcscmp( TStrTokenString, aliasEntry.TStrAlias ) )
-			{
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-				TRACE( "Alias Found: %.80s\n", TStrTokenString );
-#endif
-				profiler.End();
-				return TRUE;
-			}
-		}
-		*/
 	}
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "Alias Not Found: %.80s\n", TStrTokenString );
-#endif
 	return FALSE;
 }
 
 BOOL SVObjectScriptParserSVXClass::CheckAliasTable( const SVObjectScriptAliasListClass& rCurrentAliasTable, LPCTSTR TStrTokenString, SVObjectScriptOperandStruct& rOperand)
 {
-//	static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::CheckAliasTable(3)"));
-//	SVFunctionProfilerLocal profiler(profile);
-
 	if( TStrTokenString )
 	{
 		CString sToken(TStrTokenString);
@@ -404,36 +357,12 @@ BOOL SVObjectScriptParserSVXClass::CheckAliasTable( const SVObjectScriptAliasLis
 			rOperand = iter->second.SubstituteOperand;
 			return TRUE;
 		}
-		/*
-		// Check alias table...
-		for( int i = 0; i < rCurrentAliasTable.GetSize(); ++ i )
-		{
-			SVObjectScriptAliasStruct& aliasEntry = rCurrentAliasTable.GetAt( i );
-
-			if( ! _tcscmp( TStrTokenString, aliasEntry.TStrAlias ) )
-			{
-				rOperand = aliasEntry.SubstituteOperand;
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-				TRACE( "Alias Found: %.80s\n", TStrTokenString );
-#endif
-				profiler.End();
-				return TRUE;
-			}
-		}
-		*/
 	}
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "Alias Not Found: %.80s\n", TStrTokenString );
-#endif
-
 	return FALSE;
 }
 
 ParserOperandTypeEnum SVObjectScriptParserSVXClass::CheckKeywordTable( LPCTSTR tstrExpression )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::CheckKeywordTable"));
-	//SVFunctionProfilerLocal profiler(profile);
 	// Returns iKeyIndex!!!
 	if( tstrExpression )
 	{
@@ -443,37 +372,15 @@ ParserOperandTypeEnum SVObjectScriptParserSVXClass::CheckKeywordTable( LPCTSTR t
 			SVObjectScriptKeywordStruct& keywordEntry = m_KeywordTable.GetAt( i );
 			if( ! _tcscmp( tstrExpression, keywordEntry.tstrKeyword ) )
 			{
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-				TRACE( "Keyword Found: %.80s\n", tstrExpression );
-#endif
 				return keywordEntry.eKeyIndex;
 			}
 		}
 	}
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "Keyword Not Found: %.80s\n", tstrExpression );
-#endif
-
 	return NOP;
 }
 
 void SVObjectScriptParserSVXClass::CleanUpExpressionStack( SVExpressionStack& rExpressionStack )
 {
-//	static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::CleanUpExpressionStack"));
-//	SVFunctionProfilerLocal profiler(profile);
-	/*
-	for( int i = 0; i < rExpressionStack.GetSize(); ++ i )
-	{
-		if( rExpressionStack.GetAt( i ) )
-		{
-			free( rExpressionStack.GetAt( i ) );
-			rExpressionStack.SetAt( i, NULL );
-		}
-	}
-	*/
-
 	rExpressionStack.RemoveAll();
 }
 
@@ -485,8 +392,6 @@ void SVObjectScriptParserSVXClass::CleanUpExpressionStack( SVExpressionStack& rE
 //		 to       {2DDD26A9-79A7-11D3-A890-0012000005AA}
 CString SVObjectScriptParserSVXClass::ExtractGUIDToken( LPCTSTR TStrTokenString, int& rCount )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::ExtractGUIDToken"));
-	//SVFunctionProfilerLocal profiler(profile);
 	CString strReturn;
 	if( TStrTokenString && *TStrTokenString == TCHAR( '{' ) )
 	{
@@ -582,7 +487,7 @@ CString SVObjectScriptParserSVXClass::ExtractGUIDToken( LPCTSTR TStrTokenString,
 						}
 
 						++dataCount;
-						szToken = _tcstok( NULL, szSep );
+						szToken = _tcstok( nullptr, szSep );
 					}
 
 					_tcscat( szResult, _T( "}" ) );
@@ -608,15 +513,6 @@ CString SVObjectScriptParserSVXClass::ExtractGUIDToken( LPCTSTR TStrTokenString,
 //		 ( refer to StringFromGUID2() Win-SDK Function )
 BOOL SVObjectScriptParserSVXClass::ReadGUIDExpression( SVExpressionStack& rExpressionStack, GUID& rUniqueID, int& riIndex )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::ReadGUIDExpression"));
-	//SVFunctionProfilerLocal profiler(profile);
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "ReadGUIDExpression: " );
-
-	TRACE( "%.80s", rExpressionStack.GetAt( riIndex ) );
-#endif
-
 	LPCTSTR ptr = rExpressionStack.GetAt( riIndex );
 	if( ptr[0] == TCHAR( '{' ) && ptr[1] != TCHAR( '\0' ) )
 	{
@@ -632,8 +528,6 @@ BOOL SVObjectScriptParserSVXClass::ReadGUIDExpression( SVExpressionStack& rExpre
 
 BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, const SVObjectInfoStruct& rOwnerInfo, SVObjectScriptAliasListClass& rCurrentAliasTable, SVObjectScriptOperandStruct& rOperand, SVExpressionStack& rExpressionStack, int& riIndex, SVObjectScriptAliasListClass& rAliasTableForOptimization )
 {
-//	static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::EvaluateOperandExpression"));
-//	SVFunctionProfilerLocal profiler(profile);
 	// Operands are identified by
 	// name_expression
 	// object_expression		...could use local owner to identify
@@ -662,15 +556,11 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				rOperand.CleanUp();
 
 #ifndef SMALLMEMORYMANAGER
-				//rOperand.PValue = _tcsdup( rExpressionStack.GetAt( riIndex ) );
-				//rOperand.ValueSize = _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1;
 				rOperand.SetValue(_tcsdup( rExpressionStack.GetAt( riIndex ) ), static_cast<int>(_tcslen( rExpressionStack.GetAt( riIndex ) ) + 1));
 #else
 				int iLen = _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1;
 				char* pNewMem = (char*)SmallMemoryMalloc(iLen);
 				_tcscpy(pNewMem, rExpressionStack.GetAt( riIndex ));
-				//rOperand.ValueSize = iLen;
-				//rOperand.PValue = pNewMem;
 				rOperand.SetValue(pNewMem, iLen);
 #endif
 				if( rOperand.Value() )
@@ -713,11 +603,6 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					// No alias allowed for member access operands...
 					SVObjectScriptAliasListClass emptyAliasTable;
 					// Try to evaluate operand...
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-					TRACE( "EvaluateOperandExpression, Bingo member access\n" );
-#endif
-
 					OperandType &= (~ALIAS);					
 					return EvaluateOperandExpression( OperandType, ownerInfo, emptyAliasTable, rOperand, rExpressionStack, ++riIndex, emptyAliasTable );
 				}
@@ -733,7 +618,6 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				--riIndex;
 				return TRUE;	
 			}
-
 			
 		// Check for first part of object_expression|class_expression|embedded_expression...
 		if( type != NOP &&
@@ -747,13 +631,10 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			{
 				rOperand.CleanUp();
 
-				//rOperand.ValueSize = sizeof( GUID );
 #ifndef SMALLMEMORYMANAGER
 				rOperand.SetValue(malloc( sizeof( GUID ) ), sizeof(GUID) );
-				//rOperand.PValue = malloc( sizeof( GUID ) );
 #else
 				rOperand.SetValue(SmallMemoryMalloc( sizeof( GUID ) ), sizeof(GUID) );
-				//rOperand.PValue = SmallMemoryMalloc( sizeof( GUID ) );
 #endif
 				if( rOperand.Value() )
 				{
@@ -797,28 +678,22 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				SVObjectClass* pObject = nullptr;
 				if( rOwnerInfo.UniqueObjectID != SVInvalidGUID )
 				{
-					pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( rExpressionStack.GetAt( riIndex ))), NULL ));
+					pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( rExpressionStack.GetAt( riIndex ))), 0 ));
 				}
 				if( nullptr != pObject )
 				{
 					rOperand.CleanUp();
 				
-					//rOperand.ValueSize = sizeof( GUID );
 #ifndef SMALLMEMORYMANAGER
 					rOperand.SetValue( malloc( sizeof( GUID ) ), sizeof(GUID) );
-					//rOperand.PValue = malloc( sizeof( GUID ) );
 #else
 					rOperand.SetValue( SmallMemoryMalloc( sizeof( GUID ) ), sizeof(GUID) );
-					//rOperand.PValue = SmallMemoryMalloc( sizeof( GUID ) );
 #endif
 					if( rOperand.Value() )
 					{
 						memcpy( rOperand.Value(), &pObject->GetUniqueObjectID(), sizeof( GUID ) );
 						rOperand.Type() = OBJECT;
 
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-						TRACE( "EvaluateOperandExpression, Bingo using owner info\n" );
-#endif
 						bExpressionNext = FALSE;
 						continue;
 					}
@@ -832,29 +707,18 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				else
 				{
 					// Not Known
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-					TRACE("Unknown Object\n");
-#endif
-					
+				
 					// Check for Unknown member access
 					if( ( OperandType & ( MEMBER_ACCESS | ALIAS) ) == MEMBER_ACCESS )
 					{
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-						TRACE("Assuming Member Name\n");
-#endif
-
 						rOperand.CleanUp();
 
 #ifndef SMALLMEMORYMANAGER
-						//rOperand.PValue = _tcsdup( rExpressionStack.GetAt( riIndex ) );
-						//rOperand.ValueSize = _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1;
 						rOperand.SetValue(_tcsdup( rExpressionStack.GetAt( riIndex ) ), static_cast<int>(_tcslen( rExpressionStack.GetAt( riIndex ) ) + 1));
 #else
 						int iLen = _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1;
 						char* pNewMem = (char*)SmallMemoryMalloc(iLen);
 						_tcscpy(pNewMem, rExpressionStack.GetAt( riIndex ));
-						//rOperand.ValueSize = iLen;
-						//rOperand.PValue = pNewMem;
 						rOperand.SetValue(pNewMem, iLen);
 
 #endif
@@ -908,19 +772,15 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					else
 					{
 						SVObjectScriptOperandStruct operand2;
-						//operand2.ValueSize = sizeof( GUID );
 #ifndef SMALLMEMORYMANAGER
-						//operand2.PValue = malloc( sizeof( GUID ) );
 						operand2.SetValue( malloc( sizeof( GUID ) ), sizeof(GUID) );
 #else
-						//operand2.PValue = SmallMemoryMalloc( sizeof( GUID ) );
 						operand2.SetValue( SmallMemoryMalloc( sizeof( GUID ) ), sizeof(GUID) );
 #endif
 						(*(GUID*)operand2.Value()) = SVBarCodeResultClassGuid;
 						operand2.Type() = CLASS;
 
 						rCurrentAliasTable.m_mapAlias[strName] = SVObjectScriptAliasStruct( strName, operand2 );
-						//rCurrentAliasTable.Add( SVObjectScriptAliasStruct( strName, operand2 ) );
 						if ( &rAliasTableForOptimization != &rCurrentAliasTable )
 							rAliasTableForOptimization.m_mapAlias[strName].SubstituteOperand.Dirty() = true;
 
@@ -944,10 +804,6 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 						
 					if( rOperand.Value() )
 					{
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-						TRACE( "EvaluateOperandExpression, Bingo using alias table\n" );
-#endif
-
 						bExpressionNext = FALSE;
 						continue;
 					}
@@ -1023,12 +879,9 @@ BOOL SVObjectScriptParserSVXClass::ReadOperandList( const SVObjectInfoStruct& rL
 			{
 				operand.CleanUp();
 
-				//operand.ValueSize = sizeof( GUID );
 #ifndef SMALLMEMORYMANAGER
-				//operand.PValue = malloc( sizeof( GUID ) );
 				operand.SetValue( malloc( sizeof( GUID ) ), sizeof(GUID) );
 #else
-				//operand.PValue = SmallMemoryMalloc( sizeof( GUID ) );
 				operand.SetValue( SmallMemoryMalloc( sizeof( GUID ) ), sizeof(GUID) );
 #endif
 				if( operand.Value() )
@@ -1064,8 +917,6 @@ BOOL SVObjectScriptParserSVXClass::ReadOperandList( const SVObjectInfoStruct& rL
 
 BOOL SVObjectScriptParserSVXClass::ReadValues( SVObjectAttributeClass& dataObject, SVExpressionStack& rExpressionStack, int& riIndex )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::ReadValues"));
-	//SVFunctionProfilerLocal profiler(profile);
 	BOOL rc = FALSE;
 
 	// Check current index...
@@ -1077,8 +928,6 @@ BOOL SVObjectScriptParserSVXClass::ReadValues( SVObjectAttributeClass& dataObjec
 	// Should we have specified a type
 	if( dataObject.GetSVObjectScriptDataObjectTypeEnum() == SV_UNKNOWN_Type )
 		return rc;
-
-	//ASSERT( dataObject.GetSVObjectScriptDataObjectTypeEnum() != SV_VARIANT_Type );	// DEBUG break on Variant
 
 	// Check current index...
 	if( ++riIndex >= rExpressionStack.GetSize() )
@@ -1367,8 +1216,6 @@ BOOL SVObjectScriptParserSVXClass::CheckValue( SVObjectAttributeClass& dataObjec
 /* Do not use - Delimiters have been removed already !!! */
 BOOL SVObjectScriptParserSVXClass::CheckString( LPCTSTR tstrToken )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::CheckString"));
-	//SVFunctionProfilerLocal profiler(profile);
 	int len = static_cast<int>(_tcslen( tstrToken ));
 	
 	// check for double quote at beginning
@@ -1462,8 +1309,6 @@ SVObjectScriptDataObjectTypeEnum SVObjectScriptParserSVXClass::CheckDataTypeKeyw
 
 BOOL SVObjectScriptParserSVXClass::FindMembers( LPTSTR tstrToken, int tokenStrLen, SVExpressionStack& rExpressionStack )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::FindMembers"));
-	//SVFunctionProfilerLocal profiler(profile);
 	BOOL found = FALSE;
 	CString tmp;
 
@@ -1503,14 +1348,8 @@ BOOL SVObjectScriptParserSVXClass::FindMembers( LPTSTR tstrToken, int tokenStrLe
 ////////////////////////////////////////////////////
 // The main parse method
 ////////////////////////////////////////////////////
-LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstrParseString, SVObjectScriptAliasListClass* pExternalAliasTable /*= NULL*/ )
+LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstrParseString, SVObjectScriptAliasListClass* pExternalAliasTable /*= nullptr*/ )
 {
-//	static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::Parse"));
-	//static SVFunctionProfiler profile1(_T("SVObjectScriptParserSVXClass::Parse1"));
-	//static SVFunctionProfiler profile2(_T("SVObjectScriptParserSVXClass::Parse2"));
-	//static SVFunctionProfiler profile3(_T("SVObjectScriptParserSVXClass::Parse3"));
-	//static SVFunctionProfiler profile4(_T("SVObjectScriptParserSVXClass::Parse4"));
-//	SVFunctionProfilerLocal profiler(profile);
 	ParserOperandTypeEnum currentParseState = PARSE;
 	int currentTokenIndex = 0;
 	LPTSTR tStrParse = (LPTSTR)tstrParseString;
@@ -1518,7 +1357,6 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 	if( tStrParse )
 	{
 		SVExpressionStack	expressionStack;
-		//expressionStack.SetSize(0, 50);
 
 		SVObjectInfoStruct localOwnerInfo;
 		localOwnerInfo = pOwner;
@@ -1531,8 +1369,6 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 		{
 			SVObjectScriptAliasListClass mergeAliasTable;
 
-			//SVFunctionProfilerLocal profiler4(profile4);
-			//profile1.Begin();
 			UpdateProgress( currentTokenIndex, parseLength );
 
 			if( currentParseState == PARSE )
@@ -1543,15 +1379,10 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 			
 			UpdateProgress( currentTokenIndex, parseLength );
 
-			//profile1.End();
-
 			if( currentParseState == PROCESS_COMMAND )
 			{
 				if( expressionStack.GetSize() < 1 )
 				{
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-					TRACE("PROCESS_COMMAND = Empty Expression stack\n");
-#endif
 					ASSERT(FALSE);
 					currentParseState = PARSER_ERROR;
 					continue;
@@ -1571,89 +1402,47 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 				////////////////////////////////////////////////
 				// Build current alias table...
 				////////////////////////////////////////////////
-				//SVObjectScriptAliasListClass currentAliasTable(localAliasTable);
-				//SVObjectScriptAliasListClass* pCurrentAliasTable = &currentAliasTable;
 				SVObjectScriptAliasListClass copyOfLocalAliasTable;
 				bool bAlwaysCopyAliasTable = false;
 
-				SVObjectScriptAliasListClass* pCurrentAliasTable = NULL;
-				//SVObjectScriptAliasListClass currentAliasTable;
-				//currentAliasTable.Copy( localAliasTable );
+				SVObjectScriptAliasListClass* pCurrentAliasTable = nullptr;
 				if( pExternalAliasTable )
 				{
 					pCurrentAliasTable = pExternalAliasTable;
-					
-					/*
-					static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::Parse - copy alias table"));
-					SVFunctionProfilerLocal profiler(profile);
-					std::insert_iterator<SVObjectScriptAliasListClass::MapType > insert_iter(currentAliasTable.m_mapAlias, currentAliasTable.m_mapAlias.begin());
-					std::copy( pExternalAliasTable->m_mapAlias.begin(), pExternalAliasTable->m_mapAlias.end(),
-						 insert_iter);
-					*/
-					
-
-					//currentAliasTable.Append( *pExternalAliasTable );
 				}
 				else
 				{
-					//copyOfLocalAliasTable = localAliasTable;
 					pCurrentAliasTable = &copyOfLocalAliasTable;
 					bAlwaysCopyAliasTable = true;
-//					static SVSizeProfiler countprofileLocalAlias(_T("COUNT SVObjectScriptParserSVXClass::Parse - empty local alias table (root)"));
-//					countprofileLocalAlias.Add(0);
 				}
 
 				
-				{	// block for profiler
-					//static SVSizeProfiler sizeprofileLocal(_T("SIZE SVObjectScriptParserSVXClass::Parse - local alias table"));
-					//sizeprofileLocal.Add(localAliasTable.m_mapAlias.size());
-					//static SVSizeProfiler sizeprofileGlobal(_T("SIZE SVObjectScriptParserSVXClass::Parse - global alias table"));
-					//sizeprofileGlobal.Add(pCurrentAliasTable->m_mapAlias.size());
-//					static SVFunctionProfiler profileCopyAlias(_T("SVObjectScriptParserSVXClass::Parse - copy alias table"));
-//					static SVFunctionProfiler profileCopyAliasNew(_T("SVObjectScriptParserSVXClass::Parse - copy alias new"));
-//					static SVFunctionProfiler profileCopyAliasOverwrite(_T("SVObjectScriptParserSVXClass::Parse - copy alias overwrite"));
-//					SVFunctionProfilerLocal profiler(profileCopyAlias);
-
-
+				{	// block
 					SVObjectScriptAliasListClass::MapType::iterator iterLocal;
 					for ( iterLocal = localAliasTable.m_mapAlias.begin(); iterLocal != localAliasTable.m_mapAlias.end(); ++iterLocal)
 					{
 						if (bAlwaysCopyAliasTable || iterLocal->second.SubstituteOperand.Dirty())
 						{
-							//pCurrentAliasTable->m_mapAlias[iterLocal->first] = iterLocal->second;	// slower than below
 							SVObjectScriptAliasListClass::MapType::iterator iterCurrent = pCurrentAliasTable->m_mapAlias.find(iterLocal->first);
 							if ( iterCurrent == pCurrentAliasTable->m_mapAlias.end() )
 							{
-								//SVFunctionProfilerLocal profiler(profileCopyAliasNew);
 								pCurrentAliasTable->m_mapAlias[iterLocal->first] = iterLocal->second;
-								//pCurrentAliasTable->m_mapAlias.insert(iterCurrent, *iterLocal);	// about the same speed
 							}
 							else
 							{
-								//SVFunctionProfilerLocal profiler(profileCopyAliasOverwrite);
 								SVObjectScriptAliasStruct& rLocal = iterLocal->second;
 								SVObjectScriptAliasStruct& rCurrent = iterCurrent->second;
-								//ASSERT(FALSE);
 								iterCurrent->second = iterLocal->second;
 							}
 							iterLocal->second.SubstituteOperand.Dirty() = false;
 						}// end if (iterLocal->second.SubstituteOperand.Dirty())
 						else
 						{
-							//TRACE("Not Dirty: %s\n", iterLocal->second.TStrAlias);
 							int i=0;
 							i++;
 						}
 					}// end for ( iterLocal = localAliasTable.m_mapAlias.begin(); iterLocal != localAliasTable.m_mapAlias.end(); iterLocal++)
-					
-					
-
-					// doesn't work; insert does not overwrite
-					//std::insert_iterator<SVObjectScriptAliasListClass::MapType > insert_iter(pCurrentAliasTable->m_mapAlias, pCurrentAliasTable->m_mapAlias.begin());
-					//std::copy( localAliasTable.m_mapAlias.begin(), localAliasTable.m_mapAlias.end(),
-					//	 insert_iter);
-				}// end block for profiler
-				
+				}// end block
 				
 				///////////////////////////////////////////////////////////////////////////////////////////
 				// Expressions:
@@ -1679,7 +1468,6 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 				// name_Expression.trivial_member = value[[value,value,...]];
 				// object_expression.trivial_member = value;
 
-				//profile2.Begin();
 				// Check for alias command...
 				if( CheckKeywordTable( expressionStack.GetAt( 0 ) ) == ALIAS )
 				{
@@ -1693,10 +1481,8 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 						currentParseState = PARSE;
 
 					CleanUpExpressionStack( expressionStack );
-					//profile2.End();
 					continue;				
 				} // Check for alias command...
-				//profile2.End();
 
 				// Check other commands...
 
@@ -1727,13 +1513,7 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 							if( bStepIn )
 							{
 								// step in...
-//								profile.End();
-								//profile3.End();
-								//profile4.End();
 								LPCTSTR tStrNewParsPos = Parse( pObject, &tStrParse[ currentTokenIndex ] , pCurrentAliasTable );
-//								profile.Begin();
-								//profile4.Begin();
-								//profile3.Begin();
 								if( ! tStrNewParsPos  )
 								{
 									ASSERT(FALSE);
@@ -1798,7 +1578,7 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 		// Success
 		return tstrParseString + currentTokenIndex;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void SVObjectScriptParserSVXClass::RemoveExternalDependencies( CString& script )
@@ -1948,8 +1728,6 @@ bool SVObjectScriptParserSVXClass::FindCharacters(CString& str, int& loc, LPCTST
 // Sets loc to the location of the last encountered character
 bool SVObjectScriptParserSVXClass::FindCharacters(LPCTSTR tStr, int tStrLen, int& loc, LPCTSTR characters, bool reverse )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::findCharacters(LPCTSTR)"));
-	//SVFunctionProfilerLocal profiler(profile);
 	bool found = false;
 	
 	int numChars = static_cast<int>(_tcsclen( characters ));
@@ -2002,11 +1780,9 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 {
 	bool l_bOk = true;
 
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::reAttachInputs"));
-	//SVFunctionProfilerLocal profiler(profile);
 	SVInputInfoListClass inputInfoList;
 
-	::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<DWORD_PTR>(&inputInfoList), NULL );
+	::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<DWORD_PTR>(&inputInfoList), 0 );
 
 	// Input List and requiredInputList must be the same size
 	// and In the same Order !!!
@@ -2029,7 +1805,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 		{
 			SVGUID inputGuid = *( ( GUID* ) operand.Value() );
 
-			SVInObjectInfoStruct* pInInfo = NULL;
+			SVInObjectInfoStruct* pInInfo = nullptr;
 
 			if( l_lOperandSize == l_lInfoSize )
 			{
@@ -2037,7 +1813,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 			}
 			else
 			{
-				if( l_psvTool != NULL && i + l_lOffset < l_lInfoSize )
+				if( nullptr != l_psvTool && i + l_lOffset < l_lInfoSize )
 				{
 					do
 					{
@@ -2045,12 +1821,12 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 
 						if( TheSVObserverApp.getLoadingVersion() < 0x00044B00 && pInInfo == l_pAuxInfo )
 						{
-							pInInfo = NULL;
+							pInInfo = nullptr;
 
 							l_lOffset++;
 						}
 					}
-					while( pInInfo == NULL && i + l_lOffset < l_lInfoSize );
+					while( nullptr == pInInfo && i + l_lOffset < l_lInfoSize );
 				}
 				else
 				{
@@ -2058,7 +1834,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 				}
 			}
 
-			if( pInInfo != NULL )
+			if( nullptr != pInInfo )
 			{
 				pInInfo->SetInputObject( inputGuid );
 			}
@@ -2085,8 +1861,6 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 ///////////////////////////////////////////////////////////////
 bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseLength, int& currentIndex, SVExpressionStack& rExpressionStack, SVObjectInfoStruct& rLocalOwnerInfo, SVObjectScriptAliasListClass& rAliasTable, ParserOperandTypeEnum& rParseState )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::parseStatements"));
-	//SVFunctionProfilerLocal profiler(profile);
 	int statementLen = 0;
 	int tokenIndex = 0;
 	int tokenSize = 0;
@@ -2128,10 +1902,6 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 								if( !strTok.IsEmpty() )
 								{
 									rExpressionStack.Add( strTok );
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-									TRACE( "Add Expression: %.80s\n", strTok );
-#endif
 								}
 								else
 								{
@@ -2267,10 +2037,6 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 								// If there was an expression, put it on the stack...
 								rExpressionStack.Add( strTok );
 
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-								TRACE( "Add Expression: %.80s\n", strTok );
-#endif
-
 								if( GetGuidStringToken( rExpressionStack, tStatement, statementLen, tokenIndex ) )
 								{
 									rParseState = PARSE;
@@ -2375,8 +2141,6 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 ///////////////////////////////////////////////////////////////
 bool SVObjectScriptParserSVXClass::GetStringToken( SVExpressionStack& rExpressionStack, LPCTSTR tStatement, int statementLen, int& tokenIndex )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::getStringToken"));
-	//SVFunctionProfilerLocal profiler(profile);
 	LPCTSTR tStrCurrentToken = &tStatement[tokenIndex];
 	int startPos = tokenIndex;
 	TCHAR currentChar;
@@ -2411,10 +2175,6 @@ bool SVObjectScriptParserSVXClass::GetStringToken( SVExpressionStack& rExpressio
 				strToken.ReleaseBuffer( tokenSize );
 				rExpressionStack.Add( strToken );
 
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-				TRACE( "ParserState: READ_STRING, CurrentToken: %.80s\n", tStrToken );
-#endif
-
 				return true;
 			}
 		}
@@ -2430,8 +2190,6 @@ bool SVObjectScriptParserSVXClass::GetStringToken( SVExpressionStack& rExpressio
 ///////////////////////////////////////////////////////////////
 bool SVObjectScriptParserSVXClass::GetNameStringToken( SVExpressionStack& rExpressionStack, LPCTSTR tStatement, int statementLen, int& tokenIndex )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::getNameStringToken"));
-	//SVFunctionProfilerLocal profiler(profile);
 	LPTSTR tStrCurrentToken = ( LPTSTR )&tStatement[tokenIndex];
 	int startPos = tokenIndex;
 	TCHAR currentChar;
@@ -2450,11 +2208,6 @@ bool SVObjectScriptParserSVXClass::GetNameStringToken( SVExpressionStack& rExpre
 			else if( currentChar == TCHAR( '\'' ) )
 			{
 				// End of name string expression... put expression on the stack...
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG				
-				TRACE( "ParserState: READ_NAME_STRING, CurrentToken: %.80s\n", tStrCurrentToken );
-#endif
-
 				// Note: The Delimiters are not saved as part of the Token
 				int tokenSize = (tokenIndex - startPos) - 1;
 
@@ -2487,8 +2240,6 @@ bool SVObjectScriptParserSVXClass::GetNameStringToken( SVExpressionStack& rExpre
 ///////////////////////////////////////////////////////////////
 bool SVObjectScriptParserSVXClass::GetGuidStringToken( SVExpressionStack& rExpressionStack, LPCTSTR tStatement, int statementlen, int& tokenIndex )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::getGuidStringToken"));
-	//SVFunctionProfilerLocal profiler(profile);
 	//	get complete GUID token and put it on the expression stack
 	//  GUID-Token: e.g. { 0x2ddd26a9, 0x79a7, 0x11d3, { 0xa8, 0x90, 0x0, 0x12, 0x0, 0x0, 0x5, 0xaa } }
 
@@ -2502,17 +2253,11 @@ bool SVObjectScriptParserSVXClass::GetGuidStringToken( SVExpressionStack& rExpre
 		if( strTok.GetLength() > 0 )
 		{
 			rExpressionStack.Add( strTok );
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-			TRACE( "Add Expression: %.80s\n", tStrTok );
-#endif
-
 			tokenIndex += count;
 			return true;
 		}
 		else
 		{
-			
 		}
 
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
@@ -2530,13 +2275,7 @@ bool SVObjectScriptParserSVXClass::GetGuidStringToken( SVExpressionStack& rExpre
 ///////////////////////////////////////////////////////////////
 bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionStack, SVObjectInfoStruct& rLocalOwnerInfo, SVObjectScriptAliasListClass& rCurrentAliasTable, SVObjectScriptAliasListClass& rLocalAliasTable )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::processAlias"));
-	//SVFunctionProfilerLocal profiler(profile);
 	bool rc = false;
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "ALIAS\n" );
-#endif
 
 	SVObjectScriptOperandStruct operand1, operand2;
 
@@ -2610,14 +2349,11 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 		strName.LoadString( IDS_CLASSNAME_SVBARCODEANALYZERESULT );
 
 #ifndef SMALLMEMORYMANAGER
-		//operand1.PValue = _tcsdup( strName );
 		operand1.SetValue(_tcsdup( strName ), static_cast<int>(_tcslen( strName ) + 1));
 #else
 		int iLen = _tcslen( strName ) + 1;
 		char* pNewMem = (char*)SmallMemoryMalloc(iLen);
 		_tcscpy(pNewMem, strName);
-		//operand1.ValueSize = iLen;
-		//operand1.PValue = pNewMem;
 		operand1.SetValue(pNewMem, iLen);
 #endif
 	}// end if
@@ -2633,11 +2369,6 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 
 #endif
 	rLocalAliasTable.m_mapAlias[CString(( LPTSTR ) operand1.Value())] = SVObjectScriptAliasStruct( ( LPTSTR ) operand1.Value(), operand2 );
-	//rAliasTable.Add( SVObjectScriptAliasStruct( ( LPTSTR ) operand1.PValue, operand2 ) );
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE("Adding Alias: %.80s\n", ( LPTSTR ) operand1.Value() );
-#endif
 
 	return rc;
 }
@@ -2647,15 +2378,9 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 ///////////////////////////////////////////////////////////////
 SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionStack& rExpressionStack, SVObjectInfoStruct& rLocalOwnerInfo, SVObjectScriptAliasListClass& rAliasTable, SVObjectScriptOperandStruct& rFirstOperand, BOOL& rbStepIn, SVObjectScriptAliasListClass& rAliasTableForOptimization )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::processDefineObject"));
-	//SVFunctionProfilerLocal profiler(profile);
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 
 	int index = 0;
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "OBJECT_DEFINE\n" );
-#endif
 
 	SVObjectScriptOperandStruct embeddedOperand, classOperand, nameOperand, objectOperand, objectOwnerOperand;
 	SVObjectScriptOperandList inputOperandList;
@@ -2729,10 +2454,6 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		}
 		objectOwnerOperand.Type() = OBJECT_OWNER;
 
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-		TRACE( "OBJECT_DEFINE, @\n" );
-#endif
-
 		if( ++index >= rExpressionStack.GetSize() )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
@@ -2743,12 +2464,9 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	else
 	{
 		// No explicit object owner given, use local owner...
-		//objectOwnerOperand.ValueSize = sizeof( GUID );
 #ifndef SMALLMEMORYMANAGER
-		//objectOwnerOperand.PValue = malloc( sizeof( GUID ) );
 		objectOwnerOperand.SetValue( malloc( sizeof( GUID ) ), sizeof(GUID) );
 #else
-		//objectOwnerOperand.PValue = SmallMemoryMalloc( sizeof( GUID ) );
 		objectOwnerOperand.SetValue( SmallMemoryMalloc( sizeof( GUID ) ), sizeof(GUID) );
 #endif
 		if( objectOwnerOperand.Value() )
@@ -2775,10 +2493,6 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ParseError_UnableToReadInputList, StdMessageParams, SvOi::Err_10105 );
 			return pObject;
 		}
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-		TRACE( "OBJECT_DEFINE, (...)\n" );
-#endif
 
 		if( ++index >= rExpressionStack.GetSize() )
 		{
@@ -2815,10 +2529,6 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	}
 
 	// Process command...
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "OBJECT_DEFINE, Process command\n" );
-#endif
-
 	SVObjectInfoStruct ownerObjectInfo;
 	ownerObjectInfo.UniqueObjectID = *( ( GUID* ) objectOwnerOperand.Value() );
 	ownerObjectInfo.PObject = SVObjectManagerClass::Instance().GetObject( ownerObjectInfo.UniqueObjectID );
@@ -2835,10 +2545,6 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	{
 		if( embeddedOperand.Value() && embeddedOperand.Type() == EMBEDDED )
 		{
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-			TRACE( "OBJECT_DEFINE, embedded SVM_OVERWRITE_OBJECT\n" ); 
-#endif
-
 			// Send to Owner of Embedded Object
 			// Try to overwrite object...
 			if( pObject = reinterpret_cast<SVObjectClass*>( ::SVSendMessage( ownerObjectInfo.PObject, 
@@ -2846,12 +2552,9 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 			                                                 reinterpret_cast<DWORD_PTR>(objectOperand.Value()), 
 			                                                 reinterpret_cast<DWORD_PTR>(embeddedOperand.Value()) )) )
 			{
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-				TRACE( "OverWriteObject %.80s\n", pObject->GetName() );
-#endif
 			}
 
-			ASSERT( pObject != NULL );
+			ASSERT( nullptr != pObject );
 		}
 		else
 		{
@@ -2864,10 +2567,6 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	{
 		// Construct new object...
 		SVObjectManagerClass::Instance().ConstructObject( *( ( GUID* ) classOperand.Value() ), pObject );
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-		TRACE( "OBJECT_DEFINE, new object SVM_REPLACE_OBJECT\n" );
-#endif
 
 		if( pObject && objectOwnerOperand.Value() )
 		{
@@ -2901,12 +2600,6 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	if( pObject )
 	{
 		pObject->SetName( ( LPTSTR ) nameOperand.Value() );
-
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-		TRACE( "%.80s\n",pObject->GetName() );
-#endif
-		
-		//rc = true;				
 	}
 	else
 	{
@@ -2921,16 +2614,10 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 /////////////////////////////////////////////////////////////
 bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& rExpressionStack, SVObjectInfoStruct& rLocalOwnerInfo, SVObjectScriptAliasListClass& rAliasTable, SVObjectScriptOperandStruct& rFirstOperand, SVObjectScriptAliasListClass& rAliasTableForOptimization )
 {
-	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::processMemberAssignment"));
-	//SVFunctionProfilerLocal profiler(profile);
 	bool rc = false;
 
 	int index = 2;
 
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "Member ASSIGNMENT\n" );
-#endif
-						
 	SVObjectAttributeClass dataObject;
 
 	// must be member name
@@ -2941,12 +2628,9 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 
 
 	// Set Embedded Object's Owner
-	//objectOwnerOperand.ValueSize = sizeof( GUID );
 #ifndef SMALLMEMORYMANAGER
-	//objectOwnerOperand.PValue = malloc( sizeof( GUID ) );
 	objectOwnerOperand.SetValue( malloc( sizeof( GUID ) ), sizeof(GUID) );
 #else
-	//objectOwnerOperand.PValue = SmallMemoryMalloc( sizeof( GUID ) );
 	objectOwnerOperand.SetValue( SmallMemoryMalloc( sizeof( GUID ) ), sizeof(GUID) );
 #endif
 	if( objectOwnerOperand.Value() )
@@ -3014,10 +2698,6 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	}
 	
 	// Process command...
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-	TRACE( "SET_OBJECT_VALUE, Process command\n" );
-#endif
-
 	SVObjectInfoStruct objectInfo, ownerObjectInfo;
 
 	objectInfo.UniqueObjectID = *( ( GUID* ) objectOperand.Value() );
@@ -3045,10 +2725,6 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	/////////////////////////////////////////////////////////////////////
 	if( ownerObjectInfo.PObject && objectInfo.PObject )
 	{
-#ifdef SVOBJECTSCRIPTPARSER_DEBUG
-		TRACE( "%s %s\n",ownerObjectInfo.PObject->GetName(), objectInfo.PObject->GetName()  );
-#endif
-
 		// try to set the object's member value...
 		// Note:: Send this message to the Object's Owner
 		if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<DWORD_PTR>(&objectInfo.UniqueObjectID), reinterpret_cast<DWORD_PTR>(&dataObject) ) != SVMR_SUCCESS )
@@ -3070,6 +2746,6 @@ size_t SVObjectScriptParserSVXClass::GetTotal() const
 HRESULT SVObjectScriptParserSVXClass::DoParse()
 {
 	LPCTSTR pScript = Parse( m_pOwnerObject, *m_pParseString );
-	return (pScript != NULL) ? S_OK : E_FAIL;
+	return (nullptr != pScript) ? S_OK : E_FAIL;
 }
 

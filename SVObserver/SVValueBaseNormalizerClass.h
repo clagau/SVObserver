@@ -11,9 +11,6 @@
 
 #pragma once
 
-#ifdef SV_SHOW_INCLUDES
-	#pragma message( "Including " __FILE__ )
-#endif
 
 class SVValueBaseNormalizerClass
 {
@@ -56,3 +53,4 @@ protected:
 	double rangeStep;
 	double rangeBaseSize;
 };
+

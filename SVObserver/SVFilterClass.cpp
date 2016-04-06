@@ -8,16 +8,21 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 11:58:30  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVFilterClass, SVFilterClassGuid )
 
 SVFilterClass::SVFilterClass( SVObjectClass* POwner, int StringResourceID )
-			  :SVUnaryImageOperatorClass( POwner, StringResourceID )
+: SVUnaryImageOperatorClass( POwner, StringResourceID )
 {
 	init();
+}
+
+SVFilterClass::~SVFilterClass()
+{
 }
 
 BOOL SVFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )

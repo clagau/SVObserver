@@ -36,7 +36,6 @@ class SVDiscreteOutputsView;
 class SVDeviceParamConfigPrintHelper;
 #pragma endregion Declarations
 
-
 class SVConfigurationPrint : public CCmdTarget
 {
 	DECLARE_DYNCREATE(SVConfigurationPrint)
@@ -83,8 +82,6 @@ protected:
 	void PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 
 	void PrintInputOutputList(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
-	void PrintOCRParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel);
-	void PrintOCRGrayScaleParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel);
 	void PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, SVIOEntryHostStructPtr IOEntry);
 	void PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, LPCTSTR lpszValue);
 	void PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);

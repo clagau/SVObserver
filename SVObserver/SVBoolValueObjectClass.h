@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVBoolValueObjectClass : public SVValueObjectClassImpl <BOOL> // really int
 {
@@ -25,14 +27,11 @@ public:
 	static HRESULT GetNormalizedValue( const CString& strValue, CString& rstrNormalized );
 
 	SVBoolValueObjectClass( LPCTSTR ObjectName );
-	SVBoolValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVBOOLVALUEOBJECT );
+	SVBoolValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBOOLVALUEOBJECT );
 	SVBoolValueObjectClass(const SVBoolValueObjectClass& rhs);
 	const SVBoolValueObjectClass& operator = (const SVBoolValueObjectClass& rhs);
 
 	virtual ~SVBoolValueObjectClass();
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	HRESULT GetValidTypes( SVValidTypesVector& p_astrTypes ) const;
@@ -56,6 +55,4 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
-

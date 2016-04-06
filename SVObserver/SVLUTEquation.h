@@ -8,19 +8,20 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   27 Jan 2014 15:44:20  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVEquation.h"
 #include "SVValueObject.h"
+#pragma endregion Includes
 
 class SVLUTEquationClass : public SVEquationClass
 {
 	SV_DECLARE_CLASS( SVLUTEquationClass );
 
 public:
-	SVLUTEquationClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVLUTEQUATION );
-	~SVLUTEquationClass();
+	SVLUTEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTEQUATION );
+	virtual ~SVLUTEquationClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 
@@ -33,7 +34,6 @@ public:
 protected:
 	void init();
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-
 
 //******************************************************************************
 // Data Element(s):

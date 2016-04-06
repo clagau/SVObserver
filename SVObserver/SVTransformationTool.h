@@ -8,17 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   24 Apr 2013 12:27:14  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTool.h"
+#pragma endregion Includes
 
 class SVTransformationToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVTransformationToolClass );
 
 public:
-	SVTransformationToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTRANSFORMATIONTOOL );
+	SVTransformationToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRANSFORMATIONTOOL );
 	virtual ~SVTransformationToolClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

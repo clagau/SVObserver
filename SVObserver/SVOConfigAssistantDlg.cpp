@@ -51,49 +51,16 @@
 #define new DEBUG_NEW
 #endif
 
-namespace
-{
-	int MAX_NUM_DIGITIZERS_1394_HUB=3;
-}
-
 static const int GrayScaleBitDepth = 8;
 
 // Defines for Camera File extensions
-static const CString CorecoCameraFileDefExt = _T(".cca");
-static const CString CorecoVicCameraFileDefExt = _T(".cvi");
-static const CString SV1394CameraFileDefExt = _T(".odc");
 static const CString SVGigeCameraFileDefExt = _T(".ogc");
 
 static const CString CAMERA_FIXED_NAME   ( _T("Camera_") );
 static const CString INSPECT_FIXED_NAME  ( _T("Inspection_") );
 static const CString PPQ_FIXED_NAME      ( _T("PPQ_") );
 
-static const CString SYSTEM_SVIM_FULL    ( _T("SVIM") );
-static const CString SYSTEM_SVIM_05      ( _T("SVIM .5") );
-static const CString SYSTEM_SVIM_RGB     ( _T("SVIM RGB (mono)") );
-static const CString SYSTEM_SVIM_COLOR   ( _T("SVIM COLOR") );
-static const CString SYSTEM_SVIM_1394    ( _T("SVIM 1394") );
-static const CString SYSTEM_SVIM_UNKNOWN ( _T("Unknown SVIM") );
-
-//const strings for 1394 product types
-static const CString SYSTEM_SVIM_D1		  ( _T("SVIM D1") );
-static const CString SYSTEM_SVIM_X1		  ( _T("SVIM X1") );
-static const CString SYSTEM_SVIM_X2		  ( _T("SVIM X2") );
-static const CString SYSTEM_SVIM_X3		  ( _T("SVIM X3") );
-static const CString SYSTEM_SVIM_D2		  ( _T("SVIM D2") );
-static const CString SYSTEM_SVIM_D3		  ( _T("SVIM D3") );
-static const CString SYSTEM_SVIM_D1_COLOR	  ( _T("SVIM D1 Color") );
-static const CString SYSTEM_SVIM_X1_COLOR	  ( _T("SVIM X1 Color") );
-static const CString SYSTEM_SVIM_X2_COLOR	  ( _T("SVIM X2 Color") );
-static const CString SYSTEM_SVIM_X3_COLOR	  ( _T("SVIM X3 Color") );
-static const CString SYSTEM_SVIM_D2_COLOR	  ( _T("SVIM D2 Color") );
-static const CString SYSTEM_SVIM_D3_COLOR	  ( _T("SVIM D3 Color") );
-
-static const CString SYSTEM_SVIM_D1_HUB_STRING	( _T("SVIM D1 HUB") );
-static const CString SYSTEM_SVIM_X1_HUB_STRING	( _T("SVIM X1 Shared Bandwidth") );
-static const CString SYSTEM_SVIM_D2_HUB_STRING	( _T("SVIM D2 HUB") );
-static const CString SYSTEM_SVIM_D3_HUB_STRING	( _T("SVIM D3 HUB") );
-
+//const strings for Gig-E product types
 static const CString SYSTEM_SVIM_X2_GD1A		( _T("SVIM X2-GD1A") );
 static const CString SYSTEM_SVIM_X2_GD1A_COLOR	( _T("SVIM X2-GD1A Color") );
 static const CString SYSTEM_SVIM_X2_GD1A_MIXED	( _T("SVIM X2-GD1A Mixed camera") );
@@ -108,9 +75,6 @@ static const CString SYSTEM_SVIM_X2_GD8A_MIXED	( _T("SVIM X2-GD8A Mixed camera")
 static const CString SYSTEM_SVIM_X2_GD8A_NONIO		( _T("SVIM Non I/O") );
 static const CString SYSTEM_SVIM_X2_GD8A_NONIO_COLOR	( _T("SVIM Non I/O Color") );
 
-static const CString SVIM_BOARD_QUAD_STRING     ( _T("Viper_Quad_1") );
-static const CString SVIM_BOARD_RGB_STRING      ( _T("Viper_RGB_1") );
-static const CString SVIM_BOARD_1394_STRING     ( _T("Matrox_1394") );
 static const CString SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
 static const CString SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
 
@@ -152,26 +116,6 @@ static const CString MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera 
 
 const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap = boost::assign::map_list_of< SVIMProductEnum, CString >
 	// SYSTEM ID, DISPLAY NAME
-	( SVIM_PRODUCT_FULL, SYSTEM_SVIM_FULL )
-	( SVIM_PRODUCT_05, SYSTEM_SVIM_05 )
-	( SVIM_PRODUCT_RGB_MONO, SYSTEM_SVIM_RGB )
-	( SVIM_PRODUCT_RGB_COLOR, SYSTEM_SVIM_COLOR )
-	( SVIM_PRODUCT_D3, SYSTEM_SVIM_D3 )
-	( SVIM_PRODUCT_D2, SYSTEM_SVIM_D2 )
-	( SVIM_PRODUCT_D1, SYSTEM_SVIM_D1 )
-	( SVIM_PRODUCT_X1, SYSTEM_SVIM_X1 )
-	( SVIM_PRODUCT_X2, SYSTEM_SVIM_X2 )
-	( SVIM_PRODUCT_X3, SYSTEM_SVIM_X3 )
-	( SVIM_PRODUCT_D3_COLOR, SYSTEM_SVIM_D3_COLOR )
-	( SVIM_PRODUCT_D2_COLOR, SYSTEM_SVIM_D2_COLOR )
-	( SVIM_PRODUCT_D1_COLOR, SYSTEM_SVIM_D1_COLOR )
-	( SVIM_PRODUCT_X1_COLOR, SYSTEM_SVIM_X1_COLOR )
-	( SVIM_PRODUCT_X2_COLOR, SYSTEM_SVIM_X2_COLOR )
-	( SVIM_PRODUCT_X3_COLOR, SYSTEM_SVIM_X3_COLOR )
-	( SVIM_PRODUCT_D1_HUB, SYSTEM_SVIM_D1_HUB_STRING )
-	( SVIM_PRODUCT_D2_HUB, SYSTEM_SVIM_D2_HUB_STRING )
-	( SVIM_PRODUCT_D3_HUB, SYSTEM_SVIM_D3_HUB_STRING )
-	( SVIM_PRODUCT_X1_HUB, SYSTEM_SVIM_X1_HUB_STRING )
 	( SVIM_PRODUCT_X2_GD1A, SYSTEM_SVIM_X2_GD1A )
 	( SVIM_PRODUCT_X2_GD1A_COLOR, SYSTEM_SVIM_X2_GD1A_COLOR )
 	( SVIM_PRODUCT_X2_GD2A, SYSTEM_SVIM_X2_GD2A )
@@ -205,9 +149,6 @@ CSVOConfigAssistantDlg::CSVOConfigAssistantDlg(CWnd* pParent /*=NULL*/)
 	SVIMProductEnum eSvimType = TheSVObserverApp.GetSVIMType();
 
 	SetConfigurationSystem( eSvimType );
-
-	const SVIMTypeInfoStruct& l_SVIMInfo = SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
-	MAX_NUM_DIGITIZERS_1394_HUB = l_SVIMInfo.m_MaxDigitizers;
 }
 
 CSVOConfigAssistantDlg::~CSVOConfigAssistantDlg()
@@ -547,30 +488,6 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 
 		switch( m_lConfigurationType )
 		{
-			case SVIM_PRODUCT_FULL:
-			{
-				CreateDefaultForSVIM(4);
-				break;
-			}
-			case SVIM_PRODUCT_05:
-			{
-				CreateDefaultForSVIM(2);
-				break;
-			}
-			case SVIM_PRODUCT_RGB_MONO:
-			{
-				CreateDefaultForRGBSVIM();
-				break;
-			}
-			case SVIM_PRODUCT_RGB_COLOR:
-			{
-				CreateDefaultForSVIM(1);
-				break;
-			}
-			case SVIM_PRODUCT_D1:
-			case SVIM_PRODUCT_X1:
-			case SVIM_PRODUCT_D1_COLOR:
-			case SVIM_PRODUCT_X1_COLOR:
 			case SVIM_PRODUCT_X2_GD1A:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A:
@@ -579,38 +496,10 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 				CreateDefaultForSVIMDigital(1, TRIGGER_FIXED_NAME);
 				break;
 			}
-			case SVIM_PRODUCT_D2:
-			case SVIM_PRODUCT_X2:
-			case SVIM_PRODUCT_D2_COLOR:
-			case SVIM_PRODUCT_X2_COLOR:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			{
 				CreateDefaultForSVIMDigital(2, TRIGGER_FIXED_NAME);
-				break;
-			}
-			case SVIM_PRODUCT_D3:
-			case SVIM_PRODUCT_X3:
-			case SVIM_PRODUCT_D3_COLOR:
-			case SVIM_PRODUCT_X3_COLOR:
-			{
-				CreateDefaultForSVIMDigital(3, TRIGGER_FIXED_NAME);
-				break;
-			}
-			case SVIM_PRODUCT_D1_HUB:
-			case SVIM_PRODUCT_X1_HUB:
-			{
-				CreateDefaultForSVIMDigitalHub(1);
-				break;
-			}
-			case SVIM_PRODUCT_D2_HUB:
-			{
-				CreateDefaultForSVIMDigitalHub(2);
-				break;
-			}
-			case SVIM_PRODUCT_D3_HUB:
-			{
-				CreateDefaultForSVIMDigitalHub(3);
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
@@ -621,13 +510,12 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			}
 			default:
 			{
-				m_lConfigurationType = SVIM_PRODUCT_FULL;
+				m_lConfigurationType = SVIM_PRODUCT_X2_GD4A;
 
-				CreateDefaultForSVIM(4);
+				CreateDefaultForSVIMDigital(4, TRIGGER_FIXED_NAME);
 
 				CString l_sProductString = GetNameFromProductID( m_lConfigurationType );
 				m_ctlAvailableSys.SelectString(-1,l_sProductString.operator LPCTSTR());
-
 				break;
 			}
 		}
@@ -662,70 +550,6 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 	}
 }
 
-void CSVOConfigAssistantDlg::CreateDefaultForSVIM(int Number)
-{
-	for ( int i = 0; i < Number; i++ )
-	{
-		//add a camera
-		CString sCameraName = GetNextCameraName();
-		m_CameraList.AddCameraToList(sCameraName, i);
-
-		//add a trigger
-		CString sTriggerName = GetNextTriggerName(TRIGGER_FIXED_NAME);
-		m_TriggerList.AddTriggerToList(SVString(sTriggerName), i);
-
-		//add an inspection...
-		CString sInspectionName = GetNextInspectionName();
-		m_InspectList.AddInspectionToList(sInspectionName, sInspectionName, true);
-		m_InspectList.SetToolsetImage(sInspectionName, sCameraName);
-		m_InspectList.SetNewDisableMethod(sInspectionName,_T( "Method 1" ));
-		m_InspectList.SetEnableAuxiliaryExtent( sInspectionName, 0 );
-		m_slInspectionNamesUsed.AddTail(sInspectionName);
-		m_slInspectionLabelsUsed.AddTail(sInspectionName);
-
-		//add a ppq, attach trigger, camera and inspection to it.
-		CString sPPQName = GetNextPPQName();
-		m_PPQList.AddPPQToList(sPPQName);
-		m_PPQList.AttachCameraToPPQ(sPPQName, sCameraName);
-		m_PPQList.AttachInspectToPPQ(sPPQName, sInspectionName);
-		AddUsedInspect(sInspectionName);
-		m_PPQList.AttachTriggerToPPQ(sPPQName, sTriggerName);
-		AddUsedTrigger(sTriggerName);
-	}
-}
-
-void CSVOConfigAssistantDlg::CreateDefaultForRGBSVIM()
-{
-	//create 1 trigger, 3 camera's and inspections, 1 PPQ
-	CString sCameraName;
-	CString sTriggerName;
-	CString sInspectionName;
-	CString sPPQName;
-
-	sTriggerName = GetNextTriggerName(TRIGGER_FIXED_NAME);
-	m_TriggerList.AddTriggerToList(SVString(sTriggerName), 0);
-	sPPQName = GetNextPPQName();
-	m_PPQList.AddPPQToList(sPPQName);
-	m_PPQList.AttachTriggerToPPQ(sPPQName,sTriggerName);
-	AddUsedTrigger(sTriggerName);
-
-	for (int i = 0; i < 3; i++)
-	{
-		sCameraName = GetNextCameraName();
-		m_CameraList.AddCameraToList(sCameraName,0,i);
-		sInspectionName = GetNextInspectionName();
-		m_InspectList.AddInspectionToList(sInspectionName,sInspectionName, true);
-		m_InspectList.SetToolsetImage(sInspectionName,sCameraName);
-		m_InspectList.SetNewDisableMethod( sInspectionName, _T( "Method 1" ) );
-		m_InspectList.SetEnableAuxiliaryExtent( sInspectionName, 0 );
-		m_slInspectionNamesUsed.AddTail(sInspectionName);
-		m_slInspectionLabelsUsed.AddTail(sInspectionName);
-		AddUsedInspect(sInspectionName);
-		m_PPQList.AttachCameraToPPQ(sPPQName,sCameraName);
-		m_PPQList.AttachInspectToPPQ(sPPQName,sInspectionName);
-	}
-}
-
 void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR TriggerBaseName )
 {
 	for ( int i = 0; i < Number; i++ )
@@ -752,66 +576,6 @@ void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR Tri
 		m_PPQList.AttachInspectToPPQ(sPPQName, sInspectionName);
 		AddUsedInspect(sInspectionName);
 		m_PPQList.AttachTriggerToPPQ(sPPQName, sTriggerName);
-		AddUsedTrigger(sTriggerName);
-	}
-}
-
-void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigitalHub(int iNumber)
-{
-	CString sCameraName;
-	CString sTriggerName;
-	CString sInspectionName;
-	CString sPPQName;
-
-	ASSERT( GetProductType() == SVIM_PRODUCT_D1_HUB
-		|| GetProductType() == SVIM_PRODUCT_D2_HUB
-		|| GetProductType() == SVIM_PRODUCT_D3_HUB
-		|| GetProductType() == SVIM_PRODUCT_X1_HUB
-	);
-
-	const int NUM_CAMERAS_PER_BOARD = 3;
-
-	int iCameraIndex=0;
-	for ( int iBoard = 0; iBoard < iNumber; iBoard++ )
-	{
-		int iCamera( 0 );
-
-		// one trigger, one PPQ per board
-		// multiple cameras and inspections
-		std::vector<CString> aCameraNames;
-		std::vector<CString> aInspectionNames;
-
-		for ( iCamera = 0; iCamera < NUM_CAMERAS_PER_BOARD; iCamera++ )
-		{
-			//add a camera
-			sCameraName = GetNextCameraName();
-			aCameraNames.push_back( sCameraName );
-			m_CameraList.AddCameraToList(sCameraName, iCameraIndex);
-			iCameraIndex++;
-
-			//add an inspection...
-			sInspectionName = GetNextInspectionName();
-			aInspectionNames.push_back( sInspectionName );
-			m_InspectList.AddInspectionToList(sInspectionName, sInspectionName, true);
-			m_InspectList.SetToolsetImage(sInspectionName, sCameraName);
-			m_slInspectionNamesUsed.AddTail(sInspectionName);
-			m_slInspectionLabelsUsed.AddTail(sInspectionName);
-		}
-
-		//add a trigger
-		sTriggerName = GetNextTriggerName(TRIGGER_FIXED_NAME);
-		m_TriggerList.AddTriggerToList(SVString(sTriggerName), iBoard);
-
-		//add a ppq, attach trigger, cameras and inspections to it.
-		sPPQName = GetNextPPQName();
-		m_PPQList.AddPPQToList(sPPQName);
-		for ( iCamera = 0; iCamera < NUM_CAMERAS_PER_BOARD; iCamera++ )
-		{
-			m_PPQList.AttachCameraToPPQ(sPPQName, aCameraNames[iCamera]);
-			m_PPQList.AttachInspectToPPQ(sPPQName, aInspectionNames[iCamera]);
-			AddUsedInspect(aInspectionNames[iCamera]);
-		}
-		m_PPQList.AttachTriggerToPPQ(sPPQName,sTriggerName);
 		AddUsedTrigger(sTriggerName);
 	}
 }
@@ -1051,34 +815,6 @@ CString CSVOConfigAssistantDlg::BuildTrgDig( const SVOTriggerObj& rTriggerObj) c
 	{
 		switch( m_lConfigurationType )
 		{
-			case SVIM_PRODUCT_FULL:
-			case SVIM_PRODUCT_05:
-			{
-				sDigName.Format("%s%s%d", SVIM_BOARD_QUAD_STRING, SVIM_DIG_NAME_STRING, iDig);
-				break;
-			}
-			case SVIM_PRODUCT_RGB_MONO:
-			case SVIM_PRODUCT_RGB_COLOR:
-			{
-				sDigName.Format("%s%s%d", SVIM_BOARD_RGB_STRING, SVIM_DIG_NAME_STRING, iDig); 
-				break;
-			}
-			case SVIM_PRODUCT_D1:
-			case SVIM_PRODUCT_D2:
-			case SVIM_PRODUCT_D3:
-			case SVIM_PRODUCT_X1:
-			case SVIM_PRODUCT_X2:
-			case SVIM_PRODUCT_X3:
-			case SVIM_PRODUCT_D1_COLOR:
-			case SVIM_PRODUCT_D2_COLOR:
-			case SVIM_PRODUCT_D3_COLOR:
-			case SVIM_PRODUCT_X1_COLOR:
-			case SVIM_PRODUCT_X2_COLOR:
-			case SVIM_PRODUCT_X3_COLOR:
-			case SVIM_PRODUCT_D1_HUB:
-			case SVIM_PRODUCT_D2_HUB:
-			case SVIM_PRODUCT_D3_HUB:
-			case SVIM_PRODUCT_X1_HUB:
 			case SVIM_PRODUCT_X2_GD1A:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A:
@@ -1135,46 +871,11 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 	{
 		switch( m_lConfigurationType )
 		{
-			case SVIM_PRODUCT_FULL:
-			case SVIM_PRODUCT_05:
-			{
-				sDigName.Format("%s%s%d%s%d", SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum);
-				break;
-			}
-			case SVIM_PRODUCT_RGB_MONO:
-			case SVIM_PRODUCT_RGB_COLOR:
-			{
-				if ( m_lConfigurationType == SVIM_PRODUCT_RGB_COLOR || bIsAcqDev )
-				{
-					sDigName.Format("%s%s%d%s", SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING); 
-				}
-				else
-				{
-					sDigName.Format("%s%s%d%s%d", SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum); 
-				}
-				break;
-			}
-			case SVIM_PRODUCT_D1:
-			case SVIM_PRODUCT_D2:
-			case SVIM_PRODUCT_D3:
-			case SVIM_PRODUCT_X1:
-			case SVIM_PRODUCT_X2:
-			case SVIM_PRODUCT_X3:
-			case SVIM_PRODUCT_D1_HUB:
-			case SVIM_PRODUCT_D2_HUB:
-			case SVIM_PRODUCT_D3_HUB:
-			case SVIM_PRODUCT_X1_HUB:
 			case SVIM_PRODUCT_X2_GD1A:
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			case SVIM_PRODUCT_D1_COLOR:
-			case SVIM_PRODUCT_D2_COLOR:
-			case SVIM_PRODUCT_D3_COLOR:
-			case SVIM_PRODUCT_X1_COLOR:
-			case SVIM_PRODUCT_X2_COLOR:
-			case SVIM_PRODUCT_X3_COLOR:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
@@ -1200,50 +901,6 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 	{
 		switch( m_lConfigurationType )
 		{
-			case SVIM_PRODUCT_FULL:
-			case SVIM_PRODUCT_05:
-			{
-				sDigName.Format("%s%s%d%s%d", SVIM_BOARD_QUAD_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum);
-				break;
-			}
-			case SVIM_PRODUCT_RGB_MONO:
-			case SVIM_PRODUCT_RGB_COLOR:
-			{
-				if( m_lConfigurationType == SVIM_PRODUCT_RGB_COLOR || bIsAcqDev )
-				{
-					sDigName.Format("%s%s%d%s", SVIM_BOARD_RGB_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING); 
-				}
-				else
-				{
-					sDigName.Format("%s%s%d%s%d", SVIM_BOARD_RGB_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum); 
-				}
-				break;
-			}
-			case SVIM_PRODUCT_D1:
-			case SVIM_PRODUCT_D2:
-			case SVIM_PRODUCT_D3:
-			case SVIM_PRODUCT_X1:
-			case SVIM_PRODUCT_X2:
-			case SVIM_PRODUCT_X3:
-			case SVIM_PRODUCT_D1_HUB:
-			case SVIM_PRODUCT_D2_HUB:
-			case SVIM_PRODUCT_D3_HUB:
-			case SVIM_PRODUCT_X1_HUB:
-			{
-				sDigName.Format("%s%s%d%s%d", SVIM_BOARD_1394_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum);
-				break;
-			}
-			case SVIM_PRODUCT_D1_COLOR:
-			case SVIM_PRODUCT_D2_COLOR:
-			case SVIM_PRODUCT_D3_COLOR:
-			case SVIM_PRODUCT_X1_COLOR:
-			case SVIM_PRODUCT_X2_COLOR:
-			case SVIM_PRODUCT_X3_COLOR:
-			{
-				sDigName.Format("%s%s%d%s", SVIM_BOARD_1394_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING/*, iBandNum*/);
-				break;
-			}
-
 			case SVIM_PRODUCT_X2_GD1A:
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD4A:
@@ -1426,12 +1083,11 @@ bool CSVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR triggerName) const
 	bool bRetVal = true;
 
 	// Check for acquistion device and if software triggering is supported
-	// For Coreco acquistion device - always return true
-	// For 1394/GIGE acquistion device 
+	// For GIGE acquistion device 
 	// - check if camera file has been assigned
 	// - check if Trigger_Source_Option_N (Software Oneshot) is available
 
-	// check if analog acquisition system
+	// check if Digital acquisition system
 	if ( SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
 	{
 		// Get cameras attached to this trigger
@@ -1475,12 +1131,11 @@ bool CSVOConfigAssistantDlg::IsCameraLineInputAllowed(LPCTSTR triggerName) const
 	bool bRetVal = false;
 
 	// Check for acquistion device and if Line Input is supported
-	// For Coreco acquistion device - always return false
-	// For 1394/GIGE acquistion device 
+	// For GIGE acquistion device 
 	// - check if camera file has been assigned
 	// - check if Line Input Device parameter is available
 
-	// check if analog acquisition system
+	// check if Digital acquisition system
 	if ( SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
 	{
 		// Get cameras attached to this trigger
@@ -1921,33 +1576,12 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 
 	int iCamCnt = m_CameraList.GetCameraListCount();
 
-	BOOL bMonoHack = FALSE;
-	// if system type is RGB_MONO do this section 1 more time,
-	// the extra iteration MUST use dig_Ch_ALL
-	if ( m_lConfigurationType == SVIM_PRODUCT_RGB_MONO )
-	{
-		iCamCnt++;
-		bMonoHack = TRUE;
-	}
-
 	for (int iAcq = 0; iAcq < iCamCnt; iAcq++)
 	{
 		svFiles.RemoveAll();
 		int CameraIndex(iAcq);
 		bool IsAcqDevice( false );
 		SVAcquisitionClassPtr psvDevice;
-
-		if ( bMonoHack )
-		{
-			if ( 0 == CameraIndex )
-			{
-				IsAcqDevice = true;
-			}
-			else
-			{
-				CameraIndex--;
-			}
-		}
 
 		const SVOCameraObjPtr pCameraObj( GetCameraObject( CameraIndex ) );
 		if( nullptr != pCameraObj )
@@ -1999,17 +1633,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					CString sCameraFileName = pCameraObj->GetCameraFile();
 					svFile.SetFullFileName(sCameraFileName);
 			
-					if ( CString( svFile.GetExtension() ).CompareNoCase(CorecoCameraFileDefExt) == 0 )
-					{
-						svFiles.Add(svFile);
-						svFile.SetExtension(CorecoVicCameraFileDefExt);
-						svFiles.Add(svFile);
-					}
-					else if ( CString( svFile.GetExtension() ).CompareNoCase(SV1394CameraFileDefExt) == 0 )
-					{
-						svFiles.Add(svFile);
-					}
-					else if ( CString( svFile.GetExtension() ).CompareNoCase(SVGigeCameraFileDefExt) == 0 )
+					if ( 0 == CString( svFile.GetExtension() ).CompareNoCase(SVGigeCameraFileDefExt) )
 					{
 						svFiles.Add(svFile);
 					}
@@ -2036,17 +1660,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				sCameraFileName = pCameraObj->GetCameraFile();
 				svFile.SetFullFileName(sCameraFileName);
 			
-				if ( CString( svFile.GetExtension() ).CompareNoCase(CorecoCameraFileDefExt) == 0 )
-				{
-					svFiles.Add(svFile);
-					svFile.SetExtension(CorecoVicCameraFileDefExt);
-					svFiles.Add(svFile);
-				}
-				else if ( CString( svFile.GetExtension() ).CompareNoCase(SV1394CameraFileDefExt) == 0 )
-				{
-					svFiles.Add(svFile);
-				}
-				else if ( CString( svFile.GetExtension() ).CompareNoCase(SVGigeCameraFileDefExt) == 0 )
+				if ( 0 == CString( svFile.GetExtension() ).CompareNoCase(SVGigeCameraFileDefExt)  )
 				{
 					svFiles.Add(svFile);
 				}
@@ -2113,13 +1727,12 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 								}
 							}
 						}
-						psvDevice->SetDeviceParameters( svDeviceParams );	// must be done before CreateBuffers for 1394 (in case CameraFormat changes) - EB 20030714
+						psvDevice->SetDeviceParameters( svDeviceParams );	// must be done before CreateBuffers (in case CameraFormat changes)
 						psvDevice->GetDeviceParameters( svDeviceParams );	// LoadFiles may have created CameraFormat params which were not in the original list; retrieve the new complete list
 						psvDevice->GetImageInfo(&svImageInfo);
 						HRESULT hrCreateBuffers = psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
 
-						// EB 20031218
-						// is this going to screw up anything?? we need to do this for 1394... needs to happen AFTER SetDeviceParameters on a New
+						// needs to happen AFTER SetDeviceParameters on a New
 						if ( bGetLightReference )
 						{
 							psvDevice->GetLightReference(svLight);
@@ -2167,11 +1780,6 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				bRet = pConfig->AddAcquisitionDevice( sDigName, svFiles, *psvLight, *pLut, pDeviceParams ) && bRet;
 			}
 		}
-	}
-	if ( bMonoHack )
-	{
-		//set camera count back to what it was before...
-		iCamCnt--;
 	}
 	return bRet;
 }
@@ -3094,7 +2702,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	CString sPPQName;
 	int iDigNumber;
 	int iChannel;
-	CString sCCAFileName;
+	CString sCameraFileName;
 
 	SVVirtualCamera* pcfgCamera( nullptr );
 	SVTriggerObject* pcfgTrigger( nullptr );
@@ -3116,30 +2724,27 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				iDigNumber = pcfgCamera->mpsvDevice->DigNumber();
 				iChannel = pcfgCamera->mpsvDevice->Channel();
 
-				sCCAFileName.Empty();
-				//go through mFiles and pull out cca file for now
+				sCameraFileName.Empty();
+				
 				long lSize;
 				SVFileNameClass oCamFile;
 				pcfgCamera->mpsvDevice->GetFileNameArraySize( lSize );
-				for ( long lFile = 0; lFile < lSize && sCCAFileName.IsEmpty();lFile++)
+				for ( long lFile = 0; lFile < lSize && sCameraFileName.IsEmpty();lFile++)
 				{
 					pcfgCamera->mpsvDevice->GetFileName( lFile, oCamFile );
 					CString csExt = oCamFile.GetExtension();				
 
-					if ( ( csExt.CompareNoCase( CorecoCameraFileDefExt ) == 0 || 
-							csExt.CompareNoCase( SV1394CameraFileDefExt ) == 0 || 
-							csExt.CompareNoCase( SVGigeCameraFileDefExt ) == 0 )
-						&& sCCAFileName.IsEmpty() )
+					if ( 0 == csExt.CompareNoCase( SVGigeCameraFileDefExt ) && sCameraFileName.IsEmpty() )
 					{
-						sCCAFileName = oCamFile.GetFullFileName();
+						sCameraFileName = oCamFile.GetFullFileName();
 					}
 				}
 
 				//Add Camera Name, Camera Files and Camera Device Params to tmp list in case of a cancel
 				m_CameraList.AddCameraToList(sCameraName,iDigNumber,iChannel); 
 				m_TmpCameraList.AddCameraToList(sCameraName,iDigNumber,iChannel); 
-				m_CameraList.SetCameraFile(sCameraName,sCCAFileName);
-				m_TmpCameraList.SetCameraFile(sCameraName,sCCAFileName);
+				m_CameraList.SetCameraFile(sCameraName, sCameraFileName);
+				m_TmpCameraList.SetCameraFile(sCameraName, sCameraFileName);
 
 				SVDeviceParamCollection l_Params;
 				SVDeviceParamCollection l_CameraFileParams;
@@ -3473,7 +3078,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 									CheckCamera( *pCameraObj, true );
 									CheckTriggers();
 									CheckColor( *pCameraObj );
-								}// end if ( m_eBoard == SVIM_BOARD_1394 )
+								}
 							}
 						}
 						else
@@ -4198,52 +3803,14 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 
 	switch( p_lNewSystemType )
 	{
-		case SVIM_PRODUCT_FULL:
-		case SVIM_PRODUCT_05:
-		{
-			//go thru each camera and remove Ch#'s and assign dig #'s
-			int iNum = GetCameraListCount();
-			int iCh = 0;
-			int iDig = 0;
-			for ( int i = 0; i < iNum; i ++ )
-			{
-				SVOCameraObjPtr pCameraObj( GetCameraObject(i) );
-				if ( nullptr != pCameraObj )
-				{
-					iCh = pCameraObj->GetBandNumber();
-					pCameraObj->SetBandNumber(0);
-					//iDig = pObj->GetDigNumber(); // Leave the dig number alone.
-					//pObj->SetDigNumber(iDig);
-					pCameraObj->SetCameraFile("");
-					if (!pCameraObj->IsFileAcquisition())
-					{
-						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName(), CAMERA_INVALID_FILES));
-					}
-				}
-			}
-			l_bRet = TRUE;
-			break;
-		}
 		case SVIM_PRODUCT_X2_GD1A:
 		case SVIM_PRODUCT_X2_GD2A:
 		case SVIM_PRODUCT_X2_GD4A:
 		case SVIM_PRODUCT_X2_GD8A:
-		case SVIM_PRODUCT_D1:
-		case SVIM_PRODUCT_D2:
-		case SVIM_PRODUCT_D3:
-		case SVIM_PRODUCT_X1:
-		case SVIM_PRODUCT_X2:
-		case SVIM_PRODUCT_X3:
-		case SVIM_PRODUCT_X1_COLOR:
-		case SVIM_PRODUCT_X2_COLOR:
-		case SVIM_PRODUCT_X3_COLOR:
 		case SVIM_PRODUCT_X2_GD1A_COLOR:
 		case SVIM_PRODUCT_X2_GD2A_COLOR:
 		case SVIM_PRODUCT_X2_GD4A_COLOR:
 		case SVIM_PRODUCT_X2_GD8A_COLOR:
-		case SVIM_PRODUCT_D1_COLOR:
-		case SVIM_PRODUCT_D2_COLOR:
-		case SVIM_PRODUCT_D3_COLOR:
 		{
 			int iNum = GetCameraListCount();
 			int iCh = 0;
@@ -4535,7 +4102,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 						}
 					}// end if ( l_HardwareCapabilities.ParameterExists( DeviceParamCameraFormats ) )
 				}// end if ( params.ParameterExists( DeviceParamCameraFormats ) )
-			}// end if 1394 color product type
+			}
 		}// end if ( pDevice )
 	}
 	return S_OK;

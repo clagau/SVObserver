@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   25 Jun 2014 11:57:24  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVProgressDialog.h"
 #include "SVSystemLibrary/SVLockableClass.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
+#pragma endregion Includes
 
 class SVObjectScriptParserClass;
 

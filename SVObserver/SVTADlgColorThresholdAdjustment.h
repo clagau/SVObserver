@@ -9,16 +9,13 @@
 //* .Check In Date   : $Date:   26 Jun 2014 18:17:56  $
 //******************************************************************************
 
-#if !defined(SVTADLGCOLORTHRESHOLDADJUSTMENT_H)
-#define SVTADLGCOLORTHRESHOLDADJUSTMENT_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
 #include "SVValueBaseNormalizerClass.h"
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVIPDoc;
 class SVColorToolClass;
@@ -36,7 +33,7 @@ class SVTADlgColorThresholdAdjustment : public SVTADlgColorThresholdBasePage, pu
 // Construction
 public:
 	SVTADlgColorThresholdAdjustment();
-	~SVTADlgColorThresholdAdjustment();
+	virtual ~SVTADlgColorThresholdAdjustment();
 
 	virtual HRESULT SetInspectionData();
 
@@ -98,6 +95,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVTADLGCOLORTHRESHOLDADJUSTMENT_H)
-

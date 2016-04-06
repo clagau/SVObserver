@@ -57,18 +57,6 @@
     <ClCompile Include="SVUnloadDeviceDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTestIntekAcquisitionClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTestIntekAcquisitionSubsystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTestIntekDCamAcquisitionProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTestIntekDCamDriverProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVImageTest.rc">
@@ -119,18 +107,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUnloadDeviceDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTestIntekAcquisitionClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTestIntekAcquisitionSubsystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTestIntekDCamAcquisitionProxy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTestIntekDCamDriverProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

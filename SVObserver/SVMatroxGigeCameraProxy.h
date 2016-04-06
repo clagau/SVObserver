@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:33:58  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVGigeCameraFileLibrary/SVGigeCameraFileReader.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraProxy.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVDigitizerLoadLibraryClass;
 class SVMatroxGigeAcquisitionClass;

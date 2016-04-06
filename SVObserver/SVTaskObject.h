@@ -42,7 +42,7 @@ class SVTaskObjectClass : virtual public SvOi::ITaskObject, public SVObjectAppCl
 
 public:
 	SVTaskObjectClass( LPCSTR LPSZObjectName );
-	SVTaskObjectClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECT );
+	SVTaskObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECT );
 
 	virtual ~SVTaskObjectClass();
 
@@ -137,10 +137,6 @@ public:
 	virtual DWORD GetObjectState() const override;
 	virtual void GetInputObjects( SVInputInfoListClass& RInputObjectList );
 	virtual void GetAllInputObjects();
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectSubScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& writer);
 	virtual void PersistFriends(SVObjectWriter& rWriter);
 	virtual void PersistInputs(SVObjectWriter& rWriter);

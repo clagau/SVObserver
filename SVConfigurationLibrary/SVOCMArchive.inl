@@ -35,56 +35,35 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template< typename SVTreeType >
-HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersion, 
-																											 unsigned long  ulConfigVersion, 
-																											 BSTR			bstrFilename,
-																											 SVTreeType& p_rTree)
+HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long ulSVOVersion, unsigned long ulConfigVersion, BSTR bstrFilename, SVTreeType& p_rTree)
 {
-	USES_CONVERSION;
-
 	HRESULT hr( S_OK );
 
 	SVString l_FileName( SvUl_SF::createSVString(bstrFilename) );
 
-	CString cstrMessage;
-	BSTR bstrRevisionHistory = NULL;
-
-	while (1)
+	if( ulConfigVersion < 0x00040000 )
 	{
-		if( ulConfigVersion < 0x00040000 )
-		{
-			//-		Configuration files prior to version 4.00 should not be able to get
-			//-		here.
-			hr = -1663;
-			break;
-		}
-		else if( 0x00040000 <= ulConfigVersion && ulConfigVersion < 0x00043200 )
-		{
-			SVXmlStream< SVTreeType > xml( p_rTree );
-
-			if( !xml.Load_XML_Document( l_FileName.c_str() ) )
-			{
-				hr = E_FAIL;
-			}
-		}
-		else if( 0x00043200 <= ulConfigVersion )
-		{
-			BSTR bstrChangedNode( NULL );
-			SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
-			hr = SaxHandler.BuildFromXMLFile(&p_rTree, bstrFilename);
-			
-		}
-		else
+		//-		Configuration files prior to version 4.00 should not be able to get
+		//-		here.
+		hr = -1663;
+	}
+	else if( 0x00040000 <= ulConfigVersion && ulConfigVersion < 0x00043200 )
+	{
+		SVXmlStream< SVTreeType > xml( p_rTree );
+		if( !xml.Load_XML_Document( l_FileName.c_str() ) )
 		{
 			hr = E_FAIL;
 		}
-
-		break;
 	}
-
-	SysFreeString (bstrRevisionHistory);
-	bstrRevisionHistory = NULL;
-
+	else if( 0x00043200 <= ulConfigVersion )
+	{
+		SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
+		hr = SaxHandler.BuildFromXMLFile(&p_rTree, bstrFilename);
+	}
+	else
+	{
+		hr = E_FAIL;
+	}
 	return hr;
 }
 

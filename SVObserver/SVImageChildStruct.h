@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:48:16  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVImageObjectClass.h"
+#pragma endregion Includes
 
 struct SVImageChildStruct  
 {
@@ -26,7 +27,6 @@ struct SVImageChildStruct
 
 	SVImageInfoClass m_ImageInfo;
 	SVImageObjectClassPtr m_pImageHandles;
-
 };
 
 typedef std::map< GUID, SVImageChildStruct > SVGuidImageChildMap;

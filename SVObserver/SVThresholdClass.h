@@ -22,7 +22,7 @@ class SVThresholdClass : public SVUnaryImageOperatorClass
 	SV_DECLARE_CLASS( SVThresholdClass );
 	friend class SVToolAdjustmentDialogThresholdPageClass;
 public:
-	SVThresholdClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTHRESHOLD );
+	SVThresholdClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHRESHOLD );
 	virtual ~SVThresholdClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

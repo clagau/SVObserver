@@ -32,7 +32,6 @@
 #include "SVInputObjectList.h"
 #include "SVInfoStructs.h"
 #include "SVMessage/SVMessage.h"
-#include "SVSystemLibrary/SVCrash.h"
 #include "SVDigitalOutputObject1.h"
 #include "SVTriggerObject.h"
 #include "SVAcquisitionClass.h"
@@ -1444,7 +1443,7 @@ HRESULT SVPPQObject::GoOnline()
 	{
 		if (m_pTrigger->IsSoftwareTrigger())
 		{
-			// must do this before the Camera starts for 1394 cameras
+			// must do this before the Camera starts for Digital cameras
 			l_hrOk = m_pTrigger->EnableInternalTrigger();
 		}
 	}

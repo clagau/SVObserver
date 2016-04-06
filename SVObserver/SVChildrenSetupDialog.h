@@ -20,7 +20,8 @@ class SVObjectClass;
 class SVChildrenSetupDialogClass : public CDialog
 {
 public:
-	SVChildrenSetupDialogClass( CWnd* pParent = NULL );
+	SVChildrenSetupDialogClass( CWnd* pParent = nullptr );
+	virtual ~SVChildrenSetupDialogClass();
 
 //******************************************************************************
 // Message Handler(s):

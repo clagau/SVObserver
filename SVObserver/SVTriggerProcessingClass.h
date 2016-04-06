@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   23 Jul 2013 18:06:38  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVTriggerClass;
 class SVIOTriggerLoadLibraryClass;
@@ -58,5 +59,4 @@ private:
 	SVNameTriggerMap m_Triggers;
 
 	SVNameTriggerSubsystemMap m_TriggerSubsystems;
-
 };

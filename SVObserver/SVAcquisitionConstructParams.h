@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVImageLibrary/SVLut.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 struct SVAcquisitionConstructParams
 {
@@ -44,8 +46,6 @@ struct SVAcquisitionConstructParams
 	int m_LRBandSize;
 	int m_LRConstrast;
 	int m_LRBrightness;
-
 };
 
 typedef std::vector< SVAcquisitionConstructParams > SVAcquisitionConstructParamsVector;
-

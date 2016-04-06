@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <ddraw.h>
 #include "SVUtilityLibrary/SVBitmapInfo.h"
+#pragma endregion Includes
 
 class SVDirectX
 {

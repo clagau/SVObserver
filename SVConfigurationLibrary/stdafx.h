@@ -65,5 +65,9 @@
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
 
+#include <boost/config.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/scoped_array.hpp>
 #include <boost/shared_array.hpp>			//Used by static library
+
 #pragma endregion Precompiled Headers

@@ -45,7 +45,6 @@ static const TCHAR productIdLocation[] = _T( "Software\\Microsoft\\Windows NT\\C
 static const TCHAR oemSection[] = _T( "OEMSpecific" );
 static const TCHAR generalSection[] = _T( "general" );
 static const TCHAR UserDataSection[] = _T( "UserData" );
-static const TCHAR g_tsz1394Section[] = _T( "1394" );
 
 static const TCHAR g_tszWindowsRunOnce[] = _T( "Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce" );
 
@@ -91,7 +90,6 @@ static const TCHAR g_OperatingSystemsTag[] = _T("operating systems");
 static const TCHAR g_svobserver1CmdFilepath[] = _T("C:\\SVObserver\\bin\\SVObserver1.cmd");
 static const TCHAR g_InitializeIOSubsystemFilepath[] = _T("C:\\SVObserver\\bin\\InitializeIOSubsystem.exe");
 static const TCHAR g_SVLptIODllFilename[] = _T("SVLptIO.dll");
-static const TCHAR g_SVTVicLptDllFileName[] = _T("SVTVicLpt.dll");
 
 static const TCHAR g_ModelNumberNotValidMsg[] = _T("Model Number is not Valid.");
 static const TCHAR g_ModelNumberNotValidMsgPrompt[] = _T("Model Number is not Valid.\nWould you like to correct the Model Number ?");
@@ -163,7 +161,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // SVDriveInitDlg dialog
 
-SVDriveInitDlg::SVDriveInitDlg(CWnd* pParent /*=NULL*/)
+SVDriveInitDlg::SVDriveInitDlg(CWnd* pParent /*=nullptr*/)
 : CDialog(SVDriveInitDlg::IDD, pParent)
 {
     //{{AFX_DATA_INIT(SVDriveInitDlg)
@@ -897,7 +895,7 @@ HRESULT SVDriveInitDlg::UpdateIOInterfaceDLL(LPCTSTR p_szIOBoard)
 		++l_Iter;
 	}
 
-	if (0 == l_IOBoardDLL.Compare(g_SVTVicLptDllFileName) || 0 == l_IOBoardDLL.Compare(g_SVLptIODllFilename))
+	if (0 == l_IOBoardDLL.Compare(g_SVLptIODllFilename))
 	{
 		if (l_Iter == l_FileData.end())
 		{
@@ -989,7 +987,7 @@ HRESULT SVDriveInitDlg::UpdateMatroxRegistryMaxMem(size_t& p_rMaxSize, size_t p_
 {
 	HRESULT l_Status = S_OK;
 
-	HKEY l_hKey = NULL;
+	HKEY l_hKey = nullptr;
 	size_t l_MaxSize = 0;
 	
 	l_Status = RegOpenKeyEx(HKEY_LOCAL_MACHINE, g_MtxDmaParamRegKey, 0, KEY_ALL_ACCESS, &l_hKey);

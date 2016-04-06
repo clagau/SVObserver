@@ -19,13 +19,13 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-
-
 SV_IMPLEMENT_CLASS( EQAdjustSizePositionY, EQAdjustSizePositionYGuid );
 
-
 EQAdjustSizePositionY::EQAdjustSizePositionY( SVObjectClass* POwner, int StringResourceID )
-	:EQAdjustSize(EQSizePositionYType , EQAdjustSizePositionYResultGuid, POwner, StringResourceID )
+: EQAdjustSize(EQSizePositionYType, EQAdjustSizePositionYResultGuid, POwner, StringResourceID )
 {
 }
 
+EQAdjustSizePositionY::~EQAdjustSizePositionY()
+{
+}

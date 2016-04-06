@@ -30,7 +30,7 @@ class CSVOProPosQueDlg : public CPropertyPage
 // Construction
 public:
 	CSVOProPosQueDlg();
-	~CSVOProPosQueDlg();
+	virtual ~CSVOProPosQueDlg();
 
     void SetupList();
 

@@ -22,6 +22,10 @@ SVDilationFilterClass::SVDilationFilterClass( SVObjectClass* POwner, int StringR
 	outObjectInfo.ObjectTypeInfo.SubType = SVDilationFilterObjectType;
 }
 
+SVDilationFilterClass::~SVDilationFilterClass() 
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

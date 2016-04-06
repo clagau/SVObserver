@@ -162,14 +162,6 @@ HRESULT SVValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 	return SVObjectAppClass::SetObjectValue(pDataObject);
 }
 
-#ifdef USE_OBJECT_SCRIPT
-void SVValueObjectClass::GetObjectScript(CString& rstrScript, CString& rstrAliasTable, int iIndent)
-{
-	// Get the Heading (Class Info)
-	SVObjectAppClass::GetObjectScript(rstrScript, rstrAliasTable, iIndent);
-}
-#endif
-
 DWORD_PTR SVValueObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
 	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;

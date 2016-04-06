@@ -27,7 +27,7 @@ class SVLinearToolClass : public SVToolClass
 
 public:
 #pragma region Constructor
-	SVLinearToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVLINEARTOOL );
+	SVLinearToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARTOOL );
 	virtual ~SVLinearToolClass();
 #pragma endregion Constructor
 

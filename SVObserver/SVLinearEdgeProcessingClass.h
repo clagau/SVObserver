@@ -8,18 +8,19 @@
 // * .Current Version : $Revision:   1.3  $
 // * .Check In Date   : $Date:   10 Jul 2014 17:46:18  $
 // ******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObject.h"
 #include "SVValueObjectImpl.h"
+#pragma region Includes
 
 class SVLinearEdgeProcessingClass : public SVTaskObjectClass  
 {
 	SV_DECLARE_CLASS( SVLinearEdgeProcessingClass );
 
 public:
-	SVLinearEdgeProcessingClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEPROCESSING );
+	SVLinearEdgeProcessingClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEPROCESSING );
 	virtual ~SVLinearEdgeProcessingClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct *PCreateStructure);

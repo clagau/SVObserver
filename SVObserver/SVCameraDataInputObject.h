@@ -11,13 +11,15 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVInputObject.h"
+#pragma endregion Includes
 
 class SVCameraDataInputObject : public SVInputObject
 {
 public:
 	SVCameraDataInputObject(LPCSTR strObjectName);
-	SVCameraDataInputObject(SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVCAMERADATAINPUTOBJECT);
+	SVCameraDataInputObject(SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCAMERADATAINPUTOBJECT);
 
 	virtual ~SVCameraDataInputObject();
 

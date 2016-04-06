@@ -9,17 +9,12 @@
 //* .Check In Date   : $Date:   26 Jun 2014 18:17:56  $
 //******************************************************************************
 
-#if !defined(SVTADLGCOLORTHRESHOLDROI_H)
-#define SVTADLGCOLORTHRESHOLDROI_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVTADlgColorThresholdROI.h : header file
-//
 
+#pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgColorThresholdROI dialog
@@ -32,7 +27,7 @@ class SVTADlgColorThresholdROI : public SVTADlgColorThresholdBasePage, public SV
 public:
 
 	SVTADlgColorThresholdROI();
-	~SVTADlgColorThresholdROI();
+	virtual ~SVTADlgColorThresholdROI();
 
 	virtual HRESULT SetInspectionData();
 
@@ -70,6 +65,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVTADLGCOLORTHRESHOLDROI_H)
-

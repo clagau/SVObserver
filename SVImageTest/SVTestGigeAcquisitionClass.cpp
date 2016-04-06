@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   22 Apr 2013 11:10:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTestGigeAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
+#pragma endregion Includes
 
 SVTestGigeAcquisitionClass::SVTestGigeAcquisitionClass(SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer)
 : SVTestAcquisitionClass( p_rSubsystem, p_hDigitizer )
@@ -37,7 +39,7 @@ HRESULT SVTestGigeAcquisitionClass::ReadCameraFile( const CString& sFile )
 //	{
 //	}
 	// SEJ - Set GigeFeature Overrides
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = SetGigeFeatureOverrides(info.sFeatureOverrides);
 	}
@@ -64,11 +66,11 @@ HRESULT SVTestGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamColl
 	_variant_t dummy;
 	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SVGigeBeginTrackParameters, 0, &dummy);
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = SVTestAcquisitionClass::SetDeviceParameters( rDeviceParams );
 	}
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = InitializeDevice( rDeviceParams );
 	}
@@ -94,7 +96,7 @@ bool SVTestGigeAcquisitionClass::StartAcquire(SVCameraPage& p_rDisplay)
 	// SEJ - send notification to end tracking main camera parameters
 	_variant_t dummy;
 	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SVGigeEndTrackParameters, 0, &dummy);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		// Send Strobe & trigger
 		hr = m_gigeCameraProxy.GoOnline(m_hDigitizer, &m_rSubsystem.m_svDigitizers);

@@ -10,8 +10,9 @@
 //******************************************************************************
 
 #pragma once
-
+#pragma region Includes
 #include "SVGlobalHandles.h"
+#pragma endregion Includes
 
 class SVBarCodeBufferInfoClass
 {

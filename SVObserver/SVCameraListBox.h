@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:49:56  $
 //******************************************************************************
 
-#if !defined(AFX_SVCAMERALISTBOX_H__A841325C_3576_45E7_92C2_6047660DF097__INCLUDED_)
-#define AFX_SVCAMERALISTBOX_H__A841325C_3576_45E7_92C2_6047660DF097__INCLUDED_
+#pragma once
 
 class SVCameraListBox : public CListBox
 {
@@ -39,6 +38,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVCAMERALISTBOX_H__A841325C_3576_45E7_92C2_6047660DF097__INCLUDED_)
-

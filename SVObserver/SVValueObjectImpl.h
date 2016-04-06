@@ -8,9 +8,9 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   11 Nov 2013 07:42:24  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVBoolValueObjectClass.h"
 #include "SVByteValueObjectClass.h"
 #include "SVCharValueObjectClass.h"
@@ -26,4 +26,5 @@
 #include "SVStaticStringValueObjectClass.h"
 #include "SVTimerValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
+#pragma endregion Includes
 

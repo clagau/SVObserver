@@ -8,18 +8,19 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:59:36  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVObjectLibrary/SVObjectClass.h"
+#pragma endregion Includes
 
 class SVInputObject : public SVObjectClass
 {
 public:
 
 	SVInputObject( LPCSTR strObjectName );
-	SVInputObject( SVObjectClass* POwner = NULL,
+	SVInputObject( SVObjectClass* POwner = nullptr,
 				   int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECT );
 
 	virtual ~SVInputObject();

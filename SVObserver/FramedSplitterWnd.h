@@ -17,6 +17,7 @@ class FramedSplitterWnd : public CSplitterWnd
 #pragma region Constructor
 public:
 	FramedSplitterWnd();
+	virtual ~FramedSplitterWnd();
 #pragma endregion Constructor
 
 #pragma region Public Methods

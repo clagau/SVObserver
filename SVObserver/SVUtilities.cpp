@@ -115,16 +115,7 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
   utilInfo.bUtilityFound = FALSE;
   utilInfo.uiId = uiUtilityId;
   
-  if ( uiUtilityId == ID_EXTRAS_UTILITIES_LIMIT )
-  {
-	  // do the firmware stuff...
-	  utilInfo.bUtilityFound = TRUE;
-	  utilInfo.szArguments = pApp->m_csFirmwareArguments;
-	  utilInfo.szCommand = pApp->m_csFirmwareCommand;
-	  utilInfo.szWorkingDirectory = pApp->m_csFirmwareWorkingDir;
-	  utilInfo.bPromptForArguments = FALSE;
-  }
-  else
+  if ( uiUtilityId != ID_EXTRAS_UTILITIES_LIMIT )
   {
 	  std::map<UINT, SVUtilityIniClass>::iterator iter;
 
@@ -149,8 +140,6 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 		  utilInfo.szWorkingDirectory = l_Struct.m_csWorkingDirectory;
 	  }
   }
-
-  BOOL bUpdateFirmware = pApp->getShowUpdateFirmwareInMenu();
 
   //note: need to prompt for arguments!
   if (utilInfo.bUtilityFound)
@@ -320,24 +309,6 @@ BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 			pApp->m_UtilityMenu[(UINT)dwId] = l_Struct;
 
 			pMenu->AppendMenu (MF_STRING, (UINT) dwId, csString);
-		}
-		
-	}
-
-	//check to see if the Update Firmware should be added to the menu
-	if ( bRet )
-	{
-		if ( !pApp->m_csFirmwareCommand.IsEmpty() )
-		{
-			if ( pApp->getShowUpdateFirmwareInMenu() )
-			{
-				iId++;
-				dwId = iId;
-				pMenu->AppendMenu(MF_SEPARATOR,(UINT)dwId);
-				csString = "Update Firmware";
-				dwId = ID_EXTRAS_UTILITIES_LIMIT;
-				pMenu->AppendMenu (MF_STRING, (UINT) dwId, csString);
-			}
 		}
 	}
 	return bRet;

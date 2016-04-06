@@ -160,17 +160,6 @@ public:
 	//************************************
 	bool LoadPPQ(SVTreeType& rTree );
 
-	//************************************
-	//! Set the Producttype  if no Producttype is set
-	//! \param Boardname [in]
-	//! \param numCameras [in]
-	//! \param NumBoardDig [in]
-	//! \throw  MessageContainer
-	//! \returns void
-	//************************************
-	void CalculateProductType(const SVString& rBoardname, long numCameras, long NumBoardDig);
-
-
 	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT GetRemoteInputItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 

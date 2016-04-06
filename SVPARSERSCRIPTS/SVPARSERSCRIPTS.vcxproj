@@ -1,17 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -24,17 +16,7 @@
     <Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Utility</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>NotSet</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Utility</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>NotSet</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
@@ -47,15 +29,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\SVOGlobalProperties.props" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\SVOGlobalProperties.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\SVOGlobalProperties.props" />
   </ImportGroup>
@@ -66,38 +40,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <Midl>
-      <TypeLibraryName>.\../SVParserScripts.tlb</TypeLibraryName>
-      <HeaderFileName>
-      </HeaderFileName>
-    </Midl>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <Midl>
-      <TypeLibraryName>.\../SVParserScripts.tlb</TypeLibraryName>
-      <HeaderFileName>
-      </HeaderFileName>
-    </Midl>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Command>
       </Command>
@@ -126,13 +74,6 @@
     <None Include="readme.txt" />
     <CustomBuild Include="SVEquation.lex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo flex SVEquation.lex
-flex -oflex.cc SVEquation.lex
-move flex.cc "$(IntDir)"
-echo Using ssed to comment out invalid istream definition
-ssed "s/class istream%3b/\/\/class istream%3b/" "$(IntDir)flex.cc" &gt; "$(IntDir)lex.yy.cc"
-call CopyIfDifferent.bat "$(IntDir)lex.yy.cc" lex.yy.cc      </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)lex.yy.cc;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo flex SVEquation.lex
 flex -oflex.cc SVEquation.lex
 move flex.cc "$(IntDir)"
@@ -140,13 +81,6 @@ echo Using ssed to comment out invalid istream definition
 ssed "s/class istream%3b/\/\/class istream%3b/" "$(IntDir)flex.cc" &gt; "$(IntDir)lex.yy.cc"
 call CopyIfDifferent.bat "$(IntDir)lex.yy.cc" lex.yy.cc      </Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)lex.yy.cc;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo flex SVEquation.lex
-flex -oflex.cc SVEquation.lex
-move flex.cc "$(IntDir)"
-echo Using ssed to comment out invalid istream definition
-ssed "s/class istream%3b/\/\/class istream%3b/" "$(IntDir)flex.cc" &gt; "$(IntDir)lex.yy.cc"
-call CopyIfDifferent.bat "$(IntDir)lex.yy.cc" lex.yy.cc      </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)lex.yy.cc;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">echo flex SVEquation.lex
 flex -oflex.cc SVEquation.lex
 move flex.cc "$(IntDir)"
@@ -157,17 +91,6 @@ call CopyIfDifferent.bat "$(IntDir)lex.yy.cc" lex.yy.cc      </Command>
     </CustomBuild>
     <CustomBuild Include="SVEquation.y">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo Create tmp If Missing
-if not exist \tmp mkdir \tmp
-echo byacc -dv SVEquation.y
-byacc -dv -bt SVEquation.y
-move t.tab.h "$(IntDir)"
-move t.tab.c "$(IntDir)"
-move t.output "$(IntDir)"
-call CopyIfDifferent.bat "$(IntDir)t.tab.h" y.tab.h
-call CopyIfDifferent.bat "$(IntDir)t.tab.c" y.tab.c
-call CopyIfDifferent.bat "$(IntDir)t.output" y.output</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)t.tab.h;$(IntDir)t.tab.c;$(IntDir)t.output;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo Create tmp If Missing
 if not exist \tmp mkdir \tmp
 echo byacc -dv SVEquation.y
@@ -179,17 +102,6 @@ call CopyIfDifferent.bat "$(IntDir)t.tab.h" y.tab.h
 call CopyIfDifferent.bat "$(IntDir)t.tab.c" y.tab.c
 call CopyIfDifferent.bat "$(IntDir)t.output" y.output</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)t.tab.h;$(IntDir)t.tab.c;$(IntDir)t.output;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo Create tmp If Missing
-if not exist \tmp mkdir \tmp
-echo byacc -dv SVEquation.y
-byacc -dv -bt SVEquation.y
-move t.tab.h "$(IntDir)"
-move t.tab.c "$(IntDir)"
-move t.output "$(IntDir)"
-call CopyIfDifferent.bat "$(IntDir)t.tab.h" y.tab.h
-call CopyIfDifferent.bat "$(IntDir)t.tab.c" y.tab.c
-call CopyIfDifferent.bat "$(IntDir)t.output" y.output</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)t.tab.h;$(IntDir)t.tab.c;$(IntDir)t.output;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">echo Create tmp If Missing
 if not exist \tmp mkdir \tmp
 echo byacc -dv SVEquation.y

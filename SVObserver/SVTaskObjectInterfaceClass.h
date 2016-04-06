@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   24 Apr 2013 11:25:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
 #include "SVTaskObjectValueInterface.h"
 #include "SVValueObjectReference.h"
+#pragma endregion Includes
 
 class SVTaskObjectClass;
 class SVToolClass;
@@ -27,5 +28,4 @@ public:
 
 	virtual HRESULT SetInspectionData() = 0;
 };
-
 

@@ -11,58 +11,24 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVResult.h"
-
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
+#pragma endregion Includes
 
 class SVPointYResultClass : public SVResultClass  
 {
 	SV_DECLARE_CLASS( SVPointYResultClass );
 
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-	SVPointYResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_RESULT_POINT_Y );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
+	SVPointYResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_POINT_Y );
 	virtual ~SVPointYResultClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
-
-protected:
-	SVPointValueObjectClass* getInputPoint();
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-public:
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-public:
 	virtual BOOL OnValidate();
 
 protected:
+	SVPointValueObjectClass* getInputPoint();
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
 //******************************************************************************

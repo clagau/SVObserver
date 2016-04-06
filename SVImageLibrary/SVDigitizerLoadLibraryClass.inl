@@ -13,37 +13,37 @@
 This constructor initializes all of the local attributes to the desired default values.
 */
 inline SVDigitizerLoadLibraryClass::SVDigitizerLoadLibraryClass()
-: m_hmHandle(NULL)
-, m_psvCreate(NULL)
-, m_psvDestroy(NULL)
-, m_psvGetCount(NULL)
-, m_psvGetHandle(NULL)
-, m_psvGetName(NULL)
-, m_psvLoadCameraFiles(NULL)
-, m_psvGetBufferWidth(NULL)
-, m_psvGetBufferHeight(NULL)
-, m_psvGetBufferFormat(NULL)
-, m_psvCreateBuffers(NULL)
-, m_psvRegisterBufferInterface(NULL)
-, m_psvStart(NULL)
-, m_psvStop(NULL)
-, m_psvUnregisterBufferInterface(NULL)
-, m_psvDestroyBuffers(NULL)
-, m_psvUnloadCameraFile(NULL)
-, m_psvSetParameters(NULL)
-, m_psvSetParameter(NULL)
-, m_psvGetParameter(NULL)
-, m_psvDestroyParameter(NULL)
-, m_psvParameterGetList(NULL)
-, m_psvParameterGetName(NULL)
-, m_psvParameterGetValue(NULL)
-, m_psvParameterSetValue(NULL)
-, m_psvScanForCameras(NULL)
-, m_psvInternalTriggerEnable(NULL)
-, m_psvInternalTrigger(NULL)
-, m_psvInternalTriggerRegister(NULL)
-, m_psvInternalTriggerUnregister(NULL)
-, m_psvInternalTriggerUnregisterAll(NULL)
+: m_hmHandle(nullptr)
+, m_psvCreate(nullptr)
+, m_psvDestroy(nullptr)
+, m_psvGetCount(nullptr)
+, m_psvGetHandle(nullptr)
+, m_psvGetName(nullptr)
+, m_psvLoadCameraFiles(nullptr)
+, m_psvGetBufferWidth(nullptr)
+, m_psvGetBufferHeight(nullptr)
+, m_psvGetBufferFormat(nullptr)
+, m_psvCreateBuffers(nullptr)
+, m_psvRegisterBufferInterface(nullptr)
+, m_psvStart(nullptr)
+, m_psvStop(nullptr)
+, m_psvUnregisterBufferInterface(nullptr)
+, m_psvDestroyBuffers(nullptr)
+, m_psvUnloadCameraFile(nullptr)
+, m_psvSetParameters(nullptr)
+, m_psvSetParameter(nullptr)
+, m_psvGetParameter(nullptr)
+, m_psvDestroyParameter(nullptr)
+, m_psvParameterGetList(nullptr)
+, m_psvParameterGetName(nullptr)
+, m_psvParameterGetValue(nullptr)
+, m_psvParameterSetValue(nullptr)
+, m_psvScanForCameras(nullptr)
+, m_psvInternalTriggerEnable(nullptr)
+, m_psvInternalTrigger(nullptr)
+, m_psvInternalTriggerRegister(nullptr)
+, m_psvInternalTriggerUnregister(nullptr)
+, m_psvInternalTriggerUnregisterAll(nullptr)
 {
 }
 
@@ -66,13 +66,13 @@ inline HRESULT SVDigitizerLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_hmHandle == NULL )
+	if ( nullptr == m_hmHandle )
 	{
 		m_hmHandle = ::LoadLibrary( p_szLibrary );
 		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 		Sleep(0);
 
-		if ( m_hmHandle != NULL )
+		if ( nullptr != m_hmHandle )
 		{
 			m_psvCreate = (SVCreatePtr) ::GetProcAddress( m_hmHandle, "SVCreate" );
 			m_psvDestroy = (SVDestroyPtr) ::GetProcAddress( m_hmHandle, "SVDestroy" );
@@ -107,31 +107,31 @@ inline HRESULT SVDigitizerLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 
 			m_psvScanForCameras = (SVDigitizerScanForCamerasPtr) ::GetProcAddress( m_hmHandle, "SVDigitizerScanForCameras" );
 
-			if ( m_psvCreate != NULL &&
-			     m_psvDestroy != NULL &&
-			     m_psvGetCount != NULL &&
-			     m_psvGetHandle != NULL &&
-			     m_psvGetName != NULL &&
-			     m_psvLoadCameraFiles != NULL &&
-			     m_psvGetBufferWidth != NULL &&
-			     m_psvGetBufferHeight != NULL &&
-			     m_psvGetBufferFormat != NULL &&
-			     m_psvCreateBuffers != NULL &&
-			     m_psvRegisterBufferInterface != NULL &&
-			     m_psvStart != NULL &&
-			     m_psvStop != NULL &&
-			     m_psvUnregisterBufferInterface != NULL &&
-				 m_psvInternalTriggerEnable != NULL &&
-				 m_psvInternalTrigger != NULL &&
-				 m_psvInternalTriggerRegister != NULL &&
-				 m_psvInternalTriggerUnregister != NULL &&
-				 m_psvInternalTriggerUnregisterAll != NULL &&
-			     m_psvDestroyBuffers != NULL &&
-			     m_psvUnloadCameraFile != NULL &&
-			     m_psvSetParameters != NULL &&
-			     m_psvSetParameter != NULL &&
-			     m_psvGetParameter != NULL &&
-			     m_psvDestroyParameter != NULL
+			if ( nullptr != m_psvCreate &&
+			     nullptr != m_psvDestroy &&
+			     nullptr != m_psvGetCount &&
+			     nullptr != m_psvGetHandle &&
+			     nullptr != m_psvGetName &&
+			     nullptr != m_psvLoadCameraFiles &&
+			     nullptr != m_psvGetBufferWidth &&
+			     nullptr != m_psvGetBufferHeight &&
+			     nullptr != m_psvGetBufferFormat &&
+			     nullptr != m_psvCreateBuffers &&
+			     nullptr != m_psvRegisterBufferInterface &&
+			     nullptr != m_psvStart &&
+			     nullptr != m_psvStop &&
+			     nullptr != m_psvUnregisterBufferInterface &&
+				 nullptr != m_psvInternalTriggerEnable &&
+				 nullptr != m_psvInternalTrigger &&
+				 nullptr != m_psvInternalTriggerRegister &&
+				 nullptr != m_psvInternalTriggerUnregister &&
+				 nullptr != m_psvInternalTriggerUnregisterAll &&
+			     nullptr != m_psvDestroyBuffers &&
+			     nullptr != m_psvUnloadCameraFile &&
+			     nullptr != m_psvSetParameters &&
+			     nullptr != m_psvSetParameter &&
+			     nullptr != m_psvGetParameter &&
+			     nullptr != m_psvDestroyParameter
 				 )
 			{
 				l_hrOk = m_psvCreate();
@@ -143,7 +143,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 		}
 	}
 
-	if ( l_hrOk != S_OK )
+	if ( S_OK != l_hrOk )
 	{
 		Close();
 	}
@@ -158,9 +158,9 @@ inline HRESULT SVDigitizerLoadLibraryClass::Close()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_hmHandle != NULL )
+	if ( nullptr != m_hmHandle )
 	{
-		if ( m_psvDestroy != NULL )
+		if ( nullptr != m_psvDestroy )
 		{
 			l_hrOk = m_psvDestroy();
 		}
@@ -169,7 +169,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::Close()
 		{
 			// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 			Sleep(0);
-			m_hmHandle = NULL;
+			m_hmHandle = nullptr;
 		}
 		else
 		{
@@ -177,37 +177,37 @@ inline HRESULT SVDigitizerLoadLibraryClass::Close()
 		}
 	}
 
-	m_psvCreate = NULL;
-	m_psvDestroy = NULL;
-	m_psvGetCount = NULL;
-	m_psvGetHandle = NULL;
-	m_psvGetName = NULL;
-	m_psvLoadCameraFiles = NULL;
-	m_psvGetBufferWidth = NULL;
-	m_psvGetBufferHeight = NULL;
-	m_psvGetBufferFormat = NULL;
-	m_psvCreateBuffers = NULL;
-	m_psvRegisterBufferInterface = NULL;
-	m_psvStart = NULL;
-	m_psvStop = NULL;
-	m_psvUnregisterBufferInterface = NULL;
-	m_psvInternalTriggerEnable = NULL;
-	m_psvInternalTrigger = NULL;
-	m_psvInternalTriggerRegister = NULL;
-	m_psvInternalTriggerUnregister = NULL;
-	m_psvInternalTriggerUnregisterAll = NULL;
-	m_psvDestroyBuffers = NULL;
-	m_psvUnloadCameraFile = NULL;
-	m_psvSetParameters = NULL;
-	m_psvSetParameter = NULL;
-	m_psvGetParameter = NULL;
-	m_psvDestroyParameter = NULL;
-	m_psvParameterGetList = NULL;
-	m_psvParameterGetName = NULL;
-	m_psvParameterGetValue = NULL;
-	m_psvParameterSetValue = NULL;
+	m_psvCreate = nullptr;
+	m_psvDestroy = nullptr;
+	m_psvGetCount = nullptr;
+	m_psvGetHandle = nullptr;
+	m_psvGetName = nullptr;
+	m_psvLoadCameraFiles = nullptr;
+	m_psvGetBufferWidth = nullptr;
+	m_psvGetBufferHeight = nullptr;
+	m_psvGetBufferFormat = nullptr;
+	m_psvCreateBuffers = nullptr;
+	m_psvRegisterBufferInterface = nullptr;
+	m_psvStart = nullptr;
+	m_psvStop = nullptr;
+	m_psvUnregisterBufferInterface = nullptr;
+	m_psvInternalTriggerEnable = nullptr;
+	m_psvInternalTrigger = nullptr;
+	m_psvInternalTriggerRegister = nullptr;
+	m_psvInternalTriggerUnregister = nullptr;
+	m_psvInternalTriggerUnregisterAll = nullptr;
+	m_psvDestroyBuffers = nullptr;
+	m_psvUnloadCameraFile = nullptr;
+	m_psvSetParameters = nullptr;
+	m_psvSetParameter = nullptr;
+	m_psvGetParameter = nullptr;
+	m_psvDestroyParameter = nullptr;
+	m_psvParameterGetList = nullptr;
+	m_psvParameterGetName = nullptr;
+	m_psvParameterGetValue = nullptr;
+	m_psvParameterSetValue = nullptr;
 
-	m_psvScanForCameras = NULL;
+	m_psvScanForCameras = nullptr;
 
 	return l_hrOk;
 }
@@ -217,7 +217,7 @@ This method return the loaded state of the DLL.
 */
 inline bool SVDigitizerLoadLibraryClass::IsLoaded() const
 {
-	return (m_hmHandle != NULL);
+	return (nullptr != m_hmHandle);
 }
 
 /*
@@ -227,7 +227,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::GetLibraryName( BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_hmHandle != NULL )
+	if ( nullptr != m_hmHandle )
 	{
 		WCHAR szPath[MAX_PATH]; 
 		
@@ -236,15 +236,15 @@ inline HRESULT SVDigitizerLoadLibraryClass::GetLibraryName( BSTR *p_pbstrName )
 			l_hrOk = S_OK;
 			WCHAR szFname[_MAX_FNAME];
 
-			_wsplitpath( szPath, NULL, NULL, szFname, NULL );
+			_wsplitpath( szPath, nullptr, nullptr, szFname, nullptr );
 
 			_bstr_t fName( szFname );
 
-			if ( *p_pbstrName != NULL )
+			if ( nullptr != *p_pbstrName )
 			{
 				::SysFreeString( *p_pbstrName );
 
-				*p_pbstrName = NULL;
+				*p_pbstrName = nullptr;
 			}
 
 			// detach and assign it the the caller's variable
@@ -262,7 +262,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::GetCount( unsigned long *p_pulCount 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetCount != NULL )
+	if ( nullptr != m_psvGetCount )
 	{
 		l_hrOk = m_psvGetCount( p_pulCount );
 	}
@@ -277,7 +277,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::GetHandle( SVHANDLE *p_phHandle, uns
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetHandle != NULL )
+	if ( nullptr != m_psvGetHandle )
 	{
 		l_hrOk = m_psvGetHandle( p_phHandle, p_ulIndex );
 	}
@@ -292,7 +292,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::GetName( SVHANDLE p_hHandle, BSTR *p
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetName != NULL )
+	if ( nullptr != m_psvGetName )
 	{
 		l_hrOk = m_psvGetName( p_hHandle, p_pbstrName );
 	}
@@ -322,7 +322,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::GetBufferWidth( SVHANDLE p_hHandle, 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetBufferWidth != NULL )
+	if ( nullptr != m_psvGetBufferWidth )
 	{
 		l_hrOk = m_psvGetBufferWidth( p_hHandle, p_pulWidth );
 	}
@@ -337,7 +337,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::GetBufferHeight( SVHANDLE p_hHandle,
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetBufferHeight != NULL )
+	if ( nullptr != m_psvGetBufferHeight )
 	{
 		l_hrOk = m_psvGetBufferHeight( p_hHandle, p_pulHeight );
 	}
@@ -352,7 +352,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::GetBufferFormat( SVHANDLE p_hHandle,
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetBufferFormat != NULL )
+	if ( nullptr != m_psvGetBufferFormat )
 	{
 		l_hrOk = m_psvGetBufferFormat( p_hHandle, p_piFormat );
 	}
@@ -367,7 +367,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::CreateBuffers( SVHANDLE p_hHandle, u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvCreateBuffers != NULL )
+	if ( nullptr != m_psvCreateBuffers )
 	{
 		l_hrOk = m_psvCreateBuffers( p_hHandle, p_ulCount );
 	}
@@ -382,7 +382,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::RegisterBufferInterface( SVHANDLE p_
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvRegisterBufferInterface != NULL )
+	if ( nullptr != m_psvRegisterBufferInterface )
 	{
 		l_hrOk = m_psvRegisterBufferInterface( p_hHandle, p_pInterface );
 	}
@@ -397,7 +397,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::Start( SVHANDLE p_hHandle )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvStart != NULL )
+	if ( nullptr != m_psvStart )
 	{
 		l_hrOk = m_psvStart( p_hHandle );
 	}
@@ -412,7 +412,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::Stop( SVHANDLE p_hHandle )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvStop != NULL )
+	if ( nullptr != m_psvStop )
 	{
 		l_hrOk = m_psvStop( p_hHandle );
 	}
@@ -427,7 +427,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::UnregisterBufferInterface( SVHANDLE 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvUnregisterBufferInterface != NULL )
+	if ( nullptr != m_psvUnregisterBufferInterface )
 	{
 		l_hrOk = m_psvUnregisterBufferInterface( p_hHandle );
 	}
@@ -442,7 +442,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerEnable( SVHANDLE p_hH
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvInternalTriggerEnable != NULL )
+	if ( nullptr != m_psvInternalTriggerEnable )
 	{
 		l_hrOk = m_psvInternalTriggerEnable( p_hHandle );
 	}
@@ -457,7 +457,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::InternalTrigger( SVHANDLE p_hHandle 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvInternalTrigger != NULL )
+	if ( nullptr != m_psvInternalTrigger )
 	{
 		l_hrOk = m_psvInternalTrigger( p_hHandle );
 	}
@@ -472,7 +472,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerRegister( SVHANDLE p_
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvInternalTriggerRegister != NULL )
+	if ( nullptr != m_psvInternalTriggerRegister )
 	{
 		l_hrOk = m_psvInternalTriggerRegister( p_hHandle, p_rCallback.m_pCallback, p_rCallback.m_pOwner, p_rCallback.m_pData );
 	}
@@ -487,7 +487,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerUnregister( SVHANDLE 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvInternalTriggerUnregister != NULL )
+	if ( nullptr != m_psvInternalTriggerUnregister )
 	{
 		l_hrOk = m_psvInternalTriggerUnregister( p_hHandle, p_rCallback.m_pCallback, p_rCallback.m_pOwner, p_rCallback.m_pData );
 	}
@@ -502,7 +502,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerUnregisterAll( SVHAND
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvInternalTriggerUnregisterAll != NULL )
+	if ( nullptr != m_psvInternalTriggerUnregisterAll )
 	{
 		l_hrOk = m_psvInternalTriggerUnregisterAll( p_hHandle );
 	}
@@ -517,7 +517,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::DestroyBuffers( SVHANDLE p_hHandle )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvDestroyBuffers != NULL )
+	if ( nullptr != m_psvDestroyBuffers )
 	{
 		l_hrOk = m_psvDestroyBuffers( p_hHandle );
 	}
@@ -532,7 +532,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::UnloadCameraFile( SVHANDLE p_hHandle
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvUnloadCameraFile != NULL )
+	if ( nullptr != m_psvUnloadCameraFile )
 	{
 		l_hrOk = m_psvUnloadCameraFile( p_hHandle );
 	}
@@ -546,7 +546,7 @@ This method uses the p_psvSetParameters attribute to call the DLL SVDigitizerSet
 inline HRESULT SVDigitizerLoadLibraryClass::SetParameters( SVHANDLE p_hHandle, const SVDeviceParamCollection* p_pParameters )
 {
 	HRESULT l_hrOk = S_FALSE;
-	if ( m_psvSetParameters != NULL )
+	if ( nullptr != m_psvSetParameters )
 	{
 		l_hrOk = m_psvSetParameters( p_hHandle, p_pParameters );
 	}
@@ -559,7 +559,7 @@ This method uses the p_psvSetParameter attribute to call the DLL SVDigitizerSetP
 inline HRESULT SVDigitizerLoadLibraryClass::SetParameter( SVHANDLE p_hHandle, const SVDeviceParamWrapper* p_pParameter )
 {
 	HRESULT l_hrOk = S_FALSE;
-	if ( m_psvSetParameter != NULL )
+	if ( nullptr != m_psvSetParameter )
 	{
 		l_hrOk = m_psvSetParameter( p_hHandle, p_pParameter );
 	}
@@ -572,7 +572,7 @@ This method uses the p_psvGetParameter attribute to call the DLL SVDigitizerGetP
 inline HRESULT SVDigitizerLoadLibraryClass::GetParameter( SVHANDLE p_hHandle, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter )
 {
 	HRESULT l_hrOk = S_FALSE;
-	if ( m_psvGetParameter != NULL )
+	if ( nullptr != m_psvGetParameter )
 	{
 		l_hrOk = m_psvGetParameter( p_hHandle, p_eParameter, p_ppParameter );
 	}
@@ -585,7 +585,7 @@ This method uses the p_psvDestroyParameter attribute to call the DLL SVDigitizer
 inline HRESULT SVDigitizerLoadLibraryClass::DestroyParameter( SVHANDLE p_hHandle, SVDeviceParamWrapper* p_pParameter )
 {
 	HRESULT l_hrOk = S_FALSE;
-	if ( m_psvDestroyParameter != NULL )
+	if ( nullptr != m_psvDestroyParameter )
 	{
 		l_hrOk = m_psvDestroyParameter( p_hHandle, p_pParameter );
 	}
@@ -598,7 +598,7 @@ This method uses the p_psvParameterGetList attribute to call the DLL SVDigitizer
 inline HRESULT SVDigitizerLoadLibraryClass::ParameterGetList( SVHANDLE p_hHandle, VARIANT *p_pvarName )
 {
 	HRESULT l_hrOk = S_FALSE;
-	if ( m_psvParameterGetList != NULL )
+	if ( nullptr != m_psvParameterGetList )
 	{
 		l_hrOk = m_psvParameterGetList( p_hHandle, p_pvarName );
 	}
@@ -611,7 +611,7 @@ This method uses the p_psvParameterGetName attribute to call the DLL SVDigitizer
 inline HRESULT SVDigitizerLoadLibraryClass::ParameterGetName( SVHANDLE p_hHandle, int p_iParameterID, BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
-	if ( m_psvParameterGetName != NULL )
+	if ( nullptr != m_psvParameterGetName )
 	{
 		l_hrOk = m_psvParameterGetName( p_hHandle, p_iParameterID, p_pbstrName );
 	}
@@ -624,7 +624,7 @@ This method uses the p_psvParameterGetValue attribute to call the DLL SVDigitize
 inline HRESULT SVDigitizerLoadLibraryClass::ParameterGetValue( SVHANDLE p_hHandle, int p_iParameterID, int *p_piParameterTypeID, VARIANT *p_pvarName )
 {
 	HRESULT l_hrOk = S_FALSE;
-	if ( m_psvParameterGetValue != NULL )
+	if ( nullptr != m_psvParameterGetValue )
 	{
 		l_hrOk = m_psvParameterGetValue( p_hHandle, p_iParameterID, p_piParameterTypeID, p_pvarName );
 	}
@@ -637,7 +637,7 @@ This method uses the p_psvParameterSetList attribute to call the DLL SVDigitizer
 inline HRESULT SVDigitizerLoadLibraryClass::ParameterSetValue( SVHANDLE p_hHandle, int p_iParameterID, int p_iParameterTypeID, VARIANT *p_pvarName )
 {
 	HRESULT l_hrOk = S_FALSE;
-	if ( m_psvParameterSetValue != NULL )
+	if ( nullptr != m_psvParameterSetValue )
 	{
 		l_hrOk = m_psvParameterSetValue( p_hHandle, p_iParameterID, p_iParameterTypeID, p_pvarName );
 	}
@@ -649,7 +649,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::ScanForCameras()
 {
 	HRESULT l_hrOk = E_NOTIMPL;
 
-	if ( m_psvScanForCameras != NULL )
+	if ( nullptr != m_psvScanForCameras )
 	{
 		l_hrOk = m_psvScanForCameras();
 	}

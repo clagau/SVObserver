@@ -8,11 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:52:32  $
 //******************************************************************************
-
 #pragma once
+
+#pragma region Includes
 
 //Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 typedef std::map<SVString, int> SVTriggerNameIdList;
 

@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:42:58  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #include "SVCommandLibrary/SVCommandTemplate.h"
+#pragma endregion Includes
 
 class ATL_NO_VTABLE SVRemoteCommand
 :	public CComObjectRootEx< CComSingleThreadModel >
@@ -50,7 +51,6 @@ public:
 
 protected:
 	SVCommandTemplatePtr m_Command;
-
 };
 
 OBJECT_ENTRY_AUTO( __uuidof( SVRemoteCommand ), SVRemoteCommand ) 

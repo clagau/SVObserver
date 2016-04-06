@@ -8,19 +8,20 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   13 Aug 2013 10:08:54  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVUnaryImageOperatorClass.h"
 #include "SVValueObjectImpl.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
+#pragma endregion Includes
 
 class SVLUTOperatorClass : public SVUnaryImageOperatorClass
 {
 	SV_DECLARE_CLASS( SVLUTOperatorClass );
 
 public:
-	SVLUTOperatorClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVLUTOPERATOR );
+	SVLUTOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTOPERATOR );
 	virtual ~SVLUTOperatorClass();
 
 private:

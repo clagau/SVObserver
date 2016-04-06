@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectNotifyTemplate.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
@@ -21,6 +22,7 @@
 #include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputObject.h"
 #include "SVObjectLibrary/SVObjectXMLWriter.h"
+#pragma endregion Includes
 
 class SVRemoteOutputGroup : 
 	public SVObjectClass,
@@ -33,7 +35,7 @@ public:
 	typedef std::vector< SVString > VecStringArray;
 
 	SVRemoteOutputGroup( LPCSTR ObjectName );
-	SVRemoteOutputGroup( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTGROUP);
+	SVRemoteOutputGroup( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTGROUP);
 
 	virtual ~SVRemoteOutputGroup();
 
@@ -88,7 +90,6 @@ private:
 	SVRemoteOutputGroup( const SVRemoteOutputGroup& p_rhs );
 
 	const SVRemoteOutputGroup& operator=(const SVRemoteOutputGroup& p_rControl );
-
 };
 
 typedef std::map<CString, SVRemoteOutputGroup* > SVRemoteOutputGroupMap;

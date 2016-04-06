@@ -529,59 +529,6 @@ void SVEquationClass::SetEquationText(const SVString& text)
 	SetEquationText(CString(text.c_str()));
 }
 
-#ifdef USE_OBJECT_SCRIPT
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
-void SVEquationClass::GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent )
-{
-	CString script;
-
-	// preallocate 16K
-    script.GetBuffer(16384);  
-	script.ReleaseBuffer(); 
-	
-	// Get the Heading (Class Info)
-	SVTaskObjectClass::GetObjectScript( script, RStrAliasTable, Indent );
-
-	CString nameStrDelimiter = _T( "'" );
-
-	// Generate indent...
-	CString strIndent = _T( "\n" );
-
-	if( Indent )
-	{
-		CString tabsStrIndent(_T( '\t' ), Indent);
-		strIndent += tabsStrIndent;
-	}
-
-	// Overwrite task object termination termination...
-	int last = script.ReverseFind( TCHAR( '}' ) );
-	if( last >= 0 )
-		script = script.Left( last );
-
-	// Name is delimited by single quotes
-	CString objectTag = nameStrDelimiter + _T( "_object_ID_" ) + GetName();
-
-	// Get the Data Values (Member Info, Values)
-	CString tmp, tmp1;
-	tmp1 = equationStruct.EquationBuffer;
-	
-	::SVAddEscapeSpecialCharacters( tmp1, false );
-
-	tmp.Format( _T( "STRING \"%s\"" ), tmp1 );
-
-	// Name is delimited by single quotes - SEJ july 23,1999
-	script += strIndent + objectTag + _T(".EquationBuffer" ) + nameStrDelimiter + _T( " = " ) + tmp + _T( ";" );
-
-	// Add termination...
-	script += strIndent + _T( "};" );
-
-	script.FreeExtra();
-	
-	RStrScript += script;
-}
-#endif
 HRESULT SVEquationClass::GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const
 {
 	HRESULT hr = S_OK;

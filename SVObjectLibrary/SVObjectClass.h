@@ -100,14 +100,6 @@ public:
 	virtual DWORD GetObjectColor() const;
 	virtual DWORD GetObjectState() const;
 
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectSubScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-	virtual void PutAttributesInObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent );
-	virtual void PutPQDataLinkInfoInObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent );
-	virtual void PutFriendGuidsInObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent );
-	virtual void MakeUniqueFriendAlias( CString& RStrScript );
-#endif
 	virtual void Persist( SVObjectWriter& rWriter );
 	virtual void PersistAttributes( SVObjectWriter& rWriter );
 

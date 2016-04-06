@@ -50,7 +50,7 @@ END_EVENTSINK_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVGigeCameraROIDlg::SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdater, CWnd* pParent /*=NULL*/)
+SVGigeCameraROIDlg::SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdater, CWnd* pParent /*=nullptr*/)
 : CDialog(SVGigeCameraROIDlg::IDD, pParent)
 , m_rImageFormatUpdater(rUpdater)
 , m_pDevice(nullptr) 
@@ -152,10 +152,10 @@ void SVGigeCameraROIDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL SVGigeCameraROIDlg::OnInitDialog()
 {
-	m_iLeft = m_pFormat->lHPos;
-	m_iTop = m_pFormat->lVPos;
-	m_iWidth = m_pFormat->lWidth;
-	m_iHeight = m_pFormat->lHeight;
+	m_iLeft = m_pFormat->m_lHPos;
+	m_iTop = m_pFormat->m_lVPos;
+	m_iWidth = m_pFormat->m_lWidth;
+	m_iHeight = m_pFormat->m_lHeight;
 
 	CDialog::OnInitDialog();
 
@@ -167,20 +167,20 @@ BOOL SVGigeCameraROIDlg::OnInitDialog()
 	UDACCEL accel[10];
 	UINT nNum = m_SpinTop.GetAccel( 10, accel );
 
-	accel[1].nInc = m_pFormat->lVPosStep * 3;
-	accel[2].nInc = m_pFormat->lVPosStep * 5;
+	accel[1].nInc = m_pFormat->m_lVPosStep * 3;
+	accel[2].nInc = m_pFormat->m_lVPosStep * 5;
 	m_SpinTop.SetAccel( 3, accel );
 
-	accel[1].nInc = m_pFormat->lHPosStep * 3;
-	accel[2].nInc = m_pFormat->lHPosStep * 5;
+	accel[1].nInc = m_pFormat->m_lHPosStep * 3;
+	accel[2].nInc = m_pFormat->m_lHPosStep * 5;
 	m_SpinLeft.SetAccel( 3, accel );
 
-	accel[1].nInc = m_pFormat->lHStep * 3;
-	accel[2].nInc = m_pFormat->lHStep * 5;
+	accel[1].nInc = m_pFormat->m_lHStep * 3;
+	accel[2].nInc = m_pFormat->m_lHStep * 5;
 	m_SpinWidth.SetAccel( 3, accel );
 
-	accel[1].nInc = m_pFormat->lVStep * 3;
-	accel[2].nInc = m_pFormat->lVStep * 5;
+	accel[1].nInc = m_pFormat->m_lVStep * 3;
+	accel[2].nInc = m_pFormat->m_lVStep * 5;
 	m_SpinHeight.SetAccel( 3, accel );
 
 	ShowBinningGroup();
@@ -204,10 +204,10 @@ BOOL SVGigeCameraROIDlg::OnInitDialog()
 void SVGigeCameraROIDlg::OnOK()
 {
 	UpdateData(TRUE);
-	m_pFormat->lHPos = m_iLeft;
-	m_pFormat->lVPos = m_iTop;
-	m_pFormat->lWidth = m_iWidth;
-	m_pFormat->lHeight = m_iHeight;
+	m_pFormat->m_lHPos = m_iLeft;
+	m_pFormat->m_lVPos = m_iTop;
+	m_pFormat->m_lWidth = m_iWidth;
+	m_pFormat->m_lHeight = m_iHeight;
 	CDialog::OnOK();
 }
 
@@ -223,10 +223,10 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinHeight(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = S_OK;
 
 	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
-	pnm->iDelta *= m_pFormat->lVStep;
+	pnm->iDelta *= m_pFormat->m_lVStep;
 	long maxHeight = GetScaledMaxHeight();
 
-	if ( (m_iHeight + pnm->iDelta) < m_pFormat->lVStep )
+	if ( (m_iHeight + pnm->iDelta) < m_pFormat->m_lVStep )
 	{
 		*pResult = S_FALSE;
 	}
@@ -236,9 +236,9 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinHeight(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = S_FALSE;
 	}
 
-	if ( *pResult == S_OK )
+	if ( S_OK == *pResult )
 	{
-		m_iHeight = std::max< int >( m_pFormat->lVStep, std::min< int >( m_iHeight + pnm->iDelta, maxHeight ) );
+		m_iHeight = std::max< int >( m_pFormat->m_lVStep, std::min< int >( m_iHeight + pnm->iDelta, maxHeight ) );
 		UpdateData(FALSE);
 		OnChangeROI();
 	}
@@ -249,11 +249,11 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinWidth(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = S_OK;
 
 	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
-	pnm->iDelta *= m_pFormat->lHStep;
+	pnm->iDelta *= m_pFormat->m_lHStep;
 
 	long maxWidth = GetScaledMaxWidth();
 
-	if ( ( m_iWidth + pnm->iDelta ) < m_pFormat->lHStep )
+	if ( ( m_iWidth + pnm->iDelta ) < m_pFormat->m_lHStep )
 	{
 		*pResult = S_FALSE;
 	}
@@ -263,9 +263,9 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinWidth(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = S_FALSE;
 	}
 
-	if ( *pResult == S_OK )
+	if ( S_OK == *pResult )
 	{
-		m_iWidth = std::max< int >( m_pFormat->lHStep, std::min< int >( m_iWidth + pnm->iDelta, maxWidth ) );
+		m_iWidth = std::max< int >( m_pFormat->m_lHStep, std::min< int >( m_iWidth + pnm->iDelta, maxWidth ) );
 		UpdateData(FALSE);
 		OnChangeROI();
 	}
@@ -276,7 +276,7 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinLeft(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = S_OK;
 
 	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
-	pnm->iDelta *= m_pFormat->lHPosStep;
+	pnm->iDelta *= m_pFormat->m_lHPosStep;
 	long maxWidth = GetScaledMaxWidth();
 
 	if ( ( m_iLeft + pnm->iDelta ) < 0 )
@@ -289,9 +289,9 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinLeft(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = S_FALSE;
 	}
 
-	if ( *pResult == S_OK )
+	if ( S_OK == *pResult )
 	{
-		m_iLeft = std::max< int >( 0, std::min< int >( m_iLeft + pnm->iDelta, maxWidth - m_pFormat->lHPosStep ) );
+		m_iLeft = std::max< int >( 0, std::min< int >( m_iLeft + pnm->iDelta, maxWidth - m_pFormat->m_lHPosStep ) );
 		UpdateData(FALSE);
 		OnChangeROI();
 	}
@@ -302,7 +302,7 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinTop(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = S_OK;
 
 	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
-	pnm->iDelta *= m_pFormat->lVPosStep;
+	pnm->iDelta *= m_pFormat->m_lVPosStep;
 	long maxHeight = GetScaledMaxHeight();
 
 	if ( (m_iTop + pnm->iDelta) < 0 )
@@ -315,9 +315,9 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinTop(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = S_FALSE;
 	}
 
-	if ( *pResult == S_OK )
+	if ( S_OK == *pResult )
 	{
-		m_iTop = std::max< int >( 0, std::min< int >( m_iTop + pnm->iDelta, maxHeight - m_pFormat->lVPosStep ) );
+		m_iTop = std::max< int >( 0, std::min< int >( m_iTop + pnm->iDelta, maxHeight - m_pFormat->m_lVPosStep ) );
 		UpdateData(FALSE);
 		OnChangeROI();
 	}
@@ -406,7 +406,7 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinBinningHoriz(NMHDR* pNMHDR, LRESULT* pRes
 
 void SVGigeCameraROIDlg::OnTakePicture()
 {
-	if( m_pDevice != NULL )
+	if( nullptr != m_pDevice )
 	{
 		m_pDevice->SingleGrab( m_pImageHandle );
 	}
@@ -597,38 +597,38 @@ void SVGigeCameraROIDlg::UpdateDeviceBinningParams()
 
 void SVGigeCameraROIDlg::Normalize( CRect &l_roRect )
 {
-	if ( l_roRect.Width() < m_pFormat->lHStep )
+	if ( l_roRect.Width() < m_pFormat->m_lHStep )
 	{
-		l_roRect.right = m_pFormat->lHStep + l_roRect.left;
+		l_roRect.right = m_pFormat->m_lHStep + l_roRect.left;
 	}
 
-	if ( l_roRect.Height() < m_pFormat->lVStep )
+	if ( l_roRect.Height() < m_pFormat->m_lVStep )
 	{
-		l_roRect.bottom = m_pFormat->lVStep + l_roRect.top;
+		l_roRect.bottom = m_pFormat->m_lVStep + l_roRect.top;
 	}
 
 	// normalize to step
 	//l_roRect.top    %= m_pFormat->lVPosStep;
-	l_roRect.top    = (l_roRect.top / m_pFormat->lVPosStep) * m_pFormat->lVPosStep;
-	l_roRect.left   = (l_roRect.left / m_pFormat->lHPosStep) * m_pFormat->lHPosStep;
-	l_roRect.right  = (l_roRect.Width() / m_pFormat->lHStep) * m_pFormat->lHStep + l_roRect.left;
-	l_roRect.bottom = (l_roRect.Height() / m_pFormat->lVStep) * m_pFormat->lVStep + l_roRect.top;
+	l_roRect.top    = (l_roRect.top / m_pFormat->m_lVPosStep) * m_pFormat->m_lVPosStep;
+	l_roRect.left   = (l_roRect.left / m_pFormat->m_lHPosStep) * m_pFormat->m_lHPosStep;
+	l_roRect.right  = (l_roRect.Width() / m_pFormat->m_lHStep) * m_pFormat->m_lHStep + l_roRect.left;
+	l_roRect.bottom = (l_roRect.Height() / m_pFormat->m_lVStep) * m_pFormat->m_lVStep + l_roRect.top;
 
 	// crop
 	l_roRect.NormalizeRect();
 	l_roRect.top    = std::max<long>(0L, l_roRect.top);
 	l_roRect.left   = std::max<long>(0L, l_roRect.left);
-	l_roRect.right  = std::min<long>((m_pFormat->lWidthMax / m_horizontalBinning.value), l_roRect.right);
-	l_roRect.bottom = std::min<long>((m_pFormat->lHeightMax / m_verticalBinning.value), l_roRect.bottom);
+	l_roRect.right  = std::min<long>((m_pFormat->m_lWidthMax / m_horizontalBinning.value), l_roRect.right);
+	l_roRect.bottom = std::min<long>((m_pFormat->m_lHeightMax / m_verticalBinning.value), l_roRect.bottom);
 
-	if ( l_roRect.Width() < m_pFormat->lHStep )
+	if ( l_roRect.Width() < m_pFormat->m_lHStep )
 	{
-		l_roRect.left += l_roRect.Width() - m_pFormat->lHStep;
+		l_roRect.left += l_roRect.Width() - m_pFormat->m_lHStep;
 	}
 
-	if ( l_roRect.Height() < m_pFormat->lVStep )
+	if ( l_roRect.Height() < m_pFormat->m_lVStep )
 	{
-		l_roRect.top += l_roRect.Height() - m_pFormat->lVStep;
+		l_roRect.top += l_roRect.Height() - m_pFormat->m_lVStep;
 	}
 
 	ASSERT( l_roRect.Width() >= 0 );
@@ -637,32 +637,32 @@ void SVGigeCameraROIDlg::Normalize( CRect &l_roRect )
 
 void SVGigeCameraROIDlg::UpdateSpinTopRange()
 {
-	m_SpinTop.SetRange(0, static_cast<short>(GetScaledMaxHeight() - m_pFormat->lVPosStep) );
+	m_SpinTop.SetRange(0, static_cast<short>(GetScaledMaxHeight() - m_pFormat->m_lVPosStep) );
 }
 
 void SVGigeCameraROIDlg::UpdateSpinLeftRange()
 {
-	m_SpinLeft.SetRange(0, static_cast<short>(GetScaledMaxWidth() - m_pFormat->lHPosStep) );
+	m_SpinLeft.SetRange(0, static_cast<short>(GetScaledMaxWidth() - m_pFormat->m_lHPosStep) );
 }
 
 void SVGigeCameraROIDlg::UpdateSpinWidthRange()
 {
-	m_SpinWidth.SetRange(static_cast<short>(m_pFormat->lHStep), static_cast<short>(GetScaledMaxWidth()));
+	m_SpinWidth.SetRange(static_cast<short>(m_pFormat->m_lHStep), static_cast<short>(GetScaledMaxWidth()));
 }
 
 void SVGigeCameraROIDlg::UpdateSpinHeightRange()
 {
-	m_SpinHeight.SetRange(static_cast<short>(m_pFormat->lVStep), static_cast<short>(GetScaledMaxHeight()));
+	m_SpinHeight.SetRange(static_cast<short>(m_pFormat->m_lVStep), static_cast<short>(GetScaledMaxHeight()));
 }
 
 long SVGigeCameraROIDlg::GetScaledMaxWidth() const
 {
-	return m_pFormat->lWidthMax / m_horizontalBinning.value;
+	return m_pFormat->m_lWidthMax / m_horizontalBinning.value;
 }
 
 long SVGigeCameraROIDlg::GetScaledMaxHeight() const
 {
-	return m_pFormat->lHeightMax / m_verticalBinning.value;
+	return m_pFormat->m_lHeightMax / m_verticalBinning.value;
 }
 
 double SVGigeCameraROIDlg::GetScaledValue(long value, double scaleFactor) const

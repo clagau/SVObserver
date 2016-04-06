@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 12:46:30  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVImageClass.h"
 #include "SVPolarTransform.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 class SVImagePolarTransformClass : public SVPolarTransformClass
 {
@@ -21,7 +22,7 @@ friend class SVPolarTransformationToolClass;
 	SV_DECLARE_CLASS( SVImagePolarTransformClass )
 
 public:
-	SVImagePolarTransformClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVIMAGEPOLARTRANSFORM );
+	SVImagePolarTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEPOLARTRANSFORM );
 	virtual ~SVImagePolarTransformClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -82,6 +83,5 @@ private:
 	static double g_dMaxAngularDistance;
 
 	HRESULT CollectInputImageNames();
-
 };
 

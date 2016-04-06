@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 // Enum for threshold type radio
 enum 
@@ -21,7 +23,6 @@ enum
 	SVBCThresholdAuto = 1,
 	SVBCThresholdAdaptive = 2,
 };
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVBarCodeGeneralDialog dialog
@@ -63,7 +64,8 @@ public:
 
 	void UpdateUnEvenGrid();
 
-	SVBarCodeGeneralDialog(CWnd* pParent = NULL);   // standard constructor
+	SVBarCodeGeneralDialog(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVBarCodeGeneralDialog();
 	BOOL	m_bWarnOnFail;
 
 // Dialog Data
@@ -144,6 +146,7 @@ public:
 	class SVBarCodeInfoArray : public SVVector< SVBarCodeInfoStruct >
 	{
 	public:
+		virtual ~SVBarCodeInfoArray();
 		const SVBarCodeInfoStruct* GetInfoByIndex(int iIndex);
 		const SVBarCodeInfoStruct* GetInfoByMilID(long lMilID);
 	};

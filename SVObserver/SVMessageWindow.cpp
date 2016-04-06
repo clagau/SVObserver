@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:36:26  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMessageWindow.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 // Dialogfeld SVMessageWindowClass 
 
 
-SVMessageWindowClass::SVMessageWindowClass(CWnd* pParent /*=NULL*/)
+SVMessageWindowClass::SVMessageWindowClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVMessageWindowClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVMessageWindowClass)
@@ -30,6 +31,9 @@ SVMessageWindowClass::SVMessageWindowClass(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVMessageWindowClass::~SVMessageWindowClass()
+{
+}
 
 void SVMessageWindowClass::DoDataExchange(CDataExchange* pDX)
 {

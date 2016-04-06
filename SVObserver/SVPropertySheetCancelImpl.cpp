@@ -9,9 +9,14 @@
 // * .Check In Date   : $Date:   23 Apr 2013 14:38:00  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPropertySheetCancelImpl.h"
+#pragma endregion Includes
 
+SVPropertySheetCancelImpl::~SVPropertySheetCancelImpl()
+{
+}
 
 bool SVPropertySheetCancelImpl::CanCancel()
 {

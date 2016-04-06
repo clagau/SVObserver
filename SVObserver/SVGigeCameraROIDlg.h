@@ -44,7 +44,7 @@ class SVGigeCameraROIDlg : public CDialog
 {
 #pragma region Construction
 public:
-	SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdater, CWnd* pParent = NULL);
+	SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdater, CWnd* pParent = nullptr);
 	virtual ~SVGigeCameraROIDlg();
 #pragma endregion Construction
 

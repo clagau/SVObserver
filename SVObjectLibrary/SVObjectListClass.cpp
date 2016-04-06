@@ -115,14 +115,6 @@ CString SVObjectListClass::GetCompleteObjectNameAt( int Index )
 	return _T( "" );
 }
 
-#ifdef USE_OBJECT_SCRIPT
-void SVObjectListClass::GetObjectScriptAt( int Index, CString& RStrScript, CString& RStrAliasTable )
-{
-	if( Index >= 0 && Index < GetSize() && GetAt( Index ).Object() )
-		GetAt( Index )->GetObjectScript( RStrScript, RStrAliasTable );
-}
-#endif
-
 int SVObjectListClass::GetResourceIDAt( int Index )
 {
 	if( Index >= 0 && Index < GetSize() && GetAt( Index ).Object() )

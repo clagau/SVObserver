@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   01 Oct 2013 14:19:28  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"
+#pragma endregion Includes
 
 struct SVOverlayFigureStruct
 {

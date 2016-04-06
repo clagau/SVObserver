@@ -18,11 +18,15 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVGigeCameraManagerDlg::SVGigeCameraManagerDlg(CWnd* pParent /*=NULL*/)
+SVGigeCameraManagerDlg::SVGigeCameraManagerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVGigeCameraManagerDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVGigeCameraManagerDlg)
 	//}}AFX_DATA_INIT
+}
+
+SVGigeCameraManagerDlg::~SVGigeCameraManagerDlg()
+{
 }
 
 void SVGigeCameraManagerDlg::DoDataExchange(CDataExchange* pDX)

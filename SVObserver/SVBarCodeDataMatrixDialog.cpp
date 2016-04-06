@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:41:06  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBarCodeDataMatrixDialog.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,7 +22,6 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // SVBarCodeDataMatrixDialog dialog
-
 
 SVBarCodeDataMatrixDialog::SVBarCodeDataMatrixDialog(CWnd* pParent /*=NULL*/)
 	: CPropertyPage(SVBarCodeDataMatrixDialog::IDD)
@@ -42,6 +42,9 @@ SVBarCodeDataMatrixDialog::SVBarCodeDataMatrixDialog(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVBarCodeDataMatrixDialog::~SVBarCodeDataMatrixDialog()
+{
+}
 
 void SVBarCodeDataMatrixDialog::DoDataExchange(CDataExchange* pDX)
 {

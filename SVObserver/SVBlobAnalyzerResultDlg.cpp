@@ -8,9 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:44:52  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBlobAnalyzerResultDlg.h"
 #include "SVBlobAnalyzer.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVBlobAnalyzerResultDlg dialog
@@ -21,6 +23,10 @@ SVBlobAnalyzerResultDlg::SVBlobAnalyzerResultDlg(CWnd* pParent /*=NULL*/)
 	//{{AFX_DATA_INIT(SVBlobAnalyzerResultDlg)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
+}
+
+SVBlobAnalyzerResultDlg::~SVBlobAnalyzerResultDlg()
+{
 }
 
 void SVBlobAnalyzerResultDlg::DoDataExchange(CDataExchange* pDX)

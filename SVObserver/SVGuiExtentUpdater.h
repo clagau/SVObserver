@@ -8,12 +8,12 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   12 Feb 2015 03:00:46  $
 //******************************************************************************
-
 #pragma once
-
+#pragma region Includes
 #include "SVTaskObject.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVCommandInspectionExtentUpdater.h"
+#pragma endregion Includes
 
 class SVGuiExtentUpdater
 {
@@ -34,4 +34,3 @@ public:
 private:
 	static const int TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS = 120000;
 };
-

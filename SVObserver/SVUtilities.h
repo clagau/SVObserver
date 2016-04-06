@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:57:10  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <deque>
 #include "SVSecurity/SVSecurityManager.h"
+#pragma endregion Includes
 
 class SVUtilitiesClass  
 {
@@ -28,9 +29,8 @@ public:
 	BOOL CleanupIni();
 
 	BOOL UpdateIni();
+
 private:
-
 	BOOL ClearMenu (CMenu *pMenu);
-
 };
 

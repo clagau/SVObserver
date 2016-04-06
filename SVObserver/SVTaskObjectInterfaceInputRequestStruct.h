@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   24 Apr 2013 11:33:52  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVValueObjectReference.h"
+#pragma endregion Includes
 
 struct SVTaskObjectInterfaceInputRequestStruct
 {

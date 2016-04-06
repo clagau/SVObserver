@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 12:40:02  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTool.h"
+#pragma endregion Includes
 
 class SVResultClass;
 
@@ -40,7 +41,7 @@ class SVStatisticsToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVStatisticsToolClass );
 public:
-	SVStatisticsToolClass( BOOL BCreateDefaultTaskList=FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVSTATISTICSTOOL );
+	SVStatisticsToolClass( BOOL BCreateDefaultTaskList=FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTATISTICSTOOL );
 	virtual ~SVStatisticsToolClass();
 
 	BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct );
@@ -97,6 +98,5 @@ protected:
 
 	// Input: 
 	SVInObjectInfoStruct        m_inputObjectInfo;
-
 };
 

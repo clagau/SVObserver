@@ -9,16 +9,15 @@
 //* .Check In Date   : $Date:   01 Oct 2013 08:25:58  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageTest.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVImageTestDlg.h"
 #include "SVTestAcquisitionClass.h"
-#include "SVTestIntekAcquisitionClass.h"
-#include "SVTestIntekAcquisitionSubsystem.h"
 #include "SVTestGigeAcquisitionSubsystem.h"
-#include "SV1394CameraFileLibrary/SVDCamFactoryRegistrar.h"
 #include "SVUnloadDeviceDialog.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,45 +27,16 @@ static char THIS_FILE[] = __FILE__;
 
 CWnd g_ImageTestDesktopWindow;
 
-bool IsAnalogDigitizer(LPCTSTR p_productName) 
-{ 
-	CString l_productName = p_productName;
-	bool l_bOk = (l_productName.CompareNoCase( SVO_PRODUCT_CORECO_A4_MONO ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_CORECO_A2_MONO ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_CORECO_A1_RGB ) == 0) ? true : false;
-
-	return l_bOk;
-}
-
-bool IsDigitalDigitizer(LPCTSTR p_productName)
-{
-	CString l_productName = p_productName;
-	bool l_bOk = (l_productName.CompareNoCase( SVO_PRODUCT_MATROX_D1 ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_MATROX_D2 ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_MATROX_D3 ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_INTEK_D1 ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_INTEK_D3 ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2 ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD2A ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD4A ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A ) == 0 ) ? true : false;
-
-	return l_bOk;
-}
-
 bool IsGigeDigitizer(LPCTSTR p_productName)
 {
 	CString l_productName = p_productName;
-	bool l_bOk = ( l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD2A ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD4A ) == 0 ||
-					l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A ) == 0 ) ? true : false;
+	bool l_bOk = ( 0 == l_productName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A ) ||
+					0 == l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD2A ) ||
+					0 == l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD4A ) ||
+					0 == l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A ) ||
+					0 == l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ? true : false;
 
 	return l_bOk;
-}
-
-bool CSVImageTestApp::IsDigitizerAnalog() const
-{
-	return IsAnalogDigitizer(m_iniLoader.m_csProductName);
 }
 
 bool CSVImageTestApp::IsGigeSystem() const
@@ -89,17 +59,14 @@ END_MESSAGE_MAP()
 // CSVImageTestApp construction
 
 CSVImageTestApp::CSVImageTestApp()
+: m_pSubsystem(nullptr)
+, m_svimIniFile("C:\\SVObserver\\bin\\SVIM.INI")
+, m_hardwareIniFile("C:\\SVObserver\\bin\\HARDWARE.INI")
 {
-	m_svimIniFile = "C:\\SVObserver\\bin\\SVIM.INI";
-	m_hardwareIniFile = "C:\\SVObserver\\bin\\HARDWARE.INI";
-
 	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
 
 	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );
 	m_oemIniFile.Format( "%s\\OEMINFO.INI", l_szSystemDir );
-
-	m_pSubsystem = NULL;
-	SVDCamFactoryRegistrar::Register();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -123,7 +90,7 @@ BOOL CSVImageTestApp::InitInstance()
 	SVMatroxApplicationInterface::Startup();
 
 	// Used to hold a cwnd that is attached to the desktop.
-	if( g_ImageTestDesktopWindow.GetSafeHwnd() == NULL )
+	if( nullptr == g_ImageTestDesktopWindow.GetSafeHwnd() )
 	{
 		g_ImageTestDesktopWindow.Attach( ::GetDesktopWindow() );
 	}
@@ -131,7 +98,7 @@ BOOL CSVImageTestApp::InitInstance()
 	// Read model number
 	if (ReadSVIMModelNo())
 	{
-		if ( LoadDigitizer() == NULL )
+		if ( nullptr == LoadDigitizer() )
 		{
 			AfxMessageBox("Dll Not Connected");
 		}
@@ -144,7 +111,7 @@ BOOL CSVImageTestApp::InitInstance()
 			m_pMainWnd = &dlg;
 			dlg.DoModal();
 
-			m_pMainWnd = NULL;
+			m_pMainWnd = nullptr;
 		}
 	}
 
@@ -160,7 +127,7 @@ int CSVImageTestApp::ExitInstance()
 	// Shutdown Matrox App
 	SVMatroxApplicationInterface::Shutdown();
 
-	if( g_ImageTestDesktopWindow.GetSafeHwnd() != NULL )
+	if( nullptr != g_ImageTestDesktopWindow.GetSafeHwnd() )
 	{
 		g_ImageTestDesktopWindow.Detach();
 	}
@@ -171,7 +138,7 @@ int CSVImageTestApp::ExitInstance()
 bool CSVImageTestApp::ReadSVIMModelNo()
 {
 	HRESULT hr = m_iniLoader.Load(m_svimIniFile, m_oemIniFile, m_hardwareIniFile);
-	return (hr == S_OK) ? true : false;
+	return (S_OK == hr) ? true : false;
 }
 
 SVTestAcquisitionSubsystem* CSVImageTestApp::LoadDigitizer()
@@ -180,23 +147,12 @@ SVTestAcquisitionSubsystem* CSVImageTestApp::LoadDigitizer()
 	{
 		delete m_pSubsystem;
 
-		m_pSubsystem = NULL;
+		m_pSubsystem = nullptr;
 	}
 
-	if (IsDigitizerAnalog())
+	if (IsGigeSystem())
 	{
-		m_pSubsystem = new SVTestAcquisitionSubsystem;
-	}
-	else
-	{
-		if (IsGigeSystem())
-		{
-			m_pSubsystem = new SVTestGigeAcquisitionSubsystem;
-		}
-		else
-		{
-			m_pSubsystem = new SVTestIntekAcquisitionSubsystem;
-		}
+		m_pSubsystem = new SVTestGigeAcquisitionSubsystem;
 	}
 
 	if (m_pSubsystem)
@@ -205,7 +161,7 @@ SVTestAcquisitionSubsystem* CSVImageTestApp::LoadDigitizer()
 		{
 			delete m_pSubsystem;
 
-			m_pSubsystem = NULL;
+			m_pSubsystem = nullptr;
 		}
 	}
 
@@ -221,7 +177,7 @@ void CSVImageTestApp::UnLoadDigitizer()
 	{
 		m_pSubsystem->Destroy();
 		delete m_pSubsystem;
-		m_pSubsystem = NULL;
+		m_pSubsystem = nullptr;
 	}
 
 	dlg.Destroy();

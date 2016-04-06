@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:37:36  $
 //******************************************************************************
-
+#pragma region Inlcudes
 #include "stdafx.h"
 #include "SVProgressDialog.h"
 #include "ObjectInterfaces/SVUserMessage.h"
+#pragma endregion Inlcudes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,6 +30,10 @@ SVProgressDialog::SVProgressDialog(LPCTSTR title, CWnd* pParent /*=NULL*/)
 	//{{AFX_DATA_INIT(SVProgressDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
+}
+
+SVProgressDialog::~SVProgressDialog()
+{
 }
 
 void SVProgressDialog::DoDataExchange(CDataExchange* pDX)

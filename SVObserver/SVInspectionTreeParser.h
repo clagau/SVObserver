@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   19 Dec 2014 04:10:42  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectScriptParserBase.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
+#pragma endregion Includes
 
 class SVObjectClass;
 class SVObjectScriptParserClass;

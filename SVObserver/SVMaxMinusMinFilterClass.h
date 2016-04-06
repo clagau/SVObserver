@@ -8,17 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   12 Aug 2013 16:28:14  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 class SVMaxMinusMinFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVMaxMinusMinFilterClass );
 public:
-	SVMaxMinusMinFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVMAXMINUSMINFILTER );
-	~SVMaxMinusMinFilterClass();
+	SVMaxMinusMinFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMAXMINUSMINFILTER );
+	virtual ~SVMaxMinusMinFilterClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();

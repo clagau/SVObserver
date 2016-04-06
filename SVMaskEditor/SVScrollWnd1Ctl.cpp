@@ -8,13 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   26 Apr 2013 14:09:08  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMaskEditor.h"
 
 #include "SVScrollWnd1Ctl.h"
 #include "SVScrollWnd1Ppg.h"
-
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,9 +22,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 IMPLEMENT_DYNCREATE(SVScrollWnd1Ctrl, COleControl)
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Message map
@@ -38,7 +36,6 @@ BEGIN_MESSAGE_MAP(SVScrollWnd1Ctrl, COleControl)
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
 END_MESSAGE_MAP()
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Dispatch map
 
@@ -49,7 +46,6 @@ BEGIN_DISPATCH_MAP(SVScrollWnd1Ctrl, COleControl)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Event map
 
@@ -59,7 +55,6 @@ BEGIN_EVENT_MAP(SVScrollWnd1Ctrl, COleControl)
 	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_EVENT_MAP
 END_EVENT_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Property pages
@@ -118,6 +113,7 @@ BOOL SVScrollWnd1Ctrl::SVScrollWnd1CtrlFactory::UpdateRegistry(BOOL bRegister)
 	// afxRegApartmentThreading to 0.
 
 	if (bRegister)
+	{
 		return AfxOleRegisterControlClass(
 			AfxGetInstanceHandle(),
 			m_clsid,
@@ -129,10 +125,9 @@ BOOL SVScrollWnd1Ctrl::SVScrollWnd1CtrlFactory::UpdateRegistry(BOOL bRegister)
 			_tlid,
 			_wVerMajor,
 			_wVerMinor);
-	else
-		return AfxOleUnregisterClass(m_clsid, m_lpszProgID);
+	}
+	return AfxOleUnregisterClass(m_clsid, m_lpszProgID);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVScrollWnd1Ctrl::SVScrollWnd1Ctrl - Constructor
@@ -143,7 +138,6 @@ SVScrollWnd1Ctrl::SVScrollWnd1Ctrl()
 
 	// TODO: Initialize your control's instance data here.
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVScrollWnd1Ctrl::~SVScrollWnd1Ctrl - Destructor
@@ -163,7 +157,6 @@ void SVScrollWnd1Ctrl::OnDraw(
 	DoSuperclassPaint(pdc, rcBounds);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // SVScrollWnd1Ctrl::DoPropExchange - Persistence support
 
@@ -173,9 +166,7 @@ void SVScrollWnd1Ctrl::DoPropExchange(CPropExchange* pPX)
 	COleControl::DoPropExchange(pPX);
 
 	// TODO: Call PX_ functions for each persistent custom property.
-
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVScrollWnd1Ctrl::OnResetState - Reset control to default state
@@ -186,7 +177,6 @@ void SVScrollWnd1Ctrl::OnResetState()
 
 	// TODO: Reset any other control state here.
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVScrollWnd1Ctrl::PreCreateWindow - Modify parameters for CreateWindowEx

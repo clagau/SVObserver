@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:04:52  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVInt64ValueObjectClass : public SVValueObjectClassImpl <__int64>
 {
@@ -20,7 +21,7 @@ class SVInt64ValueObjectClass : public SVValueObjectClassImpl <__int64>
 
 public:
 	SVInt64ValueObjectClass( LPCTSTR ObjectName);
-	SVInt64ValueObjectClass( SVObjectClass* pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
+	SVInt64ValueObjectClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	const SVInt64ValueObjectClass& operator = (const SVInt64ValueObjectClass& rhs);
 	virtual void Persist(SVObjectWriter& rWriter);
 
@@ -29,7 +30,6 @@ public:
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 protected:
-
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, int value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, CString value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
@@ -40,7 +40,6 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
 
 

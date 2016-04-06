@@ -327,6 +327,12 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_15035 = Sej_ErrorBase + 35;
 	static const int Err_15036 = Sej_ErrorBase + 36;
 	static const int Err_15037 = Sej_ErrorBase + 37;
+	// Obsolete Item Check
+	static const int Err_15038_AnalogCamera = Sej_ErrorBase + 38;
+	static const int Err_15039_1394Camera = Sej_ErrorBase + 39;
+	static const int Err_15040_GageTool = Sej_ErrorBase + 40;
+	static const int Err_15041_ProfileTool = Sej_ErrorBase + 41;
+	static const int Err_15042_FastOCR = Sej_ErrorBase + 42;
 
 
 	//Marcus Eichengrün error base

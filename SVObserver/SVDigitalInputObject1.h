@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVInputObject.h"
+#pragma endregion Includes
 
 class SVDigitalInputObject : public SVInputObject
 {
@@ -49,5 +51,3 @@ private:
 	bool m_bDefaultValue;
 	bool m_bForcedValue;
 };
-
-

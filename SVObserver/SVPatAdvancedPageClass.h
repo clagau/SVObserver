@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:18:40  $
 //******************************************************************************
 
-#if !defined(SVPATADVANCEDPAGECLASS_H)
-#define SVPATADVANCEDPAGECLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 class SVToolClass;
 class SVPatternAnalyzerClass;
@@ -132,6 +127,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVPATADVANCEDPAGECLASS_H)
-

@@ -10,14 +10,12 @@
 #include "EQAdjustSize.h"
 #pragma endregion Includes
  
-
 //! \brief Equation class for Formula for Windows Width for ToolsSize Adjust
 
 class EQAdjustSizeWidth : public EQAdjustSize
 {
-
 	SV_DECLARE_CLASS( EQAdjustSizeWidth);
 public:
-	EQAdjustSizeWidth( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_EQ_ADJUSTSIZE_WIDTH );
-	
-}	;
+	EQAdjustSizeWidth( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_EQ_ADJUSTSIZE_WIDTH );
+	virtual ~EQAdjustSizeWidth();
+};

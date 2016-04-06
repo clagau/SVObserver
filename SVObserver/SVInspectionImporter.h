@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:02:16  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
 #include "SVIProgress.h"
 #include "SVImportedInspectionInfo.h"
 #include "ObjectInterfaces\DataStructures.h"
+#pragma endregion Includes
 
 class SVInspectionImporter
 {

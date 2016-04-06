@@ -27,12 +27,10 @@
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVOConfigAssistantDlg.h"
-#include "SVCameraFormat7Dlg.h"
 #include "SVGigeCameraROIDlg.h"
 #include "SVAcquisitionClass.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SV1394CameraFileLibrary/SV1394CameraParamValidateClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
 #include "SVPPQObject.h"
 #include "SVSoftwareTriggerDefaults.h"
@@ -56,38 +54,38 @@ private:
 public:
 	SVCameraDeviceImageFormatUpdater(SVDeviceParamWrapper& rw, const SVString& strName, long width, long height) 
 	: m_wFormats(rw) 
-	, m_pFormatsParam(NULL)
+	, m_pFormatsParam(nullptr)
 	, m_strName(strName)
 	{
 		m_pFormatsParam = m_wFormats.DerivedValue( m_pFormatsParam );
-		m_pFormatsParam->options[ strName ].lHeight = height;
-		m_pFormatsParam->options[ strName ].lWidth = width;
-		m_pFormatsParam->options[ strName ].lHPos = 0;
-		m_pFormatsParam->options[ strName ].lVPos = 0;
+		m_pFormatsParam->options[ strName ].m_lHeight = height;
+		m_pFormatsParam->options[ strName ].m_lWidth = width;
+		m_pFormatsParam->options[ strName ].m_lHPos = 0;
+		m_pFormatsParam->options[ strName ].m_lVPos = 0;
 		m_pFormatsParam->strValue = strName;
 	}
 	virtual ~SVCameraDeviceImageFormatUpdater() {}
 
 	virtual void SetXOffset(long xOffset) 
 	{ 
-		m_pFormatsParam->options[ m_strName ].lHPos = xOffset; 
+		m_pFormatsParam->options[ m_strName ].m_lHPos = xOffset; 
 	}
 	virtual void SetYOffset(long yOffset) 
 	{ 
-		m_pFormatsParam->options[ m_strName ].lVPos = yOffset; 
+		m_pFormatsParam->options[ m_strName ].m_lVPos = yOffset; 
 	}
 	virtual void SetWidth(long width) 
 	{  
-		m_pFormatsParam->options[ m_strName ].lWidth = width; 
+		m_pFormatsParam->options[ m_strName ].m_lWidth = width; 
 	}
 	virtual void SetHeight(long height) 
 	{ 
-		m_pFormatsParam->options[ m_strName ].lHeight = height; 
+		m_pFormatsParam->options[ m_strName ].m_lHeight = height; 
 	}
 
 	void Update(SVAcquisitionClassPtr pAcqDevice)
 	{
-		if (pAcqDevice != NULL)
+		if (nullptr != pAcqDevice)
 		{
 			SVDeviceParamCollection l_params;
 			l_params.SetParameter( m_wFormats );
@@ -96,8 +94,8 @@ public:
 			SVImageInfoClass infoTemp;
 			pAcqDevice->GetImageInfo(&infoTemp);
 		
-			long width = m_pFormatsParam->options[ m_strName ].lWidth;
-			long height = m_pFormatsParam->options[ m_strName ].lHeight;
+			long width = m_pFormatsParam->options[ m_strName ].m_lWidth;
+			long height = m_pFormatsParam->options[ m_strName ].m_lHeight;
 
 			infoTemp.SetExtentProperty(SVExtentPropertyWidth, width);
 			infoTemp.SetExtentProperty(SVExtentPropertyHeight, height);
@@ -108,8 +106,6 @@ public:
 	}
 };
 
-const CString CorecoCameraFileFilter = _T("Camera Files (*.cca)|*.cca|All Files (*.*)|*.*||");
-const CString SV1394CameraFileFilter = _T("Camera Files (*.odc)|*.odc|All Files (*.*)|*.*||");
 const CString SVGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
 
 enum {IDC_PROPERTYTREE = 100};
@@ -127,10 +123,14 @@ BEGIN_MESSAGE_MAP(CSVOPropertyPageDlg, CDialog)
     ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_PROPERTYTREE, OnItemButtonClick)
 END_MESSAGE_MAP()
 
-CSVOPropertyPageDlg::CSVOPropertyPageDlg(CWnd* pParent /*=NULL*/)
+CSVOPropertyPageDlg::CSVOPropertyPageDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CSVOPropertyPageDlg::IDD, pParent)
 ,	m_TriggerObj( _T(""), 0 )
 ,	m_eProduct( SVIM_PRODUCT_TYPE_UNKNOWN )
+{
+}
+
+CSVOPropertyPageDlg::~CSVOPropertyPageDlg()
 {
 }
 
@@ -144,15 +144,12 @@ void CSVOPropertyPageDlg::DoDataExchange(CDataExchange* pDX)
 void CSVOPropertyPageDlg::SetupCamera()
 {
 	SetTitle(m_CameraObj.GetCameraDisplayName());
-	if( (m_eProduct != SVIM_PRODUCT_FULL) && (m_eProduct != SVIM_PRODUCT_05) )
+	if( !m_CameraObj.IsFileAcquisition() )
 	{
-		if( !m_CameraObj.IsFileAcquisition() )
+		if( (m_CameraObj.GetCameraFile().GetLength() > 0) )
 		{
-			if( (m_CameraObj.GetCameraFile().GetLength() > 0) )
-			{
-				GetDlgItem( IDOK)->SetWindowText( _T("Reset"));
-				m_InitialCameraFileName = m_CameraObj.GetCameraFile();
-			}
+			GetDlgItem( IDOK)->SetWindowText( _T("Reset"));
+			m_InitialCameraFileName = m_CameraObj.GetCameraFile();
 		}
 	}
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
@@ -168,9 +165,8 @@ void CSVOPropertyPageDlg::SetupCamera()
 		SVFileNameClass FileName;
 		FileName.SetFileType(SV_CAMERA_FILE_TYPE);
 
-		// determine if GigE is present
-		LPCTSTR fileFilter = SVHardwareManifest::IsDigitalSVIM( m_eProduct ) ? 
-			(SVHardwareManifest::IsMatroxGige(m_eProduct) ? SVGigeCameraFileFilter : SV1394CameraFileFilter) : CorecoCameraFileFilter;
+		// There is only GigE at this time
+		LPCTSTR fileFilter = SVGigeCameraFileFilter;
 		
 		bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
@@ -262,7 +258,7 @@ void CSVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 	}
 
 	pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FOLDER | SVR_TRAILINGSLASH,
-									NULL, FileName.GetDefaultPathName(), true), pRoot);
+									nullptr, FileName.GetDefaultPathName(), true), pRoot);
 	if (pFile)
 	{
 		pFile->SetCtrlID(PROP_FILECAMERA_DIRECTORY);
@@ -319,7 +315,7 @@ void CSVOPropertyPageDlg::SetupAdvancedFileCamera(SVRPropertyItem* pRoot)
 
 void CSVOPropertyPageDlg::SetupAdvancedCamera()
 {
-	ASSERT( m_pAssistant != NULL );
+	ASSERT( nullptr != m_pAssistant );
 	SetTitle(m_CameraObj.GetCameraDisplayName());
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
@@ -330,7 +326,7 @@ void CSVOPropertyPageDlg::SetupAdvancedCamera()
 		}
 		else
 		{
-			SVRPropertyItemCombo* pCombo = NULL;
+			SVRPropertyItemCombo* pCombo = nullptr;
 
 			pRoot->SetCanShrink(false);
 			pRoot->SetLabelText(_T("Camera Advanced"));
@@ -392,85 +388,30 @@ void CSVOPropertyPageDlg::SetupAdvancedCamera()
 						break;
 					}
 				}
-				SV1394CameraParamValidateClass l_svValidate;
+				SVGigeCameraParamValidateClass l_svValidate;
 				l_svValidate.UpdateParams( m_CameraObj.GetCameraFileParamsNonConst(),
 					m_CameraObj.GetCameraDeviceParamsNonConst() );
 				
 				CameraAdvancedHideItems();
 			}// end if ( TheSVObserverApp.IsDigitalSVIM() )
-			else
+			else // should never get here, perhaps there should be an exception logged/displayed instead?
 			{
-				pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(),pRoot);
+				pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 				if (pCombo)
 				{
-					int iNum = 0;
 					pCombo->SetCtrlID(PROP_ADV_CAMERA_DIG);
 					pCombo->SetLabelText(_T("Digitizer #"));
 					pCombo->SetInfoText(_T("Enter the digitizer number the camera is attached to."));
 					pCombo->CreateComboBox();
-					//based on board fill in combo
-					switch(m_eProduct)
-					{
-					case SVIM_PRODUCT_FULL:
-						{
-							iNum = 4;
-							break;
-						}
-					case SVIM_PRODUCT_05:
-						{
-							iNum = 2;
-							break;
-						}
-					case SVIM_PRODUCT_RGB_MONO:
-						{
-							iNum = 1;
-							break;
-						}
-					case SVIM_PRODUCT_RGB_COLOR:
-						{
-							iNum = 1;
-							break;
-						}
-					default:
-						{
-							break;
-						}
-					}
-					CString sFormat;
-					int iPos;
-					for (int i = 0; i < iNum; i++)
-					{
-						sFormat.Empty();
-						sFormat.Format("%d",i);
-						iPos = pCombo->AddString(sFormat);
-						pCombo->SetItemData(iPos,i);
-					}
-					pCombo->SetItemValue(m_CameraObj.GetDigNumber());
-					
+
+					CString str;
+					int num = m_CameraObj.GetDigNumber();
+					str.Format("%d", num);
+					int iPos = pCombo->AddString(str);
+					pCombo->SetItemData(iPos, num);
+					pCombo->SetItemValue(num);
 				}// end if (pCombo)
-			}// end if ( m_eProduct == SVIM_BOARD_1394 ) else
-				
-			if (m_eProduct == SVIM_PRODUCT_RGB_MONO)
-			{
-				pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(),pRoot);
-				if (pCombo)
-				{  
-					CString sBands;
-					int iBandPos;
-					pCombo->SetCtrlID(PROP_ADV_CAMERA_BANDS);
-					pCombo->SetLabelText(_T("Band #"));
-					pCombo->SetInfoText(_T("Enter the band that the camera will use."));
-					pCombo->CreateComboBox();
-					for (int iC = 0; iC < 3; iC++)
-					{
-						sBands.Empty();
-						sBands.Format("%d",iC);
-						iBandPos = pCombo->AddString(sBands);
-						pCombo->SetItemData(iBandPos,iC);
-					}
-					pCombo->SetItemValue(m_CameraObj.GetBandNumber());
-				}
-			}// end if (m_eProduct == SVIM_PRODUCT_RGB_MONO)
+			}
 		}
 		pRoot->Select(true);
 		pRoot->Expand();
@@ -589,12 +530,12 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 								pCombo->CreateComboBox();
 									
 								SVCameraFormatsDeviceParam::OptionsType::const_iterator iterOption;
-								const SVCameraFormat* pFormat=NULL;
+								const SVCameraFormat* pFormat = nullptr;
 								for (iterOption = pCamFileParam->options.begin(); iterOption != pCamFileParam->options.end(); ++iterOption)
 								{
-									if ( iterOption->second.bColor == ColorCamera )
+									if ( iterOption->second.m_bColor == ColorCamera )
 									{
-										CString sText = iterOption->second.strDescription.c_str();
+										CString sText = iterOption->second.m_strDescription.c_str();
 										int iPos = pCombo->AddString( sText );
 										pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
 										if ( pCamDeviceParam->strValue == iterOption->second.m_strName )
@@ -1200,7 +1141,7 @@ void CSVOPropertyPageDlg::OnSize(UINT nType, int cx, int cy)
 	
 	// resize the control to always fit the dialog
 	if (::IsWindow(m_Tree.GetSafeHwnd()))
-		m_Tree.SetWindowPos(NULL, -1, -1, cx, cy, SWP_NOMOVE|SWP_NOZORDER);	
+		m_Tree.SetWindowPos(nullptr, -1, -1, cx, cy, SWP_NOMOVE|SWP_NOZORDER);	
 }
 
 BOOL CSVOPropertyPageDlg::OnEraseBkgnd(CDC* pdc) 
@@ -1306,19 +1247,19 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 									{
 										pParam->strValue = pFormat->m_strName;
 										//make sure binning parameters are set to 1 (no binning)
-										if (!pFormat->bVariableROI)
+										if (!pFormat->m_bVariableROI)
 										{
 											//UpdateCameraGigeBinningParameters
 											if (params.ParameterExists(DeviceParamVerticalBinning))
 											{
-												SVLongValueDeviceParam* pParam(NULL);
+												SVLongValueDeviceParam* pParam(nullptr);
 												params.GetParameter(DeviceParamVerticalBinning).GetDerivedValue(pParam);
 												pParam->lValue = 1;
 												params.SetParameter(DeviceParamVerticalBinning,pParam);
 											}
 											if (params.ParameterExists(DeviceParamHorizontalBinning))
 											{
-												SVLongValueDeviceParam* pParam(NULL);
+												SVLongValueDeviceParam* pParam(nullptr);
 												params.GetParameter(DeviceParamHorizontalBinning).GetDerivedValue(pParam);
 												pParam->lValue = 1;
 												params.SetParameter(DeviceParamHorizontalBinning,pParam);
@@ -1336,7 +1277,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 								{
 									SVRPropertyItemCombo* l_pCombo = dynamic_cast< SVRPropertyItemCombo* >( pItem );
 
-									if( l_pCombo != NULL )
+									if( nullptr != l_pCombo )
 									{
 										int l_Index = l_pCombo->GetCurSel();
 										if( -1 < l_Index )
@@ -1386,18 +1327,6 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					CameraAdvancedHideItems();
 				}
 			}
-			else
-			{
-				SV1394CameraParamValidateClass l_svValidate;
-
-				if ( l_svValidate.ShouldUpdateParams( e ) )
-				{
-					l_svValidate.UpdateParams( m_CameraObj.GetCameraFileParamsNonConst(),
-												 m_CameraObj.GetCameraDeviceParamsNonConst() );
-
-					CameraAdvancedHideItems();
-				}
-			}
 		}
 		else
 		{
@@ -1424,15 +1353,9 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_ADV_CAMERA_DIG:
 				{
-					int iBands;
 					long iDig;
 					m_Tree.FindItem(PROP_ADV_CAMERA_DIG)->GetItemValue(iDig);
 					m_CameraObj.SetDigNumber(iDig); 
-					if (m_eProduct == SVIM_PRODUCT_RGB_MONO)
-					{
-						m_Tree.FindItem(PROP_ADV_CAMERA_BANDS)->GetItemValue(iBands);
-						m_CameraObj.SetBandNumber(iBands);
-					}
 					break;
 				}
 				
@@ -1810,7 +1733,7 @@ void CSVOPropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* p
 					const SVCameraFormat* pFormat = (const SVCameraFormat*) lValue;
 					if ( pFormat )
 					{
-						if ( pFormat->bVariableROI )
+						if ( pFormat->m_bVariableROI )
 						{
 							*plResult = TRUE;
 						}// end if ( pFormat->bVariable )
@@ -1846,7 +1769,7 @@ void CSVOPropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plRes
 					const SVCameraFormat* pSelectedFormat = (const SVCameraFormat*) lValue;
 					if ( pSelectedFormat )
 					{
-						if ( pSelectedFormat->bVariableROI )
+						if ( pSelectedFormat->m_bVariableROI )
 						{
 							AdjustCameraImageFormat( pSelectedFormat->m_strName.c_str(), rw );
 						}// end if ( pFormat->bVariable )
@@ -1855,21 +1778,6 @@ void CSVOPropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plRes
 			}// end switch ( pDeviceParam->Type() )
 		}// end if ( pItem->GetCtrlID() >= PROP_CAMERA_FILE_BASE )
 	}// end if ( pNMPropTree->pItem )
-}
-
-static HRESULT ShowFormat7Dlg( SVCameraFormat& p_rFormat, const SVImageInfoClass& p_rImageInfo, SVAcquisitionClassPtr p_pDevice, SVCameraFormat& rCameraDeviceFormat )
-{
-	HRESULT hr = S_FALSE;
-	SVCameraFormat7Dlg dlg;
-	dlg.SetFormat( &p_rFormat );
-	dlg.SetFormat7Image( p_rImageInfo );
-	dlg.SetAcquisitionDevice( p_pDevice );
-	if ( IDOK == dlg.DoModal() )
-	{
-		rCameraDeviceFormat.AssignUserChangableValues( p_rFormat );
-		hr = S_OK;
-	}
-	return hr;
 }
 
 static HRESULT ShowGigeROIDlg(ISVCameraDeviceImageFormatUpdater& rImageFormatUpdater, SVCameraFormat& p_rFormat, const SVImageInfoClass& p_rImageInfo, SVAcquisitionClassPtr p_pDevice, SVCameraFormat& rCameraDeviceFormat, SVDeviceParamCollection& rDeviceParams )
@@ -1884,13 +1792,13 @@ static HRESULT ShowGigeROIDlg(ISVCameraDeviceImageFormatUpdater& rImageFormatUpd
 	// if so get value, min and max for vertical and horizontal
 	if (rDeviceParams.ParameterExists(DeviceParamVerticalBinning))
 	{
-		SVLongValueDeviceParam* pParam(NULL);
+		SVLongValueDeviceParam* pParam(nullptr);
 		rDeviceParams.GetParameter(DeviceParamVerticalBinning).GetDerivedValue(pParam);
 		dlg.SetVerticalBinningParam(pParam);
 	}
 	if (rDeviceParams.ParameterExists(DeviceParamHorizontalBinning))
 	{
-		SVLongValueDeviceParam* pParam(NULL);
+		SVLongValueDeviceParam* pParam(nullptr);
 		rDeviceParams.GetParameter(DeviceParamHorizontalBinning).GetDerivedValue(pParam);
 		dlg.SetHorizontalBinningParam(pParam);
 	}
@@ -1936,7 +1844,7 @@ static void ApplyGigeImageFormatChange(SVAcquisitionClassPtr pAcqDevice, const S
 	pAcqDevice->SetDeviceParameters(l_params);
 }
 
-// For 1394 Format 7 and GigE ROI adjustments
+// For GigE ROI adjustments
 HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, SVDeviceParamWrapper& rw)
 {
 	HRESULT hr = S_OK;
@@ -1954,8 +1862,8 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	SVCameraFormat format( pCameraFileFormats->options.find( sSelectedFormat )->second );
 	format.AssignUserChangableValues( rCameraDeviceFormat );
 
-	long l_WidthMax = format.lWidthMax;
-	long l_HeightMax = format.lHeightMax;
+	long l_WidthMax = format.m_lWidthMax;
+	long l_HeightMax = format.m_lHeightMax;
 
 	bool bHaveImage = false;
 	bool bChangedAcqFormat = false;
@@ -1975,7 +1883,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	{
 		long l_lSize = 0;
 
-		if( pDevice->GetFileNameArraySize( l_lSize ) == S_OK && l_lSize < 1 )
+		if( S_OK == pDevice->GetFileNameArraySize( l_lSize ) && l_lSize < 1 )
 		{
 			SVFileNameArrayClass svFiles;
 			SVFileNameClass svFile;
@@ -2078,8 +1986,8 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 					horizontalBinning = pParam->lValue; 
 				}
 			}
-			l_WidthMax = format.lWidthMax / horizontalBinning;
-			l_HeightMax = format.lHeightMax / verticalBinning;
+			l_WidthMax = format.m_lWidthMax / horizontalBinning;
+			l_HeightMax = format.m_lHeightMax / verticalBinning;
 			
 			l_ImageInfo.SetExtentProperty( SVExtentPropertyWidth, l_WidthMax);
 			l_ImageInfo.SetExtentProperty( SVExtentPropertyHeight, l_HeightMax);
@@ -2090,7 +1998,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 			l_ImageInfo.SetExtentProperty( SVExtentPropertyHeight, l_HeightMax );
 		}
 
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			bHaveImage = true;
 		}
@@ -2099,7 +2007,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	if (IsGigeSystem())
 	{
 		SVCameraDeviceImageFormatUpdater imageFormatUpdater(rw, format.m_strName, l_WidthMax, l_HeightMax);
-		if (ShowGigeROIDlg(imageFormatUpdater, format, l_ImageInfo, pDevice, rCameraDeviceFormat, l_CurrentParams) == S_OK)
+		if (S_OK == ShowGigeROIDlg(imageFormatUpdater, format, l_ImageInfo, pDevice, rCameraDeviceFormat, l_CurrentParams))
 		{
 			if ( bChangedAcqFormat )
 			{
@@ -2107,18 +2015,6 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 				UpdateCameraGigeBinningParameters(l_CurrentParams, rCamDeviceParams);
 				ApplyGigeImageFormatChange(pDevice, l_CurrentParams);
 			}
-		}
-	}
-	else
-	{
-		ShowFormat7Dlg(format, l_ImageInfo, pDevice, rCameraDeviceFormat);
-		if ( bChangedAcqFormat )
-		{
-			// realloc in original format
-			SVDeviceParamCollection l_params;
-			SVDeviceParamWrapper wFormats = l_CurrentParams.Parameter( DeviceParamCameraFormats );
-			l_params.SetParameter( wFormats );
-			pDevice->SetDeviceParameters(l_params);
 		}
 	}
 	
@@ -2142,17 +2038,17 @@ void CSVOPropertyPageDlg::CameraAdvancedHideItems()
 {
 	SVRPropertyItem* l_pItem = m_Tree.GetRootItem();
 
-	if ( l_pItem != NULL )
+	if ( nullptr != l_pItem )
 	{
 		l_pItem = l_pItem->GetChild();
 	}
 
-	if ( l_pItem != NULL )
+	if ( nullptr != l_pItem )
 	{
 		l_pItem = l_pItem->GetChild();
 	}
 
-	while ( l_pItem != NULL )
+	while ( nullptr != l_pItem )
 	{
 		SVDeviceParamEnum l_eParamId = (SVDeviceParamEnum) (l_pItem->GetCtrlID() - PROP_CAMERA_FILE_BASE);
 
@@ -2160,7 +2056,7 @@ void CSVOPropertyPageDlg::CameraAdvancedHideItems()
 
 		const SVDeviceParam *l_pDeviceParam = l_CamFileParams.Parameter( l_eParamId );
 
-		if ( l_pDeviceParam != NULL )
+		if ( nullptr != l_pDeviceParam )
 		{
 			l_pItem->HideItem( 0 < l_pDeviceParam->DetailLevel() );
 		}

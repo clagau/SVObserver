@@ -9,14 +9,15 @@
 //* .Check In Date   : $Date:   06 May 2013 14:15:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVOLicenseManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxLicenseInterface.h"
-
 #include "SVObserver/SVLicenseMgrModelessDlg.h"
+#pragma endregion Includes
 
 SVOLicenseManager& SVOLicenseManager::Instance()
 {
@@ -24,22 +25,20 @@ SVOLicenseManager& SVOLicenseManager::Instance()
 	return l_licenseMgr;
 }
 
-SVOLicenseManager::SVOLicenseManager(void)
+SVOLicenseManager::SVOLicenseManager()
+:m_bMatroxImageLicense(false)
+, m_bMatroxIdentificationLicense(false)
+, m_bMatroxGigELicense(false)
+, m_hCheckEvent(nullptr)
 {
-	m_bMatroxImageLicense = false;
-	m_bMatroxIdentificationLicense = false;
-	m_bMatroxGigELicense = false;
-	m_hCheckEvent = NULL;
-	//Init Fast OCR License
-	m_bFastOCR = false;
 }
 
-SVOLicenseManager::~SVOLicenseManager(void)
+SVOLicenseManager::~SVOLicenseManager()
 {
-	if( m_hCheckEvent != NULL )
+	if( nullptr != m_hCheckEvent )
 	{
 		::CloseHandle( m_hCheckEvent );
-		m_hCheckEvent = NULL;
+		m_hCheckEvent = nullptr;
 	}
 }
 
@@ -53,7 +52,7 @@ HRESULT SVOLicenseManager::InitLicenseManager()
 
 	hrRet = svMatroxLicense.InitMatroxLicense();
 
-	if ( hrRet == S_OK )
+	if ( S_OK == hrRet )
 	{
 		m_bMatroxImageLicense = svMatroxLicense.HasMatroxLicense();
 		m_bMatroxIdentificationLicense  = svMatroxLicense.HasMatroxIdentificationLicense();
@@ -63,24 +62,23 @@ HRESULT SVOLicenseManager::InitLicenseManager()
 	return hrRet;
 }
 
-bool SVOLicenseManager::HasMatroxGigELicense()
+bool SVOLicenseManager::HasMatroxGigELicense() const
 {
 	return m_bMatroxGigELicense;
 }
 
-bool SVOLicenseManager::HasMatroxIdentificationLicense()
+bool SVOLicenseManager::HasMatroxIdentificationLicense()  const
 {
 	return m_bMatroxIdentificationLicense;
 }
 
-bool SVOLicenseManager::HasMatroxLicense()
+bool SVOLicenseManager::HasMatroxLicense()  const
 {
 	return m_bMatroxImageLicense;
 }
 
 void SVOLicenseManager::AddLicenseErrorToList(const SVGUID& svGuid)
 {
-
 	m_svErrorList.insert(svGuid);
 }
 
@@ -105,32 +103,31 @@ void SVOLicenseManager::ClearLicenseErrors()
 	{
 		m_svErrorList.clear();
 
-		if ( m_hCheckEvent != NULL )
+		if ( nullptr != m_hCheckEvent )
 		{
 			::CloseHandle( m_hCheckEvent );
-			m_hCheckEvent = NULL;
+			m_hCheckEvent = nullptr;
 			SVLicenseMgrModelessDlg::Destroy();
 		}
 	} 
 }
 
-
 void SVOLicenseManager::ShowLicenseManagerErrors()
 {
-	if( m_hCheckEvent != NULL )
+	if( nullptr != m_hCheckEvent )
 	{
 		::CloseHandle( m_hCheckEvent );
-		m_hCheckEvent = NULL;
+		m_hCheckEvent = nullptr;
 		SVLicenseMgrModelessDlg::Destroy();
 
 	}
 	if ( HasToolErrors() )
 	{
-		m_hCheckEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+		m_hCheckEvent = ::CreateEvent( nullptr, true, false, nullptr );
 
 		CString sTmp = "The following tools are invalid because no Matrox Identification License was found";
 
-		if ( m_hCheckEvent != NULL )
+		if ( nullptr != m_hCheckEvent )
 		{
 			switch( ::WaitForSingleObject( m_hCheckEvent, 0 ) )
 			{
@@ -154,18 +151,7 @@ void SVOLicenseManager::ShowLicenseManagerErrors()
 	} 
 }
 
-bool SVOLicenseManager::HasToolErrors()
+bool SVOLicenseManager::HasToolErrors() const
 {
 	return !m_svErrorList.empty();
 }
-
-void SVOLicenseManager::SetFastOCRLicense(bool bPresent)
-{
-	m_bFastOCR = bPresent;
-}
-
-bool SVOLicenseManager::HasFastOCRLicense()
-{
-	return m_bFastOCR;
-}
-

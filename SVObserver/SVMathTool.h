@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:29:58  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTool.h"
+#pragma endregion Includes
 
 class SVMathEquationClass;
 
@@ -20,7 +21,7 @@ class SVMathToolClass : public SVToolClass
 	SV_DECLARE_CLASS( SVMathToolClass );
 
 public:
-	SVMathToolClass( BOOL BCreateDefaultTaskList=FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVMATHTOOL );
+	SVMathToolClass( BOOL BCreateDefaultTaskList=FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHTOOL );
 
 	virtual ~SVMathToolClass();
 

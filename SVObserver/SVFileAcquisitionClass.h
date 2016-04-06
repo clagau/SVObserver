@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   07 Mar 2014 18:15:32  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVAcquisitionClass.h"
+#pragma endregion Includes
 
 class SVFileAcquisitionClass : public SVAcquisitionClass
 {
@@ -53,4 +54,3 @@ protected:
 private:
 	bool mbIsFilesLoaded;
 };
-

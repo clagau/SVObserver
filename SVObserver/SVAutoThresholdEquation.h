@@ -11,15 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVEquation.h"
-
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
+#pragma endregion Includes
 
 class SVAutoThresholdEquationClass : public SVEquationClass
 {
@@ -29,7 +23,7 @@ class SVAutoThresholdEquationClass : public SVEquationClass
 // Serialization Declaration(s):
 //******************************************************************************
 public:
-	SVAutoThresholdEquationClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVAUTOTHRESHOLDEQUATION );
+	SVAutoThresholdEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVAUTOTHRESHOLDEQUATION );
 	virtual ~SVAutoThresholdEquationClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

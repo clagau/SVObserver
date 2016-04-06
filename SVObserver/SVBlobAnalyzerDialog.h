@@ -49,10 +49,10 @@ protected:
 
 public:
 // Standard constructor
-	SVBlobAnalyzeFeatureDialogClass( SVToolClass* PTool, SVBlobAnalyzerClass* Analyzer, SVIPDoc* p_pIPDoc, CWnd* pParent = NULL );
+	SVBlobAnalyzeFeatureDialogClass( SVToolClass* PTool, SVBlobAnalyzerClass* Analyzer, SVIPDoc* p_pIPDoc, CWnd* pParent = nullptr );
 
 // Standard destructor
-	~SVBlobAnalyzeFeatureDialogClass();
+	virtual ~SVBlobAnalyzeFeatureDialogClass();
 
 	virtual HRESULT SetInspectionData();
 

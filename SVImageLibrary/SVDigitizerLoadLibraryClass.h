@@ -11,10 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVOMFCLibrary/SVOMFCLibrary.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVAcquisitionBufferInterface.h"
+#pragma endregion Includes
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );

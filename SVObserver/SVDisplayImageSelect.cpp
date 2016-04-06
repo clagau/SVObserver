@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   15 May 2014 11:14:52  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDisplayImageSelect.h"
 
@@ -16,6 +17,7 @@
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,23 +29,25 @@ static char THIS_FILE[] = __FILE__;
 // SVDisplayImageSelect dialog
 
 
-SVDisplayImageSelect::SVDisplayImageSelect(CWnd* pParent /*=NULL*/)
+SVDisplayImageSelect::SVDisplayImageSelect(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVDisplayImageSelect::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVDisplayImageSelect)
 	//}}AFX_DATA_INIT
-	m_pDoc = NULL;
+	m_pDoc = nullptr;
 }
 
+SVDisplayImageSelect::~SVDisplayImageSelect()
+{
+}
 
 void SVDisplayImageSelect::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVDisplayImageSelect)
-	DDX_Control(pDX, IDC_IMAGE_SELECT_LIST, mImageSelectList);
+	DDX_Control(pDX, IDC_IMAGE_SELECT_LIST, m_ImageSelectList);
 	//}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(SVDisplayImageSelect, CDialog)
 	//{{AFX_MSG_MAP(SVDisplayImageSelect)
@@ -55,13 +59,11 @@ END_MESSAGE_MAP()
 
 void SVDisplayImageSelect::OnOK() 
 {
-	int index;
+	int index = m_ImageSelectList.GetCurSel();
 	
-	index = mImageSelectList.GetCurSel();
-	
-	if (index != LB_ERR)
+	if (LB_ERR != index)
 	{
-		m_pCurrentImage = (SVImageClass*) mImageSelectList.GetItemData( index );
+		m_pCurrentImage = (SVImageClass*) m_ImageSelectList.GetItemData( index );
 	}
 	CDialog::OnOK();
 }
@@ -75,28 +77,13 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	//SVImageClass *pImage;
 	CString szImageName;
-	int index;
 	
     if( m_pDoc )
 	{
-		index = mImageSelectList.AddString( _T("[None]") );
-		mImageSelectList.SetItemData( index, static_cast<DWORD_PTR>(NULL) );
+		int index = m_ImageSelectList.AddString( _T("[None]") );
+		m_ImageSelectList.SetItemData( index, static_cast<DWORD_PTR>(0) );
 
-        // Get RGB Main Image only for Color Inpsection Document
-		// BRW - No longer necessary.  l_Visitor will add this item to the list.
-		/*if( m_pDoc->IsColorInspectionDocument() )
-		{
-			pImage = m_pDoc->GetHSIMainImage();
-			if( pImage )
-			{
-				szImageName = pImage->GetCompleteObjectName();
-				index = mImageSelectList.AddString( szImageName );
-				mImageSelectList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pImage) );
-			}
-		}*/
-		
 		SVObjectTypeInfoStruct info;
 
 		info.ObjectType = SVImageObjectType;
@@ -112,18 +99,22 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 		{
 			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-			if ( pImage != NULL && !(pImage->ObjectAttributesAllowed() & SV_HIDDEN) )
+			if ( nullptr != pImage && !(pImage->ObjectAttributesAllowed() & SV_HIDDEN) )
 			{
 				szImageName = pImage->GetCompleteObjectName();
-				index = mImageSelectList.AddString( szImageName );
-				mImageSelectList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pImage) );
+				index = m_ImageSelectList.AddString( szImageName );
+				m_ImageSelectList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pImage) );
 			}
 		}// end while
 
-		if( m_pCurrentImage != NULL )
-			mImageSelectList.SelectString( -1, m_pCurrentImage->GetCompleteObjectName() );
+		if( nullptr != m_pCurrentImage )
+		{
+			m_ImageSelectList.SelectString( -1, m_pCurrentImage->GetCompleteObjectName() );
+		}
 		else
-            mImageSelectList.SelectString( -1, _T("[None]") );
+		{
+            m_ImageSelectList.SelectString( -1, _T("[None]") );
+		}
 
 		UpdateData( FALSE );
 

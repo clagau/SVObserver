@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:06:10  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVGlobal.h"
+#pragma region Includes
 
 class SVIOEntryClass
 {

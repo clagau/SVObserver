@@ -31,7 +31,7 @@ class SVProfileEdgeMarkerAdjustmentPageClass : public SVEdgeMarkerAdjustmentPage
 #pragma region Constructor
 public:
 	SVProfileEdgeMarkerAdjustmentPageClass( UINT nIDCaption = 0 );
-	~SVProfileEdgeMarkerAdjustmentPageClass();
+	virtual ~SVProfileEdgeMarkerAdjustmentPageClass();
 #pragma endregion Constructor
 
 #pragma region MFC Methods

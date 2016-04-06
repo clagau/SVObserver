@@ -55,7 +55,4 @@ private:
 	//This is a temporary storage container for the string 
 	//defining the list of file names contained in the array.
 	CString mcsFileList;
-
 };
-
-

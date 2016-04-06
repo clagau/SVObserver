@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   28 Feb 2014 08:31:08  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVPPQEntryDialogDigInPage.h"
 #include "SVPPQEntryDialogRemotePage.h"
+#pragma endregion Includes
 
 class SVPPQObject;
 
@@ -45,14 +46,7 @@ struct SVCameraPageInfoStruct
 };
 
 
-
 class SVPPQEntryDialogPropertySheetClass;
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVPPQEntryDialogCameraPageClass
@@ -69,22 +63,9 @@ class SVPPQEntryDialogPropertySheetClass;
 ////////////////////////////////////////////////////////////////////////////////
 class SVPPQEntryDialogCameraPageClass : public CPropertyPage
 {
-//******************************************************************************
-// Serialization Declaration(s):
-//******************************************************************************
-
-//******************************************************************************
-// MFC Declarations:
-//******************************************************************************
 
 	DECLARE_DYNCREATE(SVPPQEntryDialogCameraPageClass)
 
-//******************************************************************************
-// Manual Generated Message Map Entries
-//******************************************************************************
-
-//******************************************************************************
-// Class Wizard Generated Message Map Entries
 //******************************************************************************
 protected:
 	// Generated message map functions
@@ -102,41 +83,10 @@ protected:
 
 	friend class SVPPQEntryDialogPropertySheetClass;
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
 	SVPPQEntryDialogCameraPageClass();
+	virtual ~SVPPQEntryDialogCameraPageClass();
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
-	~SVPPQEntryDialogCameraPageClass();
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Process;
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Visual Representation:
-//******************************************************************************
-
-//******************************************************************************
-// Class Wizard Generated Virtual Function(s):
-//******************************************************************************
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVPPQEntryDialogCameraPageClass)
@@ -146,9 +96,6 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-//******************************************************************************
-// Debug Operation(s):
-//******************************************************************************
 
 //******************************************************************************
 // Data Element(s):
@@ -162,7 +109,6 @@ public:
 	CListBox	availableList;
 	CString		StrCurPos;
 	//}}AFX_DATA
-
 
 protected:
 	SVPPQEntryDialogPropertySheetClass* m_pSheet;
@@ -192,13 +138,7 @@ public:
 	SVPPQEntryDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
 	virtual ~SVPPQEntryDialogPropertySheetClass();
 
-// Attributes
-public:
-
-// Operations
-public:
 protected:
-
 	void addPages();
 
 // Overrides
@@ -209,16 +149,12 @@ protected:
 	//}}AFX_VIRTUAL
 	BOOL OkToAdd();
 
-// Implementation
-public:
-
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(SVPPQEntryDialogPropertySheetClass)
 		// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 
 //******************************************************************************
 // Data Element(s):
@@ -229,7 +165,6 @@ public:
 	BOOL		m_bIsTaken;
 
 protected:
-
 	SVPPQEntryDialogCameraPageClass		m_oCameraPage;
 	SVPPQEntryDialogDigInPageClass		m_oDigitalPage;
 	SVPPQEntryDialogRemotePageClass		m_oRemotePage;

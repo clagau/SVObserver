@@ -8,14 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:46:26  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
 #include "SVMFCControls\SVHistogram.h"
-
-//class SVHistogramAnalyzerSetupClass;
+#pragma endregion Includes
 
 class SVHistogramAnalyzerClass : public SVImageAnalyzerClass
 {
@@ -28,7 +27,7 @@ class SVHistogramAnalyzerClass : public SVImageAnalyzerClass
 //******************************************************************************
 public:
 	SVHistogramAnalyzerClass( LPCSTR ObjectName /* = "Histogram Analyzer" */ );
-	SVHistogramAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
+	SVHistogramAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
 
 public:
    long             msvlHistValueArraySize;

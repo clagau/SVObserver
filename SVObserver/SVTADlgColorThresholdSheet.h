@@ -9,19 +9,14 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:21:12  $
 //******************************************************************************
 
-#if !defined(SVTADLGCOLORTHRESHOLDSHEET_H)
-#define SVTADLGCOLORTHRESHOLDSHEET_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVTADlgColorThresholdSheet.h : header file
-//
 
+#pragma region Includes
 #include "SVTADlgColorThresholdROI.h"
 #include "SVTADlgColorThresholdAdjustment.h"
 #include "SVTADlgColorThresholdOutput.h"
 #include "SVROIFigureEditor.h"
+#pragma endregion Includes
 
 class SVColorToolClass;
 
@@ -81,6 +76,3 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVTADLGCOLORTHRESHOLDSHEET_H)
-

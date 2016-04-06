@@ -115,10 +115,7 @@
 //---------   relationship (m_ParentImagePtr != NULL) but are still allocated 
 //---------   as physical buffers.
 			SVImageTypeLogical = 9
-
-
 		};
-
 
 		enum SVImagePropertyEnum
 		{
@@ -130,19 +127,6 @@
 			SVImagePropertyResetOwner = 0x00000010,
 		};
 
-		/*
-		// Original Coreco Light Reference values
-		#define CORACQ_PRM_VIC_FIRST			0x00000800
-		#define CORACQ_PRM_VIC( n, size)		( (((n) + CORACQ_PRM_VIC_FIRST) << 16) | (size))
-		#define CORACQ_PRM_BRIGHTNESS						CORACQ_PRM_VIC( 0x00000003, 4)
-		#define CORACQ_PRM_BRIGHTNESS_RED				CORACQ_PRM_VIC( 0x00000004, 4)
-		#define CORACQ_PRM_BRIGHTNESS_GREEN				CORACQ_PRM_VIC( 0x00000005, 4)
-		#define CORACQ_PRM_BRIGHTNESS_BLUE 				CORACQ_PRM_VIC( 0x00000006, 4)
-		#define CORACQ_PRM_CONTRAST						CORACQ_PRM_VIC( 0x00000007, 4)
-		#define CORACQ_PRM_CONTRAST_RED	  				CORACQ_PRM_VIC( 0x00000008, 4)
-		#define CORACQ_PRM_CONTRAST_GREEN  				CORACQ_PRM_VIC( 0x00000009, 4)
-		#define CORACQ_PRM_CONTRAST_BLUE	  				CORACQ_PRM_VIC( 0x0000000a, 4)
-		*/
 		enum SVLightReferenceTypeEnum
 		{
 			SVLightReferenceTypeUnknown         = 0,
@@ -216,16 +200,6 @@
 			SVDigitizerParameterTypeEnum = 20,
 			SVDigitizerParameterTypeEnumWithValue = 21,
 			SVDigitizerParameterTypeLUT = 30,
-			SVDigitizerParameterTypeDCamRegister = 40,
-			SVDigitizerParameterTypeDCamFeature = 41,
-		};
-
-		enum SVDigitizerParameterDCamFeatureControlEnum
-		{
-			SVDigitizerParameterDCamFeatureControlOff = 0,
-			SVDigitizerParameterDCamFeatureControlAuto = 1,
-			SVDigitizerParameterDCamFeatureControlManual = 2,
-			SVDigitizerParameterDCamFeatureControlOnePushAction = 3,
 		};
 //	}  //namespace ObjectInterfaces
 //} //namespace Seidenader

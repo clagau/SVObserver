@@ -11,11 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 #include "ISVCancel.h"
+#pragma endregion Includes
 
 class SVPropertySheetCancelImpl : public ISVCancel
 {
 public:
+	virtual ~SVPropertySheetCancelImpl();
 	virtual bool CanCancel();
 	virtual HRESULT GetCancelData(SVCancelData*& ppData);
 	virtual HRESULT SetCancelData(SVCancelData* pData);

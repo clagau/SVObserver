@@ -87,6 +87,10 @@ SVToolAdjustmentDialogLUTPageClass::SVToolAdjustmentDialogLUTPageClass( const GU
 	m_pLUTLowerClip = nullptr;
 	m_pIsLUTFormulaClipped = nullptr;
 }
+
+SVToolAdjustmentDialogLUTPageClass::~SVToolAdjustmentDialogLUTPageClass()
+{
+}
 #pragma endregion Constructor
 
 BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogLUTPageClass, CPropertyPage)

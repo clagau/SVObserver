@@ -28,10 +28,7 @@ struct RegressionTestStruct
 	std::vector<CString>::iterator stdIteratorStart;
 	std::vector<CString>::iterator stdIteratorCurrent;
 	bool bDone;
-/*	POSITION posStarting;
-	POSITION posCurrent;
-	POSITION posPrevious;
-*/};
+};
 
 struct RegressionRunFileStruct
 {

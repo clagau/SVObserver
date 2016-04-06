@@ -123,52 +123,6 @@ void SVTaskObjectListClass::GetAllInputObjects()
 	AppendInputObjects();
 }
 
-#ifdef USE_OBJECT_SCRIPT
-void SVTaskObjectListClass::GetObjectScript(CString& RStrScript, CString& RStrAliasTable, int Indent)
-{
-	CString script;
-	
-	// preallocate 512K
-	script.GetBuffer(512*1024);  
-	script.ReleaseBuffer(); 
-	
-	SVTaskObjectClass::GetObjectScript(script, RStrAliasTable, Indent);
-	
-	// Generate indent...
-	CString strIndent = _T("\n");
-	if (Indent)
-	{
-		CString tabsStrIndent(_T('\t'), Indent);
-		strIndent += tabsStrIndent;
-	}
-	
-	// Overwrite task object termination termination...
-	int last = script.ReverseFind(TCHAR('}'));
-	if (last >= 0)
-	{
-		script = script.Left(last);
-	}
-
-	// Set up further object definitions...
-
-	// Get script of task list members...
-	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
-	{
-		if (m_aTaskObjects.GetAt(i))
-		{
-			m_aTaskObjects.GetAt(i)->GetObjectScript(script, RStrAliasTable, Indent + 1);
-		}
-	}
-
-	script.FreeExtra();
-
-	RStrScript += script;
-	
-	// Add termination...
-	RStrScript += strIndent + _T("};");
-}
-#endif
-
 void SVTaskObjectListClass::Persist(SVObjectWriter& writer)
 {
 	writer.StartElement(GetObjectName()); // use internal name for node name

@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   17 Jul 2014 06:38:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
+#pragma endregion Includes
 
 class SVPatternAnalyzerClass : public SVImageAnalyzerClass  
 {
@@ -23,7 +24,7 @@ class SVPatternAnalyzerClass : public SVImageAnalyzerClass
 	friend class SVSetupDialogManager;
 
 public:
-	SVPatternAnalyzerClass (BOOL BCreateDefaultTaskList = TRUE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVPATTERNANALYZER);
+	SVPatternAnalyzerClass (BOOL BCreateDefaultTaskList = TRUE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPATTERNANALYZER);
 
 	virtual	~SVPatternAnalyzerClass();
 	virtual	BOOL CloseObject();
@@ -85,7 +86,7 @@ public:
 	BOOL UpdateModelFromInputImage();
 	BOOL UpdateModelFromBuffer();
 
-	BOOL RestorePattern(CString strImageFile, UINT *ErrMsgId = NULL);
+	BOOL RestorePattern(CString strImageFile, UINT *ErrMsgId = nullptr);
 	BOOL SetSearchParameters();
 	void SetDefaultSearchValues();
 
@@ -122,7 +123,6 @@ private:
 	
 	SVBoolValueObjectClass msv_bpatCircularOverscan;
 	SVFileNameValueObjectClass msv_szModelImageFile; // Name of the Model Image File
-
 };
 
 

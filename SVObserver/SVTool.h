@@ -101,7 +101,7 @@ class SVToolClass : public SVTaskObjectListClass, public SvOi::ITool
 	friend class SVToolExtentClass;
 
 public:
-	SVToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTOOL );
+	SVToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL );
 	virtual ~SVToolClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

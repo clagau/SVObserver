@@ -46,7 +46,7 @@ public:
 	typedef std::deque< SVChildExtentPair > SVChildExtentDeque;
 
 	SVImageClass( LPCSTR ObjectName );
-	SVImageClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVIMAGE );
+	SVImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGE );
 	virtual ~SVImageClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
@@ -118,9 +118,6 @@ public:
 	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
 
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 ); //@TODO:  Change method to const?
-#endif
 	virtual void Persist( SVObjectWriter& rWriter );
 	virtual void PersistImageAttributes( SVObjectWriter& rWriter );
 

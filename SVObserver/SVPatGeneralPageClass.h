@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:19:24  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
+#pragma endregion Includes
 
 class SVPatternAnalyzerClass;
 class SVPatAnalyzeSetupDlgSheet;
@@ -92,7 +93,6 @@ protected:
 	afx_msg void OnSetRangeClicked();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 

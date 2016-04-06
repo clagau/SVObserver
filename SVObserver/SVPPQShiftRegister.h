@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:31:16  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma region Includes
 
 struct SVProductInfoStruct;
 
@@ -50,6 +51,5 @@ private:
 
 	long m_HeadTriggerCount;
 	long m_TailTriggerCount;
-
 };
 

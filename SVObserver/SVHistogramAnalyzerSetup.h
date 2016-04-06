@@ -11,10 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
 #include "SVMFCControls\SVHistogram.h"
 #include "afxwin.h"
 #include "afxcmn.h"
+#pragma region Includes
 
 class SVHistogramAnalyzerClass;
 
@@ -26,7 +28,7 @@ public:
 	{
 		RegisterWindowClass();
 	}
-
+	virtual ~SVSquare() {}
 	void SetColor(COLORREF color) { m_color = color; }
 	afx_msg void OnPaint();
 protected:
@@ -67,26 +69,6 @@ protected:
 public:
 	SvMc::SVHistogram m_histogram;
 
-	//int m_highClipEdit;
-	//int m_lowClipEdit;
-	//INT m_scaleRadio;
-	//double m_meanText;
-	//double m_stdDevText;
-	//double m_varianceText;
-	//int m_minText;
-	//int m_maxText;
-	//int m_countText;
-	//int m_grayscaleText;
-	//int m_highPeak;
-	//int m_lowPeak;
-	//int m_valley;
-	//int m_threshold;
-	////int m_minHeight;
-	//int m_defaultPeak;
-	////BOOL m_useDefaultPeak;
-	//BOOL m_accumulate;
-	//int m_heightThreshold;
-
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnBnClickedRadiolin();
 	afx_msg void OnBnClickedRadiolog();
@@ -116,8 +98,6 @@ public:
 	afx_msg void OnEnKillfocusHighValley();
 	afx_msg void OnEnKillfocusDefaultValley();
 	afx_msg void OnClose();
-
-	//BOOL UpdateData(BOOL bSaveAndValidate = TRUE);
 
 	bool setHistogram(const SvUl::SVHistogramBase &);
 	static const LPCTSTR c_zerosz;

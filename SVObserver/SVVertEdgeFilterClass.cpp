@@ -22,6 +22,10 @@ SVVertEdgeFilterClass::SVVertEdgeFilterClass( SVObjectClass* POwner, int StringR
 	outObjectInfo.ObjectTypeInfo.SubType = SVVertEdgeFilterObjectType;
 }
 
+SVVertEdgeFilterClass::~SVVertEdgeFilterClass()
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

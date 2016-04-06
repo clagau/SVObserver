@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 11:07:30  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVSystemLibrary/SVLockableClass.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVOCVBlobRecord.h"
 #include "SVResult.h"
+#pragma endregion Includes
 
 #define  OCV_MAX_ENTREES       10000  // Max number of lines allowed in the match file
 
@@ -40,9 +41,9 @@ protected:
 	SV_DECLARE_CLASS( SVOCVAnalyzeResultClass )
 
 public:
-	SVOCVAnalyzeResultClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZERESULT );
+	SVOCVAnalyzeResultClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZERESULT );
 
-	~SVOCVAnalyzeResultClass();
+	virtual ~SVOCVAnalyzeResultClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();

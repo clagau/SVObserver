@@ -39,8 +39,6 @@
 #include "SVInputObjectList.h"
 #include "SVDigitalInputObject1.h"
 #include "SVDigitalOutputObject1.h"
-#include "SVOCRParamStruct.h"
-#include "SVOCRGrayParamStruct.h"
 #include "SVArchiveTool.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
@@ -225,7 +223,7 @@ SVConfigurationPrint::SVConfigurationPrint()
 	m_isRealPrint = FALSE;
 	
 	m_isPrintToStringBuffer = false;
-	m_psBuffer = NULL;
+	m_psBuffer = nullptr;
 	
 	// Set SVFileNameClass for Print to File
 	CString strDefExt(MAKEINTRESOURCE(AFX_IDS_PRINTDEFAULTEXT));
@@ -275,11 +273,6 @@ public:
 	//}}AFX_DATA
 	CPrintingDialog(CWnd* pParent)
 	{
-#ifdef _MAC
-		// Note! set m_pView *before* CDialog::Create so that
-		// CPrintingDialog::OnInitDialog can use it.
-		m_pView = pParent;
-#endif
 		Create(CPrintingDialog::IDD, pParent);      // modeless !
 		_afxWinState->m_bUserAbort = FALSE;
 	}
@@ -287,21 +280,7 @@ public:
 	
 	virtual BOOL OnInitDialog();
 	virtual void OnCancel();
-	
-protected:
-#ifdef _MAC
-	CWnd*   m_pView;        // the view being printed
-	
-	afx_msg int OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message);
-#endif
-	
-#ifdef _MAC
-	//{{AFX_MSG(CPrintingDialog)
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-#endif
 };
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -312,7 +291,7 @@ void SVConfigurationPrint::DoPrintConfig()
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	
-	ASSERT(m_printInfo.m_pPD != NULL);    // must be set
+	ASSERT(nullptr != m_printInfo.m_pPD);    // must be set
 	
 	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
 	
@@ -320,25 +299,25 @@ void SVConfigurationPrint::DoPrintConfig()
 	{
 		CCommandLineInfo*    pCmdInfo = pApp->m_pCmdInfo;
 		
-		if (pCmdInfo != NULL)
+		if (nullptr != pCmdInfo)
 		{
 			if (pCmdInfo->m_nShellCommand == CCommandLineInfo::FilePrintTo)
 			{
 				m_printInfo.m_pPD->m_pd.hDC = ::CreateDC(pCmdInfo->m_strDriverName,
 													   pCmdInfo->m_strPrinterName, 
 													   pCmdInfo->m_strPortName,
-													   NULL);
+													   nullptr);
 				
-				if (m_printInfo.m_pPD->m_pd.hDC == NULL)
+				if (nullptr == m_printInfo.m_pPD->m_pd.hDC)
 				{
 					CString message;
 					message.Format(AFX_IDP_FAILED_TO_START_PRINT);
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10238 );
 					return;
-				}  // end if( printInfo.m_pPD->m_pd.hDC == NULL )
+				}  // end if( printInfo.m_pPD->m_pd.hDC == nullptr )
 			}  // end if( pCmdInfo->m_nShellCommand == CCommandLineInfo::FilePrintTo )
-		}  // end if( pCmdInfo != NULL )
+		}  // end if( pCmdInfo != nullptr )
 		
 		m_printInfo.m_bDirect = TRUE;
 	}  // end if(   pThreadState && ...
@@ -346,7 +325,7 @@ void SVConfigurationPrint::DoPrintConfig()
 	if (DoPreparePrinting(&m_printInfo))
 	{
 		// hDC must be set (did you remember to call DoPreparePrinting?)
-		ASSERT(m_printInfo.m_pPD->m_pd.hDC != NULL);
+		ASSERT(nullptr != m_printInfo.m_pPD->m_pd.hDC);
 		
 		// gather file to print to if print-to-file selected
 		CString strOutput;
@@ -384,7 +363,7 @@ void SVConfigurationPrint::DoPrintConfig()
 		
 		if (strOutput.IsEmpty())
 		{
-			docInfo.lpszOutput = NULL;
+			docInfo.lpszOutput = nullptr;
 			
 			strPortName = m_printInfo.m_pPD->GetPortName();
 			
@@ -540,7 +519,7 @@ void SVConfigurationPrint::printConfigToStringBuffer(CString& rsBuffer)
 	// create a dummy DC
 	CWnd wnd;
 	CRect rect(0, 0, 10, 10);
-	BOOL bResult = wnd.CreateEx(0, _T("Button"), _T(""), 0, rect, NULL, 0);
+	BOOL bResult = wnd.CreateEx(0, _T("Button"), _T(""), 0, rect, nullptr, 0);
 	ASSERT(bResult);
 	HDC hDC = wnd.GetDC()->GetSafeHdc();
 	m_printDC.Attach(hDC);
@@ -563,8 +542,8 @@ void SVConfigurationPrint::printConfigToStringBuffer(SVString& rsBuffer)
 BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	ASSERT(pPrintInfo != NULL);
-	ASSERT(pPrintInfo->m_pPD != NULL);
+	ASSERT(nullptr != pPrintInfo);
+	ASSERT(nullptr != pPrintInfo->m_pPD);
 	
 	if (pPrintInfo->m_pPD->m_pd.nMinPage > pPrintInfo->m_pPD->m_pd.nMaxPage)
 		pPrintInfo->m_pPD->m_pd.nMaxPage = pPrintInfo->m_pPD->m_pd.nMinPage;
@@ -575,7 +554,7 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 	if (pPrintInfo->m_bPreview || pPrintInfo->m_bDirect ||
 		(pPrintInfo->m_bDocObject && !(pPrintInfo->m_dwFlags & PRINTFLAG_PROMPTUSER)))
 	{
-		if (pPrintInfo->m_pPD->m_pd.hDC == NULL)
+		if (nullptr == pPrintInfo->m_pPD->m_pd.hDC)
 		{
 			// if no printer set then, get default printer DC and create DC without calling
 			//   print dialog.
@@ -588,10 +567,10 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 						return FALSE;
 			}
 			
-			if (pPrintInfo->m_pPD->m_pd.hDC == NULL)
+			if (nullptr == pPrintInfo->m_pPD->m_pd.hDC)
 			{
 				// call CreatePrinterDC if DC was not created by above
-				if (pPrintInfo->m_pPD->CreatePrinterDC() == NULL)
+				if (nullptr == pPrintInfo->m_pPD->CreatePrinterDC())
 					return FALSE;
 			}
 		}
@@ -611,11 +590,11 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 			return FALSE;       // do not print
 	}
 	
-	ASSERT(pPrintInfo->m_pPD != NULL);
+	ASSERT(nullptr != pPrintInfo->m_pPD);
 	
-	ASSERT(pPrintInfo->m_pPD->m_pd.hDC != NULL);
+	ASSERT(nullptr != pPrintInfo->m_pPD->m_pd.hDC);
 	
-	if (pPrintInfo->m_pPD->m_pd.hDC == NULL)
+	if (nullptr == pPrintInfo->m_pPD->m_pd.hDC)
 		return FALSE;
 	
 	pPrintInfo->m_nNumPreviewPages = pApp->m_nNumPreviewPages;
@@ -742,51 +721,33 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 	{
 		if ( pObj->ObjectAttributesAllowed() & SV_PRINTABLE )
 		{
-			sLabel = pValueObject->GetName();
-			if (sLabel.Find(_T("OCR Gray Scale Parameters")) >= 0)
+			BOOL bGotValue = FALSE;
+
+			if ( SVDWordValueObjectClass* pdwValueObject = dynamic_cast <SVDWordValueObjectClass*> ( pValueObject ) )
 			{
-				CString  strParameters;
-				
-				if (pValueObject->GetValue(strParameters) == S_OK )
-					PrintOCRGrayScaleParameters(pDC, strParameters, ptCurPos, nIndentLevel);
-			}
-			else if (sLabel.Find(_T("OCR Parameters")) >= 0)
-			{
-				CString  strParameters;
-				
-				if (pValueObject->GetValue(strParameters) == S_OK )
-					PrintOCRParameters(pDC, strParameters, ptCurPos, nIndentLevel);
+				DWORD dwValue=0;
+				bGotValue = (pdwValueObject->GetValue( dwValue ) == S_OK );
+				sValue = AsString( dwValue );
 			}
 			else
 			{
-				BOOL bGotValue = FALSE;
+				bGotValue = (pValueObject->GetValue( sValue ) == S_OK );
+			}
 
-				if ( SVDWordValueObjectClass* pdwValueObject = dynamic_cast <SVDWordValueObjectClass*> ( pValueObject ) )
-				{
-					DWORD dwValue=0;
-					bGotValue = (pdwValueObject->GetValue( dwValue ) == S_OK );
-					sValue = AsString( dwValue );
-				}
-				else
-				{
-					bGotValue = (pValueObject->GetValue( sValue ) == S_OK );
-				}
-
-				if ( bGotValue )
-				{
-					if (sValue.IsEmpty())
-					{
-						sValue = _T("< I N V A L I D ! >");
-					}
-				}
-				else
+			if ( bGotValue )
+			{
+				if (sValue.IsEmpty())
 				{
 					sValue = _T("< I N V A L I D ! >");
 				}
+			}
+			else
+			{
+				sValue = _T("< I N V A L I D ! >");
+			}
 				
-				ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-				PrintValueObject(pDC, ptCurPos, sLabel, sValue);
-			}  // end else
+			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
+			PrintValueObject(pDC, ptCurPos, sLabel, sValue);
 		}   // end if ( pObj->uObjectAttributesAllowed & SV_PRINTABLE )
 	}  // end if( nullptr != pValueObject )
 	else
@@ -829,15 +790,15 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				bPrintToolExtents = FALSE;
 				
 				SVInputInfoListClass    toolInputList;
-				SVImageClass*           pCurrentSourceImage = NULL;
-				SVInObjectInfoStruct*   pImageInputInfo = NULL;
+				SVImageClass*           pCurrentSourceImage = nullptr;
+				SVInObjectInfoStruct*   pImageInputInfo = nullptr;
 				
-				SVInObjectInfoStruct* l_psvImageInfo = NULL;
-				SVInObjectInfoStruct* l_psvLastImageInfo = NULL;
+				SVInObjectInfoStruct* l_psvImageInfo = nullptr;
+				SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
 
-				while( l_psvImageInfo == NULL && pTool->FindNextInputImageInfo( l_psvImageInfo, l_psvLastImageInfo ) == S_OK )
+				while( nullptr == l_psvImageInfo && S_OK == pTool->FindNextInputImageInfo( l_psvImageInfo, l_psvLastImageInfo ) )
 				{
-					if( l_psvImageInfo != NULL )
+					if( nullptr != l_psvImageInfo )
 					{
 						pImageInputInfo = l_psvImageInfo;
 
@@ -851,7 +812,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 					else
 					{
 						l_psvLastImageInfo = l_psvImageInfo;
-						l_psvImageInfo = NULL;
+						l_psvImageInfo = nullptr;
 					}
 				}
 
@@ -902,7 +863,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				for (i = 0; i < s; i++)
 				{
 					pRecord = pArchiveTool->m_arrayResultsInfoObjectsToArchive.GetAt(i);
-					if (pRecord->GetObjectReference().Object() != NULL)
+					if (nullptr != pRecord->GetObjectReference().Object())
 					{
 						ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 						CString sFormat;
@@ -975,14 +936,14 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				SVObjectInfoStruct objectInfo;
 				objectInfo.ObjectTypeInfo.ObjectType = SVLineObjectType;
 				
-				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>( &objectInfo ), NULL) ) );
+				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>( &objectInfo ), 0) ) );
 				
 				POINT l_oHeadPoint;
 				POINT l_oTailPoint;
 
-				if ( pLineClass != NULL &&
-					 pLineClass->GetHeadPoint( l_oHeadPoint ) == S_OK &&
-					 pLineClass->GetHeadPoint( l_oTailPoint ) == S_OK )
+				if ( nullptr != pLineClass &&
+					 S_OK == pLineClass->GetHeadPoint( l_oHeadPoint ) &&
+					 S_OK == pLineClass->GetHeadPoint( l_oTailPoint )  )
 				{
 					sLabel = pApp->GetStringResource(IDS_HEAD_POINT_STRING) + _T(":");
 					sValue.Format(_T("(%d, %d)"), (int)(l_oHeadPoint.x), (int)(l_oHeadPoint.y));
@@ -1230,102 +1191,6 @@ void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, 
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintInputOutputList( ... )
 
-void SVConfigurationPrint::PrintOCRParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel)
-{
-	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	int      nFirstHeight   = 0;
-	int      nLastHeight    = 0;
-	
-	CString  sLabel, sValue;
-	CPoint   ptTemp(0, 0);
-	
-	SVOCRParamStruct*	pOCRParam = new SVOCRParamStruct();
-	
-	if (pOCRParam && !strParameters.IsEmpty())
-	{
-		pOCRParam->ConvertStringToParams(strParameters);
-		
-		ptCurPos.x  = (nIndentLevel + 1) * m_shortTabPixels;
-		ptTemp		= ptCurPos;
-		ptCurPos.y += PrintString(pDC, ptTemp, _T("OCR Parameters:"));
-		ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
-		
-		sValue.Format(_T("%f"), pOCRParam->fFeaturesUsed);
-		PrintValueObject(pDC, ptCurPos, _T("Features Used"), sValue);
-		sValue.Format(_T("%f"), pOCRParam->fmaxAngle);
-		PrintValueObject(pDC, ptCurPos, _T("Max Angle"), sValue);
-		sValue.Format(_T("%f"), pOCRParam->fmaxScale);
-		PrintValueObject(pDC, ptCurPos, _T("Max Scale"), sValue);
-		sValue.Format(_T("%f"), pOCRParam->forientationSensitivity);
-		PrintValueObject(pDC, ptCurPos, _T("Orientation Sensitivity"), sValue);
-		sValue.Format(_T("%f"), pOCRParam->fthreshold);
-		PrintValueObject(pDC, ptCurPos, _T("Threshold"), sValue);
-		sValue.Format(_T("%s"), pOCRParam->ignoreNoMatch ? _T("Yes") : _T("No"));
-		PrintValueObject(pDC, ptCurPos, _T("Ignore No Match"), sValue);
-		sValue.Format(_T("(%d, %d)"), pOCRParam->minHeight, pOCRParam->maxHeight);
-		PrintValueObject(pDC, ptCurPos, _T("Height (min, max)"), sValue);
-		sValue.Format(_T("(%d, %d)"), pOCRParam->minWidth, pOCRParam->maxWidth);
-		PrintValueObject(pDC, ptCurPos, _T("Width (min, max)"), sValue);
-		sValue.Format(_T("(%d, %d)"), pOCRParam->nMinPixelsInBlob, pOCRParam->nMaxPixelsInBlob);
-		PrintValueObject(pDC, ptCurPos, _T("Pixels in Blob (min, max)"), sValue);
-		pOCRParam->STRmatchString;
-		pOCRParam->STRnoMatchLabel;
-	}
-}
-
-void SVConfigurationPrint::PrintOCRGrayScaleParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel)
-{
-	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	int      nFirstHeight   = 0;
-	int      nLastHeight    = 0;
-	
-	CString  sLabel, sValue;
-	CPoint   ptTemp(0, 0);
-	
-	SVOCRGrayParamStruct* pOCRGrayParam = new SVOCRGrayParamStruct();
-	
-	if (pOCRGrayParam && !strParameters.IsEmpty())
-	{
-		pOCRGrayParam->ConvertStringToParams(strParameters);
-		
-		ptCurPos.x  = (nIndentLevel + 1) * m_shortTabPixels;
-		ptTemp		= ptCurPos;
-		ptCurPos.y += PrintString(pDC, ptTemp, _T("OCR Gray Scale Parameters:"));
-		ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
-		
-		PrintValueObject(pDC, ptCurPos, _T("Match Label"), pOCRGrayParam->STRnoMatchLabel);
-		PrintValueObject(pDC, ptCurPos, _T("Match String"), pOCRGrayParam->STRmatchString);
-		
-		sValue.Format(_T("%d"), pOCRGrayParam->useMatchFile);	// int
-		PrintValueObject(pDC, ptCurPos, _T("Use Match File"), sValue);
-		sValue.Format(_T("%d"), pOCRGrayParam->maxMatches);		// int
-		PrintValueObject(pDC, ptCurPos, _T("Max Matches"), sValue);
-		sValue.Format(_T("%d"), pOCRGrayParam->xVicinity);	// int
-		PrintValueObject(pDC, ptCurPos, _T("X Vicinity"), sValue);
-		sValue.Format(_T("%d"), pOCRGrayParam->yVicinity);	// int
-		PrintValueObject(pDC, ptCurPos, _T("Y Vicinity"), sValue);
-		sValue.Format(_T("%f"), pOCRGrayParam->rejectThresh);	// float
-		PrintValueObject(pDC, ptCurPos, _T("Reject Threshold"), sValue);
-		sValue.Format(_T("%f"), pOCRGrayParam->acceptThresh);	// float
-		PrintValueObject(pDC, ptCurPos, _T("Accept Threshold"), sValue);
-		sValue.Format(_T("%f"), pOCRGrayParam->relThresh);	// float
-		PrintValueObject(pDC, ptCurPos, _T("Relative Threshold"), sValue);
-		sValue.Format(_T("%f"), pOCRGrayParam->minContrast);	// float
-		PrintValueObject(pDC, ptCurPos, _T("Min Contrast"), sValue);
-		sValue.Format(_T("%d"), pOCRGrayParam->scale);	// int
-		PrintValueObject(pDC, ptCurPos, _T("Scale"), sValue);
-		sValue.Format(_T("%d"), pOCRGrayParam->maxCandidates);	// int
-		PrintValueObject(pDC, ptCurPos, _T("Max Candidates"), sValue);
-		sValue.Format(_T("%d"), pOCRGrayParam->candsInVicinity);	// int
-		PrintValueObject(pDC, ptCurPos, _T("Candidates in Vicinity"), sValue);
-		sValue.Format(_T("%f"), pOCRGrayParam->candidateThresh);	// float
-		PrintValueObject(pDC, ptCurPos, _T("Candidate Threshold"), sValue);
-		sValue.Format(_T("%f"), pOCRGrayParam->candidateRelThresh);	// float
-		PrintValueObject(pDC, ptCurPos, _T("Candidate Relative Threshold"), sValue);
-		sValue.Format(_T("%d"), pOCRGrayParam->output);	// int
-		PrintValueObject(pDC, ptCurPos, _T("Output"), sValue);
-	}
-}
 
 static CString ExpandTabs(LPCTSTR text)
 {
@@ -1505,8 +1370,8 @@ void SVConfigurationPrint::PrintValueObject(CDC* pDC, CPoint& ptCurPos, LPCTSTR 
 
 void SVConfigurationPrint::PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, SVIOEntryHostStructPtr IOEntry)
 {
-	SVDigitalInputObject	*pDigInput = NULL;
-	SVDigitalOutputObject	*pDigOutput = NULL;
+	SVDigitalInputObject	*pDigInput = nullptr;
+	SVDigitalOutputObject	*pDigOutput = nullptr;
 	SVString				sValue;
 	
 	ptCurPos.x = nIndentLevel * m_shortTabPixels;
@@ -1556,8 +1421,8 @@ void SVConfigurationPrint::PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nI
 
 void SVConfigurationPrint::PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, LPCTSTR lpszValue)
 {
-	SVDigitalInputObject	*pDigInput = NULL;
-	SVDigitalOutputObject	*pDigOutput = NULL;
+	SVDigitalInputObject	*pDigInput = nullptr;
+	SVDigitalOutputObject	*pDigOutput = nullptr;
 	SVString				sValue;
 	
 	ptCurPos.x = nIndentLevel * m_shortTabPixels;
@@ -1612,7 +1477,7 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	LPTSTR pString =  strDate.GetBuffer(32);
 	if (GetDateFormat(LOCALE_SYSTEM_DEFAULT,	       // locale for which date is to be formatted 
 					  0,							   // flags specifying function options 
-					  NULL,							   // date to be formatted, NULL = use current
+					  nullptr,							   // date to be formatted, nullptr = use current
 					  _T("ddd',' dd'-'MMM'-'yyyy"),	   // date format string
 					  pString,						   // buffer for storing formatted string
 					  31							   // size of buffer
@@ -1631,7 +1496,7 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	pString =  strTime.GetBuffer(32);
 	if (GetTimeFormat(LOCALE_SYSTEM_DEFAULT,	        // locale for which time is to be formatted 
 					  0,								// flags specifying function options 
-					  NULL,								// time to be formatted, NULL = use current
+					  nullptr,								// time to be formatted, nullptr = use current
 					  _T("hh':'mm':'ss' 'tt"),	        // time format string, e.g. "01:34:42 PM"
 					  pString,							// buffer for storing formatted string
 					  31								// size of buffer
@@ -1737,7 +1602,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			CLIP_DEFAULT_PRECIS,					    // clipping precision 
 			PROOF_QUALITY,						        // output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL									    // pointer to typeface name string 
+			nullptr									    // pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
@@ -1756,7 +1621,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			CLIP_DEFAULT_PRECIS,						// clipping precision 
 			PROOF_QUALITY,								// output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL										// pointer to typeface name string 
+			nullptr										// pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
@@ -1775,7 +1640,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			CLIP_DEFAULT_PRECIS,						// clipping precision 
 			PROOF_QUALITY,								// output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL										// pointer to typeface name string 
+			nullptr										// pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
@@ -1794,7 +1659,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			CLIP_DEFAULT_PRECIS,					    // clipping precision 
 			PROOF_QUALITY,							    // output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL									    // pointer to typeface name string 
+			nullptr									    // pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
@@ -1813,7 +1678,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			CLIP_DEFAULT_PRECIS,						// clipping precision 
 			PROOF_QUALITY,								// output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL										// pointer to typeface name string 
+			nullptr										// pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
@@ -1888,10 +1753,10 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 		SVVirtualCamera* pCamera = pConfig->GetCamera(l);
 		if( nullptr != pCamera )
 		{
-			SVFileNameArrayClass* pfnac = NULL;
-			SVLightReference* plrcDummy = NULL;
-			SVLut* plutDummy = NULL;
-			SVDeviceParamCollection* pDeviceParams = NULL;
+			SVFileNameArrayClass* pfnac = nullptr;
+			SVLightReference* plrcDummy = nullptr;
+			SVLut* plutDummy = nullptr;
+			SVDeviceParamCollection* pDeviceParams = nullptr;
 			SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
 			ASSERT( !( pAcqDevice.empty() ) );
 			BOOL bOk = pConfig->GetAcquisitionDevice( pAcqDevice->GetRootDeviceName(), pfnac, plrcDummy, plutDummy, pDeviceParams );
@@ -1981,7 +1846,7 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 							if ( pParam )
 							{
 								SVDeviceParam* pCamFileParam = l_CameraFileParams.GetParameter( pParam->Type() );
-								if ( pCamFileParam == NULL)
+								if ( nullptr == pCamFileParam )
 									continue;
 								if ( pCamFileParam->DetailLevel() > iDetailLevel )
 									continue;
@@ -2320,7 +2185,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 
 					ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
 					ptTemp      = ptCurPos;
-                    if ( l_pObject != NULL )
+                    if ( nullptr != l_pObject )
                     {
                         if ( l_pObject->IsValid() )
                         {
@@ -2887,14 +2752,14 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVCameraFormatsDeviceParam& param
 	if ( pCamFileParam )
 	{
 		CString s;
-		SVCameraFormat* pFormat = NULL;
+		SVCameraFormat* pFormat = nullptr;
 		if ( param.options.size() > 0 )
 		{
 			SVCameraFormat& rFormat = param.options[ param.strValue ];
 			const SVCameraFormat& rCamFileFormat = pCamFileParam->options.find( param.strValue )->second;
 			if ( rCamFileFormat.m_strName == param.strValue )
 			{
-				s = rCamFileFormat.strDescription.c_str();
+				s = rCamFileFormat.m_strDescription.c_str();
 				pFormat = &rFormat;
 			}
 		}
@@ -2907,10 +2772,10 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVCameraFormatsDeviceParam& param
 			CPoint pt = m_rptCurPos;
 			pt.x += m_pPrint->m_shortTabPixels;
 
-			m_pPrint->PrintValueObject(m_pDC, pt, _T("Left"), AsString(pFormat->lHPos));
-			m_pPrint->PrintValueObject(m_pDC, pt, _T("Top"), AsString(pFormat->lVPos));
-			m_pPrint->PrintValueObject(m_pDC, pt, _T("Width"), AsString(pFormat->lWidth));
-			m_pPrint->PrintValueObject(m_pDC, pt, _T("Height"), AsString(pFormat->lHeight));
+			m_pPrint->PrintValueObject(m_pDC, pt, _T("Left"), AsString(pFormat->m_lHPos));
+			m_pPrint->PrintValueObject(m_pDC, pt, _T("Top"), AsString(pFormat->m_lVPos));
+			m_pPrint->PrintValueObject(m_pDC, pt, _T("Width"), AsString(pFormat->m_lWidth));
+			m_pPrint->PrintValueObject(m_pDC, pt, _T("Height"), AsString(pFormat->m_lHeight));
 			
 			m_rptCurPos.y = pt.y;
 		}

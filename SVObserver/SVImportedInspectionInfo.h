@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:57:06  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <deque>
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVImportedInputList.h"
+#pragma endregion Includes
 
 class SVImportedInspectionInfo
 {

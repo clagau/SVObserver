@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:19:36  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPatResultDlgClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -32,6 +33,10 @@ SVPatResultDlgClass::SVPatResultDlgClass(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVPatResultDlgClass::~SVPatResultDlgClass()
+{
+}
+
 void SVPatResultDlgClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -48,4 +53,3 @@ BEGIN_MESSAGE_MAP(SVPatResultDlgClass, CDialog)
 		// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-

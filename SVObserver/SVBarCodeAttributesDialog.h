@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:40:44  $
 //******************************************************************************
-
 #pragma once
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVBarCodeAttributesDialog dialog
@@ -35,7 +36,8 @@ public:
 	double GetErrorCorrection();
 	double GetEncoding ();
 	BOOL OnSetActive ();
-	SVBarCodeAttributesDialog(CWnd* pParent = NULL);   // standard constructor
+	SVBarCodeAttributesDialog(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVBarCodeAttributesDialog();
 
 // Dialog Data
 	//{{AFX_DATA(SVBarCodeAttributesDialog)
@@ -81,6 +83,7 @@ public:
 	{
 	public:
 		const SVBarCodeErrorCorrectionEncodingStruct* GetInfoByMil(long lMil);
+		virtual ~SVBarCodeEccEncArray();
 	};
 
 	SVBarCodeEccEncArray m_aMilEnc;
@@ -88,6 +91,4 @@ public:
 
 	std::map< long, std::vector< long > > m_mapBarCodeEcc;
 	std::map< long, std::vector< long > > m_mapBarCodeEnc;
-
-	
 };

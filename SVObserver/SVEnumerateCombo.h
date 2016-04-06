@@ -11,20 +11,9 @@
 
 #pragma once
 
-////////////////////////////////////////////////////////////////////////////////
-// Includes which are necessary to declare or define types, constants and macros
-////////////////////////////////////////////////////////////////////////////////
+#pragma region Includes
 #include "SVValueObjectImpl.h"
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
-
-/////////////////////////////////////////////////////////////////////////////
-// SVEnumerateComboClass window
+#pragma endregion Includes
 
 class SVEnumerateComboClass : public CComboBox
 {
@@ -33,10 +22,6 @@ public:
 	SVEnumerateComboClass();
 	virtual ~SVEnumerateComboClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	BOOL SetEnumTypes( LPCTSTR szEnumList );
 
 	int SetCurSelItemData( DWORD_PTR dwItemData );
@@ -53,9 +38,6 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
 protected:
 	SVEnumerateValueObjectClass		enumObject;
 };

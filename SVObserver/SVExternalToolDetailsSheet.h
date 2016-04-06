@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:30:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVPropertySheetCancelImpl.h"
 #include "SVExternalTool.h"
+#pragma endregion Includes
 
 class SVExternalToolTask;
 

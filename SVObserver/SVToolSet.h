@@ -8,15 +8,16 @@
 //* .Current Version : $Revision:   1.6  $
 //* .Check In Date   : $Date:   19 Dec 2014 04:24:36  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "ObjectInterfaces/IToolSet.h"
 
 #include "SVMainImageClass.h"
 #include "SVResultList.h"
 #include "SVTaskObjectList.h"
 #include "SVValueObjectImpl.h"
+#pragma region Includes
 
 class SVConditionalClass;
 
@@ -34,7 +35,7 @@ class SVToolSetClass : virtual public SvOi::IToolSet,
 public:
 	typedef std::deque< SVGUID > SVToolIdDeque;
 
-	SVToolSetClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTOOLSET );
+	SVToolSetClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOLSET );
 
 	virtual ~SVToolSetClass();
 
@@ -55,10 +56,6 @@ public:
 	HRESULT ResetCounts();
 	HRESULT ClearResetCounts();
 
-	//BOOL setCurrent( SVToolClass* Tool );
-	//BOOL setCurrent( int Index );
-	//void ResetCurrent();
-
 	void InsertToolAt( int nIndex, SVToolClass* newElement, int nCount = 1 );
 
 	//************************************
@@ -71,12 +68,6 @@ public:
 	void SetDefaultInputs();
     void CheckForExistingName(CString& newText,	SVToolClass* pTool);
 	
-	//SVToolClass*		getFirst();
-	//SVToolClass*		getLast();
-	//SVToolClass*		getNext();
-	//SVToolClass*		getPrevious();
-	//SVToolClass*		getCurrent();
-	//int					getCurrentIndex();
 	SVResultListClass*	GetResultList();
 
 	SVImageClass*		getCurrentImage();
@@ -165,13 +156,11 @@ protected:
 	SVMainImageClass		mainImageObject;	// Embedded
 
 private:
-
 	SVLongValueObjectClass m_latestCompletionPPQIndex; // the PPQ position at which the most recently completed product was located when it was completed
 	SVTimerValueObjectClass m_TriggerDelta; ///< The time interval between the two most recent triggers
 	SVTimerValueObjectClass m_LastTriggerToPPQCompletion; ///< for the most recently completed product: The time interval between the trigger that started the product and inspection completion in microsceconds
 	SVTimerValueObjectClass m_LastTriggerToStart; ///< for the most recently completed product: The time interval between the trigger that started the product and the start of the inspection in microsceconds
 
 	void init();
-
 };
 

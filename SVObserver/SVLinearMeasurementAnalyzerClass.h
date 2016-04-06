@@ -11,15 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVLinearAnalyzerClass.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 class SVLinearMeasurementAnalyzerClass : public SVLinearAnalyzerClass
 {
 	SV_DECLARE_CLASS( SVLinearMeasurementAnalyzerClass );
 
 public:
-	SVLinearMeasurementAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
+	SVLinearMeasurementAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
 	virtual ~SVLinearMeasurementAnalyzerClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

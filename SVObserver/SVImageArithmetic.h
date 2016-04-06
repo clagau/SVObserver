@@ -9,10 +9,6 @@
 //* .Check In Date   : $Date:   15 May 2014 12:44:02  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
 #pragma once
 
 #pragma region Includes
@@ -24,21 +20,12 @@
 class SVToolClass;
 class SVIPDoc;
 
-		
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
-
-
 class SVImageArithmeticClass : public SVTaskObjectClass
 {
 	SV_DECLARE_CLASS( SVImageArithmeticClass )
 
 public:
-	SVImageArithmeticClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVIMAGEARITHMETIC );
+	SVImageArithmeticClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEARITHMETIC );
 	virtual ~SVImageArithmeticClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -48,9 +35,9 @@ public:
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 
-	SVImageClass*				getInputImageA();
-	SVImageClass*				getInputImageB();
-	SVImageClass*				getOutputImage();
+	SVImageClass* getInputImageA();
+	SVImageClass* getInputImageB();
+	SVImageClass* getOutputImage();
 
 	virtual BOOL OnValidate();
 
@@ -82,6 +69,5 @@ protected:
 	SVImageClass				outputImageObject;
 
 	HRESULT CollectInputImageNames( );
-
 };
 

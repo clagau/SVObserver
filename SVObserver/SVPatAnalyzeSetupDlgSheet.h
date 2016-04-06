@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:19:02  $
 //******************************************************************************
 
-#if !defined(AFX_SVPATAANALYZESETUPDLGSHEETCLASS_H__38DF47B5_F364_11D3_A896_00106F021742__INCLUDED_)
-#define AFX_SVPATAANALYZESETUPDLGSHEETCLASS_H__38DF47B5_F364_11D3_A896_00106F021742__INCLUDED_
+#pragma once
+
 class SVPatternAnalyzerClass;
 
 class SVPatAnalyzeSetupDlgSheet : public CPropertySheet
@@ -37,10 +37,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-
 /////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVPATAANALYZESETUPDLGSHEETCLASS_H__38DF47B5_F364_11D3_A896_00106F021742__INCLUDED_)
-

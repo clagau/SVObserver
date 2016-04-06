@@ -11,15 +11,18 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 class SVClosingFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVClosingFilterClass );
 public:
-	SVClosingFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVCLOSINGFILTER );
+	SVClosingFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCLOSINGFILTER );
+	virtual ~SVClosingFilterClass();
+
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };
-
 

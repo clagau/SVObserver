@@ -38,6 +38,9 @@ SVBarCodeStringMatchDialog::SVBarCodeStringMatchDialog(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVBarCodeStringMatchDialog::~SVBarCodeStringMatchDialog()
+{
+}
 
 BOOL SVBarCodeStringMatchDialog::EnableFileSelect(BOOL bEnable)
 {

@@ -8,11 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:22:54  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
+#pragma endregion Includes
+
 
 struct SVCallbackStruct;
 class SVDigitizerLoadLibraryClass;
@@ -37,4 +39,3 @@ public:
 	HRESULT UnRegisterCallback(SVCallbackStruct& p_rCallback );
 	HRESULT UnRegisterAllCallbacks();
 };
-

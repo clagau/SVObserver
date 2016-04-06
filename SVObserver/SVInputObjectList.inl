@@ -8,11 +8,11 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   11 Jun 2013 15:26:16  $
 //******************************************************************************
+#pragma once
 
-#ifndef SVINPUTOBJECTLIST_INL
-#define SVINPUTOBJECTLIST_INL
-
+#pragma region Includes
 #include "SVInputObjectList.h"
+#pragma endregion Includes
 
 template< typename SVInputType >
 HRESULT SVInputObjectList::GetInput( const SVGUID& p_rInputID, SVInputType*& p_rpInput ) const
@@ -142,6 +142,3 @@ HRESULT SVInputObjectList::GetInputFlyweight( const SVString& p_rInputName, SVIn
 
 	return l_Status;
 }
-
-#endif
-

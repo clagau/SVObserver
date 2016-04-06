@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   05 Jul 2013 09:11:02  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVGigeCameraStruct.h"
+#pragma endregion Includes
 
 class SVGigeCameraManager  
 {

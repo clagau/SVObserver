@@ -11,40 +11,31 @@
 
 #pragma once
 
-#include "SVOMFCLibrary/SVTemplate.h"
-#include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
+#pragma region Includes
+#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/SVImageEnums.h"
+#pragma endregion Includes
 
 class SVCameraFormat
 {
 public:
 	SVString m_strName;
-	SVString strDescription;
-	SVImageFormatEnum eImageType;
-	long lWidthMax;
-	long lHeightMax;
-	long lWidth;
-	long lHeight;
-	long lHStep;
-	long lVStep;
-	long lHPos;
-	long lVPos;
-	long lHPosStep;
-	long lVPosStep;
-	long lFrameRate;
-	bool bVariableROI;
-	long lOrder;
-	bool bColor;
-	long lMinTransferTime;
-	long lMaxTransferTime;
-	bool bOptimizedTransferRate_X;
-	bool bOptimizedTransferRate_Y;
-
-	long m_lDCamFormat;
-	long m_lDCamMode;
-	long m_lDCamFrameRate;
-	long m_lDCamColorFormat;
+	SVString m_strDescription;
+	SVImageFormatEnum m_eImageType;
+	long m_lWidthMax;
+	long m_lHeightMax;
+	long m_lWidth;
+	long m_lHeight;
+	long m_lHStep;
+	long m_lVStep;
+	long m_lHPos;
+	long m_lVPos;
+	long m_lHPosStep;
+	long m_lVPosStep;
+	bool m_bVariableROI;
+	long m_lOrder;
+	bool m_bColor;
 
 	SVCameraFormat();
 	SVCameraFormat( const SVCameraFormat& rhs );
@@ -55,10 +46,6 @@ public:
 	HRESULT ParseAndAssignCameraFormat( const CString& sCameraFormat );
 
 private:
-
-	HRESULT SetDCamData( const CString& sCameraFormat );
-
 	void init();
 };
-
 

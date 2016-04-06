@@ -1477,7 +1477,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 						cf.ParseAndAssignCameraFormat( pParam->strValue.c_str() );
 
 						// Band number depends on video type...
-						switch( cf.eImageType )
+						switch( cf.m_eImageType )
 						{
 						case SVImageFormatRGB8888:  // RGB
 							{
@@ -1491,10 +1491,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 					long lBand = 0;
 
 					lNumLRBands = svLight.NumBands();    // if (svLight.NumBands() == 1)
-					// one band (viper quad / ?rgb_mono?)
-					// if (svLight.NumBands() == 3) 
-					// may need to change to handle RGB mono
-
+				
 					do
 					{
 						SVString FullName;
@@ -2366,62 +2363,6 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 	return bOk ? true : false;
 }
 
-
-void SVConfigurationObject::CalculateProductType(const SVString& rBoardName, long numCameras, long lNumBoardDig)
-{
-	// figure out what kind of configuration we have ( support for old configurations without CTAG_CONFIGURATION_TYPE )
-	if ( GetProductType() != SVIM_PRODUCT_TYPE_UNKNOWN )
-	{
-		return;
-	}
-
-	bool bViperRGB = false;
-	bool bViperRGBMono = false;
-	bool bViperQuad = false;
-	bool bMatrox1394 = false;
-
-	if ( rBoardName.find(_T("RGB")) != SVString::npos )
-	{
-		bViperRGB = true;
-		if ( numCameras > 1 )	// RGB Color doesn't have channel information
-		{
-			bViperRGBMono = true;
-		}
-	}
-	else if ( rBoardName.find(_T("Quad")) != SVString::npos )
-	{
-		bViperQuad = true;
-	}
-	else if ( rBoardName.find(_T("1394")) != SVString::npos )
-	{
-		bMatrox1394 = true;
-	}
-
-	if ( bViperRGB )
-	{
-		if ( bViperRGBMono )
-			SetProductType( SVIM_PRODUCT_RGB_MONO );
-		else
-			SetProductType( SVIM_PRODUCT_RGB_COLOR );
-	}
-	else if ( bViperQuad )
-	{
-		if ( lNumBoardDig <= 2 )
-		{
-			SetProductType( SVIM_PRODUCT_05 );
-		}
-		else
-		{
-			SetProductType( SVIM_PRODUCT_FULL );
-		}
-	}
-	else if ( bMatrox1394 )
-	{
-		SetProductType( SVIM_PRODUCT_D3 );
-	}
-}
-
-
 HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 {
 
@@ -2453,7 +2394,6 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		// a temp solution
 		// the better solution is to have the acqs subscribe and the triggers provide
 		HRESULT hrAttach = AttachAcqToTriggers();
-		CalculateProductType(BoardName, lNumCameras, lNumBoardDig);
 	}
 	catch (	const SvStl::MessageContainer& rMsgCont )
 	{
@@ -2658,24 +2598,32 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial( SVTreeType& rTree, SVTree
 						SVCameraFormat& rcf = pcf->options[SVString(sName)];
 						rcf.ParseAndAssignCameraFormat( sName );
 						if ( SVNavigateTree::GetItem( rTree, CTAG_VARIABLE_CAMERA_FORMAT, hParam, svVariant ) )
-							rcf.bVariableROI = svVariant;
+						{
+							rcf.m_bVariableROI = svVariant;
+						}
 						if ( SVNavigateTree::GetItem( rTree, CTAG_TOP, hParam, svVariant ) )
-							rcf.lVPos = svVariant;
+						{
+							rcf.m_lVPos = svVariant;
+						}
 						if ( SVNavigateTree::GetItem( rTree, CTAG_LEFT, hParam, svVariant ) )
-							rcf.lHPos = svVariant;
+						{
+							rcf.m_lHPos = svVariant;
+						}
 						if ( SVNavigateTree::GetItem( rTree, CTAG_CX, hParam, svVariant ) )
-							rcf.lWidth = svVariant;
+						{
+							rcf.m_lWidth = svVariant;
+						}
 						if ( SVNavigateTree::GetItem( rTree, CTAG_CY, hParam, svVariant ) )
-							rcf.lHeight = svVariant;
+						{
+							rcf.m_lHeight = svVariant;
+						}
 					}
 					sOptionTag.Format( CTAGF_OPTION_X, ++iOption );
 				}
 			}
 		}
 		break;
-
 	}
-
 	return hr;
 }
 
@@ -3142,61 +3090,44 @@ void SVConfigurationObject::SaveAcquisitionDevice(SVObjectXMLWriter& rWriter)  c
 		int iIndex = csName.Find( '.', 0 );
 		csBoard = csName.Left( iIndex );
 
-		bool l_bSaveAcq = false;
-
-		if ( csBoard.Compare("Viper_RGB_1") == 0 )
+		if ( ! csBoard.IsEmpty() )
 		{
-			if ( csName.Compare("Viper_RGB_1.Dig_0.Ch_All") == 0 )
+			int iDigIndex = csName.Find( '.', iIndex + 1 );
+			csDig = csName.Mid( iIndex + 1, iDigIndex - iIndex - 1 );
+			if ( ! csDig.IsEmpty() )
 			{
-				l_bSaveAcq = true;
-			}
-		}
-		else
-		{ 
-			//not an RGB write it out
-			l_bSaveAcq = true;
-		}
-
-		if ( l_bSaveAcq )
-		{
-			if ( ! csBoard.IsEmpty() )
-			{
-				int iDigIndex = csName.Find( '.', iIndex + 1 );
-				csDig = csName.Mid( iIndex + 1, iDigIndex - iIndex - 1 );
-				if ( ! csDig.IsEmpty() )
+				rWriter.StartElement( csBoard );
+				rWriter.StartElement( csDig );
+				if ( nullptr != pFiles )
 				{
-					rWriter.StartElement( csBoard );
-					rWriter.StartElement( csDig );
-					if ( nullptr != pFiles )
-					{
-						CString csFiles = pFiles->GetFileNameList();
+					CString csFiles = pFiles->GetFileNameList();
 
-						_variant_t svVariant;
-						svVariant.SetString( csFiles );
-						rWriter.WriteAttribute( CTAG_ACQUISITION_DEVICE_FILE_NAME, svVariant );
-					}
-
-					if ( nullptr != pDeviceParams )
-					{
-						// test for File Acquisition, since there is no LUT, Light, or DeviceParams per se
-						if (csBoard == _T("File")) 
-						{
-							SaveFileAcquisitionConfiguration(rWriter, *pDeviceParams);
-						}
-						else
-						{
-							if ( nullptr != pLight && nullptr != pLut )
-							{
-								SaveAcquistionConfiguration(rWriter, *pLight, *pLut, *pDeviceParams );
-							}
-						}
-					}
-
-					rWriter.EndElement(); //csDig
-					rWriter.EndElement(); //csBoard
+					_variant_t svVariant;
+					svVariant.SetString( csFiles );
+					rWriter.WriteAttribute( CTAG_ACQUISITION_DEVICE_FILE_NAME, svVariant );
 				}
+
+				if ( nullptr != pDeviceParams )
+				{
+					// test for File Acquisition, since there is no LUT, Light, or DeviceParams per se
+					if (csBoard == _T("File")) 
+					{
+						SaveFileAcquisitionConfiguration(rWriter, *pDeviceParams);
+					}
+					else
+					{
+						if ( nullptr != pLight && nullptr != pLut )
+						{
+							SaveAcquistionConfiguration(rWriter, *pLight, *pLut, *pDeviceParams );
+						}
+					}
+				}
+
+				rWriter.EndElement(); //csDig
+				rWriter.EndElement(); //csBoard
 			}
-		}// end if ( l_bSaveAcq )
+		}
+		
 	}// end while ( pos != NULL )
 
 	rWriter.EndElement(); //End of CTAG_ACQUISITION_DEVICE
@@ -3422,15 +3353,6 @@ void SVConfigurationObject::SaveInspection(SVObjectXMLWriter& rWriter) const
 			rWriter.WriteAttribute( CTAG_INSPECTION_TOOLSET_IMAGE, svVariant );
 			svVariant.Clear();
 
-#ifdef USE_OBJECT_SCRIPT
-			svVariant = pInspection->GetNewDisableMethod();
-			rWriter.WriteAttribute( CTAG_INSPECTION_NEW_DISABLE_METHOD, svVariant );
-			svVariant.Clear();
-
-			svVariant = pInspection->GetEnableAuxiliaryExtent();
-			rWriter.WriteAttribute( CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT , svVariant );
-			svVariant.Clear();
-#endif
 			//Inspection Process
 			pInspection->Persist(rWriter);
 
@@ -3832,23 +3754,23 @@ void SVConfigurationObject::SaveDeviceParamSpecial( SVObjectXMLWriter& rWriter, 
 				rWriter.WriteAttribute( CTAG_NAME, svVariant );
 				svVariant.Clear();
 
-				svVariant = rcf.bVariableROI;
+				svVariant = rcf.m_bVariableROI;
 				rWriter.WriteAttribute( CTAG_VARIABLE_CAMERA_FORMAT, svVariant );
 				svVariant.Clear();
 
-				svVariant = rcf.lHPos;
+				svVariant = rcf.m_lHPos;
 				rWriter.WriteAttribute( CTAG_LEFT, svVariant );
 				svVariant.Clear();
 
-				svVariant = rcf.lVPos;
+				svVariant = rcf.m_lVPos;
 				rWriter.WriteAttribute( CTAG_TOP, svVariant );
 				svVariant.Clear();
 
-				svVariant = rcf.lWidth;
+				svVariant = rcf.m_lWidth;
 				rWriter.WriteAttribute( CTAG_CX, svVariant );
 				svVariant.Clear();
 
-				svVariant = rcf.lHeight;
+				svVariant = rcf.m_lHeight;
 				rWriter.WriteAttribute( CTAG_CY, svVariant );
 				svVariant.Clear();
 

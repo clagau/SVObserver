@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   06 May 2013 14:38:20  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVOLicenseManager\SVOLicenseManager.h"
 #include "SVOResource\resource.h"
+#pragma endregion Includes
 
 class SVLicenseMgrModelessDlg;
 

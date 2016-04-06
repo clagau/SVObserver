@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 13:12:46  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVDataBuffer.h"
 #include "SVValueBaseNormalizerClass.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVGlobal.h"
+#pragma endregion Includes
 
 class SVAnalyzerClass;
 class SVImageClass;
@@ -107,6 +108,5 @@ public:
 
 protected:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 };
 

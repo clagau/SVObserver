@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 class SVImageClass;
 class SVToolClass;
@@ -22,7 +24,7 @@ class SVROIClass : public SVTaskObjectClass
 
 public:
 // Standard constructors
-	SVROIClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVROI );
+	SVROIClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVROI );
 	virtual ~SVROIClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -36,6 +38,5 @@ protected:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	SVInObjectInfoStruct		inputImageObjectInfo;
-
 };
 

@@ -11,15 +11,13 @@
 
 #pragma once
 
-#ifdef SV_SHOW_INCLUDES
-	#pragma message( "Including " __FILE__ )
-#endif
-
+#pragma region Includes
 #include <vector>
 #include "SVObjectPointArrayClass.h"
 #include "SVObjectScriptEnums.h"
 #include "SVObjectDPointArrayClass.h"
 #include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
+#pragma endregion Includes
 
 enum SV_OBJECT_TYPE_ENUM
 {

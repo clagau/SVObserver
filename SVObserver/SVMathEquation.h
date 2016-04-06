@@ -8,33 +8,21 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:29:38  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVEquation.h"
-
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
+#pragma endregion Includes
 
 class SVMathEquationClass : public SVEquationClass
 {
 	SV_DECLARE_CLASS( SVMathEquationClass);
 
-//******************************************************************************
-// Serialization Declaration(s):
-//******************************************************************************
 public:
-	SVMathEquationClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVMATHEQUATION );
+	SVMathEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHEQUATION );
 	virtual ~SVMathEquationClass();
 
 	virtual BOOL OnValidate();
-
-	
 
 protected:
 	void init();

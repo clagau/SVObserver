@@ -45,9 +45,6 @@
     <ClCompile Include="SVEncodeDecodeUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVCrash.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVThreadManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -102,9 +99,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEncodeDecodeUtilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCrash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVThreadManager.h">

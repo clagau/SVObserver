@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxTypedefs.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Matrox Application Interface
@@ -44,11 +46,7 @@ public:
 	static HRESULT SVMatroxIntToHRESULT( SVMatroxIdentifier p_Int );
 
 protected:
-#ifdef _WIN64
    static SVMatroxInt _stdcall SVMatroxHookHandler( SVMatroxInt HookType, SVMatroxIdentifier EventId, void* UserDataPtr );
-#else
-	static long _stdcall SVMatroxHookHandler( long HookType, SVMatroxIdentifier EventId, void* UserDataPtr );
-#endif
 
 private:
 	static void LocalInitialize();

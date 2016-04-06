@@ -8,18 +8,19 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTool.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 class SVPolarTransformationToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVPolarTransformationToolClass );
 
 public:
-	SVPolarTransformationToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORMATIONTOOL );
+	SVPolarTransformationToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORMATIONTOOL );
 	virtual ~SVPolarTransformationToolClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

@@ -9,6 +9,7 @@
 // * .Check In Date   : $Date:   01 Oct 2013 08:25:58  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svimagetest.h"
 #include "SVCameraPage.h"
@@ -18,21 +19,15 @@
 #include "SVCameraFilePropertyPageDlg.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
-#include "SVTestIntekDCamDriverProxy.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-const CString CorecoCameraFileDefExt = ".cca";
-const CString CorecoCameraFileFilter = "Digitizer Files (*.cca)|*.cca|Digitizer Files (*.ccf)|*.ccf||";
-
-const CString SV1394CameraFileDefExt = ".odc";
-const CString SV1394CameraFileFilter = "Digitizer Files (*.odc)|*.odc||";
 
 const CString SVGigeCameraFileDefExt = ".ogc";
 const CString SVGigeCameraFileFilter = "Digitizer Files (*.ogc)|*.ogc||";
@@ -140,32 +135,17 @@ void SVCameraPage::OnAdvancedButtonClick()
 	}
 }
 
-void SVCameraPage::OnCameraFileBrowseButtonClick() 
+void SVCameraPage::OnCameraFileBrowseButtonClick()
 {
 	CString cameraFileFilter;
 	CString cameraFileDefaultExt;
 
 	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();
-	bool bAnalogDigitizer = false;
-	if (pApp->IsDigitizerAnalog())
+	// check for Gige...
+	if (pApp->IsGigeSystem())
 	{
-		bAnalogDigitizer = true;
-		cameraFileFilter = CorecoCameraFileFilter;
-		cameraFileDefaultExt = CorecoCameraFileDefExt;
-	}
-	else
-	{
-		// check for Gige...
-		if (pApp->IsGigeSystem())
-		{
-			cameraFileFilter = SVGigeCameraFileFilter;
-			cameraFileDefaultExt = SVGigeCameraFileDefExt;
-		}
-		else
-		{
-			cameraFileFilter = SV1394CameraFileFilter;
-			cameraFileDefaultExt = SV1394CameraFileDefExt;
-		}
+		cameraFileFilter = SVGigeCameraFileFilter;
+		cameraFileDefaultExt = SVGigeCameraFileDefExt;
 	}
 
 	CFileDialog dlg( TRUE, 
@@ -182,7 +162,7 @@ void SVCameraPage::OnCameraFileBrowseButtonClick()
 	{
 		m_csFileName = dlg.GetPathName();
 
-		LoadCameraFiles(bAnalogDigitizer);
+		LoadSVCameraFiles();
 		m_CameraFileName.SetWindowText( m_csFileName );
 
 		// Reset Camera Image
@@ -319,19 +299,6 @@ void SVCameraPage::ResetCameraFilename()
 	m_CameraFileName.SetWindowText(m_csFileName);
 }
 
-void SVCameraPage::LoadCameraFiles(bool bAnalogDigitizer)
-{
-	// check if 1394 or coreco
-	if (bAnalogDigitizer)
-	{
-		LoadCorecoCameraFiles();
-	}
-	else
-	{
-		LoadSVCameraFiles();
-	}
-}
-
 void SVCameraPage::LoadSVCameraFiles()
 {
 	if (m_pAcquisition)
@@ -366,69 +333,6 @@ void SVCameraPage::LoadSVCameraFiles()
 	{
 		AfxMessageBox("No Acquisition Device", MB_OK);
 	}
-}
-
-void SVCameraPage::LoadCorecoCameraFiles()
-{
-	CString csPathName;
-	CString csCamFile;
-	CString csVicFile;
-
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
-
-	_splitpath( m_csFileName, drive, dir, fname, ext );
-
-	csPathName = drive;
-	csPathName += dir;
-	csPathName += fname;
-
-	csCamFile = csPathName;
-	csVicFile = csPathName;
-
-	_bstr_t l_bstrNameCCA;// = csCamFile.AllocSysString();
-	_bstr_t l_bstrNameCVI;// = csVicFile.AllocSysString();
-
-	SAFEARRAY* psaNames = NULL;
-	if (_stricmp(ext, ".ccf") != 0)
-	{
-		csCamFile += ".cca";
-		csVicFile += ".cvi";
-
-		l_bstrNameCCA = csCamFile;
-		l_bstrNameCVI = csVicFile;
-
-		SAFEARRAYBOUND rgsabound[1];
-		rgsabound[0].lLbound = 0;
-		rgsabound[0].cElements = 2;
-		psaNames = SafeArrayCreate(VT_BSTR, 1, rgsabound);
-		long lIndex = 0;
-		SafeArrayPutElement( psaNames, &lIndex, l_bstrNameCCA.GetBSTR() );
-		lIndex = 1;
-		SafeArrayPutElement( psaNames, &lIndex, l_bstrNameCVI.GetBSTR() );
-	}
-	else
-	{
-		csCamFile += ".ccf";
-		l_bstrNameCCA = csCamFile;
-
-		SAFEARRAYBOUND rgsabound[1];
-		rgsabound[0].lLbound = 0;
-		rgsabound[0].cElements = 1;
-		psaNames = SafeArrayCreate(VT_BSTR, 1, rgsabound);
-		long lIndex = 0;
-		SafeArrayPutElement( psaNames, &lIndex, l_bstrNameCCA.GetBSTR() );
-	}
-
-	unsigned long l_ulHandle = 0;
-	m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &l_ulHandle, m_lSelectedCamera );
-
-	m_pAcquisition->m_rSubsystem.m_svDigitizers.LoadCameraFiles( l_ulHandle, psaNames );
-
-	SafeArrayDestroy(psaNames);
-	psaNames = NULL;
 }
 
 void SVCameraPage::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams)
@@ -495,9 +399,9 @@ void SVCameraPage::StopAcquire()
 	}
 }
 
-void SVCameraPage::EnableViewCameraFileButton(bool bAnalog)
+void SVCameraPage::EnableViewCameraFileButton()
 {
-	::EnableWindow(::GetDlgItem(m_hWnd, IDC_VIEW_CAMERA_FILE), !bAnalog);
+	::EnableWindow(::GetDlgItem(m_hWnd, IDC_VIEW_CAMERA_FILE), true);
 }
 
 void SVCameraPage::OnTimer(UINT_PTR nIDEvent)

@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVAcquisitionInitiator.h"
+#pragma region Includes
 
 class SVFileAcquisitionInitiator
 {
@@ -30,5 +32,3 @@ public:
 
 	static HRESULT CALLBACK TriggerCallback( void *p_pvOwner, void *p_pvData );
 };
-
-

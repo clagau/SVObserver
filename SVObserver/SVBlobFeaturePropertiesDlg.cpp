@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:45:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVBlobFeaturePropertiesDlg.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,11 +21,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVBlobFeaturePropertiesDlg dialog
-
-
-SVBlobFeaturePropertiesDlg::SVBlobFeaturePropertiesDlg(CWnd* pParent /*=NULL*/)
+SVBlobFeaturePropertiesDlg::SVBlobFeaturePropertiesDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVBlobFeaturePropertiesDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVBlobFeaturePropertiesDlg)
@@ -31,6 +29,9 @@ SVBlobFeaturePropertiesDlg::SVBlobFeaturePropertiesDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVBlobFeaturePropertiesDlg::~SVBlobFeaturePropertiesDlg()
+{
+}
 
 void SVBlobFeaturePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -39,7 +40,6 @@ void SVBlobFeaturePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_DEFAULT_VALUE, m_dDefaultValue);
 	//}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(SVBlobFeaturePropertiesDlg, CDialog)
 	//{{AFX_MSG_MAP(SVBlobFeaturePropertiesDlg)

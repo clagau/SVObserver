@@ -132,7 +132,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetFileNameArraySize( long &rlSize ) const
 // Called from SVConfigurationObject::LoadConfiguration
 // Called from CSVOCameraDlg::OnBtnPropVc
 // Called from CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration
-// Called from CSVOPropertyPageDlg::Format7Dlg
+// Called from CSVOPropertyPageDlg::AdjustCameraImageFormat
 HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 {
 	m_DeviceParams.Clear();
@@ -647,9 +647,9 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pIma
 		if ( pParam )
 		{
 			SVCameraFormat& rFormat = pParam->options[ pParam->strValue ];
-			bufWidth = rFormat.lWidth;
-			bufHeight = rFormat.lHeight;
-			iFormat = rFormat.eImageType;
+			bufWidth = rFormat.m_lWidth;
+			bufHeight = rFormat.m_lHeight;
+			iFormat = rFormat.m_eImageType;
 		}
 	}
 

@@ -11,14 +11,16 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVOutputObject.h"
+#pragma endregion Includes
 
 class SVDigitalOutputObject : public SVOutputObject
 {
 public:
 
 	SVDigitalOutputObject( LPCSTR strObjectName );
-	SVDigitalOutputObject( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVDIGITALOUTPUTOBJECT );
+	SVDigitalOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALOUTPUTOBJECT );
 
 	virtual ~SVDigitalOutputObject();
 
@@ -54,4 +56,3 @@ private:
 	bool m_bForcedValue;
 	bool m_bCombinedACK;
 };
-

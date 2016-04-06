@@ -47,9 +47,6 @@ public:
 	const SVObjectInfoStruct& GetObjectOwnerAt( int Index );
 
 	CString GetCompleteObjectNameAt( int Index );
-#ifdef USE_OBJECT_SCRIPT
-	void	GetObjectScriptAt( int Index, CString& RStrScript, CString& RStrAliasTable );
-#endif
 	int		GetResourceIDAt( int Index );
 	const GUID&	GetUniqueObjectIDAt( int Index ) const;
 

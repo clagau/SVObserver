@@ -30,7 +30,6 @@
 #include "SVEnvironmentSettingsDialog.h"
 #include "SVFileNameManagerClass.h"
 #include "SVImageViewScroll.h"
-#include "SVIMServerWrapper.h"
 #include "SVIPChildFrm.h"
 #include "SVMainFrm.h"
 #include "SVDiscreteInputsView.h"
@@ -38,8 +37,6 @@
 #include "SVStartWindow.h"
 #include "SVSVIMStateClass.h"
 #include "SVUtilities.h"
-#include "SVSystemLibrary\SVCrash.h"
-#include "SVLVFastOCR.h"
 #include "SVIPDoc.h"
 #include "SVIODoc.h"
 #include "SVOIPDocClass.h"
@@ -66,15 +63,10 @@
 #include "SVXMLLibrary\SVNavigateTree.h"
 
 #include "SVConfigurationObject.h"
-// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-#include "SVImageCompression\SVImageCompressionClass.h"
-#endif
 #include "ObjectInterfaces\SVUserMessage.h"
 #include "SVOMFCLibrary\SVOINIClass.h"
 #include "SVOMFCLibrary\SVOIniLoader.h"
 
-#include "SV1394CameraManagerDlg.h"
 #include "SVGigeCameraManagerDlg.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVMemoryManager.h"
@@ -85,8 +77,6 @@
 #include "SoftwareTriggerDlg.h"
 
 #include "SVGlobal.h"
-
-#include "SV1394CameraFileLibrary\SVDCamFactoryRegistrar.h"
 
 #include "SVIOController.h"
 
@@ -134,8 +124,6 @@ static const int GoOfflineDefault4GB = 300;
 static const int GoOfflineDefault16GB = 2000;
 
 static const HRESULT ErrorMatroxServiceNotRunning = 0xcf00116f;
-
-LPCTSTR const FRAME_GRABBER_VIPER_DIGITAL                 = (_T("03"));
 
 extern bool g_bUseCorrectListRecursion;
 #pragma endregion Declarations
@@ -346,29 +334,19 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 
 #pragma region Constructor
 SVObserverApp::SVObserverApp()
-	// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-	: m_bImageCompressionStarted( FALSE )
-	  , 
-#else
-	:
-#endif
-	  m_gigePacketSize( 0 )
-	  , m_InputStreamPortNumber( InputStreamPortNumber )
-	  , m_OutputStreamPortNumber( OutputStreamPortNumber )
-	  , m_FailStatusStreamPortNumber( FailStatusStreamPortNumber )
-	  , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
-	  , m_DataValidDelay( 0 )
-	  , m_forcedImageUpdateTimeInSeconds(0)
+: m_gigePacketSize( 0 )
+, m_InputStreamPortNumber( InputStreamPortNumber )
+, m_OutputStreamPortNumber( OutputStreamPortNumber )
+, m_FailStatusStreamPortNumber( FailStatusStreamPortNumber )
+, m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
+, m_DataValidDelay( 0 )
+, m_forcedImageUpdateTimeInSeconds(0)
 {
 	free((void*)m_pszHelpFilePath);
 	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
 	EnableHtmlHelp();
 
 	::OutputDebugString( _T( "Executing => SVObserverApp::SVObserverApp()\n" ) );
-
-	// Register Dcam Drivers w/Factory
-	SVDCamFactoryRegistrar::Register();
 
 	m_csProductName.Empty();
 
@@ -416,11 +394,6 @@ SVObserverApp::SVObserverApp()
 
 	m_pCurrentDocument = nullptr;	// Set by current Document!!!
 	m_pMessageWindow = nullptr;
-
-	//
-	// For GetFirstExisitingIPDoc() and GetNextExistingIPDoc()
-	//
-	m_pFastOcr = nullptr;
 
 	m_ConfigFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 	m_ConfigFileName.setExcludeCharacters( SvO::SVEXCLUDECHARS_CONFIG_NAME );
@@ -846,10 +819,7 @@ void SVObserverApp::OnEnvironmentSettings()
 	{
 		SVEnvironmentSettingsDialogClass cfdDlg;
 
-		BOOL bUpdateMenu = m_ShowUpdateFirmwareInMenu;
-
 		cfdDlg.StartLastAutomatically = m_ShouldRunLastEnvironmentAutomatically;
-		cfdDlg.m_bUpdateFirmwareCheck = m_ShowUpdateFirmwareInMenu;
 
 		if( cfdDlg.DoModal() == IDOK )
 		{
@@ -859,36 +829,6 @@ void SVObserverApp::OnEnvironmentSettings()
 				_T( "Run Last Configuration Automatically" ), 
 				m_ShouldRunLastEnvironmentAutomatically ? 1 : 0
 				);
-
-			if( bUpdateMenu != m_ShowUpdateFirmwareInMenu )
-			{
-				SVOINIClass l_svIni;
-				CString csIni = "C:\\SVObserver\\bin\\svim.ini";
-				if ( m_ShowUpdateFirmwareInMenu )
-				{
-					l_svIni.SetValue("SVIM Information", "ShowUpdateFirmware", "Y", csIni);
-				}
-				else
-				{
-					l_svIni.SetValue("SVIM Information", "ShowUpdateFirmware", "N", csIni);
-				}
-				SVUtilitiesClass util;
-				CWnd *pWindow;
-				CMenu *pMenu;
-				CString szMenuText;
-
-				pWindow = AfxGetMainWnd();
-				pMenu = pWindow->GetMenu();
-				szMenuText = _T("&Utilities");
-
-				if ( pMenu = util.FindSubMenuByName( pMenu, szMenuText ) )
-				{
-					util.LoadMenu (pMenu);
-				}
-
-				//rebuild menu
-				// @WARNING - This comment indicates the menu should be rebuilt, but there is no code here to do this.
-			}
 		}
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
@@ -3021,10 +2961,6 @@ BOOL SVObserverApp::InitInstance()
 		}
 	#endif
 
-	EnableCrashFilter();
-
-	SetThreadType( APPLICATIONTHREAD );
-
 	#ifdef __USE_TRACEWIN
 		afxTraceEnabled = TRUE;
 		PxlTraceInit();                                    // 13 May 1999 - frb.
@@ -3201,14 +3137,6 @@ BOOL SVObserverApp::InitInstance()
 	//check to see what licenses are available before setting up any documents
 	TheSVOLicenseManager().InitLicenseManager();
 	
-	// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-	SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
-
-	HRESULT hr = mainCompressionObject.CreateResourcePool ();
-
-	m_bImageCompressionStarted = hr == S_OK;
-#endif
 	m_mgrRemoteFonts.Startup();
 
 #ifdef LUT_DEBUG
@@ -3320,13 +3248,6 @@ BOOL SVObserverApp::InitInstance()
 	pMainFrame->ShowWindow( SW_SHOWMAXIMIZED );  //m_nCmdShow
 #endif
 	pMainFrame->UpdateWindow();
-
-	// Initialize SVIM Server component
-	// Check Registry for Enable Remote Commands
-	if(  GetProfileInt( _T( "Settings" ), _T( "Enable Remote Commands" ), 0 ) )
-	{
-		InitSVIMServer();
-	}
 
 	//
 	// Init user list...
@@ -3512,21 +3433,10 @@ int SVObserverApp::ExitInstance()
 	SVObjectManagerClass::Instance().DestroyRootObject();
 	// *** // ***
 
-	DestroySVIMServer();
-	
 	INIClose();
 
 	m_mgrRemoteFonts.Shutdown();
 
-	// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-	if ( m_bImageCompressionStarted )
-	{
-		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
-
-		mainCompressionObject.DestroyResourcePool ();
-	}
-#endif
 	SVTriggerProcessingClass::Instance().Shutdown();
 	SVDigitizerProcessingClass::Instance().Shutdown();
 	SVHardwareManifest::Instance().Shutdown();
@@ -3543,7 +3453,6 @@ int SVObserverApp::ExitInstance()
 	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVO_26_SVOBSERVER_STOPPED, nullptr, StdMessageParams );
 	CloseHandle( m_hEvent );
-	DisableCrashFilter();
 
 	#if !defined(_WIN32_WCE) || defined(_CE_DCOM)
 		if( m_ATLInited )
@@ -3656,6 +3565,23 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				hr = SVOCMLoadConfiguration( m_CurrentVersion, configVer, bStr, XMLTree );
 				if (hr & SV_ERROR_CONDITION)
 				{
+					break;
+				}
+				CString itemType;
+				int errorCode(0);
+				hr = SVOCMCheckObsoleteItems( XMLTree, configVer, itemType, errorCode );
+				if (hr & SV_ERROR_CONDITION)
+				{
+					if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
+					{
+						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType, StdMessageParams, errorCode );
+					}
+					else
+					{
+						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+						Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType, StdMessageParams, errorCode, 0, nullptr, MB_OK );
+					}
 					break;
 				}
 
@@ -3771,8 +3697,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			} // while (1)
 			
 			SysFreeString (bStr);
-			bStr = NULL;
-
+			bStr = nullptr;
 
 			if (hr & SV_ERROR_CONDITION)
 			{
@@ -4486,88 +4411,6 @@ BOOL SVObserverApp::InitPath( LPCTSTR TStrPathName, BOOL BCreateIfNotExists /*= 
 	return FALSE;
 }
 
-BOOL SVObserverApp::InitSVIMServer()
-{
-	if(  !IsSVIMServerEnabled() ) // if not already allocated
-	{
-		// Initialize SVIMServer for SVFocusNT
-		if (m_pSVIMServerWrapper = new SVIMServerWrapper)
-		{
-			// Check if Connection Failed
-			if( !m_pSVIMServerWrapper->mSVIMServer.IsStarted() )
-			{
-				// Allow user to change params
-				SetupSVIMServer();
-
-				// Try to create again
-				DestroySVIMServer();
-
-				if (m_pSVIMServerWrapper = new SVIMServerWrapper)
-				{
-					// Still failed ?
-					if( !m_pSVIMServerWrapper->mSVIMServer.IsStarted() )
-					{
-						DestroySVIMServer();
-					}
-				}
-			}
-		}
-		// Success
-		if( m_pSVIMServerWrapper && m_pSVIMServerWrapper->mSVIMServer.IsStarted() )
-		{
-			m_pSVIMServerWrapper->mSVIMServer.SetSVObserverWnd( m_pMainWnd->m_hWnd );
-			m_pSVIMServerWrapper->mSVIMServer.SetGoOffline( GlobalRCGoOffline );
-			m_pSVIMServerWrapper->mSVIMServer.SetGoOnline( GlobalRCGoOnline );
-			m_pSVIMServerWrapper->mSVIMServer.SetGetConfigurationName( GlobalRCGetConfigurationName );
-			m_pSVIMServerWrapper->mSVIMServer.SetGetState( GlobalRCGetState );
-			m_pSVIMServerWrapper->mSVIMServer.SetOpenConfiguration( GlobalRCOpenConfiguration );
-			m_pSVIMServerWrapper->mSVIMServer.SetSaveConfiguration( GlobalRCSaveConfiguration );
-			m_pSVIMServerWrapper->mSVIMServer.SetCloseConfiguration( GlobalRCCloseAndCleanConfiguration );
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
-
-void SVObserverApp::DestroySVIMServer()
-{
-	if( m_pSVIMServerWrapper )
-	{
-		// Should we call some method to shutdown the server ?
-		delete m_pSVIMServerWrapper;
-		m_pSVIMServerWrapper = NULL;
-	}
-}
-
-BOOL SVObserverApp::IsSVIMServerEnabled() const
-{
-	return (m_pSVIMServerWrapper) ? TRUE : FALSE;
-}
-
-bool SVObserverApp::IsMatrox1394() const
-{
-	bool l_bOk = false;
-
-	if ( m_csDigitizerDLL.IsEmpty() )	// only true Matrox has empty dll name
-	{
-		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D1 ) == 0;
-		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D2 ) == 0;
-		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D3 ) == 0;
-	}
-	return l_bOk;
-}
-
-bool SVObserverApp::IsCoreco() const
-{
-	bool l_bOk = false;
-
-	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A4_MONO ) == 0;
-	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A2_MONO ) == 0;
-	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A1_RGB ) == 0;
-
-	return l_bOk;
-}
-
 bool SVObserverApp::IsMatroxGige() const
 {
 	bool l_bOk = false;
@@ -4603,154 +4446,6 @@ BOOL SVObserverApp::CheckSVIMType() const
 	{
 		switch( SVIMType )
 		{
-		case SVIM_PRODUCT_FULL:
-			{
-				Result = ProductType == SVIM_PRODUCT_05;
-
-				break;
-			}
-		case SVIM_PRODUCT_D3:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D3_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D2;
-				Result |= ProductType == SVIM_PRODUCT_D2_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_X1;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_X3;
-
-				break;
-			}
-		case SVIM_PRODUCT_D3_COLOR:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D2_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X3_COLOR;
-
-				break;
-			}
-		case SVIM_PRODUCT_D3_HUB:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D3;
-				Result |= ProductType == SVIM_PRODUCT_D2_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D2;
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_X1;
-				Result |= ProductType == SVIM_PRODUCT_X3;
-
-				break;
-			}
-		case SVIM_PRODUCT_D2:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D2_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_X1;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-
-				break;
-			}
-		case SVIM_PRODUCT_D2_COLOR:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
-
-				break;
-			}
-		case SVIM_PRODUCT_D2_HUB:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D2;
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_X1;
-
-				break;
-			}
-		case SVIM_PRODUCT_D1:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_X1;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-
-				break;
-			}
-		case SVIM_PRODUCT_D1_COLOR:
-			{
-				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
-
-				break;
-			}
-		case SVIM_PRODUCT_D1_HUB:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_X1;
-
-				break;
-			}
-		case SVIM_PRODUCT_X1:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-
-				break;
-			}
-		case SVIM_PRODUCT_X2:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_D2;
-				Result |= ProductType == SVIM_PRODUCT_D3;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-				break;
-			}
-
-		case SVIM_PRODUCT_X3:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_D2;
-				Result |= ProductType == SVIM_PRODUCT_D3;
-				Result |= ProductType == SVIM_PRODUCT_X1_HUB;
-
-				break;
-			}
-		case SVIM_PRODUCT_X1_COLOR:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
-
-				break;
-			}
-		case SVIM_PRODUCT_X2_COLOR:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_D2_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
-				break;
-			}
-		case SVIM_PRODUCT_X3_COLOR:
-			{
-				Result |= ProductType == SVIM_PRODUCT_X1_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X2_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_D1_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_D2_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_D3_COLOR;
-				break;
-			}
-		case SVIM_PRODUCT_X1_HUB:
-			{
-				Result |= ProductType == SVIM_PRODUCT_D1;
-				Result |= ProductType == SVIM_PRODUCT_D1_HUB;
-				Result |= ProductType == SVIM_PRODUCT_X1;
-
-				break;
-			}
 		case SVIM_PRODUCT_X2_GD1A_COLOR:
 		case SVIM_PRODUCT_X2_GD2A_COLOR:
 		case SVIM_PRODUCT_X2_GD4A_COLOR:
@@ -4792,67 +4487,26 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 {
 	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
 
-	if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A4_MONO ) == 0 )
-	{
-		eType = SVIM_PRODUCT_FULL;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A2_MONO ) == 0 )
-	{
-		eType = SVIM_PRODUCT_05;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A1_RGB ) == 0 )
-	{
-		eType = SVIM_PRODUCT_RGB_MONO;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D1 ) == 0 )
-	{
-		eType = SVIM_PRODUCT_D1;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D2 ) == 0 )
-	{
-		eType = SVIM_PRODUCT_D2;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D3 ) == 0 )
-	{
-		eType = SVIM_PRODUCT_D3;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_INTEK_D1 ) == 0 )
-	{
-		eType = SVIM_PRODUCT_X1;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_INTEK_D3 ) == 0 )
-	{
-		eType = SVIM_PRODUCT_X3;
-	}
-	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2) == 0 )
-	{
-		eType = SVIM_PRODUCT_X2;
-	}
-	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A) == 0 )
+	if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A))
 	{
 		eType = SVIM_PRODUCT_X2_GD1A;
 	}
-	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD2A) == 0 )
+	else if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD2A))
 	{
 		eType = SVIM_PRODUCT_X2_GD2A;
 	}
-	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD4A) == 0 )
+	else if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD4A))
 	{
 		eType = SVIM_PRODUCT_X2_GD4A;
 	}
-	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A) == 0 )
+	else if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A;
 	}
-	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A_NONIO) == 0 )
+	else if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A_NONIO;
 	}
-	else if( m_csFrameGrabber.CompareNoCase( FRAME_GRABBER_VIPER_DIGITAL ) == 0 )
-	{
-		eType = SVIM_PRODUCT_DIGITAL;
-	}
-
 	return eType;
 }
 
@@ -6101,11 +5755,6 @@ void SVObserverApp::OnRCOpenCurrentSVX()
 	OpenSVXFile( SVRCGetSVCPathName() );
 }
 
-void SVObserverApp::SetupSVIMServer()
-{
-	if ( m_pSVIMServerWrapper ) { m_pSVIMServerWrapper->mSVIMServer.SetupConnection(); }
-}
-
 void SVObserverApp::UpdateAllMenuExtrasUtilities()
 {
 	SVUtilitiesClass util;
@@ -6226,11 +5875,6 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 			if (SVHardwareManifest::IsMatroxGige(eProductType))
 			{
 				SVGigeCameraManagerDlg dlg;
-				dlg.DoModal();
-			}
-			else
-			{
-				SV1394CameraManagerDlg dlg;
 				dlg.DoModal();
 			}
 		}
@@ -6385,7 +6029,7 @@ HRESULT SVObserverApp::SendCameraParameters( const CStringArray& rCameras )
 
 			if (pDeviceParams)
 			{
-				pDevice->SetDeviceParameters( *pDeviceParams );	// must be done before CreateBuffers for 1394 (in case CameraFormat changes) - EB 20030714
+				pDevice->SetDeviceParameters( *pDeviceParams );	// must be done before CreateBuffers (in case CameraFormat changes)
 			}
 
 			if (pDummyLight)
@@ -7268,18 +6912,6 @@ HRESULT SVObserverApp::INILoad()
 		// Get GIGE packet Size
 		m_gigePacketSize = l_iniLoader.m_gigePacketSize;
 
-		//get firmware options
-		m_csShowUpdateFirmware = l_iniLoader.m_csShowUpdateFirmware;
-		m_csFirmwareCommand = l_iniLoader.m_csFirmwareCommand;
-		m_csFirmwareWorkingDir = l_iniLoader.m_csFirmwareWorkingDir;
-		m_csFirmwareArguments = l_iniLoader.m_csFirmwareArguments;
-
-		m_ShowUpdateFirmwareInMenu = FALSE;
-		if ( 0 == m_csShowUpdateFirmware.CompareNoCase("Y")  )
-		{
-			m_ShowUpdateFirmwareInMenu = TRUE;
-		}
-
 		for ( int i = 0; i < 4; i++ )
 		{
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, 0 == l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) );
@@ -7293,32 +6925,6 @@ HRESULT SVObserverApp::INILoad()
 		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
 		l_hrOk = l_hrOk | LoadAcquisitionDLL();
 		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
-
-		if( -1 < l_iniLoader.m_csHardwareOptions.Find( "FastOCR" ) )
-		{
-#ifdef _WIN64
-			TheSVOLicenseManager().SetFastOCRLicense(false);
-			if ( nullptr != m_pFastOcr )
-			{
-				delete m_pFastOcr;
-				m_pFastOcr = nullptr;
-			}
-#else
-			TheSVOLicenseManager().SetFastOCRLicense(true);
-			if ( nullptr != m_pFastOcr )
-			{
-				m_pFastOcr = new SVLVFastOCR();
-			}
-#endif
-		}
-		else
-		{
-			if ( nullptr != m_pFastOcr )
-			{
-				delete m_pFastOcr;
-				m_pFastOcr = nullptr;
-			}
-		}
 	}
 	else
 	{
@@ -7350,12 +6956,6 @@ HRESULT SVObserverApp::INIClose()
 	m_csAcquisitionBoardName = _T( "Unknown board" );
 	m_csDigitalBoardName = _T( "Unknown board" );
 	m_csRAIDBoardName = _T( "Unknown board" );
-
-	if ( m_pFastOcr )
-	{
-		delete m_pFastOcr;
-		m_pFastOcr = NULL;
-	}
 
 	CloseAcquisitionDLL();
 
@@ -7544,19 +7144,6 @@ HRESULT SVObserverApp::LoadAcquisitionDLL()
 			if( SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLDigitizers ) != S_OK )
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-			}
-
-			if( IsCoreco() )
-			{
-				if( ! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_Quad_1.Dig_0" ) ) &&
-					! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_RGB_1.Dig_0" ) ) )
-				{
-					l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-				}
-			}
-			else
-			{
-				l_hrOk = l_hrOk;
 			}
 		}
 	}

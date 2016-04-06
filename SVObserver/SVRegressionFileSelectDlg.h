@@ -31,7 +31,7 @@ class CSVRegressionFileSelectDlg : public CPropertyPage/*, public ISVPropertyPag
 // Construction
 public:
 	CSVRegressionFileSelectDlg(LPCTSTR lptstrDialogName = NULL);
-	~CSVRegressionFileSelectDlg();
+	virtual ~CSVRegressionFileSelectDlg();
 
 	void SetDlgTitle( LPCTSTR lpszTitle );
 

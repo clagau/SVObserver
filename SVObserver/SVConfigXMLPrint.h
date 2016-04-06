@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <sstream>
 //Moved to precompiled header: #define BOOST_DATE_TIME_NO_LIB
@@ -41,8 +42,6 @@
 #include "SVInputObjectList.h"
 #include "SVDigitalInputObject1.h"
 #include "SVDigitalOutputObject1.h"
-#include "SVOCRParamStruct.h"
-#include "SVOCRGrayParamStruct.h"
 #include "SVArchiveTool.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
@@ -58,6 +57,7 @@
 #include "SVIOController.h"
 #include "SVObserver.h"
 #include "SVUserMaskOperatorClass.h"
+#pragma region Includes
 
 using namespace SVStringConversions;
 
@@ -99,8 +99,6 @@ namespace sv_xml
 		void WriteChildren( Writer writer, SVObjectClass* pObj ) const;
 		void WriteFriends( Writer writer, SVObjectClass* pObj ) const;
 		void WriteInputOutputList( Writer writer, SVObjectClass* pObj ) const;
-		void WriteOCRParameters(Writer writer, const std::string & strParameters) const;
-		void WriteOCRGrayScaleParameters(Writer writer, const std::string & strParameters) const;
 		void WriteValueObject(Writer writer, const std::wstring  tag, const std::wstring  lpszName, const std::wstring  lpszValue) const;
 		void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
 		void WriteGlobalConstants(Writer writer) const;

@@ -26,11 +26,9 @@ public:
 	const HANDLE GetCheckEvent();
 
 protected:
-
 	HANDLE m_hCheckEvent;
 
 	CString m_csRaidStatus;
 	CString m_csErrorStatus;
-
 };
 

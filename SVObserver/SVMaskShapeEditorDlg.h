@@ -27,7 +27,7 @@ class SVMaskShapeEditorDlg : public CDialog, public ISVCancel2, public SVTaskObj
 #pragma region Construction
 public:
 	SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent = NULL);   // standard constructor
-	~SVMaskShapeEditorDlg();
+	virtual ~SVMaskShapeEditorDlg();
 #pragma endregion Construction
 
 #pragma region Public Methods

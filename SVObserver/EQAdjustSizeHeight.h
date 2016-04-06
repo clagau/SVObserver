@@ -10,9 +10,6 @@
 #include "SVEquation.h"
 #include "EQAdjustSize.h"
 #pragma endregion Includes
-
- 
-#pragma once
  
 //! \brief Equation class for Formula for Windows Height for ToolsSize Adjust 
 class EQAdjustSizeHeight : public EQAdjustSize
@@ -20,6 +17,7 @@ class EQAdjustSizeHeight : public EQAdjustSize
 
 	SV_DECLARE_CLASS( EQAdjustSizeHeight);
 public:
-	EQAdjustSizeHeight( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_EQ_ADJUSTSIZE_HEIGHT );
+	EQAdjustSizeHeight( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_EQ_ADJUSTSIZE_HEIGHT );
+	virtual ~EQAdjustSizeHeight();
 };
  

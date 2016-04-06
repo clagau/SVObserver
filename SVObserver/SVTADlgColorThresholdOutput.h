@@ -9,16 +9,11 @@
 //* .Check In Date   : $Date:   26 Jun 2014 18:17:58  $
 //******************************************************************************
 
-#if !defined(SVTADLGCOLORTHRESHOLDOUTPUT_H)
-#define SVTADLGCOLORTHRESHOLDOUTPUT_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVTADlgColorThresholdOutput.h : header file
-//
 
+#pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
+#pragma endregion Includes
 
 class SVColorThresholdClass;
 
@@ -32,7 +27,7 @@ class SVTADlgColorThresholdOutput : public SVTADlgColorThresholdBasePage
 // Construction
 public:
 	SVTADlgColorThresholdOutput();
-	~SVTADlgColorThresholdOutput();
+	virtual ~SVTADlgColorThresholdOutput();
 
 // Dialog Data
 	//{{AFX_DATA(SVTADlgColorThresholdOutput)
@@ -59,6 +54,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVTADLGCOLORTHRESHOLDOUTPUT_H)
-

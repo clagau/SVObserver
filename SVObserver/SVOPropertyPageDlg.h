@@ -91,7 +91,8 @@ class CSVOPropertyPageDlg : public CDialog
 {
 // Construction
 public:
-	CSVOPropertyPageDlg(CWnd* pParent = NULL);   // standard constructor
+	CSVOPropertyPageDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CSVOPropertyPageDlg();
 
 	SVOCameraObj& getCameraObject() { return m_CameraObj; };
     SVOTriggerObj& getTriggerObject() { return m_TriggerObj; };

@@ -21,27 +21,21 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-
-
-
-
-
-
 EQAdjustSize::EQAdjustSize( long subType, GUID resultGuid,  SVObjectClass* POwner, int StringResourceID )
-	:SVEquationClass( POwner, StringResourceID )
-
+: SVEquationClass( POwner, StringResourceID )
 {
 	m_ResultGuid = resultGuid;
 	m_SubType = subType;
 	Init();
 }
 
-
+EQAdjustSize::~EQAdjustSize()
+{
+}
 
 GUID& EQAdjustSize::GetResultGuid()
 {
-		return m_ResultGuid;
-
+	return m_ResultGuid;
 }
 
 DWORD EQAdjustSize::GetObjectColor() const

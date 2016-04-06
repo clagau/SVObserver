@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:14:12  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVVisionProcessorConstants.h"
+#pragma endregion Includes
 
 struct SVStorage
 {

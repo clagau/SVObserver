@@ -11,12 +11,10 @@
 
 #pragma once
 
-#ifdef SV_SHOW_INCLUDES
-	#pragma message( "Including " __FILE__ )
-#endif
-
+#pragma region Includes
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
+#pragma endregion Includes
 
 typedef SvCl::SVObjectArrayClassTemplate<SVDPointClass> SVObjectDPointArrayClass;
 

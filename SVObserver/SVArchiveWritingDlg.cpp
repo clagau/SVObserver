@@ -9,9 +9,11 @@
 // * .Check In Date   : $Date:   23 Apr 2013 09:33:18  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVArchiveWritingDlg.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 // SVArchiveWritingDlg dialog
 
 
-SVArchiveWritingDlg::SVArchiveWritingDlg(CWnd* pParent /*=NULL*/)
+SVArchiveWritingDlg::SVArchiveWritingDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVArchiveWritingDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVArchiveWritingDlg)
@@ -31,6 +33,9 @@ SVArchiveWritingDlg::SVArchiveWritingDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVArchiveWritingDlg::~SVArchiveWritingDlg()
+{
+}
 
 void SVArchiveWritingDlg::DoDataExchange(CDataExchange* pDX)
 {

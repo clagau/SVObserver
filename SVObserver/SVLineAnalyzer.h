@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 13:14:08  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVAnalyzer.h"
 #include "SVToolExtentClass.h"
+#pragma endregion Includes
 
 class SVLineClass;
 
@@ -23,7 +24,7 @@ class SVLineAnalyzerClass : public SVAnalyzerClass
 	friend class SVImageClass;
 
 public:
-	SVLineAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLINEANALYZER );
+	SVLineAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLINEANALYZER );
 	virtual ~SVLineAnalyzerClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -45,8 +46,6 @@ public:
 	// Min,Max values used as inputs from the SVImageToLineProjectClass
 	virtual BOOL GetMinMaxThresholdValues( DWORD& DWMinValue, DWORD& DWMaxValue ){ return FALSE; };
 
-	// *** TB *** 
-	//virtual SVDrawObjectListClass* GetDialogFigure();
 	SVObjectClass* getImageToLineProject();
 
 	SVObjectClass* getLineROI();
@@ -94,16 +93,10 @@ protected:
 
 	SVToolExtentClass           m_svLineExtent;
 
-	// Draw Objects:
-	//SVDrawObjectClass   m_svLineFigure;
-
 	BOOL m_bDisplayAnalyzeLine;
 	BOOL m_bDisplayAnalyzeEdge;
 
-	//SVDrawObjectListClass m_svDialogFigure;
-
 private:
 	void addLineAnalyzerFriend();
-	
 };
 

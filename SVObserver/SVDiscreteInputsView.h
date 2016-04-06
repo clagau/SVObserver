@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
+#pragma endregion Includes
 
 class SVIODoc;
 
@@ -57,7 +59,6 @@ private:
 	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
 
 	SVDataItemManager m_Items;
-
 };
 
 #ifndef _DEBUG  // Testversion in SVDiscreteInputsView.cpp

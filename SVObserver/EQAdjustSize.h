@@ -10,14 +10,13 @@
 #include "SVEquation.h"
 #pragma endregion Includes
 
-
 //! \brief  Base class for Formulas for Tool Width Height and Positions for ToolsSizeAdjust 
 class EQAdjustSize : public SVEquationClass
 {
-
 	
 public:
-	EQAdjustSize( long subType, GUID resultGuid,  SVObjectClass* POwner = NULL , int StringResourceID = 0 );
+	EQAdjustSize( long subType, GUID resultGuid,  SVObjectClass* POwner = nullptr, int StringResourceID = 0 );
+	virtual ~EQAdjustSize();
 
 	virtual BOOL OnValidate()    override;
 	virtual HRESULT ResetObject() override ;

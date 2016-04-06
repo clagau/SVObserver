@@ -9,6 +9,18 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:03:16  $
 //******************************************************************************
 
+#pragma once
+
+#pragma region Includes
+#include <map>
+#include <boost/foreach.hpp>
+#include <boost/assign/list_of.hpp>
+#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
+#include "SVConfigurationTreeWriter.h"
+#pragma endregion
+
 template< typename SVTreeType >
 SVConfigurationTreeWriter< SVTreeType >::SVConfigurationTreeWriter(SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent)
 : m_rTree(rTree), m_htiParent(htiParent)
@@ -64,6 +76,4 @@ template< typename SVTreeType >
 void SVConfigurationTreeWriter< SVTreeType >::ElementAttribute(LPCTSTR pAttrName, const variant_t& value)
 {
 	WriteAttribute(pAttrName, value);
-	//m_elements[0]->attr(pAttrName.c_str(), VariantToString(value));
 }
-

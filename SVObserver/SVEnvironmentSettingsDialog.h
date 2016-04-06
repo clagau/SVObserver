@@ -11,6 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVOResource/resource.h"
+#pragma endregion Includes
+
 class SVEnvironmentSettingsDialogClass : public CDialog
 {
 	//{{AFX_VIRTUAL(SVEnvironmentSettingsDialogClass)
@@ -22,27 +26,17 @@ class SVEnvironmentSettingsDialogClass : public CDialog
 	//{{AFX_MSG(SVEnvironmentSettingsDialogClass)
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
-	afx_msg void OnEnableRemoteCommands();
-	afx_msg void OnSetupSvimServer();
-	afx_msg void OnChkUpdateFirmware();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 	public:
 	//{{AFX_DATA(SVEnvironmentSettingsDialogClass)
 	enum { IDD = IDD_ENVIRONMENT_SETTINGS_DIALOG };
-	CButton	m_ctlUpdateFirmware;
 	BOOL	StartLastAutomatically;
-	BOOL	m_enableRemoteCommands;
 	//}}AFX_DATA
 
 public:
-	SVEnvironmentSettingsDialogClass(CWnd* pParent = NULL);   // Standardkonstruktor
-
-	BOOL m_bUpdateFirmwareCheck;
-
-protected:
-	void UpdateRemoteCommandSetupButton();
-
+	SVEnvironmentSettingsDialogClass(CWnd* pParent = nullptr);   // Standardkonstruktor
+	virtual ~SVEnvironmentSettingsDialogClass();
 };
 

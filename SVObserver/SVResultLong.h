@@ -11,15 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVResult.h"
 #include "SVValueObject.h"
+#pragma endregion Includes
 
 class SVLongResultClass : public SVResultClass  
 {
 	SV_DECLARE_CLASS( SVLongResultClass );
 
 public:
-	SVLongResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_RESULT_LONG );
+	SVLongResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_LONG );
 	virtual ~SVLongResultClass();
 
 public:

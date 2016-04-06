@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:18:28  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVLongValueObjectClass : public SVValueObjectClassImpl <long>
 {
@@ -21,20 +22,16 @@ class SVLongValueObjectClass : public SVValueObjectClassImpl <long>
 
 public:
 	SVLongValueObjectClass( LPCTSTR ObjectName );
-	SVLongValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLONGVALUEOBJECT );
+	SVLongValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLONGVALUEOBJECT );
 	SVLongValueObjectClass( const SVLongValueObjectClass& rhs );
 	const SVLongValueObjectClass& operator = (const SVLongValueObjectClass& rhs);
 
 	virtual ~SVLongValueObjectClass();
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist( SVObjectWriter& rWriter);
 
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 protected:
-
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, CString value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, int value );
@@ -46,6 +43,5 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
 

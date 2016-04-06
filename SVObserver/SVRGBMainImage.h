@@ -8,16 +8,17 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:00:42  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVCameraImageTemplate.h"
+#pragma endregion Includes
 
 class SVRGBMainImageClass : public SVCameraImageTemplate
 {
 public:
 	SVRGBMainImageClass( LPCSTR ObjectName );
-	SVRGBMainImageClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVRGBMAINIMAGE );
+	SVRGBMainImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRGBMAINIMAGE );
 
 	virtual ~SVRGBMainImageClass();
 
@@ -34,7 +35,5 @@ protected:
 	virtual BOOL GetCameraImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
 
 	virtual BOOL UpdateBuffer();
-
 };
-
 

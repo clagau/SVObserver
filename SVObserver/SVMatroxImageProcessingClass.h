@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:34:18  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
+#pragma endregion Includes
 
 class SVBarCodeBufferInfoClass;
 class SVDataBufferInfoClass;
@@ -102,6 +103,5 @@ private:
 
 	//Do not implement this method
 	const SVMatroxImageProcessingClass& operator=( const SVMatroxImageProcessingClass& p_rObject );
-
 };
 

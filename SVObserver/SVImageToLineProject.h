@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 12:44:06  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVImageLibrary/SVExtentLineStruct.h"
 
 #include "SVLine.h"
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 class SVToolClass;
 
@@ -23,7 +24,7 @@ class SVImageToLineProjectClass : public SVTaskObjectClass
 	SV_DECLARE_CLASS( SVImageToLineProjectClass )
 
 public:
-	SVImageToLineProjectClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVIMAGETOLINEPROJECT );
+	SVImageToLineProjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGETOLINEPROJECT );
 
 	virtual ~SVImageToLineProjectClass();
 
@@ -60,6 +61,5 @@ protected:
 	// Calculated Min, Max Values from the projection
 	SVDWordValueObjectClass thresholdMin;
 	SVDWordValueObjectClass thresholdMax;
-
 };
 

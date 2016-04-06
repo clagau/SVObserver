@@ -8,18 +8,19 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:00:00  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVLinearAnalyzerClass.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 class SVLinearMaximumForegroundObjectLineAnalyzerClass : public SVLinearAnalyzerClass
 {
 	SV_DECLARE_CLASS( SVLinearMaximumForegroundObjectLineAnalyzerClass );
 
 public:
-	SVLinearMaximumForegroundObjectLineAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
+	SVLinearMaximumForegroundObjectLineAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
 	virtual ~SVLinearMaximumForegroundObjectLineAnalyzerClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

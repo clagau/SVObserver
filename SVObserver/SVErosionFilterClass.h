@@ -11,13 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVFilterClass.h"
+#pragma endregion Includes
 
 class SVErosionFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVErosionFilterClass );
 public:
-	SVErosionFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVEROSIONFILTER );
+	SVErosionFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEROSIONFILTER );
+	virtual ~SVErosionFilterClass();
+
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 };

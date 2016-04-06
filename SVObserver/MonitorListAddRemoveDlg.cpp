@@ -136,10 +136,6 @@ void MonitorListAddRemoveDlg::OnBnClickedAddBtn()
 			{
 				m_PropertiesButton.EnableWindow(true);
 				m_RemoveButton.EnableWindow(true);
-				//only allowing 1 Monitor List for now
-				#ifdef ALLOW_ONLY_ONE_MONITOR_LIST
-				m_AddButton.EnableWindow(false);
-				#endif
 			}
 		}
 	}
@@ -232,12 +228,7 @@ BOOL MonitorListAddRemoveDlg::OnInitDialog()
 		UpdateUsedList(it->first.c_str(), it->second);
 	}
 	m_AvailableList.SetCurSel(0); // select first item
-
-#ifdef ALLOW_ONLY_ONE_MONITOR_LIST
-	m_AddButton.EnableWindow(m_UsedList.GetCount() < 1);
-#else
 	m_AddButton.EnableWindow(true);
-#endif
 
 	m_RemoveButton.EnableWindow(m_UsedList.GetCount() > 0);
 	m_PropertiesButton.EnableWindow(m_UsedList.GetCount() > 0);

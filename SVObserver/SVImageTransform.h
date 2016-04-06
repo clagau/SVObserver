@@ -8,18 +8,12 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   15 May 2014 12:44:00  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTransform.h"
 #include "SVImageClass.h"
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
+#pragma endregion Includes
 
 class SVImageTransformClass : public SVTransformClass
 {
@@ -27,7 +21,7 @@ class SVImageTransformClass : public SVTransformClass
 
 #pragma region Constructor
 public:
-	SVImageTransformClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVIMAGETRANSFORM );
+	SVImageTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGETRANSFORM );
 	virtual ~SVImageTransformClass();
 #pragma endregion
 

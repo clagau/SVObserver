@@ -60,21 +60,12 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 		if(PathFileExists(p_szLibrary))
 		{
 			// Check bitness
-#ifdef _WIN64
 			if( CheckBitness( p_szLibrary ) != ImageFileMachineAMD64 )
 			{
 				CString l_strTmp;
 				l_strTmp.Format(_T("External Tool %s is not 64Bit"),p_szLibrary);
 				fnNotifyProgress( l_strTmp);
 			}
-#else
-			if( CheckBitness( p_szLibrary ) != ImageFileMachineI386 )
-			{
-				CString l_strTmp;
-				l_strTmp.Format(_T("External Tool %s is not 32Bit"),p_szLibrary);
-				fnNotifyProgress( l_strTmp);
-			}
-#endif
 		}
 		fnNotifyProgress( _T("Attempting LoadLibrary"));
 		m_hmHandle = ::LoadLibrary( p_szLibrary );

@@ -20,7 +20,7 @@ class SVUnaryImageOperatorClass : public SVUnaryOperatorClass
 {
 	SV_DECLARE_CLASS( SVUnaryImageOperatorClass );
 public:
-	SVUnaryImageOperatorClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATOR );
+	SVUnaryImageOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATOR );
 	
 public:
 

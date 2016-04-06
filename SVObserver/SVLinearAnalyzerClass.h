@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVAnalyzer.h"
 #include "SVValueBaseNormalizerClass.h"
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 class SVLinearEdgeProcessingClass;
 
@@ -24,7 +26,7 @@ class SVLinearAnalyzerClass : public SVAnalyzerClass
 	friend class SVSetupDialogManager;
 
 public:
-	SVLinearAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLINEARANALYZER );
+	SVLinearAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARANALYZER );
 	virtual ~SVLinearAnalyzerClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -73,6 +75,5 @@ protected:
 	BOOL m_bEnableThreshold;
 
 	SVValueBaseNormalizerClass m_svNormalizer;
-
 };
 

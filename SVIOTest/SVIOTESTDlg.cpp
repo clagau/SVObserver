@@ -9,6 +9,7 @@
 // * .Check In Date   : $Date:   17 Sep 2014 15:18:02  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <string>
 #include "SVIOTEST.h"
@@ -18,6 +19,7 @@
 #include "SVSoftwareTriggerSetupDlg.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,7 +30,6 @@ static char THIS_FILE[] = __FILE__;
 UINT_PTR m_nTimer;
 extern CSVIOTESTApp theApp;
 
-static LPCTSTR SVTVICLPTDLL = _T("SVTVicLpt.dll");
 static LPCTSTR SVLPTIODLL = _T("SVLptIO.dll");
 
 /////////////////////////////////////////////////////////////////////////////
@@ -79,7 +80,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSVIOTESTDlg dialog
 
-CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=NULL*/)
+CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CSVIOTESTDlg::IDD, pParent)
 	, m_lFanFreq1(0)
 	, m_lFanFreq2(0)
@@ -138,8 +139,8 @@ bool CSVIOTESTDlg::IsSoftwareTrigger() const
 bool CSVIOTESTDlg::AllowTriggerParamEditing() const
 {
 	bool bRetVal = false;
-	if( m_csDigital.CompareNoCase("SVNId.dll") == 0 ||
-		m_csDigital.CompareNoCase("SVNI.dll") == 0 ||
+	if( 0 == m_csDigital.CompareNoCase("SVNId.dll") ||
+		0 == m_csDigital.CompareNoCase("SVNI.dll") ||
 		IsSoftwareTrigger())
 	{
 		bRetVal = true;
@@ -233,11 +234,11 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
-	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
+	ASSERT(IDM_ABOUTBOX == (IDM_ABOUTBOX & 0xFFF0));
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != NULL)
+	if (nullptr != pSysMenu)
 	{
 		CString strAboutMenu;
 		strAboutMenu.LoadString(IDS_ABOUTBOX);
@@ -253,7 +254,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-		m_nTimer = SetTimer(1, 10, 0);
+	m_nTimer = SetTimer(1, 10, 0);
 	nSeq = 0;
 	nSpeed = 0; //slow
 	m_cbtSlow.SetCheck(~nSpeed);
@@ -262,7 +263,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	// Try to Get the board version if it exists..
 	unsigned long l_lHandle;
 	COleVariant l_vVersion;
-	BSTR l_bstName = NULL;
+	BSTR l_bstName = nullptr;
 	CString l_strName;
 	CString l_strWindowName;
 	CString l_strNewName;
@@ -291,15 +292,10 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	l_strDesc = "12 - " + l_strDesc;
 	m_BoardModelCombo.AddString( l_strDesc.c_str() );
 
-	l_strDesc = l_INIHardware.GetValueString("IO Board","13","Entech Analog");
-	l_strDesc = "13 - " + l_strDesc;
-	m_BoardModelCombo.AddString( l_strDesc.c_str() );
-
 	// Default board is an IO board model 10
 	m_BoardModel = 0;
 
-	if( 0 == m_csDigital.CompareNoCase(SVTVICLPTDLL) ||
-		0 == m_csDigital.CompareNoCase(SVLPTIODLL))
+	if(0 == m_csDigital.CompareNoCase(SVLPTIODLL))
 	{
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue );
@@ -323,13 +319,6 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 				m_BoardModel = 2;
 				break;
 			}
-			case SVRABBIT_SVIM_ANALOG:
-			{
-				ShowFans(false);
-				m_BoardModel = 3;
-				break;
-			}
-			
 		}
 		m_BoardModelCombo.SetCurSel( m_BoardModel );
 	}
@@ -351,7 +340,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	// as an array and therefore this enum may not apply.
 	HRESULT l_hr = m_psvTriggers->GetParameterName( l_lHandle, SVBoardVersion, &l_bstName );
 
-	if( l_hr == S_OK )
+	if( S_OK == l_hr )
 	{
 		l_strName = l_bstName;
 		GetWindowText( l_strWindowName );
@@ -379,7 +368,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 
 void CSVIOTESTDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
-	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
+	if (IDM_ABOUTBOX == (nID & 0xFFF0))
 	{
 		CAboutDlg dlgAbout;
 		dlgAbout.DoModal();
@@ -438,8 +427,6 @@ void CSVIOTESTDlg::OnButton1()
 	{
 		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, false );
 	}
-
-
 }
 
 void CSVIOTESTDlg::OnButton2() 
@@ -453,7 +440,6 @@ void CSVIOTESTDlg::OnButton2()
 	{
 		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, true );
 	}
-
 }
 
 void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
@@ -500,12 +486,11 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 			default:
 				pCStatic = &m_input1;
 		}
-		if( (m_lSystemType == SVRABBIT_X2 || m_lSystemType == SVRABBIT_X3) && (dwChan == 6 || dwChan == 7) )
+		if( (SVRABBIT_X2 == m_lSystemType || SVRABBIT_X3 == m_lSystemType) && (6 == dwChan || 7 == dwChan) )
 		{
 			pCStatic->SetIcon(AfxGetApp()->LoadIcon( IDI_ICON5));
 		}
-		else
-		if(bValue)
+		else if(bValue)
 		{
 			pCStatic->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1));
 		}
@@ -516,34 +501,18 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 	}
 
 	// Read Fans
-	if( 0 == m_csDigital.CompareNoCase(SVTVICLPTDLL) || 
-		0 == m_csDigital.CompareNoCase(SVLPTIODLL))
+	if(0 == m_csDigital.CompareNoCase(SVLPTIODLL))
 	{
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue);
-		if( SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState, &l_vValue) == S_OK )
+		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState, &l_vValue) )
 		{
-			if( l_vValue.lVal & 1 )
-				m_Fan1.SetIcon( AfxGetApp()->LoadIcon( IDI_ICON4 ));
-			else
-				m_Fan1.SetIcon( AfxGetApp()->LoadIcon( IDI_ICON3 ));
-
-			if( l_vValue.lVal & 2 )
-				m_Fan2.SetIcon( AfxGetApp()->LoadIcon( IDI_ICON4 ));
-			else
-				m_Fan2.SetIcon( AfxGetApp()->LoadIcon( IDI_ICON3 ));
-
-			if( l_vValue.lVal & 4 )
-				m_Fan3.SetIcon( AfxGetApp()->LoadIcon( IDI_ICON4 ));
-			else
-				m_Fan3.SetIcon( AfxGetApp()->LoadIcon( IDI_ICON3 ));
-
-			if( l_vValue.lVal & 8 )
-				m_Fan4.SetIcon( AfxGetApp()->LoadIcon( IDI_ICON4 ));
-			else
-				m_Fan4.SetIcon( AfxGetApp()->LoadIcon( IDI_ICON3 ));
+			m_Fan1.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 1 ) ? IDI_ICON4 : IDI_ICON3 ));
+			m_Fan2.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 2 ) ? IDI_ICON4 : IDI_ICON3 ));
+			m_Fan3.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 4 ) ? IDI_ICON4 : IDI_ICON3 ));
+			m_Fan4.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 8 ) ? IDI_ICON4 : IDI_ICON3 ));
 		}
-		if( SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) == S_OK )
+		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
 		{
 			m_lFanFreq1 = l_vValue.lVal & 0xff;
 			m_lFanFreq2 = (l_vValue.lVal >> 8) & 0xff;
@@ -560,9 +529,13 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 	if (nSeq != 0)
 	{
 		if (nSpeed != 0)
+		{
 			nCount = 10;
+		}
 		else
+		{
 			nCount = 80;
+		}
 
 		if (nCounter >= nCount)
 		{
@@ -574,14 +547,16 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 + 8, true);
 			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount + (numOutputs - 8) , false);
 
-			if (nSeqCount == 7)
+			if (7 == nSeqCount)
+			{
 				nSeqCount = 0;
+			}
 			else
+			{
 				nSeqCount++;
-
+			}
 			nCounter = 0;
 		}
-
 		nCounter++;
 	}
 
@@ -762,17 +737,16 @@ void CSVIOTESTDlg::OnSequence()
 	{
 		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(dwChan, true);
 	}
-
 }
 
 void CSVIOTESTDlg::OnSlow() 
 {
-	nSpeed =0;
+	nSpeed = 0;
 }
 
 void CSVIOTESTDlg::OnFast() 
 {
-	nSpeed =1;
+	nSpeed = 1;
 }
 
 void CSVIOTESTDlg::OnDestroy() 
@@ -784,9 +758,7 @@ void CSVIOTESTDlg::OnDestroy()
 	{
 		OnStopTriggers();
 	}
-
 	CDialog::OnDestroy();
-
 }
 
 void CSVIOTESTDlg::OnTestOutputs() 
@@ -798,7 +770,7 @@ HRESULT CALLBACK SVCallback( void *pOwner, void *pData )
 {
 	SVClock::SVTimeStamp l_TimeStamp = SVClock::GetTimeStamp();
 
-	if ( pData != NULL )
+	if ( nullptr != pData )
 	{
 		SVIOTriggerDataStruct *l_pData = (SVIOTriggerDataStruct *)pData;
 
@@ -871,7 +843,9 @@ void CSVIOTESTDlg::OnStartTriggers()
 	m_Trigger1Maximum.SetWindowText( csText );
 
 	if (numTriggers > 0)
+	{
 		m_psvTriggers->Register( 1, l_svCallback );
+	}
 
 	l_svCallback.m_pData = &m_svTrigger2Data;
 
@@ -891,8 +865,9 @@ void CSVIOTESTDlg::OnStartTriggers()
 	m_Trigger2Maximum.SetWindowText( csText );
 
 	if (numTriggers > 1)
+	{
 		m_psvTriggers->Register( 2, l_svCallback );
-
+	}
 	l_svCallback.m_pData = &m_svTrigger3Data;
 
 	m_svTrigger3Data.ulLastIndex = 0;
@@ -911,8 +886,9 @@ void CSVIOTESTDlg::OnStartTriggers()
 	m_Trigger3Maximum.SetWindowText( csText );
 
 	if (numTriggers > 2)
+	{
 		m_psvTriggers->Register( 3, l_svCallback );
-
+	}
 	l_svCallback.m_pData = &m_svTrigger4Data;
 
 	m_svTrigger4Data.ulLastIndex = 0;
@@ -931,20 +907,25 @@ void CSVIOTESTDlg::OnStartTriggers()
 	m_Trigger4Maximum.SetWindowText( csText );
 
 	if (numTriggers > 3)
+	{
 		m_psvTriggers->Register( 4, l_svCallback );
-
+	}
 	if (numTriggers > 0)
+	{
 		m_psvTriggers->Start( 1 );
-	
+	}
 	if (numTriggers > 1)
+	{
 		m_psvTriggers->Start( 2 );
-	
+	}
 	if (numTriggers > 2)
+	{
 		m_psvTriggers->Start( 3 );
-
+	}
 	if (numTriggers > 3)
+	{
 		m_psvTriggers->Start( 4 );
-
+	}
 	m_bInterruptEnabled = true;
 	if (IsSoftwareTrigger())
 	{
@@ -960,16 +941,24 @@ void CSVIOTESTDlg::OnStopTriggers()
 	m_psvTriggers->GetCount(&numTriggers);
 
 	if (numTriggers > 3)
+	{
 		m_psvTriggers->Stop( 4 );
+	}
 
 	if (numTriggers > 2)
+	{
 		m_psvTriggers->Stop( 3 );
+	}
 
 	if (numTriggers > 1)
+	{
 		m_psvTriggers->Stop( 2 );
+	}
 
 	if (numTriggers > 0)
+	{
 		m_psvTriggers->Stop( 1 );
+	}
 
 	l_svCallback.m_pCallback = SVCallback;
 	l_svCallback.m_pOwner = this;
@@ -977,23 +966,28 @@ void CSVIOTESTDlg::OnStopTriggers()
 	l_svCallback.m_pData = &m_svTrigger4Data;
 
 	if (numTriggers > 3)
+	{
 		m_psvTriggers->Unregister( 4, l_svCallback );
-
+	}
 	l_svCallback.m_pData = &m_svTrigger3Data;
 
 	if (numTriggers > 2)
+	{
 		m_psvTriggers->Unregister( 3, l_svCallback );
+	}
 
 	l_svCallback.m_pData = &m_svTrigger2Data;
 
 	if (numTriggers > 1)
+	{
 		m_psvTriggers->Unregister( 2, l_svCallback );
-
+	}
 	l_svCallback.m_pData = &m_svTrigger1Data;
 
 	if (numTriggers > 1)
+	{
 		m_psvTriggers->Unregister( 1, l_svCallback );
-
+	}
 	m_bInterruptEnabled = false;
 
 	if (IsSoftwareTrigger())
@@ -1001,7 +995,6 @@ void CSVIOTESTDlg::OnStopTriggers()
 		GetDlgItem(IDC_TRIGGER_PARAM)->EnableWindow(true);
 	}
 }
-
 
 DWORD WINAPI SVWorkerThreadFunc( LPVOID lpParam )
 {
@@ -1030,11 +1023,13 @@ DWORD WINAPI SVWorkerThreadFunc( LPVOID lpParam )
 			if( i != l_pOwner->m_lStaticChannel )
 			{
 				l_bState = ((l_dwAccum & (1 << i)) != 0);
-				if( SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( i, l_bState ) != S_OK)
+				if( S_OK != SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( i, l_bState ) )
+				{
 					AfxMessageBox("Bad Return Code");
+				}
 			}
 		}
-	}while( l_pOwner->m_bThreadRunning );
+	} while( l_pOwner->m_bThreadRunning );
 
 	return 0L;
 }
@@ -1051,35 +1046,22 @@ void CSVIOTESTDlg::OnStartTest()
 	if( !m_bThreadRunning )
 	{
 		m_bThreadRunning = true;
-		m_hWorkerThread = ::CreateThread(NULL, 0, SVWorkerThreadFunc, (LPVOID)this, 0, &dwThreadID );
+		m_hWorkerThread = ::CreateThread(nullptr, 0, SVWorkerThreadFunc, (LPVOID)this, 0, &dwThreadID );
 	}
 	else
 	{
 		m_bThreadRunning = false;
 	}
-//	CButton* l_pButton;
-//	l_pButton = static_cast<CButton*>(GetDlgItem( IDC_START_OUTPUTS ));
-//	l_pButton->SetWindowText(m_bThreadRunning ? "Stop" : "Start");
 }
-
-
 
 void CSVIOTESTDlg::OnRandBtn() 
 {
 	m_bTestRand = !m_bTestRand;
-//	CButton* l_pButton;
-//	l_pButton = static_cast<CButton*>(GetDlgItem( IDC_RANDOM_BUTTON ));
-//	l_pButton->SetWindowText(m_bTestRand ? "Sequence" : "Random");
-	
 }
 
 void CSVIOTESTDlg::OnFastSlow() 
 {
 	m_bFast = !m_bFast;
-//	CButton* l_pButton;
-//	l_pButton = static_cast<CButton*>(GetDlgItem( IDC_FAST_BUTTON ));
-//	l_pButton->SetWindowText(m_bFast ? "Slow" : "Fast");
-	
 }
 
 void CSVIOTESTDlg::OnChangeStaticChannel() 
@@ -1096,7 +1078,6 @@ void CSVIOTESTDlg::OnChangeStaticChannel()
 			AfxMessageBox( "Channel Out of Range");
 		}
 	}
-	
 }
 
 void CSVIOTESTDlg::OnTriggerParam() 
@@ -1135,7 +1116,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 				break;
 			}
 		}
-		if( l_dlg.DoModal() == IDOK)
+		if( IDOK == l_dlg.DoModal() )
 		{
 			for( unsigned long x = 0 ; x < l_ulCount ; x++ )
 			{
@@ -1205,7 +1186,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 				}
 			}
 		}
-		if( l_dlg.DoModal() == IDOK)
+		if( IDOK == l_dlg.DoModal() )
 		{
 			for( unsigned long x = 0 ; x < l_ulCount ; x++ )
 			{
@@ -1239,44 +1220,24 @@ void CSVIOTESTDlg::OnTriggerParam()
 		m_lStrobeInverts = l_dlg.m_lStrobeInverts;
 		m_lTrigInverts = l_dlg.m_lTrigInverts;
 	}
-
 }
-
 
 void CSVIOTESTDlg::ShowFans( bool p_bShow )
 {
-	if( p_bShow )
-	{
-		// If X Series then show all 4 fans.
-		m_Fan1.ShowWindow( SW_SHOW );
-		m_Fan2.ShowWindow( SW_SHOW );
-		m_Fan3.ShowWindow( SW_SHOW );
-		m_Fan4.ShowWindow( SW_SHOW );
-		m_Fan1Txt.ShowWindow( SW_SHOW );
-		m_Fan2Txt.ShowWindow( SW_SHOW );
-		m_Fan3Txt.ShowWindow( SW_SHOW );
-		m_Fan4Txt.ShowWindow( SW_SHOW );
-		GetDlgItem(IDC_FAN_FREQ1)->ShowWindow( SW_SHOW );
-		GetDlgItem(IDC_FAN_FREQ2)->ShowWindow( SW_SHOW );
-		GetDlgItem(IDC_FAN_FREQ3)->ShowWindow( SW_SHOW );
-		GetDlgItem(IDC_FAN_FREQ4)->ShowWindow( SW_SHOW );
-	}
-	else
-	{
-		m_Fan1.ShowWindow( SW_HIDE );
-		m_Fan2.ShowWindow( SW_HIDE );
-		m_Fan3.ShowWindow( SW_HIDE );
-		m_Fan4.ShowWindow( SW_HIDE );
-		m_Fan1Txt.ShowWindow( SW_HIDE );
-		m_Fan2Txt.ShowWindow( SW_HIDE );
-		m_Fan3Txt.ShowWindow( SW_HIDE );
-		m_Fan4Txt.ShowWindow( SW_HIDE );
-		GetDlgItem(IDC_FAN_FREQ1)->ShowWindow( SW_HIDE );
-		GetDlgItem(IDC_FAN_FREQ2)->ShowWindow( SW_HIDE );
-		GetDlgItem(IDC_FAN_FREQ3)->ShowWindow( SW_HIDE );
-		GetDlgItem(IDC_FAN_FREQ4)->ShowWindow( SW_HIDE );
-
-	}
+	UINT cmd = (p_bShow) ? SW_SHOW : SW_HIDE;
+	
+	m_Fan1.ShowWindow( cmd );
+	m_Fan2.ShowWindow( cmd );
+	m_Fan3.ShowWindow( cmd );
+	m_Fan4.ShowWindow( cmd );
+	m_Fan1Txt.ShowWindow( cmd );
+	m_Fan2Txt.ShowWindow( cmd );
+	m_Fan3Txt.ShowWindow( cmd );
+	m_Fan4Txt.ShowWindow( cmd );
+	GetDlgItem(IDC_FAN_FREQ1)->ShowWindow( cmd );
+	GetDlgItem(IDC_FAN_FREQ2)->ShowWindow( cmd );
+	GetDlgItem(IDC_FAN_FREQ3)->ShowWindow( cmd );
+	GetDlgItem(IDC_FAN_FREQ4)->ShowWindow( cmd );
 }
 
 void CSVIOTESTDlg::OnSelchangeBoardModelCombo() 
@@ -1310,13 +1271,6 @@ void CSVIOTESTDlg::OnSelchangeBoardModelCombo()
 			ShowFans(true);
 			break;
 		}
-		case 3: // SVIM Analog IO Board
-		{
-			m_lSystemType = SVRABBIT_SVIM_ANALOG;
-			l_vt.lVal = m_lSystemType;
-			ShowFans(false);
-			break;
-		}
 		default:
 		{
 			m_lSystemType = SVRABBIT_X1;
@@ -1324,8 +1278,9 @@ void CSVIOTESTDlg::OnSelchangeBoardModelCombo()
 			break;
 		}
 	}
-	if( SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt ) != S_OK )
+	if( S_OK != SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt ) )
+	{
 		AfxMessageBox(" Error Setting System Type");
-	
+	}
 }
 

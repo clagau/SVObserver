@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:51:54  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
+#pragma endregion Includes
 
 template<typename TriggerHandler>
 class SVTriggerRelayClass

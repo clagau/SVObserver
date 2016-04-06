@@ -8,17 +8,18 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTool.h"
+#pragma endregion Includes
 
 class SVWindowToolClass : public SVToolClass, public AllowResizeToParent
 {
 	SV_DECLARE_CLASS( SVWindowToolClass );
 
 public:
-	SVWindowToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVWINDOWTOOL );
+	SVWindowToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWINDOWTOOL );
 	virtual ~SVWindowToolClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

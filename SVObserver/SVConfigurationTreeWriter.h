@@ -8,8 +8,9 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:03:08  $
 //******************************************************************************
-
 #pragma once
+
+#pragma region Includes
 
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/foreach.hpp>
@@ -19,6 +20,7 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVConfigurationTreeWriter.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
+#pragma endregion Includes
 
 template< typename SVTreeType >
 class SVConfigurationTreeWriter : public SVObjectWriter

@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:47:04  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVVirtualCamera.h"
 #include "SVAcquisitionClass.h"
+#pragma endregion Includes
 
 class SVLightReference;
 
@@ -48,13 +49,11 @@ protected:
 
 };
 
-
-
 class SVLightReferenceDialogPropertyPageClass : public CPropertyPage
 {
 public:
 	SVLightReferenceDialogPropertyPageClass( LPCTSTR lpszTitle = NULL );
-	~SVLightReferenceDialogPropertyPageClass();
+	virtual ~SVLightReferenceDialogPropertyPageClass();
 
 	SVVirtualCamera*       mpCamera;  // for band information
 	SVAcquisitionClassPtr  mpDevice;  // for max and min values
@@ -112,5 +111,4 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
 

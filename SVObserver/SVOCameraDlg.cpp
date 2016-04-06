@@ -44,6 +44,10 @@ CSVOCameraDlg::CSVOCameraDlg(CWnd* pParent /*=NULL*/)
     m_bModified = FALSE;
 }
 
+CSVOCameraDlg::~CSVOCameraDlg()
+{
+}
+
 void CSVOCameraDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -210,14 +214,6 @@ void CSVOCameraDlg::OnBtnNewVc()
     m_pParent->AddToCameraList(sNewCamera,iDig);
     SVOCameraObjPtr pObj = m_pParent->GetCameraObjectByName(sNewCamera);
 
-    if ( m_pParent->GetProductType() == SVIM_PRODUCT_RGB_MONO )
-    {
-        iDig = 0;
-        int iBands = m_pParent->GetNextCameraNumber() - 1;
-        pObj->SetDigNumber(iDig);
-        pObj->SetBandNumber(iBands);        
-    }
-
     int iPos = m_ctlCameraList.AddString(sNewCamera);
     m_ctlCameraList.SetCurSel(iPos);
     m_pParent->SetModified(TRUE);
@@ -279,10 +275,6 @@ void CSVOCameraDlg::OnBtnPropVc()
 								SetCameraPropForAll(pCameraObj->GetCameraDisplayName());
 							}
 						}
-					}
-					if ( m_pParent->GetProductType() == SVIM_PRODUCT_RGB_MONO )
-					{
-						SetCameraPropForAll( pCameraObj->GetCameraDisplayName() );
 					}
 
 					if ( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )

@@ -8,7 +8,7 @@
 //* .Current Version : $Revision:   1.5  $
 //* .Check In Date   : $Date:   15 May 2014 11:38:40  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <memory>
@@ -18,6 +18,7 @@
 #include "SVOTriggerObj.h"
 #include "SVTriggerSelectionDlg.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,10 @@ CSVOTriggerDeviceDlg::CSVOTriggerDeviceDlg(CWnd* pParent /*=NULL*/)
 	//{{AFX_DATA_INIT(CSVOTriggerDeviceDlg)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
+}
+
+CSVOTriggerDeviceDlg::~CSVOTriggerDeviceDlg()
+{
 }
 
 void CSVOTriggerDeviceDlg::DoDataExchange(CDataExchange* pDX)

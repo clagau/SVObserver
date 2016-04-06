@@ -11,15 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 class SVOperatorClass : public SVTaskObjectClass
 {
 	SV_DECLARE_CLASS( SVOperatorClass );
 
 public:
-	SVOperatorClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVOPERATOR );
-	
+	SVOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOPERATOR );
+	virtual ~SVOperatorClass();
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 
 protected:
@@ -27,6 +29,5 @@ protected:
 
 private:
 	void init();
-
 };
 

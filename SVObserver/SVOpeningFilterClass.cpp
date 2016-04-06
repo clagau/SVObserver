@@ -22,6 +22,10 @@ SVOpeningFilterClass::SVOpeningFilterClass( SVObjectClass* POwner, int StringRes
 	outObjectInfo.ObjectTypeInfo.SubType = SVOpeningFilterObjectType;
 }
 
+SVOpeningFilterClass::~SVOpeningFilterClass()
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

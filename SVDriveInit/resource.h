@@ -27,7 +27,6 @@
 #define IDC_EDIT1                       1012
 #define IDC_PRODUCT_INFO                1014
 #define IDC_SINGLECAMERA_CHECK          1015
-#define IDC_1394_HUB                    1016
 
 // Next default values for new objects
 // 

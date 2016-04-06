@@ -8,11 +8,12 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   23 Apr 2013 10:18:32  $
 // ******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
+#pragma endregion Includes
 
 #pragma pack (push, 1)
 struct InputValueDefinitionStruct

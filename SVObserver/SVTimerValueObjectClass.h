@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:43:58  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInt64ValueObjectClass.h"
+#pragma endregion Includes
 
 class SVTimerValueObjectClass : public SVInt64ValueObjectClass  
 {
@@ -20,7 +21,7 @@ class SVTimerValueObjectClass : public SVInt64ValueObjectClass
 
 public:
 	SVTimerValueObjectClass( LPCTSTR ObjectName);
-	SVTimerValueObjectClass( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
+	SVTimerValueObjectClass( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	virtual ~SVTimerValueObjectClass();
 
 	BOOL Start();
@@ -34,7 +35,5 @@ private:
 	void LocalInitialize();
 
 	SVClock::SVTimeStamp m_Start;  // Time Stamp in Milliseconds
-
 };
-
 

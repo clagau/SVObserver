@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:17:54  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 
 #include "SVIPResultItemData.h"
 #include "SVIPResultItemDefinition.h"
+#pragma endregion Includes
 
 struct SVIPResultData
 {
@@ -33,6 +34,5 @@ struct SVIPResultData
 
 	double m_TriggerDistance;
 	double m_ToolSetTime;
-
 };
 

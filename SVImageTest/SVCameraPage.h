@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "DisplayPicture.h"
+#pragma endregion Includes
 
 class SVCameraPage;
 
@@ -99,14 +101,12 @@ private:
 	void ResetCount();
 	void ResetCameraFilename();
 
-	void LoadCameraFiles(bool bAnalogDigitizer);
 	void LoadSVCameraFiles();
-	void LoadCorecoCameraFiles();
 
 	void CreateCameraImage();
 	void SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams);
 
-	void EnableViewCameraFileButton(bool bAnalogDigitizer);
+	void EnableViewCameraFileButton();
 
 	UINT_PTR m_timerID;
 };

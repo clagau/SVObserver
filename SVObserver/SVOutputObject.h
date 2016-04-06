@@ -8,17 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:15:50  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVObjectLibrary/SVObjectClass.h"
+#pragma endregion Includes
 
 class SVOutputObject : public SVObjectClass
 {
 public:
 	SVOutputObject( LPCSTR strObjectName );
-	SVOutputObject( SVObjectClass* POwner = NULL,
+	SVOutputObject( SVObjectClass* POwner = nullptr,
 					int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECT );
 
 	virtual ~SVOutputObject();
@@ -31,7 +32,6 @@ public:
 	virtual HRESULT Reset() = 0;
 
 	BOOL	m_bCreated;
-
 };
 
 typedef SVVector< SVOutputObject* > SVOutputObjectArray;

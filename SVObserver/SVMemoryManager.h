@@ -11,12 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <map>
 #include "SVOLibrary/SVContainableCriticalSection.h"
 #include "SVOMFCLibrary/SVTemplate.h"	// for singleton
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 // manages multiple virtual pools of memory
 // no memory is actually allocated
@@ -36,7 +38,6 @@ public:
 	__int64 ReservedBytes( LPCTSTR strPoolName ){ return SizeOfPoolBytes(strPoolName) - FreeBytes(strPoolName);}
 
 private:
-
 	// currently SVMemoryPool is thread-safe dealing with multiple owners,
 	// but an individual owner is not thread-safe.
 	// this may be changed if needed.
@@ -73,11 +74,7 @@ private:
 				SVSingleLock lock( m_critsec );
 				iter = m_mapEntries.insert( SVMemoryPoolEntryPair(owner, SVMemoryPoolEntry()) ).first;
 			}
-#ifndef _WIN64
-			::InterlockedExchangeAdd( const_cast <LPLONG> (&m_lUsed), static_cast<long>(lSizeInBytes) );
-#else
 			__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), lSizeInBytes );
-#endif
 			iter->second.lSize += lSizeInBytes;
 
 			return hr;
@@ -92,11 +89,8 @@ private:
 			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
 			if ( iter != m_mapEntries.end() )
 			{
-#ifndef _WIN64
-			::InterlockedExchangeAdd(  const_cast <LPLONG> (&m_lUsed), static_cast<long>(-iter->second.lSize) ); 
-#else
-			__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize );
-#endif
+				__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize );
+
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d\n"), owner, iter->second.lSize);
 				SVSingleLock lock( m_critsec );
 				m_mapEntries.erase( m_mapEntries.find(owner) );
@@ -121,12 +115,7 @@ private:
 					TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d >= %d\n"), owner, lSizeInBytes, iter->second.lSize);
 				}
 
-#ifndef _WIN64
-			::InterlockedExchangeAdd(  const_cast <LPLONG> (&m_lUsed), -lSizeInBytes);
-#else
-			__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -lSizeInBytes );
-#endif
-
+				__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -lSizeInBytes );
 
 				iter->second.lSize -= lSizeInBytes;
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d, remaining = %d\n"), owner, lSizeInBytes, iter->second.lSize);
@@ -166,21 +155,12 @@ private:
 		typedef std::map <OWNERTYPE, SVMemoryPoolEntry> SVMemoryPoolEntryMap;
 
 		SVMemoryPoolEntryMap m_mapEntries;
-#ifndef _WIN64
-		volatile long m_lPoolSize;
-		volatile long m_lUsed;
-#else
 		volatile __int64 m_lPoolSize;
 		volatile __int64 m_lUsed;
-#endif 
+
 		SVContainableCriticalSection m_critsec;
-		//CCriticalSection m_critsec;
 
-		// disable copying this object ( because of the CCriticalSection )
-		//SVMemoryPool( const SVMemoryPool& );                // disable copy constructor
-		//SVMemoryPool& operator = ( const SVMemoryPool& );   // disable operator =
-
-		public:	// we are using SVContainableCriticalSection to allow copying
+	public:	// we are using SVContainableCriticalSection to allow copying
 		SVMemoryPool( const SVMemoryPool& rhs ) : m_critsec( rhs.m_critsec ), m_mapEntries( rhs.m_mapEntries )
 		{
 			m_lPoolSize = rhs.m_lPoolSize;

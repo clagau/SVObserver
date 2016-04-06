@@ -7,7 +7,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
+#pragma endregion Includes
 
 //TODO (MZA:2015/01/09): Add namespace to fit to the code rules. 
 //								Not edit yet to avoid to change to much code in this prototype.
@@ -47,8 +49,8 @@
 
 			SVImageToLineProjectObjectType			= 0x00000030,
 
-			SVTransformObjectType					= 0x00000040,	// 08 Feb 2000 - SEJ
-			SVPolarTransformObjectType				= 0x00000041,	// RO_25Feb2000
+			SVTransformObjectType					= 0x00000040,
+			SVPolarTransformObjectType				= 0x00000041,
 
 			SVPPQObjectType							= 0x00000050,
 			SVDisplayObjectType						= 0x00000051,
@@ -104,20 +106,14 @@
 			SVRGBMainImageObjectType					= 0x00000002,
 
 			// System Subtypes:
-			SVCorecoSystemObjectType					= 0x00000004,
 			SVMatroxSystemObjectType					= 0x00000005,
 
-			SVCorecoImageProcessingObjectType	= 0x00000006,
-			SVMatroxImageProcessingObjectType	= 0x00000007,
-			SVIntekImageProcessingObjectType	= 0x00000008,
+			SVMatroxImageProcessingObjectType			= 0x00000007,
 			SVFileAcquisitionImageProcessingObjectType	= 0x00000009,
 
 			// Tool Subtypes:
 			SVWindowToolObjectType						= 0x00000010,
-			//SVGageToolObjectType						= 0x00000011,
 			SVMathToolObjectType						= 0x00000012,
-			//SVToolBuildReferenceObjectType				= 0x00000013,
-			//SVToolProfileObjectType						= 0x00000014,
 			SVToolImageObjectType						= 0x00000015,
 			SVToolArchiveObjectType                     = 0x00000016,
 			SVToolLoadImageObjectType					= 0x00000017,
@@ -125,7 +121,7 @@
 			SVStatisticsToolObjectType					= 0x00000019,
 			SVToolAcquisitionObjectType					= 0x0000001a,
 			SVToolFreezeObjectType						= 0x0000001b,
-			SVTransformationToolObjectType				= 0x0000001c,	// 08 Feb 2000 - SEJ
+			SVTransformationToolObjectType				= 0x0000001c,
 			SVPolarTransformationToolObjectType			= 0x0000001d, 
 			SVColorToolObjectType						= 0x0000001e,
 			SVToolCylindricalObjectType					= 0x0000001f,
@@ -141,9 +137,7 @@
 			SVPixelAnalyzerObjectType				    = 0x00000100,
 			SVBlobAnalyzerObjectType					= 0x00000101,
 			SVLuminanceAnalyzerObjectType				= 0x00000102,
-			SVOCRAnalyzerObjectType						= 0x00000103, // 27 Aug 1999 - frb.
-			SVOCRGrayAnalyzerObjectType					= 0x00000104, // 27 Aug 1999 - frb.
-			SVOCVAnalyzerObjectType						= 0x00000105, // 27 Aug 1999 - frb.
+			SVOCVAnalyzerObjectType						= 0x00000105,
 			SVHistogramAnalyzerObjectType				= 0x00000106,
 			SVPixelAnalyzerResultObjectType		        = 0x00000200,
 			SVPixelCountObjectType						= 0x00000201,
@@ -156,16 +150,16 @@
 			SVLineMaximumBackgroundObjectAnalyzerObjectType = 0x00000305,
 			SVLineMaximumObjectAnalyzerObjectType		= 0x00000306,
 
-			SVLinearEdgeAProcessingObjectType = 0x00000380,
-			SVLinearEdgeBProcessingObjectType = 0x00000381,
+			SVLinearEdgeAProcessingObjectType			= 0x00000380,
+			SVLinearEdgeBProcessingObjectType			= 0x00000381,
 
-			SVLinearPixelCountingAnalyzerObjectType		        = 0x00000397,
-			SVLinearEdgeCountingAnalyzerObjectType		        = 0x00000398,
-			SVLinearEdgePositionAnalyzerObjectType		        = 0x00000399,
-			SVLinearMeasurementAnalyzerObjectType	            = 0x0000039a,
+			SVLinearPixelCountingAnalyzerObjectType		= 0x00000397,
+			SVLinearEdgeCountingAnalyzerObjectType		= 0x00000398,
+			SVLinearEdgePositionAnalyzerObjectType		= 0x00000399,
+			SVLinearMeasurementAnalyzerObjectType	    = 0x0000039a,
 			SVLinearMaximumForegroundObjectAnalyzerObjectType = 0x0000039b,
 			SVLinearMaximumBackgroundObjectAnalyzerObjectType = 0x0000039c,
-			SVLinearMaximumObjectAnalyzerObjectType		        = 0x0000039d,
+			SVLinearMaximumObjectAnalyzerObjectType		= 0x0000039d,
 
 
 			// Equation Subtypes:
@@ -174,41 +168,41 @@
 			SVUpperThresholdEquationObjectType			= 0x00000402,
 			SVLowerThresholdEquationObjectType			= 0x00000403,
 			SVAutoThresholdEquationObjectType			= 0x00000404,
-			SVLUTEquationObjectType						= 0x00000405,	// RO_17Mar2000
+			SVLUTEquationObjectType						= 0x00000405,
 
 			//Equation Subtypes for VAriableSize 	
 			EQSizeWidthType								= 0x00000406,
-			EQSizeHeightType							 = 0x00000407,
+			EQSizeHeightType							= 0x00000407,
 			EQSizePositionXType							= 0x00000408,
-			EQSizePositionYType							 = 0x00000409,
+			EQSizePositionYType							= 0x00000409,
 
 			// Math Container Subtypes:
 			SVEvaluateXObjectType						= 0x00000480,
 			SVEvaluateYObjectType						= 0x00000481,
 			SVEvaluateBetaObjectType					= 0x00000482,
-			SVEvaluateObjectType						= 0x00000483,	// 08 Feb 2000 - SEJ
-			SVEvaluateTranslationXObjectType			= 0x00000484,	// 08 Feb 2000 - SEJ
-			SVEvaluateTranslationYObjectType			= 0x00000485,	// 08 Feb 2000 - SEJ
-			SVEvaluateRotationXObjectType				= 0x00000486,	// 08 Feb 2000 - SEJ
-			SVEvaluateRotationYObjectType				= 0x00000487,	// 08 Feb 2000 - SEJ
-			SVEvaluateRotationAngleObjectType			= 0x00000488,	// 08 Feb 2000 - SEJ
-			SVEvaluateCenterXObjectType					= 0x00000489,	// RO_27Feb2000
-			SVEvaluateCenterYObjectType					= 0x0000048a,	// RO_27Feb2000
-			SVEvaluateStartRadiusObjectType				= 0x0000048b,	// RO_27Feb2000
-			SVEvaluateEndRadiusObjectType				= 0x0000048c,	// RO_27Feb2000
-			SVEvaluateStartAngleObjectType				= 0x0000048d,	// RO_27Feb2000
-			SVEvaluateEndAngleObjectType				= 0x0000048e,	// RO_27Feb2000
+			SVEvaluateObjectType						= 0x00000483,
+			SVEvaluateTranslationXObjectType			= 0x00000484,
+			SVEvaluateTranslationYObjectType			= 0x00000485,
+			SVEvaluateRotationXObjectType				= 0x00000486,
+			SVEvaluateRotationYObjectType				= 0x00000487,
+			SVEvaluateRotationAngleObjectType			= 0x00000488,
+			SVEvaluateCenterXObjectType					= 0x00000489,
+			SVEvaluateCenterYObjectType					= 0x0000048a,
+			SVEvaluateStartRadiusObjectType				= 0x0000048b,
+			SVEvaluateEndRadiusObjectType				= 0x0000048c,
+			SVEvaluateStartAngleObjectType				= 0x0000048d,
+			SVEvaluateEndAngleObjectType				= 0x0000048e,
 			
 			// ROI Subtypes:
 			SVLineROIObjectType							= 0x00000500,
 			SVImageROIObjectType						= 0x00000501,
 
 			// Transform Subtypes:
-			SVImageTransformObjectType					= 0x00000600,	// 08 Feb 2000 - SEJ
-			SVPointTransformObjectType					= 0x00000601,	// 08 Feb 2000 - SEJ
+			SVImageTransformObjectType					= 0x00000600,
+			SVPointTransformObjectType					= 0x00000601,
 
 			// Polar Transform Subtypes:
-			SVImagePolarTransformObjectType				= 0x00000700,	// RO_27Feb2000
+			SVImagePolarTransformObjectType				= 0x00000700,
 
 			// Result Subtypes:
 			SVResultPointXObjectType					= 0x00000800,
@@ -219,19 +213,16 @@
 			SVResultDPointYObjectType					= 0x00000805,
 			SVResultVariantObjectType                   = 0x00000806,
 
-			SVResultOCRObjectType                       = 0x00000900,  // 30 Aug 1999 - frb.
-			SVResultOCRGrayObjectType                   = 0x00000901,  // 30 Aug 1999 - frb.
-			SVResultOCVObjectType						= 0x00000902,  // 30 Aug 1999 - frb.
-			SVResultBlobObjectType                      = 0x00000950,
+			SVResultOCVObjectType						= 0x00000902,
 			SVResultStringObjectType                    = 0x00000955,
 			SVBarCodeAnalyzerObjectType					= 0x0000095a,
 			SVResultBarCodeObjectType					= 0x0000095c,
-			SVPatternAnalyzerObjectType					= 0x00000960,	// Sri 04-12-00		
+			SVPatternAnalyzerObjectType					= 0x00000960,
 
 			// Unary Image Operator List Subtypes:
-			SVStdImageOperatorListObjectType			= 0x00001000,	// RO_20Mar2000
-			SVInPlaceImageOperatorListObjectType		= 0x00001001,	// RO_20Mar2000
-			SVLinearImageOperatorListObjectType		= 0x00001002,
+			SVStdImageOperatorListObjectType			= 0x00001000,
+			SVInPlaceImageOperatorListObjectType		= 0x00001001,
+			SVLinearImageOperatorListObjectType			= 0x00001002,
 
 			// Unary Image Operator Subtypes:
 			SVThresholdObjectType						= 0x00002000,
@@ -251,7 +242,7 @@
 			SVSharpen2FilterObjectType					= 0x0000200f,
 			SVSmoothFilterObjectType					= 0x00002010,
 			SVMaxMinusMinFilterObjectType				= 0x00002011,
-			SVLUTOperatorObjectType						= 0x00002012,	// RO_16Mar2000
+			SVLUTOperatorObjectType						= 0x00002012,
 			SVCustomFilterObjectType					= 0x00002013,
 			SVRankingFilterObjectType					= 0x00002014,
 			SVSkeletonFilterObjectType                  = 0x00002015,

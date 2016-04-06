@@ -14,27 +14,12 @@
 #include "SVFilterClass.h"
 #pragma endregion Includes
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVThickeningFilterClass
-// -----------------------------------------------------------------------------
-// .Description : Thickening filters
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-////////////////////////////////////////////////////////////////////////////////
 class SVThickeningFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVThickeningFilterClass );
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-// Standard constructor
-	SVThickeningFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTHICKENINGFILTER );
+
+	SVThickeningFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHICKENINGFILTER );
 	virtual ~SVThickeningFilterClass();
 	
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -43,38 +28,13 @@ public:
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
 
-private:
-	void init();
-
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
-public:
-
-////////////////////////////////////////////////////////////////////////////////
-// Create Operator
-////////////////////////////////////////////////////////////////////////////////
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-public:
+private:
+	void init();
 
 	SVLongValueObjectClass m_lvoItterations;
 	SVBoolValueObjectClass m_bvoGrayOn;	
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-protected:
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
 };
 

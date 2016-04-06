@@ -170,7 +170,7 @@ class SVEquationClass : public SVTaskObjectClass, public SVEquationBase, public 
 	};
 
 public:
-	SVEquationClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVEQUATION );
+	SVEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEQUATION );
 	virtual ~SVEquationClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -207,9 +207,6 @@ public:
 
 //	BOOL IsDataValid();
 
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
 	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );

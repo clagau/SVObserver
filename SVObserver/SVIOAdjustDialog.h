@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:16:38  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
+#pragma endregion Includes
 
 class SVDigitalInputObject;
 class SVDigitalOutputObject;
@@ -70,6 +71,5 @@ private:
 	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
 
 	SVDataItemManager m_Items;
-
 };
 

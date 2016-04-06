@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVValueObjectImpl.h"
+#pragma endregion Includes
 
 class SVBarCodeDataMatrixDialog : public CPropertyPage
 {
@@ -26,7 +28,8 @@ public:
   int GetMinCellSize ();
   int GetMaxCellSize ();
   void EnableControls (int iIdSlider, int iIdEdit, BOOL bEnable);
-	SVBarCodeDataMatrixDialog(CWnd* pParent = NULL);   // standard constructor
+	SVBarCodeDataMatrixDialog(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVBarCodeDataMatrixDialog();
 
 // Dialog Data
 	//{{AFX_DATA(SVBarCodeDataMatrixDialog)

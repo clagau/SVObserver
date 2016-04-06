@@ -11,10 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "ISVCancel.h"
 #include "SVTaskObjectInterfaceClass.h"
 #include "SVTaskObjectList.h"
+#pragma endregion Includes
 
 class SVRangeClass;
 class SVIPDoc;
@@ -30,16 +32,7 @@ enum
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Base Class of module SVResult 
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:06.06.1998 RO			Supplements for sub results -> change deriving from
-//							CObject to CArray
-//	:11.06.1998 RO			Add Calculate( SVDataObjectClass* ) member function
-//	:19.01.1999 RO			Supplements for 3.0, Change Request ...
-//							Is now derived from SVTaskObjectClass instead of
-//							SVObjectClass 
-////////////////////////////////////////////////////////////////////////////////
+
 class SVResultClass : public SVTaskObjectListClass, public ISVCancel
 {
 	SV_DECLARE_CLASS( SVResultClass );
@@ -47,7 +40,7 @@ class SVResultClass : public SVTaskObjectListClass, public ISVCancel
 public:
 	SVResultClass ( 
 		BOOL BCreateDefaultTaskList = FALSE, 
-		SVObjectClass* POwner = NULL, 
+		SVObjectClass* POwner = nullptr, 
 		int StringResourceID = IDS_CLASSNAME_SVRESULT 
 	);
 
@@ -97,7 +90,6 @@ protected:
 	SVBoolValueObjectClass	warned;
 	// Failed, if TRUE ( Reset Value: TRUE )
 	SVBoolValueObjectClass	failed;
-	
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,4 +167,3 @@ protected:
 
 	char*			resultString;
 };
-

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 15:03:10  $
 //******************************************************************************
 
+#pragma region Inlcudes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVSetupDialogManager.h"
@@ -36,12 +37,6 @@
 #include "SVLinearEdgeProcessingClass.h"
 #include "SVLineROI.h"
 #include "SVMeasureAnalyzerAdjustmentSheet.h"
-#include "SVOCRAnalyzer.h"
-#include "SVOCRAnalyzerResult.h"
-#include "SVOCRDialog.h"
-#include "SVOCRGrayAnalyzer.h"
-#include "SVOCRGrayAnalyzerResult.h"
-#include "SVOCRGrayDialog.h"
 #include "SVOCVAnalyzer.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVOCVDialog.h"
@@ -59,6 +54,7 @@
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
 #include "SVRange.h"
+#pragma endregion Inlcudes
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()
 {
@@ -169,10 +165,6 @@ SVSetupDialogManager::SVSetupDialogManager()
 		( SVMathEquationClassGuid, &SVSetupDialogManager::SVNotImplemented )
 		( SVMathToolClassGuid, &SVSetupDialogManager::SVNotImplemented )
 		( SVObjectAppClassGuid, &SVSetupDialogManager::SVNotImplemented )
-		( SVOCRAnalyzerClassGuid, &SVSetupDialogManager::SVOCRAnalyzerClassSetupDialog )
-		( SVOCRAnalyzerResultClassGuid, &SVSetupDialogManager::SVResultClassSetupDialog )
-		( SVOCRGrayAnalyzerClassGuid, &SVSetupDialogManager::SVOCRGrayAnalyzerClassSetupDialog )
-		( SVOCRGrayAnalyzerResultClassGuid, &SVSetupDialogManager::SVResultClassSetupDialog )
 		( SVOCVAnalyzerClassGuid, &SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog )
 		( SVOCVAnalyzerResultClassGuid, &SVSetupDialogManager::SVResultClassSetupDialog )
 		( SVOCVCharacterResultClassGuid, &SVSetupDialogManager::SVNotImplemented )
@@ -407,15 +399,15 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rO
 
 	SVBlobAnalyzerClass* l_pAnalyzer = dynamic_cast< SVBlobAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pAnalyzer != NULL )
+	if( nullptr != l_pAnalyzer )
 	{
-		SVIPDoc* l_pIPDoc = NULL;
+		SVIPDoc* l_pIPDoc = nullptr;
 
-		if( l_pAnalyzer->GetInspection() != NULL )
+		if( nullptr != l_pAnalyzer->GetInspection() )
 		{
 			l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
 
-			if( l_pIPDoc != NULL )
+			if( nullptr != l_pIPDoc )
 			{
 				l_pIPDoc->SetModifiedFlag();
 			}
@@ -423,7 +415,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rO
 
 		SVBlobAnalyzeFeatureDialogClass dlg( l_pAnalyzer->GetTool(), l_pAnalyzer, l_pIPDoc, PParentWnd );
 
-		if ( dlg.DoModal() == IDOK )
+		if ( IDOK == dlg.DoModal() )
 		{
 			BOOL l_bIsFillBlob;
 			l_pAnalyzer->m_bvoFillBlobs.GetValue( l_bIsFillBlob );
@@ -458,7 +450,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 
 	SVColorToolClass* l_pTool = dynamic_cast< SVColorToolClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pTool != NULL )
+	if( nullptr != l_pTool )
 	{
 		CString strTitle;
 		
@@ -483,7 +475,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 
 			if( nullptr != pIPDoc )
 			{
-				if( dlg.DoModal() == IDOK )
+				if( ID_OK == dlg.DoModal() )
 				{
 					pIPDoc->SetModifiedFlag();
 				}
@@ -494,7 +486,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 			
 				pThreshold->bShowHistogram = FALSE;
 
-				pIPDoc->UpdateAllViews( NULL );
+				pIPDoc->UpdateAllViews( nullptr );
 			}
 		}
 		else
@@ -516,7 +508,7 @@ HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog( const SVGUID&
 
 	SVHistogramAnalyzerClass* l_pAnalyzer = dynamic_cast< SVHistogramAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pAnalyzer != NULL )
+	if( nullptr != l_pAnalyzer )
 	{
 		SVHistogramAnalyzerSetupClass dlg;
 		dlg.m_pAnalyzer = l_pAnalyzer;
@@ -596,19 +588,19 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 		SVEdgeMarkerAdjustmentPageClass *pPageA = NULL;
 		SVEdgeMarkerAdjustmentPageClass *pPageB = NULL;
 
-		if( l_psvEdgeA != NULL )
+		if( nullptr != l_psvEdgeA )
 		{
 			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
 		}
 
-		if( l_psvEdgeB != NULL )
+		if( nullptr != l_psvEdgeB )
 		{
 			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
 		}
 
-		if( nullptr != pIPDoc && ( pPageA != NULL || pPageB != NULL ) )
+		if( nullptr != pIPDoc && ( nullptr != pPageA || nullptr != pPageB ) )
 		{
-			if( pPageA != NULL && l_psvEdgeA != NULL )
+			if( nullptr != pPageA && nullptr != l_psvEdgeA )
 			{
 				pPageA->PCurrentAnalyzer = l_pAnalyzer;
 				pPageA->SetNormalizer( l_pAnalyzer->m_svNormalizer );
@@ -649,7 +641,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 				measureDialog.AddPage( pPageA );
 			}
 
-			if( pPageB != NULL && l_psvEdgeB != NULL )
+			if( nullptr != pPageB && nullptr != l_psvEdgeB )
 			{
 				pPageB->PCurrentAnalyzer = l_pAnalyzer;
 				pPageB->SetNormalizer( l_pAnalyzer->m_svNormalizer );
@@ -700,7 +692,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 			l_pAnalyzer->m_svShowAllEdgeBOverlays.GetValue( l_bShowB );
 
 
-			if( measureDialog.DoModal() == IDOK )
+			if( IDOK == measureDialog.DoModal() )
 			{
 				//
 				// Make sure the persistance objects are updated.
@@ -714,12 +706,12 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 
 			try
 			{
-				if( l_pAnalyzer->m_svShowAllEdgeAOverlays.GetOwner() != NULL )
+				if( nullptr != l_pAnalyzer->m_svShowAllEdgeAOverlays.GetOwner() )
 				{
 					l_pAnalyzer->GetInspection()->AddInputRequest( &l_pAnalyzer->m_svShowAllEdgeAOverlays, l_bShowA );
 				}
 
-				if( l_pAnalyzer->m_svShowAllEdgeBOverlays.GetOwner() != NULL )
+				if( nullptr != l_pAnalyzer->m_svShowAllEdgeBOverlays.GetOwner() )
 				{
 					l_pAnalyzer->GetInspection()->AddInputRequest( &l_pAnalyzer->m_svShowAllEdgeBOverlays, l_bShowB );
 				}
@@ -730,7 +722,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 
 				SVGUID l_ToolId;
 
-				if( pTool != NULL )
+				if( nullptr != pTool )
 				{
 					l_ToolId = pTool->GetUniqueObjectID();
 				}
@@ -771,7 +763,7 @@ HRESULT SVSetupDialogManager::SVLineROIClassSetupDialog( const SVGUID& p_rObject
 
 	SVLineROIClass* l_pLine = dynamic_cast< SVLineROIClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pLine != NULL )
+	if( nullptr != l_pLine )
 	{
 		// Route call to all line output users...
 		SVLineClass* pOutputLine  = l_pLine->getOutputLine();
@@ -787,7 +779,7 @@ HRESULT SVSetupDialogManager::SVLineROIClassSetupDialog( const SVGUID& p_rObject
 
 				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( rUserInInfo.UniqueObjectID );
 
-				if( pObject != NULL )
+				if( nullptr != pObject )
 				{
 					SVSetupDialogManager::Instance().SetupDialog( pObject->GetClassID(), pObject->GetUniqueObjectID(), PParentWnd );
 				}
@@ -812,7 +804,7 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog( const SVGUID&
 
 	SVLuminanceAnalyzerClass* l_pAnalyzer = dynamic_cast< SVLuminanceAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pAnalyzer != NULL )
+	if( nullptr != l_pAnalyzer )
 	{
 		SVLuminanceAnalyzerSetupClass dlg;
 		dlg.m_pAnalyzer = l_pAnalyzer;
@@ -826,190 +818,13 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog( const SVGUID&
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
-{
-#ifdef _WIN64
-	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, _T("OCR OCV Analyzer is not supported on this platform."), StdMessageParams, SvOi::Err_10198 ); 
-	return E_FAIL;
-#else
-	HRESULT l_Status = S_OK;
-
-	SVOCRAnalyzerClass* l_pAnalyzer = dynamic_cast< SVOCRAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
-	
-	if( l_pAnalyzer != NULL )
-	{
-		SVOCRAnalyzeResultClass * pOCRResult = ( SVOCRAnalyzeResultClass* ) l_pAnalyzer->GetResultObject();
-		SVToolClass * pTool = l_pAnalyzer->GetTool();
-		SVInspectionProcess* pInspection = l_pAnalyzer->GetInspection();
-
-		if( nullptr != pOCRResult && nullptr != pTool && nullptr != pInspection )
-		{
-			SVOCRDialogClass dlg;
-
-			SVIPDoc* pIPDoc = NULL;
-
-			if( l_pAnalyzer->GetInspection() != NULL )
-			{
-				pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
-			}
-
-			dlg.pTool = pTool;
-			dlg.pOCRAnalyzerResult = pOCRResult;
-			dlg.pDocument = pIPDoc;
-
-			if ( dlg.DoModal() == IDOK )
-			{
-				pOCRResult->LoadMatchString();
-
-				// Make sure the OCR parameters string for scripting 
-				// to be saved as part of the configuration is updated.
-				//
-				pOCRResult->UpdateOCRScriptString();
-				
-				if ( pOCRResult->GenerateFontModel() )
-				{
-					//
-					//
-					// Run the toolset once in case another window is using the
-					// same OCR Font Training file.
-					// 16 Dec 1999 - frb (100)
-					//
-					// Reset all objects...
-					bool bOk = SVSendMessage( (SVObjectClass *)pInspection->GetToolSet(), 
-															 SVM_RESET_ALL_OBJECTS, NULL, NULL ) == SVMR_SUCCESS;
-					if ( bOk )
-					{
-						GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
-						SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-						l_Status = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
-					}
-					else
-					{
-						l_Status = E_FAIL;
-					}
-				}
-				else
-				{
-					l_Status = E_FAIL;
-				}
-			}
-			else
-			{
-				l_Status = S_FALSE;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-#endif
-}
-
-HRESULT SVSetupDialogManager::SVOCRGrayAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
-{
-#ifdef _WIN64
-	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, _T("OCR OCV Gray Scale Analyzer is not supported on this platform."), StdMessageParams, SvOi::Err_10199 ); 
-	return E_FAIL;
-#else
-	HRESULT l_Status = S_OK;
-
-	SVOCRGrayAnalyzerClass* l_pAnalyzer = dynamic_cast< SVOCRGrayAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
-	
-	if( l_pAnalyzer != NULL )
-	{
-		SVOCRGrayAnalyzeResultClass* pOCRResult = ( SVOCRGrayAnalyzeResultClass* ) l_pAnalyzer->GetResultObject();
-		SVToolClass * pTool = l_pAnalyzer->GetTool();
-		SVInspectionProcess* pInspection = l_pAnalyzer->GetInspection();
-
-		if( nullptr != pOCRResult && nullptr != pTool && nullptr != pInspection )
-		{
-			SVOCRGrayDialogClass dlg;
-
-			SVIPDoc* pIPDoc = NULL;
-
-			if( l_pAnalyzer->GetInspection() != NULL )
-			{
-				pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
-			}
-
-			dlg.pTool = pTool;
-			dlg.pOCRAnalyzerResult = pOCRResult;
-			dlg.pDocument = pIPDoc;
-
-			if ( dlg.DoModal() == IDOK )
-			{
-				pOCRResult->LoadMatchString();
-
-				//
-				// Make sure the OCR parameters string for scripting 
-				// to be saved as part of the configuration is updated.
-				//
-				pOCRResult->UpdateOCRScriptString();
-
-				if ( pOCRResult->GenerateFontModel() )
-				{
-					//
-					// Run the toolset once in case another window is using the
-					// same OCR Font Training file.
-					// 16 Dec 1999 - frb (100)
-					//
-					// Reset all objects...
-					bool bOk = SVSendMessage( (SVObjectClass *)pInspection->GetToolSet(), 
-						 SVM_RESET_ALL_OBJECTS, NULL, NULL ) == SVMR_SUCCESS;
-
-					if ( bOk )
-					{
-						GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
-						SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-						l_Status = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
-					}
-					else
-					{
-						l_Status = E_FAIL;
-					}
-				}
-				else
-				{
-					l_Status = E_FAIL;
-				}
-			}
-			else
-			{
-				l_Status = S_FALSE;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-#endif
-}
-
 HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
 {
 	HRESULT l_Status = S_OK;
 
 	SVOCVAnalyzerClass* l_pAnalyzer = dynamic_cast< SVOCVAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pAnalyzer != NULL )
+	if( nullptr != l_pAnalyzer )
 	{
 		SVOCVAnalyzeResultClass* pOCVResult = ( SVOCVAnalyzeResultClass* ) l_pAnalyzer->GetResultObject();
 		SVToolClass * pTool = l_pAnalyzer->GetTool();
@@ -1019,9 +834,9 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 		{
 			SVOCVDialogClass dlg;
 
-			SVIPDoc* pIPDoc = NULL;
+			SVIPDoc* pIPDoc = nullptr;
 
-			if( l_pAnalyzer->GetInspection() != NULL )
+			if( nullptr != l_pAnalyzer->GetInspection() )
 			{
 				pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
 			}
@@ -1030,7 +845,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 			dlg.pOCVAnalyzerResult = pOCVResult;
 			dlg.pDocument = pIPDoc;
 			
-			if( dlg.DoModal() == IDOK )
+			if( IDOK == dlg.DoModal() )
 			{
 				if ( TheSVOLicenseManager().HasMatroxIdentificationLicense() )
 				{
@@ -1048,8 +863,8 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 						// 16 Dec 1999 - frb (100)
 						//
 						// Reset all objects...
-						bool bOk = SVSendMessage( (SVObjectClass *) pInspection->GetToolSet(), 
-											SVM_RESET_ALL_OBJECTS, NULL, NULL ) == SVMR_SUCCESS;
+						bool bOk = SVMR_SUCCESS == SVSendMessage( (SVObjectClass *) pInspection->GetToolSet(), 
+											SVM_RESET_ALL_OBJECTS, 0, 0 );
 						if( bOk )
 						{
 							GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
@@ -1096,22 +911,21 @@ HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog( const SVGUID& p_r
 
 	SVPixelAnalyzerClass* l_pAnalyzer = dynamic_cast< SVPixelAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pAnalyzer != NULL )
+	if( nullptr != l_pAnalyzer )
 	{
-		SVIPDoc* l_pIPDoc = NULL;
+		SVIPDoc* l_pIPDoc = nullptr;
 
-		if( l_pAnalyzer->GetInspection() != NULL )
+		if( nullptr  != l_pAnalyzer->GetInspection() )
 		{
 			l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
 
-			if( l_pIPDoc != NULL )
+			if( nullptr != l_pIPDoc )
 			{
 				l_pIPDoc->SetModifiedFlag();
 			}
 		}
 
-		//SVPixelAnalyzerSetupClass   Dlg (this, pParentWnd);
-		SVPixelAnalyzerSetupClass   Dlg (l_pAnalyzer, pParentWnd);
+		SVPixelAnalyzerSetupClass Dlg (l_pAnalyzer, pParentWnd);
 
 		Dlg.DoModal();
 	}
@@ -1216,7 +1030,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 		SetupDlgSheet.AddPage(&GeneralPage);
 		SetupDlgSheet.AddPage(&AdvancedPage);
 
-		if(SetupDlgSheet.DoModal() == IDOK)
+		if (IDOK == SetupDlgSheet.DoModal())
 		{
 			l_pAnalyzer->m_bAngleAccuracy = GeneralPage.m_bAccuracy;
 
@@ -1267,7 +1081,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 				SVGUID l_ToolId;
 
-				if( pTool != NULL )
+				if( nullptr != pTool )
 				{
 					l_ToolId = pTool->GetUniqueObjectID();
 				}
@@ -1303,13 +1117,13 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& p_rObjectI
 
 	SVResultClass* l_pResult = dynamic_cast< SVResultClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pResult != NULL )
+	if( nullptr != l_pResult )
 	{
 		SVRangeClass* pRange = l_pResult->GetResultRange();
 		if( pRange )
 		{
 			RangeXDialogClass dlg( pRange, PParentWnd );
-			if( dlg.DoModal() != IDOK )
+			if( IDOK != dlg.DoModal() )
 			{
 				l_Status = S_FALSE;
 			}

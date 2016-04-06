@@ -8,18 +8,11 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 14:48:44  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObject.h"
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
-
+#pragma endregion Includes
 
 class SVTransformClass : public SVTaskObjectClass
 {
@@ -29,18 +22,8 @@ class SVTransformClass : public SVTaskObjectClass
 // Constructor(s):
 //******************************************************************************
 public:
-	SVTransformClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTRANSFORM );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
+	SVTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRANSFORM );
 	virtual ~SVTransformClass();
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
 	virtual BOOL OnValidate();
@@ -76,3 +59,4 @@ protected:
 	SVDoubleValueObjectClass    learnedRotationY;
 	SVDoubleValueObjectClass    learnedRotationAngle;
 };
+

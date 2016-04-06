@@ -25,6 +25,5 @@ public:
 	virtual ~SVImageListClass();
 
 	SVImageClass * GetAtByTool(int nIndex);             // 25 Jun 1999 - frb.
-
 };
 

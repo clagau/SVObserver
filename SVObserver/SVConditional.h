@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVEquation.h"
+#pragma endregion Includes
 
 class SVConditionalClass : public SVEquationClass
 {
@@ -21,7 +23,7 @@ class SVConditionalClass : public SVEquationClass
 // Serialization Declaration(s):
 //******************************************************************************
 public:
-	SVConditionalClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVCONDITIONAL );
+	SVConditionalClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONDITIONAL );
 	virtual ~SVConditionalClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -35,5 +37,3 @@ protected:
 protected:
 	SVBoolValueObjectClass result;			// resultant value
 };
-
-

@@ -9,16 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:23:08  $
 //******************************************************************************
 
-#if !defined(AFX_SVPIXELANALYZERSETUPCLASS_H__99AE51A1_5F9D_11D3_A79C_00106F000C76__INCLUDED_)
-#define AFX_SVPIXELANALYZERSETUPCLASS_H__99AE51A1_5F9D_11D3_A79C_00106F000C76__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVPixelAnalyzerSetupClass.h : header file
-//
 
+#pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVPixelAnalyzerClass;
 class SVToolClass;
@@ -31,8 +26,8 @@ class SVPixelAnalyzerSetupClass : public CDialog, public SVTaskObjectInterfaceCl
 // Construction
 public:
 	SVPixelAnalyzerSetupClass(SVPixelAnalyzerClass * apAnalyzer,
-                              CWnd* pParent = NULL);   // standard constructor
-
+                              CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVPixelAnalyzerSetupClass();
 	virtual HRESULT SetInspectionData();
 
 // Dialog Data
@@ -88,7 +83,6 @@ public:
     unsigned long           msvulMaxGrayscale;
     unsigned long           msvulMinGrayscale;
 
-
 protected:
 
 	// Generated message map functions
@@ -108,6 +102,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVPIXELANALYZERSETUPCLASS_H__99AE51A1_5F9D_11D3_A79C_00106F000C76__INCLUDED_)
-

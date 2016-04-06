@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
 #endif
@@ -19,6 +20,7 @@
 
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVOMFCLibrary/SVOIniLoader.h"
+#pragma endregion Includes
 
 class CSVImageTestApp : public CWinApp
 {
@@ -30,7 +32,6 @@ public:
 	CString m_hardwareIniFile;
 	CString m_oemIniFile;
 
-	bool IsDigitizerAnalog() const;
 	bool IsGigeSystem() const;
 
 	SVTestAcquisitionSubsystem* LoadDigitizer();

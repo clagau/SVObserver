@@ -35,7 +35,7 @@ class SVRankingFilterClass : public SVFilterClass
 //******************************************************************************
 public:
 // Standard constructor
-	SVRankingFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVRANKINGFILTER );
+	SVRankingFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANKINGFILTER );
 	virtual ~SVRankingFilterClass();
 	
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

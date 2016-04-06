@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:20:40  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVDoubleValueObjectClass : public SVValueObjectClassImpl <double>
 {
@@ -21,14 +22,11 @@ class SVDoubleValueObjectClass : public SVValueObjectClassImpl <double>
 
 public:
 	SVDoubleValueObjectClass( LPCTSTR ObjectName );
-	SVDoubleValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVDOUBLEVALUEOBJECT );
+	SVDoubleValueObjectClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVDOUBLEVALUEOBJECT );
 	SVDoubleValueObjectClass( const SVDoubleValueObjectClass& rhs );
 	const SVDoubleValueObjectClass& operator = (const SVDoubleValueObjectClass& rhs);
 
 	virtual ~SVDoubleValueObjectClass();
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );	// for compat loading legacy SVDoubleVectorObjectClass
@@ -49,6 +47,5 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
 

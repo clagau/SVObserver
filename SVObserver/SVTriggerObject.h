@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   24 Apr 2013 12:29:22  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVInfoStructs.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#pragma endregion Includes
 
 class SVOResponseClass;
 class SVTriggerClass;
@@ -61,6 +62,5 @@ private:
 	#ifdef SV_LOG_STATUS_INFO
 		SVStatusDeque m_StatusLog;
 	#endif
-
 };
 typedef SVVector< SVTriggerObject* > SVTriggerObjectArray;

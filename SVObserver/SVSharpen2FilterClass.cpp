@@ -22,6 +22,10 @@ SVSharpen2FilterClass::SVSharpen2FilterClass( SVObjectClass* POwner, int StringR
 	outObjectInfo.ObjectTypeInfo.SubType = SVSharpen2FilterObjectType;
 }
 
+SVSharpen2FilterClass::~SVSharpen2FilterClass()
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

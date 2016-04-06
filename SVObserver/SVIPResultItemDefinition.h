@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:45:54  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVIPResultItemDefinition
 {
@@ -35,7 +36,5 @@ protected:
 
 	bool m_IndexPresent;
 	int m_Index;
-	
-
 };
 

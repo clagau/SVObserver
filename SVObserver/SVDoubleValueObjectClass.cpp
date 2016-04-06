@@ -59,68 +59,6 @@ SVDoubleValueObjectClass::~SVDoubleValueObjectClass()
 	CreateBuckets();
 }
 
-#ifdef USE_OBJECT_SCRIPT
-void SVDoubleValueObjectClass::GetObjectScript(CString& rstrScript, CString& rstrAliasTable, int iIndent)
-{
-	CString script;
-	
-	// preallocate 4K
-	script.GetBuffer(4096);  
-	script.ReleaseBuffer(); 
-	
-	// Get the Heading (Class Info)
-	SVValueObjectClass::GetObjectScript(script, rstrAliasTable, iIndent);
-	
-	CString nameStrDelimiter = _T("'");
-	
-	// Generate indent...
-	CString strIndent = _T("\n");
-	if (iIndent)
-	{
-		CString tabsStrIndent(_T('\t'), iIndent);
-		strIndent += tabsStrIndent;
-	}
-	
-	// Name is delimited by single quotes - SEJ july 23,1999
-	// NOTE: Don' use object name here, if object name and name
-	//		 are not identically SetObjectValue(...) could be sent
-	//		 to wrong object while script parsing. RO_22Feb2000
-	CString objectTag = nameStrDelimiter + _T("_object_ID_") + GetName();
-	// GetObjectName();
-	
-	// Get the Data Values (Member Info, Values)
-	CString tmp;
-	tmp.Format("DOUBLE %lf", DefaultValue());
-	
-	// Name is delimited by single quotes - SEJ july 23,1999
-	script += strIndent + objectTag + DEFAULT_TAG_SAVE + nameStrDelimiter + _T(" = ") + tmp + _T(";");
-	
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	
-	// Name is delimited by single quotes - SEJ july 23,1999
-	script += strIndent + objectTag + ARRAY_TAG_SAVE + nameStrDelimiter + _T(" = DOUBLE ") + _T("[ ");
-	
-	// for all elements in the array (objectDepth)
-	for (int i = 0; i < m_iArraySize; i++)
-	{
-		if (i)
-			script += _T(", ");
-		
-		tmp.Format("%f", Element(m_iLastSetIndex, i));
-		script +=  tmp;
-	}
-	script += _T(" ]");
-	
-	// Add termination...
-	script += _T(";");
-	
-	script.FreeExtra();
-	
-	rstrScript += script;
-}
-#endif
-
 void SVDoubleValueObjectClass::Persist(SVObjectWriter& rWriter)
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name

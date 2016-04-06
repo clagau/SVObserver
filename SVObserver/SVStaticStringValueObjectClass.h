@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   18 Nov 2013 13:26:12  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVStaticValueObjectClassImpl.h"
+#pragma endregion Includes
 
 class SVStaticStringValueObjectClass : public SVStaticValueObjectClassImpl < CString >
 {
@@ -20,7 +21,7 @@ class SVStaticStringValueObjectClass : public SVStaticValueObjectClassImpl < CSt
 
 public:
 	SVStaticStringValueObjectClass( LPCTSTR ObjectName );
-	SVStaticStringValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVSTATICSTRINGVALUEOBJECT );
+	SVStaticStringValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTATICSTRINGVALUEOBJECT );
 	SVStaticStringValueObjectClass( const SVStaticStringValueObjectClass& rhs);
 	const SVStaticStringValueObjectClass& operator = (const SVStaticStringValueObjectClass& rhs);
 
@@ -31,9 +32,6 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 //	IMPLEMENT_VALUE_OBJECT_GET_SET()
@@ -57,9 +55,7 @@ public:
 	__forceinline  HRESULT SetValueAt( int iBucket, int iIndex, value_type value ) {return base::SetValueAt(iBucket, iIndex, value); }
 	__forceinline  HRESULT GetValueAt( int iBucket, int iIndex, value_type& rValue ) const {return base::GetValueAt(iBucket, iIndex, rValue); }
 
-
 protected:
-
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, long& rValue ) const;
@@ -68,6 +64,5 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
 

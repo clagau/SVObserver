@@ -11,23 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObjectList.h"
 #include "SVImageClass.h"
 
 #include "SVValueObjectImpl.h"
 
 #include "SVDataBuffer.h"
+#pragma endregion Includes
 
 class SVToolClass;
 class SVIPDoc;
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVUnaryImageOperatorListClass 
@@ -62,48 +56,26 @@ public:
 
 	friend class SVUnaryImageOperatorClass;
 
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-	SVUnaryImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
-
-private:
-	void init();
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
+	SVUnaryImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
 	virtual ~SVUnaryImageOperatorListClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 
-	SVImageClass*				getInputImage();
-
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-public:
+	SVImageClass* getInputImage();
 	virtual BOOL OnValidate();
+
+private:
+	void init();
 
 protected:
 	SVInObjectInfoStruct		inputImageObjectInfo;
 	SVSmartHandlePointer		m_milTmpImageObjectInfo1;
 	SVSmartHandlePointer		m_milTmpImageObjectInfo2;
 };
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVStdImageOperatorListClass  
@@ -140,7 +112,7 @@ class SVStdImageOperatorListClass : public SVUnaryImageOperatorListClass
 // Constructor(s):
 //******************************************************************************
 public:
-	SVStdImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVSTDIMAGEOPERATORLIST );
+	SVStdImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTDIMAGEOPERATORLIST );
 	virtual ~SVStdImageOperatorListClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -172,19 +144,7 @@ private:
 
 public:
 	HRESULT CollectInputImageNames();
-
 };
-
-
-
-
-
-
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVInPlaceImageOperatorListClass 
@@ -217,25 +177,14 @@ class SVInPlaceImageOperatorListClass : public SVUnaryImageOperatorListClass
 // Constructor(s):
 //******************************************************************************
 public:
-	SVInPlaceImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVINPLACEIMAGEOPERATORLIST );
+	SVInPlaceImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPLACEIMAGEOPERATORLIST );
 	virtual ~SVInPlaceImageOperatorListClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-public:
 	virtual BOOL OnValidate();
 	virtual BOOL Run( SVRunStatusClass& RRunStatus );
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
 private:
 	void init();
 };

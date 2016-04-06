@@ -9,31 +9,22 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:42:40  $
 //******************************************************************************
 
-#if !defined(AFX_SVBARCODEPROPERTIES_H__AF5FDD6C_7BE0_11D3_A7D0_00106F010A93__INCLUDED_)
-#define AFX_SVBARCODEPROPERTIES_H__AF5FDD6C_7BE0_11D3_A7D0_00106F010A93__INCLUDED_
+#pragma once
 
+#pragma region Includes
 #include "SVBarCodeGeneralDialog.h"		// Added by ClassView
 #include "SVBarCodeStringMatchDialog.h"	// Added by ClassView
 #include "SVBarCodeAttributesDialog.h"	// Added by ClassView
 #include "SVBarCodeDataMatrixDialog.h"	// Added by ClassView
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#pragma endregion Includes
 
 class SVBarCodeProperties : public CPropertySheet
 {
 	DECLARE_DYNAMIC(SVBarCodeProperties)
 
-// Construction
 public:
-	SVBarCodeProperties(UINT nIDCaption = IDS_DIALOG_TITLE_BARCODEPROPERTIES, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-
-// Attributes
-public:
-
-// Operations
-public:
+	SVBarCodeProperties(UINT nIDCaption = IDS_DIALOG_TITLE_BARCODEPROPERTIES, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	virtual ~SVBarCodeProperties();
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -46,7 +37,6 @@ public:
 	SVBarCodeAttributesDialog m_dlgBarCodeAttributes;
 	SVBarCodeStringMatchDialog m_dlgBarCodeStringMatch;
 	SVBarCodeGeneralDialog m_dlgBarCodeGeneral;
-	virtual ~SVBarCodeProperties();
 
 	// Generated message map functions
 protected:
@@ -60,6 +50,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVBARCODEPROPERTIES_H__AF5FDD6C_7BE0_11D3_A7D0_00106F010A93__INCLUDED_)
-

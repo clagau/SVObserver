@@ -8,18 +8,19 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:03:52  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVLinearAnalyzerClass.h"
 #include "SVValueObject.h"
+#pragma endregion Includes
 
 class SVLinearPixelCountingLineAnalyzerClass : public SVLinearAnalyzerClass
 {
 	SV_DECLARE_CLASS( SVLinearPixelCountingLineAnalyzerClass );
 
 public:
-	SVLinearPixelCountingLineAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
+	SVLinearPixelCountingLineAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
 	virtual ~SVLinearPixelCountingLineAnalyzerClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -35,6 +36,5 @@ protected:
 
 private:
 	void init();
-
 };
 

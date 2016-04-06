@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:17:34  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVIPImageDataElement.h"
 #include "SVIPResultData.h"
+#pragma endregion Includes
 
 struct SVIPProductStruct
 {

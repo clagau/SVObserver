@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:12:50  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTriggerSelectionDlg.h"
+#pragma endregion Includes
 
 class CSVOConfigAssistantDlg;
 
@@ -19,7 +20,8 @@ class CSVOTriggerDeviceDlg : public CPropertyPage
 {
 // Construction
 public:
-	CSVOTriggerDeviceDlg(CWnd* pParent = NULL);   // standard constructor
+	CSVOTriggerDeviceDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CSVOTriggerDeviceDlg();
     void SetupList();
 
 // Dialog Data

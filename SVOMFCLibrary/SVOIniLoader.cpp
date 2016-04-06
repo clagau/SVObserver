@@ -46,9 +46,6 @@ static const TCHAR* const SVIM_X2_GD2A = _T("SVIM X2-GD2A");
 static const TCHAR* const SVIM_X2_GD8A = _T("SVIM X2-GD8A");
 static const TCHAR* const SVIM_X2_GD1A = _T("SVIM X2-GD1A");
 
-static const TCHAR* const UpdateFirmwareCommandTag = _T("UpdateFirmwareCommand");
-static const TCHAR* const UpdateFirmwareWorkingDirectoryTag = _T("UpdateFirmwareWorkingDirectory");
-static const TCHAR* const UpdateFirmwareArgumentsTag = _T("UpdateFirmwareArguments");
 static const TCHAR* const PacketSizeTag = _T("PacketSize");
 
 static const TCHAR* const IOBoardSectionTag = _T("IO Board");
@@ -177,9 +174,6 @@ HRESULT SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 		l_svINI.SetValue( SVIMInfoSectionTag, l_csCameraName, m_csStartFrameType[i], svimIniFile );
 
 	}
-	m_csShowUpdateFirmware.Empty();
-	l_svINI.GetValue(SVIMInfoSectionTag, ShowUpdateFirmwareTag, NTag, &l_bstrValue, svimIniFile );
-	m_csShowUpdateFirmware = l_bstrValue;
 	SysFreeString( l_bstrValue );
 	l_bstrValue = nullptr;
 
@@ -272,22 +266,6 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile, LPCTSTR modelOpti
 			m_csReloadTriggerDLL = m_csReloadAcquisitionDLL;
 		}
 		
-		m_csFirmwareCommand.Empty();
-		m_csFirmwareWorkingDir.Empty();
-		m_csFirmwareArguments.Empty();
-
-		l_svINI.GetValue( m_csAcquisitionBoardName, UpdateFirmwareCommandTag, EmptyString, &l_bstrValue, hardwareIniFile);
-		m_csFirmwareCommand = l_bstrValue;
-		if (! m_csFirmwareCommand.IsEmpty() )
-		{
-			//get the rest of the firmware commands
-			l_svINI.GetValue( m_csAcquisitionBoardName, UpdateFirmwareWorkingDirectoryTag, EmptyString, &l_bstrValue, hardwareIniFile);
-			m_csFirmwareWorkingDir = l_bstrValue;
-
-			l_svINI.GetValue( m_csAcquisitionBoardName, UpdateFirmwareArgumentsTag, EmptyString, &l_bstrValue, hardwareIniFile);
-			m_csFirmwareArguments = l_bstrValue;
-		}
-
 		// Matrox Gige - Get Packet Size
 		int packetSize = 0;
 		l_svINI.GetValue( m_csAcquisitionBoardName, PacketSizeTag, 0, &packetSize, hardwareIniFile);

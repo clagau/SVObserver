@@ -8,10 +8,11 @@
 // * .Current Version : $Revision:   1.2  $
 // * .Check In Date   : $Date:   12 Dec 2014 09:52:14  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVRegressionExitDlg.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -32,6 +33,9 @@ SVRegressionExitDlg::SVRegressionExitDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVRegressionExitDlg::~SVRegressionExitDlg()
+{
+}
 
 void SVRegressionExitDlg::DoDataExchange(CDataExchange* pDX)
 {

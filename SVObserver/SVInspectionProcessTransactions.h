@@ -36,11 +36,14 @@ struct SVInspectionMessageDataStruct_CHProperties : public SVInspectionMessageDa
 
 	SVInspectionMessageDataStruct_CHProperties(SVScalarValueVector* p_pvecProperties, bool p_bResetObject)
 		: pvecProperties(p_pvecProperties), bResetObject(p_bResetObject) {}
+
+	virtual ~SVInspectionMessageDataStruct_CHProperties() {}
 };
 
 struct SVInspectionMessageDataStruct_CHReset : public SVInspectionMessageDataStruct
 {
 	SVInspectionMessageDataStruct_CHReset() {}
+	virtual ~SVInspectionMessageDataStruct_CHReset() {}
 };
 
 struct SVInspectionMessageDataStruct_CHList : public SVInspectionMessageDataStruct
@@ -52,7 +55,10 @@ struct SVInspectionMessageDataStruct_CHList : public SVInspectionMessageDataStru
 
 	SVInspectionMessageDataStruct_CHList(std::vector <SVScalarValue>* p_pvecData, std::vector <SVScalarValue>* p_pvecImages, std::vector <SVScalarValue>* p_pvecConditionals, bool p_bResetObject )
 		: pvecData(p_pvecData), pvecImages(p_pvecImages), pvecConditionals(p_pvecConditionals), bResetObject(p_bResetObject) {}
+
+	virtual ~SVInspectionMessageDataStruct_CHList() {}
 };
+
 struct SVInspectionMessageDataStruct_CHGet : public SVInspectionMessageDataStruct
 {
 	std::vector <SVScalarValue>* pvecData;
@@ -62,7 +68,10 @@ struct SVInspectionMessageDataStruct_CHGet : public SVInspectionMessageDataStruc
 
 	SVInspectionMessageDataStruct_CHGet(std::vector <SVScalarValue>* p_pvecData, std::vector <SVImageBufferStruct>* p_pvecImages, std::vector <SVScalarValue>* p_pvecConditionals, long* p_plProcessCount )
 		: pvecData(p_pvecData), pvecImages(p_pvecImages), pvecConditionals(p_pvecConditionals), plProcessCount(p_plProcessCount) {}
+
+	virtual ~SVInspectionMessageDataStruct_CHGet() {} 
 };
+
 struct SVInspectionMessageDataStruct_CHGetAll : public SVInspectionMessageDataStruct
 {
 	std::vector < std::vector <SVScalarValue> >* pvecData;
@@ -72,6 +81,8 @@ struct SVInspectionMessageDataStruct_CHGetAll : public SVInspectionMessageDataSt
 
 	SVInspectionMessageDataStruct_CHGetAll(std::vector < std::vector <SVScalarValue> >* p_pvecData, std::vector < std::vector <SVImageBufferStruct> >* p_pvecImages, std::vector < std::vector <SVScalarValue> >* p_pvecConditionals, std::vector<long>* p_pvecProcessCount )
 		: pvecData(p_pvecData), pvecImages(p_pvecImages), pvecConditionals(p_pvecConditionals), pvecProcessCount(p_pvecProcessCount) {}
+
+	virtual ~SVInspectionMessageDataStruct_CHGetAll() {}
 };
 
 struct SVInspectionTransactionStruct
@@ -83,6 +94,8 @@ struct SVInspectionTransactionStruct
 
 	SVInspectionTransactionStruct() : dwMessage(0), hCompletionEvent(NULL), pData(NULL) {}
 	SVInspectionTransactionStruct(DWORD p_dwMessage, HANDLE p_hCompletionEvent, SVInspectionMessageDataStruct* p_pData) : dwMessage(p_dwMessage), hCompletionEvent(p_hCompletionEvent), pData(p_pData) {}
+
+	virtual ~SVInspectionTransactionStruct() {}
 };
 
 

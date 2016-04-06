@@ -712,7 +712,7 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 	catch( ... )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVF_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
 		l_bOk = FALSE;
 	}
 	return l_bOk;
@@ -1001,7 +1001,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 	catch( ... )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVF_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
 		
 		ResetResultValues();
 		SetInvalid();

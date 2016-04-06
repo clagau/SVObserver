@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   07 Aug 2013 13:27:30  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVInputObject.h"
 #include "SVInfoStructs.h"
+#pragma endregion Includes
 
 class SVInputObjectList : public SVObjectClass
 {

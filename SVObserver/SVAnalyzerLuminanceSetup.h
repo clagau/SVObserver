@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVLuminanceAnalyzerClass;
 
@@ -30,7 +32,8 @@ protected:
 
 	// Construction
 public:
-	SVLuminanceAnalyzerSetupClass(CWnd* pParent = NULL);   // standard constructor
+	SVLuminanceAnalyzerSetupClass(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVLuminanceAnalyzerSetupClass();
 
 // Dialog Data
 	//{{AFX_DATA(SVLuminanceAnalyzerSetupClass)

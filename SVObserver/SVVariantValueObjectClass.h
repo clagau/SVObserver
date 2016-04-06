@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 16:20:02  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVVariantValueObjectClass : public SVValueObjectClassImpl< _variant_t >
 {
@@ -21,16 +22,13 @@ class SVVariantValueObjectClass : public SVValueObjectClassImpl< _variant_t >
 
 public:
 	SVVariantValueObjectClass( LPCTSTR ObjectName );
-	SVVariantValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVVARIANTVALUEOBJECT );
+	SVVariantValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVVARIANTVALUEOBJECT );
 	SVVariantValueObjectClass( const SVVariantValueObjectClass& rhs );
 	const SVVariantValueObjectClass& operator = ( const SVVariantValueObjectClass& rhs );
 
 	virtual ~SVVariantValueObjectClass();
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	BOOL SetType( int vt );
@@ -43,7 +41,6 @@ public:
 	IMPLEMENT_VALUE_OBJECT_GET_SET_NO_T()
 
 protected:
-
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, CString value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, BOOL value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, BYTE value );
@@ -64,7 +61,6 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
 
 

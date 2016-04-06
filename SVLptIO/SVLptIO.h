@@ -3,14 +3,13 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVLptIO
-//* .File Name       : $Workfile:   SVLptIO.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Sep 2014 15:57:34  $
 //******************************************************************************
 
 #pragma once
+
+#pragma region Includes
 //Moved to precompiled header: #include <boost/function.hpp>
+#pragma endregion Includes
 
 typedef boost::function<void()> IrqHandler;
 

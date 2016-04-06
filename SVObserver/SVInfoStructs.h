@@ -15,6 +15,7 @@
 	#define DebugBreak() NULL
 #endif
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/any.hpp>
@@ -27,6 +28,7 @@
 #include "SVIOEntryHostStruct.h"
 #include "SVValueObjectReference.h"
 #include "SVRunControlLibrary/ProductWorkloadInformation.h" 
+#pragma endregion Includes
 
 enum SVProductInspectedState
 {
@@ -496,5 +498,4 @@ private:
 	HRESULT GetWaitHandle( HANDLE& p_rHandle ) const;
 
 	HANDLE m_WaitHandle;
-
 };

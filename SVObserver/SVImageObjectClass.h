@@ -8,9 +8,9 @@
 //* .Current Version : $Revision:   1.4  $
 //* .Check In Date   : $Date:   01 Oct 2013 14:31:00  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
@@ -21,6 +21,7 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
 class SVImageObjectClass
 {
@@ -148,7 +149,6 @@ private:
 
 	// Do not implement
 	const SVImageObjectClass& operator=( const SVImageObjectClass& p_rObject );
-	
 };
 
 typedef SVSharedPtr< SVImageObjectClass > SVImageObjectClassPtr;

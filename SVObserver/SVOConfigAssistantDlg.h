@@ -83,8 +83,8 @@ public:
 
 	void SetNewConfiguration(BOOL bNewFlag);
 	bool IsNewConfiguration();
-	void SetCurrentSystem(long lSysValue = SVIM_PRODUCT_FULL);
-	void SetConfigurationSystem(long lSysValue = SVIM_PRODUCT_FULL);
+	void SetCurrentSystem(long lSysValue = SVIM_PRODUCT_X2_GD4A);
+	void SetConfigurationSystem(long lSysValue = SVIM_PRODUCT_X2_GD4A);
 
 	BOOL AddToCameraList(CString sCameraName, int iDig);
 	BOOL AddToCameraList(CString sCameraName);
@@ -288,10 +288,8 @@ private:
 	void SetupSystemComboBox();
 	void ReloadForCurrentSystem();
 	void CreateDefaultForSVIM(int Number);
-	void CreateDefaultForRGBSVIM();
 
 	void CreateDefaultForSVIMDigital( int Number, LPCTSTR TriggerBaseName );
-	void CreateDefaultForSVIMDigitalHub(int Number);
 
 	void SetCurrentSystemDisplay();
 	CString BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag, CString sObjectName, CString sMessage);

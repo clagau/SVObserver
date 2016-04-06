@@ -51,7 +51,7 @@ class SVUserMaskOperatorClass : public SVUnaryImageOperatorClass, public SvOi::I
 {
 	SV_DECLARE_CLASS( SVUserMaskOperatorClass );
 public:
-	SVUserMaskOperatorClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVUSERMASKOPERATOR );
+	SVUserMaskOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUSERMASKOPERATOR );
 	virtual ~SVUserMaskOperatorClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -66,9 +66,6 @@ public:
 
 	SVImageClass* getMaskInputImage();
 
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;

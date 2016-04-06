@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   12 Jun 2013 15:19:56  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "ObjectInterfaces/SVGigeCameraStructInterface.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Gige Camera Description

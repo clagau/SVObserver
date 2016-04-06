@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 11:07:28  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVAnalyzer.h"
+#pragma endregion Includes
 
 class SVOCVAnalyzerClass : public SVImageAnalyzerClass
 {
@@ -20,7 +21,7 @@ class SVOCVAnalyzerClass : public SVImageAnalyzerClass
 public:
 	SVOCVAnalyzerClass( 
 		BOOL BCreateDefaultTaskList = FALSE, 
-		SVObjectClass* POwner = NULL , 
+		SVObjectClass* POwner = nullptr, 
 		int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER
 	);
 
@@ -45,6 +46,5 @@ protected:
 private:
 	void init();
 	bool m_bHasLicenseError;
-
 };
 

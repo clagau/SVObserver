@@ -9,12 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:19:10  $
 //******************************************************************************
 
-
 #pragma once
 
+#pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVOMFCLibrary\SVDlgGraph.h"
 #include "SVVirtualCamera.h"
+#pragma endregion Includes
 
 class SVLutDlg : public CPropertySheet
 {
@@ -29,7 +30,6 @@ public:
 
 // Operator(s):
 protected:
-//    void CreatePages();
 	void DestroyAllPages();
 
 // Class Wizard Generated Message Map Entries
@@ -43,22 +43,14 @@ protected:
 	virtual BOOL OnInitDialog();
 	//{{AFX_VIRTUAL(SVLutDlg)
 	//}}AFX_VIRTUAL
-
-// Debug Operation(s):
-public:
-
-// Data Element(s):
-protected:
 };
-
-
-
 
 class SVLutDlgPage : public CPropertyPage
 {
 // Construction
 public:
 	SVLutDlgPage( SVLutDlg* Parent, const CString& sCaption);
+	virtual ~SVLutDlgPage();
 
 // Operator(s):
 public:
@@ -69,57 +61,56 @@ public:
 	//}}AFX_VIRTUAL
 	
 public:
-	SVLut                       mLut;
-	SVVirtualCamera*            mpCamera;   // for band information
-	SvCl::SVObjectLongArrayClass      malBandData;
+	SVLut m_Lut;
+	SVVirtualCamera* m_pCamera;   // for band information
+	SvCl::SVObjectLongArrayClass m_alBandData;
 
 	//{{AFX_DATA(SVLutDlgPage)
 	enum { IDD = IDD_LUT_DIALOG };
-	CSliderCtrl	mUpperSlider;
-	CSliderCtrl	mLowerSlider;
-	SvOml::SVDlgGraphClass	mLUTGraph;
-	SVEnumerateComboClass	mLutModeCombo;
-	CString	mstrUpperClipValue;
-	CString	mstrLowerClipValue;
-	BOOL	mbUseLUT;
-	BOOL	mbContinuousRecalcLUT;
-	int		m_iBand;
-	int		m_iX1;
-	int		m_iX2;
-	int		m_iY1;
-	int		m_iY2;
+	CSliderCtrl	m_UpperSlider;
+	CSliderCtrl	m_LowerSlider;
+	SvOml::SVDlgGraphClass m_LUTGraph;
+	SVEnumerateComboClass m_LutModeCombo;
+	CString	m_strUpperClipValue;
+	CString	m_strLowerClipValue;
+	BOOL m_bUseLUT;
+	BOOL m_bContinuousRecalcLUT;
+	int	m_iBand;
+	int	m_iX1;
+	int	m_iX2;
+	int	m_iY1;
+	int	m_iY2;
 	CString	m_sRangeXMax;
 	CString	m_sRangeYMax;
 	CString	m_sRangeXYMax;
 	//}}AFX_DATA
 
 	static BOOL CALLBACK GraphMousePointCallback( POINT Point, LPVOID pThis_ );
-
-
+	
 protected:
-	SVLutDlg* mpParentDialog;
-	SVLutTransformOperationEnum meLutMode;
+	SVLutDlg* m_pParentDialog;
+	SVLutTransformOperationEnum m_eLutMode;
 
-	int miCurrentBand;	// for rgb color systems
-    int miNumBands;
-    int miBandWidth;
-    int miCamBand;
+	int m_iCurrentBand;	// for rgb color systems
+    int m_iNumBands;
+    int m_iBandWidth;
+    int m_iCamBand;
 
-	COLORREF mrgbLineColor;
+	COLORREF m_rgbLineColor;
 
-	CPoint mptLastMousePos;
-	static const CPoint ptNoLastMousePos;
-
+	CPoint m_ptLastMousePos;
+	static const CPoint m_ptNoLastMousePos;
 	static SVLutTransformOperationMap m_mapOperations;
 
-	long mlMaxLutValue;
+	long m_lMaxLutValue;
 
 protected:
-	
 	void Refresh();
 	void SetLutParameters(const SVLutTransformParameters& param);
 	void ShowControls(bool bShow, SVLutTransformOperationEnum e = LutTransformTypeUnknown );
 	void EnableControls(bool bEnable);
+	void ShowBoundaryControls(bool bShow);
+	void ShowRangeControls(bool bShow);
 
 	// Generated message map functions
 	//{{AFX_MSG(SVLutDlgPage)
@@ -145,6 +136,5 @@ protected:
 	void OnChangeKnee();
 	afx_msg LRESULT OnGraphRefresh(WPARAM mp1, LPARAM mp2);
 	DECLARE_MESSAGE_MAP()
-
 };
 

@@ -16,27 +16,12 @@
 #include "SVFilterClass.h"
 #pragma endregion Includes
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVWatershedFilterClass
-// -----------------------------------------------------------------------------
-// .Description : Base class for all kinds of Skeleton filters
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-////////////////////////////////////////////////////////////////////////////////
 class SVWatershedFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVWatershedFilterClass );
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-// Standard constructor
-	SVWatershedFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVWATERSHEDFILTER );
+	SVWatershedFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWATERSHEDFILTER );
 	virtual ~SVWatershedFilterClass();
 	
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -54,7 +39,7 @@ protected:
 	
 private:
 	SVInObjectInfoStruct m_MarkerImageInfo;
-	SVBoolValueObjectClass m_bvoUseMarker ;
+	SVBoolValueObjectClass m_bvoUseMarker;
 	SVLongValueObjectClass m_lvoMinVariation;
 	SVLongValueObjectClass m_lvoControlFlag;
 };

@@ -2212,20 +2212,6 @@ BOOL SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 
 	if( nullptr == pInspection ) { return false; }
 
-#ifdef USE_OBJECT_SCRIPT
-	svVariant = SVGUID( pInspection->GetUniqueObjectID() ).ToVARIANT();
-	rWriter.WriteAttribute(CTAG_UNIQUE_REFERENCE_ID, svVariant);
-	svVariant.Clear();
-
-	// Get the ToolSet's Object Script - SEJ 23-06-1999
-	GetToolSet()->GetObjectScript( csScript, csAlias );
-	csAlias += csScript;
-
-	svVariant.SetString( csAlias );
-	rWriter.WriteAttribute(CTAG_TOOLSET_SCRIPT, svVariant);
-	svVariant.Clear();
-#endif
-
 	SaveViews(rWriter);
 
 	SaveConditionalHistory(rWriter);

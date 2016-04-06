@@ -11,10 +11,6 @@
 
 #pragma once
 
-#ifdef SV_SHOW_INCLUDES
-	#pragma message( "Including " __FILE__ )
-#endif
-
 //******************************************************************************
 //* OBJECT DEFINITION
 //******************************************************************************
@@ -42,7 +38,7 @@ protected:
 public:
 
 	SVAboutDialogClass();
-	~SVAboutDialogClass();
+	virtual ~SVAboutDialogClass();
 
 protected:
 	void LoadOEMInfo();

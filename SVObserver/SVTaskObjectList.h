@@ -27,7 +27,7 @@ public:
 	friend class SVImageClass;
 
 	SVTaskObjectListClass( LPCSTR LPSZObjectName );
-	SVTaskObjectListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
+	SVTaskObjectListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
 	virtual ~SVTaskObjectListClass();
 
 #pragma region public methods
@@ -94,9 +94,6 @@ public:
 
 public:
 	virtual void GetAllInputObjects();
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& writer);
 
 protected:

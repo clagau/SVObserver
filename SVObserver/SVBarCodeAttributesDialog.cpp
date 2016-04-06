@@ -8,13 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   15 May 2014 10:21:20  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBarCodeAttributesDialog.h"
 #include "SVBarCodeProperties.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-
-
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 
 const SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* SVBarCodeAttributesDialog::SVBarCodeEccEncArray::GetInfoByMil(long lMil)
 {
-	SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* pInfo = NULL;
+	SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* pInfo = nullptr;
 	for ( int i = 0; i < GetSize(); i++ )
 	{
 		if ( ElementAt(i).lMil == lMil )
@@ -33,10 +32,12 @@ const SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* SVBarCo
 			break;
 		}
 	}
-
 	return pInfo;
 }
 
+SVBarCodeAttributesDialog::SVBarCodeEccEncArray::~SVBarCodeEccEncArray()
+{
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // SVBarCodeAttributesDialog dialog
@@ -161,6 +162,9 @@ SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* pParent /*=NULL*/)
 	m_mapBarCodeEnc[ SVRssCode ].push_back( SVValueENCRssExpandedStacked );
 }
 
+SVBarCodeAttributesDialog::~SVBarCodeAttributesDialog()
+{
+}
 
 void SVBarCodeAttributesDialog::DoDataExchange(CDataExchange* pDX)
 {

@@ -19,13 +19,9 @@ class SVMultiDocTemplateClass : public CMultiDocTemplate
 {
 	DECLARE_DYNAMIC( SVMultiDocTemplateClass )
 
-// Constructors
 public:
 	SVMultiDocTemplateClass( UINT NIDResource, CRuntimeClass* PDocClass, CRuntimeClass* PFrameClass, CRuntimeClass* PViewClass );
 	virtual ~SVMultiDocTemplateClass();
-
-// Implementation
-public:
 
 	virtual void SetDefaultTitle( CDocument* PDocument );
 

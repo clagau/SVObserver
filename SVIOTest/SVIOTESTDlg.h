@@ -8,10 +8,11 @@
 // * .Current Version : $Revision:   1.2  $
 // * .Check In Date   : $Date:   01 Oct 2013 09:21:30  $
 // ******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTimerLibrary/SVClock.h"
+#pragma endregion Includes
 
 class SVIOConfigurationInterfaceClass;
 class SVIOTriggerLoadLibraryClass;
@@ -21,9 +22,7 @@ enum IOBoardType
 	SVRABBIT_X1 = 10,
 	SVRABBIT_X2 = 20,
 	SVRABBIT_X3 = 12,
-	SVRABBIT_SVIM_ANALOG = 13,
 };
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVIOTESTDlg dialog
@@ -52,7 +51,7 @@ public:
 	bool m_bTestRand;
 	HANDLE m_hWorkerThread;
 	bool m_bThreadRunning;
-	CSVIOTESTDlg(CWnd* pParent = NULL);	// standard constructor
+	CSVIOTESTDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CSVIOTESTDlg)
@@ -155,7 +154,6 @@ protected:
 	bool AllowTriggerParamEditing() const;
 
 private:
-
 	long m_lTrigger1Count;
 	long m_lTrigger2Count;
 	long m_lTrigger3Count;

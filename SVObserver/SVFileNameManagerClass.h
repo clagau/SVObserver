@@ -142,5 +142,3 @@ private:
 	// Global File Name array for DLL
 	//static SVFileNameLockablePointerArrayClass gsvFileNameArray;
 };
-
-

@@ -8,13 +8,15 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   06 May 2013 20:06:08  $
 //******************************************************************************
-
 #pragma once
+
+#pragma region Includes
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/any.hpp>
 //Moved to precompiled header: #include <deque>
 
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 typedef std::deque<boost::any> SVImportedInputList;
 

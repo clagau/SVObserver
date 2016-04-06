@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:44:06  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVImageLibrary/SVExtentEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVExtentPropertiesInfoStruct.h"
+#pragma endregion Includes
 
 class SVValueObjectClass;
 
@@ -45,6 +46,5 @@ private:
 	typedef std::map< SVExtentPropertyEnum, SVExtentPropertyInfoStructImpl > SVToolExtentPropertiesMap;
 
 	SVToolExtentPropertiesMap m_svProperties;
-
 };
 

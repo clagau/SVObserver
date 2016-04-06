@@ -11,68 +11,27 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVResult.h"
+#pragma endregion Includes
 
 class SVDPointValueObjectClass;
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
 
 class SVDPointYResultClass : public SVResultClass  
 {
 	SV_DECLARE_CLASS( SVDPointYResultClass );
 
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-	SVDPointYResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_RESULT_DPOINT_Y );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
+	SVDPointYResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_DPOINT_Y );
 	virtual ~SVDPointYResultClass();
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-public:
-protected:
-	SVDPointValueObjectClass* getInputPoint();
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-public:
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-public:
 	virtual BOOL OnValidate();
 
 protected:
+	SVDPointValueObjectClass* getInputPoint();
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
 protected:
 	// Output
 	SVDoubleValueObjectClass		y;

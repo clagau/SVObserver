@@ -117,20 +117,20 @@ void SVPixelAnalyzerClass::init()
 
 	    // Register Embedded Objects
 			RegisterEmbeddedObject( 
-				&pixelCount, 
+				&m_pixelCount, 
 				SVPixelCountObjectGuid, 
 				IDS_OBJECTNAME_PIXEL_COUNT,
 				false, SVResetItemNone );
 			
 			RegisterEmbeddedObject( 
-				&pixelCountColor, 
+				&m_pixelCountColor, 
 				SVPixelColorIndexObjectGuid,
 				IDS_OBJECTNAME_PIXEL_COLOR_INDEX,
 				false, SVResetItemNone );
 			
 	    // Set Embedded defaults
-	    pixelCountColor. SetDefaultValue( 255, TRUE ); // White
-	    pixelCount. SetDefaultValue( 0, TRUE );
+	    m_pixelCountColor. SetDefaultValue( 255, TRUE ); // White
+	    m_pixelCount. SetDefaultValue( 0, TRUE );
 
 	    // Set default inputs and outputs
 	    addDefaultInputObjects();
@@ -191,11 +191,11 @@ BOOL SVPixelAnalyzerClass::CloseObject()
 {
     m_alHistValues.clear();
 
-	if ( !histResultID.empty() )
+	if ( !m_histResultID.empty() )
 	{
 		
 		SVMatroxImageInterface::SVStatusCode l_Code;
-		l_Code = SVMatroxImageInterface::Destroy( histResultID );
+		l_Code = SVMatroxImageInterface::Destroy( m_histResultID );
 	}
 
 	return SVImageAnalyzerClass::CloseObject();
@@ -251,28 +251,28 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 			SV_TRAP_ERROR_BRK (msvError, 1085);
         }
 		
-        msvlHistValueArraySize = 1 <<
+        m_svlHistValueArraySize = 1 <<
             (GetInputPixelDepth () &
 			SVBufferSize);
 		
-        m_alHistValues.resize( msvlHistValueArraySize );
+        m_alHistValues.resize( m_svlHistValueArraySize );
 		
 		
-        for( int i = 0; i < msvlHistValueArraySize; i++ )
+        for( int i = 0; i < m_svlHistValueArraySize; i++ )
 			m_alHistValues [i] = 0L;
 		
         // &&&
 		SVDataBufferInfoClass svData;
 		
-		svData.Length = msvlHistValueArraySize;
+		svData.Length = m_svlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
-		svData.HBuffer.milResult = histResultID;
+		svData.HBuffer.milResult = m_histResultID;
 		if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData ) )
 		{
-			histResultID = svData.HBuffer.milResult;
+			m_histResultID = svData.HBuffer.milResult;
 		}
 		
-		if( histResultID.empty() )
+		if( m_histResultID.empty() )
 		{
 			msvError.msvlErrorCd = -1087;
 			SV_TRAP_ERROR_BRK (msvError, 1087);
@@ -290,8 +290,8 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	
 	
 	// Set / Reset Printable Flags
-	pixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	pixelCountColor.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_pixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_pixelCountColor.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	
     return isCreated;
 }
@@ -363,7 +363,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 		SVImageBufferHandleImage l_MilHandle;
 		ImageHandle->GetData( l_MilHandle );
 
-		l_Code = SVMatroxImageInterface::Histogram( histResultID, l_MilHandle.GetBuffer() );
+		l_Code = SVMatroxImageInterface::Histogram( m_histResultID, l_MilHandle.GetBuffer() );
 
 		if( l_Code != SVMEE_STATUS_OK )
         {
@@ -372,7 +372,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
             SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1090)
         }
 		
-		l_Code = SVMatroxImageInterface::GetResult( histResultID, m_alHistValues );
+		l_Code = SVMatroxImageInterface::GetResult( m_histResultID, m_alHistValues );
 		
 		if( l_Code != SVMEE_STATUS_OK )
         {
@@ -380,8 +380,8 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
             SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1091)
         }
 		
-		pixelCountColor.GetValue (byIndex);
-		pixelCount.SetValue( RRunStatus.m_lResultDataIndex, m_alHistValues[byIndex] );
+		m_pixelCountColor.GetValue (byIndex);
+		m_pixelCount.SetValue( RRunStatus.m_lResultDataIndex, m_alHistValues[byIndex] );
 		
         break;
     }
@@ -441,13 +441,13 @@ BOOL SVPixelAnalyzerClass::OnValidate ()
          break;
       }
 
-      if ( histResultID.empty() )
+      if ( m_histResultID.empty() )
       {
          msvError.msvlErrorCd = -1093;
          SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1093);
       }
 
-      if ( m_alHistValues.size() != msvlHistValueArraySize)
+      if ( m_alHistValues.size() != m_svlHistValueArraySize)
       {
          msvError.msvlErrorCd = -1094;
          SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1094);

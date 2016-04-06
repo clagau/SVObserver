@@ -9,12 +9,14 @@
 // * .Check In Date   : $Date:   01 Oct 2013 08:26:00  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "resource.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVCameraPage.h"
+#pragma endregion Includes
 
 SVTestAcquisitionClass::SVTestAcquisitionClass( SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer )
 : m_rSubsystem( p_rSubsystem ), m_hDigitizer( p_hDigitizer ), m_bOnline( false )
@@ -62,7 +64,7 @@ HRESULT SVTestAcquisitionClass::GetNextBuffer( SVImageBufferInterface& p_rBuffer
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDisplay != NULL )
+	if( nullptr != m_pDisplay )
 	{
 		l_Status = m_pDisplay->GetNextBuffer( p_rBuffer );
 	}
@@ -80,7 +82,7 @@ HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer( const SVImageBufferIn
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDisplay != NULL )
+	if( nullptr != m_pDisplay )
 	{
 		l_Status = m_pDisplay->UpdateWithCompletedBuffer( p_rBuffer );
 	}
@@ -121,8 +123,10 @@ HRESULT SVTestAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollecti
 	for (iter = rDeviceParams.mapParameters.begin(); iter != rDeviceParams.mapParameters.end(); ++iter)
 	{
 		const SVDeviceParamWrapper& w = iter->second;
-		if ( ((const SVDeviceParam*) w) != NULL )
+		if ( nullptr != ((const SVDeviceParam*) w) )
+		{
 			m_DeviceParams.GetParameter( iter->first ) = w;
+		}
 	}
 
 	return hr;
@@ -194,7 +198,7 @@ bool SVTestAcquisitionClass::StartAcquire( SVCameraPage& p_rDisplay )
 
 	m_pDisplay->m_CameraImage.UpdateDisplayBufferInfo( GetBufferWidth(), GetBufferHeight(), GetBufferFormat() );
 
-	m_bOnline = m_rSubsystem.m_svDigitizers.Start( m_hDigitizer ) == S_OK;
+	m_bOnline = S_OK == m_rSubsystem.m_svDigitizers.Start( m_hDigitizer );
 
 	return m_bOnline;
 }
@@ -210,7 +214,7 @@ void SVTestAcquisitionClass::StopAcquire( )
 	m_rSubsystem.m_svDigitizers.UnregisterBufferInterface( m_hDigitizer );
 	m_rSubsystem.m_svDigitizers.DestroyBuffers( m_hDigitizer );
 	
-	m_pDisplay = NULL;
+	m_pDisplay = nullptr;
 }
 
 void SVTestAcquisitionClass::FireSoftwareTrigger()

@@ -10,7 +10,10 @@
 //******************************************************************************
 
 #pragma once
+
+#pragma region Includes
 #include "SVImageClass.h"
+#pragma endregion Includes
 
 class SVIPDoc;
 
@@ -19,13 +22,13 @@ class SVDisplayImageSelect : public CDialog
 public:
 	SVImageClass *m_pCurrentImage;
 	SVIPDoc			 *m_pDoc;
-	SVDisplayImageSelect(CWnd* pParent = NULL);   // standard constructor
+	SVDisplayImageSelect(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVDisplayImageSelect();
 
 	//{{AFX_DATA(SVDisplayImageSelect)
 	enum { IDD = IDD_SELECT_DISPLAY_IMAGE };
-	CListBox	mImageSelectList;
+	CListBox	m_ImageSelectList;
 	//}}AFX_DATA
-
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVDisplayImageSelect)

@@ -9,14 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:34:28  $
 //******************************************************************************
 
-#if !defined(AFX_SVPQVariableTreeCtrl_H__A4C49D6B_24DA_11d4_A8F2_00106F030D16__INCLUDED_)
-#define AFX_SVPQVariableTreeCtrl_H__A4C49D6B_24DA_11d4_A8F2_00106F030D16__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
+#pragma region Includes
 #include "SVMFCControls/SVTreeCtrl.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVPQVariableTreeCtrlClass window
@@ -65,6 +61,4 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVPQVariableTreeCtrl_H__A4C49D6B_24DA_11d4_A8F2_00106F030D16__INCLUDED_)
 

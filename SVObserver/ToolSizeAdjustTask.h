@@ -8,9 +8,8 @@
  
 #pragma region Includes
 #include "SVTaskObject.h"
-#pragma endregion Includes
 #include "SVTool.h"
- 
+#pragma endregion Includes
 
 //! \brief Set Tool position and Size of a tool during resetObject
 //! Set the tool position and size to full Image or in accordance with a formula
@@ -18,10 +17,9 @@
 //! the friendlist of this class holds the Svevaluationobjects 
 class ToolSizeAdjustTask : public SVTaskObjectClass
 {
-
 	SV_DECLARE_CLASS( ToolSizeAdjustTask );
 public:
-    ToolSizeAdjustTask( bool AllowFullsize = true, bool AllowAdjustSize = true, bool AllowAdjustPosition = true, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_TOOLSIZEADJUSTTASK );
+    ToolSizeAdjustTask( bool AllowFullsize = true, bool AllowAdjustSize = true, bool AllowAdjustPosition = true, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TOOLSIZEADJUSTTASK );
 	virtual ~ToolSizeAdjustTask();
 	enum TSModes {TSNone =0,TSFullSize, TSFormula, TSModeCount }; 
 	enum TSValues {TSPositionX=0, TSPositionY, TSWidth, TSHeight, TSValuesCount};

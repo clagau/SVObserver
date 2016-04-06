@@ -8,11 +8,12 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   23 Apr 2013 14:41:56  $
 // ******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVRegressionTestStruct.h"
 #include "SVVirtualCamera.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectSheet
@@ -27,12 +28,6 @@ public:
 	CSVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
 
 	BOOL ValidateMask(CString sMask);
-
-// Attributes
-public:
-
-// Operations
-public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -53,10 +48,8 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 public:
 	void CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList,SVVirtualCameraPtrSet CameraList );
-
 
 private: //methods
 	CString MakeFileNameMask(CString csFileName);
@@ -68,6 +61,5 @@ private: //methods
 private: //data members
 	CList<CString, CString&> m_listMasks;
 	CList<RegressionTestStruct*,RegressionTestStruct*> *m_pRegressionList;
-
 };
 

@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
+#pragma endregion Includes
 
 enum 
 {
@@ -20,6 +21,7 @@ enum
 	SVBCStringFormatTranslateCharacters,
 	SVBCStringFormatReplaceCharacters,
 };
+
 class SVBarCodeAnalyzerClass : public SVImageAnalyzerClass  
 {
 	friend class SVSetupDialogManager;
@@ -61,28 +63,30 @@ public:
 	
 	SVMatroxBarCode m_MilCodeId;
 
-	SVBarCodeAnalyzerClass (BOOL BCreateDefaultTaskList = TRUE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
-	void CloseMil ();
-	BOOL InitMil ();
-	virtual BOOL CreateObject (SVObjectLevelCreateStruct* PCreateStructure);
-	virtual BOOL OnValidate ();
+	SVBarCodeAnalyzerClass(BOOL BCreateDefaultTaskList = TRUE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
+	virtual ~SVBarCodeAnalyzerClass();
+
+	void CloseMil();
+	BOOL InitMil();
+	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure);
+	virtual BOOL OnValidate();
 
 	SVResultClass* GetResultObject();
-
-	virtual ~SVBarCodeAnalyzerClass ();
-	virtual BOOL CloseObject ();
+	
+	virtual BOOL CloseObject();
 
 	virtual HRESULT ResetObject();
-	static bool CharIsControl( TCHAR p_Char);
+	static bool CharIsControl(TCHAR p_Char);
+
 protected:
-	void init ();
-	virtual BOOL onRun (SVRunStatusClass &RRunStatus);
+	void init();
+	virtual BOOL onRun(SVRunStatusClass &RRunStatus);
+
 private:
-	BOOL SaveRegExpression ( BOOL DisplayErrorMessage = TRUE );
-	BOOL LoadRegExpression ( BOOL DisplayErrorMessage = TRUE );
+	BOOL SaveRegExpression( BOOL DisplayErrorMessage = TRUE );
+	BOOL LoadRegExpression( BOOL DisplayErrorMessage = TRUE );
 
 	CString errStr;							// for errorEvent
 
 	bool m_bHasLicenseError;
 };
-

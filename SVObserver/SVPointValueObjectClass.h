@@ -11,10 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVUtilityLibrary/SVPOINT.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVPointValueObjectClass : public SVValueObjectClassImpl< SVPOINT >
 {
@@ -22,16 +24,13 @@ class SVPointValueObjectClass : public SVValueObjectClassImpl< SVPOINT >
 
 public:
 	SVPointValueObjectClass( LPCTSTR ObjectName );
-	SVPointValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVPOINTVALUEOBJECT );
+	SVPointValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOINTVALUEOBJECT );
 	SVPointValueObjectClass( const SVPointValueObjectClass& rhs );
 	const SVPointValueObjectClass& operator = (const SVPointValueObjectClass& rhs);
 
 	virtual ~SVPointValueObjectClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	HRESULT GetDefaultValue( POINT& rPoint );
@@ -39,7 +38,6 @@ public:
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 protected:
-
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, CString value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, POINT value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
@@ -51,6 +49,5 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
 

@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   09 Aug 2013 12:04:40  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVUnaryOperatorClass.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVUnaryOperatorClass, SVUnaryOperatorClassGuid )
 
@@ -18,6 +19,10 @@ SVUnaryOperatorClass::SVUnaryOperatorClass( SVObjectClass* POwner, int StringRes
 					 :SVOperatorClass( POwner, StringResourceID )
 {
 	init();
+}
+
+SVUnaryOperatorClass::~SVUnaryOperatorClass()
+{
 }
 
 void SVUnaryOperatorClass::init()

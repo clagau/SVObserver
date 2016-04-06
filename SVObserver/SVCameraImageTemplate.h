@@ -8,9 +8,9 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:49:34  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <set>
 
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
@@ -19,6 +19,7 @@
 
 #include "SVImageClass.h"
 #include "SVImageObjectClass.h"
+#pragma endregion Includes
 
 class SVInspectionProcess;
 class SVVirtualCamera;
@@ -52,9 +53,6 @@ public:
 	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
 
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	virtual BOOL ResetImageIndex();
@@ -81,7 +79,6 @@ protected:
 	SVVirtualCamera* mpCamera;
 	SVGUID digitizerObjectID;
 	SVImageIndexStruct m_CurrentIndex;
-
 };
 
 typedef std::set< SVCameraImageTemplate* > SVCameraImagePtrSet;

@@ -15,7 +15,9 @@ class SVExternalToolDetailsSheet;
 class SVExternalTool;
 class SVExternalToolTask;
 
+#pragma region Includes
 #include "PropertyTree/PropTree.h"
+#pragma endregion Includes
 
 class SVExternalToolResultPage : public CPropertyPage
 {
@@ -23,7 +25,7 @@ class SVExternalToolResultPage : public CPropertyPage
 
 public:
 	SVExternalToolResultPage(const CString& sTitle = _T(""), SVExternalToolDetailsSheet* pParent = NULL, int id = IDD );
-	~SVExternalToolResultPage();
+	virtual ~SVExternalToolResultPage();
 
 	//{{AFX_DATA(SVExternalToolResultPage)
 	enum { IDD = IDD_EXTERNAL_TOOL_RESULTS };
@@ -64,6 +66,5 @@ protected:
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 

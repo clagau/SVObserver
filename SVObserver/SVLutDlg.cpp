@@ -24,14 +24,8 @@
 #pragma endregion Includes
 
 
-// Undefine min/max, so can use std::min/max
-#if defined(min)
-#undef min
-#endif
 
-#if defined(max)
-#undef max
-#endif
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -40,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 SVLutTransformOperationMap SVLutDlgPage::m_mapOperations;
-const CPoint SVLutDlgPage::ptNoLastMousePos(-1,-1);
+const CPoint SVLutDlgPage::m_ptNoLastMousePos(-1,-1);
 
 BEGIN_MESSAGE_MAP(SVLutDlg, CPropertySheet)
 	//{{AFX_MSG_MAP(SVLutDlg)
@@ -77,8 +71,8 @@ bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
 
 				SVLutDlgPage* pPage;
 				pPage = new SVLutDlgPage(this, sCaption);
-				pPage->mLut = raLut[ pCamera->GetUniqueObjectID() ];
-				pPage->mpCamera = pCamera;
+				pPage->m_Lut = raLut[ pCamera->GetUniqueObjectID() ];
+				pPage->m_pCamera = pCamera;
 				AddPage(pPage);
 			}
 		}
@@ -93,15 +87,9 @@ bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
 
 		return false;
 	}
-
 	return true;
 }
 
-/*
-void SVLutDlg::CreatePages()
-{
-}
-*/
 
 void SVLutDlg::DestroyAllPages()
 {
@@ -128,10 +116,6 @@ BOOL SVLutDlg::OnInitDialog()
     return bReturn;
 }
 
-
-
-
-
 BEGIN_MESSAGE_MAP(SVLutDlgPage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVLutDlgPage)
 	ON_BN_CLICKED(IDC_ACTIVATE_CHECK, OnActivateCheck)
@@ -155,16 +139,15 @@ BEGIN_MESSAGE_MAP(SVLutDlgPage, CPropertyPage)
 	ON_MESSAGE( SV_REFRESH_DIALOG, OnGraphRefresh )
 END_MESSAGE_MAP()
 
-
-
 SVLutDlgPage::SVLutDlgPage( SVLutDlg* pParent, const CString& sCaption )
-	: CPropertyPage(SVLutDlgPage::IDD)
+: CPropertyPage(SVLutDlgPage::IDD)
+, m_pCamera(nullptr)
 {
 	//{{AFX_DATA_INIT(SVLutDlgPage)
-	mstrUpperClipValue = _T("");
-	mstrLowerClipValue = _T("");
-	mbUseLUT = TRUE;
-	mbContinuousRecalcLUT = FALSE;
+	m_strUpperClipValue = _T("");
+	m_strLowerClipValue = _T("");
+	m_bUseLUT = TRUE;
+	m_bContinuousRecalcLUT = FALSE;
 	m_iBand = -1;
 	m_iX1 = 0;
 	m_iX2 = 0;
@@ -175,25 +158,28 @@ SVLutDlgPage::SVLutDlgPage( SVLutDlg* pParent, const CString& sCaption )
 	m_sRangeXYMax = _T("");
 	//}}AFX_DATA_INIT
 
-	mpParentDialog	= pParent;
+	m_pParentDialog	= pParent;
 
     m_strCaption = sCaption;
     m_psp.pszTitle = m_strCaption;
     m_psp.dwFlags |= PSP_USETITLE;
+}
 
+SVLutDlgPage::~SVLutDlgPage()
+{
 }
 
 void SVLutDlgPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVLutDlgPage)
-	DDX_Control(pDX, IDC_UPPER_SLIDER, mUpperSlider);
-	DDX_Control(pDX, IDC_LOWER_SLIDER, mLowerSlider);
-	DDX_Control(pDX, IDC_LUT_GRAPH, mLUTGraph);
-	DDX_Control(pDX, IDC_LUT_MODE_COMBO, mLutModeCombo);
-	DDX_Text(pDX, IDC_UPPER_EDIT, mstrUpperClipValue);
-	DDX_Text(pDX, IDC_LOWER_EDIT, mstrLowerClipValue);
-	DDX_Check(pDX, IDC_ACTIVATE_CHECK, mbUseLUT);
+	DDX_Control(pDX, IDC_UPPER_SLIDER, m_UpperSlider);
+	DDX_Control(pDX, IDC_LOWER_SLIDER, m_LowerSlider);
+	DDX_Control(pDX, IDC_LUT_GRAPH, m_LUTGraph);
+	DDX_Control(pDX, IDC_LUT_MODE_COMBO, m_LutModeCombo);
+	DDX_Text(pDX, IDC_UPPER_EDIT, m_strUpperClipValue);
+	DDX_Text(pDX, IDC_LOWER_EDIT, m_strLowerClipValue);
+	DDX_Check(pDX, IDC_ACTIVATE_CHECK, m_bUseLUT);
 	DDX_Radio(pDX, IDC_COLOR_BAND_RED, m_iBand);
 	DDX_Text(pDX, IDC_X1, m_iX1);
 	DDX_Text(pDX, IDC_X2, m_iX2);
@@ -205,44 +191,43 @@ void SVLutDlgPage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BOOL SVLutDlgPage::OnInitDialog() 
 {
-	mpCamera->GetLut(mLut);
+	m_pCamera->GetLut(m_Lut);
 
-	mpCamera->GetBand(miCamBand);
-	mpCamera->GetBandSize(miBandWidth);
-	miNumBands=mLut.NumBands();
+	m_pCamera->GetBand(m_iCamBand);
+	m_pCamera->GetBandSize(m_iBandWidth);
+	m_iNumBands = m_Lut.NumBands();
 
-	miCurrentBand = -1;
-	mrgbLineColor = RGB(0,0,0);
+	m_iCurrentBand = -1;
+	m_rgbLineColor = RGB(0,0,0);
 
-	mptLastMousePos = ptNoLastMousePos;
+	m_ptLastMousePos = m_ptNoLastMousePos;
 
-	UINT uiMaxValue = mLut.Info().MaxValue();
+	UINT uiMaxValue = m_Lut.Info().MaxValue();
 	if ( uiMaxValue == 0 )	// legacy support
 	{
-		if (miNumBands == 3)
+		if (3 == m_iNumBands)
 		{
-			mlMaxLutValue = 1023;	// color
+			m_lMaxLutValue = 1023;	// color
 		}
 		else
 		{
-			mlMaxLutValue = 255;	// mono
+			m_lMaxLutValue = 255;	// mono
 		}
 	}
 	else
 	{
-		mlMaxLutValue = uiMaxValue;
+		m_lMaxLutValue = uiMaxValue;
 	}
 
-	m_sRangeYMax.Format("(0, %d)", mlMaxLutValue);
-	m_sRangeXMax.Format("(%d, 0)", mLut.Info().BandSize()-1);
-	m_sRangeXYMax.Format("(%d, %d)", mLut.Info().BandSize()-1, mlMaxLutValue);
+	m_sRangeYMax.Format("(0, %d)", m_lMaxLutValue);
+	m_sRangeXMax.Format("(%d, 0)", m_Lut.Info().BandSize()-1);
+	m_sRangeXYMax.Format("(%d, %d)", m_Lut.Info().BandSize()-1, m_lMaxLutValue);
 
 	CPropertyPage::OnInitDialog();
 
-	bool bAllVariablesSet = mpParentDialog && mpCamera;
+	bool bAllVariablesSet = m_pParentDialog && m_pCamera;
 
 	ASSERT ( bAllVariablesSet );
 
@@ -251,11 +236,10 @@ BOOL SVLutDlgPage::OnInitDialog()
 		CWnd* pWnd=NULL;
 
 		// Set Normalize Mode of Graph Control...
-		mLUTGraph.SetNormalizeMode( SvOml::SVNormalizeXYMinMax );
-		mLUTGraph.SetXYMinMax(0, 0, mLut.Info().BandSize()-1, mlMaxLutValue);
+		m_LUTGraph.SetNormalizeMode( SvOml::SVNormalizeXYMinMax );
+		m_LUTGraph.SetXYMinMax(0, 0, m_Lut.Info().BandSize()-1, m_lMaxLutValue);
 
-
-		if ( miBandWidth == 3 )
+		if ( 3 == m_iBandWidth )
 		{
 			// show color band controls if color LUT
 //			if (pWnd = GetDlgItem(IDC_COLOR_BAND_ALL))
@@ -266,50 +250,58 @@ BOOL SVLutDlgPage::OnInitDialog()
 			}
 
 			bool bSame = true;
-			for (unsigned int j=0; bSame && j < mLut.Info().BandSize(); j++)
+			for (unsigned int j=0; bSame && j < m_Lut.Info().BandSize(); j++)
 			{
-				long lVal = mLut(0,j);
-				for (unsigned int iBand=1; iBand < mLut.NumBands(); iBand++)
+				long lVal = m_Lut(0, j);
+				for (unsigned int iBand=1; iBand < m_Lut.NumBands(); iBand++)
 				{
-					bSame = bSame && (mLut(iBand,j) == lVal);
+					bSame = bSame && (m_Lut(iBand, j) == lVal);
 				}
 			}
 			if (!bSame)
 			{
-				miCurrentBand = 0;	// default to red
-				mrgbLineColor = RGB(234,0,0);
+				m_iCurrentBand = 0;	// default to red
+				m_rgbLineColor = RGB(234, 0, 0);
 			}
 
-		}// end if ( miBandWidth == 3 )
+		}// end if ( 3 == miBandWidth )
 		else
 		{
-			 mpCamera->GetBand(miCurrentBand);
+			 m_pCamera->GetBand(m_iCurrentBand);
 
 			// hide color band controls if not color LUT
 			if (pWnd = GetDlgItem(IDC_COLOR_BAND_ALL))
+			{
 				pWnd->ShowWindow( SW_HIDE );
+			}
 			if (pWnd = GetDlgItem(IDC_COLOR_BAND_BLUE))
+			{
 				pWnd->ShowWindow( SW_HIDE );
+			}
 			if (pWnd = GetDlgItem(IDC_COLOR_BAND_GREEN))
+			{
 				pWnd->ShowWindow( SW_HIDE );
+			}
 			if (pWnd = GetDlgItem(IDC_COLOR_BAND_RED))
+			{
 				pWnd->ShowWindow( SW_HIDE );
+			}
 			if (pWnd = GetDlgItem(IDC_COLOR_BAND_SYNC))
+			{
 				pWnd->ShowWindow( SW_HIDE );
-
+			}
 		}
 
 		// range is negative because the stupid slider implementation has min value hardcoded at the top.
 		// we will have to manually take the abs of the slider pos.
 
-		mUpperSlider.SetRange( -mlMaxLutValue, 0 );
-		mLowerSlider.SetRange( -mlMaxLutValue, 0 );
+		m_UpperSlider.SetRange( -m_lMaxLutValue, 0 );
+		m_LowerSlider.SetRange( -m_lMaxLutValue, 0 );
 		//Slider does not update correctly on an RGB, the position needs to be set to
 		//something  and then set to what it needs to be set at
-		mLowerSlider.SetPos(-30);
-		mLowerSlider.SetPos(-1);// default pos; should be 0 but slider doesn't initially update properly if it is 0.
-		mUpperSlider.SetPos(-mlMaxLutValue);	// default pos
-
+		m_LowerSlider.SetPos(-30);
+		m_LowerSlider.SetPos(-1);// default pos; should be 0 but slider doesn't initially update properly if it is 0.
+		m_UpperSlider.SetPos(-m_lMaxLutValue);	// default pos
 
 		// fill Mode combo box
 		for (int i = 0; i  < m_mapOperations.GetTypes().GetSize(); i++)
@@ -317,19 +309,18 @@ BOOL SVLutDlgPage::OnInitDialog()
 			const SVLutTransformOperationMap::SVLutTransformTypeInfo& rType = m_mapOperations.GetTypes()[i];
 			if (rType.pType)
 			{
-				int iPos = mLutModeCombo.AddString( rType.sType );
-				mLutModeCombo.SetItemData( iPos, i );
-				if (mLut.Info().GetTransformOperation())
+				int iPos = m_LutModeCombo.AddString( rType.sType );
+				m_LutModeCombo.SetItemData( iPos, i );
+				if (m_Lut.Info().GetTransformOperation())
 				{
-					if (typeid(*rType.pType) == typeid(*mLut.Info().GetTransformOperation()))
+					if (typeid(*rType.pType) == typeid(*m_Lut.Info().GetTransformOperation()))
 					{
-						mLutModeCombo.SetCurSel(iPos);
-						meLutMode = rType.eType;
+						m_LutModeCombo.SetCurSel(iPos);
+						m_eLutMode = rType.eType;
 					}
 				}
 			}
 		}
-		
 
 		Refresh();
 
@@ -339,80 +330,151 @@ BOOL SVLutDlgPage::OnInitDialog()
 	{
 		// Not valid call...
 		if( GetParent() )
+		{
 			GetParent()->SendMessage( WM_CLOSE );
+		}
 		else
+		{
 			SendMessage( WM_CLOSE );
+		}
 	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
+}
 
+void SVLutDlgPage::ShowBoundaryControls(bool bShow)
+{
+	UINT cmd = (bShow) ? SW_SHOW : SW_HIDE;
+	CWnd* pWnd(nullptr);
+	if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+}
+
+void SVLutDlgPage::ShowRangeControls(bool bShow)
+{
+	UINT cmd = (bShow) ? SW_SHOW : SW_HIDE;
+	CWnd* pWnd(nullptr);
+	if( pWnd = GetDlgItem( IDC_STATIC_X1 ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_STATIC_Y1 ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_STATIC_X2 ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_STATIC_Y2 ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_X1 ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_Y1 ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_X2 ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
+	if( pWnd = GetDlgItem( IDC_Y2 ) )
+	{
+		pWnd->ShowWindow( cmd );
+	}
 }
 
 void SVLutDlgPage::Refresh()
 {
-	CWnd* pWnd = NULL;
+	CWnd* pWnd = nullptr;
 	if( true )
 	{
 		// Recalc LUT...
 		//pLUTOperator->RecalcLUT();
-		m_iBand = miCurrentBand != -1 ? miCurrentBand : 4;
+		m_iBand = m_iCurrentBand != -1 ? m_iCurrentBand : 4;
 
 		// Refresh LUT Graph...
-		mpCamera->GetLut(mLut);
-		int iBandSize = mLut.Info().BandSize();
-		malBandData.SetSize(iBandSize);
+		m_pCamera->GetLut(m_Lut);
+		int iBandSize = m_Lut.Info().BandSize();
+		m_alBandData.SetSize(iBandSize);
 
-		int iSourceBand = miCurrentBand;
-		if (miCurrentBand == -1)
+		int iSourceBand = m_iCurrentBand;
+		if (-1 == m_iCurrentBand)
 		{
 			iSourceBand = 0;
 		}
 		for( int j = 0; j < iBandSize; j++ )
 		{
-			long lVal=0;
-			lVal = mLut(iSourceBand, j);
-			malBandData.SetAt( j, lVal );
+			long lVal = 0;
+			lVal = m_Lut(iSourceBand, j);
+			m_alBandData.SetAt( j, lVal );
 		}// end for
 
-		mLUTGraph.SetColor(mrgbLineColor, FALSE);
-		mLUTGraph.SetPoints( malBandData );
+		m_LUTGraph.SetColor(m_rgbLineColor, FALSE);
+		m_LUTGraph.SetPoints( m_alBandData );
 
 		if( true /*pLUTMode*/ )
 		{
 			// refresh lut mode combo settings...
 			CString strMode;
-			const SVLutTransformOperation* pOperation=NULL;
-			if (miCurrentBand == -1)
+			const SVLutTransformOperation* pOperation = nullptr;
+			if (-1 == m_iCurrentBand)
 			{
-				pOperation = mLut.GetTransformOperation();
+				pOperation = m_Lut.GetTransformOperation();
 			}
 			else
 			{
-				pOperation = mLut(miCurrentBand).GetTransformOperation();
+				pOperation = m_Lut(m_iCurrentBand).GetTransformOperation();
 			}
-			ASSERT( pOperation != NULL);
-			if (pOperation != NULL)
+			ASSERT( nullptr != pOperation );
+			if (nullptr != pOperation)
 			{
 				const SVLutTransformOperationMap::SVLutTransformTypeInfo* pInfo = m_mapOperations.GetInfo(pOperation);
 				if (pInfo)
 				{
 					strMode = pInfo->sType;
-					meLutMode = pInfo->eType;
+					m_eLutMode = pInfo->eType;
 				}
 			}
 
 			// Set cur sel in combo box...
-			mLutModeCombo.SelectString( -1, strMode );
+			m_LutModeCombo.SelectString( -1, strMode );
 
 			// Show or hide Controls depending on LUT Mode...
-			switch( meLutMode )
+			switch( m_eLutMode )
 			{
 				case LutTransformTypeNormal:	// Identity...
 				case LutTransformTypeInversion:
 				case LutTransformTypeSign:
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					mLUTGraph.SetMousePointProcFunc( NULL, NULL );
+					m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 
 					// Show no special controls...
 					ShowControls(false);
@@ -423,87 +485,60 @@ void SVLutDlgPage::Refresh()
 					{
 					// Refresh upper clip...
 					// get pos from lut
-					int iBand = miCurrentBand != -1 ? miCurrentBand : 0;
-					int iMin=9999999, iMax=0;
+					int iBand = m_iCurrentBand != -1 ? m_iCurrentBand : 0;
+					int iMin = 9999999, iMax = 0;
 
 					SVLutTransformParameters param;
-					mLut(iBand).Info().GetTransformParameters(param);
-					if (param.GetSize() == 2)
+					m_Lut(iBand).Info().GetTransformParameters(param);
+					if (2 == param.GetSize() )
 					{
 						iMin = param.GetAt(0);
 						iMax = param.GetAt(1);
 					}
 					else
 					{
-						for (unsigned int i=0; i < mLut.Info().BandSize(); i++)
+						for (unsigned int i = 0; i < m_Lut.Info().BandSize(); i++)
 						{
-							iMin = std::min(iMin, static_cast<int>(mLut(iBand, i)));
-							iMax = std::max(iMax, static_cast<int>(mLut(iBand, i)));
+							iMin = std::min(iMin, static_cast<int>(m_Lut(iBand, i)));
+							iMax = std::max(iMax, static_cast<int>(m_Lut(iBand, i)));
 						}
 					}
-					//*/
-//					long lUpperClip = abs((long)mUpperSlider.GetPos());
+					
 					long lUpperClip = iMax;
-					mstrUpperClipValue.Format( _T( "%d" ), lUpperClip );
-					mUpperSlider.SetPos( ( int ) -lUpperClip );
+					m_strUpperClipValue.Format( _T( "%d" ), lUpperClip );
+					m_UpperSlider.SetPos( ( int ) -lUpperClip );
 
 					// Refresh lower clip...
-//					long lLowerClip = abs((long)mLowerSlider.GetPos());
 					long lLowerClip = iMin;
-					mstrLowerClipValue.Format( _T( "%d" ), lLowerClip );
-					mLowerSlider.SetPos( ( int ) -lLowerClip );
+					m_strLowerClipValue.Format( _T( "%d" ), lLowerClip );
+					m_LowerSlider.SetPos( ( int ) -lLowerClip );
 
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					mLUTGraph.SetMousePointProcFunc( NULL, NULL );
+					m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 
 					// Show Clip Slider, Edit, Captions...
-					ShowControls(false, meLutMode );
-					if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
-						pWnd->ShowWindow( SW_SHOW );
+					ShowControls(false, m_eLutMode );
+
+					ShowBoundaryControls(true);
 					}
 					break;
-
-				/*
-				case 4: // Formula...
-					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					mLUTGraph.SetMousePointProcFunc( NULL, NULL );
-
-					// Hide Clip Mode controls and others...
-					ShowControls(false);
-					// Show Formula Button...
-					if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
-						pWnd->ShowWindow( SW_SHOW );
-					break;
-				*/
 
 				case LutTransformTypeFreeform:
 					// Set Mouse Proc Func of SVDlgGraph Control...
-					mLUTGraph.SetMousePointProcFunc( GraphMousePointCallback, this );
+					m_LUTGraph.SetMousePointProcFunc( GraphMousePointCallback, this );
 
 					// Hide all other controls...
 					ShowControls(false);
-
 					break;
 
 				case LutTransformTypeTwoKnee:
 					{
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					mLUTGraph.SetMousePointProcFunc( NULL, NULL );
+					m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 
-
-					int iBand = miCurrentBand != -1 ? miCurrentBand : 0;
+					int iBand = m_iCurrentBand != -1 ? m_iCurrentBand : 0;
 					SVLutTransformParameters param;
-					mLut(iBand).Info().GetTransformParameters(param);
+					m_Lut(iBand).Info().GetTransformParameters(param);
 					if (param.GetSize() > 4)
 					{
 						m_iX1 = param.GetAt(0);
@@ -512,29 +547,14 @@ void SVLutDlgPage::Refresh()
 						m_iY2 = param.GetAt(3);
 					}
 
-					ShowControls(false, meLutMode );
-					if( pWnd = GetDlgItem( IDC_STATIC_X1 ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_STATIC_Y1 ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_STATIC_X2 ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_STATIC_Y2 ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_X1 ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_Y1 ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_X2 ) )
-						pWnd->ShowWindow( SW_SHOW );
-					if( pWnd = GetDlgItem( IDC_Y2 ) )
-						pWnd->ShowWindow( SW_SHOW );
+					ShowControls(false, m_eLutMode );
+					ShowRangeControls(true);
 					}
 					break;
 					
 				default: // Unknown Mode...
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					mLUTGraph.SetMousePointProcFunc( NULL, NULL );
+					m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 
 					// Hide all...
 					ShowControls(false);
@@ -544,36 +564,20 @@ void SVLutDlgPage::Refresh()
 		{
 			// No LUT Mode...
 			// Deactivate Mouse Proc Func of SVDlgGraph Control...
-			mLUTGraph.SetMousePointProcFunc( NULL, NULL );
+			m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 
 			// Hide all...
 			ShowControls(false);
 		}
 
-
-		/*
-		if( pContinuousRecalcLUT )
-		{
-			// refresh LUT settings...
-			pContinuousRecalcLUT->GetValue( mbContinuousRecalcLUT );
-		}
-		else
-			bUseLUT = FALSE;
-		*/
-
-		if( ! mbUseLUT )
+		if( ! m_bUseLUT )
 		{
 			// Deactivate Mouse Proc Func of SVDlgGraph Control...
-			mLUTGraph.SetMousePointProcFunc( NULL, NULL );
+			m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 		}
 
 		// Set controls activation states...
-		EnableControls( ( mbUseLUT == TRUE ) );
-
-		UpdateData( FALSE ); // set data to dialog
-
-		return;
-
+		EnableControls( ( TRUE == m_bUseLUT ) );
 	}
 	else
 	{
@@ -591,93 +595,92 @@ void SVLutDlgPage::ShowControls(bool bShow, SVLutTransformOperationEnum e)
 	CWnd* pWnd;
 
 	if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
+	{
 		pWnd->ShowWindow( nCmd );
-
+	}
 	UINT nCmdRangeShow = SW_SHOW;
-	if ( e == LutTransformTypeClip)
+	if ( LutTransformTypeClip == e )
 	{
 		nCmdRangeShow = SW_HIDE;
 	}
 	if ( pWnd = GetDlgItem( IDC_STATIC_RANGE_0_0 ) )
+	{
 		pWnd->ShowWindow( nCmdRangeShow );
+	}
 	if ( pWnd = GetDlgItem( IDC_STATIC_RANGE_X_MAX ) )
+	{
 		pWnd->ShowWindow( nCmdRangeShow );
+	}
 	if ( pWnd = GetDlgItem( IDC_STATIC_RANGE_Y_MAX ) )
+	{
 		pWnd->ShowWindow( nCmdRangeShow );
+	}
 	if ( pWnd = GetDlgItem( IDC_STATIC_RANGE_XY_MAX ) )
+	{
 		pWnd->ShowWindow( nCmdRangeShow );
-
-
+	}
 
 	if ( !bShow && e == LutTransformTypeClip)
 	{
 	}
 	else
 	{
-		if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
-			pWnd->ShowWindow( nCmd );
+		ShowBoundaryControls(bShow);
 	}
 	if (!bShow && e == LutTransformTypeTwoKnee)
 	{
 	}
 	else
 	{
-		if( pWnd = GetDlgItem( IDC_STATIC_X1 ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_STATIC_Y1 ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_STATIC_X2 ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_STATIC_Y2 ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_X1 ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_Y1 ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_X2 ) )
-			pWnd->ShowWindow( nCmd );
-		if( pWnd = GetDlgItem( IDC_Y2 ) )
-			pWnd->ShowWindow( nCmd );
+		ShowRangeControls(bShow);
 	}
 }
 
 void SVLutDlgPage::EnableControls(bool bEnable)
 {
-	CWnd* pWnd;
+	CWnd* pWnd(nullptr);
 
 	if( pWnd = GetDlgItem( IDC_CONTINUOUS_RECALC_CHECK ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_LUT_MODE_COMBO ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_LUT_GRAPH ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 	if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
+	{
 		pWnd->EnableWindow( bEnable );
+	}
 }
-
-
 
 void SVLutDlgPage::OnActivateCheck() 
 {
@@ -687,37 +690,37 @@ void SVLutDlgPage::OnActivateCheck()
 
 void SVLutDlgPage::OnSelchangeLutModeCombo() 
 {
-	int sel = mLutModeCombo.GetCurSel();
-	if( sel != CB_ERR )
+	int sel = m_LutModeCombo.GetCurSel();
+	if( CB_ERR != sel )
 	{
-		long lValue = ( long ) mLutModeCombo.GetItemData( sel );
+		long lValue = ( long ) m_LutModeCombo.GetItemData( sel );
 		const SVLutTransformOperationMap::SVLutTransformTypeInfo& rType = m_mapOperations.GetTypes()[lValue];
-		if (miCurrentBand == -1)
+		if (-1 == m_iCurrentBand)
 		{
-			mLut.SetTransformOperation(*rType.pType);
+			m_Lut.SetTransformOperation(*rType.pType);
 		}
 		else
 		{
-			mLut(miCurrentBand).SetTransformOperation(*rType.pType);
+			m_Lut(m_iCurrentBand).SetTransformOperation(*rType.pType);
 		}
-		meLutMode = rType.eType;
+		m_eLutMode = rType.eType;
 
-		mptLastMousePos = ptNoLastMousePos;
+		m_ptLastMousePos = m_ptNoLastMousePos;
 
 		// set up parameters;
 		SVLutTransformParameters param;
-		switch (meLutMode)
+		switch (m_eLutMode)
 		{
 			case LutTransformTypeClip:
-				if (atoi(mstrLowerClipValue) != 0 || atoi(mstrUpperClipValue) != 0)
+				if (atoi(m_strLowerClipValue) != 0 || atoi(m_strUpperClipValue) != 0)
 				{
-					param.Add(atoi(mstrLowerClipValue));
-					param.Add(atoi(mstrUpperClipValue));
+					param.Add(atoi(m_strLowerClipValue));
+					param.Add(atoi(m_strUpperClipValue));
 				}
 				else
 				{
 					param.Add(0);
-					param.Add(mlMaxLutValue);
+					param.Add(m_lMaxLutValue);
 				}
 				break;
 			case LutTransformTypeTwoKnee:
@@ -725,7 +728,7 @@ void SVLutDlgPage::OnSelchangeLutModeCombo()
 				param.Add(m_iY1);
 				param.Add(m_iX2);
 				param.Add(m_iY2);
-				param.Add(mlMaxLutValue);
+				param.Add(m_lMaxLutValue);
 			default:
 				break;
 		}
@@ -737,15 +740,15 @@ void SVLutDlgPage::OnSelchangeLutModeCombo()
 
 void SVLutDlgPage::SetLutParameters(const SVLutTransformParameters& param)
 {
-	if (miCurrentBand == -1)
+	if (-1 == m_iCurrentBand)
 	{
-		mLut.Transform(param);
+		m_Lut.Transform(param);
 	}
 	else
 	{
-		mLut(miCurrentBand).Transform(param);	// only modify current band
+		m_Lut(m_iCurrentBand).Transform(param);	// only modify current band
 	}
-	mpCamera->SetLut(mLut);
+	m_pCamera->SetLut(m_Lut);
 }
 
 void SVLutDlgPage::OnContinuousRecalcCheck() 
@@ -761,41 +764,47 @@ LRESULT SVLutDlgPage::OnGraphRefresh( WPARAM wparam, LPARAM lparam )
 void SVLutDlgPage::OnLButtonDown(UINT nFlags, CPoint point) 
 {
 	CWnd* pWnd = ChildWindowFromPoint( point );
-	if( pWnd == &mLUTGraph )
+	if( pWnd == &m_LUTGraph )
 	{
-		mptLastMousePos = ptNoLastMousePos;
+		m_ptLastMousePos = m_ptNoLastMousePos;
 		ClientToScreen( &point );
 		pWnd->ScreenToClient( &point );
 		pWnd->SendMessage( WM_LBUTTONDOWN, nFlags, MAKELPARAM( point.x, point.y ) );
 	}
 	else
+	{
 		CPropertyPage::OnLButtonDown(nFlags, point);
+	}
 }
 
 void SVLutDlgPage::OnLButtonUp(UINT nFlags, CPoint point) 
 {
 	CWnd* pWnd = ChildWindowFromPoint( point );
-	if( pWnd == &mLUTGraph )
+	if( pWnd == &m_LUTGraph )
 	{
 		ClientToScreen( &point );
 		pWnd->ScreenToClient( &point );
 		pWnd->SendMessage( WM_LBUTTONUP, nFlags, MAKELPARAM( point.x, point.y ) );
 	}
 	else
+	{
 		CPropertyPage::OnLButtonUp(nFlags, point);
+	}
 }
 
 void SVLutDlgPage::OnMouseMove(UINT nFlags, CPoint point) 
 {
 	CWnd* pWnd = ChildWindowFromPoint( point );
-	if( pWnd == &mLUTGraph )
+	if( pWnd == &m_LUTGraph )
 	{
 		ClientToScreen( &point );
 		pWnd->ScreenToClient( &point );
 		pWnd->SendMessage( WM_MOUSEMOVE, nFlags, MAKELPARAM( point.x, point.y ) );
 	}
 	else
+	{
 		CPropertyPage::OnMouseMove(nFlags, point);
+	}
 }
 
 void SVLutDlgPage::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
@@ -804,10 +813,10 @@ void SVLutDlgPage::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	CSliderCtrl* pSlider = ( CSliderCtrl* ) pScrollBar;
 
-	if( pSlider == &mUpperSlider )
+	if( pSlider == &m_UpperSlider )
 	{
-		long lUpperClip = abs(( long ) mUpperSlider.GetPos());
-		long lLowerClip = abs(( long ) mLowerSlider.GetPos());
+		long lUpperClip = abs(( long ) m_UpperSlider.GetPos());
+		long lLowerClip = abs(( long ) m_LowerSlider.GetPos());
 
 		if ( lLowerClip > lUpperClip )
 		{
@@ -819,13 +828,11 @@ void SVLutDlgPage::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		param.Add(lUpperClip);
 		SetLutParameters(param);
 		Refresh();
-
-		return;
 	}
-	else if( pSlider == &mLowerSlider )
+	else if( pSlider == &m_LowerSlider )
 	{
-		long lUpperClip = abs(( long ) mUpperSlider.GetPos());
-		long lLowerClip = abs(( long ) mLowerSlider.GetPos());
+		long lUpperClip = abs(( long ) m_UpperSlider.GetPos());
+		long lLowerClip = abs(( long ) m_LowerSlider.GetPos());
 
 		if ( lLowerClip > lUpperClip )
 		{
@@ -837,18 +844,16 @@ void SVLutDlgPage::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		param.Add(lUpperClip);
 		SetLutParameters(param);
 		Refresh();
-
-		return;
 	}
-	
-	CPropertyPage::OnVScroll(nSBCode, nPos, pScrollBar);
+	else
+	{
+		CPropertyPage::OnVScroll(nSBCode, nPos, pScrollBar);
+	}
 }
 
 void SVLutDlgPage::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
 	OnVScroll(nSBCode, nPos, pScrollBar);
-	
-	//CPropertyPage::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
 BOOL CALLBACK SVLutDlgPage::GraphMousePointCallback( POINT point_, LPVOID pThis_ )
@@ -859,40 +864,41 @@ BOOL CALLBACK SVLutDlgPage::GraphMousePointCallback( POINT point_, LPVOID pThis_
 		SVLutDlgPage* pThis = ( SVLutDlgPage* ) pThis_;
 		CPoint pt(point_);
 
-		if (pt.x >= 0 && pt.x < static_cast<long>(pThis->mLut.Info().BandSize()) && pt.y >=0 && pt.y <= pThis->mlMaxLutValue)
+		if (pt.x >= 0 && pt.x < static_cast<long>(pThis->m_Lut.Info().BandSize()) && pt.y >=0 && pt.y <= pThis->m_lMaxLutValue)
 		{
-
 			// interpolate straight line between last point and current point...
-			if (pThis->mptLastMousePos.x != pt.x && pThis->mptLastMousePos != SVLutDlgPage::ptNoLastMousePos)
+			if (pThis->m_ptLastMousePos.x != pt.x && pThis->m_ptLastMousePos != SVLutDlgPage::m_ptNoLastMousePos)
 			{
-				double dSlope = -((double) (pThis->mptLastMousePos.y - pt.y)) / ((double) (pThis->mptLastMousePos.x - pt.x));
+				double dSlope = -((double) (pThis->m_ptLastMousePos.y - pt.y)) / ((double) (pThis->m_ptLastMousePos.x - pt.x));
 				double dY = pt.y;
-				int iDeltaX = (pThis->mptLastMousePos.x - pt.x) > 0 ? 1 : -1;
+				int iDeltaX = (pThis->m_ptLastMousePos.x - pt.x) > 0 ? 1 : -1;
 				dSlope *= (double)(-iDeltaX);
-				for (int xPos=pt.x; xPos != pThis->mptLastMousePos.x; xPos += iDeltaX)
+				for (int xPos=pt.x; xPos != pThis->m_ptLastMousePos.x; xPos += iDeltaX)
 				{
 					// set value at xPos, (int) dY
-					if (pThis->miCurrentBand == -1)
+					if (-1 == pThis->m_iCurrentBand)
 					{
-						for (unsigned int iBand=0; iBand < pThis->mLut.NumBands(); iBand++)
-							pThis->mLut(iBand)(xPos) = (int) dY;
+						for (unsigned int iBand=0; iBand < pThis->m_Lut.NumBands(); iBand++)
+						{
+							pThis->m_Lut(iBand)(xPos) = (int) dY;
+						}
 					}
 					else
 					{
-						pThis->mLut(pThis->miCurrentBand)(xPos) = (int) dY;
+						pThis->m_Lut(pThis->m_iCurrentBand)(xPos) = (int) dY;
 					}
 
 					dY += dSlope;
 				}
 			}
 
-			pThis->mpCamera->SetLut(pThis->mLut);
-			pThis->mptLastMousePos = pt;
+			pThis->m_pCamera->SetLut(pThis->m_Lut);
+			pThis->m_ptLastMousePos = pt;
 			pThis->Refresh();
 		}// end if (pt.x >= 0 && pt.x <= pThis->mLut.Info().BandSize() && pt.y >=0 && pt.y <= mlMaxLutValue)
 		else
 		{
-			pThis->mptLastMousePos = SVLutDlgPage::ptNoLastMousePos;
+			pThis->m_ptLastMousePos = SVLutDlgPage::m_ptNoLastMousePos;
 		}
 	}
 	return FALSE;
@@ -905,22 +911,22 @@ void SVLutDlgPage::OnColorBandAll()
 
 void SVLutDlgPage::OnColorBandBlue() 
 {
-	miCurrentBand = 2;
-	mrgbLineColor = RGB(0,0,255);
+	m_iCurrentBand = 2;
+	m_rgbLineColor = RGB(0,0,255);
 	Refresh();
 }
 
 void SVLutDlgPage::OnColorBandGreen() 
 {
-	miCurrentBand = 1;
-	mrgbLineColor = RGB(0,192,0);
+	m_iCurrentBand = 1;
+	m_rgbLineColor = RGB(0,192,0);
 	Refresh();
 }
 
 void SVLutDlgPage::OnColorBandRed() 
 {
-	miCurrentBand = 0;
-	mrgbLineColor = RGB(234,0,0);
+	m_iCurrentBand = 0;
+	m_rgbLineColor = RGB(234,0,0);
 	Refresh();
 }
 
@@ -932,31 +938,33 @@ void SVLutDlgPage::OnColorBandSync()
 	if (IDYES == result )
 	{
 		// copy current band data to all other bands
-		if ( miCurrentBand != -1 )
+		if ( -1 != m_iCurrentBand )
 		{
-			for (unsigned int iBand=0; iBand < mLut.NumBands(); iBand++)
+			for (unsigned int iBand=0; iBand < m_Lut.NumBands(); iBand++)
 			{
-				if (iBand == miCurrentBand)
+				if (iBand == m_iCurrentBand)
 					continue;
-				for (unsigned int j=0; j < mLut.Info().BandSize(); j++)
+				for (unsigned int j=0; j < m_Lut.Info().BandSize(); j++)
 				{
-					mLut(iBand, j) = mLut(miCurrentBand, j);
+					m_Lut(iBand, j) = m_Lut(m_iCurrentBand, j);
 				}
-				if (mLut(miCurrentBand).GetTransformOperation())
-					mLut(iBand).SetTransformOperation(*mLut(miCurrentBand).GetTransformOperation());
+				if (m_Lut(m_iCurrentBand).GetTransformOperation())
+				{
+					m_Lut(iBand).SetTransformOperation(*m_Lut(m_iCurrentBand).GetTransformOperation());
+				}
 			}
-			mpCamera->SetLut(mLut);
+			m_pCamera->SetLut(m_Lut);
 		}
 
 		// set sync band info
-		miCurrentBand = -1;
-		mrgbLineColor = RGB(0,0,0);
+		m_iCurrentBand = -1;
+		m_rgbLineColor = RGB(0,0,0);
 		Refresh();
 	}
-	else if ( miCurrentBand <= 2 && miCurrentBand >= 0)
+	else if ( m_iCurrentBand <= 2 && m_iCurrentBand >= 0)
 	{
 		// reselect previous band
-		m_iBand = miCurrentBand;
+		m_iBand = m_iCurrentBand;
 		UpdateData(FALSE);
 	}
 }
@@ -969,7 +977,7 @@ void SVLutDlgPage::OnChangeKnee()
 	param.Add(m_iY1);
 	param.Add(m_iX2);
 	param.Add(m_iY2);
-	param.Add(mlMaxLutValue);
+	param.Add(m_lMaxLutValue);
 	SetLutParameters(param);
 	Refresh();
 }

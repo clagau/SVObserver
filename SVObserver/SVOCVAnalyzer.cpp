@@ -160,7 +160,6 @@ void SVOCVAnalyzerClass::DisplayAnalyzerResult()
 	SVOCVAnalyzeResultClass* pOCVResult = ( SVOCVAnalyzeResultClass* ) GetResultObject();
 
 	SVAnalyzerResultDlg dlg;
-	dlg.svocrbraResults = NULL;
 	dlg.psvocvResultArray = &pOCVResult->arrayOCVCharacterResults;
 	dlg.DoModal();
 }

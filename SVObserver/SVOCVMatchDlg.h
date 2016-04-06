@@ -28,7 +28,7 @@ class SVOCVMatchDlg : public CPropertyPage, public SVTaskObjectInterfaceClass
 // Construction
 public:
 	SVOCVMatchDlg();
-	~SVOCVMatchDlg();
+	virtual ~SVOCVMatchDlg();
 
 	virtual HRESULT SetInspectionData();
 

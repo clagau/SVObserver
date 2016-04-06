@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:38:36  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
+#pragma endregion Includes
 
 class SVTaskObjectClass;
 class SVInspectionProcess;
@@ -37,10 +38,8 @@ protected:
 	// To handle public results ( outputs which are send to PPQ )
 	// This list doesn't own the entries! They are owned by
 	// the output owners !
-
 	HANDLE								hProtectionMutex;
 	DWORD								dwWaitTime;
-
 };
 
 

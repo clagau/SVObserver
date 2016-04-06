@@ -9,14 +9,11 @@
 //* .Check In Date   : $Date:   15 May 2014 10:19:40  $
 //******************************************************************************
 
-#if !defined(AFX_SVBARCODERESULT_H__3A85515D_7B17_11D3_A7CE_00106F010A93__INCLUDED_)
-#define AFX_SVBARCODERESULT_H__3A85515D_7B17_11D3_A7CE_00106F010A93__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "SVResultString.h"
+#pragma endregion Includes
 
 #define  BC_MAX_ENTREES       10000  // Max number of lines allowed in the match file
 #define  BC_CAR_RETURN        0x0D
@@ -32,7 +29,7 @@ public:
 	SVStringValueObjectClass* getRegExpression();
 	BOOL CloseObject();
 	BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	SVBarCodeResultClass(BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	SVBarCodeResultClass(BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	virtual ~SVBarCodeResultClass();
 
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
@@ -63,6 +60,3 @@ protected:
 	short    *m_pIndexTable;
 	double   m_dFactor;
 };
-
-#endif // !defined(AFX_SVBARCODERESULT_H__3A85515D_7B17_11D3_A7CE_00106F010A93__INCLUDED_)
-

@@ -32,8 +32,6 @@ public:
 	
 	SVTestAcquisitionClass* m_pAcquisition;
 
-//	HRESULT Format7Dlg( LPCTSTR sSelectedFormat, SVDeviceParamWrapper& rw );
-
 // Dialog Data
 	//{{AFX_DATA(SVCameraFilePropertyPageDlg)
 	enum { IDD = IDD_CAMERAFILE_PROPERTIES_DIALOG };

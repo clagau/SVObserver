@@ -8,9 +8,9 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 11:01:40  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <string>
 
@@ -18,6 +18,7 @@
 #include "SVJsonCommandServerLibrary/SVJsonCommandServer.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#pragma endregion Includes
 
 namespace Json
 {
@@ -68,6 +69,5 @@ protected:
 private:
 	SVInputStreamManager( const SVInputStreamManager& p_rObject );
 	const SVInputStreamManager& operator=( const SVInputStreamManager& p_rObject );
-
 };
 

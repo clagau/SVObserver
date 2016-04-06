@@ -21,6 +21,11 @@
 FramedSplitterWnd::FramedSplitterWnd()
 {
 }
+
+FramedSplitterWnd::~FramedSplitterWnd()
+{
+}
+
 #pragma endregion Constructor
 
 #pragma region Protected Methods

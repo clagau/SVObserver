@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   12 Dec 2014 15:17:52  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVValueObjectReference.h"
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
+#pragma endregion Includes
 
 class SVTaskObjectClass;
 class SVToolClass;

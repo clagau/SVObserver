@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVObjectAppClass.h"
 #include "SVScalarValue.h"
 #include "SVImageBufferStruct.h"
@@ -18,6 +19,7 @@
 #include "SVValueObjectImpl.h"
 #include "SVLibrary/SVSimpleIndexQueue.h"
 #include "SVImageBuffer.h"	// SVImageOverlayClass
+#pragma endregion Includes
 
 extern LPCTSTR const PPQCH_Size;
 extern LPCTSTR const PPQCH_Overwrite;
@@ -25,7 +27,6 @@ extern LPCTSTR const PPQCH_Overwrite;
 //!!!!!!
 typedef SVReferenceCountingTemplate < SVImageOverlayClass > SVRefCountImageOverlayClass;
 typedef std::vector <SVRefCountImageOverlayClass> SVRefCountImageOverlayStructVectorType;
-
 
 struct SVConditionalHistoryEntry	// all the data for one product
 {
@@ -59,6 +60,7 @@ class SVConditionalHistory : public SVObjectClass
 {
 public:
 	SVConditionalHistory();
+	virtual ~SVConditionalHistory();
 
 	HRESULT Validate( std::vector <SVScalarValue>& rvecValues, std::vector <SVScalarValue>& rvecImages, std::vector <SVScalarValue>& rvecConditionals );
 	virtual HRESULT ResetObject();
@@ -97,7 +99,6 @@ private:
 
 	SVSimpleIndexQueue m_Queue;
 
-
 	//SVTQueueObject<SVConditionalHistoryEntry*> m_Queue;
 	// no need for locking (like SVTQueueObject) because all access
 	// will be within m_CritSec
@@ -113,9 +114,6 @@ private:
 
 						
 						// queue swap on rebuild
-
-
 };
 
-
-
+// SIAC function needs to have a crit sec?

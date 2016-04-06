@@ -11,10 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <string>
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 #pragma pack (push, 1)
 struct SVDataDefinitionStruct

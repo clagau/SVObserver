@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:31:24  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
+#pragma endregion Includes
 
 class SVIODoc;
 
@@ -48,7 +49,6 @@ private:
 	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
 
 	SVDataItemManager m_Items;
-
 };
 
 #ifndef _DEBUG  // Testversion in SVRemoteInputsView.cpp

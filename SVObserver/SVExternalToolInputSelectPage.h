@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:32:38  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "PropertyTree/PropTree.h"
+#pragma endregion Includes
 
 class SVExternalToolDetailsSheet;
 class SVExternalTool;
@@ -25,7 +26,7 @@ class SVExternalToolInputSelectPage : public CPropertyPage
 // Construction
 public:
 	SVExternalToolInputSelectPage(const CString& sTitle, SVExternalToolDetailsSheet* pParent = NULL, int id = IDD );
-	~SVExternalToolInputSelectPage();
+	virtual ~SVExternalToolInputSelectPage();
 
 	CString							m_sGroupName;
 	bool							m_bTabbed;
@@ -63,7 +64,6 @@ protected:
 
 	SVRPropTree	m_Tree;
 
-
 	// Generated message map functions
 	//{{AFX_MSG(SVExternalToolInputSelectPage)
 	virtual BOOL OnInitDialog();
@@ -74,7 +74,6 @@ protected:
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 	
 	DECLARE_MESSAGE_MAP()
-
 };
 
 

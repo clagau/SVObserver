@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   27 Aug 2014 01:24:38  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <deque>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
 class SVObjectClass;
 class SVValueObjectClass;

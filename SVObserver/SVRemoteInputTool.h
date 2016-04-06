@@ -8,9 +8,9 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 12:40:04  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVObjectLibrary/SVObjectNotifyTemplate.h"
@@ -19,6 +19,7 @@
 #include "SVObjectCommandDataJson.h"
 #include "SVTool.h"
 #include "SVVariantValueObjectClass.h"
+#pragma endregion Includes
 
 class SVRemoteInputTool : 
 	public SVToolClass,
@@ -27,7 +28,7 @@ class SVRemoteInputTool :
 	SV_DECLARE_CLASS( SVRemoteInputTool )
 
 public:
-	SVRemoteInputTool( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTTOOL );
+	SVRemoteInputTool( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTTOOL );
 	virtual ~SVRemoteInputTool();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -58,7 +59,6 @@ protected:
 
 		SVGUID m_ObjectId;
 		SVObjectCommandDataJsonPtr m_JsonCommandPtr;
-
 	};
 
 	struct SVDataElement
@@ -93,6 +93,5 @@ protected:
 	long m_ElementIdentifier;
 	SVCommandQueue m_Commands;
 	SVDataContainer m_Elements;
-
 };
 

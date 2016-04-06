@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
 #include "SVValueBaseNormalizerClass.h"
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVIPDoc;
 class SVAnalyzerClass;
@@ -30,7 +32,7 @@ class SVEdgeMarkerAdjustmentPageClass : public CPropertyPage, public SVTaskObjec
 
 public:
 	SVEdgeMarkerAdjustmentPageClass( UINT nIDCaption = 0, int id = IDD );
-	~SVEdgeMarkerAdjustmentPageClass();
+	virtual ~SVEdgeMarkerAdjustmentPageClass();
 
 	virtual HRESULT GetInspectionData();
 	virtual HRESULT SetInspectionData();
@@ -139,5 +141,4 @@ protected:
 	//}}AFX_VIRTUAL
 
 };
-
 

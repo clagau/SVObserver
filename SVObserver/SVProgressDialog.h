@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:37:48  $
 //******************************************************************************
 
-#if !defined(AFX_SVPROGRESSDIALOG_H__99F49D44_91F0_11D3_A83A_00106F000C7D__INCLUDED_)
-#define AFX_SVPROGRESSDIALOG_H__99F49D44_91F0_11D3_A83A_00106F000C7D__INCLUDED_
+#pragma once
 
+#pragma region Inlcudes
 #include "SVIProgress.h"
+#pragma endregion Inlcudes
 
 class SVProgressDialog : public CDialog
 {
@@ -26,7 +27,8 @@ protected:
 	CString m_Title;
 
 public:
-	SVProgressDialog(LPCTSTR rTitle, CWnd* pParent = NULL); // standard constructor
+	SVProgressDialog(LPCTSTR rTitle, CWnd* pParent = nullptr); // standard constructor
+	virtual ~SVProgressDialog();
 
 // Dialog Data
 	//{{AFX_DATA(SVProgressDialog)
@@ -59,6 +61,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-

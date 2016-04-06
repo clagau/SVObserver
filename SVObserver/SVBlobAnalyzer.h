@@ -149,7 +149,7 @@ class SVBlobAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IBlobAnaly
 	friend class SVSetupDialogManager;
 
 public:
-	SVBlobAnalyzerClass(SVObjectClass* POwner = NULL , 
+	SVBlobAnalyzerClass(SVObjectClass* POwner = nullptr, 
 		                int StringResourceID = IDS_CLASSNAME_SVBLOBANALYZER);
 
 	virtual ~SVBlobAnalyzerClass();

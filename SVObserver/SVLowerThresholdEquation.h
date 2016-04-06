@@ -8,28 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:18:50  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVEquation.h"
-
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
+#pragma endregion Includes
 
 class SVLowerThresholdEquationClass : public SVEquationClass
 {
 	SV_DECLARE_CLASS( SVLowerThresholdEquationClass);
 
-//******************************************************************************
-// Serialization Declaration(s):
-//******************************************************************************
 public:
-	SVLowerThresholdEquationClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVLOWERTHRESHOLDEQUATION );
+	SVLowerThresholdEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLOWERTHRESHOLDEQUATION );
 	virtual ~SVLowerThresholdEquationClass();
 
 	virtual BOOL OnValidate();

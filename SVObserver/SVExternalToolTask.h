@@ -14,6 +14,7 @@
 #pragma warning (push)
 #pragma warning (disable : 4290)
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
 #include "SVTaskObject.h"
@@ -24,6 +25,7 @@
 #include "SVDllToolLoadLibraryClass.h"
 #include "PropertyTree/SVRPropTreeState.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
+#pragma endregion Includes
 
 class SVToolClass;
 class SVIPDoc;
@@ -41,13 +43,12 @@ struct SVExternalToolTaskData : public SVCancelData
 
 	SVExternalToolTaskData();
 	SVExternalToolTaskData(const SVExternalToolTaskData& src);
-	
-	const SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs);
+	virtual ~SVExternalToolTaskData();
 
+	const SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs);
 
 	SVFileNameValueObjectClass               m_voDllPath;
 	std::vector<SVFileNameValueObjectClass>  m_aDllDependencies; //[NUM_TOOL_DEPENDENCIES];
-
 
 	// DLL info
 	SVStringValueObjectClass               m_voToolName;
@@ -59,24 +60,21 @@ struct SVExternalToolTaskData : public SVCancelData
 	std::vector<SVVariantValueObjectClass> m_aInputObjects; //[NUM_INPUT_OBJECTS]; // our own value objects
 	std::vector<SVStringValueObjectClass>  m_aInputObjectNames; //[NUM_INPUT_OBJECTS]; // our value object names
 
-
 	std::vector<SVVariantValueObjectClass> m_aResultObjects; //[NUM_RESULT_OBJECTS];
 	std::vector<SVStringValueObjectClass>  m_aResultObjectNames; //[NUM_RESULT_OBJECTS];
 
-	//std::vector<SVVariantResultClass>      m_aResultRangeObjects; //ResultClass ( Ranges )
+	SVImageDefinitionStructArray m_aResultImageDefinitions;
+	ResultValueDefinitionStructArray m_aResultValueDefinitions;
+	InputValueDefinitionStructArray m_aInputValueDefinitions;
 
-	SVImageDefinitionStructArray             m_aResultImageDefinitions;
-	ResultValueDefinitionStructArray       m_aResultValueDefinitions;
-	InputValueDefinitionStructArray        m_aInputValueDefinitions;
-
-	SVMultiCancelData                      m_RangeResultData;
+	SVMultiCancelData m_RangeResultData;
 
 	long m_lNumInputImages;
 	long m_lNumInputValues;
 	long m_lNumResultImages;
 	long m_lNumResultValues;
 
-	SVRPropTreeState                       m_PropTreeState;
+	SVRPropTreeState m_PropTreeState;
 };	// end struct SVExternalToolTaskData
 
 class SVExternalToolTask : public SVTaskObjectListClass, public ISVCancel
@@ -86,7 +84,7 @@ class SVExternalToolTask : public SVTaskObjectListClass, public ISVCancel
 public:
 	typedef SVVector< CString > SVDependenyNames;
 
-	SVExternalToolTask( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SV_EXTERNAL_TOOL_TASK );
+	SVExternalToolTask( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SV_EXTERNAL_TOOL_TASK );
 	virtual ~SVExternalToolTask();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -180,14 +178,11 @@ private:
 	HRESULT CollectInputImageNames( );
 
 public:
-	
-	
 	friend class SVExternalToolDlg;
 	friend class SVExternalToolImageSelectPage;
 	friend class SVExternalToolInputSelectPage;
 	friend class SVExternalToolResultPage;
 	friend class SVExternalToolDetailsSheet;
-
 };
 #pragma warning (pop)
 

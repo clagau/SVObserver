@@ -22,6 +22,10 @@ SVLaplacianEdgeFilterClass::SVLaplacianEdgeFilterClass( SVObjectClass* POwner, i
 	outObjectInfo.ObjectTypeInfo.SubType = SVLaplacianEdgeFilterObjectType;
 }
 
+SVLaplacianEdgeFilterClass::~SVLaplacianEdgeFilterClass()
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

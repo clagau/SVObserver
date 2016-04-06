@@ -22,6 +22,10 @@ SVEdgeDetectFilterClass::SVEdgeDetectFilterClass( SVObjectClass* POwner, int Str
 	outObjectInfo.ObjectTypeInfo.SubType = SVEdgeDetectFilterObjectType;
 }
 
+SVEdgeDetectFilterClass::~SVEdgeDetectFilterClass()
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

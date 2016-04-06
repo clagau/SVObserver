@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVLoki/TypeManip.h"	// Loki
+#pragma endregion Includes
 
 class SVArrayValueHolderBase
 {
@@ -25,8 +27,6 @@ protected:
 	virtual SVArrayValueHolderBase* Clone() const = 0;
 	virtual const SVArrayValueHolderBase& Assign(const SVArrayValueHolderBase& rhs) = 0;
 };// end class SVArrayValueHolderBase
-
-
 
 template <typename T, typename D=T>
 class SVArrayValueHolder : public SVArrayValueHolderBase
@@ -49,17 +49,11 @@ protected:
 	virtual const SVArrayValueHolderBase& Assign(const SVArrayValueHolderBase& rhs);
 };// end class SVArrayValueHolder 
 
-
-
-
 inline const SVArrayValueHolderBase& SVArrayValueHolderBase::operator = (const SVArrayValueHolderBase& rhs)
 {
 	Assign(rhs);
 	return *this;
 }
-
-
-
 
 template <typename T, typename D>
 SVArrayValueHolder<T,D>::SVArrayValueHolder(const SVArrayValueHolderBase& rhs_)

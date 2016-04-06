@@ -11,11 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVUtilityLibrary/SVGUID.h"
+#pragma endregion Includes
 
 class SVSetupDialogManager
 {
@@ -40,8 +42,6 @@ protected:
 	static HRESULT SVLinearAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVLineROIClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVLuminanceAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVOCRGrayAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVPatternAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* pParentWnd );
 	static HRESULT SVPixelAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
@@ -52,6 +52,5 @@ protected:
 private:
 	SVSetupDialogManager( const SVSetupDialogManager& p_rObject );
 	const SVSetupDialogManager& operator=( const SVSetupDialogManager& p_rObject );
-
 };
 

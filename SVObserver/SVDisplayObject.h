@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:02:26  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVInfoStructs.h"
+#pragma endregion Includes
 
 class SVIPDoc;
 
@@ -81,6 +82,4 @@ protected:
 	long m_FrameRate;
 	SVClock::SVTimeStamp m_NextDisplayEvent;
 	SVClock::SVTimeStamp m_LastUpdateTime;
-
 };
-

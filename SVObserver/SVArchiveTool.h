@@ -34,7 +34,7 @@ class SVArchiveTool : public SVToolClass
 public:
 	SVArchiveTool( 
 		BOOL BCreateDefaultTaskList = FALSE, 
-		SVObjectClass* POwner = NULL, 
+		SVObjectClass* POwner = nullptr, 
 		int StringResourceID = IDS_CLASSNAME_SVARCHIVETOOL
 	    );
 	virtual ~SVArchiveTool();

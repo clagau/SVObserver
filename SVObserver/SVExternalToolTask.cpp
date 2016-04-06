@@ -47,6 +47,10 @@ SVExternalToolTaskData::SVExternalToolTaskData(const SVExternalToolTaskData& src
 	*this = src;
 }
 
+SVExternalToolTaskData::~SVExternalToolTaskData()
+{
+}
+
 const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalToolTaskData& rhs)
 {
 	if ( this != &rhs )

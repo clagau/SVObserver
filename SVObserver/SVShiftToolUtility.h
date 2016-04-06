@@ -18,6 +18,7 @@ class SVShiftToolUtility
 public:
 	static void SetToolSetReference(SVShiftTool* pShiftTool);
 	static void SetToolNormalize(SVShiftTool* pShiftTool);
+
 private:
 	SVShiftToolUtility();
 	~SVShiftToolUtility();

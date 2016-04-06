@@ -14,9 +14,11 @@
 #pragma warning (push)
 #pragma warning (disable : 4244)
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVByteValueObjectClass : public SVValueObjectClassImpl <BYTE>
 {
@@ -29,14 +31,11 @@ class SVByteValueObjectClass : public SVValueObjectClassImpl <BYTE>
 
 public:
 	SVByteValueObjectClass( LPCTSTR ObjectName );
-	SVByteValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVBYTEVALUEOBJECT );
+	SVByteValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBYTEVALUEOBJECT );
 	SVByteValueObjectClass( const SVByteValueObjectClass& rhs );
 	const SVByteValueObjectClass& operator = ( const SVByteValueObjectClass& rhs );
 
 	virtual ~SVByteValueObjectClass();
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );	// for compat loading legacy SVByteVectorObjectClass
 
@@ -52,7 +51,6 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
 
 #pragma warning (pop)

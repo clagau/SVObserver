@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   23 Jul 2013 18:04:40  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVTimerLibrary/SVClock.h"
+#pragma endregion Includes
 
 class SVRemoteFontManager  
 {

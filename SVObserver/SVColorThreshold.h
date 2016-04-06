@@ -8,21 +8,22 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   13 Aug 2013 09:47:24  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVDrawObject.h"
 #include "SVImageClass.h"
 #include "SVOperator.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVMatroxLibrary/SVMatroxImageResult.h"
+#pragma endregion Includes
 
 class SVColorThresholdClass : public SVOperatorClass
 {
 	SV_DECLARE_CLASS( SVColorThresholdClass );
 
 public:
-	SVColorThresholdClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVCOLORTHRESHOLD );
+	SVColorThresholdClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCOLORTHRESHOLD );
 
 	virtual ~SVColorThresholdClass();
 
@@ -117,6 +118,5 @@ protected:
 private:
 	SVDrawObjectClass	graphFigures[3];
 	SVDrawObjectListClass thresholdBarFigures[3];
-
 };
 

@@ -9,38 +9,22 @@
 //* .Check In Date   : $Date:   15 May 2014 11:56:12  $
 //******************************************************************************
 
+#pragma once
+
+#pragma region Includes
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 class SVToolClass;
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
-
 
 class SVPolarTransformClass : public SVTaskObjectClass
 {
 	SV_DECLARE_CLASS( SVPolarTransformClass )
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-	SVPolarTransformClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORM );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
+	SVPolarTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORM );
 	virtual ~SVPolarTransformClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
 	virtual BOOL OnValidate();
@@ -70,10 +54,6 @@ protected:
 
 	SVInObjectInfoStruct inputStartAngleResult;
 	SVInObjectInfoStruct inputEndAngleResult;
-
-
-	// Embedded Objects (outputs)
-	//SVBoolValueObjectClass performPolarTransformation;
 };
 
 

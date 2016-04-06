@@ -17,7 +17,8 @@ class SVBlobAnalyzerResultDlg : public CDialog
 {
 // Construction
 public:
-	SVBlobAnalyzerResultDlg(CWnd* pParent = NULL);   // standard constructor
+	SVBlobAnalyzerResultDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVBlobAnalyzerResultDlg();
 
 // Dialog Data
 	//{{AFX_DATA(SVBlobAnalyzerResultDlg)
@@ -41,4 +42,3 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-

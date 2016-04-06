@@ -11,10 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVFileNameArrayClass.h"
+#pragma endregion Includes
 
 enum { AcNone, AcCamera, AcFile };
 
@@ -51,7 +53,6 @@ public:
 
 private:
 	SVFileNameArrayClass msvFileNameArray;
-
 };
 
 class SVAcquisitionSourceListClass : public SVVector< SVAcquisitionSourceClass* >
@@ -60,12 +61,10 @@ public:
 	SVAcquisitionSourceListClass();
 	SVAcquisitionSourceListClass(const SVAcquisitionSourceListClass& svASLC );
 
-	~SVAcquisitionSourceListClass();
+	virtual ~SVAcquisitionSourceListClass();
 
 	const SVAcquisitionSourceListClass& operator=(const SVAcquisitionSourceListClass& svASLC);
 
 	void DeleteAll();
-
 };
-
 

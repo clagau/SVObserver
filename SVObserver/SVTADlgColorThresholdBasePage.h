@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVDlgImageEditor.h"
 #include "SVROIFigureEditor.h"
+#pragma endregion Includes
 
 class SVTADlgColorThresholdSheet;
 class SVColorToolClass;
@@ -27,7 +29,7 @@ class SVTADlgColorThresholdBasePage : public CPropertyPage
 public:
 	SVTADlgColorThresholdBasePage() {}	// dummy for DYNCREATE macros
 	SVTADlgColorThresholdBasePage(UINT nIDTemplate);
-	~SVTADlgColorThresholdBasePage();
+	virtual ~SVTADlgColorThresholdBasePage();
 
 // Dialog Data
 	//{{AFX_DATA(SVTADlgColorThresholdBasePage)

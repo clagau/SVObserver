@@ -24,10 +24,6 @@
 #include "SVCmnLib/Utilities.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVFileSystemLibrary/SVFileSystemCommandFactory.h"
-// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-#include "SVImageCompression/SVImageCompressionClass.h"
-#endif
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleStruct.h"
 #include "SVLibrary/SVPackedFile.h"
@@ -1905,25 +1901,6 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
-		// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-		SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
-
-		if (lCompression != 0)
-		{
-			//------ An lCompression of 0 indicates that no compression will be used.
-			//------ For purposes of speed, our implementation will not tie up a LeadTool
-			//------ resource.
-			hrResult = mainCompressionObject.GetAvailableResource ();
-			if (hrResult == SVDM_1502NO_INDEXESAVAILABLE_ERROR)
-			{
-				//--------- All resources are currently in use.  This should be considered an
-				//--------- acceptable response.
-				throw -1558;
-			}
-		}
-#endif
-
 		long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
 		ASSERT( ppsaStatus != NULL );
@@ -2055,63 +2032,24 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				{
 					HRESULT hr = S_OK;
 
-					char* pDIB = NULL;
+					char* pDIB = nullptr;
 
-					// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-					if (lCompression != 0)
+					bstrImage = SysAllocStringByteLen( NULL, static_cast< UINT >( l_ImageIter->second.m_ImageDIB.size() ) );
+					if (nullptr == bstrImage)
 					{
-						hr = mainCompressionObject.GetAndLockInputDIBBuffer(&pDIB);
+						hr = -1568;
 					}
 					else
-#endif
 					{
-						//------ An alCompression of 0 indicates that no compression will be used. 
-						//------ For purposes of speed, our implementation will not tie up a LeadTool
-						//------ resource.
-						bstrImage = SysAllocStringByteLen( NULL, static_cast< UINT >( l_ImageIter->second.m_ImageDIB.size() ) );
-						if (bstrImage == NULL)
-						{
-							hr = -1568;
-						}
-						else
-						{
-							//------ Convert from wide character pointer to character 
-							//------ pointer. Doesn't matter for binary data.
-							pDIB = (char *) (bstrImage);    
-						}
+						//------ Convert from wide character pointer to character 
+						//------ pointer. Doesn't matter for binary data.
+						pDIB = (char *) (bstrImage);    
 					}
 
 					if ( hr == S_OK )
 					{
 						// Copy data to DIB memory locations
 						memcpy( pDIB, &(l_ImageIter->second.m_ImageDIB[0]), l_ImageIter->second.m_ImageDIB.size() );
-
-						// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-						if (lCompression != 0)
-						{
-							mainCompressionObject.UnLockInputDIBBuffer();
-
-							hr = mainCompressionObject.ImportGlobalAllocDIBData();
-
-							if (hr < 0)
-							{
-								hr = -1566;
-							}
-							else
-							{
-								const BITMAPINFO* l_pInfo = reinterpret_cast< const BITMAPINFO* >( &(l_ImageIter->second.m_ImageDIB[0]) );
-
-								hr = mainCompressionObject.ExportBSTR(&bstrImage, l_pInfo->bmiHeader.biBitCount, lCompression);
-
-								if (hr < 0)
-								{
-									hr = -1567;
-								}
-							}
-						}
-#endif
 					}
 
 					if ( hr == S_OK )
@@ -3175,25 +3113,6 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
-		// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
-
-		if (lCompression != 0)
-		{
-			//------ An lCompression of 0 indicates that no compression will be used.
-			//------ For purposes of speed, our implementation will not tie up a LeadTool
-			//------ resource.
-			hrResult = mainCompressionObject.GetAvailableResource();
-			if (hrResult == SVDM_1502NO_INDEXESAVAILABLE_ERROR)
-			{
-				//--------- All resources are currently in use.  This should be considered an
-				//--------- acceptable response.
-				throw -1606;
-			}
-		}
-#endif		
-
 		//go through list of names and make sure they are all valid
 		// 1) Inspection exists
 		// 2) Requested data item exists
@@ -3314,12 +3233,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 							// put image in return array
 							BSTR bstrTemp = NULL;
 
-							// BRW - SVImageCompression has been removed for x64.
-							HRESULT hr = SafeImageToBSTR( pImage, svIndex, &bstrTemp
-#ifndef _WIN64
-								, lCompression, &mainCompressionObject
-#endif
-								);
+							HRESULT hr = SafeImageToBSTR( pImage, svIndex, &bstrTemp);
 
 							if ( SUCCEEDED( hr ) )
 							{
@@ -3465,15 +3379,7 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 	return hr;
 }
 
-HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, 
-	SVSmartHandlePointer rImageHandle,
-	BSTR*              pbstr
-	// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-	, long alCompression
-	, SVImageCompressionClass* apCompressionObject
-#endif
-	)
+HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePointer rImageHandle, BSTR* pbstr)
 {
 	HRESULT hr = S_OK;
 
@@ -3487,23 +3393,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 	{
 		hr = -1578;
 	}
-	// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-	else
-	{
-		//--- It's not acceptable to specify a compression and not provide a 
-		//--- compression object.  
-		//--- It is not advised to not provide a compression object; however, for
-		//--- compatabillity we will attempt to bypass the compression object if no
-		//--- compression is specified.
-		if ( apCompressionObject == NULL && alCompression != 0 )
-		{
-			hr = -1579;
-		}
-	}
-#endif
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		SVMatroxBufferInterface::SVStatusCode l_Code;
 
@@ -3517,7 +3408,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		long lTabSize;
 		bool IsColor( false );
 
-		char* pDIB = NULL;
+		char* pDIB = nullptr;
 
 		BOOL bDestroyHandle = FALSE;
 
@@ -3627,33 +3518,16 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		// Calculate total size buffer needed for image
 		lBufSize = sizeof( BITMAPINFOHEADER ) + lTabSize + pbmhInfo->biSizeImage;
 
-		// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-		if (alCompression != 0)
+		*pbstr = SysAllocStringByteLen(nullptr, lBufSize);
+		if (nullptr  == *pbstr)
 		{
-			hr = apCompressionObject->GetAndLockInputDIBBuffer(&pDIB);
-			if (pDIB == NULL)
-			{
-				hr = -1561;
-			}
+			hr = -1568;
 		}
 		else
-#endif
 		{
-			//------ An alCompression of 0 indicates that no compression will be used. 
-			//------ For purposes of speed, our implementation will not tie up a LeadTool
-			//------ resource.
-			*pbstr = SysAllocStringByteLen(NULL, lBufSize);
-			if (*pbstr == NULL)
-			{
-				hr = -1568;
-			}
-			else
-			{
-				//------ Convert from wide character pointer to character 
-				//------ pointer. Doesn't matter for binary data.
-				pDIB = (char *) (*pbstr);    
-			}
+			//------ Convert from wide character pointer to character 
+			//------ pointer. Doesn't matter for binary data.
+			pDIB = (char *) (*pbstr);    
 		}
 
 		if( oChildHandle.empty() )
@@ -3668,30 +3542,6 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 			memcpy( pDIB + sizeof( BITMAPINFOHEADER ) + lTabSize, 
 				oChildHandle->GetBufferAddress(), 
 				pbmhInfo->biSizeImage );
-
-			// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-			if (alCompression != 0)
-			{
-				apCompressionObject->UnLockInputDIBBuffer ();
-
-				hr = apCompressionObject->ImportGlobalAllocDIBData();
-
-				if (hr < 0)
-				{
-					hr = -1566;
-				}
-				else
-				{
-					hr = apCompressionObject->ExportBSTR(pbstr, pbmhInfo->biBitCount, alCompression);
-
-					if (hr < 0)
-					{
-						hr = -1567;
-					}
-				}
-			}
-#endif
 		}
 
 		//--- For the case where compression is not zero the pDIB value can no longer
@@ -3705,16 +3555,11 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 	return hr;
 }
 
-HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr
-	// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-	, long alCompression, SVImageCompressionClass *apCompressionObject
-#endif
-	)
+HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr)
 {
 	HRESULT hr = S_OK;
 
-	if( p_pImage != NULL )
+	if( nullptr != p_pImage )
 	{
 		SVImageInfoClass oChildInfo = p_pImage->GetImageInfo();
 
@@ -3731,12 +3576,7 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 			p_pImage->SafeImageCopyToHandle( p_svIndex, oChildHandle );
 		}
 
-		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr
-			// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-			, alCompression, apCompressionObject
-#endif
-			);
+		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr);
 	}
 	else
 	{
@@ -4652,29 +4492,8 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 	SVActiveXLockStruct SVaxls;
 	HRESULT hr = S_FALSE;
 
-	// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-	SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
-#endif
 	do
 	{
-		// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-		if ( p_lCompression != 0 )
-		{
-			//------ An lCompression of 0 indicates that no compression will be used.
-			//------ For purposes of speed, our implementation will not tie up a LeadTool
-			//------ resource.
-			hr = mainCompressionObject.GetAvailableResource();
-			if (hr == SVDM_1502NO_INDEXESAVAILABLE_ERROR)
-			{
-				//--------- All resources are currently in use.  This should be considered an
-				//--------- acceptable response.
-				hr = -1605;
-				break;
-			}
-		}
-#endif
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
@@ -4708,12 +4527,7 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 		SVImageInfoClass l_ImageInfo;
 
 		// put image in return array
-		// BRW - SVImageCompression has been removed for x64.
-		hr = ImageToBSTR( l_ImageInfo, SVaxls.m_ImageHandlePtr, p_pbstrImage
-#ifndef _WIN64
-			, p_lCompression, &mainCompressionObject
-#endif
-			);
+		hr = ImageToBSTR( l_ImageInfo, SVaxls.m_ImageHandlePtr, p_pbstrImage);
 
 		break;
 	} while (false);
@@ -5803,12 +5617,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 
 				SVSmartHandlePointer ImageBufferHandle = new SVImageBufferHandleStruct( lCharHandle );
 
-				// BRW - SVImageCompression has been removed for x64.
-				ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage
-#ifndef _WIN64
-					, 0,NULL
-#endif
-					);
+				ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage);
 				lCharHandle.clear();
 
 				hr = S_OK;
@@ -6305,24 +6114,6 @@ namespace local
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   1, saBounds);
 		}
 
-		// BRW - SVImageCompression has been removed for x64.
-#ifndef _WIN64
-		SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
-
-		if (lCompression != 0)
-		{
-			//------ An lCompression of 0 indicates that no compression will be used.
-			//------ For purposes of speed, our implementation will not tie up a LeadTool
-			//------ resource.
-			HRESULT hrResult = mainCompressionObject.GetAvailableResource ();
-			if (hrResult == SVDM_1502NO_INDEXESAVAILABLE_ERROR)
-			{
-				//--------- All resources are currently in use.  This should be considered an
-				//--------- acceptable response.
-				hrResult = -12391;//!!!
-			}
-		}
-#endif
 		for ( long l = 0; l < static_cast<long>(rvec.size()); ++l )
 		{
 			SVImageBufferStruct& rImage = rvec.at(l);
@@ -6335,24 +6126,19 @@ namespace local
 
 			if ( ppsaImages )
 			{
-				BSTR bstrImage = NULL;
-				// BRW - SVImageCompression has been removed for x64.
-				CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage
-#ifndef _WIN64
-					, lCompression, &mainCompressionObject
-#endif
-					);
+				BSTR bstrImage = nullptr;
+				CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage);
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, &l, bstrImage );
 			}
 
 			if ( ppsaOverlays )
 			{
-				BYTE* pBytes = NULL;
+				BYTE* pBytes = nullptr;
 				long lSize = 0;
 				rImage.overlay.GetBufferSize( lSize );
 				rImage.overlay.GetBuffer( pBytes );
 
-				BSTR bstrOverlay = ::SysAllocStringByteLen( NULL, lSize );
+				BSTR bstrOverlay = ::SysAllocStringByteLen( nullptr, lSize );
 				memcpy( bstrOverlay, pBytes, lSize );
 
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaOverlays, &l, bstrOverlay );
@@ -6401,24 +6187,6 @@ namespace local
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   2, saBounds);
 		}
 
-		// BRW - SVImageCompression has been deprecated.
-#ifndef _WIN64
-		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
-
-		if (lCompression != 0)
-		{
-			//------ An lCompression of 0 indicates that no compression will be used.
-			//------ For purposes of speed, our implementation will not tie up a LeadTool
-			//------ resource.
-			HRESULT hrResult = mainCompressionObject.GetAvailableResource ();
-			if (hrResult == SVDM_1502NO_INDEXESAVAILABLE_ERROR)
-			{
-				//--------- All resources are currently in use.  This should be considered an
-				//--------- acceptable response.
-				hrResult = -12391;//!!!
-			}
-		}
-#endif
 		long alDimIndex[2]={0};
 		for ( long lEntry = 0; lEntry < lNumEntries; ++lEntry )
 		{
@@ -6439,24 +6207,19 @@ namespace local
 
 				if ( ppsaImages )
 				{
-					BSTR bstrImage = NULL;
-					// BRW - SVImageCompression has been removed for x64.
-					CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage
-#ifndef _WIN64
-						, lCompression, &mainCompressionObject
-#endif
-						);
+					BSTR bstrImage = nullptr;
+					CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage);
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, alDimIndex, bstrImage );
 				}
 
 				if ( ppsaOverlays )
 				{
-					BYTE* pBytes = NULL;
+					BYTE* pBytes = nullptr;
 					long lSize = 0;
 					rImage.overlay.GetBufferSize( lSize );
 					rImage.overlay.GetBuffer( pBytes );
 
-					BSTR bstrOverlay = ::SysAllocStringByteLen( NULL, lSize );
+					BSTR bstrOverlay = ::SysAllocStringByteLen( nullptr, lSize );
 					memcpy( bstrOverlay, pBytes, lSize );
 
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaOverlays, alDimIndex, bstrOverlay );

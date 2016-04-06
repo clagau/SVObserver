@@ -36,7 +36,7 @@ class SVCustomFilterClass : public SVFilterClass
 //******************************************************************************
 public:
 // Standard constructor
-	SVCustomFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVCUSTOMFILTER );
+	SVCustomFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCUSTOMFILTER );
 	virtual ~SVCustomFilterClass();
 	
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

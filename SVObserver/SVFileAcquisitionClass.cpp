@@ -224,9 +224,9 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 		const SVCameraFormatsDeviceParam* pParam = m_DeviceParams.Parameter( DeviceParamCameraFormats ).DerivedValue( pParam );
 		if ( pParam )
 		{
-			bufHeight = pParam->options.find( _T("default") )->second.lHeight;
-			bufWidth = pParam->options.find( _T("default") )->second.lWidth;
-			iFormat = pParam->options.find( _T("default") )->second.eImageType;
+			bufHeight = pParam->options.find( _T("default") )->second.m_lHeight;
+			bufWidth = pParam->options.find( _T("default") )->second.m_lWidth;
+			iFormat = pParam->options.find( _T("default") )->second.m_eImageType;
 		}
 	}
 

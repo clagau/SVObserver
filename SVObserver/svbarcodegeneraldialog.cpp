@@ -9,13 +9,12 @@
 //* .Check In Date   : $Date:   15 May 2014 14:32:24  $
 //******************************************************************************
 
-// SVBarCodeGeneralDialog.cpp : implementation file
-//
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBarCodeGeneralDialog.h"
 #include "SVBarCodeProperties.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,10 +22,13 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+SVBarCodeGeneralDialog::SVBarCodeInfoArray::~SVBarCodeInfoArray()
+{
+}
 
 const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::SVBarCodeInfoArray::GetInfoByIndex(int iIndex)
 {
-	SVBarCodeGeneralDialog::SVBarCodeInfoStruct* pInfo = NULL;
+	SVBarCodeGeneralDialog::SVBarCodeInfoStruct* pInfo = nullptr;
 	for ( int i = 0; i < GetSize(); i++ )
 	{
 		if ( ElementAt(i).iIndex == iIndex )
@@ -50,14 +52,11 @@ const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::SVBar
 			break;
 		}
 	}
-
 	return pInfo;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // SVBarCodeGeneralDialog dialog
-
 
 SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=NULL*/)
 	: CPropertyPage(SVBarCodeGeneralDialog::IDD)
@@ -103,6 +102,9 @@ SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=NULL*/)
 	m_aBarCodeInfo.Add(SVBarCodeInfoStruct( SVRssCode, _T("RSS"), SVValueEncRss14, SVValueAny ));
 }
 
+SVBarCodeGeneralDialog::~SVBarCodeGeneralDialog()
+{
+}
 
 void SVBarCodeGeneralDialog::DoDataExchange(CDataExchange* pDX)
 {

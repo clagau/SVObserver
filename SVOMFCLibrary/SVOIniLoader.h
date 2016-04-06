@@ -48,12 +48,6 @@ public:
 	CString m_csAcquisitionTriggerDLL;
 	CString m_csHardwareOptions;
 
-	CString m_csFirmwareCommand;
-	CString m_csFirmwareWorkingDir;
-	CString m_csFirmwareArguments;
-
-	CString m_csShowUpdateFirmware;
-
 	CString m_csIOBoardOption;
 	
 	long m_gigePacketSize;

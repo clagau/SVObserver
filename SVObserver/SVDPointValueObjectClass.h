@@ -8,15 +8,16 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:20:56  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <atltypes.h>
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
+#pragma endregion Includes
 
 class SVDPointValueObjectClass : public SVValueObjectClassImpl <SVDPointClass>
 {
@@ -24,7 +25,7 @@ class SVDPointValueObjectClass : public SVValueObjectClassImpl <SVDPointClass>
 
 public:
 	SVDPointValueObjectClass( LPCTSTR ObjectName );
-	SVDPointValueObjectClass( SVObjectClass* POwner = NULL , 
+	SVDPointValueObjectClass( SVObjectClass* POwner = nullptr, 
 	                          int StringResourceID = IDS_CLASSNAME_SVDPOINTVALUEOBJECT );
 	const SVDPointValueObjectClass& operator = (const SVDPointValueObjectClass& rhs);
 
@@ -32,9 +33,6 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	HRESULT GetDefaultValue( POINT& rPoint );
@@ -64,6 +62,4 @@ protected:
 
 private:
 	void LocalInitialize();
-
 };
-

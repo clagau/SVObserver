@@ -8,49 +8,26 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:58:06  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVResult.h"
+#pragma endregion Includes
 
 class SVStringResultClass : public SVResultClass  
 {
 	SV_DECLARE_CLASS( SVStringResultClass );
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-	SVStringResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_RESULT_STRING );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
+	SVStringResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_STRING );
 	virtual ~SVStringResultClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
-
-protected:
-	SVStringValueObjectClass* getInputString();
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-public:
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-public:
 	virtual BOOL OnValidate();
 
 protected:
+	SVStringValueObjectClass* getInputString();
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
 //******************************************************************************

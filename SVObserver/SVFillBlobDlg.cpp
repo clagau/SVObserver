@@ -9,11 +9,13 @@
 // * .Check In Date   : $Date:   12 Nov 2014 07:05:36  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVFillBlobDlg.h"
 
 #include "SVTaskObject.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,16 +23,16 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVFillBlobDlg dialog
-
-
-SVFillBlobDlg::SVFillBlobDlg(CWnd* pParent /*=NULL*/)
+SVFillBlobDlg::SVFillBlobDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVFillBlobDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVFillBlobDlg)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
+}
+
+SVFillBlobDlg::~SVFillBlobDlg()
+{
 }
 
 HRESULT SVFillBlobDlg::SetInspectionData()

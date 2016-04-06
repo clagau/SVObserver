@@ -41,13 +41,38 @@ static const TCHAR* const CategoryUnknown = _T("Unknown");
 static const TCHAR* const CategoryNone = _T("None");
 static const TCHAR* const CategorySystem = _T("System");
 static const TCHAR* const CategoryApplication = _T("Application");
-static const TCHAR* const TaskCategory[CategoryNr]= { _T("Unused01"), _T("SVBatchReport"), _T("SVFocusNT"), _T("SVFocusDB"), _T("SVFocusDBManager"),
-	_T("SVIMCommand"), _T("SVIPC"), _T("SVLanguageManager"), _T("SVLibrary"), _T("SVPipes"), 
-	_T("Unused02"), _T("SVTCPIP"), _T("SVObserver"), _T("SVSecurity"), _T("Unused03"),
-	_T("SVMachineMessage"), _T("SVCmdComServer"), _T("SVCmdComClient"), _T("SVDataManager"),
-	_T("SVAccess"), _T("SVIntek"), _T("SVImageCompression"), _T("SVEquation"), _T("SVFileAcquisition"),
-	_T("SVMatroxGige"), _T("SVTVicLpt"), _T("SVOLibrary"), _T("SVSystemLibrary"), _T("SVMatroxLibrary"),
-	_T("SVCI"), _T("SVXMLLibrary") };
+static const TCHAR* const TaskCategory[CategoryNr]= { 
+	_T("Unused01"),
+	_T("Unused02"),  
+	_T("Unused03"), 
+	_T("Unused04"), 
+	_T("Unused05"),
+	_T("SVIMCommand"),
+	_T("Unused05"),
+	_T("Unused07"),
+	_T("SVLibrary"),
+	_T("Unused08"), 
+	_T("Unused09"),
+	_T("Unused10"),
+	_T("SVObserver"),
+	_T("SVSecurity"),
+	_T("Unused11"),
+	_T("SVMachineMessage"),
+	_T("SVCmdComServer"),
+	_T("SVCmdComClient"),
+	_T("SVDataManager"),
+	_T("SVAccess"),
+	_T("Unused12"),
+	_T("SVImageCompression"),
+	_T("SVEquation"),
+	_T("SVFileAcquisition"),
+	_T("SVMatroxGige"),
+	_T("SVLptIO"),
+	_T("SVOLibrary"),
+	_T("SVSystemLibrary"),
+	_T("SVMatroxLibrary"),
+	_T("Unused13"),
+	_T("SVXMLLibrary") };
 
 #pragma endregion Declarations
 

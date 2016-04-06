@@ -38,7 +38,7 @@ class SVShapeMaskHelperClass : public SVTaskObjectClass, public ISVCancel, publi
 {
 	SV_DECLARE_CLASS( SVShapeMaskHelperClass );
 public:
-	SVShapeMaskHelperClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SHAPE_MASK_HELPER );
+	SVShapeMaskHelperClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SHAPE_MASK_HELPER );
 	virtual ~SVShapeMaskHelperClass();
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual HRESULT ResetObject();

@@ -46,7 +46,7 @@ public:
 
 
 	SVDlgImageEditor();
-	~SVDlgImageEditor();
+	virtual ~SVDlgImageEditor();
 
 	HRESULT SetFigureEditor( SVFigureEditor* pFigureEditor);
 	//HRESULT SetROI(const CRect& p_roRect);

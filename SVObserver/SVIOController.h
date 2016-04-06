@@ -8,9 +8,9 @@
 //* .Current Version : $Revision:   1.12  $
 //* .Check In Date   : $Date:   12 Dec 2014 13:10:18  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
@@ -21,6 +21,7 @@
 #include "SVRemoteOutputDataController.h"
 #include "SVRemoteOutputObject.h"
 #include "RemoteMonitorListController.h"
+#pragma endregion Includes
 
 class SVIODoc;
 

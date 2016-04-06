@@ -8,17 +8,18 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:48:00  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVInputObject.h"
+#pragma endregion Includes
 
 class SVRemoteInputObject : public SVInputObject 
 {
 public:
 
 	SVRemoteInputObject( LPCSTR strObjectName );
-	SVRemoteInputObject( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTOBJECT );
+	SVRemoteInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTOBJECT );
 
 	virtual ~SVRemoteInputObject();
 
@@ -37,5 +38,5 @@ public:
 	long				m_lIndex;
 private:
 	CRITICAL_SECTION	m_hCriticalSection;
-	_variant_t				m_vtRemoteCache;
+	_variant_t			m_vtRemoteCache;
 };

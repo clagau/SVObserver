@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   23 Jun 2014 07:30:52  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <assert.h>
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "UseTypeExceptMatch.h"
 #include "SVValueObjectClass.h"
+#pragma endregion Includes
 
 // implement default behavior for most of the types
 // derived classes should override the virtuals needed for type-specific behavior.

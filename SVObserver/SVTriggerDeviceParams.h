@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   24 Apr 2013 12:28:54  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 struct SVTriggerDeviceParams
 {

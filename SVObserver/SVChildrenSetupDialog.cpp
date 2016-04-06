@@ -44,6 +44,10 @@ SVChildrenSetupDialogClass::SVChildrenSetupDialogClass(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVChildrenSetupDialogClass::~SVChildrenSetupDialogClass()
+{
+}
+
 void SVChildrenSetupDialogClass::redrawLists()
 {
 	if( m_pAvailableChildrenList && m_pParentObject )

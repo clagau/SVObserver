@@ -32,7 +32,7 @@ class CSVOInspectionSourceDlg : public CPropertyPage
 // Construction
 public:
 	CSVOInspectionSourceDlg();
-	~CSVOInspectionSourceDlg();
+	virtual ~CSVOInspectionSourceDlg();
     
     void SetupList();
 // Dialog Data  

@@ -19,8 +19,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSVIMStateClass.h"
 #include "SVTimerLibrary/SVClock.h"
-
-#include "SVSystemLibrary/SVCrash.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
@@ -283,8 +281,6 @@ void SVDisplayObject::SetIPDocDisplayComplete()
 
 DWORD WINAPI SVDisplayObject::SVDisplayThreadFunc( LPVOID lpParam )
 {
-	SetThreadType( DISPLAYOBJTHREAD );
-
 	SVDisplayObject *pDisplay = (SVDisplayObject*)lpParam;
 
 	if( pDisplay != NULL )

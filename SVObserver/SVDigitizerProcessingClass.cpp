@@ -16,13 +16,9 @@
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVOMFCLibrary/SVi64ValueDeviceParam.h"
-#include "SVCorecoAcquisitionClass.h"
 #include "SVFileAcquisitionClass.h"
 #include "SVHardwareManifest.h"
-#include "SVIntekAcquisitionClass.h"
 #include "SVMatroxGigeAcquisitionClass.h"
-#include "SV1394CameraStruct.h"
-#include "SV1394CameraManager.h"
 #include "SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #include "SVObserver.h"
@@ -64,15 +60,7 @@ void SVDigitizerProcessingClass::Startup()
 	{
 		SVAcquisitionClassPtr l_AcqPtr;
 
-		if( l_Iter->m_DigitizerName.find( _T( "Viper" ) ) == 0 )
-		{
-			l_AcqPtr = new SVCorecoAcquisitionClass( *l_Iter );
-		}
-		else if( l_Iter->m_DigitizerName.find( _T( "Matrox_1394" ) ) == 0 )
-		{
-			l_AcqPtr = new SVIntekAcquisitionClass( *l_Iter );
-		}
-		else if( l_Iter->m_DigitizerName.find( _T( "Matrox_GIGE" ) ) == 0 )
+		if( l_Iter->m_DigitizerName.find( _T( "Matrox_GIGE" ) ) == 0 )
 		{
 			l_AcqPtr = new SVMatroxGigeAcquisitionClass( *l_Iter );
 		}
@@ -361,13 +349,6 @@ HRESULT SVDigitizerProcessingClass::ConnectDevices()
 		++l_Iter;
 	}
 
-	l_Temp = UpdateIntekDevices();
-
-	if( l_Temp != S_OK && l_Status == S_OK )
-	{
-		l_Status = l_Temp;
-	}
-
 	l_Temp = UpdateMatroxDevices();
 
 	if( l_Temp != S_OK && l_Status == S_OK )
@@ -581,112 +562,6 @@ HRESULT SVDigitizerProcessingClass::SelectDigitizer( LPCTSTR AcquisitionName )
 	return Status;
 }
 
-HRESULT SVDigitizerProcessingClass::UpdateIntekDevices()
-{
-	HRESULT Status = S_OK;
-
-	SV1394CameraStructSet Cameras;
-
-	SVString deviceName = _T( "Matrox_1394.Dig_0" ); // just use the first one
-
-	if( IsValidDigitizerSubsystem( deviceName.c_str() ) )
-	{
-		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.c_str() );
-
-		unsigned long Count = 0;
-
-		if( pLibrary->GetCount( &Count ) == S_OK )
-		{
-			for( unsigned long i = 0; i < Count; i++ )
-			{
-				SV1394CameraStruct Camera;
-
-				unsigned long Handle = NULL;
-
-				if( pLibrary->GetHandle( &Handle, i ) == S_OK )
-				{
-					_variant_t Value;
-
-					Camera.iPosition = i;
-					Camera.m_ulHandle = Handle;
-
-					if( pLibrary->ParameterGetValue( Handle, 100, 0, &Value ) == S_OK )
-					{
-						Camera.m_csVendorId = Value.bstrVal;
-					}
-
-					if( pLibrary->ParameterGetValue( Handle, 101, 0, &Value ) == S_OK )
-					{
-						Camera.strVendorName = Value.bstrVal;
-					}
-
-					if( pLibrary->ParameterGetValue( Handle, 102, 0, &Value ) == S_OK )
-					{
-						Camera.strModelName = Value.bstrVal;
-					}
-
-					if( pLibrary->ParameterGetValue( Handle, 103, 0, &Value ) == S_OK )
-					{
-						unsigned __int64 l_ui64SerialNumber = ( (unsigned __int64)Value.ulVal ) << 32;
-
-						if( pLibrary->ParameterGetValue( Handle, 104, 0, &Value ) == S_OK )
-						{
-							Camera.m_ui64SerialNumber = l_ui64SerialNumber + Value.ulVal;
-						}
-					}
-
-					if( pLibrary->ParameterGetValue( Handle, 105, 0, &Value ) == S_OK )
-					{
-						Camera.strSerialNum = Value.bstrVal;
-					}
-				}
-
-				Cameras.Add( Camera );
-			}
-		}
-	}
-
-	TheSV1394CameraManager.UpdateConnectedCameras( Cameras );
-	
-	Cameras = TheSV1394CameraManager.GetCameraOrder();
-
-	int Count = Cameras.GetSize();
-
-	for( int j = 0; j < Count; j++ )
-	{
-		SV1394CameraStruct& Camera = Cameras.ElementAt( j );
-
-		if( Camera.m_ulHandle != NULL )
-		{
-			SVString DigitizerName = SvUl_SF::Format( _T("Matrox_1394.Dig_%d"), j );
-
-			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName.c_str() );
-
-			if( !( pAcquisitionDevice.empty() ) )
-			{
-				SVDeviceParamCollection DeviceParams;
-
-				pAcquisitionDevice->m_hDigitizer = Camera.m_ulHandle;
-
-				DeviceParams.SetParameter( DeviceParamSerialNumber, SVi64ValueDeviceParam( Camera.m_ui64SerialNumber ) );
-				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
-
-				pAcquisitionDevice->SetDeviceParameters( DeviceParams );
-
-				//Modify the configuration copy
-				SVConfigurationObject* pConfig = nullptr;
-				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-				if( nullptr != pConfig )
-				{
-					pConfig->ModifyAcquisitionDevice( pAcquisitionDevice->GetRootDeviceName(), &DeviceParams );
-				}
-			}
-		}
-	}
-
-	return Status;
-}
-
 SVString SVDigitizerProcessingClass::GetReOrderedCamera( LPCTSTR Name ) const
 {
 	SVString strRet=Name;
@@ -699,20 +574,6 @@ SVString SVDigitizerProcessingClass::GetReOrderedCamera( LPCTSTR Name ) const
 		if( index < GigECamSet.size() )
 		{
 			strRet[16] = '0' + GigECamSet[index].iPosition;
-		}
-	}
-	else
-	{
-		// if the system is Intek
-		pos = strRet.find("Matrox_1394.Dig_");
-		if( pos != SVString::npos )
-		{
-			SVGigeCameraStructSet GigECamSet = TheSVGigeCameraManager.GetCameraOrder();
-			size_t index = strRet[16]-'0';
-			if( index < GigECamSet.size() )
-			{
-				strRet[16] = '0' + GigECamSet[index].iPosition;
-			}
 		}
 	}
 	return strRet;

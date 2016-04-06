@@ -491,40 +491,6 @@ extern/*const*/ GUID SVRangeClassFailLowIndirectObjectGuid;
 extern/*const*/ GUID SVRangeClassWarnHighIndirectObjectGuid;
 extern/*const*/ GUID SVRangeClassWarnLowIndirectObjectGuid;
 
-// GUIDs for the Embedded Objects in the SVOCRAnalyzeResultClass
-extern /*const*/ GUID SVOCRAnalyzerClassGuid;
-extern /*const*/ GUID SVOCRAnalyzerResultClassGuid;
-extern /*const*/ GUID SVMatchStringObjectGuid;
-extern /*const*/ GUID SVFoundStringObjectGuid;
-extern /*const*/ GUID SVOCRParametersObjectGuid;
-extern /*const*/ GUID SVOCRBlobSortDirectionGuid;
-extern /*const*/ GUID SVOCRPixelsForASpaceGuid;
-extern /*const*/ GUID SVOCRMatchLineNumberGuid;
-
-// GUIDs for the Exposed OCR Results of the SVOCRAnalyzeResultClass
-extern /*const*/ GUID SVOCRHighestMatchScoreGuid;
-extern /*const*/ GUID SVOCRLowestMatchScoreGuid;
-extern /*const*/ GUID SVOCRAverageMatchScoreGuid;
-
-// GUIDs for the Exposed OCR File Names of the SVOCRAnalyzeResultClass
-extern /*const*/ GUID SVOCRFontFileNameGuid;
-extern /*const*/ GUID SVOCRMatchStringFileNameGuid;
-
-// GUIDs for the Embedded Objects in the SVOCRGrayAnalyzeResultClass
-extern /*const*/ GUID SVOCRGrayAnalyzerClassGuid;        // New Def
-extern /*const*/ GUID SVOCRGrayAnalyzerResultClassGuid;  // New Def
-extern /*const*/ GUID SVOCRGrayParametersObjectGuid;
-extern /*const*/ GUID SVOCRGrayMatchLineNumberGuid;
-
-// GUIDs for the Exposed OCR Results of the SVOCRGrayAnalyzeResultClass
-extern /*const*/ GUID SVOCRGrayHighestMatchScoreGuid;
-extern /*const*/ GUID SVOCRGrayLowestMatchScoreGuid;
-extern /*const*/ GUID SVOCRGrayAverageMatchScoreGuid;
-
-// GUIDs for the Exposed OCR File Names of the SVOCRAnalyzeResultClass
-extern /*const*/ GUID SVOCRGrayFontFileNameGuid;
-extern /*const*/ GUID SVOCRGrayMatchStringFileNameGuid;
-
 // GUIDs for the Embedded Objects in the SVOCVAnalyzeResultClass
 extern /*const*/ GUID SVOCVAnalyzerClassGuid;        // New Def
 extern /*const*/ GUID SVOCVAnalyzerResultClassGuid;  // New Def

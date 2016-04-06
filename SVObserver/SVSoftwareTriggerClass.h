@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 15:08:46  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVTriggerClass.h"
 #include "SVAcquisitionInitiator.h"
+#pragma endregion Includes
 
 class SVSoftwareTriggerClass : public SVTriggerClass
 {
@@ -34,5 +35,4 @@ public:
 	virtual HRESULT EnableInternalTrigger();
 	virtual HRESULT FireAcquisitionTrigger();
 };
-
 

@@ -24,7 +24,7 @@ class SVFileNameValueObjectClass : public SVValueObjectClassImpl <CString>
 
 public:
 	SVFileNameValueObjectClass( LPCTSTR ObjectName );
-	SVFileNameValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVFILENAMEVALUEOBJECT );
+	SVFileNameValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVFILENAMEVALUEOBJECT );
 	SVFileNameValueObjectClass( const SVFileNameValueObjectClass& rhs);
 	const SVFileNameValueObjectClass& operator = ( const SVFileNameValueObjectClass& rhs );
 
@@ -35,9 +35,6 @@ public:
 	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	HRESULT SetDefaultValue( CString value, bool BResetAll );

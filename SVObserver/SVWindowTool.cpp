@@ -111,24 +111,6 @@ void SVWindowToolClass::BuildAvailableAnalyzerList ()
 		availableChildren.Add(analyzerClassInfo);
 	}
 
-	//
-	// The Fast OCR Analyzer (Wit Library) is loaded only if needed.
-	//
-	if ( TheSVOLicenseManager().HasFastOCRLicense() )
-	{
-		analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-		analyzerClassInfo.ObjectTypeInfo.SubType = SVOCRAnalyzerObjectType;
-		analyzerClassInfo.ClassId = SVOCRAnalyzerClassGuid;
-		analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVOCRANALYZER );
-		availableChildren.Add(analyzerClassInfo);
-
-		analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-		analyzerClassInfo.ObjectTypeInfo.SubType = SVOCRGrayAnalyzerObjectType;
-		analyzerClassInfo.ClassId = SVOCRGrayAnalyzerClassGuid;
-		analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVOCRGRAYANALYZER );
-		availableChildren.Add(analyzerClassInfo);
-	}// end if
-
 	if ( TheSVOLicenseManager().HasMatroxIdentificationLicense() )
 	{
 		// Add the Matrox OCV Analyzer	

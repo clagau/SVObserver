@@ -24,7 +24,6 @@
 #include "SVOMFCLibrary/SVStringValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 
-#include "SV1394CameraFileLibrary/SV1394CameraParamValidateClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
 #pragma endregion Includes
 
@@ -49,13 +48,12 @@ BEGIN_MESSAGE_MAP(SVCameraFilePropertyPageDlg, CDialog)
     ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_PROPERTYTREE, OnItemButtonClick)
 END_MESSAGE_MAP()
 
-SVCameraFilePropertyPageDlg::SVCameraFilePropertyPageDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(SVCameraFilePropertyPageDlg::IDD, pParent)
+SVCameraFilePropertyPageDlg::SVCameraFilePropertyPageDlg(CWnd* pParent /*=nullptr*/)
+: CDialog(SVCameraFilePropertyPageDlg::IDD, pParent)
+, m_pAcquisition(nullptr)
 {
 	//{{AFX_DATA_INIT(SVCameraFilePropertyPageDlg)
 	//}}AFX_DATA_INIT
-
-	m_pAcquisition = NULL;
 }
 
 void SVCameraFilePropertyPageDlg::DoDataExchange(CDataExchange* pDX)
@@ -91,10 +89,10 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 	
 	// Create a root item (root items should always be SVRPropertyItem object since they
 	// can not have properties
-	SVRPropertyItem*        pRoot = NULL;
-	SVRPropertyItemFile*    pFile = NULL;
-	SVRPropertyItemCombo*   pCombo = NULL;
-	SVRPropertyItemEdit*    pEdit = NULL;
+	SVRPropertyItem*        pRoot = nullptr;
+	SVRPropertyItemFile*    pFile = nullptr;
+	SVRPropertyItemCombo*   pCombo = nullptr;
+	SVRPropertyItemEdit*    pEdit = nullptr;
 	bool                    bResult = false;
 	
 //	SVFileNameClass FileName;
@@ -146,8 +144,9 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 					CString sLabel = rCamFileParam->VisualName();
 					
 					if ( sLabel == _T("") )
+					{
 						sLabel = rCamFileParam->Name();
-
+					}
 					pCombo->SetLabelText( sLabel );
 					pCombo->SetInfoText( CString(rCamFileParam->Description()) );
 					pCombo->CreateComboBox();
@@ -170,7 +169,9 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 						pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
 						CString sLabel = rCamFileParam->VisualName();
 						if ( sLabel == _T("") )
+						{
 							sLabel = rCamFileParam->Name();
+						}
 						pCombo->SetLabelText( sLabel );
 						pCombo->SetInfoText( CString(rCamFileParam->Description()) );
 						pCombo->CreateComboBox();
@@ -200,8 +201,9 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 						pEdit->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
 						CString sLabel = rCamFileParam->VisualName();
 						if ( sLabel == _T("") )
+						{
 							sLabel = rCamFileParam->Name();
-
+						}
 						sLabel = sLabel + " (" + pCamDeviceParam->info.sUnits + ")";
 						pEdit->SetLabelText( sLabel );
 						CString sDescription = CString(rCamFileParam->Description());
@@ -259,32 +261,23 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								CString sLabel = rCamFileParam->VisualName();
 								
 								if ( sLabel == _T("") )
+								{
 									sLabel = rCamFileParam->Name();
-
+								}
 								pCombo->SetLabelText( sLabel );
 								pCombo->SetInfoText( CString(rCamFileParam->Description()) );
 								pCombo->SetButtonText("ROI");
 								pCombo->CreateComboBox();
-/* SEJ - 								
-								// special case to deal with color / mono issues EB 20031107
-								bool bColorSystem =    m_pAssistant->GetProductType() == SVIM_PRODUCT_D1_COLOR
-									|| m_pAssistant->GetProductType() == SVIM_PRODUCT_D2_COLOR
-									|| m_pAssistant->GetProductType() == SVIM_PRODUCT_D3_COLOR
-									|| m_pAssistant->GetProductType() == SVIM_PRODUCT_X1_COLOR
-									|| m_pAssistant->GetProductType() == SVIM_PRODUCT_X2_GD1A_COLOR;
-									|| m_pAssistant->GetProductType() == SVIM_PRODUCT_X2_GD2A_COLOR;
-									|| m_pAssistant->GetProductType() == SVIM_PRODUCT_X2_GD4A_COLOR;
-									|| m_pAssistant->GetProductType() == SVIM_PRODUCT_X2_GD8A_COLOR;
-*/								
+						
 								bool bColorSystem = false; // SEJ - no color for now
 
 								SVCameraFormatsDeviceParam::OptionsType::const_iterator iterOption;
-								const SVCameraFormat* pFormat=NULL;
+								const SVCameraFormat* pFormat=nullptr;
 								for (iterOption = pCamFileParam->options.begin(); iterOption != pCamFileParam->options.end(); ++iterOption)
 								{
-									if ( iterOption->second.bColor == bColorSystem )	// if camera format matches product
+									if ( iterOption->second.m_bColor == bColorSystem )	// if camera format matches product
 									{
-										CString sText = iterOption->second.strDescription.c_str();
+										CString sText = iterOption->second.m_strDescription.c_str();
 										int iPos;
 										iPos = pCombo->AddString( sText );
 										pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
@@ -319,8 +312,9 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								CString sLabel = rCamFileParam->VisualName();
 								
 								if ( sLabel == _T("") )
+								{
 									sLabel = rCamFileParam->Name();
-
+								}
 								pCombo->SetLabelText( sLabel );
 								pCombo->SetInfoText( CString(rCamFileParam->Description()) );
 								pCombo->CreateComboBox();
@@ -336,8 +330,9 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 									++iOption;
 
 									if ( iterOption->value == pCamDeviceParam->strValue )
+									{
 										iOptionIndex = iOption;
-									
+									}
 									pCombo->SetItemData( iPos, iOption );
 								}
 								if ( pCamFileParam->info.options.size() == 1 )
@@ -369,36 +364,9 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 			
 		l_svValidate.UpdateParams( GetCameraFileParamsNonConst(), GetCameraDeviceParamsNonConst() );
 	}
-	else
-	{
-		SV1394CameraParamValidateClass l_svValidate;
-				
-		l_svValidate.UpdateParams( GetCameraFileParamsNonConst(), GetCameraDeviceParamsNonConst() );
-	}
+	
 	CameraAdvancedHideItems();
-/* SEJ -			
-	if (m_eProduct == SVIM_PRODUCT_RGB_MONO)
-	{
-		pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(),pRoot);
-		if (pCombo)
-		{  
-			CString sBands;
-			int iBandPos;
-			pCombo->SetCtrlID(PROP_ADV_CAMERA_BANDS);
-			pCombo->SetLabelText(_T("Band #"));
-			pCombo->SetInfoText(_T("Enter the band that the camera will use."));
-			pCombo->CreateComboBox();
-			for (int iC = 0; iC < 3; iC++)
-			{
-				sBands.Empty();
-				sBands.Format("%d",iC);
-				iBandPos = pCombo->AddString(sBands);
-				pCombo->SetItemData(iBandPos,iC);
-			}
-			pCombo->SetItemValue(m_pCameraObj->GetBandNumber());
-		}
-	}
-*/
+
 	m_Tree.SetColumn( (long) ( rc.Width() * 0.30 ) );
 	pRoot->Select(true);
 	m_Tree.SetFocus();
@@ -448,7 +416,9 @@ void SVCameraFilePropertyPageDlg::OnSize(UINT nType, int cx, int cy)
 	
 	// resize the control to always fit the dialog
 	if (::IsWindow(m_Tree.GetSafeHwnd()))
-		m_Tree.SetWindowPos(NULL, -1, -1, cx, cy, SWP_NOMOVE | SWP_NOZORDER);	
+	{
+		m_Tree.SetWindowPos(nullptr, -1, -1, cx, cy, SWP_NOMOVE | SWP_NOZORDER);
+	}
 }
 
 BOOL SVCameraFilePropertyPageDlg::OnEraseBkgnd(CDC* pdc) 
@@ -565,56 +535,6 @@ void SVCameraFilePropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 					CameraAdvancedHideItems();
 				}
 			}
-			else
-			{
-				SV1394CameraParamValidateClass l_svValidate;
-
-				if ( l_svValidate.ShouldUpdateParams( e ) )
-				{
-					l_svValidate.UpdateParams( GetCameraFileParamsNonConst(), GetCameraDeviceParamsNonConst() );
-
-					CameraAdvancedHideItems();
-				}
-			}
-
-		}
-		else
-		{
-			switch (pNMPropTree->pItem->GetCtrlID())
-			{
-/*
-				case PROP_AD_FILE_NAME:
-					{
-						CString sFileName;
-						m_Tree.FindItem(PROP_AD_FILE_NAME)->GetItemValue(sFileName);
-						sFileName.TrimLeft();
-						sFileName.TrimRight();
-						m_pCameraObj->SetCameraFile(sFileName);
-						m_pCameraObj->SetCameraFileChanged();
-					}
-					break;
-*/
-				case PROP_ADV_CAMERA_DIG:
-					{
-/* SEJ
-						int iBands;
-						long iDig;
-						m_Tree.FindItem(PROP_ADV_CAMERA_DIG)->GetItemValue(iDig);
-						
-						SetDigNumber(iDig); 
-
-						if (m_eProduct == SVIM_PRODUCT_RGB_MONO)
-						{
-							m_Tree.FindItem(PROP_ADV_CAMERA_BANDS)->GetItemValue(iBands);
-							SetBandNumber(iBands);
-						}
-*/
-					}
-					break;
-				
-				default:
-					break;
-			}
 		}
 	}
 }
@@ -644,7 +564,7 @@ void SVCameraFilePropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LR
 					const SVCameraFormat* pFormat = (const SVCameraFormat*) lValue;
 					if ( pFormat )
 					{
-						if ( pFormat->bVariableROI )
+						if ( pFormat->m_bVariableROI )
 						{
 							*plResult = true;
 						}
@@ -680,9 +600,9 @@ void SVCameraFilePropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESUL
 					const SVCameraFormat* pSelectedFormat = (const SVCameraFormat*) lValue;
 					if ( pSelectedFormat )
 					{
-						if ( pSelectedFormat->bVariableROI )
+						if ( pSelectedFormat->m_bVariableROI )
 						{
-//SEJ							Format7Dlg( pSelectedFormat->m_strName, rw );
+							// Show ROI adjustment Dialog here
 						}
 					}
 				}
@@ -699,18 +619,17 @@ void SVCameraFilePropertyPageDlg::OnClose()
 void SVCameraFilePropertyPageDlg::CameraAdvancedHideItems()
 {
 	SVRPropertyItem* l_pItem = m_Tree.GetRootItem();
-
-	if ( l_pItem != NULL )
+	// Traverse 2 generations or is this a copy/paste error?
+	if ( nullptr != l_pItem )
+	{
+		l_pItem = l_pItem->GetChild();
+	}
+	if ( nullptr != l_pItem )
 	{
 		l_pItem = l_pItem->GetChild();
 	}
 
-	if ( l_pItem != NULL )
-	{
-		l_pItem = l_pItem->GetChild();
-	}
-
-	while ( l_pItem != NULL )
+	while ( nullptr != l_pItem )
 	{
 		SVDeviceParamEnum l_eParamId = (SVDeviceParamEnum) (l_pItem->GetCtrlID() - PROP_CAMERA_FILE_BASE);
 
@@ -718,7 +637,7 @@ void SVCameraFilePropertyPageDlg::CameraAdvancedHideItems()
 
 		const SVDeviceParam *l_pDeviceParam = l_CamFileParams.Parameter( l_eParamId );
 
-		if ( l_pDeviceParam != NULL )
+		if ( nullptr != l_pDeviceParam )
 		{
 			l_pItem->HideItem( 0 < l_pDeviceParam->DetailLevel() );
 		}

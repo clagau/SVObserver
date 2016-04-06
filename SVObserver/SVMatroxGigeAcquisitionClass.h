@@ -112,4 +112,3 @@ private:
 
 	HRESULT SetGigeFeatureOverrides(const SVString& featureOverrides);
 };
-

@@ -8,22 +8,27 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:32:20  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVAnalyzerLuminanceSetup.h"
 
 #include "SVAnalyzerLuminance.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
+#pragma endregion Includes
 
-SVLuminanceAnalyzerSetupClass::SVLuminanceAnalyzerSetupClass(CWnd* pParent /*=NULL*/)
+SVLuminanceAnalyzerSetupClass::SVLuminanceAnalyzerSetupClass(CWnd* pParent /*=nullptr*/)
 : CDialog(SVLuminanceAnalyzerSetupClass::IDD, pParent)
 {
-	m_pAnalyzer = NULL;
+	m_pAnalyzer = nullptr;
 
 	//{{AFX_DATA_INIT(SVLuminanceAnalyzerSetupClass)
 	m_calcStdDev = FALSE;
 	//}}AFX_DATA_INIT
+}
+
+SVLuminanceAnalyzerSetupClass::~SVLuminanceAnalyzerSetupClass()
+{
 }
 
 void SVLuminanceAnalyzerSetupClass::DoDataExchange(CDataExchange* pDX)

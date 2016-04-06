@@ -807,8 +807,8 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	long horizontalBinning = 1;
 	long verticalBinning = 1;
 	const SVCameraFormat& rcf = pParam->options.find(pParam->strValue)->second;
-	long l_Width = rcf.lWidth;
-	long l_Height = rcf.lHeight;
+	long l_Width = rcf.m_lWidth;
+	long l_Height = rcf.m_lHeight;
 
 	_variant_t l_oValue;
 	int l_ParType;
@@ -816,7 +816,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 
 	// Get Binning parameters
 	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterHorizontalBinning, &l_ParType, &l_oValue);
-	if (l_Temp == S_OK)
+	if( S_OK == l_Temp )
 	{
 		if (l_oValue.lVal > 0)
 		{
@@ -824,7 +824,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		}
 	}
 	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVerticalBinning, &l_ParType, &l_oValue);
-	if (l_Temp == S_OK)
+	if( S_OK == l_Temp )
 	{
 		if (l_oValue.lVal > 0)
 		{
@@ -833,15 +833,15 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	}
 	// Check if width/height exceeds binned width/height and adjust
 	// Must be a multiple of step size
-	long maxWidth = rcf.lWidthMax / horizontalBinning;
-	if (rcf.lHPosStep > 1)
+	long maxWidth = rcf.m_lWidthMax / horizontalBinning;
+	if (rcf.m_lHPosStep > 1)
 	{
-		maxWidth -= (maxWidth % rcf.lHPosStep);
+		maxWidth -= (maxWidth % rcf.m_lHPosStep);
 	}
-	long maxHeight = rcf.lHeightMax / verticalBinning;
-	if (rcf.lVPosStep > 1)
+	long maxHeight = rcf.m_lHeightMax / verticalBinning;
+	if (rcf.m_lVPosStep > 1)
 	{
-		maxHeight -= (maxHeight % rcf.lVPosStep);
+		maxHeight -= (maxHeight % rcf.m_lVPosStep);
 	}
 
 	if (l_Height > maxHeight)
@@ -859,39 +859,39 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		l_bOffsetsFirst = true;
 	}
 
-	long l_XPrevSize=0;
-	long l_YPrevSize=0;
-	long l_XPrevOffset=0;
-	long l_YPrevOffset=0;
+	long l_XPrevSize = 0;
+	long l_YPrevSize = 0;
+	long l_XPrevOffset = 0;
+	long l_YPrevOffset = 0;
 
 	// Read previous parameters so we can make an intelligent decision on which parameters to set first.
 	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterXSize, &l_ParType, &l_oValue);
-	if( l_Temp == S_OK ) 
+	if( S_OK == l_Temp )
 	{ 
 		l_XPrevSize = l_oValue.lVal;
 		l_oValue.Clear();
 	}
 	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterYSize, &l_ParType, &l_oValue);
-	if( l_Temp == S_OK ) 
+	if( S_OK == l_Temp )
 	{ 
 		l_YPrevSize = l_oValue.lVal;
 		l_oValue.Clear();
 	}
 	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterXOffset, &l_ParType, &l_oValue);
-	if( l_Temp == S_OK ) 
+	if( S_OK == l_Temp )
 	{ 
 		l_XPrevOffset = l_oValue.lVal;
 		l_oValue.Clear();
 	}
 	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterYOffset, &l_ParType, &l_oValue);
-	if( l_Temp == S_OK ) 
+	if( S_OK == l_Temp )
 	{ 
 		l_YPrevOffset = l_oValue.lVal;
 		l_oValue.Clear();
 	}
 
 	// Decide if we should adjust Width or X offset first to prevent errors.
-	if( l_XPrevSize - l_Width > l_XPrevOffset - rcf.lHPos)
+	if( l_XPrevSize - l_Width > l_XPrevOffset - rcf.m_lHPos)
 	{
 		l_oValue = l_Width;
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterXSize, 0, &l_oValue );
@@ -901,7 +901,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		{
 			hr = l_Temp;
 		}
-		l_oValue = rcf.lHPos;
+		l_oValue = rcf.m_lHPos;
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterXOffset, 0, &l_oValue );
 		l_oValue.Clear();
 
@@ -912,7 +912,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	}
 	else
 	{
-		l_oValue = rcf.lHPos;
+		l_oValue = rcf.m_lHPos;
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterXOffset, 0, &l_oValue );
 		l_oValue.Clear();
 
@@ -924,40 +924,40 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterXSize, 0, &l_oValue );
 		l_oValue.Clear();
 
-		if( hr == S_OK && l_Temp != S_OK )
+		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
 	}
 
 	// Decide if we should adjust Height or Y offset first to prevent errors.
-	if( l_YPrevSize - l_Height > l_YPrevOffset - rcf.lVPos)
+	if( l_YPrevSize - l_Height > l_YPrevOffset - rcf.m_lVPos)
 	{
 		l_oValue = l_Height;
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterYSize, 0, &l_oValue );
 		l_oValue.Clear();
 
-		if( hr == S_OK && l_Temp != S_OK )
+		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
 
-		l_oValue = rcf.lVPos;
+		l_oValue = rcf.m_lVPos;
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterYOffset, 0, &l_oValue );
 		l_oValue.Clear();
 
-		if( hr == S_OK && l_Temp != S_OK )
+		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
 	}
 	else
 	{
-		l_oValue = rcf.lVPos;
+		l_oValue = rcf.m_lVPos;
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterYOffset, 0, &l_oValue );
 		l_oValue.Clear();
 
-		if( hr == S_OK && l_Temp != S_OK )
+		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
@@ -966,7 +966,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterYSize, 0, &l_oValue );
 		l_oValue.Clear();
 
-		if( hr == S_OK && l_Temp != S_OK )
+		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
@@ -981,7 +981,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterColorFormat, 0, &l_oValue );
 		l_oValue.Clear();
 	}
-	if( hr == S_OK && FAILED( l_Temp ) ) // This is allowed to be S_FALSE
+	if( S_OK == hr && FAILED( l_Temp ) ) // This is allowed to be S_FALSE
 	{
 		hr = l_Temp;
 	}

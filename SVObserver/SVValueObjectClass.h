@@ -56,7 +56,7 @@ class SVValueObjectClass : public SVObjectAppClass, public SvOi::IValueObject
 //	SV_DECLARE_CLASS( SVValueObjectClass );
 public:
 	SVValueObjectClass( LPCTSTR ObjectName );
-	SVValueObjectClass( SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVVALUEOBJECT );
+	SVValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVVALUEOBJECT );
 
 public:
 	virtual ~SVValueObjectClass();
@@ -134,9 +134,6 @@ public:
 
 	BOOL GetLastSetIndex( int& iBucket ) const    { iBucket = m_iLastSetIndex; return TRUE; }
 	int  GetLastSetIndex()               const    { return m_iLastSetIndex; }
-#ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& rstrScript, CString& rstrAliasTable, int iIndent = 0 );
-#endif
 	void SetLegacyVectorObjectCompatibility() { m_bLegacyVectorObjectCompatibility = true; }
 
 protected:

@@ -77,7 +77,6 @@ private:
 
 	HRESULT AddDigitizer( LPCTSTR p_szName, SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem, unsigned long p_Handle );
 
-	HRESULT UpdateIntekDevices();
 	HRESULT UpdateMatroxDevices();
 
 	//Do not implement this method. This definition prevent copy and assignement operations.

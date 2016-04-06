@@ -8,7 +8,7 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 16:02:04  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVConditionalHistory.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -17,6 +17,7 @@
 #include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVImageClass.h"
+#pragma endregion Includes
 
 LPCTSTR const PPQCH_Size      = (_T("Size"));
 LPCTSTR const PPQCH_Overwrite = (_T("Overwrite"));
@@ -56,6 +57,10 @@ SVConditionalHistory::SVConditionalHistory()
 {
 	m_bvoOverwrite.SetDefaultValue( TRUE, TRUE );
 	m_lvoSize.SetDefaultValue( 0, TRUE );
+}
+
+SVConditionalHistory::~SVConditionalHistory()
+{
 }
 
 void SVConditionalHistory::SetInspection( SVInspectionProcess* pInspection )

@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:30:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMFCControls\SVWindowBar.h"
+#pragma endregion Includes
 
 class SVPPQObject;
 
@@ -22,10 +23,8 @@ public:
 	{
 		RemoveAll();
 		FreeExtra();
-	};
-
+	}
 };
-
 
 
 class SVPPQWindowClass : public CWnd
@@ -47,21 +46,16 @@ public:
 
 	BOOL DestroyButtons();
 
-
 	//{{AFX_VIRTUAL(SVPPQWindowClass)
 	public:
 	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	//}}AFX_VIRTUAL
 
-
 protected:
 	SVButtonList buttonList;
 	SVPPQObject* m_pPPQ;
-
 };
-
-
 
 class SVPPQBarClass : public SvMc::SVWindowBarClass
 {
@@ -99,11 +93,9 @@ public:
 //	virtual void Dump(CDumpContext& dc) const;
 //#endif
 
-
 protected:
 	SVPPQWindowClass PPQWindow;
 
 	CTabCtrl	pqTabCtrl;
-
 };
 

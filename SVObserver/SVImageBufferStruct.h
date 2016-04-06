@@ -8,9 +8,9 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:49:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVObjectLibrary/SVObjectReference.h"
@@ -18,6 +18,7 @@
 
 #include "SVLibrary/SVReferenceCountingTemplate.h"
 #include "SVScalarValue.h"
+#pragma endregion Includes
 
 struct SVImageBufferStruct
 {

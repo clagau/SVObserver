@@ -11,18 +11,16 @@
 
 #pragma once
 
-////////////////////////////////////////////////////////////////////////////////
-// Includes which are necessary to declare or define types, constants and macros
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "SVUnaryImageOperatorList.h"
+#pragma endregion Includes
 
 class SVLinearImageOperatorListClass : public SVStdImageOperatorListClass 
 {
 	SV_DECLARE_CLASS( SVLinearImageOperatorListClass )
 
 public:
-	SVLinearImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVLINEARIMAGEOPERATORLIST );
+	SVLinearImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARIMAGEOPERATORLIST );
 	virtual ~SVLinearImageOperatorListClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );

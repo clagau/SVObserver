@@ -21,6 +21,7 @@ class SVFilterClass : public SvOi::ISVFilter, public SVUnaryImageOperatorClass
 	SV_DECLARE_CLASS( SVFilterClass );
 public:
 	SVFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVFILTER );
+	virtual ~SVFilterClass();
 
 	//************************************
 	// Description: Creates the object

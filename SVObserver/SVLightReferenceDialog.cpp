@@ -109,9 +109,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 			}
 
 			int iMaxBand = iCamBand;    // will only ever need to do one set of tabs per camera
-			// Viper Quad has only one band
-			// Viper RGB color has 3 bands but are handled as channels on the tab
-			// Viper RGB mono has 1 band per camera, 3 cameras
+		
 			for (int iBand=iCamBand; iBand <= iMaxBand; iBand++)
 			{
 				SVLightReferenceBand* pLRBand = &(pLR->Band(iBand));

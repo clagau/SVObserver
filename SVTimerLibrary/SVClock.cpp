@@ -27,27 +27,16 @@ static const SVConversionFactorMap g_Conversions = boost::assign::map_list_of< S
 
 SVClock::SVFrequency SVClock::GetFrequency()
 {
-	SVFrequency l_Frequency = 0.0;
-
-	// VMWare ESXI has an issue with QueryPerformanceCounter (it's resolution is only 24bit not 64bit)
-	// need to use something different here
-#ifndef COMPILE_FOR_VM
-	l_Frequency = 1000.0;
-#else
-	l_Frequency = 1000.0;
-#endif
-
+	SVFrequency l_Frequency = 1000.0;
 	return l_Frequency;
 }
 
-
 SVClock::SVTimeStamp SVClock::GetTimeStamp()
 {
-
 	SVTimeStamp l_TimeStamp = 0.0;
 
-	// VMWare ESXI has an issue with QueryPerformanceCounter (it's resolution is only 24bit not 64bit)
-	// need to use something different here
+	// VMWare ESXI 5.0 has an issue with QueryPerformanceCounter (it's resolution is only 24bit not 64bit)
+	// need to use something different here like GetTickCount
 	#ifndef COMPILE_FOR_VM
 		__int64 l_Tick = 0;
 		__int64 l_Frequency = 0;

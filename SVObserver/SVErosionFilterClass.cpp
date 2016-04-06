@@ -22,6 +22,10 @@ SVErosionFilterClass::SVErosionFilterClass( SVObjectClass* POwner, int StringRes
 	outObjectInfo.ObjectTypeInfo.SubType = SVErosionFilterObjectType;
 }
 
+SVErosionFilterClass::~SVErosionFilterClass()
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

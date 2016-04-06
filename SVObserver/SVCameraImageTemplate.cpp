@@ -256,45 +256,6 @@ HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObje
 	return hr;
 }
 
-#ifdef USE_OBJECT_SCRIPT
-void SVCameraImageTemplate::GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent )
-{
-	CString script;
-
-	// preallocate 4K
-    script.GetBuffer(4096);  
-	script.ReleaseBuffer(); 
-	
-	SVImageClass::GetObjectScript( script, RStrAliasTable, Indent );
-
-	CString nameStrDelimiter = _T( "'" );
-
-	// Generate indent...
-	CString strIndent = _T( "\n" );
-	if( Indent )
-	{
-		CString tabsStrIndent(_T( '\t' ), Indent);
-		strIndent += tabsStrIndent;
-	}
-
-	// Name is delimited by single quotes - SEJ july 23,1999
-	CString objectTag = nameStrDelimiter + _T( "_object_ID_" ) + GetObjectName();
-
-	// Get the Data Values (Member Info, Values)
-	CString tmp;
-
-	// Add Digitizer ObjectID...
-	CString guidStr;
-	SV_GUID_TO_AFXSTRING( digitizerObjectID.ToGUID(), guidStr );
-	tmp.Format( "STRING [ %s ]", guidStr );
-	script += strIndent + objectTag + _T( ".DigitizerID" ) + nameStrDelimiter + _T( " = " ) + tmp + _T( ";" );
-
-	script.FreeExtra();
-
-	RStrScript += script;
-}
-#endif
-
 void SVCameraImageTemplate::Persist( SVObjectWriter& rWriter )
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name

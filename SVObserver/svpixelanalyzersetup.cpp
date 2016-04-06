@@ -8,7 +8,7 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   25 Sep 2013 11:11:00  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPixelAnalyzerSetup.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -20,6 +20,7 @@
 #include "SVToolSet.h"              // Required for scripting
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,6 +42,9 @@ SVPixelAnalyzerSetupClass::SVPixelAnalyzerSetupClass(SVPixelAnalyzerClass* apAna
     init (apAnalyzer, pParent);
 }
 
+SVPixelAnalyzerSetupClass::~SVPixelAnalyzerSetupClass()
+{
+}
 
 HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 {
@@ -48,7 +52,7 @@ HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 
 	if( msvpAnalyzer != NULL )
 	{
-		l_hrOk = AddInputRequest( &( msvpAnalyzer->pixelCountColor ), msvGrayscaleToCount );
+		l_hrOk = AddInputRequest( &( msvpAnalyzer->m_pixelCountColor ), msvGrayscaleToCount );
 
 		if( l_hrOk == S_OK )
 		{
@@ -175,7 +179,7 @@ BOOL SVPixelAnalyzerSetupClass::OnInitDialog()
 	    msvHighGrayscaleValue.Format (_T("%d"), msvulMaxGrayscale);
 		msvLowGrayscaleValue.Format (_T("%d"), msvulMinGrayscale);
 
-        msvpAnalyzer->pixelCountColor.GetValue(byGrayscale);
+        msvpAnalyzer->m_pixelCountColor.GetValue(byGrayscale);
 
         if (byGrayscale == msvulMinGrayscale) //Black
         {
@@ -295,7 +299,7 @@ void SVPixelAnalyzerSetupClass::OnOtherRad()
 {
     BYTE    byGrayscale;
 
-    msvpAnalyzer->pixelCountColor.GetValue(byGrayscale);
+    msvpAnalyzer->m_pixelCountColor.GetValue(byGrayscale);
     SetOther (byGrayscale);	
 }
 

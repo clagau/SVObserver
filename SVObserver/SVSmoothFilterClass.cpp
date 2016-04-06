@@ -22,6 +22,10 @@ SVSmoothFilterClass::SVSmoothFilterClass( SVObjectClass* POwner, int StringResou
 	outObjectInfo.ObjectTypeInfo.SubType = SVSmoothFilterObjectType;
 }
 
+SVSmoothFilterClass::~SVSmoothFilterClass()
+{
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------

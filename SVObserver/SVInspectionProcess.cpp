@@ -1651,11 +1651,13 @@ HRESULT SVInspectionProcess::RebuildInspection()
 				SVCameraFormatsDeviceParam::OptionsType::const_iterator iter;
 				for ( iter = pCFParam->options.begin(); iter != pCFParam->options.end(); ++iter)
 				{
-					if ( iter->second.bColor )
+					if ( iter->second.m_bColor )
+					{
 						bCameraSupportsColor = true;
+					}
 				}
 
-				if ( pParam && pParam->options.find(pParam->strValue)->second.bColor )
+				if ( pParam && pParam->options.find(pParam->strValue)->second.m_bColor )
 				{
 					bColorSourceImage = true;
 					break;

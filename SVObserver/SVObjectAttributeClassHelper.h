@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:40:04  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
+#pragma endregion Includes
 
 class SVObjectAttributeClassHelper
 {

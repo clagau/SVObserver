@@ -27,7 +27,7 @@ class SVOCVGeneralDlg : public CPropertyPage, public SVTaskObjectInterfaceClass
 // Construction
 public:
 	SVOCVGeneralDlg();
-	~SVOCVGeneralDlg();
+	virtual ~SVOCVGeneralDlg();
 
 	virtual HRESULT SetInspectionData();
 

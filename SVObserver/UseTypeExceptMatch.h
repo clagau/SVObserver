@@ -9,9 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:32:22  $
 //******************************************************************************
 
-#pragma once
-
+#pragma once 
+#pragma region Includes
 #include "SVLoki/TypeTraits.h"
+#pragma endregion Includes
 
 // this is used to prevent a member function from being declared twice
 // e.g. in class SVValueObjectClassImpl<double>, the 

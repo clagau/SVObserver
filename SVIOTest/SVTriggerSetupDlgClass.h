@@ -11,8 +11,6 @@
 
 #pragma once
 
-// SVTriggerSetupDlgClass.h : header file
-//
 class SVIOConfigurationInterfaceClass;
 class SVIOTriggerLoadLibraryClass;
 
@@ -46,7 +44,6 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-
 // Implementation
 protected:
 
@@ -64,6 +61,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-	
+
 };
 

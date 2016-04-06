@@ -138,7 +138,6 @@ private:
 	SVToolExtentPropertiesClass m_svProperties;
 
 	static SVTranslationFilterSet m_LinearToolTranslations;
-
 };
 
 #include "SVToolExtentClass.inl"

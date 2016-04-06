@@ -9,18 +9,14 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:43:10  $
 //******************************************************************************
 
-#if !defined(AFX_SVBARCODESTRINGMATCH_H__AF5FDD6A_7BE0_11D3_A7D0_00106F010A93__INCLUDED_)
-#define AFX_SVBARCODESTRINGMATCH_H__AF5FDD6A_7BE0_11D3_A7D0_00106F010A93__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 class SVBarCodeStringMatchDialog : public CPropertyPage
 {
 // Construction
 public:
-	SVBarCodeStringMatchDialog(CWnd* pParent = NULL);   // standard constructor
+	SVBarCodeStringMatchDialog(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVBarCodeStringMatchDialog();
 
 	BOOL EnableFileSelect (BOOL bEnable);
 	void EnableDisableControls(BOOL bSingle = TRUE);
@@ -79,6 +75,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVBARCODESTRINGMATCH_H__AF5FDD6A_7BE0_11D3_A7D0_00106F010A93__INCLUDED_)
-
