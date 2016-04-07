@@ -62,11 +62,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10030 = Maz_ErrorBase + 30;
 
 	//AFXMessageBox-replace
-	static const int Err_10031 = Maz_ErrorBase + 31;
-	static const int Err_10032 = Maz_ErrorBase + 32;
-	static const int Err_10033 = Maz_ErrorBase + 33;
-	static const int Err_10034 = Maz_ErrorBase + 34;
-	static const int Err_10035 = Maz_ErrorBase + 35;
 	static const int Err_10036 = Maz_ErrorBase + 36;
 	static const int Err_10037 = Maz_ErrorBase + 37;
 	static const int Err_10038 = Maz_ErrorBase + 38;
@@ -75,8 +70,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10041 = Maz_ErrorBase + 41;
 	static const int Err_10042 = Maz_ErrorBase + 42;
 	static const int Err_10043 = Maz_ErrorBase + 43;
-	static const int Err_10044 = Maz_ErrorBase + 44;
-	static const int Err_10045 = Maz_ErrorBase + 45;
 	static const int Err_10046 = Maz_ErrorBase + 46;
 	static const int Err_10047 = Maz_ErrorBase + 47;
 	static const int Err_10048 = Maz_ErrorBase + 48;
@@ -84,7 +77,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10050 = Maz_ErrorBase + 50;
 	static const int Err_10051 = Maz_ErrorBase + 51;
 	static const int Err_10052 = Maz_ErrorBase + 52;
-	static const int Err_10053 = Maz_ErrorBase + 53;
 	static const int Err_10054 = Maz_ErrorBase + 54;
 	static const int Err_10055 = Maz_ErrorBase + 55;
 	static const int Err_10056 = Maz_ErrorBase + 56;
@@ -92,9 +84,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10058 = Maz_ErrorBase + 58;
 	static const int Err_10059 = Maz_ErrorBase + 59;
 	static const int Err_10060 = Maz_ErrorBase + 60;
-	static const int Err_10061 = Maz_ErrorBase + 61;
-	static const int Err_10062 = Maz_ErrorBase + 62;
-	static const int Err_10063 = Maz_ErrorBase + 63;
 	static const int Err_10064 = Maz_ErrorBase + 64;
 	static const int Err_10065 = Maz_ErrorBase + 65;
 	static const int Err_10066 = Maz_ErrorBase + 66;
@@ -172,34 +161,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10138 = Maz_ErrorBase + 138;
 	static const int Err_10139 = Maz_ErrorBase + 139;
 	static const int Err_10140 = Maz_ErrorBase + 140;
-	static const int Err_10141 = Maz_ErrorBase + 141;
-	static const int Err_10142 = Maz_ErrorBase + 142;
-	static const int Err_10143 = Maz_ErrorBase + 143;
-	static const int Err_10144 = Maz_ErrorBase + 144;
-	static const int Err_10145 = Maz_ErrorBase + 145;
-	static const int Err_10146 = Maz_ErrorBase + 146;
-	static const int Err_10147 = Maz_ErrorBase + 147;
-	static const int Err_10148 = Maz_ErrorBase + 148;
-	static const int Err_10149 = Maz_ErrorBase + 149;
-	static const int Err_10150 = Maz_ErrorBase + 150;
-	static const int Err_10151 = Maz_ErrorBase + 151;
-	static const int Err_10152 = Maz_ErrorBase + 152;
-	static const int Err_10153 = Maz_ErrorBase + 153;
-	static const int Err_10154 = Maz_ErrorBase + 154;
-	static const int Err_10155 = Maz_ErrorBase + 155;
-	static const int Err_10156 = Maz_ErrorBase + 156;
-	static const int Err_10157 = Maz_ErrorBase + 157;
-	static const int Err_10158 = Maz_ErrorBase + 158;
-	static const int Err_10159 = Maz_ErrorBase + 159;
-	static const int Err_10160 = Maz_ErrorBase + 160;
-	static const int Err_10161 = Maz_ErrorBase + 161;
-	static const int Err_10162 = Maz_ErrorBase + 162;
-	static const int Err_10163 = Maz_ErrorBase + 163;
-	static const int Err_10164 = Maz_ErrorBase + 164;
-	static const int Err_10165 = Maz_ErrorBase + 165;
-	static const int Err_10166 = Maz_ErrorBase + 166;
-	static const int Err_10167 = Maz_ErrorBase + 167;
-	static const int Err_10168 = Maz_ErrorBase + 168;
 	static const int Err_10169 = Maz_ErrorBase + 169;
 	static const int Err_10170 = Maz_ErrorBase + 170;
 	static const int Err_10171 = Maz_ErrorBase + 171;
@@ -229,8 +190,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10195 = Maz_ErrorBase + 195;
 	static const int Err_10196 = Maz_ErrorBase + 196;
 	static const int Err_10197 = Maz_ErrorBase + 197;
-	static const int Err_10198 = Maz_ErrorBase + 198;
-	static const int Err_10199 = Maz_ErrorBase + 199;
 	static const int Err_10200 = Maz_ErrorBase + 200;
 	static const int Err_10201 = Maz_ErrorBase + 201;
 	static const int Err_10202 = Maz_ErrorBase + 202;
@@ -271,7 +230,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10237 = Maz_ErrorBase + 237;
 	static const int Err_10238 = Maz_ErrorBase + 238;
 	static const int Err_10239 = Maz_ErrorBase + 239;
-	static const int Err_10240 = Maz_ErrorBase + 240;
 	static const int Err_10241 = Maz_ErrorBase + 241;
 	static const int Err_10242 = Maz_ErrorBase + 242;
 	static const int Err_10243 = Maz_ErrorBase + 243;
@@ -285,15 +243,12 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10251 = Maz_ErrorBase + 251;
 	static const int Err_10252 = Maz_ErrorBase + 252;
 	static const int Err_10253 = Maz_ErrorBase + 253;
-	
 
 	//Steve Jones error base
 	static const int Sej_ErrorBase = 15000;
-	static const int Err_15000 = Sej_ErrorBase + 0;
 	static const int Err_15001 = Sej_ErrorBase + 1;
 	static const int Err_15002 = Sej_ErrorBase + 2;
 	static const int Err_15003 = Sej_ErrorBase + 3;
-	static const int Err_15004 = Sej_ErrorBase + 4;
 	static const int Err_15005 = Sej_ErrorBase + 5;
 	static const int Err_15006 = Sej_ErrorBase + 6;
 	static const int Err_15007 = Sej_ErrorBase + 7;
@@ -305,7 +260,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_15013 = Sej_ErrorBase + 13;
 	static const int Err_15014 = Sej_ErrorBase + 14;
 	static const int Err_15015 = Sej_ErrorBase + 15;
-	static const int Err_15016 = Sej_ErrorBase + 16;
 	static const int Err_15017 = Sej_ErrorBase + 17;
 	static const int Err_15018 = Sej_ErrorBase + 18;
 	static const int Err_15019 = Sej_ErrorBase + 19;
@@ -384,25 +338,25 @@ namespace Seidenader { namespace ObjectInterfaces
 	///Errornumbers load Configuration 
 	static const int Err_16041_ErrroDestroyingConfig  = Mec_ErrorBase + 41;
 	static const int Err_16042_ConvertColorToStandardProduct  = Mec_ErrorBase + 42;
-	static const int  Err_16043 = Mec_ErrorBase + 43;
-	static const int  Err_16044_CreateInputList  = Mec_ErrorBase + 44;
+	static const int Err_16043 = Mec_ErrorBase + 43;
+	static const int Err_16044_CreateInputList  = Mec_ErrorBase + 44;
 	static const int Err_16045_MissingTag = Mec_ErrorBase + 45;
-	static const int  Err_16046_LOAD_IO_FAILED =  Mec_ErrorBase + 46;
-	static const int  Err_16047_CreateOutputList =  Mec_ErrorBase + 47;
+	static const int Err_16046_LOAD_IO_FAILED =  Mec_ErrorBase + 46;
+	static const int Err_16047_CreateOutputList =  Mec_ErrorBase + 47;
 	static const int Err_16048_ErrrorCreatePPQObject  =  Mec_ErrorBase + 48;
 	static const int Err_16049_ErrorMissingInpuTag  =  Mec_ErrorBase + 49;
 	static const int Err_16050_ConstructObjectInspection  =  Mec_ErrorBase + 50;
 	static const int Err_16051_ErrorMissingIOTypeTag =  Mec_ErrorBase + 51;
-	static const int 	Err_16052_ErrorMissingItemNameTag =  Mec_ErrorBase + 52;
-	static const int	Err_16053_ErrorMissingIOTypeTag =  Mec_ErrorBase + 53; 
-	static const int	Err_16054_ErrorMissingPPQPOsitionTag =  Mec_ErrorBase + 54; 
+	static const int Err_16052_ErrorMissingItemNameTag =  Mec_ErrorBase + 52;
+	static const int Err_16053_ErrorMissingIOTypeTag =  Mec_ErrorBase + 53; 
+	static const int Err_16054_ErrorMissingPPQPOsitionTag =  Mec_ErrorBase + 54; 
 	static const int Err_16055_ErrorMissingRemoteIndexTag =  Mec_ErrorBase + 55;
-	static const int 	Err_16056_ErrorMissingPPQPOsitionTag =  Mec_ErrorBase + 56;
-	static const int 	Err_16057_ErrorMissingItemNameTag =  Mec_ErrorBase + 57;
-	static const int 	Err_16058_ErrorMissingRemoteIndexTag =  Mec_ErrorBase + 58;
-	static const int	Err_16059_ErrorMissingItemNameTag   =  Mec_ErrorBase + 59;
-	static const int 	Err_16060_IOEntryIsMissing=  Mec_ErrorBase + 60;
-	static const int 	Err_16061_EnviromentTagIsMissing =  Mec_ErrorBase + 61;
+	static const int Err_16056_ErrorMissingPPQPOsitionTag =  Mec_ErrorBase + 56;
+	static const int Err_16057_ErrorMissingItemNameTag =  Mec_ErrorBase + 57;
+	static const int Err_16058_ErrorMissingRemoteIndexTag =  Mec_ErrorBase + 58;
+	static const int Err_16059_ErrorMissingItemNameTag   =  Mec_ErrorBase + 59;
+	static const int Err_16060_IOEntryIsMissing=  Mec_ErrorBase + 60;
+	static const int Err_16061_EnviromentTagIsMissing =  Mec_ErrorBase + 61;
 	///New Errornumbers SAX PARSER
 	static const int 	Err_16062_TODO =  Mec_ErrorBase + 62;
 	static const int 	Err_16063_SAXPARSER =  Mec_ErrorBase + 63;
@@ -477,7 +431,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_17050_ErrorGettingOutputs = BRW_ErrorBase + 50;
 	static const int Err_17051_ErrorGettingPPQCount = BRW_ErrorBase + 51;
 	static const int Err_17052_ErrorGettingPPQCount = BRW_ErrorBase + 52;
-	static const int Err_17053_Shift_Tool_Source_Image_Extents_Disabled = BRW_ErrorBase + 53;
 
 	//Guido Ramseier error base
 	static const int Gra_ErrorBase = 25000;
