@@ -42,11 +42,11 @@ SVDisplayObject::SVDisplayObject( LPCSTR ObjectName )
 , m_FrameRate( 10 )
 , m_LastUpdateTime(std::numeric_limits<SVClock::SVTimeStamp>::max())
 {
-	m_hStartEvent = NULL;
-	m_hStopEvent = NULL;
-	m_hDisplayThread = NULL;
+	m_hStartEvent = nullptr;
+	m_hStopEvent = nullptr;
+	m_hDisplayThread = nullptr;
 
-	m_CriticalSectionCreated = ( ::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 5000 ) != FALSE );
+	m_CriticalSectionCreated = ::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 5000 ) ? true : false;
 }
 
 SVDisplayObject::SVDisplayObject( SVObjectClass* POwner, int StringResourceID )
@@ -57,11 +57,11 @@ SVDisplayObject::SVDisplayObject( SVObjectClass* POwner, int StringResourceID )
 , m_IPDocDisplayComplete( 1 )
 , m_FrameRate( 10 )
 {
-	m_hStartEvent = NULL;
-	m_hStopEvent			= NULL;
-	m_hDisplayThread		= NULL;
+	m_hStartEvent = nullptr;
+	m_hStopEvent = nullptr;
+	m_hDisplayThread = nullptr;
 
-	m_CriticalSectionCreated = ( ::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 5000 ) != FALSE );
+	m_CriticalSectionCreated = ::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 5000 ) ? true : false;
 }
 
 SVDisplayObject::~SVDisplayObject()

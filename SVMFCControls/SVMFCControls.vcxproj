@@ -120,8 +120,6 @@
     <ClCompile Include="SVOSelectItemListDlg.cpp" />
     <ClCompile Include="SVSlideBar.cpp" />
     <ClCompile Include="SVSliderCtrl.cpp" />
-    <ClCompile Include="CSVOCRFontTraining.cpp" />
-    <ClCompile Include="CSVOCRGrayFontTrain.cpp" />
     <ClCompile Include="SVActiveDisableButton.cpp" />
     <ClCompile Include="SVDlgFolder.cpp" />
     <ClCompile Include="SVDottedNameTreeCtrl.cpp" />
@@ -152,8 +150,6 @@
   <ItemGroup>
     <ClInclude Include="AvailableObjectListComboBox.h" />
     <ClInclude Include="CLabel.h" />
-    <ClInclude Include="CSVOCRFontTraining.h" />
-    <ClInclude Include="CSVOCRGrayFontTrain.h" />
     <ClInclude Include="NameSelectionTreeCtrl.h" />
     <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="StdAfx.h" />

@@ -169,11 +169,7 @@ namespace Loki
 
 				Initializer()
 				{
-#if _WIN32_WINNT == 0x0500
 					::InitializeCriticalSectionAndSpinCount(&mtx_, 4000);
-#else
-					::InitializeCriticalSection(&mtx_);
-#endif
 				}
 				~Initializer()
 				{

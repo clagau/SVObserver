@@ -67,16 +67,12 @@ SVLptIOImpl::SVLptIOImpl()
 {
 	try
 	{
-		#if (_WIN32_WINNT >= 0x0500)
-		  ::InitializeCriticalSectionAndSpinCount(&m_hCriticalSection, BOARD_SELECT_ACK_TIMEOUT + 100);
-		#else
-		  ::InitializeCriticalSection(&m_hCriticalSection);
-		#endif
-		m_bCriticalSectionCreated = TRUE;
+		::InitializeCriticalSectionAndSpinCount(&m_hCriticalSection, BOARD_SELECT_ACK_TIMEOUT + 100);
+		m_bCriticalSectionCreated = true;
 	}
 	catch (...)
 	{
-		m_bCriticalSectionCreated = FALSE;
+		m_bCriticalSectionCreated = false;
 	}
 	m_bUseSingleTrigger = false;
 	m_lParallelBoardInterfaceBehavior = Function00ForWrite1;

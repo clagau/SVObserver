@@ -17,7 +17,7 @@
 SVCriticalSection::SVCriticalSection( DWORD p_SpinCount )
 : m_SpinCount( p_SpinCount ), m_IsLockCreated( false ), m_Lock()
 {
-	m_IsLockCreated = ( ::InitializeCriticalSectionAndSpinCount( &m_Lock, m_SpinCount ) != FALSE );
+	m_IsLockCreated = ::InitializeCriticalSectionAndSpinCount( &m_Lock, m_SpinCount ) ? true : false;
 }
 
 SVCriticalSection::~SVCriticalSection()
@@ -84,7 +84,7 @@ BOOL SVCriticalSection::EnterLock() const
 
 	if( !m_IsLockCreated )
 	{
-		m_IsLockCreated = ( ::InitializeCriticalSectionAndSpinCount( &m_Lock, m_SpinCount ) != FALSE );
+		m_IsLockCreated = ::InitializeCriticalSectionAndSpinCount( &m_Lock, m_SpinCount ) ? true : false;
 	}
 
 	l_Status = m_IsLockCreated;
@@ -103,7 +103,7 @@ BOOL SVCriticalSection::TryEnterLock() const
 
 	if( !m_IsLockCreated )
 	{
-		m_IsLockCreated = ( ::InitializeCriticalSectionAndSpinCount( &m_Lock, m_SpinCount ) != FALSE );
+		m_IsLockCreated = ::InitializeCriticalSectionAndSpinCount( &m_Lock, m_SpinCount ) ? true : false;
 	}
 
 	l_Status = m_IsLockCreated;

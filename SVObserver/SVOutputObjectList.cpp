@@ -46,11 +46,7 @@ BOOL SVOutputObjectList::Create()
 
 	try
 	{
-		#if( _WIN32_WINNT >= 0x0500 )
-		  m_bCreated = ::InitializeCriticalSectionAndSpinCount( &m_hCriticalSection, 4000 );
-		#else
-		  m_bCreated = ::InitializeCriticalSection( &m_hCriticalSection );
-		#endif
+		m_bCreated = ::InitializeCriticalSectionAndSpinCount( &m_hCriticalSection, 4000 );
 	}
 	catch(...)
 	{

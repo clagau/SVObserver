@@ -74,12 +74,6 @@
     <ClCompile Include="SVActiveDisableButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CSVOCRFontTraining.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSVOCRGrayFontTrain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDlgFolder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -179,12 +173,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVActiveDisableButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSVOCRFontTraining.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSVOCRGrayFontTrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDlgFolder.h">

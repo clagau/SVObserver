@@ -10,10 +10,7 @@
 // ******************************************************************************
 
 // the following proxy functions are implemented in SVQueueObject.cpp
-BOOL __stdcall InitializeCriticalSectionAndSpinCount_(
-  LPCRITICAL_SECTION lpCriticalSection,  // critical section
-  DWORD dwSpinCount                      // spin count
-);
+BOOL __stdcall InitializeCriticalSectionAndSpinCount_(LPCRITICAL_SECTION lpCriticalSection, DWORD dwSpinCount);
 
 template <typename T>
 SVTQueueObject<T>::SVTQueueObject()
@@ -73,7 +70,6 @@ BOOL SVTQueueObject<T>::Create()
 	{
 		m_bCreated = InitializeCriticalSectionAndSpinCount_( &m_hCriticalSection, 4000 );
 	}
-
 	return m_bCreated;
 }
 

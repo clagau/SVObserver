@@ -450,13 +450,7 @@ HRESULT SVSAFEARRAY::UpdateVariant( VARTYPE p_Type, const void* p_pData, _varian
 			}
 			case VT_I8:
 			{
-				#if( _WIN32_WINNT < 0x0501 )
-					p_rVariant.vt = VT_I8;
-					p_rVariant.llVal = *( static_cast< const __int64* >( p_pData ) );
-				#else
-					p_rVariant = *( static_cast< const __int64* >( p_pData ) );
-				#endif
-
+				p_rVariant = *( static_cast< const __int64* >( p_pData ) );
 				break;
 			}
 			case VT_INT:
@@ -485,13 +479,7 @@ HRESULT SVSAFEARRAY::UpdateVariant( VARTYPE p_Type, const void* p_pData, _varian
 			}
 			case VT_UI8:
 			{
-				#if( _WIN32_WINNT < 0x0501 )
-					p_rVariant.vt = VT_UI8;
-					p_rVariant.llVal = *( static_cast< const unsigned __int64* >( p_pData ) );
-				#else
-					p_rVariant = *( static_cast< const unsigned __int64* >( p_pData ) );
-				#endif
-
+				p_rVariant = *( static_cast< const unsigned __int64* >( p_pData ) );
 				break;
 			}
 			case VT_UINT:
