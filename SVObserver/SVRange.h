@@ -125,6 +125,13 @@ public:
 	//************************************
 	const SVDoubleValueObjectClass& getUpdatedFailHigh( int bucket );
 
+	//************************************
+	// Description:  Gets the value of the selected Range  object
+	// Parameter:  bucket <in>:  the bucket index
+	// Parameter RangeEnum::ERange ra the selected range object 
+	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail High object
+	//************************************
+	const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange ra  ,int bucket );
 
 	//************************************
 	//! Updates the range value with the value from the indirect value if an indirect value exist.

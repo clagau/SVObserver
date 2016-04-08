@@ -617,6 +617,42 @@ void SVRangeClass::InvalidateRange()
 
 
 
+const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange ra  ,int bucket )
+{
+	if(m_isValidRange)
+	{
+
+		if( nullptr != m_ValueObjectReferences[  ra ].Object() )
+		{
+			UpdateRange(bucket, ra );
+		}
+
+	}
+
+	switch (ra)
+	{
+	case RangeEnum::ER_FailHigh:
+		return FailHigh;
+		break;
+
+	case RangeEnum::ER_WarnHigh:
+		return WarnHigh;
+		break;
+
+	case RangeEnum::ER_FailLow:
+		return FailLow;
+		break;
+
+	case RangeEnum::ER_WarnLow:
+		return WarnLow;
+		break;
+	default:
+		return FailLow;
+		break;
+	}
+
+}
+
 
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
 {

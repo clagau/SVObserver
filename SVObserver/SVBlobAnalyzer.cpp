@@ -1085,8 +1085,11 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					}
 
 					double dLow(0), dHigh(0);
-					pRange->getUpdatedFailHigh(RRunStatus.m_lResultDataIndex).GetValue(dHigh);
-					pRange->getUpdatedFailLow(RRunStatus.m_lResultDataIndex).GetValue(dLow);
+					pRange->getUpdatedRange(RangeEnum::ER_FailHigh, RRunStatus.m_lResultDataIndex).GetValue(dHigh);
+					pRange->getUpdatedRange(RangeEnum::ER_FailLow, RRunStatus.m_lResultDataIndex).GetValue(dLow);
+
+					pRange->getUpdatedRange(RangeEnum::ER_WarnLow,RRunStatus.m_lResultDataIndex);
+					pRange->getUpdatedRange(RangeEnum::ER_WarnHigh,RRunStatus.m_lResultDataIndex);
 
 					// Now that we have indirect high and low ranges it is possible that dLow is larger than dHigh.
 					// This would cause the MIL function to return an error.  To avoid this exception, we set both to NULL (0).
