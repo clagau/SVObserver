@@ -87,7 +87,7 @@ void SVStatusBar::SetFbwfInfo(UINT PaneIndex,bool FbwfAvailable, bool FbwfActive
 		}
 		else
 		{
-			m_lFbwfBKColor = FbwfActive ? RGB( 100, 255, 100) : RGB( 255, 100, 100);
+			m_lFbwfBKColor = FbwfActive ? RGB( 100, 255, 100) : RGB( 128, 128, 128); //Arvid temporarily displayed in grey as per SVO-1084. Color was: RGB( 255, 100, 100);
 			m_lFbwfForeColor = RGB( 0, 0, 0 );
 
 			m_strFbwfText = FbwfActive ? "Disk protection active" : "Disk protection inactive";

@@ -2054,9 +2054,7 @@ void SVMainFrame::OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI)
 {
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
 
-	pCmdUI->Enable( bEnable );
-
-	pCmdUI->Enable(ExtrasEngine::Instance().IsFbwfAvailable()==true);
+	pCmdUI->Enable(FALSE); //Arvid temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
 
 	pCmdUI->SetCheck( ExtrasEngine::Instance().IsFbwfSelected()==true);
 }
