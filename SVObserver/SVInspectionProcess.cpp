@@ -1288,6 +1288,17 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 		{
 			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesSetRef() &= ~SV_VIEWABLE;
 		}// end if
+
+		if( true == m_PPQInputs[iList].m_IOEntryPtr->m_Enabled)
+		{
+			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesAllowedRef()  |= SV_SELECTABLE_FOR_EQUATION;
+		}
+		else
+		{
+			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesAllowedRef()  &= ~SV_SELECTABLE_FOR_EQUATION;
+		}
+
+
 	}// end for
 
 	SVResultListClass* pResultlist = GetResultList();
