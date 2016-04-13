@@ -92,8 +92,8 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
 	{
 		//check to see if any items are selected in the image tree
-		SVObjectListClass ObjectList;
-		int iSize = ObjectList.GetSize();
+		
+		int iSize = m_List.GetSize();
 		if( 0 < iSize )
 		{
 			//if memory usage < 0 do not all them to exit
