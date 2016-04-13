@@ -650,8 +650,10 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 			// Is not yet connected...
 			if (!pInInfo->IsConnected())
 			{
+				// if Connect to Default
 				if (SVInvalidGUID == pInInfo->GetInputObjectInfo().UniqueObjectID )
 				{
+					// At least one item from the SVObjectTypeInfoStruct is required, but not all
 					if ( SVInvalidGUID != info.EmbeddedID || SVNotSetObjectType != info.ObjectType || SVNotSetSubObjectType != info.SubType )
 					{
 						SVObjectClass* pOwner = GetOwner();
