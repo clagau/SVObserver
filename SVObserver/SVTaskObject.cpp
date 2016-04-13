@@ -624,7 +624,7 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 
 BOOL SVTaskObjectClass::ConnectAllInputs()
 {
-	BOOL l_bOk = TRUE;
+	BOOL l_bOk = true;
 
 	SVInputInfoListClass inputList;
 	
@@ -635,7 +635,7 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 	for (size_t j = 0; j < friendList.size(); ++ j)
 	{
 		const SVObjectInfoStruct& rFriend = friendList[j];
-		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, NULL, NULL);
+		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, 0, 0);
 	}
 
 	// find our inputs
@@ -650,32 +650,25 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 			// Is not yet connected...
 			if (!pInInfo->IsConnected())
 			{
-				if (pInInfo->GetInputObjectInfo().UniqueObjectID == SVInvalidGUID)
+				if (SVInvalidGUID == pInInfo->GetInputObjectInfo().UniqueObjectID )
 				{
-					if ( info.EmbeddedID == SVInvalidGUID && 
-					     info.ObjectType == SVNotSetObjectType &&
-						   info.SubType == SVNotSetSubObjectType )
+					if ( SVInvalidGUID != info.EmbeddedID || SVNotSetObjectType != info.ObjectType || SVNotSetSubObjectType != info.SubType )
 					{
-						//ASSERT( FALSE );
-					}
-					else
-					{
-						
 						SVObjectClass* pOwner = GetOwner();
 						SVObjectClass* pRequestor = pInInfo->PObject;
-						SVObjectClass* pObject = NULL;
-						BOOL bSuccess = FALSE;
+						SVObjectClass* pObject = nullptr;
+						BOOL bSuccess = false;
 						
 						// Ask first friends...
 						for (size_t j = 0; j < friendList.size(); ++ j)
 						{
 							const SVObjectInfoStruct& rFriend = friendList[j];
-							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)));
+							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info)));
 							if (pObject)
 							{
 								// Connect input ...
 								pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
-								bSuccess = TRUE;
+								bSuccess = true;
 								break;
 							}
 						}
@@ -689,7 +682,7 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 							while (pOwner)
 							{
 								// if color system & pOwner == SVToolSetClass
-								if (nullptr != pInspection && pInspection->IsColorCamera() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && info.ObjectType == SVImageObjectType)
+								if (nullptr != pInspection && pInspection->IsColorCamera() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && SVImageObjectType == info.ObjectType )
 								{
 									pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
 								}
@@ -711,27 +704,22 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 							}// end while (pOwner)
 						}// end if (! bSuccess)
 					}
-				}// end if (pInInfo->InputObjectInfo.UniqueObjectID == SVInvalidGUID)
+				}// end if (SVInvalidGUID == pInInfo->InputObjectInfo.UniqueObjectID )
 				
 				// Finally try to connect...
-				if ( pInInfo->GetInputObjectInfo().UniqueObjectID == SVInvalidGUID )
+				if ( SVInvalidGUID != pInInfo->GetInputObjectInfo().UniqueObjectID )
 				{
-					//ASSERT( FALSE );
-				}
-				else
-				{
-					DWORD_PTR dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInInfo), NULL);
+					DWORD_PTR dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInInfo), 0);
 
-					l_bOk = dwConnectResult == SVMR_SUCCESS;
+					l_bOk = SVMR_SUCCESS == dwConnectResult;
 				}
 			}
 		}
 		else
 		{
-			l_bOk = FALSE;
+			l_bOk = false;
 		}
 	}
-
 	return l_bOk;
 }
 

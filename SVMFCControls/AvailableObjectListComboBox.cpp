@@ -56,10 +56,9 @@ namespace Seidenader { namespace SVMFCControls
 				InsertString(0, rFirstListText.c_str());
 			}
 
-			int nIndex = SelectString(0, rSelectedItem.c_str());
-			if (LB_ERR == nIndex)
-			{//if string not found, take first item
-				SetCurSel(0);
+			if (!rSelectedItem.empty())
+			{
+				SelectString(0. rSeletedItem.c_str());
 			}
 		}
 	}

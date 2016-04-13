@@ -60,7 +60,6 @@ public:
 	virtual void Delete(GUID& objectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
 	virtual DWORD_PTR DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context) override;
-	virtual SvOi::ISVImage* getFirstImage() override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
 #pragma endregion public methods	

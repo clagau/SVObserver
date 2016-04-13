@@ -8,7 +8,6 @@
 #pragma once
 #pragma region Includes
 #include "ITaskObject.h"
-#include "ISVImage.h"
 #pragma endregion Includes
 
 struct SVObjectTypeInfoStruct;
@@ -53,11 +52,6 @@ namespace Seidenader
 			 /param context <in>.
 			***********/
 			virtual DWORD_PTR DestroyChildObject(ITaskObject& rObject, DWORD context) = 0;
-
-			/**********
-			 The method gets the first image of this task.
-			 ***********/
-			virtual ISVImage* getFirstImage() = 0;
 		};
 	}
 }

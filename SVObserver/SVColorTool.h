@@ -45,11 +45,11 @@ protected:
 	BOOL createBandChildLayer( SVImageClass& p_rOutputImage, SVImageClass* p_pInputImage, long p_BandLink );
 
 	// Embeddeds
-	SVRGBImageClass band0Image;
-	SVRGBImageClass band1Image;
-	SVRGBImageClass band2Image;
+	SVRGBImageClass m_band0Image;
+	SVRGBImageClass m_band1Image;
+	SVRGBImageClass m_band2Image;
 
-	SVBoolValueObjectClass convertToHSI;
+	SVBoolValueObjectClass m_convertToHSI;
 	// String value object for Source Image Names
 	SVStaticStringValueObjectClass m_svSourceImageNames;
 

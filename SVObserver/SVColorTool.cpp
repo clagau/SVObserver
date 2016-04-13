@@ -41,21 +41,21 @@ void SVColorToolClass::init()
 	outObjectInfo.ObjectTypeInfo.SubType    = SVColorToolObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &band0Image, SVBand0ImageObjectGuid, IDS_OBJECTNAME_BAND0_IMAGE );
-	RegisterEmbeddedObject( &band1Image, SVBand1ImageObjectGuid, IDS_OBJECTNAME_BAND1_IMAGE );
-	RegisterEmbeddedObject( &band2Image, SVBand2ImageObjectGuid, IDS_OBJECTNAME_BAND2_IMAGE );
+	RegisterEmbeddedObject( &m_band0Image, SVBand0ImageObjectGuid, IDS_OBJECTNAME_BAND0_IMAGE );
+	RegisterEmbeddedObject( &m_band1Image, SVBand1ImageObjectGuid, IDS_OBJECTNAME_BAND1_IMAGE );
+	RegisterEmbeddedObject( &m_band2Image, SVBand2ImageObjectGuid, IDS_OBJECTNAME_BAND2_IMAGE );
 
-	RegisterEmbeddedObject( &convertToHSI, SVConvertToHSIObjectGuid, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SVResetItemIP );
+	RegisterEmbeddedObject( &m_convertToHSI, SVConvertToHSIObjectGuid, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SVResetItemIP );
 
 	// Register SourceImageNames Value Object
 	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
 
-	band0Image.InitializeImage( SVImageTypeDependent );
-	band1Image.InitializeImage( SVImageTypeDependent );
-	band2Image.InitializeImage( SVImageTypeDependent );
+	m_band0Image.InitializeImage( SVImageTypeDependent );
+	m_band1Image.InitializeImage( SVImageTypeDependent );
+	m_band2Image.InitializeImage( SVImageTypeDependent );
 
-	extentTop.SetDefaultValue( 0.0, TRUE );
-	extentLeft.SetDefaultValue( 0.0, TRUE );
+	extentTop.SetDefaultValue( 0.0, true );
+	extentLeft.SetDefaultValue( 0.0, true );
 
 	m_svToolExtent.SetTranslation( SVExtentTranslationNone );
 
@@ -73,16 +73,16 @@ SVColorToolClass::~SVColorToolClass()
 
 BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVToolClass::CreateObject( PCreateStructure ) )
 	{
 		// Create 3 output images, one for each band...
 		SVImageClass* pInputImage = nullptr;
 
-		BOOL useHSI = TRUE;
+		BOOL useHSI = true;
 		// Create HSI Image if required
-		convertToHSI.GetValue( useHSI );
+		m_convertToHSI.GetValue( useHSI );
 
 		if( useHSI )
 		{
@@ -95,28 +95,28 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 
 		if( pInputImage )
 		{
-			band0Image.setDibBufferFlag(false);
-			band1Image.setDibBufferFlag(false);
-			band2Image.setDibBufferFlag(false);
+			m_band0Image.setDibBufferFlag(false);
+			m_band1Image.setDibBufferFlag(false);
+			m_band2Image.setDibBufferFlag(false);
 
 			// Create 3 child layers...
 			
 			// Create band 0 Layer
-			bOk = createBandChildLayer( band0Image, pInputImage, 0 );
+			bOk = createBandChildLayer( m_band0Image, pInputImage, 0 );
 
 			// Create Band 1 Layer
-			bOk &= createBandChildLayer( band1Image, pInputImage, 1 );
+			bOk &= createBandChildLayer( m_band1Image, pInputImage, 1 );
 
 			// Create Band 2 Layer...
-			bOk &= createBandChildLayer( band2Image, pInputImage, 2 );
+			bOk &= createBandChildLayer( m_band2Image, pInputImage, 2 );
 		}
 	}
 	
-	extentTop.SetDefaultValue( 0.0, TRUE );
-	extentLeft.SetDefaultValue( 0.0, TRUE );
+	extentTop.SetDefaultValue( 0.0, true );
+	extentLeft.SetDefaultValue( 0.0, true );
 
 	// Set / Reset Printable Flag
-	convertToHSI.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_convertToHSI.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
@@ -150,10 +150,10 @@ HRESULT SVColorToolClass::ResetObject()
 	// Create 3 output images, one for each band...
 	SVImageClass* pInputImage = nullptr;
 
-	BOOL useHSI = TRUE;
+	BOOL useHSI = true;
 
 	// Create HSI Image if required
-	convertToHSI.GetValue( useHSI );
+	m_convertToHSI.GetValue( useHSI );
 
 	if( useHSI )
 	{
@@ -170,16 +170,16 @@ HRESULT SVColorToolClass::ResetObject()
 	// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
 	// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
 
-	createBandChildLayer( band0Image, pInputImage, Band0 );
-	band0Image.ResetObject();
+	createBandChildLayer( m_band0Image, pInputImage, Band0 );
+	m_band0Image.ResetObject();
 
 	// Create Band 1 Layer
-	createBandChildLayer( band1Image, pInputImage, Band1 );
-	band1Image.ResetObject();
+	createBandChildLayer( m_band1Image, pInputImage, Band1 );
+	m_band1Image.ResetObject();
 
 	// Create Band 2 Layer...
-	createBandChildLayer( band2Image, pInputImage, Band2 );
-	band2Image.ResetObject();
+	createBandChildLayer( m_band2Image, pInputImage, Band2 );
+	m_band2Image.ResetObject();
 
 	if( S_OK != SVToolClass::ResetObject() )
 	{
@@ -212,10 +212,10 @@ BOOL SVColorToolClass::onRun( SVRunStatusClass& RRunStatus )
 	// Create 3 output images, one for each band...
 	SVImageClass* pInputImage = nullptr;
 
-	BOOL useHSI = TRUE;
+	BOOL useHSI = true;
 
 	// Create HSI Image if required
-	convertToHSI.GetValue( useHSI );
+	m_convertToHSI.GetValue( useHSI );
 
 	if( useHSI )
 	{
@@ -228,19 +228,19 @@ BOOL SVColorToolClass::onRun( SVRunStatusClass& RRunStatus )
 
 	if( nullptr != pInputImage )
 	{
-		if( band0Image.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
+		if( m_band0Image.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 		{
-			band0Image.ResetObject();
+			m_band0Image.ResetObject();
 		}
 
-		if( band1Image.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
+		if( m_band1Image.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 		{
-			band1Image.ResetObject();
+			m_band1Image.ResetObject();
 		}
 
-		if( band2Image.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
+		if( m_band2Image.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 		{
-			band2Image.ResetObject();
+			m_band2Image.ResetObject();
 		}
 	}
 
@@ -249,7 +249,7 @@ BOOL SVColorToolClass::onRun( SVRunStatusClass& RRunStatus )
 
 BOOL SVColorToolClass::createBandChildLayer( SVImageClass& p_rOutputImage, SVImageClass* p_pInputImage, long p_BandLink )
 {
-	BOOL l_bOk = FALSE;
+	BOOL l_bOk = false;
 
 	SVGUID l_InputID;
 	SVImageInfoClass ImageInfo;
@@ -312,13 +312,19 @@ SVImageClass* SVColorToolClass::GetHSIImage()
 
 SVBoolValueObjectClass* SVColorToolClass::GetConvertToHSIVariable()
 {
-	return &convertToHSI;
+	return &m_convertToHSI;
 }
 
 DWORD_PTR SVColorToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = 0;
-	
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+
+	switch (dwPureMessageID)
+	{
+		case SVMSGID_GET_IMAGE_BAND0_OBJECT: // The only Tool that owns a Color Band 0 Image is the ColorTool
+		return reinterpret_cast<DWORD_PTR>(&m_band0Image);
+	}
 	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
 
@@ -328,7 +334,7 @@ HRESULT SVColorToolClass::CollectInputImageNames( )
 	CString l_strName;
 	SVImageClass* l_pImage = nullptr;
 	bool l_bConvertToHSI;
-	HRESULT l_hr = convertToHSI.GetValue( l_bConvertToHSI );
+	HRESULT l_hr = m_convertToHSI.GetValue( l_bConvertToHSI );
 	if( S_OK == l_hr )
 	{
 		if( l_bConvertToHSI )
