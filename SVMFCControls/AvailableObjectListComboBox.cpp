@@ -58,7 +58,7 @@ namespace Seidenader { namespace SVMFCControls
 
 			if (!rSelectedItem.empty())
 			{
-				SelectString(0. rSeletedItem.c_str());
+				SelectString(0, rSelectedItem.c_str());
 			}
 		}
 	}
