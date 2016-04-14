@@ -32,10 +32,8 @@
 #include "SVHistogramAnalyzerSetup.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-#include "SVLine.h"
 #include "SVLinearAnalyzerClass.h"
 #include "SVLinearEdgeProcessingClass.h"
-#include "SVLineROI.h"
 #include "SVMeasureAnalyzerAdjustmentSheet.h"
 #include "SVOCVAnalyzer.h"
 #include "SVOCVAnalyzerResult.h"
@@ -141,8 +139,6 @@ SVSetupDialogManager::SVSetupDialogManager()
 		( SVInspectionProcessGuid, &SVSetupDialogManager::SVNotImplemented )
 		( SVInt64ValueObjectClassGuid, &SVSetupDialogManager::SVNotImplemented )
 		( SVIOControllerGuid, &SVSetupDialogManager::SVNotImplemented )
-		( SVLineClassGuid, &SVSetupDialogManager::SVNotImplemented )
-		( SVLineAnalyzerClassGuid, &SVSetupDialogManager::SVNotImplemented )
 		( SVLinearAnalyzerClassGuid, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog )
 		( SVLinearEdgeAProcessingClassGuid, &SVSetupDialogManager::SVNotImplemented )
 		( SVLinearEdgeBProcessingClassGuid, &SVSetupDialogManager::SVNotImplemented )
@@ -156,7 +152,6 @@ SVSetupDialogManager::SVSetupDialogManager()
 		( SVLinearPixelCountingLineAnalyzerClassGuid, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog )
 		( SVLinearMeasurementAnalyzerClassGuid, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog )
 		( SVLinearToolClassGuid, &SVSetupDialogManager::SVNotImplemented )
-		( SVLineROIClassGuid, &SVSetupDialogManager::SVLineROIClassSetupDialog )
 		( SVLongValueObjectClassGuid, &SVSetupDialogManager::SVNotImplemented )
 		( SVLowerThresholdEquationClassGuid, &SVSetupDialogManager::SVNotImplemented )
 		( SVLUTEquationClassGuid, &SVSetupDialogManager::SVNotImplemented )
@@ -748,47 +743,6 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 
 		if( pPageB )
 			delete pPageB;
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVSetupDialogManager::SVLineROIClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
-{
-	HRESULT l_Status = S_OK;
-
-	SVLineROIClass* l_pLine = dynamic_cast< SVLineROIClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
-	
-	if( nullptr != l_pLine )
-	{
-		// Route call to all line output users...
-		SVLineClass* pOutputLine  = l_pLine->getOutputLine();
-		if( pOutputLine )
-		{
-			SVOutObjectInfoStruct& rOutInfo = pOutputLine->GetObjectOutputInfo();
-
-			long l_lCount = static_cast<long>(rOutInfo.GetInputSize());
-
-			for( int i = 0; i < l_lCount; ++ i )
-			{
-				SVInObjectInfoStruct& rUserInInfo = rOutInfo.GetInputAt( i );
-
-				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( rUserInInfo.UniqueObjectID );
-
-				if( nullptr != pObject )
-				{
-					SVSetupDialogManager::Instance().SetupDialog( pObject->GetClassID(), pObject->GetUniqueObjectID(), PParentWnd );
-				}
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
 	}
 	else
 	{

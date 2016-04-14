@@ -31,8 +31,6 @@
 #include "SVValueObject.h"
 #include "SVEquation.h"
 #include "SVImageClass.h"
-#include "SVLine.h"
-#include "SVLineAnalyzer.h"
 #include "SVObserver.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
@@ -930,32 +928,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 					}
 				}
 			}
-
-			if (SV_IS_KIND_OF(pObj, SVLineAnalyzerClass))
-			{
-				SVObjectInfoStruct objectInfo;
-				objectInfo.ObjectTypeInfo.ObjectType = SVLineObjectType;
-				
-				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>( &objectInfo ), 0) ) );
-				
-				POINT l_oHeadPoint;
-				POINT l_oTailPoint;
-
-				if ( nullptr != pLineClass &&
-					 S_OK == pLineClass->GetHeadPoint( l_oHeadPoint ) &&
-					 S_OK == pLineClass->GetHeadPoint( l_oTailPoint )  )
-				{
-					sLabel = pApp->GetStringResource(IDS_HEAD_POINT_STRING) + _T(":");
-					sValue.Format(_T("(%d, %d)"), (int)(l_oHeadPoint.x), (int)(l_oHeadPoint.y));
-					ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-					PrintValueObject(pDC, ptCurPos, sLabel, sValue);
-					
-					sLabel = pApp->GetStringResource(IDS_TAIL_POINT_STRING) + _T(":");
-					sValue.Format(_T("(%d, %d)"), (int)(l_oTailPoint.x), (int)(l_oTailPoint.y));
-					PrintValueObject(pDC, ptCurPos, sLabel, sValue);
-				} // End, if(pLineClass)
-				
-			} // End if(SV_IS_KIND_OF( pObj, SVLineAnalyzerClass))
 		} while (false);// end do
 	}// End if( nullptr != pValueObject ) else
 

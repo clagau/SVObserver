@@ -1175,31 +1175,6 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				}
 			}
 
-			if (SV_IS_KIND_OF(pObj, SVLineAnalyzerClass))
-			{
-				SVObjectInfoStruct objectInfo;
-				objectInfo.ObjectTypeInfo.ObjectType = SVLineObjectType;
-				
-				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>(&objectInfo), 0) ) );
-				
-				POINT l_oHeadPoint;
-				POINT l_oTailPoint;
-
-				if ( nullptr != pLineClass &&
-					 S_OK == pLineClass->GetHeadPoint( l_oHeadPoint ) &&
-					 S_OK == pLineClass->GetHeadPoint( l_oTailPoint ) )
-				{
-					sLabel = pApp->GetStringResource(IDS_HEAD_POINT_STRING);
-					sValue.Format(_T("(%d, %d)"), (int)(l_oHeadPoint.x), (int)(l_oHeadPoint.y));
-					WriteValueObject(writer,  L"Property", utf16(SVString(sLabel)), utf16(SVString(sValue)));
-					
-					sLabel = pApp->GetStringResource(IDS_TAIL_POINT_STRING);
-					sValue.Format(_T("(%d, %d)"), (int)(l_oTailPoint.x), (int)(l_oTailPoint.y));
-					WriteValueObject(writer, L"Property", utf16(SVString(sLabel)), utf16(SVString(sValue)));
-				} // End, if(pLineClass)
-				
-			}
-
 			if (SV_IS_KIND_OF(pObj, SVTaskObjectClass))
 			{
 				if ( SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (pObj) )

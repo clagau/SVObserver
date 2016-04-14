@@ -22,7 +22,6 @@
 #include "SVAnalyzer.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVInspectionProcess.h"
-#include "SVLine.h"
 #include "SVObserver.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
@@ -1121,15 +1120,6 @@ void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoL
 }
 
 BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID)
-{
-	SVObjectClass *l_psvObject = dynamic_cast<SVObjectClass *>(p_psvEmbeddedObject);
-
-	BOOL l_bOk = l_psvObject != NULL && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
-
-	return l_bOk;
-}
-
-BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVLineClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID)
 {
 	SVObjectClass *l_psvObject = dynamic_cast<SVObjectClass *>(p_psvEmbeddedObject);
 

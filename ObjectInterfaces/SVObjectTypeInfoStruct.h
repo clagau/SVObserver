@@ -32,12 +32,10 @@
 
 			SVToolObjectType						= 0x00000007,
 			SVEquationObjectType					= 0x00000008,
-			SVROIObjectType							= 0x00000009,
 			SVImageArithmeticObjectType				= 0x0000000a,
 			SVMathContainerObjectType				= 0x0000000b,
 			SVRotateReferenceObjectType				= 0x0000000c,
 
-			SVLineObjectType						= 0x00000010,
 			SVImageObjectType						= 0x00000011,
 			SVDataBufferClassObjectType				= 0x00000012,
 
@@ -46,8 +44,6 @@
 			SVRootObjectType						= 0x00000015,
 
 			SVExternalToolTaskObjectType            = 0x00000020,
-
-			SVImageToLineProjectObjectType			= 0x00000030,
 
 			SVTransformObjectType					= 0x00000040,
 			SVPolarTransformObjectType				= 0x00000041,
@@ -194,7 +190,6 @@
 			SVEvaluateEndAngleObjectType				= 0x0000048e,
 			
 			// ROI Subtypes:
-			SVLineROIObjectType							= 0x00000500,
 			SVImageROIObjectType						= 0x00000501,
 
 			// Transform Subtypes:

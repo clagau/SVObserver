@@ -17,11 +17,11 @@
 
 #include "SVAnalyzer.h"
 #include "SVInspectionProcess.h"
-#include "SVLine.h"
 #include "SVLinearImageOperatorList.h"
 #include "SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "ToolSizeAdjustTask.h"
+#include "SVGlobal.h"
 #pragma endregion Includes
 
 #pragma region Declarations

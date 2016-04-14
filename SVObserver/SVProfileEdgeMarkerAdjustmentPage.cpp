@@ -15,7 +15,6 @@
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVLinearAnalyzerClass.h"
 #include "SVLinearEdgeProcessingClass.h"
-#include "SVImageToLineProject.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVSVIMStateClass.h"
@@ -109,30 +108,6 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 	if( ! PCurrentAnalyzer )
 		GetParent()->SendMessage( WM_CLOSE );
 
-	SVLinearAnalyzerClass *l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(PCurrentAnalyzer);
-
-	if( nullptr == l_psvLinear )
-	{
-		if( PCurrentAnalyzer )
-		{
-			SVObjectTypeInfoStruct lineObjectInfo;
-			lineObjectInfo.ObjectType = SVLineObjectType;
-
-			pLine = ( SVLineClass* )::SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lineObjectInfo) );
-		}
-		
-		// Get the Thesholding Options from the SVImageToLineProjectClass
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVImageToLineProjectObjectType;
-
-		SVImageToLineProjectClass *pProject = reinterpret_cast<SVImageToLineProjectClass *>(SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-	
-		if( nullptr != pProject )
-		{
-			GetParent()->SendMessage( WM_CLOSE );
-		}
-	}
-	
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>( PCurrentAnalyzer->GetOwner() );
 
 	RunOnce( pTool );

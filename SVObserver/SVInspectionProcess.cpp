@@ -530,7 +530,6 @@ void SVInspectionProcess::Init()
 #else
 	m_dwCHTimeout = 40000;	// not INFINITE
 #endif
-	m_lGageToolCount = 0;
 
 	m_svReset.RemoveState( SVResetStateAll );
 
@@ -1565,21 +1564,6 @@ BOOL SVInspectionProcess::RemoveAllInputRequests()
 //******************************************************************************
 // Message Operation(s):
 //******************************************************************************
-
-long SVInspectionProcess::GetGageToolCount() const
-{
-	return m_lGageToolCount;
-}
-
-void SVInspectionProcess::GageToolCountInc()
-{
-	::InterlockedIncrement( &m_lGageToolCount );
-}
-
-void SVInspectionProcess::GageToolCountDec()
-{
-	::InterlockedDecrement( &m_lGageToolCount );
-}
 
 HRESULT SVInspectionProcess::RebuildInspection()
 {
@@ -3034,14 +3018,7 @@ void SVInspectionProcess::SetNewDisableMethod( BOOL bNewDisableMethod )
 
 long SVInspectionProcess::GetEnableAuxiliaryExtent() const
 {
-	long l_lTemp = 0;
-
-	if( GetGageToolCount() < 1 )
-	{
-		l_lTemp = m_lEnableAuxiliaryExtents;
-	}
-
-	return l_lTemp;
+	return m_lEnableAuxiliaryExtents;
 }// end GetEnableAuxiliaryExtent
 
 void SVInspectionProcess::SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents )

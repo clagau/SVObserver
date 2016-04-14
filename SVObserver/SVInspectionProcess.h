@@ -194,11 +194,6 @@ public:
 	SVImageClass* GetRGBMainImage();
 	SVImageClass* GetHSIMainImage();
 
-	long GetGageToolCount() const;
-
-	void GageToolCountInc();
-	void GageToolCountDec();
-
 	void SetInvalid();
 
 	HRESULT RebuildInspection();
@@ -416,8 +411,6 @@ protected:
 	volatile long m_lInputRequestMarkerCount;
 	SVInputRequestQueue m_InputRequests;
 	SVInputImageRequestQueue m_InputImageRequests;
-
-	long m_lGageToolCount;
 
 	SVRGBMainImageClass m_rgbMainImageObject;
 

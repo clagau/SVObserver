@@ -9,11 +9,13 @@
 //* .Check In Date   : $Date:   02 Jul 2014 13:08:04  $
 //******************************************************************************
 
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVEdgeMarkerAdjustmentPageClass.h"
 #include "SVGlobal.h"
-#include "SVLineAnalyzer.h"
+#include "SVObjectAppClass.h"
+#include "SVAnalyzer.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,7 +31,6 @@ IMPLEMENT_DYNCREATE( SVEdgeMarkerAdjustmentPageClass, CPropertyPage )
 SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass( UINT nIDCaption /* = 0 */ , int id /* = IDD */) 
 : CPropertyPage( id, nIDCaption )
 , PCurrentAnalyzer( nullptr )
-, pLine( nullptr )
 , m_pvoEdgeDirection( nullptr )
 , m_pvoEdgePolarisation( nullptr )
 , m_pvoEdgeSelect( nullptr )
@@ -593,14 +594,6 @@ BOOL SVEdgeMarkerAdjustmentPageClass::OnInitDialog()
 	if( ! PCurrentAnalyzer )
 		GetParent()->SendMessage( WM_CLOSE );
 
-	if( PCurrentAnalyzer )
-	{
-		SVObjectTypeInfoStruct lineObjectInfo;
-		lineObjectInfo.ObjectType = SVLineObjectType;
-
-		pLine = reinterpret_cast<SVLineClass*>(::SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lineObjectInfo) ) );
-	}
-
 	setScrollRange( &UpperSliderCtrl, static_cast<int>(Normalizer.GetRealRangeMin()), static_cast<int>(Normalizer.GetRealRangeMax()) );
 	setScrollRange( &LowerSliderCtrl, static_cast<int>(LowerNormalizer.GetRealRangeMin()), static_cast<int>(LowerNormalizer.GetRealRangeMax()) );
 
@@ -760,13 +753,6 @@ void SVEdgeMarkerAdjustmentPageClass::OnVScroll( UINT nSBCode, UINT nPos, CScrol
 
 BOOL SVEdgeMarkerAdjustmentPageClass::OnSetActive() 
 {
-	SVLineAnalyzerClass *l_psvAnalyzer = dynamic_cast<SVLineAnalyzerClass *>(PCurrentAnalyzer);
-
-	if( l_psvAnalyzer != NULL )
-	{
-		l_psvAnalyzer->m_bSetupEdgeA = m_bEdgeA;
-	}
-
 	// Run the Tool/Analyzer & update the Display
 	SetInspectionData();
 			

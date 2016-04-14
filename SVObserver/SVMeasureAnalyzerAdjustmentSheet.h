@@ -13,7 +13,6 @@
 #include "SVTaskObjectInterfaceClass.h"
 #pragma endregion Includes
 
-class SVLineAnalyzerClass;
 class SVTaskObjectClass;
 class SVIPDoc;
 

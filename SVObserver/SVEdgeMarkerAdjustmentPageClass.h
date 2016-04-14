@@ -20,7 +20,6 @@
 class SVIPDoc;
 class SVAnalyzerClass;
 class SVTaskObjectClass;
-class SVLineClass;
 class SVBoolValueObjectClass;
 class SVDWordValueObjectClass;
 class SVEnumerateValueObjectClass;
@@ -105,7 +104,6 @@ protected:
 	// Normalizer for Lower threshold
 	SVValueBaseNormalizerClass LowerNormalizer;
 	SVValueBaseNormalizerClass Normalizer;
-	SVLineClass *pLine;
 
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(SVEdgeMarkerAdjustmentPageClass)

@@ -34,8 +34,6 @@
 #include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVEquation.h"
 #include "SVImageClass.h"
-#include "SVLine.h"	// Sri 2/21/00
-#include "SVLineAnalyzer.h"	// Sri 2/21/00
 #include "SVObserver.h"
 #include "SVTool.h"
 #include "SVToolSet.h"

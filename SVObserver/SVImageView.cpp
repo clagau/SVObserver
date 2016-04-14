@@ -30,7 +30,6 @@
 #include "SVImageProcessingClass.h"
 #include "SVImageViewScroll.h"
 #include "SVIPDoc.h"
-#include "SVLineAnalyzer.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
 #include "SVSetupDialogManager.h"
@@ -599,16 +598,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 				case SVAnalyzerObjectType:
 				{
-					if( SV_IS_KIND_OF( m_psvObject, SVLineAnalyzerClass ) )
-					{
-						DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
-						SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
-						dlg.DoModal();
-					}
-					else
-					{
-						l_err = -1283;
-					}
+					l_err = -1283;
 					break;
 				}
 
@@ -1090,33 +1080,23 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 			SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
 			if( l_psvTool )
 			{
-				SVTaskObjectClass* l_pObject = l_psvTool->GetObjectAtPoint( l_point );
-				
-				// Checking for LineROI...
-				if( SV_IS_KIND_OF( l_pObject, SVLineAnalyzerClass ) )
+				// Try to call SetupDialog for first found Analyzer...
+				SVObjectTypeInfoStruct l_svInfo;
+				l_svInfo.ObjectType = SVAnalyzerObjectType;
+
+				SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+				if( l_psvAnalyzer )
 				{
-					SVSetupDialogManager::Instance().SetupDialog( l_pObject->GetClassID(), l_pObject->GetUniqueObjectID(), this );
-				}
-				else
-				{
-					// Try to call SetupDialog for first found Analyzer...
-					SVObjectTypeInfoStruct l_svInfo;
-					l_svInfo.ObjectType = SVAnalyzerObjectType;
+					// Set Display Flag so Errors will be displayed on dialog.
+					l_psvAnalyzer->GetTool()->msvError.m_bDisplayError = true;
+					l_psvAnalyzer->msvError.m_bDisplayError = true;
 
-					SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
-					if( l_psvAnalyzer )
-					{
-						// Set Display Flag so Errors will be displayed on dialog.
-						l_psvAnalyzer->GetTool()->msvError.m_bDisplayError = true;
-						l_psvAnalyzer->msvError.m_bDisplayError = true;
+					SVSetupDialogManager::Instance().SetupDialog( l_psvAnalyzer->GetClassID(), l_psvAnalyzer->GetUniqueObjectID(), this );
 
-						SVSetupDialogManager::Instance().SetupDialog( l_psvAnalyzer->GetClassID(), l_psvAnalyzer->GetUniqueObjectID(), this );
+					l_psvAnalyzer->msvError.m_bDisplayError = false;
+					l_psvAnalyzer->GetTool()->msvError.m_bDisplayError = false;
 
-						l_psvAnalyzer->msvError.m_bDisplayError = false;
-						l_psvAnalyzer->GetTool()->msvError.m_bDisplayError = false;
-						
-						l_psvIPDoc->RunOnce();
-					}
+					l_psvIPDoc->RunOnce();
 				}
 			}
 		}

@@ -570,20 +570,8 @@ extern /*const*/ GUID SVLinearPixelCountingLineAnalyzerClassGuid;
 // GUID for the SVROIClass
 extern /*const*/ GUID SVROIClassGuid;
 
-// GUID for the SVLineROIClass
-extern /*const*/ GUID SVLineROIClassGuid;
-
 // GUID for the SVImageROIClass
 extern /*const*/ GUID SVImageROIClassGuid;
-
-// GUID for the SVLineClass
-extern /*const*/ GUID SVLineClassGuid;
-
-// GUIDs for the Embedded Objects in the SVLineROIClass
-extern /*const*/ GUID SVOutputLineObjectGuid;
-
-// GUID for the SVLineAnalyzerClass
-extern /*const*/ GUID SVLineAnalyzerClassGuid;
 
 // GUID for the SVLinearEdgeCountingLineAnalyzerClass
 extern /*const*/ GUID SVLinearEdgeCountingLineAnalyzerClassGuid;
@@ -881,9 +869,6 @@ extern /*const*/ GUID SVUseUpperThresholdMinPlusOffsetBObjectGuid;
 extern /*const*/ GUID SVUpperThresholdMaxMinusPercentDiffBObjectGuid;
 extern /*const*/ GUID SVUpperThresholdMaxMinusOffsetBObjectGuid;
 extern /*const*/ GUID SVUpperThresholdMinPlusOffsetBObjectGuid;
-
-extern /*const*/ GUID SVThresholdMaxObjectGuid;
-extern /*const*/ GUID SVThresholdMinObjectGuid;
 
 extern /*const*/ GUID SVLinearThresholdMaxObjectGuid;
 extern /*const*/ GUID SVLinearThresholdMinObjectGuid;

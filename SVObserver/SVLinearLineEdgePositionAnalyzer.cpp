@@ -13,9 +13,9 @@
 #include "stdafx.h"
 #include "SVLinearLineEdgePositionAnalyzer.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
-#include "SVLine.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVTool.h"
+#include "SVGlobal.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLinearEdgePositionLineAnalyzerClass, SVLinearEdgePositionLineAnalyzerClassGuid );

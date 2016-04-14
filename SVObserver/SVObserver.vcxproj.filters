@@ -341,9 +341,6 @@
     <ClCompile Include="SVImageProcessingClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageToLineProject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVImageTransform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -407,12 +404,6 @@
     <ClCompile Include="SVLightReferenceDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVLine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLineAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVLinearAnalyzerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -450,9 +441,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVLinearToolClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLineROI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVLongValueObjectClass.cpp">
@@ -789,9 +777,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVRGBMainImage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVROI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVROIFigureEditor.cpp">
@@ -1641,9 +1626,6 @@
     <ClInclude Include="SVImageProcessingClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageToLineProject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVImageTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1728,12 +1710,6 @@
     <ClInclude Include="SVLightReferenceDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVLine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLineAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVLinearAnalyzerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1771,9 +1747,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVLinearToolClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLineROI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVLongValueObjectClass.h">
@@ -2131,9 +2104,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVRGBMainImage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVROI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVROIFigureEditor.h">

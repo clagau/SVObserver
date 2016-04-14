@@ -391,7 +391,6 @@ echo %time%
     <ClCompile Include="SVImageObjectClass.cpp" />
     <ClCompile Include="SVImagePolarTransform.cpp" />
     <ClCompile Include="SVImageProcessingClass.cpp" />
-    <ClCompile Include="SVImageToLineProject.cpp" />
     <ClCompile Include="SVImageTransform.cpp" />
     <ClCompile Include="SVImageView.cpp" />
     <ClCompile Include="SVImageViewScroll.cpp" />
@@ -416,8 +415,6 @@ echo %time%
     <ClCompile Include="SVIPResultItemData.cpp" />
     <ClCompile Include="SVIPResultItemDefinition.cpp" />
     <ClCompile Include="SVLightReferenceDialog.cpp" />
-    <ClCompile Include="SVLine.cpp" />
-    <ClCompile Include="SVLineAnalyzer.cpp" />
     <ClCompile Include="SVLinearAnalyzerClass.cpp" />
     <ClCompile Include="SVLinearEdgeAProcessingClass.cpp" />
     <ClCompile Include="SVLinearEdgeBProcessingClass.cpp" />
@@ -431,7 +428,6 @@ echo %time%
     <ClCompile Include="SVLinearLinePixelCountingAnalyzer.cpp" />
     <ClCompile Include="SVLinearMeasurementAnalyzerClass.cpp" />
     <ClCompile Include="SVLinearToolClass.cpp" />
-    <ClCompile Include="SVLineROI.cpp" />
     <ClCompile Include="SVLongValueObjectClass.cpp" />
     <ClCompile Include="SVLowerThresholdEquation.cpp" />
     <ClCompile Include="SVLutDlg.cpp" />
@@ -556,7 +552,6 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="SVRGBMainImage.cpp" />
-    <ClCompile Include="SVROI.cpp" />
     <ClCompile Include="SVROIFigureEditor.cpp" />
     <ClCompile Include="SVSetupDialogManager.cpp" />
     <ClCompile Include="SVShiftTool.cpp" />
@@ -862,7 +857,6 @@ echo %time%
     <ClInclude Include="SVImageObjectClass.h" />
     <ClInclude Include="SVImagePolarTransform.h" />
     <ClInclude Include="SVImageProcessingClass.h" />
-    <ClInclude Include="SVImageToLineProject.h" />
     <ClInclude Include="SVImageTransform.h" />
     <ClInclude Include="SVImageView.h" />
     <ClInclude Include="SVImageViewScroll.h" />
@@ -891,8 +885,6 @@ echo %time%
     <ClInclude Include="SVIPResultItemDefinition.h" />
     <ClInclude Include="SVIProgress.h" />
     <ClInclude Include="SVLightReferenceDialog.h" />
-    <ClInclude Include="SVLine.h" />
-    <ClInclude Include="SVLineAnalyzer.h" />
     <ClInclude Include="SVLinearAnalyzerClass.h" />
     <ClInclude Include="SVLinearEdgeAProcessingClass.h" />
     <ClInclude Include="SVLinearEdgeBProcessingClass.h" />
@@ -906,7 +898,6 @@ echo %time%
     <ClInclude Include="SVLinearLinePixelCountingAnalyzer.h" />
     <ClInclude Include="SVLinearMeasurementAnalyzerClass.h" />
     <ClInclude Include="SVLinearToolClass.h" />
-    <ClInclude Include="SVLineROI.h" />
     <ClInclude Include="SVLongValueObjectClass.h" />
     <ClInclude Include="SVLowerThresholdEquation.h" />
     <ClInclude Include="SVLutDlg.h" />
@@ -1027,7 +1018,6 @@ echo %time%
     <ClInclude Include="SVResultsWrapperClass.h" />
     <ClInclude Include="SVResultView.h" />
     <ClInclude Include="SVRGBMainImage.h" />
-    <ClInclude Include="SVROI.h" />
     <ClInclude Include="SVROIFigureEditor.h" />
     <ClInclude Include="SVScalarValue.h" />
     <ClInclude Include="SVSetupDialogManager.h" />

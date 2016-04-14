@@ -2846,7 +2846,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 
 			m_InspectList.SetNewDisableMethod( sInspectLabel, sDisable );
 
-			m_InspectList.SetShowAuxExtent( sInspectLabel, pcfgInspection->GetGageToolCount() == 0 );
+			m_InspectList.SetShowAuxExtent( sInspectLabel, true );
 
 			// Enable Auxiliary Extent
 			long l_lEnable = 0;
