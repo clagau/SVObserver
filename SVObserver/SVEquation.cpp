@@ -218,8 +218,7 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, lo
 			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
 			{
 				SVValueObjectClass* pValueObject = static_cast <SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
-				HRESULT hr = pValueObject->GetValue( value );
-				return hr;
+				return pValueObject->GetValue( value );
 			}
 		}
 
@@ -236,9 +235,10 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, lo
 				return pBasicValueObject->getValue( value );
 			}
 			else
+			{
 				return S_FALSE;
+			}
 		}
-
 	}
 	return S_FALSE;
 }
@@ -1020,7 +1020,7 @@ double SVEquationClass::GetPropertyValue( int iSymbolIndex )
 			hr = symbols.GetData( iSymbolIndex, value, 1 );
 	}// end if
 
-	if ( hr != S_OK && hr != SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE)
+	if ( S_OK != hr )
 	{
 		isDataValid = FALSE;
 	}
