@@ -412,8 +412,7 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 
 	ToolTime.Start();
 
-	SetRunErrorCode(0);
-	ClearRunErrorData();
+	ClearRunError();
 
 	if( !GetInspection()->GetNewDisableMethod() )
 	{
@@ -697,7 +696,8 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 	if (SUCCEEDED (m_RunError.m_MessageCode))
 	{
 		m_RunError.m_MessageCode = m_ValidationError.m_MessageCode;
-		m_RunError.m_AdditionalText = m_ValidationError.m_AdditionalText;
+		m_RunError.m_AdditionalTextId = m_ValidationError.m_AdditionalTextId;
+		m_RunError.m_AdditionalTextList = m_ValidationError.m_AdditionalTextList;
 	}
 
 	if ((false == bRetVal) && (SUCCEEDED (m_RunError.m_MessageCode)))
@@ -815,10 +815,11 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 			{
 				ASSERT( FALSE );
 
-				CString sMsg;
-				sMsg.Format("Creation of %s \"%s\" failed.", GetObjectName(), GetCompleteObjectName());
+				SVStringArray msgList;
+				msgList.push_back(GetObjectName());
+				msgList.push_back(SVString(GetCompleteObjectName()));
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, sMsg, StdMessageParams, SvOi::Err_10209 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreationOf2Failed, msgList, StdMessageParams, SvOi::Err_10209 );
 
 				DwResult = SVMR_NO_SUCCESS;
 			}
@@ -1515,109 +1516,37 @@ bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location 
 	return ret;
 }
 
-HRESULT	SVToolClass::ClearRunError()
+void	SVToolClass::ClearRunError()
 {
-	HRESULT hr = S_OK;
-
 	m_RunError.clear();
-
-	return hr;
 }
 
-HRESULT	SVToolClass::SetRunErrorData(const SVString& errorString)
+void	SVToolClass::SetRunErrorData(const SvStl::MessageData& errorMessage)
 {
-	HRESULT hr = S_OK;
-
-	m_RunError.m_AdditionalText = errorString;
-
-	return hr;
+	m_RunError = errorMessage;
 }
 
-HRESULT	SVToolClass::ClearRunErrorData()
+const SvStl::MessageData& SVToolClass::GetRunErrorData() const
 {
-	HRESULT hr = S_OK;
-
-	m_RunError.clear();
-
-	return hr;
+	return m_RunError;
 }
 
-SVString SVToolClass::GetRunErrorData() const
+void SVToolClass::SetRunDisplayed(bool displayed)
 {
-	return m_RunError.m_AdditionalText;
-}
-
-HRESULT	SVToolClass::SetRunErrorCode(const HRESULT	errorCode)
-{
-	HRESULT hr = S_OK;
-
-	m_RunError.m_MessageCode = errorCode;
-
-	return hr;
-}
-
-HRESULT	SVToolClass::GetRunErrorCode() const
-{
-	return m_RunError.m_MessageCode;
-}
-
-bool SVToolClass::GetRunDisplayed() const
-{
-	return m_RunError.m_Displayed;
-}
-
-HRESULT SVToolClass::SetRunDisplayed(bool displayed)
-{
-	HRESULT	hr = S_OK;
-
 	m_RunError.m_Displayed = displayed;
-
-	return hr;
 }
 
-HRESULT SVToolClass::ClearValidationError()
+void SVToolClass::ClearValidationError()
 {
-	HRESULT hr = S_OK;
-
 	m_ValidationError.clear();
-
-	return hr;
 }
 
-HRESULT SVToolClass::SetValidationErrorData(const SVString& errorString)
+void SVToolClass::SetValidationErrorData(const SvStl::MessageData& errorMessage)
 {
-	HRESULT hr = S_OK;
-
-	m_ValidationError.m_AdditionalText = errorString;
-
-	return hr;
+	m_ValidationError = errorMessage;
 }
 
-HRESULT SVToolClass::ClearValidationErrorData()
+const SvStl::MessageData& SVToolClass::GetValidationErrorData() const
 {
-	HRESULT hr = S_OK;
-
-	m_ValidationError.clear();
-
-	return hr;
+	return m_ValidationError;
 }
-
-SVString SVToolClass::GetValidationErrorData() const
-{
-	return m_ValidationError.m_AdditionalText;
-}
-
-HRESULT SVToolClass::SetValidationErrorCode(const HRESULT errorCode)
-{
-	HRESULT hr = S_OK;
-
-	m_ValidationError.m_MessageCode = errorCode;
-
-	return hr;
-}
-
-HRESULT SVToolClass::GetValidationErrorCode() const
-{
-	return m_ValidationError.m_MessageCode;
-}
-

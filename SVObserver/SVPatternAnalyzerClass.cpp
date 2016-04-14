@@ -420,7 +420,7 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, UINT *pErrMsgId)
+BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::MessageTextEnum *pErrMsgId)
 {
 	BOOL bOk = FALSE;
 
@@ -462,7 +462,9 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, UINT *pErrMsg
 	else
 	{
 		if ( pErrMsgId )
-			*pErrMsgId = IDS_PAT_INVALID_FILENAME;
+		{
+			*pErrMsgId = SvOi::Tid_PatInvalidFilename;
+		}
 
 		msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
 		SV_TRAP_ERROR (msvError, ERR_SRI5);
@@ -476,7 +478,9 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, UINT *pErrMsg
 	if ( ! bOk )
 	{
 		if(pErrMsgId)
-			*pErrMsgId = IDS_PAT_ALLOC_MODEL_FAILED;
+		{
+			*pErrMsgId = SvOi::Tid_PatAllocModelFailed;
+		}
 
 		msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
 		SV_TRAP_ERROR (msvError, ERR_SRI6);
@@ -712,7 +716,7 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 	catch( ... )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, StdMessageParams );
 		l_bOk = FALSE;
 	}
 	return l_bOk;
@@ -1001,7 +1005,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 	catch( ... )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, StdMessageParams );
 		
 		ResetResultValues();
 		SetInvalid();

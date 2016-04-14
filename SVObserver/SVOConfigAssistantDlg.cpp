@@ -376,7 +376,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 				(!SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::Config_SwitchResetQuestion, StdMessageParams, SvOi::Err_10138, NULL, nullptr, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Config_SwitchResetQuestion, StdMessageParams, SvOi::Err_10138, NULL, nullptr, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
@@ -387,7 +387,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			else
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::Config_SwitchInvalidQuestion, StdMessageParams, SvOi::Err_10139, NULL, nullptr, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Config_SwitchInvalidQuestion, StdMessageParams, SvOi::Err_10139, NULL, nullptr, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
@@ -2195,10 +2195,10 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						}
 						else
 						{
-							CString msg;
-							msg.Format(SvO::Config_InspectionImportFailed, hr);
+							SVStringArray msgList;
+							msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msg, StdMessageParams, SvOi::Err_10140);
+							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Config_InspectionImportFailed, msgList, StdMessageParams, SvOi::Err_10140);
 						}
 						pInspectionObj->ClearImportFilename();
 					}

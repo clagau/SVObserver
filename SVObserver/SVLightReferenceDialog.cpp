@@ -92,18 +92,17 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 		{
 			if (pLR->NumBands() == 0)
 			{
-				CString sCaption;
+				SVStringArray msgList;
 				if( !( pDevice.empty() ) )
 				{
-					sCaption.Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pDevice->DigNumber(), pDevice->Channel());
+					msgList.push_back(SvUl_SF::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pDevice->DigNumber(), pDevice->Channel()));
 				}
 				else
 				{
-					sCaption = pCamera->GetName();
+					msgList.push_back(pCamera->GetName());
 				}
-				SVString s = SvUl_SF::Format(SvO::LightReference_NotAvailable, sCaption);
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s.c_str(), StdMessageParams, SvOi::Err_10059 );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LightReference_NotAvailable, msgList, StdMessageParams, SvOi::Err_10059 );
 				DestroyAllPages();
 				return false;
 			}

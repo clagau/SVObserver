@@ -86,7 +86,7 @@ namespace Seidenader
 			//}}AFX_DATA
 
 		private:
-			HRESULT SetInspectionData(SVString& rMsg);
+			void SetInspectionData();
 			bool UpdateRangeValues();
 			void InitData();
 

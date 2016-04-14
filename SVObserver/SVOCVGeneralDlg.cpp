@@ -149,17 +149,17 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 		if ( csTemp.IsEmpty() )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontFileSpec, StdMessageParams, SvOi::Err_10171 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoFontFileSpec, StdMessageParams, SvOi::Err_10171 ); 
 		}
 		else
 		{
 			csTemp = svfncFileName.GetExtension();
 			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
 			{
-				CString s;
-				s.Format( SvO::Error_FontNotMfoExt, svfncFileName.GetFullFileName() );
+				SVStringArray msgList;
+				msgList.push_back(svfncFileName.GetFullFileName());
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10172 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontNotMfoExt, msgList, StdMessageParams, SvOi::Err_10172 ); 
 			}
 			else
 			{
@@ -169,17 +169,17 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 				CFileStatus rStatus;
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
 				{
-					CString s;
-					s.Format( SvO::Error_FontFileNotExist, svfncFileName.GetFullFileName() );
+					SVStringArray msgList;
+					msgList.push_back(svfncFileName.GetFullFileName());
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10173 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontFileNotExist, msgList, StdMessageParams, SvOi::Err_10173 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					CString s;
-					s.Format( SvO::Error_FontFileEmpty, svfncFileName.GetFullFileName() );
+					SVStringArray msgList;
+					msgList.push_back(svfncFileName.GetFullFileName());
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10174 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontFileEmpty, msgList, StdMessageParams, SvOi::Err_10174 );
 				}
 				else
 				{
@@ -217,17 +217,17 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 		if ( csTemp.IsEmpty() )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontConstraintsFileSpec, StdMessageParams, SvOi::Err_10175 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoFontConstraintsFileSpec, StdMessageParams, SvOi::Err_10175 ); 
 		}
 		else
 		{
 			csTemp = svfncFileName.GetExtension();
 			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
 			{
-				CString s;
-				s.Format( SvO::Error_FontConstraintsRequiredMfoExt, svfncFileName.GetFullFileName() );
+				SVStringArray msgList;
+				msgList.push_back(svfncFileName.GetFullFileName());
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10176 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontConstraintsRequiredMfoExt, msgList, StdMessageParams, SvOi::Err_10176 ); 
 			}
 			else
 			{
@@ -237,17 +237,17 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 				CFileStatus rStatus;
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
 				{
-					CString s;
-					s.Format( SvO::Error_FontConstraintsFileNotExist, svfncFileName.GetFullFileName() );
+					SVStringArray msgList;
+					msgList.push_back(svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10177 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontConstraintsFileNotExist, msgList, StdMessageParams, SvOi::Err_10177 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					CString s;
-					s.Format( SvO::Error_FontConstraintsFileEmpty, svfncFileName.GetFullFileName() );
+					SVStringArray msgList;
+					msgList.push_back(svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10178 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontConstraintsFileEmpty, msgList, StdMessageParams, SvOi::Err_10178 ); 
 				}
 				else
 				{
@@ -286,17 +286,17 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 		if ( csTemp.IsEmpty() )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoFontControlsFileSpec, StdMessageParams, SvOi::Err_10179 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoFontControlsFileSpec, StdMessageParams, SvOi::Err_10179 ); 
 		}
 		else
 		{
 			csTemp = svfncFileName.GetExtension();
 			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
 			{
-				CString s;
-				s.Format( SvO::Error_FontControlsRequiredMfoExt, svfncFileName.GetFullFileName() );
+				SVStringArray msgList;
+				msgList.push_back( svfncFileName.GetFullFileName() );
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10180 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontControlsRequiredMfoExt, msgList, StdMessageParams, SvOi::Err_10180 ); 
 			}
 			else
 			{
@@ -306,17 +306,17 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 				CFileStatus rStatus;
 				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
 				{
-					CString s;
-					s.Format( SvO::Error_FontControlsFileNotExist, svfncFileName.GetFullFileName() );
+					SVStringArray msgList;
+					msgList.push_back( svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10181 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontControlsFileNotExist, msgList, StdMessageParams, SvOi::Err_10181 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					CString s;
-					s.Format( SvO::Error_FontControlsFileEmpty, svfncFileName.GetFullFileName() );
+					SVStringArray msgList;
+					msgList.push_back( svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10182 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontControlsFileEmpty, msgList, StdMessageParams, SvOi::Err_10182 ); 
 				}
 				else
 				{

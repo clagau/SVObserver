@@ -2083,7 +2083,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		if ( nullptr == pPPQ )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdMessageParams, SvOi::Err_17000_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, StdMessageParams, SvOi::Err_17000_ErrorGettingPPQ );
 			DebugBreak();
 			continue;
 		}
@@ -2280,13 +2280,13 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		if ( nullptr == pInputList )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17001_ErrorGettingInputObjectList );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17001_ErrorGettingInputObjectList );
 			DebugBreak();
 		}
 		else if (!pInputList->FillInputs( ppIOEntries ))
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdMessageParams, SvOi::Err_17002_ErrorFillingInputs );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFillingInputs, StdMessageParams, SvOi::Err_17002_ErrorFillingInputs );
 			DebugBreak();
 		}
 
@@ -2403,7 +2403,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	else
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17003_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17003_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -2447,7 +2447,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( nullptr == pPPQ )
 				{
 					SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdMessageParams, SvOi::Err_17004_ErrorGettingPPQ );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, StdMessageParams, SvOi::Err_17004_ErrorGettingPPQ );
 					DebugBreak();
 				}
 
@@ -2456,7 +2456,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				{
 					SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdMessageParams, SvOi::Err_17005_ErrorGettingOutputs );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingOutputs, StdMessageParams, SvOi::Err_17005_ErrorGettingOutputs );
 					DebugBreak();
 				}
 

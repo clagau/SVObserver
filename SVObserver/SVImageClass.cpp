@@ -240,7 +240,7 @@ BOOL SVImageClass::DestroyImage()
 		if ( ! bOk )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::ImageClass_DestroyError, StdMessageParams, SvOi::Err_10051 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImageClass_DestroyError, StdMessageParams, SvOi::Err_10051 ); 
 		}
 	}
 
@@ -1136,7 +1136,7 @@ HRESULT SVImageClass::GetParentImageHandle( SVSmartHandlePointer &p_rsvBufferHan
 		if( S_OK != l_hrOk )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_5059_GETCHILDERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5059_GETCHILDERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 	}
 	return l_hrOk;
@@ -1158,11 +1158,8 @@ HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, 
 
 		if( S_OK != l_hrOk )
 		{
-			CString sMsgStr;
-			sMsgStr.Format("ERROR: Cannot Get Indexed Child Image Handle");
-
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_5060_GETCHILDERROR, sMsgStr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5060_GETCHILDERROR, SvOi::Tid_GetParentImageHandleError, StdMessageParams );
 		}
 	}
 	return l_hrOk;
@@ -2418,9 +2415,6 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 {
 	HRESULT		l_Status = S_OK;
-	HRESULT		hrTemp = S_OK;
-	SVString	sTemp;
-	bool		displayedTemp;
 
 	if ((SVImageTypeLogicalAndPhysical == m_ImageType ||
 		 SVImageTypeLogical == m_ImageType) &&
@@ -2488,6 +2482,7 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 
 				if( l_Reset )
 				{
+					SvStl::MessageData oldMessage;
 					SVToolClass*	parentTool = GetTool();
 					if (nullptr == parentTool)
 					{
@@ -2498,46 +2493,38 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 						// Because m_BufferArrayPtr->ResetObject() only 
 						// returns an S_FALSE, error data will be tracked 
 						// through the owning Tool (if present).
-						hrTemp = parentTool->GetRunErrorCode();
-						sTemp = parentTool->GetRunErrorData();
-						displayedTemp = parentTool->GetRunDisplayed();
+						oldMessage = parentTool->GetRunErrorData();
 						parentTool->ClearRunError();
 					}
 
 					l_Status = m_BufferArrayPtr->ResetObject();
-					if (S_FALSE == l_Status)
-					{
-						l_Status = SVMSG_SVO_5069_RESETOBJECTFAILED;
-					}
-
-					HRESULT	hrRun = S_OK;
-
+					SvStl::MessageData currentMessage;
 					if (nullptr != parentTool)
 					{
-						hrRun = parentTool->GetRunErrorCode();
+						currentMessage = parentTool->GetRunErrorData();
 					}
 
-					if ((S_OK == l_Status) && (S_OK != hrRun))
+					if ((S_OK == l_Status) && (S_OK != currentMessage.m_MessageCode))
 					{
 						l_Status = SVMSG_SVO_5068_INCONSISTENTDATA;
 					}
 					else
 					{
-						l_Status = hrRun;
+						l_Status = currentMessage.m_MessageCode;
 					}
 
 					if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == l_Status)
 					{
-						const SVString& tString1 = GetCompleteName();
-						parentTool->SetRunErrorData(tString1.c_str());
+						currentMessage.m_AdditionalTextId = SvOi::Tid_Default;
+						SVStringArray msgList;
+						msgList.push_back(GetCompleteName());
+						currentMessage.m_AdditionalTextList = msgList;
+						parentTool->SetRunErrorData(currentMessage);
 					}
 
-					if ((nullptr != parentTool && SUCCEEDED (parentTool->GetRunErrorCode())))
+					if ((nullptr != parentTool && SUCCEEDED (parentTool->GetRunErrorData().m_MessageCode)))
 					{
-						// Why three (3) function calls to set this data?
-						parentTool->SetRunErrorCode(hrTemp);
-						parentTool->SetRunErrorData(sTemp);
-						parentTool->SetRunDisplayed(displayedTemp);
+						parentTool->SetRunErrorData(oldMessage);
 					}
 				}
 				else

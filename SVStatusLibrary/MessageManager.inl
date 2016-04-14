@@ -52,9 +52,29 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Process( UINT 
 template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
 INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User=nullptr,  UINT MsgBoxType = MB_OK)
 {
+	SVStringArray textList;
+	SvOi::MessageTextEnum id = SvOi::Tid_Empty;
+	if (nullptr != AdditionalText)
+	{
+		textList.push_back(AdditionalText);
+		id = SvOi::Tid_Default;
+	}
+
+	return setMessage( MessageCode, id, textList, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User, MsgBoxType );
+}
+
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User=nullptr,  UINT MsgBoxType = MB_OK)
+{
+	return setMessage( MessageCode, AdditionalTextId, SVStringArray(), CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User, MsgBoxType );
+}
+
+template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User=nullptr,  UINT MsgBoxType = MB_OK)
+{
 	INT_PTR Result( IDCANCEL );
 
-	M_Container.setMessage( MessageCode, AdditionalText, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
+	M_Container.setMessage( MessageCode, AdditionalTextId, AdditionalTextList, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
 
 	Result = Process( MsgBoxType );
 

@@ -15,6 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
+#include "ObjectInterfaces/MessageTextEnum.h"
 #pragma endregion Includes
 
 class SVPatternAnalyzerClass : public SVImageAnalyzerClass  
@@ -86,7 +87,7 @@ public:
 	BOOL UpdateModelFromInputImage();
 	BOOL UpdateModelFromBuffer();
 
-	BOOL RestorePattern(CString strImageFile, UINT *ErrMsgId = nullptr);
+	BOOL RestorePattern(CString strImageFile, SvOi::MessageTextEnum *ErrMsgId = nullptr);
 	BOOL SetSearchParameters();
 	void SetDefaultSearchValues();
 

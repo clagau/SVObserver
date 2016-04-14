@@ -15,6 +15,7 @@
 #include "PropertyTree/PropTree.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
+#include "ObjectInterfaces/MessageTextEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -100,14 +101,14 @@ protected:
 #pragma region Private Methods
 private:
 	// Validation routines
-	bool ValidateModelParameters(UINT& nMsgID);
-	bool ValidateModelWidth(UINT& nMsgID);
-	bool ValidateModelHeight(UINT& nMsgID);
-	bool ValidateModelFilename(UINT& nMsgID);
+	void ValidateModelParameters();
+	void ValidateModelWidth();
+	void ValidateModelHeight();
+	void ValidateModelFilename();
 
 	void InitializeData(); 
 	BOOL ProcessOnKillFocus(UINT nId);
-	UINT RestoreModelFromFile();
+	SvOi::MessageTextEnum RestoreModelFromFile();
 	BOOL GetModelFile(BOOL bMode);
 
 	HRESULT BuildPropertyList();

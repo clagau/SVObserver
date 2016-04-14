@@ -203,12 +203,12 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
 //          LogError ();
 		//************************************************
 		// Use SVException to get this information to the event log.
-			lx_displayString = SvUl_SF::Format("Error Nbr = %lx, Program Cd = %d\n",
-			  msvlLastErrorCd ,
-			  programCd  );
+			SVStringArray messageList;
+			messageList.push_back(SvUl_SF::Format(_T("%lx"), msvlLastErrorCd));
+			messageList.push_back(SvUl_SF::Format(_T("%d"), programCd));
 		  // log to event log.
 			SvStl::MessageContainer svE;
-			svE.setMessage (SVMSG_SVO_35_LEGACY_ERROR_TRAP, lx_displayString.c_str(), 
+			svE.setMessage (SVMSG_SVO_35_LEGACY_ERROR_TRAP, SvOi::Tid_ErrorClass, messageList, 
 				_T(__DATE__), _T(__TIME__), fileName, lineNbr, _T(__TIMESTAMP__), programCd );
 			svE.logMessage();
 		//*******************************************************

@@ -123,7 +123,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 				{
 					PackedFile.Close();
 					FindClose (hFindFile);
-					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, nullptr, StdMessageParams );
+					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 					Exception.Throw();
 				}
 			}

@@ -63,6 +63,7 @@
 #include "SVVisionProcessorHelper.h"
 #include "RangeClassHelper.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary/SVString.h"
 
 #pragma endregion Includes
 
@@ -138,13 +139,13 @@ STDMETHODIMP CSVCommand::GetSVIMState(BSTR *pszXMLData, BSTR *pXMLError)
 		{
 			SysFreeString(XMLData);
 		}
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -206,13 +207,13 @@ STDMETHODIMP CSVCommand::SetSVIMState(BSTR szXMLData, BSTR* pXMLError)
 			GlobalRCGoOffline();
 		}
 
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -323,17 +324,17 @@ STDMETHODIMP CSVCommand::GetSVIMConfig(BSTR* pszXMLData, BSTR* pXMLError)
 			SysFreeString(XMLData);
 		}
 
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		break;
 error:
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -386,7 +387,7 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 	}
 	do
 	{
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, _T("Informational - Starting PutSVIMConfig"), StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Command_StartSvimConfig, StdMessageParams );
 
 		if(!SvXmlCmd.InitXml())goto xmlerror;
 
@@ -456,18 +457,18 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		}
 		szConfigFile.ReleaseBuffer();
 
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, _T("Informational - Ending PutSVIMConfig"), StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Command_EndSvimConfig, StdMessageParams );
 		break;
 error:
 		//set the exception for the correct reason for breaking
-		Exception.setMessage( hrException, nullptr, StdMessageParams );
+		Exception.setMessage( hrException, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -549,17 +550,17 @@ STDMETHODIMP CSVCommand::GetSVIMFile(BSTR * pszXMLData, BSTR* pXMLError)
 			SysFreeString(XMLData);
 		}
 
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		break;
 error:
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -639,17 +640,17 @@ STDMETHODIMP CSVCommand::PutSVIMFile(BSTR szXMLData, BSTR* pXMLError)
 		}
 		else goto error;
 
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		break;
 error:
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -731,17 +732,17 @@ STDMETHODIMP CSVCommand::LoadSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		//load the config
 		if( !GlobalRCOpenConfiguration( szConfigFileName ) ) { goto error; }
 
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		break;
 error:
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -829,17 +830,17 @@ STDMETHODIMP CSVCommand::GetSVIMInspectionResults(BSTR* pszXMLData, BSTR* pXMLEr
 			SysFreeString(XMLData);
 		}
 
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		break;
 error:
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -900,17 +901,17 @@ STDMETHODIMP CSVCommand::GetSVIMConfigName(BSTR * pszXMLData, BSTR* pXMLError)
 			SysFreeString(XMLData);
 		}
 
-		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		break;
 error:
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
 		if(!SvXmlCmd.GetParserErrorCode())
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 		else
 		{
@@ -968,7 +969,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMState(unsigned long *ulState)
 		if( !bSuccess )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 	} while (0);
@@ -1006,7 +1007,7 @@ STDMETHODIMP CSVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
 		if( !(hrResult == S_OK) )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		}
 	} while (0);
 
@@ -1031,7 +1032,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
 	if( !(hrResult == S_OK) )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 	}
 
 	return hrResult;
@@ -1076,7 +1077,7 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 		if( !bSuccess )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 	}
@@ -1202,7 +1203,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 		if( (!bSuccess) && (!bHrSet) )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 		break;
@@ -1296,7 +1297,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 						hrResult = SVMSG_CMDCOMSRV_PACKEDFILE_ERROR;
 						bHrSet = TRUE;
 						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-						Exception.setMessage( hrResult, nullptr, StdMessageParams );
+						Exception.setMessage( hrResult, SvOi::Tid_Empty, StdMessageParams );
 					}
 				}
 
@@ -1342,7 +1343,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 		if( (!bSuccess) && (!bHrSet) )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 		break;
@@ -1447,7 +1448,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 		if( ! SUCCEEDED( hrResult ) )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( hrResult, nullptr, StdMessageParams );
+			Exception.setMessage( hrResult, SvOi::Tid_Empty, StdMessageParams );
 		}
 	}
 	else
@@ -1523,7 +1524,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 			theEx->Delete();
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( hrResult, nullptr, StdMessageParams );
+			Exception.setMessage( hrResult, SvOi::Tid_Empty, StdMessageParams );
 		}
 		catch (...)
 		{
@@ -1627,7 +1628,7 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 		{
 			hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
 			bHrSet = TRUE;
-			Exception.setMessage( hrResult, nullptr, StdMessageParams );
+			Exception.setMessage( hrResult, SvOi::Tid_Empty, StdMessageParams );
 			theEx->Delete();
 		}
 		catch (...)
@@ -1637,7 +1638,7 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 
 		if( (!bSuccess) && (!bHrSet) )
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 		break;
@@ -1708,15 +1709,15 @@ STDMETHODIMP CSVCommand::SVGetSVIMInspectionResults(BSTR bstrInspection, BSTR *b
 				SysFreeString(XMLData);
 			}
 
-			Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_NO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			break;
 error:
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 			break;
 xmlerror:
 			// we had an XML error, return the right HRESULT
-			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_XML_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 			break;
 		}
@@ -1758,7 +1759,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 		if( !bSuccess )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 	} while (0);
@@ -1789,7 +1790,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long *ulOfflineCount)
 		if( !bSuccess )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 
@@ -1821,7 +1822,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
 		if( !bSuccess )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 
@@ -1860,7 +1861,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long lOffset, long *lBlockSize, BS
 		if( !bSuccess )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			hrResult = S_FALSE;
 		}
 
@@ -2135,7 +2136,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 	if( FAILED( hrResult ) )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 	}
 
 	return hrResult;
@@ -2184,7 +2185,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 
 			if( S_OK != hrRet )
 			{
-				Exception.setMessage( hrRet, nullptr, StdMessageParams );
+				Exception.setMessage( hrRet, SvOi::Tid_Empty, StdMessageParams );
 			}
 
 			return hrRet;
@@ -2194,7 +2195,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 		if ( hr != S_OK )
 		{
 			hrRet = SVMSG_SERVER_UNABLE_TO_CONNECT_TO_CONTROL;
-			Exception.setMessage( hrRet, nullptr, StdMessageParams );
+			Exception.setMessage( hrRet, SvOi::Tid_Empty, StdMessageParams );
 
 			return hrRet;
 		}// end else
@@ -2268,7 +2269,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 			if ( !bSamePPQ )
 			{
 				hrRet = SVMSG_REQUESTED_OBJECTS_ON_DIFFERENT_PPQS;
-				Exception.setMessage( hrRet, nullptr, StdMessageParams );
+				Exception.setMessage( hrRet, SvOi::Tid_Empty, StdMessageParams );
 				// go through all items in psaStatus and set to hrRet;
 				lNumberOfElements = (*ppsaStatus)->rgsabound[0].cElements;
 				for (long l = 0; l < lNumberOfElements; l++)
@@ -3301,7 +3302,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 	if( FAILED( hrResult ) )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 	}
 
 	return hrResult;
@@ -4600,7 +4601,7 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 	if( !bSuccess )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = S_FALSE;
 	}
 
@@ -4634,7 +4635,7 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 	if( !bSuccess )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		hrResult = SVMSG_CMDCOMSRV_ERROR;
 	}
 
@@ -4932,11 +4933,13 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				if ( l_Code != SVMEE_STATUS_OK )
 				{
 					SVMatroxStatusInformation l_info;
-					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVLoadFont"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVLoadFont"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 			}// end if
 
@@ -4951,11 +4954,13 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				if( l_Code != SVMEE_STATUS_OK )
 				{
 					SVMatroxStatusInformation l_info;
-					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVLoadFont"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVLoadFont"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 			}// end if
 
@@ -4968,13 +4973,14 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				l_Code = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strConstraintsFileName, SVOcrLoadConstraint );
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-
 					SVMatroxStatusInformation l_info;
-					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVLoadFont"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVLoadFont"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 			}// end if
 
@@ -5026,11 +5032,13 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				{
 
 					SVMatroxStatusInformation l_info;
-					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVSaveFont"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVSaveFont"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 
 				CFile::GetStatus( strFontFileName.c_str(), rStatus );
@@ -5048,11 +5056,13 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				if ( l_Code != SVMEE_STATUS_OK )
 				{
 					SVMatroxStatusInformation l_info;
-					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVSaveFont"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVSaveFont"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 
 				CFile::GetStatus( strControlsFileName.c_str(), rStatus );
@@ -5071,11 +5081,13 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				if ( l_Code != SVMEE_STATUS_OK )
 				{
 					SVMatroxStatusInformation l_info;
-					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVSaveFont"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVSaveFont"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 
 				CFile::GetStatus( strConstraintsFileName.c_str(), rStatus );
@@ -5142,10 +5154,12 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					CString l_sErrorStr;
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVCalibrateFont"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVCalibrateFont"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_45_CALIBRATEFONT_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 					//return some mil error
 				}
 				l_milImage.clear();
@@ -5155,10 +5169,12 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					CString l_sErrorStr;
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVCalibrateFont"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVCalibrateFont"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_45_CALIBRATEFONT_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 			}// end if
 			else
@@ -5200,10 +5216,12 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
-				CString l_sErrorStr;
-				l_sErrorStr.Format(SvO::ErrorMIL, _T("SVReadString"), l_Code, l_info.m_StatusString.c_str() );
+				SVStringArray msgList;
+				msgList.push_back(_T("SVReadString"));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
-				Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+				Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 			}
 
 			// Process the OCR chars returned from MocrReadString();
@@ -5231,10 +5249,12 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
-				CString l_sErrorStr;
-				l_sErrorStr.Format(SvO::ErrorMIL, _T("SVReadString"), l_Code, l_info.m_StatusString.c_str() );
+				SVStringArray msgList;
+				msgList.push_back(_T("SVReadString"));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
-				Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+				Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 			}
 
 			l_Code = SVMatroxOcrInterface::Destroy( l_milResult );
@@ -5242,10 +5262,12 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
-				CString l_sErrorStr;
-				l_sErrorStr.Format(SvO::ErrorMIL, _T("SVReadString"), l_Code, l_info.m_StatusString.c_str() );
+				SVStringArray msgList;
+				msgList.push_back(_T("SVReadString"));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
-				Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+				Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 			}
 		}// end if
 		else
@@ -5285,10 +5307,12 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					CString l_sErrorStr;
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVVerifyString"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVVerifyString"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 
 				lFontHandle.m_bVerify = true;
@@ -5300,10 +5324,12 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					CString l_sErrorStr;
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVVerifyString"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVVerifyString"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 
 				// Process the OCV chars returned from MocrVerifyString();
@@ -5326,10 +5352,12 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					CString l_sErrorStr;
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVVerifyString"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVVerifyString"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 
 				l_Code = SVMatroxOcrInterface::Destroy( l_milResult );
@@ -5338,10 +5366,12 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					CString l_sErrorStr;
-					l_sErrorStr.Format(SvO::ErrorMIL, _T("SVVerifyString"), l_Code, l_info.m_StatusString.c_str() );
+					SVStringArray msgList;
+					msgList.push_back(_T("SVVerifyString"));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
-					Exception.setMessage( hr, l_sErrorStr, StdMessageParams );
+					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, StdMessageParams );
 				}
 			}// end if
 			else

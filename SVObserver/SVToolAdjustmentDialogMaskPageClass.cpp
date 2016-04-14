@@ -328,7 +328,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			m_pMaskEditorCtl = nullptr;
 			
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::MaskPage_StartOCXFailed, StdMessageParams, SvOi::Err_10215 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_MaskPage_StartOCXFailed, StdMessageParams, SvOi::Err_10215 );
 			return;
 		}
 	}
@@ -427,7 +427,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 		if (!SUCCEEDED(hr))
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_CannotOpenFile, StdMessageParams, SvOi::Err_10216 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, StdMessageParams, SvOi::Err_10216 );
 		}
 	}
 	// Refresh image view...
@@ -445,7 +445,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 		if (!SUCCEEDED(hr))
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_CannotOpenFile, StdMessageParams, SvOi::Err_10217 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, StdMessageParams, SvOi::Err_10217 );
 		}
 	}
 	// Refresh image view...

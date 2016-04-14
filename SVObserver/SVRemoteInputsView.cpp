@@ -121,7 +121,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		if( nullptr == pInputList )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17044_ErrorGettingInputObjectList );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17044_ErrorGettingInputObjectList );
 			DebugBreak();
 			return;
 		}
@@ -129,7 +129,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		if( !pInputList->FillInputs( ppIOEntries ) )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdMessageParams, SvOi::Err_17045_ErrorFillingInputs );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFillingInputs, StdMessageParams, SvOi::Err_17045_ErrorFillingInputs );
 			DebugBreak();
 		}
 
@@ -212,14 +212,14 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			if( nullptr == pInputList )
 			{
 				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17046_ErrorGettingInputObjectList );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17046_ErrorGettingInputObjectList );
 				DebugBreak();
 			}
 
 			if( !pInputList->FillInputs( ppIOEntries ) )
 			{
 				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdMessageParams, SvOi::Err_17047_ErrorFillingInputs );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFillingInputs, StdMessageParams, SvOi::Err_17047_ErrorFillingInputs );
 				DebugBreak();
 			}
 

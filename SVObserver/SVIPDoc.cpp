@@ -469,7 +469,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 									!SV_IS_KIND_OF(pTool, SVColorToolClass))
 					{
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::ColorToolMustBeFirstMessage, StdMessageParams, SvOi::Err_10055 );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ColorToolMustBeFirstMessage, StdMessageParams, SvOi::Err_10055 );
 						return false;
 					}
 				}
@@ -697,7 +697,7 @@ BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 	if (!bCanClose)
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::SVIPDoc_ClosingImpossible, StdMessageParams, SvOi::Err_10056 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVIPDoc_ClosingImpossible, StdMessageParams, SvOi::Err_10056 );
 	}
 
 	return bCanClose;
@@ -1216,7 +1216,7 @@ void SVIPDoc::OnEditDelete()
 						pNextTool && !SV_IS_KIND_OF(pNextTool, SVColorToolClass))
 					{
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::ColorToolMustBeFirstMessage, StdMessageParams, SvOi::Err_10057 );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ColorToolMustBeFirstMessage, StdMessageParams, SvOi::Err_10057 );
 						return;
 					}
 				}
@@ -1909,7 +1909,7 @@ void SVIPDoc::RunRegressionTest()
 	else
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::SVIPDoc_GoIntoRegTestFailed, StdMessageParams, SvOi::Err_10058 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVIPDoc_GoIntoRegTestFailed, StdMessageParams, SvOi::Err_10058 );
 	}
 }
 

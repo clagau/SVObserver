@@ -249,7 +249,7 @@ BOOL SVXmlException::operator=( SvStl::MessageContainer& rhs)
 	//set the OS error code
 	if(!SetOsErrorCode( rMsg.m_OSErrorCode ))return FALSE;
 	//set the error data
-	if(!SetErrorData( _bstr_t(rMsg.m_AdditionalText.c_str()).GetAddress() ))return FALSE;
+	if(!SetErrorData( _bstr_t(rMsg.getAdditionalText().c_str()).GetAddress() ))return FALSE;
 	//set the source file 
 	if(!SetSourceFile( _bstr_t(rMsg.m_SourceFile.c_str()).GetAddress() ))return FALSE;
 	//set the source line

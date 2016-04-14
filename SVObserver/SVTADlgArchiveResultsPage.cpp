@@ -99,7 +99,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		{
 			//don't allow to exit with invalid path
 			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::InvalidFileName, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidFileName, StdMessageParams );
 			return false;
 		}
 	}
@@ -111,10 +111,10 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 
 	if(!ArchiveToolHelper::ValidateDrive(csArchiveFileName,szDrive) || csArchiveFileName.IsEmpty())
 	{
-		CString temp;
-		temp.Format ("Invalid drive:  %s", szDrive);
+		SVStringArray msgList;
+		msgList.push_back(SVString(szDrive));
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, temp.GetString(), StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidDrive, msgList, StdMessageParams );
 
 		return false; 
 	}
@@ -127,11 +127,10 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	BOOL bResult = m_pTool->CheckForUniqueArchiveFilePath(csArchiveFileName);
 	if(!bResult)
 	{
-		CString temp;
-		temp.Format(	_T("ERROR: Archive File is not unique in system:\nChange archive file name:\n%s"),
-			csArchiveFileName);
+		SVStringArray msgList;
+		msgList.push_back(SVString(csArchiveFileName));
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, temp.GetString(), StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_InvalidFile, msgList, StdMessageParams );
 		return false;   // Property is ready to exit.
 	}
 
@@ -444,7 +443,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 		{
 			//don't allow to exit with invalid path
 			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::InvalidFileName, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidFileName, StdMessageParams );
 			return;
 		}
 	}

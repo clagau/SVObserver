@@ -311,18 +311,10 @@ private:
 	// In general, the Run Error data will track through the OnRun() and 
 	// ResetObject() logic.
 public:
-	HRESULT	ClearRunError();
-
-	HRESULT	SetRunErrorData(const SVString& errorString);
-	HRESULT	ClearRunErrorData();
-
-	SVString GetRunErrorData() const;
-
-	HRESULT	SetRunErrorCode(const HRESULT errorCode);
-	HRESULT	GetRunErrorCode() const;
-
-	bool GetRunDisplayed() const;
-	HRESULT	SetRunDisplayed(const bool displayed);
+	void	ClearRunError();
+	void	SetRunErrorData(const SvStl::MessageData& errorMessage);
+	const SvStl::MessageData& SVToolClass::GetRunErrorData() const;
+	void	SetRunDisplayed(const bool displayed);
 
 protected:
 	SvStl::MessageData m_RunError;
@@ -352,14 +344,9 @@ protected:
 	// function, which will cover the required clearing for many of the use 
 	// cases.
 public:
-	HRESULT ClearValidationError();
-	HRESULT SetValidationErrorData(const SVString& errorString);
-	HRESULT ClearValidationErrorData();
-
-	SVString GetValidationErrorData() const;
-
-	HRESULT SetValidationErrorCode(const HRESULT errorCode);
-	HRESULT GetValidationErrorCode() const;
+	void ClearValidationError();
+	void SetValidationErrorData(const SvStl::MessageData& errorMessage);
+	const SvStl::MessageData& GetValidationErrorData() const;
 
 protected:
 	SvStl::MessageData m_ValidationError;

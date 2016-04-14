@@ -1517,22 +1517,20 @@ SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookT
 			if (IsCamPresent)
 			{
 				// log an exception
-				CString l_csbuf;
-				l_csbuf.Format("CameraPresentCallback - Connect - Device %d", deviceNumber);
-
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, l_csbuf, StdMessageParams );
+				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvOi::Tid_MatroxGigE_Connect, msgList, StdMessageParams );
 
 				g_svTheApp.m_svSystem.HandleConnect(system, static_cast<unsigned char>(deviceNumber));
 			}
 			else
 			{
 				// log an exception
-				CString l_csbuf;
-				l_csbuf.Format("CameraPresentCallback - Disconnect - Device %d", deviceNumber);
-
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, l_csbuf, StdMessageParams );
+				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvOi::Tid_MatroxGigE_Disconnect, msgList, StdMessageParams );
 
 				g_svTheApp.m_svSystem.HandleDisconnect(system, deviceNumber);
 			}
@@ -1582,73 +1580,73 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 									if (hr != S_OK)
 									{
 										// log an exception
-										CString l_csbuf;
-										l_csbuf.Format("HandleConnect - StartDigitizer Error - Device %d", deviceNumber);
-
+										SVStringArray msgList;
+										msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+										msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 										SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-										Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
+										Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_StartDigitizerError, msgList, StdMessageParams );
 									}
 								}
 								else
 								{
 									// log an exception
-									CString l_csbuf;
-									l_csbuf.Format("HandleConnect - Reload Camera Parameters Error (%d) - Device %d", hr, deviceNumber);
-
+									SVStringArray msgList;
+									msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+									msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 									SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-									Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
+									Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_ReloadError, msgList, StdMessageParams );
 								}
 							}
 							else
 							{
 								// log an exception
-								CString l_csbuf;
-								l_csbuf.Format("HandleConnect - CreateAcquisitionBuffers Error (%d) - Device %d", hr, deviceNumber);
-
+								SVStringArray msgList;
+								msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+								msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-								Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
+								Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_CreateError, msgList, StdMessageParams );
 							}
 						}
 						else
 						{
 							// log an exception
-							CString l_csbuf;
-							l_csbuf.Format("HandleConnect - ReadCameraFormat Error (%d) - Device %d", hr, deviceNumber);
-
+							SVStringArray msgList;
+							msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+							msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 							SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-							Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
+							Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_ReadError, msgList, StdMessageParams );
 						}
 					}
 				}
 				else
 				{
 					// log an exception
-					CString l_csbuf;
-					l_csbuf.Format("HandleConnect - AllocDigitizer Error (%d) - Device %d", hr, deviceNumber);
-
+					SVStringArray msgList;
+					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
+					Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_AllocError, msgList, StdMessageParams );
 				}
 			}
 		}
 		else
 		{
 			// log an exception
-			CString l_csbuf;
-			l_csbuf.Format("HandleConnect - GetDigitizer Error (%d) - Device %d", hr, deviceNumber);
-
+			SVStringArray msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
+			Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_GetDigitizerError, msgList, StdMessageParams );
 		}
 	}
 	else
 	{
 		// log an exception
-		CString l_csbuf;
-		l_csbuf.Format("HandleConnect - FindCamera Error (%d) - Device %d", hr, deviceNumber);
-
+		SVStringArray msgList;
+		msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+		msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
+		Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_FindCameraError, msgList, StdMessageParams );
 	}
 }
 
@@ -1677,21 +1675,21 @@ void SVMatroxGige::HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNu
 		else
 		{
 			// log an exception
-			CString l_csbuf;
-			l_csbuf.Format("HandleDisconnect - GetDigitizer Error (%d) - Device %d", hr, deviceNumber);
-
+			SVStringArray msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, l_csbuf, StdMessageParams );
+			Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, SvOi::Tid_MatroxGigE_Disconnect_GetDigitizerError, msgList, StdMessageParams );
 		}
 	}
 	else
 	{
 		// log an exception
-		CString l_csbuf;
-		l_csbuf.Format("HandleDisconnect - FindCamera Error (%d) - Device %d", hr, deviceNumber);
-
+		SVStringArray msgList;
+		msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+		msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, l_csbuf, StdMessageParams );
+		Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, SvOi::Tid_MatroxGigE_Disconnect_FindCameraError, msgList, StdMessageParams );
 	}
 }
 

@@ -896,7 +896,7 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 	if( !bOk )
 	{
 		SvStl::MessageContainer MsgCont;
-		MsgCont.setMessage( SVMSG_SVO_82_NO_ENVIROMENT_TAG, nullptr, StdMessageParams, SvOi::Err_16061_EnviromentTagIsMissing );
+		MsgCont.setMessage( SVMSG_SVO_82_NO_ENVIROMENT_TAG, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_16061_EnviromentTagIsMissing );
 		throw MsgCont;
 	}
 
@@ -918,7 +918,9 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 	{
 
 		SvStl::MessageContainer MsgCont;
-		MsgCont.setMessage( SVMSG_SVO_77_LOAD_VERSION_NUMBER_FAILED, CTAG_VERSION_NUMBER, StdMessageParams, SvOi::Err_16043 );
+		SVStringArray messageList;
+		messageList.push_back(CTAG_VERSION_NUMBER);
+		MsgCont.setMessage( SVMSG_SVO_77_LOAD_VERSION_NUMBER_FAILED, SvOi::Tid_Default, messageList, StdMessageParams, SvOi::Err_16043 );
 		throw MsgCont;
 	}
 
@@ -1005,18 +1007,19 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 	pOutputsList->SetName( SvO::OutputObjectList );
 	if( nullptr == pInputsList  || !pInputsList->Create() )
 	{
-		
-		SVString msg = SvUl_SF::Format(SvO::Create_S_Failed,SvO::InputObjectList );
+		SVStringArray msgList;
+		msgList.push_back(SvO::InputObjectList);
 		SvStl::MessageContainer MsgCont;
-		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, msg.c_str(), StdMessageParams, SvOi::Err_16044_CreateInputList );
+		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_CreateSFailed, msgList, StdMessageParams, SvOi::Err_16044_CreateInputList );
 		throw MsgCont;
 
 	}
 	if( nullptr == pOutputsList || !pOutputsList->Create() )
 	{
-		SVString msg = SvUl_SF::Format(SvO::Create_S_Failed,SvO::OutputObjectList );
+		SVStringArray msgList;
+		msgList.push_back(SvO::OutputObjectList);
 		SvStl::MessageContainer MsgCont;
-		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, msg.c_str(), StdMessageParams, SvOi::Err_16047_CreateOutputList );
+		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_CreateSFailed, msgList, StdMessageParams, SvOi::Err_16047_CreateOutputList );
 		throw MsgCont;
 	}
 
@@ -1031,7 +1034,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 	{
 		
 		SvStl::MessageContainer MsgCont;
-		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvO::NumberOfIosMissing, StdMessageParams, SvOi::Err_16045_MissingTag );
+		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_NumberOfIosMissing, StdMessageParams, SvOi::Err_16045_MissingTag );
 		throw MsgCont;
 	}
 
@@ -1049,7 +1052,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			
 			
 			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvO::IOEntryIsMissingMissing, StdMessageParams, SvOi::Err_16060_IOEntryIsMissing );
+			MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_IOEntryIsMissing, StdMessageParams, SvOi::Err_16060_IOEntryIsMissing );
 			throw MsgCont;
 		}
 
@@ -1177,7 +1180,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 		if(!bOk)
 		{
 			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, nullptr, StdMessageParams, SvOi::Err_16046_LOAD_IO_FAILED );
+			MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_16046_LOAD_IO_FAILED );
 			throw MsgCont;
 		}
 
@@ -1547,7 +1550,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							{
 								//This stops loading without any further messages
 								SvStl::MessageContainer MsgCont;
-								MsgCont.setMessage( SVMSG_SVO_IGNORE_EXCEPTION, nullptr, StdMessageParams );
+								MsgCont.setMessage( SVMSG_SVO_IGNORE_EXCEPTION, SvOi::Tid_Empty, StdMessageParams );
 								throw MsgCont;
 							}
 
@@ -1860,7 +1863,7 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 		if( nullptr == pInspection )
 		{
 			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_SVO_80_LOAD_INSPECTION_FAILED, nullptr, StdMessageParams, SvOi::Err_16050_ConstructObjectInspection );
+			MsgCont.setMessage( SVMSG_SVO_80_LOAD_INSPECTION_FAILED, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_16050_ConstructObjectInspection );
 			throw MsgCont;
 		}
 
@@ -1980,7 +1983,7 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 	if(false == bOk)
 	{
 		SvStl::MessageContainer MsgCont;
-		MsgCont.setMessage( SVMSG_SVO_91_LOAD_INSPECTION_FAILED, nullptr, StdMessageParams, SvOi::Err_16076_CouldNotLoadInspection );
+		MsgCont.setMessage( SVMSG_SVO_91_LOAD_INSPECTION_FAILED, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_16076_CouldNotLoadInspection );
 		throw MsgCont;
 	
 	}
@@ -2007,7 +2010,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		if( nullptr == pPPQ )
 		{
 			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvO::CreationOfPPQFailed, StdMessageParams, SvOi::Err_16048_ErrrorCreatePPQObject );
+			MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvOi::Tid_CreationOfPPQFailed, StdMessageParams, SvOi::Err_16048_ErrrorCreatePPQObject );
 			throw MsgCont;
 		}
 		pPPQ->SetName( ItemName.c_str() );
@@ -2243,7 +2246,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			
 			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvO::InputIsMissing, StdMessageParams, SvOi::Err_16049_ErrorMissingInpuTag );
+			MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvOi::Tid_InputIsMissing, StdMessageParams, SvOi::Err_16049_ErrorMissingInpuTag );
 			throw MsgCont;
 		}
 		
@@ -2264,7 +2267,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 			{
 				
 				SvStl::MessageContainer MsgCont;
-				MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvO::MsgIOTypeIsMissing, StdMessageParams, SvOi::Err_16053_ErrorMissingIOTypeTag );
+				MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvOi::Tid_MsgIOTypeIsMissing, StdMessageParams, SvOi::Err_16053_ErrorMissingIOTypeTag );
 				throw MsgCont;
 			}
 			strType = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
@@ -2277,7 +2280,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 				{
 					
 					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvO::MsgIONameIsMissing, StdMessageParams, SvOi::Err_16052_ErrorMissingItemNameTag );
+					MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvOi::Tid_MsgIONameIsMissing, StdMessageParams, SvOi::Err_16052_ErrorMissingItemNameTag );
 					throw MsgCont;
 				}
 
@@ -2288,7 +2291,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 				{
 					
 					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,SvO::MsgPPQPOsitionIsMissing,StdMessageParams, SvOi::Err_16054_ErrorMissingPPQPOsitionTag);
+					MsgCont.setMessage(SVMSG_SVO_79_LOAD_PPQ_FAILED,SvOi::Tid_MsgPPQPOsitionIsMissing, StdMessageParams, SvOi::Err_16054_ErrorMissingPPQPOsitionTag);
 					throw MsgCont;
 				}
 				lPPQPosition = svValue;
@@ -2303,18 +2306,16 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 				_variant_t l_Variant = 0.0;
 				if( !SVNavigateTree::GetItem( rTree, CTAG_ITEM_NAME, hDataChild, svValue ) )
 				{
-					LPCTSTR pMsgDet = _T("Item Name is missing"); 
 					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, pMsgDet, StdMessageParams, SvOi::Err_16059_ErrorMissingItemNameTag );
+					MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvOi::Tid_MsgIONameIsMissing, StdMessageParams, SvOi::Err_16059_ErrorMissingItemNameTag );
 					throw MsgCont;
 				}
 
 				DataName = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
 				if( !SVNavigateTree::GetItem( rTree, CTAG_PPQ_POSITION, hDataChild, svValue ) )
 				{
-					LPCTSTR pMsgDet = _T("PPQ Position is missing") ;
 					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, pMsgDet, StdMessageParams, SvOi::Err_16056_ErrorMissingPPQPOsitionTag );
+					MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvOi::Tid_MsgPPQPOsitionIsMissing, StdMessageParams, SvOi::Err_16056_ErrorMissingPPQPOsitionTag );
 					throw MsgCont;
 				}
 
@@ -2323,7 +2324,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 				if( !SVNavigateTree::GetItem( rTree, CTAG_REMOTE_INDEX, hDataChild, svValue ) )
 				{
 					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvO::MsgRemoteIndexIsMissing, StdMessageParams, SvOi::Err_16058_ErrorMissingRemoteIndexTag );
+					MsgCont.setMessage( SVMSG_SVO_79_LOAD_PPQ_FAILED, SvOi::Tid_MsgRemoteIndexIsMissing, StdMessageParams, SvOi::Err_16058_ErrorMissingRemoteIndexTag );
 					throw MsgCont;
 				}
 				lIndex = svValue;
@@ -2371,7 +2372,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 	if( !DestroyConfiguration() )
 	{
 		SvStl::MessageContainer MsgCont;
-		MsgCont.setMessage(SVMSG_SVO_75_DESTROY_CONFIGURATION_FAILED,nullptr,StdMessageParams, SvOi::Err_16041_ErrroDestroyingConfig);
+		MsgCont.setMessage(SVMSG_SVO_75_DESTROY_CONFIGURATION_FAILED, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_16041_ErrroDestroyingConfig);
 		throw MsgCont;
 	}
 
@@ -2518,7 +2519,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 				{
 					//This stops loading without any further messages
 					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage( SVMSG_SVO_IGNORE_EXCEPTION, nullptr, StdMessageParams );
+					MsgCont.setMessage( SVMSG_SVO_IGNORE_EXCEPTION, SvOi::Tid_Empty, StdMessageParams );
 					throw MsgCont;
 				}
 

@@ -747,10 +747,10 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 
 	if( hrOk != S_OK )
 	{
-		SVString l_Message = SvUl_SF::Format( _T( "SVAcquisitionClass::GetNextIndex-Name=%s" ), GetDeviceName() );
-
+		SVStringArray msgList;
+		msgList.push_back(GetDeviceName());
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (hrOk), l_Message.c_str(), StdMessageParams );
+		Exception.setMessage( static_cast<DWORD> (hrOk), SvOi::Tid_SVAcquisitionClass_GetNextIndex, msgList, StdMessageParams );
 	}
 	
 	return hrOk;

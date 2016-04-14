@@ -18,6 +18,7 @@
 #include "SVTaskObjectInterfaceClass.h"
 #include "SVTaskObjectList.h"
 #include "ObjectInterfaces\RangeEnum.h"
+#include "ObjectInterfaces\MessageTextEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -60,11 +61,12 @@ public:
 	HRESULT GetInspectionData(RangeEnum::ERange ra);
 
 	//************************************
-	// Description: Check if data are plausible
-	// Parameter: CString& csmsg // @TODO:  Change to SVString
-	// Returns:   HRESULT  S_OK if successful
+	/// Description: Check if data are plausible
+	/// \param messageId [out] Id to message text
+	/// \param messageList [out] additionalText to message text
+	/// \returns HRESULT S_OK if successful
 	//************************************
-	HRESULT CheckInternalData(CString &Errorsmsg) const;
+	HRESULT CheckInternalData(SvOi::MessageTextEnum &messageId, SVStringArray &messageList) const;
 
 	//************************************
 	// Description:  Set the data
@@ -72,7 +74,7 @@ public:
 	// Parameter:  lp <in>:  string what to set
 	// Returns:  void, but throw an Exception from type ExceptionMgr1 if set failed
 	//************************************
-	 void SetInternalData(RangeEnum::ERange er, LPCTSTR lp);
+	 void SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp);
 
 	//************************************
 	// Description:  set m_pRange as TaskObject

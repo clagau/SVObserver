@@ -194,10 +194,10 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					// And finally try to create the child object...
 					if( ::SVSendMessage( m_pParentObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
-						CString strMessage;
-						AfxFormatString1( strMessage, IDS_CRITICAL_CREATION_OF_FAILED, pObject->GetName() );
+						SVStringArray msgList;
+						msgList.push_back(SVString(pObject->GetName()));
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, strMessage, StdMessageParams, SvOi::Err_10043 ); 
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreationFailed, msgList, StdMessageParams, SvOi::Err_10043 ); 
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = pObject->GetUniqueObjectID();

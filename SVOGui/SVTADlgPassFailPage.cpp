@@ -18,6 +18,7 @@
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
+#include "ObjectInterfaces\MessageTextEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -63,33 +64,20 @@ namespace Seidenader { namespace SVOGui
 	}
 	#pragma endregion Public Methods
 
-	HRESULT SVToolAdjustmentDialogPassFailPageClass::SetInspectionData(SVString& rMsg)
+	void SVToolAdjustmentDialogPassFailPageClass::SetInspectionData()
 	{
 		UpdateData(true); // get data from dialog
 
-		HINSTANCE resHandle = AfxGetResourceHandle();
-		// Validate Entered data for existance and if within bounds
-		HRESULT hr = IsFieldValid(rMsg, RangeEnum::ERange2String(resHandle, RangeEnum::ER_FailHigh), static_cast<LPCSTR>(m_FailHigh));
-		if (S_OK == hr)
-		{
-			hr = IsFieldValid(rMsg, RangeEnum::ERange2String(resHandle, RangeEnum::ER_FailLow), static_cast<LPCSTR>(m_FailLow));
-		}
-		if (S_OK == hr)
-		{
-			hr = IsFieldValid(rMsg, RangeEnum::ERange2String(resHandle, RangeEnum::ER_WarnHigh), static_cast<LPCSTR>(m_WarnHigh));
-		}
-		if (S_OK == hr)
-		{
-			hr = IsFieldValid(rMsg, RangeEnum::ERange2String(resHandle, RangeEnum::ER_WarnLow), static_cast<LPCSTR>(m_WarnLow));
-		}
-		if (S_OK == hr)
-		{
-			Set(FailHigh, static_cast<LPCSTR>(m_FailHigh));
-			Set(FailLow, static_cast<LPCSTR>(m_FailLow));
-			Set(WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
-			Set(WarnLow, static_cast<LPCSTR>(m_WarnLow));
-		}
-		return hr;
+		// Validate Entered data for existance and if within bounds		
+		IsFieldValid(SvOi::Tid_FailHigh, static_cast<LPCSTR>(m_FailHigh));
+		IsFieldValid(SvOi::Tid_FailLow, static_cast<LPCSTR>(m_FailLow));
+		IsFieldValid(SvOi::Tid_WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
+		IsFieldValid(SvOi::Tid_WarnLow, static_cast<LPCSTR>(m_WarnLow));
+		
+		Set(FailHigh, static_cast<LPCSTR>(m_FailHigh));
+		Set(FailLow, static_cast<LPCSTR>(m_FailLow));
+		Set(WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
+		Set(WarnLow, static_cast<LPCSTR>(m_WarnLow));
 	}
 
 	#pragma region Protected Methods
@@ -189,27 +177,20 @@ namespace Seidenader { namespace SVOGui
 		bool bRetVal = true;
 	
 		SVString errorMsg;
-		HRESULT retVal = SetInspectionData(errorMsg);
-		if (S_OK != retVal)
+
+		try
+		{
+			SetInspectionData();
+			Validate(AfxGetResourceHandle());
+			Commit();
+		}
+		catch (const SvStl::MessageContainer& rSvE)
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, errorMsg.c_str(), StdMessageParams, SvOi::Err_10229 );
+			Msg.setMessage( rSvE.getMessage() );
 			bRetVal = false;
 		}
-		else
-		{
-			retVal = Validate(errorMsg, AfxGetResourceHandle());
-			if (S_OK != retVal)
-			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, errorMsg.c_str(), StdMessageParams, SvOi::Err_10230 );
-				bRetVal = false;
-			}
-			else
-			{
-				Commit();
-			}
-		}
+		
 		return bRetVal;
 	}
 

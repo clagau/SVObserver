@@ -48,7 +48,7 @@ protected:
 	HRESULT ValidateCurrentTreeData (SVRPropertyItem* item);
 	// DisplayRunError () is intended to deal with scenarios where an error 
 	// may have already been displayed earlier in the tracking. 
-	HRESULT	DisplayRunError (HRESULT errorCode, SVString errorString, unsigned long programCode);
+	void	DisplayRunError (const SvStl::MessageData& displayMessage, unsigned long programCode);
 
 
 // Note:

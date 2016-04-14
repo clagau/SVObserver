@@ -42,9 +42,8 @@ namespace Seidenader { namespace  SVXMLLibrary
 		if((S_OK != hr) && (S_FALSE != hr) && (RPC_E_CHANGED_MODE != hr))
 		{
 			ASSERT(false);
-			std::string msg = "CoInitializeEx Failed";
 			SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, msg.c_str(), StdMessageParams, SvOi::Err_16073_COINITIALIZE_ );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_Sax_ConInitializeExFailed, StdMessageParams, SvOi::Err_16073_COINITIALIZE_ );
 		}
 		else if(S_FALSE == hr)
 		{

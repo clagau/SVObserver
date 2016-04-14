@@ -404,7 +404,7 @@ BOOL SVPatGeneralPageClass::ProcessOnKillfocus(UINT nId)
 			if(dThreshold > 100 || strValue.IsEmpty())
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_InvalidThresholdValue, StdMessageParams, SvOi::Err_10183 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidThresholdValue, StdMessageParams, SvOi::Err_10183 ); 
 				GetDlgItem(nId)->SetFocus();
 				((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
 				return FALSE;

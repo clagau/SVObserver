@@ -101,7 +101,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 			if (0 > FreeMemory)
 			{
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::AP_NotEnoughMemoryPleaseDeselect, StdMessageParams );
+				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_NotEnoughMemoryPleaseDeselect, StdMessageParams );
 				return false;
 			}
 		}
@@ -127,7 +127,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		{
 			//don't allow to exit with invalid path
 			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::InvalidImagePath, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidImagePath, StdMessageParams );
 			return false;
 		}
 	}
@@ -141,10 +141,10 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	//check for valid drive for image archive
 	if(!ArchiveToolHelper::ValidateDrive(csImageFolder,szDrive ) || csImageFolder.IsEmpty())
 	{
-		CString temp;
-		temp.Format ("Invalid drive:  %s", szDrive);
+		SVStringArray msgList;
+		msgList.push_back(SVString(szDrive));
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, temp.GetString(), StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidDrive, msgList, StdMessageParams );
 		return false; 
 	}
 
@@ -162,19 +162,21 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_ImagesToArchive = dwTemp;
 	if( UpperLimitImageNumbers < dwTemp )
 	{
-		SVString svTemp = SvUl_SF::Format(	SvO::Error_you_have_Selected_X_Must_less_then_Y, dwTemp, UpperLimitImageNumbers);
+		SVStringArray msgList;
+		msgList.push_back(SvUl_SF::Format(_T("%ld"), dwTemp));
+		msgList.push_back(SvUl_SF::Format(_T("%ld"), UpperLimitImageNumbers));
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, svTemp.c_str(), StdMessageParams, SvOi::Err_16075_ImageNrToBig  );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_Error_you_have_Selected_X_Must_less_then_Y, msgList, StdMessageParams, SvOi::Err_16075_ImageNrToBig  );
 		return FALSE;
 
 	}
 
 	if( MaxImagesWarningLimit < dwTemp )
 	{
-		CString csTemp;
-		csTemp.Format(	_T("WARNING: You have selected %ld for the Max Images count"), dwTemp);
+		SVStringArray msgList;
+		msgList.push_back(SvUl_SF::Format(_T("%ld"),  dwTemp));
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, csTemp.GetString(), StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_ArchiveTool_WarningMaxImages, msgList, StdMessageParams );
 	}
 	//Max images must be at least 1
 	if( 1L > dwTemp )
@@ -587,7 +589,7 @@ void SVTADlgArchiveImagePage::OnBrowse()
 		{
 			//don't allow to exit with invalid path
 			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::InvalidImagePath, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidImagePath, StdMessageParams );
 			return;
 		}
 	}
@@ -628,13 +630,13 @@ void SVTADlgArchiveImagePage::OnSelchangeModeCombo()
 			if ( 0 > FreeMem )
 			{
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::AP_NotEnoughMemoryInChangeMode, StdMessageParams );
+				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_NotEnoughMemoryInChangeMode, StdMessageParams );
 			}
 		}
 		else if(SVArchiveSynchronous == m_eSelectedArchiveMethod )
 		{
 			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_89_ARCHIVE_TOOL_SYNCHRONOUS_MODE, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_89_ARCHIVE_TOOL_SYNCHRONOUS_MODE, SvOi::Tid_Empty, StdMessageParams );
 		}
 	}
 }
@@ -661,10 +663,10 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 				}
 				else
 				{
-					CString sMsg;
-					sMsg.Format("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
+					SVStringArray msgList;
+					msgList.push_back(SVString(strNumImages));
 					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-					Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, sMsg.GetString(), StdMessageParams );
+					Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_NotEnoughImageMemoryInChangeMode, msgList, StdMessageParams );
 					m_ImagesToArchive = atol(m_sMaxImageNumber);
 					if(m_sMaxImageNumber != strNumImages)
 					{
@@ -731,10 +733,10 @@ bool SVTADlgArchiveImagePage::checkImageMemory( SVGUID ImageGuid , bool bNewStat
 			{
 				bAddItem = false;
 				bOk = false;
-				CString strMessage;
-				strMessage.Format(_T("Not enough Archive Image Memory to select %s"), pImage->GetCompleteObjectName());
+				SVStringArray msgList;
+				msgList.push_back(SVString(pImage->GetCompleteObjectName()));
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, strMessage.GetString(), StdMessageParams );
+				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_NotEnoughImageMemoryToSelect, msgList, StdMessageParams );
 			}
 		}
 		if (bAddItem)
@@ -754,7 +756,7 @@ bool SVTADlgArchiveImagePage::checkImageMemory( SVGUID ImageGuid , bool bNewStat
 			if( 0 > FreeMem )
 			{
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvO::AP_NotEnoughMemoryPleaseDeselectImage, StdMessageParams );
+				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_NotEnoughMemoryPleaseDeselectImage, StdMessageParams );
 
 			}
 		}

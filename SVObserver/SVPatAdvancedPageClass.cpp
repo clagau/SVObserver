@@ -443,45 +443,41 @@ BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId)
 		m_pSheet->GetActiveIndex() != 0)
 		return TRUE;
 	
-	UINT nMsgID = 0;
-	
-	switch (nId)
+	try
 	{
-		case IDC_PAT_ADDITIONAL_CANDIDATES_VALUE:
+		switch (nId)
 		{
-			nMsgID = ValidateAdditionalCandidatesValue();
-			break;
-		}
+		case IDC_PAT_ADDITIONAL_CANDIDATES_VALUE:
+			{
+				ValidateAdditionalCandidatesValue();
+				break;
+			}
 
 		case IDC_PAT_ACCEPTANCE_THRESHOLD_VALUE:
-		{
-			nMsgID = ValidatePreliminaryAcceptanceThreshold();
-			if (0 == nMsgID)
 			{
+				ValidatePreliminaryAcceptanceThreshold();
 				AdjustSliderPreliminaryAcceptanceThreshold();
+				break;
 			}
-			break;
-		}
 
 		case IDC_PAT_CANDIDATES_SPACING_XMIN_VALUE:
-		{
-			nMsgID = ValidateCandidatesSpacingXMinValue();
-			break;
-		}
+			{
+				ValidateCandidatesSpacingXMinValue();
+				break;
+			}
 
 		case IDC_PAT_CANDIDATES_SPACING_YMIN_VALUE:
-		{
-			nMsgID = ValidateCandidatesSpacingYMinValue();
-			break;
+			{
+				ValidateCandidatesSpacingYMinValue();
+				break;
+			}
 		}
 	}
-	
-	if (0 != nMsgID)
+	catch ( const SvStl::MessageContainer& rSvE )
 	{
-		CString message;
-		message.Format(nMsgID);
+		//Now that we have caught the exception we would like to display it
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10241 );
+		Msg.setMessage( rSvE.getMessage() );
 		GetDlgItem(nId)->SetFocus();
 		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
 		return FALSE;
@@ -489,27 +485,16 @@ BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId)
 	return TRUE;
 }
 
-UINT SVPatAdvancedPageClass::ValidateEditableParameters()
+void SVPatAdvancedPageClass::ValidateEditableParameters()
 {
-	UINT nMsgID = ValidateAdditionalCandidatesValue();
-	if (0 == nMsgID)
-	{
-		nMsgID = ValidateCandidatesSpacingXMinValue();
-	}
-	if (0 == nMsgID)
-	{
-		nMsgID = ValidateCandidatesSpacingYMinValue();
-	}
-	if (0 == nMsgID)
-	{
-		nMsgID = ValidatePreliminaryAcceptanceThreshold();
-	}
-	return nMsgID;
+	ValidateAdditionalCandidatesValue();
+	ValidateCandidatesSpacingXMinValue();
+	ValidateCandidatesSpacingYMinValue();
+	ValidatePreliminaryAcceptanceThreshold();
 }
 
-UINT SVPatAdvancedPageClass::ValidateAdditionalCandidatesValue()
+void SVPatAdvancedPageClass::ValidateAdditionalCandidatesValue()
 {
-	UINT nMsgID = 0;
 	UpdateData(true);
 
 	if (m_AdditionalCandidatesAutoCheckBox.GetCheck() == BST_UNCHECKED)
@@ -522,15 +507,14 @@ UINT SVPatAdvancedPageClass::ValidateAdditionalCandidatesValue()
 		}
 		else
 		{
-			nMsgID = IDS_PAT_ADDITIONALCANDIDATES_ERROR;
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatAdditionalCandidatesErr, StdMessageParams, SvOi::Err_10240 );
+			throw Msg;
 		}
 	}
-	return nMsgID;
 }
 
-UINT SVPatAdvancedPageClass::ValidateCandidatesSpacingXMinValue()
+void SVPatAdvancedPageClass::ValidateCandidatesSpacingXMinValue()
 {
-	UINT nMsgID = 0;
 	UpdateData(true);
 	
 	if (m_CandidateSpacingXMinAutoCheckBox.GetCheck() == BST_UNCHECKED)
@@ -543,15 +527,14 @@ UINT SVPatAdvancedPageClass::ValidateCandidatesSpacingXMinValue()
 		}
 		else
 		{
-			nMsgID = IDS_PAT_CANDIDATE_SPACING_ERROR;
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatCandidateSpaceErr, StdMessageParams, SvOi::Err_10241 );
+			throw Msg;
 		}
 	}
-	return nMsgID;
 }
 
-UINT SVPatAdvancedPageClass::ValidateCandidatesSpacingYMinValue()
+void SVPatAdvancedPageClass::ValidateCandidatesSpacingYMinValue()
 {
-	UINT nMsgID = 0;
 	UpdateData(true);
 	
 	if (m_CandidateSpacingYMinAutoCheckBox.GetCheck() == BST_UNCHECKED)
@@ -564,15 +547,14 @@ UINT SVPatAdvancedPageClass::ValidateCandidatesSpacingYMinValue()
 		}
 		else
 		{
-			nMsgID = IDS_PAT_CANDIDATE_SPACING_ERROR;
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatCandidateSpaceErr, StdMessageParams, SvOi::Err_10242 );
+			throw Msg;
 		}
 	}
-	return nMsgID;
 }
 
-UINT SVPatAdvancedPageClass::ValidatePreliminaryAcceptanceThreshold()
+void SVPatAdvancedPageClass::ValidatePreliminaryAcceptanceThreshold()
 {
-	UINT nMsgID = 0;
 	UpdateData(true);
 	
 	if (m_PreliminaryAcceptanceThresholdAutoCheckBox.GetCheck() == BST_UNCHECKED)
@@ -585,10 +567,10 @@ UINT SVPatAdvancedPageClass::ValidatePreliminaryAcceptanceThreshold()
 		}
 		else
 		{
-			nMsgID = IDS_PAT_PRELIMINARYACCEPTANCETHRESHOLD_ERROR;
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatPreliminaryAcceptanceThresholdErr, StdMessageParams, SvOi::Err_10243 );
+			throw Msg;
 		}
 	}
-	return nMsgID;
 }
 
 void SVPatAdvancedPageClass::AdjustSliderPreliminaryAcceptanceThreshold() 
@@ -613,17 +595,16 @@ void SVPatAdvancedPageClass::OnCancel()
 
 void SVPatAdvancedPageClass::OnOK() 
 {
-	UINT nMsgID = ValidateEditableParameters();
-	if (0 == nMsgID)
+	try
 	{
+		ValidateEditableParameters();
 		CPropertyPage::OnOK();
 	}
-	else
+	catch ( const SvStl::MessageContainer& rSvE )
 	{
-		CString message;
-		message.Format(nMsgID);
+		//Now that we have caught the exception we would like to display it
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10242 );
+		Msg.setMessage( rSvE.getMessage() );
 	}
 }
 
@@ -692,13 +673,15 @@ void SVPatAdvancedPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScr
 
 BOOL SVPatAdvancedPageClass::OnKillActive()
 {
-	UINT nMsgID = ValidateEditableParameters();
-	if (0 != nMsgID)
+	try
 	{
-		CString message;
-		message.Format(nMsgID);
+		ValidateEditableParameters();
+	}
+	catch ( const SvStl::MessageContainer& rSvE )
+	{
+		//Now that we have caught the exception we would like to display it
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10243 );
+		Msg.setMessage( rSvE.getMessage() );
 		return false;
 	}
 	return true;

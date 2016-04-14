@@ -173,7 +173,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		if( nullptr == pConfig )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17029_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17029_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 
@@ -211,14 +211,14 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			if( nullptr == pPPQ )
 			{
 				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdMessageParams, SvOi::Err_17030_ErrorGettingPPQ );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, StdMessageParams, SvOi::Err_17030_ErrorGettingPPQ );
 				DebugBreak();
 			}
 			// Get list of available outputs
 			else if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 			{
 				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdMessageParams, SvOi::Err_17031_ErrorGettingOutputs );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingOutputs, StdMessageParams, SvOi::Err_17031_ErrorGettingOutputs );
 				DebugBreak();
 			}
 

@@ -382,7 +382,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), NULL ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::StatTool_ResultFailed, StdMessageParams, SvOi::Err_10200 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, StdMessageParams, SvOi::Err_10200 ); 
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
@@ -647,10 +647,10 @@ BOOL SVStatisticsToolClass::Test()
 				}
 				else
 				{
-					CString tmp,fullObjectName;
-					fullObjectName = refValueObject.Object()->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
-					tmp.LoadString(IDS_STATTOOL_INVALID_VARIABLE);
-					m_errStr.Format(_T( "%s \n %s" ), fullObjectName, tmp );
+					CString fullObjectName = refValueObject.Object()->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
+					SVStringArray msgList;
+					msgList.push_back(SVString(fullObjectName));
+					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatToolInvalidVariable, msgList, StdMessageParams, SvOi::Err_10201);
 				}
 			}
 		}
@@ -836,10 +836,10 @@ DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR Dw
 			{
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 
-				if( !SilentReset && !m_errStr.IsEmpty() )
+				if( !SilentReset && 0 != m_errContainer.getMessage().m_MessageCode )
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errStr, StdMessageParams, SvOi::Err_10201 ); 
+					Msg.setMessage( m_errContainer.getMessage() ); 
 				}
 				DwResult = SVMR_NO_SUCCESS;
 			}

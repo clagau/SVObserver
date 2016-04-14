@@ -109,6 +109,7 @@
     <ClInclude Include="ITool.h" />
     <ClInclude Include="IToolSet.h" />
     <ClInclude Include="IValueObject.h" />
+    <ClInclude Include="MessageTextEnum.h" />
     <ClInclude Include="NameValueList.h" />
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="RangeEnum.h" />

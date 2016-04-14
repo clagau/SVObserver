@@ -44,7 +44,6 @@ const TCHAR* const AutosaveTempDirectory3Name =
 const TCHAR* const FbwfCheckFunctionName= 
 	_T("FbwfIsFilterEnabled");///< the third autosave temp directory name
 
-const TCHAR* const CouldNotExecuteFormatString= _T(_T("could not execute '%s'"));
 const TCHAR* const FbwfEnableBatchName= 
 	_T("fbwf Enable for next session.bat");///< name of the batch file that enables the file based write filter after the next reboot
 const TCHAR* const FbwfDisableBatchName= 
@@ -155,18 +154,19 @@ void ExtrasEngine::ToggleEnableFbwf()
 	m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
 
 	CString RequiredBatchFileName(SvO::NoneString);
-	CString msg;
+	SvOi::MessageTextEnum msgId = SvOi::Tid_Empty;
+	SVStringArray msgList;
 
 	if(m_IsFbwfSelected)
 	{
 		RequiredBatchFileName = FbwfEnableBatchName;
 		if(m_FbwfActiveChanging)
 		{
-			msg = SvO::ActivatingDiskProtection;
+			msgId = SvOi::Tid_ActivatingDiskProtection;
 		}
 		else
 		{
-			msg = SvO::DiskProtectionRemainsActive;
+			msgId = SvOi::Tid_DiskProtectionRemainsActive;
 		}
 	}
 	else
@@ -174,11 +174,11 @@ void ExtrasEngine::ToggleEnableFbwf()
 		RequiredBatchFileName = FbwfDisableBatchName;
 		if(m_FbwfActiveChanging)
 		{
-			msg = SvO::DeactivatingDiskProtection;
+			msgId = SvOi::Tid_DeactivatingDiskProtection;
 		}
 		else
 		{
-			msg = SvO::DiskProtectionRemainsInactive;
+			msgId = SvOi::Tid_DiskProtectionRemainsInactive;
 		}
 	}
 
@@ -187,14 +187,15 @@ void ExtrasEngine::ToggleEnableFbwf()
 	auto ret = system(BatchfilePath);
 	if(ret)
 	{
-		msg.Format(CouldNotExecuteFormatString,BatchfilePath);
+		msgId = SvOi::Tid_CouldNotExecuteFormatString;
+		msgList.push_back(SVString(BatchfilePath));
 		// undo selection in this case
 		m_IsFbwfSelected = !m_IsFbwfSelected; 
 		m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
 	}
 
 	SvStl::MessageMgrDisplayAndNotify toggleFbwfMessage( SvStl::LogAndDisplay );
-	toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msg, StdMessageParams );
+	toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msgId, msgList, StdMessageParams );
 
 	ReadCurrentFbwfSettings();
 } 

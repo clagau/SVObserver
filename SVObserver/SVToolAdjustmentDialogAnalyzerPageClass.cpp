@@ -234,7 +234,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 	else
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::Error_NoAnalyzerDetails, StdMessageParams, SvOi::Err_10210 );
+		Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Error_NoAnalyzerDetails, StdMessageParams, SvOi::Err_10210 );
 	}
 }
 
@@ -285,7 +285,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 					if( ::SVSendMessage( m_pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_AnalyzerCreationFailed, StdMessageParams, SvOi::Err_10211 );
+						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerCreationFailed, StdMessageParams, SvOi::Err_10211 );
 
 						// What should we really do here ??? SEJ
 
@@ -303,7 +303,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			else
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::Error_AnalyzerInstantiationFailed, StdMessageParams, SvOi::Err_10212 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerInstantiationFailed, StdMessageParams, SvOi::Err_10212 );
 			}
 		}
 	}

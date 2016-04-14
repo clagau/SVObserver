@@ -607,10 +607,10 @@ void ToolSetView::OnRunOnce()
 
 bool ToolSetView::ShowDuplicateNameMessage(const CString& rName) const
 {
-	CString msg("A duplicate name was found for the item being renamed\n");
-	msg += rName;
+	SVStringArray msgList;
+	msgList.push_back(SVString(rName));
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	INT_PTR rc = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msg, StdMessageParams, SvOi::Err_10221, NULL, nullptr, MB_RETRYCANCEL );
+	INT_PTR rc = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RenameError_DuplicateName, msgList, StdMessageParams, SvOi::Err_10221, NULL, nullptr, MB_RETRYCANCEL );
 	return (IDRETRY == rc);
 }
 

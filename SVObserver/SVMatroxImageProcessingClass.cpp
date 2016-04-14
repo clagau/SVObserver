@@ -103,7 +103,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVImageInfoClass&
 	if ( S_OK != hrOk && !bDisplayedErrorMessage )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::CreateBufferFailed, StdMessageParams, SvOi::Err_10064 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, StdMessageParams, SvOi::Err_10064 );
 	}
 
 	return hrOk;
@@ -302,38 +302,30 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 				}
 			}
 
-			CString sMsg;
+			SvStl::MessageContainer message;
 			if (rChildInfo.GetOwner() != NULL)
 			{
 				if (rParentInfo.GetOwner() != NULL)
 				{
-					sMsg.Format("\"%s\" was located partially or completely outside of "
-						"the bounds of \"%s\".\nIt has been moved and/or resized "
-						"to fit in the bounds.\nThis configuration should be "
-						"saved to prevent this message from appearing again.", 
-						rChildInfo.GetOwner()->GetCompleteObjectName(), 
-						rParentInfo.GetOwner()->GetCompleteObjectName());
+					SVStringArray msgList;
+					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteObjectName()));
+					msgList.push_back(SVString(rParentInfo.GetOwner()->GetCompleteObjectName()));
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer_parent, msgList, StdMessageParams, SvOi::Err_10065);
 				}
 				else 
 				{
-					sMsg.Format("\"%s\" was located partially or completely outside of "
-						"the bounds of its parent image.\nIt has been moved "
-						"and/or resized to fit in the bounds.\nThis configuration "
-						"should be saved to prevent this message from appearing "
-						"again.", rChildInfo.GetOwner()->GetCompleteObjectName());
+					SVStringArray msgList;
+					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteObjectName()));
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer_child, msgList, StdMessageParams, SvOi::Err_10065);
 				}
 			}
 			else
 			{
-				sMsg.Format("A child buffer was located partially or completely outside "
-					"of the bounds of its parent image.\nIt has been moved "
-					"and/or resized to fit in the bounds.\nThis configuration "
-					"should be saved to prevent this message from appearing "
-					"again.");
+				message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer, StdMessageParams, SvOi::Err_10065);
 			}
 
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, sMsg, StdMessageParams, SvOi::Err_10065 );
+			Msg.setMessage( message.getMessage() );
 		}
 
 
@@ -404,7 +396,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 	if ( hrOk != S_OK )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::CreateBufferFailed, StdMessageParams, SvOi::Err_10066 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, StdMessageParams, SvOi::Err_10066 );
 	}
 
 	return hrOk;
@@ -570,9 +562,10 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 				return S_FALSE;
 			}
 
-			SVString strMessage = SvUl_SF::Format( SvO::MatroxImage_UnableToFindFile, strImagePathName );
+			SVStringArray msgList;
+			msgList.push_back(SVString(strImagePathName));
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, strMessage.c_str(), StdMessageParams, SvOi::Err_10067 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_MatroxImage_UnableToFindFile, msgList, StdMessageParams, SvOi::Err_10067 );
 			// Browse...
 			//
 			// Try to read the current image file path name from registry...
@@ -676,11 +669,11 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 		}
 
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::UnKnownFileFormat, StdMessageParams, SvOi::Err_10068 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnKnownFileFormat, StdMessageParams, SvOi::Err_10068 );
 	}
 
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::FailedToLoadImage, StdMessageParams, SvOi::Err_10069 );
+	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, StdMessageParams, SvOi::Err_10069 );
 
 	return S_FALSE;
 }
@@ -827,7 +820,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( void* pBuffer, SVImageInf
 	rBufferHandle.clear();
 
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::FailedToLoadImage, StdMessageParams, SvOi::Err_10070 );
+	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, StdMessageParams, SvOi::Err_10070 );
 
 	return S_FALSE;
 }

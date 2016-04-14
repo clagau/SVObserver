@@ -755,11 +755,12 @@ BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 			// Image does not have a Tool for a parent. Not sure if this can 
 			// happen.
 			SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
-			Exception.setMessage( hr, nullptr, StdMessageParams, SvOi::ProgCode_5066_CreateImageBuffer);
+			Exception.setMessage( hr, SvOi::Tid_Empty, StdMessageParams, SvOi::ProgCode_5066_CreateImageBuffer);
 		}
 		else
 		{
-			parentTool->SetRunErrorCode(hr);
+			SvStl::MessageData message(hr);
+			parentTool->SetRunErrorData(message);
 		}
 	}
 

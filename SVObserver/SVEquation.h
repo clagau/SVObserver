@@ -19,6 +19,7 @@
 #include "SVEquationLibrary/SVEquationLex.h"
 #include "SVEquationLibrary/SVEquationYacc.h"
 #include "SVTaskObject.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
 /**
@@ -234,7 +235,7 @@ private:
 	SVEquationLexClass lex;					// scanner class
 	SVEquationYaccClass yacc;				// parser class
 
-	CString errStr;							// for errorEvent
+	SvStl::MessageContainer errContainer;							// for errorEvent
 
 	BOOL isDataValid;						// the variable(s) returned Valid Data
 	

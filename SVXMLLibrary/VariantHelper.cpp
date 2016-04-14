@@ -73,10 +73,10 @@ namespace Seidenader { namespace  SVXMLLibrary
 		HRESULT hres = SVVariantConverter::RestoreVariant(Value.GetBSTR(), Type.GetBSTR() ,pVar);
 		if(hres != S_OK )
 		{
-			std::stringstream Errorstream;
-			Errorstream << L"RestoreVariant returns: "  << hres ;
+			SVStringArray messageList;
+			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,Errorstream.str().c_str(), StdMessageParams,SvOi::Err_16064_RESTOREVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_RestoreVariantError, messageList, StdMessageParams,SvOi::Err_16064_RESTOREVARIANT  );
 			throw Exception;
 		}
 
@@ -91,10 +91,10 @@ namespace Seidenader { namespace  SVXMLLibrary
 		HRESULT hres = 	SVVariantConverter::TranslateVariant(const_cast<_variant_t*> (&rVar) , &Value.GetBSTR(), &Type.GetBSTR() );
 		if(hres != S_OK )
 		{
-			std::stringstream Errorstream;
-			Errorstream << L"TranslateVariant returns: "  << hres ;
+			SVStringArray messageList;
+			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, Errorstream.str().c_str(), StdMessageParams,SvOi::Err_16065_TRANSLATEVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_TranslateVariantError, messageList, StdMessageParams,SvOi::Err_16065_TRANSLATEVARIANT  );
 			throw Exception;
 		}
 
@@ -336,10 +336,8 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 		if(bInvalidArgument)
 		{
-			std::stringstream Errorstream;
-			Errorstream << L"Invalid Argument in function ToVariant ";
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,Errorstream.str().c_str(), StdMessageParams,SvOi::Err_16066_TOVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,SvOi::Tid_ToVariant_InvalidArgument, StdMessageParams,SvOi::Err_16066_TOVARIANT  );
 			throw Exception;
 		}
 

@@ -67,17 +67,18 @@ END_MESSAGE_MAP()
 
 void RangeXDialogClass::OnBnClickedOk()
 {
-	CString errorMsg;
 	bool bOK = GetDlgData();
 
 	if(bOK)
 	{
-		HRESULT hres = m_RangeClassHelper.CheckInternalData(errorMsg);
+		SvOi::MessageTextEnum messageId;
+		SVStringArray messageList;
+		HRESULT hres = m_RangeClassHelper.CheckInternalData(messageId, messageList);
 		if( S_OK != hres)
 		{
 			bOK = false;
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, errorMsg, StdMessageParams, hres); 
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, messageId, messageList, StdMessageParams, hres); 
 		}
 	}
 
@@ -152,13 +153,13 @@ bool RangeXDialogClass::GetDlgData()
 	try
 	{
 		m_EditFailHigh.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(RangeEnum::ER_FailHigh, csText);
+		m_RangeClassHelper.SetInternalData(SvOi::Tid_FailHigh, csText);
 		m_EditWarnHigh.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(RangeEnum::ER_WarnHigh, csText);
+		m_RangeClassHelper.SetInternalData(SvOi::Tid_WarnHigh, csText);
 		m_EditFailLow.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(RangeEnum::ER_FailLow, csText);
+		m_RangeClassHelper.SetInternalData(SvOi::Tid_FailLow, csText);
 		m_EditWarnLow.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(RangeEnum::ER_WarnLow, csText);
+		m_RangeClassHelper.SetInternalData(SvOi::Tid_WarnLow, csText);
 		res = true;
 	}
 	catch ( const SvStl::MessageContainer& rSvE )

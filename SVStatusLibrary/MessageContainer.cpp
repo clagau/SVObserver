@@ -90,11 +90,18 @@ namespace Seidenader { namespace SVStatusLibrary
 	{
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime,
+	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime,
 		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime,
 		DWORD ProgramCode, DWORD OSErrorCode, LPCTSTR User )
 	{
-		setMessage( MessageCode, AdditionalText, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
+		setMessage( MessageCode, AdditionalTextId, SVStringArray(), CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
+	}
+
+	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime,
+		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime,
+		DWORD ProgramCode, DWORD OSErrorCode, LPCTSTR User )
+	{
+		setMessage( MessageCode, AdditionalTextId, AdditionalTextList, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
 	}
 
 	const MessageContainer& MessageContainer::operator=(const MessageContainer& rRhs)
@@ -115,13 +122,21 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	void MessageContainer::setMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
+		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
+	{
+		setMessage( MessageCode, AdditionalTextId, SVStringArray(), CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OsErrorCode, User );
+	}
+
+	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
 		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
 		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
-		m_Message.m_AdditionalText = (nullptr != AdditionalText) ? AdditionalText : SVString();
+		m_Message.m_AdditionalTextId = AdditionalTextId;
+		m_Message.m_AdditionalTextList = AdditionalTextList;
 		m_Message.m_CompileDate = CompileDate;
 		m_Message.m_CompileTime = CompileTime;
 		m_Message.m_SourceLine = SourceLine;
@@ -150,9 +165,10 @@ namespace Seidenader { namespace SVStatusLibrary
 			m_Message.m_OSErrorCode = GetLastError();
 		}
 
-		if( !m_Message.m_AdditionalText.empty() )
+		SVString additionalText = m_Message.getAdditionalText();
+		if( !additionalText.empty() )
 		{
-			m_What = m_Message.m_AdditionalText;
+			m_What = additionalText;
 		}
 		else
 		{
@@ -160,7 +176,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 	}
 
-	void MessageContainer::addMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+	void MessageContainer::addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
 		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime , 
 		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
 	{
@@ -168,7 +184,8 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_AdditionalMessages.push_back( m_Message );
 
 		m_Message.m_MessageCode = MessageCode;
-		m_Message.m_AdditionalText = (nullptr != AdditionalText) ? AdditionalText : SVString();
+		m_Message.m_AdditionalTextId = AdditionalTextId;
+		m_Message.m_AdditionalTextList = AdditionalTextList;
 		m_Message.m_CompileDate = CompileDate;
 		m_Message.m_CompileTime = CompileTime;
 		m_Message.m_SourceLine = SourceLine;
@@ -210,7 +227,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		SVStringArray SubstituteStrings;
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
-		SVString DebugString = SvUl_SF::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.m_AdditionalText.c_str() );
+		SVString DebugString = SvUl_SF::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.getAdditionalText().c_str() );
 		::OutputDebugString( DebugString.c_str() );
 
 		setSubstituteStrings( SubstituteStrings );
@@ -489,7 +506,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		rSubstituteStrings[7] = m_Message.m_CompileTime;
 		rSubstituteStrings[8] = SvUl_SF::Format( _T("%d"), m_Message.m_ProgramCode );
 		rSubstituteStrings[9] = SvUl_SF::Format( _T("0x%08x"), m_Message.m_ProgramCode );
-		rSubstituteStrings[10] = m_Message.m_AdditionalText;
+		rSubstituteStrings[10] = m_Message.getAdditionalText();
 		rSubstituteStrings[11] = m_Message.m_User;
 	}
 #pragma endregion Private Methods

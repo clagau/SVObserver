@@ -116,12 +116,12 @@ namespace Seidenader { namespace SVOGui
 						if (E_INVALIDARG == hr)
 						{
 							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::UnKnownFileFormat, StdMessageParams, SvOi::Err_10071 );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnKnownFileFormat, StdMessageParams, SvOi::Err_10071 );
 						}
 						else
 						{
 							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::FailedToSaveImage, StdMessageParams, SvOi::Err_10072 );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToSaveImage, StdMessageParams, SvOi::Err_10072 );
 						}
 					}
 				}

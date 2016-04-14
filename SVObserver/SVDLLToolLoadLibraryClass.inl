@@ -159,27 +159,27 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 				else	// error in MIL/HBITMAP definitions
 				{
 					Result = -12372;
-					e.setMessage( SvStl::MessageData( -12372, _T("Error in MIL/HBITMAP function definitions.") ) );
+					e.setMessage( SvStl::MessageData( -12372, SvOi::Tid_ToolLoadError_ImageDef ) );
 
 					// none are defined
 					if( !m_pfnSetMILResultImages && !m_pfnSetMILInputImages 
 						&& !m_pfnSetHBITMAPInputImages && !m_pfnGetHBITMAPResultImages )
 					{
-						e.addMessage( SvStl::MessageData( -12373, _T("Neither MIL nor HBITMAP image functions are defined.") ), false );
+						e.addMessage( SvStl::MessageData( -12373, SvOi::Tid_ToolLoadError_NoImageDef ), false );
 					}
 					else if(     m_pfnSetMILResultImages && m_pfnSetMILInputImages
 					         &&  m_pfnSetHBITMAPInputImages && m_pfnGetHBITMAPResultImages )
 					{
-						e.addMessage( SvStl::MessageData( -12375, _T("Both sets of MIL and HBITMAP image functions are defined.") ), false );
+						e.addMessage( SvStl::MessageData( -12375, SvOi::Tid_ToolLoadError_BothSetsImagesDef ), false );
 					}
 					else if(     (m_pfnSetMILResultImages && (m_pfnGetHBITMAPResultImages || m_pfnSetHBITMAPInputImages))
 					         ||  (m_pfnSetHBITMAPInputImages &&  (m_pfnSetMILInputImages || m_pfnSetMILResultImages)))
 					{
-						e.addMessage( SvStl::MessageData( -12376, _T("Both MIL and HBITMAP image functions are defined.") ), false );
+						e.addMessage( SvStl::MessageData( -12376, SvOi::Tid_ToolLoadError_BothImagesDef ), false );
 					}
 					else
 					{
-						e.addMessage( SvStl::MessageData( -12374, _T("Error in MIL/HBITMAP image functions definitions.") ), false );
+						e.addMessage( SvStl::MessageData( -12374, SvOi::Tid_ToolLoadError_InFunctionDef ), false );
 					}
 	
 				}// end else	// error in MIL/HBITMAP definitions
@@ -194,13 +194,13 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 						if ( lTest != 2 )
 						{
 							Result = -12349;
-							e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), _T("SimpleTest failed.") ) );
+							e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError_SimpleTest ) );
 						}
 					}
 					catch (...)
 					{
 						Result = -12384;
-						e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result),  _T("SimpleTest failed - exception.") ) );
+						e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError_SimpleTestException ) );
 					}
 
 				}
@@ -212,13 +212,13 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 						Result = m_pfnStartup();
 						if ( S_OK != Result )
 						{
-							e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result),  _T("DLL Startup function failed.") ) );
+							e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError_DllStartup ) );
 						}
 					}
 					catch(...)
 					{
 						Result = -12385;
-						e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), _T("DLL Startup function failed.- exception") ) );
+						e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError_DllStartupException ) );
 					}
 				}
 				// Get Tool Name
@@ -231,7 +231,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 						Result = m_pfnGetToolName( &bstName );
 						if ( S_OK != Result )
 						{
-							e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result),  _T("DLL GetToolName function failed.") ) );
+							e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError_GetToolName ) );
 						}
 						else
 						{
@@ -241,7 +241,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 					catch(...)
 					{
 						Result = -12386;
-						e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result),  _T("DLL GetToolName failed.- exception") ) );
+						e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError_GetToolNameException ) );
 					}
 
 				}
@@ -255,7 +255,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 						Result = m_pfnGetToolVersion( &lTmp );
 						if ( S_OK != Result )
 						{
-							e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result),  _T("DLL GetToolVersion function failed.") ) );
+							e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError_GetToolVersion ) );
 						}
 						else
 						{
@@ -265,7 +265,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 					catch(...)
 					{
 						Result = -12387;
-						e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result),  _T("DLL GetToolVersion failed.- exception") ) );
+						e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError_GetToolVersionException ) );
 					}
 				}
 
@@ -273,33 +273,33 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 			else	// get proc address failure
 			{
 				Result = -12350;
-				e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result),  _T("") ) );
+				e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_Empty ) );
 
-				if ( !m_pfnSimpleTest )                             e.addMessage( SvStl::MessageData( -12351, _T("GetProcAddress failed SimpleTest") ), false );
-				if ( !m_pfnGetToolName )                            e.addMessage( SvStl::MessageData( -12352, _T("GetProcAddress failed GetToolName") ), false );
-				if ( !m_pfnGetToolVersion )                         e.addMessage( SvStl::MessageData( -12353, _T("GetProcAddress failed GetToolVersion") ), false );
-				if ( !m_pfnRunTool )                                e.addMessage( SvStl::MessageData( -12354, _T("GetProcAddress failed RunTool") ), false );
-				if ( !m_pfnStartup )                                e.addMessage( SvStl::MessageData( -12355, _T("GetProcAddress failed Startup") ), false );
-				if ( !m_pfnShutDown )                               e.addMessage( SvStl::MessageData( -12356, _T("GetProcAddress failed ShutDown") ), false );
-				if ( !m_pfnInitializeRun )                          e.addMessage( SvStl::MessageData( -12357, _T("GetProcAddress failed InitializeRun") ), false );
-				if ( !m_pfnUninitializeRun )                        e.addMessage( SvStl::MessageData( -12358, _T("GetProcAddress failed UninitializeRun") ), false );
-				if ( !m_pfnGetInputValueDefinitions )               e.addMessage( SvStl::MessageData( -12359, _T("GetProcAddress failed GetInputValueDefinitions") ), false );
-				if ( !m_pfnDestroyInputValueDefinitionStructures )  e.addMessage( SvStl::MessageData( -12360, _T("GetProcAddress failed DestroyInputValueDefinitionStructures") ), false );
-				if ( !m_pfnDestroyResultValueDefinitionStructures ) e.addMessage( SvStl::MessageData( -12361, _T("GetProcAddress failed DestroyResultValueDefinitionStructures") ), false );
-				if ( !m_pfnSetInputValues )                         e.addMessage( SvStl::MessageData( -12362, _T("GetProcAddress failed SetInputValues") ), false );
-				if ( !m_pfnGetResultValues )                        e.addMessage( SvStl::MessageData( -12363, _T("GetProcAddress failed GetResultValues") ), false );
-				if ( !m_pfnGetMessageString )                       e.addMessage( SvStl::MessageData( -12364, _T("GetProcAddress failed GetMessageString") ), false );
-				if ( !m_pfnValidateValueParameter )                 e.addMessage( SvStl::MessageData( -12365, _T("GetProcAddress failed ValidateValueParameter") ), false );
-				if ( !m_pfnGetResultValueDefinitions )              e.addMessage( SvStl::MessageData( -12366, _T("GetProcAddress failed GetResultValueDefinitions") ), false );
-				if ( !m_pfnGetNumberOfInputImages )                 e.addMessage( SvStl::MessageData( -12367, _T("GetProcAddress failed GetNumberOfInputImages") ), false );
-				if ( !m_pfnGetResultImageDefinitions )              e.addMessage( SvStl::MessageData( -12368, _T("GetProcAddress failed GetResultImageDefinitions") ), false );
-				if ( !m_pfnDestroyImageDefinitionStructure )        e.addMessage( SvStl::MessageData( -12369, _T("GetProcAddress failed DestroyImageDefinitionStructure") ), false );
+				if ( !m_pfnSimpleTest )                             e.addMessage( SvStl::MessageData( -12351, SvOi::Tid_GetProcAddressError_SimpleTest ), false );
+				if ( !m_pfnGetToolName )                            e.addMessage( SvStl::MessageData( -12352, SvOi::Tid_GetProcAddressError_GetToolName ), false );
+				if ( !m_pfnGetToolVersion )                         e.addMessage( SvStl::MessageData( -12353, SvOi::Tid_GetProcAddressError_GetToolVersion ), false );
+				if ( !m_pfnRunTool )                                e.addMessage( SvStl::MessageData( -12354, SvOi::Tid_GetProcAddressError_RunTool ), false );
+				if ( !m_pfnStartup )                                e.addMessage( SvStl::MessageData( -12355, SvOi::Tid_GetProcAddressError_Startup ), false );
+				if ( !m_pfnShutDown )                               e.addMessage( SvStl::MessageData( -12356, SvOi::Tid_GetProcAddressError_ShutDown ), false );
+				if ( !m_pfnInitializeRun )                          e.addMessage( SvStl::MessageData( -12357, SvOi::Tid_GetProcAddressError_InitializeRun ), false );
+				if ( !m_pfnUninitializeRun )                        e.addMessage( SvStl::MessageData( -12358, SvOi::Tid_GetProcAddressError_UninitializeRun ), false );
+				if ( !m_pfnGetInputValueDefinitions )               e.addMessage( SvStl::MessageData( -12359, SvOi::Tid_GetProcAddressError_GetInputValueDefinitions ), false );
+				if ( !m_pfnDestroyInputValueDefinitionStructures )  e.addMessage( SvStl::MessageData( -12360, SvOi::Tid_GetProcAddressError_DestroyInputValueDefinitionStructures ), false );
+				if ( !m_pfnDestroyResultValueDefinitionStructures ) e.addMessage( SvStl::MessageData( -12361, SvOi::Tid_GetProcAddressError_DestroyResultValueDefinitionStructures ), false );
+				if ( !m_pfnSetInputValues )                         e.addMessage( SvStl::MessageData( -12362, SvOi::Tid_GetProcAddressError_SetInputValues ), false );
+				if ( !m_pfnGetResultValues )                        e.addMessage( SvStl::MessageData( -12363, SvOi::Tid_GetProcAddressError_GetResultValues ), false );
+				if ( !m_pfnGetMessageString )                       e.addMessage( SvStl::MessageData( -12364, SvOi::Tid_GetProcAddressError_GetMessageString ), false );
+				if ( !m_pfnValidateValueParameter )                 e.addMessage( SvStl::MessageData( -12365, SvOi::Tid_GetProcAddressError_ValidateValueParameter ), false );
+				if ( !m_pfnGetResultValueDefinitions )              e.addMessage( SvStl::MessageData( -12366, SvOi::Tid_GetProcAddressError_GetResultValueDefinitions ), false );
+				if ( !m_pfnGetNumberOfInputImages )                 e.addMessage( SvStl::MessageData( -12367, SvOi::Tid_GetProcAddressError_GetNumberOfInputImages ), false );
+				if ( !m_pfnGetResultImageDefinitions )              e.addMessage( SvStl::MessageData( -12368, SvOi::Tid_GetProcAddressError_GetResultImageDefinitions ), false );
+				if ( !m_pfnDestroyImageDefinitionStructure )        e.addMessage( SvStl::MessageData( -12369, SvOi::Tid_GetProcAddressError_DestroyImageDefinitionStructure ), false );
 			}
 		}// end if ( m_hmHandle != NULL )
 		else	// can't load library
 		{
 			Result = -12378;
-			e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result),  _T("Could not load DLL (LoadLibrary failed).") ) );
+			e.setMessage( SvStl::MessageData( static_cast<DWORD> (Result), SvOi::Tid_ToolLoadError ) );
 		}
 	}
 
@@ -442,13 +442,12 @@ inline HRESULT SVDLLToolLoadLibraryClass::RunTool (GUID tool, long* plStatus)
 
 		if( l_hrOk != S_OK )
 		{
-			CString l_strTmp;
-			l_strTmp.Format( _T("Exception in SVRunTool of some External Dll %d \n"), l_hrOk);
-			TRACE (l_strTmp);
 			ASSERT (0);
+			SVStringArray msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), l_hrOk));
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( static_cast<DWORD> (l_hrOk), l_strTmp, StdMessageParams );
+			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvOi::Tid_RunTool_Exception, msgList, StdMessageParams );
 		}
 	}
 
@@ -510,13 +509,11 @@ inline HRESULT SVDLLToolLoadLibraryClass::InitializeRun ( GUID tool, long lImage
 
 		if( l_hrOk != S_OK )
 		{
-			CString l_strTmp;
-			l_strTmp.Format( _T("Exception in SVInitializeRun in some External Dll %d \n"), l_hrOk);
-			TRACE (l_strTmp);
 			ASSERT (0);
-
+			SVStringArray msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), l_hrOk));
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( static_cast<DWORD> (l_hrOk), l_strTmp, StdMessageParams );
+			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvOi::Tid_SVInitializeRun_Exception, msgList, StdMessageParams );
 		}
 	}
 

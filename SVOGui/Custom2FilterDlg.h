@@ -155,11 +155,9 @@ namespace Seidenader
 			void checkCellsValid();
 
 			//************************************
-			// Description: This method checks if the kernel data is valid
-			// Parameter: rMessage <out> Reference to the message to display if not valid
-			// Return: True if data valid
+			// Description: This method checks if the kernel data is valid. (Throw an exception if data invalid)
 			//************************************
-			bool isDataValid( SVString& rMessage ) const;
+			void isDataValid() const;
 
 			//************************************
 			// Description: This method determines if the control has the focus currently

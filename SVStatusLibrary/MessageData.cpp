@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MessageData.h"
+#include "MessageTextGenerator.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -31,11 +32,12 @@ namespace Seidenader { namespace SVStatusLibrary
 	{
 	}
 
-	MessageData::MessageData( DWORD MessageCode, LPCTSTR AdditionalText ) :
+	MessageData::MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList ) :
 	m_Logged( false )
 	, m_Displayed( false )
 	, m_MessageCode( MessageCode )
-	, m_AdditionalText( AdditionalText )
+	, m_AdditionalTextId( AdditionalTextId )
+	, m_AdditionalTextList( AdditionalTextList )
 	, m_SourceLine( 0 )
 	, m_ProgramCode( 0 )
 	, m_OSErrorCode( 0 )
@@ -47,7 +49,8 @@ namespace Seidenader { namespace SVStatusLibrary
 	  m_Logged( rRhs.m_Logged )
 	, m_Displayed( rRhs.m_Displayed )
 	, m_MessageCode( rRhs.m_MessageCode )
-	, m_AdditionalText( rRhs.m_AdditionalText )
+	, m_AdditionalTextId( rRhs.m_AdditionalTextId )
+	, m_AdditionalTextList( rRhs.m_AdditionalTextList )
 	, m_CompileDate( rRhs.m_CompileDate )
 	, m_CompileTime( rRhs.m_CompileTime )
 	, m_SourceFile( rRhs.m_SourceFile )
@@ -67,7 +70,8 @@ namespace Seidenader { namespace SVStatusLibrary
 			m_Logged = rRhs.m_Logged;
 			m_Displayed = rRhs.m_Displayed;
 			m_MessageCode = rRhs.m_MessageCode;
-			m_AdditionalText = rRhs.m_AdditionalText;
+			m_AdditionalTextId = rRhs.m_AdditionalTextId;
+			m_AdditionalTextList = rRhs.m_AdditionalTextList;
 			m_CompileDate = rRhs.m_CompileDate;
 			m_CompileTime = rRhs.m_CompileTime;
 			m_SourceFile = rRhs.m_SourceFile;
@@ -93,7 +97,8 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_Logged = false;
 		m_Displayed = false;
 		m_MessageCode = 0;
-		m_AdditionalText.clear();
+		m_AdditionalTextId = SvOi::Tid_Empty;
+		m_AdditionalTextList.clear();
 		m_CompileDate.clear();
 		m_CompileTime.clear();
 		m_SourceFile.clear();
@@ -103,6 +108,16 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_OSErrorCode = 0;
 		m_User.clear();
 		m_DateTime = 0;
+	}
+
+	SVString MessageData::getAdditionalText() const
+	{
+		return MessageTextGenerator::Instance().getText(m_AdditionalTextId, m_AdditionalTextList);
+	}
+
+	SVString MessageData::convertId2AddtionalText(SvOi::MessageTextEnum id)
+	{
+		return MessageTextGenerator::convertId2AddtionalText(id);
 	}
 #pragma endregion Public Methods
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */

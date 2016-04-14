@@ -8,6 +8,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary\SVString.h"
+#include "ObjectInterfaces\MessageTextEnum.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -17,10 +18,9 @@ namespace Seidenader
 		class RangeValidator
 		{
 		public:
-			static HRESULT IsFieldValid(SVString& msg, const SVString& fieldName, const SVString& value);
+			static void IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& value);
 
-			static HRESULT Validate(SVString& msg, 
-							HINSTANCE resHandle,
+			static void Validate(HINSTANCE resHandle,
 							const SVString& InspectionName, 
 							const SVString& FailHighIndirectValue, 
 							const SVString& FailLowIndirectValue, 

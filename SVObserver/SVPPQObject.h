@@ -373,7 +373,7 @@ protected:
 
 	BOOL RebuildProductInfoStructs();
 
-	HRESULT DisplayGoOnlineError(const CString& sReason, HRESULT hr = S_OK);
+	void DisplayGoOnlineError(SvOi::MessageTextEnum id, LPCTSTR name);
 
 	//************************************
 	/// Processes a single camera queue event

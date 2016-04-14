@@ -307,9 +307,11 @@ namespace Seidenader
 				hResult = S_FALSE;
 				m_EditRingDepth.SetFocus();
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				CString strText;
-				strText.Format(RingBuffer_Depth_Invalid_ValueString, SvOi::IRingBufferTool::m_minRingBufferDepth, SvOi::IRingBufferTool::m_maxRingBufferDepth, csText);
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult );
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::IRingBufferTool::m_minRingBufferDepth));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::IRingBufferTool::m_maxRingBufferDepth));
+				msgList.push_back(SVString(csText));
+				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, StdMessageParams, hResult );
 			}
 			return hResult;
 		}
@@ -328,9 +330,9 @@ namespace Seidenader
 			{
 				m_EditImageIndex[indexNumber].SetFocus();
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				CString strText;
-				strText.Format(RingBuffer_ImageIndex_Invalid_ValueString, indexNumber+1);
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult );
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%d"), indexNumber+1));
+				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_ImageIndex_Invalid_ValueString, msgList, StdMessageParams, hResult );
 			}
 			return hResult;
 		}

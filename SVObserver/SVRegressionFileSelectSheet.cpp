@@ -144,14 +144,14 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionBadList:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_WrongListSize, StdMessageParams, SvOi::Err_10188 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_WrongListSize, StdMessageParams, SvOi::Err_10188 ); 
 			ClearRegressionList();
 			return;
 		}
 		case SelectionInvalid:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_NoFileSelected, StdMessageParams, SvOi::Err_10189, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoFileSelected, StdMessageParams, SvOi::Err_10189, NULL, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				return;
@@ -166,7 +166,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionEmptyList:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10190, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10190, NULL, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				ClearRegressionList();
@@ -182,7 +182,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionInvalidMask:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10191, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10191, NULL, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				return;
@@ -197,7 +197,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionNoFiles:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_NoFilesSelected, StdMessageParams, SvOi::Err_10192, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoFilesSelected, StdMessageParams, SvOi::Err_10192, NULL, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				return;
@@ -213,7 +213,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionFileNotExist:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_FileNotExist, StdMessageParams, SvOi::Err_10193, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_FileNotExist, StdMessageParams, SvOi::Err_10193, NULL, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				return;

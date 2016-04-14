@@ -11,6 +11,7 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <ctime>
 #include "SVUtilityLibrary/SVString.h"
+#include "ObjectInterfaces/MessageTextEnum.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVStatusLibrary
@@ -24,9 +25,10 @@ namespace Seidenader { namespace SVStatusLibrary
 		//************************************
 		//! Constructor to set only the following parameters
 		//! \param MessageCode <in> the message code
-		//! \param AdditionalText <in> the additional text
+		//! \param AdditionalTextId <in> Id for the additional text
+		//! \param AdditionalTextList <in> List of strings for the additional text
 		//************************************
-		MessageData( DWORD MessageCode, LPCTSTR AdditionalText );
+		MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId = SvOi::Tid_Empty, SVStringArray AdditionalTextList = SVStringArray() );
 
 		//************************************
 		//! This is the copy constructor
@@ -49,6 +51,19 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! This is the method to clear the data
 		//************************************
 		void clear();
+
+		//************************************
+		/// Create addtionalText and return it
+		/// \returns SVString
+		//************************************
+		SVString getAdditionalText() const;
+
+		//************************************
+	/// Convert an enum id to a string for setting it to the addtionalTextList.
+	/// \param id [in] the id
+	/// \returns SVString
+	//************************************
+		static SVString convertId2AddtionalText(SvOi::MessageTextEnum id);
 #pragma endregion Public Methods
 
 #pragma region Member Variables
@@ -56,7 +71,8 @@ namespace Seidenader { namespace SVStatusLibrary
 		bool m_Logged;						//Flag indicating if the message was written to the event log
 		bool m_Displayed;					//Flag indicating if the message has been displayed
 		DWORD m_MessageCode;				//Number identifying the message
-		SVString m_AdditionalText;			//The additional text to the message code
+		SvOi::MessageTextEnum m_AdditionalTextId;
+		SVStringArray m_AdditionalTextList;
 		SVString m_CompileDate;				//Date the source file was compiled.
 		SVString m_CompileTime;				//Time the source file was compiled.
 		SVString m_SourceFile;				//Name of the source file where the message was encountered.

@@ -99,11 +99,11 @@ protected:
 	BOOL ProcessOnKillfocus(UINT nId);
 	
 	// Validation
-	UINT ValidateEditableParameters();
-	UINT ValidateAdditionalCandidatesValue();
-	UINT ValidatePreliminaryAcceptanceThreshold();
-	UINT ValidateCandidatesSpacingXMinValue();
-	UINT ValidateCandidatesSpacingYMinValue();
+	void ValidateEditableParameters();
+	void ValidateAdditionalCandidatesValue();
+	void ValidatePreliminaryAcceptanceThreshold();
+	void ValidateCandidatesSpacingXMinValue();
+	void ValidateCandidatesSpacingYMinValue();
 
 	// Generated message map functions
 	//{{AFX_MSG(SVPatAdvancedPageClass)

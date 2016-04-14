@@ -255,7 +255,7 @@ namespace Seidenader
 				if (S_OK != hr)
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOg::Error_CreationFilterFailed, StdMessageParams, SvOi::Err_10231 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CreationFilterFailed, StdMessageParams, SvOi::Err_10231 );
 				}
 
 				// Refresh Dialog...

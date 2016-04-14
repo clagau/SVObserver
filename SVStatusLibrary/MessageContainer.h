@@ -34,7 +34,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//************************************
 		//! This is the constructor to set the data on construction
 		//! \param MessageCode <in> the number identifying the message
-		//! \param AdditionalText <in> the additional text to the code
+		//! \param AdditionalTextId <in> the Id for the additional text to the code (without AdditionalTextList)
 		//! \param CompileDate <in> the file compile date
 		//! \param CompileTime <in> the file compile time
 		//! \param SourceFile <in> the source file in which code set
@@ -44,7 +44,25 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param OSErrorCode <in> the operating system error code
 		//! \param User <in> the respective user for security messages
 		//************************************
-		MessageContainer( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+						LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
+						DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User = nullptr );
+
+		//************************************
+		//! This is the constructor to set the data on construction
+		//! \param MessageCode <in> the number identifying the message
+		//! \param AdditionalTextId <in> the Id for the additional text to the code
+		//! \param AdditionalTextList <in> List of strings for the additional text to the code
+		//! \param CompileDate <in> the file compile date
+		//! \param CompileTime <in> the file compile time
+		//! \param SourceFile <in> the source file in which code set
+		//! \param SourceLine <in> the source line number in which code set
+		//! \param SourceDateTime <in> the source file date time in which code set
+		//! \param ProgramCode <in> the unique program ID for the code
+		//! \param OSErrorCode <in> the operating system error code
+		//! \param User <in> the respective user for security messages
+		//************************************
+		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
 						LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
 						DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User = nullptr );
 
@@ -67,7 +85,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
 		//! \param MessageCode <in> the number identifying the message
-		//! \param AdditionalText <in> the additional text to the code
+		//! \param AdditionalTextId <in> the Id for the additional text to the code (without AdditionalTextList)
 		//! \param CompileDate <in> the file compile date
 		//! \param CompileTime <in> the file compile time
 		//! \param SourceFile <in> the source file in which code set
@@ -77,7 +95,25 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param OSErrorCode <in> the operating system error code
 		//! \param User <in> the respective user for security messages
 		//************************************
-		void setMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+			LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
+			DWORD dwProgramCode=0, DWORD dwOsErrorCode=0, LPCTSTR User=nullptr);
+
+		//************************************
+		//! This is the method to set the data this will delete the m_AdditonalMessages list
+		//! \param MessageCode <in> the number identifying the message
+		//! \param AdditionalTextId <in> the Id for the additional text to the code
+		//! \param AdditionalTextList <in> List of strings for the additional text to the code
+		//! \param CompileDate <in> the file compile date
+		//! \param CompileTime <in> the file compile time
+		//! \param SourceFile <in> the source file in which code set
+		//! \param SourceLine <in> the source line number in which code set
+		//! \param SourceDateTime <in> the source file date time in which code set
+		//! \param ProgramCode <in> the unique program ID for the code
+		//! \param OSErrorCode <in> the operating system error code
+		//! \param User <in> the respective user for security messages
+		//************************************
+		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
 			LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
 			DWORD dwProgramCode=0, DWORD dwOsErrorCode=0, LPCTSTR User=nullptr);
 
@@ -92,7 +128,8 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! This method first adds the current main message to the m_AdditionalMessage list 
 		//! and then sets the main message with the parameters
 		//! \param MessageCode <in> the number identifying the message
-		//! \param AdditionalText <in> the additional text to the code
+		//! \param AdditionalTextId <in> the Id for the additional text to the code
+		//! \param AdditionalTextList <in> List of strings for the additional text to the code
 		//! \param CompileDate <in> the file compile date
 		//! \param CompileTime <in> the file compile time
 		//! \param SourceFile <in> the source file in which code set
@@ -102,7 +139,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param OSErrorCode <in> the operating system error code
 		//! \param User <in> the respective user for security messages
 		//************************************
-		void addMessage( long MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, 
+		void addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
 			LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
 			DWORD dwProgramCode=0, DWORD dwOsErrorCode=0, LPCTSTR User=nullptr);
 

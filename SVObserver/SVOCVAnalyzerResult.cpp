@@ -862,7 +862,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						// No MIL image buffer handle..
 						//
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_NoMilHostBuffer, StdMessageParams, SvOi::Err_10169);
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoMilHostBuffer, StdMessageParams, SvOi::Err_10169);
 					}
 					else
 					{
@@ -874,10 +874,10 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 						if ( imageTypeMil != 8)  // (8L + M_UNSIGNED) )
 						{
-							CString s;
-							s.Format(SvO::Error_MilImageTypeInvalid,imageTypeMil);
+							SVStringArray msgList;
+							msgList.push_back(SvUl_SF::Format(_T("%x"), imageTypeMil));
 							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s, StdMessageParams, SvOi::Err_10170);
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_MilImageTypeInvalid, msgList, StdMessageParams, SvOi::Err_10170);
 						}
 					}
 				}
@@ -1383,16 +1383,15 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 //	if( !bOk )
 	if (l_Code & SV_ARC_ERROR)
 	{
-		CString		l_csMessage;
-
 		assert (0);
 		SetInvalid();
 		RRunStatus.SetInvalid();
 
-		l_csMessage.Format ("Error in SVOCVAnalyzeResultClass::onRun");
+		SVStringArray msgList;
+		msgList.push_back(_T("SVOCVAnalyzeResultClass::onRun"));
 
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (l_Code), l_csMessage, StdMessageParams );
+		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, StdMessageParams );
 
 		bOk = false;
 	}

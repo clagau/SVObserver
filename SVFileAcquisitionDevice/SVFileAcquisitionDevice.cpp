@@ -620,11 +620,8 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 						wsprintf(l_szbuf, "FileAcquisition::CopyImage - Error in Format");
 						TRACE( "%s\n", l_szbuf );
 
-						CString l_csBuf;
-						l_csBuf.Format(_T("E: FileAcquisition::CopyImage - Error in Format"));
-
 						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, l_csBuf, StdMessageParams );
+						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, SvOi::Tid_FileAcquisition_FormatError, StdMessageParams );
 					}
 				}
 				else

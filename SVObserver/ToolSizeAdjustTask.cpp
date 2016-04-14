@@ -476,14 +476,16 @@ DWORD_PTR	ToolSizeAdjustTask::ProcessResetAllObject( DWORD DwMessageID, DWORD_PT
 					GetTool()->SetInvalid();
 				}
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
-				CString ErrorMsg(_T("Error in Reset"));
+				SvOi::MessageTextEnum messageId = SvOi::Tid_ErrorInReset;
+				SVStringArray msgList;
 				if(GetTool()->GetName())
 				{
-					ErrorMsg.Format(_T("The new extents for the %s are not valid"), GetTool()->GetName());
+					messageId = SvOi::Tid_InValidNewExtents;
+					msgList.push_back(GetTool()->GetName());
 				}
 				SvStl::MsgTypeEnum mode = SilentReset ? SvStl::LogOnly :  SvStl::LogAndDisplay;
 				SvStl::MessageMgrDisplayAndNotify Exception(mode);
-				Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, ErrorMsg.GetString(), StdMessageParams, ResetStatus );
+				Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, StdMessageParams, ResetStatus );
 				DwResult = SVMR_NO_SUCCESS | DwResult;
 			}
 			else

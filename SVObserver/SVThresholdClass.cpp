@@ -442,16 +442,15 @@ BOOL SVThresholdClass::onRun( BOOL First,
 	// Signal threshold operator was not running...
 	if (l_Code & SV_OC_ERROR)
 	{
-		CString		l_csMessage;
-
 		assert (0);
 		SetInvalid();
 		RRunStatus.SetInvalid();
 
-		l_csMessage.Format ("Error in SVThresholdClass::onRun");
+		SVStringArray msgList;
+		msgList.push_back(_T("SVThresholdClass::onRun"));
 		
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (l_Code), l_csMessage, StdMessageParams );
+		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, StdMessageParams );
 
 		RRunStatus.SetCriticalFailure();
 

@@ -13,6 +13,7 @@
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
 #include "GuiController.h"
+#include "ObjectInterfaces\MessageTextEnum.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -36,8 +37,8 @@ namespace Seidenader
 
 			void FillObjectSelector();
 			SVString GetOwnerName() const;
-			HRESULT IsFieldValid(SVString& msg, const SVString& rFieldName, const SVString& rValue);
-			HRESULT Validate(SVString& msg, HINSTANCE resHandle);
+			void IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& rValue);
+			void Validate(HINSTANCE resHandle);
 
 			static const std::string FailHigh;
 			static const std::string FailLow;

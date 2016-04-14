@@ -410,16 +410,16 @@ void SVExternalToolDlg::InitializeDll()
 		UpdateData(TRUE);
 		m_strStatus +=  _T("DLL did not pass.") + CRLF;
 
-		if ( !e.getMessage().m_AdditionalText.empty() )
+		if ( !e.getMessage().getAdditionalText().empty() )
 		{
-			m_strStatus += e.getMessage().m_AdditionalText.c_str();
+			m_strStatus += e.getMessage().getAdditionalText().c_str();
 			m_strStatus += CRLF;
 		}
 		const SvStl::Messages& AdditionalMessages( e.getAdditionalMessages() );
 		SvStl::Messages::const_iterator iter;
 		for (iter = AdditionalMessages.begin(); iter != AdditionalMessages.end(); ++iter)
 		{
-			m_strStatus += iter->m_AdditionalText.c_str();
+			m_strStatus += iter->getAdditionalText().c_str();
 			m_strStatus += CRLF;
 		}
 		UpdateData(FALSE);

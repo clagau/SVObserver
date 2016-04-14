@@ -107,62 +107,61 @@ BOOL CALLBACK FindUtilityById (CString &szKeyName, LPVOID pVoid)
 
 void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 {
-  SVRegistryClass reg(gmszUtilityKey);
-  UTILITYINFO utilInfo;
-  SVUtilityArgumentDialogClass dlg;
-  SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
+	SVRegistryClass reg(gmszUtilityKey);
+	UTILITYINFO utilInfo;
+	SVUtilityArgumentDialogClass dlg;
+	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
 
-  utilInfo.bUtilityFound = FALSE;
-  utilInfo.uiId = uiUtilityId;
-  
-  if ( uiUtilityId != ID_EXTRAS_UTILITIES_LIMIT )
-  {
-	  std::map<UINT, SVUtilityIniClass>::iterator iter;
+	utilInfo.bUtilityFound = FALSE;
+	utilInfo.uiId = uiUtilityId;
 
-	  iter = pApp->m_UtilityMenu.find(uiUtilityId);
-	  if ( iter != pApp->m_UtilityMenu.end() )
-	  {
-		  SVUtilityIniClass l_Struct;
-		  l_Struct = iter->second;
+	if ( uiUtilityId != ID_EXTRAS_UTILITIES_LIMIT )
+	{
+		std::map<UINT, SVUtilityIniClass>::iterator iter;
 
-		  if ( l_Struct.m_csPromptForArguments.Left(1).CompareNoCase("Y")== 0 )
-		  {
-			  utilInfo.bPromptForArguments = TRUE;
-		  }
-		  else
-		  {
-			  utilInfo.bPromptForArguments = FALSE;
-		  }
-		  utilInfo.bUtilityFound = TRUE;
-		  utilInfo.szArguments = l_Struct.m_csArguments;
-		  utilInfo.szCommand = l_Struct.m_csCommand;
-		  utilInfo.szUtilityName = l_Struct.m_csDisplayName;
-		  utilInfo.szWorkingDirectory = l_Struct.m_csWorkingDirectory;
-	  }
-  }
+		iter = pApp->m_UtilityMenu.find(uiUtilityId);
+		if ( iter != pApp->m_UtilityMenu.end() )
+		{
+			SVUtilityIniClass l_Struct;
+			l_Struct = iter->second;
 
-  //note: need to prompt for arguments!
-  if (utilInfo.bUtilityFound)
-  {
-    if (utilInfo.bPromptForArguments)
-    {
-      if (IDOK == dlg.DoModal())
-      {
-        utilInfo.szArguments.Empty();
-        utilInfo.szArguments = dlg.mszArguments;
-      }
-    }
-	
-	if( pAccess->SVCreateProcess(utilInfo.szCommand, utilInfo.szWorkingDirectory, utilInfo.szArguments ) )
-    {
-      CString msg;
-      msg.Format (_T("Unable to start %s\n(%s).\n\nCheck Utility Properties."),
-                  utilInfo.szUtilityName,
-                  utilInfo.szCommand);
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msg, StdMessageParams, SvOi::Err_10237 );
-    }
-  }
+			if ( l_Struct.m_csPromptForArguments.Left(1).CompareNoCase("Y")== 0 )
+			{
+				utilInfo.bPromptForArguments = TRUE;
+			}
+			else
+			{
+				utilInfo.bPromptForArguments = FALSE;
+			}
+			utilInfo.bUtilityFound = TRUE;
+			utilInfo.szArguments = l_Struct.m_csArguments;
+			utilInfo.szCommand = l_Struct.m_csCommand;
+			utilInfo.szUtilityName = l_Struct.m_csDisplayName;
+			utilInfo.szWorkingDirectory = l_Struct.m_csWorkingDirectory;
+		}
+	}
+
+	//note: need to prompt for arguments!
+	if (utilInfo.bUtilityFound)
+	{
+		if (utilInfo.bPromptForArguments)
+		{
+			if (IDOK == dlg.DoModal())
+			{
+				utilInfo.szArguments.Empty();
+				utilInfo.szArguments = dlg.mszArguments;
+			}
+		}
+
+		if( pAccess->SVCreateProcess(utilInfo.szCommand, utilInfo.szWorkingDirectory, utilInfo.szArguments ) )
+		{
+			SVStringArray msgList;
+			msgList.push_back(SVString(utilInfo.szUtilityName));
+			msgList.push_back(SVString(utilInfo.szCommand));
+			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnableStart_Utility, msgList, StdMessageParams, SvOi::Err_10237 );
+		}
+	}
 }
 
 BOOL SVUtilitiesClass::SetupUtilities(CMenu *pMenu)

@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
+#include "ObjectInterfaces/MessageTextEnum.h"
 #pragma endregion Includes
 
 enum 
@@ -86,7 +87,7 @@ private:
 	BOOL SaveRegExpression( BOOL DisplayErrorMessage = TRUE );
 	BOOL LoadRegExpression( BOOL DisplayErrorMessage = TRUE );
 
-	CString errStr;							// for errorEvent
+	SvOi::MessageTextEnum m_errId;							// for errorEvent
 
 	bool m_bHasLicenseError;
 };

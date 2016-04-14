@@ -155,9 +155,11 @@ BOOL RingBufferTool::OnValidate()
 	{
 		bValid = false;
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		CString strText;
-		strText.Format(SvO::RingBuffer_Depth_Invalid_Value, m_minRingBufferDepth, m_maxRingBufferDepth, ringBufferDepth);
-		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, strText, StdMessageParams, SvOi::Err_10013_RingBuffer_DepthValueInvalid );
+		SVStringArray msgList;
+		msgList.push_back(SvUl_SF::Format("%d", m_minRingBufferDepth));
+		msgList.push_back(SvUl_SF::Format("%d", m_maxRingBufferDepth));
+		msgList.push_back(SvUl_SF::Format("%d", ringBufferDepth));
+		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, SvOi::Tid_RingBuffer_Depth_Invalid_Value, msgList, StdMessageParams, SvOi::Err_10013_RingBuffer_DepthValueInvalid );
 	}
 	for (int i=0; i< m_numberOfOutputImages; ++i)
 	{

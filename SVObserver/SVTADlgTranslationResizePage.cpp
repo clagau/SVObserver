@@ -131,7 +131,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 	if (S_OK != hr)
 	{
 		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( hr, nullptr, StdMessageParams, 5015);
+		Exception.setMessage( hr, SvOi::Tid_Empty, StdMessageParams, 5015);
 	}
 
 	UpdateData(FALSE); // dialog being initialized.
@@ -954,16 +954,6 @@ bool	SVTADlgTranslationResizePage::QueryAllowExit()
 
 HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 {
-	HRESULT		hr =		S_OK;
-	HRESULT		hrTemp =	S_OK;
-	BOOL		br =		FALSE;
-	LRESULT		lr =		S_OK; // not used.
-	bool		alreadyDisplayed = false;
-
-	SVString	tString;
-
-	SVRPropertyItem* item = m_Tree.GetFocusedItem ();
-
 	// if changes in the property are pending, CommitChanges() will fire off 
 	// OnItemChanged(). Because OnItemChanged() will in turn go into 
 	// RunOnce() and ResetObject() logic, we will attempt to retrieve 
@@ -972,87 +962,69 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 
 	// It is possible for no item to be in focus if the table was not clicked 
 	// on.  In which case nothing has changed.
+	SVRPropertyItem* item = m_Tree.GetFocusedItem ();
 	if (nullptr != item)
 	{
 		item->CommitChanges();  
 	}
 
-	hr = m_pTool->GetRunErrorCode();
-	tString = m_pTool->GetRunErrorData();
+	SvStl::MessageData message = m_pTool->GetRunErrorData();
 	
 	// above validates the parameters from the translation tab.
 	// below validates the whole tool.
-
-	if (SUCCEEDED (hr))
+	if (SUCCEEDED (message.m_MessageCode))
 	{
-		br = m_pTool->Validate();
-		hr = m_pTool->GetValidationErrorCode();
-		if ((TRUE == br) != SUCCEEDED (hr))
+		BOOL br = m_pTool->Validate();
+		message = m_pTool->GetValidationErrorData();
+		if ((TRUE == br) != SUCCEEDED (message.m_MessageCode))
 		{
-			hr = SVMSG_SVO_5078_INCONSISTENTDATA;
+			message = SvStl::MessageData(SVMSG_SVO_5078_INCONSISTENTDATA);
+		}
+	}
+
+	if (SUCCEEDED (message.m_MessageCode))
+	{
+		HRESULT hr = RunOnce(m_pTool);
+		SvStl::MessageData tmpMessage = m_pTool->GetRunErrorData();
+		if (hr == tmpMessage.m_MessageCode)
+		{
+			message = tmpMessage;
 		}
 		else
-			if (!SUCCEEDED (hr))
-			{
-				tString = m_pTool->GetValidationErrorData();
-			}
-	}
-	else
-	{
-		// anything that failed during the commit should have already been 
-		// displayed.
-		alreadyDisplayed = true;
-	}
-
-	if (SUCCEEDED (hr))
-	{
-
-		hr = RunOnce(m_pTool);
-		hrTemp = m_pTool->GetRunErrorCode();
-		if (hr == hrTemp)
 		{
-			tString = m_pTool->GetRunErrorData();
+			message.m_MessageCode = hr;
 		}
 	}
 
-	if (!SUCCEEDED (hr))
+	if (!SUCCEEDED (message.m_MessageCode))
 	{
-		DisplayRunError(hr, tString, 5068);
+		DisplayRunError(message, 5068);
 	}
 
-	return hr;
+	return message.m_MessageCode;
 }
 
 
-HRESULT		SVTADlgTranslationResizePage::DisplayRunError (HRESULT errorCode, SVString errorString, unsigned long programCode)
+void	SVTADlgTranslationResizePage::DisplayRunError (const SvStl::MessageData& displayMessage, unsigned long programCode)
 {
-	HRESULT hr = S_OK;
+	const SvStl::MessageData& message = m_pTool->GetRunErrorData();
 
-	HRESULT runError = m_pTool->GetRunErrorCode ();
-	bool	displayed = m_pTool->GetRunDisplayed ();
-
-	if (errorCode == runError)
+	if (displayMessage.m_MessageCode == message.m_MessageCode)
 	{
-		if (true == displayed)
+		if (!message.m_Displayed)
 		{
-			// do nothing, this error message has already been displayed.
-		}
-		else
-		{
-			// this is the Run Error and should be displayed.
+			// this is the Run Error and hasn't already been displayed. Should be displayed.
 			SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
-			Exception.setMessage( errorCode, errorString.c_str(), StdMessageParams, programCode);
-			hr = m_pTool->SetRunDisplayed(true);
+			Exception.setMessage( displayMessage.m_MessageCode, displayMessage.m_AdditionalTextId, displayMessage.m_AdditionalTextList, StdMessageParams, programCode);
+			m_pTool->SetRunDisplayed(true);
 		}
 	}
 	else
 	{
 		// this is not the Run Error and should always be displayed.
 		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( errorCode, errorString.c_str(), StdMessageParams, programCode);
+		Exception.setMessage( displayMessage.m_MessageCode, displayMessage.m_AdditionalTextId, displayMessage.m_AdditionalTextList, StdMessageParams, programCode);
 	}
-
-	return hr;
 }
 
 
@@ -1136,10 +1108,7 @@ void SVTADlgTranslationResizePage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* 
 
 HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* item)
 {
-//	bool bValid = true;
-
-	SVString tString;
-	HRESULT hrTemp = S_OK;
+	SvStl::MessageData message;
 
 	// Some items are checked before the RunOnce, and then the RunOnce is 
 	// bypassed.  So the clear must be explicitly called.
@@ -1154,7 +1123,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 		// Error handling within these processes is not complete. The 
 		// maintains members to help pass error data outside these 
 		// operations.
-		HRESULT hrTemp = m_pTool->GetRunErrorCode();
+		message = m_pTool->GetRunErrorData();
 
 		if (((SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr) ||
 			 (SVMSG_SVO_5061_SFOUTSIDERANGE == hr)) &&
@@ -1166,19 +1135,15 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 				hr = SVMSG_SVO_5070_IMAGEALLOCATIONFAILED;
 			}
 
-			tString = item->GetLabelText();
+			SVStringArray msgList;
+			msgList.push_back(item->GetLabelText());
+			message.m_AdditionalTextId = SvOi::Tid_Default;
+			message.m_AdditionalTextList = msgList;
 		}
-		else
-		if (hr == hrTemp)
-		{
-			tString = m_pTool->GetRunErrorData();
-		}
+		message.m_MessageCode = hr;
 
-		DisplayRunError(hr, tString.c_str(), SvOi::ProgCode_5067_ValidateCurrentTreeData);
+		DisplayRunError(message, SvOi::ProgCode_5067_ValidateCurrentTreeData);
 	}
-
-	hrTemp = hr;
-
 
 	if (!SUCCEEDED (hr))
 	{
@@ -1202,8 +1167,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 			// and there was no error setting the properties back to the 
 			// original values, then preserve the first error (which was 
 			// displayed).
-			m_pTool->SetRunErrorCode (hrTemp);
-			m_pTool->SetRunErrorData (tString);
+			m_pTool->SetRunErrorData (message);
 			m_pTool->SetRunDisplayed(true);
 		}
 	}

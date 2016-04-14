@@ -250,7 +250,7 @@ static void WriteMonitorListToSharedMemory(const std::string& name, const std::s
 	else
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvO::ErrorWriteMonitorListNoSharedMemory, StdMessageParams, SvOi::Err_15020 );
+		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ErrorWriteMonitorListNoSharedMemory, StdMessageParams, SvOi::Err_15020 );
 	}
 }
 

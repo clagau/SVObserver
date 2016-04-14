@@ -93,7 +93,7 @@ DWORD WINAPI SVEventThread<SVEventThreadSignalHandler>::ThreadProc( LPVOID lpPar
 		Result = SVMSG_THREAD_EXIT_ERROR;
 
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (Result), _T( "Unknown Thread" ), StdMessageParams, SvOi::Err_25022_EventThread, errorCode );
+		Exception.setMessage( static_cast<DWORD> (Result), SvOi::Tid_UnknowThread, StdMessageParams, SvOi::Err_25022_EventThread, errorCode );
 	}
 
 	return Result;

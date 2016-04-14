@@ -262,12 +262,12 @@ namespace Seidenader { namespace SVOGui
 		return PPQName;
 	}
 
-	HRESULT RangeController::IsFieldValid(SVString& rMsg, const SVString& rFieldName, const SVString& rValue)
+	void RangeController::IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& rValue)
 	{
-		return RangeValidator::IsFieldValid(rMsg, rFieldName, rValue);
+		RangeValidator::IsFieldValid(fieldName, rValue);
 	}
 
-	HRESULT RangeController::Validate(SVString& msg, HINSTANCE resHandle)
+	void RangeController::Validate(HINSTANCE resHandle)
 	{
 		SVString InspectionName = GetInspectionName();
 
@@ -280,6 +280,6 @@ namespace Seidenader { namespace SVOGui
 		double WarnHighValue = m_directRangeValues.Get<double>(WarnHigh);
 		double WarnLowValue = m_directRangeValues.Get<double>(WarnLow);
 
-		return RangeValidator::Validate(msg, resHandle, InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_InspectionID);
+		RangeValidator::Validate(resHandle, InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_InspectionID);
 	}
 } /* namespace SVOGui */ } /* namespace Seidenader */

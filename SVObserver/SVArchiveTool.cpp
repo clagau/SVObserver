@@ -397,9 +397,10 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 
 	if(!bResult)
 	{
-		SVString s = SvUl_SF::Format(SvO::Error_ArchiveTool_CreateFileFailed,	(LPCTSTR)csFileArchivePath);
+		SVStringArray msgList;
+		msgList.push_back(SVString(csFileArchivePath));
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, s.c_str(), StdMessageParams, SvOi::Err_10036 ); 
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_CreateFileFailed, msgList, StdMessageParams, SvOi::Err_10036 ); 
 		return FALSE;
 	}
 	
@@ -572,9 +573,10 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 
 					if ( msvError.msvlErrorCd == -3 )
 					{ //should not ever get here since the path is validated above
-						SVString temp = SvUl_SF::Format (SvO::Error_PathFileNotFound, csImagePath);
+						SVStringArray msgList;
+						msgList.push_back(SVString(csImagePath));
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, temp.c_str(), StdMessageParams, SvOi::Err_10037 ); 
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PathFileNotFound, msgList, StdMessageParams, SvOi::Err_10037 ); 
 
 						bOk = FALSE;
 					}

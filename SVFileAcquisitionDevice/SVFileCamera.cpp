@@ -360,17 +360,20 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 	else
 	{
 		// add to event log
-		CString l_csBuf;
+		SVStringArray msgList;
+		SvOi::MessageTextEnum id = SvOi::Tid_Empty;
 		if (filename.empty())
 		{
-			l_csBuf.Format(_T("E: FileAcquisition::No Image File to Load, possible Invalid or Empty Directory %s"), pCamera->GetDirectory());
+			msgList.push_back(pCamera->GetDirectory());
+			id = SvOi::Tid_FileCamera_NoImageFile;
 		}
 		else
 		{
-			l_csBuf.Format(_T("E: FileAcquisition::Unable to Load Image File %s"), filename.c_str());
+			msgList.push_back(filename);
+			id = SvOi::Tid_FileCamera_LoadFailed;
 		}
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, l_csBuf, StdMessageParams );
+		Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, id, msgList, StdMessageParams );
 	}
 }
 

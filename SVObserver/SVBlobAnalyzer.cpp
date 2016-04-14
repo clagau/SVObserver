@@ -455,7 +455,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), NULL ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10041 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10041 ); 
 					
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
@@ -547,7 +547,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pResultBlob), NULL ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10042 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10042 ); 
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = m_pResultBlob->GetUniqueObjectID();

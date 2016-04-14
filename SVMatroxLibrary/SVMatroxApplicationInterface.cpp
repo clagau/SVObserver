@@ -478,16 +478,12 @@ void SVMatroxApplicationInterface::LocalInitialize()
 
 			if ( SV_CURRENT_MIL_VERSION != l_lMilVersion )
 			{
-				TCHAR l_szMsg[ 1024 ];
-
-				_stprintf_s( l_szMsg, 1024,
-					_T("This version of SVObserver will not run with the installed MIL library. ")
-					_T("SVObserver needs MIL %4.2f. The installed version is %4.2f"),
-					SV_CURRENT_MIL_VERSION, 
-					l_MilVersion );
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), SV_CURRENT_MIL_VERSION));
+				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), l_MilVersion));
 				
 				SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, l_szMsg, StdMessageParams, SvOi::Err_10249 );
+				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvOi::Tid_MilVersion_Error, msgList, StdMessageParams, SvOi::Err_10249 );
 				::exit( EXIT_FAILURE );
 			}
 		}

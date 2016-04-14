@@ -48,16 +48,6 @@ namespace Seidenader
 		static const TCHAR CustomFilterExportFileFilters[] = _T("Custom Filter Export Files (*.xcf)|*.xcf||");
 		static const TCHAR CustomFilterExportFileExt[] = _T("xcf");
 
-		static const TCHAR ExportFailed[] = _T("Custom filter export failed");
-		static const TCHAR ImportFailed[] = _T("The Custom Filter file [%s] could not be imported.");
-		static const TCHAR XmlFormatInvalid[] = _T("\r\nThe XML format is invalid.");
-		static const TCHAR VersionMismatch[] = _T("\r\nVersion mismatch.");
-		static const TCHAR ImportFailedDataInvalid[] = _T("Custom filter import failed, Kernel data is invalid.\r\n");
-		static const TCHAR DataInvalidKernelSize[] = _T("The Kernel array size [%d] does not match the size of the Kernel Width [%d] and Height [%d]");
-		static const TCHAR DataInvalidKernelWidth[] = _T("The Kernel Width is not valid [%d], it must be odd and be between the limits including 1 and %d");
-		static const TCHAR DataInvalidKernelHeight[] = _T("The Kernel Height is not valid [%d], it must be odd and be between the limits including 1 and %d");
-		static const TCHAR DataInvalidNormalizationFactor[] = _T("The Normalization Factor is not allowed to be 0 or negative");
-
 		static const std::string KernelWidthTag("KernelWidth");
 		static const std::string KernelHeidghtTag("KernelHeight");
 		static const std::string IsClippingTag("IsClipping");
@@ -240,7 +230,7 @@ namespace Seidenader
 			if( 0 == m_KernelSum )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, DataInvalidNormalizationFactor, StdMessageParams, SvOi::Err_10225 );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, StdMessageParams, SvOi::Err_10225 );
 			}
 			else
 			{
@@ -332,68 +322,83 @@ namespace Seidenader
 
 			if( IDOK == FileDlg.DoModal() )
 			{
-				SVString Message;
 				SVString pathName = FileDlg.GetPathName();
+				SvStl::MessageContainer message;
+
+				//Save current values in case of a restore
+				long KernelWidth( m_KernelWidth );
+				long KernelHeight( m_KernelHeight );
+				long NormalizationFactor( m_NormalizationFactor );
+				BOOL AbsoluteValue( m_AbsoluteValue );
+				BOOL ClippingEnabled( m_ClippingEnabled );
+				ICustom2Filter::LongArray KernelArray;
+				m_KernelArray.swap( KernelArray );
 
 				try
 				{
-					//Save current values in case of a restore
-					long KernelWidth( m_KernelWidth );
-					long KernelHeight( m_KernelHeight );
-					long NormalizationFactor( m_NormalizationFactor );
-					BOOL AbsoluteValue( m_AbsoluteValue );
-					BOOL ClippingEnabled( m_ClippingEnabled );
-					ICustom2Filter::LongArray KernelArray;
-					m_KernelArray.swap( KernelArray );
-
 					HRESULT Result = importCustom2Filter(pathName, m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray);
-					SVString DataInvalidMessage;
-					if ( S_OK != Result || !isDataValid( DataInvalidMessage ))
+					if ( S_OK == Result )
+					{
+						isDataValid();
+					}
+					else
 					{
 						if (E_CUSTOM_IMPORT_FORMAT_INVALID == Result)
 						{
-							Message = SvUl_SF::Format( ImportFailed, pathName );
-							Message += XmlFormatInvalid;
+							SVStringArray msgList;
+							msgList.push_back(pathName);
+							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_XmlFormatInvalid));
+							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, StdMessageParams, SvOi::Err_10226 );
 						}
 						else if (E_CUSTOM_IMPORT_VERSION_MISMATCH == Result)
 						{
-							Message = SvUl_SF::Format( ImportFailed, pathName );
-							Message += VersionMismatch;
+							SVStringArray msgList;
+							msgList.push_back(pathName);
+							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_VersionMismatch));
+							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, StdMessageParams, SvOi::Err_10226 );
 						}
 						else
 						{
-							Message =  ImportFailedDataInvalid;
-							Message += DataInvalidMessage;
+							SVStringArray msgList;
+							msgList.push_back(pathName);
+							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
+							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, StdMessageParams, SvOi::Err_10226 );
 						}
-
-
-						//Need to restore the previous values before the import
-						m_KernelWidth = KernelWidth;
-						m_KernelHeight = KernelHeight;
-						m_NormalizationFactor = NormalizationFactor;
-						m_AbsoluteValue = AbsoluteValue;
-						m_ClippingEnabled = ClippingEnabled;
-						m_KernelArray.swap( KernelArray );
 					}
-
-					recalculateKernel( m_KernelWidth, m_KernelHeight );
-					UpdateData( FALSE );
-
-					//Set the focus and visibility to the first cell
-					m_Grid.SetFocusCell( 1, 1 );
-					m_Grid.SetSelectedRange( 1, 1, 1, 1 );
-					m_Grid.EnsureVisible( 1, 1 );
-					m_Grid.Refresh();
+				}
+				catch (const SvStl::MessageContainer& rSvE)
+				{
+					message = rSvE;
 				}
 				catch ( ... )
 				{
-					Message = SvUl_SF::Format( ImportFailed, pathName );
+					SVStringArray msgList;
+					msgList.push_back(pathName);
+					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
+					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, StdMessageParams, SvOi::Err_10226 );
 				}
-				if( !Message.empty() )
+				if( 0 != message.getMessage().m_MessageCode )
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, Message.c_str(), StdMessageParams, SvOi::Err_10226 );
+					Msg.setMessage( message.getMessage() );
+				
+					//Need to restore the previous values before the import
+					m_KernelWidth = KernelWidth;
+					m_KernelHeight = KernelHeight;
+					m_NormalizationFactor = NormalizationFactor;
+					m_AbsoluteValue = AbsoluteValue;
+					m_ClippingEnabled = ClippingEnabled;
+					m_KernelArray.swap( KernelArray );
 				}
+
+				recalculateKernel( m_KernelWidth, m_KernelHeight );
+				UpdateData( FALSE );
+
+				//Set the focus and visibility to the first cell
+				m_Grid.SetFocusCell( 1, 1 );
+				m_Grid.SetSelectedRange( 1, 1, 1, 1 );
+				m_Grid.EnsureVisible( 1, 1 );
+				m_Grid.Refresh();
 			}
 		}
 
@@ -413,7 +418,7 @@ namespace Seidenader
 				catch( ... )
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, ExportFailed, StdMessageParams, SvOi::Err_10227 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ExportFailed, StdMessageParams, SvOi::Err_10227 );
 				}
 			}
 		}
@@ -424,15 +429,16 @@ namespace Seidenader
 
 			UpdateData( TRUE );
 
-			if( isDataValid( DataInvalidMessage ) )
+			try
 			{
+				isDataValid( );
 				SetInspectionData();
 				CDialog::OnOK();
 			}
-			else
+			catch (const SvStl::MessageContainer& rSvE)
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, DataInvalidMessage.c_str(), StdMessageParams, SvOi::Err_10228 );
+				Msg.setMessage( rSvE.getMessage() );
 			}
 		}
 
@@ -884,36 +890,42 @@ namespace Seidenader
 			}
 		}
 
-		bool Custom2FilterDlg::isDataValid( SVString& rMessage ) const
+		void Custom2FilterDlg::isDataValid( ) const
 		{
-			bool Result( true );
-
 			//Kernel array and kernel height and width must match
 			if( m_KernelArray.size() != m_KernelWidth*m_KernelHeight )
 			{
-				rMessage = SvUl_SF::Format(DataInvalidKernelSize, m_KernelArray.size(), m_KernelWidth, m_KernelHeight);
-				Result = false;
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelArray.size()));
+				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelWidth));
+				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelHeight));
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelSize, msgList, StdMessageParams, Err_10228);
+				throw message;
 			}
 
 			//Check that the Kernel Width and Height are odd and between 1 and MaxKernelSize
 			if( 1 != m_KernelWidth % 2 || 1 > m_KernelWidth || ICustom2Filter::MaxKernelSize < m_KernelWidth )
 			{
-				rMessage = SvUl_SF::Format( DataInvalidKernelWidth, m_KernelWidth,  ICustom2Filter::MaxKernelSize);
-				Result = false;
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelWidth));
+				msgList.push_back(SvUl_SF::Format(_T("%d"),ICustom2Filter::MaxKernelSize));
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelWidth, msgList, StdMessageParams, Err_10228);
+				throw message;
 			}
 			if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || ICustom2Filter::MaxKernelSize < m_KernelHeight )
 			{
-				rMessage = SvUl_SF::Format( DataInvalidKernelHeight, m_KernelHeight,  ICustom2Filter::MaxKernelSize);
-				Result = false;
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelHeight));
+				msgList.push_back(SvUl_SF::Format(_T("%d"),ICustom2Filter::MaxKernelSize));
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelHeight, msgList, StdMessageParams, Err_10228);
+				throw message;
 			}
 			//Normalization Factor is not allowed to be 0 or negative
 			if( 0 >= m_NormalizationFactor )
 			{
-				rMessage = DataInvalidNormalizationFactor;
-				Result = false;
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, StdMessageParams, Err_10228);
+				throw message;
 			}
-
-			return Result;
 		}
 
 		bool Custom2FilterDlg::doesControlHaveFocus( UINT ControlID ) const

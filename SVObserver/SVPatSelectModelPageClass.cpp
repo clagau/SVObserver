@@ -80,23 +80,24 @@ void SVPatModelPageClass::OnCancel()
 void SVPatModelPageClass::OnOK()
 {
 	UINT nMsgID = 0;
-	if (ValidateModelParameters(nMsgID))
+	try
 	{
+		ValidateModelParameters();
 		// Should we check if model needs created here?
 		CPropertyPage::OnOK();
 	}
-	else
+	catch ( const SvStl::MessageContainer& rSvE )
 	{
-		CString message;
-		message.Format(nMsgID);
+		//Now that we have caught the exception we would like to display it
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10244 );
+		Msg.setMessage( rSvE.getMessage() );
 	}
+
 	m_bAllowExit = true;
 	if (!m_pPatAnalyzer->IsValidSize())
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Pattern_Model2Large, StdMessageParams, SvOi::Err_10184, NULL, nullptr, MB_YESNO ); 
+		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Model2Large, StdMessageParams, SvOi::Err_10184, NULL, nullptr, MB_YESNO ); 
 		if (IDYES == result)
 		{
 			m_bAllowExit = false;
@@ -140,13 +141,15 @@ BOOL SVPatModelPageClass::OnKillActive()
 	UpdateData(true);
 
 	// Do Settings Validation
-	UINT nMsgID = 0;
-	if (!ValidateModelParameters(nMsgID))
+	try
 	{
-		CString message;
-		message.Format(nMsgID);
+		ValidateModelParameters();
+	}
+	catch ( const SvStl::MessageContainer& rSvE )
+	{
+		//Now that we have caught the exception we would like to display it
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10245 );
+		Msg.setMessage( rSvE.getMessage() );
 		return FALSE;
 	}
 
@@ -215,7 +218,7 @@ void SVPatModelPageClass::OnCreateModel()
 {
 	UpdateData();
 
-	UINT nMsgID = 0;
+	SvOi::MessageTextEnum msgID = SvOi::Tid_Empty;
 
 	if ( m_pPatAnalyzer != nullptr && GetModelFile( FALSE ) ) // @TODO:  Explain the "FALSE".
 	{
@@ -259,29 +262,27 @@ void SVPatModelPageClass::OnCreateModel()
 				if (l_Code == SVMEE_STATUS_OK)
 				{
 					
-					nMsgID = RestoreModelFromFile();
+					msgID = RestoreModelFromFile();
 				}
 				else
 				{
-					nMsgID = IDS_PAT_ALLOC_MODEL_FAILED;
+					msgID = SvOi::Tid_PatAllocModelFailed;
 				}
 			}
 			else
 			{
-				nMsgID = IDS_PAT_ALLOC_MODEL_FAILED;
+				msgID = SvOi::Tid_PatAllocModelFailed;
 			}
 		}
 		else
 		{
-			nMsgID = IDS_PAT_ALLOC_MODEL_FAILED;
+			msgID = SvOi::Tid_PatAllocModelFailed;
 		}
 	}
-	if (0 != nMsgID)
+	if (SvOi::Tid_Empty != msgID)
 	{
-		CString message;
-		message.Format(nMsgID);
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10246 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, StdMessageParams, SvOi::Err_10246 );
 	}
 }
 
@@ -429,27 +430,17 @@ void SVPatModelPageClass::ObjectChangedExDialogImage(long Tab, long Handle, VARI
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-bool SVPatModelPageClass::ValidateModelParameters(UINT& nMsgID)
+void SVPatModelPageClass::ValidateModelParameters()
 {
 	UpdateData(true);
 
-	bool bRetVal = ValidateModelWidth(nMsgID);
-	if (bRetVal)
-	{
-		bRetVal = ValidateModelHeight(nMsgID);
-	}
-
-	if (bRetVal)
-	{
-		bRetVal = ValidateModelFilename(nMsgID);
-	}
-
-	return bRetVal;
+	ValidateModelWidth();
+	ValidateModelHeight();
+	ValidateModelFilename();
 }
 
-bool SVPatModelPageClass::ValidateModelWidth(UINT& nMsgID)
+void SVPatModelPageClass::ValidateModelWidth()
 {
-	nMsgID = 0;
 	UpdateData(true);
 
 	long lMaxPixels = m_sourceImageWidth;
@@ -468,14 +459,13 @@ bool SVPatModelPageClass::ValidateModelWidth(UINT& nMsgID)
 	
 	if (!bRetVal)
 	{
-		nMsgID = IDS_PAT_MODEL_SIZE_ERROR;
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatModelSizeErr, StdMessageParams, SvOi::Err_10245 );
+		throw Msg;
 	}
-	return bRetVal;
 }
 
-bool SVPatModelPageClass::ValidateModelHeight(UINT& nMsgID)
+void SVPatModelPageClass::ValidateModelHeight()
 {
-	nMsgID = 0;
 	UpdateData(true);
 
 	long lMaxPixels = m_sourceImageHeight;
@@ -493,23 +483,20 @@ bool SVPatModelPageClass::ValidateModelHeight(UINT& nMsgID)
 	bool bRetVal = (m_lModelHeight >= minHeight && m_lModelHeight <= lMaxPixels);
 	if (!bRetVal)
 	{
-		nMsgID = IDS_PAT_MODEL_SIZE_ERROR;
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatModelSizeErr, StdMessageParams, SvOi::Err_10244 );
+		throw Msg;
 	}
-	return bRetVal;
 }
 
-bool SVPatModelPageClass::ValidateModelFilename(UINT& nMsgID) // @TODO:  Add actual validation to this method.
+void SVPatModelPageClass::ValidateModelFilename() // @TODO:  Add actual validation to this method.
 {
-	nMsgID = 0;
 	UpdateData(true);
 
 	// Should we have a model file name ?
-	bool bRetVal = true;
 	if ( !m_strModelName.IsEmpty() )
 	{
 		// verify that the file exists
 	}
-	return bRetVal; // Currently, this is always returning true!
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -574,7 +561,7 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 		return TRUE;
 	}
 
-	UINT nMsgID = 0;
+	SvOi::MessageTextEnum msgID = SvOi::Tid_Empty;
 
 	switch (nId)
 	{
@@ -590,7 +577,7 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 			if (m_strModelName != m_strOldModelName)
 			{
 				// Extract Model from the file
-				nMsgID = RestoreModelFromFile();
+				msgID = RestoreModelFromFile();
 			}
 			break;
 		}
@@ -600,12 +587,10 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 		}
 	}
 
-	if (0 != nMsgID)
+	if (SvOi::Tid_Empty != msgID)
 	{
-		CString message;
-		message.Format(nMsgID);
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10247 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, StdMessageParams, SvOi::Err_10247 );
 		GetDlgItem(nId)->SetFocus();
 		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
 		return FALSE;
@@ -614,16 +599,16 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 }
 
 // If an error occurs, return the Error message Id, otherwise return 0;
-UINT SVPatModelPageClass::RestoreModelFromFile()
+SvOi::MessageTextEnum SVPatModelPageClass::RestoreModelFromFile()
 {
-	UINT nMsgId = 0;
+	SvOi::MessageTextEnum msgId = SvOi::Tid_Empty;
 	UpdateData( true );
 
 	// set analyzer values
 	// Set circular overscan State
 	m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
 
-	if ( m_pPatAnalyzer->RestorePattern( m_strModelName, &nMsgId ) )
+	if ( m_pPatAnalyzer->RestorePattern( m_strModelName, &msgId ) )
 	{
 		// save the offsets
 		POINT pos = { m_nXPos, m_nYPos };
@@ -638,11 +623,11 @@ UINT SVPatModelPageClass::RestoreModelFromFile()
 	}
 	else
 	{
-		return nMsgId;
+		return msgId;
 	}
 
 	setImages();
-	return 0;
+	return SvOi::Tid_Empty;
 }
 
 BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)

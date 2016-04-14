@@ -789,20 +789,18 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 			if( dwConnectResult != SVMR_SUCCESS )
 			{
 				// Unable to connect to new input object....
-				CString strMessage;
-				CString strItem;
+				SVStringArray msgList;
 				if( p_psvNewImage )
 				{
-					strItem = p_psvNewImage->GetName();
+					msgList.push_back(p_psvNewImage->GetName());
 				}
 				else
 				{
-					strItem.LoadString( IDS__UNKNOWN__STRING ); 
+					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_UnknownString));
 				}
 				// Should we really be doing this here?
-				AfxFormatString1( strMessage, IDS_CRITICAL_UNABLE_TO_CONNECT_TO, strItem );
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, strMessage, StdMessageParams, SvOi::Err_10203 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CriticalUnableToConnectTo, msgList, StdMessageParams, SvOi::Err_10203 ); 
 
 				// Try to recover old state...
 				if( l_psvOldImage != NULL )
@@ -1183,7 +1181,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedOb
 				if (pObject->GetEmbeddedID() == REmbeddedID)
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::Error_DuplicateEmbeddedId, StdMessageParams, SvOi::Err_10204 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_DuplicateEmbeddedId, StdMessageParams, SvOi::Err_10204 ); 
 					return FALSE;
 				}
 			}

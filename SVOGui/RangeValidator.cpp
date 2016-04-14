@@ -15,6 +15,9 @@
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVUtilityLibrary\SVStringLoader.h"
 #include "TextDefinesSvOg.h"
+#include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVStatusLibrary\MessageContainer.h"
+#include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui
@@ -71,16 +74,16 @@ namespace Seidenader { namespace SVOGui
 		return bRetVal;
 	}
 
-	HRESULT RangeValidator::IsFieldValid(SVString& rMsg, const SVString& rFieldName, const SVString& rValue)
+	void RangeValidator::IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& rValue)
 	{
-		HRESULT hr = S_OK;
-	
 		size_t len = rValue.size();
 
 		if (!len)
 		{
-			rMsg = SvUl_SF::Format(SvOg::RangeValue_EmptyString, rFieldName.c_str());
-			hr = E_POINTER;
+			SVStringArray msgList;
+			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(fieldName));
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RangeValue_EmptyString, msgList, StdMessageParams, SvOi::Err_10229);
+			throw message;
 		}
 		else
 		{
@@ -93,16 +96,18 @@ namespace Seidenader { namespace SVOGui
 				const double s_RangeMin = -s_RangeMax;
 				if (val > s_RangeMax || val < s_RangeMin)
 				{
-					rMsg = SvUl_SF::Format(SvOg::RangeValue_WrongRange, rFieldName.c_str(), static_cast<int>(s_RangeMin), static_cast<int>(s_RangeMax));
-					hr = E_INVALIDARG;
+					SVStringArray msgList;
+					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(fieldName));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), static_cast<int>(s_RangeMin)));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), static_cast<int>(s_RangeMax)));
+					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RangeValue_WrongRange, msgList, StdMessageParams, SvOi::Err_10230);
+					throw message;
 				}		
 			}
 		}
-		return hr;	
 	}
 
-	HRESULT RangeValidator::Validate(SVString& msg,
-									HINSTANCE resHandle,
+	void RangeValidator::Validate(HINSTANCE resHandle,
 									const SVString& InspectionName, 
 									const SVString& FailHighIndirectValue, 
 									const SVString& FailLowIndirectValue, 
@@ -114,110 +119,106 @@ namespace Seidenader { namespace SVOGui
 									double WarnLowValue,
 									const GUID& rInspectionID)
 	{
-		HRESULT retVal = S_OK;
-	
-		SVString sFailHigh(SvU::SVStringLoader(resHandle, static_cast<UINT>(IDS_FAIL_HIGH)));
-		SVString sWarnHigh(SvU::SVStringLoader(resHandle, static_cast<UINT>(IDS_WARN_HIGH)));
-		SVString sFailLow(SvU::SVStringLoader(resHandle, static_cast<UINT>(IDS_FAIL_LOW)));
-		SVString sWarnLow(SvU::SVStringLoader(resHandle, static_cast<UINT>(IDS_WARN_LOW)));
-
-		SVString InvalidRef(SvU::SVStringLoader(resHandle, static_cast<UINT>(IDS_ISANINVALID_REFERENCE)));
 		SVString ToolSetName(SvU::SVStringLoader(resHandle, static_cast<UINT>(IDS_CLASSNAME_SVTOOLSET)));
 	
 		if (!FailHighIndirectValue.empty())
 		{
 			if (!isValidReference(rInspectionID, InspectionName, ToolSetName, FailHighIndirectValue))
 			{
-				//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-				const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sFailHigh.c_str())((DWORD_PTR)FailHighIndirectValue.c_str());
-				msg = FormatErrorMessage(InvalidRef, args);
-				retVal =  -SvOi::Err_16018;
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+				messageList.push_back(FailHighIndirectValue);
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsInvalidRef, messageList, StdMessageParams, SvOi::Err_16018);
+				throw message;
 			}
 		}
-		if (S_OK == retVal && !WarnHighIndirectValue.empty())
+		if (!WarnHighIndirectValue.empty())
 		{
 			if( !isValidReference(rInspectionID, InspectionName, ToolSetName, WarnHighIndirectValue))
 			{
-				//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-				const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sWarnHigh.c_str())((DWORD_PTR)WarnHighIndirectValue.c_str());
-				msg = FormatErrorMessage(InvalidRef, args);
-				retVal = -SvOi::Err_16019;
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
+				messageList.push_back(WarnHighIndirectValue);
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsInvalidRef, messageList, StdMessageParams, SvOi::Err_16019);
+				throw message;
 			}
 		}
-		if (S_OK == retVal && !WarnLowIndirectValue.empty())
+		if (!WarnLowIndirectValue.empty())
 		{
 			if (!isValidReference(rInspectionID, InspectionName, ToolSetName, WarnLowIndirectValue))
 			{
-				//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-				const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sWarnLow.c_str())((DWORD_PTR)WarnLowIndirectValue.c_str());
-				msg = FormatErrorMessage(InvalidRef, args);
-				retVal = -SvOi::Err_16020;
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
+				messageList.push_back(WarnLowIndirectValue);
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsInvalidRef, messageList, StdMessageParams, SvOi::Err_16020);
+				throw message;
 			}
 		}
-		if (S_OK == retVal && !FailLowIndirectValue.empty())
+		if (!FailLowIndirectValue.empty())
 		{
 			if (!isValidReference(rInspectionID, InspectionName, ToolSetName, FailLowIndirectValue))
 			{
-				//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-				const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sFailLow.c_str())((DWORD_PTR)FailLowIndirectValue.c_str());
-				msg = FormatErrorMessage(InvalidRef, args);
-				retVal = -SvOi::Err_16021;
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
+				messageList.push_back(FailLowIndirectValue);
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsInvalidRef, messageList, StdMessageParams, SvOi::Err_16021);
+				throw message;
 			}
 		}
 
-		if (S_OK == retVal)
+		if (FailHighIndirectValue.empty())
 		{
-			SVString LessThanErr(SvU::SVStringLoader(resHandle, static_cast<UINT>(IDS_IS_LESS_THAN)));
-
-			if (FailHighIndirectValue.empty())
+			if (WarnHighIndirectValue.empty() && FailHighValue < WarnHighValue)
 			{
-				if (WarnHighIndirectValue.empty() && FailHighValue < WarnHighValue)
-				{
-					//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-					const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sFailHigh.c_str())((DWORD_PTR)sWarnHigh.c_str());
-					msg = FormatErrorMessage(LessThanErr, args);
-					retVal = -SvOi::Err_16012;
-				}
-				if (S_OK == retVal && WarnLowIndirectValue.empty() && FailHighValue < WarnLowValue)
-				{
-					//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-					const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sFailHigh.c_str())((DWORD_PTR)sWarnLow.c_str());
-					msg = FormatErrorMessage(LessThanErr, args);
-					retVal = -SvOi::Err_16013;
-				}
-				if (S_OK == retVal && FailLowIndirectValue.empty() && FailHighValue < FailLowValue)
-				{
-					//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-					const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sFailHigh.c_str())((DWORD_PTR)sFailLow.c_str());
-					msg = FormatErrorMessage(LessThanErr, args);
-					retVal = -SvOi::Err_16014;
-				}
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, StdMessageParams, SvOi::Err_16012);
+				throw message;
 			}
-			if (S_OK == retVal && WarnHighIndirectValue.empty())
+			if (WarnLowIndirectValue.empty() && FailHighValue < WarnLowValue)
 			{
-				if (WarnLowIndirectValue.empty() && WarnHighValue < WarnLowValue)
-				{
-					//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-					const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sWarnHigh.c_str())((DWORD_PTR)sWarnLow.c_str());
-					msg = FormatErrorMessage(LessThanErr, args);
-					retVal = -SvOi::Err_16015;
-				}
-				if (S_OK == retVal && FailLowIndirectValue.empty() && WarnHighValue < FailLowValue)
-				{
-					//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-					const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sWarnHigh.c_str())((DWORD_PTR)sFailLow.c_str());
-					msg = FormatErrorMessage(LessThanErr, args);
-					retVal = -SvOi::Err_16016;
-				}
-				if (S_OK == retVal && FailLowIndirectValue.empty() && WarnLowValue < FailLowValue)
-				{
-					//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-					const std::vector<DWORD_PTR> args = boost::assign::list_of<DWORD_PTR>((DWORD_PTR)sWarnLow.c_str())((DWORD_PTR)sFailLow.c_str());
-					msg = FormatErrorMessage(LessThanErr, args);
-					retVal = -SvOi::Err_16017;
-				}
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, StdMessageParams, SvOi::Err_16013);
+				throw message;
+			}
+			if (FailLowIndirectValue.empty() && FailHighValue < FailLowValue)
+			{
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, StdMessageParams, SvOi::Err_16014);
+				throw message;
 			}
 		}
-		return retVal;
+		if (WarnHighIndirectValue.empty())
+		{
+			if (WarnLowIndirectValue.empty() && WarnHighValue < WarnLowValue)
+			{
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, StdMessageParams, SvOi::Err_16015);
+				throw message;
+			}
+			if (FailLowIndirectValue.empty() && WarnHighValue < FailLowValue)
+			{
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, StdMessageParams, SvOi::Err_16016);
+				throw message;
+			}
+			if (FailLowIndirectValue.empty() && WarnLowValue < FailLowValue)
+			{
+				SVStringArray messageList;
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
+				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, StdMessageParams, SvOi::Err_16017);
+				throw message;
+			}
+		}
 	}
 } /* namespace SVOGui */ } /* namespace Seidenader */

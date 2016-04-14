@@ -104,7 +104,7 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 	if( !m_pSheet->m_pPPQ->GetAllInputs( ppIOEntries ) )
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputs, StdMessageParams, SvOi::Err_17041_ErrorGettingInputs );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingInputs, StdMessageParams, SvOi::Err_17041_ErrorGettingInputs );
 		DebugBreak();
 	}
 

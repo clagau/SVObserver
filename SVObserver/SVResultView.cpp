@@ -90,7 +90,7 @@ void SVResultViewClass::OnInitialUpdate()
 	if( GetIPDoc() == NULL )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvO::ResultView_InitFailed, StdMessageParams, SvOi::Err_10197 ); 
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ResultView_InitFailed, StdMessageParams, SvOi::Err_10197 ); 
 		return;
 	}
 

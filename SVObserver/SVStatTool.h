@@ -91,7 +91,7 @@ protected:
 
 	DWORD                       msvlDefaultAttributes; 
 
-	CString                     m_errStr;				// for errorEvent
+	SvStl::MessageContainer     m_errContainer; // for errorEvent
 
 	double                      msvAccumulatedTotal;
 	double                      msvAccumulatedSquares;

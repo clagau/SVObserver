@@ -625,7 +625,7 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 		case SV_ISGARBAGE :
 			{
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY, nullptr, StdMessageParams );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY, SvOi::Tid_Empty, StdMessageParams );
 			}
 			break;
 
@@ -653,7 +653,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 	if (ferror (pFile))
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, nullptr, StdMessageParams );
+		Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 		return SV_ISERROR;
 	}
 
@@ -668,7 +668,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 		if (ferror (pFile))
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, nullptr, StdMessageParams );
+			Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, SvOi::Tid_Empty, StdMessageParams );
 			return SV_ISERROR;
 		}
 

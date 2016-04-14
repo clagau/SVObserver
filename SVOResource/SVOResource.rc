@@ -4224,20 +4224,13 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_USER_QUESTION_CLOSE_CONFIG 
-                            "Are you sure you want to close the current SVObserver application  %1?\n\nALL CURRENT RUNNING INSPECTIONS WILL BE STOPPED!"
-    IDS_USER_QUESTION_SAVE_CHANGES "Save changes to %1?"
     IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE 
                             "No access during Test or Run Mode!"
-    IDS_STATTOOL_INVALID_VARIABLE 
-                            "Error - The Selected Variable To Monitor does not exist."
-    IDS_EQUATION_PARSER_ERROR "Syntax Error at position %d\n"
     IDS_SELECT_TOOLSET_OUTPUT "Select Toolset Output"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_TOO_MANY_VARIABLES  "Too many variables."
     IDS_SELECT_DATA_FOR_VIEWING "Select Data for Viewing..."
     IDS_AVAILABLE_DATA      "Available Data:"
     IDS_CLASSNAME_SVOBJECT  "Base Class: SVResearch Base Object"
@@ -4494,8 +4487,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_PAT_PRELIMINARYACCEPTANCETHRESHOLD_ERROR 
-                            "Invalid Preliminary Acceptance Threshold Value (range is 1.0 to 100.0)"
     IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER "Remote Output Controller"
     IDS_CLASSNAME_SVREMOTEOUTPUTGROUP "Remote Output Group"
     IDS_RESULT_PICKER       "Result Picker"
@@ -4845,10 +4836,6 @@ BEGIN
     IDS_OBJECTNAME_PAT_CANDIDATESPACINGXMIN "Candidate Spacing X Min"
     IDS_OBJECTNAME_PAT_CANDIDATESPACINGYMIN "Candidate Spacing Y Min"
     IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES "Number of Found Occurrences"
-    IDS_PAT_ADDITIONALCANDIDATES_ERROR 
-                            "Invalid Additional Candidates Value (range is 1 to 100)"
-    IDS_PAT_CANDIDATE_SPACING_ERROR 
-                            "Invalid Candidate Spacing Min Value (range is 1.0 to 100.0)"
 END
 
 STRINGTABLE
@@ -4861,10 +4848,7 @@ BEGIN
     IDS_OBJECTNAME_PAT_SPEED "Search Speed"
     IDS_OBJECTNAME_PAT_MODELIMAGEFILE "Model Image File"
     IDS_OBJECTNAME_DPEDGE   "Sub Pixel Edge"
-    IDS_PAT_INVALID_FILENAME "Not a Valid Model file"
     IDS_OBJECTNAME_PAT_RESULTANGLE "Result Angle"
-    IDS_PAT_MODEL_SIZE_ERROR "Invalid Model Size"
-    IDS_PAT_ALLOC_MODEL_FAILED "Pattern Model Allocation Failed."
     IDS_OBJECTNAME_CENTER_X "Center X"
 END
 
@@ -4938,8 +4922,6 @@ BEGIN
     IDS_RESULTVIEW_COLUMN_NAME2 "Location"
     IDS_RESULTVIEW_COLUMN_NAME3 "Index"
     IDS_RESULTVIEW_COLUMN_NAME4 "Faults"
-    IDS_CRITICAL_UNABLE_TO_CONNECT_TO "Unable to connect to %1"
-    IDS_CRITICAL_CREATION_OF_FAILED "Creation of %1 Failed"
 END
 
 STRINGTABLE
@@ -5167,7 +5149,6 @@ BEGIN
     IDS_FULL_MASKFILE_EXTENSION ".svm"
     IDS_MASKFILE_DIALOG_FILTER "SVObserver Mask Files (*.svm)|*.svm||"
     IDS_ADJUSTMENT_STRING   "Adjustment"
-    IDS__UNKNOWN__STRING    "<Unknown>"
 END
 
 STRINGTABLE

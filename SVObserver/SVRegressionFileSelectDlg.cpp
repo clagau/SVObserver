@@ -105,7 +105,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 			if (0 != m_sRegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvO::RegressionTest_NoBmpFileSelected, StdMessageParams, SvOi::Err_10187 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoBmpFileSelected, StdMessageParams, SvOi::Err_10187 ); 
 				m_sRegTestFiles = _T("");
 			}
 

@@ -593,12 +593,12 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
 		{
 			TRACE( "Exception : File = %s -- Line = %d\n", _T(__FILE__), __LINE__ );
 
-			errStr = SvO::BarCode_UnableToRead;
+			m_errId = SvOi::Tid_BarCode_UnableToRead;
 
 			if( DisplayErrorMessage )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, errStr, StdMessageParams, SvOi::Err_10038 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, StdMessageParams, SvOi::Err_10038 ); 
 			}
 			return FALSE;
 		}
@@ -638,12 +638,12 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
 		}
 		CATCH (CFileException, e)
 		{
-			errStr = SvO::BarCode_UnableToSave;
+			m_errId = SvOi::Tid_BarCode_UnableToSave;
 
 			if( DisplayErrorMessage )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, errStr, StdMessageParams, SvOi::Err_10039 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, StdMessageParams, SvOi::Err_10039 ); 
 			}
 			return FALSE;
 		}
@@ -665,10 +665,10 @@ DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR Dw
 			{
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 
-				if( !SilentReset && !errStr.IsEmpty() )
+				if( !SilentReset && SvOi::Tid_Empty != m_errId )
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, errStr, StdMessageParams, SvOi::Err_10040 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, StdMessageParams, SvOi::Err_10040 ); 
 				}
 				dwResult = SVMR_NO_SUCCESS;
 			}
@@ -685,6 +685,7 @@ DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR Dw
 HRESULT SVBarCodeAnalyzerClass::ResetObject()
 {
 	HRESULT l_hrOk = SVImageAnalyzerClass::ResetObject();
+	m_errId = SvOi::Tid_Empty;
 
 	if ( !m_bHasLicenseError )
 	{

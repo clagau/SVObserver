@@ -125,7 +125,7 @@ HRESULT RangeClassHelper::GetAllInspectionData()
 	return hr;
 }
 
-void RangeClassHelper::SetInternalData(RangeEnum::ERange er, LPCTSTR lp)
+void RangeClassHelper::SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp)
 {
 	CString csText = lp;
 	double val = 0.0;
@@ -136,10 +136,10 @@ void RangeClassHelper::SetInternalData(RangeEnum::ERange er, LPCTSTR lp)
 
 	if( textLength == 0)
 	{
-		CString strText;
-		strText.Format(SvO::RangeValue_EmptyString, RangeEnum::ERange2String(resHandle, er).c_str());
+		SVStringArray msgList;
+		msgList.push_back(SvStl::MessageData::convertId2AddtionalText(er));
 		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16022 );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_RangeValue_EmptyString, msgList, StdMessageParams, SvOi::Err_16022 );
 		Exception.Throw();
 	}
 
@@ -150,42 +150,43 @@ void RangeClassHelper::SetInternalData(RangeEnum::ERange er, LPCTSTR lp)
 		csText = _T("");
 		if(val > s_RangeMax || val < s_RangeMin )
 		{
-			CString strText;
-			strText.Format(SvO::RangeValue_WrongRange, RangeEnum::ERange2String(resHandle, er).c_str(), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ) );
+			SVStringArray msgList;
+			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(er));
+			msgList.push_back(SvUl_SF::Format("%d", static_cast<int>(s_RangeMin)));
+			msgList.push_back(SvUl_SF::Format("%d", static_cast<int>(s_RangeMax)));
 			SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16023 );
+			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_RangeValue_WrongRange, msgList, StdMessageParams, SvOi::Err_16023 );
 			Exception.Throw();
 		}
 	}
 
 	switch (er)
 	{
-	case RangeEnum::ER_FailHigh:
+	case SvOi::Tid_FailHigh:
 		m_FailHigh = val;
 		m_FailHighIndirect = csText;
 		break;
-	case RangeEnum::ER_WarnHigh:
+	case SvOi::Tid_WarnHigh:
 		m_WarnHigh = val;
 		m_WarnHighIndirect = csText;
 		break;
-	case RangeEnum::ER_FailLow:
+	case SvOi::Tid_FailLow:
 		m_FailLow = val;
 		m_FailLowIndirect = csText;
 		break;
-	case RangeEnum::ER_WarnLow:
+	case SvOi::Tid_WarnLow:
 		m_WarnLow = val;
 		m_WarnLowIndirect = csText;
 		break;
 	default:
 		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvO::ErrorUnknownEnum, StdMessageParams, SvOi::Err_16024 );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_ErrorUnknownEnum, StdMessageParams, SvOi::Err_16024 );
 		Exception.Throw();
 		break;
 	}
 }
 
-// @TODO:  Better to use SVString here instead of CString.
-HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
+HRESULT RangeClassHelper::CheckInternalData(SvOi::MessageTextEnum &messageId, SVStringArray &messageList) const
 {
 	CString InspectionName;
 	if( nullptr != m_pRange)
@@ -198,50 +199,51 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	}
 	InspectionName += _T(".");
 
-	CString csFailHigh, csWarnHigh, csFailLow, csWarnLow;
-	csFailHigh.LoadString(IDS_FAIL_HIGH);
-	csWarnHigh.LoadString(IDS_WARN_HIGH);
-	csFailLow.LoadString(IDS_FAIL_LOW);
-	csWarnLow.LoadString(IDS_WARN_LOW);
-
 	if( m_FailHighIndirect.IsEmpty() && m_WarnHighIndirect.IsEmpty() && m_FailHigh < m_WarnHigh )
 	{
-		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csWarnHigh.GetString() );
+		messageId = SvOi::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
 		return -SvOi::Err_16012;
 	}
 
 	if( m_FailHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_FailHigh < m_WarnLow )
 	{
-		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csWarnLow.GetString() );
+		messageId = SvOi::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
 		return -SvOi::Err_16013;
 	}
 
 	if( m_FailHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_FailHigh < m_FailLow )
 	{
-		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csFailLow.GetString() );
+		messageId = SvOi::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
 		return -SvOi::Err_16014;
 	}
 
 	if( m_WarnHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_WarnHigh < m_WarnLow )
 	{
-		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnHigh.GetString(), csWarnLow.GetString() );
+		messageId = SvOi::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
 		return -SvOi::Err_16015;
 	}
 
 	if( m_WarnHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnHigh < m_FailLow )
 	{
-		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnHigh.GetString(), csFailLow.GetString() );
+		messageId = SvOi::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
 		return -SvOi::Err_16016;
 	}
 
 	if( m_WarnLowIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnLow < m_FailLow )
 	{
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnLow.GetString(), csFailLow.GetString() );
+		messageId = SvOi::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
 		return -SvOi::Err_16017;
 	}
 
@@ -249,8 +251,9 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	{
 		if( !isValidReference( InspectionName, m_FailHighIndirect ) )
 		{
-			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csFailHigh.GetString(), m_FailHighIndirect.GetString() );
+			messageId = SvOi::Tid_IsInvalidRef;
+			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+			messageList.push_back(SVString(m_FailHighIndirect));
 			return -SvOi::Err_16018;
 		}
 	}
@@ -259,8 +262,9 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	{
 		if( !isValidReference( InspectionName, m_WarnHighIndirect ) )
 		{
-			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csWarnHigh.GetString(), m_WarnHighIndirect.GetString() );
+			messageId = SvOi::Tid_IsInvalidRef;
+			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
+			messageList.push_back(SVString(m_WarnHighIndirect));
 			return -SvOi::Err_16019;
 		}
 	}
@@ -269,7 +273,9 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	{
 		if( !isValidReference( InspectionName, m_WarnLowIndirect ) )
 		{
-			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csWarnLow.GetString(), m_WarnLowIndirect.GetString() );
+			messageId = SvOi::Tid_IsInvalidRef;
+			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
+			messageList.push_back(SVString(m_WarnLowIndirect));
 			return -SvOi::Err_16020;
 		}
 	}
@@ -278,7 +284,9 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	{
 		if( !isValidReference( InspectionName, m_FailLowIndirect ) )
 		{
-			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csFailLow.GetString(), m_FailLowIndirect.GetString() );
+			messageId = SvOi::Tid_IsInvalidRef;
+			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
+			messageList.push_back(SVString(m_FailLowIndirect));
 			return -SvOi::Err_16021;
 		}
 	}

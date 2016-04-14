@@ -269,7 +269,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 						if (m_pParent->GetCameraListCount() > 1)
 						{
 							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvO::Camera_UseQuestion, StdMessageParams, SvOi::Err_10137, NULL, nullptr, MB_YESNO );
+							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Camera_UseQuestion, StdMessageParams, SvOi::Err_10137, NULL, nullptr, MB_YESNO );
 							if (IDYES == result)
 							{
 								SetCameraPropForAll(pCameraObj->GetCameraDisplayName());

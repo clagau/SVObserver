@@ -54,9 +54,6 @@ USES_CONVERSION;
 	CString szBstr;
 	BSTR reasonString;
 	long lErrorCode, lLinePos, lLine;
-#ifndef _DEBUG
-	CString szError;
-#endif
 	errorObj->get_reason(&reasonString);
 
 	AfxBSTR2CString(&szBstr,reasonString);
@@ -66,12 +63,19 @@ USES_CONVERSION;
 	errorObj->get_errorCode(&lErrorCode);
 	errorObj->get_linepos(&lLinePos);
 	errorObj->get_line(&lLine);
-	szError.Format(_T("%s, Error Code:%X, On line %d position %d"),szBstr,lErrorCode,lLinePos,lLine);
-
+	SVStringArray messageList;
+	messageList.push_back(SVString(szBstr));
+	messageList.push_back(SvUl_SF::Format(_T("%X"), lErrorCode));
+	messageList.push_back(SvUl_SF::Format(_T("%d"), lLinePos));
+	messageList.push_back(SvUl_SF::Format(_T("%d"), lLine));
 	SvStl::MessageData Msg( m_SVException.getMessage() );
 	Msg.m_MessageCode = 0;
-	Msg.m_AdditionalText = szError;
+	Msg.m_AdditionalTextId = SvOi::Tid_XmlParserError;
+	Msg.m_AdditionalTextList = messageList;
 	m_SVException.setMessage( Msg );
+#ifdef _DEBUG
+	szError = Msg.getAdditionalText().c_str();
+#endif
 }
 
 
