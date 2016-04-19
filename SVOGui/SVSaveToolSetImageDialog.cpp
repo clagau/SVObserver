@@ -27,9 +27,9 @@ static char THIS_FILE[]=__FILE__;
 
 namespace Seidenader { namespace SVOGui
 {
-	SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=NULL*/)
+	SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSaveToolSetImageDialogClass::IDD, pParent)
-	, m_ImageController(rInspectionID, rTaskObjectID)
+	, m_ImageController(rInspectionID, rTaskObjectID, SVNotSetSubObjectType, true)
 	{
 		//{{AFX_DATA_INIT(SVSaveToolSetImageDialogClass)
 			// NOTE: the ClassWizard will add member initialization here

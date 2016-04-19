@@ -23,6 +23,7 @@ namespace Seidenader
 		private:
 			GUID m_TaskObjectID;
 			SVObjectSubTypeEnum m_subType;
+			bool m_bAllowColor;
 
 			bool IsHidden(SvOi::IObjectClass* pObject) const
 			{
@@ -56,9 +57,10 @@ namespace Seidenader
 			}
 
 		public:
-			AllowedImageFunc(const GUID& rTaskObjectID, SVObjectSubTypeEnum subType)
+			AllowedImageFunc(const GUID& rTaskObjectID, SVObjectSubTypeEnum subType, bool bAllowColor)
 			: m_TaskObjectID(rTaskObjectID)
 			, m_subType(subType)
+			, m_bAllowColor(bAllowColor)
 			{
 			}
 	
@@ -67,16 +69,17 @@ namespace Seidenader
 				bool bUseImage = false;
 				SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage *>(pObject);
 
-				// Ensure only image sources which are produced by tools above the current tool....
 				if (pImage)
 				{
 					if (SVToolImageObjectType != m_subType)
 					{
+						// Ensure only image sources which are produced by tools above the current tool...
 						bStop = !IsObjectCurrentTask(pObject);
-						bUseImage = !bStop && !IsHidden(pObject) && HasOneBand(pImage);
+						bUseImage = !bStop && !IsHidden(pObject) && (m_bAllowColor || HasOneBand(pImage));
 					}
 					else
 					{
+						// The ImageTool does not have the requirement of using only image sources which are produced by tools above the current tool.
 						bUseImage = !IsHidden(pObject) && HasOneBand(pImage);
 					}
 				}

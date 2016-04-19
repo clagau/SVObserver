@@ -23,12 +23,14 @@ namespace Seidenader
 			GUID m_InspectionID;
 			GUID m_TaskObjectID;
 			SVObjectSubTypeEnum m_subType;
+			bool m_bAllowColor;
+
 			mutable SvUl::NameGuidList m_availableList;
 			mutable SvUl::InputNameGuidPairList m_connectedList;
 			mutable CComPtr<IPictureDisp> m_picture;
 
 		public:
-			ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType = SVNotSetSubObjectType);
+			ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType = SVNotSetSubObjectType, bool bAllowColor = false);
 	
 			HRESULT Init();
 

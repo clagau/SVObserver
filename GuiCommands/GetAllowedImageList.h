@@ -18,8 +18,8 @@ namespace Seidenader
 	{
 		struct GetAllowedImageList : public boost::noncopyable
 		{
-			GetAllowedImageList(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType)
-			: m_command(rObjectID, typeInfo, AllowedImageFunc(rTaskObjectID, subType)) {}
+			GetAllowedImageList(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType, bool bAllowColor = false )
+			: m_command(rObjectID, typeInfo, AllowedImageFunc(rTaskObjectID, subType, bAllowColor)) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture

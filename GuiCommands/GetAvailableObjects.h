@@ -67,15 +67,21 @@ namespace Seidenader
 										SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(pObject);
 										if (pImage)
 										{
-											SVString name = pImage->getDisplayedName();
-											m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+											const SVString& name = pImage->getDisplayedName();
+											if (!name.empty())
+											{
+												m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+											}
 										}
 									}
 									break;
 								default:
 									{
 										SVString name = pObject->GetName();
-										m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+										if (!name.empty())
+										{
+											m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
+										}
 									}
 									break;
 								}
