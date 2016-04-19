@@ -230,7 +230,7 @@ public:
 
 	HRESULT RemoveImage(SVImageClass* pImage);
 
-	HRESULT UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList );
+	void UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList );
 	HRESULT UpdateSharedMemoryLastInspectedImages( const SVMonitorItemList& p_rImageList );
 	virtual void Persist(SVObjectWriter& rWriter);
 

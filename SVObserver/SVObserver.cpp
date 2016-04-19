@@ -686,33 +686,7 @@ void SVObserverApp::OnEditEnvironment()
 	ShowConfigurationAssistant();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnTestMode
-// -----------------------------------------------------------------------------
 // .Description : OnTestMode calls SetTestMode
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnTestMode() 
 {
 	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: before entering test mode: perform autosave
@@ -1895,9 +1869,6 @@ void SVObserverApp::OnGoOnline()
 		if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) && 
 			!SVSVIMStateClass::CheckState( SV_STATE_TEST | SV_STATE_RUNNING ))
 		{
-
-			HRESULT l_hrStatus = S_OK;
-
 			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 			DeselectTool();
 
@@ -1909,12 +1880,11 @@ void SVObserverApp::OnGoOnline()
 
 					try
 					{
-						l_hrStatus = Start();
+						Start();
 					}
 					catch (const SvStl::MessageContainer& rExp)
 					{
 						exceptionContainer = rExp;
-						l_hrStatus = SV_CAN_GO_ONLINE_FAILURE_ACQUISITION;
 					}
 				}
 				else
@@ -1973,77 +1943,10 @@ void SVObserverApp::OnGoOnline()
 			{
 				PostMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_STOP, 0), 0);
 			}
-			else if ( l_hrStatus != S_OK )
+			else if ( 0 != exceptionContainer.getMessage().m_MessageCode )
 			{
-				SvOi::MessageTextEnum messageId = SvOi::Tid_Empty;
-				SVStringArray msgList;
-
-				if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_TRIGGER ) == 
-					SV_CAN_GO_ONLINE_FAILURE_TRIGGER )
-				{
-					messageId = SvOi::Tid_CanGoOnlineFailure_Trigger;
-				}
-				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_ACQUISITION ) == 
-					SV_CAN_GO_ONLINE_FAILURE_ACQUISITION )
-				{
-					messageId = SvOi::Tid_CanGoOnlineFailure_Acquisition;
-				}
-				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_INSPECTION ) == 
-					SV_CAN_GO_ONLINE_FAILURE_INSPECTION )
-				{
-					bool bShowToolError = false;
-					if ( SVVisionProcessorHelper::Instance().GetNumberOfToolErrors() > 0 )
-					{
-						SVGUID ToolGuid;
-						SVString sToolErrorTxt;
-						if ( SVVisionProcessorHelper::Instance().GetFirstErrorMessage(ToolGuid,sToolErrorTxt) )
-						{
-							bShowToolError = true;
-							SVString sToolName = SVObjectManagerClass::Instance().GetCompleteObjectName(ToolGuid);
-							msgList.push_back(sToolName);
-							msgList.push_back(sToolErrorTxt);
-							messageId = SvOi::Tid_CanGoOnlineFailure_InspectionTool;
-						}
-					}
-					if (!bShowToolError)
-					{
-						messageId = SvOi::Tid_CanGoOnlineFailure_Inspection;
-					}
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT ) == 
-					SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT )
-				{
-					messageId = SvOi::Tid_GoOnlineFailure_RecycleProduct;
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_INSPECTION ) == 
-					SV_GO_ONLINE_FAILURE_INSPECTION )
-				{
-					messageId = SvOi::Tid_GoOnlineFailure_Inspection;
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_ACQUISITION ) == 
-					SV_GO_ONLINE_FAILURE_ACQUISITION )
-				{
-					messageId = SvOi::Tid_GoOnlineFailure_Acquisition;
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_TRIGGER ) == 
-					SV_GO_ONLINE_FAILURE_TRIGGER )
-				{
-					messageId = SvOi::Tid_GoOnlineFailure_Trigger;
-				}
-				else
-				{
-					messageId = SvOi::Tid_CanGoOnlineFailure_Unknown;
-				}
-				INT_PTR Res(0);
 				SvStl::MessageMgrDisplayAndNotify Exception(SvStl::LogAndDisplay);
-				if (0 == exceptionContainer.getMessage().m_MessageCode)
-				{
-					Res = Exception.setMessage(SVMSG_SVO_54_EMPTY, messageId, msgList, StdMessageParams, SvOi::Err_45000);
-				}
-				else
-				{
-					Res = Exception.setMessage(exceptionContainer.getMessage());
-				}
+				Exception.setMessage(exceptionContainer.getMessage());
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 		}
@@ -4901,8 +4804,7 @@ HRESULT SVObserverApp::SetMode( unsigned long p_lNewMode )
 		{
 			try
 			{
-				if( Start() != S_OK )
-					l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
+				Start();
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{ //Log exception, (do not display the error because it is called from remote)
@@ -6091,33 +5993,6 @@ HRESULT SVObserverApp::SetModeEdit( bool p_bState )
 	return l_hr;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SetTestMode
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 {
 	bool l_bAllowAccess = false;
@@ -6161,7 +6036,6 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 				SVPPQObject* pPPQ( nullptr );
 				long l;
 				long lSize = 0;
-				HRESULT hrReady = S_OK;
 
 				SVConfigurationObject* pConfig( nullptr );
 				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -6171,16 +6045,25 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 				l_trgrDlg.ClearTriggers();
 				//If the pointer is a nullptr the lSize is 0
 				if( nullptr != pConfig ){ lSize = pConfig->GetPPQCount( ); }
-				HRESULT l_hrOk = S_OK;
-				for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
+				for( l = 0; l < lSize; l++ )
 				{
 					pPPQ = pConfig->GetPPQ( l );
 					if( nullptr == pPPQ )
 					{
-						l_hrOk = S_FALSE;
-						break;
+						return;
 					}
-					l_hrOk = pPPQ->CanGoOnline();
+					try
+					{
+						pPPQ->PrepareGoOnline();
+					}
+					catch( const SvStl::MessageContainer& rExp )
+					{
+						//This is the topmost catch for MessageContainer exceptions
+						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+						Exception.setMessage(rExp.getMessage());
+						return;
+					}
+					
 					SVTriggerObject* pTrigger( nullptr );
 					pPPQ->GetTrigger( pTrigger );
 					if ( nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
@@ -6193,46 +6076,37 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 				{
 					l_trgrDlg.SelectTrigger();
 				}
-				lSize = 0;
-				//If the pointer is a nullptr the lSize is 0
-				if( nullptr != pConfig ){ lSize = pConfig->GetPPQCount(); }
-				for( l = 0; hrReady == S_OK && l < lSize; l++ )
+
+				for( l = 0; l < lSize; l++ )
 				{
 					pPPQ = pConfig->GetPPQ( l );
 					if( nullptr != pPPQ )
 					{
-						hrReady = pPPQ->CanGoOnline();
-					}
-				}// end for
-
-				if( hrReady != S_OK )
-				{
-					return;
-				}
-
-				for( l = 0; hrReady == S_OK && l < lSize; l++ )
-				{
-					pPPQ = pConfig->GetPPQ( l );
-					if( nullptr != pPPQ )
-					{
-						hrReady = pPPQ->GoOnline();
-					}
-				}// end for
-
-				if( hrReady != S_OK )
-				{
-					for( l = 0; l < lSize; l++ )
-					{
-						pPPQ = pConfig->GetPPQ( l );
-						if( nullptr != pPPQ )
+						try
 						{
-							pPPQ->GoOffline();
+							pPPQ->GoOnline();
 						}
-					}// end for
+						catch( const SvStl::MessageContainer& rExp )
+						{
+							//This is the topmost catch for MessageContainer exceptions
+							SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+							Exception.setMessage(rExp.getMessage());
 
-					SetAllIPDocumentsOffline();
-					return;
-				}// end if
+							//failed, goOffline, before return
+							for( l = 0; l < lSize; l++ )
+							{
+								pPPQ = pConfig->GetPPQ( l );
+								if( nullptr != pPPQ )
+								{
+									pPPQ->GoOffline();
+								}
+							}// end for
+
+							SetAllIPDocumentsOffline();
+							return;
+						}
+					}
+				}// end for
 
 				SetAllIPDocumentsOnline();
 
@@ -6646,10 +6520,8 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT SVObserverApp::Start()
+void SVObserverApp::Start()
 {
-	HRESULT l_hrOk = S_OK;
-
 	SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_STARTING ) )
@@ -6659,14 +6531,14 @@ HRESULT SVObserverApp::Start()
 			SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
 		}
 
-		return S_OK;
+		return;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING | SV_STATE_STOPING ) )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_START_PENDING );
 
-		return S_OK;
+		return;
 	}
 
 	UpdateAndGetLogDataManager();
@@ -6680,17 +6552,30 @@ HRESULT SVObserverApp::Start()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	ASSERT( nullptr != pConfig );
 
-
-	if ( m_pMainWnd && nullptr != pConfig)
+	if ( nullptr == m_pMainWnd || nullptr == pConfig)
 	{
-		SVPPQObject* pPPQ( nullptr );
-		CStringArray saCameras;
+		RunAllIPDocuments();
 
-		SVDigitizerProcessingClass::Instance().StoreLastCameraImage();
+		SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvOi::Tid_GoOnlineFailure_InvalidPointerConfig, StdMessageParams, SvOi::Err_45000);
+		throw Exception;
+	}
 
+	SVPPQObject* pPPQ( nullptr );
+	CStringArray saCameras;
+
+	SVDigitizerProcessingClass::Instance().StoreLastCameraImage();
+	long lSize = pConfig->GetPPQCount();
+
+	try
+	{
 		DisconnectCameras( saCameras );
 		ConnectCameras( saCameras );
-		l_hrOk = SendCameraParameters( saCameras );
+		HRESULT hr = SendCameraParameters( saCameras );
+		if( hr != S_OK )
+		{
+			SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvOi::Tid_GoOnlineFailure_SendCameraParam, StdMessageParams, SvOi::Err_45000);
+			throw Exception;
+		}
 
 		SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
 		l_trgrDlg.ShowWindow(SW_HIDE);
@@ -6699,16 +6584,14 @@ HRESULT SVObserverApp::Start()
 		PPQMonitorList ppqMonitorList;
 		pConfig->BuildPPQMonitorList(ppqMonitorList);
 
-		long lSize = pConfig->GetPPQCount(  );
-		for( long l = 0; l_hrOk == S_OK && l < lSize; l++ )
+		for( long l = 0; hr == S_OK && l < lSize; l++ )
 		{
 			pPPQ =  pConfig->GetPPQ( l );
 			//Returns true when pointer valid
 			if( nullptr != pPPQ )
 			{
+				pPPQ->PrepareGoOnline();
 				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
-
-				l_hrOk = pPPQ->CanGoOnline();
 
 				SVTriggerObject* pTrigger( nullptr );
 				pPPQ->GetTrigger(pTrigger);
@@ -6722,136 +6605,135 @@ HRESULT SVObserverApp::Start()
 		{
 			l_trgrDlg.SelectTrigger();
 		}
-		if( l_hrOk != S_OK )
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		//cleanup goOnline, after fail, before exception leave this method
+		SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
+		RunAllIPDocuments();
+
+		throw rExp;
+	}// end if
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+	{
+		try
 		{
-			SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
-
-			RunAllIPDocuments();
-
-			return l_hrOk; // JMS ERROR - Cannot send PPQ on-line.
-		}// end if
-
-		if( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-		{
-			for( long l = 0; l_hrOk == S_OK && l < lSize; l++ )
+			for( long l = 0; l < lSize; l++ )
 			{
 				pPPQ = pConfig->GetPPQ( l );
 				if( nullptr != pPPQ )
 				{
-					l_hrOk = pPPQ->GoOnline();
+					pPPQ->GoOnline();
+				}
+			}// end for
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			//cleanup goOnline, after fail, before exception leave this method
+			for( long l = 0; l < lSize; l++ )
+			{
+				pPPQ = pConfig->GetPPQ( l );
+				if( nullptr != pPPQ )
+				{
+					pPPQ->GoOffline();
 				}
 			}// end for
 
-			if( l_hrOk != S_OK )
-			{
-				for( long l = 0; l < lSize; l++ )
-				{
-					pPPQ = pConfig->GetPPQ( l );
-					if( nullptr != pPPQ )
-					{
-						pPPQ->GoOffline();
-					}
-				}// end for
+			SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
 
-				SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
+			RunAllIPDocuments();
+			SetAllIPDocumentsOffline();
 
-				RunAllIPDocuments();
-				SetAllIPDocumentsOffline();
+			throw rExp;
+		}// end if
 
-				return l_hrOk;
-			}// end if
+		SetAllIPDocumentsOnline();
 
-			SetAllIPDocumentsOnline();
+		SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
+		SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_START_PENDING );
 
-			SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
-			SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_START_PENDING );
+		GetMainFrame()->ShowToolBars( FALSE, TRUE, SVMainFrame::Flag_Standard | SVMainFrame::Flag_Zoom );
+		GetMainFrame()->RefreshAllSplitters();
 
-			GetMainFrame()->ShowToolBars( FALSE, TRUE, SVMainFrame::Flag_Standard | SVMainFrame::Flag_Zoom );
-			GetMainFrame()->RefreshAllSplitters();
+		SetPriorityClass( GetCurrentProcess(), REALTIME_PRIORITY_CLASS );
 
-			SetPriorityClass( GetCurrentProcess(), REALTIME_PRIORITY_CLASS );
+		SVSVIMStateClass::AddState( SV_STATE_RUNNING );
 
-			SVSVIMStateClass::AddState( SV_STATE_RUNNING );
+		SVCommandStreamManager::Instance().RebuildCommandObserver();
+		m_mgrRemoteFonts.GoOnline();
 
-			SVCommandStreamManager::Instance().RebuildCommandObserver();
-			m_mgrRemoteFonts.GoOnline();
+		if( IsProductTypeRAID() )
+		{
+			m_IntelRAID.UpdateStatus();
 
-			if( IsProductTypeRAID() )
-			{
-				m_IntelRAID.UpdateStatus();
-
-				if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
-				{
-					if( pConfig->SetRaidErrorBit( true ) != S_OK )
-					{
-						return S_FALSE;
-					}
-				}
-				else
-				{
-					if( pConfig->SetRaidErrorBit( false ) != S_OK )
-					{
-						return S_FALSE;
-					}
-				}
-			}
-			else
+			if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
 			{
 				if( pConfig->SetRaidErrorBit( true ) != S_OK )
 				{
-					return S_FALSE;
+					SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvOi::Tid_GoOnlineFailure_RaidBits, StdMessageParams, SvOi::Err_45000);
+					throw Exception;
 				}
-			}
-
-			if( pConfig->SetModuleReady( true ) != S_OK )
-			{
-				RunAllIPDocuments();
-
-				return S_FALSE; // JMS ERROR - Cannot write to module ready output.
-			}// end if
-
-			SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadOnly );
-
-			CString l_strTrigCnts;
-			GetTriggersAndCounts( l_strTrigCnts );
-			l_FinishLoad = SVClock::GetTimeStamp();
-			long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
-
-			SVStringArray msgList;
-			msgList.push_back(SVString(l_strTrigCnts));
-			msgList.push_back(SvUl_SF::Format(_T("%d"), l_lTime));
-
-			//add go-online message to the event viewer.
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, SvOi::Tid_GoOnlineTime, msgList, StdMessageParams );
-			
-			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
-			
-			if (l_trgrDlg.HasTriggers())
-			{
-				EnableTriggerSettings();
 			}
 			else
 			{
-				DisableTriggerSettings();
+				if( pConfig->SetRaidErrorBit( false ) != S_OK )
+				{
+					SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvOi::Tid_GoOnlineFailure_RaidBits, StdMessageParams, SvOi::Err_45000);
+					throw Exception;
+				}
 			}
+		}
+		else
+		{
+			if( pConfig->SetRaidErrorBit( true ) != S_OK )
+			{
+				SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvOi::Tid_GoOnlineFailure_RaidBits, StdMessageParams, SvOi::Err_45000);
+				throw Exception;
+			}
+		}
 
-			SetThreadPriority( THREAD_PRIORITY_BELOW_NORMAL );
+		if( pConfig->SetModuleReady( true ) != S_OK )
+		{
+			RunAllIPDocuments();
+
+			SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvOi::Tid_GoOnlineFailure_ModuleReadyOutput, StdMessageParams, SvOi::Err_45000);
+			throw Exception;
 		}// end if
-	}// end if
-	else
-	{
-		RunAllIPDocuments();
 
-		l_hrOk = S_FALSE;
-	}
+		SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadOnly );
+
+		CString l_strTrigCnts;
+		GetTriggersAndCounts( l_strTrigCnts );
+		l_FinishLoad = SVClock::GetTimeStamp();
+		long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
+
+		SVStringArray msgList;
+		msgList.push_back(SVString(l_strTrigCnts));
+		msgList.push_back(SvUl_SF::Format(_T("%d"), l_lTime));
+
+		//add go-online message to the event viewer.
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, SvOi::Tid_GoOnlineTime, msgList, StdMessageParams );
+
+		SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
+
+		if (SVSoftwareTriggerDlg::Instance().HasTriggers())
+		{
+			EnableTriggerSettings();
+		}
+		else
+		{
+			DisableTriggerSettings();
+		}
+
+		SetThreadPriority( THREAD_PRIORITY_BELOW_NORMAL );
+	}// end if
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) )
 	{
 		PostMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_STOP, 0), 0);
 	}
-
-	return l_hrOk;
 }
 
 HRESULT SVObserverApp::INILoad()
@@ -8070,7 +7952,7 @@ BOOL SVObserverApp::InitATL()
 			if( IDYES == result )
 			{
 				return FALSE;
-			}
+		}
 		}
 		else
 #endif

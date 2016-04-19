@@ -59,18 +59,7 @@ enum SVHardwareErrorEnums
 	SV_HARDWARE_FAILURE_CAMERATRIGGER = 0xC0000080L,
 	SV_HARDWARE_FAILURE_ALL         = 0xC00000FFL, // this is all the above combined
 
-	SV_CAN_GO_ONLINE_FAILURE_TRIGGER     = 0xC0000100L,
 	SV_CAN_GO_ONLINE_FAILURE_ACQUISITION = 0xC0000200L,
-	SV_CAN_GO_ONLINE_FAILURE_INSPECTION  = 0xC0000400L,
-	SV_CAN_GO_ONLINE_FAILURE_CONDITIONAL_OUTPUT = 0xC0000800L,
-	SV_CAN_GO_ONLINE_FAILURE_ALL         = 0xC0000F00L, // this is all the above combined
-
-	SV_GO_ONLINE_FAILURE_ALREADY_ONLINE  = 0xC0010000L,
-	SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT = 0xC0020000L,
-	SV_GO_ONLINE_FAILURE_INSPECTION      = 0xC0040000L,
-	SV_GO_ONLINE_FAILURE_ACQUISITION     = 0xC0080000L,
-	SV_GO_ONLINE_FAILURE_TRIGGER         = 0xC0100000L,
-	SV_GO_ONLINE_FAILURE_ALL             = 0xC01F0000L, // this is all the above combined
 };
 
 typedef SvXml::SVXMLMaterialsTree SVTreeType;
@@ -359,7 +348,10 @@ public:
 
 #pragma region Protected Methods
 protected:
-	HRESULT Start();
+
+	/// Start the configuration (go online).
+	/// In error cases this method throw Exception.
+	void Start();
 
 	HRESULT INILoad();
 	HRESULT INIClose();

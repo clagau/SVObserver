@@ -115,9 +115,13 @@ public:
 	BOOL SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera );
 	BOOL GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera ) const;
 
-	// Runtime Functions
-	HRESULT CanGoOnline();
-	HRESULT GoOnline();
+	
+	/// Check and prepare if configuration can go online.
+	/// In error cases this method throw Exception.
+	void PrepareGoOnline();
+	/// Go online.
+	/// In error cases this method throw Exception.
+	void GoOnline();
 	BOOL GoOffline();
 	BOOL IsOnline() const;
 
@@ -185,7 +189,10 @@ public:
 	SVCameraTriggerData& GetCameraInputData();
 	long GetExtraBufferSize() const;
 
-	HRESULT SetMonitorList(const ActiveMonitorList& rActiveList);
+	/// Set or unset Monitor list and activated the shared memory for it.
+	/// \param rActiveList [in] The new monitor list.
+	/// In error cases (only possible in set case) this method throw Exception
+	void SetMonitorList(const ActiveMonitorList& rActiveList);
 	bool HasActiveMonitorList() const;
 
 	//************************************
@@ -372,8 +379,6 @@ protected:
 	BOOL RecycleProductInfo( SVProductInfoStruct *pProduct );
 
 	BOOL RebuildProductInfoStructs();
-
-	void DisplayGoOnlineError(SvOi::MessageTextEnum id, LPCTSTR name);
 
 	//************************************
 	/// Processes a single camera queue event

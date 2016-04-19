@@ -3704,18 +3704,14 @@ HRESULT SVInspectionProcess::GetMainImages( const CString& p_rCameraName, SVCame
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList )
+void SVInspectionProcess::UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList )
 {
-	HRESULT l_Status = S_OK;
-
 	m_MonitorListQueue.clear();
 	m_ImageNameDequeQueue.clear();
 
 	m_MonitorListQueue.AddTail( p_rMonitorList );
 
 	m_AsyncProcedure.Signal( NULL );
-
-	return l_Status;
 }
 
 HRESULT SVInspectionProcess::UpdateSharedMemoryLastInspectedImages( const SVMonitorItemList& p_rImageList )

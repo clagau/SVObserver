@@ -47,6 +47,7 @@
 #include "SVTimerLibrary\SVProfiler.h"
 #endif
 #include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVVisionProcessorHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1166,24 +1167,6 @@ BOOL SVPPQObject::RebuildProductInfoStructs()
 	return l_bOk;
 }
 
-void SVPPQObject::DisplayGoOnlineError(SvOi::MessageTextEnum id, LPCTSTR name)
-{
-	const bool bDisplayError = TheSVObserverApp.GetProfileInt(_T("Debug"), _T("ReportGoOnlineFailure"), 0) != 0;
-	TheSVObserverApp.WriteProfileInt(_T("Debug"), _T("ReportGoOnlineFailure"), (int) bDisplayError);
-
-	if ( bDisplayError )
-	{
-		SVStringArray msgList;
-		if (nullptr != name)
-		{
-			msgList.push_back(name);
-		}
-		
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, id, msgList, StdMessageParams, SvOi::Err_10185 ); 
-	}
-}
-
 void SVPPQObject::AssignCameraToAcquisitionTrigger()
 {
 	if (m_pTrigger->IsAcquisitionTrigger() && m_pTrigger->mpsvDevice)
@@ -1207,36 +1190,29 @@ void SVPPQObject::AssignCameraToAcquisitionTrigger()
 	}
 }
 
-HRESULT SVPPQObject::CanGoOnline()
+void SVPPQObject::PrepareGoOnline()
 {
-	long lPos = -1;
-	HRESULT l_hrOk = S_OK;
-
 	// Fixup Acquisition triggers (as Cameras can be in a different order than Triggers)
 	AssignCameraToAcquisitionTrigger();
 
 	if( ! m_pTrigger->CanGoOnline() )
 	{
-		CString sName = m_pTrigger->GetCompleteObjectName();
-		DisplayGoOnlineError(SvOi::Tid_CannotGoOnline, sName);
+		SVStringArray msgList;
+		msgList.push_back(SVString(m_pTrigger->GetCompleteObjectName()));
 
-		l_hrOk = SV_CAN_GO_ONLINE_FAILURE_TRIGGER;
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_Trigger, msgList, StdMessageParams, SvOi::Err_10185 );
+		throw Msg;
 	}
 
-	if ( S_OK == l_hrOk  )
+	for( SVCameraInfoMap::iterator l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter )
 	{
-		SVCameraInfoMap::iterator l_svIter;
-
-		for( l_svIter = m_Cameras.begin(); 
-			S_OK == l_hrOk  && l_svIter != m_Cameras.end(); ++l_svIter )
+		if ( ! ( l_svIter->second.m_CameraPPQIndex >= 0 && l_svIter->first->CanGoOnline() ) )
 		{
-			if ( ! ( l_svIter->second.m_CameraPPQIndex >= 0 && l_svIter->first->CanGoOnline() ) )
-			{
-				CString sName = l_svIter->first->GetCompleteObjectName();
-				DisplayGoOnlineError(SvOi::Tid_CannotGoOnline, sName);
+			SVStringArray msgList;
+			msgList.push_back(SVString(l_svIter->first->GetCompleteObjectName()));
 
-				l_hrOk = SV_CAN_GO_ONLINE_FAILURE_ACQUISITION;
-			}
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_Acquisition, msgList, StdMessageParams, SvOi::Err_10185 );
+			throw Msg;
 		}
 	}
 
@@ -1248,7 +1224,8 @@ HRESULT SVPPQObject::CanGoOnline()
 		{
 			if( !RecycleProductInfo( l_pProduct ) )
 			{
-				l_hrOk = SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT;
+				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_RecycleProduct, StdMessageParams, SvOi::Err_10185 );
+				throw Msg;
 			}
 
 			m_ppPPQPositions.SetProductAt( i, nullptr );
@@ -1256,101 +1233,78 @@ HRESULT SVPPQObject::CanGoOnline()
 
 		if(  m_qAvailableProductInfos.RemoveHead( &l_pProduct ) && nullptr != l_pProduct )
 		{
-			HRESULT l_HRTemp = m_ppPPQPositions.SetProductAt( i, l_pProduct );
+			HRESULT hRTemp = m_ppPPQPositions.SetProductAt( i, l_pProduct );
 
-			if( S_OK == l_HRTemp  )
+			if( S_OK == hRTemp  )
 			{
 				if( 0 == i )
 				{
-					l_HRTemp = GetNextAvailableIndexes( l_pProduct->oPPQInfo, SV_PPQ );
+					hRTemp = GetNextAvailableIndexes( l_pProduct->oPPQInfo, SV_PPQ );
 				}
 				else
 				{
-					l_HRTemp = TheSVDataManager.GetNextAvailableBufferIndex( m_pResultDataCircleBuffer, SV_PPQ, l_pProduct->oPPQInfo.m_ResultDataDMIndexHandle );
+					hRTemp = TheSVDataManager.GetNextAvailableBufferIndex( m_pResultDataCircleBuffer, SV_PPQ, l_pProduct->oPPQInfo.m_ResultDataDMIndexHandle );
 				}
 			}
 
-			if( S_OK == l_hrOk )
+			if( S_OK != hRTemp )
 			{
-				l_hrOk = l_HRTemp;
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%X"), hRTemp));
+				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_RecycleProduct, msgList, StdMessageParams, SvOi::Err_10185 );
+				throw Msg;
 			}
 		}
 		else
 		{
-			if( S_OK == l_hrOk  )
-			{
-				l_hrOk = SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT;
-			}
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_RecycleProduct, StdMessageParams, SvOi::Err_10185 );
+			throw Msg;
 		}
 	}// end for
 
-	SeidenaderVision::InspectionIDs sharedInspectionWriterCreationInfo;
-	if ( S_OK == l_hrOk  )
+	size_t iSize = m_arInspections.GetSize();
+	for( size_t i = 0; i < iSize; i++ )
 	{
-		size_t iSize = m_arInspections.GetSize();
-		for( size_t i = 0; S_OK == l_hrOk && i < iSize; i++ )
+		if ( ! m_arInspections[i]->CanGoOnline() )
 		{
-			sharedInspectionWriterCreationInfo.push_back(SeidenaderVision::InspectionID(m_arInspections[i]->GetName(), m_arInspections[i]->GetUniqueObjectID()));
-			if ( ! m_arInspections[i]->CanGoOnline() )
-			{
-				CString sName = m_arInspections[i]->GetCompleteObjectName();
-				DisplayGoOnlineError(SvOi::Tid_CannotGoOnline, sName);
-
-				l_hrOk = SV_CAN_GO_ONLINE_FAILURE_INSPECTION; // JMS ERROR - Create error message for inspection CanGoOnline failure
-			}
-		}// end for
-	}
-
-	if (S_OK == l_hrOk  && !ResolveConditionalOutput())
-	{
-		l_hrOk = SV_CAN_GO_ONLINE_FAILURE_CONDITIONAL_OUTPUT;
-	}
-
-	if (S_OK == l_hrOk && HasActiveMonitorList())
-	{
-		// Get List of Inspections for this PPQ
-		// SVSharedPPQWriter will create the inspection shares
-		l_hrOk = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), sharedInspectionWriterCreationInfo);
-		if (S_OK != l_hrOk)
-		{
+			SvOi::MessageTextEnum messageId = SvOi::Tid_Empty;
 			SVStringArray msgList;
-			msgList.push_back(GetName());
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvOi::Tid_ErrorNotEnoughDiskSpace, msgList, StdMessageParams, SvOi::Err_15025 );
-		}
-		else
-		{
-			SeidenaderVision::SVShareControlHandler& rControlHandler = SVSharedMemorySingleton::Instance().GetIPCShare();
-			if (rControlHandler.IsCreated())
+			//@TODO[mza][7.40][14.04.2016]: This part is only used by ArchiveTool and should be replaced if SVO-1053 will be implemented
+			bool bShowToolError = false;
+			if ( SVVisionProcessorHelper::Instance().GetNumberOfToolErrors() > 0 )
 			{
-				rControlHandler.SetReady();
-				// do we wait for ack?
+				SVGUID ToolGuid;
+				SVString sToolErrorTxt;
+				if ( SVVisionProcessorHelper::Instance().GetFirstErrorMessage(ToolGuid,sToolErrorTxt) )
+				{
+					bShowToolError = true;
+					SVString sToolName = SVObjectManagerClass::Instance().GetCompleteObjectName(ToolGuid);
+					msgList.push_back(sToolName);
+					msgList.push_back(sToolErrorTxt);
+					messageId = SvOi::Tid_CanGoOnlineFailure_InspectionTool;
+				}
 			}
+			if (!bShowToolError)
+			{
+				messageId = SvOi::Tid_CanGoOnlineFailure_Inspection;
+				msgList.push_back(SVString(m_arInspections[i]->GetCompleteObjectName()));
+			}
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList,  StdMessageParams, SvOi::Err_10185 );
+			throw Msg;
 		}
-	}
-	if (S_OK != l_hrOk && HasActiveMonitorList())
+	}// end for
+
+	if (!ResolveConditionalOutput())
 	{
-		// clear the list
-		SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_ConditionalOutput,  StdMessageParams, SvOi::Err_10185 );
+		throw Msg;
 	}
+}// end PrepareGoOnline
 
-	return l_hrOk;
-}// end CanGoOnline
-
-HRESULT SVPPQObject::GoOnline()
+void SVPPQObject::GoOnline()
 {
-	BOOL bValue;
-	size_t i;
-	size_t lSize;
-
-	HRESULT l_hrOk = S_OK;
-
 	CString sFailureObjectName;
 
-	if( m_bOnline )
-	{
-		return SV_GO_ONLINE_FAILURE_ALREADY_ONLINE;
-	}
 #ifdef EnableTracking
 	m_PPQTracking.clear();
 	m_PPQTracking.m_QueueLength = m_ppPPQPositions.size();
@@ -1361,7 +1315,7 @@ HRESULT SVPPQObject::GoOnline()
 	// First, make sure the trigger toggle output is set to the right default
 	if( !( m_pTriggerToggle.empty() ) && m_pTriggerToggle->m_pValueObject )
 	{
-		bValue = false;
+		BOOL bValue = false;
 		m_pTriggerToggle->m_pValueObject->SetValue( 1, bValue );
 		m_TriggerToggle = ( bValue != FALSE );
 	}// end if
@@ -1369,7 +1323,7 @@ HRESULT SVPPQObject::GoOnline()
 	// Also, make sure the output toggle output is set to the right default
 	if( !( m_pOutputToggle.empty() ) && m_pOutputToggle->m_pValueObject )
 	{
-		bValue = false;
+		BOOL bValue = false;
 		m_pOutputToggle->m_pValueObject->SetValue( 1, bValue );
 		m_OutputToggle = ( bValue != FALSE );
 	}// end if
@@ -1397,107 +1351,110 @@ HRESULT SVPPQObject::GoOnline()
 		m_pOutputToggle->m_Enabled = FALSE;
 	}
 
-	if ( S_OK == l_hrOk )
+	size_t lSize = m_arInspections.GetSize();
+	bool bInspGoOnline = true;
+	for( size_t i = 0; i < lSize; i++ )
+	{
+		if ( ! m_arInspections[i]->GoOnline() )
+		{
+			sFailureObjectName = m_arInspections[i]->GetCompleteObjectName();
+			bInspGoOnline = false;
+			break;
+		}
+	}// end for
+
+	if( !bInspGoOnline )
 	{
 		lSize = m_arInspections.GetSize();
-		for( i = 0; S_OK == l_hrOk && i < lSize; i++ )
+		for( size_t i = 0; i < lSize; i++ )
 		{
-			if ( ! m_arInspections[i]->GoOnline() )
-			{
-				sFailureObjectName = m_arInspections[i]->GetCompleteObjectName();
-
-				l_hrOk = SV_GO_ONLINE_FAILURE_INSPECTION;
-			}
+			m_arInspections[i]->GoOffline();
 		}// end for
 
-		if( S_OK != l_hrOk  )
-		{
-			lSize = m_arInspections.GetSize();
-			for( i = 0; i < lSize; i++ )
-			{
-				m_arInspections[i]->GoOffline();
-			}// end for
+		SVStringArray msgList;
+		msgList.push_back(SVString(sFailureObjectName));
 
-			DisplayGoOnlineError(SvOi::Tid_FailedToGoOnline, sFailureObjectName);
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Inspection, msgList, StdMessageParams, SvOi::Err_10185 );
+		throw Msg;
+	}// end if
 
-			return l_hrOk;
-		}// end if
-	}
-
-	if( S_OK == l_hrOk  )
+	if (m_pTrigger->IsSoftwareTrigger())
 	{
-		if (m_pTrigger->IsSoftwareTrigger())
+		// must do this before the Camera starts for Digital cameras
+		HRESULT hr = m_pTrigger->EnableInternalTrigger();
+		if (S_OK != hr)
 		{
-			// must do this before the Camera starts for Digital cameras
-			l_hrOk = m_pTrigger->EnableInternalTrigger();
+			SVStringArray msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%X"), hr));
+
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_InternalTrigger, msgList, StdMessageParams, SvOi::Err_10185 );
+			throw Msg;
 		}
 	}
 
-	if( S_OK == l_hrOk  )
+	SVCameraInfoMap::iterator l_svIter;
+	bool bCameraGoOnline = true;
+	for( l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter )
 	{
-		SVCameraInfoMap::iterator l_svIter;
-
-		for( l_svIter = m_Cameras.begin(); S_OK == l_hrOk  && l_svIter != m_Cameras.end(); ++l_svIter )
+		if ( ! l_svIter->first->GoOnline() )
 		{
-			if ( ! l_svIter->first->GoOnline() )
-			{
-				sFailureObjectName = l_svIter->first->GetCompleteObjectName();
+			sFailureObjectName = l_svIter->first->GetCompleteObjectName();
 
-				l_hrOk = SV_GO_ONLINE_FAILURE_ACQUISITION;
-			}
+			bCameraGoOnline = false;
+			break;
+		}
+	}// end for
+
+	if( !bCameraGoOnline )
+	{
+		for( l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter )
+		{
+			l_svIter->first->GoOffline();
 		}// end for
 
-		if( S_OK != l_hrOk )
+		lSize = m_arInspections.GetSize();
+		for( size_t i = 0; i < lSize; i++ )
 		{
-			for( l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter )
-			{
-				l_svIter->first->GoOffline();
-			}// end for
+			m_arInspections[i]->GoOffline();
+		}// end for
 
-			lSize = m_arInspections.GetSize();
-			for( i = 0; i < lSize; i++ )
-			{
-				m_arInspections[i]->GoOffline();
-			}// end for
+		SVStringArray msgList;
+		msgList.push_back(SVString(sFailureObjectName));
 
-			DisplayGoOnlineError(SvOi::Tid_FailedToGoOnline, sFailureObjectName);
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Acquisition, msgList, StdMessageParams, SvOi::Err_10185 );
+		throw Msg;
+	}// end if
 
-			return l_hrOk;
-		}// end if
-	}
-
-	if ( S_OK == l_hrOk  )
+	if( ! m_pTrigger->GoOnline() )
 	{
-		if( ! m_pTrigger->GoOnline() )
+		sFailureObjectName = m_pTrigger->GetCompleteObjectName();
+		m_pTrigger->GoOffline();
+
+		SVCameraInfoMap::iterator l_svIter;
+
+		for( l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter )
 		{
-			sFailureObjectName = m_pTrigger->GetCompleteObjectName();
-			m_pTrigger->GoOffline();
+			l_svIter->first->GoOffline();
+		}// end for
 
-			SVCameraInfoMap::iterator l_svIter;
+		lSize = m_arInspections.GetSize();
+		for( size_t i = 0; i < lSize; i++ )
+		{
+			m_arInspections[i]->GoOffline();
+		}// end for
 
-			for( l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter )
-			{
-				l_svIter->first->GoOffline();
-			}// end for
+		SVStringArray msgList;
+		msgList.push_back(SVString(sFailureObjectName));
 
-			lSize = m_arInspections.GetSize();
-			for( i = 0; i < lSize; i++ )
-			{
-				m_arInspections[i]->GoOffline();
-			}// end for
-
-			DisplayGoOnlineError(SvOi::Tid_FailedToGoOnline, sFailureObjectName);
-
-			l_hrOk = SV_GO_ONLINE_FAILURE_TRIGGER;
-
-			return l_hrOk;
-		}// end if
-	}
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Trigger, msgList, StdMessageParams, SvOi::Err_10185 );
+		throw Msg;
+	}// end if
 
 	// Create a multimedia timer thread for the output and reset time delays
 	if( TIMERR_NOERROR != ::timeBeginPeriod( 1 ) )
 	{
-		return S_FALSE;
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_CreateTimerThread, StdMessageParams, SvOi::Err_10185 );
+		throw Msg;
 	}
 
 	//The timer should start when not "Next Trigger Mode" or when reset or data valid delay are not 0
@@ -1510,24 +1467,22 @@ HRESULT SVPPQObject::GoOnline()
 			TIME_PERIODIC | TIME_CALLBACK_FUNCTION );
 	}// end if
 
-	if ( S_OK == l_hrOk  )
+	// Create the PPQ's threads
+	if ( S_OK != m_AsyncProcedure.Create( &SVPPQObject::APCThreadProcess, boost::bind(&SVPPQObject::ThreadProcess, this, _1), GetName(), SVAffinityPPQ ) )
 	{
-		// Create the PPQ's threads
-		l_hrOk = m_AsyncProcedure.Create( &SVPPQObject::APCThreadProcess, boost::bind(&SVPPQObject::ThreadProcess, this, _1), GetName(), SVAffinityPPQ );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_CreatePPQThread, StdMessageParams, SvOi::Err_10185 );
+		throw Msg;
 	}
+	
+	// Kick the threads up a notch, for real!
+	m_AsyncProcedure.SetPriority( THREAD_PRIORITY_HIGHEST );
 
-	if ( S_OK == l_hrOk )
-	{
-		// Kick the threads up a notch, for real!
-		m_AsyncProcedure.SetPriority( THREAD_PRIORITY_HIGHEST );
-	}
-
-	m_bOnline = ( S_OK == l_hrOk );
+	m_bOnline = true;
 
 	// This snippet of code here apears to do nothing, but it is actually 
 	// initializing the RTTI for the output object parents.  This insures that there 
 	// is no appreciable delay in the writeOutputs function that uses dynaic_cast.
-	for( i = 0; i < m_UsedOutputs.size(); i++ )
+	for( size_t i = 0; i < m_UsedOutputs.size(); i++ )
 	{
 		void* l_pInit = dynamic_cast<SVPPQObject*>( m_UsedOutputs[i]->m_pValueParent );
 	}
@@ -1540,8 +1495,6 @@ HRESULT SVPPQObject::GoOnline()
 	{
 		m_NAKCount = 0;
 	}
-
-	return l_hrOk;
 }// end GoOnline
 
 static void QuieseSharedMemory()
@@ -4888,9 +4841,8 @@ static HRESULT GetValueObject(const SVString& rName, SVValueObjectReference& rRe
 	return hr;
 }
 
-HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
+void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 {
-	HRESULT hr = S_OK;
 	m_bActiveMonitorList = rActiveList.first;
 	if (m_bActiveMonitorList)
 	{
@@ -4918,10 +4870,39 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 					SVMonitorItemList(imgBounds.first, imgBounds.second),
 					SVMonitorItemList(), SVMonitorItemList(), SVMonitorItemList());
 
-				hr = pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
+				pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
 			}
 		}
 		SetRejectConditionList(rejectCondList);
+
+		// Get List of Inspections for this PPQ
+		// SVSharedPPQWriter will create the inspection shares
+		SeidenaderVision::InspectionIDs sharedInspectionWriterCreationInfo;
+		size_t iSize = m_arInspections.GetSize();
+		for( size_t i = 0; i < iSize; i++ )
+		{
+			sharedInspectionWriterCreationInfo.push_back(SeidenaderVision::InspectionID(m_arInspections[i]->GetName(), m_arInspections[i]->GetUniqueObjectID()));
+		}
+		HRESULT hr = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), sharedInspectionWriterCreationInfo);
+		if (S_OK != hr)
+		{
+			//Set MonitorList failed, clear momitorList
+			SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+
+			SVStringArray msgList;
+			msgList.push_back(GetName());
+			SvStl::MessageContainer Exception( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvOi::Tid_ErrorNotEnoughDiskSpace, msgList, StdMessageParams, SvOi::Err_15025 );
+			throw;
+		}
+		else
+		{
+			SeidenaderVision::SVShareControlHandler& rControlHandler = SVSharedMemorySingleton::Instance().GetIPCShare();
+			if (rControlHandler.IsCreated())
+			{
+				rControlHandler.SetReady();
+				// do we wait for ack?
+			}
+		}
 	}
 	else
 	{
@@ -4938,7 +4919,6 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 			}
 		}
 	}
-	return hr;
 }
 
 bool SVPPQObject::HasActiveMonitorList() const

@@ -141,7 +141,6 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_ErrorUnlockingInputRequests, _T( "Error unlocking input requests." ))
 	(SvOi::Tid_IPDoc_NoCameraColorAttached, _T("Color camera not attached to this IPDoc"))
 	(SvOi::Tid_ErrorGettingTimeStamp, _T( "Error getting time stamp." ))
-	(SvOi::Tid_ErrorNotEnoughDiskSpace, _T("CanGoOnline %s - Not enough Disk Space Available"))
 	(SvOi::Tid_ProcessTrigger, _T("ProcessTrigger - %s"))
 	(SvOi::Tid_ErrorNotAllRejectConditionItemsFound, _T("Not All Reject Condition List items found"))
 	(SvOi::Tid_ReleaseProduct, _T("Release Product - %s"))
@@ -274,20 +273,34 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_SVObserver_RegisterClassObjectsFailed_Question, _T( "(hr=0x%s), Unable to register class objects. COM interface ISVCommand unavailable.\nDo you want to exit?"))
 	(SvOi::Tid_SVObserver_OleInitFailed, _T( "OLE initialization failed.  Make sure that the OLE libraries are the correct version."))
 	(SvOi::Tid_CanGoOnlineFailure_Trigger, _T( "Configuration cannot enter Run.  There is an "
-			"unknown error with a Trigger when the system attempted to enter Run." ))
-	(SvOi::Tid_CanGoOnlineFailure_Acquisition, _T( "Configuration cannot enter Run.  Cannot connect to camera when the system attempted to enter Run." ))
+			"unknown error with Trigger %s when the system attempted to enter Run." ))
+	(SvOi::Tid_CanGoOnlineFailure_Acquisition, _T( "Configuration cannot enter Run.  Cannot connect to camera %s when the system attempted to enter Run." ))
 	(SvOi::Tid_CanGoOnlineFailure_InspectionTool, _T("Configuration cannot enter Run.\n Error with \"%s\" : %s"))
 	(SvOi::Tid_CanGoOnlineFailure_Inspection, _T( "Configuration cannot enter Run.  There is an "
-							"unknown error with an inspection when the system attempted to enter Run." ))
+							"unknown error with an inspection %s when the system attempted to enter Run." ))
+	(SvOi::Tid_CanGoOnlineFailure_ConditionalOutput, _T( "Configuration cannot enter Run.  There is an "
+							"unknown error by resolving the coditionalOutputs when the system attempted to enter Run." ))
 	(SvOi::Tid_GoOnlineFailure_RecycleProduct, _T( "Configuration cannot enter Run.  There is an "
 						"unknown error with a PPQ when it attempted to recycle a product when the system was going online." ))
+	(SvOi::Tid_GoOnlineFailure_RecycleProductId, _T( "Configuration cannot enter Run.  There is the "
+						"error %s with a PPQ when it attempted to recycle a product when the system was going online." ))
 	(SvOi::Tid_GoOnlineFailure_Inspection, _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with an Inspection when the system was going online." ))
-	(SvOi::Tid_GoOnlineFailure_Acquisition, _T("Configuration cannot enter Run.  Cannot reach camera when the system was going online." ))
+						"unknown error with Inspection %s when the system was going online." ))
+	(SvOi::Tid_GoOnlineFailure_Acquisition, _T("Configuration cannot enter Run.  Cannot reach camera %s when the system was going online." ))
 	(SvOi::Tid_GoOnlineFailure_Trigger, _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a Trigger when the system was going online." ))
-	(SvOi::Tid_CanGoOnlineFailure_Unknown, _T( "Configuration cannot enter Run.  There is an "
-						"unknown error when the system was going online." ))
+						"unknown error with Trigger %s when the system was going online." ))
+	(SvOi::Tid_GoOnlineFailure_InternalTrigger, _T( "Configuration cannot enter Run.  There is the "
+						"error %s with enable internal Trigger when the system was going online." ))
+	(SvOi::Tid_GoOnlineFailure_CreatePPQThread, _T( "Configuration cannot enter Run.  There is the "
+						"error %s by creating the PPQ Thread." ))
+	(SvOi::Tid_GoOnlineFailure_CreateTimerThread, _T( "Configuration cannot enter Run.  There is the "
+						"error %s by creating the timer Thread." ))
+	(SvOi::Tid_GoOnlineFailure_InvalidPointerConfig, _T( "Configuration cannot enter Run.  Invalid pointer of configuration or mainWnd." ))
+	(SvOi::Tid_GoOnlineFailure_RaidBits, _T( "Configuration cannot enter Run.  Error by setting of raid bits." ))
+	(SvOi::Tid_GoOnlineFailure_ModuleReadyOutput, _T( "Configuration cannot enter Run.  Cannot write to module ready output." ))
+	(SvOi::Tid_ErrorNotEnoughDiskSpace, _T("Unable to set monitor list for %s - Not enough Disk Space Available"))
+	(SvOi::Tid_GoOnlineFailure_SendCameraParam, _T( "Configuration cannot enter Run.  There is an "
+						"unknown error by sending camera parameter when the system was going online." ))
 	(SvOi::Tid_AmountOfSystemMemoryText, _T("Amount of physical memory = %s"))
 	(SvOi::Tid_Version, _T("\nVersion %s"))
 	(SvOi::Tid_ConfigLoadTime, _T("%s\nload time %s ms"))
@@ -373,8 +386,6 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_InValidNewExtents, _T("The new extents for the %s are not valid"))
 	(SvOi::Tid_MilVersion_Error, _T("This version of SVObserver will not run with the installed MIL library. SVObserver needs MIL %4.2f. The installed version is %4.2f"))
 	(SvOi::Tid_StatToolInvalidVariable, _T("%s\nError - The Selected Variable To Monitor does not exist."))
-	(SvOi::Tid_CannotGoOnline, _T("%s cannot go online"))
-	(SvOi::Tid_FailedToGoOnline, _T("%s failed to go online"))
 	(SvOi::Tid_PatModelSizeErr, _T("Invalid Model Size"))
 	(SvOi::Tid_PatInvalidFilename, _T("Not a Valid Model file"))
 	(SvOi::Tid_PatAllocModelFailed, _T("Pattern Model Allocation Failed."))
