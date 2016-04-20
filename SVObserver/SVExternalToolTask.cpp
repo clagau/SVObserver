@@ -28,6 +28,7 @@
 #include "SVToolSet.h"
 #include "SVValueObject.h"
 #include "BasicValueObject.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -125,7 +126,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 	SVOINIClass m_SvimIni;
 
-	m_SvimIni.SetFile(_T("C:\\SVObserver\\bin\\SVIM.INI"));
+	m_SvimIni.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	m_bUseImageCopies = m_SvimIni.GetValueInt(_T("External Tool"), _T("UseImageCopy"), TRUE) != FALSE;
 

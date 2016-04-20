@@ -42,6 +42,7 @@
 #include "SVShiftToolUtility.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 #pragma endregion Includes
 
@@ -158,7 +159,7 @@ SVImageViewClass::SVImageViewClass()
 , m_sourceImageHeight( 0 )
 , m_sourceBitCount( 0 )
 , m_hActionIcon(nullptr)
-, m_ViewOrImageFilename(SvO::ContextMenuImageSaveLocation)
+,m_ViewOrImageFilename(SvStl::GlobalPath::Inst().GetSecondObserverPath(_T("Image.bmp")).c_str())
 {
 	Initialize();
 }

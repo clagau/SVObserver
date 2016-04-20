@@ -44,6 +44,7 @@
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "SVIPChildFrm.h" 
 #include "ExtrasEngine.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 #pragma endregion Includes
 
@@ -199,10 +200,12 @@ SVMainFrame::~SVMainFrame()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::LoadOEMIcon()
 {
-	if( 0 == ::_access( _T("C:\\SVObserver\\Bin\\OEM\\oem32x32.ico"), 0 ) )
+	std::string OEMICON32FileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\oem32x32.ico")); 
+	
+	if( 0 == ::_access( OEMICON32FileName.c_str(), 0 ) )
 	{
 		m_oemLargeIcon = (HICON)::LoadImage( NULL, 
-										_T("C:\\SVObserver\\Bin\\OEM\\oem32x32.ico"),
+										OEMICON32FileName.c_str(),
 										IMAGE_ICON,
 										0,
 										0,
@@ -214,10 +217,12 @@ void SVMainFrame::LoadOEMIcon()
 
 	}// end if
 
-	if( 0 == ::_access( _T("C:\\SVObserver\\Bin\\OEM\\oem16x16.ico"), 0 ) )
+	std::string OEMICON16FileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\oem16x16.ico")); 
+
+	if( 0 == ::_access( OEMICON16FileName.c_str(), 0 ) )
 	{
 		m_oemSmallIcon = (HICON)::LoadImage( NULL, 
-										_T("C:\\SVObserver\\Bin\\OEM\\oem16x16.ico"),
+										 OEMICON16FileName.c_str(),
 										IMAGE_ICON,
 										0,
 										0,

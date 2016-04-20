@@ -21,6 +21,7 @@
 #include "SVOMFCLibrary\SVOIniLoader.h"
 #include "SVDriveInitDlg.h"
 #include "cpassdlg.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -100,8 +101,7 @@ static const TCHAR g_SvimInfoUpdateFailedMsg[] = _T("Update SVIM Info Failed");
 static const TCHAR g_RegistryInfoUpdateFailedMsg[] = _T("Update Registry Info Failed");
 static const TCHAR g_CreateProcessFailedMsg[] = _T("Create Process Failed");
 
-static const TCHAR hardwareFileName[] = _T("c:\\SVObserver\\bin\\hardware.ini");
-static const TCHAR sviminfoFileName[] = _T("c:\\SVObserver\\bin\\svim.ini");
+
 static const TCHAR g_SVObserverExeTag[] = _T("SVObserver.exe");
 
 static TCHAR oeminfoFileName[_MAX_PATH];
@@ -408,7 +408,7 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 	HRESULT hr = iniLoader.DecodeModelNumber(csModel);
 	if (S_OK == hr)
 	{
-		hr = iniLoader.LoadHardwareIni(hardwareFileName, iniLoader.m_csOptions);
+		hr = iniLoader.LoadHardwareIni(SvStl::GlobalPath::Inst().GetHardwareIniPath(), iniLoader.m_csOptions);
 
 		if (S_OK == hr)
 		{
@@ -602,14 +602,14 @@ bool SVDriveInitDlg::UpdateRegistryInfo()
 
 		CString l_csFrameGrabberName;
 		TCHAR *l_pszName = l_csFrameGrabberName.GetBuffer(TmpBufSize);
-		GetPrivateProfileString(g_FrameGrabberTag, l_csFrameGrabber, _T(""), l_pszName, TmpBufSize, hardwareFileName);
+		GetPrivateProfileString(g_FrameGrabberTag, l_csFrameGrabber, _T(""), l_pszName, TmpBufSize, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 		l_csFrameGrabberName.ReleaseBuffer();
 
 		if (0 < l_csFrameGrabberName.GetLength())
 		{
 			CString l_csFrameGrabberDLL;
 			TCHAR *l_pszDLL = l_csFrameGrabberDLL.GetBuffer(TmpBufSize);
-			GetPrivateProfileString( l_csFrameGrabberName, g_DigitizerDLLTag, _T(""), l_pszDLL, TmpBufSize, hardwareFileName);
+			GetPrivateProfileString( l_csFrameGrabberName, g_DigitizerDLLTag, _T(""), l_pszDLL, TmpBufSize, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 			l_csFrameGrabberDLL.ReleaseBuffer();
 
 			l_bOk = (S_OK == UpdateMatrox(l_csFrameGrabberName));
@@ -626,14 +626,14 @@ bool SVDriveInitDlg::UpdateRegistryInfo()
 
 		CString l_csIOBoardName;
 		TCHAR *l_pszBoardName = l_csIOBoardName.GetBuffer(TmpBufSize);
-		GetPrivateProfileString(g_IOBoardTag, l_csIOBoard, _T(""), l_pszBoardName, TmpBufSize, hardwareFileName);
+		GetPrivateProfileString(g_IOBoardTag, l_csIOBoard, _T(""), l_pszBoardName, TmpBufSize, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 		l_csIOBoardName.ReleaseBuffer();
 
 		if (0 < l_csIOBoardName.GetLength())
 		{
 			CString l_csIOBoardDLL;
 			TCHAR *l_pszDLL = l_csIOBoardDLL.GetBuffer(TmpBufSize);
-			GetPrivateProfileString(l_csIOBoardName, g_DigitalIODLLTag, _T(""), l_pszDLL, TmpBufSize, hardwareFileName);
+			GetPrivateProfileString(l_csIOBoardName, g_DigitalIODLLTag, _T(""), l_pszDLL, TmpBufSize, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 			l_csIOBoardDLL.ReleaseBuffer();
 
 			l_bOk &= (S_OK == UpdateIOInterfaceDLL(l_csIOBoardDLL));
@@ -932,7 +932,7 @@ HRESULT SVDriveInitDlg::UpdateMatrox(LPCTSTR p_szDigitizer)
 {
 	HRESULT l_Status = S_OK;
 
-	int l_Size = GetPrivateProfileInt( p_szDigitizer, g_MatroxReserveMemorySizeTag, 0, hardwareFileName);
+	int l_Size = GetPrivateProfileInt( p_szDigitizer, g_MatroxReserveMemorySizeTag, 0, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	if (0 < l_Size)
 	{

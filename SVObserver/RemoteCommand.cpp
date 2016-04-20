@@ -18,6 +18,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVGlobal.h"
 #include "SVIMCommand/SVIMCommand.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion includes
 
 #pragma region Global functions
@@ -123,7 +124,7 @@ BOOL GlobalRCGetConfigurationName( char* pszConfigName )
 
 	if ( !CString( svFileName.GetFileNameOnly() ).IsEmpty() )
 	{
-		svFileName.SetPathName( _T( "C:\\RUN" ) );
+		svFileName.SetPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 
 		strcpy( pszConfigName, svFileName.GetFullFileName() );
 

@@ -38,6 +38,7 @@
 #include "TextDefinesSvO.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -73,7 +74,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 
 			if( ::EmptyClipboard() && 0 != ClipboardFormat )
 			{
-				SVString FileName( SvO::TempFolder );
+				SVString FileName( SvStl::GlobalPath::Inst().GetTempPath().c_str() );
 
 				FileName += _T("\\");
 				FileName += SvO::ClipboardFileName;
@@ -135,7 +136,7 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 		Result = convertClipboardDataToString( ClipboardData );
 		if( S_OK == Result )
 		{
-			SVString FileName( SvO::TempFolder );
+			SVString FileName( SvStl::GlobalPath::Inst().GetTempPath().c_str()  );
 
 			FileName += _T("\\");
 			FileName += SvO::ClipboardFileName;
@@ -143,7 +144,7 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 			writeStringToFile( FileName, ClipboardData, false );
 
 			SVStringSet ZippedFiles;
-			ZipHelper::unzipAll( FileName, SVString( SvO::TempFolder ), ZippedFiles );
+			ZipHelper::unzipAll( FileName, SVString( SvStl::GlobalPath::Inst().GetTempPath().c_str()  ), ZippedFiles );
 			::DeleteFile( FileName.c_str() );
 			updateDependencyFiles( ZippedFiles );
 			
@@ -322,7 +323,7 @@ void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SVSt
 {
 	size_t StartPos( 0 );
 	size_t EndPos( 0 );
-	SVString SearchString( SvO::RunFolder );
+	SVString SearchString( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 	SearchString += _T("\\");
 
 	StartPos = rToolXmlString.find( SearchString.c_str(), EndPos );
@@ -359,7 +360,7 @@ void ToolClipboard::updateDependencyFiles( const SVStringSet& rDependencyFiles )
 			_TCHAR Extension[_MAX_EXT];
 			_splitpath( Iter->c_str(), NULL, NULL, Name, Extension );
 
-			SVString DestinationFile( SvO::RunFolder );
+			SVString DestinationFile( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			DestinationFile += _T("\\");
 			DestinationFile += Name;
 			DestinationFile += Extension;

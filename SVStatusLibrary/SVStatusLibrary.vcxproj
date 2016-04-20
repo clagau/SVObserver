@@ -81,6 +81,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CommandLineArgs.cpp" />
     <ClCompile Include="ec000009.cpp" />
     <ClCompile Include="ec010049.cpp" />
     <ClCompile Include="ec050099.cpp" />
@@ -89,6 +90,7 @@
     <ClCompile Include="ec200249.cpp" />
     <ClCompile Include="ec250299.cpp" />
     <ClCompile Include="ec300349.cpp" />
+    <ClCompile Include="GlobalPath.cpp" />
     <ClCompile Include="MessageData.cpp" />
     <ClCompile Include="MessageTextGenerator.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +104,8 @@
     <ClCompile Include="SVRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommandLineArgs.h" />
+    <ClInclude Include="GlobalPath.h" />
     <ClInclude Include="MessageManager.h" />
     <ClInclude Include="MessageManagerResource.h" />
     <ClInclude Include="MessageData.h" />

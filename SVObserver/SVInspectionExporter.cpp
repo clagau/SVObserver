@@ -33,11 +33,10 @@
 #include "RootObject.h"
 #include "SVToolSet.h"
 #include "SVGlobal.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-static LPCTSTR scRunDirectory = _T("C:\\Run");
-static LPCTSTR scAllRunDirectoryFiles = _T("C:\\Run\\*");
 static LPCTSTR scSVXConfigExt = _T(".svx");
 static LPCTSTR scDependentsZipExt = _T(".dependents.zip");
 static LPCTSTR scXmlExt = _T(".xml");
@@ -166,7 +165,7 @@ static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& d
 	}
 
 	WIN32_FIND_DATA findFileData;
-	HANDLE hFind = ::FindFirstFile(scAllRunDirectoryFiles, &findFileData);
+	HANDLE hFind = ::FindFirstFile(SvStl::GlobalPath::Inst().GetRunPath(_T("*")).c_str() , &findFileData);
 
 	if (hFind != INVALID_HANDLE_VALUE) 
 	{
@@ -194,7 +193,7 @@ static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& d
 					value.SetString(findFileData.cFileName);
 					rWriter.WriteAttribute(CTAG_FILENAME, value);
 
-					SVString srcFile = scRunDirectory;
+					SVString srcFile = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 					srcFile += "\\";
 					srcFile += findFileData.cFileName;
 					DependencyFileNames.insert( srcFile );

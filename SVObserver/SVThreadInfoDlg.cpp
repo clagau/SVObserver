@@ -15,6 +15,7 @@
 #include "afxdialogex.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVSVIMStateClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 // SVThreadInfoDlg dialog
 
@@ -309,7 +310,7 @@ void SVThreadInfoDlg::OnBnClickedSave()
 	std::list<SVThreadSetup> tList;
 	SVThreadManager::Instance().GetThreadInfo( tList, SVNone );
 	CStdioFile file;
-	if ( file.Open( "c:\\temp\\Threads.txt", CFile::modeWrite | CFile::shareDenyNone | CFile::modeCreate ) )
+	if ( file.Open( SvStl::GlobalPath::Inst().GetTempPath(_T("Threads.txt")).c_str(), CFile::modeWrite | CFile::shareDenyNone | CFile::modeCreate ) )
 	{
 		file.WriteString("Name,Affinity\n");
 		for( std::list<SVThreadSetup>::const_iterator it = tList.begin() ; it != tList.end() ; ++it)

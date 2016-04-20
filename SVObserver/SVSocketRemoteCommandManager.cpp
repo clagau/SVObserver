@@ -31,6 +31,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVSVIMStateClass.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 
 #define SV_DATA_TO_CONTENTS
@@ -607,14 +608,14 @@ HRESULT SVRemoteCommandFunctions::CommandNotFound( const std::string& p_rJsonCom
 {
 	HRESULT l_Status = S_FALSE;
 
-	std::string l_FileName = "C:\\temp\\CommandNotFound-cmd";
+	std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("CommandNotFound-cmd")).c_str() ;
 	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	Json::Value l_Results(Json::objectValue);
 
 	l_Status = E_FAIL;
 
-	l_FileName = "C:\\temp\\CommandNotFound-rsp";
+	l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("CommandNotFound-rsp")).c_str() ;
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -624,7 +625,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceMode( const std::string& p_rJsonComma
 {
 	HRESULT l_Status = S_OK;
 
-	std::string l_FileName = "C:\\temp\\GetDeviceMode-cmd";
+	std::string l_FileName =  SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceMode-cmd")).c_str() ;
 	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	unsigned long l_Mode = SVIM_MODE_UNKNOWN;
@@ -635,7 +636,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceMode( const std::string& p_rJsonComma
 
 	l_Results[ SVRC::result::mode ] = static_cast< Json::Value::UInt >( l_Mode );
 
-	l_FileName = "C:\\temp\\GetDeviceMode-rsp";
+	l_FileName =   SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceMode-rsp")).c_str() ;
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -645,7 +646,7 @@ HRESULT SVRemoteCommandFunctions::GetState( const std::string& p_rJsonCommand, s
 {
 	HRESULT l_Status = S_OK;
 
-	std::string l_FileName = "C:\\temp\\GetState-cmd";
+	std::string l_FileName =   SvStl::GlobalPath::Inst().GetTempPath(_T("GetState-cmd")).c_str() ;
 	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	unsigned long l_State = 0;
@@ -656,7 +657,7 @@ HRESULT SVRemoteCommandFunctions::GetState( const std::string& p_rJsonCommand, s
 
 	l_Results[ SVRC::result::state ] = static_cast< Json::Value::UInt >( l_State );
 
-	l_FileName = "C:\\temp\\GetState-rsp";
+	l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetState-rsp")).c_str() ; 
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -666,7 +667,7 @@ HRESULT SVRemoteCommandFunctions::GetVersions( const std::string& p_rJsonCommand
 {
 	HRESULT l_Status = S_OK;
 
-	std::string l_FileName = "C:\\temp\\GetVersions-cmd";
+	std::string l_FileName =   SvStl::GlobalPath::Inst().GetTempPath(_T("GetVersions-cmd")).c_str() ;
 	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	SVString l_Version;
@@ -677,7 +678,7 @@ HRESULT SVRemoteCommandFunctions::GetVersions( const std::string& p_rJsonCommand
 
 	l_Results[ SVRC::result::SVO_ver ] = l_Version;
 
-	l_FileName = "C:\\temp\\GetVersions-rsp";
+	l_FileName =  SvStl::GlobalPath::Inst().GetTempPath(_T("GetVersions-rsp")).c_str() ;
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -687,7 +688,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceOfflineCount( const std::string& p_rJ
 {
 	HRESULT l_Status = S_OK;
 
-	std::string l_FileName = "C:\\temp\\GetDeviceOfflineCount-cmd";
+	std::string l_FileName =  SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceOfflineCount-cmd")).c_str() ;
 	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	unsigned long l_OfflineCount;
@@ -698,7 +699,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceOfflineCount( const std::string& p_rJ
 
 	l_Results[ SVRC::result::count ] = static_cast< Json::Value::UInt >( l_OfflineCount );
 
-	l_FileName = "C:\\temp\\GetDeviceOfflineCount-rsp";
+	l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceOfflineCount-rsp")).c_str() ;
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -720,7 +721,7 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		std::string l_FileName = "C:\\temp\\GetConfig-cmd";
+		std::string l_FileName =   SvStl::GlobalPath::Inst().GetTempPath(_T("GetConfig-cmd")).c_str() ; 
 		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
@@ -792,7 +793,7 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 		#else
 			l_Results[ SVRC::result::destinationFileName ] = l_DestinationFileName;
 		#endif
-		std::string l_FileName = "C:\\temp\\GetConfig-rsp";
+		std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetConfig-rsp")).c_str() ;  
 		WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 	}
 	else
@@ -822,7 +823,7 @@ HRESULT SVRemoteCommandFunctions::GetItems( const std::string& p_rJsonCommand, s
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		std::string l_FileName = "C:\\temp\\GetItems-cmd";
+		std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetItems-cmd")).c_str() ;   
 		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
@@ -967,7 +968,7 @@ HRESULT SVRemoteCommandFunctions::GetItems( const std::string& p_rJsonCommand, s
 		l_Status = E_INVALIDARG;
 	}
 
-	std::string l_FileName = "C:\\temp\\GetItems-rsp";
+	std::string l_FileName =   SvStl::GlobalPath::Inst().GetTempPath(_T("GetItems-rsp")).c_str() ;    
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -990,7 +991,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceFile( const std::string& p_rJsonComma
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		std::string l_FileName = "C:\\temp\\GetDeviceFile-cmd";
+		std::string l_FileName =  SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceFile-cmd"));  
 		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
@@ -1066,7 +1067,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceFile( const std::string& p_rJsonComma
 		#endif
 	}
 
-	std::string l_FileName = "C:\\temp\\GetDeviceFile-rsp";
+	std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceFile-rsp"));
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -1076,7 +1077,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceConfigReport( const std::string& p_rJ
 {
 	HRESULT l_Status = S_OK;
 
-	std::string l_FileName = "C:\\temp\\GetDeviceConfigReport-cmd";
+	std::string l_FileName =  SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceConfigReport-cmd"));
 	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	SVString l_Report;
@@ -1090,7 +1091,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceConfigReport( const std::string& p_rJ
 		l_Results[ SVRC::result::report ] = l_Report;
 	}
 
-	l_FileName = "C:\\temp\\GetDeviceConfigReport-rsp";
+	l_FileName =  SvStl::GlobalPath::Inst().GetTempPath(_T("GetDeviceConfigReport-rsp"));  
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -1115,7 +1116,7 @@ HRESULT SVRemoteCommandFunctions::GetDataDefinitionList( const std::string& p_rJ
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		std::string l_FileName = "C:\\temp\\GetDataDefinitionList-cmd";
+		std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetDataDefinitionList-cmd"));   
 		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
@@ -1187,7 +1188,8 @@ HRESULT SVRemoteCommandFunctions::GetDataDefinitionList( const std::string& p_rJ
 		l_Results[ SVRC::result::items ] = l_JsonItems;
 	}
 
-	std::string l_FileName = "C:\\temp\\GetDataDefinitionList-rsp";
+	
+	std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetDataDefinitionList-rsp")); 
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -1203,7 +1205,8 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		std::string l_FileName = "C:\\temp\\PutConfig-cmd";
+		
+		std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("PutConfig-cmd")); 
 		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
@@ -1296,7 +1299,8 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 
 	if (S_OK == l_Status)
 	{
-		std::string l_FileName = "C:\\temp\\PutConfig-rsp";
+		
+		std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("PutConfig-rsp")); 
 		WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 	}
 	else
@@ -1335,7 +1339,8 @@ HRESULT SVRemoteCommandFunctions::PutDeviceFile( const std::string& p_rJsonComma
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		std::string l_FileName = "C:\\temp\\PutDeviceFile-cmd";
+		
+		std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("PutDeviceFile-cmd")); 
 		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
@@ -1425,7 +1430,8 @@ HRESULT SVRemoteCommandFunctions::PutDeviceFile( const std::string& p_rJsonComma
 
 	Json::Value l_Results(Json::objectValue);
 
-	std::string l_FileName = "C:\\temp\\PutDeviceFile-rsp";
+	
+	std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("PutDeviceFile-rsp")); 
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -1442,7 +1448,8 @@ HRESULT SVRemoteCommandFunctions::SetDeviceMode( const std::string& p_rJsonComma
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		std::string l_FileName = "C:\\temp\\SetDeviceMode-cmd";
+		
+		std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("SetDeviceMode-cmd")); 
 		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
@@ -1484,7 +1491,8 @@ HRESULT SVRemoteCommandFunctions::SetDeviceMode( const std::string& p_rJsonComma
 
 	Json::Value l_Results(Json::objectValue);
 
-	std::string l_FileName = "C:\\temp\\SetDeviceMode-rsp";
+	
+	std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("SetDeviceMode-rsp")); 
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
@@ -1564,7 +1572,8 @@ HRESULT SVRemoteCommandFunctions::Shutdown( const std::string& command, std::str
 	}
 
 	result[ SVRC::result::state ] = hr;
-	std::string fileName = "C:\\temp\\Shutdown-rsp";
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("Shutdown-rsp")); 
 	WriteResultToJsonAndFile(command, jsonResults, result, fileName, hr);
 
 	return hr;
@@ -1582,7 +1591,9 @@ HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, s
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		std::string l_FileName = "C:\\temp\\SetItems-cmd";
+		
+		std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("SetItems-cmd")); 
+
 		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
@@ -1651,7 +1662,8 @@ HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, s
 		l_Status = l_TempStatus;
 	}
 
-	std::string l_FileName = "C:\\temp\\SetItems-rsp";
+	
+	std::string l_FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("SetItems-rsp")); 
 	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, jsonResults, l_FileName, l_Status);
 
 	return l_Status;
@@ -1668,7 +1680,8 @@ HRESULT SVRemoteCommandFunctions::ActivateMonitorList( const std::string& rJsonC
 
 	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
 	{
-		std::string FileName = "C:\\temp\\ActivateMonitorList-cmd";
+		
+		std::string FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("ActivateMonitorList-cmd")); 
 		WriteJsonCommandToFile(JsonCmdValues, FileName);
 
 		Json::Value JsonArguments;
@@ -1724,8 +1737,9 @@ HRESULT SVRemoteCommandFunctions::ActivateMonitorList( const std::string& rJsonC
 
 	Json::Value Results(Json::objectValue);
 
-	std::string FileName = "C:\\temp\\ActivateMonitorList-rsp";
-	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("ActivateMonitorList-rsp")); 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, fileName, hr);
 	
 	return hr;
 }
@@ -1745,7 +1759,8 @@ HRESULT SVRemoteCommandFunctions::RegisterMonitorList( const std::string& rJsonC
 
 	if( reader.parse( rJsonCommand, jsonCmdValues, false ) )
 	{
-		std::string fileName = "C:\\temp\\RegisterMonitorList-cmd";
+		
+		std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("RegisterMonitorList-cmd")); 
 		WriteJsonCommandToFile(jsonCmdValues, fileName);
 
 		Json::Value jsonArguments;
@@ -1831,7 +1846,8 @@ HRESULT SVRemoteCommandFunctions::RegisterMonitorList( const std::string& rJsonC
 		hr = tmp_hr;
 	}
 
-	std::string fileName = "C:\\temp\\RegisterMonitorList-rsp";
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("RegisterMonitorList-rsp")); 
 	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, results, fileName, hr);
 	return hr;
 }
@@ -1846,7 +1862,7 @@ HRESULT SVRemoteCommandFunctions::QueryProductList( const std::string& rJsonComm
 
 	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
 	{
-		std::string FileName = "C:\\temp\\QueryProductList-cmd";
+		std::string FileName =   SvStl::GlobalPath::Inst().GetTempPath(_T("QueryProductList-cmd"));
 		WriteJsonCommandToFile(JsonCmdValues, FileName);
 
 		Json::Value JsonArguments;
@@ -1898,7 +1914,8 @@ HRESULT SVRemoteCommandFunctions::QueryProductList( const std::string& rJsonComm
 	}
 	// need to set the results even on an error...
 	Results[ SVRC::result::names ] = EntryArray;
-	std::string FileName = "C:\\temp\\QueryProductList-rsp";
+	
+	std::string FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("QueryProductList-rsp")); 
 	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
 
 	return hr;
@@ -1914,8 +1931,8 @@ HRESULT SVRemoteCommandFunctions::QueryRejectCondList( const std::string& rJsonC
 
 	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
 	{
-		std::string FileName = "C:\\temp\\QueryRejectCondList-cmd";
-		WriteJsonCommandToFile(JsonCmdValues, FileName);
+		std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("QueryRejectCondList-cmd")); 
+		WriteJsonCommandToFile(JsonCmdValues, fileName);
 
 		Json::Value JsonArguments;
 
@@ -1966,8 +1983,9 @@ HRESULT SVRemoteCommandFunctions::QueryRejectCondList( const std::string& rJsonC
 	}
 	// need to set the results even on an error...
 	Results[ SVRC::result::names ] = EntryArray;
-	std::string FileName = "C:\\temp\\QueryRejectCondList-rsp";
-	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("QueryRejectCondList-rsp")); 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, fileName, hr);
 
 	return hr;
 }
@@ -1982,8 +2000,9 @@ HRESULT SVRemoteCommandFunctions::QueryFailStatusList( const std::string& rJsonC
 
 	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
 	{
-		std::string FileName = "C:\\temp\\QueryFailStatusList-cmd";
-		WriteJsonCommandToFile(JsonCmdValues, FileName);
+		
+		std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("QueryFailStatusList-cmd")); 
+		WriteJsonCommandToFile(JsonCmdValues, fileName);
 
 		Json::Value JsonArguments;
 
@@ -2034,8 +2053,9 @@ HRESULT SVRemoteCommandFunctions::QueryFailStatusList( const std::string& rJsonC
 	}
 	// need to set the results even on an error...
 	Results[ SVRC::result::names ] = EntryArray;
-	std::string FileName = "C:\\temp\\QueryFailStatusList-rsp";
-	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("QueryFailStatusList-rsp")); 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, fileName, hr);
 
 	return hr;
 }
@@ -2060,8 +2080,9 @@ HRESULT SVRemoteCommandFunctions::GetInspectionNames( const std::string& rJsonCo
 	// need to set the results even on an error...
 	Json::Value Results(Json::objectValue);
 	Results[ SVRC::result::names ] = EntryArray;
-	std::string FileName = "C:\\temp\\GetInspectionNames-rsp";
-	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetInspectionNames-rsp")); 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, fileName, hr);
 
 	return hr;
 }
@@ -2086,8 +2107,9 @@ HRESULT SVRemoteCommandFunctions::QueryMonitorListNames( const std::string& rJso
 	// need to set the results even on an error...
 	Json::Value Results(Json::objectValue);
 	Results[ SVRC::result::names ] = EntryArray;
-	std::string FileName = "C:\\temp\\QueryMonitorListNames-rsp";
-	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("QueryMonitorListNames-rsp")); 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, fileName, hr);
 
 	return hr;
 }
@@ -2103,8 +2125,9 @@ HRESULT SVRemoteCommandFunctions::GetProductFilter( const std::string& rJsonComm
 
 	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
 	{
-		std::string FileName = "C:\\temp\\GetProductFilter-cmd";
-		WriteJsonCommandToFile(JsonCmdValues, FileName);
+		
+		std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetProductFilter-cmd")); 
+		WriteJsonCommandToFile(JsonCmdValues, fileName);
 
 		Json::Value JsonArguments;
 
@@ -2154,8 +2177,9 @@ HRESULT SVRemoteCommandFunctions::GetProductFilter( const std::string& rJsonComm
 		Results[SVRC::result::filter] = static_cast<Json::Value::Int>(filter);
 	}
 
-	std::string FileName = "C:\\temp\\GetProductFilter-rsp";
-	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetProductFilter-rsp")); 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, fileName, hr);
 	
 	return hr;
 }
@@ -2171,8 +2195,9 @@ HRESULT SVRemoteCommandFunctions::SetProductFilter( const std::string& rJsonComm
 
 	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
 	{
-		std::string FileName = "C:\\temp\\SetProductFilter-cmd";
-		WriteJsonCommandToFile(JsonCmdValues, FileName);
+		
+		std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("SetProductFilter-cmd")); 
+		WriteJsonCommandToFile(JsonCmdValues, fileName);
 
 		Json::Value JsonArguments;
 
@@ -2227,8 +2252,9 @@ HRESULT SVRemoteCommandFunctions::SetProductFilter( const std::string& rJsonComm
 
 	Json::Value Results(Json::objectValue);
 
-	std::string FileName = "C:\\temp\\SetProductFilter-rsp";
-	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("SetProductFilter-rsp")); 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, fileName, hr);
 	
 	return hr;
 

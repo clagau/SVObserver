@@ -27,6 +27,7 @@
 #include "TextDefinesSvOg.h"
 #include "ObjectInterfaces/TextDefineSvOi.h"
 #include "TextDefinesSvOg.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -119,8 +120,8 @@ namespace Seidenader { namespace SVOGui
 
 		HINSTANCE ScintillaInstance( NULL );
 
-		SVString scintillaPath = SvOi::SVObserverExecutableDirectoryPath;
-		scintillaPath +=  SvUl::ScintillaDll;
+		
+		SVString scintillaPath = SvStl::GlobalPath::Inst( ).GetBinPath(SvUl::ScintillaDll).c_str();
 		//Load Scintilla dll explicitly
 		HRESULT hOK = SvUl::LoadDll::Instance().getDll( scintillaPath, ScintillaInstance );
 		if (S_OK != hOK || nullptr == ScintillaInstance)

@@ -18,6 +18,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -136,7 +137,7 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 	//
 	CString csPath = AfxGetApp()->GetProfileString(	_T( "Settings" ),
 	                                                _T( "WitFontFilePath" ),
-	                                                _T( "C:\\RUN" ) );
+	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
 	svfncFileName.SetDefaultPathName( csPath );
 
@@ -204,7 +205,7 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 	//
 	CString csPath = AfxGetApp()->GetProfileString(	_T( "Settings" ),
 	                                                _T( "WitFontFilePath" ),
-	                                                _T( "C:\\RUN" ) );
+	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
 	svfncFileName.SetDefaultPathName( csPath );
 
@@ -273,7 +274,7 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 	//
 	CString csPath = AfxGetApp()->GetProfileString(	_T( "Settings" ),
 	                                                _T( "WitFontFilePath" ),
-	                                                _T( "C:\\RUN" ) );
+	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
 	svfncFileName.SetDefaultPathName( csPath );
 

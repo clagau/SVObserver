@@ -17,6 +17,7 @@
 #include "SVTestAcquisitionClass.h"
 #include "SVTestGigeAcquisitionSubsystem.h"
 #include "SVUnloadDeviceDialog.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -60,9 +61,10 @@ END_MESSAGE_MAP()
 
 CSVImageTestApp::CSVImageTestApp()
 : m_pSubsystem(nullptr)
-, m_svimIniFile("C:\\SVObserver\\bin\\SVIM.INI")
-, m_hardwareIniFile("C:\\SVObserver\\bin\\HARDWARE.INI")
 {
+	m_svimIniFile = SvStl::GlobalPath::Inst().GetSVIMIniPath();
+	m_hardwareIniFile = SvStl::GlobalPath::Inst().GetHardwareIniPath();
+
 	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
 
 	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );

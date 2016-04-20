@@ -16,6 +16,7 @@
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 //******************************************************************************
 // Message Map Entries
@@ -82,19 +83,23 @@ void SVAboutDialogClass::LoadOEMInfo()
 {
 	// Load Bitmap for OEM Logo
 	logoBmp = NULL;
+	
 
-	if( 0 == ::_access( _T("C:\\SVObserver\\Bin\\OEM\\logo.bmp"), 0 ) )
+	SVString logoFileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\logo.bmp")); 
+	if( 0 == ::_access(logoFileName.c_str()  , 0 ) )
 	{
 		logoBmp = (HBITMAP) ::LoadImage( NULL, 
-								_T("C:\\SVObserver\\Bin\\OEM\\logo.bmp"),
+								logoFileName.c_str(),
 								IMAGE_BITMAP,
 								0,
 								0,
 								LR_DEFAULTCOLOR | LR_CREATEDIBSECTION | LR_LOADFROMFILE );
 	}// end if
 
+	SVString TextFileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\oem.txt")); 
+	
 	FILE* oemFile;
-	oemFile = _tfopen( _T("C:\\SVObserver\\Bin\\OEM\\oem.txt"),"r" );
+	oemFile = _tfopen( TextFileName.c_str(),"r" );
 
 	if( logoBmp && oemFile )
 	{

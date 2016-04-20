@@ -31,21 +31,21 @@
 SVMESSAGE_API unsigned long g_LastDllMainReason=0;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved
+	)
 {
 	g_LastDllMainReason = ul_reason_for_call;
 
 	return TRUE;
 }
 
-TCHAR g_szMessageFile[] = _T( "C:\\SVObserver\\bin\\SVMessage.dll" );
 DWORD g_dwData = EVENTLOG_ERROR_TYPE | EVENTLOG_WARNING_TYPE | EVENTLOG_INFORMATION_TYPE; 
 DWORD g_dwCatagoryCount = 23;
 
 HRESULT AddMessageKeys( TCHAR *p_pszBuf )
 {
+	//@Todo MEC_04_27 regsrv32 does not work this code is probably never called	
 	HKEY hk; 
 	DWORD dwDisp;
 	TCHAR szBuf[MAX_PATH]; 
@@ -97,12 +97,16 @@ HRESULT AddMessageKeys( TCHAR *p_pszBuf )
 
 	// Set the category message file and number of categories.
 
+	TCHAR MessageFile[1024];
+	::GetCurrentDirectory(1024,MessageFile);
+	wcscat_s(MessageFile,1024,_T("\\SVMessage.dll"));
+
 	if( ::RegSetValueEx( hk,              // subkey handle 
 		_T( "CategoryMessageFile" ),     // value name 
 		0,                         // must be zero 
 		REG_EXPAND_SZ,             // value type 
-		(LPBYTE) g_szMessageFile,        // pointer to value data 
-		(DWORD) lstrlen( g_szMessageFile ) + 1 ) ) // length of value data 
+		(LPBYTE) MessageFile,        // pointer to value data 
+		(DWORD) lstrlen( MessageFile ) + 1 ) ) // length of value data 
 	{
 		printf( "Could not set the category message file." ); 
 
@@ -117,8 +121,8 @@ HRESULT AddMessageKeys( TCHAR *p_pszBuf )
 		_T( "ParameterMessageFile" ),     // value name 
 		0,                         // must be zero 
 		REG_EXPAND_SZ,             // value type 
-		(LPBYTE) g_szMessageFile,        // pointer to value data 
-		(DWORD) lstrlen( g_szMessageFile ) + 1 ) ) // length of value data 
+		(LPBYTE) MessageFile,        // pointer to value data 
+		(DWORD) lstrlen( MessageFile ) + 1 ) ) // length of value data 
 	{
 		printf( "Could not set the parameter message file." ); 
 
@@ -133,8 +137,8 @@ HRESULT AddMessageKeys( TCHAR *p_pszBuf )
 		_T( "EventMessageFile" ),        // value name 
 		0,                         // must be zero 
 		REG_EXPAND_SZ,             // value type 
-		(LPBYTE) g_szMessageFile,        // pointer to value data 
-		(DWORD) lstrlen( g_szMessageFile ) + 1 ) ) // length of value data 
+		(LPBYTE) MessageFile,        // pointer to value data 
+		(DWORD) lstrlen( MessageFile ) + 1 ) ) // length of value data 
 	{
 		printf( "Could not set the event message file." ); 
 

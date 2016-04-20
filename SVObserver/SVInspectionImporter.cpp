@@ -36,9 +36,10 @@
 #include "SVGlobal.h"
 #include "RootObject.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
-static LPCTSTR scRunDirectory = _T("C:\\Run");
+
 static LPCTSTR scImportNewExt = _T(".new.xml");
 static LPCTSTR scDependentsZipExt = _T(".dependents.zip");
 static LPCTSTR scTransformProgram = _T("SVImportTransform.exe");
@@ -340,7 +341,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 		rProgress.UpdateProgress(++currentOp, numOperations);
 
 		SVStringSet Files;
-		ZipHelper::unzipAll( zipFilename, SVString( scRunDirectory ), Files );
+		ZipHelper::unzipAll( zipFilename, SVString( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), Files );
 
 		rProgress.UpdateText(_T("Importing PPQ Inputs..."));
 		rProgress.UpdateProgress(++currentOp, numOperations);
@@ -457,7 +458,7 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	SVString zipFilename = GetFilenameWithoutExt(inFilename);
 	zipFilename += scDependentsZipExt;
 
-	SVString outFilename = scRunDirectory;
+	SVString outFilename = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 	outFilename +=  _T("\\");
 	outFilename += inspectionName;
 	outFilename +=  scImportNewExt;
@@ -471,7 +472,7 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	// Deal with single zip file
 	if (isExportFile(inFilename))
 	{
-		ZipHelper::unzipAll( inFilename, SVString( scRunDirectory ), list );
+		ZipHelper::unzipAll( inFilename, SVString( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
 		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			if (isXMLFile(*it))
@@ -598,7 +599,7 @@ HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNew
 	// Deal with single zip file
 	if (isExportFile(inFilename))
 	{
-		ZipHelper::unzipAll( inFilename, SVString( scRunDirectory ), list );
+		ZipHelper::unzipAll( inFilename, SVString( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
 		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			if (isXMLFile(*it))

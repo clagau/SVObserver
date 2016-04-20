@@ -17,6 +17,7 @@
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -79,7 +80,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	//get last regression path from registry...
 	CString sFilePath;
 
-	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), _T("LastPath"), _T("C:\\Temp"));
+	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), _T("LastPath"), SvStl::GlobalPath::Inst().GetTempPath().c_str());
 
 	CString	csFileExtensionFilterList = _T("BMP's (*.bmp)|*.bmp||");
 	static TCHAR szFilter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");

@@ -14,6 +14,7 @@
 #include "SVOCVDialog.h"
 #include "SVOCVMatchDlg.h"
 #include "SVOCVAnalyzerResult.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -191,7 +192,7 @@ void SVOCVMatchDlg::OnFontBrowseCmd()
 	//
 	CString csPath = AfxGetApp()->GetProfileString(	_T("Settings"),
 	                                                _T("OCVMatchStringFilePath"),
-	                                                _T("C:\\RUN") );
+	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str());
 
 	svfncFileName.SetDefaultPathName( csPath );
 

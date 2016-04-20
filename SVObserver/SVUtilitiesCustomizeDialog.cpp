@@ -17,6 +17,7 @@
 #include "SVObserver.h"
 #include "SVUtilityIniClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -282,7 +283,7 @@ void SVUtilitiesCustomizeDialogClass::OnApply()
 		pApp->m_UtilityMenu[uintVal+1] = l_Struct;
 
 		SVOINIClass l_svIni;
-		CString csIniName = "C:\\SVObserver\\bin\\SVUtility.ini";
+		CString csIniName =SvStl::GlobalPath::Inst().GetSVUtilityIniPath();
 
 		int iCnt = l_svIni.GetValueInt("General","HighestUtilityIndex",0,csIniName);
 		iCnt++;
@@ -325,7 +326,7 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete()
 	std::map<UINT,SVUtilityIniClass>::iterator iter;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
 	SVOINIClass l_svIni;
-	CString csIniName = "C:\\SVObserver\\bin\\SVUtility.ini";
+	CString csIniName = SvStl::GlobalPath::Inst().GetSVUtilityIniPath();
 
   UpdateData (TRUE);
 

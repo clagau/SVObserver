@@ -14,6 +14,7 @@
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -185,7 +186,7 @@ BOOL SVVirtualCamera::GoOnline()
 		if ( bLog )
 		{
 			CString sName;
-			sName.Format(_T("c:\\temp\\TSFEF_%s.log"), mpsvDevice->DeviceName() + _T("_vc"));
+			sName.Format(_T("%s\\TSFEF_%s.log"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), mpsvDevice->DeviceName() + _T("_vc"));
 			m_LogFile.Open(sName, CFile::modeCreate | CFile::modeWrite | CFile::shareDenyWrite );
 		}
 	}

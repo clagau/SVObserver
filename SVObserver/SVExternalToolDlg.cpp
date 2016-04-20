@@ -23,6 +23,7 @@
 #include "SVMFCControls\SVFileDialog.h"
 #include "SVLoki\Functor.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "SVStatusLibrary\GlobalPath.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -129,7 +130,7 @@ BOOL SVExternalToolDlg::OnInitDialog()
 
 	CPropertyPage::OnInitDialog();	// create button and list box windows
 
-	m_strLastDllPath = AfxGetApp()->GetProfileString(_T("Settings"), _T("Last External Tool Dll Path"), _T("C:\\Run"));
+	m_strLastDllPath = AfxGetApp()->GetProfileString(_T("Settings"), _T("Last External Tool Dll Path"), SvStl::GlobalPath::Inst().GetRunPath().c_str());
 
 	m_ToolTip.Create(this, TTS_NOPREFIX | WS_VISIBLE);
 	m_ToolTip.Activate(TRUE);
@@ -262,7 +263,7 @@ void SVExternalToolDlg::OnAdd()
 			m_strLastDllPath = m_strLastDllPath.Left(iFind);
 		}
 		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
-		//CString strFileName = "c:\\Run\\" + cfd.GetFileName();
+		
 
 		// Check for already existing DLL Paths
 		if(m_lbDependentList.FindString( 0, cfd.GetPathName() ) == LB_ERR 

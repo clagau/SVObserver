@@ -570,6 +570,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 			//
 			// Try to read the current image file path name from registry...
 			//
+			///read from ini file 
 			CString csPath = AfxGetApp()->GetProfileString( _T( "Settings" ),
 				_T( "ImagesFilePath" ), 
 				_T( "C:\\Images" ) );

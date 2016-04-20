@@ -16,6 +16,7 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVMFCControls/SVDlgFolder.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 SVFileNameClass::SVFileNameClass()
@@ -165,7 +166,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveDialogTitle( _T("Save File") );
 			SetDefaultFileExtension( nullptr );
 			SetDefaultFileName( nullptr );
-			SetDefaultPathName( _T("C:\\RUN") );
+			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("All Files (*.*)|*.*||") );
@@ -207,7 +208,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveDialogTitle( _T("Save Model File") );
 			SetDefaultFileExtension( _T(".bmp") );
 			SetDefaultFileName( nullptr );
-			SetDefaultPathName( _T("C:\\RUN") );
+			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( "Bitmap File Format (*.bmp)|*.bmp|MIL Image Format File (*.mim)|*.mim|TIFF Image Format (*.tif)|*.tif||" );
@@ -221,7 +222,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveDialogTitle( _T("Save SVObserver Mask File") );
 			SetDefaultFileExtension( _T(".svm") );
 			SetDefaultFileName( nullptr );
-			SetDefaultPathName( _T("C:\\RUN") );
+			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("SVObserver Mask Files (*.svm)|*.svm||") );
@@ -235,7 +236,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveDialogTitle( _T("Save Bar Code Match String File") );
 			SetDefaultFileExtension( _T(".txt") );
 			SetDefaultFileName( nullptr );
-			SetDefaultPathName( _T("C:\\RUN") );
+			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
@@ -249,7 +250,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveDialogTitle( _T("Save Bar Code Value File") );
 			SetDefaultFileExtension( _T(".txt") );
 			SetDefaultFileName( nullptr );
-			SetDefaultPathName( _T("C:\\RUN") );
+			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
@@ -263,7 +264,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveDialogTitle( _T("Save OCR Match String File") );
 			SetDefaultFileExtension( _T(".txt") );
 			SetDefaultFileName( nullptr );
-			SetDefaultPathName( _T("C:\\RUN") );
+			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
@@ -277,7 +278,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveDialogTitle( _T("Save WiT Font Training File") );
 			SetDefaultFileExtension( _T(".wit") );
 			SetDefaultFileName( nullptr );
-			SetDefaultPathName( _T("C:\\RUN") );
+			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("WiT Font Files (*.wit)|*.wit||") );
@@ -291,7 +292,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveDialogTitle( _T( "Save Configuration File" ) );
 			SetDefaultFileExtension( _T(".svx") );
 			SetDefaultFileName( nullptr );
-			SetDefaultPathName( _T("C:\\RUN") );
+			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T( "SVResearch Configuration Files (*.svx)|*.svx||" ) );
@@ -617,7 +618,7 @@ BOOL SVFileNameClass::SaveFile()
 					SetExtension( _T( ".svx" ) );
 				}
 
-				bDone = csNewFullFileName.CompareNoCase( _T( "C:\\RUN" ) ) == 0 ||
+				bDone = csNewFullFileName.CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 ||
 					      _access( GetFullFileName(), 0 ) == 0;
 
 				if ( ! bDone )

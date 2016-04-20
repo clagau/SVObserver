@@ -25,6 +25,7 @@
 #include "SVOGui\SVColor.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -643,7 +644,7 @@ BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)
 	//
 	CString csPath = AfxGetApp()->GetProfileString(	_T( "Settings" ), 
 		                                              _T( "SVCFilePath" ), 
-		                                              _T("C:\\RUN") );   // Default
+		                                              SvStl::GlobalPath::Inst().GetRunPath().c_str() );   // Default
 
 	svfncFileName.SetDefaultPathName( csPath );
 

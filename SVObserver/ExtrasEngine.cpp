@@ -19,6 +19,7 @@
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 #pragma endregion Includes
 
@@ -106,18 +107,20 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 	//Arvid: ensure that the autosave directory exists.
 
 	//Arvid: create the AutoSave directory step by step
-	CreateDirectory(SvO::SecondSVObserverDirectoryPath, NULL); //Arvid: this will fail if the directory already exists, but so what?
-	CreateDirectory(SvO::SVObserverAutosavePath, NULL); //Arvid: this will fail if the directory already exists, but so what?
+	
+	CreateDirectory(SvStl::GlobalPath::Inst().GetSecondObserverPath().c_str(), NULL); //Arvid: this will fail if the directory already exists, but so what?
+	SVString  AutosavePath = SvStl::GlobalPath::Inst().GetSecondObserverPath(_T("Autosave\\"));
+	CreateDirectory(AutosavePath.c_str(), NULL); //Arvid: this will fail if the directory already exists, but so what?
 	//Arvid: now move the temporary directories around (if they exist already)
-	moveContainedDirectory(SvO::SVObserverAutosavePath, AutosaveTempDirectory2Name, AutosaveTempDirectory3Name);
-	moveContainedDirectory(SvO::SVObserverAutosavePath, AutosaveTempDirectory1Name, AutosaveTempDirectory2Name);
+	moveContainedDirectory(AutosavePath.c_str(), AutosaveTempDirectory2Name, AutosaveTempDirectory3Name);
+	moveContainedDirectory(AutosavePath.c_str(), AutosaveTempDirectory1Name, AutosaveTempDirectory2Name);
 
 	CreateDirectory(GetTempFolderRelPath(), NULL);
 
 	//Arvid: save the current configuration in the AutoSave Directory
 	TheSVObserverApp.fileSaveAsSVX(_T(""), true);
 
-	moveContainedDirectory(SvO::SVObserverAutosavePath, AutosaveTempDirectoryName, AutosaveTempDirectory1Name);
+	moveContainedDirectory(AutosavePath.c_str(), AutosaveTempDirectoryName, AutosaveTempDirectory1Name);
 
 	autosavePopupDialog.DestroyWindow();
 }
@@ -125,7 +128,8 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 
 CString ExtrasEngine::GetTempDirectoryPath() const 
 {
-	return SvO::SVObserverAutosavePath+CString(GetTempFolderRelPath())+_T("\\");
+	SVString AutosavePath = SvStl::GlobalPath::Inst().GetSecondObserverPath(_T("Autosave\\"));
+	return AutosavePath.c_str() +CString(GetTempFolderRelPath())+_T("\\");
 }
 
 
@@ -183,7 +187,7 @@ void ExtrasEngine::ToggleEnableFbwf()
 	}
 
 	CString BatchfilePath;
-	BatchfilePath.Format("\"%s%s\"",SvOi::SVObserverExecutableDirectoryPath,RequiredBatchFileName);
+	BatchfilePath.Format("\"%s%s\"",SvStl::GlobalPath::Inst().GetBinPath().c_str(),RequiredBatchFileName);
 	auto ret = system(BatchfilePath);
 	if(ret)
 	{

@@ -504,7 +504,7 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 
 	while (1)
 	{
-//		hFile = _wfopen (L"c:\\EncryptLog.txt", L"at");
+
 
 		if (svmlInitialized != TRUE)
 		{
@@ -1182,7 +1182,6 @@ HRESULT SVDOMClass::GetDOMNodeElementValue (SVXML::IXMLDOMElementPtr aDOMElement
 	vNewVariant.vt = VT_EMPTY;
 	vNewVariant.lVal = 0;
 
-//	hFile = _wfopen (L"c:\\DecryptLog.txt", L"at");
 
 	while (1)
 	{
@@ -1420,7 +1419,7 @@ HRESULT SVDOMClass::GetDOMNodeElementName (SVXML::IXMLDOMElementPtr	aDOMElementP
 	vName.vt = VT_EMPTY;
 	vName.lVal = 0;
 
-//	hFile = _wfopen (L"c:\\DecryptLog.txt", L"at");
+
 
 	while (1)
 	{

@@ -21,6 +21,7 @@
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -269,7 +270,7 @@ BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 		pApp->m_UtilityMenu.clear();
 	}
 	
-	CString csIniName = "C:\\SVObserver\\bin\\SVUtility.ini";
+	CString csIniName = SvStl::GlobalPath::Inst().GetSVUtilityIniPath(); 
 
 	l_iHighestIndex = l_svIni.GetValueInt("General","HighestUtilityIndex",0,csIniName);
 
@@ -322,7 +323,7 @@ BOOL SVUtilitiesClass::CleanupIni()
 	CString csString;
 	CString csStanza;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
-	CString csIniFile = "C:\\SVObserver\\bin\\SVUtility.ini";
+	CString csIniFile = SvStl::GlobalPath::Inst().GetSVUtilityIniPath() ;
 
 	CStdioFile file;
 
@@ -403,7 +404,7 @@ BOOL SVUtilitiesClass::CleanupIni()
 
 	//destroy contents of ini file.
 	FILE *fp;
-	if ( (fp = fopen("C:\\SVObserver\\bin\\SVUtility.ini","w")) != NULL )
+	if ( (fp = fopen(SvStl::GlobalPath::Inst().GetSVUtilityIniPath() ,"w")) != NULL )
 	{
 		fclose(fp);
 	}
@@ -446,7 +447,7 @@ BOOL SVUtilitiesClass::UpdateIni()
 	std::map<UINT,SVUtilityIniClass>::iterator iter;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
 	SVOINIClass l_svIni;
-	CString csIniName = "C:\\SVObserver\\bin\\SVUtility.ini";
+	CString csIniName = SvStl::GlobalPath::Inst().GetSVUtilityIniPath();
 
 	int iMapSize = static_cast<int>(pApp->m_UtilityMenu.size());
 

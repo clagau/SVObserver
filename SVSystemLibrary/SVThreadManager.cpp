@@ -13,6 +13,7 @@
 #include "sstream"
 #include "SVThreadManager.h"
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 SVThreadManager& SVThreadManager::Instance()
 {
@@ -35,7 +36,7 @@ SVThreadManager::SVThreadManager()
 {
 	::InitializeCriticalSection(&m_CritSec);
 	// Temperary place to de-activate SVThreadManager
-	m_bThreadManagerInstalled = GetPrivateProfileInt( _T( "Settings" ), _T( "ThreadManagerActive" ), 1, _T( "c:\\SVObserver\\Bin\\SVim.ini" ) );
+	m_bThreadManagerInstalled = GetPrivateProfileInt( _T( "Settings" ), _T( "ThreadManagerActive" ), 1, SvStl::GlobalPath::Inst().GetSVIMIniPath());
 	if( m_bThreadManagerInstalled )
 	{
 		Create();

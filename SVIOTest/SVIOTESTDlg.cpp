@@ -19,6 +19,7 @@
 #include "SVSoftwareTriggerSetupDlg.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -277,7 +278,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 
 	// Read Information from hardware.ini about the board options...
 	SVOINIClass l_INIHardware;
-	l_INIHardware.SetFile( "C:\\SVObserver\\bin\\HARDWARE.INI" );
+	l_INIHardware.SetFile( SvStl::GlobalPath::Inst().GetHardwareIniPath() );
 	std::string l_strDesc;
 
 	l_strDesc = l_INIHardware.GetValueString("IO Board","10","Entech X1");

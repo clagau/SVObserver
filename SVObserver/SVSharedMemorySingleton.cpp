@@ -13,6 +13,7 @@
 #include "SVOMFCLibrary/SVOIniClass.h"
 #include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
 #include "SVSharedMemorySingleton.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 SVSharedMemorySingleton& SVSharedMemorySingleton::Instance()
 {
@@ -33,7 +34,7 @@ SVSharedMemorySingleton::SVSharedMemorySingleton()
 void SVSharedMemorySingleton::ReadSettings()
 {
 	SVOINIClass reader;
-	reader.SetFile(_T("C:\\SVObserver\\bin\\SVIM.ini"));
+	reader.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	long monitorStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("MonitorStoreSize"), SVSharedMemorySettings::DefaultMonitorStoreSize);
 	long productStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("ProductStoreSize"), SVSharedMemorySettings::DefaultProductStoreSize);

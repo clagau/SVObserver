@@ -17,6 +17,7 @@
 #include "SVFileNameManagerClass.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVFileNameLockablePointerArrayClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 // Global Configuration Path Name variable for DLL
@@ -37,7 +38,7 @@ SVFileNameManagerClass::SVFileNameManagerClass()
 
 	if ( csRunPathName.IsEmpty() )
 	{
-		SetRunPathName( "C:\\RUN" );
+		SetRunPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 	}
 }
 

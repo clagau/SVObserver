@@ -64,6 +64,7 @@
 #include "RangeClassHelper.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 #pragma endregion Includes
 
@@ -399,15 +400,17 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		//Unpacked the file and save all files under C:\Run  directory
 		//then load the config
 
+
+
 		//create confirm directory c:\temp
-		if(!CreateDirPath(CString(_T("c:\\temp"))))
+		if(!CreateDirPath(CString(SvStl::GlobalPath::Inst().GetTempPath().c_str())))
 		{
 			hrException = SVMSG_ERROR_CREATING_DIRECTORY;
 			goto error;
 		}
 
 		//create a temporary filename and saved file to c:\temp
-		szPackedFile = CString(_T("c:\\temp\\temp")) + _T(".svf");
+		szPackedFile =  SvStl::GlobalPath::Inst().GetTempPath(_T("temp.svf")).c_str() ; 
 
 		if(savFile.Open(szPackedFile, CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary))
 		{
@@ -428,7 +431,7 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		}
 
 		//unpack the files in the c:\run directory
-		if(!svPackedFile.UnPackFiles (szPackedFile, _T("C:\\RUN")))
+		if(!svPackedFile.UnPackFiles (szPackedFile, SvStl::GlobalPath::Inst().GetRunPath().c_str()))
 		{
 			hrException = SVMSG_ERROR_UNPACKING_FILE;
 			goto error;
@@ -623,8 +626,9 @@ STDMETHODIMP CSVCommand::PutSVIMFile(BSTR szXMLData, BSTR* pXMLError)
 
 		if(szPath.IsEmpty())
 		{
-			szPath = _T("c:\\run\\");
+			szPath= SvStl::GlobalPath::Inst().GetRunPath().c_str();
 			if(!CreateDirPath(szPath))goto error;
+			szPath += _T("\\");
 			szPath += szSVIMFilename;
 			_tcscpy(szSVIMFilename,szPath.GetBuffer(szPath.GetLength()));
 		}
@@ -1243,9 +1247,9 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 
 		try
 		{
-			if(CreateDirPath(CString(_T("c:\\temp")))) 
+			if(CreateDirPath(CString(SvStl::GlobalPath::Inst().GetTempPath().c_str()))) 
 			{
-				szPackedFile = CString(_T("c:\\temp\\temp")) + _T(".svf");
+				szPackedFile = SvStl::GlobalPath::Inst().GetTempPath(_T("temp.svf")).c_str();
 				ex = new CFileException;
 				if (lOffset < 1)
 				{
@@ -1291,7 +1295,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 				if( bSuccess )
 				{
 					//unpack the files in the c:\run directory
-					bSuccess = svPackedFile.UnPackFiles( szPackedFile, _T("C:\\RUN") );
+					bSuccess = svPackedFile.UnPackFiles( szPackedFile, SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 					if (!bSuccess)
 					{
 						hrResult = SVMSG_CMDCOMSRV_PACKEDFILE_ERROR;
@@ -4907,9 +4911,9 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ))
 		{
-			CString strFontFileName			= _T( "C:\\temp\\svlffont.mfo" );
-			CString strControlsFileName		= _T( "C:\\temp\\svlfcont.mfo" );
-			CString strConstraintsFileName	= _T( "C:\\temp\\svlfstra.mfo" );
+			CString strFontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlffont.mfo")).c_str();
+			CString strControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfcont.mfo")).c_str();
+			CString strConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfstra.mfo")).c_str();
 			CFile oFile;
 
 			SVMatroxOcrInterface::SVStatusCode l_Code;
@@ -5017,9 +5021,9 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ) )
 		{
-			SVMatroxString strFontFileName			= _T( "C:\\temp\\svsffont.mfo" );
-			SVMatroxString strControlsFileName		= _T( "C:\\temp\\svsfcont.mfo" );
-			SVMatroxString strConstraintsFileName	= _T( "C:\\temp\\svsfstra.mfo" );
+			SVMatroxString strFontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsffont.mfo")).c_str();
+			SVMatroxString strControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfcont.mfo")).c_str();
+			SVMatroxString strConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfstra.mfo")).c_str();
 			CFileStatus rStatus;
 			CFile oFile;
 

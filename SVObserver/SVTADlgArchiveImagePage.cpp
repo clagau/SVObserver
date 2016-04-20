@@ -30,6 +30,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -569,7 +570,7 @@ void SVTADlgArchiveImagePage::OnBrowse()
 	SVFileNameClass	svfncImageFolder;
 
 	// Set the default folder to start with.
-	CString csInitialPath(_T("C:\\Temp\\"));
+	CString csInitialPath(SvStl::GlobalPath::Inst().GetTempPath(_T("\\")).c_str());
 
 	m_ImageFilesRoot.GetWindowText(csInitialPath);
 	if (!csInitialPath.IsEmpty())

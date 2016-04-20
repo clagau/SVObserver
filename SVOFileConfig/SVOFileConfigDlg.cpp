@@ -25,6 +25,7 @@
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "AutoBuild/AutoBuild.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -83,7 +84,7 @@ BOOL SVOFileConfigDlg::OnInitDialog()
 	l_Text += " - With Detect and Repair IOEntries - version";
 	l_Text +=  STRPRODUCTVER;
 	SetWindowText( l_Text );
-	m_strLastDirectory = "c:\\Run";
+	m_strLastDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 

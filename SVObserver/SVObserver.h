@@ -470,13 +470,11 @@ private:
 	// The Standard Configuration Execution Directory
 	// PN -> Path Name
 	LPCTSTR m_ConfigExePNVariableName;
-	LPCTSTR m_ConfigExePNVariableDefaultValue;
 	CString m_ConfigExePNVariableValue;
 
 	// The Standard Last Valid Configuration Directory
 	// PN -> Path Name
 	LPCTSTR m_LastValidConfigPNVariableName;
-	LPCTSTR m_LastValidConfigPNVariableDefaultValue;
 	CString m_LastValidConfigPNVariableValue;
 
 	long m_lSouceImageDepth;

@@ -14,6 +14,7 @@
 
 #include "SVImageProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
+#include "SVStatusLibrary\GlobalPath.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -82,7 +83,7 @@ HRESULT SVGigeCameraManager::UpdateCameraOrder( const SVGigeCameraStructSet& rSV
 		}
 
 		strKey.Format("Matrox_GIGE.Dig_%d", x);
-		WritePrivateProfileString("Camera Mapping", strKey, l_Number, "c:\\SVObserver\\Bin\\SVIM.ini");
+		WritePrivateProfileString("Camera Mapping", strKey, l_Number,SvStl::GlobalPath::Inst().GetSVIMIniPath());
 	}
 
 	// Write Num Cameras to Camera Mapping
@@ -92,7 +93,7 @@ HRESULT SVGigeCameraManager::UpdateCameraOrder( const SVGigeCameraStructSet& rSV
 	WritePrivateProfileString( "Camera Mapping",
 		"GigeCameraCount",
 		sTmp,
-		"c:\\SVObserver\\Bin\\SVIM.ini" );
+		SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	SVConnectedCameraMap l_ConnectedCameras;
 
@@ -124,7 +125,7 @@ void SVGigeCameraManager::GetCameraOrder( SVGigeCameraStructSet& rSVCameraList )
 	int iSize = GetPrivateProfileInt( "Camera Mapping",
 		"GigeCameraCount",
 		1,
-		"c:\\SVObserver\\Bin\\SVIM.ini" );
+		SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 
 	rSVCameraList.clear();
 
@@ -136,7 +137,7 @@ void SVGigeCameraManager::GetCameraOrder( SVGigeCameraStructSet& rSVCameraList )
 		char szGetBuf[128];
 
 		strKey.Format( "Matrox_GIGE.Dig_%d", x );
-		GetPrivateProfileString( "Camera Mapping", strKey, "", szGetBuf, 128, "c:\\SVObserver\\Bin\\SVIM.ini" );
+		GetPrivateProfileString( "Camera Mapping", strKey, "", szGetBuf, 128, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 		SVcs.strIPAddress = szGetBuf;
 
 		SVcs.iPosition = x;

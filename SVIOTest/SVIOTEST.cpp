@@ -15,6 +15,7 @@
 
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVOMFCLibrary/SVOIniLoader.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -71,7 +72,7 @@ BOOL CSVIOTESTApp::InitInstance()
 	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
 
 	SVOIniLoader l_iniLoader;
-	HRESULT l_hrOk = l_iniLoader.Load("C:\\SVObserver\\bin\\SVIM.INI", l_csSystemDir, "C:\\SVObserver\\bin\\HARDWARE.INI");
+	HRESULT l_hrOk = l_iniLoader.Load(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	bool l_bOk = true;
 

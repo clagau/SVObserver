@@ -112,6 +112,7 @@
 #include "TextDefinesSvO.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -343,7 +344,8 @@ SVObserverApp::SVObserverApp()
 , m_forcedImageUpdateTimeInSeconds(0)
 {
 	free((void*)m_pszHelpFilePath);
-	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
+	
+	m_pszHelpFilePath = _tcsdup(SvStl::GlobalPath::Inst().GetBinPath(_T("SVObserver.chm")).c_str());
 	EnableHtmlHelp();
 
 	::OutputDebugString( _T( "Executing => SVObserverApp::SVObserverApp()\n" ) );
@@ -369,12 +371,12 @@ SVObserverApp::SVObserverApp()
 
 	// The Standard Configuration Execution Directory
 	m_ConfigExePNVariableName			= _T( "ConfigurationExecutionPathName" );	// LPCTSTR
-	m_ConfigExePNVariableDefaultValue	= _T( "C:\\RUN\\" );						// LPCTSTR
+	
 	m_ConfigExePNVariableValue			= _T( "" );									// CString
 
 	// The Standard Last Valid Configuration Directory
 	m_LastValidConfigPNVariableName			= _T( "LastValidConfigurationPathName" );	// LPCTSTR
-	m_LastValidConfigPNVariableDefaultValue	= _T( "C:\\Last Valid\\" );					// LPCTSTR
+
 	m_LastValidConfigPNVariableValue		= _T( "" );									// CString
 
 	m_csProcessor.Empty();
@@ -614,7 +616,7 @@ void SVObserverApp::OnFileOpenSVC()
 		//
 		svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
 			_T( "SVCFilePath" ), 
-			_T( "C:\\RUN" ) ) );
+			SvStl::GlobalPath::Inst().GetRunPath().c_str() ) );
 		if ( svFileName.SelectFile() )
 		{
 			//
@@ -2405,7 +2407,7 @@ void SVObserverApp::OnRCSaveAllAndGetConfig()
 		SVFileNameClass svFileName;
 
 		svFileName.SetFullFileName( getConfigFullFileName() );
-		svFileName.SetPathName( _T( "C:\\RUN" ) );
+		svFileName.SetPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 		svFileName.SetExtension( _T( ".svx" ) );
 
 		fileSaveAsSVX( svFileName.GetFullFileName() );
@@ -2855,7 +2857,7 @@ BOOL SVObserverApp::InitInstance()
 	}
 
 	#ifdef _DEBUG
-		long l_CrtVal = GetPrivateProfileInt( _T( "Memory" ), _T( "CrtSetBreakAlloc" ), 0, _T( "c:\\SVObserver\\Bin\\SVDebug.ini" ) );
+		long l_CrtVal = GetPrivateProfileInt( _T( "Memory" ), _T( "CrtSetBreakAlloc" ), 0, SvStl::GlobalPath::Inst().GetBinPath("SVDebug.ini").c_str() ) ;
 
 		if( 0 < l_CrtVal )
 		{
@@ -2873,9 +2875,9 @@ BOOL SVObserverApp::InitInstance()
 	// added to ensure C:\TEMP always exists;
 	// bad things happen if it doesn't
 	// example of symptom: crash when SVFocus tries to connect
-	if (_taccess(_T("c:\\TEMP"), 0) != 0)
+	if (_taccess(SvStl::GlobalPath::Inst().GetTempPath().c_str(), 0) != 0)
 	{
-		_tmkdir(_T("c:\\TEMP"));
+		_tmkdir(SvStl::GlobalPath::Inst().GetTempPath().c_str());
 	}
 
 	// EB 2005 08 01
@@ -2927,7 +2929,7 @@ BOOL SVObserverApp::InitInstance()
 
 	LoadStdProfileSettings( 7 );  // Standard-INI-Dateioptionen einlesen (einschließlich MRU)
 
-	m_SvimIni.SetFile(_T("C:\\SVObserver\\bin\\SVIM.INI"));
+	m_SvimIni.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	ValidateMRUList();
 
@@ -2956,25 +2958,20 @@ BOOL SVObserverApp::InitInstance()
 	// Set up path name environment variables...
 
 	// Configuration Execution Path Name... ( "Run Directory" )
-	m_ConfigExePNVariableValue = GetProfileString( _T( "Settings" ), m_ConfigExePNVariableName );
-	if( m_ConfigExePNVariableValue.IsEmpty() )
-	{
-		m_ConfigExePNVariableValue = m_ConfigExePNVariableDefaultValue;
-		// Update registry...
-		WriteProfileString( _T( "Settings" ), m_ConfigExePNVariableName, m_ConfigExePNVariableValue );
-	}
+	m_ConfigExePNVariableValue = SvStl::GlobalPath::Inst().GetRunPath(_T("\\")).c_str();
+
+	// Update registry...
+	WriteProfileString( _T( "Settings" ), m_ConfigExePNVariableName, m_ConfigExePNVariableValue );
+
 	// Check path, create if necessary but don't delete contents...
 	InitPath( m_ConfigExePNVariableValue, TRUE, FALSE );
 	SetEnvironmentVariable( m_ConfigExePNVariableName, m_ConfigExePNVariableValue );
 
 	// Last Valid Configuration Path Name... ( "Last Valid Directory" )
-	m_LastValidConfigPNVariableValue = GetProfileString( _T( "Settings" ), m_LastValidConfigPNVariableName );
-	if( m_LastValidConfigPNVariableValue.IsEmpty() )
-	{
-		m_LastValidConfigPNVariableValue = m_LastValidConfigPNVariableDefaultValue;
-		// Update registry...
-		WriteProfileString( _T( "Settings" ), m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue );
-	}
+	
+	m_LastValidConfigPNVariableValue = SvStl::GlobalPath::Inst().GetLastValidPath(_T("\\")).c_str();
+	WriteProfileString( _T( "Settings" ), m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue );
+	
 	// Check path, create if necessary but don't delete contents...
 	InitPath( m_LastValidConfigPNVariableValue, TRUE, FALSE );
 	SetEnvironmentVariable( m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue );
@@ -3825,7 +3822,7 @@ CString SVObserverApp::GetConfigurationName() const
 
 	if( 0 < strlen( svFileName.GetFileNameOnly() ) )
 	{
-		svFileName.SetPathName( _T( "C:\\RUN" ) );
+		svFileName.SetPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
 		l_ConfigName = svFileName.GetFullFileName();
 	}
@@ -3877,7 +3874,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration( const CString& p_rPackedFileName
 
 	if( l_Status == S_OK )
 	{
-		if( !( PackedFile.UnPackFiles( p_rPackedFileName, _T("C:\\RUN") ) ) )
+		if( !( PackedFile.UnPackFiles( p_rPackedFileName, SvStl::GlobalPath::Inst().GetRunPath().c_str() ) ) )
 		{
 			l_Status = E_UNEXPECTED;
 		}
@@ -5097,7 +5094,7 @@ BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction
 		}
 		else
 		{
-			if ( CString( m_ConfigFileName.GetPathName() ).CompareNoCase( _T( "C:\\RUN" ) ) == 0 )
+			if ( CString( m_ConfigFileName.GetPathName() ).CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
 			{
 				svFileManager.SetConfigurationPathName( NULL );
 			}
@@ -5787,8 +5784,8 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 				SVGigeCameraManagerDlg dlg;
 				dlg.DoModal();
 			}
+			}
 		}
-	}
 	catch (...)
 	{
 		ASSERT(FALSE);
@@ -6761,7 +6758,7 @@ HRESULT SVObserverApp::INILoad()
 	m_csOptions.Empty();
 
 	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
-	HRESULT l_hrOk = l_iniLoader.Load("C:\\SVObserver\\bin\\SVIM.INI", l_csSystemDir, "C:\\SVObserver\\bin\\HARDWARE.INI");
+	HRESULT l_hrOk = l_iniLoader.Load(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	if (S_OK == l_hrOk)
 	{
@@ -6817,9 +6814,9 @@ HRESULT SVObserverApp::INILoad()
 		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
 		l_hrOk = l_hrOk | LoadAcquisitionDLL();
 		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
-	}
-	else
-	{
+			}
+		else
+		{
 		if (S_OK != l_iniLoader.m_hrOEMFailure)
 		{
 			ASSERT( FALSE );
@@ -7037,10 +7034,10 @@ HRESULT SVObserverApp::LoadAcquisitionDLL()
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
 			}
-		}
-	}
-	else
-	{
+				}
+			}
+			else
+			{
 		if( m_csFrameGrabber != _T( "00" ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
@@ -7275,8 +7272,10 @@ HRESULT SVObserverApp::InitializeSecurity()
 		m_svSecurityMgr.SVProtectData( SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER ); // Sets Flag that will prevent data from being changed.
 	}
 
-	char szGetBuf[256];
-	GetPrivateProfileString(_T("Security"), _T("Security File Path"), _T("c:\\SVObserver\\bin\\Gatekpr.xml"), szGetBuf, 256, "c:\\SVObserver\\Bin\\SVIM.ini");
+	
+	TCHAR szGetBuf[256];
+	 
+	GetPrivateProfileString(_T("Security"), _T("Security File Path"), SvStl::GlobalPath::Inst().GetBinPath(_T("\\Gatekpr.xml") ).c_str() , szGetBuf, 256, SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	if( m_svSecurityMgr.SVLoad(szGetBuf) != S_OK )
 	{
@@ -7310,13 +7309,13 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 		svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 
 		if ( CString( getConfigPathName() ).IsEmpty() ||
-			CString( getConfigPathName() ).CompareNoCase( Seidenader::SVObserver::RunFolder ) == 0 )
+			CString( getConfigPathName() ).CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
 		{
 			svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
 				_T( "ConfigurationFilePath" ), 
-				_T( Seidenader::SVObserver::RunFolder ) ) );
+				SvStl::GlobalPath::Inst().GetRunPath().c_str() ) );
 
-			if ( CString( svFileName.GetPathName() ).CompareNoCase( Seidenader::SVObserver::RunFolder ) == 0 )
+			if ( CString( svFileName.GetPathName() ).CompareNoCase(SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
 			{
 				if ( ! CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
 				{
@@ -7396,7 +7395,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 			// save are skipped, 
 			// e.g. the configuration name must not be added to the LRU list
 			
-			ExtrasEngine::Instance().CopyDirectoryToTempDirectory(Seidenader::SVObserver::RunFolder + CString("\\"));
+			ExtrasEngine::Instance().CopyDirectoryToTempDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str() + CString("\\"));
 			ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: update autosave timestamp
 		}
 		else 

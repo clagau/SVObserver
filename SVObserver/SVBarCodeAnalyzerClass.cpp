@@ -27,6 +27,7 @@
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -125,7 +126,7 @@ void SVBarCodeAnalyzerClass::init()
 	//set MIL Timeout default to be what is in the INI file...
 	SVOINIClass l_SvimIni;
 
-	l_SvimIni.SetFile(_T("C:\\SVObserver\\bin\\SVIM.INI"));
+	l_SvimIni.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	int l_mTimeout = l_SvimIni.GetValueInt(_T("SVIM Information"), _T("MILBarcodeTimeout"),20);
 

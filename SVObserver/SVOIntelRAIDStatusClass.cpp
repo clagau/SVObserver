@@ -15,6 +15,7 @@
 #include "ModelessMessageBox.h"
 #include "SVStatusLibrary/SVEventLogClass.h"
 #include "SVSVIMStateClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 
 SVOIntelRAIDStatusClass::SVOIntelRAIDStatusClass()
 	:m_hCheckEvent( NULL ), m_csRaidStatus(), m_csErrorStatus()
@@ -173,7 +174,8 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	{
 		m_csErrorStatus.Format( _T("Error Reading Event Log (Item = %lu - ErrorCode = %lu)"), l_ulItem, l_svOk );
 
-		FILE* l_pFile = ::fopen( _T("C:\\SVObserver\\LastEventReadError.txt"), _T("w") );
+		
+		FILE* l_pFile = ::fopen(  SvStl::GlobalPath::Inst().GetObserverPath(_T("LastEventReadError.txt")).c_str() , _T("w") );
 
 		if( l_pFile != NULL )
 		{
