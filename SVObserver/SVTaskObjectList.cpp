@@ -52,6 +52,7 @@ SVTaskObjectListClass::~SVTaskObjectListClass()
 }
 #pragma endregion
 
+#pragma region public methods
 HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const
 {
 	HRESULT l_Status( SVTaskObjectClass::GetOutputList( p_rOutputInfoList ) );
@@ -149,111 +150,6 @@ void SVTaskObjectListClass::Persist(SVObjectWriter& writer)
 	writer.EndElement();
 }
 
-void SVTaskObjectListClass::cleanUpEmptyEntries()
-{
-	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
-	{
-		if (! m_aTaskObjects.GetAt(i))
-		{
-			m_aTaskObjects.RemoveAt(i--);
-		}
-	}
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
-}
-
-#pragma region virtual method (ISVTaskOBjectListClass)
-int SVTaskObjectListClass::GetSize() const
-{
-	return static_cast< int >( m_aTaskObjects.GetSize() );
-}
-
-SvUl::NameGuidList SVTaskObjectListClass::GetTaskObjectList( ) const
-{
-	SvUl::NameGuidList list;
-	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
-	{
-		SVTaskObjectClass *pObject = m_aTaskObjects.GetAt(i);
-		if (pObject)
-		{
-			list.push_back(SvUl::NameGuidPair(pObject->GetName(), pObject->GetUniqueObjectID()));
-		}
-	}
-	return list;
-}
-
-void SVTaskObjectListClass::InsertAt(int index, SvOi::ITaskObject& rObject, int count)
-{
-	SVTaskObjectClass *pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
-	InsertAt(index, pObject, count);
-}
-
-DWORD_PTR SVTaskObjectListClass::DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context)
-{
-	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
-	return DestroyChildObject(pTaskObject, context);
-}
-#pragma endregion virtual method (ISVTaskOBjectListClass)
-
-const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
-{
-	CString name( ToolName );
-	CString objectName;
-	CString tmp;
-	SVString newName( ToolName );
-	
-	int num = 0;
-	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
-	{
-		SVObjectClass* pObject = m_aTaskObjects.GetAt(i);
-		if (pObject)
-		{
-			objectName = pObject->GetName();
-			if (! objectName.Find(name))
-			{
-				// see if the name ends in a number
-				int lastNum;
-				bool digit = false;
-				
-				for (int i = objectName.GetLength() - 1; i >= 0; i--)
-				{
-					if (isdigit(objectName[i]))
-					{
-						digit = true;
-					}
-					else // found a non digit - stop looking for a digit
-					{
-						// if any digits were found - convert to a number
-						if (digit)
-						{	
-							// convert to a number
-							CString numStr = objectName.Right((objectName.GetLength() - 1) - i);
-							lastNum = atoi(numStr);
-						}
-						break;
-					}
-				}
-				
-				if (digit)
-				{
-					num = std::max(num, lastNum + 1);
-				}
-				else
-				{
-					num = std::max(num, 1);
-				}
-			}
-		}
-	}
-	// Set the name
-	if (num)
-	{
-		tmp.Format("%d", num);
-		newName = name + tmp;
-	}
-		
-	return newName;
-	}
-
 SVTaskObjectClass *SVTaskObjectListClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {
 	SVTaskObjectClass *l_psvObject = SVTaskObjectClass::GetObjectAtPoint( p_rsvPoint );
@@ -293,30 +189,14 @@ HRESULT SVTaskObjectListClass::IsInputImage( SVImageClass *p_psvImage )
 	return l_hrOk;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : Validate member function of class SVTaskObjectListClass
-// -----------------------------------------------------------------------------
 // .Description : Validates the inputs of this object and its children
 //				: Only Override in Special Cases
 //				: Note: Normally Override OnValidate
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :05.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVTaskObjectListClass::Validate()
 {
 	BOOL retVal = SVTaskObjectClass::Validate();
-	
+
 	if (retVal)
 	{
 		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
@@ -326,7 +206,7 @@ BOOL SVTaskObjectListClass::Validate()
 			{
 				BOOL l_bTemp = pTaskObject->Validate();
 
-//				ASSERT( l_bTemp );
+				//				ASSERT( l_bTemp );
 
 				retVal &= l_bTemp;
 			}
@@ -336,88 +216,75 @@ BOOL SVTaskObjectListClass::Validate()
 			}
 		}
 	}
-	
+
 	return retVal;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnValidate member function of class SVTaskObjectListClass
-// -----------------------------------------------------------------------------
 // .Description : validates the inputs of this object
 //				: must be overridden
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :25.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVTaskObjectListClass::OnValidate()
 {
 	BOOL retVal = SVTaskObjectClass::OnValidate();
-	
+
 	if (! retVal)
 	{
 		SetInvalid();
 	}
-	
+
 	return retVal;
 }
 
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
-
-void SVTaskObjectListClass::RemoveAt( int nIndex, int nCount )
+BOOL SVTaskObjectListClass::CloseObject()
 {
-	m_aTaskObjects.RemoveAt(nIndex, nCount);
+	DWORD_PTR DwResult = 0;
+	BOOL retVal = TRUE;
 
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+	// Close our children
+	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
+	{
+		SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
+		if (pTaskObject)
+		{
+			DwResult = ::SVSendMessage(pTaskObject, SVM_CLOSE_OBJECT, NULL, NULL);
+			retVal = (DwResult == SVMR_SUCCESS) && retVal;
+		}
+	}
+	// Close ourself and our friends
+	retVal = SVTaskObjectClass::CloseObject() && retVal;
+
+	return retVal;
 }
 
-int SVTaskObjectListClass::Add(SVTaskObjectClass* PTaskObject)
+HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
-	if (! PTaskObject)
-	{
-		return -1;
-	}
-	
-	// Check for Unique names 
-	const SVString NewName( checkName( PTaskObject->GetName() ) );
-	if( NewName != PTaskObject->GetName() )
-	{
-		PTaskObject->SetName( NewName.c_str() );
-	}
-	// SEJ Aug 10,1999
-	PTaskObject->SetObjectOwner(this);
-	
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+	HRESULT l_Status = SVTaskObjectClass::GetChildObject( rpObject, rNameInfo, Index );
 
-	// call the base class to realy add it
-	return m_aTaskObjects.Add(PTaskObject);
+	if( l_Status != S_OK )
+	{
+		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
+		{
+			for (int i = 0; nullptr == rpObject && i < m_aTaskObjects.GetSize(); i++)
+			{
+				SVTaskObjectClass* l_pTask = m_aTaskObjects.GetAt(i);
+				if( nullptr != l_pTask )
+				{
+					l_Status = l_pTask->GetChildObject( rpObject, rNameInfo, Index + 1 );
+				}
+			}
+		}
+		else
+		{
+			l_Status = S_FALSE;
+		}
+	}
+
+	return l_Status;
 }
 
-HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
+const SVClock::SVTimeStamp& SVTaskObjectListClass::GetLastListUpdateTimestamp() const
 {
-	HRESULT hr = S_OK;
-
-	DWORD_PTR uRetCode = SVSendMessage (this, 
-	               SVM_DESTROY_CHILD_OBJECT,
-	               reinterpret_cast<DWORD_PTR>(pChildObject),
-	               SVMFSetDefaultInputs);
-
-	if( uRetCode != SVMR_SUCCESS )
-	{
-		hr = S_FALSE;
-	}
-	return hr;
+	return m_LastListUpdateTimestamp;
 }
 
 void SVTaskObjectListClass::InsertAt(int nIndex, SVTaskObjectClass* PTaskObject, int nCount)
@@ -465,18 +332,63 @@ void SVTaskObjectListClass::SetAt(int nIndex, SVTaskObjectClass* PTaskObject)
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
 
+void SVTaskObjectListClass::RemoveAt( int nIndex, int nCount )
+{
+	m_aTaskObjects.RemoveAt(nIndex, nCount);
+
+	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+}
+
+int SVTaskObjectListClass::Add(SVTaskObjectClass* PTaskObject)
+{
+	if (! PTaskObject)
+	{
+		return -1;
+	}
+
+	// Check for Unique names 
+	const SVString NewName( checkName( PTaskObject->GetName() ) );
+	if( NewName != PTaskObject->GetName() )
+	{
+		PTaskObject->SetName( NewName.c_str() );
+	}
+	// SEJ Aug 10,1999
+	PTaskObject->SetObjectOwner(this);
+
+	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+
+	// call the base class to realy add it
+	return m_aTaskObjects.Add(PTaskObject);
+}
+
+HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
+{
+	HRESULT hr = S_OK;
+
+	DWORD_PTR uRetCode = SVSendMessage (this, 
+		SVM_DESTROY_CHILD_OBJECT,
+		reinterpret_cast<DWORD_PTR>(pChildObject),
+		SVMFSetDefaultInputs);
+
+	if( uRetCode != SVMR_SUCCESS )
+	{
+		hr = S_FALSE;
+	}
+	return hr;
+}
+
 // Should be overridden and must be called in derived classes...
 BOOL SVTaskObjectListClass::SetObjectDepth(int NewObjectDepth)
 {
 	// Set object depth of members here...
-	
+
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
 		if (m_aTaskObjects.GetAt(j))
 		{
 			m_aTaskObjects.GetAt(j)->SetObjectDepth(NewObjectDepth);
 		}
-		
+
 		return SVTaskObjectClass::SetObjectDepth(NewObjectDepth);
 }
 
@@ -484,28 +396,28 @@ BOOL SVTaskObjectListClass::SetObjectDepth(int NewObjectDepth)
 BOOL SVTaskObjectListClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex)
 {
 	// Set object depth of members here...
-	
+
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
 		if (m_aTaskObjects.GetAt(j))
 		{
 			m_aTaskObjects.GetAt(j)->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 		}
-		
+
 		return SVTaskObjectClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 }
 
 BOOL SVTaskObjectListClass::SetImageDepth(long lDepth)
 {
 	// Set object depth of members here...
-	
+
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
 		if (m_aTaskObjects.GetAt(j))
 		{
 			m_aTaskObjects.GetAt(j)->SetImageDepth(lDepth);
 		}
-		
+
 		return SVTaskObjectClass::SetImageDepth(lDepth);
 }
 
@@ -514,7 +426,7 @@ void SVTaskObjectListClass::SetInvalid()
 {
 	// Set this object and all own embedded objects to invalid
 	SVTaskObjectClass::SetInvalid();
-	
+
 	// Set all children to invalid also
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
 	{
@@ -532,7 +444,7 @@ void SVTaskObjectListClass::SetDisabled()
 	// Set this object and all own embedded objects to disabled...
 	// Set also all friends to disabled...
 	SVTaskObjectClass::SetDisabled();
-	
+
 	// Set all children to disabled also
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
 	{
@@ -544,7 +456,181 @@ void SVTaskObjectListClass::SetDisabled()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
+const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
+{
+	CString name( ToolName );
+	CString objectName;
+	CString tmp;
+	SVString newName( ToolName );
+
+	int num = 0;
+	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
+	{
+		SVObjectClass* pObject = m_aTaskObjects.GetAt(i);
+		if (pObject)
+		{
+			objectName = pObject->GetName();
+			if (! objectName.Find(name))
+			{
+				// see if the name ends in a number
+				int lastNum;
+				bool digit = false;
+
+				for (int i = objectName.GetLength() - 1; i >= 0; i--)
+				{
+					if (isdigit(objectName[i]))
+					{
+						digit = true;
+					}
+					else // found a non digit - stop looking for a digit
+					{
+						// if any digits were found - convert to a number
+						if (digit)
+						{	
+							// convert to a number
+							CString numStr = objectName.Right((objectName.GetLength() - 1) - i);
+							lastNum = atoi(numStr);
+						}
+						break;
+					}
+				}
+
+				if (digit)
+				{
+					num = std::max(num, lastNum + 1);
+				}
+				else
+				{
+					num = std::max(num, 1);
+				}
+			}
+		}
+	}
+	// Set the name
+	if (num)
+	{
+		tmp.Format("%d", num);
+		newName = name + tmp;
+	}
+
+	return newName;
+}
+
+HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+{
+	HRESULT hrRet = S_OK;
+
+	hrRet = SVTaskObjectClass::CollectOverlays(p_Image,p_MultiLineArray);
+
+	for ( int i = 0; i < m_aTaskObjects.GetSize(); i++ )
+	{
+		SVTaskObjectClass *pObject = dynamic_cast< SVTaskObjectClass* >( m_aTaskObjects.GetAt(i) );
+
+		if ( pObject != NULL )
+		{
+			HRESULT l_Temp = pObject->CollectOverlays(p_Image, p_MultiLineArray);
+
+			if( hrRet == S_OK )
+			{
+				hrRet = l_Temp;
+			}
+		}
+	}
+
+	return hrRet;
+}
+
+#pragma region virtual method (ITaskObjectListClass)
+int SVTaskObjectListClass::GetSize() const
+{
+	return static_cast< int >( m_aTaskObjects.GetSize() );
+}
+
+SvUl::NameGuidList SVTaskObjectListClass::GetTaskObjectList( ) const
+{
+	SvUl::NameGuidList list;
+	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
+	{
+		SVTaskObjectClass *pObject = m_aTaskObjects.GetAt(i);
+		if (pObject)
+		{
+			list.push_back(SvUl::NameGuidPair(pObject->GetName(), pObject->GetUniqueObjectID()));
+		}
+	}
+	return list;
+}
+
+// .Title       : Delete
+// .Description : Calls the list object destructor and removes the pointer from 
+//				: the list.
+//				: objectId is the taskObjectId
+void SVTaskObjectListClass::Delete(GUID& objectID)
+{
+	SVTaskObjectClass* pTaskObject;
+
+	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
+	{
+		pTaskObject = m_aTaskObjects.GetAt(i);
+
+		if (pTaskObject && pTaskObject->GetUniqueObjectID() == objectID)
+		{
+			m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+
+			m_aTaskObjects.RemoveAt(i);
+			// Delete object not till it is removed from list!!!
+			if (pTaskObject)
+			{
+				delete(pTaskObject);
+				return;
+			}
+		}
+	}
+	// look in friend list
+	if (RemoveFriend(objectID))
+	{
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(objectID);
+		if (pObject)
+		{
+			delete(pObject);
+			return;
+		}
+	}
+	// unknown owner!!
+	ASSERT(0);
+}
+
+void SVTaskObjectListClass::InsertAt(int index, SvOi::ITaskObject& rObject, int count)
+{
+	SVTaskObjectClass *pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
+	InsertAt(index, pObject, count);
+}
+
+DWORD_PTR SVTaskObjectListClass::DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context)
+{
+	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
+	return DestroyChildObject(pTaskObject, context);
+}
+
+SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const
+{
+	SvUl::NameGuidList list = SVTaskObjectClass::GetCreatableObjects(pObjectTypeInfo);
+
+	for (int i = 0; i < availableChildren.GetSize(); i++)
+	{
+		SVClassInfoStruct classInfo = availableChildren.GetAt(i);
+		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo.ObjectType &&
+			(pObjectTypeInfo.SubType == SVNotSetSubObjectType ||
+			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
+			)
+		{
+			list.push_back(std::make_pair(classInfo.ClassName, classInfo.ClassId));
+		}
+	}
+	return list;
+}
+#pragma endregion virtual method (ITaskObjectListClass)
+
+#pragma region protected methods
 // .Title       : DeleteAt
 // -----------------------------------------------------------------------------
 // .Description : Calls the list object destructor and removes the pointer from 
@@ -555,18 +641,6 @@ void SVTaskObjectListClass::SetDisabled()
 //				: If Index or Count is out of range, you will get an ASSERT 
 //				: message, and Index and Count will be set to their max 
 //				: possible values!!!
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:int				Index
-//	:int				Count
-// .Return Value
-//	:None 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :17.02.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 {
 	// SV_FORMAT_MESSAGE_5( "%s - > SVTaskObjectListClass::DeleteAt( int Index, int Count /*= 1*/ )\nSize: %d\nIndex: %d\nCount: %d", GetName(), GetSize(), Index, Count, NULL );
@@ -608,60 +682,6 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Delete
-// -----------------------------------------------------------------------------
-// .Description : Calls the list object destructor and removes the pointer from 
-//				: the list.
-//				: objectId is the taskObjectId
-//
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:int				Index
-//	:int				Count
-// .Return Value
-//	:None 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :14.07.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVTaskObjectListClass::Delete(GUID& objectID)
-{
-	SVTaskObjectClass* pTaskObject;
-	
-	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
-	{
-		pTaskObject = m_aTaskObjects.GetAt(i);
-		
-		if (pTaskObject && pTaskObject->GetUniqueObjectID() == objectID)
-		{
-			m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
-
-			m_aTaskObjects.RemoveAt(i);
-			// Delete object not till it is removed from list!!!
-			if (pTaskObject)
-			{
-				delete(pTaskObject);
-				return;
-			}
-		}
-	}
-	// look in friend list
-	if (RemoveFriend(objectID))
-	{
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(objectID);
-		if (pObject)
-		{
-			delete(pObject);
-			return;
-		}
-	}
-	// unknown owner!!
-	ASSERT(0);
-}
-
 // Calls DeleteAt( 0, GetSize() )...
 void SVTaskObjectListClass::DeleteAll()
 {
@@ -670,140 +690,19 @@ void SVTaskObjectListClass::DeleteAll()
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
 
-DWORD_PTR SVTaskObjectListClass::DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context)
+HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
 {
-	//This code was located before in processMessage case SVMSGID_DESTROY_CHILD_OBJECT and is moved to this method.
+	HRESULT hrRet = S_FALSE;
 
-	// Kill the Object
-	if (pTaskObject)
-	{
-		// if the object is a Child of this
-		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
-		{
-			SVObjectClass* pObject = m_aTaskObjects.GetAt(i);
-			if (pObject && pObject == pTaskObject)
-			{
-				// Notify the Owner of our inputs that they are not needed anymore
-				pTaskObject->Disconnect();
+	hrRet = SVTaskObjectClass::onCollectOverlays(p_Image,p_MultiLineArray);
 
-				// Close the Object
-				pTaskObject->CloseObject();
-
-				// Get the object's uniqueID
-				GUID objectID = pTaskObject->GetUniqueObjectID();
-
-				// Destroy our Friends
-				pTaskObject->DestroyFriends();
-
-				// Remove it from the SVTaskObjectList ( Destruct it )
-				Delete(objectID);
-
-				if( GetInspection() != NULL )
-				{
-					if( ( context & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
-					{
-						GetInspection()->SetDefaultInputs();
-					}
-
-					if( ( context & SVMFResetInspection ) == SVMFResetInspection )
-					{
-						::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
-					}
-				}
-
-				return SVMR_SUCCESS;
-			}
-		}
-	}
-	return SVMR_NO_SUCCESS;
-}
-
-BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
-{
-	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
-	ChildRunStatus.Images = RRunStatus.Images;
-	ChildRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
-
-	// Run yourself...
-	BOOL bRetVal = onRun(RRunStatus);
-	
-	if (!RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition())
-	{
-		// Run your children...
-		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
-		{
-			SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
-			if ( pTaskObject != NULL )
-			{
-				ChildRunStatus.ResetRunStateAndToolSetTimes();
-				
-				BOOL l_bTemp = pTaskObject->Run(ChildRunStatus);
-
-				bRetVal &= l_bTemp;
-				
-				// Update our Run Status
-				if ( ChildRunStatus.IsDisabled() ) { RRunStatus.SetDisabled(); }
-				
-				if ( ChildRunStatus.IsDisabledByCondition() ) { RRunStatus.SetDisabledByCondition(); }
-				
-				if ( ChildRunStatus.IsWarned() ) { RRunStatus.SetWarned(); }
-				
-				if ( ChildRunStatus.IsFailed() ) { RRunStatus.SetFailed(); }
-				
-				if ( ChildRunStatus.IsPassed() ) { RRunStatus.SetPassed(); }
-
-				if ( ChildRunStatus.IsCriticalFailure() ) { RRunStatus.SetCriticalFailure(); }
-			}
-		}
-	}
-	
-	// Get Status Color...
-	DWORD dwValue = RRunStatus.GetStatusColor();
-	statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
-	
-	// Get Status...
-	dwValue = RRunStatus.GetState();
-	statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
-	
-	return bRetVal;
-}
-
-SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPreProcessObjects() const
-{
-	SVObjectPtrDeque l_Objects = SVTaskObjectClass::GetPreProcessObjects();
-
-	return l_Objects;
-}
-
-SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPostProcessObjects() const
-{
-	SVObjectPtrDeque l_Objects = SVTaskObjectClass::GetPostProcessObjects();
-
-	SVTaskObjectPtrVector::const_iterator l_Iter;
-	
-	for( l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
-	{
-		SVTaskObjectClass* l_pTask = *l_Iter;
-
-		if( l_pTask != NULL )
-		{
-			l_Objects.push_back( l_pTask );
-		}
-	}
-
-	return l_Objects;
-}
-
-BOOL SVTaskObjectListClass::onRun(SVRunStatusClass& RRunStatus)
-{
-	return SVTaskObjectClass::onRun(RRunStatus);
+	return hrRet;
 }
 
 SVObjectClass *SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner )
 {
 	SVObjectClass *l_psvObject = NULL;
-	
+
 	int l_iSize = m_aTaskObjects.GetSize();
 
 	// find the friend in our taskObject List
@@ -831,58 +730,107 @@ SVObjectClass *SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, S
 	return l_psvObject;
 }
 
-BOOL SVTaskObjectListClass::CloseObject()
+BOOL SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo) const
 {
-	DWORD_PTR DwResult = 0;
-	BOOL retVal = TRUE;
-	
-	// Close our children
-	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
+	BOOL rc = FALSE;
+
+	for (int i = 0; i < availableChildren.GetSize(); i++)
 	{
-		SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
-		if (pTaskObject)
+		SVClassInfoStruct classInfo = availableChildren.GetAt(i);
+		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo->ObjectType &&
+			(pObjectTypeInfo->SubType == SVNotSetSubObjectType ||
+			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo->SubType) 
+			)
 		{
-			DwResult = ::SVSendMessage(pTaskObject, SVM_CLOSE_OBJECT, NULL, NULL);
-			retVal = (DwResult == SVMR_SUCCESS) && retVal;
+			pList->Add(classInfo);
+			rc = TRUE;
 		}
 	}
-	// Close ourself and our friends
-	retVal = SVTaskObjectClass::CloseObject() && retVal;
-	
-	return retVal;
+	return rc;
 }
 
-HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
+BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 {
-	HRESULT l_Status = SVTaskObjectClass::GetChildObject( rpObject, rNameInfo, Index );
+	SVRunStatusClass ChildRunStatus;
+	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
+	ChildRunStatus.Images = RRunStatus.Images;
+	ChildRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
 
-	if( l_Status != S_OK )
+	// Run yourself...
+	BOOL bRetVal = onRun(RRunStatus);
+
+	if (!RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition())
 	{
-		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
+		// Run your children...
+		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 		{
-			for (int i = 0; nullptr == rpObject && i < m_aTaskObjects.GetSize(); i++)
+			SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
+			if ( pTaskObject != NULL )
 			{
-				SVTaskObjectClass* l_pTask = m_aTaskObjects.GetAt(i);
-				if( nullptr != l_pTask )
-				{
-					l_Status = l_pTask->GetChildObject( rpObject, rNameInfo, Index + 1 );
-				}
+				ChildRunStatus.ResetRunStateAndToolSetTimes();
+
+				BOOL l_bTemp = pTaskObject->Run(ChildRunStatus);
+
+				bRetVal &= l_bTemp;
+
+				// Update our Run Status
+				if ( ChildRunStatus.IsDisabled() ) { RRunStatus.SetDisabled(); }
+
+				if ( ChildRunStatus.IsDisabledByCondition() ) { RRunStatus.SetDisabledByCondition(); }
+
+				if ( ChildRunStatus.IsWarned() ) { RRunStatus.SetWarned(); }
+
+				if ( ChildRunStatus.IsFailed() ) { RRunStatus.SetFailed(); }
+
+				if ( ChildRunStatus.IsPassed() ) { RRunStatus.SetPassed(); }
+
+				if ( ChildRunStatus.IsCriticalFailure() ) { RRunStatus.SetCriticalFailure(); }
 			}
 		}
-		else
+	}
+
+	// Get Status Color...
+	DWORD dwValue = RRunStatus.GetStatusColor();
+	statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+
+	// Get Status...
+	dwValue = RRunStatus.GetState();
+	statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+
+	return bRetVal;
+}
+
+SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPreProcessObjects() const
+{
+	SVObjectPtrDeque l_Objects = SVTaskObjectClass::GetPreProcessObjects();
+
+	return l_Objects;
+}
+
+SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPostProcessObjects() const
+{
+	SVObjectPtrDeque l_Objects = SVTaskObjectClass::GetPostProcessObjects();
+
+	SVTaskObjectPtrVector::const_iterator l_Iter;
+
+	for( l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
+	{
+		SVTaskObjectClass* l_pTask = *l_Iter;
+
+		if( l_pTask != NULL )
 		{
-			l_Status = S_FALSE;
+			l_Objects.push_back( l_pTask );
 		}
 	}
 
-	return l_Status;
+	return l_Objects;
 }
 
-const SVClock::SVTimeStamp& SVTaskObjectListClass::GetLastListUpdateTimestamp() const
+BOOL SVTaskObjectListClass::onRun(SVRunStatusClass& RRunStatus)
 {
-	return m_LastListUpdateTimestamp;
+	return SVTaskObjectClass::onRun(RRunStatus);
 }
-	
+
 DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
 	//
@@ -1049,14 +997,14 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 		{
 			SVClassInfoStructListClass* pList = reinterpret_cast<SVClassInfoStructListClass *>(DwMessageValue);
 			SVObjectTypeInfoStruct* pObjectTypeInfo = reinterpret_cast<SVObjectTypeInfoStruct *>(DwMessageContext);
-					
+
 			if (getAvailableObjects(pList, pObjectTypeInfo))
 			{
 				return SVMR_SUCCESS;
 			}
-					
+
 			return SVMR_NOT_PROCESSED;
-					
+
 			break;
 		}
 
@@ -1108,7 +1056,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 						if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 						{
 							::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), NULL );
-								
+
 							return SVMR_SUCCESS;
 						}
 
@@ -1162,10 +1110,10 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 			// NOTE:	Only for embedded objects !!! 
 			//			Dynamically generated objects must be replaced,
 			//			using SVM_REPLACE_OBJECT!!!
-					
+
 			// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
 			// ... and if object could not be identified then call base class processMessage member function!!!
-					
+
 			return SVTaskObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
 		}
 
@@ -1241,7 +1189,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 			return SVTaskObjectClass::processMessage(dwMaskID, DwMessageValue, DwMessageContext);
 		}
 	}
-	
+
 	return DwResult;
 }
 
@@ -1261,7 +1209,7 @@ DWORD_PTR SVTaskObjectListClass::OutputListProcessMessage( DWORD DwMessageID, DW
 	{
 		DwResult = ChildrenOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
 	}
-	
+
 	return DwResult;
 }
 
@@ -1305,76 +1253,66 @@ DWORD_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessa
 
 	return DwResult;
 }
+#pragma endregion protected methods
 
-#pragma region virtual methods (ITaskObjectListClass)
-SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const
+#pragma region Private Methods
+void SVTaskObjectListClass::cleanUpEmptyEntries()
 {
-	SvUl::NameGuidList list = SVTaskObjectClass::GetCreatableObjects(pObjectTypeInfo);
-
-	for (int i = 0; i < availableChildren.GetSize(); i++)
+	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
 	{
-		SVClassInfoStruct classInfo = availableChildren.GetAt(i);
-		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo.ObjectType &&
-			(pObjectTypeInfo.SubType == SVNotSetSubObjectType ||
-			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
-			)
+		if (! m_aTaskObjects.GetAt(i))
 		{
-			list.push_back(std::make_pair(classInfo.ClassName, classInfo.ClassId));
+			m_aTaskObjects.RemoveAt(i--);
 		}
 	}
-	return list;
-}
-#pragma endregion virtual methods (ITaskObjectListClass)
-
-BOOL SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo) const
-{
-	BOOL rc = FALSE;
-
-	for (int i = 0; i < availableChildren.GetSize(); i++)
-	{
-		SVClassInfoStruct classInfo = availableChildren.GetAt(i);
-		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo->ObjectType &&
-			(pObjectTypeInfo->SubType == SVNotSetSubObjectType ||
-			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo->SubType) 
-			)
-		{
-			pList->Add(classInfo);
-			rc = TRUE;
-		}
-	}
-	return rc;
+	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
 
-HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+DWORD_PTR SVTaskObjectListClass::DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context)
 {
-	HRESULT hrRet = S_OK;
+	//This code was located before in processMessage case SVMSGID_DESTROY_CHILD_OBJECT and is moved to this method.
 
-	hrRet = SVTaskObjectClass::CollectOverlays(p_Image,p_MultiLineArray);
-
-	for ( int i = 0; i < m_aTaskObjects.GetSize(); i++ )
+	// Kill the Object
+	if (pTaskObject)
 	{
-		SVTaskObjectClass *pObject = dynamic_cast< SVTaskObjectClass* >( m_aTaskObjects.GetAt(i) );
-
-		if ( pObject != NULL )
+		// if the object is a Child of this
+		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 		{
-			HRESULT l_Temp = pObject->CollectOverlays(p_Image, p_MultiLineArray);
-
-			if( hrRet == S_OK )
+			SVObjectClass* pObject = m_aTaskObjects.GetAt(i);
+			if (pObject && pObject == pTaskObject)
 			{
-				hrRet = l_Temp;
+				// Notify the Owner of our inputs that they are not needed anymore
+				pTaskObject->Disconnect();
+
+				// Close the Object
+				pTaskObject->CloseObject();
+
+				// Get the object's uniqueID
+				GUID objectID = pTaskObject->GetUniqueObjectID();
+
+				// Destroy our Friends
+				pTaskObject->DestroyFriends();
+
+				// Remove it from the SVTaskObjectList ( Destruct it )
+				Delete(objectID);
+
+				if( GetInspection() != NULL )
+				{
+					if( ( context & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
+					{
+						GetInspection()->SetDefaultInputs();
+					}
+
+					if( ( context & SVMFResetInspection ) == SVMFResetInspection )
+					{
+						::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+					}
+				}
+
+				return SVMR_SUCCESS;
 			}
 		}
 	}
-
-	return hrRet;
+	return SVMR_NO_SUCCESS;
 }
-
-HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
-{
-	HRESULT hrRet = S_FALSE;
-
-	hrRet = SVTaskObjectClass::onCollectOverlays(p_Image,p_MultiLineArray);
-
-	return hrRet;
-}
-
+#pragma endregion Private Methods

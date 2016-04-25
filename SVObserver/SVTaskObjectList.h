@@ -26,15 +26,21 @@ class SVTaskObjectListClass : public SVTaskObjectClass, virtual public SvOi::ITa
 public:
 	friend class SVImageClass;
 
+#pragma region Constructor
 	SVTaskObjectListClass( LPCSTR LPSZObjectName );
 	SVTaskObjectListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
 	virtual ~SVTaskObjectListClass();
+#pragma endregion Constructor
 
 #pragma region public methods
+public:
 	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 
 	void AppendInputObjects();
 	void RemoveOutputObject( SVOutObjectInfoStruct* pOutObject );
+
+	virtual void GetAllInputObjects();
+	virtual void Persist(SVObjectWriter& writer);
 
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
 
@@ -54,26 +60,6 @@ public:
 
 	const SVClock::SVTimeStamp& GetLastListUpdateTimestamp() const;
 
-#pragma region virtual methods (ITaskObjectListClass)
-	virtual int GetSize() const override;
-	virtual SvUl::NameGuidList GetTaskObjectList( ) const override;
-	virtual void Delete(GUID& objectID) override;
-	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
-	virtual DWORD_PTR DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context) override;
-	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
-#pragma endregion virtual methods (ITaskObjectListClass)
-#pragma endregion public methods	
-
-protected:
-	virtual SVObjectClass *UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
-	BOOL getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
-
-
-private:
-	void cleanUpEmptyEntries();
-
-
-public:
 	int GetUpperBound() const {return GetSize()-1;}
 	virtual void InsertAt( int nIndex, SVTaskObjectClass* PTaskObject, int nCount = 1 );
 	void SetAt( int nIndex, SVTaskObjectClass* PTaskObject );
@@ -91,31 +77,27 @@ public:
 
 	const SVString checkName( LPCTSTR ToolName ) const;
 
-public:
-	virtual void GetAllInputObjects();
-	virtual void Persist(SVObjectWriter& writer);
+	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
+#pragma region virtual methods (ITaskObjectListClass)
+	virtual int GetSize() const override;
+	virtual SvUl::NameGuidList GetTaskObjectList( ) const override;
+	virtual void Delete(GUID& objectID) override;
+	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
+	virtual DWORD_PTR DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context) override;
+	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
+#pragma endregion virtual methods (ITaskObjectListClass)
+#pragma endregion public methods	
+
+#pragma region protected methods
 protected:
 	virtual void DeleteAt( int Index, int Count = 1 );
 	void DeleteAll();
 
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-public:
-	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
- 
-protected:
-	typedef SVVector< SVTaskObjectClass*, SVTaskObjectClass* > SVTaskObjectPtrVector;
-
-	/**********
-	  The method destroy a child object. 
-	  /param pTaskObject <in> object to destroy.
-	  /param context <in>.
-	***********/
-	DWORD_PTR DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context);
+	virtual SVObjectClass *UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
+	BOOL getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 
 	// Direct Method Call
 	// NOTE:
@@ -137,11 +119,27 @@ protected:
 	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual DWORD_PTR	OutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual DWORD_PTR	ChildrenOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+#pragma endregion protected methods	
 
+#pragma region Private Methods
+private:
+	void cleanUpEmptyEntries();
+
+	/**********
+	  The method destroy a child object. 
+	  /param pTaskObject <in> object to destroy.
+	  /param context <in>.
+	***********/
+	DWORD_PTR DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context);
+#pragma endregion Private Methods
+	
+#pragma region Member Variables
+protected:
+	typedef SVVector< SVTaskObjectClass*, SVTaskObjectClass* > SVTaskObjectPtrVector;
 	SVClassInfoStructListClass availableChildren; // available children classes (not instantiated)
 
 	SVClock::SVTimeStamp m_LastListUpdateTimestamp;
 	SVTaskObjectPtrVector m_aTaskObjects;
-
+#pragma endregion Member Variables
 };
 
