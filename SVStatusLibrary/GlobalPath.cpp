@@ -91,7 +91,7 @@ namespace Seidenader { namespace SVStatusLibrary
 			m_Hardware_ini = m_IniFolder;
 			m_Hardware_ini.append(_T("\\Hardware.ini"));
 			m_Utility_ini = m_IniFolder;
-			m_Utility_ini.append(_T("\\Utility.ini"));
+			m_Utility_ini.append(_T("\\SVUtility.ini"));
 
 			m_IsInitializedIni = true;
 		}
