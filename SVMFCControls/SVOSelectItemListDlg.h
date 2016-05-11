@@ -10,8 +10,10 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVOResource\resource.h"
 #include "SVContainerLibrary/SVList.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -22,7 +24,8 @@ namespace Seidenader
 			// Construction
 		public:
 			void AddListBoxItem(CString sItem);
-			CSVOSelectItemListDlg(CWnd* pParent = NULL);   // standard constructor
+			CSVOSelectItemListDlg(CWnd* pParent = nullptr);   // standard constructor
+			virtual ~CSVOSelectItemListDlg();
 
 			void SetDisplayName(LPCTSTR sDisplayName);
 			int m_iSelectedItemPosition;

@@ -50,12 +50,11 @@ public:
 	typedef std::vector< std::pair< _variant_t, bool > > SVVariantBoolVector;
 
 	SVPPQObject( LPCSTR ObjectName );
-	SVPPQObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVPPQOBJECT );
+	SVPPQObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPPQOBJECT );
 
 	virtual ~SVPPQObject();
 
 public:
-
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
 	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData );
@@ -63,7 +62,6 @@ public:
 	BOOL Create();
 	BOOL Rebuild();
 	BOOL Destroy();
-	BOOL IsCreated();
 	BOOL DetachAll();
 
 	BOOL SetPPQOutputMode( SVPPQOutputModeEnum ePPQOutputMode );
@@ -525,15 +523,14 @@ private:
 	BasicValueObjects	m_PpqValues;
 
 	SVPPQOutputModeEnum m_oOutputMode;
-	long				m_lOutputDelay;
-	long				m_lResetDelay;
-	long				m_DataValidDelay;
-	bool				m_bMaintainSourceImages;
-	long                m_lInspectionTimeoutMillisec;
-	BOOL				m_bCreated;
-	BOOL				m_bOnline;
-		
-	UINT				m_uOutputTimer;
+	long m_lOutputDelay;
+	long m_lResetDelay;
+	long m_DataValidDelay;
+	bool m_bMaintainSourceImages;
+	long m_lInspectionTimeoutMillisec;
+	BOOL m_bOnline;
+
+	UINT m_uOutputTimer;
 
 	long m_NAKCount;
 	SVObjectPtrDeque m_childObjects;

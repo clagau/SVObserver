@@ -37,11 +37,7 @@ namespace
 		namespace color
 		{
 			inline double white()		{ return SVMatroxGraphicsInterface::CreateRGB888(255,255,255); }
-			inline double silver()		{ return SVMatroxGraphicsInterface::CreateRGB888(192,192,192); }
-			inline double gray()			{ return SVMatroxGraphicsInterface::CreateRGB888(128,128,128); }
-			inline double charcoal()	{ return SVMatroxGraphicsInterface::CreateRGB888( 64, 64, 64); }
 			inline double black()		{ return SVMatroxGraphicsInterface::CreateRGB888(  0,  0,  0); }
-
 			inline double color(unsigned char val) { return SVMatroxGraphicsInterface::CreateRGB888(val,val,val); }
 		}
 
@@ -161,7 +157,6 @@ namespace helper
 #define Err_SetValleyHigh		(JH_ErrorBase+136)
 #define Err_SetValleyDefault	(JH_ErrorBase+137)
 #define Err_GetResult			(JH_ErrorBase+138)
-//#define Err_		(JH_ErrorBase+139)
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Class SVHistogramAnalyzerClass
@@ -216,7 +211,7 @@ void SVHistogramAnalyzerClass::init()
 	while (1)
 	{
 		// Identify our output type
-		outObjectInfo.ObjectTypeInfo.SubType = SVHistogramAnalyzerObjectType;
+		m_outObjectInfo.ObjectTypeInfo.SubType = SVHistogramAnalyzerObjectType;
 
 		// Register Embedded Objects
 		RegisterEmbeddedObject( 
@@ -449,8 +444,6 @@ BOOL SVHistogramAnalyzerClass::OnValidate()
       if (!SVImageAnalyzerClass::OnValidate())
       {
 //       Error code set inside SVImageAnalyzerClass::OnValidate()
-//		 Next line commented out to remove message box.
-//       SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1081);
          break;
       }
 
@@ -522,7 +515,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		svData.Length = msvlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
 		svData.HBuffer.milResult = msvHistResultID;
-		if ( SVImageProcessingClass::Instance().CreateDataBuffer( &svData ) == S_OK )
+		if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData )  )
 		{
 			msvHistResultID = svData.HBuffer.milResult;
 		}
@@ -557,37 +550,37 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
     if (msvError.GetLastErrorCd() & SV_ERROR_CONDITION)
     {
-        isCreated = FALSE;
+        m_isCreated = false;
     }
     else
-        isCreated = TRUE;
+	{
+        m_isCreated = true;
+	}
 
+	msvHistogramValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvStdDevValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvMeanValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvRangeStartValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvRangeEndValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvMaxPixelValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvMinPixelValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvPixelCountValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvRangeSizeValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvScaleValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvHighPeak.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvLowPeak.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvValley.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvPeakThreshold.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvDefaultPeak.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvAccumulateCounts.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvMinPeakHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvValleyLowerBound.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvValleyUpperBound.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvValleyDefault.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvDynamicHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	msvFixedHeightValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 
-		msvHistogramValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		//msvVarianceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvStdDevValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvMeanValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvRangeStartValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvRangeEndValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvMaxPixelValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvMinPixelValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvPixelCountValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvRangeSizeValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvScaleValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvHighPeak.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvLowPeak.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvValley.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvPeakThreshold.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvDefaultPeak.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvAccumulateCounts.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvMinPeakHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvValleyLowerBound.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvValleyUpperBound.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvValleyDefault.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvDynamicHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		msvFixedHeightValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-
-    return isCreated;
+    return m_isCreated;
 }
 
 void SVHistogramAnalyzerClass::DisconnectImages()
@@ -628,7 +621,7 @@ SVResultClass* SVHistogramAnalyzerClass::GetResultObject(const GUID & guid)
 		if (l_result && l_result->GetInputEmbeddedID() == guid)
 			return l_result;
 	}
-	return NULL;
+	return nullptr;
 }
 
 BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
@@ -637,7 +630,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 	SVMatroxImageInterface::SVStatusCode l_Code;
 
-	pInputImage = NULL;
+	pInputImage = nullptr;
 	msvError.ClearLastErrorCd();
 	
 	while (1)
@@ -989,7 +982,7 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	double l_dWidth  = histogram_width;
 	double l_dHeight = histogram_height;
 
-	if( GetOwner() != NULL )
+	if( nullptr != GetOwner() )
 	{
 		ImageInfo.SetOwner( GetOwner()->GetUniqueObjectID() );
 	}
@@ -1006,7 +999,7 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	ImageInfo.SetTranslation( SVExtentTranslationNone );
 
 	// Try to create image object...
-	if( m_histogramImage.UpdateImage( SVImageTypeFixed, ImageInfo ) != S_OK )
+	if( S_OK != m_histogramImage.UpdateImage( SVImageTypeFixed, ImageInfo ) )
 	{
 		return Err_SetImageInfo;
 	}

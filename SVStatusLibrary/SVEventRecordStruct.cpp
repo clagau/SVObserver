@@ -13,7 +13,7 @@
 #include "SVEventRecordStruct.h"
 
 SVEventRecordStruct::SVEventRecordStruct()
-: m_ulBufferSize(0L), m_pucBuffer(NULL)
+: m_ulBufferSize(0L), m_pucBuffer(nullptr)
 {
 	LocalInitialize(SV_EVENT_RECORD_STRUCT_RECORD_SIZE);
 }
@@ -30,9 +30,9 @@ void SVEventRecordStruct::SetBuffer( unsigned char* p_pucBuffer, unsigned long p
 		LocalInitialize( p_unLength );
 	}
 
-	if( p_pucBuffer != NULL )
+	if( nullptr != p_pucBuffer )
 	{
-		EVENTLOGRECORD* l_poRecord = NULL;
+		EVENTLOGRECORD* l_poRecord = nullptr;
 
 		l_poRecord = reinterpret_cast<EVENTLOGRECORD*>( p_pucBuffer );
 
@@ -62,9 +62,9 @@ LPCTSTR SVEventRecordStruct::GetComputerName()
 
 LPCTSTR SVEventRecordStruct::GetFirstString()
 {
-	m_szCurrentString = NULL;
+	m_szCurrentString = nullptr;
 
-	if( m_poRecord != NULL && 0 < m_poRecord->NumStrings )
+	if( nullptr != m_poRecord && 0 < m_poRecord->NumStrings )
 	{
 		m_szCurrentString = reinterpret_cast<LPCTSTR>( m_pucBuffer + m_poRecord->StringOffset );
 
@@ -76,7 +76,7 @@ LPCTSTR SVEventRecordStruct::GetFirstString()
 
 LPCTSTR SVEventRecordStruct::GetNextString()
 {
-	if( m_poRecord != NULL && m_ulStringIndex + 1 < m_poRecord->NumStrings )
+	if( nullptr != m_poRecord && m_ulStringIndex + 1 < m_poRecord->NumStrings )
 	{
 		size_t l_ulSize = strlen( m_szCurrentString ) + 1;
 		
@@ -86,7 +86,7 @@ LPCTSTR SVEventRecordStruct::GetNextString()
 	}
 	else
 	{
-		m_szCurrentString = NULL;
+		m_szCurrentString = nullptr;
 	}
 
 	return m_szCurrentString;
@@ -108,21 +108,21 @@ HRESULT SVEventRecordStruct::LocalInitialize(unsigned long p_ulSize)
 
 HRESULT SVEventRecordStruct::LocalDestroy()
 {
-	m_poRecord = NULL;
+	m_poRecord = nullptr;
 
-	if ( m_pucBuffer != NULL )
+	if ( nullptr != m_pucBuffer )
 	{
 		delete[] m_pucBuffer;
 
-		m_pucBuffer = NULL;
+		m_pucBuffer = nullptr;
 	}
 
 	m_ulBufferSize = 0;
 
-	m_szSourceName = NULL;
-	m_szComputerName = NULL;
+	m_szSourceName = nullptr;
+	m_szComputerName = nullptr;
 
-	m_szCurrentString = NULL;
+	m_szCurrentString = nullptr;
 	m_ulStringIndex = 0;
 
 	return S_OK;
@@ -130,8 +130,8 @@ HRESULT SVEventRecordStruct::LocalDestroy()
 
 LPCTSTR SVEventRecordStruct::GetType()
 {
-	LPCTSTR l_pString = NULL;
-	if( m_poRecord != NULL )
+	LPCTSTR l_pString = nullptr;
+	if( nullptr != m_poRecord )
 	{
 		switch( m_poRecord->EventType )
 		{

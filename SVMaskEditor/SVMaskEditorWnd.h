@@ -9,17 +9,7 @@
 //* .Check In Date   : $Date:   26 Apr 2013 14:08:52  $
 //******************************************************************************
 
-#if !defined(AFX_SVMASKEDITORWND_H__326BF442_EBC4_11D2_A75C_00106F000C7A__INCLUDED_)
-#define AFX_SVMASKEDITORWND_H__326BF442_EBC4_11D2_A75C_00106F000C7A__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVMaskEditorWnd.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorWndClass window
 
 class SVMaskEditorDialogClass;
 
@@ -77,6 +67,4 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVMASKEDITORWND_H__326BF442_EBC4_11D2_A75C_00106F000C7A__INCLUDED_)
 

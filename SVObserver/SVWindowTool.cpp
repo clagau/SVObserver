@@ -17,7 +17,7 @@
 #include "SVLUTEquation.h"
 #include "SVLUTOperator.h"
 #include "SVObserver.h"
-#include "SVUnaryImageOperatorList.h"
+#include "SVStdImageOperatorListClass.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
@@ -42,8 +42,8 @@ void SVWindowToolClass::init()
 
 	// Set up your type... in this case this will reference that this tool is a 
 	// Window Tool.
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVWindowToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVWindowToolObjectType;
 }
 
 void SVWindowToolClass::BuildEmbeddedObjectList ()
@@ -161,10 +161,10 @@ BOOL SVWindowToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 	
 	if(bOk)
 	{
-		bOk  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this,true,true,true)); 
+		bOk = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this, true, true, true)); 
 	}
 	
-	isCreated = bOk;
+	m_isCreated = bOk;
 	return bOk;
 }
 
@@ -176,7 +176,7 @@ BOOL SVWindowToolClass::SetDefaultFormulas()
 	SVObjectTypeInfoStruct lutEquationInfo;
 	lutEquationInfo.ObjectType	= SVEquationObjectType;
 	lutEquationInfo.SubType		= SVLUTEquationObjectType;
-	SVLUTEquationClass* pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutEquationInfo) ));
+	SVLUTEquationClass* pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutEquationInfo) ));
 	if( pLUTEquation )
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula() && bRetVal;
@@ -190,7 +190,7 @@ HRESULT SVWindowToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExten
 {
 	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage( p_svImageExtent );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, p_svImageExtent );
 	}
@@ -205,7 +205,7 @@ HRESULT SVWindowToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 
 	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
 	}
@@ -226,10 +226,10 @@ SVTaskObjectClass *SVWindowToolClass::GetObjectAtPoint( const SVExtentPointStruc
 {
 	SVImageExtentClass l_svExtents;
 
-	SVTaskObjectClass *l_psvObject = NULL;
+	SVTaskObjectClass *l_psvObject = nullptr;
 
-	if( m_svToolExtent.GetImageExtent( l_svExtents ) == S_OK &&
-		l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SVExtentLocationPropertyUnknown )
+	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
+		SVExtentLocationPropertyUnknown  != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
 	{
 		l_psvObject = this;
 	}
@@ -250,8 +250,6 @@ SVStaticStringValueObjectClass* SVWindowToolClass::GetInputImageNames()
 HRESULT SVWindowToolClass::ResetObject()
 {
 	HRESULT l_Status = SVToolClass::ResetObject();
-
-	//SetExtendPropertyAutoReset();
 
 	UpdateImageWithExtent( 1 );
 

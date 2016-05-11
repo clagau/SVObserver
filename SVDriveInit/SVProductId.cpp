@@ -67,13 +67,13 @@ bool SVProductId::UpdateProductId() const
       WritePrivateProfileString( _T( "OEMSpecific" ), _T("ProductID"), l_ProductId, l_szOEMInfoFileName );
 
       //add entry into registry RunOnce to run the SVFinishSetup.bat
-      HKEY l_hKey = NULL;
+      HKEY l_hKey = nullptr;
       unsigned long l_ulValue = 0;
 
       if ( ERROR_SUCCESS == RegCreateKeyEx(HKEY_LOCAL_MACHINE, _T( "Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce" ),
-                          NULL, _T(""),REG_OPTION_NON_VOLATILE,
+                          0, _T(""),REG_OPTION_NON_VOLATILE,
                           KEY_ALL_ACCESS,
-                          (SECURITY_ATTRIBUTES *) NULL,
+                          (SECURITY_ATTRIBUTES *) nullptr,
                           &l_hKey, & l_ulValue ) )
       {
           RegSetValueEx( l_hKey, _T("SVObserver"),0L, REG_SZ,
@@ -112,12 +112,12 @@ bool SVProductId::UpdateProductId() const
       szCmdLine = "init";
       
       if(!CreateProcess(
-          szApp,NULL,//"-quiet -reboot",
-          NULL, NULL,  // security attributes
+          szApp, nullptr,//"-quiet -reboot",
+          nullptr, nullptr,  // security attributes
           FALSE, // handle inheritance
           CREATE_DEFAULT_ERROR_MODE,     // creation flags
-          NULL,     // environment block
-          "c:\\svobserver\\sysprep",//NULL,     // current directory
+          nullptr,     // environment block
+          "c:\\svobserver\\sysprep",//nullptr,     // current directory
           &si, &pi ))
       {
 					l_Status = false;
@@ -130,7 +130,7 @@ bool SVProductId::UpdateProductId() const
 
 LPCTSTR SVProductId::GetSubElement( size_t p_Index ) const
 {
-	LPCTSTR l_pszResult = NULL;
+	LPCTSTR l_pszResult = nullptr;
 
 	if( 0 <= p_Index && p_Index < 5 )
 	{ 

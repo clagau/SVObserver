@@ -77,7 +77,7 @@ class SVSoftwareTriggerDlg : public CDialog
 {
 	DECLARE_DYNAMIC(SVSoftwareTriggerDlg)
 
-	SVSoftwareTriggerDlg(CWnd* pParent = NULL);   // standard constructor
+	SVSoftwareTriggerDlg(CWnd* pParent = nullptr);   // standard constructor
 public:
 	virtual ~SVSoftwareTriggerDlg();
 
@@ -226,10 +226,8 @@ inline int SVSpinGroup::GetValue() const
 	return m_limit * (m_next?m_next->GetValue():0) + m_value;
 }
 
-inline bool SVSpinGroup::Increment(int val) //, boost::function<int ()> total)
+inline bool SVSpinGroup::Increment(int val)
 {
-	//if (0 > m_value + val || m_value + val >= m_limit)
-	//	return false;
 	m_value += val;
 
 	while (m_value < 0 && m_next != 0)

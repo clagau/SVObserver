@@ -212,10 +212,10 @@ void SVBlobAnalyzerClass::init()
 	msvlDefaultAttributes = 0;
 	m_lNumberOfBlobsFound = 0;
 	m_lNumberOfBlobsToProcess = 0;
-	m_pResultBlob = NULL;
+	m_pResultBlob = nullptr;
 
 	//Indentify our output type.
-	outObjectInfo.ObjectTypeInfo.SubType = SVBlobAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVBlobAnalyzerObjectType;
 
 	//Register embedded objects.
 	RegisterEmbeddedObject(
@@ -433,7 +433,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		SVDoubleValueObjectClass* pValue = 
 		      reinterpret_cast<SVDoubleValueObjectClass*>(SVSendMessage(pResult, 
 		                                               SVM_GETFIRST_OBJECT, 
-		                                               NULL, 
+		                                               0, 
 		                                              reinterpret_cast<DWORD_PTR>(&info)));
 
 		if (!pValue)
@@ -445,14 +445,14 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		pValue->ObjectAttributesAllowedRef() = pValue->ObjectAttributesAllowed() & ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
 
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( pResult, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+		::SVSendMessage( pResult, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
 		// And last - Create (initialize) it
 
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), NULL ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), 0 ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10041 ); 
@@ -525,7 +525,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		SVLongValueObjectClass* pValue = 
 			reinterpret_cast<SVLongValueObjectClass*>(SVSendMessage(m_pResultBlob, 
 			SVM_GETFIRST_OBJECT, 
-			NULL, 
+			0, 
 			reinterpret_cast<DWORD_PTR>(&info)));
 		
 		if (!pValue)
@@ -537,14 +537,14 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		pValue->ObjectAttributesAllowedRef() = pValue->ObjectAttributesAllowed() & ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
 		
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( m_pResultBlob, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+		::SVSendMessage( m_pResultBlob, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 		
 		// And last - Create (initialize) it
 		
 		if( ! m_pResultBlob->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pResultBlob), NULL ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pResultBlob), 0 ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10042 ); 
@@ -587,7 +587,7 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 		              reinterpret_cast<DWORD_PTR>(pResult),
 		               SVMFSetDefaultInputs);
 		
-		pResult = NULL;
+		pResult = nullptr;
 		
 	} while ( false );
 	
@@ -661,7 +661,7 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 	SVOutputInfoListClass	resultOutputList;
 
 	SVInObjectInfoStruct*	pResultInputInfo;
-	SVLongResultClass*    pResult = NULL;
+	SVLongResultClass*    pResult = nullptr;
 	SVObjectClass*          pSVObject;
 
 	SVObjectTypeInfoStruct info;
@@ -763,7 +763,6 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		
 		l_Code = SVMatroxBlobInterface::Set( msvResultBufferID, SVEBlobIdentifier, static_cast<long>(SVValueBinary) );
 
-		//MblobControl(msvResultBufferID, M_IDENTIFIER_TYPE, M_BINARY );
 		BOOL l_bUseFillBlob;
 		m_bvoFillBlobs.GetValue( l_bUseFillBlob );
 		if ( l_bUseFillBlob )
@@ -846,16 +845,20 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	} while ( false );
 
 	if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-		isCreated = FALSE;
+	{
+		m_isCreated = false;
+	}
 	else
-		isCreated = TRUE;
+	{
+		m_isCreated = true;
+	}
 
 	// Set Embedded defaults
 	for (i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
 	{
 		if( !msvValue[i].IsCreated() )
 		{
-			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>( msvValue + i ), NULL );
+			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>( msvValue + i ), 0 );
 		}
 
 		if ( msvszFeaturesEnabled[i] != _T('1') )
@@ -881,7 +884,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	msvbExcludeFailed.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	m_lvoNumberOfBlobsFound.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	return isCreated;
+	return m_isCreated;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -909,23 +912,15 @@ DWORD SVBlobAnalyzerClass::EnableFeature (SVBlobFeatureEnum aIndex)
 	return 0;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 //
 DWORD SVBlobAnalyzerClass::DisableFeature (SVBlobFeatureEnum aIndex)
 {
-//    msvValue[aIndex].uObjectAttributesAllowed = 
-//        msvValue[aIndex].uObjectAttributesAllowed & 
-//        (~SV_DEFAULT_ATTRIBUTES);
-
-	// If picked for resultView, published, used in an Equation, or selected for Archiving
-//	msvValue[aIndex].uObjectAttributesSet = 0;
-
-
-	if ( aIndex != SV_CENTER_X_SOURCE && aIndex != SV_CENTER_Y_SOURCE )
+	if ( SV_CENTER_X_SOURCE  != aIndex && SV_CENTER_Y_SOURCE != aIndex )
+	{
 		FreeResult (aIndex);
-// HideEmbeddedObject () dissconnects all users of this object.
+	}
 	hideEmbeddedObject (msvValue[aIndex]);
 	RemoveEmbeddedObject (&msvValue[aIndex]);
 	GetInspection()->SetDefaultInputs();
@@ -946,8 +941,6 @@ BOOL SVBlobAnalyzerClass::OnValidate()
 		if (!SVImageAnalyzerClass::OnValidate ())
 		{
 			//       Error code set inside SVImageAnalyzerClass::OnValidate ()
-			//		 Next line commented out to remove message box.
-			//       SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1124);
 			break;
 		}
 	} while ( false );
@@ -965,14 +958,14 @@ BOOL SVBlobAnalyzerClass::OnValidate()
 
 DWORD_PTR SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	DWORD_PTR dwResult = 0;
+	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
-	case SVMSGID_RESET_ALL_OBJECTS :
+	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -1092,7 +1085,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					pRange->getUpdatedRange(RangeEnum::ER_WarnHigh,RRunStatus.m_lResultDataIndex);
 
 					// Now that we have indirect high and low ranges it is possible that dLow is larger than dHigh.
-					// This would cause the MIL function to return an error.  To avoid this exception, we set both to NULL (0).
+					// This would cause the MIL function to return an error.  To avoid this exception, we set both to 0.
 					// Desired behavior in this case is that ALL blobs are excluded.
 					if( dLow > dHigh )
 					{
@@ -1247,7 +1240,6 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 				vector2d<double>::row_type& row = m_vec2dBlobResults[eFeature];
 				row.resize( m_lNumberOfBlobsFound );
-				//m_vec2dBlobResults[ eFeature ].resize( m_lNumberOfBlobsFound );
 				double* pData = nullptr;
 				if(row.size() != 0)
 				{
@@ -1289,7 +1281,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if (m_lNumberOfBlobsFound != 0 && ((msvszFeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1')) || 
 				(msvszFeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1'))) )
 		{
-			double * pCenterXData = NULL;
+			double * pCenterXData = nullptr;
 			bool l_bCenterXSet = false;
 			if (msvszFeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1') )
 			{
@@ -1299,7 +1291,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				l_bCenterXSet = true;
 			}
 
-			double * pCenterYData = NULL;
+			double * pCenterYData = nullptr;
 			bool l_bCenterYSet = false;
 			if (msvszFeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1') )
 			{
@@ -1335,12 +1327,12 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				ptSt.m_dPositionX = l_dCenterX;
 				ptSt.m_dPositionY = l_dCenterY;
 
-				SVImageClass* pTmpImage = NULL;
+				SVImageClass* pTmpImage = nullptr;
 
 				if ( pImage )
 				{
 					pTmpImage = pImage;
-					while ( pTmpImage->GetParentImage() != NULL )
+					while ( nullptr != pTmpImage->GetParentImage() )
 					{
 						pTmpImage = pTmpImage->GetParentImage();
 					}
@@ -1511,18 +1503,10 @@ DWORD SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray,
 			{
 				while (aSortArray [alSortMap [j]] < val)
 				{
-#ifdef _DEBUG
-					//ASSERT( (j >= 0) && (j < SV_MAX_NUMBER_OF_BLOBS) );
-					//ASSERT( (alSortMap [j] >= 0) && (alSortMap [j] < SVA.GetSize()) );
-#endif
 					j++;
 				}
 				while (aSortArray [alSortMap [i]] > val)
 				{
-#ifdef _DEBUG
-					//ASSERT( (i >= 0) && (i < SV_MAX_NUMBER_OF_BLOBS) );
-					//ASSERT( (alSortMap [i] >= 0) && (alSortMap [i] < SVA.GetSize()) );
-#endif
 					i--;
 				}
 			}
@@ -1530,18 +1514,10 @@ DWORD SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray,
 			{
 				while (aSortArray [alSortMap [j]] > val)
 				{
-#ifdef _DEBUG
-					// ASSERT( (j >= 0) && (j < SV_MAX_NUMBER_OF_BLOBS) );
-					// ASSERT( (alSortMap [j] >= 0) && (alSortMap [j] < SVA.GetSize()) );
-#endif
 					j++;
 				}
 				while (aSortArray [alSortMap [i]] < val) 
 				{
-#ifdef _DEBUG
-					// ASSERT( (i >= 0) && (i < SV_MAX_NUMBER_OF_BLOBS) );
-					// ASSERT( (alSortMap [i] >= 0) && (alSortMap [i] < SVA.GetSize()) );
-#endif
 					i--;
 				}
 			}
@@ -1649,32 +1625,9 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 					msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
 					SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1130);
 				}
-				
-			}
-			else
-			{
 			}
 		}
-		
-		// "Chain" features were removed. jab
-		//--- Each of the following features define below (chained pixel features)
-		//--- require M_SAVE_RUNS to be enabled.  When M_SAVE_RUNS is enabled, it 
-		//--- adds to processing time, so when not needed, it is dissabled. The code
-		//--- has been added to BuildFeatureListID () because it is a common location
-		//--- that is called every time a feature is enabled or disabled.
-		//      if ((msvszFeaturesEnabled [SV_NBRCHAINED_PIXELS] == _T('1')) ||
-		//          (msvszFeaturesEnabled [SV_CHAIN_INDEX] == _T('1')) ||
-		//          (msvszFeaturesEnabled [SV_CHAIN_X] == _T('1')) ||
-		//          (msvszFeaturesEnabled [SV_CHAIN_Y] == _T('1')))
-		//      {
-		//   		MblobControl(msvResultBufferID, M_SAVE_RUNS, M_ENABLE );
-		//      }
-		//      else
-		//      {
-		//   		MblobControl(msvResultBufferID, M_SAVE_RUNS, M_DISABLE );
-		//      }
-			
-			
+
 	} while ( false );
 	
 	return msvError.GetLastErrorCd ();
@@ -1697,13 +1650,13 @@ BOOL SVBlobAnalyzerClass::IsPtOverResult( CPoint point )
 
 	m_nBlobIndex = -1;
 
-	if (( m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs ) == S_OK ) &&
-		(l_lCurrentNbrOfBlobs != 0))
+	if (( S_OK == m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs ) ) &&
+		(0 != l_lCurrentNbrOfBlobs))
 	{
 		SVImageExtentClass l_svExtents;
 		HRESULT hr = GetTool()->GetImageExtent( l_svExtents );
 
-		if (hr == S_OK)
+		if (S_OK == hr )
 		{
 			double* pxMax = &(m_vec2dBlobResults[SV_BOXX_MAX][0]);
 			double* pxMin = &(m_vec2dBlobResults[SV_BOXX_MIN][0]);
@@ -1726,7 +1679,7 @@ BOOL SVBlobAnalyzerClass::IsPtOverResult( CPoint point )
 				SVExtentFigureStruct l_svFigure = l_oRect;
 				l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
-				if( l_svFigure.IsPointOverFigure( point ) == S_OK )
+				if( S_OK == l_svFigure.IsPointOverFigure( point ) )
 				{
 					m_nBlobIndex = msvlSortMap.GetAt(i); 
 

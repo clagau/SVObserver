@@ -73,7 +73,7 @@ HRESULT SVInternalTrigger::Fire(unsigned long p_ulIndex)
 	if (it != m_triggerHandlerList.end())
 	{
 		hr = (*it).second.Fire();
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			(*it).second.Notify();
 		}

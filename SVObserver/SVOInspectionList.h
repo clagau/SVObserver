@@ -31,7 +31,7 @@ public:
 	BOOL SetColor(CString sInspectLabel, bool Color);
 	BOOL SetNewDisableMethod(CString sInspectLabel, CString sDisable);
 	BOOL SetEnableAuxiliaryExtent(CString sInspectLabel, long sEnable);
-	BOOL SetShowAuxExtent(CString sInspectLabel, bool p_bShow);
+	BOOL SetShowAuxExtent(CString sInspectLabel, bool p_bShow=true);
 	BOOL ReNameInspection(CString sInspectLabel, CString sNewInspectName);
 	BOOL RemoveInspectionFromList(CString sInspectLabel);
 

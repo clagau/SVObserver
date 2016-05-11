@@ -21,13 +21,13 @@ class TextObject : public DrawObject
 public:
 #pragma region Constructor
 	TextObject();
-	TextObject( TextObject& p_rhs );
+	TextObject( const TextObject& p_rhs );
 	TextObject( long x, long y, COLORREF color, LPCTSTR text, long lAllowEdit );
 	virtual ~TextObject();
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	TextObject& operator=( TextObject& p_rhs );
+	TextObject& operator=( const TextObject& p_rhs );
 	HRESULT SetText(long x, long y, LPCTSTR text);
 
 	virtual void Draw( POINT p_dOffset, double p_fZoomWidth, double p_fZoomHeight, CDC& rDC, bool p_bSelected ) override;

@@ -29,7 +29,7 @@ HRESULT SVXMLSafeArrayConverter::CopyDOMNodeToSafeArray(SVXMLClass& rXml, SVXML:
 	long lIndices [g_lXMLSafeArrayMaxDimensions];	// This puts a dimension limit on the SAFEARRAYs that can be handled.
 
 	SAFEARRAYBOUND oSafeArrayBounds [g_lXMLSafeArrayMaxDimensions];
-	SAFEARRAY* pSafeArray = NULL;
+	SAFEARRAY* pSafeArray = nullptr;
 
 	for (long lCounter = 0; lCounter < g_lXMLSafeArrayMaxDimensions; lCounter++)
 	{
@@ -39,15 +39,15 @@ HRESULT SVXMLSafeArrayConverter::CopyDOMNodeToSafeArray(SVXMLClass& rXml, SVXML:
 	value.Clear();
 	
 	hr = SVXMLSafeArrayConverter::GetSafeArrayData(rXml, aDOMElementPtr, &lSafeArrayDepth, &lSafeArrayType, oSafeArrayBounds);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		pSafeArray = ::SafeArrayCreate((VARTYPE) lSafeArrayType, lSafeArrayDepth, oSafeArrayBounds);
-		if (pSafeArray == NULL)
+		if (nullptr == pSafeArray)
 		{
 			hr = -1787;
 		}
 	}
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 //-	The element that is being sent here is the root which contains the type
 //-	VT_ARRAY.  At this time the DOM element does not also contain the array
@@ -78,13 +78,13 @@ HRESULT SVXMLSafeArrayConverter::CopyDOMChildNodesToSafeArrayNodes(SVXMLClass& r
 
 	SVXML::IXMLDOMElementPtr oDOMChildElementPtr = rXml.GetFirstElementChild(aDOMParentElementPtr);
 
-	if (oDOMChildElementPtr == NULL)
+	if (nullptr == oDOMChildElementPtr)
 	{
 //-		This is exceptable.  Empty array.
 //-		This is acceptable?  Empty array.
 		hr = 2;
 	}
-	while (hr == S_OK && oDOMChildElementPtr != NULL)
+	while (S_OK == hr && nullptr != oDOMChildElementPtr)
 	{
 		hr = rXml.GetElementData(oDOMChildElementPtr, &vDOMElementData);
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -142,7 +142,7 @@ HRESULT SVXMLSafeArrayConverter::CopyDOMChildNodesToSafeArrayNodes(SVXMLClass& r
 				break;
 			}
 		}
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			alpIndicesArray[alDimension] = alpIndicesArray [alDimension] + 1;
 
@@ -169,7 +169,7 @@ HRESULT SVXMLSafeArrayConverter::GetSafeArrayData(SVXMLClass& rXml, SVXML::IXMLD
 		
 	SVXML::IXMLDOMElementPtr oDOMElementPtr = aDOMElementPtr;
 
-	while (oDOMElementPtr != NULL) // This loop actually exits internally.
+	while (nullptr != oDOMElementPtr) // This loop actually exits internally.
 	{
 		if (lDepth >= g_lXMLSafeArrayMaxDimensions)
 		{
@@ -204,7 +204,7 @@ HRESULT SVXMLSafeArrayConverter::GetSafeArrayData(SVXMLClass& rXml, SVXML::IXMLD
 		}
 
 		SVXML::IXMLDOMElementPtr oDOMChildElementPtr = rXml.GetFirstElementChild(oDOMElementPtr);
-		if (oDOMChildElementPtr == NULL)
+		if (nullptr == oDOMChildElementPtr)
 		{
 			hr = -1792;
 			break;
@@ -445,7 +445,7 @@ HRESULT SVXMLSafeArrayConverter::CreateDOMChildSafeArrayNodes(SVXMLClass& rXml, 
 					break;
 				} // switch (lArrayType)
 
-				if( hr == S_OK )
+				if( S_OK == hr)
 				{
 					hr = rXml.CreateDOMChildData(p_roDOMParentElementPtr, bstrNodeName, &vTreeNodeData, oDOMNewElementPtr);
 					if( SEV_SUCCESS != SV_SEVERITY( hr ) )

@@ -11,5 +11,5 @@
 
 #pragma once
 
-void SVYieldMessages(HWND hWnd = NULL);
-void SVYieldPaintMessages(HWND hWnd = NULL );
+void SVYieldMessages(HWND hWnd = nullptr);
+void SVYieldPaintMessages(HWND hWnd = nullptr );

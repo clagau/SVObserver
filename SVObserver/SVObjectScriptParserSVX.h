@@ -307,13 +307,9 @@ protected:
 
 	BOOL CheckValue( SVObjectAttributeClass& dataObject, LPCTSTR tokenStr );
 	BOOL CheckNumber( LPCTSTR tokenStr );
-	BOOL CheckString( LPCTSTR tokenStr );
 	BOOL FindMembers( LPTSTR tokenStr, int tokenStrLen, SVExpressionStack& rExpressionStack );
-	void RemoveExternalDependencies( CString& script );
 	SVObjectScriptDataObjectTypeEnum CheckDataTypeKeywordTable( LPCTSTR TStrExpression );
 
-	DWORD TStrToDWORD( LPCTSTR TStrInput );
-	double TStrToDouble( LPCTSTR TStrInput );
 	bool FindCharacters( CString& str, int& loc, LPCTSTR characters, bool reverse=false );
 	bool FindCharacters( LPCTSTR pStr, int tStrLen, int& loc, LPCTSTR characters, bool reverse=false );
 	bool ReattachInputs( SVObjectClass* pObject, SVObjectScriptOperandList& rInputOperandList );

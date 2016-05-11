@@ -39,9 +39,9 @@ HRESULT WINAPI SVCreate()
 	{
 		l_hrOk = g_softwareTrigger.Initialize( true );
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
-			if ( l_hrOk != S_OK )
+			if ( S_OK != l_hrOk )
 			{
 				SVSoftwareTriggerDestroy( true );
 			}
@@ -63,7 +63,7 @@ HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		*p_pulCount = g_softwareTrigger.GetTriggerCount();
 
@@ -77,7 +77,7 @@ HRESULT WINAPI SVTriggerGetHandle( unsigned long *p_pulHandle, unsigned long p_u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulHandle != NULL )
+	if ( nullptr != p_pulHandle )
 	{
 		*p_pulHandle = reinterpret_cast<unsigned long>(g_softwareTrigger.GetTriggerHandle(p_ulIndex));
 		l_hrOk = S_OK;
@@ -89,16 +89,18 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL && p_ulHandle != NULL)
+	if ( nullptr != p_pbstrName && 0 < p_ulHandle)
 	{
-		// free any crap on input...
-		if (*p_pbstrName != NULL)
+		if (nullptr != *p_pbstrName)
+		{
 			::SysFreeString(*p_pbstrName);
-
+		}
 		*p_pbstrName = g_softwareTrigger.GetTriggerName(reinterpret_cast<HANDLE>(p_ulHandle));
 		
-		if (*p_pbstrName != NULL)
+		if (nullptr != *p_pbstrName)
+		{
 			l_hrOk = S_OK;
+		}
 	} 
 	return l_hrOk;
 }
@@ -107,7 +109,7 @@ HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVTriggerCallbackPtr
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pCallback != NULL && 0 < p_ulHandle)
+	if ( nullptr != p_pCallback && 0 < p_ulHandle)
 	{
 		l_hrOk = S_OK;
 
@@ -120,7 +122,7 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVTriggerCallbackP
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pCallback != NULL && 0 < p_ulHandle )
+	if ( nullptr != p_pCallback && 0 < p_ulHandle )
 	{
 		l_hrOk = g_softwareTrigger.RemoveTriggerCallback(reinterpret_cast<HANDLE>(p_ulHandle), p_pCallback);
 	} 

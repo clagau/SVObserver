@@ -48,7 +48,7 @@ namespace Seidenader { namespace SVUtilityLibrary
 		HRESULT Result = S_OK;
 		Instance = nullptr;
 		Instance = m_DllsLoaded[DllName];
-		if( NULL == Instance )
+		if( nullptr == Instance )
 		{
 			Instance = ::LoadLibrary( DllName.c_str() );
 			Sleep(0);
@@ -73,7 +73,7 @@ namespace Seidenader { namespace SVUtilityLibrary
 		{
 			if( ::FreeLibrary( Iter->second ) )
 			{
-				//We are not setting the instance handle to NULL because the list is anyway being cleared after the loop
+				//We are not clearing the instance handle because the list is being cleared after the loop
 				//This Sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 				Sleep(0);
 			}

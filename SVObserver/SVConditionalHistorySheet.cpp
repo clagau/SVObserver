@@ -39,9 +39,10 @@ static const int ControlHeight = 20;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVConditionalHistorySheet::SVConditionalHistorySheet( LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
-,	m_rInspection( rInspection )
+SVConditionalHistorySheet::SVConditionalHistorySheet( SVIPDoc* pDoc, LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd, UINT iSelectPage)
+: CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
+, m_rInspection( rInspection )
+, m_pDoc(pDoc)
 {
 	SVScalarValueVector CurrentValueList;
 	SVScalarValueVector CurrentImageList;
@@ -222,12 +223,9 @@ void SVConditionalHistorySheet::OnOK()
 
 	if( Changed )
 	{
-		SVIPDoc* pIPDoc( nullptr );
-		pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_rInspection.GetUniqueObjectID() );
-
-		if( nullptr != pIPDoc )
+		if( nullptr != m_pDoc )
 		{
-			pIPDoc->SetModifiedFlag();
+			m_pDoc->SetModifiedFlag();
 		}
 	}
 

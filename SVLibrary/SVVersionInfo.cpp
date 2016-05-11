@@ -13,47 +13,39 @@
 #include "SVVersionInfo.h"
 
 #pragma comment(lib, "Version")
-//##ModelId=3A2E3CBC0203
+
 int SVVersionInfo::m_curlang   = 0;
 
-//##ModelId=3A2E3CBD0198
 SVVersionInfo::SVVersionInfo()
+: m_pVersionInfo(nullptr)
+, m_pTranslation(nullptr)
 {
-	m_pVersionInfo = NULL;				// raw version info data 
-	m_pTranslation = NULL;
-
 	GetAppVersionInfo(); 
 }
-
 
 //////////////////
 // Destroy: delete version info
 //
-
-//##ModelId=3A2E3CBD0197
 SVVersionInfo::~SVVersionInfo()
 {
 	ReleaseVersionInfo();
 }
 
-
-//##ModelId=3A2E3CBD0199
 void SVVersionInfo::ReleaseVersionInfo()
 {
 	if (m_pVersionInfo)
 	{
 		delete [] m_pVersionInfo;
-		m_pVersionInfo = NULL;
+		m_pVersionInfo = nullptr;
 	}
 	
 	if (m_pTranslation)
 	{
 		delete [] m_pTranslation;
-		m_pTranslation = NULL;
+		m_pTranslation = nullptr;
 	}
 	m_languages = 0;
 }
-
 
 //////////////////
 // Get file version info for a given module
@@ -61,7 +53,6 @@ void SVVersionInfo::ReleaseVersionInfo()
 // VS_FIXEDFILEINFO, and sets codepage.
 //
 
-//##ModelId=3A2E3CBD0191
 BOOL SVVersionInfo::GetAppVersionInfo()
 {
 	HGLOBAL hGlobal;
@@ -77,7 +68,7 @@ BOOL SVVersionInfo::GetAppVersionInfo()
 		return FALSE;
 
 	LPVOID	lpvi;
-	UINT		iLen;
+	UINT	iLen;
 
 	hGlobal = LoadResource(AfxGetInstanceHandle(), hRsrc1);
 	len     = SizeofResource(AfxGetInstanceHandle(), hRsrc1);
@@ -94,9 +85,7 @@ BOOL SVVersionInfo::GetAppVersionInfo()
 	// Note: VerQueryValue could return a value > 4, in which case
 	// mulitple languages are supported and VerQueryValue returns an
 	// array of langID/codepage pairs and you have to decide which to use.
-	if (::VerQueryValue(m_pVersionInfo,
-											_T("\\VarFileInfo\\Translation"),
-											&lpvi, &iLen) && iLen >= 4)
+	if (::VerQueryValue(m_pVersionInfo, _T("\\VarFileInfo\\Translation"), &lpvi, &iLen) && iLen >= 4)
 	{
 		m_languages = iLen >> 2;
 		m_pTranslation = new TRANSLATION[m_languages];
@@ -108,14 +97,11 @@ BOOL SVVersionInfo::GetAppVersionInfo()
 	return dwSignature == VS_FFI_SIGNATURE;
 }
 
-
 //////////////////
 // Get string file info.
 // Key name is something like "CompanyName".
 // returns the value as a CString.
 //
-
-//##ModelId=3A2E3CBD018F
 CString SVVersionInfo::GetValue(LPCTSTR lpKeyName)
 {
 	CString sVal;
@@ -148,14 +134,11 @@ CString SVVersionInfo::GetValue(LPCTSTR lpKeyName)
 	return sVal;
 }
 
-
 //////////////////
 // Get string file info.
 // Key name is something like "CompanyName".
 // returns the value as a CString.
 //
-
-//##ModelId=3A2E3CBD018D
 CString SVVersionInfo::GetValueFromResource(LPCTSTR lpKeyName)
 {
 	TRANSLATION	translation;
@@ -170,7 +153,7 @@ CString SVVersionInfo::GetValueFromResource(LPCTSTR lpKeyName)
 	{
 		HGLOBAL hGlobal = LoadResource(hInst, hRsrc);
 		DWORD		len     = SizeofResource(hInst, hRsrc);
-		LPVOID	lpvi    = NULL;
+		LPVOID	lpvi    = nullptr;
 		UINT		iLen    = 0;
 
 		if (::VerQueryValue(hGlobal, _T("\\"), &lpvi, &iLen))
@@ -208,7 +191,6 @@ CString SVVersionInfo::GetValueFromResource(LPCTSTR lpKeyName)
 // returns the value as a CString.
 //
 
-//##ModelId=3A2E3CBD018B
 CString SVVersionInfo::GetProductString(void)
 {
 	CString sVal;
@@ -232,12 +214,9 @@ CString SVVersionInfo::GetProductString(void)
 									LOWORD(dwProductVersionMS));
 		}
 	}
-
 	return sVal;
 }
 
-
-//##ModelId=3A2E3CBD0192
 void SVVersionInfo::SetLanguage(int langID)
 {
 	m_curlang = 0;
@@ -255,7 +234,6 @@ void SVVersionInfo::SetLanguage(int langID)
 /////////////////
 // Get DLL Version by calling DLL's DllGetVersion proc
 //
-//##ModelId=3A2E3CBD0158
 BOOL SVVersionInfo::DllGetVersion(LPCTSTR ModuleName, DLLVERSIONINFO& dvi)
 {
 	HINSTANCE   hinstDll;
@@ -279,10 +257,10 @@ BOOL SVVersionInfo::DllGetVersion(LPCTSTR ModuleName, DLLVERSIONINFO& dvi)
 		
 		if (pDllGetVersion)
 		{
-      ZeroMemory(&dvi, sizeof(dvi));
-      dvi.cbSize = sizeof(dvi);
+			ZeroMemory(&dvi, sizeof(dvi));
+			dvi.cbSize = sizeof(dvi);
 			
-      hr = (*pDllGetVersion)(&dvi);
+			hr = (*pDllGetVersion)(&dvi);
 		}
 		
 		FreeLibrary(hinstDll);

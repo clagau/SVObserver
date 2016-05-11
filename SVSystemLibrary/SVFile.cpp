@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVString.h"
 
 SVFile::SVFile()
-: m_pFile( NULL )
+: m_pFile( nullptr )
 {
 }
 
@@ -27,7 +27,7 @@ SVFile::~SVFile()
 
 bool SVFile::IsOpen() const
 {
-	return m_pFile != NULL;
+	return nullptr != m_pFile;
 }
 
 HRESULT SVFile::Open( const char* p_szFileName, UINT p_OpenFlags )
@@ -41,11 +41,11 @@ HRESULT SVFile::Open( const char* p_szFileName, UINT p_OpenFlags )
 
 	l_Status = GetAccessMode( l_Mode, l_Share, p_OpenFlags );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		m_pFile = ::_fsopen( p_szFileName, l_Mode.c_str(), l_Share );
 
-		if( m_pFile == NULL )
+		if( nullptr == m_pFile )
 		{
 			l_Status = E_FAIL;
 		}
@@ -56,12 +56,12 @@ HRESULT SVFile::Open( const char* p_szFileName, UINT p_OpenFlags )
 
 void SVFile::Close()
 {
-	if( m_pFile != NULL )
+	if( nullptr != m_pFile )
 	{
 		::fflush( m_pFile );
 		::fclose( m_pFile );
 
-		m_pFile = NULL;
+		m_pFile = nullptr;
 	}
 }
 
@@ -69,7 +69,7 @@ UINT SVFile::Read( void* lpBuf, UINT nCount )
 {
 	UINT l_BytesRead( 0 );
 
-	if( m_pFile != NULL )
+	if( nullptr != m_pFile )
 	{
 		l_BytesRead = static_cast<UINT>(::fread( lpBuf, 1, nCount, m_pFile ));
 	}
@@ -83,7 +83,7 @@ HRESULT SVFile::ReadContents( SVByteVector& p_rContents )
 
 	p_rContents.clear();
 
-	if( m_pFile != NULL )
+	if( nullptr != m_pFile )
 	{
 		UINT l_BytesRead( 0 );
 
@@ -110,7 +110,7 @@ HRESULT SVFile::Write( const void* lpBuf, UINT nCount )
 {
 	HRESULT l_Status( S_OK );
 
-	if( m_pFile != NULL )
+	if( nullptr != m_pFile )
 	{
 		if( ::fwrite( lpBuf, 1, nCount, m_pFile ) != nCount )
 		{
@@ -125,7 +125,7 @@ HRESULT SVFile::WriteContents( const SVByteVector& p_rContents )
 {
 	HRESULT l_Status( S_OK );
 
-	if( m_pFile != NULL )
+	if( nullptr != m_pFile )
 	{
 		unsigned long strSize = static_cast< unsigned long >( p_rContents.size() );
 
@@ -143,7 +143,7 @@ ULONGLONG SVFile::GetLength() const
 {
 	ULONGLONG l_Size( 0 );
 
-	if( m_pFile != NULL )
+	if( nullptr != m_pFile )
 	{
 		int l_FileDescripter( ::_fileno( m_pFile ) );
 
@@ -160,7 +160,7 @@ ULONGLONG SVFile::SeekToEnd()
 {
 	ULONGLONG l_Location( 0 );
 
-	if( m_pFile != NULL )
+	if( nullptr != m_pFile )
 	{
 		if( ::fseek( m_pFile, 0L, SEEK_END ) == 0 )
 		{
@@ -223,7 +223,7 @@ HRESULT SVFile::GetAccessMode( SVString& p_rAccessMode, int& p_rShareMode, UINT 
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		switch( l_TypeFlags )
 		{
@@ -243,7 +243,7 @@ HRESULT SVFile::GetAccessMode( SVString& p_rAccessMode, int& p_rShareMode, UINT 
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		switch( l_ShareFlags )
 		{

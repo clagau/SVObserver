@@ -143,6 +143,8 @@ class SVMaskShapeRectangle : public SVMaskShape
 {
 public:
 	SVMaskShapeRectangle();
+	virtual ~SVMaskShapeRectangle();
+
 protected:
 	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF );
 	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb );
@@ -152,6 +154,8 @@ class SVMaskShapeOval : public SVMaskShape
 {
 public:
 	SVMaskShapeOval();
+	virtual ~SVMaskShapeOval();
+
 protected:
 	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF );
 	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb );
@@ -161,6 +165,7 @@ class SVMaskShapeSymmetricTrapezoid : public SVMaskShape
 {
 public:
 	SVMaskShapeSymmetricTrapezoid();
+	virtual ~SVMaskShapeSymmetricTrapezoid();
 
 	// future reference: rotation range will be (-180, 180]
 	enum SymmetryOrientation
@@ -182,6 +187,8 @@ class SVMaskShapeDoughnut : public SVMaskShape
 {
 public:
 	SVMaskShapeDoughnut();
+	virtual ~SVMaskShapeDoughnut();
+
 	// the doughnut is the only shape so far that cares about the rgbBackground
 protected:
 	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF rgbBackground );

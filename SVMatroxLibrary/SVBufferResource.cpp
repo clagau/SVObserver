@@ -13,7 +13,7 @@
 
 SVBufferResource::SVBufferResource(void)
 {
-	m_pBuffer = NULL;
+	m_pBuffer = nullptr;
 }
 
 SVBufferResource::~SVBufferResource(void)
@@ -27,7 +27,7 @@ void SVBufferResource::Destroy(void)
 	if( m_pBuffer )
 	{
 		delete m_pBuffer;
-		m_pBuffer = NULL;
+		m_pBuffer = nullptr;
 	}
 }
 HRESULT SVBufferResource::Resize( long l_lSize)
@@ -49,7 +49,7 @@ HRESULT SVBufferResource::GetBuffer( MIL_TEXT_CHAR*& p_rpMilChar )
 	}
 	else
 	{
-		p_rpMilChar = NULL;
+		p_rpMilChar = nullptr;
 		return S_FALSE;
 	}
 }

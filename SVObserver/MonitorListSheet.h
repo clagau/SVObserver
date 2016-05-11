@@ -32,7 +32,7 @@ class MonitorListSheet : public CPropertySheet, public ISVCancel//, public SVPro
 #pragma region Public
 // Construction
 public:
-	MonitorListSheet( LPCTSTR pszCaption, MonitorListType eListType, bool bImageTab, const RemoteMonitorNamedList& rList, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
+	MonitorListSheet( LPCTSTR pszCaption, MonitorListType eListType, bool bImageTab, const RemoteMonitorNamedList& rList, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
 	virtual ~MonitorListSheet();
 
 	const RemoteMonitorNamedList& GetMonitorList() const;

@@ -29,11 +29,11 @@ const SVObjectTypeInfoStruct	SVInvalidObjectTypeInfo;
 
 DWORD_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	if( PObject != NULL )
+	if( nullptr != PObject )
 	{
 		return PObject->processMessage( DwMessageID, DwMessageValue, DwMessageContext );
 	}
-	return NULL;
+	return SVMR_NOT_PROCESSED;
 }
 
 
@@ -42,11 +42,10 @@ DWORD_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD_P
 	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( RUniqueObjectID );
 
 	// Check if object exists...
-	if( pObject != NULL )
+	if( nullptr != pObject )
 	{
 		return pObject->processMessage( DwMessageID, DwMessageValue, DwMessageContext );
 	}
-
-	return NULL;
+	return SVMR_NOT_PROCESSED;
 }
 

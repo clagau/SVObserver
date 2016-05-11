@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:22:34  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPixelAnalyzer.h"
 
@@ -20,126 +21,45 @@
 #include "SVImageProcessingClass.h"
 #include "SVPixelAnalyzerSetup.h" // Required by SVPixelAnalyzerSetupClass
 #include "SVResultLong.h"   // Required by SVLongResultClass
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVPixelAnalyzerClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVPixelAnalyzerClass, SVPixelAnalyzerClassGuid );
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVPixelAnalyzerClass()
-// -----------------------------------------------------------------------------
-// .Description : Standard constructor I
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: LPCSTR			ObjectName 
-//  :
-// .Output(s)
-//	: // e.g. int&				MyInt				Index Handle 
-//  :
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 SVPixelAnalyzerClass::SVPixelAnalyzerClass( LPCSTR ObjectName )
-						  :SVImageAnalyzerClass( ObjectName )
+: SVImageAnalyzerClass( ObjectName )
 {
 	init();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVPixelAnalyzerClass
-// -----------------------------------------------------------------------------
-// .Description : Standard constructor II
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: LPCSTR			ObjectName
-//  :
-// .Output(s)
-//	: // e.g. int&				MyInt				Index Handle 
-//  :
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :09.07.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-SVPixelAnalyzerClass::SVPixelAnalyzerClass( 
-	BOOL BCreateDefaultTaskList, 
-	SVObjectClass* POwner, 
-	int StringResourceID )
-		:SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVPixelAnalyzerClass::SVPixelAnalyzerClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
+: SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
 {
 	init();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVPixelAnalyzerClass
-// -----------------------------------------------------------------------------
-// .Description : Initialization of newly Instantiated Object
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.06.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVPixelAnalyzerClass::init()
 {
     while (1)
     {
 		// Identify our output type
-	    // Already identified in the base class (SVImageAnalyzerClass)
-	    //outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	    outObjectInfo.ObjectTypeInfo.SubType = 
-            SVPixelAnalyzerObjectType;
+	    m_outObjectInfo.ObjectTypeInfo.SubType = SVPixelAnalyzerObjectType;
 
 	    // Identify our input type needs
-		// Done in the base class (SVImageAnalyzerClass)
-	    //inputImageObjectInfo.InputObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
-	    //inputImageObjectInfo.SetObject( GetObjectInfo() );
-
-	    // SetObjectDepth() already called in SVObjectClass Ctor
 
 	    // Register Embedded Objects
-			RegisterEmbeddedObject( 
-				&m_pixelCount, 
-				SVPixelCountObjectGuid, 
-				IDS_OBJECTNAME_PIXEL_COUNT,
-				false, SVResetItemNone );
+		RegisterEmbeddedObject(&m_pixelCount, SVPixelCountObjectGuid, IDS_OBJECTNAME_PIXEL_COUNT, false, SVResetItemNone);
 			
-			RegisterEmbeddedObject( 
-				&m_pixelCountColor, 
-				SVPixelColorIndexObjectGuid,
-				IDS_OBJECTNAME_PIXEL_COLOR_INDEX,
-				false, SVResetItemNone );
+			RegisterEmbeddedObject(&m_pixelCountColor, SVPixelColorIndexObjectGuid,	IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SVResetItemNone);
 			
 	    // Set Embedded defaults
-	    m_pixelCountColor. SetDefaultValue( 255, TRUE ); // White
-	    m_pixelCount. SetDefaultValue( 0, TRUE );
+	    m_pixelCountColor. SetDefaultValue( 255, true ); // White
+	    m_pixelCount. SetDefaultValue( 0, true );
 
 	    // Set default inputs and outputs
 	    addDefaultInputObjects();
 	    
 	    // Instantiate Children
-        SVLongResultClass *pAnalyzerResult = 
-            new SVLongResultClass (TRUE,
-                                   this,
-                                   IDS_CLASSNAME_SVPIXELANALYZERESULT);
+        SVLongResultClass *pAnalyzerResult = new SVLongResultClass (true, this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
 
 	    if (!pAnalyzerResult)
 	    {
@@ -155,82 +75,25 @@ void SVPixelAnalyzerClass::init()
     }
 }
 
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : ~SVPixelAnalyzerClass
-// -----------------------------------------------------------------------------
-// .Description : This destructor deletes ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 SVPixelAnalyzerClass::~SVPixelAnalyzerClass()
 {
 	CloseObject();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : CloseObject
-// -----------------------------------------------------------------------------
-// .Description : Closes the Object
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :06.08.1999 SEJ			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVPixelAnalyzerClass::CloseObject()
 {
     m_alHistValues.clear();
 
 	if ( !m_histResultID.empty() )
 	{
-		
 		SVMatroxImageInterface::SVStatusCode l_Code;
 		l_Code = SVMatroxImageInterface::Destroy( m_histResultID );
 	}
-
 	return SVImageAnalyzerClass::CloseObject();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : CreateObject
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type								Name				Description
-//	: SVObjectLevelCreateStruct*		PCreateStructure
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :25.08.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	
     SVImageClass *pSVImage;
 	
     msvError.ClearLastErrorCd ();
@@ -251,16 +114,14 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 			SV_TRAP_ERROR_BRK (msvError, 1085);
         }
 		
-        m_svlHistValueArraySize = 1 <<
-            (GetInputPixelDepth () &
-			SVBufferSize);
+        m_svlHistValueArraySize = 1 << (GetInputPixelDepth () & SVBufferSize);
 		
         m_alHistValues.resize( m_svlHistValueArraySize );
 		
-		
         for( int i = 0; i < m_svlHistValueArraySize; i++ )
+		{
 			m_alHistValues [i] = 0L;
-		
+		}
         // &&&
 		SVDataBufferInfoClass svData;
 		
@@ -277,73 +138,35 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 			msvError.msvlErrorCd = -1087;
 			SV_TRAP_ERROR_BRK (msvError, 1087);
         }
-		
         break;
     }
 	
     if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
     {
-        isCreated = FALSE;
+        m_isCreated = false;
     }
     else
-        isCreated = TRUE;
-	
+	{
+        m_isCreated = true;
+	}
 	
 	// Set / Reset Printable Flags
 	m_pixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_pixelCountColor.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	
-    return isCreated;
+    return m_isCreated;
 }
-
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Run
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: TRUE
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 {
+    SVImageClass* pInputImage (nullptr);
+    BYTE byIndex;
 
-    SVImageClass     *pInputImage;
-
-    BYTE             byIndex;
-
-
-    pInputImage = NULL;
     msvError.ClearLastErrorCd ();
 
     while (1)
     {
 		SVSmartHandlePointer ImageHandle;
 
-		
 		SVMatroxImageInterface::SVStatusCode l_Code;
 
         pInputImage = getInputImage ();
@@ -386,85 +209,49 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
         break;
     }
 	
-	
     if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
     {
 		SetInvalid ();            
 		RRunStatus.SetInvalid ();
 		
-		return FALSE;
+		return false;
     }
-
-    return TRUE;
-
+    return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Validate
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :06.08.1999 SEJ			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVPixelAnalyzerClass::OnValidate ()
 {
-   msvError.ClearLastErrorCd ();
-   msvError.msvlErrorCd = 0x00000000;
+	msvError.ClearLastErrorCd ();
+	msvError.msvlErrorCd = 0x00000000;
 
-   while (1)
-   {
-      if (!SVImageAnalyzerClass::OnValidate ())
-      {
-//       Error code set inside SVImageAnalyzerClass::OnValidate ()
-//		 Next line commented out to remove message box.
-//       SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1092);
-         break;
-      }
+	while (1)
+	{
+		if (!SVImageAnalyzerClass::OnValidate ())
+		{
+			break;
+		}
 
-      if ( m_histResultID.empty() )
-      {
-         msvError.msvlErrorCd = -1093;
-         SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1093);
-      }
+		if ( m_histResultID.empty() )
+		{
+			msvError.msvlErrorCd = -1093;
+			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1093);
+		}
 
-      if ( m_alHistValues.size() != m_svlHistValueArraySize)
-      {
-         msvError.msvlErrorCd = -1094;
-         SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1094);
-      }
+		if ( m_alHistValues.size() != m_svlHistValueArraySize)
+		{
+			msvError.msvlErrorCd = -1094;
+			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1094);
+		}
+		break;
+	}
 
-      break;
-   }
-
-   if( (msvError.GetLastErrorCd () & SV_ERROR_CONDITION) ||
-	   (msvError.msvlErrorCd       & SV_ERROR_CONDITION) )
-   {
-       SetInvalid ();
-       return FALSE;
-   }
-
-   isObjectValid.SetValue (1, TRUE);
-   return TRUE;
-
+	if( (msvError.GetLastErrorCd () & SV_ERROR_CONDITION) ||
+		(msvError.msvlErrorCd       & SV_ERROR_CONDITION) )
+	{
+		SetInvalid();
+		return false;
+	}
+	isObjectValid.SetValue(1, true);
+	return true;
 }
 

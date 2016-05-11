@@ -29,7 +29,7 @@ SVLinearEdgePositionLineAnalyzerClass::SVLinearEdgePositionLineAnalyzerClass( BO
 void SVLinearEdgePositionLineAnalyzerClass::init()
 {
 	// Identify our type
-	outObjectInfo.ObjectTypeInfo.SubType = SVLinearEdgePositionAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVLinearEdgePositionAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
 
@@ -106,14 +106,12 @@ SVLinearEdgePositionLineAnalyzerClass::~SVLinearEdgePositionLineAnalyzerClass()
 
 BOOL SVLinearEdgePositionLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
-
-	bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
 
 	dpEdge.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;	// Point
 	m_svLinearDistance.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -132,34 +130,34 @@ BOOL SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 	// All inputs and outputs must be validated first
 	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
 
-	l_bOk = l_bOk && GetEdgeA() != NULL && GetTool() != NULL;
+	l_bOk = l_bOk && nullptr != GetEdgeA() && nullptr != GetTool();
 
 	if( l_bOk )
 	{
 		SVImageExtentClass l_svExtents;
 
-		if( GetEdgeA()->GetOutputEdgePoint( l_svEdgePoint ) != S_OK )
+		if( S_OK != GetEdgeA()->GetOutputEdgePoint( l_svEdgePoint ) )
 		{
 			RRunStatus.SetFailed();	
 		}
 
-		if( GetEdgeA()->GetOutputEdgeDistance( l_dDistance ) != S_OK )
+		if( S_OK != GetEdgeA()->GetOutputEdgeDistance( l_dDistance ) )
 		{
 			RRunStatus.SetFailed();	
 		}
 
-		l_bOk &= GetImageExtent( l_svExtents ) == S_OK &&
-		         l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint ) == S_OK;
+		l_bOk &= S_OK == GetImageExtent( l_svExtents ) &&
+		         S_OK == l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint );
 
-		l_bOk &= GetTool()->GetImageExtent( l_svExtents ) == S_OK &&
-		         l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint ) == S_OK;
+		l_bOk &= S_OK == GetTool()->GetImageExtent( l_svExtents ) &&
+		         S_OK == l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint );
 	}
 
 	l_svDPoint.x = l_svEdgePoint.m_dPositionX;
 	l_svDPoint.y = l_svEdgePoint.m_dPositionY;
 
-	l_bOk = ( m_svLinearDistance.SetValue( RRunStatus.m_lResultDataIndex, l_dDistance )== S_OK ) && l_bOk;
-	l_bOk = ( dpEdge.SetValue( RRunStatus.m_lResultDataIndex, l_svDPoint ) == S_OK ) && l_bOk;
+	l_bOk = ( S_OK == m_svLinearDistance.SetValue( RRunStatus.m_lResultDataIndex, l_dDistance ) ) && l_bOk;
+	l_bOk = ( S_OK == dpEdge.SetValue( RRunStatus.m_lResultDataIndex, l_svDPoint ) ) && l_bOk;
 	
 	if( ! l_bOk )
 	{
@@ -170,37 +168,11 @@ BOOL SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 	return l_bOk;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Validate
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :20.08.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVLinearEdgePositionLineAnalyzerClass::OnValidate()
 {
 	BOOL retVal = SVLinearAnalyzerClass::OnValidate();
 	
-	retVal &= GetEdgeA() != NULL;
+	retVal &= nullptr != GetEdgeA();
 
 	if( ! retVal )
 	{

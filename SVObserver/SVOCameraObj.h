@@ -85,8 +85,6 @@ private:  //data members
 	bool m_imageSizeEditModeFileBased;
 	SIZE m_fileImageSize;
 	long m_fileMode;
-
-    void CheckObject();
 };
 
 typedef SVSharedPtr< SVOCameraObj > SVOCameraObjPtr;

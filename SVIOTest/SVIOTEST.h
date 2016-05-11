@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
 #endif
@@ -19,6 +20,7 @@
 
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#pragma endregion Includes
 
 static int SVMEBoardNumber = 0;
 
@@ -26,6 +28,7 @@ class CSVIOTESTApp : public CWinApp
 {
 public:
 	CSVIOTESTApp();
+	virtual ~CSVIOTESTApp();
 
 // Overrides
 	// ClassWizard generated virtual function overrides

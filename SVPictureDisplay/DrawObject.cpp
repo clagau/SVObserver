@@ -47,12 +47,6 @@ HRESULT DrawObject::SetColor(COLORREF color)
 	return S_OK;
 }
 
-HRESULT DrawObject::SetSelectedColor(COLORREF color)
-{
-	m_SelectedColor = color;
-	return S_OK;
-}
-
 HRESULT DrawObject::SetEditAllowed( long p_lAllowed )
 {
 	m_lEditAllowed = p_lAllowed;
@@ -245,19 +239,9 @@ std::unique_ptr<CRgn> DrawObject::GetHotSpot( CPoint pt1, CPoint pt2 ) const
 	return pRegion;
 }
 
-CSize DrawObject::getImageSize() const
-{
-	return m_imageSize;
-}
-
 void DrawObject::setImageSize( CSize val )
 {
 	m_imageSize = val;
-}
-
-CSize DrawObject::getViewSize() const
-{
-	return m_viewSize;
 }
 
 void DrawObject::setViewSize( CSize val )

@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 // SVParserProgressDialog dialog
 
 
-SVParserProgressDialog::SVParserProgressDialog(LPCTSTR title, CWnd* pParent /*=NULL*/)
+SVParserProgressDialog::SVParserProgressDialog(LPCTSTR title, CWnd* pParent /*=nullptr*/)
 : SVProgressDialog(title, pParent)
 {
 	//{{AFX_DATA_INIT(SVParserProgressDialog)
@@ -186,7 +186,7 @@ CProgressCtrl* SVParserProgressDialog::GetProgressControl( unsigned long parserH
 	{
 		TRACE(e.what());
 	}
-	return NULL;
+	return nullptr;
 }
 
 CStatic* SVParserProgressDialog::GetTextControl( unsigned long parserHandle )
@@ -200,7 +200,7 @@ CStatic* SVParserProgressDialog::GetTextControl( unsigned long parserHandle )
 	{
 		TRACE(e.what());
 	}
-	return NULL;
+	return nullptr;
 }
 
 SVParserProgressControlStruct& SVParserProgressDialog::GetFirstAvailableParserControl()
@@ -296,7 +296,7 @@ LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM wParam, LPARAM lPara
 
 		// Delete the Parser
 		delete parserControl.pParser;
-		parserControl.pParser = NULL;
+		parserControl.pParser = nullptr;
 
 		// Post Message to MainFrame
 		CWnd* pWnd = GetParent();

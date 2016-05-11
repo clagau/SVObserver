@@ -18,7 +18,6 @@
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectAsynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -36,8 +35,8 @@
 #include "SVOutputObjectList.h"
 #include "SVRemoteInputObject.h"
 #include "SVCommandInspectionGetItems.h"
-#include "SVDigitalInputObject1.h"
-#include "SVDigitalOutputObject1.h"
+#include "SVDigitalInputObject.h"
+#include "SVDigitalOutputObject.h"
 #include "SVMainFrm.h"
 #include "SVIODoc.h"
 #include "SVIOController.h"
@@ -90,8 +89,8 @@ SVConfigurationObject::SVConfigurationObject( LPCSTR ObjectName )
 	: SVObjectClass( ObjectName )
 {
 	m_pIOController = new SVIOController;
-	m_pInputObjectList	= NULL;
-	m_pOutputObjectList	= NULL;
+	m_pInputObjectList	= nullptr;
+	m_pOutputObjectList	= nullptr;
 	m_bConfigurationValid = false;
 	m_ulVersion = 0;
 
@@ -107,8 +106,8 @@ SVConfigurationObject::SVConfigurationObject( SVObjectClass* POwner, int StringR
 	: SVObjectClass( POwner, StringResourceID )
 {
 	m_pIOController = new SVIOController;
-	m_pInputObjectList	= NULL;
-	m_pOutputObjectList	= NULL;
+	m_pInputObjectList	= nullptr;
+	m_pOutputObjectList	= nullptr;
 	m_bConfigurationValid = false;
 
 	SetProductType( SVIM_PRODUCT_TYPE_UNKNOWN );
@@ -137,7 +136,7 @@ BOOL SVConfigurationObject::Destroy()
 
 BOOL SVConfigurationObject::SetInputObjectList( SVInputObjectList *pInputObjectList )
 {
-	if( m_pInputObjectList != NULL && m_pInputObjectList != pInputObjectList )
+	if( nullptr != m_pInputObjectList && m_pInputObjectList != pInputObjectList )
 	{
 		delete m_pInputObjectList;
 	}
@@ -154,7 +153,7 @@ SVInputObjectList* SVConfigurationObject::GetInputObjectList( ) const
 
 BOOL SVConfigurationObject::SetOutputObjectList( SVOutputObjectList *pOutputObjectList )
 {
-	if( m_pOutputObjectList != NULL && m_pOutputObjectList != pOutputObjectList )
+	if( nullptr != m_pOutputObjectList && m_pOutputObjectList != pOutputObjectList )
 	{
 		delete m_pOutputObjectList;
 	}
@@ -286,9 +285,10 @@ bool SVConfigurationObject::AddAcquisitionDevice( LPCTSTR szName,
 		pDevice->msvFiles = rsvFiles;
 		pDevice->msvLightArray = rsvLight;
 		pDevice->mLut = rLut;
-		if ( pDeviceParams != NULL )
+		if ( nullptr != pDeviceParams )
+		{
 			pDevice->mDeviceParams = *pDeviceParams;
-
+		}
 		mAcquisitionDeviceMap.SetAt( szName, pDevice );
 	}
 
@@ -298,11 +298,11 @@ bool SVConfigurationObject::AddAcquisitionDevice( LPCTSTR szName,
 BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, SVLightReference& rsvLight )
 {
 	BOOL bOk = FALSE;
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = NULL;
+	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	mAcquisitionDeviceMap.Lookup( szName, pDevice);
 
-	bOk = pDevice != NULL;
+	bOk = nullptr != pDevice;
 	if ( bOk )
 	{
 		pDevice->msvLightArray = rsvLight;
@@ -314,11 +314,11 @@ BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, SVLightRefe
 BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVLut& lut )
 {
 	BOOL bOk = FALSE;
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = NULL;
+	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	mAcquisitionDeviceMap.Lookup( szName, pDevice);
 
-	bOk = pDevice != NULL;
+	bOk = nullptr != pDevice;
 	if ( bOk )
 	{
 		pDevice->mLut = lut;
@@ -330,13 +330,13 @@ BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVLut
 BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVDeviceParamCollection* pParams )
 {
 	BOOL bOk = FALSE;
-	if ( pParams != NULL )
+	if ( nullptr != pParams )
 	{
-		SVConfigurationAcquisitionDeviceInfoStruct* pDevice = NULL;
+		SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 		mAcquisitionDeviceMap.Lookup( szName, pDevice);
 
-		bOk = pDevice != NULL;
+		bOk = nullptr != pDevice;
 		if ( bOk )
 		{
 			// don't do a straight assignment ( m_DeviceParams = pParams )
@@ -346,7 +346,7 @@ BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVDev
 			{
 				const SVDeviceParamWrapper& w = iter->second;
 
-				if ( ((const SVDeviceParam*) w) != NULL )
+				if ( nullptr != ((const SVDeviceParam*) w) )
 				{
 					pDevice->mDeviceParams.GetParameter( iter->first ) = w;
 				}
@@ -361,14 +361,14 @@ BOOL SVConfigurationObject::RemoveAcquisitionDevice( LPCTSTR szName )
 {
 	BOOL bOk = FALSE;
 
-	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = NULL;
+	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
 
 	bOk = mAcquisitionDeviceMap.Lookup( szName, pDevice );
 	if ( bOk )
 	{
 		mAcquisitionDeviceMap.RemoveKey( szName );
 
-		if ( pDevice != NULL )
+		if ( nullptr != pDevice )
 		{
 			delete pDevice;		
 		}
@@ -385,17 +385,17 @@ BOOL SVConfigurationObject::GetAcquisitionDevice( LPCTSTR szName,
 {
 	BOOL bOk = FALSE;
 
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = NULL;
+	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
-	rpFiles = NULL;
-	rpLight = NULL;
-	rpLut   = NULL;
-	rpDeviceParams = NULL;
+	rpFiles = nullptr;
+	rpLight = nullptr;
+	rpLut   = nullptr;
+	rpDeviceParams = nullptr;
 
 	bOk = mAcquisitionDeviceMap.Lookup( szName, pDevice );
 	if ( bOk )
 	{
-		bOk = pDevice != NULL;
+		bOk = nullptr != pDevice;
 		if ( bOk )
 		{
 			rpFiles = &(pDevice->msvFiles);
@@ -421,7 +421,7 @@ SVConfigurationObject::SVAcquisitionDeviceMap::iterator SVConfigurationObject::G
 void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, 
 	CString& rKey ) const
 {
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = NULL;
+	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 	mAcquisitionDeviceMap.GetNextAssoc( rNextPosition, rKey, pDevice );
 }
 
@@ -432,16 +432,16 @@ void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMa
 	SVLut*& rpLut,
 	SVDeviceParamCollection*& rpDeviceParams ) const
 {
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = NULL;
+	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
-	rpFiles = NULL;
-	rpLight = NULL;
-	rpLut   = NULL;
-	rpDeviceParams = NULL;
+	rpFiles = nullptr;
+	rpLight = nullptr;
+	rpLut   = nullptr;
+	rpDeviceParams = nullptr;
 
 	mAcquisitionDeviceMap.GetNextAssoc( rNextPosition, rKey, pDevice );
 
-	if ( pDevice != NULL )
+	if ( nullptr != pDevice)
 	{
 		rpFiles = &(pDevice->msvFiles);
 		rpLight = &(pDevice->msvLightArray);
@@ -748,9 +748,9 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const S
 			pIOEntry->m_PPQIndex = ppqPosition;
 			pIOEntry->m_Enabled = true;
 
-			SVRemoteInputObject* pRemoteInput = NULL;
+			SVRemoteInputObject* pRemoteInput = nullptr;
 			m_pInputObjectList->GetInputFlyweight( name.c_str(), pRemoteInput );
-			if (pRemoteInput != NULL)
+			if (nullptr != pRemoteInput)
 			{
 				pRemoteInput->m_lIndex = index;
 				pRemoteInput->Create();
@@ -779,7 +779,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 	{
 		if (!pIOEntry->m_Enabled)
 		{
-			SVDigitalInputObject* pDigitalInput = NULL;
+			SVDigitalInputObject* pDigitalInput = nullptr;
 			m_pInputObjectList->GetInputFlyweight( name.c_str(), pDigitalInput );
 
 			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
@@ -797,7 +797,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const SVString&
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != pPPQ );
 
-	SVRemoteInputObject* pRemoteInput = NULL;
+	SVRemoteInputObject* pRemoteInput = nullptr;
 
 	// Add Remote Inputs to the InputObjectList
 	//first check to see if remote input is there, check by name...
@@ -817,7 +817,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const SVString&
 	pIOEntry->m_PPQIndex		= ppqPosition;
 	pIOEntry->m_Enabled			= ppqPosition != -1;
 
-	if( pRemoteInput != NULL )
+	if( nullptr != pRemoteInput )
 	{
 		pRemoteInput->m_lIndex = index;
 		pRemoteInput->Create();
@@ -838,7 +838,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const SVString
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != pPPQ );
 
-	SVDigitalInputObject* pDigitalInput = NULL;
+	SVDigitalInputObject* pDigitalInput = nullptr;
 
 	m_pInputObjectList->GetInputFlyweight( name.c_str(), pDigitalInput );
 
@@ -856,7 +856,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const SVString
 	pIOEntry->m_PPQIndex		= ppqPosition;
 	pIOEntry->m_Enabled			= ppqPosition != -1;
 
-	if( pDigitalInput != NULL )
+	if( nullptr != pDigitalInput )
 	{
 		pIOEntry->m_IOId = pDigitalInput->GetUniqueObjectID();
 	}
@@ -873,13 +873,13 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != pPPQ );
 
-	SVCameraDataInputObject* pInput = NULL;
+	SVCameraDataInputObject* pInput = nullptr;
 	SVString name = pIOEntry->m_pValueObject->GetName();
 	m_pInputObjectList->GetInputFlyweight( name.c_str(), pInput );
 	pInput->Create(); // why o why...
 
 	// Add Input to the PPQ
-	if( pInput != NULL )
+	if( nullptr != pInput )
 	{
 		pIOEntry->m_IOId = pInput->GetUniqueObjectID();
 	}
@@ -904,19 +904,14 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 
 	if ( SVNavigateTree::GetItem( rTree, CTAG_CONFIGURATION_TYPE, hChild, svValue ) )
 	{
-
 		int iType = svValue;
 		SetProductType( SVIMProductEnum( iType ) );
 
 		ConvertColorToStandardProductType( ConfigurationColor );
-		
 	}
-
-
 
 	if( !SVNavigateTree::GetItem( rTree, CTAG_VERSION_NUMBER, hChild, svValue ) )
 	{
-
 		SvStl::MessageContainer MsgCont;
 		SVStringArray messageList;
 		messageList.push_back(CTAG_VERSION_NUMBER);
@@ -927,7 +922,6 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 	TheSVObserverApp.setLoadingVersion( svValue );
 
 	m_ulVersion = TheSVObserverApp.getLoadingVersion();
-
 
 	//This is the deprecated tag and has changed to CTAG_IMAGE_UPDATE and CTAG_RESULT_UPDATE
 	//Needs to be read for older configurations and becomes the standard default
@@ -985,7 +979,6 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 		bThreadMgrEnable = svValue;
 	}
 	SVThreadManager::Instance().SetThreadAffinityEnabled( bThreadMgrEnable );
-
 }
 
 bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
@@ -1012,7 +1005,6 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 		SvStl::MessageContainer MsgCont;
 		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_CreateSFailed, msgList, StdMessageParams, SvOi::Err_16044_CreateInputList );
 		throw MsgCont;
-
 	}
 	if( nullptr == pOutputsList || !pOutputsList->Create() )
 	{
@@ -1023,16 +1015,12 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 		throw MsgCont;
 	}
 
-
-
 	SVTreeType::SVBranchHandle hSubChild;
 	long lIOSize = 0;
 	long i;
 
-
 	if( !SVNavigateTree::GetItem( rTree, CTAG_NUMBER_OF_IO_ENTRIES, hChild, svValue ))
 	{
-		
 		SvStl::MessageContainer MsgCont;
 		MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_NumberOfIosMissing, StdMessageParams, SvOi::Err_16045_MissingTag );
 		throw MsgCont;
@@ -1049,13 +1037,10 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 		strEntry.Format( CTAGF_IO_ENTRY_X, i );
 		if( !SVNavigateTree::GetItemBranch( rTree, strEntry, hChild, hSubChild ) )
 		{
-			
-			
 			SvStl::MessageContainer MsgCont;
 			MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_IOEntryIsMissing, StdMessageParams, SvOi::Err_16060_IOEntryIsMissing );
 			throw MsgCont;
 		}
-
 
 		_variant_t svoData;
 		CString strName;
@@ -1141,11 +1126,11 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 		{
 			if( bOutput )
 			{
-				SVDigitalOutputObject* pOutput = NULL;
+				SVDigitalOutputObject* pOutput = nullptr;
 
 				pOutputsList->GetOutputFlyweight( strName, pOutput );
 
-				if( pOutput != NULL )
+				if( nullptr != pOutput )
 				{
 					pOutput->SetChannel( dwChannel );
 					pOutput->Force( bForced, ( dwForcedValue != FALSE ) );
@@ -1164,11 +1149,11 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			}// end if
 			else
 			{
-				SVDigitalInputObject* pInput = NULL;
+				SVDigitalInputObject* pInput = nullptr;
 
 				pInputsList->GetInputFlyweight( static_cast< LPCTSTR >( strName ), pInput );
 
-				if( pInput != NULL )
+				if( nullptr != pInput )
 				{
 					pInput->SetChannel( dwChannel );
 					pInput->Force( bForced, dwForcedValue != FALSE );
@@ -1183,25 +1168,21 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			MsgCont.setMessage( SVMSG_SVO_78_LOAD_IO_FAILED, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_16046_LOAD_IO_FAILED );
 			throw MsgCont;
 		}
-
 	}// end for
 
-
-	if( m_pInputObjectList != NULL )
+	if( nullptr != m_pInputObjectList )
 	{
 		delete m_pInputObjectList;
 	}
 
 	m_pInputObjectList  = pInputsList;
 
-	if( m_pOutputObjectList != NULL )
+	if( nullptr != m_pOutputObjectList )
 	{
 		delete m_pOutputObjectList;
 	}
 
 	m_pOutputObjectList = pOutputsList;
-
-
 
 	if ( nullptr != m_pIOController )
 	{
@@ -1215,14 +1196,13 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 		m_pIOController->SetParameters( rTree, hChild );
 	}
 
-
 	if(  l_ModuleReadyId.empty() )
 	{
 		SVDigitalOutputObject* pOutput( nullptr );
 
 		m_pOutputObjectList->GetOutputFlyweight( "Module Ready", pOutput );
 
-		if( pOutput != NULL )
+		if( nullptr != pOutput )
 		{
 			l_ModuleReadyId = pOutput->GetUniqueObjectID();
 		}
@@ -1232,7 +1212,6 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 
 	return true;
 }
-
 
 bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& BoardName, long &lNumBordDig )
 {
@@ -1304,7 +1283,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							{
 								CString csBand;
 
-								SVTreeType::SVBranchHandle hBand = NULL;
+								SVTreeType::SVBranchHandle hBand = nullptr;
 
 								csBand.Format( CTAGF_BAND_X, i );
 
@@ -1320,7 +1299,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 											{
 												CString csLight;
 
-												SVTreeType::SVBranchHandle hLight = NULL;
+												SVTreeType::SVBranchHandle hLight = nullptr;
 
 												csBand.Format( CTAGF_LIGHTREFERENCE_X, j );
 
@@ -1344,7 +1323,6 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 													if ( SVNavigateTree::GetItem( rTree, CTAG_TYPE, hLight, svValue ) )
 													{
 														svLight.Band( i ).Attribute( j ).dwType = svValue;
-														ConvertLightReferenceEnum(svLight.Band( i ).Attribute( j ).dwType);
 													}
 													if ( SVNavigateTree::GetItem( rTree, CTAG_VALUE, hLight, svValue ) )
 													{
@@ -1396,7 +1374,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							for ( int iBand = 0; iBand < iBands; iBand++ )
 							{
 								CString csBand;
-								SVTreeType::SVBranchHandle hBand = NULL;
+								SVTreeType::SVBranchHandle hBand = nullptr;
 
 								csBand.Format( CTAGF_BAND_X, iBand );
 
@@ -1612,7 +1590,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
 								SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
 							}
-							// SEJ - Get Combined parameters
+							// Get Combined parameters
 							psvDevice->GetDeviceParameters(svDeviceParams);
 							bOk = AddAcquisitionDevice( FullName.c_str(), svFileArray, svLight, lut, &svDeviceParams );
 						}
@@ -1693,7 +1671,7 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 
 				SVObjectManagerClass::Instance().CloseUniqueObjectID( pCamera );
 
-				pCamera->outObjectInfo.UniqueObjectID = l_Guid;
+				pCamera->m_outObjectInfo.UniqueObjectID = l_Guid;
 
 				SVObjectManagerClass::Instance().OpenUniqueObjectID( pCamera );
 			}
@@ -1820,7 +1798,7 @@ bool SVConfigurationObject::LoadTrigger( SVTreeType& rTree )
 			{
 				SVTriggerClass *psvDevice = SVTriggerProcessingClass::Instance().GetTrigger( csDeviceName );
 
-				if ( psvDevice != NULL )
+				if ( nullptr != psvDevice )
 				{
 					bOk = pTrigger->Create( psvDevice ) ? true : false;
 				}
@@ -1932,7 +1910,7 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 
 				SVObjectManagerClass::Instance().CloseUniqueObjectID( pInspection );
 
-				pInspection->outObjectInfo.UniqueObjectID = ObjectID;
+				pInspection->m_outObjectInfo.UniqueObjectID = ObjectID;
 
 				SVObjectManagerClass::Instance().OpenUniqueObjectID( pInspection );
 			}
@@ -1960,7 +1938,7 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 
 					hViewed = rTree.getFirstBranch( hDataChild );
 
-					while( hViewed != NULL )
+					while( nullptr != hViewed )
 					{	
 						SVString strName = rTree.getBranchName( hViewed );
 
@@ -1968,7 +1946,6 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 
 						hViewed = rTree.getNextBranch( hDataChild, hViewed );
 					}
-
 				}
 			}
 		}
@@ -2039,7 +2016,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( pPPQ );
 
-			pPPQ->outObjectInfo.UniqueObjectID = ObjectID;
+			pPPQ->m_outObjectInfo.UniqueObjectID = ObjectID;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( pPPQ );
 		}// end if
@@ -2118,7 +2095,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voOutputState );
 
-			pPPQ->m_voOutputState.outObjectInfo.UniqueObjectID = ObjectID;
+			pPPQ->m_voOutputState.m_outObjectInfo.UniqueObjectID = ObjectID;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voOutputState );
 		}// end if
@@ -2130,7 +2107,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voTriggerCount );
 
-			pPPQ->m_voTriggerCount.outObjectInfo.UniqueObjectID = l_TriggercountId;
+			pPPQ->m_voTriggerCount.m_outObjectInfo.UniqueObjectID = l_TriggercountId;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voTriggerCount );
 		}
@@ -2255,8 +2232,8 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			SVString DataName = rTree.getBranchName( hDataChild );
 
-			SVRemoteInputObject *pRemoteInput = NULL;
-			SVValueObjectClass *pObject = NULL;
+			SVRemoteInputObject *pRemoteInput = nullptr;
+			SVValueObjectClass *pObject = nullptr;
 			_variant_t svValue;
 			CString strName;
 			CString strType;
@@ -2418,14 +2395,14 @@ HRESULT SVConfigurationObject::ValidateOutputList( )
 	for( int i = 0 ; i < l_iInspections ; i++ )
 	{
 		SVInspectionProcess* l_pInsp = m_arInspectionArray[i];
-		if( l_pInsp != NULL )
+		if( nullptr != l_pInsp )
 		{
 			l_aInspNames.push_back( l_pInsp->GetName() );
 		}
 	}
 	for( SVPPQObjectArray::iterator it = m_arPPQArray.begin(); it != m_arPPQArray.end() ; ++it)
 	{
-		if( *it != NULL )
+		if( nullptr != *it )
 		{
 			l_aPPQNames.push_back((*it)->GetName());
 		}
@@ -2464,7 +2441,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 	SVLightReference svLight;
 	SVLut lut;
 
-	while ( hr == S_OK && nullptr != hDigChild )
+	while ( S_OK == hr && nullptr != hDigChild )
 	{
 		++lNumAcqDig;
 
@@ -2485,7 +2462,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 			LoadDeviceParameters(rTree, hDataChild, svDeviceParams);
 		}
 
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			// need to determine Digitizer Number and Channel
 			SVString FullName;
@@ -2524,7 +2501,6 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 				}
 
 				psvDevice->GetImageInfo( &svImageInfo );
-				//psvDevice->DestroyBuffers();
 				psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
 			}
 			SVString strRemappedName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( FullName.c_str() );
@@ -2641,10 +2617,10 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 	lSize = m_arInspectionArray.GetSize();
 	for ( l = lSize - 1; -1 < l; l-- )
 	{
-		if ( m_arInspectionArray[l] != NULL )
+		if ( nullptr != m_arInspectionArray[l] )
 		{
 			delete m_arInspectionArray[l];
-			m_arInspectionArray[l] = NULL;
+			m_arInspectionArray[l] = nullptr;
 		}
 	}
 	m_arInspectionArray.RemoveAll();
@@ -2653,16 +2629,16 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 	lSize = m_arCameraArray.GetSize();
 	for ( l = lSize - 1; -1 < l; l-- )
 	{
-		if ( m_arCameraArray[l] != NULL )
+		if ( nullptr != m_arCameraArray[l] )
 		{
 			delete m_arCameraArray[l];
-			m_arCameraArray[l] = NULL;
+			m_arCameraArray[l] = nullptr;
 		}
 	}
 	m_arCameraArray.RemoveAll();
 
 	CString csKey;
-	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = NULL;
+	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
 
 	SVAcquisitionDeviceMap::iterator pos = mAcquisitionDeviceMap.GetStartPosition();
 	while ( pos != mAcquisitionDeviceMap.end() )
@@ -2672,7 +2648,7 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 
 		pos = mAcquisitionDeviceMap.erase( pos );
 
-		if ( pDevice != NULL )
+		if ( nullptr != pDevice )
 		{
 			SVAcquisitionClassPtr psvDevice;
 
@@ -2695,10 +2671,10 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 	lSize = m_arTriggerArray.GetSize();
 	for ( l = lSize - 1; -1 < l; l-- )
 	{
-		if ( m_arTriggerArray[l] != NULL )
+		if ( nullptr != m_arTriggerArray[l] )
 		{
 			delete m_arTriggerArray[l];
-			m_arTriggerArray[l] = NULL;
+			m_arTriggerArray[l] = nullptr;
 		}
 	}
 	m_arTriggerArray.RemoveAll();
@@ -2707,32 +2683,32 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 	lSize = m_arPPQArray.GetSize();
 	for ( l = lSize - 1; -1 < l; l-- )
 	{
-		if ( m_arPPQArray[l] != NULL )
+		if ( nullptr != m_arPPQArray[l] )
 		{
 			delete m_arPPQArray[l];
-			m_arPPQArray[l] = NULL;
+			m_arPPQArray[l] = nullptr;
 		}
 	}
 	m_arPPQArray.RemoveAll();
 
 	//destroy Input Object List
-	if ( m_pInputObjectList	!= NULL )
+	if ( nullptr != m_pInputObjectList )
 	{
 		delete m_pInputObjectList;
-		m_pInputObjectList = NULL;
+		m_pInputObjectList = nullptr;
 	}
 
 	//destroy Output Object List    
-	if ( m_pOutputObjectList	!= NULL )
+	if ( nullptr != m_pOutputObjectList	)
 	{
 		delete m_pOutputObjectList;
-		m_pOutputObjectList = NULL;
+		m_pOutputObjectList = nullptr;
 	}
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		delete m_pIOController;
-		m_pIOController = NULL;
+		m_pIOController = nullptr;
 	}
 
 	//Delete all Global Constants
@@ -2753,7 +2729,7 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( p_rData.m_ObjectId );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		SVPPQObject* pPPQ( nullptr );
 		SVOutputObjectList *pOutputs = GetOutputObjectList();
@@ -2822,7 +2798,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 		{
 			SVInspectionProcessVector::const_iterator l_InspectIter;
 
-			for( l_InspectIter = m_arInspectionArray.begin(); rpObject == NULL && l_InspectIter != m_arInspectionArray.end(); ++l_InspectIter )
+			for( l_InspectIter = m_arInspectionArray.begin(); nullptr == rpObject && l_InspectIter != m_arInspectionArray.end(); ++l_InspectIter )
 			{
 				SVInspectionProcess* pInspection = ( *l_InspectIter );
 
@@ -3128,8 +3104,7 @@ void SVConfigurationObject::SaveAcquisitionDevice(SVObjectXMLWriter& rWriter)  c
 				rWriter.EndElement(); //csBoard
 			}
 		}
-		
-	}// end while ( pos != NULL )
+	}// end while ( nullptr != pos )
 
 	rWriter.EndElement(); //End of CTAG_ACQUISITION_DEVICE
 }
@@ -3358,7 +3333,7 @@ void SVConfigurationObject::SaveInspection(SVObjectXMLWriter& rWriter) const
 			pInspection->Persist(rWriter);
 
 			//SVIPDoc
-			SVIPDoc* pDoc =  SVObjectManagerClass::Instance().GetIPDoc(pInspection->GetUniqueObjectID());
+			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
 			if (pDoc)
 			{
 				rWriter.StartElement(CTAG_SVIPDOC);
@@ -3685,15 +3660,14 @@ void SVConfigurationObject::SaveDeviceParameters( SVObjectXMLWriter& rWriter, co
 	for (iter = rDeviceParams.mapParameters.begin(); iter != rDeviceParams.mapParameters.end(); ++iter)
 	{
 		const SVDeviceParam* pParam = iter->second;
-		if ( pParam != NULL )
+		if ( nullptr != pParam )
 		{
-			//ASSERT( pParam->Type() != DeviceParamInvalid );
 			if ( pParam->Type() != DeviceParamInvalid )
 			{
 				VARIANT vValue;
 				::VariantInit( &vValue );
 				HRESULT hrValue = pParam->GetValue( vValue );
-				if ( hrValue == S_OK )
+				if ( S_OK == hrValue )
 				{
 					CString strParam;
 					strParam.Format( CTAGF_DEVICE_PARAM_X, ++i );
@@ -3852,7 +3826,7 @@ BOOL SVConfigurationObject::RebuildInputOutputLists()
 		}
 	}
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		m_pIOController->RebuildOutputList();
 	}
@@ -3887,10 +3861,10 @@ unsigned long SVConfigurationObject::GetFileVersion() const
 unsigned long SVConfigurationObject::GetSVXFileVersion(SVTreeType& rTree)
 {
 	BOOL bOk = TRUE;
-	SVTreeType::SVBranchHandle hChild = NULL;
+	SVTreeType::SVBranchHandle hChild = nullptr;
 	unsigned long ulVersion;
 
-	if ( SVNavigateTree::GetItemBranch( rTree, CTAG_ENVIRONMENT, NULL, hChild ) )
+	if ( SVNavigateTree::GetItemBranch( rTree, CTAG_ENVIRONMENT, nullptr, hChild ) )
 	{
 		_variant_t svValue;
 		if ( SVNavigateTree::GetItem( rTree, CTAG_CONFIGURATION_TYPE, hChild, svValue ) )
@@ -4035,7 +4009,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 {
 	HRESULT hr = S_OK;
 
-	// SEJ - for Software Triggers
+	// For Software Triggers
 	// Iterate thru Trigger List and Connect Acquistion Initiator for Software Triggers
 	// the channel number for the trigger object must be set at this point, it represents the Digitizer Number
 	// Set the Software Timer Trigger period as well here
@@ -4101,62 +4075,11 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 	return hr;
 }
 
-void SVConfigurationObject::ConvertLightReferenceEnum(DWORD &dwType)
-{
-	switch ( dwType )
-	{
-	case SVCorLightReferenceTypeBrightness :
-		{
-			dwType = SVLightReferenceTypeBrightness;
-			break;
-		}
-	case SVCorLightReferenceTypeBrightnessRed :   
-		{	
-			dwType = SVLightReferenceTypeBrightnessRed;
-			break;
-		}
-	case SVCorLightReferenceTypeBrightnessGreen :
-		{
-			dwType = SVLightReferenceTypeBrightnessGreen;
-			break;
-		}
-	case SVCorLightReferenceTypeBrightnessBlue :
-		{
-			dwType = SVLightReferenceTypeBrightnessBlue;
-			break;
-		}
-	case SVCorLightReferenceTypeContrast :
-		{
-			dwType = SVLightReferenceTypeContrast;
-			break;
-		}
-	case SVCorLightReferenceTypeContrastRed : 
-		{
-			dwType = SVLightReferenceTypeContrastRed;
-			break;
-		}
-	case SVCorLightReferenceTypeContrastGreen :
-		{
-			dwType = SVLightReferenceTypeContrastGreen;
-			break;
-		}
-	case SVCorLightReferenceTypeContrastBlue :
-		{
-			dwType = SVLightReferenceTypeContrastBlue;
-			break;
-		}
-	default:
-		{
-			break;
-		}
-	}
-}
-
 HRESULT SVConfigurationObject::SetModuleReady( bool p_Value )
 {
 	HRESULT l_Status( S_OK );
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->SetModuleReady( p_Value );
 	}
@@ -4172,7 +4095,7 @@ HRESULT SVConfigurationObject::SetRaidErrorBit( bool p_Value )
 {
 	HRESULT l_Status( S_OK );
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->SetRaidErrorBit( p_Value );
 	}
@@ -4188,7 +4111,7 @@ SVIOEntryHostStructPtr SVConfigurationObject::GetModuleReady()
 {
 	SVIOEntryHostStructPtr l_IOEntryPtr;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_IOEntryPtr = m_pIOController->GetModuleReady();
 	}
@@ -4200,7 +4123,7 @@ SVIOEntryHostStructPtr SVConfigurationObject::GetRaidErrorBit()
 {
 	SVIOEntryHostStructPtr l_IOEntryPtr;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_IOEntryPtr = m_pIOController->GetRaidErrorBit();
 	}
@@ -4217,7 +4140,7 @@ SVGUID SVConfigurationObject::GetIOControllerID() const
 {
 	SVGUID l_ObjectId;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_ObjectId = m_pIOController->GetUniqueObjectID();
 	}
@@ -4231,7 +4154,7 @@ SVGUID SVConfigurationObject::GetRemoteOutputController() const
 {
 	SVGUID l_ObjectId;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_ObjectId = m_pIOController->GetRemoteOutputController();
 	}
@@ -4243,7 +4166,7 @@ size_t SVConfigurationObject::GetRemoteOutputGroupCount() const
 {
 	size_t l_Count = 0;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Count = m_pIOController->GetRemoteOutputGroupCount();
 	}
@@ -4253,7 +4176,7 @@ size_t SVConfigurationObject::GetRemoteOutputGroupCount() const
 
 void SVConfigurationObject::SetupRemoteOutput()
 {
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		m_pIOController->SetupRemoteOutput( this );
 	}
@@ -4263,7 +4186,7 @@ HRESULT SVConfigurationObject::ClearRemoteOutputUnUsedData()
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->ClearRemoteOutputUnUsedData();
 	}
@@ -4277,9 +4200,9 @@ HRESULT SVConfigurationObject::ClearRemoteOutputUnUsedData()
 
 SVRemoteOutputGroup* SVConfigurationObject::GetRemoteOutputGroup( const CString& p_strRemoteGroupID ) const
 {
-	SVRemoteOutputGroup* l_pObject = NULL;
+	SVRemoteOutputGroup* l_pObject = nullptr;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_pObject = m_pIOController->GetRemoteOutputGroup( p_strRemoteGroupID );
 	}
@@ -4291,7 +4214,7 @@ HRESULT SVConfigurationObject::GetRemoteOutputGroupNames( std::vector<CString>& 
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->GetRemoteOutputGroupNames( p_astrPPQs );
 	}
@@ -4309,7 +4232,7 @@ size_t SVConfigurationObject::GetRemoteOutputGroupItemCount( const CString& p_st
 {
 	size_t l_Count = 0;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Count = m_pIOController->GetRemoteOutputGroupItemCount( p_strRemoteGroupID );
 	}
@@ -4321,7 +4244,7 @@ HRESULT SVConfigurationObject::GetRemoteOutputItem( const CString& p_strRemoteGr
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->GetRemoteOutputItem( p_strRemoteGroupId, l_lIndex, p_rItem );
 	}
@@ -4335,9 +4258,9 @@ HRESULT SVConfigurationObject::GetRemoteOutputItem( const CString& p_strRemoteGr
 
 SVRemoteOutputObject* SVConfigurationObject::GetFirstRemoteOutputObject( const CString& p_strRemoteGroupId ) const
 {
-	SVRemoteOutputObject* l_pObject = NULL;
+	SVRemoteOutputObject* l_pObject = nullptr;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_pObject = m_pIOController->GetFirstRemoteOutputObject( p_strRemoteGroupId );
 	}
@@ -4349,7 +4272,7 @@ HRESULT SVConfigurationObject::AddRemoteOutputItem( const CString& p_strRemoteGr
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->AddRemoteOutputItem( p_strRemoteGroupId, p_pNewOutput, p_InputObjectID, p_strPPQ );
 	}
@@ -4365,7 +4288,7 @@ HRESULT SVConfigurationObject::DeleteRemoteOutput( const CString& p_strRemoteGro
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->DeleteRemoteOutput( p_strRemoteGroupId );
 	}
@@ -4381,7 +4304,7 @@ HRESULT SVConfigurationObject::DeleteRemoteOutputEntry( const CString& p_strRemo
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->DeleteRemoteOutputEntry( p_strRemoteGroupId, p_pOutputObject );
 	}
@@ -4397,7 +4320,7 @@ HRESULT SVConfigurationObject::RemoteOutputValidateInputs()
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pIOController != NULL )
+	if( nullptr != m_pIOController )
 	{
 		l_Status = m_pIOController->RemoteOutputValidateInputs();
 	}
@@ -4596,17 +4519,17 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 
 			if( SVString( SvOl::FqnRemoteInputs ) == l_Info.m_NameArray[ 0 ] )
 			{
-				SVRemoteInputObject* l_pInput = NULL;
+				SVRemoteInputObject* l_pInput = nullptr;
 
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), l_pInput );
 
-				if( l_pInput != NULL )
+				if( nullptr != l_pInput )
 				{
 					_variant_t l_Value;
 
 					HRESULT l_TempStatus = l_pInput->Read( l_Value );
 
-					if( l_TempStatus == S_OK )
+					if( S_OK == l_TempStatus )
 					{
 						p_rItems[ *l_Iter ] = SVStorageResult( SVStorage( SVVisionProcessor::SVStorageValue, l_Value ), S_OK, 0 );
 					}
@@ -4614,7 +4537,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 					{
 						p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), E_INVALIDARG, 0 );
 
-						if( l_Status == S_OK )
+						if( S_OK == l_Status )
 						{
 							l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 						}
@@ -4624,7 +4547,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 				{
 					p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 					}
@@ -4634,7 +4557,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 			{
 				p_rItems[ *l_Iter ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 				}
@@ -4675,7 +4598,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 				SVObjectReference ref;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
 
-				if( ref.Object() != nullptr )
+				if( nullptr != ref.Object() )
 				{
 					///someone wants to set this variable check if this is allowed
 					bool l_AddParameter = ( ( ref.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
@@ -4688,7 +4611,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 						{
 							p_rStatus[ l_Iter->first ] = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
 
-							if( l_Status == S_OK )
+							if( S_OK == l_Status )
 							{
 								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 							}
@@ -4712,7 +4635,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 							{
 								p_rStatus[ l_Iter->first ] = hresult;
 								l_AddParameter = false;
-								if( l_Status == S_OK )
+								if( S_OK == l_Status )
 								{
 									l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 								}
@@ -4743,7 +4666,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 							{
 								SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( ref.Object() );
 
-								if( l_pImage != nullptr )
+								if( nullptr != l_pImage )
 								{
 									p_rStatus[ l_Iter->first ] = pInspection->AddInputImageFileNameRequest( l_pImage, SvUl_SF::createSVString(l_Iter->second.m_Variant) );
 								}
@@ -4751,7 +4674,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 								{
 									p_rStatus[ l_Iter->first ] = E_INVALIDARG;
 
-									if( l_Status == S_OK )
+									if( S_OK == l_Status )
 									{
 										l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 									}
@@ -4871,17 +4794,17 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 			if( SVString( SvOl::FqnRemoteInputs ) == l_Info.m_NameArray[ 0 ] )
 			{
-				SVRemoteInputObject* l_pInput = NULL;
+				SVRemoteInputObject* l_pInput = nullptr;
 
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Iter->first, l_pInput );
 
-				if( l_pInput != NULL )
+				if( nullptr != l_pInput )
 				{
 					HRESULT l_LoopStatus = l_pInput->WriteCache( l_Iter->second.m_Variant );
 
 					p_rStatus[ l_Iter->first ] = l_LoopStatus;
 
-					if( l_Status == S_OK && l_LoopStatus != S_OK )
+					if( S_OK == l_Status && S_OK != l_LoopStatus )
 					{
 						l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 					}
@@ -4890,7 +4813,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 				{
 					p_rStatus[ l_Iter->first ] = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 					}
@@ -4900,7 +4823,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 			{
 				p_rStatus[ l_Iter->first ] = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 				}
@@ -4928,7 +4851,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 					{
 						SVInspectionProcess* pInspection = *l_InspectionIter;
 
-						if( pInspection != NULL )
+						if( nullptr != pInspection )
 						{
 							l_Inspections[ pInspection->GetName() ] = pInspection;
 
@@ -4941,7 +4864,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 							SVObjectManagerClass::Instance().GetObjectByDottedName( l_Name, ref );
 
-							if( ref.Object() != NULL )
+							if( nullptr != ref.Object() )
 							{
 								if( pInspection->AddInputRequest( ref, l_Iter->second.m_Variant ) )
 								{
@@ -5006,11 +4929,11 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 
 			if( SVString( SvOl::FqnCameras ) == Info.m_NameArray[ 0 ] )
 			{
-				BasicValueObject* pValueObject = NULL;
+				BasicValueObject* pValueObject = nullptr;
 
 				SVObjectManagerClass::Instance().GetObjectByDottedName( Iter->first, pValueObject );
 
-				if( pValueObject != NULL )
+				if( nullptr != pValueObject )
 				{
 					bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
 
@@ -5049,7 +4972,7 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 			}
 
 			rStatus[ Iter->first ] = LoopStatus;
-			if( Status == S_OK && LoopStatus != S_OK )
+			if( S_OK == Status && S_OK != LoopStatus )
 			{
 				Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 			}
@@ -5101,7 +5024,7 @@ void SVConfigurationObject::GetRemoteInputInspections( const SVString& p_rRemote
 
 			SVObjectManagerClass::Instance().GetObjectByDottedName( l_Name, ref );
 
-			if( ref.Object() != NULL )
+			if( nullptr != ref.Object() )
 			{
 				p_rInspections.insert( l_pInspection );
 			}
@@ -5122,7 +5045,7 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 			if (pTrigger->IsAcquisitionTrigger())
 			{
 				SVCameraTriggerClass* pTriggerDevice = dynamic_cast<SVCameraTriggerClass*>(pTrigger->mpsvDevice);
-				if( pTriggerDevice != NULL )
+				if( nullptr != pTriggerDevice )
 				{
 					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
 					if (pCameraPPQ == pPPQ)
@@ -5215,7 +5138,7 @@ void SVConfigurationObject::ReplaceOrAddMonitorList(const RemoteMonitorNamedList
 	if (nullptr != m_pIOController)
 	{
 		m_pIOController->ReplaceOrAddMonitorList(rList);
-		SendMessage(AfxGetApp()->m_pMainWnd->GetSafeHwnd(),SV_REGISTER_MONITOR_LIST, NULL, 0);
+		SendMessage(AfxGetApp()->m_pMainWnd->GetSafeHwnd(),SV_REGISTER_MONITOR_LIST, 0, 0);
 	}
 }
 

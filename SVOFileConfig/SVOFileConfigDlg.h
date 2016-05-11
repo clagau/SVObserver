@@ -20,7 +20,7 @@ public:
 	CString m_strLastDirectory;
 	bool GetDirectoryRemoveLevel( CString& p_strFile, int p_level );
 
-	SVOFileConfigDlg(CWnd* pParent = NULL);	// standard constructor
+	SVOFileConfigDlg(CWnd* pParent = nullptr);	// standard constructor
 
 	virtual ~SVOFileConfigDlg();
 

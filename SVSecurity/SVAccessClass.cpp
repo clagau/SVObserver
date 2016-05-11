@@ -42,8 +42,8 @@ SVAccessClass::SVAccessClass()
 
 	// Initialize the login server
 	// to be later used for validation
-	PWKSTA_USER_INFO_1 pInfo = NULL;
-	NET_API_STATUS ns = NetWkstaUserGetInfo( NULL, 1, (LPBYTE*)&pInfo );
+	PWKSTA_USER_INFO_1 pInfo = nullptr;
+	NET_API_STATUS ns = NetWkstaUserGetInfo( nullptr, 1, (LPBYTE*)&pInfo );
 	if( ns == NERR_Success )
 	{
 		m_strLogonServer = W2A( ( LPWSTR )pInfo->wkui1_logon_server);
@@ -155,7 +155,7 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, Sv
 			return S_OK;
 		}
 
-		HANDLE phToken = NULL;
+		HANDLE phToken = nullptr;
 
 		if( LogonUserA(  ( LPSTR  )( LPCSTR )dlg.m_strUser,
 			( LPSTR  ) ( LPCSTR )m_strLogonServer, 
@@ -208,8 +208,8 @@ bool SVAccessClass::IsUserAMember( const CString& p_strUser, const CString& p_st
 	USES_CONVERSION;
 	bool l_bRet = false;
 
-	LPLOCALGROUP_USERS_INFO_0 pBuf = NULL;
-	LPLOCALGROUP_USERS_INFO_0 pTmpBuf = NULL;
+	LPLOCALGROUP_USERS_INFO_0 pBuf = nullptr;
+	LPLOCALGROUP_USERS_INFO_0 pTmpBuf = nullptr;
 	DWORD entriesread = 0;
 	DWORD totalentries = 0;
 	if( p_strGroups.Compare(_T("Everybody") ) == 0 )
@@ -235,7 +235,7 @@ bool SVAccessClass::IsUserAMember( const CString& p_strUser, const CString& p_st
 													&totalentries);
 	#endif
 
-	if( nas == NERR_Success && ( pTmpBuf = pBuf) != NULL )
+	if( nas == NERR_Success && nullptr != ( pTmpBuf = pBuf) )
 	{
 		for( DWORD i = 0 ; i< entriesread && !l_bRet; i++ )
 		{
@@ -292,7 +292,7 @@ bool SVAccessClass::IsDisplayable(long lId)
 		{
 			CString strGroups;
 			HRESULT hr = GetNTGroup( lId, strGroups );
-			if( hr != S_OK )
+			if( S_OK != hr )
 			{
 				// Default Group if failure occurs.
 				strGroups = _T("Administrators");
@@ -401,7 +401,7 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 				{
 					l_strStatus = _T("Invalid User or Password");
 				}
-				if( hr == S_OK )
+				if( S_OK == hr )
 				{
 					if( IsMasterPassword( strTmpUser, strTmpPW ) )
 					{
@@ -411,10 +411,10 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 				l_bUserValidated = true;
 			}
 
-			HANDLE phToken = NULL;
+			HANDLE phToken = nullptr;
 			// Group 
 			// UserValidated prevents the extra call to logonUser
-			if( (hr == S_OK && l_bUserValidated) || LogonUserA( ( LPSTR )( LPCSTR )strTmpUser,
+			if( (S_OK == hr && l_bUserValidated) || LogonUserA( ( LPSTR )( LPCSTR )strTmpUser,
 				( LPSTR ) ( LPCTSTR )m_strLogonServer,
 				( LPSTR ) ( LPCTSTR )strTmpPW, 
 				LOGON32_LOGON_NETWORK,
@@ -456,7 +456,7 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 		hr = S_OK;
 	}
 	
-	// if hr == S_OK, log to Application Log
+	// if S_OK == hr, log to Application Log
 	return hr;
 } // end HRESULT SVAccessClass::Validate(  long lId )
 
@@ -570,9 +570,6 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 						case 1:
 						{
 							l_strStatus = _T("Access - ") + strName2;
-							msgId = SvOi::Tid_Security_Access;
-							msgList.clear();
-							msgList.push_back(SVString(strName2));
 							break;
 						}
 						case 2:
@@ -600,7 +597,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 				{
 					l_strStatus = _T("Invalid User or Password");
 				}
-				if( hr == S_OK )
+				if( S_OK == hr )
 				{
 					if( IsMasterPassword( strTmpUser, strTmpPW ) )
 					{
@@ -611,10 +608,10 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 
 			}
 
-			HANDLE phToken = NULL;
+			HANDLE phToken = nullptr;
 			// Group 
 			// UserValidated prevents the extra call to logonUser
-			if( ( hr == S_OK && l_bUserValidated) || LogonUserA( ( LPSTR ) ( LPCTSTR )strTmpUser,
+			if( ( S_OK == hr && l_bUserValidated) || LogonUserA( ( LPSTR ) ( LPCTSTR )strTmpUser,
 				( LPSTR ) ( LPCTSTR )m_strLogonServer,
 				( LPSTR ) ( LPCTSTR )strTmpPW, 
 				LOGON32_LOGON_NETWORK,
@@ -668,7 +665,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 		hr = S_OK;
 	}
 	
-	// if hr == S_OK, log to Application Log
+	// if S_OK == hr, log to Application Log
 	return hr;
 } // end HRESULT SVAccessClass::Validate(  long lId1, long lId2 )
 
@@ -801,7 +798,7 @@ HRESULT SVAccessClass::Logon()
 		l_strStatus = _T("Invalid User or Password");
 	}
 
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED1, SvOi::Tid_Security_Login, StdMessageParams, 0, 0, strTmpUser );
@@ -1022,10 +1019,10 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 	Startup.cb = sizeof(Startup);
 	Startup.dwFlags = STARTF_USESHOWWINDOW;
 	Startup.wShowWindow = SW_SHOWDEFAULT;
-	Startup.lpDesktop = NULL;  // will create an invisible desktop for this user
-	Startup.lpReserved = NULL;
-	Startup.lpReserved2 = NULL;
-	Startup.lpTitle = NULL;
+	Startup.lpDesktop = nullptr;  // will create an invisible desktop for this user
+	Startup.lpReserved = nullptr;
+	Startup.lpReserved2 = nullptr;
+	Startup.lpTitle = nullptr;
 //	GetStartupInfoW(&Startup);
 
 	wcscpy( wstrAppPathName, p_wstrAppName );        // Start with the supplied app name
@@ -1091,7 +1088,7 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 
 	CString l_strGroup;
 	l_hr = GetNTGroup( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN, l_strGroup );
-	if( l_hr == S_OK )
+	if( S_OK == l_hr )
 	{
 		// WINSHELLAPI HINSTANCE APIENTRY ShellExecuteW(HWND hwnd, LPCWSTR lpOperation, LPCWSTR lpFile, LPCWSTR lpParameters, LPCWSTR lpDirectory, INT nShowCmd);
 		// Old way with out User/PW
@@ -1135,9 +1132,9 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 				l_pwcPassword,                                    // Password
 				LOGON_WITH_PROFILE,                               // Logon Flags
 				wstrAppPathName,                                  // Application
-				wstrArgs,                                             // Command line
+				wstrArgs,                                         // Command line
 				CREATE_DEFAULT_ERROR_MODE|CREATE_NEW_CONSOLE|CREATE_NEW_PROCESS_GROUP|NORMAL_PRIORITY_CLASS,	// Creation Flags 
-				NULL,                                             // Environment
+				nullptr,                                          // Environment
 				wstrDirPath,                                      // Current Directory
 				&Startup,                                         // StartupInfo
 				&processInfo);                                    // processInfo
@@ -1168,14 +1165,14 @@ bool SVAccessClass::SVIsSecured( long lId )
 	bool l_bRet = true;
 	BOOL l_bForced = true;
 
-	if( GetForcedPrompt( lId, l_bForced ) == S_OK && ! l_bForced )
+	if( S_OK == GetForcedPrompt( lId, l_bForced ) && ! l_bForced )
 	{
 		CString l_strGroups;
 
 		HRESULT hr = GetNTGroup( lId, l_strGroups );
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
-			if( l_strGroups.CompareNoCase( _T( "Everybody" ) ) == 0)
+			if( 0 == l_strGroups.CompareNoCase( _T( "Everybody" ) ) )
 			{
 				l_bRet = false;
 			}

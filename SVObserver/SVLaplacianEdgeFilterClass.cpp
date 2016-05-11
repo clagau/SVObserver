@@ -19,7 +19,7 @@ SV_IMPLEMENT_CLASS( SVLaplacianEdgeFilterClass, SVLaplacianEdgeFilterClassGuid )
 SVLaplacianEdgeFilterClass::SVLaplacianEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 						   :SVFilterClass( POwner, StringResourceID ) 
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVLaplacianEdgeFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVLaplacianEdgeFilterObjectType;
 }
 
 SVLaplacianEdgeFilterClass::~SVLaplacianEdgeFilterClass()

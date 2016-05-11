@@ -130,7 +130,7 @@ void CALLBACK SVMMTimer::TimerProc( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser,
 	SVMMTimer& timer = SVMMTimer::Instance();
 
 	// Wake up Dispatch Thread
-	timer.m_asyncProcedure.Signal(NULL);
+	timer.m_asyncProcedure.Signal(nullptr);
 }
 
 // Callback for the QueueUserAPC API call

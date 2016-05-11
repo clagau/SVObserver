@@ -56,6 +56,10 @@ SVCameraFilePropertyPageDlg::SVCameraFilePropertyPageDlg(CWnd* pParent /*=nullpt
 	//}}AFX_DATA_INIT
 }
 
+SVCameraFilePropertyPageDlg::~SVCameraFilePropertyPageDlg()
+{
+}
+
 void SVCameraFilePropertyPageDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -95,12 +99,8 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 	SVRPropertyItemEdit*    pEdit = nullptr;
 	bool                    bResult = false;
 	
-//	SVFileNameClass FileName;
-	
-//	FileName.SetFileType(SV_CAMERA_FILE_TYPE);
 	CString	rKey;
 	
-//	SetTitle(GetCameraDisplayName());
 	pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
 	{

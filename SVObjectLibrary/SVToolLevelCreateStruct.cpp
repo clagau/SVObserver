@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:25:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolLevelCreateStruct.h"
+#pragma endregion Includes
 
 SVToolLevelCreateStruct::SVToolLevelCreateStruct()
 						:SVInspectionLevelCreateStruct()
@@ -19,7 +21,7 @@ SVToolLevelCreateStruct::SVToolLevelCreateStruct()
 }
 
 
-SVToolLevelCreateStruct::SVToolLevelCreateStruct( SVObjectLevelCreateStruct& ROLCS )
+SVToolLevelCreateStruct::SVToolLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS )
 						:SVInspectionLevelCreateStruct( ROLCS )
 {
 	strCreateStructName = "SVObjectLevelCreateStruct\nSVInspectionLevelCreateStruct\nSVToolLevelCreateStruct";

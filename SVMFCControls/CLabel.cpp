@@ -284,7 +284,7 @@ void CLabel::OnPaint()
 		{
 			CBrush br;
 
-			if (m_hBackBrush != nullptr)
+			if (nullptr != m_hBackBrush)
 			{
 				br.Attach(m_hBackBrush);
 			}
@@ -497,12 +497,12 @@ void CLabel::OnLButtonDown(UINT nFlags, CPoint point)
 		GetWindowText(strLink);
 		if (m_Link == HyperLink)
 		{
-			ShellExecute(NULL,_T("open"),m_sLink.IsEmpty() ? strLink : m_sLink,NULL,NULL,SW_SHOWNORMAL);
+			ShellExecute(nullptr, _T("open"), m_sLink.IsEmpty() ? strLink : m_sLink, nullptr, nullptr, SW_SHOWNORMAL);
 		}
 		if (m_Link == MailLink)
 		{
 			strLink = "mailto:" + strLink;
-			ShellExecute( NULL, NULL,  strLink,  NULL, NULL, SW_SHOWNORMAL );
+			ShellExecute( nullptr, nullptr, strLink, nullptr, nullptr, SW_SHOWNORMAL );
 		}
 	}
 	else
@@ -844,11 +844,11 @@ CLabel& CLabel::FlashText(BOOL bActivate)
 
 	if (bActivate)
 	{
-		m_bState = FALSE;
+		m_bState = false;
 		
-		m_bTimer = TRUE;
+		m_bTimer = true;
 		
-		SetTimer(1, 500, NULL);
+		SetTimer(1, 500, nullptr);
 
 		m_Type = Text;
 	}
@@ -884,10 +884,10 @@ CLabel& CLabel::FlashBackground(BOOL bActivate)
 
 	if (bActivate)
 	{
-		m_bState = FALSE;
+		m_bState = false;
 
-		m_bTimer = TRUE;
-		SetTimer(1, 500, NULL);
+		m_bTimer = true;
+		SetTimer(1, 500, nullptr);
 
 		m_Type = Background;
 	}
@@ -1113,7 +1113,7 @@ void CLabel::PreSubclassWindow()
 	CStatic::PreSubclassWindow();
 
 	CFont* cf = GetFont();
-	if(cf != nullptr)
+	if( nullptr != cf )
 	{
 		cf->GetObject(sizeof(m_lf), &m_lf);
 	}

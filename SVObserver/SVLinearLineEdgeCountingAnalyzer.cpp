@@ -35,7 +35,7 @@ SVLinearEdgeCountingLineAnalyzerClass::SVLinearEdgeCountingLineAnalyzerClass( BO
 void SVLinearEdgeCountingLineAnalyzerClass::init()
 {
 	// Identify our type
-	outObjectInfo.ObjectTypeInfo.SubType = SVLinearEdgeCountingAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVLinearEdgeCountingAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
 
@@ -78,14 +78,12 @@ SVLinearEdgeCountingLineAnalyzerClass::~SVLinearEdgeCountingLineAnalyzerClass()
 
 BOOL SVLinearEdgeCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
-
-	bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
 	m_svEdgeCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -101,17 +99,17 @@ BOOL SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 	// All inputs and outputs must be validated first
 	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
 
-	l_bOk = l_bOk && GetEdgeA() != NULL;
+	l_bOk = l_bOk && nullptr != GetEdgeA();
 
 	if( l_bOk )
 	{
 		std::vector<double> l_svEdges;
 
-		l_bOk = ( GetEdgeA()->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) == S_OK );
+		l_bOk = ( S_OK == GetEdgeA()->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) );
 
 		long l_lCount = static_cast<int>(l_svEdges.size());
 
-		l_bOk = l_bOk && ( m_svEdgeCount.SetValue( RRunStatus.m_lResultDataIndex, l_lCount )== S_OK ); 
+		l_bOk = l_bOk && ( S_OK == m_svEdgeCount.SetValue( RRunStatus.m_lResultDataIndex, l_lCount ) );
 	}
 
 	if( ! l_bOk )
@@ -123,37 +121,11 @@ BOOL SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 	return l_bOk;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnValidate
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :20.08.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVLinearEdgeCountingLineAnalyzerClass::OnValidate()
 {
 	BOOL retVal = SVLinearAnalyzerClass::OnValidate();
 		
-	retVal = retVal && GetEdgeA() != NULL;
+	retVal = retVal && nullptr != GetEdgeA();
 
 	if( !retVal )
 		SetInvalid();
@@ -167,9 +139,9 @@ HRESULT SVLinearEdgeCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtent
 
 	HRESULT l_hrOk = GetImageExtent( l_svAnalyzerExtents );
 
-	if( l_hrOk == S_OK && GetEdgeA() != NULL )
+	if( S_OK == l_hrOk && nullptr != GetEdgeA() )
 	{
-		if( GetEdgeA()->GetEdgesOverlay( p_MultiLine ) == S_OK )
+		if( S_OK == GetEdgeA()->GetEdgesOverlay( p_MultiLine ) )
 		{
 			l_svAnalyzerExtents.TranslateFromOutputSpace( p_MultiLine, p_MultiLine );
 

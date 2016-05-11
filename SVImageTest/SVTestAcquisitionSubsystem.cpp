@@ -24,7 +24,7 @@ SVTestAcquisitionSubsystem::~SVTestAcquisitionSubsystem()
 
 bool SVTestAcquisitionSubsystem::Create(const CString& csDigitizerDLL)
 {
-	bool l_bOk = m_svDigitizers.Open( csDigitizerDLL ) == S_OK;
+	bool l_bOk = S_OK == m_svDigitizers.Open( csDigitizerDLL );
 
 	return l_bOk;
 }

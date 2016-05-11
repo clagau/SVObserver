@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 // Dialogfeld SVStartWindowClass 
 
 
-SVStartWindowClass::SVStartWindowClass(CWnd* pParent /*=NULL*/)
+SVStartWindowClass::SVStartWindowClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVStartWindowClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVStartWindowClass)

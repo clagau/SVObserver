@@ -48,8 +48,8 @@ void EQAdjustSize::Init()
 	enabled.SetDefaultValue( FALSE, TRUE );
 	m_bUseOverlays = false;
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = m_SubType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = m_SubType;
 	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
 	// Set Embedded defaults
 	static const double DefaultValue = 100.0;
@@ -62,12 +62,12 @@ void EQAdjustSize::Init()
 
 BOOL EQAdjustSize::CreateObject(SVObjectLevelCreateStruct *PCreateStruct)
 {
-	isCreated = SVEquationClass::CreateObject(PCreateStruct);
+	m_isCreated = SVEquationClass::CreateObject(PCreateStruct);
 
 	// Set / Reset Printable Flag
 	m_result.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	return isCreated;
+	return m_isCreated;
 }
 
 

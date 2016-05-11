@@ -25,8 +25,8 @@ typedef std::vector<StrStrPair> StringPairVect;
 class SVObserverApp;
 class SVDataManager;
 
-extern SVObserverApp			TheSVObserverApp;
-extern SVDataManager			TheSVDataManager;
+extern SVObserverApp TheSVObserverApp;
+extern SVDataManager TheSVDataManager;
 
 enum SV_THRESHOLD_SELECTION_ENUM
 {
@@ -50,8 +50,6 @@ enum SV_EDGECONTROL_POLARISATION_ENUM
 // Add String for SVEnumerateValueObjectClass
 const LPCSTR g_strPolarisationEnums = 
 				_T( "Any=3,Negative=2,Positive=1" );
-
-
 
 enum SV_EDGECONTROL_EDGESELECT_ENUM
 {
@@ -80,8 +78,6 @@ enum SV_EDGECONTROL_POSITION_ENUM
 const LPCSTR g_strPositionEnums = 
 				_T( "Start=128,Center=64,End=32,Offset=16" );
 
-
-
 enum SV_EDGECONTROL_DIRECTION_ENUM
 {
 	SV_UNDEFINED_DIRECTION		= 0x0000,	// 0000 0000 0000 0000
@@ -92,7 +88,6 @@ enum SV_EDGECONTROL_DIRECTION_ENUM
 // Add String for SVEnumerateValueObjectClass
 const LPCSTR g_strDirectionEnums = 
 				_T( "Undefined=0,Tail to Head=512,Head to Tail=256" );
-
 
 enum SVGetPathInfo
 {
@@ -108,57 +103,11 @@ enum SVGetPathInfo
 	SVPATHNAME			= 0x8f
 };
 
-//******************************************************************************
-//* DEFINE(S):
-//******************************************************************************
-
-#define SV_PPQ_SUPPORT             // PPQ Support
-#define SV_NO_MIL_ERROR_MESSAGES   // MIL Error Message Support
-
 ////////////////////////////////////////////////////////////////////////////////
 // Global Helpers:
 ////////////////////////////////////////////////////////////////////////////////
 
 #define SV_GET_BIT_NUMBER( X )						( sizeof( X ) * 8 )
-
-// Creates new string using malloc and fills it with the GUID, use free() to deallocate the string memory...
-#define SV_GUID_TO_NEW_STRING( XGUID, XLPTSTR )	\
- 		{ \
-			if( ( XLPTSTR ) = ( LPTSTR ) malloc( sizeof( TCHAR ) * 256 ) )	\
-			{	\
-				_stprintf( ( XLPTSTR ), "{ 0x%x, 0x%x, 0x%x, { 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x } }", \
-				( XGUID ).Data1, ( XGUID ).Data2, ( XGUID ).Data3, \
-				( XGUID ).Data4[0], ( XGUID ).Data4[1], ( XGUID ).Data4[2], ( XGUID ).Data4[3], \
-				( XGUID ).Data4[4], ( XGUID ).Data4[5], ( XGUID ).Data4[6], ( XGUID ).Data4[7] );	\
-			}	\
-		}
-
-// GUID String
-// XLPSZSTRING must be a LPTSTR !!!
-#define SV_GUID_TO_STRING( XGUID, XLPSZSTRING, XLENGTH ) \
-		{	\
-			if( ( XLPSZSTRING ) && ( XLENGTH ) > 0 ) \
-			{ \
-				TCHAR szBuf[ 100 ]; \
-				_stprintf( szBuf, "{%x-%x-%x-%x %x %x %x %x %x %x %x}", \
-						   ( XGUID ).Data1, ( XGUID ).Data2, ( XGUID ).Data3, \
-						   ( XGUID ).Data4[0], ( XGUID ).Data4[1], ( XGUID ).Data4[2], ( XGUID ).Data4[3], \
-						   ( XGUID ).Data4[4], ( XGUID ).Data4[5], ( XGUID ).Data4[6], ( XGUID ).Data4[7] ); \
-				_tcsncpy( XLPSZSTRING, szBuf, min( ( XLENGTH ), 100 ) - 1 ); \
-			} \
-		}
-
-
-// GUID String
-// AFXSTRING must be a CString type !!!
-#define SV_GUID_TO_AFXSTRING( XGUID, XAFXSTRING ) \
-		{	\
-			XAFXSTRING.Format( _T("\"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}\""), \
-							  ( XGUID ).Data1, ( XGUID ).Data2, ( XGUID ).Data3, \
-							  ( XGUID ).Data4[0], ( XGUID ).Data4[1], ( XGUID ).Data4[2], ( XGUID ).Data4[3], \
-							  ( XGUID ).Data4[4], ( XGUID ).Data4[5], ( XGUID ).Data4[6], ( XGUID ).Data4[7] ); \
-		}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // DLL Handling:
@@ -185,10 +134,6 @@ const CString SV_TSTR_DOLLAR                ( _T( "$" ) );
 const CString SV_TSTR_SPACE                 ( _T( " " ) );
 const CString SV_TSTR_NEWLINE               ( _T( "\n" ) );
 const CString SV_TSTR_TAB                   ( _T( "\t" ) );
-
-// May be obsolete...
-// #define SVR_MUNICH
-// #define SVR_HARRISBURG
 
 const long SV_DEFAULT_TOOL_UPPER_TRESH              = 255L;
 const long SV_DEFAULT_TOOL_LOWER_TRESH              = 40L;
@@ -230,7 +175,6 @@ const long SV_DEFAULT_POLARTRANSFORM_END_ANGLE    = 330L;
 // Acquisition Overlapping
 const long SV_DEFAULT_MAX_OVERLAPPING           = 10;
 
-
 const long SV_DEFAULT_CURRENT_RESULT_OUTPUT_TABLE_SIZE   = 4;
 
 #pragma warning(disable:4308)
@@ -251,17 +195,6 @@ const DWORD SV_64BIT_INT                = ( SV_GET_BIT_NUMBER( __int64 ) + SVBuf
 const DWORD SV_SIGNED_64BIT_INT         = ( SV_GET_BIT_NUMBER( __int64 ) + static_cast< DWORD >( SVBufferSigned ) );
 const DWORD SV_FLOAT                    = ( SV_GET_BIT_NUMBER( float )  + static_cast< DWORD >( SVBufferFloat ) );
 const DWORD SV_DOUBLE                   = ( SV_GET_BIT_NUMBER( double ) + static_cast< DWORD >( SVBufferDouble ) );
-
-
-
-const double SV_PI						= 3.141592654;
-
-
-const CString SV_DEFAULT_SIMPLE_ENCRYPT_KEY_STRING			( _T("PixelDepth") );
-
-//******************************************************************************
-//* TYPEDEF(S):
-//******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////
 // IO DLL Function Types
@@ -304,58 +237,26 @@ typedef void ( CALLBACK* SVIODLLVOIDLPVOIDFUNCTION ) ( LPVOID );
 //	SVIOTestOutputs
 typedef void ( CALLBACK* SVIODLLVOIDFUNCTION ) ();
 
-// DLLEXPORT BOOL WINAPI SVIOGetResultOutputState( BYTE* PStateBuffer, DWORD* PDwNumber );
 typedef BOOL ( CALLBACK* SVDLL_BOOL_BYTEPTR_DWORDPTR_FUNCTION ) ( BYTE*, DWORD* );
-
-
-//******************************************************************************
-//* CONSTANT VARIABLE(S):
-//******************************************************************************
-
-//******************************************************************************
-//* VARIABLE(S):
-//******************************************************************************
-
-//******************************************************************************
-//* EXTERN(S):
-//******************************************************************************
-
-//******************************************************************************
-//* FUNCTION DECLARATION(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : FormatLongerString2
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.11.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void FormatLongerString2( CString& RString, UINT IDS, LPCTSTR LPSZFirst, LPCTSTR LPSZSecond );
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVSearchForMDIChildWnd
 // -----------------------------------------------------------------------------
 // .Description : 
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :25.05.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 CMDIChildWnd* SVSearchForMDIChildWnd( CWnd* PStartWnd );
 
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : SVCalcLinePixelNumber
+// -----------------------------------------------------------------------------
+// .Description : 
+////////////////////////////////////////////////////////////////////////////////
+long SVCalcLinePixelNumber( long Width, long Height );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetDataTypeMin
 // -----------------------------------------------------------------------------
 // .Description : 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.06.1998 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 double SVGetDataTypeMin( DWORD DataType );
 
@@ -364,177 +265,54 @@ double SVGetDataTypeMin( DWORD DataType );
 // -----------------------------------------------------------------------------
 // .Description : 
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.06.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 double SVGetDataTypeMax( DWORD DataType );
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetDataTypeRange
 // -----------------------------------------------------------------------------
 // .Description : 
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :30.06.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 double SVGetDataTypeRange( DWORD DataType );
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVSimpleEncrypt
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :14.07.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVSimpleEncrypt( LPTSTR LPCHCode, int CodeLength, LPCTSTR LPCHKey );
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVCheckPathDir
 // -----------------------------------------------------------------------------
 // .Description : 
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :13.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVCheckPathDir( LPCTSTR TStrPathName, BOOL BCreateIfNotExists );
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVDeleteFiles
 // -----------------------------------------------------------------------------
 // .Description : 
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :13.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVDeleteFiles( LPCTSTR TStrPathName, BOOL BIncludeSubDirectories );
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVGetAbsoluteFilePathName
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :14.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVGetAbsoluteFilePathName( CString& RStrOutputPath, LPCTSTR TStrAbsoluteInputPath, LPCTSTR TStrRelativeFileInputPath );
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVGetRelativeFilePathName
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :14.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVGetRelativeFilePathName( CString& RStrOutputPath, LPCTSTR TStrAbsoluteInputPath, LPCTSTR TStrAbsoluteFileInputPath );
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVFileExists
 // -----------------------------------------------------------------------------
 // .Description : 
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :14.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVFileExists( LPCTSTR TStrFilePath );
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetPathInformation
 // -----------------------------------------------------------------------------
 // .Description : Uses SVGetPathInfo enumeration...
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :17.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVGetPathInformation( CString& RStrOutput, LPCTSTR TStrFileInputPath, DWORD DwMask );
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVWaitXTimesForSingleObject
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVWaitXTimesForSingleObject( HANDLE HWaitObject, DWORD DwWaitTime, int XTimes );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVSelectListCtrlItem
-// -----------------------------------------------------------------------------
-// .Description : Select an item of a List Ctrl.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :07.11.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVSelectListCtrlItem( CListCtrl& RListControl, int Item );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetVersionString
 // -----------------------------------------------------------------------------
 // .Description : Use this function to convert an SVObserver Version to a string.
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :09.03.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVCompareNoCase
-// -----------------------------------------------------------------------------
-// .Description : Compares two T-Strings without regarding the case.
-//				: If a T-String pointer is NULL, he is lesser. 
-//				: If both T-String pointer are NULL, 0 is returned!
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.07.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-int SVCompareNoCase( LPCTSTR TStrString1, LPCTSTR TStrString2 );
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVEscapeDoubleQuotes
 // -----------------------------------------------------------------------------
 // .Description : Places escape character before double quotes in a CString
-//				: 
-//				: 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :10.09.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 bool SVAddEscapeSpecialCharacters( CString& RString, bool bConvertCtrl );
 
@@ -542,25 +320,12 @@ bool SVAddEscapeSpecialCharacters( CString& RString, bool bConvertCtrl );
 // .Title       : SVRemoveEscapedDoubleQuotes
 // -----------------------------------------------------------------------------
 // .Description : Removes any escape characters before double quotes in a CString
-//				: 
-//				: 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :10.09.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 bool SVRemoveEscapedSpecialCharacters( CString& RString, bool bConvertCtrl );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConvertToHexString
 // -----------------------------------------------------------------------------
 // .Description : Convert hex binary data to a hex Dump String
-//				: 
-//				: 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.09.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 void SVConvertToHexString( DWORD len, LPBYTE buff, CString& hexString );
 
@@ -568,30 +333,16 @@ void SVConvertToHexString( DWORD len, LPBYTE buff, CString& hexString );
 // .Title       : SVConvertFromHexString
 // -----------------------------------------------------------------------------
 // .Description : Convert hex Dump String to hex binary data
-//				: 
-//				: 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.09.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, CString& hexString );
-
 
 CMenu* SVFindMenuByCommand( CMenu *pMenu, int nID, BOOL bIncludeSubMenues, int& rMenuPos );
 CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues, int& rMenuPos );
 CMenu* SVFindSubMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues );
 
-BOOL SVCartesianToPolar( const POINT& RPoint, double& RRadius, double& RAngle );
-BOOL SVPolarToCartesian( double Radius, double Angle, POINT& RPoint );
-POINT SVPolarToCartesian( double Radius, double Angle );
-
 //Methods that were once in SVCommRC
 LPCTSTR SVRCGetSVCPathName();
 void 	SVRCSetSVCPathName( LPCTSTR TStrPathName );
-void	SVSetupLoadSECCommand( HWND HWindow, UINT Msg, WPARAM WParam, LPARAM LParam );
-
-
 
 //************************************
 // Method:    EnableParentMenu

@@ -48,17 +48,17 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void
 		Result = m_thread.Restart();
 	}
 
-	if( Result == S_OK )
+	if( S_OK == Result )
 	{
-		if( ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), ( ULONG_PTR )pData ) == 0 )
+		if( 0 == ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(pData) )  )
 		{
 			Exception.setMessage( SVMSG_QUEUE_USER_APC_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25038_AsyncProcedure );
 
 			Result = m_thread.Restart();
 
-			if( Result == S_OK )
+			if( S_OK == Result )
 			{
-				if( ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), ( ULONG_PTR )pData ) == 0 )
+				if( 0 == ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(pData) )  )
 				{
 					Result = SVMSG_QUEUE_USER_APC_ERROR;
 

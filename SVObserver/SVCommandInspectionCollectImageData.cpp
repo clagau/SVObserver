@@ -98,7 +98,7 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 				::Sleep( 0 );
 
-				if( UpdateBuffer( l_ImageId, l_rCameraInfos, l_ResultImageIndex, l_ResultDataIndex, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) == S_OK )
+				if( S_OK == UpdateBuffer( l_ImageId, l_rCameraInfos, l_ResultImageIndex, l_ResultDataIndex, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) )
 				{
 					::Sleep( 0 );
 
@@ -171,7 +171,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( p_rImageId.ToGUID() ) );
 
-	if( l_pImage != NULL )
+	if( nullptr != l_pImage )
 	{
 		SVDataManagerHandle	l_SourceImageDMIndexHandle;
 
@@ -180,12 +180,12 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 		SVCameraImageTemplate* l_psvMainImage = dynamic_cast< SVCameraImageTemplate* >( l_pImage );
 		SVRGBImageClass* l_psvRGBImage = dynamic_cast< SVRGBImageClass* >( l_pImage );
 
-		if( l_psvMainImage == NULL && l_psvRGBImage != NULL )
+		if( nullptr == l_psvMainImage && nullptr != l_psvRGBImage )
 		{
 			l_psvMainImage = dynamic_cast< SVCameraImageTemplate* >( l_pImage->GetParentImage() );
 		}
 
-		if( l_psvMainImage != NULL )
+		if( nullptr != l_psvMainImage )
 		{
 			SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::const_iterator l_svIter;
 
@@ -233,9 +233,9 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 			l_Status = E_INVALIDARG;
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
-			if( l_pImage->GetInspection() != NULL )
+			if( nullptr != l_pImage->GetInspection() )
 			{
 				l_pImage->GetInspection()->CollectOverlays( l_pImage, p_rMultiLineArray );
 			}

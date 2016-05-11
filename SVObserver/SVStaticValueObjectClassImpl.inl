@@ -29,12 +29,16 @@ const SVStaticValueObjectClassImpl<T>& SVStaticValueObjectClassImpl<T>::operator
 	{
 		if ( SetObjectDepth( 1 ) )
 		{
-			if ( CreateBuckets() == S_OK )
+			if ( S_OK == CreateBuckets() )
 			{
-				if ( rhs.ArraySize() == 1 )
+				if ( 1 == rhs.ArraySize() )
+				{
 					m_ScalarBuckets = rhs.m_ScalarBuckets;
+				}
 				else
+				{
 					Buckets() = Buckets(rhs);
+				}
 
 				DefaultValue() = DefaultValue(rhs);
 
@@ -102,9 +106,9 @@ HRESULT SVStaticValueObjectClassImpl<T>::CreateBuckets()
 {
 	HRESULT l_hrOk = S_OK;
 
-	objectDepth = 1;
+	m_objectDepth = 1;
 
-	if ( m_iNumberOfBuckets != 1 && objectDepth > 0)
+	if ( m_iNumberOfBuckets != 1 && m_objectDepth > 0)
 	{
 		if ( ArraySize() == 1 )
 		{
@@ -172,11 +176,11 @@ __forceinline HRESULT SVStaticValueObjectClassImpl<T>::SetValueAt( int iBucket, 
 	// Static Value Object has only 1 bucket.. Always access bucket 0
 	HRESULT hr = m_iNumberOfBuckets == 1 ? S_OK : SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE;
 
-	if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		m_iLastSetIndex  = 0;
 
-		if ( ArraySize() == 1 )
+		if ( 1 == ArraySize() )
 		{
 			m_ScalarBuckets[0] = value;
 		}
@@ -195,29 +199,32 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetValueAt( int iBucket, int iIndex, T&
 	HRESULT hr = m_iNumberOfBuckets == 1 ? S_OK : SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE;
 
 	// is the index valid?
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
-		if ( isObjectValid == FALSE )	// optimization? or not? Is reading faster than writing to cache/memory?
-			isObjectValid = TRUE;
-		if ( ArraySize() == 1 )
+		if ( false == m_isObjectValid )	// optimization? or not? Is reading faster than writing to cache/memory?
+		{
+			m_isObjectValid = true;
+		}
+		if ( 1 == ArraySize() )
 		{
 			rValue = m_ScalarBuckets[0];
 			return hr;
 		}
 		else
+		{
 			rValue = Buckets()[0][iIndex];
+		}
 	}
-	else if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+	else if ( SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		rValue = DefaultValue();
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
 	else	// BAD INDEX
 	{
 		rValue = DefaultValue();
-		isObjectValid = FALSE;
+		m_isObjectValid = false;
 	}
-
 	return hr;
 }
 
@@ -300,7 +307,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetObjectValue( const SVString& p_rValu
 
 				hr = l_SafeArray.GetElement( 0, l_Value );
 
-				if( hr == S_OK )
+				if( S_OK == hr )
 				{
 					ScalarBucket(0) = l_Value;
 
@@ -315,7 +322,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetObjectValue( const SVString& p_rValu
 				{
 					_variant_t l_Value;
 
-					if( l_SafeArray.GetElement( i, l_Value ) == S_OK )
+					if( S_OK == l_SafeArray.GetElement( i, l_Value ) )
 					{
 						Array(0)[ i ] = l_Value;
 					}
@@ -350,9 +357,6 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetObjectValue( const SVString& p_rValu
 template <typename T>
 HRESULT SVStaticValueObjectClassImpl<T>::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
-//	ASSERT( !m_sLegacyScriptDefaultName.IsEmpty() );
-//	ASSERT( !m_sLegacyScriptArrayName.IsEmpty() );
-
 	HRESULT hr = S_FALSE;
 	
 	SvCl::SVObjectArrayClassTemplate<T> svArray;	// for default values
@@ -399,13 +403,11 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetObjectValue(SVObjectAttributeClass* 
 		if ( svArray.GetSize() > 0 )
 			DefaultValue() = svArray[ svArray.GetSize()-1 ];
 	}
-	//else if ( bOk = pDataObject->GetAttributeData("pBArray", Buckets() ) )
 	else if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, m_sLegacyScriptArrayName, l_Buckets, DefaultValue() ) )
 	{
 		if ( ArraySize() == 1 )
 		{
 			ScalarBucket(0)=l_Buckets[0][0];
-			//ScalarBucket(1)=l_Buckets[1][0];
 		}
 		else
 		{
@@ -480,14 +482,14 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValuesAsVariant( int iBucket, V
 
 				HRESULT l_TempStatus = l_SafeArray.Add( l_Variant );
 
-				if( hrOk == S_OK )
+				if( S_OK == hrOk )
 				{
 					hrOk = l_TempStatus;
 				}
 			}
 		}
 
-		if( hrOk == S_OK )
+		if( S_OK == hrOk )
 		{
 			l_Variant = l_SafeArray;
 		}
@@ -548,7 +550,6 @@ inline void SVStaticValueObjectClassImpl<T>::swap( SVStaticValueObjectClassImpl<
 	if ( this != &rhs )
 	{
 		std::swap( m_DefaultValue, rhs.m_DefaultValue );
-		//swap( m_ScalarBuckets, rhs.m_ScalarBuckets );// not sure if VC6 implements redirection to vector member function
 		m_ScalarBuckets.swap( rhs.m_ScalarBuckets );
 
 		SVValueObjectClass::swap( rhs );

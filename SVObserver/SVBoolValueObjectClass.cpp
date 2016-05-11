@@ -204,7 +204,7 @@ HRESULT SVBoolValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rv
 	_variant_t l_Temp;
 	l_Temp.Attach( rvtValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_bValue );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		l_Temp = static_cast<VARIANT_BOOL>(l_bValue) ;
 	}
@@ -231,8 +231,8 @@ HRESULT SVBoolValueObjectClass::GetNormalizedValueImpl( const CString& strValue,
 
 void SVBoolValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVBoolValueObjectType;
-	DefaultValue() = FALSE;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVBoolValueObjectType;
+	DefaultValue() = false;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{
 		m_sLegacyScriptDefaultName = "bDefault";

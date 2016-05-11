@@ -28,7 +28,6 @@ public:
 	virtual ~SVDeviceParam();
 	static SVDeviceParam* Create(SVDeviceParamEnum eType);
 	static CString GetParameterName( SVDeviceParamEnum e );
-//	virtual SVDeviceParam* Clone();	// need covariant return types (see Q240862)
 	SVDeviceParam* Clone() const {return static_cast< SVDeviceParam* >( CloneImpl() );}
 	virtual SVClonable* CloneImpl() const = 0;
 

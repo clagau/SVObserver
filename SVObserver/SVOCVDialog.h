@@ -9,29 +9,24 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:02:48  $
 //******************************************************************************
 
-#if !defined(SVOCVDIALOGCLASS_H)
-#define SVOCVDIALOGCLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "SVOCVMatchDlg.h"
 #include "SVOCVGeneralDlg.h"
+#pragma endregion Includes
 
 class SVToolClass;
 class SVIPDoc;
 class SVOCVAnalyzeResultClass;
 
-/////////////////////////////////////////////////////////////////////////////
-// SVOCVDialogClass dialog
-
 class SVOCVDialogClass : public CPropertySheet
 {
-// Construction
 public:
-	SVOCVDialogClass(CWnd* pParent = NULL);   // standard constructor
+	SVOCVDialogClass(SVIPDoc* pDoc, SVOCVAnalyzeResultClass* pResult, CWnd* pParent = nullptr);   // standard constructor
     virtual ~SVOCVDialogClass();
+
+	SVOCVAnalyzeResultClass* GetAnalyzerResult() const;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -42,21 +37,17 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
-public:	
-	SVToolClass				*pTool;
-	SVIPDoc					*pDocument;
-	SVOCVAnalyzeResultClass	*pOCVAnalyzerResult;
+private:	
+	SVIPDoc* m_pDocument;
+	SVOCVAnalyzeResultClass* m_pOCVAnalyzerResult;
 
-	SVOCVGeneralDlg			m_GeneralParamsDlg;
-	SVOCVMatchDlg			m_MatchStringParamsDlg;
+	SVOCVGeneralDlg	m_GeneralParamsDlg;
+	SVOCVMatchDlg	m_MatchStringParamsDlg;
 
 private:
-
 	void AddPageDialogs();
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(SVOCVDialogClass)
 	//}}AFX_MSG
@@ -68,6 +59,4 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVOCVDIALOGCLASS_H)
 

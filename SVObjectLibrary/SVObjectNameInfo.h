@@ -31,7 +31,6 @@ struct SVObjectNameInfo
 	void clear();
 
 	HRESULT ParseObjectName( const SVString& p_rObjectName );
-	HRESULT UpdateObjectNameOnly( const SVString& p_rObjectName );
 
 	SVString GetObjectName( size_t p_StartIndex = 0 ) const;
 	SVString GetObjectArrayName( size_t p_StartIndex = 0 ) const;
@@ -39,9 +38,6 @@ struct SVObjectNameInfo
 	void RemoveTopName();
 	void RemoveBottomName();
 	long GetIndexValue() const;
-
-
-
 	
 	//************************************
 	//! Set function for m_Index
@@ -61,7 +57,6 @@ struct SVObjectNameInfo
 	//! \returns bool
 	//************************************
 	bool IsIndexPresent() const  {return m_IndexPresent; } ;
-	
 	
 	//************************************
 	//! Set function for m_IndexPresent
@@ -85,16 +80,12 @@ struct SVObjectNameInfo
 	bool IsDefaultValuePresent() const  {return m_DefaultValuePresent; } ;
 	void SetIsDefaultValuePresent(bool ispresent) {m_DefaultValuePresent = ispresent;}
 	
-	
 	const SVString&      GetDefaultValue() const {return m_DefaultValue;} 
 	void SetDefaultValue(const SVString& DefaultValue ) {m_DefaultValue = DefaultValue;}
 
 	SVNameDeque m_NameArray;
 
-
-
 private:
-	
 	bool m_IndexPresent; /// true for arrays 
 	SVString m_Index; /// one based index or empty for non array names or whole arrays 
 

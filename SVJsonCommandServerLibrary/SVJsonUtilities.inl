@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 13:14:10  $
 //******************************************************************************
 
-#ifndef SVJSONUTILITIES_INL
-#define SVJSONUTILITIES_INL
+#pragma once
 
+#pragma region Includes
 #include "SVJsonUtilities.h"
+#pragma region Includes
 
 template< typename SVStringType >
 HRESULT SVJsonUtilities::ConvertJsonArrayToStringSet( const Json::Value& p_rJsonArray, std::set< SVStringType >& p_rStrings )
@@ -27,7 +28,7 @@ HRESULT SVJsonUtilities::ConvertJsonArrayToStringSet( const Json::Value& p_rJson
 			{
 				p_rStrings.insert( p_rJsonArray[ i ].asCString() );
 			}
-			else if( l_Status == S_OK )
+			else if( S_OK == l_Status )
 			{
 				l_Status = E_INVALIDARG;
 			}
@@ -38,13 +39,10 @@ HRESULT SVJsonUtilities::ConvertJsonArrayToStringSet( const Json::Value& p_rJson
 		l_Status = E_INVALIDARG;
 	}
 
-	if( l_Status != S_OK )
+	if( S_OK != l_Status )
 	{
 		p_rStrings.clear();
 	}
 
 	return l_Status;
 }
-
-#endif
-

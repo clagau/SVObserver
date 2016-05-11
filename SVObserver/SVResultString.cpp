@@ -9,41 +9,19 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:57:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVResultString.h"
+#pragma endregion Includes
 
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVStringResultClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVStringResultClass, SVStringResultClassGuid );
-
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 SVStringResultClass::SVStringResultClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 				  :SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVResultStringObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultStringObjectType;
 
 	// Identify our input type needs
 	m_SVInputStringObjectInfo.SetInputObjectType( SVStringValueObjectType );
@@ -67,16 +45,16 @@ SVStringResultClass::~SVStringResultClass()
 
 BOOL SVStringResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVResultClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = getInputString() != NULL;
+		bOk = nullptr != getInputString();
 	}
 
 	m_szValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -91,7 +69,7 @@ SVStringValueObjectClass* SVStringResultClass::getInputString()
 	if( m_SVInputStringObjectInfo.IsConnected() && m_SVInputStringObjectInfo.GetInputObjectInfo().PObject )
 		return ( SVStringValueObjectClass* ) m_SVInputStringObjectInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 BOOL SVStringResultClass::OnValidate()

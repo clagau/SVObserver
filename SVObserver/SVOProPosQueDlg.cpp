@@ -537,7 +537,7 @@ void CSVOProPosQueDlg::OnDblclkLstPpqList()
 
 BOOL CSVOProPosQueDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
+	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, 0, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 
 	return TRUE;
 }

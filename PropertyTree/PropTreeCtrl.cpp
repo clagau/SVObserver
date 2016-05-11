@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace	// file scope
 {
-	void YieldPaintMessages(HWND hWnd = NULL )
+	void YieldPaintMessages(HWND hWnd = nullptr )
 	{// Let other PAINT messages through
 		
 		MSG msg;
@@ -36,22 +36,13 @@ namespace	// file scope
 	}
 }
 
-/*
-enum
-{
-	PROPTREEITEM_EXPANDCOLUMN		= 16,			// width of the expand column
-	PROPTREEITEM_COLRNG				= 5,			// width of splitter
-	PROPTREEITEM_DEFHEIGHT			= 21,			// default heigt of an item
-};
-//*/
-
 extern HINSTANCE ghInst;
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropTreeCtrl
 
 SVRPropTreeCtrl::SVRPropTreeCtrl() :
-	m_pProp(NULL),
+	m_pProp(nullptr),
 	m_BackBufferSize(0,0),
 	m_bColDrag(FALSE),
 	m_nPrevCol(0)
@@ -61,7 +52,6 @@ SVRPropTreeCtrl::SVRPropTreeCtrl() :
 SVRPropTreeCtrl::~SVRPropTreeCtrl()
 {
 }
-
 
 BEGIN_MESSAGE_MAP(SVRPropTreeCtrl, CWnd)
 	//{{AFX_MSG_MAP(SVRPropTreeCtrl)
@@ -93,7 +83,7 @@ BOOL SVRPropTreeCtrl::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, 
 {
 	CWnd* pWnd = this;
 
-	LPCTSTR pszCreateClass = AfxRegisterWndClass(CS_HREDRAW|CS_VREDRAW|CS_DBLCLKS, ::LoadCursor(NULL, IDC_ARROW));
+	LPCTSTR pszCreateClass = AfxRegisterWndClass(CS_HREDRAW|CS_VREDRAW|CS_DBLCLKS, ::LoadCursor(nullptr, IDC_ARROW));
 
 	return pWnd->Create(pszCreateClass, _T(""), dwStyle, rect, pParentWnd, nID);
 }
@@ -116,23 +106,21 @@ void SVRPropTreeCtrl::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-
 void SVRPropTreeCtrl::RecreateBackBuffer(int cx, int cy)
 {
 	if (m_BackBufferSize.cx<cx || m_BackBufferSize.cy<cy)
 	{
 		m_BackBufferSize = CSize(cx, cy);
 
-		CWindowDC dc(NULL);
+		CWindowDC dc(nullptr);
 
 		int nPlanes = dc.GetDeviceCaps(PLANES);
 		int nBitCount = dc.GetDeviceCaps(BITSPIXEL);
 
 		m_BackBuffer.DeleteObject();
-		m_BackBuffer.CreateBitmap(cx, cy, nPlanes, nBitCount, NULL);
+		m_BackBuffer.CreateBitmap(cx, cy, nPlanes, nBitCount, nullptr);
 	}
 }
-
 
 void SVRPropTreeCtrl::UpdateResize()
 {
@@ -140,7 +128,7 @@ void SVRPropTreeCtrl::UpdateResize()
 	LONG nHeight;
 	CRect rc;
 
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	GetClientRect(rc);
 	nHeight = rc.Height() + 1;
@@ -187,7 +175,7 @@ void SVRPropTreeCtrl::OnPaint()
 	CBitmap* pOldBitmap;
 	HBRUSH		l_hOldBrush;
 
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	m_pProp->ClearVisibleList();
 
@@ -216,7 +204,7 @@ void SVRPropTreeCtrl::OnPaint()
 	SVRPropertyItem* pItem;
 	LONG nTotal = 0;
 
-	ASSERT(m_pProp->GetRootItem()!=NULL);
+	ASSERT(nullptr != m_pProp->GetRootItem());
 
 	rc.DeflateRect(2,2);
 
@@ -232,7 +220,7 @@ void SVRPropTreeCtrl::OnPaint()
 	}
 
 	// remove clip region
-	SelectClipRgn(memdc.m_hDC, NULL);
+	SelectClipRgn(memdc.m_hDC, nullptr);
 	DeleteObject(hRgn);
 
 	// copy back buffer to the display
@@ -252,7 +240,7 @@ BOOL SVRPropTreeCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 	{
 		CPoint pt;
 
-		ASSERT(m_pProp!=NULL);
+		ASSERT(nullptr != m_pProp);
 
 		GetCursorPos(&pt);
 		ScreenToClient(&pt);
@@ -276,7 +264,7 @@ BOOL SVRPropTreeCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point) 
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	if (m_pProp->IsDisableInput())
 		return;
@@ -313,7 +301,7 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 			break;
 
 		case HTCHECKBOX:
-			if ((pItem = m_pProp->FindItem(point))!=NULL)
+			if (nullptr != (pItem = m_pProp->FindItem(point)))
 			{
 				pItem->Check(!pItem->IsChecked());
 				m_pProp->SendNotify(PTN_CHECKCLICK, pItem);
@@ -322,7 +310,7 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 			break;
 
 		case HTEXPAND:
-			if ((pItem = m_pProp->FindItem(point))!=NULL)
+			if (nullptr != (pItem = m_pProp->FindItem(point)))
 			{
 				if ( pItem->CanShrink() || !pItem->IsExpanded() )
 				{
@@ -340,13 +328,13 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 			break;
 
 		default:
-			if ((pItem = m_pProp->FindItem(point))!=NULL)
+			if (nullptr != (pItem = m_pProp->FindItem(point)))
 			{
 				if ( pItem->CanHighlight() )
 				{
 					SVRPropertyItem* pOldFocus = m_pProp->GetFocusedItem();
 
-					m_pProp->SelectItems(NULL, FALSE);
+					m_pProp->SelectItems(nullptr, FALSE);
 					m_pProp->SetFocusedItem(pItem);
 
 					YieldPaintMessages();
@@ -367,8 +355,8 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 			}
 			else
 			{
-				m_pProp->SelectItems(NULL, FALSE);
-				m_pProp->SetFocusedItem(NULL);
+				m_pProp->SelectItems(nullptr, FALSE);
+				m_pProp->SetFocusedItem(nullptr);
 				m_pProp->SendNotify(PTN_SELCHANGE);
 				Invalidate();
 			}
@@ -400,14 +388,14 @@ void SVRPropTreeCtrl::OnLButtonUp(UINT, CPoint point)
 
 void SVRPropTreeCtrl::OnLButtonDblClk(UINT, CPoint point)
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	m_pProp->SendNotify(NM_DBLCLK);
 
 	SVRPropertyItem* pItem;
 	SVRPropertyItem* pOldFocus;
 
-	if ((pItem = m_pProp->FindItem(point))!=NULL && pItem->GetChild())
+	if (nullptr != (pItem = m_pProp->FindItem(point)) && pItem->GetChild())
 	{
 		switch (m_pProp->HitTest(point))
 		{
@@ -428,7 +416,7 @@ void SVRPropTreeCtrl::OnLButtonDblClk(UINT, CPoint point)
 
 			default:
 				pOldFocus = m_pProp->GetFocusedItem();
-				m_pProp->SelectItems(NULL, FALSE);
+				m_pProp->SelectItems(nullptr, FALSE);
 				m_pProp->SetFocusedItem(pItem);
 				pItem->Select();
 
@@ -489,18 +477,16 @@ BOOL SVRPropTreeCtrl::OnMouseWheel(UINT, short zDelta, CPoint)
 		return TRUE;
 
 	SetFocus();
-	OnVScroll(zDelta < 0 ? SB_LINEDOWN : SB_LINEUP, 0, NULL);
+	OnVScroll(zDelta < 0 ? SB_LINEDOWN : SB_LINEUP, 0, nullptr);
 
 	return TRUE;
 }
 
-
 void SVRPropTreeCtrl::OnKeyDown(UINT nChar, UINT, UINT) 
 {
-
 	SVRPropertyItem* pItem;
 
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	if (m_pProp->IsDisableInput() || !m_pProp->IsWindowEnabled())
 		return;
@@ -508,7 +494,7 @@ void SVRPropTreeCtrl::OnKeyDown(UINT nChar, UINT, UINT)
 	switch (nChar)
 	{
 		case VK_RETURN:
-			if ((pItem = m_pProp->GetFocusedItem())!=NULL && !pItem->IsRootLevel() && !pItem->IsReadOnly())
+			if (nullptr != (pItem = m_pProp->GetFocusedItem()) && !pItem->IsRootLevel() && !pItem->IsReadOnly())
 			{
 				pItem->Activate();
 			}
@@ -525,7 +511,7 @@ void SVRPropTreeCtrl::OnKeyDown(UINT nChar, UINT, UINT)
 			break;
 
 		case VK_LEFT:
-			if ((pItem = m_pProp->GetFocusedItem())!=NULL)
+			if (nullptr != (pItem = m_pProp->GetFocusedItem()))
 			{
 				if (!m_pProp->SendNotify(PTN_ITEMEXPANDING, pItem))
 				{
@@ -552,7 +538,7 @@ void SVRPropTreeCtrl::OnKeyDown(UINT nChar, UINT, UINT)
 			break;
 
 		case VK_RIGHT:
-			if ((pItem = m_pProp->GetFocusedItem())!=NULL)
+			if (nullptr != (pItem = m_pProp->GetFocusedItem()))
 			{
 				if (!m_pProp->SendNotify(PTN_ITEMEXPANDING, pItem))
 				{
@@ -639,11 +625,11 @@ void SVRPropTreeCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*)
 
 void SVRPropTreeCtrl::CheckVisibleFocus()
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	SVRPropertyItem* pItem;
 	
-	if ((pItem = m_pProp->GetFocusedItem())==NULL)
+	if (nullptr == (pItem = m_pProp->GetFocusedItem()))
 		return;
 
 	if (!m_pProp->IsItemVisible(pItem))
@@ -651,8 +637,8 @@ void SVRPropTreeCtrl::CheckVisibleFocus()
 		if (m_pProp->IsSingleSelection())
 			pItem->Select(FALSE);
 
-		m_pProp->SetFocusedItem(NULL);
-		m_pProp->SendNotify(PTN_SELCHANGE, NULL);
+		m_pProp->SetFocusedItem(nullptr);
+		m_pProp->SendNotify(PTN_SELCHANGE, nullptr);
 
 		Invalidate();
 	}

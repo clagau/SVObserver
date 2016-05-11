@@ -31,25 +31,17 @@ SVMatroxImageBuffer::~SVMatroxImageBuffer()
 {
 	#ifdef _DEBUG
 		assert( m_StartIdentifier == m_Identifier );
-
-		/*
-		SVString l_Temp;
-
-		l_Temp.Format( "EraseIdentifier: %ld-%s\n", m_Identifier, m_CreatorName.c_str() );
-
-		::OutputDebugString( l_Temp.c_str() );
-		*/
 	#endif
 
-	if( m_Identifier != 0 )
+	if( 0 != m_Identifier )
 	{
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-		if( SVMatroxResourceMonitor::GetAutoLock( l_AutoLock ) == SVMEE_STATUS_OK )
+		if( SVMEE_STATUS_OK == SVMatroxResourceMonitor::GetAutoLock( l_AutoLock ) )
 		{
-			MIL_ID l_SystemID = MbufInquire( m_Identifier, M_OWNER_SYSTEM, NULL );
+			MIL_ID l_SystemID = MbufInquire( m_Identifier, M_OWNER_SYSTEM, nullptr );
 
-			if( l_SystemID != M_NULL && SVMatroxApplicationInterface::GetLastStatus() == S_OK )
+			if( M_NULL != l_SystemID && S_OK == SVMatroxApplicationInterface::GetLastStatus() )
 			{
 				SVMatroxResourceMonitor::EraseIdentifier( SVBufferID, m_Identifier );
 			}

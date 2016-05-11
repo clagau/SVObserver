@@ -15,6 +15,7 @@ namespace Seidenader {	namespace SVOGui	{
 	class ISVPropertyPageDialog
 	{
 	public:
+		virtual ~ISVPropertyPageDialog() {}
 		virtual bool QueryAllowExit() = 0;
 	};
 }}  //namespace Seidenader::SVOGui

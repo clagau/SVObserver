@@ -245,9 +245,9 @@ HRESULT SVStringValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& 
 	_variant_t l_Temp;
 	l_Temp.Attach( rvtValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, strVal );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
-		l_Temp = strVal ;
+		l_Temp = strVal;
 	}
 	else
 	{
@@ -260,12 +260,10 @@ HRESULT SVStringValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& 
 
 void SVStringValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVStringValueObjectType;
-	//StrDefault = _T("");
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVStringValueObjectType;
 	
 	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_CH_VALUE | SV_DD_VALUE;
 	m_strTypeName = "Text";
 
 	InitializeBuckets();
 }
-

@@ -14,7 +14,7 @@
 #pragma region Constructor
 SVArchiveRecordsArray::SVArchiveRecordsArray()
 {
-	m_pArchiveTool = NULL;
+	m_pArchiveTool = nullptr;
 }
 
 SVArchiveRecordsArray::~SVArchiveRecordsArray()
@@ -62,7 +62,7 @@ void SVArchiveRecordsArray::ClearArray()
 HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, SVStringValueObjectClass& p_svoObjects )	// use array capability of string vo
 {
 	HRESULT hr = S_OK;
-	ASSERT( m_pArchiveTool != NULL );
+	ASSERT( nullptr != m_pArchiveTool );
 	ClearArray();
 	SVInspectionProcess* pInspection = m_pArchiveTool->GetInspection();
 	ASSERT( pInspection );
@@ -100,7 +100,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 				ASSERT(FALSE);
 			}
 
-			if ( ref.Object() == NULL )
+			if ( nullptr == ref.Object() )
 			{
 				TRACE( _T( "SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n" ), m_pArchiveTool->GetCompleteObjectName(), sName );
 			}
@@ -239,7 +239,7 @@ void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pTool )
 
 BOOL SVArchiveRecordsArray::WriteArchiveImageFiles( )
 {
-	ASSERT( m_pArchiveTool != NULL );
+	ASSERT( nullptr != m_pArchiveTool );
 	BOOL bOk = TRUE;
 	HRESULT	hr = 0;
 	
@@ -248,7 +248,7 @@ BOOL SVArchiveRecordsArray::WriteArchiveImageFiles( )
 	for ( int i = 0; bOk && i < nCount; i++ )
 	{
 		SVArchiveRecord* pImageRecord = m_vecRecords.at(i);
-		bOk = bOk && (pImageRecord->WriteImage( ) == S_OK);
+		bOk = bOk && (S_OK == pImageRecord->WriteImage());
 	}// end for ( int i = 0; bOk && i < nCount; i++ )
 	
 	return bOk;
@@ -272,7 +272,7 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 		SVArchiveRecord* pResultRecord = *iter;
 		pResultRecord->DisconnectInputObject();
 		
-		SVValueObjectClass* pValueObject = NULL;
+		SVValueObjectClass* pValueObject = nullptr;
 
 		GUID guid = pResultRecord->m_svObjectReference.Guid();
 
@@ -301,7 +301,7 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 
 		if ( !bRecordOK )
 		{
-			pResultRecord->m_svObjectReference = NULL;
+			pResultRecord->m_svObjectReference = nullptr;
 			iter = m_vecRecords.erase(iter);
 		}
 	}
@@ -336,7 +336,7 @@ CString SVArchiveRecordsArray::BuildResultsArchiveString()
 			CString csTemp;
 
 			HRESULT hr = voref.GetValue( csTemp );
-			if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				if ( bFirst )
 				{
@@ -379,8 +379,10 @@ HRESULT SVArchiveRecordsArray::AllocateBuffers( long lBufferSize )
 	{
 		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
 		HRESULT hrRecord = pResultRecord->AllocateBuffers( lBufferSize );
-		if ( hr == S_OK )
+		if ( S_OK == hr )
+		{
 			hr = hrRecord;
+		}
 	}
 	return hr;
 }
@@ -393,12 +395,13 @@ HRESULT SVArchiveRecordsArray::WriteImageQueue()
 	{
 		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
 		HRESULT hrRecord = pResultRecord->WriteImageQueue();
-		if ( hr == S_OK )
+		if ( S_OK == hr )
+		{
 			hr = hrRecord;
+		}
 	}
 	return hr;
 }
-
 
 int SVArchiveRecordsArray::GetSize()
 {

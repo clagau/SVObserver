@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
+#pragma endregion Includes
 
 enum SVLutTransformOperationEnum	// for legacy conversion
 {
@@ -19,7 +21,6 @@ enum SVLutTransformOperationEnum	// for legacy conversion
 	LutTransformTypeInversion = 1,
 	LutTransformTypeSign = 2,
 	LutTransformTypeClip = 3,
-	//LutTransformTypeFormula = 4,
 	LutTransformTypeFreeform = 5,
 	LutTransformTypeTwoKnee = 6,
 
@@ -38,7 +39,7 @@ public:
 		SVLutTransformOperationEnum eType;
 		SVLutTransformOperation* pType;
 		CString sType;
-		SVLutTransformTypeInfo() {eType = LutTransformTypeUnknown; pType = NULL;}
+		SVLutTransformTypeInfo() {eType = LutTransformTypeUnknown; pType = nullptr;}
 		SVLutTransformTypeInfo(SVLutTransformOperationEnum e_, SVLutTransformOperation* pType_, const CString& sType_) {eType = e_; pType = pType_; sType = sType_;}
 	};
 	typedef SVVector< SVLutTransformTypeInfo > SVLutTransformTypeInfoArray;
@@ -55,9 +56,7 @@ private:
 	SVLutTransformTypeInfoArray maTypeInfo;
 };
 
-class SVLutTransformParameters : public CDWordArray
-{
-};
+typedef CDWordArray SVLutTransformParameters;
 
 class SVLutBand;
 
@@ -127,45 +126,65 @@ public:
 
 class SVLutTransformOperationNormal : public SVLutTransformOperation
 {
+public:
+	virtual ~SVLutTransformOperationNormal() {}
+private:
 	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
 	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationNormal;}
 };
+
 class SVLutTransformOperationInvert : public SVLutTransformOperation
 {
+public:
+	virtual ~SVLutTransformOperationInvert() {}
+private:
 	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
 	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationInvert;}
 };
+
 class SVLutTransformOperationSign : public SVLutTransformOperation
 {
+public:
+	virtual ~SVLutTransformOperationSign() {}
+private:
 	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
 	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationSign;}
 };
+
 class SVLutTransformOperationClip : public SVLutTransformOperation
 {
+public:
+	virtual ~SVLutTransformOperationClip() {}
+private:
 	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
 	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationClip;}
 };
+
 class SVLutTransformOperationFreeform : public SVLutTransformOperation
 {
+public:
+	virtual ~SVLutTransformOperationFreeform() {}
+private:
 	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
 	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationFreeform;}
 };
+
 class SVLutTransformOperationTwoKnee : public SVLutTransformOperation
 {
+public:
+	virtual ~SVLutTransformOperationTwoKnee() {}
+private:
 	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
 	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationTwoKnee;}
 };
 
-
-
-
-
 class SVDefaultLutTransform : public SVLutTransform
 {
 public:
-	SVDefaultLutTransform(){};
+	SVDefaultLutTransform() {}
 	SVDefaultLutTransform(const SVLutTransformOperation& rType) : SVLutTransform(rType) {}
 	SVDefaultLutTransform(const SVDefaultLutTransform& rhs) : SVLutTransform(rhs) {}
+	virtual ~SVDefaultLutTransform() {}
 	virtual SVLutTransform* Clone() const {return new SVDefaultLutTransform(*this);}
 	virtual HRESULT Transform(SVLutTransformOperationNormal& t, SVLutBand& data, const SVLutTransformParameters& param);
 	virtual HRESULT Transform(SVLutTransformOperationInvert& t, SVLutBand& data, const SVLutTransformParameters& param);

@@ -12,23 +12,19 @@
 #include "stdafx.h"
 #include "SVFileNameArrayClass.h"
 
-//##ModelId=3A55CE1B0119
 SVFileNameArrayClass::SVFileNameArrayClass()
 {
 }
 
-//##ModelId=3A55CE1B0167
 SVFileNameArrayClass::SVFileNameArrayClass(const SVFileNameArrayClass& orig)
 {
 	*this = orig;
 }
 
-//##ModelId=3A5A39C60203
 SVFileNameArrayClass::~SVFileNameArrayClass()
 {
 }
 
-//##ModelId=3A55CE1B01C5
 const SVFileNameArrayClass& SVFileNameArrayClass::operator=(const SVFileNameArrayClass& rhs)
 {
 	Copy( rhs );
@@ -36,7 +32,6 @@ const SVFileNameArrayClass& SVFileNameArrayClass::operator=(const SVFileNameArra
 	return *this;
 }
 
-//##ModelId=3A55CCDA004E
 LPCTSTR SVFileNameArrayClass::GetFileNameList()
 {
 	mcsFileList.Empty();
@@ -54,7 +49,6 @@ LPCTSTR SVFileNameArrayClass::GetFileNameList()
 	return mcsFileList;
 }
 
-//##ModelId=3A55F7DF0399
 BOOL SVFileNameArrayClass::SetFileNameList(LPCTSTR szFileNameList)
 {
 	BOOL bOk = TRUE;
@@ -98,4 +92,3 @@ BOOL SVFileNameArrayClass::SetFileNameList(LPCTSTR szFileNameList)
 
 	return bOk;
 }
-

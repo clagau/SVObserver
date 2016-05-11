@@ -50,7 +50,7 @@ namespace Seidenader
 			// Parameter: SVImageClass* pImage: The child image of the image which should be set.
 			// Parameter: long tabNumber = 0: The tab number of the activeX-control.
 			//************************************
-			void setImageFromParent( SvOi::ISVImage* pImage, long tabNumber = 0 ); //SEJ888 - this needs to go!
+			void setImageFromParent( SvOi::ISVImage* pImage, long tabNumber = 0 ); //@TODO - this needs to go!
 
 			//************************************
 			//! Set a image to a tab of the activeX-control.
@@ -58,7 +58,7 @@ namespace Seidenader
 			//! \param tabNumber [in,out] The tab number of the activeX-control. Default value = 0.
 			//! \returns void
 			//************************************
-			void setImage( SvOi::ISVImage* pImage, long tabNumber = 0 ); //SEJ888 - this needs to go!
+			void setImage( SvOi::ISVImage* pImage, long tabNumber = 0 ); //@TODO - this needs to go!
 
 			//************************************
 			//! Set a image to a tab of the activeX-control.
@@ -66,7 +66,7 @@ namespace Seidenader
 			//! \param tabNumber [in] The tab number of the activeX-control. Default value = 0.
 			//! \returns void
 			//************************************
-			void setImage( const SvOi::IMatroxImageData *imageData, long tabNumber = 0 ); //SEJ888 - this needs to go!
+			void setImage( const SvOi::IMatroxImageData *imageData, long tabNumber = 0 ); //@TODO - this needs to go!
 
 			//************************************
 			//! Set a image to a tab of the activeX-control.

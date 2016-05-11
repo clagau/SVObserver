@@ -53,7 +53,6 @@ public:
 	virtual HRESULT PaintOverlay( CDC& dc, CRect rectViewport, CRect rectDisplay );
 
 	// provide an interface to the underlying shape object
-	//*
 	virtual CRect GetRect();	// in SVFigureEditor
 	void  SetRect( const CRect& rect );
 
@@ -61,7 +60,6 @@ public:
 	HRESULT GetImageInfo( SVImageInfoClass& svImageInfo ) const;
 
 	CRect GetParentImageRect();
-	//*/
 
 protected:
 	virtual HRESULT MouseMove(UINT nFlags, CPoint point);

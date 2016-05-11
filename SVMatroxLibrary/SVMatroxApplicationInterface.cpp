@@ -178,7 +178,7 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLast
 
 	if( appID != M_NULL )
 	{
-		l_Status = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_CURRENT, NULL ) );
+		l_Status = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_CURRENT, nullptr ) );
 
 		#ifdef _DEBUG
 		if( l_Status != M_NULL_ERROR )
@@ -289,7 +289,7 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirs
 
 	if( appID != M_NULL )
 	{
-		l_Code = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_GLOBAL, NULL ) );
+		l_Code = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_GLOBAL, nullptr ) );
 	}
 	else
 	{
@@ -455,8 +455,8 @@ void SVMatroxApplicationInterface::LocalInitialize()
 		{
 			double l_MilVersion( 0.0 );
 
-			SVMatroxHookFunctionPtr l_pHandlerFunction = NULL;
-			void* l_pHandlerUserData = NULL;
+			SVMatroxHookFunctionPtr l_pHandlerFunction = nullptr;
+			void* l_pHandlerUserData = nullptr;
 
 			// Disable MIL error message to be displayed by MIL
 			MappControl( M_ERROR, M_PRINT_DISABLE );
@@ -469,7 +469,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 			MappHookFunction( M_ERROR_CURRENT + M_UNHOOK, l_pHandlerFunction, l_pHandlerUserData );
 
 			// Hook into MIL error handling
-			MappHookFunction( M_ERROR_CURRENT, SVMatroxHookHandler, NULL );
+			MappHookFunction( M_ERROR_CURRENT, SVMatroxHookHandler, nullptr );
 
 			// check version of MIL
 			MappInquire( M_VERSION, &l_MilVersion );
@@ -489,7 +489,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 		}
 		else
 		{
-			SVMatroxIdentifier l_Status = MappGetError( M_THREAD_CURRENT + M_CURRENT, NULL );
+			SVMatroxIdentifier l_Status = MappGetError( M_THREAD_CURRENT + M_CURRENT, nullptr );
 
 			#ifdef _DEBUG
 			if( l_Status != M_NULL_ERROR )
@@ -520,7 +520,7 @@ void SVMatroxApplicationInterface::LocalClear()
 		MappControl( M_ERROR, M_PRINT_DISABLE );
 
 		// Unhook Error handler
-		MappHookFunction( M_ERROR_CURRENT + M_UNHOOK, SVMatroxHookHandler, NULL );
+		MappHookFunction( M_ERROR_CURRENT + M_UNHOOK, SVMatroxHookHandler, nullptr );
 		
 		MappFree( appID );
 	}

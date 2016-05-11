@@ -13,15 +13,15 @@
 #include "SVObjectCommandDataJson.h"
 
 SVObjectCommandDataJson::SVObjectCommandDataJson()
-: m_WaitHandle( NULL )
+: m_WaitHandle( nullptr )
 , m_JsonCommand( _T( "" ) )
 , m_JsonResults( _T( "" ) )
 {
-	m_WaitHandle = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+	m_WaitHandle = ::CreateEvent( nullptr, true, false, nullptr );
 }
 
 SVObjectCommandDataJson::SVObjectCommandDataJson( const SVObjectCommandDataJson& p_rObject )
-: m_WaitHandle( NULL )
+: m_WaitHandle( nullptr )
 , m_JsonCommand( p_rObject.m_JsonCommand )
 , m_JsonResults( p_rObject.m_JsonResults )
 {
@@ -30,11 +30,11 @@ SVObjectCommandDataJson::SVObjectCommandDataJson( const SVObjectCommandDataJson&
 
 SVObjectCommandDataJson::~SVObjectCommandDataJson()
 {
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		::CloseHandle( m_WaitHandle );
 
-		m_WaitHandle = NULL;
+		m_WaitHandle = nullptr;
 	}
 }
 
@@ -58,7 +58,7 @@ HRESULT SVObjectCommandDataJson::NotifyRequestComplete() const
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		::SetEvent( m_WaitHandle );
 	}
@@ -74,7 +74,7 @@ HRESULT SVObjectCommandDataJson::WaitForRequest( DWORD p_TimeoutInMilliseconds )
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		if( ::WaitForSingleObject( m_WaitHandle, p_TimeoutInMilliseconds ) != WAIT_OBJECT_0 )
 		{
@@ -100,7 +100,7 @@ HRESULT SVObjectCommandDataJson::SetJsonCommand( const std::string& p_rCommand )
 
 	m_JsonCommand = p_rCommand;
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		if( !( ::ResetEvent( m_WaitHandle ) ) )
 		{
@@ -119,11 +119,11 @@ HRESULT SVObjectCommandDataJson::GetWaitHandle( HANDLE& p_rHandle ) const
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_rHandle != NULL )
+	if( nullptr != p_rHandle )
 	{
 		::CloseHandle( p_rHandle );
 
-		p_rHandle = NULL;
+		p_rHandle = nullptr;
 	}
 
 	if( ! ::DuplicateHandle( GetCurrentProcess(), m_WaitHandle, GetCurrentProcess(), &p_rHandle, 0, FALSE, DUPLICATE_SAME_ACCESS ) )

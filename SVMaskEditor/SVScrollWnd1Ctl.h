@@ -9,17 +9,7 @@
 //* .Check In Date   : $Date:   26 Apr 2013 14:09:24  $
 //******************************************************************************
 
-#if !defined(AFX_SVSCROLLWND1CTL_H__6DF99A47_EBB8_11D2_A759_00106F000C7A__INCLUDED_)
-#define AFX_SVSCROLLWND1CTL_H__6DF99A47_EBB8_11D2_A759_00106F000C7A__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
-// SVScrollWnd1Ctl.h : Declaration of the SVScrollWnd1Ctrl ActiveX Control class.
-
-/////////////////////////////////////////////////////////////////////////////
-// SVScrollWnd1Ctrl : See SVScrollWnd1Ctl.cpp for implementation.
 
 class SVScrollWnd1Ctrl : public COleControl
 {
@@ -85,6 +75,4 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVSCROLLWND1CTL_H__6DF99A47_EBB8_11D2_A759_00106F000C7A__INCLUDED)
 

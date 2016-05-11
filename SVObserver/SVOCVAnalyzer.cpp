@@ -51,8 +51,8 @@ SVOCVAnalyzerClass::SVOCVAnalyzerClass(
 ////////////////////////////////////////////////////////////////////////////////
 void SVOCVAnalyzerClass::init()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVOCVAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVOCVAnalyzerObjectType;
 
 	SVOCVAnalyzeResultClass* pAnalyzerResult = new SVOCVAnalyzeResultClass( this );
 
@@ -82,14 +82,14 @@ SVOCVAnalyzerClass::~SVOCVAnalyzerClass()
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVOCVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	isCreated = SVImageAnalyzerClass::CreateObject( PCreateStructure );
+	m_isCreated = SVImageAnalyzerClass::CreateObject( PCreateStructure );
 	
 	if ( m_bHasLicenseError )
 	{
 		TheSVOLicenseManager().AddLicenseErrorToList(GetUniqueObjectID());
 	}
 
-	return isCreated;
+	return m_isCreated;
 }
 
 HRESULT SVOCVAnalyzerClass::ResetObject()
@@ -102,7 +102,7 @@ HRESULT SVOCVAnalyzerClass::ResetObject()
 ////////////////////////////////////////////////////////////////////////////////
 SVResultClass* SVOCVAnalyzerClass::GetResultObject()
 {
-	SVResultClass* pAnalyzerResult = NULL;
+	SVResultClass* pAnalyzerResult = nullptr;
 
 	// Find the result Object in Our List
 	pAnalyzerResult = (SVResultClass *) GetAt(0);
@@ -166,7 +166,7 @@ void SVOCVAnalyzerClass::DisplayAnalyzerResult()
 
 DWORD_PTR SVOCVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -174,7 +174,7 @@ DWORD_PTR SVOCVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 

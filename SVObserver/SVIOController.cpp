@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   12 Dec 2014 13:10:18  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVIOController.h"
 
@@ -16,15 +17,16 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVConfigurationObject.h"
-#include "SVDigitalOutputObject1.h"
-#include "SVInfoStructs.h"
 #include "SVIODoc.h"
+#include "SVConfigurationObject.h"
+#include "SVDigitalOutputObject.h"
+#include "SVInfoStructs.h"
 #include "SVObserver.h"
 #include "SVOutputObjectList.h"
 #include "SVOutputStreamManager.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVSVIMStateClass.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVIOController, SVIOControllerGuid );
 
@@ -32,7 +34,8 @@ SVIOController::SVIOController( LPCSTR ObjectName )
 : SVObjectClass( ObjectName )
 , m_pModuleReady()
 , m_pRaidErrorBit()
-, m_pRemoteOutputController( NULL )
+, m_pRemoteOutputController( nullptr )
+, m_pIODoc(nullptr)
 {
 	LocalIntialize();
 }
@@ -41,7 +44,8 @@ SVIOController::SVIOController( SVObjectClass *pOwner, int StringResourceID )
 : SVObjectClass( pOwner, StringResourceID )
 , m_pModuleReady()
 , m_pRaidErrorBit()
-, m_pRemoteOutputController( NULL )
+, m_pRemoteOutputController( nullptr )
+, m_pIODoc(nullptr)
 {
 	LocalIntialize();
 }
@@ -49,7 +53,7 @@ SVIOController::SVIOController( SVObjectClass *pOwner, int StringResourceID )
 void SVIOController::LocalIntialize()
 {
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVIOControllerType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVIOControllerType;
 
 	m_pModuleReady = new SVIOEntryHostStruct;
 	m_pModuleReady->m_pValueParent = this;
@@ -72,14 +76,10 @@ void SVIOController::LocalIntialize()
 
 SVIOController::~SVIOController()
 {
-	SVIODoc* l_pIODoc( GetIODoc() );
-
-	if ( l_pIODoc != NULL )
+	if ( nullptr != m_pIODoc )
 	{
-		SVObjectManagerClass::Instance().UnregisterIODoc( GetUniqueObjectID() );
-
-		l_pIODoc->OnCloseDocument();
-		l_pIODoc = NULL;
+		m_pIODoc->OnCloseDocument();
+		m_pIODoc = nullptr;
 	}
 
 	LocalDestroy();
@@ -87,18 +87,27 @@ SVIOController::~SVIOController()
 
 void SVIOController::LocalDestroy()
 {
-
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		delete m_pRemoteOutputController;
 
-		m_pRemoteOutputController = NULL;
+		m_pRemoteOutputController = nullptr;
 	}
 
 	m_RemoteMonitorListController.Clear();
 
 	m_pModuleReady.clear();
 	m_pRaidErrorBit.clear();
+}
+
+void SVIOController::SetIODoc(SVIODoc* pDoc)
+{
+	m_pIODoc = pDoc;
+}
+
+SVIODoc* SVIOController::GetIODoc() const
+{
+	return m_pIODoc;
 }
 
 BOOL SVIOController::RebuildOutputList()
@@ -139,7 +148,7 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 	_variant_t svVariant;
 
-	SVTreeType::SVBranchHandle htiIODoc = NULL;
+	SVTreeType::SVBranchHandle htiIODoc = nullptr;
 	BOOL bTmp = SVNavigateTree::GetItemBranch( rTree, CTAG_IODOC, htiParent, htiIODoc );
 	if( bTmp )
 	{
@@ -150,29 +159,28 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
-			outObjectInfo.UniqueObjectID = ObjectID;
+			m_outObjectInfo.UniqueObjectID = ObjectID;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
 
-		if( m_pRemoteOutputController != NULL )
+		if( nullptr != m_pRemoteOutputController )
 		{
 			delete m_pRemoteOutputController;
 
-			m_pRemoteOutputController = NULL;
+			m_pRemoteOutputController = nullptr;
 		}
 
 		m_pRemoteOutputController = new SVRemoteOutputDataController;
 
-		bOk &= ( m_pRemoteOutputController != NULL );
+		bOk &= ( nullptr != m_pRemoteOutputController );
 
-		if( m_pRemoteOutputController != NULL )
+		if( nullptr != m_pRemoteOutputController )
 		{
 			// Set Remote Output Data
 			bOk &= m_pRemoteOutputController->SetParameters( rTree, htiIODoc );
 		}
 	}
-
 	return bOk;
 }
 
@@ -184,15 +192,14 @@ bool SVIOController::GetParameters( SVObjectXMLWriter& rWriter ) const
 
 	_variant_t svVariant;
 
-	svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
+	svVariant = SVGUID( m_outObjectInfo.UniqueObjectID ).ToVARIANT();
 	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		// Remote Outputs
 		bOk &= m_pRemoteOutputController->GetParameters( rWriter );
 	}
-
 	return bOk;
 }
 
@@ -230,9 +237,9 @@ void SVIOController::ResetName()
 {
 	SVObjectClass::ResetName();
 
-	if( GetIODoc() != NULL )
+	if( nullptr != m_pIODoc )
 	{
-		GetIODoc()->SetTitle( GetName() );
+		m_pIODoc->SetTitle( GetName() );
 	}
 }
 
@@ -240,15 +247,15 @@ void SVIOController::SetName( const CString& StrString )
 {
 	SVObjectClass::SetName( StrString );
 
-	if( GetIODoc() != NULL )
+	if( nullptr != m_pIODoc )
 	{
-		GetIODoc()->SetTitle( GetName() );
+		m_pIODoc->SetTitle( GetName() );
 	}
 }
 
 DWORD_PTR SVIOController::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -257,7 +264,7 @@ DWORD_PTR SVIOController::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -271,19 +278,19 @@ DWORD_PTR SVIOController::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 		}
 	}
 
-	if( DwResult == SVMR_NOT_PROCESSED || 
+	if( SVMR_NOT_PROCESSED == DwResult || 
 		( DwMessageID & SVM_NOTIFY_FIRST_RESPONDING ) != SVM_NOTIFY_FIRST_RESPONDING )
 	{
 		DwResult = ::SVSendMessage( m_pModuleReady->m_pValueObject, DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
 	}
 
-	if( DwResult == SVMR_NOT_PROCESSED || 
+	if( SVMR_NOT_PROCESSED == DwResult || 
 		( DwMessageID & SVM_NOTIFY_FIRST_RESPONDING ) != SVM_NOTIFY_FIRST_RESPONDING )
 	{
 		DwResult = ::SVSendMessage( m_pRaidErrorBit->m_pValueObject, DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
 	}
 
-	if( DwResult == SVMR_NOT_PROCESSED || 
+	if( SVMR_NOT_PROCESSED == DwResult || 
 		( DwMessageID & SVM_NOTIFY_FIRST_RESPONDING ) != SVM_NOTIFY_FIRST_RESPONDING )
 	{
 		DwResult = SVObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
@@ -296,12 +303,12 @@ HRESULT SVIOController::ResetObject()
 {
 	HRESULT l_hrOk = SVObjectClass::ResetObject();
 
-	if( ::SVSendMessage( m_pModuleReady->m_pValueObject, SVM_RESET_ALL_OBJECTS, NULL, NULL ) != SVMR_SUCCESS )
+	if( SVMR_SUCCESS != ::SVSendMessage( m_pModuleReady->m_pValueObject, SVM_RESET_ALL_OBJECTS, 0, 0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( ::SVSendMessage( m_pRaidErrorBit->m_pValueObject, SVM_RESET_ALL_OBJECTS, NULL, NULL ) != SVMR_SUCCESS )
+	if( SVMR_SUCCESS != ::SVSendMessage( m_pRaidErrorBit->m_pValueObject, SVM_RESET_ALL_OBJECTS, 0, 0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -313,7 +320,6 @@ HRESULT SVIOController::ResetObject()
 	{
 		l_hrOk = S_FALSE;
 	}
-
 	return l_hrOk;
 }
 
@@ -325,8 +331,9 @@ BOOL SVIOController::OnValidate()
 	retVal = retVal && !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->m_pValueObject->IsCreated();
 
 	if( !retVal )
+	{
 		SetInvalid();
-
+	}
 	return retVal;
 }
 
@@ -390,17 +397,11 @@ SVIOEntryHostStructPtr SVIOController::GetRaidErrorBit()
 	return m_pRaidErrorBit;
 }
 
-SVIODoc* SVIOController::GetIODoc() const
-{
-	return SVObjectManagerClass::Instance().GetIODoc( GetUniqueObjectID() );
-}
-
-
 SVGUID SVIOController::GetRemoteOutputController() const
 {
 	SVGUID l_ObjectId;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_ObjectId = m_pRemoteOutputController->GetUniqueObjectID();
 	}
@@ -412,7 +413,7 @@ size_t SVIOController::GetRemoteOutputGroupCount() const
 {
 	size_t l_Count = 0;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_Count = m_pRemoteOutputController->GetRemoteOutputGroupCount();
 	}
@@ -422,10 +423,11 @@ size_t SVIOController::GetRemoteOutputGroupCount() const
 
 void SVIOController::SetupRemoteOutput( SVConfigurationObject* pConfig )
 {
-	if( m_pRemoteOutputController == NULL)
+	if( nullptr == m_pRemoteOutputController )
+	{
 		m_pRemoteOutputController = new SVRemoteOutputDataController;
-
-	if( m_pRemoteOutputController != NULL )
+	}
+	if( nullptr != m_pRemoteOutputController )
 	{
 		m_pRemoteOutputController->SetupRemoteOutput( pConfig );
 	}
@@ -435,7 +437,7 @@ HRESULT SVIOController::ClearRemoteOutputUnUsedData()
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_Status = m_pRemoteOutputController->ClearUnUsedData();
 	}
@@ -443,7 +445,6 @@ HRESULT SVIOController::ClearRemoteOutputUnUsedData()
 	{
 		l_Status = E_FAIL;
 	}
-
 	return l_Status;
 }
 
@@ -451,7 +452,7 @@ HRESULT SVIOController::GetRemoteOutputGroupNames( std::vector<CString>& p_astrP
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr !=  m_pRemoteOutputController )
 	{
 		l_Status = m_pRemoteOutputController->GetGroupNames( p_astrPPQs );
 	}
@@ -467,9 +468,9 @@ HRESULT SVIOController::GetRemoteOutputGroupNames( std::vector<CString>& p_astrP
 
 SVRemoteOutputGroup* SVIOController::GetRemoteOutputGroup( const CString& p_strRemoteGroupID ) const
 {
-	SVRemoteOutputGroup* l_pObject = NULL;
+	SVRemoteOutputGroup* l_pObject = nullptr;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_pObject = m_pRemoteOutputController->GetControlPar( p_strRemoteGroupID );
 	}
@@ -481,7 +482,7 @@ size_t SVIOController::GetRemoteOutputGroupItemCount( const CString& p_strRemote
 {
 	size_t l_Count = 0;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_Count = m_pRemoteOutputController->GetItemCount( p_strRemoteGroupID );
 	}
@@ -493,7 +494,7 @@ HRESULT SVIOController::GetRemoteOutputItem( const CString& p_strRemoteGroupId, 
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_Status = m_pRemoteOutputController->GetItem( p_strRemoteGroupId, l_lIndex, p_rItem );
 	}
@@ -507,9 +508,9 @@ HRESULT SVIOController::GetRemoteOutputItem( const CString& p_strRemoteGroupId, 
 
 SVRemoteOutputObject* SVIOController::GetFirstRemoteOutputObject( const CString& p_strRemoteGroupId )
 {
-	SVRemoteOutputObject* l_pObject = NULL;
+	SVRemoteOutputObject* l_pObject = nullptr;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_pObject = m_pRemoteOutputController->GetFirstObject( p_strRemoteGroupId );
 	}
@@ -521,7 +522,7 @@ HRESULT SVIOController::AddRemoteOutputItem( const CString& p_strRemoteGroupId, 
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_Status = m_pRemoteOutputController->AddItem( p_strRemoteGroupId, p_pNewOutput, p_InputObjectID, p_strPPQ );
 	}
@@ -537,7 +538,7 @@ HRESULT SVIOController::DeleteRemoteOutput( const CString& p_strRemoteGroupId )
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_Status = m_pRemoteOutputController->DeleteRemoteOutput( p_strRemoteGroupId );
 	}
@@ -553,7 +554,7 @@ HRESULT SVIOController::DeleteRemoteOutputEntry( const CString& p_strRemoteGroup
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_Status = m_pRemoteOutputController->DeleteRemoteOutputEntry( p_strRemoteGroupId, p_pOutputObject );
 	}
@@ -569,7 +570,7 @@ HRESULT SVIOController::RemoteOutputValidateInputs()
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pRemoteOutputController != NULL )
+	if( nullptr != m_pRemoteOutputController )
 	{
 		l_Status = m_pRemoteOutputController->ValidateInputs();
 	}

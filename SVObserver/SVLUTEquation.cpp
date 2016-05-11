@@ -9,18 +9,12 @@
 //* .Check In Date   : $Date:   31 Jan 2014 17:16:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLUTEquation.h"
 #include "SVObserver.h"
+#pragma endregion Includes
 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVLUTEquationClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVLUTEquationClass, SVLUTEquationClassGuid );
 
 SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourceID )
@@ -34,22 +28,16 @@ SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourc
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.03.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVLUTEquationClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVLUTEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVLUTEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 	
-	// SetObjectDepth() already called in SVObjectClass Ctor
-
 	// Register Embedded Objects
 	m_byteVectorResult.SetLegacyVectorObjectCompatibility();
 	RegisterEmbeddedObject( &m_lutIndex, SVLUTIndexVariableObjectGuid, IDS_OBJECTNAME_LUTINDEXVARIABLE, false, SVResetItemNone  );
@@ -80,10 +68,6 @@ SVLUTEquationClass::~SVLUTEquationClass()
 // -----------------------------------------------------------------------------
 // .Description : Creates this object.
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.03.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL bOk = SVEquationClass::CreateObject( PCreateStructure );
@@ -92,7 +76,7 @@ BOOL SVLUTEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	m_lutIndex.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_byteVectorResult.ObjectAttributesAllowedRef() &= ~(SV_PRINTABLE | SV_VIEWABLE);
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -102,7 +86,7 @@ HRESULT SVLUTEquationClass::ResetObject()
 	HRESULT l_hrOk = SVEquationClass::ResetObject();
 
 	// Resize to 256 entries...
-	if( l_hrOk == S_OK && m_byteVectorResult.GetArraySize() != 256 )
+	if( S_OK == l_hrOk && 256 != m_byteVectorResult.GetArraySize()  )
 	{
 		m_byteVectorResult.SetArraySize( 256 );
 	}
@@ -137,14 +121,10 @@ BOOL SVLUTEquationClass::OnValidate()
 //				: ( i.e. if your correlated tool is added to the tool set,
 //				:   after the user clicked on 'Add XXXTool' ).
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :23.03.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTEquationClass::SetDefaultFormula()
 {
 	// Get current complete name of LUT Index...
-	CString strName = m_lutIndex.GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType );
+	CString strName = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 
 	CString strEmpty;
 	if( ! strName.IsEmpty() )
@@ -179,10 +159,6 @@ BOOL SVLUTEquationClass::SetDefaultFormula()
 //				: which are placed into the byte result vector.
 //				: Use the m_lutIndex as variable in the equation, if you want to
 //				: index the values. ( m_lutIndex is running from 0 to 255 )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.03.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus )
 {

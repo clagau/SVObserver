@@ -9,14 +9,16 @@
 //* .Check In Date   : $Date:   12 Jun 2013 15:20:12  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRemoteInputObject.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
+#pragma endregion Includes
 
 SVRemoteInputObject::SVRemoteInputObject( LPCSTR strObjectName )
 : SVInputObject( strObjectName )
 {
-	m_bCreated = FALSE;
+	m_isCreated = false;
 	m_lIndex   = -1;
 	m_vtRemoteCache = 0.0;
 }
@@ -24,24 +26,26 @@ SVRemoteInputObject::SVRemoteInputObject( LPCSTR strObjectName )
 SVRemoteInputObject::SVRemoteInputObject( SVObjectClass* POwner, int StringResourceID )
 : SVInputObject( POwner, StringResourceID )
 {
-	m_bCreated = FALSE;
+	m_isCreated = false;
 	m_lIndex   = -1;
 	m_vtRemoteCache = 0.0;
 }
 
 SVRemoteInputObject::~SVRemoteInputObject()
 {
-	if( m_bCreated )
+	if( m_isCreated )
+	{
 		Destroy();
+	}
 }
 
 BOOL SVRemoteInputObject::Create()
 {
-	m_bCreated = TRUE;
+	m_isCreated = true;
 
   ::InitializeCriticalSection( &m_hCriticalSection );
 
-	return TRUE;
+	return true;
 }// end Create
 
 BOOL SVRemoteInputObject::Destroy()
@@ -50,28 +54,23 @@ BOOL SVRemoteInputObject::Destroy()
 
 	::DeleteCriticalSection( &m_hCriticalSection );
 
-	m_bCreated = FALSE;
+	m_isCreated = false;
 
-	return TRUE;
+	return true;
 }// end Destroy
-
-BOOL SVRemoteInputObject::IsCreated()
-{
-	return m_bCreated;
-}// end IsCreated
 
 BOOL SVRemoteInputObject::Lock()
 {
 	::EnterCriticalSection( &m_hCriticalSection );
 
-	return TRUE;
+	return true;
 }// end Lock
 
 BOOL SVRemoteInputObject::Unlock()
 {
 	::LeaveCriticalSection( &m_hCriticalSection );
 
-	return TRUE;
+	return true;
 }// end Unlock
 
 HRESULT SVRemoteInputObject::Read( _variant_t& p_rValue )
@@ -91,7 +90,7 @@ HRESULT SVRemoteInputObject::WriteCache( const _variant_t& p_rValue )
 	{
 		SVSAFEARRAY l_SafeArray( p_rValue );
 
-		if ( l_SafeArray.size() == 1 )
+		if ( 1 == l_SafeArray.size() )
 		{
 			l_Status = l_SafeArray.GetElement( 0, l_Temp );
 		}
@@ -105,7 +104,7 @@ HRESULT SVRemoteInputObject::WriteCache( const _variant_t& p_rValue )
 		l_Temp = p_rValue;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		::EnterCriticalSection( &m_hCriticalSection );
 

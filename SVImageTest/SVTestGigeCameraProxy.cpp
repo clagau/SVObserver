@@ -90,7 +90,7 @@ static DeviceParamToGigeParamAssoc DeviceParamEnumToGigeParamEnum = boost::assig
 
 SVTestGigeCameraProxy::SVTestGigeCameraProxy()
 {
-	m_pAcquisition = NULL;
+	m_pAcquisition = nullptr;
 }
 
 SVTestGigeCameraProxy::~SVTestGigeCameraProxy()
@@ -111,10 +111,8 @@ HRESULT SVTestGigeCameraProxy::InitializeDevice( const SVDeviceParamWrapper& rwP
 		hr = SVMSG_SVO_20_INCORRECT_CAMERA_FILE;
 	}
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
-//		UpdateLightReferenceAttributes( rwParam );
-
 		if ( CameraMatchesCameraFile( rDeviceParams, hDigitizer, pDigitizer ) )
 		{
 			if ( rwParam.IsValid() )
@@ -137,7 +135,7 @@ HRESULT SVTestGigeCameraProxy::InitializeDevice( const SVDeviceParamCollection& 
 
 //	UpdateLightReferenceAttributes( rDeviceParams );
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		if ( CameraMatchesCameraFile( rDeviceParams, hDigitizer, pDigitizer ) )
 		{
@@ -151,7 +149,7 @@ HRESULT SVTestGigeCameraProxy::SetGigeFeatureOverrides(const SVString& xmlData, 
 {
 	HRESULT hr = S_OK;
 
-	if (pDigitizer != NULL && hDigitizer != NULL)
+	if (nullptr != pDigitizer && 0 < hDigitizer)
 	{
 		_variant_t l_oValue = xmlData.c_str(); // does this convert from ansi to wide ?
 		hr = pDigitizer->ParameterSetValue(hDigitizer, SVGigeParameterFeatureOverrides, 0, &l_oValue);
@@ -161,7 +159,7 @@ HRESULT SVTestGigeCameraProxy::SetGigeFeatureOverrides(const SVString& xmlData, 
 
 // this is where the SV Camera Device Parameters are mapped to the Gige Parameter defines (mostly)
 // exceptions to this are the Internal ones for things like Trigger and Strobe...
-// SEJ - all parameters must pass through here to translate DeviceParam to GigeParamter tags
+// All parameters must pass through here to translate DeviceParam to GigeParamter tags
 /* Tags - DeviceParam to GigeFeatureParam
 DeviceParamVendorName				- SVGigeParameterVendorName
 DeviceParamModelName				- SVGigeParameterModelName
@@ -212,7 +210,7 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 {
 	HRESULT hr = S_OK;
 
-	if ( pDigitizer != NULL && hDigitizer != NULL )
+	if ( nullptr != pDigitizer && 0 < hDigitizer )
 	{
 		_variant_t l_oValue;
 
@@ -773,7 +771,7 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 								hr = pHeldParam->GetValue(l_oValue);
 								break;
 						}
-						if (hr == S_OK)
+						if (S_OK == hr)
 						{
 							hr = pDigitizer->ParameterSetValue(hDigitizer, DeviceParamEnumToGigeParamEnum[l_eType], 0, &l_oValue);
 						}
@@ -793,7 +791,7 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 		}
 	}
 
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		rDeviceParams.SetParameter( rw );
 	}
@@ -897,7 +895,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterXSize, 0, &l_oValue );
 		l_oValue.Clear();
 
-		if( hr == S_OK && l_Temp != S_OK )
+		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
@@ -905,7 +903,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterXOffset, 0, &l_oValue );
 		l_oValue.Clear();
 
-		if( hr == S_OK && l_Temp != S_OK )
+		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
@@ -916,7 +914,7 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterXOffset, 0, &l_oValue );
 		l_oValue.Clear();
 
-		if( hr == S_OK && l_Temp != S_OK )
+		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
@@ -991,17 +989,17 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 HRESULT SVTestGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer )
 {
 	HRESULT hr = S_OK;
-	// SEJ - send notification to start tracking main camera parameters
-	if ( pDigitizer != NULL )
+	// Send notification to start tracking main camera parameters
+	if ( nullptr != pDigitizer )
 	{
 		_variant_t dummy;
 		hr = pDigitizer->ParameterSetValue(hDigitizer, SVGigeBeginTrackParameters, 0, &dummy);
 	}
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = SVGigeCameraProxy::SetDeviceParameters( rDeviceParams, m_pAcquisition->m_DeviceParams );
 	}
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = InitializeDevice( rDeviceParams, hDigitizer, pDigitizer );
 	}
@@ -1012,19 +1010,19 @@ HRESULT SVTestGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollect
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( hDigitizer != NULL && pDigitizer != NULL &&
+	if( 0 < hDigitizer && nullptr != pDigitizer &&
 		rDeviceParams.ParameterExists( DeviceParamVendorName ) )
 	{
 		_variant_t l_oValue;
 
-		if( pDigitizer != NULL && pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) == S_OK )
+		if( nullptr != pDigitizer && S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) )
 		{
 			SVString l_csVenderName  = SvUl_SF::createSVString(l_oValue.bstrVal);
 
 			if( l_csVenderName == StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) )
 			{
 				if( rDeviceParams.ParameterExists( DeviceParamModelName ) &&
-					pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) == S_OK )
+					S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) )
 				{
 					CString sHardwareModel( l_oValue.bstrVal );
 
@@ -1049,13 +1047,13 @@ bool SVTestGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollectio
 {
 	bool l_bOk = true;
 	
-	if( hDigitizer != NULL && pDigitizer != NULL &&
+	if( 0 < hDigitizer && nullptr != pDigitizer &&
 		rCameraFileDeviceParams.ParameterExists( DeviceParamVendorName ) )
 	{
 		_variant_t l_oValue;
 
 		// Check Vendor Name
-		if( pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) == S_OK )
+		if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterVendorName, 0, &l_oValue ) )
 		{
 			SVString l_csVenderName = SvUl_SF::createSVString(l_oValue.bstrVal);
 
@@ -1066,7 +1064,7 @@ bool SVTestGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollectio
 		if ( l_bOk )
 		{
 			// Check Model Name
-			if( pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) == S_OK )
+			if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) )
 			{
 				SVString l_csModelName = SvUl_SF::createSVString(l_oValue.bstrVal);
 
@@ -1162,10 +1160,10 @@ HRESULT SVTestGigeCameraProxy::SetDigitizerParameter( const SVDeviceParamWrapper
 {
 	HRESULT hr = S_FALSE;
 
-	if (pDigitizer != NULL)
+	if (nullptr != pDigitizer)
 	{
 		const SVDeviceParam* pParam = (const SVDeviceParam*) rw;
-		if ( pParam != NULL )
+		if ( nullptr != pParam )
 		{
 			// Translate DeviceParameterEnum to GigeParameterEnum
 			hr = SetStandardCameraParameter( rw, m_pAcquisition->m_DeviceParams, hDigitizer, pDigitizer );
@@ -1188,7 +1186,7 @@ SVDeviceParamWrapper& SVTestGigeCameraProxy::GetCameraDeviceParamNonConst( SVDev
 
 HRESULT SVTestGigeCameraProxy::SVLUTToSafeArray(const SVLut& lut, _variant_t& output)
 {
-	SAFEARRAY* psaBandData(NULL);
+	SAFEARRAY* psaBandData(nullptr);
 
 	bool bRetVal = lut.GetBandData(psaBandData);
 	if (bRetVal)

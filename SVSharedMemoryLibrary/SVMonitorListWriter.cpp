@@ -31,7 +31,7 @@ SVMonitorListWriter::~SVMonitorListWriter()
 void SVMonitorListWriter::Release()
 {
 	SVSharedConfiguration::Log("SVMonitorListWriter::Release");
-	if (shm.get() != nullptr)
+	if (nullptr != shm.get())
 	{
 		if (m_lists)
 		{
@@ -61,7 +61,7 @@ void SVMonitorListWriter::Init()
 bool SVMonitorListWriter::IsCreated() const
 {
 	SVSharedConfiguration::Log("SVMonitorListWriter::IsCreated");
-	return (shm.get() != nullptr && m_lists);
+	return (nullptr != shm.get() && m_lists);
 }
 
 HRESULT SVMonitorListWriter::Create(const SVSharedMemorySettings & settings)

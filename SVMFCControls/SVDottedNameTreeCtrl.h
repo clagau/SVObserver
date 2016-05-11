@@ -11,22 +11,6 @@
 
 #pragma once
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
-
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
 namespace Seidenader
 {
 	namespace SVMFCControls
@@ -41,7 +25,7 @@ namespace Seidenader
 
 			// Attributes
 		public:
-			BOOL		AddItem( CString StrDottedItemName, DWORD_PTR DwItemValue = NULL, BOOL BExpand = TRUE );
+			BOOL		AddItem( CString StrDottedItemName, DWORD_PTR DwItemValue = 0, BOOL BExpand = true );
 			HTREEITEM	GetItem( CString StrDottedItemName );
 			DWORD_PTR	GetSelectedItemValue();
 

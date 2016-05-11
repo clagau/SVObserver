@@ -63,20 +63,20 @@ BOOL SVTADlgRemoteInputToolPage::OnInitDialog()
 {
 	BOOL l_Status = CPropertyPage::OnInitDialog();
 
-	l_Status = l_Status && ( m_pParentDialog != NULL );
+	l_Status = l_Status && ( nullptr != m_pParentDialog );
 
 	if( l_Status )
 	{
 		m_pTool = dynamic_cast< SVRemoteInputTool* >( m_pParentDialog->GetTool() );
 	}
 
-	l_Status = l_Status && ( m_pTool != NULL );
+	l_Status = l_Status && ( nullptr != m_pTool );
 
 	if( l_Status )
 	{
 		SVObjectClass* l_pObject = m_pTool->GetInputObject();
 
-		l_Status = ( l_pObject != NULL );
+		l_Status = ( nullptr != l_pObject );
 
 		if( l_Status )
 		{
@@ -96,7 +96,7 @@ void SVTADlgRemoteInputToolPage::OnBnClickedClearInputButton()
 {
 	m_InputName.Empty();
 
-	if( m_pTool != NULL )
+	if( nullptr != m_pTool )
 	{
 		m_pTool->ClearInputObject();
 	}

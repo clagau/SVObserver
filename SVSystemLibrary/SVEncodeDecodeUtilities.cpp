@@ -19,9 +19,9 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToByteBufferFromByteBuffer( int& p_
 {
 	HRESULT l_Status = S_OK;
 
-	if( ( 0 < p_rOutputBufferSize ) && ( p_pOutput != NULL ) )
+	if( ( 0 < p_rOutputBufferSize ) && ( nullptr != p_pOutput ) )
 	{
-		if( ( 0 < p_InputBufferSize ) && ( p_pInput != NULL ) )
+		if( ( 0 < p_InputBufferSize ) && ( nullptr != p_pInput ) )
 		{
 			int enc_len = ::Base64EncodeGetRequiredLength(static_cast<int>(p_InputBufferSize), ATL_BASE64_FLAG_NOCRLF);
 
@@ -58,7 +58,7 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromByteBuffer( std::string
 {
 	HRESULT l_Status = S_OK;
 
-	if( ( 0 < p_InputBufferSize ) && ( p_pInput != NULL ) )
+	if( ( 0 < p_InputBufferSize ) && ( nullptr != p_pInput ) )
 	{
 		int enc_len = ::Base64EncodeGetRequiredLength(static_cast<int>(p_InputBufferSize), ATL_BASE64_FLAG_NOCRLF);
 		boost::scoped_array<char> enc_buff( new char[enc_len + 1]);
@@ -67,7 +67,7 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromByteBuffer( std::string
 
 		l_Status = Base64EncodeToByteBufferFromByteBuffer( enc_len, enc_buff.get(), p_InputBufferSize, p_pInput );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			p_rOutput = enc_buff.get();
 		}
@@ -100,17 +100,17 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromFile( std::string& p_rO
 {
 	HRESULT l_Status = S_OK;
 
-	HANDLE hFile = ::CreateFile(p_rFileName.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = ::CreateFile(p_rFileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
-		DWORD file_sz = ::GetFileSize(hFile, NULL);
+		DWORD file_sz = ::GetFileSize(hFile, nullptr);
 		if( 0 < file_sz )
 		{
-			HANDLE hMapping = ::CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, file_sz, NULL);
-			if( hMapping != NULL )
+			HANDLE hMapping = ::CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, file_sz, nullptr);
+			if( nullptr != hMapping )
 			{
 				BYTE * buff = (BYTE *)::MapViewOfFile(hMapping, FILE_MAP_READ, 0, 0, file_sz);
-				if( buff != NULL )
+				if( nullptr != buff )
 				{
 					l_Status = Base64EncodeToStringFromByteBuffer( p_rOutput, file_sz, buff );
 
@@ -147,7 +147,7 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToByteBufferFromString( int& p_rOut
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( p_rInput.empty() ) && ( 0 < p_rOutputBufferSize ) && ( p_pOutput != NULL ) )
+	if( !( p_rInput.empty() ) && ( 0 < p_rOutputBufferSize ) && ( nullptr != p_pOutput ) )
 	{
 		int l_BufferSize = p_rOutputBufferSize;
 		if( !( ::Base64Decode( p_rInput.c_str(), static_cast<int>(p_rInput.size()), p_pOutput, &l_BufferSize ) ) )
@@ -168,15 +168,15 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const SVString& p
 {
 	HRESULT l_Status = S_OK;
 
-	HANDLE hFile = ::CreateFile(p_rFileName.c_str(), GENERIC_WRITE|GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = ::CreateFile(p_rFileName.c_str(), GENERIC_WRITE|GENERIC_READ, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if( hFile != INVALID_HANDLE_VALUE )
 	{
 		int buff_len = ::Base64DecodeGetRequiredLength(static_cast<int>(p_rInput.size()));
-		HANDLE hMapping = ::CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, static_cast<DWORD>(buff_len), NULL);
-		if( hMapping != NULL )
+		HANDLE hMapping = ::CreateFileMapping(hFile, nullptr, PAGE_READWRITE, 0, static_cast<DWORD>(buff_len), nullptr);
+		if( nullptr != hMapping )
 		{
 			BYTE * buff = (BYTE *)::MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, buff_len);
-			if (buff != 0)
+			if (nullptr != buff)
 			{
 				l_Status = Base64DecodeToByteBufferFromString( buff_len, buff, p_rInput );
 
@@ -194,7 +194,7 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const SVString& p
 			l_Status = ::GetLastError();
 		}
 
-		::SetFilePointer(hFile, buff_len, NULL, FILE_BEGIN);
+		::SetFilePointer(hFile, buff_len, nullptr, FILE_BEGIN);
 		::SetEndOfFile(hFile);
 		::CloseHandle(hFile);
 	}

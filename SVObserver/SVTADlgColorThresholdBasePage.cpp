@@ -27,8 +27,8 @@ SVTADlgColorThresholdBasePage::SVTADlgColorThresholdBasePage(UINT nIDTemplate) :
 {
 	//{{AFX_DATA_INIT(SVTADlgColorThresholdBasePage)
 	//}}AFX_DATA_INIT
-	m_pSheet = NULL;
-	mpTool = NULL;
+	m_pSheet = nullptr;
+	mpTool = nullptr;
 }
 
 SVTADlgColorThresholdBasePage::~SVTADlgColorThresholdBasePage()
@@ -95,10 +95,7 @@ void SVTADlgColorThresholdBasePage::OnSelchangeComboZoom()
 {
 	UpdateData();
 	int iZoom = static_cast<int>(m_cbZoom.GetItemData( m_cbZoom.GetCurSel() ));
-	//CString sText;
-	//m_cbZoom.GetWindowText( sText );
-	//StringMunge::KeepChars(&sText, _T("0123456789"));
-	//double dPercent = atof(sText);
+
 	double dZoom = iZoom / 100.0;
 	m_svDlgImage.SetZoom( dZoom );
 }

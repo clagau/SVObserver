@@ -54,7 +54,7 @@ HRESULT SVCylindricalWarpDlg::SetInspectionData()
 
 			l_bUpdate = true;
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pWarpType, lValue );
 			}
@@ -64,7 +64,7 @@ HRESULT SVCylindricalWarpDlg::SetInspectionData()
 		{
 			l_bUpdate = true;
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pWarpAngle, m_dWarpAngle );
 			}
@@ -77,7 +77,7 @@ HRESULT SVCylindricalWarpDlg::SetInspectionData()
 
 			l_bUpdate = true;
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pInterpolationMode, lValue );
 			}
@@ -85,12 +85,12 @@ HRESULT SVCylindricalWarpDlg::SetInspectionData()
 
 		if( l_bUpdate )
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequestMarker();
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = RunOnce( m_pTool );
 			}
@@ -142,7 +142,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 		SVObjectTypeInfoStruct objectInfo;
 		// Warp Type
 		objectInfo.EmbeddedID = SVWarpTypeObjectGuid;
-		m_pWarpType = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)));
+		m_pWarpType = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)));
 		if( m_pWarpType )
 		{
 			CString l_strEnumList;
@@ -158,7 +158,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 
 		// Interpolation Mode
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;
@@ -175,7 +175,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 
 		// Warp Angle
 		objectInfo.EmbeddedID = SVWarpAngleObjectGuid;
-		m_pWarpAngle = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
+		m_pWarpAngle = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 		if( m_pWarpAngle )
 		{
 			m_pWarpAngle->GetValue( m_dWarpAngle );
@@ -217,7 +217,7 @@ void SVCylindricalWarpDlg::OnDestroy()
 			l_svExtents.SetTranslation( SVExtentTranslationCylindricalWarpH );
 		}
 		HRESULT hrUpdate = l_svExtents.UpdateData();
-		ASSERT( hrUpdate == S_OK );
+		ASSERT( S_OK == hrUpdate );
 		m_pTool->SetImageExtent( 1, l_svExtents );
 	}
 

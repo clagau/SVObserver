@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   17 Feb 2015 18:21:56  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMathTool.h"
 #include "SVGlobal.h"
 #include "SVMathEquation.h"
 #include "SVResultDouble.h"
 #include "SVInspectionProcess.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,20 +24,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVMathToolClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
-
 SV_IMPLEMENT_CLASS( SVMathToolClass, SVMathToolClassGuid );
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Constructor of class SVMathToolClass
@@ -52,16 +41,6 @@ SV_IMPLEMENT_CLASS( SVMathToolClass, SVMathToolClassGuid );
 //	                                        string that contents an optional
 //                                          class name.
 //                                          Initiated in SVObjectClass.  
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :04.05.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 SVMathToolClass::SVMathToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 : SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
@@ -75,8 +54,8 @@ SVMathToolClass::SVMathToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* PO
 void SVMathToolClass::init(void)
 {
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVMathToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVMathToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -106,33 +85,21 @@ void SVMathToolClass::init(void)
 	Add( pResult );
 }
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Standard Destructor of class SVMathToolClass
 // -----------------------------------------------------------------------------
 // .Description : Standard destructor
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :04.05.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 SVMathToolClass::~SVMathToolClass()
 { 
 }
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 
 ///////////////////////////////////////////////////////////////////////////////
 // Create Operator
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
 {
-	isCreated = SVToolClass::CreateObject( PCreateStruct );
+	m_isCreated = SVToolClass::CreateObject( PCreateStruct );
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Math Tool.
@@ -147,25 +114,13 @@ BOOL SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
 	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
 	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
 
-	return isCreated;
+	return m_isCreated;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnValidate
 // -----------------------------------------------------------------------------
 // .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVMathToolClass::OnValidate()
 {

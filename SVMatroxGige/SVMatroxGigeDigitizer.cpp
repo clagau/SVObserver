@@ -22,7 +22,7 @@ SVMatroxGigeDigitizer::SVMatroxGigeDigitizer(unsigned long deviceNumber, unsigne
 , m_lIsStarted(false)
 , m_lStartIndex(-1)
 , m_lLastUsedIndex(-1)
-, m_pBufferInterface(NULL)
+, m_pBufferInterface(nullptr)
 , m_StartFrameTimeStamp(0) 
 , m_lineState(false)
 {
@@ -79,7 +79,7 @@ HRESULT SVMatroxGigeDigitizer::CreateAcquisitionBuffers(const SVMatroxSystem& rS
 	AcqBufferCreator l_creator;
 	SVMatroxBufferCreateStruct l_createStruct;
 	HRESULT hr = l_creator.BuildCreateStruct(width, height, format, l_createStruct);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = m_AcqBuffers.Create(rSystem, l_createStruct, NUM_ACQUISITION_BUFFERS);
 	}
@@ -95,7 +95,7 @@ HRESULT SVMatroxGigeDigitizer::DestroyAcquistionBuffers()
 HRESULT SVMatroxGigeDigitizer::StartGrabArray(SVMatroxDigitizerInterface::SVGrabProcessFunc func)
 {
 	HRESULT hr = SVMatroxDigitizerInterface::EnableCorruptedFrameMonitoring(*(m_Digitizer.get()), true);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = SVMatroxDigitizerInterface::StartGrabArray(*(m_Digitizer.get()), m_AcqBuffers, SVMatroxDigitizerGrab::SVGrabAsynchronous, func, this);
 	}
@@ -251,8 +251,8 @@ void SVMatroxGigeDigitizer::SetTriggerCallback(SVCallbackStruct& callback)
 
 void SVMatroxGigeDigitizer::ClearTriggerCallback()
 {
-	m_triggerCallback.m_pCallback = NULL;
-	m_triggerCallback.m_pOwner = NULL;
-	m_triggerCallback.m_pData = NULL;
+	m_triggerCallback.m_pCallback = nullptr;
+	m_triggerCallback.m_pOwner = nullptr;
+	m_triggerCallback.m_pData = nullptr;
 }
 

@@ -38,7 +38,7 @@ SVDOMClass::SVDOMClass()
 : svmlInitialized(0)
 , svmlCoInitialized(0)
 , m_lUseEncryption(0)
-, m_opEncryption(NULL)
+, m_opEncryption(nullptr)
 {
 	Init ();
 }
@@ -50,7 +50,7 @@ HRESULT SVDOMClass::Init ()
 	svmlInitialized = FALSE;
 	svmlCoInitialized = FALSE;
 
-	m_opEncryption = NULL;
+	m_opEncryption = nullptr;
 
 	return hr;
 }
@@ -69,7 +69,7 @@ HRESULT SVDOMClass::Initialize (long p_lUseEncryption)
 
 		svmlInitialized = TRUE;
 
-		hr = CoInitialize(NULL); // Check the return value, hr...
+		hr = CoInitialize(nullptr); // Check the return value, hr...
 		if (hr == S_FALSE)
 		{
 //-		A return value of S_FALSE means that somebody has already 
@@ -78,7 +78,7 @@ HRESULT SVDOMClass::Initialize (long p_lUseEncryption)
 			hr = S_OK;
 		}
 		else
-		if (hr != S_OK)
+		if (S_OK != hr)
 		{
 			hr = -1619;
 			break;
@@ -96,14 +96,14 @@ HRESULT SVDOMClass::Initialize (long p_lUseEncryption)
 		}
 
 		m_lUseEncryption = p_lUseEncryption;
-		if (m_opEncryption != NULL)
+		if (nullptr != m_opEncryption)
 		{
 			hr = -1894;
 			break;
 		}
 
 		m_opEncryption = new SVXMLEncryptionClass;
-		if (m_opEncryption == NULL)
+		if (nullptr == m_opEncryption)
 		{
 			hr = -1893;
 			break;
@@ -142,14 +142,14 @@ HRESULT SVDOMClass::Initialize (long p_lUseEncryption)
 
 SVDOMClass::~SVDOMClass()
 {
-//-It is assumed that Release () will correctly handle if svmDOMPtr == NULL 
-//-or svmRootNodePtr == NULL,
-	if (svmDOMPtr != NULL)
+//-It is assumed that Release () will correctly handle if nullptr == svmDOMPtr 
+//-or nullptr == svmRootNodePtr,
+	if (nullptr != svmDOMPtr)
 	{
 		svmDOMPtr.Release ();
 	}
 
-	if (svmRootNodePtr != NULL)
+	if (nullptr != svmRootNodePtr)
 	{
 		svmRootNodePtr.Release ();
 	}
@@ -161,7 +161,7 @@ SVDOMClass::~SVDOMClass()
 	}
 
 	delete m_opEncryption;
-	m_opEncryption = NULL;
+	m_opEncryption = nullptr;
 
 	svmlInitialized = FALSE;
 }
@@ -179,7 +179,7 @@ HRESULT SVDOMClass::InitializeDOM ()
 //-	This uses smart pointers
 //-	Creates the instance of the COM object.
 		hr = svmDOMPtr.CreateInstance( "Msxml2.DOMDocument.6.0" );
-		if (hr != S_OK)
+		if (S_OK != hr)
 		{
 			hr = -1618;
 			break;
@@ -201,7 +201,7 @@ HRESULT SVDOMClass::InitializeDOM ()
 //-
 //-   When the following line is enabled (not commented out), what the parser
 //-	loads does not contain children below the "base" node level.  get child
-//-	returns NULL, so "Environment" does not exist.
+//-	returns nullptr, so "Environment" does not exist.
 //		svmDOMPtr->PutpreserveWhiteSpace (VARIANT_TRUE);
 
 		break;
@@ -224,8 +224,8 @@ HRESULT SVDOMClass::CreateRootNode ()
 //
 		hr = CreateDOMNodeChildElement (svmDOMPtr,
 												  bstrRootName,
-												  NULL,
-												  NULL,
+												  nullptr,
+												  nullptr,
 												  oRootNodePtr);
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
@@ -271,7 +271,7 @@ HRESULT SVDOMClass::SetHeader ()
 		bstrData = "version='1.0' standalone='yes'";
 		oXMLProcessingInstructionPtr = svmDOMPtr->createProcessingInstruction (bstrTarget, 
 																							  		  bstrData);
-		if (oXMLProcessingInstructionPtr == NULL)
+		if (nullptr == oXMLProcessingInstructionPtr)
 		{
 			hr = -1615;
 			break;
@@ -300,8 +300,8 @@ HRESULT SVDOMClass::Clear ()
 //	long lListLength;
 //	long lLoop;
 
-//	pNodeList = NULL;
-//	pNode = NULL;
+//	pNodeList = nullptr;
+//	pNode = nullptr;
 
 	while (1)
 	{
@@ -322,12 +322,12 @@ HRESULT SVDOMClass::Clear ()
 //-	children of that item.
 
 		// BRW:  Added check here to avoid crash.
-		if ( svmDOMPtr != NULL )
+		if ( nullptr != svmDOMPtr )
 		{
 			oNodeListPtr = svmDOMPtr->GetchildNodes();
 		}
 
-		if (oNodeListPtr == NULL)
+		if (nullptr == oNodeListPtr)
 		{
 			hr = -1620;
 			break;
@@ -341,19 +341,19 @@ HRESULT SVDOMClass::Clear ()
 			oNodeListPtr->reset ();
 
 			oNodePtr = oNodeListPtr->nextNode ();
-			if (oNodePtr == NULL)
+			if (nullptr == oNodePtr)
 			{
 //-			It is assumed that we are at the end of the list.				
 				break;
 			}
 
 			oNode1Ptr = svmDOMPtr->removeChild (oNodePtr);
-			if (oNode1Ptr == NULL)
+			if (nullptr == oNode1Ptr)
 			{
 				hr = -1692;
 				break;
 			}
-		} while (1); // relies on nodePtr == NULL to leave the loop
+		} while (1); // relies on nullptr == nodePtr to leave the loop
 
 
 		hr = SetHeader ();
@@ -375,7 +375,7 @@ HRESULT SVDOMClass::Clear ()
 HRESULT SVDOMClass::GetRootNode (SVXML::IXMLDOMElementPtr& apDOMRootPtr)
 {
 	HRESULT	hr = 0;
-	apDOMRootPtr = NULL;
+	apDOMRootPtr = nullptr;
 
 	while (1)
 	{
@@ -457,7 +457,7 @@ HRESULT SVDOMClass::CreateDOMNodeChildElement(SVXML::IXMLDOMNodePtr	aDOMParentNo
 		}
 
 		arDOMChildElementPtr = aDOMParentNodePtr->appendChild(oTempElementPtr);
-		if (arDOMChildElementPtr == NULL)
+		if (nullptr == arDOMChildElementPtr)
 		{
 			hr = -1643;
 			break;
@@ -465,14 +465,9 @@ HRESULT SVDOMClass::CreateDOMNodeChildElement(SVXML::IXMLDOMNodePtr	aDOMParentNo
 
 		break;
 	}
-
-//	SysFreeString (bstrValue);
-//	SysFreeString (bstrType);
-
 	return hr;
 }
 
-//##ModelId=41264A79024E
 HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElementName, VARIANT* avpElementValue, SVXML::IXMLDOMElementPtr& arDOMChildElementPtr)
 {
 	HRESULT hr = 0;
@@ -499,8 +494,8 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 //	FILE*								hFile;
 //	char								l_csHexDump [4000];
 
-	bstrValue = NULL;
-	bstrType = NULL;
+	bstrValue = nullptr;
+	bstrType = nullptr;
 
 	while (1)
 	{
@@ -550,7 +545,7 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 //fwrite ((BSTR) l_bstrElementName, SysStringByteLen (l_bstrElementName), 1, hFile);
 //fwrite ("\"\n", 2, 1, hFile);
 
-				if (((WCHAR*) l_bstrElementName == NULL) && 
+				if (( nullptr == (WCHAR*)l_bstrElementName) && 
 					 ((WCHAR*) l_bstrElementName == (WCHAR *) l_bstrDebugDecryptedString))
 				{
 				}
@@ -580,7 +575,7 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 
 
 //-	If an element name/label was specified, then add it.
-		if (abstrElementName != NULL)
+		if (nullptr != abstrElementName)
 		{
 			bstrAttributeName = g_wcsName;
 		
@@ -599,11 +594,11 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 
 //-		Make sure nobody attempts to VariantClear () our BSTR.
 			vAttributeValue.vt = VT_EMPTY;
-			vAttributeValue.bstrVal = NULL;
+			vAttributeValue.bstrVal = nullptr;
 		}
 
 		
-		if (avpElementValue != NULL)
+		if (nullptr != avpElementValue)
 		{
 			hr = SVVariantConverter::TranslateVariant (avpElementValue, &bstrValue, &bstrType);
 			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -651,14 +646,6 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 						}
 					}
 
-//fwrite ("CreateNode11\n", 13, 1, hFile);
-//CString x;
-//x.Format ("Length = %d\n", l_bstrElementValue.GetLength ());
-//fwrite (x, x.GetLength (), 1, hFile);
-//l_bstrElementValue.CharHexDump (l_csHexDump, sizeof (l_csHexDump));
-//fwrite ("Encrypted buffer\n", 17, 1, hFile);
-//fwrite (l_csHexDump, strlen (l_csHexDump), 1, hFile);
-//fwrite ("\n", 1, 1, hFile);		
 #ifdef _DEBUG
 
 					hr = m_opEncryption->DecryptString (l_bstrElementValue, &l_bstrDebugDecryptedString);
@@ -800,10 +787,10 @@ HRESULT SVDOMClass::CreateDOMNodeElement (BSTR abstrElementTag, BSTR abstrElemen
 
 	//-		Make sure nobody attempts to VariantClear () our BSTR.
 				vAttributeValue.vt = VT_EMPTY;
-   			vAttributeValue.bstrVal = NULL;
+   			vAttributeValue.bstrVal = nullptr;
 			}
 
-		} // if (avpElementValue != NULL)
+		} // if (nullptr != avpElementValue)
 
 		break;
 	} // while (1)
@@ -852,7 +839,7 @@ HRESULT	SVDOMClass::CopyXMLFileToDOM (BSTR	abstrLoadText)
 		if (bResult == VARIANT_FALSE)	// VARIANT_TRUE is -1 or 0xffff
 		{
 			oXMLParseErrorPtr = svmDOMPtr->GetparseError ();
-			if (oXMLParseErrorPtr == NULL)
+			if (nullptr == oXMLParseErrorPtr)
 			{
 				hr = -1670;
 				break;
@@ -908,7 +895,7 @@ HRESULT SVDOMClass::CreateElement (BSTR abstrElementName, SVXML::IXMLDOMElementP
 
 		arDOMElementPtr = svmDOMPtr->createNode (ccvNodeType, abstrElementName, (BSTR) svmbstrNameSpace);
 
-		if (arDOMElementPtr == NULL)
+		if (nullptr == arDOMElementPtr)
 		{
 			hr = -1910;
 			break;
@@ -944,8 +931,6 @@ HRESULT SVDOMClass::AppendChildToDOMDoc (SVXML::IXMLDOMNodePtr	aNodePtr)
 	return hr;
 }
 
-
-//##ModelId=41264A790289
 HRESULT SVDOMClass::AppendChildToDOMNode (SVXML::IXMLDOMNodePtr aParentNodePtr, SVXML::IXMLDOMNodePtr aChildNodePtr)
 {
 	HRESULT	hr = 0;
@@ -960,7 +945,7 @@ HRESULT SVDOMClass::AppendChildToDOMNode (SVXML::IXMLDOMNodePtr aParentNodePtr, 
 		}
 
 		oNewNodePtr = aParentNodePtr->appendChild (aChildNodePtr);
-		if (oNewNodePtr == NULL)
+		if (nullptr == oNewNodePtr)
 		{
 			hr = -1674;
 			break;
@@ -1014,14 +999,6 @@ HRESULT SVDOMClass::AppendCarriageReturnToDOMNode (SVXML::IXMLDOMNodePtr aParent
 			break;
 		}
 
-//		l_oDOMElementPtr = svmDOMPtr->createNode (ccvNodeType, (BSTR) l_bstrElementName, (BSTR) svmbstrNameSpace);
-//
-//		if (l_oDOMElementPtr == NULL)
-//		{
-//			hr = -1909;
-//			break;
-//		}
-
 		hr = l_bstrElementValue.CopyFromWChar (L"\n");
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
@@ -1032,7 +1009,7 @@ HRESULT SVDOMClass::AppendCarriageReturnToDOMNode (SVXML::IXMLDOMNodePtr aParent
 		l_oTextNodePtr->PutnodeValue (ccvText);
 
 		l_oResultNodePtr = aParentNodePtr->appendChild (l_oTextNodePtr);
-		if (l_oResultNodePtr == NULL)
+		if (nullptr == l_oResultNodePtr)
 		{
 			hr = -1911;
 			break;
@@ -1059,7 +1036,7 @@ HRESULT SVDOMClass::CreateNode (long p_lNodeType, const BSTR* p_bstrpNodeName, c
 	{
 		p_rNewNodePtr = svmDOMPtr->createNode (p_lNodeType, const_cast<BSTR> (*p_bstrpNodeName), const_cast<BSTR> (*p_bstrpNameSpace));
 
-		if (p_rNewNodePtr == NULL)
+		if (nullptr == p_rNewNodePtr)
 		{
 			hr = -1909;
 			break;
@@ -1282,7 +1259,7 @@ HRESULT SVDOMClass::GetDOMNodeElementValue (SVXML::IXMLDOMElementPtr aDOMElement
 		}
 
 //-	Do not attempt to destroy bstrValueType.
-		bstrValueType = NULL;
+		bstrValueType = nullptr;
 
 		break;
 	}
@@ -1297,7 +1274,7 @@ HRESULT SVDOMClass::GetDOMNodeElementValue (SVXML::IXMLDOMElementPtr aDOMElement
 		*avpValue = vNewVariant;
 
 		vNewVariant.vt = VT_EMPTY;
-		vNewVariant.bstrVal = NULL;
+		vNewVariant.bstrVal = nullptr;
 	}
 
 //	fclose (hFile);
@@ -1308,7 +1285,7 @@ HRESULT SVDOMClass::GetDOMNodeMainText (SVXML::IXMLDOMElementPtr p_oDOMElementPt
 {
 	HRESULT	hr = S_OK;
 
-	long l_lFound = false;
+	long l_lFound = FALSE;
 
 	SVXML::IXMLDOMNodeListPtr l_oNodeListPtr;
 	SVXML::IXMLDOMNodePtr l_oDOMNodePtr;
@@ -1318,7 +1295,7 @@ HRESULT SVDOMClass::GetDOMNodeMainText (SVXML::IXMLDOMElementPtr p_oDOMElementPt
 	while (1)
 	{
 		l_oNodeListPtr = p_oDOMElementPtr->GetchildNodes ();   
-		if (l_oNodeListPtr == NULL)
+		if (nullptr == l_oNodeListPtr)
 		{
 			hr = -1940;
 			break;
@@ -1328,7 +1305,7 @@ HRESULT SVDOMClass::GetDOMNodeMainText (SVXML::IXMLDOMElementPtr p_oDOMElementPt
 		{
 			l_oDOMNodePtr = GetDOMNodeNextText (l_oNodeListPtr, l_oDOMNodePtr);
 			
-			if (l_oDOMNodePtr == NULL)
+			if (nullptr == l_oDOMNodePtr)
 			{
 				break;
 			}
@@ -1339,7 +1316,7 @@ HRESULT SVDOMClass::GetDOMNodeMainText (SVXML::IXMLDOMElementPtr p_oDOMElementPt
 //-		(possibly white space).
 			l_lFound = TRUE;
 
-		} while ((l_oDOMNodePtr != NULL) && (l_lFound == FALSE));
+		} while ((nullptr != l_oDOMNodePtr) && (FALSE == l_lFound));
 
 		if (l_lFound == TRUE)
 		{
@@ -1366,14 +1343,14 @@ SVXML::IXMLDOMNodePtr SVDOMClass::GetDOMNodeNextText (SVXML::IXMLDOMNodeListPtr	
 {
 	HRESULT hr = S_OK;
 
-	long l_lTextFound = false;
+	long l_lTextFound = FALSE;
 
 	SVXML::IXMLDOMNodePtr l_oDOMNodePtr;
 	SVXML::DOMNodeType l_oNodeType;
 
 	while (1)
 	{
-		if (p_oDOMTextPtr == NULL)
+		if (nullptr == p_oDOMTextPtr)
 		{
 			hr = p_oNodeListPtr->reset ();
 			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -1385,7 +1362,7 @@ SVXML::IXMLDOMNodePtr SVDOMClass::GetDOMNodeNextText (SVXML::IXMLDOMNodeListPtr	
 		do
 		{
 			l_oDOMNodePtr = p_oNodeListPtr->nextNode ();
-			if (l_oDOMNodePtr == NULL)
+			if (nullptr == l_oDOMNodePtr)
 			{
 				break;
 			}
@@ -1395,7 +1372,7 @@ SVXML::IXMLDOMNodePtr SVDOMClass::GetDOMNodeNextText (SVXML::IXMLDOMNodeListPtr	
 			{
 				l_lTextFound = TRUE;
 			}
-		} while ((l_lTextFound == FALSE) && (l_oDOMNodePtr != NULL));
+		} while ((FALSE == l_lTextFound) && (nullptr != l_oDOMNodePtr));
 		break;
 	}
 	return l_oDOMNodePtr;
@@ -1423,7 +1400,7 @@ HRESULT SVDOMClass::GetDOMNodeElementName (SVXML::IXMLDOMElementPtr	aDOMElementP
 
 	while (1)
 	{
-		if (aDOMElementPtr == NULL)
+		if (nullptr == aDOMElementPtr)
 		{
 			hr = -1783;
 			break;
@@ -1454,7 +1431,7 @@ HRESULT SVDOMClass::GetDOMNodeElementName (SVXML::IXMLDOMElementPtr	aDOMElementP
 			hr = m_opEncryption->DecryptNameAttribute (vTempName.bstrVal, &l_bstrDecryptedName);
 
 			*abstrpDOMElementName = SysAllocString (l_bstrDecryptedName);
-			if (*abstrpDOMElementName == NULL)
+			if (nullptr == *abstrpDOMElementName)
 			{
 				hr = -1938;
 				break;
@@ -1512,7 +1489,7 @@ HRESULT SVDOMClass::GetElementNbrOfChildren (const SVXML::IXMLDOMElementPtr aDOM
 	while (1)
 	{
 		oNodeListPtr = aDOMElementPtr->GetchildNodes ();   
-		if (oNodeListPtr == NULL)
+		if (nullptr == oNodeListPtr)
 		{
 			hr = -1794;
 			break;

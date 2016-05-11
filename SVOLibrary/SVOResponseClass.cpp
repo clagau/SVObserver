@@ -17,7 +17,7 @@ This constructor initializes the local attributes and calls the Reset method.
 */
 SVOResponseClass::SVOResponseClass()
 {
-	mpvOwner = NULL;
+	mpvOwner = nullptr;
 
 	Reset();
 }
@@ -27,7 +27,7 @@ This constructor initializes the local attributes, calls the Reset method, and c
 */
 SVOResponseClass::SVOResponseClass(const SVOResponseClass &rResponse)
 {
-	mpvOwner = NULL;
+	mpvOwner = nullptr;
 
 	Reset();
 

@@ -26,7 +26,7 @@ END_MESSAGE_MAP()
 
 
 CModelessMsgBox::CModelessMsgBox(const CString& s, HANDLE p_hEvent)
-	: CDialog(CModelessMsgBox::IDD, NULL)
+	: CDialog(CModelessMsgBox::IDD, nullptr)
 {
 	m_sMsg = s;
 
@@ -37,12 +37,12 @@ CModelessMsgBox::CModelessMsgBox(const CString& s, HANDLE p_hEvent)
 
 CModelessMsgBox::~CModelessMsgBox()
 {
-	if( m_hEvent != NULL )
+	if( nullptr != m_hEvent )
 	{
 		::ResetEvent( m_hEvent );
 		::CloseHandle( m_hEvent );
 
-		m_hEvent = NULL;
+		m_hEvent = nullptr;
 	}
 
 	m_sMsg.Empty();
@@ -119,7 +119,7 @@ void CModelessMsgBox::OnSize(UINT nType, int cx, int cy)
 		mycx = cx - 20;
 		mycy = y/*OK button Y*/ -10 - rectText.top;
 
-		pText->SetWindowPos(NULL, 0,0, mycx, mycy, SWP_NOMOVE | SWP_NOZORDER);
+		pText->SetWindowPos(nullptr, 0,0, mycx, mycy, SWP_NOMOVE | SWP_NOZORDER);
 	}
 	
 	CDialog::OnSize(nType, cx, cy);

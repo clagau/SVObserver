@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "ObjectInterfaces/EquationTestResult.h"
 #include "ObjectInterfaces/IEquation.h"
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVEquationLibrary/SVEquationBase.h"
 #include "SVEquationLibrary/SVEquationLex.h"
 #include "SVEquationLibrary/SVEquationYacc.h"
@@ -175,12 +174,7 @@ public:
 	virtual ~SVEquationClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-
-
-
-	// For Conditional
-	BOOL NeedsConditionalPPQData();
-
+	
 	BOOL HasCondition();
 
 	void GetEquationText(CString& text) const;
@@ -206,8 +200,6 @@ public:
 
 	BOOL IsEnabled();
 
-//	BOOL IsDataValid();
-
 	virtual void Persist(SVObjectWriter& rWriter);
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
 	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
@@ -219,8 +211,6 @@ public:
 
 protected:
 	void init();
-
-	BOOL buildDynamicInputList();
 
 	virtual BOOL renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR originalName );
 

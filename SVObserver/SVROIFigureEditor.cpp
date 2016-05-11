@@ -31,7 +31,7 @@ HRESULT SVROIShape::DrawOutline( CDC& dc, CRect rectViewport, CRect rectDisplay,
 
 	TranslateToDisplay(rectViewport, rectDisplay, rect);
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		CBrush brush;
 		brush.CreateSolidBrush( rgbOuter );
@@ -64,41 +64,6 @@ void  SVROIShape::SetRect( const CRect& rect )
 	m_Rect = rect;
 }
 
-
-/*
-HRESULT SVROIShape::Refresh()
-{
-	// take the properties and draw them on the internal bitmap
-	HRESULT hr = S_OK;
-
-	if ( m_bImageInfoChanged && m_dib.hbm != NULL )
-	{
-		::DeleteObject( m_dib.hbm );
-		m_dib.FreeBitmapInfo();
-		m_dib.Clear();
-		m_RenderDC.DeleteDC();
-	}
-
-	if ( m_dib.hbm == NULL )
-	{
-		m_RenderDC.CreateCompatibleDC(NULL);
-		hr = SVIHBitmapUtilities::SVImageInfoToNewDIB( m_svImageInfo, m_dib );
-		m_bImageInfoChanged = false;
-	}
-
-	if ( hr == S_OK )
-	{
-		HBITMAP hbmOld = (HBITMAP) ::SelectObject(m_RenderDC.GetSafeHdc(), m_dib.hbm);
-
-		// Render Shape
-		hr = RenderOutline( m_RenderDC, , , rgb );
-
-		::SelectObject(m_RenderDC.GetSafeHdc(), hbmOld);
-	}
-
-	return hr;
-}// SVMaskShape::Refresh
-*/
 
 CRect SVROIShape::GetParentImageRect()
 {
@@ -135,13 +100,13 @@ HRESULT SVROIShape::TranslateToDisplay( CRect rectViewport, CRect rectDisplay, C
 	// translate mask image to viewport
 	figure -= (figureDest.m_svTopLeft - figureSource.m_svTopLeft); // simple offset, no scaling
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		figureSource = figureDest;	// viewport is now the input
 		figureDest = rectDisplay;   // display is the output
 		// translate viewport to display
 		hr = TranslateCoordinates(figureSource, figureDest, figure);
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			rectShape = figure.Rect();
 		}
@@ -194,7 +159,7 @@ SVROIFigureEditor::SVROIFigureEditor()
 SVROIFigureEditor::~SVROIFigureEditor()
 {
 	delete m_pShape;
-	m_pShape = NULL;
+	m_pShape = nullptr;
 }
 
 HRESULT SVROIFigureEditor::PaintOverlay( CDC& dc, CRect rectViewport, CRect rectDisplay )
@@ -229,14 +194,6 @@ CRect SVROIFigureEditor::GetRect()
 	return m_pShape->GetRect();
 }
 
-/*
-HRESULT SVROIFigureEditor::Refresh()
-{
-	return m_pShape->Refresh();
-}
-*/
-
-
 HRESULT SVROIFigureEditor::SetImageInfo( const SVImageInfoClass& svImageInfo )
 {
 	return m_pShape->SetImageInfo( svImageInfo );
@@ -267,10 +224,7 @@ CSize SVROIFigureEditor::GetSizeImpl()
 CPoint SVROIFigureEditor::GetReferencePoint()
 {
 	return m_pShape->GetRect().TopLeft();	// we need top left for ROI purposes
-	//return m_pShape->GetCenter();	// this is how MaskShapeFigureEditor works
 }
-
-
 
 HRESULT SVROIFigureEditor::MouseMove(UINT nFlags, CPoint point)
 {

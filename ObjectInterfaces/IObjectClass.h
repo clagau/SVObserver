@@ -16,10 +16,7 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		//disable warning to avoid a long list of warning about of the dominate use of methods from SVObjectClass
-#pragma warning(disable:4250)
-
-		//this class is a interface. It should only have pure virtual public method and new member parameter
+		//this class is a interface. It should only have pure virtual public method and no member variables
 		class IObjectClass
 		{
 		public:

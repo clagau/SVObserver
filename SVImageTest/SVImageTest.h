@@ -26,6 +26,7 @@ class CSVImageTestApp : public CWinApp
 {
 public:
 	CSVImageTestApp();
+	virtual ~CSVImageTestApp();
 
 	SVOIniLoader m_iniLoader;
 	CString m_svimIniFile;

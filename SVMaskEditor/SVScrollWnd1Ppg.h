@@ -9,17 +9,7 @@
 //* .Check In Date   : $Date:   26 Apr 2013 14:05:46  $
 //******************************************************************************
 
-#if !defined(AFX_SVSCROLLWND1PPG_H__6DF99A49_EBB8_11D2_A759_00106F000C7A__INCLUDED_)
-#define AFX_SVSCROLLWND1PPG_H__6DF99A49_EBB8_11D2_A759_00106F000C7A__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-
-// SVScrollWnd1Ppg.h : Declaration of the SVScrollWnd1PropPage property page class.
-
-////////////////////////////////////////////////////////////////////////////
-// SVScrollWnd1PropPage : See SVScrollWnd1Ppg.cpp.cpp for implementation.
 
 class SVScrollWnd1PropPage : public COlePropertyPage
 {
@@ -29,6 +19,7 @@ class SVScrollWnd1PropPage : public COlePropertyPage
 // Constructor
 public:
 	SVScrollWnd1PropPage();
+	virtual ~SVScrollWnd1PropPage();
 
 // Dialog Data
 	//{{AFX_DATA(SVScrollWnd1PropPage)
@@ -48,11 +39,7 @@ protected:
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVSCROLLWND1PPG_H__6DF99A49_EBB8_11D2_A759_00106F000C7A__INCLUDED)
-

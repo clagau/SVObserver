@@ -38,7 +38,7 @@ HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		*p_pulCount = 8;
 
@@ -54,7 +54,7 @@ HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbValue != NULL )
+	if ( nullptr != p_pbValue )
 	{
 		*p_pbValue = false;
 	}
@@ -77,7 +77,7 @@ HRESULT WINAPI SVInputGetPortCount( unsigned long *p_pulCount )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		*p_pulCount = 0;
 
@@ -93,7 +93,7 @@ HRESULT WINAPI SVInputGetPortValue( unsigned long p_ulPort, unsigned long *p_pul
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulValue != NULL )
+	if ( nullptr != p_pulValue )
 	{
 		*p_pulValue = 0;
 
@@ -118,7 +118,7 @@ HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		*p_pulCount = 16;
 
@@ -152,7 +152,7 @@ HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		*p_pulCount = 0;
 
@@ -186,7 +186,7 @@ HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		*p_pulCount = 4;
 
@@ -202,7 +202,7 @@ HRESULT WINAPI SVTriggerGetHandle( unsigned long *p_pulHandle, unsigned long p_u
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulHandle != NULL )
+	if ( nullptr != p_pulHandle )
 	{
 		*p_pulHandle = p_ulIndex + 1;
 
@@ -218,15 +218,15 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL && 0 < p_ulHandle && p_ulHandle <= 4 )
+	if ( nullptr != p_pbstrName && 0 < p_ulHandle && p_ulHandle <= 4 )
 	{
 		l_hrOk = S_OK;
 
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
 
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 
 		CString l_csName;
@@ -245,7 +245,7 @@ HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVEmptyIOCallbackPtr
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pCallback != NULL && 0 < p_ulHandle && p_ulHandle <= 4 )
+	if ( nullptr != p_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
 	{
 		l_hrOk = S_OK;
 	} 
@@ -259,7 +259,7 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVEmptyIOCallbackP
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pCallback != NULL && 0 < p_ulHandle && p_ulHandle <= 4 )
+	if ( nullptr != p_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
 	{
 		l_hrOk = S_OK;
 	} 
@@ -315,7 +315,7 @@ HRESULT WINAPI SVTriggerGetParameterCount( unsigned long p_ulHandle, unsigned lo
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		if ( 0 < p_ulHandle && p_ulHandle <= 4 )
 		{
@@ -338,13 +338,13 @@ HRESULT WINAPI SVTriggerGetParameterName( unsigned long p_ulHandle, unsigned lon
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
 
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 
 		l_hrOk = S_OK;
@@ -359,9 +359,9 @@ HRESULT WINAPI SVTriggerGetParameterValue( unsigned long p_ulHandle, unsigned lo
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
-		if ( ::VariantClear( p_pvarValue ) == S_OK )
+		if ( S_OK == ::VariantClear( p_pvarValue ) )
 		{
 			if ( 0 < p_ulHandle && p_ulHandle <= 4 )
 			{
@@ -381,7 +381,7 @@ HRESULT WINAPI SVTriggerSetParameterValue( unsigned long p_ulHandle, unsigned lo
 
 	if ( 0 < p_ulHandle && p_ulHandle <= 4 )
 	{
-		if ( p_pvarValue != NULL )
+		if ( nullptr != p_pvarValue )
 		{
 			l_hrOk = S_OK;
 		}
@@ -398,7 +398,7 @@ HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		*p_pulCount = 0;
 
@@ -414,9 +414,9 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *p_pulHandle, unsigned long p
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulHandle != NULL )
+	if ( nullptr != p_pulHandle )
 	{
-		*p_pulHandle = NULL;
+		*p_pulHandle = 0;
 	} 
 
 	return l_hrOk;
@@ -428,15 +428,15 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
 		l_hrOk = S_OK;
 
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
 
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 	} 
 
@@ -458,7 +458,7 @@ HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long p_ulHandle, unsigned lon
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulWidth != NULL )
+	if ( nullptr != p_pulWidth )
 	{
 		*p_pulWidth = 0;
 	}
@@ -472,7 +472,7 @@ HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long p_ulHandle, unsigned lo
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulHeight != NULL )
+	if ( nullptr != p_pulHeight )
 	{
 		*p_pulHeight = 0;
 	}
@@ -486,7 +486,7 @@ HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long p_ulHandle, int *p_piFo
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_piFormat != NULL )
+	if ( nullptr != p_piFormat )
 	{
 		*p_piFormat = SVImageFormatUnknown;
 	}
@@ -674,7 +674,7 @@ HRESULT WINAPI SVDigitizerGetRawParameter( unsigned long p_ulHandle, unsigned lo
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
 		::VariantClear( p_pvarValue );
 	}

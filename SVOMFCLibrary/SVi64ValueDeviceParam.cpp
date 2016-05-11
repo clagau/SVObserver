@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 13:06:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "Stdafx.h"
 #include "SVi64ValueDeviceParam.h"
+#pragma endregion Includes
 
 SVi64ValueDeviceParam::SVi64ValueDeviceParam()
 : iValue(0)
@@ -31,6 +33,10 @@ SVi64ValueDeviceParam::SVi64ValueDeviceParam(const SVi64ValueDeviceParam& rhs)
 	m_eDataType = DeviceDataTypei64;
 	iValue = rhs.iValue;
 	info = rhs.info;
+}
+
+SVi64ValueDeviceParam::~SVi64ValueDeviceParam()
+{
 }
 
 SVClonable* SVi64ValueDeviceParam::CloneImpl() const
@@ -99,7 +105,7 @@ HRESULT SVi64ValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 __int64& i64Value(SVDeviceParamWrapper& w) 
 {
 	const SVi64ValueDeviceParam* p = w.DerivedValue(p); 
-	if (p == NULL) 
+	if (nullptr == p) 
 	{
 		w = SVi64ValueDeviceParam(); 
 		p = w.DerivedValue(p);

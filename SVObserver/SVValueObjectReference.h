@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #pragma endregion Includes
 
 class SVValueObjectReference : public SVCheckedObjectReference<SVValueObjectClass>

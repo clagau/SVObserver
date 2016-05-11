@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxImageProcessingClass.h"
+#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
@@ -122,17 +123,17 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVSmartHandlePoin
 
 		l_Status = rFromHandle->GetData( l_FromMilHandle );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::Create( l_Temp, l_FromMilHandle.GetBuffer() );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				rToHandle = new SVImageBufferHandleStruct( l_Temp );
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxImageInterface::Convert( l_Temp, l_FromMilHandle.GetBuffer(), p_lConversionType );
 		}
@@ -142,7 +143,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVSmartHandlePoin
 		l_Status = E_FAIL;
 	}
 
-	if( l_Status != S_OK )
+	if( S_OK != l_Status )
 	{
 		rToHandle.clear();
 	}
@@ -177,19 +178,19 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 
 	hrOk = l_svParentExtents.GetOutputRectangle( l_oParent );
 
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		hrOk = l_svChildExtents.GetRectangle( l_oChild );
 	}
 
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		hrOk = GetChildImageCreateData( rChildInfo, l_eChildFormat, 
 			l_iChildPixelDepth, l_iChildBandNumber, l_iChildBandLink, 
 			l_lChildWidth, l_lChildHeight );
 	}
 
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		hrOk = GetOutputImageCreateData( rParentInfo, l_eParentFormat,
 			l_iParentPixelDepth, l_iParentBandNumber, l_iParentBandLink,
@@ -197,7 +198,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 	}
 
 
-	if ( hrOk == S_OK &&
+	if ( S_OK == hrOk &&
 		rChildHandle.empty() &&
 		l_lChildWidth > 0 && l_lChildHeight > 0 &&
 		l_iChildBandNumber <= l_iParentBandNumber &&
@@ -265,47 +266,47 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 				}
 			}
 
-			if ( rChildInfo.SetExtentProperty( SVExtentPropertyPositionPointX, l_oChild.left ) != S_OK )
+			if ( S_OK != rChildInfo.SetExtentProperty( SVExtentPropertyPositionPointX, l_oChild.left ) )
 			{
 				hrOk = S_FALSE;
 			}
 
-			if ( rChildInfo.SetExtentProperty( SVExtentPropertyPositionPointY, l_oChild.top ) != S_OK )
+			if ( S_OK != rChildInfo.SetExtentProperty( SVExtentPropertyPositionPointY, l_oChild.top ) )
 			{
 				hrOk = S_FALSE;
 			}
 
-			if ( rChildInfo.SetExtentProperty( SVExtentPropertyWidth, l_oChild.right - l_oChild.left ) != S_OK )
+			if ( S_OK != rChildInfo.SetExtentProperty( SVExtentPropertyWidth, l_oChild.right - l_oChild.left ) )
 			{
 				hrOk = S_FALSE;
 			}
 
-			if ( rChildInfo.SetExtentProperty( SVExtentPropertyHeight, l_oChild.bottom - l_oChild.left ) != S_OK )
+			if ( S_OK != rChildInfo.SetExtentProperty( SVExtentPropertyHeight, l_oChild.bottom - l_oChild.left ) )
 			{
 				hrOk = S_FALSE;
 			}
 
-			if ( hrOk == S_OK )
+			if ( S_OK == hrOk )
 			{
 				hrOk = GetChildImageCreateData( rChildInfo, l_eChildFormat, 
 					l_iChildPixelDepth, l_iChildBandNumber, l_iChildBandLink, 
 					l_lChildWidth, l_lChildHeight );
 
-				if ( hrOk == S_OK )
+				if ( S_OK == hrOk )
 				{
 					l_svChildExtents = rChildInfo.GetExtents();
 				}
 
-				if ( hrOk == S_OK )
+				if ( S_OK == hrOk )
 				{
 					hrOk = l_svChildExtents.GetRectangle( l_oChild );
 				}
 			}
 
 			SvStl::MessageContainer message;
-			if (rChildInfo.GetOwner() != NULL)
+			if (nullptr != rChildInfo.GetOwner())
 			{
-				if (rParentInfo.GetOwner() != NULL)
+				if (nullptr != rParentInfo.GetOwner())
 				{
 					SVStringArray msgList;
 					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteObjectName()));
@@ -328,8 +329,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 			Msg.setMessage( message.getMessage() );
 		}
 
-
-		if ( hrOk == S_OK )
+		if ( S_OK == hrOk )
 		{
 			if( l_iChildBandNumber < l_iParentBandNumber &&
 				l_iChildBandNumber > 0 )
@@ -356,7 +356,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 					rChildHandle = new SVImageBufferHandleStruct( l_NewBuffer );
 
 					hrOk = l_Code == SVMEE_STATUS_OK ? S_OK : l_Code | SVMEE_MATROX_ERROR;
-					if ( hrOk != S_OK )
+					if ( S_OK != hrOk )
 					{
 
 					}
@@ -380,20 +380,16 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 				rChildHandle = new SVImageBufferHandleStruct( l_NewBuffer );
 
 				hrOk = (l_Code == SVMEE_STATUS_OK) ? S_OK : l_Code | SVMEE_MATROX_ERROR;
-				if ( hrOk == S_OK )
+				if ( S_OK == hrOk )
 				{
 					rChildInfo.SetImageProperty( SVImagePropertyBandNumber, l_iParentBandNumber );
 					rChildInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
-				}
-				else
-				{
-
 				}
 			}
 		}
 	}
 
-	if ( hrOk != S_OK )
+	if ( S_OK != hrOk )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, StdMessageParams, SvOi::Err_10066 );
@@ -404,7 +400,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 
 HDC SVMatroxImageProcessingClass::CreateBufferDC( const SVImageInfoClass& rInfo, SVSmartHandlePointer rHandle )
 {
-	HDC hDC = NULL;
+	HDC hDC = nullptr;
 
 	SVImageFormatEnum l_eFormat;
 	int l_iBandNumber = 0;
@@ -413,7 +409,7 @@ HDC SVMatroxImageProcessingClass::CreateBufferDC( const SVImageInfoClass& rInfo,
 	long l_lWidth = 0;
 	long l_lHeight = 0;
 
-	bool l_bOk = GetOutputImageCreateData( rInfo, l_eFormat, l_iPixelDepth, l_iBandNumber, l_iBandLink, l_lWidth, l_lHeight ) == S_OK;
+	bool l_bOk = S_OK == GetOutputImageCreateData( rInfo, l_eFormat, l_iPixelDepth, l_iBandNumber, l_iBandLink, l_lWidth, l_lHeight );
 
 	if( l_bOk && !rHandle.empty() &&
 		l_iPixelDepth > 0 && l_iBandNumber > 0 )
@@ -528,7 +524,7 @@ HRESULT SVMatroxImageProcessingClass::InitBuffer( SVSmartHandlePointer rHandle, 
 	HRESULT hrOk = S_OK;
 
 	hrOk = !rHandle.empty() ? S_OK : S_FALSE;
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		SVImageBufferHandleImage l_MilHandle;
 		rHandle->GetData( l_MilHandle );
@@ -553,7 +549,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 	SVFileNameClass	svfncImageFile(tstrImagePathName);
 	CString strImagePathName = svfncImageFile.GetFullFileName();
 
-	if( tstrImagePathName != NULL )
+	if( nullptr != tstrImagePathName )
 	{
 		if( ! ::SVFileExists( strImagePathName ) )
 		{
@@ -724,7 +720,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( void* pBuffer, SVImageInf
 		long l_lWidth = 0;
 		long l_lHeight = 0;
 
-		bool l_bOk = GetOutputImageCreateData( rBufferInfo, l_eFormat, l_iPixelDepth, l_iBandNumber, l_iBandLink, l_lWidth, l_lHeight ) == S_OK;
+		bool l_bOk = S_OK == GetOutputImageCreateData( rBufferInfo, l_eFormat, l_iPixelDepth, l_iBandNumber, l_iBandLink, l_lWidth, l_lHeight );
 
 		if( ! l_bOk || 
 			l_lWidth != pbmhInfo->biWidth ||
@@ -785,14 +781,14 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( void* pBuffer, SVImageInf
 	int l_iBandNumber = 0;
 	int l_iBandLink = 0;
 
-	if ( rCameraInfo.GetImageProperty( SVImagePropertyBandNumber, l_iBandNumber ) != S_OK || 
-		rCameraInfo.GetImageProperty( SVImagePropertyBandLink, l_iBandLink ) != S_OK )
+	if ( S_OK != rCameraInfo.GetImageProperty( SVImagePropertyBandNumber, l_iBandNumber ) || 
+		S_OK != rCameraInfo.GetImageProperty( SVImagePropertyBandLink, l_iBandLink ) )
 	{
 		return S_FALSE;
 	}
 
 	// Copy the bits into the image object
-	if( pBits != NULL && !oTempHandle.empty()  && !rBufferHandle.empty() )
+	if( nullptr != pBits && !oTempHandle.empty()  && !rBufferHandle.empty() )
 	{
 		SVImageBufferHandleImage l_TempMilHandle;
 		SVImageBufferHandleImage l_MilHandle;
@@ -875,12 +871,12 @@ HRESULT SVMatroxImageProcessingClass::CopyImageBuffer( SVSmartHandlePointer& rTo
 
 		l_Status = rToHandle->GetData( l_ToMilHandle );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = rFromHandle->GetData( l_FromMilHandle );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::CopyBuffer( l_ToMilHandle.GetBuffer(), l_FromMilHandle.GetBuffer() );
 		}
@@ -903,7 +899,7 @@ HRESULT SVMatroxImageProcessingClass::CopyImageBuffer( SVByteVector& p_rToDIB, c
 
 		l_Status = rFromHandle->GetData( l_FromMilHandle );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::CopyBuffer( p_rToDIB, l_FromMilHandle.GetBuffer() );
 		}
@@ -926,7 +922,7 @@ HRESULT SVMatroxImageProcessingClass::CopyImageBuffer( SVByteVector& p_rToDIB, c
 
 		l_Status = rFromHandle->GetData( l_FromMilHandle );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::CopyBuffer( p_rToDIB, p_rToBitmapInfo, l_FromMilHandle.GetBuffer() );
 		}
@@ -949,7 +945,7 @@ HRESULT SVMatroxImageProcessingClass::CopyImageBufferToFileDIB( SVByteVector& p_
 
 		l_Status = rFromHandle->GetData( l_FromMilHandle );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::CopyBufferToFileDIB( p_rToDIB, l_FromMilHandle.GetBuffer() );
 		}
@@ -972,7 +968,7 @@ HRESULT SVMatroxImageProcessingClass::CopyImageBuffer( SVImageCopyUtility& p_rIm
 
 		l_Status = rFromHandle->GetData( l_FromMilHandle );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::CopyDIBBufferToMemory(p_rImageCopier, l_FromMilHandle.GetBuffer());
 		}
@@ -995,17 +991,17 @@ HRESULT SVMatroxImageProcessingClass::ConvertImageBuffer( SVByteVector& p_rToDIB
 
 		l_Status = rFromHandle->GetData( l_FromMilHandle );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::Create( l_Temp, l_FromMilHandle.GetBuffer() );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxImageInterface::Convert( l_Temp, l_FromMilHandle.GetBuffer(), p_lConversionType );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::CopyBuffer( p_rToDIB, l_Temp );
 		}
@@ -1022,7 +1018,7 @@ HRESULT SVMatroxImageProcessingClass::CreateDataBuffer( SVDataBufferInfoClass* p
 {
 	HRESULT hrOk = S_OK;
 
-	if( pDataInfo != NULL && pDataInfo->Length > 0 &&
+	if( nullptr != pDataInfo && pDataInfo->Length > 0 &&
 		pDataInfo->HBuffer.milResult.empty() )
 	{
 		SVImageOperationTypeEnum l_eType;
@@ -1075,15 +1071,13 @@ HRESULT SVMatroxImageProcessingClass::DestroyDataBuffer( SVDataBufferInfoClass* 
 {
 	HRESULT hrOk = S_OK;
 
-	if ( pDataInfo != NULL )
+	if ( nullptr != pDataInfo )
 	{
 		hrOk = S_OK;
 
 		if( !pDataInfo->HBuffer.milResult.empty() )
 		{
-
 			SVMatroxImageInterface::Destroy( pDataInfo->HBuffer.milResult );
-
 		}
 	}
 
@@ -1095,7 +1089,7 @@ HRESULT SVMatroxImageProcessingClass::ResizeDataBuffer( SVDataBufferInfoClass* p
 	HRESULT hrOk = S_OK;
 
 	hrOk = DestroyDataBuffer( pDataInfo );
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		pDataInfo->Length = lNewLength;
 
@@ -1109,15 +1103,12 @@ HRESULT SVMatroxImageProcessingClass::CreateBarCodeBuffer(SVBarCodeBufferInfoCla
 {
 	HRESULT hrOk = S_OK;
 
-	if( pDataInfo != NULL && pDataInfo->HBuffer.milBarCode.empty() )
+	if( nullptr != pDataInfo && pDataInfo->HBuffer.milBarCode.empty() )
 	{
 		// Allocate Bar Code buffer...
-
 		SVMatroxBarCodeInterface::Create(pDataInfo->HBuffer.milBarCode, pDataInfo->m_lCodeType );
-
 		hrOk = (!pDataInfo->HBuffer.milBarCode.empty()) ? S_OK : S_FALSE;
 	}
-
 	return hrOk;
 }
 
@@ -1131,34 +1122,34 @@ HRESULT SVMatroxImageProcessingClass::GetOutputImageCreateData( const SVImageInf
 {
 	HRESULT l_hrOk = p_rsvInfo.GetExtentProperty( SVExtentPropertyOutputWidth, p_rlWidth );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = p_rsvInfo.GetExtentProperty( SVExtentPropertyOutputHeight, p_rlHeight );
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		int l_iFormat = SVImageFormatUnknown;
 
 		l_hrOk = p_rsvInfo.GetImageProperty( SVImagePropertyFormat, l_iFormat );
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			p_reFormat = (SVImageFormatEnum)l_iFormat;
 		}
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = p_rsvInfo.GetImageProperty( SVImagePropertyBandNumber, p_riBandNumber );
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = p_rsvInfo.GetImageProperty( SVImagePropertyBandLink, p_riBandLink );
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = p_rsvInfo.GetImageProperty( SVImagePropertyPixelDepth, p_riPixelDepth );
 	}
@@ -1176,34 +1167,34 @@ HRESULT SVMatroxImageProcessingClass::GetChildImageCreateData( const SVImageInfo
 {
 	HRESULT l_hrOk = p_rsvInfo.GetExtentProperty( SVExtentPropertyWidth, p_rlWidth );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = p_rsvInfo.GetExtentProperty( SVExtentPropertyHeight, p_rlHeight );
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		int l_iFormat = SVImageFormatUnknown;
 
 		l_hrOk = p_rsvInfo.GetImageProperty( SVImagePropertyFormat, l_iFormat );
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			p_reFormat = (SVImageFormatEnum)l_iFormat;
 		}
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = p_rsvInfo.GetImageProperty( SVImagePropertyBandNumber, p_riBandNumber );
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = p_rsvInfo.GetImageProperty( SVImagePropertyBandLink, p_riBandLink );
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = p_rsvInfo.GetImageProperty( SVImagePropertyPixelDepth, p_riPixelDepth );
 	}

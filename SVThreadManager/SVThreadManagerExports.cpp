@@ -42,7 +42,7 @@ HRESULT WINAPI SVGetThreadInfoFilter( BSTR* bstrInfo, SVThreadAttribute eFilter 
 {
 	SVThreadManagerImpl::ThreadList InfoList;
 	HRESULT hr = gThreadManager.GetThreadInfo(InfoList, eFilter);
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		std::string strTmp;
 		for( SVThreadManagerImpl::ThreadList::const_iterator it = InfoList.begin() ; it != InfoList.end() ; ++it)

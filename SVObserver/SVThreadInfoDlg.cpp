@@ -72,11 +72,7 @@ BOOL SVThreadInfoDlg::OnInitDialog()
 	// Only show threads that have edit allowed.
 	UpdateThreadInfo(SVAffinityUser);
 
-	// For showing all threads update with SVNone.
-	//UpdateThreadInfo(SVNone); 
-
 	// Enable button to save info to a file for debugging.
-	//GetDlgItem(IDC_SAVE)->ShowWindow( SW_SHOW ); 
 	GetDlgItem(IDC_SAVE)->ShowWindow( SW_HIDE );
 
 	m_bManagerEnable = SVThreadManager::Instance().GetThreadAffinityEnabled();
@@ -176,10 +172,7 @@ void SVThreadInfoDlg::InsertComboThreadItem( SVRPropertyItem* pRoot, CString nam
 
 	std::list<int> AffList;
 	AffList.push_back( 0 );
-	//AffList.push_back( 1 ); Reserve these pipes as per IF00100.S960.003
-	//AffList.push_back( 2 );
-	//AffList.push_back( 3 );
-	//AffList.push_back( 4 );
+	//Reserve these pipes (1-4) as per IF00100.S960.003
 	AffList.push_back( 5 );
 	AffList.push_back( 6 );
 	AffList.push_back( 7 );
@@ -212,27 +205,27 @@ void SVThreadInfoDlg::AddComboAffinitys( SVRPropertyItemCombo* pCombo, AffinityB
 bool SVThreadInfoDlg::FindName( SVRPropertyItem* pRoot, LPCTSTR Name )
 {
 	bool bRet = false;
-	if( pRoot == nullptr )
+	if( nullptr == pRoot )
 	{
 		pRoot = m_ThreadList.GetRootItem();
 	}
 	else
 	{
-		if( std::strcmp( pRoot->GetLabelText(), Name ) == 0)
+		if( 0 == std::strcmp( pRoot->GetLabelText(), Name ) )
 		{
 			return true;
 		}
 	}
 
 	SVRPropertyItem* pChild = pRoot->GetChild();
-	if( pChild != nullptr )
+	if( nullptr != pChild )
 	{
 		bRet = FindName( pChild, Name );
 	}
 	else
 	{
 		SVRPropertyItem* pSibling = pRoot->GetSibling();
-		if( pSibling != nullptr )
+		if( nullptr != pSibling )
 		{
 			bRet = FindName( pSibling, Name);
 		}
@@ -240,7 +233,6 @@ bool SVThreadInfoDlg::FindName( SVRPropertyItem* pRoot, LPCTSTR Name )
 
 	return bRet;
 }
-
 
 void SVThreadInfoDlg::InsertThreadItem( SVRPropertyItem* pRoot, CString name, int Affinity, unsigned int nID )
 {

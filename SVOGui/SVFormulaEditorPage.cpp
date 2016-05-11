@@ -118,7 +118,7 @@ namespace Seidenader { namespace SVOGui
 	{
 		CPropertyPage::OnInitDialog();
 
-		HINSTANCE ScintillaInstance( NULL );
+		HINSTANCE ScintillaInstance( nullptr );
 
 		
 		SVString scintillaPath = SvStl::GlobalPath::Inst( ).GetBinPath(SvUl::ScintillaDll).c_str();
@@ -737,16 +737,6 @@ namespace Seidenader { namespace SVOGui
 			return CPropertyPage::OnKillActive();
 		}
 	}
-
-	int SVFormulaEditorPageClass::GetComboBoxStringExtent( CComboBox& rComboBox, LPCTSTR szStr ) 
-	{ 
-		CDC* pDC; 
-		pDC = rComboBox.GetDC(); 
-
-		CSize size = pDC->GetOutputTextExtent( szStr ); 
-
-		return (int)(size.cx * 0.80); 
-	} 
 
 	void SVFormulaEditorPageClass::HandleValidateError( int posFailed )
 	{

@@ -23,7 +23,7 @@ class SVTriggerObject : public SVObjectClass
 {
 public:
 	SVTriggerObject( LPCSTR ObjectName );
-	SVTriggerObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTRIGGEROBJECT );
+	SVTriggerObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRIGGEROBJECT );
 	virtual ~SVTriggerObject();
 
 	BOOL Create( SVTriggerClass *psvDevice );

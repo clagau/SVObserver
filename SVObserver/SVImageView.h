@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
@@ -20,6 +21,7 @@
 #include "SVInfoStructs.h"
 #include "SVOMFCLibrary\ZoomHelper.h"
 #include "ZoomHelperEx.h"
+#pragma endregion Includes
 
 struct IDirectDrawSurface7;
 
@@ -27,8 +29,8 @@ class SVToolClass;
 class SVImageViewScroll;
 class SVIPDoc;
 class SVTaskObjectClass;
-struct SVCameraInfoStruct;
 class SVObjectWriter;
+class SVDrawContext;
 
 // enums are parameter for function SetZoom
 enum EZoom {
@@ -46,12 +48,6 @@ public:
 	SVImageViewClass();
 	virtual ~SVImageViewClass();
 
-	virtual HRESULT UpdateToolExtents( SVExtentLocationPropertyEnum p_svLocation, double p_x, double p_y );
-	virtual HRESULT UpdateToolExtents( SVExtentLocationPropertyEnum p_svLocation, double p_angle );
-	virtual HRESULT UpdateToolExtents( const SVImageExtentClass& p_rExtents );
-	virtual HRESULT UpdateToolExtentsToFit( const SVImageExtentClass& p_rExtents );
-	virtual HRESULT GetToolExtents(SVImageExtentClass& p_svToolExtents);
-
 	SVIPDoc* GetIPDoc() const;
 
 	void AttachToImage( const SVGUID& p_rImageId );
@@ -61,8 +57,6 @@ public:
 	const SVGUID& GetImageID() const;
 
 	SVImageClass* GetImage();
-	SVTaskObjectClass* GetSelectedObject();
-
 	void GetImageRect( CRect &p_rect );
 
 	BOOL GetParameters(SVObjectWriter& rWriter);
@@ -77,7 +71,6 @@ public:
 
 	void ShowExtremeLUT( bool p_show = true );
 	
-	void TransformToViewSpace( CPoint& p_point );
 	void TransformFromViewSpace( CPoint& p_point );
 
 	BOOL GetObjectAtPoint( POINT p_point );
@@ -110,7 +103,7 @@ public:
 
 	//{{AFX_VIRTUAL( SVImageViewClass )
 	public:
-	virtual BOOL Create( LPCTSTR p_className, LPCTSTR p_windowName, DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext = NULL );
+	virtual BOOL Create( LPCTSTR p_className, LPCTSTR p_windowName, DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext = nullptr );
 	virtual void OnInitialUpdate();
 	virtual BOOL OnCommand( WPARAM p_wParam, LPARAM p_lParam );
 	protected:
@@ -193,6 +186,8 @@ protected:
 
 	HICON GetObjectCursor( POINT p_point );
 	HICON GetObjectCursor( SVExtentLocationPropertyEnum p_svLocation, POINT p_point);
+
+	HRESULT GetToolExtents(SVImageExtentClass& p_svToolExtents);
 
 #ifdef _DEBUG
 	virtual void AssertValid() const;

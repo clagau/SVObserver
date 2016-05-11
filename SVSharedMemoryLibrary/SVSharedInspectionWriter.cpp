@@ -109,7 +109,7 @@ HRESULT SVSharedInspectionWriter::Create( const std::string& name, const GUID & 
 
 void SVSharedInspectionWriter::Destroy()
 {
-	if (shm.get() != nullptr)
+	if (nullptr != shm.get())
 	{
 		ReleaseAll();
 		if (rsh)

@@ -22,8 +22,6 @@
 class SVHardwareManifest
 {
 public:
-	friend class SVObserverApp;
-
 	static SVHardwareManifest& Instance();
 
 	virtual ~SVHardwareManifest();
@@ -69,6 +67,13 @@ public:
 	static SVString BuildIOBoardTriggerDeviceName(int iDig);
 
 	//************************************
+	//! This is a static method to check if the product type loaded from a configuration is valid
+	//! \param ProductType <in> the SVIM product type
+	//! \returns true if the ProductType is valid
+	//************************************
+	static bool IsValidProductType( SVIMProductEnum ProductType );
+
+	//************************************
 	//! This is a static method to check if two product types are compatible
 	//! \param ConfigType <in> the configuration product type
 	//! \param ProductType <in> the SVIM product type
@@ -111,15 +116,17 @@ public:
 	//************************************
 	static bool IsNonIOSVIM(SVIMProductEnum ProductType);
 
-protected:
-	SVHardwareManifest();
-
-	void Startup();
-	void Shutdown();
+	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
+	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project
+	// So for now the restriction is made manually, just don't call these methods anywhere else, as described via this comment
+	void Startup();	 // This method is only meant to be called by the main application class
+	void Shutdown(); // This method is only meant to be called by the main application class
 
 private:
+	SVHardwareManifest();
+	
 	/*
-	Do not implement the following to methods.
+	Do not implement the following two methods.
 	These definitions prevent copy and assignment operations.
 	*/
 	SVHardwareManifest( const SVHardwareManifest& p_rObject );

@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 // Dialogfeld SVEnvironmentSettingsDialogClass 
 
 
-SVEnvironmentSettingsDialogClass::SVEnvironmentSettingsDialogClass(CWnd* pParent /*=NULL*/)
+SVEnvironmentSettingsDialogClass::SVEnvironmentSettingsDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVEnvironmentSettingsDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVEnvironmentSettingsDialogClass)

@@ -132,20 +132,7 @@ void SVOCameraObj::SetCameraFileParams(const SVDeviceParamCollection& rParams)
 {
 	m_CameraFileParams = rParams;
 
-	/*
-	// now update the parameter list if it is different than the camera file (stuff it with defaults)
-	SVDeviceParamMap::const_iterator iter;
-	for (iter = m_CameraFileParams.mapParameters.begin(); iter != m_CameraFileParams.mapParameters.end(); iter++)
-	{
-		const SVDeviceParam* pDeviceParam = m_CameraDeviceParams.GetParameter( iter->first );
-		if ( pDeviceParam == NULL )
-		{
-			m_CameraDeviceParams.GetParameter( iter->first ) = iter->second;
-		}
-	}
-	*/
 	m_CameraDeviceParams = rParams;	// reset all settings when changing camera file!!
-
 }
 
 void SVOCameraObj::SetCameraDeviceParams(const SVDeviceParamCollection& rParams)
@@ -219,14 +206,6 @@ SVOCameraObj* SVOCameraObj::operator =(const SVOCameraObj *source)
 	m_fileImageSize = source->m_fileImageSize;
 
     return (this);
-}
-
-void SVOCameraObj::CheckObject()
-{
-    //check to see if camera file is empty
-
- //   if (!m_sCameraFile.IsEmpty())
-   //     m_bCameraSet = TRUE;
 }
 
 bool SVOCameraObj::IsFileAcquisition() const

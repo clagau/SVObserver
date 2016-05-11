@@ -33,7 +33,7 @@ SV_IMPLEMENT_CLASS( SVLinearEdgeProcessingClass, SVLinearEdgeProcessingClassGuid
 SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner, int StringResourceID )
 					                  :SVTaskObjectClass( POwner, StringResourceID )
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVLinearEdgeProcessingObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVLinearEdgeProcessingObjectType;
 
 	m_svInputImageObjectInfo.SetInputObjectType( SVImageObjectType );
 	m_svInputImageObjectInfo.SetObject( GetObjectInfo() );
@@ -108,7 +108,7 @@ BOOL SVLinearEdgeProcessingClass::CreateObject( SVObjectLevelCreateStruct *PCrea
 
 	BOOL bOk = SVTaskObjectClass::CreateObject( PCreateStructure );
 
-	bOk = bOk && GetPixelDepth() == S_OK;
+	bOk = bOk && S_OK == GetPixelDepth();
 
 	if( bOk )
 	{
@@ -188,7 +188,7 @@ HRESULT SVLinearEdgeProcessingClass::ResetObject()
 		m_svUpperThresholdValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	}
 
-	if( GetPixelDepth() != S_OK )
+	if( S_OK != GetPixelDepth() )
 	{
 		hRet = S_FALSE;
 	}
@@ -205,14 +205,14 @@ BOOL SVLinearEdgeProcessingClass::OnValidate()
 {
 	if( SVTaskObjectClass::OnValidate() )
 	{
-		if( GetInputLinearData() != NULL )
+		if( nullptr != GetInputLinearData() )
 		{
-			return TRUE;
+			return true;
 		}
 	}
 
 	SetInvalid();
-	return FALSE;
+	return false;
 }
 
 BOOL SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus )
@@ -221,20 +221,20 @@ BOOL SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus )
 
 	l_bOk = SVTaskObjectClass::onRun(p_rsvRunStatus);
 
-	l_bOk &= UpdateUpperThresholdValues( p_rsvRunStatus.m_lResultDataIndex ) == S_OK;
-	l_bOk &= UpdateLowerThresholdValues( p_rsvRunStatus.m_lResultDataIndex ) == S_OK;
+	l_bOk &= S_OK == UpdateUpperThresholdValues( p_rsvRunStatus.m_lResultDataIndex );
+	l_bOk &= S_OK == UpdateLowerThresholdValues( p_rsvRunStatus.m_lResultDataIndex );
 
-	l_bOk &= UpdateEdgeList( p_rsvRunStatus.m_lResultDataIndex ) == S_OK;
+	l_bOk &= S_OK == UpdateEdgeList( p_rsvRunStatus.m_lResultDataIndex );
 
 	return l_bOk;
 }
 
 SVImageClass *SVLinearEdgeProcessingClass::GetInputImage()
 {
-	SVImageClass *l_psvImage = NULL;
+	SVImageClass *l_psvImage = nullptr;
 
 	if( m_svInputImageObjectInfo.IsConnected() && 
-		  m_svInputImageObjectInfo.GetInputObjectInfo().PObject != NULL )
+		  nullptr != m_svInputImageObjectInfo.GetInputObjectInfo().PObject )
 	{
 		l_psvImage = dynamic_cast<SVImageClass *>(m_svInputImageObjectInfo.GetInputObjectInfo().PObject);
 	}
@@ -244,10 +244,10 @@ SVImageClass *SVLinearEdgeProcessingClass::GetInputImage()
 
 SVDoubleValueObjectClass *SVLinearEdgeProcessingClass::GetInputMinThreshold()
 {
-	SVDoubleValueObjectClass *l_psvValue = NULL;
+	SVDoubleValueObjectClass *l_psvValue = nullptr;
 
 	if( m_svInputMinThreshold.IsConnected() && 
-		  m_svInputMinThreshold.GetInputObjectInfo().PObject != NULL )
+		nullptr != m_svInputMinThreshold.GetInputObjectInfo().PObject )
 	{
 		l_psvValue = dynamic_cast<SVDoubleValueObjectClass *>(m_svInputMinThreshold.GetInputObjectInfo().PObject);
 	}
@@ -257,10 +257,10 @@ SVDoubleValueObjectClass *SVLinearEdgeProcessingClass::GetInputMinThreshold()
 
 SVDoubleValueObjectClass *SVLinearEdgeProcessingClass::GetInputMaxThreshold()
 {
-	SVDoubleValueObjectClass *l_psvValue = NULL;
+	SVDoubleValueObjectClass *l_psvValue = nullptr;
 
 	if( m_svInputMaxThreshold.IsConnected() && 
-		  m_svInputMaxThreshold.GetInputObjectInfo().PObject != NULL )
+		nullptr != m_svInputMaxThreshold.GetInputObjectInfo().PObject )
 	{
 		l_psvValue = dynamic_cast<SVDoubleValueObjectClass *>(m_svInputMaxThreshold.GetInputObjectInfo().PObject);
 	}
@@ -270,15 +270,15 @@ SVDoubleValueObjectClass *SVLinearEdgeProcessingClass::GetInputMaxThreshold()
 
 SVDoubleValueObjectClass* SVLinearEdgeProcessingClass::GetInputLinearData()
 {
-	SVDoubleValueObjectClass* l_psvData = NULL;
+	SVDoubleValueObjectClass* l_psvData = nullptr;
 
 	if( m_svInputLinearData.IsConnected() && m_svInputLinearData.GetInputObjectInfo().PObject )
 	{
 		l_psvData = dynamic_cast <SVDoubleValueObjectClass*> (m_svInputLinearData.GetInputObjectInfo().PObject);
 #ifdef _DEBUG
-		if ( m_svInputLinearData.GetInputObjectInfo().PObject != NULL )
+		if ( nullptr != m_svInputLinearData.GetInputObjectInfo().PObject )
 		{
-			ASSERT( l_psvData != NULL );
+			ASSERT( nullptr != l_psvData );
 		}
 #endif
 	}
@@ -290,7 +290,7 @@ HRESULT SVLinearEdgeProcessingClass::GetPixelDepth()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( GetInputImage() != NULL )
+	if( nullptr != GetInputImage() )
 	{
 	  SVImageInfoClass ImageInfo = GetInputImage()->GetImageInfo();
 
@@ -308,18 +308,18 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double &p_rdValue )
 
 	p_rdValue = 0.0;
 
-	if( GetInputLinearData() != NULL &&
-		  ( GetInputLinearData()->GetValues( l_svData ) == S_OK ) )
+	if( nullptr != GetInputLinearData() &&
+		  ( S_OK == GetInputLinearData()->GetValues( l_svData ) ) )
 	{
-		BOOL l_bIsFixedEdgeMarker = FALSE;
+		BOOL l_bIsFixedEdgeMarker = false;
 		DWORD l_dwPosition = 0;
 
 		double l_dWidth = static_cast<double>(l_svData.size());
 		double l_dEndOfLine = static_cast<double>(l_svData.size() - 1);
 
-		if( ( m_svIsFixedEdgeMarker.GetValue( l_bIsFixedEdgeMarker ) == S_OK ) && 
+		if( ( S_OK == m_svIsFixedEdgeMarker.GetValue( l_bIsFixedEdgeMarker ) ) && 
 				l_bIsFixedEdgeMarker &&
-				( m_svPosition.GetValue( l_dwPosition ) == S_OK ) )
+				( S_OK == m_svPosition.GetValue( l_dwPosition ) ) )
 		{
 			// Get the selected fixed position...
 			switch ( l_dwPosition )
@@ -363,7 +363,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double &p_rdValue )
 				{
 					double l_dOffset = 0.0;
 
-					if( ( m_svPositionOffsetValue.GetValue( l_dOffset ) == S_OK ) && 
+					if( ( S_OK == m_svPositionOffsetValue.GetValue( l_dOffset ) ) && 
 					    l_dOffset <= l_dEndOfLine )
 					{
 						p_rdValue = l_dOffset;
@@ -381,8 +381,8 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double &p_rdValue )
 
 			DWORD l_dwEdgeSelect = 0;
 
-			if( ( m_svLinearEdges.GetValues( l_svEdges ) == S_OK ) &&
-				  ( m_svEdgeSelect.GetValue( l_dwEdgeSelect ) == S_OK ) )
+			if( ( S_OK == m_svLinearEdges.GetValues( l_svEdges ) ) &&
+				( S_OK == m_svEdgeSelect.GetValue( l_dwEdgeSelect ) ) )
 			{
 				switch ( l_dwEdgeSelect )
 				{
@@ -425,8 +425,8 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double &p_rdValue )
 						double l_dEdgeSelect = 0.0;
 						DWORD l_dwDirection = 0;
 
-						if( ( m_svEdgeSelectThisValue.GetValue( l_dEdgeSelect ) == S_OK ) &&
-						    ( m_svDirection.GetValue( l_dwDirection ) == S_OK ) )
+						if( ( S_OK == m_svEdgeSelectThisValue.GetValue( l_dEdgeSelect ) ) &&
+						    ( S_OK == m_svDirection.GetValue( l_dwDirection ) ) )
 						{
 							long l_lEdge = (long)l_dEdgeSelect;
 							double l_dPercent = l_dEdgeSelect - l_lEdge;
@@ -487,14 +487,14 @@ HRESULT SVLinearEdgeProcessingClass::GetPointFromDistance( double p_dDistance, S
 
 	HRESULT l_hrOk = p_rsvPoint.Initialize();
 
-	if( GetAnalyzer() == NULL ||
-		  GetAnalyzer()->GetImageExtent( l_svExtents ) != S_OK  ||
-			l_svExtents.GetOutputRectangle( l_oRect ) != S_OK )
+	if( nullptr == GetAnalyzer() ||
+		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		p_rsvPoint.m_dPositionX = p_dDistance;
 		p_rsvPoint.m_dPositionY = l_oRect.bottom / 2;
@@ -513,14 +513,14 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double p_dDista
 
 	HRESULT l_hrOk = p_rsvLine.Initialize();
 
-	if( GetAnalyzer() == NULL ||
-		  GetAnalyzer()->GetImageExtent( l_svExtents ) != S_OK  ||
-			l_svExtents.GetOutputRectangle( l_oRect ) != S_OK )
+	if( nullptr == GetAnalyzer() ||
+		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		SVExtentPointStruct l_oGraphPoint;
 
@@ -555,22 +555,22 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgePoint( SVExtentPointStruct &p_
 
 	HRESULT l_hrOk = p_rsvPoint.Initialize();
 
-	if( GetAnalyzer() == NULL ||
-		  GetAnalyzer()->GetImageExtent( l_svExtents ) != S_OK  ||
-			l_svExtents.GetOutputRectangle( l_oRect ) != S_OK ||
-		  ( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
-			( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
+	if( nullptr == GetAnalyzer() ||
+		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
+		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
+		( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		double l_dDistance = 0.0;
 
 		l_hrOk = GetOutputEdgeDistance( l_dDistance );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			p_rsvPoint.m_dPositionX = l_dDistance;
 			p_rsvPoint.m_dPositionY = l_oRect.bottom / 2;
@@ -591,16 +591,16 @@ HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineS
 
 	HRESULT l_hrOk = p_rsvMiltiLine.Initialize();
 		
-	if( GetAnalyzer() == NULL ||
-		  GetAnalyzer()->GetImageExtent( l_svExtents ) != S_OK  ||
-			l_svExtents.GetOutputRectangle( l_oRect ) != S_OK ||
-		  ( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
-			( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
+	if( nullptr == GetAnalyzer() ||
+		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
+		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
+		( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		SVExtentLineStruct l_svUpperLine;
 		SVExtentLineStruct l_svLowerLine;
@@ -661,16 +661,16 @@ HRESULT SVLinearEdgeProcessingClass::GetHistogramOverlay( SVExtentLineStruct &p_
 
 	HRESULT l_hrOk = p_rsvLine.Initialize();
 		
-	if( GetAnalyzer() == NULL ||
-		  GetAnalyzer()->GetImageExtent( l_svExtents ) != S_OK  ||
-			l_svExtents.GetOutputRectangle( l_oRect ) != S_OK ||
-		  GetInputLinearData() == NULL ||
-			(S_OK != GetInputLinearData()->GetValues( l_svData )) )
+	if( nullptr == GetAnalyzer() ||
+		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
+		nullptr == GetInputLinearData()  ||
+		(S_OK != GetInputLinearData()->GetValues( l_svData )) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		double divisor = m_dwColorNumber;
 
@@ -703,15 +703,15 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &p
 
 	std::vector<double> l_svEdges;
 	
-	if( GetAnalyzer() == NULL ||
-		  GetAnalyzer()->GetImageExtent( l_svExtents ) != S_OK  ||
-			l_svExtents.GetOutputRectangle( l_oRect ) != S_OK ||
-		  ( S_OK != m_svLinearEdges.GetValues( l_svEdges ) ) )
+	if( nullptr == GetAnalyzer() ||
+		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
+		 ( S_OK != m_svLinearEdges.GetValues( l_svEdges ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		DWORD l_dwDirection = SV_UNDEFINED_DIRECTION;
 
@@ -775,15 +775,15 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 
 	HRESULT l_hrOk = p_rsvLine.Initialize();
 
-	if( GetAnalyzer() == NULL ||
-		  GetAnalyzer()->GetImageExtent( l_svExtents ) != S_OK  ||
-			l_svExtents.GetOutputRectangle( l_oRect ) != S_OK ||
-		  GetOutputEdgeDistance( l_dDistance ) != S_OK )
+	if( nullptr == GetAnalyzer() ||
+		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
+		S_OK != GetOutputEdgeDistance( l_dDistance ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		SVExtentPointStruct l_oGraphPoint;
 
@@ -844,25 +844,25 @@ HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues( long p_lIndex )
 
 	double l_dUpper = 0.0;
 
-	if( GetInputMinThreshold() == NULL || ( S_OK != GetInputMinThreshold()->GetValue( p_lIndex, l_dMin ) ) )
+	if( nullptr == GetInputMinThreshold() || ( S_OK != GetInputMinThreshold()->GetValue( p_lIndex, l_dMin ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( GetInputMaxThreshold() == NULL || ( S_OK != GetInputMaxThreshold()->GetValue( p_lIndex, l_dMax ) ) )
+	if( nullptr == GetInputMaxThreshold() || ( S_OK != GetInputMaxThreshold()->GetValue( p_lIndex, l_dMax ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( ( l_hrTemp = m_svUseUpperThresholdSelectable.GetValue( l_bState ) ) == S_OK )
+	if( S_OK == ( l_hrTemp = m_svUseUpperThresholdSelectable.GetValue( l_bState ) ) )
 	{
 		if( ! l_bState )
 		{
-			if( ( m_svUseUpperThresholdMaxMinusPercentDiff.GetValue( l_bState ) == S_OK ) && l_bState )
+			if( ( S_OK == m_svUseUpperThresholdMaxMinusPercentDiff.GetValue( l_bState ) ) && l_bState )
 			{
 				double l_dPercentDiff = 0.0;
 
-				if( m_svUpperMaxMinusPercentDiffValue.GetValue( l_dPercentDiff ) == S_OK )
+				if( S_OK == m_svUpperMaxMinusPercentDiffValue.GetValue( l_dPercentDiff )  )
 				{
 					if( l_dPercentDiff != 0.0 )
 					{
@@ -880,11 +880,11 @@ HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues( long p_lIndex )
 					l_hrOk = S_FALSE;
 				}
 			}
-			else if( ( m_svUseUpperThresholdMaxMinusOffset.GetValue( l_bState ) == S_OK ) && l_bState )
+			else if( ( S_OK == m_svUseUpperThresholdMaxMinusOffset.GetValue( l_bState ) ) && l_bState )
 			{
 				double l_dOffset = 0.0;
 
-				if( (l_hrTemp = m_svUpperMaxMinusOffsetValue.GetValue( l_dOffset )) == S_OK )
+				if( S_OK == (l_hrTemp = m_svUpperMaxMinusOffsetValue.GetValue( l_dOffset )) )
 				{
 					l_dUpper = l_dMax - l_dOffset;
 				}
@@ -893,11 +893,11 @@ HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues( long p_lIndex )
 					l_hrOk = l_hrTemp;
 				}
 			}
-			else if( ( m_svUseUpperThresholdMinPlusOffset.GetValue( l_bState ) == S_OK ) && l_bState )
+			else if( ( S_OK == m_svUseUpperThresholdMinPlusOffset.GetValue( l_bState ) ) && l_bState )
 			{
 				double l_dOffset = 0.0;
 
-				if( ( l_hrTemp = m_svUpperMinPlusOffsetValue.GetValue( l_dOffset ) ) == S_OK )
+				if( S_OK == ( l_hrTemp = m_svUpperMinPlusOffsetValue.GetValue( l_dOffset ) ) )
 				{
 					l_dUpper = l_dMin + l_dOffset;
 				}
@@ -943,25 +943,25 @@ HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues( long p_lIndex )
 
 	double l_dLower = 0.0;
 
-	if( GetInputMinThreshold() == NULL || ( S_OK != GetInputMinThreshold()->GetValue( p_lIndex, l_dMin ) ) )
+	if( nullptr == GetInputMinThreshold() || ( S_OK != GetInputMinThreshold()->GetValue( p_lIndex, l_dMin ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( GetInputMaxThreshold() == NULL || ( S_OK != GetInputMaxThreshold()->GetValue( p_lIndex, l_dMax ) ) )
+	if( nullptr == GetInputMaxThreshold() || ( S_OK != GetInputMaxThreshold()->GetValue( p_lIndex, l_dMax ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( ( l_hrTemp = m_svUseLowerThresholdSelectable.GetValue( l_bState ) ) == S_OK )
+	if( S_OK == ( l_hrTemp = m_svUseLowerThresholdSelectable.GetValue( l_bState ) ) )
 	{
 		if( ! l_bState )
 		{
-			if( ( m_svUseLowerThresholdMaxMinusPercentDiff.GetValue( l_bState ) == S_OK ) && l_bState )
+			if( ( S_OK == m_svUseLowerThresholdMaxMinusPercentDiff.GetValue( l_bState ) ) && l_bState )
 			{
 				double l_dPercentDiff = 0.0;
 
-				if( ( l_hrTemp = m_svLowerMaxMinusPercentDiffValue.GetValue( l_dPercentDiff ) ) == S_OK )
+				if( S_OK == ( l_hrTemp = m_svLowerMaxMinusPercentDiffValue.GetValue( l_dPercentDiff ) ) )
 				{
 					if( l_dPercentDiff != 0.0 )
 					{
@@ -979,11 +979,11 @@ HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues( long p_lIndex )
 					l_hrOk = l_hrTemp;
 				}
 			}
-			else if( ( m_svUseLowerThresholdMaxMinusOffset.GetValue( l_bState ) == S_OK ) && l_bState )
+			else if( ( S_OK == m_svUseLowerThresholdMaxMinusOffset.GetValue( l_bState ) ) && l_bState )
 			{
 				double l_dOffset = 0.0;
 
-				if( ( l_hrTemp = m_svLowerMaxMinusOffsetValue.GetValue( l_dOffset ) ) == S_OK )
+				if( S_OK == ( l_hrTemp = m_svLowerMaxMinusOffsetValue.GetValue( l_dOffset ) ) )
 				{
 					l_dLower = l_dMax - l_dOffset;
 				}
@@ -992,11 +992,11 @@ HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues( long p_lIndex )
 					l_hrOk = l_hrTemp;
 				}
 			}
-			else if( ( m_svUseLowerThresholdMinPlusOffset.GetValue( l_bState ) == S_OK ) && l_bState )
+			else if( ( S_OK == m_svUseLowerThresholdMinPlusOffset.GetValue( l_bState ) ) && l_bState )
 			{
 				double l_dOffset = 0.0;
 
-				if( ( l_hrTemp = m_svLowerMinPlusOffsetValue.GetValue( l_dOffset ) ) == S_OK )
+				if( S_OK == ( l_hrTemp = m_svLowerMinPlusOffsetValue.GetValue( l_dOffset ) ) )
 				{
 					l_dLower = l_dMin + l_dOffset;
 				}
@@ -1042,37 +1042,37 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long p_lIndex )
 	DWORD l_dwDirection = 0;
 	DWORD l_dwPolarisation = 0;
 
-	if( GetInputLinearData() == NULL )
+	if( nullptr == GetInputLinearData() )
 	{
 		l_hrOk = S_FALSE;
 	}
 	
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = GetInputLinearData()->GetValues( l_svData );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = m_svUpperThresholdValue.GetValue( l_dwUpper );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = m_svLowerThresholdValue.GetValue( l_dwLower );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = m_svDirection.GetValue( l_dwDirection );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = m_svPolarisation.GetValue( l_dwPolarisation );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		long l_lCount = static_cast<long>(l_svData.size());
 
@@ -1083,15 +1083,15 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long p_lIndex )
 				// Calc edges...
 				for( long l = 0; l < l_lCount - 1; ++l )
 				{
-					if( IsEdge( l_svData[ l ], l_svData[ l + 1 ], l_dwUpper, l_dwLower, l_dwPolarisation ) == S_OK )
+					if( S_OK == IsEdge( l_svData[ l ], l_svData[ l + 1 ], l_dwUpper, l_dwLower, l_dwPolarisation ) )
 					{
 						if( l_dwPolarisation == SV_ANY_POLARISATION )
 						{
 							double l_dDistance1 = 0.0;
 							double l_dDistance2 = 0.0;
 
-							bool l_bDistance1 = CalculateSubPixelEdge( l_svData[ l ], l_svData[ l + 1 ], l_dwUpper, l_dwLower, SV_POSITIVE_POLARISATION, l_dDistance1 ) == S_OK;
-							bool l_bDistance2 = CalculateSubPixelEdge( l_svData[ l ], l_svData[ l + 1 ], l_dwUpper, l_dwLower, SV_NEGATIVE_POLARISATION, l_dDistance2 ) == S_OK;
+							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( l_svData[ l ], l_svData[ l + 1 ], l_dwUpper, l_dwLower, SV_POSITIVE_POLARISATION, l_dDistance1 );
+							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( l_svData[ l ], l_svData[ l + 1 ], l_dwUpper, l_dwLower, SV_NEGATIVE_POLARISATION, l_dDistance2 );
 
 							if ( l_dDistance1 <= l_dDistance2 )
 							{
@@ -1130,7 +1130,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long p_lIndex )
 						{
 							double l_dDistance = 0.0;
 
-							if( CalculateSubPixelEdge( l_svData[ l ], l_svData[ l + 1 ], l_dwUpper, l_dwLower, l_dwPolarisation, l_dDistance ) == S_OK )
+							if( S_OK == CalculateSubPixelEdge( l_svData[ l ], l_svData[ l + 1 ], l_dwUpper, l_dwLower, l_dwPolarisation, l_dDistance ) )
 							{
 								l_dDistance = l + l_dDistance;
 
@@ -1147,15 +1147,15 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long p_lIndex )
 			{
 				for( long l = l_lCount - 1; 0 < l; --l )
 				{
-					if( IsEdge( l_svData[ l ], l_svData[ l - 1 ], l_dwUpper, l_dwLower, l_dwPolarisation ) == S_OK )
+					if( S_OK == IsEdge( l_svData[ l ], l_svData[ l - 1 ], l_dwUpper, l_dwLower, l_dwPolarisation ) )
 					{
 						if( l_dwPolarisation == SV_ANY_POLARISATION )
 						{
 							double l_dDistance1 = 0.0;
 							double l_dDistance2 = 0.0;
 
-							bool l_bDistance1 = CalculateSubPixelEdge( l_svData[ l ], l_svData[ l - 1 ], l_dwUpper, l_dwLower, SV_POSITIVE_POLARISATION, l_dDistance1 ) == S_OK;
-							bool l_bDistance2 = CalculateSubPixelEdge( l_svData[ l ], l_svData[ l - 1 ], l_dwUpper, l_dwLower, SV_NEGATIVE_POLARISATION, l_dDistance2 ) == S_OK;
+							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( l_svData[ l ], l_svData[ l - 1 ], l_dwUpper, l_dwLower, SV_POSITIVE_POLARISATION, l_dDistance1 );
+							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( l_svData[ l ], l_svData[ l - 1 ], l_dwUpper, l_dwLower, SV_NEGATIVE_POLARISATION, l_dDistance2 );
 
 							if ( l_dDistance1 <= l_dDistance2 )
 							{
@@ -1194,7 +1194,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long p_lIndex )
 						{
 							double l_dDistance = 0.0;
 
-							if( CalculateSubPixelEdge( l_svData[ l ], l_svData[ l - 1 ], l_dwUpper, l_dwLower, l_dwPolarisation, l_dDistance ) == S_OK )
+							if( S_OK == CalculateSubPixelEdge( l_svData[ l ], l_svData[ l - 1 ], l_dwUpper, l_dwLower, l_dwPolarisation, l_dDistance ) )
 							{
 								l_dDistance = l - l_dDistance;
 
@@ -1214,7 +1214,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long p_lIndex )
 				{
 					double l_dValue = 0.0;
 
-					if( GetBlackWhiteEdgeValue( l_svData[ l ], l_dwUpper, l_dwLower, l_dValue ) == S_OK )
+					if( S_OK == GetBlackWhiteEdgeValue( l_svData[ l ], l_dwUpper, l_dwLower, l_dValue ) )
 					{
 						l_svEdges.push_back( l_dValue );
 					}
@@ -1232,8 +1232,10 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long p_lIndex )
 	// always do the Set
 	HRESULT hrSet = m_svLinearEdges.SetArrayValues( p_lIndex, l_svEdges );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
+	{
 		l_hrOk = hrSet;
+	}
 
 	return l_hrOk;
 }
@@ -1369,7 +1371,7 @@ HRESULT SVLinearEdgeProcessingClass::CalculateSubPixelEdge( double p_dStart, dou
 			}
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			p_rdDistance = fabs( l_dwThreshold - p_dStart ) / fabs( p_dEnd - p_dStart );
 		}
@@ -1380,14 +1382,14 @@ HRESULT SVLinearEdgeProcessingClass::CalculateSubPixelEdge( double p_dStart, dou
 
 DWORD_PTR SVLinearEdgeProcessingClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	DWORD_PTR DwResult = 0;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 

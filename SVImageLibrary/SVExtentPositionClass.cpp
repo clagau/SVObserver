@@ -188,17 +188,17 @@ HRESULT SVExtentPositionClass::Initialize()
 
 	m_ulProperties = 0;
 
-	if ( m_svPositionPoint.Initialize() != S_OK )
+	if ( S_OK != m_svPositionPoint.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svPositionPointEndOfLine.Initialize() != S_OK )
+	if ( S_OK != m_svPositionPointEndOfLine.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svTranslationOffset.Initialize() != S_OK )
+	if ( S_OK != m_svTranslationOffset.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -206,27 +206,27 @@ HRESULT SVExtentPositionClass::Initialize()
 	m_dRotationAngle = 0.0;
 	m_dOldRotationAngle = 0.0;
 
-	if ( m_svOutputPositionPoint.Initialize() != S_OK )
+	if ( S_OK != m_svOutputPositionPoint.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svOldPositionPoint.Initialize() != S_OK )
+	if ( S_OK != m_svOldPositionPoint.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svOldAbsPositionPoint.Initialize() != S_OK )
+	if ( S_OK != m_svOldAbsPositionPoint.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svOldRotationPoint.Initialize() != S_OK )
+	if ( S_OK != m_svOldRotationPoint.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svOldTranslationOffset.Initialize() != S_OK )
+	if ( S_OK != m_svOldTranslationOffset.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -358,13 +358,11 @@ HRESULT SVExtentPositionClass::DisableExtentProperty( SVExtentPropertyEnum p_ePr
 
 HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
 	double l_dValue = 0.0;
 
-	l_hrOk = GetExtentProperty( p_eProperty, l_dValue );
+	HRESULT l_hrOk = GetExtentProperty( p_eProperty, l_dValue );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		p_rlValue = (long)l_dValue;
 	}
@@ -506,13 +504,11 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 
 HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
 	SVExtentPointStruct l_svPoint;
 
-	l_hrOk = GetExtentProperty( p_eProperty, l_svPoint );
+	HRESULT l_hrOk = GetExtentProperty( p_eProperty, l_svPoint );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		p_roValue = l_svPoint;
 	}

@@ -24,7 +24,7 @@ public:
 	typedef std::vector< std::pair< _variant_t, bool > > SVVariantBoolVector;
 
 	SVInputObjectList( LPCSTR ObjectName );
-	SVInputObjectList( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECTLIST );
+	SVInputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECTLIST );
 	virtual ~SVInputObjectList();
 
 	BOOL Create();

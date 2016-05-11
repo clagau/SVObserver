@@ -44,7 +44,7 @@ HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		l_hr = g_svTheApp.m_svSystem.TriggerGetCount( *p_pulCount );
 	}
@@ -57,7 +57,7 @@ HRESULT WINAPI SVTriggerGetHandle( unsigned long *p_pulHandle, unsigned long p_u
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pulHandle != NULL )
+	if ( nullptr != p_pulHandle )
 	{
 		*p_pulHandle = g_svTheApp.m_svSystem.TriggerGetHandle(p_ulIndex);
 		l_hr = S_OK;
@@ -71,15 +71,15 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
 		l_hr = S_OK;
 
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
 
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 		l_hr = g_svTheApp.m_svSystem.TriggerGetName(p_ulHandle, *p_pbstrName);
 	} 
@@ -92,7 +92,7 @@ HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVCallbackPtr p_pCal
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pCallback != NULL )
+	if ( nullptr != p_pCallback )
 	{
 		SVCallbackStruct l_Callback;
 
@@ -111,7 +111,7 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVCallbackPtr p_pC
 
 	HRESULT l_hr = S_OK;
 
-	if ( p_pCallback != NULL )
+	if ( nullptr != p_pCallback )
 	{
 		SVCallbackStruct l_Callback;
 
@@ -119,7 +119,7 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVCallbackPtr p_pC
 		l_Callback.m_pOwner = p_pOwner;
 		l_Callback.m_pData = p_pData;
 
-		if ( g_svTheApp.m_svSystem.TriggerUnregisterCallback(p_ulHandle, l_Callback) != S_OK )
+		if ( S_OK != g_svTheApp.m_svSystem.TriggerUnregisterCallback(p_ulHandle, l_Callback) )
 		{
 			l_hr = S_FALSE;
 		}
@@ -133,7 +133,7 @@ HRESULT WINAPI SVTriggerUnregisterAll( unsigned long p_ulHandle )
 
 	HRESULT l_hr = S_OK;
 
-	if ( g_svTheApp.m_svSystem.TriggerUnregisterAllCallbacks(p_ulHandle) != S_OK )
+	if ( S_OK != g_svTheApp.m_svSystem.TriggerUnregisterAllCallbacks(p_ulHandle) )
 	{
 		l_hr = S_FALSE;
 	}
@@ -155,7 +155,7 @@ HRESULT WINAPI SVTriggerStop( unsigned long p_ulHandle )
 
 	HRESULT l_hr = S_OK;
 
-	if ( g_svTheApp.m_svSystem.TriggerStop(p_ulHandle) != S_OK )
+	if ( S_OK != g_svTheApp.m_svSystem.TriggerStop(p_ulHandle) )
 	{
 		l_hr = S_FALSE;
 	} 
@@ -198,7 +198,7 @@ HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		l_hr = g_svTheApp.m_svSystem.CameraGetCount( *p_pulCount );
 	}
@@ -212,13 +212,13 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *p_pulHandle, unsigned long p
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pulHandle != NULL )
+	if ( nullptr != p_pulHandle )
 	{
 		unsigned long l_ulCount = 0;
 
 		l_hr = g_svTheApp.m_svSystem.CameraGetCount( l_ulCount );
 
-		if ( l_hr == S_OK )
+		if ( S_OK == l_hr )
 		{
 			if ( p_ulIndex < l_ulCount )
 			{
@@ -228,7 +228,7 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *p_pulHandle, unsigned long p
 			}
 			else
 			{
-				*p_pulHandle = NULL;
+				*p_pulHandle = 0;
 			}
 		}
 	} 
@@ -242,13 +242,13 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
 
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 
 		l_hr = g_svTheApp.m_svSystem.CameraGetName( p_ulHandle, *p_pbstrName );
@@ -272,7 +272,7 @@ HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long p_ulHandle, unsigned lon
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pulWidth != NULL )
+	if ( nullptr != p_pulWidth )
 	{
 		*p_pulWidth = 0;
 
@@ -288,7 +288,7 @@ HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long p_ulHandle, unsigned lo
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pulHeight != NULL )
+	if ( nullptr != p_pulHeight )
 	{
 		*p_pulHeight = 0;
 
@@ -304,7 +304,7 @@ HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long p_ulHandle, int *p_piFo
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_piFormat != NULL )
+	if ( nullptr != p_piFormat )
 	{
 		*p_piFormat = SVImageFormatUnknown;
 
@@ -550,7 +550,7 @@ HRESULT WINAPI SVDigitizerSetParameters( unsigned long p_ulHandle, const SVDevic
 	for (iter = p_pParameters->mapParameters.begin(); iter != p_pParameters->mapParameters.end(); ++iter)
 	{
 		const SVDeviceParamWrapper& w = iter->second;
-		if ( ((const SVDeviceParam*) w) != NULL )
+		if ( nullptr != ((const SVDeviceParam*) w) )
 		{
 			SVDigitizerSetParameter( p_ulHandle, &w );
 		}
@@ -565,10 +565,10 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDevice
 
 	HRESULT l_hr = S_OK;
 
-	if ( p_pParameter != NULL )
+	if ( nullptr != p_pParameter )
 	{
 		const SVDeviceParamWrapper& rw = *p_pParameter;
-		if ( ((const SVDeviceParam*) rw) != NULL )
+		if ( nullptr != ((const SVDeviceParam*) rw) )
 		{
 			switch ( rw->Type() )
 			{
@@ -603,7 +603,7 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamE
 
 	HRESULT l_hr = S_OK;
 	
-	if ( p_ppParameter != NULL )
+	if ( nullptr != p_ppParameter )
 	{
 		*p_ppParameter = new SVDeviceParamWrapper;
 		SVDeviceParamWrapper& rw = **p_ppParameter;

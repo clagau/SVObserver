@@ -52,6 +52,7 @@ public:
 	HANDLE m_hWorkerThread;
 	bool m_bThreadRunning;
 	CSVIOTESTDlg(CWnd* pParent = nullptr);	// standard constructor
+	virtual ~CSVIOTESTDlg();
 
 // Dialog Data
 	//{{AFX_DATA(CSVIOTESTDlg)

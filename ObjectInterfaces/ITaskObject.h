@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include <boost\function.hpp>
-#include "IObjectAppClass.h"
+#include "IObjectClass.h"
 #include "ISelectorItemVector.h"
 #include "SVObjectTypeInfoStruct.h"
 #include "DependencyList.h"
@@ -21,8 +21,8 @@ namespace Seidenader
 	{	
 		typedef boost::function<bool (const IObjectClass* pObject, unsigned int Attribute, int ArrayIndex)> IsObjectInfoAllowed;
 
-		//this class is a interface. It should only have pure virtual public method and new member parameter
-		class ITaskObject : virtual public IObjectAppClass
+		//this class is a interface. It should only have pure virtual public method and no member variables
+		class ITaskObject
 		{
 		public:
 			virtual ~ITaskObject() {}

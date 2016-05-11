@@ -16,8 +16,6 @@ enum SVCommandType
 	SV_COMMAND_TYPE_UNKNOWN = 0x00000000,
 };
 
-/*
-*/
 enum SVCommandDataType
 {
 	SV_COMMAND_DATA_TYPE_UNKNOWN   = 0x00000000,

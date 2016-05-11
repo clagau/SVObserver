@@ -23,9 +23,6 @@ public:
 
 	void Shutdown();
 
-	HRESULT SetOpto22InvertInputValue( bool p_bInvert );
-	HRESULT SetOpto22InvertOutputValue( bool p_bInvert );
-
 	HRESULT OpenDigital( LPCTSTR p_szName );
 	HRESULT CloseDigital();
 

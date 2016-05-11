@@ -43,7 +43,7 @@ public:
 
 	HRESULT SetParameter( const SVDeviceParamWrapper& rw )
 	{
-		if ( ((const SVDeviceParam*) rw ) != NULL )
+		if ( nullptr != ((const SVDeviceParam*) rw ) )
 		{
 			mapParameters[rw->Type()] = rw;
 			return S_OK;
@@ -53,7 +53,7 @@ public:
 
 	bool ParameterExists( SVDeviceParamEnum e ) const
 	{
-		return (mapParameters.find(e) != mapParameters.end()) && mapParameters.find(e)->second != NULL;
+		return (mapParameters.find(e) != mapParameters.end()) && nullptr != mapParameters.find(e)->second;
 	}
 
 	const SVDeviceParamWrapper& Parameter( SVDeviceParamEnum e ) const
@@ -137,7 +137,7 @@ public:
 		if ( iter != mapParameters.end() )
 		{
 			rpParam = iter->second.DerivedValue( rpParam );
-			return rpParam != NULL ? S_OK : TYPE_E_TYPEMISMATCH;
+			return nullptr != rpParam ? S_OK : TYPE_E_TYPEMISMATCH;
 		}
 		else
 		{

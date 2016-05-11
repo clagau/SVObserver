@@ -39,12 +39,12 @@ SVValueObjectClass::SVValueObjectClass(SVObjectClass* POwner, int StringResource
 
 SVValueObjectClass::~SVValueObjectClass()
 {
-	if( GetInspection() != NULL )
+	if( nullptr != GetInspection() )
 	{
 		GetInspection()->UnregisterSubObject( this );
 	}
 
-	if( GetTool() != NULL )
+	if( nullptr != GetTool() )
 	{
 		GetTool()->UnregisterSubObject( this );
 	}
@@ -56,7 +56,7 @@ SVValueObjectClass::~SVValueObjectClass()
 
 void SVValueObjectClass::InitializeBuckets()
 {
-	objectDepth = 2;
+	m_objectDepth = 2;
 	m_iArraySize = 1;
 
 	CreateBuckets();
@@ -79,12 +79,12 @@ BOOL SVValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructu
 {
 	BOOL l_bOk = SVObjectAppClass::CreateObject( pCreateStructure );
 
-	if( GetTool() != NULL )
+	if( nullptr != GetTool() )
 	{
 		GetTool()->RegisterSubObject( this );
 	}
 	
-	if( GetInspection() != NULL )
+	if( nullptr != GetInspection() )
 	{
 		GetInspection()->RegisterSubObject( this );
 	}
@@ -96,7 +96,7 @@ BOOL SVValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructu
 		l_bOk = l_bOk && SetObjectDepth( 2 );
 	}
 
-	l_bOk = l_bOk && (CreateBuckets() == S_OK);
+	l_bOk = l_bOk && ( S_OK == CreateBuckets());
 
 	if( l_bOk )
 	{
@@ -108,12 +108,12 @@ BOOL SVValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructu
 
 BOOL SVValueObjectClass::CloseObject()
 {
-	if( GetInspection() != NULL )
+	if( nullptr != GetInspection() )
 	{
 		GetInspection()->UnregisterSubObject( this );
 	}
 
-	if( GetTool() != NULL )
+	if( nullptr != GetTool() )
 	{
 		GetTool()->UnregisterSubObject( this );
 	}
@@ -126,7 +126,7 @@ HRESULT SVValueObjectClass::ResetObject()
 	HRESULT l_hrOk = CreateBuckets();
 
 	HRESULT hr = SVObjectAppClass::ResetObject();
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = hr;
 	}
@@ -174,7 +174,7 @@ DWORD_PTR SVValueObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMess
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -190,7 +190,7 @@ DWORD_PTR SVValueObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMess
 	case SVMSGID_COPY_RESULT_DATA_FORWARD:
 		HRESULT hrRet = CopyLastSetValue( static_cast<int>(DwMessageValue) );
 
-		return (hrRet == S_OK) ? SVMR_SUCCESS : SVMR_NO_SUCCESS;
+		return (S_OK == hrRet) ? SVMR_SUCCESS : SVMR_NO_SUCCESS;
 		break;
 	}
 
@@ -253,7 +253,7 @@ HRESULT SVValueObjectClass::GetResultSize(int iBucket, int& riResultSize) const
 
 int SVValueObjectClass::GetResultSize() const
 {
-	int iResultSize=0;
+	int iResultSize = 0;
 	GetResultSize(m_iLastSetIndex, iResultSize);
 	return iResultSize;
 }
@@ -286,7 +286,7 @@ HRESULT SVValueObjectClass::CompareWithCurrentValueImpl( const CString& rstrComp
 	HRESULT hr = S_FALSE;
 	CString strCurrentValue;
 	HRESULT hrGet = GetValue( strCurrentValue );
-	if ( hrGet == S_OK )
+	if ( S_OK == hrGet )
 	{
 		hr = ( (strCurrentValue == rstrCompare) ? S_OK : S_FALSE );
 	}
@@ -296,7 +296,6 @@ HRESULT SVValueObjectClass::CompareWithCurrentValueImpl( const CString& rstrComp
 HRESULT SVValueObjectClass::GetValue( int iBucket, int iIndex, SVScalarValue& rValue ) const
 {
 	rValue.strName = GetCompleteObjectName();
-	//rValue.strType = ;
 	HRESULT hr = GetValue( iBucket, iIndex, rValue.strValue );
 
 	return hr;
@@ -321,7 +320,7 @@ void SVValueObjectClass::Initialize()
 	m_iLastSetIndex = -1;
 	m_iNumberOfBuckets = 0;
 	m_iArraySize = 1;
-	m_pBuckets = NULL;
+	m_pBuckets = nullptr;
 	m_bLegacyVectorObjectCompatibility = false;
 	m_bResetAlways = false;
 	m_eResetItem = SVResetItemIP;
@@ -374,15 +373,13 @@ HRESULT SVValueObjectClass::SetValue( const _variant_t& rValue )
 
 	return hr;
 }
+
 HRESULT SVValueObjectClass::GetValue( _variant_t& rValue ) const
 { 
 	if (!IsArray())
 	{
 		return GetValue(*(rValue.GetAddress())); 
 	}
-	else
-	{
-		return GetValues(*(rValue.GetAddress())); 
-	}
+	return GetValues(*(rValue.GetAddress())); 
 }
 #pragma endregion IValueObject

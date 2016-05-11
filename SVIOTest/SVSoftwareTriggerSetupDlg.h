@@ -17,7 +17,7 @@ class SVSoftwareTriggerSetupDlg : public CDialog
 	DECLARE_DYNAMIC(SVSoftwareTriggerSetupDlg)
 
 public:
-	SVSoftwareTriggerSetupDlg(CWnd* pParent = NULL);   // standard constructor
+	SVSoftwareTriggerSetupDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVSoftwareTriggerSetupDlg();
 
 // Dialog Data

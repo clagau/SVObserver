@@ -151,7 +151,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionInvalid:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoFileSelected, StdMessageParams, SvOi::Err_10189, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoFileSelected, StdMessageParams, SvOi::Err_10189, 0, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				return;
@@ -166,7 +166,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionEmptyList:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10190, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10190, 0, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				ClearRegressionList();
@@ -182,7 +182,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionInvalidMask:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10191, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_WrongFormat, StdMessageParams, SvOi::Err_10191, 0, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				return;
@@ -197,7 +197,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionNoFiles:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoFilesSelected, StdMessageParams, SvOi::Err_10192, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoFilesSelected, StdMessageParams, SvOi::Err_10192, 0, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				return;
@@ -213,7 +213,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		case SelectionFileNotExist:
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_FileNotExist, StdMessageParams, SvOi::Err_10193, NULL, nullptr, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_FileNotExist, StdMessageParams, SvOi::Err_10193, 0, nullptr, MB_YESNO ); 
 			if ( IDYES == result )
 			{
 				return;
@@ -370,38 +370,6 @@ long CSVRegressionFileSelectSheet::GetNumberOfFilesMatchingMask(CString sMask)
 	return lNumCount;
 }
 
-
-BOOL CSVRegressionFileSelectSheet::ValidateMask(CString sMask)
-{
-	BOOL bRet = FALSE;
-
-	CString sMaskStr;
-	sMaskStr = MakeFileNameMask(sMask);
-
-	if ( m_listMasks.IsEmpty() )
-	{
-		m_listMasks.AddTail(sMaskStr);
-		m_listMasks.AddHead((CString)sMaskStr);
-		bRet = TRUE;
-	}
-	else
-	{
-		POSITION pos = m_listMasks.Find(sMaskStr,NULL);
-		if ( pos == NULL )
-		{
-			//add to list
-			m_listMasks.AddTail((CString)sMaskStr);
-			bRet = TRUE;
-		}
-		else //pos != null
-		{
-			bRet = FALSE;
-		}
-	}
-
-	return bRet;
-}
-
 void CSVRegressionFileSelectSheet::ClearRegressionList()
 {
 	int iCount = static_cast<int>(m_pRegressionList->GetCount());
@@ -414,7 +382,6 @@ void CSVRegressionFileSelectSheet::ClearRegressionList()
 		}
 	}
 }
-
 
 void CSVRegressionFileSelectSheet::FillFileList()
 {

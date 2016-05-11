@@ -15,13 +15,11 @@
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
-//##ModelId=3A54D7EC0251
 SVFileNameLockablePointerArrayClass::SVFileNameLockablePointerArrayClass()
 :mcmArrayLock()
 {
 }
 
-//##ModelId=3A54A0EB03D8
 SVFileNameLockablePointerArrayClass::SVFileNameLockablePointerArrayClass(const SVFileNameLockablePointerArrayClass& orig)
 {
 	*this = orig;
@@ -31,8 +29,6 @@ SVFileNameLockablePointerArrayClass::~SVFileNameLockablePointerArrayClass()
 {
 }
 
-
-//##ModelId=3A54A0EC003E
 const SVFileNameLockablePointerArrayClass SVFileNameLockablePointerArrayClass::operator=(const SVFileNameLockablePointerArrayClass& rhs)
 {
 	Copy( rhs );
@@ -40,7 +36,6 @@ const SVFileNameLockablePointerArrayClass SVFileNameLockablePointerArrayClass::o
 	return *this;
 }
 
-//##ModelId=3A54A6750280
 LPCTSTR SVFileNameLockablePointerArrayClass::GetFileNameList()
 {
 	mcsFileList.Empty();
@@ -58,13 +53,11 @@ LPCTSTR SVFileNameLockablePointerArrayClass::GetFileNameList()
 	return mcsFileList;
 }
 
-//##ModelId=3A535EFE009C
 BOOL SVFileNameLockablePointerArrayClass::Lock()
 {
 	return mcmArrayLock.Lock( 300000 );
 }
 
-//##ModelId=3A535F67000F
 BOOL SVFileNameLockablePointerArrayClass::Unlock()
 {
 	return mcmArrayLock.Unlock();

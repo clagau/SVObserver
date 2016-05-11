@@ -52,8 +52,8 @@ static bool isZipFile(const SVString& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
-	_splitpath(filename.c_str(), NULL, NULL, NULL, ext);
-	if (strcmp(ext, scZipExt) == 0)
+	_splitpath(filename.c_str(), nullptr, nullptr, nullptr, ext);
+	if (0 == strcmp(ext, scZipExt))
 	{
 		bRetVal = true;
 	}
@@ -64,8 +64,8 @@ static bool isXMLFile(const SVString& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
-	_splitpath(filename.c_str(), NULL, NULL, NULL, ext);
-	if (strcmp(ext, scXMLExt) == 0)
+	_splitpath(filename.c_str(), nullptr, nullptr, nullptr, ext);
+	if (0 == strcmp(ext, scXMLExt))
 	{
 		bRetVal = true;
 	}
@@ -76,8 +76,8 @@ static bool isExportFile(const SVString& filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
-	_splitpath(filename.c_str(), NULL, NULL, NULL, ext);
-	if (strcmp(ext, scExportExt) == 0 || strcmp(ext, scColorExportExt) == 0)
+	_splitpath(filename.c_str(), nullptr, nullptr, nullptr, ext);
+	if (0 == strcmp(ext, scExportExt) || 0 == strcmp(ext, scColorExportExt) )
 	{
 		bRetVal = true;
 	}
@@ -108,8 +108,8 @@ static int LaunchTransform(const char* inFilename, const char* outFilename, cons
 	TCHAR drive[_MAX_DRIVE];
 	TCHAR dir[_MAX_PATH];
 	TCHAR exePath[_MAX_PATH];
-	::GetModuleFileName(NULL, exePath, sizeof(exePath) / sizeof(TCHAR));
-	_tsplitpath(exePath, drive, dir, NULL, NULL);
+	::GetModuleFileName(nullptr, exePath, sizeof(exePath) / sizeof(TCHAR));
+	_tsplitpath(exePath, drive, dir, nullptr, nullptr);
 	std::string progName = drive;
 	progName += dir;
 	progName += scTransformProgram;
@@ -118,13 +118,13 @@ static int LaunchTransform(const char* inFilename, const char* outFilename, cons
 	ZeroMemory(&si, sizeof(si));
 	si.cbSize = sizeof(SHELLEXECUTEINFO);
 	si.fMask = SEE_MASK_NOCLOSEPROCESS;
-	si.hwnd = NULL;
-	si.lpVerb = NULL;
+	si.hwnd = nullptr;
+	si.lpVerb = nullptr;
 	si.lpFile = progName.c_str();
 	si.lpParameters = parameters.c_str();
-	si.lpDirectory = NULL;
+	si.lpDirectory = nullptr;
 	si.nShow = SW_HIDE;
-	si.hInstApp = NULL;	
+	si.hInstApp = nullptr;	
 	if (::ShellExecuteEx(&si))
 	{
 		::WaitForSingleObject(si.hProcess, INFINITE);
@@ -150,7 +150,7 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 	bool bOk = true;
 	
 	SVTreeType::SVBranchHandle hItem;
-	if (SVNavigateTree::GetItemBranch(rTree, CTAG_PPQ, NULL, hItem))
+	if (SVNavigateTree::GetItemBranch(rTree, CTAG_PPQ, nullptr, hItem))
 	{
 		SVTreeType::SVBranchHandle hItemInputs;
 		if (SVNavigateTree::GetItemBranch(rTree, CTAG_INPUT, hItem , hItemInputs))
@@ -221,7 +221,7 @@ static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSe
 	bool Result( true );
 
 	SVTreeType::SVBranchHandle hItem;
-	if (SVNavigateTree::GetItemBranch( rTree, CTAG_GLOBAL_CONSTANTS, NULL, hItem ))
+	if (SVNavigateTree::GetItemBranch( rTree, CTAG_GLOBAL_CONSTANTS, nullptr, hItem ))
 	{
 		SVTreeType::SVBranchHandle hItemChild( nullptr );
 
@@ -400,7 +400,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 							// Show the Dialog
 							l_ParserProgressDialog.DoModal();
 
-							::SVSendMessage( pInspection, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+							::SVSendMessage( pInspection, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
 							rProgress.UpdateText(_T("Parsing Complete."));
 							rProgress.UpdateProgress(++currentOp, numOperations);
@@ -452,7 +452,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvOi::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
 {
 	HRESULT hr = S_OK;
-	::CoInitialize(NULL);
+	::CoInitialize(nullptr);
 
 	SVString inFilename = filename;
 	SVString zipFilename = GetFilenameWithoutExt(inFilename);
@@ -521,14 +521,14 @@ static HRESULT ExtractProperties(const SVString& filename, long& rNewDisableMeth
 	SVDOMClass xml;
 	
 	HRESULT hr = xml.Initialize(0);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = xml.CopyXMLFileToDOM(_bstr_t(filename.c_str())); 
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			_bstr_t bstrQueryNameSpace = L"xmlns:svr1=\"x-schema:#SVR00001\"";
 			hr = xml.SetQueryNameSpace(bstrQueryNameSpace);
-			if (hr == S_OK)
+			if (S_OK == hr)
 			{
 				SVXML::IXMLDOMElementPtr root;
 				xml.GetRootNode(root);
@@ -537,7 +537,7 @@ static HRESULT ExtractProperties(const SVString& filename, long& rNewDisableMeth
 				{
 					SVXML::IXMLDOMNodePtr nodePtr;
 					hr = pXMLDomNodeList->get_item(i, &nodePtr);
-					if (hr == S_OK)
+					if (S_OK == hr)
 					{
 						SVXML::IXMLDOMNamedNodeMapPtr attributesPtr = nodePtr->attributes;
 						if (attributesPtr)
@@ -549,7 +549,7 @@ static HRESULT ExtractProperties(const SVString& filename, long& rNewDisableMeth
 								VARIANT var;
 								
 								hr = xml.GetDOMNodeElementValue(nodePtr, &var);
-								if (hr == S_OK)
+								if (S_OK == hr)
 								{
 									_variant_t value;
 									value.Attach(var);
@@ -588,7 +588,7 @@ static HRESULT ExtractProperties(const SVString& filename, long& rNewDisableMeth
 HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
 {
 	HRESULT hr = S_OK;
-	::CoInitialize(NULL);
+	::CoInitialize(nullptr);
 
 	SVString inFilename = filename;
 	SVString zipFilename = GetFilenameWithoutExt(inFilename);

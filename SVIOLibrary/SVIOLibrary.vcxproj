@@ -116,7 +116,6 @@
   <ItemGroup>
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVIOConfigurationInterfaceClass.h" />
-    <ClInclude Include="SVIODDELoadLibraryClass.h" />
     <ClInclude Include="SVIODigitalArrayClass.h" />
     <ClInclude Include="SVIODigitalLoadLibraryClass.h" />
     <ClInclude Include="SVIODigitalStruct.h" />
@@ -125,7 +124,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVIOConfigurationInterfaceClass.inl" />
-    <None Include="SVIODDELoadLibraryClass.inl" />
     <None Include="SVIODigitalLoadLibraryClass.inl" />
     <None Include="SVIOTriggerLoadLibraryClass.inl" />
   </ItemGroup>

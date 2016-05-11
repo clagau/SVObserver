@@ -9,14 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:44:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolExtentPropertiesClass.h"
-
 #include "SVValueObject.h"
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+#pragma endregion Includes
 
 SVToolExtentPropertiesClass::SVToolExtentPropertiesClass()
 {
@@ -43,15 +40,15 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass &p_rsvExt
 
 	SVToolExtentPropertiesMap::const_iterator iter;
 
-	for ( iter = m_svProperties.begin(); l_hrOk == S_OK && iter != m_svProperties.end(); ++iter )
+	for ( iter = m_svProperties.begin(); S_OK == l_hrOk && iter != m_svProperties.end(); ++iter )
 	{
 		SVValueObjectClass* l_psvValue = iter->second.pValueObject;
 
-		if ( l_psvValue != NULL )
+		if ( nullptr != l_psvValue )
 		{
 			double l_dValue = 0.0;
 
-			if ( ( l_hrOk = l_psvValue->GetValue( l_dValue ) ) == S_OK )
+			if ( S_OK == ( l_hrOk = l_psvValue->GetValue( l_dValue ) ) )
 			{
 				l_hrOk = p_rsvExtents.SetExtentProperty( iter->first, l_dValue );
 			}
@@ -67,15 +64,15 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( unsigned long p_ulIndex, SVI
 
 	SVToolExtentPropertiesMap::const_iterator iter;
 
-	for ( iter = m_svProperties.begin(); l_hrOk == S_OK && iter != m_svProperties.end(); ++iter )
+	for ( iter = m_svProperties.begin(); S_OK == l_hrOk && iter != m_svProperties.end(); ++iter )
 	{
 		SVValueObjectClass* l_psvValue = iter->second.pValueObject;
 
-		if ( l_psvValue != NULL )
+		if ( nullptr != l_psvValue )
 		{
 			double l_dValue = 0.0;
 
-			if ( ( l_hrOk = l_psvValue->GetValue( p_ulIndex, l_dValue ) ) == S_OK )
+			if ( S_OK == ( l_hrOk = l_psvValue->GetValue( p_ulIndex, l_dValue ) ) )
 			{
 				l_hrOk = p_rsvExtents.SetExtentProperty( iter->first, l_dValue );
 			}
@@ -104,7 +101,7 @@ HRESULT SVToolExtentPropertiesClass::SetExtentObject( SVExtentPropertyEnum p_ePr
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_psvValue == NULL )
+	if ( nullptr == p_psvValue )
 	{
 		m_svProperties.erase( p_eProperty );
 	}

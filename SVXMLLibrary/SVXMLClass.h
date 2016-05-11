@@ -512,7 +512,7 @@ protected:
 //	 3 - The aDOMNodePtr is not a "NODE" element.  No checksum will be 
 //	     performed on this element.
 //  4 - Checksum failed. A change was detected.
-	HRESULT CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr aDOMNodePtr, unsigned long* aulpCheckSum, long alMode = 0, BSTR* abstrpChangedNode = NULL);
+	HRESULT CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr aDOMNodePtr, unsigned long* aulpCheckSum, long alMode = 0, BSTR* abstrpChangedNode = nullptr);
 
 	HRESULT CalculateStringCheckSum (BSTR abstrSource, unsigned long* aulpCheckSum);
 

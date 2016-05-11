@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVTool.h"
-#include "SVValueObjectImpl.h"
 #pragma endregion Includes
 
 class SVPolarTransformationToolClass : public SVToolClass

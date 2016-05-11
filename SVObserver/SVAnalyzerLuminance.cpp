@@ -57,7 +57,7 @@ void SVLuminanceAnalyzerClass::init()
 	while (1)
 	{
 		// Identify our output type
-		outObjectInfo.ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
+		m_outObjectInfo.ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
 		
 		// Register Embedded Objects
 		RegisterEmbeddedObject( 
@@ -99,7 +99,7 @@ void SVLuminanceAnalyzerClass::init()
 		// Set Local
 
 		SVLongResultClass* pAnalyzerResult = 
-		 new SVLongResultClass( TRUE, this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT );
+		 new SVLongResultClass( true, this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT );
 
 		if(!pAnalyzerResult)
 		{
@@ -126,8 +126,6 @@ BOOL SVLuminanceAnalyzerClass::OnValidate ()
       if (!SVImageAnalyzerClass::OnValidate ())
       {
 //       Error code set inside SVImageAnalyzerClass::OnValidate ()
-//		 Next line commented out to remove message box.
-//       SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1081);
          break;
       }
 
@@ -204,7 +202,7 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		svData.Length = msvlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
 		svData.HBuffer.milResult = msvHistResultID;
-		if ( SVImageProcessingClass::Instance().CreateDataBuffer( &svData ) == S_OK )
+		if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData ) )
 		{
 			msvHistResultID = svData.HBuffer.milResult;
 		}
@@ -222,18 +220,19 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
     
     if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
     {
-        isCreated = FALSE;
+        m_isCreated = false;
     }
     else
-        isCreated = TRUE;
+	{
+        m_isCreated = true;
+	}
 
+	msvLuminanceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvVarianceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvStdDevValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msvCalcStdDevValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
-		msvLuminanceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvVarianceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvStdDevValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		msvCalcStdDevValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-
-    return isCreated;
+    return m_isCreated;
 }
 
 
@@ -265,7 +264,7 @@ BOOL SVLuminanceAnalyzerClass::CloseObject()
 
 SVResultClass* SVLuminanceAnalyzerClass::GetResultObject()
 {
-	SVResultClass* pAnalyzerResult = NULL;
+	SVResultClass* pAnalyzerResult = nullptr;
 
 	// Find the result Object in Our List
 	pAnalyzerResult = (SVResultClass *)GetAt(0);
@@ -284,7 +283,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 	SVMatroxImageInterface::SVStatusCode l_Code;
 
-	pInputImage = NULL;
+	pInputImage = nullptr;
 	msvError.ClearLastErrorCd ();
 	sum = 0;
 	lNbrPixels = 0;
@@ -323,7 +322,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		HRESULT l_Status = ImageHandle->GetData( l_MilBuffer );
 
-		if( l_Status != S_OK )
+		if( S_OK != l_Status )
 		{
 			msvError.msvlErrorCd = l_Status;
 			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1067)

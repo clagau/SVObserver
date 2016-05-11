@@ -36,6 +36,10 @@ END_MESSAGE_MAP()
 SVOResourceApp::SVOResourceApp()
 {
 }
+
+SVOResourceApp::~SVOResourceApp()
+{
+}
 #pragma endregion Constructor
 
 #pragma region Public Methods

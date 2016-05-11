@@ -49,7 +49,7 @@ SVShareControlHandler::~SVShareControlHandler()
 void SVShareControlHandler::Release()
 {
 	SVSharedConfiguration::Log("ControlHandler::Release");
-	if (shm.get() != nullptr)
+	if (nullptr != shm.get())
 	{
 		if (m_ctrl)
 		{
@@ -72,7 +72,7 @@ void SVShareControlHandler::Release()
 bool SVShareControlHandler::IsCreated() const
 {
 	SVSharedConfiguration::Log("ControlHandler::IsCreated");
-	return (shm.get() != nullptr && m_ctrl);
+	return (nullptr != shm.get() && m_ctrl);
 }
 
 void SVShareControlHandler::SetReady()

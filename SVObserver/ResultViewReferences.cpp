@@ -52,7 +52,7 @@ bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
 bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR TagName )
 {
 
-	CString csTagName =  TagName == nullptr?  m_TagName: TagName;
+	CString csTagName =  nullptr == TagName ?  m_TagName: TagName;
 	SVTreeType::SVBranchHandle hVariables = nullptr;
 	bool bOK = SVNavigateTree::GetItemBranch(rTree, csTagName, hParent, hVariables);
 
@@ -76,7 +76,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 {
 	SVString Name( rTree.getLeafName( htiLeaf ) );
 
-	bool bOK = ( Name.compare( CTAG_COMPLETENAME ) == 0 );
+	bool bOK = ( 0 == Name.compare( CTAG_COMPLETENAME ) );
 
 	_variant_t svValue;
 	svValue = rTree.getLeafData( htiLeaf );
@@ -85,10 +85,9 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 	{
 		SVObjectReference objRef;
 		SVString dottedName = SvUl_SF::createSVString(svValue);
-		bOK = (SVObjectManagerClass::Instance().GetObjectByDottedName( dottedName, objRef ) == S_OK);
+		bOK = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( dottedName, objRef ));
 		if ( bOK && objRef.Object() )
 		{
-		
 			if (IsViewable(objRef))
 			{
 				ResultViewItemDef itemDef(objRef);
@@ -165,10 +164,10 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 	{
 		bool bInsert(false);
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( it->getGuid() );
-		if( pObject != nullptr)
+		if( nullptr != pObject )
 		{
 			bInsert = true;
-			if(pIProcess  != nullptr  && pIProcess->IsDisabledPPQVariable(dynamic_cast<SVValueObjectClass*>(pObject)) == true )
+			if( nullptr != pIProcess && true == pIProcess->IsDisabledPPQVariable(dynamic_cast<SVValueObjectClass*>(pObject)) )
 			{
 				bInsert = false;
 			}
@@ -242,7 +241,7 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 				{
 					csValue = _T("< ") + csValue + _T(" >");
 				}
-				else if ( hr != S_OK )
+				else if ( S_OK != hr )
 				{
 					csValue = _T( "<Not Valid>" );
 				}
@@ -257,7 +256,7 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 			SVString value;
 			HRESULT hr = bvo->getValue(value);
 
-			if ( hr != S_OK )
+			if ( S_OK != hr )
 			{
 				csValue = _T( "<Not Valid>" );
 			}
@@ -279,7 +278,7 @@ HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rD
 	for( size_t i = 0; i < m_ReferenceVector.size(); ++i )
 	{
 		SVObjectReference ref = m_ReferenceVector.at(i);
-		if( ref.Object() != nullptr )
+		if( nullptr != ref.Object() )
 		{
 			SVIPResultItemDefinition Def;
 
@@ -346,7 +345,7 @@ int ResultViewReferences::AddResults(  SVResultsWrapperClass* pSVRWC, LPCTSTR lp
 				nType = ref.Object()->GetObjectType();
 			}
 
-			szCol3 = ref.GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
+			szCol3 = ref.GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 			szCol4.Format(_T("%d"),iNumberOfItems);
 
 			CString szIPD = lptitle;

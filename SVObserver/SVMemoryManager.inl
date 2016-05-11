@@ -17,8 +17,6 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::CreatePool( LPCTSTR strPoolName, __in
 	SVMemoryPoolMap::iterator iter = m_mapPools.find( SVString(strPoolName) );
 	if ( iter == m_mapPools.end() )// ensure it doesn't already exist
 	{
-		//m_mapPools[ strPoolName ] = new SVMemoryPool;
-		//hr = m_mapPools[ strPoolName ]->Create( lPoolSizeKBytes );
 		TRACE(_T("SVMemoryManager::CreatePool(%s, %d)\n"), strPoolName, lPoolSizeKBytes*1024);
 		hr = m_mapPools[ SVString(strPoolName) ].Create( lPoolSizeKBytes );
 	}

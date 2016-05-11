@@ -64,7 +64,7 @@ SVBitmapInfo SVImageBufferHandleStruct::GetBitmapInfo() const
 
 unsigned char* SVImageBufferHandleStruct::GetBufferAddress() const
 {
-	unsigned char* l_pHostBuffer = NULL;
+	unsigned char* l_pHostBuffer = nullptr;
 
 	if( !( milImage.empty() ) )
 	{

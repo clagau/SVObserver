@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #pragma endregion Includes

@@ -90,7 +90,7 @@ void ObjectTreeCtrl::OnRButtonDown( UINT Flags, CPoint Point )
 
 	HTREEITEM Item = checkItemHit( getContextPoint(), TVHT_ONITEM );
 	
-	bool ItemHit = NULL != Item;
+	bool ItemHit = nullptr != Item;
 	if( ItemHit )
 	{
 		SelectItem( Item );

@@ -39,7 +39,6 @@ void SVLuminanceAnalyzerSetupClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(SVLuminanceAnalyzerSetupClass, CDialog)
 	//{{AFX_MSG_MAP(SVLuminanceAnalyzerSetupClass)
 	ON_BN_CLICKED(IDC_RANGE, OnRange)
@@ -98,7 +97,7 @@ void SVLuminanceAnalyzerSetupClass::OnRange()
             SV_TRAP_ERROR_BRK (msvError, 1064);
         }
 
-		if ( SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this ) != S_OK )
+		if ( S_OK != SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this ) )
         {
             msvError.msvlErrorCd = -1093;
             SV_TRAP_ERROR_BRK (msvError, 1093);
@@ -116,12 +115,12 @@ HRESULT SVLuminanceAnalyzerSetupClass::SetInspectionData()
 
 	l_hrOk = AddInputRequest( &( m_pAnalyzer->msvCalcStdDevValue ), m_calcStdDev );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequestMarker();
 	}
 	
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = RunOnce( m_pAnalyzer->GetTool() );
 	}

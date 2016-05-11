@@ -49,6 +49,6 @@ const SVMatroxGigeBufferStruct& SVMatroxGigeBufferStruct::operator=( const SVMat
 
 bool SVMatroxGigeBufferStruct::IsValid() const
 {
-	return (m_Buffer.get() != NULL && !m_Buffer.get()->empty());
+	return (nullptr != m_Buffer.get() && !m_Buffer.get()->empty());
 }
 

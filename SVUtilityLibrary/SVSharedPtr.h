@@ -50,7 +50,7 @@ public:
 #endif
 	}
 
-	virtual bool empty() const { return get() == NULL; }
+	virtual bool empty() const { return nullptr == get(); }
 
 	virtual void clear() { reset(); }
 

@@ -23,14 +23,14 @@ namespace Seidenader
 	namespace SVSystemLibrary
 	{
 		SVLockableClass::SVLockableClass()
-			: hProtectionMutex( NULL )
+			: hProtectionMutex( nullptr )
 		{
-			hProtectionMutex = CreateMutex( NULL, FALSE, NULL );
+			hProtectionMutex = CreateMutex( nullptr, false, nullptr );
 		}
 
 		SVLockableClass::~SVLockableClass()
 		{
-			if( hProtectionMutex != NULL )
+			if( nullptr != hProtectionMutex )
 			{
 				CloseHandle( hProtectionMutex );
 			}
@@ -39,7 +39,7 @@ namespace Seidenader
 
 		BOOL SVLockableClass::Lock( DWORD DWWaitTime /* = INFINITE */ ) const
 		{
-			BOOL l_Status = ( hProtectionMutex != NULL );
+			BOOL l_Status = ( nullptr != hProtectionMutex );
 
 			if( l_Status )
 			{
@@ -51,7 +51,7 @@ namespace Seidenader
 
 		BOOL SVLockableClass::Unlock() const
 		{
-			BOOL l_Status = ( hProtectionMutex != NULL );
+			BOOL l_Status = ( nullptr != hProtectionMutex );
 
 			if( l_Status )
 			{
@@ -59,11 +59,6 @@ namespace Seidenader
 			}
 
 			return l_Status;
-		}
-
-		HANDLE SVLockableClass::GetLockHandle()
-		{
-			return hProtectionMutex;
 		}
 	} //SVSystemLibrary
 } //Seidenader

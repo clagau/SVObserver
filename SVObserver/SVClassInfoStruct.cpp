@@ -66,9 +66,6 @@ SVClassInfoStruct::~SVClassInfoStruct()
 {
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 SVClassInfoStruct SVClassInfoStruct::operator=( const SVClassInfoStruct& RClassInfo )
 {
 	ClassId					= RClassInfo.ClassId;
@@ -81,7 +78,7 @@ SVClassInfoStruct SVClassInfoStruct::operator=( const SVClassInfoStruct& RClassI
 
 SVObjectClass* SVClassInfoStruct::Construct()
 {
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 
 	SVObjectManagerClass::Instance().ConstructObject( ClassId, pObject );
 
@@ -117,25 +114,15 @@ SVObjectClass* SVClassInfoStruct::Construct()
 	return pObject;
 }
 
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 SVClassInfoStructListClass::SVClassInfoStructListClass()
 {
 }
 
-//******************************************************************************
-// Destructor:
-//******************************************************************************
 SVClassInfoStructListClass::~SVClassInfoStructListClass() 
 {
 	RemoveAll();
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 int SVClassInfoStructListClass::Find( const GUID& ClassID ) 
 { 
 	for( int i = 0; i < GetSize(); i++ )

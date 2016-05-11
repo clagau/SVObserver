@@ -15,8 +15,8 @@ template< typename SVDataType >
 class SVObserverTemplate
 {
 public:
+	virtual ~SVObserverTemplate() {}
 	virtual HRESULT ObserverUpdate( const SVDataType& p_rData ) = 0;
-
 };
 
 

@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <atltypes.h>
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"

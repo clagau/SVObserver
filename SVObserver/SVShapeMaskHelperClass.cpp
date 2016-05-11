@@ -26,11 +26,11 @@ SVShapeMaskHelperClass::SVShapeMaskHelperClass( SVObjectClass* POwner, int Strin
 
 void SVShapeMaskHelperClass::init()
 {
-	m_pShape = NULL;
+	m_pShape = nullptr;
 	m_bUseOverlays = false;
 
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVShapeMaskHelperObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVShapeMaskHelperObjectType;
 
 	// do these eventually be changed to ResetItemOwner?
 	RegisterEmbeddedObject( &m_Data.bvoAutoResize, SVShapeMaskAutoResizeGuid, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SVResetItemTool );
@@ -110,9 +110,9 @@ BOOL SVShapeMaskHelperClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 
 	// Set / Reset Printable Flag
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
-	return isCreated;
+	return m_isCreated;
 }
 
 HRESULT SVShapeMaskHelperClass::ResetObject()
@@ -227,19 +227,22 @@ HRESULT SVShapeMaskHelperClass::SetProperties( const SVMaskShape::MapType& p_map
 	// This will allow SIAC to to a set on all properties without worrying about order.
 
 	SVMaskShape::MapType::iterator iter;
-	//if ( eShapeType == SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut )
+	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertySideThicknessGuid )) != l_mapProperties.end() )
 	{
-		if ( ( iter = l_mapProperties.find( SVShapeMaskPropertySideThicknessGuid )) != l_mapProperties.end() )
-			m_Data.lvoSideThickness.SetValue     ( 1, iter->second.value );
-		if ( ( iter = l_mapProperties.find( SVShapeMaskPropertyTopBottomThicknessGuid )) != l_mapProperties.end() )
-			m_Data.lvoTopBottomThickness.SetValue( 1, iter->second.value );
+		m_Data.lvoSideThickness.SetValue     ( 1, iter->second.value );
 	}
-	//else if ( eShapeType == SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid )
+	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertyTopBottomThicknessGuid )) != l_mapProperties.end() )
 	{
-		if ( ( iter = l_mapProperties.find( SVShapeMaskPropertyOffsetGuid ) ) != l_mapProperties.end() )
-			m_Data.lvoOffset.SetValue    ( 1, iter->second.value );
-		if ( ( iter = l_mapProperties.find( SVShapeMaskPropertySymmetryOrientationGuid ) ) != l_mapProperties.end() )
-			m_Data.evoXYSymmetry.SetValue( 1, iter->second.value );
+		m_Data.lvoTopBottomThickness.SetValue( 1, iter->second.value );
+	}
+	
+	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertyOffsetGuid ) ) != l_mapProperties.end() )
+	{
+		m_Data.lvoOffset.SetValue    ( 1, iter->second.value );
+	}
+	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertySymmetryOrientationGuid ) ) != l_mapProperties.end() )
+	{
+		m_Data.evoXYSymmetry.SetValue( 1, iter->second.value );
 	}
 
 	return hr;	

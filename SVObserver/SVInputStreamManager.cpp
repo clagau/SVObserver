@@ -60,7 +60,7 @@ HRESULT SVInputStreamManager::QueryInputStreamNames( const SVCommandDataHolder& 
 
 	HRESULT l_Temp = ConvertJsonToCommandDataHolder( p_rResults, _T( "Results" ), l_JsonResults );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_Temp;
 	}
@@ -80,7 +80,7 @@ HRESULT SVInputStreamManager::QueryInputStreamDataItems( const SVCommandDataHold
 
 	l_Status = p_rAttributes.GetValue( _T( "StreamName" ), l_VariantStreamName );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		std::string l_JsonCommand;
 		std::string l_JsonResults;
@@ -97,7 +97,7 @@ HRESULT SVInputStreamManager::QueryInputStreamDataItems( const SVCommandDataHold
 
 		HRESULT l_Temp = ConvertJsonToCommandDataHolder( p_rResults, _T( "Results" ), l_JsonResults );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -118,7 +118,7 @@ HRESULT SVInputStreamManager::ClearInputStreamDataItems( const SVCommandDataHold
 
 	l_Status = p_rAttributes.GetValue( _T( "StreamName" ), l_VariantStreamName );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		std::string l_JsonCommand;
 		std::string l_JsonResults;
@@ -222,7 +222,7 @@ HRESULT SVInputStreamManager::ProcessJsonCommand( const std::string& p_rJsonComm
 		l_Status = E_FAIL;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		if( l_StreamName.empty() )
 		{
@@ -259,16 +259,16 @@ HRESULT SVInputStreamManager::SendCommandToInputStream( const std::string& p_rNa
 		{
 			l_Status = l_CommandDataPtr->SetJsonCommand( p_rJsonCommand );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = SVObjectManagerClass::Instance().Notify( l_SubjectID, l_CommandDataPtr );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_CommandDataPtr->WaitForRequest( 60000 );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					p_rJsonResults = l_CommandDataPtr->m_JsonResults;
 				}
@@ -322,7 +322,7 @@ HRESULT SVInputStreamManager::ProcessStreamManagerJsonCommand( const std::string
 			l_Status = E_FAIL;
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			if( l_Command == _T( "QueryStreamNames" ) )
 			{
@@ -423,7 +423,7 @@ HRESULT SVInputStreamManager::ProcessJsonValuesToCommandDataHolder( SVCommandDat
 		{
 			HRESULT l_Temp = ProcessJsonToCommandDataHolder( l_ValuesDataHolder, l_Iter.memberName(), (*l_Iter) );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -433,7 +433,7 @@ HRESULT SVInputStreamManager::ProcessJsonValuesToCommandDataHolder( SVCommandDat
 
 		HRESULT l_Temp = p_rDataHolder.SetContainer( p_rLabel.c_str(), l_ValuesDataHolder, true );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}

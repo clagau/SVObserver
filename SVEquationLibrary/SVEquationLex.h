@@ -46,9 +46,8 @@ class SVEquationLexClass : public yyFlexLexer
 
 public:
 	SVEquationLexClass();
-	~SVEquationLexClass();
+	virtual ~SVEquationLexClass();
 
-	// had to add these 3 methods - SEJ
 	virtual struct yy_buffer_state* yy_scan_buffer( char *base, yy_size_t size );
 	virtual struct yy_buffer_state* yy_scan_bytes( const char *bytes, int len );
 	virtual struct yy_buffer_state* yy_scan_string( const char *yy_str );

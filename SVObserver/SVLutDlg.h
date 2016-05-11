@@ -23,7 +23,7 @@ public:
 	typedef std::map< SVGUID, SVLut > SVLutMap;
 
 //	DECLARE_DYNAMIC(SVLutDlg)
-	SVLutDlg(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVLutDlg(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVLutDlg();
 
 	bool Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut );

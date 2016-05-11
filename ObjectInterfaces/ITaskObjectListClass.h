@@ -10,22 +10,15 @@
 #include "ITaskObject.h"
 #pragma endregion Includes
 
-struct SVObjectTypeInfoStruct;
-
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		//this class is a interface. It should only have pure virtual public method and new member parameter
-		class ITaskObjectListClass : virtual public ITaskObject
+		//this class is a interface. It should only have pure virtual public method and no member variables
+		class ITaskObjectListClass
 		{
 		public:
 			virtual ~ITaskObjectListClass() {}
-
-			/**********
-			 The method gets the size of tasks.
-			***********/
-			virtual int GetSize() const = 0;
 
 			/**********
 			 The method gets the name/Guid list of the task object of this taskObjectList.
@@ -51,7 +44,7 @@ namespace Seidenader
 			 /param rObject <in> object to destroy.
 			 /param context <in>.
 			***********/
-			virtual DWORD_PTR DestroyChildObject(ITaskObject& rObject, DWORD context) = 0;
+			virtual DWORD_PTR DestroyChild(ITaskObject& rObject, DWORD context) = 0;
 		};
 	}
 }

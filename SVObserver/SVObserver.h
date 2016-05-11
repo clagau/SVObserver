@@ -28,7 +28,6 @@
 
 #pragma region Declarations
 class SVConfigurationObject;
-class SVIMServerWrapper;
 class SVInspectionProcess;
 class SVIOController;
 class SVIODoc;
@@ -144,8 +143,6 @@ public:
 	afx_msg void OnExtrasLogin();
 	afx_msg void OnUpdateExtrasLogin(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasUserManager(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateViewToolBuffers(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateSetupMode(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
 	afx_msg void OnGoOffline();
 	afx_msg void OnUpdateGoOffline(CCmdUI* PCmdUI);
@@ -167,8 +164,6 @@ public:
 	afx_msg void OnExtrasUtilitiesEdit();
 	afx_msg void OnUpdateAddPolarUnwrapTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddAcquisitionTool(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateResumeFreeze(CCmdUI* PCmdUI);
-	//afx_msg void OnUpdateSelectPPQVariable(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateRegressionTest(CCmdUI* pCmdUI);
     afx_msg void OnEditMonitorList();
@@ -223,18 +218,12 @@ public:
 public:
 #pragma region virtual
 	virtual HRESULT OpenSVXFile( LPCTSTR PathName );
-	virtual void LoadTempIODoc( LPCTSTR FileName );
-	virtual void LoadTempIPDoc( LPCTSTR FileName );
 	virtual SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );	
 	virtual SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
 #pragma endregion virtual
 
 	CString GetConfigurationName() const;
-
-	SVString getModelNumber() const;
-	SVString getSerialNumber() const;
-	SVString getWinKey() const;
-
+	
 	HRESULT LoadPackedConfiguration( const CString& p_rPackedFileName );
 	HRESULT SavePackedConfiguration( const CString& p_rPackedFileName );
 
@@ -244,7 +233,6 @@ public:
 	void RemoveUnusedFiles();
 	SVIODoc* GetIODoc() const;
 
-	BOOL Login();
 	BOOL Logout( BOOL BForceLogout = FALSE );
 	BOOL InitPath( LPCTSTR TStrPathName, BOOL BCreateIfNotExists = TRUE, BOOL BDeleteContents = TRUE );
 
@@ -274,6 +262,7 @@ public:
 	LPCTSTR getConfigFullFileName() const;
 	BOOL setConfigFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
 
+	SVIPDoc* GetIPDoc( const SVGUID& rInspectionID ) const;
 	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
 	BOOL AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
 	CString GetStringResource( int ResourceID ) const;
@@ -282,7 +271,6 @@ public:
 
 	bool OkToEdit();
 	BOOL IsMonochromeImageAvailable();
-	void SVGetCurrentConfigName( CString &ConfigName ) const;
 	void OnRCOpenCurrentSVX();
 	void UpdateAllMenuExtrasUtilities();
 
@@ -371,7 +359,6 @@ protected:
 	HRESULT LoadDigitalDLL();
 	HRESULT CloseDigitalDLL();
 
-	LPCTSTR GetProcessorBoardName() const;
 	LPCTSTR GetTriggerBoardName() const;
 	LPCTSTR GetSoftwareTriggerBoardName() const;
 	LPCTSTR GetAcquisitionBoardName() const;
@@ -400,7 +387,6 @@ private:
 	void OnStopAll();
 	BOOL InitATL();
 	void StopRegression();
-	DWORD GetActiveIOTab() const;
 
 	bool AddSecurityNode(HMODULE hMessageDll, long lId, CString sNTGroup, bool bForcePrompt = false);
 	bool AddSecurityNode( HMODULE hMessageDll, long lId );
@@ -424,9 +410,7 @@ public:
 
 #pragma region Member variables
 private:
-	// *** // ***
 	HANDLE m_hAppThread;
-	// *** // ***
 
 	SVOIntelRAIDStatusClass m_IntelRAID;
 
@@ -484,8 +468,6 @@ private:
 	SVMessageWindowClass* m_pMessageWindow;
 
 	typedef SVVector< SVFileNameClass* > SVFileNamePtrVector;
-
-	SVIMServerWrapper* m_pSVIMServerWrapper;
 
 	SVFileNamePtrVector m_svFileNames;
 

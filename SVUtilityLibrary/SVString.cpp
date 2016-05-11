@@ -173,7 +173,7 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 		SVString stringValue(_T(""));
 		assert(pFormat);
 
-		if (pFormat != NULL)
+		if (nullptr != pFormat)
 		{
 			va_list argList;
 			va_start(argList, pFormat);
@@ -196,7 +196,7 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 		SVString stringValue(_T(""));
 		assert(pFormat);
 
-		if (pFormat != NULL)
+		if (nullptr != pFormat)
 		{
 			va_list argList;
 			va_start(argList, pFormat);

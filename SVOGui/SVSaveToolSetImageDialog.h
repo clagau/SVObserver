@@ -24,7 +24,7 @@ namespace Seidenader
 		class SVSaveToolSetImageDialogClass : public CDialog
 		{
 		public:
-			SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = NULL);   // standard constructor
+			SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);   // standard constructor
 
 			//{{AFX_VIRTUAL(SVSaveToolSetImageDialogClass)
 			protected:

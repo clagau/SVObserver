@@ -113,11 +113,11 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 
 				HRESULT l_TempStatus = l_SafeArray.GetElement( l_Index, l_Value );
 
-				if( l_TempStatus == S_OK )
+				if( S_OK == l_TempStatus )
 				{
 					l_TempStatus = ConvertVariantToJsonValue( l_Value, l_JsonValue );
 				}
-				else if( l_Status == S_OK )
+				else if( S_OK == l_Status )
 				{
 					l_Status = l_TempStatus;
 				}
@@ -195,26 +195,6 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 				break;
 			}
 		}
-	}
-
-	return l_Status;
-}
-
-HRESULT SVJsonUtilities::UpdateNameVariantPairToJsonObject( const std::string& p_rName, const _variant_t& p_rVariant, Json::Value& p_rJsonObject )
-{
-	HRESULT l_Status = S_OK;
-
-	if( !( p_rName.empty() ) && p_rJsonObject.isObject() )
-	{
-		Json::Value l_JsonValue;
-
-		l_Status = ConvertVariantToJsonValue( p_rVariant, l_JsonValue );
-
-		p_rJsonObject[ p_rName ] = l_JsonValue;
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
 	}
 
 	return l_Status;

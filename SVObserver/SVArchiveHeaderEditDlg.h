@@ -21,7 +21,7 @@ class SVArchiveHeaderEditDlg : public CDialog
 	DECLARE_DYNAMIC(SVArchiveHeaderEditDlg)
 #pragma region Public
 public:
-	SVArchiveHeaderEditDlg(CWnd* pParent = NULL);   // standard constructor
+	SVArchiveHeaderEditDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVArchiveHeaderEditDlg();
 
 // Dialog Data

@@ -9,66 +9,23 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:37:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVInputInfoListClass.h"
 
 #include "SVInObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectManagerClass.h"
+#pragma endregion Includes
 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVInputInfoListClass
-//* Note(s)    :
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
-
-//******************************************************************************
-// Serialization:
-//******************************************************************************
-
-
-
-//******************************************************************************
-// Message Map Entries
-//******************************************************************************
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVInputInfoListClass
-// -----------------------------------------------------------------------------
-// .Description : This constructor inits ...
-//              :
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :07.01.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 SVInputInfoListClass::SVInputInfoListClass()
 {
 }
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
 SVInputInfoListClass::~SVInputInfoListClass()
 {
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 BOOL SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 {
 	BOOL BRetVal = FALSE;
@@ -78,17 +35,25 @@ BOOL SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 		{
 			// Check only this entry...
 			if( GetAt( Index ) )
-				BRetVal = ( ( GetAt( Index )->PObject = SVObjectManagerClass::Instance().GetObject( GetAt( Index )->UniqueObjectID ) ) != NULL ) ? TRUE : FALSE;
+			{
+				BRetVal = ( nullptr != ( GetAt( Index )->PObject = SVObjectManagerClass::Instance().GetObject( GetAt( Index )->UniqueObjectID ) ) ) ? true : false;
+			}
 		}
 		else
 		{
 			// Check all entries...
 			BRetVal = TRUE;
 			for( int i = 0; i < GetSize(); ++i )
+			{
 				if( GetAt( i ) )
-					BRetVal = ( ( ( GetAt( i )->PObject = SVObjectManagerClass::Instance().GetObject( GetAt( i )->UniqueObjectID ) ) != NULL ) ? TRUE : FALSE ) && BRetVal;
+				{
+					BRetVal = ( ( nullptr != ( GetAt( i )->PObject = SVObjectManagerClass::Instance().GetObject( GetAt( i )->UniqueObjectID ) ) ) ? true : false ) && BRetVal;
+				}
 				else
-					BRetVal = FALSE;
+				{
+					BRetVal = false;
+				}
+			}
 		}
 	}
 	return BRetVal;

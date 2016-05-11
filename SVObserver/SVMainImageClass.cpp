@@ -35,7 +35,7 @@ SVMainImageClass::SVMainImageClass( SVObjectClass* POwner, int StringResourceID 
 
 void SVMainImageClass::init()
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVMainImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVMainImageObjectType;
 
 	m_ImageType = SVImageTypeMain;
 }
@@ -54,7 +54,7 @@ BOOL SVMainImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 
 	while( l_Iter != m_ChildArrays.end() )
 	{
-		if( l_Iter->second.m_pImageHandles != NULL )
+		if( nullptr != l_Iter->second.m_pImageHandles )
 		{
 			bOk &= l_Iter->second.m_pImageHandles->SetCurrentIndex( svIndex.m_CameraDMIndexHandle );
 		}
@@ -74,7 +74,7 @@ BOOL SVMainImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 
 BOOL SVMainImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 {
-	BOOL bOk = GetCameraBufferArrayPtr() != NULL;
+	BOOL bOk = nullptr != GetCameraBufferArrayPtr();
 	
 	if ( bOk )
 	{
@@ -86,7 +86,7 @@ BOOL SVMainImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 
 BOOL SVMainImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle )
 {
-	BOOL bOk = GetCameraBufferArrayPtr() != NULL;
+	BOOL bOk = nullptr != GetCameraBufferArrayPtr();
 	
 	if ( bOk )
 	{
@@ -100,15 +100,15 @@ BOOL SVMainImageClass::OnValidate()
 {
 	if( SVObjectAppClass::OnValidate() )
 	{
-		isObjectValid = !( GetCameraBufferArrayPtr().empty() );
+		m_isObjectValid = !( GetCameraBufferArrayPtr().empty() );
 	}
 
-	return isObjectValid;
+	return m_isObjectValid;
 }
 
 const SVClock::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const
 {
-	if( GetCameraBufferArrayPtr() != NULL )
+	if( nullptr != GetCameraBufferArrayPtr() )
 	{
 		m_LastReset = std::max( m_LastReset, GetCameraBufferArrayPtr()->GetLastResetTimeStamp() );
 	}

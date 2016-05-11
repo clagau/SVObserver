@@ -23,7 +23,7 @@ namespace
 
 IMPLEMENT_DYNAMIC(SVSoftwareTriggerDlg, CDialog)
 
-SVSoftwareTriggerDlg::SVSoftwareTriggerDlg(CWnd* pParent /*=NULL*/)
+SVSoftwareTriggerDlg::SVSoftwareTriggerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSoftwareTriggerDlg::IDD, pParent), set_dirty(dummy)
 {
 	m_spins = 0;
@@ -248,25 +248,6 @@ BOOL SVSoftwareTriggerDlg::OnInitDialog()
 				m_secEdit,
 				m_secLabel,
 				sv::Def(false, 121), 0
-				//new SVSpinGroup(
-				//	m_minSpin,
-				//	m_minEdit,
-				//	m_minLabel,
-				//	sv::Def(false, 60), 
-				//	new SVSpinGroup(
-				//		m_hourSpin,
-				//		m_hourEdit,
-				//		m_hourLabel,
-				//		sv::Def(false, 24), 
-				//		new SVSpinGroup(
-				//			m_daySpin,
-				//			m_dayEdit,
-				//			m_dayLabel,
-				//			sv::Def(false, 100), 
-				//			0
-				//		)
-				//	)
-				//)
 			)				
 		);
 
@@ -306,13 +287,13 @@ bool SVSoftwareTriggerDlg::AddTrigger(SVTriggerObject* pTrigger)
 
 SVSoftwareTriggerDlg & SVSoftwareTriggerDlg::Instance()
 {
-	static SVSoftwareTriggerDlg dlg(NULL);
+	static SVSoftwareTriggerDlg dlg(nullptr);
 	static bool created = false;
 	if (!created)
 	{
 		created = true;
 		CWnd * l_parent = ::AfxGetMainWnd();
-		while (l_parent->GetParent() != NULL)
+		while (nullptr != l_parent->GetParent())
 		{
 			l_parent = l_parent->GetParent();
 		}

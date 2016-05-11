@@ -30,6 +30,10 @@ Doughnut::Doughnut()
 	m_TwiceSideThickness = 0;
 	m_TwiceTopThickness = 0;
 }
+
+Doughnut::~Doughnut()
+{
+}
 #pragma endregion Constructor
 
 #pragma region Public Methods

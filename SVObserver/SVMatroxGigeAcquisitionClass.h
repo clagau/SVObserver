@@ -23,8 +23,6 @@ struct SVGigeCameraFileInfoStruct;
 
 class SVMatroxGigeAcquisitionClass : public SVAcquisitionClass
 {
-	friend class SVMatroxGigeCameraProxy;
-
 public:
 	SVMatroxGigeAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVMatroxGigeAcquisitionClass();
@@ -57,6 +55,7 @@ public:
 	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual void ClearDeviceIdentifier();
 	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
+	virtual bool IsOnline() const;
 
 protected:
 	bool CameraMatchesCameraFile();
@@ -70,8 +69,6 @@ protected:
 
 	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rwParam );	// for parameters that are settable through MIL (all standard DCAM params)
 
-	virtual bool IsOnline() const;
-	
 	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR );
 	virtual HRESULT GetLutImpl( SVLut& lut );
 	virtual HRESULT SetLutImpl( const SVLut& lut );

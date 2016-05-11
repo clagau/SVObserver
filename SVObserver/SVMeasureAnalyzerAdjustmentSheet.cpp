@@ -58,7 +58,7 @@ BOOL SVMeasureAnalyzerAdjustmentSheetClass::OnInitDialog()
     //
 	// Disable and Hide Cancel Button
 	HWND hWnd = ::GetDlgItem(m_hWnd, IDCANCEL);
-	if (hWnd != NULL)
+	if (nullptr != hWnd)
 	{
 		::EnableWindow( hWnd, FALSE );
 		::ShowWindow(hWnd, SW_HIDE );
@@ -70,7 +70,7 @@ BOOL SVMeasureAnalyzerAdjustmentSheetClass::OnInitDialog()
     // Position this dialog at saved (or initial) location.
     //
     BOOL bResult2 = SetWindowPos(
-        NULL,          // Z order not used
+        nullptr,          // Z order not used
         gPtPosition.x,
         gPtPosition.y,
         0,0,           // Width and Height Not Used

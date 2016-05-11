@@ -37,9 +37,9 @@ struct SVParserProgressControlStruct
 	{
 		bValidate = FALSE;
 		OwnerGuid = GUID_NULL;
-		pParser = NULL;
-		pProgressCtrl = NULL;
-		pStaticTextCtrl = NULL;
+		pParser = nullptr;
+		pProgressCtrl = nullptr;
+		pStaticTextCtrl = nullptr;
 		TotalSize = 0;
 	}
 };
@@ -50,7 +50,7 @@ class SVParserProgressDialog : public SVProgressDialog
 {
 // Construction
 public:
-	SVParserProgressDialog(LPCTSTR title, CWnd* pParent = NULL);   // standard constructor
+	SVParserProgressDialog(LPCTSTR title, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVParserProgressDialog();
 
 	BOOL AddParser( unsigned long parserHandle, SVObjectScriptParserClass* pParser );

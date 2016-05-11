@@ -38,17 +38,16 @@ bool SVDeviceParamIndexer::keycomp::operator () (const SVDeviceParamEnum& a, con
 	SVDeviceParamMap::const_iterator iterB = m_mapIndexed.find(b);
 	const SVDeviceParam* pA = iterA->second;
 	const SVDeviceParam* pB = iterB->second;
-	if (pB==NULL)
+	if (nullptr == pB)
 		return true;
-	else if (pA==NULL)
+	else if (nullptr == pA)
 		return false;
-	else
-		return iterA->second->GetOrder() < iterB->second->GetOrder();
+	return iterA->second->GetOrder() < iterB->second->GetOrder();
 }
 
 SVDeviceParamCollection::SVDeviceParamCollection( const SVDeviceParamCollection& rhs )
 {
-		mapParameters = rhs.mapParameters;
+	mapParameters = rhs.mapParameters;
 }
 
 SVDeviceParamCollection& SVDeviceParamCollection::operator = ( const SVDeviceParamCollection& rhs )

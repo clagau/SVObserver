@@ -9,14 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:08:26  $
 //******************************************************************************
 
-#if !defined(SVOIPVIEWCLASS_H)
-#define SVOIPVIEWCLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVOIPViewClass.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // SVOIPViewClass view
@@ -60,6 +53,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVOIOVIEWCLASS_H)
-

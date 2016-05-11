@@ -81,7 +81,7 @@ void LeafTreeCtrl::loadTree()
 					0,
 					0,
 					reinterpret_cast<LPARAM> (&IterChild->first),
-					NULL,
+					nullptr,
 					TVI_LAST);
 
 				SetItemState( Item, INDEXTOSTATEIMAGEMASK( IterChild->second->getCheckedState() ),  TVIS_STATEIMAGEMASK );
@@ -110,7 +110,7 @@ void LeafTreeCtrl::updateTree()
 			{
 				if( IterChild->second->isLeaf() )
 				{
-					IterChild->second->setTreeItem( NULL );
+					IterChild->second->setTreeItem( nullptr );
 				}
 
 				++IterChild;
@@ -133,7 +133,7 @@ void LeafTreeCtrl::updateTree()
 		SvTrl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
 		while( Iter.node()->end() != IterChild )
 		{
-			if( IterChild->second->isLeaf() && (NULL != IterChild->second->getTreeItem()) )
+			if( IterChild->second->isLeaf() && (nullptr != IterChild->second->getTreeItem()) )
 			{
 				SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState( SvTrl::IObjectSelectorItem::EmptyEnabled );
 				//The checked state is saved in the upper nibble of the item state (Filtered with 0xF000) and must be shifted by 12 to get the required value

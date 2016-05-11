@@ -39,7 +39,7 @@ SVObjectScriptParserClass::~SVObjectScriptParserClass()
 	if (m_pParser)
 	{
 		delete m_pParser;
-		m_pParser = NULL;
+		m_pParser = nullptr;
 	}
 }
 

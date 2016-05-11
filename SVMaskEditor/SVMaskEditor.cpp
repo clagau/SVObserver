@@ -8,25 +8,24 @@
 // * .Current Version : $Revision:   1.1  $
 // * .Check In Date   : $Date:   01 Oct 2013 10:22:32  $
 // ******************************************************************************
-
-
-//#ifdef _DEBUG
-//#define new DEBUG_NEW
-//#undef THIS_FILE
-//static char THIS_FILE[] = __FILE__;
-//#endif
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMaskEditor.h"
 #include "SVMatroxLibrary\SVMatroxLibrary.h"
+#pragma endregion Includes
 
-SVMaskEditorApp NEAR theApp;
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+SVMaskEditorApp theApp;
 
 const GUID CDECL BASED_CODE _tlid =
 		{ 0xc87c9b70, 0xe6dc, 0x11d2, { 0xa7, 0x7b, 0, 0x10, 0x6f, 0, 0xc, 0x7d } };
 const WORD _wVerMajor = 1;
 const WORD _wVerMinor = 0;
-
 
 ////////////////////////////////////////////////////////////////////////////
 // SVMaskEditorApp::InitInstance - DLL initialization
@@ -43,7 +42,6 @@ BOOL SVMaskEditorApp::InitInstance()
 	return bInit;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////
 // SVMaskEditorApp::ExitInstance - DLL termination
 
@@ -53,7 +51,6 @@ int SVMaskEditorApp::ExitInstance()
 
 	return COleControlModule::ExitInstance();
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // DllRegisterServer - Adds entries to the system registry
@@ -71,7 +68,6 @@ STDAPI DllRegisterServer(void)
 	return NOERROR;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // DllUnregisterServer - Removes entries from the system registry
 
@@ -87,11 +83,6 @@ STDAPI DllUnregisterServer(void)
 
 	return NOERROR;
 }
-
-
-
-
-
 
 
 // Global Functions...
@@ -136,9 +127,9 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
 	l_BufIntf.Get( l_MilBuffer, SVWindowDC, l_lTmp );
 	hDC = reinterpret_cast<HDC>(l_lTmp);
 
-    HDC hMemDC = NULL;
+    HDC hMemDC = nullptr;
 
-    if( hDC != NULL )
+    if( nullptr != hDC )
 	{
         if( hMemDC = ::CreateCompatibleDC( hDC ) )
         {

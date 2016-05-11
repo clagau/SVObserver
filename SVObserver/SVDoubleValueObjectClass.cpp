@@ -183,7 +183,7 @@ HRESULT SVDoubleValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& 
 	_variant_t l_Temp;
 	l_Temp.Attach( rvtValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_dValue );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		l_Temp = l_dValue;
 	}
@@ -197,7 +197,7 @@ HRESULT SVDoubleValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& 
 
 void SVDoubleValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVDoubleValueObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDoubleValueObjectType;
 	DefaultValue() = 0.0;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{

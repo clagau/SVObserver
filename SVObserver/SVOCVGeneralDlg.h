@@ -8,13 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:03:10  $
 //******************************************************************************
-
-#if !defined(SVOCVGENERALDLG_H)
-#define SVOCVGENERALDLG_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVTaskObjectInterfaceClass.h"
 
@@ -67,6 +61,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVOCVGENERALDLG_H)
-

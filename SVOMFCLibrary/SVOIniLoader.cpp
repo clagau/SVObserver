@@ -91,7 +91,7 @@ HRESULT SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
 	HRESULT l_hrOk = S_OK;
 	SVOINIClass l_svINI;
 	
-	BSTR l_bstrValue = NULL;
+	BSTR l_bstrValue = nullptr;
 	CString l_csWinKey;
 	
 	l_svINI.GetValue( OEMSpecificSectionTag, ProductIDTag, EmptyString, &l_bstrValue, oemIniFile );

@@ -43,11 +43,11 @@ class SVObjectAttributeClass
 public:
 	SVObjectAttributeClass();
 
-	SVObjectAttributeClass(SVObjectAttributeClass& orig);
+	SVObjectAttributeClass(SVObjectAttributeClass& orig); // @WARNING Should be const & - See Implementation
 
 	virtual ~SVObjectAttributeClass();
 
-	SVObjectAttributeClass& operator=(SVObjectAttributeClass& rhs);
+	SVObjectAttributeClass& operator=(SVObjectAttributeClass& rhs); // @WARNING Should be const & - See Implementation
 
 	LPCTSTR GetName();
 	int GetType();

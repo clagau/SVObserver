@@ -56,7 +56,7 @@ HRESULT SVThreadManagerImpl::GetThreadInfo( std::list<std::string>& p_rStrList)
 	for( ThreadList::iterator l_it = m_threads.begin() ; l_it != m_threads.end() ; ++l_it)
 	{
 		HANDLE l_hThread = l_it->m_hThread;
-		if( l_hThread == nullptr)
+		if( nullptr == l_hThread )
 			continue;
 		int iPriority = ::GetThreadPriority(l_hThread);
 		if( iPriority == THREAD_PRIORITY_ERROR_RETURN )
@@ -126,7 +126,7 @@ HRESULT SVThreadManagerImpl::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttri
 	{
 		if( strcmp(it->m_strName.c_str(), Name.c_str()) == 0 )
 		{
-			if( it->m_hThread == nullptr )
+			if( nullptr == it->m_hThread )
 			{	// Thread already in list but not created yet, Null handle.
 				break;
 			}
@@ -168,7 +168,7 @@ HRESULT SVThreadManagerImpl::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttri
 	}
 	else
 	{
-		if( it->m_hThread != nullptr )	// Duplicate Name...
+		if( nullptr != it->m_hThread )	// Duplicate Name...
 		{
 			newThread.m_eAttribute = eAttrib;
 			newThread.m_hThread = hThread;
@@ -199,7 +199,7 @@ HRESULT SVThreadManagerImpl::Clear( )
 
 	for( ThreadList::iterator it = m_threads.begin() ; it != m_threads.end() ; )
 	{
-		if( it->m_hThread == nullptr )
+		if( nullptr == it->m_hThread )
 		{
 			it = m_threads.erase( it );
 		}
@@ -258,7 +258,7 @@ BOOL SVThreadManagerImpl::SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwA
 	DWORD_PTR newAffinityBits;
 	BOOL bRet = FALSE;
 
-	if( hThread != nullptr )
+	if( nullptr != hThread )
 	{
 		bRet = ::GetProcessAffinityMask( GetCurrentProcess(), &systemAffinityMask, &myCurrentMask);
 		if( bRet )
@@ -340,7 +340,7 @@ HRESULT SVThreadManagerImpl::StartAffinityMgnt()
 	HRESULT hr=S_FALSE;
 
 	// Dummy Thread Creation...
-	if( m_hShutdown == nullptr)
+	if( nullptr == m_hShutdown )
 	{
 		m_hShutdown = ::CreateEvent( nullptr, TRUE, FALSE, nullptr );
 	}
@@ -348,7 +348,7 @@ HRESULT SVThreadManagerImpl::StartAffinityMgnt()
 	{
 		return hr;
 	}
-	if( m_hThreadComplete == nullptr)
+	if( nullptr == m_hThreadComplete )
 	{
 		m_hThreadComplete = ::CreateEvent( nullptr, TRUE, TRUE, nullptr );
 	}
@@ -359,7 +359,7 @@ HRESULT SVThreadManagerImpl::StartAffinityMgnt()
 
 	DWORD dwThreadID=0;
 	m_hThread = ::CreateThread( nullptr, 0, &SVThreadManagerImpl::Process, LPVOID(this),0, &dwThreadID );
-	if( m_hThread != nullptr)
+	if( nullptr != m_hThread )
 	{
 		hr = Add( m_hThread, _T("Dummy Thread"), SVAffinityDummy );
 	}
@@ -377,10 +377,10 @@ HRESULT SVThreadManagerImpl::StartAffinityMgnt()
 			case SVAffinityTrigger:
 			case SVAffinityDummy:
 			{
-				if( it->m_hThread != NULL )
+				if( nullptr != it->m_hThread )
 				{
 					BOOL bRet = SetThreadHandleAffinity(it->m_hThread, it->m_lAffinity);
-					if( bRet == 0 )
+					if( 0 == bRet )
 					{
 						OutputDebugString("\nAffinity Set Failed");
 					}
@@ -417,10 +417,10 @@ HRESULT SVThreadManagerImpl::StopAffinityMgmt()
 			case SVAffinityTrigger:
 			case SVAffinityDummy:
 			{
-				if( it->m_hThread != NULL )
+				if( nullptr != it->m_hThread )
 				{
 					BOOL bRet = SetThreadHandleAffinity(it->m_hThread, 0); // 0 = all processors.
-					if( bRet == 0 )
+					if( 0 == bRet )
 					{
 						OutputDebugString("\nAffinity Reset Failed");
 					}

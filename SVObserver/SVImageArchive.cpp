@@ -108,7 +108,7 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr
 	
 	if (ImageArchiveFileExists (szFileName) && !( p_HandlePtr.empty() ) )
 	{
-		hCursor = SetCursor (LoadCursor(NULL, IDC_WAIT));
+		hCursor = SetCursor (LoadCursor(nullptr, IDC_WAIT));
 		sFileName = szFileName;
 
 		SVImageBufferHandleImage l_MilHandle;
@@ -179,122 +179,17 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_Acquisit
 	return bRetValue;
 }
 
-BOOL SVImageArchiveClass::SaveImageArchiveFile(SVImageClass *pImage, BOOL bOverWrite)
-{
-	CString szFileName;
-	HCURSOR hCursor;
-	
-	SVSmartHandlePointer ImageHandle;
-	
-	if ( ! pImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
-	{
-		return FALSE;
-	}
-	
-	SVImageBufferHandleImage l_MilHandle;
-	ImageHandle->GetData( l_MilHandle );
-
-	if ( l_MilHandle.empty() )
-	{
-		return FALSE;
-	}
-	
-	NextFileName ();
-	szFileName = mszImageArchivePath;
-	szFileName += mszCurrentFileName;
-	
-	if (!bOverWrite && ImageArchiveFileExists(szFileName))
-		return FALSE;
-	
-	hCursor = SetCursor (LoadCursor(NULL, IDC_WAIT));
-
-	
-	SVMatroxBufferInterface::SVStatusCode l_Code;
-	SVMatroxString sFileName = szFileName;	
-	l_Code = SVMatroxBufferInterface::Export( l_MilHandle.GetBuffer(), sFileName, SVFileBitmap); 
-	SetCursor (hCursor);
-	
-	if( l_Code == SVMEE_STATUS_OK )
-		return TRUE;
-	else
-		return FALSE;
-}
-
 BOOL SVImageArchiveClass::ImageArchiveFileExists(CString &szFileName)
 {
   CFile fFile;
 
   if (!fFile.Open ((LPCTSTR) szFileName,
                   CFile::modeRead | CFile::typeBinary,
-                  (CFileException *) NULL))
+                  (CFileException *) nullptr))
   {
     return FALSE;
   }
   fFile.Close();
   return TRUE;
-}
-
-BOOL SVImageArchiveClass::SelectImageArchivePath()
-{
-	CString  szFilter, szFileName;
-
-	DWORD dwOldFileNumber = ResetFileNumber ();
-   
-   NextFileName ();
-
-   szFilter = _T ( "Image Archive Files|" );
-   szFilter += mszArchiveFileTemplate;
-   szFilter += _T ( "*.bmp|Bitmap Files|*.bmp||" );
-
-   msvfnFileName.SetFileExtensionFilterList ( szFilter );
-   msvfnFileName.SetDefaultFileName ( mszCurrentFileName );
-	msvfnFileName.SetFileSelectFlags ( OFN_PATHMUSTEXIST | OFN_NOTESTFILECREATE | 
-	                                   OFN_NONETWORKBUTTON | OFN_NOCHANGEDIR );
-
-	//
-   // Try to read the current image file path name from registry...
-	//
-	CString csPath = AfxGetApp ()->GetProfileString ( _T ( "Settings" ), 
-											                              _T ( "ArchivedImagesFilePath" ), 
-											                              (LPCTSTR) mszImageArchivePath );
-
-   msvfnFileName.SetPathName ( csPath );
-
-	msvfnFileName.SetFileSelectDialogTitle ( _T( "Image Archive Directory Selection" ) );
-
-   if ( msvfnFileName.SelectFile () == IDOK )
-   {
-		mszImageArchivePath = msvfnFileName.GetPathName ();
-	   
-      //
-	   // Write this path name back to registry...to initialize registry.
-	   //
-	   AfxGetApp ()->WriteProfileString (  _T( "Settings" ), 
-		                                    _T( "ArchivedImagesFilePath" ), 
-                                       (LPCTSTR) mszImageArchivePath );
-    
-      szFileName = msvfnFileName.GetFileNameOnly ();
-
-      if ( szFileName.GetLength () > 8 )
-      {
-         szFileName.Delete ( szFileName.GetLength () - 8, 8 );
-      }
-      else
-      {
-         szFileName = mszArchiveFileTemplate;
-      }
-      
-      SetImageArchiveFileTemplate ( szFileName );
-      
-      ResetFileNumber ();
-      
-      mdwFileNumber = dwOldFileNumber;
-      
-      return TRUE;
-   }
-
-   ResetFileNumber ();
-   mdwFileNumber = dwOldFileNumber;
-   return FALSE;
 }
 

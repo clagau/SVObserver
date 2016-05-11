@@ -88,7 +88,7 @@ bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBran
 {
 	bool bRetVal = false;
 
-	SVTreeType::SVBranchHandle hBranch = NULL;
+	SVTreeType::SVBranchHandle hBranch = nullptr;
 	SVNavigateTree::GetItemBranch(m_rTree, tag.c_str(), hItem, hBranch);
 	if(nullptr != hBranch)
 	{
@@ -154,7 +154,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		{
 			hr = SVObjectBuilder::CreateObject(SVGUID(classID), objectID, name, SvUl_SF::createSVString(objectName), ownerID);
 		}
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			UpdateProgress(m_count, m_totalSize);
 
@@ -272,11 +272,11 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	// Build the Object
 	GUID objectID = SVGUID(uniqueID);
 	hr = SVObjectBuilder::CreateFriendObject(SVGUID(classID), objectID, Name.c_str(), SvUl_SF::createSVString(objectName), ownerID);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		// this will be different for embeddeds, it will use the owning object ID and the embedded object ID
 		hr = ProcessAttributes(objectID, objectID, hItem);
-		if( hr == S_OK )
+		if (S_OK == hr)
 		{
 			hr = ProcessChildren(hItem, objectID);
 		}
@@ -327,14 +327,14 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 
 	GUID objectID = SVGUID(uniqueID);
 	hr = SVObjectBuilder::CreateEmbeddedObject(SVGUID(embeddedID), objectID, Name.c_str(), SvUl_SF::createSVString(objectName), ownerID);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		SVObjectScriptDataObjectTypeEnum dataType;
-		if (SVObjectBuilder::GetObjectDataType(ownerID, objectID, dataType) == S_OK)
+		if (S_OK == SVObjectBuilder::GetObjectDataType(ownerID, objectID, dataType))
 		{
 			hr = ProcessAttributes(ownerID, objectID, hItem);
 		
-			if (hr == S_OK)
+			if (S_OK == hr)
 			{
 				GetItemValue(scDefaultTag, hItem, defaultValue);
 				hr = ProcessEmbeddedValues(hItem, ownerID, objectID, defaultValue, dataType);
@@ -367,7 +367,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVT
 	{
 		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scDefaultTag, defaultValue, dataType);
 	}
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		SVVariantList values;
 		bool bVal = GetValues(hItem, scArrayElementsTag, values);
@@ -384,13 +384,13 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 {
 	HRESULT hr = S_OK;
 
-	if( hItem != NULL && SVNavigateTree::HasChildren( m_rTree, hItem ) )
+	if( nullptr != hItem && SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
 		SVTreeType::SVBranchHandle hValue( nullptr );
 
 		hValue = m_rTree.getFirstBranch(hItem);
 
-		while( hr == S_OK && m_rTree.isValidBranch( hValue ) )
+		while( S_OK == hr && m_rTree.isValidBranch( hValue ) )
 		{
 			SVVariantList values;
 
@@ -452,11 +452,11 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 {
 	HRESULT hr = S_OK;
 
-	if( hItem != NULL && SVNavigateTree::HasChildren( m_rTree, hItem ) )
+	if( nullptr != hItem && SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
 		SVTreeType::SVLeafHandle hValue( m_rTree.getFirstLeaf(hItem) );
 
-		while( hr == S_OK && m_rTree.isValidLeaf(hItem, hValue) )
+		while( S_OK == hr && m_rTree.isValidLeaf(hItem, hValue) )
 		{
 			SVVariantList values;
 
@@ -615,7 +615,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 	SVString sEnableAuxiliaryExtent = SvUl_SF::createSVString(enableAuxiliaryExtent);
 
 	hr = SVObjectBuilder::CreateObject(SVGUID(classID), SVGUID(uniqueID), name, SvUl_SF::createSVString(objectName), ownerGuid);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		inspectionGuid = SVGUID(uniqueID);
 

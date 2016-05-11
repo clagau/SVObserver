@@ -132,7 +132,7 @@ template
 >
 void SVList< SVT_TYPE >::AddTail( SVList* pNewList )
 {
-	if( pNewList != NULL )
+	if( nullptr != pNewList )
 	{
 		SVListBase& l_NewList( *pNewList );
 

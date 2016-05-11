@@ -23,10 +23,3 @@ SVContainableCriticalSection::SVContainableCriticalSection( DWORD p_dwSpinCount 
 	m_dwSpinCount = p_dwSpinCount;
 	::InitializeCriticalSectionAndSpinCount(m_pCritSec, m_dwSpinCount);
 }
-
-
-DWORD SVContainableCriticalSection::SetSpinCount( DWORD dwSpinCount )
-{
-	return ::SetCriticalSectionSpinCount( m_pCritSec, dwSpinCount );
-}
-

@@ -9,23 +9,15 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:15:14  $
 // ******************************************************************************
 
-#if !defined(AFX_SVUNLOADDEVICEDIALOG_H__24BB1C13_E87E_41A2_991D_E8BCDFCAC3E1__INCLUDED_)
-#define AFX_SVUNLOADDEVICEDIALOG_H__24BB1C13_E87E_41A2_991D_E8BCDFCAC3E1__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVUnloadDeviceDialog.h : header file
-//
-
-/////////////////////////////////////////////////////////////////////////////
-// SVUnloadDeviceDialog dialog
 
 class SVUnloadDeviceDialog : public CDialog
 {
 // Construction
 public:
-	SVUnloadDeviceDialog(CWnd* pParent = NULL);   // standard constructor
+	SVUnloadDeviceDialog(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVUnloadDeviceDialog();
+
 	void Show(CWnd* pParent);
 	void Destroy();
 
@@ -56,6 +48,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVUNLOADDEVICEDIALOG_H__24BB1C13_E87E_41A2_991D_E8BCDFCAC3E1__INCLUDED_)
-

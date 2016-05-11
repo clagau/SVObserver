@@ -8,8 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 13:14:16  $
 //******************************************************************************
+
+#pragma region Includes
 #include "Stdafx.h"
 #include "SVStringValueDeviceParam.h"
+#pragma endregion Includes
 
 SVStringValueDeviceParam::SVStringValueDeviceParam()
 {
@@ -28,6 +31,10 @@ SVStringValueDeviceParam::SVStringValueDeviceParam( const SVStringValueDevicePar
 	m_eDataType = DeviceDataTypeString;
 	strValue = rhs.strValue;
 	info = rhs.info;
+}
+
+SVStringValueDeviceParam::~SVStringValueDeviceParam()
+{
 }
 
 SVClonable* SVStringValueDeviceParam::CloneImpl() const
@@ -88,7 +95,7 @@ HRESULT SVStringValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam )
 SVString& StringValue(SVDeviceParamWrapper& w) 
 {
 	const SVStringValueDeviceParam* p = w.DerivedValue(p); 
-	if (p==NULL) 
+	if (nullptr == p) 
 	{
 		w = SVStringValueDeviceParam(); 
 		p = w.DerivedValue(p);

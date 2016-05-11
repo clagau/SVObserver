@@ -11,19 +11,18 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <string>
 
-#include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVObjectLibrary/SVObserverNotificationFunctor.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVJsonCommandServerLibrary/SVJsonCommandServer.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#pragma endregion Includes
 
 class SVOutputStreamManager
 {
 public:
-	friend class SVObserverApp;
-
 	static SVOutputStreamManager& Instance();
 
 	virtual ~SVOutputStreamManager();
@@ -37,6 +36,12 @@ public:
 	HRESULT ProcessJsonCommand( const std::string& rJsonCommand, std::string& rJsonResults );
 	HRESULT Rename( LPCTSTR OldName, LPCTSTR NewName);
 
+	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
+	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project
+	// So for now the restriction is made manually, just don't call these methods anywhere else, as described via this comment
+	void Startup(unsigned short PortNumber); // This method is only meant to be called by the main application class
+	void Shutdown();						 // This method is only meant to be called by the main application class
+
 protected:
 	typedef std::pair< std::string, SVGUID > SVOutputStreamPair;
 
@@ -47,6 +52,7 @@ protected:
 	public:
 		typedef boost::function< HRESULT ( const std::string& ) > SVObserverFunction;
 		SVOutputSocketObserver( SVObserverFunction Function ) : m_Function( Function ) {}
+		virtual ~SVOutputSocketObserver() {}
 
 		virtual HRESULT ObserverUpdate( const std::string& rData ) override
 		{
@@ -70,9 +76,6 @@ protected:
 
 	SVOutputStreamManager();
 
-	void Startup(unsigned short PortNumber);
-	void Shutdown();
-
 	HRESULT SendCommandToOutputStream( const std::string& rCmdName, const std::string& rName, const std::string& rJsonCommand, std::string& rJsonResults );
 
 	HRESULT ProcessStreamManagerJsonCommand( const std::string& rJsonCommand, std::string& rJsonResults );
@@ -82,6 +85,5 @@ protected:
 	SVObserverNotificationFunctorPtr m_SocketNotifyPtr;
 	SVGUID m_OutputControllerId;
 	SVOutputStreamPair m_OutputStream;
-
 };
 

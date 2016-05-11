@@ -15,17 +15,6 @@
 // .Title       : SVObjectScriptDataObjectTypeEnum
 // -----------------------------------------------------------------------------
 // .Description : Enumerated Types for Object Script Data Objects
-//              : 
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :08.07.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 enum SVObjectScriptDataObjectTypeEnum
 {

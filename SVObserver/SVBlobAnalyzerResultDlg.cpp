@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // SVBlobAnalyzerResultDlg dialog
 
-SVBlobAnalyzerResultDlg::SVBlobAnalyzerResultDlg(CWnd* pParent /*=NULL*/)
+SVBlobAnalyzerResultDlg::SVBlobAnalyzerResultDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVBlobAnalyzerResultDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVBlobAnalyzerResultDlg)

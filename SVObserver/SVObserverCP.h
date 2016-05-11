@@ -39,7 +39,7 @@ class CProxy_ISVCommandEvents : public IConnectionPointImpl<T, &IID__ISVCommandE
 public:
 	HRESULT Fire_StreamingData(SAFEARRAY * saProcessCount, SAFEARRAY * saNames, SAFEARRAY * saValues)
 	{
-		HRESULT ret=S_FALSE;
+		HRESULT ret = S_FALSE;
 		T* pT = static_cast<T*>(this);
 		int nConnectionIndex;
 		int nConnections = m_vec.GetSize();
@@ -57,8 +57,10 @@ public:
 			CComPtr<IUnknown> sp = pTemp;
 			pT->Unlock();
 			_ISVCommandEvents* p_ISVCommandEvents = reinterpret_cast<_ISVCommandEvents*>(sp.p);
-			if (p_ISVCommandEvents != NULL)
+			if (nullptr != p_ISVCommandEvents)
+			{
 				ret = p_ISVCommandEvents->StreamingData(saProcessCount, saNames, saValues);
+			}
 		}	return ret;
 
 	}
@@ -75,8 +77,10 @@ public:
 			CComPtr<IUnknown> sp = m_vec.GetAt(nConnectionIndex);
 			pT->Unlock();
 			_ISVCommandEvents* p_ISVCommandEvents = reinterpret_cast<_ISVCommandEvents*>(sp.p);
-			if (p_ISVCommandEvents != NULL)
+			if (nullptr != p_ISVCommandEvents)
+			{
 				ret = p_ISVCommandEvents->TestConnection();
+			}
 		}	return ret;
 
 	}
@@ -87,8 +91,10 @@ public:
 		T* pT = static_cast<T*>(this);
 		IUnknown* p;
 		HRESULT hRes = S_OK;
-		if (pUnkSink == NULL || pdwCookie == NULL)
+		if (nullptr == pUnkSink || nullptr == pdwCookie)
+		{
 			return E_POINTER;
+		}
 		IID iid;
 		GetConnectionInterface(&iid);
 		hRes = pUnkSink->QueryInterface(iid, (void**)&p);
@@ -99,18 +105,23 @@ public:
 
 			StoreMarshalInterface(p);
 
-			hRes = (*pdwCookie != NULL) ? S_OK : CONNECT_E_ADVISELIMIT;
+			hRes = (0 != *pdwCookie) ? S_OK : CONNECT_E_ADVISELIMIT;
 			pT->Unlock();
-			if (hRes != S_OK)
+			if (S_OK != hRes)
+			{
 				p->Release();
+			}
 		}
-		else if (hRes == E_NOINTERFACE)
+		else if (E_NOINTERFACE == hRes)
+		{
 			hRes = CONNECT_E_CANNOTCONNECT;
+		}
 		if (FAILED(hRes))
+		{
 			*pdwCookie = 0;
+		}
 		return hRes;
 	}
-
 
 	STDMETHOD(Unadvise) (DWORD dwCookie)
 	{
@@ -119,8 +130,10 @@ public:
 		IUnknown* p = m_vec.GetUnknown(dwCookie);
 		HRESULT hRes = m_vec.Remove(dwCookie) ? S_OK : CONNECT_E_NOCONNECTION;
 		pT->Unlock();
-		if (hRes == S_OK && p != NULL)
+		if (S_OK == hRes && nullptr != p)
+		{
 			p->Release();
+		}
 		return hRes;
 	}
 
@@ -133,14 +146,14 @@ protected:
 		IStream* pStream;
 		HRESULT hr;
 		hr = CoMarshalInterThreadInterfaceInStream( IID__ISVCommandEvents, pUnk, &pStream);
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			m_mapInterface.SetAt(pUnk, pStream);
 			m_mapMarshaled.SetAt(pUnk, false);
 		}
 		else
 		{
-			m_mapInterface.SetAt(pUnk, NULL);
+			m_mapInterface.SetAt(pUnk, nullptr);
 		}
 
 		return hr;
@@ -212,9 +225,9 @@ public:
 
 			_ISVCommandObserverEvents* p_ISVCommandObserverEvents = reinterpret_cast< _ISVCommandObserverEvents* >( sp.p );
 
-			if( p_ISVCommandObserverEvents != NULL )
+			if( nullptr != p_ISVCommandObserverEvents )
 			{
-				if( p_ISVCommandObserverEvents->IsValidObserver( p_rNotificationType ) == S_OK )
+				if( S_OK == p_ISVCommandObserverEvents->IsValidObserver( p_rNotificationType ) )
 				{
 					ret = p_ISVCommandObserverEvents->NotifyObserver( p_pResults );
 				}
@@ -228,10 +241,10 @@ public:
 	{               
 		HRESULT l_Status = IConnectionPointImpl<T, &IID__ISVCommandObserverEvents, CComDynamicUnkArray>::Advise( pUnkSink, pdwCookie );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			IID iid;
-			IUnknown* p = NULL;
+			IUnknown* p = nullptr;
 
 			GetConnectionInterface( &iid );
 
@@ -264,7 +277,7 @@ public:
 
 		IUnknown* p = m_vec.GetUnknown( dwCookie );
 
-		if( p != NULL )
+		if( nullptr != p )
 		{
 			ReleaseEventObserver( dwCookie, pT );
 
@@ -289,11 +302,11 @@ protected:
 
 	HRESULT MarshalInterface( IUnknown* pUnk )
 	{
-		IStream* pStream = NULL;
+		IStream* pStream = nullptr;
 
 		HRESULT hr = CoMarshalInterThreadInterfaceInStream( IID__ISVCommandObserverEvents, pUnk, &pStream );
 
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			m_MarshalInterface[ pUnk ] = pStream;
 		}
@@ -317,7 +330,7 @@ protected:
 
 			if( l_StreamIter != m_MarshalInterface.end() )
 			{
-				if( CoGetInterfaceAndReleaseStream( l_StreamIter->second, IID__ISVCommandObserverEvents, (void**) &l_pInterface ) == S_OK )
+				if( S_OK == CoGetInterfaceAndReleaseStream( l_StreamIter->second, IID__ISVCommandObserverEvents, (void**) &l_pInterface ) )
 				{
 					m_Interface[ pUnk ] = l_pInterface;
 				}

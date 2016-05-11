@@ -293,7 +293,7 @@ BOOL SVRemoteOutputGroup::Clear()
 
 BOOL SVRemoteOutputGroup::Create()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVRemoteOutputGroupType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVRemoteOutputGroupType;
 
 	m_bCreated = true;
 
@@ -345,7 +345,7 @@ BOOL SVRemoteOutputGroup::GetParameters( SVObjectXMLWriter& rWriter ) const
 	_variant_t svVariant;
 
 	// Unique Id
-	svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
+	svVariant = SVGUID( m_outObjectInfo.UniqueObjectID ).ToVARIANT();
 	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
@@ -381,7 +381,7 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 
 		if( bOk )
 		{
-			outObjectInfo.UniqueObjectID = ObjectID;
+			m_outObjectInfo.UniqueObjectID = ObjectID;
 
 			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
@@ -522,13 +522,6 @@ public:
 		return l_bGreater;
 	}
 };
-
-HRESULT SVRemoteOutputGroup::SortRemoteOutputList()
-{
-	std::sort( m_RemoteOutputs.begin(), m_RemoteOutputs.end(), EntrySortLess());
-
-	return S_OK;
-}
 
 SVRemoteOutputObject* SVRemoteOutputGroup::GetItem( long l_lIndex )
 {

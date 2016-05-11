@@ -18,17 +18,17 @@
 #include "SVStatusLibrary/GlobalPath.h"
 
 SVOIntelRAIDStatusClass::SVOIntelRAIDStatusClass()
-	:m_hCheckEvent( NULL ), m_csRaidStatus(), m_csErrorStatus()
+	:m_hCheckEvent( nullptr ), m_csRaidStatus(), m_csErrorStatus()
 {
-	m_hCheckEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+	m_hCheckEvent = ::CreateEvent( nullptr, true, false, nullptr );
 }
 
 SVOIntelRAIDStatusClass::~SVOIntelRAIDStatusClass()
 {
-	if( m_hCheckEvent != NULL )
+	if( nullptr != m_hCheckEvent )
 	{
 		::CloseHandle( m_hCheckEvent );
-		m_hCheckEvent = NULL;
+		m_hCheckEvent = nullptr;
 	}
 }
 
@@ -36,7 +36,7 @@ HRESULT SVOIntelRAIDStatusClass::UpdateStatus()
 {
 	HRESULT l_svOk = S_OK;
 
-	if( m_hCheckEvent != NULL )
+	if( nullptr != m_hCheckEvent )
 	{
 		switch( ::WaitForSingleObject( m_hCheckEvent, 0 ) )
 		{
@@ -96,13 +96,13 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 
 	HRESULT l_svOk = l_psvLog->Open( _T("Application") );
 
-	if( l_svOk == S_OK )
+	if( S_OK == l_svOk )
 	{
 		unsigned long l_ulCount = 0;
 
 		l_svOk = l_psvLog->GetRecordCount( l_ulCount );
 
-		if( l_svOk == S_OK )
+		if( S_OK == l_svOk )
 		{
 			SVEventRecordStruct l_svRecord;
 
@@ -110,11 +110,11 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 
 			l_svOk = l_psvLog->ReadLast( l_svRecord );
 
-			if( l_svOk == S_OK )
+			if( S_OK == l_svOk )
 			{
 				l_ulItem = 1;
 
-				while( l_svOk == S_OK && l_ulItem <= l_ulCount  && m_csRaidStatus.IsEmpty() )
+				while( S_OK == l_svOk && l_ulItem <= l_ulCount  && m_csRaidStatus.IsEmpty() )
 				{	// Look for event source "IAANTMon"
 					if( CString( l_svRecord.GetSourceName() ).CompareNoCase( _T("IAANTMon") ) == 0 )
 					{
@@ -149,7 +149,7 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 						lType = 2;
 						LPCTSTR l_szString = l_svRecord.GetFirstString();
 
-						while( l_szString != NULL )
+						while( nullptr != l_szString )
 						{
 							if( 0 < strlen( l_szString ) )
 							{
@@ -170,20 +170,19 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 		}
 	}
 
-	if( l_svOk != S_OK )
+	if( S_OK != l_svOk )
 	{
 		m_csErrorStatus.Format( _T("Error Reading Event Log (Item = %lu - ErrorCode = %lu)"), l_ulItem, l_svOk );
 
-		
 		FILE* l_pFile = ::fopen(  SvStl::GlobalPath::Inst().GetObserverPath(_T("LastEventReadError.txt")).c_str() , _T("w") );
 
-		if( l_pFile != NULL )
+		if( nullptr != l_pFile )
 		{
 			::fprintf( l_pFile,_T("%s\n"), m_csErrorStatus );
 
 			::fclose( l_pFile );
 
-			l_pFile = NULL;
+			l_pFile = nullptr;
 		}
 	}
 

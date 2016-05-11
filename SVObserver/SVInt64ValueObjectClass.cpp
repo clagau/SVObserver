@@ -130,9 +130,9 @@ HRESULT SVInt64ValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& r
 	_variant_t l_Temp;
 	l_Temp.Attach( rValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_i64Value );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
-		l_Temp = l_i64Value ;
+		l_Temp = l_i64Value;
 	}
 	else
 	{
@@ -141,12 +141,11 @@ HRESULT SVInt64ValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& r
 	rValue = l_Temp.Detach();
 
 	return hr;
-
 }
 
 void SVInt64ValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;
 	DefaultValue() = 0;
 	m_sLegacyScriptDefaultName = "Default";
 	m_sLegacyScriptArrayName = "Array";

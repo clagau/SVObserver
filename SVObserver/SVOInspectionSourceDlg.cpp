@@ -166,7 +166,7 @@ void CSVOInspectionSourceDlg::EnableDisableExport()
 				SVObjectClass *pObject;
 				SVString ipName = sName;
 				HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName(ipName, pObject);
-				if ( hr == S_OK )
+				if ( S_OK == hr )
 				{
 					m_ctlExportIPDbtn.EnableWindow(TRUE);
 				}
@@ -244,7 +244,7 @@ static bool IsColorImport(LPCTSTR filename)
 {
 	bool bRetVal = false;
 	char ext[_MAX_EXT];
-	_splitpath(filename, NULL, NULL, NULL, ext);
+	_splitpath(filename, nullptr, nullptr, nullptr, ext);
 	// skip the '.'
 	if (strcmp(&ext[1], ColorInspectionExportFileExt ) == 0)
 	{
@@ -258,7 +258,7 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 	// prompt for file 
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SvMc::SVFileDialog dlg(true, bFullAccess, AllInspectionExportFileExt, NULL, dwFlags, AllInspectionExportFileFilters, this);
+	SvMc::SVFileDialog dlg(true, bFullAccess, AllInspectionExportFileExt, nullptr, dwFlags, AllInspectionExportFileFilters, this);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 
 	if (dlg.DoModal() == IDOK)
@@ -285,7 +285,7 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 			long l_EnableAuxExtents = 0;
 			unsigned long l_VersionNumber = 0;
 			HRESULT hr = SVInspectionImporter::GetProperties(SVString(pathName), l_NewDisableMethod, l_EnableAuxExtents, l_VersionNumber);
-			if (hr == S_OK && nullptr != pInspectionObj )
+			if (S_OK == hr && nullptr != pInspectionObj )
 			{
 				bool shouldLoad = l_VersionNumber <= TheSVObserverApp.getCurrentVersion();
 				if( shouldLoad )
@@ -341,7 +341,7 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 			HRESULT hr =  SVObjectManagerClass::Instance().GetObjectByDottedName(ipName, pObject);
 			SVInspectionProcess* pInspectionProcess = dynamic_cast<SVInspectionProcess*> (pObject);
 
-			if (hr == S_OK && nullptr != pInspectionProcess)
+			if (S_OK == hr && nullptr != pInspectionProcess)
 			{
 				bool IsColor = pInspectionProcess->IsColorCamera();
 				LPCTSTR fileExt = (IsColor) ? ColorInspectionExportFileExt : InspectionExportFileExt;
@@ -498,7 +498,7 @@ CString CSVOInspectionSourceDlg::GetNextInspectionDisplayName(CString sLabelName
 
 BOOL CSVOInspectionSourceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
+	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, 0, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 
 	return TRUE;
 }

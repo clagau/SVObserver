@@ -35,9 +35,9 @@ HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void *pvOwner, void *pvCaller, voi
 
 SVTriggerObject::SVTriggerObject( LPCSTR ObjectName )
 : SVObjectClass( ObjectName )
-, mpsvDevice(NULL)
-, m_pFinishProc(NULL)
-, m_pOwner(NULL)
+, mpsvDevice(nullptr)
+, m_pFinishProc(nullptr)
+, m_pOwner(nullptr)
 , m_lTriggerCount(0)
 , m_bSoftwareTrigger(false)
 , m_timerPeriod(SVSoftwareTriggerDefaults::TimerPeriod) 
@@ -49,9 +49,9 @@ SVTriggerObject::SVTriggerObject( LPCSTR ObjectName )
 
 SVTriggerObject::SVTriggerObject( SVObjectClass* POwner, int StringResourceID )
 : SVObjectClass( POwner, StringResourceID )
-, mpsvDevice(NULL)
-, m_pFinishProc(NULL)
-, m_pOwner(NULL)
+, mpsvDevice(nullptr)
+, m_pFinishProc(nullptr)
+, m_pOwner(nullptr)
 , m_lTriggerCount(0)
 , m_bSoftwareTrigger(false)
 , m_timerPeriod(SVSoftwareTriggerDefaults::TimerPeriod) 
@@ -64,10 +64,10 @@ SVTriggerObject::SVTriggerObject( SVObjectClass* POwner, int StringResourceID )
 SVTriggerObject::~SVTriggerObject()
 {
 	Destroy();
-	mpsvDevice = NULL;
+	mpsvDevice = nullptr;
 
-	m_pOwner = NULL;
-	m_pFinishProc	= NULL;
+	m_pOwner = nullptr;
+	m_pFinishProc = nullptr;
 	m_lTriggerCount	= 0;
 }
 
@@ -75,13 +75,13 @@ BOOL SVTriggerObject::Create( SVTriggerClass *psvDevice )
 {
 	BOOL bOk = TRUE;
 
-	if ( psvDevice != NULL )
+	if ( nullptr != psvDevice )
 	{
 		mpsvDevice = psvDevice;
 
-		outObjectInfo.ObjectTypeInfo.ObjectType = SVTriggerObjectType;
+		m_outObjectInfo.ObjectTypeInfo.ObjectType = SVTriggerObjectType;
 
-		bOk = psvDevice->Create() == S_OK;
+		bOk = S_OK == psvDevice->Create();
 	}
     else 
     {
@@ -94,18 +94,18 @@ BOOL SVTriggerObject::Destroy()
 {
 	BOOL bOk = FALSE;
 
-	if ( mpsvDevice != NULL )
+	if ( nullptr != mpsvDevice )
 	{
-		bOk = mpsvDevice->Destroy() == S_OK;
+		bOk = S_OK == mpsvDevice->Destroy();
 
-		mpsvDevice = NULL;
+		mpsvDevice = nullptr;
 	}
 	return bOk;
 }
 
 BOOL SVTriggerObject::CanGoOnline()
 {
-	return mpsvDevice != NULL && mpsvDevice->IsValid();
+	return nullptr != mpsvDevice && mpsvDevice->IsValid();
 }
 
 BOOL SVTriggerObject::GoOnline()
@@ -116,26 +116,26 @@ BOOL SVTriggerObject::GoOnline()
 		m_StatusLog.clear();
 	#endif
 
-    if ( mpsvDevice != NULL && ! mpsvDevice->IsStarted() )
+    if ( nullptr != mpsvDevice && ! mpsvDevice->IsStarted() )
     {
-      bOk = mpsvDevice->RegisterCallback( SVOTriggerObjectCallbackPtr, this, mpsvDevice ) == S_OK;
+      bOk = S_OK == mpsvDevice->RegisterCallback( SVOTriggerObjectCallbackPtr, this, mpsvDevice );
     }
-	return bOk && mpsvDevice != NULL && ( mpsvDevice->Start() == S_OK );
+	return bOk && nullptr != mpsvDevice && ( S_OK == mpsvDevice->Start() );
 }
 
 BOOL SVTriggerObject::GoOffline()
 {
   BOOL bOk = FALSE;
 
-  if ( mpsvDevice != NULL )
+  if ( nullptr != mpsvDevice )
   {
     bool l_bIsStarted = mpsvDevice->IsStarted();
   
-    bOk = mpsvDevice->Stop() == S_OK;
+    bOk = S_OK == mpsvDevice->Stop();
 
     if ( l_bIsStarted )
     {
-      bOk = mpsvDevice->UnregisterCallback( SVOTriggerObjectCallbackPtr, this, mpsvDevice )== S_OK && bOk;
+      bOk = S_OK == mpsvDevice->UnregisterCallback( SVOTriggerObjectCallbackPtr, this, mpsvDevice ) && bOk;
     }
   }
   
@@ -170,7 +170,7 @@ BOOL SVTriggerObject::RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc 
 {
 	BOOL bOk = FALSE;
 
-	if ( mpsvDevice != NULL )
+	if ( nullptr != mpsvDevice )
 	{
 		bOk = TRUE;
 
@@ -186,8 +186,8 @@ BOOL SVTriggerObject::UnregisterFinishProcess( void *pOwner )
 
 	if( bOk )
 	{
-		m_pFinishProc = NULL;
-		m_pOwner = NULL;
+		m_pFinishProc = nullptr;
+		m_pOwner = nullptr;
 	}
 	return bOk;
 }
@@ -224,10 +224,10 @@ HRESULT SVTriggerObject::EnableInternalTrigger()
 {
 	HRESULT hr = S_FALSE;
 
-	if (mpsvDevice != NULL)
+	if (nullptr != mpsvDevice)
 	{
 		SVTriggerClass* pTrigger = dynamic_cast<SVTriggerClass *>(mpsvDevice);
-		if (pTrigger != NULL)
+		if (nullptr != pTrigger)
 		{
 			hr = pTrigger->EnableInternalTrigger();
 		}
@@ -254,11 +254,11 @@ void SVTriggerObject::SetSoftwareTriggerPeriod(long period, bool setTimer)
 {
 	m_timerPeriod = period;
 
-	if( setTimer && mpsvDevice != NULL )
+	if( setTimer && nullptr != mpsvDevice )
 	{
 		SVIOTriggerLoadLibraryClass* l_pLib = mpsvDevice->m_pDLLTrigger;
 
-		if( l_pLib != NULL )
+		if( nullptr != l_pLib )
 		{
 			unsigned long triggerHandle = 0;
 			l_pLib->GetHandle(&triggerHandle, mpsvDevice->miChannelNumber);
@@ -283,11 +283,11 @@ bool SVTriggerObject::IsAcquisitionTrigger() const
 
 void SVTriggerObject::SetAcquisitionTriggered(bool bAcquisitionTriggered)
 {
-	if (mpsvDevice != NULL)
+	if (nullptr != mpsvDevice)
 	{
 		SVIOTriggerLoadLibraryClass* l_pLib = mpsvDevice->m_pDLLTrigger;
 
-		if (l_pLib != NULL)
+		if (nullptr != l_pLib)
 		{
 			unsigned long triggerHandle = 0;
 			l_pLib->GetHandle(&triggerHandle, mpsvDevice->miChannelNumber);

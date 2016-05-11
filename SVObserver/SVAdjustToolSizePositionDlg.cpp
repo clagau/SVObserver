@@ -173,7 +173,7 @@ LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown( WPARAM wParam, LPARAM 
 
 	ButtonAction( m_pButton );
 
-	SetTimer( TIMER_PAUSE, 600, NULL ); //@TODO:  Document why 600.
+	SetTimer( TIMER_PAUSE, 600, nullptr ); //@TODO:  Document why 600.
 	return 0;
 }
 
@@ -289,7 +289,7 @@ void SVAdjustToolSizePositionDlg::OnBnClickedFullROI()
 {
 	HRESULT hr = SVGuiExtentUpdater::SetImageExtentToParent(m_pToolTask,ResetMode_Tool );
 
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		m_pToolTask->GetImageExtent(m_svExtents);
 
@@ -392,12 +392,12 @@ HRESULT SVAdjustToolSizePositionDlg::AdjustTool( SVExtentLocationPropertyEnum eA
 
 	hr = m_pToolTask->GetImageExtent(l_pExtents);
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = l_pExtents.UpdateFromOutputSpace( eAction, static_cast< long >( dx ),static_cast< long >( dy ) );
 	}
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_pExtents, ResetMode_Tool);
 	}
@@ -421,10 +421,10 @@ HRESULT SVAdjustToolSizePositionDlg::AdjustToolAngle(double dDAngle)
 		dCurrentAngle -= dDAngle;
 	}
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = l_Extents.SetExtentProperty( SVExtentPropertyRotationAngle, dCurrentAngle );
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_Extents,ResetMode_Tool);
 			m_svExtents = l_Extents;
@@ -477,8 +477,6 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 			continue;
 		}
 
-
-
 		SVRPropertyItemEdit* pEdit = nullptr;
 		if (shouldCreate)
 		{
@@ -490,13 +488,12 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 		}
 		ASSERT( pEdit );
 
-		if (pEdit != nullptr)
+		if (nullptr != pEdit)
 		{
 			CString sName = iter->second;
 			double dValue = 0.0;
 			m_svExtents.GetExtentProperty( iter->first, dValue);
 
-			//pEdit->SetCtrlID( iID++ );	// needs to be a postincrement here
 			pEdit->SetCtrlID( ID_BASE + (int) iter->first );
 			pEdit->SetLabelText( sName );
 			pEdit->SetBold( false );
@@ -609,7 +606,7 @@ bool SVAdjustToolSizePositionDlg::IsFullSize()
 
 	m_pToolTask->GetImageExtent(m_svExtents);
 	SVImageExtentClass l_ParentExtent;
-	if( m_pToolTask->GetTool()->GetParentExtent( l_ParentExtent ) == S_OK )
+	if( S_OK == m_pToolTask->GetTool()->GetParentExtent( l_ParentExtent ) )
 	{
 		long l_lParentWidth=0;
 		long l_lParentHeight=0;

@@ -9,31 +9,19 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:50:56  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectLevelCreateStruct.h"
 
 #include "SVObjectLibrary.h"
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Structure Name : SVObjectLevelCreateStruct
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
+#pragma endregion Includes
 
 SVObjectLevelCreateStruct::SVObjectLevelCreateStruct()
 {
 	strCreateStructName = "SVObjectLevelCreateStruct";
 }
 
-
-SVObjectLevelCreateStruct::SVObjectLevelCreateStruct( SVObjectLevelCreateStruct& ROLCS )
+SVObjectLevelCreateStruct::SVObjectLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS )
 {
 	strCreateStructName = "SVObjectLevelCreateStruct";
 	if( ROLCS.CheckCreateStructName( strCreateStructName ) )
@@ -46,26 +34,13 @@ SVObjectLevelCreateStruct::~SVObjectLevelCreateStruct()
 {
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
-BOOL SVObjectLevelCreateStruct::CheckCreateStructType( SVObjectLevelCreateStruct* PCreateStructure )
-{
-	if( PCreateStructure != NULL )
-	{
-		return( strstr( strCreateStructName, PCreateStructure->strCreateStructName ) != NULL );
-	}
-	return FALSE;
-}
-
-BOOL SVObjectLevelCreateStruct::CheckCreateStructName( const char* StrCreateStructureName )
+BOOL SVObjectLevelCreateStruct::CheckCreateStructName( const char* StrCreateStructureName ) const
 {
 	ASSERT( StrCreateStructureName );
 	if( StrCreateStructureName )
 	{
-		return( strstr( strCreateStructName, StrCreateStructureName ) != NULL );
+		return( nullptr != strstr( strCreateStructName, StrCreateStructureName ) );
 	}
-	return FALSE;
+	return false;
 }
 

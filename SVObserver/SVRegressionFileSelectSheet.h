@@ -24,10 +24,8 @@ class CSVRegressionFileSelectSheet : public CPropertySheet
 
 // Construction
 public:
-	CSVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	CSVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-
-	BOOL ValidateMask(CString sMask);
+	CSVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	CSVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

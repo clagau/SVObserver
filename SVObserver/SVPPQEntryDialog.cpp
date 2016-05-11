@@ -22,18 +22,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVPPQEntryDialogCameraPageClass
-//* Note(s)    : property page
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
 IMPLEMENT_DYNCREATE(SVPPQEntryDialogCameraPageClass, CPropertyPage)
 
 SVPPQEntryDialogCameraPageClass::SVPPQEntryDialogCameraPageClass() : CPropertyPage(SVPPQEntryDialogCameraPageClass::IDD)
@@ -203,12 +191,6 @@ void SVPPQEntryDialogCameraPageClass::OnOK()
 	CPropertyPage::OnOK();
 
 }// end OnOk
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVPPQEntryDialogPropertySheetClass
-//* Note(s)    : property sheet
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 
 IMPLEMENT_DYNAMIC(SVPPQEntryDialogPropertySheetClass, CPropertySheet)
 

@@ -88,7 +88,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVContainableCriticalSection.cpp" />
-    <ClCompile Include="SVListObject.cpp" />
     <ClCompile Include="SVOCallbackClass.cpp" />
     <ClCompile Include="SVODataDeviceClass.cpp" />
     <ClCompile Include="SVODataResponseClass.cpp" />
@@ -101,7 +100,6 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVContainableCriticalSection.h" />
-    <ClInclude Include="SVListObject.h" />
     <ClInclude Include="SVMultithread.h" />
     <ClInclude Include="SVOCallbackClass.h" />
     <ClInclude Include="SVODataDeviceClass.h" />

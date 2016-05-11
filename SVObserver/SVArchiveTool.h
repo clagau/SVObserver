@@ -61,8 +61,6 @@ public:
 
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
-	long TotalImageMemoryUsage();
-
 	static long CalculateImageMemory( SVImageClass* p_pImage );
 	static long CalculateImageMemory( std::vector<SVImageClass*> p_apImages );
 
@@ -136,10 +134,9 @@ protected:
 
 private:
 	void initializeArchiveTool();
-    HRESULT initializeOnRun();        // 24 Jan 2000 - frb.
+    HRESULT initializeOnRun();
 	HRESULT AllocateImageBuffers();
 	BOOL CreateTextArchiveFile();
-	void UpdateImagePointerInImageArray( SVArchiveRecord* pImageRecord	);
 
 	SVStringValueObjectClass	m_stringImageFileRootPath;
 	SVStringValueObjectClass	m_stringFileArchivePath;

@@ -25,7 +25,7 @@
 			SVDigitizerObjectType					= 0x00000002,
 			SVImageProcessingObjectType				= 0x00000003,
 
-			SVInspectionObjectType = 0x00000004,
+			SVInspectionObjectType					= 0x00000004,
 
 			SVFreezeSetObjectType					= 0x00000005,
 			SVToolSetObjectType						= 0x00000006,
@@ -189,9 +189,6 @@
 			SVEvaluateStartAngleObjectType				= 0x0000048d,
 			SVEvaluateEndAngleObjectType				= 0x0000048e,
 			
-			// ROI Subtypes:
-			SVImageROIObjectType						= 0x00000501,
-
 			// Transform Subtypes:
 			SVImageTransformObjectType					= 0x00000600,
 			SVPointTransformObjectType					= 0x00000601,
@@ -251,29 +248,8 @@
 
 			// unknown
 			SVRegressionTestModeObjectType				= 0x00011010,
-
-
-			//...
-			//...
-			//...
 		};
 
-		////////////////////////////////////////////////////////////////////////////////
-		// .Title       : SVObjectInfoStruct
-		// -----------------------------------------------------------------------------
-		// .Description : 
-		//              :
-		//              :
-		// -----------------------------------------------------------------------------
-		// .Export
-		//	 Public Method				Description
-		//  :
-		//  :
-		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
-		//  :03.02.1999 RO			First Implementation
-		////////////////////////////////////////////////////////////////////////////////
 		struct SVObjectTypeInfoStruct
 		{
 			SVObjectTypeInfoStruct( SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, long p_SubType=SVNotSetSubObjectType )

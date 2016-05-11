@@ -107,7 +107,7 @@ void CGridCellBase::operator=(const CGridCellBase& cell)
     SetFormat(cell.GetFormat());
     SetTextClr(cell.GetTextClr());
     SetBackClr(cell.GetBackClr());
-    SetFont(cell.IsDefaultFont()? NULL : cell.GetFont());
+    SetFont(cell.IsDefaultFont()? nullptr: cell.GetFont());
     SetMargin(cell.GetMargin());
 }
 
@@ -119,7 +119,7 @@ CGridCellBase* CGridCellBase::GetDefaultCell() const
 {
     if (GetGrid())
         return GetGrid()->GetDefaultCell(IsFixedRow(), IsFixedCol());
-    return NULL;
+    return nullptr;
 }
 
 
@@ -515,17 +515,17 @@ BOOL CGridCellBase::GetTextRect( LPRECT pRect)  // i/o:  i=dims of cell rect; o=
 }
 
 // By default this uses the selected font (which is a bigger font)
-CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
+CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= nullptr*/)
 {
     CGridCtrl* pGrid = GetGrid();
     ASSERT(pGrid);
 
     BOOL bReleaseDC = FALSE;
-    if (pDC == NULL || szText == NULL)
+    if (nullptr == pDC || nullptr == szText)
     {
         if (szText)
 			pDC = pGrid->GetDC();
-        if (pDC == NULL || szText == NULL) 
+        if (nullptr == pDC || nullptr == szText) 
         {
             CGridDefaultCell* pDefCell = (CGridDefaultCell*) GetDefaultCell();
             ASSERT(pDefCell);
@@ -534,7 +534,7 @@ CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
         bReleaseDC = TRUE;
     }
 
-    CFont *pOldFont = NULL,
+    CFont *pOldFont = nullptr,
           *pFont = GetFontObject();
     if (pFont)
         pOldFont = pDC->SelectObject(pFont);

@@ -14,7 +14,6 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageClass.h"
 #include "SVTool.h"
-#include "SVValueObjectImpl.h"
 #pragma endregion Includes
 
 const CString PERSPECTIVE_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
@@ -26,7 +25,7 @@ class SVPerspectiveToolClass : public SVToolClass
 
 public:
 	SVPerspectiveToolClass( BOOL p_bCreateDefaultTaskList = FALSE, 
-		                    SVObjectClass *p_pOwner = NULL, 
+		                    SVObjectClass *p_pOwner = nullptr, 
 												int p_iStringResourceID = IDS_CLASSNAME_SVPERSPECTIVETOOL );
 	virtual ~SVPerspectiveToolClass();
 

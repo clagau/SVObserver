@@ -35,7 +35,7 @@ HRESULT SVInputRequestStructMap::Add( SVValueObjectClass* p_pValueObject )
 	{
 		CString strValue;
 		hr = p_pValueObject->GetValue( strValue );
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			(*this)[ SVValueObjectReference( p_pValueObject ) ] = strValue;
 		}
@@ -51,7 +51,7 @@ HRESULT SVInputRequestStructMap::Add( SVValueObjectReference p_refValueObject )
 	{
 		CString strValue;
 		hr = p_refValueObject.GetValue( strValue );
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			(*this)[ p_refValueObject ] = strValue;
 		}

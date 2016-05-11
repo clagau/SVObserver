@@ -228,11 +228,6 @@ namespace Seidenader
 		// -----------------------------------------------------------------------------
 		// .Description : Insert New Filter in Current Filter Table
 		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
-		//  :27.05.1997 RO			First Implementation
-		//	:20.03.2000 RO			Revised to use new refresh() to update dialog.
-		////////////////////////////////////////////////////////////////////////////////
 		void SVToolAdjustmentDialogFilterPageClass::OnButtonInsertNewFilter() 
 		{ 
 			const SVGUID classID = m_availableFilterCB.getSelectedGUID();
@@ -267,11 +262,6 @@ namespace Seidenader
 		// .Title       : OnButtonClearAll
 		// -----------------------------------------------------------------------------
 		// .Description : Clear Filter Table
-		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
-		//  :27.05.1997 RO			First Implementation
-		//	:20.03.2000 RO			Revised to use new refresh() to update dialog.
 		////////////////////////////////////////////////////////////////////////////////
 		void SVToolAdjustmentDialogFilterPageClass::OnButtonClearAll() 
 		{
@@ -330,11 +320,6 @@ namespace Seidenader
 		// -----------------------------------------------------------------------------
 		// .Description : Delete Current Filter in Current Filter Table
 		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
-		//  :27.05.1997 RO			First Implementation
-		//	:20.03.2000 RO			Revised to use new refresh() to update dialog.
-		////////////////////////////////////////////////////////////////////////////////
 		void SVToolAdjustmentDialogFilterPageClass::OnButtonDeleteCurrentFilter() 
 		{
 			int index = m_filterListBox.GetCurSel();
@@ -369,14 +354,10 @@ namespace Seidenader
 			}
 		}
 
-
 		////////////////////////////////////////////////////////////////////////////////
 		// .Title       : OnButtonProperties
 		// -----------------------------------------------------------------------------
 		// .Description : Change properties of the Current custom Filter in Filter Table
-		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
 		////////////////////////////////////////////////////////////////////////////////
 		void SVToolAdjustmentDialogFilterPageClass::OnButtonProperties() 
 		{

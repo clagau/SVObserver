@@ -50,18 +50,12 @@ SVImageOverlayClass::SVImageOverlayClass(const SVExtentMultiLineStructCArray& p_
 	Init();
 
 	*this = p_MultiLineArrayStruct;
-
-	//IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer ) =  = p_MultiLineArrayStruct.GetSize();
-	//set buffer size to lSize = 131072 //128K
 }
 
 void SVImageOverlayClass::Init()
 {
 	m_lBufferSize	= 0;
-	m_pBuffer		= NULL;
-
-	//m_lOverlaySize	= 0;
-	//m_ppOverlays	= NULL;
+	m_pBuffer		= nullptr;
 }
 
 SVImageOverlayClass::SVImageOverlayClass( const SVImageOverlayClass& rhs )
@@ -93,27 +87,8 @@ const SVImageOverlayClass& SVImageOverlayClass::operator = (const SVExtentMultiL
 	for ( long l = 0; l < l_BufferCount; l++ )
 	{
 		SVOverlayStruct oOverlayStruct( p_MultiLineArrayStruct.GetAt((int)l) );
-
-		/*
-		//fill in struct and add  SetOverlayFigureAt
-		l_MultiLineStruct = p_MultiLineArrayStruct.GetAt((int)l);
-
-		oOverlayStruct.oTextColor = l_MultiLineStruct.m_Color;
-		oOverlayStruct.oTextPoint = l_MultiLineStruct.m_StringPoint.operator POINT();
-		oOverlayStruct.strText = l_MultiLineStruct.m_csString;
-
-		int iNumElements = l_MultiLineStruct.m_svLineArray.GetSize();
-		oOverlayStruct.pOverlays = new SVOverlayFigureStruct[iNumElements];
-		oOverlayStruct.lFigureSize = iNumElements;
-		for ( int i = 0; i < iNumElements; i++ )
-		{
-			oOverlayStruct.pOverlays[i] = l_MultiLineStruct.m_svLineArray.GetAt(i);
-			oOverlayStruct.pOverlays[i].oFigureColor = l_MultiLineStruct.m_Color;
-		}
-		*/
 		SetOverlayFigureAt(l,oOverlayStruct);
 	}
-
 	return *this;
 }
 
@@ -184,7 +159,7 @@ BOOL SVImageOverlayClass::GetOverlayFigureAt( long &lIndex, SVOverlayStruct &oOv
 	oOverlay.strText	= oOverlay.strText.Left( IMAGEBUFFER_OVERLAYTEXTSIZE( pOverlayBytes ) );
 
 	oOverlay.lFigureSize = IMAGEBUFFER_OVERLAYFIGURESCOUNT( pOverlayBytes );
-	oOverlay.pOverlays = NULL;
+	oOverlay.pOverlays = nullptr;
 
 	if( oOverlay.lFigureSize )
 		oOverlay.pOverlays = new SVOverlayFigureStruct[oOverlay.lFigureSize];
@@ -236,22 +211,12 @@ BOOL SVImageOverlayClass::SetBufferSize( long lSize, bool bClearBuffer )
 	}
 	else	// size 0
 	{
-		m_pBuffer = NULL;
+		m_pBuffer = nullptr;
 		m_lBufferSize = 0;
 	}
 
 	return TRUE;
 }// end SetBufferSize
-
-/*
-BOOL SVImageOverlayClass::SetBuffer( BYTE *&pBuffer, long &lSize )
-{
-	m_pBuffer = pBuffer;
-	m_lBufferSize = lSize;
-
-	return TRUE;
-}// end SetBuffer
-*/
 
 // Overlay section
 BOOL SVImageOverlayClass::SetOverlayCount( long &lCount )
@@ -309,13 +274,10 @@ BOOL SVImageOverlayClass::SetOverlayFigureAt( long &lIndex, SVOverlayStruct& roO
 void SVImageOverlayClass::Clear()
 {
 	m_lBufferSize	= 0;
-	if( m_pBuffer != NULL )
+	if( nullptr != m_pBuffer )
 	{
 		delete [] m_pBuffer;
-		m_pBuffer		= NULL;
+		m_pBuffer = nullptr;
 	}
-
-	//m_lOverlaySize	= 0;
-	//m_ppOverlays = NULL;
 }
 

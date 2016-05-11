@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:42:02  $
 //******************************************************************************
 
-#if !defined(AFX_SVToolbar_H__3BD1EE4E_079D_11D3_A74F_00106F000C78__INCLUDED_)
-#define AFX_SVToolbar_H__3BD1EE4E_079D_11D3_A74F_00106F000C78__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 namespace Seidenader
 {
@@ -63,6 +58,4 @@ namespace Seidenader
 }
 
 namespace SvMc = Seidenader::SVMFCControls;
-
-#endif // !defined(AFX_SVToolbar_H__3BD1EE4E_079D_11D3_A74F_00106F000C78__INCLUDED_)
 

@@ -33,6 +33,10 @@ SVLutDeviceParam::SVLutDeviceParam(SVDeviceParamEnum typeEnum)
 	m_eDataType = DeviceDataTypeComplex;
 }
 
+SVLutDeviceParam::~SVLutDeviceParam()
+{
+}
+
 SVLightReferenceDeviceParam::SVLightReferenceDeviceParam()
 {
 	m_eDataType = DeviceDataTypeComplex;
@@ -45,6 +49,10 @@ SVLightReferenceDeviceParam::SVLightReferenceDeviceParam(SVDeviceParamEnum typeE
 	m_eDataType = DeviceDataTypeComplex;
 }
 
+SVLightReferenceDeviceParam::~SVLightReferenceDeviceParam()
+{
+}
+
 SVCameraFormatsDeviceParam::SVCameraFormatsDeviceParam()
 {
 	m_eDataType = DeviceDataTypeString;
@@ -55,6 +63,10 @@ SVCameraFormatsDeviceParam::SVCameraFormatsDeviceParam(SVDeviceParamEnum typeEnu
 : SVStringValueDeviceParam(typeEnum)
 {
 	m_eDataType = DeviceDataTypeString;
+}
+
+SVCameraFormatsDeviceParam::~SVCameraFormatsDeviceParam()
+{
 }
 
 SVLutDeviceParam::SVLutDeviceParam(const SVLutDeviceParam& rhs)

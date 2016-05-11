@@ -70,7 +70,7 @@ void CSVROI::OnFinalRelease()
 /*static*/ CSVROI* CSVROI::GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch)
 {
 	static size_t offset = offsetof(CSVROI, m_xDispatch);
-	return reinterpret_cast <CSVROI*> ( lpDispatch ? ((BYTE*)lpDispatch - offset) : NULL );
+	return reinterpret_cast <CSVROI*> ( lpDispatch ? ((BYTE*)lpDispatch - offset) : nullptr );
 }
 
 ////////////////////////////////////////////////////////////

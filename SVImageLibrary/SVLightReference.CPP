@@ -63,8 +63,6 @@ SVLightReferenceBand::~SVLightReferenceBand()
 
 const SVLightReferenceBand& SVLightReferenceBand::operator=( const SVLightReferenceBand& rhs )
 {
-//  ASSERT( rhs.m_iNumAttributes > 0 );
-//	if(	iNumAttributes != rhs.iNumAttributes )
     if ( this != &rhs )
 	{
 		if ( Create( rhs.m_iNumAttributes ) )
@@ -78,28 +76,22 @@ const SVLightReferenceBand& SVLightReferenceBand::operator=( const SVLightRefere
 
 BOOL SVLightReferenceBand::Create(int iSize)
 {
-//    ASSERT (iSize > 0);
-
 	BOOL bOk = FALSE;
 
 	bOk = Destroy();
 	if ( bOk )
 	{
-		//bOk = 0 < iSize;	// we can now create 0 size LR's (for digital). The attributes are added with calls to AddAttribute
-		if ( bOk )
+		// we can now create 0 size LR's (for digital). The attributes are added with calls to AddAttribute
+		m_iNumAttributes = iSize;
+		m_aAttributeInfo.resize( iSize );
+
+		bOk = TRUE;
+
+		if ( !bOk )
 		{
-			m_iNumAttributes = iSize;
-			m_aAttributeInfo.resize( iSize );
-
-			bOk = TRUE;
-
-			if ( !bOk )
-			{
-				Destroy();
-			}
+			Destroy();
 		}
 	}
-
 	return bOk;
 }
 
@@ -112,11 +104,6 @@ BOOL SVLightReferenceBand::Destroy()
 	return bOk;
 }
 
-void SVLightReferenceBand::SetFileVersion(unsigned long ulVersion)
-{
-	m_ulFileVersion = ulVersion;
-}
-
 SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByType( DWORD dwAttributeType )
 {
 	for ( int i = 0; i < m_iNumAttributes; i++)
@@ -125,7 +112,7 @@ SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByType( DWORD dwAt
 			return &m_aAttributeInfo[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByType( DWORD dwAttributeType ) const
@@ -136,7 +123,7 @@ const SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByType( DWOR
 			return &m_aAttributeInfo[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( const SVString& sAttributeName )
@@ -147,7 +134,7 @@ SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( const SVSt
 			return &m_aAttributeInfo[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( const SVString& sAttributeName ) const
@@ -158,7 +145,7 @@ const SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByName( cons
 			return &m_aAttributeInfo[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int SVLightReferenceBand::AddAttribute(SVLightReferenceAttributeInfo& attribute)
@@ -171,24 +158,6 @@ int SVLightReferenceBand::AddAttribute(SVLightReferenceAttributeInfo& attribute)
 
 	return iIndex;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVLightReference
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
 
 SVLightReference::SVLightReference()
 {
@@ -245,9 +214,6 @@ void SVLightReference::DeleteAll()
 
 const SVLightReference& SVLightReference::operator = ( const SVLightReference& rhs )
 {
-	// Rosco removed this to prevent annoying assert dialogs even though eric told him not to.
-    // ASSERT( rhs.m_iNumBands > 0 );
-    
     if (this != &rhs)
     {
 	    if(	Create( rhs.m_iNumBands ) )
@@ -294,12 +260,6 @@ bool SVLightReference::SetBandData(const SVLightReference& rhs, unsigned int uiB
 	}
 
     return bResult;
-}
-
-
-void SVLightReference::SetFileVersion(unsigned long ulVersion)
-{
-	m_ulFileVersion = ulVersion;
 }
 
 int SVLightReference::AddAttribute(SVLightReferenceAttributeInfo& attribute)

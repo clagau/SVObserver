@@ -59,18 +59,18 @@ HRESULT SVToolAdjustmentDialogLinearSpecialPageClass::SetInspectionData()
 		{
 			long lValue = ( long ) m_ctlProfileOrientation.GetItemData( iCurSel );
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( &( pTool->m_voProfileOrientation ), lValue );
 			}
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( pTool );
 		}
@@ -164,7 +164,7 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 			if ( sTxt == "Vertical" )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_OrientationVertical, StdMessageParams, SvOi::Err_10213, NULL, nullptr, MB_YESNO );
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_OrientationVertical, StdMessageParams, SvOi::Err_10213, 0, nullptr, MB_YESNO );
 				l_bUpdateRotation = (IDYES == result);
 
 				if( ! l_bUpdateRotation )
@@ -184,7 +184,7 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 				if ( bIsRotated )
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_IsRotated, StdMessageParams, SvOi::Err_10214, NULL, nullptr, MB_YESNO );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_IsRotated, StdMessageParams, SvOi::Err_10214, 0, nullptr, MB_YESNO );
 					l_bUpdateRotation = (IDYES == result);
 					if( ! l_bUpdateRotation )
 					{

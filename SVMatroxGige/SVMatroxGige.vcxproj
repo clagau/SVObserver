@@ -144,7 +144,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVBufferQueueFreeListStrategy.cpp" />
     <ClCompile Include="SVGigeCameraDatabase.cpp" />
     <ClCompile Include="SVGigeStandardCameraFeatures.cpp" />
     <ClCompile Include="SVMatroxGige.cpp" />
@@ -162,7 +161,6 @@
   <ItemGroup>
     <None Include="SVMatroxGige.def" />
     <None Include="SVMatroxGigeBufferCreator.inl" />
-    <None Include="SVMatroxGigeBufferManager.inl" />
     <None Include="SVMatroxGigeHandleList.inl" />
     <None Include="res\SVMatroxGige.rc2" />
   </ItemGroup>
@@ -172,14 +170,12 @@
   <ItemGroup>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVBufferQueueFreeListStrategy.h" />
     <ClInclude Include="SVGigeCameraDatabase.h" />
     <ClInclude Include="SVGigeStandardCameraFeatures.h" />
     <ClInclude Include="SVMatroxGige.h" />
     <ClInclude Include="SVMatroxGigeAcqParams.h" />
     <ClInclude Include="SVMatroxGigeApp.h" />
     <ClInclude Include="SVMatroxGigeBufferCreator.h" />
-    <ClInclude Include="SVMatroxGigeBufferManager.h" />
     <ClInclude Include="SVMatroxGigeBufferStruct.h" />
     <ClInclude Include="SVMatroxGigeCallbackStruct.h" />
     <ClInclude Include="SVMatroxGigeCameraId.h" />

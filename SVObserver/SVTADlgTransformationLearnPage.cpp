@@ -43,33 +43,33 @@ SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransf
 	//}}AFX_DATA_INIT
 
 	pParentDialog	= Parent;
-	pTool			= NULL;
+	pTool			= nullptr;
 
-	pPerformTranslation		= NULL;
+	pPerformTranslation		= nullptr;
 
-	pEvaluateTranslationX	= NULL;
-	pTranslationXResult		= NULL;
+	pEvaluateTranslationX	= nullptr;
+	pTranslationXResult		= nullptr;
 
-	pEvaluateTranslationY	= NULL;
-	pTranslationYResult		= NULL;
+	pEvaluateTranslationY	= nullptr;
+	pTranslationYResult		= nullptr;
 
-	pPerformRotation		= NULL;
+	pPerformRotation		= nullptr;
 
-	pEvaluateRotationX		= NULL;
-	pRotationXResult		= NULL;
+	pEvaluateRotationX		= nullptr;
+	pRotationXResult		= nullptr;
 
-	pEvaluateRotationY		= NULL;
-	pRotationYResult		= NULL;
+	pEvaluateRotationY		= nullptr;
+	pRotationYResult		= nullptr;
 
-	pEvaluateRotationAngle	= NULL;
-	pRotationAngleResult	= NULL;
+	pEvaluateRotationAngle	= nullptr;
+	pRotationAngleResult	= nullptr;
 
-	pImageTransform			= NULL;
-	pLearnedTranslationX	= NULL;
-	pLearnedTranslationY	= NULL;
-	pLearnedRotationX		= NULL;
-	pLearnedRotationY		= NULL;
-	pLearnedRotationAngle	= NULL;
+	pImageTransform			= nullptr;
+	pLearnedTranslationX	= nullptr;
+	pLearnedTranslationY	= nullptr;
+	pLearnedRotationX		= nullptr;
+	pLearnedRotationY		= nullptr;
+	pLearnedRotationAngle	= nullptr;
 }
 
 SVToolAdjustmentDialogTransformationLearnPageClass::~SVToolAdjustmentDialogTransformationLearnPageClass()
@@ -86,32 +86,32 @@ HRESULT SVToolAdjustmentDialogTransformationLearnPageClass::SetInspectionData()
 
 		l_hrOk = AddInputRequest( pLearnedTranslationX, m_translationXValue );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( pLearnedTranslationY, m_translationYValue );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( pLearnedRotationX, m_rotationXValue );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( pLearnedRotationY, m_rotationYValue );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( pLearnedRotationAngle, m_rotationAngleValue );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( pTool );
 		}
@@ -127,7 +127,7 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refresh()
 {
 	if( pTool )
 	{
-		CWnd* pWnd = NULL;
+		CWnd* pWnd = nullptr;
 
 
 		m_translationXValue = 0.0;
@@ -237,70 +237,70 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Evaluate Object for Translation X Coordinate...
 		evaluateObjectInfo.SubType	   = SVEvaluateTranslationXObjectType;
-		pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateTranslationX )
 		{
 			// Get Evaluate Result Object for the Translation X coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateTranslationXResultObjectGuid;
-			pTranslationXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateTranslationX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pTranslationXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateTranslationX, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Object for the Translation Y coordinate...
 		evaluateObjectInfo.SubType	   = SVEvaluateTranslationYObjectType;
-		pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateTranslationY )
 		{
 			// Get Evaluate Result Object for the Translation Y coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateTranslationYResultObjectGuid;
-			pTranslationYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateTranslationY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pTranslationYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateTranslationY, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Object for Translation X Coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateRotationXObjectType;
-		pEvaluateRotationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateRotationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateRotationX )
 		{
 			// Get Evaluate Result Object for the Rotation X coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationXResultObjectGuid;
-			pRotationXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateRotationX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pRotationXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateRotationX, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Object for the Rotation Y coordinate...
 		evaluateObjectInfo.SubType	   = SVEvaluateRotationYObjectType;
-		pEvaluateRotationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateRotationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateRotationY )
 		{
 			// Get Evaluate Result Object for the Rotation Y coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationYResultObjectGuid;
-			pRotationYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateRotationY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pRotationYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateRotationY, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Object for the Rotation Angle...
 		evaluateObjectInfo.SubType	   = SVEvaluateRotationAngleObjectType;
-		pEvaluateRotationAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateRotationAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateRotationAngle )
 		{
 			// Get Evaluate Result Object for the Rotation Angle...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationAngleResultObjectGuid;
-			pRotationAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateRotationAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pRotationAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateRotationAngle, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Rotation enabled...
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
-		pPerformRotation = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		pPerformRotation = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		// get Translation Enabled
 		objectInfo.EmbeddedID = SVPerformTranslationObjectGuid;
-		pPerformTranslation = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		pPerformTranslation = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		// Get SVImageTransformClass Object...
 		SVObjectTypeInfoStruct transformObjectInfo;
 		transformObjectInfo.ObjectType = SVTransformObjectType;
 		transformObjectInfo.SubType = SVImageTransformObjectType;
 
-		pImageTransform = reinterpret_cast<SVImageTransformClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&transformObjectInfo) ));
+		pImageTransform = reinterpret_cast<SVImageTransformClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&transformObjectInfo) ));
 		if( pImageTransform )
 		{
 			// Get learned Objects...
@@ -309,23 +309,23 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 			// Get learned Translation X Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedTranslationXObjectGuid;
-			pLearnedTranslationX = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
+			pLearnedTranslationX = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
 
 			// Get learned Translation Y Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedTranslationYObjectGuid;
-			pLearnedTranslationY = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
+			pLearnedTranslationY = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
 
 			// Get learned Rotation X Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedRotationXObjectGuid;
-			pLearnedRotationX = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
+			pLearnedRotationX = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
 
 			// Get learned Translation Y Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedRotationYObjectGuid;
-			pLearnedRotationY = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
+			pLearnedRotationY = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
 
 			// Get learned Rotation Angle Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedRotationAngleObjectGuid;
-			pLearnedRotationAngle = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
+			pLearnedRotationAngle = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pImageTransform, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&learnedObjectInfo) ));
 		}
 
 

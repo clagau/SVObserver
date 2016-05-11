@@ -69,7 +69,7 @@ HRESULT WINAPI SVInputGetCount(unsigned long* pulCount)
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulCount)
+	if (nullptr != pulCount)
 	{
 		*pulCount = g_Lpt.GetInputCount();
 		hr = S_OK;
@@ -81,7 +81,7 @@ HRESULT WINAPI SVInputGetValue( unsigned long ulChannel, bool* pbValue )
 { 
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pbValue)
+	if (nullptr != pbValue)
 	{
 		if (0 <= ulChannel && ulChannel < g_Lpt.GetInputCount())
 		{
@@ -107,7 +107,7 @@ HRESULT WINAPI SVInputGetPortCount(unsigned long* pulCount)
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulCount)
+	if (nullptr != pulCount)
 	{
 		*pulCount = g_Lpt.GetPortCount();
 		hr = S_OK;
@@ -120,7 +120,7 @@ HRESULT WINAPI SVInputGetPortValue(unsigned long ulPort, unsigned long* pulValue
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulValue)
+	if (nullptr != pulValue)
 	{
 		if (0 <= ulPort && ulPort < g_Lpt.GetNumPorts())
 		{
@@ -145,7 +145,7 @@ HRESULT WINAPI SVOutputGetCount(unsigned long* pulCount)
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulCount)
+	if (nullptr != pulCount)
 	{
 		*pulCount = g_Lpt.GetOutputCount();
 		hr = S_OK;
@@ -155,7 +155,7 @@ HRESULT WINAPI SVOutputGetCount(unsigned long* pulCount)
 
 HRESULT WINAPI SVOutputGetValue(unsigned long ulChannel, bool* pbValue)
 {
-	if (NULL != pbValue)
+	if (nullptr != pbValue)
 	{
 		long port = ulChannel / 8;
 		*pbValue = (g_Lpt.m_nPreviousOutputs[port] & ( 1 << (ulChannel % 8) )) != 0;
@@ -178,7 +178,7 @@ HRESULT WINAPI SVOutputGetPortCount(unsigned long* pulCount)
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulCount)
+	if (nullptr != pulCount)
 	{
 		*pulCount = g_Lpt.GetPortCount();
 		hr = S_OK;
@@ -214,7 +214,7 @@ HRESULT WINAPI SVTriggerGetCount(unsigned long* pulCount)
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulCount)
+	if (nullptr != pulCount)
 	{
 		*pulCount = g_Lpt.GetTriggerCount();
 		hr = S_OK;
@@ -226,7 +226,7 @@ HRESULT WINAPI SVTriggerGetHandle(unsigned long* pulHandle, unsigned long ulInde
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulHandle)
+	if (nullptr != pulHandle)
 	{
 		*pulHandle = reinterpret_cast<unsigned long>(g_Lpt.GetTriggerHandle(ulIndex));
 		hr = S_OK;
@@ -238,17 +238,17 @@ HRESULT WINAPI SVTriggerGetName(unsigned long ulHandle, BSTR* pbstrName)
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pbstrName && NULL != ulHandle)
+	if (nullptr != pbstrName && 0 < ulHandle)
 	{
 		// free any data on input...
-		if (NULL != *pbstrName)
+		if (nullptr != *pbstrName)
 		{
 			::SysFreeString(*pbstrName);
 		}
 
 		*pbstrName = g_Lpt.GetTriggerName((HANDLE)ulHandle);
 		
-		if (NULL != *pbstrName)
+		if (nullptr != *pbstrName)
 		{
 			hr = S_OK;
 		}
@@ -260,7 +260,7 @@ HRESULT WINAPI SVTriggerRegister(unsigned long ulHandle, SVLptCallbackPtr pCallb
 {
 	HRESULT hr = S_FALSE;
 
-	if ( NULL != pCallback && 0 < ulHandle)
+	if ( nullptr != pCallback && 0 < ulHandle)
 	{
 		hr = S_OK;
 
@@ -273,7 +273,7 @@ HRESULT WINAPI SVTriggerUnregister(unsigned long ulHandle, SVLptCallbackPtr pCal
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pCallback && 0 < ulHandle)
+	if (nullptr != pCallback && 0 < ulHandle)
 	{
 		hr = g_Lpt.RemoveTriggerCallback((HANDLE)ulHandle, pCallback);
 	} 

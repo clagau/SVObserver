@@ -28,7 +28,7 @@ SVUnaryOperatorClass::~SVUnaryOperatorClass()
 void SVUnaryOperatorClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryOperatorObjectType;
 
 	// Register Embedded Object(s)
 

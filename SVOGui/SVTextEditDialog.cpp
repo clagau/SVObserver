@@ -28,7 +28,7 @@ namespace Seidenader { namespace SVOGui
 	#pragma endregion Declarations
 
 	#pragma region Constructor
-	SVTextEditDialog::SVTextEditDialog( LPCTSTR Text,  CWnd* pParent /*=NULL*/)
+	SVTextEditDialog::SVTextEditDialog( LPCTSTR Text,  CWnd* pParent /*=nullptr*/)
 		: CDialog(SVTextEditDialog::IDD, pParent)
 		, m_Text( Text )
 	{

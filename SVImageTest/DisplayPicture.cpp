@@ -39,7 +39,7 @@ END_MESSAGE_MAP()
 bool CDisplayPicture::UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat )
 {
 	SVDisplayImageBufferClass* l_pImage = dynamic_cast< SVDisplayImageBufferClass* >( m_pImage.get() );
-	bool l_Status = l_pImage != NULL;
+	bool l_Status = nullptr != l_pImage;
 
 	if( l_Status )
 	{
@@ -55,7 +55,7 @@ void CDisplayPicture::OnPaint()
 	
 	SVDisplayImageBufferClass* l_pImage = dynamic_cast< SVDisplayImageBufferClass* >( m_pImage.get() );
 
-	if( l_pImage != NULL && !( l_pImage->GetBitmapInfo().empty() ) && l_pImage->m_pucImageData != NULL )
+	if( nullptr != l_pImage && !( l_pImage->GetBitmapInfo().empty() ) && nullptr != l_pImage->m_pucImageData )
 	{
 		CRect rec;	// Rect from IDC_PICT
 		GetClientRect(rec);

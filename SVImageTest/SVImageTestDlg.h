@@ -47,7 +47,7 @@ class CSVImageTestDlg : public CDialog
 	DECLARE_MESSAGE_MAP()
 
 public:
-	CSVImageTestDlg(CWnd* pParent = NULL);
+	CSVImageTestDlg(CWnd* pParent = nullptr);
 
 	virtual ~CSVImageTestDlg();
 

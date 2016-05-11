@@ -108,14 +108,14 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 
 	//Arvid: create the AutoSave directory step by step
 	
-	CreateDirectory(SvStl::GlobalPath::Inst().GetSecondObserverPath().c_str(), NULL); //Arvid: this will fail if the directory already exists, but so what?
+	CreateDirectory(SvStl::GlobalPath::Inst().GetSecondObserverPath().c_str(), nullptr); //Arvid: this will fail if the directory already exists, but so what?
 	SVString  AutosavePath = SvStl::GlobalPath::Inst().GetSecondObserverPath(_T("Autosave\\"));
-	CreateDirectory(AutosavePath.c_str(), NULL); //Arvid: this will fail if the directory already exists, but so what?
+	CreateDirectory(AutosavePath.c_str(), nullptr); //Arvid: this will fail if the directory already exists, but so what?
 	//Arvid: now move the temporary directories around (if they exist already)
 	moveContainedDirectory(AutosavePath.c_str(), AutosaveTempDirectory2Name, AutosaveTempDirectory3Name);
 	moveContainedDirectory(AutosavePath.c_str(), AutosaveTempDirectory1Name, AutosaveTempDirectory2Name);
 
-	CreateDirectory(GetTempFolderRelPath(), NULL);
+	CreateDirectory(GetTempFolderRelPath(), nullptr);
 
 	//Arvid: save the current configuration in the AutoSave Directory
 	TheSVObserverApp.fileSaveAsSVX(_T(""), true);

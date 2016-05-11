@@ -288,17 +288,24 @@ FixedAllocator::Chunk* FixedAllocator::VicinityFind(void* p)
 
     for (;;)
     {
-		if ( lo == NULL && hi == NULL )
+		if ( nullptr == lo && nullptr == hi )
+		{
 			break;
-
+		}
         if (lo)
         {
             if (p >= lo->pData_ && p < lo->pData_ + chunkLength)
             {
                 return lo;
             }
-            if (lo == loBound) lo = 0;
-            else --lo;
+            if (lo == loBound)
+			{
+				lo = 0;
+			}
+            else
+			{
+				--lo;
+			}
         }
         
         if (hi)
@@ -307,7 +314,10 @@ FixedAllocator::Chunk* FixedAllocator::VicinityFind(void* p)
             {
                 return hi;
             }
-            if (++hi == hiBound) hi = 0;
+            if (++hi == hiBound) 
+			{
+				hi = 0;
+			}
         }
     }
     assert(false);

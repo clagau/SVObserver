@@ -16,7 +16,7 @@
 template < typename T >
 struct SVWinHandle	// implements RAII for windows handles
 {
-	SVWinHandle() : m_t(NULL) {}
+	SVWinHandle() : m_t(nullptr) {}
 	SVWinHandle(T rt) : m_t(rt) {}
 	~SVWinHandle() {::CloseHandle(m_t);}
 	const SVWinHandle<T>& operator = (T t) {m_t = t; return *this;}

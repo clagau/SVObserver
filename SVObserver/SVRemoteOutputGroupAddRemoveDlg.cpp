@@ -22,7 +22,7 @@
 
 IMPLEMENT_DYNAMIC(SVRemoteOutputGroupAddRemoveDlg, CDialog)
 
-SVRemoteOutputGroupAddRemoveDlg::SVRemoteOutputGroupAddRemoveDlg(CWnd* pParent /*=NULL*/)
+SVRemoteOutputGroupAddRemoveDlg::SVRemoteOutputGroupAddRemoveDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVRemoteOutputGroupAddRemoveDlg::IDD, pParent)
 	, m_lOutputGroupCount(0)
 	, m_strGroupNameEdit(_T(""))
@@ -304,13 +304,6 @@ HRESULT SVRemoteOutputGroupAddRemoveDlg::GetNewItems( CStringVec& OutputList )
 			OutputList.push_back( m_astrSetupGroups[i] );
 		}
 	}
-	return S_OK;
-}
-
-HRESULT SVRemoteOutputGroupAddRemoveDlg::AddValue( CString GroupName, CString PPQName )
-{
-	SVGroupDef l_grp(GroupName, PPQName);
-	m_SetupGroup.push_back( l_grp);
 	return S_OK;
 }
 

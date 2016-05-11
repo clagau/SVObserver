@@ -32,6 +32,10 @@ ZoomHelper::ZoomHelper()
 , m_bIsFit(false)
 {
 }
+
+ZoomHelper::~ZoomHelper()
+{
+}
 #pragma endregion Constructor
 
 #pragma region Public Methods

@@ -33,7 +33,7 @@ public:
 		SVClock::SVTimeStamp m_Timestamp;
 		SVImageObjectClassPtr pImageObject;
 
-		BufferInfo() : lBufferSize(0), m_Timestamp(0), pRecord(NULL), pImageObject(NULL) {}
+		BufferInfo() : lBufferSize(0), m_Timestamp(0), pRecord(nullptr), pImageObject(nullptr) {}
 		BufferInfo( const BufferInfo& rhs )
 			: id(rhs.id), strFilename(rhs.strFilename), lBufferSize(rhs.lBufferSize), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pImageObject(rhs.pImageObject), pRecord(rhs.pRecord) {}
 		BufferInfo( SVMatroxBuffer p_id, CString p_strFilename, long p_lBufferSize, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )

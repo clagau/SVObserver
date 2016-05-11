@@ -21,37 +21,14 @@
 #include "ObjectInterfaces/TextDefineSvOi.h"
 #pragma endregion Includes
 
-////////////////////////////////////////////////////////////////////////////////
-// Other Necessary Include File(s) - Module Link(s)
-////////////////////////////////////////////////////////////////////////////////
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVWaterShedFilter
-//* Note(s)    : Skeleton Filter Base Class
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVWatershedFilterClass, SVWatershedFilterClassGuid )
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 SVWatershedFilterClass::SVWatershedFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
@@ -64,7 +41,7 @@ SVWatershedFilterClass::~SVWatershedFilterClass()
 
 void SVWatershedFilterClass::init()
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVWatershedFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVWatershedFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoMinVariation,		SVWatershedFilterMinVariationGuid, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_lvoControlFlag,		SVWatershedFilterControlFlagGuid, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SVResetItemNone );
@@ -94,10 +71,6 @@ void SVWatershedFilterClass::init()
 // .Title       : CreateObject
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVWatershedFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -114,31 +87,22 @@ BOOL SVWatershedFilterClass::OnValidate()
 
 	BOOL bRetVal = SVFilterClass::OnValidate();
 
-	bRetVal = bRetVal && ( m_bvoUseMarker.GetValue(bUseMarker) == S_OK );
+	bRetVal = bRetVal && ( S_OK == m_bvoUseMarker.GetValue(bUseMarker) );
 
 	if( bRetVal && bUseMarker )
 	{
 		bRetVal = bRetVal && m_MarkerImageInfo.IsConnected();
-		bRetVal = bRetVal && m_MarkerImageInfo.GetInputObjectInfo().PObject != NULL;
+		bRetVal = bRetVal && nullptr != m_MarkerImageInfo.GetInputObjectInfo().PObject;
 	}
 
 	return bRetVal;	
 }
-
-
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVWatershedFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 { 

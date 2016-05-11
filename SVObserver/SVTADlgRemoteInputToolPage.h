@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #include "afxcmn.h"
 #include "afxwin.h"
 #pragma endregion Includes

@@ -20,7 +20,7 @@ class ZoomToolBar : public CToolBar
 #pragma region Constructor
 public:
 	ZoomToolBar();
-	~ZoomToolBar();
+	virtual ~ZoomToolBar();
 #pragma endregion Constructor
 
 #pragma region Public Methods

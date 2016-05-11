@@ -22,11 +22,13 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
+class SVUserMaskOperatorClass;
+
 class SVMaskShapeEditorDlg : public CDialog, public ISVCancel2, public SVTaskObjectInterfaceClass
 {
 #pragma region Construction
 public:
-	SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent = NULL);   // standard constructor
+	SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVMaskShapeEditorDlg();
 #pragma endregion Construction
 

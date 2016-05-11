@@ -9,11 +9,12 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:51:48  $
 //******************************************************************************
 
-
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <typeinfo.h>
 #include "SVLutTransform.h"
 #include "SVLut.h"
+#pragma endregion Includes
 
 SVLutTransformOperationMap SVLutTransform::mMapTypes;
 
@@ -32,17 +33,19 @@ SVLutTransformOperationMap::~SVLutTransformOperationMap()
 	for (int i=0; i<MAX_LUT_TRANSFORM_TYPE; i++)
 	{
 		if (maTypeInfo[i].pType)
+		{
 			delete maTypeInfo[i].pType;
+		}
 	}
 }
-
 
 SVLutTransformOperation* SVLutTransformOperationMap::GetType(SVLutTransformOperationEnum e)
 {
 	if (e < MAX_LUT_TRANSFORM_TYPE && (int)e >= 0)
+	{
 		return maTypeInfo[e].pType;
-	else
-		return NULL;
+	}
+	return nullptr;
 }
 
 SVLutTransformOperationEnum SVLutTransformOperationMap::GetType(const SVLutTransformOperation* pType)
@@ -51,7 +54,9 @@ SVLutTransformOperationEnum SVLutTransformOperationMap::GetType(const SVLutTrans
 	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
 	{
 		if (pType && maTypeInfo[i].pType && typeid(*maTypeInfo[i].pType) == typeid(*pType))
+		{
 			return maTypeInfo[i].eType;
+		}
 	}
 	return LutTransformTypeUnknown;
 }
@@ -61,9 +66,11 @@ const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperatio
 	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
 	{
 		if (maTypeInfo[i].eType == e)
+		{
 			return &maTypeInfo.ElementAt(i);
+		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const SVLutTransformOperation* pType)
@@ -72,9 +79,11 @@ const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperatio
 	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
 	{
 		if (pType && maTypeInfo[i].pType && typeid(*maTypeInfo[i].pType) == typeid(*pType))
+		{
 			return &maTypeInfo.ElementAt(i);
+		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperationMap::GetInfo(const CString& sType)
@@ -82,38 +91,33 @@ const SVLutTransformOperationMap::SVLutTransformTypeInfo* SVLutTransformOperatio
 	for (int i=0; i < MAX_LUT_TRANSFORM_TYPE; i++)
 	{
 		if (maTypeInfo[i].sType == sType && !sType.IsEmpty())
+		{
 			return &maTypeInfo.ElementAt(i);
+		}
 	}
-	return NULL;
+	return nullptr;
 }
-
-
-
-
-
 
 SVLutTransformOperation::~SVLutTransformOperation()
 {
 }
 
-
-
 SVLutTransform::SVLutTransform()
 {
-	mpType = NULL;
+	mpType = nullptr;
 	mbOwnType = false;
 }
 
 SVLutTransform::SVLutTransform(const SVLutTransformOperation& rType)
 {
-	mpType = NULL;
+	mpType = nullptr;
 	mbOwnType = false;
 	SetOperation( rType );
 }
 
 SVLutTransform::SVLutTransform(const SVLutTransform& rhs)
 {
-	mpType = NULL;
+	mpType = nullptr;
 	mbOwnType = false;
 	*this = rhs;
 }
@@ -127,7 +131,9 @@ SVLutTransform& SVLutTransform::operator = (const SVLutTransform& rhs)
 {
 	Cleanup();
 	if (rhs.GetOperation())
+	{
 		SetOperation(*(rhs.GetOperation()));
+	}
 	mParam.Copy(rhs.mParam);
 	return *this;
 }
@@ -146,8 +152,7 @@ HRESULT SVLutTransform::Transform(SVLutBand& data, const SVLutTransformParameter
 		mParam.Copy(param);
 		return mpType->Transform(*this, data, param);
 	}
-	else
-		return S_FALSE;
+	return S_FALSE;
 }
 
 bool SVLutTransform::SetOperation(const SVLutTransformOperation& rType)
@@ -167,7 +172,7 @@ bool SVLutTransform::SetOperation(SVLutTransformOperationEnum eType)
 	mParam.RemoveAll();
 	mpType = mMapTypes.GetType(eType);
 	mbOwnType = false;
-	return mpType != NULL;
+	return nullptr != mpType;
 }
 
 const SVLutTransformOperation* SVLutTransform::GetOperation() const
@@ -186,7 +191,7 @@ void SVLutTransform::Cleanup()
 	if (mpType && mbOwnType)
 	{
 		delete mpType;
-		mpType = NULL;
+		mpType = nullptr;
 		mbOwnType = false;
 	}
 }
@@ -207,10 +212,12 @@ bool SVLutTransform::operator == (const SVLutTransform& rhs) const
 {
 	// equal if operaton and params are equal
 	bool bEqual = true;
-	if ( mpType == NULL && rhs.mpType == NULL )
-		{}
-	else if ( mpType == NULL || rhs.mpType == NULL )
-		{ bEqual = false; }
+	if ( nullptr == mpType && nullptr == rhs.mpType )
+	{}
+	else if ( nullptr == mpType || nullptr == rhs.mpType )
+	{ 
+		bEqual = false; 
+	}
 	else
 	{
 		bEqual = (*mpType == *(rhs.mpType));
@@ -224,7 +231,9 @@ bool SVLutTransform::operator == (const SVLutTransform& rhs) const
 				}
 			}
 			else
+			{
 				bEqual = false;
+			}
 		}
 	}
 	return bEqual;
@@ -235,9 +244,6 @@ bool SVLutTransformOperation::operator == ( const SVLutTransformOperation& rhs )
 	return (typeid(*this) == typeid(rhs)) != FALSE;
 }
 
-
-
-
 HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationNormal& t, SVLutBand& data, const SVLutTransformParameters& param)
 {
 	HRESULT hr = S_OK;
@@ -247,6 +253,7 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationNormal& t, SVLut
 	}
 	return hr;
 }
+
 HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationInvert& t, SVLutBand& data, const SVLutTransformParameters& param)
 {
 	HRESULT hr = S_OK;
@@ -270,6 +277,7 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationSign& t, SVLutBa
 	}
 	return hr;
 }
+
 HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationClip& t, SVLutBand& data, const SVLutTransformParameters& param)
 {
 	HRESULT hr = S_FALSE;
@@ -293,6 +301,7 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationClip& t, SVLutBa
 	}
 	return hr;
 }
+
 HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationFreeform& t, SVLutBand& data, const SVLutTransformParameters& param)
 {
 	HRESULT hr = S_OK;
@@ -311,7 +320,6 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationTwoKnee& t, SVLu
 		unsigned long y2 = param[3];
 		unsigned long lMaxY = param[4];
 
-		//ASSERT ( x1 >= 0 && x2 >= 0 && x1 < data.Size() && x2 < data.Size() && x2 >= x1 );
 		if ( x1 >= 0 && x2 >= 0 && x1 < data.Size() && x2 < data.Size() && x2 >= x1 )
 		{
 			if (x1 > 0)

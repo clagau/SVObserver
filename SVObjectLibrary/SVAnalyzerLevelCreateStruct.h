@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVToolLevelCreateStruct.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVAnalyzerLevelCreateStruct
@@ -19,33 +21,13 @@
 // .Description : Structure for SVM_CREATE... messages to objects below the
 //				: Analyzer level
 //              : Supports structure identifying by structure name
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :29.06.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 struct SVAnalyzerLevelCreateStruct : public SVToolLevelCreateStruct
 {
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-
 	SVAnalyzerLevelCreateStruct();
-	SVAnalyzerLevelCreateStruct( SVObjectLevelCreateStruct& ROLCS );
+	SVAnalyzerLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS );
 
 	virtual ~SVAnalyzerLevelCreateStruct();
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
 
 	SVObjectInfoStruct AnalyzerObjectInfo;
 };

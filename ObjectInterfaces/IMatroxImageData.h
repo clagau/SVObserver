@@ -14,7 +14,7 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		//this class is a interface. It should only have pure virtual public method and new member parameter
+		//this class is a interface. It should only have pure virtual public method and no member variables
 		class IMatroxImageData
 		{
 		public:

@@ -16,7 +16,7 @@
 
 
 SVEventLogClass::SVEventLogClass()
-:m_pucBuffer(NULL),m_ulBufferSize(0)
+:m_pucBuffer(nullptr), m_ulBufferSize(0)
 {
 	LocalInitialize();
 }
@@ -31,11 +31,11 @@ HRESULT SVEventLogClass::Open( LPCTSTR p_pszName )
 {
 	HRESULT l_svOk = Close();
 
-	if( l_svOk == S_OK )
+	if( S_OK == l_svOk )
 	{
-		m_hHandle = ::OpenEventLog( NULL, p_pszName );
+		m_hHandle = ::OpenEventLog( nullptr, p_pszName );
 
-		if( m_hHandle != NULL )
+		if( nullptr != m_hHandle )
 		{
 			m_csName = (nullptr != p_pszName) ? p_pszName : SVString();
 		}
@@ -52,7 +52,7 @@ HRESULT SVEventLogClass::Close()
 {
 	HRESULT l_svOk = S_OK;
 
-	if( m_hHandle != NULL )
+	if( nullptr != m_hHandle )
 	{
 		if( ! ::CloseEventLog( m_hHandle ) )
 		{
@@ -70,7 +70,7 @@ HRESULT SVEventLogClass::GetRecordCount( unsigned long& p_rulCount )
 
 	p_rulCount = 0;
 
-	if( m_hHandle != NULL )
+	if( nullptr != m_hHandle )
 	{
 		if( ::GetNumberOfEventLogRecords( m_hHandle, &p_rulCount ) )
 		{
@@ -89,9 +89,9 @@ HRESULT SVEventLogClass::ReadLast( SVEventRecordStruct& p_rsvRecord )
 {
 	HRESULT l_svOk = S_FALSE;
 
-	p_rsvRecord.SetBuffer( NULL, SV_EVENT_RECORD_STRUCT_RECORD_SIZE );
+	p_rsvRecord.SetBuffer( nullptr, SV_EVENT_RECORD_STRUCT_RECORD_SIZE );
 
-	if( m_hHandle != NULL )
+	if( nullptr != m_hHandle )
 	{
 		unsigned long l_ulRecordNumber = 1;
 
@@ -113,7 +113,7 @@ HRESULT SVEventLogClass::ReadLast( SVEventRecordStruct& p_rsvRecord )
 					if( ::ReadEventLog( m_hHandle, EVENTLOG_SEEK_READ | EVENTLOG_BACKWARDS_READ, l_ulRecordNumber, 
 						m_pucBuffer, m_ulBufferSize, &l_ulBytesRead, &l_ulBytesNeeded ) )
 					{
-						EVENTLOGRECORD* l_poRecord = NULL;
+						EVENTLOGRECORD* l_poRecord = nullptr;
 
 						m_ulBytesRead = l_ulBytesRead;
 						m_pucCurrent = m_pucBuffer;
@@ -124,7 +124,7 @@ HRESULT SVEventLogClass::ReadLast( SVEventRecordStruct& p_rsvRecord )
 
 						if( m_pucBuffer + m_ulBytesRead <= m_pucPrevious )
 						{
-							m_pucPrevious = NULL;
+							m_pucPrevious = nullptr;
 						}
 
 						p_rsvRecord.SetBuffer( m_pucCurrent, l_poRecord->Length );
@@ -138,7 +138,7 @@ HRESULT SVEventLogClass::ReadLast( SVEventRecordStruct& p_rsvRecord )
 						if ( l_svOk == ERROR_INSUFFICIENT_BUFFER )
 						{
 							delete[] m_pucBuffer;
-							m_pucBuffer = NULL;
+							m_pucBuffer = nullptr;
 
 							try
 							{
@@ -147,7 +147,7 @@ HRESULT SVEventLogClass::ReadLast( SVEventRecordStruct& p_rsvRecord )
 							}
 							catch( std::bad_alloc* memExc )
 							{
-								m_pucBuffer = NULL;
+								m_pucBuffer = nullptr;
 								m_ulBufferSize = 0;
 
 								delete memExc;
@@ -155,7 +155,7 @@ HRESULT SVEventLogClass::ReadLast( SVEventRecordStruct& p_rsvRecord )
 						}
 					}
 				} 
-				while ( (l_svOk != ERROR_INSUFFICIENT_BUFFER) && (l_svOk != S_OK) && (m_pucBuffer != NULL)  && (l_iTries <= 2) ); //end do while
+				while ( (ERROR_INSUFFICIENT_BUFFER != l_svOk ) && (S_OK != l_svOk) && (nullptr != m_pucBuffer)  && (l_iTries <= 2) ); //end do while
 			}
 			else
 			{
@@ -181,13 +181,13 @@ HRESULT SVEventLogClass::ReadPrevious( SVEventRecordStruct& p_rsvRecord )
 {
 	HRESULT l_svOk = S_FALSE;
 
-	p_rsvRecord.SetBuffer( NULL, SV_EVENT_RECORD_STRUCT_RECORD_SIZE );
+	p_rsvRecord.SetBuffer( nullptr, SV_EVENT_RECORD_STRUCT_RECORD_SIZE );
 
-	if( m_hHandle != NULL )
+	if( nullptr != m_hHandle )
 	{
-		if( m_pucPrevious != NULL )
+		if( nullptr != m_pucPrevious )
 		{
-			EVENTLOGRECORD* l_poRecord = NULL;
+			EVENTLOGRECORD* l_poRecord = nullptr;
 
 			m_pucCurrent = m_pucPrevious;
 
@@ -197,7 +197,7 @@ HRESULT SVEventLogClass::ReadPrevious( SVEventRecordStruct& p_rsvRecord )
 
 			if( m_pucBuffer + m_ulBytesRead <= m_pucPrevious )
 			{
-				m_pucPrevious = NULL;
+				m_pucPrevious = nullptr;
 			}
 
 			p_rsvRecord.SetBuffer( m_pucCurrent, l_poRecord->Length );
@@ -216,7 +216,7 @@ HRESULT SVEventLogClass::ReadPrevious( SVEventRecordStruct& p_rsvRecord )
 				if( ::ReadEventLog( m_hHandle, EVENTLOG_SEQUENTIAL_READ | EVENTLOG_BACKWARDS_READ, 1, 
 					m_pucBuffer, m_ulBufferSize, &l_ulBytesRead, &l_ulBytesNeeded ) )
 				{
-					EVENTLOGRECORD* l_poRecord = NULL;
+					EVENTLOGRECORD* l_poRecord = nullptr;
 
 					m_ulBytesRead = l_ulBytesRead;
 					m_pucCurrent = m_pucBuffer;
@@ -227,7 +227,7 @@ HRESULT SVEventLogClass::ReadPrevious( SVEventRecordStruct& p_rsvRecord )
 
 					if( m_pucBuffer + m_ulBytesRead <= m_pucPrevious )
 					{
-						m_pucPrevious = NULL;
+						m_pucPrevious = nullptr;
 					}
 
 					p_rsvRecord.SetBuffer( m_pucCurrent, l_poRecord->Length );
@@ -240,7 +240,7 @@ HRESULT SVEventLogClass::ReadPrevious( SVEventRecordStruct& p_rsvRecord )
 					if ( l_svOk == ERROR_INSUFFICIENT_BUFFER )
 					{
 						delete[] m_pucBuffer;
-						m_pucBuffer = NULL;
+						m_pucBuffer = nullptr;
 
 						try
 						{
@@ -249,7 +249,7 @@ HRESULT SVEventLogClass::ReadPrevious( SVEventRecordStruct& p_rsvRecord )
 						}
 						catch( std::bad_alloc *memExc )
 						{
-							m_pucBuffer = NULL;
+							m_pucBuffer = nullptr;
 							m_ulBufferSize = 0;
 
 							delete memExc;
@@ -265,7 +265,7 @@ HRESULT SVEventLogClass::ReadPrevious( SVEventRecordStruct& p_rsvRecord )
 					}
 				}
 			}
-			while ( (l_svOk == ERROR_INSUFFICIENT_BUFFER) && (m_pucBuffer != NULL) && (l_iTries <= 2) );
+			while ( (ERROR_INSUFFICIENT_BUFFER == l_svOk) && (nullptr != m_pucBuffer) && (l_iTries <= 2) );
 		}
 	}
 
@@ -289,12 +289,12 @@ HRESULT SVEventLogClass::LocalInitialize()
 	// Should be one of the following: "Application", "Security", or "System"
 	m_csName.clear();
 
-	m_hHandle = NULL;
+	m_hHandle = nullptr;
 
 	m_ulBytesRead = 0;
 
-	m_pucPrevious = NULL;
-	m_pucCurrent = NULL;
+	m_pucPrevious = nullptr;
+	m_pucCurrent = nullptr;
 
 	return l_svOk;
 }
@@ -303,11 +303,11 @@ HRESULT SVEventLogClass::LocalDestroy()
 {
 	HRESULT l_svOk = S_OK;
 
-	if( m_pucBuffer != NULL )
+	if( nullptr != m_pucBuffer )
 	{
 		delete[] m_pucBuffer;
 
-		m_pucBuffer = NULL;
+		m_pucBuffer = nullptr;
 	}
 
 	m_ulBufferSize = 0;
@@ -315,12 +315,12 @@ HRESULT SVEventLogClass::LocalDestroy()
 	// Should be one of the following: "Application", "Security", or "System"
 	m_csName.clear();
 
-	m_hHandle = NULL;
+	m_hHandle = nullptr;
 
 	m_ulBytesRead = 0;
 
-	m_pucPrevious = NULL;
-	m_pucCurrent = NULL;
+	m_pucPrevious = nullptr;
+	m_pucCurrent = nullptr;
 
 	return l_svOk;
 }

@@ -9,42 +9,20 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:56:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVResultLong.h"
 #include "SVRange.h"
+#pragma endregion Includes
 
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVLongResultClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVLongResultClass, SVLongResultClassGuid );
-
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 SVLongResultClass::SVLongResultClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 				  :SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVResultLongObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultLongObjectType;
 
 	// Identify our input type needs
 	inputObjectInfo.SetInputObjectType( SVLongValueObjectType );
@@ -91,16 +69,16 @@ SVLongResultClass::~SVLongResultClass()
 
 BOOL SVLongResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVResultClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = getInput() != NULL;
+		bOk = nullptr != getInput();
 	}
 
 	value.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -152,7 +130,7 @@ SVLongValueObjectClass* SVLongResultClass::getInputLong()
 	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
 		return static_cast<SVLongValueObjectClass*>(inputObjectInfo.GetInputObjectInfo().PObject);
 
-	return NULL;
+	return nullptr;
 }
 
 

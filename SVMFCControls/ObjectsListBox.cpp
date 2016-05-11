@@ -46,13 +46,12 @@ namespace Seidenader
 
 			if( GetCount() <= 0 )
 			{
-				SetItemData( AddString( rEmptyListText.c_str() ), static_cast<DWORD_PTR>(NULL) );
+				SetItemData( AddString( rEmptyListText.c_str() ), 0 );
 				index = 0;
 			}
 			else
 			{
 				index = AddString( _T( "--------------------------------------------" ) );
-				//SetItemData( index, static_cast<DWORD_PTR>(NULL) );
 			}
 
 			if( index >= GetCount() )

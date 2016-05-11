@@ -74,11 +74,10 @@ public:
 
 	CString GetName() const;
 	CString GetCompleteObjectName() const;
-	CString GetCompleteObjectNameToObjectType( LPCSTR lpszCompleteName = NULL, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	CString GetCompleteObjectNameToObjectType( LPCSTR lpszCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
 
 	CString GetOneBasedName() const;
 	CString GetCompleteOneBasedObjectName() const;
-	CString GetCompleteOneBasedObjectNameToObjectType( LPCSTR lpszCompleteName = NULL, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
 
 	const SVObjectNameInfo& GetObjectNameInfo() const;
 

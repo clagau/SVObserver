@@ -32,20 +32,6 @@
 
 #include "PropTreeItem.h"
 
-/*
-enum
-{
-	PROPTREEITEM_DEFHEIGHT     = 21,			// default heigt of an item
-	PROPTREEITEM_SPACE         = 5, 			// default horz spacing
-	PROPTREEITEM_EXPANDBOX     = 9, 			// size of the expand box
-	PROPTREEITEM_CHECKBOX      = 14,			// size of the check box
-	PROPTREEITEM_EXPANDCOLUMN  = 16,			// width of the expand column
-	PNINDENT                   = 16,			// child level indent
-
-	PROPTREEITEM_EXPANDBOXHALF = (PROPTREEITEM_EXPANDBOX / 2)
-};
-//*/
-
 /////////////////////////////////////////////////////////////////////////////
 // drawing helper functions
 //
@@ -74,11 +60,11 @@ static void _DrawExpand(HDC hdc, LONG x, LONG y, bool bExpand, bool bFill)
 
 	if (!bExpand)
 	{
-		MoveToEx(hdc, x + SVRPropTree::PROPTREEITEM_EXPANDBOXHALF, y + 2, NULL);
+		MoveToEx(hdc, x + SVRPropTree::PROPTREEITEM_EXPANDBOXHALF, y + 2, nullptr);
 		LineTo(hdc, x + SVRPropTree::PROPTREEITEM_EXPANDBOXHALF, y + SVRPropTree::PROPTREEITEM_EXPANDBOX - 2);
 	}
 
-	MoveToEx(hdc, x + 2, y + SVRPropTree::PROPTREEITEM_EXPANDBOXHALF, NULL);
+	MoveToEx(hdc, x + 2, y + SVRPropTree::PROPTREEITEM_EXPANDBOXHALF, nullptr);
 	LineTo(hdc, x + SVRPropTree::PROPTREEITEM_EXPANDBOX - 2, y + SVRPropTree::PROPTREEITEM_EXPANDBOXHALF);
 
 	SelectObject(hdc, oPen);
@@ -91,7 +77,7 @@ static void _DrawExpand(HDC hdc, LONG x, LONG y, bool bExpand, bool bFill)
 // @mfunc Constructor
 
 SVRPropertyItem::SVRPropertyItem() :
-	m_pProp(NULL),
+	m_pProp(nullptr),
 	m_sLabel(_T("")),
 	m_sInfo(_T("")),
 	m_loc(0,0),
@@ -102,10 +88,10 @@ SVRPropertyItem::SVRPropertyItem() :
 	m_bCommitOnce(FALSE),
 	m_rcExpand(0,0,0,0),
 	m_rcCheckbox(0,0,0,0),
-	m_pParent(NULL),
-	m_pSibling(NULL),
-	m_pChild(NULL),
-	m_pVis(NULL),
+	m_pParent(nullptr),
+	m_pSibling(nullptr),
+	m_pChild(nullptr),
+	m_pVis(nullptr),
 	m_bCanShrink(true),
 	m_rgbForeColor(::GetSysColor(COLOR_BTNTEXT)),
 	m_rgbBackColor(::GetSysColor(COLOR_WINDOW)),
@@ -262,7 +248,7 @@ bool SVRPropertyItem::HitCheckBox(const POINT& pt)
 
 bool SVRPropertyItem::IsRootLevel()
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 	return GetParent() == m_pProp->GetRootItem();
 }
 
@@ -406,18 +392,18 @@ void SVRPropertyItem::CommitChanges()
 
 	m_bCommitOnce = true;
 
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	OnCommit();
 
 	LRESULT lr = m_pProp->SendNotify(PTN_ITEMCHANGED, this);
 
-	if ( lr != S_OK )
+	if ( S_OK != lr )
+	{
 		OnUndoCommit();
-
+	}
 	m_pProp->RefreshItems(this);
 }
-
 
 void SVRPropertyItem::OnActivate()
 {
@@ -495,7 +481,7 @@ LONG SVRPropertyItem::UpdatePosition( const RECT& rc, LONG x, LONG y )
 	LONG nTotal, nCol, ey;
 	CRect drc, ir;
 
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 
 	if(!IsRootLevel() && IsHidden())
@@ -618,7 +604,7 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 
 	CFont*	l_pOldFont;
 
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 
 	if(!IsRootLevel() && IsHidden())
@@ -702,7 +688,7 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 	else
 		m_rcCheckbox.SetRectEmpty();
 
-	HRGN hRgn = NULL;
+	HRGN hRgn = nullptr;
 
 	// create a clipping region for the label
 	if (!IsRootLevel())
@@ -773,7 +759,7 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 	// remove clip region
 	if (hRgn)
 	{
-		SelectClipRgn(pDC->m_hDC, NULL);
+		SelectClipRgn(pDC->m_hDC, nullptr);
 		DeleteObject(hRgn);
 	}
 
@@ -808,7 +794,7 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 		
 		DrawAttribute(pDC, m_rc);
 
-		SelectClipRgn(pDC->m_hDC, NULL);
+		SelectClipRgn(pDC->m_hDC, nullptr);
 		DeleteObject(hRgn);
 	}
 

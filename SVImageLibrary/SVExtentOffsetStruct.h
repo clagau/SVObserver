@@ -47,8 +47,8 @@ struct SVExtentOffsetStruct
 
 	HRESULT Initialize()
 	{
-		m_psvRootImage = NULL;
-		m_psvImage = NULL;
+		m_psvRootImage = nullptr;
+		m_psvImage = nullptr;
 
 		m_csImageName.Empty();
 

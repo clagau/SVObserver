@@ -100,13 +100,11 @@ HRESULT SVImagePropertiesClass::DisableImageProperty( SVImagePropertyEnum p_ePro
 
 HRESULT SVImagePropertiesClass::GetImageProperty( SVImagePropertyEnum p_eProperty, int &p_riValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
 	long l_lValue = 0;
 
-	l_hrOk = GetImageProperty( p_eProperty, l_lValue );
+	HRESULT l_hrOk = GetImageProperty( p_eProperty, l_lValue );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		p_riValue = (int)l_lValue;
 	}

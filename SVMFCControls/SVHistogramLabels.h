@@ -262,7 +262,7 @@ namespace Seidenader { namespace SVMFCControls {
 				COLORREF tmp_color = GetSysColor(COLOR_BTNFACE); 
 				tmp_color = dc.SetTextColor(tmp_color);
 				l_mode = dc.SetBkMode(l_mode);
-				dc.ExtTextOut(rect.left, rect.top, 0, NULL, old, NULL);
+				dc.ExtTextOut(rect.left, rect.top, 0, nullptr, old, nullptr);
 				dc.SetBkMode(l_mode);
 				tmp_color = dc.SetTextColor(tmp_color);
 			}
@@ -304,7 +304,7 @@ namespace Seidenader { namespace SVMFCControls {
 			{
 				dc.SetBkMode(mode);
 				UpdateRect(dc.GetOutputTextExtent(m_text));
-				dc.ExtTextOut(m_rect.left, m_rect.top, 0, NULL, m_text, NULL);
+				dc.ExtTextOut(m_rect.left, m_rect.top, 0, nullptr, m_text, nullptr);
 				m_oldtxt = m_text;
 				m_changed = false;
 			}

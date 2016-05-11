@@ -43,7 +43,7 @@ SVBarCodeAttributesDialog::SVBarCodeEccEncArray::~SVBarCodeEccEncArray()
 // SVBarCodeAttributesDialog dialog
 
 
-SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* pParent /*=NULL*/)
+SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(SVBarCodeAttributesDialog::IDD)
 {
 	//{{AFX_DATA_INIT(SVBarCodeAttributesDialog)

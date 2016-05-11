@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <map>
 
-#include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVObjectLibrary/SVObserverNotificationFunctor.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVJsonCommandServerLibrary/SVJsonCommandServer.h"

@@ -68,7 +68,7 @@ public:
 	HRESULT SetArrayValues(int iBucket, InIterator begin, InIterator end)//std::vector<ELEMENT_TYPE>& raValues)
 	{
 		HRESULT hr = ValidateIndexes(iBucket,0);
-		if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+		if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 		{
 			int iSize = static_cast< int >( std::distance(begin, end));
 			ASSERT( iSize <= ArraySize() );

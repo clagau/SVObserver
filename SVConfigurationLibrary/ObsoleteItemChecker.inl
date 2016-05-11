@@ -25,11 +25,12 @@ namespace Seidenader
 		LPCSTR const TAG_OCROCVANALYZER = "OCR  OCV Analyzer";
 		LPCSTR const TAG_OCROCVGRAYANALYZER = "OCR  OCV Gray Scale Analyzer";
 
-		LPCSTR const ITEM_ANALOG_CAMERA = _T("Analog Camera - Obsolete");
-		LPCSTR const ITEM_1394_CAMERA = _T("1394 Camera - Obsolete");
-		LPCSTR const ITEM_GAGE_TOOL = _T("Gage Tool - Obsolete");
-		LPCSTR const ITEM_PROFILE_TOOL = _T("Profile Tool - Obsolete");
-		LPCSTR const ITEM_FAST_OCR = _T("Fast OCR - Obsolete");
+		LPCTSTR const ITEM_ANALOG_CAMERA = _T("Analog Camera - Obsolete");
+		LPCTSTR const ITEM_1394_CAMERA = _T("1394 Camera - Obsolete");
+		LPCTSTR const ITEM_GAGE_TOOL = _T("Gage Tool - Obsolete");
+		LPCTSTR const ITEM_PROFILE_TOOL = _T("Profile Tool - Obsolete");
+		LPCTSTR const ITEM_FAST_OCR = _T("Fast OCR - Obsolete");
+		LPCTSTR const ITEM_PRODUCTTYPE = _T("Unknown Product Type");
 		#pragma endregion String Defines
 
 		struct ObsoleteItem
@@ -77,7 +78,7 @@ namespace Seidenader
 		{
 			bool bFound = false;
 
-			TreeType::SVBranchHandle htiChild(nullptr );
+			TreeType::SVBranchHandle htiChild(nullptr);
 			if( SVNavigateTree::GetItemBranch( rTree, CTAG_INSPECTION, nullptr, htiChild ) )
 			{
 				TreeType::SVBranchHandle htiSubChild( rTree.getFirstBranch( htiChild ) );
@@ -133,7 +134,31 @@ namespace Seidenader
 			}
 			return bFound;
 		}
-		
+
+		template<typename TreeType>
+		static bool HasInvalidProductType(TreeType& rTree, CString& rItemType, int& rErrorCode)
+		{
+			bool bInvalid = false;
+			TreeType::SVBranchHandle hChild(nullptr);
+
+			if (SVNavigateTree::GetItemBranch(rTree, CTAG_ENVIRONMENT, nullptr, hChild))
+			{
+				_variant_t svValue;
+
+				if (SVNavigateTree::GetItem(rTree, CTAG_CONFIGURATION_TYPE, hChild, svValue))
+				{
+					int iType = svValue;
+					if (!SVHardwareManifest::IsValidProductType(static_cast<SVIMProductEnum>(iType)))
+					{
+						bInvalid = true;
+						rErrorCode = SvOi::Err_15043_UnknownProductType;
+						rItemType = ITEM_PRODUCTTYPE;
+					}
+				}
+			}
+			return bInvalid;
+		}
+
 		template<typename TreeType>
 		HRESULT HasObsoleteItem(TreeType& rTree, CString& rItemType, int& rErrorCode)
 		{
@@ -151,7 +176,10 @@ namespace Seidenader
 			rErrorCode = 0;
 			if (!HasAcquisitionDevice(rTree, cameraItems, rItemType, rErrorCode))
 			{
-				HasTaskObject(rTree, taskItems, rItemType, rErrorCode);
+				if (!HasTaskObject(rTree, taskItems, rItemType, rErrorCode))
+				{
+					HasInvalidProductType(rTree, rItemType, rErrorCode);
+				}
 			}
 			if (rErrorCode)
 			{

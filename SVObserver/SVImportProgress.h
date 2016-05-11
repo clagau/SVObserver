@@ -21,7 +21,7 @@ template<typename Task>
 class SVImportProgress : public SVIProgress
 {
 public:
-	SVImportProgress(Task& rTask, LPCTSTR title, CWnd* pParent=NULL);
+	SVImportProgress(Task& rTask, LPCTSTR title, CWnd* pParent=nullptr);
 	virtual ~SVImportProgress();
 
 	void DoModal();

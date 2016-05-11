@@ -30,13 +30,8 @@ public:
     BOOL RemovePPQFromList(CString sPPQName);
 
     BOOL AttachCameraToPPQ(CString sPPQName, CString sCamera);
-    BOOL RemoveCameraFromPPQ(CString sPPQName, CString sCamera);
-
     BOOL AttachInspectToPPQ(CString sPPQName, CString sInspect);
-    BOOL RemoveInspectFromPPQ(CString sPPQName, CString sInspect);
-    
     BOOL AttachTriggerToPPQ(CString sPPQName, CString sTrigger);
-    BOOL RemoveTriggerFromPPQ(CString sPPQName);
 
     int GetPPQListCount() const;
     SVOPPQObjPtr GetPPQObjectByName(CString sPPQName);

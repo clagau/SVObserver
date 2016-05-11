@@ -154,8 +154,8 @@ HRESULT SVXMLEncryptionClass::Init ()
 
 	while (1)
 	{
-		m_opParentDOM = NULL;
-		m_opParentXML = NULL;
+		m_opParentDOM = nullptr;
+		m_opParentXML = nullptr;
 
 		m_lEncryptionMethod = 0;
 		m_ulNameSeed = 0;
@@ -739,7 +739,7 @@ HRESULT SVXMLEncryptionClass::InitializeXMLInterface (SVXMLBase*		p_opParentXML)
 			break;
 		}
 
-		if (p_opParentXML == NULL)
+		if (nullptr == p_opParentXML)
 		{
 			hr = -1891;
 			break;
@@ -775,7 +775,7 @@ HRESULT SVXMLEncryptionClass::InitializeDOMInterface (SVDOMClass*		p_opParentDOM
 			break;
 		}
 
-		if (p_opParentDOM == NULL)
+		if (nullptr == p_opParentDOM)
 		{
 			hr = -1892;
 			break;
@@ -882,7 +882,7 @@ HRESULT SVXMLEncryptionClass::SetEncryption ()
 			break;
 		}
 
-		if (l_oRootElementPtr == NULL)
+		if (nullptr == l_oRootElementPtr)
 		{
 			hr = -1896;
 			break;
@@ -980,7 +980,7 @@ bool SVXMLEncryptionClass::LoadEncryptionFromSaxData(LPCWSTR lpName, LPCWSTR lpC
 		{
 			return false;
 		}
-		ulNameSeed = wcstol (bstrDecryptedNameSeed, NULL, 0);
+		ulNameSeed = wcstol (bstrDecryptedNameSeed, nullptr, 0);
 		m_ulNameSeed = ulNameSeed;
 		TRACE ("LoadEncryptionFromSaxData - Loaded NameSeed = %d\n", m_ulNameSeed);
 		return true;	
@@ -1040,12 +1040,12 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 		}
 
 
-		if (l_oEncryptionBaseNodePtr == NULL)
+		if (nullptr == l_oEncryptionBaseNodePtr)
 		{
 			m_lIsEncrypted = FALSE;
 			hr = 3;	// No encryption section available.
 			break;
-		} // if (l_oEncryptionBaseNodePtr == NULL)
+		} // if (nullptr == l_oEncryptionBaseNodePtr)
 
 
 		l_bstrIsActiveAttribute = g_wcsIsActive;
@@ -1077,7 +1077,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 			{
 //-			First time through.
 				l_oChildPtr = m_opParentDOM->GetFirstElementChild(l_oEncryptionBaseNodePtr);
-				if (l_oChildPtr == NULL)
+				if (nullptr == l_oChildPtr)
 				{
 					hr = -1926;
 					break;
@@ -1086,7 +1086,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 			else
 			{
 				l_oChildPtr = m_opParentDOM->GetNextElementSibling(l_oOldPtr);
-				if (l_oChildPtr == NULL)
+				if (nullptr == l_oChildPtr)
 				{
 					hr = -1927;
 					break;
@@ -1135,7 +1135,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 					break;
 				}
 
-				l_ulNameSeed = wcstol (l_bstrDecryptedNameSeed, NULL, 0);
+				l_ulNameSeed = wcstol (l_bstrDecryptedNameSeed, nullptr, 0);
 
 			}
 			else
@@ -1213,7 +1213,7 @@ HRESULT SVXMLEncryptionClass::GetEncryptionBaseNode (
 			break;
 		}
 
-		if (l_oRootElementPtr == NULL)
+		if (nullptr == l_oRootElementPtr)
 		{
 			hr = -1895;
 			break;
@@ -1252,7 +1252,7 @@ HRESULT SVXMLEncryptionClass::GetEncryptionBaseNode (
 //-   being done imediately prior to the query.
 		p_orEncryptionBaseNodePtr = l_oRootElementPtr->selectSingleNode (l_bstrSelectName);
 
-		if (p_orEncryptionBaseNodePtr == NULL)
+		if (nullptr == p_orEncryptionBaseNodePtr)
 		{
 //-		No revision history base node found.
 			hr = 2;
@@ -1287,7 +1287,7 @@ HRESULT SVXMLEncryptionClass::CreateRandomLong (unsigned long* p_ulpSeedValue)
 
 	while (1)
 	{	
-		l_lTime = (long)time (NULL);
+		l_lTime = (long)time (nullptr);
 		l_lClock = clock ();
 
 		l_lSeed = (l_lTime << 4) + l_lClock + l_lStaticValue;
@@ -1360,8 +1360,8 @@ HRESULT SVXMLEncryptionClass::EncryptNameAttribute (BSTR		p_bstrSourceString,
 
 	hr = S_OK;
 
-	l_ucpPartialEncryption1 = NULL;
-	l_ucpPartialEncryption2 = NULL;
+	l_ucpPartialEncryption1 = nullptr;
+	l_ucpPartialEncryption2 = nullptr;
 
 	while (1)
 	{
@@ -1371,7 +1371,7 @@ HRESULT SVXMLEncryptionClass::EncryptNameAttribute (BSTR		p_bstrSourceString,
 			break;
 		}
 
-		if (p_bstrSourceString == NULL)
+		if (nullptr == p_bstrSourceString)
 		{
 			break;
 		}
@@ -1503,7 +1503,7 @@ HRESULT SVXMLEncryptionClass::DecryptNameAttribute (BSTR		p_bstrEncryptedString,
 	unsigned char*	l_ucpPartialDecryption;
 
 	hr = S_OK;
-	l_ucpPartialDecryption = NULL;
+	l_ucpPartialDecryption = nullptr;
 
 	while (1)
 	{
@@ -1513,7 +1513,7 @@ HRESULT SVXMLEncryptionClass::DecryptNameAttribute (BSTR		p_bstrEncryptedString,
 			break;
 		}
 
-		if (p_bstrEncryptedString == NULL)
+		if (nullptr == p_bstrEncryptedString)
 		{
 			hr = p_bstrpDecryptedString->SetNULL ();
 			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -1636,7 +1636,7 @@ HRESULT SVXMLEncryptionClass::JumpTracking1Initialization (long	p_lSourceStringL
 
 		*p_lppTrackJumping = new long [*p_lpMaxTrackingLength];
 
-		if (*p_lppTrackJumping == NULL)
+		if (nullptr == *p_lppTrackJumping)
 		{
 			hr = -1887;
 			break;
@@ -1683,7 +1683,7 @@ HRESULT SVXMLEncryptionClass::EncryptString (long		p_lEncryptionMethod,
 	SVValue64Union	l_oNewValueUnion;
 
 	hr = S_OK;
-	l_lpTrackJumping = NULL;
+	l_lpTrackJumping = nullptr;
 
 	l_lFirstTrackingUnused = 0;
 	l_lCurrentTrackingLengthThreshold = 0;
@@ -1707,7 +1707,7 @@ if (g_lTempDevelopment < 10)
 			break;
 		}
 
-		if (p_bstrSourceString == NULL)
+		if (nullptr == p_bstrSourceString)
 		{
 			hr = p_bstrpEncryptedString->SetNULL ();
 			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -1974,7 +1974,7 @@ if (l_lTempDevelopment)
 	} // while (1)
 
 	delete [] l_lpTrackJumping;
-	l_lpTrackJumping = NULL;
+	l_lpTrackJumping = nullptr;
 
 	return hr;
 }
@@ -2471,7 +2471,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 
 
 	hr = S_OK;
-	l_lpTrackJumping = NULL;
+	l_lpTrackJumping = nullptr;
 	l_lFirstTrackingUnused = 0;
 
 	l_oNewValueUnion.int64Value = 0;
@@ -2484,7 +2484,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 			break;
 		}
 
-		if (p_bstrEncryptedString == NULL)
+		if (nullptr == p_bstrEncryptedString)
 		{
 			hr = p_bstrpDecryptedString->SetNULL ();
 			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -2528,7 +2528,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 		l_lMaxTrackingLength = (l_lEncryptedLength) / 8;
 
 		l_lpTrackJumping = new long [l_lMaxTrackingLength];
-		if (l_lpTrackJumping == NULL)
+		if (nullptr == l_lpTrackJumping)
 		{
 			hr = -1932;
 			break;

@@ -27,9 +27,6 @@
     <ClCompile Include="SVImageConvertorGDI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMemoryChecker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVSAXContentHandlerImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,9 +69,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVImageConvertorGDI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMemoryChecker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSAXContentHandlerImpl.h">

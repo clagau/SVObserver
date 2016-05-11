@@ -48,7 +48,7 @@ void ObjectSelectorItem::Clear()
 	m_Location = _T("");
 	m_DisplayLocation = _T("");
 	m_ItemTypeName = _T("");
-	m_TreeItem = NULL;
+	m_TreeItem = nullptr;
 	m_ItemKey = _T("");
 	m_Attribute = AttributeNone;
 	m_IconNumber = 0;

@@ -19,9 +19,6 @@
 
 #pragma once
 
-#if !defined(_INC_VARIANTOBJ)
-#define _INC_VARIANTOBJ
-
 //Moved to precompiled header: #include <comdef.h>
 
 #pragma warning(push)
@@ -193,7 +190,7 @@ public:
 
 	VARIANT Detach() throw(_com_error);
 	
-	void ChangeType(VARTYPE vartype, const CVariantObj* pSrc = NULL, USHORT wFlags = 0) throw(_com_error);
+	void ChangeType(VARTYPE vartype, const CVariantObj* pSrc = nullptr, USHORT wFlags = 0) throw(_com_error);
 	
 	void SetString(LPCTSTR lpszSrc, VARTYPE vtSrc) throw(_com_error); // used to set ANSI string
 	void toString(CString& strSrc) throw(_com_error);
@@ -202,6 +199,3 @@ public:
 };
 
 #pragma warning(pop)
-
-#endif  /* _INC_VARIANT */
-

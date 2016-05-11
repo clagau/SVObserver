@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 SVPixelAnalyzerSetupClass::SVPixelAnalyzerSetupClass(SVPixelAnalyzerClass* apAnalyzer, 
-                                                     CWnd* pParent /*=NULL*/)
+                                                     CWnd* pParent /*=nullptr*/)
 	: CDialog(SVPixelAnalyzerSetupClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVPixelAnalyzerSetupClass)
@@ -50,16 +50,16 @@ HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( msvpAnalyzer != NULL )
+	if( nullptr != msvpAnalyzer )
 	{
 		l_hrOk = AddInputRequest( &( msvpAnalyzer->m_pixelCountColor ), msvGrayscaleToCount );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( msvpAnalyzer->GetTool() );
 		}
@@ -134,25 +134,15 @@ END_MESSAGE_MAP()
 void SVPixelAnalyzerSetupClass::OnOK() 
 {
 	// TODO: Add extra validation here
-    ASSERT(msvpTool);
-    if(msvpTool)
-    {
-		SVIPDoc* l_pIPDoc = NULL;
+	SVIPDoc* l_pIPDoc = TheSVObserverApp.GetIPDoc(msvpTool->GetInspection()->GetUniqueObjectID());
 
-		if( msvpTool->GetInspection() != NULL )
-		{
-			l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( msvpTool->GetInspection()->GetUniqueObjectID() );
-
-			if( l_pIPDoc != NULL )
-			{
-				l_pIPDoc->SetModifiedFlag();
-			}
-		}
+	if( nullptr != l_pIPDoc )
+	{
+		l_pIPDoc->SetModifiedFlag();
     }
     	
 	CDialog::OnOK();
 }
-
 
 BOOL SVPixelAnalyzerSetupClass::OnInitDialog() 
 {
@@ -164,7 +154,7 @@ BOOL SVPixelAnalyzerSetupClass::OnInitDialog()
     {
        	CDialog::OnInitDialog();
 
-				SetTaskObject( msvpTool );
+		SetTaskObject( msvpTool );
 
         if (!msvpTool)
         {
@@ -349,7 +339,7 @@ void SVPixelAnalyzerSetupClass::OnPixelSetRange()
             SV_TRAP_ERROR_BRK (msvError, 1121);
         }
 
-		if (SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), msvpParent) != S_OK)
+		if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), msvpParent) )
         {
             msvError.msvlErrorCd = -1122;
             SV_TRAP_ERROR_BRK (msvError, 1122);

@@ -22,68 +22,33 @@ TCHAR SVRCCurrentSVCPathName[ _MAX_PATH ];
 
 SVDataManager TheSVDataManager;
 
-//******************************************************************************
-//* FUNCTION DEFINITION(S):
-//******************************************************************************
-
-void FormatLongerString2( CString& RString, UINT IDS, LPCTSTR LPSZFirst, LPCTSTR LPSZSecond )
-{
-	// Only for MFC-Threads!
-
-	CString message;
-	message.LoadString( IDS );
-
-	if( ! LPSZFirst )
-		LPSZFirst = _T( "" );
-
-	if( ! LPSZSecond )
-		LPSZSecond = _T( "" );
-
-	int first, second;
-	BOOL searching = TRUE;
-	while( searching )
-	{
-		first = message.Find( _T( "%1" ) );
-		second = message.Find( _T( "%2" ) );
-		if( first >= 0 || second >= 0  )
-		{
-			if( first < second && first >= 0 )
-			{
-				RString = RString + message.Left( first ) + LPSZFirst;
-				message = message.Mid( first + 2 );
-			}
-			else
-			{
-				if( second >= 0 )
-				{
-					RString = RString + message.Left( second ) + LPSZSecond;
-					message = message.Mid( second + 2 );
-				}
-			}
-		}
-		else
-		{
-			RString = RString + message;
-			searching = FALSE;
-		}
-	}
-}
-
 CMDIChildWnd* SVSearchForMDIChildWnd( CWnd* PStartWnd )
 {
 	// Only for MFC-Threads!
 
-	while( PStartWnd != NULL )
+	while( nullptr != PStartWnd )
 	{
 		if( ! PStartWnd->IsKindOf( RUNTIME_CLASS( CWnd ) ) )
-			return NULL;
+		{
+			return nullptr;
+		}
 
 		if( PStartWnd->IsKindOf( RUNTIME_CLASS( CMDIChildWnd ) ) )
+		{
 			return( ( CMDIChildWnd* ) PStartWnd );
+		}
 
 		PStartWnd = PStartWnd->GetParent();
 	}
-	return NULL;
+	return nullptr;
+}
+
+// Calculate real pixel number of a line, which is built by Bresenham.
+// Works also with negative values.
+long SVCalcLinePixelNumber( long Width, long Height )
+{
+	long Length = max( labs( Width ), labs( Height ) );
+	return( ( Width && Height ) ? ++Length : Length );
 }
 
 double SVGetDataTypeMin( DWORD DataType )
@@ -204,25 +169,6 @@ double SVGetDataTypeRange( DWORD DataType )
 	// ( long ) pow( 2.0, ( BYTE ) ( DataType ) )
 }
 
-
-
-
-void SVSimpleEncrypt( LPTSTR LPCHCode, int CodeLength, LPCTSTR LPCHKey )
-{
-	int keyLength = static_cast<int>(_tcslen( LPCHKey ));
-	int j = 0;
-	TCHAR tch;
-	for( int i = 0; i < CodeLength; ++i )
-	{
-		tch = LPCHCode[ i ];
-		// a xor b = a or b - a and b
-		LPCHCode[ i ] = ( tch | LPCHKey[ j ] ) - ( tch & LPCHKey[ j ] );
-		if( ++j == keyLength ) 
-			j = 0;
-	}
-}
-
-
 // TStrPathName must be the full pathname of a file
 // or a full pathname of a directory with a slash on the end!
 // e.g.: c:/dir1/dir2/dir3/filename.ext
@@ -238,9 +184,10 @@ BOOL SVCheckPathDir( LPCTSTR TStrPathName, BOOL BCreateIfNotExists )
 {
 	TCHAR  curPath[ _MAX_PATH ];
 	// Save current settings...
-	if( _tgetcwd( curPath, _MAX_PATH ) == NULL )
+	if( nullptr == _tgetcwd( curPath, _MAX_PATH )  )
+	{
 		curPath[ 0 ] = _TCHAR( '/0' );
-
+	}
 	// check path
 	TCHAR  path[ _MAX_PATH ];
 	TCHAR* pLast = ( TCHAR* ) TStrPathName;
@@ -251,7 +198,7 @@ BOOL SVCheckPathDir( LPCTSTR TStrPathName, BOOL BCreateIfNotExists )
 	if( TStrPathName && _tcslen( TStrPathName ) < _MAX_PATH )
 	{
 		_tsplitpath( pLast, drive, dir, fname, ext );
-		if( _tcslen( drive ) == 0 && _tcschr( pLast, _TCHAR( ':' ) ) != NULL )
+		if( _tcslen( drive ) == 0 && nullptr != _tcschr( pLast, _TCHAR( ':' ) ) )
 		{
 			// Restore settings...
 			_tchdir( curPath );
@@ -364,233 +311,6 @@ BOOL SVDeleteFiles( LPCTSTR TStrPathName, BOOL BIncludeSubDirectories )
 	return FALSE;
 }
 
-
-BOOL SVGetAbsoluteFilePathName( CString& RStrOutputPath, LPCTSTR TStrAbsoluteInputPath, LPCTSTR TStrRelativeFileInputPath )
-{
-	// Only for MFC-Threads!
-
-	// TStrAbsoluteInputPath must be the full and absolute pathname 
-	// of a file or directory!
-	// e.g.: c:\dir1\dir2\dir3\filename.ext
-	//       c:\dir1\dir2\
-	// strlen of TStrAbsoluteInputPath must not exceed _MAX_PATH length!
-
-	// TStrRelativeFileInputPath could be any relative path of an existing
-	// file on the same drive as TStrAbsoluteInputPath! 
-	// e.g.: ..\..\dir2\dir3\filename.ext
-	// strlen of TStrAbsoluteInputPath plus strlen of TStrRelativeFileInputPath
-	// must not exceed 2 * _MAX_PATH length!
-
-	// RStrOutputPath receives the MERGED absolute path name of the file, 
-	// if the function is successfully. Otherwise NO changes are made!
-
-	// If successful the function returns TRUE.
-	// That includes path length and path name checking,
-	// and file exist checking!
-	//
-	// In all other cases it returns FALSE.
-	
-
-	if( TStrAbsoluteInputPath && 
-		_tcslen( TStrAbsoluteInputPath ) < _MAX_PATH && 
-		TStrRelativeFileInputPath 
-	  )
-	{
-		TCHAR  tStrPathProcess[ 2 * _MAX_PATH ];
-		TCHAR  tStrPathOut[ _MAX_PATH ];
-		TCHAR* tStrFilePart;
-		TCHAR  drive[ _MAX_DRIVE ];
-		TCHAR  dir[ _MAX_DIR ];
-		TCHAR  fname[ _MAX_FNAME ];  
-		TCHAR  ext[ _MAX_EXT ];
-		_tsplitpath( TStrAbsoluteInputPath, drive, dir, fname, ext );
-
-		// Cut any filename of absolute path away...
-		_tcscpy( tStrPathProcess, drive );
-		_tcscat( tStrPathProcess, dir );
-
-		if( _tcslen( tStrPathProcess ) + _tcslen( TStrRelativeFileInputPath ) < 2 * _MAX_PATH )
-		{
-			// Add relative file path...
-			_tcscat( tStrPathProcess, TStrRelativeFileInputPath );
-			tStrPathOut[ 0 ] = _TCHAR( '\0' );
-			if( GetFullPathName( tStrPathProcess, _MAX_PATH, tStrPathOut, &tStrFilePart ) == _tcslen( tStrPathOut ) )
-			{
-				if( SVFileExists( tStrPathOut ) )
-				{
-					// Success...
-					RStrOutputPath = tStrPathOut;
-					return TRUE;
-				}
-			} 
-		}
-	}
-	return FALSE;
-}
-
-
-
-
-BOOL SVGetRelativeFilePathName( CString& RStrOutputPath, LPCTSTR TStrAbsoluteInputPath, LPCTSTR TStrAbsoluteFileInputPath )
-{
-	// Only for MFC-Threads!
-
-	// TStrAbsoluteInputPath must be the full and absolute pathname 
-	// of a file or directory!
-	// e.g.: c:\dir1\dir2\dir3\filename.ext
-	//       c:\dir1\dir2\
-	// strlen of TStrAbsoluteInputPath must not exceed _MAX_PATH length!
-
-	// TStrAbsoluteFileInputPath must be the full and absolute pathname 
-	// of an existing file on the same drive as TStrAbsoluteInputPath!
-	// e.g.: c:\dir1\dir2\dir4\filename.ext
-	// strlen of TStrAbsoluteFileInputPath must not exceed _MAX_PATH length!
-
-	// RStrOutputPath receives the relative path name of the file, 
-	// that means TStrAbsoluteFileInputPath relative to TStrAbsoluteInputPath,
-	// if the function is successfully. Otherwise NO changes are made!
-
-	// If successful the function returns TRUE.
-	// That includes path length and path name checking,
-	// and file exist checking!
-	//
-	// In all other cases it returns FALSE.
-	
-
-	if( TStrAbsoluteInputPath && 
-		_tcslen( TStrAbsoluteInputPath ) < _MAX_PATH && 
-		TStrAbsoluteFileInputPath &&
-		_tcslen( TStrAbsoluteFileInputPath ) < _MAX_PATH
-	  )
-	{
-		TCHAR  tStrPathOut[ _MAX_PATH ];
-		TCHAR* tStrFilePart;
-
-		TCHAR  tStrPathProcess[ _MAX_PATH ];
-		TCHAR  drive[ _MAX_DRIVE ];
-		TCHAR  dir[ _MAX_DIR ];
-		TCHAR  fname[ _MAX_FNAME ];  
-		TCHAR  ext[ _MAX_EXT ];
-		_tsplitpath( TStrAbsoluteInputPath, drive, dir, fname, ext );
-
-		TCHAR  tStrPathProcess2[ _MAX_PATH ];
-		TCHAR  drive2[ _MAX_DRIVE ];
-		TCHAR  dir2[ _MAX_DIR ];
-		TCHAR  fname2[ _MAX_FNAME ];  
-		TCHAR  ext2[ _MAX_EXT ];
-		_tsplitpath( TStrAbsoluteFileInputPath, drive2, dir2, fname2, ext2 );
-
-		// Check for same drive...
-		if( ! _tcsicmp( drive, drive2 ) && _tcslen( drive ) != 0 )
-		{
-			// Qualify absolute path...
-			_tcscpy( tStrPathProcess, drive );
-			_tcscat( tStrPathProcess, dir );
-			_tcscat( tStrPathProcess, _T( "X" ) );
-			tStrPathOut[ 0 ] = _TCHAR( '\0' );
-			if( GetFullPathName( tStrPathProcess, _MAX_PATH, tStrPathOut, &tStrFilePart ) == _tcslen( tStrPathOut ) )
-			{
-				// Cut dummy filename...
-				*tStrFilePart = _TCHAR( '\0' );
-				// Now we have a regular path ( including drive )...
-				_tcscpy( tStrPathProcess, tStrPathOut );
-
-				// Qualify absolute file path...
-				if( GetFullPathName( TStrAbsoluteFileInputPath, _MAX_PATH, tStrPathOut, &tStrFilePart ) == _tcslen( tStrPathOut ) )
-				{
-					// Now we have a regular file path ( including drive )...
-					_tcscpy( tStrPathProcess2, tStrPathOut );
-					if( SVFileExists( tStrPathProcess2 ) )
-					{
-						// And the file exits...
-						// Create now the relative file path...
-						int count    = 0;
-						int oldCount = 0;
-						TCHAR* pIter;
-						tStrPathOut[ 0 ] = _TCHAR( '\0' );
-						BOOL bFinished = FALSE;
-						while( ! bFinished )
-						{
-							if( ! ( pIter = _tcschr( &tStrPathProcess[ count ], _TCHAR( '\\' ) ) ) )
-							{
-								// No more sub directories in absolute path...
-								bFinished = TRUE;
-							}
-							else
-							{
-								// Check for end of absolute file path...
-								if( ! _tcschr( &tStrPathProcess2[ count ], _TCHAR( '\\' ) ) )
-								{
-									// No more directories in absolute file path...
-
-									// Search for directory depth of absolute path...
-									TCHAR* pIter2;
-									int index = 0;
-									do
-									{
-										pIter2 = _tcschr( &tStrPathProcess[ count + index ], _TCHAR( '\\' ) );
-										if( pIter2 )
-										{
-											index = static_cast<int>(pIter2 - &tStrPathProcess[ count ]) + 1;
-											// Append go backward...
-											_tcscat( tStrPathOut, _T( "..\\" ) );
-										}
-									} while( pIter2 );
-
-									bFinished = TRUE;
-								}
-								else
-								{
-									oldCount = count;
-									// Move to the next valid position...
-									count = static_cast<int>(pIter - tStrPathProcess) + 1;
-
-									if( _tcsnicmp( tStrPathProcess, tStrPathProcess2, count ) )
-									{
-										// Different path at this position...
-
-										// Append go backward...
-										_tcscat( tStrPathOut, _T( "..\\" ) );
-										// Search for directory depth...
-										TCHAR* pIter2;
-										int index = 0;
-										do
-										{
-											pIter2 = _tcschr( &tStrPathProcess[ count + index ], _TCHAR( '\\' ) );
-											if( pIter2 )
-											{
-												index = static_cast<int>(pIter2 - &tStrPathProcess[ count ]) + 1;
-												// Append go backward...
-												_tcscat( tStrPathOut, _T( "..\\" ) );
-											}
-										} while( pIter2 );
-
-										count = oldCount;
-									
-										bFinished = TRUE;
-									}
-
-								}
-					
-							}
-							
-						}
-
-						// Append necessary part of file path...
-						_tcscat( tStrPathOut, &tStrPathProcess2[ count ] );
-
-						RStrOutputPath = tStrPathOut;
-						return TRUE;
-					}
-				}
-			} 
-		}
-	}
-	return FALSE;
-}
-
-
-			
 BOOL SVFileExists( LPCTSTR TStrFilePath )
 {
 	if( TStrFilePath )
@@ -606,8 +326,6 @@ BOOL SVFileExists( LPCTSTR TStrFilePath )
 	}
 	return FALSE;
 }
-
-
 
 BOOL SVGetPathInformation( CString& RStrOutput, LPCTSTR TStrFileInputPath, DWORD DwMask )
 {
@@ -652,48 +370,6 @@ BOOL SVGetPathInformation( CString& RStrOutput, LPCTSTR TStrFileInputPath, DWORD
 	return FALSE;
 }
 
-
-BOOL SVWaitXTimesForSingleObject( HANDLE HWaitObject, DWORD DwWaitTime, int XTimes )
-{
-	BOOL BRetVal = ( XTimes > 0 );
-
-	while( XTimes-- > 0 )
-		if( WaitForSingleObject( HWaitObject, DwWaitTime ) == WAIT_OBJECT_0 )
-			ResetEvent( HWaitObject );
-		else
-			BRetVal = FALSE;
-
-	return BRetVal;
-}
-
-BOOL SVSelectListCtrlItem( CListCtrl& RListControl, int Item )
-{
-	RECT rect;
-	rect.left = 0;
-	rect.top = 0;
-	
-	if( Item >= 0 && Item < RListControl.GetItemCount() ) 
-		RListControl.GetItemRect( Item, &rect, LVIR_LABEL );
-	
-	DWORD lParam = (DWORD) rect.top;
-	lParam *= 256 * 256;
-	lParam += ( DWORD ) rect.left;
-
-	// Catch focus...
-//	HWND hOldFocusOwner = ::SetFocus( RListControl.m_hWnd );
-	CWnd* pOldFocusOwner = RListControl.SetFocus();
-
-	// Select list ctrl item...( via mouse click! )
-	BOOL BRetVal = ( RListControl.SendMessage( WM_LBUTTONDOWN, MK_LBUTTON, lParam ) == 0 );
-	
-	// Recover old focus state...
-	if( /*hOldFocusOwner*/ pOldFocusOwner )
-//		::SetFocus( hOldFocusOwner );
-		pOldFocusOwner->SetFocus();
-
-	return BRetVal;
-}
-
 BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion )
 {
 	int subVersion   = ( int ) LOBYTE( LOWORD( dwVersion ) );
@@ -725,83 +401,6 @@ BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion )
 #endif
 	return TRUE;
 }
-
-/*---- 01 Nov 1999 - frb.
-int	sv_strncpy (char		*destString,
-				const char	*sourceString,
-				int			nbrOfBytes)
-{
-	strncpy (destString, sourceString, nbrOfBytes);
-
-	destString [nbrOfBytes - 1] = 0;
-
-	return 0;
-}
--------*/
-
-
-/*------------ 09 Dec 1999 - obsolete - frb.
-HBITMAP SVMilBufferToBitmap( MIL_ID MilBufferID ) 
-{
-    if( MilBufferID == M_NULL )
-        return NULL;
-
-    // Try to get device context of mil buffer...
-	MbufControl( MilBufferID, M_WINDOW_DC_ALLOC, M_DEFAULT );
-	HDC hDC			  = ( HDC ) MbufInquire( MilBufferID, M_WINDOW_DC, M_NULL );
-    HDC hMemDC		  = NULL;
-	HBITMAP hResultBM = NULL;
-    if( hDC != M_NULL )
-	{
-
-        if( hMemDC = ::CreateCompatibleDC( hDC ) )
-        {
-			HBITMAP hOrgBitmap = ( HBITMAP ) ::GetCurrentObject( hDC, OBJ_BITMAP );
-
-			// Get bitmap info...
-			BITMAP bmInfo;
-			::GetObject( hOrgBitmap, sizeof( BITMAP ), &bmInfo );
-
-			HBITMAP hReplaceBM = ::CreateCompatibleBitmap( hDC, bmInfo.bmWidth, bmInfo.bmHeight );
-			HBITMAP hOldBM = ( HBITMAP ) ::SelectObject( hMemDC, hReplaceBM );
-
-            // Copy source bitmap into memDC...
-            ::SetStretchBltMode( hDC, COLORONCOLOR );
-            ::StretchBlt( hMemDC, 0, 0, bmInfo.bmWidth, bmInfo.bmHeight, hDC, 0, 0, bmInfo.bmWidth, bmInfo.bmHeight, SRCCOPY );
-
-			// Replace bitmap and kill memDC...
-			hResultBM = ( HBITMAP ) ::SelectObject( hMemDC, hOldBM );
-            ::DeleteDC( hMemDC );
-		}
-         
-		// Release mil buffer dc...
-        MbufControl( MilBufferID, M_WINDOW_DC_FREE, M_DEFAULT );
-
-	}
-
-	return hResultBM;
-}
---------------*/
-
-
-int SVCompareNoCase( LPCTSTR TStrString1, LPCTSTR TStrString2 )
-{
-	if( ! TStrString1 )
-	{
-		if( ! TStrString2 )
-			return 0;
-		else
-			return -1;
-	}
-	
-	if( ! TStrString2 )
-		return 1;
-	
-	size_t count = __max( _tcslen( TStrString1 ), _tcslen( TStrString2 ) );
-	return _tcsnicmp( TStrString1, TStrString2, count );
-}
-
-
 
 // Escapes Special Characters in CStrings 
 bool SVAddEscapeSpecialCharacters( CString& RString, bool bConvertCtrl )
@@ -955,7 +554,7 @@ void SVConvertToHexString( DWORD len, LPBYTE buff, CString& hexString )
 BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, CString& hexString )
 {
 	CString tmpStr;
-	*buff = NULL;
+	*buff = nullptr;
 	len = 0;
 
 	// get length first
@@ -1016,15 +615,11 @@ BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, CString& hexString )
 // .Title       : SVFindMenuByCommand
 // -----------------------------------------------------------------------------
 // .Description : Returns 'parent' menu and position of searched menu, if any. 
-//				: Otherwise NULL.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
+//				: Otherwise nullptr.
 ////////////////////////////////////////////////////////////////////////////////
 CMenu* SVFindMenuByCommand( CMenu *pMenu, int nID, BOOL bIncludeSubMenues, int& rMenuPos )
 {
-	CMenu* pRetMenu = NULL;
+	CMenu* pRetMenu = nullptr;
 	if( pMenu )
 	{
 		int count = pMenu->GetMenuItemCount();
@@ -1050,21 +645,15 @@ CMenu* SVFindMenuByCommand( CMenu *pMenu, int nID, BOOL bIncludeSubMenues, int& 
 	return pRetMenu;
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVFindMenuByName
 // -----------------------------------------------------------------------------
 // .Description : Returns 'parent' menu and position of searched menu, if any.
-//				: Otherwise NULL.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
+//				: Otherwise nullptr.
 ////////////////////////////////////////////////////////////////////////////////
 CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues, int& rMenuPos )
 {
-	CMenu* pRetMenu = NULL;
+	CMenu* pRetMenu = nullptr;
 	if( pMenu && szMenuString )
 	{
 		int count = pMenu->GetMenuItemCount();
@@ -1093,21 +682,16 @@ CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMen
 	}
 	return pRetMenu;
 }
-
  
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVFindSubMenuByName
 // -----------------------------------------------------------------------------
 // .Description : Returns pointer to sub menu which is searched for, if any.
-//				: Otherwise NULL.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
+//				: Otherwise nullptr.
 ////////////////////////////////////////////////////////////////////////////////
 CMenu* SVFindSubMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues )
 {
-	CMenu* pRetMenu = NULL;
+	CMenu* pRetMenu = nullptr;
 	if( pMenu && szMenuString )
 	{
 		int count = pMenu->GetMenuItemCount();
@@ -1136,73 +720,6 @@ CMenu* SVFindSubMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSub
 	return pRetMenu;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVCartesianToPolar
-// -----------------------------------------------------------------------------
-// .Description : Returns radius and angle of converted point.
-//				: Angle is given back in Degree ( 0.0...360.0 )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.02.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVCartesianToPolar( const POINT& RPoint, double& RRadius, double& RAngle )
-{
-	double radGrad = 3.14159265 / 180.0;
-	double radius = RPoint.x * RPoint.x + RPoint.y * RPoint.y;
-	RRadius = ( radius > 0.0 ) ? sqrt( radius ) : 0;
-	// gives back -180.0...180.0
-	RAngle = atan2( (double)-RPoint.y, (double)RPoint.x ) / radGrad;
-	// Convert to 0...360
-	if( RAngle < 0.0 )
-	{
-		RAngle = 360.0 + RAngle;
-	}
-	return TRUE;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVPolarToCartesian
-// -----------------------------------------------------------------------------
-// .Description : Returns POINT defined by radius and angle.
-//				: Angle must be given in Degree ( 0.0...360.0 )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.02.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVPolarToCartesian( double Radius, double Angle, POINT& RPoint )
-{
-	double radGrad = 3.14159265 / 180.0;
-	double ang = Angle * radGrad;
-	RPoint.x = (long)(Radius * cos( ang ));
-	RPoint.y = (long)(- Radius * sin( ang ));
-	return TRUE;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVPolarToCartesian
-// -----------------------------------------------------------------------------
-// .Description : Returns POINT defined by radius and angle.
-//				: Angle must be given in Degree ( 0.0...360.0 )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.02.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-POINT SVPolarToCartesian( double Radius, double Angle )
-{
-	double radGrad = 3.14159265 / 180.0;
-	double ang = Angle * radGrad;
-	POINT retPoint;
-	retPoint.x = (long)(Radius * cos( ang ));
-	retPoint.y = (long)(- Radius * sin( ang ));
-	return retPoint;
-}
-
-
 LPCTSTR SVRCGetSVCPathName()
 {
 	DWORD dwType, dwSize, dwResult;
@@ -1217,16 +734,16 @@ LPCTSTR SVRCGetSVCPathName()
                              0L, KEY_QUERY_VALUE, &hKey);
 	if (dwResult == ERROR_SUCCESS)
 	{
-		RegQueryValueEx (hKey, _T("CurrentSVCPathName"), (DWORD *) NULL, &dwType, (BYTE *) SVRCCurrentSVCPathName, &dwSize);
+		RegQueryValueEx (hKey, _T("CurrentSVCPathName"), (DWORD *) nullptr, &dwType, (BYTE *) SVRCCurrentSVCPathName, &dwSize);
 		RegCloseKey (hKey);
 	}
 	else
 	{
 #ifdef _DEBUG
 		char *pszBuff;
-		pszBuff = NULL;
+		pszBuff = nullptr;
 		FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-					   NULL, dwResult, 0, (char *) &pszBuff, 0, NULL);
+					   nullptr, dwResult, 0, (char *) &pszBuff, 0, nullptr);
 		ASSERT( false );// pszBuff
 		LocalFree (pszBuff);
 #endif
@@ -1314,7 +831,3 @@ bool EnableParentMenu(CMenu* pMenu, UINT ID, bool Enable, int start )
 	}
 	return false;
 }
-
-
-//** EOF **
-

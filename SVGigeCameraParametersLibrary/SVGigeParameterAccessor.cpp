@@ -67,7 +67,7 @@ HRESULT SVGigeParameterAccessor::GetFeature(SVMatroxDigitizerRef Digitizer, cons
 		{
 			variant_t value("");
 			hr = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVMatroxString(rFeature.GetName().c_str()), rFeature.GetType(), value);
-			if (hr == S_OK)
+			if (S_OK == hr)
 			{
 				SVGigeFeatureString gigeFeatureValue(SvUl_SF::createSVString(value));
 				SVDeviceParamString deviceParamString;
@@ -104,7 +104,7 @@ HRESULT SVGigeParameterAccessor::SetFeature(SVMatroxDigitizerRef Digitizer, cons
 			SVGigeFeatureString gigeFeatureValue;
 			
 			hr = rFeature.GetGigeFeatureString(deviceParamString, gigeFeatureValue);
-			if (hr == S_OK)
+			if (S_OK == hr)
 			{
 				variant_t value(gigeFeatureValue.c_str());
 				hr = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString(rFeature.GetName().c_str()), rFeature.GetType(), value);

@@ -9,9 +9,12 @@
 //* .Check In Date   : $Date:   09 Aug 2013 12:04:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVUnaryImageOperatorClass.h"
-#include "SVUnaryImageOperatorList.h"
+#include "SVStdImageOperatorListClass.h"
+#include "SVInPlaceImageOperatorListClass.h"
+#pragma region Includes
 
 SV_IMPLEMENT_CLASS( SVUnaryImageOperatorClass, SVUnaryImageOperatorClassGuid )
 
@@ -21,24 +24,24 @@ SVUnaryImageOperatorClass::SVUnaryImageOperatorClass( SVObjectClass* POwner, int
 	init();
 }
 
+SVUnaryImageOperatorClass::~SVUnaryImageOperatorClass()
+{
+}
+
 void SVUnaryImageOperatorClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
 
 	// Identify our input type needs
-//	inputImageObjectInfo.InputObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
-//	inputImageObjectInfo.SetObject( GetObjectInfo() );
 
 	// Register Embedded Object(s)
-//	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
 	// Set Embedded defaults
 	m_pCurrentUIOPL = nullptr;
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
-
 }
 
 BOOL SVUnaryImageOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
@@ -50,11 +53,11 @@ BOOL SVUnaryImageOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 		// Owner can only be : SVUnaryImageOperatorListClass !!!
 		if( m_pCurrentUIOPL = dynamic_cast<SVUnaryImageOperatorListClass*>(GetOwner()) )
 		{
-			bOk = TRUE;
+			bOk = true;
 		}
 	}
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -102,7 +105,7 @@ BOOL SVUnaryImageOperatorClass::Run( BOOL First, SVSmartHandlePointer RInputImag
 BOOL SVUnaryImageOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 {
 	ASSERT(0);
-	return FALSE;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +132,6 @@ SVImageClass* SVUnaryImageOperatorClass::getReferenceImage()
 		// Input image is reference...
 		return m_pCurrentUIOPL->getInputImage();
 	}
-
-	return NULL;
+	return nullptr;
 }
 

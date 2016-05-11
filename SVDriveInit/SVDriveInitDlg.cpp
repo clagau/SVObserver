@@ -429,36 +429,6 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// Get the Windows NT productID (Certificate of Authenticity) from the registry
-////////////////////////////////////////////////////////////////////////////////////////
-bool SVDriveInitDlg::GetProductId() const
-{
-    bool rc = true;
-    // update the productID
-    HKEY regKey;
-    LONG retCode = RegOpenKeyEx(HKEY_LOCAL_MACHINE, productIdLocation, 0, KEY_QUERY_VALUE, &regKey);
-    
-    if (ERROR_SUCCESS == retCode)
-    {
-        TCHAR oemProductID[REGISTRYPRODUCTID_SIZE + 1];
-        
-        // Read the ProductId
-        DWORD type;
-        DWORD len = sizeof(oemProductID);
-        retCode = RegQueryValueEx(regKey, g_ProductIdTag, 0, &type, reinterpret_cast<BYTE *>(oemProductID), &len);
-        
-        if (ERROR_SUCCESS != retCode)
-        {
-            AfxMessageBox(IDS_GET_PRODUCTID_FAILED);
-            rc = false;
-        }
-        RegFlushKey(regKey);
-        RegCloseKey(regKey);
-    }
-    return rc;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
 // Get the OEM Specific info from the oeminfo.ini file
 ////////////////////////////////////////////////////////////////////////////////////////
 bool SVDriveInitDlg::GetOEMInfo()
@@ -939,8 +909,6 @@ HRESULT SVDriveInitDlg::UpdateMatrox(LPCTSTR p_szDigitizer)
 		CString l_From;
 		CString l_To;
 
-		// l_Status = AddMatroxBootIniMaxMem(l_Size);   // This causes the system to crash on boot.  Use MILConfig to set memory.
-
 		l_From.Format(g_mtxgigeSVR, windowsDriverPath);
 		l_To.Format(g_mtxgigeSYS, windowsDriverPath);
 
@@ -1047,88 +1015,11 @@ HRESULT SVDriveInitDlg::UpdateMatroxRegistryMaxMem(size_t& p_rMaxSize, size_t p_
 	return l_Status;
 }
 
-HRESULT SVDriveInitDlg::AddMatroxBootIniMaxMem(size_t p_MILSize)
-{
-	HRESULT l_Status = BackupBootIni();
-
-	if (S_OK == l_Status)
-	{
-		DWORD l_Attr = GetFileAttributes(g_bootIniFilepath);
-	  
-		//remove the read only flag
-		l_Attr = l_Attr & ~FILE_ATTRIBUTE_READONLY;
-	  
-		//set the file to read only
-		SetFileAttributes(g_bootIniFilepath, l_Attr);
-
-		CString l_Default;
-
-		TCHAR* l_pszDefault = l_Default.GetBuffer(TmpBufSize);
-		GetPrivateProfileString(g_bootLoaderTag, g_defaultTag, _T(""), l_pszDefault, TmpBufSize, g_bootIniFilepath);
-		l_Default.ReleaseBuffer();
-
-		if (0 < l_Default.GetLength())
-		{
-			CString l_Option;
-
-			TCHAR *l_pszOption = l_Option.GetBuffer(TmpBufSize);
-			GetPrivateProfileString(g_OperatingSystemsTag, l_Default, _T(""), l_pszOption, TmpBufSize, g_bootIniFilepath);
-			l_Option.ReleaseBuffer();
-
-			if (0 < l_Option.GetLength())
-			{
-				if (-1 == l_Option.Find(g_MaxMemTag))
-				{
-					int l_Pos = l_Option.ReverseFind(_T('\"'));
-
-					if (-1 != l_Pos)
-					{
-						size_t l_MaxSize = 0;
-
-						l_Status = UpdateMatroxRegistryMaxMem(l_MaxSize, p_MILSize);
-
-						if (S_OK == l_Status)
-						{
-							CString l_NewOption;
-
-							l_NewOption.Format(g_ReserveMemoryEntry, 
-								l_Option.Left(l_Pos), static_cast<int>(l_MaxSize), static_cast<int>(p_MILSize), l_Option[l_Pos], static_cast<int>(p_MILSize), l_Option.Mid(l_Pos + 1));
-
-							WritePrivateProfileString(g_OperatingSystemsTag, l_Default, l_NewOption, g_bootIniFilepath);
-						}
-					}
-					else
-					{
-						l_Status = E_FAIL;
-					}
-				}
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-
-		l_Attr = GetFileAttributes(g_bootIniFilepath);
-	  
-		//remove the read only flag
-		l_Attr = l_Attr | FILE_ATTRIBUTE_READONLY;
-	  
-		//set the file to read only
-		SetFileAttributes(g_bootIniFilepath, l_Attr);
-	}
-	return l_Status;
-}
-
 HRESULT SVDriveInitDlg::RemoveMatroxBootIniMaxMem()
 {
 	HRESULT l_Status = BackupBootIni();
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		DWORD l_Attr = GetFileAttributes(g_bootIniFilepath);
 	  

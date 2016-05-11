@@ -63,8 +63,8 @@ void SVArchiveTool::initializeArchiveTool()
 	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
 
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVToolArchiveObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVToolArchiveObjectType;
 	
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -232,7 +232,7 @@ BOOL SVArchiveTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
 	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -277,10 +277,10 @@ HRESULT SVArchiveTool::ResetObject()
 		m_arrayResultsInfoObjectsToArchive.ConvertStringToGuids( this, (LPCTSTR) csTemp );
 	}
 
-	if ( GetInspection() != NULL && GetInspection()->IsResetStateSet( SVResetStateArchiveToolCreateFiles ) )
+	if ( nullptr != GetInspection() && GetInspection()->IsResetStateSet( SVResetStateArchiveToolCreateFiles ) )
 	{
 		HRESULT hrInitialize = initializeOnRun();
-		m_bInitializedForRun = hrInitialize == S_OK;
+		m_bInitializedForRun = S_OK == hrInitialize;
 	}
 	else
 	{
@@ -300,8 +300,7 @@ SVArchiveTool::~SVArchiveTool()
 
 // Should be overridden and must be called in derived classes...
 // Sets Depth of Array for historical purposes 
-// (i.e. to get images/results N events ago) SEJ
-//
+// (i.e. to get images/results N events ago)
 BOOL SVArchiveTool::SetObjectDepth( int NewObjectDepth )
 {
 	// Set object depth of members here...
@@ -313,8 +312,7 @@ BOOL SVArchiveTool::SetObjectDepth( int NewObjectDepth )
 
 // Should be overridden and must be called in derived classes...
 // Sets Depth of Array for historical purposes 
-// (i.e. to get images/results N events ago) SEJ
-//
+// (i.e. to get images/results N events ago)
 BOOL SVArchiveTool::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
 {
 	// Set object depth of members here...
@@ -393,7 +391,7 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 	
 	BOOL bResult = m_fileArchive.Open( (LPCTSTR)csFileArchivePath,
 	                                   uOpenFlags,
-	                                   NULL );
+	                                   nullptr );
 
 	if(!bResult)
 	{
@@ -430,7 +428,7 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 
 		bool bUseHeaders = false;
 		HRESULT hr = m_bvoUseHeaders.GetValue( bUseHeaders );
-		if( hr == S_OK && bUseHeaders )
+		if( S_OK == hr && bUseHeaders )
 		{
 			// Write Header
 			std::vector<CString> astrHeaders;
@@ -498,7 +496,6 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 		//Display message that the Archive Tool path is full
 		SVString sMessage;
 		sMessage = SvUl_SF::Format(" %s - drive is full.", csImagePath.GetString());
-		//GetUniqueObjectID()
 		SVVisionProcessorHelper::Instance().AddToolError(GetUniqueObjectID(),sMessage);
 	}
 	m_uiValidateCount = 0;
@@ -650,7 +647,7 @@ DWORD_PTR SVArchiveTool::processMessage( DWORD dwMessageID,
                                      DWORD_PTR dwMessageContext )
 {
 	//BOOL bResult;
-	DWORD_PTR dwResult = NULL;
+	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = dwMessageID & SVM_PURE_MESSAGE;
 	switch (dwPureMessageID)
@@ -769,7 +766,7 @@ HRESULT SVArchiveTool::initializeOnRun()
 	if ( m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
 	{
 		HRESULT hrAllocate = AllocateImageBuffers();
-		if ( hrAllocate != S_OK )
+		if ( S_OK != hrAllocate )
 			return hrAllocate;
 
 		if ( m_eArchiveMethod == SVArchiveAsynchronous )
@@ -825,7 +822,7 @@ HRESULT SVArchiveTool::AllocateImageBuffers()
 		DWORD dwMaxImages;
 		m_dwArchiveMaxImagesCount.GetValue( dwMaxImages );
 		HRESULT hrAllocate = m_arrayImagesInfoObjectsToArchive.AllocateBuffers( dwMaxImages );
-		ASSERT( hrAllocate == S_OK );
+		ASSERT( S_OK == hrAllocate );
 		return hrAllocate;
 	}
 	return S_OK;
@@ -1052,7 +1049,7 @@ void SVArchiveTool::RebuildImageArchiveList()
 	{
 		SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-		if( ( pImage != NULL ) && ( pImage->ObjectAttributesSet() & SV_ARCHIVABLE_IMAGE ) )
+		if( ( nullptr != pImage ) && ( pImage->ObjectAttributesSet() & SV_ARCHIVABLE_IMAGE ) )
 		{
 			AddImageToArray( pImage );
 			pImage->ObjectAttributesSetRef() &= ~SV_ARCHIVABLE_IMAGE;	// WHY??
@@ -1127,49 +1124,6 @@ void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageL
 	}// end for (int i = 0; i < nCount; i++)
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-void SVArchiveTool::UpdateImagePointerInImageArray(	SVArchiveRecord* pImageRecord )
-{
-	CString csImageDottedName = pImageRecord->GetImageObjectName();
-	pImageRecord->GetObjectReference() = NULL;           
-	
-	//
-	// Get a pointer to the toolset
-	//
-	SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
-	
-	SVErrorClass msvError;
-	msvError.ClearLastErrorCd ();
-	
-	SVObjectTypeInfoStruct info;
-
-	info.ObjectType = SVImageObjectType;
-	info.SubType = SVNotSetSubObjectType;
-
-	SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, GetInspection()->GetUniqueObjectID() );
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
-	{
-		SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-		if (pImage)
-		{
-			CString csDottedNameToCheck = pImage->GetCompleteObjectName();
-			if (csImageDottedName == csDottedNameToCheck)
-			{
-				pImageRecord->GetObjectReference() = pImage->GetObjectInfo().GetObjectReference();
-				return;
-			}
-		}
-	}
-}
-
 // Check for duplicate archive result file path in some other tool or 
 // toolset in the system.
 //
@@ -1181,28 +1135,24 @@ BOOL SVArchiveTool::CheckForUniqueArchiveFilePath( LPCTSTR pszArchiveFilePathToT
 	return TRUE;
 }
 
-
 BOOL SVArchiveTool::GetFileArchive( CString& rcsName )
 {
-	return m_stringFileArchivePath.GetValue( rcsName ) == S_OK;
+	return S_OK == m_stringFileArchivePath.GetValue( rcsName );
 }
-
 
 BOOL SVArchiveTool::GetImageArchivePath( CString& rcsName )
 {
-	return m_stringImageFileRootPath.GetValue( rcsName ) == S_OK;
+	return S_OK == m_stringImageFileRootPath.GetValue( rcsName );
 }
-
 
 BOOL SVArchiveTool::SetFileArchive( LPCTSTR lpszName )
 {
-	return m_stringFileArchivePath.SetValue( 1, lpszName ) == S_OK;
+	return S_OK == m_stringFileArchivePath.SetValue( 1, lpszName );
 }
-
 
 BOOL SVArchiveTool::SetImageArchivePath( LPCTSTR lpszName )
 {
-	return m_stringImageFileRootPath.SetValue( 1, lpszName ) == S_OK;
+	return S_OK == m_stringImageFileRootPath.SetValue( 1, lpszName );
 }
 
 
@@ -1235,24 +1185,11 @@ HRESULT SVArchiveTool::WriteBuffers()
 	// write images
 
 	HRESULT hrImages = m_arrayImagesInfoObjectsToArchive.WriteImageQueue();
-	if ( hr == S_OK )
-		hr = hrImages;
-
-	return hr;
-}
-
-long SVArchiveTool::TotalImageMemoryUsage()
-{
-	long lTotalMemory = 0;
-
-	int iSize = m_arrayImagesInfoObjectsToArchive.GetSize();
-	for ( int i = 0; i < iSize; i++ )
+	if ( S_OK == hr )
 	{
-		SVArchiveRecord* pRecord = m_arrayImagesInfoObjectsToArchive.GetAt(i);
-		lTotalMemory += pRecord->GetImageMemorySize();
+		hr = hrImages;
 	}
-
-	return lTotalMemory;
+	return hr;
 }
 
 long SVArchiveTool::CalculateImageMemory( SVImageClass* p_pImage )
@@ -1291,15 +1228,15 @@ BOOL SVArchiveTool::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR o
 
 		if( const SVInspectionProcess* l_pInspection = dynamic_cast<const SVInspectionProcess*> (pObject) )
 		{
-			newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+			newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
 		}// end if
 		else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
 		{
-			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType );
+			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
 		}
 		else
 		{
-			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+			newPrefix = pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
 		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );

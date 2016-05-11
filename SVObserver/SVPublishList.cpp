@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVPublishList.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVDigitalOutputObject1.h"
+#include "SVDigitalOutputObject.h"
 #include "SVTaskObject.h"
 #include "SVOutputObjectList.h"
 #include "SVInfoStructs.h"
@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 
 SVPublishListClass::SVPublishListClass()
 {
-	hProtectionMutex   = hProtectionMutex = CreateMutex( NULL, FALSE, NULL );
+	hProtectionMutex   = hProtectionMutex = CreateMutex( nullptr, false, nullptr );
 	dwWaitTime		   = 2000;
 }
 
@@ -51,7 +51,7 @@ void SVPublishListClass::Destroy()
 			return;
 
 		CloseHandle( hProtectionMutex );
-		hProtectionMutex = NULL;
+		hProtectionMutex = nullptr;
 	}
 
 	RemoveAll();
@@ -100,7 +100,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 		if( !found ) // not found - have to remove it
 		{
-			bOk = ( SVObjectManagerClass::Instance().GetObject( pPublishedOutObjectInfo->UniqueObjectID ) != NULL );
+			bOk = ( nullptr != SVObjectManagerClass::Instance().GetObject( pPublishedOutObjectInfo->UniqueObjectID ) );
 			if( !bOk )
 			{
 				RemoveAt( i );
@@ -113,7 +113,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			InObjectInfo.SetInputObject( pPublishedOutObjectInfo->UniqueObjectID );
 
 			// Disconnect
-			::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), NULL );
+			::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), 0 );
 
 			//if( should not be anymore published )
 			SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->PObject->GetPublicAttribute();
@@ -179,7 +179,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			InObjectInfo.SetInputObject( pOutObjectInfo->UniqueObjectID );
 
 			// connect to the object
-			if( ::SVSendMessage( pOutObjectInfo->PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), NULL ) == SVMR_SUCCESS )
+			if( SVMR_SUCCESS == ::SVSendMessage( pOutObjectInfo->PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), 0 ) )
 			{
 				SVValueObjectClass* pValueObject = dynamic_cast< SVValueObjectClass* >( SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->UniqueObjectID ) );
 				if( pValueObject )
@@ -199,7 +199,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 					if( nullptr == pValueParent )
 					{
 						pValueParent = pValueObject->GetOwner();
-						while( pValueParent != NULL && !SV_IS_KIND_OF( pValueParent, SVInspectionProcess ) )
+						while( nullptr != pValueParent && !SV_IS_KIND_OF( pValueParent, SVInspectionProcess ) )
 							pValueParent = pValueParent->GetOwner();
 					}
 
@@ -271,7 +271,7 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 		InObjectInfo.SetInputObject( pPublishedOutObjectInfo->UniqueObjectID );
 
 		// Disconnect
-		::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), NULL );
+		::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), 0 );
 		
 		//if( should not be anymore published )
 		SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->PObject->GetPublicAttribute();

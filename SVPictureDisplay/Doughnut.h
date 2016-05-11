@@ -22,6 +22,7 @@ class Doughnut : public EllipseObject
 public:
 #pragma region Constructor
 	Doughnut();
+	virtual ~Doughnut();
 #pragma endregion Constructor
 
 #pragma region Public Methods

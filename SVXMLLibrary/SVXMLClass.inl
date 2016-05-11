@@ -40,7 +40,7 @@ HRESULT SVXMLClass::CopyTreeToXMLFile (SVT_TREE& rTree, long alSVOCurrentVersion
 				break;
 			}
 
-			hr = CalculateNodeCheckSums (oDOMRootPtr, &ulCheckSum, g_lXMLCheckSumCreate, NULL);
+			hr = CalculateNodeCheckSums (oDOMRootPtr, &ulCheckSum, g_lXMLCheckSumCreate, nullptr);
 
 			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
@@ -72,7 +72,7 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 
 	SVBStr bstrNameSpace;
 
-	oDOMRootPtr = NULL;
+	oDOMRootPtr = nullptr;
 
 	while (1)
 	{
@@ -154,7 +154,7 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 		}
 
 //-	There should be a root. It should have been created in Clear ().
-		if (oDOMRootPtr == NULL)
+		if (nullptr == oDOMRootPtr)
 		{
 			hr = -1695;
 			break;
@@ -190,12 +190,12 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 
 	SVXML::IXMLDOMElementPtr oDOMNewParentElementPtr;
 
-	if( svmlInitialized == 0 )
+	if( 0 == svmlInitialized )
 	{
 		l_Status = -1637;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_bstr_t bstrTreeNodeName;
 
@@ -210,17 +210,17 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 			l_Status = CreateDOMNode( oDOMNewParentElementPtr, bstrTreeNodeName ); 
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = AppendCarriageReturnToDOMNode( oDOMNewParentElementPtr );
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		if( rTree.hasLeaves( alTreeNodeHandle ) )
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVT_TREE::SVLeafHandle pLeaf;
 
@@ -232,17 +232,17 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 
 					l_Status = CopyTreeDataToDOMData( rTree, pLeaf, oDOMNewChildElementPtr );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = AppendChildToDOMNode( oDOMNewParentElementPtr, oDOMNewChildElementPtr );
 
-						if( l_Status == S_OK )
+						if( S_OK == l_Status )
 						{
 							l_Status = AppendCarriageReturnToDOMNode( oDOMNewParentElementPtr );
 						}
 					}
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						pLeaf = rTree.getNextLeaf( alTreeNodeHandle, pLeaf );
 					}
@@ -260,11 +260,11 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		if( rTree.hasBranches( alTreeNodeHandle ) )
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVT_TREE::SVBranchHandle l_Child( nullptr );
 				SVT_TREE::SVBranchHandle l_Parent( alTreeNodeHandle );
@@ -277,17 +277,17 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 
 					l_Status = CopyTreeNodeToDOMNode( rTree, l_Child, oDOMNewChildElementPtr );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = AppendChildToDOMNode( oDOMNewParentElementPtr, oDOMNewChildElementPtr );
 
-						if( l_Status == S_OK )
+						if( S_OK == l_Status )
 						{
 							l_Status = AppendCarriageReturnToDOMNode( oDOMNewParentElementPtr );
 						}
 					}
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Child = rTree.getNextBranch( l_Parent, l_Child );
 					}
@@ -305,7 +305,7 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		arDOMParentNodePtr = oDOMNewParentElementPtr;
 	}

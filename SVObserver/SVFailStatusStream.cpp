@@ -92,11 +92,11 @@ HRESULT SVFailStatusStream::BuildJsonStream(const SVProductInfoStruct& rData, SV
 			{
 				const SVObjectReference& rObject = *(it);
 
-				if (rObject.Object() != nullptr)
+				if (nullptr != rObject.Object())
 				{
 					SVValueObjectClass* pValue = dynamic_cast<SVValueObjectClass *>(rObject.Object());
 
-					if (pValue != nullptr)
+					if (nullptr != pValue)
 					{
 						Json::Value elementObject(Json::objectValue);
 						Json::Value arrayObject(Json::arrayValue);

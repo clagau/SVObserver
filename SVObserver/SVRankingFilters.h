@@ -19,22 +19,12 @@
 // .Title       : SVRankingFilterClass
 // -----------------------------------------------------------------------------
 // .Description : Base class for all kinds of custom filters
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 class SVRankingFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVRankingFilterClass );
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-// Standard constructor
 	SVRankingFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANKINGFILTER );
 	virtual ~SVRankingFilterClass();
 	
@@ -113,4 +103,3 @@ private:
 	SVLongValueObjectClass m_lvoRankingHeight;
 	SVLongValueObjectClass m_lvoRankingRank;
 };
-

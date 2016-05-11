@@ -9,59 +9,20 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:55:50  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
-
-////////////////////////////////////////////////////////////////////////////////
-// Other Necessary Include File(s) - Module Link(s)
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// Prototyping
-////////////////////////////////////////////////////////////////////////////////
-
 #include "SVResultDouble.h"
 #include "SVRange.h"
+#pragma endregion Includes
 
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVDoubleResultClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVDoubleResultClass, SVDoubleResultClassGuid );
-
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 SVDoubleResultClass::SVDoubleResultClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 				  :SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVResultDoubleObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultDoubleObjectType;
 
 	// Identify our input type needs
 	inputObjectInfo.SetInputObjectType( SVDoubleValueObjectType );
@@ -106,16 +67,16 @@ SVDoubleResultClass::~SVDoubleResultClass()
 
 BOOL SVDoubleResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVResultClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = getInput() != NULL;
+		bOk = nullptr != getInput();
 	}
 
 	value.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }

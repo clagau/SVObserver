@@ -9,14 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:57:38  $
 //******************************************************************************
 
-#if !defined(AFX_SVUTILITIESCUSTOMIZEDIALOG_H__0011F4F0_9C37_11D3_A80B_00106F010A93__INCLUDED_)
-#define AFX_SVUTILITIESCUSTOMIZEDIALOG_H__0011F4F0_9C37_11D3_A80B_00106F010A93__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "SVUtilities.h"
+#pragma region Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVUtilitiesCustomizeDialogClass dialog
@@ -26,25 +23,24 @@ class SVUtilitiesCustomizeDialogClass : public CDialog
 // Construction
 public:
 	CString mszUtilityKey;
-	SVUtilitiesCustomizeDialogClass(CWnd* pParent = NULL);   // standard constructor
-
-	void SetUtilityClass(SVUtilitiesClass *pUtilClass );
+	SVUtilitiesCustomizeDialogClass(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVUtilitiesCustomizeDialogClass();
 
 private:
 	void SetDeleteState (BOOL bEnabled);
 	void SetApplyState (BOOL bEnabled);
-  CString mszCommandValueName;
-  CString mszArgumentsValueName;
-  CString mszWorkingDirectoryValueName;
-  CString mszPromptValueName;
-  CString mszIdValueName;
-  UINT    muiId;
-  SVUtilitiesClass *m_pUtilityClass;
+	CString mszCommandValueName;
+	CString mszArgumentsValueName;
+	CString mszWorkingDirectoryValueName;
+	CString mszPromptValueName;
+	CString mszIdValueName;
+	UINT    muiId;
+	SVUtilitiesClass *m_pUtilityClass;
 
 // Dialog Data
 	//{{AFX_DATA(SVUtilitiesCustomizeDialogClass)
 	enum { IDD = IDD_EXTRAS_UTILITIES_CUSTOMIZE };
-  CString	mszArguments;
+	CString	mszArguments;
 	CString	mszCommand;
 	CString	mszMenuText;
 	BOOL	mbPromptForArguments;
@@ -81,6 +77,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVUTILITIESCUSTOMIZEDIALOG_H__0011F4F0_9C37_11D3_A80B_00106F010A93__INCLUDED_)
-

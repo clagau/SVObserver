@@ -9,17 +9,14 @@
 // * .Check In Date   : $Date:   12 Nov 2014 08:24:36  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxBlobInterface.h"
 
-#include "SVCommandLibrary/SVCommandDataContainer.h"
 #include "SVCommandLibrary/SVCommandDataHolder.h"
-#include "SVCommandLibrary/SVCommandDataValue.h"
-
-#include "SVMatroxCommandDataImage.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
-#include "SVMatroxBufferInterface.h"
 #include "SVMatroxResourceMonitor.h"
+#pragma endregion Includes
 
 /**
 @SVOperationName Default Constructor
@@ -1209,7 +1206,7 @@ HRESULT SVMatroxBlobInterface::FillResults( const SVBlobOffsetList& p_rBlobList,
 
 	l_Status = p_rResults.SetValue( _T( "Number of Blobs" ), l_lNumberBlobs, true );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		for( int i = 0; i < l_lNumberBlobs; ++i)
 		{
@@ -1218,12 +1215,12 @@ HRESULT SVMatroxBlobInterface::FillResults( const SVBlobOffsetList& p_rBlobList,
 
 			l_Status = l_Blob.SetValue( _T( "Offset X" ), l_rPoint.x, true );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Blob.SetValue( _T( "Offset Y" ), l_rPoint.y, true );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVString l_Name;
 
@@ -1386,25 +1383,11 @@ HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& p_rThresholdImage
 	// Set Control Values
 	if (l_Status == SVMEE_STATUS_OK)
 	{
-		/*
-		#define M_NONZERO               0x80L
-		#define M_ZERO                 0x100L
-		#define M_NON_ZERO          M_NONZERO
-		#define M_FOREGROUND_WHITE      0x80L
-		#define M_FOREGROUND_BLACK     0x100L
-		*/
-
 		l_Status = SVMatroxBlobInterface::SetForeground(blobResult, p_LightBackground );
 	}
 
 	if (l_Status == SVMEE_STATUS_OK)
 	{
-		/* MIL Blob Identifier Type
-		#define M_BINARY          0x00001000L
-		#define M_GREYSCALE           0x0200L
-		#define M_GRAYSCALE       M_GREYSCALE
-		*/
-
 		l_Status = SVMatroxBlobInterface::Set(blobResult, SVEBlobIdentifier, 0x00001000L);
 	}
 
@@ -1452,7 +1435,7 @@ HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& p_rThresholdImage
 			l_Status = SVMatroxBlobInterface::GetNumber( blobResult, l_lNumberBlobs );
 		}
 
-		if (l_Status == S_OK && l_lNumberBlobs > 0)
+		if (S_OK == l_Status && l_lNumberBlobs > 0)
 		{
 			SVBlobResultCollection l_lBoxXMax;
 			SVBlobResultCollection l_lBoxXMin;
@@ -1536,41 +1519,41 @@ HRESULT SVMatroxBlobInterface::NumBlobs( SVMatroxBuffer& p_rThresholdImage, BYTE
 
 	l_Status = SVMatroxBlobInterface::Create(blobFeatureList);
 
-	if (l_Status == S_OK)
+	if (S_OK == l_Status)
 	{
 		l_Status = SVMatroxBlobInterface::Create(blobResult);
 	}
 
 	// Set Control Values
-	if (l_Status == S_OK)
+	if (S_OK == l_Status)
 	{
 		bool bLightGround = ( p_Background == DARK );
 		l_Status = SVMatroxBlobInterface::SetForeground(blobResult, bLightGround);
 	}
 
-	if (l_Status == S_OK)
+	if (S_OK == l_Status)
 	{
 		l_Status = SVMatroxBlobInterface::Set(blobResult, SVEBlobIdentifier, 0x00001000L);
 	}
 
 	// Set features
-	if (l_Status == S_OK)
+	if (S_OK == l_Status)
 	{
 		l_Status = SVMatroxBlobInterface::BlobSelectFeature(blobFeatureList, SVEBlobArea);
 	}
 
-	if (l_Status == S_OK)
+	if (S_OK == l_Status)
 	{   
 		// Find Blobs
 		l_Status = SVMatroxBlobInterface::Execute(blobResult, p_rThresholdImage, blobFeatureList);
 	}
 
-	if (l_Status == S_OK)
+	if (S_OK == l_Status)
 	{
 		long l_lNumberBlobs = 0;
 		l_Status = SVMatroxBlobInterface::GetNumber(blobResult, l_lNumberBlobs);
 
-		if (l_Status == S_OK)
+		if (S_OK == l_Status)
 		{
 			p_rBlobCount = l_lNumberBlobs;
 		}

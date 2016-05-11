@@ -33,8 +33,8 @@ namespace Seidenader
 		public:
 		#pragma region Constructor
 			CResizablePropertySheet();
-			CResizablePropertySheet(UINT nIDCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
-			CResizablePropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+			CResizablePropertySheet(UINT nIDCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
+			CResizablePropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
 			virtual ~CResizablePropertySheet();
 		#pragma endregion Constructor
 

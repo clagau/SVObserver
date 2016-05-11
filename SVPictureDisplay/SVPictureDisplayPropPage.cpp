@@ -41,13 +41,17 @@ BOOL SVPictureDisplayPropPage::SVPictureDisplayPropPageFactory::UpdateRegistry(B
 		return AfxOleRegisterPropertyPageClass(AfxGetInstanceHandle(),
 			m_clsid, IDS_SVPICTUREDISPLAY_PPG);
 	else
-		return AfxOleUnregisterClass(m_clsid, NULL);
+		return AfxOleUnregisterClass(m_clsid, nullptr);
 }
 
 // SVPictureDisplayPropPage::SVPictureDisplayPropPage - Constructor
 
 SVPictureDisplayPropPage::SVPictureDisplayPropPage() :
 	COlePropertyPage(IDD, IDS_SVPICTUREDISPLAY_PPG_CAPTION)
+{
+}
+
+SVPictureDisplayPropPage::~SVPictureDisplayPropPage()
 {
 }
 

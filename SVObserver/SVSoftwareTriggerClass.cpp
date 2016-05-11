@@ -72,7 +72,7 @@ HRESULT SVSoftwareTriggerClass::RegisterCallback( SVOCallbackPtr pCallback, void
 
 	l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
-	if ( m_pDLLTrigger != NULL )
+	if ( nullptr != m_pDLLTrigger )
 	{
 		SVCallbackStruct localCallback;
 		localCallback.m_pCallback = SVSoftwareTriggerClass::TriggerCallback;
@@ -84,17 +84,17 @@ HRESULT SVSoftwareTriggerClass::RegisterCallback( SVOCallbackPtr pCallback, void
 		l_Callback.m_pOwner = this;
 		l_Callback.m_pData = pvOwner;
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			l_hrOk = m_pDLLTrigger->Register( m_ulHandle, localCallback );
 		}
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			l_hrOk = m_acquisitionInitiator.RegisterCallback( l_Callback );
 		}
 
-		if ( l_hrOk != S_OK )
+		if ( S_OK != l_hrOk )
 		{
 			m_pDLLTrigger->Unregister( m_ulHandle, localCallback );
 			m_acquisitionInitiator.UnRegisterCallback(l_Callback);
@@ -112,12 +112,12 @@ HRESULT SVSoftwareTriggerClass::UnregisterCallback( SVOCallbackPtr pCallback, vo
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( SVODeviceClass::UnregisterCallback( pCallback, pvOwner, pvCaller ) != S_OK )
+	if ( S_OK != SVODeviceClass::UnregisterCallback( pCallback, pvOwner, pvCaller ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_pDLLTrigger != NULL )
+	if ( nullptr != m_pDLLTrigger )
 	{
 		SVCallbackStruct localCallback;
 
@@ -130,7 +130,7 @@ HRESULT SVSoftwareTriggerClass::UnregisterCallback( SVOCallbackPtr pCallback, vo
 		l_Callback.m_pOwner = this;
 		l_Callback.m_pData = pvOwner;
 
-		if ( m_pDLLTrigger->Unregister( m_ulHandle, localCallback ) != S_OK )
+		if ( S_OK != m_pDLLTrigger->Unregister( m_ulHandle, localCallback ) )
 		{
 			l_hrOk = S_FALSE;
 		}

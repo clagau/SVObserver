@@ -12,18 +12,17 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMainFrm.h"
-#include "SVSystemLibrary/SVMemoryChecker.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVGlobal.h"
 #include "SVIOController.h"
-#include "SVIODoc.h"                 // 13 Jan 2000 - frb.
+#include "SVIODoc.h"
 #include "SVIPDoc.h"
 #include "SVObjectScriptParser.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObserver.h"
 #include "SVParserProgressDialog.h"
-#include "SVToolSet.h"               // 26 Jan 2000 - frb.
+#include "SVToolSet.h"
 #include "SVSVIMStateClass.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVMessage/SVMessage.h"
@@ -35,8 +34,8 @@
 #include "ModelessMessageBox.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVObjectScriptParserSVX.h"	// new speedy
-#include "SVInspectionTreeParser.h"		// new Inspection XML (NOT object script)
+#include "SVObjectScriptParserSVX.h"
+#include "SVInspectionTreeParser.h"
 #include "RemoteCommand.h"
 #include "RootObject.h"
 #include "SVImageViewScroll.h"
@@ -55,11 +54,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVMainFrame
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 
 IMPLEMENT_DYNAMIC(SVMainFrame, CMDIFrameWnd)
 
@@ -86,7 +80,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_EXTRAS_ENABLEAUTOSAVE, OnExtrasEnableAutoSave)
 	ON_COMMAND(ID_EXTRAS_ENABLEDISKPROTECTION , OnExtrasEnableFbwf)
 	
-
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEAUTOSAVE, OnUpdateExtrasEnableAutoSave)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEDISKPROTECTION, OnUpdateExtrasEnableFbwf)
 	
@@ -107,9 +100,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_CONTEXT_HELP, CMDIFrameWnd::OnContextHelp)
 	ON_COMMAND(ID_DEFAULT_HELP, CMDIFrameWnd::OnHelpFinder)
 
-	// Load and Run Last Configuration Automatically...
-	//ON_MESSAGE(SV_AUTO_RUN_LAST_CONFIGURATION, OnAutoRunLastConfiguration)
-
 	// Start Object Script Parser
 	ON_MESSAGE(SV_PARSE_OBJECT_SCRIPT_END, OnEndObjectScriptParse)
 	ON_MESSAGE(SV_PARSE_OBJECT_CREATE_DONE, OnEndObjectCreation)
@@ -128,61 +118,25 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Standard constructor of class ...
-// -----------------------------------------------------------------------------
-// .Description : This constructor inits ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: // e.g. int&				MyInt				Index Handle 
-//  :
-// .Output(s)
-//	: // e.g. int&				MyInt				Index Handle 
-//  :
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
+
 SVMainFrame::SVMainFrame()
 {
-	m_toolbarWasShown			= FALSE;
-	m_PPQBarWasShown			= FALSE;
-	m_toolbarZoomWasShown		= FALSE;
+	m_toolbarWasShown			= false;
+	m_PPQBarWasShown			= false;
+	m_toolbarZoomWasShown		= false;
 
-	m_notifyCommRC = FALSE;
-	m_oemLargeIcon = NULL;
-	m_oemSmallIcon = NULL;
+	m_oemLargeIcon = nullptr;
+	m_oemSmallIcon = nullptr;
 
-	m_hDisplayChangedEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+	m_hDisplayChangedEvent = ::CreateEvent( nullptr, true, false, nullptr );
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Standard destructor of class ...
-// -----------------------------------------------------------------------------
-// .Description : This destructor deletes ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 SVMainFrame::~SVMainFrame()
 {
-	if( m_hDisplayChangedEvent != NULL )
+	if( nullptr != m_hDisplayChangedEvent )
 	{
 		::CloseHandle( m_hDisplayChangedEvent );
-		m_hDisplayChangedEvent = NULL;
+		m_hDisplayChangedEvent = nullptr;
 	}
 
 	if( m_oemLargeIcon )
@@ -204,7 +158,7 @@ void SVMainFrame::LoadOEMIcon()
 	
 	if( 0 == ::_access( OEMICON32FileName.c_str(), 0 ) )
 	{
-		m_oemLargeIcon = (HICON)::LoadImage( NULL, 
+		m_oemLargeIcon = (HICON)::LoadImage( nullptr, 
 										OEMICON32FileName.c_str(),
 										IMAGE_ICON,
 										0,
@@ -221,7 +175,7 @@ void SVMainFrame::LoadOEMIcon()
 
 	if( 0 == ::_access( OEMICON16FileName.c_str(), 0 ) )
 	{
-		m_oemSmallIcon = (HICON)::LoadImage( NULL, 
+		m_oemSmallIcon = (HICON)::LoadImage( nullptr, 
 										 OEMICON16FileName.c_str(),
 										IMAGE_ICON,
 										0,
@@ -234,14 +188,9 @@ void SVMainFrame::LoadOEMIcon()
 	}// end if
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // Create Operator
 ////////////////////////////////////////////////////////////////////////////////
-
 BOOL SVMainFrame::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext ) 
 {
 	return CWnd::Create( lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext );
@@ -252,8 +201,8 @@ BOOL SVMainFrame::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD d
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu)
 {
-	ASSERT( m_hWnd != NULL );
-	ASSERT( m_hWndMDIClient == NULL );
+	ASSERT( nullptr != m_hWnd );
+	ASSERT( nullptr == m_hWndMDIClient );
 	DWORD dwStyle = WS_VISIBLE | WS_CHILD | WS_BORDER | 
 		WS_CLIPCHILDREN | WS_CLIPSIBLINGS | 
 		MDIS_ALLCHILDSTYLES;    // allow children to be created invisible
@@ -279,7 +228,7 @@ BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu
 	windowClass.lpszClassName = _T( "SVObserverMDIClient" );
 
 	if( !AfxRegisterClass( &windowClass ) )
-		return( FALSE );
+		return( false );
 
 	CLIENTCREATESTRUCT ccs;
 	ccs.hWindowMenu = pWindowMenu->GetSafeHmenu();
@@ -297,94 +246,40 @@ BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu
 	}
 
 	// Create MDICLIENT control with special IDC
-	if( ( m_hWndMDIClient = ::CreateWindowEx( dwExStyle,
+	if( nullptr == ( m_hWndMDIClient = ::CreateWindowEx( dwExStyle,
 											  _T(  "SVObserverMDIClient"  ), 
-											  NULL,
+											  nullptr,
 											  dwStyle, 
 											  0, 0, 0, 0,
 											  m_hWnd,
 											  ( HMENU )AFX_IDW_PANE_FIRST,
 											  AfxGetInstanceHandle(),
-											  ( LPVOID )&ccs ) ) == NULL )
+											  ( LPVOID )&ccs ) ) )
 	{
-		return FALSE;
+		return false;
 	}
 	// Move it to the top of z-order
 	::BringWindowToTop( m_hWndMDIClient );
 
-	return TRUE;
-};
+	return true;
+}
 
 //******************************************************************************
 // Class Wizard Generated Virtual Function(s):
 //******************************************************************************
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::PreCreateWindow( CREATESTRUCT& cs )
 {
 	return CMDIFrameWnd::PreCreateWindow( cs );
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : setStatusInfoText
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::SetStatusInfoText( LPCTSTR SIText )
 {
-	size_t l_Size = ( SIText != NULL ) ? ::strlen( SIText ) : 0;
+	size_t l_Size = ( nullptr != SIText ) ? ::strlen( SIText ) : 0;
 
 	if( 0 < l_Size )
 	{
-		CClientDC DC( NULL );
+		CClientDC DC( nullptr );
 		int l_Width = DC.GetTextExtent( SIText, static_cast<int>(l_Size) ).cx - static_cast< int >( static_cast< double >( l_Size ) * 1.5 );
 
 		m_wndStatusBar.SetPaneInfo( 1, ID_INDICATOR_INFO, 0, l_Width );
@@ -420,12 +315,12 @@ void SVMainFrame::ShowToolBars(BOOL Show, BOOL RememberOldState /*= FALSE*/, DWO
 			// Show all bars
 			if(Flags & Flag_Standard)
 			{
-				ShowControlBar( &m_wndToolBar, TRUE, FALSE );
-				ShowControlBar( &m_PPQBar, TRUE, FALSE );
+				ShowControlBar( &m_wndToolBar, true, false );
+				ShowControlBar( &m_PPQBar, true, false );
 			}
 			if(Flags & Flag_Zoom)
 			{
-				ShowControlBar( &m_wndToolBarZoom, TRUE, FALSE );
+				ShowControlBar( &m_wndToolBarZoom, true, false );
 				m_wndToolBarZoom.Enable(IsZoomingPossible());
 			}
 		}
@@ -434,11 +329,11 @@ void SVMainFrame::ShowToolBars(BOOL Show, BOOL RememberOldState /*= FALSE*/, DWO
 	{
 		if(Flags & Flag_Standard)
 		{
-			m_toolbarWasShown			= m_wndToolBar.IsWindowVisible();
-			m_PPQBarWasShown			= m_PPQBar.IsWindowVisible();
-			ShowControlBar( &m_wndToolBar, FALSE, FALSE );
+			m_toolbarWasShown = m_wndToolBar.IsWindowVisible();
+			m_PPQBarWasShown = m_PPQBar.IsWindowVisible();
+			ShowControlBar( &m_wndToolBar, false, false );
 
-			ShowControlBar( &m_PPQBar, FALSE, FALSE );
+			ShowControlBar( &m_PPQBar, false, false );
 		}
 
 		if(Flags & Flag_Zoom)
@@ -447,7 +342,7 @@ void SVMainFrame::ShowToolBars(BOOL Show, BOOL RememberOldState /*= FALSE*/, DWO
 			{
 				m_toolbarZoomWasShown = m_wndToolBarZoom.IsWindowVisible();
 			}
-			ShowControlBar( &m_wndToolBarZoom, FALSE, FALSE );
+			ShowControlBar( &m_wndToolBarZoom, false, false );
 		}
 
 		SetStatusInfoText( _T(""));
@@ -456,51 +351,24 @@ void SVMainFrame::ShowToolBars(BOOL Show, BOOL RememberOldState /*= FALSE*/, DWO
 	RecalcLayout();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateFrameTitle
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateFrameTitle( BOOL bAddToTitle )
 {
-	if( ( GetStyle() & FWS_ADDTOTITLE ) == 0 )
+	if( 0 == ( GetStyle() & FWS_ADDTOTITLE )  )
 		return;     // leave it alone!
 
 	CMDIChildWnd* pActiveChild;
 	CDocument* pDocument = GetActiveDocument();
 	if ( bAddToTitle &&
-		( pActiveChild = MDIGetActive() ) != NULL &&
-		( pActiveChild->GetStyle() & WS_MAXIMIZE ) == 0 &&
-		( pDocument != NULL || 
-			( pDocument = pActiveChild->GetActiveDocument() ) != NULL ) )
+		nullptr != ( pActiveChild = MDIGetActive() ) &&
+		0 == ( pActiveChild->GetStyle() & WS_MAXIMIZE ) &&
+		( nullptr != pDocument || 
+			nullptr != ( pDocument = pActiveChild->GetActiveDocument() ) ) )
 	{
 		UpdateFrameTitleForDocument( pDocument->GetTitle() );
 	}
 	else
 	{
-		UpdateFrameTitleForDocument( NULL );
+		UpdateFrameTitleForDocument( nullptr );
 	}
 }
 
@@ -517,12 +385,14 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 		szText[ 0 ] = '\0';   // start with nothing
 
 		// get name of currently active view
-		if( lpszDocName != NULL )
+		if( nullptr != lpszDocName )
 		{
 			lstrcpy( szText, lpszDocName );
 			// add current window # if needed
 			if( m_nWindow > 0 )
+			{
 				wsprintf( szText + lstrlen( szText ), _T( ":%d" ), m_nWindow );
+			}
 			lstrcat( szText, _T( " - " ) );
 		}
 		lstrcat( szText, m_strTitle );
@@ -543,13 +413,15 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 		}
 
 		// get name of currently active view
-		if( lpszDocName != NULL )
+		if( nullptr != lpszDocName )
 		{
 			lstrcat( szText, _T( " - " ) );
 			lstrcat( szText, lpszDocName );
 			// add current window # if needed
 			if( m_nWindow > 0 )
+			{
 				wsprintf( szText + lstrlen( szText ), _T( ":%d" ), m_nWindow );
+			}
 		}
 	}
 
@@ -567,37 +439,6 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 	}
 }
 
-//******************************************************************************
-// Message Operation(s):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) 
 {
 	return CMDIFrameWnd::OnCreateClient(lpcs, pContext);
@@ -605,33 +446,6 @@ BOOL SVMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	// SVMainFrame::CreateClient function to perform the MDIClient window
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 {
 	if( CMDIFrameWnd::OnCreate( lpCreateStruct ) == -1 )
@@ -703,102 +517,21 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_bSizeChanged = FALSE;
 	m_PosSize = SIZE_MAXIMIZED;
 
-	UpdateFrameTitleForDocument( NULL );
+	UpdateFrameTitleForDocument( nullptr );
 
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnLButtonDown(UINT nFlags, CPoint point) 
 {
 	CMDIFrameWnd::OnLButtonDown(nFlags, point);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnRButtonDown(UINT nFlags, CPoint point) 
 {
 	CMDIFrameWnd::OnRButtonDown(nFlags, point);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnSetFocus(CWnd* pOldWnd) 
 {
 	CMDIFrameWnd::OnSetFocus(pOldWnd);
@@ -806,33 +539,6 @@ void SVMainFrame::OnSetFocus(CWnd* pOldWnd)
 	// TODO: Code für die Behandlungsroutine für Nachrichten hier einfügen
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnLButtonDblClk(UINT nFlags, CPoint point) 
 {
 	// TODO: Code für die Behandlungsroutine für Nachrichten hier einfügen und/oder Standard aufrufen
@@ -840,33 +546,6 @@ void SVMainFrame::OnLButtonDblClk(UINT nFlags, CPoint point)
 	CMDIFrameWnd::OnLButtonDblClk(nFlags, point);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnClose()
 {
 	bool l_bAllowAccess = false;
@@ -880,15 +559,14 @@ void SVMainFrame::OnClose()
 	// If Running, check if access to exit run.
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT, 
-			SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) == S_OK )
+		if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT, 
+			SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) )
 		{
 			TheSVObserverApp.OnStop();
 			l_bAllowAccess = true;
 		}
 	}
-	else
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
+	else if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) )
 	{
 		l_bAllowAccess = true;
 	}
@@ -931,33 +609,6 @@ void SVMainFrame::OnClose()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 {
 	CStatusBarCtrl* pCtrl = ( CStatusBarCtrl* )pCmdUI->m_pOther;
@@ -971,12 +622,12 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 		}
 		case ID_INDICATOR_USER:  // Status Bar User
 		{
-			BSTR l_bstUser = NULL;
+			BSTR l_bstUser = nullptr;
 			CString l_strUser = _T("User: ");
 			if( TheSVObserverApp.m_svSecurityMgr.SVGetUseLogon() )
 			{
 				HRESULT l_hr = TheSVObserverApp.m_svSecurityMgr.SVGetUser( l_bstUser );
-				if( l_bstUser != NULL )
+				if( nullptr != l_bstUser )
 				{
 					l_strUser += l_bstUser;
 					::SysFreeString( l_bstUser );
@@ -984,7 +635,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 			}
 			pCmdUI->Enable();
 
-			CClientDC DC( NULL );
+			CClientDC DC( nullptr );
 			int l_Width = DC.GetTextExtent( l_strUser ).cx - ( l_strUser.GetLength() * 2 );
 
 			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_USER, 0, l_Width );
@@ -1057,7 +708,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 
 			pCmdUI->Enable();
 
-			CClientDC DC( NULL );
+			CClientDC DC( nullptr );
 			int l_Width = DC.GetTextExtent( l_strMode ).cx - ( l_strMode.GetLength() * 2 );
 
 			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_MODE, 0, l_Width );
@@ -1103,7 +754,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 					m_wndStatusBar.m_lErrorForeColor = RGB( 0, 0, 0 );
 				}
 
-				CClientDC DC(NULL);
+				CClientDC DC(nullptr);
 				int lWidth = DC.GetTextExtent( l_strError ).cx - ( l_strError.GetLength() *2 ) +20;
 				m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_GIGE_LICENSE_ERROR, 0, lWidth );
 				pCtrl->SetText( l_strError, pCmdUI->m_nIndex, SBT_OWNERDRAW );
@@ -1156,127 +807,46 @@ LRESULT SVMainFrame::Shutdown( WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnMouseMove( UINT nFlags, CPoint point )
 {
-	SetStatusInfoText( NULL );
+	SetStatusInfoText( nullptr );
 	
 	CMDIFrameWnd::OnMouseMove( nFlags, point );
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnViewPPQBar
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnViewPPQBar()
 {
 	bool l_IsWindowVisible = ( m_PPQBar.IsWindowVisible() != FALSE );
-	bool l_ValidState = ( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) != FALSE );
+	bool l_ValidState = ( FALSE != SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) );
 
 	if ( ! l_IsWindowVisible && l_ValidState && TheSVObserverApp.OkToEdit() )
 	{
-		ShowControlBar( &m_PPQBar, TRUE, FALSE );
-		m_PPQBarWasShown = TRUE;
+		ShowControlBar( &m_PPQBar, true, false );
+		m_PPQBarWasShown = true;
 		m_PPQBar.BuildButtons();
 	}
 	else
 	{
 		// Hide bar...
-		ShowControlBar( &m_PPQBar, FALSE, FALSE );
-		m_PPQBarWasShown = FALSE;
+		ShowControlBar( &m_PPQBar, false, false );
+		m_PPQBarWasShown = false;
 	}
 
 	RecalcLayout();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnViewToolBar
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnViewToolBar()
 {
 	if( !m_wndToolBar.IsWindowVisible() )
 	{
-		ShowControlBar( &m_wndToolBar, TRUE, FALSE );
-		m_toolbarWasShown = TRUE;
+		ShowControlBar( &m_wndToolBar, true, false );
+		m_toolbarWasShown = true;
 	}
 	else
 	{
 		// Hide bar...
-		ShowControlBar( &m_wndToolBar, FALSE, FALSE );
-		m_toolbarWasShown = FALSE;
+		ShowControlBar( &m_wndToolBar, false, false );
+		m_toolbarWasShown = false;
 	}
 
 	RecalcLayout();
@@ -1286,50 +856,19 @@ void SVMainFrame::OnToolbarZoom()
 {
 	if( !m_wndToolBarZoom.IsWindowVisible() )
 	{
-		ShowControlBar( &m_wndToolBarZoom, TRUE, FALSE );
-		m_toolbarZoomWasShown = TRUE;
+		ShowControlBar( &m_wndToolBarZoom, true, false );
+		m_toolbarZoomWasShown = true;
 	}
 	else
 	{
 		// Hide bar...
-		ShowControlBar( &m_wndToolBarZoom, FALSE, FALSE );
-		m_toolbarZoomWasShown = FALSE;
+		ShowControlBar( &m_wndToolBarZoom, false, false );
+		m_toolbarZoomWasShown = false;
 	}
 
 	RecalcLayout();
 }
 
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateViewPPQBar
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 {
 	BOOL bEnable = !SVSVIMStateClass::CheckState( SV_STATE_TEST|SV_STATE_RUNNING );
@@ -1351,39 +890,8 @@ void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 	bool enableToolbars =  ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION );
 	CMenu* pMenu = GetMenu();
 	EnableParentMenu(pMenu,ID_TOOLBAR_ZOOM, enableToolbars,3 );
-	
-
-	
-	
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateViewToolbar
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnUpdateViewToolbar( CCmdUI* pCmdUI )
 {
 	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) );
@@ -1427,7 +935,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 		SVTreeType::SVBranchHandle htiSubChild( p_rTree.getFirstBranch( htiChild ) );
 		;
-		while( l_Status == S_OK && nullptr != htiSubChild )
+		while( S_OK == l_Status && nullptr != htiSubChild )
 		{
 			SVSharedPtr<CString> pToolsetScript = new CString;
 			SVGUID ownerGuid;
@@ -1435,13 +943,12 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 			SVInspectionProcess* pInspect( nullptr );
 			SVTreeType::SVBranchHandle htiSVIPDoc = nullptr;
 			SVTreeType::SVBranchHandle htiDataChild( p_rTree.getFirstBranch( htiSubChild ) );
-			;
 
 			while( nullptr != htiDataChild )
 			{
 				SVString DataName = p_rTree.getBranchName( htiDataChild );
 
-				if ( DataName.compare( CTAG_INSPECTION_PROCESS ) == 0 )
+				if ( 0 == DataName.compare( CTAG_INSPECTION_PROCESS ) )
 				{
 					if( SVNavigateTree::GetItemBranch( p_rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
 					{
@@ -1453,7 +960,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 						}
 					}
 				}
-				else if ( DataName.compare( CTAG_SVIPDOC ) == 0 )
+				else if ( 0 == DataName.compare( CTAG_SVIPDOC ) )
 				{
 					htiSVIPDoc = htiDataChild;
 				}
@@ -1601,10 +1108,6 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 // .Import Function Reference(s)
 //	:BOOL PPQBar::BuildButtons()
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :08.01.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::BuildPPQButtons()
 {
 	return m_PPQBar.BuildButtons();
@@ -1621,10 +1124,6 @@ BOOL SVMainFrame::BuildPPQButtons()
 // .Import Function Reference(s)
 //	:BOOL PPQBar::DestroyButtons()
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :05.05.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::DestroyPPQButtons()
 {
 	return m_PPQBar.DestroyButtons();
@@ -1635,7 +1134,7 @@ BOOL SVMainFrame::DestroyPPQButtons()
 ///////////////////////////////////////////////////////
 LRESULT SVMainFrame::OnEndObjectScriptParse(WPARAM wParam, LPARAM lParam)
 {
-	BOOL rc = TRUE;
+	BOOL rc = true;
 	return rc;
 }
 
@@ -1644,49 +1143,41 @@ LRESULT SVMainFrame::OnEndObjectScriptParse(WPARAM wParam, LPARAM lParam)
 ///////////////////////////////////////////////////////
 LRESULT SVMainFrame::OnEndObjectCreation(WPARAM wParam, LPARAM lParam)
 {
-	BOOL rc = TRUE;
+	BOOL rc = true;
 	return rc;
 }
 
 void SVMainFrame::OnConfigurationFinishedInitializing()
 {
-	//
 	// Finally indicate to the 'world' that the configuration is loaded
 	// and ready to run or test.
 	//
 	// All operations that need to happen after the configuration is fully
 	// loaded and initialized should go here
 
-	//
-	// Update the IO views.  13 Jan 2000 - frb.
-	//
+	// Update the IO views. 
 
 	SVIODoc* l_pIODoc( TheSVObserverApp.GetIODoc() );
 
-	if( l_pIODoc != NULL )
+	if( nullptr != l_pIODoc )
 	{
 		SVIOController* l_pIOController( l_pIODoc->GetIOController() );
 
-		if( l_pIOController != NULL )
+		if( nullptr != l_pIOController )
 		{
 			l_pIOController->RebuildOutputList();
 		}
 
-		l_pIODoc->UpdateAllViews( NULL );
+		l_pIODoc->UpdateAllViews( nullptr );
 	}// end if
 
 	TheSVObserverApp.UpdateAllMenuExtrasUtilities();
 
-	//
 	// Set the tool selected for an operator to move if any.
-	// 26 Jan 2000 - frb.
-	//
 	PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM) TRUE );
 
-	//
 	// Indicate to the world that a configuration is loaded, parsed,
 	// and is ready to run.
-	//
 	SVSVIMStateClass::AddState( SV_STATE_READY );
 	SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
 
@@ -1699,14 +1190,6 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 		SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
 	{
 		PostMessage ( WM_COMMAND, MAKEWPARAM (ID_MODE_RUN, 0), 0 );
-	}
-
-	//
-	// See if this configuration was downloaded from a remote computer.
-	//
-	if ( m_notifyCommRC )
-	{
-		m_notifyCommRC = FALSE;
 	}
 
 	TheSVObserverApp.RemoveUnusedFiles();
@@ -1786,7 +1269,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 				{
 					// recreate Image Surfaces
 					CMDIChildWnd* pMDIChild = MDIGetActive();
-					while (pMDIChild != NULL)
+					while (nullptr != pMDIChild)
 					{
 						CDocument* pCurrentDocument = pMDIChild->GetActiveDocument();
 						if (pCurrentDocument)
@@ -1821,14 +1304,13 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 
 		// if pixel depth changed - show mesage...
 		if ( p_p1 / 8 != l_PixelDepth )
-		//if (bResolutionChanged) // SEJ - what about resolution change ?
 		{
 			if( WAIT_TIMEOUT == WaitForSingleObject( m_hDisplayChangedEvent, 0 ) )
 			{
 				CString l_csMessage;
 				l_csMessage.Format( "\n\n\nThe display color settings on the system have changed.\n"
 					"Images may not display correctly until this configuration is reopened." );
-				HANDLE l_hMessage = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+				HANDLE l_hMessage = ::CreateEvent( nullptr, true, false, nullptr );
 				::SetEvent( l_hMessage );
 				ModelessMessageBox( l_csMessage, l_hMessage );
 			}
@@ -1852,82 +1334,18 @@ LRESULT SVMainFrame::OnLoadConfiguration( WPARAM wParam, LPARAM lParam )
 	return TheSVObserverApp.LoadConfiguration();
 }
 
-
-//******************************************************************************
-// Debug Operation(s):
-//******************************************************************************
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 #ifdef _DEBUG
 void SVMainFrame::AssertValid() const
 {
 	CMDIFrameWnd::AssertValid();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Run member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::Dump(CDumpContext& dc) const
 {
 	CMDIFrameWnd::Dump(dc);
 }
 
 #endif //_DEBUG
-
-void SVMainFrame::SetNotifyCommRC()
-{
-	m_notifyCommRC = TRUE;
-}
-
 
 LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
 {
@@ -1948,14 +1366,16 @@ LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
 
 	// Reposition windows if required
 	if( recalcNeeded )
+	{
 		RecalcLayout();
+	}
 
 	return (LRESULT)TRUE;
 }
 
 void SVMainFrame::OnViewImageDisplayUpdate()
 {
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE ) == S_OK )
+	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE ) )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
@@ -1977,8 +1397,8 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	bool bEnableZoom = false;
 	CMDIChildWnd *pChild = (CMDIChildWnd*) GetActiveFrame();
 	CView*  pView =  pChild->GetActiveView();
-	SVImageViewClass *pIView = NULL;
-	SVImageViewScroll *pSView = NULL;
+	SVImageViewClass *pIView = nullptr;
+	SVImageViewScroll *pSView = nullptr;
 	pIView = dynamic_cast<SVImageViewClass*> (pView);
 	if(pIView)
 	{
@@ -2002,7 +1422,7 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 
 void SVMainFrame::OnViewResultDisplayUpdate()
 {
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE ) == S_OK )
+	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE ) )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
@@ -2025,8 +1445,8 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 
 void SVMainFrame::OnExtrasEnableAutoSave()
 {
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate(
-		SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION) != S_OK )
+	if( S_OK != TheSVObserverApp.m_svSecurityMgr.SVValidate(
+		SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION) )
 	{
 		return; //Arvid: not validated:do nothing
 	}
@@ -2039,14 +1459,13 @@ void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
 
 	pCmdUI->Enable( bEnable );
-	pCmdUI->SetCheck( ExtrasEngine::Instance().IsEnabled()==TRUE );
+	pCmdUI->SetCheck( ExtrasEngine::Instance().IsEnabled() == TRUE );
 }
-
 
 void SVMainFrame::OnExtrasEnableFbwf()
 {
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate(
-		SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION) != S_OK )
+	if( S_OK != TheSVObserverApp.m_svSecurityMgr.SVValidate(
+		SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION) )
 	{
 		return; //Arvid: not validated:do nothing
 	}
@@ -2054,16 +1473,16 @@ void SVMainFrame::OnExtrasEnableFbwf()
 	ExtrasEngine::Instance().ToggleEnableFbwf();
 }
 
-
 void SVMainFrame::OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI)
 {
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
 
-	pCmdUI->Enable(FALSE); //Arvid temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
+	pCmdUI->Enable( bEnable );
 
-	pCmdUI->SetCheck( ExtrasEngine::Instance().IsFbwfSelected()==true);
+	pCmdUI->Enable(ExtrasEngine::Instance().IsFbwfAvailable() == true);
+
+	pCmdUI->SetCheck( ExtrasEngine::Instance().IsFbwfSelected() == true);
 }
-
 
 BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 {
@@ -2074,7 +1493,7 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 	{
 		CControlBarInfo* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
 
-		ASSERT(pInfo != NULL);
+		ASSERT(nullptr != pInfo);
 
 		int nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
 		if (nDockedCount > 0)
@@ -2090,30 +1509,30 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 					nID &= 0xFFFF; // placeholder - get the ID
 				}
 
-				if (GetControlBar(nID) == NULL)
+				if (nullptr == GetControlBar(nID))
 				{
-					return FALSE;
+					return false;
 				}
 			}
 		}
 		
 		if (!pInfo->m_bFloating) // floating dockbars can be created later
 		{
-			if (GetControlBar(pInfo->m_nBarID) == NULL)
+			if (nullptr == GetControlBar(pInfo->m_nBarID))
 			{
-				return FALSE; // invalid bar ID
+				return false; // invalid bar ID
 			}
 		}
 		else
 		{
 			if(nullptr == dynamic_cast<CDockBar*>(pInfo->m_pBar))
 			{
-				return FALSE;
+				return false;
 			}
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 void SVMainFrame::OnSize(UINT nType, int cx, int cy)

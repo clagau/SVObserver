@@ -29,6 +29,8 @@ public:
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent );
 	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent );
 
+	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
 
@@ -38,11 +40,6 @@ protected:
 
 private:
 	void Initialize();
-
-	friend class SVExternalToolDlg;
-
-public:
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 #pragma region Member Variables
 private:

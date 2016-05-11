@@ -260,7 +260,6 @@ namespace SVImportTransform
             xsltSettings.EnableDocumentFunction = false;
 
             XsltArgumentList argList = new XsltArgumentList();
-            //argList.AddParam("ReplaceThis", "", oldInspectionName +".");
             argList.AddParam("With", "", newInspectionName + ".");
 
             try

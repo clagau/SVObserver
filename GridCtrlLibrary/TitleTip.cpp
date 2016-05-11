@@ -80,10 +80,10 @@ CTitleTip::CTitleTip()
 		wndcls.lpfnWndProc		= ::DefWindowProc;
 		wndcls.cbClsExtra		= wndcls.cbWndExtra = 0;
 		wndcls.hInstance		= hInst;
-		wndcls.hIcon			= NULL;
+		wndcls.hIcon			= nullptr;
 		wndcls.hCursor			= LoadCursor( hInst, IDC_ARROW );
 		wndcls.hbrBackground	= (HBRUSH)(COLOR_INFOBK +1);
-		wndcls.lpszMenuName		= NULL;
+		wndcls.lpszMenuName		= nullptr;
 		wndcls.lpszClassName	= TITLETIP_CLASSNAME;
 
 		if (!AfxRegisterClass(&wndcls))
@@ -93,7 +93,7 @@ CTitleTip::CTitleTip()
     m_dwLastLButtonDown = ULONG_MAX;
     m_dwDblClickMsecs   = GetDoubleClickTime();
     m_bCreated          = FALSE;
-    m_pParentWnd        = NULL;
+    m_pParentWnd        = nullptr;
 }
 
 CTitleTip::~CTitleTip()
@@ -125,7 +125,7 @@ BOOL CTitleTip::Create(CWnd * pParentWnd)
 
 	m_bCreated = CreateEx(dwExStyle, TITLETIP_CLASSNAME, NULL, dwStyle, 
                           CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
-		                  NULL, NULL, NULL );
+		                  nullptr, nullptr, nullptr);
 
     return m_bCreated;
 }
@@ -144,8 +144,8 @@ BOOL CTitleTip::DestroyWindow()
 // xoffset		 - Number of pixel that the text is offset from
 //				   left border of the cell
 void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
-                     LPRECT lpHoverRect /*=NULL*/,
-                     const LOGFONT* lpLogFont /*=NULL*/,
+                     LPRECT lpHoverRect /*=nullptr*/,
+                     const LOGFONT* lpLogFont /*=nullptr*/,
                      COLORREF crTextClr /* CLR_DEFAULT */,
                      COLORREF crBackClr /* CLR_DEFAULT */)
 {
@@ -161,14 +161,14 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 	if( IsWindowVisible() ) 
 		return;
 
-    m_rectHover = (lpHoverRect != NULL)? lpHoverRect : rectTitle;
+    m_rectHover = (nullptr != lpHoverRect ) ? lpHoverRect : rectTitle;
     m_rectHover.right++; m_rectHover.bottom++;
 
 	m_pParentWnd->ClientToScreen( m_rectHover );
     ScreenToClient( m_rectHover );
 
 	// Do not display the titletip is app does not have focus
-	if( GetFocus() == NULL )
+	if( nullptr == GetFocus() )
 		return;
 
 	// Define the rectangle outside which the titletip will be hidden.
@@ -187,7 +187,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
     strTitle += lpszTitleText; 
     strTitle += _T(" ");
 
-	CFont font, *pOldFont = NULL;
+	CFont font, *pOldFont = nullptr;
     if (lpLogFont)
     {
         font.CreateFontIndirect(lpLogFont);
@@ -349,7 +349,7 @@ BOOL CTitleTip::PreTranslateMessage(MSG* pMsg)
 		return TRUE;
 	}
 
-	if( GetFocus() == NULL )
+	if( nullptr == GetFocus() )
 	{
         Hide();
 		return TRUE;

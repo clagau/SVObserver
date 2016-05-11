@@ -17,12 +17,8 @@
 class SVSubscriberInterface
 {
 public:
+	virtual ~SVSubscriberInterface() {}
 	// temp hack
 	virtual SVOCallbackPtr GetCallbackFunction(const CString& sType) const = 0;
 };
-
-class SVProviderInterface
-{
-};
-
 

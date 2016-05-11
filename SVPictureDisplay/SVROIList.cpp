@@ -75,7 +75,7 @@ void CSVROIList::OnFinalRelease()
 /*static*/ CSVROIList* CSVROIList::GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch)
 {
     static size_t offset = offsetof(CSVROIList, m_xDispatch);
-    return reinterpret_cast <CSVROIList*> ( lpDispatch ? ((BYTE*)lpDispatch - offset) : NULL );
+    return reinterpret_cast <CSVROIList*> ( lpDispatch ? ((BYTE*)lpDispatch - offset) : nullptr );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ LPUNKNOWN CSVROIList::_NewEnum()
         pList->m_xEnumVARIANT.Reset();
         return &pList->m_xEnumVARIANT;
     }
-    return NULL;
+    return nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -213,13 +213,13 @@ STDMETHODIMP CSVROIList::XEnumVARIANT::Next( ULONG celt, VARIANT FAR* rgvar, ULO
     ULONG l = 0;
 
     // pceltFetched can legally == 0
-    if (pceltFetched != NULL)
+    if (nullptr != pceltFetched)
 	{
         *pceltFetched = 0;
 	}
     else if (celt > 1)
     {   
-        TRACE(_T("XEnumVARIANT::Next() celt > 1 and pceltFetched == NULL!\r\n"), celt );
+        TRACE(_T("XEnumVARIANT::Next() celt > 1 and nullptr == pceltFetched !\r\n"), celt );
         return ResultFromScode( E_INVALIDARG );
     }
 
@@ -231,7 +231,7 @@ STDMETHODIMP CSVROIList::XEnumVARIANT::Next( ULONG celt, VARIANT FAR* rgvar, ULO
 	long lSize = (long)pThis->m_arROIObjects.GetSize();
     for (l = 0; m_lCurrent >= 0 && m_lCurrent < lSize && celt != 0; l++)
     {   
-        LPDISPATCH pItem = NULL;
+        LPDISPATCH pItem = nullptr;
         pItem = pThis->m_arROIObjects.GetAt( m_lCurrent++ );
         celt--;
         if (pItem)
@@ -239,8 +239,10 @@ STDMETHODIMP CSVROIList::XEnumVARIANT::Next( ULONG celt, VARIANT FAR* rgvar, ULO
  	        pItem->AddRef();
             rgvar[l].vt = VT_DISPATCH;
             rgvar[l].pdispVal = pItem;
-            if (pceltFetched != NULL)
+            if (nullptr != pceltFetched )
+			{
                 (*pceltFetched)++;
+			}
         }
         else 
         {

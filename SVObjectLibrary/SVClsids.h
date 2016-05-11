@@ -48,13 +48,13 @@ extern /*const*/ GUID SVDPointValueObjectClassGuid;
 extern /*const*/ GUID SVByteValueObjectClassGuid;
 
 // GUID for the SVStringValueObjectClass
-extern /*const*/ GUID SVStringValueObjectClassGuid;  // 16 Aug 1999 - frb.
+extern /*const*/ GUID SVStringValueObjectClassGuid;
 
 // GUID for the SVStringValueObjectClass
 extern /*const*/ GUID SVStaticStringValueObjectClassGuid;
 
 // GUID for the SVFileNameValueObjectClass
-extern /*const*/ GUID SVFileNameValueObjectClassGuid;	//	11-Apr-2001 - SES
+extern /*const*/ GUID SVFileNameValueObjectClassGuid;
 
 //GUID for the SVInt64ValueObjectClass
 extern /*const*/ GUID SVInt64ValueObjectClassGuid;
@@ -492,8 +492,8 @@ extern/*const*/ GUID SVRangeClassWarnHighIndirectObjectGuid;
 extern/*const*/ GUID SVRangeClassWarnLowIndirectObjectGuid;
 
 // GUIDs for the Embedded Objects in the SVOCVAnalyzeResultClass
-extern /*const*/ GUID SVOCVAnalyzerClassGuid;        // New Def
-extern /*const*/ GUID SVOCVAnalyzerResultClassGuid;  // New Def
+extern /*const*/ GUID SVOCVAnalyzerClassGuid;
+extern /*const*/ GUID SVOCVAnalyzerResultClassGuid;
 extern /*const*/ GUID SVOCVPerformOCRGuid;
 extern /*const*/ GUID SVOCVMatchLineNumberGuid;
 
@@ -520,16 +520,16 @@ extern /*const*/ GUID SVOCVExtentWidthGuid;
 extern /*const*/ GUID SVOCVExtentHeightGuid;
 extern /*const*/ GUID SVOCVMatchScoreGuid;
 
-extern /*const*/ GUID SVEdgeParameters1ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters2ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters3ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters4ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters5ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters6ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters7ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters8ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters9ObjectGuid;     // 30 Sep 1999 - frb.
-extern /*conts*/ GUID SVEdgeParameters10ObjectGuid;     // 30 Sep 1999 - frb.
+extern /*const*/ GUID SVEdgeParameters1ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters2ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters3ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters4ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters5ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters6ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters7ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters8ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters9ObjectGuid;
+extern /*conts*/ GUID SVEdgeParameters10ObjectGuid;
 
 extern /*const*/ GUID SVArchiveToolClassGuid;
 extern /*const*/ GUID SVArchiveFilePathObjectGuid;
@@ -566,12 +566,6 @@ extern /*const*/ GUID SVMathEquationResultObjectGuid;
 
 //GUID for the SVLinearPixelCountingLineAnalyzerClass
 extern /*const*/ GUID SVLinearPixelCountingLineAnalyzerClassGuid;
-
-// GUID for the SVROIClass
-extern /*const*/ GUID SVROIClassGuid;
-
-// GUID for the SVImageROIClass
-extern /*const*/ GUID SVImageROIClassGuid;
 
 // GUID for the SVLinearEdgeCountingLineAnalyzerClass
 extern /*const*/ GUID SVLinearEdgeCountingLineAnalyzerClassGuid;
@@ -664,9 +658,6 @@ extern /*const*/ GUID SVEdgeCountObjectGuid;
 // GUIDs for the Embedded Objects
 extern /*const*/ GUID SVColorObjectGuid;
 extern /*const*/ GUID SVStatusObjectGuid;
-
-// GUID for the SVImageToLineProjectClass
-extern /*const*/ GUID SVImageToLineProjectClassGuid;
 
 // GUID for the SVLinearImageToLineProjectClassGuid
 extern /*const*/ GUID SVLinearImageToLineProjectClassGuid;
@@ -806,12 +797,12 @@ extern /*const*/ GUID SVWatershedFilterMinVariationGuid;
 extern /*const*/ GUID SVWatershedFilterControlFlagGuid;
 extern /*const*/ GUID SVWatershedFilterClassGuid;
 extern /*const*/ GUID SVWatershedFilterUseMarkerGuid;
-extern/*const*/ GUID SVThickeningFilterClassGuid ;
-extern/*const*/ GUID SVThickeningFilterItterationsGuid ;
-extern/*const*/ GUID SVThickeningFilterGrayOnGuid ;
-extern/*const*/ GUID SVThinningFilterClassGuid ;
-extern/*const*/ GUID SVThinningFilterItterationsGuid ;
-extern/*const*/ GUID SVThinningFilterGrayOnGuid ;
+extern/*const*/ GUID SVThickeningFilterClassGuid;
+extern/*const*/ GUID SVThickeningFilterItterationsGuid;
+extern/*const*/ GUID SVThickeningFilterGrayOnGuid;
+extern/*const*/ GUID SVThinningFilterClassGuid;
+extern/*const*/ GUID SVThinningFilterItterationsGuid;
+extern/*const*/ GUID SVThinningFilterGrayOnGuid;
 extern/*const*/ GUID SVBCUnevenGridGuid;
 
 // GUID for the SVUpperThresholdEquationClass

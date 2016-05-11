@@ -19,7 +19,7 @@ SV_IMPLEMENT_CLASS( SVSmoothFilterClass, SVSmoothFilterClassGuid )
 SVSmoothFilterClass::SVSmoothFilterClass( SVObjectClass* POwner, int StringResourceID )
 					:SVFilterClass( POwner, StringResourceID ) 
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVSmoothFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVSmoothFilterObjectType;
 }
 
 SVSmoothFilterClass::~SVSmoothFilterClass()
@@ -34,21 +34,21 @@ SVSmoothFilterClass::~SVSmoothFilterClass()
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVSmoothFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 { 
-	if( m_pCurrentUIOPL != NULL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
+	if( nullptr != m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
 		SVImageBufferHandleImage l_InMilHandle;
 		SVImageBufferHandleImage l_OutMilHandle;
 
-		if( RInputImageHandle->GetData( l_InMilHandle ) == S_OK && !( l_InMilHandle.empty() ) &&
-			ROutputImageHandle->GetData( l_OutMilHandle ) == S_OK && !( l_OutMilHandle.empty() ) )
+		if( S_OK == RInputImageHandle->GetData( l_InMilHandle ) && !( l_InMilHandle.empty() ) &&
+			S_OK == ROutputImageHandle->GetData( l_OutMilHandle ) && !( l_OutMilHandle.empty() ) )
 		{
 			SVMatroxImageInterface::SVStatusCode l_Code;
 
 			l_Code = SVMatroxImageInterface::Convolve( l_OutMilHandle.GetBuffer(),
-				( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+				( TRUE == First ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 					SVFilterOpSmooth );
 
-			if( l_Code != SVMEE_STATUS_OK )
+			if( SVMEE_STATUS_OK != l_Code )
 			{
 				// Signal that something was wrong...
 				SetInvalid();

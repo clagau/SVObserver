@@ -50,7 +50,7 @@ inline void SVContainableCriticalSection::Release()
 		delete m_pCritSec;
 	}
 	m_plRefCount = 0;
-	m_pCritSec = NULL;
+	m_pCritSec = nullptr;
 }
 
 inline SVContainableCriticalSection::operator CRITICAL_SECTION*()

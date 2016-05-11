@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVEquation.h"
-#include "SVValueObject.h"
 #pragma endregion Includes
 
 class SVLUTEquationClass : public SVEquationClass

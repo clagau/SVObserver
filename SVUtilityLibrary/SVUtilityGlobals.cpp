@@ -22,9 +22,10 @@ HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
 {
     void* pElement;
     HRESULT hr = SafeArrayGetElementPointer(psa, rgIndices, &pElement);
-    if (hr == S_OK)
+    if (S_OK == hr)
+	{
         memcpy(pv, pElement, psa->cbElements);
-	
+	}
     return hr;
 }
 
@@ -35,9 +36,10 @@ HRESULT SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
 {
     void* pElement;
     HRESULT hr = SafeArrayGetElementPointer(psa, rgIndices, &pElement);
-    if (hr == S_OK)
+    if (S_OK == hr)
+	{
 		memcpy(pElement, &pv, psa->cbElements);
-	
+	}
     return hr;
 }
 
@@ -68,7 +70,7 @@ HRESULT SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv)
 
 void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew )
 {
-	if( p_rhrPrev == S_OK )
+	if( S_OK == p_rhrPrev )
 	{
 		p_rhrPrev = p_hrNew;
 	}
@@ -76,7 +78,7 @@ void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew )
 
 HRESULT KeepPrevErrorReturnPrev( HRESULT& p_rhrPrev, HRESULT p_hrNew )
 {
-	if( p_rhrPrev == S_OK )
+	if( S_OK == p_rhrPrev )
 	{
 		p_rhrPrev = p_hrNew;
 	}
@@ -86,7 +88,7 @@ HRESULT KeepPrevErrorReturnPrev( HRESULT& p_rhrPrev, HRESULT p_hrNew )
 
 HRESULT KeepPrevErrorReturnNew( HRESULT& p_rhrPrev, HRESULT p_hrNew )
 {
-	if( p_rhrPrev == S_OK )
+	if( S_OK == p_rhrPrev )
 	{
 		p_rhrPrev = p_hrNew;
 	}

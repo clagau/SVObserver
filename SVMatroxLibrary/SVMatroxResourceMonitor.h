@@ -17,7 +17,7 @@
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxIdentifierEnum.h"
 
-// SEJ - this needs to be in a DLL Joe!!! (not a static lib)
+// @TODO - this needs to be in a DLL (not a static lib)
 class SVMatroxResourceMonitor
 {
 public:

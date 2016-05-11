@@ -17,18 +17,18 @@
 #include "SVThreadWait.h"
 
 SVThreadWait::SVThreadWait()
-: m_Thread(), m_WaitEvent( NULL )
+: m_Thread(), m_WaitEvent( nullptr )
 {
-	m_WaitEvent = ::CreateEvent( NULL, false, false, NULL );
+	m_WaitEvent = ::CreateEvent( nullptr, false, false, nullptr );
 }
 
 SVThreadWait::~SVThreadWait()
 {
-	if( m_WaitEvent != NULL )
+	if( nullptr != m_WaitEvent )
 	{
 		::CloseHandle( m_WaitEvent );
 
-		m_WaitEvent = NULL;
+		m_WaitEvent = nullptr;
 	}
 }
 
@@ -36,16 +36,16 @@ HRESULT SVThreadWait::Create()
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_WaitEvent == NULL )
+	if( nullptr == m_WaitEvent )
 	{
-		m_WaitEvent = ::CreateEvent( NULL, false, false, NULL );
+		m_WaitEvent = ::CreateEvent( nullptr, false, false, nullptr );
 	}
 
-	if( m_WaitEvent != NULL )
+	if( nullptr != m_WaitEvent )
 	{
 		l_Status = m_Thread.Create( boost::bind( &SVThreadWait::Dispatch, this, _1 ), _T( "SVThreadWait" ) );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			m_Thread.SetPriority( THREAD_PRIORITY_IDLE );
 		}
@@ -62,19 +62,19 @@ void SVThreadWait::Destroy()
 {
 	m_Thread.Destroy();
 
-	if( m_WaitEvent != NULL )
+	if( nullptr != m_WaitEvent )
 	{
 		::CloseHandle( m_WaitEvent );
 
-		m_WaitEvent = NULL;
+		m_WaitEvent = nullptr;
 	}
 }
 
 void SVThreadWait::Sleep()
 {
-	if( m_WaitEvent != NULL )
+	if( nullptr != m_WaitEvent )
 	{
-		if( m_Thread.Signal() == S_OK )
+		if( S_OK == m_Thread.Signal() )
 		{
 			::WaitForSingleObject( m_WaitEvent, 1 );
 		}

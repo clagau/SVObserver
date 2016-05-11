@@ -301,7 +301,7 @@ HRESULT SVPictureDisplayCtrl::GetZoom( LONG p_lTab, FLOAT* p_pfZoom )
 
 	double value = 1.0f;
 	HRESULT hr = m_TabDisplay.GetZoom( p_lTab, value );
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		*p_pfZoom = static_cast<float>(value);
 	}
@@ -478,7 +478,7 @@ LRESULT SVPictureDisplayCtrl::OnObjectSelected( WPARAM wParam, LPARAM lParam )
 	long l_lY2;
 	if( l_lHandle > 0 )
 	{
-		if( m_TabDisplay.GetObjectCoords( l_lTab, l_lHandle, l_lX1, l_lY1, l_lX2, l_lY2 ) == S_OK )
+		if( S_OK == m_TabDisplay.GetObjectCoords( l_lTab, l_lHandle, l_lX1, l_lY1, l_lX2, l_lY2 ) )
 		{
 			ObjectSelected( l_lTab, l_lHandle, l_lX1, l_lY1, l_lX2, l_lY2 );
 		}
@@ -591,9 +591,9 @@ SCODE SVPictureDisplayCtrl::AddOverlay(LONG lTab, VARIANT* ParameterList, VARIAN
 	{
 		return E_FAIL;
 	}
-	long handle(NULL);
+	long handle(0);
 	HRESULT hr = m_TabDisplay.AddOverlay( lTab, ParameterMap, handle );
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		*pHandle = handle;
 	}
@@ -609,9 +609,9 @@ SCODE SVPictureDisplayCtrl::AddOverlayToGroup(LONG lGroup, LONG lTab, VARIANT* P
 	{
 		return E_FAIL;
 	}
-	long handle(NULL);
+	long handle(0);
 	HRESULT hr = m_TabDisplay.AddOverlayToGroup( lGroup, lTab, ParameterMap, handle );
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		*pHandle = handle;
 	}

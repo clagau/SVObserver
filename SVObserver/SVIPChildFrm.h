@@ -39,8 +39,6 @@ protected:
 public:
 	void SetDefaultPaneSizes( RECT &BoundingRect );
 
-	void GetToolWidthAndResultHeight( int& nWidthToolSetView, int& nHeightResultView );
-
 	//{{AFX_VIRTUAL(SVIPSplitterFrame)
 	public:
 	virtual BOOL PreCreateWindow( CREATESTRUCT& cs );

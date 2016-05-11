@@ -9,19 +9,17 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:37:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVMultiDocTemplate.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// SVMultiDocTemplateClass
-
 
 SVMultiDocTemplateClass::SVMultiDocTemplateClass( UINT NIDResource, CRuntimeClass* PDocClass, CRuntimeClass* PFrameClass, CRuntimeClass* PViewClass )
 						:CMultiDocTemplate( NIDResource, PDocClass,	PFrameClass, PViewClass )
@@ -32,12 +30,15 @@ SVMultiDocTemplateClass::~SVMultiDocTemplateClass()
 {
 //	CMultiDocTemplate::~CMultiDocTemplate();
 	// delete shared components
-	if( m_hMenuShared != NULL )
+	if( nullptr != m_hMenuShared )
+	{
 		::DestroyMenu( m_hMenuShared );
-	if( m_hAccelTable != NULL )
+	}
+	if( nullptr != m_hAccelTable )
+	{
 		::FreeResource( ( HGLOBAL ) m_hAccelTable );
+	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVMultiDocTemplateClass commands
@@ -73,7 +74,6 @@ void SVMultiDocTemplateClass::SetDefaultTitle( CDocument* PDocument )
 	}
 	PDocument->SetTitle( strDocName );
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVMultiDocTemplateClass diagnostics

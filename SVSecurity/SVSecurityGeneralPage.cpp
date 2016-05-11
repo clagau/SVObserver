@@ -71,16 +71,14 @@ void SVSecurityGeneralPage::OnUserMgrBtn()
 {
 	TCHAR tcharSysDir[INFO_BUFFER_SIZE];
 	TCHAR tcharCommand[INFO_BUFFER_SIZE];
-	tcharCommand[0] = NULL;
+	tcharCommand[0] = _T('\0');
 	GetSystemDirectory(tcharSysDir,INFO_BUFFER_SIZE);
-	_tcscat(tcharCommand,tcharSysDir);
+	_tcscat(tcharCommand, tcharSysDir);
 
-	_tcscat(tcharCommand,_T("\\lusrmgr.msc"));
+	_tcscat(tcharCommand, _T("\\lusrmgr.msc"));
 
 	CString sStr1(tcharCommand);
 	CString sStr2(tcharSysDir);
-	//ShellExecute(m_hWnd, _T("open"),_T("c:\\winnt\\System32\\lusrmgr.msc"), _T(""), _T(""), SW_SHOW );
-//	m_pAccess->CreateProcess(_T("MMC.exe"),_T("c:\\winnt\\System32"),_T("c:\\winnt\\System32\\lusrmgr.msc"));
 	m_pAccess->CreateProcess(_T("MMC.exe"),tcharSysDir,tcharCommand);
 }
 
@@ -88,7 +86,7 @@ void SVSecurityGeneralPage::OnEventViewerBtn()
 {
 	TCHAR tcharSysDir[INFO_BUFFER_SIZE];
 	TCHAR tcharCommand[INFO_BUFFER_SIZE];
-	tcharCommand[0] = NULL;
+	tcharCommand[0] = _T('\0');
 	GetSystemDirectory(tcharSysDir,INFO_BUFFER_SIZE);
 	_tcscat(tcharCommand,tcharSysDir);
 

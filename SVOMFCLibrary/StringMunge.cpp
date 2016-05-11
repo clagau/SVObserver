@@ -20,36 +20,14 @@
 	{
 	// this works like the PERL statement tr/abc//   -or-    s/[abc]//g
 	// it will strip all occurances of any char in tszChars out of psString
-#if 1
 	int t;
 	bool bModified=false;
 
-//	while ((t=strcspn(*psString, szChars)) < psString->GetLength())
 	while ( ( t = static_cast< int >( _tcscspn( *psString, tszChars ) ) ) < psString->GetLength() )
 		{
 		bModified=true;
 		*psString=psString->Left(t)+psString->Mid(t+1);
 		}
-#else
-	CString sTemp;
-	TCHAR tszTemp[2] = {0,NULL};
-	// go through each char one-by-one, see if it is on the list.
-	// if it isn't, add to sTemp.
-	int i,s = psString->GetLength();
-	for (i=0; i<s; i++)
-		{
-		tszTemp[0] = psString->GetAt(i);
-		if (_tcscspn(tszTemp, tszChars) != 0)
-			{
-			sTemp += tszTemp;
-			}
-		else
-			bModified = true;
-		}
-	*psString = sTemp;
-
-#endif
-
 	return bModified;
 	}
 
@@ -63,31 +41,11 @@
 	int t;
 	bool bModified=false;
 
-#if 1
-//	while ((t=strspn(*psString, szChars)) < psString->GetLength())
 	while ( ( t = static_cast< int >( _tcsspn( *psString, tszChars ) ) ) < psString->GetLength() )
 		{
 		bModified=true;
 		*psString=psString->Left(t)+psString->Mid(t+1);
 		}
-#else
-	CString sTemp;
-	TCHAR tszTemp[2] = {0,NULL};
-	// go through each char one-by-one, see if it is on the list.
-	// if it is, add to sTemp.
-	int i,s = psString->GetLength();
-	for (i=0; i<s; i++)
-		{
-		tszTemp[0] = psString->GetAt(i);
-		if (_tcsspn(tszTemp, tszChars) != 0)
-			{
-			sTemp += tszTemp;
-			}
-		else
-			bModified = true;
-		}
-	*psString = sTemp;
-#endif
 
 	return bModified;
 	}
@@ -96,8 +54,6 @@
 /*static*/ bool StringMunge::KeepAlphaNum(CString* psString)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	{
-//	return KeepChars(psString, _T(" abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-
 	// optimize for speed; common characters first
 	return KeepChars(psString, _T(" etoanishrdlumwgycfpbvkITAHSWj0192345678qxzBCDEFGJKLMNOPQRUVXYZ"));
 	}
@@ -110,8 +66,6 @@
 	// works like PERL's tr/abc/ABC/ command
 	// tszFrom & tszTo must be the same length
 
-
-//	if (strlen(szFrom) != strlen(szTo))
 	if (_tcslen(tszFrom) != _tcslen(tszTo))
 		return false;
 	
@@ -126,10 +80,8 @@
 		{
 		tc=psString->GetAt(i);
 		tszTemp[0]=tc;
-//		if (((nPos=strcspn(szFrom, szTemp)) < len) && (nPos >=0) )	
 		if ( ( ( nPos = static_cast< long >( _tcscspn( tszFrom, tszTemp ) ) ) < len ) && ( nPos >= 0 ) )
 			{
-//			c=*(szTo+nPos);
 			tc=tszTo[nPos];
 			psString->SetAt(i,tc);
 			bModified=true;
@@ -189,9 +141,9 @@
 
 		for (i=0; i<nNumElements; i++)
 			{
-//			pszFromSet=szFrom+nFromPos;
+
 			ptszFromSet=&(tszFrom[nFromPos]);
-//			pszToSet=szTo+nToPos;
+
 			ptszToSet=&(tszTo[nToPos]);
 			len = static_cast< int >( _tcslen( ptszFromSet ) + 1 );
 			nFromPos+=len;
@@ -350,30 +302,21 @@
 	for (i=0; i<arraysize; i++)
 		nCharDiff += abs(naChar1[i] - naChar2[i]);
 
-//	const double CHARDIFF_SCALE = 1.2;
 	double CHARDIFF_SCALE = dPicky;	// let the user modify this if they wish.
 	dCharDiff = pow((double)nCharDiff, CHARDIFF_SCALE);
 	double dMaxDiff = pow((double) (nLength1+nLength2), CHARDIFF_SCALE);
 	dCharDiff = 1.0 - ((double) dCharDiff / dMaxDiff);
 
-
-
-	//printf("%f\n", dScore);	// raw score
-
 	// scale the score
 	double dMaxScore1 = sqrt(dMaxScore[nLength1-1]);
 	double dMaxScore2 = sqrt(dMaxScore[nLength2-1]);
 	dScore = sqrt(dScore) / ((dMaxScore1+dMaxScore2)/2);
-	//printf("%f\n", dScore);	// scaled score
-
-
+	
 
 	// take into account the character difference;
 	const double CHARDIFF_MATCH_OFFSET = .2;
 	if ((dScore > .3 && dScore < .75) && (dCharDiff > .5 || nCharDiff <= 2))
 		dScore = pow(dScore, 1.0 - dCharDiff + CHARDIFF_MATCH_OFFSET);
-
-
 
 	if (bEnding)
 		dScore = pow(dScore, SPECIAL_ENDING_ADJUSTMENT);

@@ -20,14 +20,14 @@ struct SVOverlayFigureStruct
 	SVOverlayFigureStruct()
 	{
 		lFigureSize = 0;
-		pFigurePoints = NULL;
+		pFigurePoints = nullptr;
 		oFigureColor = 0;
 	}
 
 	SVOverlayFigureStruct(const SVExtentLineStruct& p_ExtentLineStruct)
 	{
 		lFigureSize = 0;
-		pFigurePoints = NULL;
+		pFigurePoints = nullptr;
 		*this = p_ExtentLineStruct;
 	}
 
@@ -58,10 +58,10 @@ struct SVOverlayFigureStruct
 	{
 		lFigureSize = 0;
 
-		if( pFigurePoints != NULL )
+		if( nullptr != pFigurePoints )
 		{
 			delete [] pFigurePoints;
-			pFigurePoints = NULL;
+			pFigurePoints = nullptr;
 		}
 	}
 
@@ -75,14 +75,14 @@ struct SVOverlayStruct
 	SVOverlayStruct()
 	{
 		lFigureSize = 0;
-		pOverlays = NULL;
+		pOverlays = nullptr;
 		oTextColor = 0;
 	}
 	
 	SVOverlayStruct(const SVExtentMultiLineStruct& p_MultiLineStruct)
 	{
 		lFigureSize = 0;
-		pOverlays = NULL;
+		pOverlays = nullptr;
 		*this = p_MultiLineStruct;
 	}
 
@@ -100,10 +100,10 @@ struct SVOverlayStruct
 
 		lFigureSize = 0;
 
-		if( pOverlays != NULL )
+		if( nullptr != pOverlays )
 		{
 			delete [] pOverlays;
-			pOverlays = NULL;
+			pOverlays = nullptr;
 		}
 	}
 
@@ -159,7 +159,6 @@ public:
 
 	// General and header section
 	BOOL SetBufferSize( long lSize, bool bClearBuffer = true );
-	//BOOL SetBuffer( BYTE *&pBuffer, long &lSize );
 
 	// Overlay section
 	BOOL SetOverlayCount( long &lCount );

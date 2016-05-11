@@ -49,8 +49,6 @@ public:
 	virtual ~SVDlgImageEditor();
 
 	HRESULT SetFigureEditor( SVFigureEditor* pFigureEditor);
-	//HRESULT SetROI(const CRect& p_roRect);
-	//HRESULT GetROI(CRect& p_roRect);
 	CPoint GetMouseCoordinates();	// in image coordinates, not screen
 
 	HRESULT ClearOverlayPoints();
@@ -86,16 +84,9 @@ protected:
 	LPCTSTR m_szCursorId;
 	CPoint m_ptPickPoint;
 	CPoint m_ptLastMousePosition;
-
-	//void ScaleDisplayToReal(CRect& p_rRect);
-	//void ScaleRealToDisplay(CRect& p_rRect);
-
 	SVFigureEditor* m_pFigureEditor;
-
-	//std::vector < std::vector< CPoint > > m_vecFixedOverlayPoints;
 	SVOverlayStructVectorType  m_drawList;
 
 	HPEN m_hDefaultPen;
-
 }; // end class SVDlgImageEditor
 

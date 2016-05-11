@@ -96,25 +96,6 @@ _bstr_t SVGUID::ToBSTR() const
 
 SVString SVGUID::ToString() const
 {
-	/*
-	_bstr_t l_OutString;
-
-	RPC_WSTR l_RpcString( NULL );
-
-	UUID* l_pUuid( const_cast< UUID* >( &m_Guid ) );
-
-	if( ::UuidToStringW( l_pUuid, &l_RpcString ) == RPC_S_OK )
-	{
-		wchar_t* l_pTempString( NULL );
-
-		l_pTempString = reinterpret_cast< wchar_t* >( l_RpcString );
-
-		l_OutString = l_pTempString;
-
-		::RpcStringFreeW( &l_RpcString );
-	}
-	*/
-
 	// Make the String Representation have Enclosing Braces and All Hex Upper case
 	return SvUl_SF::Format("{%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
 		m_Guid.Data1, m_Guid.Data2, m_Guid.Data3,
@@ -122,7 +103,6 @@ SVString SVGUID::ToString() const
 		m_Guid.Data4[4], m_Guid.Data4[5], m_Guid.Data4[6], m_Guid.Data4[7]
 		);
 }
-
 
 const SVGUID& SVGUID::operator=( const SVGUID& p_rObject )
 {
@@ -161,7 +141,7 @@ const SVGUID& SVGUID::operator=( const BSTR& p_rString )
 			{
 				if( l_pTempString[ l ] == L'}' )
 				{
-					l_pTempString[ l_DestPos ] = NULL;
+					l_pTempString[ l_DestPos ] = L'\0';
 
 					break;
 				}

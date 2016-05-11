@@ -182,7 +182,7 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 								m_configFilePath = szPath;
 							}
 
-							CreateDirectoryW ((WCHAR *) Buffer, NULL);
+							CreateDirectoryW ((WCHAR *) Buffer, nullptr);
 
 							if (SourceFile.Open (szPath, CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &FileException))
 							{

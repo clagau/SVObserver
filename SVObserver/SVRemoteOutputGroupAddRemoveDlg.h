@@ -53,7 +53,6 @@ public:
 	HRESULT GetNewItems( CStringVec& OutputList );
 	HRESULT GetRemoved( CStringVec& OutputList );
 	HRESULT GetRenamed( CStringPairVect& OutputList);
-	HRESULT AddValue( CString GroupName, CString PPQName );
 
 	CStringVec m_astrAvailablePPQs;
 	CStringVec m_astrSetupGroups;

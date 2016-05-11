@@ -7,21 +7,21 @@
 
 #pragma once
 #pragma region Includes
-#include "ITaskObjectListClass.h"
+#include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		//this class is a interface. It should only have pure virtual public method and new member parameter
-		class IToolSet : virtual public ITaskObjectListClass
+		//this class is a interface. It should only have pure virtual public method and no member variables
+		class IToolSet
 		{
 		public:
 			virtual ~IToolSet() {}
 
 			/**********
-			 The method gets ?.
+			 The method determines if it is previous to another in the list.
 			 \param rToolID <out>: tool id
 			***********/
 			virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const = 0;

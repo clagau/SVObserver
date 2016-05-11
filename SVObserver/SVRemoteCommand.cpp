@@ -40,7 +40,7 @@ STDMETHODIMP SVRemoteCommand::GetCommandType(long* p_CommandType)
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_CommandType != NULL )
+	if( nullptr != p_CommandType )
 	{
 		if( ! m_Command.empty() )
 		{
@@ -65,28 +65,28 @@ STDMETHODIMP SVRemoteCommand::ConstructCommandData( ISVRemoteCommandData **p_ppC
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_ppCommandData != NULL )
+	if( nullptr != p_ppCommandData )
 	{
-		if( *p_ppCommandData != NULL )
+		if( nullptr != *p_ppCommandData )
 		{
 			( *p_ppCommandData )->Release();
 
-			*p_ppCommandData = NULL;
+			*p_ppCommandData = nullptr;
 		}
 
 		CComPtr< ISVRemoteCommandData > l_RemoteCommandDataPtr;
 
 		l_Status = l_RemoteCommandDataPtr.CoCreateInstance( __uuidof( SVRemoteCommandData ) );
 
-		if( l_RemoteCommandDataPtr.p == NULL )
+		if( nullptr == l_RemoteCommandDataPtr.p )
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = E_FAIL;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_RemoteCommandDataPtr.QueryInterface( p_ppCommandData );
 		}
@@ -103,39 +103,39 @@ STDMETHODIMP SVRemoteCommand::GetAttributes(ISVRemoteCommandData** p_ppAttribute
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_ppAttributes != NULL )
+	if( nullptr != p_ppAttributes )
 	{
-		if( *p_ppAttributes != NULL )
+		if( nullptr != *p_ppAttributes )
 		{
 			( *p_ppAttributes )->Release();
 
-			*p_ppAttributes = NULL;
+			*p_ppAttributes = nullptr;
 		}
 
 		if( ! m_Command.empty() )
 		{
 			SVCommandDataHolder::SVCommandAttributes* l_Attr = dynamic_cast< SVCommandDataHolder::SVCommandAttributes* >( m_Command.get() );
 
-			if( l_Attr != NULL )
+			if( nullptr != l_Attr )
 			{
 				CComPtr< ISVRemoteCommandData > l_CommandDataPtr;
 
 				l_Status = l_CommandDataPtr.CoCreateInstance( __uuidof( SVRemoteCommandData ) );
 
-				if( l_CommandDataPtr.p == NULL )
+				if( nullptr == l_CommandDataPtr.p )
 				{
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = E_FAIL;
 					}
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					// This has issues when using _ATL_DEBUG_INTERFACES...
 					SVRemoteCommandData* l_pCommandData = dynamic_cast< SVRemoteCommandData* >( l_CommandDataPtr.p );
 
-					if( l_pCommandData != NULL )
+					if( nullptr != l_pCommandData )
 					{
 						l_Status = l_Attr->GetAttributes( l_pCommandData->m_Data );
 					}
@@ -145,7 +145,7 @@ STDMETHODIMP SVRemoteCommand::GetAttributes(ISVRemoteCommandData** p_ppAttribute
 					}
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_CommandDataPtr.QueryInterface( p_ppAttributes );
 				}
@@ -172,18 +172,18 @@ STDMETHODIMP SVRemoteCommand::SetAttributes(ISVRemoteCommandData* p_pAttributes)
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pAttributes != NULL )
+	if( nullptr != p_pAttributes )
 	{
 		if( ! m_Command.empty() )
 		{
 			SVCommandDataHolder::SVCommandAttributes* l_Attr = dynamic_cast< SVCommandDataHolder::SVCommandAttributes* >( m_Command.get() );
 
-			if( l_Attr != NULL )
+			if( nullptr != l_Attr )
 			{
 				// This has issues when using _ATL_DEBUG_INTERFACES...
 				SVRemoteCommandData* l_pCommandData = dynamic_cast< SVRemoteCommandData* >( p_pAttributes );
 
-				if( l_pCommandData != NULL )
+				if( nullptr != l_pCommandData )
 				{
 					l_Status = l_Attr->SetAttributes( l_pCommandData->m_Data );
 				}
@@ -230,39 +230,39 @@ STDMETHODIMP SVRemoteCommand::GetResults(ISVRemoteCommandData** p_ppResults)
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_ppResults != NULL )
+	if( nullptr != p_ppResults )
 	{
-		if( *p_ppResults != NULL )
+		if( nullptr != *p_ppResults )
 		{
 			( *p_ppResults )->Release();
 
-			*p_ppResults = NULL;
+			*p_ppResults = nullptr;
 		}
 
 		if( ! m_Command.empty() )
 		{
 			SVCommandDataHolder::SVCommandResults* l_Results = dynamic_cast< SVCommandDataHolder::SVCommandResults* >( m_Command.get() );
 
-			if( l_Results != NULL )
+			if( nullptr != l_Results )
 			{
 				CComPtr< ISVRemoteCommandData > l_CommandDataPtr;
 
 				l_Status = l_CommandDataPtr.CoCreateInstance( __uuidof( SVRemoteCommandData ) );
 
-				if( l_CommandDataPtr.p == NULL )
+				if( nullptr == l_CommandDataPtr.p )
 				{
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = E_FAIL;
 					}
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					// This has issues when using _ATL_DEBUG_INTERFACES...
 					SVRemoteCommandData* l_pCommandData = dynamic_cast< SVRemoteCommandData* >( l_CommandDataPtr.p );
 
-					if( l_pCommandData != NULL )
+					if( nullptr != l_pCommandData )
 					{
 						l_Status = l_Results->GetResults( l_pCommandData->m_Data );
 					}
@@ -272,7 +272,7 @@ STDMETHODIMP SVRemoteCommand::GetResults(ISVRemoteCommandData** p_ppResults)
 					}
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_CommandDataPtr.QueryInterface( p_ppResults );
 				}

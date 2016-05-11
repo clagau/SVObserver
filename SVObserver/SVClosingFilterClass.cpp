@@ -19,7 +19,7 @@ SV_IMPLEMENT_CLASS( SVClosingFilterClass, SVClosingFilterClassGuid )
 SVClosingFilterClass::SVClosingFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVClosingFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVClosingFilterObjectType;
 }
 
 SVClosingFilterClass::~SVClosingFilterClass() 

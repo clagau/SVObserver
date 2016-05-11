@@ -21,9 +21,6 @@
     <ClCompile Include="SVContainableCriticalSection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVListObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVOCallbackClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,9 +51,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVContainableCriticalSection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVListObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMultithread.h">

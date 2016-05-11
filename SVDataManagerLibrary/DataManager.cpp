@@ -74,7 +74,7 @@ HRESULT SVDataManager::CreateManagedIndexArray( SVSmartIndexArrayHandlePtr& p_pA
 	
 	l_Status = CreateManagedIndexArray( p_Name, p_Depth, &( l_Handle ) );
 	
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		p_pArrayHandle = new SVDataManagerIndexArrayHandle( *this, l_Handle );
 	}
@@ -101,7 +101,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( const SVSmartIndexArrayHandl
 		
 		l_Status = GetNextAvailableBufferIndex( p_pArrayHandle->m_ArrayHandle, aLockType, true, &l_Index, &l_TransactionId );
 		
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			p_rHandle.m_pArrayHandle = p_pArrayHandle;
 			p_rHandle.m_LockType = aLockType;
@@ -132,7 +132,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndexNoWait( const SVSmartIndexArra
 		
 		l_Status = GetNextAvailableBufferIndex( p_pArrayHandle->m_ArrayHandle, aLockType, false, &l_Index, &l_TransactionId );
 		
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			p_rHandle.m_pArrayHandle = p_pArrayHandle;
 			p_rHandle.m_LockType = aLockType;
@@ -160,7 +160,7 @@ HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName,
 	SVManagedIndexArray*  pNewManagedIndexArray;
 	
 	lErr = 0;
-	pNewManagedIndexArray = NULL;
+	pNewManagedIndexArray = nullptr;
 	*alpIndexArrayHandle = -1;
 	
 	while (1)
@@ -173,7 +173,7 @@ HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName,
 		
 		pNewManagedIndexArray = new SVManagedIndexArray;
 		
-		if (pNewManagedIndexArray == NULL)
+		if (nullptr == pNewManagedIndexArray)
 		{
 			lErr = SVDM_1509NOALLOCATE_FATAL;
 			break;
@@ -235,7 +235,7 @@ HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName,
 	{
 		//--- No errors occur after the lock (accept for the lock) ------------------
 		delete pNewManagedIndexArray;
-		pNewManagedIndexArray = NULL;
+		pNewManagedIndexArray = nullptr;
 		
 		Unlock (); // Just in case someone puts in an error
 		//  break after locking and prior to 
@@ -259,8 +259,8 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( long alIndexArrayHandle,
 	long                  lAvailableBufferIndex = -1;
 	long					 lTransactionId = 0;
 
-	SVManagedIndex*       l_pAvailableIndex = NULL;
-	SVManagedIndex*       l_pNextAvailableIndex = NULL;
+	SVManagedIndex*       l_pAvailableIndex = nullptr;
+	SVManagedIndex*       l_pNextAvailableIndex = nullptr;
 
 
 	SVManagedIndexArray*  pManagedIndexArray;
@@ -294,7 +294,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( long alIndexArrayHandle,
 			lErr = pManagedIndexArray->GetNextIndex( lAvailableBufferIndex, lTransactionId, p_WaitForLock );
 			if (lAvailableBufferIndex == -1)
 			{
-				if( lErr == S_OK )
+				if( S_OK == lErr )
 				{
 					lErr = SVDM_1502NO_INDEXESAVAILABLE_ERROR;
 				}
@@ -311,9 +311,9 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( long alIndexArrayHandle,
 			{
 				lErr = pManagedIndexArray->GetAt( lAvailableBufferIndex, l_pAvailableIndex );
 
-				if( lErr != S_OK || l_pAvailableIndex == NULL )
+				if( S_OK != lErr || nullptr == l_pAvailableIndex )
 				{
-					if( lErr == S_OK )
+					if( S_OK == lErr )
 					{
 						lErr = SVDM_1513COULDNOTLOCKMANAGEDARRAY_FATAL;
 					}
@@ -374,12 +374,12 @@ HRESULT SVDataManager::LockBufferIndex (long    alIndexArrayHandle,
 
 	l_Status = ValidateIndexArrayHandle( alIndexArrayHandle );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = ValidateLockType( aLockType );
 	}
 		
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ alIndexArrayHandle ];
 		
@@ -392,21 +392,21 @@ HRESULT SVDataManager::LockBufferIndex (long    alIndexArrayHandle,
 /*
 This method locks a buffer index based on the index value and the index array handle.
 */
-HRESULT SVDataManager::LockBufferIndexNoLock (long    alIndexArrayHandle,
-                                        long    alBufferIndex,
-																				long	alTransactionId,
-                                        SVDataManagerLockTypeEnum aLockType)
+HRESULT SVDataManager::LockBufferIndexNoLock (long alIndexArrayHandle,
+											long alBufferIndex,
+											long alTransactionId,
+											SVDataManagerLockTypeEnum aLockType)
 {
 	HRESULT l_Status = S_OK;
 
 	l_Status = ValidateIndexArrayHandle( alIndexArrayHandle );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = ValidateLockType( aLockType );
 	}
 		
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ alIndexArrayHandle ];
 		
@@ -419,21 +419,21 @@ HRESULT SVDataManager::LockBufferIndexNoLock (long    alIndexArrayHandle,
 /*
 This method releases a buffer index based on the index value and the index array handle.
 */
-HRESULT SVDataManager::ReleaseBufferIndex (long    alIndexArrayHandle,
-                                           long    alBufferIndex,
-																					 long	   alTransactionId,
+HRESULT SVDataManager::ReleaseBufferIndex (long alIndexArrayHandle,
+                                           long alBufferIndex,
+										   long alTransactionId,
                                            SVDataManagerLockTypeEnum aLockType)
 {
 	HRESULT l_Status = S_OK;
 
 	l_Status = ValidateIndexArrayHandle( alIndexArrayHandle );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = ValidateLockType( aLockType );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ alIndexArrayHandle ];
 
@@ -446,21 +446,21 @@ HRESULT SVDataManager::ReleaseBufferIndex (long    alIndexArrayHandle,
 /*
 This method releases a buffer index based on the index value and the index array handle.
 */
-HRESULT SVDataManager::ReleaseBufferIndexNoLock (long    alIndexArrayHandle,
-                                           long    alBufferIndex,
-																					 long	   alTransactionId,
-                                           SVDataManagerLockTypeEnum aLockType)
+HRESULT SVDataManager::ReleaseBufferIndexNoLock (long alIndexArrayHandle,
+											long alBufferIndex,
+											long alTransactionId,
+											SVDataManagerLockTypeEnum aLockType)
 {
 	HRESULT l_Status = S_OK;
 
 	l_Status = ValidateIndexArrayHandle( alIndexArrayHandle );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = ValidateLockType( aLockType );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVManagedIndexArray* pManagedIndexArray = svmManagedIndexArrayList[ alIndexArrayHandle ];
 
@@ -532,7 +532,7 @@ HRESULT SVDataManager::DestroyIndexArray (long    alIndexArrayHandle)
 		//--- The following delete, deletes the ManagedIndexArrayLock, so there is no
 		//--- more need to free it.
 		delete pManagedIndexArray;
-		pManagedIndexArray = NULL;
+		pManagedIndexArray = nullptr;
 		
 		break;
 	}
@@ -540,20 +540,6 @@ HRESULT SVDataManager::DestroyIndexArray (long    alIndexArrayHandle)
 	Unlock ();
 	
 	return lErr;
-}
-
-/*
-This method handles string copies as desired by this class.
-*/
-HRESULT SVDataManager::StringCopy (TCHAR*		   apczDestString,
-																	 const TCHAR*	apczSourceString,
-																	 long		   alNbrOfCharacters)
-{
-	_tcsncpy (apczDestString, apczSourceString, alNbrOfCharacters);
-	
-	apczDestString [alNbrOfCharacters - 1] = 0;
-	
-	return 0;
 }
 
 /*
@@ -582,7 +568,7 @@ HRESULT SVDataManager::ValidateIndexArrayHandle (long   alIndexArrayHandle) cons
 			break;
 		}
 	
-		if ( svmManagedIndexArrayList [alIndexArrayHandle] == nullptr )
+		if ( nullptr == svmManagedIndexArrayList [alIndexArrayHandle] )
 		{
 			//------ This is a bit of an assumtion. If the handle is actually within 
 			//------ acceptable boundaries, but the contents of the contained pointer are
@@ -682,7 +668,7 @@ HRESULT	SVDataManager::GetNbrOfAvailableIndexes (long alIndexArrayHandle, long* 
 	{
 		lErr = ValidateIndexArrayHandle( alIndexArrayHandle );
 		
-		if( lErr != S_OK )
+		if( S_OK != lErr )
 		{
 			break;
 		}
@@ -711,7 +697,7 @@ void SVDataManager::Dump (long    alIndexArrayHandle, LPCSTR p_szSource ) const
 	long  lErr;
 	
 	lErr = 0;
-	pManagedIndexArray = NULL;
+	pManagedIndexArray = nullptr;
 
 	do
 	{
@@ -742,7 +728,7 @@ void SVDataManager::Dump_All ()
 	long  lErr;
 	
 	lErr = 0;
-	pManagedIndexArray = NULL;
+	pManagedIndexArray = nullptr;
 	for( long alIndexArrayHandle = 0 ; alIndexArrayHandle < svmManagedIndexArrayList.GetSize() ; alIndexArrayHandle++ )
 	{
 		
@@ -757,7 +743,7 @@ void SVDataManager::Dump_All ()
 		
 		pManagedIndexArray = svmManagedIndexArrayList [alIndexArrayHandle];
 		
-		if( pManagedIndexArray == NULL )
+		if( nullptr == pManagedIndexArray )
 		{
 			continue;
 		}
@@ -771,13 +757,13 @@ long SVDataManager::GetIndexLockCountByType( long p_ArrayHandle, long p_Index, S
 {
 	long l_Count( 0 );
 	
-	if( ValidateIndexArrayHandle( p_ArrayHandle ) == S_OK )
+	if( S_OK == ValidateIndexArrayHandle( p_ArrayHandle ) )
 	{
-		if( ValidateLockType( p_LockType ) == S_OK )
+		if( S_OK == ValidateLockType( p_LockType ) )
 		{
 			SVManagedIndexArray* l_pManagedIndexArray = svmManagedIndexArrayList[ p_ArrayHandle ];
 			
-			if( l_pManagedIndexArray != NULL && 0 <= p_Index && p_Index < static_cast< long >( l_pManagedIndexArray->GetSize() ) )
+			if( nullptr != l_pManagedIndexArray && 0 <= p_Index && p_Index < static_cast< long >( l_pManagedIndexArray->GetSize() ) )
 			{
 				l_Count = l_pManagedIndexArray->GetReferenceCount( p_Index, p_LockType );
 			}
@@ -791,13 +777,13 @@ long SVDataManager::GetLockCountByType( long p_ArrayHandle, SVDataManagerLockTyp
 {
 	long l_Count( 0 );
 	
-	if( ValidateIndexArrayHandle( p_ArrayHandle ) == S_OK )
+	if( S_OK == ValidateIndexArrayHandle( p_ArrayHandle ) )
 	{
-		if( ValidateLockType( p_LockType ) == S_OK )
+		if( S_OK == ValidateLockType( p_LockType ) )
 		{
 			SVManagedIndexArray* l_pManagedIndexArray = svmManagedIndexArrayList[ p_ArrayHandle ];
 			
-			if( l_pManagedIndexArray != NULL )
+			if( nullptr != l_pManagedIndexArray )
 			{
 				for( size_t i = 0; i < l_pManagedIndexArray->GetSize(); ++i )
 				{

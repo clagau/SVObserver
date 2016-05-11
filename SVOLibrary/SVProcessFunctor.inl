@@ -11,7 +11,7 @@
 
 template< typename SVT_CLASS >
 SVProcessFunctor< SVT_CLASS >::SVProcessFunctor()
-: m_pObject( NULL )
+: m_pObject( nullptr )
 {
 }
 
@@ -41,7 +41,7 @@ const SVProcessFunctor< SVT_CLASS >& SVProcessFunctor< SVT_CLASS >::operator=( c
 template< typename SVT_CLASS >
 void SVProcessFunctor< SVT_CLASS >::operator()( bool& p_WaitForEvents )
 {
-	if( m_pObject != NULL )
+	if( nullptr != m_pObject )
 	{
 		m_pObject->Process( p_WaitForEvents );
 	}

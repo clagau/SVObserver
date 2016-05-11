@@ -47,7 +47,7 @@ template < typename VALUETYPE, class VALUEOBJECTCLASS >
 inline VALUETYPE GetValue( VALUEOBJECTCLASS& valueobject )
 {
 	VALUETYPE value;
-	BOOL bOk = ( valueobject.GetValue( value ) == S_OK );
+	BOOL bOk = ( S_OK == valueobject.GetValue( value ) );
 	ASSERT( bOk );
 	return value;
 }

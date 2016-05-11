@@ -20,22 +20,12 @@
 // .Title       : SVCustomFilterClass
 // -----------------------------------------------------------------------------
 // .Description : Base class for all kinds of custom filters
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 class SVCustomFilterClass : public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVCustomFilterClass );
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-// Standard constructor
 	SVCustomFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCUSTOMFILTER );
 	virtual ~SVCustomFilterClass();
 	

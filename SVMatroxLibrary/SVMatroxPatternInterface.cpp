@@ -332,9 +332,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatro
 
 		if( l_Code == SVMEE_STATUS_OK )
 		{
-			MIL_ID l_NewId = MpatAllocResult(M_DEFAULT_HOST,
-				p_rlNbrEntries,
-				NULL);
+			MIL_ID l_NewId = MpatAllocResult(M_DEFAULT_HOST, p_rlNbrEntries, nullptr);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if( l_Code == SVMEE_STATUS_OK )

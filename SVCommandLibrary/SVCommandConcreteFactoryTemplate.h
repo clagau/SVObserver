@@ -11,11 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVCommandFactoryTemplate.h"
 #include "SVCommandConcreteTemplate.h"
+#pragma endregion Includes
 
-/*
-*/
 template< typename SVCommandObject >
 class SVCommandConcreteFactoryTemplate : public SVCommandFactoryTemplate
 {

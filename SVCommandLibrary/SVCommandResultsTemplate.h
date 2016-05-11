@@ -11,10 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVCommandResultsFacade.h"
+#pragma endregion Includes
 
-/*
-*/
 template< typename SVResultCollection >
 class SVCommandResultsTemplate : public SVCommandResultsFacade< SVResultCollection > 
 {

@@ -8,8 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 13:10:32  $
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
 #include "SVParamListDeviceParam.h"
+#pragma endregion Includes
 
 SVParamListDeviceParam::SVParamListDeviceParam()
 {
@@ -26,6 +29,10 @@ SVParamListDeviceParam::SVParamListDeviceParam(const SVParamListDeviceParam& rhs
 , mapParameters(rhs.mapParameters)
 {
 	m_eDataType = DeviceDataTypeComplex;
+}
+
+SVParamListDeviceParam::~SVParamListDeviceParam()
+{
 }
 
 SVClonable* SVParamListDeviceParam::CloneImpl() const

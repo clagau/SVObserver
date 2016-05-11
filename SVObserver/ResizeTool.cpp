@@ -49,8 +49,8 @@ void ResizeTool::LocalInitialize()
 
 	// Set up your type... in this case this will reference that this tool is a 
 	// Resize Tool.
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVResizeToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVResizeToolObjectType;
 }
 
 HRESULT	ResizeTool::InitializeInterpolationModeMember()
@@ -153,9 +153,9 @@ ResizeTool::~ResizeTool(void)
 
 BOOL ResizeTool::CloseObject()
 {
-	BOOL bRetVal = TRUE;
+	BOOL bRetVal = true;
 
-	if ( isCreated )
+	if ( m_isCreated )
 	{
 //		This statement should not be necessary because it should be set within 
 //		the base class.  
@@ -216,7 +216,7 @@ BOOL ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 
 	m_svSourceImageName.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -268,7 +268,6 @@ SVEnumerateValueObjectClass* ResizeTool::getPerformance()
 	return &m_ResizePerformance;
 }
 
-
 HRESULT ResizeTool::SetImageExtentToParent(unsigned long p_ulIndex)
 {
 	HRESULT l_hrOk = S_OK;
@@ -286,19 +285,17 @@ HRESULT ResizeTool::SetImageExtentToParent(unsigned long p_ulIndex)
 	return l_hrOk;
 }
 
-
 HRESULT ResizeTool::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
 {
 	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage( p_svImageExtent );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, p_svImageExtent );
 	}
 
 	return l_hrOk;
 }
-
 
 SVTaskObjectClass* ResizeTool::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {
@@ -314,7 +311,6 @@ SVTaskObjectClass* ResizeTool::GetObjectAtPoint( const SVExtentPointStruct &p_rs
 	return l_psvObject;
 }
 
-
 bool ResizeTool::DoesObjectHaveExtents() const
 {
 	return true;
@@ -324,7 +320,6 @@ SVStaticStringValueObjectClass* ResizeTool::GetInputImageNames()
 {
 	return &m_svSourceImageName;
 }
-
 
 HRESULT ResizeTool::ResetObject()
 {
@@ -387,7 +382,6 @@ HRESULT ResizeTool::ResetObject()
 	return hr;
 }
 
-
 BOOL ResizeTool::IsValid()
 {
 	BOOL bValid = true;
@@ -400,7 +394,6 @@ BOOL ResizeTool::IsValid()
 
 	return SVToolClass::IsValid() && bValid;
 }
-
 
 BOOL ResizeTool::Validate()
 {
@@ -432,7 +425,6 @@ BOOL ResizeTool::Validate()
 
 	return br;
 }
-
 
 BOOL ResizeTool::OnValidate()
 {
@@ -466,7 +458,6 @@ BOOL ResizeTool::OnValidate()
 	return br;
 }
 
-
 HRESULT	ResizeTool::OnValidate (ValidationLevelEnum validationLevel)
 {
 	if (SUCCEEDED (m_ValidationError.m_MessageCode))
@@ -490,7 +481,6 @@ HRESULT	ResizeTool::OnValidate (ValidationLevelEnum validationLevel)
 	return m_ValidationError.m_MessageCode;
 }
 
-
 HRESULT	ResizeTool::ValidateInspectionSettableParameters ()
 {
 	HRESULT	hr = S_OK;
@@ -498,7 +488,6 @@ HRESULT	ResizeTool::ValidateInspectionSettableParameters ()
 	// I think Extents are checked elsewhere.
 	return hr;
 }
-
 
 HRESULT	ResizeTool::ValidateRemotelySettableParameters ()
 {
@@ -529,7 +518,6 @@ HRESULT	ResizeTool::ValidateRemotelySettableParameters ()
 	return hr;
 }
 
-
 HRESULT	ResizeTool::ValidateOfflineParameters ()
 {
 	HRESULT	hr = S_OK;
@@ -557,7 +545,6 @@ HRESULT	ResizeTool::ValidateOfflineParameters ()
 	return hr;
 }
 
-
 HRESULT	ResizeTool::ValidateInterpolation (SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode)
 {
 	HRESULT hr = S_OK;
@@ -584,7 +571,6 @@ HRESULT	ResizeTool::ValidateInterpolation (SVInterpolationModeOptions::SVInterpo
 	return hr;
 }
 
-
 HRESULT	ResizeTool::ValidateOverscan (const SVOverscanOptions::SVOverscanOptionsEnum overscan)
 {
 	HRESULT hr = S_OK;
@@ -606,7 +592,6 @@ HRESULT	ResizeTool::ValidateOverscan (const SVOverscanOptions::SVOverscanOptions
 
 	return hr;
 }
-
 
 HRESULT	ResizeTool::ValidatePerformance (const SVPerformanceOptions::SVPerformanceOptionsEnum performance)
 {
@@ -630,7 +615,6 @@ HRESULT	ResizeTool::ValidatePerformance (const SVPerformanceOptions::SVPerforman
 	return hr;
 }
 
-
 HRESULT ResizeTool::ValidateScaleFactor(const double value)
 {
 	HRESULT hr = S_OK;
@@ -644,7 +628,6 @@ HRESULT ResizeTool::ValidateScaleFactor(const double value)
 
 	return hr;
 }
-
 
 HRESULT	ResizeTool::BackupInspectionParameters ()
 {
@@ -670,7 +653,6 @@ HRESULT	ResizeTool::BackupInspectionParameters ()
 	return hr;
 }
 
-
 HRESULT	ResizeTool::GetBackupInspectionParameters (	double*	oldHeightScaleFactor,
 													double*	oldWidthScaleFactor,
 													long*	oldInterpolationMode,
@@ -687,7 +669,6 @@ HRESULT	ResizeTool::GetBackupInspectionParameters (	double*	oldHeightScaleFactor
 
 	return hr;
 }
-
 
 BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
 {

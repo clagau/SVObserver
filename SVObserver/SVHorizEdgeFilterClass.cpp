@@ -19,7 +19,7 @@ SV_IMPLEMENT_CLASS( SVHorizEdgeFilterClass, SVHorizEdgeFilterClassGuid )
 SVHorizEdgeFilterClass::SVHorizEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 					   :SVFilterClass( POwner, StringResourceID ) 
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVHorzEdgeFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVHorzEdgeFilterObjectType;
 }
 
 SVHorizEdgeFilterClass::~SVHorizEdgeFilterClass()

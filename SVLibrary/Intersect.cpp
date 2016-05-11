@@ -83,9 +83,6 @@ Intersect::LineResultEnum Intersect::Lines(long x1, long y1, long x2, long y2, l
 	/////////////////////
 	// Compute s3 and s4 
 	/////////////////////
-//	r3 = ((y2 - y1) * x3) + ((x1 - x2) * y3) + ((x2 * y1) - (x1 * y2));
-//	r4 = ((y2 - y1) * x4) + ((x1 - x2) * y4) + ((x2 * y1) - (x1 * y2));
-
 	s3 = a1 * x3 + b1 * y3 + c1;
 	s4 = a1 * x4 + b1 * y4 + c1;
 
@@ -108,9 +105,6 @@ Intersect::LineResultEnum Intersect::Lines(long x1, long y1, long x2, long y2, l
 	/////////////////////
 	// Compute s1 and s2 
 	/////////////////////
-//  s1 = ((y4 - y3) * x1) + ((x3 - x4) * y1) + ((x4 * y3) - (x3 * y4));
-//  s2 = ((y4 - y3) * x2) + ((x3 - x4) * y2) + ((x4 * y3) - (x3 * y4));
-
 	s1 = a2 * x1 + b2 * y1 + c2;
 	s2 = a2 * x2 + b2 * y2 + c2;
 
@@ -136,8 +130,6 @@ Intersect::LineResultEnum Intersect::Lines(long x1, long y1, long x2, long y2, l
 	///////////////////////////////////////////////////////////////////////
 	denom = a1 * b2 - a2 * b1;
 
-//  denom = ((y2 - y1) * (x3 - x4)) - ((y4 - y3) * (x1 - x2));
-
 	if (!denom)  // COLLINEAR LINE SEGMENTS
 	{
 		a1 = std::max(x1, x2);
@@ -158,10 +150,6 @@ Intersect::LineResultEnum Intersect::Lines(long x1, long y1, long x2, long y2, l
 	// is added or subtracted to the numerator, depending upon the 
 	// sign of the numerator.                                      
 	///////////////////////////////////////////////////////////////////////
-
-//  num = ((x1 - x2) * ((x4 * y3) - (x3 * y4))) - ((x3 - x4) * ((x2 * y1) - (x1 * y2)));
-//  num = ((y4 - y3) * ((x2 * y1) - (x1 * y2))) - ((y2 - y1) * ((x4 * y3) - (x3 * y4)));
-
 	num = b1 * c2 - b2 * c1;
 	x = (num < 0 ? num - offset : num + offset) / denom;
 
@@ -243,65 +231,3 @@ bool Intersect::RectRect(const RECT& rect1, const RECT& rect2)
 	}
 	return bRetVal;
 }
-
-/*
-float Magnitude(POINT& pos1, POINT& pos2)
-{
-    float dx = abs(pos1.x - pos2.x);
-    float dy = abs(pos1.y - pos2.y);
-
-    return (float)sqrtf((dx * dx) + (dy * dy));
-}
-
-bool DistancePointToLine(POINT& pos, POINT& sPos, POINT& ePos, float& distance)
-{
-	bool bRetVal = true;
-    POINT Intersection;
- 
-	float lineLen = Magnitude(sPos, ePos);
- 
-    float U = ((((pos.x - sPos.x) * (sPos.x - ePos.x)) +
-				((pos.y - sPos.y) * (sPos.y - ePos.y))) /
-                (lineLen * lineLen);
- 
-    if (U < 0.0f || U > 1.0f)
-	{
-        bRetVal = false;   // closest point does not fall within the line segment
-	}
-	else
-	{
-		Intersection.x = sPos.x + (U * (sPos.x - ePos.x));
-		Intersection.x = sPos.y + (U * (sPos.y - ePos.y));
- 
-		Distance = Magnitude(pos.x, Intersection.y);
-	}
-	return bRetVal;
-}
-
-void main( void )
-{
-    XYZ LineStart, LineEnd, Point;
-    float Distance;
-
-
-    LineStart.X =  50.0f; LineStart.Y =   80.0f; LineStart.Z =  300.0f;
-    LineEnd.X   =  50.0f; LineEnd.Y   = -800.0f; LineEnd.Z   = 1000.0f;
-    Point.X     =  20.0f; Point.Y     = 1000.0f; Point.Z     =  400.0f;
-
-    if( DistancePointLine( &Point, &LineStart, &LineEnd, &Distance ) )
-        printf( "closest point falls within line segment, distance = %f\n", Distance );
-    else
-        printf( "closest point does not fall within line segment\n" );
-
-
-    LineStart.X =  0.0f; LineStart.Y =   0.0f; LineStart.Z =  50.0f;
-    LineEnd.X   =  0.0f; LineEnd.Y   =   0.0f; LineEnd.Z   = -50.0f;
-    Point.X     = 10.0f; Point.Y     =  50.0f; Point.Z     =  10.0f;
-
-    if( DistancePointLine( &Point, &LineStart, &LineEnd, &Distance ) )
-        printf( "closest point falls within line segment, distance = %f\n", Distance );
-    else
-        printf( "closest point does not fall within line segment\n" );
-}
-*/
-

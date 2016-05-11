@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:47:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRemoteInputDialog.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,7 +24,7 @@ namespace Seidenader
 {
 	namespace SVMFCControls
 	{
-		SVRemoteInputDialog::SVRemoteInputDialog(CWnd* pParent /*=NULL*/)
+		SVRemoteInputDialog::SVRemoteInputDialog(CWnd* pParent /*=nullptr*/)
 			: CDialog(SVRemoteInputDialog::IDD, pParent)
 		{
 			//{{AFX_DATA_INIT(SVRemoteInputDialog)
@@ -30,6 +32,9 @@ namespace Seidenader
 			//}}AFX_DATA_INIT
 		}
 
+		SVRemoteInputDialog::~SVRemoteInputDialog()
+		{
+		}
 
 		void SVRemoteInputDialog::DoDataExchange(CDataExchange* pDX)
 		{

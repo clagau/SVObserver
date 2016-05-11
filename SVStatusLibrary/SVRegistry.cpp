@@ -96,9 +96,9 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 						{
 							szFullKey += SV_BACKSLASH;
 							mszKey += SV_BACKSLASH;
-							if (GetModuleFileName (NULL, szPath, _MAX_PATH))
+							if (GetModuleFileName (nullptr, szPath, _MAX_PATH))
 							{
-								_tsplitpath (szPath, NULL, NULL, szFname, NULL);
+								_tsplitpath (szPath, nullptr, nullptr, szFname, nullptr);
 								szFullKey += szFname;
 								szFullKey += SV_BACKSLASH;
 								mszKey += szFname;
@@ -113,7 +113,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 		}
 	}
 
-	mhKey = (HKEY) NULL;
+	mhKey = (HKEY) nullptr;
 
 	if (SvUl_SF::Right(mszKey, 1) == SV_BACKSLASH)
 		mszKey.erase(mszKey.size() - 1);
@@ -143,15 +143,15 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 		{
 			if( ERROR_SUCCESS != RegCreateKeyEx ( hBaseKey,
 				szFullKey.c_str(),
-				static_cast< DWORD >( NULL ),
+				static_cast< DWORD >( 0 ),
 				_T( "" ),
 				REG_OPTION_NON_VOLATILE,
 				KEY_ALL_ACCESS,
-				static_cast< SECURITY_ATTRIBUTES* >( NULL ),
+				static_cast< SECURITY_ATTRIBUTES* >( nullptr ),
 				&mhKey,
 				&dwDisposition ) )
 			{
-				mhKey = static_cast< HKEY >( NULL );
+				mhKey = static_cast< HKEY >( nullptr );
 				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_CREATE_FAILED, szFullKey.c_str(), StdMessageParams );
 				Exception.Throw();
 			}
@@ -160,7 +160,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 		}
 		else
 		{
-			mhKey = (HKEY) NULL;
+			mhKey = (HKEY) nullptr;
 			Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_OPEN_FAILED, szFullKey.c_str(), StdMessageParams );
 			Exception.Throw();
 		}
@@ -199,9 +199,9 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVString& szValue)
 	// determine the size of the buffer necessary for the data
 	if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
 		szValueName,
-		(DWORD *) NULL,
+		(DWORD *) nullptr,
 		&dwType,
-		NULL,
+		nullptr,
 		&dwSize))
 	{
 		if (dwType == REG_SZ || dwType == REG_BINARY || dwType == REG_EXPAND_SZ || dwType == REG_MULTI_SZ)
@@ -212,7 +212,7 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVString& szValue)
 				// get the data
 				if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
 					szValueName,
-					(DWORD *) NULL,
+					(DWORD *) nullptr,
 					&dwType,
 					pBuff,
 					&dwSize))
@@ -238,7 +238,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 
 	if( ERROR_SUCCESS == RegSetValueEx( mhKey,
 		szValueName,
-		static_cast< DWORD >( NULL ),
+		0,
 		REG_SZ,
 		( BYTE* )( szValue ),  //BRW - This conversion only works when a C-style cast is used. [2007]
 		( DWORD )( strlen( szValue ) * sizeof( TCHAR ) ) ) )  //BRW - This conversion only works when a C-style cast is used. [2007]
@@ -262,9 +262,9 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
 	// determine the size of the buffer necessary for the data
 	if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
 		szValueName,
-		(DWORD *) NULL,
+		(DWORD *) nullptr,
 		&dwType,
-		NULL,
+		nullptr,
 		&dwSize))
 	{
 		if (dwType == REG_DWORD)
@@ -272,7 +272,7 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
 			// get the data
 			if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
 				szValueName,
-				(DWORD *) NULL,
+				(DWORD *) nullptr,
 				&dwType,
 				(LPBYTE) pdwValue,
 				&dwSize))
@@ -294,7 +294,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 
 	if( ERROR_SUCCESS == RegSetValueEx( mhKey,
 		szValueName,
-		static_cast< DWORD >( NULL ),
+		0,
 		REG_DWORD,
 		reinterpret_cast< BYTE* >( &dwValue ),
 		static_cast< DWORD >( sizeof( DWORD ) ) ) )
@@ -317,9 +317,9 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 	// determine the size of the buffer necessary for the data
 	if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
 		szValueName,
-		(DWORD *) NULL,
+		(DWORD *) nullptr,
 		&dwType,
-		NULL,
+		nullptr,
 		&dwSize))
 	{
 		// set byte array size
@@ -328,7 +328,7 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 		// get the data
 		if (ERROR_SUCCESS == RegQueryValueEx (mhKey,
 			szValueName,
-			(DWORD *) NULL,
+			(DWORD *) nullptr,
 			&dwType,
 			(LPBYTE) baValue.GetData(),
 			&dwSize))
@@ -347,7 +347,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 
 	lResult = RegSetValueEx( mhKey,
 		szValueName,
-		static_cast< DWORD >( NULL ),
+		0,
 		REG_BINARY,
 		baValue.GetData(),
 		static_cast< DWORD >( baValue.GetSize() ) );
@@ -372,7 +372,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 
 	lResult = RegSetValueEx( mhKey,
 		szValueName,
-		static_cast< DWORD >( NULL ),
+		0,
 		dwType,
 		baValue.GetData(),
 		dwLength );
@@ -398,7 +398,7 @@ BOOL SVRegistryClass::SaveKey(LPCTSTR p_szHive)
 
 	_tunlink( p_szHive );
 
-	dwResult = RegSaveKey( mhKey, p_szHive, NULL );
+	dwResult = RegSaveKey( mhKey, p_szHive, nullptr );
 
 	return (ERROR_SUCCESS == dwResult);
 }
@@ -424,7 +424,7 @@ BOOL SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
 	TOKEN_PRIVILEGES NewState;
 	LUID luid;
 
-	if (LookupPrivilegeValue (NULL, pszPrivilege, &luid))
+	if (LookupPrivilegeValue (nullptr, pszPrivilege, &luid))
 	{
 		NewState.PrivilegeCount = 1;
 		NewState.Privileges[0].Luid = luid;
@@ -432,7 +432,7 @@ BOOL SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
 
 		if (OpenProcessToken (GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken))
 		{
-			return AdjustTokenPrivileges (hToken, FALSE, &NewState, NULL, NULL, NULL);
+			return AdjustTokenPrivileges (hToken, FALSE, &NewState, 0, nullptr, nullptr);
 		}
 	}
 
@@ -449,7 +449,7 @@ void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
 	FILETIME ftLastWriteTime;
 	LONG lResult;
 
-	RegQueryInfoKey (mhKey, NULL, NULL, NULL, &dwcSubKeys, &dwcbMaxSubKeyLen, NULL, NULL, NULL, NULL, NULL, NULL);
+	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, &dwcSubKeys, &dwcbMaxSubKeyLen, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 
 	if (dwcSubKeys)
 	{
@@ -457,7 +457,7 @@ void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
 		{
 			dwcbBuffSize = dwcbMaxSubKeyLen + 1;
 			TCHAR* pszKey = new TCHAR[dwcbBuffSize];
-			lResult = RegEnumKeyEx (mhKey, dwIndex, pszKey, &dwcbBuffSize, NULL, NULL, NULL, &ftLastWriteTime);
+			lResult = RegEnumKeyEx (mhKey, dwIndex, pszKey, &dwcbBuffSize, nullptr, nullptr, nullptr, &ftLastWriteTime);
 			
 			if (lResult == ERROR_SUCCESS)
 				szKey = pszKey;
@@ -479,7 +479,7 @@ BOOL SVRegistryClass::DeleteKey()
 {
 	if (ERROR_SUCCESS == RegDeleteKey (mhKey, _T("")))
 	{
-		mhKey = NULL;
+		mhKey = nullptr;
 		return TRUE;
 	}
 	
@@ -525,9 +525,9 @@ BOOL SVRegistryClass::GetDefaultShadowFileName(SVString & szShadowFile)
 	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
 	SVString szKey;
 
-	if (GetModuleFileName (NULL, szPath, _MAX_PATH))
+	if (GetModuleFileName (nullptr, szPath, _MAX_PATH))
 	{
-		_tsplitpath (szPath, NULL, NULL, szFname, NULL);
+		_tsplitpath (szPath, nullptr, nullptr, szFname, nullptr);
 		_tgetcwd (szPath, _MAX_PATH);
 
 		szShadowFile = szPath;
@@ -846,13 +846,13 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 	if (ExportValues (pFile))
 	{
 		_ftprintf (pFile, _T("\n"));
-		RegQueryInfoKey (mhKey, NULL, NULL, NULL, &dwcSubKeys, &dwcbMaxSubKeyLen, NULL, NULL, NULL, NULL, NULL, NULL);
+		RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, &dwcSubKeys, &dwcbMaxSubKeyLen, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 
 		for (dwIndex = 0; dwIndex < dwcSubKeys; dwIndex++)
 		{
 			dwcbBuffSize = dwcbMaxSubKeyLen + 1;
 			TCHAR* pszKey = new TCHAR[dwcbBuffSize];
-			lResult= RegEnumKeyEx (mhKey, dwIndex, pszKey, &dwcbBuffSize, NULL, NULL, NULL, NULL);
+			lResult= RegEnumKeyEx (mhKey, dwIndex, pszKey, &dwcbBuffSize, nullptr, nullptr, nullptr, nullptr);
 			szKey = pszKey;
 			delete [] pszKey;
 
@@ -901,7 +901,7 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 	int i;
 	SVString szComma;
 
-	RegQueryInfoKey (mhKey, NULL, NULL, NULL, NULL, NULL, NULL, &dwcValues, &dwcbNameMax, &dwcbValueMax, NULL, NULL);
+	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dwcValues, &dwcbNameMax, &dwcbValueMax, nullptr, nullptr);
 
 	if (dwcValues)
 	{
@@ -915,7 +915,7 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 		{
 			dwcbName = dwcbNameMax + 1;
 			dwcbValue = dwcbValueMax;
-			lResult= RegEnumValue (mhKey, dwIndex, pszName, &dwcbName, NULL, &dwType, pData, &dwcbValue);
+			lResult= RegEnumValue (mhKey, dwIndex, pszName, &dwcbName, nullptr, &dwType, pData, &dwcbValue);
 
 			if (lResult == ERROR_SUCCESS)
 			{
@@ -1041,7 +1041,7 @@ BOOL SVRegistryClass::GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVS
 	BOOL rc = FALSE;
 	DWORD dwcbNameMax, dwcbValueMax, dwcbName, dwcbValue;
 	
-	RegQueryInfoKey (mhKey, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &dwcbNameMax, &dwcbValueMax, NULL, NULL);
+	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dwcbNameMax, &dwcbValueMax, nullptr, nullptr);
 
 	TCHAR* pName = new TCHAR[++dwcbNameMax];
 	TCHAR* pValue = new TCHAR[dwcbValueMax];
@@ -1049,7 +1049,7 @@ BOOL SVRegistryClass::GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVS
 	dwcbName = dwcbNameMax;
 	dwcbValue = dwcbValueMax;
 
-	if (ERROR_SUCCESS == RegEnumValue (mhKey, dwIndex, pName, &dwcbName, NULL, pdwType, reinterpret_cast<BYTE *>(pValue), &dwcbValue))
+	if (ERROR_SUCCESS == RegEnumValue (mhKey, dwIndex, pName, &dwcbName, nullptr, pdwType, reinterpret_cast<BYTE *>(pValue), &dwcbValue))
 	{
 		memset ((void *) pName, 0, dwcbNameMax * sizeof (TCHAR));
 		memset ((void *) pValue, 0, dwcbValueMax * sizeof (TCHAR));
@@ -1069,7 +1069,7 @@ DWORD SVRegistryClass::NumSubKeys()
 {
 	DWORD dwNumSubKeys;
 
-	RegQueryInfoKey (mhKey, NULL, NULL, NULL, &dwNumSubKeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, &dwNumSubKeys, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 	return dwNumSubKeys;
 }
 

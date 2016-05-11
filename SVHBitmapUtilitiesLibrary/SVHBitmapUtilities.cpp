@@ -9,25 +9,12 @@
 //* .Check In Date   : $Date:   12 Jun 2014 13:19:44  $
 //******************************************************************************
 
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVHBitmapUtilities.h"
 #include <assert.h>
 #include <math.h>
-
-/**
-@SVOperationName SVGetDIBSection
-
-@SVOperationDescription This function extracts a dib section from a HBitmap. 
-
-*/
-HRESULT SVIHBitmapUtilities::SVGetDIBSection( HBITMAP hDIB, DIBSECTION& rDibSection )
-{
-	HRESULT hr = S_OK;
-	if(::GetObject(hDIB, sizeof(DIBSECTION), &rDibSection) == 0)
-		hr = S_FALSE;
-	return hr;
-}
+#pragma endregion Includes
 
 /**
 @SVOperationName SVCopyDIBitsFlip
@@ -53,80 +40,6 @@ HRESULT SVIHBitmapUtilities::SVCopyDIBitsFlip(HDC hDC, HBITMAP hDIB, void* pSrcB
 	::SelectObject( hDC, hbmOld );
 	return S_OK;
 }// end SVCopyDIBitsFlip
-
-
-/**
-@SVOperationName SVCopyDIBitsFast
-
-@SVOperationDescription This function copies a SVDIBITMAPINFO into a SVDIBITMAPINFO.  The function uses a standard memcpy if the sizes and formats match.
-
-*/
-HRESULT SVIHBitmapUtilities::SVCopyDIBitsFast(const SVDIBITMAPINFO svSrcDIB, SVDIBITMAPINFO& rsvDestDIB )
-{
-	HRESULT hr = S_FALSE;
-
-	const BITMAPINFOHEADER* pSrcHeader = svSrcDIB.Header();
-	BITMAPINFOHEADER* pDestHeader = rsvDestDIB.Header();
-	
-	assert( pSrcHeader->biSizeImage == pDestHeader->biSizeImage );
-	assert( pSrcHeader->biWidth == pDestHeader->biWidth );
-	assert( abs(pSrcHeader->biHeight) == abs(pDestHeader->biHeight) );
-	assert( pSrcHeader->biClrUsed == pDestHeader->biClrUsed );
-	assert( pSrcHeader->biHeight != 0 );
-
-	bool bFormatMatches =
-		 (    abs(pSrcHeader->biHeight) == abs(pDestHeader->biHeight)
-		   && pSrcHeader->biWidth == pDestHeader->biWidth
-		   && pSrcHeader->biSizeImage == pDestHeader->biSizeImage
-		   && pSrcHeader->biClrUsed == pDestHeader->biClrUsed
-		   && pSrcHeader->biHeight != 0
-		 );
-	
-	if ( bFormatMatches )
-	{
-		if ( pSrcHeader->biHeight == pDestHeader->biHeight )	// if sign matches
-		{
-			memcpy( rsvDestDIB.pBits, svSrcDIB.pBits, pSrcHeader->biSizeImage );
-			hr = S_OK;
-		}
-		else
-		{
-			hr = SVRasterCopyFlip(svSrcDIB, rsvDestDIB);
-		}
-		//pDestHeader->biHeight = pSrcHeader->biHeight;	// ensure the sign is the same
-	}
-
-	return hr;
-}// end SVCopyDIBitsFast
-
-// don't call this directly; call SVCopyDIBitsFast
-HRESULT SVIHBitmapUtilities::SVRasterCopyFlip(const SVDIBITMAPINFO svSrcDIB, SVDIBITMAPINFO& rsvDestDIB )
-{
-	HRESULT hr = S_FALSE;
-
-	const BITMAPINFOHEADER* pSrcHeader = svSrcDIB.Header();
-	BITMAPINFOHEADER* pDestHeader = rsvDestDIB.Header();
-	
-	assert( pSrcHeader->biSizeImage == pDestHeader->biSizeImage );
-	assert( pSrcHeader->biWidth == pDestHeader->biWidth );
-	assert( abs(pSrcHeader->biHeight) == abs(pDestHeader->biHeight) );
-	assert( pSrcHeader->biClrUsed == pDestHeader->biClrUsed );
-	assert( pSrcHeader->biHeight != 0 );
-
-	// do a raster-line copy of the image, flipping it
-	int iRasterLineSize = ( ( ( ( pSrcHeader->biWidth * pSrcHeader->biBitCount ) + 31 ) & ~31 ) >> 3 );
-
-	const BYTE* pSrcLine = reinterpret_cast<BYTE *> (svSrcDIB.pBits);
-	BYTE* pDestLine = (reinterpret_cast<BYTE *> (rsvDestDIB.pBits)) + (iRasterLineSize * (abs(pDestHeader->biHeight)-1));
-	for ( int iLine = 0; iLine < pSrcHeader->biHeight; iLine++, pSrcLine += iRasterLineSize, pDestLine -= iRasterLineSize )
-	{
-		memcpy( pDestLine, pSrcLine, iRasterLineSize );
-	}
-
-	hr = S_OK;
-
-	return hr;
-}// end SVRasterCopyFlip
 
 /**
 @SVOperationName CreateBitmapInfoStruct
@@ -245,9 +158,9 @@ SVDIBITMAPINFO SVIHBitmapUtilities::SVCreateHBitmap( SVImageDefinitionStruct& rI
 			break;
 	}
 
-	void* pBits = NULL;
-	HBITMAP hbmResult = ::CreateDIBSection( NULL, pbmInfo, DIB_RGB_COLORS, &pBits, NULL, 0 );
-	if(hbmResult == NULL)
+	void* pBits = nullptr;
+	HBITMAP hbmResult = ::CreateDIBSection( nullptr, pbmInfo, DIB_RGB_COLORS, &pBits, nullptr, 0 );
+	if(nullptr == hbmResult)
 	{
 		delete [] pbmInfo;
 		pbmInfo = nullptr;
@@ -270,7 +183,7 @@ HRESULT SVIHBitmapUtilities::SVImageInfoToNewDIB( const BITMAPINFOHEADER& info, 
 
 	HRESULT hr = S_OK;
 
-	assert( rsvDIB.hbm == NULL );
+	assert( nullptr == rsvDIB.hbm );
 
 	SVImageDefinitionStruct l_ImageDef;
 	SVImageInfoToImageDefinitionStruct( info, l_ImageDef );

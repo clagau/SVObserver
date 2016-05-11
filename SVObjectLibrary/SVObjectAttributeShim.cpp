@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:37:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectAttributeShim.h"
 #include "SVObjectClass.h"
+#pragma endregion Includes
 
 SVObjectAttributeShim::~SVObjectAttributeShim()
 {

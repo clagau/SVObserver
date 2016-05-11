@@ -31,7 +31,7 @@ DWORD gmdwLastId;
 CString gmszUtilityKeyStr;
 CString gmszIdValueNameStr;
 
-SVUtilitiesCustomizeDialogClass::SVUtilitiesCustomizeDialogClass(CWnd* pParent /*=NULL*/)
+SVUtilitiesCustomizeDialogClass::SVUtilitiesCustomizeDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVUtilitiesCustomizeDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVUtilitiesCustomizeDialogClass)
@@ -43,6 +43,9 @@ SVUtilitiesCustomizeDialogClass::SVUtilitiesCustomizeDialogClass(CWnd* pParent /
 	//}}AFX_DATA_INIT
 }
 
+SVUtilitiesCustomizeDialogClass::~SVUtilitiesCustomizeDialogClass()
+{
+}
 
 void SVUtilitiesCustomizeDialogClass::DoDataExchange(CDataExchange* pDX)
 {
@@ -345,19 +348,19 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete()
 
   while ( !bFound )
   {
-	  BSTR l_bstrVal = NULL;
+	  BSTR l_bstrVal = nullptr;
 	  CString l_csVal;
 	  iUtlCnt++;
-	  csStanza.Format("Utility%d",iUtlCnt);
-	  l_svIni.GetValue(csStanza,"DisplayName","",&l_bstrVal,csIniName);
+	  csStanza.Format("Utility%d", iUtlCnt);
+	  l_svIni.GetValue(csStanza, "DisplayName", "", &l_bstrVal, csIniName);
 	  l_csVal = l_bstrVal;
 
 	  if ( l_csVal == mszMenuText )
 	  {
 		  //found value.  delete from INI
-		  l_svIni.SetValue(csStanza,NULL,"",csIniName);
-		  int iVal = l_svIni.GetValueInt("General","HighestUtilityIndex",0,csIniName);
-		  l_svIni.SetValue("General","HighestUtilityIndex",(iVal-1),csIniName);
+		  l_svIni.SetValue(csStanza, nullptr, "", csIniName);
+		  int iVal = l_svIni.GetValueInt("General", "HighestUtilityIndex", 0, csIniName);
+		  l_svIni.SetValue("General", "HighestUtilityIndex", (iVal-1), csIniName);
 		  bFound = TRUE;
 
 		  //find and delete from map
@@ -436,9 +439,3 @@ void SVUtilitiesCustomizeDialogClass::OnKillfocusCustomizeMenutext()
     GetDlgItem(IDC_CUSTOMIZE_MENUTEXT)->GetWindowText(mszMenuText);
     UpdateData (FALSE);
 }
-
-void SVUtilitiesCustomizeDialogClass::SetUtilityClass( SVUtilitiesClass *pUtilClass )
-{
-	m_pUtilityClass = pUtilClass;
-}
-

@@ -23,17 +23,17 @@
 template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& p_rClassID, SVObjectTypeName*& p_rpObject )
 {
-	SVObjectClass* l_pObject = NULL;
+	SVObjectClass* l_pObject = nullptr;
 
-	p_rpObject = NULL;
+	p_rpObject = nullptr;
 
 	HRESULT l_Status = ConstructObject( p_rClassID, l_pObject );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		p_rpObject = dynamic_cast< SVObjectTypeName* >( l_pObject );
 
-		if( p_rpObject == NULL )
+		if( nullptr == p_rpObject )
 		{
 			l_Status = E_FAIL;
 
@@ -53,16 +53,16 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& p_rFullName
 
 	l_Status = GetObjectByDottedName( p_rFullName, l_Reference );
 
-	if( l_Reference.Object() != NULL )
+	if( nullptr != l_Reference.Object() )
 	{
 		p_rpObject = dynamic_cast< SVObjectTypeName* >( l_Reference.Object() );
 	}
 	else
 	{
-		p_rpObject = NULL;
+		p_rpObject = nullptr;
 	}
 
-	if( l_Status == S_OK && p_rpObject == NULL )
+	if( S_OK == l_Status && nullptr == p_rpObject )
 	{
 		l_Status = E_FAIL;
 	}
@@ -77,7 +77,7 @@ HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, c
 
 	SVObjectClass* l_pObject = GetObject( m_RootNameChildren[rRootChild] );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		rpObject = dynamic_cast< SVObjectTypeName* >( l_pObject );
 	}
@@ -102,11 +102,11 @@ HRESULT SVObjectManagerClass::Notify( const SVGUID& p_rObjectID, SVNotifyData& p
 
 	SVObjectClass* l_pObject = GetObject( p_rObjectID );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		SVObjectNotifyTemplate< SVNotifyData >* l_pCommand = dynamic_cast< SVObjectNotifyTemplate< SVNotifyData >* >( l_pObject );
 
-		if( l_pCommand != NULL )
+		if( nullptr != l_pCommand )
 		{
 			l_Status = l_pCommand->ProcessNotifyData( p_rData );
 		}
@@ -136,7 +136,7 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& p_rVisitor, const SV
 	}
 	SVObjectClass* l_pObject = GetObject( l_StartingObjectID );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		HRESULT l_Temp = S_OK;
 
@@ -148,11 +148,11 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& p_rVisitor, const SV
 		{
 			SVObjectClass* l_pPreObject = *l_PreIter;
 
-			if( l_pPreObject != NULL )
+			if( nullptr != l_pPreObject )
 			{
 				l_Temp = VisitElements( p_rVisitor, l_pPreObject->GetUniqueObjectID() );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_Temp;
 				}
@@ -161,7 +161,7 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& p_rVisitor, const SV
 
 		l_Temp = l_pObject->Accept( p_rVisitor );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -174,11 +174,11 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& p_rVisitor, const SV
 		{
 			SVObjectClass* l_pPostObject = *l_PostIter;
 
-			if( l_pPostObject != NULL )
+			if( nullptr != l_pPostObject )
 			{
 				l_Temp = VisitElements( p_rVisitor, l_pPostObject->GetUniqueObjectID() );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_Temp;
 				}
@@ -196,11 +196,11 @@ HRESULT SVObjectManagerClass::UpdateObserver( const SVGUID& p_rObserverID, const
 
 	SVObjectClass* l_pObject = GetObject( p_rObserverID );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		SVObserverTemplate< SVDataType >* l_pObserver = dynamic_cast< SVObserverTemplate< SVDataType >* >( l_pObject );
 
-		if( l_pObserver != NULL )
+		if( nullptr != l_pObserver )
 		{
 			l_Status = l_pObserver->ObserverUpdate( p_rData );
 		}
@@ -228,7 +228,7 @@ HRESULT SVObjectManagerClass::UpdateObserver( long p_Cookie, const SVDataType& p
 	{
 		SVObserverTemplate< SVDataType >* l_pObserver = dynamic_cast< SVObserverTemplate< SVDataType >* >( l_CookiePtr->m_FunctorPtr.get() );
 
-		if( l_pObserver != NULL )
+		if( nullptr != l_pObserver )
 		{
 			l_Status = l_pObserver->ObserverUpdate( p_rData );
 		}
@@ -255,7 +255,7 @@ HRESULT SVObjectManagerClass::UpdateObservers( const SVString& p_rSubjectDataNam
 
 	l_Status = GetObservers( p_rSubjectDataName, p_rSubjectID, l_Observers, l_Cookies );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVSubjectEnabledObserverMap::iterator l_Iter = l_Observers.begin();
 
@@ -265,7 +265,7 @@ HRESULT SVObjectManagerClass::UpdateObservers( const SVString& p_rSubjectDataNam
 			{
 				HRESULT l_Temp = UpdateObserver( l_Iter->first, p_rData );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_Temp;
 				}
@@ -282,7 +282,7 @@ HRESULT SVObjectManagerClass::UpdateObservers( const SVString& p_rSubjectDataNam
 			{
 				HRESULT l_Temp = UpdateObserver( l_CookieIter->first, p_rData );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_Temp;
 				}

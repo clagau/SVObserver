@@ -9,10 +9,12 @@
 // * .Check In Date   : $Date:   01 Oct 2013 08:25:58  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageTest.h"
 #include "SVCameraPropDlgClass.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,15 +22,19 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVCameraPropDlgClass::SVCameraPropDlgClass(CWnd* pParent /*=NULL*/)
+SVCameraPropDlgClass::SVCameraPropDlgClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVCameraPropDlgClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVCameraPropDlgClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 
-	m_psvDigitizers = NULL;
-	m_ulHandle = NULL;
+	m_psvDigitizers = nullptr;
+	m_ulHandle = 0;
+}
+
+SVCameraPropDlgClass::~SVCameraPropDlgClass()
+{
 }
 
 void SVCameraPropDlgClass::DoDataExchange(CDataExchange* pDX)
@@ -61,7 +67,7 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 
 	// Start - Add Camera Parameters
 
-	if( m_psvDigitizers != NULL )
+	if( nullptr != m_psvDigitizers )
 	{
 		VARIANT l_varList;
 
@@ -83,14 +89,14 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 				int l_iParameterID = 0;
 				int l_iParameterTypeID = 0;
 
-				BSTR l_bstrName = NULL;
+				BSTR l_bstrName = nullptr;
 				VARIANT l_varValue;
 
 				::VariantInit( &l_varValue );
 
 				::SafeArrayGetElement(l_varList.parray, &i, &l_iParameterID);
 
-				if( m_psvDigitizers->ParameterGetName( m_ulHandle, l_iParameterID, &l_bstrName ) == S_OK )
+				if( S_OK == m_psvDigitizers->ParameterGetName( m_ulHandle, l_iParameterID, &l_bstrName ) )
 				{
 					m_psvDigitizers->ParameterGetValue( m_ulHandle, l_iParameterID, &l_iParameterTypeID, &l_varValue );
 
@@ -163,7 +169,6 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 
 void SVCameraPropDlgClass::OnOK() 
 {
-	//*
 	int l_iCount = m_svListCtrl.GetItemCount();
 
 	for( int i = 0; i < l_iCount; i++ )
@@ -181,7 +186,6 @@ void SVCameraPropDlgClass::OnOK()
 
 		m_psvDigitizers->ParameterSetValue( m_ulHandle, l_lParameterID, l_lParameterTypeID, &l_varValue );
 	}
-	//*/
 	
 	CDialog::OnOK();
 }

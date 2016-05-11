@@ -25,11 +25,8 @@ namespace Seidenader
 			BOOL Lock( DWORD DWWaitTime = INFINITE ) const;
 			BOOL Unlock() const;
 
-			HANDLE GetLockHandle();
-
 		protected:
 			HANDLE hProtectionMutex; 
-
 		};
 	} //SVSystemLibrary
 } //Seidenader

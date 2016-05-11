@@ -9,27 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:56:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVUpperThresholdEquation.h"
+#pragma endregion Includes
 
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVUpperThresholdEquationClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVUpperThresholdEquationClass, SVUpperThresholdEquationClassGuid );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,15 +30,11 @@ SVUpperThresholdEquationClass::SVUpperThresholdEquationClass( SVObjectClass* POw
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :26.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVUpperThresholdEquationClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType	= SVUpperThresholdEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType	= SVUpperThresholdEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -64,7 +44,7 @@ void SVUpperThresholdEquationClass::init()
 	RegisterEmbeddedObject( &result, SVUpperThresholdEquationResultObjectGuid, IDS_OBJECTNAME_UPPER_THRESHOLD_RESULT, false, SVResetItemNone );
 
 	// Set Embedded defaults
-	result.SetDefaultValue( 0.0, TRUE );
+	result.SetDefaultValue( 0.0, true );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -76,7 +56,6 @@ void SVUpperThresholdEquationClass::init()
 SVUpperThresholdEquationClass::~SVUpperThresholdEquationClass()
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // 

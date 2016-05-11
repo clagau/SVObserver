@@ -21,13 +21,14 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "SVVisionProcessorConstants.h"
 #include "SVDataDefinitionStruct.h"
 #include "RemoteMonitorNamedList.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "MessageNotification.h"
+#include "SVPPQObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -46,7 +47,7 @@ enum SVDataDefinitionListType
 	AllValuesAndAllImages			= 12,
 };
 
-const TCHAR			StandardItems[]				= _T( "StandardItems" );
+const TCHAR StandardItems[] = _T( "StandardItems" );
 #pragma endregion Declarations
 
 typedef std::map<SVGUID,SVString> SVErrorMap;
@@ -54,8 +55,6 @@ typedef std::map<SVGUID,SVString> SVErrorMap;
 class SVVisionProcessorHelper
 {
 public:
-	friend class SVObserverApp;
-
 	static SVVisionProcessorHelper& Instance();
 
 	virtual ~SVVisionProcessorHelper();
@@ -145,6 +144,12 @@ public:
 	//////////////////////////////////////////
 	bool GetFirstErrorMessage(SVGUID &guid, SVString &sErrorMessage) const;
 
+	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
+	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declares in another project
+	// So for now the restriction is made manually, just don't call these methods anywhere else, and described via this comment
+	void Startup(); // This method is only meant to be called by the main application class
+	void Shutdown();						 // This method is only meant to be called by the main application certain class
+
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
 	typedef boost::function< HRESULT ( const SVNameStorageMap&, SVNameStatusMap& ) > SVSetItemsFunctor;
@@ -154,11 +159,6 @@ protected:
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
-
-	SVVisionProcessorHelper();
-
-	void Startup();
-	void Shutdown();
 
 	HRESULT GetStandardItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
@@ -188,6 +188,7 @@ protected:
 	
 private:
 #pragma region Private Methods
+	SVVisionProcessorHelper();
 	SVVisionProcessorHelper( const SVVisionProcessorHelper& p_rObject );
 	const SVVisionProcessorHelper& operator=( const SVVisionProcessorHelper& p_rObject );
 

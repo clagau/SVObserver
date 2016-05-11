@@ -12,7 +12,7 @@
 #pragma once
 
 #ifndef _DEBUG
-	#define DebugBreak() NULL
+	#define DebugBreak() ; // Do Nothing
 #endif
 
 #pragma region Includes

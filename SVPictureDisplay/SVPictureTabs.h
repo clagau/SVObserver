@@ -28,7 +28,7 @@ class SVPictureTabs : public CDialog
 
 public:
 #pragma region Constructor
-	SVPictureTabs(CWnd* pParent = NULL);
+	SVPictureTabs(CWnd* pParent = nullptr);
 	virtual ~SVPictureTabs();
 #pragma endregion Constructor
 

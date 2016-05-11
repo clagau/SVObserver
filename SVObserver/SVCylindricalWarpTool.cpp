@@ -8,7 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:05:18  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCylindricalWarpTool.h"
 
@@ -16,7 +16,7 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 
 #include "SVImageProcessingClass.h"
-#include "SVValueObject.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SVCylindricalWarpToolClassGuid )
 
@@ -37,19 +37,19 @@ BOOL SVCylindricalWarpToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCre
 
 	if ( l_bOk )
 	{
-		l_bOk = LocalCreate() == S_OK;
+		l_bOk = S_OK == LocalCreate();
 	}
 
 	m_svSourceImageName.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	isCreated = l_bOk;
+	m_isCreated = l_bOk;
 
 	return l_bOk;
 }
 
 BOOL SVCylindricalWarpToolClass::CloseObject()
 {
-	BOOL l_bOk = LocalDestroy() == S_OK;
+	BOOL l_bOk = S_OK == LocalDestroy();
 
 	l_bOk = SVToolClass::CloseObject() && l_bOk;
 
@@ -59,8 +59,8 @@ BOOL SVCylindricalWarpToolClass::CloseObject()
 void SVCylindricalWarpToolClass::LocalInitialize()
 {
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVToolCylindricalObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVToolCylindricalObjectType;
 
 	// Identify our input image...
 	m_InputImageObjectInfo.SetInputObjectType( SVImageObjectType );
@@ -129,7 +129,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 	HRESULT l_hr= S_OK;
 
 	l_hrOk = S_OK;
-	if ( LocalDestroy() == S_OK )
+	if ( S_OK == LocalDestroy() )
 	{
 		SVGUID l_InputID;
 		SVImageInfoClass l_ImageInfo;
@@ -137,7 +137,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 
 		SVImageClass* l_pInputImage = GetInputImage();
 
-		if( l_pInputImage != NULL )
+		if( nullptr != l_pInputImage )
 		{
 			// Image input must already exist, and must be created!!!
 			// Embedded Image output must already exist!!!
@@ -174,15 +174,15 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 		// Warp Angle
 		double l_dAngle = 180;
 		l_hrOk = m_svWarpAngle.GetValue( l_dAngle );
-		if( (l_hr = l_svExtents.SetExtentProperty( SVExtentPropertyStartAngle, l_dAngle )) != S_OK )
+		if( S_OK != (l_hr = l_svExtents.SetExtentProperty( SVExtentPropertyStartAngle, l_dAngle )) )
 			l_hrOk = l_hr;
 
 		// Build Output Extents...
-		if( (l_hr = l_svExtents.UpdateData()) != S_OK )
+		if( S_OK != (l_hr = l_svExtents.UpdateData()) )
 			l_hrOk = l_hr;
 
 		// Tool Extents.....
-		if( (l_hr = SetImageExtent( 1, l_svExtents )) != S_OK )
+		if( S_OK != (l_hr = SetImageExtent( 1, l_svExtents )) )
 			l_hrOk = l_hr;
 
 		// Output Image..
@@ -193,7 +193,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 
 		l_hrOk = m_OutputImage.UpdateImage( SVImageTypePhysical, l_InputID, l_ImageInfo );
 
-		if( l_hrOk != S_OK )
+		if( S_OK != l_hrOk )
 		{
 			l_hrOk = CreateLUT();
 		}
@@ -209,7 +209,7 @@ HRESULT SVCylindricalWarpToolClass::LocalDestroy()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( DestroyLUT() != S_OK )
+	if ( S_OK != DestroyLUT() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -255,7 +255,7 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 
 	SVGUID l_InputID;
 
-	if( GetInputImage() != NULL )
+	if( nullptr != GetInputImage() )
 	{
 		l_InputID = GetInputImage()->GetUniqueObjectID();
 	}
@@ -276,9 +276,9 @@ HRESULT SVCylindricalWarpToolClass::ResetObject()
 	l_hrOk = UpdateOutputImageExtents();
 
 	// Now the input image is valid!
-	if( m_OutputImage.ResetObject() == S_OK )
+	if( S_OK == m_OutputImage.ResetObject() )
 	{
-		if( CreateLUT() != S_OK )
+		if( S_OK != CreateLUT() )
 		{
 			l_hrOk = S_FALSE;
 		}
@@ -314,10 +314,10 @@ BOOL SVCylindricalWarpToolClass::OnValidate()
 
 SVImageClass* SVCylindricalWarpToolClass::GetInputImage()
 {
-	SVImageClass* l_pImage = NULL;
+	SVImageClass* l_pImage = nullptr;
 
 	if( m_InputImageObjectInfo.IsConnected() && 
-		  m_InputImageObjectInfo.GetInputObjectInfo().PObject != NULL )
+		nullptr != m_InputImageObjectInfo.GetInputObjectInfo().PObject )
 	{
 		l_pImage = dynamic_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().PObject);
 	}
@@ -339,7 +339,7 @@ BOOL SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus )
 		SVImageClass* l_pInputImage = GetInputImage();
 
 		SVImageExtentClass l_svToolExtents;
-		l_bOk = GetImageExtent(l_svToolExtents) == S_OK;
+		l_bOk = S_OK == GetImageExtent(l_svToolExtents);
 		
 		SVMatroxImageInterface::SVStatusCode l_Code;
 
@@ -348,17 +348,17 @@ BOOL SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus )
 		long l_lInterpolation;
 		m_svInterpolationMode.GetValue(p_rRunStatus.m_lResultDataIndex, l_lInterpolation);
 
-		l_bOk = (l_svInputExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_dInputWidth ) == S_OK) && l_bOk;
-		l_bOk = (l_svToolExtents.GetExtentProperty( SVExtentPropertyWidth, l_dToolWidth ) == S_OK) && l_bOk;
-		l_bOk = (l_svInputExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_dInputHeight ) == S_OK) && l_bOk;
-		l_bOk = (l_svToolExtents.GetExtentProperty( SVExtentPropertyHeight, l_dToolHeight ) == S_OK) && l_bOk;
+		l_bOk = (S_OK == l_svInputExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_dInputWidth )) && l_bOk;
+		l_bOk = (S_OK == l_svToolExtents.GetExtentProperty( SVExtentPropertyWidth, l_dToolWidth )) && l_bOk;
+		l_bOk = (S_OK == l_svInputExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_dInputHeight )) && l_bOk;
+		l_bOk = (S_OK == l_svToolExtents.GetExtentProperty( SVExtentPropertyHeight, l_dToolHeight )) && l_bOk;
 
 		if( (l_dInputWidth != l_dToolWidth) || (l_dInputHeight != l_dToolHeight) )
 		{
 			HRESULT hrReset = ResetObject();
 		}
 
-		if ( l_pInputImage != NULL &&
+		if ( nullptr != l_pInputImage &&
 			   m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
 		{
 			SVSmartHandlePointer l_InputHandle;
@@ -446,8 +446,8 @@ HRESULT SVCylindricalWarpToolClass::CreateLUT()
 		SVMatroxBufferInterface::Get( m_LutX, SVPitch, l_lPitchX );
 		SVMatroxBufferInterface::Get( m_LutY, SVPitch, l_lPitchY );
 
-		long* l_plLutXData = NULL; // (long*) MbufInquire( m_LutX, M_HOST_ADDRESS, M_NULL );
-		long* l_plLutYData = NULL; // (long*) MbufInquire( m_LutY, M_HOST_ADDRESS, M_NULL );
+		long* l_plLutXData = nullptr;
+		long* l_plLutYData = nullptr;
 		SVMatroxBufferInterface::GetHostAddress( static_cast<void*>(&l_plLutXData), m_LutX );
 		SVMatroxBufferInterface::GetHostAddress( static_cast<void*>(&l_plLutYData), m_LutY );
 

@@ -42,7 +42,7 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	SVImageClass* inputImage = getInputImage ();
 	bOk &= (nullptr != inputImage);
 
-	bOk &= (m_svToolExtent.SetTranslation( SVExtentTranslationNone ) == S_OK);
+	bOk &= (S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationNone ));
 	SetToolROIExtentToFullInputImage ();
 
 	m_BufferDepth.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION;
@@ -50,7 +50,7 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	{
 		for (int i=0; i < m_numberOfOutputImages; i++)
 		{
-			bOk &= (m_OutputImages[i].InitializeImage( inputImage ) == S_OK );
+			bOk &= (S_OK == m_OutputImages[i].InitializeImage( inputImage ));
 			m_ImageIndexManagers[i].init(GetInspection());
 			m_ImageIndexManagers[i].SetAttributes(SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION, true);
 		}
@@ -74,7 +74,7 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
 	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -355,8 +355,8 @@ void RingBufferTool::LocalInitialize ()
 
 	// Set up your type... in this case this will reference that this tool is a 
 	// Resize Tool.
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVRingBufferToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVRingBufferToolObjectType;
 
 	m_ringBuffer.clear();
 }

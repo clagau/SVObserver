@@ -37,13 +37,13 @@ namespace Seidenader
 #pragma endregion Contructor
 
 #pragma region Public Methods
-		// only called for mask and threshold - SEJ888 - needs to go!
+		// only called for mask and threshold - @TODO - needs to go!
 		void PictureDisplay::setImageFromParent( SvOi::ISVImage* pImage, long tabNumber )
 		{
 			if (nullptr != pImage)
 			{
 				SvOi::MatroxImageSmartHandlePtr data;
-				if( pImage->GetImageType() == SVImageTypePhysical )
+				if( SVImageTypePhysical == pImage->GetImageType() )
 				{
 					data = pImage->GetParentImageInterface()->getImageData();
 				}
@@ -64,7 +64,7 @@ namespace Seidenader
 			}
 		}
 
-		//SEJ888 - needs to go!
+		//@TODO - needs to go!
 		void PictureDisplay::setImage( const SvOi::IMatroxImageData *imageData, long tabNumber )
 		{
 			if( nullptr != imageData && !( imageData->empty() ) )

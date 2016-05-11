@@ -25,9 +25,6 @@ namespace Seidenader
 		SVDlgFolder::SVDlgFolder(bool bFullAccess, LPCTSTR initialDir) 
 			: SVFileDialog(true, bFullAccess, nullptr, _T("*..*"))      // Show folders only.
 		{
-			/* vista style only
-			m_bPickFoldersMode = true; // Show folders only.
-			*/
 			m_ofn.lpstrInitialDir = initialDir;
 		}
 

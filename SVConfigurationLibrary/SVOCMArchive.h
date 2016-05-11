@@ -47,11 +47,10 @@ public:
 	//   format that is desired in the saved file.  This functionality is not 
 	//   currently implemented, so this parameter is not used.  Potential future 
 	//   implementation.
-	//##ModelId=3F2FA26101AD
 	template< typename SVTreeType >
 	static HRESULT CreateConfigurationFileFromTree(
 		unsigned long	ulSVOVersion, 
-		BSTR				bstrRevisionHistory,
+		BSTR			bstrRevisionHistory,
 		unsigned long	ulSECVersion, 
 		LPCTSTR			pstrFilename,
 		SVTreeType& p_rTree);

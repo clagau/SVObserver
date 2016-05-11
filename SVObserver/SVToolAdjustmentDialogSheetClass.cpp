@@ -121,7 +121,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	SVObjectTypeInfoStruct lutObjectInfo;
 	lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
 	lutObjectInfo.SubType	 = SVLUTOperatorObjectType;
-	if( ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutObjectInfo) ) )
+	if( ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutObjectInfo) ) )
 	{
 		bHasLUT = TRUE;
 	}
@@ -130,7 +130,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
 	ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
 
-	if( ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&ToolSizeAdjustTaskInfo) ) )
+	if( ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&ToolSizeAdjustTaskInfo) ) )
 	{
 		bHasSize = true;
 	}
@@ -139,16 +139,16 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	const SVObjectTypeInfoStruct& rToolType = GetTool()->GetObjectInfo().ObjectTypeInfo;
 	switch( rToolType.SubType )
 	{
-	case SVToolAcquisitionObjectType:
-		AddPage( new SVToolAdjustmentDialogAcquisitionSourcePageClass( m_InspectionID, m_TaskObjectID, this ) );
-		// NOTE:
-		// No Conditional Execution for Acquisition Tool !!!!
-		delete pConditionalDlg;
-		pConditionalDlg = nullptr;
-		// NOTE:
-		// No General page for acquisition tool!
-		// AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
-		break;
+		case SVToolAcquisitionObjectType:
+			AddPage( new SVToolAdjustmentDialogAcquisitionSourcePageClass( m_InspectionID, m_TaskObjectID, this ) );
+			// NOTE:
+			// No Conditional Execution for Acquisition Tool !!!!
+			delete pConditionalDlg;
+			pConditionalDlg = nullptr;
+			// NOTE:
+			// No General page for acquisition tool!
+			// AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
+			break;
 
 		case SVToolImageObjectType:	// Image Tool
 			AddPage( new SvOg::SVToolAdjustmentDialogTwoImagePageClass( m_InspectionID, m_TaskObjectID ) );
@@ -228,7 +228,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SVStatisticsToolObjectType:
-			AddPage( new SVToolAdjustmentDialogStatisticsPageClass( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SVToolAdjustmentDialogStatisticsPageClass( m_InspectionID, m_TaskObjectID,this ) );
 			AddPage( pConditionalDlg );
 			break;
 
@@ -324,7 +324,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		// Disable and Hide Cancel Button
 		HWND hWnd = ::GetDlgItem(m_hWnd, IDCANCEL);
-		if (hWnd != NULL)
+		if (nullptr != hWnd)
 		{
 			::EnableWindow( hWnd, FALSE );
 			::ShowWindow(hWnd, SW_HIDE );
@@ -400,21 +400,19 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		SVImageExtentClass oldImageExtend;
 		SVToolClass* pTool = GetTool();
 		pTool->GetImageExtent(oldImageExtend);
-		DWORD_PTR dwRet =  ::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		DWORD_PTR dwRet =  ::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 		
-		if( dwRet != SVMR_SUCCESS)
+		if( SVMR_SUCCESS == dwRet )
 		{
-			return;
-		}
-
-		SVIPDoc* l_psvDocument = SVObjectManagerClass::Instance().GetIPDoc( pTool->GetInspection()->GetUniqueObjectID() );;
-		l_psvDocument->SetModifiedFlag();
-		if( dwRet == SVMR_SUCCESS)
-		{
-		l_psvDocument->RunOnce();
-		}
+			SVIPDoc* pDocument = GetIPDoc();
+			if (pDocument)
+			{
+				pDocument->SetModifiedFlag();
+				pDocument->RunOnce();
+			}
 		
-		EndDialog( IDOK );
+			EndDialog( IDOK );
+		}
 	}
 
 void SVToolAdjustmentDialogSheetClass::OnCancel() 

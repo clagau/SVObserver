@@ -81,7 +81,6 @@ public:
 	virtual RECT GetRectangle() const = 0;
 
 	HRESULT SetColor(COLORREF color);
-	HRESULT SetSelectedColor(COLORREF color);
 	HRESULT SetEditAllowed( long p_lAllowed );
 	long GetEditAllowed() const;
 	long AddDrawObjectChild( long p_lHandle, DrawObjectRef p_DrawObject );
@@ -147,9 +146,7 @@ public:
 	//************************************
 	std::unique_ptr<CRgn> GetHotSpot( CPoint pt1, CPoint pt2 ) const;
 
-	CSize getImageSize() const;
 	void setImageSize(CSize val);
-	CSize getViewSize() const;
 	void setViewSize( CSize val );
 #pragma endregion Public Methods
 

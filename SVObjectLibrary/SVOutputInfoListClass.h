@@ -58,8 +58,6 @@ public:
 
 	virtual bool HasDependents();
 
-	virtual HRESULT ValidateAll();
-
 protected:
 	SVOutObjectInfoStructPtrArray m_svObjectArray;
 	SVStdSetSVOutObjectInfoStructPtr m_svObjectSet;

@@ -64,7 +64,7 @@ SVDeviceParam::~SVDeviceParam()
 
 SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
 {
-	SVDeviceParam* pParam = NULL;
+	SVDeviceParam* pParam = nullptr;
 
 	try
 	{
@@ -79,7 +79,7 @@ SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
 
 	ASSERT(pParam);
 
-	if (pParam != NULL)
+	if (nullptr != pParam)
 	{
 		pParam->Init(eType);
 	}

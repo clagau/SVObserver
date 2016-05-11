@@ -9,32 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:21:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDPointYResult.h"
-#include "SVValueObjectImpl.h"
 #include "SVRange.h"
+#pragma endregion Includes
 
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVDPointYResult
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVDPointYResultClass, SVDPointYResultClassGuid );
-
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -44,8 +25,8 @@ SVDPointYResultClass::SVDPointYResultClass( BOOL BCreateDefaultTaskList, SVObjec
 					:SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVResultDPointYObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultDPointYObjectType;
 
 	// Identify our input type needs
 	inputObjectInfo.SetInputObjectType( SVDPointValueObjectType );
@@ -95,13 +76,13 @@ BOOL SVDPointYResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 
 	if( SVResultClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = getInputPoint() != NULL;
+		bOk = nullptr != getInputPoint();
 	}
 
 	// Set / Reset Printable Flag
 	y.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -116,7 +97,7 @@ SVDPointValueObjectClass* SVDPointYResultClass::getInputPoint()
 	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
 		return static_cast<SVDPointValueObjectClass*>(inputObjectInfo.GetInputObjectInfo().PObject);
 	
-	return NULL;
+	return nullptr;
 }
 
 

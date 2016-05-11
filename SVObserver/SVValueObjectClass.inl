@@ -61,8 +61,6 @@ inline void SVValueObjectClass::swap( SVValueObjectClass& rhs )
 
 		std::swap( m_bResetAlways, m_bResetAlways );
 		std::swap( m_eResetItem, m_eResetItem );
-
-		//SVObjectAppClass::swap( rhs );	// no, we will only swap data for now, not identity
 	}
 }
 

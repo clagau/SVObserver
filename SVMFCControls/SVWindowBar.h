@@ -16,41 +16,10 @@ namespace Seidenader
 {
 	namespace SVMFCControls
 	{
-		////////////////////////////////////////////////////////////////////////////////
-		// .Title       : SVWindowBarClass
-		// -----------------------------------------------------------------------------
-		// .Description : e.g. This base class capsules an Image and provides its ...
-		//              :
-		//              :
-		// -----------------------------------------------------------------------------
-		// .Export
-		//	 Public Method				Description
-		//  :
-		//  :
-		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
-		//  :dd.mm.yyyy				First Implementation
-		//	:
-		////////////////////////////////////////////////////////////////////////////////
 		class SVWindowBarClass : public CControlBar
 		{
-			//******************************************************************************
-			// Serialization Declaration(s):
-			//******************************************************************************
-
-			//******************************************************************************
-			// MFC Declarations:
-			//******************************************************************************
 			DECLARE_DYNCREATE( SVWindowBarClass )
 
-			//******************************************************************************
-			// Manual Generated Message Map Entries
-			//******************************************************************************
-
-			//******************************************************************************
-			// Class Wizard Generated Message Map Entries
-			//******************************************************************************
 		protected:
 			//{{AFX_MSG(SVWindowBarClass)
 			afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
@@ -61,50 +30,11 @@ namespace Seidenader
 
 			DECLARE_MESSAGE_MAP()
 
-			//******************************************************************************
-			// Friend Declaration(s):
-			//******************************************************************************
-
-			//******************************************************************************
-			// Constructor(s):
-			//******************************************************************************
 		public:
 			SVWindowBarClass();
-
-			//******************************************************************************
-			// Destructor(s):
-			//******************************************************************************
-		public:
 			virtual ~SVWindowBarClass();
-
-
-			//******************************************************************************
-			// Operator(s):
-			//******************************************************************************
-			////////////////////////////////////////////////////////////////////////////////
-			// Create Operator
-			////////////////////////////////////////////////////////////////////////////////
-		public:
 			virtual BOOL Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID );
-
-			//******************************************************************************
-			// Operation(s) Of Writing Access:
-			//******************************************************************************
-		public:
 			virtual void OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler );
-
-			//******************************************************************************
-			// Operation(s) Of Reading Access:
-			//******************************************************************************
-
-			//******************************************************************************
-			// Operation(s) Of Process;
-			//******************************************************************************
-
-			//******************************************************************************
-			// Operation(s) Of Visual Representation:
-			//******************************************************************************
-		public:
 			virtual CSize CalcFixedLayout( BOOL bStretch, BOOL bHorz );
 			virtual CSize CalcDynamicLayout( int nLength, DWORD dwMode );
 
@@ -115,7 +45,7 @@ namespace Seidenader
 			// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
 			//{{AFX_VIRTUAL(SVWindowBarClass)
 		public:
-			virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+			virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
 		protected:
 			virtual void CalcWindowRect(LPRECT lpClientRect, UINT nAdjustType = adjustBorder);
 			//}}AFX_VIRTUAL

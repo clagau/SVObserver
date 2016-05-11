@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVTaskObject.h"
 
-#include "SVImageLibrary/SVDrawContext.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
@@ -40,7 +39,6 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVTaskObjectClass, SVTaskObjectClassGuid)
 #pragma endregion Declarations
-
 
 SVTaskObjectClass::SVTaskObjectClass(LPCSTR ObjectName)
 	:SVObjectAppClass(ObjectName) 
@@ -81,26 +79,19 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 	return l_hrOk;
 }
 
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
 SVTaskObjectClass::~SVTaskObjectClass()
 {
-	//	SV_FORMAT_MESSAGE( "%s - > SVTaskObjectClass::~SVTaskObjectClass()", GetName() );
-	
 	DestroyFriends();
 	
 	// empty the Embedded List
 	for (int i = embeddedList.GetSize() - 1; i >= 0; i--)
 	{
 		SVObjectClass* pObject = embeddedList.GetAt(i);
-		if (pObject)
+		if (pObject && pObject->IsCreated())
 		{
 			pObject->CloseObject();
-			embeddedList.RemoveAt(i);
 		}
+		embeddedList.RemoveAt(i);
 	}
 	CloseObject();
 }
@@ -112,35 +103,24 @@ HRESULT SVTaskObjectClass::ResetObject()
 	return l_hrOk;
 }
 
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
-// Dummy! Should be pure virtual!
-BOOL SVTaskObjectClass::ReInit()
-{
-	return FALSE;
-}
-
 HRESULT SVTaskObjectClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const
 {
 	HRESULT l_Status( S_OK );
 
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[ i ];
+		const SVObjectInfoStruct& rFriend = m_friendList[ i ];
 
 		// Check if Friend is alive...
-		SVTaskObjectClass* l_pObject( NULL );
+		SVTaskObjectClass* l_pObject( nullptr );
 
 		l_pObject = dynamic_cast< SVTaskObjectClass* >( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
 
-		if( l_pObject != NULL )
+		if( nullptr != l_pObject )
 		{
 			HRESULT l_Temp = l_pObject->GetOutputList( p_rOutputInfoList );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -149,8 +129,8 @@ HRESULT SVTaskObjectClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoLi
 
 	for( long i = 0; i < embeddedList.GetSize(); i++ )
 	{
-		SVObjectClass *pObject = embeddedList.GetAt(i);
-		if( pObject != NULL )
+		SVObjectClass* pObject = embeddedList.GetAt(i);
+		if( nullptr != pObject )
 		{
 			p_rOutputInfoList.Add( &(pObject->GetObjectOutputInfo()) );
 		}
@@ -180,7 +160,9 @@ HRESULT SVTaskObjectClass::GetOutputListFiltered(std::vector<SVValueObjectRefere
 					bool bAttributesOK = bAND ? (ref.ObjectAttributesSet() & uiAttributes) == uiAttributes // AND
 					                          : (ref.ObjectAttributesSet() & uiAttributes) > 0;            // OR
 					if ( bAttributesOK )
+					{
 						rvecObjects.push_back( ref );
+					}
 				}
 				else
 				{
@@ -191,7 +173,9 @@ HRESULT SVTaskObjectClass::GetOutputListFiltered(std::vector<SVValueObjectRefere
 						bool bAttributesOK = bAND ? (ref.ObjectAttributesSet() & uiAttributes) == uiAttributes // AND
 						                          : (ref.ObjectAttributesSet() & uiAttributes) > 0;            // OR
 						if ( bAttributesOK )
+						{
 							rvecObjects.push_back( ref );
+						}
 					}
 
 				}
@@ -286,25 +270,25 @@ HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObj
 {
 	HRESULT l_Status = SVObjectAppClass::GetChildObject( rpObject, rNameInfo, Index );
 
-	if( l_Status != S_OK )
+	if( S_OK != l_Status )
 	{
 		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
 		{
 			// Notify friends...
-			for (size_t i = 0; nullptr == rpObject && i < friendList.size(); ++ i)
+			for (size_t i = 0; nullptr == rpObject && i < m_friendList.size(); ++ i)
 			{
-				const SVObjectInfoStruct& rfriend = friendList[i];
+				const SVObjectInfoStruct& rfriend = m_friendList[i];
 				if( nullptr != rfriend.PObject)
 				{
 					l_Status = rfriend.PObject->GetChildObject( rpObject, rNameInfo, Index + 1 );
 				}
 			}
 
-			if( ( l_Status != S_OK ) && ( ( Index + 1 ) == ( rNameInfo.m_NameArray.size() - 1 ) ) )
+			if( ( S_OK != l_Status ) && ( ( Index + 1 ) == ( rNameInfo.m_NameArray.size() - 1 ) ) )
 			{
 				for( long j = 0; nullptr == rpObject && j < embeddedList.GetSize(); j++ )
 				{
-					SVObjectClass *l_pObject = embeddedList.GetAt(j);
+					SVObjectClass* l_pObject = embeddedList.GetAt(j);
 
 					if( nullptr != l_pObject )
 					{
@@ -341,7 +325,7 @@ HRESULT SVTaskObjectClass::RunOnce(IObjectClass* pTool)
 
 SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed isAllowed, UINT Attribute, bool WholeArray) const
 {
-	SvOsl::SelectorItemVector *pSelectorList = new SvOsl::SelectorItemVector();
+	SvOsl::SelectorItemVector* pSelectorList = new SvOsl::SelectorItemVector();
 	SvOi::ISelectorItemVectorPtr Result = static_cast<SvOi::ISelectorItemVector*> (pSelectorList);
 
 	if (isAllowed)
@@ -420,7 +404,7 @@ SvOi::DependencyList SVTaskObjectClass::GetDependents(bool bImagesOnly, SVObject
 {
 	SvOi::DependencyList dependents;
 	SVObjectPairVector v;
-	HRESULT hr = const_cast<SVTaskObjectClass *>(this)->GetDependentsList(v, bImagesOnly);
+	HRESULT hr = const_cast<SVTaskObjectClass*>(this)->GetDependentsList(v, bImagesOnly);
 	if (S_OK == hr)
 	{
 		std::for_each(v.begin(), v.end(), [&dependents, &nameToObjectType](const SVObjectPair& item)->void
@@ -448,7 +432,7 @@ void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, i
 				SvOi::IObjectClass* pObject = psvImageInfo->GetInputObjectInfo().PObject;
 				if (nullptr != pObject)
 				{
-					SvOi::ISVImage* pImage = dynamic_cast <SvOi::ISVImage *>(pObject);
+					SvOi::ISVImage* pImage = dynamic_cast <SvOi::ISVImage*>(pObject);
 					if (nullptr != pImage)
 					{
 						SVString name = pImage->getDisplayedName();
@@ -471,24 +455,20 @@ void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, i
 }
 #pragma endregion virtual method (ITaskObject)
 
-////////////////////////////////////////////////////////////////////////////////
-// Other Operators
-////////////////////////////////////////////////////////////////////////////////
-
-HRESULT SVTaskObjectClass::IsInputImage( SVImageClass *p_psvImage )
+HRESULT SVTaskObjectClass::IsInputImage( SVImageClass* p_psvImage )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( p_psvImage != NULL )
+	if( nullptr != p_psvImage)
 	{
-		SVTaskObjectClass *l_psvObject = nullptr;
+		SVTaskObjectClass* l_psvObject = nullptr;
 
 		// Notify friends...
-		for( size_t i = 0; S_OK != l_hrOk && i < friendList.size(); ++i )
+		for( size_t i = 0; S_OK != l_hrOk && i < m_friendList.size(); ++i )
 		{
-			const SVObjectInfoStruct &l_rsvFriend = friendList[i];
+			const SVObjectInfoStruct &l_rsvFriend = m_friendList[i];
 
-			l_psvObject = dynamic_cast<SVTaskObjectClass *>(l_rsvFriend.PObject);
+			l_psvObject = dynamic_cast<SVTaskObjectClass*>(l_rsvFriend.PObject);
 
 			if( nullptr != l_psvObject && l_psvObject->GetOwner() == this )
 			{
@@ -499,9 +479,9 @@ HRESULT SVTaskObjectClass::IsInputImage( SVImageClass *p_psvImage )
 		// Notify embeddeds...
 		for( int i = 0; S_OK != l_hrOk && i < embeddedList.GetSize(); ++i )
 		{
-			l_psvObject = dynamic_cast<SVTaskObjectClass *>(embeddedList[i]);
+			l_psvObject = dynamic_cast<SVTaskObjectClass*>(embeddedList[i]);
 
-			if( l_psvObject != NULL )
+			if( nullptr != l_psvObject )
 			{
 				l_hrOk = l_psvObject->IsInputImage( p_psvImage );
 			}
@@ -511,16 +491,16 @@ HRESULT SVTaskObjectClass::IsInputImage( SVImageClass *p_psvImage )
 	return l_hrOk;
 }
 
-SVTaskObjectClass *SVTaskObjectClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass* SVTaskObjectClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {
-	SVTaskObjectClass *l_psvObject = nullptr;
+	SVTaskObjectClass* l_psvObject = nullptr;
 
 	// Notify friends...
-	for( size_t i = 0; nullptr == l_psvObject && i < friendList.size(); ++i )
+	for( size_t i = 0; nullptr == l_psvObject && i < m_friendList.size(); ++i )
 	{
-		const SVObjectInfoStruct &l_rsvFriend = friendList[i];
+		const SVObjectInfoStruct &l_rsvFriend = m_friendList[i];
 
-		l_psvObject = dynamic_cast<SVTaskObjectClass *>(l_rsvFriend.PObject);
+		l_psvObject = dynamic_cast<SVTaskObjectClass*>(l_rsvFriend.PObject);
 
 		if( nullptr != l_psvObject && l_psvObject->GetOwner() == this )
 		{
@@ -531,7 +511,7 @@ SVTaskObjectClass *SVTaskObjectClass::GetObjectAtPoint( const SVExtentPointStruc
 	// Notify embeddeds...
 	for( int i = 0; nullptr == l_psvObject && i < embeddedList.GetSize(); ++i )
 	{
-		l_psvObject = dynamic_cast<SVTaskObjectClass *>(embeddedList[i]);
+		l_psvObject = dynamic_cast<SVTaskObjectClass*>(embeddedList[i]);
 
 		if( nullptr != l_psvObject )
 		{
@@ -572,21 +552,13 @@ HRESULT SVTaskObjectClass::GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SV
 	return S_FALSE;
 }
 
-
 HRESULT SVTaskObjectClass::GetOutputRectangle( RECT &l_roRect )
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::NormalizePoint( POINT l_oPoint, POINT &l_roOutputPoint )
-{
-	return S_FALSE;
-}
-
-
 // Must and will be called if ObjectID of this object has been changed.
 // ( Refer to SVObjectManagerClass::ChangeUniqueObjectID() )
-
 void SVTaskObjectClass::ResetPrivateInputInterface()
 {
 	for (int i = 0; i < inputInterfaceList.GetSize(); ++ i)
@@ -631,9 +603,9 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 	addDefaultInputObjects(TRUE, &inputList);
 	
 	// tell friends to connect...
-	for (size_t j = 0; j < friendList.size(); ++ j)
+	for (size_t j = 0; j < m_friendList.size(); ++ j)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[j];
+		const SVObjectInfoStruct& rFriend = m_friendList[j];
 		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, 0, 0);
 	}
 
@@ -661,10 +633,10 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 						BOOL bSuccess = false;
 						
 						// Ask first friends...
-						for (size_t j = 0; j < friendList.size(); ++ j)
+						for (size_t j = 0; j < m_friendList.size(); ++ j)
 						{
-							const SVObjectInfoStruct& rFriend = friendList[j];
-							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info)));
+							const SVObjectInfoStruct& rFriend = m_friendList[j];
+							pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info)));
 							if (pObject)
 							{
 								// Connect input ...
@@ -685,11 +657,11 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 								// if color system & pOwner == SVToolSetClass
 								if (nullptr != pInspection && pInspection->IsColorCamera() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && SVImageObjectType == info.ObjectType )
 								{
-									pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
+									pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
 								}
 								else
 								{
-									pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(pOwner, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
+									pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage(pOwner, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
 								}
 								if (pObject)
 								{
@@ -741,12 +713,12 @@ HRESULT SVTaskObjectClass::ConnectToImage(const SVString& rInputName, const SVGU
 	HRESULT hr = S_OK;
 
 	SVInputInfoListClass toolInputList;
-	::SVSendMessage( this, SVM_GET_INPUT_INTERFACE | SVM_NOTIFY_FRIENDS, reinterpret_cast<DWORD_PTR>(&toolInputList), NULL );
+	::SVSendMessage( this, SVM_GET_INPUT_INTERFACE | SVM_NOTIFY_FRIENDS, reinterpret_cast<DWORD_PTR>(&toolInputList), 0 );
 	// Find SVInObjectInfoStruct that has this name
 	SVVector<SVInObjectInfoStruct*>::const_iterator it = std::find_if(toolInputList.begin(), toolInputList.end(), CompareInputName(rInputName));
 	if (it != toolInputList.end())
 	{
-		SVImageClass* pNewImage = dynamic_cast<SVImageClass *>(SVObjectManagerClass::Instance().GetObject(newImageGUID));
+		SVImageClass* pNewImage = dynamic_cast<SVImageClass*>(SVObjectManagerClass::Instance().GetObject(newImageGUID));
 		if (pNewImage)
 		{
 			hr = ConnectToImage((*it), pNewImage);
@@ -776,16 +748,16 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 		if( p_psvInputInfo->IsConnected() )
 		{
 			// Send to the Object we are using
-			::SVSendMessage( l_guidOldInputObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), NULL );
+			::SVSendMessage( l_guidOldInputObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );
 		}
 
 		// Set new input...
 		p_psvInputInfo->SetInputObject( p_psvNewImage );
 
-		if( p_psvNewImage != NULL )
+		if( nullptr != p_psvNewImage )
 		{
 			// Connect input info to new input object...
-			DWORD_PTR dwConnectResult = ::SVSendMessage( p_psvNewImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), NULL );
+			DWORD_PTR dwConnectResult = ::SVSendMessage( p_psvNewImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );
 			if( dwConnectResult != SVMR_SUCCESS )
 			{
 				// Unable to connect to new input object....
@@ -803,10 +775,10 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CriticalUnableToConnectTo, msgList, StdMessageParams, SvOi::Err_10203 ); 
 
 				// Try to recover old state...
-				if( l_psvOldImage != NULL )
+				if( nullptr != l_psvOldImage )
 				{
 					p_psvInputInfo->SetInputObject( l_psvOldImage );
-					dwConnectResult = ::SVSendMessage( l_psvOldImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), NULL );			
+					dwConnectResult = ::SVSendMessage( l_psvOldImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );			
 				}
 
 				l_svOk = S_FALSE;
@@ -818,11 +790,11 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 		}
 
 		// Tell Tool image source has changed
-		::SVSendMessage( GetTool(), SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+		::SVSendMessage( GetTool(), SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
-		::SVSendMessage( GetTool(), SVM_IMAGE_SOURCE_CHANGED, NULL, NULL );
+		::SVSendMessage( GetTool(), SVM_IMAGE_SOURCE_CHANGED, 0, 0 );
 
-		::SVSendMessage( GetTool(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		::SVSendMessage( GetTool(), SVM_RESET_ALL_OBJECTS, 0, 0 );
 	}
 	else
 	{
@@ -834,24 +806,24 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 
 BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 {
-	DWORD_PTR DwResult = 0;
-	BOOL retVal = TRUE;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
+	BOOL retVal = true;
 	
 	if (!PCreateStruct)
-		return FALSE;
+		return false;
 	
 	retVal = SVObjectAppClass::CreateObject(PCreateStruct);
 	
 	// Create our friends
-	for (size_t j = 0; j < friendList.size(); ++ j)
+	for (size_t j = 0; j < m_friendList.size(); ++ j)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[j];
+		const SVObjectInfoStruct& rFriend = m_friendList[j];
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 		if (pFriend)
 		{
-			DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pFriend), NULL );
+			DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pFriend), 0 );
 
-			ASSERT(DwResult == SVMR_SUCCESS);
+			ASSERT(SVMR_SUCCESS == DwResult);
 		}
 		else
 		{
@@ -859,22 +831,21 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 			retVal = FALSE;
 		}
 			
-		retVal = (DwResult == SVMR_SUCCESS) && retVal;
+		retVal = (SVMR_SUCCESS == DwResult) && retVal;
 	}
 
 	// Create the embeddeds...
 	// Save the owner and set the owner of our embeddeds to us!
-	
 	for (int i = 0; i < embeddedList.GetSize(); i++)
 	{
 		SVObjectClass* pObject = embeddedList.GetAt(i);
 		if (pObject)
 		{
-			DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), NULL );
+			DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0 );
 
-			ASSERT(DwResult == SVMR_SUCCESS);
+			ASSERT(SVMR_SUCCESS == DwResult);
 
-			retVal = (DwResult == SVMR_SUCCESS) && retVal;
+			retVal = (SVMR_SUCCESS == DwResult) && retVal;
 		}
 	}
 
@@ -882,7 +853,7 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 	statusTag.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	statusColor.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	
-	isCreated = retVal;
+	m_isCreated = retVal;
 	
 	return retVal;	
 }
@@ -892,21 +863,7 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 // -----------------------------------------------------------------------------
 // .Description : Returns the Validity state of this object
 //				: must be overridden
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :05.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-
 BOOL SVTaskObjectClass::IsValid()
 {
 	BOOL bIsValid;
@@ -921,21 +878,7 @@ BOOL SVTaskObjectClass::IsValid()
 // -----------------------------------------------------------------------------
 // .Description : validates the inputs of this object
 //				: Note: Only Override in special cases
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :25.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-
 BOOL SVTaskObjectClass::Validate()
 {
 	BOOL retVal = TRUE;
@@ -968,20 +911,7 @@ BOOL SVTaskObjectClass::Validate()
 // .Description : validates the inputs of this object
 //				: Note: Do Not Route , Validate Routes!
 // -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :05.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-
 BOOL SVTaskObjectClass::OnValidate()
 {
 	BOOL l_bOk = SVObjectClass::OnValidate();
@@ -1000,21 +930,14 @@ BOOL SVTaskObjectClass::OnValidate()
 	return l_bOk;
 }
 
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
-
-// Should be overridden and must be called in derived classes...
-// SEJ - I don't think this is the case anymore....
-// SEJ - it used to be true because of the embedded objects, but now we have a list
 BOOL SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
 {
 	// Set object depth of members here...
 	
 	// Set Depth of our Friends...
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[i];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 		if (pFriend)
@@ -1023,27 +946,25 @@ BOOL SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
 		}
 	}
 	
-	// SEJ - July 8,1999
 	for (int i = 0; i < embeddedList.GetSize(); i++)
 	{
 		if (embeddedList.GetAt(i))
+		{
 			embeddedList.GetAt(i)->SetObjectDepth(NewObjectDepth);
+		}
 	}
 	
 	return SVObjectAppClass::SetObjectDepth(NewObjectDepth);
 }
 
-// Should be overridden and must be called in derived classes...
-// SEJ - I don't think this is the case anymore....
-// SEJ - it used to be true because of the embedded objects, but now we have a list
 BOOL SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex)
 {
 	// Set object depth of members here...
 	
 	// Set Depth of our Friends...
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[i];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 		if (pFriend)
@@ -1052,11 +973,12 @@ BOOL SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastS
 		}
 	}
 	
-	// SEJ - July 8,1999
 	for (int i = 0; i < embeddedList.GetSize(); i++)
 	{
 		if (embeddedList.GetAt(i))
+		{
 			embeddedList.GetAt(i)->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
+		}
 	}
 	
 	return SVObjectAppClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
@@ -1067,9 +989,9 @@ BOOL SVTaskObjectClass::SetImageDepth(long lDepth)
 	// Set object depth of members here...
 	
 	// Set Depth of our Friends...
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[i];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 		if (pFriend)
@@ -1078,11 +1000,12 @@ BOOL SVTaskObjectClass::SetImageDepth(long lDepth)
 		}
 	}
 
-	// SEJ - July 8,1999
 	for (int i = 0; i < embeddedList.GetSize(); i++)
 	{
 		if (embeddedList.GetAt(i))
+		{
 			embeddedList.GetAt(i)->SetImageDepth(lDepth);
+		}
 	}
 	
 	return SVObjectAppClass::SetImageDepth(lDepth);
@@ -1093,7 +1016,6 @@ void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoL
 	int l_iCount = inputInterfaceList.GetSize();
 	int i( 0 );
 
-	// RO - August 30,1999
 	for (i = 0; i < l_iCount; i++)
 	{
 		SVInObjectInfoStruct* pInInfo = inputInterfaceList.GetAt(i);
@@ -1110,18 +1032,22 @@ void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoL
 			}
 
 			if (PInputListToFill)
+			{
 				PInputListToFill->Add(pInInfo);
+			}
 			else
+			{
 				m_InputObjectList.Add(pInInfo);
+			}
 		}
 	}
 }
 
 BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID)
 {
-	SVObjectClass *l_psvObject = dynamic_cast<SVObjectClass *>(p_psvEmbeddedObject);
+	SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>(p_psvEmbeddedObject);
 
-	BOOL l_bOk = l_psvObject != NULL && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
+	BOOL l_bOk = nullptr != l_psvObject && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
 
 	return l_bOk;
 }
@@ -1137,13 +1063,13 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* p_psvEmbeddedObject
 //
 BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset )
 {
-	BOOL l_bOk = p_psvEmbeddedObject->SetResetOptions( p_bResetAlways, p_eRequiredReset ) == S_OK;
+	BOOL l_bOk = S_OK == p_psvEmbeddedObject->SetResetOptions( p_bResetAlways, p_eRequiredReset );
 
 	if( l_bOk )
 	{
-		SVObjectClass *l_psvObject = dynamic_cast<SVObjectClass *>(p_psvEmbeddedObject);
+		SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>(p_psvEmbeddedObject);
 
-		l_bOk = l_psvObject != NULL && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
+		l_bOk = nullptr != l_psvObject && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
 	}
 
 	return l_bOk;
@@ -1151,22 +1077,21 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbedde
 
 BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName )
 {
-	BOOL l_bOk = p_psvEmbeddedObject->SetResetOptions( p_bResetAlways, p_eRequiredReset ) == S_OK;
+	BOOL l_bOk = S_OK == p_psvEmbeddedObject->SetResetOptions( p_bResetAlways, p_eRequiredReset );
 
 	if( l_bOk )
 	{
-		if( p_pszTypeName != NULL )
+		if( nullptr != p_pszTypeName )
 		{
 			p_psvEmbeddedObject->SetTypeName( p_pszTypeName );
 		}
-		SVObjectClass *l_psvObject = dynamic_cast<SVObjectClass *>(p_psvEmbeddedObject);
+		SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>(p_psvEmbeddedObject);
 
-		l_bOk = l_psvObject != NULL && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
+		l_bOk = nullptr != l_psvObject && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
 	}
 
 	return l_bOk;
 }
-
 
 BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, int NewStringResourceID)
 {
@@ -1189,7 +1114,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedOb
 		// Set object embedded to Setup the Embedded GUID
 		PEmbeddedObject->SetObjectEmbedded(REmbeddedID, this, NewStringResourceID);
 		
-		// Add to embedded object to List of Embedded Objects - SEJ July 7,1999
+		// Add to embedded object to List of Embedded Objects
 		AddEmbeddedObject(PEmbeddedObject);
 		
 		return TRUE;
@@ -1212,7 +1137,7 @@ SVTaskObjectClass::SVObjectPtrDeque SVTaskObjectClass::GetPostProcessObjects() c
 	for( l_Iter = embeddedList.begin(); l_Iter != embeddedList.end(); ++l_Iter )
 	{
 		SVObjectClass* pObject = *l_Iter;
-		if( pObject != NULL )
+		if( nullptr != pObject )
 		{
 			l_Objects.push_back( pObject ); 
 		}
@@ -1242,7 +1167,6 @@ void SVTaskObjectClass::GetPrivateInputList(SVInputInfoListClass& RInputInterfac
 	RInputInterface.Copy(inputInterfaceList);
 }
 
-
 // Set an Embedded Object's data Value(s)
 BOOL SVTaskObjectClass::SetEmbeddedObjectValue(const GUID& RObjectID, SVObjectAttributeClass* PDataObject)
 {
@@ -1260,7 +1184,7 @@ BOOL SVTaskObjectClass::SetEmbeddedObjectValue(const GUID& RObjectID, SVObjectAt
 				// Set the Object Depth ?
 				
 				// Set the Object's Data Member Value
-				rc = ( embeddedList.GetAt(i)->SetObjectValue(PDataObject) == S_OK );
+				rc = ( S_OK == embeddedList.GetAt(i)->SetObjectValue(PDataObject) );
 				break;
 			}
 		}
@@ -1306,19 +1230,15 @@ void SVTaskObjectClass::SetDisabled()
 	statusColor.SetValue(1, SV_DEFAULT_DISABLED_COLOR);
 	
 	// Set friends to disabled...
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[i];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		if (rFriend.PObject)
 		{
 			rFriend.PObject->SetDisabled();
 		}
 	}
 }
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
 
 DWORD SVTaskObjectClass::GetObjectColor() const
 {
@@ -1339,30 +1259,14 @@ DWORD SVTaskObjectClass::GetObjectState() const
 // -----------------------------------------------------------------------------
 // .Description : Use this function to get the in- and outputs of this object.
 //				: Normally used from an overlaying TaskListObject or TaskObject.
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//  :
-// .Output(s)
-//  :
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.01.1999 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 void SVTaskObjectClass::GetInputObjects(SVInputInfoListClass& RInputObjectList)
 {
 	// Add our Friends first
 	
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[i];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 		if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
@@ -1374,17 +1278,20 @@ void SVTaskObjectClass::GetInputObjects(SVInputInfoListClass& RInputObjectList)
 	int j( 0 );
 
 	for (j = 0; j < m_InputObjectList.GetSize(); ++ j)
+	{
 		if (m_InputObjectList.GetAt(j))
+		{
 			RInputObjectList.Add(m_InputObjectList.GetAt(j));
+		}
+	}
 }
-
 
 void SVTaskObjectClass::GetAllInputObjects()
 {
 	// Tell Friends to rebuild their lists
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[i];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 		if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
@@ -1406,13 +1313,13 @@ void SVTaskObjectClass::Persist(SVObjectWriter& rWriter)
 void SVTaskObjectClass::PersistFriends(SVObjectWriter& rWriter)
 {
 	// Get script of close friends list members...
-	if (friendList.size())
+	if (m_friendList.size())
 	{
 		rWriter.StartElement(scFriendsTag);
 
-		for (size_t i = 0; i < friendList.size(); ++ i)
+		for (size_t i = 0; i < m_friendList.size(); ++ i)
 		{
-			const SVObjectInfoStruct& rFriend = friendList[i];
+			const SVObjectInfoStruct& rFriend = m_friendList[i];
 			// Check if Friend is alive...
 			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 			if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
@@ -1481,14 +1388,6 @@ void SVTaskObjectClass::PersistEmbeddeds(SVObjectWriter& rWriter)
 	}
 }
 
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-
 BOOL SVTaskObjectClass::Run(SVRunStatusClass& RRunStatus)
 {
 	// Run yourself...
@@ -1530,23 +1429,23 @@ BOOL SVTaskObjectClass::onRun(SVRunStatusClass& RRunStatus)
 
 BOOL SVTaskObjectClass::runFriends(SVRunStatusClass& RRunStatus)
 {
-	BOOL bRetVal = TRUE;
+	BOOL bRetVal = true;
 	
 	// Run your friends
-	for (size_t j = 0; j < friendList.size(); ++ j)
+	for (size_t j = 0; j < m_friendList.size(); ++ j)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[j];
+		const SVObjectInfoStruct& rFriend = m_friendList[j];
 		if (SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(rFriend.PObject))
 		{
 			bRetVal = pTaskObject->Run(RRunStatus) && bRetVal;
 		}
 		else
-			bRetVal = FALSE;
+		{
+			bRetVal = false;
+		}
 	}
-
 	return bRetVal;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -1563,7 +1462,7 @@ void SVTaskObjectClass::Disconnect()
 				// Send to the Object we are using
 				::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
 					SVM_DISCONNECT_OBJECT_INPUT, 
-					reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL);
+					reinterpret_cast<DWORD_PTR>(pInObjectInfo), 0);
 			}
 		}
 		// remove it from the list
@@ -1590,9 +1489,9 @@ void SVTaskObjectClass::Disconnect()
 	}
 	
 	// Disconnect our Friends
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[i];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 		if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
@@ -1610,7 +1509,7 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 {
 	BOOL l_Status( false );
 
-	if( pInObjectInfo != NULL )
+	if( nullptr != pInObjectInfo )
 	{
 		for( int i = 0; ! l_Status && i < inputInterfaceList.GetSize(); i++ )
 		{
@@ -1620,7 +1519,7 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 			{
 				if (pInObjectInfo->GetInputObjectInfo().UniqueObjectID == pInputObjectInfo->GetInputObjectInfo().UniqueObjectID)
 				{
-					pInputObjectInfo->SetInputObject( NULL );
+					pInputObjectInfo->SetInputObject( nullptr );
 					
 					l_Status = true;
 				}
@@ -1631,7 +1530,7 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 		{
 			SVImageClass* l_pImage( dynamic_cast< SVImageClass* >( embeddedList[ j ] ) );
 
-			if( l_pImage != NULL )
+			if( nullptr != l_pImage )
 			{
 				if( pInObjectInfo->GetInputObjectInfo().UniqueObjectID == l_pImage->GetUniqueObjectID() )
 				{
@@ -1644,7 +1543,6 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 	return l_Status;
 }
 
-
 // Add embedded object pointer to the embedded List.
 // Use this only for real embedded objects.
 void SVTaskObjectClass::AddEmbeddedObject(SVObjectClass* PObject)
@@ -1652,16 +1550,14 @@ void SVTaskObjectClass::AddEmbeddedObject(SVObjectClass* PObject)
 	//	ASSERT( embeddedID == SVInvalidGUID );
 	ASSERT(nullptr != PObject);
 	
-	// Add to Owner's List of Embedded Objects - SEJ July 7,1999
+	// Add to Owner's List of Embedded Objects
 	embeddedList.Add(PObject);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-//
-void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass * pObjectToRemove)
+void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass* pObjectToRemove)
 {
 	// iterate and remove object if in embedded list.
 	for (int i = embeddedList.GetSize() - 1; i >= 0; i--)
@@ -1671,9 +1567,11 @@ void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass * pObjectToRemove)
 		{
 			if (pObject == pObjectToRemove)
 			{
-				pObject->CloseObject();
+				if (pObject->IsCreated())
+				{
+					pObject->CloseObject();
+				}
 				embeddedList.RemoveAt(i);
-
 				break;
 			}
 		}
@@ -1696,8 +1594,6 @@ void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass * pObjectToRemove)
 			}
 		}
 	}
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1720,23 +1616,23 @@ void SVTaskObjectClass::hideEmbeddedObject(SVObjectClass& RObjectToHide)
 // Added to process friends
 BOOL SVTaskObjectClass::CloseObject()
 {
-	BOOL retVal = TRUE;
+	BOOL retVal = true;
 
-	DWORD_PTR DwResult = 0;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	
 	// Close ourself first
 	retVal &= SVObjectAppClass::CloseObject();
 	
 	// Close our Friends
-	for (size_t i = 0; i < friendList.size(); ++ i)
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[i];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 		if (pFriend)
 		{
 			// Close Friend...
-			DwResult = ::SVSendMessage(pFriend, SVM_CLOSE_OBJECT, NULL, NULL);
+			DwResult = ::SVSendMessage(pFriend, SVM_CLOSE_OBJECT, 0, 0);
 				
 			retVal = (DwResult == SVMR_SUCCESS) && retVal;
 		}
@@ -1751,7 +1647,6 @@ BOOL SVTaskObjectClass::CloseObject()
 			pObject->CloseObject();
 		}
 	}
-	
 	return retVal;
 }
 
@@ -1798,7 +1693,7 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 
 		case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
-			if( ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) != S_OK )
+			if( S_OK != ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
 			{
 				ASSERT( FALSE );
 
@@ -1829,9 +1724,9 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 		
 		DWORD_PTR l_dwTmp = 0;
 		// Notify friends...
-		for (size_t i = 0; i < friendList.size(); ++ i)
+		for (size_t i = 0; i < m_friendList.size(); ++ i)
 		{
-			const SVObjectInfoStruct& rfriend = friendList[i];
+			const SVObjectInfoStruct& rfriend = m_friendList[i];
 			if (rfriend.PObject)
 			{
 				// Notify not only friends of friends...
@@ -1877,7 +1772,7 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 				if (pRequestor && pRequestor == this || pRequestor == GetOwner())
 				{
 					// Do not reference self 
-					return NULL;
+					return SVMR_NOT_PROCESSED;
 				}
 				
 				DwResult = SVObjectAppClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
@@ -2058,9 +1953,9 @@ DWORD_PTR SVTaskObjectClass::FriendOutputListProcessMessage( DWORD DwMessageID, 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
 	{
-		for (size_t i = 0; ! DwResult && i < friendList.size(); ++ i)
+		for (size_t i = 0; ! DwResult && i < m_friendList.size(); ++ i)
 		{
-			const SVObjectInfoStruct& rFriend = friendList[ i ];
+			const SVObjectInfoStruct& rFriend = m_friendList[ i ];
 
 			// Check if Friend is alive...
 			SVTaskObjectClass* l_pObject( nullptr );
@@ -2073,28 +1968,28 @@ DWORD_PTR SVTaskObjectClass::FriendOutputListProcessMessage( DWORD DwMessageID, 
 			}
 			else
 			{
-				DwResult = NULL;
+				DwResult = SVMR_NOT_PROCESSED;
 			}
 		}
 	}
 	else
 	{
-		for (size_t i = 0; i < friendList.size(); ++ i)
+		for (size_t i = 0; i < m_friendList.size(); ++ i)
 		{
-			const SVObjectInfoStruct& rFriend = friendList[ i ];
+			const SVObjectInfoStruct& rFriend = m_friendList[ i ];
 
 			// Check if Friend is alive...
-			SVTaskObjectClass* l_pObject( NULL );
+			SVTaskObjectClass* l_pObject( nullptr );
 
 			l_pObject = dynamic_cast< SVTaskObjectClass* >( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
 
-			if( l_pObject != NULL )
+			if( nullptr != l_pObject )
 			{
 				DwResult = l_pObject->OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext) | DwResult;
 			}
 			else
 			{
-				DwResult = NULL | DwResult;
+				DwResult = SVMR_NOT_PROCESSED | DwResult;
 			}
 		}
 	}
@@ -2111,15 +2006,15 @@ DWORD_PTR SVTaskObjectClass::EmbeddedOutputListProcessMessage( DWORD DwMessageID
 	{
 		for( long i = 0; ! DwResult && i < embeddedList.GetSize(); i++ )
 		{
-			SVObjectClass *l_pObject = embeddedList.GetAt(i);
+			SVObjectClass* l_pObject = embeddedList.GetAt(i);
 
-			if( l_pObject != NULL )
+			if( nullptr != l_pObject )
 			{
 				DwResult = ::SVSendMessage(l_pObject, DwMessageID, DwMessageValue, DwMessageContext);
 			}
 			else
 			{
-				DwResult = NULL;
+				DwResult = SVMR_NOT_PROCESSED;
 			}
 		}
 	}
@@ -2127,15 +2022,15 @@ DWORD_PTR SVTaskObjectClass::EmbeddedOutputListProcessMessage( DWORD DwMessageID
 	{
 		for( long i = 0; i < embeddedList.GetSize(); i++ )
 		{
-			SVObjectClass *l_pObject = embeddedList.GetAt(i);
+			SVObjectClass* l_pObject = embeddedList.GetAt(i);
 
-			if( l_pObject != NULL )
+			if( nullptr != l_pObject )
 			{
 				DwResult = ::SVSendMessage(l_pObject, DwMessageID, DwMessageValue, DwMessageContext) | DwResult;
 			}
 			else
 			{
-				DwResult = NULL | DwResult;
+				DwResult = SVMR_NOT_PROCESSED | DwResult;
 			}
 		}
 	}
@@ -2191,8 +2086,8 @@ HRESULT SVTaskObjectClass::GetDependentsList( const SVObjectVector& rListOfObjec
 		SVObjectVector::const_iterator iter;
 		for ( iter = rListOfObjects.begin(); iter != rListOfObjects.end(); ++iter)
 		{
-			SVOutObjectInfoStruct* pOutput = NULL;
-			for( int i = 0;i < l_OutputInfoList.GetSize() && (pOutput == NULL || pOutput->PObject != *iter); ++ i )
+			SVOutObjectInfoStruct* pOutput = nullptr;
+			for( int i = 0;i < l_OutputInfoList.GetSize() && (nullptr == pOutput || pOutput->PObject != *iter); ++ i )
 			{
 				pOutput = l_OutputInfoList.GetAt( i );
 			}
@@ -2228,7 +2123,7 @@ HRESULT SVTaskObjectClass::GetImageList( SVImageListClass& p_rImageList, UINT ui
 	{
 		SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-		if( pImage != NULL )
+		if( nullptr != pImage )
 		{
 			bool bAttributesOK = bAND ? (pImage->ObjectAttributesSet() & uiAttributes) == uiAttributes // AND
 									  : (pImage->ObjectAttributesSet() & uiAttributes) > 0;            // OR
@@ -2238,7 +2133,6 @@ HRESULT SVTaskObjectClass::GetImageList( SVImageListClass& p_rImageList, UINT ui
 			}
 		}
 	}
-
 
 	return hr;
 }
@@ -2260,7 +2154,7 @@ HRESULT SVTaskObjectClass::RegisterSubObject( SVValueObjectClass* p_pValueObject
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pValueObject != NULL )
+	if( nullptr != p_pValueObject )
 	{
 		m_svValueObjectSet.insert( p_pValueObject );
 	}
@@ -2276,9 +2170,10 @@ HRESULT SVTaskObjectClass::RegisterSubObject( SVImageClass* p_pImageObject )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pImageObject != NULL )
+	if( nullptr != p_pImageObject )
 	{
-		if( dynamic_cast< SVCameraImageTemplate* >( p_pImageObject ) == NULL )
+		// What is the restriction here?
+		if( nullptr == dynamic_cast< SVCameraImageTemplate* >( p_pImageObject ) )
 		{
 			m_svImageObjectSet.insert( p_pImageObject );
 		}
@@ -2295,7 +2190,7 @@ HRESULT SVTaskObjectClass::UnregisterSubObject( SVValueObjectClass* p_pValueObje
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pValueObject != NULL )
+	if( nullptr != p_pValueObject )
 	{
 		m_svValueObjectSet.erase( p_pValueObject );
 	}
@@ -2311,7 +2206,7 @@ HRESULT SVTaskObjectClass::UnregisterSubObject( SVImageClass* p_pImageObject )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pImageObject != NULL )
+	if( nullptr != p_pImageObject )
 	{
 		m_svImageObjectSet.erase( p_pImageObject );
 	}
@@ -2323,27 +2218,27 @@ HRESULT SVTaskObjectClass::UnregisterSubObject( SVImageClass* p_pImageObject )
 	return l_Status;
 }
 
-HRESULT SVTaskObjectClass::RegisterSubObjects( SVTaskObjectClass *p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList )
+HRESULT SVTaskObjectClass::RegisterSubObjects( SVTaskObjectClass* p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList )
 {
 	HRESULT l_hrOk = UnregisterSubObjects( p_psvOwner );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		long l_lSize = p_rsvEmbeddedList.GetSize();
 
 		for ( long l = 0; l < l_lSize; l++ )
 		{
-			SVValueObjectClass *l_psvValueObject = dynamic_cast<SVValueObjectClass *>( p_rsvEmbeddedList[ l ] );
+			SVValueObjectClass* l_psvValueObject = dynamic_cast<SVValueObjectClass*>( p_rsvEmbeddedList[ l ] );
 
-			if( l_psvValueObject != NULL )
+			if( nullptr != l_psvValueObject )
 			{
 				m_svValueObjectSet.insert( l_psvValueObject );
 			}
-			else if( dynamic_cast< SVCameraImageTemplate* >( p_rsvEmbeddedList[ l ] ) == NULL )
+			else if( nullptr == dynamic_cast< SVCameraImageTemplate* >( p_rsvEmbeddedList[ l ] )  )
 			{
-				SVImageClass *l_psvImageObject = dynamic_cast<SVImageClass *>( p_rsvEmbeddedList[ l ] );
+				SVImageClass* l_psvImageObject = dynamic_cast<SVImageClass*>( p_rsvEmbeddedList[ l ] );
 
-				if( l_psvImageObject != NULL )
+				if( nullptr != l_psvImageObject )
 				{
 					m_svImageObjectSet.insert( l_psvImageObject );
 				}
@@ -2351,9 +2246,9 @@ HRESULT SVTaskObjectClass::RegisterSubObjects( SVTaskObjectClass *p_psvOwner, SV
 		}
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
-		if( GetInspection() == NULL || GetInspection()->RegisterSubObjects( p_psvOwner, p_rsvEmbeddedList ) != S_OK )
+		if( nullptr == GetInspection() || S_OK != GetInspection()->RegisterSubObjects( p_psvOwner, p_rsvEmbeddedList ) )
 		{
 			l_hrOk = S_FALSE;
 		}
@@ -2362,11 +2257,11 @@ HRESULT SVTaskObjectClass::RegisterSubObjects( SVTaskObjectClass *p_psvOwner, SV
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectClass::UnregisterSubObjects( SVTaskObjectClass *p_psvOwner )
+HRESULT SVTaskObjectClass::UnregisterSubObjects( SVTaskObjectClass* p_psvOwner )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( GetInspection() == NULL || GetInspection()->UnregisterSubObjects( p_psvOwner ) != S_OK )
+	if( nullptr == GetInspection() || S_OK != GetInspection()->UnregisterSubObjects( p_psvOwner ) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -2375,7 +2270,7 @@ HRESULT SVTaskObjectClass::UnregisterSubObjects( SVTaskObjectClass *p_psvOwner )
 
 	while( l_oValueIter != m_svValueObjectSet.end() )
 	{
-		if( *l_oValueIter == NULL || (*l_oValueIter)->GetOwner() == p_psvOwner )
+		if( nullptr == *l_oValueIter || (*l_oValueIter)->GetOwner() == p_psvOwner )
 		{
 			l_oValueIter = m_svValueObjectSet.erase( l_oValueIter );
 		}
@@ -2389,7 +2284,7 @@ HRESULT SVTaskObjectClass::UnregisterSubObjects( SVTaskObjectClass *p_psvOwner )
 
 	while( l_oImageIter != m_svImageObjectSet.end() )
 	{
-		if( *l_oImageIter == NULL || (*l_oImageIter)->GetOwner() == p_psvOwner )
+		if( nullptr == *l_oImageIter || (*l_oImageIter)->GetOwner() == p_psvOwner )
 		{
 			l_oImageIter = m_svImageObjectSet.erase( l_oImageIter );
 		}
@@ -2445,11 +2340,9 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectVector& rListOfObject
 					// Send to the Object we are using
 					::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
 						SVM_DISCONNECT_OBJECT_INPUT, 
-						reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL);
+						reinterpret_cast<DWORD_PTR>(pInObjectInfo), 0);
 				}
 			}
-			// remove it from the list
-			//m_InputObjectList.erase(iterInput);
 		}
 		
 		// check outputs
@@ -2475,7 +2368,6 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectVector& rListOfObject
 		}
 
 		// check friend list??
-
 	}
 
 	return S_OK;
@@ -2509,7 +2401,7 @@ HRESULT SVTaskObjectClass::UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLi
 
 	p_rMultiLine.m_ObjectID = GetUniqueObjectID();
 
-	if( GetAnalyzer() != NULL )
+	if( nullptr != GetAnalyzer() )
 	{
 		p_rMultiLine.m_AnalyzerID = GetAnalyzer()->GetUniqueObjectID();
 	}
@@ -2518,7 +2410,7 @@ HRESULT SVTaskObjectClass::UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLi
 		p_rMultiLine.m_AnalyzerID.clear();
 	}
 
-	if( GetTool() != NULL )
+	if( nullptr != GetTool() )
 	{
 		p_rMultiLine.m_ToolID = GetTool()->GetUniqueObjectID();
 	}
@@ -2527,7 +2419,7 @@ HRESULT SVTaskObjectClass::UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLi
 		p_rMultiLine.m_ToolID.clear();
 	}
 
-	if( GetInspection() != NULL )
+	if( nullptr != GetInspection() )
 	{
 		p_rMultiLine.m_InspectionID = GetInspection()->GetUniqueObjectID();
 	}
@@ -2556,7 +2448,7 @@ HRESULT SVTaskObjectClass::UpdateOverlayName( SVExtentMultiLineStruct& p_rMultiL
 
 	SVExtentPointStruct l_Point( 0, 0 );
 
-	if( p_pImageExtents.GetTitlePoint( l_Point ) == S_OK )
+	if( S_OK == p_pImageExtents.GetTitlePoint( l_Point ) )
 	{
 		CString l_String = GetName();
 
@@ -2567,7 +2459,7 @@ HRESULT SVTaskObjectClass::UpdateOverlayName( SVExtentMultiLineStruct& p_rMultiL
 	return l_Status;
 }
 
-HRESULT SVTaskObjectClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+HRESULT SVTaskObjectClass::CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
 {
 	HRESULT hrRet = S_OK;
 		
@@ -2576,11 +2468,11 @@ HRESULT SVTaskObjectClass::CollectOverlays( SVImageClass *p_Image, SVExtentMulti
 		hrRet = onCollectOverlays(p_Image, p_MultiLineArray);
 	}
 
-	for ( size_t j = 0; j < friendList.size(); j++ )
+	for ( size_t j = 0; j < m_friendList.size(); j++ )
 	{
-		const SVObjectInfoStruct& l_rFriend = friendList[j];
+		const SVObjectInfoStruct& l_rFriend = m_friendList[j];
 
-		SVTaskObjectClass *pObject = dynamic_cast< SVTaskObjectClass* >( l_rFriend.PObject );
+		SVTaskObjectClass* pObject = dynamic_cast< SVTaskObjectClass* >( l_rFriend.PObject );
 		
 		if ( pObject )
 		{
@@ -2596,35 +2488,35 @@ HRESULT SVTaskObjectClass::CollectOverlays( SVImageClass *p_Image, SVExtentMulti
 	return hrRet;
 }
 
-HRESULT SVTaskObjectClass::onCollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+HRESULT SVTaskObjectClass::onCollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_Image != NULL )
+	if( nullptr != p_Image )
 	{
 		SVExtentFigureStruct l_ImageFigureStruct;
 		SVImageExtentClass l_ImageExtents;
 
-		if ( GetImageExtent( l_ImageExtents ) == S_OK && l_ImageExtents.GetFigure( l_ImageFigureStruct ) == S_OK )
+		if ( S_OK == GetImageExtent( l_ImageExtents ) && S_OK == l_ImageExtents.GetFigure( l_ImageFigureStruct ) )
 		{
 			SVExtentMultiLineStruct l_MultiLine;
 
 			l_Status = UpdateOverlayIDs( l_MultiLine );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = UpdateOverlayName( l_MultiLine, l_ImageExtents );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVToolClass* l_pTool = GetTool();
 
-				if( l_pTool != NULL )
+				if( nullptr != l_pTool )
 				{
 					l_Status = l_pTool->UpdateOverlayColor( l_MultiLine );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = l_pTool->GetDrawInfo( l_MultiLine );
 					}
@@ -2633,14 +2525,14 @@ HRESULT SVTaskObjectClass::onCollectOverlays( SVImageClass *p_Image, SVExtentMul
 				{
 					l_Status = UpdateOverlayColor( l_MultiLine );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = GetDrawInfo( l_MultiLine );
 					}
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_MultiLine.AssignExtentFigure( l_ImageFigureStruct, l_MultiLine.m_Color );
 
@@ -2654,7 +2546,7 @@ HRESULT SVTaskObjectClass::onCollectOverlays( SVImageClass *p_Image, SVExtentMul
 
 SVValueObjectClass* SVTaskObjectClass::GetEmbeddedValueObject( GUID classguid )
 {
-	SVValueObjectClass* pValueObject = NULL;
+	SVValueObjectClass* pValueObject = nullptr;
 
 	for (int i = 0; i < embeddedList.GetSize(); i++)
 	{

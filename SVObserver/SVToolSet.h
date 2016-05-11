@@ -16,21 +16,17 @@
 #include "SVMainImageClass.h"
 #include "SVResultList.h"
 #include "SVTaskObjectList.h"
-#include "SVValueObjectImpl.h"
 #pragma region Includes
 
 class SVConditionalClass;
 
-/*
-This class capsules basic properties to handle and execute an Image Processing Tool Set
-*/
+// This class encapsules basic properties to handle and execute an Image Processing Tool Set
 
-class SVToolSetClass : virtual public SvOi::IToolSet,
-		public SVTaskObjectListClass	
+class SVToolSetClass : public SVTaskObjectListClass, public SvOi::IToolSet 
 {
 	SV_DECLARE_CLASS( SVToolSetClass );
 
-	friend class SVInspectionProcess;
+	friend class SVInspectionProcess; // for access to Run()
 
 public:
 	typedef std::deque< SVGUID > SVToolIdDeque;
@@ -46,7 +42,6 @@ public:
 	virtual BOOL Validate();
 
 	void Destroy();
-	void DestroyAt( int I );
 
 	bool IsEnabled() const;
 	bool IsEnabled(long p_lIndex) const;
@@ -56,8 +51,6 @@ public:
 	HRESULT ResetCounts();
 	HRESULT ClearResetCounts();
 
-	void InsertToolAt( int nIndex, SVToolClass* newElement, int nCount = 1 );
-
 	//************************************
 	// Description: This moves a tool to the desired index
 	// Parameter: NewIndex <in> The new index for the tool
@@ -66,15 +59,12 @@ public:
 	void moveTool( int NewIndex, SVToolClass* pTool );
 
 	void SetDefaultInputs();
-    void CheckForExistingName(CString& newText,	SVToolClass* pTool);
 	
-	SVResultListClass*	GetResultList();
+	SVResultListClass* GetResultList();
 
-	SVImageClass*		getCurrentImage();
+	SVImageClass* getCurrentImage();
 
-	int					GetIndex( SVToolClass* PTool );
-
-	SVToolClass*		GetToolAt( int nIndex ) const;
+	int GetIndex( SVToolClass* PTool );
 
 	SVEnumerateValueObjectClass* GetDrawFlagObject();
 
@@ -91,7 +81,7 @@ public:
 
 	SVBoolValueObjectClass RegressionTestMode;
 
-	long		setNumber;
+	long setNumber;
 
 	SVClock::SVTimeStamp m_StartTime;
 	SVClock::SVTimeStamp m_EndTime;
@@ -117,16 +107,16 @@ protected:
 	// and returns the result of this message.
 	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
 
-	SVResultListClass	m_ResultList;
+	SVResultListClass m_ResultList;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass	passed;
+	SVBoolValueObjectClass passed;
 	// Warned, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass	warned;
+	SVBoolValueObjectClass warned;
 	// Failed, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass	failed;
+	SVBoolValueObjectClass failed;
 	// Failed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass	explicitFailed;
+	SVBoolValueObjectClass explicitFailed;
 
 	SVLongValueObjectClass passedCount;
 	SVLongValueObjectClass failedCount;
@@ -136,7 +126,7 @@ protected:
 	SVLongValueObjectClass processedCount;
 
 	// Conditional input
-	SVInObjectInfoStruct	inputConditionBoolObjectInfo;
+	SVInObjectInfoStruct inputConditionBoolObjectInfo;
 
 	// Conditional tool set drawing flag.
 	SVEnumerateValueObjectClass	drawFlag;
@@ -147,13 +137,13 @@ protected:
 	SVTimerValueObjectClass m_svMinToolsetTime;
 	SVTimerValueObjectClass m_svMaxToolsetTime;
 
-	/* maybe later
+	/* maybe later (Arvid?)
 	SVLongValueObjectClass	processesCompleted;
 	SVDoubleValueObjectClass executionTime;
 	*/
 
 	// Embedded Object:
-	SVMainImageClass		mainImageObject;	// Embedded
+	SVMainImageClass mainImageObject;	// Embedded
 
 private:
 	SVLongValueObjectClass m_latestCompletionPPQIndex; // the PPQ position at which the most recently completed product was located when it was completed

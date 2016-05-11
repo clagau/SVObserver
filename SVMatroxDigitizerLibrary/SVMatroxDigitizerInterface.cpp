@@ -274,7 +274,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetHookInfo
 	{
 		SVMatroxInt l_matroxType = 0;
 		HRESULT hr = SVMatroxDigitizerHook::m_HookInfoEnumConvertor.ConvertEnumToMatroxType(InfoType, l_matroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigGetHookInfo(milEventID, l_matroxType, UserPtr);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -377,7 +377,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetHookFunc
 	{
 		long l_MatroxHookType = 0;
 		HRESULT hr = SVMatroxDigitizerHook::m_HookTypeEnumConvertor.ConvertEnumToMatroxType(HookType, l_MatroxHookType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigHookFunction(DigitizerID.m_DigitizerIdentifier, l_MatroxHookType, HookHandlerPtr, UserDataPtr);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -417,7 +417,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::ReleaseHook
 	{
 		long l_MatroxHookType = 0;
 		HRESULT hr = SVMatroxDigitizerHook::m_HookTypeEnumConvertor.ConvertEnumToMatroxType(HookType, l_MatroxHookType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			// check for hook first before removing ?
 			l_MatroxHookType |= M_UNHOOK;
@@ -509,7 +509,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetGrabMode
 	{
 		MIL_INT32 l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerGrab::m_GrabModeEnumConvertor.ConvertEnumToMatroxType(grabMode, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigControl(DigitizerID.m_DigitizerIdentifier, M_GRAB_MODE, l_MatroxType);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -605,7 +605,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetGrabTrig
 	{
 		MIL_INT32 l_MatroxGrabTriggerMode = 0;
 		HRESULT hr = SVMatroxDigitizerGrab::m_GrabTriggerModeEnumConvertor.ConvertEnumToMatroxType(grabTriggerMode, l_MatroxGrabTriggerMode);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigControl(DigitizerID.m_DigitizerIdentifier, M_GRAB_TRIGGER_MODE, l_MatroxGrabTriggerMode);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -759,7 +759,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Get(const S
 	{
 		long l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerInquire::m_BoardEnumConvertor.ConvertEnumToMatroxType(InquireType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigInquire(DigitizerID.m_DigitizerIdentifier, l_MatroxType, &Value);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -801,7 +801,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetColorMod
 		if (l_Code == SVMEE_STATUS_OK)
 		{
 			HRESULT hr = SVMatroxDigitizerInquire::m_ColorModeEnumConvertor.ConvertEnumFromMatroxType(matroxValue, ColorMode);
-			if (hr != S_OK) // Converison Error
+			if (S_OK != hr) // Converison Error
 			{
 				l_Code = hr;
 			}
@@ -835,10 +835,10 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetScanMode
 		long matroxValue;
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_SCAN_MODE, &matroxValue);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		if (l_Code == SVMEE_STATUS_OK)
+		if (SVMEE_STATUS_OK == l_Code)
 		{
 			HRESULT hr = SVMatroxDigitizerInquire::m_ScanModeEnumConvertor.ConvertEnumFromMatroxType(matroxValue, ScanMode);
-			if (hr != S_OK) // Converison Error
+			if (S_OK != hr) // Converison Error
 			{
 				l_Code = hr;
 			}
@@ -912,7 +912,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetSize(con
 	try
 #endif
 	{
-		/* SEJ
+		/* GigE syntax
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_SOURCE_SIZE_X, &X);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -954,7 +954,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetSize(con
 	try
 #endif
 	{
-		/* SEJ(GIGE)
+		/* GigE syntax
 		MdigControl(DigitizerID.m_DigitizerIdentifier, M_SOURCE_SIZE_X, X);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -995,7 +995,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetBitDepth
 	try
 #endif
 	{
-		/* SEJ(GIGE)
+		/* GigE syntax
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_SIZE_BIT, &BitDepth);
 		*/
 		BitDepth = 0;
@@ -1040,7 +1040,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetNumberOf
 	try
 #endif
 	{
-		/* SEJ(GIGE)
+		/* GigE syntax
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_SIZE_BAND, &numBands);
 		*/
 		char pixelFormat[32];
@@ -1082,7 +1082,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetOffset(c
 	try
 #endif
 	{
-		/* SEJ(GIGE)
+		/* GigE syntax
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_SOURCE_OFFSET_X, &XOffset);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -1123,7 +1123,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetOffset(c
 	try
 #endif
 	{
-		/* SEJ(GIGE)
+		/* GigE syntax
 		MdigControl(DigitizerID.m_DigitizerIdentifier, M_SOURCE_OFFSET_X, XOffset);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -1273,7 +1273,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Get(const S
 	{
 		long l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerInquire::m_GrabEnumConvertor.ConvertEnumToMatroxType(InquireType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			// determine type based on Enum category ?
 			long value;
@@ -1313,7 +1313,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Get(const S
 	{
 		long l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerInquire::m_FrameEnumConvertor.ConvertEnumToMatroxType(InquireType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigInquire(DigitizerID.m_DigitizerIdentifier, M_PROCESS_FRAME_COUNT, &Value);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -1528,7 +1528,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Get(const S
 	{
 		SVMatroxInt l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerInquire::m_UserBitEnumConvertor.ConvertEnumToMatroxType(InquireType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigInquire(DigitizerID.m_DigitizerIdentifier, l_MatroxType, &Value);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -1594,7 +1594,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Set(const S
 	{
 		long l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerControl::m_CameraEnumConvertor.ConvertEnumToMatroxType(ControlType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigControl(DigitizerID.m_DigitizerIdentifier, l_MatroxType, Value);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -1631,7 +1631,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Set(const S
 	{
 		long l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerGrab::m_GrabEnumConvertor.ConvertEnumToMatroxType(ControlType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			double value = 0.0;
 			MdigControl(DigitizerID.m_DigitizerIdentifier, l_MatroxType, value);
@@ -1696,7 +1696,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Set(const S
 	{
 		SVMatroxInt l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerControl::m_UserBitEnumConvertor.ConvertEnumToMatroxType(ControlType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			double value = 0.0;
 			MdigControl(DigitizerID.m_DigitizerIdentifier, l_MatroxType, value);
@@ -1882,7 +1882,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetReferenc
 	{
 		long l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerLightReference::m_LightReferenceEnumConvertor.ConvertEnumToMatroxType(ReferenceType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigInquire(DigitizerID.m_DigitizerIdentifier, l_MatroxType, &ReferenceLevel);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
@@ -1918,7 +1918,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetReferenc
 	{
 		long l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerLightReference::m_LightReferenceEnumConvertor.ConvertEnumToMatroxType(ReferenceType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MdigReference(DigitizerID.m_DigitizerIdentifier, l_MatroxType, ReferenceLevel);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -1957,7 +1957,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetFeature(
 	{
 		long l_matroxFeatureType = 0;
 		HRESULT hr = SVMatroxDigitizerFeature::m_FeatureTypeEnumConvertor.ConvertEnumToMatroxType(FeatureType, l_matroxFeatureType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			char featureNameStr[256];
 			strcpy_s(featureNameStr, sizeof(featureNameStr), FeatureName.c_str());
@@ -2106,7 +2106,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetFeature(
 	{
 		long l_matroxFeatureType = 0;
 		HRESULT hr = SVMatroxDigitizerFeature::m_FeatureTypeEnumConvertor.ConvertEnumToMatroxType(FeatureType, l_matroxFeatureType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			char featureNameStr[256];
 			strcpy_s(featureNameStr, sizeof(featureNameStr), FeatureName.c_str());
@@ -2310,11 +2310,11 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::StartGrabAr
 	{
 		long l_MatroxOperationFlag = 0;
 		HRESULT hr = SVMatroxDigitizerGrab::m_GrabModeEnumConvertor.ConvertEnumToMatroxType(grabMode, l_MatroxOperationFlag);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			SVMatroxBufferArray::BufferIDList l_List = p_rBufferArray.GetList(); 
 			long numBuffers = static_cast< long >( l_List.size() );
-			SVMatroxIdentifier* pList = NULL;
+			SVMatroxIdentifier* pList = nullptr;
 
 			if( 0 < numBuffers )
 			{
@@ -2363,11 +2363,11 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::StopGrabArr
 	{
 		long l_MatroxOperationFlag = 0;
 		HRESULT hr = SVMatroxDigitizerGrab::m_GrabModeEnumConvertor.ConvertEnumToMatroxType(grabMode, l_MatroxOperationFlag);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			SVMatroxBufferArray::BufferIDList l_List = p_rBufferArray.GetList(); 
 			long numBuffers = static_cast< long >( l_List.size() );
-			SVMatroxIdentifier* pList = NULL;
+			SVMatroxIdentifier* pList = nullptr;
 
 			if( 0 < numBuffers )
 			{

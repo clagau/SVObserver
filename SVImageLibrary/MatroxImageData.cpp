@@ -25,6 +25,10 @@ MatroxImageData::MatroxImageData(SVSmartHandlePointer imageHandle) : m_ImageHand
 {
 }
 
+MatroxImageData::~MatroxImageData()
+{
+}
+
 #pragma endregion Constructor
 
 #pragma region Public Methods

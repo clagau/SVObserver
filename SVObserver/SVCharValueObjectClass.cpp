@@ -110,7 +110,7 @@ HRESULT SVCharValueObjectClass::SetValueAt( int iBucket, int iIndex, CString str
 		if ( strDigits == strValue )
 		{
 			strDigits.MakeLower();
-			TCHAR* p = NULL;
+			TCHAR* p = nullptr;
 			long lValue;
 			if ( strDigits.Find(_T('x')) != -1  )
 				lValue = _tcstol(strDigits, &p, 16);
@@ -120,7 +120,7 @@ HRESULT SVCharValueObjectClass::SetValueAt( int iBucket, int iIndex, CString str
 			if ( lValue >= 0 && lValue <= 255 )
 				return base::SetValueAt(iBucket, iIndex, static_cast <char> (lValue) );
 		}
-		else
+		else // @TODO
 		{
 			// do we want to use the array capabilities to create an array of chars for the string?
 			//STATIC_CHECK( sizeof(TCHAR) == sizeof(char), Need_to_decide_what_to_do_here );
@@ -137,7 +137,7 @@ HRESULT SVCharValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rv
 	_variant_t l_Temp;
 	l_Temp.Attach( rvtValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_cValue );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		l_Temp = l_cValue;
 	}
@@ -171,7 +171,7 @@ HRESULT SVCharValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdV
 
 void SVCharValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVCharValueObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVCharValueObjectType;
 	DefaultValue() = 0;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{

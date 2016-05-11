@@ -32,7 +32,7 @@
 #include "SVInputObjectList.h"
 #include "SVInfoStructs.h"
 #include "SVMessage/SVMessage.h"
-#include "SVDigitalOutputObject1.h"
+#include "SVDigitalOutputObject.h"
 #include "SVTriggerObject.h"
 #include "SVAcquisitionClass.h"
 #include "SVTriggerClass.h"
@@ -335,7 +335,7 @@ SVPPQObject::~SVPPQObject()
 		m_uOutputTimer = 0;
 	}
 
-	if( m_bCreated )
+	if( m_isCreated )
 	{
 		Destroy();
 	}
@@ -348,7 +348,7 @@ SVPPQObject::~SVPPQObject()
 void SVPPQObject::init()
 {
 	m_oOutputMode                = SVPPQNextTriggerMode;
-	m_bCreated                   = false;
+	m_isCreated                  = false;
 	m_bOnline                    = false;
 	m_bMaintainSourceImages      = false;
 	m_lInspectionTimeoutMillisec = 0;
@@ -456,7 +456,7 @@ BOOL SVPPQObject::Create()
 	int iSize;
 
 	// Return if already created
-	if( m_bCreated ) { return FALSE; }
+	if( m_isCreated ) { return false; }
 
 	strName = _T( "PPQ Result Data" );
 	bstrName = strName.AllocSysString();
@@ -531,21 +531,21 @@ BOOL SVPPQObject::Create()
 		}
 	}
 
-	m_bCreated = TRUE;
+	m_isCreated = true;
 
 	// Create the Queues that run the threads
-	m_bCreated &= m_oCamerasQueue.Create();
-	m_bCreated &= m_CameraResponseQueue.Create();
-	m_bCreated &= m_oInspectionQueue.Create();
-	m_bCreated &= m_oOutputsDelayQueue.Create();
-	m_bCreated &= m_oOutputsResetQueue.Create();
-	m_bCreated &= m_DataValidDelayQueue.Create();
-	m_bCreated &= m_ProductRequests.Create();
+	m_isCreated &= m_oCamerasQueue.Create();
+	m_isCreated &= m_CameraResponseQueue.Create();
+	m_isCreated &= m_oInspectionQueue.Create();
+	m_isCreated &= m_oOutputsDelayQueue.Create();
+	m_isCreated &= m_oOutputsResetQueue.Create();
+	m_isCreated &= m_DataValidDelayQueue.Create();
+	m_isCreated &= m_ProductRequests.Create();
 
 	m_oNotifyInspectionsSet.clear();
 	m_ProcessInspectionsSet.clear();
 
-	if( m_bCreated )
+	if( m_isCreated )
 	{
 		// Force the Inspections to rebuild
 		iSize = m_arInspections.GetSize();
@@ -569,7 +569,7 @@ BOOL SVPPQObject::Create()
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
 
-	return m_bCreated;
+	return m_isCreated;
 }
 
 BOOL SVPPQObject::Rebuild()
@@ -582,7 +582,7 @@ BOOL SVPPQObject::Rebuild()
 	int iSize;
 
 	// Return if not created
-	if( !m_bCreated ) { return FALSE; }
+	if( !m_isCreated ) { return false; }
 
 	// Delete buckets for the PPQ positions
 	m_ppPPQPositions.clear();
@@ -677,7 +677,7 @@ BOOL SVPPQObject::Rebuild()
 BOOL SVPPQObject::Destroy()
 {
 	// Return if not created
-	if( !m_bCreated ) { return FALSE; }
+	if( !m_isCreated ) { return false; }
 
 	// Stop the multimedia timer thread for the output and reset time delays
 	if( 0 != m_uOutputTimer )
@@ -742,8 +742,8 @@ BOOL SVPPQObject::Destroy()
 		SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 	}
 
-	m_bCreated = FALSE;
-	return TRUE;
+	m_isCreated = false;
+	return true;
 }// end Destroy
 
 BOOL SVPPQObject::DetachAll()
@@ -773,11 +773,6 @@ BOOL SVPPQObject::DetachAll()
 
 	return TRUE;
 }
-
-BOOL SVPPQObject::IsCreated()
-{
-	return m_bCreated;
-}// end IsCreated
 
 BOOL SVPPQObject::SetPPQOutputMode( SVPPQOutputModeEnum oPPQOutputMode )
 {
@@ -1113,7 +1108,7 @@ BOOL SVPPQObject::SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != pCamera );
 
-	if( m_bCreated && -1 <= lPosition && lPosition < static_cast< long >( m_ppPPQPositions.size() ) - 1 )
+	if( m_isCreated && -1 <= lPosition && lPosition < static_cast< long >( m_ppPPQPositions.size() ) - 1 )
 	{
 		l_Status = AttachCamera( pCamera, lPosition, true );
 	}
@@ -1134,9 +1129,9 @@ BOOL SVPPQObject::GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamer
 
 	lPosition = -1;
 
-	if( !m_bCreated )
+	if( !m_isCreated )
 	{
-		return FALSE;
+		return false;
 	}// end if
 
 	// Try to find to the Camera they sent it
@@ -4833,7 +4828,7 @@ static HRESULT GetValueObject(const SVString& rName, SVValueObjectReference& rRe
 	HRESULT hr = S_FALSE;
 	SVObjectClass* pObject(nullptr);
 	hr = SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
-	if (pObject != nullptr)
+	if (nullptr != pObject)
 	{
 		rRefObject = SVValueObjectReference(pObject);
 		hr = S_OK;

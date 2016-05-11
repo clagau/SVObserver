@@ -19,7 +19,7 @@ SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID 
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVTransformObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVTransformObjectType;
 
 	// Identify our input type needs...
 	// Translation X
@@ -94,7 +94,7 @@ BOOL SVTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	learnedRotationY.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	learnedRotationAngle.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -114,7 +114,7 @@ SVDoubleValueObjectClass* SVTransformClass::getInputTranslationXResult()
 	if( inputTranslationXResult.IsConnected() && inputTranslationXResult.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) inputTranslationXResult.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVTransformClass::getInputTranslationYResult()
@@ -122,7 +122,7 @@ SVDoubleValueObjectClass* SVTransformClass::getInputTranslationYResult()
 	if( inputTranslationYResult.IsConnected() && inputTranslationYResult.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) inputTranslationYResult.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVTransformClass::getInputRotationXResult()
@@ -130,7 +130,7 @@ SVDoubleValueObjectClass* SVTransformClass::getInputRotationXResult()
 	if( inputRotationXResult.IsConnected() && inputRotationXResult.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) inputRotationXResult.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVTransformClass::getInputRotationYResult()
@@ -138,7 +138,7 @@ SVDoubleValueObjectClass* SVTransformClass::getInputRotationYResult()
 	if( inputRotationYResult.IsConnected() && inputRotationYResult.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) inputRotationYResult.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -147,7 +147,7 @@ SVDoubleValueObjectClass* SVTransformClass::getInputRotationAngleResult()
 	if( inputRotationAngleResult.IsConnected() && inputRotationAngleResult.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) inputRotationAngleResult.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 BOOL SVTransformClass::OnValidate()
@@ -170,7 +170,7 @@ BOOL SVTransformClass::OnValidate()
 
 DWORD_PTR SVTransformClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }

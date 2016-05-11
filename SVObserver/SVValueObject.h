@@ -11,5 +11,20 @@
 
 #pragma once
 
-#include "SVValueObjectImpl.h"
-
+#pragma region Includes
+#include "SVBoolValueObjectClass.h"
+#include "SVByteValueObjectClass.h"
+#include "SVCharValueObjectClass.h"
+#include "SVDoubleValueObjectClass.h"
+#include "SVDPointValueObjectClass.h"
+#include "SVDWordValueObjectClass.h"
+#include "SVEnumerateValueObjectClass.h"
+#include "SVFileNameValueObjectClass.h"
+#include "SVInt64ValueObjectClass.h"
+#include "SVLongValueObjectClass.h"
+#include "SVPointValueObjectClass.h"
+#include "SVStringValueObjectClass.h"
+#include "SVStaticStringValueObjectClass.h"
+#include "SVTimerValueObjectClass.h"
+#include "SVVariantValueObjectClass.h"
+#pragma endregion Includes

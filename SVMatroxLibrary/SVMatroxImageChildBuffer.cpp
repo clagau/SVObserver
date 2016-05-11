@@ -25,15 +25,15 @@ SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 {
 	assert( m_StartIdentifier == m_Identifier );
 
-	if( m_Identifier != 0 )
+	if( 0 != m_Identifier )
 	{
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-		if( SVMatroxResourceMonitor::GetAutoLock( l_AutoLock ) == SVMEE_STATUS_OK )
+		if( SVMEE_STATUS_OK == SVMatroxResourceMonitor::GetAutoLock( l_AutoLock )  )
 		{
-			MIL_ID l_SystemID = MbufInquire( m_Identifier, M_OWNER_SYSTEM, NULL );
+			MIL_ID l_SystemID = MbufInquire( m_Identifier, M_OWNER_SYSTEM, nullptr );
 
-			if( l_SystemID != M_NULL && SVMatroxApplicationInterface::GetLastStatus() == S_OK )
+			if( M_NULL != l_SystemID && S_OK == SVMatroxApplicationInterface::GetLastStatus()  )
 			{
 				SVMatroxResourceMonitor::EraseIdentifier( SVChildBufferID, m_Identifier );
 			}

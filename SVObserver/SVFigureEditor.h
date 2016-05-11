@@ -59,8 +59,8 @@ protected:
 	virtual CRect GetRect() = 0;
 	virtual CSize GetHotSpotSize();
 
-	/*virtual*/ HRESULT LButtonDown(UINT nFlags, CPoint point);
-	/*virtual*/ HRESULT LButtonUp(UINT nFlags, CPoint point);
+	HRESULT LButtonDown(UINT nFlags, CPoint point);
+	HRESULT LButtonUp(UINT nFlags, CPoint point);
 
 	CRect GetHotSpot( CPoint pt );
 	std::auto_ptr<CRgn> GetHotSpot( CPoint pt1, CPoint pt2 );

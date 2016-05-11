@@ -97,7 +97,7 @@ void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)
 				HRESULT hr = ::SafeArrayGetLBound( value.parray,1,&lBound);
 				hr = ::SafeArrayGetUBound( value.parray, 1, &uBound);
 				long lSize = uBound-lBound+1;
-				if(hr == S_OK && lSize > 0)
+				if( S_OK == hr && lSize > 0 )
 				{
 					bEmpty = false;
 				}
@@ -175,11 +175,9 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	}
 	else if ( bOk = pDataObject->GetAttributeData("m_vtDefault", svArray) )
 	{
-//		for (int i = 0; i < svArray.GetSize(); i++)
+		if ( svArray.GetSize() > 0 )
 		{
-			//m_vtDefault = svArray[i];
-			if ( svArray.GetSize() > 0 )
-				DefaultValue() = svArray[svArray.GetSize()-1];
+			DefaultValue() = svArray[svArray.GetSize()-1];
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData("m_pavtArray", l_Buckets, DefaultValue() ) )
@@ -230,7 +228,7 @@ HRESULT SVVariantValueObjectClass::SetValueAt(int iBucket, int iIndex, const BOO
 {
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
-	if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		Element(iBucket, iIndex).Clear();
 		Element(iBucket, iIndex).ChangeType(VT_BOOL);
@@ -262,7 +260,7 @@ HRESULT SVVariantValueObjectClass::SetValueAt( int iBucket, int iIndex, const DW
 {
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
-	if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		Element(iBucket, iIndex).Clear();
 		Element(iBucket, iIndex).ChangeType(VT_UI4);
@@ -332,7 +330,7 @@ HRESULT SVVariantValueObjectClass::SetValueKeepType( int iBucket, int iIndex, LP
 		hr = ::VariantChangeType( &vtTemp, &vtTemp, 0, DefaultValue().vt );
 	}
 
-	if( hr == S_OK )
+	if( S_OK == hr)
 	{
 		hr = base::SetValueAt( iBucket, iIndex, vtTemp );
 	}
@@ -378,22 +376,21 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT&
 {
 	HRESULT hr = ValidateIndexes(iBucket,iIndex);
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = ::VariantCopy( &rvtValue, const_cast <_variant_t*> (&(Element(iBucket, iIndex))) );
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
-	else if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+	else if ( SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		rvtValue = DefaultValue();
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
 	else	//	BAD INDEX
 	{
 		rvtValue = DefaultValue();
-		isObjectValid = FALSE;
+		m_isObjectValid = false;
 	}
-
 	return hr;
 }
 
@@ -401,38 +398,38 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, BOOL& rb
 {
 	HRESULT hr = ValidateIndexes(iBucket,iIndex);
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 		_variant_t vtTemp = Element(iBucket, iIndex);
 		switch ( vtTemp.vt )
 		{
 			case VT_BSTR:
 			{
 				CString sTemp(vtTemp.bstrVal);
-				if ( sTemp.CompareNoCase(_T("TRUE")) == 0 )
+				if ( 0 == sTemp.CompareNoCase(_T("TRUE")) )
 				{
-					rbValue = TRUE;
+					rbValue = true;
 					hr = S_OK;
 				}
-				else if ( sTemp.CompareNoCase(_T("FALSE")) == 0 )
+				else if ( 0 == sTemp.CompareNoCase(_T("FALSE")) )
 				{
-					rbValue = FALSE;
+					rbValue = false;
 					hr = S_OK;
 				}
-				else if ( sTemp.CompareNoCase(_T("1")) == 0 )
+				else if ( 0 == sTemp.CompareNoCase(_T("1")) )
 				{
-					rbValue = TRUE;
+					rbValue = true;
 					hr = S_OK;
 				}
-				else if ( sTemp.CompareNoCase(_T("0")) == 0 )
+				else if ( 0 == sTemp.CompareNoCase(_T("0")) )
 				{
-					rbValue = FALSE;
+					rbValue = false;
 					hr = S_OK;
 				}
 				else
 				{
-					rbValue = FALSE;
+					rbValue = false;
 				}
 			}
 			break;
@@ -440,28 +437,35 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, BOOL& rb
 			default:
 			{
 				hr = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_BOOL);
-				//vtTemp.ChangeType(VT_BOOL);
-				if ( hr == S_OK )
+				if ( S_OK == hr )
 				{
 					rbValue = vtTemp.boolVal;
 				}
 				else
 				{
-					if ( DefaultValue().vt == VT_BOOL )
+					if ( VT_BOOL == DefaultValue().vt )
+					{
 						rbValue = DefaultValue().boolVal;
+					}
 					else
-						rbValue = FALSE;
+					{
+						rbValue = false;
+					}
 				}
 			}
 		}// end switch ( vtTemp.vt )
 	}// end if (iBucket >= 0 && iBucket < m_iNumberOfBuckets)
 	else
 	{
-		if ( DefaultValue().vt == VT_BOOL )
+		if ( VT_BOOL == DefaultValue().vt )
+		{
 			rbValue = DefaultValue().boolVal;
+		}
 		else
-			rbValue = FALSE;
-		isObjectValid = (hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE);
+		{
+			rbValue = false;
+		}
+		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
 	}
 
 	return hr;
@@ -473,15 +477,15 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, CString&
 	HRESULT hr = ValidateIndexes(iBucket,iIndex);
 
 	_variant_t vtTemp;
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		vtTemp = Element(iBucket, iIndex);
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
 	else
 	{
 		vtTemp = DefaultValue();
-		isObjectValid = (hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE);
+		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
 	}
 
 	switch ( vtTemp.vt )
@@ -497,10 +501,10 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, CString&
 		{
 			VARTYPE vtOrig = vtTemp.vt;
 			hr = ::VariantChangeType(&vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
-			if ( hr == S_OK )
+			if ( S_OK == hr )
 			{
 				rstrValue = vtTemp.bstrVal;
-				if( vtOrig == VT_BOOL )
+				if( VT_BOOL == vtOrig )
 				{
 					rstrValue.MakeUpper();
 				}
@@ -520,27 +524,29 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, double& 
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
 	_variant_t vtTemp;
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		vtTemp = Element(iBucket, iIndex);
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
 	else
 	{
 		vtTemp = DefaultValue();
-		isObjectValid = (hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE);
+		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
 	}
 
 	HRESULT hrChange = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_R8);
-	if ( hrChange == S_OK )
+	if ( S_OK == hrChange )
 	{
 		rdValue = vtTemp.dblVal;
 	}
 	else
 	{
 		rdValue = 0;
-		if ( hr == S_OK )
+		if ( S_OK == hr )
+		{
 			hr = hrChange;
+		}
 	}
 
 	return hr;
@@ -551,19 +557,19 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, long& rl
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
 	_variant_t vtTemp;
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		vtTemp = Element(iBucket, iIndex);
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
 	else
 	{
 		vtTemp = DefaultValue();
-		isObjectValid = (hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE);
+		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
 	}
 
 	HRESULT hrChange = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_I4);
-	if ( hrChange == S_OK )
+	if ( S_OK == hrChange )
 	{
 		rlValue = vtTemp.lVal;
 	}
@@ -571,8 +577,10 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, long& rl
 	{
 		rlValue = 0;
 
-		if ( hr == S_OK )
+		if ( S_OK == hr )
+		{
 			hr = hrChange;
+		}
 	}
 
 	return hr;
@@ -583,58 +591,61 @@ HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, DWORD& r
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
 	_variant_t vtTemp;
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		vtTemp = Element(iBucket, iIndex);
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
 	else
 	{
 		vtTemp = DefaultValue();
-		isObjectValid = (hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE);
+		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
 	}
 
 	HRESULT hrChange = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_UI4);
-	if ( hrChange == S_OK )
+	if ( S_OK == hrChange  )
 	{
 		rdwValue = vtTemp.ulVal;
 	}
 	else
 	{
 		rdwValue = 0;
-		if ( hr == S_OK )
+		if ( S_OK == hr )
+		{
 			hr = hrChange;
+		}
 	}
 	return hr;
 }
-
 
 HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, BYTE& rbyValue ) const
 {
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
 	_variant_t vtTemp;
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		vtTemp = Element(iBucket, iIndex);
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
 	else
 	{
 		vtTemp = DefaultValue();
-		isObjectValid = (hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE);
+		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr );
 	}
 
 	HRESULT hrChange = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_UI1);
-	if ( hrChange == S_OK )
+	if ( S_OK == hrChange )
 	{
 		rbyValue = vtTemp.bVal;
 	}
 	else
 	{
 		rbyValue = 0;
-		if ( hr == S_OK )
+		if ( S_OK == hr )
+		{
 			hr = hrChange;
+		}
 	}
 
 	return hr;
@@ -677,7 +688,7 @@ CString SVVariantValueObjectClass::ToString(const VARIANT& rvt, bool bScript )
 
 		default:
 		{
-			if( (vt.vt & VT_ARRAY) == VT_ARRAY)
+			if( VT_ARRAY == (vt.vt & VT_ARRAY) )
 			{
 				if( bScript)
 				{
@@ -688,7 +699,7 @@ CString SVVariantValueObjectClass::ToString(const VARIANT& rvt, bool bScript )
 			{
 				VARTYPE l_OldType = vt.vt;
 				HRESULT hr = ::VariantChangeTypeEx(&vt, &vt, SvOl::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
-				if ( hr == S_OK )
+				if ( S_OK == hr )
 				{
 					if( bScript)
 					{
@@ -717,7 +728,7 @@ CString SVVariantValueObjectClass::ToString(const VARIANT& rvt, bool bScript )
 
 void SVVariantValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVVariantValueObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVVariantValueObjectType;
 	DefaultValue().Clear();
 
 	m_strTypeName = "Variant";

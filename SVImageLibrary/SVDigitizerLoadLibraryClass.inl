@@ -307,7 +307,7 @@ inline HRESULT SVDigitizerLoadLibraryClass::LoadCameraFiles( SVHANDLE p_hHandle,
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvLoadCameraFiles != NULL )
+	if ( nullptr != m_psvLoadCameraFiles )
 	{
 		l_hrOk = m_psvLoadCameraFiles( p_hHandle, p_psaFileNames );
 	}

@@ -8,11 +8,12 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   18 Apr 2013 16:43:22  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <atlconv.h>
 //Moved to precompiled header: #include <math.h>
 #include "VariantObj.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -517,7 +518,7 @@ const CVariantObj& CVariantObj::operator=(const LPCTSTR lpszSrc)
 	V_VT(this) = VT_BSTR;
 	V_BSTR(this) = _com_util::ConvertStringToBSTR(lpszSrc);
 	
-	if (V_BSTR(this) == NULL && lpszSrc != NULL)
+	if (nullptr == V_BSTR(this) && nullptr != lpszSrc)
 	{
 		_com_issue_error(E_OUTOFMEMORY);
 	}
@@ -534,7 +535,7 @@ const CVariantObj& CVariantObj::operator=(const CString& strSrc)
 	V_VT(this) = VT_BSTR;
 	V_BSTR(this) = _com_util::ConvertStringToBSTR(strSrc);
 	
-	if (V_BSTR(this) == NULL )//&& (strSrc != NULL))
+	if (nullptr == V_BSTR(this) )
 	{
 		_com_issue_error(E_OUTOFMEMORY);
 	}
@@ -960,12 +961,12 @@ void CVariantObj::SetString(LPCTSTR lpszSrc, VARTYPE vtSrc)
 	Clear();
 	
 	V_VT(this) = VT_BSTR;
-	V_BSTR(this) = NULL;
+	V_BSTR(this) = nullptr;
 	
-	if (lpszSrc != NULL)
+	if (nullptr != lpszSrc)
 	{
 #ifndef _UNICODE
-		if (vtSrc == VT_BSTRT)
+		if (VT_BSTRT == vtSrc)
 		{
 			int nLen = lstrlen(lpszSrc);
 			V_BSTR(this) = ::SysAllocStringByteLen(lpszSrc, nLen);
@@ -976,8 +977,10 @@ void CVariantObj::SetString(LPCTSTR lpszSrc, VARTYPE vtSrc)
 			V_BSTR(this) = ::SysAllocString(T2COLE(lpszSrc));
 		}
 		
-		if (V_BSTR(this) == NULL)
+		if (nullptr == V_BSTR(this) )
+		{
 			_com_issue_error(E_OUTOFMEMORY);
+		}
 	}
 }
 
@@ -1069,9 +1072,9 @@ VARIANT CVariantObj::Detach()
 void CVariantObj::ChangeType(VARTYPE vartype, const CVariantObj* pSrc, USHORT wFlags) 
 {
 	//
-	// If pDest is NULL, convert type in place
+	// If pDest is nullptr, convert type in place
 	//
-	if (pSrc == NULL)
+	if (nullptr == pSrc)
 	{
 		pSrc = this;
 	}

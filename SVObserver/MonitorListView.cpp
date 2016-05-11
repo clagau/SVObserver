@@ -302,7 +302,7 @@ void MonitorListView::Dump(CDumpContext& dc) const
 
 SVIODoc* MonitorListView::GetDocument()
 {
-	if( m_pDocument == NULL )
+	if( nullptr == m_pDocument )
 	{
 		m_pDocument = dynamic_cast<SVIODoc *>(CListView::GetDocument());
 	}
@@ -412,7 +412,7 @@ void MonitorListView::CollapseItem(int item)
 	{
 		if (HandleExpandCollapse(nodeType, it->second, 1))
 		{
-			OnUpdate(this, ExpandCollapseHint, NULL);
+			OnUpdate(this, ExpandCollapseHint, nullptr);
 		}
 	}
 }
@@ -434,7 +434,7 @@ void MonitorListView::ExpandItem(int item)
 		MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
 		if (HandleExpandCollapse(nodeType, it->second, 0))
 		{
-			OnUpdate(this, ExpandCollapseHint, NULL);
+			OnUpdate(this, ExpandCollapseHint, nullptr);
 		}
 	}
 }
@@ -459,7 +459,7 @@ void MonitorListView::ToggleExpandCollapse(int item)
 		{
 			if (HandleExpandCollapse(nodeType, it->second, (state) ? 0 : 1))
 			{
-				OnUpdate(this, ExpandCollapseHint, NULL);
+				OnUpdate(this, ExpandCollapseHint, nullptr);
 			}
 		}
 	}
@@ -580,7 +580,7 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		}
 		rCtrl.SetRedraw(true);
 	}
-	//CListView::OnUpdate( pSender, lHint, pHint );   // This call will cause flicker
+	// Do not call CListView::OnUpdate() - it will cause flicker
 }
 
 void MonitorListView::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -615,7 +615,7 @@ BOOL MonitorListView::PreTranslateMessage(MSG* pMsg)
 	if (pMsg->message == WM_KEYDOWN && TheSVObserverApp.OkToEdit())
 	{
 		POSITION Pos = GetListCtrl().GetFirstSelectedItemPosition();
-		if (Pos != NULL)
+		if (nullptr != Pos)
 		{
 			int item = GetListCtrl().GetNextSelectedItem(Pos);
 			if (item >= 0)
@@ -844,7 +844,7 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 		}
 		if (bRetVal)
 		{
-			OnUpdate(this, RemoveNodeHint, NULL);
+			OnUpdate(this, RemoveNodeHint, nullptr);
 		}
 	}
 	return bRetVal;
@@ -882,7 +882,7 @@ bool MonitorListView::EditMonitoredItem(int item)
 						bRetVal = pConfig->SetupRemoteMonitorList();
 						if (bRetVal)
 						{
-							OnUpdate(this, NULL, NULL);
+							OnUpdate(this, 0, nullptr);
 							return true;
 						}
 					}
@@ -953,7 +953,7 @@ bool MonitorListView::EditMonitoredItem(int item)
 			}
 			if (bRetVal)
 			{
-				OnUpdate(this, EditNodeHint, NULL);
+				OnUpdate(this, EditNodeHint, nullptr);
 			}
 		}
 	}
@@ -1020,7 +1020,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			case MonitorListNameNode: 
 				{
 					CMenu* PupupMenu = m_ContextMenuNamedList.GetSubMenu(0);
-					ASSERT(PupupMenu != NULL);
+					ASSERT(nullptr != PupupMenu);
 					CWnd* PopupOwner = this;
 					while (PopupOwner->GetStyle() & WS_CHILD)
 					{
@@ -1040,7 +1040,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			case FailStatusValuesNode:
 				{
 					CMenu* PupupMenu = m_ContextMenuSubList.GetSubMenu(0);
-					ASSERT(PupupMenu != NULL);
+					ASSERT(nullptr != PupupMenu);
 					CWnd* PopupOwner = this;
 					while (PopupOwner->GetStyle() & WS_CHILD)
 					{
@@ -1057,7 +1057,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			case FailStatusValuesItemNode:
 				{
 					CMenu* PupupMenu = m_ContextMenuNode.GetSubMenu(0);
-					ASSERT(PupupMenu != NULL);
+					ASSERT(nullptr != PupupMenu);
 					CWnd* PopupOwner = this;
 					while (PopupOwner->GetStyle() & WS_CHILD)
 					{
@@ -1096,7 +1096,7 @@ void MonitorListView::OnAddRemoveList()
 				{
 					pIODoc->SetModifiedFlag();
 				}
-				OnUpdate(this , NULL, NULL);
+				OnUpdate(this, 0, nullptr);
 			}
 		}
 		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
@@ -1134,7 +1134,7 @@ void MonitorListView::OnEditListProperties()
 							pIODoc->SetModifiedFlag();
 						}
 						pConfig->SetRemoteMonitorList(rList);
-						OnUpdate(this, NULL, NULL);
+						OnUpdate(this, 0, nullptr);
 					}
 				}
 			}
@@ -1150,7 +1150,7 @@ void MonitorListView::OnDeleteItem()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		CListCtrl& rCtrl = GetListCtrl();
 		POSITION Pos = rCtrl.GetFirstSelectedItemPosition();
-		if (Pos != NULL)
+		if (nullptr != Pos)
 		{
 			int item = rCtrl.GetNextSelectedItem(Pos);
 			int Nextitem = rCtrl.GetNextItem(item, LVNI_ABOVE);
@@ -1184,7 +1184,7 @@ void MonitorListView::OnEditItem()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
 		POSITION Pos = GetListCtrl().GetFirstSelectedItemPosition();
-		if (Pos != NULL)
+		if (nullptr != Pos)
 		{
 			int item = GetListCtrl().GetNextSelectedItem(Pos);
 			if (EditMonitoredItem(item))

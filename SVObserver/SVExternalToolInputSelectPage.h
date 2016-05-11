@@ -25,7 +25,7 @@ class SVExternalToolInputSelectPage : public CPropertyPage
 
 // Construction
 public:
-	SVExternalToolInputSelectPage(const CString& sTitle, SVExternalToolDetailsSheet* pParent = NULL, int id = IDD );
+	SVExternalToolInputSelectPage(const CString& sTitle, SVExternalToolDetailsSheet* pParent = nullptr, int id = IDD );
 	virtual ~SVExternalToolInputSelectPage();
 
 	CString							m_sGroupName;

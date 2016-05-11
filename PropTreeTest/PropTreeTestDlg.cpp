@@ -30,7 +30,7 @@ namespace
 	const static int PROP_TRG_TYPE = 102;
 }
 
-CPropTreeTestDlg::CPropTreeTestDlg(CWnd* pParent /*=NULL*/)
+CPropTreeTestDlg::CPropTreeTestDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CPropTreeTestDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);

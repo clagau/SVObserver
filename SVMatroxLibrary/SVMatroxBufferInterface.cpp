@@ -2143,7 +2143,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyDIBBufferToMe
 {
 	SVBitmapInfo l_Info;
 	HRESULT l_Status = SVMatroxBufferInterface::GetBitmapInfo(l_Info, p_rFromId);
-	if (l_Status == S_OK)
+	if (S_OK == l_Status)
 	{
 		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
 

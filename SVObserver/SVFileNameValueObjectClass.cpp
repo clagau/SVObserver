@@ -282,7 +282,7 @@ HRESULT SVFileNameValueObjectClass::SetValueAt(int iBucket, int iIndex, CString 
 {
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
-	if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		SVFileNameManagerClass SVFileManager;
 
@@ -317,7 +317,7 @@ HRESULT SVFileNameValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT
 	_variant_t l_Temp;
 	l_Temp.Attach( rvtValue );
 	HRESULT hr = GetValueAt( iBucket, iIndex, strVal );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		l_Temp = strVal;
 	}
@@ -338,8 +338,7 @@ HRESULT SVFileNameValueObjectClass::GetValueAt( int iBucket, int iIndex, double&
 
 void SVFileNameValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVStringValueObjectType;
-	//StrDefault = _T("");
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVStringValueObjectType;
 	
 	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_CH_VALUE | SV_DD_VALUE;
 

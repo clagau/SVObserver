@@ -387,7 +387,7 @@ HRESULT SVManagedIndexArray::RemoveAll()
 		{
 			SVManagedIndex* l_pIndex = *l_Iter;
 
-			if( l_pIndex != NULL )
+			if( nullptr != l_pIndex )
 			{
 				delete l_pIndex;
 			}
@@ -420,14 +420,14 @@ HRESULT SVManagedIndexArray::SetSize( size_t p_Size )
 
 		if( l_OrigSize < p_Size )
 		{
-			m_IndexArray.resize( p_Size, NULL );
+			m_IndexArray.resize( p_Size, nullptr );
 		}
 
 		for( size_t i = 0; i < m_IndexArray.size(); ++i )
 		{
 			SVManagedIndex* l_pIndex = m_IndexArray[ i ];
 
-			if( l_pIndex == NULL )
+			if( nullptr == l_pIndex )
 			{
 				m_IndexArray[ i ] = new SVManagedIndex;
 			}
@@ -456,7 +456,7 @@ HRESULT SVManagedIndexArray::GetAt( size_t p_Index, SVManagedIndex*& p_rpManaged
 {
 	HRESULT l_Status = S_OK;
 
-	p_rpManagedIndex = NULL;
+	p_rpManagedIndex = nullptr;
 
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 
@@ -486,7 +486,7 @@ HRESULT SVManagedIndexArray::ValidateIndex( size_t p_Index ) const
 			{
 				SVManagedIndex* l_pIndex = m_IndexArray[ p_Index ];
 
-				if( l_pIndex != NULL )
+				if( nullptr != l_pIndex )
 				{
 					if( l_pIndex->svmlTransactionId == 0 )
 					{
@@ -549,7 +549,7 @@ HRESULT SVManagedIndexArray::ReleaseAllIndexes()
 		{
 			SVManagedIndex* l_pIndex = m_IndexArray[ i ];
 
-			if( l_pIndex != NULL )
+			if( nullptr != l_pIndex )
 			{
 				l_pIndex->ReleaseAllReferences();
 			}
@@ -575,7 +575,7 @@ SVString SVManagedIndexArray::GetReferenceCounts() const
 		{
 			SVManagedIndex* l_pIndex = m_IndexArray[ i ];
 
-			if( l_pIndex != NULL )
+			if( nullptr != l_pIndex )
 			{
 				SVString l_Element = SvUl_SF::Format( _T( ":Index=%ld-" ), i );
 
@@ -602,7 +602,7 @@ long SVManagedIndexArray::GetReferenceCount( size_t p_Index ) const
 			{
 				SVManagedIndex* l_pIndex = m_IndexArray[ p_Index ];
 
-				if( l_pIndex != NULL )
+				if( nullptr != l_pIndex )
 				{
 					l_Count = l_pIndex->GetReferenceCount();
 				}
@@ -627,7 +627,7 @@ long SVManagedIndexArray::GetReferenceCount( size_t p_Index, SVDataManagerLockTy
 			{
 				SVManagedIndex* l_pIndex = m_IndexArray[ p_Index ];
 
-				if( l_pIndex != NULL )
+				if( nullptr != l_pIndex )
 				{
 					l_Count = l_pIndex->GetReferenceCount( p_eType );
 				}
@@ -669,7 +669,7 @@ HRESULT SVManagedIndexArray::GetNextIndex( long& p_rIndex, long& p_rTransactionI
 
 			SVManagedIndex* l_pIndex = m_IndexArray[ l_TempIndex ];
 
-			if( l_pIndex != NULL )
+			if( nullptr != l_pIndex )
 			{
 				if( ::InterlockedCompareExchange( &( l_pIndex->svmlTransactionId ), p_rTransactionID, 0 ) == 0 )
 				{
@@ -741,7 +741,7 @@ size_t SVManagedIndexArray::GetAvailableIndexCount() const
 		{
 			SVManagedIndex* l_pIndex = m_IndexArray[ i ];
 
-			if( l_pIndex != NULL && l_pIndex->svmlTransactionId == 0 )
+			if( nullptr != l_pIndex && 0 == l_pIndex->svmlTransactionId )
 			{
 				++l_Count;
 			}
@@ -789,18 +789,18 @@ void SVManagedIndexArray::Dump( const SVString& p_rSourceName ) const
 	if( l_AutoLock.Assign( &m_Lock ) )
 	{
 		// Open a File Name derived from handle ...
-		FILE* l_pfh=NULL;
+		FILE* l_pfh = nullptr;
 		char l_sFileName[128];
 		sprintf( l_sFileName, _T("c:\\SVObserver\\Data Manager %s %s.csv"), p_rSourceName.c_str(), GetName().c_str() );
 		l_pfh = fopen( l_sFileName, _T("w"));
-		if( l_pfh == NULL )
+		if( nullptr == l_pfh )
 			return;
 		
 		fprintf( l_pfh, _T("%s\n"), GetName().c_str() );
 		fprintf( l_pfh, _T(" Acquisition, PPQ, Inspection, Display, Last Insp, Archive, DCOM, Other\n"));
 		for( size_t i = 0 ; i < GetSize(); i++ )
 		{
-			SVManagedIndex* l_pIndex = NULL;
+			SVManagedIndex* l_pIndex = nullptr;
 
 			GetAt( i, l_pIndex );
 			
@@ -833,7 +833,7 @@ HRESULT SVManagedIndexArray::ClearIndex( size_t p_Index, long p_TransactionId )
 			{
 				SVManagedIndex* l_pIndex = m_IndexArray[ p_Index ];
 
-				if( l_pIndex != NULL )
+				if( nullptr != l_pIndex )
 				{
 					if( l_pIndex->svmlTransactionId == p_TransactionId )
 					{
@@ -871,7 +871,7 @@ HRESULT SVManagedIndexArray::GetAtNoLock( size_t p_Index, SVManagedIndex*& p_rpM
 {
 	HRESULT l_Status = S_OK;
 
-	p_rpManagedIndex = NULL;
+	p_rpManagedIndex = nullptr;
 
 	if( p_Index < m_ArrayDepth )
 	{
@@ -902,7 +902,7 @@ HRESULT SVManagedIndexArray::AddReferenceNoLock( size_t p_Index, long p_Transact
 		{
 			SVManagedIndex* l_pIndex = m_IndexArray[ p_Index ];
 
-			if( l_pIndex != NULL )
+			if( nullptr != l_pIndex )
 			{
 				if( l_pIndex->svmlTransactionId == p_TransactionId )
 				{
@@ -941,7 +941,7 @@ HRESULT SVManagedIndexArray::ReleaseReferenceNoLock( size_t p_Index, long p_Tran
 		{
 			SVManagedIndex* l_pIndex = m_IndexArray[ p_Index ];
 
-			if( l_pIndex != NULL )
+			if( nullptr != l_pIndex )
 			{
 				if( l_pIndex->svmlTransactionId == p_TransactionId )
 				{
@@ -980,7 +980,7 @@ HRESULT SVManagedIndexArray::ValidateIndexNoLock( size_t p_Index, long p_Transac
 		{
 			SVManagedIndex* l_pIndex = m_IndexArray[ p_Index ];
 
-			if( l_pIndex != NULL )
+			if( nullptr != l_pIndex )
 			{
 				if( l_pIndex->svmlTransactionId != p_TransactionId )
 				{

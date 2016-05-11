@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   26 Apr 2013 14:09:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMaskEditor.h"
 #include "SVScrollWnd1Ppg.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,9 +21,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 IMPLEMENT_DYNCREATE(SVScrollWnd1PropPage, COlePropertyPage)
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Message map
@@ -40,7 +40,6 @@ END_MESSAGE_MAP()
 IMPLEMENT_OLECREATE_EX(SVScrollWnd1PropPage, "SVSCROLLWND.SVScrollWnd1PropPage.1",
 	0x6df99a36, 0xebb8, 0x11d2, 0xa7, 0x59, 0, 0x10, 0x6f, 0, 0xc, 0x7a)
 
-
 /////////////////////////////////////////////////////////////////////////////
 // SVScrollWnd1PropPage::SVScrollWnd1PropPageFactory::UpdateRegistry -
 // Adds or removes system registry entries for SVScrollWnd1PropPage
@@ -48,12 +47,15 @@ IMPLEMENT_OLECREATE_EX(SVScrollWnd1PropPage, "SVSCROLLWND.SVScrollWnd1PropPage.1
 BOOL SVScrollWnd1PropPage::SVScrollWnd1PropPageFactory::UpdateRegistry(BOOL bRegister)
 {
 	if (bRegister)
-		return AfxOleRegisterPropertyPageClass(AfxGetInstanceHandle(),
-			m_clsid, IDS_SVSCROLLWND1_PPG);
-	else
-		return AfxOleUnregisterClass(m_clsid, NULL);
+	{
+		return AfxOleRegisterPropertyPageClass(AfxGetInstanceHandle(), m_clsid, IDS_SVSCROLLWND1_PPG);
+	}
+	return AfxOleUnregisterClass(m_clsid, nullptr);
 }
 
+SVScrollWnd1PropPage::~SVScrollWnd1PropPage()
+{
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // SVScrollWnd1PropPage::SVScrollWnd1PropPage - Constructor

@@ -15,7 +15,7 @@
 
 // Note: SafeArray must be allocated to the proper dimension for the camera
 // LUTEnable must be set prior to setting the Lut values
-// SEJ - try to speed this up, performance is horrible...
+// @TODO - Try to speed this up, performance is horrible...
 HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 {
 	HRESULT hr = S_OK;
@@ -39,27 +39,27 @@ HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGige
 					long lBandLBound(0);
 					long lBandUBound(0);
 					hr = GetLutBandBounds(var.parray, lBandLBound, lBandUBound);
-					if (hr == S_OK)
+					if (S_OK == hr)
 					{
 						ULONG lNumBands = lBandUBound - lBandLBound + 1;
 
 						VARTYPE vt;
 						hr = ::SafeArrayGetVartype(var.parray, &vt);
-						if (hr == S_OK)
+						if (S_OK == hr)
 						{
-							if ( vt == VT_I4 || vt == VT_UI4 )
+							if ( VT_I4 == vt || VT_UI4 == vt )
 							{
 								long lBandSizeLBound(0);
 								long lBandSizeUBound(0);
 								hr = GetLutBandSizeBounds(var.parray, lBandSizeLBound, lBandSizeUBound);
 								
-								if (hr == S_OK)
+								if (S_OK == hr)
 								{
-									unsigned long* pData(NULL);
+									unsigned long* pData(nullptr);
 									hr = ::SafeArrayAccessData(var.parray, (void **)&pData);
 
 									long lBandSize = lBandSizeUBound - lBandSizeLBound + 1;
-									for (int i = 0; i < lBandSize && hr == S_OK; i++)
+									for (int i = 0; i < lBandSize && S_OK == hr; i++)
 									{
 										_variant_t lutIndex(i);
 
@@ -109,7 +109,7 @@ HRESULT SVGigeLUTSetter::GetLutBandBounds(SAFEARRAY* parray, long& lBandLBound, 
 {
 	HRESULT hr = ::SafeArrayGetLBound(parray, 2, &lBandLBound);
 
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = ::SafeArrayGetUBound(parray, 2, &lBandUBound);
 	}
@@ -120,7 +120,7 @@ HRESULT SVGigeLUTSetter::GetLutBandSizeBounds(SAFEARRAY* parray, long& lBandSize
 {
 	HRESULT hr = ::SafeArrayGetLBound(parray, 1, &lBandSizeLBound);
 
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = ::SafeArrayGetUBound(parray, 1, &lBandSizeUBound);
 	}

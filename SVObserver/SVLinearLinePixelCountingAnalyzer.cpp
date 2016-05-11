@@ -9,22 +9,13 @@
 // * .Check In Date   : $Date:   23 Apr 2013 12:03:42  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLinearLinePixelCountingAnalyzer.h"
 #include "SVGlobal.h"
 #include "SVImageClass.h"
 #include "SVLinearEdgeAProcessingClass.h"
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVPixelCountingLineAnalyzerClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLinearPixelCountingLineAnalyzerClass, SVLinearPixelCountingLineAnalyzerClassGuid );
 
@@ -44,13 +35,13 @@ SVLinearPixelCountingLineAnalyzerClass::SVLinearPixelCountingLineAnalyzerClass( 
 void SVLinearPixelCountingLineAnalyzerClass::init()
 {
 	// Identify our type
-	outObjectInfo.ObjectTypeInfo.SubType = SVLinearPixelCountingAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVLinearPixelCountingAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
 
-	if( l_pEdge != NULL )
+	if( nullptr != l_pEdge )
 	{
-		l_pEdge->m_svDirection.SetDefaultValue( SV_UNDEFINED_DIRECTION, TRUE );
+		l_pEdge->m_svDirection.SetDefaultValue( SV_UNDEFINED_DIRECTION, true );
 
 		AddFriend( l_pEdge->GetUniqueObjectID() );
 	}
@@ -60,8 +51,8 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	RegisterEmbeddedObject( &whitePixelCount, SVWhitePixelObjectGuid, IDS_OBJECTNAME_WHITEPIXELCOUNT, false, SVResetItemNone );
 
 	// Set Embedded defaults
-	blackPixelCount.SetDefaultValue( 0, TRUE );
-	whitePixelCount.SetDefaultValue( 0, TRUE );
+	blackPixelCount.SetDefaultValue( 0, true );
+	whitePixelCount.SetDefaultValue( 0, true );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -108,15 +99,13 @@ SVLinearPixelCountingLineAnalyzerClass::~SVLinearPixelCountingLineAnalyzerClass(
 
 BOOL SVLinearPixelCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
-
-	bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
 	blackPixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	whitePixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -135,8 +124,8 @@ BOOL SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus
 
 	SVLinearEdgeProcessingClass *l_pEdge = GetEdgeA();
 
-	l_bOk = l_bOk && l_pEdge != NULL;
-	l_bOk = l_bOk && ( l_pEdge->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) == S_OK );
+	l_bOk = l_bOk && nullptr != l_pEdge;
+	l_bOk = l_bOk && ( S_OK == l_pEdge->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) );
 
 	long l_lBlack = 0;
 	long l_lWhite = 0;
@@ -156,8 +145,8 @@ BOOL SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus
 		}
 	}
 
-	l_bOk = ( blackPixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lBlack ) == S_OK ) && l_bOk;
-	l_bOk = ( whitePixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lWhite ) == S_OK ) && l_bOk;
+	l_bOk = ( S_OK == blackPixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lBlack ) ) && l_bOk;
+	l_bOk = ( S_OK == whitePixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lWhite ) ) && l_bOk;
 
 	if( ! l_bOk )
 	{
@@ -174,6 +163,3 @@ HRESULT SVLinearPixelCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExten
 
 	return l_hrOk;
 }
-
-//** EOF **
-

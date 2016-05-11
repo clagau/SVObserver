@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:43:56  $
 //******************************************************************************
 
-#if !defined(SVREGISTRY_H_INCLUDED)
-#define SVREGISTRY_H_INCLUDED
+#pragma once
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVContainerLibrary/SVVector.h"
@@ -335,7 +334,6 @@ public:
 	//Remarks:
 	//Sets the REG_SZ registry value for the entry specified 
 	//by szValueName.
-	//##ModelId=385F75BB02FD
 	BOOL SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue );
 
 	//BOOL GetRegistryValue (SVString &szValueName, SVString 
@@ -530,6 +528,4 @@ private:
 	BOOL AdjustPrivileges (TCHAR *pszPrivilege);
 
 };
-
-#endif
 

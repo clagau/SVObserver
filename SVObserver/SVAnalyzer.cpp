@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 10:09:10  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVAnalyzer.h"
 #include "SVInspectionProcess.h"
@@ -16,7 +17,7 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageClass.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
-#include "SVImageLibrary/SVDrawContext.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -40,20 +41,18 @@ SVAnalyzerClass::SVAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* PO
 // Initialization of newly Instantiated Object
 void SVAnalyzerClass::init()
 {
-	pAnalyzerResult			= NULL;
-	isDirty					= FALSE;
+	pAnalyzerResult			= nullptr;
+	isDirty					= false;
 
 	// Indentify our type in the Output List
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 
 	// Set up the Defualt Inputs/Outputs
 	addDefaultInputObjects();
-
 }
 
 SVAnalyzerClass::~SVAnalyzerClass()
 {
-
 }
 
 BOOL SVAnalyzerClass::CloseObject()
@@ -69,33 +68,32 @@ BOOL SVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	{
 		if( GetInspection() && GetTool() )
 		{
-			isDirty	= FALSE;
+			isDirty	= false;
 
-			bOk = TRUE;
+			bOk = true;
 		}
 	}
-
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
 
 void SVAnalyzerClass::MakeDirty()
 {
-	isDirty = TRUE;
+	isDirty = true;
 }
 
 SVResultClass* SVAnalyzerClass::GetResultObject()
 {
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVResultObjectType;
-	SVResultClass* pResult = reinterpret_cast<SVResultClass*>(SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ) );
+	SVResultClass* pResult = reinterpret_cast<SVResultClass*>(SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info) ) );
 	return pResult;
 }
 
 DWORD_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	SVAnalyzerLevelCreateStruct createStruct;
 
@@ -107,7 +105,7 @@ DWORD_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 		{
 			if( !IsCreated() && !CreateObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
 			{
-				ASSERT( FALSE );
+				ASSERT( false );
 
 				DwResult = SVMR_NO_SUCCESS;
 			}
@@ -128,9 +126,9 @@ DWORD_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 
 		case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
-			if( ConnectObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) != S_OK )
+			if( S_OK != ConnectObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
 			{
-				ASSERT( FALSE );
+				ASSERT( false );
 
 				DwResult = SVMR_NO_SUCCESS;
 			}
@@ -169,7 +167,7 @@ DWORD_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 			createStruct.ToolObjectInfo			= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
 		}
 
 		case SVMSGID_DISCONNECT_IMAGE_OBJECT:
@@ -190,7 +188,7 @@ DWORD_PTR SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass* pChildObjec
 	createStruct.ToolObjectInfo			= GetTool();
 	createStruct.InspectionObjectInfo	= GetInspection();
 	
-	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
 }
 
 SV_IMPLEMENT_CLASS( SVImageAnalyzerClass, SVImageAnalyzerClassGuid );
@@ -210,7 +208,7 @@ SVImageAnalyzerClass::SVImageAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjec
 void SVImageAnalyzerClass::init()
 {
 	// Set object type info...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	// Set sub type only in derived classes!
 
 	// Set Input requirement
@@ -232,17 +230,18 @@ BOOL SVImageAnalyzerClass::CloseObject()
 
 BOOL SVImageAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	isCreated = SVAnalyzerClass::CreateObject( PCreateStructure );
+	m_isCreated = SVAnalyzerClass::CreateObject( PCreateStructure );
 
-	return isCreated;
+	return m_isCreated;
 }
 
 SVImageClass* SVImageAnalyzerClass::getInputImage()
 {
 	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().PObject )
+	{
 		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().PObject;
-
-	return NULL;
+	}
+	return nullptr;
 }
 
 unsigned long SVImageAnalyzerClass::GetInputPixelDepth ()
@@ -275,11 +274,10 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth ()
 
 BOOL SVImageAnalyzerClass::OnValidate()
 {
-	BOOL l_bOk = TRUE;
-		
+	BOOL l_bOk = true;
 
 	l_bOk = l_bOk && inputImageObjectInfo.IsConnected();
-	l_bOk = l_bOk && inputImageObjectInfo.GetInputObjectInfo().PObject != NULL;
+	l_bOk = l_bOk && nullptr != inputImageObjectInfo.GetInputObjectInfo().PObject;
 	l_bOk = l_bOk && inputImageObjectInfo.GetInputObjectInfo().PObject->IsValid();
 
   return l_bOk;

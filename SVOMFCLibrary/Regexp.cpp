@@ -295,7 +295,7 @@ public:
 		const short &offset = *((short*)(p+1));
 
 		if (offset == 0)
-			return(NULL);
+			return(nullptr);
 		
 		return((OP(p) == BACK) ? p-offset : p+offset);
 	}
@@ -460,7 +460,7 @@ void CRegCompiler::regtail(LPTSTR p, LPTSTR val)
 	LPTSTR temp;
 
 	// Find last node. 
-	for (scan = p; (temp = regnext(scan)) != NULL; scan = temp)
+	for (scan = p; nullptr != (temp = regnext(scan)); scan = temp)
 		continue;
 
 	*((short *)(scan+1)) = (short)((OP(scan) == BACK) ? scan - val : val - scan);
@@ -584,23 +584,23 @@ bool regexp::regcomp(LPCTSTR exp)
 	LPTSTR scan;
 	int flags;
 
-	if (exp == NULL)
+	if (nullptr == exp)
 	{
 		regerror( REGERR_NULL_TO_REGCOMP );
-		return NULL;
+		return nullptr;
 	}
 
 	// First pass: determine size, legality.
 	CRegValidator tester( exp );
 
-	if (tester.reg(0, &flags) == NULL)
+	if (nullptr == tester.reg(0, &flags))
 		return false;
 
 	// Small enough for pointer-storage convention? 
 	if (tester.Size() >= 0x7fffL)	// Probably could be 0xffffL. 
 	{
 		regerror(REGERR_TO_BIG);
-		return NULL;
+		return nullptr;
 	}
 
 	m_programSize = tester.Size();
@@ -609,7 +609,7 @@ bool regexp::regcomp(LPCTSTR exp)
 
 	CRegCompiler comp( exp, program );
 	// Second pass: emit code. 
-	if (comp.reg(0, &flags) == NULL)
+	if (nullptr == comp.reg(0, &flags))
 		return false;
 
 	scan = program + 1;			// First BRANCH. 
@@ -632,10 +632,10 @@ bool regexp::regcomp(LPCTSTR exp)
 		 
 		if (flags&SPSTART) 
 		{
-			LPTSTR longest = NULL;
+			LPTSTR longest = nullptr;
 			size_t len = 0;
 
-			for (; scan != NULL; scan = regnext(scan))
+			for (; nullptr != scan; scan = regnext(scan))
 				if (OP(scan) == EXACTLY && _tcslen(OPERAND(scan)) >= len)
 				{
 					longest = OPERAND(scan);
@@ -678,7 +678,7 @@ LPTSTR CRegCompilerBase::reg( int paren, int *flagp )
 		if (regnpar >= Regexp::NSUBEXP)
 		{
 			regerror(REGERR_TO_MANY_PAREN);
-			return NULL;
+			return nullptr;
 		}
 		parno = regnpar;
 		regnpar++;
@@ -687,8 +687,8 @@ LPTSTR CRegCompilerBase::reg( int paren, int *flagp )
 
 	// Pick up the branches, linking them together. 
 	br = regbranch(&flags);
-	if (br == NULL)
-		return(NULL);
+	if (nullptr == br)
+		return(nullptr);
 	if (paren)
 		regtail(ret, br);	// OPEN -> first. 
 	else
@@ -699,8 +699,8 @@ LPTSTR CRegCompilerBase::reg( int paren, int *flagp )
 	{
 		regparse++;
 		br = regbranch(&flags);
-		if (br == NULL)
-			return(NULL);
+		if (nullptr == br)
+			return(nullptr);
 		regtail(ret, br);	// BRANCH -> BRANCH. 
 		*flagp &= ~(~flags&HASWIDTH);
 		*flagp |= flags&SPSTART;
@@ -711,26 +711,26 @@ LPTSTR CRegCompilerBase::reg( int paren, int *flagp )
 	regtail(ret, ender);
 
 	// Hook the tails of the branches to the closing node. 
-	for (br = ret; br != NULL; br = regnext(br))
+	for (br = ret; nullptr != br; br = regnext(br))
 		regoptail(br, ender);
 
 	// Check for proper termination. 
 	if (paren && *regparse++ != ')')
 	{
 		regerror( REGERR_UNTERMINATED_PAREN );
-		return NULL;
+		return nullptr;
 	}
 	else if (!paren && *regparse != '\0')
 	{
 		if (*regparse == ')')
 		{
 			regerror( REGERR_UNMATCHED_PAREN );
-			return NULL;
+			return nullptr;
 		}
 		else
 		{
 			regerror( REGERR_INTERNAL_ERROR_JUNK );
-			return NULL;
+			return nullptr;
 		}
 		// NOTREACHED 
 	}
@@ -753,20 +753,20 @@ LPTSTR CRegCompilerBase::regbranch(int *flagp)
 	*flagp = WORST;				// Tentatively. 
 
 	ret = regnode(BRANCH);
-	chain = NULL;
+	chain = nullptr;
 	while ((c = *regparse) != '\0' && c != '|' && c != ')')
 	{
 		latest = regpiece(&flags);
-		if (latest == NULL)
-			return(NULL);
+		if (nullptr == latest)
+			return(nullptr);
 		*flagp |= flags&HASWIDTH;
-		if (chain == NULL)		// First piece. 
+		if (nullptr == chain)		// First piece. 
 			*flagp |= flags&SPSTART;
 		else
 			regtail(chain, latest);
 		chain = latest;
 	}
-	if (chain == NULL)			// Loop ran zero times. 
+	if (nullptr == chain)			// Loop ran zero times. 
 		(void) regnode(NOTHING);
 
 	return(ret);
@@ -788,8 +788,8 @@ LPTSTR CRegCompilerBase::regpiece(int *flagp)
 	int flags;
 
 	ret = regatom(&flags);
-	if (ret == NULL)
-		return(NULL);
+	if (nullptr == ret)
+		return(nullptr);
 
 	op = *regparse;
 	if (!ISREPN(op))
@@ -801,7 +801,7 @@ LPTSTR CRegCompilerBase::regpiece(int *flagp)
 	if (!(flags&HASWIDTH) && op != _T( '?' ))
 	{
 		regerror( REGERR_OP_COULD_BE_EMPTY );
-		return NULL;
+		return nullptr;
 	}
 	switch (op)
 	{
@@ -845,7 +845,7 @@ LPTSTR CRegCompilerBase::regpiece(int *flagp)
 	if (ISREPN(*regparse))
 	{
 		regerror( REGERR_NESTED_OP );
-		return NULL;
+		return nullptr;
 	}
 
 	return(ret);
@@ -909,7 +909,7 @@ LPTSTR CRegCompilerBase::regatom(int * flagp)
 					if (range > rangeend)
 					{
 						regerror( REGERR_INVALID_RANGE );
-						return NULL;
+						return nullptr;
 					}
 					for (range++; range <= rangeend; range++)
 						regc(range);
@@ -920,15 +920,15 @@ LPTSTR CRegCompilerBase::regatom(int * flagp)
 			if (c != ']')
 			{
 				regerror( REGERR_UNMATCHED_BRACE );
-				return NULL;
+				return nullptr;
 			}
 			*flagp |= HASWIDTH|SIMPLE;
 			break;
 		}
 		case '(':
 			ret = reg(1, &flags);
-			if (ret == NULL)
-				return(NULL);
+			if (nullptr == ret)
+				return(nullptr);
 			*flagp |= flags&(HASWIDTH|SPSTART);
 			break;
 		case '\0':
@@ -936,13 +936,13 @@ LPTSTR CRegCompilerBase::regatom(int * flagp)
 		case ')':
 			// supposed to be caught earlier 
 			regerror( REGERR_INTERNAL_UNEXPECTED_CHAR );
-			return NULL;
+			return nullptr;
 		case '?':
 		case '+':
 		case '*':
 			{
 				regerror( REGERR_OP_FOLLOWS_NOTHING );
-				return NULL;
+				return nullptr;
 			}
 		case '\\':
 			switch (*regparse++)
@@ -950,7 +950,7 @@ LPTSTR CRegCompilerBase::regatom(int * flagp)
 				case '\0':
 				{
 					regerror( REGERR_TRAILING_ESC );
-					return NULL;
+					return nullptr;
 				}
 				case '<':
 					ret = regnode(WORDA);
@@ -1089,7 +1089,7 @@ bool regexp::regexec( LPCTSTR str )
 	LPTSTR string = (LPTSTR)str;	// avert const poisoning 
 
 	// Be paranoid. 
-	if ( string == NULL )
+	if ( nullptr == string )
 	{
 		regerror( REGERR_NULLARG );
 		return false;
@@ -1103,7 +1103,7 @@ bool regexp::regexec( LPCTSTR str )
 	}
 
 	// If there is a "must appear" string, look for it. 
-	if ( regmust != NULL && _tcsstr( string, regmust ) == NULL )
+	if ( nullptr != regmust && nullptr == _tcsstr( string, regmust ) )
 		return false;
 
 	CRegExecutor executor( this, string );
@@ -1116,7 +1116,7 @@ bool regexp::regexec( LPCTSTR str )
 	if ( regstart != '\0' )
 	{
 		// We know what TCHAR it must start with. 
-		for ( LPTSTR s = string; s != NULL; s = _tcschr( s+1 , regstart ) )
+		for ( LPTSTR s = string; nullptr != s; s = _tcschr( s+1 , regstart ) )
 			if ( executor.regtry( s) )
 				return true;
 		return false;
@@ -1144,8 +1144,8 @@ bool CRegExecutor::regtry( LPTSTR string )
 	enp = prog->endp;
 	for (i = Regexp::NSUBEXP; i > 0; i--)
 	{
-		*stp++ = NULL;
-		*enp++ = NULL;
+		*stp++ = nullptr;
+		*enp++ = nullptr;
 	}
 	if ( regmatch( prog->program + 1 ) )
 	{
@@ -1172,10 +1172,10 @@ bool CRegExecutor::regmatch( LPTSTR prog )
 	LPTSTR next;		// Next node. 
 
 #ifdef _RE_DEBUG
-	if (prog != NULL && regnarrate)
+	if (nullptr != prog && regnarrate)
 		_ftprintf(stderr, _T( "%s(\n" ), regprop(prog));
 #endif
-	for (scan = prog; scan != NULL; scan = next)
+	for (scan = prog; nullptr != scan; scan = next)
 	{
 #ifdef _RE_DEBUG
 		if (regnarrate)
@@ -1230,13 +1230,13 @@ bool CRegExecutor::regmatch( LPTSTR prog )
 			}
 			case ANYOF:
 				if (*reginput == '\0' ||
-						_tcschr(OPERAND(scan), *reginput) == NULL)
+						nullptr == _tcschr(OPERAND(scan), *reginput))
 					return false;
 				reginput++;
 				break;
 			case ANYBUT:
 				if (*reginput == '\0' ||
-						_tcschr(OPERAND(scan), *reginput) != NULL)
+						nullptr != _tcschr(OPERAND(scan), *reginput))
 					return false;
 				reginput++;
 				break;
@@ -1257,7 +1257,7 @@ bool CRegExecutor::regmatch( LPTSTR prog )
 					// invocation of the same parentheses
 					// already has.
 					 
-					if (regstartp[no] == NULL)
+					if (nullptr == regstartp[no])
 						regstartp[no] = input;
 					return true;
 				}
@@ -1278,7 +1278,7 @@ bool CRegExecutor::regmatch( LPTSTR prog )
 					// invocation of the same parentheses
 					// already has.
 					 
-					if (regendp[no] == NULL)
+					if (nullptr == regendp[no])
 						regendp[no] = input;
 					return true;
 				}
@@ -1391,7 +1391,7 @@ void regexp::regdump()
 		op = OP(s);
 		_tprintf(_T( "%2d%s" ), s-program, regprop(s));	// Where, what. 
 		next = regnext(s);
-		if (next == NULL)		// Next ptr. 
+		if (nullptr == next)		// Next ptr. 
 			_tprintf(_T( "(0)" ));
 		else 
 			_tprintf(_T( "(%d)" ), (s-program)+(next-s));
@@ -1414,7 +1414,7 @@ void regexp::regdump()
 		_tprintf(_T( "start `%c' " ), regstart);
 	if (reganch)
 		_tprintf(_T( "anchored " ));
-	if (regmust != NULL)
+	if (nullptr != regmust)
 		_tprintf(_T( "must have \"%s\"" ), regmust);
 	_tprintf(_T( "\n" ));
 }
@@ -1449,19 +1449,19 @@ LPTSTR CRegProgramAccessor::regprop( LPTSTR op )
 	case OPEN+4: case OPEN+5: case OPEN+6:
 	case OPEN+7: case OPEN+8: case OPEN+9:
 		_stprintf(buf+_tcslen(buf), _T( "OPEN%d" ), OP(op)-OPEN);
-		p = NULL;
+		p = nullptr;
 		break;
 	case CLOSE+1: case CLOSE+2: case CLOSE+3:
 	case CLOSE+4: case CLOSE+5: case CLOSE+6:
 	case CLOSE+7: case CLOSE+8: case CLOSE+9:
 		_stprintf(buf+_tcslen(buf), _T( "CLOSE%d" ), OP(op)-CLOSE);
-		p = NULL;
+		p = nullptr;
 		break;
 	default:
 		regerror( REGERR_CORRUPTED_OPCODE );
 		break;
 	}
-	if (p != NULL)
+	if (nullptr != p)
 		(void) _tcscat(buf, p);
 	return(buf);
 }
@@ -1666,7 +1666,7 @@ CString regexp::GetReplaceString( const TCHAR* sReplaceExp ) const
 	int no;
 	size_t len;
 
-	if( sReplaceExp == NULL )
+	if( nullptr == sReplaceExp )
 	{
 		regerror( REGERR_NULL_TO_REGSUB  );
 		return szEmpty;
@@ -1695,7 +1695,7 @@ CString regexp::GetReplaceString( const TCHAR* sReplaceExp ) const
 				c = *src++;
 			replacelen++;
 		} 
-		else if (startp[no] != NULL && endp[no] != NULL &&
+		else if (nullptr != startp[no] && nullptr != endp[no] &&
 					endp[no] > startp[no]) 
 		{
 			// Get tagged expression
@@ -1726,7 +1726,7 @@ CString regexp::GetReplaceString( const TCHAR* sReplaceExp ) const
 				c = *src++;
 			*buf++ = c;
 		} 
-		else if (startp[no] != NULL && endp[no] != NULL &&
+		else if (nullptr != startp[no] && nullptr != endp[no] &&
 					endp[no] > startp[no]) 
 		{
 			// Get tagged expression

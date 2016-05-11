@@ -32,10 +32,6 @@ SVBarCodeBufferInfoClass::SVBarCodeBufferInfoClass( const SVBarCodeBufferInfoCla
 	*this = S2;
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
 const SVBarCodeBufferInfoClass &SVBarCodeBufferInfoClass::operator=( const SVBarCodeBufferInfoClass& S2 )
 {
 	m_lCodeType = S2.m_lCodeType;

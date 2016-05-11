@@ -40,7 +40,6 @@ SVToolSetAdjustmentDialogSheetClass::SVToolSetAdjustmentDialogSheetClass( const 
 : CPropertySheet( nIDCaption, pParentWnd, iSelectPage )
 , m_InspectionID(rInspectionID)
 , m_TaskObjectID(rTaskObjectID)
-, m_pToolSet(nullptr)
 {
 	init( rCondition );
 }
@@ -49,7 +48,6 @@ SVToolSetAdjustmentDialogSheetClass::SVToolSetAdjustmentDialogSheetClass( const 
 : CPropertySheet( pszCaption, pParentWnd, iSelectPage )
 , m_InspectionID(rInspectionID)
 , m_TaskObjectID(rTaskObjectID)
-, m_pToolSet(nullptr)
 {
 	init( rCondition );
 }
@@ -78,7 +76,7 @@ BOOL SVToolSetAdjustmentDialogSheetClass::OnInitDialog()
 
 	// Disable and Hide Cancel Button
 	HWND hWnd = ::GetDlgItem(m_hWnd, IDCANCEL);
-	if (hWnd != nullptr)
+	if (nullptr != hWnd)
 	{
 		::EnableWindow( hWnd, FALSE );
 		::ShowWindow(hWnd, SW_HIDE );

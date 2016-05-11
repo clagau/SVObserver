@@ -346,7 +346,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 				{
 				case VT_I4:
 					{
-						if(m_spIntVector.get() == nullptr)
+						if(nullptr == m_spIntVector.get())
 						{
 							m_spIntVector = std::unique_ptr<std::vector<int>> (new(std::vector<int>));
 						}
@@ -356,7 +356,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 					}
 				case VT_UI4:
 					{
-						if(m_spUINTVector.get() == nullptr)
+						if(nullptr == m_spUINTVector.get())
 						{
 							m_spUINTVector = std::unique_ptr<std::vector<UINT>> (new(std::vector<UINT>));
 						}

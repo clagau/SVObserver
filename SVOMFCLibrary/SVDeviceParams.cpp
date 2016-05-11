@@ -154,8 +154,6 @@ HRESULT ToVariant( __int64 iValue, VARIANT& rv )
 	::VariantClear( &rv );
 
 	// no real support for VT_I8 yet; stuff into a string; see also FromVariant
-	//rv.vt = VT_I8;
-	//rv.lVal = iValue;
 	rv.vt = VT_BSTR;
 	CString s;
 	s.Format("%I64d", iValue);
@@ -323,77 +321,7 @@ SVDeviceParamStructTestCases::SVDeviceParamStructTestCases(SVDeviceParamCollecti
 	}
 	int abc=0;
 	abc = 5;
-
-	/*
-	SVLutDeviceParam* pParam1 = DerivedValue< SVLutDeviceParam >( rDevice.GetParameter( DeviceParamLut ) );
-	if (pParam1)
-	{
-		SVLut lut1 = pParam1->lut;
-	}
-
-	SVLutDeviceParam* pParam2 = rDevice.GetParameter( DeviceParamLut ).DerivedValue( pParam2 );
-	if (pParam2)
-	{
-		SVLut lut2 = pParam2->lut;
-	}
-
-	SVLutDeviceParam* pParam3 = NULL;
-	HRESULT hr = rDevice.GetParameter( DeviceParamLut ).GetDerivedValue( pParam3 );
-	SVLut lut3;
-	if ( pParam3 != NULL && hr == S_OK )
-	{
-		lut3 = pParam3->lut;
-	}
-	else
-	{
-		// type mismatch
-	}
 	
-
-	HRESULT hrTemp = S_OK;
-	//SVDeviceParamMap::iterator iter = rDevice.mapParameters.find( DeviceParamLut );
-	//if (iter != rDevice.mapParameters.end())
-	if ( rDevice.mapParameters.find( DeviceParamLut ) != rDevice.mapParameters.end() )
-	{
-		SVLutDeviceParam* pParam4 = NULL;
-		hrTemp = rDevice.GetParameter( DeviceParamLut ).GetDerivedValue( pParam4 );
-		SVLut lut4;
-		if ( pParam4 != NULL && hrTemp == S_OK )
-		{
-			lut4 = pParam4->lut;
-		}
-		else
-		{
-			// type mismatch
-		}
-	}
-	else
-	{
-		hrTemp = ERROR_NOT_FOUND;	// parameter not found
-	}
-
-	SVLutDeviceParam* pParam5 = NULL;
-	hrTemp = rDevice.GetParameter( DeviceParamLut, pParam5 );
-	if ( hrTemp == S_OK )
-	{
-	}
-
-
-
-	SVLutDeviceParam* pParam1b = NULL;
-	pParam1b = DerivedValue< SVLutDeviceParam >( rDevice.mapParameters[ DeviceParamLut ] );
-	if (pParam1b)
-	{
-		SVLut lut1b = pParam1b->lut;
-	}
-	SVLutDeviceParam* pParam2b = NULL;
-	pParam2b = rDevice.mapParameters[ DeviceParamLut ].DerivedValue( pParam2b );
-	if ( pParam2b )
-	{
-		SVLut lut2b = pParam2b->lut;
-	}
-	*/
-
 	// Set
 
 	{// begin scope
@@ -406,7 +334,7 @@ SVDeviceParamStructTestCases::SVDeviceParamStructTestCases(SVDeviceParamCollecti
 		param.info.options.push_back(option);
 		rDevice.SetParameter( DeviceParamBrightness, param );
 
-		SVLongValueDeviceParam* pParam = NULL;
+		SVLongValueDeviceParam* pParam = nullptr;
 		HRESULT hr = rDevice.GetParameter( DeviceParamBrightness, pParam );
 		if ( pParam )
 		{
@@ -454,7 +382,6 @@ SVDeviceParamStructTestCases::SVDeviceParamStructTestCases(SVDeviceParamCollecti
 ///////////////////////////////////////////////////////////////////////////////////
 
 // long Specialization TDeviceParamInfo Implementation ....
-//template<>
 TDeviceParamInfo<long>::TDeviceParamInfo() 
 {
 	min=0; 
@@ -467,13 +394,11 @@ TDeviceParamInfo<long>::TDeviceParamInfo()
 	sUnits = _T("");
 }
 
-//template<>
 TDeviceParamInfo<long>::TDeviceParamInfo(const TDeviceParamInfo<long>& rhs)
 {
 	*this=rhs;
 }
 
-//template<>
 const TDeviceParamInfo<long>& TDeviceParamInfo<long>::operator= (const TDeviceParamInfo<long>& rhs)
 {
 	if ( this != &rhs )
@@ -491,9 +416,7 @@ const TDeviceParamInfo<long>& TDeviceParamInfo<long>::operator= (const TDevicePa
 	return *this;
 }
 
-
 // __in64 Specialization TDeviceParamInfo Implementation ....
-//template<>
 TDeviceParamInfo<__int64>::TDeviceParamInfo() 
 {
 	min=0; 
@@ -503,13 +426,11 @@ TDeviceParamInfo<__int64>::TDeviceParamInfo()
 	sUnits = _T("");
 }
 
-//template<>
 TDeviceParamInfo<__int64>::TDeviceParamInfo(const TDeviceParamInfo<__int64>& rhs)
 {
 	*this=rhs;
 }
 
-//template<>
 const TDeviceParamInfo<__int64>& TDeviceParamInfo<__int64>::operator= (const TDeviceParamInfo<__int64>& rhs)
 {
 	if ( this != &rhs )

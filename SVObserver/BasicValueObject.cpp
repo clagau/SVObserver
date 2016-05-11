@@ -35,7 +35,7 @@ BasicValueObject::BasicValueObject( LPCSTR ObjectName,  SVObjectClass* pOwner, b
 	, m_Created(false)
 	, m_Node(Node)
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType =  ObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType =  ObjectType;
 	Create( pOwner );
 }
 

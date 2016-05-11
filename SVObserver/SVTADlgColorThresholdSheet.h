@@ -29,8 +29,8 @@ class SVTADlgColorThresholdSheet : public CPropertySheet
 
 // Construction
 public:
-	SVTADlgColorThresholdSheet(SVColorToolClass* aPTool, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SVTADlgColorThresholdSheet(SVColorToolClass* aPTool, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVTADlgColorThresholdSheet(SVColorToolClass* aPTool, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVTADlgColorThresholdSheet(SVColorToolClass* aPTool, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 	virtual ~SVTADlgColorThresholdSheet();
 

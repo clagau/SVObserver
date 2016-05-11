@@ -34,9 +34,7 @@ const CString SVGigeCameraFileFilter = "Digitizer Files (*.ogc)|*.ogc||";
 
 const static int AcqImageBufferCnt = 10;
 
-// SEJ - silly factory register for device param names...
-//REGISTER_DEVICE_PARAM( DeviceParamCameraFormats,       DeviceParamCameraFormats_String,  SVCameraFormatsDeviceParam );
-// SEJ - need to instantiate one of these first, so the factory is updated...
+// Need to instantiate one of these first, so the factory is updated...
 SVCameraFormatsDeviceParam gDummySVCameraFormatsDeviceParam;
 SVLutDeviceParam gDummySVLutDeviceParam;
 SVLightReferenceDeviceParam gDummySVLightReferenceDeviceParam;
@@ -119,16 +117,11 @@ void SVCameraPage::OnAdvancedButtonClick()
 			m_pAcquisition->GetDeviceParameters(deviceParams);
 
 			HRESULT hr = m_pAcquisition->SetDeviceParameters(deviceParams);
-			if (hr != S_OK)
+			if (S_OK != hr)
 			{
-				if (hr == SVMSG_SVO_20_INCORRECT_CAMERA_FILE)
+				if (SVMSG_SVO_20_INCORRECT_CAMERA_FILE == hr)
 				{
 					AfxMessageBox("Error - Camera File does not Match Camera", MB_OK);
-				}
-				else
-				{
-					// be silent?
-					//AfxMessageBox("Error Loading Camera File", MB_OK);
 				}
 			}
 		}
@@ -148,12 +141,12 @@ void SVCameraPage::OnCameraFileBrowseButtonClick()
 		cameraFileDefaultExt = SVGigeCameraFileDefExt;
 	}
 
-	CFileDialog dlg( TRUE, 
+	CFileDialog dlg( true, 
 						cameraFileDefaultExt,
 						m_csFileName, 
 						OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_NOCHANGEDIR,
 						cameraFileFilter,
-						NULL );
+						nullptr );
 
 	dlg.m_ofn.lpstrTitle = "Select Camera File";
 	dlg.m_ofn.lpstrInitialDir = "C:\\CAM";
@@ -222,7 +215,7 @@ BOOL SVCameraPage::OnInitDialog()
 
 SVCameraPage::SVCameraPage()
 : CPropertyPage(SVCameraPage::IDD),
-	m_pAcquisition( NULL ),
+	m_pAcquisition( nullptr ),
 	m_csFileName(),
 	m_lSelectedCamera( -1L ),
 	m_lStartCount( 0L ),
@@ -257,7 +250,7 @@ void SVCameraPage::SelectCamera( long p_SelectedCamera )
 {
 	m_lSelectedCamera = p_SelectedCamera;
 
-	if( 0 <= m_lSelectedCamera && m_pAcquisition != NULL )
+	if( 0 <= m_lSelectedCamera && nullptr != m_pAcquisition )
 	{
 		CreateCameraImage();
 	}
@@ -265,7 +258,7 @@ void SVCameraPage::SelectCamera( long p_SelectedCamera )
 
 void SVCameraPage::CreateCameraImage()
 {
-	if( 0 <= m_lSelectedCamera && m_pAcquisition != NULL )
+	if( 0 <= m_lSelectedCamera && nullptr != m_pAcquisition )
 	{
 		unsigned long l_ulHandle( 0L );
 
@@ -293,33 +286,27 @@ void SVCameraPage::ResetCount()
 	m_EndFrameCount.SetWindowText( "0" );
 }
 
-void SVCameraPage::ResetCameraFilename()
-{
-	m_csFileName.Empty();
-	m_CameraFileName.SetWindowText(m_csFileName);
-}
-
 void SVCameraPage::LoadSVCameraFiles()
 {
 	if (m_pAcquisition)
 	{
 		HRESULT hr = m_pAcquisition->ReadCameraFile(m_csFileName);
 
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			// do camera file test/validation?
 
 			SVDeviceParamCollection cameraFileParams;
 			m_pAcquisition->GetCameraFileParameters(cameraFileParams);
 
-			if (m_pAcquisition->IsValidCameraFileParameters(cameraFileParams) != S_OK)
+			if (S_OK != m_pAcquisition->IsValidCameraFileParameters(cameraFileParams))
 			{
 				AfxMessageBox("Error - Incorrect Camera File", MB_OK);
 			}
 		}
 		else
 		{
-			if (hr == SVMSG_SVO_20_INCORRECT_CAMERA_FILE)
+			if (SVMSG_SVO_20_INCORRECT_CAMERA_FILE == hr)
 			{
 				AfxMessageBox("Error - Camera File does not Match Camera", MB_OK);
 			}
@@ -343,7 +330,7 @@ void SVCameraPage::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDevice
 	SVDeviceParam* l_pGigePacketSize = pDeviceParams->GetParameter( DeviceParamGigePacketSize );
 	// if found - update it
 	// else - add it
-	if ( l_pGigePacketSize != NULL )
+	if ( nullptr != l_pGigePacketSize )
 	{
 		l_pGigePacketSize->SetValue(_variant_t(pApp->m_iniLoader.m_gigePacketSize));
 	}
@@ -368,7 +355,7 @@ void SVCameraPage::StartAcquire()
 
 		if (m_timerID == 0)
 		{
-			m_timerID = SetTimer(1, m_triggerPeriod, NULL);
+			m_timerID = SetTimer(1, m_triggerPeriod, nullptr);
 		}
 	}
 	SVCallbackStruct l_svCallback;
@@ -406,7 +393,7 @@ void SVCameraPage::EnableViewCameraFileButton()
 
 void SVCameraPage::OnTimer(UINT_PTR nIDEvent)
 {
-	if( m_pAcquisition != NULL && m_bStarted )
+	if( nullptr != m_pAcquisition && m_bStarted )
 	{
 		m_pAcquisition->FireSoftwareTrigger();
 	}

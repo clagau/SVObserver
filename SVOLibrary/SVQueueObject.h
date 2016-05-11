@@ -13,11 +13,13 @@
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <deque>
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMultithread.h"
+#pragma endregion Includes
 
 typedef long QUEUEPOS;
 

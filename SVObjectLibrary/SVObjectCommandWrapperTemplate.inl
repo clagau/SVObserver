@@ -16,19 +16,19 @@
 
 template< typename SVCommandPtr >
 SVObjectCommandWrapperTemplate< SVCommandPtr >::SVObjectCommandWrapperTemplate( const SVCommandPtr& p_rCommandPtr )
-: m_CommandPtr( p_rCommandPtr ), m_WaitHandle( NULL ), m_Status( E_FAIL )
+: m_CommandPtr( p_rCommandPtr ), m_WaitHandle( nullptr ), m_Status( E_FAIL )
 {
-	m_WaitHandle = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+	m_WaitHandle = ::CreateEvent( nullptr, true, false, nullptr );
 }
 
 template< typename SVCommandPtr >
 SVObjectCommandWrapperTemplate< SVCommandPtr >::~SVObjectCommandWrapperTemplate()
 {
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		::CloseHandle( m_WaitHandle );
 
-		m_WaitHandle = NULL;
+		m_WaitHandle = nullptr;
 	}
 }
 
@@ -56,7 +56,7 @@ HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::NotifyRequestComplete() 
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		::SetEvent( m_WaitHandle );
 	}
@@ -73,7 +73,7 @@ HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::IsRequestComplete() cons
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		DWORD l_WaitStatus = ::WaitForSingleObject( m_WaitHandle, 0 );
 
@@ -111,7 +111,7 @@ HRESULT SVObjectCommandWrapperTemplate< SVCommandPtr >::WaitForRequest( DWORD p_
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		if( ::WaitForSingleObject( m_WaitHandle, p_TimeoutInMilliseconds ) != WAIT_OBJECT_0 )
 		{

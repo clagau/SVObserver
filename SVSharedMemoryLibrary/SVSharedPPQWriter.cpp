@@ -133,7 +133,7 @@ namespace SeidenaderVision
 				std::for_each(m_writers.begin(), m_writers.end(), 
 					[&it, &settings](SVSharedInspectionWriter & wr) 
 				{ 
-					if (wr.Create(it->first, it->second, settings) != S_OK) throw std::exception("Failed to create inspection writer");
+					if (S_OK != wr.Create(it->first, it->second, settings)) throw std::exception("Failed to create inspection writer");
 					++it;
 				});
 			}
@@ -161,7 +161,7 @@ namespace SeidenaderVision
 	void SVSharedPPQWriter::Destroy()
 	{
 		m_writers.clear();
-		if (shm.get() != nullptr)
+		if (nullptr != shm.get())
 		{
 			ReleaseAll();
 			if (rsh)
@@ -216,13 +216,10 @@ namespace SeidenaderVision
 		{
 			SVSharedInspectionWriter & rInspectionWriter = (*this)[it->second.m_ShareName.c_str()];
 			hr = rInspectionWriter.CopyLastInspectedToReject(it->second.m_Index, rejectIndex);
-			if (hr == S_OK)
+			if (S_OK == hr)
 			{
-
 				std::pair< SVSharedInspectionMap::iterator,bool>  mRet; 	
 				mRet = rRejectProduct.m_Inspections.insert(SVSharedInspectionPair(it->second.m_ShareName, SVSharedInspection(it->second.m_ShareName.c_str(), rejectIndex, rRejectProduct.m_Allocator)));
-
-
 			}
 		}
 		ReleaseReject(rRejectProduct);

@@ -15,14 +15,6 @@
 #include "SVImageProcessingClass.h"
 #pragma endregion Includes
 
-////////////////////////////////////////////////////////////////////////////////
-// Other Necessary Include File(s) - Module Link(s)
-////////////////////////////////////////////////////////////////////////////////
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -31,23 +23,8 @@ static char THIS_FILE[] = __FILE__;
 
 #define RANKING_BIT_DEPTH SV32BitSigned
 
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVRankingFilter
-//* Note(s)    : Custom Filter Base Class
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVRankingFilterClass, SVRankingFilterClassGuid )
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 SVRankingFilterClass::SVRankingFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
@@ -63,7 +40,7 @@ void SVRankingFilterClass::init()
 {
 	long l( 0 );
 
-	outObjectInfo.ObjectTypeInfo.SubType = SVRankingFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVRankingFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoCell01, SVRankingFilterCell01Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL01, false, SVResetItemOwner );
 	RegisterEmbeddedObject( &m_lvoCell02, SVRankingFilterCell02Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL02, false, SVResetItemOwner );
@@ -196,10 +173,6 @@ void SVRankingFilterClass::init()
 // .Title       : CreateObject
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVRankingFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -248,15 +221,10 @@ BOOL SVRankingFilterClass::OnValidate()
 	return bRetVal;	
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Initialization of class SVRankingFilterClass
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.07.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVRankingFilterClass::RebuildRanking()
 {
@@ -267,7 +235,6 @@ BOOL SVRankingFilterClass::RebuildRanking()
 	m_milRanking.clear();
 
 	// Average ranking information data definition
-//	unsigned char *pRankingData;
 	long *pRankingData;
 	long lValue;
 	long lWidth;
@@ -324,7 +291,6 @@ BOOL SVRankingFilterClass::RebuildRanking()
 	l_Create.m_eAttribute = SVBufAttStructElement;
 	l_Code = SVMatroxBufferInterface::Create( m_milRanking, l_Create );
 
-//	pRankingData = new unsigned char[lWidth*lHeight];
 	pRankingData = new long[lWidth*lHeight];
 	for( l = 0; l < lWidth; l++ )
 	{
@@ -354,18 +320,11 @@ BOOL SVRankingFilterClass::RebuildRanking()
 	return TRUE;
 }
 
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVRankingFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 { 
@@ -395,7 +354,7 @@ BOOL SVRankingFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHa
 		l_Code = SVMatroxImageInterface::Rank( l_OutMilHandle.GetBuffer(),
 				( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 				m_milRanking, lRank );
-    if( l_Code != SVMEE_STATUS_OK )
+	    if( SVMEE_STATUS_OK != l_Code )
 		{
 			// Signal that something was wrong...
 			SetInvalid();

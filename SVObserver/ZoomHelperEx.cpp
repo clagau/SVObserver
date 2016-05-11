@@ -18,7 +18,7 @@
 
 int ZoomHelperEx::s_InstanceCount = 0;
 double ZoomHelperEx::m_scaleFactor[ ZoomHelperEx::s_scaleCount ] = {0};
-HGDIOBJ ZoomHelperEx::m_hFont[ ZoomHelperEx::s_scaleCount ] = {NULL};
+HGDIOBJ ZoomHelperEx::m_hFont[ ZoomHelperEx::s_scaleCount ] = {nullptr};
 
 #pragma region Constructor
 ZoomHelperEx::ZoomHelperEx()
@@ -54,7 +54,7 @@ void ZoomHelperEx::Exit()
 			DeleteObject( m_hFont[ i ] );
 		}
 
-		m_hFont[ i ] = NULL;
+		m_hFont[ i ] = nullptr;
 	}
 }
 
@@ -92,7 +92,7 @@ void ZoomHelperEx::Init()
 				CLIP_DEFAULT_PRECIS, // clipping precision
 				DEFAULT_QUALITY, // output quality
 				DEFAULT_PITCH | FF_DONTCARE, // pitch and family
-				NULL ); // pointer to typeface name string
+				nullptr); // pointer to typeface name string
 		}
 	}
 }

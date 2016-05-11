@@ -44,9 +44,8 @@ SVStatisticsToolClass::SVStatisticsToolClass( BOOL BCreateDefaultTaskList,
 
 void SVStatisticsToolClass::init(void)
 {
-
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVStatisticsToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVStatisticsToolObjectType;
 	
 	// Register an empty input object
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
@@ -162,7 +161,7 @@ SVStatisticsToolClass::~SVStatisticsToolClass()
 
 BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
 {
-	isCreated = SVToolClass::CreateObject( PCreateStruct );
+	m_isCreated = SVToolClass::CreateObject( PCreateStruct );
 
 	for ( int i = 0; i < SV_NUMBER_OF_STAT_FEATURES; i++ )
 	{
@@ -200,7 +199,7 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 			GUID guid = SVInvalidGUID;
 			AfxGetClassIDFromString(strGuid, &guid);
 			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
-			if( pObject != NULL )
+			if( nullptr != pObject )
 			{
 				strName = pObject->GetCompleteObjectName();
 			}
@@ -211,14 +210,14 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 
 	RestoreFeatureAttributes();
 
-	return isCreated;
+	return m_isCreated;
 }
 
 HRESULT SVStatisticsToolClass::ResetObject()
 {
 	HRESULT Result = SVToolClass::ResetObject();
 	
-	if ( Result == S_OK )
+	if ( S_OK == Result )
 	{
 		CString strName;
 		msvVariableName.GetValue(strName);
@@ -359,7 +358,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		SVDoubleValueObjectClass* pValue = 
 			reinterpret_cast<SVDoubleValueObjectClass*>(SVSendMessage(pResult, 
 			SVM_GETFIRST_OBJECT, 
-			NULL, 
+			0, 
 			reinterpret_cast<DWORD_PTR>(&info)));
 		
 		if (!pValue)
@@ -372,14 +371,14 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		pValue->ObjectAttributesAllowedRef() &= ( ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES );
 		
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( pResult, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+		::SVSendMessage( pResult, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 		
 		// And last - Create (initialize) it
 		
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), NULL ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), 0 ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, StdMessageParams, SvOi::Err_10200 ); 
@@ -422,7 +421,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 			reinterpret_cast<DWORD_PTR>(pResult),
 			SVMFSetDefaultInputs);
 		
-		pResult = NULL;
+		pResult = nullptr;
 		
 		break;
 	}
@@ -461,7 +460,7 @@ SVResultClass* SVStatisticsToolClass::GetResultObject(SVStatisticsFeatureEnum aF
 	{
 		pResult = dynamic_cast< SVDoubleResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-		if( pResult != NULL )
+		if( nullptr != pResult )
 		{
 			pResult->GetPrivateInputList( resultInputList );
 			
@@ -523,7 +522,7 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 		if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
 		{
 			::SVSendMessage(m_inputObjectInfo.GetInputObjectInfo().PObject,
-							SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast <DWORD_PTR> (&m_inputObjectInfo), NULL );
+							SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast <DWORD_PTR> (&m_inputObjectInfo), 0 );
 		}
 	}
 
@@ -540,7 +539,7 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 			//m_inputObjectInfo.InputObjectInfo.UniqueObjectID = selectedVarGuid;
 			m_inputObjectInfo.SetInputObject( refObject );
 			
-			::SVSendMessage(refObject.Object(), SVM_CONNECT_OBJECT_INPUT, reinterpret_cast <DWORD_PTR> (&m_inputObjectInfo), NULL );
+			::SVSendMessage(refObject.Object(), SVM_CONNECT_OBJECT_INPUT, reinterpret_cast <DWORD_PTR> (&m_inputObjectInfo), 0 );
 		}// end if( refObject.Object() )
 		msvVariableName.SetValue(1, p_strName);
 	}
@@ -550,7 +549,7 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 		msvVariableName.SetValue(1,_T(""));
 
 		// Clear the Object Info
-		m_inputObjectInfo.SetInputObject( NULL );
+		m_inputObjectInfo.SetInputObject( nullptr );
 	}
 }
 
@@ -641,13 +640,13 @@ BOOL SVStatisticsToolClass::Test()
 			{
 				double dValue;
 				HRESULT hr = refValueObject.GetValue( dValue );
-				if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+				if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 				{
 					bRetVal = TRUE;
 				}
 				else
 				{
-					CString fullObjectName = refValueObject.Object()->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
+					CString fullObjectName = refValueObject.Object()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 					SVStringArray msgList;
 					msgList.push_back(SVString(fullObjectName));
 					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatToolInvalidVariable, msgList, StdMessageParams, SvOi::Err_10201);
@@ -667,11 +666,11 @@ BOOL SVStatisticsToolClass::OnValidate()
 	{
 		if( HasVariable() )
 		{
-			bRetVal = m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject != NULL;
+			bRetVal = m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().PObject;
 		}
 		else
 		{
-			bRetVal = TRUE;
+			bRetVal = true;
 		}
 	}
 
@@ -686,7 +685,7 @@ BOOL SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	BOOL l_bOk = SVToolClass::onRun( RRunStatus );
 
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject != NULL )
+	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().PObject )
 	{
 		if( !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
 		{
@@ -823,16 +822,16 @@ BOOL SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus )
 
 DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
 	{
-		// is sent in SVIPDoc::Validate() ( old PrepareForRunning() )
+		// is sent in SVIPDoc::Validate()
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT ResetStatus = ResetObject();
-			if( ResetStatus != S_OK )
+			if( S_OK != ResetStatus )
 			{
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 
@@ -857,13 +856,13 @@ DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR Dw
 			SVInObjectInfoStruct* pInObjectInfo = ( SVInObjectInfoStruct* ) DwMessageValue;
 			if( pInObjectInfo && pInObjectInfo->GetInputObjectInfo().UniqueObjectID == m_inputObjectInfo.GetInputObjectInfo().UniqueObjectID )
 			{
-				m_inputObjectInfo.SetInputObject( NULL );
+				m_inputObjectInfo.SetInputObject( nullptr );
 
 				// Check if variable still exists and is selectable for stats
 				if( !HasVariable() )
 				{
 					// Clear it since the object is gone
-					m_inputObjectInfo.SetInputObject( NULL );
+					m_inputObjectInfo.SetInputObject( nullptr );
 					SetVariableSelected( _T("") );	// will this result in a recursive call to this message???
 				}
 				DwResult = SVMR_SUCCESS;

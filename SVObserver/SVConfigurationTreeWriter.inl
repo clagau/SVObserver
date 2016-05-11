@@ -35,7 +35,7 @@ SVConfigurationTreeWriter< SVTreeType >::~SVConfigurationTreeWriter()
 template< typename SVTreeType >
 void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, const _variant_t& value)
 {
-	if (nullptr != pName && (value.vt != VT_NULL || value.vt != VT_EMPTY))
+	if (nullptr != pName && (VT_NULL != value.vt || VT_EMPTY != value.vt))
 	{
 		SVTreeType::SVBranchHandle hItem = m_nodes[0];
 		_variant_t v(value);

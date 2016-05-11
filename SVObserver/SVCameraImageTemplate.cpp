@@ -22,11 +22,11 @@
 
 SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 : SVImageClass( ObjectName )
-, mpCamera( NULL )
+, mpCamera( nullptr )
 , digitizerObjectID()
 , m_CurrentIndex()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -35,11 +35,11 @@ SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 
 SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringResourceID )
 : SVImageClass( POwner, StringResourceID )
-, mpCamera( NULL )
+, mpCamera( nullptr )
 , digitizerObjectID()
 , m_CurrentIndex()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -52,12 +52,12 @@ SVCameraImageTemplate::~SVCameraImageTemplate()
 
 HRESULT SVCameraImageTemplate::UpdateCameraImage( LPCTSTR p_szCameraName )
 {
-	mpCamera = NULL;
+	mpCamera = nullptr;
 	digitizerObjectID.clear();
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectCompleteName( p_szCameraName );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		digitizerObjectID = l_pObject->GetUniqueObjectID();
 	}
@@ -67,7 +67,7 @@ HRESULT SVCameraImageTemplate::UpdateCameraImage( LPCTSTR p_szCameraName )
 
 HRESULT SVCameraImageTemplate::UpdateCameraImage( const SVGUID& p_CameraID )
 {
-	mpCamera = NULL;
+	mpCamera = nullptr;
 	digitizerObjectID = p_CameraID;
 
 	return RebuildCameraImage();
@@ -77,7 +77,7 @@ BOOL SVCameraImageTemplate::DestroyImage()
 {
 	BOOL bOk = TRUE;
 	
-	mpCamera = NULL;
+	mpCamera = nullptr;
 	digitizerObjectID.clear();
 	m_CurrentIndex.clear();
 
@@ -90,7 +90,7 @@ BOOL SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 {
 	BOOL l_bOk = SVImageClass::CreateObject(PCreateStruct);
 
-	l_bOk = l_bOk && ( RebuildCameraImage() == S_OK );
+	l_bOk = l_bOk && ( S_OK == RebuildCameraImage() );
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -98,7 +98,7 @@ BOOL SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 	SetBits( ObjectAttributesAllowedRef(), SV_CH_IMAGE, true );
 	SetBits( ObjectAttributesAllowedRef(), SV_DD_IMAGE, true );
 	
-	isCreated = l_bOk;
+	m_isCreated = l_bOk;
 	
 	return l_bOk;	
 }
@@ -147,7 +147,7 @@ SVString SVCameraImageTemplate::GetCameraName() const
 {
 	SVString l_String;
 
-	if( mpCamera != NULL )
+	if( nullptr != mpCamera )
 	{
 		l_String = mpCamera->GetName();
 	}
@@ -159,11 +159,11 @@ HRESULT SVCameraImageTemplate::RestoreMainImage( SVInspectionProcess* p_psvInspe
 {
 	HRESULT l_svOk = S_OK;
 
-	if( p_psvInspection != NULL )
+	if( nullptr != p_psvInspection )
 	{
-		if( mpCamera != NULL && mpCamera->mpsvDevice != NULL && mpCamera->mpsvDevice->m_LastImage != NULL )
+		if( nullptr != mpCamera && nullptr != mpCamera->mpsvDevice && nullptr != mpCamera->mpsvDevice->m_LastImage )
 		{
-			if( 0 <= m_CurrentIndex.m_CameraDMIndexHandle.GetIndex() && GetCameraBufferArrayPtr() != NULL )
+			if( 0 <= m_CurrentIndex.m_CameraDMIndexHandle.GetIndex() && nullptr != GetCameraBufferArrayPtr() )
 			{
 				GetCameraBufferArrayPtr()->CopyValue( m_CurrentIndex.m_CameraDMIndexHandle );
 			}
@@ -280,7 +280,7 @@ SVImageIndexStruct SVCameraImageTemplate::GetSourceImageIndex( SVProductInfoStru
 {
 	SVImageIndexStruct svIndex;
 
-	if ( mpCamera != NULL && pProduct != NULL )
+	if ( nullptr != mpCamera && nullptr != pProduct )
 	{
 		 mpCamera->GetSourceImageIndex( svIndex.m_CameraDMIndexHandle, *pProduct );
 	}
@@ -299,7 +299,7 @@ HRESULT SVCameraImageTemplate::ReconnectBuffers()
 
 	hr = RebuildCameraImage();
 
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		mpCamera->GetImageInfo( &m_ImageInfo );
 
@@ -307,7 +307,7 @@ HRESULT SVCameraImageTemplate::ReconnectBuffers()
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		if ( ResetObject() != S_OK )
+		if ( S_OK != ResetObject() )
 		{
 			hr = S_FALSE;
 		}
@@ -338,7 +338,7 @@ SVImageObjectClassPtr SVCameraImageTemplate::GetCameraBufferArrayPtr() const
 {
 	SVImageObjectClassPtr l_ArrayPtr;
 
-	if ( mpCamera != NULL && mpCamera->mpsvDevice != NULL )
+	if ( nullptr != mpCamera && nullptr != mpCamera->mpsvDevice )
 	{
 		l_ArrayPtr = mpCamera->mpsvDevice->GetCircleBuffer();
 	}

@@ -89,15 +89,6 @@ enum SVMessageFlags
 		const UINT SVMSGID_GETFIRST_OBJECT                  = 0x00000100;
 		const UINT SVM_GETFIRST_OBJECT                      = ( SVMSGID_GETFIRST_OBJECT | SVM_POINTER_RESULT | SVM_GET_MESSAGE | SVM_NOTIFY_FIRST_RESPONDING | SVM_NOTIFY_FRIENDS );
 
-		/*
-		// ...use result of SVM_GETFIRST_OBJECT as second message parameter ( DwMessageValue ) to find next specified object!
-		// ...use third message parameter ( DwMessageContext ) to specify the object!
-		// ( SVObjectTypeInfoStruct->ObjectType => SVObjectTypeEnum && SVObjectTypeInfoStruct->objectType => SVObjectSubTypeEnum )
-		// ...returns SVObjectClass* or SVMR_NOT_PROCESSED
-		const UINT SVMSGID_GETNEXT_OBJECT                   = 0x00000101;
-		const UINT SVM_GETNEXT_OBJECT                       = ( SVMSGID_GETNEXT_OBJECT | SVM_POINTER_RESULT | SVM_GET_MESSAGE );
-		*/
-
 		// ...use a LPCTSTR as second message parameter ( DwMessageValue ) to specify the name
 		// ...returns SVObjectClass* or SVMR_NOT_PROCESSED
 		const UINT SVMSGID_GET_OBJECT_BY_NAME               = 0x00000102;
@@ -144,7 +135,6 @@ enum SVMessageFlags
 		const UINT SVMSGID_OVERWRITE_OBJECT                 = 0x00000501;
 		const UINT SVM_OVERWRITE_OBJECT                     = ( SVMSGID_OVERWRITE_OBJECT  | SVM_POINTER_RESULT | SVM_SET_MESSAGE | SVM_PARENT_TO_CHILD | SVM_NOTIFY_ONLY_THIS );
 
-		// SEJ July 8,1999 - New Message
 		// ...use second message parameter ( DwMessageValue ) as objectID ( GUID* )
 		// ...use third message parameter ( DwMessageContext ) as SVObjectScriptDataObjectStruct*
 		// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
@@ -211,13 +201,11 @@ enum SVMessageFlags
 		const UINT SVMSGID_CLOSE_OBJECT                     = 0x00000900;
 		const UINT SVM_CLOSE_OBJECT                         = ( SVMSGID_CLOSE_OBJECT | SVM_SVMR_RESULT | SVM_CREATE_CLOSE_MESSAGE | SVM_NOTIFY_ONLY_THIS );
 
-		// SEJ Aug 6,1999 - New Message
 		// Send this message to the parent of the Object to be destroyed
 		// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
 		const UINT SVMSGID_DESTROY_CHILD_OBJECT             = 0x00000901;
 		const UINT SVM_DESTROY_CHILD_OBJECT                 = ( SVMSGID_DESTROY_CHILD_OBJECT | SVM_SVMR_RESULT | SVM_CREATE_CLOSE_MESSAGE | SVM_NOTIFY_ONLY_THIS);
 
-		// SEJ Sep 23,1999 - New Message
 		// Send this message to the owner of the Friend Object to be destroyed
 		// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the friend object
 		const UINT SVMSGID_DESTROY_FRIEND_OBJECT            = 0x00000902;

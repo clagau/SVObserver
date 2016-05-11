@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   07 May 2013 08:29:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 #include "SVToolLoadImage.h"
@@ -18,10 +19,7 @@
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "ToolSizeAdjustTask.h"
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -29,28 +27,7 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVLoadImageToolClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
-
 SV_IMPLEMENT_CLASS( SVLoadImageToolClass, SVLoadImageToolClassGuid );
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 
 SVLoadImageToolClass::SVLoadImageToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 					 :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
@@ -58,12 +35,11 @@ SVLoadImageToolClass::SVLoadImageToolClass( BOOL BCreateDefaultTaskList, SVObjec
 	init();
 }
 
-
 void SVLoadImageToolClass::init()
 {
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVToolLoadImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVToolLoadImageObjectType;
 
 	// Identify our input type needs
 	
@@ -73,8 +49,8 @@ void SVLoadImageToolClass::init()
 	RegisterEmbeddedObject( &m_continuousReload, SVContinuousReloadObjectGuid, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SVResetItemNone );
 
 	// Set Embedded defaults
-	m_currentPathName.SetDefaultValue( _T( "" ), TRUE );
-	m_continuousReload.SetDefaultValue( FALSE, TRUE );
+	m_currentPathName.SetDefaultValue( _T( "" ), true );
+	m_continuousReload.SetDefaultValue( false, true );
 
 	m_fileImage.InitializeImage( SVImageTypePhysical );
 
@@ -82,23 +58,14 @@ void SVLoadImageToolClass::init()
 
 	// Set Translation
 	m_svToolExtent.SetTranslation(SVExtentTranslationFigureShift);
-	ToolSizeAdjustTask::AddToFriendlist(this, true,true,false);
+	ToolSizeAdjustTask::AddToFriendlist(this, true, true, false);
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 }
 
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
 SVLoadImageToolClass::~SVLoadImageToolClass()
 { 
 }
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 
 BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -106,7 +73,7 @@ BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 
 	if( SVToolClass::CreateObject( PCreateStructure ) )
 	{
-		SVImageClass* pImage = NULL;
+		SVImageClass* pImage = nullptr;
 
 		// Create Image...
 		SVImageInfoClass l_svImageInfo = m_fileImage.GetImageInfo();
@@ -118,7 +85,7 @@ BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 		l_svImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
 		l_svImageInfo.SetImageProperty(SVImagePropertyPixelDepth,8);
 
-		bOk = ( m_fileImage.UpdateImage( l_svImageInfo ) == S_OK );
+		bOk = ( S_OK == m_fileImage.UpdateImage( l_svImageInfo ) );
 	}
 
 	// Set / Reset Printable Flags
@@ -126,13 +93,12 @@ BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	m_currentPathName.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	m_continuousReload.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
-	if(bOk)
+	if (bOk)
 	{
-		bOk  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this,true,true,false)); 
+		bOk = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this, true, true, false)); 
 	}
 
-
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -174,31 +140,31 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 	// All inputs and outputs must be validated first
 	if( SVToolClass::onRun( RRunStatus ) )
 	{
-		BOOL bReload = FALSE;
+		BOOL bReload = false;
 		CString strImagePathName;
 
 		if( S_OK != m_continuousReload.GetValue( bReload ) )
 		{
 			RRunStatus.SetInvalid();
 			SetInvalid();
-			return FALSE;
+			return false;
 		}
 		
 		if( S_OK != m_currentPathName.GetValue( strImagePathName ) )
 		{
 			RRunStatus.SetInvalid();
 			SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		if( bReload || m_bResetFileImage)
 		{
-			if( m_fileImage.LoadImage( strImagePathName, RRunStatus.Images ) != S_OK )
+			if( S_OK != m_fileImage.LoadImage( strImagePathName, RRunStatus.Images ) )
 			{
 				RRunStatus.SetInvalid();
 				SetInvalid();
 
-				return FALSE;
+				return false;
 			}
 
 			m_bResetFileImage = false;
@@ -211,11 +177,11 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 				RRunStatus.SetInvalid();
 				SetInvalid();
 
-				return FALSE;
+				return false;
 			}
 		}
 		
-		return TRUE;
+		return true;
 	}
 
 	RRunStatus.SetInvalid();
@@ -227,12 +193,12 @@ HRESULT SVLoadImageToolClass::ResetObject()
 {
 	HRESULT l_hrOk = S_OK;
 	
-	if ( SVToolClass::ResetObject() != S_OK )
+	if ( S_OK != SVToolClass::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	m_bResetFileImage = l_hrOk == S_OK;
+	m_bResetFileImage = S_OK == l_hrOk;
 
 	UpdateImageWithExtent( 1 );
 
@@ -243,7 +209,7 @@ HRESULT SVLoadImageToolClass::IsInputImage(SVImageClass *p_psvImage)
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_psvImage != NULL )
+	if ( nullptr != p_psvImage )
 	{
 		if ( p_psvImage == pCurrentToolSet->getCurrentImage() )
 		{
@@ -263,10 +229,10 @@ SVTaskObjectClass *SVLoadImageToolClass::GetObjectAtPoint( const SVExtentPointSt
 {
 	SVImageExtentClass l_svExtents;
 
-	SVTaskObjectClass *l_psvObject = NULL;
+	SVTaskObjectClass *l_psvObject = nullptr;
 
-	if( m_svToolExtent.GetImageExtent( l_svExtents ) == S_OK &&
-	    l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SVExtentLocationPropertyUnknown )
+	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
+	    SVExtentLocationPropertyUnknown != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
 	{
 		l_psvObject = this;
 	}
@@ -299,22 +265,20 @@ HRESULT SVLoadImageToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageEx
 	return l_hrOk;
 }
 
-
 HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent ) const
 {
 	HRESULT hr = S_OK;
 	CString strImagePathName;
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		hr = m_currentPathName.GetValue( strImagePathName );
 	}
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		hr = SVImageObjectClass::GetImageExtentFromFile(strImagePathName,rParentExtent);
 	}
 	return hr;
 }
-
 
 HRESULT SVLoadImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 {
@@ -322,22 +286,23 @@ HRESULT SVLoadImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 	SVImageExtentClass l_NewExtent;
 	CString strImagePathName;
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = m_currentPathName.GetValue( strImagePathName );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = m_fileImage.LoadImageFullSize( strImagePathName, l_NewExtent);
 	}
 		
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
 	}
 	return l_hrOk;
 }
+
 BOOL SVLoadImageToolClass::IsValid()
 {
 	BOOL bValid = TRUE;

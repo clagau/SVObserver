@@ -20,7 +20,7 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 					 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVMathContainerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVMathContainerObjectType;
 
 	// Identify our input type needs...
 
@@ -48,7 +48,7 @@ SVMathContainerClass::~SVMathContainerClass()
 
 BOOL SVMathContainerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVTaskObjectClass::CreateObject( PCreateStructure ) &&
 		PCreateStructure->CheckCreateStructName( "SVToolLevelCreateStruct" ) 
@@ -56,11 +56,11 @@ BOOL SVMathContainerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	{
 		SVDoubleValueObjectClass*  pInputMathResult;
 
-		bOk = GetInspection() != NULL && GetTool() != NULL && 
-			    ( pInputMathResult = getInputMathResult() ) != NULL;
+		bOk = nullptr != GetInspection() && nullptr != GetTool() && 
+			  nullptr != ( pInputMathResult = getInputMathResult() );
 	}
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -80,7 +80,7 @@ SVDoubleValueObjectClass* SVMathContainerClass::getInputMathResult()
 	if( inputMathResult.IsConnected() && inputMathResult.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) inputMathResult.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 BOOL SVMathContainerClass::OnValidate()

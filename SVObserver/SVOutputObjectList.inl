@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   23 Apr 2013 13:16:24  $
 //******************************************************************************
 
-#ifndef SVOUTPUTOBJECTLIST_INL
-#define SVOUTPUTOBJECTLIST_INL
+#pragma once
 
 #include "SVOutputObjectList.h"
 
@@ -19,7 +18,7 @@ HRESULT SVOutputObjectList::GetOutput( const SVGUID& p_rOutputID, SVOutputType*&
 {
 	HRESULT l_Status = S_OK;
 
-	p_rpOutput = NULL;
+	p_rpOutput = nullptr;
 
 	if( Lock() )
 	{
@@ -29,7 +28,7 @@ HRESULT SVOutputObjectList::GetOutput( const SVGUID& p_rOutputID, SVOutputType*&
 		{
 			p_rpOutput = dynamic_cast< SVOutputType* >( l_Iter->second );
 
-			if( p_rpOutput == NULL )
+			if( nullptr == p_rpOutput )
 			{
 				l_Status = E_FAIL;
 			}
@@ -56,17 +55,17 @@ HRESULT SVOutputObjectList::GetOutput( LPCTSTR p_szName, SVOutputType*& p_rpOutp
 
 	SVString l_Name = p_szName;
 
-	p_rpOutput = NULL;
+	p_rpOutput = nullptr;
 
 	if( Lock() )
 	{
 		SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.begin();
 
-		while( p_rpOutput == NULL && l_Iter != m_OutputObjects.end() )
+		while( nullptr == p_rpOutput && l_Iter != m_OutputObjects.end() )
 		{
 			SVOutputObject* l_pOutput = l_Iter->second;
 
-			if( l_pOutput != NULL && l_Name == l_pOutput->GetName() )
+			if( nullptr != l_pOutput && l_Name == l_pOutput->GetName() )
 			{
 				p_rpOutput = dynamic_cast< SVOutputType* >( l_pOutput );
 			}
@@ -74,7 +73,7 @@ HRESULT SVOutputObjectList::GetOutput( LPCTSTR p_szName, SVOutputType*& p_rpOutp
 			++l_Iter;
 		}
 
-		if( p_rpOutput == NULL )
+		if( nullptr == p_rpOutput )
 		{
 			l_Status = E_INVALIDARG;
 		}
@@ -94,7 +93,7 @@ HRESULT SVOutputObjectList::GetOutputFlyweight( LPCTSTR p_szName, SVOutputType*&
 {
 	HRESULT l_Status = S_OK;
 
-	p_rpOutput = NULL;
+	p_rpOutput = nullptr;
 
 	if( Lock() )
 	{
@@ -102,11 +101,11 @@ HRESULT SVOutputObjectList::GetOutputFlyweight( LPCTSTR p_szName, SVOutputType*&
 
 		l_Status = GetOutput( p_szName, p_rpOutput );
 
-		if( p_rpOutput == NULL )
+		if( nullptr == p_rpOutput )
 		{
 			p_rpOutput = new SVOutputType;
 
-			if( p_rpOutput != NULL )
+			if( nullptr != p_rpOutput )
 			{
 				p_rpOutput->SetName( l_Name.c_str() );
 
@@ -116,14 +115,14 @@ HRESULT SVOutputObjectList::GetOutputFlyweight( LPCTSTR p_szName, SVOutputType*&
 				{
 					delete p_rpOutput;
 
-					p_rpOutput = NULL;
+					p_rpOutput = nullptr;
 				}
 			}
 		}
 
-		if( p_rpOutput == NULL )
+		if( nullptr == p_rpOutput )
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = E_INVALIDARG;
 			}
@@ -138,6 +137,4 @@ HRESULT SVOutputObjectList::GetOutputFlyweight( LPCTSTR p_szName, SVOutputType*&
 
 	return l_Status;
 }
-
-#endif
 

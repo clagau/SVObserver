@@ -9,16 +9,10 @@
 //* .Check In Date   :     $Date:   23 Apr 2013 11:08:10  $
 //******************************************************************************
 
-// SVIOBoardCapabilities.cpp: implementation of the SVIOBoardCapabilities class.
-//
-//////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVIOBoardCapabilities.h"
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+#pragma endregion Includes
 
 SVIOBoardCapabilities::SVIOBoardCapabilities()
 :m_iNumTriggers(4),

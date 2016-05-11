@@ -40,7 +40,7 @@ void SVNotifyButton::OnKillFocus( CWnd* pNewWnd )
 	CButton::OnKillFocus( pNewWnd );
 	if ( GetOwner() && GetOwner() != pNewWnd )
 	{
-		GetOwner()->SendMessage(WM_KILLFOCUS, (WPARAM) pNewWnd->GetSafeHwnd(), NULL);
+		GetOwner()->SendMessage(WM_KILLFOCUS, (WPARAM) pNewWnd->GetSafeHwnd(), 0);
 	}
 }
 

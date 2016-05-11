@@ -36,7 +36,7 @@ public:
 	virtual BOOL OnValidate();
 
 	virtual BOOL IsPtOverResult( CPoint point );
-	virtual	void DisplayAnalyzerResult( void );
+	virtual	void DisplayAnalyzerResult();
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );

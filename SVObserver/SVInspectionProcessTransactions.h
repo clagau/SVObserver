@@ -88,11 +88,10 @@ struct SVInspectionMessageDataStruct_CHGetAll : public SVInspectionMessageDataSt
 struct SVInspectionTransactionStruct
 {
 	DWORD dwMessage;
-	//Loki::Functor<> callback
 	HANDLE hCompletionEvent;
 	SVInspectionMessageDataStruct* pData;
 
-	SVInspectionTransactionStruct() : dwMessage(0), hCompletionEvent(NULL), pData(NULL) {}
+	SVInspectionTransactionStruct() : dwMessage(0), hCompletionEvent(nullptr), pData(nullptr) {}
 	SVInspectionTransactionStruct(DWORD p_dwMessage, HANDLE p_hCompletionEvent, SVInspectionMessageDataStruct* p_pData) : dwMessage(p_dwMessage), hCompletionEvent(p_hCompletionEvent), pData(p_pData) {}
 
 	virtual ~SVInspectionTransactionStruct() {}

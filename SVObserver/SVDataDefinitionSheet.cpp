@@ -32,10 +32,11 @@ END_MESSAGE_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVDataDefinitionSheet::SVDataDefinitionSheet(LPCTSTR pszCaption, const SVString& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd, UINT iSelectPage)
+SVDataDefinitionSheet::SVDataDefinitionSheet(SVIPDoc* pDoc, LPCTSTR pszCaption, const SVString& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd, UINT iSelectPage)
 : CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
 , m_InspectionName( rInspectionName )
 , m_InspectionID( rInspectionID )
+, m_pDoc(pDoc) 
 {
 	CreatePages();
 }
@@ -133,12 +134,9 @@ void SVDataDefinitionSheet::OnOK()
 
 	if( ListsChanged )
 	{
-		SVIPDoc* pIPDoc( nullptr );
-		pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_InspectionID );
-
-		if( nullptr != pIPDoc )
+		if( nullptr != m_pDoc )
 		{
-			pIPDoc->SetModifiedFlag();
+			m_pDoc->SetModifiedFlag();
 		}
 	}
 

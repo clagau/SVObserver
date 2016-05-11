@@ -15,37 +15,14 @@
 #include "SVImageProcessingClass.h"
 #pragma endregion Includes
 
-////////////////////////////////////////////////////////////////////////////////
-// Other Necessary Include File(s) - Module Link(s)
-////////////////////////////////////////////////////////////////////////////////
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVThinningFilter
-//* Note(s)    : Thinning Filter
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVThinningFilterClass, SVThinningFilterClassGuid )
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 SVThinningFilterClass::SVThinningFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
@@ -58,13 +35,13 @@ SVThinningFilterClass::~SVThinningFilterClass()
 
 void SVThinningFilterClass::init()
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVThinningFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVThinningFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoItterations, SVThinningFilterItterationsGuid, IDS_OBJECTNAME_THINNINGFILTER_ITTERATIONS, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoGrayOn, SVThinningFilterGrayOnGuid, IDS_OBJECTNAME_THINNINGFILTER_GRAYON, false, SVResetItemNone );
 
-	m_lvoItterations.SetDefaultValue( 1L, TRUE );
-	m_bvoGrayOn.SetDefaultValue( FALSE, TRUE );
+	m_lvoItterations.SetDefaultValue( 1L, true );
+	m_bvoGrayOn.SetDefaultValue( false, true );
 
 
 	m_lvoItterations.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
@@ -78,10 +55,6 @@ void SVThinningFilterClass::init()
 // .Title       : CreateObject
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVThinningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -92,18 +65,11 @@ BOOL SVThinningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 	return bOk;
 }
 
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVThinningFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 { 

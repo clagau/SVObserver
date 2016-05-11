@@ -71,7 +71,7 @@ void SVGigeCameraStruct::Clear()
 	strIPAddress.Empty();
 	eChangeType = SVNoChange;
 	
-	m_ulHandle = NULL;
+	m_ulHandle = 0;
 }
 
 bool SVGigeCameraStruct::operator == (const SVGigeCameraStruct &SVGigecs) const

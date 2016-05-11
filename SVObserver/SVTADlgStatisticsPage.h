@@ -15,6 +15,7 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
+class SVToolAdjustmentDialogSheetClass;
 class SVStatisticsToolClass;
 class SVToolClass;
 class SVToolSetClass;
@@ -22,7 +23,7 @@ class SVToolSetClass;
 class SVToolAdjustmentDialogStatisticsPageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogStatisticsPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+	SVToolAdjustmentDialogStatisticsPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent);
 	virtual ~SVToolAdjustmentDialogStatisticsPageClass();
 
 	void UpdateStatisticsParameters();
@@ -32,8 +33,6 @@ public:
 
 protected:
 	void getParameters();
-	//void initVariablesComboBox();
-	//int getComboBoxStringExtent( CComboBox& RComboBox, CString& RStr );
 	void initListBox(CListBox* pListBox, TCHAR atcTestChar);
 
 protected:
@@ -63,6 +62,7 @@ public:
 	//}}AFX_DATA
 
 protected:
+	SVToolAdjustmentDialogSheetClass* m_pParent;
 	SVStatisticsToolClass*  m_pTool;
 	SVToolSetClass*         m_pToolSet;
 	CString                 m_strFullNameOfVariable;

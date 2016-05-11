@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeCameraManager.h"
 
 #include "SVImageProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -77,7 +78,7 @@ HRESULT SVGigeCameraManager::UpdateCameraOrder( const SVGigeCameraStructSet& rSV
 	{
 		CString strKey;
 		CString l_Number;
-		if( (rSVCameraList[x].m_ulHandle != NULL) || ignoreHandles )
+		if( (0 != rSVCameraList[x].m_ulHandle) || ignoreHandles )
 		{
 			l_Number = rSVCameraList[ x ].strIPAddress;
 		}
@@ -191,7 +192,7 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 				l_rCamera.strModelName.Empty();
 				l_rCamera.strVendorName.Empty();
 				l_rCamera.eChangeType = SvOi::SVGigeCameraStructInterface::SVCameraRemoved;
-				l_rCamera.m_ulHandle = NULL;
+				l_rCamera.m_ulHandle = 0;
 			}
 		}
 		l_rCamera.iPosition = static_cast<int>(i);
@@ -201,13 +202,12 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 	{
 		SVGigeCameraStruct& l_rCamera = m_OrderedCamaras[ i ];
 
-		if( l_rCamera.m_ulHandle == NULL )
+		if( 0 == l_rCamera.m_ulHandle )
 		{
 			SVConnectedCameraMap::iterator l_Iter = rSVCameraList.begin();
 
 			if( l_Iter != rSVCameraList.end() )
 			{
-
 				if( l_rCamera.HasIPAddress() )
 				{
 					l_rCamera = l_Iter->second;
@@ -219,7 +219,6 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 					l_rCamera.eChangeType = SvOi::SVGigeCameraStructInterface::SVNewCamera;
 				}
 
-
 				rSVCameraList.erase( l_Iter );
 			}
 		}
@@ -229,5 +228,3 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 
 	return l_Status;
 }
-
-

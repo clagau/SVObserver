@@ -15,7 +15,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVContainerLibrary/SVVector.h"
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////

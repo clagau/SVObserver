@@ -26,7 +26,7 @@ class SVContainableCriticalSection : public SVSyncObject
 public:
 	SVContainableCriticalSection( DWORD dwSpinCount = 0 );
 	SVContainableCriticalSection( const SVContainableCriticalSection& rhs );
-	~SVContainableCriticalSection();
+	virtual ~SVContainableCriticalSection();
 
 	const SVContainableCriticalSection& operator = ( const SVContainableCriticalSection& rhs );
 	operator CRITICAL_SECTION*();
@@ -37,8 +37,6 @@ public:
 	virtual HRESULT Unlock();
 	virtual HRESULT Lock();
 	virtual HRESULT Lock(DWORD dwTimeout);
-
-	DWORD SetSpinCount( DWORD dwSpinCount );
 
 	CRITICAL_SECTION* m_pCritSec;
 	DWORD             m_dwSpinCount;

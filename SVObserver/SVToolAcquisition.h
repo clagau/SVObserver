@@ -33,8 +33,6 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 
-	SVCameraImageTemplate* GetMainImageClass();
-
 	virtual SVStaticStringValueObjectClass* GetInputImageNames( ) override;
 
 protected:

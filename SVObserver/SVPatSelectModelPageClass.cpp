@@ -98,7 +98,7 @@ void SVPatModelPageClass::OnOK()
 	if (!m_pPatAnalyzer->IsValidSize())
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Model2Large, StdMessageParams, SvOi::Err_10184, NULL, nullptr, MB_YESNO ); 
+		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Model2Large, StdMessageParams, SvOi::Err_10184, 0, nullptr, MB_YESNO ); 
 		if (IDYES == result)
 		{
 			m_bAllowExit = false;
@@ -221,12 +221,12 @@ void SVPatModelPageClass::OnCreateModel()
 
 	SvOi::MessageTextEnum msgID = SvOi::Tid_Empty;
 
-	if ( m_pPatAnalyzer != nullptr && GetModelFile( FALSE ) ) // @TODO:  Explain the "FALSE".
+	if ( nullptr != m_pPatAnalyzer && GetModelFile( FALSE ) ) // @TODO:  Explain the "FALSE".
 	{
 		m_pPatAnalyzer->SetModelExtents(static_cast<long>(m_nXPos), static_cast<long>(m_nYPos), m_lModelWidth, m_lModelHeight);
 		m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
 
-		// SEJ - need to check if region is large enough to accommodate Overscan
+		// Need to check if region is large enough to accommodate Overscan
 
 		if( m_pPatAnalyzer->UpdateModelFromInputImage() )
 		{

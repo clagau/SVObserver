@@ -15,8 +15,8 @@
 #include "SVIOAdjustDialog.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVSVIMStateClass.h"
-#include "SVDigitalInputObject1.h"
-#include "SVDigitalOutputObject1.h"
+#include "SVDigitalInputObject.h"
+#include "SVDigitalOutputObject.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
 #include "SVHardwareManifest.h"
@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVIOAdjustDialogClass::SVIOAdjustDialogClass(CWnd* pParent /*=NULL*/)
+SVIOAdjustDialogClass::SVIOAdjustDialogClass(CWnd* pParent /*=nullptr*/)
 : CDialog(SVIOAdjustDialogClass::IDD, pParent)
 , m_Items( boost::bind( &( CComboBox::GetItemData ), &IOCombo, _1 ), boost::bind( &( CComboBox::SetItemData ), &IOCombo, _1, _2 ) )
 {
@@ -133,7 +133,9 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 
 	// Add an empty item...
 	if( !( m_pIOEntry.empty() ) )
-		IOCombo.SetItemData( IOCombo.AddString( _T( "" ) ), static_cast<DWORD_PTR>(NULL) );
+	{
+		IOCombo.SetItemData( IOCombo.AddString( _T( "" ) ), 0 );
+	}
 
 	if( m_bInputMode )
 	{

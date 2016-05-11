@@ -25,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SVTriggerSetupDlgClass dialog
 
-SVTriggerSetupDlgClass::SVTriggerSetupDlgClass(CWnd* pParent /*=NULL*/)
+SVTriggerSetupDlgClass::SVTriggerSetupDlgClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVTriggerSetupDlgClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVTriggerSetupDlgClass)
@@ -36,6 +36,9 @@ SVTriggerSetupDlgClass::SVTriggerSetupDlgClass(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVTriggerSetupDlgClass::~SVTriggerSetupDlgClass()
+{
+}
 
 void SVTriggerSetupDlgClass::DoDataExchange(CDataExchange* pDX)
 {

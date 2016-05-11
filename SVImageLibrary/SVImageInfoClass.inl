@@ -13,22 +13,22 @@ template< typename SV_OBJECT_TYPE >
 HRESULT SVImageInfoClass::GetOwnerImage( SV_OBJECT_TYPE*& p_rpObject ) const
 {
 	HRESULT l_Status = S_OK;
-	SVObjectClass* l_pObject = NULL;
+	SVObjectClass* l_pObject = nullptr;
 
 	l_Status = GetOwnerImage( l_pObject );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		p_rpObject = dynamic_cast< SV_OBJECT_TYPE* >( l_pObject );
 	}
 	else
 	{
-		p_rpObject = NULL;
+		p_rpObject = nullptr;
 	}
 
-	if( p_rpObject == NULL )
+	if( nullptr == p_rpObject )
 	{
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = E_FAIL;
 		}

@@ -49,16 +49,16 @@ SVExternalToolDetailsSheet::SVExternalToolDetailsSheet( const SVGUID& rInspectio
 , m_numImages(numImages)
 {
 	m_pSVExternalToolDlgParent = pParentWnd;
-	m_pTask = NULL;
-	m_pTool = NULL;
+	m_pTask = nullptr;
+	m_pTool = nullptr;
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 
 SVExternalToolDetailsSheet::~SVExternalToolDetailsSheet()
 {
 	DestroyPages();
-	m_pTask = NULL;
-	m_pTool = NULL;
+	m_pTask = nullptr;
+	m_pTool = nullptr;
 }
 
 HRESULT SVExternalToolDetailsSheet::CreatePages()
@@ -88,7 +88,7 @@ HRESULT SVExternalToolDetailsSheet::CreatePages()
 			InputValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aInputValueDefinitions[i];
 
 			CString sGroup(rDefinition.bstrGroup);
-			SVRPropertyItem* pGroupItem = NULL;
+			SVRPropertyItem* pGroupItem = nullptr;
 			if ( (iterGroup = mapGroupItems.find(sGroup)) == mapGroupItems.end() )
 			{	// if new group, add tab
 
@@ -110,9 +110,9 @@ HRESULT SVExternalToolDetailsSheet::CreatePages()
 
 SVIPDoc* SVExternalToolDetailsSheet::GetIPDoc() const
 {
-	SVIPDoc* l_pIPDoc = NULL;
+	SVIPDoc* l_pIPDoc = nullptr;
 
-	if( m_pSVExternalToolDlgParent != NULL )
+	if( nullptr != m_pSVExternalToolDlgParent )
 	{
 		l_pIPDoc = m_pSVExternalToolDlgParent->GetIPDoc();
 	}

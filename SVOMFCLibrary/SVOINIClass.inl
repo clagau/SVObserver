@@ -12,15 +12,15 @@
 
 inline SVOINIClass::SVOINIClass()
 {
-	m_tszFile = NULL;
+	m_tszFile = nullptr;
 }
 
 inline SVOINIClass::~SVOINIClass()
 {
-	if ( m_tszFile != NULL )
+	if ( nullptr != m_tszFile )
 	{
 		delete[] m_tszFile;
-		m_tszFile = NULL;
+		m_tszFile = nullptr;
 	}
 }
 
@@ -28,13 +28,13 @@ inline HRESULT SVOINIClass::SetFile( LPCTSTR p_szFile )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_tszFile != NULL )
+	if ( nullptr != m_tszFile )
 	{
 		delete[] m_tszFile;
-		m_tszFile = NULL;
+		m_tszFile = nullptr;
 	}
 
-	if ( p_szFile != NULL )
+	if ( nullptr != p_szFile )
 	{
 		m_tszFile = new TCHAR[ _tcslen( p_szFile ) + 1 ];
 		_tcscpy( m_tszFile, p_szFile );
@@ -56,7 +56,7 @@ inline HRESULT SVOINIClass::GetValue( LPCTSTR p_szSection,
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_szFileName == NULL )
+	if ( nullptr == p_szFileName )
 	{
 		 p_szFileName = m_tszFile;
 	}
@@ -69,11 +69,11 @@ inline HRESULT SVOINIClass::GetValue( LPCTSTR p_szSection,
 	                                                    p_szFileName );
 
 	
-	if ( *p_pbstrValue != NULL )	// TRB coding error was if( p_pbstrValue
+	if ( nullptr != *p_pbstrValue )	// TRB coding error was if( p_pbstrValue
 	{
 		::SysFreeString( *p_pbstrValue );
 
-		*p_pbstrValue = NULL;
+		*p_pbstrValue = nullptr;
 	}
 
 	if ( ( sizeof l_szResult ) <= l_ulSize + 2 )
@@ -99,7 +99,7 @@ inline std::string SVOINIClass::GetValueString( LPCTSTR p_szSection,
 
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_szFileName == NULL )
+	if ( nullptr == p_szFileName )
 	{
 		 p_szFileName = m_tszFile;
 	}
@@ -135,12 +135,12 @@ inline HRESULT SVOINIClass::GetValue( LPCTSTR p_szSection,
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_szFileName == NULL )
+	if ( nullptr == p_szFileName )
 	{
 		p_szFileName = m_tszFile;
 	}
 
-	if ( p_piValue != NULL )
+	if ( nullptr != p_piValue )
 	{
 		INT iVal = ::GetPrivateProfileInt( p_szSection, p_szKey, p_iDefault, p_szFileName );
 
@@ -158,7 +158,7 @@ inline HRESULT SVOINIClass::SetValue( LPCTSTR p_szSection,
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_szFileName == NULL )
+	if ( nullptr == p_szFileName )
 	{
 		p_szFileName = m_tszFile;
 	}
@@ -179,7 +179,7 @@ inline HRESULT SVOINIClass::SetValue( LPCTSTR p_szSection,
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_szFileName == NULL )
+	if ( nullptr == p_szFileName )
 	{
 		p_szFileName = m_tszFile;
 	}

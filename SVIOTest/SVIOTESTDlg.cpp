@@ -132,6 +132,10 @@ CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=nullptr*/)
 	m_svTrigger4Data.m_MinTime = SVClock::GetMaxTimeStamp();
 }
 
+CSVIOTESTDlg::~CSVIOTESTDlg()
+{
+}
+
 bool CSVIOTESTDlg::IsSoftwareTrigger() const
 {
 	return (m_csTrigger.CompareNoCase("SVSoftwareTriggerDevice.dll") == 0);
@@ -360,7 +364,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	}
 	m_bThreadRunning = false;
 	m_bTestRand = false;
-	m_hWorkerThread = NULL;
+	m_hWorkerThread = nullptr;
 	m_bFast = false;
 	m_lStaticChannel = 15;
 	UpdateData(FALSE);

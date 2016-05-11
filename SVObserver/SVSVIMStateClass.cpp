@@ -31,11 +31,6 @@ SVSVIMStateClass::~SVSVIMStateClass()
 
 bool SVSVIMStateClass::AddState( DWORD dwState )
 {
-	//DWORD dwTempState;
-
-	//dwTempState = m_SVIMState | dwState;
-	//::InterlockedExchange( &m_SVIMState, dwTempState );
-
 	::_InterlockedOr( &m_SVIMState, dwState );
 
 	if( dwState & SV_STATE_MODIFIED )
@@ -51,11 +46,6 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 
 bool SVSVIMStateClass::RemoveState( DWORD dwState )
 {
-	//DWORD dwTempState;
-
-	//dwTempState = m_SVIMState & ~dwState;
-	//::InterlockedExchange( &m_SVIMState, dwTempState );
-
 	::_InterlockedAnd( &m_SVIMState, ~dwState );
 	svModeEnum mode = GetMode();
 	CheckModeNotify(mode);

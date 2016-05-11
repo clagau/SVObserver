@@ -75,17 +75,17 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 		
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
-		m_pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		m_pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
 		
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
-		m_pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		m_pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
 
 		// Interpolation Mode
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.ObjectType = SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)));
+		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)));
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;
@@ -98,11 +98,11 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 			m_cbInterpolation.SelectString( -1, strEnum );
 		}
 
-		SVTransformationToolClass* l_pTool = NULL;
+		SVTransformationToolClass* l_pTool = nullptr;
 
 		m_pParentDialog->GetToolByType( l_pTool );
 		// Check...
-		if( m_pEvaluateTranslationX != NULL && m_pEvaluateTranslationY != NULL )
+		if( nullptr != m_pEvaluateTranslationX && nullptr != m_pEvaluateTranslationY )
 		{
 			_variant_t l_Variant = 0;
 
@@ -207,7 +207,7 @@ HRESULT SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
 	{
 		UpdateData( TRUE ); // get data from dialog
 
-		SVTransformationToolClass* l_pTool = NULL;
+		SVTransformationToolClass* l_pTool = nullptr;
 
 		m_pParentDialog->GetToolByType( l_pTool );
 
@@ -217,18 +217,18 @@ HRESULT SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
 		if( sel >= 0 )
 		{
 			long lValue = ( long ) m_cbInterpolation.GetItemData( sel );
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pInterpolationMode, lValue );
 			}
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( m_pTool );
 		}
@@ -243,13 +243,13 @@ void SVToolAdjustmentDialogTranslationPageClass::refresh()
 {
 	if (m_pTool)
 	{
-		CWnd* pWnd = NULL;
+		CWnd* pWnd = nullptr;
 
 		SetInspectionData();
 
 		_variant_t l_Variant;
 
-		if( GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+		if( S_OK == GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, l_Variant.GetVARIANT() ) )
 		{
 			m_strTranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
 		}
@@ -258,7 +258,7 @@ void SVToolAdjustmentDialogTranslationPageClass::refresh()
 			m_strTranslationXValue = _T("");
 		}
 		
-		if( GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+		if( S_OK == GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, l_Variant.GetVARIANT() ) )
 		{
 			m_strTranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
 		}

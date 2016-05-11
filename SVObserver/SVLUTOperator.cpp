@@ -9,16 +9,14 @@
 //* .Check In Date   : $Date:   01 Oct 2013 14:57:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLUTOperator.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h" 
 #include "SVLUTEquation.h"
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,27 +24,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVLUTOperatorClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVLUTOperatorClass, SVLUTOperatorClassGuid )
-
-
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 
 SVLUTOperatorClass::SVLUTOperatorClass( SVObjectClass* POwner, int StringResourceID )
 				   :SVUnaryImageOperatorClass( POwner, StringResourceID ) 
@@ -59,15 +37,11 @@ SVLUTOperatorClass::SVLUTOperatorClass( SVObjectClass* POwner, int StringResourc
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.03.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVLUTOperatorClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVLUTOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVLUTOperatorObjectType;
 
 	// Register Embedded Object(s)
 	RegisterEmbeddedObject( &m_lutVector, SVOutputLUTVectorObjectGuid, IDS_OBJECTNAME_LUTVECTOR, false, SVResetItemNone );
@@ -82,12 +56,6 @@ void SVLUTOperatorClass::init()
 	// LUT Vector...
 	m_lutVector.SetLegacyVectorObjectCompatibility();
 	m_lutVector.SetDefaultValue( 0, TRUE );
-	// NOTE: Vector Size Setting...
-	// Set default vector size in CreateObject, since objectDepth must be set before!!!
-	//m_lutVector.SetSize( 256, TRUE );
-	// Place another check/set vector size at the position you want to use the vector
-	// i.e. in onRun(...) : 
-	//	if( vector.GetSize() != targetSize  ) { vector.SetSize( targetSize ); }
 
 	// Use LUT...
 	// Default must be FALSE, since we have to be compatible to 
@@ -131,25 +99,15 @@ void SVLUTOperatorClass::init()
 	m_bForceLUTRecalc = true;
 }
 
-
 SVLUTOperatorClass::~SVLUTOperatorClass()
 {
 	CloseObject();
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : CreateObject
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.03.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -165,7 +123,7 @@ BOOL SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	m_upperClip.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	m_lowerClip.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -173,7 +131,7 @@ BOOL SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 
 DWORD_PTR SVLUTOperatorClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	BOOL bUseSilent = TRUE;
@@ -182,7 +140,7 @@ DWORD_PTR SVLUTOperatorClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 		case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT ResetStatus = ResetObject();
-			if( ResetStatus != S_OK )
+			if( S_OK != ResetStatus )
 			{
 				DwResult = SVMR_NO_SUCCESS;
 			}
@@ -211,7 +169,7 @@ HRESULT SVLUTOperatorClass::ResetObject()
 {
 	HRESULT l_hrOk = SVUnaryImageOperatorClass::ResetObject();
 
-	m_bForceLUTRecalc = m_bForceLUTRecalc || l_hrOk == S_OK;
+	m_bForceLUTRecalc = m_bForceLUTRecalc || S_OK == l_hrOk;
 
 	return l_hrOk;
 }
@@ -219,11 +177,6 @@ HRESULT SVLUTOperatorClass::ResetObject()
 // .Title       : CloseObject
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.03.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTOperatorClass::CloseObject()
 {
@@ -240,11 +193,6 @@ BOOL SVLUTOperatorClass::CloseObject()
 // .Description : Recalulates LUT any time it is called completely.
 //              : If MIL LUT buffer is not yet allocated, it tries to do this, 
 //				: also.
-//				: 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.03.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 {
@@ -385,7 +333,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 				std::vector<BYTE> byteVector;
 				SVByteValueObjectClass* pLUTResult = getInputLUTVectorResult();
 
-				l_bOk = l_bOk && pLUTResult != NULL;
+				l_bOk = l_bOk && nullptr != pLUTResult;
 				l_bOk = l_bOk && S_OK == pLUTResult->GetArrayValues( byteVector );
 				l_bOk = l_bOk && S_OK == m_lutVector.SetArrayValues( RRunStatus.m_lResultDataIndex, byteVector );
 
@@ -414,10 +362,10 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 		// Fill Mil Lut Buffer...
 		if( !m_lutBufID.empty() )
 		{
-			if( m_lutElementNumber == 256 )	// 8 Bit LUT
+			if( 256 == m_lutElementNumber )	// 8 Bit LUT
 			{
 				std::vector<BYTE> byteVec;
-				if( m_lutVector.GetArrayValues( byteVec ) == S_OK )
+				if( S_OK == m_lutVector.GetArrayValues( byteVec )  )
 				{
 					ASSERT( byteVec.size() == m_lutElementNumber );
 					if ( byteVec.size() == m_lutElementNumber )
@@ -430,7 +378,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 				}
 			}
 
-			if( m_lutElementNumber == 65536 )	// 16 Bit LUT
+			if( 65536 == m_lutElementNumber )	// 16 Bit LUT
 			{
 				// Other Depths are not yet supported...
 			}
@@ -446,29 +394,18 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 // -----------------------------------------------------------------------------
 // .Description : Returns input LUT Vector. Is comming from LUTEquation friend.
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.03.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 {
 	if( m_inputLUTVectorResult.IsConnected() && m_inputLUTVectorResult.GetInputObjectInfo().PObject )
 		return dynamic_cast <SVByteValueObjectClass*> (m_inputLUTVectorResult.GetInputObjectInfo().PObject);
 
-	return NULL;
+	return nullptr;
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnValidate
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.03.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTOperatorClass::OnValidate() 
 {
@@ -480,10 +417,6 @@ BOOL SVLUTOperatorClass::OnValidate()
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.03.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 { 

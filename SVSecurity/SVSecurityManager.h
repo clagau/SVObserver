@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:03:26  $
 //******************************************************************************
 
-#if !defined(AFX_SVSECURITYMANAGER_H__F22A92EB_D27F_4CF1_B099_1B11A3C99888__INCLUDED_)
-#define AFX_SVSECURITYMANAGER_H__F22A92EB_D27F_4CF1_B099_1B11A3C99888__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #ifdef _EXPORTING
    #define CLASS_DECLSPEC    __declspec(dllexport)
@@ -58,6 +53,3 @@ private:
 	SVAccessClass* m_pSVAccess;
 
 };
-
-#endif // !defined(AFX_SVSECURITYMANAGER_H__F22A92EB_D27F_4CF1_B099_1B11A3C99888__INCLUDED_)
-

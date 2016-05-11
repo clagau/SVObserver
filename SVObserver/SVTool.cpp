@@ -8,10 +8,10 @@
 //* .Current Version : $Revision:   1.9  $
 //* .Check In Date   : $Date:   17 Dec 2014 10:48:04  $
 //******************************************************************************
+
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTool.h"
-#include "SVImageLibrary/SVDrawContext.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
@@ -36,7 +36,7 @@ SVToolClass::SVToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, in
 void SVToolClass::init()
 {
 	// Indentify our type in the Output List
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &enabled, SVToolEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SVResetItemNone );
@@ -135,8 +135,6 @@ void SVToolClass::init()
 	extentWidthScaleFactor.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTHSCALEFACTOR, TRUE );
 	extentHeightScaleFactor.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR, TRUE );
 
-//	ToolSelectedForOperatorMove.SetDefaultValue( 0, FALSE );
-
 	drawToolFlag.SetEnumTypes( IDS_TOOLDRAW_ENUMOBJECT_LIST );
 	drawToolFlag.SetDefaultValue( ( const long ) 0, TRUE ); // 0 Should be show tool 'Always'
 
@@ -188,9 +186,9 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 		}
 	}
 
-	for( size_t j = 0;nullptr ==  m_pToolConditional && j < friendList.size(); j++ )
+	for( size_t j = 0;nullptr ==  m_pToolConditional && j < m_friendList.size(); j++ )
 	{
-		m_pToolConditional = dynamic_cast<SVConditionalClass *>(friendList[j].PObject);
+		m_pToolConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].PObject);
 	}
 
 	// Set / Reset Printable Flags
@@ -229,7 +227,7 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_svToolComment.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	m_svToolComment.ObjectAttributesAllowedRef() &= ~SV_VIEWABLE;	// We do not want this to show up in the results picker.
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -299,11 +297,6 @@ bool SVToolClass::WasEnabled() const
 	return bEnabled;
 }
 
-BOOL SVToolClass::isFreeMoveable()
-{
-	return FALSE;
-}
-
 HRESULT SVToolClass::GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine )
 {
 	HRESULT l_Status = S_OK;
@@ -333,12 +326,6 @@ HRESULT SVToolClass::GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine )
 	p_rMultiLine.m_Warned = ( FALSE != bWarned );
 
 	return l_Status;
-}
-
-SVToolPropertyEntryStruct* SVToolClass::GetSpecialPropertyList( int& RCount )
-{
-	RCount = propertyCount;
-	return pPropertyArray;
 }
 
 BOOL SVToolClass::OnValidate()
@@ -780,7 +767,7 @@ bool SVToolClass::getConditionalResult(long p_lIndex) const
 
 DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = 0;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	SVToolLevelCreateStruct createStruct;
 
 	// Try to process message by yourself...
@@ -798,8 +785,6 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 			HRESULT l_ResetStatus = ResetObject();
 			if( S_OK != l_ResetStatus )
 			{
-//				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
 				DwResult |= SVMR_NO_SUCCESS;
 			}
 			else
@@ -1088,11 +1073,6 @@ HRESULT SVToolClass::GetParentExtent( SVImageExtentClass& p_rParent ) const
 	return l_hr;
 }
 
-BOOL SVToolClass::PrepareForRunning()
-{
-	return TRUE;
-}
-
 BOOL SVToolClass::IsOkToEdit()
 {
 	return TRUE;
@@ -1332,7 +1312,7 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
 			GetInspection()->m_bForceOffsetUpdate = true;
 		}
 		UpdateAuxiliaryExtents(1);
-		::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, 0, 0 );
 	}
 
 	return l_hr;

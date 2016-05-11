@@ -18,8 +18,8 @@ namespace Seidenader
 	namespace ObjectInterfaces
 	{	
 		typedef SVSharedPtr< IMatroxImageData > MatroxImageSmartHandlePtr;
-		//this class is a interface. It should only have pure virtual public method and new member parameter
-		class ISVImage : virtual public IObjectAppClass
+		//this class is a interface. It should only have pure virtual public method and no member variables
+		class ISVImage
 		{
 		public:
 			virtual ~ISVImage() {}
@@ -53,12 +53,6 @@ namespace Seidenader
 			/// \returns SVString
 			//************************************
 			virtual SVString getDisplayedName() const = 0;
-
-			//************************************
-			/// Get the Owner Object for the Image.
-			/// \returns SvOi::IObjectClass*
-			//************************************
-			virtual SvOi::IObjectClass* getOwner() const = 0;
 
 			//************************************
 			/// Get the Number of bands in the image.

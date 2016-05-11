@@ -507,14 +507,14 @@ bool SVPictureDialog::PutIconOnButton( unsigned int p_iIconResource, unsigned in
 	bool l_bOk = false;
 
 	CButton* pBtn = (CButton*)GetDlgItem( p_iButton );
-	if( pBtn != NULL )
+	if( nullptr != pBtn )
 	{
 		IconMap::iterator it = m_Icons.find(p_iIconResource);
 		if (it != m_Icons.end())
 		{
 			HICON l_TmpIcon = it->second;
 
-			if( l_TmpIcon != NULL )
+			if( nullptr != l_TmpIcon )
 			{
 				pBtn->SetIcon( l_TmpIcon );
 				l_bOk = true;
@@ -588,7 +588,7 @@ HRESULT SVPictureDialog::SetScrollBars()
 void SVPictureDialog::ToEditCtrl( unsigned int p_iResource, long p_lValue )
 {
 	CEdit* l_pEdit = dynamic_cast< CEdit* >( GetDlgItem( p_iResource ) );
-	if( l_pEdit != nullptr )
+	if( nullptr != l_pEdit )
 	{
 		CString l_strTmp;
 		l_strTmp.Format( _T("%d"), p_lValue );
@@ -1195,7 +1195,7 @@ HRESULT SVPictureDialog::EnableSaveButton( long p_lEnable )
 void SVPictureDialog::OnBnClickedSaveButton()
 {
 	SVPictureTabs* l_pTabs = static_cast< SVPictureTabs* >( GetParent() );
-	if( l_pTabs != NULL )
+	if( nullptr != l_pTabs )
 	{
 		long lTab = 0;
 		l_pTabs->GetParent()->GetParent()->SendMessage( SAVE_BUTTON_PRESSED, static_cast<WPARAM>( lTab ), reinterpret_cast<LPARAM>( m_PictDisplay.GetPicture() ) );

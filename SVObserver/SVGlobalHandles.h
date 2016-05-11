@@ -22,10 +22,6 @@
 // -----------------------------------------------------------------------------
 // .Description : Is used as a multi system data buffer handle container
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :09.09.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 struct SVDataBufferHandleStruct
 {
 	SVDataBufferHandleStruct()

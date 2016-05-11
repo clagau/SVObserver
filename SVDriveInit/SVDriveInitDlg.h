@@ -66,8 +66,6 @@ private:
 	void OnChangeCdkey(CEdit& rEdit);
 	bool IsValidModelNumber() const;
 
-	bool GetProductId() const;
-	
 	bool GetOEMInfo();
 	bool GetSysPrepInfo();
 
@@ -82,7 +80,6 @@ private:
 
 	HRESULT UpdateMatrox(LPCTSTR p_szDigitizer);
 	HRESULT UpdateMatroxRegistryMaxMem(size_t& p_rMaxSize, size_t p_MILSize);
-	HRESULT AddMatroxBootIniMaxMem(size_t p_MILSize);
 	HRESULT RemoveMatroxBootIniMaxMem();
 	HRESULT AddCommandBeforeSVObserver(LPCTSTR p_strNewCommand, bool p_bRemove);
 

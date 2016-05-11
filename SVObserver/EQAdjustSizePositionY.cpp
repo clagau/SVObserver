@@ -5,7 +5,6 @@
 /// Equation class for Formula for Windows PositionY for ToolsSize Adjust 
 //******************************************************************************
 
-
 #pragma region Includes
 #include "stdafx.h"
 #include "EQAdjustSizePositionY.h"

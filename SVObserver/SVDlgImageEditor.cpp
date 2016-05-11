@@ -35,7 +35,7 @@ END_MESSAGE_MAP()
 
 SVDlgImageEditor::SVDlgImageEditor()
 {
-	m_pFigureEditor = NULL;
+	m_pFigureEditor = nullptr;
 	m_hDefaultPen = ::CreatePen( PS_DOT, 1, RGB(0,255,0) );
 }
 
@@ -61,7 +61,6 @@ LRESULT SVDlgImageEditor::OnNcHitTest( CPoint point )
 CPoint SVDlgImageEditor::TranslateClientCoordinatesToImageCoordinates(CPoint point)
 {
 	CRect rectClient = m_ClientRect;
-	//GetClientRect(&rectClient);
 	CSize sizeFigure;
 	if ( m_pFigureEditor )
 		sizeFigure =  m_pFigureEditor->GetSize();
@@ -71,8 +70,6 @@ CPoint SVDlgImageEditor::TranslateClientCoordinatesToImageCoordinates(CPoint poi
 		sizeFigure.cx = rect.Width();
 		sizeFigure.cy = rect.Height();
 	}
-
-	//CPoint ptViewOffset(0,0);
 
 	double dScaleX = m_dZoomX * (double) rectClient.Width() / (double) sizeFigure.cx;
 	double dScaleY = m_dZoomY * (double) rectClient.Height() / (double) sizeFigure.cy;
@@ -92,7 +89,7 @@ void SVDlgImageEditor::OnMouseMove(UINT nFlags, CPoint point)
 	//MK_RBUTTON   Set if the right mouse button is down. 
 	//MK_SHIFT   Set if the SHIFT key is down. 
 
-	if ( (m_hWnd != NULL) && (m_pFigureEditor != NULL) )
+	if ( (nullptr != m_hWnd ) && (nullptr != m_pFigureEditor ) )
 	{
 		bool bResetMouse = false;
 
@@ -131,10 +128,7 @@ void SVDlgImageEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 
 	SvOg::SVDlgImageClass::OnMouseMove(nFlags, point);
-
-	//CRect rectClient;
-	//GetClientRect(&rectClient);
-
+	
 	if ( m_ClientRect.PtInRect( point ) )
 	{
 		if ( GetOwner() )
@@ -150,11 +144,9 @@ CPoint SVDlgImageEditor::GetMouseCoordinates()	// in image coordinates, not scre
 
 BOOL SVDlgImageEditor::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
 {
-	//TRACE(_T("HitTest: %d\n"), nHitTest);
-	//m_szCursorId = GetPickCursor( nHitTest );
 	m_szCursorId = GetPickCursor( m_uiHitTest );
 	
-	HCURSOR hCursor = ::LoadCursor(NULL, m_szCursorId);
+	HCURSOR hCursor = ::LoadCursor(nullptr, m_szCursorId);
 	::SetCursor(hCursor);
 
 	return TRUE;
@@ -172,7 +164,7 @@ void SVDlgImageEditor::OnKillFocus(CWnd* pNewWnd)
 
 void SVDlgImageEditor::OnLButtonDown(UINT nFlags, CPoint point) 
 {
-	if ( m_uiHitTest != HTCLIENT && m_pFigureEditor != NULL )
+	if ( m_uiHitTest != HTCLIENT && nullptr != m_pFigureEditor )
 	{
 		SetCapture();
 		CPoint ptImage = TranslateClientCoordinatesToImageCoordinates(point);
@@ -335,13 +327,7 @@ void SVDlgImageEditor::Normalize( OverlayStruct& rOverlay )
 	const SVCPointArray& rPointArray = rOverlay.svDrawObject.GetPointArray();
 	CopyOverlayPoints( rPointArray, rOverlay.vecPoints );
 
-	CSize sizeFigure;
-	/*
-	if ( m_pFigureEditor )
-		sizeFigure = m_pFigureEditor->GetSize();
-	else
-	*/
-		sizeFigure = rOverlay.options.sizeROI;
+	CSize sizeFigure = rOverlay.options.sizeROI;
 
 	int iFigureArea = sizeFigure.cx * sizeFigure.cy;
 	
@@ -385,12 +371,18 @@ void SVDlgImageEditor::Normalize( OverlayStruct& rOverlay )
 		rpt -= offset;
 		rpt.x = (int) ((double) rpt.x * dScaleX) + 1;
 		if ( rOverlay.options.bNormalizeY_ROI )
+		{
 			rpt.y = (int) (pow((double) rpt.y, 0.4) * dScaleY) + 1;
+		}
 		else
+		{
 			rpt.y = (int) ((double) rpt.y * dScaleY) + 1;
+		}
 
 		if ( rOverlay.options.bFlipVertical )
+		{
 			rpt.y = m_ClientRect.Height() - rpt.y;
+		}
 	}
 }
 									 
@@ -405,7 +397,7 @@ void SVDlgImageEditor::DrawOverlay(CPaintDC& dc)
 		
 		if( size > 0 )
 		{
-			CPen* pPen = NULL;
+			CPen* pPen = nullptr;
 			
 			HPEN hPen = (HPEN) ( rOverlay.svDrawObject.GetDrawPen() );
 			

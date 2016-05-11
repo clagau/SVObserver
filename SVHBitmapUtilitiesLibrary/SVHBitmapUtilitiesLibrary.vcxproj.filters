@@ -38,9 +38,6 @@
     <ClInclude Include="SVHBitmapUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVHBitmapUtilitiesLibrary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVImageDefinitionStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>

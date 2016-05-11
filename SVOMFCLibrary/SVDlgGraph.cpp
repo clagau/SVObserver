@@ -37,8 +37,8 @@ namespace Seidenader
 	{
 		SVDlgGraphClass::SVDlgGraphClass()
 		{
-			pProcFunc = NULL;
-			pUserData = NULL;
+			pProcFunc = nullptr;
+			pUserData = nullptr;
 			xMult = 0.0;
 			yMult = 0.0;
 			xDisp = 0;
@@ -269,7 +269,7 @@ namespace Seidenader
 				0,
 				clientRect.Width(),
 				clientRect.Height(),
-				NULL,
+				nullptr,
 				0,
 				0,
 				WHITENESS

@@ -42,18 +42,6 @@ static char THIS_FILE[] = __FILE__;
 enum { DROPDOWN_HEIGHT = 100};
 
 /////////////////////////////////////////////////////////////////////////////
-// Button states
-
-/*
-enum
-{
-	BTN_UP        = 0,
-	BTN_DOWN      = 1,
-	BTN_DISABLED  = 2,
-};
-*/
-
-/////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemCombo
 
 BEGIN_MESSAGE_MAP(SVRPropertyItemCombo, CComboBox)
@@ -91,7 +79,7 @@ void SVRPropertyItemCombo::Initialize()
 
 void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rc)
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	CFont*	l_pOldFont;
 
@@ -127,13 +115,13 @@ void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rc)
 void SVRPropertyItemCombo::OnMove()
 {
 	if (IsWindow(m_hWnd) && IsWindowVisible())
-		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER|SWP_SHOWWINDOW|SWP_NOACTIVATE);
+		SetWindowPos(nullptr, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER|SWP_SHOWWINDOW|SWP_NOACTIVATE);
 }
 
 
 void SVRPropertyItemCombo::OnRefresh()
 {
-	if ( GetSafeHwnd() != NULL )
+	if ( nullptr != GetSafeHwnd() )
 	{
 		LONG idx = FindCBData(m_lComboData);
 
@@ -158,7 +146,7 @@ void SVRPropertyItemCombo::StoreItemData()
 {
 	LONG idx;
 	// store combo box item data
-	if ( GetSafeHwnd() != NULL )
+	if ( nullptr != GetSafeHwnd() )
 	{
 		if ((idx = GetCurSel()) == CB_ERR)
 			m_lComboData = 0L;
@@ -169,27 +157,19 @@ void SVRPropertyItemCombo::StoreItemData()
 
 void SVRPropertyItemCombo::OnActivate()
 {
-		int iButtonWidth = 0;
-		if ( m_bEnableButton )
-		{
-			CDC* pDC = m_btnDots.GetDC();
-			CSize size = pDC->GetTextExtent(m_strButtonText);
-			iButtonWidth = size.cx + g_buttonSpace;
-		}	
-		// activate the combo box
-		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height() + m_nDropHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
-
-		DisplayButton();
-
-		SetFocus();
-
-if ( !m_bShowButton )
+	int iButtonWidth = 0;
+	if ( m_bEnableButton )
 	{
-		/*
-		if (GetCount())
-			ShowDropDown(TRUE);
-		*/
-	}
+		CDC* pDC = m_btnDots.GetDC();
+		CSize size = pDC->GetTextExtent(m_strButtonText);
+		iButtonWidth = size.cx + g_buttonSpace;
+	}	
+	// activate the combo box
+	SetWindowPos(nullptr, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height() + m_nDropHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
+
+	DisplayButton();
+
+	SetFocus();
 }
 
 void SVRPropertyItemCombo::OnLossFocus()
@@ -199,7 +179,7 @@ void SVRPropertyItemCombo::OnLossFocus()
 
 BOOL SVRPropertyItemCombo::CreateComboBox(DWORD dwStyle)
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	if (IsWindow(m_hWnd))
 		DestroyWindow();
@@ -217,15 +197,9 @@ BOOL SVRPropertyItemCombo::CreateComboBox(DWORD dwStyle)
 		m_btnDots.Create("", WS_CHILD, CRect(0,0,0,0), m_pProp->GetCtrlParent(), 32000-GetCtrlID());
 		m_btnDots.SetWindowText(m_strButtonText);
 		m_btnDots.SetOwner( this );
-		//m_btnDots.ShowWindow(SW_SHOW);
 		m_btnDots.SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
 	}
 	SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
-
-	//SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height() + m_nDropHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
-	//DisplayButton();
-
-
 
 	return TRUE;
 }
@@ -243,13 +217,13 @@ void SVRPropertyItemCombo::DisplayButton()
 		CSize size = pDC->GetTextExtent(m_strButtonText);
 		int iButtonWidth = size.cx + g_buttonSpace;
 		m_bShowButton = (m_pProp->SendNotify(PTN_QUERY_SHOW_BUTTON, this)) != FALSE;
-		m_btnDots.SetWindowPos(NULL, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
+		m_btnDots.SetWindowPos(nullptr, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 	}
 }
 
 BOOL SVRPropertyItemCombo::CreateComboBoxBool()
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	if (IsWindow(m_hWnd))
 		DestroyWindow();
@@ -310,7 +284,7 @@ void SVRPropertyItemCombo::OnSelendok()
 	if ( m_bEnableButton )
 	{
 		m_bShowButton = (m_pProp->SendNotify(PTN_QUERY_SHOW_BUTTON, this)) != FALSE;
-		m_btnDots.SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
+		m_btnDots.SetWindowPos(nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 	}
 }
 

@@ -62,6 +62,5 @@ private:
 
 	SVCriticalSection m_WriteQueueLock;
 	SVWriteDeque m_WriteQueue;
-
 };
 

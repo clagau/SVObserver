@@ -32,9 +32,6 @@
     <ClCompile Include="SVEditNumbers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVNumericEdit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVUpDownButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -131,9 +128,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEditNumbers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVNumericEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUpDownButton.h">

@@ -12,7 +12,7 @@
 #pragma once
 
 class CModelessMsgBox;
-#define ModelessMessageBox(s,e)	{CModelessMsgBox* pBox = new CModelessMsgBox((s),(e)); pBox->Create(CModelessMsgBox::IDD, NULL);}
+#define ModelessMessageBox(s,e)	{CModelessMsgBox* pBox = new CModelessMsgBox((s),(e)); pBox->Create(CModelessMsgBox::IDD, nullptr);}
 
 // the following is from Windows Developer's Journal Feb 1998 p 54
 // code by James M. Curran; JamesCurram@CompuServe.com

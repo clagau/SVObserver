@@ -60,6 +60,6 @@ void SVImageDefinitionStruct::Init( )
 	lHeight = 0;
 	lWidth = 0;
 	eImageFormat = SVImageFormatUnknown;
-	bstrDisplayName = NULL;
+	bstrDisplayName = nullptr;
 }
 

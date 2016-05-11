@@ -7,7 +7,6 @@
 
 #pragma once
 #pragma region Includes
-#include "ITaskObjectListClass.h"
 #include "SVUtilityLibrary\SVGuid.h"
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
@@ -16,7 +15,7 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		//this class is a interface. It should only have pure virtual public method and new member parameter
+		//this class is a interface. It should only have pure virtual public method and no member variables
 		class ITool
 		{
 		public:

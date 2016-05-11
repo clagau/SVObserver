@@ -34,7 +34,6 @@ public:
 
    SVLongValueObjectClass		msvHistogramValue;
 
-	//SVDoubleValueObjectClass	msvVarianceValue;
 	SVDoubleValueObjectClass	msvStdDevValue;
 	SVDoubleValueObjectClass	msvMeanValue;
 
@@ -85,9 +84,6 @@ public:
 private:
    void init();
    
-	//void setHistogramOptions(SVHistogramAnalyzerSetupClass &) const;
-	//void getHistogramOptions(const SVHistogramAnalyzerSetupClass &);
-
 	SvUl::SVHistogramBase m_histogram;
 	void AddResult(const std::pair<GUID, DWORD> &);
 	std::map<GUID, GUID> m_resultGuids;
@@ -95,11 +91,10 @@ private:
 protected:
    virtual BOOL   onRun( SVRunStatusClass& RRunStatus );
 
-   SVMatroxImageResult        msvHistResultID;
-	SVMatroxLongArray          msvplHistValues;
-	SVImageClass					m_histogramImage;
+	SVMatroxImageResult msvHistResultID;
+	SVMatroxLongArray   msvplHistValues;
+	SVImageClass		m_histogramImage;
 
-	//SVHistogramStats	m_stats;
 	long m_rangeStart;
 	long m_rangeEnd;
 	long m_scale;

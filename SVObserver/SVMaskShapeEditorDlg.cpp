@@ -71,7 +71,7 @@ namespace	// file local
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent /*=NULL*/)
+SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, CWnd* pParent /*=nullptr*/)
 : CDialog(SVMaskShapeEditorDlg::IDD, pParent)
 , m_sFillColor( _T( "" ) )
 , m_sCoordinates( _T( "" ) )
@@ -163,7 +163,7 @@ HRESULT SVMaskShapeEditorDlg::SetInspectionData()
 	{
 		GUID guid = iter->first;
 		SVValueObjectClass* pValueObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject( guid );
-		if ( pValueObject != nullptr )
+		if ( nullptr != pValueObject )
 		{
 			SVValueObjectReference ref( pValueObject );
 			mapData[ ref ] = AsString( iter->second.value );
@@ -195,8 +195,8 @@ void SVMaskShapeEditorDlg::DoDataExchange(CDataExchange* pDX)
 BOOL SVMaskShapeEditorDlg::OnInitDialog()
 {
 	// must set these before calling DoModal
-	ASSERT( m_pTool != nullptr );
-	ASSERT( m_pMask != nullptr );
+	ASSERT( nullptr != m_pTool );
+	ASSERT( nullptr != m_pMask );
 
 	// SVTaskObjectInterfaceClass requirement
 	SetTaskObject( m_pTool );
@@ -230,7 +230,7 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 	SVShapeMaskHelperClass* pShapeMaskHelper = dynamic_cast <SVShapeMaskHelperClass*> 
 		( SVObjectManagerClass::Instance().GetObject(m_pMask->m_guidShapeHelper) );
 
-	ASSERT( pShapeMaskHelper != NULL );
+	ASSERT( nullptr != pShapeMaskHelper );
 
 	if ( pShapeMaskHelper )
 	{
@@ -723,7 +723,7 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 		{
 			CString sName = pValueObject->GetName();
 
-			SVRPropertyItem* pItem = NULL;
+			SVRPropertyItem* pItem = nullptr;
 
 			if ( SVEnumerateValueObjectClass* pEnum = dynamic_cast <SVEnumerateValueObjectClass*> ( pValueObject ) )
 			{
@@ -837,7 +837,7 @@ HRESULT SVMaskShapeEditorDlg::UpdateMask(bool bResetObject)
 
 void SVMaskShapeEditorDlg::FillComboBox(SVEnumerateValueObjectClass& p_rValueObject, CComboBox* p_pCombo)
 {
-	ASSERT( p_pCombo != NULL );
+	ASSERT( nullptr != p_pCombo );
 
 	if ( p_pCombo )
 	{
@@ -875,7 +875,7 @@ void SVMaskShapeEditorDlg::setImages()
 	m_dialogImage.setImage( &data, tabIndex );
 	tabIndex++;
 	// Set third tab to source image
-	SVImageInfoClass* pImageInfo = reinterpret_cast < SVImageInfoClass*> (::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ) );
+	SVImageInfoClass* pImageInfo = reinterpret_cast < SVImageInfoClass*> (::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0 ) );
 	if( nullptr != pImageInfo )
 	{
 		SVImageClass* pImage = nullptr;

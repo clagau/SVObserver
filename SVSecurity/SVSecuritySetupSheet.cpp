@@ -44,7 +44,7 @@ SVSecuritySetupSheet::SVSecuritySetupSheet(LPCTSTR pszCaption, CWnd* pParentWnd,
 }
 
 SVSecuritySetupSheet::SVSecuritySetupSheet()
-	:CPropertySheet(_T("SECURITY SETUP"), NULL, 0)
+	:CPropertySheet(_T("SECURITY SETUP"), nullptr, 0)
 {
 	Initialize();
 }
@@ -87,17 +87,17 @@ INT_PTR SVSecuritySetupSheet::DoModal()
 void SVSecuritySetupSheet::InitializeGroupList(CListBox& list)
 {
 	DWORD			nas;
-	PGROUP_INFO_0	pBuf = NULL;
-	PGROUP_INFO_0	pTmpBuf = NULL;
+	PGROUP_INFO_0	pBuf = nullptr;
+	PGROUP_INFO_0	pTmpBuf = nullptr;
 	DWORD			entriesread = 0;
 	DWORD			totalentries = 0;
 	PDWORD_PTR		resume_handle = 0;
 
 	list.AddString( _T( "Everybody" ) );
-	nas = NetLocalGroupEnum( NULL, 0, ( LPBYTE* )&pBuf, -1, &entriesread, &totalentries, resume_handle );
+	nas = NetLocalGroupEnum( nullptr, 0, ( LPBYTE* )&pBuf, -1, &entriesread, &totalentries, resume_handle );
 	if (nas == NERR_Success)
 	{
-		if ((pTmpBuf = pBuf) != NULL)
+		if ( nullptr !=  (pTmpBuf = pBuf) )
 		{
 			for (int i=0; i < (int)entriesread; i++)
 			{

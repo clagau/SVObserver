@@ -226,7 +226,7 @@ HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, CString& 
 	SVDPointClass value;
 
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, value );
-	//if ( hr == S_OK )
+	//if ( S_OK == hr ) // @WARNING - log an error here?
 	{
 		rstrValue.Format( _T( "( %lf, %lf )" ), value.x, value.y );
 	}
@@ -242,7 +242,7 @@ HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& 
 	l_Temp.Attach( rValue );
 
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_dPoint );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		CString l_strTmp;
 		l_strTmp.Format(  _T( "( %lf, %lf )"),l_dPoint.x, l_dPoint.y);
@@ -259,9 +259,7 @@ HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& 
 
 void SVDPointValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVDPointValueObjectType;
-	//DefaultValue().x = 0.0;
-	//DefaultValue().y = 0.0;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDPointValueObjectType;
 
 	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_CH_VALUE | SV_DD_VALUE;
 

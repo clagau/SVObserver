@@ -94,12 +94,6 @@ void RectangleObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomH
 	rDC.SelectObject( l_pOldPen );
 	rDC.SetBkMode( l_OldBKMode );
 
-	// We could use some of these functions instead of lineto moveto
-	//rDC.DrawFocusRect(
-	//rDC.DrawDragRect(
-	//rDC.Rectangle(
-	//HBRUSH hBrush = ::GetStockObject( NULL_BRUSH );
-	//HBRUSH hOldBrush = SelectObject( hBrush );
 	DrawObject::DrawChildren( p_Offset,  p_fZoomWidth, p_fZoomHeight, rDC, p_bSelected );
 }
 

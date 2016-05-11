@@ -63,12 +63,12 @@ HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg)
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
 		FORMAT_MESSAGE_FROM_SYSTEM | 
 		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
+		nullptr,
 		dwError,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 		(LPTSTR) &lpMsgBuf,
 		0,
-		NULL 
+		nullptr 
 	) == 0)return S_FALSE;
 	szMsg.Format(_T("%s"),lpMsgBuf);
 	LocalFree(lpMsgBuf);

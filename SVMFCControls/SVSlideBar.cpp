@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:07:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVSlideBar.h"
 #include "SVSystemLibrary/SVLockableClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,7 +29,7 @@ namespace Seidenader
 
 		SVSlideBarClass::SVSlideBarClass()
 		{
-			bTracking		= FALSE;
+			bTracking = false;
 			dwSlideBarType	= SV_SLIDEBAR_VERT;
 			trackRect.SetRectEmpty();
 		}
@@ -57,29 +59,30 @@ namespace Seidenader
 					invertTracker( trackRect );
 
 					ClientToScreen( &point );
-					if( dwSlideBarType == SV_SLIDEBAR_VERT )
+					if( SV_SLIDEBAR_VERT == dwSlideBarType )
 					{
 						trackRect.left  = point.x;
 						trackRect.right = trackRect.left + SV_SLIDEBAR_WIDTH;
 					}
-					else
-						if( dwSlideBarType == SV_SLIDEBAR_HORZ )
-						{
-							trackRect.top    = point.y;
-							trackRect.bottom = trackRect.top + SV_SLIDEBAR_HEIGHT;
-						}
+					else if( SV_SLIDEBAR_HORZ == dwSlideBarType)
+					{
+						trackRect.top    = point.y;
+						trackRect.bottom = trackRect.top + SV_SLIDEBAR_HEIGHT;
+					}
 
-						invertTracker( trackRect );
+					invertTracker( trackRect );
 				}
 				else
 				{
 					// Set cursor...
-					if( dwSlideBarType == SV_SLIDEBAR_VERT )
+					if( SV_SLIDEBAR_VERT == dwSlideBarType)
+					{
 						SetCursor( AfxGetApp()->LoadCursor( AFX_IDC_VSPLITBAR ) );
-					else
-						if( dwSlideBarType == SV_SLIDEBAR_HORZ )
-							SetCursor( AfxGetApp()->LoadCursor( AFX_IDC_HSPLITBAR ) );
-
+					}
+					else if( SV_SLIDEBAR_HORZ == dwSlideBarType )
+					{
+						SetCursor( AfxGetApp()->LoadCursor( AFX_IDC_HSPLITBAR ) );
+					}
 				}
 
 				SVSlideBarLock.Unlock();
@@ -92,20 +95,20 @@ namespace Seidenader
 		{
 			if( SVSlideBarLock.Lock() )
 			{
-				if( bTracking )
-					return;
+				if( !bTracking )
+				{
+					bTracking = true;
 
-				bTracking = TRUE;
+					SetCapture();
 
-				SetCapture();
+					GetWindowRect( &trackRect );
 
-				GetWindowRect( &trackRect );
+					invertTracker( trackRect );
 
-				invertTracker( trackRect );
+					SVSlideBarLock.Unlock();
 
-				SVSlideBarLock.Unlock();
-
-				CWnd::OnLButtonDown(nFlags, point);
+					CWnd::OnLButtonDown(nFlags, point);
+				}
 			}
 		}
 
@@ -113,20 +116,20 @@ namespace Seidenader
 		{
 			if( SVSlideBarLock.Lock() )
 			{
-				if( ! bTracking )
-					return;
+				if( bTracking )
+				{
+					bTracking = false;
 
-				bTracking = FALSE;
+					invertTracker( trackRect );
 
-				invertTracker( trackRect );
+					ReleaseCapture();
 
-				ReleaseCapture();
+					trackRect.SetRectEmpty();
 
-				trackRect.SetRectEmpty();
+					SVSlideBarLock.Unlock();
 
-				SVSlideBarLock.Unlock();
-
-				CWnd::OnLButtonUp(nFlags, point);
+					CWnd::OnLButtonUp(nFlags, point);
+				}
 			}
 		}
 
@@ -144,12 +147,16 @@ namespace Seidenader
 				{
 					// No drawing if parent control bar is floating ( not docked ! )
 					if( bVisible )
+					{
 						ShowWindow( SW_HIDE );
+					}
 					return;
 				}
 
 				if( ! bVisible )
+				{
 					ShowWindow( SW_SHOW );
+				}
 
 				CRect oldRect;
 				GetWindowRect( &oldRect );
@@ -215,7 +222,6 @@ namespace Seidenader
 						MoveWindow( &rect );
 						BringWindowToTop();
 					}
-					return;
 				}
 			}
 		}
@@ -230,12 +236,16 @@ namespace Seidenader
 			CDC* pDC = GetDC();
 			// invert the brush pattern (looks just like frame window sizing)
 			CBrush* pBrush = CDC::GetHalftoneBrush();
-			HBRUSH hOldBrush = NULL;
-			if (pBrush != NULL)
+			HBRUSH hOldBrush = nullptr;
+			if (nullptr != pBrush )
+			{
 				hOldBrush = (HBRUSH)SelectObject(pDC->m_hDC, pBrush->m_hObject);
+			}
 			pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATINVERT);
-			if (hOldBrush != NULL)
+			if (nullptr != hOldBrush)
+			{
 				SelectObject(pDC->m_hDC, hOldBrush);
+			}
 			ReleaseDC(pDC);
 		}
 	} //SVMFCControls

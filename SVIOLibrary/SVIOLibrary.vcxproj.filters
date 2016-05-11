@@ -31,9 +31,6 @@
     <ClInclude Include="SVIOConfigurationInterfaceClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIODDELoadLibraryClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVIODigitalArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -52,9 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVIOConfigurationInterfaceClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVIODDELoadLibraryClass.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVIODigitalLoadLibraryClass.inl">

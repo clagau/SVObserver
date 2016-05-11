@@ -42,7 +42,7 @@ HRESULT SVGigeCameraProxy::ReadCameraFileImpl( SVGigeCameraFileInfoStruct& p_rIn
 		// Read the Gige Feature Overrides
 		hr = reader.ReadGigeFeatureOverrides();
 
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			hr = reader.ReadParams( p_rParams );
 		}
@@ -152,7 +152,7 @@ HRESULT SVGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollection& r
 	for (iter = rDeviceParams.mapParameters.begin(); iter != rDeviceParams.mapParameters.end(); ++iter)
 	{
 		const SVDeviceParamWrapper& w = iter->second;
-		if ( ((const SVDeviceParam*) w) != NULL )
+		if ( nullptr != ((const SVDeviceParam*) w) )
 		{
 			rDestDeviceParams.GetParameter( iter->first ) = w;
 		}

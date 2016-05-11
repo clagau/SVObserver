@@ -23,9 +23,6 @@
     <ClCompile Include="SVBStr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVPackedFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,12 +47,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVBStr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPackedFile.h">

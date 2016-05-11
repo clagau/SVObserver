@@ -13,6 +13,7 @@
 
 bool CreateBmpFileFromHdc(const char* FilePath, HDC Context, RECT Area, uint16_t BitsPerPixel)
 {
+	bool bRetVal = false;
 	uint32_t Width = Area.right - Area.left;
 	uint32_t Height = Area.bottom - Area.top;
 	BITMAPINFO Info;
@@ -28,26 +29,25 @@ bool CreateBmpFileFromHdc(const char* FilePath, HDC Context, RECT Area, uint16_t
 	Info.bmiHeader.biSizeImage = Width * Height * (BitsPerPixel > 24 ? 4 : 3);
 	Header.bfType = 0x4D42;
 	Header.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-	char* Pixels = NULL;
+	char* Pixels = nullptr;
 	HDC MemDC = CreateCompatibleDC(Context);
 	HBITMAP Section = CreateDIBSection(Context, &Info, DIB_RGB_COLORS, (void**)&Pixels, 0, 0);
-	DeleteObject(SelectObject(MemDC, Section));
-	BitBlt(MemDC, 0, 0, Width, Height, Context, Area.left, Area.top, SRCCOPY);
-	DeleteDC(MemDC);
-	std::fstream hFile(FilePath, std::ios::out | std::ios::binary);
-	if (hFile.is_open())
+	if (Section)
 	{
-		hFile.write((char*)&Header, sizeof(Header));
-		hFile.write((char*)&Info.bmiHeader, sizeof(Info.bmiHeader));
-		hFile.write(Pixels, (((BitsPerPixel * Width + 31) & ~31) / 8) * Height);
-		hFile.close();
+		DeleteObject(SelectObject(MemDC, Section));
+		BitBlt(MemDC, 0, 0, Width, Height, Context, Area.left, Area.top, SRCCOPY);
+		DeleteDC(MemDC);
+		std::fstream hFile(FilePath, std::ios::out | std::ios::binary);
+		if (hFile.is_open())
+		{
+			hFile.write((char*)&Header, sizeof(Header));
+			hFile.write((char*)&Info.bmiHeader, sizeof(Info.bmiHeader));
+			hFile.write(Pixels, (((BitsPerPixel * Width + 31) & ~31) / 8) * Height);
+			hFile.close();
+		
+			bRetVal = true;
+		}
 		DeleteObject(Section);
-		return true;
 	}
-	DeleteObject(Section);
-	return false;
+	return bRetVal;
 }
-
-
-
-

@@ -18,7 +18,7 @@ SVMachineTypeEnum SVDLLToolLoadLibraryClass::CheckBitness( LPCTSTR p_szFile )
 		//offset to PE header is always at 0x3C
 		//PE header starts with "PE\0\0" =  0x50 0x45 0x00 0x00
 		//followed by 2-byte machine type field (see document above for enum)
-		FILE* fh = NULL;
+		FILE* fh = nullptr;
 		SVMachineTypeEnum l_machineType = ImageFileUnknownMachine;
 
 		errno_t err =  fopen_s( &fh, p_szFile, "rb");

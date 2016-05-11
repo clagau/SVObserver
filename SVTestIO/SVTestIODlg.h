@@ -34,7 +34,7 @@ class SVTestIODlg : public CDialog
 	DECLARE_DYNAMIC(SVTestIODlg)
 
 public:
-	SVTestIODlg(CWnd* pParent = NULL);   // standard constructor
+	SVTestIODlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVTestIODlg();
 
 // Dialog Data

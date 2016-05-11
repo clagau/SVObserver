@@ -9,17 +9,17 @@
 //* .Check In Date   : $Date:   15 May 2014 12:44:02  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageArithmetic.h"
 
-#include "SVImageLibrary/SVDrawContext.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 
 #include "SVImageClass.h"
 #include "SVTool.h"
 #include "SVToolImage.h"
-
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVImageArithmeticClass, SVImageArithmeticClassGuid )
 
@@ -28,7 +28,7 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 {
 
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVImageArithmeticObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageArithmeticObjectType;
 
 	// Identify our input type needs...
 
@@ -89,13 +89,12 @@ BOOL SVImageArithmeticClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 {
 	BOOL bOk = SVTaskObjectClass::CreateObject( PCreateStructure );
 
-	bOk &= ( outputImageObject.InitializeImage( getInputImageA() ) == S_OK );
+	bOk &= ( S_OK == outputImageObject.InitializeImage( getInputImageA() ) );
 
 	// Reset Printable flag
 	outputImageObject.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -104,10 +103,10 @@ BOOL SVImageArithmeticClass::CloseObject()
 {
 	if( SVTaskObjectClass::CloseObject() && getOutputImage() )
 	{
-		BOOL bRetVal = TRUE;
+		BOOL bRetVal = true;
 		return getOutputImage()->CloseObject() && bRetVal;
 	}
-	return FALSE;
+	return false;
 }
 
 HRESULT SVImageArithmeticClass::ResetObject()
@@ -116,11 +115,10 @@ HRESULT SVImageArithmeticClass::ResetObject()
 
 	CollectInputImageNames();
 
-	if ( SVTaskObjectClass::ResetObject() != S_OK )
+	if ( S_OK != SVTaskObjectClass::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
-
 	return l_hrOk;
 }
 
@@ -128,7 +126,7 @@ HRESULT SVImageArithmeticClass::IsInputImage( SVImageClass *p_psvImage )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_psvImage != NULL && ( p_psvImage == getInputImageA() || p_psvImage == getInputImageB() ) )
+	if ( nullptr != p_psvImage && ( p_psvImage == getInputImageA() || p_psvImage == getInputImageB() ) )
 	{
 		l_hrOk = S_OK;
 	}
@@ -141,7 +139,7 @@ SVImageClass* SVImageArithmeticClass::getInputImageA()
 	if( inputImageAInfo.IsConnected() && inputImageAInfo.GetInputObjectInfo().PObject )
 		return ( SVImageClass* ) inputImageAInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetA()
@@ -149,7 +147,7 @@ SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetA()
 	if( inputEnableOffsetAInfo.IsConnected() && inputEnableOffsetAInfo.GetInputObjectInfo().PObject )
 		return ( SVBoolValueObjectClass* ) inputEnableOffsetAInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetAPoint()
@@ -157,7 +155,7 @@ SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetAPoint()
 	if( inputOffsetAPointInfo.IsConnected() && inputOffsetAPointInfo.GetInputObjectInfo().PObject )
 		return ( SVPointValueObjectClass* ) inputOffsetAPointInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVImageClass* SVImageArithmeticClass::getInputImageB()
@@ -165,7 +163,7 @@ SVImageClass* SVImageArithmeticClass::getInputImageB()
 	if( inputImageBInfo.IsConnected() && inputImageBInfo.GetInputObjectInfo().PObject )
 		return ( SVImageClass* ) inputImageBInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetB()
@@ -173,7 +171,7 @@ SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetB()
 	if( inputEnableOffsetBInfo.IsConnected() && inputEnableOffsetBInfo.GetInputObjectInfo().PObject )
 		return ( SVBoolValueObjectClass* ) inputEnableOffsetBInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetBPoint()
@@ -181,7 +179,7 @@ SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetBPoint()
 	if( inputOffsetBPointInfo.IsConnected() && inputOffsetBPointInfo.GetInputObjectInfo().PObject )
 		return ( SVPointValueObjectClass* ) inputOffsetBPointInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVLongValueObjectClass* SVImageArithmeticClass::getInputArithOperator()
@@ -189,7 +187,7 @@ SVLongValueObjectClass* SVImageArithmeticClass::getInputArithOperator()
 	if( inputArithOperatorInfo.IsConnected() && inputArithOperatorInfo.GetInputObjectInfo().PObject )
 		return ( SVLongValueObjectClass* ) inputArithOperatorInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 	
 SVImageClass* SVImageArithmeticClass::getOutputImage()
@@ -364,7 +362,7 @@ BOOL SVImageArithmeticClass::OnValidate()
 
 DWORD_PTR SVImageArithmeticClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -372,7 +370,7 @@ DWORD_PTR SVImageArithmeticClass::processMessage( DWORD DwMessageID, DWORD_PTR D
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -393,8 +391,8 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 {
 	if( pInputImage && pOutputImage )
 	{
-		LPVOID pSrcHostBuffer = NULL;
-		LPVOID pDstHostBuffer = NULL;
+		LPVOID pSrcHostBuffer = nullptr;
+		LPVOID pDstHostBuffer = nullptr;
 		unsigned char *srcLinePtr,*srcLinePtr1,*dstLinePtr;
 	
 		long srcPitch = 0;
@@ -416,8 +414,8 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 		
 		if( pInputImage->GetImageHandle( InputImageBufferHandle ) && !( InputImageBufferHandle.empty() ) &&
 			pOutputImage->GetImageHandle( OutputImageBufferHandle ) && !( OutputImageBufferHandle.empty() ) &&
-			InputImageInfo.GetOutputRectangle( l_oInputRect ) == S_OK &&
-			OutputImageInfo.GetOutputRectangle( l_oOutputRect ) == S_OK )
+			S_OK == InputImageInfo.GetOutputRectangle( l_oInputRect ) &&
+			S_OK == OutputImageInfo.GetOutputRectangle( l_oOutputRect ) )
 		{
 			pSrcHostBuffer = InputImageBufferHandle->GetBufferAddress();
 			pDstHostBuffer = OutputImageBufferHandle->GetBufferAddress();

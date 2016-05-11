@@ -8,14 +8,8 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   26 Jul 2013 10:16:06  $
 //******************************************************************************
-#if !defined(AFX_SVOINSPECTIONSOURCEDLG_H__5C162AEB_4F59_4485_BB0F_615148FF99B1__INCLUDED_)
-#define AFX_SVOINSPECTIONSOURCEDLG_H__5C162AEB_4F59_4485_BB0F_615148FF99B1__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVOInspectionSourceDlg.h : header file
-//
+
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 
 #define INTERNAL_INSPECTION_NAME "Inspection_"
@@ -103,6 +97,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVOINSPECTIONSOURCEDLG_H__5C162AEB_4F59_4485_BB0F_615148FF99B1__INCLUDED_)
-

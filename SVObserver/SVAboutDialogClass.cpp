@@ -30,7 +30,7 @@ END_MESSAGE_MAP()
 
 SVAboutDialogClass::SVAboutDialogClass() : CDialog(SVAboutDialogClass::IDD)
 {
-	logoBmp = NULL;
+	logoBmp = nullptr;
 
 	//{{AFX_DATA_INIT(SVAboutDialogClass)
 	//}}AFX_DATA_INIT
@@ -82,13 +82,13 @@ BOOL SVAboutDialogClass::OnInitDialog()
 void SVAboutDialogClass::LoadOEMInfo()
 {
 	// Load Bitmap for OEM Logo
-	logoBmp = NULL;
+	logoBmp = nullptr;
 	
 
 	SVString logoFileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\logo.bmp")); 
 	if( 0 == ::_access(logoFileName.c_str()  , 0 ) )
 	{
-		logoBmp = (HBITMAP) ::LoadImage( NULL, 
+		logoBmp = (HBITMAP) ::LoadImage( nullptr, 
 								logoFileName.c_str(),
 								IMAGE_BITMAP,
 								0,
@@ -229,7 +229,7 @@ void SVAboutDialogClass::SetOEMText( LPCTSTR text )
 
 void SVAboutDialogClass::LoadVersionList()
 {
-	BSTR l_bstName = NULL;
+	BSTR l_bstName = nullptr;
 
 	// IO Board Version.....
 
@@ -238,7 +238,7 @@ void SVAboutDialogClass::LoadVersionList()
 	// as an array and therefore this enum may not apply.
 	HRESULT l_hr = SVIOConfigurationInterfaceClass::Instance().GetParameterName(SVBoardVersion, &l_bstName );
 
-	if( l_hr == S_OK )
+	if( S_OK == l_hr )
 	{
 		CString l_strName( l_bstName, ::SysStringLen( l_bstName ) );
 		CString l_strValue;

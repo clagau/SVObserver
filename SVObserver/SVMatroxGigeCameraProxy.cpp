@@ -159,7 +159,7 @@ HRESULT SVMatroxGigeCameraProxy::SetGigeFeatureOverrides(const SVString& xmlData
 
 // this is where the SV Camera Device Parameters are mapped to the Gige Parameter defines (mostly)
 // exceptions to this are the Internal ones for things like Trigger and Strobe...
-// SEJ - all parameters must pass through here to translate DeviceParam to GigeParamter tags
+// All parameters must pass through here to translate DeviceParam to GigeParamter tags
 /* Tags - DeviceParam to GigeFeatureParam
 DeviceParamVendorName				- SVGigeParameterVendorName
 DeviceParamModelName				- SVGigeParameterModelName
@@ -941,7 +941,7 @@ HRESULT SVMatroxGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigiti
 HRESULT SVMatroxGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer )
 {
 	HRESULT hr = S_OK;
-	// SEJ - send notification to start tracking main camera parameters
+	// Send notification to start tracking main camera parameters
 	if ( nullptr != pDigitizer)
 	{
 		_variant_t dummy;

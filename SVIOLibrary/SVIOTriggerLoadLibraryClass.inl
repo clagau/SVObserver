@@ -15,22 +15,22 @@
 
 inline SVIOTriggerLoadLibraryClass::SVIOTriggerLoadLibraryClass()
 {
-	m_hmHandle = NULL;
+	m_hmHandle = nullptr;
 
-	m_psvCreate = NULL;
-	m_psvDestroy = NULL;
-	m_psvGetCount = NULL;
-	m_psvGetHandle = NULL;
-	m_psvGetName = NULL;
-	m_psvRegister = NULL;
-	m_psvUnregister = NULL;
-	m_psvUnregisterAll = NULL;
-	m_psvStart = NULL;
-	m_psvStop = NULL;
-	m_psvGetParameterCount = NULL;
-	m_psvGetParameterName = NULL;
-	m_psvGetParameterValue = NULL;
-	m_psvSetParameterValue = NULL;
+	m_psvCreate = nullptr;
+	m_psvDestroy = nullptr;
+	m_psvGetCount = nullptr;
+	m_psvGetHandle = nullptr;
+	m_psvGetName = nullptr;
+	m_psvRegister = nullptr;
+	m_psvUnregister = nullptr;
+	m_psvUnregisterAll = nullptr;
+	m_psvStart = nullptr;
+	m_psvStop = nullptr;
+	m_psvGetParameterCount = nullptr;
+	m_psvGetParameterName = nullptr;
+	m_psvGetParameterValue = nullptr;
+	m_psvSetParameterValue = nullptr;
 }
 
 inline SVIOTriggerLoadLibraryClass::~SVIOTriggerLoadLibraryClass()
@@ -42,13 +42,13 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_hmHandle == NULL )
+	if ( nullptr == m_hmHandle )
 	{
 		m_hmHandle = ::LoadLibrary( p_szLibrary );
 		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 		Sleep(0);
 
-		if ( m_hmHandle != NULL )
+		if ( nullptr != m_hmHandle )
 		{
 			m_psvCreate = (SVCreatePtr)::GetProcAddress( m_hmHandle, "SVCreate" );
 			m_psvDestroy = (SVDestroyPtr)::GetProcAddress( m_hmHandle, "SVDestroy" );
@@ -65,16 +65,16 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 			m_psvGetParameterValue = (SVTriggerGetParameterValuePtr)::GetProcAddress( m_hmHandle, "SVTriggerGetParameterValue" );
 			m_psvSetParameterValue = (SVTriggerSetParameterValuePtr)::GetProcAddress( m_hmHandle, "SVTriggerSetParameterValue" );
 
-			if ( m_psvCreate != NULL &&
-			     m_psvDestroy != NULL &&
-			     m_psvGetCount != NULL &&
-			     m_psvGetHandle != NULL &&
-			     m_psvGetName != NULL &&
-			     m_psvRegister != NULL &&
-			     m_psvUnregister != NULL &&
-			     m_psvUnregisterAll != NULL &&
-			     m_psvStart != NULL &&
-			     m_psvStop != NULL )
+			if ( nullptr != m_psvCreate &&
+			     nullptr != m_psvDestroy &&
+			     nullptr != m_psvGetCount &&
+			     nullptr != m_psvGetHandle &&
+			     nullptr != m_psvGetName &&
+			     nullptr != m_psvRegister &&
+			     nullptr != m_psvUnregister &&
+			     nullptr != m_psvUnregisterAll &&
+			     nullptr != m_psvStart &&
+			     nullptr != m_psvStop )
 			{
 				l_hrOk = m_psvCreate();
 			}
@@ -86,7 +86,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 		}
 	}
 
-	if ( l_hrOk != S_OK )
+	if ( S_OK != l_hrOk )
 	{
 		Close();
 	}
@@ -98,9 +98,9 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Close()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_hmHandle != NULL )
+	if ( nullptr != m_hmHandle )
 	{
-		if ( m_psvDestroy != NULL )
+		if ( nullptr != m_psvDestroy )
 		{
 			l_hrOk = m_psvDestroy();
 		}
@@ -109,7 +109,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Close()
 		{
 			// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 			Sleep(0);
-			m_hmHandle = NULL;
+			m_hmHandle = nullptr;
 		}
 		else
 		{
@@ -117,20 +117,20 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Close()
 		}
 	}
 
-	m_psvCreate = NULL;
-	m_psvDestroy = NULL;
-	m_psvGetCount = NULL;
-	m_psvGetHandle = NULL;
-	m_psvGetName = NULL;
-	m_psvRegister = NULL;
-	m_psvUnregister = NULL;
-	m_psvUnregisterAll = NULL;
-	m_psvStart = NULL;
-	m_psvStop = NULL;
-	m_psvGetParameterCount = NULL;
-	m_psvGetParameterName = NULL;
-	m_psvGetParameterValue = NULL;
-	m_psvSetParameterValue = NULL;
+	m_psvCreate = nullptr;
+	m_psvDestroy = nullptr;
+	m_psvGetCount = nullptr;
+	m_psvGetHandle = nullptr;
+	m_psvGetName = nullptr;
+	m_psvRegister = nullptr;
+	m_psvUnregister = nullptr;
+	m_psvUnregisterAll = nullptr;
+	m_psvStart = nullptr;
+	m_psvStop = nullptr;
+	m_psvGetParameterCount = nullptr;
+	m_psvGetParameterName = nullptr;
+	m_psvGetParameterValue = nullptr;
+	m_psvSetParameterValue = nullptr;
 
 	return l_hrOk;
 }
@@ -139,7 +139,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetCount( unsigned long *p_pulCount 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetCount != NULL )
+	if ( nullptr != m_psvGetCount )
 	{
 		l_hrOk = m_psvGetCount( p_pulCount );
 	}
@@ -151,7 +151,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetHandle( unsigned long *p_pulHandl
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetHandle != NULL )
+	if ( nullptr != m_psvGetHandle )
 	{
 		l_hrOk = m_psvGetHandle( p_pulHandle, p_ulIndex );
 	}
@@ -163,7 +163,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetName( unsigned long p_ulHandle, B
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetName != NULL )
+	if ( nullptr != m_psvGetName )
 	{
 		l_hrOk = m_psvGetName( p_ulHandle, p_pbstrName );
 	}
@@ -175,7 +175,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long p_ulHandle, 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvRegister != NULL )
+	if ( nullptr != m_psvRegister )
 	{
 		l_hrOk = m_psvRegister( p_ulHandle, p_rCallback.m_pCallback, p_rCallback.m_pOwner, p_rCallback.m_pData );
 	}
@@ -187,7 +187,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long p_ulHandle
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvUnregister != NULL )
+	if ( nullptr != m_psvUnregister )
 	{
 		l_hrOk = m_psvUnregister( p_ulHandle, p_rCallback.m_pCallback, p_rCallback.m_pOwner, p_rCallback.m_pData );
 	}
@@ -199,7 +199,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::UnregisterAll( unsigned long p_ulHan
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvUnregisterAll != NULL )
+	if ( nullptr != m_psvUnregisterAll )
 	{
 		l_hrOk = m_psvUnregisterAll( p_ulHandle );
 	}
@@ -211,7 +211,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Start( unsigned long p_ulHandle )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvStart != NULL )
+	if ( nullptr != m_psvStart )
 	{
 		l_hrOk = m_psvStart( p_ulHandle );
 	}
@@ -223,7 +223,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Stop( unsigned long p_ulHandle )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvStop != NULL )
+	if ( nullptr != m_psvStop )
 	{
 		l_hrOk = m_psvStop( p_ulHandle );
 	}
@@ -235,7 +235,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterCount( unsigned long p_u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetParameterCount != NULL )
+	if ( nullptr != m_psvGetParameterCount )
 	{
 		l_hrOk = m_psvGetParameterCount( p_ulHandle, p_pulCount );
 	}
@@ -247,7 +247,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterName( unsigned long p_ul
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetParameterName != NULL )
+	if ( nullptr != m_psvGetParameterName )
 	{
 		l_hrOk = m_psvGetParameterName( p_ulHandle, p_ulIndex, p_pbstrName );
 	}
@@ -259,7 +259,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterValue( unsigned long p_u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetParameterValue != NULL )
+	if ( nullptr != m_psvGetParameterValue )
 	{
 		l_hrOk = m_psvGetParameterValue( p_ulHandle, p_ulIndex, p_pvarValue );
 	}
@@ -271,7 +271,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::SetParameterValue( unsigned long p_u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvSetParameterValue != NULL )
+	if ( nullptr != m_psvSetParameterValue )
 	{
 		l_hrOk = m_psvSetParameterValue( p_ulHandle, p_ulIndex, p_pvarValue );
 	}

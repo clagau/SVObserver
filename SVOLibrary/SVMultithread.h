@@ -14,6 +14,7 @@
 class SVSyncObject
 {
 public:
+	virtual ~SVSyncObject() {}
 	virtual HRESULT Unlock() = 0;
 	virtual HRESULT Lock() = 0;
 	virtual HRESULT Lock(DWORD dwTimeout) {return Lock();}

@@ -40,19 +40,19 @@ SVClassRegisterListClass::~SVClassRegisterListClass()
 }
 
 // Construct class by ClassID, 
-// returns NULL, if this class type is not available!
+// returns nullptr, if this class type is not available!
 // Otherwise, it returns a SVObjectClass* to the new object.
 // You have to destroy this new object by yourself by using delete
 //
 SVObjectClass* SVClassRegisterListClass::ConstructNewObject( const SVGUID& RUniqueClassID )
 {
-	SVObjectClass* l_pObject = NULL;
+	SVObjectClass* l_pObject = nullptr;
 
 	SVRegisterClasses::const_iterator l_Iter = m_Registers.find( RUniqueClassID );
 
 	if( l_Iter != m_Registers.end() )
 	{
-		if( l_Iter->second != NULL )
+		if( nullptr != l_Iter->second )
 		{
 			l_pObject = l_Iter->second->Construct();
 		}
@@ -63,7 +63,7 @@ SVObjectClass* SVClassRegisterListClass::ConstructNewObject( const SVGUID& RUniq
 
 void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )
 {
-	if( pClass != NULL )
+	if( nullptr != pClass )
 	{
 		SVRegisterClasses::const_iterator l_Iter = m_Registers.find( pClass->GetClassID() );
 

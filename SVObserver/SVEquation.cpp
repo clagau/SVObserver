@@ -64,7 +64,7 @@ void SVEquationSymbolTableClass::ClearAll()
 		SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable.GetAt( i );
 		::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
 										SVM_DISCONNECT_OBJECT_INPUT, 
-										reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL );
+										reinterpret_cast<DWORD_PTR>(pInObjectInfo), 0 );
 	}
 	// Empty the ToolSet Symbol table 
 	m_toolsetSymbolTable.RemoveAll();
@@ -99,32 +99,26 @@ int SVEquationSymbolTableClass::FindSymbol( LPCTSTR name )
 
 void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 {
-	
 	SVInspectionProcess *pInspection(nullptr);
 	SVObjectAppClass* pAppClass = dynamic_cast<SVObjectAppClass*>(pRequestor);
-	if(pAppClass != nullptr)
+	if( nullptr != pAppClass )
 	{
 		pInspection = 	pAppClass->GetInspection();
 	}
-	if(pInspection)
+	if( pInspection )
 	{
 		m_InspectionName = pInspection->GetName();
 		m_InspectionName += "."; 
-		
 	}	
 }
 
-
 int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequestor )
 {
-	
 	// Strip off Double Quotes
 	CString csName = name;
-	//csName.Remove( _T( '\"' ) );
 	csName.Trim(_T("\"" ) );
 
 	SVEquationSymbolTypeEnum Type = SV_INPUT_SYMBOL_TYPE; 
-	
 	
 	int symbolIndex = FindSymbol( csName ); 
 	if(symbolIndex != -1)
@@ -141,8 +135,8 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 		strLookUpName = m_InspectionName;
 		strLookUpName += csName;
 	}
-	else if ( 0== csName.Left(m_DIOInputName.GetLength()).Compare(m_DIOInputName) 
-			||  0== csName.Left(m_RemoteInputName.GetLength()).Compare(m_RemoteInputName) )
+	else if ( 0 == csName.Left(m_DIOInputName.GetLength()).Compare(m_DIOInputName) 
+			||  0 == csName.Left(m_RemoteInputName.GetLength()).Compare(m_RemoteInputName) )
 	{
 		strLookUpName = m_InspectionName;
 		strLookUpName += csName;
@@ -151,18 +145,16 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	{
 		strLookUpName = csName;
 	}
-
-	
-	
+		
 	SVObjectReference ObjectReference;
 
 	HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( strLookUpName.GetString(), ObjectReference );
-	if(hr != S_OK)
+	if( S_OK != hr )
 	{
 		return -1;
 	}
 
-	if(FALSE == (ObjectReference.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ))
+	if( FALSE == (ObjectReference.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION) )
 	{
 		return -1;
 	}
@@ -180,7 +172,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	pSymbolStruct->InObjectInfo.SetInputObject( ObjectReference->GetObjectOutputInfo().UniqueObjectID );
 
 	// Try to Connect at this point
-	DWORD_PTR rc = ::SVSendMessage(ObjectReference->GetObjectOutputInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&pSymbolStruct->InObjectInfo), NULL);
+	DWORD_PTR rc = ::SVSendMessage(ObjectReference->GetObjectOutputInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&pSymbolStruct->InObjectInfo), 0);
 	if( rc == SVMR_SUCCESS )
 	{
 		pSymbolStruct->IsValid = TRUE;
@@ -218,7 +210,8 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, lo
 			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
 			{
 				SVValueObjectClass* pValueObject = static_cast <SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
-				return pValueObject->GetValue( value );
+				HRESULT hr = pValueObject->GetValue( value );
+				return hr;
 			}
 		}
 
@@ -301,14 +294,6 @@ HRESULT SVEquationSymbolTableClass::GetData(int iSymbolIndex, std::vector<double
 	return S_FALSE;
 }
 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVEquationClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVEquationClass, SVEquationClassGuid );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -325,20 +310,14 @@ SVEquationClass::SVEquationClass( SVObjectClass* POwner, int StringResourceID )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVEquationClass
-// -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :10.08.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 void SVEquationClass::init()
 {
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -368,8 +347,6 @@ SVEquationClass::~SVEquationClass()
 {
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
@@ -379,7 +356,7 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 
 	if( SVTaskObjectClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = GetInspection() != NULL;
+		bOk = nullptr != GetInspection();
 	}
 
 	// Set / Reset Printable Flag
@@ -399,49 +376,11 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 		}
 	}
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : NeedsConditionalPPQData
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :26.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVEquationClass::NeedsConditionalPPQData()
-{
-	if( HasCondition() && IsEnabled() )
-		return TRUE;
-
-	return FALSE;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : HasCondition
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :30.06.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVEquationClass::HasCondition()
 {
 	return !equationStruct.EquationBuffer.IsEmpty();
@@ -452,32 +391,6 @@ double SVEquationClass::GetYACCResult() const
 	return yacc.equationResult;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetEquationText
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :25.05.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVEquationClass::GetEquationText(CString& text) const
 {
 	text = equationStruct.EquationBuffer;
@@ -488,32 +401,6 @@ void SVEquationClass::GetEquationText(SVString& text) const
 	text = equationStruct.EquationBuffer.GetString();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SetEquationText
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :25.05.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVEquationClass::SetEquationText(const CString& text)
 {
 	equationStruct.EquationBuffer = text;
@@ -697,10 +584,10 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 	
 			if (yacc.yacc_err)
 			{
-				SVString fullObjectName = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
+				SVString fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 				SVStringArray msgList;
 				msgList.push_back(fullObjectName);
-				if( yacc.m_StatusCode != S_OK )
+				if( S_OK != yacc.m_StatusCode )
 				{
 					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TooManyVariables, msgList, StdMessageParams, SvOi::Err_10046 );
 				}
@@ -789,7 +676,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
 
 	if (lex.lex_err)
 	{
-		SVString fullObjectName = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
+		SVString fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 		ret.bPassed = false;
 		ret.iPositionFailed = static_cast< int >( lex.position + 1 );
 		SVStringArray msgList;
@@ -837,7 +724,7 @@ BOOL SVEquationClass::DisconnectToolSetSymbol( SVInObjectInfoStruct* pInObjectIn
 			{
 				if( pInObjectInfo->GetInputObjectInfo().UniqueObjectID == pSymbolInputObjectInfo->GetInputObjectInfo().UniqueObjectID )
 				{
-					pSymbolInputObjectInfo->SetInputObject( NULL );
+					pSymbolInputObjectInfo->SetInputObject( nullptr );
 					return TRUE;
 				}
 			}
@@ -857,15 +744,15 @@ BOOL SVEquationClass::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR
 
 		if( const SVInspectionProcess* pInspection = dynamic_cast<const SVInspectionProcess*> (pObject) )
 		{
-			newPrefix = _T( "." ) + pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+			newPrefix = _T( "." ) + pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
 		}// end if
 		else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
 		{
-			newPrefix = _T( "\"" ) + pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType ) + _T( "\"" );
+			newPrefix = _T( "\"" ) + pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType ) + _T( "\"" );
 		}
 		else
 		{
-			newPrefix = _T( "\"" ) + pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+			newPrefix = _T( "\"" ) + pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
 		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), orginalName );
@@ -882,40 +769,6 @@ BOOL SVEquationClass::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR
 		}
 	}
 	return Result;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVEquationClass::buildDynamicInputList()
-{
-	BOOL retVal = TRUE;
-
-	// for all toolset Variables
-	SVInObjectInfoStruct* pInObjectInfo;
-
-	SVInputInfoListClass& dynaInputList = symbols.GetToolSetSymbolTable();
-
-	for( int i = 0; i < dynaInputList.GetSize() ;i++ )
-	{
-		pInObjectInfo = dynaInputList.GetAt( i );
-
-		// set the owner
-		pInObjectInfo->SetObject( GetObjectInfo() );
-
-		SVString l_Name = SvUl_SF::Format( _T( "Equation%d" ), i );
-
-		// add to the owner list of inputs
-		RegisterInputObject( pInObjectInfo, l_Name );
-
-		// if not connected - try to connect it
-		if( !pInObjectInfo->IsConnected() )
-		{
-			// Connect to the Input
-			retVal = ::SVSendMessage( pInObjectInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL ) && retVal;
-		}
-	}
-	return retVal;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -984,8 +837,6 @@ BOOL SVEquationClass::onRun( SVRunStatusClass& RRunStatus )
 			isDataValid = FALSE;
 		}
 
-		//yacc.yyparse();
-
 		/////////////////////////////////////////////////////
 		// Check for Valid Data
 		/////////////////////////////////////////////////////
@@ -1040,7 +891,7 @@ HRESULT SVEquationClass::GetArrayValues( int iSymbolIndex, std::vector< double >
 			hr = symbols.GetData( iSymbolIndex, values, 1 );
 	}// end if
 
-	if ( hr != S_OK )
+	if ( S_OK != hr )
 	{
 		isDataValid = FALSE;
 	}
@@ -1061,7 +912,7 @@ double SVEquationClass::GetSubscriptedPropertyValue( int iSymbolIndex, int iInde
 			hr = symbols.GetData( iSymbolIndex, iIndex, value, 1 );
 	}// end if
 
-	if ( hr != S_OK )
+	if ( S_OK != hr )
 	{
 		value = dDefault;
 	}
@@ -1096,16 +947,16 @@ double SVEquationClass::GetSubscriptedPropertyValue( int iSymbolIndex, int iInde
 ////////////////////////////////////////////////////////////////////////////////
 DWORD_PTR SVEquationClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
 	{
-		// is sent in SVIPDoc::Validate() ( old PrepareForRunning() )
+		// is sent in SVIPDoc::Validate()
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT ResetStatus = ResetObject();
-			if( ResetStatus != S_OK )
+			if( S_OK != ResetStatus )
 			{
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 
@@ -1132,7 +983,9 @@ DWORD_PTR SVEquationClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
 			SVInObjectInfoStruct* pInObjectInfo = ( SVInObjectInfoStruct* ) DwMessageValue;
 			if( DisconnectToolSetSymbol( pInObjectInfo ) )
+			{
 				DwResult = SVMR_SUCCESS;
+			}
 		}
 		break;
 
@@ -1143,7 +996,9 @@ DWORD_PTR SVEquationClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 			LPCTSTR orgName = ( LPCTSTR )DwMessageContext;
 
 			if( renameToolSetSymbol(pObject, orgName ) )
+			{
 				DwResult = SVMR_SUCCESS;
+			}
 		}
 		break;
 	}
@@ -1155,8 +1010,6 @@ HRESULT SVEquationClass::ResetObject()
 {
 	HRESULT l_hrOk = SVTaskObjectClass::ResetObject();
 
-	
-	
 	// call Test()...( Rebuilds symbol table !!! )
 	if( HasCondition() && IsEnabled() )
 	{

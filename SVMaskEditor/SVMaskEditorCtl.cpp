@@ -11,13 +11,14 @@
 
 // SVMaskEditorCtl.cpp : Implementation of the SVMaskEditorCtrl ActiveX Control class.
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVSystemLibrary\SVImageConvertorGDI.h"
 #include "SVMaskEditor.h"
 
 #include "SVMaskEditorCtl.h"
 #include "SVMaskEditorPpg.h"
-
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,9 +26,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 IMPLEMENT_DYNCREATE(SVMaskEditorCtrl, COleControl)
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Message map
@@ -343,9 +342,8 @@ IStream* SVMaskEditorCtrl::GetMaskData()
 {
 	CComPtr<IStream> stream;
 	HRESULT hr = CreateStreamOnHGlobal(maskEditorDlg.GraphixObject.GetGraphixData(), true, &stream );
-	ASSERT( hr == S_OK );
+	ASSERT( S_OK == hr );
 	return stream.Detach();
-
 }
 
 void SVMaskEditorCtrl::SetMaskData(IStream* nNewValue) 

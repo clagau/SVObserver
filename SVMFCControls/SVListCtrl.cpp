@@ -276,7 +276,7 @@ namespace Seidenader
 
 			// fill background color
 			CRect rcClip(lpDrawItemStruct->rcItem);
-			ExtTextOut(pDC->GetSafeHdc(), 0, 0, ETO_OPAQUE, rcClip, NULL, 0, NULL);
+			ExtTextOut(pDC->GetSafeHdc(), 0, 0, ETO_OPAQUE, rcClip, nullptr, 0, nullptr);
 
 			// draw color in first col if any
 			rcClip.right = rcLabel.right;
@@ -370,13 +370,13 @@ namespace Seidenader
 					CImageList::DragLeave(this);
 					CImageList::EndDrag();
 					ReleaseCapture();
-					InvalidateRect(NULL);
+					InvalidateRect(nullptr);
 					UpdateWindow();
 					KillTimer(1);
 					return;
 				}
 
-				SetTimer(1, 300, NULL);// reset timer
+				SetTimer(1, 300, nullptr);// reset timer
 				DWORD dwPos = ::GetMessagePos();
 				CPoint ptList(LOWORD(dwPos), HIWORD(dwPos));
 				ScreenToClient(&ptList);
@@ -405,11 +405,8 @@ namespace Seidenader
 
 			LVHITTESTINFO ht;
 			ht.pt = point;
-#if _MSC_VER >= 1200
+
 			SubItemHitTest(&ht);
-#else
-			ListView_SubItemHitTest(m_hWnd, &ht);
-#endif
 
 			if (OnItemLButtonDown(ht))
 			{
@@ -471,7 +468,7 @@ namespace Seidenader
 					CImageList::DragLeave(this);
 					CImageList::EndDrag();
 					ReleaseCapture();
-					InvalidateRect(NULL);
+					InvalidateRect(nullptr);
 					UpdateWindow();
 				}	
 				else
@@ -492,7 +489,7 @@ namespace Seidenader
 					if (m_nDragTarget != -1)
 					{
 						SetItemState(m_nDragTarget, LVIS_DROPHILITED, LVIS_DROPHILITED);
-						SetTimer(1, 300, NULL);
+						SetTimer(1, 300, nullptr);
 					}
 				}
 			}
@@ -536,22 +533,9 @@ namespace Seidenader
 			if (iSubItem == m_CurSubItem)
 			{
 				CRect rect;
-#if _MSC_VER >= 1200
+
 				GetSubItemRect(nItem, iSubItem, LVIR_BOUNDS, rect);
-#else
-				int nCol = iSubItem;
-				// Get the column offset	
-				int offset = 0;	
-				for (int i = 0; i < nCol; i++)
-					offset += GetColumnWidth(i);	
-				GetItemRect(nItem, &rect, LVIR_BOUNDS);
-				// Get Column alignment	
-				LV_COLUMN lvcol;
-				lvcol.mask = LVCF_FMT;
-				GetColumn(nCol, &lvcol);
-				rect.left += offset;
-				rect.right = rect.left + GetColumnWidth(nCol);
-#endif
+
 				if (iSubItem == 0)
 					GetItemRect(iSubItem, rect, LVIR_LABEL);
 				rect.DeflateRect(1, 1);
@@ -599,7 +583,7 @@ namespace Seidenader
 			{
 				CSize size(offset + rect.left, 0);
 				Scroll(size);
-				InvalidateRect(NULL);
+				InvalidateRect(nullptr);
 				UpdateWindow();
 			}
 		}
@@ -678,13 +662,8 @@ namespace Seidenader
 			if (!EnsureVisible(iItem, TRUE)) 
 				return;
 
-#if _MSC_VER >= 1200
 			GetSubItemRect(iItem, iSubItem, LVIR_BOUNDS, rect);
-#else
-			for (int i = 0; i < iSubItem; i++)
-				offset += GetColumnWidth(i);
-			GetItemRect(iItem, &rect, LVIR_BOUNDS);
-#endif
+
 			// Now scroll if we need to expose the column
 			CRect rcClient;
 			GetClientRect(rcClient);
@@ -874,7 +853,7 @@ namespace Seidenader
 			CListCtrl::OnSetFocus(pOldWnd);
 
 			// check if we are getting focus from label edit box
-			if(pOldWnd != NULL && ::IsWindow(pOldWnd->m_hWnd) && pOldWnd->GetParent() == this)
+			if(nullptr != pOldWnd && ::IsWindow(pOldWnd->m_hWnd) && pOldWnd->GetParent() == this)
 				return;
 
 			// repaint items that should change appearance
@@ -888,7 +867,7 @@ namespace Seidenader
 			CListCtrl::OnKillFocus(pNewWnd);
 
 			// check if we are losing focus to label edit box
-			if(pNewWnd != NULL && ::IsWindow(pNewWnd->m_hWnd) && pNewWnd->GetParent() == this)
+			if(nullptr != pNewWnd && ::IsWindow(pNewWnd->m_hWnd) && pNewWnd->GetParent() == this)
 				return;
 
 			// repaint items that should change appearance

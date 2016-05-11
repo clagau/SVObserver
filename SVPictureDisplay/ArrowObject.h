@@ -31,7 +31,6 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	HRESULT SetSelectedColor(COLORREF color);
 	virtual void Draw( POINT p_dOffset, double p_fZoomWidth, double p_fZoomHeight, CDC& rDC, bool p_bSelected ) override;
 	virtual void SetParameter(long parameterId, _variant_t parameterValue) override;
 	virtual void GetParameter(VariantParamMap& ParameterMap) const override;

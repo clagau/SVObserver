@@ -16,7 +16,6 @@
 #include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary\SVObjectAsynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "SVObjectLibrary\SVObjectScriptUsage.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
@@ -52,11 +51,6 @@ RangeClassHelper::~RangeClassHelper()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void RangeClassHelper::setRangeObject(SVRangeClass* PRange)
-{
-	m_pRange = PRange;
-}
-
 void RangeClassHelper::SetRangeTaskObject()
 {
 	SetTaskObject(m_pRange);
@@ -69,7 +63,7 @@ HRESULT RangeClassHelper::GetInspectionData(RangeEnum::ERange ra)
 	{
 	case RangeEnum::ER_FailHigh:
 		hr = m_pRange->GetValue(ra, m_FailHigh);
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			hr = m_pRange->GetIndirectValue(ra, m_FailHighIndirect);
 		}
@@ -77,7 +71,7 @@ HRESULT RangeClassHelper::GetInspectionData(RangeEnum::ERange ra)
 
 	case RangeEnum::ER_WarnHigh:
 		hr = m_pRange->GetValue(ra, m_WarnHigh);
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			hr = m_pRange->GetIndirectValue(ra, m_WarnHighIndirect);
 		}
@@ -85,7 +79,7 @@ HRESULT RangeClassHelper::GetInspectionData(RangeEnum::ERange ra)
 
 	case RangeEnum::ER_FailLow:
 		hr = m_pRange->GetValue(ra, m_FailLow);
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			hr = m_pRange->GetIndirectValue(ra, m_FailLowIndirect);
 		}
@@ -93,7 +87,7 @@ HRESULT RangeClassHelper::GetInspectionData(RangeEnum::ERange ra)
 
 	case RangeEnum::ER_WarnLow:
 		hr = m_pRange->GetValue(ra, m_WarnLow);
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			hr = m_pRange->GetIndirectValue(ra, m_WarnLowIndirect);
 		}
@@ -110,9 +104,9 @@ HRESULT RangeClassHelper::GetInspectionData(RangeEnum::ERange ra)
 HRESULT RangeClassHelper::GetAllInspectionData()
 {
 	HRESULT hr = S_OK;
-	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
+	for (int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
-		if(hr == S_OK)
+		if (S_OK == hr)
 		{
 			hr = GetInspectionData(static_cast<RangeEnum::ERange>(i));
 		}
@@ -301,7 +295,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 	{
 		hr = AddInputRequest( &( m_pRange->FailHigh ), m_FailHigh );
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16001;
 		}
@@ -310,7 +304,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = AddInputRequest( &( m_pRange->FailLow ), m_FailLow );
 		}
 
-		if(hr != S_OK)
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16002;
 		}
@@ -319,7 +313,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = AddInputRequest( &( m_pRange->WarnHigh ), m_WarnHigh );
 		}
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16003;
 		}
@@ -328,7 +322,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = AddInputRequest( &( m_pRange->WarnLow ), m_WarnLow );
 		}
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16004;
 		}
@@ -337,7 +331,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_FailHigh), m_FailHighIndirect );
 		}
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16005;
 		}
@@ -346,7 +340,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_FailLow), m_FailLowIndirect );
 		}
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16006;
 		}
@@ -355,7 +349,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_WarnHigh), m_WarnHighIndirect );
 		}
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16007;
 		}
@@ -364,7 +358,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_WarnLow), m_WarnLowIndirect );
 		}
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16008;
 		}
@@ -373,7 +367,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = AddInputRequestMarker();
 		}
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16009;
 		}
@@ -382,7 +376,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 			hr = RunOnce( m_pRange->GetTool() );
 		}
 
-		if( hr != S_OK )
+		if( S_OK != hr )
 		{
 			hr = -SvOi::Err_16010;
 		}
@@ -396,16 +390,16 @@ CString RangeClassHelper::GetStringFromRange(RangeEnum::ERange ra) const
 	CString ret;
 	double val;
 
-	if(nullptr == m_pRange)
+	if( nullptr == m_pRange )
 	{
 		return ret;
 	}
 
 	m_pRange->GetIndirectValue(ra, ret);
 
-	if(ret.IsEmpty())
+	if( ret.IsEmpty() )
 	{
-		if(m_pRange->GetValue(ra, val) == S_OK)
+		if( S_OK == m_pRange->GetValue(ra, val) )
 		{
 			ret.Format(_T("%lf"), val);
 		}
@@ -459,7 +453,7 @@ bool RangeClassHelper::IsAllowedToSet(const SVObjectClass& ref, const CString& v
 			SVObjectReference ObjectRefValue;
 			HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( value.GetString(), ObjectRefValue );
 
-			if( !value.IsEmpty() && ( hrFind != S_OK || ObjectRefValue.Object() == nullptr ) )
+			if( !value.IsEmpty() && ( S_OK != hrFind || nullptr == ObjectRefValue.Object() ) )
 			{
 				//a not empty string and no reference
 				hres = SVMSG_OBJECT_CANNOT_BE_SET_INVALID_REFERENCE;

@@ -72,7 +72,7 @@ BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	// This value object is obsolete, hide it.
 	m_EnableSourceImageExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
 
-	isCreated = l_Status;
+	m_isCreated = l_Status;
 
 	SetAttributeData();
 
@@ -389,8 +389,8 @@ SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput() const
 #pragma region Private Methods
 void SVShiftTool::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVShiftToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVShiftToolObjectType;
 
 	SVObjectClass* l_pObject = nullptr;
 

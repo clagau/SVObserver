@@ -24,7 +24,7 @@ SVStatusBar::~SVStatusBar()
 
 void SVStatusBar::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 {
-	if( lpDrawItemStruct->hDC != NULL )
+	if( nullptr != lpDrawItemStruct->hDC )
 	{
 		CDC dc;
 		dc.Attach( lpDrawItemStruct->hDC );
@@ -100,10 +100,9 @@ void SVStatusBar::SetFbwfInfo(UINT PaneIndex,bool FbwfAvailable, bool FbwfActive
 		m_strFbwfText = "Disk protection not available!";
 	}
 
-	CClientDC DC( NULL );
+	CClientDC DC( nullptr );
 	int l_Width = DC.GetTextExtent(m_strFbwfText ).cx - (3*m_strFbwfText.GetLength())/2;
 	SetPaneInfo( PaneIndex,ID_INDICATOR_FBWF,SBPS_DISABLED ,l_Width);
-
 }
 
 

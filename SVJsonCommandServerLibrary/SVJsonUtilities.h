@@ -28,8 +28,6 @@ namespace SVJsonUtilities
 
 	HRESULT AddVariantToJsonArray( const _variant_t& p_rVariant, Json::Value& p_rJsonArray );
 
-	HRESULT UpdateNameVariantPairToJsonObject( const std::string& p_rName, const _variant_t& p_rVariant, Json::Value& p_rJsonObject );
-
 	HRESULT GetTempFileNameUsingPrefixAndExt( std::string& p_rTempFileName, const std::string& p_rPrefix, const std::string& p_rExt );
 
 	HRESULT WriteJsonValueToFile( const Json::Value& p_rJsonValue, const std::string& p_rFileName );

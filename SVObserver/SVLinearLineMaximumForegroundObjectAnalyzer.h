@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVLinearAnalyzerClass.h"
-#include "SVValueObjectImpl.h"
 #pragma endregion Includes
 
 class SVLinearMaximumForegroundObjectLineAnalyzerClass : public SVLinearAnalyzerClass

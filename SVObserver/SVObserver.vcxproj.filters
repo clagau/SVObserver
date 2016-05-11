@@ -50,9 +50,6 @@
     <ClCompile Include="SVAcquisitionInitiator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAcquisitionSource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVActiveXLockStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -173,16 +170,7 @@
     <ClCompile Include="SVCylindricalWarpTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDataBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDataDefinitionSheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDigitalInputObject1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDigitalOutputObject1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVDigitizerProcessingClass.cpp">
@@ -365,9 +353,6 @@
     <ClCompile Include="SVInt64ValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVIOAdjustDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -518,9 +503,6 @@
     <ClCompile Include="SVObserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVOCameraDeviceMapClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVOCameraDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -590,9 +572,6 @@
     <ClCompile Include="SVOPPQObj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVOProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVOPropertyPageDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -600,9 +579,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOTriggerDeviceDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOTriggerDeviceMapClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOTriggerList.cpp">
@@ -678,9 +654,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVPPQShiftRegister.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPQVariableTreeCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp">
@@ -1289,6 +1262,54 @@
     <ClCompile Include="SVMeasureAnalyzerAdjustmentSheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVEvaluateTranslationXClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateTranslationYClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateRotationXClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateRotationYClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateRotationAngleClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateCenterXClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateCenterYClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateStartRadiusClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateEndRadiusClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateStartAngleClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateEndAngleClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDataBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVStdImageOperatorListClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVInPlaceImageOperatorListClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDigitalInputObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDigitalOutputObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1321,9 +1342,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVAcquisitionInitiator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAcquisitionSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVActiveXLockStruct.h">
@@ -1452,16 +1470,7 @@
     <ClInclude Include="SVCylindricalWarpTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDataBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVDataDefinitionSheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDigitalInputObject1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDigitalOutputObject1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDigitizerProcessingClass.h">
@@ -1662,9 +1671,6 @@
     <ClInclude Include="SVInt64ValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVIOAdjustDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1830,9 +1836,6 @@
     <ClInclude Include="SVObserverCP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVOCameraDeviceMapClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVOCameraDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1902,9 +1905,6 @@
     <ClInclude Include="SVOPPQObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVOProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVOPropertyPageDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1912,9 +1912,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOTriggerDeviceDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOTriggerDeviceMapClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOTriggerList.h">
@@ -1996,9 +1993,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPPQShiftRegister.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPQVariableTreeCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h">
@@ -2317,9 +2311,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVValueObjectGlobals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVValueObjectImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVValueObjectReference.h">
@@ -2668,6 +2659,54 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMeasureAnalyzerAdjustmentSheet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEValuateEndAngleClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateStartAngleClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateEndRadiusClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateStartRadiusClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateCenterYClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateCenterXClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateTranslationXClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateTranslationYClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateRotationXClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateRotationYClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateRotationAngleClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDataBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVStdImageOperatorListClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVInPlaceImageOperatorListClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDigitalInputObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDigitalOutputObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

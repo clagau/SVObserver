@@ -5,8 +5,8 @@
 //* .Module Name     : SVIMPL
 //******************************************************************************
 
+#pragma region Includes
 //#define INITIALIZE_IO_SUBSYSTEM // for InitializeIOSubsystem Application
-
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 //Moved to precompiled header: #include <time.h>
@@ -22,6 +22,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #endif
+#pragma endregion Includes
 
 static const int RETRY = 2;
 
@@ -252,12 +253,12 @@ HRESULT SVLptIOImpl::SetOutputValue(unsigned long val)
 	for (int i = 0; i < RETRY; i++)
 	{
 		unsigned long data = val & 0xff;
-		if (SVReadWriteLpt(data, SVControlWriteDigital0) != S_OK)
+		if (S_OK != SVReadWriteLpt(data, SVControlWriteDigital0))
 		{
 			hr = S_FALSE;
 		}
 		data = (val >> 8) & 0xff;
-		if (SVReadWriteLpt(data, SVControlWriteDigital1) != S_OK)
+		if (S_OK != SVReadWriteLpt(data, SVControlWriteDigital1))
 		{
 			hr = S_FALSE;
 		}
@@ -271,13 +272,12 @@ HRESULT SVLptIOImpl::SetOutputValue(unsigned long val)
 		}
 	}
 	// The camera control bits could be written along with the outputs since
-	// there are only 16 output bits.
-
-//	data = (val >> 16) & 0xff;
-//	if (SVReadWriteLpt(data, SVControlCameraSetup) != S_OK)
-//	{
-//		hr = S_FALSE;
-//	}
+	// there are only 16 output bits. Here is an Example:
+	//	data = (val >> 16) & 0xff;
+	//	if (S_OK != SVReadWriteLpt(data, SVControlCameraSetup))
+	//	{
+	//		hr = S_FALSE;
+	//	}
 
 	return hr;
 }
@@ -833,7 +833,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long ulHandle, unsigned l
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulCount)
+	if (nullptr != pulCount)
 	{
 		if (0 < ulHandle)
 		{
@@ -852,12 +852,12 @@ HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long ulHandle, unsigned lo
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pbstrName)
+	if (nullptr != pbstrName)
 	{
-		if (NULL != *pbstrName)
+		if (nullptr != *pbstrName)
 		{
 			::SysFreeString(*pbstrName);
-			*pbstrName = NULL;
+			*pbstrName = nullptr;
 		}
 
 		if (0 < ulHandle)
@@ -877,7 +877,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long ulHandle, unsigned lo
 			{
 				*pbstrName = ::SysAllocString(L"Board Version");
 			}
-			if (*pbstrName != NULL)
+			if (nullptr != *pbstrName)
 			{
 				hr = S_OK;
 			}
@@ -890,7 +890,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long ulHandle, unsigned l
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pvarValue)
+	if (nullptr != pvarValue)
 	{
 		if (S_OK == ::VariantClear(pvarValue))
 		{
@@ -967,7 +967,7 @@ HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long ulHandle, unsigned l
 
 	if (0 < ulHandle)
 	{
-		if (NULL != pvarValue)
+		if (nullptr != pvarValue)
 		{
 			// SVSignalEdge enum is used here to make the code more clear.
 			// however at some time in the future the Dll parameters may be implemented
@@ -1059,7 +1059,7 @@ HRESULT SVLptIOImpl::GetParameterCount(unsigned long* pulCount)
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pulCount)
+	if (nullptr != pulCount)
 	{
 		*pulCount = 3;
 		hr = S_OK;
@@ -1074,12 +1074,12 @@ HRESULT SVLptIOImpl::GetParameterName(unsigned long ulIndex, BSTR* pbstrName)
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pbstrName)
+	if (nullptr != pbstrName)
 	{
-		if (NULL != *pbstrName)
+		if (nullptr != *pbstrName)
 		{
 			::SysFreeString(*pbstrName);
-			*pbstrName = NULL;
+			*pbstrName = nullptr;
 		}
 
 		if (SVBoardVersion == ulIndex)
@@ -1099,7 +1099,7 @@ HRESULT SVLptIOImpl::GetParameterName(unsigned long ulIndex, BSTR* pbstrName)
 			*pbstrName = ::SysAllocString(L"Fan Frequency");
 		}
 			
-		if (NULL != *pbstrName)
+		if (nullptr != *pbstrName)
 		{
 			hr = S_OK;
 		}
@@ -1113,7 +1113,7 @@ HRESULT SVLptIOImpl::GetParameterValue(unsigned long ulIndex, VARIANT* pvarValue
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL !=  pvarValue)
+	if (nullptr != pvarValue)
 	{
 		if (S_OK == ::VariantClear(pvarValue))
 		{
@@ -1176,7 +1176,7 @@ HRESULT SVLptIOImpl::GetParameterValue(unsigned long ulIndex, VARIANT* pvarValue
 				if (S_OK == hr)
 				{
 					FILE* fh = fopen("c:\\SVObserver\\IOBoardLog.txt", "a");
-					if (fh != NULL)
+					if (nullptr != fh)
 					{
 						time_t timeVal;
 						time(&timeVal);
@@ -1228,7 +1228,7 @@ HRESULT SVLptIOImpl::SetParameterValue(unsigned long ulIndex, VARIANT* pvarValue
 {
 	HRESULT hr = S_FALSE;
 
-	if (NULL != pvarValue)
+	if (nullptr != pvarValue)
 	{
 		// Set Board Type
 		if (SVBoardType == ulIndex) 
@@ -1324,7 +1324,6 @@ HRESULT SVLptIOImpl::Lock()
 	catch (...)
 	{
 		hr = S_FALSE;
-//		::MessageBox(NULL, "SVReadWrite Locked", NULL, MB_OK);
 	}
 	return hr;
 }
@@ -1661,7 +1660,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 
 LPCTSTR SVLptIOImpl::GetControlText(long lControl)
 {
-	LPCTSTR pString = NULL;
+	LPCTSTR pString = nullptr;
 	{
 		switch (lControl)
 		{

@@ -21,11 +21,9 @@ class SVUnaryImageOperatorClass : public SVUnaryOperatorClass
 	SV_DECLARE_CLASS( SVUnaryImageOperatorClass );
 public:
 	SVUnaryImageOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATOR );
-	
-public:
+	virtual ~SVUnaryImageOperatorClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-
 	virtual BOOL CloseObject();
 
 	virtual BOOL OnValidate();
@@ -33,13 +31,11 @@ public:
 
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
+	SVImageClass* getReferenceImage();
 
-	SVImageClass*                   getReferenceImage();
-
-	SVUnaryImageOperatorListClass*  m_pCurrentUIOPL;
+	SVUnaryImageOperatorListClass* m_pCurrentUIOPL;
 	
 private:
 	void init();
-
 };
 

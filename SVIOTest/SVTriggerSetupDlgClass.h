@@ -21,7 +21,9 @@ class SVTriggerSetupDlgClass : public CDialog
 {
 // Construction
 public:
-	SVTriggerSetupDlgClass(CWnd* pParent = NULL);   // standard constructor
+	SVTriggerSetupDlgClass(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVTriggerSetupDlgClass();
+
 	SVIOTriggerLoadLibraryClass *m_psvTriggers;
 	long m_lStrobeInverts;
 	long m_lTrigInverts;

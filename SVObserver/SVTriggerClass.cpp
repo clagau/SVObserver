@@ -31,8 +31,6 @@ HRESULT CALLBACK SVTriggerClass::SVTriggerCallback( void *p_pvOwner, void *p_pvD
 
 		HRESULT hr = pDevice->Notify( l_Response );
 
-		//TRACE( "Process Trigger Callback - %s\n", pDevice->GetDeviceName() );
-
 		#ifdef SV_LOG_STATUS_INFO
 			SVString l_String;
 
@@ -47,8 +45,8 @@ HRESULT CALLBACK SVTriggerClass::SVTriggerCallback( void *p_pvOwner, void *p_pvD
 
 SVTriggerClass::SVTriggerClass(LPCTSTR deviceName)
 : SVODeviceClass(deviceName)
-, m_pDLLTrigger(NULL)
-, m_ulHandle(NULL)
+, m_pDLLTrigger(nullptr)
+, m_ulHandle(0)
 , miChannelNumber(-1)
 {
 	#ifdef SV_LOG_STATUS_INFO
@@ -72,21 +70,21 @@ HRESULT SVTriggerClass::RegisterCallback( SVOCallbackPtr pCallback, void *pvOwne
 
 	l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
-	if( m_pDLLTrigger != NULL )
+	if( nullptr != m_pDLLTrigger )
 	{
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			l_hrOk = m_pDLLTrigger->Register( m_ulHandle, l_Callback );
 		}
 
-		if ( l_hrOk != S_OK )
+		if ( S_OK != l_hrOk )
 		{
 			m_pDLLTrigger->Unregister( m_ulHandle, l_Callback );
 		}
 	}
 	else
 	{
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = E_FAIL;
 		}
@@ -99,7 +97,7 @@ HRESULT SVTriggerClass::UnregisterCallback( SVOCallbackPtr pCallback, void *pvOw
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_pDLLTrigger != NULL )
+	if ( nullptr != m_pDLLTrigger )
 	{
 		SVCallbackStruct l_Callback;
 
@@ -116,7 +114,7 @@ HRESULT SVTriggerClass::UnregisterCallback( SVOCallbackPtr pCallback, void *pvOw
 
 	HRESULT l_Temp = SVODeviceClass::UnregisterCallback( pCallback, pvOwner, pvCaller );
 
-	if( l_Temp != S_OK && l_hrOk == S_OK )
+	if( S_OK != l_Temp && S_OK == l_hrOk )
 	{
 		l_hrOk = l_Temp;
 	}
@@ -128,18 +126,18 @@ HRESULT SVTriggerClass::UnregisterAllCallbacks()
 {
 	HRESULT l_hrOk = SVODeviceClass::UnregisterAllCallbacks();
 
-	if ( m_pDLLTrigger != NULL )
+	if ( nullptr != m_pDLLTrigger )
 	{
 		HRESULT l_Temp = m_pDLLTrigger->UnregisterAll( m_ulHandle );
 		
-		if( l_Temp != S_OK && l_hrOk == S_OK )
+		if( S_OK != l_Temp && S_OK == l_hrOk )
 		{
 			l_hrOk = l_Temp;
 		}
 	}
 	else
 	{
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = E_FAIL;
 		}
@@ -156,7 +154,7 @@ HRESULT SVTriggerClass::Start()
 		m_StatusLog.clear();
 	#endif
 
-	if ( m_pDLLTrigger != NULL )
+	if ( nullptr != m_pDLLTrigger )
 	{
 		l_hrOk = m_pDLLTrigger->Start( m_ulHandle );
 	}
@@ -165,7 +163,7 @@ HRESULT SVTriggerClass::Start()
 		l_hrOk = E_FAIL;
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = SVODeviceClass::Start();
 	}
@@ -177,11 +175,11 @@ HRESULT SVTriggerClass::Stop()
 {
 	HRESULT l_hrOk = SVODeviceClass::Stop();
 
-	if ( m_pDLLTrigger != NULL )
+	if ( nullptr != m_pDLLTrigger )
 	{
 		HRESULT l_Temp = m_pDLLTrigger->Stop( m_ulHandle );
 
-		if( l_Temp != S_OK && l_hrOk == S_OK )
+		if( S_OK != l_Temp && S_OK == l_hrOk )
 		{
 			l_hrOk = l_Temp;
 		}

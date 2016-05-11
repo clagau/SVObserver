@@ -79,7 +79,7 @@ Release()
 		Free( m_pResource );	// call ALLOCATIONPOLICY function
 	}
 	m_plRefCount = 0;
-	m_pResource = NULL;
+	m_pResource = nullptr;
 }
 
 template < typename RESOURCE, typename RESOURCEMANAGER, typename ALLOCATIONPOLICY >

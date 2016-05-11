@@ -20,9 +20,9 @@
 
 IMPLEMENT_DYNAMIC(SVArchiveHeaderEditDlg, CDialog)
 
-SVArchiveHeaderEditDlg::SVArchiveHeaderEditDlg(CWnd* pParent /*=NULL*/)
+SVArchiveHeaderEditDlg::SVArchiveHeaderEditDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVArchiveHeaderEditDlg::IDD, pParent)
-	,m_pEdit(NULL)
+	,m_pEdit(nullptr)
 	,m_PreviousClient()
 {
 
@@ -34,7 +34,7 @@ SVArchiveHeaderEditDlg::~SVArchiveHeaderEditDlg()
 	{
 		m_pEdit->DestroyWindow();
 		delete m_pEdit;
-		m_pEdit = NULL;
+		m_pEdit = nullptr;
 	}
 }
 
@@ -79,7 +79,7 @@ void SVArchiveHeaderEditDlg::OnSize(UINT nType, int cx, int cy)
 		}
 		if( bReset)
 		{
-			SetWindowPos( NULL, 0,0,rec.Width(), rec.Height(), SWP_NOMOVE | SWP_NOZORDER );
+			SetWindowPos( nullptr, 0,0,rec.Width(), rec.Height(), SWP_NOMOVE | SWP_NOZORDER );
 		}
 		else
 		{
@@ -193,13 +193,13 @@ void SVArchiveHeaderEditDlg::HeaderListChangeSize(int cx, int cy)
 	int T1y = (cy - m_PreviousClient.bottom) + StaticTextRec.top;;
 
 
-	pOkBtn->SetWindowPos(NULL, b1x, b1y ,
+	pOkBtn->SetWindowPos(nullptr, b1x, b1y ,
 		0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING);
 
-	pCancelBtn->SetWindowPos(NULL, b2x, b2y ,
+	pCancelBtn->SetWindowPos(nullptr, b2x, b2y ,
 		0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING);
 
-	pStatic->SetWindowPos( NULL, ListRec.left, T1y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING);
+	pStatic->SetWindowPos( nullptr, ListRec.left, T1y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING);
 
 	DisplaySelectedText();
 
@@ -242,7 +242,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 
 		CRect StaticRec;
 		pText->GetWindowRect( StaticRec );
-		pText->SetWindowPos( NULL, 0, 0, newWidth, StaticRec.Height(), SWP_NOZORDER | SWP_NOMOVE | SWP_NOREPOSITION);
+		pText->SetWindowPos( nullptr, 0, 0, newWidth, StaticRec.Height(), SWP_NOZORDER | SWP_NOMOVE | SWP_NOREPOSITION);
 		if( textSize.cx < newWidth )
 		{   // the string will fit.
 			pText->SetWindowText( strTmp );

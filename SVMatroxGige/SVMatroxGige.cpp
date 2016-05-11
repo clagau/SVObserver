@@ -52,7 +52,7 @@ bool SVMatroxGige::IsValidDigitizer(unsigned long p_Handle) const
 	if (bRetVal)
 	{
 		const SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_Handle);
-		bRetVal = ( l_rCamera.m_Digitizer.get() != NULL && !l_rCamera.m_Digitizer.get()->empty() );
+		bRetVal = ( nullptr != l_rCamera.m_Digitizer.get() && !l_rCamera.m_Digitizer.get()->empty() );
 	}
 	return bRetVal;
 }
@@ -83,7 +83,7 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 	try
 	{
 		SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(p_pvContext);
-		if ( l_pCamera != NULL )
+		if ( nullptr != l_pCamera )
 		{
 			if ( l_pCamera->m_lIsStarted == 1 )
 			{
@@ -146,7 +146,7 @@ SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType,
 	try
 	{
 		SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(p_pvContext);
-		if ( l_pCamera != NULL )
+		if ( nullptr != l_pCamera )
 		{
 			if ( l_pCamera->m_lIsStarted == 1 )
 			{
@@ -167,14 +167,6 @@ SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType,
 				else if( SVMatroxDigitizerInterface::IsEventGrabFrameEnd(HookType) )
 				{
 					TRACE( "Gige End Frame\n" );
-					/* For AsyncQueued only
-					// Do EndFrame Logic
-					g_svTheApp.m_svSystem.ProcessEndFrame( *l_pCamera );
-
-					CString l_csbuf;
-					l_csbuf.Format("Process End Frame Callback - Camera %d-%d", l_pCamera->m_SystemHandle, l_pCamera->m_Handle );
-					TRACE( "%s\n", l_csbuf );
-					*/
 				}
 			}
 		}
@@ -250,7 +242,7 @@ HRESULT SVMatroxGige::Create()
 
 		hr = CreateSystems();
 
-		if ( hr != S_OK )
+		if ( S_OK != hr )
 		{
 			Destroy( true );
 		}
@@ -328,10 +320,10 @@ HRESULT SVMatroxGige::AddSystem(const SVMatroxString& rName, long SystemNumber)
 	{
 		hr = m_Systems.Add(l_System);
 		
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			SVMatroxGigeSystem& rSystem = m_Systems.Get(l_System.m_Handle, hr);
-			if (hr == S_OK)
+			if (S_OK == hr)
 			{
 				// Register camera present hook
 #if SV_CURRENT_MIL_VERSION == 0x0900
@@ -408,11 +400,11 @@ HRESULT SVMatroxGige::CreateDigitizer(SVMatroxGigeSystem& system, long digitizer
 	l_camera.m_Digitizer = new SVMatroxDigitizer;
 
 	hr = AllocDigitizer(system, digitizerIndex, l_camera);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = ReadCameraFormat(l_camera);
 	}
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = system.AddDigitizer(l_camera);
 	}
@@ -432,7 +424,7 @@ HRESULT SVMatroxGige::AllocDigitizer(SVMatroxGigeSystem& system, long digitizerI
 	{
 		//
 		hr = ReadCameraSerialNumber(p_rCamera);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			hr = ReadCameraIPAddress(p_rCamera);
 		}
@@ -458,7 +450,7 @@ HRESULT SVMatroxGige::DestroyDigitizers(SVMatroxGigeSystem& rSystem)
 	{
 		CameraStop(SV_MAKE_MATROXGIGE_SYSTEM_DIGITIZER_HANDLE(rSystem.m_Handle, it->first)); // Stop Acquiring...
 
-		if ( DestroyDigitizer( it->second ) != S_OK )
+		if ( S_OK != DestroyDigitizer( it->second ) )
 		{
 			hr = S_FALSE;
 		}
@@ -492,7 +484,7 @@ HRESULT SVMatroxGige::DestroySystems()
 	{
 		DestroyDigitizers(it->second);
 
-		if ( DestroySystem( it->second ) != S_OK )
+		if ( S_OK != DestroySystem( it->second ) )
 		{
 			hr = S_FALSE;
 		}
@@ -547,11 +539,11 @@ HRESULT SVMatroxGige::CameraGetName( unsigned long p_Handle, BSTR &p_rbstrName )
 	{
 		hr = S_OK;
 
-		if ( p_rbstrName != NULL )
+		if ( nullptr != p_rbstrName )
 		{
 			::SysFreeString( p_rbstrName );
 
-			p_rbstrName = NULL;
+			p_rbstrName = nullptr;
 		}
 
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_Handle);
@@ -605,7 +597,7 @@ HRESULT SVMatroxGige::CameraGetParameterList( unsigned long p_Handle, VARIANT *p
 {
 	HRESULT hr = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
 		::VariantClear( p_pvarValue );
 
@@ -635,13 +627,13 @@ HRESULT SVMatroxGige::CameraGetParameterName( unsigned long p_Handle, int p_iPar
 {
 	HRESULT hr = S_FALSE;
 
-	if ( p_pBstrName != NULL )
+	if ( nullptr != p_pBstrName )
 	{
-		if ( *p_pBstrName != NULL )
+		if ( nullptr != *p_pBstrName )
 		{
 			::SysFreeString( *p_pBstrName );
 
-			*p_pBstrName = NULL;
+			*p_pBstrName = nullptr;
 		}
 
 		if ( IsValidDigitizerHandle(p_Handle) && IsValidDigitizer(p_Handle) )
@@ -657,7 +649,7 @@ HRESULT SVMatroxGige::CameraGetParameter( unsigned long p_Handle, int p_iParamet
 {
 	HRESULT hr = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
 		::VariantClear( p_pvarValue );
 
@@ -675,7 +667,7 @@ HRESULT SVMatroxGige::CameraSetParameter( unsigned long p_Handle, int p_iParamet
 {
 	HRESULT hr = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
 		if ( IsValidDigitizerHandle(p_Handle) && IsValidDigitizer(p_Handle) )
 		{
@@ -707,11 +699,6 @@ HRESULT SVMatroxGige::CameraSetParameter( unsigned long p_Handle, int p_iParamet
 				case SVGigeParameterLineInput:
 				{
 					l_rCamera.SetLineInputMoniker(SvUl_SF::createSVString(p_pvarValue->bstrVal));
-					/*
-					hr = SVMatroxGigeDeviceParameterManager::SetParameter(l_rCamera, p_iParameterID, p_iParameterTypeID, p_pvarValue);
-					// Keep track of parameters sent for reconnect logic
-					SetCameraParam(l_rCamera, p_iParameterID, p_iParameterTypeID, p_pvarValue);
-					*/
 				}
 				break;
 
@@ -778,13 +765,13 @@ HRESULT SVMatroxGige::CameraBufferCreateAll( unsigned long p_Handle, unsigned lo
 
 		hr = CameraBufferDestroyAll( p_Handle );
 
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			const SVMatroxGigeSystem& rSystem = m_Systems.Get(l_rCamera.m_SystemHandle, hr);
 
 			hr = ReadCameraFormat(l_rCamera);
 
-			if ( hr == S_OK )
+			if ( S_OK == hr )
 			{
 				//
 				hr = l_rCamera.CreateAcquisitionBuffers(*(rSystem.m_System.get()), 
@@ -794,7 +781,7 @@ HRESULT SVMatroxGige::CameraBufferCreateAll( unsigned long p_Handle, unsigned lo
 			}
 		}
 
-		if ( hr != S_OK )
+		if ( S_OK != hr )
 		{
 			CameraBufferDestroyAll( p_Handle );
 		}
@@ -862,7 +849,7 @@ HRESULT SVMatroxGige::CameraUnregisterBufferInterface( unsigned long p_Handle )
 	{
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_Handle);
 
-		l_rCamera.m_pBufferInterface = NULL;
+		l_rCamera.m_pBufferInterface = nullptr;
 	}
 	else
 	{
@@ -891,12 +878,12 @@ HRESULT SVMatroxGige::CameraStart( unsigned long p_Handle )
 					hr = -123456;
 				}
 			}
-			if ( hr == S_OK )
+			if ( S_OK == hr )
 			{
 				hr = StartDigitizer(p_Handle, l_rCamera);
 			}
 			
-			if ( hr != S_OK )
+			if ( S_OK != hr )
 			{
 				::InterlockedExchange( &(l_rCamera.m_lIsStarted), 0 );
 			}
@@ -927,7 +914,7 @@ HRESULT SVMatroxGige::CameraStop( unsigned long p_Handle )
 			// reset to Hardware Trigger
 			l_rCamera.m_params.TriggerType = SVMatroxGigeTrigger::HardwareTrigger;
 
-			if( SVMatroxGigeDeviceParameterManager::IsParameterSupported(l_rCamera, SVGigeParameterStrobeEnable) == S_OK )
+			if( S_OK == SVMatroxGigeDeviceParameterManager::IsParameterSupported(l_rCamera, SVGigeParameterStrobeEnable) )
 			{
 				_variant_t value("Disable");
 
@@ -945,15 +932,15 @@ HRESULT SVMatroxGige::StartDigitizer(unsigned long p_Handle, SVMatroxGigeDigitiz
 	p_rCamera.m_frameStack.clear();
 
 	HRESULT hr = RegisterMatroxDigitizerHooks(p_rCamera);
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = SetGrabMode(p_rCamera);
 	}
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = EnableTriggering(p_rCamera);
 	}
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		// Start the Asynchronous Grab (using MdigProcess)
 		hr = p_rCamera.StartGrabArray(SVMatroxGige::ProcessFrame);
@@ -986,7 +973,7 @@ HRESULT SVMatroxGige::ProcessStartFrame( SVMatroxGigeDigitizer& p_rCamera )
 		// Get a Buffer to copy in to
 		// Sets m_lStartIndex and sets Buffer lock flag
 		hr = GetNextAvailableProcBuffer(p_rCamera);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			// Buffer index is set and locked
 			long l_lIndex = p_rCamera.m_lStartIndex;
@@ -1020,7 +1007,7 @@ HRESULT SVMatroxGige::CameraStartFrame( SVMatroxGigeDigitizer& p_rCamera )
 {
 	HRESULT hr = S_OK;
 
-	if ( p_rCamera.m_lIsStarted == 1 && p_rCamera.m_pBufferInterface != NULL )
+	if ( p_rCamera.m_lIsStarted == 1 && nullptr != p_rCamera.m_pBufferInterface )
 	{
 		p_rCamera.m_StartFrameTimeStamp = p_rCamera.m_pBufferInterface->GetTimeStamp();
 	}
@@ -1040,11 +1027,11 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 
 	p_rCamera.m_StartFrameTimeStamp = 0;
 
-	if ( p_rCamera.m_lIsStarted == 1 && p_rCamera.m_pBufferInterface != NULL )
+	if ( 1 == p_rCamera.m_lIsStarted && nullptr != p_rCamera.m_pBufferInterface  )
 	{
 		SVImageBufferInterface l_Buffer;
 		
-		if( p_rCamera.m_pBufferInterface->GetNextBuffer( l_Buffer ) == S_OK )
+		if( S_OK == p_rCamera.m_pBufferInterface->GetNextBuffer( l_Buffer ) )
 		{
 			SVImageBufferHandleImage l_MilBuffer;
 
@@ -1058,7 +1045,7 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 				SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilBuffer.GetBuffer(), p_SrcBufferID );
 				hr = l_Code;
 
-				if( hr == S_OK )
+				if( S_OK == hr)
 				{
 					l_Buffer.SetStartFrameTimeStamp( l_StartFrameTimeStamp );
 					l_Buffer.SetEndFrameTimeStamp();
@@ -1073,7 +1060,7 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 				// For Mil to Non Mil Buffer copy
 				unsigned char *l_pDstBuffer = l_Buffer.GetBufferAddress();
 
-				if( l_pDstBuffer != NULL )
+				if( nullptr != l_pDstBuffer )
 				{
 					// copy the image data
 					SVBitmapInfo bmpInfo;
@@ -1429,7 +1416,7 @@ HRESULT SVMatroxGige::EnableTriggering(const SVMatroxGigeDigitizer& p_rCamera)
 		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SVGigeParameterTriggerSource, 0, &value);
 	}
 
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		_variant_t value("Enable");
 		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SVGigeParameterTriggerEnable, 0, &value);
@@ -1544,12 +1531,12 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 	// Check if camera is already in the list 
 	unsigned long handle = 0;
 	HRESULT hr = FindCamera(p_rSystem, deviceNumber, handle);
-	bool bHasCamera = (hr == S_OK) ? true : false;
+	bool bHasCamera = (S_OK == hr) ? true : false;
 
 	if (bHasCamera)
 	{
 		SVMatroxGigeDigitizer& l_rCamera = p_rSystem.GetDigitizer(SV_EXTRACT_MATROXGIGE_DIGITIZER_HANDLE(handle), hr);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			if (l_rCamera.m_Digitizer.empty())
 			{
@@ -1557,27 +1544,27 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 				l_rCamera.m_Digitizer = new SVMatroxDigitizer;
 				hr = AllocDigitizer(p_rSystem, deviceNumber, l_rCamera);
 
-				if (hr == S_OK)
+				if (S_OK == hr)
 				{
 					if (l_rCamera.m_lIsStarted)
 					{
 						// Set the Camera Parameters before recreating buffers and restarting acquisition
 						hr = m_trackedCameraParameters.ReloadCameraParams(l_rCamera.m_svCameraId.m_serialNo, l_rCamera);
-						if (hr == S_OK)
+						if (S_OK == hr)
 						{
 							hr = ReadCameraFormat(l_rCamera);
 
-							if (hr == S_OK)
+							if (S_OK == hr)
 							{
 								hr = l_rCamera.CreateAcquisitionBuffers(*(p_rSystem.m_System.get()), 
 																l_rCamera.m_params.Width, 
 																l_rCamera.m_params.Height,
 																l_rCamera.m_params.Format);
 
-								if (hr == S_OK)
+								if (S_OK == hr)
 								{
 									hr = StartDigitizer(handle, l_rCamera);
-									if (hr != S_OK)
+									if (S_OK != hr)
 									{
 										// log an exception
 										SVStringArray msgList;
@@ -1656,10 +1643,10 @@ void SVMatroxGige::HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNu
 	unsigned long handle = 0;
 	HRESULT hr = FindCamera(p_rSystem, deviceNumber, handle);
 
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		SVMatroxGigeDigitizer& l_rCamera = p_rSystem.GetDigitizer(SV_EXTRACT_MATROXGIGE_DIGITIZER_HANDLE(handle), hr);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			if (l_rCamera.m_lIsStarted)
 			{
@@ -1745,10 +1732,10 @@ HRESULT SVMatroxGige::TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName
 	HRESULT l_Result = S_FALSE;
 	if (IsValidDigitizer(p_ulHandle))
 	{
-		if ( p_rbstrName != NULL )
+		if ( nullptr != p_rbstrName )
 		{
 			::SysFreeString( p_rbstrName );
-			p_rbstrName = NULL;
+			p_rbstrName = nullptr;
 		}
 
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_ulHandle);
@@ -1823,7 +1810,7 @@ HRESULT SVMatroxGige::TriggerGetParameterCount( unsigned long p_ulHandle, unsign
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		if (IsValidDigitizer(p_ulHandle))
 		{
@@ -1842,12 +1829,12 @@ HRESULT SVMatroxGige::TriggerGetParameterName( unsigned long p_ulHandle, unsigne
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 
 		if (IsValidDigitizer(p_ulHandle))
@@ -1858,7 +1845,7 @@ HRESULT SVMatroxGige::TriggerGetParameterName( unsigned long p_ulHandle, unsigne
 				*p_pbstrName = ::SysAllocString( L"Acquisition Triggered" );
 				break;
 			}
-			if ( *p_pbstrName != NULL )
+			if ( nullptr != *p_pbstrName )
 			{
 				l_hrOk = S_OK;
 			}
@@ -1871,9 +1858,9 @@ HRESULT SVMatroxGige::TriggerGetParameterValue( unsigned long p_ulHandle, unsign
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
-		if ( ::VariantClear( p_pvarValue ) == S_OK )
+		if ( S_OK == ::VariantClear( p_pvarValue ) )
 		{
 			if (IsValidDigitizer(p_ulHandle))
 			{
@@ -1884,7 +1871,7 @@ HRESULT SVMatroxGige::TriggerGetParameterValue( unsigned long p_ulHandle, unsign
 						p_pvarValue->vt = VT_BOOL;
 						bool bAcquisitonTriggered;
 						l_hrOk = IsAcquisitionTriggered(p_ulHandle, bAcquisitonTriggered);
-						if (l_hrOk == S_OK)
+						if (S_OK == l_hrOk)
 						{
 							p_pvarValue->bVal = (bAcquisitonTriggered) ? VARIANT_TRUE : VARIANT_FALSE;
 						}
@@ -1906,7 +1893,7 @@ HRESULT SVMatroxGige::TriggerSetParameterValue( unsigned long p_ulHandle, unsign
 
 	if (IsValidDigitizer(p_ulHandle))
 	{
-		if ( p_pvarValue != NULL )
+		if ( nullptr != p_pvarValue )
 		{
 			switch (p_ulIndex)
 			{

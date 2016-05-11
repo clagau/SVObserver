@@ -23,6 +23,7 @@
 #include "SVRemoteOutputObject.h"
 
 struct SVProductInfoStruct;
+class SVConfigurationObject;
 
 class SVRemoteOutputDataController : 
 	public SVObjectClass,
@@ -32,7 +33,7 @@ class SVRemoteOutputDataController :
 
 public:
 	SVRemoteOutputDataController( LPCSTR ObjectName );
-	SVRemoteOutputDataController( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER );
+	SVRemoteOutputDataController( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER );
 
 	virtual ~SVRemoteOutputDataController();
 
@@ -87,9 +88,6 @@ public:
 	// returns a pointer to a SVRemoteOutputGroup class based on the Remote Group ID.
 	HRESULT GetControlPar( const CString& p_strRemoteGroupID, SVRemoteOutputGroup*& p_pControl );
 
-	// Sets the SVRemoteOutputGroup associated with RemoteOutputID with a copy of a SVRemoteOutputGroup
-	HRESULT SetControlPar( const CString& p_strRemoteGroupID, SVRemoteOutputGroup* p_RemoteOutputControl );
-
 	// Adds the defaults to a SVRemoteOutputGroup object
 	HRESULT AddDefaultOutputs( CString p_strRemoteGroupID, SVPPQObject* p_pPPQ );
 
@@ -105,17 +103,13 @@ public:
 	// If an input fails then it is deleted.
 	HRESULT ValidateInputs();
 
-	HRESULT GetListIndex( SVRemoteOutputObject* p_pOutput, const CString& p_strRemoteOutputGroupName, long& p_rlIndex );
-	
 	HRESULT ClearUnUsedData( );
 
 private:
 	HRESULT GetValueObjectData( void* l_mem, long p_lNumBytes, SVValueObjectClass* p_ValueObject, long p_lProductIndex );
-	HRESULT GetValueObjectDataConvert2String( CString& p_rStringOut, SVValueObjectClass* p_pValueObject, long p_lProductIndex );
 
 	bool RenameGroup( CString oldName, CString newName );
 	SVRemoteOutputGroupMap m_RemoteGroupParameters;	// Map of RemoteOutput parameters based on RemoteOutput ID
-
 };
 
 

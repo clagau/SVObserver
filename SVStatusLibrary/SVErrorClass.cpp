@@ -49,10 +49,6 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
 {
    int              lx_found;
 
-   //int              lx_err;
-   //int              lx_err_save;
-   //int              lx_err_ackupdate;
-   //unsigned long    lx_tmp_time;
    SVString          lx_displayString;
 
    while (1)
@@ -185,7 +181,7 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
                                   msvLastFileName.c_str(),
                                   msvlLastLineNbr,
                                   msvLastErrorData.c_str());
-	      MessageBox(NULL, lx_displayString.c_str(), "", MB_OK);
+	      MessageBox(nullptr, lx_displayString.c_str(), "", MB_OK);
 /*------- End of DISPLAY ERROR MESSAGE. ------------------------------------*/
       }
 
@@ -237,15 +233,9 @@ unsigned long SVErrorClass::LogError ()
     int             lx_index;
     int             lx_startOfBuffer;
     int             lx_TCHARSize;
-    //int             lx_length;
-
     TCHAR           lx_computerName [512];
-
     char            lx_sidBuffer [2000];
-
     PSID            lx_sidPtr;
-
-
     SVLogExtention  lx_SVDef;
     SVLog           lx_logRecord;
 

@@ -54,6 +54,10 @@ CSVTestIOApp::CSVTestIOApp()
 	// Place all significant initialization in InitInstance
 }
 
+CSVTestIOApp::~CSVTestIOApp()
+{
+}
+
 // The one and only CSVTestIOApp object
 
 CSVTestIOApp theApp;
@@ -65,7 +69,7 @@ BOOL CSVTestIOApp::InitInstance()
 	CWinApp::InitInstance();
 
 	m_pTestIODlg = new SVTestIODlg;
-	if( m_pTestIODlg != NULL )
+	if( nullptr != m_pTestIODlg )
 	{
 		CWnd DTWin;
 		DTWin.Attach( ::GetDesktopWindow());
@@ -85,7 +89,7 @@ BOOL CSVTestIOApp::ExitInstance()
 	{
 		m_pTestIODlg->DestroyWindow();
 		delete m_pTestIODlg;
-		m_pTestIODlg = NULL;
+		m_pTestIODlg = nullptr;
 	}
 
 

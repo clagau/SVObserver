@@ -9,11 +9,16 @@
 //* .Check In Date   : $Date:   24 Apr 2013 12:27:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTransformationTool.h"
-#include "SVEvaluate.h"
+#include "SVEvaluateTranslationXClass.h"
+#include "SVEvaluateTranslationYClass.h"
+#include "SVEvaluateRotationXClass.h"
+#include "SVEvaluateRotationYClass.h"
+#include "SVEvaluateRotationAngleClass.h"
 #include "SVImageTransform.h"
-#include "SVInspectionProcess.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVTransformationToolClass, SVTransformationToolClassGuid );
 
@@ -23,12 +28,11 @@ SVTransformationToolClass::SVTransformationToolClass( BOOL BCreateDefaultTaskLis
 	init();
 }
 
-
 void SVTransformationToolClass::init()
 {
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVTransformationToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVTransformationToolObjectType;
 
 	// Identify our input type needs
 
@@ -89,7 +93,7 @@ BOOL SVTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -106,7 +110,7 @@ HRESULT SVTransformationToolClass::ResetObject()
 
 SVTaskObjectClass *SVTransformationToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {
-	return NULL;
+	return nullptr;
 }
 
 bool SVTransformationToolClass::DoesObjectHaveExtents() const

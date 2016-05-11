@@ -30,7 +30,7 @@ class SVDisplayObject :
 {
 public:
 	SVDisplayObject( LPCSTR ObjectName );
-	SVDisplayObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVDISPLAYOBJECT );
+	SVDisplayObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDISPLAYOBJECT );
 	virtual ~SVDisplayObject();
 
 	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData );
@@ -39,7 +39,7 @@ public:
 	virtual HRESULT ObserverUpdate( const SVRemoveValues& p_rData );
 	virtual HRESULT ObserverUpdate( const SVRemoveSubjectStruct& p_rData );
 
-	void SetInspectionID( const SVGUID& p_rInspectionID );
+	void SetInspectionID( const SVGUID& p_rInspectionID, SVIPDoc* pDoc );
 
 	SVIPDoc* GetIPDoc() const;
 
@@ -82,4 +82,5 @@ protected:
 	long m_FrameRate;
 	SVClock::SVTimeStamp m_NextDisplayEvent;
 	SVClock::SVTimeStamp m_LastUpdateTime;
+	SVIPDoc* m_pDoc;
 };

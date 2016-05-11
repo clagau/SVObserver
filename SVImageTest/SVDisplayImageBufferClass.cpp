@@ -15,7 +15,7 @@
 
 SVDisplayImageBufferClass::SVDisplayImageBufferClass()
 {
-	m_pucImageData = NULL;
+	m_pucImageData = nullptr;
 }
 
 SVDisplayImageBufferClass::~SVDisplayImageBufferClass()
@@ -25,7 +25,7 @@ SVDisplayImageBufferClass::~SVDisplayImageBufferClass()
 
 bool SVDisplayImageBufferClass::empty() const
 {
-	return ( m_pucImageData == NULL );
+	return ( nullptr == m_pucImageData );
 }
 
 void SVDisplayImageBufferClass::clear()
@@ -74,7 +74,7 @@ bool SVDisplayImageBufferClass::UpdateDisplayBufferInfo( long bufWidth, long buf
 		{
 			m_pucImageData = new unsigned char[ m_BitmapInfo.GetBitmapImageSizeInBytes() ];
 
-			l_bOk = m_pucImageData != NULL;
+			l_bOk = nullptr != m_pucImageData;
 		}
 
 		if( l_bOk )
@@ -193,10 +193,10 @@ bool SVDisplayImageBufferClass::DestroyDisplayBuffer()
 
 	m_BitmapInfo.clear();
 
-	if( m_pucImageData != NULL )
+	if( nullptr != m_pucImageData )
 	{
 		delete[] m_pucImageData;
-		m_pucImageData = NULL;
+		m_pucImageData = nullptr;
 	}
 
 	return l_bOk;

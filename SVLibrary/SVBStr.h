@@ -9,31 +9,20 @@
 // * .Check In Date   : $Date:   22 Apr 2013 13:31:04  $
 // ******************************************************************************
 
-#if !defined(AFX_SVBSTR_H__58F6DDEB_CCA5_4C77_9C6F_08024EBCD06B__INCLUDED_)
-#define AFX_SVBSTR_H__58F6DDEB_CCA5_4C77_9C6F_08024EBCD06B__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 
-
-//##ModelId=3D3C81920244
 class SVBStr  
 {
 public:
 // SVBStr () ----------------------------------------------------------------
 // Constructs SVBstr class with an empty string. ----------------------------
-	//##ModelId=3D3C8192024E
 	SVBStr();
-	//##ModelId=3D3C81920258
 	virtual ~SVBStr();
 
 // All equals operators assume a null terminated source string.
-	//##ModelId=3D3C81920262
 	const SVBStr& operator=(const SVBStr&  stringSrc);
 
-	//##ModelId=3D3C81920264
 // operator=(const BSTR& stringSrc) - Makes copy. ---------------------------
    const SVBStr& operator=(const BSTR&    stringSrc);
 
@@ -44,11 +33,8 @@ public:
 //	  pass in a WCHAR pointer, the BSTR function gets called.  For this 
 //	  reason, a WCHAR* should not use an equals operator to copy to a SVBStr.  
 //   Use CopyFromWChar () instead.
-//	const SVBStr& operator=(const WCHAR&		stringSrc);
 
-	//##ModelId=3D3C8192026C
 	const SVBStr& operator=(const TCHAR&   stringSrc);
-	//##ModelId=3D3C8192026E
 	const SVBStr& operator=(const CString&   stringSrc);
 
 // operator [] --------------------------------------------------------------
@@ -66,7 +52,6 @@ public:
 //	(for a[x] = b).
 	WCHAR& operator[](int p_nIndex );
 
-	//##ModelId=3D3C81920270
 	operator const BSTR() const;
 	operator       BSTR();
 
@@ -81,7 +66,6 @@ public:
 // returns a pointer to the char array.  The char array is reused on 
 // subsequent calls, and is eventually deleted during the destruction of 
 // this class. --------------------------------------------------------------
-	//##ModelId=3D3C81920277
 	operator const char*() const;
 
 // PreAllocate () -----------------------------------------------------------
@@ -100,7 +84,6 @@ public:
 // p_lLength - input, this sets the number of WCHARs.
 	long		SetLength (long	p_lLength);
 
-	//##ModelId=3D3C81920281
    long     GetLength () const;
 
 //	Clear () -----------------------------------------------------------------
@@ -110,7 +93,6 @@ public:
 
 	long		SetNULL ();
 
-	//##ModelId=3D3C81920283
 // CopyFromWChar () ---------------------------------------------------------
 // This function assumes a NULL termination to awcpSource.  Although space 
 // will be allocated within SVBStr to accommodate the NULL, the size 
@@ -119,72 +101,46 @@ public:
 //
 // return values
 //	  2 = input was NULL.
-   long     CopyFromWChar (const WCHAR* awcpSource);
+	long CopyFromWChar (const WCHAR* awcpSource);
 
-	long		CharHexDump (char*	p_csHexDump, 
-				  			    long	 p_lSizeOfDest);
-
-
-
-	//##ModelId=3D3C8192028C
    long     EnterCriticalSection () const;
-	//##ModelId=3D3C8192028E
    long     LeaveCriticalSection () const;
 
 private:
+	long    InitializeCriticalSection();
+	long    DeleteCriticalSection();
+	long    InternalGetLength () const;
+	long	InternalClear ();
 
-	//##ModelId=3D3C81920295
-   long     InitializeCriticalSection();
-	//##ModelId=3D3C81920296
-   long     DeleteCriticalSection();
-
-	//##ModelId=3D3C8192028A
-   long     InternalGetLength () const;
-
-	long		InternalClear ();
-
-	long		InternalSetNULL ();
-
-
-	long		InternalPreAllocate (unsigned long p_ulNbrOfCharacters);
-
+	long	InternalSetNULL ();
+	long	InternalPreAllocate (unsigned long p_ulNbrOfCharacters);
 
 // DoWeNeedNewBBuffer () ----------------------------------------------------
 // alSourceLength - input, This refers to the byte length!!!
 	long*		DoWeNeedNewBuffer (long	alSourceLength);
 
-	//##ModelId=3D3C8192029E
    CRITICAL_SECTION svmCriticalSection; 
-
 
 // svmlAllocationPageSize ---------------------------------------------------
 // Number of bytes!!!	
-	//##ModelId=3D3C8192029F
    static const long svmlAllocationPageSize=4000; //Arvid 2015-01-08 made this a static const since it is always set to 4000 anyway
 
 // svmlCurrrentAllocationSize -----------------------------------------------
 // Number of bytes!!!
-	//##ModelId=3D3C819202A8
    long     svmlCurrentAllocationSize;
 
 // svmlLength ---------------------------------------------------------------
 // Number of WCHARs.
-	//##ModelId=3D3C819202B2
    long     svmlLength;
-
 	long		m_lNULL;
 
 // This value is only used for outputting a char* copy of the wide character 
 // string.  If the contents of this string are changed, the changes will be 
 // ignored and lost.
-	//##ModelId=3D3C819202BC
    char*    svmcpCharStringBuffer;
-	//##ModelId=3D3C819202BD
    long     svmlCharStringAllocationSize;
-
-	//##ModelId=3D3C819202C6
    WCHAR*   svmwcBStringBuffer;
-	//##ModelId=3D3C819202D0
+
 // svmlpBStringLength -------------------------------------------------------
 // This length is number of bytes.
    long*    svmlpBStringLength;
@@ -193,6 +149,4 @@ private:
 // Use by the indexing operators only when there is an allocation failure.
 	WCHAR		svmwcOverflow;
 };
-
-#endif // !defined(AFX_SVBSTR_H__58F6DDEB_CCA5_4C77_9C6F_08024EBCD06B__INCLUDED_)
 

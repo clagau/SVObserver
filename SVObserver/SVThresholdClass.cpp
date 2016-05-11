@@ -38,12 +38,10 @@ void SVThresholdClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVThresholdObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVThresholdObjectType;
 
 	// Register Embedded Object(s)
-	// RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
-
 	RegisterEmbeddedObject( &m_upperThresh, SVUpperThresholdObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_lowerThresh, SVLowerThresholdObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLD, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_threshActivate, SVThresholdActivateObjectGuid, IDS_OBJECTNAME_THRESHOLDACTIVATE, false, SVResetItemNone );
@@ -131,9 +129,9 @@ BOOL SVThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	m_lowerThresh.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 	m_dAutoThresholdMultiplier.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 
-	bOk = Rebuild() == S_OK;
+	bOk = S_OK == Rebuild();
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -156,7 +154,7 @@ HRESULT SVThresholdClass::ResetObject()
 {
 	HRESULT l_hrOk = SVUnaryImageOperatorClass::ResetObject();
 
-	if( Rebuild() != S_OK )
+	if( S_OK != Rebuild() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -174,7 +172,7 @@ SVDoubleValueObjectClass* SVThresholdClass::getExternalUT()
 	if( m_inputUT.IsConnected() && m_inputUT.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) m_inputUT.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVThresholdClass::getExternalLT()
@@ -182,7 +180,7 @@ SVDoubleValueObjectClass* SVThresholdClass::getExternalLT()
 	if( m_inputLT.IsConnected() && m_inputLT.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) m_inputLT.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
@@ -190,7 +188,7 @@ SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
 	if( m_inputATM.IsConnected() && m_inputATM.GetInputObjectInfo().PObject )
 		return ( SVDoubleValueObjectClass* ) m_inputATM.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 BOOL SVThresholdClass::OnValidate() 
@@ -472,12 +470,12 @@ HRESULT SVThresholdClass::Rebuild()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( GetTool() == NULL )
+	if ( nullptr == GetTool() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		// &&&
 		SVDataBufferInfoClass svData;
@@ -498,12 +496,12 @@ HRESULT SVThresholdClass::Rebuild()
 			l_hrOk = SVImageProcessingClass::Instance().DestroyDataBuffer( &svData );
 		}
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			l_hrOk = SVImageProcessingClass::Instance().CreateDataBuffer( &svData );
 		}
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			m_histResultID = svData.HBuffer.milResult;
 		}
@@ -521,9 +519,9 @@ HRESULT SVThresholdClass::Rebuild()
 			double l_dWidth = 0.0;
 			double l_dHeight = 0.0;
 
-			if ( GetTool()->GetImageExtent( l_svExtents ) == S_OK &&
-					 l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_dWidth ) == S_OK &&
-					 l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_dHeight ) == S_OK )
+			if ( S_OK == GetTool()->GetImageExtent( l_svExtents ) &&
+				S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_dWidth ) &&
+				S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_dHeight ) )
 			{
 				// Recalculate pixel number...
 				m_pixelNumber = ( ( __int64 ) l_dWidth ) * ( ( __int64 ) l_dHeight );

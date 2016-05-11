@@ -9,14 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 08:33:10  $
 //******************************************************************************
 
-#if !defined(AFX_CPASSDLG_H__13DC2ECF_F70B_11D6_9C9C_00AACA00180E__INCLUDED_)
-#define AFX_CPASSDLG_H__13DC2ECF_F70B_11D6_9C9C_00AACA00180E__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// CPassDlg.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // CCPassDlg dialog
@@ -25,7 +18,7 @@ class CCPassDlg : public CDialog
 {
 // Construction
 public:
-	CCPassDlg(CWnd* pParent = NULL);   // standard constructor
+	CCPassDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CCPassDlg)
@@ -53,6 +46,4 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_CPASSDLG_H__13DC2ECF_F70B_11D6_9C9C_00AACA00180E__INCLUDED_)
 

@@ -22,7 +22,8 @@ class SVMatroxBlobInterface;
 
 @SVObjectOperations The empty function is used to detect if the handle is empty.  When this class is destroyed the the LocalClear will free the matrox handle.
 
-*/class SVMatroxBlobFeatureList  
+*/
+class SVMatroxBlobFeatureList  
 {
 	friend SVMatroxBlobInterface;
 public:

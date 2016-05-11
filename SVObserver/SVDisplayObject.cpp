@@ -41,11 +41,11 @@ SVDisplayObject::SVDisplayObject( LPCSTR ObjectName )
 , m_IPDocDisplayComplete( 1 )
 , m_FrameRate( 10 )
 , m_LastUpdateTime(std::numeric_limits<SVClock::SVTimeStamp>::max())
+, m_pDoc(nullptr)
+, m_hStartEvent(nullptr)
+, m_hStopEvent(nullptr)
+, m_hDisplayThread(nullptr)
 {
-	m_hStartEvent = nullptr;
-	m_hStopEvent = nullptr;
-	m_hDisplayThread = nullptr;
-
 	m_CriticalSectionCreated = ::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 5000 ) ? true : false;
 }
 
@@ -56,11 +56,11 @@ SVDisplayObject::SVDisplayObject( SVObjectClass* POwner, int StringResourceID )
 , m_DisplayedTrigger( -1 )
 , m_IPDocDisplayComplete( 1 )
 , m_FrameRate( 10 )
+, m_pDoc(nullptr)
+, m_hStartEvent(nullptr)
+, m_hStopEvent(nullptr)
+, m_hDisplayThread(nullptr)
 {
-	m_hStartEvent = nullptr;
-	m_hStopEvent = nullptr;
-	m_hDisplayThread = nullptr;
-
 	m_CriticalSectionCreated = ::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 5000 ) ? true : false;
 }
 
@@ -71,16 +71,14 @@ SVDisplayObject::~SVDisplayObject()
 	m_CriticalSectionCreated = false;
 	::DeleteCriticalSection( &m_CriticalSection );
 
-	m_hStartEvent = NULL;
-	m_hStopEvent			= NULL;
-	m_hDisplayThread		= NULL;
+	m_hStartEvent = nullptr;
+	m_hStopEvent = nullptr;
+	m_hDisplayThread = nullptr;
 }
 
 HRESULT SVDisplayObject::ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData )
 {
-	HRESULT l_Status = S_OK;
-
-	l_Status = FinishInspection( p_rData );
+	HRESULT l_Status = FinishInspection( p_rData );
 
 	return l_Status;
 }
@@ -91,7 +89,7 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVInspectionNameUpdate& p_rData )
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		l_pIPDoc->SetTitle( p_rData.m_InspectionName.c_str() );
 	}
@@ -105,7 +103,7 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveImages& p_rData )
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		SVRemoveImages::SVImageIdSet::const_iterator l_Iter = p_rData.m_Images.begin();
 
@@ -126,7 +124,7 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveValues& p_rData )
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		l_pIPDoc->RebuildResultsList();
 	}
@@ -140,7 +138,7 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveSubjectStruct& p_rData )
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		l_pIPDoc->CloseDocument();
 	}
@@ -148,8 +146,10 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveSubjectStruct& p_rData )
 	return l_Status;
 }
 
-void SVDisplayObject::SetInspectionID( const SVGUID& p_rInspectionID )
+void SVDisplayObject::SetInspectionID( const SVGUID& p_rInspectionID, SVIPDoc* pDoc )
 {
+	m_pDoc = pDoc;
+
 	if( !( m_InspectionID.empty() ) )
 	{
 		SVObjectManagerClass::Instance().DetachObserver( "SVInspectionProcess", m_InspectionID, GetUniqueObjectID() );
@@ -165,29 +165,22 @@ void SVDisplayObject::SetInspectionID( const SVGUID& p_rInspectionID )
 
 SVIPDoc* SVDisplayObject::GetIPDoc() const
 {
-	SVIPDoc* l_pDoc = NULL;
-
-	if( !( m_InspectionID.empty() ) )
-	{
-		l_pDoc = SVObjectManagerClass::Instance().GetIPDoc( m_InspectionID );
-	}
-
-	return l_pDoc;
+	return m_pDoc;
 }
 
 BOOL SVDisplayObject::Create()
 {
 	DWORD dwThreadID;
 
-	m_hStartEvent = ::CreateEvent( NULL, FALSE, FALSE, NULL );
+	m_hStartEvent = ::CreateEvent( nullptr, false, false, nullptr );
 	if( !m_hStartEvent )
 		return FALSE;
 
-	m_hStopEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+	m_hStopEvent = ::CreateEvent( nullptr, true, false, nullptr );
 	if( !m_hStopEvent )
 		return FALSE;
 
-	m_hDisplayThread = ::CreateThread(NULL, 0, SVDisplayThreadFunc, (LPVOID)this, 0, &dwThreadID );
+	m_hDisplayThread = ::CreateThread(nullptr, 0, SVDisplayThreadFunc, (LPVOID)this, 0, &dwThreadID );
 	if( !m_hDisplayThread )
 		return FALSE;
 	SVThreadManager::Instance().Add( m_hDisplayThread,"Display", SVAffinityUser);
@@ -218,14 +211,14 @@ BOOL SVDisplayObject::Destroy()
 		} while (exitCode == STILL_ACTIVE);
 
 		::CloseHandle( m_hStopEvent );
-		m_hStopEvent = NULL;
+		m_hStopEvent = nullptr;
 
 		::CloseHandle( m_hStartEvent );
-		m_hStartEvent = NULL;
+		m_hStartEvent = nullptr;
 
 		CloseHandle( m_hDisplayThread );
 		SVThreadManager::Instance().Remove(m_hDisplayThread );
-		m_hDisplayThread = NULL;
+		m_hDisplayThread = nullptr;
 	}
 	return true;
 }
@@ -234,10 +227,10 @@ BOOL SVDisplayObject::CanGoOnline()
 {
 	BOOL l_Status = m_CriticalSectionCreated;
 
-	l_Status &= ( GetIPDoc() != NULL );
-	l_Status &= ( m_hStopEvent != NULL );
-	l_Status &= ( m_hStartEvent != NULL );
-	l_Status &= ( m_hDisplayThread != NULL );
+	l_Status &= ( nullptr != GetIPDoc() );
+	l_Status &= ( nullptr != m_hStopEvent );
+	l_Status &= ( nullptr != m_hStartEvent );
+	l_Status &= ( nullptr != m_hDisplayThread );
 
 	return l_Status;
 }// end CanGoOnline
@@ -251,7 +244,7 @@ BOOL SVDisplayObject::GoOnline()
 
 	m_FrameRate = 10;
 
-	GetIPDoc()->UpdateAllViews( NULL );
+	GetIPDoc()->UpdateAllViews( nullptr );
 
 	return TRUE;
 }// end GoOnline
@@ -260,7 +253,7 @@ BOOL SVDisplayObject::GoOffline()
 {
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		l_pIPDoc->UpdateWithLastProduct();
 	}
@@ -283,7 +276,7 @@ DWORD WINAPI SVDisplayObject::SVDisplayThreadFunc( LPVOID lpParam )
 {
 	SVDisplayObject *pDisplay = (SVDisplayObject*)lpParam;
 
-	if( pDisplay != NULL )
+	if( nullptr != pDisplay )
 	{
 		bool l_Processed = true;
 		bool l_Running = pDisplay->m_CriticalSectionCreated;
@@ -407,7 +400,7 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 		{
 			SVIPDoc* l_pIPDoc = GetIPDoc();
 
-			p_rProcessed = ( l_pIPDoc != NULL );
+			p_rProcessed = ( nullptr != l_pIPDoc );
 
 			if( p_rProcessed )
 			{
@@ -445,7 +438,7 @@ HRESULT SVDisplayObject::FinishInspection( const SVInspectionCompleteInfoStruct&
 
 	if( ImageUpdate || ResultUpdate  || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
 	{
-		if( m_CriticalSectionCreated && m_hStartEvent != NULL && !( p_rProduct.empty() ) )
+		if( m_CriticalSectionCreated && nullptr != m_hStartEvent && !( p_rProduct.empty() ) )
 		{
 			SVGUIDSVInspectionInfoStructMap::const_iterator l_Iter = p_rProduct.m_ProductInfo.m_svInspectionInfos.find( m_InspectionID.ToGUID() );
 

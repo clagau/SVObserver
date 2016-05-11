@@ -9,42 +9,20 @@
 //* .Check In Date   : $Date:   23 Apr 2013 14:57:04  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVResultPointX.h"
 #include "SVRange.h"
+#pragma endregion Includes
 
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVPointXResultClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVPointXResultClass, SVPointXResultClassGuid );
-
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 SVPointXResultClass::SVPointXResultClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 					:SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVResultPointXObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultPointXObjectType;
 
 	// Identify our input type needs
 	inputObjectInfo.SetInputObjectType( SVPointValueObjectType );
@@ -91,16 +69,16 @@ SVPointXResultClass::~SVPointXResultClass()
 
 BOOL SVPointXResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVResultClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = getInputPoint() != NULL;
+		bOk = nullptr != getInputPoint();
 	}
 	
 	x.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -115,9 +93,8 @@ SVPointValueObjectClass* SVPointXResultClass::getInputPoint()
 	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
 		return static_cast<SVPointValueObjectClass*>(inputObjectInfo.GetInputObjectInfo().PObject);
 
-	return NULL;
+	return nullptr;
 }
-
 
 BOOL SVPointXResultClass::OnValidate()
 {

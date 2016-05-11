@@ -215,7 +215,7 @@ HRESULT SVOutputStreamManager::Rename( LPCTSTR OldName, LPCTSTR NewName)
 {
 	HRESULT l_hr = S_OK;
 	l_hr = OldName == m_OutputStream.first ? S_OK : S_FALSE;
-	if( l_hr == S_OK )
+	if( S_OK == l_hr )
 	{
 		m_OutputStream.first = NewName ;
 	}

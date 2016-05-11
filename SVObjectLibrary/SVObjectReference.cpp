@@ -31,7 +31,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 {
 	m_pObject = pObject;
 	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SVInvalidGUID;
-	if( m_pObject != NULL )
+	if( nullptr != m_pObject )
 	{
 		m_NameInfo.ParseObjectName( m_NameInfo, static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
 	}
@@ -124,22 +124,10 @@ CString SVObjectReference::GetCompleteOneBasedObjectName() const
 	return strName;
 }
 
-CString SVObjectReference::GetCompleteOneBasedObjectNameToObjectType( LPCSTR lpszCompleteName, SVObjectTypeEnum objectTypeToInclude ) const
-{
-	CString strName;
-	if ( m_pObject )
-	{
-		strName = m_pObject->GetCompleteObjectNameToObjectType(lpszCompleteName, objectTypeToInclude);
-		strName += GetOneBasedIndexString();
-	}
-	return strName;
-}
-
 const SVObjectNameInfo& SVObjectReference::GetObjectNameInfo() const
 {
 	return m_NameInfo;
 }
-
 
 CString SVObjectReference::GetZeroBasedIndexString() const
 {
@@ -157,7 +145,6 @@ CString SVObjectReference::GetZeroBasedIndexString() const
 	}
 	return s;
 }
-
 
 CString SVObjectReference::GetOneBasedIndexString() const
 {
@@ -184,28 +171,26 @@ const SVString& SVObjectReference::GetIndex() const
 
 const UINT SVObjectReference::ObjectAttributesAllowed() const
 {
-	ASSERT( m_pObject != nullptr );
+	ASSERT( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesAllowed();
 }
 
 const UINT SVObjectReference::ObjectAttributesSet() const
 {
-	ASSERT( m_pObject != nullptr );
+	ASSERT( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex:0  );
-
 }
 
 UINT& SVObjectReference::ObjectAttributesAllowedRef()
 {
-	ASSERT( m_pObject != nullptr );
+	ASSERT( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesAllowedRef();
 }
 
 SVObjectAttributeShim SVObjectReference::ObjectAttributesSetRef()
 {
-	ASSERT( m_pObject != nullptr );
+	ASSERT( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesSetRef(m_ArrayIndex >= 0 ? m_ArrayIndex:0 );
-
 }
 
 GUID SVObjectReference::GetObjectGuid( SVObjectClass* pObject )

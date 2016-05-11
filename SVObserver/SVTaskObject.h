@@ -15,11 +15,10 @@
 //Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/ITaskObject.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVObjectAppClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #include "SVImageClass.h"
 #include "SVImageListClass.h"
 #include "SVExtentPropertiesInfoStruct.h"
@@ -29,16 +28,14 @@
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
 #pragma endregion Includes
 
-class SVLineClass;
 class SVIPDoc;
 
-class SVTaskObjectClass : virtual public SvOi::ITaskObject, public SVObjectAppClass  
+class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {
 	SV_DECLARE_CLASS( SVTaskObjectClass )
 
-	friend class SVInspectionProcess;
-	friend class SVTaskObjectListClass;
-	friend class SVToolSetClass;
+	friend class SVTaskObjectListClass; // For access to Run()
+	friend class SVToolSetClass; // For access to Run()
 
 public:
 	SVTaskObjectClass( LPCSTR LPSZObjectName );
@@ -48,11 +45,9 @@ public:
 
 	virtual HRESULT ResetObject();
 
-	virtual BOOL ReInit();
+	virtual HRESULT IsInputImage( SVImageClass* p_psvImage );
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
-
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
 	virtual bool DoesObjectHaveExtents() const;
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent );
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
@@ -62,7 +57,6 @@ public:
 	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 
 	virtual HRESULT GetOutputRectangle( RECT &l_roRect );
-	virtual HRESULT NormalizePoint( POINT l_oPoint, POINT &l_roOutputPoint );
 
 	void ResetPrivateInputInterface();
 	
@@ -87,9 +81,6 @@ public:
 	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects);
 
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 	virtual BOOL SetImageDepth( long lDepth );
@@ -155,10 +146,10 @@ public:
 	virtual HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
 	virtual HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
 
-	virtual HRESULT RegisterSubObjects( SVTaskObjectClass *p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList );
-	virtual HRESULT UnregisterSubObjects( SVTaskObjectClass *p_psvOwner );
+	virtual HRESULT RegisterSubObjects( SVTaskObjectClass* p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList );
+	virtual HRESULT UnregisterSubObjects( SVTaskObjectClass* p_psvOwner );
 
-	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
 	virtual void AddEmbeddedObject( SVObjectClass* PObject );
 	virtual void RemoveEmbeddedObject( SVObjectClass* pObjectToRemove);
@@ -183,7 +174,7 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
-	virtual void addDefaultInputObjects( BOOL BCallBaseClass = FALSE, SVInputInfoListClass* PInputListToFill = NULL );
+	virtual void addDefaultInputObjects( BOOL BCallBaseClass = FALSE, SVInputInfoListClass* PInputListToFill = nullptr );
 
 	virtual void hideEmbeddedObject( SVObjectClass& RObjectToHide );
 
@@ -215,10 +206,8 @@ protected:
 	SVDWordValueObjectClass         statusTag;
 	SVDWordValueObjectClass         statusColor;
 
-
-	// Embedded Object List - SEJ July 7,1999
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	// .Description : Contains pointer to SVObjectClass items, but doesn't owns this
+	// .Description : Contains pointer to SVObjectClass items, but doesn't owns these
 	//				: SVObjectClass items. That means it doesn't construct
 	//				: or destruct the items! 
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,7 +215,6 @@ protected:
 	// Embedded Objects can be SVObjectClass Objects
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	SVObjectClassPtrArray           embeddedList;
-
 
 	// Input Interface List
 	// Used to register your input interface...

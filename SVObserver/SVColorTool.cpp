@@ -37,8 +37,8 @@ SVColorToolClass::SVColorToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* 
 void SVColorToolClass::init()
 {
  	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVColorToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVColorToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_band0Image, SVBand0ImageObjectGuid, IDS_OBJECTNAME_BAND0_IMAGE );
@@ -133,7 +133,7 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
 	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }

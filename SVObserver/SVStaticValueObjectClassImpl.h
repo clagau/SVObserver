@@ -26,7 +26,7 @@ class SVStaticValueObjectClassImpl : public SVValueObjectClass
 public:
 	virtual ~SVStaticValueObjectClassImpl(); // See C++ Coding standards page 90 avoid memory leaks. public virtual destructor.
 	typedef SVStaticValueObjectClassImpl<T>  this_type;
-	typedef typename T                          value_type;
+	typedef typename T                 value_type;
 	typedef std::vector <value_type>   array_type;
 	typedef std::vector <value_type>   bucket_type_scalar;
 	typedef std::vector <array_type>   bucket_type_array;
@@ -36,12 +36,10 @@ public:
 	array_type m_ScalarBuckets;
 	value_type m_DefaultValue;
 
-
-
 	const this_type& operator = (const this_type& rhs);
 	void swap( SVStaticValueObjectClassImpl<T>& rhs );	// provide an efficient swap; derived classes with extra data should redefine.
 
-	virtual BOOL      SetObjectDepth ( int iNewObjectDepth );
+	virtual BOOL SetObjectDepth ( int iNewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 	virtual HRESULT SetArraySize   ( int iSize );
 	virtual HRESULT CopyValue      ( int src, int dest );
@@ -68,7 +66,7 @@ public:
 	HRESULT SetArrayValues(int iBucket, InIterator begin, InIterator end)//std::vector<ELEMENT_TYPE>& raValues)
 	{
 		HRESULT hr = ValidateIndexes(iBucket,0);
-		if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+		if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 		{
 			int iSize = static_cast< int >( std::distance(begin, end));
 			ASSERT( iSize <= ArraySize() );
@@ -93,7 +91,6 @@ public:
 
 		return hr;
 	}
-
 
 protected:
 	typedef SVStaticValueObjectClassImpl<T> base;	// to be used only by derived class!

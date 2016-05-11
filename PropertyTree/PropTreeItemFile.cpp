@@ -109,7 +109,7 @@ END_MESSAGE_MAP()
 
 void SVRPropertyItemFile::DrawAttribute(CDC* pDC, const RECT& rc)
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 	CFont*	l_pOldFont;
 
 	l_pOldFont = pDC->SelectObject(IsReadOnly() ? m_pProp->GetNormalFont() : m_pProp->GetBoldFont());
@@ -127,7 +127,7 @@ void SVRPropertyItemFile::OnMove()
 {
 	if (IsWindow(m_hWnd))
 	{
-		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER|SWP_NOACTIVATE);
+		SetWindowPos(nullptr, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER|SWP_NOACTIVATE);
 	}
 }
 
@@ -157,7 +157,7 @@ void SVRPropertyItemFile::OnActivate()
 		if (CreateEx(0, _T("EDIT"), _T(""), dwStyle, r, m_pProp->GetCtrlParent(), GetCtrlID()))
 		{
 			// Force a call to SVRPropertyItemFile::OnNcCalcSize() to calculate button size
-			SetWindowPos(NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+			SetWindowPos(nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 		SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
 	}
@@ -166,7 +166,7 @@ void SVRPropertyItemFile::OnActivate()
 	SetSel(0, -1);
 
 	SetFocus();
-	SetWindowPos(NULL, r.left, r.top, r.Width(), r.Height(), SWP_NOZORDER|SWP_SHOWWINDOW);
+	SetWindowPos(nullptr, r.left, r.top, r.Width(), r.Height(), SWP_NOZORDER|SWP_SHOWWINDOW);
 	SendMessage(EM_LIMITTEXT, _MAX_PATH, 0);
 }
 
@@ -228,7 +228,7 @@ void SVRPropertyItemFile::DrawButton(int nButtonState)
 
 //-		JAB110508 - The following statement obviously does not do anything 
 //-		with whatever font object DrawEdge assigned.
-		DC.SelectObject ((CFont*) NULL);
+		DC.SelectObject ((CFont*) nullptr);
 
 		// draw the dots
 		if (nButtonState == BTN_DISABLED)
@@ -243,7 +243,7 @@ void SVRPropertyItemFile::DrawButton(int nButtonState)
 //-			BoundsChecker doesn't like it.
 			DrawDots(&DC, GetSysColor(COLOR_BTNTEXT));
 
-			DC.SelectObject ((CFont*) NULL);
+			DC.SelectObject ((CFont*) nullptr);
 		}
 		else
 			ASSERT(FALSE);	// Invalid nButtonState
@@ -335,7 +335,7 @@ bool SVRPropertyItemFile::SVROpenFile()
 
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 	TCHAR lpstrDirectory[_MAX_PATH] = _T("");
-	if (dlg.m_ofn.lpstrInitialDir == nullptr)
+	if (nullptr == dlg.m_ofn.lpstrInitialDir)
 	{
 		bDirectory = false;				// directory in edit control
 		_tcscpy(lpstrDirectory, GetPathName());
@@ -515,7 +515,7 @@ void SVRPropertyItemFile::OnSize(UINT nType, int cx, int cy)
 {
 	CEdit::OnSize(nType, cx, cy);
 	// Force a recalculation of the button's size and position
-	SetWindowPos(NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+	SetWindowPos(nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 BOOL SVRPropertyItemFile::ScreenPointInButtonRect(CPoint point)
@@ -531,14 +531,11 @@ void SVRPropertyItemFile::OnKillFocus(CWnd* pNewWnd)
 {
 	CEdit::OnKillFocus(pNewWnd);
 	
-	//if (pNewWnd != NULL && pNewWnd != this) //CWnd::GetParent() == pNewWnd)
+	if (m_pProp->GetFocusedItem() == this)
 	{
-		if (m_pProp->GetFocusedItem() == this)
-		{
-			m_pProp->SetFocusedItem(NULL);
-		}
-		CommitChanges();
+		m_pProp->SetFocusedItem(nullptr);
 	}
+	CommitChanges();
 }
 
 UINT SVRPropertyItemFile::OnGetDlgCode() 
@@ -546,7 +543,7 @@ UINT SVRPropertyItemFile::OnGetDlgCode()
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
 }
 
-bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=NULL*/)
+bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=nullptr*/)
 {
 	ResetControl();
 

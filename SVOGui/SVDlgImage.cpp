@@ -39,14 +39,7 @@ namespace Seidenader { namespace SVOGui {
 		pParent->ScreenToClient(&point);
 		pParent->PostMessage(WM_MOUSEMOVE, nFlags, MAKELPARAM(point.x, point.y) );
 	}
-
-
-	//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-	//* Class Name : SVDlgImageClass
-	//* Note(s)    : CStatic
-	//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-
+		
 	BEGIN_MESSAGE_MAP(SVDlgImageClass, CStatic)
 		//{{AFX_MSG_MAP(SVDlgImageClass)
 		ON_WM_PAINT()
@@ -82,7 +75,7 @@ namespace Seidenader { namespace SVOGui {
 		m_inspectionId = inspectionId;
 		m_imageId = imageId;
 
-		if ( m_sbHorizontal.m_hWnd == NULL )
+		if ( nullptr == m_sbHorizontal.m_hWnd )
 		{
 			CRect rect;
 			CRect rectClient;

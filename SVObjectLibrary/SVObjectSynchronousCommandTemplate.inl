@@ -48,12 +48,12 @@ HRESULT SVObjectSynchronousCommandTemplate< SVCommandPtr >::Execute( DWORD p_Tim
 			{
 				l_Status = SVObjectManagerClass::Instance().SubmitCommand( m_ObjectID, l_CommandPtr );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_WrapperPtr->WaitForRequest( p_TimeoutInMilliseconds );
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = l_WrapperPtr->GetStatus();
 				}

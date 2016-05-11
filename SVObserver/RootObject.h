@@ -38,7 +38,7 @@ public:
 	//! \param pOwner <in> a pointer to the parent object
 	//! \param StringResourceID <in> the resource string ID for the name
 	//************************************
-	RootObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_ROOTOBJECT );
+	RootObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_ROOTOBJECT );
 
 	virtual ~RootObject();
 #pragma endregion Constructor

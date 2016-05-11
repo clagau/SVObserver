@@ -51,8 +51,8 @@ HRESULT SVOCVGeneralDlg::SetInspectionData()
 
 	UpdateData (TRUE);
 	
-	SVOCVDialogClass *pParent = (SVOCVDialogClass *) GetParent();
-	SVOCVAnalyzeResultClass *pOCVAnalyzerResult = pParent->pOCVAnalyzerResult;
+	SVOCVDialogClass* pParent = dynamic_cast<SVOCVDialogClass*>(GetParent());
+	SVOCVAnalyzeResultClass* pOCVAnalyzerResult = pParent->GetAnalyzerResult();
 
 	if( pOCVAnalyzerResult )
 	{
@@ -60,22 +60,22 @@ HRESULT SVOCVGeneralDlg::SetInspectionData()
 
 		l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_fnvoFontFileName ), m_fontFilename );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_fnvoConstraintsFileName ), m_constraintsFilename );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_fnvoControlsFileName ), m_controlsFilename );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( pOCVAnalyzerResult->GetTool() );
 		}
@@ -110,8 +110,8 @@ BOOL SVOCVGeneralDlg::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	
-	SVOCVDialogClass *pParent = (SVOCVDialogClass*) GetParent();
-	SVOCVAnalyzeResultClass *pOCVAnalyzerResult = pParent->pOCVAnalyzerResult;
+	SVOCVDialogClass* pParent = dynamic_cast<SVOCVDialogClass*>(GetParent());
+	SVOCVAnalyzeResultClass *pOCVAnalyzerResult = pParent->GetAnalyzerResult();
 	
 	SetTaskObject( pOCVAnalyzerResult );
 

@@ -16,7 +16,6 @@
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVTriggerLibrary/SVInternalTrigger.h"
 #include "SVTriggerLibrary/SVTriggerCallbackMap.h"
-#include "SVBufferQueueFreeListStrategy.h"
 
 #include "SVMatroxGigeExports.h"
 #include "SVMatroxGigeDigitizer.h"

@@ -74,11 +74,11 @@ namespace Seidenader
 
 		HBITMAP SVDlgBitmapClass::InitFromFile()
 		{
-			HBITMAP bm = NULL;
+			HBITMAP bm = nullptr;
 
 			if( 0 == ::_access( _T("C:\\SVObserver\\Bin\\OEM\\splash.bmp"), 0 ) )
 			{
-				bm = (HBITMAP) ::LoadImage( NULL, 
+				bm = (HBITMAP) ::LoadImage( nullptr, 
 					_T("C:\\SVObserver\\Bin\\OEM\\splash.bmp"),
 					IMAGE_BITMAP,
 					0,
@@ -135,7 +135,7 @@ namespace Seidenader
 			return FALSE;
 		}
 
-		CSize SVDlgBitmapClass::GetDimensions()
+		CSize SVDlgBitmapClass::GetDimensions() const
 		{
 			CSize size;
 
@@ -233,7 +233,7 @@ namespace Seidenader
 		{
 			CPaintDC dc(this); // device context for painting
 
-			if( dc != NULL )
+			if( nullptr != dc ) // @WTF
 			{
 				CDC memDC;
 				memDC.CreateCompatibleDC( &dc );
@@ -263,8 +263,6 @@ namespace Seidenader
 				pPal->CreatePalette( pLP );
 				delete [] pLP;               // 22 Mar 1999 - frb
 
-				//pPal->SetPaletteEntries( 0, 256, ( PALETTEENTRY* ) rgbStd256 );
-
 				memDC.SelectPalette( pPal, FALSE );
 				memDC.RealizePalette();
 
@@ -273,7 +271,6 @@ namespace Seidenader
 
 				CRect rect;
 				GetClientRect( &rect );
-				//GetWindowRect( &rect );
 
 				dc.SetStretchBltMode( COLORONCOLOR );
 				dc.StretchBlt( 0, 0, rect.Width(), rect.Height(), 
@@ -309,7 +306,7 @@ namespace Seidenader
 		{
 			CStatic::OnPaletteIsChanging(pRealizeWnd);
 
-			if( pRealizeWnd != NULL )
+			if( nullptr != pRealizeWnd )
 			{
 				HDC hdc = ::GetDC( pRealizeWnd->m_hWnd );
 
@@ -317,35 +314,6 @@ namespace Seidenader
 
 				::ReleaseDC( pRealizeWnd->m_hWnd, hdc );
 			}
-		}
-
-		BOOL SVDlgBitmapClass::SetWindowSize( int cx /* = -1 */, int cy /* = -1 */ )
-		{
-			if ( cx == -1 || cy == -1 )
-			{
-				CSize sizeImage = GetDimensions();
-				cx = sizeImage.cx;
-				cy = sizeImage.cy;
-			}
-
-			CRect rectClient;
-			CRect rectWindow;
-			GetWindowRect(&rectWindow);
-			GetClientRect(&rectClient);
-			cx = cx + (rectWindow.Width() - rectClient.Width());
-			cy = cy + (rectWindow.Height() - rectClient.Height());
-
-
-			BOOL bOK = SetWindowPos( NULL, 0, 0, cx, cy, SWP_NOZORDER | SWP_NOMOVE );
-
-			return bOK;
-		}
-
-		CSize SVDlgBitmapClass::GetWindowSize()
-		{
-			CRect rectWindow;
-			GetWindowRect(&rectWindow);
-			return CSize(rectWindow.Width(), rectWindow.Height());
 		}
 	} //SVMFCControls
 } //Seidenader

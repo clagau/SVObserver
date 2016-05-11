@@ -27,9 +27,6 @@ public:
 	static HRESULT GetBitmapFromIPictureDisp(IPictureDisp* pPictureDisp, HBITMAP& rBitmap);
 	static HRESULT GetIPictureDispFromBitmap(HBITMAP Bitmap, IPictureDisp** ppPictureDisp);
 
-	static HRESULT BitmapToBStr(HBITMAP Bitmap, BSTR& rImage);
-	static HRESULT BStrToBitmap(BSTR Image, HBITMAP& rBitmap);
-
 	static HRESULT BitmapToByteVector(HBITMAP Bitmap, SVByteVector& rImage);
 	static HRESULT ByteVectorToBitmap(const SVByteVector& Image, HBITMAP& rBitmap);
 
@@ -49,12 +46,9 @@ public:
 	static HRESULT CopyDIBitsFlip(BITMAPINFOHEADER* pSrcInfo, void* pSrcBits, BITMAPINFOHEADER* pDestInfo, void* pDestBits);
 
 	static HBITMAP CreateBitmap(HBITMAP SourceBitmap, const RECT& rROI);
-	static HBITMAP CopyBitmap(HBITMAP SourceBitmap);
 
 	static HBITMAP CreateDIB(BITMAPINFO* pbmInfo, void* pSrc);
 	static HBITMAP CreateDIB(BITMAPINFO* pBmpInfo, void* pSrc, long srcPitch);
 	static HBITMAP CreateDIB(BITMAPINFO* pBmpInfo, void* pSrc, long srcPitch, long pixelOffset, long bytesPerPixel);
-
-	static HRESULT WriteBStrImageToFile(const _bstr_t& rFileName, BSTR Image);
 };
 

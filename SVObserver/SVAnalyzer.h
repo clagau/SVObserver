@@ -14,9 +14,7 @@
 #include "SVTaskObjectList.h"
 #pragma endregion Includes
 
-
 class SVImageClass;
-class SVRefExtentListClass;
 class SVResultClass;
 class SVToolClass;
 class SVIPDoc;
@@ -43,8 +41,8 @@ public:
 	
 // Sri. 04-12-00
 // used in pattern and Blob Analyzers.
-	virtual BOOL IsPtOverResult( CPoint point ){ return FALSE;};
-	virtual	void DisplayAnalyzerResult( void){};
+	virtual BOOL IsPtOverResult( CPoint point ){ return false;}
+	virtual	void DisplayAnalyzerResult(){};
 // End. Sri
 
 protected:

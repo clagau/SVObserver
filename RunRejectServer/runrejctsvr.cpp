@@ -163,16 +163,16 @@ std::string GetVersionString()
 	std::string verStr;
 
 	char moduleFilename[512];
-	::GetModuleFileNameA(NULL, moduleFilename, sizeof(moduleFilename));
+	::GetModuleFileNameA(nullptr, moduleFilename, sizeof(moduleFilename));
 
 	DWORD dwHandle;
 	DWORD size = ::GetFileVersionInfoSizeA(moduleFilename, &dwHandle);
 	unsigned char* lpData = new unsigned char[size];
 
-	BOOL rc = ::GetFileVersionInfoA(moduleFilename, NULL, size, lpData);
+	BOOL rc = ::GetFileVersionInfoA(moduleFilename, 0, size, lpData);
 	if (rc)
 	{
-		VS_FIXEDFILEINFO* pFileInfo = NULL;
+		VS_FIXEDFILEINFO* pFileInfo = nullptr;
 		UINT Len = 0;
 		if (::VerQueryValueA(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 		{
@@ -246,7 +246,7 @@ JsonCmd ReadCommand(UdpSocket & sok)
 
 std::string EncodeImg(const std::string & name)
 {
-	HANDLE hFile = ::CreateFileA(name.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = ::CreateFileA(name.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		throw std::exception("Invalid file handle");
@@ -254,9 +254,9 @@ std::string EncodeImg(const std::string & name)
 	else
 	{
 		DWORD file_sz;
-		file_sz = ::GetFileSize(hFile, NULL);
+		file_sz = ::GetFileSize(hFile, nullptr);
 
-		HANDLE hMapping = ::CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, file_sz, NULL);
+		HANDLE hMapping = ::CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, file_sz, nullptr);
 		BYTE * buff = (BYTE *)::MapViewOfFile(hMapping, FILE_MAP_READ, 0, 0, file_sz);
 		int enc_len = ::Base64EncodeGetRequiredLength(file_sz, ATL_BASE64_FLAG_NOCRLF);
 		boost::scoped_array<char>  enc_buff( new char[enc_len + 1]);
@@ -1057,10 +1057,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	bool bShowConsole = CheckCommandLineArgs(argc, argv, _T("/show"));
 	
 	HRESULT hr = SeidenaderVision::SVSharedConfiguration::SharedResourcesOk();
-	if (hr != S_OK)
+	if (S_OK != hr )
 	{
 		std::string msg;
-		if (hr == STG_E_INSUFFICIENTMEMORY)
+		if (STG_E_INSUFFICIENTMEMORY == hr)
 		{
 			if (!bCheckSizeOverride)
 			{
@@ -1071,7 +1071,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				hr = S_OK;
 			}
 		}
-		else if (hr == STG_E_PATHNOTFOUND)
+		else if (STG_E_PATHNOTFOUND == hr)
 		{
 			msg = "Shared Resources - Path not found.\n";
 		}

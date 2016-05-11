@@ -63,8 +63,8 @@ SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int Str
 void SVOCVAnalyzeResultClass::clearAll()
 {	
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVResultOCVObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultOCVObjectType;
 
 	// Identify our input type needs
 	inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
@@ -188,8 +188,8 @@ void SVOCVAnalyzeResultClass::clearAll()
 	m_lFontStringLengthMax = 0;
 	m_lMatchStringLength = 0;
 
-	m_pBuffer = NULL;
-	m_pIndexTable = NULL;
+	m_pBuffer = nullptr;
+	m_pIndexTable = nullptr;
 }
 
 SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
@@ -230,20 +230,16 @@ SVImageClass* SVOCVAnalyzeResultClass::getInputImage()
 	{
 		return (SVImageClass*) inputImageObjectInfo.GetInputObjectInfo().PObject;
 	}
-	return NULL;
+	return nullptr;
 }
-
 
 BOOL SVOCVAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
-	
-
-	bOk = SVResultClass::CreateObject( PCreateStructure );
+	BOOL bOk = SVResultClass::CreateObject( PCreateStructure );
 
 	if ( bOk )
 	{
-		bOk = getInputImage() != NULL;
+		bOk = nullptr != getInputImage();
 	}
 	
 	if ( bOk && !m_bHasLicenseError )
@@ -273,7 +269,7 @@ BOOL SVOCVAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCreateSt
 
 	HideResults();
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -341,7 +337,7 @@ BOOL SVOCVAnalyzeResultClass::CloseObject()
 
 void SVOCVAnalyzeResultClass::GetOCVResultString( CString & csResult )
 {
-   BOOL bResult = ( m_svoFoundString.GetValue( csResult ) == S_OK );
+   BOOL bResult = ( S_OK == m_svoFoundString.GetValue( csResult ) );
    ASSERT(bResult);
 }
 
@@ -370,9 +366,6 @@ CRect SVOCVAnalyzeResultClass::Draw( HDC DC, CRect R )
 	R.top += SV_DEFAULT_TEXT_HEIGHT + 2;
 
     DWORD dwColor = GetObjectColor();
-	//resultColor.GetValue(dwColor);
-
-	//::SetTextColor( DC, resultColor ); 
 	::SetTextColor(DC,dwColor);
 
 	text = _T( "OCV String:" );
@@ -391,12 +384,6 @@ CRect SVOCVAnalyzeResultClass::Draw( HDC DC, CRect R )
 // -----------------------------------------------------------------------------
 // .Description : Generates the mil font model from the Font file and the
 //				  entered sampling rate.
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :19.03.1999 JB			First Implementation
-//	:
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 {
@@ -578,29 +565,6 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 	return bOk;
 }
 
-
-void  SVOCVAnalyzeResultClass::WriteToArchive(CFile & fileArchive)
-{
-    //
-    // Write the match string to the archive.
-    //
-	CString strTemp;
-	CString csResult;
-
-	m_svoFoundString.GetValue( csResult );
-	strTemp.Format("OCV result: %s\r\n", (LPCTSTR)csResult );
-
-    TRY
-	{
-	    fileArchive.Write((LPCTSTR)strTemp,strTemp.GetLength());
-	}
-	CATCH_ALL(e)
-	{
-	} 
-	END_CATCH_ALL;
-}
-
-
 HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 {
 	//
@@ -713,10 +677,10 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 
 BOOL SVOCVAnalyzeResultClass::OnValidate()
 {
-	BOOL bRetVal = TRUE;
+	BOOL bRetVal = true;
 
 	bRetVal = bRetVal && inputImageObjectInfo.IsConnected();
-	bRetVal = bRetVal && inputImageObjectInfo.GetInputObjectInfo().PObject != NULL;
+	bRetVal = bRetVal && nullptr != inputImageObjectInfo.GetInputObjectInfo().PObject;
 	bRetVal = bRetVal && m_lMatchStringLength == m_lFontStringLength;
 	bRetVal = bRetVal && m_lMatchStringLength <= m_lFontStringLengthMax;
 	bRetVal = bRetVal && !m_milFontID.empty();
@@ -735,7 +699,7 @@ BOOL SVOCVAnalyzeResultClass::OnValidate()
 //
 DWORD_PTR SVOCVAnalyzeResultClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -744,7 +708,7 @@ DWORD_PTR SVOCVAnalyzeResultClass::processMessage( DWORD DwMessageID, DWORD_PTR 
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -794,7 +758,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	BOOL bOk = FALSE;
 	SVMatroxBuffer l_milImageID;
-	BYTE* pMilBuffer = NULL;
+	BYTE* pMilBuffer = nullptr;
 	BOOL l_bOperation;
 	BOOL bUseFile;
 	BOOL bStringPassed;
@@ -832,7 +796,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 			SVImageClass* pImage = getInputImage();
 
-			bOk = pImage != NULL;
+			bOk = nullptr != pImage;
 			
 			if( !bOk )
 			{    
@@ -854,7 +818,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 					//
 					
 					SVMatroxBufferInterface::GetHostAddress( &pMilBuffer, l_milImageID );				
-					bOk = pMilBuffer != NULL;
+					bOk = nullptr != pMilBuffer;
 
 					if( ! bOk )
 					{
@@ -1138,18 +1102,6 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 					if( l_lLength > OCV_MAX_RESULTS )
 						l_lLength = OCV_MAX_RESULTS;
 				}// end try
-
-				/*
-				// MILOCR 5ef91ee2 - 0xC0000090: Float Invalid Operation.
-				// how to catch just fp exception???  use _controlfp/_clearfp to see if flag is set in (...)
-				// or GetExceptionCode()???  --> only with __try / __except
-				catch ( fpexception& e )
-				{
-					_clearfp();	// clear floating-point exception register; allow other downstream fp routines to work properly
-				}
-				//*/
-
-				///*
 				catch( ... ) // Access violation in : 5eec0a51 milpat!MpatFindMultipleModelUnpack
 				{
 					assert (0);
@@ -1167,7 +1119,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 					l_lLength = 0;
 				}// end catch
-				//*/
+
 
 				for( k = 0; k < l_lLength; k++ ) // For critical error cases 
 					                             // the length must be 0 at 
@@ -1380,7 +1332,6 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 	}// end if
 
-//	if( !bOk )
 	if (l_Code & SV_ARC_ERROR)
 	{
 		assert (0);
@@ -1455,7 +1406,7 @@ BOOL SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 		if(m_nTotalCount == 1)
 		{
 			m_svoMatchString.SetValue( 1, (LPTSTR)pBuffer );
-			m_pIndexTable = NULL;
+			m_pIndexTable = nullptr;
 			break; // No need to create hash table
 		}
 		
@@ -1547,7 +1498,6 @@ void SVOCVAnalyzeResultClass::InsertValueToTable ( short nValue, int nIndex )
 int SVOCVAnalyzeResultClass::CheckStringInTable(CString MatchString)
 {
 	int nReturnIndex = -1;
-	//   m_dFactor = ((double)(m_lHighValue - m_lLowValue)) / (double)m_nTotalCount;
 	
 	long  lIndexValue = 0;
 	int   nCharCount = MatchString.GetLength();

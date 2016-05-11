@@ -22,7 +22,7 @@ namespace Seidenader
 
 		SVEditableListBox::~SVEditableListBox(void)
 		{
-			if( m_ceEdit.GetSafeHwnd() != NULL )
+			if( nullptr != m_ceEdit.GetSafeHwnd() )
 				m_ceEdit.DestroyWindow();
 		}
 
@@ -43,11 +43,11 @@ namespace Seidenader
 			int iSel = GetCurSel();
 
 			// Make sure the edit is not already started.
-			if( m_ceEdit.GetSafeHwnd() != NULL)
+			if( nullptr != m_ceEdit.GetSafeHwnd() )
 				return;
 
 			// Anything selected?
-			if( iSel != LB_ERR )
+			if( LB_ERR != iSel )
 			{
 				CRect rItem;
 
@@ -93,7 +93,7 @@ namespace Seidenader
 
 		void SVEditableListBox::EditEnds( BOOL bCommitText /* = TRUE */ )
 		{
-			if( m_ceEdit.GetSafeHwnd() != NULL )
+			if( nullptr != m_ceEdit.GetSafeHwnd() )
 			{
 				// Do we want the text entered by the user
 				// to replace the selected lb item's text?

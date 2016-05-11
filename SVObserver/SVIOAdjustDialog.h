@@ -38,7 +38,7 @@ class SVIOAdjustDialogClass : public CDialog
 	DECLARE_MESSAGE_MAP()	
 
 public:
-	SVIOAdjustDialogClass( CWnd* pParent = NULL );   // Standardkonstruktor
+	SVIOAdjustDialogClass( CWnd* pParent = nullptr );   // Standardkonstruktor
 	virtual ~SVIOAdjustDialogClass();
 
 	//{{AFX_VIRTUAL(SVIOAdjustDialogClass)

@@ -31,7 +31,7 @@ class SVIOController : public SVObjectClass
 
 public:
 	SVIOController( LPCSTR ObjectName );
-	SVIOController( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVIOCONTROLLER );
+	SVIOController( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIOCONTROLLER );
 
 	virtual ~SVIOController();
 
@@ -47,6 +47,9 @@ public:
 	virtual HRESULT ResetObject();
 	virtual BOOL OnValidate();
 
+	void SetIODoc(SVIODoc* pDoc); 
+	SVIODoc* GetIODoc() const;
+
 	BOOL RebuildOutputList();
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
@@ -60,8 +63,6 @@ public:
 
 	SVIOEntryHostStructPtr GetModuleReady();
 	SVIOEntryHostStructPtr GetRaidErrorBit();
-
-	SVIODoc* GetIODoc() const;
 
 	SVGUID GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
@@ -107,6 +108,8 @@ protected:
 private:
 	void LocalIntialize();
 	void LocalDestroy();
+
+	SVIODoc* m_pIODoc;
 };
 
 

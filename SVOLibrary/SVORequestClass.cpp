@@ -17,9 +17,9 @@ This constructor initializes the local attributes and calls the Reset method.
 */
 SVORequestClass::SVORequestClass()
 {
-	mpvOwner = NULL;
-	mpvParent = NULL;
-	mpvExtraData = NULL;
+	mpvOwner = nullptr;
+	mpvParent = nullptr;
+	mpvExtraData = nullptr;
 
 	Reset();
 }
@@ -29,9 +29,9 @@ This constructor initializes the local attributes, calls the Reset method, and c
 */
 SVORequestClass::SVORequestClass(const SVORequestClass &rRequest)
 {
-	mpvOwner = NULL;
-	mpvParent = NULL;
-	mpvExtraData = NULL;
+	mpvOwner = nullptr;
+	mpvParent = nullptr;
+	mpvExtraData = nullptr;
 
 	Reset();
 
@@ -73,12 +73,12 @@ HRESULT SVORequestClass::Reset()
 {
 	HRESULT hrOk = S_OK;
 
-	mbIsValid = FALSE;
-	mbIsComplete = FALSE;
+	mbIsValid = false;
+	mbIsComplete = false;
 
 	m_StartTick = SVClock::GetTimeStamp();
 
-	if ( mResponse.Reset() != S_OK )
+	if ( S_OK != mResponse.Reset() )
 	{
 		hrOk = S_FALSE;
 	}

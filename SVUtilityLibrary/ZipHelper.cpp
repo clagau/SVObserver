@@ -42,8 +42,8 @@ void ZipHelper::makeZipFile( const SVString& rZipFileName, const SVStringSet& rZ
 {
 	if( 0 != rZipFiles.size() )
 	{
-		HZIP ZipHandle = ::CreateZip( rZipFileName.c_str(), NULL);
-		if( NULL != ZipHandle )
+		HZIP ZipHandle = ::CreateZip( rZipFileName.c_str(), nullptr);
+		if( nullptr != ZipHandle )
 		{
 			SVStringSet::const_iterator Iter( rZipFiles.begin() );
 			while( rZipFiles.end() != Iter )
@@ -54,7 +54,7 @@ void ZipHelper::makeZipFile( const SVString& rZipFileName, const SVStringSet& rZ
 					_TCHAR Name[_MAX_FNAME];
 					_TCHAR Extension[_MAX_EXT];
 
-					_splitpath( Iter->c_str(), NULL, NULL, Name, Extension );
+					_splitpath( Iter->c_str(), nullptr, nullptr, Name, Extension );
 					FileName = Name;
 					FileName += Extension;
 					::ZipAdd(ZipHandle, FileName.c_str(), Iter->c_str() );
@@ -76,8 +76,8 @@ void ZipHelper::unzipAll( const SVString& rZipFileName, const SVString& rDestina
 {
 	if( !rDestinationFolder.empty() )
 	{
-		HZIP ZipHandle = ::OpenZip( rZipFileName.c_str(), NULL );
-		if ( NULL != ZipHandle )
+		HZIP ZipHandle = ::OpenZip( rZipFileName.c_str(), nullptr );
+		if ( nullptr != ZipHandle )
 		{
 			ZIPENTRY Entry;
 			::SetUnzipBaseDir( ZipHandle,  rDestinationFolder.c_str() );

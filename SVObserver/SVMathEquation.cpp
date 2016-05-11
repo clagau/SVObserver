@@ -9,27 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:29:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMathEquation.h"
+#pragma endregion Includes
 
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVConditionalClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVMathEquationClass, SVMathEquationClassGuid );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,17 +30,13 @@ SVMathEquationClass::SVMathEquationClass( SVObjectClass* POwner, int StringResou
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :26.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVMathEquationClass::init()
 {
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVMathEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVMathEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -76,12 +56,12 @@ void SVMathEquationClass::init()
 
 BOOL SVMathEquationClass::CreateObject(SVObjectLevelCreateStruct *PCreateStruct)
 {
-	isCreated = SVEquationClass::CreateObject(PCreateStruct);
+	m_isCreated = SVEquationClass::CreateObject(PCreateStruct);
 
 	// Set / Reset Printable Flag
 	result.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	return isCreated;
+	return m_isCreated;
 }
 ////////////////////////////////////////////////////////////////////////////////
 // 
@@ -131,10 +111,3 @@ BOOL SVMathEquationClass::onRun( SVRunStatusClass& RRunStatus )
 
 	return retVal;
 }
-
-
-
-
-
-//** EOF **
-

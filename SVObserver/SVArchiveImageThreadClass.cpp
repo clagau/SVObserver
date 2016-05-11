@@ -16,10 +16,10 @@
 #pragma region Constructor
 SVArchiveImageThreadClass::SVArchiveImageThreadClass()
 {
-	m_hThread = NULL;
+	m_hThread = nullptr;
 	m_dwThreadId = 0;
 	m_bRunThread = false;
-	m_hExitEvent = NULL;
+	m_hExitEvent = nullptr;
 }
 
 SVArchiveImageThreadClass::~SVArchiveImageThreadClass()
@@ -38,11 +38,11 @@ HRESULT SVArchiveImageThreadClass::GoOnline()
 
 		// create thread
 		m_bRunThread = true;
-		ASSERT( m_hExitEvent == NULL );
-		m_hExitEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
-		ASSERT( m_hThread == NULL );
+		ASSERT( nullptr == m_hExitEvent );
+		m_hExitEvent = ::CreateEvent( nullptr, true, false, nullptr );
+		ASSERT( nullptr == m_hThread );
 
-		m_hThread = ::CreateThread( NULL, 0, SVArchiveImageThreadClass::ThreadEntry, this, 0, &m_dwThreadId );
+		m_hThread = ::CreateThread( nullptr, 0, SVArchiveImageThreadClass::ThreadEntry, this, 0, &m_dwThreadId );
 
 		::SetThreadPriority( m_hThread, THREAD_PRIORITY_NORMAL );
 		
@@ -56,7 +56,7 @@ HRESULT SVArchiveImageThreadClass::GoOffline()
 	if ( m_bRunThread )
 	{
 		m_bRunThread = false;
-		ASSERT( m_hExitEvent != NULL );
+		ASSERT( nullptr != m_hExitEvent );
 		::SetEvent( m_hExitEvent );
 		::CloseHandle( m_hThread );	// can be done on a live thread
 		SVThreadManager::Instance().Remove( m_hThread );
@@ -114,7 +114,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		else
 		{
 			HRESULT hrAllocate = TheSVMemoryManager().ReservePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, p_BufferInfo.lBufferSize );
-			if ( hrAllocate == S_OK )	// if enough memory in queue
+			if ( S_OK == hrAllocate )	// if enough memory in queue
 			{
 				lock.Unlock();	// do the least possible amount of work with this locked
 
@@ -132,7 +132,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 					hr = E_FAIL;
 				}
 
-				if ( hr == S_OK )
+				if ( S_OK == hr )
 				{
 					p_BufferInfo.pImageObject = pImageObject;
 
@@ -228,7 +228,7 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 	                                            ::GetCurrentProcess(),
 	                                            &(ahObjects[0]),
 	                                            0, FALSE, DUPLICATE_SAME_ACCESS );
-	ASSERT( m_hExitEvent != NULL );
+	ASSERT( nullptr != m_hExitEvent );
 	ahObjects[1] = m_hExitEvent;
 
 	const DWORD dwTimeoutMilliseconds = 10;
@@ -247,7 +247,7 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 
 	::CloseHandle( ahObjects[0] );
 	::CloseHandle( m_hExitEvent );
-	m_hExitEvent = NULL;
+	m_hExitEvent = nullptr;
 
 	// finish writing buffers
 	while ( m_Queue.size() > 0 )
@@ -257,7 +257,7 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 	}
 
 
-	m_hThread = NULL;
+	m_hThread = nullptr;
 	return 0;
 }
 

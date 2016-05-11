@@ -28,7 +28,7 @@ HRESULT SVVariantConverter::TranslateVariant(VARIANT* avpValue, BSTR* abstrpValu
 
 	while (1)
 	{
-		if (avpValue == NULL)
+		if (nullptr == avpValue)
 		{
 			hr = 2;
 			break;
@@ -61,21 +61,21 @@ HRESULT SVVariantConverter::TranslateVariant(VARIANT* avpValue, BSTR* abstrpValu
 			{
 			case VT_SVBASENODE:
 				{
-					*abstrpValue = NULL;
+					*abstrpValue = nullptr;
 					bstrType = g_wcsBaseNode;
 					*abstrpType = SysAllocString (bstrType);
 					break;
 				}
 			case VT_SVNODEWITHDATA:
 				{
-					*abstrpValue = NULL;
+					*abstrpValue = nullptr;
 					bstrType = "SV_NODEWITHDATA";
 					*abstrpType = SysAllocString (bstrType);
 					break;
 				}
 			case VT_NULL:
 				{
-					*abstrpValue = NULL;
+					*abstrpValue = nullptr;
 					bstrType = "VT_NULL";
 					*abstrpType = SysAllocString (bstrType);
 					break;
@@ -232,13 +232,13 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 //-	If the value is numeric, we will return the same value that is 
 //-   present.
 //-   Move passed any white space.
-		if (wcpPntr1 != NULL)
+		if (nullptr != wcpPntr1)
 		{
 			wcpPntr1 = wcpPntr1 + wcsspn (wcpPntr1, wszWhiteSpace);
 		}
 //--- END - DONE FOR CONVERSION TO NUMBER. --------------------------------/\
 		
-		if (abstrType == NULL)
+		if (nullptr == abstrType)
 		{
 			vRestoredValue.vt = VT_NULL;
 			vRestoredValue.lVal = 0;
@@ -267,7 +267,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_BSTR", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1802;
 				break;
@@ -279,7 +279,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_BOOL", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1803;
 				break;
@@ -287,7 +287,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 //-      For BOOL values we will accept TRUE/FALSE or 1/0.
 			vRestoredValue.vt = VT_BOOL;
 
-			if (abstrValue == NULL)
+			if (nullptr == abstrValue)
 			{
 				hr = -1773;
 				break;
@@ -320,7 +320,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_INT", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1804;
 				break;
@@ -342,7 +342,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_I4", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1805;
 				break;
@@ -364,7 +364,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_UINT", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1806;
 				break;
@@ -384,7 +384,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_UI4", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1807;
 				break;
@@ -405,7 +405,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_R4", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1791;
 				break;
@@ -416,7 +416,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 			if ((iswdigit (*wcpPntr1)) ||
 				 ((*wcpPntr1 == '-') && iswdigit (*(wcpPntr1 + 1))))
 			{
-				vRestoredValue.fltVal = static_cast <float> (wcstod (wcpPntr1,NULL));
+				vRestoredValue.fltVal = static_cast <float> (wcstod (wcpPntr1, nullptr));
 			}
 			else
 			{
@@ -426,7 +426,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}// ...else if (!_wcsnicmp (abstrType, L"VT_R4", SysStringLen (abstrType)))
 		else if (!_wcsnicmp (abstrType, L"VT_R8", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1812;
 				break;
@@ -437,7 +437,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 			if ((iswdigit (*wcpPntr1)) ||
 				 ((*wcpPntr1 == '-') && iswdigit (*(wcpPntr1 + 1))))
 			{
-				vRestoredValue.dblVal = wcstod (wcpPntr1,NULL);
+				vRestoredValue.dblVal = wcstod (wcpPntr1, nullptr);
 			}
 			else
 			{
@@ -447,7 +447,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		} // ...else if (!_wcsnicmp (abstrType, L"VT_R8", SysStringLen (abstrType)))
 		else if (!_wcsnicmp (abstrType, L"VT_I8", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1814;
 				break;
@@ -468,7 +468,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_UI8", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1816;
 				break;
@@ -489,7 +489,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_UI1", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1818;
 				break;
@@ -510,7 +510,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 		}
 		else if (!_wcsnicmp (abstrType, L"VT_I1", SysStringLen (abstrType)))
 		{
-			if (wcpPntr1 == NULL)
+			if (nullptr == wcpPntr1)
 			{
 				hr = -1820;
 				break;

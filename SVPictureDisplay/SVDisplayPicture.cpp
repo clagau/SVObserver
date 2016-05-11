@@ -104,7 +104,7 @@ HBITMAP SVDisplayPicture::GetBitmapFromIPictureDisp() const
 		if( l_pPicture)
 		{
 			HRESULT hr = l_pPicture->get_Handle( (OLE_HANDLE*)&l_hBitmap );
-			if (hr != S_OK)
+			if (S_OK != hr)
 			{
 				TRACE(_T("GetBitmapFromIPictureDisp failed %08lx\n"), hr);
 			}
@@ -300,7 +300,7 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 
 		HBITMAP l_hbm(nullptr);
 
-		if( l_pPicture && l_pPicture->get_Handle( reinterpret_cast< OLE_HANDLE* >( &l_hbm ) ) == S_OK )
+		if( l_pPicture && S_OK == l_pPicture->get_Handle( reinterpret_cast< OLE_HANDLE* >( &l_hbm ) ) )
 		{
 			if (m_isClearOverlayByNewImage)
 			{
@@ -395,7 +395,7 @@ HRESULT SVDisplayPicture::SetPictureWithROI( IPictureDisp* p_Picture, unsigned l
 
 		HBITMAP l_hbm(nullptr);
 
-		if( l_pPicture && l_pPicture->get_Handle( reinterpret_cast< OLE_HANDLE* >( &l_hbm ) ) == S_OK )
+		if( l_pPicture && S_OK == l_pPicture->get_Handle( reinterpret_cast< OLE_HANDLE* >( &l_hbm ) ) )
 		{
 			if( nullptr == l_hbm )
 			{
@@ -553,7 +553,7 @@ long SVDisplayPicture::AddOverlayToGroup(long lGroup, const VariantParamMap& Par
 {
 	long handle = -1; // BRW - Better to return a constant representing an invalid handle.
 
-	if( NULL != lGroup )
+	if( 0 != lGroup )
 	{
 		if( m_DrawObjects.find( lGroup ) != m_DrawObjects.end() )
 		{
@@ -1316,7 +1316,7 @@ HRESULT SVDisplayPicture::GetObjectParameter( long lHandle, VariantParamMap& Par
 	if( it != m_DrawObjects.end() )
 	{
 		DrawObject* pObject = it->second.get();
-		if(pObject != nullptr)
+		if( nullptr != pObject )
 		{
 			pObject->GetParameter(ParameterMap);
 			hr = S_OK;

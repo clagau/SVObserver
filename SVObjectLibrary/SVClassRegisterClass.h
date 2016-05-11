@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
+#pragma endregion Includes
 
 class SVObjectClass;
 
@@ -19,7 +21,8 @@ class SVClassRegisterClass
 { 
 public: 
 	SVClassRegisterClass();
-	
+	virtual ~SVClassRegisterClass();
+
 	virtual SVGUID GetClassID();
 	
 	virtual SVObjectClass* Construct();

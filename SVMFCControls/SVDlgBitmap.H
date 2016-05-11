@@ -69,10 +69,7 @@ namespace Seidenader
 			BOOL Init( LPCTSTR lpszResourceName );
 			BOOL Init( UINT nIDResource );
 
-			CSize GetDimensions();
-
-			BOOL SetWindowSize( int cx = -1, int cy = -1 );
-			CSize GetWindowSize();
+			CSize GetDimensions() const;
 
 			BOOL TextOut( int X, int Y, COLORREF Color, LPCTSTR StrText );
 			BOOL TextOut( double X, double Y, COLORREF Color, LPCTSTR StrText );
@@ -87,7 +84,7 @@ namespace Seidenader
 			//}}AFX_VIRTUAL	
 
 		protected:
-			CBitmap		bitmap;
+			mutable CBitmap	bitmap;
 			SVDlgBitmapTextListClass textList;
 
 		};

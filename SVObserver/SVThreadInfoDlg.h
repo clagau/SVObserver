@@ -22,7 +22,7 @@ class SVThreadInfoDlg : public CDialog
 	typedef std::list<int> AffinityBitList;
 #pragma region Public
 public:
-	SVThreadInfoDlg(CWnd* pParent = NULL);   // standard constructor
+	SVThreadInfoDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVThreadInfoDlg();
 	virtual BOOL OnInitDialog();
 	void UpdateThreadInfo( SVThreadAttribute eAttribute);

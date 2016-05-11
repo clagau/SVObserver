@@ -18,7 +18,7 @@ bool SVNavigateTree::AddItem( SVTreeType &rTree, typename SVTreeType::SVBranchHa
 
 	SVTreeType::SVLeafHandle pLeaf;
 
-	Result = rTree.createLeaf( pParent, Name, rVariant, &pLeaf ) == S_OK;
+	Result = S_OK == rTree.createLeaf( pParent, Name, rVariant, &pLeaf );
 
 	if( nullptr != ppItem )
 	{
@@ -43,7 +43,7 @@ bool SVNavigateTree::SetItem( SVTreeType &rTree, typename SVTreeType::SVBranchHa
 	}
 	else
 	{
-		Result = rTree.setLeafData( l_Leaf, rVariant ) == S_OK;
+		Result = S_OK == rTree.setLeafData( l_Leaf, rVariant );
 	}
 
 	if( nullptr != ppItem )
@@ -61,7 +61,7 @@ bool SVNavigateTree::AddBranch( SVTreeType &rTree, typename SVTreeType::SVBranch
 
 	SVTreeType::SVBranchHandle pBranch( nullptr );
 
-	Result = rTree.createBranch( pParent, Name, &pBranch ) == S_OK;
+	Result = S_OK == rTree.createBranch( pParent, Name, &pBranch );
 
 	if( nullptr != ppItem )
 	{
@@ -127,21 +127,21 @@ bool SVNavigateTree::GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeTy
 template< typename SVTreeType >
 bool SVNavigateTree::DeleteItem(SVTreeType &rTree, typename SVTreeType::SVBranchHandle pItem)
 {
-	bool bOk = ( rTree.deleteBranch( pItem ) == S_OK );
+	bool bOk = ( S_OK == rTree.deleteBranch( pItem ) );
 	return bOk;
 }
 
 template< typename SVTreeType >
 bool SVNavigateTree::DeleteItem(SVTreeType &rTree, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle pItem)
 {
-	bool bOk = ( rTree.deleteLeaf( pParent, pItem ) == S_OK );
+	bool bOk = ( S_OK == rTree.deleteLeaf( pParent, pItem ) );
 	return bOk;
 }
 
 template< typename SVTreeType >
 bool SVNavigateTree::DeleteAllItems( SVTreeType &rTree )
 {
-	bool bOk = ( rTree.Clear() == S_OK );
+	bool bOk = ( S_OK == rTree.Clear() );
 	return bOk;
 }
 

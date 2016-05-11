@@ -75,7 +75,7 @@ void SVRemoteOutputsView::Dump(CDumpContext& dc) const
 
 SVIODoc* SVRemoteOutputsView::GetDocument() // Die endgültige (nicht zur Fehlersuche kompilierte) Version ist Inline
 {
-	if( m_pDocument == NULL )
+	if( nullptr == m_pDocument )
 	{
 		m_pDocument = dynamic_cast<SVIODoc*>(CListView::GetDocument());
 	}
@@ -100,7 +100,6 @@ int SVRemoteOutputsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_ICON ) );
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_REMOTE_OUTPUT_ICON ) );
 
-
 	lc.SetImageList( &StateImageList, LVSIL_STATE );
 	lc.SetImageList( &ImageList, LVSIL_NORMAL );
 	lc.SetImageList( &ImageList, LVSIL_SMALL );
@@ -108,15 +107,10 @@ int SVRemoteOutputsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// insert columns
 	lc.InsertColumn( 0, _T( "Remote Output" ), LVCFMT_LEFT, -1, -1 );
 	lc.InsertColumn( 1, _T( "PPQ" ), LVCFMT_LEFT, -1, -1 );
-	//lc.InsertColumn( 2, _T( "Size" ), LVCFMT_LEFT, -1, -1 );
-	
+		
 	lc.SetColumnWidth( 0, 500 );
 	lc.SetColumnWidth( 1, 125 );
-	//lc.SetColumnWidth( 2,  50 );
-
-	// We can show grid lines if we want to .
-	// ListView_SetExtendedListViewStyle(m_hWnd, LVS_EX_GRIDLINES );
-
+	
 	lc.SetExtendedStyle( lc.GetExtendedStyle() | LVS_EX_FULLROWSELECT );
 	return 0;
 }
@@ -193,7 +187,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			}
 
 			SVRemoteOutputGroup* l_pControl = pConfig->GetRemoteOutputGroup( l_strGroupName );
-			if( l_pControl == NULL )
+			if( nullptr == l_pControl )
 			{
 				continue;
 			}
@@ -222,10 +216,10 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				// DLL outputs 
 				for( j = 0; j < lSize; j++ )
 				{
-					SVRemoteOutputObject* l_pOutput = NULL;
+					SVRemoteOutputObject* l_pOutput = nullptr;
 					HRESULT l_hr = pConfig->GetRemoteOutputItem( l_strGroupName, j, l_pOutput);
 
-					if( l_pOutput == NULL )
+					if( nullptr == l_pOutput )
 					{
 						continue;
 					}
@@ -241,15 +235,10 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 						1,
 						0);	// Set item data
 
-					GetListCtrl().SetItem( lInsertedEntry + iCurrentPPQ + k, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
+					GetListCtrl().SetItem( lInsertedEntry + iCurrentPPQ + k, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
 					// Store SVDLLOutputObject pointer in item data for editing
 					GetListCtrl().SetItemData( lInsertedEntry + iCurrentPPQ + k, reinterpret_cast<DWORD>(l_pOutput) );
-
-
-					// Column: Remote Output Destination Address ??????
-					//CString l_strTargetID = "Target"
-					//GetListCtrl().SetItemText( lInsertedEntry + iCurrentPPQ + k, 1, l_strTargetID );
 					
 					lInsertedEntry++;
 				}// end for
@@ -300,7 +289,7 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		}
 
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-		OnUpdate( NULL, NULL, NULL );
+		OnUpdate( nullptr, 0, nullptr );
 		GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 	} // if ( item >= 0 && ! SVSVIMStateClass::CheckState
 }// OnLButtonDblClk(
@@ -311,22 +300,22 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 	if(pMsg->message==WM_KEYDOWN && TheSVObserverApp.OkToEdit() )
 	{
 		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
-		if( l_Pos != NULL )
+		if( nullptr != l_Pos )
 		{
 			int l_item = GetListCtrl().GetNextSelectedItem( l_Pos );
 			DWORD_PTR l_pdwItemData = GetListCtrl().GetItemData( l_item );
 			if( l_item >= 0 )
 			{
-				if(pMsg->wParam== VK_DELETE )
+				if( VK_DELETE == pMsg->wParam )
 				{
 					OnRemoteOutputDelete();
 					l_bRet = TRUE;
 				}
 				else
-				if(pMsg->wParam== VK_INSERT)
+				if( VK_INSERT == pMsg->wParam )
 				{
 					CString l_strGroupName;
-					if( RemoteOutputGroupNameAtItem( l_strGroupName, l_item ) == S_OK )
+					if( S_OK == RemoteOutputGroupNameAtItem( l_strGroupName, l_item )  )
 					{
 						// New Entry...
 						SVSVIMStateClass::AddState( SV_STATE_EDITING );
@@ -336,16 +325,16 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 							l_item++;
 						}
 						SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-						OnUpdate( NULL, NULL, NULL );
+						OnUpdate( nullptr, 0, nullptr );
 						GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						l_bRet = TRUE;
 					}
 				}
 				else
-				if(pMsg->wParam == VK_RETURN )
+				if( VK_RETURN == pMsg->wParam )
 				{
 					CString l_strGroupName;
-					if( RemoteOutputGroupNameAtItem( l_strGroupName, l_item ) == S_OK )
+					if( S_OK == RemoteOutputGroupNameAtItem( l_strGroupName, l_item )  )
 					{
 						// New Entry...
 						SVSVIMStateClass::AddState( SV_STATE_EDITING );
@@ -363,7 +352,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 							OnRemoteOutputProperties();
 						}
 						SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-						OnUpdate( NULL, NULL, NULL );
+						OnUpdate( nullptr, 0, nullptr );
 						GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						l_bRet = TRUE;
 					}
@@ -377,7 +366,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 					{
 						m_GroupStates[ pOutputGroup->GetGroupName().c_str() ] = false;
 
-						OnUpdate( NULL, NULL, NULL );
+						OnUpdate( nullptr, 0, nullptr );
 						LVFINDINFOA l_fi;
 						l_fi.flags = LVFI_PARTIAL | LVFI_STRING;
 						l_fi.psz = pOutputGroup->GetGroupName().c_str();
@@ -397,7 +386,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 					{
 						m_GroupStates[ pOutputGroup->GetGroupName().c_str() ] = true;
 
-						OnUpdate( NULL, NULL, NULL );
+						OnUpdate( nullptr, 0, nullptr );
 
 						LVFINDINFOA l_fi;
 						l_fi.flags = LVFI_PARTIAL | LVFI_STRING;
@@ -428,7 +417,7 @@ HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( CString& p_rstrGroupNa
 		DWORD_PTR pdwItemData;
 		pdwItemData = GetListCtrl().GetItemData( i );
 		SVRemoteOutputObject* l_pOutput = dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(pdwItemData));
-		if( l_pOutput != NULL )
+		if( nullptr != l_pOutput )
 		{
 			p_rstrGroupName = l_pOutput->GetGroupID().c_str();
 			l_hr = S_OK;
@@ -437,7 +426,7 @@ HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( CString& p_rstrGroupNa
 		else
 		{
 			SVRemoteOutputGroup* l_pGroup = dynamic_cast<SVRemoteOutputGroup*>(reinterpret_cast<SVObjectClass*>(pdwItemData));
-			if( l_pGroup != NULL )
+			if( nullptr != l_pGroup )
 			{
 				p_rstrGroupName = l_pGroup->GetGroupName().c_str();
 				l_hr = S_OK;
@@ -466,7 +455,7 @@ void SVRemoteOutputsView::OnRemoteOutputAdd()
 		}
 
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-		OnUpdate( NULL, NULL, NULL );
+		OnUpdate( nullptr, 0, nullptr );
 		if( l_item > -1 )
 		{
 			GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
@@ -478,7 +467,7 @@ void SVRemoteOutputsView::OnRemoteOutputProperties()
 {
 	if( TheSVObserverApp.OkToEdit() )
 	{
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		if( nullptr != pConfig){ pConfig->SetupRemoteOutput(); }
@@ -502,7 +491,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 		{
 			// Context Menu...Add and Properties
 			CMenu* pPopup = m_ContextMenuProp.GetSubMenu(0);
-			ASSERT(pPopup != NULL);
+			ASSERT(nullptr != pPopup);
 			CWnd* pWndPopupOwner = this;
 
 			while(pWndPopupOwner->GetStyle() & WS_CHILD)
@@ -521,7 +510,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 			SVRemoteOutputObject* l_pOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem )));
 			if( l_pOutput )
 			{
-				SVRemoteOutputObject* l_pPrevOutput = NULL;
+				SVRemoteOutputObject* l_pPrevOutput = nullptr;
 				CMenu* pPopup;
 				CWnd* pWndPopupOwner = this;
 				if( m_CurrentItem > 1 )
@@ -529,7 +518,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 					l_pPrevOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem-1 )));
 				}
 				int pos = static_cast<int>(l_pOutput->GetInputValueObjectName().find( _T("Trigger Count") ));
-				if( pos != SVString::npos && (l_pPrevOutput == NULL) ) // If the name is trigger count
+				if( pos != SVString::npos && (nullptr == l_pPrevOutput) ) // If the name is trigger count
 				{
 					pPopup = m_ContextMenuItemNoDelete.GetSubMenu(0);
 				}
@@ -538,7 +527,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 					pPopup = m_ContextMenuItem.GetSubMenu(0);
 				}
 
-				ASSERT(pPopup != NULL);
+				ASSERT(nullptr != pPopup);
 				while(pWndPopupOwner->GetStyle() & WS_CHILD)
 				{
 					pWndPopupOwner = pWndPopupOwner->GetParent();
@@ -558,7 +547,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 	if( TheSVObserverApp.OkToEdit() )
 	{
 		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
-		if( l_Pos != NULL )
+		if( nullptr != l_Pos )
 		{
 			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -580,13 +569,12 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				else
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingOutput, StdMessageParams, SvOi::Err_10195, NULL, nullptr, MB_YESNO ); 
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingOutput, StdMessageParams, SvOi::Err_10195, 0, nullptr, MB_YESNO ); 
 					if( IDYES == result )
 					{
 						pConfig->DeleteRemoteOutputEntry( l_strRemoteGroup, pRemoteOutput );
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-//						TheSVObserverApp.m_DLLManager.Startup( TheSVObserverApp.m_pConfiguration );
-						OnUpdate( NULL, NULL, NULL );
+						OnUpdate( nullptr, 0, nullptr );
 						if( l_item >= GetListCtrl().GetItemCount() )
 						{
 							l_item--;
@@ -608,13 +596,13 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 					SVStringArray msgList;
 					msgList.push_back(strGroup);
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingAllOutput, msgList, StdMessageParams, SvOi::Err_10196, NULL, nullptr, MB_YESNO ); 
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingAllOutput, msgList, StdMessageParams, SvOi::Err_10196, 0, nullptr, MB_YESNO ); 
 					if( IDYES == result )
 					{
 						// Delete all DLL entries
 						pConfig->DeleteRemoteOutput( strGroup.c_str() );
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-						OnUpdate( NULL, NULL, NULL );
+						OnUpdate( nullptr, 0, nullptr );
 					}
 				}
 			}
@@ -631,7 +619,7 @@ void SVRemoteOutputsView::OnRemoteOutputEdit()
 		EditOutput(m_CurrentItem);
 		
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-		OnUpdate( NULL, NULL, NULL );
+		OnUpdate( nullptr, 0, nullptr );
 	}
 }
 
@@ -643,7 +631,7 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 	SVRemoteOutputEditDialog dlg;
 	CString l_strGroup;
 
-	if( RemoteOutputGroupNameAtItem( l_strGroup, p_iWhere ) == S_OK)
+	if( S_OK == RemoteOutputGroupNameAtItem( l_strGroup, p_iWhere ) )
 	{
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -666,12 +654,12 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 
 				if( dlg.DoModal() == IDOK )
 				{
-					SVRemoteOutputObject* l_pNewOutput = NULL;
+					SVRemoteOutputObject* l_pNewOutput = nullptr;
 					pConfig->AddRemoteOutputItem(l_strGroup, 
 						l_pNewOutput, 
 						dlg.m_InputObjectGUID,
 						PPQName.c_str());
-					OnUpdate( NULL, NULL, NULL );
+					OnUpdate( nullptr, 0, nullptr );
 					l_bRet = true;
 				}
 				if( p_iWhere >= GetListCtrl().GetItemCount() )
@@ -693,7 +681,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 	SVRemoteOutputEditDialog dlg;
 
 
-	SVRemoteOutputObject* pRemoteOutput=NULL;
+	SVRemoteOutputObject* pRemoteOutput = nullptr;
 	pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( p_iWhere )));
 	if( pRemoteOutput )
 	{
@@ -750,7 +738,7 @@ void SVRemoteOutputsView::OnLButtonDown(UINT nFlags, CPoint point)
 
 				m_GroupStates[ pOutputGroup->GetGroupName().c_str() ] = !l_bCollapse;
 
-				OnUpdate( NULL, NULL, NULL );
+				OnUpdate( nullptr, 0, nullptr );
 				LVFINDINFOA l_fi;
 				l_fi.flags = LVFI_PARTIAL | LVFI_STRING;		
 				l_fi.psz = pOutputGroup->GetGroupName().c_str();

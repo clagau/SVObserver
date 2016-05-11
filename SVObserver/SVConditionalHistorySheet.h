@@ -18,13 +18,14 @@
 
 class SVInspectionProcess;
 class SelectedObjectsPage;
+class SVIPDoc;
 
 class SVConditionalHistorySheet : public CPropertySheet, public ISVCancel
 {
 	DECLARE_DYNAMIC(SVConditionalHistorySheet)
 #pragma region Constructor
 public:
-	SVConditionalHistorySheet( LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
+	SVConditionalHistorySheet( SVIPDoc* pDoc, LPCTSTR pszCaption, SVInspectionProcess& rInspection, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
 	virtual ~SVConditionalHistorySheet();
 #pragma endregion Constructor
 
@@ -53,6 +54,7 @@ private:
 
 #pragma region Member variables
 private:
+	SVIPDoc* m_pDoc;
 	SVInspectionProcess& m_rInspection;		//Reference to the respective inspection object
 	SvOsl::SelectorItemVector m_ValueList;	//List of value objects
 	SvOsl::SelectorItemVector m_ImageList;	//List of image objects

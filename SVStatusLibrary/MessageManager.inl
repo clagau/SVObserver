@@ -130,7 +130,7 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Display( const
 		{
 			M_Notify(SvStl::StartMsgBox,M_Container.getMessage().m_ProgramCode,Msg.c_str()  );
 		}
-		Result = M_Display( NULL, Msg.c_str(), MsgDetails.c_str(), Type );
+		Result = M_Display( nullptr, Msg.c_str(), MsgDetails.c_str(), Type );
 		if(nullptr != M_Notify )
 		{
 			M_Notify(SvStl::EndMsgBox,M_Container.getMessage().m_ProgramCode,Msg.c_str()  );

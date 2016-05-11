@@ -50,7 +50,7 @@ bool SVJsonCommandServerSocket::Start(unsigned short portNo)
 				{
 					// Start thread for accepts and reads
 					m_thread.Create(boost::bind(&SVJsonCommandServerSocket::ThreadProcessHandler, this, _1), "SVJsonCommandServerSocketThread", SVNone);
-					QueueUserAPC(SVJsonCommandServerSocket::OnAPCEvent, m_thread.GetThreadHandle(), NULL);
+					QueueUserAPC(SVJsonCommandServerSocket::OnAPCEvent, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(nullptr));
 				}
 			}
 		}
@@ -96,7 +96,7 @@ bool SVJsonCommandServerSocket::Write(const std::string& data)
 		}
 		else
 		{
-			// SEJ  - need to log something
+			// @TODO - need to log something
 		}
 	}
 
@@ -138,7 +138,7 @@ void SVJsonCommandServerSocket::CheckConnection()
 
 	int max_fd = 1;
 
-	int rc = select(max_fd + 1, &read_set, NULL, NULL, &tv);
+	int rc = select(max_fd + 1, &read_set, nullptr, nullptr, &tv);
 	if (rc > 0) 
 	{
 		if (FD_ISSET(m_server, &read_set)) 
@@ -194,7 +194,7 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 			//FD_SET(m_client, &error_set);
 			int max_fd = 1;
 
-			int rc = select(max_fd + 1, &read_set, &write_set, NULL, &tv);
+			int rc = select(max_fd + 1, &read_set, &write_set, nullptr, &tv);
 			if (rc > 0) 
 			{
 				/* Not used as of yet
@@ -230,18 +230,18 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 								l_Sleep = ( error != SVSocketError::Success );
 								if( l_Sleep )
 								{
-									// SEJ - need to log something
+									// @TODO - need to log something
 									CloseClient();
 								}
 							}
 							else
 							{
-								// SEJ - need to log something
+								// @TODO - need to log something
 							}
 						}
 						else
 						{
-							// SEJ - need to log something
+							// @TODO - need to log something
 						}
 					}
 				}

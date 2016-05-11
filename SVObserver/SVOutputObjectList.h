@@ -22,7 +22,7 @@ class SVOutputObjectList : public SVObjectClass
 public:
 	typedef std::vector<CString> StringVect;
 	SVOutputObjectList( LPCSTR ObjectName );
-	SVOutputObjectList( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECTLIST );
+	SVOutputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECTLIST );
 
 	virtual ~SVOutputObjectList();
 

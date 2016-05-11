@@ -9,27 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:18:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLowerThresholdEquation.h"
+#pragma endregion Includes
 
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVLowerThresholdEquationClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVLowerThresholdEquationClass, SVLowerThresholdEquationClassGuid );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,15 +30,11 @@ SVLowerThresholdEquationClass::SVLowerThresholdEquationClass( SVObjectClass* POw
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :26.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVLowerThresholdEquationClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType	= SVLowerThresholdEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType	= SVLowerThresholdEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -72,13 +52,12 @@ void SVLowerThresholdEquationClass::init()
 
 BOOL SVLowerThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	isCreated = SVEquationClass::CreateObject( PCreateStructure );
+	m_isCreated = SVEquationClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
 	result.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-
-	return isCreated;
+	return m_isCreated;
 }
 ////////////////////////////////////////////////////////////////////////////////
 // 

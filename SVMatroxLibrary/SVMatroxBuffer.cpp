@@ -95,7 +95,7 @@ SVMatroxIdentifier SVMatroxBuffer::GetIdentifier() const
 
 bool SVMatroxBuffer::IsParent( const SVMatroxBuffer& p_rParent ) const
 {
-	bool l_Status = ( SVMatroxBufferInterface::IsParent( p_rParent, *this ) == S_OK );
+	bool l_Status = ( S_OK == SVMatroxBufferInterface::IsParent( p_rParent, *this ) );
 
 	return l_Status;
 }

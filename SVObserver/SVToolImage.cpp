@@ -9,44 +9,21 @@
 //* .Check In Date   : $Date:   15 May 2014 14:47:34  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolImage.h"
 #include "SVAnalyzer.h"
 #include "SVImageArithmetic.h"
 #include "SVInspectionProcess.h"
-#include "SVUnaryImageOperatorList.h"
+#include "SVInplaceImageOperatorListClass.h"
 #include "SVLUTEquation.h"
 #include "SVLUTOperator.h"
 #include "SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "ToolSizeAdjustTask.h"
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVImageToolClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVImageToolClass, SVImageToolClassGuid );
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 
 SVImageToolClass::SVImageToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 				 :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
@@ -59,15 +36,11 @@ SVImageToolClass::SVImageToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* 
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :20.08.1999 RO          First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVImageToolClass::init()
 {
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVToolImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVToolImageObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &outputEnableOffsetA, SVEnableOffsetAObjectGuid, IDS_OBJECTNAME_ENABLEOFFSETA, false, SVResetItemNone );
@@ -136,7 +109,7 @@ void SVImageToolClass::init()
 
 		// Ensure input image gets connected to preceeding image output 
 		// ( SVImageArithmeticClass image output !!! )
-		::SVSendMessage( pOperatorList, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+		::SVSendMessage( pOperatorList, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 	}
 
 	ToolSizeAdjustTask::AddToFriendlist(this, true,true,false);
@@ -145,29 +118,15 @@ void SVImageToolClass::init()
 	addDefaultInputObjects();
 }
 
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Standard Destructor of class SVImageToolClass
 // -----------------------------------------------------------------------------
 // .Description : Standard destructor
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :20.08.1999 RO          First Implementation
-////////////////////////////////////////////////////////////////////////////////
 SVImageToolClass::~SVImageToolClass()
 { 
 	CloseObject();
 }
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
 
 BOOL SVImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -182,15 +141,14 @@ BOOL SVImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	bOk &= UpdateTranslation() == S_OK;
-
+	bOk &= S_OK == UpdateTranslation();
 	
 	if(bOk)
 	{
-		bOk  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this,true,true,false)); 
+		bOk = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this, true, true, false)); 
 	}
 	
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -199,10 +157,10 @@ SVTaskObjectClass *SVImageToolClass::GetObjectAtPoint( const SVExtentPointStruct
 {
 	SVImageExtentClass l_svExtents;
 
-	SVTaskObjectClass *l_psvObject = NULL;
+	SVTaskObjectClass *l_psvObject = nullptr;
 
-	if( m_svToolExtent.GetImageExtent( l_svExtents ) == S_OK &&
-	    l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SVExtentLocationPropertyUnknown )
+	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
+	    SVExtentLocationPropertyUnknown != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
 	{
 		l_psvObject = this;
 	}
@@ -245,10 +203,6 @@ HRESULT SVImageToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtent
 //				:	to have default equations in your tool and/or 
 //				:	friends, children, embeddeds, etc.
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :23.03.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVImageToolClass::SetDefaultFormulas()
 {
 	BOOL bRetVal = TRUE;
@@ -257,7 +211,7 @@ BOOL SVImageToolClass::SetDefaultFormulas()
 	SVObjectTypeInfoStruct lutEquationInfo;
 	lutEquationInfo.ObjectType	= SVEquationObjectType;
 	lutEquationInfo.SubType		= SVLUTEquationObjectType;
-	SVLUTEquationClass* pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutEquationInfo) ));
+	SVLUTEquationClass* pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutEquationInfo) ));
 	if( pLUTEquation )
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula() && bRetVal;
@@ -270,12 +224,12 @@ HRESULT SVImageToolClass::ResetObject()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( UpdateTranslation() != S_OK )
+	if( S_OK != UpdateTranslation() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if( SVToolClass::ResetObject() != S_OK )
+	if( S_OK != SVToolClass::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -300,7 +254,7 @@ HRESULT SVImageToolClass::UpdateTranslation()
 
 	SVImageExtentClass toolImageExtents;
 
-	if( outputOperator.GetValue(l_lValue) == S_OK )
+	if( S_OK == outputOperator.GetValue(l_lValue) )
 	{
 		//change translation type on extents to match operator if:
 		//			Height Double, Flip Horizontal of Flip Vertical
@@ -329,7 +283,7 @@ HRESULT SVImageToolClass::UpdateTranslation()
 			l_hrOK = toolImageExtents.SetTranslation(SVExtentTranslationFigureShift);
 			extentChanged = true;
 		}
-	} // if( outputOperator.GetValue(l_lValue) == S_OK )
+	} // if( S_OK == outputOperator.GetValue(l_lValue)  )
 
 	if ((true == extentChanged) && (S_OK == l_hrOK))
 	{
@@ -351,7 +305,7 @@ HRESULT SVImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 
 	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
 	}

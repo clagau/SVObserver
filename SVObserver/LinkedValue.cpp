@@ -46,7 +46,7 @@ void LinkedValue::init(SVInspectionProcess *pInspection, bool isInvalidStringSet
 {
 	m_pInspection = pInspection;
 	m_isInvalidStringSetToDefault = isInvalidStringSetToDefault;
-	m_isValid = (m_pInspection != nullptr);
+	m_isValid = (nullptr != m_pInspection);
 }
 
 void LinkedValue::RegisterObjects(SVTaskObjectClass &taskObject, const SVString& inputConnectionName, const GUID& rguidEmbeddedID, int iStringResourceID, bool bResetAlways, SVResetItemEnum eRequiredReset)
@@ -103,10 +103,10 @@ SVString LinkedValue::GetInputValue() const
 	{
 		VARTYPE oldType = value.vt;
 		HRESULT hr = ::VariantChangeTypeEx(&value, &value, SvOl::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			retValue = SvUl_SF::createSVString(value.bstrVal);
-			if( oldType == VT_BOOL )
+			if( VT_BOOL == oldType )
 			{
 				SvUl_SF::MakeUpper(retValue);
 			}
@@ -180,11 +180,11 @@ void LinkedValue::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR orig
 		//In this case the inspection name is not part of the saved name
 		if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
 		{
-			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType );
+			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
 		}
 		else
 		{
-			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+			newPrefix = pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
 		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
@@ -218,7 +218,7 @@ void LinkedValue::UpdateTaskInfo(const SVObjectInfoStruct& rTaskInfoStruct)
 HRESULT LinkedValue::ResetObject()
 {
 	HRESULT retVal = UpdateConnection();
-	m_isValid = (retVal == S_OK);
+	m_isValid = (S_OK == retVal);
 	return retVal;
 }
 
@@ -306,7 +306,7 @@ HRESULT LinkedValue::UpdateConnection()
 			}
 		}
 
-		if( SVMR_SUCCESS != ::SVSendMessage( &m_variantObject, SVM_RESET_ALL_OBJECTS, NULL, NULL ) )
+		if( SVMR_SUCCESS != ::SVSendMessage( &m_variantObject, SVM_RESET_ALL_OBJECTS, 0, 0 ) )
 		{
 			hr = SvOi::Err_10017_LinkedValueConnectInput_ResetFailed;
 		}
@@ -320,7 +320,7 @@ DWORD_PTR LinkedValue::DisconnectInput()
 	DWORD_PTR retVal = ::SVSendMessage(	m_inputConnectionInfo.GetInputObjectInfo().UniqueObjectID, 
 		SVM_DISCONNECT_OBJECT_INPUT, 
 		reinterpret_cast<DWORD_PTR>(&m_inputConnectionInfo), 
-		NULL );
+		0 );
 	m_inputConnectionInfo.SetInputObject( nullptr );
 	return retVal;
 }
@@ -328,6 +328,6 @@ DWORD_PTR LinkedValue::DisconnectInput()
 DWORD_PTR LinkedValue::ConnectInput(SVObjectClass* pObject)
 {
 	m_inputConnectionInfo.SetInputObject( pObject );
-	return ::SVSendMessage( pObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&m_inputConnectionInfo), NULL );
+	return ::SVSendMessage( pObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&m_inputConnectionInfo), 0 );
 }
 #pragma endregion Private Methods

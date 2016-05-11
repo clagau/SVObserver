@@ -23,7 +23,7 @@ SVFileCamera::SVFileCamera()
 , m_index(-1)
 , m_bAcquisitionTriggered(false)
 {
-	m_pBufferInterface = NULL;
+	m_pBufferInterface = nullptr;
 	m_StartTimeStamp = 0;
 }
 
@@ -352,7 +352,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 	SVString filename = pCamera->GetNextFilename();
 
 	// Load file
-	if (!filename.empty() && SVImageFileLoader::Load(filename.c_str(), pCamera->m_bitmap) == S_OK)
+	if (!filename.empty() && S_OK == SVImageFileLoader::Load(filename.c_str(), pCamera->m_bitmap))
 	{
 		// fire StartFrame event
 		pCamera->m_startFrameEvent.Fire(pCamera->m_index);
@@ -419,8 +419,8 @@ void SVFileCamera::SetTriggerCallback(SVCallbackStruct& callback)
 
 void SVFileCamera::ClearTriggerCallback()
 {
-	m_triggerCallback.m_pCallback = NULL;
-	m_triggerCallback.m_pOwner = NULL;
-	m_triggerCallback.m_pData = NULL;
+	m_triggerCallback.m_pCallback = nullptr;
+	m_triggerCallback.m_pOwner = nullptr;
+	m_triggerCallback.m_pData = nullptr;
 }
 

@@ -39,6 +39,7 @@ public:
 
 	SVArrayValueHolder<T,D>() {}
 	SVArrayValueHolder<T,D>(const SVArrayValueHolderBase& rhs);
+	virtual ~SVArrayValueHolder<T,D>() {}
 	const type& operator = (const type&);
 	virtual bool IsArray() const;
 

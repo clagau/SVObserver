@@ -25,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 extern HRESULT GlobalRCSetMode(unsigned long lSVIMNewMode);
 
 
-SVRegressionExitDlg::SVRegressionExitDlg(CWnd* pParent /*=NULL*/)
+SVRegressionExitDlg::SVRegressionExitDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVRegressionExitDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVRegressionExitDlg)

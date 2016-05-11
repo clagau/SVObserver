@@ -90,14 +90,6 @@ static AttributesMap Attributes = boost::assign::map_list_of<>
 	)
 ;
 
-// Accessors Tags
-/*
-std::map<WString, Function> AccessorFunctions = boost::assign::map_list_of<>
-	(L"SVGigeEmptyGetter", SVGigeEmptyGetter)
-	(L"SVGigeEmptySetter", SVGigeEmptySetter)
-;
-*/
-
 // GigeParameterEnum Map
 typedef std::map<WString, SVGigeParameterEnum> GigeParameterEnumMap;
 static GigeParameterEnumMap GigeParameterEnums = boost::assign::map_list_of<>
@@ -336,8 +328,8 @@ void SVGigeCameraDBContent::GetGigeParameterAttributes(MSXML2::ISAXAttributes* p
 	pAttributes->getLength(&numAttributes);
 	for (int i = 0;i < numAttributes;i++)
 	{
-		wchar_t* name(NULL);
-		wchar_t* value(NULL);
+		wchar_t* name(nullptr);
+		wchar_t* value(nullptr);
 		int nameSize = 0;
 		int valueSize = 0;
 		pAttributes->getLocalName(i, reinterpret_cast<unsigned short **>(&name), &nameSize);
@@ -362,8 +354,8 @@ void SVGigeCameraDBContent::GetGigeDeviceParameterStructAttributes(MSXML2::ISAXA
 	pAttributes->getLength(&numAttributes);
 	for (int i = 0;i < numAttributes;i++)
 	{
-		wchar_t* name(NULL);
-		wchar_t* value(NULL);
+		wchar_t* name(nullptr);
+		wchar_t* value(nullptr);
 		int nameSize = 0;
 		int valueSize = 0;
 		pAttributes->getLocalName(i, reinterpret_cast<unsigned short **>(&name), &nameSize);
@@ -388,8 +380,8 @@ void SVGigeCameraDBContent::GetGigeAccessorAttributes(MSXML2::ISAXAttributes* pA
 	pAttributes->getLength(&numAttributes);
 	for (int i = 0;i < numAttributes;i++)
 	{
-		wchar_t* name(NULL);
-		wchar_t* value(NULL);
+		wchar_t* name(nullptr);
+		wchar_t* value(nullptr);
 		int nameSize = 0;
 		int valueSize = 0;
 		pAttributes->getLocalName(i, reinterpret_cast<unsigned short **>(&name), &nameSize);
@@ -414,8 +406,8 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 	pAttributes->getLength(&numAttributes);
 	for (int i = 0;i < numAttributes;i++)
 	{
-		wchar_t* name(NULL);
-		wchar_t* value(NULL);
+		wchar_t* name(nullptr);
+		wchar_t* value(nullptr);
 		int nameSize = 0;
 		int valueSize = 0;
 		pAttributes->getLocalName(i, reinterpret_cast<unsigned short **>(&name), &nameSize);
@@ -464,8 +456,8 @@ void SVGigeCameraDBContent::GetGigeFeatureSelectorAttributes(MSXML2::ISAXAttribu
 	pAttributes->getLength(&numAttributes);
 	for (int i = 0;i < numAttributes;i++)
 	{
-		wchar_t* name(NULL);
-		wchar_t* value(NULL);
+		wchar_t* name(nullptr);
+		wchar_t* value(nullptr);
 		int nameSize = 0;
 		int valueSize = 0;
 		pAttributes->getLocalName(i, reinterpret_cast<unsigned short **>(&name), &nameSize);
@@ -494,8 +486,8 @@ void SVGigeCameraDBContent::GetGigeFeatureStringEnumAttributes(MSXML2::ISAXAttri
 	pAttributes->getLength(&numAttributes);
 	for (int i = 0;i < numAttributes;i++)
 	{
-		wchar_t* name(NULL);
-		wchar_t* value(NULL);
+		wchar_t* name(nullptr);
+		wchar_t* value(nullptr);
 		int nameSize = 0;
 		int valueSize = 0;
 		pAttributes->getLocalName(i, reinterpret_cast<unsigned short **>(&name), &nameSize);

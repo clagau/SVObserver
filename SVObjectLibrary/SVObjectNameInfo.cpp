@@ -20,9 +20,6 @@ static void StripSpaces(std::string& rStr)
 	boost::algorithm::trim(rStr);
 }
 
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // indexes are one-based and specified with []
 // {} inside index block defines default value
@@ -166,22 +163,6 @@ HRESULT SVObjectNameInfo::ParseObjectName( const SVString& p_rObjectName )
 	HRESULT l_Status = S_OK;
 
 	l_Status = ParseObjectName( *this, p_rObjectName );
-
-	return l_Status;
-}
-
-HRESULT SVObjectNameInfo::UpdateObjectNameOnly( const SVString& p_rObjectName )
-{
-	HRESULT l_Status = S_OK;
-
-	SVObjectNameInfo l_Temp;
-
-	l_Status = l_Temp.ParseObjectName( p_rObjectName );
-
-	if( l_Status == S_OK )
-	{
-		m_NameArray = l_Temp.m_NameArray;
-	}
 
 	return l_Status;
 }

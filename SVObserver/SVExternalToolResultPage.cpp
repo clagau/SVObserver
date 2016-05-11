@@ -8,10 +8,8 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   17 Jul 2014 18:51:30  $
 //******************************************************************************
-// SVExternalToolResultPage.cpp : implementation file
-//
 
-
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVExternalToolResultPage.h"
@@ -24,15 +22,13 @@
 #include "SVInspectionProcess.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// SVExternalToolResultPage property page
 
 IMPLEMENT_DYNCREATE(SVExternalToolResultPage, CPropertyPage)
 
@@ -104,10 +100,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 		pRoot->SetInfoText(_T(""));
 
 		int iID = ID_BASE-1;	// the increment happens before using the value, so subtract one here
-
-	//	SVRPropertyItem* pGroupItem = NULL;
-
-		
+	
 		for( int i = 0 ; i < m_pTask->m_Data.m_lNumResultValues ; i++ )
 		{
 			SVStringValueObjectClass& rName = m_pTask->m_Data.m_aResultObjectNames[i];  
@@ -251,18 +244,7 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 
 		// do validation
 		bool bValidated = true;
-
-		//SVObjectClass* pObject = FindObject(pItem);
-		
-		//if( pObject )
-		{// selected a value object as input; no validation??
-			
-		}
-		//else
-		{
-			//bValidated = ValidateItem(pItem) == S_OK;
-		}
-
+		// @TODO - add validation logic
 		if ( !bValidated )
 		{
 			*plResult = S_FALSE;
@@ -277,14 +259,14 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 void SVExternalToolResultPage::OnOK() 
 {
 
-	SVRPropertyItem* pGroup = NULL;
+	SVRPropertyItem* pGroup = nullptr;
 
-	if( m_Tree.GetRootItem() && m_Tree.GetRootItem()->GetChild() != NULL )
+	if( m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild() )
 	{
 		pGroup = m_Tree.GetRootItem()->GetChild()->GetChild();
 		while ( pGroup )
 		{
-			SVRPropertyItem* pItem = NULL;
+			SVRPropertyItem* pItem = nullptr;
 			pItem = pGroup->GetChild();
 			while ( pItem )
 			{

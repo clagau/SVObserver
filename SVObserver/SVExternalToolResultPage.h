@@ -24,7 +24,7 @@ class SVExternalToolResultPage : public CPropertyPage
 	DECLARE_DYNCREATE(SVExternalToolResultPage)
 
 public:
-	SVExternalToolResultPage(const CString& sTitle = _T(""), SVExternalToolDetailsSheet* pParent = NULL, int id = IDD );
+	SVExternalToolResultPage(const CString& sTitle = _T(""), SVExternalToolDetailsSheet* pParent = nullptr, int id = IDD );
 	virtual ~SVExternalToolResultPage();
 
 	//{{AFX_DATA(SVExternalToolResultPage)

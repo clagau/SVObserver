@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:26:16  $
 //******************************************************************************
 
-#if !defined(AFX_EDITNUMBERS_H__)
-#define AFX_EDITNUMBERS_H__
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 namespace Seidenader
 {
@@ -91,6 +86,3 @@ namespace Seidenader
 } //Seidenader
 
 namespace SvMc = Seidenader::SVMFCControls;
-
-#endif // !defined(AFX_EDITNUMBERS_H__)
-

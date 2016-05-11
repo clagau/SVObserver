@@ -71,6 +71,9 @@ CSVImageTestApp::CSVImageTestApp()
 	m_oemIniFile.Format( "%s\\OEMINFO.INI", l_szSystemDir );
 }
 
+CSVImageTestApp::~CSVImageTestApp()
+{
+}
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CSVImageTestApp object
 

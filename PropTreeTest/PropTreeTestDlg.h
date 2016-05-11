@@ -18,7 +18,7 @@ class CPropTreeTestDlg : public CDialogEx
 {
 // Construction
 public:
-	CPropTreeTestDlg(CWnd* pParent = NULL);	// standard constructor
+	CPropTreeTestDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_PROPTREETEST_DIALOG };

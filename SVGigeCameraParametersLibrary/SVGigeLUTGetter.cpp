@@ -15,79 +15,6 @@
 
 HRESULT SVGigeLUTGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 
-/*
-	HRESULT hr = S_OK;
-
-	if (rValue.vt & VT_ARRAY)
-	{
-		// Set the Selector
-		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString(selector.GetName().ToString()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().ToString()));
-
-		if (l_Code == SVMEE_STATUS_OK)
-		{
-			
-			try
-			{
-				VARIANT& var = rValue.GetVARIANT();
-
-				// Get the bounds of the safe array
-				long lowerBound(0);
-				long upperBound(0);
-
-				hr = ::SafeArrayGetLBound(var.parray, 1, &lowerBound);
-				if (hr == S_OK)
-				{
-					hr = ::SafeArrayGetUBound(var.parray, 1, &upperBound);
-				}
-				if (hr == S_OK)
-				{
-					int numElements = upperBound - lowerBound;
-
-					// Get the  SafeArray Dimensions
-					for (int i = 0;i < numElements;i++)
-					{
-						_variant_t value(i);
-
-						// Set LUT Index
-						l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), "LUTIndex", SVMatroxDigitizerFeature::SVTypeInt32, value);
-						if (l_Code == SVMEE_STATUS_OK)
-						{
-							_variant_t lutValue;
-							lutValue.ChangeType(VT_I4);
-							
-							// Get Value from the camera
-							l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVMatroxString(rFeature.GetName().ToString()), rFeature.GetType(), lutValue);
-							if (l_Code == SVMEE_STATUS_OK)
-							{
-								long index[1];
-								index[0] = i + lowerBound;
-							
-								long saLutValue = lutValue.lVal;
-								// Set SafeArray Element
-								hr = SafeArrayPutElement(var.parray, index, &saLutValue);
-							}
-							else
-							{
-								hr = l_Code;
-							}
-						}
-					}
-				}
-			}
-			catch (...)
-			{
-				hr = E_FAIL;
-			}
-		}
-		else
-		{
-			// Not an array - parameter error
-			hr = E_INVALIDARG;
-		}
-	}
-	return hr;
-*/
 	HRESULT hr = S_OK;
 	if (rValue.vt & VT_ARRAY)
 	{
@@ -109,63 +36,27 @@ HRESULT SVGigeLUTGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGige
 					long lBandLBound(0);
 					long lBandUBound(0);
 					hr = GetLutBandBounds(var.parray, lBandLBound, lBandUBound);
-					if (hr == S_OK)
+					if (S_OK == hr)
 					{
 						ULONG lNumBands = lBandUBound - lBandLBound + 1;
 
 						VARTYPE vt;
 						hr = ::SafeArrayGetVartype(var.parray, &vt);
-						if (hr == S_OK)
+						if (S_OK == hr)
 						{
-							if ( vt == VT_I4 || vt == VT_UI4 )
+							if ( VT_I4 == vt || VT_UI4 == vt )
 							{
 								long lBandSizeLBound(0);
 								long lBandSizeUBound(0);
 								hr = GetLutBandSizeBounds(var.parray, lBandSizeLBound, lBandSizeUBound);
 								
-								if (hr == S_OK)
+								if (S_OK == hr)
 								{
-									/* Slow way...
-									ULONG lBandSize = lBandSizeUBound - lBandSizeLBound + 1;
-									long alDimIndex[2];
-									for (unsigned long lBand = 0;lBand < lNumBands && hr == S_OK;lBand++)
-									{
-										alDimIndex[1] = lBand;
-										long lBegin = lBandSizeLBound;
-										long lEnd = lBegin + lBandSize;
-										for (long l = lBegin; l < lEnd && hr == S_OK; l++)
-										{
-											_variant_t lutIndex(l - lBandSizeLBound);
-
-											// Set LUT Index
-											l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString("LUTIndex"), SVMatroxDigitizerFeature::SVTypeInt32, lutIndex);
-											hr = l_Code;
-
-											if (l_Code == SVMEE_STATUS_OK)
-											{
-												_variant_t lutValue;
-												lutValue.ChangeType(VT_I4);
-
-												// Get LUT Value at Index N
-												l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVMatroxString(rFeature.GetName().ToString()), rFeature.GetType(), lutValue);
-												hr = l_Code;
-												if (l_Code == SVMEE_STATUS_OK)
-												{
-													long saLutValue = lutValue.lVal;
-													alDimIndex[0] = l;
-													hr = ::SafeArrayPutElement(var.parray, alDimIndex, (void *)&saLutValue);
-												}
-											}
-										}
-									}
-									*/
-
-									// Faster way...
-									unsigned long* pData(NULL);
+									unsigned long* pData(nullptr);
 									hr = ::SafeArrayAccessData(var.parray, (void **)&pData);
 
 									long lBandSize = lBandSizeUBound - lBandSizeLBound + 1;
-									for (int i = 0; i < lBandSize && hr == S_OK; i++)
+									for (int i = 0; i < lBandSize && S_OK == hr; i++)
 									{
 										_variant_t lutIndex(i);
 
@@ -221,7 +112,7 @@ HRESULT SVGigeLUTGetter::GetLutBandBounds(SAFEARRAY* parray, long& lBandLBound, 
 {
 	HRESULT hr = ::SafeArrayGetLBound(parray, 2, &lBandLBound);
 
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = ::SafeArrayGetUBound(parray, 2, &lBandUBound);
 	}
@@ -232,7 +123,7 @@ HRESULT SVGigeLUTGetter::GetLutBandSizeBounds(SAFEARRAY* parray, long& lBandSize
 {
 	HRESULT hr = ::SafeArrayGetLBound(parray, 1, &lBandSizeLBound);
 
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		hr = ::SafeArrayGetUBound(parray, 1, &lBandSizeUBound);
 	}

@@ -15,28 +15,28 @@
 
 inline SVIODigitalLoadLibraryClass::SVIODigitalLoadLibraryClass()
 {
-	m_hmHandle = NULL;
+	m_hmHandle = nullptr;
 
-	m_psvCreate = NULL;
-	m_psvDestroy = NULL;
-	m_psvGetInputCount = NULL;
-	m_psvGetInputValue = NULL;
-	m_psvSetInputValue = NULL;
-	m_psvGetInputPortCount = NULL;
-	m_psvGetInputPortValue = NULL;
-	m_psvSetInputPortValue = NULL;
-	m_psvGetOutputCount = NULL;
-	m_psvGetOutputValue = NULL;
-	m_psvSetOutputValue = NULL;
-	m_psvGetOutputPortCount = NULL;
-	m_psvGetOutputPortValue = NULL;
-	m_psvSetOutputPortValue = NULL;
+	m_psvCreate = nullptr;
+	m_psvDestroy = nullptr;
+	m_psvGetInputCount = nullptr;
+	m_psvGetInputValue = nullptr;
+	m_psvSetInputValue = nullptr;
+	m_psvGetInputPortCount = nullptr;
+	m_psvGetInputPortValue = nullptr;
+	m_psvSetInputPortValue = nullptr;
+	m_psvGetOutputCount = nullptr;
+	m_psvGetOutputValue = nullptr;
+	m_psvSetOutputValue = nullptr;
+	m_psvGetOutputPortCount = nullptr;
+	m_psvGetOutputPortValue = nullptr;
+	m_psvSetOutputPortValue = nullptr;
 
 	// Parameter Functions.
-	m_psvSetParameterValue = NULL;
-	m_psvGetParameterValue = NULL;
-	m_psvGetParameterName = NULL;
-	m_psvGetParameterCount = NULL;
+	m_psvSetParameterValue = nullptr;
+	m_psvGetParameterValue = nullptr;
+	m_psvGetParameterName = nullptr;
+	m_psvGetParameterCount = nullptr;
 }
 
 inline SVIODigitalLoadLibraryClass::~SVIODigitalLoadLibraryClass()
@@ -48,13 +48,13 @@ inline HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_hmHandle == NULL )
+	if ( nullptr == m_hmHandle )
 	{
 		m_hmHandle = ::LoadLibrary( p_szLibrary );
 		// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 		Sleep(0);
 
-		if ( m_hmHandle != NULL )
+		if ( nullptr != m_hmHandle )
 		{
 			m_psvCreate = (SVCreatePtr)::GetProcAddress( m_hmHandle, "SVCreate" );
 			m_psvDestroy = (SVDestroyPtr)::GetProcAddress( m_hmHandle, "SVDestroy" );
@@ -78,20 +78,20 @@ inline HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 			m_psvGetParameterCount = (SVGetParameterCountPtr)::GetProcAddress( m_hmHandle, "SVGetParameterCount" );
 
 
-			if ( m_psvCreate != NULL &&
-			     m_psvDestroy != NULL &&
-			     m_psvGetInputCount != NULL &&
-			     m_psvGetInputValue != NULL &&
-			     m_psvSetInputValue != NULL &&
-			     m_psvGetInputPortCount != NULL &&
-			     m_psvGetInputPortValue != NULL &&
-			     m_psvSetInputPortValue != NULL &&
-			     m_psvGetOutputCount != NULL &&
-			     m_psvGetOutputValue != NULL &&
-			     m_psvSetOutputValue != NULL &&
-			     m_psvGetOutputPortCount != NULL &&
-			     m_psvGetOutputPortValue != NULL &&
-			     m_psvSetOutputPortValue != NULL )
+			if ( nullptr != m_psvCreate &&
+			     nullptr != m_psvDestroy &&
+			     nullptr != m_psvGetInputCount &&
+			     nullptr != m_psvGetInputValue &&
+			     nullptr != m_psvSetInputValue &&
+			     nullptr != m_psvGetInputPortCount &&
+			     nullptr != m_psvGetInputPortValue &&
+			     nullptr != m_psvSetInputPortValue &&
+			     nullptr != m_psvGetOutputCount &&
+			     nullptr != m_psvGetOutputValue &&
+			     nullptr != m_psvSetOutputValue &&
+			     nullptr != m_psvGetOutputPortCount &&
+			     nullptr != m_psvGetOutputPortValue &&
+			     nullptr != m_psvSetOutputPortValue )
 			{
 				l_hrOk = m_psvCreate();
 			}
@@ -102,7 +102,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR p_szLibrary)
 		}
 	}
 
-	if ( l_hrOk != S_OK )
+	if ( S_OK != l_hrOk )
 	{
 		Close();
 	}
@@ -114,9 +114,9 @@ inline HRESULT SVIODigitalLoadLibraryClass::Close()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_hmHandle != NULL )
+	if ( nullptr != m_hmHandle )
 	{
-		if ( m_psvDestroy != NULL )
+		if ( nullptr != m_psvDestroy )
 		{
 			l_hrOk = m_psvDestroy();
 		}
@@ -125,7 +125,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::Close()
 		{
 			// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 			Sleep(0);
-			m_hmHandle = NULL;
+			m_hmHandle = nullptr;
 		}
 		else
 		{
@@ -133,21 +133,21 @@ inline HRESULT SVIODigitalLoadLibraryClass::Close()
 		}
 	}
 
-	m_psvCreate = NULL;
-	m_psvDestroy = NULL;
-	m_psvGetInputCount = NULL;
-	m_psvGetInputValue = NULL;
-	m_psvSetInputValue = NULL;
-	m_psvGetInputPortCount = NULL;
-	m_psvGetInputPortValue = NULL;
-	m_psvSetInputPortValue = NULL;
-	m_psvGetOutputCount = NULL;
-	m_psvGetOutputValue = NULL;
-	m_psvSetOutputValue = NULL;
-	m_psvGetOutputPortCount = NULL;
-	m_psvGetOutputPortValue = NULL;
-	m_psvSetOutputPortValue = NULL;
-	m_psvSetParameterValue = NULL;
+	m_psvCreate = nullptr;
+	m_psvDestroy = nullptr;
+	m_psvGetInputCount = nullptr;
+	m_psvGetInputValue = nullptr;
+	m_psvSetInputValue = nullptr;
+	m_psvGetInputPortCount = nullptr;
+	m_psvGetInputPortValue = nullptr;
+	m_psvSetInputPortValue = nullptr;
+	m_psvGetOutputCount = nullptr;
+	m_psvGetOutputValue = nullptr;
+	m_psvSetOutputValue = nullptr;
+	m_psvGetOutputPortCount = nullptr;
+	m_psvGetOutputPortValue = nullptr;
+	m_psvSetOutputPortValue = nullptr;
+	m_psvSetParameterValue = nullptr;
 
 	return l_hrOk;
 }
@@ -156,7 +156,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetInputCount( unsigned long *p_pulC
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetInputCount != NULL )
+	if ( nullptr != m_psvGetInputCount )
 	{
 		l_hrOk = m_psvGetInputCount( p_pulCount );
 	}
@@ -168,7 +168,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetInputValue( unsigned long p_ulCha
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetInputValue != NULL )
+	if ( nullptr != m_psvGetInputValue )
 	{
 		l_hrOk = m_psvGetInputValue( p_ulChannel, p_pbValue );
 	}
@@ -180,7 +180,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::SetInputValue( unsigned long p_ulCha
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvSetInputValue != NULL )
+	if ( nullptr != m_psvSetInputValue )
 	{
 		l_hrOk = m_psvSetInputValue( p_ulChannel, p_bValue );
 	}
@@ -192,7 +192,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetInputPortCount( unsigned long *p_
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetInputPortCount != NULL )
+	if ( nullptr != m_psvGetInputPortCount )
 	{
 		l_hrOk = m_psvGetInputPortCount( p_pulCount );
 	}
@@ -204,7 +204,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetInputPortValue( unsigned long p_u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetInputPortValue != NULL )
+	if ( nullptr != m_psvGetInputPortValue )
 	{
 		l_hrOk = m_psvGetInputPortValue( p_ulPort, p_pulValue );
 	}
@@ -216,7 +216,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::SetInputPortValue( unsigned long p_u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvSetInputPortValue != NULL )
+	if ( nullptr != m_psvSetInputPortValue )
 	{
 		l_hrOk = m_psvSetInputPortValue( p_ulPort, p_ulValue );
 	}
@@ -228,7 +228,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetOutputCount( unsigned long *p_pul
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetOutputCount != NULL )
+	if ( nullptr != m_psvGetOutputCount )
 	{
 		l_hrOk = m_psvGetOutputCount( p_pulCount );
 	}
@@ -240,7 +240,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetOutputValue( unsigned long p_ulCh
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetOutputValue != NULL )
+	if ( nullptr != m_psvGetOutputValue )
 	{
 		l_hrOk = m_psvGetOutputValue( p_ulChannel, p_pbValue );
 	}
@@ -252,7 +252,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::SetOutputValue( unsigned long p_ulCh
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvSetOutputValue != NULL )
+	if ( nullptr != m_psvSetOutputValue )
 	{
 		l_hrOk = m_psvSetOutputValue( p_ulChannel, p_bValue );
 	}
@@ -264,7 +264,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetOutputPortCount( unsigned long *p
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetOutputPortCount != NULL )
+	if ( nullptr != m_psvGetOutputPortCount )
 	{
 		l_hrOk = m_psvGetOutputPortCount( p_pulCount );
 	}
@@ -276,7 +276,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetOutputPortValue( unsigned long p_
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetOutputPortValue != NULL )
+	if ( nullptr != m_psvGetOutputPortValue )
 	{
 		l_hrOk = m_psvGetOutputPortValue( p_ulPort, p_pulValue );
 	}
@@ -288,7 +288,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::SetOutputPortValue( unsigned long p_
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvSetOutputPortValue != NULL )
+	if ( nullptr != m_psvSetOutputPortValue )
 	{
 		l_hrOk = m_psvSetOutputPortValue( p_ulPort, p_ulValue );
 	}
@@ -301,7 +301,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetParameterCount( unsigned long *p_
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetParameterCount != NULL )
+	if ( nullptr != m_psvGetParameterCount )
 	{
 		l_hrOk = m_psvGetParameterCount( p_pulCount );
 	}
@@ -313,7 +313,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetParameterName( unsigned long p_ul
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetParameterName != NULL )
+	if ( nullptr != m_psvGetParameterName )
 	{
 		l_hrOk = m_psvGetParameterName( p_ulIndex, p_pbstrName );
 	}
@@ -325,7 +325,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::GetParameterValue( unsigned long p_u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvGetParameterValue != NULL )
+	if ( nullptr != m_psvGetParameterValue )
 	{
 		l_hrOk = m_psvGetParameterValue( p_ulIndex, p_pvarValue );
 	}
@@ -337,7 +337,7 @@ inline HRESULT SVIODigitalLoadLibraryClass::SetParameterValue( unsigned long p_u
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_psvSetParameterValue != NULL )
+	if ( nullptr != m_psvSetParameterValue )
 	{
 		l_hrOk = m_psvSetParameterValue( p_ulIndex, p_pvarValue );
 	}

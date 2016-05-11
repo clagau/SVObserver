@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVResult.h"
-#include "SVValueObjectImpl.h"
 #pragma region Includes
 
 class SVDPointXResultClass : public SVResultClass  

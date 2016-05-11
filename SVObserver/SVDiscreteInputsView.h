@@ -32,7 +32,7 @@ class SVDiscreteInputsView : public CListView
 	//{{AFX_VIRTUAL(SVDiscreteInputsView)
 	public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
 	protected:
 	virtual void OnInitialUpdate(); // das erste mal nach der Konstruktion aufgerufen
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);

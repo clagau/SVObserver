@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   26 Apr 2013 14:08:06  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMaskEditor.h"
 #include "SVMaskEditorPpg.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,9 +21,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 IMPLEMENT_DYNCREATE(SVMaskEditorPropPage, COlePropertyPage)
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Message map
@@ -30,7 +30,6 @@ BEGIN_MESSAGE_MAP(SVMaskEditorPropPage, COlePropertyPage)
 	//{{AFX_MSG_MAP(SVMaskEditorPropPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Initialize class factory and guid
@@ -46,12 +45,11 @@ IMPLEMENT_OLECREATE_EX(SVMaskEditorPropPage, "SVMASKEDITOR.SVMaskEditorPropPage.
 BOOL SVMaskEditorPropPage::SVMaskEditorPropPageFactory::UpdateRegistry(BOOL bRegister)
 {
 	if (bRegister)
-		return AfxOleRegisterPropertyPageClass(AfxGetInstanceHandle(),
-			m_clsid, IDS_SVMASKEDITOR_PPG);
-	else
-		return AfxOleUnregisterClass(m_clsid, NULL);
+	{
+		return AfxOleRegisterPropertyPageClass(AfxGetInstanceHandle(), m_clsid, IDS_SVMASKEDITOR_PPG);
+	}
+	return AfxOleUnregisterClass(m_clsid, nullptr);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVMaskEditorPropPage::SVMaskEditorPropPage - Constructor
@@ -67,6 +65,9 @@ SVMaskEditorPropPage::SVMaskEditorPropPage() :
 	SetHelpInfo(_T("Names to appear in the control"), _T("SVMASKEDITOR.HLP"), 0);
 }
 
+SVMaskEditorPropPage::~SVMaskEditorPropPage()
+{
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // SVMaskEditorPropPage::DoDataExchange - Moves data between page and properties

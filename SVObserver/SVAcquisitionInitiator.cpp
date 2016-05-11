@@ -60,7 +60,7 @@ HRESULT SVAcquisitionInitiator::RegisterCallback(SVCallbackStruct& p_rCallback)
 	{
 		hr = S_OK;
 		SVAcquisitionInitiatorList::iterator it;
-		for (it = m_initiatorList.begin(); hr == S_OK && it != m_initiatorList.end(); ++it)
+		for (it = m_initiatorList.begin(); S_OK == hr && it != m_initiatorList.end(); ++it)
 		{
 			SVDigitizerLoadLibraryClass* pDLL = it->first;
 			const SVAcquisitionInitiatorHandleList& handleList = it->second;
@@ -82,7 +82,7 @@ HRESULT SVAcquisitionInitiator::UnRegisterCallback(SVCallbackStruct& p_rCallback
 	{
 		hr = S_OK;
 		SVAcquisitionInitiatorList::iterator it;
-		for (it = m_initiatorList.begin(); hr == S_OK && it != m_initiatorList.end(); ++it)
+		for (it = m_initiatorList.begin(); S_OK == hr && it != m_initiatorList.end(); ++it)
 		{
 			SVDigitizerLoadLibraryClass* pDLL = it->first;
 			const SVAcquisitionInitiatorHandleList& handleList = it->second;
@@ -104,7 +104,7 @@ HRESULT SVAcquisitionInitiator::UnRegisterAllCallbacks()
 	{
 		hr = S_OK;
 		SVAcquisitionInitiatorList::iterator it;
-		for (it = m_initiatorList.begin(); hr == S_OK && it != m_initiatorList.end(); ++it)
+		for (it = m_initiatorList.begin(); S_OK == hr && it != m_initiatorList.end(); ++it)
 		{
 			SVDigitizerLoadLibraryClass* pDLL = it->first;
 			const SVAcquisitionInitiatorHandleList& handleList = it->second;
@@ -125,12 +125,12 @@ HRESULT SVAcquisitionInitiator::EnableInternalTrigger()
 	{
 		hr = S_OK;
 		SVAcquisitionInitiatorList::iterator it;
-		for (it = m_initiatorList.begin(); hr == S_OK && it != m_initiatorList.end(); ++it)
+		for (it = m_initiatorList.begin(); S_OK == hr && it != m_initiatorList.end(); ++it)
 		{
 			SVDigitizerLoadLibraryClass* pDLL = it->first;
 			const SVAcquisitionInitiatorHandleList& handleList = it->second;
 			SVAcquisitionInitiatorHandleList::const_iterator handleIt;
-			for (handleIt = handleList.begin(); hr == S_OK && handleIt != handleList.end(); ++handleIt)
+			for (handleIt = handleList.begin(); S_OK == hr && handleIt != handleList.end(); ++handleIt)
 			{
 				hr = pDLL->InternalTriggerEnable((*handleIt));
 			}
@@ -146,12 +146,12 @@ HRESULT SVAcquisitionInitiator::Exec()
 	{
 		hr = S_OK;
 		SVAcquisitionInitiatorList::iterator it;
-		for (it = m_initiatorList.begin(); hr == S_OK && it != m_initiatorList.end(); ++it)
+		for (it = m_initiatorList.begin(); S_OK == hr && it != m_initiatorList.end(); ++it)
 		{
 			SVDigitizerLoadLibraryClass* pDLL = it->first;
 			const SVAcquisitionInitiatorHandleList& handleList = it->second;
 			SVAcquisitionInitiatorHandleList::const_iterator handleIt;
-			for (handleIt = handleList.begin(); hr == S_OK && handleIt != handleList.end(); ++handleIt)
+			for (handleIt = handleList.begin(); S_OK == hr && handleIt != handleList.end(); ++handleIt)
 			{
 				hr = pDLL->InternalTrigger((*handleIt));
 			}

@@ -69,7 +69,7 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_Iden
 		}
 	}
 
-	assert( l_Status == S_OK );
+	assert( S_OK == l_Status );
 #endif
 	return l_Status;
 }
@@ -131,11 +131,11 @@ HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_Identi
 				l_Status = E_FAIL;
 			}
 
-			assert(l_Status == S_OK);
+			assert(S_OK == l_Status );
 		}
 	}
 
-	assert( l_Status == S_OK );
+	assert( S_OK == l_Status );
 #endif
 	return l_Status;
 }

@@ -154,9 +154,6 @@
     <ClInclude Include="SVObjectNotifyTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectPointArrayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectReference.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -170,9 +167,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectThreadCommandTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectScriptUsage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectWriter.h">

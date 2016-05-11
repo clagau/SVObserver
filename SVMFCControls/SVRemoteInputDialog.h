@@ -10,7 +10,10 @@
 //******************************************************************************
 
 #pragma once
+
+#pragma region Includes
 #include "SVOResource\resource.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -20,8 +23,8 @@ namespace Seidenader
 		{
 			// Construction
 		public:
-			SVRemoteInputDialog(CWnd* pParent = NULL);   // standard constructor
-
+			SVRemoteInputDialog(CWnd* pParent = nullptr);   // standard constructor
+			virtual ~SVRemoteInputDialog();
 			// Dialog Data
 			//{{AFX_DATA(SVRemoteInputDialog)
 			enum { IDD = IDD_REMOTE_INPUTS };

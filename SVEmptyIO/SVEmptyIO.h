@@ -11,12 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
 #ifndef __AFXWIN_H__
 	#error "include 'stdafx.h' before including this file for PCH"
 #endif
 
 #include "resource.h"		// main symbols
-
+#pragma endregion Includes
 
 // CSVEmptyIOApp
 // See SVEmptyIO.cpp for the implementation of this class
@@ -26,6 +27,7 @@ class CSVEmptyIOApp : public CWinApp
 {
 public:
 	CSVEmptyIOApp();
+	virtual ~CSVEmptyIOApp();
 
 // Overrides
 public:

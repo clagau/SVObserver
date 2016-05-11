@@ -8,11 +8,10 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   07 May 2013 08:29:14  $
 //******************************************************************************
-#pragma region once
+#pragma once
 
 #pragma region Includes
 #include "SVTool.h"
-#include "SVValueObject.h"
 #pragma region Includes
 
 class SVImageToolClass : public SVToolClass, public AllowResizeToParent

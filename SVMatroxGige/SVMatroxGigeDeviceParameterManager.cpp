@@ -73,7 +73,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigit
 
 			l_hr = it->second.accessor.GetParam(p_rCamera.m_Digitizer, it->second.accessor.feature, value);
 		}
-		//if (l_hr == S_OK)
+		//if (S_OK == l_hr)
 		{
 			*p_pvarValue = value.Detach();
 		}

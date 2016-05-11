@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #pragma endregion Includes
 
 // Enum for threshold type radio

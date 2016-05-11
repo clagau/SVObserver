@@ -142,7 +142,7 @@ HRESULT SVCommandDataHolder::GetContainer( const _bstr_t& p_rName, SVCommandData
 	{
 		SVCommandDataContainer::SVCommandDataInterface* l_pContainer = dynamic_cast< SVCommandDataContainer::SVCommandDataInterface* >( l_ContainerPtr.get() );
 
-		if( l_pContainer != NULL )
+		if( nullptr != l_pContainer )
 		{
 			l_Status = l_pContainer->GetData( p_rData );
 		}
@@ -153,7 +153,7 @@ HRESULT SVCommandDataHolder::GetContainer( const _bstr_t& p_rName, SVCommandData
 	}
 	else
 	{
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = E_FAIL;
 		}
@@ -176,13 +176,13 @@ HRESULT SVCommandDataHolder::GetValue( const _bstr_t& p_rName, VARIANT& p_rData 
 	{
 		SVCommandDataValue::SVCommandDataInterface* l_pValue = dynamic_cast< SVCommandDataValue::SVCommandDataInterface* >( l_ValuePtr.get() );
 
-		if( l_pValue != NULL )
+		if( nullptr != l_pValue )
 		{
 			_variant_t l_Variant;
 
 			l_Status = l_pValue->GetData( l_Variant );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				p_rData = l_Variant.Detach();
 			}
@@ -194,7 +194,7 @@ HRESULT SVCommandDataHolder::GetValue( const _bstr_t& p_rName, VARIANT& p_rData 
 	}
 	else
 	{
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = E_FAIL;
 		}
@@ -217,7 +217,7 @@ HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& p_rName, SVByteVector& p_r
 	{
 		SVCommandDataBlock::SVCommandDataInterface* l_pValue = dynamic_cast< SVCommandDataBlock::SVCommandDataInterface* >( l_ValuePtr.get() );
 
-		if( l_pValue != NULL )
+		if( nullptr != l_pValue )
 		{
 			l_Status = l_pValue->GetData( p_rData );
 		}
@@ -228,7 +228,7 @@ HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& p_rName, SVByteVector& p_r
 	}
 	else
 	{
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = E_FAIL;
 		}
@@ -251,7 +251,7 @@ HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_r
 	{
 		SVCommandDataImage::SVCommandDataInterface* l_pData = dynamic_cast< SVCommandDataImage::SVCommandDataInterface* >( l_DataPtr.get() );
 
-		if( l_pData != NULL )
+		if( nullptr != l_pData )
 		{
 			l_Status = l_pData->GetData( p_rData );
 		}
@@ -262,7 +262,7 @@ HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_r
 	}
 	else
 	{
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = E_FAIL;
 		}

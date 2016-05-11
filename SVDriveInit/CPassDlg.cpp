@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 // CCPassDlg dialog
 
 
-CCPassDlg::CCPassDlg(CWnd* pParent /*=NULL*/)
+CCPassDlg::CCPassDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CCPassDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CCPassDlg)

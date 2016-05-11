@@ -54,7 +54,7 @@ private:
   HICON m_hIcon;            // Optional icon handle for tab
 
 public:
-  TTabItem(CWnd *pParent, LPCTSTR label, HICON hIcon = NULL);
+  TTabItem(CWnd *pParent, LPCTSTR label, HICON hIcon = nullptr);
   TTabItem(const TTabItem& obj);
   TTabItem& operator=(const TTabItem& obj);
   virtual ~TTabItem();
@@ -123,7 +123,7 @@ protected:
   // Create a tab window
   virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, 
                       DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, 
-                      UINT nID=AFX_IDW_PANE_FIRST, CCreateContext *pContext = NULL);
+                      UINT nID=AFX_IDW_PANE_FIRST, CCreateContext *pContext = nullptr);
   // Resize tabs
   virtual void ResizeTab(int cx = -1, int cy = -1);
   // Create pane
@@ -309,7 +309,7 @@ inline DWORD TVisualObject::GetID(void)
 inline CWnd *TVisualObject::GetWnd(void)
   { return m_pWnd; }
 inline CWnd *TVisualObject::GetSafeWnd(void)
-  { return ::IsWindow(m_pWnd->m_hWnd) ? m_pWnd : NULL;; }
+  { return ::IsWindow(m_pWnd->m_hWnd) ? m_pWnd : nullptr; }
 inline CString TVisualObject::GetTitle(void)
   { return m_strTitle; }
 inline CString TVisualObject::GetDescription(void)
@@ -364,7 +364,7 @@ public:
   BOOL Add(TVisualObject *pObject);
   BOOL Add(TVisualObject *pOwner, TVisualObject *pObject);
 
-  virtual BOOL Create(CWnd *pWnd = NULL);
+  virtual BOOL Create(CWnd *pWnd = nullptr);
   virtual void Destroy(void);
 
   CWnd *GetWnd(void);
@@ -457,7 +457,7 @@ public:
     case IT_LIST: return *m_ListIt;
     }
     ASSERT(FALSE);
-    return NULL;
+    return nullptr;
   }
   int End(void)
   {

@@ -83,7 +83,7 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 	objectInfo.SubType = SVColorThresholdObjectType;
 
 	// Get the color threshold object
-	mpThreshold = reinterpret_cast<SVColorThresholdClass*>(::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	mpThreshold = reinterpret_cast<SVColorThresholdClass*>(::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 	if( mpThreshold )
 	{
@@ -93,19 +93,19 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;
-		mpExtentLeft = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentLeft = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
 
 		// Get Train Color ROI Extent Top Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeTopPositionObjectGuid;
-		mpExtentTop = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentTop = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
 
 		// Get Train Color ROI Extent Width Object...
 		extentObjectInfo.EmbeddedID = SVExtentWidthObjectGuid;
-		mpExtentWidth = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentWidth = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
 
 		// Get Train Color ROI Extent Height Object...
 		extentObjectInfo.EmbeddedID = SVExtentHeightObjectGuid;
-		mpExtentHeight = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentHeight = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
 
 		// Initialize Extent
 		double value;
@@ -209,27 +209,27 @@ HRESULT SVTADlgColorThresholdROI::SetInspectionData()
 {
 	HRESULT l_hrOk = AddInputRequest( mpExtentLeft, m_pSheet->m_rectROI.left );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpExtentTop, m_pSheet->m_rectROI.top );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpExtentWidth, m_pSheet->m_rectROI.Width() );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpExtentHeight, m_pSheet->m_rectROI.Height() );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequestMarker();
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = RunOnce( mpTool );
 	}

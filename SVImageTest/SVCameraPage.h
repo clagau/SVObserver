@@ -25,7 +25,7 @@ struct SVCameraPageBufferInfoStruct
 
 	SVCameraPageBufferInfoStruct()
 	{
-		m_psvDlg = NULL;
+		m_psvDlg = nullptr;
 		m_lIndex = -1;
 		m_ulBufferIndex = 0;
 	};
@@ -99,7 +99,6 @@ public:
 
 private:
 	void ResetCount();
-	void ResetCameraFilename();
 
 	void LoadSVCameraFiles();
 

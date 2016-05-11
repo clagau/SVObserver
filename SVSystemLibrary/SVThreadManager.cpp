@@ -52,7 +52,7 @@ SVThreadManager::~SVThreadManager()
 HRESULT SVThreadManager::GetThreadInfo( std::list<std::string>& p_rStrList) const
 {
 	HRESULT hr = S_FALSE;
-	if( m_pGetThreadInfo != nullptr )
+	if( nullptr != m_pGetThreadInfo )
 	{
 		BSTR List;
 		hr = m_pGetThreadInfo( &List );
@@ -66,9 +66,9 @@ HRESULT SVThreadManager::GetThreadInfo( std::list<std::string>& p_rStrList) cons
 HRESULT SVThreadManager::GetThreadInfo( std::list<SVThreadSetup>& rSetupList, SVThreadAttribute eFilter )
 {
 	HRESULT hr = S_FALSE;
-	if( m_pGetThreadInfoFilter != nullptr )
+	if( nullptr != m_pGetThreadInfoFilter )
 	{
-		BSTR List=nullptr;
+		BSTR List = nullptr;
 		hr = m_pGetThreadInfoFilter( &List, eFilter );
 		_bstr_t bstList;
 		bstList.Attach(List); // Auto delete the bstr.
@@ -79,7 +79,7 @@ HRESULT SVThreadManager::GetThreadInfo( std::list<SVThreadSetup>& rSetupList, SV
 		char seps[]="\n\r";
 		token1 = strtok_s(pList, seps, &next_token);
 		std::list<char*> pLines;
-		while( token1 != nullptr )
+		while( nullptr != token1 )
 		{
 			// parse individual lines.
 			pLines.push_back( token1 );
@@ -90,22 +90,22 @@ HRESULT SVThreadManager::GetThreadInfo( std::list<SVThreadSetup>& rSetupList, SV
 			SVThreadSetup tsu;
 			next_token = nullptr;
 			token1 = strtok_s(*it, ",", &next_token);
-			if( token1 != nullptr) // Name
+			if( nullptr != token1 ) // Name
 			{
 				tsu.m_strName = token1;
 			}
 			token1 = strtok_s(nullptr, ",", &next_token);
-			if( token1 != nullptr) // Attribute
+			if( nullptr != token1 ) // Attribute
 			{
 				tsu.m_eAttribute = static_cast<SVThreadAttribute>(atol(token1));
 			}
 			token1 = strtok_s(nullptr, ",", &next_token);
-			if( token1 != nullptr) // Affinity
+			if( nullptr != token1 ) // Affinity
 			{
 				tsu.m_lAffinity = atol(token1);
 			}
 			token1 = strtok_s(nullptr, ",", &next_token);
-			if( token1 != nullptr) // Handle
+			if( nullptr != token1 ) // Handle
 			{
 				tsu.m_hThread = reinterpret_cast<HANDLE>(atol(token1)); // 
 			}
@@ -120,7 +120,7 @@ HRESULT SVThreadManager::GetThreadInfo( std::list<SVThreadSetup>& rSetupList, SV
 HRESULT SVThreadManager::IsAllowed( LPCTSTR strName,  SVThreadAttribute eAttrib )
 {
 	HRESULT hr = S_FALSE;
-	if( m_pIsAllowed != nullptr )
+	if( nullptr != m_pIsAllowed )
 	{
 		_bstr_t bstName(strName);
 		hr = m_pIsAllowed(bstName.Detach(), eAttrib );
@@ -135,7 +135,7 @@ HRESULT SVThreadManager::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttribute
 {
 	HRESULT hr = S_FALSE;
 	::EnterCriticalSection( &m_CritSec );
-	if( m_pAdd != nullptr )
+	if( nullptr != m_pAdd )
 	{
 		_bstr_t bstName(strName);
 		hr = m_pAdd(hThread, bstName.Detach(), eAttrib);
@@ -153,7 +153,7 @@ HRESULT SVThreadManager::Setup( LPCTSTR strName, long Affinity )
 	GetPipeCount(lPipeCount);
 	if( lPipeCount >= 8 )
 	{
-		if( m_pSetup != nullptr )
+		if( nullptr != m_pSetup )
 		{
 			_bstr_t bstName(strName);
 			hr = m_pSetup(bstName.Detach(), Affinity);
@@ -172,19 +172,19 @@ void SVThreadManager::SetThreadAffinityEnabled( BOOL bEnable )
 	HRESULT hr = S_FALSE;
 	if( bEnable && !m_bThreadAffinityEnabled )
 	{
-		if( m_pStartAffinityMgnt != nullptr )
+		if( nullptr != m_pStartAffinityMgnt )
 		{
 			hr = m_pStartAffinityMgnt();
 		}
 	}
 	if( !bEnable && m_bThreadAffinityEnabled )
 	{
-		if(m_pStopAffinityMgnt!= nullptr)
+		if( nullptr != m_pStopAffinityMgnt )
 		{
 			hr = m_pStopAffinityMgnt();
 		}
 	}
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		m_bThreadAffinityEnabled = bEnable;
 	}
@@ -199,11 +199,11 @@ BOOL SVThreadManager::IsThreadManagerInstalled() const
 HRESULT SVThreadManager::GetPipeCount( long& lrPipeCount)
 {
 	HRESULT hr = S_FALSE;
-	if( m_pGetPipeCount != nullptr )
+	if( nullptr != m_pGetPipeCount )
 	{
 		long value = 0;
 		hr = m_pGetPipeCount( &value );
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			lrPipeCount = value;
 		}
@@ -214,7 +214,7 @@ HRESULT SVThreadManager::GetPipeCount( long& lrPipeCount)
 BOOL SVThreadManager::SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwAffinityBitNum )
 {
 	BOOL bRet = FALSE;
-	if(m_pSetAffinity != nullptr)
+	if( nullptr != m_pSetAffinity )
 	{
 		_bstr_t bstName(ThreadName);
 		bRet = m_pSetAffinity(bstName.Detach(), dwAffinityBitNum);
@@ -228,7 +228,7 @@ HRESULT SVThreadManager::Remove( HANDLE p_hThread )
 {
 	HRESULT hr = S_FALSE;
 	::EnterCriticalSection( &m_CritSec );
-	if(m_pRemove != nullptr)
+	if( nullptr != m_pRemove )
 	{
 		hr = m_pRemove(p_hThread);
 	}
@@ -241,7 +241,7 @@ HRESULT SVThreadManager::Remove( HANDLE p_hThread )
 HRESULT SVThreadManager::Clear( )
 {
 	HRESULT hr = S_FALSE;
-	if(m_pClear != nullptr)
+	if( nullptr != m_pClear )
 	{
 		hr = m_pClear();
 	}
@@ -253,7 +253,7 @@ HRESULT SVThreadManager::Create()
 	HRESULT hr=S_FALSE;
 	// LoadLibrary
 	m_hThreadManagerDll = LoadLibrary(_T("SVThreadManager.dll"));
-	if( m_hThreadManagerDll != nullptr)
+	if( nullptr != m_hThreadManagerDll )
 	{
 		m_pGetThreadInfo = reinterpret_cast<GetThreadInfoPtr>(GetProcAddress(m_hThreadManagerDll, _T("SVGetThreadInfo")));
 		m_pGetThreadInfoFilter = reinterpret_cast<GetThreadInfoFilterPtr>(GetProcAddress(m_hThreadManagerDll, _T("SVGetThreadInfoFilter")));
@@ -267,17 +267,17 @@ HRESULT SVThreadManager::Create()
 		m_pStartAffinityMgnt = reinterpret_cast<StartAffinityMgntPtr>(GetProcAddress(m_hThreadManagerDll, _T("SVStartAffinityMgnt")));
 		m_pStopAffinityMgnt = reinterpret_cast<StopAffinityMgmtPtr>(GetProcAddress(m_hThreadManagerDll, _T("SVStopAffinityMgmt")));
 
-		if( m_pGetThreadInfo != nullptr &&
-			m_pGetThreadInfoFilter != nullptr &&
-			m_pIsAllowed != nullptr &&
-			m_pAdd != nullptr &&
-			m_pSetup != nullptr &&
-			m_pSetAffinity != nullptr &&
-			m_pRemove != nullptr &&
-			m_pClear != nullptr &&
-			m_pGetPipeCount != nullptr &&
-			m_pStartAffinityMgnt != nullptr &&
-			m_pStopAffinityMgnt != nullptr)
+		if( nullptr != m_pGetThreadInfo &&
+			nullptr != m_pGetThreadInfoFilter &&
+			nullptr != m_pIsAllowed &&
+			nullptr != m_pAdd &&
+			nullptr != m_pSetup &&
+			nullptr != m_pSetAffinity &&
+			nullptr != m_pRemove &&
+			nullptr != m_pClear &&
+			nullptr != m_pGetPipeCount &&
+			nullptr != m_pStartAffinityMgnt &&
+			nullptr != m_pStopAffinityMgnt )
 		{
 			hr = S_OK;
 		}
@@ -298,7 +298,7 @@ void SVThreadManager::Destroy()
 	m_pClear = nullptr;
 	m_pGetPipeCount = nullptr;
 	// FreeLibrary
-	if( m_hThreadManagerDll != nullptr )
+	if( nullptr != m_hThreadManagerDll )
 	{
 		FreeLibrary( m_hThreadManagerDll );
 		m_hThreadManagerDll = nullptr;

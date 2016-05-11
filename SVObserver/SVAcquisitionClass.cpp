@@ -44,12 +44,12 @@ SVAcquisitionClass::SVAcquisitionClass( const SVAcquisitionConstructParams& p_rP
 	mbIsBufferCreated = false;
 	mbTempOnline = false;
 	m_ImageAquired = false;
-	m_LastImage = NULL;
+	m_LastImage = nullptr;
 	mulSize = 0;
 
 	mlStartFrameIndex = -1;
 
-	m_hDigitizer = NULL;
+	m_hDigitizer = 0;
 
 	m_AcquisitionBuffersPtr = new SVImageObjectClass;
 
@@ -72,11 +72,11 @@ SVAcquisitionClass::SVAcquisitionClass( const SVAcquisitionConstructParams& p_rP
 
 SVAcquisitionClass::~SVAcquisitionClass()
 {
-	if( m_LastImage != NULL )
+	if( nullptr != m_LastImage )
 	{
 		::SysFreeString( m_LastImage );
 
-		m_LastImage = NULL;
+		m_LastImage = nullptr;
 	}
 }
 
@@ -92,11 +92,11 @@ bool SVAcquisitionClass::IsStarted() const
 
 void SVAcquisitionClass::ClearDevice()
 {
-	if( m_LastImage != NULL )
+	if( nullptr != m_LastImage )
 	{
 		::SysFreeString( m_LastImage );
 
-		m_LastImage = NULL;
+		m_LastImage = nullptr;
 	}
 
 	m_pDataManagerHandle.clear();
@@ -135,14 +135,14 @@ HRESULT SVAcquisitionClass::Destroy()
 
 	l_Status = SVODataDeviceClass::Destroy();
 
-	if( hrOk == S_OK )
+	if( S_OK == hrOk  )
 	{
 		hrOk = l_Status;
 	}
 
 	l_Status = DestroyBuffers();
 
-	if( hrOk == S_OK )
+	if( S_OK == hrOk  )
 	{
 		hrOk = l_Status;
 	}
@@ -164,7 +164,7 @@ HRESULT SVAcquisitionClass::Start()
 	m_ImageAquired = false;
 	mlStartFrameIndex = -1;
 	
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk  )
 	{
 		if( !( m_AcquisitionBuffersPtr.empty() ) )
 		{
@@ -176,7 +176,7 @@ HRESULT SVAcquisitionClass::Start()
 		}
 	}
 	
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		hrOk = StartDigitizer();
 	}
@@ -193,21 +193,21 @@ HRESULT SVAcquisitionClass::Stop()
 	{
 		l_Temp = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->Stop( m_hDigitizer );
 
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			hr = l_Temp;
 		}
 
 		l_Temp = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->UnregisterBufferInterface( m_hDigitizer );
 
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			hr = l_Temp;
 		}
 	}
 	else
 	{
-		if( hr == S_OK )
+		if( S_OK == hr  )
 		{
 			hr = E_FAIL;
 		}
@@ -215,7 +215,7 @@ HRESULT SVAcquisitionClass::Stop()
 	
 	l_Temp = SVODataDeviceClass::Stop();
 
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		hr = l_Temp;
 	}
@@ -228,7 +228,7 @@ HRESULT SVAcquisitionClass::Reset()
 	HRESULT l_Status = S_OK;
 	HRESULT l_Temp = SVODataDeviceClass::Reset();
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_Temp;
 	}
@@ -238,10 +238,10 @@ HRESULT SVAcquisitionClass::Reset()
 
 HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long ulSize )
 {
-	HRESULT hrOk = FALSE;
+	HRESULT hrOk = S_FALSE;
 	
 	hrOk = DestroyBuffers();
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		_bstr_t bsName = DeviceName();
 
@@ -250,7 +250,7 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 		mulSize = ulSize + 3;
 		msvImageInfo = IInfo;
 		
-		if( hrOk == S_OK )
+		if( S_OK == hrOk )
 		{
 			if ( IsDigitizerSubsystemValid() )
 			{
@@ -275,8 +275,8 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 				m_AcquisitionBuffersPtr->SetImageInfo( msvImageInfo );
 			}
 
-			l_Status = l_Status && ( m_AcquisitionBuffersPtr->ResetObject() == S_OK );
-			l_Status = l_Status && GetNextIndex( l_Handle ) == S_OK;
+			l_Status = l_Status && ( S_OK == m_AcquisitionBuffersPtr->ResetObject()  );
+			l_Status = l_Status && S_OK == GetNextIndex( l_Handle );
 			l_Status = l_Status && SetCurrentIndex( l_Handle );
 
 			if( l_Status )
@@ -321,7 +321,7 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 	
 	if ( IsDigitizerSubsystemValid() )
 	{
-		if ( SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->DestroyBuffers( m_hDigitizer ) != S_OK )
+		if ( S_OK != SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->DestroyBuffers( m_hDigitizer ) )
 		{
 			hrOk = S_FALSE;
 		}
@@ -351,7 +351,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 	mFiles = rArray;
 	m_CameraFileDeviceParams.Clear();
 
-	for ( l = 0; Result == S_OK && l < mFiles.GetSize(); l++ )
+	for ( l = 0; S_OK == Result  && l < mFiles.GetSize(); l++ )
 	{
 		if ( ! svFileMgr.AddItem( &(mFiles[l]) ) )
 		{
@@ -413,9 +413,9 @@ HRESULT SVAcquisitionClass::CreateLightReference(int iBands, int iBrightness, in
 
 	if ( iBands > 0 )
 	{
-		BOOL bResult = (mLightReference.Create( iBands ) == TRUE);
+		BOOL bResult = (TRUE == mLightReference.Create( iBands ));
 
-        if (bResult == TRUE)
+        if (TRUE == bResult )
 		{
             hrOk = S_OK;
 		}
@@ -479,7 +479,6 @@ HRESULT SVAcquisitionClass::CreateLightReferenceBand( int iBand, int iAttributes
 	return hrOk;
 }
 
-
 HRESULT SVAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hrOk = S_FALSE;
@@ -542,7 +541,7 @@ HRESULT SVAcquisitionClass::GetImageInfo( SVImageInfoClass *pImageInfo ) const
 {
 	HRESULT hrOk = S_FALSE;
 
-	if ( pImageInfo != NULL )
+	if ( nullptr != pImageInfo )
 	{
 		*pImageInfo = msvImageInfo;
 	}
@@ -605,10 +604,10 @@ HRESULT SVAcquisitionClass::GetLut( SVLut& lut )
 	HRESULT hr = S_FALSE;
 	SVLut lutdata;
 	hr = GetLutImpl( lutdata );
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		Lut().CopyNoTransform( lutdata );
-		if ( Lut().Info().GetTransform() == NULL )
+		if ( nullptr == Lut().Info().GetTransform() )
 		{
 			Lut().SetTransform( SVDefaultLutTransform() );
 			Lut().SetTransformOperation( SVLutTransformOperationNormal() );
@@ -690,7 +689,6 @@ HRESULT SVAcquisitionClass::SetLutImpl( const SVLut& lut )
 	return hr;
 }
 
-
 HRESULT SVAcquisitionClass::CreateLut( const SVLutInfo& info )
 {
 	HRESULT hr = S_FALSE;
@@ -712,20 +710,18 @@ HRESULT SVAcquisitionClass::ResetLut()
 
 SVLut& SVAcquisitionClass::Lut()
 {
-	SVLutDeviceParam* pParam = NULL;
+	SVLutDeviceParam* pParam = nullptr;
 	HRESULT hr = m_DeviceParams.GetParameter( DeviceParamLut, pParam );
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		return pParam->lut;
 	}
-	else
-	{
-		SVLutDeviceParam lutparam;
-		m_DeviceParams.SetParameter( DeviceParamLut, lutparam );
-		hr = m_DeviceParams.GetParameter( DeviceParamLut, pParam );
-		ASSERT( hr == S_OK && pParam != NULL );
-		return pParam->lut;
-	}
+	
+	SVLutDeviceParam lutparam;
+	m_DeviceParams.SetParameter( DeviceParamLut, lutparam );
+	hr = m_DeviceParams.GetParameter( DeviceParamLut, pParam );
+	ASSERT( S_OK == hr && nullptr != pParam );
+	return pParam->lut;
 }
 
 bool SVAcquisitionClass::IsValidBoard() const
@@ -745,7 +741,7 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 	//	This will lock the index!
 	hrOk = TheSVDataManager.GetNextAvailableBufferIndexNoWait( m_pDataManagerHandle, p_LockType, rDMHandle );
 
-	if( hrOk != S_OK )
+	if( S_OK != hrOk )
 	{
 		SVStringArray msgList;
 		msgList.push_back(GetDeviceName());
@@ -773,7 +769,7 @@ HRESULT SVAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollection& 
 	{
 		const SVDeviceParamWrapper& w = iter->second;
 
-		if ( ((const SVDeviceParam*) w) != NULL )
+		if ( nullptr != ((const SVDeviceParam*) w) )
 		{
 			m_DeviceParams.GetParameter( iter->first ) = w;
 		}
@@ -802,7 +798,7 @@ HRESULT SVAcquisitionClass::GetHardwareDeviceCapabilities( SVDeviceParamCollecti
 
 HRESULT SVAcquisitionClass::SetHardwareDeviceCapabilities( const SVDeviceParamCollection& rDeviceParams )
 {
-	ASSERT(FALSE);
+	ASSERT(false);
 	return S_FALSE;	// derived class needs to implement this function
 }
 
@@ -828,7 +824,6 @@ DWORD WINAPI SVAcquisitionClass::SingleGrabHelperFn(LPVOID lpParameter)
 	{
 		Sleep(0);
 	}
-
 	return 0;
 }
 
@@ -849,11 +844,6 @@ HRESULT SVAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleGrabHandle 
 }
 
 HRESULT SVAcquisitionClass::AllocDigitizer( SVDeviceParamCollection& rDevice )
-{
-	return E_NOTIMPL;
-}
-
-HRESULT SVAcquisitionClass::DeallocDigitizer( SVDeviceParamCollection& rDevice )
 {
 	return E_NOTIMPL;
 }
@@ -930,7 +920,7 @@ unsigned long SVAcquisitionClass::GetBufferWidth() const
 	unsigned long l_Width = 0;
 	RECT l_Rect;
 
-	if( msvImageInfo.GetOutputRectangle( l_Rect ) == S_OK )
+	if( S_OK == msvImageInfo.GetOutputRectangle( l_Rect ) )
 	{
 		l_Width = l_Rect.right;
 	}
@@ -943,7 +933,7 @@ unsigned long SVAcquisitionClass::GetBufferHeight() const
 	unsigned long l_Height = 0;
 	RECT l_Rect;
 
-	if( msvImageInfo.GetOutputRectangle( l_Rect ) == S_OK )
+	if( S_OK == msvImageInfo.GetOutputRectangle( l_Rect ) )
 	{
 		l_Height = l_Rect.bottom;
 	}
@@ -966,7 +956,7 @@ HRESULT SVAcquisitionClass::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
 
 	HRESULT l_Status = GetNextIndex( l_Handle );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		if( !( m_AcquisitionBuffersPtr.empty() ) && SetCurrentIndex( l_Handle ) )
 		{
@@ -1027,30 +1017,30 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer( const SVImageBufferInterf
 
 	l_Status = l_Response.mDMHandle.Assign( p_rBuffer.m_IndexHandle, p_rBuffer.m_IndexHandle.GetLockType() );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		m_ImageAquired = true;
 
 		l_Status = l_Response.SetStartTick( p_rBuffer.GetStartFrameTimeStamp() );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Response.SetEndTick( p_rBuffer.GetEndFrameTimeStamp() );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
-			l_Status = l_Response.SetIsValid( TRUE );
+			l_Status = l_Response.SetIsValid( true );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
-			l_Status = l_Response.SetIsComplete( TRUE );
+			l_Status = l_Response.SetIsComplete( true );
 		}
 
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = Notify( l_Response );
 	}
@@ -1074,7 +1064,7 @@ HRESULT SVAcquisitionClass::RestoreLastImage()
 {
 	HRESULT l_Status = S_OK;
 
-	if( ! m_ImageAquired && m_LastImage != NULL && !( m_AcquisitionBuffersPtr.empty() ) )
+	if( ! m_ImageAquired && nullptr != m_LastImage && !( m_AcquisitionBuffersPtr.empty() ) )
 	{
 		l_Status = m_AcquisitionBuffersPtr->CopyFromBSTR( m_LastImage );
 	}
@@ -1090,7 +1080,7 @@ HRESULT SVAcquisitionClass::StartDigitizer()
 	{
 		hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->RegisterBufferInterface( m_hDigitizer, this );
 
-		if( hrOk == S_OK )
+		if( S_OK == hrOk )
 		{
 			hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->Start( m_hDigitizer );
 		}

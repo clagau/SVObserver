@@ -55,7 +55,7 @@ END_MESSAGE_MAP()
 
 
 SVRPropertyItemEdit::SVRPropertyItemEdit() :
-	m_pstr(NULL)
+	m_pstr(nullptr)
 {
 	// Initialize all variables
 	m_bShowButton      = false;
@@ -71,7 +71,7 @@ SVRPropertyItemEdit::~SVRPropertyItemEdit()
 
 void SVRPropertyItemEdit::DrawAttribute(CDC* pDC, const RECT& rc)
 {
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	pDC->SelectObject(IsReadOnly() ? m_pProp->GetNormalFont() : m_pProp->GetBoldFont());
 	pDC->SetTextColor( m_rgbForeColor );
@@ -240,8 +240,9 @@ void SVRPropertyItemEdit::OnEnable(BOOL bEnable)
 void SVRPropertyItemEdit::OnMove()
 {
 	if (IsWindow(m_hWnd))
-		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER|SWP_NOACTIVATE);
-//		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+	{
+		SetWindowPos(nullptr, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER|SWP_NOACTIVATE);
+	}
 }
 
 
@@ -302,7 +303,7 @@ void SVRPropertyItemEdit::OnActivate()
 			m_btnDots.ReleaseDC(pDC);
 		}
 
-		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height(), SWP_NOZORDER | SWP_SHOWWINDOW);
+		SetWindowPos(nullptr, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height(), SWP_NOZORDER | SWP_SHOWWINDOW);
 		SetSel(0,-1);
 		SetFocus();
 	}
@@ -339,7 +340,7 @@ void SVRPropertyItemEdit::DisplayButton()
 
 	int iButtonWidth = size.cx + g_buttonSpace;
 	m_bShowButton = (m_pProp->SendNotify(PTN_QUERY_SHOW_BUTTON, this)) != FALSE;
-	m_btnDots.SetWindowPos(NULL, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
+	m_btnDots.SetWindowPos(nullptr, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 }
 
 
@@ -687,7 +688,7 @@ bool SVRPropertyItemEdit::SetItemValue(LPCTSTR strSrc)
 	try
 	{
 		m_vtData = strSrc;
-		m_pstr   = NULL;
+		m_pstr   = nullptr;
 	}
 	catch(_com_error e)
 	{

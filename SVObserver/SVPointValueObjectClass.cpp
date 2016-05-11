@@ -169,7 +169,7 @@ HRESULT SVPointValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& r
 	l_Temp.Attach( rValue );
 
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_Point );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		CString l_strTmp;
 		l_strTmp.Format(  _T( "( %d, %d )"),l_Point.x(), l_Point.y());
@@ -192,9 +192,7 @@ HRESULT SVPointValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rV
 
 void SVPointValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVPointValueObjectType;
-	//DefaultValue().x = 0;
-	//DefaultValue().y = 0;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVPointValueObjectType;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{
 		m_sLegacyScriptDefaultName = "defaultPoint";

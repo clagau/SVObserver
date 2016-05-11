@@ -38,35 +38,17 @@ void SVIOConfigurationInterfaceClass::Shutdown()
 	CloseDigital();
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetOpto22InvertInputValue( bool p_bInvert )
-{
-	HRESULT l_hrOk = S_OK;
-
-	m_Opto22InputInvert = p_bInvert;
-
-	return l_hrOk;
-}
-
-HRESULT SVIOConfigurationInterfaceClass::SetOpto22InvertOutputValue( bool p_bInvert )
-{
-	HRESULT l_hrOk = S_OK;
-
-	m_Opto22OutputInvert = p_bInvert;
-
-	return l_hrOk;
-}
-
 HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR p_szName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	l_hrOk = m_svDigitalBoard.Open( p_szName );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		unsigned long l_ulSize = 0;
 
-		if ( ( l_hrOk = m_svDigitalBoard.GetInputCount( &l_ulSize ) ) == S_OK )
+		if ( S_OK == ( l_hrOk = m_svDigitalBoard.GetInputCount( &l_ulSize ) ) )
 		{
 			if ( l_ulSize < static_cast< unsigned long >( m_svDigitalInputs.GetSize() ) )
 			{
@@ -75,11 +57,11 @@ HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR p_szName )
 		}
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		unsigned long l_ulSize = 0;
 
-		if ( ( l_hrOk = m_svDigitalBoard.GetOutputCount( &l_ulSize ) ) == S_OK )
+		if ( S_OK == ( l_hrOk = m_svDigitalBoard.GetOutputCount( &l_ulSize ) ) )
 		{
 			if ( l_ulSize < static_cast< unsigned long >( m_svDigitalOutputs.GetSize() ) )
 			{
@@ -88,12 +70,12 @@ HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR p_szName )
 		}
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = ClearDigitalOutputs();
 	}
 
-	if ( l_hrOk != S_OK )
+	if ( S_OK != l_hrOk )
 	{
 		CloseDigital();
 	}
@@ -227,7 +209,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long p_u
 
 		l_hrOk = m_svDigitalBoard.GetInputValue( p_ulChannel, &l_bValue );
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			m_svDigitalInputs[ p_ulChannel ].m_bValue = l_bValue;
 		}
@@ -426,7 +408,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputState( unsigned long p_
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( 0 < p_ulSizeInChars && p_pucBlock != NULL )
+	if( 0 < p_ulSizeInChars && nullptr != p_pucBlock )
 	{
 		unsigned long l_ulCount = 0;
 
@@ -439,13 +421,13 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputState( unsigned long p_
 
 		memset( (void *)p_pucBlock, 0x00, p_ulSizeInChars );
 
-		for ( unsigned long l = 0; l_hrOk == S_OK && l < l_ulCount; l++ )
+		for ( unsigned long l = 0; S_OK == l_hrOk && l < l_ulCount; l++ )
 		{
 			bool l_bValue = false;
 
 			l_hrOk = GetDigitalOutputValue( l, l_bValue );
 
-			if ( l_hrOk == S_OK )
+			if ( S_OK == l_hrOk )
 			{
 				if ( l_bValue ) 
 				{
@@ -666,7 +648,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetCameraTriggerValue( unsigned long p_
 
 		l_hrOk = GetIOTriggerValue( p_ulChannel, l_bRising );
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			// JMS - Set Output to FALSE to invert signal
 			// JMS - Set Output to TRUE to not invert signal
@@ -688,7 +670,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetCameraStrobeValue( unsigned long p_u
 
 		l_hrOk = GetIOStrobeValue( p_ulChannel, l_bRising );
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			// JMS - Set Output to FALSE to invert signal
 			// JMS - Set Output to TRUE to not invert signal

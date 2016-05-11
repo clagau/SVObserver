@@ -26,7 +26,6 @@ static char THIS_FILE[] = __FILE__;
 
 BOOL SVIOInitOutputs();
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CSVIOTESTApp
 
@@ -46,6 +45,10 @@ CSVIOTESTApp::CSVIOTESTApp()
 	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 }
 
+CSVIOTESTApp::~CSVIOTESTApp()
+{
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CSVIOTESTApp object
 
@@ -58,7 +61,7 @@ BOOL CSVIOTESTApp::InitInstance()
 {
 	SVOINIClass l_svINI;
 
-	BSTR l_bstrValue = NULL;
+	BSTR l_bstrValue = nullptr;
 
 	CString l_csTrigger;
 	CString l_csDigital;
@@ -76,8 +79,8 @@ BOOL CSVIOTESTApp::InitInstance()
 
 	bool l_bOk = true;
 
-	l_bOk = m_svTriggers.Open( l_iniLoader.m_csTriggerDLL ) == S_OK && l_bOk;
-	l_bOk = SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_csDigitalDLL ) == S_OK && l_bOk;
+	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.m_csTriggerDLL ) && l_bOk;
+	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_csDigitalDLL ) && l_bOk;
 
 	if ( ! l_bOk )
 	{

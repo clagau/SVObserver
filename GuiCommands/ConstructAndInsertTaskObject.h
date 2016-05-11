@@ -31,24 +31,26 @@ namespace Seidenader
 			{
 				HRESULT hr = S_OK;
 
-				SvOi::ITaskObjectListClass *pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(m_InstanceID));
+				SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(m_InstanceID));
+				SvOi::IObjectAppClass* pObjectApp = dynamic_cast<SvOi::IObjectAppClass*>(pTaskObjectList);
+
 				SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::ConstructObject( m_ClassID ));
-				if( nullptr != pTaskObjectList && nullptr != pTaskObject )
+				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*>(pTaskObject);
+				
+				if( nullptr != pTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
 				{
 					pTaskObjectList->InsertAt( m_pos, *pTaskObject );
 
 					// And last - Create (initialize) it
-					if( ! pTaskObject->is_Created() )
+					if( ! pObject->is_Created() )
 					{
-						// SEJ 
 						// And finally try to create the child object...
-						if( SVMR_SUCCESS != pTaskObjectList->CreateChildObject( *pTaskObject, SVMFResetObject ) )
+						if( SVMR_SUCCESS != pObjectApp->CreateChildObject(*pObject, SVMFResetObject ) )
 						{
 							hr = SvOi::Err_10021_InsertTaskObject_CreateObjectFailed;
 
-							// What should we really do here ??? SEJ
 							// Remove it from the Tool TaskObjectList ( Destruct it )
-							GUID objectID = pTaskObject->GetUniqueObjectID();
+							GUID objectID = pObject->GetUniqueObjectID();
 							if( SVInvalidGUID != objectID )
 							{
 								pTaskObjectList->Delete( objectID );

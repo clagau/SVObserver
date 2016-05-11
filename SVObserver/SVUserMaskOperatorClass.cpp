@@ -41,8 +41,8 @@ SVUserMaskOperatorClass::~SVUserMaskOperatorClass()
 void SVUserMaskOperatorClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVUserMaskOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVUserMaskOperatorObjectType;
 
 	m_inObjectInfo.SetInputObjectType( SVImageObjectType );
 	m_inObjectInfo.SetObject( GetObjectInfo() );
@@ -51,15 +51,6 @@ void SVUserMaskOperatorClass::init()
 
 	// RRRRGGGGHHHHHH who created this stupid object structure????
 	SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
-/*	
-	SVClassInfoStruct infoShapeHelper;
-	infoShapeHelper.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	infoShapeHelper.ObjectTypeInfo.SubType	= SVShapeMaskHelperObjectType;
-	infoShapeHelper.ClassId = SVShapeMaskHelperClassGuid;
-	infoShapeHelper.ClassName.LoadString( IDS_CLASSNAME_SHAPE_MASK_HELPER );
-	SVShapeMaskHelperClass* pShapeHelper = dynamic_cast <SVShapeMaskHelperClass*> (infoShapeHelper.Construct());
-	pShapeHelper->SetObjectOwner(this);
-*/
 	m_guidShapeHelper = pShapeHelper->GetUniqueObjectID();
 
 	BOOL bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
@@ -122,11 +113,11 @@ void SVUserMaskOperatorClass::init()
 
 BOOL SVUserMaskOperatorClass::CloseObject()
 {
-	BOOL bOk = DestroyLocalImageBuffer() == S_OK;
+	BOOL bOk = S_OK == DestroyLocalImageBuffer();
 
-	if ( isCreated )
+	if ( m_isCreated )
 	{
-		isCreated = FALSE;
+		m_isCreated = false;
 
 		bOk = SVUnaryImageOperatorClass::CloseObject();
 	}
@@ -147,9 +138,9 @@ BOOL SVUserMaskOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateSt
 	m_Data.evoFillArea.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 	m_Data.lvoFillColor.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
-	return isCreated;
+	return m_isCreated;
 }
 
 HRESULT SVUserMaskOperatorClass::ResetObject()
@@ -193,7 +184,7 @@ HRESULT SVUserMaskOperatorClass::ResetObject()
 
 	m_bUseOverlays = ( l_eCriteria != SVNone || dwMaskType == MASK_TYPE_IMAGE );
 
-	if( CreateLocalImageBuffer() != S_OK )
+	if( S_OK != CreateLocalImageBuffer() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -222,9 +213,9 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	SVShapeMaskHelperClass* pMaskHelper = nullptr;
 
 	// Get Friend Object
-	for( size_t i = 0; i < friendList.size(); i++ )
+	for( size_t i = 0; i < m_friendList.size(); i++ )
 	{
-		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
+		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
 		if( pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.PObject) )
 		{
 			m_guidShapeHelper = pMaskHelper->GetUniqueObjectID();
@@ -241,7 +232,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 		BOOL bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
 		ASSERT( bAddFriend );
 
-		if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pShapeHelper), NULL ) == SVMR_SUCCESS )
+		if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pShapeHelper), 0 ) == SVMR_SUCCESS )
 		{
 			pMaskHelper = pShapeHelper;
 		}
@@ -289,10 +280,10 @@ HRESULT SVUserMaskOperatorClass::SetCancelData(SVCancelData* p_pData)
 		{
 			hr = pShapeHelper->SetCancelData( pData->pShapeData );
 		}
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			m_Data = *pData;
-			m_Data.pShapeData = NULL;
+			m_Data.pShapeData = nullptr;
 
 			hr = ResetObject();
 		}
@@ -330,7 +321,7 @@ HRESULT SVUserMaskOperatorClass::IsInputImage( SVImageClass *p_psvImage )
 
 	if ( dwMaskType == MASK_TYPE_IMAGE )
 	{
-		if ( p_psvImage != NULL && p_psvImage == getMaskInputImage() )
+		if ( nullptr != p_psvImage && p_psvImage == getMaskInputImage() )
 		{
 			l_hrOk = S_OK;
 		}
@@ -384,7 +375,7 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 	SVImageClass* pInputImage = getMaskInputImage();
 	SVImageExtentClass l_svExtents;
 	if( l_eCriteria != SVNone && l_bActivated && !m_MaskBufferHandlePtr.empty() &&
-		( dwMaskType != MASK_TYPE_IMAGE || pInputImage != NULL ) )
+		( MASK_TYPE_IMAGE != dwMaskType || nullptr != pInputImage ) )
 	{
 		SVImageBufferHandleImage l_MilHandle;
 		m_MaskBufferHandlePtr->GetData( l_MilHandle );
@@ -399,7 +390,7 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 		
 		SVMatroxBufferInterface::SVStatusCode l_Code;
 		
-		LPVOID pSrcHostBuffer = NULL;
+		LPVOID pSrcHostBuffer = nullptr;
 		l_Code = SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, l_MilHandle.GetBuffer() );
 		long l_lSrcBytes;
 		l_Code = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVPitchByte, l_lSrcBytes );
@@ -499,7 +490,7 @@ HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
 
 	SVImageClass *l_psvImage = getReferenceImage();
 
-	if( l_psvImage != NULL )
+	if( nullptr != l_psvImage )
 	{
 		SVImageInfoClass l_MaskBufferInfo = l_psvImage->GetImageInfo();
 
@@ -511,7 +502,7 @@ HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
 			l_hrOk = SVImageProcessingClass::Instance().CreateImageBuffer( m_MaskBufferInfo, m_MaskBufferHandlePtr );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			if( ! Refresh() )
 			{
@@ -547,10 +538,10 @@ BOOL SVUserMaskOperatorClass::Refresh()
 		DWORD dwMaskType;
 		m_Data.dwvoMaskType.GetValue( dwMaskType );
 		SVShapeMaskHelperClass* pShape = GetShapeHelper();
-		if ( pShape != NULL && ( dwMaskType == MASK_TYPE_SHAPE) )
+		if ( nullptr != pShape && ( MASK_TYPE_SHAPE == dwMaskType ) )
 		{
 			pShape->Refresh();
-			return TRUE;
+			return true;
 		}
 		else
 		{
@@ -589,25 +580,14 @@ BOOL SVUserMaskOperatorClass::Refresh()
 
 				}
 	#endif //_DEBUG
-					//
-					// Check to see if a new DIB image had to be created in order.
-					// to get a HDC for it from the MIL library 6.0.
-					//
-					//if(GetSystem()->imageDIB_MIL &&
-					//  (GetSystem()->imageDIB_MIL != maskBufferInfo.HImageBuffer.milImage))
-					//{
-					//    MbufFree(maskBufferInfo.HImageBuffer.milImage);
-					//    maskBufferInfo.HImageBuffer.milImage = GetSystem()->imageDIB_MIL;
-					//    GetSystem()->imageDIB_MIL = M_NULL;
-					//}
 
 					// Release DC...
 					return S_OK == SVImageProcessingClass::Instance().DestroyBufferDC( m_MaskBufferHandlePtr, dc );
-				}// end if(dc != (HDC)0)        // && dc != (HDC)-1)
+				}// end if(dc != (HDC)0) 
 			}// end if ( S_OK == TheSVObserverApp.mpsvImaging->InitBuffer( m_MaskBufferHandle ) )
 		}// end else if not shape
 	}// end if( GetIPDoc() )
-	return FALSE;
+	return false;
 }
 
 void SVUserMaskOperatorClass::Persist( SVObjectWriter& rWriter )
@@ -718,11 +698,11 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( const SVString& p_rValueName, c
 			// create a buffer
 			std::vector< unsigned char > l_Buffer( l_SafeArray.size() );
 
-			for( size_t i = 0; hr == S_OK && i < l_SafeArray.size(); i++ )
+			for( size_t i = 0; S_OK == hr && i < l_SafeArray.size(); i++ )
 			{
 				_variant_t l_Value;
 
-				if( l_SafeArray.GetElement( i, l_Value ) == S_OK )
+				if( S_OK == l_SafeArray.GetElement( i, l_Value ) )
 				{
 					l_Buffer[ i ] = l_Value;
 				}
@@ -732,7 +712,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( const SVString& p_rValueName, c
 				}
 			}
 
-			if( hr == S_OK )
+			if( S_OK == hr )
 			{
 				CMemFile maskStorage;
 			
@@ -824,10 +804,10 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 	addDefaultInputObjects(TRUE, &inputList);
 	
 	// tell friends to connect...
-	for (size_t j = 0; j < friendList.size(); ++ j)
+	for (size_t j = 0; j < m_friendList.size(); ++ j)
 	{
-		const SVObjectInfoStruct& rFriend = friendList[j];
-		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, NULL, NULL);
+		const SVObjectInfoStruct& rFriend = m_friendList[j];
+		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, 0, 0);
 	}
 
 	// find our inputs
@@ -846,8 +826,8 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 					
 					SVObjectClass* pOwner = GetOwner();
 					SVObjectClass* pRequestor = pInInfo->PObject;
-					SVObjectClass* pObject = NULL;
-					BOOL bSuccess = FALSE;
+					SVObjectClass* pObject = nullptr;
+					BOOL bSuccess = false;
 					
 					if ( info.ObjectType == SVImageObjectType )
 					{
@@ -856,15 +836,15 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 					else
 					{
 						// Ask first friends...
-						for (size_t j = 0; j < friendList.size(); ++ j)
+						for (size_t j = 0; j < m_friendList.size(); ++ j)
 						{
-							const SVObjectInfoStruct& rFriend = friendList[j];
-							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)));
+							const SVObjectInfoStruct& rFriend = m_friendList[j];
+							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info)));
 							if (pObject)
 							{
 								// Connect input ...
 								pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
-								bSuccess = TRUE;
+								bSuccess = true;
 								break;
 							}
 						}
@@ -901,7 +881,7 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 				}
 				
 				// Finally try to connect...
-				DWORD_PTR dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInInfo), NULL);
+				DWORD_PTR dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInInfo), 0);
 
 				dwResult = dwConnectResult | dwResult;
 			}
@@ -953,8 +933,8 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 				SVImageClass* l_pMaskInputImage = getMaskInputImage();
 				SVImageClass* l_pRefImage = getReferenceImage();
 
-				if ( l_pRefImage != NULL &&
-				     l_pMaskInputImage != NULL )
+				if ( nullptr != l_pRefImage &&
+				     nullptr != l_pMaskInputImage )
 				{
 					SVExtentPointStruct l_svPoint;
 
@@ -962,14 +942,14 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 
 					SVImageExtentClass l_svExtents = l_pRefImage->GetImageExtents();
 
-					if ( l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPoint ) == S_OK &&
+					if ( S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPoint ) &&
 					     l_pMaskInputImage->GetImageHandle( l_MaskInputBuffer ) && !( l_MaskInputBuffer.empty() ) )
 					{
-						if ( l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) != S_OK )
+						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) )
 						{
 							l_Code = SVMatroxBufferInterface::ClearBuffer( l_MaskMilHandle.GetBuffer(), 0.0 );
 
-							if( l_Code != SVMEE_STATUS_OK )
+							if( SVMEE_STATUS_OK != l_Code )
 							{
 								// Signal that something was wrong...
 								SetInvalid();
@@ -1096,8 +1076,7 @@ SVImageClass* SVUserMaskOperatorClass::getMaskInputImage()
 	{
 		return dynamic_cast< SVImageClass* > ( m_inObjectInfo.GetInputObjectInfo().PObject );
 	}
-	return NULL;
-
+	return nullptr;
 }
 
 BOOL SVUserMaskOperatorClass::OnValidate()

@@ -22,17 +22,16 @@ std::string SVVersionInfo::GetVersion()
 	std::string verStr;
 
 	TCHAR moduleFilename[512];
-	::GetModuleFileName(NULL, moduleFilename, sizeof(moduleFilename));
+	::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
 
 	DWORD dwHandle;
 	DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
 	unsigned char* lpData = new unsigned char[size];
 
-	BOOL rc = ::GetFileVersionInfo(moduleFilename, NULL, size, lpData);
+	BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
 	if (rc)
 	{
-		VS_FIXEDFILEINFO* pFileInfo = NULL;
-		//::ZeroMemory(&version, sizeof(VS_FIXEDFILEINFO));
+		VS_FIXEDFILEINFO* pFileInfo = nullptr;
 		UINT Len = 0;
 		if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 		{
@@ -72,17 +71,16 @@ unsigned long SVVersionInfo::GetLongVersion()
 	unsigned long l_Version = 0;
 
 	TCHAR moduleFilename[512];
-	::GetModuleFileName(NULL, moduleFilename, sizeof(moduleFilename));
+	::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
 
 	DWORD dwHandle;
 	DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
 	unsigned char* lpData = new unsigned char[size];
 
-	BOOL rc = ::GetFileVersionInfo(moduleFilename, NULL, size, lpData);
+	BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
 	if (rc)
 	{
-		VS_FIXEDFILEINFO* pFileInfo = NULL;
-		//::ZeroMemory(&version, sizeof(VS_FIXEDFILEINFO));
+		VS_FIXEDFILEINFO* pFileInfo = nullptr;
 		UINT Len = 0;
 		if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 		{
@@ -129,17 +127,16 @@ std::string SVVersionInfo::GetTitleVersion()
 	std::string verStr;
 
 	TCHAR moduleFilename[512];
-	::GetModuleFileName(NULL, moduleFilename, sizeof(moduleFilename));
+	::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
 
 	DWORD dwHandle;
 	DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
 	unsigned char* lpData = new unsigned char[size];
 
-	BOOL rc = ::GetFileVersionInfo(moduleFilename, NULL, size, lpData);
+	BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
 	if (rc)
 	{
-		VS_FIXEDFILEINFO* pFileInfo = NULL;
-		//::ZeroMemory(&version, sizeof(VS_FIXEDFILEINFO));
+		VS_FIXEDFILEINFO* pFileInfo = nullptr;
 		UINT Len = 0;
 		if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 		{
@@ -168,17 +165,16 @@ std::string SVVersionInfo::GetShortTitleVersion()
 	std::string verStr;
 
 	TCHAR moduleFilename[512];
-	::GetModuleFileName(NULL, moduleFilename, sizeof(moduleFilename));
+	::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
 
 	DWORD dwHandle;
 	DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
 	unsigned char* lpData = new unsigned char[size];
 
-	BOOL rc = ::GetFileVersionInfo(moduleFilename, NULL, size, lpData);
+	BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
 	if (rc)
 	{
-		VS_FIXEDFILEINFO* pFileInfo = NULL;
-		//::ZeroMemory(&version, sizeof(VS_FIXEDFILEINFO));
+		VS_FIXEDFILEINFO* pFileInfo = nullptr;
 		UINT Len = 0;
 		if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 		{

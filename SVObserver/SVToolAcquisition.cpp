@@ -9,34 +9,12 @@
 //* .Check In Date   : $Date:   14 Jul 2014 12:44:44  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolAcquisition.h"
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVAcquisitionToolClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVAcquisitionToolClass, SVAcquisitionToolClassGuid );
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 
 SVAcquisitionToolClass::SVAcquisitionToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 					   :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
@@ -44,12 +22,11 @@ SVAcquisitionToolClass::SVAcquisitionToolClass( BOOL BCreateDefaultTaskList, SVO
 	init();
 }
 
-
 void SVAcquisitionToolClass::init()
 {
 	// Indentify our type in the Output List
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVToolAcquisitionObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVToolAcquisitionObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &mainImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
@@ -72,14 +49,14 @@ BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 
 	if( SVToolClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = ( SetImageExtent( 1, mainImageObject.GetImageExtents() ) == S_OK );
+		bOk = ( S_OK == SetImageExtent( 1, mainImageObject.GetImageExtents() ) );
 		mainImageObject.ObjectAttributesAllowedRef() |= SV_PUBLISH_RESULT_IMAGE;
 	}
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 	m_svSourceImageNames.SetValue( 0, mainImageObject.GetCompleteObjectName() );
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -89,7 +66,7 @@ HRESULT SVAcquisitionToolClass::ResetObject()
 	HRESULT l_hrOk = SVToolClass::ResetObject();
 	HRESULT l_Temp = SetImageExtent( 1, mainImageObject.GetImageExtents() );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Temp;
 	}
@@ -105,7 +82,7 @@ BOOL SVAcquisitionToolClass::OnValidate()
 
 	bRetVal = SVToolClass::OnValidate();
 
-	bRetVal &= mainImageObject.GetCamera() != NULL;
+	bRetVal &= nullptr != mainImageObject.GetCamera();
 
 	if( !bRetVal )
 	{
@@ -122,15 +99,9 @@ bool SVAcquisitionToolClass::DoesObjectHaveExtents() const
 
 DWORD_PTR SVAcquisitionToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
-
-SVCameraImageTemplate* SVAcquisitionToolClass::GetMainImageClass()
-{
-	return &mainImageObject;
 }
 
 SVStaticStringValueObjectClass* SVAcquisitionToolClass::GetInputImageNames()

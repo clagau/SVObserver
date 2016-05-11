@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 07:53:42  $
 //******************************************************************************
 
-#ifndef _INC_MANAGEDINDEXARRAYLIST_3C8E8E400133_INCLUDED
-#define _INC_MANAGEDINDEXARRAYLIST_3C8E8E400133_INCLUDED
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 
@@ -23,8 +22,5 @@ public:
 	SVManagedIndexArrayList();
 
 	virtual ~SVManagedIndexArrayList();
-
 };
-
-#endif /* _INC_MANAGEDINDEXARRAYLIST_3C8E8E400133_INCLUDED */
 

@@ -36,8 +36,8 @@
 //---------   a Color Tool.
 //---------
 //---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship at the SVImageClass level (m_ParentImagePtr != 
-//---------   NULL) but are still allocated as physical buffers.
+//---------   relationship at the SVImageClass level (nullptr != m_ParentImagePtr)
+//---------   but are still allocated as physical buffers.
 //---------
 //---------	  This image type does not create an image buffer pool as part of
 //---------	  the SVImageObjectClass.  Instead its buffer pool is maintained 
@@ -73,20 +73,19 @@
 //---------   SVImageTypePhysical buffer.  This type should be obsoleted and
 //---------   removed.
 //---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship (m_ParentImagePtr != NULL) but are still allocated 
+//---------   relationship (nullptr != m_ParentImagePtr) but are still allocated 
 //---------   as physical buffers?
 			SVImageTypeLogicalAndPhysical = 5,
 
-//--------- SVImageTypeVirtual - Only used to define an output image in the 
-//---------   Gage Tool, which is now obsolete.
+//--------- SVImageTypeVirtual - Not used. 
 //---------
 //---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship (m_ParentImagePtr != NULL) but are still allocated 
+//---------   relationship (nullptr != m_ParentImagePtr) but are still allocated 
 //---------   as physical buffers?
 //---------
 //---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship at the SVImageClass level (m_ParentImagePtr != 
-//---------   NULL) but are still allocated as physical buffers.
+//---------   relationship at the SVImageClass level (nullptr != m_ParentImagePtr) 
+//---------   but are still allocated as physical buffers.
 //---------
 //---------	  This image type does not create an image buffer pool as part of
 //---------	  the SVImageObjectClass.  Instead its buffer pool is maintained 
@@ -112,7 +111,7 @@
 //---------   only two image types that result in a Matrox "child" buffer
 //---------   (as opposed to an SVO "child" buffer).
 //---------   Dependent and Virtual image types maintain a child->parent 
-//---------   relationship (m_ParentImagePtr != NULL) but are still allocated 
+//---------   relationship (nullptr != m_ParentImagePtr) but are still allocated 
 //---------   as physical buffers.
 			SVImageTypeLogical = 9
 		};
@@ -126,30 +125,7 @@
 			SVImagePropertyBandLink = 0x00000008,
 			SVImagePropertyResetOwner = 0x00000010,
 		};
-
-		enum SVLightReferenceTypeEnum
-		{
-			SVLightReferenceTypeUnknown         = 0,
-			SVLightReferenceTypeBrightness      = 10,
-			SVLightReferenceTypeBrightnessRed   = 11,
-			SVLightReferenceTypeBrightnessGreen = 12,
-			SVLightReferenceTypeBrightnessBlue  = 13,
-			SVLightReferenceTypeContrast        = 20,
-			SVLightReferenceTypeContrastRed     = 21,
-			SVLightReferenceTypeContrastGreen   = 22,
-			SVLightReferenceTypeContrastBlue    = 23,
-
-			SVCorLightReferenceTypeBrightness      = 0x08030004,
-			SVCorLightReferenceTypeBrightnessRed   = 0x08040004,
-			SVCorLightReferenceTypeBrightnessGreen = 0x08050004,
-			SVCorLightReferenceTypeBrightnessBlue  = 0x08060004,
-			SVCorLightReferenceTypeContrast        = 0x08070004,
-			SVCorLightReferenceTypeContrastRed     = 0x08080004,
-			SVCorLightReferenceTypeContrastGreen   = 0x08090004,
-			SVCorLightReferenceTypeContrastBlue    = 0x080A0004,
-
-		};
-
+		
 		enum SVDigitizerParameterEnum
 		{
 			SVDigitizerParameterUnknown = 0,

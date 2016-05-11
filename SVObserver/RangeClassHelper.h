@@ -36,12 +36,6 @@ public:
 
 #pragma region Public Methods
 	//************************************
-	/// Set the range object to this class.
-	/// \param PRange [in] Range Object.
-	//************************************
-	void setRangeObject(SVRangeClass* PRange);
-
-	//************************************
 	// Description:  implements interface of SVTaskObjectInterfaceClass Set internal value to m_pRange
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************

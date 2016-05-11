@@ -63,7 +63,7 @@ namespace Seidenader
 							flag = 0;
 							break;
 					}
-					pTaskObjectList->DestroyChildObject( *pObject, flag);
+					pTaskObjectList->DestroyChild(*pObject, flag);
 				}
 				else
 				{

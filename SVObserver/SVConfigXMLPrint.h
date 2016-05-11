@@ -31,15 +31,14 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVEquation.h"
 #include "SVImageClass.h"
 #include "SVObserver.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
 #include "SVInputObjectList.h"
-#include "SVDigitalInputObject1.h"
-#include "SVDigitalOutputObject1.h"
+#include "SVDigitalInputObject.h"
+#include "SVDigitalOutputObject.h"
 #include "SVArchiveTool.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
@@ -56,8 +55,6 @@
 #include "SVObserver.h"
 #include "SVUserMaskOperatorClass.h"
 #pragma region Includes
-
-using namespace SVStringConversions;
 
 typedef CComPtr<IXmlWriter> Writer;
 

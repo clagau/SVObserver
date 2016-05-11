@@ -64,7 +64,6 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnCancel()
 	SVEdgeMarkerAdjustmentPageClass::OnCancel();
 }
 
-
 BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnSetActive()
 {
 	BOOL bRetVal = SVEdgeMarkerAdjustmentPageClass::OnSetActive();
@@ -103,18 +102,18 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	SetTaskObject( PCurrentAnalyzer );
+	SetTaskObject( m_pCurrentAnalyzer );
 
-	if( ! PCurrentAnalyzer )
+	if( ! m_pCurrentAnalyzer )
 		GetParent()->SendMessage( WM_CLOSE );
 
-	SVToolClass* pTool = dynamic_cast<SVToolClass*>( PCurrentAnalyzer->GetOwner() );
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>( m_pCurrentAnalyzer->GetOwner() );
 
 	RunOnce( pTool );
 	GetInspectionData();
 
 	// Get the Image for this tool
-	SVImageInfoClass* pImageInfo = ( SVImageInfoClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL );
+	SVImageInfoClass* pImageInfo = ( SVImageInfoClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0 );
 	if( nullptr != pImageInfo )
 	{
 		SVImageClass* pImage = nullptr;
@@ -515,22 +514,22 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 	{
 		case USE_SLIDER:
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdSelectable, TRUE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusPercentDiff, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusOffset, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMinPlusOffset, (double)FALSE );
 			}
@@ -540,27 +539,27 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 		case USE_MAX_MINUS_PERCENT_DIFF:
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoLowerThresholdMaxMinusPercentDiff, m_lowerThresholdMaxPercentDiff );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdSelectable, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusPercentDiff, TRUE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusOffset, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMinPlusOffset, (double)FALSE );
 			}
@@ -570,27 +569,27 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 		case USE_MAX_MINUS_OFFSET:
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoLowerThresholdMaxMinusOffset, m_lowerThresholdMaxOffset );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdSelectable, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusPercentDiff, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusOffset, TRUE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMinPlusOffset, (double)FALSE );
 			}
@@ -600,27 +599,27 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 		case USE_MIN_PLUS_OFFSET:
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoLowerThresholdMinPlusOffset, m_lowerThresholdMinOffset );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdSelectable, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusPercentDiff, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusOffset, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMinPlusOffset, TRUE );
 			}
@@ -633,22 +632,22 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 	{
 		case USE_SLIDER:
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdSelectable, TRUE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMaxMinusPercentDiff, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMaxMinusOffset, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMinPlusOffset, (double)FALSE );
 			}
@@ -658,27 +657,27 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 		case USE_MAX_MINUS_PERCENT_DIFF:
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUpperThresholdMaxMinusPercentDiff, m_upperThresholdMaxPercentDiff );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdSelectable, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMaxMinusPercentDiff, TRUE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMaxMinusOffset, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMinPlusOffset, (double)FALSE );
 			}
@@ -688,27 +687,27 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 		case USE_MAX_MINUS_OFFSET:
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUpperThresholdMaxMinusOffset, m_upperThresholdMaxOffset );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdSelectable, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMaxMinusPercentDiff, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMaxMinusOffset, TRUE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMinPlusOffset, (double)FALSE );
 			}
@@ -718,27 +717,27 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 		case USE_MIN_PLUS_OFFSET:
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUpperThresholdMinPlusOffset, m_upperThresholdMinOffset );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdSelectable, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMaxMinusPercentDiff, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMaxMinusOffset, (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseUpperThresholdMinPlusOffset, TRUE );
 			}
@@ -747,37 +746,37 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 		}
 	}
 
-	SVLinearAnalyzerClass *l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(PCurrentAnalyzer);
+	SVLinearAnalyzerClass* l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(m_pCurrentAnalyzer);
 	
 	if( nullptr != l_psvLinear )
 	{
 		if( m_bEdgeA )
 		{
-			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeAOverlays.GetOwner() != nullptr )
+			if( S_OK == l_hrOk && nullptr != l_psvLinear->m_svShowAllEdgeAOverlays.GetOwner() )
 			{
 				l_hrOk = AddInputRequest( &( l_psvLinear->m_svShowAllEdgeAOverlays ), TRUE );
 			}
 
-			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeBOverlays.GetOwner() != nullptr )
+			if( S_OK == l_hrOk && nullptr != l_psvLinear->m_svShowAllEdgeBOverlays.GetOwner() )
 			{
 				l_hrOk = AddInputRequest( &( l_psvLinear->m_svShowAllEdgeBOverlays ), (double)FALSE );
 			}
 		}
 		else
 		{
-			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeAOverlays.GetOwner() != nullptr )
+			if( S_OK == l_hrOk && nullptr != l_psvLinear->m_svShowAllEdgeAOverlays.GetOwner() )
 			{
 				l_hrOk = AddInputRequest( &( l_psvLinear->m_svShowAllEdgeAOverlays ), (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeBOverlays.GetOwner() != nullptr )
+			if( S_OK == l_hrOk && nullptr != l_psvLinear->m_svShowAllEdgeBOverlays.GetOwner() )
 			{
 				l_hrOk = AddInputRequest( &( l_psvLinear->m_svShowAllEdgeBOverlays ), TRUE );
 			}
 		}
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = SVEdgeMarkerAdjustmentPageClass::SetInspectionData();
 	}
@@ -928,7 +927,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
 void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 {
 	BOOL l_bOk = TRUE;
-	SVLinearAnalyzerClass *l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(PCurrentAnalyzer);
+	SVLinearAnalyzerClass* l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(m_pCurrentAnalyzer);
 
 	// Remove old points
 	m_dialogImage.RemoveAllOverlays(0);

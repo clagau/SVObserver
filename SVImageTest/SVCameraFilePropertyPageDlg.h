@@ -11,6 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "PropertyTree/PropTree.h"
+#pragma endregion Includes
+
 //defines for the properties for each dlg
 enum PROPERTY_PAGE_PROPERTY
 {
@@ -20,16 +25,13 @@ enum PROPERTY_PAGE_PROPERTY
 	PROP_CAMERA_FILE_BASE               = 10000
 };
 
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
-#include "PropertyTree/PropTree.h"
-
 class SVTestAcquisitionClass;
 
 class SVCameraFilePropertyPageDlg : public CDialog
 {
 public:
-	SVCameraFilePropertyPageDlg(CWnd* pParent = NULL);   // standard constructor
-	
+	SVCameraFilePropertyPageDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVCameraFilePropertyPageDlg();
 	SVTestAcquisitionClass* m_pAcquisition;
 
 // Dialog Data

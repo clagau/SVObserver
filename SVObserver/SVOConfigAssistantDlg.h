@@ -77,7 +77,7 @@ class CSVOConfigAssistantDlg : public CDialog
 public:
 	typedef SVBiUniqueMap< SVIMProductEnum, CString >::type SVProductStringMap;
 
-	CSVOConfigAssistantDlg(CWnd* pParent = NULL);   // standard constructor
+	CSVOConfigAssistantDlg(CWnd* pParent = nullptr);   // standard constructor
 
 	virtual ~CSVOConfigAssistantDlg();
 
@@ -88,8 +88,6 @@ public:
 
 	BOOL AddToCameraList(CString sCameraName, int iDig);
 	BOOL AddToCameraList(CString sCameraName);
-	BOOL AssignCameraFileToCamera(CString sCameraName, CString sCameraFile);
-	BOOL AssignDigToCamera(CString sCameraName, int iDig);
 	BOOL AddToTriggerList(CString sTriggerName, int iDig);
 	BOOL AddToInspectList(CString sExternal, CString sInternal, bool NewInspection);
 	BOOL AddToPPQList(CString sPPQ, CString sCamera, CString sTrigger, CString sInspection);
@@ -101,7 +99,6 @@ public:
 	BOOL RemovePPQFromList(CString sPPQ);
 
 	BOOL IsDigitizerUsed(CString sDigString);
-	BOOL IsTriggerDigUsed(CString sDigString);
 	BOOL IsCameraInList(CString sCameraName) const;
 	bool IsTriggerInList(CString sTriggerName) const;
 	BOOL IsInspectionInList(CString sInspectionName) const;
@@ -145,17 +142,13 @@ public:
 	BOOL IsTriggerUsed(CString sTriggerName) const;
 	void AddUsedTrigger(CString sTriggerName);
 	void RemoveUsedTrigger(CString sTriggerName);
-	int GetUsedTriggerCount() const;
 
 	bool IsSoftwareTriggerAllowed(LPCTSTR sTriggerName) const;
 	bool IsCameraLineInputAllowed(LPCTSTR triggerName) const;
 
-	SVOPPQObjPtr GetPPQForAttachedTrigger(const CString& sTriggerName);
-
 	BOOL IsInspectUsed(CString sInspect);
 	void AddUsedInspect(CString sInspect);
 	void RemoveUsedInspect(CString sInspect);
-	int GetUsedInspectCount();
 
 	SVIMProductEnum GetProductType() const;
 	void SetModified(BOOL bModified);
@@ -170,10 +163,7 @@ public:
 	int GetAllowedNumberOfDigs(BOOL bTrigger = FALSE);
 
 	void LastInspectionLabelDeleted(CString sInspectionLabel);
-	BOOL CanInspectionLableBeUsed(CString sLabelName);
 	BOOL CanInspectionNameBeUsed(CString sName);
-	void AddInspectionLableUsed(CString sLableName);
-	void AddInspectionNameUsed(CString sName);
 	void SetIOBoardCapabilities( SVIOBoardCapabilities& p_svCapable );
 
 	bool IsNonIOSVIM(SVIMProductEnum productType) const;
@@ -241,7 +231,6 @@ private:
 	static CString GetNameFromProductID( SVIMProductEnum p_ID );
 	static SVIMProductEnum GetProductIDFromName( const CString& p_Name );
 
-	void VerifyList();
 	void ClearMessages();
 	//data members
 	BOOL m_bNewConfiguration;

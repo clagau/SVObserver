@@ -22,7 +22,7 @@
 
 SVToolAdjustmentDialogCommentPageClass::SVToolAdjustmentDialogCommentPageClass( SVToolAdjustmentDialogSheetClass* PSheet ) : CPropertyPage(SVToolAdjustmentDialogCommentPageClass::IDD)
 , m_strComment(_T(""))
-, pTool(NULL)
+, pTool(nullptr)
 {
 	pSheet = PSheet;
 
@@ -49,7 +49,6 @@ BOOL SVToolAdjustmentDialogCommentPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	//SVToolClass* pTool = NULL;
 	if( pSheet && ( pTool = pSheet->GetTool() ) )
 	{
 		SetTaskObject( pTool );
@@ -75,12 +74,12 @@ HRESULT SVToolAdjustmentDialogCommentPageClass::SetInspectionData()
 
 	l_hrOk = AddInputRequest( pTool->GetToolComment(), m_strComment );
 	
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequestMarker();
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = RunOnce( pTool );
 	}

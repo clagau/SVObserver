@@ -70,13 +70,13 @@ void NodeTreeCtrl::loadTree()
 			++Iter;
 			continue;
 		}
-		if(NULL != Iter.node()->parent())
+		if(nullptr != Iter.node()->parent())
 		{
 			ParentItem = Iter.node()->parent()->get()->second->getTreeItem();
 		}
 		if( Iter->second->isNode() )
 		{
-			HTREEITEM Item = NULL;
+			HTREEITEM Item = nullptr;
 			Item = InsertItem( TVIF_TEXT | TVIF_STATE | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM, 
 				Iter->second->getName().c_str(),
 				Iter->second->getIconNumber(),
@@ -159,7 +159,7 @@ void NodeTreeCtrl::OnExpandAll()
 	HTREEITEM Item = checkItemHit( getContextPoint(), TVHT_ONITEM );
 	TreeItemSet Items;
 
-	if( NULL != Item )
+	if( nullptr != Item )
 	{
 		Items.insert( Item );
 	}
@@ -184,7 +184,7 @@ void NodeTreeCtrl::OnCollapseAll()
 	HTREEITEM Item = checkItemHit( getContextPoint(), TVHT_ONITEM );
 	TreeItemSet Items;
 
-	if( NULL != Item )
+	if( nullptr != Item )
 	{
 		Items.insert( Item );
 	}
@@ -224,7 +224,7 @@ void NodeTreeCtrl::OnCheckAll()
 
 	HTREEITEM Item = checkItemHit( getContextPoint(), TVHT_ONITEM );
 
-	if( NULL != Item )
+	if( nullptr != Item )
 	{
 		Items.insert( Item );
 	}
@@ -243,7 +243,7 @@ void NodeTreeCtrl::OnUncheckAll()
 
 	HTREEITEM Item = checkItemHit( getContextPoint(), TVHT_ONITEM );
 
-	if( NULL != Item )
+	if( nullptr != Item )
 	{
 		Items.insert( Item );
 	}
@@ -258,7 +258,7 @@ void NodeTreeCtrl::OnUncheckAll()
 
 void NodeTreeCtrl::changeSelectedItem( const HTREEITEM& rItem )
 {
-	if( NULL != rItem )
+	if( nullptr != rItem )
 	{
 		SVString* pLocation = reinterpret_cast<SVString*> ( GetItemData( rItem ) );
 		if( nullptr != pLocation )

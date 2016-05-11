@@ -9,13 +9,11 @@
 //* .Check In Date   : $Date:   15 May 2014 11:07:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageProcessingClass.h"
-
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
-
 #include "SVDataBuffer.h"
-#include "SVTool.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,44 +22,41 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 SVDataBufferInfoClass::SVDataBufferInfoClass()
+: POwnerTool(nullptr)
+, Length(0L)
+, Type(0L)
 {
-	POwnerTool			= NULL;
-	Length				= 0L;
-	Type				= 0L;
 }
 
-
-SVDataBufferInfoClass::SVDataBufferInfoClass( SVDataBufferInfoClass& S2 )
+SVDataBufferInfoClass::SVDataBufferInfoClass( const SVDataBufferInfoClass& S2 )
 {
-	POwnerTool		= S2.POwnerTool;
-	Length			= S2.Length;
-	Type			= S2.Type;
-	HBuffer			= S2.HBuffer;
+	POwnerTool	= S2.POwnerTool;
+	Length		= S2.Length;
+	Type		= S2.Type;
+	HBuffer		= S2.HBuffer;
 }
 
 SVDataBufferInfoClass SVDataBufferInfoClass::operator=( SVDataBufferInfoClass& S2 )
 {
-	POwnerTool		= S2.POwnerTool;
-	Length			= S2.Length;
-	Type			= S2.Type;
-	HBuffer			= S2.HBuffer;
+	POwnerTool	= S2.POwnerTool;
+	Length		= S2.Length;
+	Type		= S2.Type;
+	HBuffer		= S2.HBuffer;
 
 	return ( *this );
 }
 
-
 SV_IMPLEMENT_CLASS( SVDataBufferClass, SVDataBufferClassGuid );
 
-SVDataBufferClass::SVDataBufferClass( SVObjectClass* POwner, int StringResourceID )
-			      :SVObjectAppClass( POwner, StringResourceID )
+SVDataBufferClass::SVDataBufferClass( SVObjectClass* pOwner, int StringResourceID )
+: SVObjectAppClass( pOwner, StringResourceID )
 {
 	init();
-	
 }
 
 void SVDataBufferClass::init()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVDataBufferClassObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDataBufferClassObjectType;
 }
 
 SVDataBufferClass::~SVDataBufferClass()
@@ -71,45 +66,41 @@ SVDataBufferClass::~SVDataBufferClass()
 
 BOOL SVDataBufferClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVObjectAppClass::CreateObject( PCreateStructure ) )
 	{
-		if( dataInfo.Type != 0 && dataInfo.Length > 0 )
+		if( dataInfo.Type != 0 && 0 < dataInfo.Length )
 		{
 			dataInfo.POwnerTool = GetTool();
 
 			// Create data buffer...
-
-			bOk = SVImageProcessingClass::Instance().CreateDataBuffer(&dataInfo ) == S_OK;
+			bOk = S_OK == SVImageProcessingClass::Instance().CreateDataBuffer(&dataInfo);
 		}
 	}
-
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
-
 
 BOOL SVDataBufferClass::CloseObject()
 {
 	BOOL rc = SVObjectAppClass::CloseObject();
 
-	rc = (SVImageProcessingClass::Instance().DestroyDataBuffer( &dataInfo ) == S_OK ) && rc;
+	rc = (S_OK == SVImageProcessingClass::Instance().DestroyDataBuffer( &dataInfo ) ) && rc;
 
 	return rc;
 }
 
 BOOL SVDataBufferClass::Resize( int NewLength )
 {
-	return SVImageProcessingClass::Instance().ResizeDataBuffer( &dataInfo, NewLength ) == S_OK;
+	return S_OK == SVImageProcessingClass::Instance().ResizeDataBuffer( &dataInfo, NewLength );
 }
 
 SVDataBufferInfoClass& SVDataBufferClass::GetDataBufferInfo()
 {
 	return dataInfo;
 }
-
 
 SVDataBufferHandleStruct& SVDataBufferClass::GetDataBufferHandle()
 {
@@ -118,8 +109,7 @@ SVDataBufferHandleStruct& SVDataBufferClass::GetDataBufferHandle()
 
 DWORD_PTR SVDataBufferClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	return SVObjectAppClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
 }
-

@@ -11,12 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
 #include "resource.h"		// main symbols
 #include "SVMatroxGige.h"
+#pragma endregion Includes
 
 class CSVMatroxGigeApp : public CWinApp
 {
@@ -24,6 +26,7 @@ public:
 	SVMatroxGige m_svSystem;
 	
 	CSVMatroxGigeApp();
+	virtual ~CSVMatroxGigeApp();
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSVMatroxGigeApp)

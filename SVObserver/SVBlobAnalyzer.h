@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVAnalyzer.h"
-#include "SVValueObjectImpl.h"
 #include "SVBlobAnalyzerResultDlg.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
 #pragma endregion Includes
@@ -59,14 +58,6 @@ enum SVBlobFeatureEnum
 	//
 	// v3.1 Added Blob Features
 	//
-// The "chain" values do not seem to want to be excluded from the list based
-// on their pass/fail criteria. And since I don't know what they do, I am 
-// removing them. jab
-
-//	SV_NBRCHAINED_PIXELS,   // 26
-//	SV_CHAIN_INDEX,         // 27
-//	SV_CHAIN_X,             // 28
-//	SV_CHAIN_Y,             // 29 
 	SV_COMPACTNESS,         // 25
 	SV_NBR_RUNS,            // 26
 	SV_XMINAT_YMIN,         // 27
@@ -149,8 +140,7 @@ class SVBlobAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IBlobAnaly
 	friend class SVSetupDialogManager;
 
 public:
-	SVBlobAnalyzerClass(SVObjectClass* POwner = nullptr, 
-		                int StringResourceID = IDS_CLASSNAME_SVBLOBANALYZER);
+	SVBlobAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBLOBANALYZER);
 
 	virtual ~SVBlobAnalyzerClass();
 
@@ -193,7 +183,7 @@ public:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	virtual BOOL IsPtOverResult(CPoint point );
-	virtual	void DisplayAnalyzerResult( void);
+	virtual	void DisplayAnalyzerResult();
 
 	SVLongResultClass*           m_pResultBlob;
 
@@ -243,8 +233,8 @@ public:
 
 	DWORD                        msvlDefaultAttributes; 
 
-	SVMatroxBlobFeatureList              msvFeatureListID;
-	SVMatroxBlobResult                   msvResultBufferID;
+	SVMatroxBlobFeatureList      msvFeatureListID;
+	SVMatroxBlobResult           msvResultBufferID;
 
 	SVEnumerateValueObjectClass  m_colorBlobEnumValue;
 
@@ -274,7 +264,7 @@ protected:
 	                    std::vector<double>& SVA);
 #endif
 
-	virtual void addDefaultInputObjects( BOOL BCallBaseClass = FALSE, SVInputInfoListClass* PInputListToFill = NULL );
+	virtual void addDefaultInputObjects( BOOL BCallBaseClass = false, SVInputInfoListClass* PInputListToFill = nullptr );
 
 private:
 	void CreateArray();

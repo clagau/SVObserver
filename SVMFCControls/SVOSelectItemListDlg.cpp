@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   02 Oct 2013 07:01:52  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOSelectItemListDlg.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,7 +24,7 @@ namespace Seidenader
 {
 	namespace SVMFCControls
 	{
-		CSVOSelectItemListDlg::CSVOSelectItemListDlg(CWnd* pParent /*=NULL*/)
+		CSVOSelectItemListDlg::CSVOSelectItemListDlg(CWnd* pParent /*=nullptr*/)
 			: CDialog(CSVOSelectItemListDlg::IDD, pParent)
 		{
 			//{{AFX_DATA_INIT(CSVOSelectItemListDlg)
@@ -30,6 +32,9 @@ namespace Seidenader
 			//}}AFX_DATA_INIT
 		}
 
+		CSVOSelectItemListDlg::~CSVOSelectItemListDlg()
+		{
+		}
 
 		void CSVOSelectItemListDlg::DoDataExchange(CDataExchange* pDX)
 		{

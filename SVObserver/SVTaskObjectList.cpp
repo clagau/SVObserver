@@ -61,11 +61,11 @@ HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputIn
 	{
 		SVTaskObjectClass* l_pObject( m_aTaskObjects.GetAt( i ) );
 
-		if( l_pObject != NULL )
+		if( nullptr != l_pObject )
 		{
 			HRESULT l_Temp = l_pObject->GetOutputList( p_rOutputInfoList );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -150,16 +150,16 @@ void SVTaskObjectListClass::Persist(SVObjectWriter& writer)
 	writer.EndElement();
 }
 
-SVTaskObjectClass *SVTaskObjectListClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+SVTaskObjectClass* SVTaskObjectListClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {
-	SVTaskObjectClass *l_psvObject = SVTaskObjectClass::GetObjectAtPoint( p_rsvPoint );
+	SVTaskObjectClass* l_psvObject = SVTaskObjectClass::GetObjectAtPoint( p_rsvPoint );
 
 	// Get Object from our children
-	for (int i = 0; l_psvObject == NULL && i < m_aTaskObjects.GetSize(); i++)
+	for (int i = 0; nullptr == l_psvObject && i < m_aTaskObjects.GetSize(); i++)
 	{
 		l_psvObject = m_aTaskObjects.GetAt(i);
 
-		if ( l_psvObject != NULL )
+		if ( nullptr != l_psvObject )
 		{
 			l_psvObject = l_psvObject->GetObjectAtPoint( p_rsvPoint );
 		}
@@ -168,18 +168,18 @@ SVTaskObjectClass *SVTaskObjectListClass::GetObjectAtPoint( const SVExtentPointS
 	return l_psvObject;
 }
 
-HRESULT SVTaskObjectListClass::IsInputImage( SVImageClass *p_psvImage )
+HRESULT SVTaskObjectListClass::IsInputImage( SVImageClass* p_psvImage )
 {
 	HRESULT l_hrOk = SVTaskObjectClass::IsInputImage( p_psvImage );
 
-	if ( p_psvImage != NULL )
+	if ( nullptr != p_psvImage )
 	{
 		// Get Object from our children
-		for (int i = 0; l_hrOk != S_OK && i < m_aTaskObjects.GetSize(); i++)
+		for (int i = 0; S_OK != l_hrOk && i < m_aTaskObjects.GetSize(); i++)
 		{
-			SVTaskObjectClass *l_psvObject = m_aTaskObjects.GetAt(i);
+			SVTaskObjectClass* l_psvObject = m_aTaskObjects.GetAt(i);
 
-			if ( l_psvObject != NULL )
+			if ( nullptr != l_psvObject )
 			{
 				l_hrOk = l_psvObject->IsInputImage( p_psvImage );
 			}
@@ -205,9 +205,6 @@ BOOL SVTaskObjectListClass::Validate()
 			if (pTaskObject)
 			{
 				BOOL l_bTemp = pTaskObject->Validate();
-
-				//				ASSERT( l_bTemp );
-
 				retVal &= l_bTemp;
 			}
 			else
@@ -246,8 +243,8 @@ BOOL SVTaskObjectListClass::CloseObject()
 		SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
 		if (pTaskObject)
 		{
-			DwResult = ::SVSendMessage(pTaskObject, SVM_CLOSE_OBJECT, NULL, NULL);
-			retVal = (DwResult == SVMR_SUCCESS) && retVal;
+			DwResult = ::SVSendMessage(pTaskObject, SVM_CLOSE_OBJECT, 0, 0);
+			retVal = (SVMR_SUCCESS == DwResult) && retVal;
 		}
 	}
 	// Close ourself and our friends
@@ -260,7 +257,7 @@ HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& rpObject, const S
 {
 	HRESULT l_Status = SVTaskObjectClass::GetChildObject( rpObject, rNameInfo, Index );
 
-	if( l_Status != S_OK )
+	if( S_OK != l_Status )
 	{
 		if( static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
 		{
@@ -302,7 +299,6 @@ void SVTaskObjectListClass::InsertAt(int nIndex, SVTaskObjectClass* PTaskObject,
 		PTaskObject->SetName( NewName.c_str() );
 	}
 	
-	// SEJ Aug 10,1999
 	PTaskObject->SetObjectOwner(this);
 	
 	m_aTaskObjects.InsertAt(nIndex, PTaskObject, nCount);
@@ -310,7 +306,7 @@ void SVTaskObjectListClass::InsertAt(int nIndex, SVTaskObjectClass* PTaskObject,
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
 
-// Use this if You want to set list entry to NULL!
+// Use this if You want to set list entry to nullptr!
 // And to replace an entyr with a new pointer after it was deleted!!!
 void SVTaskObjectListClass::SetAt(int nIndex, SVTaskObjectClass* PTaskObject)
 {
@@ -323,13 +319,17 @@ void SVTaskObjectListClass::SetAt(int nIndex, SVTaskObjectClass* PTaskObject)
 			PTaskObject->SetName( NewName.c_str() );
 		}
 		
-		// SEJ Aug 10,1999
 		PTaskObject->SetObjectOwner(this);
 	}
 	
 	m_aTaskObjects.SetAt(nIndex, PTaskObject);
 
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+}
+
+SVTaskObjectClass* SVTaskObjectListClass::GetAt( int nIndex ) const 
+{
+	return m_aTaskObjects.GetAt(nIndex);
 }
 
 void SVTaskObjectListClass::RemoveAt( int nIndex, int nCount )
@@ -370,7 +370,7 @@ HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 		reinterpret_cast<DWORD_PTR>(pChildObject),
 		SVMFSetDefaultInputs);
 
-	if( uRetCode != SVMR_SUCCESS )
+	if( SVMR_SUCCESS != uRetCode )
 	{
 		hr = S_FALSE;
 	}
@@ -384,12 +384,13 @@ BOOL SVTaskObjectListClass::SetObjectDepth(int NewObjectDepth)
 
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
+	{
 		if (m_aTaskObjects.GetAt(j))
 		{
 			m_aTaskObjects.GetAt(j)->SetObjectDepth(NewObjectDepth);
 		}
-
-		return SVTaskObjectClass::SetObjectDepth(NewObjectDepth);
+	}
+	return SVTaskObjectClass::SetObjectDepth(NewObjectDepth);
 }
 
 // Should be overridden and must be called in derived classes...
@@ -399,12 +400,13 @@ BOOL SVTaskObjectListClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewL
 
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
+	{
 		if (m_aTaskObjects.GetAt(j))
 		{
 			m_aTaskObjects.GetAt(j)->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 		}
-
-		return SVTaskObjectClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
+	}
+	return SVTaskObjectClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 }
 
 BOOL SVTaskObjectListClass::SetImageDepth(long lDepth)
@@ -413,14 +415,14 @@ BOOL SVTaskObjectListClass::SetImageDepth(long lDepth)
 
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
+	{
 		if (m_aTaskObjects.GetAt(j))
 		{
 			m_aTaskObjects.GetAt(j)->SetImageDepth(lDepth);
 		}
-
-		return SVTaskObjectClass::SetImageDepth(lDepth);
+	}
+	return SVTaskObjectClass::SetImageDepth(lDepth);
 }
-
 
 void SVTaskObjectListClass::SetInvalid()
 {
@@ -516,7 +518,7 @@ const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 	return newName;
 }
 
-HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
 {
 	HRESULT hrRet = S_OK;
 
@@ -524,13 +526,13 @@ HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass *p_Image, SVExtentM
 
 	for ( int i = 0; i < m_aTaskObjects.GetSize(); i++ )
 	{
-		SVTaskObjectClass *pObject = dynamic_cast< SVTaskObjectClass* >( m_aTaskObjects.GetAt(i) );
+		SVTaskObjectClass* pObject = dynamic_cast< SVTaskObjectClass* >( m_aTaskObjects.GetAt(i) );
 
-		if ( pObject != NULL )
+		if ( nullptr != pObject )
 		{
 			HRESULT l_Temp = pObject->CollectOverlays(p_Image, p_MultiLineArray);
 
-			if( hrRet == S_OK )
+			if( S_OK == hrRet )
 			{
 				hrRet = l_Temp;
 			}
@@ -540,18 +542,18 @@ HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass *p_Image, SVExtentM
 	return hrRet;
 }
 
-#pragma region virtual method (ITaskObjectListClass)
 int SVTaskObjectListClass::GetSize() const
 {
 	return static_cast< int >( m_aTaskObjects.GetSize() );
 }
 
+#pragma region virtual method (ITaskObjectListClass)
 SvUl::NameGuidList SVTaskObjectListClass::GetTaskObjectList( ) const
 {
 	SvUl::NameGuidList list;
 	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
 	{
-		SVTaskObjectClass *pObject = m_aTaskObjects.GetAt(i);
+		SVTaskObjectClass* pObject = m_aTaskObjects.GetAt(i);
 		if (pObject)
 		{
 			list.push_back(SvUl::NameGuidPair(pObject->GetName(), pObject->GetUniqueObjectID()));
@@ -601,11 +603,11 @@ void SVTaskObjectListClass::Delete(GUID& objectID)
 
 void SVTaskObjectListClass::InsertAt(int index, SvOi::ITaskObject& rObject, int count)
 {
-	SVTaskObjectClass *pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
+	SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
 	InsertAt(index, pObject, count);
 }
 
-DWORD_PTR SVTaskObjectListClass::DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context)
+DWORD_PTR SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD context)
 {
 	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
 	return DestroyChildObject(pTaskObject, context);
@@ -643,8 +645,6 @@ SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SVObjectType
 //				: possible values!!!
 void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 {
-	// SV_FORMAT_MESSAGE_5( "%s - > SVTaskObjectListClass::DeleteAt( int Index, int Count /*= 1*/ )\nSize: %d\nIndex: %d\nCount: %d", GetName(), GetSize(), Index, Count, NULL );
-	
 	if (Count < 1)
 	{
 		return;
@@ -672,12 +672,9 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 	for (int i = Index + Count - 1; i >= Index; -- i)
 	{
 		pTaskObject = m_aTaskObjects.GetAt(i);
-		// RemoveAt( i );
-		// Delete object not till it is removed from list!!!
 		if (pTaskObject)
 		{
-			// delete( pTaskObject );
-			::SVSendMessage(this, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), NULL);
+			::SVSendMessage(this, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), 0);
 		}
 	}
 }
@@ -690,27 +687,25 @@ void SVTaskObjectListClass::DeleteAll()
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
 
-HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
 {
-	HRESULT hrRet = S_FALSE;
-
-	hrRet = SVTaskObjectClass::onCollectOverlays(p_Image,p_MultiLineArray);
+	HRESULT hrRet = SVTaskObjectClass::onCollectOverlays(p_Image, p_MultiLineArray);
 
 	return hrRet;
 }
 
-SVObjectClass *SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner )
+SVObjectClass* SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner )
 {
-	SVObjectClass *l_psvObject = NULL;
+	SVObjectClass* l_psvObject = nullptr;
 
 	int l_iSize = m_aTaskObjects.GetSize();
 
 	// find the friend in our taskObject List
-	for (int i = 0; l_psvObject == NULL && i < l_iSize; i++)
+	for (int i = 0; nullptr == l_psvObject && i < l_iSize; i++)
 	{
 		l_psvObject = m_aTaskObjects.GetAt(i);
 
-		if ( l_psvObject != NULL && p_oFriendGuid == l_psvObject->GetUniqueObjectID() )
+		if ( nullptr != l_psvObject && p_oFriendGuid == l_psvObject->GetUniqueObjectID() )
 		{
 			m_aTaskObjects.RemoveAt(i);
 
@@ -718,11 +713,11 @@ SVObjectClass *SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, S
 		}
 		else
 		{
-			l_psvObject = NULL;
+			l_psvObject = nullptr;
 		}
 	}
 
-	if ( p_psvObject != NULL )
+	if ( nullptr != p_psvObject )
 	{
 		p_psvObject->SetObjectOwner( p_psvNewOwner );
 	}
@@ -765,7 +760,7 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 		{
 			SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
-			if ( pTaskObject != NULL )
+			if ( nullptr != pTaskObject )
 			{
 				ChildRunStatus.ResetRunStateAndToolSetTimes();
 
@@ -817,7 +812,7 @@ SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPostProcessObj
 	{
 		SVTaskObjectClass* l_pTask = *l_Iter;
 
-		if( l_pTask != NULL )
+		if( nullptr != l_pTask )
 		{
 			l_Objects.push_back( l_pTask );
 		}
@@ -843,7 +838,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Check if friend should process this message first....
-	if ((DwMessageID & SVM_NOTIFY_FRIENDS) == SVM_NOTIFY_FRIENDS)
+	if (SVM_NOTIFY_FRIENDS == (DwMessageID & SVM_NOTIFY_FRIENDS))
 	{
 		//
 		// NOTE: Beware to route Create Object Messages here !!!
@@ -854,13 +849,13 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 		DwResult = SVTaskObjectClass::processMessage(DwMessageID | SVM_NOTIFY_ONLY_FRIENDS, DwMessageValue, DwMessageContext);
 
 		// Check if processed and Notify First Responding...
-		if (DwResult != SVMR_NOT_PROCESSED && (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
+		if (SVMR_NOT_PROCESSED != DwResult && SVM_NOTIFY_FIRST_RESPONDING == (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING))
 		{
 			return DwResult;
 		}
 
 		// Check if Notify Only Friends...
-		if ((DwMessageID & SVM_NOTIFY_ONLY_FRIENDS) == SVM_NOTIFY_ONLY_FRIENDS)
+		if (SVM_NOTIFY_ONLY_FRIENDS == (DwMessageID & SVM_NOTIFY_ONLY_FRIENDS))
 		{
 			return DwResult;
 		}
@@ -898,7 +893,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 
 	case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
-			if( ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) != S_OK )
+			if( S_OK != ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
 			{
 				ASSERT( FALSE );
 
@@ -934,9 +929,9 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 			{
 				if (pRequestor == this || pRequestor == GetOwner())
 				{
-					return NULL;
+					return SVMR_NOT_PROCESSED;
 				}
-				SVObjectClass* pObject = NULL;
+				SVObjectClass* pObject = nullptr;
 
 				// look at outputs first
 				SVOutputInfoListClass l_OutputInfoList;
@@ -985,18 +980,17 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 			}
 
 			DwResult = SVObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
-			if (DwResult != SVMR_NOT_PROCESSED)
+			if (SVMR_NOT_PROCESSED != DwResult)
 			{
 				return DwResult;
 			}
-
 			break;
 		}
 
 	case SVMSGID_GETAVAILABLE_OBJECTS: // Only SVTaskObjectListClasses have available objects (currently)
 		{
-			SVClassInfoStructListClass* pList = reinterpret_cast<SVClassInfoStructListClass *>(DwMessageValue);
-			SVObjectTypeInfoStruct* pObjectTypeInfo = reinterpret_cast<SVObjectTypeInfoStruct *>(DwMessageContext);
+			SVClassInfoStructListClass* pList = reinterpret_cast<SVClassInfoStructListClass*>(DwMessageValue);
+			SVObjectTypeInfoStruct* pObjectTypeInfo = reinterpret_cast<SVObjectTypeInfoStruct*>(DwMessageContext);
 
 			if (getAvailableObjects(pList, pObjectTypeInfo))
 			{
@@ -1020,7 +1014,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 				// NOTE:	Only dynamically generated objects could be replaced, 
 				//			embedded objects must be overwritten using SVM_OVERWRITE_OBJECT!!!
 
-				// SEJ (July 15 1999) - Remove All Dynamic Children (they will be constructed anew)
+				// - Remove All Dynamic Children (they will be constructed anew)
 				if (SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pTaskObject))
 				{
 					// Kill the Friends
@@ -1044,8 +1038,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 						SVObjectClass* l_pObject = m_aTaskObjects.GetAt(i);
 						delete l_pObject;
 
-						// delete( m_aTaskObjects.GetAt( i ) );
-						m_aTaskObjects.SetAt(i, NULL);
+						m_aTaskObjects.SetAt(i, nullptr);
 
 						// Replace list member...
 						m_aTaskObjects.SetAt(i, pTaskObject);
@@ -1055,7 +1048,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 						// Set unique object ID...
 						if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 						{
-							::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), NULL );
+							::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), 0 );
 
 							return SVMR_SUCCESS;
 						}
@@ -1074,7 +1067,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 					if (pOwner)
 					{
 						// Ask the owner to kill the imposter!
-						if (::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), NULL) == SVMR_NO_SUCCESS)
+						if (SVMR_NO_SUCCESS == ::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0))
 						{
 							// must be a Friend
 							pOwner->DestroyFriends();
@@ -1085,13 +1078,12 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 				// If this object not already exists, add it to the task list...
 				Add(pTaskObject);
 
-				// SEJ - Sep 28,1999
 				// Special code for Objects that allocate Friends on SetOwner()
 				pTaskObject->DestroyFriends();
 
 				if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 				{
-					::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), NULL );
+					::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), 0 );
 
 					return SVMR_SUCCESS;
 				}
@@ -1142,17 +1134,17 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 		}
 	} // switch
 
-	if ((DwMessageID & SVM_NOTIFY_ONLY_THIS) != SVM_NOTIFY_ONLY_THIS)
+	if (SVM_NOTIFY_ONLY_THIS != (DwMessageID & SVM_NOTIFY_ONLY_THIS))
 	{
 		// Try to send message to list members, if not already processed...
-		if ((DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
+		if (SVM_NOTIFY_FIRST_RESPONDING == (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING))
 		{
-			// Send to base class - Since SVTaskObjectListClass is also a SVTaskObjectClass - SEJ July 20,1999
+			// Send to base class - Since SVTaskObjectListClass is also a SVTaskObjectClass
 			// But don't notify friends again...
 			DWORD dwMaskID = DwMessageID & ~(SVM_NOTIFY_ONLY_FRIENDS | SVM_NOTIFY_FRIENDS);
 			DwResult = SVTaskObjectClass::processMessage(dwMaskID, DwMessageValue, DwMessageContext);
 
-			// Stop queuing, if DwResult is not NULL...
+			// Stop queuing, if DwResult is not nullptr...
 			// Try to send message to list members, if not already processed...
 			for (int i = 0; ! DwResult && i < m_aTaskObjects.GetSize(); i++)
 			{
@@ -1164,7 +1156,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 		}
 		else
 		{
-			// Send to base class - Since SVTaskObjectListClass is also a SVTaskObjectClass - SEJ Aug 11,1999
+			// Send to base class - Since SVTaskObjectListClass is also a SVTaskObjectClass
 			// But don't notify friends again...
 			DWORD dwMaskID = DwMessageID & ~(SVM_NOTIFY_ONLY_FRIENDS | SVM_NOTIFY_FRIENDS);
 			DwResult = SVTaskObjectClass::processMessage(dwMaskID, DwMessageValue, DwMessageContext) | DwResult;
@@ -1182,7 +1174,7 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 	else
 	{
 		// Route to Base Class if not yet processed.
-		if (DwResult == SVMR_NOT_PROCESSED)
+		if (SVMR_NOT_PROCESSED == DwResult)
 		{
 			// But don't notify friends again...
 			DWORD dwMaskID = DwMessageID & ~(SVM_NOTIFY_ONLY_FRIENDS | SVM_NOTIFY_FRIENDS);
@@ -1198,7 +1190,7 @@ DWORD_PTR SVTaskObjectListClass::OutputListProcessMessage( DWORD DwMessageID, DW
 	DWORD_PTR DwResult = SVTaskObjectClass::OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
 
 	// Try to send message to outputObjectList members, if not already processed...
-	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
+	if( SVM_NOTIFY_FIRST_RESPONDING == (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) )
 	{
 		if( ! DwResult )
 		{
@@ -1218,19 +1210,19 @@ DWORD_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessa
 	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to send message to outputObjectList members, if not already processed...
-	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
+	if( SVM_NOTIFY_FIRST_RESPONDING == (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) )
 	{
 		for( int i = 0; ! DwResult && i < m_aTaskObjects.GetSize(); ++ i )
 		{
 			SVTaskObjectClass* l_pObject( m_aTaskObjects[ i ] );
 
-			if( l_pObject != NULL )
+			if( nullptr != l_pObject )
 			{
 				DwResult = l_pObject->OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
 			}
 			else
 			{
-				DwResult = NULL;
+				DwResult = SVMR_NOT_PROCESSED;
 			}
 		}
 	}
@@ -1240,13 +1232,13 @@ DWORD_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessa
 		{
 			SVTaskObjectClass* l_pObject( m_aTaskObjects[ i ] );
 
-			if( l_pObject != NULL )
+			if( nullptr != l_pObject )
 			{
 				DwResult = l_pObject->OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext) | DwResult;
 			}
 			else
 			{
-				DwResult = NULL | DwResult;
+				DwResult = SVMR_NOT_PROCESSED | DwResult;
 			}
 		}
 	}
@@ -1296,16 +1288,16 @@ DWORD_PTR SVTaskObjectListClass::DestroyChildObject(SVTaskObjectClass* pTaskObje
 				// Remove it from the SVTaskObjectList ( Destruct it )
 				Delete(objectID);
 
-				if( GetInspection() != NULL )
+				if( nullptr != GetInspection() )
 				{
-					if( ( context & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
+					if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
 					{
 						GetInspection()->SetDefaultInputs();
 					}
 
-					if( ( context & SVMFResetInspection ) == SVMFResetInspection )
+					if( SVMFResetInspection == ( context & SVMFResetInspection ) )
 					{
-						::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+						::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, 0, 0 );
 					}
 				}
 

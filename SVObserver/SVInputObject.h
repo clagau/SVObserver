@@ -18,20 +18,15 @@
 class SVInputObject : public SVObjectClass
 {
 public:
-
 	SVInputObject( LPCSTR strObjectName );
-	SVInputObject( SVObjectClass* POwner = nullptr,
-				   int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECT );
+	SVInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECT );
 
 	virtual ~SVInputObject();
 
 	virtual BOOL Create();
 	virtual BOOL Destroy();
-	virtual BOOL IsCreated();
 
 	virtual HRESULT Read( _variant_t& p_rValue ) = 0;
-
-	BOOL	m_bCreated;
 };
 
 typedef SVVector< SVInputObject* > SVInputObjectArray;

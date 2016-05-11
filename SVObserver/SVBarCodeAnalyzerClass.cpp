@@ -60,7 +60,7 @@ SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (BOOL BCreateDefaultTaskList, SVO
 void SVBarCodeAnalyzerClass::init()
 {
 	
-	outObjectInfo.ObjectTypeInfo.SubType = SVBarCodeAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVBarCodeAnalyzerObjectType;
 	
 	// Register Embedded Objects
 	RegisterEmbeddedObject (&msv_szBarCodeValue, SVBarCodeObjectGuid, IDS_OBJECTNAME_BARCODEVALUE, false, SVResetItemNone);
@@ -161,7 +161,7 @@ BOOL SVBarCodeAnalyzerClass::InitMil ()
 		long l_lTmpType;
 		msv_lBarCodeType.GetValue( l_lTmpType );
 		svData.m_lCodeType = static_cast<SVBarCodeTypesEnum>( l_lTmpType );
-		if ( SVImageProcessingClass::Instance().CreateBarCodeBuffer( &svData ) == S_OK )
+		if ( S_OK == SVImageProcessingClass::Instance().CreateBarCodeBuffer( &svData ) )
 		{
 			
 			SVMatroxBarCodeInterface::SVStatusCode l_Code;
@@ -318,7 +318,7 @@ BOOL SVBarCodeAnalyzerClass::CreateObject (SVObjectLevelCreateStruct* pCreateStr
 	m_bWarnOnFailedRead.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
 	msv_lBarcodeTimeout.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
 	msv_RawData.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	if ( m_bHasLicenseError )
 	{
@@ -372,7 +372,7 @@ BOOL SVBarCodeAnalyzerClass::OnValidate ()
 
 SVResultClass* SVBarCodeAnalyzerClass::GetResultObject()
 {
-	SVResultClass* pAnalyzerResult = NULL;
+	SVResultClass* pAnalyzerResult = nullptr;
 
 	// Find the result Object in Our List
 	pAnalyzerResult = (SVResultClass *)GetAt(0);
@@ -482,7 +482,7 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 									}
 									l_strRemoved[j++]=l_strBarCodeValue[i];
 								}
-								l_strRemoved[j] = 0; // NULL...
+								l_strRemoved[j] = 0; // Teminate String...
 								l_strRemoved.resize(j);
 								l_strBarCodeValue = l_strRemoved;
 								break;
@@ -513,7 +513,7 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 										l_strTranslated[j++]=l_strBarCodeValue[i];
 									}
 								}
-								l_strTranslated[j] = 0; // NULL...
+								l_strTranslated[j] = 0; // Terminate String...
 								l_strTranslated.resize(j);
 								l_strBarCodeValue = l_strTranslated;
 								break;
@@ -662,7 +662,7 @@ DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR Dw
 	case SVMSGID_RESET_ALL_OBJECTS :
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 
@@ -695,10 +695,10 @@ HRESULT SVBarCodeAnalyzerClass::ResetObject()
 			CString m_csTempRegExpressionValue;
 			CString m_csTempStringFileName;
 
-		if( ( msv_szRegExpressionValue.GetValue( m_csTempRegExpressionValue ) == S_OK &&
-					m_csTempRegExpressionValue.Compare( m_csRegExpressionValue ) != 0 ) ||
-			( msv_szStringFileName.GetValue( m_csTempStringFileName ) == S_OK &&
-					m_csTempStringFileName.Compare( m_csStringFileName ) != 0 ) )
+		if( ( S_OK == msv_szRegExpressionValue.GetValue( m_csTempRegExpressionValue )  &&
+					0 != m_csTempRegExpressionValue.Compare( m_csRegExpressionValue )  ) ||
+			( S_OK == msv_szStringFileName.GetValue( m_csTempStringFileName )  &&
+					0 != m_csTempStringFileName.Compare( m_csStringFileName )  ) )
 			{
 				if( ! SaveRegExpression( FALSE ) )
 				{

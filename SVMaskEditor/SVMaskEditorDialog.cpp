@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   03 Jun 2014 13:22:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 
 #include "SVMaskEditor.h"
 #include "SVMaskEditorDialog.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 // SVMaskEditorDialogClass dialog
 
 
-SVMaskEditorDialogClass::SVMaskEditorDialogClass(CWnd* pParent /*=NULL*/)
+SVMaskEditorDialogClass::SVMaskEditorDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVMaskEditorDialogClass::IDD, pParent)
 {
 	EnableAutomation();
@@ -33,11 +35,7 @@ SVMaskEditorDialogClass::SVMaskEditorDialogClass(CWnd* pParent /*=NULL*/)
 	StrZoom = _T("");
 	//}}AFX_DATA_INIT
 
-    HImageBitmap = NULL;
-//    milDisplay                  = M_NULL;
-//    milDisplayBuffer            = M_NULL;
-//    milMaskBuffer               = M_NULL;
-//    milImageBuffer              = M_NULL;
+    HImageBitmap = nullptr;
 
     currentZoomX    = 0L;
     currentZoomY    = 0L;
@@ -45,7 +43,7 @@ SVMaskEditorDialogClass::SVMaskEditorDialogClass(CWnd* pParent /*=NULL*/)
     currentPanY     = 0L;
 
 	currentDrawObjectSelection = SVDrawObjectPoint;
-	pCurrentDrawObject = NULL;
+	pCurrentDrawObject = nullptr;
 	bNewDrawObject	   = TRUE;
 	bDrawActive		   = FALSE;
 
@@ -182,7 +180,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 
 
             DisplayWndCtl.PMother = this;
-            DisplayWndCtl.Create( NULL, 
+            DisplayWndCtl.Create( nullptr, 
                                   _T( "SVMaskEditorImageWindow" ), 
                                   WS_CHILD | WS_VISIBLE | WS_BORDER,
                                   rect,
@@ -422,43 +420,7 @@ void SVMaskEditorDialogClass::evaluateMask()
 	SVMatroxImageInterface l_ImageIntf;
 
 	l_ImageIntf.Arithmetic( milDisplayBuffer, milImageBuffer, milMaskBuffer, static_cast<SVImageOperationTypeEnum>(m_lMilArithmeticOperation) );
-	// Draw graphix extent...
-/*
-	CWindowDC dc( this );
-	HDC hDC = dc.GetSafeHdc();
-	if( hDC )
-	{
-		// Update screen...
-		CRect cRect;
-		DisplayWndCtl.GetClientRect( &cRect );
-		DisplayWndCtl.ClientToScreen( &cRect );
-		ScreenToClient( &cRect );
-		RedrawWindow( &cRect );
-		// Force to redraw...
-		UpdateWindow();
-
-
-		// Prepare Graphix rect drawing...
-		CRect gRect;
-		GraphixObject.GetGraphixRect( gRect, currentZoomX, currentZoomY );
-		// Move to display client origin regarding dialog device context origin...
-		CRect mRect;
-		DisplayWndCtl.GetWindowRect( &cRect );
-		GetWindowRect( &mRect );
-		gRect.OffsetRect( cRect.left - mRect.left, cRect.top - mRect.top );
-		// Draw Graphix rect...
-		HPEN hPen       = ::CreatePen( PS_DASH, 1, RGB( 255, 0, 0 ) );
-		HPEN hOldPen    = ( HPEN ) ::SelectObject( hDC, hPen );
-		::MoveToEx( hDC, gRect.left, gRect.top, NULL );
-		::LineTo( hDC, gRect.right, gRect.top );
-		::LineTo( hDC, gRect.right, gRect.bottom );
-		::LineTo( hDC, gRect.left, gRect.bottom );
-		::LineTo( hDC, gRect.left, gRect.top );
-		::DeleteObject( ::SelectObject( hDC, hOldPen ) );
-	}
-*/
 }
-
 
 void SVMaskEditorDialogClass::zoom( int ZoomOperand )
 {

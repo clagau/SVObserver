@@ -106,14 +106,14 @@ public:
 	// Returns the root item of the tree
 	SVRPropertyItem* GetRootItem();
 
-	// Returns the focused item or NULL for none
+	// Returns the focused item or nullptr for none
 	SVRPropertyItem* GetFocusedItem();
 
 	// Enumerates an item and all its child items
 	bool EnumItems(SVRPropertyItem* pItem, ENUMPROPITEMPROC proc, LPARAM lParam = 0L);
 
 	// Insert a created SVRPropertyItem into the control
-	SVRPropertyItem* InsertItem(SVRPropertyItem* pItem, SVRPropertyItem* pParent = NULL);
+	SVRPropertyItem* InsertItem(SVRPropertyItem* pItem, SVRPropertyItem* pParent = nullptr);
 
 	// Delete an item and ALL its children
 	void DeleteItem(SVRPropertyItem* pItem);
@@ -158,7 +158,7 @@ public:
 	void SetOriginOffset(LONG nOffset);
 	void UpdatedItems();
 	void UpdateMoveAllItems();
-	void RefreshItems(SVRPropertyItem* pItem = NULL);
+	void RefreshItems(SVRPropertyItem* pItem = nullptr);
 
 	// enable or disable tree input
 	void DisableInput(bool bDisable = true);
@@ -185,7 +185,7 @@ public:
 	// Focus on the next item
 	SVRPropertyItem* FocusNext();
 
-	LRESULT SendNotify(UINT nNotifyCode, SVRPropertyItem* pItem = NULL);
+	LRESULT SendNotify(UINT nNotifyCode, SVRPropertyItem* pItem = nullptr);
 
 	bool SaveState(SVRPropTreeState& rState);
 	bool RestoreState(const SVRPropTreeState& rState);

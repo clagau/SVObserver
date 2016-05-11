@@ -119,7 +119,7 @@ namespace Seidenader
 			The method checks if at the given point a valid item is hit
 			\param rPoint <in> a reference to the point to check if there is an item
 			\param Flags <in> the flags for the hit test
-			\return the tree item or NULL
+			\return the tree item or nullptr
 			***********/
 			const HTREEITEM checkItemHit( const CPoint& rPoint, const UINT Flags ) const;
 

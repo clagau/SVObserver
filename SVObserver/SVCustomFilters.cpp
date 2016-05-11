@@ -31,18 +31,6 @@ static char THIS_FILE[] = __FILE__;
 
 #define KERNEL_BIT_DEPTH     8L
 
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVCustomFilter
-//* Note(s)    : Custom Filter Base Class
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVCustomFilterClass, SVCustomFilterClassGuid )
 
 //******************************************************************************
@@ -63,7 +51,7 @@ void SVCustomFilterClass::init()
 {
 	long l( 0 );
 
-	outObjectInfo.ObjectTypeInfo.SubType = SVCustomFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVCustomFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoCell01, SVCustomFilterCell01Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL01, false, SVResetItemOwner );
 	RegisterEmbeddedObject( &m_lvoCell02, SVCustomFilterCell02Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL02, false, SVResetItemOwner );
@@ -202,10 +190,6 @@ void SVCustomFilterClass::init()
 // .Title       : CreateObject
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVCustomFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -254,20 +238,13 @@ BOOL SVCustomFilterClass::OnValidate()
 	return bRetVal;	
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Initialization of class SVCustomFilterClass
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.07.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVCustomFilterClass::RebuildKernel()
 {
-
-	
 	SVMatroxBufferInterface::SVStatusCode l_Code;
 
 	// First free old kernel
@@ -382,18 +359,11 @@ BOOL SVCustomFilterClass::RebuildKernel()
 	return TRUE;
 }
 
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVCustomFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 { 
@@ -403,7 +373,6 @@ BOOL SVCustomFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHan
 		m_plvoKernelCells[l]->CopyLastSetValue( RRunStatus.m_lResultDataIndex );
 	}// end for
 
-	
 	SVMatroxImageInterface::SVStatusCode l_Code;
 
 	m_lvoKernelWidth.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
@@ -445,6 +414,3 @@ BOOL SVCustomFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHan
 	RRunStatus.SetInvalid();
 	return FALSE;
 }
-
-//** EOF **
-

@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVResult.h"
-#include "SVValueObject.h"
 #pragma endregion Includes
 
 class SVLongResultClass : public SVResultClass  

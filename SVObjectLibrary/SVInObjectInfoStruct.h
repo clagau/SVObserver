@@ -28,8 +28,6 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 
 	const SVObjectInfoStruct& GetInputObjectInfo() const;
 
-	SVString GetOneBasedInputObjectShortName() const;
-
 	void SetInputObjectType( SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, long p_SubType=SVNotSetSubObjectType );
 	void SetInputObjectType( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, long p_SubType=SVNotSetSubObjectType );
 	void SetInputObjectType( const SVObjectTypeInfoStruct& p_rTypeInfo );

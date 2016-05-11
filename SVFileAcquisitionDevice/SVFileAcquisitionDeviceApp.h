@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:28:46  $
 //******************************************************************************
+#pragma once
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH
@@ -20,11 +21,11 @@
 // SVFileAcquisitionDeviceApp
 // See SVFileAcquisitionDeviceApp.cpp for the implementation of this class
 //
-
 class SVFileAcquisitionDeviceApp : public CWinApp
 {
 public:
 	SVFileAcquisitionDeviceApp();
+	virtual ~SVFileAcquisitionDeviceApp();
 	SVFileAcquisitionDevice m_fileAcqDevice;
 
 // Overrides

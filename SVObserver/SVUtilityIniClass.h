@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:58:30  $
 //******************************************************************************
 
-#if !defined(AFX_SVUTILITYINICLASS_H__ABB010B7_F3C1_424E_8E4D_647A85C14D82__INCLUDED_)
-#define AFX_SVUTILITYINICLASS_H__ABB010B7_F3C1_424E_8E4D_647A85C14D82__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 class SVUtilityIniClass  
 {
@@ -32,6 +27,3 @@ public:
 	CString m_csArguments;
 	CString m_csPromptForArguments;
 };
-
-#endif // !defined(AFX_SVUTILITYINICLASS_H__ABB010B7_F3C1_424E_8E4D_647A85C14D82__INCLUDED_)
-

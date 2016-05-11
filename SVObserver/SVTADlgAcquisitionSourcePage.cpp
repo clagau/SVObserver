@@ -41,8 +41,8 @@ SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisit
 	//}}AFX_DATA_INIT
 
 	pSheet		= PSheet;
-	pTool		= NULL;
-	pMainImage	= NULL;
+	pTool		= nullptr;
+	pMainImage	= nullptr;
 	availableBandNum  = 0;
 	availableBandLink = -1;
 }
@@ -53,7 +53,7 @@ SVToolAdjustmentDialogAcquisitionSourcePageClass::~SVToolAdjustmentDialogAcquisi
 
 void SVToolAdjustmentDialogAcquisitionSourcePageClass::refresh()
 {
-	CWnd* pWnd = NULL;
+	CWnd* pWnd = nullptr;
 	BOOL bColor = GetCheckedRadioButton( IDC_SINGLEBAND_RADIO, IDC_MULTIBAND_RADIO ) == IDC_MULTIBAND_RADIO;
 
 	if ( !bColor )
@@ -89,7 +89,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::refresh()
 		SVImageInfoClass ImageInfo;
 		SVImageInfoClass oImageInfo;
 
-		if ( pMainImage->GetCamera() != NULL )
+		if ( nullptr != pMainImage->GetCamera() )
 		{
 			// Get current selected Digitizer Name...
 			StrSelectedDigitizer = pMainImage->GetCamera()->GetCompleteObjectName();
@@ -180,7 +180,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 		SVObjectTypeInfoStruct info;
 		info.ObjectType = SVImageObjectType;
 		info.SubType    = SVMainImageObjectType;
-		pMainImage = reinterpret_cast<SVCameraImageTemplate*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
+		pMainImage = reinterpret_cast<SVCameraImageTemplate*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info) ));
 		if( pMainImage )
 		{
 			SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pTool->GetAncestor( SVInspectionObjectType ) );
@@ -197,7 +197,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 				while( l_Iter != l_CameraList.end() )
 				{
-					if( ( *l_Iter ) != NULL && ( *l_Iter )->mpsvDevice != NULL )
+					if( nullptr != ( *l_Iter ) && nullptr != ( *l_Iter )->mpsvDevice )
 					{
 						availableDigitizerTreeCtrl.AddItem( ( *l_Iter )->GetCompleteObjectName(), reinterpret_cast<DWORD_PTR>(*l_Iter) );
 					}
@@ -226,7 +226,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelectButton() 
 {
-	SVToolSetClass* pToolSet = NULL;
+	SVToolSetClass* pToolSet = nullptr;
 
 	// &&&
 	// Get current selected object in tree...
@@ -242,10 +242,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelectButton()
 		ImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 		ImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
 
-		if ( pMainImage->UpdateImage( ImageInfo ) == S_OK )
+		if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
 			// Reset all objects...
-			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 			refresh();
 		}
@@ -275,10 +275,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel0Check()
 			ImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 			ImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
 
-			if( pMainImage->UpdateImage( ImageInfo ) == S_OK )
+			if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
 				// Reset all objects...
-				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 				refresh();
 			}
@@ -299,10 +299,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel1Check()
 			ImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 			ImageInfo.SetImageProperty( SVImagePropertyBandLink, 1 );
 
-			if ( pMainImage->UpdateImage( ImageInfo ) == S_OK )
+			if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
 				// Reset all objects...
-				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 				refresh();
 			}
@@ -323,10 +323,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel2Check()
 			ImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 			ImageInfo.SetImageProperty( SVImagePropertyBandLink, 2 );
 
-			if( pMainImage->UpdateImage( ImageInfo ) == S_OK )
+			if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
 				// Reset all objects...
-				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 				refresh();
 			}
@@ -347,10 +347,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel3Check()
 			ImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 			ImageInfo.SetImageProperty( SVImagePropertyBandLink, 3 );
 
-			if ( pMainImage->UpdateImage( ImageInfo ) == S_OK )
+			if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
 				// Reset all objects...
-				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 				refresh();
 			}
@@ -369,10 +369,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnMultibandRadio()
 		ImageInfo.SetImageProperty( SVImagePropertyBandNumber, availableBandNum );
 		ImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
 
-		if( pMainImage->UpdateImage( ImageInfo ) == S_OK )
+		if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
 			// Reset all objects...
-			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 			CheckRadioButton( IDC_SINGLEBAND_RADIO, IDC_MULTIBAND_RADIO, IDC_MULTIBAND_RADIO );
 
@@ -400,10 +400,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSinglebandRadio()
 			ImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
 		}
 
-		if( pMainImage->UpdateImage( ImageInfo ) == S_OK )
+		if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
 			// Reset all objects...
-			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 			CheckRadioButton( IDC_SINGLEBAND_RADIO, IDC_MULTIBAND_RADIO, IDC_SINGLEBAND_RADIO );
 

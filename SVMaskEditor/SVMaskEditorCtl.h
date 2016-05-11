@@ -9,18 +9,11 @@
 //* .Check In Date   : $Date:   03 Jun 2014 13:20:54  $
 //******************************************************************************
 
-#if !defined(AFX_SVMASKEDITORCTL_H__C87C9B82_E6DC_11D2_A77B_00106F000C7D__INCLUDED_)
-#define AFX_SVMASKEDITORCTL_H__C87C9B82_E6DC_11D2_A77B_00106F000C7D__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-
+#pragma region Includes
 #include "SVMaskEditorDialog.h"
-
-
-// SVMaskEditorCtl.h : Declaration of the SVMaskEditorCtrl ActiveX Control class.
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVMaskEditorCtrl : See SVMaskEditorCtl.cpp for implementation.
@@ -90,13 +83,9 @@ public:
 	};
 
 protected:
-
 	CBitmap		bitmap;
 	SVMaskEditorDialogClass maskEditorDlg;
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVMASKEDITORCTL_H__C87C9B82_E6DC_11D2_A77B_00106F000C7D__INCLUDED)
-

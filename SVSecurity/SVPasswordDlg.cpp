@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 
 extern CSVSecurityApp theApp;
 
-SVPasswordDlg::SVPasswordDlg(CWnd* pParent /*=NULL*/)
+SVPasswordDlg::SVPasswordDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVPasswordDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVPasswordDlg)

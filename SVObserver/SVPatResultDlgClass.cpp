@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SVPatResultDlgClass dialog
 
-SVPatResultDlgClass::SVPatResultDlgClass(CWnd* pParent /*=NULL*/)
+SVPatResultDlgClass::SVPatResultDlgClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVPatResultDlgClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVPatResultDlgClass)

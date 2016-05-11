@@ -70,9 +70,9 @@ bool SVMatroxGigeAcquisitionClass::IsValid() const
 
 bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 {
-	bool bOk = TRUE;
+	bool bOk = true;
 	
-	bOk = m_hDigitizer != NULL && bOk;
+	bOk = 0 != m_hDigitizer && bOk;
 
 	if( bOk && m_DeviceParams.ParameterExists( DeviceParamVendorId ) )
 	{
@@ -80,7 +80,7 @@ bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 
 		SVDigitizerLoadLibraryClass* l_psvLibrary = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
 
-		if( l_psvLibrary != NULL && l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &l_oValue ) == S_OK )
+		if( nullptr != l_psvLibrary && S_OK == l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &l_oValue ) )
 		{
 			SVString l_csVenderId = SvUl_SF::createSVString( l_oValue.bstrVal );
 
@@ -111,11 +111,9 @@ HRESULT SVMatroxGigeAcquisitionClass::Create( unsigned long ulSize )
 
 HRESULT SVMatroxGigeAcquisitionClass::Destroy()
 {
-	HRESULT hr = S_FALSE;
+	HRESULT hr = DestroyLocal();
 
-	hr = DestroyLocal();
-
-	if ( SVAcquisitionClass::Destroy() != S_OK )
+	if ( S_OK != SVAcquisitionClass::Destroy()  )
 	{
 		hr = S_FALSE;
 	}
@@ -138,7 +136,7 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 	m_DeviceParams.Clear();
 
 	HRESULT hr = SVAcquisitionClass::LoadFiles( rFiles );
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		ASSERT( mFiles.GetSize() == 1 );	// only one file
 		if ( mFiles.GetSize() == 1 )
@@ -151,7 +149,7 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 
 			hr = SVGigeCameraProxy::ReadCameraFileImpl( info, m_CameraFileDeviceParams );
 
-			if ( hr == SVMSG_INCORRECT_CHECKSUM )
+			if ( SVMSG_INCORRECT_CHECKSUM == hr )
 			{
 			}
 			// Set Gige Feature Overrides
@@ -185,7 +183,7 @@ HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const CString& sFilename, 
 	info.bColorSystem = IsColor();
 	HRESULT hr = SVGigeCameraProxy::ReadCameraFileImpl( info, rParams );
 	
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		// Set Gige Feature Overrides
 		hr = SetGigeFeatureOverrides(info.sFeatureOverrides);
@@ -199,16 +197,16 @@ HRESULT SVMatroxGigeAcquisitionClass::CreateLightReference(int iBands, int iBrig
 
 	HRESULT hr = SVAcquisitionClass::CreateLightReference( iBands, iBrightness, iContrast );
 	
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		DWORD dwDefaultBrightness = 0;	// not used
-		for ( int i = 0; hr == S_OK && i < iBands; i++)
+		for ( int i = 0; S_OK == hr && i < iBands; i++)
 		{
-			if ( (hr = CreateLightReferenceBand( i, 0 )) == S_OK )
+			if ( S_OK == (hr = CreateLightReferenceBand( i, 0 )) )
 			{
 			}
 		}
-		if ( hr != S_OK )
+		if ( S_OK != hr )
 		{
 			mLightReference.DeleteAll();
 		}
@@ -264,7 +262,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetLightReferenceValueStep( unsigned long 
 bool SVMatroxGigeAcquisitionClass::CameraMatchesCameraFile()
 {
 	bool l_bOk = true;
-	if (m_hDigitizer != NULL && IsDigitizerSubsystemValid())
+	if (0 != m_hDigitizer && IsDigitizerSubsystemValid())
 	{
 		l_bOk = m_cameraProxy.CameraMatchesCameraFile(m_CameraFileDeviceParams, m_hDigitizer, SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName));
 	}
@@ -280,11 +278,11 @@ HRESULT SVMatroxGigeAcquisitionClass::InitializeDevice( const SVDeviceParamWrapp
 		hr = SVMSG_SVO_20_INCORRECT_CAMERA_FILE;
 	}
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		UpdateLightReferenceAttributes( rwParam );
 
-		if (m_hDigitizer != NULL && IsDigitizerSubsystemValid())
+		if (0 != m_hDigitizer && IsDigitizerSubsystemValid())
 		{
 			hr = m_cameraProxy.InitializeDevice(rwParam, m_DeviceParams, m_hDigitizer, SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName));
 		}
@@ -304,9 +302,9 @@ HRESULT SVMatroxGigeAcquisitionClass::InitializeDevice( const SVDeviceParamColle
 
 	UpdateLightReferenceAttributes( rDeviceParams );
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
-		if (m_hDigitizer != NULL && IsDigitizerSubsystemValid())
+		if (0 != m_hDigitizer && IsDigitizerSubsystemValid())
 		{
 			hr = m_cameraProxy.InitializeDevice(rDeviceParams, m_hDigitizer, SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName));
 		}
@@ -480,20 +478,20 @@ HRESULT SVMatroxGigeAcquisitionClass::SetStandardCameraParameter( const SVDevice
 
 	if ( IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
-		if ( m_hDigitizer != NULL )
+		if ( 0 != m_hDigitizer )
 		{
 			SVDigitizerLoadLibraryClass* pDigitizer = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
 
 			hr = m_cameraProxy.SetStandardCameraParameter(rw, m_DeviceParams, m_hDigitizer, pDigitizer);
 
-			if ( hr == S_OK )
+			if ( S_OK == hr )
 			{
 				hr = InitializeDevice( m_DeviceParams );
 			}
 		}
 	}
 
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		// refresh image info
 		GetCameraImageInfo( msvImageInfo );
@@ -534,7 +532,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo)
 {
 	HRESULT hr = S_FALSE;
 	
-	if ( pImageInfo != NULL )
+	if ( nullptr != pImageInfo )
 	{
 		*pImageInfo = msvImageInfo;
 		
@@ -550,7 +548,7 @@ HRESULT SVMatroxGigeAcquisitionClass::DestroyLocal()
 
 	if ( mbIsStarted )
 	{
-		if ( Stop() != S_OK )
+		if ( S_OK != Stop() )
 		{
 			hr = S_FALSE;
 		}
@@ -558,7 +556,7 @@ HRESULT SVMatroxGigeAcquisitionClass::DestroyLocal()
 
 	if ( mbIsBufferCreated )
 	{
-		if ( DestroyBuffers() != S_OK )
+		if ( S_OK != DestroyBuffers() )
 		{
 			hr = S_FALSE;
 		}
@@ -566,13 +564,13 @@ HRESULT SVMatroxGigeAcquisitionClass::DestroyLocal()
 
 	if ( mbIsCamFilesLoaded )
 	{
-		if ( UnloadFiles() != S_OK )
+		if ( S_OK != UnloadFiles() )
 		{
 			hr = S_FALSE;
 		}
 	}
 
-	if ( ResetLightReference() != S_OK )
+	if ( S_OK != ResetLightReference() )
 	{
 		hr = S_FALSE;
 	}
@@ -676,17 +674,17 @@ HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCo
 {
 	HRESULT hr = S_OK;
 
-	// SEJ - send notification to start tracking main camera parameters
+	// Send notification to start tracking main camera parameters
 	if ( IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
 		_variant_t dummy;
 		hr = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->ParameterSetValue(m_hDigitizer, SVGigeBeginTrackParameters, 0, &dummy);
 	}
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		hr = SVAcquisitionClass::SetDeviceParameters( rDeviceParams );
 	}
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		hr = InitializeDevice( rDeviceParams );
 	}
@@ -704,10 +702,10 @@ HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleG
 {
 	HRESULT hr = SVAcquisitionClass::SingleGrab( p_SingleGrabHandle );
 
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		SVDigitizerLoadLibraryClass* pDigitizer = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
-		if (pDigitizer != NULL)
+		if (nullptr != pDigitizer)
 		{
 			mbTempOnline = true;
 
@@ -725,7 +723,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleG
 				// do the grab in another thread
 				DWORD dwThreadId = 0;
 				HANDLE hThread = 0;
-				hThread = ::CreateThread(NULL, 0, SingleGrabHelperFn, this, 0, &dwThreadId);
+				hThread = ::CreateThread(nullptr, 0, SingleGrabHelperFn, this, 0, &dwThreadId);
 
 				// grab a single frame
 				m_cameraProxy.SoftwareTrigger(m_hDigitizer, pDigitizer);
@@ -743,7 +741,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleG
 				// do the grab in another thread
 				DWORD dwThreadId = 0;
 				HANDLE hThread = 0;
-				hThread = ::CreateThread(NULL, 0, SingleGrabHelperFn, this, 0, &dwThreadId);
+				hThread = ::CreateThread(nullptr, 0, SingleGrabHelperFn, this, 0, &dwThreadId);
 
 				// 
 				::WaitForSingleObject(hThread, 2000);
@@ -775,7 +773,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& fe
 	
 	if (IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
-		if (m_hDigitizer != NULL)
+		if (0 != m_hDigitizer)
 		{
 			SVDigitizerLoadLibraryClass* pDigitizer = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
 
@@ -789,7 +787,7 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 {
 	HRESULT hr = S_OK;
 	
-	// SEJ - send notification to end tracking main camera parameters
+	// Send notification to end tracking main camera parameters
 	_variant_t dummy;
 
 	SVDigitizerLoadLibraryClass* pDigitizer = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
@@ -797,7 +795,7 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 	{
 		hr = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->ParameterSetValue(m_hDigitizer, SVGigeEndTrackParameters, 0, &dummy);
 
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			hr = SVAcquisitionClass::StartDigitizer();
 		}

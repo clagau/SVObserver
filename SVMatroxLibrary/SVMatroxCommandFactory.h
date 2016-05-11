@@ -11,11 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVCommandLibrary/SVCommandAbstractFactorySingleton.h"
 #include "SVCommandLibrary/SVCommandAbstractFactoryTemplate.h"
+#pragma endregion Includes
 
-/*
-*/
 class SVMatroxCommandFactory : public SVCommandAbstractFactoryTemplate
 {
 public:

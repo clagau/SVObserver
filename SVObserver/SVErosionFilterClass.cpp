@@ -19,7 +19,7 @@ SV_IMPLEMENT_CLASS( SVErosionFilterClass, SVErosionFilterClassGuid )
 SVErosionFilterClass::SVErosionFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVErosionFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVErosionFilterObjectType;
 }
 
 SVErosionFilterClass::~SVErosionFilterClass()

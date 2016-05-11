@@ -19,7 +19,6 @@
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
 #include "SVTaskObject.h"
 #include "SVImageClass.h"
-#include "SVValueObject.h"
 #include "SVVariantResultClass.h"
 #include "ISVCancel.h"
 #include "SVDllToolLoadLibraryClass.h"
@@ -120,6 +119,7 @@ public:
 		FIND_ALL_OBJECTS = FIND_IMAGES | FIND_VALUES
 	};
 	HRESULT FindInvalidatedObjects(SVObjectVector& rList, const SVCancelData* pOriginalData, FindEnum eWhich );
+	void GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const;
 
 protected:
 	HRESULT ConnectInputs();
@@ -179,7 +179,6 @@ private:
 
 public:
 	friend class SVExternalToolDlg;
-	friend class SVExternalToolImageSelectPage;
 	friend class SVExternalToolInputSelectPage;
 	friend class SVExternalToolResultPage;
 	friend class SVExternalToolDetailsSheet;

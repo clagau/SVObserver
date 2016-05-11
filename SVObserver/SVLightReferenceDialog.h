@@ -22,8 +22,8 @@ typedef SVVector< SVLightReference* > SVLightReferenceArray;
 class SVLightReferenceDialogPropertySheetClass : public CPropertySheet
 {
 public:
-	SVLightReferenceDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SVLightReferenceDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVLightReferenceDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVLightReferenceDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 	virtual ~SVLightReferenceDialogPropertySheetClass();
 
@@ -52,7 +52,7 @@ protected:
 class SVLightReferenceDialogPropertyPageClass : public CPropertyPage
 {
 public:
-	SVLightReferenceDialogPropertyPageClass( LPCTSTR lpszTitle = NULL );
+	SVLightReferenceDialogPropertyPageClass( LPCTSTR lpszTitle = nullptr );
 	virtual ~SVLightReferenceDialogPropertyPageClass();
 
 	SVVirtualCamera*       mpCamera;  // for band information

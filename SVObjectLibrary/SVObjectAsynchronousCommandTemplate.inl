@@ -101,7 +101,7 @@ HRESULT SVObjectAsynchronousCommandTemplate< SVCommandPtr >::WaitForCommandToCom
 	{
 		l_Status = m_WrapperPtr->WaitForRequest( p_TimeoutInMilliseconds );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = m_WrapperPtr->GetStatus();
 		}

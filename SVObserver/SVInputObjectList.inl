@@ -19,7 +19,7 @@ HRESULT SVInputObjectList::GetInput( const SVGUID& p_rInputID, SVInputType*& p_r
 {
 	HRESULT l_Status = S_OK;
 
-	p_rpInput = NULL;
+	p_rpInput = nullptr;
 
 	if( Lock() )
 	{
@@ -29,7 +29,7 @@ HRESULT SVInputObjectList::GetInput( const SVGUID& p_rInputID, SVInputType*& p_r
 		{
 			p_rpInput = dynamic_cast< SVInputType* >( l_Iter->second );
 
-			if( p_rpInput == NULL )
+			if( nullptr == p_rpInput )
 			{
 				l_Status = E_FAIL;
 			}
@@ -54,17 +54,17 @@ HRESULT SVInputObjectList::GetInput( const SVString& p_rInputName, SVInputType*&
 {
 	HRESULT l_Status = S_OK;
 
-	p_rpInput = NULL;
+	p_rpInput = nullptr;
 
 	if( Lock() )
 	{
 		SVGuidSVInputObjectPtrMap::const_iterator	l_Iter;
 		
-		for( l_Iter = m_InputObjects.begin(); p_rpInput == NULL && l_Iter != m_InputObjects.end(); ++l_Iter )
+		for( l_Iter = m_InputObjects.begin(); nullptr == p_rpInput && l_Iter != m_InputObjects.end(); ++l_Iter )
 		{
 			SVInputObject* pInput = l_Iter->second;
 
-			if ( pInput != NULL )
+			if ( nullptr != pInput )
 			{
 				if ( p_rInputName == pInput->GetName() )
 				{
@@ -73,7 +73,7 @@ HRESULT SVInputObjectList::GetInput( const SVString& p_rInputName, SVInputType*&
 			}
 		}
 
-		if( p_rpInput == NULL )
+		if( nullptr == p_rpInput )
 		{
 			l_Status = E_INVALIDARG;
 		}
@@ -93,17 +93,17 @@ HRESULT SVInputObjectList::GetInputFlyweight( const SVString& p_rInputName, SVIn
 {
 	HRESULT l_Status = S_OK;
 
-	p_rpInput = NULL;
+	p_rpInput = nullptr;
 
 	if( Lock() )
 	{
 		SVGuidSVInputObjectPtrMap::const_iterator	l_Iter;
 		
-		for( l_Iter = m_InputObjects.begin(); p_rpInput == NULL && l_Iter != m_InputObjects.end(); ++l_Iter )
+		for( l_Iter = m_InputObjects.begin(); nullptr == p_rpInput && l_Iter != m_InputObjects.end(); ++l_Iter )
 		{
 			SVInputObject* pInput = l_Iter->second;
 
-			if ( pInput != NULL )
+			if ( nullptr != pInput )
 			{
 				if ( p_rInputName == pInput->GetName() )
 				{
@@ -112,23 +112,23 @@ HRESULT SVInputObjectList::GetInputFlyweight( const SVString& p_rInputName, SVIn
 			}
 		}
 
-		if( p_rpInput == NULL )
+		if( nullptr == p_rpInput )
 		{
 			p_rpInput = new SVInputType;
 
-			if( p_rpInput != NULL )
+			if( nullptr != p_rpInput )
 			{
 				p_rpInput->SetName( p_rInputName.c_str() );
 
-				if( AttachInput( p_rpInput ) != S_OK )
+				if( S_OK != AttachInput( p_rpInput ) )
 				{
 					delete p_rpInput;
-					p_rpInput = NULL;
+					p_rpInput = nullptr;
 				}
 			}
 		}
 
-		if( p_rpInput == NULL )
+		if( nullptr == p_rpInput )
 		{
 			l_Status = E_INVALIDARG;
 		}

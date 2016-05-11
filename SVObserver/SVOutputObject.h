@@ -19,19 +19,15 @@ class SVOutputObject : public SVObjectClass
 {
 public:
 	SVOutputObject( LPCSTR strObjectName );
-	SVOutputObject( SVObjectClass* POwner = nullptr,
-					int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECT );
+	SVOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECT );
 
 	virtual ~SVOutputObject();
 
 	virtual BOOL Create();
 	virtual BOOL Destroy();
-	virtual BOOL IsCreated();
 
 	virtual HRESULT Write( const _variant_t& p_rValue ) = 0;
 	virtual HRESULT Reset() = 0;
-
-	BOOL	m_bCreated;
 };
 
 typedef SVVector< SVOutputObject* > SVOutputObjectArray;

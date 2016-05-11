@@ -8,19 +8,16 @@
 // * .Current Version : $Revision:   1.1  $
 // * .Check In Date   : $Date:   01 Oct 2013 09:57:48  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBStr.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 // These are a few of Jim's current thoughts on Multi-threaded variable 
 // access.
@@ -30,19 +27,16 @@ static char THIS_FILE[]=__FILE__;
 // updated in an atomic fashion.  This tells me that longs can be accessed 
 // without locking, but doubles can not.
 
-
 SVBStr::SVBStr()
 {
-
-
 // We are not going to pre-allocate here because of the lack of error 
 // handling. ----------------------------------------------------------------
    svmlCurrentAllocationSize = 0;
 
-   svmwcBStringBuffer = NULL;
-   svmlpBStringLength = NULL;
+   svmwcBStringBuffer = nullptr;
+   svmlpBStringLength = nullptr;
 
-   svmcpCharStringBuffer = NULL;
+   svmcpCharStringBuffer = nullptr;
    svmlCharStringAllocationSize = 0;
 
 	svmwcOverflow = 0;
@@ -64,9 +58,9 @@ SVBStr::~SVBStr()
 
    EnterCriticalSection();
 
-   svmwcBStringBuffer = NULL;
-   svmlpBStringLength = NULL;
-   svmcpCharStringBuffer = NULL;
+   svmwcBStringBuffer = nullptr;
+   svmlpBStringLength = nullptr;
+   svmcpCharStringBuffer = nullptr;
    svmlLength = 0;
 
    delete [] lTemp;
@@ -77,14 +71,12 @@ SVBStr::~SVBStr()
 
 }
 
-
-/*  Return a single wide character from the string.						      */
+/*  Return a single wide character from the string. */
 WCHAR SVBStr::operator[](int p_nIndex ) const
 {
 	long	l_lLength;
 
 	WCHAR	l_wcReturnValue;
-
 
 //-If an error occurs, it should result in a 0xffff (-1) being returned.  
 //-Other than that, there is no way to detect an error condition.
@@ -104,16 +96,13 @@ WCHAR SVBStr::operator[](int p_nIndex ) const
 		break;
 	}
 
-
 	LeaveCriticalSection();
 
 	return l_wcReturnValue;
 }
 
-
 WCHAR& SVBStr::operator[](int p_nIndex )
 {
-
 	long		hr;
 	long		l_lLength;  // Number of WCHARs.
 
@@ -125,7 +114,6 @@ WCHAR& SVBStr::operator[](int p_nIndex )
 	l_wcpReturnValue = &svmwcOverflow;
 
 	EnterCriticalSection();
-
 
 	while (1)
 	{
@@ -146,7 +134,7 @@ WCHAR& SVBStr::operator[](int p_nIndex )
 //-		length value.
 			svmlLength = p_nIndex + 1;
 			*svmlpBStringLength = svmlLength * l_lSizeOfWChar;	
-			svmwcBStringBuffer [p_nIndex + 1] = NULL;
+			svmwcBStringBuffer [p_nIndex + 1] = L'\0';
 
 			m_lNULL = FALSE;
 		}
@@ -161,7 +149,6 @@ WCHAR& SVBStr::operator[](int p_nIndex )
 	return *l_wcpReturnValue;
 }
 
-
 SVBStr::operator BSTR() 
 {
 
@@ -170,43 +157,32 @@ SVBStr::operator BSTR()
 	l_lLength = GetLength ();
 	if ((l_lLength == 0) && (m_lNULL == TRUE))
 	{
-		return NULL;
+		return nullptr;
 	}
-	else
-	{
-	   return svmwcBStringBuffer;
-	}
+	return svmwcBStringBuffer;
 }
-
 
 SVBStr::operator const BSTR() const
 {
-
 	long	l_lLength;
 
 	l_lLength = GetLength ();
 	if ((l_lLength == 0) && (m_lNULL == TRUE))
 	{
-		return NULL;
+		return nullptr;
 	}
-	else
-	{
-	   return svmwcBStringBuffer;
-	}
+	return svmwcBStringBuffer;
 }
-
 
 SVBStr::operator BSTR*() 
 {
    return &svmwcBStringBuffer;
 }
 
-
 SVBStr::operator const BSTR*() const
 {
    return &svmwcBStringBuffer;
 }
-
 
 SVBStr::operator const char*() const
 {
@@ -231,33 +207,19 @@ SVBStr::operator const char*() const
 
 const SVBStr& SVBStr::operator=(const SVBStr& stringSrc)
 {
-//   WCHAR wcsWideCharacterSource [svmlAllocationPageSize]; //Arvid 2015-01-08 was: 4000
-//   long  lNbrOfCharacters;
-
    while (1)
    {
-
       stringSrc.EnterCriticalSection ();
-
-//		wcsncpy (wcsWideCharacterSource, 
-//             stringSrc.svmwcBStringBuffer, 
-//             stringSrc.svmlLength);
 
       CopyFromWChar (stringSrc);
 
       stringSrc.LeaveCriticalSection ();
-
-//      lNbrOfCharacters = sizeof (wcsWideCharacterSource) / sizeof (WCHAR);
-//      wcsWideCharacterSource [lNbrOfCharacters - 1] = 0;
-
-//      CopyFromWChar (wcsWideCharacterSource);
 
       break;
    }
 
 	return *this;
 }
-
 
 const SVBStr& SVBStr::operator=(const TCHAR& stringSrc)
 {
@@ -284,7 +246,6 @@ const SVBStr& SVBStr::operator=(const TCHAR& stringSrc)
 	return *this;
 }
 
-
 const SVBStr& SVBStr::operator=(const BSTR& stringSrc)
 {
    USES_CONVERSION;
@@ -306,19 +267,18 @@ const SVBStr& SVBStr::operator=(const BSTR& stringSrc)
 	return *this;
 }
 
-
 const SVBStr& SVBStr::operator=(const CString& stringSrc)
 {
 	long	lErr;
 
    WCHAR wcsWideCharacterSource [svmlAllocationPageSize];
-//   long  lNbrOfBytes;
+
    long  lNbrOfCharacters;
    TCHAR*	czpStringSrc;
    
    USES_CONVERSION;
 
-   czpStringSrc = NULL;
+   czpStringSrc = nullptr;
 
 	lErr = 0;
 
@@ -327,7 +287,7 @@ const SVBStr& SVBStr::operator=(const CString& stringSrc)
 // jab 040703 - Help file shows return of number of bytes in one place and
 // number of characters in another.  I've been told number of characters is
 // correct.
-//      lNbrOfBytes = stringSrc.GetLength ();
+
 //-	CString GetLength does not include NULL, so we will add 1 for the NULL. 
       lNbrOfCharacters = stringSrc.GetLength () + 1;
 	  //Arvid 2015-01-08 suggestion: use svmlAllocationPageSize rather than sizeof (wcsWideCharacterSource) / sizeof (WCHAR))
@@ -340,11 +300,6 @@ const SVBStr& SVBStr::operator=(const CString& stringSrc)
 		czpStringSrc = ((CString&) stringSrc).GetBuffer (0);
 // jab 040703 - Help file indicated 3rd param is number of characters, 
 // appears to be number of bytes.
-//	   wcsncpy (wcsWideCharacterSource, 
-//               T2W(czpStringSrc), 
-//               ((lNbrOfBytes + 1) / sizeof (TCHAR)) + 1);// lNbrOfBytes does 
-//                                                         //  not include 
-//                                                         //  NULL.
 
 	   wcsncpy (wcsWideCharacterSource, 
                T2W(czpStringSrc), 
@@ -364,24 +319,21 @@ const SVBStr& SVBStr::operator=(const CString& stringSrc)
 	return *this;
 }
 
-
 long SVBStr::CopyFromWChar (const WCHAR* awcpSource)
 {
 	long		lErr;
 
-   long     lSourceLength;
-//   long     lNumberOfPagesToAllocate;
-//   long     lAllocationSize;
-   long     lMaxNbrOfCharacters;
-   long*    lpTemp;
+	long     lSourceLength;
+	long     lMaxNbrOfCharacters;
+	long*    lpTemp;
 
-	lpTemp = NULL;
+	lpTemp = nullptr;
 
 	lErr = 0;
 
-   while (1)
-   {
-		if (awcpSource == NULL)
+	while (1)
+	{
+		if (nullptr == awcpSource)
 		{
 			lErr = 2;
 			break;
@@ -400,7 +352,7 @@ long SVBStr::CopyFromWChar (const WCHAR* awcpSource)
 
       delete [] lpTemp;
 
-		if ((lSourceLength > 0) && (svmlpBStringLength == NULL))
+		if ((lSourceLength > 0) && (nullptr == svmlpBStringLength))
 		{
 			lErr = -1905;
 			break;
@@ -414,7 +366,7 @@ long SVBStr::CopyFromWChar (const WCHAR* awcpSource)
                awcpSource, 
                lMaxNbrOfCharacters);
 
- 	   svmwcBStringBuffer [lMaxNbrOfCharacters] = NULL;
+ 	   svmwcBStringBuffer [lMaxNbrOfCharacters] = L'\0';
 
       svmlLength = static_cast<long>(wcslen (svmwcBStringBuffer));
 
@@ -430,8 +382,6 @@ long SVBStr::CopyFromWChar (const WCHAR* awcpSource)
    return lErr;
 }
 
-
-
 long SVBStr::GetLength () const
 {
    long  lLength;
@@ -446,12 +396,10 @@ long SVBStr::GetLength () const
    return lLength;
 }
 
-
 long SVBStr::InternalGetLength () const
 {
    return svmlLength;
 }
-
 
 long*	SVBStr::DoWeNeedNewBuffer (long	alSourceLength)
 {
@@ -462,7 +410,7 @@ long*	SVBStr::DoWeNeedNewBuffer (long	alSourceLength)
 	
 	long* lpTemp;
 
-	lpTemp = NULL;
+	lpTemp = nullptr;
 
 	while (1)
 	{
@@ -473,8 +421,8 @@ long*	SVBStr::DoWeNeedNewBuffer (long	alSourceLength)
 			lpTemp = svmlpBStringLength;
 
 			svmlLength = 0;
-			svmlpBStringLength = NULL;
-			svmwcBStringBuffer = NULL;
+			svmlpBStringLength = nullptr;
+			svmwcBStringBuffer = nullptr;
 
 
 			lNumberOfPagesToAllocate = 
@@ -487,10 +435,10 @@ long*	SVBStr::DoWeNeedNewBuffer (long	alSourceLength)
 
 			svmlLength = 0;
 
-			if (svmlpBStringLength == NULL)
+			if (nullptr == svmlpBStringLength)
 			{
 				svmlCurrentAllocationSize = 0;
-				svmwcBStringBuffer = NULL;
+				svmwcBStringBuffer = nullptr;
 			}
 			else
 			{
@@ -501,7 +449,7 @@ long*	SVBStr::DoWeNeedNewBuffer (long	alSourceLength)
 				svmwcBStringBuffer = (reinterpret_cast <WCHAR*> (svmlpBStringLength)) + 2;
 				*svmlpBStringLength = 0;
 
-				if (lpTemp == NULL)
+				if (nullptr == lpTemp)
 				{
 	//-			If the lpTemp was NULL when we started, then set the internal 
 	//-			NULL flag.
@@ -511,7 +459,7 @@ long*	SVBStr::DoWeNeedNewBuffer (long	alSourceLength)
 						break;
 					}
 				}
-			} // if (svmlpBStringLength == NULL) ... else
+			} // if (nullptr == svmlpBStringLength) ... else
 		} // if (alSourceLength > (svmlCurrentAllocationSize - 6))
 
 		break;
@@ -520,10 +468,8 @@ long*	SVBStr::DoWeNeedNewBuffer (long	alSourceLength)
 	return lpTemp;
 }
 
-
 long SVBStr::SetLength (long	p_lLength)
 {
-
 	while (1)
 	{
 		EnterCriticalSection();
@@ -551,7 +497,6 @@ long SVBStr::SetLength (long	p_lLength)
    return 0;
 }
 
-
 long SVBStr::PreAllocate (unsigned long p_ulNbrOfCharacters)
 {
 	long	hr;
@@ -563,18 +508,12 @@ long SVBStr::PreAllocate (unsigned long p_ulNbrOfCharacters)
 	return hr;
 }
 
-
-
 long SVBStr::InternalPreAllocate (unsigned long p_ulNbrOfCharacters)
 {
 	long		hr;
 	long		l_lMaxNbrOfCharacters;
-
 	long*		l_lpTemp;
-
 	unsigned long	l_lSizeOfWChar;
-
-
 
 	hr = 0;
 
@@ -593,13 +532,12 @@ long SVBStr::InternalPreAllocate (unsigned long p_ulNbrOfCharacters)
 //-	  the NULL termination is dealt with within DoWeNeedNewBuffer ().
 		l_lpTemp = DoWeNeedNewBuffer ((p_ulNbrOfCharacters + 1) * l_lSizeOfWChar);
 
-		if (l_lpTemp != NULL)
+		if (nullptr != l_lpTemp)
 		{
-			if (svmlpBStringLength == NULL)
+			if (nullptr == svmlpBStringLength)
 			{
 //--------- If there was not enough room to allocate the correct buffer,
 //--------- then the location of overflow will be handed back.
-//				l_wcrReturnValue = svmwcOverflow;
 				break;
 			}
 			else
@@ -607,23 +545,19 @@ long SVBStr::InternalPreAllocate (unsigned long p_ulNbrOfCharacters)
 //--------- Subract out 4 bytes for length at beginning of block.
 				l_lMaxNbrOfCharacters = (svmlCurrentAllocationSize - 4) / l_lSizeOfWChar;
 
-//				wcsncpy (svmwcBStringBuffer, 
-//							(WCHAR *) (l_lpTemp + 1), 
-//							*l_lpTemp / l_lSizeOfWChar);
-
 				memcpy (svmwcBStringBuffer, 
 						  reinterpret_cast <WCHAR *> (l_lpTemp + 1), 
 						  *l_lpTemp);
 
- 				svmwcBStringBuffer [l_lMaxNbrOfCharacters - 1] = NULL;
+ 				svmwcBStringBuffer [l_lMaxNbrOfCharacters - 1] = L'\0';
 
 				svmlLength = *l_lpTemp / l_lSizeOfWChar;
 				*svmlpBStringLength = svmlLength * l_lSizeOfWChar;
 				m_lNULL = FALSE;
 
 			}
-		} // if (l_lpTemp != NULL)
-		else // if (l_lpTemp == NULL)
+		} // if (nullptr != l_lpTemp)
+		else // if (nullptr == l_lpTemp)
 		{
 		}
 
@@ -635,15 +569,11 @@ long SVBStr::InternalPreAllocate (unsigned long p_ulNbrOfCharacters)
 	return hr;
 }
 
-
-
-
 long SVBStr::InitializeCriticalSection ()
 {
    ::InitializeCriticalSection (&svmCriticalSection);
    return 0;
 }
-
 
 long SVBStr::EnterCriticalSection () const
 {
@@ -651,20 +581,17 @@ long SVBStr::EnterCriticalSection () const
    return 0;
 }
 
-
 long SVBStr::LeaveCriticalSection () const
 {
    ::LeaveCriticalSection (&((CRITICAL_SECTION) svmCriticalSection));
    return 0;
 }
 
-
 long SVBStr::DeleteCriticalSection ()
 {
    ::DeleteCriticalSection (&svmCriticalSection);
    return 0;
 }
-
 
 long SVBStr::Clear ()
 {
@@ -677,8 +604,6 @@ long SVBStr::Clear ()
 	return hr;
 }
 
-
-
 long SVBStr::InternalClear ()
 {
    svmlLength = 0;
@@ -688,24 +613,21 @@ long SVBStr::InternalClear ()
 	if (svmlpBStringLength)
 	{
 		*svmlpBStringLength = svmlLength * 2;
-		svmwcBStringBuffer [0] = NULL;
+		svmwcBStringBuffer [0] = L'\0';
 	}
-
 	return 0;
 }
 
-
 long SVBStr::SetNULL ()
 {
-	long	hr;
+	long hr;
 
-   EnterCriticalSection();
-	hr = InternalSetNULL ();
-   LeaveCriticalSection();
+	EnterCriticalSection();
+	hr = InternalSetNULL();
+	LeaveCriticalSection();
 
 	return hr;
 }
-
 
 long SVBStr::InternalSetNULL ()
 {
@@ -727,36 +649,3 @@ long SVBStr::InternalSetNULL ()
 
 	return hr;
 }
-
-
-long SVBStr::CharHexDump (char*	p_csHexDump, 
-								  long	 p_lSizeOfDest)
-{
-	long	lErr;
-	char*	l_cpIndex;
-
-	long	l_lLoop;
-	
-	lErr = 0;
-
-   EnterCriticalSection();
-
-	l_cpIndex = p_csHexDump;
-
-	l_cpIndex [0] = 0;
-
-	for (l_lLoop = 0; l_lLoop < InternalGetLength (); l_lLoop++)
-	{
-		l_cpIndex = l_cpIndex + sprintf (l_cpIndex, "%d=<%x>", l_lLoop, svmwcBStringBuffer [l_lLoop]);
-		if ((l_cpIndex - p_csHexDump) >= p_lSizeOfDest)
-		{
-			lErr = -1956;
-			break;
-		}
-	}
-   LeaveCriticalSection();
-
-
-	return lErr;
-}
-

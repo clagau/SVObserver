@@ -107,7 +107,7 @@ bool SVWaitFuncs::SleepEx(DWORD dwMilliseconds, bool bProcessMsgs)
 		// So we create a dummy event object which we will never signal
 		// This is because MsgWaitForMultipleObjectsEx requires a non NULL 
 		// Win32 object to wait upon
-		HANDLE hWaitObject = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+		HANDLE hWaitObject = ::CreateEvent(nullptr, true, false, nullptr);
 		
 		dwRetval = SVWaitFuncs::WaitForSingleObject(hWaitObject, dwMilliseconds);
 

@@ -48,34 +48,34 @@ HRESULT SVOCVMatchDlg::SetInspectionData()
 
 	UpdateData(TRUE);
 	
-	SVOCVDialogClass *pParent = (SVOCVDialogClass*) GetParent();
-	SVOCVAnalyzeResultClass *pOCVAnalyzerResult = pParent->pOCVAnalyzerResult;
+	SVOCVDialogClass* pParent = dynamic_cast<SVOCVDialogClass*>(GetParent());
+	SVOCVAnalyzeResultClass *pOCVAnalyzerResult = pParent->GetAnalyzerResult();
 	
 	if( pOCVAnalyzerResult )
 	{
 		l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_fnvoMatchStringFileName ), m_MatchFilename );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_svoMatchString ), m_MatchString );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_bvoUseMatchFile ), !m_useMatchFile );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_bvoPerformOCR ), m_nRadioOperation ? 0:1);
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( pOCVAnalyzerResult->GetTool() );
 		}
@@ -116,8 +116,8 @@ BOOL SVOCVMatchDlg::OnInitDialog()
 	BOOL bUseMatchFile;
 	BOOL bPerformOCR;
 	
-	SVOCVDialogClass *pParent = (SVOCVDialogClass *)GetParent();
-	SVOCVAnalyzeResultClass *pOCVAnalyzerResult = pParent->pOCVAnalyzerResult;
+	SVOCVDialogClass* pParent = dynamic_cast<SVOCVDialogClass*>(GetParent());
+	SVOCVAnalyzeResultClass* pOCVAnalyzerResult = pParent->GetAnalyzerResult();
 	
 	SetTaskObject( pOCVAnalyzerResult );
 

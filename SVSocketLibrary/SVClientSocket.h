@@ -57,14 +57,14 @@ namespace Seidenader
 				if ( !boost::xpressive::regex_match(ipAddr, sMatchIP, e) )
 				{
 					hostent* pHost = gethostbyname(hostAddr);
-					if ( pHost != nullptr )
+					if ( nullptr != pHost )
 					{
 						ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
 						// if loopback get real ip address
 						if ( "127.0.0.1" == ipAddr )
 						{
 							pHost = gethostbyname("");
-							if ( pHost != nullptr )
+							if ( nullptr != pHost )
 							{
 								ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
 							}

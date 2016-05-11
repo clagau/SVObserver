@@ -22,6 +22,7 @@ class MatroxImageData : public SvOi::IMatroxImageData
 #pragma region Constructor
 public:
     MatroxImageData(SVSmartHandlePointer imageHandle);
+	virtual ~MatroxImageData();
 
 #pragma endregion Constructor
 

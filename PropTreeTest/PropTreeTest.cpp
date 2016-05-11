@@ -75,7 +75,7 @@ BOOL CPropTreeTestApp::InitInstance()
 	}
 
 	// Delete the shell manager created above.
-	if (pShellManager != NULL)
+	if (nullptr != pShellManager)
 	{
 		delete pShellManager;
 	}

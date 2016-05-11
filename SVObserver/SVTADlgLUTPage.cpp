@@ -22,9 +22,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -54,14 +52,8 @@ BOOL CALLBACK SVLutGraphMousePointFunction( POINT Point, LPVOID PUserData )
 }
 #pragma endregion callback functions
 
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
 #pragma region Constructor
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVToolAdjustmentDialogLUTPageClass
-//* Note(s)    : Property Page
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
+
 SVToolAdjustmentDialogLUTPageClass::SVToolAdjustmentDialogLUTPageClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent )
 	: CPropertyPage(SVToolAdjustmentDialogLUTPageClass::IDD)
 	, m_InspectionID(rInspectionID)
@@ -124,19 +116,19 @@ HRESULT SVToolAdjustmentDialogLUTPageClass::SetInspectionData()
 		
 		l_hrOk = AddInputRequest( m_pLUTUpperClip, lUpperClip );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			long lLowerClip = ( long ) m_lowerSlider.GetPos();
 
 			l_hrOk = AddInputRequest( m_pLUTLowerClip, lLowerClip );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( m_pContinuousRecalcLUT, m_bContinuousRecalcLUT );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			int sel = m_LUTModeCombo.GetCurSel();
 			if( sel >= 0 )
@@ -147,22 +139,22 @@ HRESULT SVToolAdjustmentDialogLUTPageClass::SetInspectionData()
 			}
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( m_pUseLUT, m_bUseLUT );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( m_pIsLUTFormulaClipped, m_isFormulaClip );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( m_pTool );
 		}
@@ -216,13 +208,13 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 		SVObjectTypeInfoStruct lutObjectInfo;
 		lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
 		lutObjectInfo.SubType	 = SVLUTOperatorObjectType;
-		m_pLUTOperator = reinterpret_cast<SVLUTOperatorClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutObjectInfo) ));
+		m_pLUTOperator = reinterpret_cast<SVLUTOperatorClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutObjectInfo) ));
 		if( m_pLUTOperator )
 		{
 			// Get Use Lut Flag...
 			SVObjectTypeInfoStruct useLUTObjectInfo;
 			useLUTObjectInfo.EmbeddedID = SVUseLUTObjectGuid;
-			m_pUseLUT = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&useLUTObjectInfo) ));
+			m_pUseLUT = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&useLUTObjectInfo) ));
 			if( m_pUseLUT )
 			{
 				m_pUseLUT->GetValue( m_bUseLUT );
@@ -231,7 +223,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			// Get Continuous Recalc Lut Flag...
 			SVObjectTypeInfoStruct continuousRecalcLUTObjectInfo;
 			continuousRecalcLUTObjectInfo.EmbeddedID = SVContinuousRecalcLUTObjectGuid;
-			m_pContinuousRecalcLUT = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&continuousRecalcLUTObjectInfo) ));
+			m_pContinuousRecalcLUT = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&continuousRecalcLUTObjectInfo) ));
 			if( m_pContinuousRecalcLUT )
 			{
 				m_pContinuousRecalcLUT->GetValue( m_bContinuousRecalcLUT );
@@ -241,11 +233,11 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			SVObjectTypeInfoStruct lutEquationObjectInfo;
 			lutEquationObjectInfo.ObjectType = SVEquationObjectType;
 			lutEquationObjectInfo.SubType	 = SVLUTEquationObjectType;
-			m_pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutEquationObjectInfo) ));
+			m_pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutEquationObjectInfo) ));
 			// Get Lut Mode...
 			SVObjectTypeInfoStruct lutModeObjectInfo;
 			lutModeObjectInfo.EmbeddedID = SVLUTModeObjectGuid;
-			m_pLUTMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutModeObjectInfo) ));
+			m_pLUTMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutModeObjectInfo) ));
 			if( m_pLUTMode )
 			{
 				// Populate LUT Mode combo...
@@ -259,7 +251,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			lutVectorObjectInfo.EmbeddedID = SVOutputLUTVectorObjectGuid;
 			m_pLUTVector = dynamic_cast <SVByteValueObjectClass*> 
 			                    (reinterpret_cast <SVObjectClass*>
-			                      (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutVectorObjectInfo) ) ) );
+			                      (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutVectorObjectInfo) ) ) );
 			ASSERT( m_pLUTVector );
 
 			// Get LUT Upper Clip...
@@ -267,7 +259,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			lutUpperClipObjectInfo.EmbeddedID = SVLUTUpperClipObjectGuid;
 			m_pLUTUpperClip = dynamic_cast <SVLongValueObjectClass*>
 			                       (reinterpret_cast <SVObjectClass*>
-			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutUpperClipObjectInfo) ) ) );
+			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutUpperClipObjectInfo) ) ) );
 			ASSERT( m_pLUTUpperClip );
 
 			// Get LUT Lower Clip...
@@ -275,13 +267,13 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			lutLowerClipObjectInfo.EmbeddedID = SVLUTLowerClipObjectGuid;
 			m_pLUTLowerClip = dynamic_cast <SVLongValueObjectClass*>
 			                       (reinterpret_cast <SVObjectClass*>
-			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutLowerClipObjectInfo) ) ) );
+			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutLowerClipObjectInfo) ) ) );
 			ASSERT( m_pLUTLowerClip );
 
 			// Get Formula Clip Flag...
 			SVObjectTypeInfoStruct formulaClipFlagObjectInfo;
 			formulaClipFlagObjectInfo.EmbeddedID = SVLUTEquationClipFlagObjectGuid;
-			m_pIsLUTFormulaClipped = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&formulaClipFlagObjectInfo) ));
+			m_pIsLUTFormulaClipped = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&formulaClipFlagObjectInfo) ));
 			if( nullptr != m_pIsLUTFormulaClipped )
 			{
 				m_pIsLUTFormulaClipped->GetValue( m_isFormulaClip );
@@ -481,7 +473,7 @@ void SVToolAdjustmentDialogLUTPageClass::OnUpperEditLostFocus()
 
 void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 {
-	CWnd* pWnd = NULL;
+	CWnd* pWnd = nullptr;
 	if( nullptr != m_pTool )
 	{
 		if( p_bSave ) { SetInspectionData(); }
@@ -500,7 +492,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 		{
 			// refresh lut mode combo settings...
 			CString strEnum;
-			if( m_pLUTMode->GetValue( strEnum ) == S_OK )
+			if( S_OK == m_pLUTMode->GetValue( strEnum ) )
 			{
 				// Set cur sel in combo box...
 				m_LUTModeCombo.SelectString( -1, strEnum );
@@ -515,19 +507,19 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 				case 1: // Inversion...
 				case 2: // Sign...
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					m_LUTGraph.SetMousePointProcFunc( NULL, NULL );
+					m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 					hideAllUncommonControls();
 					break;
 				
 				case 3: // Clip...
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					m_LUTGraph.SetMousePointProcFunc( NULL, NULL );
+					m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 					showClipControls();
 					break;
 
 				case 4: // Formula...
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					m_LUTGraph.SetMousePointProcFunc( NULL, NULL );
+					m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 					showFormulaControls();
 					if( nullptr != m_pIsLUTFormulaClipped )
 					{
@@ -547,7 +539,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 
 				default: // Unknown Mode...
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
-					m_LUTGraph.SetMousePointProcFunc( NULL, NULL );
+					m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 					hideAllUncommonControls();
 					break;
 			}
@@ -556,7 +548,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 		{
 			// No LUT Mode...
 			// Deactivate Mouse Proc Func of SVDlgGraph Control...
-			m_LUTGraph.SetMousePointProcFunc( NULL, NULL );
+			m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr);
 			hideAllUncommonControls();
 		}
 
@@ -569,7 +561,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 
 		if( ! m_bUseLUT )
 		{	// Deactivate Mouse Proc Func of SVDlgGraph Control...
-			m_LUTGraph.SetMousePointProcFunc( NULL, NULL );
+			m_LUTGraph.SetMousePointProcFunc( nullptr, nullptr );
 		}
 
 		enableAllControls( m_bUseLUT );

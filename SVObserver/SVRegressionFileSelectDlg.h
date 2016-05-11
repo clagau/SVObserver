@@ -9,14 +9,7 @@
 // * .Check In Date   : $Date:   23 Apr 2013 14:41:32  $
 // ******************************************************************************
 
-#if !defined(AFX_SVREGRESSIONFILESELECTDLG_H__126EEBB2_34C5_4542_B002_B1A875D6CF1D__INCLUDED_)
-#define AFX_SVREGRESSIONFILESELECTDLG_H__126EEBB2_34C5_4542_B002_B1A875D6CF1D__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVRegressionFileSelectDlg.h : header file
-//
 
 #include "SVRegressionTestStruct.h"
 #include "SVRegressionFileSelectSheet.h"
@@ -30,7 +23,7 @@ class CSVRegressionFileSelectDlg : public CPropertyPage/*, public ISVPropertyPag
 
 // Construction
 public:
-	CSVRegressionFileSelectDlg(LPCTSTR lptstrDialogName = NULL);
+	CSVRegressionFileSelectDlg(LPCTSTR lptstrDialogName = nullptr);
 	virtual ~CSVRegressionFileSelectDlg();
 
 	void SetDlgTitle( LPCTSTR lpszTitle );
@@ -80,6 +73,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVREGRESSIONFILESELECTDLG_H__126EEBB2_34C5_4542_B002_B1A875D6CF1D__INCLUDED_)
-

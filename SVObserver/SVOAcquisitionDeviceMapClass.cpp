@@ -30,11 +30,11 @@ BOOL SVOAcquisitionDeviceMapClass::GetDeviceList(CStringList &rDeviceList)
 
 	POSITION pos;
 	CString csName;
-	void *pItem = NULL;
+	void *pItem = nullptr;
 
 	rDeviceList.RemoveAll();
 
-  for( pos = GetStartPosition(); bOk && pos != NULL; GetNextAssoc( pos, csName, pItem ) )
+  for( pos = GetStartPosition(); bOk && nullptr != pos; GetNextAssoc( pos, csName, pItem ) )
 	{
 		bOk = ! csName.IsEmpty();
 

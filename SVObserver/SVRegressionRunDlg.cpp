@@ -29,15 +29,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #pragma region Constructor
-CSVRegressionRunDlg::CSVRegressionRunDlg(CWnd* pParent /*=NULL*/)
+CSVRegressionRunDlg::CSVRegressionRunDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CSVRegressionRunDlg::IDD, pParent)
-	,m_iconPlay(NULL)
-	,m_iconPause(NULL)
-	,m_iconStop(NULL)
-	,m_iconModeContinue(NULL)
-	,m_iconModeRunToEnd(NULL)
-	,m_iconFrameUp(NULL)
-	,m_iconFrameBack(NULL)
+	,m_iconPlay(nullptr)
+	,m_iconPause(nullptr)
+	,m_iconStop(nullptr)
+	,m_iconModeContinue(nullptr)
+	,m_iconModeRunToEnd(nullptr)
+	,m_iconFrameUp(nullptr)
+	,m_iconFrameBack(nullptr)
 	,m_timeDelayText( _T( " 0.0" ) ) // Lead with a space for all values less than 10.
 {
 	m_sliderDelayTime.SetInvertVerticalArrowKeys(true);
@@ -388,15 +388,11 @@ void CSVRegressionRunDlg::OnBtnExit()
 }
 
 LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
-//(CList<RegressionRunFileStruct*,RegressionRunFileStruct*>*RegressionFileList)
 {
 	HRESULT hRet = S_OK;
 
 	CList<RegressionRunFileStruct*,RegressionRunFileStruct*> *RegressionFileList =
 	(CList<RegressionRunFileStruct*,RegressionRunFileStruct*>*) wParam;
-
-	//clear contents of list control
-	//m_lstCameraImages.DeleteAllItems();
 
 	int iCount = static_cast<int>(RegressionFileList->GetCount());
 

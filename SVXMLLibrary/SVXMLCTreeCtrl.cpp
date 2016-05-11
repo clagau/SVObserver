@@ -81,7 +81,7 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		pResult = m_rTree.GetChildItem( pParent );
 
-		while( nullptr != pResult && NULL != m_rTree.GetItemData( pResult ) )
+		while( nullptr != pResult && m_rTree.GetItemData( pResult ) )
 		{
 			pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
 		}
@@ -99,7 +99,7 @@ namespace Seidenader { namespace SVXMLLibrary
 			{
 				pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
 			}
-			while( nullptr != pResult && NULL != m_rTree.GetItemData( pResult ) );
+			while( nullptr != pResult && m_rTree.GetItemData( pResult ) );
 
 		}
 
@@ -116,7 +116,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		{
 			CString BranchName = m_rTree.GetItemText( pBranch );
 
-			if( m_rTree.GetItemData( pBranch ) == NULL && BranchName.Compare( Name ) == 0 )
+			if( 0 == m_rTree.GetItemData( pBranch ) && 0 == BranchName.Compare( Name ) )
 			{
 				pResult = pBranch;
 			}
@@ -142,7 +142,7 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		if( nullptr != pNewBranch )
 		{
-			m_rTree.SetItemData( pNewBranch, NULL );
+			m_rTree.SetItemData( pNewBranch, 0 );
 		}
 
 		if( nullptr != ppBranch)
@@ -165,16 +165,16 @@ namespace Seidenader { namespace SVXMLLibrary
 
 			pChild = m_rTree.GetNextItem( pChild, TVGN_NEXT );
 
-			if( m_rTree.GetItemData( pDeleteChild ) != NULL )
+			if( 0 != m_rTree.GetItemData( pDeleteChild )  )
 			{
-				if( deleteLeaf( pDeleteChild ) != S_OK )
+				if( S_OK != deleteLeaf( pDeleteChild ) )
 				{
 					l_Status = S_FALSE;
 				}
 			}
 			else
 			{
-				if( deleteBranch( pDeleteChild ) != S_OK )
+				if( S_OK != deleteBranch( pDeleteChild ) )
 				{
 					l_Status = S_FALSE;
 				}
@@ -225,7 +225,7 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		pResult = m_rTree.GetChildItem( pParent );
 
-		while( nullptr != pResult && NULL == m_rTree.GetItemData( pResult ) )
+		while( nullptr != pResult && !m_rTree.GetItemData( pResult ) )
 		{
 			pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
 		}
@@ -243,7 +243,7 @@ namespace Seidenader { namespace SVXMLLibrary
 			{
 				pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
 			}
-			while( nullptr != pResult && NULL == m_rTree.GetItemData( pResult ) );
+			while( nullptr != pResult && !m_rTree.GetItemData( pResult ) );
 		}
 
 		return pResult;
@@ -259,7 +259,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		{
 			CString BranchName = m_rTree.GetItemText( pBranch );
 
-			if( NULL != m_rTree.GetItemData( pBranch ) && BranchName.Compare( Name ) == 0 )
+			if( m_rTree.GetItemData( pBranch ) && 0 == BranchName.Compare( Name ) )
 			{
 				pResult = pBranch;
 			}
@@ -268,7 +268,6 @@ namespace Seidenader { namespace SVXMLLibrary
 				pBranch = m_rTree.GetNextItem( pBranch, TVGN_NEXT );
 			}
 		}
-
 		return pResult;
 	}
 
@@ -349,7 +348,7 @@ namespace Seidenader { namespace SVXMLLibrary
 				l_Status = S_FALSE;
 			}
 
-			if( pData != NULL )
+			if( 0 != pData )
 			{
 				VARIANT* pVariant( reinterpret_cast< VARIANT* >( pData ) );
 
@@ -389,7 +388,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		{
 			DWORD_PTR pData( m_rTree.GetItemData( pLeaf ) );
 		
-			if( pData != NULL )
+			if( 0 != pData )
 			{
 				VARIANT* pVariant( reinterpret_cast< VARIANT* >( pData ) );
 
@@ -413,7 +412,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		{
 			DWORD_PTR pData( m_rTree.GetItemData( pLeaf ) );
 		
-			if( pData != NULL )
+			if( 0 != pData )
 			{
 				VARIANT* pVariant = reinterpret_cast< VARIANT* >( pData );
 

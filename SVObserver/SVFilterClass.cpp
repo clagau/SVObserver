@@ -40,14 +40,12 @@ BOOL SVFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 void SVFilterClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVFilterObjectType;
 
 	// Register Embedded Object(s)
-//	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
 	// Set Embedded defaults
 	
 	// Set default inputs and outputs
-	
 }
 

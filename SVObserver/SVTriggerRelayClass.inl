@@ -30,7 +30,7 @@ HRESULT SVTriggerRelayClass<TriggerHandler>::RegisterTriggerRelay( SVIOTriggerLo
 	SVCallbackStruct callback;
 	callback.m_pCallback = TriggerHandler::TriggerCallback;
 	callback.m_pOwner = &m_triggerHandler;
-	callback.m_pData = NULL;
+	callback.m_pData = nullptr;
 	
 	HRESULT l_hr = m_pTriggerDLL->Register( m_ulTriggerHandle, callback );
 	return l_hr;
@@ -45,7 +45,7 @@ HRESULT SVTriggerRelayClass<TriggerHandler>::UnregisterTriggerRelay()
 		SVCallbackStruct callback;
 		callback.m_pCallback = TriggerHandler::TriggerCallback;
 		callback.m_pOwner = &m_triggerHandler;
-		callback.m_pData = NULL;
+		callback.m_pData = nullptr;
 
 		l_hr = m_pTriggerDLL->Unregister( m_ulTriggerHandle, callback );
 	}

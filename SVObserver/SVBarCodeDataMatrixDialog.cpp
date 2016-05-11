@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SVBarCodeDataMatrixDialog dialog
 
-SVBarCodeDataMatrixDialog::SVBarCodeDataMatrixDialog(CWnd* pParent /*=NULL*/)
+SVBarCodeDataMatrixDialog::SVBarCodeDataMatrixDialog(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(SVBarCodeDataMatrixDialog::IDD)
 {
 	//{{AFX_DATA_INIT(SVBarCodeDataMatrixDialog)

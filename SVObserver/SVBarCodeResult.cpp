@@ -27,13 +27,13 @@ SV_IMPLEMENT_CLASS (SVBarCodeResultClass, SVBarCodeResultClassGuid);
 SVBarCodeResultClass::SVBarCodeResultClass (BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
   : SVStringResultClass(BCreateDefaultTaskList, POwner, StringResourceID)
 {
-	m_pBuffer = NULL;
-	m_pIndexTable = NULL;
+	m_pBuffer = nullptr;
+	m_pIndexTable = nullptr;
 	m_lTotalBytes = 0;
 
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVResultBarCodeObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultBarCodeObjectType;
 
   RegisterEmbeddedObject(
 		&msv_bUseSingleMatchString, 
@@ -84,13 +84,13 @@ SVBarCodeResultClass::~SVBarCodeResultClass()
 	if(m_pBuffer)
 	{
 		delete m_pBuffer;
-		m_pBuffer = NULL;
+		m_pBuffer = nullptr;
 	}
 
 	if(m_pIndexTable)
 	{
 		delete m_pIndexTable;
-		m_pIndexTable = NULL;
+		m_pIndexTable = nullptr;
 	}
 }
 
@@ -100,7 +100,7 @@ BOOL SVBarCodeResultClass::CreateObject(SVObjectLevelCreateStruct *PCreateStruct
 
 	if( SVStringResultClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = getInputString() && getRegExpression() && (LoadMatchStringFile() == S_OK);
+		bOk = getInputString() && getRegExpression() && (S_OK == LoadMatchStringFile());
 		if (bOk)
 		{
 			getRegExpression()->ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
@@ -112,7 +112,7 @@ BOOL SVBarCodeResultClass::CreateObject(SVObjectLevelCreateStruct *PCreateStruct
 	msv_lMatchStringLine.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	msv_bUseMatchStringFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	m_dReadScore.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -127,7 +127,7 @@ SVStringValueObjectClass* SVBarCodeResultClass::getInputString()
 	if( m_SVInputStringObjectInfo.IsConnected() && m_SVInputStringObjectInfo.GetInputObjectInfo().PObject )
 		return ( SVStringValueObjectClass* ) m_SVInputStringObjectInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression()
@@ -135,14 +135,14 @@ SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression()
 	if( m_SVRegExpressionObjectInfo.IsConnected() && m_SVRegExpressionObjectInfo.GetInputObjectInfo().PObject )
 		return ( SVStringValueObjectClass* ) m_SVRegExpressionObjectInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 BOOL SVBarCodeResultClass::OnValidate()
 {
 	BOOL bRetVal = m_SVRegExpressionObjectInfo.IsConnected();
 
-	bRetVal = bRetVal && m_SVRegExpressionObjectInfo.GetInputObjectInfo().PObject != NULL;
+	bRetVal = bRetVal && nullptr != m_SVRegExpressionObjectInfo.GetInputObjectInfo().PObject;
 	bRetVal = bRetVal && SVStringResultClass::OnValidate();
 
 	BOOL bLoad = FALSE;
@@ -225,14 +225,14 @@ BOOL SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus)
 
 DWORD_PTR SVBarCodeResultClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	DWORD_PTR dwResult = 0;
+	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
 	case SVMSGID_RESET_ALL_OBJECTS :
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -252,7 +252,7 @@ HRESULT SVBarCodeResultClass::ResetObject()
 {
 	HRESULT l_hrOk = SVStringResultClass::ResetObject();
 
-	if( LoadMatchStringFile() != S_OK )
+	if( S_OK != LoadMatchStringFile() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -263,13 +263,13 @@ HRESULT SVBarCodeResultClass::ResetObject()
 HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 {
 	HRESULT hrRet = S_OK;
-	BOOL bOk = TRUE;
-	BOOL bLoad = FALSE;
+	BOOL bOk = true;
+	BOOL bLoad = false;
 
-	if ( m_pBuffer != NULL )
+	if ( nullptr != m_pBuffer )
 	{
 		delete m_pBuffer;
-		m_pBuffer = NULL;
+		m_pBuffer = nullptr;
 	}
 
 	m_lTotalBytes = 0;
@@ -300,7 +300,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 					if ( 0 < ulLength )
 					{
 						m_pBuffer = new char[ulLength + 1];
-						bOk = m_pBuffer != NULL;
+						bOk = nullptr != m_pBuffer;
 						if ( bOk )
 						{
 							m_lTotalBytes = matchFile.Read( m_pBuffer, ulLength );
@@ -328,25 +328,18 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 					else
 					{
 						hrRet = S_FALSE;
-						bOk = FALSE;
-						//set tool to be invalid
-					   /* SVToolClass *l_pTool = (SVToolClass*) GetAncestor(SVToolObjectType);
-					   if ( l_pTool )
-					   {
-						   l_pTool->SetInvalid();
-					   }
-					   */
+						bOk = false;
 					}
 				}
 				else
 				{
-					hrRet = FALSE;
+					hrRet = S_FALSE;
 				}
 			}
 			catch ( ... )
 			{
 				hrRet = S_FALSE;
-				bOk = FALSE;
+				bOk = false;
 			}
 		}
 	}

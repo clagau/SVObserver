@@ -726,111 +726,111 @@ HRESULT SVMatroxOcrInterface::CalibrateFontCommand( const SVCommandDataHolder& p
 
 	l_Status = CreateFontIdFromFontData( p_rAttributes, l_Font );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		SVMatroxCommandDataImage l_Image;
 		SVMatroxOcrCalibrateStruct l_CalStruct;
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			SVByteVector l_TempImage;
 
 			l_Status = p_rAttributes.GetImage( _T( "Calibrate Image" ), l_TempImage );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Image.SetData( l_TempImage );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_CalStruct.m_ImageBuff = l_Image.m_Buffer;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rAttributes.GetValue( _T( "Calibrate String" ), l_Temp );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_CalStruct.m_strCalString = static_cast< char* >( _bstr_t( l_Temp ) );
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rAttributes.GetValue( _T( "Maximum Character Size Width" ), l_Temp );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_CalStruct.m_TargetCharSizeXMax = l_Temp;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rAttributes.GetValue( _T( "Minimum Character Size Width" ), l_Temp );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_CalStruct.m_TargetCharSizeXMin = l_Temp;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rAttributes.GetValue( _T( "Maximum Character Size Height" ), l_Temp );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_CalStruct.m_TargetCharSizeYMax = l_Temp;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rAttributes.GetValue( _T( "Minimum Character Size Height" ), l_Temp );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_CalStruct.m_TargetCharSizeYMin = l_Temp;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rAttributes.GetValue( _T( "Character Step Size Width" ), l_Temp );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_CalStruct.m_TargetCharSizeXStep = l_Temp;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rAttributes.GetValue( _T( "Character Step Size Height" ), l_Temp );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_CalStruct.m_TargetCharSizeYStep = l_Temp;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxOcrInterface::Set( l_Font, SVOcrStringSize, static_cast< double >( l_CalStruct.m_strCalString.size() ) );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxOcrInterface::CalibrateFont( l_Font, l_CalStruct );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = CreateFontDataFromFontId( l_Font, p_rResults );
 		}
@@ -999,38 +999,38 @@ HRESULT SVMatroxOcrInterface::RestoreFont( const SVCommandDataHolder& p_rAttribu
 
 	l_Status = p_rAttributes.GetBlock( _T( "Character File Contents" ), l_CharacterFileContents );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = ConvertByteVectorToTempFile( l_CharacterFileContents, l_CharacterFileName );
 	}
 
-	if( p_rAttributes.GetBlock( _T( "Control File Contents" ), l_ControlFileContents ) == S_OK )
+	if( S_OK == p_rAttributes.GetBlock( _T( "Control File Contents" ), l_ControlFileContents ) )
 	{
 		l_Status = ConvertByteVectorToTempFile( l_ControlFileContents, l_ControlFileName );
 	}
 
-	if( p_rAttributes.GetBlock( _T( "Constraint File Contents" ), l_ConstraintFileContents ) == S_OK )
+	if( S_OK == p_rAttributes.GetBlock( _T( "Constraint File Contents" ), l_ConstraintFileContents ) )
 	{
 		l_Status = ConvertByteVectorToTempFile( l_ConstraintFileContents, l_ConstraintFileName );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVMatroxOcr lFontHandle;
 
 		l_Status = RestoreFont( lFontHandle, l_CharacterFileName, SVOcrRestore );
 
-		if( l_Status == S_OK && 0 < l_ControlFileName.size() )
+		if( S_OK == l_Status && 0 < l_ControlFileName.size() )
 		{
 			l_Status = RestoreFont( lFontHandle, l_ControlFileName, SVOcrLoadControl );
 		}
 
-		if( l_Status == S_OK && 0 < l_ConstraintFileName.size() )
+		if( S_OK == l_Status && 0 < l_ConstraintFileName.size() )
 		{
 			l_Status = RestoreFont( lFontHandle, l_ConstraintFileName, SVOcrLoadConstraint );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = CreateFontDataFromFontId( lFontHandle, p_rResults );
 		}
@@ -1111,70 +1111,70 @@ HRESULT SVMatroxOcrInterface::SaveFont( const SVCommandDataHolder& p_rAttributes
 
 	l_Status = CreateFontIdFromFontData( p_rAttributes, l_Font );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = CreateTempFileName( l_CharacterFileName );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = CreateTempFileName( l_ControlFileName );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = CreateTempFileName( l_ConstraintFileName );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::SaveFont( l_Font, l_CharacterFileName, SVOcrSave );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::SaveFont( l_Font, l_ControlFileName, SVOcrSaveControl );
 	}
 	
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::SaveFont( l_Font, l_ConstraintFileName, SVOcrSaveConstraint );
 	}
 
 	SVMatroxOcrInterface::Destroy( l_Font );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVByteVector l_CharacterFileContents;
 		SVByteVector l_ControlFileContents;
 		SVByteVector l_ConstraintFileContents;
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = ConvertFileToByteVector( l_CharacterFileName, l_CharacterFileContents );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rResults.SetBlock( _T( "Character File Contents" ), l_CharacterFileContents, true );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = ConvertFileToByteVector( l_ControlFileName, l_ControlFileContents );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rResults.SetBlock( _T( "Control File Contents" ), l_ControlFileContents, true );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = ConvertFileToByteVector( l_ConstraintFileName, l_ConstraintFileContents );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rResults.SetBlock( _T( "Constraint File Contents" ), l_ConstraintFileContents, true );
 		}
@@ -1210,64 +1210,64 @@ HRESULT SVMatroxOcrInterface::FindFontCharacters( const SVCommandDataHolder& p_r
 	_variant_t l_Height = 0;
 	_variant_t l_IsBlack = true;
 	SVMatroxCommandDataImage l_SourceImage;
-	SVCommandDataContainer* l_pBlobResults = NULL;
+	SVCommandDataContainer* l_pBlobResults = nullptr;
 	SVMatroxBlobInterface::SVBlobList l_Blobs;
 	SVMatroxBlobInterface::SVBlobOffsetList l_FilteredBlobs;
 
 	l_Status = p_rAttributes.GetValue( _T( "Offset X" ), l_OffsetX );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rAttributes.GetValue( _T( "Offset Y" ), l_OffsetY );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rAttributes.GetValue( _T( "Width" ), l_Width );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rAttributes.GetValue( _T( "Height" ), l_Height );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rAttributes.GetValue( _T( "Is Black Background" ), l_IsBlack );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVByteVector l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Source Image" ), l_TempImage );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_SourceImage.SetData( l_TempImage );
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		long l_Temp = 0;
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeX, l_Temp );
 		imageSize.cx = static_cast< LONG >( l_Temp );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		long l_Temp = 0;
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeY, l_Temp );
 		imageSize.cy = static_cast< LONG >( l_Temp );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBlobInterface::FindSizedBlobs( l_SourceImage.m_Buffer, !( bool( l_IsBlack ) ), l_Blobs );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SIZE size = { l_Width, l_Height };
 		POINT offset = { l_OffsetX, l_OffsetY };
@@ -1287,18 +1287,18 @@ HRESULT SVMatroxOcrInterface::FindFontCharacters( const SVCommandDataHolder& p_r
 		// Convert SVBlobList to SVBlobOffsetList
 		l_Status = SVMatroxBlobInterface::CreateBlobOffsetResultList(l_Blobs, l_FilteredBlobs, size, offset, imageSize);
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rResults.SetValue( _T( "Width" ), size.cx, true );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rResults.SetValue( _T( "Height" ), size.cy, true );
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBlobInterface::FillResults( l_FilteredBlobs, p_rResults );
 	}
@@ -1321,34 +1321,34 @@ HRESULT SVMatroxOcrInterface::CharacterThickness( const SVCommandDataHolder& p_r
 
 	l_Status = p_rAttributes.GetValue( _T( "Background Type" ), l_BackgroundType );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVByteVector l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Threshold Image" ), l_TempImage );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_ThresholdImage.SetData( l_TempImage );
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_ThresholdImage.m_Buffer, SVSizeX, lSizeX );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_ThresholdImage.m_Buffer, SVSizeY, lSizeY );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBlobInterface::FindSizedBlobs( l_ThresholdImage.m_Buffer, ( static_cast< BYTE >( l_BackgroundType ) != DARK ), l_Blobs );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		if( l_Blobs.size() > 0 )
 		{
@@ -1379,7 +1379,7 @@ HRESULT SVMatroxOcrInterface::CharacterThickness( const SVCommandDataHolder& p_r
 					SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Create( ROIBuf, l_CreateStruct);
 
 					long l_tmp;
-					if( ThicknessCalculation( ROIBuf, l_BackgroundType, l_tmp ) == S_OK)
+					if( S_OK == ThicknessCalculation( ROIBuf, l_BackgroundType, l_tmp ) )
 					{
 						l_aItterations.push_back( l_tmp);
 					}
@@ -1400,7 +1400,7 @@ HRESULT SVMatroxOcrInterface::CharacterThickness( const SVCommandDataHolder& p_r
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rResults.SetValue( _T( "Thickness" ), l_Thickness, true );
 		}
@@ -1890,36 +1890,36 @@ HRESULT SVMatroxOcrInterface::ReadString( const SVCommandDataHolder& p_rAttribut
 
 	l_Status = CreateFontIdFromFontData( p_rAttributes, l_Font );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVMatroxCommandDataImage l_Image;
 		SVMatroxOcrResult l_milResult;
 
 		l_Font.m_bVerify = false;
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			SVByteVector l_TempImage;
 
 			l_Status = p_rAttributes.GetImage( _T( "Read Image" ), l_TempImage );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Image.SetData( l_TempImage );
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxOcrInterface::Create( l_milResult );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxOcrInterface::Execute( l_milResult, l_Font, l_Image.m_Buffer );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			// Process the OCR chars returned from MocrReadString();
 			long l_Length = 0L;
@@ -1930,23 +1930,23 @@ HRESULT SVMatroxOcrInterface::ReadString( const SVCommandDataHolder& p_rAttribut
 
 			if( l_Length != 0 )
 			{
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, l_MatchScore );
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrString, l_ReadString );
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = p_rResults.SetValue( _T( "Found String" ), _bstr_t( l_ReadString.c_str() ), true );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = p_rResults.SetValue( _T( "Match Score" ), l_MatchScore, true );
 			}
@@ -1970,7 +1970,7 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 
 	l_Status = CreateFontIdFromFontData( p_rAttributes, l_Font );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
@@ -1979,44 +1979,44 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 
 		l_Font.m_bVerify = true;
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			SVByteVector l_TempImage;
 
 			l_Status = p_rAttributes.GetImage( _T( "Verify Image" ), l_TempImage );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Image.SetData( l_TempImage );
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = p_rAttributes.GetValue( _T( "Verify String" ), l_Temp );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Font.m_VerifyString = static_cast< char* >( _bstr_t( l_Temp ) );
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxOcrInterface::Set( l_Font, SVOcrStringSize, static_cast< double >( l_Font.m_VerifyString.size() ) );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxOcrInterface::Create( l_milResult );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxOcrInterface::Execute( l_milResult, l_Font, l_Image.m_Buffer );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			// Process the OCR chars returned from MocrReadString();
 			long l_Length = 0L;
@@ -2027,13 +2027,13 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 
 			if( l_Length != 0 )
 			{
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, l_MatchScore );
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status  )
 			{
 				l_Status = p_rResults.SetValue( _T( "Match Score" ), l_MatchScore, true );
 			}
@@ -2093,7 +2093,7 @@ HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile( const SVByteVector& p
 
 	l_Status = CreateTempFileName( l_FileName );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVFile l_File;
 
@@ -2101,7 +2101,7 @@ HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile( const SVByteVector& p
 		l_Status = l_File.WriteContents( p_rFileContents );
 		l_File.Close();
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			p_rFileName = l_FileName;
 		}
@@ -2144,249 +2144,248 @@ HRESULT SVMatroxOcrInterface::CreateFontDataFromFontId( const SVMatroxOcr& p_rFo
 
 	SVCommandDataHolder l_FontData;
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharNumberInFont, lCharInCurrFont );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharThickness, lCharThickness );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrForegroundValue, lForeground );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrStringSize, lStringLength );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrStringSizeMax, lMaxStringLength );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharCellSizeX, dCharBoxSizeX );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharCellSizeY, dCharBoxSizeY );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharOffsetX, dCharOffsetX );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharOffsetY, dCharOffsetY );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrCharAcceptance, l_dCharacterAcceptance );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrStringAcceptance, l_dStringAcceptance );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrSpeed, l_dOcrSpeed );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrTargetCharSpacing, l_dSpacing );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrCharInvalid, l_dInvalidCharacter );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVStringAngle, l_dStringAngle );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrStringAngleDeltaNeg, l_dAngleDeltaNeg );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrStringAngleDeltaPos, l_dAngleDeltaPos );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrStringAngleInterpolationMode, l_dInterpolation );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrCharPositionVariationX, l_dPositionVariationX );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrCharPositionVariationY, l_dPositionVariationY );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrSkipStringLocation, l_dSkipStringLocation );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrBrokenChar, l_dBrokenChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrMorphologicFiltering, l_dMorphologicFiltering );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrThickenChar, l_dThickenChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrTouchingChar, l_dTouchingChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVOcrStringNumber, l_dStringNumber );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Number Of Characters" ), lCharInCurrFont, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Width" ), dCharBoxSizeX, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Height" ), dCharBoxSizeY, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Character Offset X" ), dCharOffsetX, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Character Offset Y" ), dCharOffsetY, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Character Thickness" ), lCharThickness, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Is Foreground White" ), bool( lForeground == SVOcrForegroundWhite ), true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "String Length" ), lStringLength, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Max String Length" ), lMaxStringLength, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_FontData.SetValue( _T( "Character Acceptance" ), l_dCharacterAcceptance );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "String Acceptance" ), l_dStringAcceptance );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Speed" ), l_dOcrSpeed );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Spacing" ), l_dSpacing );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Invalid Character" ), l_dInvalidCharacter );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Interpolation Mode" ), l_dInterpolation );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "String Angle" ), l_dStringAngle );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Angle Delta Neg" ), l_dAngleDeltaNeg );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Angle Delta Pos" ), l_dAngleDeltaPos );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Position Variation X" ), l_dPositionVariationX );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Position Variation Y" ), l_dPositionVariationY );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Skip String Location" ), l_dSkipStringLocation );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Broken Char" ), l_dBrokenChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Morphologic Filtering" ), l_dMorphologicFiltering );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Thicken Char" ), l_dThickenChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "Touching Char" ), l_dTouchingChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_FontData.SetValue( _T( "String Number" ), l_dStringNumber );
 	}
 
-
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = UpdateCharacterListFromFontId( p_rFontId, l_FontData );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rFontData.SetContainer( _T( "Font" ), l_FontData, true );
 	}
@@ -2428,314 +2427,314 @@ HRESULT SVMatroxOcrInterface::CreateFontIdFromFontData( const SVCommandDataHolde
 
 	l_Status = p_rFontData.GetContainer( _T( "Font" ), l_FontData );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Number Of Characters" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Create.m_lCharNumber = ( static_cast< long >( l_Temp ) < 256 ) ? 256 : l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Width" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Create.m_lCharCellSizeX = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Height" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Create.m_lCharCellSizeY = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Character Offset X" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Create.m_lCharOffsetX = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Character Offset Y" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Create.m_lCharOffsetY = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Character Thickness" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Create.m_lCharThickness = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Is Foreground White" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Create.m_eInitFlag = ( static_cast< bool >( l_Temp ) ) ? SVOcrForegroundWhite : SVOcrForegroundBlack;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Max String Length" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Create.m_lStringLength = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "String Length" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_lStringLength = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Character Acceptance" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dCharacterAcceptance = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "String Acceptance" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dStringAcceptance = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Speed" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dOcrSpeed = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Invalid Character" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dInvalidCharacter = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Spacing" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dSpacing = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "String Angle" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dStringAngle = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Angle Delta Neg" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dAngleDeltaNeg = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Angle Delta Pos" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dAngleDeltaPos = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Interpolation Mode" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dInterpolationMode = l_Temp;
 		}
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Position Variation X" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dPositionVariationX = l_Temp;
 		}
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Position Variation Y" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dPositionVariationY = l_Temp;
 		}
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Skip String Location" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dSkipStringLocation = l_Temp;
 		}
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Broken Char" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dBrokenChar = l_Temp;
 		}
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Morphologic Filtering" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dMorphologicFiltering = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Thicken Char" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dThickenChar = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "Touching Char" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dTouchingChar = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		_variant_t l_Temp;
 
 		l_Status = l_FontData.GetValue( _T( "String Number" ), l_Temp );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_dStringNumber = l_Temp;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Create.m_eFontType = SVUserDefinedConstrained;
 		l_Create.m_lCharSizeX = l_Create.m_lCharCellSizeX - ( 2 * l_Create.m_lCharOffsetX );
@@ -2747,95 +2746,94 @@ HRESULT SVMatroxOcrInterface::CreateFontIdFromFontData( const SVCommandDataHolde
 		Destroy( p_rFontId );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Create( p_rFontId, l_Create );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrStringSize, l_lStringLength );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrCharAcceptance, l_dCharacterAcceptance );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrStringAcceptance, l_dStringAcceptance );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrSpeed, l_dOcrSpeed );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrTargetCharSpacing, l_dSpacing );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrCharInvalid, l_dInvalidCharacter );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVStringAngle, l_dStringAngle );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrStringAngleDeltaNeg, l_dAngleDeltaNeg );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrStringAngleDeltaPos, l_dAngleDeltaPos );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status  )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrStringAngleInterpolationMode, l_dInterpolationMode );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrCharPositionVariationX, l_dPositionVariationX );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrCharPositionVariationY, l_dPositionVariationY );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrSkipStringLocation, l_dSkipStringLocation );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrBrokenChar, l_dBrokenChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrMorphologicFiltering, l_dMorphologicFiltering );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrThickenChar, l_dThickenChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrTouchingChar, l_dTouchingChar );
 	}
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Set( p_rFontId, SVOcrStringNumber, l_dStringNumber );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = UpdateFontIdFromCharacterList( l_FontData, p_rFontId );
 
-		if( l_Status != S_OK && !( p_rFontId.empty() ) )
+		if( S_OK != l_Status && !( p_rFontId.empty() ) )
 		{
 			Destroy( p_rFontId );
 		}
 	}
-
 
 	return l_Status;
 }
@@ -2853,24 +2851,24 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 			
 	l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharNumberInFont, l_Count );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_strFontChars.resize( l_Count + 1 );
 
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharInFont, l_strFontChars );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharCellSizeX, dCharBoxSizeX );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharCellSizeY, dCharBoxSizeY );
 	}
 
-	for ( size_t i = 0; l_Status == S_OK && i < l_strFontChars.size(); ++i )
+	for ( size_t i = 0; S_OK == l_Status && i < l_strFontChars.size(); ++i )
 	{
 		SVCommandDataHolder l_Character;
 		SVMatroxBuffer l_CharHandle;
@@ -2892,7 +2890,7 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 		{
 			l_Status = SVMatroxOcrInterface::CopyFont( p_rFontId, l_CharHandle, SVOcrCopyFromFont, l_FontChar );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVCommandDataFacadePtr l_DestPtr = new SVMatroxCommandDataImage( l_CharHandle, true );
 
@@ -2908,12 +2906,12 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 
 			l_CharHandle.clear();
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Character.SetValue( _T( "Label" ), _bstr_t( l_FontChar.c_str() ), true );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVString l_Name = SvUl_SF::Format( _T( "Character %d" ), i );
 
@@ -2922,19 +2920,19 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 		}
 		else
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = E_FAIL;
 			}
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rFontData.SetContainer( _T( "Character List" ), l_Characters, true );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rFontData.SetValue( _T( "Number Of Characters" ), l_Count, true );
 	}
@@ -2950,25 +2948,25 @@ HRESULT SVMatroxOcrInterface::UpdateFontIdFromCharacterList( const SVCommandData
 
 	l_Status = p_rFontData.GetValue( _T( "Number Of Characters" ), l_NumberOfCharacters );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVCommandDataHolder l_Characters;
 
 		l_Status = p_rFontData.GetContainer( _T( "Character List" ), l_Characters );
 
-		for( size_t i = 0; l_Status == S_OK && i < static_cast< size_t >( l_NumberOfCharacters ); ++i )
+		for( size_t i = 0; S_OK == l_Status && i < static_cast< size_t >( l_NumberOfCharacters ); ++i )
 		{
 			SVCommandDataHolder l_Character;
 			SVString l_Name = SvUl_SF::Format( _T( "Character %d" ), i );
 
 			l_Status = l_Characters.GetContainer( _bstr_t(l_Name.c_str()), l_Character );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				_bstr_t l_Label;
 				SVMatroxCommandDataImage l_MatroxImage;
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					_variant_t l_TempLabel;
 
@@ -2982,19 +2980,19 @@ HRESULT SVMatroxOcrInterface::UpdateFontIdFromCharacterList( const SVCommandData
 					}
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					SVByteVector l_TempImage;
 
 					l_Status = l_Character.GetImage( _T( "Image" ), l_TempImage );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = l_MatroxImage.SetData( l_TempImage );
 					}
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					SVMatroxString l_FontChar;
 
@@ -3008,7 +3006,7 @@ HRESULT SVMatroxOcrInterface::UpdateFontIdFromCharacterList( const SVCommandData
 			}
 			else
 			{
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = E_FAIL;
 				}
@@ -3023,8 +3021,8 @@ HRESULT SVMatroxOcrInterface::ThicknessCalculation( SVMatroxBuffer p_ThresholdIm
 {
 	HRESULT l_Status = S_OK;
 
-	long ItterationsBefore=0;
-	long ItterationsAfter=0;
+	long ItterationsBefore = 0;
+	long ItterationsAfter = 0;
 
 	// create working buffer
 	SVMatroxBuffer l_WorkingBuffer;

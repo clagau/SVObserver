@@ -94,7 +94,7 @@ public:
 	HRESULT DestroyInputValueDefinitionStructures (InputValueDefinitionStruct* paStructs);
 	HRESULT SetInputValues (GUID tool, long lArraySize, VARIANT* paInputValues);
 	HRESULT GetResultValues (GUID tool, long lArraySize, VARIANT* paResultValues);
-	HRESULT GetMessageString (unsigned long ulErrorNumber,BSTR* pbstrErrorMessage);
+	HRESULT GetMessageString (unsigned long ulErrorNumber, BSTR* pbstrErrorMessage) const;
 	HRESULT ValidateValueParameter (GUID tool, long lParameterNumber, VARIANT vParameterValue);
 	HRESULT GetResultValueDefinitions (long* plArraySize, ResultValueDefinitionStruct** ppaResultValues);
 	HRESULT DestroyResultValueDefinitionStructures (ResultValueDefinitionStruct* paStructs);

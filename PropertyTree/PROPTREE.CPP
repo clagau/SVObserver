@@ -18,11 +18,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/*
-#define PROPTREEITEM_EXPANDCOLUMN		16			// width of the expand column
-#define PROPTREEITEM_COLRNG				5			// width of splitter
-//*/
-//int SVRPropTree::PROPTREEITEM_EXPANDCOLUMN       = 16;            // width of the expand column
 const int SVRPropTree::PROPTREEITEM_COLRNG        = 5;             // width of splitter
 const int SVRPropTree::PROPTREEITEM_DEFHEIGHT     = 21;			// default heigt of an item
 const int SVRPropTree::PROPTREEITEM_SPACE         = 5; 			// default horz spacing
@@ -36,7 +31,7 @@ static const CString strDefaultFontName = _T("MS Sans Serif");
 
 static int CALLBACK FontFamilyProcFonts(const LOGFONT FAR* lplf, const TEXTMETRIC FAR*, ULONG, LPARAM)
 {
-	ASSERT(lplf != NULL);
+	ASSERT(nullptr != lplf);
 	CString strFont = lplf->lfFaceName;
 	return strFont.CollateNoCase (strOfficeFontName) == 0 ? 0 : 1;
 }
@@ -53,10 +48,10 @@ SVRPropertyItem* SVRPropTree::s_pFound;
 SVRPropTree::SVRPropTree() :
 	m_bShowInfo(true),
 	m_nInfoHeight(50),
-	m_pVisbleList(NULL),
+	m_pVisbleList(nullptr),
 	m_Origin(100,0),
 	m_nLastUID(1),
-	m_pFocus(NULL),
+	m_pFocus(nullptr),
 	m_bDisableInput(false),
 	m_bLockWindowUpdate(false),
 	PROPTREEITEM_EXPANDCOLUMN(16),
@@ -106,7 +101,7 @@ BOOL SVRPropTree::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT
 {
 	CWnd* pWnd = this;
 
-	LPCTSTR pszCreateClass = AfxRegisterWndClass(CS_HREDRAW|CS_VREDRAW, ::LoadCursor(NULL, IDC_ARROW));
+	LPCTSTR pszCreateClass = AfxRegisterWndClass(CS_HREDRAW|CS_VREDRAW, ::LoadCursor(nullptr, IDC_ARROW));
 
 	m_nID = nID;
 	return pWnd->Create(pszCreateClass, _T(""), dwStyle, rect, pParentWnd, nID);
@@ -196,8 +191,8 @@ void SVRPropTree::InitGlobalResources()
 	LOGFONT lf;
 	memset(&lf, 0, sizeof (LOGFONT));
 
-	CWindowDC dc(NULL);
-	lf.lfCharSet = (BYTE)GetTextCharsetInfo(dc.GetSafeHdc(), NULL, 0);
+	CWindowDC dc(nullptr);
+	lf.lfCharSet = (BYTE)GetTextCharsetInfo(dc.GetSafeHdc(), nullptr, 0);
 
 	lf.lfHeight = info.lfMenuFont.lfHeight;
 	lf.lfWeight = info.lfMenuFont.lfWeight;
@@ -210,7 +205,7 @@ void SVRPropTree::InitGlobalResources()
 	if (!fUseSystemFont)
 	{
 		// check for "Tahoma" font existance:
-		if (::EnumFontFamilies(dc.GetSafeHdc(), NULL, FontFamilyProcFonts, 0)==0)
+		if (::EnumFontFamilies(dc.GetSafeHdc(), nullptr, FontFamilyProcFonts, 0)==0)
 		{
 			// Found! Use MS Office font!
 			_tcscpy(lf.lfFaceName, strOfficeFontName);
@@ -239,14 +234,14 @@ void SVRPropTree::FreeGlobalResources()
 	{
 		s_pNormalFont->DeleteObject();
 		delete s_pNormalFont;
-		s_pNormalFont = NULL;
+		s_pNormalFont = nullptr;
 	}
 
 	if (s_pBoldFont)
 	{
 		s_pBoldFont->DeleteObject();
 		delete s_pBoldFont;
-		s_pBoldFont = NULL;
+		s_pBoldFont = nullptr;
 	}
 }
 
@@ -281,7 +276,7 @@ SVRPropertyItem* SVRPropTree::GetRootItem()
 
 void SVRPropTree::ClearVisibleList()
 {
-	m_pVisbleList = NULL;
+	m_pVisbleList = nullptr;
 }
 
 void SVRPropTree::SetExpandColumnSize(int iSize)
@@ -315,7 +310,7 @@ void SVRPropTree::AddToVisibleList(SVRPropertyItem* pItem)
 		pNext->SetNextVisible(pItem);
 	}
 
-	pItem->SetNextVisible(NULL);
+	pItem->SetNextVisible(nullptr);
 }
 
 
@@ -365,7 +360,7 @@ void SVRPropTree::UpdatedItems()
 		m_List.UpdateResize();
 		m_List.Invalidate();
 
-		if ( m_pFocus != NULL && ! m_pFocus->IsReadOnly() )
+		if ( nullptr != m_pFocus && ! m_pFocus->IsReadOnly() )
 		{
 			m_pFocus->Activate();
 		}
@@ -376,7 +371,7 @@ void SVRPropTree::UpdatedItems()
 void SVRPropTree::DeleteAllItems()
 {
 	ClearVisibleList();	// prevent potential crash
-	Delete(NULL);
+	Delete(nullptr);
 	UpdatedItems();
 	m_nLastUID = 1; // reset uid counter
 }
@@ -461,8 +456,8 @@ void SVRPropTree::Delete(SVRPropertyItem* pItem)
 
 void SVRPropTree::SetFocusedItem(SVRPropertyItem* pItem)
 {
-	// If new focus item != nullptr, it will activated and for the old one automatically the OnKill will be fired.
-	// But if the new focus item == nullptr, the focus-parameter will be set to nullptr and no new focus will be set,
+	// If new focus nullptr != item, it will activated and for the old one automatically the OnKill will be fired.
+	// But if the new focus nullptr == item, the focus-parameter will be set to nullptr and no new focus will be set,
 	// and the old item do not unrecognized this. In this case it has to be called a method to tell them item, that he loss the focus. 
 	if (nullptr == pItem && m_pFocus != nullptr && IsWindow(m_hWnd))
 	{
@@ -547,7 +542,7 @@ void SVRPropTree::EnsureVisible(SVRPropertyItem* pItem)
 		else
 			oy = pt.y - rc.Height() + pItem->GetHeight();
 
-		m_List.OnVScroll(SB_THUMBTRACK, oy, NULL);
+		m_List.OnVScroll(SB_THUMBTRACK, oy, nullptr);
 	}
 }
 
@@ -555,7 +550,7 @@ void SVRPropTree::EnsureVisible(SVRPropertyItem* pItem)
 SVRPropertyItem* SVRPropTree::InsertItem(SVRPropertyItem* pItem, SVRPropertyItem* pParent)
 {
 	if (!pItem)
-		return NULL;
+		return nullptr;
 
 	if (!pParent)
 		pParent = &m_Root;
@@ -598,7 +593,7 @@ LONG SVRPropTree::HitTest(const POINT& pt)
 	// convert screen to tree coordinates
 	p.y += m_Origin.y;
 
-	if ((pItem = FindItem(pt))!=NULL)
+	if (nullptr != (pItem = FindItem(pt)))
 	{
 		if (!pItem->IsRootLevel() && pt.x >= m_Origin.x - PROPTREEITEM_COLRNG && pt.x <= m_Origin.x + PROPTREEITEM_COLRNG)
 			return HTCOLUMN;
@@ -636,13 +631,13 @@ SVRPropertyItem* SVRPropTree::FindItem(const POINT& pt)
 			return pItem;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 SVRPropertyItem* SVRPropTree::FindItem(UINT nCtrlID)
 {
-	s_pFound = NULL;
+	s_pFound = nullptr;
 
 	EnumItems(&m_Root, EnumFindItem, nCtrlID);
 
@@ -652,7 +647,7 @@ SVRPropertyItem* SVRPropTree::FindItem(UINT nCtrlID)
 
 bool CALLBACK SVRPropTree::EnumFindItem(SVRPropTree*, SVRPropertyItem* pItem, LPARAM lParam)
 {
-	ASSERT(pItem!=NULL);
+	ASSERT(nullptr != pItem);
 
 	if (pItem->GetCtrlID()==(UINT)lParam)
 	{
@@ -676,7 +671,7 @@ void SVRPropTree::DisableInput(bool bDisable)
 
 	CWnd* pWnd;
 
-	if ((pWnd = GetParent())!=NULL)
+	if (nullptr != (pWnd = GetParent()))
 		pWnd->EnableWindow(!bDisable);
 }
 
@@ -700,7 +695,7 @@ SVRPropertyItem* SVRPropTree::FocusFirst()
 
 	if (m_pFocus)
 	{
-		SelectItems(NULL, false);
+		SelectItems(nullptr, false);
 		m_pFocus->Select();
 	}
 
@@ -729,7 +724,7 @@ SVRPropertyItem* SVRPropTree::FocusLast()
 
 		if (m_pFocus)
 		{
-			SelectItems(NULL, false);
+			SelectItems(nullptr, false);
 			m_pFocus->Select();
 		}
 	}
@@ -748,7 +743,7 @@ SVRPropertyItem* SVRPropTree::FocusPrev()
 
 	pChange = m_pFocus;
 
-	if (m_pFocus==NULL)
+	if (nullptr == m_pFocus)
 	{
 		// get the last visible item
 		pNext = m_pVisbleList;
@@ -767,7 +762,7 @@ SVRPropertyItem* SVRPropTree::FocusPrev()
 	
 	if (m_pFocus)
 	{
-		SelectItems(NULL, false);
+		SelectItems(nullptr, false);
 		m_pFocus->Select();
 	}
 
@@ -785,20 +780,20 @@ SVRPropertyItem* SVRPropTree::FocusNext()
 
 	pChange = m_pFocus;
 
-	if (m_pFocus==NULL)
+	if (nullptr == m_pFocus)
 		pNext = m_pVisbleList;
 	else
 	if (m_pFocus->GetNextVisible())
 		pNext = m_pFocus->GetNextVisible();
 	else
-		pNext = NULL;
+		pNext = nullptr;
 
 	if (pNext)
 		SetFocusedItem(pNext);
 
 	if (m_pFocus)
 	{
-		SelectItems(NULL, false);
+		SelectItems(nullptr, false);
 		m_pFocus->Select();
 	}
 
@@ -870,7 +865,7 @@ LRESULT SVRPropTree::SendNotify(UINT nNotifyCode, SVRPropertyItem* pItem)
 	NMPROPTREE nmmp;
 	LPNMHDR lpnm;
 
-	lpnm = NULL;
+	lpnm = nullptr;
 
 	switch (nNotifyCode)
 	{
@@ -996,18 +991,3 @@ bool SVRPropTree::RestoreState(CString sItemName, SVRPropertyItem* pItem, const 
 	return bOK;
 
 }
-
-/*
-BOOL SVRPropTree::LockWindowUpdate()
-{
-	m_bLockWindowUpdate = true;
-	return TRUE;
-}
-
-void SVRPropTree::UnlockWindowUpdate()
-{
-	m_bLockWindowUpdate = false;
-	UpdatedItems();
-}
-*/
-

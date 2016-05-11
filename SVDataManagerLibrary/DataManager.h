@@ -9,8 +9,7 @@
 // * .Check In Date   : $Date:   22 Apr 2013 07:53:36  $
 // ******************************************************************************
 
-#ifndef DATAMANAGER_H
-#define DATAMANAGER_H
+#pragma once
 
 #include "ManagedIndexArray.h"
 #include "ManagedIndexArrayList.h"
@@ -27,9 +26,7 @@ class SVDataManager
 public:
 	friend class SVDataManagerHandle;
 	friend class SVDataManagerIndexArrayHandle;
-	friend class SVImageCompressionClass;
-	friend class StaticImageCompressionPool;
-	
+
 	SVDataManager();
 
 	virtual ~SVDataManager();
@@ -66,9 +63,7 @@ protected:
 		long alTransactionId, SVDataManagerLockTypeEnum aLockType);
 	
 	HRESULT  DestroyIndexArray( long alIndexArrayHandle );
-	
-	HRESULT  StringCopy( TCHAR* apszDestString, const TCHAR* apszSourceString, long alNbrOfBytes );
-	
+
 	HRESULT  ValidateIndexArrayHandle( long alIndexArrayHandle ) const;
 	
 	HRESULT  ValidateLockType( long alLockType );
@@ -103,8 +98,4 @@ protected:
 
 	// This attribute manages the lock for multi-threaded access to this container.
 	mutable CRITICAL_SECTION m_Lock;
-	
 };
-
-#endif
-

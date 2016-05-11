@@ -12,10 +12,6 @@
 #pragma once
 
 //Moved to precompiled header: #include <math.h>
-//const double g_svPI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679;
-//const double g_svRadian = 180.0 / g_svPI;
-
-//extern SVGeometryClass g_svPi;	// declared below
 
 class SVGeometryClass
 {

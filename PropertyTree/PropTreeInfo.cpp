@@ -42,7 +42,7 @@ static char THIS_FILE[] = __FILE__;
 // SVRPropertyInfo
 
 SVRPropertyInfo::SVRPropertyInfo() :
-	m_pProp(NULL)
+	m_pProp(nullptr)
 {
 }
 
@@ -78,7 +78,7 @@ void SVRPropertyInfo::OnPaint()
 	dc.DrawEdge(&rc, BDR_SUNKENOUTER, BF_RECT);
 	rc.DeflateRect(4, 4);
 
-	ASSERT(m_pProp!=NULL);
+	ASSERT(nullptr != m_pProp);
 
 	SVRPropertyItem* pItem = m_pProp->GetFocusedItem();
 

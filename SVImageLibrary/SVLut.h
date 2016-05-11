@@ -56,8 +56,6 @@ private:
 	UINT            muiFormat;      // color format of the LUT
 	UINT            muiMaxValue;    // max LUT value
 	SVLutTransform* mpTransform;	// transform object;
-
-friend class SVLut;	// so can set the handles to NULL on Create
 };
 
 typedef ULONG SVLutValueType;
@@ -74,7 +72,6 @@ public:
 	typedef T ValueType;
 };
 
-//typedef SVLutValue<SVLutValueType> SVLutEntry;
 typedef SVLutValue<UINT> SVLutEntry;   // this is needed so the specialization can be called.
                                        // there is still an automatic conversion to/from SVLutValueType. (!)
 
@@ -126,7 +123,7 @@ public:
 	const SVLut& operator = ( const SVLut& rhs );
 	void CopyNoTransform( const SVLut& rhs );
 
-	bool IsCreated();
+	bool IsCreated() const;
 	bool Create(const SVLutInfo& info);
 	bool Destroy();
 	bool CopyBandData(const SVLut& lut, int iBand=-1);
@@ -156,13 +153,11 @@ private:
 template <typename T>
 inline SVLutValue<T>::SVLutValue()
 {
-	//TRACE("SVLutValue<T>\n");
 }
 
 // specialize for UINT so can init to 0
 inline SVLutValue<UINT>::SVLutValue()
 {
-	//TRACE("SVLutValue<UINT>\n");
 	value = 0;
 }
 

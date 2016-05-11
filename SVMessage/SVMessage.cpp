@@ -55,8 +55,8 @@ HRESULT AddMessageKeys( TCHAR *p_pszBuf )
 	_stprintf( szBuf, _T( "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\%s" ),	p_pszBuf ); 
 
 	if( ::RegCreateKeyEx( HKEY_LOCAL_MACHINE, szBuf, 
-		0, NULL, REG_OPTION_NON_VOLATILE,
-		KEY_WRITE, NULL, &hk, &dwDisp ) ) 
+		0, nullptr, REG_OPTION_NON_VOLATILE,
+		KEY_WRITE, nullptr, &hk, &dwDisp ) ) 
 	{
 		printf( "Could not create the registry key." ); 
 
@@ -168,17 +168,17 @@ STDAPI DllRegisterServer(void)
 {
 	HRESULT l_Status( S_OK );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = AddMessageKeys( _T( "SVException" ) );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = AddMessageKeys( _T( "SVSecurity" ) );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = AddMessageKeys( _T( "SVAccess" ) );
 	}

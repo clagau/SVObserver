@@ -35,8 +35,8 @@ SVEquationYaccClass::SVEquationYaccClass()
 	yynerrs = 0;
 	yyerrflag = 0;
 	yychar = 0;
-	yyssp = NULL;
-	yyvsp = NULL;
+	yyssp = nullptr;
+	yyvsp = nullptr;
 	
 	memset(yyss,'\0',YYSTACKSIZE);
 	memset(yyvs,'\0',YYSTACKSIZE);
@@ -111,13 +111,13 @@ int SVEquationYaccClass::AddToList(double val)
 		else
 		{
 			m_StatusCode = SVMSG_TOO_MANY_VARIABLES;
-			yyerror(NULL);
+			yyerror(nullptr);
 		}
 	}
 	else
 	{
 		m_StatusCode = SVMSG_TOO_MANY_VARIABLES;
-		yyerror(NULL);
+		yyerror(nullptr);
 		current_recursive_depth = 0;	// reset this var on error
 	}
 

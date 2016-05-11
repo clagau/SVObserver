@@ -151,22 +151,6 @@ SVOCameraList::iterator SVOCameraList::FindCameraPosition(CString sCameraName)
 	return pos;
 }
 
-
-BOOL SVOCameraList::SetCameraDig(CString sCameraName, int iDig)
-{
-	iterator pos = FindCameraPosition(sCameraName);
-	BOOL bRet = FALSE;
-
-	if (pos != m_CameraList.end())
-	{
-		SVOCameraObjPtr pObj = m_CameraList.GetAt(pos);
-		pObj->SetDigNumber(iDig);
-		m_CameraList.SetAt(pos,pObj);
-		bRet = TRUE;
-	}
-	return bRet;
-}
-
 BOOL SVOCameraList::SetCameraFile(CString sCameraName, CString sFileName)
 {
 	iterator pos = FindCameraPosition(sCameraName);

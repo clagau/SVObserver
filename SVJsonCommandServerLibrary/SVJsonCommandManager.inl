@@ -96,16 +96,16 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( con
 			{
 				l_Status = m_JsonCommandDataPtr->SetJsonCommand( p_rJsonCommand );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
-					l_Status = m_AsyncProcedure.Signal( NULL );
+					l_Status = m_AsyncProcedure.Signal( nullptr );
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = m_JsonCommandDataPtr->WaitForRequest( 60000 * 5 );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						p_rJsonResults = m_JsonCommandDataPtr->m_JsonResults;
 					}

@@ -9,20 +9,19 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:25:34  $
 //******************************************************************************
 
-#ifndef SVTOOLLEVELCREATESTRUCT_H
-#define SVTOOLLEVELCREATESTRUCT_H
+#pragma once
 
+#pragma region Includes
 #include "SVInspectionLevelCreateStruct.h"
+#pragma endregion Includes
 
 struct SVToolLevelCreateStruct : public SVInspectionLevelCreateStruct
 {
 	SVToolLevelCreateStruct();
-	SVToolLevelCreateStruct( SVObjectLevelCreateStruct& ROLCS );
+	SVToolLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS );
 
 	virtual ~SVToolLevelCreateStruct();
 
 	SVObjectInfoStruct ToolObjectInfo;
 };
-
-#endif
 

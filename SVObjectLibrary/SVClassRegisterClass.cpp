@@ -9,13 +9,19 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:35:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVClassRegisterClass.h"
 
 #include "SVObjectLibrary.h"
+#pragma endregion Includes
 
 SVClassRegisterClass::SVClassRegisterClass() 
 { 
+}
+
+SVClassRegisterClass::~SVClassRegisterClass()
+{
 }
 
 SVGUID SVClassRegisterClass::GetClassID() 
@@ -27,7 +33,7 @@ SVGUID SVClassRegisterClass::GetClassID()
 SVObjectClass* SVClassRegisterClass::Construct() 
 { 
 	ASSERT( 0 );
-	return NULL; 
+	return nullptr; 
 }
 
 LPCTSTR SVClassRegisterClass::GetClassName()	

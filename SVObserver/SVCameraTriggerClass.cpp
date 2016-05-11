@@ -17,7 +17,7 @@
 
 SVCameraTriggerClass::SVCameraTriggerClass(LPCTSTR deviceName)
 : SVTriggerClass(deviceName)
-, m_pSoftwareTrigger(NULL)
+, m_pSoftwareTrigger(nullptr)
 {
 }
 
@@ -79,22 +79,22 @@ HRESULT SVCameraTriggerClass::RegisterCallback(SVOCallbackPtr pCallback, void *p
 {
 	HRESULT hr = SVODeviceClass::RegisterCallback(pCallback, pvOwner, pvCaller);
 
-	if (m_pDLLTrigger != NULL)
+	if (nullptr != m_pDLLTrigger)
 	{
 		SVCallbackStruct l_Callback;
 		l_Callback.m_pCallback = SVCameraTriggerClass::TriggerCallback;
 		l_Callback.m_pOwner = this;
-		l_Callback.m_pData = NULL;
+		l_Callback.m_pData = nullptr;
 
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			hr = m_pDLLTrigger->Register(m_ulHandle, l_Callback);
 		}
-		if (hr != S_OK)
+		if (S_OK != hr)
 		{
 			m_pDLLTrigger->Unregister(m_ulHandle, l_Callback);
 		}
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			if (m_pSoftwareTrigger)
 			{
@@ -113,7 +113,7 @@ HRESULT SVCameraTriggerClass::UnregisterCallback(SVOCallbackPtr pCallback, void 
 {
 	HRESULT hr = S_OK;
 
-	if (SVODeviceClass::UnregisterCallback(pCallback, pvOwner, pvCaller) != S_OK)
+	if (S_OK != SVODeviceClass::UnregisterCallback(pCallback, pvOwner, pvCaller))
 	{
 		hr = S_FALSE;
 	}
@@ -121,14 +121,14 @@ HRESULT SVCameraTriggerClass::UnregisterCallback(SVOCallbackPtr pCallback, void 
 	{
 		m_pSoftwareTrigger->UnregisterCallback(SVCameraTriggerClass::SoftwareTriggerCompleteCallback, pvOwner, pvCaller);
 	}
-	if (m_pDLLTrigger != NULL)
+	if (nullptr != m_pDLLTrigger)
 	{
 		SVCallbackStruct l_Callback;
 		l_Callback.m_pCallback = SVCameraTriggerClass::TriggerCallback;
 		l_Callback.m_pOwner = this;
-		l_Callback.m_pData = NULL;
+		l_Callback.m_pData = nullptr;
 
-		if (m_pDLLTrigger->Unregister( m_ulHandle, l_Callback) != S_OK)
+		if (S_OK != m_pDLLTrigger->Unregister( m_ulHandle, l_Callback))
 		{
 			hr = S_FALSE;
 		}

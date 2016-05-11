@@ -20,7 +20,7 @@
 
 IMPLEMENT_DYNAMIC(MonitorListAddRemoveDlg, CDialog)
 
-MonitorListAddRemoveDlg::MonitorListAddRemoveDlg(const RemoteMonitorList& rMonitorList, const PPQNameListNames& rList, CWnd* pParent /*=NULL*/)
+MonitorListAddRemoveDlg::MonitorListAddRemoveDlg(const RemoteMonitorList& rMonitorList, const PPQNameListNames& rList, CWnd* pParent /*=nullptr*/)
 : CDialog(MonitorListAddRemoveDlg::IDD, pParent)
 , m_MonitorList(rMonitorList)
 , m_SetupList(rList)
@@ -171,15 +171,7 @@ CString MonitorListAddRemoveDlg::NextAvailableListName() const
 	{
         num = (*it) + 1;
     }
-
-	// find next non used number in the sequence
-	/*IDSet::const_iterator it = ids.lower_bound(num);
-    while (it != ids.end() && *it == num)
-    {
-        ++it;
-        ++num;
-    } */
-    
+	    
     newName.Format( _T("MonitorList%d"), num );
 	return newName;
 }

@@ -218,7 +218,7 @@ BOOL Custom2Filter::OnValidate()
 #pragma region Private Methods
 void Custom2Filter::init()
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVCustom2FilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVCustom2FilterObjectType;
 
 	RegisterEmbeddedObject( &m_KernelArray, Custom2FilterKernelGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SVResetItemOwner );
 

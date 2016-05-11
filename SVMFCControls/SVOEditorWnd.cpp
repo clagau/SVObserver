@@ -158,7 +158,7 @@ namespace Seidenader
 		{// Let other messages through
 			MSG msg;
 
-			while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);

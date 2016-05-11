@@ -572,7 +572,7 @@ void SVGigeCameraROIDlg::UpdateImageDisplay()
 
 void SVGigeCameraROIDlg::UpdateDeviceBinningParams()
 {
-	if ( m_pDevice != nullptr )
+	if ( nullptr != m_pDevice )
 	{
 		// Set Device parameters
 		SVDeviceParamCollection l_DeviceParams;
@@ -608,7 +608,6 @@ void SVGigeCameraROIDlg::Normalize( CRect &l_roRect )
 	}
 
 	// normalize to step
-	//l_roRect.top    %= m_pFormat->lVPosStep;
 	l_roRect.top    = (l_roRect.top / m_pFormat->m_lVPosStep) * m_pFormat->m_lVPosStep;
 	l_roRect.left   = (l_roRect.left / m_pFormat->m_lHPosStep) * m_pFormat->m_lHPosStep;
 	l_roRect.right  = (l_roRect.Width() / m_pFormat->m_lHStep) * m_pFormat->m_lHStep + l_roRect.left;

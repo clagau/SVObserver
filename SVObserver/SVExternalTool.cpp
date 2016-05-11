@@ -15,24 +15,15 @@
 
 SV_IMPLEMENT_CLASS( SVExternalTool, SVExternalToolGuid );
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-
 SVExternalTool::SVExternalTool( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 						  :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	Initialize();
 }
 
-
 SVExternalTool::~SVExternalTool()
 { 
 }
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 
 BOOL SVExternalTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -40,14 +31,14 @@ BOOL SVExternalTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
 
 SVTaskObjectClass *SVExternalTool::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {
-	return NULL;
+	return nullptr;
 }
 
 HRESULT SVExternalTool::GetImageExtent( SVImageExtentClass &p_rsvImageExtent )
@@ -67,7 +58,7 @@ HRESULT SVExternalTool::UpdateImageWithExtent( unsigned long p_Index )
 
 DWORD_PTR SVExternalTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -75,7 +66,7 @@ DWORD_PTR SVExternalTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 	{
 		case SVMSGID_IMAGE_SOURCE_CHANGED:
 		{
-//			isCreated = FALSE;
+//			m_isCreated = false;
 		}
 		break;
 	}
@@ -85,14 +76,14 @@ DWORD_PTR SVExternalTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 
 void SVExternalTool::Initialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVExternalToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVExternalToolObjectType;
 
 	// Register SourceImageNames Value Object
 	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
 
 	SVExternalToolTask* l_pTask = new SVExternalToolTask;
-	if ( l_pTask != NULL )
+	if ( nullptr != l_pTask )
 	{
 		Add( l_pTask );
 	}

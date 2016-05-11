@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include "SVValueBaseNormalizerClass.h"
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #include "SVTaskObjectInterfaceClass.h"
 #pragma endregion Includes
 
@@ -28,14 +28,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVMeasureAnalyzerAdjustmentSheetClass(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SVMeasureAnalyzerAdjustmentSheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVMeasureAnalyzerAdjustmentSheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVMeasureAnalyzerAdjustmentSheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
 	virtual ~SVMeasureAnalyzerAdjustmentSheetClass();
 
 public:

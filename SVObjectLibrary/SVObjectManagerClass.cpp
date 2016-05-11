@@ -117,7 +117,7 @@ HRESULT SVObjectManagerClass::ConstructRootObject( const SVGUID& rClassID )
 	{
 		SVObjectClass* pRootObject;
 		GetObjectByIdentifier(ObjectID, pRootObject);
-		if(NULL != pRootObject)
+		if(nullptr != pRootObject)
 		{
 			m_RootNameChildren[FqnRoot] = ObjectID;
 		}
@@ -135,7 +135,7 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 	{
 		SVObjectClass* l_pObject = GetObject( RootID );
 
-		if( l_pObject != NULL )
+		if( nullptr != l_pObject )
 		{
 			delete l_pObject;
 		}
@@ -185,16 +185,6 @@ void SVObjectManagerClass::Shutdown()
 
 	l_AutoLock.Assign( &m_Lock );
 
-	if( !( m_IPDocs.empty() ) )
-	{
-		m_IPDocs.clear();
-	}
-
-	if( !( m_IODocs.empty() ) )
-	{
-		m_IODocs.clear();
-	}
-
 	if( !( m_CookieEntries.empty() ) )
 	{
 		m_CookieEntries.clear();
@@ -210,11 +200,11 @@ HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& rClassID, GUID& rOb
 {
 	HRESULT l_Status = S_OK;
 
-	SVObjectClass* l_pObject = NULL;
+	SVObjectClass* l_pObject = nullptr;
 
 	l_Status = ConstructObject( rClassID, l_pObject );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		rObjectID = l_pObject->GetUniqueObjectID();
 	}
@@ -222,7 +212,7 @@ HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& rClassID, GUID& rOb
 	{
 		rObjectID = SVInvalidGUID;
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = E_FAIL;
 		}
@@ -237,25 +227,12 @@ HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& rClassID, SVObjectC
 
 	rpObject = SVClassRegisterListClass::Instance().ConstructNewObject( rClassID );
 
-	if( rpObject == NULL )
+	if( nullptr == rpObject )
 	{
 		l_Status = E_FAIL;
 	}
 
 	return l_Status;
-}
-
-void SVObjectManagerClass::DestructObject( const SVGUID& rClassID )
-{
-	if( !( rClassID.empty() ) )
-	{
-		SVObjectClass* l_pObject = GetObject( rClassID );
-
-		if( l_pObject != NULL )
-		{
-			delete l_pObject;
-		}
-	}
 }
 
 HRESULT SVObjectManagerClass::GetObjectByIdentifier( const SVGUID& rObjectID, SVObjectClass*& rpObject ) const
@@ -280,15 +257,15 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier( const SVGUID& rObjectID, SV
 		}
 		else
 		{
-			rpObject = NULL;
+			rpObject = nullptr;
 		}
 	}
 	else
 	{
-		rpObject = NULL;
+		rpObject = nullptr;
 	}
 
-	if( l_Result == S_OK && rpObject == NULL )
+	if( S_OK == l_Result && nullptr == rpObject )
 	{
 		l_Result = E_FAIL;
 	}
@@ -303,13 +280,13 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 
 	Status = GetObjectByDottedName( rFullName, Reference );
 
-	if( Reference.Object() != NULL )
+	if( nullptr != Reference.Object() )
 	{
 		rObjectID = Reference.Object()->GetUniqueObjectID();
 	}
 	else
 	{
-		if( Status == S_OK )
+		if( S_OK == Status )
 		{
 			Status = E_FAIL;
 		}
@@ -328,16 +305,16 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 
 	Status = GetObjectByDottedName( rFullName, Reference );
 
-	if( Reference.Object() != NULL )
+	if( nullptr != Reference.Object() )
 	{
 		rpObject = Reference.Object();
 	}
 	else
 	{
-		rpObject = NULL;
+		rpObject = nullptr;
 	}
 
-	if( Status == S_OK && rpObject == NULL )
+	if( S_OK == Status && nullptr == rpObject )
 	{
 		Status = E_FAIL;
 	}
@@ -433,7 +410,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 		rReference = SVObjectReference();
 	}
 
-	if( Result == S_OK && rReference.Object() == NULL )
+	if( S_OK == Result && nullptr == rReference.Object() )
 	{
 		Result = E_FAIL;
 	}
@@ -460,12 +437,12 @@ BOOL SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* PObject )
 
 			if( l_Status )
 			{
-				l_Status = ( CoCreateGuid( &( pUniqueObject->ObjectUID.ToGUID() ) ) == S_OK );
+				l_Status = ( S_OK == CoCreateGuid( &( pUniqueObject->ObjectUID.ToGUID() ) ) );
 
 				if( l_Status )
 				{
 					pUniqueObject->PObject = PObject;
-					PObject->outObjectInfo.UniqueObjectID = pUniqueObject->ObjectUID; 
+					PObject->m_outObjectInfo.UniqueObjectID = pUniqueObject->ObjectUID; 
 					m_UniqueObjectEntries[ pUniqueObject->ObjectUID ] = pUniqueObject;
 				}
 			}
@@ -484,11 +461,11 @@ BOOL SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* PObject )
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 
 		l_Status = l_Status && l_AutoLock.Assign( &m_Lock );
-		l_Status = l_Status && PObject != nullptr;
+		l_Status = l_Status && nullptr != PObject;
 
 		if( l_Status )
 		{
-			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( PObject->outObjectInfo.UniqueObjectID );
+			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( PObject->m_outObjectInfo.UniqueObjectID );
 
 			l_Status = ( pUniqueObject.empty() );
 
@@ -501,7 +478,7 @@ BOOL SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* PObject )
 				if( l_Status )
 				{
 					pUniqueObject->PObject = PObject;
-					pUniqueObject->ObjectUID = PObject->outObjectInfo.UniqueObjectID; 
+					pUniqueObject->ObjectUID = PObject->m_outObjectInfo.UniqueObjectID; 
 					m_UniqueObjectEntries[ pUniqueObject->ObjectUID ] = pUniqueObject;
 				}
 			}
@@ -543,7 +520,7 @@ BOOL SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* PObject, const S
 {
 	if(	RNewGuid != SVInvalidGUID && CloseUniqueObjectID( PObject ) )
 	{
-		PObject->outObjectInfo.UniqueObjectID = RNewGuid;
+		PObject->m_outObjectInfo.UniqueObjectID = RNewGuid;
 		BOOL bRetVal = OpenUniqueObjectID( PObject );
 
 		// Change ObjectID setting in private input interface...
@@ -556,7 +533,7 @@ BOOL SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* PObject, const S
 
 SVObjectClass* SVObjectManagerClass::GetObject( const SVGUID& RGuid ) const
 {
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 	BOOL l_Status = ( RGuid != SVInvalidGUID );
 
@@ -580,7 +557,7 @@ SVObjectClass* SVObjectManagerClass::GetObject( const SVGUID& RGuid ) const
 
 SVObjectClass* SVObjectManagerClass::GetObjectCompleteName( LPCTSTR tszName )
 {
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 	CString sName = tszName;
 	BOOL l_Status = !( sName.IsEmpty() );
@@ -595,13 +572,13 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName( LPCTSTR tszName )
 		SVObjectClass* l_pConfig;
 		GetRootChildObject( l_pConfig, FqnConfiguration );
 
-		if( l_pConfig != NULL )
+		if( nullptr != l_pConfig )
 		{
 			SVObjectNameInfo l_NameInfo;
 
 			l_NameInfo.ParseObjectName( static_cast< LPCTSTR >( sName ) );
 
-			l_Status = l_pConfig->GetChildObject( pObject, l_NameInfo ) == S_OK;
+			l_Status = S_OK == l_pConfig->GetChildObject( pObject, l_NameInfo );
 		}
 	}
 
@@ -614,10 +591,10 @@ SVObjectReference SVObjectManagerClass::GetObjectReference( const CString& strNa
 
 	SVObjectNameInfo l_NameInfo;
 
-	if( l_NameInfo.ParseObjectName( static_cast< LPCTSTR >( strName ) ) == S_OK )
+	if( S_OK == l_NameInfo.ParseObjectName( static_cast< LPCTSTR >( strName ) ) )
 	{
 		SVObjectClass* l_pObject = GetObjectCompleteName( l_NameInfo.GetObjectName().c_str() );
-		if ( l_pObject != NULL )
+		if ( nullptr != l_pObject )
 		{
 			refObject = SVObjectReference( l_pObject, l_NameInfo );
 		}
@@ -632,7 +609,7 @@ SVGUID SVObjectManagerClass::GetObjectIdFromCompleteName( const SVString& rName 
 
 	SVObjectClass* l_pObject = GetObjectCompleteName( rName.c_str() );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		l_ObjectID = l_pObject->GetUniqueObjectID();
 	}
@@ -646,7 +623,7 @@ SVString SVObjectManagerClass::GetCompleteObjectName( const SVGUID& RGuid )
 
 	SVObjectClass* l_pObject = GetObject( RGuid );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		l_Name = static_cast< LPCTSTR >( l_pObject->GetCompleteObjectName() );
 	}
@@ -756,7 +733,7 @@ HRESULT SVObjectManagerClass::GetObserverIds( const SVString& rSubjectDataName, 
 
 	HRESULT l_Status = GetObservers( rSubjectDataName, rSubjectID, l_Observers );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVSubjectEnabledObserverMap::iterator l_Iter;
 
@@ -858,7 +835,7 @@ HRESULT SVObjectManagerClass::EnableObserver( const SVString& rSubjectDataName, 
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
@@ -889,7 +866,7 @@ HRESULT SVObjectManagerClass::EnableObserver( const SVString& rSubjectDataName, 
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
@@ -920,7 +897,7 @@ HRESULT SVObjectManagerClass::DisableObserver( const SVString& rSubjectDataName,
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
@@ -951,7 +928,7 @@ HRESULT SVObjectManagerClass::DisableObserver( const SVString& rSubjectDataName,
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry( rSubjectID );
 		
@@ -1037,7 +1014,7 @@ HRESULT SVObjectManagerClass::DetachObservers( const SVString& rSubjectDataName,
 
 	l_Status = GetObservers( rSubjectDataName, rSubjectID, l_Observers, l_CookieObservers );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVSubjectEnabledObserverMap::iterator l_Iter = l_Observers.begin();
 
@@ -1045,7 +1022,7 @@ HRESULT SVObjectManagerClass::DetachObservers( const SVString& rSubjectDataName,
 		{
 			HRESULT l_Temp = DetachObserver( rSubjectDataName, rSubjectID, l_Iter->first ) ;
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -1059,7 +1036,7 @@ HRESULT SVObjectManagerClass::DetachObservers( const SVString& rSubjectDataName,
 		{
 			HRESULT l_Temp = DetachObserver( rSubjectDataName, rSubjectID, l_CookieIter->first ) ;
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -1076,7 +1053,7 @@ HRESULT SVObjectManagerClass::DetachSubjectsAndObservers( const SVGUID& rObjectI
 	HRESULT l_Status = DetachObservers( rObjectID );
 	HRESULT l_SubjectStatus = DetachSubjects( rObjectID );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = l_SubjectStatus;
 	}
@@ -1092,7 +1069,7 @@ HRESULT SVObjectManagerClass::DetachSubjects( long p_Cookie )
 
 	l_Status = GetObserverDataNames( p_Cookie, l_SubjectDataNames );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVSubjectDataNameDeque::iterator l_Iter;
 		
@@ -1117,7 +1094,7 @@ HRESULT SVObjectManagerClass::DetachSubjects( const SVGUID& rObserverID )
 
 	l_Status = GetObserverDataNames( rObserverID, l_SubjectDataNames );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVSubjectDataNameDeque::iterator l_Iter;
 		
@@ -1142,7 +1119,7 @@ HRESULT SVObjectManagerClass::DetachObservers( const SVGUID& rSubjectID )
 
 	l_Status = GetSubjectDataNames( rSubjectID, l_SubjectDataNames );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVSubjectDataNameDeque::iterator l_Iter;
 		
@@ -1150,7 +1127,7 @@ HRESULT SVObjectManagerClass::DetachObservers( const SVGUID& rSubjectID )
 		{
 			HRESULT l_Temp = DetachObservers( *l_Iter, rSubjectID ) ;
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -1166,155 +1143,21 @@ HRESULT SVObjectManagerClass::DisconnectObjects( const SVGUID& rObjectID, const 
 
 	SVObjectClass* l_pObject = GetObject( rObjectID );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		l_Status = l_pObject->RemoveObjectConnection( rRemoteID );
 	}
 
 	l_pObject = GetObject( rRemoteID );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		HRESULT l_Temp = l_pObject->RemoveObjectConnection( rObjectID );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
-	}
-
-	return l_Status;
-}
-
-SVIPDoc* SVObjectManagerClass::GetIPDoc( const SVGUID& rIPGuid ) const
-{
-	SVIPDoc* l_pIPDoc( NULL );
-
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-	BOOL l_Status = true;
-
-	if( m_State == ReadWrite )
-	{
-		l_Status = l_AutoLock.Assign( &m_Lock );
-	}
-
-	if( l_Status )
-	{
-		SVIPDocMap::const_iterator l_Iter( m_IPDocs.find( rIPGuid ) );
-
-		if( l_Iter != m_IPDocs.end() )
-		{
-			l_pIPDoc = l_Iter->second;
-		}
-	}
-
-	return l_pIPDoc;
-}
-
-HRESULT SVObjectManagerClass::RegisterIPDoc( const SVGUID& rIPGuid, SVIPDoc* p_pIPDoc )
-{
-	HRESULT l_Status( S_OK );
-
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-	if( m_State == ReadWrite && l_AutoLock.Assign( &m_Lock ) )
-	{
-		SVIPDocMap::iterator l_Iter( m_IPDocs.find( rIPGuid ) );
-
-		if( l_Iter == m_IPDocs.end() )
-		{
-			m_IPDocs[ rIPGuid ] = p_pIPDoc;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVObjectManagerClass::UnregisterIPDoc( const SVGUID& rIPGuid )
-{
-	HRESULT l_Status( S_OK );
-
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-	if( m_State == ReadWrite && l_AutoLock.Assign( &m_Lock ) )
-	{
-		m_IPDocs.erase( rIPGuid );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-SVIODoc* SVObjectManagerClass::GetIODoc( const SVGUID& rIOGuid ) const
-{
-	SVIODoc* l_pIODoc( NULL );
-
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-	BOOL l_Status = true;
-
-	if( m_State == ReadWrite )
-	{
-		l_Status = l_AutoLock.Assign( &m_Lock );
-	}
-
-	if( l_Status )
-	{
-		SVIODocMap::const_iterator l_Iter( m_IODocs.find( rIOGuid ) );
-
-		if( l_Iter != m_IODocs.end() )
-		{
-			l_pIODoc = l_Iter->second;
-		}
-	}
-
-	return l_pIODoc;
-}
-
-HRESULT SVObjectManagerClass::RegisterIODoc( const SVGUID& rIOGuid, SVIODoc* p_pIODoc )
-{
-	HRESULT l_Status( S_OK );
-
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-	if( m_State == ReadWrite && l_AutoLock.Assign( &m_Lock ) )
-	{
-		SVIODocMap::iterator l_Iter( m_IODocs.find( rIOGuid ) );
-
-		if( l_Iter == m_IODocs.end() )
-		{
-			m_IODocs[ rIOGuid ] = p_pIODoc;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVObjectManagerClass::UnregisterIODoc( const SVGUID& rIOGuid )
-{
-	HRESULT l_Status( S_OK );
-
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-	if( m_State == ReadWrite && l_AutoLock.Assign( &m_Lock ) )
-	{
-		m_IODocs.erase( rIOGuid );
-	}
-	else
-	{
-		l_Status = E_FAIL;
 	}
 
 	return l_Status;
@@ -1462,9 +1305,9 @@ HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferen
 
 			while( Iter != m_UniqueObjectEntries.end() )
 			{
-				pUniqueObjectEntry = Iter->second ;
+				pUniqueObjectEntry = Iter->second;
 
-				if( !pUniqueObjectEntry.empty() &&  NULL != pUniqueObjectEntry->PObject )
+				if( !pUniqueObjectEntry.empty() && nullptr != pUniqueObjectEntry->PObject )
 				{
 					if( (pUniqueObjectEntry->PObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 					{
@@ -1631,51 +1474,8 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 
 				if( !( pUniqueObjectEntry.empty() ) )
 				{
-					if( pUniqueObjectEntry->PObject == NULL ||
+					if( nullptr == pUniqueObjectEntry->PObject ||
 						pUniqueObjectEntry->PObject->GetName() != sName )
-					{
-						pUniqueObjectEntry.clear();
-					}
-				}
-
-				if( pUniqueObjectEntry.empty() )
-				{
-					++l_Iter;
-				}
-			}
-		}
-	}
-
-	return pUniqueObjectEntry;
-}
-
-SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntryCompleteObjectName( const CString& sName ) const
-{
-	SVUniqueObjectEntryStructPtr pUniqueObjectEntry;
-
-	if( !sName.IsEmpty() )
-	{
-		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-		BOOL l_Status = true;
-
-		if( m_State == ReadWrite )
-		{
-			l_Status = l_AutoLock.Assign( &m_Lock );
-		}
-
-		if( l_Status )
-		{
-			SVUniqueObjectEntryMap::const_iterator l_Iter( m_UniqueObjectEntries.begin() );
-
-			while( pUniqueObjectEntry.empty() && l_Iter != m_UniqueObjectEntries.end() )
-			{
-				pUniqueObjectEntry = l_Iter->second ;
-
-				if( !( pUniqueObjectEntry.empty() ) )
-				{
-					if( pUniqueObjectEntry->PObject == NULL ||
-						pUniqueObjectEntry->PObject->GetCompleteObjectName() != sName )
 					{
 						pUniqueObjectEntry.clear();
 					}
@@ -1937,14 +1737,14 @@ SvOi::IObjectClass* SvOi::FindObject(const SVGUID& rParentID, const SVObjectType
 
 SvOi::IValueObject* SvOi::FindValueObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
 {
-	SVObjectClass* pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&rInfo)));
+	SVObjectClass* pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&rInfo)));
 	
 	return dynamic_cast<SvOi::IValueObject *>(pObject);
 }
 
 SvOi::ISVImage* SvOi::FindImageObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
 {
-	SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&rInfo)));
+	SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&rInfo)));
 	
 	return dynamic_cast<SvOi::ISVImage *>(pObject);
 }

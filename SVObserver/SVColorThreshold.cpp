@@ -47,8 +47,8 @@ void SVColorThresholdClass::init()
 	graphFigures[2].SetDrawPen( TRUE, PS_SOLID, 1, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
 
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVOperatorObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVColorThresholdObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVColorThresholdObjectType;
 
 	// Register Embedded Object(s)
 
@@ -171,7 +171,7 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 		  svData.Length = histValueArraySize;
 		  svData.Type = SVDataBufferInfoClass::SVHistResult;
 		  svData.HBuffer.milResult = histResultID;
-		  if ( SVImageProcessingClass::Instance().CreateDataBuffer( &svData ) == S_OK )
+		  if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData )  )
 		  {
 			  histResultID = svData.HBuffer.milResult;
 		  }
@@ -188,9 +188,9 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 				  // Create 4 Output Images and 3 Histogram Images
 				  bOk = createImages();
 				  
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band0HistogramImage), NULL );
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band1HistogramImage), NULL );
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band2HistogramImage), NULL );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band0HistogramImage), 0 );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band1HistogramImage), 0 );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band2HistogramImage), 0 );
 			  }
 			  catch(...)
 			  {
@@ -226,7 +226,7 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 	extentWidth.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	extentHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -255,7 +255,7 @@ BOOL SVColorThresholdClass::createOutputImage( SVImageClass* p_pInputImage, SVIm
 	SVGUID l_InputID;
 	SVImageInfoClass ImageInfo;
 
-	if( p_pInputImage != NULL )
+	if( nullptr != p_pInputImage )
 	{
 		l_InputID = p_pInputImage->GetUniqueObjectID();
 		ImageInfo = p_pInputImage->GetImageInfo();
@@ -272,7 +272,7 @@ BOOL SVColorThresholdClass::createOutputImage( SVImageClass* p_pInputImage, SVIm
 	ImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
 	ImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 
-	l_bOk = ( p_rOutputImage.UpdateImage( l_InputID, ImageInfo ) == S_OK );
+	l_bOk = ( S_OK == p_rOutputImage.UpdateImage( l_InputID, ImageInfo ) );
 
 	return l_bOk;
 }
@@ -284,7 +284,7 @@ BOOL SVColorThresholdClass::createHistogramImage( SVImageClass* p_pInputImage, S
 	SVGUID l_InputID;
 	SVImageInfoClass ImageInfo;
 
-	if( p_pInputImage != NULL )
+	if( nullptr != p_pInputImage )
 	{
 		l_InputID = p_pInputImage->GetUniqueObjectID();
 		ImageInfo = p_pInputImage->GetImageInfo();
@@ -318,7 +318,7 @@ BOOL SVColorThresholdClass::createHistogramImage( SVImageClass* p_pInputImage, S
 	ImageInfo.SetTranslation( SVExtentTranslationNone );
 
 	// Try to create image object...
-  l_bOk = ( p_rOutputImage.UpdateImage( l_InputID, ImageInfo ) == S_OK );
+  l_bOk = ( S_OK == p_rOutputImage.UpdateImage( l_InputID, ImageInfo ) );
 
 	return l_bOk;
 }
@@ -367,7 +367,7 @@ SVImageClass* SVColorThresholdClass::GetBand0InputImage()
 	if( inputBand0Image.IsConnected() && inputBand0Image.GetInputObjectInfo().PObject )
 		return ( SVImageClass * )inputBand0Image.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVImageClass* SVColorThresholdClass::GetBand1InputImage()
@@ -375,7 +375,7 @@ SVImageClass* SVColorThresholdClass::GetBand1InputImage()
 	if( inputBand1Image.IsConnected() && inputBand1Image.GetInputObjectInfo().PObject )
 		return ( SVImageClass * )inputBand1Image.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVImageClass* SVColorThresholdClass::GetBand2InputImage()
@@ -383,7 +383,7 @@ SVImageClass* SVColorThresholdClass::GetBand2InputImage()
 	if( inputBand2Image.IsConnected() && inputBand2Image.GetInputObjectInfo().PObject )
 		return ( SVImageClass * )inputBand2Image.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVImageClass* SVColorThresholdClass::GetBand0HistogramImage()
@@ -399,23 +399,6 @@ SVImageClass* SVColorThresholdClass::GetBand1HistogramImage()
 SVImageClass* SVColorThresholdClass::GetBand2HistogramImage()
 {
 	return &band2HistogramImage;
-}
-
-void SVColorThresholdClass::GetTrainColorROIExtent( CRect &p_roRect )
-{
-	double value;
-
-	extentLeft.GetValue( value );
-	p_roRect.left = (long)(value);
-
-	extentTop.GetValue( value );
-	p_roRect.top = (long)(value);
-
-	extentWidth.GetValue( value );
-	p_roRect.right = (long)(value) + p_roRect.left;
-
-	extentHeight.GetValue( value );
-	p_roRect.bottom = (long)(value) + p_roRect.top;
 }
 
 SVImageClass* SVColorThresholdClass::GetBand0OutputImage()
@@ -566,7 +549,7 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 				band1HistogramImage.SetImageHandleIndex( RRunStatus.Images );
 				band2HistogramImage.SetImageHandleIndex( RRunStatus.Images );
 
-				if( GetBand0InputImage() != NULL && 
+				if( nullptr != GetBand0InputImage() && 
 					  GetBand0InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
 				    band0HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
 				{
@@ -582,7 +565,7 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 					}
 				}
 
-				if( GetBand1InputImage() != NULL && 
+				if( nullptr != GetBand1InputImage() && 
 					  GetBand1InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
 				    band1HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
 				{
@@ -598,7 +581,7 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 					}
 				}
 
-				if( GetBand2InputImage() != NULL && 
+				if( nullptr != GetBand2InputImage() && 
 					  GetBand2InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
 				    band2HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
 				{
@@ -811,7 +794,7 @@ SVDrawObjectClass* SVColorThresholdClass::GetGraphFigure( int bandNumber )
 	if( bandNumber >= 0 && bandNumber < 3 )
 		return &graphFigures[bandNumber];
 
-	return NULL;
+	return nullptr;
 }
 
 SVDrawObjectListClass* SVColorThresholdClass::GetThresholdBarsFigure( int bandNumber )
@@ -819,5 +802,5 @@ SVDrawObjectListClass* SVColorThresholdClass::GetThresholdBarsFigure( int bandNu
 	if( bandNumber >= 0 && bandNumber < 3 )
 		return &thresholdBarFigures[bandNumber];
 
-	return NULL;
+	return nullptr;
 }

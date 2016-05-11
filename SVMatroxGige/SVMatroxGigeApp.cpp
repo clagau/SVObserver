@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:38:56  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeApp.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,6 +66,10 @@ CSVMatroxGigeApp::CSVMatroxGigeApp()
 	// Place all significant initialization in InitInstance
 }
 
+CSVMatroxGigeApp::~CSVMatroxGigeApp()
+{
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CSVMatroxGigeApp object
 
@@ -73,12 +79,12 @@ BOOL CSVMatroxGigeApp::InitInstance()
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	if ( m_svSystem.Open() == S_OK )
+	if ( S_OK == m_svSystem.Open() )
 	{
 		return CWinApp::InitInstance();
 	}
 
-	return FALSE;
+	return false;
 }
 
 int CSVMatroxGigeApp::ExitInstance() 

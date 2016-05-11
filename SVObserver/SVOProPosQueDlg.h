@@ -9,17 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:12:06  $
 //******************************************************************************
 
-#if !defined(AFX_SVOPROPOSQUEDLG_H__61831F6D_FABE_4950_AA04_A038B3E07128__INCLUDED_)
-#define AFX_SVOPROPOSQUEDLG_H__61831F6D_FABE_4950_AA04_A038B3E07128__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVOProPosQueDlg.h : header file
-//
-/////////////////////////////////////////////////////////////////////////////
-// CSVOProPosQueDlg dialog
-
 
 class CSVOConfigAssistantDlg;
 
@@ -92,6 +82,4 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVOPROPOSQUEDLG_H__61831F6D_FABE_4950_AA04_A038B3E07128__INCLUDED_)
 

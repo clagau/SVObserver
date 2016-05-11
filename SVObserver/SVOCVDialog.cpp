@@ -8,7 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:58:54  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCVDialog.h"
 #include "SVIPDoc.h"
@@ -16,6 +16,7 @@
 #include "SVUnaryImageOperatorList.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,14 +24,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVOCVDialogClass::SVOCVDialogClass(CWnd* pParent /*=NULL*/)
-	: CPropertySheet(IDS_OCV_PARAMETERS, pParent)
+SVOCVDialogClass::SVOCVDialogClass(SVIPDoc* pDoc, SVOCVAnalyzeResultClass* pResult, CWnd* pParent /*=nullptr*/)
+: CPropertySheet(IDS_OCV_PARAMETERS, pParent)
+, m_pDocument(pDoc)
+, m_pOCVAnalyzerResult(pResult)
 {
-
-    pOCVAnalyzerResult  = NULL;
-	pTool				= NULL;
-	pDocument			= NULL;
-
 	AddPageDialogs ();
 	//{{AFX_DATA_INIT(SVOCVDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
@@ -43,13 +41,17 @@ SVOCVDialogClass::~SVOCVDialogClass()
 	RemovePage (&m_MatchStringParamsDlg);
 }
 
+SVOCVAnalyzeResultClass* SVOCVDialogClass::GetAnalyzerResult() const
+{
+	return m_pOCVAnalyzerResult;
+}
+
 void SVOCVDialogClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertySheet::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVOCVDialogClass)
 	//}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(SVOCVDialogClass, CPropertySheet)
 	//{{AFX_MSG_MAP(SVOCVDialogClass)
@@ -66,12 +68,8 @@ BOOL SVOCVDialogClass::OnInitDialog()
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
 
-	ASSERT(pOCVAnalyzerResult);
+	ASSERT(m_pOCVAnalyzerResult);
 
-	if( pTool && pDocument && pOCVAnalyzerResult )
-	{
-	}
-	
 	return bResult;
 }
 
@@ -83,24 +81,18 @@ void SVOCVDialogClass::AddPageDialogs ()
 	AddPage (&m_MatchStringParamsDlg);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 void SVOCVDialogClass::OnOK()
 {
 	m_GeneralParamsDlg.UpdateOCVParameters ();
 	m_MatchStringParamsDlg.UpdateOCVParameters ();
-
-    pDocument->SetModifiedFlag(TRUE);       // Set document 'changed'.
+	if (m_pDocument)
+	{
+		m_pDocument->SetModifiedFlag(TRUE);       // Set document 'changed'.
+	}
 
 	CPropertySheet::EndDialog(IDOK);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 void SVOCVDialogClass::OnCancel()
 {
 	CPropertySheet::EndDialog(IDCANCEL);

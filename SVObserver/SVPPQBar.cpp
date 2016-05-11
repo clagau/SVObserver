@@ -60,7 +60,7 @@ END_MESSAGE_MAP()
 
 BOOL SVPPQBarClass::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID ) 
 {
-	ASSERT(pParentWnd != NULL);
+	ASSERT(nullptr != pParentWnd);
 	ASSERT_KINDOF(CFrameWnd, pParentWnd);
 
 	windowTitle = _T( "PPQ Bar" );
@@ -89,7 +89,7 @@ int SVPPQBarClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pqTabCtrl.AdjustRect( FALSE, &rect );
 
 	// Create Button Window...
-	PPQWindow.CreateEx( WS_EX_STATICEDGE, NULL, _T( "PPQ Entry Settings" ), WS_CHILD | WS_BORDER | WS_GROUP | WS_VISIBLE | WS_HSCROLL, rect, this, 0 );
+	PPQWindow.CreateEx( WS_EX_STATICEDGE, nullptr, _T( "PPQ Entry Settings" ), WS_CHILD | WS_BORDER | WS_GROUP | WS_VISIBLE | WS_HSCROLL, rect, this, 0 );
 
 	return 0;
 }
@@ -295,17 +295,14 @@ LRESULT SVPPQBarClass::OnSizeParent( WPARAM, LPARAM lParam )
 		rect.bottom = rect.top + size.cy;
 
 		// only resize the window if doing layout and not just rect query
-		if( lpLayout->hDWP != NULL )
+		if( nullptr != lpLayout->hDWP )
+		{
 			AfxRepositionWindow( lpLayout, m_hWnd, &rect );
+		}
 	}
 	return 0;
 }
 
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVPPQWindowClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 
 SVPPQWindowClass::SVPPQWindowClass()
 {
@@ -383,7 +380,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 			else
 			{
 				CRect rectX( rect.left, rect.top, rect.left + 2000, rect.bottom );
-				pButton->Create( NULL, dwStyle | WS_DISABLED, rectX, this, i + 50 );
+				pButton->Create( nullptr, dwStyle | WS_DISABLED, rectX, this, i + 50 );
 			}
 			
 			rect.left += dimension;
@@ -464,13 +461,13 @@ int SVPPQWindowClass::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if( CWnd::OnCreate( lpCreateStruct ) == -1 )
 		return -1;
 
-	return 0; //( BuildButtons() ? 0 : -1 );
+	return 0;
 }
 
 BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo ) 
 {
 	// Click on PPQEntry button 
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) == S_OK ) // CheckCurrentUserAccess( ID_ADJUST_PPQ_ENTRY )  && nCode == BN_CLICKED )
+	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) )
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{

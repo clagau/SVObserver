@@ -30,7 +30,8 @@ public:
 	//! \param pTool [in]
 	//! \returns HRESULT S_OK if successfully
 	//************************************
-	static ToolSizeAdjustTask*  AddToFriendlist(SVToolClass *pTool, bool AllowFullsize = true, bool AllowAdjustSize = true, bool AllowAdjustPosition = true);
+	static ToolSizeAdjustTask* AddToFriendlist(SVToolClass *pTool, bool AllowFullsize = true, bool AllowAdjustSize = true, bool AllowAdjustPosition = true);
+
 	//************************************
 	//! Insert a a ToolSizeAdjustTask object to the friendlist of pTool if it is not there
 	//! Correct  the extend Property of pTool 
@@ -39,18 +40,12 @@ public:
 	//************************************
 	static HRESULT EnsureInFriendList(SVToolClass *pTool, bool AllowFullsize = true, bool AllowAdjustSize = true, bool AllowAdjustPosition = true);
 	
-	
-	
-
-
 	//************************************
 	//! Search and return the first ToolSizeAdjustTask”bject in friendlist of pObject
 	//! \param pObject [in]
 	//! \returns ToolSizeAdjustTask*
 	//************************************
 	static ToolSizeAdjustTask* GetToolSizeAdjustTask(SVObjectClass *pObject);
-	
-	
 	
 	//************************************
 	//! returns True if pObject has a ToolSizeAdjustTaskObject in the friendlist, which formula or AutoSize  
@@ -59,13 +54,11 @@ public:
 	//************************************
 	static BOOL UseSizeAdjust( SVObjectClass *pObject);
 
-
 	//************************************
 	//! returns True if a formula or Autosize is used 
 	//! \returns BOOL
 	//************************************
 	BOOL UseAutoMode() const;
-	
 	
 	//************************************
 	//! Non routing version  
@@ -79,8 +72,6 @@ public:
 	//! \returns HRESULT
 	//************************************
 	virtual HRESULT ResetObject() override;
-
-	
 
 	//************************************
 	//! DoNothing in onRun
@@ -97,8 +88,6 @@ public:
 	//************************************
 	HRESULT GetResultValue( TSValues val, long &value) const;
 	
-	
-	
 	//************************************
 	//! Get the extend Values of the tool
 	//! \param val [in] TSPositionX etc,
@@ -106,7 +95,6 @@ public:
 	//! \returns HRESULT
 	//************************************
 	HRESULT GetExtentValues( TSValues val, long &value) const;
-
 	
 	//************************************
 	//! Get Width and height of the parent 
@@ -129,13 +117,11 @@ public:
 	//************************************
 	HRESULT SetExtendPropertyAutoReset();
 
-
 	//************************************
 	//! return white color
 	//! \returns DWORD
 	//************************************
 	virtual DWORD GetObjectColor() const override; 
-
 
 	//************************************
 	//! Called by ProcessMessagefunction in SVToolclass before ResetObject 
@@ -145,10 +131,15 @@ public:
 	//! \param DwMessageContext [in]
 	//! \returns DWORD_PTR
 	//************************************
-	DWORD_PTR	ProcessResetAllObject( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ); 
+	DWORD_PTR ProcessResetAllObject( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ); 
+
+	bool IsFullSizeAllowed() const;
+	bool IsAdjustSizeAllowed() const;
+	bool IsAdjustPositionAllowed() const;
+
+	SVEnumerateValueObjectClass* GetInputMode(TSValues mode);
 
 protected:
-	
 	//************************************
 	//! Result data Index of inspection
 	//! \returns int
@@ -171,8 +162,7 @@ protected:
 	//************************************
 	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 	
-	
-	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
 	//************************************
 	//! retrieves the inputmodes. Check for consistency 
 	//! \param rModeWidth [out]
@@ -181,32 +171,26 @@ protected:
 	//! \param rModePosY [out]
 	//! \returns S_OK or errornumber 
 	//************************************
-	
-	HRESULT GetModes(long &rModeWidth,long &rModeHeight,long &rModePosX, long &rModePosY  );
+	HRESULT GetModes(long &rModeWidth, long &rModeHeight, long &rModePosX, long &rModePosY);
+
 	//************************************
 	//! Get the Owner. The Owner is the tool which we want to resize  
 	//! \returns SVToolClass*
 	//************************************
-	SVToolClass*  GetTool() const; 
+	SVToolClass* GetTool() const; 
 	
 public:
 	const static long MaxToolSize; //< Maximum allowed WindowSize 
 	const static long MinToolSize; //< Maximum allowed WindowSize 
 
 protected:
-
-	SVEnumerateValueObjectClass  m_InputModes[TSValuesCount]; //< the four input modes None=0,Full Size,Formula
+	SVEnumerateValueObjectClass m_InputModes[TSValuesCount]; //< the four input modes None=0,Full Size,Formula
 	SVInObjectInfoStruct m_InObjectInfoDResult[TSValuesCount]; //<The four inputs from the Equations 
 	
 	bool m_AllowFullSize;
 	bool m_AllowAdjustSize;
 	bool m_AllowAdjustPosition;
-
 	
 	HRESULT m_Status; //< the status of last ResetObject()
-	
-	
-	friend class SVToolAdjustmentDialogSizePage;
-
 };
  

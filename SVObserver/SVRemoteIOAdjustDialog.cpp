@@ -17,7 +17,7 @@ IMPLEMENT_DYNAMIC(SVRemoteIOAdjustDialog, CDialog)
 BEGIN_MESSAGE_MAP(SVRemoteIOAdjustDialog, CDialog)
 END_MESSAGE_MAP()
 
-SVRemoteIOAdjustDialog::SVRemoteIOAdjustDialog(CWnd* pParent /*=NULL*/)
+SVRemoteIOAdjustDialog::SVRemoteIOAdjustDialog(CWnd* pParent /*=nullptr*/)
 : CDialog(SVRemoteIOAdjustDialog::IDD, pParent)
 , m_Name()
 , m_Value()
@@ -33,7 +33,7 @@ void SVRemoteIOAdjustDialog::SetIOName( LPCTSTR p_szName )
 {
 	m_Name = p_szName;
 
-	if( m_IOName.GetSafeHwnd() != NULL )
+	if( nullptr != m_IOName.GetSafeHwnd() )
 	{
 		m_IOName.SetWindowText( p_szName );
 	}
@@ -45,7 +45,7 @@ void SVRemoteIOAdjustDialog::SetIOValue( const _variant_t& p_rValue )
 
 	m_Value.ChangeType( VT_R8 );
 
-	if( m_ValueEditControl.GetSafeHwnd() != NULL )
+	if( nullptr != m_ValueEditControl.GetSafeHwnd() )
 	{
 		_bstr_t l_Value = m_Value;
 
@@ -57,7 +57,7 @@ void SVRemoteIOAdjustDialog::GetIOValue( _variant_t& p_rValue ) const
 {
 	p_rValue.Clear();
 
-	if( m_ValueEditControl.GetSafeHwnd() != NULL )
+	if( nullptr != m_ValueEditControl.GetSafeHwnd() )
 	{
 		CString l_Value;
 

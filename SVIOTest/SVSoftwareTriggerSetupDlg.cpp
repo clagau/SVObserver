@@ -17,7 +17,7 @@
 
 IMPLEMENT_DYNAMIC(SVSoftwareTriggerSetupDlg, CDialog)
 
-SVSoftwareTriggerSetupDlg::SVSoftwareTriggerSetupDlg(CWnd* pParent /*=NULL*/)
+SVSoftwareTriggerSetupDlg::SVSoftwareTriggerSetupDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSoftwareTriggerSetupDlg::IDD, pParent)
 	, m_period1(0)
 	, m_period2(0)

@@ -9,15 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:35:28  $
 // ******************************************************************************
 
-#if !defined(AFX_SVOIPFRAMEWNDCLASS_H__CDF9EB40_A939_4B1A_AF5C_D45CE408BB2A__INCLUDED_)
-#define AFX_SVOIPFRAMEWNDCLASS_H__CDF9EB40_A939_4B1A_AF5C_D45CE408BB2A__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-// SVOIPFrameWndClass frame
 
 class SVOIPFrameWndClass : public CFrameWnd
 {
@@ -50,6 +42,3 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVOIOFRAMEWNDCLASS_H__CDF9EB40_A939_4B1A_AF5C_D45CE408BB2A__INCLUDED_)
-

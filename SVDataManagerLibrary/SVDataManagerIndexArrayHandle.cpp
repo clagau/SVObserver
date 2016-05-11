@@ -15,7 +15,7 @@
 #include "SVDataManagerHandle.h"
 
 SVDataManagerIndexArrayHandle::SVDataManagerIndexArrayHandle()
-: m_pDataManager( NULL ),
+: m_pDataManager( nullptr ),
 	m_ArrayHandle( -1 )
 {
 }
@@ -28,7 +28,7 @@ SVDataManagerIndexArrayHandle::SVDataManagerIndexArrayHandle( SVDataManager& p_r
 
 SVDataManagerIndexArrayHandle::~SVDataManagerIndexArrayHandle()
 {
-	if( m_pDataManager != NULL && 0 <= m_ArrayHandle )
+	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
 		m_pDataManager->ReleaseAllIndexes( m_ArrayHandle );
 		m_pDataManager->DestroyIndexArray( m_ArrayHandle );
@@ -41,7 +41,7 @@ long SVDataManagerIndexArrayHandle::GetNbrOfAvailableIndexes() const
 {
 	long l_Size = 0;
 
-	if( m_pDataManager != NULL && 0 <= m_ArrayHandle )
+	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
 		m_pDataManager->GetNbrOfAvailableIndexes( m_ArrayHandle, &l_Size );
 	}
@@ -53,7 +53,7 @@ long SVDataManagerIndexArrayHandle::GetLockCountByType( SVDataManagerLockTypeEnu
 {
 	long l_Count = 0;
 
-	if( m_pDataManager != NULL && 0 <= m_ArrayHandle )
+	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
 		l_Count = m_pDataManager->GetLockCountByType( m_ArrayHandle, p_LockType );
 	}
@@ -63,7 +63,7 @@ long SVDataManagerIndexArrayHandle::GetLockCountByType( SVDataManagerLockTypeEnu
 
 void SVDataManagerIndexArrayHandle::Dump( LPCSTR p_szSource ) const
 {
-	if( m_pDataManager != NULL && 0 <= m_ArrayHandle )
+	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
 		m_pDataManager->Dump( m_ArrayHandle, p_szSource );
 	}
@@ -73,7 +73,7 @@ HRESULT SVDataManagerIndexArrayHandle::LockBufferIndex( long p_Index, long p_Tra
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDataManager != NULL && 0 <= m_ArrayHandle )
+	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
 		l_Status = m_pDataManager->LockBufferIndexNoLock( m_ArrayHandle, p_Index, p_TransactionId, p_LockType );
 	}
@@ -89,7 +89,7 @@ HRESULT SVDataManagerIndexArrayHandle::ReleaseBufferIndex( const SVDataManagerHa
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDataManager != NULL && 0 <= m_ArrayHandle )
+	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
 		l_Status = m_pDataManager->ReleaseBufferIndexNoLock( m_ArrayHandle, p_rHandle.m_Index, p_rHandle.m_TransactionId, p_rHandle.m_LockType );
 	}
@@ -105,7 +105,7 @@ HRESULT SVDataManagerIndexArrayHandle::ValidateBufferIndex( const SVDataManagerH
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_pDataManager != NULL && 0 <= m_ArrayHandle )
+	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
 		l_Status = m_pDataManager->ValidateBufferIndexNoLock( m_ArrayHandle, p_rHandle.m_Index, p_rHandle.m_TransactionId );
 	}
@@ -121,7 +121,7 @@ long SVDataManagerIndexArrayHandle::GetIndexLockCountByType( const SVDataManager
 {
 	long l_Count = 0;
 
-	if( m_pDataManager != NULL && 0 <= m_ArrayHandle )
+	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
 		l_Count = m_pDataManager->GetIndexLockCountByType( m_ArrayHandle, p_rHandle.m_Index, p_rHandle.m_LockType );
 	}

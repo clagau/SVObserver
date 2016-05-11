@@ -31,17 +31,17 @@ void SVShiftToolUtility::SetToolNormalize(SVShiftTool* pShiftTool)
 
 	HRESULT l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, l_TranslationX );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceYObjectGuid, l_TranslationY );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Interface.AddInputRequestMarker();
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Interface.RunOnce();
 	}
@@ -84,27 +84,27 @@ void SVShiftToolUtility::SetToolSetReference(SVShiftTool *pShiftTool)
 
 	HRESULT l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVExtentRelativeLeftPositionObjectGuid, l_Left );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVExtentRelativeTopPositionObjectGuid, l_Top );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, l_TranslationX );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceYObjectGuid, l_TranslationY );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Interface.AddInputRequestMarker();
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = l_Interface.RunOnce();
 	}

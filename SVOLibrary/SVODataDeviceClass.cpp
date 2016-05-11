@@ -75,19 +75,19 @@ HRESULT SVODataDeviceClass::Create( unsigned long ulSize )
 		hrOk = Destroy();
 	}
 
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		mUsedQueue.Create();
 		m_CallbackList.Create();
 
-		if( mUsedQueue.IsCreated() && m_CallbackList.IsCreated() && hrOk == S_OK )
+		if( mUsedQueue.IsCreated() && m_CallbackList.IsCreated() && S_OK == hrOk )
 		{
 			mbIsValid = TRUE;
 			mbIsCreated = TRUE;
 		}
 		else
 		{
-			if (hrOk == S_OK)
+			if (S_OK == hrOk )
 			{
 				hrOk = -4353;
 			}
@@ -320,7 +320,7 @@ HRESULT SVODataDeviceClass::Start()
 	{
 		hrOk = m_Thread.Create( &SVODataDeviceClass::APCProc, SVProcessFunctorImpl( this ), mDeviceName.c_str(), SVAffinityAcq  );
 
-		if( hrOk == S_OK )
+		if( S_OK == hrOk )
 		{
 			m_Thread.SetPriority( THREAD_PRIORITY_ABOVE_NORMAL );
 
@@ -328,7 +328,7 @@ HRESULT SVODataDeviceClass::Start()
 			{
 				hrOk = Reset();
 
-				if ( hrOk == S_OK )
+				if ( S_OK == hrOk )
 				{
 					mbIsStarted = TRUE;
 				}
@@ -406,12 +406,12 @@ HRESULT SVODataDeviceClass::Process( bool& p_WaitForEvents )
 
 		bDone = lRes < 1;
 		
-		while( ! bDone && hrOk == S_OK )
+		while( ! bDone && S_OK == hrOk )
 		{
 			SVODataResponseClass l_Response;
 
 			hrOk = ProcessResponse( mUsedQueue, l_Response );
-			if ( hrOk == S_OK )
+			if ( S_OK == hrOk )
 			{
 				hrOk = ExecuteCallback( m_CallbackList, l_Response );
 			}
@@ -443,7 +443,7 @@ HRESULT SVODataDeviceClass::Notify( SVODataResponseClass& p_rResponse )
 	if ( mbIsStarted )
 	{
 		hrOk = AddUsedResponse( mUsedQueue, p_rResponse );
-		if ( hrOk == S_OK )
+		if ( S_OK == hrOk )
 		{
 			hrOk = m_Thread.Signal( this );
 		}
@@ -551,9 +551,7 @@ HRESULT SVODataDeviceClass::ExecuteCallback( SVCallbackClassPtrQueue &rCallbackL
 			m_CallbackList.GetAt( l, &pData );
 			if ( !( pData.empty() ) )
 			{
-				if ( (pData->mpCallback)( pData->mpvOwner,
-																	pData->mpvCaller,
-																	&p_rResponse ) != S_OK )
+				if ( S_OK != (pData->mpCallback)( pData->mpvOwner, pData->mpvCaller, &p_rResponse ) )
 				{
 					hrOk = -4386;;
 				}

@@ -58,16 +58,14 @@ class SVResultListClass;
 #pragma endregion Declarations
 
 class SVInspectionProcess : 
-	virtual public SvOi::IInspectionProcess,
-	virtual public SVObjectClass,
+	public SVObjectClass,
 	public SVObjectSubmitCommandFacade,
 	public SVObserverTemplate< SVAddTool >,
 	public SVObserverTemplate< SVDeleteTool >,
-	public SVObserverTemplate< SVRenameObject >
+	public SVObserverTemplate< SVRenameObject >,
+	public SvOi::IInspectionProcess
 {
-	friend class SVCommandInspectionExtentUpdater;
-	friend class SVConditionalHistory;
-
+	friend class SVCommandInspectionExtentUpdater; // For access to RunOnce()
 	SV_DECLARE_CLASS( SVInspectionProcess );
 
 public:
@@ -75,14 +73,13 @@ public:
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
 	typedef SVVector< SVPPQObject* > SVPPQObjectPtrVector;
 	//************************************
-	//! FunctionPointer as Argument for LooopOverTool
+	//! FunctionPointer as Argument for LoopOverTool
 	//! negative return values indicate an error 
 	//************************************
 	typedef int  (*pToolFunc) (SVObjectClass *pObject );
 
-
 	SVInspectionProcess( LPCSTR ObjectName );
-	SVInspectionProcess( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
+	SVInspectionProcess( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
 	virtual ~SVInspectionProcess();
 
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
@@ -249,21 +246,15 @@ public:
 	//************************************
 	bool IsEnabledPPQVariable(SVValueObjectClass* pValueObject);
 	
-	
 	//************************************
 	//! Check if the pValueObject is an inactive ppqVarable for the used inspection.
 	//! \param pValueObject [in]
 	//! \returns 
 	//************************************
 	bool IsDisabledPPQVariable(SVValueObjectClass* pValueObject);
-
-	
 	
 	virtual DWORD GetObjectColor() const;
 
-	
-	
-	
 	//************************************
 	//! calls pf for all object in Inspection 
 	//! \param pf [in] function pointer 
@@ -272,13 +263,11 @@ public:
 	//************************************
 	bool   LoopOverTools(pToolFunc pf, int& counter ); 
 	
-	
 	SVIOEntryStructVector m_PPQInputs;
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
 
 	CStringArray m_arViewedInputNames;
-
 	 
 protected:
 	typedef std::map< SVString, SVGUID > SVFilterElementMap;
@@ -508,7 +497,7 @@ namespace SVDetail
 	inline T str2int(const String & str)
 	{
 		int base = (str[0] == '0' && toupper(str[1]) == 'X')?16:10;
-		return static_cast<T>(_tcstol(str.c_str(), NULL, base));
+		return static_cast<T>(_tcstol(str.c_str(), nullptr, base));
 	}
 
 	template<typename T>

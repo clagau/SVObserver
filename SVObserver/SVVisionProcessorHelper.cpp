@@ -309,7 +309,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 				pInfoItem = l_OutputList.GetAt( i );
 
 				SVObjectReference l_ObjRef;
-				if( NULL != pInfoItem )
+				if( nullptr != pInfoItem )
 				{
 					l_ObjRef = pInfoItem->GetObjectReference();
 				}
@@ -376,9 +376,8 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 		SVString InputName;
 		
 		HRESULT l_LoopStatus = SVObjectNameInfo::ParseObjectName( l_Info, *pInputName );
-
 		
-		if( l_LoopStatus == S_OK )
+		if( S_OK == l_LoopStatus )
 		{
 			if( 0 < l_Info.m_NameArray.size() )
 			{
@@ -398,7 +397,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 			{
 				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 				}
@@ -408,7 +407,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 		{
 			p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 			}
@@ -449,7 +448,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 
 				}
 			}
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_LoopStatus;
 			}
@@ -458,7 +457,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 		{
 			p_rItems[ l_NameIterator->first.c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 			}
@@ -503,7 +502,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 
 		const SVString* pInputName = &( l_Iter->first);
 
-		if( l_LoopStatus == S_OK )
+		if( S_OK == l_LoopStatus )
 		{
 			if( 0 < l_Info.m_NameArray.size() )
 			{
@@ -533,7 +532,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 			{
 				rStatusOfItems[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 				}
@@ -543,7 +542,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 		{
 			rStatusOfItems[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 			}
@@ -577,7 +576,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 				}	
 			
 			}
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_LoopStatus;
 			}
@@ -586,7 +585,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 		{
 			rStatusOfItems[ l_NameIterator->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 			}
@@ -674,7 +673,7 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& p_rNames, 
 	{
 		l_Status = pConfig->GetInspectionItems( p_rNames, p_rItems );
 	}
-	else if( l_Status == S_OK )
+	else if( S_OK == l_Status )
 	{
 		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
@@ -694,7 +693,7 @@ HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& p_rNames,
 	{
 		l_Status = pConfig->GetRemoteInputItems( p_rNames, p_rItems );
 	}
-	else if( l_Status == S_OK )
+	else if( S_OK == l_Status )
 	{
 		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
@@ -715,11 +714,11 @@ HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItem
 		for( SVNameStorageMap::const_iterator Iter = rItems.begin(); Iter != rItems.end(); ++Iter )
 		{
 			HRESULT LoopStatus = S_OK;
-			BasicValueObject* pValueObject = NULL;
+			BasicValueObject* pValueObject = nullptr;
 
 			SVObjectManagerClass::Instance().GetObjectByDottedName( Iter->first, pValueObject );
 
-			if( pValueObject != NULL )
+			if( nullptr != pValueObject )
 			{
 				bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
 
@@ -747,7 +746,7 @@ HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItem
 			}
 
 			rStatus[ Iter->first ] = LoopStatus;
-			if( Status == S_OK && LoopStatus != S_OK )
+			if( S_OK == Status && S_OK != LoopStatus )
 			{
 				Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 			}
@@ -773,7 +772,7 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& p_r
 	{
 		l_Status = pConfig->SetInspectionItems( p_rItems, p_rStatus );
 	}
-	else if( l_Status == S_OK )
+	else if( S_OK == l_Status )
 	{
 		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
@@ -793,7 +792,7 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& p_
 	{
 		l_Status = pConfig->SetRemoteInputItems( p_rItems, p_rStatus );
 	}
-	else if( l_Status == S_OK )
+	else if( S_OK == l_Status )
 	{
 		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
@@ -813,7 +812,7 @@ HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& p_rItem
 	{
 		l_Status = pConfig->SetCameraItems( p_rItems, p_rStatus );
 	}
-	else if( l_Status == S_OK )
+	else if( S_OK == l_Status )
 	{
 		l_Status = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
 	}
@@ -847,7 +846,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 		p_rDataDef.m_Published = (p_rObj.ObjectAttributesSet() & SV_PUBLISHABLE) != 0;
 		const SVValueObjectClass* l_pValueObject = dynamic_cast<const SVValueObjectClass*> (&p_rObj);
 		//If null we assume its an image
-		if( NULL != l_pValueObject)
+		if( nullptr != l_pValueObject)
 		{
 			l_pValueObject->GetTypeName(l_String);
 			p_rDataDef.m_Type = l_String;
@@ -862,7 +861,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 		{
 			// Get the strings from the enumeration value object class.
 			const SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&p_rObj);
-			if( NULL != l_pEnumVO )
+			if( nullptr != l_pEnumVO )
 			{
 				SVEnumerateVector l_EnumVect;
 				SVEnumerateVector::iterator l_EnumIter;
@@ -878,7 +877,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 		{
 			// Get the strings from the enumeration value object class.
 			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&p_rObj);
-			if( NULL != l_pBoolVO)
+			if( nullptr != l_pBoolVO)
 			{
 				SVBoolValueObjectClass::SVValidTypesVector l_StringVect;
 				SVBoolValueObjectClass::SVValidTypesVector::iterator l_StringIter;
@@ -893,10 +892,10 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 		//This should be an image so check for its additional info
 		{
 			const SVImageClass* l_pImage = dynamic_cast<const SVImageClass*> (&p_rObj);
-			if(NULL != l_pImage)
+			if(nullptr != l_pImage)
 			{
 				SVToolClass* l_pTool = l_pImage->GetTool();
-				if( NULL != l_pTool )
+				if( nullptr != l_pTool )
 				{
 					SVStaticStringValueObjectClass* l_pSourceNames = l_pTool->GetInputImageNames();
 					if( l_pSourceNames )
@@ -1178,11 +1177,11 @@ HRESULT SVVisionProcessorHelper::SetLastModifiedTime()
 
 	__time32_t l_LastModifiedTime = m_LastModifiedTime;
 
-	::InterlockedExchange( &m_LastModifiedTime, ::_time32( NULL ) );
+	::InterlockedExchange( &m_LastModifiedTime, ::_time32( nullptr ) );
 
 	if( l_LastModifiedTime != m_LastModifiedTime )
 	{
-		l_Status = m_AsyncProcedure.Signal( NULL );
+		l_Status = m_AsyncProcedure.Signal( nullptr );
 	}
 
 	return l_Status;
@@ -1200,8 +1199,8 @@ HRESULT SVVisionProcessorHelper::FireMessageNotification(SvStl::NotificationEnum
 	m_MessageNotification.SetNotification(type, ErrorNumber, errormessage  );
 	HRESULT status = m_AsyncProcedure.Signal(nullptr);
 	return status;
-
 }
+
 void CALLBACK SVVisionProcessorHelper::APCThreadProcess( DWORD_PTR dwParam )
 {
 }

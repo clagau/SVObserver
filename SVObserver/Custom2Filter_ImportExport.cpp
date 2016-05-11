@@ -77,7 +77,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 	bool Result(false);
 
 	Label.LoadString( IDS_CLASSNAME_CUSTOM2FILTER );
-	if ( SVNavigateTree::GetItemBranch( rTree, Label, NULL, Branch ) )
+	if ( SVNavigateTree::GetItemBranch( rTree, Label, nullptr, Branch ) )
 	{
 		_variant_t Value;
 
@@ -88,7 +88,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 		clippingEnabled = readElement( rTree, Branch, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING );
 
 		Label.LoadString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
-		SVTreeType::SVBranchHandle Elements = NULL;
+		SVTreeType::SVBranchHandle Elements = nullptr;
 		if ( SVNavigateTree::GetItemBranch( rTree, Label, Branch, Elements ) )
 		{
 			SVTreeType::SVLeafHandle Leaf;
@@ -194,7 +194,7 @@ HRESULT SvOi::importCustom2Filter(const SVString &filePath,
 	if(SUCCEEDED(Result))
 	{
 		SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
-		if ( SVNavigateTree::GetItemBranch( Tree, CTAG_ENVIRONMENT, NULL, Branch ) )
+		if ( SVNavigateTree::GetItemBranch( Tree, CTAG_ENVIRONMENT, nullptr, Branch ) )
 		{
 			_variant_t Value;
 			//At this moment in time we just check that the version number tag is in the file but do not worry which version saved the file

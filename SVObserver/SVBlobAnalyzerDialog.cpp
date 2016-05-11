@@ -21,7 +21,7 @@
 #include "SVResult.h"
 #include "SVFillBlobDlg.h"
 #include "SVBlobFeaturePropertiesDlg.h"
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #include "SVSetupDialogManager.h"
 #pragma endregion Includes
 
@@ -189,8 +189,7 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 	//
 	// Position this dialog at saved (or initial) location.
 	//
-	BOOL bResult2 = SetWindowPos(
-	                             NULL,          // Z order not used
+	BOOL bResult2 = SetWindowPos(nullptr,          // Z order not used
 	                             gPtPosition.x,
 	                             gPtPosition.y,
 	                             0,0,           // Width and Height Not Used
@@ -212,37 +211,37 @@ HRESULT SVBlobAnalyzeFeatureDialogClass::SetInspectionData()
 
 		l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->msvPersistantFeaturesEnabled ), m_pCurrentAnalyzer->msvszFeaturesEnabled );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->msvSortAscending ), msvAscending );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->msvbExcludeFailed ), m_bExclude );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_colorBlobEnumValue ), m_colorBlobEnum );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_bvoFillBlobs ), m_chkFillBlob.GetCheck() );
 		}
 
-		if ( l_hrOk == S_OK)
+		if ( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_lvoBlobSampleSize ), m_lMaxNumberBlobs );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( m_pCurrentAnalyzer->GetTool() );
 		}
@@ -264,7 +263,7 @@ void SVBlobAnalyzeFeatureDialogClass::EnableButtons()
 	CWnd* pSetSortButtonWnd = GetDlgItem( IDC_SET_SORT_BTN );
 	CWnd* pSetRangeButtonWnd = GetDlgItem( IDC_BUTTON4 );
 
-	BOOL state = FALSE;
+	BOOL state = false;
 
 	if( count ) 
 	{
@@ -272,44 +271,35 @@ void SVBlobAnalyzeFeatureDialogClass::EnableButtons()
 		long newIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( 0 ) );
 		if( newIndex != LB_ERR)
 		{
-			state = TRUE;
-// Features Box X Max, Box X Min, Box Y Max and Box Y Min should not be removed from the list. 
-// So if the selection is one of these features, disable the remove button.
-/*			CString		strSelection;
-			m_lbSelectedFeatures.GetText(0, strSelection);
-			if(strSelection.Find((LPCTSTR)"Box X") == 0 || 
-					strSelection.Find((LPCTSTR)"Box Y") == 0)
-				((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(FALSE);
-			else
-				((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(TRUE);
-*/
+			state = true;
 			int iIndex = m_lbSelectedFeatures.GetCurSel();
-			SVBlobFeatureEnum index = (SVBlobFeatureEnum) m_lbSelectedFeatures.GetItemData(iIndex);
+			SVBlobFeatureEnum index = static_cast<SVBlobFeatureEnum>(m_lbSelectedFeatures.GetItemData(iIndex));
 
-			if ( index == SV_AREA || index == SV_BOXX_MAX || index == SV_BOXX_MIN || index == SV_BOXY_MAX || index == SV_BOXY_MIN )
-				((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(FALSE);
-			else
-				((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(TRUE);
-
-			if ( (index == SV_CENTER_X_SOURCE) || (index == SV_CENTER_Y_SOURCE) )
+			if ( SV_AREA == index || SV_BOXX_MAX == index || SV_BOXX_MIN == index || SV_BOXY_MAX == index || SV_BOXY_MIN == index)
 			{
-				((CWnd *)GetDlgItem(IDC_SET_SORT_BTN))->EnableWindow(FALSE);
-				((CWnd *)GetDlgItem(IDC_BUTTON4))->EnableWindow(FALSE);
+				GetDlgItem(IDC_BUTTON5)->EnableWindow(false);
+			}
+			else
+			{
+				GetDlgItem(IDC_BUTTON5)->EnableWindow(true);
+			}
+
+			if ( (SV_CENTER_X_SOURCE == index) || (SV_CENTER_Y_SOURCE == index) )
+			{
+				GetDlgItem(IDC_SET_SORT_BTN)->EnableWindow(false);
+				GetDlgItem(IDC_BUTTON4)->EnableWindow(false);
 				l_bSetRange = false;
 			}
 			else
 			{
-				((CWnd *)GetDlgItem(IDC_SET_SORT_BTN))->EnableWindow(TRUE);
-				((CWnd *)GetDlgItem(IDC_BUTTON4))->EnableWindow(TRUE);
+				GetDlgItem(IDC_SET_SORT_BTN)->EnableWindow(true);
+				GetDlgItem(IDC_BUTTON4)->EnableWindow(true);
 			}
 		}
 	}
 
 	pAscendingCheckBoxWnd->EnableWindow( state );
 	pAscendingCheckBoxWnd->ShowWindow( state ? SW_SHOW : SW_HIDE );
-
-//	pSetSortButtonWnd->EnableWindow( state );
-//	pSetSortButtonWnd->ShowWindow( state ? SW_SHOW : SW_HIDE );
 
 	if ( l_bSetRange )
 	{
@@ -422,7 +412,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetRange()
 	SVBlobFeatureEnum index;
 	SVResultClass *pAnalyzerResult;
 	
-	pAnalyzerResult = NULL;
+	pAnalyzerResult = nullptr;
 	
 	while (1)
 	{
@@ -455,11 +445,11 @@ void SVBlobAnalyzeFeatureDialogClass::OnOK()
 	m_pIPDoc->SetModifiedFlag();
 
 	// Incase the Dimensional Data changed...
-	SVSendMessage ( m_pCurrentAnalyzer->GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+	SVSendMessage ( m_pCurrentAnalyzer->GetInspection(), SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 	// Rebuild results list/view
 	// what about published results list ?
-	m_pIPDoc->UpdateAllViews( NULL );
+	m_pIPDoc->UpdateAllViews( nullptr );
 
 	CDialog::OnOK();
 }
@@ -511,31 +501,29 @@ void SVBlobAnalyzeFeatureDialogClass::OnDestroy()
 void SVBlobAnalyzeFeatureDialogClass::OnSelchangeList2() 
 {
 	long iIndex = m_lbSelectedFeatures.GetCurSel();
-	SVBlobFeatureEnum index;// = (SVBlobFeatureEnum) iIndex;
+	SVBlobFeatureEnum index;
 
-	if( iIndex != LB_ERR )
+	if( LB_ERR != iIndex )
 	{
-/*		CString		strSelection;
-		m_lbSelectedFeatures.GetText(index, strSelection);
-		if(strSelection.Find((LPCTSTR)"Box X") == 0 || 
-				strSelection.Find((LPCTSTR)"Box Y") == 0)*/
+		index = static_cast<SVBlobFeatureEnum>(m_lbSelectedFeatures.GetItemData(iIndex));
 
-		index = (SVBlobFeatureEnum) m_lbSelectedFeatures.GetItemData(iIndex);
-
-		if ( index == SV_AREA || index == SV_BOXX_MAX || index == SV_BOXX_MIN || index == SV_BOXY_MAX || index == SV_BOXY_MIN )
-			((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(FALSE);
-		else
-			((CWnd *)GetDlgItem(IDC_BUTTON5))->EnableWindow(TRUE);
-
-		if ( (index == SV_CENTER_X_SOURCE) || (index == SV_CENTER_Y_SOURCE) )
+		if ( SV_AREA == index || SV_BOXX_MAX == index || SV_BOXX_MIN == index || SV_BOXY_MAX == index || SV_BOXY_MIN == index )
 		{
-			((CWnd *)GetDlgItem(IDC_SET_SORT_BTN))->EnableWindow(FALSE);
-			((CWnd *)GetDlgItem(IDC_BUTTON4))->EnableWindow(FALSE);
+			GetDlgItem(IDC_BUTTON5)->EnableWindow(false);
 		}
 		else
 		{
-			((CWnd *)GetDlgItem(IDC_SET_SORT_BTN))->EnableWindow(TRUE);
-			((CWnd *)GetDlgItem(IDC_BUTTON4))->EnableWindow(TRUE);
+			GetDlgItem(IDC_BUTTON5)->EnableWindow(true);
+		}
+		if ( (SV_CENTER_X_SOURCE == index) || (SV_CENTER_Y_SOURCE == index) )
+		{
+			GetDlgItem(IDC_SET_SORT_BTN)->EnableWindow(false);
+			GetDlgItem(IDC_BUTTON4)->EnableWindow(false);
+		}
+		else
+		{
+			GetDlgItem(IDC_SET_SORT_BTN)->EnableWindow(true);
+			GetDlgItem(IDC_BUTTON4)->EnableWindow(true);
 		}
 	}
 }

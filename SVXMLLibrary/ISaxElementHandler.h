@@ -25,6 +25,7 @@ namespace Seidenader
 		{
 		public:
 #pragma region Public Methods
+			virtual ~ISaxElementHandler() {}
 			//************************************
 			//! CallBackFunction when the saxparser encounted a new xml Element
 			//! \param pwchNamespaceUri [in]

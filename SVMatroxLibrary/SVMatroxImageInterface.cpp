@@ -715,47 +715,47 @@ HRESULT SVMatroxImageInterface::AdaptiveThreshold( const SVCommandDataHolder& p_
 	long l_Width = 0;
 	long l_Height = 0;
 	long l_Stride = 0;
-	unsigned char* l_pSource = NULL;
+	unsigned char* l_pSource = nullptr;
 
 	l_Status = p_rAttributes.GetValue( _T( "Is Black Background" ), l_IsBlack );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVByteVector l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Source Image" ), l_TempImage );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_SourceImage.SetData( l_TempImage );
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeX, l_Width );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeY, l_Height );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVPitchByte, l_Stride );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::GetHostAddress( &l_pSource, l_SourceImage.m_Buffer );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		// Create the Destination Buffer
 		SVMatroxBuffer dstBuffer;
-		unsigned char* l_pDest = NULL;
+		unsigned char* l_pDest = nullptr;
 
 		SVMatroxBufferCreateStruct createStruct;
 		createStruct.m_lSizeBand = 1;
@@ -766,19 +766,19 @@ HRESULT SVMatroxImageInterface::AdaptiveThreshold( const SVCommandDataHolder& p_
 
 		l_Status = SVMatroxBufferInterface::Create(dstBuffer, createStruct);
 
-		if(l_Status == S_OK)
+		if( S_OK == l_Status )
 		{
 			l_Status = SVMatroxBufferInterface::GetHostAddress( &l_pDest, dstBuffer );
 		}
 
-		if(l_Status == S_OK)
+		if( S_OK == l_Status )
 		{
 			if( (bool)l_IsBlack )
 			{
 				l_Status = SVMatroxImageInterface::Arithmetic(l_SourceImage.m_Buffer, l_SourceImage.m_Buffer, l_SourceImage.m_Buffer, SVImageNot);
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				AdaptiveThreshold(l_pSource, l_pDest, static_cast< int >( l_Width ), static_cast< int >( l_Height ), static_cast< int >( l_Stride ), 0.15f);
 			}
@@ -788,7 +788,7 @@ HRESULT SVMatroxImageInterface::AdaptiveThreshold( const SVCommandDataHolder& p_
 				l_Status = SVMatroxImageInterface::Arithmetic(dstBuffer, dstBuffer, dstBuffer, SVImageNot);
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVCommandDataFacadePtr l_DestPtr = new SVMatroxCommandDataImage( dstBuffer, true ); 
 
@@ -821,34 +821,34 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 
 	l_Status = p_rAttributes.GetValue( _T( "Threshold Multiplier" ), l_Multiplier );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rAttributes.GetValue( _T( "Is Black Background" ), l_IsBlack );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVByteVector l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Source Image" ), l_TempImage );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_SourceImage.SetData( l_TempImage );
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeX, l_Width );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeY, l_Height );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		// Create the Destination Buffer
 		SVMatroxBuffer dstBuffer;
@@ -863,7 +863,7 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 
 		l_Status = SVMatroxBufferInterface::Create(dstBuffer, createStruct);
 
-		if(l_Status == S_OK)
+		if( S_OK == l_Status )
 		{
 			// Read histogram...
 			SVMatroxImageResult histResult;
@@ -949,12 +949,12 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 
 			SVMatroxImageInterface::Destroy(histResult);
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = p_rResults.SetValue( _T( "Threshold Value" ), l_Value, true );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVCommandDataFacadePtr l_DestPtr = new SVMatroxCommandDataImage( dstBuffer, true );
 
@@ -987,34 +987,34 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 
 	l_Status = p_rAttributes.GetValue( _T( "Threshold Lower Value" ), l_Lower );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = p_rAttributes.GetValue( _T( "Threshold Upper Value" ), l_Upper );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVByteVector l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Source Image" ), l_TempImage );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_SourceImage.SetData( l_TempImage );
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeX, l_Width );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeY, l_Height );
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		// Create the Destination Buffer
 		SVMatroxBuffer dstBuffer;
@@ -1028,7 +1028,7 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 
 		l_Status = SVMatroxBufferInterface::Create(dstBuffer, createStruct);
 
-		if(l_Status == S_OK)
+		if( S_OK == l_Status )
 		{
 			SVMatroxImageInterface::SVStatusCode l_RetCode(SVMEE_STATUS_OK);
 
@@ -1058,7 +1058,7 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				SVCommandDataFacadePtr l_DestPtr = new SVMatroxCommandDataImage( dstBuffer, true );
 

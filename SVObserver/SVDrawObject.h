@@ -19,31 +19,12 @@
 #include "SVImageLibrary/SVDrawContext.h"
 #pragma endregion Includes
 
-//******************************************************************************
-//* FUNCTION DECLARATION(S):
-//******************************************************************************
-
-// Calculates a new set of points (PDestinyPointVector) rotated by the degrees specified in "RotationAngle"
-// around "RRotationCenter" and then scales the output points by a factor specified by "lZoomFactor". 
-// lZoomFactor may have values from -16 ( 1/16th scale) to 16 (16 times scale), except 0.
-BOOL SVCalculateRotation( POINT* PSourcePointVector, POINT* PDestinyPointVector, 
-                          int Count, const POINT& RRotationCenter, double RotationAngle, 
-													long lZoomFactor = 0 );
-
-// Calculates a new point rotated by the degrees specified in "RotationAngle" around
-// "RRotationCenter" and then scales the output points by a factor specified by "lZoomFactor". 
-// lZoomFactor may have values from -16 ( 1/16th scale) to 16 (16 times scale), except 0.
-POINT SVCalculateRotation( const POINT& RSourcePoint, const POINT& RRotationCenter, 
-                           double RotationAngle, long lZoomFactor = 0 );
-
-
 typedef SVVector< CPoint > SVCPointArray;
 
 enum 
 {
 	InvalidPoint = INT_MIN,
 };
-
 
 class SVDrawObjectClass
 {
@@ -55,7 +36,6 @@ public:
 	const SVDrawObjectClass &operator=( const SVDrawObjectClass &p_rsvObject );
 
 	virtual void AddExtentLineData( SVExtentLineStruct p_svLine, int PenStyle = PS_SOLID );
-	virtual void AddExtentFigureData( SVExtentFigureStruct p_svFigure );
 
 	virtual BOOL Draw( SVDrawContext* PDrawContext );
 	virtual BOOL DrawHatch( SVDrawContext* PDrawContext, int& LastY );
@@ -66,40 +46,26 @@ public:
 
 	void Transform( SVDrawContext* PDrawContext );
 
-	void ClearObject();
 	int AddPoint( const POINT p_oPoint );
 	int AddPoint( const CPoint& RPoint );
 	void SetPointAtGrow( int Index, const CPoint& RPoint );
 	void SetPointAtGrow( int Index, POINT p_oPoint );
 	void SetListSize( int NewSize );
-	int GetListSize();
  
 	CPoint GetPointAt( int Index );
-	CPoint GetCalcPointAt( int Index );
 
-	// SEJ April 17 2000
 	const SVCPointArray& GetPointArray();
 	
-	// SEJ April 17 2000
 	HGDIOBJ GetDrawPen();
-	COLORREF GetPenColor() const;
-
-	// Copy another CPoint Array ( Type: SVCPointArray ) into this draw object.
-	void CopyList( const SVCPointArray& RSrc );
-
-	void SetDrawSinglePoints( bool p_bDrawSinglePoints );
-	bool DrawSinglePoints() const;
 
 protected:
-
 	BOOL beginDraw( SVDrawContext* PDrawContext );
 	void endDraw( HDC DC );
-
 	
 	SVCPointArray	 points;
 	SVCPointArray	 calcPoints;
 
-	HGDIOBJ drawPen;	// If NULL the current selected pen of the DC
+	HGDIOBJ drawPen;	// If nullptr the current selected pen of the DC
 						// will be used!
 
 	HGDIOBJ oldPen;
@@ -108,11 +74,9 @@ protected:
 	int m_PenStyle;
 	int m_PenWidth;
 	COLORREF m_PenColor;
-	bool m_bDrawSinglePoints;
 };
 
 typedef SVVector< SVDrawObjectClass > SVDrawObjectClassArray;
-
 
 
 /////////////////////////////////////////////////////////////////////////////

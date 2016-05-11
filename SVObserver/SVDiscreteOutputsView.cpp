@@ -17,7 +17,7 @@
 #include "SVObserver.h"
 #include "SVIODoc.h"
 #include "SVIOAdjustDialog.h"
-#include "SVDigitalOutputObject1.h"
+#include "SVDigitalOutputObject.h"
 #include "SVSVIMStateClass.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
@@ -124,14 +124,14 @@ BOOL SVDiscreteOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName
 void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint ) 
 {
 	SVIODoc* pIODoc = (SVIODoc*) GetDocument();
-	SVIOController* l_pIOController = NULL;
+	SVIOController* l_pIOController = nullptr;
 
-	if( pIODoc != NULL )
+	if( nullptr != pIODoc )
 	{
 		l_pIOController = pIODoc->GetIOController();
 	}
 
-	if( l_pIOController != NULL && ::IsWindow( m_hWnd ) )
+	if( nullptr != l_pIOController && ::IsWindow( m_hWnd ) )
 	{
 		GetListCtrl().SetRedraw(false);
 
@@ -180,7 +180,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 				i, strItem, 
 				INDEXTOSTATEIMAGEMASK( 2 ),	// state
 				LVIS_STATEIMAGEMASK,		// stateMask
-				1, 0 );						// Set item data to NULL
+				1, 0 );						// Set item data to nothing
 
 			// Check Module Ready first
 			pIOEntry = l_pIOController->GetModuleReady();
@@ -189,7 +189,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 			{
 				if( i == pDigOutput->GetChannel() )
 				{
-					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
+					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
 					m_Items.SetItemData( i, pIOEntry );
 
@@ -218,7 +218,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 			{
 				if( i == pDigOutput->GetChannel() )
 				{
-					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
+					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
 					m_Items.SetItemData( i, pIOEntry );
 
@@ -272,7 +272,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 
 					if( i == pDigOutput->GetChannel() )
 					{
-						GetListCtrl().SetItem( i, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
+						GetListCtrl().SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
 						m_Items.SetItemData( i, pIOEntry );
 
@@ -312,15 +312,15 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 	int item = GetListCtrl().HitTest( point, &flags );
 	SVIODoc* pIODoc = ( SVIODoc* ) GetDocument();
 
-	SVIOController* l_pIOController = NULL;
+	SVIOController* l_pIOController = nullptr;
 
-	if( pIODoc != NULL )
+	if( nullptr != pIODoc )
 	{
 		l_pIOController = pIODoc->GetIOController();
 	}
 	if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		 TheSVObserverApp.OkToEdit() &&
-	     l_pIOController != NULL )
+	     nullptr != l_pIOController )
 	{
 		if( item >= 0 && item < GetListCtrl().GetItemCount() && 
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
@@ -397,7 +397,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 								{
 									pOutputList->DetachOutput( pDigOutput->GetUniqueObjectID() );
 								}
-								pDigOutput = NULL;
+								pDigOutput = nullptr;
 
 								if( pIOEntry == l_pIOController->GetModuleReady() )
 								{
@@ -466,7 +466,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 				}// end switch
 
 				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-				OnUpdate( NULL, NULL, NULL );
+				OnUpdate( nullptr, 0, nullptr );
 			}
 			else
 			{
@@ -484,7 +484,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 					break;
 				}// end switch
 
-				OnUpdate( NULL, NULL, NULL );
+				OnUpdate( nullptr, 0, nullptr );
 			}// end else
 		}// end if
 	}// end if

@@ -34,7 +34,7 @@ struct SVMaskOperatorCancelData : public SVCancelData
 
 	SVMaskOperatorCancelData()
 	{
-		pShapeData = NULL;
+		pShapeData = nullptr;
 	}
 
 	~SVMaskOperatorCancelData()
@@ -42,7 +42,7 @@ struct SVMaskOperatorCancelData : public SVCancelData
 		if ( pShapeData )
 		{
 			delete pShapeData;
-			pShapeData = NULL;
+			pShapeData = nullptr;
 		}
 	}
 };

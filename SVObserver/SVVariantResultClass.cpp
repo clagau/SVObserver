@@ -28,8 +28,8 @@ SV_IMPLEMENT_CLASS( SVVariantResultClass, SVVariantResultClassGuid );
 SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObjectClass* POwner  , int StringResourceID  )
 {
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVResultVariantObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultVariantObjectType;
 
 	// Identify our input type needs
 	m_InputValueObjectInfo.SetInputObjectType( SVVariantValueObjectType );
@@ -81,19 +81,18 @@ SVVariantResultClass::~SVVariantResultClass()
 
 BOOL SVVariantResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVResultClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = GetInputValue() != NULL;
+		bOk = nullptr != GetInputValue();
 	}
 
 	m_Value.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
-
 }
 
 BOOL SVVariantResultClass::CloseObject()
@@ -124,7 +123,7 @@ SVValueObjectClass* SVVariantResultClass::GetInputValue()
 	if( m_InputValueObjectInfo.IsConnected() && m_InputValueObjectInfo.GetInputObjectInfo().PObject )
 		return static_cast<SVValueObjectClass*> ( m_InputValueObjectInfo.GetInputObjectInfo().PObject );
 
-	return NULL;
+	return nullptr;
 }
 
 BOOL SVVariantResultClass::onRun( SVRunStatusClass& RRunStatus )

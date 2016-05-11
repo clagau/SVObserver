@@ -45,7 +45,7 @@ HRESULT SVDataManagerHandle::Assign( const SVDataManagerHandle& p_rObject, SVDat
 		{
 			l_Status = p_rObject.m_pArrayHandle->LockBufferIndex( p_rObject.m_Index, p_rObject.m_TransactionId, p_LockType );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				m_pArrayHandle = p_rObject.m_pArrayHandle;
 				m_LockType = p_LockType;
@@ -84,7 +84,7 @@ long SVDataManagerHandle::GetIndex() const
 
 	if( ! m_pArrayHandle.empty() )
 	{
-		if( m_pArrayHandle->ValidateBufferIndex( *this ) == S_OK )
+		if( S_OK == m_pArrayHandle->ValidateBufferIndex( *this ) )
 		{
 			l_Index = m_Index;
 		}

@@ -8,10 +8,11 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   22 Apr 2013 11:15:38  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "svimagetest.h"
 #include "SVUnloadDeviceDialog.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,8 +23,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SVUnloadDeviceDialog dialog
 
-
-SVUnloadDeviceDialog::SVUnloadDeviceDialog(CWnd* pParent /*=NULL*/)
+SVUnloadDeviceDialog::SVUnloadDeviceDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVUnloadDeviceDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVUnloadDeviceDialog)
@@ -31,6 +31,9 @@ SVUnloadDeviceDialog::SVUnloadDeviceDialog(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+SVUnloadDeviceDialog::~SVUnloadDeviceDialog()
+{
+}
 
 void SVUnloadDeviceDialog::DoDataExchange(CDataExchange* pDX)
 {
@@ -49,7 +52,7 @@ void SVUnloadDeviceDialog::Destroy()
 {
 	DestroyWindow();
 
-	m_hWnd = NULL;
+	m_hWnd = nullptr;
 }
 
 BEGIN_MESSAGE_MAP(SVUnloadDeviceDialog, CDialog)
@@ -64,14 +67,12 @@ END_MESSAGE_MAP()
 void SVUnloadDeviceDialog::OnClose() 
 {
 	// TODO: Add your message handler code here and/or call default
-//	CDialog::OnClose();
 }
 
 BOOL SVUnloadDeviceDialog::OnCommand(WPARAM wParam, LPARAM lParam) 
 {
 	// TODO: Add your specialized code here and/or call the base class
-	
-//	return CDialog::OnCommand(wParam, lParam);
+
 	return true;
 }
 

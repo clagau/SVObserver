@@ -29,7 +29,6 @@
 #include "SVMatroxGigeCameraId.h"
 #include "SVMatroxGigeAcqParams.h"
 #include "SVMatroxGigeBufferCreator.h"
-#include "SVMatroxGigeBufferManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations

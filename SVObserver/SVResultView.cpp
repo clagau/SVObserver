@@ -87,7 +87,7 @@ void SVResultViewClass::OnTimer( UINT_PTR nIDEvent )
 
 void SVResultViewClass::OnInitialUpdate()
 {
-	if( GetIPDoc() == NULL )
+	if( nullptr == GetIPDoc() )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ResultView_InitFailed, StdMessageParams, SvOi::Err_10197 ); 
@@ -118,7 +118,7 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 		return;
 	}
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		CListCtrl& listCtrl = GetListCtrl();
 
@@ -153,7 +153,7 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 				l_pObject = SVObjectManagerClass::Instance().GetObject( l_rDef.GetObjectID() );
 			}
 
-			if( l_pObject != nullptr)
+			if( nullptr != l_pObject )
 			{
 				if( l_rDef.GetIndexPresent())
 				{
@@ -163,7 +163,7 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 				{
 					l_Name = l_pObject->GetName();
 				}
-				l_NameToType = l_pObject->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
+				l_NameToType = l_pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 			}
 
 			l_ItemIndex.Format( _T( "%d" ),i );
@@ -343,20 +343,20 @@ void SVResultViewClass::OnSize(UINT nType, int cx, int cy)
 void SVResultViewClass::SetViewSize(CSize &Size)
 {
 	CWnd *l_pcWnd = this;
-	SVIPSplitterFrame *l_pSplitterFrame = NULL;
+	SVIPSplitterFrame *l_pSplitterFrame = nullptr;
 
 	do
 	{
 		l_pcWnd = l_pcWnd->GetParent();
 
-		if ( l_pcWnd != NULL )
+		if ( nullptr != l_pcWnd )
 		{
 			l_pSplitterFrame = dynamic_cast<SVIPSplitterFrame *>( l_pcWnd );
 		}
 	}
-	while ( l_pSplitterFrame == NULL && l_pcWnd != NULL );
+	while ( nullptr == l_pSplitterFrame && nullptr != l_pcWnd );
 
-	if ( l_pSplitterFrame != NULL )
+	if ( nullptr != l_pSplitterFrame )
 	{
 		l_pSplitterFrame->SetViewSize( this, Size );
 	}

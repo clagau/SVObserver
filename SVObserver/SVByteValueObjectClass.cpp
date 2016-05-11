@@ -127,7 +127,7 @@ HRESULT SVByteValueObjectClass::SetValueAt( int iBucket, int iIndex, CString str
 	if ( strDigits == strValue )
 	{
 		strDigits.MakeLower();
-		TCHAR* p = NULL;
+		TCHAR* p = nullptr;
 		DWORD ulValue;
 		if ( strDigits.Find(_T('x')) != -1  )
 			ulValue = _tcstoul(strDigits, &p, 16);
@@ -147,7 +147,7 @@ HRESULT SVByteValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rv
 	_variant_t l_Temp;
 	l_Temp.Attach( rvtValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_byValue );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		l_Temp = l_byValue;
 	}
@@ -181,7 +181,7 @@ HRESULT SVByteValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdV
 
 void SVByteValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVByteValueObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVByteValueObjectType;
 	DefaultValue() = 0;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{

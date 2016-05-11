@@ -38,7 +38,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	{
 
 		// Initialize COM.
-		HRESULT hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
+		HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		if((S_OK != hr) && (S_FALSE != hr) && (RPC_E_CHANGED_MODE != hr))
 		{
 			ASSERT(false);
@@ -111,7 +111,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	{
 		HRESULT hr = CoCreateInstance(
 			__uuidof(SAXXMLReader60), 
-			NULL, 
+			nullptr, 
 			CLSCTX_ALL, 
 			__uuidof(ISAXXMLReader), 
 			(void **)&m_pReader);
@@ -158,7 +158,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 		HRESULT hr = CoCreateInstance(
 			__uuidof(XMLSchemaCache60), 
-			NULL, 
+			nullptr, 
 			CLSCTX_ALL, 
 			__uuidof(IXMLDOMSchemaCollection2), 
 			(void **)&m_pSchemaCache);
@@ -257,7 +257,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		}
 
 		// Check for existing schema associated with this namespace URI.
-		ISchema* pExistingSchema = NULL;
+		ISchema* pExistingSchema = nullptr;
 		_bstr_t bstrNamespace = namespaceURI.c_str();
 		HRESULT hr = m_pSchemaCache->getSchema(bstrNamespace, &pExistingSchema);
 		if ( SUCCEEDED(hr) )

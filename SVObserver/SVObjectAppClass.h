@@ -11,16 +11,16 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "ObjectInterfaces/IObjectAppClass.h"
-#include "ObjectInterfaces/IObjectClass.h"
+#pragma endregion Includes
 
 class SVInspectionProcess;
 class SVToolClass;
 class SVAnalyzerClass;
 
-class SVObjectAppClass : virtual public SvOi::IObjectAppClass
-								, public SVObjectClass  
+class SVObjectAppClass : public SVObjectClass, public SvOi::IObjectAppClass
 {
 	SV_DECLARE_CLASS( SVObjectAppClass )
 
@@ -37,7 +37,6 @@ public:
 	SVAnalyzerClass* GetAnalyzer() const;
 
 #pragma region virtual methods (IObjectAppClass)
-	virtual SvOi::IObjectClass* GetToolInterface() const override;
 	virtual DWORD_PTR CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context) override;
 #pragma endregion virtual methods (IObjectAppClass)
 
@@ -48,7 +47,7 @@ protected:
 
 	// Sends SVM_CREATE_ALL_OBJECTS to the child object
 	// and returns the result of this message.
-	virtual DWORD_PTR SVObjectAppClass::createAllObjectsFromChild( SVObjectClass* pChildObject );
+	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject );
 	// Call this method at the object owner to create an object.
 	// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
 	// Otherwise called the method createAllOBjectsFromChild
@@ -61,9 +60,4 @@ private:
 	SVToolClass* m_psvTool;
 	SVAnalyzerClass* m_psvAnalyzer;
 };
-
-////////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
 

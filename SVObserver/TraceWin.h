@@ -28,6 +28,8 @@
 //
 // ***************************************************************************
 //
+#pragma once
+
 #ifdef _DEBUG
 
 // Window class name used by the main window of the TRACEWIN applet.
@@ -59,9 +61,9 @@ void CFileTrace::Write(const void* lpBuf, UINT nCount)
 	if (!afxTraceEnabled)
 		return;	// MFC tracing not enabled
 
-	HWND hTraceWnd = ::FindWindow(TRACEWND_CLASSNAME, NULL);
-	if (hTraceWnd==NULL)
-		hTraceWnd = ::FindWindow(OLDTRACEWND_CLASSNAME, NULL);
+	HWND hTraceWnd = ::FindWindow(TRACEWND_CLASSNAME, nullptr);
+	if (nullptr == hTraceWnd)
+		hTraceWnd = ::FindWindow(OLDTRACEWND_CLASSNAME, nullptr);
 	if (hTraceWnd) {
 		// Found Trace window: send string with WM_COPYDATA
 		// Must copy to make me the owner of the string; otherwise
@@ -72,7 +74,7 @@ void CFileTrace::Write(const void* lpBuf, UINT nCount)
 #ifdef _UNICODE
 		BOOL bDefCharUsed;
 		::WideCharToMultiByte(CP_ACP,0,LPCWSTR(lpBuf),
-			-1, mybuf, 1024, NULL, &bDefCharUsed);
+			-1, mybuf, 1024, nullptr, &bDefCharUsed);
 #else
 		memcpy(mybuf, lpBuf, nCount);
 #endif
@@ -82,9 +84,7 @@ void CFileTrace::Write(const void* lpBuf, UINT nCount)
 		cds.cbData = nCount;
 		cds.lpData = mybuf;
 
-		//CWinApp* pApp = AfxGetApp();          // 13 May 1999 - frb.
-		//HWND hWnd = pApp ? pApp->m_pMainWnd->GetSafeHwnd() : NULL;
-		HWND hWnd = NULL;                       // 13 May 1999 - frb.
+		HWND hWnd = nullptr;
 		::SendMessage(hTraceWnd, WM_COPYDATA, (WPARAM)hWnd, (LPARAM)&cds);
 
 #define __TRAP1
@@ -112,7 +112,7 @@ void CFileTrace::Write(const void* lpBuf, UINT nCount)
 //
 BOOL CFileTrace::Init()
 {
-	if (afxDump.m_pFile==NULL) {
+	if (nullptr == afxDump.m_pFile) {
 		// Initialize tracing: replace afxDump.m_pFile w/my own CFile object
 		//
 		// It's important to allocate with "new" here, not a static object,
@@ -157,4 +157,3 @@ BOOL CFileTrace::autoInit = CFileTrace::Init();
 #define PxlTraceInit()
 
 #endif // _DEBUG
-//eof:TraceWin.h

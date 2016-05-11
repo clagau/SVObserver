@@ -132,7 +132,6 @@
     <ClCompile Include="SVKnobControl.cpp" />
     <ClCompile Include="SVListCtrl.cpp" />
     <ClCompile Include="SVMaskEditor.cpp" />
-    <ClCompile Include="SVNumericEdit.cpp" />
     <ClCompile Include="SVOConfigNameEdit.cpp" />
     <ClCompile Include="SVOEditorWnd.cpp" />
     <ClCompile Include="SVRemoteInputDialog.cpp" />
@@ -172,7 +171,6 @@
     <ClInclude Include="SVKnobControl.h" />
     <ClInclude Include="SVListCtrl.h" />
     <ClInclude Include="SVMaskEditor.h" />
-    <ClInclude Include="SVNumericEdit.h" />
     <ClInclude Include="SVOConfigNameEdit.h" />
     <ClInclude Include="SVOEditorWnd.h" />
     <ClInclude Include="SVRemoteInputDialog.h" />

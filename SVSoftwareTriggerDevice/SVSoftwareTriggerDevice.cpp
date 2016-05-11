@@ -89,7 +89,7 @@ HANDLE SVSoftwareTriggerDevice::GetTriggerHandle(unsigned long index)
 
 BSTR SVSoftwareTriggerDevice::GetTriggerName(HANDLE handle)
 {
-	BSTR name = NULL;
+	BSTR name = nullptr;
 
 	typedef NameHandleList::index_const_iterator<to>::type Iterator;
 	Iterator it = m_nameHandleList.get<to>().find(handle);
@@ -240,7 +240,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount( HANDLE p_ulHandle, un
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		if ( 0 < p_ulHandle )
 		{
@@ -260,12 +260,12 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( HANDLE p_ulHandle, uns
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 
 		if ( 0 < p_ulHandle )
@@ -283,7 +283,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( HANDLE p_ulHandle, uns
 				*p_pbstrName = ::SysAllocString( L"Board Version");
 				break;
 			}
-			if ( *p_pbstrName != NULL )
+			if ( nullptr != *p_pbstrName )
 			{
 				l_hrOk = S_OK;
 			}
@@ -296,9 +296,9 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( HANDLE p_ulHandle, un
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
-		if ( ::VariantClear( p_pvarValue ) == S_OK )
+		if ( S_OK == ::VariantClear( p_pvarValue ) )
 		{
 			if ( 0 < p_ulHandle )
 			{
@@ -341,7 +341,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( HANDLE p_ulHandle, un
 
 	if ( 0 < p_ulHandle )
 	{
-		if ( p_pvarValue != NULL )
+		if ( nullptr != p_pvarValue )
 		{
 			switch (p_ulIndex)
 			{

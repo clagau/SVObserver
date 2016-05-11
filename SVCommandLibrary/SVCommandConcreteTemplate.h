@@ -11,17 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVCommandAttributesTemplate.h"
 #include "SVCommandTemplate.h"
 #include "SVCommandDataHolder.h"
 #include "SVCommandResultsTemplate.h"
+#pragma endregion Includes
 
 typedef boost::function< HRESULT ( const SVCommandDataHolder&, SVCommandDataHolder& ) > SVCommandExecuteFunctor;
 
-/*
-*/
 template< unsigned long p_CommandType >
 class SVCommandConcreteTemplate : 
 	public SVCommandTemplate,

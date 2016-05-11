@@ -269,13 +269,11 @@ HRESULT SVExtentDimensionsClass::DisableExtentProperty( SVExtentPropertyEnum p_e
 
 HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
 	double l_dValue = 0.0;
 
-	l_hrOk = GetExtentProperty( p_eProperty, l_dValue );
+	HRESULT l_hrOk = GetExtentProperty( p_eProperty, l_dValue );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		p_rlValue = (long)l_dValue;
 	}

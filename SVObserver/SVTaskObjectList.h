@@ -12,20 +12,17 @@
 
 #pragma region Includes
 #include "ObjectInterfaces/ITaskObjectListClass.h"
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVClassInfoStruct.h"
 #include "SVValueObject.h"
 #include "SVTaskObject.h"
 #pragma endregion Includes
 
-class SVTaskObjectListClass : public SVTaskObjectClass, virtual public SvOi::ITaskObjectListClass
+class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass
 {
 	SV_DECLARE_CLASS( SVTaskObjectListClass )
 
 public:
-	friend class SVImageClass;
-
 #pragma region Constructor
 	SVTaskObjectListClass( LPCSTR LPSZObjectName );
 	SVTaskObjectListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
@@ -42,9 +39,9 @@ public:
 	virtual void GetAllInputObjects();
 	virtual void Persist(SVObjectWriter& writer);
 
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
+	virtual HRESULT IsInputImage( SVImageClass* p_psvImage );
 
 	// Routing Version of Validate
 	// Validates Local Scope and all owned objects
@@ -60,13 +57,13 @@ public:
 
 	const SVClock::SVTimeStamp& GetLastListUpdateTimestamp() const;
 
-	int GetUpperBound() const {return GetSize()-1;}
-	virtual void InsertAt( int nIndex, SVTaskObjectClass* PTaskObject, int nCount = 1 );
+	int GetSize() const;
+	void InsertAt( int nIndex, SVTaskObjectClass* PTaskObject, int nCount = 1 );
 	void SetAt( int nIndex, SVTaskObjectClass* PTaskObject );
-	virtual SVTaskObjectClass* GetAt( int nIndex ) const {return m_aTaskObjects.GetAt(nIndex);}
-	virtual void RemoveAt( int nIndex, int nCount = 1 );
-	virtual int Add( SVTaskObjectClass* PTaskObject );
-	virtual HRESULT RemoveChild( SVTaskObjectClass* pChildObject );	
+	SVTaskObjectClass* GetAt( int nIndex ) const;
+	void RemoveAt( int nIndex, int nCount = 1 );
+	int Add( SVTaskObjectClass* PTaskObject );
+	HRESULT RemoveChild( SVTaskObjectClass* pChildObject );	
 
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
@@ -77,14 +74,13 @@ public:
 
 	const SVString checkName( LPCTSTR ToolName ) const;
 
-	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
 #pragma region virtual methods (ITaskObjectListClass)
-	virtual int GetSize() const override;
 	virtual SvUl::NameGuidList GetTaskObjectList( ) const override;
 	virtual void Delete(GUID& objectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
-	virtual DWORD_PTR DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context) override;
+	virtual DWORD_PTR DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
 #pragma endregion public methods	
@@ -94,9 +90,9 @@ protected:
 	virtual void DeleteAt( int Index, int Count = 1 );
 	void DeleteAll();
 
-	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
-	virtual SVObjectClass *UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
+	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner );
 	BOOL getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 
 	// Direct Method Call
@@ -126,7 +122,7 @@ private:
 	void cleanUpEmptyEntries();
 
 	/**********
-	  The method destroy a child object. 
+	  The method destroys a child object. 
 	  /param pTaskObject <in> object to destroy.
 	  /param context <in>.
 	***********/

@@ -78,7 +78,7 @@ SV_IMPLEMENT_CLASS(SVPatternAnalyzerClass, SVPatternAnalyzerClassGuid);
 SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
   : SVImageAnalyzerClass(BCreateDefaultTaskList, POwner, StringResourceID)
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
 	
 	m_lpatModelWidth = 4;	// minimum Width
@@ -130,7 +130,7 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	msv_dpatResultAngle.SetDefaultValue (0.0, TRUE);
 
 	// Setup the result
-	pAnalyzerResult = NULL;
+	pAnalyzerResult = nullptr;
 	CreateResult();
 	
 	// Set default inputs and outputs
@@ -145,7 +145,7 @@ SVPatternAnalyzerClass::~SVPatternAnalyzerClass()
 
 void SVPatternAnalyzerClass::CreateResult()
 {
-	if (pAnalyzerResult == NULL)
+	if (nullptr == pAnalyzerResult)
 	{
 		// Declare Input Interface of Result...
 		SVClassInfoStruct resultClassInfo;
@@ -281,7 +281,7 @@ BOOL SVPatternAnalyzerClass::CreateModelBuffer()
 		m_patBuffer.SetExtentProperty( SVExtentPropertyWidth, m_lpatModelWidth );
 		m_patBuffer.SetExtentProperty( SVExtentPropertyHeight, m_lpatModelHeight );
 
-		l_bOk = SVImageProcessingClass::Instance().CreateImageBuffer( m_patBuffer, m_patBufferHandlePtr ) == S_OK;
+		l_bOk = S_OK == SVImageProcessingClass::Instance().CreateImageBuffer( m_patBuffer, m_patBufferHandlePtr );
 	}
 	return l_bOk;
 }
@@ -297,11 +297,11 @@ BOOL SVPatternAnalyzerClass::DestroyModelBuffer()
 
 BOOL SVPatternAnalyzerClass::UpdateModelFromInputImage()
 {
-	BOOL l_bOk = FALSE;
+	BOOL l_bOk = false;
 
 	SVImageClass *l_pInputImage = getInputImage();
 
-	if( l_pInputImage != NULL )
+	if( nullptr != l_pInputImage)
 	{
 		SVMatroxPatternInterface::SVStatusCode l_Code;
 
@@ -327,7 +327,7 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromInputImage()
 		childImageInfo.SetExtentProperty( SVExtentPropertyHeight, m_lpatModelHeight );
 
 		HRESULT hr = SVImageProcessingClass::Instance().CreateImageChildBuffer(imageInfo, l_ImageHandle, childImageInfo, childImageHandle);
-		if (hr == S_OK && !( childImageHandle.empty() ) && !( m_patBufferHandlePtr.empty() ) )
+		if (S_OK == hr && !( childImageHandle.empty() ) && !( m_patBufferHandlePtr.empty() ) )
 		{
 			SVImageBufferHandleImage l_ChildMilHandle;
 			SVImageBufferHandleImage l_PatMilHandle;
@@ -492,7 +492,7 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 
 	if ( bOk )
 	{
-		bOk = ( msv_szModelImageFile.SetValue( 1, strImageFile ) == S_OK );
+		bOk = ( S_OK == msv_szModelImageFile.SetValue( 1, strImageFile ) );
 	}
 	return bOk;
 }	
@@ -794,18 +794,18 @@ BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStru
 
 	// Check if Result is present
 	SVResultClass* pResult = GetResultObject();
-	if (pResult == NULL)
+	if (nullptr == pResult)
 	{
-		pAnalyzerResult = NULL;
+		pAnalyzerResult = nullptr;
 		CreateResult();
 
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( pAnalyzerResult, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+		::SVSendMessage( pAnalyzerResult, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
-		::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(pAnalyzerResult), NULL );
+		::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(pAnalyzerResult), 0 );
 	}
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 	
 	return bOk;
 }
@@ -861,7 +861,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 			}
 			
 			pSVImage = (SVImageClass *)getInputImage();
-			if( pSVImage == NULL || ! pSVImage->GetImageHandle( ImageHandle ) )
+			if( nullptr == pSVImage || ! pSVImage->GetImageHandle( ImageHandle ) )
 			{
 				msvError.msvlErrorCd = -ERR_SRI15; // Error code 25015
 				SV_TRAP_ERROR_BRK (msvError, ERR_SRI15);
@@ -1017,14 +1017,14 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 
 DWORD_PTR SVPatternAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	DWORD_PTR DwResult = 0;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -1044,7 +1044,7 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 {
 	HRESULT l_hrOk = SVImageAnalyzerClass::ResetObject();
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		SVInspectionProcess* pInspection = GetInspection();
 
@@ -1060,7 +1060,7 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 			// If so, restore the model from the file.
 			CString	strFile;
 
-			if( msv_szModelImageFile.GetValue( strFile ) == S_OK )
+			if( S_OK == msv_szModelImageFile.GetValue( strFile ) )
 			{
 				if( !strFile.IsEmpty() )
 				{
@@ -1088,7 +1088,7 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 			}
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			if( !m_patModelHandle.empty() )
 			{
@@ -1119,7 +1119,7 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExte
 			SVImageExtentClass l_svExtents;
 			HRESULT hr = GetTool()->GetImageExtent( l_svExtents );
 
-			if (hr == S_OK)
+			if (S_OK == hr)
 			{
 				long lpatModelWidth = m_lpatModelWidth;
 				long lpatModelHeight = m_lpatModelHeight;
@@ -1216,7 +1216,7 @@ BOOL SVPatternAnalyzerClass::IsPtOverResult( CPoint point )
 		SVImageExtentClass l_svExtents;
 		HRESULT hr = GetTool()->GetImageExtent( l_svExtents );
 
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			long lpatModelWidth = m_lpatModelWidth;
 			long lpatModelHeight = m_lpatModelHeight;
@@ -1267,7 +1267,7 @@ BOOL SVPatternAnalyzerClass::IsPtOverResult( CPoint point )
 
 					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
-					if( l_svFigure.IsPointOverFigure( point ) == S_OK )
+					if( S_OK == l_svFigure.IsPointOverFigure( point ) )
 					{
 						m_nPatternIndex = i;
 
@@ -1347,7 +1347,7 @@ BOOL SVPatternAnalyzerClass::ResetImageFile()
 {
 	CString	strFile;
 	
-	BOOL bOk = ( msv_szModelImageFile.GetValue( strFile ) == S_OK );
+	BOOL bOk = ( S_OK == msv_szModelImageFile.GetValue( strFile ) );
 	
 	if ( bOk )
 	{
@@ -1368,7 +1368,7 @@ BOOL SVPatternAnalyzerClass::ResetImageFile()
 
 BOOL SVPatternAnalyzerClass::GetModelImageFileName( CString &csFileName )
 {
-	return ( msv_szModelImageFile.GetValue( csFileName ) == S_OK );
+	return ( S_OK == msv_szModelImageFile.GetValue( csFileName ) );
 }
 
 bool SVPatternAnalyzerClass::IsValidSize()
@@ -1376,7 +1376,7 @@ bool SVPatternAnalyzerClass::IsValidSize()
 	bool bRet = true;
 	SVImageExtentClass svExtents;
 
-	if ( GetTool() != NULL && GetTool()->GetImageExtent( svExtents ) == S_OK )
+	if ( nullptr != GetTool() && S_OK == GetTool()->GetImageExtent( svExtents ) )
 	{
 		RECT oRec;
 		HRESULT hrOk = svExtents.GetOutputRectangle( oRec );

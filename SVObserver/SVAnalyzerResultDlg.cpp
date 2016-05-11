@@ -20,7 +20,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVAnalyzerResultDlg::SVAnalyzerResultDlg(CWnd* pParent /*=NULL*/)
+SVAnalyzerResultDlg::SVAnalyzerResultDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVAnalyzerResultDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVAnalyzerResultDlg)

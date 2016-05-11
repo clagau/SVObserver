@@ -35,22 +35,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVPPQEntryDialogRemotePageClass
-//* Note(s)    : property page
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-
-/////////////////////////////////////////////////////////////////////////////
-// SVPPQEntryDialogRemotePageClass property page
-
 IMPLEMENT_DYNCREATE(SVPPQEntryDialogRemotePageClass, CPropertyPage)
 
 SVPPQEntryDialogRemotePageClass::SVPPQEntryDialogRemotePageClass()

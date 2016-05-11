@@ -181,7 +181,7 @@ HRESULT SVEnumerateValueObjectClass::SetObjectValue( const SVString& p_rValueNam
 					l_Index[ 0 ] = i;
 					l_Index[ 1 ] = 0;
 
-					if( l_SafeArray.GetElement( l_Index, l_Value ) == S_OK && l_Value.vt == VT_BSTR )
+					if( S_OK == l_SafeArray.GetElement( l_Index, l_Value ) && VT_BSTR == l_Value.vt )
 					{
 						l_Enums[ i ].first = static_cast< LPCTSTR >( _bstr_t( l_Value ) );
 					}
@@ -189,7 +189,7 @@ HRESULT SVEnumerateValueObjectClass::SetObjectValue( const SVString& p_rValueNam
 					l_Index[ 0 ] = i;
 					l_Index[ 1 ] = 1;
 
-					if( l_SafeArray.GetElement( l_Index, l_Value ) == S_OK )
+					if( S_OK == l_SafeArray.GetElement( l_Index, l_Value ) )
 					{
 						l_Enums[ i ].second = l_Value;
 					}
@@ -284,9 +284,9 @@ HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, CStrin
 	long lValue = 0;
 
 	if (GetEnumerator( strValue, lValue ))
+	{
 		return base::SetValueAt( iBucket, iIndex, lValue );
-
-	//ASSERT(FALSE);
+	}
 	return S_FALSE;
 }
 
@@ -316,7 +316,7 @@ HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, CStrin
 {
 	long lValue=0;
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, lValue );
-	//if ( hr == S_OK )
+	//if ( S_OK == hr ) // @WARNING - log an error here ?
 	{
 		GetEnumeratorName( lValue, rstrValue );
 	}
@@ -327,13 +327,12 @@ HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, double
 {
 	long lValue=0;
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, lValue );
-	//if ( hr == S_OK )
+	//if ( S_OK == hr ) // @WARNING - log an error here ?
 	{
 		rdValue = ( double ) lValue;
 	}
 	return hr;
 }
-
 
 HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
 {
@@ -341,7 +340,7 @@ HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIAN
 	_variant_t l_Temp;
 	l_Temp.Attach( rValue );
 	HRESULT hr = GetValueAt( iBucket, iIndex, sVal );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		l_Temp = static_cast< LPCTSTR >( sVal );
 	}
@@ -354,9 +353,6 @@ HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIAN
 	return hr;
 }
 
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SetEnumTypes
 // -----------------------------------------------------------------------------
@@ -365,10 +361,6 @@ HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIAN
 //				: special value. If no value is defined for an enumeration
 //				: standard enumeration defines an incremental number.
 //				: ( e.g. "NULL,ONE,TWO,BigNumber=99999,BiggerNumber" ) 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :21.02.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 {
@@ -429,7 +421,7 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 					bRetVal = FALSE;
 				}
 
-			} while( szEnumToken = _tcstok( NULL, sep ) );
+			} while( szEnumToken = _tcstok( nullptr, sep ) );
 
 			// Free allocated resources...
 			free( szList );
@@ -477,10 +469,6 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( int StringResourceID )
 //				: szEnumerator.
 //				: If Enumerator is not defined, the function fails and returns
 //				: FALSE.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :21.02.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const
 {
@@ -544,7 +532,7 @@ SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
 	{
 		if ( strMunge.Find( _T('x') ) != -1 )	// HEX
 		{
-			TCHAR* p = NULL;
+			TCHAR* p = nullptr;
 			p_rlValue = _tcstol(strMunge, &p, 16);	// base 16
 			bConverted = true;
 		}
@@ -554,7 +542,7 @@ SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
 			StringMunge::KeepChars( &strDec, _T("0123456789-. ") );
 			if ( strDec == strMunge )	// if no abcdef
 			{
-				TCHAR* p = NULL;
+				TCHAR* p = nullptr;
 				p_rlValue = _tcstol(strDec, &p, 10);	// base 10
 				bConverted = true;
 			}
@@ -571,10 +559,6 @@ SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
 //				: If Enumerator is not defined for this value, the function 
 //				: returns in rEnumerator the value converted to a String and
 //				: returns FALSE.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :21.02.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, CString& rEnumerator ) const
 {
@@ -603,10 +587,6 @@ BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, CString& rEnum
 // .Title       : GetEnumTypes
 // -----------------------------------------------------------------------------
 // .Description : Returns a string with all defined enumerations and their values
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVEnumerateValueObjectClass::GetEnumTypes( CString& rStrEnumList ) const
 {
@@ -638,10 +618,6 @@ BOOL SVEnumerateValueObjectClass::GetEnumTypes( CString& rStrEnumList ) const
 //				: The return value is -1, if there is nothing defined or the 
 //				: func. failed.
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 int SVEnumerateValueObjectClass::GetFirstEnumTypePos() const
 {
 	int iRetVal = -1;
@@ -662,10 +638,6 @@ int SVEnumerateValueObjectClass::GetFirstEnumTypePos() const
 //				:
 //				: Use Iterator which is returned by GetFirstEnumType(...),
 //				:	to iterate through list of enum types.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, CString& RStrEnum, long& REnumValue ) const
 {
@@ -710,9 +682,8 @@ HRESULT SVEnumerateValueObjectClass::GetNormalizedValueImpl( const CString& strV
 
 void SVEnumerateValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEnumValueObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEnumValueObjectType;
 
-	//DefaultValue() = 0;
 	SetBits( ObjectAttributesAllowedRef(), SV_CH_CONDITIONAL, false);	// Enums not allowed as conditional history conditionals
 
 	m_strTypeName = "Enumeration";

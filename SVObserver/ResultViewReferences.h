@@ -27,10 +27,6 @@ class SVInspectionProcess;
 class SVValueObjectClass;
 #pragma endregion Declarations
 
-
-
- 
-
 /**
 	Class contains a list of GUIDS of and references to variables which are selected to be shown in the result view.
 **/

@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <set>
 
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVUtilityLibrary/SVGUID.h"
 

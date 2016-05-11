@@ -57,13 +57,13 @@ static const TCHAR* const TaskCategory[CategoryNr]= {
 	_T("SVObserver"),
 	_T("SVSecurity"),
 	_T("Unused11"),
-	_T("SVMachineMessage"),
+	_T("Unused12"),
 	_T("SVCmdComServer"),
 	_T("SVCmdComClient"),
 	_T("SVDataManager"),
 	_T("SVAccess"),
-	_T("Unused12"),
-	_T("SVImageCompression"),
+	_T("Unused13"),
+	_T("Unused14"),
 	_T("SVEquation"),
 	_T("SVFileAcquisition"),
 	_T("SVMatroxGige"),
@@ -71,7 +71,7 @@ static const TCHAR* const TaskCategory[CategoryNr]= {
 	_T("SVOLibrary"),
 	_T("SVSystemLibrary"),
 	_T("SVMatroxLibrary"),
-	_T("Unused13"),
+	_T("Unused15"),
 	_T("SVXMLLibrary") };
 
 #pragma endregion Declarations
@@ -246,26 +246,26 @@ namespace Seidenader { namespace SVStatusLibrary
 
 		if (!m_Message.m_Logged)
 		{
-			HANDLE hEventLog = RegisterEventSource ( NULL, getFacilityName().c_str() );
-			if( NULL != hEventLog )
+			HANDLE hEventLog = RegisterEventSource ( nullptr, getFacilityName().c_str() );
+			if( nullptr != hEventLog )
 			{
 				UINT Severity;
 
 				switch (getSeverity())
 				{
-				case SEV_SUCCESS :
+				case SEV_SUCCESS:
 					Severity = EVENTLOG_SUCCESS;
 					break;
 
-				case SEV_INFORMATIONAL :
+				case SEV_INFORMATIONAL:
 					Severity = EVENTLOG_INFORMATION_TYPE;
 					break;
 
-				case SEV_WARNING :
+				case SEV_WARNING:
 					Severity = EVENTLOG_WARNING_TYPE;
 					break;
 
-				case SEV_FATAL :
+				case SEV_FATAL:
 					Severity = EVENTLOG_ERROR_TYPE;
 					break;
 				}

@@ -24,7 +24,7 @@ namespace Seidenader { namespace SVMFCControls {
 			GDICanvas(CWnd * owner, const CRect & client, CBitmap * bmp, COLORREF color)
 			{
 				CPaintDC dc(owner); // device context for painting
-				if (bmp->GetSafeHandle() == NULL)
+				if (nullptr == bmp->GetSafeHandle() )
 				{
 					bmp->CreateCompatibleBitmap(&dc, client.Width(), client.Height());
 				}
@@ -124,22 +124,15 @@ namespace Seidenader { namespace SVMFCControls {
 		CString msg;
 		if (needs_repaint)
 		{
-			//GetClientRect(m_client);
-			//UpdateAnchors(m_client);
 			PaintBitmap();
-			//return;
 		}
 
 		CPaintDC dc(this); // device context for painting
 		CRect l_rect;
-		//GetClientRect(l_client);
-		//if ((dc.GetBoundsRect(&l_rect, DCB_RESET) & DCB_SET) != DCB_SET || not_valid(l_rect))
 		{
 			l_rect = m_client;
 		}
 
-		//msg.FormatMessage(_T("BoundsRect: %1!d!, %2!d!, %3!d!, %4!d!\n"), l_rect.left, l_rect.top, l_rect.right, l_rect.bottom);
-		//OutputDebugString(msg);
 		CDC memDC;
 		memDC.CreateCompatibleDC(&dc);
 		CBitmap * temp_bmp = (CBitmap *)memDC.SelectObject(&m_bmp);
@@ -259,7 +252,6 @@ namespace Seidenader { namespace SVMFCControls {
 		m_dragging = 0;
 		ReleaseCapture();
 		::SetCursor(m_ArrowCursor);
-		//CStatic::OnLButtonUp(nFlags, point);
 	}
 
 	BOOL SVHistogram::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
@@ -308,10 +300,10 @@ namespace Seidenader { namespace SVMFCControls {
 			wndcls.lpfnWndProc      = ::DefWindowProc;
 			wndcls.cbClsExtra       = wndcls.cbWndExtra = 0;
 			wndcls.hInstance        = hInst;
-			wndcls.hIcon            = NULL;
+			wndcls.hIcon            = nullptr;
 			wndcls.hCursor          = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
 			wndcls.hbrBackground    = (HBRUSH) (COLOR_GRADIENTACTIVECAPTION);
-			wndcls.lpszMenuName     = NULL;
+			wndcls.lpszMenuName     = nullptr;
 			wndcls.lpszClassName    = HISTOGRAM_CLASSNAME;
 
 			if (!AfxRegisterClass(&wndcls))
@@ -338,8 +330,6 @@ namespace Seidenader { namespace SVMFCControls {
 
 		l_menu.CreatePopupMenu();
 		l_menu.AppendMenu(MF_STRING, ID_BCK_COLOR, _T("&Background..."));
-		//l_menu.AppendMenu(MF_SEPARATOR);
-		//l_menu.AppendMenu(MF_STRING, ID_OPTIONS, (LPCSTR)"&Options...");
 		l_menu.TrackPopupMenu(TPM_LEFTALIGN |TPM_RIGHTBUTTON, point.x, point.y, this);
 	}
 
@@ -352,21 +342,6 @@ namespace Seidenader { namespace SVMFCControls {
 			PaintBitmap();
 		}
 	}
-
-	//void SVHistogram::OnOptions()
-	//{
-	//	OptionsDialog l_dlg;
-	//	l_dlg.scale = m_scale;
-	//	l_dlg.verticalAxis = m_axis;
-	//
-	//	if (l_dlg.DoModal() == IDOK)
-	//	{
-	//		m_scale = static_cast<histogram::scale>(l_dlg.scale);
-	//		m_axis = static_cast<histogram::v_axis>(l_dlg.verticalAxis);
-	//		PaintBitmap();
-	//	}
-	//}
-
 
 	int SVHistogram::SetBound(int pos, Bound bound)
 	{

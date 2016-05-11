@@ -275,7 +275,7 @@ bool SVToolSetListCtrl::IsEndListDelimiter(const CString& text) const
 bool SVToolSetListCtrl::IsEmptyStringPlaceHolder(const CString& text) const
 {
 	CString emptyString;
-	emptyString.LoadString(NULL, IDS_EMPTY_STRING);
+	emptyString.LoadString(nullptr, IDS_EMPTY_STRING);
 	return (text == emptyString);
 }
 

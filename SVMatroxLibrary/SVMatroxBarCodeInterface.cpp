@@ -519,9 +519,9 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 					SVBufferResource l_Resource;
 
 					McodeGetResult( p_rCodeID.m_BarCodeId, M_STRING_SIZE | M_TYPE_LONG, &l_lSize );
-					if( l_Resource.Resize( l_lSize + 256 ) == S_OK )
+					if( S_OK == l_Resource.Resize( l_lSize + 256 )  )
 					{
-						MIL_TEXT_CHAR* l_pChars = NULL;
+						MIL_TEXT_CHAR* l_pChars = nullptr;
 						l_Resource.GetBuffer( l_pChars );
 						McodeGetResult( p_rCodeID.m_BarCodeId, l_lControlType , l_pChars );
 						l_Code = SVMatroxApplicationInterface::GetLastStatus();

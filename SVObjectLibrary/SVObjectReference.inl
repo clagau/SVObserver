@@ -24,7 +24,7 @@ inline SVObjectReference::SVObjectReference( GUID guid )
 
 inline void SVObjectReference::init()
 {
-	m_pObject = NULL;
+	m_pObject = nullptr;
 	m_Guid = SVInvalidGUID;
 	m_NameInfo.clear();
 	m_ArrayIndex = -1;
@@ -147,7 +147,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 	if ( m_pObject )
 	{
 		m_Guid = m_pObject->GetUniqueObjectID();
-		if( m_pObject != NULL )
+		if( nullptr != m_pObject )
 		{
 			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
 		}
@@ -173,7 +173,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, long l
 	if ( m_pObject )
 	{
 		m_Guid = m_pObject->GetUniqueObjectID();
-		if( m_pObject != NULL )
+		if( nullptr != m_pObject )
 		{
 			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
 		}

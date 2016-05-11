@@ -16,7 +16,7 @@
 
 template< typename SVLockType >
 SVAutoLockAndReleaseTemplate< SVLockType >::SVAutoLockAndReleaseTemplate()
-: m_pLock( NULL )
+: m_pLock( nullptr )
 {
 }
 
@@ -25,20 +25,20 @@ BOOL SVAutoLockAndReleaseTemplate< SVLockType >::Assign( SVLockType* p_pLock, DW
 {
 	BOOL l_Status = true;
 
-	if( m_pLock != NULL )
+	if( nullptr != m_pLock )
 	{
 		m_pLock->Unlock();
 	}
 
 	m_pLock = p_pLock;
 
-	if( m_pLock != NULL )
+	if( nullptr != m_pLock )
 	{
 		l_Status = m_pLock->Lock( p_WaitTime );
 
 		if( !l_Status )
 		{
-			m_pLock = NULL;
+			m_pLock = nullptr;
 		}
 	}
 
@@ -48,7 +48,7 @@ BOOL SVAutoLockAndReleaseTemplate< SVLockType >::Assign( SVLockType* p_pLock, DW
 template< typename SVLockType >
 SVAutoLockAndReleaseTemplate< SVLockType >::~SVAutoLockAndReleaseTemplate()
 {
-	if( m_pLock != NULL )
+	if( nullptr != m_pLock )
 	{
 		m_pLock->Unlock();
 	}

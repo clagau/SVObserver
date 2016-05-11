@@ -11,10 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVCommandDataTemplateFacade.h"
+#pragma endregion Includes
 
-/*
-*/
 template< unsigned long p_BaseDataType, typename SVTemplateDataType, typename SVTemplateArgType = SVTemplateDataType >
 class SVCommandDataTemplate : public SVCommandDataTemplateFacade< p_BaseDataType, SVTemplateDataType, SVTemplateArgType >
 {

@@ -259,7 +259,7 @@ HRESULT SVDirectX::CreateSurface(long width, long height, IDirectDrawSurface7** 
 				*ppDDSurface = nullptr;
 			}
 
-			l_hr = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, ppDDSurface, NULL );
+			l_hr = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, ppDDSurface, nullptr );
 			if (DD_OK != l_hr)
 			{
 				TRACE( _T( "SVDirectX::CreateSurface failed (%08lx)\n" ), l_hr );

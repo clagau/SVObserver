@@ -19,7 +19,6 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageChildStruct.h"
@@ -37,7 +36,7 @@ struct SVProductInfoStruct;
 
 typedef SVVector< long > SVImageChildIndexCArray;
 
-class SVImageClass : virtual public SvOi::ISVImage, public SVObjectAppClass
+class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
 {
 	SV_DECLARE_CLASS( SVImageClass );
 
@@ -84,7 +83,6 @@ public:
 	virtual SVImageExtentClass GetImageExtents();
 	virtual HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
 
-	virtual HRESULT ValidateAgainstAllExtents( SVImageExtentClass& p_rsvExtent );
 	virtual HRESULT ValidateAgainstParentExtents( SVImageExtentClass& p_rsvExtent );
 	virtual HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& p_rsvExtent );
 	virtual HRESULT ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvExtent );
@@ -99,15 +97,10 @@ public:
 	virtual BOOL CopyImageTo( SVImageIndexStruct svIndex );
 
 	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ); //@TODO:  Change method to const?
-		virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
+	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
 
 	virtual BOOL SafeImageCopyToHandle     ( SVSmartHandlePointer& p_rHandle );
 	virtual BOOL SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle );
-	virtual BOOL SafeImageCopyToBSTR       ( SVImageIndexStruct p_svFromIndex, BSTR &p_rbstrData );
-	virtual BOOL SafeImageCopyColorToHandle( SVSmartHandlePointer& p_rHandle, long p_lBandNumber );
-	virtual BOOL SafeImageCopyColorToHandle( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle, long p_lBandNumber );
-	virtual BOOL SafeImageCopyClipToHandle ( SVSmartHandlePointer& p_rHandle, long p_lLeftOffset, long p_lTopOffset );
-	virtual BOOL SafeImageCopyClipToHandle ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle, long p_lLeftOffset, long p_lTopOffset );
 	virtual BOOL SafeImageConvertToHandle  ( SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_lConversionType );
 	virtual BOOL SafeImageConvertToHandle  ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_lConversionType );
 
@@ -136,7 +129,6 @@ public:
 	virtual SvOi::MatroxImageSmartHandlePtr getImageData() override;
 	virtual SvOi::MatroxImageSmartHandlePtr getParentImageData() override;
 	virtual SVString getDisplayedName() const override;
-	virtual SvOi::IObjectClass* getOwner() const override; // Gets the owner from the ImageInfo
 	virtual long getBands() const override;
 	virtual long getPixelDepth() const override;
 	virtual HRESULT Save(const SVString& rFilename) override; 

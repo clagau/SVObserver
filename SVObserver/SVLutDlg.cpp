@@ -16,8 +16,6 @@
 #include "SVLutDlg.h"
 #include "SVAcquisitionClass.h"
 #include "ObjectInterfaces/SVUserMessage.h"
-#include "SVObserver.h"	// TEMP HACK for 1394 detection
-#include "SVConfigurationObject.h"	// TEMP HACK for 1394 detection
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
@@ -233,7 +231,7 @@ BOOL SVLutDlgPage::OnInitDialog()
 
 	if( bAllVariablesSet )
 	{
-		CWnd* pWnd=NULL;
+		CWnd* pWnd = nullptr;
 
 		// Set Normalize Mode of Graph Control...
 		m_LUTGraph.SetNormalizeMode( SvOml::SVNormalizeXYMinMax );
@@ -242,8 +240,6 @@ BOOL SVLutDlgPage::OnInitDialog()
 		if ( 3 == m_iBandWidth )
 		{
 			// show color band controls if color LUT
-//			if (pWnd = GetDlgItem(IDC_COLOR_BAND_ALL))
-//				pWnd->ShowWindow( SW_SHOW );
 			if (pWnd = GetDlgItem(IDC_COLOR_BAND_SYNC))
 			{
 				((CButton*)pWnd)->SetCheck(TRUE);
@@ -934,7 +930,7 @@ void SVLutDlgPage::OnColorBandSync()
 {
 	// we will have to adjust this once we implement the "All" option... All -> Sync??? disable Sync if all is selected
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LUT_ShouldOverwriteAllBands, StdMessageParams, SvOi::Err_10235, NULL, nullptr, MB_YESNO );
+	INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LUT_ShouldOverwriteAllBands, StdMessageParams, SvOi::Err_10235, 0, nullptr, MB_YESNO );
 	if (IDYES == result )
 	{
 		// copy current band data to all other bands

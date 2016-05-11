@@ -36,8 +36,6 @@ public:
 
 	virtual HRESULT ResetObject();
 
-	void GetTrainColorROIExtent( CRect &p_roRect );
-
 	SVImageClass* GetBand0InputImage();
 	SVImageClass* GetBand1InputImage();
 	SVImageClass* GetBand2InputImage();

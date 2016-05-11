@@ -57,7 +57,7 @@ const SVObjectInfoStruct& SVObjectInfoStruct::operator = ( const SVObjectInfoStr
 
 void SVObjectInfoStruct::clear()
 {
-	PObject = NULL;
+	PObject = nullptr;
 	UniqueObjectID.clear();
 	ObjectTypeInfo = SVInvalidObjectTypeInfo;
 	m_ObjectNameInfo.clear();

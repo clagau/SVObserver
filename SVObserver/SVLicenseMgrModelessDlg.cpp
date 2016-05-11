@@ -30,9 +30,8 @@ SVLicenseMgrModelessDlg& SVLicenseMgrModelessDlg::Instance()
 	return l_Object;
 }
 
-SVLicenseMgrModelessDlg::SVLicenseMgrModelessDlg(): CDialog(SVLicenseMgrModelessDlg::IDD, NULL),m_hEvent(NULL)
+SVLicenseMgrModelessDlg::SVLicenseMgrModelessDlg(): CDialog(SVLicenseMgrModelessDlg::IDD, nullptr), m_hEvent(nullptr)
 {
-	
 }
 
 void SVLicenseMgrModelessDlg::Init(const CString& s,const SVLicenseErrorListSet& p_sList, HANDLE p_hEvent)
@@ -50,7 +49,7 @@ void SVLicenseMgrModelessDlg::Show(const CString& s,const SVLicenseErrorListSet&
 {
 	SVLicenseMgrModelessDlg& l_rDlg = SVLicenseMgrModelessDlg::Instance();
 	l_rDlg.Init(s,p_sList,p_hEvent);
-	l_rDlg.Create(SVLicenseMgrModelessDlg::IDD, NULL);
+	l_rDlg.Create(SVLicenseMgrModelessDlg::IDD, nullptr);
 }
 
 void SVLicenseMgrModelessDlg::Destroy()
@@ -79,12 +78,12 @@ void SVLicenseMgrModelessDlg::DoDataExchange(CDataExchange* pDX)
 
 void SVLicenseMgrModelessDlg::CleanUp()
 {
-	if( m_hEvent != NULL )
+	if( nullptr != m_hEvent )
 	{
 		::ResetEvent( m_hEvent );
 		::CloseHandle( m_hEvent );
 
-		m_hEvent = NULL;
+		m_hEvent = nullptr;
 	}
 
 	m_sMsg.Empty();
@@ -162,7 +161,7 @@ void SVLicenseMgrModelessDlg::OnSize(UINT nType, int cx, int cy)
 		mycx = cx - 20;
 		mycy = y/*OK button Y*/ -10 - rectText.top;
 
-		pText->SetWindowPos(NULL, 0,0, mycx, mycy, SWP_NOMOVE | SWP_NOZORDER);
+		pText->SetWindowPos(nullptr, 0, 0, mycx, mycy, SWP_NOMOVE | SWP_NOZORDER);
 	}
 	
 	CDialog::OnSize(nType, cx, cy);

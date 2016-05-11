@@ -11,15 +11,15 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <string>
 #include "SVSystemLibrary/SVThreadManager.h"
+#pragma endregion Includes
 
 /*
 ThreadFunc must have the following prototype:
-
      void ThreadFunc();
-
 */
 
 template <typename ThreadFunc>

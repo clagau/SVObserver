@@ -19,6 +19,7 @@ public:
 	typedef SVXML::IXMLDOMElementPtr SVElementPtr;
 	typedef SVXML::IXMLDOMNodePtr SVNodePtr;
 
+	virtual ~SVXMLBase() {}
 	virtual HRESULT CreateDOMData( SVElementPtr& arDOMNewElementPtr, BSTR abstrElementName, VARIANT* avpElementData ) = 0;
 
 	virtual HRESULT CreateElement( BSTR p_bstrElementName, SVElementPtr& p_orDOMElementPtr ) = 0;

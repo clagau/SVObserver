@@ -154,7 +154,6 @@ private: //data members
 
     void CameraAdvancedHideItems();
     void PPQHideItems();
-    void TriggerHideItems();
     void SetTitle(CString sName);
 
 	void SetupCamera();

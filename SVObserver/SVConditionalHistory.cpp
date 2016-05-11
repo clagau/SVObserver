@@ -82,7 +82,7 @@ SVConditionalHistory::ParseName( const CString& strName )
 		{
 			SVObjectReference object;
 			HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strName ), object );
-			if ( hr == S_OK )
+			if ( S_OK == hr )
 			{
 				/// names  are zero based!!!
 				object.IncrementIndex();
@@ -90,7 +90,7 @@ SVConditionalHistory::ParseName( const CString& strName )
 			}
 		}
 	}
-	return std::pair<SVObjectReference, SVInspectionProcess*>(SVObjectReference(), reinterpret_cast<SVInspectionProcess*>(NULL) );
+	return std::pair<SVObjectReference, SVInspectionProcess*>(SVObjectReference(), reinterpret_cast<SVInspectionProcess*>(nullptr) );
 }
 
 // Validate that the object exists and store the object reference
@@ -107,7 +107,7 @@ HRESULT SVConditionalHistory::Validate( std::vector <SVScalarValue>& p_rvec )
 		if ( pInspection == m_pInspection )
 		{
 			rValue.object = retval.first;	// assign into passed in vector
-			if ( rValue.object.Object() == NULL )	// error: object does not exist
+			if ( nullptr == rValue.object.Object() )	// error: object does not exist
 			{
 				rValue.status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 				hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
@@ -141,7 +141,7 @@ namespace local
 	struct IsInvalid
 	{
 		bool operator () ( const T& rhs )
-			{ return rhs.object.Object() == NULL; }
+			{ return nullptr == rhs.object.Object(); }
 	};
 
 	template < typename CONTAINER >
@@ -157,15 +157,7 @@ HRESULT SVConditionalHistory::ResetObject()
 {
 	HRESULT hr = S_OK;
 
-	// WORK ON A COPY OF THE HISTORY, swap atomically later 
-	// This copy needs to be an atomic operation, too??!!!
-	// Not necessary because there is no dynamic allocation at runtime.
-	// The data that could be changing doesn't matter to this function
-
-	// **UNNECESSARY (and undesirable) now because CH is completely managed and accessed from the inspection thread.
-	//SVConditionalHistoryData l_Data( m_Data );  
 	SVConditionalHistoryData& l_Data = m_Data;    // INSTEAD OF A COPY JUST USE A REFERENCE  
-
 
 	// CLEAR OBJECT ATTRIBUTES FOR CURRENTLY SELECTED OBJECTS
 	{// block scope
@@ -284,7 +276,7 @@ HRESULT SVConditionalHistory::ResetObject()
 			{
 				// assign a raw SVImageBufferStruct to a ref counted struct;
 				//  releases reference to (and destroys if necessary) old buffer;
-				//  clears rImageDef.handle (which is NULL anyway)
+				//  clears rImageDef.handle (which is empty anyway)
 				rEntryImage = rSpecifiedImageDef;
 
 				// now allocate buffer
@@ -332,7 +324,7 @@ HRESULT SVConditionalHistory::SetProperties( SVScalarValueVector& rvecProperties
 		{
 			CString strNormalizedValue;
 			HRESULT hrNormalize = m_Data.bvoOverwrite.GetNormalizedValue( rProperty.strValue, strNormalizedValue );
-			if ( hrNormalize == S_OK )
+			if ( S_OK == hrNormalize )
 			{
 				bOverwriteChanged = (S_OK == m_Data.bvoOverwrite.CompareWithCurrentValue( strNormalizedValue ) );
 				if ( bOverwriteChanged )
@@ -406,7 +398,7 @@ HRESULT SVConditionalHistory::GetProperties( SVScalarValueVector& rvecProperties
 	return hr;
 }
 
-// if a pointer is NULL, there is no change for that list
+// if a pointer is nullptr, there is no change for that list
 HRESULT SVConditionalHistory::SetList( std::vector <SVScalarValue>* p_pvecValues, std::vector <SVScalarValue>* p_pvecImages, std::vector <SVScalarValue>* p_pvecConditionals, bool p_bResetObject )
 {
 	HRESULT hr = S_OK;
@@ -501,8 +493,9 @@ HRESULT SVConditionalHistory::SetList( std::vector <SVScalarValue>* p_pvecValues
 	}
 
 	if ( p_bResetObject )
+	{
 		ResetObject();
-
+	}
 	return hr;
 }
 
@@ -511,14 +504,13 @@ HRESULT SVConditionalHistory::GetList( std::vector <SVScalarValue>& rvecData, st
 	rvecData = m_Data.vecValues;
 	rvecConditionals = m_Data.vecConditionals;
 	rvecImages.clear();
-	//rvecImages = m_vecImages;
-	//*
+	
 	std::vector<SVImageBufferStruct>::iterator iter;
 	for ( iter = m_Data.vecImages.begin(); iter != m_Data.vecImages.end(); ++iter )
 	{
 		rvecImages.push_back( SVScalarValue( iter->strName, _T(""), iter->object ) );
 	}
-	//*/
+
 	return S_OK;
 }
 
@@ -626,32 +618,6 @@ HRESULT SVConditionalHistory::GetHistoryEntry( long lIndex, std::vector <SVScala
 	}
 
 	return hr;
-}
-
-HRESULT SVConditionalHistory::CheckConditionals() const
-{
-	HRESULT l_Status = S_FALSE;
-
-	for( size_t i = 0; l_Status != S_OK && i < m_Data.vecConditionals.size(); ++i )
-	{
-		const SVScalarValue& rValue = m_Data.vecConditionals.at(i);
-
-		SVValueObjectReference refValueObject = rValue.object;
-
-		if ( refValueObject.Object() )
-		{
-			double dValue = 0.0;
-			
-			refValueObject.GetValue( dValue );
-
-			if( dValue != 0.0 )
-			{
-				l_Status = S_OK;
-			}
-		}
-	}
-
-	return l_Status;
 }
 
 HRESULT SVConditionalHistory::CollectDataAndStore()

@@ -46,7 +46,7 @@ HRESULT SVFillBlobDlg::SetInspectionData()
 	{
 		long lValue = ( long ) m_ctlBlobColor.GetItemData( iCurSel );
 
-		if( AddInputRequest( m_pvoBlobFillColor, lValue ) == S_OK )
+		if( S_OK == AddInputRequest( m_pvoBlobFillColor, lValue ) )
 		{
 			l_bRequestAdded = true;
 		}
@@ -61,7 +61,7 @@ HRESULT SVFillBlobDlg::SetInspectionData()
 	{
 		long lValue = ( long ) m_ctlBlobType.GetItemData( iCurSel );
 
-		if( AddInputRequest( m_pvoBlobType, lValue ) == S_OK )
+		if( S_OK == AddInputRequest( m_pvoBlobType, lValue ) )
 		{
 			l_bRequestAdded = true;
 		}
@@ -71,11 +71,11 @@ HRESULT SVFillBlobDlg::SetInspectionData()
 		}
 	}
 
-	if( l_hrOk == S_OK && l_bRequestAdded )
+	if( S_OK == l_hrOk && l_bRequestAdded )
 	{
 		l_hrOk = AddInputRequestMarker();
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( m_pvoBlobType->GetTool() );
 		}

@@ -49,7 +49,7 @@ public:
 	bool BoolValue(const SVDeviceParamWrapper& w);
 	SVDeviceParamWrapper DeviceParam(bool b);
 #else
-	inline bool& BoolValue(SVDeviceParamWrapper& w) {SVBoolValueDeviceParam* p = w.DerivedValue(p); if (p==NULL) {w = SVBoolValueDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->bValue;}
+	inline bool& BoolValue(SVDeviceParamWrapper& w) {SVBoolValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVBoolValueDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->bValue;}
 	inline bool BoolValue(const SVDeviceParamWrapper& w) {const SVBoolValueDeviceParam* p = w.DerivedValue(p); if (p) return p->bValue; else {ASSERT(FALSE); return 0;} }
 	inline SVDeviceParamWrapper DeviceParam(bool b) {return SVBoolValueDeviceParam(b);}
 #endif

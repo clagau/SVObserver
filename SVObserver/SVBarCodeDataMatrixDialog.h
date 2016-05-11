@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #pragma endregion Includes
 
 class SVBarCodeDataMatrixDialog : public CPropertyPage

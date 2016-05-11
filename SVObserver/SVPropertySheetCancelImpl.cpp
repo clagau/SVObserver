@@ -32,7 +32,7 @@ bool SVPropertySheetCancelImpl::CanCancel()
 		CPropertyPage* pPage = pThisSheet->GetPage(i);
 		if( pPage && pPage->GetSafeHwnd() ) 
 		{
-			ISVCancel* pPageCancel = NULL;
+			ISVCancel* pPageCancel = nullptr;
 			bCanCancel = bCanCancel && (( pPageCancel = dynamic_cast<ISVCancel*>(pPage) ) && pPageCancel->CanCancel());
 		}
 	}
@@ -47,7 +47,7 @@ HRESULT SVPropertySheetCancelImpl::GetCancelData(SVCancelData*& rpData)
 	CPropertySheet* pThisSheet = dynamic_cast <CPropertySheet*> (this);
 	ASSERT( pThisSheet );
 
-	ASSERT(rpData == NULL);
+	ASSERT(nullptr == rpData);
 	SVMultiCancelData* pCancelData = new SVMultiCancelData;
 	rpData = pCancelData;
 
@@ -58,14 +58,16 @@ HRESULT SVPropertySheetCancelImpl::GetCancelData(SVCancelData*& rpData)
 		CPropertyPage* pPage = pThisSheet->GetPage(i);
 		if( pPage && pPage->GetSafeHwnd() ) 
 		{
-			ISVCancel* pPageCancel = NULL;
+			ISVCancel* pPageCancel = nullptr;
 			if (( pPageCancel = dynamic_cast<ISVCancel*>(pPage) ) && pPageCancel->CanCancel())
 			{
-				SVCancelData* pPageData = NULL;
+				SVCancelData* pPageData = nullptr;
 				HRESULT hr = pPageCancel->GetCancelData(pPageData);
 				pCancelData->mapData[pPageCancel] = pPageData;
-				if ( hrResult == S_OK )
+				if ( S_OK == hrResult )
+				{
 					hrResult = hr;
+				}
 			}
 		}
 	}
@@ -79,7 +81,7 @@ HRESULT SVPropertySheetCancelImpl::SetCancelData(SVCancelData* pData)
 
 	CPropertySheet* pThisSheet = dynamic_cast <CPropertySheet*> (this);
 	ASSERT( pThisSheet );
-	ASSERT(pData != NULL);
+	ASSERT(nullptr != pData);
 
 	SVMultiCancelData* pCancelData = static_cast<SVMultiCancelData*> (pData);
 	SVMultiCancelData::MapType::iterator iter;
@@ -89,8 +91,10 @@ HRESULT SVPropertySheetCancelImpl::SetCancelData(SVCancelData* pData)
 		ISVCancel* pPageCancel = iter->first;
 		SVCancelData* pPageData = iter->second;
 		HRESULT hr = pPageCancel->SetCancelData(pPageData);
-		if ( hrResult == S_OK )
+		if ( S_OK == hrResult )
+		{
 			hrResult = hr;
+		}
 	}
 
 	return hrResult;

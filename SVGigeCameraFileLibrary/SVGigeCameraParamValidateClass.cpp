@@ -68,18 +68,18 @@ HRESULT SVGigeCameraParamValidateClass::UpdateParams( SVDeviceParamCollection& p
 		}
 
 		SVDeviceParam *l_pShutter = p_rFileParams.GetParameter( DeviceParamShutter );
-		if ( l_pShutter != NULL )
+		if ( nullptr != l_pShutter )
 		{
-			if ( l_pShutter->SetDetailLevel( l_lDetailLevel ) != S_OK )
+			if ( S_OK != l_pShutter->SetDetailLevel( l_lDetailLevel ) )
 			{
 				l_hrOk = S_FALSE;
 			}
 		}
 
 		SVDeviceParam *l_pShutterDelay = p_rFileParams.GetParameter( DeviceParamShutterDelay );
-		if ( l_pShutterDelay != NULL )
+		if ( nullptr != l_pShutterDelay )
 		{
-			if ( l_pShutterDelay->SetDetailLevel( l_lDetailLevel ) != S_OK )
+			if (S_OK != l_pShutterDelay->SetDetailLevel( l_lDetailLevel ) )
 			{
 				l_hrOk = S_FALSE;
 			}

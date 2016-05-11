@@ -9,15 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:36:00  $
 // ******************************************************************************
 
-#if !defined(SVOIPVIEWCLASS_H)
-#define SVOIPVIEWCLASS_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-// SVOIPViewClass view
 
 class SVOIPViewClass : public CView
 {
@@ -57,6 +49,3 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(SVOIOVIEWCLASS_H)
-

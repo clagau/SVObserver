@@ -84,7 +84,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		// Get the line and column where the error occurred.
 		int line = 0;
 		int column = 0;
-		if ( pLocator != NULL )
+		if ( nullptr != pLocator )
 		{
 			pLocator->getLineNumber(&line);
 			pLocator->getColumnNumber(&column);

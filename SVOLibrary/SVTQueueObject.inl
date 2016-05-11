@@ -177,7 +177,7 @@ BOOL SVTQueueObject<T>::GetSize( long &lSize )
 template <typename T>
 BOOL SVTQueueObject<T>::GetHead( T* pParam )
 {
-	if( m_bCreated && pParam != NULL )
+	if( m_bCreated && nullptr != pParam )
 	{
 		SVCriticalSectionSingleLock lock( m_critsec );
 
@@ -195,7 +195,7 @@ BOOL SVTQueueObject<T>::GetHead( T* pParam )
 template <typename T>
 BOOL SVTQueueObject<T>::GetTail( T* pParam )
 {
-	if( m_bCreated && pParam != NULL )
+	if( m_bCreated && nullptr != pParam )
 	{
 		SVCriticalSectionSingleLock lock( m_critsec );
 

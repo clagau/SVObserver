@@ -9,11 +9,12 @@
 //* .Check In Date   : $Date:   15 May 2014 11:21:44  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOutputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVValueObject.h"
-#include "SVDigitalOutputObject1.h"
+#include "SVDigitalOutputObject.h"
 #include "SVRemoteOutputObject.h"
 #include "SVInfoStructs.h"
 #include "SVObserver.h"
@@ -21,6 +22,7 @@
 #include "SVInputObjectList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage\SVMessage.h"
+#pragma endregion Includes
 
 SVOutputObjectList::SVOutputObjectList( LPCSTR ObjectName )
 : SVObjectClass( ObjectName ), m_bCreated( false )
@@ -42,7 +44,7 @@ SVOutputObjectList::~SVOutputObjectList()
 
 BOOL SVOutputObjectList::Create()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVOutputObjectListType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVOutputObjectListType;
 
 	try
 	{
@@ -108,7 +110,7 @@ HRESULT SVOutputObjectList::AttachOutput( SVOutputObject *pOutput )
 {
 	HRESULT l_Status = S_OK;
 
-	if( pOutput != NULL )
+	if( nullptr != pOutput )
 	{
 		if( Lock() )
 		{
@@ -148,7 +150,7 @@ HRESULT SVOutputObjectList::DetachOutput( const SVGUID& p_rOutputID )
 
 			m_OutputObjects.erase( l_Iter );
 
-			if( l_pOutput != NULL )
+			if( nullptr != l_pOutput )
 			{
 				delete l_pOutput;
 			}
@@ -167,19 +169,19 @@ HRESULT SVOutputObjectList::DetachOutput( const SVGUID& p_rOutputID )
 BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& p_IOEntries, long lDataIndex, bool p_ACK, bool p_NAK )
 {
 	
-	SVOutputObject	*pStateOutput = NULL;
-	SVDigitalOutputObject	*pDigOutput = NULL;
+	SVOutputObject	*pStateOutput = nullptr;
+	SVDigitalOutputObject	*pDigOutput = nullptr;
 	_variant_t l_Variant;
 	CString strValue;
 	BOOL bValue = false;
 	double dValue = 0.0;
 	DWORD dwValue = 0;
 	long lValue = 0;
-	TCHAR *pStrValue = NULL;
+	TCHAR *pStrValue = nullptr;
 
 	if( Lock() )
 	{
-		pStateOutput = NULL;
+		pStateOutput = nullptr;
 
 		for( size_t i = 0; i < p_IOEntries.size(); i++ )
 		{
@@ -194,7 +196,7 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& p_IOEntries, long 
 				}// end if
 				else if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_REMOTE_OUTPUT )
 				{
-					SVOutputObject* pOutput = NULL;
+					SVOutputObject* pOutput = nullptr;
 
 					SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry.m_IOEntryPtr->m_IOId );
 
@@ -244,19 +246,19 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& p_IOEntries, long 
 BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, long lDataIndex, bool p_ACK, bool p_NAK )
 {
 	
-	SVOutputObject	*pStateOutput = NULL;
-	SVDigitalOutputObject	*pDigOutput = NULL;
+	SVOutputObject	*pStateOutput = nullptr;
+	SVDigitalOutputObject	*pDigOutput = nullptr;
 	_variant_t l_Variant;
 	CString strValue;
 	BOOL bValue = false;
 	double dValue = 0.0;
 	DWORD dwValue = 0;
 	long lValue = 0;
-	TCHAR *pStrValue = NULL;
+	TCHAR *pStrValue = nullptr;
 
 	if( Lock() )
 	{
-		pStateOutput = NULL;
+		pStateOutput = nullptr;
 
 		for( size_t i = 0; i < p_IOEntries.size(); i++ )
 		{
@@ -276,7 +278,7 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, 
 				}// end if
 				else if( pIOEntry->m_ObjectType == IO_REMOTE_OUTPUT )
 				{
-					SVOutputObject* pOutput = NULL;
+					SVOutputObject* pOutput = nullptr;
 
 					SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
 
@@ -334,7 +336,7 @@ BOOL SVOutputObjectList::ResetOutputs( SVIOEntryStructVector& p_IOEntries )
 			// Check if output is enabled for this call
 			if( !( pIOEntry.empty() ) && pIOEntry.m_IOEntryPtr->m_Enabled )
 			{
-				SVOutputObject* pOutput = NULL;
+				SVOutputObject* pOutput = nullptr;
 
 				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry.m_IOEntryPtr->m_IOId );
 
@@ -366,7 +368,7 @@ BOOL SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrList& p_IOEntries )
 			// Check if output is enabled for this call
 			if( !( pIOEntry.empty() ) && pIOEntry->m_Enabled )
 			{
-				SVOutputObject* pOutput = NULL;
+				SVOutputObject* pOutput = nullptr;
 
 				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
 
@@ -404,7 +406,7 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex,
 			}// end if
 			else if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_REMOTE_OUTPUT )
 			{
-				SVOutputObject* pOutput = NULL;
+				SVOutputObject* pOutput = nullptr;
 
 				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry.m_IOEntryPtr->m_IOId );
 
@@ -457,7 +459,7 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 			}// end if
 			else if( pIOEntry->m_ObjectType == IO_REMOTE_OUTPUT )
 			{
-				SVOutputObject* pOutput = NULL;
+				SVOutputObject* pOutput = nullptr;
 
 				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
 
@@ -672,7 +674,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const StringVect& p_aStrInspNam
 
 				CString l_strName;
 
-				if( l_pOutput != NULL )
+				if( nullptr != l_pOutput )
 				{
 					l_strName = l_pOutput->GetName();
 				}
@@ -709,18 +711,18 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const StringVect& p_aStrInspNam
 				{
 					l_Iter = m_OutputObjects.erase( l_Iter );
 
-					if( l_pOutput != NULL )
+					if( nullptr != l_pOutput )
 					{
 						delete l_pOutput;
 					}
 				}
 				else
 				{
-					if( l_pOutput != NULL )
+					if( nullptr != l_pOutput )
 					{
 						SVDigitalOutputObject* l_pDigital = dynamic_cast< SVDigitalOutputObject* >( l_pOutput );
 
-						if( l_pDigital != NULL )
+						if( nullptr != l_pDigital )
 						{
 							if( 0 <= l_pDigital->GetChannel() && l_pDigital->GetChannel() <= 15 )
 							{
@@ -746,7 +748,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const StringVect& p_aStrInspNam
 				{
 					SVDigitalOutputObject* l_pOutput = *l_OutputIter;
 
-					if( l_pOutput != NULL && SVString( _T("Module Ready") ) == l_pOutput->GetName() )
+					if( nullptr != l_pOutput && SVString( _T("Module Ready") ) == l_pOutput->GetName() )
 					{
 						l_pOutput->SetChannel( -1 );
 
@@ -789,11 +791,12 @@ bool SVOutputObjectList::OutputIsNotValid( SVString p_strName )
 	SVObjectClass* l_pObject;
 	HRESULT l_hr = SVObjectManagerClass::Instance().GetObjectByDottedName( p_strName, l_pObject );
 	// Check if the object exists.
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
-		//if( l_pObject->GetPublicAttribute(
 		if( l_pObject->ObjectAttributesSet() & SV_PUBLISHABLE )
+		{
 			l_bRet = false;
+		}
 	}
 	// Return true if object does not exist or is not published.
 	return l_bRet;
@@ -801,7 +804,7 @@ bool SVOutputObjectList::OutputIsNotValid( SVString p_strName )
 
 DWORD_PTR SVOutputObjectList::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -872,11 +875,11 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 {
 	HRESULT l_Status = S_OK;
 
-	SVDigitalOutputObject* pOutput = NULL;
+	SVDigitalOutputObject* pOutput = nullptr;
 
 	l_Status = GetOutput( pIOEntry.m_IOEntryPtr->m_IOId, pOutput );
 
-	if( pOutput != NULL )
+	if( nullptr != pOutput )
 	{
 		bool bValue = false;
 

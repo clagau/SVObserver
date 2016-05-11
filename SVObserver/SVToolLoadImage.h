@@ -19,7 +19,7 @@ class SVLoadImageToolClass : public SVToolClass, public AllowResizeToParent
 	SV_DECLARE_CLASS( SVLoadImageToolClass );
 
 public:
-	SVLoadImageToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVLOADIMAGETOOL );
+	SVLoadImageToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLOADIMAGETOOL );
 
 	virtual ~SVLoadImageToolClass();
 
@@ -33,7 +33,7 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
 
-	virtual BOOL OnValidate();        // 23 Nov 1999 - frb.
+	virtual BOOL OnValidate();
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
 	//************************************

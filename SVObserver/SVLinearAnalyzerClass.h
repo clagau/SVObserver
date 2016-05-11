@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVAnalyzer.h"
 #include "SVValueBaseNormalizerClass.h"
-#include "SVValueObjectImpl.h"
 #pragma endregion Includes
 
 class SVLinearEdgeProcessingClass;

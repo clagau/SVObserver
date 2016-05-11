@@ -43,7 +43,7 @@ const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::SVBar
 
 const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::SVBarCodeInfoArray::GetInfoByMilID(long lMilID)
 {
-	SVBarCodeGeneralDialog::SVBarCodeInfoStruct* pInfo = NULL;
+	SVBarCodeGeneralDialog::SVBarCodeInfoStruct* pInfo = nullptr;
 	for ( int i = 0; i < GetSize(); i++ )
 	{
 		if ( ElementAt(i).lMil == lMilID )
@@ -58,7 +58,7 @@ const SVBarCodeGeneralDialog::SVBarCodeInfoStruct* SVBarCodeGeneralDialog::SVBar
 /////////////////////////////////////////////////////////////////////////////
 // SVBarCodeGeneralDialog dialog
 
-SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=NULL*/)
+SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(SVBarCodeGeneralDialog::IDD)
 	, m_lStringFormat(0)
 	, m_iThresholdRadio(0)
@@ -400,7 +400,7 @@ bool SVBarCodeGeneralDialog::SetBarcodeStringFormat( SVEnumerateValueObjectClass
 	p_sveStringFormat.GetEnumTypes( m_EnumVect );
 
 	DWORD l_dwValue;
-	bool l_bRet = p_sveStringFormat.GetValue( l_dwValue ) == S_OK ;
+	bool l_bRet = S_OK == p_sveStringFormat.GetValue( l_dwValue );
 	m_lStringFormat = l_dwValue;
 	return l_bRet;
 }
@@ -413,7 +413,7 @@ long SVBarCodeGeneralDialog::GetBarcodeStringFormat( )
 bool SVBarCodeGeneralDialog::SetBarcodeThresholdType( SVLongValueObjectClass& p_svlThresholdType )
 {
 	long l_lType = 0;
-	bool l_bRet = p_svlThresholdType.GetValue( l_lType ) == S_OK;
+	bool l_bRet = S_OK == p_svlThresholdType.GetValue( l_lType );
 	if( l_lType > SVBCThresholdAdaptive )
 	{
 		l_lType = SVBCThresholdNormal ;
@@ -429,7 +429,7 @@ int SVBarCodeGeneralDialog::GetBarcodeThresholdType( )
 bool SVBarCodeGeneralDialog::SetUnEvenGrid(SVBoolValueObjectClass p_svbUnEvenGrid)
 {
 	BOOL bVal;
-	bool l_bRet = p_svbUnEvenGrid.GetValue(bVal) == S_OK;
+	bool l_bRet = S_OK == p_svbUnEvenGrid.GetValue(bVal);
 	
 	m_bUnEvenGrid = bVal;
 	return l_bRet;

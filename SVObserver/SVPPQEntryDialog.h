@@ -21,15 +21,6 @@ class SVPPQObject;
 // .Title       : SVCameraPageInfoStruct
 // -----------------------------------------------------------------------------
 // .Description : 
-// -----------------------------------------------------------------------------
-// .Export
-//	 Type				Name				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :04.08.1999 RO 			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 struct SVCameraPageInfoStruct
 {
@@ -52,14 +43,6 @@ class SVPPQEntryDialogPropertySheetClass;
 // .Title       : SVPPQEntryDialogCameraPageClass
 // -----------------------------------------------------------------------------
 // .Description : 
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 class SVPPQEntryDialogCameraPageClass : public CPropertyPage
 {
@@ -76,10 +59,6 @@ protected:
 	virtual void OnOK();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
 
 	friend class SVPPQEntryDialogPropertySheetClass;
 
@@ -119,14 +98,6 @@ protected:
 // .Title       : SVPPQEntryDialogPropertySheetClass
 // -----------------------------------------------------------------------------
 // .Description : 
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 class SVPPQEntryDialogPropertySheetClass : public CPropertySheet
 {
@@ -134,8 +105,8 @@ class SVPPQEntryDialogPropertySheetClass : public CPropertySheet
 
 // Construction
 public:
-	SVPPQEntryDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SVPPQEntryDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVPPQEntryDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVPPQEntryDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVPPQEntryDialogPropertySheetClass();
 
 protected:

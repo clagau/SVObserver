@@ -49,12 +49,6 @@ ResultViewItemDef::~ResultViewItemDef()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ResultViewItemDef::setIndex(int  index)
-{
-	m_hasIndex = true;
-	m_Index = index;
-}
-
 const SVGUID& ResultViewItemDef::getGuid() const
 {
 	return m_ObjectID;

@@ -22,6 +22,7 @@ class CSVTestIOApp : public CWinApp
 {
 public:
 	CSVTestIOApp();
+	virtual ~CSVTestIOApp();
 
 // Overrides
 public:

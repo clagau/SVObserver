@@ -40,9 +40,9 @@ bool SVToolGrouping::IsNameUnique(const String& rName, LPCTSTR pExclude) const
 	bool bRetVal = std::none_of(m_list.begin(), m_list.end(), 
 		[&nameLower, pExclude, rName](const ToolGroup& rGroup)->bool 
 	{ 
-		if(pExclude != nullptr)
+		if( nullptr != pExclude )
 		{
-			if(rGroup.first.compare(pExclude) == 0 )
+			if( 0 == rGroup.first.compare(pExclude) )
 			{
 				return  false;
 			}

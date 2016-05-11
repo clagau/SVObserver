@@ -22,23 +22,23 @@ HRESULT SVGigeCameraDBParser::Parse(BSTR data, SVGigeDeviceParameterMap& params)
 
 	HRESULT hr = CoCreateInstance(__uuidof(MSXML2::SAXXMLReader), nullptr, CLSCTX_ALL, __uuidof(MSXML2::ISAXXMLReader), (void **)&pRdr);
 
-	if (hr == S_OK) 
+	if (S_OK == hr) 
 	{
 		SVGigeCameraDBContent contentHandler;
 		SVSAXErrorHandlerImpl<SVGigeCameraDBContent> ErrorHandler(contentHandler);
 		hr = pRdr->putContentHandler(&contentHandler);
 		
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			hr = pRdr->putErrorHandler(&ErrorHandler);
 		}
 		
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			// Convert to Variant containing BSTR
 			_variant_t dataVar(data);
 			hr = pRdr->parse(dataVar);
-			if (hr != S_OK)
+			if (S_OK != hr)
 			{
 				// Get Error Info
 			}

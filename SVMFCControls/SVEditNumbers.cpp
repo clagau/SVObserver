@@ -88,20 +88,13 @@ okChar:;
 		//
 		void CEditNumbers::OnSetFocus(CWnd* pOldWnd) 
 		{
-			///SetSel(0,-1);
-
 			CEdit::OnSetFocus(pOldWnd);
 
 			//
 			// Select all the characters in the edit
 			//
-			///SetSel(0,-1);             // This one has never worked
-			///PostMessage(EM_SETSEL,0,MAKELPARAM(0,-1));     // 16 bit version
 			PostMessage(EM_SETSEL,(WPARAM)0,(LPARAM)-1);   // 32 Bit version
-
-
 		}
-
 
 		/////////////////////////////////////////////////////////////////////////////
 		// CEditNumbersFloat
@@ -179,15 +172,11 @@ okChar:;
 
 		void CEditNumbersFloat::OnSetFocus(CWnd* pOldWnd) 
 		{
-			///SetSel(0,-1);
-
 			CEdit::OnSetFocus(pOldWnd);
 
 			//
 			// Select all the characters in the edit
 			//
-			///SetSel(0,-1);             // This one has never worked
-			///PostMessage(EM_SETSEL,0,MAKELPARAM(0,-1));     // 16 bit version
 			PostMessage(EM_SETSEL,(WPARAM)0,(LPARAM)-1);   // 32 Bit version
 		}
 	} //SVMFCControls

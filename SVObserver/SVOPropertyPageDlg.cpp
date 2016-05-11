@@ -1219,7 +1219,6 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					case DeviceDataTypei64:
 					{
 						// this does nothing so we can't edit I64 values....
-						//SVi64ValueDeviceParam* pParam = w.DerivedValue( pParam );
 						break;
 					}
 					case DeviceDataTypeBool:
@@ -2076,7 +2075,6 @@ void CSVOPropertyPageDlg::PPQHideItems()
         case 0:
         {
             //NextTrigger mode - hide OutputDelay
-            //m_Tree.FindItem(PROP_PPQ_OUTPUT_RESET_DELAY)->HideItem();
             m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem();
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem();
             break;
@@ -2091,7 +2089,6 @@ void CSVOPropertyPageDlg::PPQHideItems()
 
         case 3: //extendedtimedelay
         {
-            //m_Tree.FindItem(PROP_PPQ_OUTPUT_RESET_DELAY)->HideItem(FALSE);
             m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(FALSE);
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem(FALSE);
             break;
@@ -2099,10 +2096,6 @@ void CSVOPropertyPageDlg::PPQHideItems()
         default:
             break;
     }//end of switch...
-}
-
-void CSVOPropertyPageDlg::TriggerHideItems()
-{
 }
 
 void CSVOPropertyPageDlg::SetDlgPage(int nID)

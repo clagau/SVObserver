@@ -11,7 +11,7 @@
 
 #pragma once
 
-//	item - A pointer to another branch off the tree (NULL if none).
+//	item - A pointer to another branch off the tree (nullptr if none).
 //	name - The string the TreeCtrl displays for that node.
 //	func - A function pointer to the function to execute upon double-clicking the node.
 //	image - An integer specifying which image in the image list that the node uses.
@@ -39,9 +39,9 @@ public:
 	
 	SVSecuritySetupSheet();
 	
-	SVSecuritySetupSheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVSecuritySetupSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	
-	SVSecuritySetupSheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVSecuritySetupSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Attributes
 public:

@@ -101,7 +101,7 @@ BOOL CSVImageTestDlg::OnInitDialog()
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != NULL)
+	if (nullptr != pSysMenu)
 	{
 		CString strAboutMenu;
 		strAboutMenu.LoadString(IDS_ABOUTBOX);
@@ -132,7 +132,7 @@ BOOL CSVImageTestDlg::OnInitDialog()
 	CRect rcSheet;
 	GetDlgItem( IDC_CAMERA_TAB_AREA )->GetWindowRect( &rcSheet );
 	ScreenToClient( &rcSheet );
-	m_CameraSheet.SetWindowPos( NULL, rcSheet.left-7, rcSheet.top-7, 0, 0, 
+	m_CameraSheet.SetWindowPos( nullptr, rcSheet.left-7, rcSheet.top-7, 0, 0, 
 			SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE );
 
 	for( int j = 0; j < 4; ++j )
@@ -203,7 +203,7 @@ void CSVImageTestDlg::OnRefresh()
 {
 	ResetCameraList();
 
-	if ( m_pSubsystem != NULL )
+	if ( nullptr != m_pSubsystem )
 	{
 		CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();	
 
@@ -213,11 +213,11 @@ void CSVImageTestDlg::OnRefresh()
 
 		for ( unsigned long i = 0; i < 4; i++ )
 		{
-			if( m_Camera[ i ].m_pAcquisition != NULL )
+			if( nullptr != m_Camera[ i ].m_pAcquisition )
 			{
 				delete m_Camera[ i ].m_pAcquisition;
 
-				m_Camera[ i ].m_pAcquisition = NULL;
+				m_Camera[ i ].m_pAcquisition = nullptr;
 				m_Camera[ i ].m_lSelectedCamera = -1;
 			}
 
@@ -225,11 +225,11 @@ void CSVImageTestDlg::OnRefresh()
 			{
 				m_Camera[ i ].m_pAcquisition = m_pSubsystem->GetAcquisitionDevice( i );
 
-				if( m_Camera[ i ].m_pAcquisition != NULL )
+				if( nullptr != m_Camera[ i ].m_pAcquisition )
 				{
 					unsigned long l_ulHandle = 0;
 
-					BSTR l_bstrName = NULL;
+					BSTR l_bstrName = nullptr;
 					CString l_csName;
 
 					m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &l_ulHandle, i );
@@ -276,7 +276,7 @@ void CSVImageTestDlg::OnUpdateModelNumber()
 	CString l_modelNumber = m_modelNo;
 	UpdateData();
 	HRESULT hr = pApp->m_iniLoader.DecodeModelNumber(m_modelNo);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		StopAllCameras();
 
@@ -284,11 +284,11 @@ void CSVImageTestDlg::OnUpdateModelNumber()
 		
 		for ( unsigned long i = 0; i < 4; i++ )
 		{
-			if( m_Camera[ i ].m_pAcquisition != NULL )
+			if( nullptr != m_Camera[ i ].m_pAcquisition )
 			{
 				delete m_Camera[ i ].m_pAcquisition;
 
-				m_Camera[ i ].m_pAcquisition = NULL;
+				m_Camera[ i ].m_pAcquisition = nullptr;
 				m_Camera[ i ].m_lSelectedCamera = -1;
 			}
 		}
@@ -311,11 +311,11 @@ void CSVImageTestDlg::OnCancel()
 {
 	for ( unsigned long i = 0; i < 4; i++ )
 	{
-		if( m_Camera[ i ].m_pAcquisition != NULL )
+		if( nullptr != m_Camera[ i ].m_pAcquisition )
 		{
 			delete m_Camera[ i ].m_pAcquisition;
 
-			m_Camera[ i ].m_pAcquisition = NULL;
+			m_Camera[ i ].m_pAcquisition = nullptr;
 			m_Camera[ i ].m_lSelectedCamera = -1;
 		}
 	}
@@ -323,9 +323,9 @@ void CSVImageTestDlg::OnCancel()
 	CDialog::OnCancel();
 }
 
-CSVImageTestDlg::CSVImageTestDlg(CWnd* pParent /*=NULL*/)
+CSVImageTestDlg::CSVImageTestDlg(CWnd* pParent /*=nullptr*/)
 : CDialog(CSVImageTestDlg::IDD, pParent),
-	m_pSubsystem( NULL )
+	m_pSubsystem( nullptr )
 {
 	//{{AFX_DATA_INIT(CSVImageTestDlg)
 	m_modelNo = _T("");
@@ -348,7 +348,7 @@ void CSVImageTestDlg::StartAllCameras()
 {
 	for ( unsigned long i = 0; i < 4; i++ )
 	{
-		if( m_Camera[ i ].m_pAcquisition != NULL && ! m_Camera[ i ].m_bStarted )
+		if( nullptr != m_Camera[ i ].m_pAcquisition && ! m_Camera[ i ].m_bStarted )
 		{
 			m_Camera[ i ].StartAcquire();
 		}
@@ -359,7 +359,7 @@ void CSVImageTestDlg::StopAllCameras()
 {
 	for ( unsigned long i = 0; i < 4; i++ )
 	{
-		if( m_Camera[ i ].m_pAcquisition != NULL && m_Camera[ i ].m_bStarted )
+		if( nullptr != m_Camera[ i ].m_pAcquisition && m_Camera[ i ].m_bStarted )
 		{
 			m_Camera[ i ].StopAcquire();
 		}

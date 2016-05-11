@@ -31,7 +31,7 @@ size_t SVPPQShiftRegister::size() const
 
 void SVPPQShiftRegister::resize( size_t p_Size )
 {
-	m_Products.resize( p_Size, NULL );
+	m_Products.resize( p_Size, nullptr );
 }
 
 void SVPPQShiftRegister::clear()
@@ -44,7 +44,7 @@ void SVPPQShiftRegister::clear()
 
 SVProductInfoStruct* SVPPQShiftRegister::GetProductAt( size_t p_Index ) const
 {
-	SVProductInfoStruct* l_pProduct = NULL;
+	SVProductInfoStruct* l_pProduct = nullptr;
 
 	l_pProduct = m_Products.at( p_Index );
 
@@ -61,7 +61,7 @@ HRESULT SVPPQShiftRegister::SetProductAt( size_t p_Index, SVProductInfoStruct* p
 
 		if( p_Index == 0 )
 		{
-			if( p_pProduct != NULL )
+			if( nullptr != p_pProduct )
 			{
 				m_HeadTriggerCount = p_pProduct->ProcessCount();
 			}
@@ -86,7 +86,7 @@ HRESULT SVPPQShiftRegister::SetProductAt( size_t p_Index, SVProductInfoStruct* p
 
 SVProductInfoStruct* SVPPQShiftRegister::IndexRegister()
 {
-	SVProductInfoStruct* l_pProduct = NULL;
+	SVProductInfoStruct* l_pProduct = nullptr;
 
 	if( 0 < m_Products.size() )
 	{
@@ -99,7 +99,7 @@ SVProductInfoStruct* SVPPQShiftRegister::IndexRegister()
 		{
 			m_Products[ i ] = m_Products[ i - 1 ];
 
-			if( m_Products[ i ] != NULL )
+			if( nullptr != m_Products[ i ] )
 			{
 				l_HeadTriggerCount = m_Products[ i ]->ProcessCount();
 
@@ -113,7 +113,7 @@ SVProductInfoStruct* SVPPQShiftRegister::IndexRegister()
 		m_HeadTriggerCount = l_HeadTriggerCount;
 		m_TailTriggerCount = l_TailTriggerCount;
 
-		m_Products[ 0 ] = NULL;
+		m_Products[ 0 ] = nullptr;
 	}
 
 	return l_pProduct;
@@ -142,7 +142,7 @@ bool SVTriggerCountLess( const SVProductInfoStruct* l_pLeft, const SVProductInfo
 {
 	bool l_Status = false;
 
-	if( l_pLeft != NULL && l_pRight != NULL )
+	if( nullptr != l_pLeft && nullptr != l_pRight )
 	{
 		l_Status = ( l_pRight->ProcessCount() < l_pLeft->ProcessCount() );
 	}
@@ -170,7 +170,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerCount( long& p_rIndex, long p_Trigg
 
 		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerCountLess );
 
-		if( l_Iter != m_Products.end() && ( *l_Iter ) != NULL )
+		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
 		{
 			if( p_TriggerCount == ( *l_Iter )->ProcessCount() )
 			{
@@ -204,7 +204,7 @@ HRESULT SVPPQShiftRegister::GetProductByTriggerCount( SVProductInfoStruct*& p_rp
 {
 	HRESULT l_Status = S_OK;
 
-	p_rpProduct = NULL;
+	p_rpProduct = nullptr;
 
 	if( 0 < p_TriggerCount )
 	{
@@ -216,7 +216,7 @@ HRESULT SVPPQShiftRegister::GetProductByTriggerCount( SVProductInfoStruct*& p_rp
 
 		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerCountLess );
 
-		if( l_Iter != m_Products.end() && ( *l_Iter ) != NULL )
+		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
 		{
 			if( p_TriggerCount == ( *l_Iter )->ProcessCount() )
 			{
@@ -250,7 +250,7 @@ struct SVTriggerTimeStampCompare
 	{
 		bool l_Status = false;
 
-		if( l_pLeft != NULL && l_pRight != NULL )
+		if( nullptr != l_pLeft && nullptr != l_pRight )
 		{
 			SVClock::SVTimeStamp l_RightTimeStamp = l_pRight->TimeStamp();
 			SVClock::SVTimeStamp l_LeftTimeStamp = l_pLeft->TimeStamp() + m_LowerThresholdInMilliseconds;
@@ -284,7 +284,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 
 		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerTimeStampCompare( p_LowerThresholdInMilliseconds ) );
 
-		if( l_Iter != m_Products.end() && ( *l_Iter ) != NULL )
+		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
 		{
 			SVClock::SVTimeStamp l_ProductTS = ( *l_Iter )->TimeStamp();
 
@@ -328,7 +328,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 
 		l_Iter = std::lower_bound( m_Products.begin(), m_Products.end(), &l_Product, SVTriggerTimeStampCompare( l_LowerThreshold ) );
 
-		if( l_Iter != m_Products.end() && ( *l_Iter ) != NULL )
+		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
 		{
 			SVClock::SVTimeStamp l_ProductTS = ( *l_Iter )->TimeStamp();
 			SVClock::SVTimeStamp l_Upper = l_ProductTS + l_UpperThreshold;
@@ -373,7 +373,7 @@ HRESULT SVPPQShiftRegister::GetProductStates( SVString& p_rProductStates ) const
 		{
 			SVString l_TempString;
 
-			if( m_Products[ i ] != NULL )
+			if( nullptr != m_Products[ i ] )
 			{
 				l_TempString = SvUl_SF::Format( _T( "%d:%s\n" ), i, m_Products[ i ]->m_ProductState.c_str() );
 			}

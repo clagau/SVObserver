@@ -40,7 +40,7 @@ enum {WM_UPDATE_STATUS = WM_APP + 100};
 
 namespace	// file scope
 {
-	void YieldPaintMessages(HWND hWnd /* = NULL */)
+	void YieldPaintMessages(HWND hWnd /* = nullptr */)
 	{// Let other PAINT messages through
 		
 		MSG msg;
@@ -77,10 +77,10 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVExternalToolTaskObjectType;
 
-	m_pTask = dynamic_cast<SVExternalToolTask*> ( reinterpret_cast<SVObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)) ));
+	m_pTask = dynamic_cast<SVExternalToolTask*> ( reinterpret_cast<SVObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info)) ));
 	ASSERT( m_pTask );
 
-	m_pCancelData = NULL;
+	m_pCancelData = nullptr;
 	if ( m_pTask->CanCancel() )
 	{
 		m_pTask->GetCancelData( m_pCancelData );
@@ -163,34 +163,30 @@ void SVExternalToolDlg::OnOK()
 {
 	UpdateData();
 
-	//if ( ShowDependentsDlg() )	// moved to QueryAllowExit
-	if ( true )
+	// set dll path
+	m_pTask->m_Data.m_voDllPath.SetValue(1, m_strDLLPath);
+
+
+	// Copy DLL Dependents from listbox to Task Class FileNameValueObject List...
+	SetDependencies();
+
+	HRESULT hr;
+	try
 	{
-		// set dll path
-		m_pTask->m_Data.m_voDllPath.SetValue(1, m_strDLLPath);
-
-
-		// Copy DLL Dependents from listbox to Task Class FileNameValueObject List...
-		SetDependencies();
-
-		HRESULT hr;
-		try
+		hr = m_pTask->Initialize();
+		if( ::SVSendMessage( m_pTask, SVM_RESET_ALL_OBJECTS, 0, 0 ) != SVMR_SUCCESS )
 		{
-			hr = m_pTask->Initialize();
-			if( ::SVSendMessage( m_pTask, SVM_RESET_ALL_OBJECTS, NULL, NULL ) != SVMR_SUCCESS )
-			{
-				hr = S_FALSE;
-			}
+			hr = S_FALSE;
 		}
-		catch ( const SvStl::MessageContainer& e)
-		{
-			hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
-		}
-
-		CleanUpOldToolInfo();
-
-		CPropertyPage::OnOK();
 	}
+	catch ( const SvStl::MessageContainer& e)
+	{
+		hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
+	}
+
+	CleanUpOldToolInfo();
+
+	CPropertyPage::OnOK();
 }
 
 void SVExternalToolDlg::OnDetails() 
@@ -198,7 +194,7 @@ void SVExternalToolDlg::OnDetails()
 	// Add new property sheet to adjust Input Images, Input Value Objects..
 	SVExternalToolDetailsSheet sheet(m_InspectionID, m_TaskObjectID, m_pTask->m_Data.m_lNumInputImages, _T("External Tool Details"), this, 0);
 
-	SVCancelData* pCancelData = NULL;
+	SVCancelData* pCancelData = nullptr;
 
 	sheet.m_pTool = m_pTool;
 	sheet.m_pTask = m_pTask;
@@ -263,11 +259,10 @@ void SVExternalToolDlg::OnAdd()
 			m_strLastDllPath = m_strLastDllPath.Left(iFind);
 		}
 		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
-		
 
 		// Check for already existing DLL Paths
-		if(m_lbDependentList.FindString( 0, cfd.GetPathName() ) == LB_ERR 
-			&& m_lbDependentList.FindString(0, strFileName) == LB_ERR )
+		if( LB_ERR == m_lbDependentList.FindString( 0, cfd.GetPathName() ) && 
+			LB_ERR == m_lbDependentList.FindString(0, strFileName) )
 		{
 			m_lbDependentList.AddString( cfd.GetPathName() );
 		}
@@ -394,7 +389,7 @@ void SVExternalToolDlg::InitializeDll()
 		m_strStatus.Empty();
 		UpdateData(FALSE);
 		m_pTask->Initialize( SVDllLoadLibraryCallback(this, &SVExternalToolDlg::NotifyProgress) );
-		::SVSendMessage( m_pTask, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		::SVSendMessage( m_pTask, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 
 		m_strStatus += CString(_T("DLL passes the tests.")) + CRLF;
@@ -490,9 +485,9 @@ bool SVExternalToolDlg::QueryAllowExit()
 
 SVIPDoc* SVExternalToolDlg::GetIPDoc() const
 {
-	SVIPDoc* l_pIPDoc = NULL;
+	SVIPDoc* l_pIPDoc = nullptr;
 
-	if( m_pSheet != NULL )
+	if( nullptr != m_pSheet )
 	{
 		l_pIPDoc = m_pSheet->GetIPDoc();
 	}
@@ -558,18 +553,12 @@ HRESULT SVExternalToolDlg::CleanUpOldToolInfo()
 	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FIND_VALUES );
 	m_pTask->HideInputsOutputs(list);
 
-	SVIPDoc* l_pIPDoc = NULL;
+	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( m_pTask->GetInspection() != NULL )
+	if( nullptr != l_pIPDoc )
 	{
-		l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pTask->GetInspection()->GetUniqueObjectID() );
-
-		if( l_pIPDoc != NULL )
-		{
-			l_pIPDoc->UpdateAllViews( NULL );
-		}
+		l_pIPDoc->UpdateAllViews( nullptr );
 	}
-
 	return S_OK;
 }
 

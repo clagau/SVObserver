@@ -49,7 +49,7 @@ bool SVFileAcquisitionClass::IsValid() const
 {
 	bool bOk = true;
 
-	bOk = m_hDigitizer != NULL && bOk;
+	bOk = 0 != m_hDigitizer && bOk;
 	bOk = SVAcquisitionClass::IsValid() && bOk;
 
 	return bOk;
@@ -59,7 +59,7 @@ bool SVFileAcquisitionClass::IsValidBoard() const
 {
 	bool bOk = true;
 	
-	bOk = m_hDigitizer != NULL && bOk;
+	bOk = 0 != m_hDigitizer && bOk;
 
 	return bOk;
 }
@@ -68,7 +68,7 @@ HRESULT SVFileAcquisitionClass::Destroy()
 {
 	HRESULT hrOk = DestroyLocal();
 
-	if ( SVAcquisitionClass::Destroy() != S_OK )
+	if ( S_OK != SVAcquisitionClass::Destroy() )
 	{
 		hrOk = S_FALSE;
 	}
@@ -134,7 +134,7 @@ HRESULT SVFileAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo) const
 {
 	HRESULT hrOk = S_FALSE;
 
-	if ( pImageInfo != NULL )
+	if ( nullptr != pImageInfo )
 	{
 		*pImageInfo = msvImageInfo;
 		
@@ -147,25 +147,25 @@ HRESULT SVFileAcquisitionClass::DestroyLocal()
 {
 	HRESULT hrOk = S_OK;
 
-	if ( Stop() != S_OK )
+	if ( S_OK != Stop() )
 	{
 		hrOk = S_FALSE;
 	}
 
-	if ( DestroyBuffers() != S_OK )
+	if ( S_OK != DestroyBuffers() )
 	{
 		hrOk = S_FALSE;
 	}
 
 	if ( mbIsFilesLoaded )
 	{
-		if ( UnloadFiles() != S_OK )
+		if ( S_OK != UnloadFiles() )
 		{
 			hrOk = S_FALSE;
 		}
 	}
 
-	if ( ResetLightReference() != S_OK )
+	if ( S_OK != ResetLightReference() )
 	{
 		hrOk = S_FALSE;
 	}
@@ -256,7 +256,7 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 
 	hrOk = S_OK;
 
-	if ( hrOk != S_OK )
+	if ( S_OK != hrOk )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Acquisition_SourceInformationFailed, StdMessageParams, SvOi::Err_10050 ); 

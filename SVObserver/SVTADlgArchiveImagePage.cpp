@@ -168,7 +168,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		msgList.push_back(SvUl_SF::Format(_T("%ld"), UpperLimitImageNumbers));
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_Error_you_have_Selected_X_Must_less_then_Y, msgList, StdMessageParams, SvOi::Err_16075_ImageNrToBig  );
-		return FALSE;
+		return false;
 
 	}
 
@@ -208,17 +208,18 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	// Mark the document as 'dirty' so user will be prompted to save
 	// this configuration on program exit.
-	SVIPDoc* pIPDoc = NULL;
-	pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pTool->GetInspection()->GetUniqueObjectID() );
-
-	if( nullptr != pIPDoc )
+	if (m_pParent)
 	{
-		pIPDoc->SetModifiedFlag();
-	}
+		SVIPDoc* pIPDoc = m_pParent->GetIPDoc();
 
+		if( nullptr != pIPDoc )
+		{
+			pIPDoc->SetModifiedFlag();
+		}
+	}
 	HRESULT hRet = m_pTool->ValidateArchiveTool();
 
-	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 	return true;
 }

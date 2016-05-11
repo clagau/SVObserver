@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:19:54  $
 //******************************************************************************
+#pragma once
 
 template<typename Type, typename LookupTable, typename StringType>
 class StringToEnum

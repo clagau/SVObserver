@@ -143,14 +143,6 @@ namespace Seidenader { namespace SVOGui
 		ToolRunOnce();
 		m_ImageDisplay.Refresh();
 		UpdateData(false); // set data to dialog
-
-	/*SEJ666 - is this needed?
-		SVIPDoc* pIPDoc = m_pParentDialog->GetIPDoc();
-		if (nullptr != pIPDoc)
-		{
-			pIPDoc->UpdateAllViews(nullptr);
-		}
-	*/
 	}
 
 	void SVExternalToolImageSelectPage::buildPropertyTree()

@@ -103,7 +103,7 @@ INT_PTR DisplayMessageBox::showDialog( HWND hParent, LPCTSTR Message, LPCTSTR Me
 
 		//The setting for hParent can influence the behavior of modal dialogs which call this method to display a message (eg. setting hParent to the main window)
 		CWnd* pParent( nullptr );
-		if( NULL != hParent )
+		if( nullptr != hParent )
 		{
 			pParent = CWnd::FromHandle( hParent );
 		}
@@ -339,7 +339,7 @@ void DisplayMessageBox::initializeIcon()
 	}
 	if( nullptr != pIcon )
 	{
-		m_Icon = ::LoadIcon( NULL, pIcon );
+		m_Icon = ::LoadIcon( nullptr, pIcon );
 	}
 }
 

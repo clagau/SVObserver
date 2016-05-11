@@ -13,12 +13,10 @@
 #pragma region Includes
 #include "SVImageClass.h"
 #include "SVPolarTransform.h"
-#include "SVValueObjectImpl.h"
 #pragma endregion Includes
 
 class SVImagePolarTransformClass : public SVPolarTransformClass
 {
-friend class SVPolarTransformationToolClass;
 	SV_DECLARE_CLASS( SVImagePolarTransformClass )
 
 public:
@@ -40,8 +38,6 @@ public:
 	SVImageClass* getInputImage();
 
 protected:
-	//BOOL calcPolarDestImageSize( SVExtentClass& RExtent );
-	//BOOL checkOutputImageDimensions( double DCenterX, double DCenterY, double DStartRadius, double DEndRadius, double DStartAngle, double DEndAngle, long LInterpolationMode );
 	void NewCorrectAngles( double& RDStartAngle, double& RDEndAngle );
 	void correctAngles( double& RDStartAngle, double& RDEndAngle );
 	void AnglesTo360( double& p_dStart, double& p_dEnd);

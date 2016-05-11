@@ -130,7 +130,7 @@ HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibrary
 
 		l_hrOk = p_pDLLTrigger->GetCount( &l_ulSize );
 
-		for ( unsigned long i = 0; l_hrOk == S_OK && i < l_ulSize; i++ )
+		for ( unsigned long i = 0; S_OK == l_hrOk && i < l_ulSize; i++ )
 		{
 			SVString l_Name;
 

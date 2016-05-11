@@ -63,7 +63,7 @@ void SVIOEntryStruct::InitEntry()
 
 
 SVInputsInfoStruct::SVInputsInfoStruct()
-: pInputsList( NULL )
+: pInputsList( nullptr )
 , m_BeginProcess( 0.0 )
 , m_EndProcess( 0.0 )
 {
@@ -95,7 +95,7 @@ const SVInputsInfoStruct& SVInputsInfoStruct::operator=( const SVInputsInfoStruc
 
 void SVInputsInfoStruct::Reset()
 {
-	pInputsList		= NULL;
+	pInputsList		= nullptr;
 	m_BeginProcess	= 0;
 	m_EndProcess	= 0;
 }// end Reset
@@ -108,7 +108,7 @@ void SVInputsInfoStruct::Init()
 
 
 SVOutputsInfoStruct::SVOutputsInfoStruct()
-: pOutputsList( NULL )
+: pOutputsList( nullptr )
 , lOutputDelay( 0 )
 , lResetDelay( 0 )
 , lDataValidDelay( 0 )
@@ -164,7 +164,7 @@ const SVOutputsInfoStruct& SVOutputsInfoStruct::operator=( const SVOutputsInfoSt
 
 void SVOutputsInfoStruct::Reset()
 {
-	pOutputsList	= NULL;
+	pOutputsList	= nullptr;
 	lOutputDelay	= 0;
 	lResetDelay		= 0;
 	lDataValidDelay	= 0;
@@ -225,14 +225,14 @@ HRESULT SVPPQInfoStruct::Assign( const SVPPQInfoStruct &p_rsvObject, SVDataManag
 
 		l_Temp = m_ResultDataDMIndexHandle.Assign( p_rsvObject.m_ResultDataDMIndexHandle, p_rsvObject.m_ResultDataDMIndexHandle.GetLockType() );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
 
 		l_Temp = m_ResultImagePublishedDMIndexHandle.Assign( p_rsvObject.m_ResultImagePublishedDMIndexHandle, p_rsvObject.m_ResultImagePublishedDMIndexHandle.GetLockType() );
 	
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -243,7 +243,7 @@ HRESULT SVPPQInfoStruct::Assign( const SVPPQInfoStruct &p_rsvObject, SVDataManag
 
 void SVPPQInfoStruct::Reset()
 {
-	pPPQ = NULL;
+	pPPQ = nullptr;
 
 	m_InputData.clear();
 
@@ -272,7 +272,7 @@ HRESULT SVPPQInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_Lo
 {
 	HRESULT l_Status = S_OK;
 
-	if( pPPQ != NULL )
+	if( nullptr != pPPQ )
 	{
 		l_Status = pPPQ->GetNextAvailableIndexes( *this, p_LockType );
 	}
@@ -287,7 +287,7 @@ HRESULT SVPPQInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_Lo
 
 SVTriggerInfoStruct::SVTriggerInfoStruct()
 : bValid( FALSE )
-, pTrigger( NULL )
+, pTrigger( nullptr )
 , lTriggerCount( 0 )
 , m_ToggleState( false )
 , m_BeginProcess( 0 )
@@ -342,7 +342,7 @@ const SVTriggerInfoStruct& SVTriggerInfoStruct::operator=( const SVTriggerInfoSt
 void SVTriggerInfoStruct::Reset()
 {
 	bValid			= FALSE;
-	pTrigger		= NULL;
+	pTrigger		= nullptr;
 	lTriggerCount	= 0;
 	m_ToggleState = false;
 	m_BeginProcess	= 0;
@@ -374,7 +374,7 @@ void SVTriggerInfoStruct::Init()
 
 
 SVInspectionInfoStruct::SVInspectionInfoStruct()
-:	pInspection( NULL ),
+:	pInspection( nullptr ),
 	oInspectedState(PRODUCT_NOT_INSPECTED),
 	m_ResultImageDMIndexHandle(),
 	m_CanProcess( false ),
@@ -392,7 +392,7 @@ SVInspectionInfoStruct::SVInspectionInfoStruct()
 }
 
 SVInspectionInfoStruct::SVInspectionInfoStruct( const SVInspectionInfoStruct &p_rsvData )
-:	pInspection( NULL ),
+:	pInspection( nullptr ),
 	oInspectedState(),
 	m_ResultImageDMIndexHandle(),
 	m_CanProcess( false ),
@@ -450,7 +450,7 @@ HRESULT SVInspectionInfoStruct::Assign( const SVInspectionInfoStruct &p_rsvData,
 
 		l_Temp = m_ResultImageDMIndexHandle.Assign( p_rsvData.m_ResultImageDMIndexHandle, p_LockType );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -461,7 +461,7 @@ HRESULT SVInspectionInfoStruct::Assign( const SVInspectionInfoStruct &p_rsvData,
 
 void SVInspectionInfoStruct::Reset()
 {
-	pInspection = NULL;
+	pInspection = nullptr;
 	oInspectedState = PRODUCT_NOT_INSPECTED;
 
 	m_CanProcess = false;
@@ -521,7 +521,7 @@ HRESULT SVInspectionInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEn
 {
 	HRESULT l_Status = S_OK;
 
-	if( pInspection != NULL )
+	if( nullptr != pInspection )
 	{
 		pInspection->GetNextAvailableIndexes( *this, p_LockType );
 	}
@@ -800,7 +800,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 		{
 			HRESULT l_Temp = m_svCameraInfos[ l_RightIter->first ].Assign( l_RightIter->second, p_LockType );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -816,7 +816,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 		{
 			HRESULT l_Temp = m_svInspectionInfos[ l_InspectIter->first ].Assign( l_InspectIter->second, p_LockType );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_Temp;
 			}
@@ -947,7 +947,7 @@ HRESULT SVProductInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum 
 	{
 		HRESULT l_Temp = l_svCameraIter->second.GetNextAvailableIndexes( p_LockType );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -961,7 +961,7 @@ HRESULT SVProductInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum 
 	{
 		HRESULT l_Temp = l_svInspectionIter->second.GetNextAvailableIndexes( p_LockType );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -976,7 +976,7 @@ bool SVProductInfoStruct::IsAlive() const
 {
 	bool l_Status = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
-	if( ! l_Status && oPPQInfo.pPPQ != NULL )
+	if( ! l_Status && nullptr != oPPQInfo.pPPQ )
 	{
 		l_Status = oPPQInfo.pPPQ->IsProductAlive( ProcessCount() );
 	}
@@ -997,7 +997,7 @@ void SVProductInfoStruct::DumpIndexInfo( SVString& p_rData )
 	while( l_CamIter != m_svCameraInfos.end() )
 	{
 		SVString l_Temp = SvUl_SF::Format( _T( " : %s-Index=%ld" ), 
-			( l_CamIter->first != NULL ) ? l_CamIter->first->GetName() : _T( "(null)" ), 
+			( nullptr != l_CamIter->first ) ? l_CamIter->first->GetName() : _T( "(null)" ), 
 			l_CamIter->second.GetIndex() );
 
 		p_rData += l_Temp;
@@ -1010,7 +1010,7 @@ void SVProductInfoStruct::DumpIndexInfo( SVString& p_rData )
 	while( l_InspectIter != m_svInspectionInfos.end() )
 	{
 		SVString l_Temp = SvUl_SF::Format( _T( " : %s-State=0x%x-Index=%ld" ), 
-			( l_InspectIter->second.pInspection != NULL ) ? l_InspectIter->second.pInspection->GetName() : _T( "(null)" ), 
+			( nullptr != l_InspectIter->second.pInspection ) ? l_InspectIter->second.pInspection->GetName() : _T( "(null)" ), 
 			l_InspectIter->second.oInspectedState,
 			l_InspectIter->second.m_ResultImageDMIndexHandle.GetIndex() );
 
@@ -1047,7 +1047,7 @@ HRESULT SVProductInfoStruct::GetResultImageIndex( SVImageIndexStruct& p_rIndex, 
 		l_Temp = p_rIndex.m_PublishedResultDMIndexHandle.Assign( oPPQInfo.m_ResultImagePublishedDMIndexHandle, 
 			oPPQInfo.m_ResultImagePublishedDMIndexHandle.GetLockType() );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
@@ -1205,7 +1205,7 @@ SVRenameObject::~SVRenameObject()
 }
 
 SVAddTool::SVAddTool()
-: m_pTool( NULL ), m_Index( -1 )
+: m_pTool( nullptr ), m_Index( -1 )
 {
 }
 
@@ -1224,7 +1224,7 @@ SVAddTool::~SVAddTool()
 }
 
 SVDeleteTool::SVDeleteTool()
-: m_pTool( NULL )
+: m_pTool( nullptr )
 {
 }
 
@@ -1351,45 +1351,45 @@ void SVOutputRequestInfoStruct::Reset()
 {
 	m_ProductInfo.Reset();
 
-	pCaller		 = NULL;
-	pOwner		 = NULL;
-	pCallback	 = NULL;
+	pCaller		 = nullptr;
+	pOwner		 = nullptr;
+	pCallback	 = nullptr;
 }// end Reset
 
 void SVOutputRequestInfoStruct::Init()
 {
 	m_ProductInfo.Reset();
 
-	pCaller		 = NULL;
-	pOwner		 = NULL;
-	pCallback	 = NULL;
+	pCaller		 = nullptr;
+	pOwner		 = nullptr;
+	pCallback	 = nullptr;
 }// end Init
 
 SVProductInfoRequestStruct::SVProductInfoRequestStruct()
-: m_pProduct( NULL ), m_WaitHandle( NULL )
+: m_pProduct( nullptr ), m_WaitHandle( nullptr )
 {
-	m_WaitHandle = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+	m_WaitHandle = ::CreateEvent( nullptr, TRUE, FALSE, nullptr );
 }
 
 SVProductInfoRequestStruct::SVProductInfoRequestStruct( SVProductInfoStruct* p_pProduct )
-: m_pProduct( p_pProduct ), m_WaitHandle( NULL )
+: m_pProduct( p_pProduct ), m_WaitHandle( nullptr )
 {
-	m_WaitHandle = ::CreateEvent( NULL, TRUE, FALSE, NULL );
+	m_WaitHandle = ::CreateEvent( nullptr, TRUE, FALSE, nullptr );
 }
 
 SVProductInfoRequestStruct::SVProductInfoRequestStruct( const SVProductInfoRequestStruct& p_rObject )
-: m_pProduct( p_rObject.m_pProduct ), m_WaitHandle( NULL )
+: m_pProduct( p_rObject.m_pProduct ), m_WaitHandle( nullptr )
 {
 	p_rObject.GetWaitHandle( m_WaitHandle );
 }
 
 SVProductInfoRequestStruct::~SVProductInfoRequestStruct()
 {
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		::CloseHandle( m_WaitHandle );
 
-		m_WaitHandle = NULL;
+		m_WaitHandle = nullptr;
 	}
 }
 
@@ -1407,17 +1407,17 @@ const SVProductInfoRequestStruct& SVProductInfoRequestStruct::operator=( const S
 
 bool SVProductInfoRequestStruct::empty() const
 {
-	return ( m_pProduct == NULL );
+	return ( nullptr == m_pProduct );
 }
 
 void SVProductInfoRequestStruct::clear()
 {
-	if( m_pProduct != NULL )
+	if( nullptr != m_pProduct )
 	{
-		m_pProduct = NULL;
+		m_pProduct = nullptr;
 	}
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		::ResetEvent( m_WaitHandle );
 	}
@@ -1427,7 +1427,7 @@ HRESULT SVProductInfoRequestStruct::NotifyRequestComplete() const
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		::SetEvent( m_WaitHandle );
 	}
@@ -1443,7 +1443,7 @@ HRESULT SVProductInfoRequestStruct::WaitForRequest() const
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_WaitHandle != NULL )
+	if( nullptr != m_WaitHandle )
 	{
 		if( ::ResetEvent( m_WaitHandle ) )
 		{
@@ -1469,11 +1469,11 @@ HRESULT SVProductInfoRequestStruct::GetWaitHandle( HANDLE& p_rHandle ) const
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_rHandle != NULL )
+	if( nullptr != p_rHandle )
 	{
 		::CloseHandle( p_rHandle );
 
-		p_rHandle = NULL;
+		p_rHandle = nullptr;
 	}
 
 	if( ! ::DuplicateHandle( GetCurrentProcess(), m_WaitHandle, GetCurrentProcess(), &p_rHandle, 0, FALSE, DUPLICATE_SAME_ACCESS ) )

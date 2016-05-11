@@ -55,13 +55,6 @@ public:
 
 #pragma region Public Methods
 	//************************************
-	// Description:  Sets the member variable m_Index.
-	// Parameter:  index <in>:  The desired value for the index.
-	//************************************
-	void setIndex(int index);
-
-	
-	//************************************
 	// Description:  Gets the value of the member variable m_Index as a long
 	// Returns:  long:  the value of the member variable m_Index, if possible.  0 otherwise.
 	//************************************

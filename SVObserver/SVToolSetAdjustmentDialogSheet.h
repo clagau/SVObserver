@@ -36,8 +36,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVToolSetAdjustmentDialogSheetClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVConditionalClass& rCondition, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
-	SVToolSetAdjustmentDialogSheetClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVConditionalClass& rCondition, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
+	SVToolSetAdjustmentDialogSheetClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVConditionalClass& rCondition, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
+	SVToolSetAdjustmentDialogSheetClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVConditionalClass& rCondition, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
 	virtual ~SVToolSetAdjustmentDialogSheetClass();
 
 protected:
@@ -67,7 +67,6 @@ private:
 
 	typedef SVSharedPtr<SvOg::SVFormulaEditorPageClass> FormulaEditorPagePtr;
 	FormulaEditorPagePtr m_formulaPage;
-	SVToolSetClass* m_pToolSet;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

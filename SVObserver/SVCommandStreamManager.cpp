@@ -122,16 +122,16 @@ HRESULT SVCommandStreamManager::InsertInspection( const SVGUID& p_rObjectId )
 			SVObserverNotificationFunctorPtr l_NotifyPtr = new SVInspectionObserver( boost::bind( &SVCommandStreamManager::CommandCallback, this, _1 ) );
 			l_Status = SVObjectManagerClass::Instance().InsertObserver( l_NotifyPtr, l_Cookie );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = SVObjectManagerClass::Instance().AttachObserver( "SVInspectionProcess", p_rObjectId, l_Cookie );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVObjectManagerClass::Instance().DisableObserver( "SVInspectionProcess", p_rObjectId, l_Cookie );
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					m_Cookies[ p_rObjectId ] = SVCookieEnableItem( l_Cookie, 0 );
 				}

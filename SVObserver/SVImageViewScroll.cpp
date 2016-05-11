@@ -696,7 +696,7 @@ void SVImageViewScroll::OnSetFocus(CWnd* pOldWnd)
 	{
 		SVIPSplitterFrame* pSplitterFrame = dynamic_cast< SVIPSplitterFrame* >(pFrame->GetActiveFrame());
 
-		if(pSplitterFrame != nullptr)
+		if( nullptr != pSplitterFrame )
 		{
 			pSplitterFrame->RefreshAllSplitters();
 		}

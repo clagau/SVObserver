@@ -9,21 +9,23 @@
 //* .Check In Date   : $Date:   20 Nov 2014 07:02:58  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <float.h>
 #include "SVImagePolarTransform.h"
 
-#include "SVImageLibrary/SVDrawContext.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVObjectLibrary/SVToolLevelCreateStruct.h"
-
+#include "SVEvaluateCenterXClass.h"
+#include "SVEvaluateCenterYClass.h"
+#include "SVEvaluateStartRadiusClass.h"
+#include "SVEvaluateEndRadiusClass.h"
+#include "SVEvaluateStartAngleClass.h"
+#include "SVEvaluateEndAngleClass.h"
 #include "SVEquation.h"
-#include "SVEvaluate.h"
-#include "SVGlobal.h"
+#include "SVGlobal.h" // Default Coordinates
 #include "SVImageProcessingClass.h"
-#include "SVTool.h"
 #include "SVPolarTransformationTool.h"
+#pragma endregion Includes
 
 double SVImagePolarTransformClass::g_dMaxAngularDistance  = 720.0;
 
@@ -32,16 +34,14 @@ SV_IMPLEMENT_CLASS( SVImagePolarTransformClass, SVImagePolarTransformClassGuid )
 SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, int StringResourceID )
 						   :SVPolarTransformClass( POwner, StringResourceID ) 
 {
-
 	// Identify yourself
-	outObjectInfo.ObjectTypeInfo.SubType = SVImagePolarTransformObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVImagePolarTransformObjectType;
 
 	// Identify our input type needs...
 	// Image
 	inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
 	inputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputImageObjectInfo, _T( "ImagePolarTransformImage" ) );
-
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &centerX, SVOutputCenterXObjectGuid, IDS_OBJECTNAME_CENTER_X, false, SVResetItemNone );
@@ -137,16 +137,16 @@ BOOL SVImagePolarTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreat
 {
 	BOOL l_bOk = SVPolarTransformClass::CreateObject( PCreateStructure );
 
-	l_bOk = l_bOk && GetTool() != NULL;
+	l_bOk = l_bOk && nullptr != GetTool();
 
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointX, &centerX ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointY, &centerY ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyInnerRadius, &endRadius ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyOuterRadius, &startRadius ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyStartAngle, &startAngle ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyEndAngle, &endAngle ) == S_OK;
+	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointX, &centerX );
+	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointY, &centerY );
+	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyInnerRadius, &endRadius );
+	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyOuterRadius, &startRadius );
+	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyStartAngle, &startAngle );
+	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyEndAngle, &endAngle );
 
-	l_bOk &= ( outputImageObject.InitializeImage( getInputImage() ) == S_OK );
+	l_bOk &= S_OK == ( outputImageObject.InitializeImage( getInputImage() ) );
 
 	// Set / Reset Printable Flag
 	centerX.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT | SV_SETABLE_ONLINE;
@@ -161,17 +161,16 @@ BOOL SVImagePolarTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreat
 
 	SetCalculatedPrintableFlags();
 
+	m_isCreated = l_bOk;
 
-	isCreated = l_bOk;
-
-	return isCreated;
+	return m_isCreated;
 }
 
 HRESULT SVImagePolarTransformClass::IsInputImage( SVImageClass *p_psvImage )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_psvImage != NULL && p_psvImage == getInputImage() )
+	if ( nullptr != p_psvImage && p_psvImage == getInputImage() )
 	{
 		l_hrOk = S_OK;
 	}
@@ -184,7 +183,7 @@ SVImageClass* SVImagePolarTransformClass::getInputImage()
 	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().PObject )
 		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().PObject;
 
-	return NULL;
+	return nullptr;
 }
 
 SVImageClass* SVImagePolarTransformClass::GetOutputImage()
@@ -214,15 +213,15 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation center x object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateCenterXObjectType;
-	SVEvaluateCenterXClass* pEvaluateCenterX = reinterpret_cast<SVEvaluateCenterXClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
+	SVEvaluateCenterXClass* pEvaluateCenterX = reinterpret_cast<SVEvaluateCenterXClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateCenterX )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateCenterX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateCenterX, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded CenterX...
-			CString strName = centerX.GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType );
+			CString strName = centerX.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 			if( ! strName.IsEmpty() )
 			{
 				// Set equation in quotes...
@@ -246,15 +245,15 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation center y object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateCenterYObjectType;
-	SVEvaluateCenterYClass* pEvaluateCenterY = reinterpret_cast<SVEvaluateCenterYClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
+	SVEvaluateCenterYClass* pEvaluateCenterY = reinterpret_cast<SVEvaluateCenterYClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateCenterY )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateCenterY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateCenterY, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded CenterY...
-			CString strName = centerY.GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType );
+			CString strName = centerY.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 			if( ! strName.IsEmpty() )
 			{
 				// Set equation in quotes...
@@ -278,15 +277,15 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation start radius object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateStartRadiusObjectType;
-	SVEvaluateStartRadiusClass* pEvaluateStartRadius = reinterpret_cast<SVEvaluateStartRadiusClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
+	SVEvaluateStartRadiusClass* pEvaluateStartRadius = reinterpret_cast<SVEvaluateStartRadiusClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateStartRadius )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateStartRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateStartRadius, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded StartRadius...
-			CString strName = startRadius.GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType );
+			CString strName = startRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 			if( ! strName.IsEmpty() )
 			{
 				// Set equation in quotes...
@@ -310,15 +309,15 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation end radius object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateEndRadiusObjectType;
-	SVEvaluateEndRadiusClass* pEvaluateEndRadius = reinterpret_cast<SVEvaluateEndRadiusClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
+	SVEvaluateEndRadiusClass* pEvaluateEndRadius = reinterpret_cast<SVEvaluateEndRadiusClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateEndRadius )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateEndRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateEndRadius, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded EndRadius...
-			CString strName = endRadius.GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType );
+			CString strName = endRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 			if( ! strName.IsEmpty() )
 			{
 				// Set equation in quotes...
@@ -342,15 +341,15 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation start angle object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateStartAngleObjectType;
-	SVEvaluateStartAngleClass* pEvaluateStartAngle = reinterpret_cast<SVEvaluateStartAngleClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
+	SVEvaluateStartAngleClass* pEvaluateStartAngle = reinterpret_cast<SVEvaluateStartAngleClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateStartAngle )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateStartAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateStartAngle, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded StartAngle...
-			CString strName = startAngle.GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType );
+			CString strName = startAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 			if( ! strName.IsEmpty() )
 			{
 				// Set equation in quotes...
@@ -374,15 +373,15 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation end angle object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateEndAngleObjectType;
-	SVEvaluateEndAngleClass* pEvaluateEndAngle = reinterpret_cast<SVEvaluateEndAngleClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
+	SVEvaluateEndAngleClass* pEvaluateEndAngle = reinterpret_cast<SVEvaluateEndAngleClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateEndAngle )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateEndAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateEndAngle, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded EndAngle...
-			CString strName = endAngle.GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType );
+			CString strName = endAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 			if( ! strName.IsEmpty() )
 			{
 				// Set equation in quotes...
@@ -544,13 +543,13 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 	BOOL l_bOk = SVPolarTransformClass::onRun( RRunStatus );
 
-	l_bOk = l_bOk && (useFormulaInput.GetValue( l_bUseFormula ) == S_OK );
+	l_bOk = l_bOk && (S_OK == useFormulaInput.GetValue( l_bUseFormula ));
 
 	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*>( GetTool() );
 
 	if( pTool )
 	{
-		l_bOk = l_bOk && ( pTool->m_svAngularMethod.GetValue( l_lAngularMethod ) == S_OK );
+		l_bOk = l_bOk && ( S_OK == pTool->m_svAngularMethod.GetValue( l_lAngularMethod ) );
 	}
 	else
 		ASSERT( FALSE );
@@ -567,33 +566,33 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 	{
 		if ( l_bUseFormula )
 		{
-			l_bOk = l_bOk && getInputStartAngleResult() != NULL && ( getInputStartAngleResult()->GetValue( l_dStartAngle ) == S_OK );
+			l_bOk = l_bOk && nullptr != getInputStartAngleResult() && S_OK == ( getInputStartAngleResult()->GetValue( l_dStartAngle ) );
 
-			l_bOk = l_bOk && getInputEndAngleResult() != NULL && ( getInputEndAngleResult()->GetValue( l_dEndAngle ) == S_OK );
+			l_bOk = l_bOk && nullptr != getInputEndAngleResult() && S_OK == ( getInputEndAngleResult()->GetValue( l_dEndAngle ) );
 
-			l_bOk = l_bOk && getInputCenterXResult() != NULL && ( getInputCenterXResult()->GetValue( l_dCenterX ) == S_OK );
-			l_bOk = l_bOk && ( centerX.SetValue( RRunStatus.m_lResultDataIndex, l_dCenterX ) == S_OK );
+			l_bOk = l_bOk && nullptr != getInputCenterXResult() && S_OK == ( getInputCenterXResult()->GetValue( l_dCenterX ) );
+			l_bOk = l_bOk && ( S_OK == centerX.SetValue( RRunStatus.m_lResultDataIndex, l_dCenterX ) );
 
-			l_bOk = l_bOk && getInputCenterYResult() != NULL && ( getInputCenterYResult()->GetValue( l_dCenterY ) == S_OK );
-			l_bOk = l_bOk && ( centerY.SetValue( RRunStatus.m_lResultDataIndex, l_dCenterY ) == S_OK );
+			l_bOk = l_bOk && nullptr != getInputCenterYResult() && S_OK == ( getInputCenterYResult()->GetValue( l_dCenterY ) );
+			l_bOk = l_bOk && ( S_OK == centerY.SetValue( RRunStatus.m_lResultDataIndex, l_dCenterY ) );
 
-			l_bOk = l_bOk && getInputStartRadiusResult() != NULL && ( getInputStartRadiusResult()->GetValue( l_dStartRadius ) == S_OK );
-			l_bOk = l_bOk && ( startRadius.SetValue( RRunStatus.m_lResultDataIndex, l_dStartRadius ) == S_OK );
+			l_bOk = l_bOk && nullptr != getInputStartRadiusResult() && ( S_OK == getInputStartRadiusResult()->GetValue( l_dStartRadius ) );
+			l_bOk = l_bOk && ( S_OK == startRadius.SetValue( RRunStatus.m_lResultDataIndex, l_dStartRadius ) );
 
-			l_bOk = l_bOk && getInputEndRadiusResult() != NULL && ( getInputEndRadiusResult()->GetValue( l_dEndRadius ) == S_OK );
-			l_bOk = l_bOk && ( endRadius.SetValue( RRunStatus.m_lResultDataIndex, l_dEndRadius ) == S_OK );
+			l_bOk = l_bOk && nullptr != getInputEndRadiusResult() && ( S_OK == getInputEndRadiusResult()->GetValue( l_dEndRadius ) );
+			l_bOk = l_bOk && ( S_OK == endRadius.SetValue( RRunStatus.m_lResultDataIndex, l_dEndRadius ) );
 		}
 		else
 		{
-			l_bOk = l_bOk && ( startAngle.GetValue( l_dStartAngle ) == S_OK );
-			l_bOk = l_bOk && ( endAngle.GetValue( l_dEndAngle ) == S_OK );
+			l_bOk = l_bOk && ( S_OK == startAngle.GetValue( l_dStartAngle ) );
+			l_bOk = l_bOk && ( S_OK == endAngle.GetValue( l_dEndAngle ) );
 		}
 
 		// Correct start and end angle...
 		// ]-360.0...360.0[
 		// start angle must always be lower than end angle, so that
 		// MIL works all the time counter clockwise...
-		if( l_lAngularMethod == 1 )
+		if( 1 == l_lAngularMethod  )
 		{
 			NewCorrectAngles( l_dStartAngle, l_dEndAngle );
 		}
@@ -604,8 +603,8 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 
 		// Write back modified angles...
-		l_bOk = l_bOk && ( startAngle.SetValue( RRunStatus.m_lResultDataIndex, l_dStartAngle ) == S_OK );
-		l_bOk = l_bOk && ( endAngle.SetValue( RRunStatus.m_lResultDataIndex, l_dEndAngle ) == S_OK );
+		l_bOk = l_bOk && ( S_OK == startAngle.SetValue( RRunStatus.m_lResultDataIndex, l_dStartAngle ) );
+		l_bOk = l_bOk && ( S_OK == endAngle.SetValue( RRunStatus.m_lResultDataIndex, l_dEndAngle ) );
 	}
 
 	if ( l_bOk )
@@ -615,24 +614,24 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
     SVSmartHandlePointer l_svInputHandle;
     SVSmartHandlePointer l_svOutputHandle;
 
-		l_bOk = l_bOk && (GetTool() != NULL) && (GetTool()->GetImageExtent( l_svExtents ) == S_OK);
+		l_bOk = l_bOk && (nullptr != GetTool()) && (S_OK == GetTool()->GetImageExtent( l_svExtents ));
 
 		l_bOk = l_bOk && outputImageObject.SetImageHandleIndex( RRunStatus.Images );
 
 		//added "true" to the call of UpdateImage - if the tool only changes position the output image does not need to be re-created
-		l_bOk = l_bOk && outputImageObject.UpdateImage( l_svExtents,true ) == S_OK;
+		l_bOk = l_bOk && S_OK == outputImageObject.UpdateImage( l_svExtents, true );
 
 		l_svExtents = outputImageObject.GetImageExtents( );
 
 		l_bOk = l_bOk && outputImageObject.GetImageHandle( l_svOutputHandle ) && !( l_svOutputHandle.empty() );
 
-		l_bOk = l_bOk && getInputImage() != NULL && getInputImage()->GetImageHandle( l_svInputHandle ) && !( l_svInputHandle.empty() );
+		l_bOk = l_bOk && nullptr != getInputImage() && getInputImage()->GetImageHandle( l_svInputHandle ) && !( l_svInputHandle.empty() );
 
 		SVImageBufferHandleImage l_InMilHandle;
-		l_bOk = l_bOk && ( l_svInputHandle->GetData( l_InMilHandle ) == S_OK );
+		l_bOk = l_bOk && ( S_OK == l_svInputHandle->GetData( l_InMilHandle ) );
 
 		SVImageBufferHandleImage l_OutMilHandle;
-		l_bOk = l_bOk && ( l_svOutputHandle->GetData( l_OutMilHandle ) == S_OK );
+		l_bOk = l_bOk && ( S_OK == l_svOutputHandle->GetData( l_OutMilHandle ) );
 
 		if ( l_bOk )
 		{
@@ -647,16 +646,16 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 			double l_dOutputWidth = 0.0;
 			double l_dOutputHeight = 0.0;
 
-			l_bOk = l_bOk && l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointX, l_dCenterX ) == S_OK;
-			l_bOk = l_bOk && l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointY, l_dCenterY ) == S_OK;
-			l_bOk = l_bOk && l_svExtents.GetExtentProperty( SVExtentPropertyInnerRadius, l_dStartRadius ) == S_OK;
-			l_bOk = l_bOk && l_svExtents.GetExtentProperty( SVExtentPropertyOuterRadius, l_dEndRadius ) == S_OK;
-			l_bOk = l_bOk && l_svExtents.GetExtentProperty( SVExtentPropertyStartAngle, l_dStartAngle ) == S_OK;
-			l_bOk = l_bOk && l_svExtents.GetExtentProperty( SVExtentPropertyEndAngle, l_dEndAngle ) == S_OK;
-			l_bOk = l_bOk && l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_dOutputWidth ) == S_OK;
-			l_bOk = l_bOk && l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_dOutputHeight ) == S_OK;
+			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointX, l_dCenterX );
+			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointY, l_dCenterY );
+			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyInnerRadius, l_dStartRadius );
+			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOuterRadius, l_dEndRadius );
+			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyStartAngle, l_dStartAngle );
+			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyEndAngle, l_dEndAngle );
+			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_dOutputWidth );
+			l_bOk = l_bOk && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_dOutputHeight );
 
-			l_bOk = l_bOk && ( interpolationMode.GetValue( l_lInterpolationMode ) == S_OK );
+			l_bOk = l_bOk && ( S_OK == interpolationMode.GetValue( l_lInterpolationMode ) );
 
 			if ( l_bOk )
 			{
@@ -748,7 +747,7 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 DWORD_PTR SVImagePolarTransformClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 
@@ -757,7 +756,7 @@ DWORD_PTR SVImagePolarTransformClass::processMessage( DWORD DwMessageID, DWORD_P
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -782,7 +781,7 @@ void SVImagePolarTransformClass::SetCalculatedPrintableFlags()
 {
 	BOOL l_bSetValue;
 
-	if ( ( useFormulaInput.GetValue( l_bSetValue )  == S_OK ) && l_bSetValue )
+	if ( ( S_OK == useFormulaInput.GetValue( l_bSetValue ) ) && l_bSetValue )
 	{
 		//turn off the print flags
 		//turn off setable remotely/online
@@ -814,7 +813,7 @@ HRESULT SVImagePolarTransformClass::ResetObject()
 
 	HRESULT hr;
 	bool bUseFormula = false;
-	BOOL bOk = ( useFormulaInput.GetValue( bUseFormula ) == S_OK );	// one formula option for all values?
+	BOOL bOk = ( S_OK == useFormulaInput.GetValue( bUseFormula ) );	// one formula option for all values?
 	SVExtentPropertyInfoStruct info;
 
 	hr = pTool->m_svToolExtent.GetExtentPropertyInfo( SVExtentPropertyPositionPointX, info );
@@ -847,7 +846,7 @@ HRESULT SVImagePolarTransformClass::ResetObject()
 
 	HRESULT l_hrOk = outputImageObject.InitializeImage( getInputImage() );
 
-	if (SVPolarTransformClass::ResetObject() != S_OK )
+	if (S_OK != SVPolarTransformClass::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}

@@ -15,7 +15,7 @@ template< typename SVNotifyData >
 class SVObjectNotifyTemplate
 {
 public:
+	virtual ~SVObjectNotifyTemplate() {}
 	virtual HRESULT ProcessNotifyData( SVNotifyData& p_rData ) = 0;
-
 };
 

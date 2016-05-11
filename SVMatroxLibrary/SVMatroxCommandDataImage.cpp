@@ -47,17 +47,17 @@ SVMatroxCommandDataImage::~SVMatroxCommandDataImage()
 
 HRESULT SVMatroxCommandDataImage::GetData( SVByteVector& p_rData ) const
 {
-	HBITMAP l_Bitmap = NULL;
+	HBITMAP l_Bitmap = nullptr;
 	HRESULT l_Status = Convert( m_Buffer, l_Bitmap );
 
 	p_rData.clear();
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_Status = SVImageConvertorGDI::BitmapToByteVector( l_Bitmap, p_rData );
 	}
 
-	if( l_Bitmap != NULL )
+	if( nullptr != l_Bitmap )
 	{
 		::DeleteObject( l_Bitmap );
 	}
@@ -71,16 +71,16 @@ HRESULT SVMatroxCommandDataImage::SetData( const SVByteVector& p_rData )
 
 	if( ( m_DataType & SV_COMMAND_DATA_TYPE_READ_ONLY ) == 0 )
 	{
-		HBITMAP l_Bitmap = NULL;
+		HBITMAP l_Bitmap = nullptr;
 
 		l_Status = SVImageConvertorGDI::ByteVectorToBitmap( p_rData, l_Bitmap );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = Convert( l_Bitmap, m_Buffer );
 		}
 
-		if( l_Bitmap != NULL )
+		if( nullptr != l_Bitmap )
 		{
 			::DeleteObject( l_Bitmap );
 		}
@@ -116,7 +116,7 @@ HRESULT SVMatroxCommandDataImage::Convert( HBITMAP hBitmap, SVMatroxBuffer& rIma
 				{
 					//SVMatroxBuffer srcBuffer = rImage;
 					hr = ConvertToGrayscale(srcBuffer, dstBuffer);
-					if (hr == S_OK)
+					if (S_OK == hr)
 					{
 						// flip it
 						status = SVMatroxImageInterface::Flip(srcBuffer, dstBuffer, SVImageFlipVertical);

@@ -17,31 +17,31 @@
 
 inline SVDLLToolLoadLibraryClass::SVDLLToolLoadLibraryClass()
 {
-	m_hmHandle = NULL;
+	m_hmHandle = nullptr;
 
-	m_pfnSimpleTest = NULL;
-	m_pfnGetToolName = NULL;
-	m_pfnGetToolVersion = NULL;
-	m_pfnRunTool = NULL;
-	m_pfnStartup = NULL;
-	m_pfnShutDown = NULL;
-	m_pfnInitializeRun = NULL;
-	m_pfnUninitializeRun = NULL;
-	m_pfnGetInputValueDefinitions = NULL;
-	m_pfnDestroyInputValueDefinitionStructures = NULL;
-	m_pfnDestroyResultValueDefinitionStructures = NULL;
-	m_pfnSetInputValues = NULL;
-	m_pfnGetResultValues = NULL;
-	m_pfnGetMessageString = NULL;
-	m_pfnValidateValueParameter = NULL;
-	m_pfnGetResultValueDefinitions = NULL;
-	m_pfnGetNumberOfInputImages = NULL;
-	m_pfnSetMILInputImages = NULL;
-	m_pfnSetHBITMAPInputImages = NULL;
-	m_pfnGetHBITMAPResultImages = NULL;
-	m_pfnSetMILResultImages = NULL;
-	m_pfnGetResultImageDefinitions = NULL;
-	m_pfnDestroyImageDefinitionStructure = NULL;
+	m_pfnSimpleTest = nullptr;
+	m_pfnGetToolName = nullptr;
+	m_pfnGetToolVersion = nullptr;
+	m_pfnRunTool = nullptr;
+	m_pfnStartup = nullptr;
+	m_pfnShutDown = nullptr;
+	m_pfnInitializeRun = nullptr;
+	m_pfnUninitializeRun = nullptr;
+	m_pfnGetInputValueDefinitions = nullptr;
+	m_pfnDestroyInputValueDefinitionStructures = nullptr;
+	m_pfnDestroyResultValueDefinitionStructures = nullptr;
+	m_pfnSetInputValues = nullptr;
+	m_pfnGetResultValues = nullptr;
+	m_pfnGetMessageString = nullptr;
+	m_pfnValidateValueParameter = nullptr;
+	m_pfnGetResultValueDefinitions = nullptr;
+	m_pfnGetNumberOfInputImages = nullptr;
+	m_pfnSetMILInputImages = nullptr;
+	m_pfnSetHBITMAPInputImages = nullptr;
+	m_pfnGetHBITMAPResultImages = nullptr;
+	m_pfnSetMILResultImages = nullptr;
+	m_pfnGetResultImageDefinitions = nullptr;
+	m_pfnDestroyImageDefinitionStructure = nullptr;
 }
 
 inline SVDLLToolLoadLibraryClass::~SVDLLToolLoadLibraryClass()
@@ -55,7 +55,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 
 	SvStl::MessageContainer e;
 
-	if ( m_hmHandle == NULL )
+	if ( nullptr == m_hmHandle )
 	{
 		if(PathFileExists(p_szLibrary))
 		{
@@ -71,7 +71,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 		m_hmHandle = ::LoadLibrary( p_szLibrary );
 		Sleep(0);
 
-		if ( m_hmHandle != NULL )
+		if ( nullptr != m_hmHandle )
 		{
 			m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress( m_hmHandle, "SVSimpleTest" );
 			m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress( m_hmHandle, "SVGetToolName" );
@@ -98,52 +98,52 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 			m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress( m_hmHandle, "SVDestroyImageDefinitionStructure" );
 
 			// Backwards compatability
-			if ( m_pfnSimpleTest == NULL ) m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress( m_hmHandle, "SimpleTest" );
-			if ( m_pfnGetToolName == NULL ) m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress( m_hmHandle, "GetToolName" );
-			if ( m_pfnGetToolVersion == NULL ) m_pfnGetToolVersion = (GetToolVersionPtr)::GetProcAddress( m_hmHandle, "GetToolVersion" );
-			if ( m_pfnRunTool == NULL ) m_pfnRunTool = (RunToolPtr)::GetProcAddress( m_hmHandle, "RunTool" );
-			if ( m_pfnStartup == NULL ) m_pfnStartup = (StartupPtr)::GetProcAddress( m_hmHandle, "Startup" );
-			if ( m_pfnShutDown == NULL ) m_pfnShutDown = (ShutDownPtr)::GetProcAddress( m_hmHandle, "ShutDown" );
-			if ( m_pfnInitializeRun == NULL ) m_pfnInitializeRun = (InitializeRunPtr)::GetProcAddress( m_hmHandle, "InitializeRun" );
-			if ( m_pfnUninitializeRun == NULL ) m_pfnUninitializeRun = (UninitializeRunPtr)::GetProcAddress( m_hmHandle, "UninitializeRun" );
-			if ( m_pfnGetInputValueDefinitions == NULL ) m_pfnGetInputValueDefinitions = (GetInputValueDefinitionsPtr)::GetProcAddress( m_hmHandle, "GetInputValueDefinitions" );
-			if ( m_pfnDestroyInputValueDefinitionStructures == NULL ) m_pfnDestroyInputValueDefinitionStructures = (DestroyInputValueDefinitionStructuresPtr)::GetProcAddress( m_hmHandle, "DestroyInputValueDefinitionStructures" );
-			if ( m_pfnDestroyResultValueDefinitionStructures == NULL ) m_pfnDestroyResultValueDefinitionStructures = (DestroyResultValueDefinitionStructuresPtr)::GetProcAddress( m_hmHandle, "DestroyResultValueDefinitionStructures" );
-			if ( m_pfnSetInputValues == NULL ) m_pfnSetInputValues = (SetInputValuesPtr)::GetProcAddress( m_hmHandle, "SetInputValues" );
-			if ( m_pfnGetResultValues == NULL ) m_pfnGetResultValues = (GetResultValuesPtr)::GetProcAddress( m_hmHandle, "GetResultValues" );
-			if ( m_pfnGetMessageString == NULL ) m_pfnGetMessageString = (GetMessageStringPtr)::GetProcAddress( m_hmHandle, "GetErrorMessageString" );
-			if ( m_pfnValidateValueParameter == NULL ) m_pfnValidateValueParameter = (ValidateValueParameterPtr)::GetProcAddress( m_hmHandle, "ValidateValueParameter" );
-			if ( m_pfnGetResultValueDefinitions == NULL ) m_pfnGetResultValueDefinitions = (GetResultValueDefinitionsPtr)::GetProcAddress( m_hmHandle, "GetResultValueDefinitions" );
-			if ( m_pfnGetNumberOfInputImages == NULL ) m_pfnGetNumberOfInputImages = (GetNumberOfInputImagesPtr)::GetProcAddress( m_hmHandle, "GetNumberOfInputImages" );
-			if ( m_pfnSetMILInputImages == NULL ) m_pfnSetMILInputImages = (SetMILInputImagesPtr)::GetProcAddress( m_hmHandle, "SetMILInputImages" );
-			if ( m_pfnSetMILResultImages == NULL ) m_pfnSetMILResultImages = (SetMILResultImagesPtr)::GetProcAddress( m_hmHandle, "SetMILResultImages" );
-			if ( m_pfnSetHBITMAPInputImages == NULL ) m_pfnSetHBITMAPInputImages = (SetHBITMAPInputImagesPtr)::GetProcAddress( m_hmHandle, "SetHBITMAPInputImages" );
-			if ( m_pfnGetHBITMAPResultImages == NULL ) m_pfnGetHBITMAPResultImages = (GetHBITMAPResultImagesPtr)::GetProcAddress( m_hmHandle, "GetHBITMAPResultImages" );
-			if ( m_pfnGetResultImageDefinitions == NULL ) m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress( m_hmHandle, "GetResultImageDefinitions" );
-			if ( m_pfnDestroyImageDefinitionStructure == NULL ) m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress( m_hmHandle, "DestroyImageDefinitionStructure" );
+			if ( nullptr == m_pfnSimpleTest ) m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress( m_hmHandle, "SimpleTest" );
+			if ( nullptr == m_pfnGetToolName ) m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress( m_hmHandle, "GetToolName" );
+			if ( nullptr == m_pfnGetToolVersion ) m_pfnGetToolVersion = (GetToolVersionPtr)::GetProcAddress( m_hmHandle, "GetToolVersion" );
+			if ( nullptr == m_pfnRunTool ) m_pfnRunTool = (RunToolPtr)::GetProcAddress( m_hmHandle, "RunTool" );
+			if ( nullptr == m_pfnStartup ) m_pfnStartup = (StartupPtr)::GetProcAddress( m_hmHandle, "Startup" );
+			if ( nullptr == m_pfnShutDown ) m_pfnShutDown = (ShutDownPtr)::GetProcAddress( m_hmHandle, "ShutDown" );
+			if ( nullptr == m_pfnInitializeRun ) m_pfnInitializeRun = (InitializeRunPtr)::GetProcAddress( m_hmHandle, "InitializeRun" );
+			if ( nullptr == m_pfnUninitializeRun ) m_pfnUninitializeRun = (UninitializeRunPtr)::GetProcAddress( m_hmHandle, "UninitializeRun" );
+			if ( nullptr == m_pfnGetInputValueDefinitions ) m_pfnGetInputValueDefinitions = (GetInputValueDefinitionsPtr)::GetProcAddress( m_hmHandle, "GetInputValueDefinitions" );
+			if ( nullptr == m_pfnDestroyInputValueDefinitionStructures ) m_pfnDestroyInputValueDefinitionStructures = (DestroyInputValueDefinitionStructuresPtr)::GetProcAddress( m_hmHandle, "DestroyInputValueDefinitionStructures" );
+			if ( nullptr == m_pfnDestroyResultValueDefinitionStructures ) m_pfnDestroyResultValueDefinitionStructures = (DestroyResultValueDefinitionStructuresPtr)::GetProcAddress( m_hmHandle, "DestroyResultValueDefinitionStructures" );
+			if ( nullptr == m_pfnSetInputValues ) m_pfnSetInputValues = (SetInputValuesPtr)::GetProcAddress( m_hmHandle, "SetInputValues" );
+			if ( nullptr == m_pfnGetResultValues ) m_pfnGetResultValues = (GetResultValuesPtr)::GetProcAddress( m_hmHandle, "GetResultValues" );
+			if ( nullptr == m_pfnGetMessageString ) m_pfnGetMessageString = (GetMessageStringPtr)::GetProcAddress( m_hmHandle, "GetErrorMessageString" );
+			if ( nullptr == m_pfnValidateValueParameter ) m_pfnValidateValueParameter = (ValidateValueParameterPtr)::GetProcAddress( m_hmHandle, "ValidateValueParameter" );
+			if ( nullptr == m_pfnGetResultValueDefinitions ) m_pfnGetResultValueDefinitions = (GetResultValueDefinitionsPtr)::GetProcAddress( m_hmHandle, "GetResultValueDefinitions" );
+			if ( nullptr == m_pfnGetNumberOfInputImages ) m_pfnGetNumberOfInputImages = (GetNumberOfInputImagesPtr)::GetProcAddress( m_hmHandle, "GetNumberOfInputImages" );
+			if ( nullptr == m_pfnSetMILInputImages ) m_pfnSetMILInputImages = (SetMILInputImagesPtr)::GetProcAddress( m_hmHandle, "SetMILInputImages" );
+			if ( nullptr == m_pfnSetMILResultImages ) m_pfnSetMILResultImages = (SetMILResultImagesPtr)::GetProcAddress( m_hmHandle, "SetMILResultImages" );
+			if ( nullptr == m_pfnSetHBITMAPInputImages ) m_pfnSetHBITMAPInputImages = (SetHBITMAPInputImagesPtr)::GetProcAddress( m_hmHandle, "SetHBITMAPInputImages" );
+			if ( nullptr == m_pfnGetHBITMAPResultImages ) m_pfnGetHBITMAPResultImages = (GetHBITMAPResultImagesPtr)::GetProcAddress( m_hmHandle, "GetHBITMAPResultImages" );
+			if ( nullptr == m_pfnGetResultImageDefinitions ) m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress( m_hmHandle, "GetResultImageDefinitions" );
+			if ( nullptr == m_pfnDestroyImageDefinitionStructure ) m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress( m_hmHandle, "DestroyImageDefinitionStructure" );
 
 
 
 			if ( (
-				m_pfnSimpleTest != NULL &&
-				m_pfnGetToolName != NULL &&
-				m_pfnGetToolVersion != NULL &&
-				m_pfnRunTool != NULL &&
-				m_pfnStartup != NULL &&
-				m_pfnShutDown != NULL &&
-				m_pfnInitializeRun != NULL &&
-				m_pfnUninitializeRun != NULL &&
-				m_pfnGetInputValueDefinitions != NULL &&
-				m_pfnDestroyInputValueDefinitionStructures != NULL &&
-				m_pfnDestroyResultValueDefinitionStructures != NULL &&
-				m_pfnSetInputValues != NULL &&
-				m_pfnGetResultValues != NULL &&
-				m_pfnGetMessageString != NULL &&
-				m_pfnValidateValueParameter != NULL &&
-				m_pfnGetResultValueDefinitions != NULL &&
-				m_pfnGetNumberOfInputImages != NULL &&
-				m_pfnGetResultImageDefinitions != NULL &&
-				m_pfnDestroyImageDefinitionStructure != NULL )
+				nullptr != m_pfnSimpleTest &&
+				nullptr != m_pfnGetToolName &&
+				nullptr != m_pfnGetToolVersion &&
+				nullptr != m_pfnRunTool &&
+				nullptr != m_pfnStartup &&
+				nullptr != m_pfnShutDown &&
+				nullptr != m_pfnInitializeRun &&
+				nullptr != m_pfnUninitializeRun &&
+				nullptr != m_pfnGetInputValueDefinitions &&
+				nullptr != m_pfnDestroyInputValueDefinitionStructures &&
+				nullptr != m_pfnDestroyResultValueDefinitionStructures &&
+				nullptr != m_pfnSetInputValues &&
+				nullptr != m_pfnGetResultValues &&
+				nullptr != m_pfnGetMessageString &&
+				nullptr != m_pfnValidateValueParameter &&
+				nullptr != m_pfnGetResultValueDefinitions &&
+				nullptr != m_pfnGetNumberOfInputImages &&
+				nullptr != m_pfnGetResultImageDefinitions &&
+				nullptr != m_pfnDestroyImageDefinitionStructure )
 				)
 			{
 				if(     m_pfnSetMILResultImages && m_pfnSetMILInputImages
@@ -225,7 +225,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 				if( S_OK == Result )
 				{
 					fnNotifyProgress( _T("Attempting GetToolName"));
-					BSTR bstName = NULL;
+					BSTR bstName = nullptr;
 					try
 					{
 						Result = m_pfnGetToolName( &bstName );
@@ -295,7 +295,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 				if ( !m_pfnGetResultImageDefinitions )              e.addMessage( SvStl::MessageData( -12368, SvOi::Tid_GetProcAddressError_GetResultImageDefinitions ), false );
 				if ( !m_pfnDestroyImageDefinitionStructure )        e.addMessage( SvStl::MessageData( -12369, SvOi::Tid_GetProcAddressError_DestroyImageDefinitionStructure ), false );
 			}
-		}// end if ( m_hmHandle != NULL )
+		}// end if ( nullptr != m_hmHandle )
 		else	// can't load library
 		{
 			Result = -12378;
@@ -319,14 +319,11 @@ inline bool SVDLLToolLoadLibraryClass::UseMil()
 
 inline BOOL SVDLLToolLoadLibraryClass::IsHandleNull()
 {
-	if ( m_hmHandle == NULL )
+	if ( nullptr == m_hmHandle )
 	{
-		return TRUE;
+		return true;
 	}
-	else
-	{
-		return FALSE;
-	}
+	return false;
 }
 
 
@@ -334,9 +331,9 @@ inline HRESULT SVDLLToolLoadLibraryClass::Close()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_hmHandle != NULL )
+	if ( nullptr != m_hmHandle )
 	{
-		if ( m_pfnShutDown != NULL )
+		if ( nullptr != m_pfnShutDown )
 		{
 			try
 			{
@@ -352,7 +349,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Close()
 		{
 			// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
 			Sleep(0);
-			m_hmHandle = NULL;
+			m_hmHandle = nullptr;
 		}
 		else
 		{
@@ -360,29 +357,29 @@ inline HRESULT SVDLLToolLoadLibraryClass::Close()
 		}
 	}
 
-	m_pfnSimpleTest = NULL;
-	m_pfnGetToolName = NULL;
-	m_pfnGetToolVersion = NULL;
-	m_pfnRunTool = NULL;
-	m_pfnStartup = NULL;
-	m_pfnShutDown = NULL;
-	m_pfnInitializeRun = NULL;
-	m_pfnUninitializeRun = NULL;
-	m_pfnGetInputValueDefinitions = NULL;
-	m_pfnDestroyInputValueDefinitionStructures = NULL;
-	m_pfnDestroyResultValueDefinitionStructures = NULL;
-	m_pfnSetInputValues = NULL;
-	m_pfnGetResultValues = NULL;
-	m_pfnGetMessageString = NULL;
-	m_pfnValidateValueParameter = NULL;
-	m_pfnGetResultValueDefinitions = NULL;
-	m_pfnGetNumberOfInputImages = NULL;
-	m_pfnSetMILInputImages = NULL;
-	m_pfnSetHBITMAPInputImages = NULL;
-	m_pfnGetHBITMAPResultImages = NULL;
-	m_pfnSetMILResultImages = NULL;
-	m_pfnGetResultImageDefinitions = NULL;
-	m_pfnDestroyImageDefinitionStructure = NULL;
+	m_pfnSimpleTest = nullptr;
+	m_pfnGetToolName = nullptr;
+	m_pfnGetToolVersion = nullptr;
+	m_pfnRunTool = nullptr;
+	m_pfnStartup = nullptr;
+	m_pfnShutDown = nullptr;
+	m_pfnInitializeRun = nullptr;
+	m_pfnUninitializeRun = nullptr;
+	m_pfnGetInputValueDefinitions = nullptr;
+	m_pfnDestroyInputValueDefinitionStructures = nullptr;
+	m_pfnDestroyResultValueDefinitionStructures = nullptr;
+	m_pfnSetInputValues = nullptr;
+	m_pfnGetResultValues = nullptr;
+	m_pfnGetMessageString = nullptr;
+	m_pfnValidateValueParameter = nullptr;
+	m_pfnGetResultValueDefinitions = nullptr;
+	m_pfnGetNumberOfInputImages = nullptr;
+	m_pfnSetMILInputImages = nullptr;
+	m_pfnSetHBITMAPInputImages = nullptr;
+	m_pfnGetHBITMAPResultImages = nullptr;
+	m_pfnSetMILResultImages = nullptr;
+	m_pfnGetResultImageDefinitions = nullptr;
+	m_pfnDestroyImageDefinitionStructure = nullptr;
 
 	return l_hrOk;
 }
@@ -391,7 +388,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetToolName( BSTR* pbstrToolName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetToolName != NULL )
+	if ( nullptr != m_pfnGetToolName )
 	{
 		try
 		{
@@ -410,7 +407,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetToolVersion (long* plVersionNumber)
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetToolVersion != NULL )
+	if ( nullptr != m_pfnGetToolVersion )
 	{
 		try
 		{
@@ -429,7 +426,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::RunTool (GUID tool, long* plStatus)
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnRunTool != NULL )
+	if ( nullptr != m_pfnRunTool )
 	{
 		try
 		{
@@ -440,7 +437,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::RunTool (GUID tool, long* plStatus)
 			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
 		}
 
-		if( l_hrOk != S_OK )
+		if( S_OK != l_hrOk )
 		{
 			ASSERT (0);
 			SVStringArray msgList;
@@ -458,7 +455,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Startup ()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnStartup != NULL )
+	if ( nullptr != m_pfnStartup )
 	{
 		try
 		{
@@ -477,7 +474,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::ShutDown ()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnShutDown != NULL )
+	if ( nullptr != m_pfnShutDown )
 	{
 		try
 		{
@@ -496,7 +493,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::InitializeRun ( GUID tool, long lImage
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnInitializeRun != NULL )
+	if ( nullptr != m_pfnInitializeRun )
 	{
 		try
 		{
@@ -507,7 +504,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::InitializeRun ( GUID tool, long lImage
 			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
 		}
 
-		if( l_hrOk != S_OK )
+		if( S_OK != l_hrOk )
 		{
 			ASSERT (0);
 			SVStringArray msgList;
@@ -524,7 +521,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::UninitializeRun ( GUID tool )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnUninitializeRun != NULL )
+	if ( nullptr != m_pfnUninitializeRun )
 	{
 		try
 		{
@@ -542,7 +539,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetInputValueDefinitions (long* plArra
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetInputValueDefinitions != NULL )
+	if ( nullptr != m_pfnGetInputValueDefinitions )
 	{
 		try
 		{
@@ -561,7 +558,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::DestroyInputValueDefinitionStructures 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnDestroyInputValueDefinitionStructures != NULL )
+	if ( nullptr != m_pfnDestroyInputValueDefinitionStructures )
 	{
 		try
 		{
@@ -580,7 +577,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::DestroyResultValueDefinitionStructures
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnDestroyResultValueDefinitionStructures != NULL )
+	if ( nullptr != m_pfnDestroyResultValueDefinitionStructures )
 	{
 		try
 		{
@@ -599,7 +596,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::SetInputValues (GUID tool, long lArray
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnSetInputValues != NULL )
+	if ( nullptr != m_pfnSetInputValues )
 	{
 		try
 		{
@@ -618,7 +615,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetResultValues (GUID tool, long lArra
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetResultValues != NULL )
+	if ( nullptr != m_pfnGetResultValues )
 	{
 		try
 		{
@@ -633,11 +630,11 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetResultValues (GUID tool, long lArra
 	return l_hrOk;
 }
 
-inline HRESULT SVDLLToolLoadLibraryClass::GetMessageString (unsigned long ulErrorNumber,BSTR* pbstrErrorMessage)
+inline HRESULT SVDLLToolLoadLibraryClass::GetMessageString (unsigned long ulErrorNumber,BSTR* pbstrErrorMessage) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetMessageString != NULL )
+	if ( nullptr != m_pfnGetMessageString )
 	{
 		try
 		{
@@ -656,7 +653,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::ValidateValueParameter (GUID tool, lon
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnValidateValueParameter != NULL )
+	if ( nullptr != m_pfnValidateValueParameter )
 	{
 		try
 		{
@@ -675,7 +672,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetResultValueDefinitions (long* plArr
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetResultValueDefinitions != NULL )
+	if ( nullptr != m_pfnGetResultValueDefinitions )
 	{
 		try
 		{
@@ -694,7 +691,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetNumberOfInputImages (long* plNumber
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetNumberOfInputImages != NULL )
+	if ( nullptr != m_pfnGetNumberOfInputImages )
 	{
 		try
 		{
@@ -713,7 +710,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::SetMILInputImages (GUID tool, long lAr
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnSetMILInputImages != NULL )
+	if ( nullptr != m_pfnSetMILInputImages )
 	{
 		try
 		{
@@ -732,7 +729,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::SetHBITMAPInputImages (GUID tool, HBIT
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnSetHBITMAPInputImages != NULL )
+	if ( nullptr != m_pfnSetHBITMAPInputImages )
 	{
 		try
 		{
@@ -751,7 +748,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetHBITMAPResultImages (GUID tool, lon
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetHBITMAPResultImages != NULL )
+	if ( nullptr != m_pfnGetHBITMAPResultImages )
 	{
 		try
 		{
@@ -769,7 +766,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::SetMILResultImages (GUID tool, long lA
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnSetMILResultImages != NULL )
+	if ( nullptr != m_pfnSetMILResultImages )
 	{
 		try
 		{
@@ -788,7 +785,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::GetResultImageDefinitions (GUID tool, 
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnGetResultImageDefinitions != NULL )
+	if ( nullptr != m_pfnGetResultImageDefinitions )
 	{
 		try
 		{
@@ -807,7 +804,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::DestroyImageDefinitionStructure ( SVIm
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( m_pfnDestroyImageDefinitionStructure != NULL )
+	if ( nullptr != m_pfnDestroyImageDefinitionStructure )
 	{
 		try
 		{
@@ -824,6 +821,6 @@ inline HRESULT SVDLLToolLoadLibraryClass::DestroyImageDefinitionStructure ( SVIm
 
 inline bool SVDLLToolLoadLibraryClass::IsOpen()
 {
-	return m_hmHandle != NULL;
+	return nullptr != m_hmHandle;
 }
 

@@ -15,9 +15,7 @@
 #pragma region Declarations
 #pragma endregion Declarations
 
-class RingBufferTool :
-	public SVToolClass
-	, virtual public SvOi::IRingBufferTool
+class RingBufferTool :	public SVToolClass, public SvOi::IRingBufferTool
 {
 	SV_DECLARE_CLASS (RingBufferTool);
 

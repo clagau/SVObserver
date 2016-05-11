@@ -12,9 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearToolClass.h"
-
-#include "SVImageLibrary/SVDrawContext.h"
-
 #include "SVAnalyzer.h"
 #include "SVInspectionProcess.h"
 #include "SVLinearImageOperatorList.h"
@@ -56,15 +53,15 @@ BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 
 	BOOL l_bValue = FALSE;
 
-	if( m_voUseProfileRotation.GetValue( l_bValue ) == S_OK )
+	if( S_OK == m_voUseProfileRotation.GetValue( l_bValue ) )
 	{
 		if( l_bValue )
 		{
-			bOk &= m_svToolExtent.SetTranslation( SVExtentTranslationProfile ) == S_OK;
+			bOk &= S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationProfile );
 		}
 		else
 		{
-			bOk &= m_svToolExtent.SetTranslation( SVExtentTranslationProfileShift ) == S_OK;
+			bOk &= S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationProfileShift );
 		}
 	}
 
@@ -82,12 +79,10 @@ BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 
 	if(bOk)
 	{
-		bOk  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this,true,true,true)); 
+		bOk  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this, true, true, true)); 
 	}
 
-
-
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -106,7 +101,7 @@ HRESULT SVLinearToolClass::ResetObject()
 	long l_lValue = 0;
 	BOOL l_bValue = FALSE;
 
-	if( m_voUseProfileRotation.GetValue( l_bValue ) == S_OK )
+	if( S_OK == m_voUseProfileRotation.GetValue( l_bValue ) )
 	{
 		long l_DataIndex = m_voUseProfileRotation.GetLastSetIndex();
 
@@ -131,11 +126,11 @@ HRESULT SVLinearToolClass::ResetObject()
 
 		SVExtentPropertyInfoStruct info;
 
-		if( m_svToolExtent.GetExtentPropertyInfo( SVExtentPropertyRotationAngle, info ) == S_OK )
+		if( S_OK == m_svToolExtent.GetExtentPropertyInfo( SVExtentPropertyRotationAngle, info ) )
 		{
 			info.bHidden = ! l_bValue;
 
-			if( m_svToolExtent.SetExtentPropertyInfo( SVExtentPropertyRotationAngle, info ) != S_OK )
+			if( S_OK != m_svToolExtent.SetExtentPropertyInfo( SVExtentPropertyRotationAngle, info ) )
 			{
 				l_hrOk = S_FALSE;
 			}
@@ -146,20 +141,20 @@ HRESULT SVLinearToolClass::ResetObject()
 		}
 	}
 
-	if( SVToolClass::ResetObject() != S_OK )
+	if( S_OK != SVToolClass::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		SVImageExtentClass l_svExtents;
 
-		if ( GetImageExtent( l_svExtents ) == S_OK )
+		if ( S_OK == GetImageExtent( l_svExtents ) )
 		{
 			SVExtentFigureStruct l_svFigure;
 
-			if ( l_svExtents.GetFigure( l_svFigure ) == S_OK )
+			if ( S_OK == l_svExtents.GetFigure( l_svFigure ) )
 			{
 				if( extentLeft.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
 				{
@@ -190,7 +185,7 @@ HRESULT SVLinearToolClass::SetImageExtentToParent( unsigned long p_ulIndex )
 
 	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
 	}
@@ -201,10 +196,10 @@ SVTaskObjectClass* SVLinearToolClass::GetObjectAtPoint( const SVExtentPointStruc
 {
 	SVImageExtentClass l_svExtents;
 
-	SVTaskObjectClass *l_psvObject = NULL;
+	SVTaskObjectClass *l_psvObject = nullptr;
 
-	if( m_svToolExtent.GetImageExtent( l_svExtents ) == S_OK &&
-	    l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SVExtentLocationPropertyUnknown )
+	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
+	    SVExtentLocationPropertyUnknown != l_svExtents.GetLocationPropertyAt( p_rsvPoint ) )
 	{
 		l_psvObject = this;
 	}
@@ -280,7 +275,7 @@ BOOL SVLinearToolClass::onRun( SVRunStatusClass& RRunStatus )
 
 DWORD_PTR SVLinearToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -293,8 +288,8 @@ DWORD_PTR SVLinearToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMess
 void SVLinearToolClass::init()
 {
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVLinearToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVLinearToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_svRotationAngle, SVRotationAngleObjectGuid, IDS_OBJECTNAME_ROTATION_ANGLE, false, SVResetItemTool, _T("Extent Angle") );
@@ -372,8 +367,7 @@ void SVLinearToolClass::init()
 
 	// Build an operator list...
 
-	// ...use In Place image operator list, because we already have an output image! SEJ_24Mar2000
-//	SVUnaryImageOperatorListClass* pOperatorList = new SVInPlaceImageOperatorListClass;
+	// ...use In Place image operator list, because we already have an output image!
 	SVUnaryImageOperatorListClass* pOperatorList = new SVLinearImageOperatorListClass;
 
 	// Operator list defaults:

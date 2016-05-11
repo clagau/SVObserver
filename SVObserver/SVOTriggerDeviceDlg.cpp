@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 
 static const CString scCameraTriggerTag = _T("CameraTrigger_");
 
-CSVOTriggerDeviceDlg::CSVOTriggerDeviceDlg(CWnd* pParent /*=NULL*/)
+CSVOTriggerDeviceDlg::CSVOTriggerDeviceDlg(CWnd* pParent /*=nullptr*/)
 : CPropertyPage(CSVOTriggerDeviceDlg::IDD)
 {
 	//{{AFX_DATA_INIT(CSVOTriggerDeviceDlg)
@@ -297,7 +297,7 @@ void CSVOTriggerDeviceDlg::OnSelchangeLstTriggers()
 
 BOOL CSVOTriggerDeviceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
+	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, 0, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 
 	return TRUE;
 }

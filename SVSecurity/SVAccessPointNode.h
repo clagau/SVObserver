@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:00:38  $
 //******************************************************************************
 
-#if !defined(AFX_SVACCESSPOINTNODE_H__BA98421F_1D99_4058_840B_773FC810D11A__INCLUDED_)
-#define AFX_SVACCESSPOINTNODE_H__BA98421F_1D99_4058_840B_773FC810D11A__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 class SVAccessPointNode  
 {
@@ -33,6 +28,3 @@ public:
 	bool m_bForcePrompt;
 	bool m_bDataCannotChange;
 };
-
-#endif // !defined(AFX_SVACCESSPOINTNODE_H__BA98421F_1D99_4058_840B_773FC810D11A__INCLUDED_)
-

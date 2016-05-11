@@ -53,10 +53,9 @@ struct SVInvalidObject
 struct SVGetNextUniqueObjectID
 {
 	static void Next(SVUniqueObjectID& id) { id++; }
-	//void operator() (SVUniqueObjectID& id) { id++; }
 };
 
-// SEJ - specializations
+// Specializations
 typedef SVUniqueObjectID SVObjectID;
 typedef SVGetNextUniqueObjectID SVGetNextObjectID;
 typedef std::list<SVObjectID> SVObjectIDList;

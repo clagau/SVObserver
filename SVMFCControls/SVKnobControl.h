@@ -43,22 +43,15 @@ namespace Seidenader
 					center = rect.CenterPoint();
 					bitmap.mask.LoadBitmap(mask);
 					mdc.face.CreateCompatibleDC(&dc);
-					mdc.mask.CreateCompatibleDC(NULL);
+					mdc.mask.CreateCompatibleDC(nullptr);
 					save.face = mdc.face.SelectObject(&(bitmap.face));
 					save.mask = mdc.mask.SelectObject(&(bitmap.mask));
 					mdc.face.BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &(mdc.mask), 0, 0, SRCAND);
-					//CDC tmpDC;
-					//tmpDC.CreateCompatibleDC(NULL);
-					//CBitmap tmpBmp;
-					//tmpBmp.LoadBitmap(mask);
-					//CBitmap * sav = tmpDC.SelectObject(&tmpBmp);
-					mdc.mask.BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), NULL, 0, 0, DSTINVERT);
-					//tmpDC.SelectObject(sav);
+					mdc.mask.BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), nullptr, 0, 0, DSTINVERT);
+
 				}
 				~hold()
 				{
-					//mdc.face.SelectObject(save.face);
-					//mdc.mask.SelectObject(save.mask);
 				}
 			};
 		}
@@ -88,7 +81,6 @@ namespace Seidenader
 			void CreateBitmaps();
 			int GetValue() const { return int_value(m_value); }
 			int SetValue(int value);
-			void RunTest() const;
 		private:
 			bool TransparentBlt(CDC & dest, sv::hold & src, CPoint pt);
 			bool BitBlt(CDC & dest, CRect & rect, CDC & src, CPoint pt, DWORD rop);

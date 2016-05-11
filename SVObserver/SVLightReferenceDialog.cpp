@@ -88,9 +88,9 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 		int iCamBand = 0;
 		HRESULT hr = pCamera->GetBand(iCamBand);
 		hr = pCamera->GetBandSize(iBandSize);
-		if (hr == S_OK)
+		if (S_OK == hr )
 		{
-			if (pLR->NumBands() == 0)
+			if (0 == pLR->NumBands() )
 			{
 				SVStringArray msgList;
 				if( !( pDevice.empty() ) )
@@ -129,7 +129,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 					miNumPages++;
 				}// end for (int iAttribute=0; iAttribute < pLRBand->NumAttributes(); iAttribute++)
 			}// end for (int iBand=0; iBand < nNumBands; iBand++)
-		}// end if (hr == S_OK)
+		}// end if (S_OK == hr)
 	}
 	return true;
 }
@@ -141,19 +141,8 @@ BOOL SVLightReferenceDialogPropertySheetClass::OnInitDialog()
 	return bReturn;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Behandlungsroutinen für Nachrichten SVLightReferenceDialogPropertySheetClass 
-
-
-
-
-
-
-
-
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Eigenschaftenseite SVLightReferenceDialogPropertyPageClass 
@@ -181,7 +170,7 @@ SVLightReferenceDialogPropertyPageClass::SVLightReferenceDialogPropertyPageClass
 
 	miAttributeType=-1;
 	miCurrentBand = 0;
-	mpAcquisition = NULL;
+	mpAcquisition = nullptr;
 	m_strCaption = lpszTitle;
 	m_psp.pszTitle = m_strCaption;
 	m_psp.dwFlags |= PSP_USETITLE;
@@ -248,10 +237,9 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnSetActive()
 
 BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog() 
 {
-
 	CPropertyPage::OnInitDialog();
 
-	if( mpDevice == NULL || mpLR == NULL || miAttributeType == -1 || mpCamera == NULL )
+	if( nullptr == mpDevice || nullptr == mpLR || -1 == miAttributeType || nullptr == mpCamera )
 	{
 		// Not supported use!!! Caller forgot to set parameters
 		ASSERT( FALSE );
@@ -266,13 +254,11 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 	HRESULT hr = mpCamera->GetBand(miCamBand);
 	hr = mpCamera->GetBandSize(miBandSize);
 
-
 	UpdateData( TRUE );	// set data to dialog...
 
 	mValueSlider.SetRange( 0, 255, TRUE );
 	mValueSlider.SetTic( 127 );
 	mValueSlider.SetPageSize( 1 );
-	
 
 	CWnd* pWnd;
 
@@ -288,8 +274,10 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 			BOOL bEnable =  miNumBands > 1 && (miBandSize > 1 || miCamBand == i);  // if there is only one band, don't enable any of the radio buttons
 			if ( i < mpLR->NumBands() )
 			{
-				if ( mpLR->Band(i).AttributeByName(SVString(CurrentName())) == NULL )
-					bEnable = FALSE;
+				if ( nullptr == mpLR->Band(i).AttributeByName(SVString(CurrentName())) )
+				{
+					bEnable = false;
+				}
 			}
 			pWnd->EnableWindow(bEnable);
 		}
@@ -298,13 +286,12 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 	if( pWnd = GetDlgItem( IDC_CHANNEL3 ) )
 	{
 		BOOL bEnable = miNumBands > 1 && (miBandSize > 3 || miCamBand == 3);
-		if ( mpLR->Band(miCamBand).AttributeByName(SVString(CurrentName())) == NULL )
-			bEnable = FALSE;
+		if ( nullptr == mpLR->Band(miCamBand).AttributeByName(SVString(CurrentName())) )
+		{
+			bEnable = false;
+		}
 		pWnd->EnableWindow(bEnable);
 	}
-
-
-
 
 	// NOTE: 
 	//		Only one image source at this time...!!
@@ -451,9 +438,5 @@ void SVLightReferenceDialogPropertyPageClass::SetCurrentValue(DWORD dw)
 		{
 			ASSERT( FALSE );
 		}
-
 	}
 }
-
-//** EOF **//
-

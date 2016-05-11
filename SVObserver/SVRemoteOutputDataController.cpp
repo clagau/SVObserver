@@ -52,74 +52,7 @@ SVRemoteOutputDataController::~SVRemoteOutputDataController()
 HRESULT SVRemoteOutputDataController::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr )
 {
 	HRESULT l_Status = E_FAIL;
-
-	/*
-	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
-	SVString l_Command;
-
-	if( l_Reader.parse( p_rDataPtr->m_JsonCommand, l_JsonValues, false ) )
-	{
-		if( l_JsonValues.isObject() )
-		{
-			Json::Value l_JsonCommand = l_JsonValues[ _T( "Command" ) ];
-
-			if( l_JsonCommand.isString() )
-			{
-				l_Command = l_JsonCommand.asString();
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	if( l_Status == S_OK )
-	{
-		if( l_Command == _T( "QueryStreamNames" ) )
-		{
-			Json::FastWriter l_Writer;
-			Json::Value l_Object(Json::objectValue);
-			Json::Value l_Array(Json::arrayValue);
-
-			if( !( m_InputStreams.empty() ) )
-			{
-				SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-				l_AutoLock.Assign( &m_Lock );
-
-				SVRemoteOutputGroupMap::iterator l_Iter = m_RemoteGroupParameters.begin();
-
-				while( l_Iter != m_RemoteGroupParameters.end() )
-				{
-					l_Array.append( static_cast< LPCTSTR >( l_Iter->first ) );
-
-					++l_Iter;
-				}
-			}
-
-			l_Object[ _T( "StreamNames" ) ] = l_Array;
-
-			p_rJsonResults = l_Writer.write( l_Object ).c_str();
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-
-	p_rDataPtr->NotifyRequestComplete();
-	*/
-
+	
 	return l_Status;
 }
 
@@ -188,7 +121,7 @@ HRESULT SVRemoteOutputDataController::AddItem( const CString& p_strRemoteGroupId
 // This gives us a way to get the data associated with a Remote Group Id.
 SVRemoteOutputGroup* SVRemoteOutputDataController::GetControlPar( const CString& p_strGroupID )
 {
-	SVRemoteOutputGroup* l_pPars = NULL;
+	SVRemoteOutputGroup* l_pPars = nullptr;
 	if( m_RemoteGroupParameters.find( p_strGroupID ) != m_RemoteGroupParameters.end() )
 	{
 		l_pPars = m_RemoteGroupParameters[p_strGroupID];
@@ -205,15 +138,6 @@ HRESULT SVRemoteOutputDataController::GetControlPar( const CString& p_strRemoteG
 		p_pControl = m_RemoteGroupParameters[p_strRemoteGroup];
 		l_hr = S_OK;
 	}
-	return l_hr;
-}
-
-// Set the Control Parameters Map with the SVRemoteOutputGroup at the supplied Remote Group Id
-HRESULT SVRemoteOutputDataController::SetControlPar( const CString& p_strRemoteGroup, SVRemoteOutputGroup* p_RemoteOutputGroup )
-{
-	HRESULT l_hr = S_FALSE;
-	m_RemoteGroupParameters[p_strRemoteGroup] = p_RemoteOutputGroup;
-	l_hr = S_OK;
 	return l_hr;
 }
 
@@ -250,7 +174,7 @@ bool SVRemoteOutputDataController::GetParameters( SVObjectXMLWriter& rWriter )
 	{
 		rWriter.StartElement( CTAG_REMOTE_OUTPUT_PARAMETERS );
 		
-		svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
+		svVariant = SVGUID( m_outObjectInfo.UniqueObjectID ).ToVARIANT();
 		rWriter.WriteAttribute(  CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 		// Remote Output Parameters
@@ -280,7 +204,7 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 
 	_variant_t svVariant;
 
-	SVTreeType::SVBranchHandle htiIORemoteOutput = NULL;
+	SVTreeType::SVBranchHandle htiIORemoteOutput = nullptr;
 
 	BOOL l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, CTAG_REMOTE_OUTPUT_PARAMETERS,p_htiParent, htiIORemoteOutput ) ;
 
@@ -295,7 +219,7 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
-			outObjectInfo.UniqueObjectID = ObjectID;
+			m_outObjectInfo.UniqueObjectID = ObjectID;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 
@@ -309,7 +233,7 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 			long l_lEntryNum = 0;
 			while( l_bTmp )
 			{
-				SVTreeType::SVBranchHandle htiBranch=NULL;
+				SVTreeType::SVBranchHandle htiBranch = nullptr;
 				CString l_strEntry;
 				CString l_strGroupID;
 
@@ -325,7 +249,7 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 					{
 						l_strGroupID = l_pRemOut->GetGroupID().c_str();
 					}
-					if( l_bTmp && l_pRemOut != NULL )
+					if( l_bTmp && nullptr != l_pRemOut )
 					{
 						m_RemoteGroupParameters[ l_strGroupID ] = l_ControlParameter;
 					}
@@ -345,21 +269,10 @@ HRESULT SVRemoteOutputDataController::WriteOutputs( const CString& p_strRemoteGr
 
 	if( pProduct && (m_RemoteGroupParameters.find(p_strRemoteGroupID) != m_RemoteGroupParameters.end()) )
 	{
-		// BRW - l_pAddressStrings and l_pStringValues were never used again.
-		/*std::vector<LPCTSTR> l_pAddressStrings;			// place to collect Address pointers
-		std::vector<LPCTSTR> l_pStringValues;
-		l_pAddressStrings.resize(l_lMaxDTSize);
-		l_pStringValues.resize(l_lMaxDTSize);*/
 		long l_lOutputIndex=-1;
 		l_lOutputIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 		std::vector<CString> l_strAddresses;  // place to collect address strings
 		std::vector<CString> l_strStringValues;
-
-//		char l_pTmpBuf[256];
-
-		// BRW - l_pvData was never used again.
-		/*std::vector<VARIANT> l_pvData;
-		l_pvData.resize(l_lMaxDTSize);*/
 
 		// parameters for a Remote Output Group
 		SVRemoteOutputGroup* l_RemoteGroupPar = m_RemoteGroupParameters[p_strRemoteGroupID];
@@ -370,150 +283,6 @@ HRESULT SVRemoteOutputDataController::WriteOutputs( const CString& p_strRemoteGr
 	return hr;
 
 } // end WriteOutputs(...
-
-
-
-// This function will get the value from the given value object and convert it to a string.
-// Supply the value object, and product index
-// Supply a SVString.
-HRESULT SVRemoteOutputDataController::GetValueObjectDataConvert2String( CString& p_rStringOut, SVValueObjectClass* p_pValueObject, long p_lProductIndex )
-{
-	HRESULT hr = S_OK;
-
-	SVObjectTypeEnum l_eObjectType = p_pValueObject->GetObjectType();
-
-	switch( l_eObjectType )
-	{
-		case SVDWordValueObjectType:
-		{
-			SVDWordValueObjectClass* l_vo = dynamic_cast<SVDWordValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				DWORD l_dwValue;
-				l_vo->GetValue( p_lProductIndex, l_dwValue );
-				p_rStringOut.Format(_T("%ld"), l_dwValue);
-			}
-			break;
-		}
-		case SVLongValueObjectType:
-		{
-			SVLongValueObjectClass* l_vo = dynamic_cast<SVLongValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				long l_lValue;
-				l_vo->GetValue( p_lProductIndex, l_lValue );
-				p_rStringOut.Format(_T("%ld"), l_lValue);
-			}
-			break;
-		}
-
-		case SVDoubleValueObjectType:
-		{
-			SVDoubleValueObjectClass* l_vo = dynamic_cast<SVDoubleValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				double l_dValue;
-				l_vo->GetValue( p_lProductIndex, l_dValue );
-				p_rStringOut.Format(_T("%f"), l_dValue);
-			}
-			break;
-		}
-		case SVBoolValueObjectType:
-		{
-			SVBoolValueObjectClass* l_vo = dynamic_cast<SVBoolValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				bool l_bValue;
-				l_vo->GetValue( p_lProductIndex, l_bValue );
-				p_rStringOut.Format(_T("%s"), l_bValue ? _T("True") : _T("False") );
-			}
-			break;
-		}
-		case SVPointValueObjectType:
-		{
-			SVPointValueObjectClass* l_vo = dynamic_cast<SVPointValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				l_vo->GetValue( p_lProductIndex, p_rStringOut );
-			}
-			break;
-		}
-		case SVByteValueObjectType:  
-		{
-			SVByteValueObjectClass* l_vo = dynamic_cast<SVByteValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				BYTE l_ucValue;
-				l_vo->GetValue( p_lProductIndex, l_ucValue );
-				p_rStringOut.Format(_T("%d"), l_ucValue );
-			}
-			break;
-		}
-		case SVStringValueObjectType: 
-		{
-			SVStringValueObjectClass* l_vo = dynamic_cast<SVStringValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				l_vo->GetValue( p_lProductIndex, p_rStringOut );
-			}
-			break;
-		}
-		case SVEnumValueObjectType:
-		{
-			SVEnumerateValueObjectClass* l_vo = dynamic_cast<SVEnumerateValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				l_vo->GetValue( p_lProductIndex, p_rStringOut );
-			}
-			break;
-		}
-		case SVDPointValueObjectType:
-		{
-			SVDPointValueObjectClass* l_vo = dynamic_cast<SVDPointValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				l_vo->GetValue( p_lProductIndex, p_rStringOut );
-			}
-			break;
-		}
-		case SVInt64ValueObjectType:
-		{
-			SVInt64ValueObjectClass* l_vo = dynamic_cast<SVInt64ValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				l_vo->GetValue( p_lProductIndex, p_rStringOut );
-			}
-			break;
-		}
-		case SVCharValueObjectType:
-		{
-			SVCharValueObjectClass* l_vo = dynamic_cast<SVCharValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				l_vo->GetValue( p_lProductIndex, p_rStringOut );
-			}
-			break;
-		}
-		case SVVariantValueObjectType:
-		{
-			SVVariantValueObjectClass* l_vo = dynamic_cast<SVVariantValueObjectClass*>(p_pValueObject);
-			if( l_vo )
-			{
-				l_vo->GetValue( p_lProductIndex, p_rStringOut );
-			}
-			break;
-		}
-		default:
-		{
-			hr = S_FALSE;
-			OutputDebugString(_T("Object Type Conversion Not Implemented"));
-			break;
-		}
-	}
-	return hr;
-}
-
-
 
 // Gets the last remote output object with in this group.
 SVRemoteOutputObject* SVRemoteOutputDataController::GetLastObject( const CString& p_strRemoteOutputName )
@@ -696,28 +465,11 @@ HRESULT SVRemoteOutputDataController::AddDefaultOutputs(CString p_strRemoteGroup
 	{
 		if( m_RemoteGroupParameters.find( p_strRemoteGroupID ) == m_RemoteGroupParameters.end() )
 		{
-			SVRemoteOutputObject* l_pNewOutput = NULL;
+			SVRemoteOutputObject* l_pNewOutput = nullptr;
 			
 			AddItem( p_strRemoteGroupID, l_pNewOutput, pPPQ->m_voTriggerCount.GetUniqueObjectID(), pPPQ->GetName() );
 		}
 		l_hr = S_OK;
-	}
-	return l_hr;
-}
-
-// Get List index returns the index for a specific Remote Group Output.
-HRESULT SVRemoteOutputDataController::GetListIndex( SVRemoteOutputObject* p_pOutput, const CString& p_strRemoteOutputGroupName, long& p_rlIndex )
-{
-	HRESULT l_hr = S_FALSE;
-	SVRemoteOutputGroupMap::iterator l_it;
-	l_it = m_RemoteGroupParameters.find( p_strRemoteOutputGroupName );
-	if( l_it != m_RemoteGroupParameters.end() )
-	{
-		l_hr = l_it->second->Find( p_pOutput, p_rlIndex );
-	}
-	else
-	{
-		p_rlIndex = -1;
 	}
 	return l_hr;
 }
@@ -740,10 +492,10 @@ HRESULT SVRemoteOutputDataController::ValidateInputs()
 				GUID l_GUID;
 				::KeepPrevError( l_hr, l_pOutput->GetInputValueObjectGUID( l_GUID ));
 				SVObjectClass* l_pInputVO = SVObjectManagerClass::Instance().GetObject( l_GUID );
-				if( l_pInputVO == NULL )
+				if( nullptr == l_pInputVO )
 				{
 					l_pInputVO = SVObjectManagerClass::Instance().GetObjectCompleteName(l_pOutput->GetInputValueObjectName().c_str());
-					if( l_pInputVO == NULL  )
+					if( nullptr == l_pInputVO )
 					{
 						OutputDebugString(_T("Input Deleted \n"));
 						KeepPrevError( l_hr, l_pGroup->Delete( l_pOutput ));
@@ -779,11 +531,11 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 		l_OriginalList.push_back( l_grp );
 	}
 
-	if( l_hr == S_OK )
+	if( S_OK == l_hr )
 	{
 		SetupRemoteOutputGroup(pConfig, l_OriginalList );
 
-		if( l_hr == S_OK )
+		if( S_OK == l_hr )
 		{
 			TheSVObserverApp.GetIODoc()->SetModifiedFlag();
 			if( IsEmpty() )

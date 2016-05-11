@@ -58,7 +58,6 @@ public:
 	size_t RemoteOutputListSize();
 	HRESULT GetItem( long l_lIndex, SVRemoteOutputObject*& p_rItem );
 	SVRemoteOutputObject* GetItem( long l_lIndex );
-	HRESULT SortRemoteOutputList();
 	SVRemoteOutputObject* GetLastObject( );
 	SVRemoteOutputObject* GetFirstObject( );
 

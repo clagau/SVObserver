@@ -9,17 +9,19 @@
 // * .Check In Date   : $Date:   25 Apr 2013 11:53:54  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCallbackClass.h"
+#pragma endregion Includes
 
 /*
 This constructor initializes the attributes to the desired default values.
 */
 SVOCallbackClass::SVOCallbackClass()
 {
-	mpCallback = NULL;
-  mpvOwner = NULL;
-  mpvCaller = NULL;
+	mpCallback = nullptr;
+  mpvOwner = nullptr;
+  mpvCaller = nullptr;
 
 	m_lRefCount = 0;
 
@@ -32,9 +34,9 @@ This constructor initializes the attributes of this object from the provided obj
 */
 SVOCallbackClass::SVOCallbackClass(const SVOCallbackClass& rData)
 {
-	mpCallback = NULL;
-  mpvOwner = NULL;
-  mpvCaller = NULL;
+	mpCallback = nullptr;
+  mpvOwner = nullptr;
+  mpvCaller = nullptr;
 
 	m_lRefCount = 0;
 

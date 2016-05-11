@@ -69,7 +69,7 @@ IMPLEMENT_DYNCREATE(CGridDefaultCell, CGridCell)
 
 CGridCell::CGridCell()
 {
-    m_plfFont = NULL;
+    m_plfFont = nullptr;
 	CGridCell::Reset();
 }
 
@@ -92,10 +92,10 @@ void CGridCell::Reset()
 
     m_strText.Empty();
     m_nImage   = -1;
-    m_lParam   = NULL;           // BUG FIX J. Bloggs 20/10/03
-    m_pGrid    = NULL;
+    m_lParam   = 0;           // BUG FIX J. Bloggs 20/10/03
+    m_pGrid    = nullptr;
     m_bEditing = FALSE;
-    m_pEditWnd = NULL;
+    m_pEditWnd = nullptr;
 
     m_nFormat = (DWORD)-1;       // Use default from CGridDefaultCell
     m_crBkClr = CLR_DEFAULT;     // Background colour (or CLR_DEFAULT)
@@ -103,15 +103,15 @@ void CGridCell::Reset()
     m_nMargin = (UINT)-1;        // Use default from CGridDefaultCell
 
     delete m_plfFont;
-    m_plfFont = NULL;            // Cell font
+    m_plfFont = nullptr;            // Cell font
 }
 
 void CGridCell::SetFont(const LOGFONT* plf)
 {
-    if (plf == NULL)
+    if (nullptr == plf)
     {
         delete m_plfFont;
-        m_plfFont = NULL;
+        m_plfFont = nullptr;
     }
     else
     {
@@ -124,11 +124,11 @@ void CGridCell::SetFont(const LOGFONT* plf)
 
 LOGFONT* CGridCell::GetFont() const
 {
-    if (m_plfFont == NULL)
+    if (nullptr == m_plfFont)
     {
         CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
         if (!pDefaultCell)
-            return NULL;
+            return nullptr;
 
         return pDefaultCell->GetFont();
     }
@@ -139,11 +139,11 @@ LOGFONT* CGridCell::GetFont() const
 CFont* CGridCell::GetFontObject() const
 {
     // If the default font is specified, use the default cell implementation
-    if (m_plfFont == NULL)
+    if (nullptr == m_plfFont)
     {
         CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
         if (!pDefaultCell)
-            return NULL;
+            return nullptr;
 
         return pDefaultCell->GetFontObject();
     }
@@ -220,7 +220,7 @@ void CGridCell::EndEdit()
 void CGridCell::OnEndEdit()
 {
     m_bEditing = FALSE;
-    m_pEditWnd = NULL;
+    m_pEditWnd = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -286,7 +286,7 @@ void CGridDefaultCell::SetFont(const LOGFONT* plf)
     CGridCell::SetFont(plf);
 
     // Get the font size and hence the default cell size
-    CDC* pDC = CDC::FromHandle(::GetDC(NULL));
+    CDC* pDC = CDC::FromHandle(::GetDC(nullptr));
     if (pDC)
     {
         CFont* pOldFont = pDC->SelectObject(&m_Font);
@@ -296,7 +296,7 @@ void CGridDefaultCell::SetFont(const LOGFONT* plf)
         m_Size.cy = (m_Size.cy * 3) / 2;
 
         pDC->SelectObject(pOldFont);
-        ReleaseDC(NULL, pDC->GetSafeHdc());
+        ReleaseDC(nullptr, pDC->GetSafeHdc());
     }
     else
     {

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   17 Apr 2014 17:00:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVIOTabbedView.h"
@@ -19,8 +20,7 @@
 #include "SVRemoteOutputsView.h"
 #include "MonitorListView.h"
 #include "GlobalConstantView.h"
-
-// SVIOTabbedView
+#pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVIOTabbedView, CMDIChildWnd)
 
@@ -69,15 +69,16 @@ CWnd* SVIOTabbedView::GetActivePane(int* /*pRow*/, int* /*pCol*/)
 	ASSERT_VALID(this);
 
 	// attempt to use active view of frame window
-	CWnd* pView = NULL;
+	CWnd* pView = nullptr;
 	CFrameWnd* pFrameWnd = GetParentFrame();
 	ASSERT_VALID(pFrameWnd);
 	pView = pFrameWnd->GetActiveView();
 
 	// failing that, use the current focus
-	if (pView == NULL)
+	if (nullptr == pView)
+	{
 		pView = GetFocus();
-
+	}
 	return pView;
 }
 

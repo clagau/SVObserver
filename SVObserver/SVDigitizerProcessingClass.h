@@ -24,8 +24,6 @@ class SVDigitizerLoadLibraryClass;
 class SVDigitizerProcessingClass
 {
 public:
-	friend class SVObserverApp;
-
 	static SVDigitizerProcessingClass& Instance();
 
 	virtual ~SVDigitizerProcessingClass();
@@ -64,13 +62,15 @@ public:
 
 	SVString GetReOrderedCamera( LPCTSTR Name ) const;
 
-protected:
-	SVDigitizerProcessingClass();
-
-	void Startup();
-	void Shutdown();
+	// These two (2) methods, Startup, Shutdown, are only meant to be called by the main application class and no other
+	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project
+	// So for now the restriction is made manually, just don't call these methods anywhere else, and described via this comment
+	void Startup();		// This method is only meant to be called by the main application class
+	void Shutdown();	// This method is only meant to be called by the main application class
 
 private:
+	SVDigitizerProcessingClass();
+
 	typedef std::set< SVDigitizerLoadLibraryClass* > SVDigitizerSubsystemSet;
 	typedef std::map< SVString, SVAcquisitionClassPtr > SVNameDigitizerMap;
 	typedef std::map< SVString, SVDigitizerLoadLibraryClass* > SVNameDigitizerSubsystemMap;
@@ -91,6 +91,5 @@ private:
 	SVNameDigitizerMap m_AcquisitionDevices;
 
 	SVNameDigitizerSubsystemMap m_DigitizerSubsystems;
-
 };
 

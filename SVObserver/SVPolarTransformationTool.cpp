@@ -9,15 +9,17 @@
 //* .Check In Date   : $Date:   15 May 2014 12:31:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPolarTransformationTool.h"
-
-#include "SVImageLibrary/SVDrawContext.h"
-
-#include "SVAnalyzer.h"
-#include "SVEvaluate.h"
 #include "SVImagePolarTransform.h"
-#include "SVInspectionProcess.h"
+#include "SVEvaluateCenterXClass.h"
+#include "SVEvaluateCenterYClass.h"
+#include "SVEvaluateStartRadiusClass.h"
+#include "SVEvaluateEndRadiusClass.h"
+#include "SVEvaluateStartAngleClass.h"
+#include "SVEvaluateEndAngleClass.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVPolarTransformationToolClass, SVPolarTransformationToolClassGuid );
 
@@ -30,12 +32,11 @@ SVPolarTransformationToolClass::SVPolarTransformationToolClass( BOOL BCreateDefa
 	init();
 }
 
-
 void SVPolarTransformationToolClass::init()
 {
 	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVPolarTransformationToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVPolarTransformationToolObjectType;
 
 	// Identify our input type needs
 
@@ -113,7 +114,7 @@ BOOL SVPolarTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* PC
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -122,9 +123,9 @@ SVTaskObjectClass *SVPolarTransformationToolClass::GetObjectAtPoint( const SVExt
 {
 	SVImageExtentClass l_svExtents;
 
-	SVTaskObjectClass *l_psvObject = NULL;
+	SVTaskObjectClass* l_psvObject = nullptr;
 
-	if( m_svToolExtent.GetImageExtent( l_svExtents ) == S_OK &&
+	if( S_OK == m_svToolExtent.GetImageExtent( l_svExtents ) &&
 	    l_svExtents.GetLocationPropertyAt( p_rsvPoint ) != SVExtentLocationPropertyUnknown )
 	{
 		l_psvObject = this;
@@ -152,7 +153,7 @@ BOOL SVPolarTransformationToolClass::SetDefaultFormulas()
 	// Find image polar transform child...
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.SubType = SVImagePolarTransformObjectType;
-	SVImagePolarTransformClass* pImagePolarTransform = reinterpret_cast<SVImagePolarTransformClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	SVImagePolarTransformClass* pImagePolarTransform = reinterpret_cast<SVImagePolarTransformClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 	if( pImagePolarTransform )
 	{
 		return pImagePolarTransform->SetDefaultFormulas();
@@ -166,12 +167,12 @@ HRESULT SVPolarTransformationToolClass::SetImageExtent( unsigned long p_ulIndex,
 	double l_dInnerRadius;
 	double l_dOuterRadius;
 
-	if( (l_hrOk = p_svImageExtent.GetExtentProperty( SVExtentPropertyOuterRadius, l_dOuterRadius )) == S_OK )
+	if( S_OK == (l_hrOk = p_svImageExtent.GetExtentProperty( SVExtentPropertyOuterRadius, l_dOuterRadius )) )
 	{
 		l_hrOk = p_svImageExtent.GetExtentProperty( SVExtentPropertyOuterRadius, l_dInnerRadius );
 	}
 	// Validate that at least one radius is greater than or equal to 1.
-	if(l_hrOk == S_OK && (l_dOuterRadius >= 1 || l_dInnerRadius >= 1) )
+	if( S_OK == l_hrOk && (l_dOuterRadius >= 1 || l_dInnerRadius >= 1) )
 	{
 		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, p_svImageExtent );
 	}

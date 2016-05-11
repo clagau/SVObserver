@@ -450,8 +450,8 @@ namespace Seidenader
 			// SetRedraw stops/starts redraws on things like changing the # rows/columns
 			// and autosizing, but not for user-intervention such as resizes
 			void SetRedraw(BOOL bAllowDraw, BOOL bResetScrollBars = FALSE);
-			BOOL RedrawCell(int nRow, int nCol, CDC* pDC = NULL);
-			BOOL RedrawCell(const CCellID& cell, CDC* pDC = NULL);
+			BOOL RedrawCell(int nRow, int nCol, CDC* pDC = nullptr);
+			BOOL RedrawCell(const CCellID& cell, CDC* pDC = nullptr);
 			BOOL RedrawRow(int row);
 			BOOL RedrawColumn(int col);
 
@@ -519,7 +519,7 @@ namespace Seidenader
 		///////////////////////////////////////////////////////////////////////////////////
 		#if !defined(_WIN32_WCE_NO_PRINTING) && !defined(GRIDCONTROL_NO_PRINTING)
 		public:
-			void Print(CPrintDialog* pPrntDialog = NULL);
+			void Print(CPrintDialog* pPrntDialog = nullptr);
 
 			// EFW - New printing support functions
 			void EnableWysiwygPrinting(BOOL bEnable = TRUE) { m_bWysiwygPrinting = bEnable;     }
@@ -577,8 +577,8 @@ namespace Seidenader
 
 			CCellID GetTopleftNonFixedCell(BOOL bForceRecalculation = FALSE);
 			CCellRange GetUnobstructedNonFixedCellRange(BOOL bForceRecalculation = FALSE);
-			CCellRange GetVisibleNonFixedCellRange(LPRECT pRect = NULL, BOOL bForceRecalculation = FALSE);
-			CCellRange GetVisibleFixedCellRange(LPRECT pRect = NULL, BOOL bForceRecalculation = FALSE);
+			CCellRange GetVisibleNonFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
+			CCellRange GetVisibleFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
 
 			BOOL IsVisibleVScroll() { return ( (m_nBarState & GVL_VERT) > 0); } 
 			BOOL IsVisibleHScroll() { return ( (m_nBarState & GVL_HORZ) > 0); }
@@ -841,7 +841,7 @@ namespace Seidenader
 		inline CGridCellBase* CGridCtrl::GetCell(int nRow, int nCol) const
 		{
 			if (nRow < 0 || nRow >= m_nRows || nCol < 0 || nCol >= m_nCols) 
-				return NULL;
+				return nullptr;
 
 			if (GetVirtualMode())
 			{
@@ -893,7 +893,7 @@ namespace Seidenader
 			}
 
 			GRID_ROW* pRow = m_RowData[nRow];
-			if (!pRow) return NULL;
+			if (!pRow) return nullptr;
 			return pRow->GetAt(m_arColOrder[nCol]);
 		}
 

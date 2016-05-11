@@ -98,7 +98,7 @@ BOOL SVOCVCharacterResultClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 
 	m_dvoMatchScore.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }// end CreateObject
@@ -124,7 +124,7 @@ BOOL SVOCVCharacterResultClass::onRun(SVRunStatusClass& RRunStatus)
 ////////////////////////////////////////////////////////////////////////////////
 DWORD_PTR SVOCVCharacterResultClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }

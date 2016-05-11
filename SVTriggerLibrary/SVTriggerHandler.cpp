@@ -33,7 +33,7 @@ SVTriggerHandler& SVTriggerHandler::operator=(const SVTriggerHandler& rHandler)
 HRESULT SVTriggerHandler::Fire()
 {
 	HRESULT hr = m_activator.Exec(m_handle);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		SetFired(true);
 	}

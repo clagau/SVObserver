@@ -110,7 +110,7 @@ BOOL SVTADlgColorThresholdSheet::OnInitDialog()
 
 	// Disable and Hide Cancel Button
 	HWND hWnd = ::GetDlgItem(m_hWnd, IDCANCEL);
-	if (hWnd != NULL)
+	if (nullptr != hWnd)
 	{
 		::EnableWindow( hWnd, FALSE );
 		::ShowWindow(hWnd, SW_HIDE );

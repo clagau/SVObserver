@@ -11,11 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
-/*
-*/
 class SVCommandDataFacade
 {
 public:

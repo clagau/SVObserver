@@ -20,18 +20,6 @@
 // .Title       : Class SVPixelAnalyzerClass
 // -----------------------------------------------------------------------------
 // .Description : e.g. This base class capsules an Image and provides its ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
 ////////////////////////////////////////////////////////////////////////////////
 class SVPixelAnalyzerClass : public SVImageAnalyzerClass
 {

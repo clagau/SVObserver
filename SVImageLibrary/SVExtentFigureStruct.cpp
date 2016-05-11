@@ -135,7 +135,7 @@ const SVExtentFigureStruct& SVExtentFigureStruct::operator = ( RECT p_oRect )
 HRESULT SVExtentFigureStruct::GetRect(RECT& p_rRect) const
 {
 	HRESULT hr = (m_eShape == SVExtentShapeRectangle) ? S_OK : SV_FALSE;
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		p_rRect.top = (long) m_svTopLeft.m_dPositionY;
 		p_rRect.left = (long) m_svTopLeft.m_dPositionX;
@@ -157,17 +157,6 @@ RECT SVExtentFigureStruct::Rect() const
 	return rect;
 }
 
-HRESULT SVExtentFigureStruct::GetRectSize( SVExtentSizeStruct& p_rSize ) const
-{
-	HRESULT hr = (m_eShape == SVExtentShapeRectangle) ? S_OK : SV_FALSE;
-	if ( hr == S_OK )
-	{
-		p_rSize.m_dCX = m_svBottomRight.m_dPositionX - m_svTopLeft.m_dPositionX;
-		p_rSize.m_dCY = m_svBottomRight.m_dPositionY - m_svTopLeft.m_dPositionY;
-	}
-	return hr;
-}
-
 SVExtentSizeStruct SVExtentFigureStruct::Size() const
 {
 	return SVExtentSizeStruct( m_svBottomRight.m_dPositionX - m_svTopLeft.m_dPositionX,  m_svBottomRight.m_dPositionY - m_svTopLeft.m_dPositionY );
@@ -181,11 +170,6 @@ double SVExtentFigureStruct::Top() const
 double SVExtentFigureStruct::Left() const
 {
 	return m_svTopLeft.m_dPositionX;
-}
-
-double SVExtentFigureStruct::Bottom() const
-{
-	return m_svBottomRight.m_dPositionY;
 }
 
 double SVExtentFigureStruct::Right() const
@@ -240,88 +224,53 @@ HRESULT SVExtentFigureStruct::SetRect( double p_dTop, double p_dLeft, double p_d
 	return S_OK;
 }
 
-HRESULT SVExtentFigureStruct::SetRectTop( double p_dTop )
-{
-	SetRect( p_dTop, m_svTopLeft.m_dPositionX, m_svBottomRight.m_dPositionY, m_svBottomRight.m_dPositionX );
-	return S_OK;
-}
-
-HRESULT SVExtentFigureStruct::SetRectLeft( double p_dLeft )
-{
-	SetRect( m_svTopLeft.m_dPositionY, p_dLeft, m_svBottomRight.m_dPositionY, m_svBottomRight.m_dPositionX );
-	return S_OK;
-}
-
-HRESULT SVExtentFigureStruct::SetRectRight( double p_dRight )
-{
-	SetRect( m_svTopLeft.m_dPositionY, m_svTopLeft.m_dPositionX, m_svBottomRight.m_dPositionY, p_dRight );
-	return S_OK;
-}
-
-HRESULT SVExtentFigureStruct::SetRectBottom( double p_dBottom )
-{
-	SetRect( m_svTopLeft.m_dPositionY, m_svTopLeft.m_dPositionX, p_dBottom, m_svBottomRight.m_dPositionX );
-	return S_OK;
-}
-
-HRESULT SVExtentFigureStruct::SetRectCenter( SVExtentPointStruct p_svCenter )
-{
-	SVExtentPointStruct l_ptOffset = p_svCenter - m_svCenter;
-	HRESULT hr = SetRect( m_svTopLeft.m_dPositionY + l_ptOffset.m_dPositionY,
-	         m_svTopLeft.m_dPositionX + l_ptOffset.m_dPositionX,
-	         m_svBottomRight.m_dPositionY + l_ptOffset.m_dPositionY,
-	         m_svBottomRight.m_dPositionX + l_ptOffset.m_dPositionX );
-	return hr;
-}
-
-
 HRESULT SVExtentFigureStruct::Initialize()
 {
 	HRESULT l_hrOk = S_OK;
 
 	m_eShape = SVExtentShapeUnknown;
 
-	if ( m_svTopLeft.Initialize() != S_OK )
+	if ( S_OK != m_svTopLeft.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svTopRight.Initialize() != S_OK )
+	if ( S_OK != m_svTopRight.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svBottomRight.Initialize() != S_OK )
+	if ( S_OK != m_svBottomRight.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svBottomLeft.Initialize() != S_OK )
+	if ( S_OK != m_svBottomLeft.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svCenterLeft.Initialize() != S_OK )
+	if ( S_OK != m_svCenterLeft.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svCenterRight.Initialize() != S_OK )
+	if ( S_OK != m_svCenterRight.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svTopCenter.Initialize() != S_OK )
+	if ( S_OK != m_svTopCenter.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svBottomCenter.Initialize() != S_OK )
+	if ( S_OK != m_svBottomCenter.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svCenter.Initialize() != S_OK )
+	if ( S_OK != m_svCenter.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}

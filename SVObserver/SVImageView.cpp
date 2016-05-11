@@ -54,8 +54,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-
-
 static void UpdatePaletteForLut(bool bLut, LPDIRECTDRAWSURFACE7 pSurface)
 {
 	DDPIXELFORMAT l_ddPixelFormat;
@@ -226,96 +224,6 @@ void SVImageViewClass::ReleaseImageSurface()
 
 		m_pDDScaledImageSurface = nullptr;
 	}
-}
-
-HRESULT SVImageViewClass::UpdateToolExtents( SVExtentLocationPropertyEnum p_svLocation, double p_x, double p_y )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	SVIPDoc* l_pIPDoc = GetIPDoc();
-
-	if( nullptr != l_pIPDoc )
-	{
-		SVImageExtentClass l_svExtents;
-
-		l_hrOk = GetToolExtents( l_svExtents );
-
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = l_svExtents.UpdateFromOutputSpace( p_svLocation, static_cast< long >( p_x ), static_cast< long >( p_y ) );
-		}
-
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = UpdateToolExtents( l_svExtents );
-		}
-	}
-	else
-	{
-		l_hrOk = E_FAIL;
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVImageViewClass::UpdateToolExtents( const SVImageExtentClass& p_rExtents )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	SVIPDoc* l_pIPDoc = GetIPDoc();
-
-	if( nullptr != l_pIPDoc )
-	{
-		l_hrOk = l_pIPDoc->UpdateExtents( m_psvObject, p_rExtents );
-	}
-	else
-	{
-		l_hrOk = E_FAIL;
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVImageViewClass::UpdateToolExtents( SVExtentLocationPropertyEnum p_svLocation, double p_angle )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if( SVExtentLocationPropertyRotate == p_svLocation )
-	{
-		SVImageExtentClass l_svExtents;
-
-		l_hrOk = GetToolExtents( l_svExtents );
-
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = l_svExtents.SetExtentProperty( SVExtentPropertyRotationAngle, p_angle );
-		}
-
-		if( S_OK == l_hrOk )
-		{
-			l_hrOk = UpdateToolExtents( l_svExtents );
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVImageViewClass::UpdateToolExtentsToFit( const SVImageExtentClass& p_rExtents )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	SVIPDoc* l_pIPDoc = GetIPDoc();
-
-	if( nullptr != l_pIPDoc )
-	{
-		l_hrOk = l_pIPDoc->UpdateExtentsToFit( m_psvObject, p_rExtents );
-	}
-	else
-	{
-		l_hrOk = E_FAIL;
-	}
-
-	return l_hrOk;
 }
 
 HRESULT SVImageViewClass::GetToolExtents( SVImageExtentClass& p_svToolExtents )
@@ -540,7 +448,6 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 			//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
 			//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
-			//------ Gage tool (edge counting analyzer) hands back a SVROIObjectType. Sub type 1280.
 			CString DlgName; //used for the Adjust Tool Size and Position dialog
 
 			switch( l_svTypeInfo.ObjectType )
@@ -700,14 +607,13 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	if( l_pIPDoc != nullptr )
+	if( nullptr != l_pIPDoc )
 	{
 		l_pIPDoc->UpdateWithLastProduct();
 	}
 
 	return CView::OnCommand( p_wParam, p_lParam );
 }
-
 
 void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 {
@@ -745,11 +651,6 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 // .Title       : OnContextMenu
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :dd.mm.yyyy 			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 {
@@ -847,14 +748,6 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 			l_pPopup->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, p_point.x, p_point.y, this );
 		}
 	}
-}
-
-void SVImageViewClass::TransformToViewSpace( CPoint& p_point )
-{
-	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
-	SVDrawContext l_svDrawContext( nullptr, l_pImage, m_ZoomHelper.GetZoom() );
-
-	l_svDrawContext.Transform( &p_point, &p_point, 1 );
 }
 
 void SVImageViewClass::TransformFromViewSpace( CPoint& p_point )
@@ -969,7 +862,6 @@ void SVImageViewClass::OnDraw( CDC* p_pDC )
 	}
 	else
 	{
-		//TRACE( _T( "SVImageView::OnDraw %s\n" ), m_imageName );
 		HRESULT hr = UpdateSurface();
 
 		if( S_OK == hr)
@@ -1001,8 +893,6 @@ void SVImageViewClass::OnInitialUpdate()
 
 void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint )
 {
-	//TRACE( _T( "SVImageView::OnUpdate %s\n" ), m_imageName );
-
 	bool Update = TRUE;
 	RootObject::getRootChildValue( ::EnvironmentImageUpdate, Update );
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
@@ -1158,7 +1048,6 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 	}
 }
 
-
 void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point ) 
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
@@ -1280,12 +1169,6 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 // .Title       : OnLButtonUp
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//  :24.05.1998 RO			Supplements
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageViewClass::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 {
@@ -1311,12 +1194,6 @@ void SVImageViewClass::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 // .Title       : OnCaptureChanged
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//  :24.05.1998 RO			Supplements
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageViewClass::OnCaptureChanged( CWnd* p_pWnd )
 {
@@ -1329,12 +1206,6 @@ void SVImageViewClass::OnCaptureChanged( CWnd* p_pWnd )
 // .Title       : OnNcMouseMove
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//  :24.05.1998 RO			Supplements
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageViewClass::OnNcMouseMove( UINT p_hitTest, CPoint p_point )
 {
@@ -1343,18 +1214,10 @@ void SVImageViewClass::OnNcMouseMove( UINT p_hitTest, CPoint p_point )
 	CWnd::OnNcMouseMove( p_hitTest, p_point );
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnDestroy
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1998 RO			First Implementation
-//	:16.02.2000 RO			Added Freeze Panel Support.
-//	:20.02.2000 RO			Revised to use CloseImageWindow().
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageViewClass::OnDestroy()
 {
@@ -1452,18 +1315,18 @@ bool SVImageViewClass::CalculateZoomFit()
 				CRect rect;
 				CScrollBar* pScrollbar = psvScroll->GetScrollBarCtrl( SB_HORZ );
 
-				if(pScrollbar != nullptr)
+				if( nullptr != pScrollbar )
 				{
 					pScrollbar->GetWindowRect(&rect);
 					viewsize.cy -= rect.Height();
 				}
 			}
 
-			if(hasVertScroll)
+			if( hasVertScroll )
 			{
 				CRect rect;
 				CScrollBar* pScrollbar = psvScroll->GetScrollBarCtrl( SB_VERT );
-				if(pScrollbar != nullptr)
+				if( nullptr != pScrollbar )
 				{
 					pScrollbar->GetWindowRect(&rect);
 					viewsize.cx -= rect.Width(); 
@@ -1916,11 +1779,6 @@ HICON SVImageViewClass::GetObjectCursor( SVExtentLocationPropertyEnum p_svLocati
 // .Title       : getObjectAtPoint
 // -----------------------------------------------------------------------------
 // .Description : Get Object under Mouse point
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :22.02.2000 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 {
@@ -1954,8 +1812,6 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 		{
 				m_svLocation = SVExtentLocationPropertyDisabled;
 		}
-		
-		
 	}
 
 	l_bOk = nullptr != m_psvObject;
@@ -2159,14 +2015,9 @@ BOOL SVImageViewClass::OnEraseBkgnd( CDC* p_pDC )
 {
 	BOOL l_bOk = TRUE;
 
-	//l_bOk = CView::OnEraseBkgnd( p_pDC );  //causes flicker and will get painted over by image
+	//calling CView::OnEraseBkgnd causes flicker and will get painted over by image
 
 	return l_bOk;
-}
-
-SVTaskObjectClass* SVImageViewClass::GetSelectedObject()
-{
-	return m_psvObject;
 }
 
 SVBitmapInfo SVImageViewClass::GetBitmapInfo() const
@@ -2303,9 +2154,6 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 
 					l_pTo += l_ddSurfaceDesc.lPitch;
 					l_pFrom += l_BitmapPitch;
-
-					//Sleep( 0 );
-					//m_ThreadWait.Sleep();
 				}
 			}
 			else
@@ -2330,9 +2178,6 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 
 	return l_Status;
 }
-
-
-
 
 void SVImageViewClass::OnZoomPlus()
 {
@@ -2415,7 +2260,6 @@ void SVImageViewClass::OnZoomSliderMoved()
 
 	SetZoom( EZoomValue, val );
 }
-
 
 HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, CString Filepath, bool showOverlays)
 {
@@ -2758,7 +2602,7 @@ void SVImageViewClass::OnSetFocus(CWnd* pOldWnd)
 	SVIPSplitterFrame* pSplitterFrame = nullptr;
 	pSplitterFrame =  dynamic_cast< SVIPSplitterFrame*> (pFrame->GetActiveFrame());
 
-	if(pSplitterFrame != nullptr)
+	if( nullptr != pSplitterFrame )
 	{
 		pSplitterFrame->RefreshAllSplitters();
 	}
@@ -2779,13 +2623,12 @@ void SVImageViewClass::OnKillFocus(CWnd* pNewWnd)
 	SVIPSplitterFrame* pSplitterFrame = nullptr;
 	CMDIFrameWnd* pMDIFrame =  nullptr;
 	pMDIFrame =  dynamic_cast< CMDIFrameWnd*>(AfxGetApp()->m_pMainWnd);
-	if(pMDIFrame!= nullptr)
+	if( nullptr != pMDIFrame )
 	{
 		pSplitterFrame =  dynamic_cast< SVIPSplitterFrame*> (pMDIFrame->GetActiveFrame());
 	}
-	if(pSplitterFrame != nullptr)
+	if( nullptr != pSplitterFrame )
 	{
 		pSplitterFrame->RefreshAllSplitters();
 	}
 }
-

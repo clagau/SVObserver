@@ -28,14 +28,17 @@ const SVValueObjectClassImpl<T>& SVValueObjectClassImpl<T>::operator = (const SV
 	{
 		if ( SetObjectDepth( rhs.m_iNumberOfBuckets ) )
 		{
-			if ( CreateBuckets() == S_OK )
+			if ( S_OK == CreateBuckets() )
 			{
-				if ( rhs.ArraySize() == 1 )
+				if ( 1 == rhs.ArraySize() )
+				{
 					m_ScalarBuckets = rhs.m_ScalarBuckets;
+				}
 				else
+				{
 // Jim 10.02.15 - allow the copy of empty vector.
 					BucketsNoAssert() = Buckets(rhs);
-
+				}
 				DefaultValue() = DefaultValue(rhs);
 
 				m_iLastSetIndex = rhs.m_iLastSetIndex;
@@ -50,8 +53,6 @@ const SVValueObjectClassImpl<T>& SVValueObjectClassImpl<T>::operator = (const SV
 template <typename T>
 HRESULT SVValueObjectClassImpl<T>::SetDefaultValue(const T value, bool bResetAll)
 {
-	//ASSERT((!pBArray && m_iNumberOfBuckets <= 0) || (pBArray && m_iNumberOfBuckets > 0));
-	
 	DefaultValue() = value;
 	if ( bResetAll )
 	{
@@ -125,28 +126,28 @@ HRESULT SVValueObjectClassImpl<T>::CreateBuckets()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( objectDepth < 2 )
+	if( m_objectDepth < 2 )
 	{
-		objectDepth = 2;
+		m_objectDepth = 2;
 	}
 
-	if ( (m_iNumberOfBuckets != objectDepth) && (objectDepth > 0))
+	if ( (m_iNumberOfBuckets != m_objectDepth) && (m_objectDepth > 0))
 	{
 		if ( ArraySize() == 1 )
 		{
 			BucketsNoAssert().resize(0);	// avoid ASSERT in Buckets()
-			m_ScalarBuckets.resize( objectDepth, DefaultValue() );
+			m_ScalarBuckets.resize( m_objectDepth, DefaultValue() );
 		}
 		else
 		{
 			m_ScalarBuckets.resize(0);
 
 			array_type l_DefaultArray(ArraySize(), DefaultValue());
-			Buckets().resize( objectDepth, l_DefaultArray );
+			Buckets().resize( m_objectDepth, l_DefaultArray );
 		}
 	}
 
-	m_iNumberOfBuckets = objectDepth;
+	m_iNumberOfBuckets = m_objectDepth;
 
 	l_hrOk = SVValueObjectClass::CreateBuckets();
 
@@ -215,11 +216,11 @@ __forceinline HRESULT SVValueObjectClassImpl<T>::SetValueAt( int iBucket, int iI
 {
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
-	if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		m_iLastSetIndex  = iBucket;
 
-		if ( ArraySize() == 1 )
+		if ( 1 == ArraySize() )
 		{
 			m_ScalarBuckets[iBucket] = value;
 		}
@@ -238,34 +239,37 @@ HRESULT SVValueObjectClassImpl<T>::GetValueAt( int iBucket, int iIndex, T& rValu
 	HRESULT hr = ValidateIndexes(iBucket, iIndex);
 
 	// is the index valid?
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
-		if ( isObjectValid == FALSE )	// optimization? or not? Is reading faster than writing to cache/memory?
-			isObjectValid = TRUE;
-		if ( ArraySize() == 1 )
+		if ( !m_isObjectValid )	// optimization? or not? Is reading faster than writing to cache/memory?
+		{
+			m_isObjectValid = true;
+		}
+		if ( 1 == ArraySize() )
 		{
 			rValue = m_ScalarBuckets[iBucket];
 			return hr;
 		}
 		else
+		{
 			rValue = Buckets()[iBucket][iIndex];
+		}
 	}
-	else if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+	else if ( SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		// inside the allocated array size but bucket does
 		// not contain a value for the current run so use
 		// the default value.
 		rValue = DefaultValue();
-		isObjectValid = TRUE;
+		m_isObjectValid = true;
 	}
 	else	// BAD INDEX
 	{
 		// the selected index is not in the allocated array 
 		// size. ie (-1, 1001).  use the default value.		 
 		rValue = DefaultValue();
-		isObjectValid = FALSE;
+		m_isObjectValid = false;
 	}
-
 	return hr;
 }
 
@@ -342,13 +346,13 @@ HRESULT SVValueObjectClassImpl<T>::SetObjectValue( const SVString& p_rValueName,
 
 			SetArraySize( static_cast< int >( l_SafeArray.size() ) );
 
-			if ( ArraySize() == 1 )
+			if ( 1 == ArraySize() )
 			{
 				_variant_t l_Value;
 
 				hr = l_SafeArray.GetElement( 0, l_Value );
 
-				if( hr == S_OK )
+				if( S_OK == hr )
 				{
 					ScalarBucket(1) = l_Value;
 
@@ -363,7 +367,7 @@ HRESULT SVValueObjectClassImpl<T>::SetObjectValue( const SVString& p_rValueName,
 				{
 					_variant_t l_Value;
 
-					if( l_SafeArray.GetElement( i, l_Value ) == S_OK )
+					if( S_OK == l_SafeArray.GetElement( i, l_Value ) )
 					{
 						Array(1)[ i ] = l_Value;
 					}
@@ -398,9 +402,6 @@ HRESULT SVValueObjectClassImpl<T>::SetObjectValue( const SVString& p_rValueName,
 template <typename T>
 HRESULT SVValueObjectClassImpl<T>::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
-//	ASSERT( !m_sLegacyScriptDefaultName.IsEmpty() );
-//	ASSERT( !m_sLegacyScriptArrayName.IsEmpty() );
-
 	HRESULT hr = S_FALSE;
 	
 	SvCl::SVObjectArrayClassTemplate<T> svArray;	// for default values
@@ -529,14 +530,14 @@ HRESULT SVValueObjectClassImpl<T>::GetArrayValuesAsVariant( int iBucket, VARIANT
 
 				HRESULT l_TempStatus = l_SafeArray.Add( l_Variant );
 
-				if( hrOk == S_OK )
+				if( S_OK == hrOk )
 				{
 					hrOk = l_TempStatus;
 				}
 			}
 		}
 
-		if( hrOk == S_OK )
+		if( S_OK == hrOk )
 		{
 			l_Variant = l_SafeArray;
 		}
@@ -597,7 +598,6 @@ inline void SVValueObjectClassImpl<T>::swap( SVValueObjectClassImpl<T>& rhs )
 	if ( this != &rhs )
 	{
 		std::swap( m_DefaultValue, rhs.m_DefaultValue );
-		//swap( m_ScalarBuckets, rhs.m_ScalarBuckets );// not sure if VC6 implements redirection to vector member function
 		m_ScalarBuckets.swap( rhs.m_ScalarBuckets );
 
 		SVValueObjectClass::swap( rhs );

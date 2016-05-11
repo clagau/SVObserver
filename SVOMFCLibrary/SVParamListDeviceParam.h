@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVDeviceParams.h"
+#pragma region Includes
 
 class SVParamListDeviceParam : public SVDeviceParam
 {
@@ -19,6 +21,7 @@ public:
 	SVParamListDeviceParam();
 	SVParamListDeviceParam(SVDeviceParamEnum typeEnum);
 	SVParamListDeviceParam(const SVParamListDeviceParam& rhs);
+	virtual ~SVParamListDeviceParam();
 	virtual SVClonable* CloneImpl() const;
 
 	std::map <SVDeviceParamEnum, SVDeviceParamWrapper> mapParameters;

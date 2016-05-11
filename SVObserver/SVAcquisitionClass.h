@@ -61,7 +61,6 @@ public:
 	virtual HRESULT Reset();  // SVODataDeviceClass Override
 
 	virtual HRESULT AllocDigitizer( SVDeviceParamCollection& rDevice );
-	virtual HRESULT DeallocDigitizer( SVDeviceParamCollection& rDevice );
 
 	virtual HRESULT CreateBuffers( SVImageInfoClass IInfo, unsigned long ulSize );
 	virtual HRESULT DestroyBuffers();
@@ -133,11 +132,10 @@ public:
 
 	bool IsDigitizerSubsystemValid() const;
 
-
 	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
 
 	// temp hack
-	virtual SVOCallbackPtr GetCallbackFunction(const CString& sType) const {return NULL;}
+	virtual SVOCallbackPtr GetCallbackFunction(const CString& sType) const {return nullptr;}
 
 	virtual BOOL GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle ) const;
 	virtual BOOL GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const;

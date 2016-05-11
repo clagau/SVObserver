@@ -49,10 +49,10 @@ BOOL SVSquare::RegisterWindowClass()
         wndcls.lpfnWndProc      = ::DefWindowProc;
         wndcls.cbClsExtra       = wndcls.cbWndExtra = 0;
         wndcls.hInstance        = hInst;
-        wndcls.hIcon            = NULL;
+        wndcls.hIcon            = nullptr;
         wndcls.hCursor          = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
         wndcls.hbrBackground    = (HBRUSH) (COLOR_GRADIENTACTIVECAPTION);
-        wndcls.lpszMenuName     = NULL;
+        wndcls.lpszMenuName     = nullptr;
         wndcls.lpszClassName    = _T("SVCuteSquare");
 
         if (!AfxRegisterClass(&wndcls))
@@ -65,7 +65,7 @@ BOOL SVSquare::RegisterWindowClass()
     return TRUE;
 }
 
-SVHistogramAnalyzerSetupClass::SVHistogramAnalyzerSetupClass(CWnd* pParent /*=NULL*/)
+SVHistogramAnalyzerSetupClass::SVHistogramAnalyzerSetupClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVHistogramAnalyzerSetupClass::IDD, pParent)
 {
 	unsigned opt = m_histogram.GetOptions();

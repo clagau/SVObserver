@@ -237,11 +237,6 @@ BOOL SVToolAdjustmentDialogMaskPageClass::OnSetActive()
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : initMask
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :17.04.1999 RO			First Implementation
-//	:20.03.2000 RO			Revised to update dialog image right.
-////////////////////////////////////////////////////////////////////////////////
 void SVToolAdjustmentDialogMaskPageClass::initMask()
 {
 	SetInspectionData();
@@ -307,7 +302,7 @@ void SVToolAdjustmentDialogMaskPageClass::RefreshComboBox(const CString& rValue,
 
 void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton() 
 {
-	if( NULL == m_pMaskEditorCtl )
+	if( nullptr == m_pMaskEditorCtl )
 	{
 		m_pMaskEditorCtl = new SvMc::CSVMaskEditor;
 
@@ -318,8 +313,6 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			r,           //const RECT& rect, 
 			this,        //CWnd* pParentWnd, 
 			2           //UINT nID,
-			//CFile* pPersist = NULL, BOOL bStorage = FALSE,
-			//BSTR bstrLicKey = NULL
 			);
 
 		if (!bResult)
@@ -383,7 +376,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			hr = pUnk->QueryInterface(IID_IStream, reinterpret_cast<void**>(&pStream));
 			if (S_OK == hr)
 			{
-				if (pStream != nullptr)
+				if (nullptr != pStream )
 				{
 					hr = GetHGlobalFromStream(pStream, &hg);
 					m_maskController.SetMaskData(hg);

@@ -11,14 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVMFCControls\SVListCtrl.h"
+#pragma endregion Includes
 
 class SVDigitizerLoadLibraryClass;
 
 class SVCameraPropDlgClass : public CDialog
 {
 public:
-	SVCameraPropDlgClass(CWnd* pParent = NULL);   // standard constructor
+	SVCameraPropDlgClass(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVCameraPropDlgClass();
 
 	//{{AFX_DATA(SVCameraPropDlgClass)
 	enum { IDD = IDD_CAMERA_PROP };

@@ -17,6 +17,7 @@ class ZoomHelper
 #pragma region Constructor
 public:
 	ZoomHelper();
+	virtual ~ZoomHelper();
 #pragma endregion Constructor
 
 #pragma region Public Methods

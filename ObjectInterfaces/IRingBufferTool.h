@@ -7,14 +7,14 @@
 
 #pragma once
 #pragma region Includes
-#include "ITaskObjectListClass.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		class IRingBufferTool: virtual public ITaskObjectListClass
+		class IRingBufferTool
 		{
 		public:
 			virtual ~IRingBufferTool() {}

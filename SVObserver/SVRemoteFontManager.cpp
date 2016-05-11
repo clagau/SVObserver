@@ -8,7 +8,7 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   01 Dec 2014 13:22:50  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRemoteFontManager.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -17,11 +17,12 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageProcessingClass.h"
 #include "SVObserver.h"
+#pragma endregion Includes
 
 DWORD WINAPI SVRemoteFontManager::SVRemoteFontCleanupThread( LPVOID lpParam )
 {
 	unsigned long l_ulSize;
-	HANDLE *l_phArray = NULL;
+	HANDLE* l_phArray = nullptr;
 
 	SVRemoteFontManager *l_pManager = (SVRemoteFontManager*) lpParam;
 	
@@ -51,13 +52,13 @@ DWORD WINAPI SVRemoteFontManager::SVRemoteFontCleanupThread( LPVOID lpParam )
 	for ( unsigned long l = 0; l < l_ulSize; l++ )
 	{
 		::CloseHandle( l_phArray[l] );
-		l_phArray[l] = NULL;
+		l_phArray[l] = nullptr;
 	}
 
-	if ( l_phArray != NULL )
+	if ( nullptr != l_phArray )
 	{
 		delete[] l_phArray;
-		l_phArray = NULL;
+		l_phArray = nullptr;
 	}
 	
 	return 0L;
@@ -65,8 +66,8 @@ DWORD WINAPI SVRemoteFontManager::SVRemoteFontCleanupThread( LPVOID lpParam )
 
 SVRemoteFontManager::SVRemoteFontManager()
 {
-	m_hShutdown = NULL;
-	m_hThread = NULL;
+	m_hShutdown = nullptr;
+	m_hThread = nullptr;
 
 	m_bIsOnline = false;
 	m_bLockCreated = false;
@@ -99,8 +100,8 @@ bool SVRemoteFontManager::Startup()
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		m_hShutdown = ::CreateEvent( NULL, TRUE, FALSE, NULL );
-		m_hThread = ::CreateThread( NULL, 0, SVRemoteFontCleanupThread, this, 0, NULL );
+		m_hShutdown = ::CreateEvent( nullptr, true, false, nullptr );
+		m_hThread = ::CreateThread( nullptr, 0, SVRemoteFontCleanupThread, this, 0, nullptr );
 		SVThreadManager::Instance().Add( m_hThread, "SVFontManager");
 		::LeaveCriticalSection( &m_csLock );
 	}
@@ -118,18 +119,18 @@ bool SVRemoteFontManager::Shutdown()
 	{
 		::EnterCriticalSection( &m_csLock );
 
-		if ( m_hShutdown != NULL )
+		if ( nullptr != m_hShutdown )
 		{
 			::SetEvent( m_hShutdown );
 			::CloseHandle( m_hShutdown );
-			m_hShutdown = NULL;
+			m_hShutdown = nullptr;
 		}
 
-		if ( m_hThread != NULL )
+		if ( nullptr != m_hThread )
 		{
 			::CloseHandle( m_hThread );
 			SVThreadManager::Instance().Remove( m_hThread );
-			m_hThread = NULL;
+			m_hThread = nullptr;
 		}
 
 		long lSize = m_arRemoteFontTimestamps.GetSize();
@@ -162,14 +163,14 @@ bool SVRemoteFontManager::Shutdown()
 
 bool SVRemoteFontManager::CanGoOnline()
 {
-	bool bRet = m_hShutdown != NULL && m_bLockCreated;
+	bool bRet = nullptr != m_hShutdown && m_bLockCreated;
 	
 	return bRet;
 }// end CanGoOnline
 
 bool SVRemoteFontManager::GoOnline()
 {
-	bool bRet = m_hShutdown != NULL && m_bLockCreated;
+	bool bRet = nullptr != m_hShutdown && m_bLockCreated;
 	
 	if ( bRet )
 	{
@@ -192,7 +193,7 @@ bool SVRemoteFontManager::AddFont( long &lIdentifier )
 {
 	bool bRet = false;
 	
-	if ( m_hShutdown != NULL && m_bLockCreated )
+	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 
@@ -238,7 +239,7 @@ bool SVRemoteFontManager::RemoveFont( long lIdentifier )
 {
 	bool bRet = false;
 	
-	if ( m_hShutdown != NULL && m_bLockCreated )
+	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 
@@ -269,7 +270,7 @@ bool SVRemoteFontManager::IsValidFont( long lIdentifier, SVMatroxOcr &lHandle )
 {
 	bool bRet = false;
 	
-	if ( m_hShutdown != NULL && m_bLockCreated )
+	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 
@@ -295,7 +296,7 @@ bool SVRemoteFontManager::UpdateFontTime( long lIdentifier )
 {
 	bool bRet = false;
 	
-	if ( m_hShutdown != NULL && m_bLockCreated )
+	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 
@@ -323,7 +324,7 @@ bool SVRemoteFontManager::UpdateFontHandle( long lIdentifier, SVMatroxOcr lHandl
 {
 	bool bRet = false;
 	
-	if ( m_hShutdown != NULL && m_bLockCreated )
+	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 
@@ -352,11 +353,11 @@ bool SVRemoteFontManager::GetStatusHandles( unsigned long &p_rulSize, HANDLE **p
 
 	p_rulSize = 0;
 
-	if ( p_pphArray != NULL )
+	if ( nullptr != p_pphArray )
 	{
-		*p_pphArray = NULL;
+		*p_pphArray = nullptr;
 
-		if ( m_hShutdown != NULL )
+		if ( nullptr != m_hShutdown )
 		{
 			p_rulSize = 1;
 
@@ -370,7 +371,7 @@ bool SVRemoteFontManager::GetStatusHandles( unsigned long &p_rulSize, HANDLE **p
 				if ( ! l_bOk )
 				{
 					delete[] *p_pphArray;
-					*p_pphArray = NULL;
+					*p_pphArray = nullptr;
 				}
 			}
 		}
@@ -383,7 +384,7 @@ bool SVRemoteFontManager::RemoveFontsOlderThan( SVClock::SVTimeStamp p_Age )
 {
 	bool bRet = false;
 
-	if ( m_hShutdown != NULL && m_bLockCreated && 
+	if ( nullptr != m_hShutdown && m_bLockCreated && 
 	     ::TryEnterCriticalSection( &m_csLock ) )
 	{
 		SVClock::SVTimeStamp tsNow = SVClock::GetTimeStamp();
@@ -426,7 +427,7 @@ bool SVRemoteFontManager::RemoveFontsOlderThan( SVClock::SVTimeStamp p_Age )
 bool SVRemoteFontManager::AddFontImage(long lIdentifier, SVMatroxBuffer& lHandle)
 {
 	bool bRet = false;
-	if ( m_hShutdown != NULL && m_bLockCreated )
+	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 
@@ -462,7 +463,7 @@ bool SVRemoteFontManager::GetFontImage( long lIdentifier, SVMatroxBuffer &lHandl
 {
 	bool bRet = false;
 
-	if ( m_hShutdown != NULL && m_bLockCreated )
+	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 
@@ -724,7 +725,7 @@ bool SVRemoteFontManager::AddFontChar(long lCurrentFont, char p_cNewChar, long *
 
 	unsigned long l_ulLastCharID;
 
-	if ( m_hShutdown != NULL && m_bLockCreated )
+	if ( nullptr != m_hShutdown && m_bLockCreated )
 	{
 		::EnterCriticalSection( &m_csLock );
 

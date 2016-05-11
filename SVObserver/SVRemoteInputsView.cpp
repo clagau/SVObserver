@@ -20,7 +20,7 @@
 #include "SVRemoteIOAdjustDialog.h"
 #include "SVInputObjectList.h"
 #include "SVRemoteInputObject.h"
-#include "SVDigitalInputObject1.h"
+#include "SVDigitalInputObject.h"
 #include "SVConfigurationObject.h"
 #include "SVSVIMStateClass.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
@@ -167,9 +167,9 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 					h , strItem,
 					INDEXTOSTATEIMAGEMASK( 1 ),	// state
 					LVIS_STATEIMAGEMASK,		// stateMask
-					1, 0 );						// Set item data to NULL
+					1, 0 );						// Set item data to Nothing
 
-				GetListCtrl().SetItem( h , 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
+				GetListCtrl().SetItem( h , 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
 				m_Items.SetItemData( h, pIOEntry );
 
@@ -261,7 +261,7 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 							pRemoteInput->WriteCache( l_Value );
 
 							SVVariantValueObjectClass* l_pValueObject = dynamic_cast< SVVariantValueObjectClass* >( pIOEntry->m_pValueObject );
-							if( l_pValueObject != NULL )
+							if( nullptr != l_pValueObject )
 							{
 								l_pValueObject->SetDefaultValue( l_Value, true );
 							}
@@ -275,7 +275,7 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 						break;
 					}// end switch
 
-					OnUpdate( NULL, NULL, NULL );
+					OnUpdate( nullptr, 0, nullptr );
 
 					SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 				}

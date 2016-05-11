@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 SVTaskObjectValueInterface::SVTaskObjectValueInterface()
-: m_psvTaskObject( NULL )
+: m_psvTaskObject( nullptr )
 {
 }
 
@@ -38,11 +38,6 @@ SVTaskObjectValueInterface::SVTaskObjectValueInterface( SVTaskObjectClass *p_psv
 
 SVTaskObjectValueInterface::~SVTaskObjectValueInterface()
 {
-}
-
-SVTaskObjectClass *SVTaskObjectValueInterface::GetTaskObject()
-{
-	return m_psvTaskObject;
 }
 
 void SVTaskObjectValueInterface::SetTaskObject( SVTaskObjectClass *p_psvTaskObject )
@@ -101,9 +96,9 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& p_rTaskId, co
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		l_hrOk = AddInputRequest( l_pObject, p_szValue );
 	}
@@ -118,9 +113,9 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& p_rTaskId, co
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		l_hrOk = AddInputRequest( l_pObject, p_dValue );
 	}
@@ -165,7 +160,7 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 
 		SVGUID l_ToolId;
 
-		if( p_psvTool != NULL )
+		if( nullptr != p_psvTool )
 		{
 			l_ToolId = p_psvTool->GetUniqueObjectID();
 		}
@@ -218,13 +213,13 @@ HRESULT SVTaskObjectValueInterface::GetValue( const SVGUID& p_rTaskId, const SVG
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		SVValueObjectClass* l_pValueObject = dynamic_cast< SVValueObjectClass* >( l_pObject );
 
-		if( l_pValueObject != NULL )
+		if( nullptr != l_pValueObject )
 		{
 			l_hrOk = l_pValueObject->GetValue( p_rValue );
 		}
@@ -239,7 +234,7 @@ HRESULT SVTaskObjectValueInterface::GetObjectValue( const SVGUID& p_rObjectId, c
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( p_rObjectId );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		l_hrOk = l_pObject->GetObjectValue( p_rValueName, p_rVariantValue );
 	}
@@ -257,7 +252,7 @@ HRESULT SVTaskObjectValueInterface::SetObjectValue( const SVGUID& p_rObjectId, c
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( p_rObjectId );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		l_hrOk = l_pObject->SetObjectValue( p_rValueName, p_rVariantValue );
 	}

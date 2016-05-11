@@ -35,10 +35,7 @@ HRESULT SVTestGigeAcquisitionClass::ReadCameraFile( const CString& sFile )
 	m_DeviceParams.Clear();
 	HRESULT hr = SVGigeCameraProxy::ReadCameraFileImpl( info, m_CameraFileDeviceParams );
 
-//	if ( hr == SVMSG_INCORRECT_CHECKSUM )
-//	{
-//	}
-	// SEJ - Set GigeFeature Overrides
+	// Set GigeFeature Overrides
 	if (S_OK == hr)
 	{
 		hr = SetGigeFeatureOverrides(info.sFeatureOverrides);
@@ -62,7 +59,7 @@ bool SVTestGigeAcquisitionClass::CameraMatchesCameraFile()
 
 HRESULT SVTestGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams )
 {
-	// SEJ - send notification to start tracking main camera parameters
+	// Send notification to start tracking main camera parameters
 	_variant_t dummy;
 	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SVGigeBeginTrackParameters, 0, &dummy);
 
@@ -93,7 +90,7 @@ bool SVTestGigeAcquisitionClass::StartAcquire(SVCameraPage& p_rDisplay)
 {
 	m_bOnline = true;
 
-	// SEJ - send notification to end tracking main camera parameters
+	// Send notification to end tracking main camera parameters
 	_variant_t dummy;
 	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SVGigeEndTrackParameters, 0, &dummy);
 	if (S_OK == hr)

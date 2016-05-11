@@ -48,9 +48,9 @@ HRESULT SVSocketThread<ThreadFunc>::Create(const ThreadFunc& threadFunc, const _
 
 	if (!m_hThread)
 	{
-		m_hThread = ::CreateThread( NULL, 0, SVSocketThread::ThreadProc, (LPVOID)this, 0, &m_ulThreadID );
+		m_hThread = ::CreateThread( nullptr, 0, SVSocketThread::ThreadProc, (LPVOID)this, 0, &m_ulThreadID );
 
-		if (m_hThread == NULL)
+		if (nullptr == m_hThread)
 		{
 			l_Status = S_FALSE;
 		}
@@ -72,7 +72,7 @@ void SVSocketThread< ThreadFunc >::Destroy()
 		}
 		::CloseHandle( m_hThread );
 		SVThreadManager::Instance().Remove(m_hThread );
-		m_hThread = NULL;
+		m_hThread = nullptr;
 	}
 
 	m_ulThreadID = 0;
@@ -99,7 +99,7 @@ void SVSocketThread<ThreadFunc>::SetPriority(int priority)
 template<typename ThreadFunc>
 bool SVSocketThread<ThreadFunc>::IsActive() const
 {
-	bool bRetVal = m_hThread != NULL;
+	bool bRetVal = nullptr != m_hThread ;
 
 	if( bRetVal )
 	{

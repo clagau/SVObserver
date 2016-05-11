@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:58:30  $
 //******************************************************************************
 
-//#include "stdafx.h"
-//#include "SVImportProgress.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 
@@ -56,10 +54,9 @@ HRESULT SVImportProgress<Task>::Start()
 {
 	HRESULT l_Status(S_OK);
 
-	//m_hThread = ::CreateThread(NULL, 0, SVImportTaskThread, this, CREATE_SUSPENDED, NULL);
-	m_hThread = ::CreateThread(NULL, 0, &SVImportProgress<Task>::TaskThread, this, 0, NULL);
+	m_hThread = ::CreateThread(nullptr, 0, &SVImportProgress<Task>::TaskThread, this, 0, nullptr);
 
-	if (m_hThread == NULL)
+	if (nullptr == m_hThread)
 	{
 		l_Status = E_FAIL;
 	}
@@ -89,7 +86,7 @@ HRESULT SVImportProgress<Task>::UpdateProgress(unsigned long p_Current, unsigned
 {
 	HRESULT l_Status(m_Status);
 
-	if (l_Status == S_OK)
+	if (S_OK == l_Status)
 	{
 		m_Dialog.SendMessage(SV_UPDATE_PROGRESS, p_Current, p_Total);
 	}

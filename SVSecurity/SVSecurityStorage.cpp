@@ -87,7 +87,7 @@ SVAccessPointNode* SVSecurityStorage::FindByID( long lId )
 		if( m_aNodes[ i ].m_lID == lId)
 			return &(m_aNodes[ i ] );
 	}
-	return NULL;
+	return nullptr;
 }
 
 void SVSecurityStorage::SetUser( LPCTSTR strUser )
@@ -126,8 +126,8 @@ USES_CONVERSION;
 
 	HRESULT	hr;
 
-	BSTR l_bstrFormat = NULL;
-	BSTR l_bstrFileName = NULL;
+	BSTR l_bstrFormat = nullptr;
+	BSTR l_bstrFileName = nullptr;
 
 	SvXml::SVXMLMaterialsTree XMLTree ;
 	SVXMLClass svX;
@@ -151,20 +151,20 @@ USES_CONVERSION;
 		}
 
 		l_bstrFormat = ::SysAllocString(L"Security File");
-		if( l_bstrFormat == NULL )
+		if( nullptr == l_bstrFormat )
 		{
 			hr = E_FAIL;
 			break;
 		}
 
 		l_bstrFileName = ::SysAllocString(T2W(pFileName));
-		if( l_bstrFileName == NULL )
+		if( nullptr == l_bstrFileName )
 		{
 			hr = E_FAIL;
 			break;
 		}
 
-		hr = svX.CopyTreeToXMLFile(XMLTree, 1, l_bstrFormat, NULL, l_bstrFileName);
+		hr = svX.CopyTreeToXMLFile(XMLTree, 1, l_bstrFormat, nullptr, l_bstrFileName);
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
@@ -225,13 +225,13 @@ HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
 	CA2W  pwXmlFilename(pFileName); 
 	HRESULT hr  = SaxHandler.BuildFromXMLFile(&XMLTree,  pwXmlFilename );	
 	
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		SVAccessPointNodeVectorArray l_aNodes;
 
 		hr = ProcessMaterialsTree( l_aNodes, XMLTree.getTree() );
 
-		if( hr == S_OK )
+		if( S_OK == hr )
 		{
 			SVAccessPointNodeVectorArray::iterator iterInitNodes;
 			for( iterInitNodes = m_aNodes.begin() ; iterInitNodes != m_aNodes.end() ; ++iterInitNodes )
@@ -263,7 +263,7 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& r
 
 	if( m_aNodes.size() != 0 )
 	{
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			rTree.set( SVMaterialsTree::SVTreeElement( _T( "Root" ), SVMaterialDataPtr( nullptr ) ) );
 
@@ -274,11 +274,11 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& r
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Auto Edit") ), new SVMaterialData( _variant_t( GetAutoEdit() ) ) ) );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			SVAccessPointNodeVectorArray::const_iterator l_NodeIter( m_aNodes.begin() );
 
-			while( l_Status == S_OK && l_NodeIter != m_aNodes.end() )
+			while( S_OK == l_Status && l_NodeIter != m_aNodes.end() )
 			{
 				if( !l_NodeIter->m_bHasData )
 				{
@@ -286,7 +286,7 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& r
 					SVMaterialsTree::SVTreeElement Element( l_Name, SVMaterialDataPtr(nullptr) );
 					SVMaterialsTree::iterator l_Iter( rTree.insert( Element ) );
 
-					if( l_Iter != rTree.end() && l_Iter.node() != NULL )
+					if( l_Iter != rTree.end() && nullptr != l_Iter.node() )
 					{
 						l_Status = GetChildMaterialsTree( *l_Iter.node(), ++l_NodeIter );
 					}
@@ -306,10 +306,10 @@ HRESULT SVSecurityStorage::GetChildMaterialsTree( SVMaterialsTree::SVTreeContain
 {
 	HRESULT l_Status( S_OK );
 
-	while( l_Status == S_OK && p_rNodeIter != m_aNodes.end() && p_rNodeIter->m_bHasData )
+	while( S_OK == l_Status && p_rNodeIter != m_aNodes.end() && p_rNodeIter->m_bHasData )
 	{
 		SVMaterialsTree::SVTreeContainer* pNode( nullptr );
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			SVString l_Name( p_rNodeIter->m_strName );
 			SVMaterialsTree::SVTreeElement Element( l_Name, SVMaterialDataPtr(nullptr) );
@@ -346,7 +346,7 @@ HRESULT SVSecurityStorage::ProcessMaterialsTree( SVAccessPointNodeVectorArray& p
 
 	SVMaterialsTree::const_iterator Iter( rTree.begin() );
 
-	while( l_Status == S_OK && Iter != rTree.end() && nullptr != Iter.node() )
+	while( S_OK == l_Status && Iter != rTree.end() && nullptr != Iter.node() )
 	{
 		//Process only nodes not leaves
 		if( Iter->second.empty() )
@@ -364,7 +364,7 @@ HRESULT SVSecurityStorage::ProcessChild( SVAccessPointNodeVectorArray& p_rNewArr
 {
 	HRESULT l_Status( S_OK );
 
-	if( rTree.get() != NULL )
+	if( nullptr != rTree.get() )
 	{
 		SVString l_Name( rTree.get()->first );
 
@@ -408,7 +408,7 @@ HRESULT SVSecurityStorage::ProcessChild( SVAccessPointNodeVectorArray& p_rNewArr
 
 	SVMaterialsTree::const_iterator l_Iter( rTree.begin() );
 
-	while( l_Status == S_OK && l_Iter != rTree.end() )
+	while( S_OK == l_Status && l_Iter != rTree.end() )
 	{
 		//Process only nodes not leaves
 		if( nullptr != l_Iter.node() && l_Iter->second.empty() )

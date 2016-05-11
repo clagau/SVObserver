@@ -25,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 // SVBarCodeStringMatchDialog dialog
 
 
-SVBarCodeStringMatchDialog::SVBarCodeStringMatchDialog(CWnd* pParent /*=NULL*/)
+SVBarCodeStringMatchDialog::SVBarCodeStringMatchDialog(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(SVBarCodeStringMatchDialog::IDD)
 {
 	//{{AFX_DATA_INIT(SVBarCodeStringMatchDialog)

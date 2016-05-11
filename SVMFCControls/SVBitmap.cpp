@@ -94,22 +94,22 @@ HRESULT SVBitmap::LoadDIBitmap (void* p_pDIB)
    char*             l_pImage;
 
    l_hr = 0;
-   l_pbmhInfo = NULL;
-   l_pDIBSectionImage = NULL;
-   l_pImage = NULL;
-   l_bmhCreateDIBSectionBitmapHandle = NULL;
-   l_bmhTestExisting = NULL;
+   l_pbmhInfo = nullptr;
+   l_pDIBSectionImage = nullptr;
+   l_pImage = nullptr;
+   l_bmhCreateDIBSectionBitmapHandle = nullptr;
+   l_bmhTestExisting = nullptr;
 
    while (1)
    {
       l_bmhTestExisting = (HBITMAP) m_hObject; // Typecast from void* to
 															  //  HBITMAP.
 
-      if (l_bmhTestExisting != NULL)			  // If there is already a 
-      {													  //  Windows GDI object 
-         l_hr = -1599;								  //  attached to this instance
-         break;										  //  then an error code will be
-      }													  //  returned.
+      if (nullptr != l_bmhTestExisting )		  // If there is already a 
+      {											  //  Windows GDI object 
+         l_hr = -1599;							  //  attached to this instance
+         break;									  //  then an error code will be
+      }											  //  returned.
 
       l_pbmhInfo = (BITMAPINFOHEADER*) p_pDIB; // Typecast from void* to
 															  //  BITMAPINFOHEADER*.
@@ -154,21 +154,17 @@ HRESULT SVBitmap::LoadDIBitmap (void* p_pDIB)
       l_pImage = ((char *) p_pDIB) + l_lColorTableSize + l_pbmhInfo->biSize;
 
       l_bmhCreateDIBSectionBitmapHandle = 
-		          ::CreateDIBSection (NULL,    // [in] Device Context; not
-                                             //  required.
+		          ::CreateDIBSection (nullptr,		// [in] Device Context, not required.
                                     (BITMAPINFO*)l_pbmhInfo, 
-                                             // [in] BITMAPINFOHEADER is the 
-                                             //  first element of BITMAPINFO.
+													// [in] BITMAPINFOHEADER is the 
+													// first element of BITMAPINFO.
                                     DIB_RGB_COLORS, 
                                     (void**) &l_pDIBSectionImage, 
-                                             // [out] System allocated 
-                                             //  location for image bits.
-															// Typecast from char** to 
-															//  void**.
-                                    NULL,    // [in] File map handle; not
-                                             //  required.
-                                    NULL );  // [in] Used for filemapping;
-                                             //  not required.
+													// [out] System allocated 
+													// location for image bits.
+													// Typecast from char** to void**.
+                                    nullptr,		// [in] File map handle, not required.
+                                    0 );			// [in] Used for filemapping, not required.
 
       ::GdiFlush (); // The GdiFlush function flushes the calling thread's 
                      //  current batch. Probably not needed but MSDN 
@@ -197,17 +193,17 @@ HRESULT SVBitmap::LoadDIBitmap ( BITMAPINFO* pDIBInfo, void* pDIBData )
 	char*             l_pImage;
 	
 	l_hr = 0;
-	l_pbmhInfo = NULL;
-	l_pDIBSectionImage = NULL;
-	l_pImage = NULL;
-	l_bmhCreateDIBSectionBitmapHandle = NULL;
-	l_bmhTestExisting = NULL;
+	l_pbmhInfo = nullptr;
+	l_pDIBSectionImage = nullptr;
+	l_pImage = nullptr;
+	l_bmhCreateDIBSectionBitmapHandle = nullptr;
+	l_bmhTestExisting = nullptr;
 	
 	do
 	{
 		l_bmhTestExisting = (HBITMAP) m_hObject; // Typecast from void* to HBITMAP.
 		
-		if (l_bmhTestExisting != NULL)   // If there is already a 
+		if (nullptr != l_bmhTestExisting )   // If there is already a 
 		{                                //  Windows GDI object 
 			l_hr = -12336;               //  attached to this instance
 			break;                       //  then an error code will be
@@ -258,17 +254,14 @@ HRESULT SVBitmap::LoadDIBitmap ( BITMAPINFO* pDIBInfo, void* pDIBData )
 		l_pImage = (char*) pDIBData;
 		
 		l_bmhCreateDIBSectionBitmapHandle = 
-				::CreateDIBSection ( NULL,                          // [in] Device Context; not required.
+				::CreateDIBSection ( nullptr,                       // [in] Device Context, not required.
 						             pDIBInfo,                      // [in]
 						             DIB_RGB_COLORS, 
 						             (void**) &l_pDIBSectionImage,  // [out] System allocated  
 						                                            //  location for image bits.
-						                                            // Typecast from char** to 
-						                                            //  void**.
-						             NULL,                          // [in] File map handle; not
-						                                            //  required.
-						             NULL );                        // [in] Used for filemapping;
-						                                            //  not required.
+						                                            // Typecast from char** to void**.
+						             nullptr,                       // [in] File map handle, not required.
+						             0 );							// [in] Used for filemapping, not required.
 		
 		::GdiFlush (); // The GdiFlush function flushes the calling thread's 
 				       //  current batch. Probably not needed but MSDN 

@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:57:50  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVUtilityArgumentDialog.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,12 +23,16 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SVUtilityArgumentDialogClass dialog
 
-SVUtilityArgumentDialogClass::SVUtilityArgumentDialogClass(CWnd* pParent /*=NULL*/)
+SVUtilityArgumentDialogClass::SVUtilityArgumentDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVUtilityArgumentDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVUtilityArgumentDialogClass)
 	mszArguments = _T("");
 	//}}AFX_DATA_INIT
+}
+
+SVUtilityArgumentDialogClass::~SVUtilityArgumentDialogClass()
+{
 }
 
 void SVUtilityArgumentDialogClass::DoDataExchange(CDataExchange* pDX)

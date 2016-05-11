@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   26 Apr 2013 14:08:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMaskEditor.h"
 
 #include "SVMaskEditorCtl.h"
 #include "SVMaskEditorDialog.h"
 #include "SVMaskEditorWnd.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,7 +31,7 @@ SVMaskEditorWndClass::SVMaskEditorWndClass()
 {
 	EnableAutomation();
 
-    PMother = NULL;
+    PMother = nullptr;
 	bPerformDblClk = FALSE;
 }
 

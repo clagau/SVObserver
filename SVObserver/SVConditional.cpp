@@ -9,28 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:59:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVConditional.h"
 #include "SVSVIMStateClass.h"
+#pragma endregion Includes
 
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVConditionalClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVConditionalClass, SVConditionalClassGuid );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,28 +30,21 @@ SVConditionalClass::SVConditionalClass( SVObjectClass* POwner, int StringResourc
 // .Title       : Initialization of class SVConditionalClass
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :26.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVConditionalClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVConditionalObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVConditionalObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 	
-	// SetObjectDepth() already called in SVObjectClass Ctor
-
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &result, SVConditionalResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
 
 	// Set Embedded defaults
-	result.SetDefaultValue( FALSE, TRUE );
+	result.SetDefaultValue( false, true );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -80,16 +57,14 @@ SVConditionalClass::~SVConditionalClass()
 {
 }
 
-
-
 BOOL SVConditionalClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	isCreated = SVEquationClass::CreateObject( PCreateStructure );
+	m_isCreated = SVEquationClass::CreateObject( PCreateStructure );
 
 	// Set/Reset printable Flags
 	result.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	return isCreated;
+	return m_isCreated;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,14 +90,14 @@ BOOL SVConditionalClass::OnValidate()
 // Otherwise the return value depends on the Conditional equation result!
 BOOL SVConditionalClass::onRun( SVRunStatusClass& RRunStatus )
 {
-	BOOL value = FALSE;
+	BOOL value = false;
 
 	// Bypass all conditional execution if we are performing an internal run
 	// This is used to initially setup certain objects.
 	if( SVSVIMStateClass::CheckState( SV_STATE_INTERNAL_RUN ) )
 	{
 		result.SetValue( RRunStatus.m_lResultDataIndex, 1L );
-		return TRUE;
+		return true;
 	}// end if
 
 	BOOL retVal = SVEquationClass::onRun( RRunStatus );
@@ -133,11 +108,10 @@ BOOL SVConditionalClass::onRun( SVRunStatusClass& RRunStatus )
 	}
 	else
 	{
-		value = TRUE;
+		value = true;
 		if( HasCondition() && IsEnabled() )
 		{
-			//value = ( BOOL )yacc.equationResult;  08 Feb 2000 - frb.
-            value = yacc.equationResult ? TRUE : FALSE;
+            value = yacc.equationResult ? true : false;
 		}
 	}
 	result.SetValue( RRunStatus.m_lResultDataIndex, value );

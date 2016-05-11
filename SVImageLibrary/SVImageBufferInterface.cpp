@@ -75,7 +75,7 @@ HRESULT SVImageBufferInterface::Assign( SVSmartHandlePointer p_ImageHandle, cons
 
 unsigned char* SVImageBufferInterface::GetBufferAddress() const
 {
-	unsigned char* l_pBuffer = NULL;
+	unsigned char* l_pBuffer = nullptr;
 
 	if( ! m_ImageHandle.empty() )
 	{

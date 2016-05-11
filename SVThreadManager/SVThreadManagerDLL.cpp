@@ -55,6 +55,9 @@ CSVThreadManagerApp::CSVThreadManagerApp()
 	// Place all significant initialization in InitInstance
 }
 
+CSVThreadManagerApp::~CSVThreadManagerApp()
+{
+}
 
 // The one and only CSVThreadManagerApp object
 

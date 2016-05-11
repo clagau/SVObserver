@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <string>
 
@@ -20,10 +21,7 @@
 #include "SVODataResponseClass.h"
 #include "SVProcessFunctor.h"
 #include "SVQueueObject.h"
-
-//typedef HRESULT ( CALLBACK *SVODataDeviceClassCallbackPtr )( void *, /* Owner */
-//                                                         void *, /* Caller */
-//                                                         SVODataResponseClass * );
+#pragma endregion Includes
 
 /*
 This class represents the base functionality required for a device.
@@ -110,6 +108,5 @@ private:
 
 	//This attribute is a container that holds the unused resposes in the callback system.
 	SVDataResponseQueue mUsedQueue;
-
 };
 

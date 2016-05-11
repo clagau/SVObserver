@@ -25,7 +25,7 @@
 
 IMPLEMENT_DYNAMIC(SVRemoteOutputEditDialog, CDialog)
 
-SVRemoteOutputEditDialog::SVRemoteOutputEditDialog(CWnd* pParent /*=NULL*/)
+SVRemoteOutputEditDialog::SVRemoteOutputEditDialog(CWnd* pParent /*=nullptr*/)
 : CDialog(SVRemoteOutputEditDialog::IDD, pParent)
 , m_strValueObjectSourceName(_T("Invalid"))
 , m_Items( boost::bind( &( CComboBox::GetItemData ), &m_ValueObjectNameCombo, _1 ) , boost::bind( &( CComboBox::SetItemData ), &m_ValueObjectNameCombo, _1, _2 ) )
@@ -122,7 +122,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 				if( !( pIOEntry.empty() ) )
 				{
-					if( ( pIOEntry->m_pValueObject != NULL ) 
+					if( ( nullptr != pIOEntry->m_pValueObject ) 
 						&& ( pIOEntry->m_pValueObject->GetCompleteObjectName().Find( _T( "PPQ" ) ) == -1 ) )
 					{
 						iIndex = m_ValueObjectNameCombo.AddString( pIOEntry->m_pValueObject->GetCompleteObjectName() );
@@ -200,7 +200,7 @@ void SVRemoteOutputEditDialog::UpdateValueObjectFromCombo()
 			l_pIOEntry = l_Iter->second;
 		}
 
-		if( !( l_pIOEntry.empty() ) && ( l_pIOEntry->m_pValueObject != NULL ) )
+		if( !( l_pIOEntry.empty() ) && ( nullptr != l_pIOEntry->m_pValueObject ) )
 		{
 			CString l_strName;
 			m_ValueObjectNameCombo.GetLBText( l_iSel, m_strValueObjectSourceName );

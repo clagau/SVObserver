@@ -322,59 +322,6 @@ inline DWORD ComputeChangedBits(DWORD dwOld, DWORD dwNew, bool bChangedTo)
 	return dwResult;
 }
 
-
-
-
-// this is supposed to be cheap to compile so it is located in this fairly lean header
-// allows std:: containers (and other template containers) to use pointers to incomplete types.
-// this helps reduce dependencies between compilation units
-// example of use:
-//
-// struct MyStruct;
-// typedef std::set< SVIncompleteTypePtr<MyStruct> > MyStructPtrSetType;
-//
-// you can put pointers to MyStruct into MyStructPtrSetType;
-
-template <typename T>
-class SVIncompleteTypePtr
-{
-	public:
-	typedef T* value_type;
-
-	SVIncompleteTypePtr(T* t) : m_t(t) {}
-	SVIncompleteTypePtr(const SVIncompleteTypePtr<T>& rhs) : m_t(rhs.m_t) {}
-
-	operator T* () { return m_t; }
-
-	bool operator == ( const SVIncompleteTypePtr& rhs ) const
-	{
-		return m_t == rhs.m_t;
-	}
-	bool operator != ( const SVIncompleteTypePtr& rhs ) const
-	{
-		return m_t != rhs.m_t;
-	}
-	bool operator < ( const SVIncompleteTypePtr& rhs ) const
-	{
-		return m_t < rhs.m_t;
-	}
-	bool operator <= ( const SVIncompleteTypePtr& rhs ) const
-	{
-		return m_t <= rhs.m_t;
-	}
-	bool operator > ( const SVIncompleteTypePtr& rhs ) const
-	{
-		return m_t > rhs.m_t;
-	}
-	bool operator >= ( const SVIncompleteTypePtr& rhs ) const
-	{
-		return m_t >= rhs.m_t;
-	}
-
-	private:
-	T* m_t;
-};
-
 //******************************************************************************
 // Method:		GetAndEnableWindow
 // Description:	Gets a control from a dialog and enables or disables it.

@@ -109,72 +109,72 @@ HRESULT SVImageInfoClass::Initialize()
 
 	m_OwnerObjectID.clear();
 
-	if ( m_svExtents.Initialize() != S_OK )
+	if ( S_OK != m_svExtents.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svProperties.Initialize() != S_OK )
+	if ( S_OK != m_svProperties.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svExtents.SetTranslation( SVExtentTranslationShift ) != S_OK )
+	if ( S_OK != m_svExtents.SetTranslation( SVExtentTranslationShift ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svExtents.SetExtentProperty( SVExtentPropertyPositionPoint, 10.0 ) != S_OK )
+	if ( S_OK != m_svExtents.SetExtentProperty( SVExtentPropertyPositionPoint, 10.0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svExtents.SetExtentProperty( SVExtentPropertyRectangle, 100.0 ) != S_OK )
+	if ( S_OK != m_svExtents.SetExtentProperty( SVExtentPropertyRectangle, 100.0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svExtents.SetExtentProperty( SVExtentPropertyWidthScaleFactor,  1.0) != S_OK )
+	if ( S_OK != m_svExtents.SetExtentProperty( SVExtentPropertyWidthScaleFactor,  1.0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svExtents.SetExtentProperty( SVExtentPropertyHeightScaleFactor,  1.0) != S_OK )
+	if ( S_OK != m_svExtents.SetExtentProperty( SVExtentPropertyHeightScaleFactor,  1.0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svExtents.SetExtentProperty( SVExtentPropertyRotationAngle, 0.0 ) != S_OK )
+	if ( S_OK != m_svExtents.SetExtentProperty( SVExtentPropertyRotationAngle, 0.0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( m_svExtents.SetExtentProperty( SVExtentPropertyTranslationOffset, 0.0 ) != S_OK )
+	if ( S_OK != m_svExtents.SetExtentProperty( SVExtentPropertyTranslationOffset, 0.0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( SetImageProperty( SVImagePropertyFormat, SVImageFormatMono8 ) != S_OK )
+	if ( S_OK != SetImageProperty( SVImagePropertyFormat, SVImageFormatMono8 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( SetImageProperty( SVImagePropertyPixelDepth, 8 ) != S_OK )
+	if ( S_OK != SetImageProperty( SVImagePropertyPixelDepth, 8 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( SetImageProperty( SVImagePropertyBandNumber, 1 ) != S_OK )
+	if ( S_OK != SetImageProperty( SVImagePropertyBandNumber, 1 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( SetImageProperty( SVImagePropertyBandLink, 0 ) != S_OK )
+	if ( S_OK != SetImageProperty( SVImagePropertyBandLink, 0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( SetImageProperty( SVImagePropertyResetOwner, FALSE ) != S_OK )
+	if ( S_OK != SetImageProperty( SVImagePropertyResetOwner, false ) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -217,7 +217,7 @@ HRESULT SVImageInfoClass::SetTranslation( SVExtentTranslationEnum p_eTranslation
 {
 	HRESULT l_hrOk = m_svExtents.SetTranslation( p_eTranslation );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = m_svExtents.UpdateData();
 	}
@@ -260,7 +260,7 @@ HRESULT SVImageInfoClass::GetExtentProperty( SVExtentPropertyEnum p_eProperty, l
 
 	l_hrOk = GetExtentProperty( p_eProperty, l_dValue );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		p_rlValue = static_cast<long>(l_dValue);
 	}
@@ -301,7 +301,7 @@ HRESULT SVImageInfoClass::SetExtentProperty( SVExtentPropertyEnum p_eProperty, d
 
 	l_hrOk = m_svExtents.SetExtentProperty( p_eProperty, p_dValue );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = m_svExtents.UpdateData();
 	}
@@ -315,7 +315,7 @@ HRESULT SVImageInfoClass::SetExtentProperty( SVExtentPropertyEnum p_eProperty, S
 
 	l_hrOk = m_svExtents.SetExtentProperty( p_eProperty, p_svValue );
 
-	if ( l_hrOk == S_OK )
+	if ( S_OK == l_hrOk )
 	{
 		l_hrOk = m_svExtents.UpdateData();
 	}
@@ -332,9 +332,9 @@ HRESULT SVImageInfoClass::GetImageExtentsToFit( SVImageExtentClass p_svInExtent,
 
 	SVExtentPointStruct l_svPositionPoint;
 
-	if( GetOutputRectangle( l_oParentRect ) == S_OK &&
-			p_svInExtent.GetRectangle( l_oNewRect ) == S_OK &&
-			p_svInExtent.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPositionPoint ) == S_OK )
+	if( S_OK == GetOutputRectangle( l_oParentRect ) &&
+		S_OK == p_svInExtent.GetRectangle( l_oNewRect ) &&
+		S_OK == p_svInExtent.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPositionPoint ) )
 	{
 		long l_lWidth = l_oNewRect.right - l_oNewRect.left;
 		long l_lHeight = l_oNewRect.bottom - l_oNewRect.top;
@@ -369,17 +369,17 @@ HRESULT SVImageInfoClass::GetImageExtentsToFit( SVImageExtentClass p_svInExtent,
 
 		l_hrOk = p_svInExtent.SetExtentProperty( SVExtentPropertyPositionPoint, l_svPositionPoint );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = p_svInExtent.SetExtentProperty( SVExtentPropertyWidth, l_lWidth );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = p_svInExtent.SetExtentProperty( SVExtentPropertyHeight, l_lHeight );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			p_rsvOutExtent = p_svInExtent;
 		}
@@ -404,7 +404,7 @@ HRESULT SVImageInfoClass::GetOwnerImage( SVObjectClass*& p_rpObject ) const
 
 	p_rpObject = SVObjectManagerClass::Instance().GetObject( m_OwnerImageID );
 
-	if( p_rpObject == NULL )
+	if( nullptr == p_rpObject )
 	{
 		l_Status = E_FAIL;
 	}
@@ -424,7 +424,7 @@ void SVImageInfoClass::SetOwnerImage( const GUID& p_rObjectID )
 
 SVObjectClass* SVImageInfoClass::GetOwner() const
 {
-	SVObjectClass* l_pObject = NULL;
+	SVObjectClass* l_pObject = nullptr;
 
 	l_pObject = SVObjectManagerClass::Instance().GetObject( m_OwnerObjectID );
 

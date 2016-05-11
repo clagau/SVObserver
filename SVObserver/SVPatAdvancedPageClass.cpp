@@ -581,7 +581,6 @@ void SVPatAdvancedPageClass::AdjustSliderPreliminaryAcceptanceThreshold()
 		SetSliderPosition(IDC_PAT_ACCEPTANCE_THRESHOLD_VALUE);
 
 		int nPos = m_PreliminaryAcceptanceThresholdSliderCtrl.GetPos();
-		//m_dPreliminaryAcceptanceThreshold = static_cast<double>(nPos) / 10.0;
 		m_dPreliminaryAcceptanceThreshold = static_cast<double>(nPos);
 		UpdatePreliminaryAcceptanceThresholdString();
 
@@ -660,7 +659,6 @@ void SVPatAdvancedPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScr
 	{
 		case IDC_PAT_ACCEPTANCE_THRESHOLD_SLIDER:
 		{
-			//m_dPreliminaryAcceptanceThreshold = ((double)iNewPos) / 10.0;
 			m_dPreliminaryAcceptanceThreshold = static_cast<double>(iNewPos);
 			UpdatePreliminaryAcceptanceThresholdString();
 			UpdateData(false);
@@ -707,7 +705,7 @@ void SVPatAdvancedPageClass::SetSliderPosition(UINT nId)
 	GetDlgItemText(nId, strValue);
 	double dValue = atof(strValue.Left(10));
 
-	CSliderCtrl* pSlider = NULL;
+	CSliderCtrl* pSlider = nullptr;
 
 	switch (nId)
 	{

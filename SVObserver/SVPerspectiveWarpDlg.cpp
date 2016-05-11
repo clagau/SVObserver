@@ -59,7 +59,7 @@ HRESULT SVPerspectiveWarpDlg::SetInspectionData()
 
 			long lValue = ( long ) m_FunctionCombo.GetItemData( sel );
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pWarpType, lValue );
 			}
@@ -72,7 +72,7 @@ HRESULT SVPerspectiveWarpDlg::SetInspectionData()
 
 			long lValue = ( long ) m_cbInterpolation.GetItemData( sel );
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequest( m_pInterpolationMode, lValue );
 			}
@@ -80,12 +80,12 @@ HRESULT SVPerspectiveWarpDlg::SetInspectionData()
 
 		if( l_bUpdate )
 		{
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = AddInputRequestMarker();
 			}
 
-			if( l_hrOk == S_OK )
+			if( S_OK == l_hrOk )
 			{
 				l_hrOk = RunOnce( m_pTool );
 			}
@@ -133,7 +133,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVWarpTypeObjectGuid;
-		m_pWarpType = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pWarpType = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( m_pWarpType )
 		{
 			
@@ -150,7 +150,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 
 		// Interpolation Mode
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;

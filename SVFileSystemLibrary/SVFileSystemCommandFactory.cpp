@@ -36,7 +36,7 @@ HRESULT SVFileSystemCommandFactory::DoesFileExist( const SVCommandDataHolder& p_
 
 	l_Status = p_rAttributes.GetValue( _T( "File Name" ), l_Temp );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		FILE *fFile;
 

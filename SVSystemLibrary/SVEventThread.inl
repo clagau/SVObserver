@@ -109,8 +109,8 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Create(const SVEventThreadSig
 
 	if (!m_hShutdown)
 	{
-		m_hShutdown = ::CreateEvent( NULL, TRUE, FALSE, NULL );
-		if (m_hShutdown == NULL)
+		m_hShutdown = ::CreateEvent( nullptr, true, false, nullptr );
+		if (nullptr == m_hShutdown)
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
 
@@ -123,8 +123,8 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Create(const SVEventThreadSig
 
 	if( !m_hThreadComplete )
 	{
-		m_hThreadComplete = ::CreateEvent( NULL, TRUE, TRUE, NULL );
-		if( m_hThreadComplete == NULL )
+		m_hThreadComplete = ::CreateEvent( nullptr, true, true, nullptr );
+		if( nullptr == m_hThreadComplete )
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
 
@@ -137,8 +137,8 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Create(const SVEventThreadSig
 
 	if( !m_hSignalEvent )
 	{
-		m_hSignalEvent = ::CreateEvent( NULL, FALSE, FALSE, NULL );
-		if( m_hThreadComplete == NULL )
+		m_hSignalEvent = ::CreateEvent( nullptr, false, false, nullptr );
+		if( nullptr == m_hThreadComplete )
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
 
@@ -151,10 +151,9 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Create(const SVEventThreadSig
 
 	if (!m_hThread)
 	{
-		m_hThread = ::CreateThread( NULL, 0, SVEventThread::ThreadProc, (LPVOID)this, 0, &m_ulThreadID );
+		m_hThread = ::CreateThread( nullptr, 0, SVEventThread::ThreadProc, (LPVOID)this, 0, &m_ulThreadID );
 		
-
-		if (m_hThread == NULL)
+		if (nullptr == m_hThread)
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
 
@@ -167,7 +166,7 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Create(const SVEventThreadSig
 		{
 			SVThreadManager::Instance().Add(m_hThread, tag);
 
-			if( Result == S_OK )
+			if( S_OK == Result )
 			{
 				unsigned long l_WaitStatus = ::WaitForSingleObject( m_hThreadComplete, 0 );
 
@@ -239,25 +238,25 @@ void SVEventThread< SVEventThreadSignalHandler >::Destroy()
 		}
 		SVThreadManager::Instance().Remove(m_hThread);
 		::CloseHandle( m_hThread );
-		m_hThread = NULL;
+		m_hThread = nullptr;
 	}
 
 	if( m_hSignalEvent )
 	{
 		::CloseHandle( m_hSignalEvent );
-		m_hSignalEvent = NULL;
+		m_hSignalEvent = nullptr;
 	}
 
 	if( m_hThreadComplete )
 	{
 		::CloseHandle( m_hThreadComplete );
-		m_hThreadComplete = NULL;
+		m_hThreadComplete = nullptr;
 	}
 
 	if( m_hShutdown )
 	{
 		::CloseHandle( m_hShutdown );
-		m_hShutdown = NULL;
+		m_hShutdown = nullptr;
 	}
 
 	m_ulThreadID = 0;
@@ -284,7 +283,7 @@ void SVEventThread<SVEventThreadSignalHandler>::SetPriority(int priority)
 template<typename SVEventThreadSignalHandler>
 bool SVEventThread<SVEventThreadSignalHandler>::IsActive() const
 {
-	bool bRetVal = m_hThread != NULL;
+	bool bRetVal = nullptr != m_hThread;
 
 	if( bRetVal )
 	{
@@ -308,13 +307,13 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Signal()
 		l_Status = Restart();
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		if( ! ::SetEvent( m_hSignalEvent ) )
 		{
 			l_Status = Restart();
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				if( ! ::SetEvent( m_hSignalEvent ) )
 				{

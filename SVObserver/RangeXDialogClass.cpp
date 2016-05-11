@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNAMIC(RangeXDialogClass, CDialog)
 
-RangeXDialogClass::RangeXDialogClass(SVRangeClass* range, CWnd* parent /*=NULL*/)
+RangeXDialogClass::RangeXDialogClass(SVRangeClass* range, CWnd* parent /*=nullptr*/)
 : CDialog(RangeXDialogClass::IDD, parent)
 , m_RangeClassHelper(range)
 , m_LastSelected(RangeEnum::ER_COUNT)

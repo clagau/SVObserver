@@ -56,7 +56,7 @@ private:
 	void SetResultRange(const GUID & resultGuid);
 
 public:
-	SVHistogramAnalyzerSetupClass(CWnd* pParent = NULL);   // standard constructor
+	SVHistogramAnalyzerSetupClass(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVHistogramAnalyzerSetupClass();
 
 // Dialog Data

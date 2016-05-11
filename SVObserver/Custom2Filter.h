@@ -30,7 +30,7 @@ public:
 	// Parameter: pOwner <in> The owner of this class
 	// Parameter: StringResourceID <in> The class name resource ID
 	//************************************
-	Custom2Filter( SVObjectClass* pOwner = NULL, int StringResourceID = IDS_CLASSNAME_CUSTOM2FILTER );
+	Custom2Filter( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_CUSTOM2FILTER );
 
 	//************************************
 	// Description: The class destructor

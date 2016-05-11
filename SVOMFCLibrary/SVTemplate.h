@@ -114,10 +114,10 @@ TTemporaryPointerWrapper<TYPE>::TTemporaryPointerWrapper(TYPE* pT)
 template <typename TYPE>
 TTemporaryPointerWrapper<TYPE>::~TTemporaryPointerWrapper()
 {
-	if (m_pTemp != NULL)
+	if (nullptr != m_pTemp)
 	{
 		delete m_pTemp;
-		m_pTemp = NULL;
+		m_pTemp = nullptr;
 	}
 }
 
@@ -162,25 +162,21 @@ public:
 	template<typename DERIVED>
 	    //DERIVED* DerivedValue(const DERIVED*& rpDummyArg)
 		DERIVED* DerivedValue(DERIVED*& rpDummyArg)
-	                            { DERIVED* p = NULL;
+	                            { DERIVED* p = nullptr;
 	                              if (m_pImpl) {p = dynamic_cast< DERIVED* > ((BASETYPE*) *this);
 								              ASSERT(p); }	// if the ASSERT hits, the type is incorrect
 	                              return p;}
 	template<typename DERIVED>
 	    const DERIVED* DerivedValue(const DERIVED*& rpDummyArg) const
-	                            { const DERIVED* p = NULL;
+	                            { const DERIVED* p = nullptr;
 	                              if (m_pImpl) { p = dynamic_cast< const DERIVED* > ((const BASETYPE*) *this);
 								               ASSERT(p); }  // if the ASSERT hits, the type is incorrect
 	                              return p; }
 	template<typename DERIVED>
 	    HRESULT GetDerivedValue(DERIVED*& rpd)
-	                            { if (m_pImpl == NULL) return ERROR_NOT_FOUND; 
-	                              else if ((rpd = dynamic_cast< DERIVED* > ((BASETYPE*) *this)) != NULL) return S_OK;
+	                            { if (nullptr == m_pImpl) return ERROR_NOT_FOUND; 
+	                              else if (nullptr != (rpd = dynamic_cast< DERIVED* > ((BASETYPE*) *this))) return S_OK;
 								  else { ASSERT(rpd); return TYPE_E_TYPEMISMATCH;} }  // if the ASSERT hits, the type is incorrect
-	/*	// commented out because could not get the const to work properly... compiler problem
-	template<typename DERIVED>
-	    HRESULT GetDerivedValue(const DERIVED*& rpd) const { return m_pImpl == NULL ? TYPE_E_ELEMENTNOTFOUND : (rpd = dynamic_cast< const DERIVED* > ((const BASETYPE*) *this)) != NULL ? S_OK : TYPE_E_TYPEMISMATCH;}
-	*/
 private:
 	BASETYPE* m_pImpl;
 };
@@ -192,10 +188,10 @@ private:
 
 // an example of how to use TValueSemantics::GetDerivedValue:
 //    HRESULT hr=S_OK;
-//    SVAcqLutParam* pParam = NULL;
+//    SVAcqLutParam* pParam = nullptr;
 //    hr = rDevice.mapParameters[ AcqParamLut ].GetDerivedValue( pParam );
 //    SVLut lut;
-//    if ( pParam != NULL && hr == S_OK )
+//    if ( nullptr != pParam && S_OK == hr )
 	//        lut = pParam->lut;
 
 
@@ -205,8 +201,8 @@ private:
 // the member function version (see above) is preferred over this method.
 template < typename DERIVED, typename DUMMYARG > DERIVED* DerivedValue ( TValueSemantics<DUMMYARG> base )
 {
-	DERIVED* pd = NULL;
-	if ( ((DUMMYARG*) base) != NULL )
+	DERIVED* pd = nullptr;
+	if ( nullptr != ((DUMMYARG*) base) )
 	{
 		pd = dynamic_cast < DERIVED* > ((DUMMYARG*) base);
 		ASSERT( pd );	// if the ASSERT hits, you are telling it the wrong type
@@ -218,7 +214,7 @@ template < typename DERIVED, typename DUMMYARG > DERIVED* DerivedValue ( TValueS
 template <typename BASETYPE>
 TValueSemantics<BASETYPE>::TValueSemantics()
 {
-	m_pImpl = NULL;
+	m_pImpl = nullptr;
 }
 
 template <typename BASETYPE>
@@ -231,7 +227,7 @@ TValueSemantics<BASETYPE>::TValueSemantics(const BASETYPE* pType)
 		m_pImpl = static_cast<BASETYPE*>( pType->CloneImpl() );
 	}
 	else
-		m_pImpl = NULL;
+		m_pImpl = nullptr;
 }
 
 template <typename BASETYPE>
@@ -252,7 +248,7 @@ TValueSemantics<BASETYPE>::TValueSemantics(const TValueSemantics<BASETYPE>& rhs)
 	}
 	else
 	{
-		m_pImpl = NULL;
+		m_pImpl = nullptr;
 	}
 }
 
@@ -270,7 +266,7 @@ const TValueSemantics<BASETYPE>& TValueSemantics<BASETYPE>::operator = (const TV
 		if ( m_pImpl )
 		{
 			delete m_pImpl;
-			m_pImpl = NULL;
+			m_pImpl = nullptr;
 		}
 		if ( rhs.m_pImpl )
 		{
@@ -284,17 +280,17 @@ const TValueSemantics<BASETYPE>& TValueSemantics<BASETYPE>::operator = (const TV
 template <typename BASETYPE>
 void TValueSemantics<BASETYPE>::Clear()
 {
-	if ( m_pImpl != NULL )
+	if ( nullptr != m_pImpl )
 	{
 		delete m_pImpl;
-		m_pImpl = NULL;
+		m_pImpl = nullptr;
 	}
 }
 
 template <typename BASETYPE>
 bool TValueSemantics<BASETYPE>::IsValid() const
 {
-	return ( m_pImpl != NULL );
+	return ( nullptr != m_pImpl );
 }
 
 template <typename BASETYPE>
@@ -399,7 +395,7 @@ FACTORYBASE* TFactory<TYPEID, FACTORYBASE>::New(TYPEID id)
 	CreateFnMap::const_iterator iter = mapCreateFn.find(id);
 	if (iter != mapCreateFn.end())
 	{
-		if (iter->second == NULL)
+		if (nullptr == iter->second)
 		{
 			std::string sError;
 			std::stringstream stream;
@@ -441,8 +437,6 @@ public:
 };
 // example of usage:
 // typedef TFactorySingleton<SVDeviceParamEnum, SVDeviceParam>::factory TheDeviceParamFactory;
-
-
 
 template <typename TYPEID, typename TYPEID2, class FACTORYBASE> 
 class TDoubleFactory
@@ -505,7 +499,7 @@ FACTORYBASE* TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::New(const TYPEID& id)
 	CreateFnMap::const_iterator iter = mapCreateFn.find(id);
 	if (iter != mapCreateFn.end())
 	{
-		if (iter->second == NULL)
+		if (nullptr == iter->second)
 		{
 			std::string sError;
 			std::stringstream stream;

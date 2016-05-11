@@ -25,7 +25,7 @@ class SVObjectAttributeShim
 {
 public:
 	SVObjectAttributeShim( SVObjectClass* pOwner, UINT& rAttribute, long lIndex );
-	SVObjectAttributeShim( SVObjectAttributeShim& rhs );
+	SVObjectAttributeShim( SVObjectAttributeShim& rhs ); // @WARNING - Argument should be const & - See Implementation
 	~SVObjectAttributeShim();
 	operator volatile UINT& ();
 	const SVObjectAttributeShim& operator =  ( UINT uAttribute );
@@ -47,7 +47,7 @@ inline SVObjectAttributeShim::SVObjectAttributeShim( SVObjectClass* pOwner, UINT
 inline SVObjectAttributeShim::SVObjectAttributeShim( SVObjectAttributeShim& rhs )
 	: m_pOwner ( rhs.m_pOwner ), m_rAttribute ( rhs.m_rAttribute ), m_uOriginal ( rhs.m_uOriginal ), m_lIndex ( rhs.m_lIndex ), m_bUpdate ( true )
 {
-	rhs.m_bUpdate = false;
+	rhs.m_bUpdate = false; // @WARNING [SEJ][20 April 2016] - copy constructor modifying rvalue
 }
 
 inline SVObjectAttributeShim::operator volatile UINT& ()

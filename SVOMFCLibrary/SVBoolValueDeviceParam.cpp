@@ -91,7 +91,7 @@ HRESULT SVBoolValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 bool& BoolValue(SVDeviceParamWrapper& w) 
 {
 	const SVBoolValueDeviceParam* p = w.DerivedValue(p); 
-	if (p == NULL) 
+	if (nullptr == p) 
 	{
 		w = SVBoolValueDeviceParam(); 
 		p = w.DerivedValue(p);

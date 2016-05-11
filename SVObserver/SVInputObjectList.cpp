@@ -9,13 +9,15 @@
 //* .Check In Date   : $Date:   07 Aug 2013 13:27:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVInputObjectList.h"
 #include "SVInfoStructs.h"
 #include "SVValueObject.h"
-#include "SVDigitalInputObject1.h"
+#include "SVDigitalInputObject.h"
 #include "SVRemoteInputObject.h"
 #include "SVCameraDataInputObject.h"
+#pragma endregion Includes
 
 SVInputObjectList::SVInputObjectList( LPCSTR ObjectName )
 : SVObjectClass( ObjectName ), m_bCreated( false )
@@ -37,7 +39,7 @@ SVInputObjectList::~SVInputObjectList()
 
 BOOL SVInputObjectList::Create()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVInputObjectListType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVInputObjectListType;
 
 	try
 	{
@@ -67,7 +69,7 @@ BOOL SVInputObjectList::Destroy()
 
 				l_Iter = m_InputObjects.erase( l_Iter );
 
-				if( pInput != NULL )
+				if( nullptr != pInput )
 				{
 					delete pInput;
 				}
@@ -116,7 +118,7 @@ HRESULT SVInputObjectList::AttachInput( SVInputObject* pInput )
 {
 	HRESULT l_Status = S_OK;
 
-	if( pInput != NULL )
+	if( nullptr != pInput )
 	{
 		if( Lock() )
 		{
@@ -181,7 +183,7 @@ BOOL SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrList& p_rInputs,
 			// Check if output is enabled for this call
 			if( !( pIOEntry.empty() ) && pIOEntry->m_Enabled )
 			{
-				SVInputObject *pInput = NULL;
+				SVInputObject *pInput = nullptr;
 
 				SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( pIOEntry->m_IOId );
 
@@ -190,9 +192,9 @@ BOOL SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrList& p_rInputs,
 					pInput = l_Iter->second;
 				}
 
-				if( pInput != NULL )
+				if( nullptr != pInput )
 				{
-					p_rInputValues[ i ].second = ( pInput->Read( p_rInputValues[ i ].first ) == S_OK );
+					p_rInputValues[ i ].second = ( S_OK == pInput->Read( p_rInputValues[ i ].first ) );
 				}
 				else
 				{
@@ -230,7 +232,7 @@ BOOL SVInputObjectList::ReadInput( SVIOEntryStruct pIOEntry, _variant_t& p_rVari
 			{
 				SVInputObject* l_pInput = l_Iter->second;
 
-				l_Status = ( l_pInput != NULL ) && ( l_pInput->Read( p_rVariant ) == S_OK ); 
+				l_Status = ( nullptr != l_pInput ) && ( S_OK == l_pInput->Read( p_rVariant ) ); 
 			}
 		}
 
@@ -320,7 +322,7 @@ BOOL SVInputObjectList::SetRemoteInput( long lIndex, VARIANT vtValue )
 		{
 			SVRemoteInputObject* pInput = dynamic_cast< SVRemoteInputObject* >( l_Iter->second );
 
-			if( pInput != NULL )
+			if( nullptr != pInput )
 			{
 				bFound = ( lIndex == pInput->m_lIndex );
 

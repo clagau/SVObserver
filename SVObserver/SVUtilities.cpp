@@ -71,39 +71,39 @@ SVUtilitiesClass::~SVUtilitiesClass()
 
 BOOL CALLBACK FindUtilityById (CString &szKeyName, LPVOID pVoid)
 {
-  CString szKey;
-  PUTILITYINFO pUtilInfo = (PUTILITYINFO) pVoid;
+	CString szKey;
+	PUTILITYINFO pUtilInfo = (PUTILITYINFO) pVoid;
 
-  szKey.Format (_T("%s\\%s"), gmszUtilityKey, szKeyName);
+	szKey.Format (_T("%s\\%s"), gmszUtilityKey, szKeyName);
 
-  SVRegistryClass reg(szKey);
-  DWORD dwId, dwPromptForArguments;
+	SVRegistryClass reg(szKey);
+	DWORD dwId, dwPromptForArguments;
 
-  if (reg.GetRegistryValue (gmszIdValueName, &dwId))
-  {
-    if (dwId == pUtilInfo->uiId)
-    {
+	if (reg.GetRegistryValue (gmszIdValueName, &dwId))
+	{
+		if (dwId == pUtilInfo->uiId)
+		{
 			SVString l_Command;
 			SVString l_Arguments;
 			SVString l_WorkingDirectory;
 
-      pUtilInfo->uiId = (UINT) dwId;
-      pUtilInfo->szUtilityName = szKeyName;
-      reg.GetRegistryValue( gmszCommandValueName, l_Command );
-      reg.GetRegistryValue( gmszArgumentsValueName, l_Arguments );
-      reg.GetRegistryValue( gmszWorkingDirectoryValueName, l_WorkingDirectory );
-      reg.GetRegistryValue( gmszPromptValueName, &dwPromptForArguments );
+			pUtilInfo->uiId = (UINT) dwId;
+			pUtilInfo->szUtilityName = szKeyName;
+			reg.GetRegistryValue( gmszCommandValueName, l_Command );
+			reg.GetRegistryValue( gmszArgumentsValueName, l_Arguments );
+			reg.GetRegistryValue( gmszWorkingDirectoryValueName, l_WorkingDirectory );
+			reg.GetRegistryValue( gmszPromptValueName, &dwPromptForArguments );
 
-      pUtilInfo->bPromptForArguments = (BOOL) dwPromptForArguments;
-      pUtilInfo->bUtilityFound = TRUE;
-		pUtilInfo->szCommand = l_Command.c_str();
-      pUtilInfo->szArguments = l_Arguments.c_str();
-      pUtilInfo->szWorkingDirectory = l_WorkingDirectory.c_str();
+			pUtilInfo->bPromptForArguments = (BOOL) dwPromptForArguments;
+			pUtilInfo->bUtilityFound = TRUE;
+			pUtilInfo->szCommand = l_Command.c_str();
+			pUtilInfo->szArguments = l_Arguments.c_str();
+			pUtilInfo->szWorkingDirectory = l_WorkingDirectory.c_str();
 
-      return FALSE;
-    }
-  }
-  return TRUE;
+			return false;
+		}
+	}
+	return true;
 }
 
 void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
@@ -116,7 +116,7 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 	utilInfo.bUtilityFound = FALSE;
 	utilInfo.uiId = uiUtilityId;
 
-	if ( uiUtilityId != ID_EXTRAS_UTILITIES_LIMIT )
+	if ( ID_EXTRAS_UTILITIES_LIMIT != uiUtilityId )
 	{
 		std::map<UINT, SVUtilityIniClass>::iterator iter;
 
@@ -126,21 +126,21 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 			SVUtilityIniClass l_Struct;
 			l_Struct = iter->second;
 
-			if ( l_Struct.m_csPromptForArguments.Left(1).CompareNoCase("Y")== 0 )
-			{
-				utilInfo.bPromptForArguments = TRUE;
-			}
-			else
-			{
-				utilInfo.bPromptForArguments = FALSE;
-			}
-			utilInfo.bUtilityFound = TRUE;
-			utilInfo.szArguments = l_Struct.m_csArguments;
-			utilInfo.szCommand = l_Struct.m_csCommand;
-			utilInfo.szUtilityName = l_Struct.m_csDisplayName;
-			utilInfo.szWorkingDirectory = l_Struct.m_csWorkingDirectory;
-		}
-	}
+		  if ( 0 == l_Struct.m_csPromptForArguments.Left(1).CompareNoCase(_T("Y")) )
+		  {
+			  utilInfo.bPromptForArguments = true;
+		  }
+		  else
+		  {
+			  utilInfo.bPromptForArguments = false;
+		  }
+		  utilInfo.bUtilityFound = true;
+		  utilInfo.szArguments = l_Struct.m_csArguments;
+		  utilInfo.szCommand = l_Struct.m_csCommand;
+		  utilInfo.szUtilityName = l_Struct.m_csDisplayName;
+		  utilInfo.szWorkingDirectory = l_Struct.m_csWorkingDirectory;
+	  }
+  }
 
 	//note: need to prompt for arguments!
 	if (utilInfo.bUtilityFound)
@@ -167,44 +167,25 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 
 BOOL SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
 {
-  SVUtilitiesCustomizeDialogClass dlg;
+	SVUtilitiesCustomizeDialogClass dlg;
 
-  ClearMenu (pMenu);
+	ClearMenu (pMenu);
 
-  dlg.mszUtilityKey = gmszUtilityKey;
-  if ( dlg.DoModal () == IDOK )
-  {	
-	UpdateIni();
-  }
-  return LoadMenu (pMenu);
+	dlg.mszUtilityKey = gmszUtilityKey;
+	if ( IDOK == dlg.DoModal() )
+	{	
+		UpdateIni();
+	}
+	return LoadMenu(pMenu);
 }
 
 BOOL SVUtilitiesClass::ClearMenu(CMenu *pMenu)
 {
-  while (pMenu->GetMenuItemCount () > 2)
-  {
-    pMenu->RemoveMenu (2, MF_BYPOSITION);
-  }
-  return TRUE;
-}
-
-BOOL CALLBACK LoadMenuItem (CString &szKeyName, LPVOID pVoid)
-{
-  CMenu *pMenu = (CMenu *) pVoid;
-  CString szKey;
-  DWORD dwId;
-
-  szKey.Format (_T("%s\\%s"), gmszUtilityKey, szKeyName);
-
-  SVRegistryClass reg(szKey);
-
-  if (reg.GetRegistryValue (gmszIdValueName, &dwId))
-  {
-    pMenu->AppendMenu(MF_STRING, (UINT) dwId, szKeyName);
-  }
-
-  int iCount = pMenu->GetMenuItemCount();
-  return TRUE;
+	while (pMenu->GetMenuItemCount () > 2)
+	{
+		pMenu->RemoveMenu (2, MF_BYPOSITION);
+	}
+	return true;
 }
 
 BOOL SVUtilitiesClass::LoadMenu(CMenu *pMenu)
@@ -214,54 +195,51 @@ BOOL SVUtilitiesClass::LoadMenu(CMenu *pMenu)
 		CleanupIni();
 		LoadMenuFromINI(pMenu);
 	}
-  return TRUE;
+	return true;
 }
 
 CMenu *SVUtilitiesClass::FindSubMenuByName(CMenu *pMenu, CString &szName)
 {
-  CString szMenuText;
-  int i, iLimit;
-  CMenu *pMatchingMenu;
-  
-  if (pMenu == NULL)
-      return (CMenu*) NULL;
-  
-  iLimit = pMenu->GetMenuItemCount ();
-  for (i = 0; i < iLimit; i++)
-  {
-    pMenu->GetMenuString (i, szMenuText, MF_BYPOSITION);
-    if (szMenuText == szName)
-    {
-      return pMenu->GetSubMenu (i);
-    }
-    else
-    {
-      if (pMenu->GetSubMenu (i))
-      {
-        pMatchingMenu = FindSubMenuByName (pMenu->GetSubMenu (i), szName);
-        if (pMatchingMenu)
-        {
-          return pMatchingMenu;
-        }
-      }
-    }
-  }
-  return (CMenu *) NULL;
+	if (nullptr != pMenu)
+	{
+		int iLimit = pMenu->GetMenuItemCount ();
+		for (int i = 0; i < iLimit; i++)
+		{
+			CString szMenuText;
+			pMenu->GetMenuString(i, szMenuText, MF_BYPOSITION);
+			if (szMenuText == szName)
+			{
+				return pMenu->GetSubMenu(i);
+			}
+			else
+			{
+				if (pMenu->GetSubMenu(i))
+				{
+					CMenu* pMatchingMenu = FindSubMenuByName (pMenu->GetSubMenu(i), szName);
+					if (pMatchingMenu)
+					{
+						return pMatchingMenu;
+					}
+				}
+			}
+		}
+	}
+	return nullptr;
 }
 
 BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 {
-	BOOL bRet = TRUE;
+	BOOL bRet = true;
 	SVOINIClass l_svIni;
 	int l_iHighestIndex =0;
 	int iId = ID_EXTRAS_UTILITIES_BASE;
 
 	ClearMenu(pMenu);
 
-	BSTR l_bstrVal = NULL;
+	BSTR l_bstrVal = nullptr;
 	CString csString;
 	CString csStanza;
-	LPTSTR pKeyName = NULL;
+	LPTSTR pKeyName = nullptr;
 	DWORD dwId = 0;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
 
@@ -272,39 +250,39 @@ BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 	
 	CString csIniName = SvStl::GlobalPath::Inst().GetSVUtilityIniPath(); 
 
-	l_iHighestIndex = l_svIni.GetValueInt("General","HighestUtilityIndex",0,csIniName);
+	l_iHighestIndex = l_svIni.GetValueInt(_T("General"), _T("HighestUtilityIndex"), 0, csIniName);
 
 	for ( int i = 0; (i < l_iHighestIndex) && bRet; i++ )
 	{
 		SVUtilityIniClass l_Struct;
-		csStanza.Format("Utility%d",i+1);
-		l_svIni.GetValue(csStanza, "DisplayName","",&l_bstrVal, csIniName);
+		csStanza.Format(_T("Utility%d"), i+1);
+		l_svIni.GetValue(csStanza, _T("DisplayName"), _T(""), &l_bstrVal, csIniName);
 		csString = l_bstrVal;
 		
 		if ( csString.IsEmpty() )
 		{
 			//not found, set bRet = FALSE - will cause a clean to happen
-			bRet = FALSE;
+			bRet = false;
 		}
 		else
 		{
 			iId++;
 			l_Struct.m_csDisplayName = csString;
 
-			l_svIni.GetValue(csStanza, "Command", "", &l_bstrVal, csIniName);
+			l_svIni.GetValue(csStanza, _T("Command"), _T(""), &l_bstrVal, csIniName);
 			l_Struct.m_csCommand = l_bstrVal;
 
-			l_svIni.GetValue(csStanza, "Arguments","",&l_bstrVal, csIniName);
+			l_svIni.GetValue(csStanza, _T("Arguments"), _T(""), &l_bstrVal, csIniName);
 			l_Struct.m_csArguments = l_bstrVal;
 
-			l_svIni.GetValue(csStanza, "WorkingDirectory","",&l_bstrVal, csIniName);
+			l_svIni.GetValue(csStanza, _T("WorkingDirectory"), _T(""), &l_bstrVal, csIniName);
 			l_Struct.m_csWorkingDirectory = l_bstrVal;
 
-			l_svIni.GetValue(csStanza, "PromptForArguments", "", &l_bstrVal, csIniName);
+			l_svIni.GetValue(csStanza, _T("PromptForArguments"), _T(""), &l_bstrVal, csIniName);
 			l_Struct.m_csPromptForArguments = l_bstrVal;
 			dwId = iId;
 			::SysFreeString( l_bstrVal );
-			l_bstrVal = NULL;
+			l_bstrVal = nullptr;
 
 			pApp->m_UtilityMenu[(UINT)dwId] = l_Struct;
 
@@ -317,9 +295,9 @@ BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 BOOL SVUtilitiesClass::CleanupIni()
 {  //this function will cleanup the utility ini file.  
 	SVOINIClass l_svIni;
-	int l_iHighestIndex =0;
+	int l_iHighestIndex = 0;
 
-	BSTR l_bstrVal = NULL;
+	BSTR l_bstrVal = nullptr;
 	CString csString;
 	CString csStanza;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
@@ -335,9 +313,9 @@ BOOL SVUtilitiesClass::CleanupIni()
 		{
 			if ( !sLine.IsEmpty() )
 			{
-				if ( sLine.GetAt(0) == '[' )
+				if ( sLine.GetAt(0) == _T('[') )
 				{
-					if ( sLine.Left(3).Compare("[Ut")== 0 )
+					if ( 0 == sLine.Left(3).Compare(_T("[Ut")) )
 					{
 						l_iHighestIndex++;
 					}
@@ -351,7 +329,7 @@ BOOL SVUtilitiesClass::CleanupIni()
 
 	//find all utilites in the INI file and store into the deque
 
-	BOOL bDone = FALSE;
+	BOOL bDone = false;
 	int iUtilityIndex = 0;
 	CString csValue;
 	int l_iProcessedUtility = 0;
@@ -359,38 +337,38 @@ BOOL SVUtilitiesClass::CleanupIni()
 
 	while ( !bDone )
 	{
-		l_bstrVal = NULL;
+		l_bstrVal = nullptr;
 		SVUtilityIniClass l_Struct;
 		iUtilityIndex++;
-		csStanza.Format("Utility%d",iUtilityIndex);
-		l_svIni.GetValue(csStanza,"DisplayName","",&l_bstrVal,csIniFile);
+		csStanza.Format(_T("Utility%d"), iUtilityIndex);
+		l_svIni.GetValue(csStanza, _T("DisplayName"), _T(""), &l_bstrVal, csIniFile);
 		csValue = l_bstrVal;
 		::SysFreeString( l_bstrVal );
-		l_bstrVal = NULL;
+		l_bstrVal = nullptr;
 		if ( !csValue.IsEmpty() )
 		{
 			//found a utility with the current index. put into map
 			l_iProcessedUtility++;
 			l_Struct.m_csDisplayName = csValue;
-			l_svIni.GetValue(csStanza,"Command","",&l_bstrVal, csIniFile);
+			l_svIni.GetValue(csStanza, _T("Command"), _T(""), &l_bstrVal, csIniFile);
 			l_Struct.m_csCommand = l_bstrVal;
 			::SysFreeString( l_bstrVal );
-			l_bstrVal = NULL;
+			l_bstrVal = nullptr;
 
-			l_svIni.GetValue(csStanza,"Arguments","",&l_bstrVal, csIniFile);
+			l_svIni.GetValue(csStanza, _T("Arguments"), _T("") ,&l_bstrVal, csIniFile);
 			l_Struct.m_csArguments = l_bstrVal;
 			::SysFreeString( l_bstrVal );
-			l_bstrVal = NULL;
+			l_bstrVal = nullptr;
 
-			l_svIni.GetValue(csStanza,"WorkingDirectory","",&l_bstrVal, csIniFile);
+			l_svIni.GetValue(csStanza, _T("WorkingDirectory"), _T(""), &l_bstrVal, csIniFile);
 			l_Struct.m_csWorkingDirectory = l_bstrVal;
 			::SysFreeString( l_bstrVal );
-			l_bstrVal = NULL;
+			l_bstrVal = nullptr;
 
-			l_svIni.GetValue(csStanza,"PromptForArguments","",&l_bstrVal,csIniFile);
+			l_svIni.GetValue(csStanza, _T("PromptForArguments"), _T(""), &l_bstrVal, csIniFile);
 			l_Struct.m_csPromptForArguments = l_bstrVal;
 			::SysFreeString( l_bstrVal );
-			l_bstrVal = NULL;
+			l_bstrVal = nullptr;
 
 			//add struct to the map
 			pApp->m_UtilityMenu[(UINT)iId] = l_Struct;
@@ -404,40 +382,39 @@ BOOL SVUtilitiesClass::CleanupIni()
 
 	//destroy contents of ini file.
 	FILE *fp;
-	if ( (fp = fopen(SvStl::GlobalPath::Inst().GetSVUtilityIniPath() ,"w")) != NULL )
+	if ( nullptr != (fp = fopen(SvStl::GlobalPath::Inst().GetSVUtilityIniPath(), "w")) )
 	{
 		fclose(fp);
 	}
 
 	//write out ini file
 
-	l_svIni.SetValue("General","HighestUtilityIndex",l_iHighestIndex,csIniFile);
+	l_svIni.SetValue(_T("General"), _T("HighestUtilityIndex"), l_iHighestIndex, csIniFile);
 
 	SVUtilityIniClass l_Struct;
 	std::map<UINT,SVUtilityIniClass>::iterator iter;
-
 
 	iId = ID_EXTRAS_UTILITIES_BASE;
 
 	for ( int i = 1; i <= l_iHighestIndex; i++ )
 	{
 		CString csStanza;
-		csStanza.Format("Utility%d",i);
+		csStanza.Format(_T("Utility%d"), i);
 
-		iter = pApp->m_UtilityMenu.find((UINT)(iId+i-1));
+		iter = pApp->m_UtilityMenu.find((UINT)(iId + i-1));
 		if ( iter != pApp->m_UtilityMenu.end() )
 		{
 			l_Struct = iter->second;
 		
-			l_svIni.SetValue(csStanza,"DisplayName",l_Struct.m_csDisplayName,csIniFile);
-			l_svIni.SetValue(csStanza,"Command",l_Struct.m_csCommand,csIniFile);
-			l_svIni.SetValue(csStanza,"Arguments",l_Struct.m_csArguments,csIniFile);
-			l_svIni.SetValue(csStanza,"WorkingDirectory",l_Struct.m_csWorkingDirectory,csIniFile);
-			l_svIni.SetValue(csStanza,"PromptForArguments",l_Struct.m_csPromptForArguments,csIniFile);
+			l_svIni.SetValue(csStanza, _T("DisplayName"), l_Struct.m_csDisplayName, csIniFile);
+			l_svIni.SetValue(csStanza, _T("Command"), l_Struct.m_csCommand, csIniFile);
+			l_svIni.SetValue(csStanza, _T("Arguments"), l_Struct.m_csArguments, csIniFile);
+			l_svIni.SetValue(csStanza, _T("WorkingDirectory"), l_Struct.m_csWorkingDirectory, csIniFile);
+			l_svIni.SetValue(csStanza, _T("PromptForArguments"), l_Struct.m_csPromptForArguments, csIniFile);
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 BOOL SVUtilitiesClass::UpdateIni()
@@ -458,18 +435,17 @@ BOOL SVUtilitiesClass::UpdateIni()
 	{
 		iCnt++;
 		CString csStanza;
-		csStanza.Format("Utility%d",iCnt);
+		csStanza.Format(_T("Utility%d"), iCnt);
 		l_Struct = iter->second;
 
 		//update ini entries for each utility
-		l_svIni.SetValue(csStanza,"DisplayName",l_Struct.m_csDisplayName, csIniName);
-		l_svIni.SetValue(csStanza,"Command",l_Struct.m_csCommand, csIniName);
-		l_svIni.SetValue(csStanza,"Arguments",l_Struct.m_csArguments,csIniName);
-		l_svIni.SetValue(csStanza,"WorkingDirectory",l_Struct.m_csWorkingDirectory,csIniName);
-		l_svIni.SetValue(csStanza,"PromptForArguments",l_Struct.m_csPromptForArguments,csIniName);
+		l_svIni.SetValue(csStanza, _T("DisplayName"), l_Struct.m_csDisplayName, csIniName);
+		l_svIni.SetValue(csStanza, _T("Command"), l_Struct.m_csCommand, csIniName);
+		l_svIni.SetValue(csStanza, _T("Arguments"), l_Struct.m_csArguments, csIniName);
+		l_svIni.SetValue(csStanza, _T("WorkingDirectory"), l_Struct.m_csWorkingDirectory, csIniName);
+		l_svIni.SetValue(csStanza, _T("PromptForArguments"), l_Struct.m_csPromptForArguments, csIniName);
 
 		++iter;
 	}
 	return bRet;
 }
-

@@ -27,16 +27,8 @@
 class SVObjectClass;
 #pragma endregion Declarations
 
-//
-// SVObjectManagerClass
-//
 class SVObjectManagerClass
 {
-	friend class SVIPDoc;
-	friend class SVIODoc;
-	friend class SVToolClass;
-	friend class SVObserverApp;
-
 public:
 	enum SVObjectManagerStateEnum
 	{
@@ -76,8 +68,6 @@ public:
 
 	template< typename SVObjectTypeName >
 	HRESULT ConstructObject( const SVGUID& rClassID, SVObjectTypeName*& rpObject );
-
-	void DestructObject( const SVGUID& rClassID );
 
 	HRESULT GetObjectByIdentifier( const SVGUID& rObjectID, SVObjectClass*& rpObject ) const;
 
@@ -147,16 +137,6 @@ public:
 
 	HRESULT DisconnectObjects( const SVGUID& rSource, const SVGUID& rDestination );
 
-	SVIPDoc* GetIPDoc( const SVGUID& rIPGuid ) const;
-
-	HRESULT RegisterIPDoc( const SVGUID& rIPGuid, SVIPDoc* p_pIPDoc );
-	HRESULT UnregisterIPDoc( const SVGUID& rIPGuid );
-
-	SVIODoc* GetIODoc( const SVGUID& rIPGuid ) const;
-
-	HRESULT RegisterIODoc( const SVGUID& rIOGuid, SVIODoc* p_pIODoc );
-	HRESULT UnregisterIODoc( const SVGUID& rIOGuid );
-
 	long GetShortPPQIndicator() const;
 	void ClearShortPPQIndicator();
 	void IncrementShortPPQIndicator();
@@ -186,6 +166,11 @@ public:
 
 	HRESULT getTreeList(const SVString& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const;
 
+	// This method, Shutdown, is only meant to be called by the main application class and no other
+	// It used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project
+	// So for now the restriction is made manually, just don't call this method anywhere else, as described via this comment
+	void Shutdown();	// This method is only meant to be called by the main application class
+
 protected:
 	typedef std::map< SVString, SVGUID > SVSubjectDataNameSubjectIDMap;
 
@@ -197,7 +182,7 @@ protected:
 		SVSubjectDataNameSubjectIDMap m_SubjectIDs;
 
 		SVCookieEntryStruct()
-		: m_Cookie( 0 ), m_FunctorPtr( NULL ), m_SubjectIDs() {}
+		: m_Cookie( 0 ), m_FunctorPtr( nullptr ), m_SubjectIDs() {}
 
 		SVCookieEntryStruct( long p_Cookie, SVObserverNotificationFunctorPtr p_FunctorPtr )
 		: m_Cookie( p_Cookie ), m_FunctorPtr( p_FunctorPtr ), m_SubjectIDs() {}
@@ -232,17 +217,13 @@ protected:
 		SVSubjectDataNameObserverMap m_DataNameSubjectObservers;
 
 		SVUniqueObjectEntryStruct()
-		: ObjectUID(), PObject( NULL ), m_SubjectIDs(), m_DataNameSubjectObservers() {}
+		: ObjectUID(), PObject( nullptr ), m_SubjectIDs(), m_DataNameSubjectObservers() {}
 	};
 
 	typedef SVSharedPtr< SVUniqueObjectEntryStruct > SVUniqueObjectEntryStructPtr;
 	typedef std::map< GUID, SVUniqueObjectEntryStructPtr > SVUniqueObjectEntryMap;
-	typedef std::map< GUID, SVIPDoc* > SVIPDocMap;
-	typedef std::map< GUID, SVIODoc* > SVIODocMap;
 
 	SVObjectManagerClass();
-
-	void Shutdown();
 
 	HRESULT GetSubjectDataNames( const SVGUID& rSubjectID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 
@@ -256,7 +237,6 @@ protected:
 
 	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const SVGUID& RGuid ) const;
 	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const CString& sName ) const;
-	SVUniqueObjectEntryStructPtr getUniqueObjectEntryCompleteObjectName( const CString& sName ) const;
 
 	HRESULT DetachSubjects( long p_Cookie );
 	HRESULT DetachSubjects( const SVGUID& rObserverID );
@@ -269,8 +249,6 @@ protected:
 
 	SVCookieEntryMap		m_CookieEntries;
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
-	SVIPDocMap				m_IPDocs;
-	SVIODocMap				m_IODocs;
 	RootNameChildMap		m_RootNameChildren;
 	TranslateMap			m_TranslationMap;
 

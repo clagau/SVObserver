@@ -36,7 +36,7 @@ HRESULT SVMatroxGigeBufferCreator<Attribute>::Create(const SVMatroxSystem& rSyst
 	SVMatroxBufferCreateStruct createStruct;
 	l_hr = BuildCreateStruct(p_ulWidth, p_ulHeight, p_ulFormat, createStruct);
 	
-	if (l_hr == S_OK)
+	if (S_OK == l_hr)
 	{
 		SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Create( rSystem, *(rBufferStruct.m_Buffer.get()), createStruct);
 		if (l_Code == SVMEE_STATUS_OK)
@@ -100,7 +100,7 @@ HRESULT SVMatroxGigeBufferCreator<Attribute>::Destroy(SVMatroxGigeBufferStruct& 
 {
 	HRESULT l_hr = S_OK;
 
-	if( rBufferStruct.m_Buffer.get() != NULL )
+	if( nullptr != rBufferStruct.m_Buffer.get() )
 	{
 		rBufferStruct.m_Buffer.get()->clear();
 	}

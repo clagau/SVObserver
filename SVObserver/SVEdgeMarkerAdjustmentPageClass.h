@@ -38,33 +38,33 @@ public:
 
 	void SetNormalizer( const SVValueBaseNormalizerClass &l_rsvNormalizer );
 
-	SVAnalyzerClass *PCurrentAnalyzer;
+	SVAnalyzerClass* m_pCurrentAnalyzer;
 
 	//edge value objects
-	SVBoolValueObjectClass		*m_pvoUseLowerThresholdSelectable;
-	SVBoolValueObjectClass		*m_pvoUseLowerThresholdMaxMinusPercentDiff;
-	SVBoolValueObjectClass		*m_pvoUseLowerThresholdMaxMinusOffset;
-	SVBoolValueObjectClass		*m_pvoUseLowerThresholdMinPlusOffset;
-	SVDWordValueObjectClass		*m_pvoLowerThresholdMaxMinusPercentDiff;
-	SVDWordValueObjectClass		*m_pvoLowerThresholdMaxMinusOffset;
-	SVDWordValueObjectClass		*m_pvoLowerThresholdMinPlusOffset;
-	SVBoolValueObjectClass		*m_pvoUseUpperThresholdSelectable;
-	SVBoolValueObjectClass		*m_pvoUseUpperThresholdMaxMinusPercentDiff;
-	SVBoolValueObjectClass		*m_pvoUseUpperThresholdMaxMinusOffset;
-	SVBoolValueObjectClass		*m_pvoUseUpperThresholdMinPlusOffset;
-	SVDWordValueObjectClass		*m_pvoUpperThresholdMaxMinusPercentDiff;
-	SVDWordValueObjectClass		*m_pvoUpperThresholdMaxMinusOffset;
-	SVDWordValueObjectClass		*m_pvoUpperThresholdMinPlusOffset;
+	SVBoolValueObjectClass* m_pvoUseLowerThresholdSelectable;
+	SVBoolValueObjectClass* m_pvoUseLowerThresholdMaxMinusPercentDiff;
+	SVBoolValueObjectClass* m_pvoUseLowerThresholdMaxMinusOffset;
+	SVBoolValueObjectClass* m_pvoUseLowerThresholdMinPlusOffset;
+	SVDWordValueObjectClass* m_pvoLowerThresholdMaxMinusPercentDiff;
+	SVDWordValueObjectClass* m_pvoLowerThresholdMaxMinusOffset;
+	SVDWordValueObjectClass* m_pvoLowerThresholdMinPlusOffset;
+	SVBoolValueObjectClass* m_pvoUseUpperThresholdSelectable;
+	SVBoolValueObjectClass* m_pvoUseUpperThresholdMaxMinusPercentDiff;
+	SVBoolValueObjectClass* m_pvoUseUpperThresholdMaxMinusOffset;
+	SVBoolValueObjectClass* m_pvoUseUpperThresholdMinPlusOffset;
+	SVDWordValueObjectClass* m_pvoUpperThresholdMaxMinusPercentDiff;
+	SVDWordValueObjectClass* m_pvoUpperThresholdMaxMinusOffset;
+	SVDWordValueObjectClass* m_pvoUpperThresholdMinPlusOffset;
 
-	SVEnumerateValueObjectClass *m_pvoEdgeDirection;
-	SVEnumerateValueObjectClass *m_pvoEdgePolarisation;
-	SVEnumerateValueObjectClass *m_pvoEdgeSelect;
-	SVDoubleValueObjectClass	*m_pvoEdgeSelectThisValue;
-	SVBoolValueObjectClass		*m_pvoEdgeIsFixedEdgeMarker;
-	SVEnumerateValueObjectClass *m_pvoEdgePosition;
-	SVDoubleValueObjectClass	*m_pvoEdgePositionOffsetValue;
-	SVDWordValueObjectClass		*m_pvoEdgeLowerThresholdValue;
-	SVDWordValueObjectClass		*m_pvoEdgeUpperThresholdValue;
+	SVEnumerateValueObjectClass* m_pvoEdgeDirection;
+	SVEnumerateValueObjectClass* m_pvoEdgePolarisation;
+	SVEnumerateValueObjectClass* m_pvoEdgeSelect;
+	SVDoubleValueObjectClass* m_pvoEdgeSelectThisValue;
+	SVBoolValueObjectClass* m_pvoEdgeIsFixedEdgeMarker;
+	SVEnumerateValueObjectClass* m_pvoEdgePosition;
+	SVDoubleValueObjectClass* m_pvoEdgePositionOffsetValue;
+	SVDWordValueObjectClass* m_pvoEdgeLowerThresholdValue;
+	SVDWordValueObjectClass* m_pvoEdgeUpperThresholdValue;
 	
 	//flags
 	BOOL m_bEnableDirection;

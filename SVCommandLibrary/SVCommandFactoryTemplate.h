@@ -11,11 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVCommandTemplate.h"
+#pragma endregion Includes
 
-/*
-*/
 class SVCommandFactoryTemplate
 {
 public:

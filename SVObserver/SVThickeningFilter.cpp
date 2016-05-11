@@ -15,37 +15,14 @@
 #include "SVImageProcessingClass.h"
 #pragma endregion Includes
 
-////////////////////////////////////////////////////////////////////////////////
-// Other Necessary Include File(s) - Module Link(s)
-////////////////////////////////////////////////////////////////////////////////
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVThickeningFilter
-//* Note(s)    : Skeleton Filter Base Class
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 SV_IMPLEMENT_CLASS( SVThickeningFilterClass, SVThickeningFilterClassGuid )
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 SVThickeningFilterClass::SVThickeningFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
@@ -58,13 +35,13 @@ SVThickeningFilterClass::~SVThickeningFilterClass()
 
 void SVThickeningFilterClass::init()
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVThickeningFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVThickeningFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoItterations, SVThickeningFilterItterationsGuid, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoGrayOn, SVThickeningFilterGrayOnGuid, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SVResetItemNone );
 
-	m_lvoItterations.SetDefaultValue( 1L, TRUE );
-	m_bvoGrayOn.SetDefaultValue( FALSE, TRUE );
+	m_lvoItterations.SetDefaultValue( 1L, true );
+	m_bvoGrayOn.SetDefaultValue( false, true );
 
 
 	m_lvoItterations.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
@@ -78,10 +55,6 @@ void SVThickeningFilterClass::init()
 // .Title       : CreateObject
 // -----------------------------------------------------------------------------
 // .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVThickeningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -92,22 +65,14 @@ BOOL SVThickeningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateSt
 	return bOk;
 }
 
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVThickeningFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 { 
-
 	// Force a copy forward to keep the display correct
 	m_lvoItterations.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
 	m_bvoGrayOn.CopyLastSetValue( RRunStatus.m_lResultDataIndex );

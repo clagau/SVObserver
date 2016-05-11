@@ -89,6 +89,7 @@ class ATL_NO_VTABLE CSVCommand :
 {
 public:
 	CSVCommand();
+	virtual ~CSVCommand();
 	
 DECLARE_REGISTRY_RESOURCEID(IDR_SVCOMMAND)
 
@@ -652,7 +653,6 @@ public:
 	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SVSmartHandlePointer ImageHandle, BSTR *pbstr);
 	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr);
 
-	static HRESULT BSTRToImage(bool bCreateNew, BSTR bstr, SVImageInfoClass& rImageInfo,SVSmartHandlePointer &rImageHandle);
 	static SVMatroxBuffer CreateImageFromBSTR( BSTR bstrImage );
 
     static HRESULT SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);

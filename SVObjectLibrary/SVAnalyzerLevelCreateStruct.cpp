@@ -9,25 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:35:02  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVAnalyzerLevelCreateStruct.h"
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Structure Name : SVAnalyzerLevelCreateStruct
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
+#pragma endregion Includes
 
 SVAnalyzerLevelCreateStruct::SVAnalyzerLevelCreateStruct()
 						:SVToolLevelCreateStruct()
@@ -35,8 +20,7 @@ SVAnalyzerLevelCreateStruct::SVAnalyzerLevelCreateStruct()
 	strCreateStructName = "SVObjectLevelCreateStruct\nSVIPDocLevelCreateStruct\nSVToolLevelCreateStruct\nSVAnalyzerLevelCreateStruct";
 }
 
-
-SVAnalyzerLevelCreateStruct::SVAnalyzerLevelCreateStruct( SVObjectLevelCreateStruct& ROLCS )
+SVAnalyzerLevelCreateStruct::SVAnalyzerLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS )
 						:SVToolLevelCreateStruct( ROLCS )
 {
 	strCreateStructName = "SVObjectLevelCreateStruct\nSVIPDocLevelCreateStruct\nSVToolLevelCreateStruct\nSVAnalyzerLevelCreateStruct";

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVEdgeMarkerAdjustmentPageClass.h"
 #include "SVGlobal.h"
-#include "SVObjectAppClass.h"
 #include "SVAnalyzer.h"
 #pragma endregion Includes
 
@@ -30,7 +29,7 @@ IMPLEMENT_DYNCREATE( SVEdgeMarkerAdjustmentPageClass, CPropertyPage )
 
 SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass( UINT nIDCaption /* = 0 */ , int id /* = IDD */) 
 : CPropertyPage( id, nIDCaption )
-, PCurrentAnalyzer( nullptr )
+, m_pCurrentAnalyzer( nullptr )
 , m_pvoEdgeDirection( nullptr )
 , m_pvoEdgePolarisation( nullptr )
 , m_pvoEdgeSelect( nullptr )
@@ -51,15 +50,15 @@ SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass( UINT nIDCaptio
 
 SVEdgeMarkerAdjustmentPageClass::~SVEdgeMarkerAdjustmentPageClass()
 {
-	m_pvoEdgeDirection = NULL;
-	m_pvoEdgePolarisation = NULL;
-	m_pvoEdgeSelect = NULL;
-	m_pvoEdgeSelectThisValue = NULL;
-	m_pvoEdgeIsFixedEdgeMarker = NULL;
-	m_pvoEdgePosition = NULL;
-	m_pvoEdgePositionOffsetValue = NULL;
-	m_pvoEdgeLowerThresholdValue = NULL;
-	m_pvoEdgeUpperThresholdValue = NULL;
+	m_pvoEdgeDirection = nullptr;
+	m_pvoEdgePolarisation = nullptr;
+	m_pvoEdgeSelect = nullptr;
+	m_pvoEdgeSelectThisValue = nullptr;
+	m_pvoEdgeIsFixedEdgeMarker = nullptr;
+	m_pvoEdgePosition = nullptr;
+	m_pvoEdgePositionOffsetValue = nullptr;
+	m_pvoEdgeLowerThresholdValue = nullptr;
+	m_pvoEdgeUpperThresholdValue = nullptr;
 }
 
 HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
@@ -71,12 +70,12 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 
 	l_hrOk = m_pvoEdgeUpperThresholdValue->GetValue( l_dUpper );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = m_pvoEdgeLowerThresholdValue->GetValue( l_dLower );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = UpdateSliderData( l_dLower, l_dUpper );
 	}
@@ -305,16 +304,16 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( PCurrentAnalyzer )
+	if( m_pCurrentAnalyzer )
 	{
 		UpdateData( TRUE ); // get data of dialog	
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( m_pvoEdgeUpperThresholdValue, StrUpper );
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequest( m_pvoEdgeLowerThresholdValue, StrLower );
 		}
@@ -323,7 +322,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 		{
 			case IDC_SEARCHED_EDGE_MARKER_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgeIsFixedEdgeMarker, (double)FALSE );
 				}
@@ -332,7 +331,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_FIXED_EDGE_MARKER_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgeIsFixedEdgeMarker, TRUE );
 				}
@@ -345,7 +344,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 		{
 			case IDC_DIRECTION_HEAD_TO_TAIL_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgeDirection, SV_HEAD_TO_TAIL_DIRECTION );
 				}
@@ -354,7 +353,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_DIRECTION_TAIL_TO_HEAD_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgeDirection, SV_TAIL_TO_HEAD_DIRECTION );
 				}
@@ -367,7 +366,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 		{
 			case IDC_EDGE_SELECT_FIRST_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgeSelect, SV_FIRST_EDGE );
 				}
@@ -376,7 +375,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_EDGE_SELECT_LAST_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgeSelect, SV_LAST_EDGE );
 				}
@@ -385,12 +384,12 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_EDGE_SELECT_THIS_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgeSelect, SV_THIS_EDGE );
 				}
 
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgeSelectThisValue, atof( StrEdgeSelectThis ) );
 				}
@@ -403,7 +402,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 		{
 			case IDC_POLARISATION_ANY_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgePolarisation, SV_ANY_POLARISATION );
 				}
@@ -412,7 +411,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_POLARISATION_NEGATIVE_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgePolarisation, SV_NEGATIVE_POLARISATION );
 				}
@@ -421,7 +420,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_POLARISATION_POSITIVE_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgePolarisation, SV_POSITIVE_POLARISATION );
 				}
@@ -434,7 +433,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 		{
 			case IDC_POSITION_CENTER_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgePosition, SV_CENTER_POSITION );
 				}
@@ -443,7 +442,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_POSITION_END_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgePosition, SV_END_POSITION );
 				}
@@ -452,12 +451,12 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_POSITION_OFFSET_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgePosition, SV_OFFSET_POSITION );
 				}
 
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgePositionOffsetValue, atof( StrPositionOffset ) );
 				}
@@ -466,7 +465,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 			case IDC_POSITION_START_RADIO:
 			{
-				if( l_hrOk == S_OK )
+				if( S_OK == l_hrOk )
 				{
 					l_hrOk = AddInputRequest( m_pvoEdgePosition, SV_START_POSITION );
 				}
@@ -475,17 +474,17 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			}
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( PCurrentAnalyzer->GetTool() );
+			l_hrOk = RunOnce( m_pCurrentAnalyzer->GetTool() );
 		}
 
-		if( GetInspectionData() != S_OK )
+		if( S_OK != GetInspectionData() )
 		{
 			l_hrOk = S_FALSE;
 		}
@@ -589,9 +588,9 @@ BOOL SVEdgeMarkerAdjustmentPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	SetTaskObject( PCurrentAnalyzer );
+	SetTaskObject( m_pCurrentAnalyzer );
 
-	if( ! PCurrentAnalyzer )
+	if( ! m_pCurrentAnalyzer )
 		GetParent()->SendMessage( WM_CLOSE );
 
 	setScrollRange( &UpperSliderCtrl, static_cast<int>(Normalizer.GetRealRangeMin()), static_cast<int>(Normalizer.GetRealRangeMax()) );
@@ -722,7 +721,6 @@ void SVEdgeMarkerAdjustmentPageClass::OnCancel()
 	CPropertyPage ::OnCancel();
 }
 
-
 void SVEdgeMarkerAdjustmentPageClass::OnVScroll( UINT nSBCode, UINT nPos, CScrollBar* pScrollBar ) 
 {
 	if( &UpperSliderCtrl == ( CSliderCtrl* ) pScrollBar )
@@ -749,7 +747,6 @@ void SVEdgeMarkerAdjustmentPageClass::OnVScroll( UINT nSBCode, UINT nPos, CScrol
 
 	CPropertyPage ::OnVScroll( nSBCode, nPos, pScrollBar );
 }
-
 
 BOOL SVEdgeMarkerAdjustmentPageClass::OnSetActive() 
 {

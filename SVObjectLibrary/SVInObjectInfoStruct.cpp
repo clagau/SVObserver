@@ -44,18 +44,6 @@ const SVObjectInfoStruct& SVInObjectInfoStruct::GetInputObjectInfo() const
 	return m_InputObjectInfo;
 }
 
-SVString SVInObjectInfoStruct::GetOneBasedInputObjectShortName() const
-{
-	SVString l_Result;
-
-	if( m_InputObjectInfo.PObject != NULL )
-	{
-		l_Result = static_cast< LPCTSTR >( m_InputObjectInfo.GetObjectReference().GetOneBasedName() );
-	}
-
-	return l_Result;
-}
-
 bool SVInObjectInfoStruct::IsConnected() const
 {
 	return m_IsConnected;
@@ -98,14 +86,14 @@ void SVInObjectInfoStruct::SetInputObject( SVObjectClass* p_pObject )
 {
 	m_InputObjectInfo.SetObject( p_pObject );
 
-	m_IsConnected = ( m_InputObjectInfo.PObject != NULL );
+	m_IsConnected = ( nullptr != m_InputObjectInfo.PObject );
 }
 
 void SVInObjectInfoStruct::SetInputObject( const SVObjectReference& p_rObject )
 {
 	m_InputObjectInfo.SetObject( p_rObject );
 
-	m_IsConnected = ( m_InputObjectInfo.PObject != NULL );
+	m_IsConnected = ( nullptr != m_InputObjectInfo.PObject );
 }
 
 const SVString& SVInObjectInfoStruct::GetInputName() const

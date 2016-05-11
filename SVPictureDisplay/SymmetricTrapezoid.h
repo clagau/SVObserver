@@ -26,7 +26,7 @@ class SymmetricTrapezoid : public RectangleObject
 #pragma region Constructor
 public:
 	SymmetricTrapezoid();
-	~SymmetricTrapezoid();
+	virtual ~SymmetricTrapezoid();
 
 #pragma endregion Constructor
 

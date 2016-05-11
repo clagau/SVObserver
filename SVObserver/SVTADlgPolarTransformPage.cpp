@@ -72,7 +72,7 @@ HRESULT SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 
 		l_hrOk = AddInputRequest( pUseFormula, bUseFormula );
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			int sel = interpolationComboCtrl.GetCurSel();
 			if( sel >= 0 )
@@ -83,7 +83,7 @@ HRESULT SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 			}
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			int sel = m_AngularMethodCombo.GetCurSel();
 			if( sel >= 0 )
@@ -94,12 +94,12 @@ HRESULT SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 			}
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = AddInputRequestMarker();
 		}
 
-		if( l_hrOk == S_OK )
+		if( S_OK == l_hrOk )
 		{
 			l_hrOk = RunOnce( pTool );
 		}
@@ -115,7 +115,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::refresh()
 {
 	if( pTool )
 	{
-		CWnd* pWnd = NULL;
+		CWnd* pWnd = nullptr;
 
 		SetInspectionData();
 
@@ -150,7 +150,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::refresh()
 		if( pInterpolationMode )
 		{
 			CString strEnum;
-			if( pInterpolationMode->GetValue( strEnum ) == S_OK )
+			if( S_OK == pInterpolationMode->GetValue( strEnum ) )
 			{
 				// Set cur sel in combo box...
 				interpolationComboCtrl.SelectString( -1, strEnum );
@@ -274,68 +274,68 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center X...
 		evaluateObjectInfo.SubType = SVEvaluateCenterXObjectType;		
-		pEvaluateCenterX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateCenterX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateCenterX )
 		{
 			// Get Center X Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateCenterXResultObjectGuid;
-			pCenterXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateCenterX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pCenterXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateCenterX, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Center Y...
 		evaluateObjectInfo.SubType = SVEvaluateCenterYObjectType;		
-		pEvaluateCenterY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateCenterY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateCenterY )
 		{
 			// Get Center Y Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateCenterYResultObjectGuid;
-			pCenterYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateCenterY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pCenterYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateCenterY, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Start Radius...
 		evaluateObjectInfo.SubType = SVEvaluateStartRadiusObjectType;		
-		pEvaluateStartRadius = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateStartRadius = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateStartRadius )
 		{
 			// Get Start Radius Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateStartRadiusResultObjectGuid;
-			pStartRadiusResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateStartRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pStartRadiusResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateStartRadius, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate End Radius...
 		evaluateObjectInfo.SubType = SVEvaluateEndRadiusObjectType;		
-		pEvaluateEndRadius = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateEndRadius = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateEndRadius )
 		{
 			// Get End Radius Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateEndRadiusResultObjectGuid;
-			pEndRadiusResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateEndRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pEndRadiusResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateEndRadius, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Start Angle...
 		evaluateObjectInfo.SubType = SVEvaluateStartAngleObjectType;		
-		pEvaluateStartAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateStartAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateStartAngle )
 		{
 			// Get Start Angle Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateStartAngleResultObjectGuid;
-			pStartAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateStartAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pStartAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateStartAngle, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate End Angle...
 		evaluateObjectInfo.SubType = SVEvaluateEndAngleObjectType;		
-		pEvaluateEndAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		pEvaluateEndAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateEndAngle )
 		{
 			// Get End Angle Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateEndAngleResultObjectGuid;
-			pEndAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateEndAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			pEndAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateEndAngle, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Use Formula...
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVOutputUseFormulaObjectGuid;
-		pUseFormula = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		pUseFormula = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( pUseFormula )
 		{
 			pUseFormula->GetValue( bUseFormula );
@@ -343,7 +343,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Use Angle Method ...
 		objectInfo.EmbeddedID = SVOutputAngularMethodObjectGuid;
-		m_pAngleMethod = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pAngleMethod = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( m_pAngleMethod )
 		{
 			CString l_strEnumList;
@@ -353,7 +353,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Interpolation Mode...
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( pInterpolationMode )
 		{
 			// Populate Interpolation Mode combo...

@@ -19,6 +19,7 @@
 #pragma endregion Includes
 
 class SelectedObjectsPage;
+class SVIPDoc;
 
 class SVDataDefinitionSheet : public CPropertySheet, public ISVCancel
 {
@@ -26,7 +27,7 @@ class SVDataDefinitionSheet : public CPropertySheet, public ISVCancel
 
 #pragma region Constructor
 public:
-	SVDataDefinitionSheet( LPCTSTR pszCaption, const SVString& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
+	SVDataDefinitionSheet(SVIPDoc* pDoc, LPCTSTR pszCaption, const SVString& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
 	virtual ~SVDataDefinitionSheet();
 #pragma endregion Constructor
 
@@ -54,6 +55,7 @@ private:
 
 #pragma region Member variables
 private:
+	SVIPDoc* m_pDoc;
 	SVString m_InspectionName;				//Name of the Inspection
 	SVGUID m_InspectionID;					//UniqueID of the Inspection
 	SvOsl::SelectorItemVector m_ValueList;	//The selected value list 

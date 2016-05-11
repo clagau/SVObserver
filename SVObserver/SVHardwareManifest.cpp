@@ -185,6 +185,22 @@ SVString SVHardwareManifest::BuildIOBoardTriggerDeviceName(int iDig)
 	return SvUl_SF::Format("%s%s%d", SVIM_TRIGGER_SOURCE_IO_BOARD_STRING, SVIM_DIG_NAME_STRING, iDig);
 }
 
+bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType )
+{
+	static SVIMProductEnumSet list = boost::assign::list_of<>
+	(SVIM_PRODUCT_X2_GD1A_COLOR)
+	(SVIM_PRODUCT_X2_GD2A_COLOR)
+	(SVIM_PRODUCT_X2_GD4A_COLOR)
+	(SVIM_PRODUCT_X2_GD8A_COLOR)
+	(SVIM_PRODUCT_X2_GD1A)
+	(SVIM_PRODUCT_X2_GD2A)
+	(SVIM_PRODUCT_X2_GD4A)
+	(SVIM_PRODUCT_X2_GD8A)
+	;
+	SVIMProductEnumSet::const_iterator it = list.find(productType);
+	return (it != list.end());
+}
+
 bool SVHardwareManifest::IsCompatible( SVIMProductEnum ConfigType, SVIMProductEnum ProductType )
 {
 	static SVIMProductCompatibilityList l_compatibleList = boost::assign::map_list_of<>

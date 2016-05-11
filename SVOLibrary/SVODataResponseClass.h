@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
+#pragma endregion Includes
 
 /*
 This object holds the data response information to a event.

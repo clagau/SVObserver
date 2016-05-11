@@ -92,78 +92,27 @@ protected:
 	SVBoolValueObjectClass	failed;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Class SVAnalyzeFeatureClass
-// -----------------------------------------------------------------------------
-// .Description : e.g. This base class capsules an Image and provides its ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 class SVAnalyzeFeatureClass : public SVTaskObjectClass
 {
 	SV_DECLARE_CLASS( SVAnalyzeFeatureClass );
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-// Standard constructor
 	SVAnalyzeFeatureClass( LPCSTR ObjectName = "Unknown Analyze Feature" );
-// Standard destructor
 	virtual ~SVAnalyzeFeatureClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
-////////////////////////////////////////////////////////////////////////////////
-// Create Operator
-////////////////////////////////////////////////////////////////////////////////
 	BOOL Create( LPCSTR ObjectName, long F );
 
-	void create( int MaxNumber = SV_DEFAULT_MAX_BLOB_NUMBER, SVRangeClass* R = NULL );
+	BOOL IsFailed() const;
+	BOOL IsWarned() const;
 
-////////////////////////////////////////////////////////////////////////////////
-// is... Operator
-////////////////////////////////////////////////////////////////////////////////
-	BOOL IsFailed();
-	BOOL IsWarned();
+	long getFeature() const;
 
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
-public:
-	void setFeatureResultRange( SVRangeClass* R );
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-public:
-	SVRangeClass*	getFeatureResultRange();
-	double*			getResultArray();
-	long			getFeature();
-	TCHAR*			GetResultArrayString( int N );
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
 protected:
-	long			feature;
-	double*			resultArray;
-	SVRangeClass*	featureResultRange;
-	int				resultArraySize;
-	BOOL			failed;
-	BOOL			warned;
-
-	char*			resultString;
+	long feature;
+	double* resultArray;
+	SVRangeClass* featureResultRange;
+	int resultArraySize;
+	BOOL failed;
+	BOOL warned;
+	char* resultString;
 };

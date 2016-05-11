@@ -74,18 +74,18 @@ HRESULT SVODeviceClass::Create( unsigned long ulSize )
 		hrOk = Destroy();
 	}
 
-	if ( hrOk == S_OK )
+	if ( S_OK == hrOk )
 	{
 		m_CallbackList.Create();
 
-		if( m_CallbackList.IsCreated() && hrOk == S_OK )
+		if( m_CallbackList.IsCreated() && S_OK == hrOk )
 		{
 			mbIsValid = TRUE;
 			mbIsCreated = TRUE;
 		}
 		else
 		{
-			if (hrOk == S_OK)
+			if (S_OK == hrOk)
 			{
 				hrOk = -4353;
 			}
@@ -318,7 +318,7 @@ HRESULT SVODeviceClass::Start()
 	{
 		hrOk = m_Thread.Create( &SVODeviceClass::APCProc, SVProcessFunctorImpl( this ), mDeviceName.c_str(), SVAffinityAcq );
 
-		if( hrOk == S_OK )
+		if( S_OK == hrOk )
 		{
 			m_Thread.SetPriority( THREAD_PRIORITY_TIME_CRITICAL );
 
@@ -326,7 +326,7 @@ HRESULT SVODeviceClass::Start()
 			{
 				hrOk = Reset();
 
-				if ( hrOk == S_OK )
+				if ( S_OK == hrOk )
 				{
 					mbIsStarted = TRUE;
 				}
@@ -413,12 +413,12 @@ HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
 
 		bDone = lRes < 1;
 		
-		while( ! bDone && hrOk == S_OK )
+		while( ! bDone && S_OK == hrOk )
 		{
 			SVOResponseClass l_Response;
 
 			hrOk = ProcessResponse( mUsedQueue, l_Response );
-			if ( hrOk == S_OK )
+			if ( S_OK == hrOk )
 			{
 				hrOk = ExecuteCallback( m_CallbackList, l_Response );
 			}
@@ -450,7 +450,7 @@ HRESULT SVODeviceClass::Notify( SVOResponseClass& p_rResponse )
 	if ( mbIsStarted )
 	{
 		hrOk = AddUsedResponse( mUsedQueue, p_rResponse );
-		if ( hrOk == S_OK )
+		if ( S_OK == hrOk )
 		{
 			hrOk = m_Thread.Signal( this );
 		}
@@ -535,9 +535,7 @@ HRESULT SVODeviceClass::ExecuteCallback( SVCallbackClassPtrQueue &rCallbackList,
 			m_CallbackList.GetAt( l, &pData );
 			if ( !( pData.empty() ) )
 			{
-				if ( (pData->mpCallback)( pData->mpvOwner,
-																	pData->mpvCaller,
-																	&p_rResponse ) != S_OK )
+				if ( S_OK != (pData->mpCallback)( pData->mpvOwner, pData->mpvCaller, &p_rResponse ) )
 				{
 					hrOk = -4386;;
 				}
@@ -592,7 +590,7 @@ HRESULT SVODeviceClass::TriggerDevice()
 		SVOResponseClass l_Response;
 
 		hrOk = AddUsedResponse( mUsedQueue, l_Response );
-		if ( hrOk == S_OK )
+		if ( S_OK == hrOk )
 		{
 			hrOk = m_Thread.Signal( this );
 		}

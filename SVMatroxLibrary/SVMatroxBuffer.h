@@ -24,18 +24,8 @@
 class SVMatroxBuffer
 {
 public:
-	friend class SVExternalToolTask;
-	friend class SVMatroxBufferArray;
 	friend class SVMatroxBufferInterface;
-	friend class SVMatroxBarCodeInterface;
-	friend class SVMatroxBlobInterface;
-	friend class SVMatroxDigitizerInterface;
 	friend class SVMatroxDisplayInterface;
-	friend class SVMatroxGraphicsInterface;
-	friend class SVMatroxImageInterface;
-	friend class SVMatroxOcrInterface;
-	friend class SVMatroxPatternInterface;
-	friend class SVMatroxDisplayBuffer;
 
 	SVMatroxBuffer();
 	SVMatroxBuffer(const SVMatroxBuffer& p_rBuf);
@@ -55,9 +45,8 @@ public:
 
 	bool IsParent( const SVMatroxBuffer& p_rParent ) const;
 
-protected:
 	SVMatroxIdentifier GetIdentifier() const;
 
+protected:
 	SVMatroxBufferPtr m_BufferPtr;
-
 };

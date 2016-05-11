@@ -8,7 +8,8 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 16:18:00  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
+#pragma endregion Includes
 

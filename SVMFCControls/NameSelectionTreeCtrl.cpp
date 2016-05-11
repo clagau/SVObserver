@@ -100,7 +100,7 @@ namespace Seidenader
 
 			NameSelectionTreeCtrl::NameSelectionTreeCtrl()
 				: CTreeCtrl()
-				, m_hLastChecked(NULL)
+				, m_hLastChecked(nullptr)
 				, m_bSingleSelect(false)
 				, m_bAllowWholeArray(false)
 				, m_bAllowBranchCheck(false)
@@ -150,10 +150,10 @@ namespace Seidenader
 				SetImageList(&m_StateImageList, TVSIL_STATE);
 			}
 
-			// SEJ - unwind this mess...
+			// @TODO - unwind this mess...
 			void NameSelectionTreeCtrl::Populate(const SvUl::NameSelectionList& list)
 			{
-				HTREEITEM hRoot = NULL;       
+				HTREEITEM hRoot = nullptr;       
 
 				m_mapIndexes.clear();
 				DeleteAllItems();
@@ -179,7 +179,7 @@ namespace Seidenader
 					for (int nLevel = 0; nLevel < nCountTokens; nLevel++)
 					{
 						// Check for next child. 
-						// If hChild == NULL then we are at the root.
+						// If nullptr == hChild then we are at the root.
 						if (nLevel == 0)
 						{
 							hChild = hRoot;    // Force the root node.
@@ -211,7 +211,7 @@ namespace Seidenader
 							// At this same level see if there are any more tree 'siblings'.
 							HTREEITEM hSibling = GetNextSiblingItem(hChild);
 
-							if (hSibling == NULL)
+							if (nullptr == hSibling)
 							{
 								bDone = true;
 								continue;
@@ -227,7 +227,7 @@ namespace Seidenader
 							for (int nNewLevel = nLevel; nNewLevel < nCountTokens; nNewLevel++)
 							{
 								CString csNewChild = arrayCSNames.GetAt(nNewLevel);
-								if (hNewChild == NULL)
+								if (nullptr == hNewChild)
 								{
 									if (m_bAllowBranchCheck)
 									{
@@ -347,7 +347,7 @@ next_i:;
 				HTREEITEM hNextSibling = GetNextSiblingItem(hItem);
 				SetBranchChecks(hItem, false);
 				//check if there are sibling roots (each inspection is its own root)
-				while(hNextSibling != NULL)
+				while (nullptr != hNextSibling)
 				{
 					SetBranchChecks(hNextSibling,false);
 					hNextSibling = GetNextSiblingItem(hNextSibling);
@@ -367,7 +367,7 @@ next_i:;
 
 				if (bCheck)
 				{
-					if (m_bSingleSelect && m_hLastChecked != NULL) // deselect last on tree control
+					if (m_bSingleSelect && nullptr != m_hLastChecked) // deselect last on tree control
 					{
 						SetCheckState(m_hLastChecked, false);
 					}
@@ -414,7 +414,7 @@ next_i:;
 
 			void NameSelectionTreeCtrl::UpdateNodeStateColor(HTREEITEM hItem, long& p_rlFlags)
 			{
-				HTREEITEM hItemLast = NULL;
+				HTREEITEM hItemLast = nullptr;
 				while (hItem)
 				{
 					hItemLast = hItem;
@@ -514,7 +514,7 @@ next_i:;
 				SetCheckState(hItem, p_bNewBranchState, false);
 				// **** Set Check on Everything below this node...
 				HTREEITEM hChildItem = GetChildItem(hItem);
-				while (hChildItem != NULL) // && l_bStillChecking )
+				while (nullptr != hChildItem)
 				{
 					DWORD_PTR dwItemData = GetItemData(hChildItem);
 					if (!dwItemData)
@@ -548,10 +548,10 @@ next_i:;
 				HTREEITEM hRetItem = hItem;
 				HTREEITEM hTempItem = hItem;
 
-				while (hTempItem != NULL)
+				while (nullptr != hTempItem )
 				{
 					hTempItem =	GetParentItem(hTempItem);
-					if (hTempItem != NULL)
+					if (nullptr != hTempItem)
 					{
 						hRetItem = hTempItem;
 					}

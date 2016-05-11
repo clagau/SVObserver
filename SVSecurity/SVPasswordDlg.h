@@ -14,7 +14,7 @@
 class SVPasswordDlg : public CDialog
 {
 public:
-	SVPasswordDlg(CWnd* pParent = NULL);   // standard constructor
+	SVPasswordDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVPasswordDlg();
 
 	//{{AFX_DATA(SVPasswordDlg)

@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:28:44  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVFileAcquisitionDeviceApp.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,6 +66,10 @@ SVFileAcquisitionDeviceApp::SVFileAcquisitionDeviceApp()
 	// Place all significant initialization in InitInstance
 }
 
+SVFileAcquisitionDeviceApp::~SVFileAcquisitionDeviceApp()
+{
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // The one and only SVFileAcquisitionDeviceApp object
 
@@ -73,11 +79,11 @@ BOOL SVFileAcquisitionDeviceApp::InitInstance()
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	if ( m_fileAcqDevice.Open() == S_OK )
+	if ( S_OK == m_fileAcqDevice.Open() )
 	{
 		return CWinApp::InitInstance();
 	}
-	return FALSE;
+	return false;
 }
 
 int SVFileAcquisitionDeviceApp::ExitInstance() 

@@ -25,34 +25,34 @@ public:
 	std::string GetValueString( LPCTSTR p_szSection,
 	                  LPCTSTR p_szKey,
 	                  LPCTSTR p_szDefault,
-	                  LPCTSTR p_szFileName = NULL );
+	                  LPCTSTR p_szFileName = nullptr );
 
 	HRESULT GetValue( LPCTSTR p_szSection,
 	                  LPCTSTR p_szKey,
 	                  LPCTSTR p_szDefault,
 	                  BSTR*   p_pbstrValue,
-	                  LPCTSTR p_szFileName = NULL );
+	                  LPCTSTR p_szFileName = nullptr );
 
 	HRESULT GetValue( LPCTSTR p_szSection,
 	                  LPCTSTR p_szKey,
 	                  int     p_iDefault,
 	                  int*    p_piValue,
-	                  LPCTSTR p_szFileName = NULL );
+	                  LPCTSTR p_szFileName = nullptr );
 
 	int GetValueInt( LPCTSTR p_szSection,
 	                     LPCTSTR p_szKey,
 	                     int     p_iDefault,
-	                     LPCTSTR p_szFileName = NULL );
+	                     LPCTSTR p_szFileName = nullptr );
 
 	HRESULT SetValue( LPCTSTR p_szSection,
 	                  LPCTSTR p_szKey,
 	                  LPCTSTR p_szValue,
-	                  LPCTSTR p_szFileName = NULL );
+	                  LPCTSTR p_szFileName = nullptr );
 
 	HRESULT SetValue( LPCTSTR p_szSection,
 	                  LPCTSTR p_szKey,
 	                  int     p_iValue,
-	                  LPCTSTR p_szFileName = NULL );
+	                  LPCTSTR p_szFileName = nullptr );
 protected:
 	LPTSTR	m_tszFile;
 };

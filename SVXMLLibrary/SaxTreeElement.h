@@ -181,17 +181,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		void PrintElement(std::wstringstream& stream );
 		void PrintElementStart(std::wstringstream& stream );
 		void PrintElementEnd(std::wstringstream& stream );
-
-		//************************************
-		//! Compare function necessary tree library
-		//! \param lhs [in]
-		//! \param rhs [in]
-		//! \returns friend bool
-		//************************************
-		friend bool operator <(const SaxTreeElement& lhs, const SaxTreeElement& rhs)
-		{
-			return true;
-		};
+	
 	#pragma endregion Public Methods
 		
 	#pragma region Member variables

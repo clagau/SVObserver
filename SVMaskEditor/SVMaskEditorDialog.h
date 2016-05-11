@@ -9,17 +9,11 @@
 // * .Check In Date   : $Date:   26 Apr 2013 14:07:50  $
 // ******************************************************************************
 
-//{{AFX_INCLUDES()
-#include "SVMaskEditorWnd.h"
-//}}AFX_INCLUDES
-#if !defined(AFX_SVMASKEDITORDIALOG_H__BB21D9F0_E6F9_11D2_A77B_00106F000C7D__INCLUDED_)
-#define AFX_SVMASKEDITORDIALOG_H__BB21D9F0_E6F9_11D2_A77B_00106F000C7D__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVMaskEditorDialog.h : header file
-//
+
+#pragma region Includes
+#include "SVMaskEditorWnd.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVMaskEditorDialogClass dialog
@@ -28,7 +22,7 @@ class SVMaskEditorDialogClass : public CDialog
 {
 // Construction
 public:
-	SVMaskEditorDialogClass( CWnd* pParent = NULL );   // standard constructor
+	SVMaskEditorDialogClass( CWnd* pParent = nullptr );   // standard constructor
 
     void PanX( int OffsetX );
     void PanY( int OffsetY );
@@ -115,13 +109,9 @@ protected:
 	BOOL						bNewDrawObject;
 	BOOL						bDrawActive;
 	SVGraphixDrawObjectClass*	pCurrentDrawObject;
-
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVMASKEDITORDIALOG_H__BB21D9F0_E6F9_11D2_A77B_00106F000C7D__INCLUDED_)
-
 
 

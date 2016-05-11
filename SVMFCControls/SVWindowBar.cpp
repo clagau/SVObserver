@@ -57,11 +57,8 @@ namespace Seidenader
 			UpdateDialogControls(pTarget, bDisableIfNoHndler);
 		}
 
-
 		BOOL SVWindowBarClass::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext ) 
 		{
-			//SetBorders( 0, 3, 0, 3 );
-
 			dwStyle |= CBRS_BORDER_ANY;
 
 			// save the style
@@ -72,7 +69,7 @@ namespace Seidenader
 
 		BOOL SVWindowBarClass::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID ) 
 		{
-			ASSERT( pParentWnd != NULL );
+			ASSERT( nullptr != pParentWnd );
 			ASSERT_KINDOF( CFrameWnd, pParentWnd );
 
 			CRect rect;
@@ -220,25 +217,11 @@ namespace Seidenader
 		void SVWindowBarClass::AssertValid() const
 		{
 			CControlBar::AssertValid();
-
-			//	ASSERT(m_nCount == 0 || m_pData != NULL);
-			//	ASSERT((m_dwStyle & CBRS_ALL) == m_dwStyle);
 		}
 
 		void SVWindowBarClass::Dump(CDumpContext& dc) const
 		{
 			CControlBar::Dump(dc);
-			/*
-			dc << "\nm_cxLeftBorder = " << m_cxLeftBorder;
-			dc << "\nm_cxRightBorder = " << m_cxRightBorder;
-			dc << "\nm_cyTopBorder = " << m_cyTopBorder;
-			dc << "\nm_cyBottomBorder = " << m_cyBottomBorder;
-			dc << "\nm_cxDefaultGap = " << m_cxDefaultGap;
-			dc << "\nm_nCount = " << m_nCount;
-			dc << "\nm_bAutoDelete = " << m_bAutoDelete;
-
-			dc << "\n";
-			*/
 		}
 #endif
 	} //SVMFCControls

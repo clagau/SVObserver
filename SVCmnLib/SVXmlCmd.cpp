@@ -64,22 +64,22 @@ _T("</Schema>");
 SVXmlCmd::SVXmlCmd()
 {
 	m_ResultsDataLength = 0;
-	m_pResultsDataElements = NULL;
+	m_pResultsDataElements = nullptr;
 }
 
 SVXmlCmd::~SVXmlCmd()
 {
-	if(m_pResultsDataElements != NULL)
+	if(nullptr != m_pResultsDataElements)
 		{
 		free(m_pResultsDataElements);
-		m_pResultsDataElements = NULL;
+		m_pResultsDataElements = nullptr;
 		}
 }
 BOOL SVXmlCmd::InitXml()
 {
 	Reset();
 	m_ResultsDataLength = 0;
-	m_pResultsDataElements = NULL;
+	m_pResultsDataElements = nullptr;
 	SetSchemaFilename(CString(""));
 	BOOL blReturn = SVXml::InitXml( g_szCmdSchema );
 	ClearResultsData();
@@ -91,65 +91,65 @@ BOOL SVXmlCmd::InitXml(LPCTSTR szSchemaFileName)
 {
 	Reset();
 	m_ResultsDataLength = 0;
-	m_pResultsDataElements = NULL;
+	m_pResultsDataElements = nullptr;
 	SetSchemaFilename(CString(szSchemaFileName));
-	BOOL blReturn = SVXml::InitXml(NULL);
+	BOOL blReturn = SVXml::InitXml(nullptr);
 	ClearResultsData();
 	return blReturn;
 }
 
 BOOL SVXmlCmd::SetCommand(LPCTSTR Data)
 {
-	Element * pRootElement = NULL;
-	Attribute * pAttribute = NULL;
+	Element * pRootElement = nullptr;
+	Attribute * pAttribute = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pAttribute = pRootElement->GetChildAttribute(_T("Command"));
-	if(pAttribute == NULL)return FALSE;
+	if(nullptr == pAttribute)return FALSE;
 	//set the data
 	return (pAttribute->SetData(Data));
 }
 
 BOOL SVXmlCmd::SetSVIMfilename(LPCTSTR Data)
 {
-	Element * pRootElement = NULL;
-	Element * pElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pElement = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pElement = pRootElement->GetChildElement(_T("SVIM_filename"));
-	if(pElement == NULL)return FALSE;
+	if(nullptr == pElement)return FALSE;
 	//set the data
 	return (pElement->SetData(Data));
 }
 
 BOOL SVXmlCmd::SetRemotefilename(LPCTSTR Data)
 {
-	Element * pRootElement = NULL;
-	Element * pElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pElement = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pElement = pRootElement->GetChildElement(_T("Remote_filename"));
-	if(pElement == NULL)return FALSE;
+	if(nullptr == pElement)return FALSE;
 	//set the data
 	return (pElement->SetData(Data));
 }
 
 BOOL SVXmlCmd::SetSVIMstate(ULONG Data)
 {
-	Element * pRootElement = NULL;
-	Element * pElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pElement = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pElement = pRootElement->GetChildElement(_T("SVIM_state"));
-	if(pElement == NULL)return FALSE;
+	if(nullptr == pElement)return FALSE;
 	//set the data
 	return (pElement->SetData(Data));
 }
@@ -157,14 +157,14 @@ BOOL SVXmlCmd::SetSVIMstate(ULONG Data)
 
 BOOL SVXmlCmd::SetBinData(BYTE *pBuf, ULONG FileLength)
 {
-	Element * pRootElement = NULL;
-	Element * pElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pElement = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pElement = pRootElement->GetChildElement(_T("Bin_data"));
-	if(pElement == NULL)return FALSE;
+	if(nullptr == pElement)return FALSE;
 	//set the data
 	return (pElement->SetData(pBuf,FileLength));
 }
@@ -173,14 +173,14 @@ BOOL SVXmlCmd::SetBinData(BYTE *pBuf, ULONG FileLength)
 
 BOOL SVXmlCmd::GetCommand(LPTSTR * szTemp)
 {
-	Element * pRootElement = NULL;
-	Attribute * pAttribute = NULL;
+	Element * pRootElement = nullptr;
+	Attribute * pAttribute = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pAttribute = pRootElement->GetChildAttribute(_T("Command"));
-	if(pAttribute == NULL)return FALSE;
+	if(nullptr == pAttribute)return FALSE;
 	//set the data
 	pAttribute->GetData(szTemp);
 	return TRUE;
@@ -188,14 +188,14 @@ BOOL SVXmlCmd::GetCommand(LPTSTR * szTemp)
 
 BOOL SVXmlCmd::GetSVIMfilename(LPTSTR * szTemp)
 {
-	Element * pRootElement = NULL;
-	Element * pElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pElement = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pElement = pRootElement->GetChildElement(_T("SVIM_filename"));
-	if(pElement == NULL)return FALSE;
+	if(nullptr == pElement)return FALSE;
 	//set the data
 	pElement->GetData(szTemp);
 	return TRUE;
@@ -203,14 +203,14 @@ BOOL SVXmlCmd::GetSVIMfilename(LPTSTR * szTemp)
 
 BOOL SVXmlCmd::GetRemotefilename(LPTSTR *szTemp)
 {
-	Element * pRootElement = NULL;
-	Element * pElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pElement = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pElement = pRootElement->GetChildElement(_T("Remote_filename"));
-	if(pElement == NULL)return FALSE;
+	if(nullptr == pElement)return FALSE;
 	//set the data
 	pElement->GetData(szTemp);
 	return TRUE;
@@ -218,14 +218,14 @@ BOOL SVXmlCmd::GetRemotefilename(LPTSTR *szTemp)
 
 BOOL SVXmlCmd::GetSVIMstate(ULONG * Data)
 {
-	Element * pRootElement = NULL;
-	Element * pElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pElement = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pElement = pRootElement->GetChildElement(_T("SVIM_state"));
-	if(pElement == NULL)return FALSE;
+	if(nullptr == pElement)return FALSE;
 	//set the data
 	pElement->GetData(Data);
 	return TRUE;
@@ -234,14 +234,14 @@ BOOL SVXmlCmd::GetSVIMstate(ULONG * Data)
 
 BOOL SVXmlCmd::GetBinData(BYTE **pBuf, ULONG * FileLength)
 {
-	Element * pRootElement = NULL;
-	Element * pElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pElement = nullptr;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 	//find the Attribute
 	pElement = pRootElement->GetChildElement(_T("Bin_data"));
-	if(pElement == NULL)return FALSE;
+	if(nullptr == pElement)return FALSE;
 	//set the data
 	return (pElement->GetData(pBuf,FileLength));
 }
@@ -249,23 +249,23 @@ BOOL SVXmlCmd::GetBinData(BYTE **pBuf, ULONG * FileLength)
 BOOL SVXmlCmd::SetResultsData(CString szIPD, CString szFullname, CString szValue, CString szType)
 {
 
-	Element * pRootElement = NULL;
-	Element * pResultsElement = NULL;
-	Element ** pIpdElements = NULL;
-	Element * pIpdElement = NULL;
-	Element * pElement = NULL;
-	Element * pSubElement = NULL;
-	Element * pNewSubElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pResultsElement = nullptr;
+	Element ** pIpdElements = nullptr;
+	Element * pIpdElement = nullptr;
+	Element * pElement = nullptr;
+	Element * pSubElement = nullptr;
+	Element * pNewSubElement = nullptr;
 
 
 	int nIpds = 0;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 
 	//first search for the Results element
 	pResultsElement = pRootElement->GetChildElement(_T("Results"));
-	if(pResultsElement == NULL)return FALSE;
+	if(nullptr == pResultsElement)return FALSE;
 
 	//next find all the IPD elements under the Results element
 	nIpds = pResultsElement->FindChildElements(_T("IPD"),&pIpdElements);
@@ -282,7 +282,7 @@ BOOL SVXmlCmd::SetResultsData(CString szIPD, CString szFullname, CString szValue
 			pPtr++;
 			//get Name attribute
 			Attribute * pAttr = pPtr->GetChildAttribute(_T("Name"));
-			if(pAttr == NULL)continue;
+			if(nullptr == pAttr)continue;
 			//get the name value from the Name attribute			
 			pAttr->GetData(&pName);
 			//compare to search name
@@ -303,11 +303,11 @@ BOOL SVXmlCmd::SetResultsData(CString szIPD, CString szFullname, CString szValue
 	//free the list of ipd pointers
 	if(pIpdElements)free(pIpdElements);
 
-	if(pIpdElement == NULL)
+	if(nullptr == pIpdElement)
 		{//create IPD element since it does not exist
 		pIpdElement = GetElementFromList(_T("IPD"));
 		//return if not found
-		if(pIpdElement == NULL)return FALSE;
+		if(nullptr == pIpdElement)return FALSE;
 		//create the child attribute
 		Attribute * pAttr = GetAttributeFromList(_T("Name"));
 		//set the data
@@ -348,7 +348,7 @@ BOOL SVXmlCmd::SetResultsData(CString szIPD, CString szFullname, CString szValue
 			Element * pElem = pSubElement->ppElements[y];
 			//get Name attribute
 			Attribute * pAttr = pElem->GetChildAttribute(_T("Name"));
-			if(pAttr == NULL)continue;
+			if(nullptr == pAttr)continue;
 			//get the name value from the Name attribute			
 			pAttr->GetData(&pName);
 			//compare to search name
@@ -358,7 +358,7 @@ BOOL SVXmlCmd::SetResultsData(CString szIPD, CString szFullname, CString szValue
 				break;
 				}
 			}
-		if(pNewSubElement == NULL)
+		if(nullptr == pNewSubElement)
 			{//no kids, create the tool
 			if(index == szToolNames.GetSize()-1)
 				{
@@ -369,7 +369,7 @@ BOOL SVXmlCmd::SetResultsData(CString szIPD, CString szFullname, CString szValue
 				pNewSubElement = GetElementFromList(_T("Tool"));
 				}
 			//return if not found
-			if(pNewSubElement == NULL)return FALSE;
+			if(nullptr == pNewSubElement)return FALSE;
 			//create the child attribute
 			Attribute * pAttr = GetAttributeFromList(_T("Name"));
 			//set the data
@@ -380,7 +380,7 @@ BOOL SVXmlCmd::SetResultsData(CString szIPD, CString szFullname, CString szValue
 			pSubElement->AddChildElement(pNewSubElement);
 			}
 		pSubElement = pNewSubElement;
-		pNewSubElement = NULL;
+		pNewSubElement = nullptr;
 		}
 	
 	//using the last element, set the results data
@@ -405,18 +405,18 @@ BOOL SVXmlCmd::SetResultsData(CString szIPD, CString szFullname, CString szValue
 
 BOOL SVXmlCmd::ClearResultsData()
 {
-	Element * pRootElement = NULL;
-	Element * pResultsElement = NULL;
-	Element ** pIpdElements = NULL;
-	Element * pIpdElement = NULL;
+	Element * pRootElement = nullptr;
+	Element * pResultsElement = nullptr;
+	Element ** pIpdElements = nullptr;
+	Element * pIpdElement = nullptr;
 	int nIpds = 0;
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 
 	//first search for the Results element
 	pResultsElement = pRootElement->GetChildElement(_T("Results"));
-	if(pResultsElement == NULL)return FALSE;
+	if(nullptr == pResultsElement)return FALSE;
 
 	//next find all the IPD elements under the Results element
 	nIpds = pResultsElement->FindChildElements(_T("IPD"),&pIpdElements);
@@ -444,22 +444,22 @@ BOOL SVXmlCmd::ClearResultsData()
 
 long SVXmlCmd::EnumerateResultsData(LPTSTR pIpdName)
 {
-	Element * pResultsElement = NULL;
-	Element ** ppIpdElements = NULL;
-	Element * pRootElement = NULL;
+	Element * pResultsElement = nullptr;
+	Element ** ppIpdElements = nullptr;
+	Element * pRootElement = nullptr;
 	int nIPDitems = 0;
-	LPCTSTR szTemp = NULL;
+	LPCTSTR szTemp = nullptr;
 	BOOL blFound = FALSE;
 	int x = 0;
 
 	//SaveXmlDocToFile(CString("ResultsTest.txt"));
 
 	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
+	if(nullptr == pRootElement)return FALSE;
 
 	//first, search for the Results element
 	pResultsElement = pRootElement->GetChildElement(_T("Results"));
-	if(pResultsElement == NULL)return FALSE;
+	if(nullptr == pResultsElement)return FALSE;
 
 	//next, find all the IPD elements under the Results element
 	nIPDitems = pResultsElement->FindChildElements(_T("IPD"),&ppIpdElements,TRUE);
@@ -504,10 +504,10 @@ BOOL SVXmlCmd::GetResultsData(int index,CString szIPD, CString& szFullname, CStr
 	CString szTemp;
 	BSTR bstrTemp;
 
-	if(m_pResultsDataElements != NULL)
+	if(nullptr != m_pResultsDataElements)
 		{
 		free(m_pResultsDataElements);
-		m_pResultsDataElements = NULL;
+		m_pResultsDataElements = nullptr;
 		}
 
 
@@ -519,91 +519,56 @@ BOOL SVXmlCmd::GetResultsData(int index,CString szIPD, CString& szFullname, CStr
 	
 	// get the data 
 	Attribute * pAttr = m_pResultsDataElements[index]->GetChildAttribute(_T("Data"));
-	if(pAttr == NULL)return FALSE;
+	if(nullptr == pAttr)return FALSE;
 	pAttr->GetData(&bstrTemp);
 	szValue	= bstrTemp;
-	pAttr = NULL;
+	pAttr = nullptr;
 
 	pAttr = m_pResultsDataElements[index]->GetChildAttribute(_T("Type"));
-	if(pAttr == NULL)return FALSE;
+	if(nullptr == pAttr)return FALSE;
 	pAttr->GetData(&bstrTemp);
 	szType	= bstrTemp;
-	pAttr = NULL;
+	pAttr = nullptr;
 
 	pAttr = m_pResultsDataElements[index]->GetChildAttribute(_T("Name"));
 	pAttr->GetData(&bstrTemp);
 	szFullname	= bstrTemp;
 	szFullname = _T(".") + szFullname;
-	pAttr = NULL;
+	pAttr = nullptr;
 
 	//now walk up through the parent elements until we get to the IPD element
 	
 	Element * pParent = m_pResultsDataElements[index]->GetParent();
-	if(pParent == NULL)return FALSE;
+	if(nullptr == pParent)return FALSE;
 	CString szName = pParent->GetName();
 	
 	while (szName != _T("IPD"))
 		{
 		pAttr = pParent->GetChildAttribute(_T("Name"));
-		if(pAttr == NULL)return FALSE;
+		if(nullptr == pAttr)return FALSE;
 		pAttr->GetData(&bstrTemp);
 		szTemp	= bstrTemp;
 		szFullname = szTemp + szFullname;
 		szFullname = _T(".") + szFullname;
 		pParent = pParent->GetParent();
-		if(pParent == NULL)return FALSE;
+		if(nullptr == pParent)return FALSE;
 		szName = pParent->GetName();
 		}
 
 	
 	szFullname.Delete(0);
 	pAttr = pParent->GetChildAttribute(_T("Name"));
-	if(pAttr == NULL)return FALSE;
+	if(nullptr == pAttr)return FALSE;
 
 	return TRUE;
 
 }
 
-/*
-LPTSTR SVXmlCmd::GetCmdType()
-{
-	Element * pRootElement = NULL;
-	Attribute * pAttribute = NULL;
-	LPTSTR szTemp;
-
-	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return NULL;
-	//find the Attribute
-	pAttribute = pRootElement->GetChildAttribute(_T("CmdType"));
-	if(pAttribute == NULL)return NULL;
-	//set the data
-	pAttribute->GetData(&szTemp);
-	return szTemp;
-}
-
-BOOL SVXmlCmd::SetCmdType(LPCTSTR Data)
-{
-	Element * pRootElement = NULL;
-	Attribute * pAttribute = NULL;
-
-	pRootElement = GetTreeRoot();
-	if(pRootElement == NULL)return FALSE;
-	//find the Attribute
-	pAttribute = pRootElement->GetChildAttribute(_T("CmdType"));
-	if(pAttribute == NULL)return FALSE;
-	//set the data
-	return (pAttribute->SetData(Data));
-}
-
-
-
-*/
-
 BOOL SVXmlCmd::GetXmlDoc(BSTR *bstrDoc)
 {
 	if(!CreateXmlDocFromTreeObj())
 		{
-		*bstrDoc = SysAllocStringByteLen (NULL, 0 );
+		*bstrDoc = SysAllocStringByteLen (nullptr, 0 );
 		return FALSE;
 		}
 	if(!SVXml::GetXmlDoc(bstrDoc))return FALSE;

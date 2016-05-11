@@ -20,7 +20,7 @@
 #include "SVIODoc.h"
 #include "SVIOAdjustDialog.h"
 #include "SVInputObjectList.h"
-#include "SVDigitalInputObject1.h"
+#include "SVDigitalInputObject.h"
 #include "SVInfoStructs.h"
 #include "SVConfigurationObject.h"
 #include "SVSVIMStateClass.h"
@@ -168,7 +168,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 									  i, strItem,
 									  INDEXTOSTATEIMAGEMASK( 1 ),	// state
 									  LVIS_STATEIMAGEMASK,			// stateMask
-									  1, 0 );						// Set item data to NULL
+									  1, 0 );						// Set item data to nothing
 
 			// Find each digital input
 			for( j = 0; j < lSize; j++ )
@@ -182,7 +182,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 
 				if( i == pDigInput->GetChannel() )
 				{
-					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
+					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
 					m_Items.SetItemData( i, pIOEntry );
 
@@ -281,7 +281,7 @@ void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 					break;
 				}// end switch
 
-				OnUpdate( NULL, NULL, NULL );
+				OnUpdate( nullptr, 0, nullptr );
 
 				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 			}// end if

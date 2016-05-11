@@ -20,7 +20,6 @@
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVDisplayObject.h"
 #include "SVPublishList.h"
-#include "SVRGBMainImage.h"
 #include "SVVirtualCamera.h"
 #include "SVRegressionTestStruct.h"
 #include "SVIPImageDataElement.h"
@@ -32,8 +31,6 @@
 
 #pragma region Declarations
 class SVConditionalClass;
-class SVInspectionThreadClass;
-class SVObserverSrvrItem;
 class SVResultListClass;
 class SVToolSetClass;
 class SVInspectionProcess;
@@ -56,7 +53,6 @@ class SVIPDoc : public CDocument
 	friend class SVImageViewClass;
 	friend class SVIPSplitterFrame;
 	friend class SVResultViewClass;
-	friend class SVToolSetListBoxClass;
 	friend class ToolSetView;
 
 public:
@@ -115,7 +111,7 @@ public:
 	HRESULT GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
 
 	HRESULT UpdateWithLastProduct();
-	BOOL RunOnce( SVToolClass* p_pTool = NULL );
+	BOOL RunOnce( SVToolClass* p_pTool = nullptr );
 
 	
 	//Regression Test Methods

@@ -25,8 +25,8 @@ SVMaxMinusMinFilterClass::SVMaxMinusMinFilterClass( SVObjectClass* POwner, int S
 void SVMaxMinusMinFilterClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = SVMaxMinusMinFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVFilterObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVMaxMinusMinFilterObjectType;
 }
 
 SVMaxMinusMinFilterClass::~SVMaxMinusMinFilterClass()
@@ -40,10 +40,10 @@ BOOL SVMaxMinusMinFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
 	if( bOk )
 	{
-		bOk = ResetObject() == S_OK;
+		bOk = S_OK == ResetObject();
 	}
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -61,7 +61,7 @@ HRESULT SVMaxMinusMinFilterClass::ResetObject()
 
 	m_ProcBufferHandlePtr.clear();
 
-	if( l_hrOk == S_OK && getReferenceImage() != NULL )
+	if( S_OK == l_hrOk && nullptr != getReferenceImage() )
 	{
 		mProcBufferInfo = getReferenceImage()->GetImageInfo();
 
@@ -71,7 +71,7 @@ HRESULT SVMaxMinusMinFilterClass::ResetObject()
 		l_hrOk = SVImageProcessingClass::Instance().CreateImageBuffer( mProcBufferInfo, m_ProcBufferHandlePtr );
 	}
 
-	isCreated = l_hrOk == S_OK;
+	m_isCreated = S_OK == l_hrOk;
 
 	return l_hrOk;
 }

@@ -41,25 +41,21 @@ namespace Seidenader
 		//				: ( Value could also be a pointer, e.g. SVObjectClass* )
 		//				: Expand Item if BExpand is TRUE ( default )
 		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
-		//  :26.01.2000 RO 			First Implementation
-		////////////////////////////////////////////////////////////////////////////////
 		BOOL SVDottedNameTreeCtrlClass::AddItem( CString StrDottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
 		{
 			LPTSTR tStrSource = _tcsdup( StrDottedItemName );
 			if( tStrSource )
 			{
-				HTREEITEM hRoot = NULL;
+				HTREEITEM hRoot = nullptr;
 
 				TCHAR sep[] = _T( "." );
 				LPTSTR tStrToken = _tcstok( tStrSource, sep );
-				LPTSTR tStrNextToken = _tcstok( NULL, sep );
+				LPTSTR tStrNextToken = _tcstok( nullptr, sep );
 
-				while( tStrToken != NULL )   
+				while( nullptr != tStrToken )
 				{
 					// Note:
-					// If there is no next token ( tStrNextToken == NULL ), 
+					// If there is no next token ( nullptr == tStrNextToken ), 
 					// we assume the current token ( tStrToken )
 					// is the object itself and DwItemValue is set for him !!!
 
@@ -72,13 +68,13 @@ namespace Seidenader
 							break;
 					} while( hSibling = GetNextItem( hSibling, TVGN_NEXT ) );
 
-					if( hSibling == NULL )
+					if( nullptr == hSibling )
 					{
 						// There were no leaf which was refered by the token at this
 						// tree level yet.
 
 						// Put in a new leaf...
-						if( tStrNextToken == NULL )
+						if( nullptr == tStrNextToken )
 						{
 							// We stick the object itself inside...
 							hSibling = InsertItem( TVIF_TEXT | TVIF_PARAM, // UINT nMask, 
@@ -97,7 +93,7 @@ namespace Seidenader
 								Expand( hRoot, TVE_EXPAND );
 
 							free( tStrSource );
-							return( hSibling != NULL );
+							return( nullptr != hSibling );
 						}
 
 						// We build just another sibling...
@@ -114,7 +110,7 @@ namespace Seidenader
 
 					}
 
-					if( hSibling != NULL )
+					if( nullptr != hSibling )
 					{
 						if( BExpand )
 							Expand( hRoot, TVE_EXPAND );
@@ -124,7 +120,7 @@ namespace Seidenader
 
 						// And get the next token...
 						tStrToken = tStrNextToken;
-						tStrNextToken = _tcstok( NULL, sep );
+						tStrNextToken = _tcstok( nullptr, sep );
 
 						continue;
 					}
@@ -142,28 +138,23 @@ namespace Seidenader
 		// .Title       : GetItem
 		// -----------------------------------------------------------------------------
 		// .Description : Get Item using dotted name. Starts always at the root.
-		//				: Returns NULL, if Item not exists.
-		//				: 
-		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
-		//  :26.01.2000 RO 			First Implementation
+		//				: Returns nullptr, if Item not exists.
 		////////////////////////////////////////////////////////////////////////////////
 		HTREEITEM SVDottedNameTreeCtrlClass::GetItem( CString StrDottedItemName )
 		{
 			LPTSTR tStrSource = _tcsdup( StrDottedItemName );
 			if( tStrSource )
 			{
-				HTREEITEM hRoot = NULL;
+				HTREEITEM hRoot = nullptr;
 
 				TCHAR sep[] = _T( "." );
 				LPTSTR tStrToken = _tcstok( tStrSource, sep );
-				LPTSTR tStrNextToken = _tcstok( NULL, sep );
+				LPTSTR tStrNextToken = _tcstok( nullptr, sep );
 
-				while( tStrToken != NULL )   
+				while( nullptr != tStrToken )   
 				{
 					// Note:
-					// If there is no next token ( tStrNextToken == NULL ), 
+					// If there is no next token ( nullptr == tStrNextToken ), 
 					// we assume the current token ( tStrToken )
 					// is the object itself !!!
 
@@ -176,9 +167,9 @@ namespace Seidenader
 							break;
 					} while( hSibling = GetNextItem( hSibling, TVGN_NEXT ) );
 
-					if( hSibling != NULL )
+					if( nullptr != hSibling )
 					{
-						if( tStrNextToken == NULL )
+						if( nullptr == tStrNextToken )
 						{
 							// We found the item...
 							free( tStrSource );
@@ -190,7 +181,7 @@ namespace Seidenader
 
 						// And get the next token...
 						tStrToken = tStrNextToken;
-						tStrNextToken = _tcstok( NULL, sep );
+						tStrNextToken = _tcstok( nullptr, sep );
 
 						continue;
 					}
@@ -201,7 +192,7 @@ namespace Seidenader
 				free( tStrSource );
 			}
 
-			return NULL;
+			return nullptr;
 		}
 
 
@@ -209,19 +200,15 @@ namespace Seidenader
 		// .Title       : GetSelectedItemValue
 		// -----------------------------------------------------------------------------
 		// .Description : Returns applied Value of the currently selected Item.
-		//				: Returns NULL, if nothing is selected.
-		////////////////////////////////////////////////////////////////////////////////
-		// .History
-		//	 Date		Author		Comment                                       
-		//  :26.01.2000 RO 			First Implementation
+		//				: Returns 0, if nothing is selected.
 		////////////////////////////////////////////////////////////////////////////////
 		DWORD_PTR SVDottedNameTreeCtrlClass::GetSelectedItemValue()
 		{
 			HTREEITEM hItem = GetSelectedItem();
-			if( hItem != NULL )
+			if( nullptr != hItem )
 				return GetItemData( hItem );
 
-			return NULL;
+			return 0;
 		}
 
 		BEGIN_MESSAGE_MAP(SVDottedNameTreeCtrlClass, CTreeCtrl)

@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVWinUtility.h"
 
-void SVYieldMessages(HWND hWnd /* = NULL*/ )
+void SVYieldMessages(HWND hWnd /* = nullptr*/ )
 {// Let other messages through
 	MSG msg;
 
@@ -23,7 +23,7 @@ void SVYieldMessages(HWND hWnd /* = NULL*/ )
 	}
 }
 
-void SVYieldPaintMessages(HWND hWnd /* = NULL */ )
+void SVYieldPaintMessages(HWND hWnd /* = nullptr */ )
 {// Let other PAINT messages through
 	
 	MSG msg;

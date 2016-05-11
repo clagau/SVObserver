@@ -11,19 +11,15 @@
 //******************************************************************************
 #pragma once
 
-
 typedef ULONG	(__stdcall *FbwfIsFilterEnabledPtr) (PULONG currentSession, PULONG nextSession);
-
 
 class ExtrasEngine
 {
 #pragma region Constructor
 private:
-
-	ExtrasEngine(ExtrasEngine&); // no copy allowed, i.e. '= delete' in C++11;
+	ExtrasEngine(const ExtrasEngine&); // no copy allowed, i.e. '= delete' in C++11;
 
 public:
-
 	ExtrasEngine();
 
 #pragma endregion Constructor
@@ -60,7 +56,6 @@ public:
 	bool IsFbwfSelected()  const {return m_IsFbwfSelected;}		//AB simple getter 
 	bool IsFbwfChanging()  const {return m_FbwfActiveChanging;} //AB simple getter 
 
-
 	//************************************
 	/// performs an automatic configuration backup if enabled and required (when always is false, 
 	/// only if IsAutoSaveTimestampOlderThanDeltaTime() returns true)
@@ -87,7 +82,6 @@ public:
 
 	bool IsAutoSaveRequired(){return m_AutoSaveRequired;}
 	void SetAutoSaveRequired(bool required){m_AutoSaveRequired=required;}
-
 
 #pragma endregion Public Methods
 
@@ -121,7 +115,6 @@ private:
 	bool m_IsFbwfSelected;		///< is FBWF functionality selected to be available after the next bootup
 	bool m_FbwfActive;			///< is FBWF functionality currently active?
 	bool m_FbwfActiveChanging;	///< will FBWF functionality be active after the next reboot?
-
 
 #pragma endregion Member Variables
 };

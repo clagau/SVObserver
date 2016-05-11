@@ -163,7 +163,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	// Add newly selected values to headers.
 	bool bUseHeaders = false;
 	HRESULT hr = m_pTool->m_bvoUseHeaders.GetValue( bUseHeaders );
-	if( hr == S_OK && bUseHeaders )
+	if( S_OK == hr && bUseHeaders )
 	{
 		StringPairVect l_HeaderPairs;
 		GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
@@ -171,15 +171,13 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	}
 	HRESULT hRet = m_pTool->ValidateArchiveTool();
 
-	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 	// Mark the document as 'dirty' so user will be prompted to save
 	// this configuration on program exit.
-	SVIPDoc* l_pIPDoc = NULL;
+	SVIPDoc* l_pIPDoc = m_pParent->GetIPDoc();
 
-	l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pTool->GetInspection()->GetUniqueObjectID() );
-
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
 		l_pIPDoc->SetModifiedFlag();
 	}

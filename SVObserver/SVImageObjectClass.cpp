@@ -112,7 +112,7 @@ HRESULT SVImageObjectClass::ResetObject()
 		l_hrOk = S_FALSE;  
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = UpdateTimeStamp();
 	}
@@ -136,7 +136,7 @@ BOOL SVImageObjectClass::Clear( long lIndex, unsigned long ulValue )
 	SVSmartHandlePointer ImageHandle;
 
 	bOk = bOk && GetImageHandle( lIndex, ImageHandle );
-	bOk = bOk && ( SVImageProcessingClass::Instance().InitBuffer( ImageHandle, ulValue ) == S_OK );
+	bOk = bOk && ( S_OK == SVImageProcessingClass::Instance().InitBuffer( ImageHandle, ulValue ) );
 	
 	return bOk;
 }
@@ -517,19 +517,19 @@ HRESULT SVImageObjectClass::CopyToBSTR( BSTR &p_rbstrData )
 {
 	HRESULT l_Status = S_OK;
 
-	BITMAPINFO* pbmInfo = NULL;
+	BITMAPINFO* pbmInfo = nullptr;
 
 	SVSmartHandlePointer l_svOrigHandle;
 	SVSmartHandlePointer l_svCopyHandle;
 
 	SVSmartHandlePointer l_psvHandle;
 
-	if( ! GetImageHandle( l_svOrigHandle ) || l_svOrigHandle.empty() || l_svOrigHandle->GetBitmapInfo().empty() || l_svOrigHandle->GetBufferAddress() == NULL )
+	if( ! GetImageHandle( l_svOrigHandle ) || l_svOrigHandle.empty() || l_svOrigHandle->GetBitmapInfo().empty() || nullptr == l_svOrigHandle->GetBufferAddress() )
 	{
 		l_Status = S_FALSE;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		l_psvHandle = l_svOrigHandle;
 	}
@@ -537,21 +537,21 @@ HRESULT SVImageObjectClass::CopyToBSTR( BSTR &p_rbstrData )
 	{
 		l_Status = SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, l_svCopyHandle );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
-			if( ! CopyToHandle( l_svCopyHandle ) || l_svCopyHandle.empty() || l_svCopyHandle->GetBitmapInfo().empty() || l_svCopyHandle->GetBufferAddress() == NULL )
+			if( ! CopyToHandle( l_svCopyHandle ) || l_svCopyHandle.empty() || l_svCopyHandle->GetBitmapInfo().empty() || nullptr == l_svCopyHandle->GetBufferAddress() )
 			{
 				l_Status = E_FAIL;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_psvHandle = l_svCopyHandle;
 		}
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		SVBitmapInfo l_BitmapInfo = l_psvHandle->GetBitmapInfo();
 		const BITMAPINFO* pbmInfo = l_BitmapInfo.GetBitmapInfo();
@@ -591,14 +591,14 @@ HRESULT SVImageObjectClass::CopyToBSTR( BSTR &p_rbstrData )
 		lBufSize += l_lColorTableSize;
 		lBufSize += l_lDIBSize;
 		
-		if( p_rbstrData != NULL )
+		if( nullptr != p_rbstrData )
 		{
 			::SysFreeString( p_rbstrData );
 
-			p_rbstrData = NULL;
+			p_rbstrData = nullptr;
 		}
 
-		p_rbstrData = ::SysAllocStringByteLen(NULL, lBufSize);
+		p_rbstrData = ::SysAllocStringByteLen(nullptr, lBufSize);
 
 		unsigned char *l_pucStart = (unsigned char *)(p_rbstrData);
 		BITMAPINFO *l_pbmiInfo = (BITMAPINFO *)(p_rbstrData);
@@ -665,7 +665,7 @@ BOOL SVImageObjectClass::CreateBufferArrays()
 
 		m_HandleCount = m_ParentImagePtr->size();
 
-		l_ValidExtents = ( l_ParentInfo.ValidateAgainstOutputSpace( m_ImageInfo.GetExtents() ) == S_OK );
+		l_ValidExtents = ( S_OK == l_ParentInfo.ValidateAgainstOutputSpace( m_ImageInfo.GetExtents() ) );
 
 		if( !l_ValidExtents )
 		{
@@ -716,8 +716,6 @@ BOOL SVImageObjectClass::CreateBufferArrays()
 	if( 0 <= m_CurrentDMIndexHandle.GetIndex() && m_CurrentDMIndexHandle.GetIndex() < static_cast< long >( m_ImageHandleArray.size() ) )
 	{
 		bOk &= !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
-
-		//assert( bOk );
 	}
 
 	return bOk;
@@ -750,7 +748,7 @@ BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 	{
 		SVToolClass*	parentTool = static_cast <SVToolClass*> (rInfo.GetOwner());
 
-		if (parentTool == nullptr)
+		if (nullptr == parentTool)
 		{
 			// Image does not have a Tool for a parent. Not sure if this can 
 			// happen.
@@ -1030,7 +1028,7 @@ BOOL SVImageObjectClass::LockIndex(long lIndex)
 		{
 			size_t l_MasterIndex = 0;
 
-			bOk = ( m_ParentImagePtr->GetMasterIndex( lIndex, l_MasterIndex ) == S_OK );
+			bOk = ( S_OK == m_ParentImagePtr->GetMasterIndex( lIndex, l_MasterIndex ) );
 
 			if( bOk )
 			{

@@ -35,8 +35,8 @@
 #include "SVTool.h"
 #include "SVToolSet.h"
 #include "SVInputObjectList.h"
-#include "SVDigitalInputObject1.h"
-#include "SVDigitalOutputObject1.h"
+#include "SVDigitalInputObject.h"
+#include "SVDigitalOutputObject.h"
 #include "SVArchiveTool.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
@@ -182,7 +182,7 @@ private:
 static SVToolGrouping GetToolGroupings(const SVGUID& rInspectionGuid)
 {
 	// get the document that owns this inspection
-	SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(rInspectionGuid);
+	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(rInspectionGuid);
 	if (pDoc)
 	{
 		return pDoc->GetToolGroupings();
@@ -313,9 +313,9 @@ void SVConfigurationPrint::DoPrintConfig()
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10238 );
 					return;
-				}  // end if( printInfo.m_pPD->m_pd.hDC == nullptr )
+				}  // end if( nullptr == printInfo.m_pPD->m_pd.hDC  )
 			}  // end if( pCmdInfo->m_nShellCommand == CCommandLineInfo::FilePrintTo )
-		}  // end if( pCmdInfo != nullptr )
+		}  // end if( nullptr != pCmdInfo )
 		
 		m_printInfo.m_bDirect = TRUE;
 	}  // end if(   pThreadState && ...
@@ -622,18 +622,6 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 // :
 // .Return Value
 //	:  none
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	   Date		      Author		Comment                                       
-// :  26-Oct-1999    SES         First Implementation
-// :  12-Nov-2002    CHS         Changed Method Parameters
-//	:
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintObject( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
@@ -662,18 +650,6 @@ void SVConfigurationPrint::PrintObject( CDC* pDC, SVObjectClass* pObj, CPoint& p
 // :
 // .Return Value
 //	:  none
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	   Date		      Author		Comment                                       
-// :  26-Oct-1999    SES         First Implementation
-// :  12-Nov-2002    CHS         Changed Method Parameters
-// :
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
@@ -724,12 +700,12 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 			if ( SVDWordValueObjectClass* pdwValueObject = dynamic_cast <SVDWordValueObjectClass*> ( pValueObject ) )
 			{
 				DWORD dwValue=0;
-				bGotValue = (pdwValueObject->GetValue( dwValue ) == S_OK );
+				bGotValue = (S_OK == pdwValueObject->GetValue( dwValue ));
 				sValue = AsString( dwValue );
 			}
 			else
 			{
-				bGotValue = (pValueObject->GetValue( sValue ) == S_OK );
+				bGotValue = (S_OK == pValueObject->GetValue( sValue ));
 			}
 
 			if ( bGotValue )
@@ -814,7 +790,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 					}
 				}
 
-				SVImageInfoClass* pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL) );
+				SVImageInfoClass* pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0) );
 				
 				if (pImageInfo)
 				{
@@ -824,10 +800,10 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 					long l_lWidth = 0;
 					long l_lHeight = 0;
 
-					if ( pImageInfo->GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint ) == S_OK &&
-						 pImageInfo->GetExtentProperty( SVExtentPropertyOutputPositionPoint, l_oOutputPoint ) == S_OK &&
-						 pImageInfo->GetExtentProperty( SVExtentPropertyWidth, l_lWidth ) == S_OK &&
-						 pImageInfo->GetExtentProperty( SVExtentPropertyHeight, l_lHeight ) == S_OK )
+					if ( S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint ) &&
+						 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyOutputPositionPoint, l_oOutputPoint ) &&
+						 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyWidth, l_lWidth ) &&
+						 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyHeight, l_lHeight ) )
 					{
 						sLabel = pApp->GetStringResource(IDS_TOOL_LENGTH_STRING) + _T(":");
 						sValue.Format("%d", l_lWidth);
@@ -980,18 +956,6 @@ void SVConfigurationPrint::PrintAllChildren(CDC* pDC, SVTaskObjectListClass* pTa
 // :
 // .Return Value
 //	:  none
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	   Date		      Author		Comment                                       
-// :  26-Oct-1999    SES         First Implementation
-// :  12-Nov-2002    CHS         Changed Method Parameters
-// :
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
@@ -1084,18 +1048,6 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 // :
 // .Return Value
 //	:  none
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	   Date		      Author		Comment                                       
-// :  26-Oct-1999    SES         First Implementation
-// :  12-Nov-2002    CHS         Changed Method Parameters
-// :
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
@@ -1132,18 +1084,6 @@ void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& 
 // :
 // .Return Value
 //	:  none
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	   Date		      Author		Comment                                       
-// :  01-Nov-1999    SES         First Implementation
-// :  12-Nov-2002    CHS         Changed Method Parameters
-// :
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {

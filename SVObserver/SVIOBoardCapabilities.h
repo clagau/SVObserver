@@ -9,12 +9,7 @@
 //* .Check In Date   :     $Date:   11 Jun 2013 15:26:18  $
 //******************************************************************************
 
-#if !defined(AFX_SVIOBOARDCAPABILITIES_H_INCLUDED_)
-#define AFX_SVIOBOARDCAPABILITIES_H_INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "SVConfigurationLibrary/SVObserverEnums.h"
 
@@ -48,6 +43,3 @@ private:
 	int m_iNumOutputs;
 	int m_iNumInputs;
 };
-
-#endif // !defined(AFX_SVIOBOARDCAPABILITIES_H_INCLUDED_)
-

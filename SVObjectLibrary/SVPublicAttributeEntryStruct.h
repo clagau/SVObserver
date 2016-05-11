@@ -9,12 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:25:06  $
 //******************************************************************************
 
-#ifndef SVPUBLICATTRIBUTEENTRYSTRUCT_H
-#define SVPUBLICATTRIBUTEENTRYSTRUCT_H
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 struct SVPublicAttributeEntryStruct
 {
@@ -25,7 +20,7 @@ struct SVPublicAttributeEntryStruct
 		BIsActivatible		= TRUE;
 	};
 
-	SVPublicAttributeEntryStruct( SVPublicAttributeEntryStruct& ROriginal )
+	SVPublicAttributeEntryStruct( const SVPublicAttributeEntryStruct& ROriginal )
 	{
 		BIsPublic			= ROriginal.BIsPublic;
 		BIsOpened			= ROriginal.BIsOpened;
@@ -50,6 +45,3 @@ struct SVPublicAttributeEntryStruct
 //{{AFX_INSERT_LOCATION}}
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
-
-#endif	//	SVPUBLICATTRIBUTEENTRYSTRUCT_H
-

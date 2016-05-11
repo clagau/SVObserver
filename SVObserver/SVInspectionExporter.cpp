@@ -143,7 +143,7 @@ static bool ShouldExcludeFile(LPCTSTR filename)
 	bool bRetVal = false;
 	LPCTSTR exclusions[] = { ".cvi", ".cca", ".cvf", ".odc", ".ogc" }; // exclude camera files
 	TCHAR ext[_MAX_EXT];
-	_tsplitpath(filename, NULL, NULL, NULL, ext);
+	_tsplitpath(filename, nullptr, nullptr, nullptr, ext);
 	for (int i = 0;i < sizeof(exclusions) / sizeof(LPCTSTR); i++)
 	{
 		// Exclude certain file extensions
@@ -225,7 +225,7 @@ static std::string RemovePath(const SVString& fname)
 
 	char filename[_MAX_FNAME];
 	char ext[_MAX_EXT];
-	_splitpath(fname.c_str(), NULL, NULL, filename, ext);
+	_splitpath(fname.c_str(), nullptr, nullptr, filename, ext);
 
 	name = filename;
 	name += ext;
@@ -234,7 +234,7 @@ static std::string RemovePath(const SVString& fname)
 
 static void PersistDocument(const SVGUID& inspectionGuid, SVObjectWriter& rWriter)
 {
-	SVIPDoc* pDoc =  SVObjectManagerClass::Instance().GetIPDoc(inspectionGuid);
+	SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc(inspectionGuid);
 	if (pDoc)
 	{
 		rWriter.StartElement(CTAG_SVIPDOC);
@@ -263,8 +263,8 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 	{
 		// Write out the SVObserver version - will be checked against when importing
 		SVObjectClass* pObject;
-		hr =  SVObjectManagerClass::Instance().GetObjectByDottedName(inspectionName.c_str(), pObject);
-		if (hr == S_OK)
+		hr = SVObjectManagerClass::Instance().GetObjectByDottedName(inspectionName.c_str(), pObject);
+		if (S_OK == hr)
 		{
 			SVString dstXmlFile = GetFilenameWithoutExt(filename);
 			dstXmlFile += scXmlExt;

@@ -50,8 +50,8 @@ public:
 	const SVSAFEARRAY& operator=( const VARIANT& p_rVariant );
 	const SVSAFEARRAY& operator=( SAFEARRAY* p_pObject );
 
-	template< class InputIterator	>
-  void assign( InputIterator _First, InputIterator _Last );
+	template< class InputIterator >
+	void assign( InputIterator _First, InputIterator _Last );
 
 	HRESULT GetVartype( VARTYPE& p_rType ) const;
 	HRESULT GetBounds( SVBounds& p_rBounds ) const;

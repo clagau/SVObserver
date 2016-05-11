@@ -16,7 +16,7 @@
 #include "SVScalarValue.h"
 #include "SVImageBufferStruct.h"
 #include "SVOLibrary/SVContainableCriticalSection.h"
-#include "SVValueObjectImpl.h"
+#include "SVValueObject.h"
 #include "SVLibrary/SVSimpleIndexQueue.h"
 #include "SVImageBuffer.h"	// SVImageOverlayClass
 #pragma endregion Includes
@@ -72,7 +72,6 @@ public:
 	HRESULT GetHistoryAndClear( std::vector < std::vector <SVScalarValue> >& rvecValues, std::vector < std::vector <SVImageBufferStruct> >& rvecImages, std::vector < std::vector <SVScalarValue> >& rvecConditionals, std::vector<long>& rvecProcessCount );
 	HRESULT GetMostRecentHistory( std::vector <SVScalarValue>& rvecValues, std::vector <SVImageBufferStruct>& rvecImages, std::vector <SVScalarValue>& rvecConditionals, long& rlProcessCount );
 
-	HRESULT CheckConditionals() const;
 	HRESULT CollectDataAndStore();
 	HRESULT DeleteTool( LPCTSTR p_strToolName );
 
@@ -83,7 +82,6 @@ private:
 	HRESULT GetHistoryEntry( long lIndex, std::vector <SVScalarValue>& rvecValues, std::vector <SVImageBufferStruct>& rvecImages, std::vector <SVScalarValue>& rvecConditionals, long& rlProcessCount );
 
 	SVInspectionProcess*            m_pInspection;
-	//SVContainableCriticalSection  m_CritSec;//!!! UNNECESSARY NOW THAT CH IS TOTALLY CONTAINED WITHIN THE INSPECTION THREAD
 	SVEmptySyncObject               m_CritSec;// does no locking; a placeholder so we can maintain the locking logic
 
 	// the following serve as holders for the inputs between a Set and a ResetObject:

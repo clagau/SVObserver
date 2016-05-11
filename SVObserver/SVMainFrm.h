@@ -92,9 +92,6 @@ public:
 	// DDE Server Connect Confirm Message...
 	afx_msg LRESULT OnDDEServerConnect( WPARAM wParam, LPARAM lParam );
 
-	// Load and Run Last Configuration Automatically...
-	//afx_msg LRESULT OnAutoRunLastConfiguration( WPARAM wParam, LPARAM lParam );
-
 	// End Object Script Parsing
 	afx_msg LRESULT OnEndObjectScriptParse( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnEndObjectCreation( WPARAM wParam, LPARAM lParam );
@@ -160,7 +157,7 @@ public:
 	//{{AFX_VIRTUAL(SVMainFrame)
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
 protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	//}}AFX_VIRTUAL
@@ -184,8 +181,6 @@ public:
 // Data Element(s):
 //******************************************************************************
 public:
-	void SetNotifyCommRC ();
-
 	//************************************
 	// Method:    GetZoomToolbarValue
 	// Description:  Get the value from the zoom toolbar
@@ -234,8 +229,6 @@ private: //Arvid 150203: changed access class from protected
 	HICON m_oemSmallIcon;
 
 private:
-
-	BOOL m_notifyCommRC;
 
 	BOOL m_bSizeChanged;
 	UINT m_PosSize;

@@ -106,7 +106,7 @@ HRESULT SVDWordValueObjectClass::SetValueAt( int iBucket, int iIndex, CString st
 	if ( strDigits == strValue )
 	{
 		strDigits.MakeLower();
-		TCHAR* p = NULL;
+		TCHAR* p = nullptr;
 		DWORD ulValue;
 		if ( strDigits.Find(_T('x')) != -1  )
 			ulValue = _tcstoul(strDigits, &p, 16);
@@ -122,11 +122,11 @@ HRESULT SVDWordValueObjectClass::SetValueAt( int iBucket, int iIndex, CString st
 
 HRESULT SVDWordValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rvtValue ) const
 {
-	DWORD l_dwValue=0;
+	DWORD l_dwValue = 0;
 	_variant_t l_Temp;
 	l_Temp.Attach( rvtValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_dwValue );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		l_Temp = l_dwValue ;
 	}
@@ -162,7 +162,7 @@ HRESULT SVDWordValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rd
 
 void SVDWordValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVDWordValueObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDWordValueObjectType;
 	DefaultValue() = 0;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{

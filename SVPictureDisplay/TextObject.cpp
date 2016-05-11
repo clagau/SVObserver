@@ -32,7 +32,7 @@ TextObject::~TextObject()
 {
 }
 
-TextObject::TextObject( TextObject& p_rhs )
+TextObject::TextObject( const TextObject& p_rhs )
 {
 	*this = p_rhs;
 }
@@ -57,7 +57,7 @@ HRESULT TextObject::SetText(long x, long y, LPCTSTR text)
 	return S_OK;
 }
 
-TextObject& TextObject::operator=( TextObject& p_rhs )
+TextObject& TextObject::operator=( const TextObject& p_rhs )
 {
 	if( this != &p_rhs )
 	{

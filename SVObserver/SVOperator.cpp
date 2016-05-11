@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   15 May 2014 11:21:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOperator.h"
-#include "SVImageLibrary/SVDrawContext.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
@@ -25,12 +25,12 @@
 #include "SVLowerThresholdEquation.h"
 #include "SVUnaryImageOperatorList.h"
 #include "SVUpperThresholdEquation.h"
-#include "SVDataBuffer.h"
 #include "SVImageProcessingClass.h"
 #include "SVToolSet.h"
 #include "SVTool.h"
 #include "SVMaskShape.h"
 #include "SVObjectLibrary\SVToolSetScriptTags.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -52,29 +52,29 @@ SVOperatorClass::~SVOperatorClass()
 
 BOOL SVOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
-	if( SVTaskObjectClass::CreateObject( PCreateStructure ) && GetTool() != NULL )
+	if( SVTaskObjectClass::CreateObject( PCreateStructure ) && nullptr != GetTool() )
 	{
-		bOk = TRUE;
+		bOk = true;
 	}
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
 
 DWORD_PTR SVOperatorClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
 	{
-	case SVMSGID_RESET_ALL_OBJECTS :
+	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			if( S_OK != l_ResetStatus )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
@@ -95,7 +95,7 @@ void SVOperatorClass::init()
 	m_bUseOverlays = false;	// in general, operators don't have overlays
 
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVOperatorObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVOperatorObjectType;
 
 	// Register Embedded Object(s)
 

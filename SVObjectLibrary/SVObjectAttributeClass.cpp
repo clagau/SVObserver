@@ -9,30 +9,31 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:38:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectAttributeClass.h"
+#pragma endregion Includes
 
 SVObjectAttributeClass::SVObjectAttributeClass()
 {
 	miType = SV_OBJECT_TYPE_UNKNOWN;
 }
 
-
-SVObjectAttributeClass::SVObjectAttributeClass(SVObjectAttributeClass& orig)
+SVObjectAttributeClass::SVObjectAttributeClass(SVObjectAttributeClass& orig) // @WARNING [SEJ][20 April 2016] - Should be const &
 {
-	(*this) = orig;
+	(*this) = orig; // @WARNING [SEJ][20 April 2016] - prevents rvalue from being const & - See operator=() Implementation
 }
 
 SVObjectAttributeClass::~SVObjectAttributeClass()
 {
 }
 
-SVObjectAttributeClass& SVObjectAttributeClass::operator=(SVObjectAttributeClass& rhs)
+SVObjectAttributeClass& SVObjectAttributeClass::operator=(SVObjectAttributeClass& rhs) // @WARNING [SEJ][20 April 2016] - Should be const &
 {
 	if ( this != &rhs )
 	{
-		SetName( rhs.GetName() );
-		SetType( rhs.GetType() );
+		SetName( rhs.GetName() ); // @WARNING [SEJ][20 April 2016] - prevents rvalue from being const &
+		SetType( rhs.GetType() ); // @WARNING [SEJ][20 April 2016] - prevents rvalue from being const &
 
 		msvBoolArray = rhs.msvBoolArray;
 		msvByteArray = rhs.msvByteArray;
@@ -48,12 +49,10 @@ SVObjectAttributeClass& SVObjectAttributeClass::operator=(SVObjectAttributeClass
 	return rhs;
 }
 
-
 LPCTSTR SVObjectAttributeClass::GetName()
 {
 	return mcsName;
 }
-
 
 int SVObjectAttributeClass::GetType()
 {
@@ -193,7 +192,6 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 
 	return bOk;
 }// end GetData(SVObjectBoolArrayClass& svData)
-
 
 BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 {
@@ -468,7 +466,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 
 				VARIANT vtTemp = msvVariantArray[i];
 				HRESULT hr = ::VariantChangeType( &vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
-				if(hr == S_OK)
+				if( S_OK == hr )
 				{
 					csTemp = vtTemp.bstrVal;
 				}
@@ -637,7 +635,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 
 				VARIANT vtTemp = msvVariantArray[i];
 				HRESULT hr = ::VariantChangeType( &vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
-				if(hr == S_OK)
+				if( S_OK == hr )
 				{
 					csTemp = SvUl_SF::createSVString(vtTemp);
 				}
@@ -674,7 +672,6 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>&
 
 	return bOk;
 }// end GetData(SVObjectArrayClassTemplate<CString>& svData)
-
 
 BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 {
@@ -780,7 +777,6 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectDoubleArrayClass& svData)
 
-
 BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 {
 	BOOL bOk = FALSE;
@@ -885,7 +881,6 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectDWordArrayClass& svData)
 
-
 BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 {
 	BOOL bOk = FALSE;
@@ -989,7 +984,6 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 
 	return bOk;
 }// end GetData(SVObjectLongArrayClass& svData)
-
 
 BOOL SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
 {

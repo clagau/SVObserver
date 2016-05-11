@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVLut.h"
 #include "SVLightReference.h"
@@ -18,6 +19,7 @@
 
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVStringValueDeviceParam.h"
+#pragma endregion Includes
 
 // for now, still need to update the enum in SVDeviceParams.h
 
@@ -27,6 +29,8 @@ public:
 	SVLutDeviceParam();
 	SVLutDeviceParam(SVDeviceParamEnum typeEnum);
 	SVLutDeviceParam(const SVLutDeviceParam& rhs);
+	virtual ~SVLutDeviceParam();
+
 	virtual SVClonable* CloneImpl() const;
 	SVLutDeviceParam& operator = (const SVLutDeviceParam& rhs);
 
@@ -39,7 +43,7 @@ public:
 #if defined(_DEBUG) || defined (_MINDEBUG)
 	SVLut& Lut(SVDeviceParamWrapper& w);
 #else
-	inline SVLut& Lut(SVDeviceParamWrapper& w) {SVLutDeviceParam* p = w.DerivedValue(p); if (p==NULL) {w = SVLutDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->lut;}
+	inline SVLut& Lut(SVDeviceParamWrapper& w) {SVLutDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLutDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->lut;}
 #endif
 
 class SVLightReferenceDeviceParam : public SVDeviceParam
@@ -48,6 +52,8 @@ public:
 	SVLightReferenceDeviceParam();
 	SVLightReferenceDeviceParam(SVDeviceParamEnum typeEnum);
 	SVLightReferenceDeviceParam( const SVLightReferenceDeviceParam& rhs);
+	virtual ~SVLightReferenceDeviceParam();
+
 	virtual SVClonable* CloneImpl() const;
 	SVLightReferenceDeviceParam& operator = (const SVLightReferenceDeviceParam& rhs);
 
@@ -60,9 +66,8 @@ public:
 #if defined(_DEBUG) || defined (_MINDEBUG)
 	SVLightReference& LR(SVDeviceParamWrapper& w);
 #else
-	inline SVLightReference& LR(SVDeviceParamWrapper& w) {SVLightReferenceDeviceParam* p = w.DerivedValue(p); if (p==NULL) {w = SVLightReferenceDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->lr;}
+	inline SVLightReference& LR(SVDeviceParamWrapper& w) {SVLightReferenceDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLightReferenceDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->lr;}
 #endif
-
 
 class SVCameraFormatsDeviceParam : public SVStringValueDeviceParam
 {
@@ -70,6 +75,8 @@ public:
 	SVCameraFormatsDeviceParam();
 	SVCameraFormatsDeviceParam(SVDeviceParamEnum typeEnum);
 	SVCameraFormatsDeviceParam(const SVCameraFormatsDeviceParam& rhs);
+	virtual ~SVCameraFormatsDeviceParam();
+
 	virtual SVClonable* CloneImpl() const;
 	const SVCameraFormatsDeviceParam& operator=(const SVCameraFormatsDeviceParam& rhs);
 	bool SupportsColor() const;

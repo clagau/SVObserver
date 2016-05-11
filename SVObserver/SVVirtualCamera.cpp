@@ -128,7 +128,7 @@ BOOL SVVirtualCamera::Create( LPCTSTR p_szDeviceName )
 	{
 		SetBandLink( mpsvDevice->Channel() );
 
-		outObjectInfo.ObjectTypeInfo.ObjectType = SVVirtualCameraType;
+		m_outObjectInfo.ObjectTypeInfo.ObjectType = SVVirtualCameraType;
 
 		bOk = m_CallbackList.Create() && bOk;
 
@@ -315,8 +315,6 @@ BOOL SVVirtualCamera::UnregisterFinishProcess(void *pvOwner, LPSVFINISHPROC pCal
 
 	return bOk;
 }
-
-//typedef BOOL (CALLBACK *LPSVFINISHPROC)(void*,void*,SVODataResponseClass*);
 
 void SVVirtualCamera::FinishProcess( SVODataResponseClass *pResponse )
 {
@@ -664,7 +662,7 @@ HRESULT SVVirtualCamera::RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* trigg
 {
 	HRESULT hr = S_FALSE;
 
-	if (triggerDLL && ulHandle > 0)
+	if (triggerDLL && 0 != ulHandle)
 	{
 		SVAcquisitionClassPtr pAcq = GetAcquisitionDevice();
 		if( !( pAcq.empty() ) )

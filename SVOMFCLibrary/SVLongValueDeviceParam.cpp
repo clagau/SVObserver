@@ -8,9 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   03 Dec 2014 19:41:32  $
 //******************************************************************************
+
+#pragma region Includes
 #include "Stdafx.h"
 //Moved to precompiled header: #include <cmath>
 #include "SVLongValueDeviceParam.h"
+#pragma endregion Includes
 
 SVLongValueDeviceParam::SVLongValueDeviceParam()
 : lValue(0) 
@@ -33,6 +36,10 @@ SVLongValueDeviceParam::SVLongValueDeviceParam(const SVLongValueDeviceParam& rhs
 	m_eDataType = DeviceDataTypeLong;
 	lValue = rhs.lValue;
 	info = rhs.info;
+}
+
+SVLongValueDeviceParam::~SVLongValueDeviceParam()
+{
 }
 
 SVClonable* SVLongValueDeviceParam::CloneImpl() const
@@ -147,7 +154,7 @@ HRESULT SVLongValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 long& LongValue(SVDeviceParamWrapper& w) 
 {
 	const SVLongValueDeviceParam* p = w.DerivedValue(p); 
-	if (p == NULL) 
+	if (nullptr == p) 
 	{
 		w = SVLongValueDeviceParam(); 
 		p = w.DerivedValue(p);

@@ -25,8 +25,6 @@ class SVImageClass;
 class SVImageArchiveClass
 {
 public:
-	BOOL SelectImageArchivePath ();
-	BOOL SaveImageArchiveFile (SVImageClass *pImage, BOOL bOverWrite = TRUE);
 	BOOL LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr );
 	BOOL ImageArchiveFileExists (CString &szFileName);
 	BOOL LoadImageArchiveFile (SVImageClass *pImage);

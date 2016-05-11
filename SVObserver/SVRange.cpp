@@ -46,11 +46,6 @@ const TCHAR* const ToolSetName = _T( "Tool Set" );
 
 #pragma endregion Declarations
 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVRangeClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
 SV_IMPLEMENT_CLASS( SVRangeClass, SVRangeClassGuid );
 
 #pragma region Constructor
@@ -70,7 +65,7 @@ void SVRangeClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVRangeObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVRangeObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &FailHigh, SVRangeClassFailHighObjectGuid, IDS_OBJECTNAME_FAIL_HIGH, false, SVResetItemNone );
@@ -83,19 +78,19 @@ void SVRangeClass::init()
 	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_WarnLow], SVRangeClassWarnLowIndirectObjectGuid, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SVResetItemOwner);
 
 	// Set Embedded defaults
-	FailLow.SetDefaultValue( lowDef, TRUE );
-	FailHigh.SetDefaultValue( highDef, TRUE );
-	WarnLow.SetDefaultValue( lowDef, TRUE );
-	WarnHigh.SetDefaultValue( highDef, TRUE );
+	FailLow.SetDefaultValue( lowDef, true );
+	FailHigh.SetDefaultValue( highDef, true );
+	WarnLow.SetDefaultValue( lowDef, true );
+	WarnHigh.SetDefaultValue( highDef, true );
 
 	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
-		m_ValueIndirect[i].SetDefaultValue( _T(""), TRUE );
+		m_ValueIndirect[i].SetDefaultValue( _T(""), true );
 	}
 
 	m_isValidRange = true;
 
-	isObjectValid.SetDefaultValue(true, TRUE);
+	isObjectValid.SetDefaultValue(true, true);
 
 	// Setup up the input
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
@@ -107,7 +102,7 @@ void SVRangeClass::init()
 
 BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	isCreated = SVTaskObjectClass::CreateObject( PCreateStructure );
+	m_isCreated = SVTaskObjectClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flags
 	FailHigh.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
@@ -120,7 +115,7 @@ BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 		m_ValueIndirect[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
 	}
 
-	return isCreated;
+	return m_isCreated;
 }
 
 bool SVRangeClass::SetReference(LPCTSTR Name, SVObjectReference &ObjectReference)
@@ -130,7 +125,7 @@ bool SVRangeClass::SetReference(LPCTSTR Name, SVObjectReference &ObjectReference
 	if(nullptr != Name)
 	{
 		HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( Name, ObjectReference );
-		if(hr == S_OK)
+		if( S_OK == hr )
 		{
 			ret = true;
 		}
@@ -149,7 +144,7 @@ HRESULT SVRangeClass::ResetObject()
 
 	HRESULT hres = SVTaskObjectClass::ResetObject();
 
-	if (hresult == S_OK)
+	if (S_OK == hresult)
 	{
 		hresult = hres;
 	}
@@ -237,12 +232,12 @@ BOOL SVRangeClass::OnValidate()
 	if( bRetVal && m_inputObjectInfo.IsConnected() &&
 		m_inputObjectInfo.GetInputObjectInfo().PObject )
 	{
-		bRetVal = TRUE;
+		bRetVal = true;
 	}
 
 	if(bRetVal)
 	{
-		bRetVal = ( InitReferencesAndInputs() == S_OK);
+		bRetVal = ( S_OK == InitReferencesAndInputs() );
 	}
 
 	if(!bRetVal)
@@ -272,22 +267,18 @@ SVDoubleValueObjectClass&  SVRangeClass::GetRange(RangeEnum::ERange range)
 		ASSERT (FALSE);
 		return WarnLow;
 	}
-
 }
 
 void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
 {
-
 	double dres(0);
 	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[range].Object()) )
 	{
-
 		if(m_ValueObjectReferences[range].IsIndexPresent())
 		{
 			int index = m_ValueObjectReferences[range].ArrayIndex();
 			int LastSet =  pValueObject->GetLastSetIndex();
 			pValueObject->GetValue(LastSet,index,dres);
-
 		}
 		else
 		{
@@ -295,7 +286,6 @@ void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
 		}
 
 		GetRange(range).SetValue( bucket,dres );	
-
 	}
 	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[range].Object()) )
 	{
@@ -304,21 +294,17 @@ void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
 	}
 }
 
-
-
-
 BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 {
-	BOOL ret = TRUE;
+	BOOL ret = true;
 	if(!m_isValidRange)
 	{
 		RRunStatus.SetInvalid();
-		ret = FALSE;
+		ret = false;
 	}
 
 	if(ret)
 	{
-
 		double InputValue,failHigh(0), failLow(0),warnLow(0),warnHigh(0);
 		getInputValue(InputValue);
 
@@ -328,7 +314,6 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_FailLow );
 		}
 		FailLow.GetValue(failLow);
-
 
 		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailHigh ].Object() )
 		{
@@ -341,7 +326,6 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnLow );
 		}
 
-
 		WarnLow.GetValue(warnLow);
 
 		if( nullptr != m_ValueObjectReferences[ RangeEnum::ER_WarnHigh  ].Object() )
@@ -351,12 +335,8 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 
 		WarnHigh.GetValue(warnHigh);
 
-
-
-
 		bool isFailed = ( InputValue < failLow || InputValue > failHigh );
 		bool isWarned = ( !isFailed && ( InputValue < warnLow || InputValue > warnHigh ) );
-
 
 		if( isFailed )
 		{
@@ -379,7 +359,7 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 
 DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = NULL;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -388,13 +368,13 @@ DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
 			HRESULT ResetStatus = ResetObject();
-			if( ResetStatus != S_OK )
+			if( S_OK != ResetStatus )
 			{
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 				if(!SilentReset && (ResetStatus == -SvOi::Err_16025 || ResetStatus == -SvOi::Err_16026))
 				{
 					SVStringArray msgList;
-					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType )));
+					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, StdMessageParams, SvOi::Err_10186 ); 
 				}
@@ -413,7 +393,6 @@ DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 	case SVMSGID_DISCONNECT_OBJECT_INPUT:
 		{
 			m_isValidRange = false;
-			//return SVMR_SUCCESS;
 		}
 		break;
 
@@ -446,11 +425,11 @@ BOOL SVRangeClass::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR ori
 		//In this case the inspection name is not part of the saved name so do not rename inspection names
 		if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
 		{
-			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType );
+			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
 		}
 		else
 		{
-			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+			newPrefix = pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
 		}// end else
 		oldPrefix = newPrefix;
 		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
@@ -475,7 +454,7 @@ bool SVRangeClass::CanCancel()
 
 HRESULT SVRangeClass::GetCancelData(SVCancelData*& rpCancelData)
 {
-	ASSERT(rpCancelData == NULL);
+	ASSERT(nullptr == rpCancelData);
 	SVRangeClassCancelData* pData = new SVRangeClassCancelData;
 	rpCancelData = pData;
 
@@ -509,9 +488,9 @@ BOOL SVRangeClass::getInputValue( double& RVal )
 {
 	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
 	{
-		return ( static_cast<SVValueObjectClass*>( m_inputObjectInfo.GetInputObjectInfo().PObject) )->GetValue( RVal ) == S_OK;
+		return S_OK == ( static_cast<SVValueObjectClass*>( m_inputObjectInfo.GetInputObjectInfo().PObject) )->GetValue( RVal );
 	}
-	return FALSE;
+	return false;
 }
 
 void SVRangeClass::ConnectAllInputObjects()
@@ -531,7 +510,7 @@ void SVRangeClass::ConnectAllInputObjects()
 				DWORD_PTR rc = ::SVSendMessage( m_ValueObjectReferences[i].Guid(), 
 					SVM_CONNECT_OBJECT_INPUT, 
 					reinterpret_cast<DWORD_PTR>(&InObjectInfo), 
-					NULL );
+					0 );
 
 				m_IsConnectedInput[i] = ( rc == SVMR_SUCCESS );
 			}
@@ -556,7 +535,7 @@ void SVRangeClass::DisconnectAllInputObjects()
 				DWORD_PTR rc = ::SVSendMessage(	m_ValueObjectReferences[i].Guid(), 
 					SVM_DISCONNECT_OBJECT_INPUT, 
 					reinterpret_cast<DWORD_PTR>(&InObjectInfo), 
-					NULL );
+					0 );
 				m_IsConnectedInput[i] = (rc == SVMR_SUCCESS );
 			}
 		}
@@ -613,19 +592,14 @@ void SVRangeClass::InvalidateRange()
 	m_isValidRange = false;
 }
 
-
-
-
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange ra  ,int bucket )
 {
 	if(m_isValidRange)
 	{
-
 		if( nullptr != m_ValueObjectReferences[  ra ].Object() )
 		{
 			UpdateRange(bucket, ra );
 		}
-
 	}
 
 	switch (ra)
@@ -649,37 +623,28 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange
 		return FailLow;
 		break;
 	}
-
 }
-
 
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
 {
 	if(m_isValidRange)
 	{
-
 		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailLow  ].Object() )
 		{
 			UpdateRange(bucket, RangeEnum::ER_FailLow );
 		}
-
-
 	}
 	return FailLow;
 }
 
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
 {
-
 	if(m_isValidRange)
 	{
 		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailHigh ].Object() )
 		{
 			UpdateRange(bucket, RangeEnum::ER_FailHigh );
 		}
-
 	}
-
-
 	return FailHigh;
 }

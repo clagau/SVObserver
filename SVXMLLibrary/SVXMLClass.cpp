@@ -24,12 +24,12 @@ SVXMLClass::SVXMLClass()
 : svmlUseRevisionHistoryInfo(0)
 , svmlUseCheckSums(0)
 , m_lUseEncryption(0)
-, svmopDOM(NULL)
+, svmopDOM(nullptr)
 , svmlInitialized(0)
 , m_lIsEncrypted(0)
 , m_lCurrentVersion(0)
 , m_lCurrentRevision(0)
-, m_opEncryption(NULL)
+, m_opEncryption(nullptr)
 {
 	Init ();
 }
@@ -41,7 +41,7 @@ SVXMLClass::~SVXMLClass()
 	if (svmopDOM)
 	{
 		delete svmopDOM;
-		svmopDOM = NULL;
+		svmopDOM = nullptr;
 	}
 }
 
@@ -49,19 +49,15 @@ HRESULT SVXMLClass::Init()
 {
 	long lErr = 0;
 
-	while (1)
-	{
-		svmlInitialized = FALSE;
-		m_lIsEncrypted = FALSE;
+	svmlInitialized = false;
+	m_lIsEncrypted = false;
 
-		svmopDOM = NULL;
-		m_opEncryption = NULL;
-		m_wczRevisionHistory [0] = NULL;
-		m_lCurrentVersion = 0;
-		m_lCurrentRevision = 0;
+	svmopDOM = nullptr;
+	m_opEncryption = nullptr;
+	m_wczRevisionHistory [0] = 0;
+	m_lCurrentVersion = 0;
+	m_lCurrentRevision = 0;
 
-		break;
-	}
 	return lErr;
 }
 
@@ -80,14 +76,14 @@ HRESULT	SVXMLClass::Initialize (long p_lUseCheckSums, long p_lUseRevisionHistory
 			break;
 		}
 
-		if (svmopDOM != NULL)
+		if (nullptr != svmopDOM)
 		{
 			hr = -1613;
 			break;
 		}
 
 		svmopDOM = new SVDOMClass;
-		if (svmopDOM == NULL)
+		if (nullptr == svmopDOM)
 		{
 			hr = -1611;
 			break;
@@ -115,7 +111,7 @@ HRESULT	SVXMLClass::Initialize (long p_lUseCheckSums, long p_lUseRevisionHistory
 		svmlUseRevisionHistoryInfo =	p_lUseRevisionHistoryInfo;
 		m_lUseEncryption =				p_lUseEncryption;
 		m_lIsEncrypted =				FALSE;
-		m_wczRevisionHistory [0] =		NULL;
+		m_wczRevisionHistory [0] =		_T('\0');
 		m_lCurrentVersion = 0;
 		m_lCurrentRevision = 0;
 
@@ -279,7 +275,7 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 			break;
 		}
 
-		if (abstrRevisionHistory == NULL)
+		if (nullptr == abstrRevisionHistory)
 		{
 //-		If the bstr was not allocated, then there is no revision history 
 //-		available and a past revision history will not be entered.  This
@@ -322,14 +318,14 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 			break;
 		}
 
-		if (oSourceRootElementPtr == NULL)
+		if (nullptr == oSourceRootElementPtr)
 		{
 			hr = -1691;
 			break;
 		}
 
 		oNodeListPtr = oSourceRootElementPtr->GetchildNodes ();
-		if (oNodeListPtr == NULL)
+		if (nullptr == oNodeListPtr)
 		{
 			break;
 		}
@@ -349,25 +345,25 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 			oNodeListPtr->reset ();
 
 			oNodePtr1 = oNodeListPtr->nextNode ();
-			if (oNodePtr1 == NULL)
+			if (nullptr == oNodePtr1)
 			{
 //-			It is assumed that we are at the end of the list.				
 				break;
 			}
 
 			oNodePtr2 = oDestinationElementPtr->appendChild (oNodePtr1);
-			if (oNodePtr2 == NULL)
+			if (nullptr == oNodePtr2)
 			{
 				hr = -1668;
 				break;
 			}
 
 			oNodePtr2 = oSourceRootElementPtr->removeChild (oNodePtr1);
-			if (oNodePtr2 == NULL)
+			if (nullptr == oNodePtr2)
 			{
 				break;
 			}
-		} while (1); // relies on nodePtr == NULL to leave the loop
+		} while (1); // relies on nullptr == nodePtr to leave the loop
 
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
@@ -389,7 +385,7 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 			break;
 		}
 
-		if (oDestinationRootElementPtr == NULL)
+		if (nullptr == oDestinationRootElementPtr)
 		{
 			hr = -1685;
 			break;
@@ -448,7 +444,7 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 			break;
 		}
 
-		if (oRevHistoryBaseElementPtr == NULL)
+		if (nullptr == oRevHistoryBaseElementPtr)
 		{
 			hr = AddRevisionHistoryBaseNode ();
 			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -463,12 +459,12 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 				break;
 			}
 
-			if (oRevHistoryBaseElementPtr == NULL)
+			if (nullptr == oRevHistoryBaseElementPtr)
 			{
 				hr = -1675;
 				break;
 			}
-		} // if (oRevHistoryBaseNodePtr == NULL)
+		} // if (nullptr == oRevHistoryBaseNodePtr)
 
 		bstrElementTagName = g_wcsRevision;
 
@@ -501,7 +497,7 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 		bstrAttributeName = g_wcsRevisionAtt;
 
 		oDOMNodeListPtr = oRevHistoryBaseElementPtr->GetchildNodes ();
-		if (oDOMNodeListPtr == NULL)
+		if (nullptr == oDOMNodeListPtr)
 		{
 			hr = -1667;
 			break;
@@ -515,13 +511,6 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 		}
 
 		oFirstRevNodePtr = oDOMNodeListPtr->nextNode ();
-//		if (oFirstRevNodePtr == NULL)
-//		{
-//-		If no nodes are present, this should not be a problem.
-//			hr = -1673;
-//			break;
-//		}
-
 		ccvAttributeValue = sprintf (szBuffer, "%d", oDOMNodeListPtr->Getlength () + 1);
 
 		oNewRevElementPtr->setAttribute (bstrAttributeName, ccvAttributeValue);
@@ -529,7 +518,7 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 		ccvInsertBefore = (SVXML::IXMLDOMNode *) oFirstRevNodePtr;
 
 		oOutputNodePtr = oRevHistoryBaseElementPtr->insertBefore (oNewRevElementPtr, ccvInsertBefore);
-		if (oOutputNodePtr == NULL)
+		if (nullptr == oOutputNodePtr)
 		{
 			hr = -1672;
 			break;
@@ -545,19 +534,7 @@ HRESULT SVXMLClass::GetRevisionHistory(BSTR* abstrpRevisionHistory)
 
 	while (1)
 	{
-//		if (abstrpRevisionHistory == NULL)
-//		{
-//-		If the abstrpRevisionHistory parameter is NULL, it is understood 
-//-		that the application is not interested in the persistance of the 
-//-		existing revision history.  svmlUseRevisionHistoryInfo can still 
-//-		be set, indicating that current version information will still 
-//-		be saved, without maintaining past version information.
-
-//			hr = 2;
-//			break;
-//		}
-
-		if (*abstrpRevisionHistory != NULL)
+		if (nullptr != *abstrpRevisionHistory)
 		{
 			hr = -1752;
 			break;
@@ -602,7 +579,7 @@ HRESULT SVXMLClass::AddRevisionHistoryBaseNode ()
 			break;
 		}
 
-		if (oRootElementPtr == NULL)
+		if (nullptr == oRootElementPtr)
 		{
 			hr = -1696;
 			break;
@@ -644,7 +621,7 @@ HRESULT SVXMLClass::GetRevisionHistoryBaseNode (SVXML::IXMLDOMElementPtr& arRevH
 			break;
 		}
 
-		if (oRootElementPtr == NULL)
+		if (nullptr == oRootElementPtr)
 		{
 			hr = -1687;
 			break;
@@ -683,7 +660,7 @@ HRESULT SVXMLClass::GetRevisionHistoryBaseNode (SVXML::IXMLDOMElementPtr& arRevH
 //-   being done imediately prior to the query.
 		arRevHistoryBaseNodePtr = oRootElementPtr->selectSingleNode (bstrSelectName);
 
-		if (arRevHistoryBaseNodePtr == NULL)
+		if (nullptr == arRevHistoryBaseNodePtr)
 		{
 //-		No revision history base node found.
 			hr = 2;
@@ -731,11 +708,11 @@ HRESULT SVXMLClass::GetRevisionNodeByIndex (long p_lIndex, SVXML::IXMLDOMElement
 			break;
 		}
 
-		if (l_oRevHistoryBaseNodePtr == NULL)
+		if (nullptr == l_oRevHistoryBaseNodePtr)
 		{
 			hr = -1922;
 			break;
-		} // if (oRevHistoryBaseNodePtr == NULL)
+		} // if (nullptr == oRevHistoryBaseNodePtr)
 
 
 		hr = svmopDOM->GetElementNbrOfChildren (l_oRevHistoryBaseNodePtr, 
@@ -817,7 +794,7 @@ HRESULT SVXMLClass::DeleteRevisionHistory ()
 			break;
 		}
 
-		if (oRevHistoryBaseElementPtr == NULL)
+		if (nullptr == oRevHistoryBaseElementPtr)
 		{
 //-		No element found, no element to delete.  We consider this to be a 
 //-		successful path to the end goal.
@@ -830,14 +807,14 @@ HRESULT SVXMLClass::DeleteRevisionHistory ()
 			break;
 		}
 
-		if (oRootElementPtr == NULL)
+		if (nullptr == oRootElementPtr)
 		{
 			hr = -1689;
 			break;
 		}
 		
 		oTempNodePtr = oRootElementPtr->removeChild (oRevHistoryBaseElementPtr);
-		if (oTempNodePtr == NULL)
+		if (nullptr == oTempNodePtr)
 		{
 			hr = -1693;
 			break;
@@ -894,14 +871,14 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 
 	while (1)
 	{
-		if (aDOMNodePtr == NULL)
+		if (nullptr == aDOMNodePtr)
 		{
 //-		Return harmlessly.
 			break;
 		}
 
 		if ((alMode == g_lXMLCheckSumCompare) &&
-			 (bstrpChangedNode == NULL))
+			 (nullptr == bstrpChangedNode))
 		{
 //-		If we are doing a checksum compare, then the BSTR pointer must 
 //-		exist for returning the error path.
@@ -934,7 +911,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 //-	Although ccvNodeValue is a variant, it should always contain a bstr.
 		ccvNodeValue = aDOMNodePtr->GetnodeValue ();
 
-		if ((ccvNodeValue.vt != VT_BSTR) || (ccvNodeValue.bstrVal == NULL))
+		if ((VT_BSTR != ccvNodeValue.vt) || (nullptr == ccvNodeValue.bstrVal))
 		{
 //-		For now we do not expect nodes to contain values (only attributes
 //-		contain values.  However, if there is a value, we will try to
@@ -954,7 +931,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 //-	Checksum attributes.
 		oAttributeListPtr = aDOMNodePtr->attributes;
 
-		if (oAttributeListPtr == NULL)
+		if (nullptr == oAttributeListPtr)
 		{
 			hr = -1681;
 			break;
@@ -968,7 +945,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 		for (lCounter = 0; lCounter < lNbrOfAttributes; lCounter++)
 		{
 			oAttributePtr = oAttributeListPtr->Getitem (lCounter);
-			if (oAttributePtr == NULL)
+			if (nullptr == oAttributePtr)
 			{
 				hr = -1682;
 				break;
@@ -988,7 +965,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 //-		bstr.
 			ccvAttributeValue = oAttributePtr->GetnodeValue ();
 
-			if ((ccvAttributeValue.vt != VT_BSTR) || (ccvAttributeValue.bstrVal == NULL))
+			if ((VT_BSTR != ccvAttributeValue.vt) || (nullptr == ccvAttributeValue.bstrVal))
 			{
 				hr = -1683;
 				break;
@@ -1037,7 +1014,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 //-	will not be returned by this function (at least not from an element 
 //-	node).
 
-		while (oNodePtr != NULL)
+		while (nullptr != oNodePtr)
 		{
 //-		If this node is an element (which will usually be the case), then 
 //-		checksum the sub nodes.
@@ -1059,7 +1036,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 
 //-		Get next node.
 			oNodePtr = oNodePtr->GetnextSibling ();
-		}// while (oNodePtr != NULL)
+		}// while (nullptr != oNodePtr)
 
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
@@ -1204,7 +1181,7 @@ HRESULT SVXMLClass::UpdateCheckSumValue (SVXML::IXMLDOMNodePtr aDOMNodePtr, unsi
 //-	setProperty("SelectionNamespaces", <ccvProperty>) which is currently 
 //-   being done imediately prior to the query.
 		oCheckSumElementPtr = aDOMNodePtr->selectSingleNode (bstrSelectName);
-		if (oCheckSumElementPtr == NULL)
+		if (nullptr == oCheckSumElementPtr)
 		{
 			bstrElementName = g_csCheckSum;
 
@@ -1218,7 +1195,7 @@ HRESULT SVXMLClass::UpdateCheckSumValue (SVXML::IXMLDOMNodePtr aDOMNodePtr, unsi
 				break;
 			}
 
-			if (aDOMNodePtr == NULL)
+			if (nullptr == aDOMNodePtr)
 			{
 				hr = -1678;
 				break;
@@ -1261,7 +1238,7 @@ HRESULT	SVXMLClass::CompareCheckSumValue (SVXML::IXMLDOMNodePtr	aDOMNodePtr, uns
 
 	while (1)
 	{
-		if (abstrpChangedNode == NULL)
+		if (nullptr == abstrpChangedNode)
 		{
 			hr = -1736;
 			break;
@@ -1309,7 +1286,7 @@ HRESULT	SVXMLClass::CompareCheckSumValue (SVXML::IXMLDOMNodePtr	aDOMNodePtr, uns
 		bstrSelectName = (_bstr_t) g_wcsData + L"[@" + g_wcsName + L" = \"" + g_csCheckSum + L"\"]";
 
 		oCheckSumElementPtr = aDOMNodePtr->selectSingleNode (bstrSelectName);
-		if (oCheckSumElementPtr == NULL)
+		if (nullptr == oCheckSumElementPtr)
 		{
 //-		Checksum not found will be treated the same as checksum not matched.
 			hr = 2;
@@ -1326,7 +1303,7 @@ HRESULT	SVXMLClass::CompareCheckSumValue (SVXML::IXMLDOMNodePtr	aDOMNodePtr, uns
 				break;
 			}
 
-		} // if (oCheckSumElementPtr == NULL) ... else
+		} // if (nullptr == oCheckSumElementPtr) ... else
 
 		break;
 	} // while (1)
@@ -1395,14 +1372,14 @@ HRESULT SVXMLClass::ConfigureAllElementsOffRootToValidateAgainstSchema ()
 			break;
 		}
 
-		if (oDOMRootPtr == NULL)
+		if (nullptr == oDOMRootPtr)
 		{
 			hr = -1721;
 			break;
 		}
 
 		oNodePtr = oDOMRootPtr->GetfirstChild ();
-		if (oNodePtr == NULL)
+		if (nullptr == oNodePtr)
 		{
 			hr = -1722;
 			break;
@@ -1410,7 +1387,7 @@ HRESULT SVXMLClass::ConfigureAllElementsOffRootToValidateAgainstSchema ()
 
 		oElementPtr = oNodePtr;
 
-		while (oElementPtr != NULL)
+		while (nullptr != oElementPtr)
 		{
 
 			bstrElementName = oNodePtr->GetbaseName ();
@@ -1441,7 +1418,7 @@ HRESULT SVXMLClass::ConfigureAllElementsOffRootToValidateAgainstSchema ()
 			
 			oNodePtr = oNodePtr->GetnextSibling ();
 			oElementPtr = oNodePtr;
-		} // while (oElementPtr != NULL)
+		} // while (nullptr != oElementPtr)
 
 		break;
 	} // while (1)
@@ -1478,7 +1455,7 @@ HRESULT SVXMLClass::Clear ()
 	while (1)
 	{
 		m_lIsEncrypted = FALSE;
-		m_wczRevisionHistory [0] =	NULL;
+		m_wczRevisionHistory [0] = _T('\0');
 		m_lCurrentVersion = 0;
 		m_lCurrentRevision = 0;
 
@@ -1509,7 +1486,7 @@ HRESULT SVXMLClass::IsElementNode (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 	BSTR bstrHack;
 
 	lIsElementNode = 1;  // FALSE
-	bstrHack = NULL;
+	bstrHack = nullptr;
 
 	while (1)
 	{
@@ -1520,7 +1497,7 @@ HRESULT SVXMLClass::IsElementNode (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 //-	reference to the underlying BSTR, and as such should not be 
 //-   modified in any way.
 		bstrHack = (wchar_t*) bstrDOMElementTag;
-		if (bstrHack == NULL)
+		if (nullptr == bstrHack)
 		{
 			hr = -1772;
 			break;
@@ -1535,7 +1512,7 @@ HRESULT SVXMLClass::IsElementNode (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 
 		lIsElementNode = hr;
 
-		if (abstrpDOMElementTag != NULL)
+		if (nullptr != abstrpDOMElementTag)
 		{
 //-		We would love to detach the BSTR so that we didn't need to 
 //-		make a copy.
@@ -1584,14 +1561,14 @@ HRESULT SVXMLClass::IsElementData (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 	BSTR bstrHack;
 
 	lIsElementData = 1;  // FALSE
-	bstrHack = NULL;
+	bstrHack = nullptr;
 
 	while (1)
 	{
 		bstrDOMElementTag = aDOMElementPtr->GetnodeName ();
 
 		bstrHack = (wchar_t*) bstrDOMElementTag;
-		if (bstrHack == NULL)
+		if (nullptr == bstrHack)
 		{
 			hr = -1809;
 			break;
@@ -1606,7 +1583,7 @@ HRESULT SVXMLClass::IsElementData (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 
 		lIsElementData = hr;
 
-		if (abstrpDOMElementTag != NULL)
+		if (nullptr != abstrpDOMElementTag)
 		{
 			*abstrpDOMElementTag = bstrDOMElementTag.copy ();
 		}
@@ -1650,11 +1627,11 @@ HRESULT SVXMLClass::GetElementData (SVXML::IXMLDOMElementPtr aDOMElementPtr, VAR
 
 	l_Status = svmopDOM->GetDOMNodeElementValue( aDOMElementPtr, vpDOMElementData );
 
-	if( l_Status == S_OK && ( vpDOMElementData->vt & VT_ARRAY ) == VT_ARRAY )
+	if( S_OK == l_Status && VT_ARRAY == ( vpDOMElementData->vt & VT_ARRAY ) )
 	{
 		_variant_t value;
 		l_Status = SVXMLSafeArrayConverter::CopyDOMNodeToSafeArray(*this, aDOMElementPtr, value );
-		if (l_Status == S_OK)
+		if (S_OK == l_Status )
 		{
 			*vpDOMElementData = value.Detach();
 		}
@@ -1682,7 +1659,7 @@ HRESULT SVXMLClass::IsElementFromParent (SVXML::IXMLDOMElementPtr aDOMElementPtr
 {
 	HRESULT hr = 0;
 
-	BSTR bstrElementName = NULL;
+	BSTR bstrElementName = nullptr;
 	SVBStr bstrFromParent;
 
 	while (1)
@@ -1708,8 +1685,10 @@ HRESULT SVXMLClass::IsElementFromParent (SVXML::IXMLDOMElementPtr aDOMElementPtr
 		
 		break;
 	}
-//SEJ - should'nt we check it first?
-	SysFreeString (bstrElementName);
+	if (bstrElementName)
+	{
+		SysFreeString (bstrElementName);
+	}
 
 	return hr;
 }
@@ -1718,7 +1697,7 @@ HRESULT SVXMLClass::IsElementSafeArray (SVXML::IXMLDOMElementPtr aDOMElementPtr)
 {
 	HRESULT hr = 0;
 
-	BSTR bstrElementName = NULL;
+	BSTR bstrElementName = nullptr;
 
 	VARIANT vElementData;
 
@@ -1765,7 +1744,7 @@ HRESULT SVXMLClass::GetBaseElement (SVXML::IXMLDOMElementPtr& arBaseElementPtr)
 			break;
 		}
 
-		if (oRootElementPtr == NULL)
+		if (nullptr == oRootElementPtr)
 		{
 			hr = -1793;
 			break;
@@ -1822,7 +1801,7 @@ HRESULT SVXMLClass::GetBaseElement (SVXML::IXMLDOMElementPtr& arBaseElementPtr)
 //-	search for .... A FEW WORDS ABOUT selectSingleNode (). ----------------
 		arBaseElementPtr = oRootElementPtr->selectSingleNode (bstrSelectName);
 
-		if (arBaseElementPtr == NULL)
+		if (nullptr == arBaseElementPtr)
 		{
 //-		No revision history base node found.
 			hr = 2;

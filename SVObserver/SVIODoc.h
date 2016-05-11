@@ -21,7 +21,6 @@ class SVIOController;
 // First the user has to assign an existing channel to a possible
 // io entry or this is done by default, refer to IODoc::IODoc().
 // Second in any part of this software must be an 
-// IOControl::CreateIOEntry call to open this io entry for 
 // reading or writing.
 class SVIODoc : public CDocument
 {
@@ -53,8 +52,6 @@ public:
 public:
 	virtual ~SVIODoc();
 
-	void InitIO();
-
 	void CloseDocument();
 
 	void updateGlobalConstantsView() const;
@@ -65,8 +62,7 @@ public:
 #endif
 
 	SVIOController* GetIOController() const;
-
-	SVIOController* m_pIOController;
+	void SetIOController(SVIOController* pController);
 
 protected:
 	SVIODoc();
@@ -75,7 +71,7 @@ private:
 	void InitMenu();
 
 	SVFileNameClass msvFileName;
-
+	SVIOController* m_pIOController;
 };
 
 //{{AFX_INSERT_LOCATION}}

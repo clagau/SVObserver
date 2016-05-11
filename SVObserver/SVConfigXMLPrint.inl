@@ -11,12 +11,15 @@
 
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectLibrary.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVBlobAnalyzer.h"
 #include "SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
 #include "RootObject.h"
 #pragma endregion Includes
+
+using namespace SVStringConversions;
 
 std::pair<GUID **, size_t> NonPrintGuids();
 
@@ -31,7 +34,7 @@ const int cp_dflt = 1252;
 static SVToolGrouping GetToolGroupings(const SVGUID& rInspectionGuid)
 {
 	// get the document that owns this inspection
-	SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(rInspectionGuid);
+	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(rInspectionGuid);
 	if (pDoc)
 	{
 		return pDoc->GetToolGroupings();
@@ -970,7 +973,7 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 			}
 		}
 
-		SVImageInfoClass* pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL) );
+		SVImageInfoClass* pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0) );
 		
 		if (pImageInfo)
 		{
@@ -982,10 +985,10 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 			long l_lWidth = 0;
 			long l_lHeight = 0;
 
-			if ( pImageInfo->GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint ) == S_OK &&
-				 pImageInfo->GetExtentProperty( SVExtentPropertyOutputPositionPoint, l_oOutputPoint ) == S_OK &&
-				 pImageInfo->GetExtentProperty( SVExtentPropertyWidth, l_lWidth ) == S_OK &&
-				 pImageInfo->GetExtentProperty( SVExtentPropertyHeight, l_lHeight ) == S_OK )
+			if ( S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint ) &&
+				 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyOutputPositionPoint, l_oOutputPoint ) &&
+				 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyWidth, l_lWidth ) &&
+				 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyHeight, l_lHeight ) )
 			{
 				sLabel = SVString(pApp->GetStringResource(IDS_TOOL_LENGTH_STRING));
 				WriteValueObject(writer,  L"Property", utf16(sLabel), _itow(l_lWidth, buff, 10));

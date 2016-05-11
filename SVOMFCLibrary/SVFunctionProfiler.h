@@ -15,15 +15,13 @@
 //Moved to precompiled header: #include <map>
 #include "SVTimerLibrary/SVClock.h"
 
-#if 0
-// this class is meant to be used like this:
+/* // this class is meant to be used like this:
 void MyClass::MyFunction()
 {
 	static SVFunctionProfiler profile("MyClass::MyFunction");
 	SVFunctionProfilerLocal profiler(profile);
 	// do stuff
-}
-#endif
+} */
 
 class SVFunctionProfiler
 {
@@ -73,7 +71,6 @@ inline SVFunctionProfiler::SVFunctionProfiler(const CString& sName)
 
 inline SVFunctionProfiler::~SVFunctionProfiler()
 {
-	//TRACE();
 	__int64 iTotalTime = static_cast< __int64 >( m_TotalTime );
 	FILE* fh = fopen("c:\\temp\\profile.txt","a");
 	if( fh )
@@ -83,16 +80,6 @@ inline SVFunctionProfiler::~SVFunctionProfiler()
 	}
 	
 	TRACE(_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_sName, m_iCount, iTotalTime);
-	/*
-	std::cout << m_sName.GetBuffer(1);
-	m_sName.ReleaseBuffer();
-	std::cout << "count=";
-	std::cout << (int)m_iCount;
-	std::cout << "; total time = ";
-	std::cout << (int)iTotalTime;
-	std::cout << "ms";
-	std::cout << std::endl;
-	*/
 }
 
 inline void SVFunctionProfiler::Begin()

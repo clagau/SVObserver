@@ -18,21 +18,6 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-
-
-
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVGraphixClass
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
-
 //******************************************************************************
 // Serialization:
 //******************************************************************************
@@ -45,8 +30,10 @@ void SVGraphixClass::Serialize( CArchive& RArchive )
 		// Clean up NULL pointer...
 		for( i = size - 1 ; i >= 0; -- i )
 		{
-			if( drawObjectArray.GetAt( i ) == NULL )
+			if( nullptr == drawObjectArray.GetAt( i ) )
+			{
 				drawObjectArray.RemoveAt( i );
+			}
 		}
 
 		// Serialize draw objects...
@@ -76,7 +63,7 @@ void SVGraphixClass::Serialize( CArchive& RArchive )
 		
 		__int32 size = 0;
 		__int32 objectType = 0;
-		SVGraphixDrawObjectClass* pNewObject = NULL;
+		SVGraphixDrawObjectClass* pNewObject = nullptr;
 		// Serialize draw objects...
 		RArchive >> size;
 		for( __int32 i = 0; i < size; ++i )
@@ -149,7 +136,7 @@ void SVGraphixClass::FlushDrawObjects()
 		if( drawObjectArray.GetAt( i ) )
 		{
 			delete drawObjectArray.GetAt( i );
-			drawObjectArray.SetAt( i, NULL );
+			drawObjectArray.SetAt( i, nullptr );
 		}
 
 	drawObjectArray.RemoveAll();
@@ -159,12 +146,12 @@ void SVGraphixClass::FlushDrawObjects()
 
 void SVGraphixClass::Draw( HDC HDestinyDC, const RECT& RDestinyRect )
 {
-    HDC     hMemDC              = NULL;
-    HBRUSH  hBackgroundBrush    = NULL;
-    HBRUSH  hOldBrush           = NULL;
-    HBITMAP hBM                 = NULL;
-    HBITMAP hBMHolder           = NULL;
-    HBITMAP hOldBM              = NULL;
+    HDC     hMemDC              = nullptr;
+    HBRUSH  hBackgroundBrush    = nullptr;
+    HBRUSH  hOldBrush           = nullptr;
+    HBITMAP hBM                 = nullptr;
+    HBITMAP hBMHolder           = nullptr;
+    HBITMAP hOldBM              = nullptr;
 
     while( 1 )
     {
@@ -186,13 +173,8 @@ void SVGraphixClass::Draw( HDC HDestinyDC, const RECT& RDestinyRect )
         hOldBrush = ( HBRUSH ) ::SelectObject( hMemDC, hBackgroundBrush );
 
         // Select bitmap for memDC...
-        if( hOldBM = ( HBITMAP ) ::SelectObject( hMemDC, hBM ) )
-        {
-//JAB103108 - Do not delete old bitmap object?
-//            ::DeleteObject( hOldBM );
-//            hOldBM = NULL;
-        }
-
+        hOldBM = ( HBITMAP ) ::SelectObject( hMemDC, hBM );
+        
         // Set memDC background color...
         ::PatBlt( hMemDC, rect.left, rect.top, graphixWidth, graphixHeight, PATCOPY );
 
@@ -258,8 +240,6 @@ void SVGraphixClass::Draw( HDC HDestinyDC, const RECT& RDestinyRect )
 
         // Deselect bitmap for memDC...
         hBMHolder = ( HBITMAP ) ::SelectObject( hMemDC, hOldBM );
-
-//JAB103108		::DeleteObject( hBM );
         break;
     }
 
@@ -278,7 +258,7 @@ void SVGraphixClass::Draw( HDC HDestinyDC, const RECT& RDestinyRect )
 
 SVGraphixDrawObjectClass* SVGraphixClass::GetNewDrawObject( SVGraphixDrawObjectEnum NewObject, BOOL BInsert )
 {
-	SVGraphixDrawObjectClass* pDrawObject = NULL;
+	SVGraphixDrawObjectClass* pDrawObject = nullptr;
 
 	switch( NewObject )
 	{
@@ -348,7 +328,7 @@ HGLOBAL SVGraphixClass::GetGraphixData()
 	}
 	if(pMem) ::GlobalUnlock( pMem );
 	if(hMem) ::GlobalFree( hMem );
-	return NULL;
+	return nullptr;
 }
 
 BOOL SVGraphixClass::SetGraphixData( HGLOBAL HGlobalMem ) 

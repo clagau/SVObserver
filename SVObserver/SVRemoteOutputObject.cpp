@@ -24,7 +24,7 @@
 SV_IMPLEMENT_CLASS( SVRemoteOutputObject, SVRemoteOutputObjectGUID );
 
 SVRemoteOutputObject::SVRemoteOutputObject(void)
-: m_pValueObject(NULL)
+: m_pValueObject(nullptr)
 {
 }
 
@@ -36,7 +36,7 @@ SVString SVRemoteOutputObject::GetInputValueObjectName()
 {
 	// Use the GUID to get an object.
 	SVValueObjectClass* l_pObject = dynamic_cast<SVValueObjectClass*>(SVObjectManagerClass::Instance().GetObjectA(m_InputObjectId));
-	if( l_pObject!= NULL )
+	if( nullptr != l_pObject )
 	{	// Get the object name from the object pointer.
 		m_strObjectName = l_pObject->GetCompleteObjectName();
 		m_pValueObject = l_pObject;
@@ -60,7 +60,7 @@ bool SVRemoteOutputObject::GetParameters( SVObjectXMLWriter& rWriter ) const
 {
 	_variant_t svVariant;
 
-	svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
+	svVariant = SVGUID( m_outObjectInfo.UniqueObjectID ).ToVARIANT();
 	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
@@ -94,7 +94,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 		if( bOk )
 		{
-			outObjectInfo.UniqueObjectID = ObjectID;
+			m_outObjectInfo.UniqueObjectID = ObjectID;
 
 			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
@@ -140,7 +140,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 HRESULT SVRemoteOutputObject::SetInputObject(SVValueObjectClass* p_pObject )
 {
-	if( p_pObject != NULL )
+	if( nullptr != p_pObject )
 	{
 		m_InputObjectId = p_pObject->GetUniqueObjectID();
 	}

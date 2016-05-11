@@ -151,7 +151,7 @@ void SVVector< SVT_TYPE, SVT_ARG_TYPE >::SetSize( int nNewSize )
 template< typename SVT_TYPE, typename SVT_ARG_TYPE >
 const typename SVVector< SVT_TYPE, SVT_ARG_TYPE >::SVType* SVVector< SVT_TYPE, SVT_ARG_TYPE >::GetData() const
 {
-	const SVType* l_pData( NULL );
+	const SVType* l_pData( nullptr );
 
 	if( 0 < m_Vector.size() )
 	{
@@ -165,7 +165,7 @@ const typename SVVector< SVT_TYPE, SVT_ARG_TYPE >::SVType* SVVector< SVT_TYPE, S
 template< typename SVT_TYPE, typename SVT_ARG_TYPE >
 typename SVVector< SVT_TYPE, SVT_ARG_TYPE >::SVType* SVVector< SVT_TYPE, SVT_ARG_TYPE >::GetData()
 {
-	SVType* l_pData( NULL );
+	SVType* l_pData( nullptr );
 
 	if( 0 < m_Vector.size() )
 	{

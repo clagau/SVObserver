@@ -45,7 +45,7 @@ SVMaskShape::~SVMaskShape()	// this is a base class
 HRESULT SVMaskShape::Draw( HDC hDC ) const
 {
 	HRESULT hr = S_OK;
-	if ( hDC != NULL )
+	if ( nullptr != hDC )
 	{
 		hr = SVIHBitmapUtilities::SVHBitmapToDC(m_dib, hDC);
 	}
@@ -79,7 +79,7 @@ HRESULT SVMaskShape::Refresh()
 	// take the properties and draw them on the internal bitmap
 	HRESULT hr = S_OK;
 
-	if ( m_bImageInfoChanged && m_dib.hbm != NULL )
+	if ( m_bImageInfoChanged && nullptr != m_dib.hbm )
 	{
 		::DeleteObject( m_dib.hbm );
 		m_dib.FreeBitmapInfo();
@@ -87,14 +87,14 @@ HRESULT SVMaskShape::Refresh()
 		m_RenderDC.DeleteDC();
 	}
 
-	if ( m_dib.hbm == NULL )
+	if ( nullptr == m_dib.hbm )
 	{
-		m_RenderDC.CreateCompatibleDC(NULL);
+		m_RenderDC.CreateCompatibleDC(nullptr);
 		hr = SVIHBitmapUtilities::SVImageInfoToNewDIB( m_svImageInfo, m_dib );
 		m_bImageInfoChanged = false;
 	}
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		HBITMAP hbmOld = (HBITMAP) ::SelectObject(m_RenderDC.GetSafeHdc(), m_dib.hbm);
 
@@ -142,7 +142,7 @@ HRESULT SVMaskShape::SetProperties(const MapType& p_mapProperties)
 		// let derived classes put constraints on the values, etc.
 		hr = ValidateProperties( l_mapProperties );
 
-		if ( hr == S_OK )//|| hr == SVMSG_SVO_32_VALUE_OUT_OF_RANGE )
+		if ( S_OK == hr )//|| SVMSG_SVO_32_VALUE_OUT_OF_RANGE == hr)
 		{
 			MapType::const_iterator iterSource;
 			MapType::iterator iterDest;
@@ -174,30 +174,22 @@ HRESULT SVMaskShape::ValidateProperties(MapType& p_rmapProperties)
 		SVImageInfoClass info;
 		CRect rect;
 		hr = GetImageInfo( info );
-		if ( hr == S_OK )
-			hr = info.GetOutputRectangle(rect);
-		if ( hr == S_OK )
+		if ( S_OK == hr)
 		{
-			//if ( hr == S_OK )
-			//	hr = p_rmapProperties[ SVShapeMaskPropertyHeightGuid ].value <= rect.Height() ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			//if ( hr == S_OK )
-			//	hr = p_rmapProperties[ SVShapeMaskPropertyWidthGuid  ].value <= rect.Width() ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			if ( hr == S_OK )
+			hr = info.GetOutputRectangle(rect);
+		}
+		if ( S_OK == hr )
+		{
+			if ( S_OK == hr )
+			{
 				hr = p_rmapProperties[ SVShapeMaskPropertyHeightGuid ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			if ( hr == S_OK )
+			}
+			if ( S_OK == hr )
+			{
 				hr = p_rmapProperties[ SVShapeMaskPropertyWidthGuid  ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			//if ( hr == S_OK )
-			//	hr = p_rmapProperties[ SVShapeMaskPropertyCenterXGuid  ].value <= rect.right ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			//if ( hr == S_OK )
-			//	hr = p_rmapProperties[ SVShapeMaskPropertyCenterYGuid  ].value <= rect.bottom ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			//if ( hr == S_OK )
-			//	hr = p_rmapProperties[ SVShapeMaskPropertyCenterXGuid  ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			//if ( hr == S_OK )
-			//	hr = p_rmapProperties[ SVShapeMaskPropertyCenterYGuid  ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
+			}
 		}
 	}
-
-	//ASSERT( hr == S_OK );
 
 	return hr;
 }// SVMaskShape::ValidateProperties
@@ -355,7 +347,7 @@ HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect re
 	std::transform( vecPoints.begin(), vecPoints.end(), vecPoints.begin(),
 	                std::bind2nd( std::minus<SVExtentPointStruct>(), ptOffset) );	// subtract the offset from each point
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		figureSource = figureDest;	// viewport is now the input
 		figureDest = rectDisplay;   // display is the output
@@ -382,13 +374,13 @@ HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect re
 	// translate mask image to viewport
 	figure -= (figureDest.m_svTopLeft - figureSource.m_svTopLeft); // simple offset, no scaling
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		figureSource = figureDest;	// viewport is now the input
 		figureDest = rectDisplay;   // display is the output
 		// translate viewport to display
 		hr = TranslateCoordinates(figureSource, figureDest, figure);
-		if ( hr == S_OK )
+		if ( S_OK == hr )
 		{
 			rectShape = figure.Rect();
 		}
@@ -425,8 +417,10 @@ HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource
 	for ( size_t i=0; i < rvecPoints.size(); i++ )
 	{
 		HRESULT hrPoint = TranslateCoordinates(rectSource, rectDest, rvecPoints[i]);
-		if ( hr == S_OK )
+		if ( S_OK == hr )
+		{
 			hr = hrPoint;
+		}
 	}
 	return hr;
 }
@@ -442,13 +436,15 @@ bool SVMaskShape::IsAutoResize() const
 	return m_bAutoResize;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////////
 
 SVMaskShapeRectangle::SVMaskShapeRectangle()
 {
 	// all properties in base
+}
+
+SVMaskShapeRectangle::~SVMaskShapeRectangle()
+{
 }
 
 HRESULT SVMaskShapeRectangle::Render( CDC& dc, COLORREF rgbShape, COLORREF )
@@ -470,7 +466,7 @@ HRESULT SVMaskShapeRectangle::RenderOutline( CDC& dc, const CRect rectViewport, 
 
 	TranslateToDisplay(rectViewport, rectDisplay, rect);
 
-	if ( hr == S_OK )
+	if ( S_OK == hr )
 	{
 		CBrush brush;
 		brush.CreateSolidBrush(rgb);
@@ -484,13 +480,15 @@ HRESULT SVMaskShapeRectangle::RenderOutline( CDC& dc, const CRect rectViewport, 
 	return hr;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////////
 
 SVMaskShapeOval::SVMaskShapeOval()
 {
 	// all properties in base
+}
+
+SVMaskShapeOval::~SVMaskShapeOval()
+{
 }
 
 HRESULT SVMaskShapeOval::Render( CDC& dc, COLORREF rgbShape, COLORREF )
@@ -518,9 +516,6 @@ HRESULT SVMaskShapeOval::RenderOutline( CDC& dc, const CRect rectViewport, const
 	return hr;
 }
 
-
-
-
 //////////////////////////////////////////////////////////////////////////////////
 
 SVMaskShapeSymmetricTrapezoid::SVMaskShapeSymmetricTrapezoid()
@@ -533,6 +528,10 @@ SVMaskShapeSymmetricTrapezoid::SVMaskShapeSymmetricTrapezoid()
 
 	m_mapProperties[ SVShapeMaskPropertyOffsetGuid ].bAvailableWithAutoResize = true;
 	m_mapProperties[ SVShapeMaskPropertySymmetryOrientationGuid ].bAvailableWithAutoResize = true;
+}
+
+SVMaskShapeSymmetricTrapezoid::~SVMaskShapeSymmetricTrapezoid()
+{
 }
 
 HRESULT SVMaskShapeSymmetricTrapezoid::Render( CDC& dc, COLORREF rgbShape, COLORREF )
@@ -580,16 +579,13 @@ HRESULT SVMaskShapeSymmetricTrapezoid::GetPoints(std::vector<POINT>& p_rvecPoint
 	SymmetryOrientation eSymmetryOrientation = static_cast <SymmetryOrientation> ( m_mapProperties[ SVShapeMaskPropertySymmetryOrientationGuid ].value );
 
 	// if offset is bigger than half the width, we will get a triangle with the top not really at the top.
-	//bool bDegenerate = false;
-
+	
 	switch ( eSymmetryOrientation )
 	{
 		case VerticalAxisTop:
 		{
 			p_rvecPoints[0].x += lOffset;
 			p_rvecPoints[3].x -= lOffset;
-			//bDegenerate = lOffset * 2 > rect.Width();
-			//if ( bDegenerate )
 			CPoint ptIntersect;
 			Intersect::LineResultEnum eIntersect = Intersect::Lines( p_rvecPoints[0], p_rvecPoints[1],
 			                                                         p_rvecPoints[2], p_rvecPoints[3],
@@ -605,7 +601,6 @@ HRESULT SVMaskShapeSymmetricTrapezoid::GetPoints(std::vector<POINT>& p_rvecPoint
 		{
 			p_rvecPoints[1].x += lOffset;
 			p_rvecPoints[2].x -= lOffset;
-			//bDegenerate = lOffset * 2 > rect.Width();
 			CPoint ptIntersect;
 			Intersect::LineResultEnum eIntersect = Intersect::Lines( p_rvecPoints[0], p_rvecPoints[1],
 			                                                         p_rvecPoints[2], p_rvecPoints[3],
@@ -621,7 +616,6 @@ HRESULT SVMaskShapeSymmetricTrapezoid::GetPoints(std::vector<POINT>& p_rvecPoint
 		{
 			p_rvecPoints[0].y += lOffset;
 			p_rvecPoints[1].y -= lOffset;
-			//bDegenerate = lOffset * 2 > rect.Height();
 			CPoint ptIntersect;
 			Intersect::LineResultEnum eIntersect = Intersect::Lines( p_rvecPoints[0], p_rvecPoints[3],
 			                                                         p_rvecPoints[1], p_rvecPoints[2],
@@ -637,7 +631,6 @@ HRESULT SVMaskShapeSymmetricTrapezoid::GetPoints(std::vector<POINT>& p_rvecPoint
 		{
 			p_rvecPoints[3].y += lOffset;
 			p_rvecPoints[2].y -= lOffset;
-			//bDegenerate = lOffset * 2 > rect.Height();
 			CPoint ptIntersect;
 			Intersect::LineResultEnum eIntersect = Intersect::Lines( p_rvecPoints[0], p_rvecPoints[3],
 			                                                         p_rvecPoints[1], p_rvecPoints[2],
@@ -650,11 +643,6 @@ HRESULT SVMaskShapeSymmetricTrapezoid::GetPoints(std::vector<POINT>& p_rvecPoint
 			break;
 		}
 	}// end switch ( eSymmetryOrientation )
-
-	//if ( bDegenerate )
-	{
-		// find the intersection point and re-adjust
-	}
 
 	p_rvecPoints.push_back( p_rvecPoints[0] ); // 4; close the shape (back to original point)
 
@@ -688,14 +676,15 @@ HRESULT SVMaskShapeSymmetricTrapezoid::ValidateProperties(MapType& p_rmapPropert
 	}
 
 	hr = SVMaskShape::ValidateProperties( p_rmapProperties );
-	if ( hrRet == S_OK ) hrRet = hr;
+	if ( S_OK == hrRet )
+	{
+		hrRet = hr;
+	}
 
 	return hrRet;
 }// SVMaskShapeSymmetricTrapezoid::ValidateProperties
 
-
 //////////////////////////////////////////////////////////////////////////////////
-
 SVMaskShapeDoughnut::SVMaskShapeDoughnut()
 {
 	m_mapProperties[ SVShapeMaskPropertySideThicknessGuid ] = 20;
@@ -706,6 +695,10 @@ SVMaskShapeDoughnut::SVMaskShapeDoughnut()
 
 	m_mapProperties[ SVShapeMaskPropertySideThicknessGuid ].bAvailableWithAutoResize = true;
 	m_mapProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ].bAvailableWithAutoResize = true;
+}
+
+SVMaskShapeDoughnut::~SVMaskShapeDoughnut()
+{
 }
 
 HRESULT SVMaskShapeDoughnut::Render( CDC& dc, COLORREF rgbShape, COLORREF rgbBackground )

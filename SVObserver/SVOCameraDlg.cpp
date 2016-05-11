@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-CSVOCameraDlg::CSVOCameraDlg(CWnd* pParent /*=NULL*/)
+CSVOCameraDlg::CSVOCameraDlg(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(CSVOCameraDlg::IDD)
 {
 	//{{AFX_DATA_INIT(CSVOCameraDlg)
@@ -269,7 +269,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 						if (m_pParent->GetCameraListCount() > 1)
 						{
 							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Camera_UseQuestion, StdMessageParams, SvOi::Err_10137, NULL, nullptr, MB_YESNO );
+							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Camera_UseQuestion, StdMessageParams, SvOi::Err_10137, 0, nullptr, MB_YESNO );
 							if (IDYES == result)
 							{
 								SetCameraPropForAll(pCameraObj->GetCameraDisplayName());
@@ -356,7 +356,7 @@ void CSVOCameraDlg::SetCameraPropForAll(CString sCurrentCamera)
 
 BOOL CSVOCameraDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
+	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, 0, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 	return TRUE;
 }
 

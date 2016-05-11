@@ -48,7 +48,7 @@ public:
 
 	//{{AFX_VIRTUAL(SVPPQWindowClass)
 	public:
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	//}}AFX_VIRTUAL
 
@@ -87,11 +87,6 @@ public:
 
 	//{{AFX_VIRTUAL(SVPPQBarClass)
 	//}}AFX_VIRTUAL
-
-//#ifdef _DEBUG
-//	virtual void AssertValid() const;
-//	virtual void Dump(CDumpContext& dc) const;
-//#endif
 
 protected:
 	SVPPQWindowClass PPQWindow;

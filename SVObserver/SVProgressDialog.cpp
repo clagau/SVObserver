@@ -20,12 +20,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVProgressDialog::SVProgressDialog(LPCTSTR title, CWnd* pParent /*=NULL*/)
+SVProgressDialog::SVProgressDialog(LPCTSTR title, CWnd* pParent /*=nullptr*/)
 : CDialog(SVProgressDialog::IDD, pParent)
 , m_Title(title)
 , m_TotalSize(0)
 , m_AmountProcessed(0)
-, m_pTask(NULL)
+, m_pTask(nullptr)
 {
 	//{{AFX_DATA_INIT(SVProgressDialog)
 		// NOTE: the ClassWizard will add member initialization here

@@ -21,7 +21,7 @@ class MonitorListAddRemoveDlg : public CDialog
 
 #pragma region Public Methods
 public:
-	MonitorListAddRemoveDlg(const RemoteMonitorList& rMonitorList, const PPQNameListNames& rList, CWnd* pParent = NULL);   // standard constructor
+	MonitorListAddRemoveDlg(const RemoteMonitorList& rMonitorList, const PPQNameListNames& rList, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~MonitorListAddRemoveDlg();
 
 	const RemoteMonitorList& GetRemoteMonitorList() const;

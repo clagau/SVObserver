@@ -45,7 +45,7 @@ HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		l_hr = g_svTheApp.m_fileAcqDevice.TriggerGetCount( *p_pulCount );
 	}
@@ -58,7 +58,7 @@ HRESULT WINAPI SVTriggerGetHandle( unsigned long *p_pulHandle, unsigned long p_u
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pulHandle != NULL )
+	if ( nullptr != p_pulHandle )
 	{
 		*p_pulHandle = g_svTheApp.m_fileAcqDevice.TriggerGetHandle(p_ulIndex);
 		l_hr = S_OK;
@@ -72,15 +72,15 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
 		l_hr = S_OK;
 
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
 
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 		l_hr = g_svTheApp.m_fileAcqDevice.TriggerGetName(p_ulHandle, *p_pbstrName);
 	} 
@@ -93,7 +93,7 @@ HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVCallbackPtr p_pCal
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( p_pCallback != NULL )
+	if ( nullptr != p_pCallback )
 	{
 		SVCallbackStruct l_Callback;
 
@@ -112,7 +112,7 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVCallbackPtr p_pC
 
 	HRESULT l_hr = S_OK;
 
-	if ( p_pCallback != NULL )
+	if ( nullptr != p_pCallback )
 	{
 		SVCallbackStruct l_Callback;
 
@@ -120,7 +120,7 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVCallbackPtr p_pC
 		l_Callback.m_pOwner = p_pOwner;
 		l_Callback.m_pData = p_pData;
 
-		if ( g_svTheApp.m_fileAcqDevice.TriggerUnregisterCallback(p_ulHandle, l_Callback) != S_OK )
+		if ( S_OK != g_svTheApp.m_fileAcqDevice.TriggerUnregisterCallback(p_ulHandle, l_Callback) )
 		{
 			l_hr = S_FALSE;
 		}
@@ -134,7 +134,7 @@ HRESULT WINAPI SVTriggerUnregisterAll( unsigned long p_ulHandle )
 
 	HRESULT l_hr = S_OK;
 
-	if ( g_svTheApp.m_fileAcqDevice.TriggerUnregisterAllCallbacks(p_ulHandle) != S_OK )
+	if ( S_OK != g_svTheApp.m_fileAcqDevice.TriggerUnregisterAllCallbacks(p_ulHandle) )
 	{
 		l_hr = S_FALSE;
 	}
@@ -156,7 +156,7 @@ HRESULT WINAPI SVTriggerStop( unsigned long p_ulHandle )
 
 	HRESULT l_hr = S_OK;
 
-	if ( g_svTheApp.m_fileAcqDevice.TriggerStop(p_ulHandle) != S_OK )
+	if ( S_OK != g_svTheApp.m_fileAcqDevice.TriggerStop(p_ulHandle) )
 	{
 		l_hr = S_FALSE;
 	} 
@@ -198,7 +198,7 @@ HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetCount( *p_pulCount );
 	}
@@ -211,13 +211,13 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *p_pulHandle, unsigned long p
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulHandle != NULL )
+	if ( nullptr != p_pulHandle )
 	{
 		unsigned long l_ulCount = 0;
 
 		l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetCount( l_ulCount );
 
-		if ( l_hrOk == S_OK )
+		if ( S_OK == l_hrOk )
 		{
 			if ( p_ulIndex < l_ulCount )
 			{
@@ -227,7 +227,7 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *p_pulHandle, unsigned long p
 			}
 			else
 			{
-				*p_pulHandle = NULL;
+				*p_pulHandle = 0;
 			}
 		}
 	} 
@@ -240,13 +240,13 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
 
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 		l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetName( p_ulHandle - 1, *p_pbstrName );
 	} 
@@ -267,7 +267,7 @@ HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long p_ulHandle, unsigned lon
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulWidth != NULL )
+	if ( nullptr != p_pulWidth )
 	{
 		*p_pulWidth = 0;
 
@@ -282,7 +282,7 @@ HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long p_ulHandle, unsigned lo
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulHeight != NULL )
+	if ( nullptr != p_pulHeight )
 	{
 		*p_pulHeight = 0;
 
@@ -297,7 +297,7 @@ HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long p_ulHandle, int *p_piFo
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_piFormat != NULL )
+	if ( nullptr != p_piFormat )
 	{
 		*p_piFormat = SVImageFormatUnknown;
 
@@ -423,7 +423,7 @@ HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SVF
 	unsigned long l_ulCount = 0;
 	HRESULT l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetCount( l_ulCount );
 	
-	if ( l_hrOk == S_OK && p_ulHandle <= l_ulCount )
+	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
 		SVCallbackStruct l_Callback;
 		l_Callback.m_pCallback = p_pCallback;
@@ -442,7 +442,7 @@ HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, S
 	unsigned long l_ulCount = 0;
 	HRESULT l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetCount( l_ulCount );
 	
-	if ( l_hrOk == S_OK && p_ulHandle <= l_ulCount )
+	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
 		SVCallbackStruct l_Callback;
 		l_Callback.m_pCallback = p_pCallback;
@@ -461,7 +461,7 @@ HRESULT WINAPI SVDigitizerInternalTriggerUnregisterAll( unsigned long p_ulHandle
 	unsigned long l_ulCount = 0;
 	HRESULT l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetCount( l_ulCount );
 	
-	if ( l_hrOk == S_OK && p_ulHandle <= l_ulCount )
+	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
 		l_hrOk = g_svTheApp.m_fileAcqDevice.UnregisterAllInternalTriggerCallbacks(p_ulHandle - 1);
 	}
@@ -496,13 +496,13 @@ HRESULT WINAPI SVDigitizerParameterGetName( unsigned long p_ulHandle, unsigned l
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
 
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 		l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameterName( p_ulHandle - 1, p_ulParameter, *p_pbstrName );
 	}
@@ -533,13 +533,13 @@ HRESULT WINAPI SVDigitizerSetParameters( unsigned long p_ulHandle, const SVDevic
 
 	HRESULT l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetCount( l_ulCount );
 	
-	if ( l_hrOk == S_OK && p_ulHandle <= l_ulCount )
+	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
 		SVDeviceParamMap::const_iterator iter;
 		for (iter = p_pParameters->mapParameters.begin(); iter != p_pParameters->mapParameters.end(); ++iter)
 		{
 			const SVDeviceParamWrapper& w = iter->second;
-			if ( ((const SVDeviceParam*) w) != NULL )
+			if ( nullptr != ((const SVDeviceParam*) w) )
 			{
 				SVDigitizerSetParameter( p_ulHandle, &w );
 			}
@@ -556,12 +556,12 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDevice
 
 	HRESULT l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetCount( l_ulCount );
 	
-	if ( l_hrOk == S_OK && p_ulHandle <= l_ulCount )
+	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
-		if ( p_pParameter != NULL )
+		if ( nullptr != p_pParameter )
 		{
 			const SVDeviceParamWrapper& rw = *p_pParameter;
-			if ( ((const SVDeviceParam*) rw) != NULL )
+			if ( nullptr != ((const SVDeviceParam*) rw) )
 			{
 				switch ( rw->Type() )
 				{
@@ -570,7 +570,7 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDevice
 						const SVStringValueDeviceParam* pFilename = rw.DerivedValue( pFilename );
 						_variant_t value;
 						pFilename->GetValue(value);
-						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterFilename, NULL, &value );
+						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterFilename, 0, &value );
 						break;
 					}
 
@@ -579,7 +579,7 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDevice
 						const SVStringValueDeviceParam* pDirname = rw.DerivedValue( pDirname );
 						_variant_t value;
 						pDirname->GetValue(value);
-						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterDirectory, NULL, &value );
+						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterDirectory, 0, &value );
 						break;
 					}
 
@@ -588,7 +588,7 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDevice
 						const SVLongValueDeviceParam* pLoadingMode = rw.DerivedValue( pLoadingMode );
 						_variant_t value;
 						pLoadingMode->GetValue(value);
-						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterLoadingMode, NULL, &value );
+						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterLoadingMode, 0, &value );
 						break;
 					}
 
@@ -597,7 +597,7 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDevice
 						const SVLongValueDeviceParam* pImageWidth = rw.DerivedValue( pImageWidth );
 						_variant_t value;
 						pImageWidth->GetValue(value);
-						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageWidth, NULL, &value );
+						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageWidth, 0, &value );
 						break;
 					}
 
@@ -606,7 +606,7 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDevice
 						const SVLongValueDeviceParam* pImageHeight = rw.DerivedValue( pImageHeight );
 						_variant_t value;
 						pImageHeight->GetValue(value);
-						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageHeight, NULL, &value );
+						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageHeight, 0, &value );
 						break;
 					}
 
@@ -615,19 +615,17 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long p_ulHandle, const SVDevice
 						const SVLongValueDeviceParam* pImageFormat = rw.DerivedValue( pImageFormat );
 						_variant_t value;
 						pImageFormat->GetValue(value);
-						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageFormat, NULL, &value );
+						l_hrOk = g_svTheApp.m_fileAcqDevice.CameraSetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageFormat, 0, &value );
 						break;
 					}
 					
 					case DeviceParamLightReference:
 					{
-						//const SVLightReferenceDeviceParam* pLR = rw.DerivedValue( pLR );
-						l_hrOk = S_FALSE; // g_CIAcqSetLightReference( HandleToIndex( p_ulHandle ), pLR->lr );
+						l_hrOk = S_FALSE;
 						break;
 					}
 					case DeviceParamLut:
 					{
-						//const SVLutDeviceParam* pLut = rw.DerivedValue( pLut );
 						l_hrOk = S_FALSE;
 						break;
 					}
@@ -652,9 +650,9 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamE
 
 	HRESULT l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetCount( l_ulCount );
 	
-	if ( l_hrOk == S_OK && p_ulHandle <= l_ulCount )
+	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
-		if ( p_ppParameter != NULL )
+		if ( nullptr != p_ppParameter )
 		{
 			*p_ppParameter = new SVDeviceParamWrapper;
 			SVDeviceParamWrapper& rw = **p_ppParameter;
@@ -664,8 +662,8 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamE
 				{
 					SVStringValueDeviceParam* pFilename = rw.DerivedValue( pFilename );
 					_variant_t value;
-					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterFilename, NULL, &value );
-					if (l_hrOk == S_OK)
+					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterFilename, 0, &value );
+					if (S_OK == l_hrOk)
 					{
 						pFilename->SetValue(value);
 					}
@@ -676,8 +674,8 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamE
 				{
 					SVStringValueDeviceParam* pDirname = rw.DerivedValue( pDirname );
 					_variant_t value;
-					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterDirectory, NULL, &value );
-					if (l_hrOk == S_OK)
+					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterDirectory, 0, &value );
+					if (S_OK == l_hrOk)
 					{
 						pDirname->SetValue(value);
 					}
@@ -688,8 +686,8 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamE
 				{
 					SVLongValueDeviceParam* pLoadingMode = rw.DerivedValue( pLoadingMode );
 					_variant_t value;
-					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterLoadingMode, NULL, &value );
-					if (l_hrOk == S_OK)
+					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterLoadingMode, 0, &value );
+					if (S_OK == l_hrOk)
 					{
 						pLoadingMode->SetValue(value);
 					}
@@ -700,8 +698,8 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamE
 				{
 					SVLongValueDeviceParam* pImageWidth = rw.DerivedValue( pImageWidth );
 					_variant_t value;
-					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageWidth, NULL, &value );
-					if (l_hrOk == S_OK)
+					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageWidth, 0, &value );
+					if (S_OK == l_hrOk)
 					{
 						pImageWidth->SetValue(value);
 					}
@@ -712,8 +710,8 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamE
 				{
 					SVLongValueDeviceParam* pImageHeight = rw.DerivedValue( pImageHeight );
 					_variant_t value;
-					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageHeight, NULL, &value );
-					if (l_hrOk == S_OK)
+					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageHeight, 0, &value );
+					if (S_OK == l_hrOk)
 					{
 						pImageHeight->SetValue(value);
 					}
@@ -724,8 +722,8 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long p_ulHandle, SVDeviceParamE
 				{
 					SVLongValueDeviceParam* pImageFormat = rw.DerivedValue( pImageFormat );
 					_variant_t value;
-					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageFormat, NULL, &value );
-					if (l_hrOk == S_OK)
+					l_hrOk = g_svTheApp.m_fileAcqDevice.CameraGetParameter( p_ulHandle - 1, SVFileAcquisitionParameterImageFormat, 0, &value );
+					if (S_OK == l_hrOk)
 					{
 						pImageFormat->SetValue(value);
 					}

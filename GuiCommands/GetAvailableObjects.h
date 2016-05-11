@@ -25,7 +25,7 @@ namespace Seidenader
 {
 	namespace GuiCommand
 	{
-		// This function object return always true if object != nullptr
+		// This function object return always true if nullptr != object
 		struct IsValidObject 
 		{
 			bool operator()(SvOi::IObjectClass* pObject, bool& bStop) const

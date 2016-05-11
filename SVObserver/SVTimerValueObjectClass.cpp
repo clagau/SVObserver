@@ -64,30 +64,18 @@ BOOL SVTimerValueObjectClass::Stop(long lIndex)
 {
 	double l_Value = SVClock::ConvertTo( SVClock::Microseconds, ( SVClock::GetTimeStamp() - m_Start ) );
 
-	return SetValue(lIndex, l_Value) == S_OK;
+	return S_OK == SetValue(lIndex, l_Value);
 }
 
 HRESULT SVTimerValueObjectClass::GetValueAt(int iBucket, int iIndex, CString& rstrValue) const
 {
-	HRESULT hr = S_FALSE;
-
 	__int64 value=0;
 
-	hr = base::GetValueAt(iBucket, iIndex, value);
-	//if ( hr == S_OK )
+	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
+	//if ( S_OK == hr ) //@WARNING - log an error ?
 	{
 		rstrValue.Format("%I64u (µs)", value);
 	}
-	/*
-	else
-	{
-		if ( GetDefaultValue(value) )
-		{
-			rstrValue.Format("%d µs", value);
-		}
-	}
-	*/
-
 	return hr;
 }
 
@@ -97,9 +85,9 @@ HRESULT SVTimerValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& r
 	_variant_t l_Temp;
 	l_Temp.Attach( rValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, Value );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
-		l_Temp = Value ;
+		l_Temp = Value;
 	}
 	else
 	{

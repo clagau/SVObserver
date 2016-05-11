@@ -182,7 +182,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 	{
 		SVMatroxInt l_MatroxType = 0;
 		HRESULT hr = SVMatroxSystemInquire::m_convertor.ConvertEnumToMatroxType( InquireType, l_MatroxType );
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MIL_INT l_Value = 0;
 			MsysInquire( SystemId.m_SystemIdentifier, l_MatroxType, &l_Value );
@@ -220,7 +220,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Set(const SVMatro
 	{
 		long l_MatroxType = 0;
 		HRESULT hr = SVMatroxSystemControl::m_convertor.ConvertEnumToMatroxType(ControlType, l_MatroxType);
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			MsysControl( SystemId.m_SystemIdentifier, l_MatroxType, ControlValue );
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -272,7 +272,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::SetHookFunction(c
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
 	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType( HookType, l_MatroxType );
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		MsysHookFunction( SystemId.m_SystemIdentifier, l_MatroxType, HookHandlerPtr, UserDataPtr );
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
@@ -298,8 +298,8 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::ReleaseHookFuncti
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
 	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType( HookType, l_MatroxType );
-	if (hr == S_OK)
-{	
+	if (S_OK == hr)
+	{	
 		MsysHookFunction( SystemId.m_SystemIdentifier, l_MatroxType | M_UNHOOK, HookHandlerPtr, UserDataPtr);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 	}
@@ -324,7 +324,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
 	HRESULT hr = SVMatroxSystemHookInfo::m_convertor.ConvertEnumToMatroxType(HookInfoType, l_MatroxType);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		MIL_INT mValue;
 		MsysGetHookInfo(SystemId.m_SystemIdentifier, p_EventId, l_MatroxType, &mValue);
@@ -352,7 +352,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
 	HRESULT hr = SVMatroxSystemHookInfo::m_convertor.ConvertEnumToMatroxType(HookInfoType, l_MatroxType);
-	if (hr == S_OK)
+	if (S_OK == hr)
 	{
 		MsysGetHookInfo(SystemId.m_SystemIdentifier, p_EventId, l_MatroxType, &value);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();

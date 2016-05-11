@@ -24,7 +24,7 @@
 SVRGBMainImageClass::SVRGBMainImageClass( LPCSTR ObjectName )
 : SVCameraImageTemplate( ObjectName )
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVRGBMainImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVRGBMainImageObjectType;
 
 	m_ImageType = SVImageTypeRGBMain;
 
@@ -35,7 +35,7 @@ SVRGBMainImageClass::SVRGBMainImageClass( LPCSTR ObjectName )
 SVRGBMainImageClass::SVRGBMainImageClass( SVObjectClass* POwner, int StringResourceID )
 : SVCameraImageTemplate( POwner, StringResourceID )
 {
-	outObjectInfo.ObjectTypeInfo.SubType = SVRGBMainImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVRGBMainImageObjectType;
 
 	m_ImageType = SVImageTypeRGBMain;
 
@@ -105,7 +105,7 @@ BOOL SVRGBMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo, S
 
 BOOL SVRGBMainImageClass::GetCameraImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 {
-	BOOL bOk = GetCameraBufferArrayPtr() != NULL;
+	BOOL bOk = nullptr != GetCameraBufferArrayPtr();
 	
 	if ( bOk )
 	{
@@ -117,7 +117,7 @@ BOOL SVRGBMainImageClass::GetCameraImageHandle( SVSmartHandlePointer& p_rHandleP
 
 BOOL SVRGBMainImageClass::GetCameraImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle )
 {
-	BOOL bOk = GetCameraBufferArrayPtr() != NULL;
+	BOOL bOk = nullptr != GetCameraBufferArrayPtr();
 	
 	if ( bOk )
 	{

@@ -13,23 +13,18 @@
 // & SchemaElement classes
 //
 //////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "element.h"
-
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+#pragma endregion Includes
 
 SchemaElement::SchemaElement()
 {
-	m_lpszName  = NULL;	//name of element/attribute
+	m_lpszName  = nullptr;	//name of element/attribute
 	VariantInit(&m_var);  //Initialize our variant
 }
 
-
-SchemaElement::SchemaElement(SchemaElement& source)
+SchemaElement::SchemaElement(const SchemaElement& source)
 {
 	HRESULT hr = S_OK;
 	//copy the string
@@ -47,15 +42,13 @@ SchemaElement::SchemaElement(SchemaElement& source)
 	m_ElementType = source.m_ElementType;
 }
 
-
-
 SchemaElement::~SchemaElement()
 {
 	if(m_lpszName)
 	{
 		size_t x = _tcsclen(m_lpszName);
 		if(x>0)free(m_lpszName);
-		m_lpszName = NULL;
+		m_lpszName = nullptr;
 	}
 	VariantClear(&m_var);
 }
@@ -66,11 +59,10 @@ void SchemaElement::DeleteContent()
 	{
 		size_t x = _tcsclen(m_lpszName);
 		if(x>0)free(m_lpszName);
-		m_lpszName = NULL;
+		m_lpszName = nullptr;
 	}
 	VariantClear(&m_var); 
 }
-
 
 SchemaElement& SchemaElement::operator=(const SchemaElement& source)
 {
@@ -88,14 +80,13 @@ SchemaElement* SchemaElement::operator=(const SchemaElement* source)
 	return this;
 }
 
-
 void SchemaElement::SetName(LPTSTR szName)
 {
-	if(m_lpszName != NULL)
+	if(nullptr != m_lpszName)
 	{
 		size_t x = _tcsclen(m_lpszName);
 		if(x>0)free(m_lpszName);
-		m_lpszName = NULL;
+		m_lpszName = nullptr;
 	}
 
 	//create storage
@@ -103,7 +94,6 @@ void SchemaElement::SetName(LPTSTR szName)
 	//copy the data in
 	_tcscpy(m_lpszName,szName);
 }
-
 
 LPTSTR SchemaElement::GetType()
 {
@@ -173,22 +163,20 @@ LPTSTR SchemaElement::GetType()
 	return szType;
 }
 
-
-
 void SchemaElement::SetType(CString szType)
 {
-	VariantClear(&m_var);// != S_OK)return fRetVal;
+	VariantClear(&m_var);
 
 	VariantInit(&m_var);  //Initialize our variant
 
 	//set to null so that destructor does not fail
-	m_var.parray = NULL;
+	m_var.parray = nullptr;
 	
 	// determine the type
 	if((szType == _T("enumeration")) || (szType == _T("string")) )// || szType.IsEmpty())
 	{
 		m_var.vt = VT_BSTR;
-		V_BSTR(&m_var) = ::SysAllocStringByteLen(NULL,0);
+		V_BSTR(&m_var) = ::SysAllocStringByteLen(nullptr, 0);
 	}
 	else if(szType.IsEmpty())
 	{
@@ -252,7 +240,7 @@ BOOL SchemaElement::SetData(BSTR * Data)
 
 	if(m_var.vt == VT_BSTR)
 	{
-		if(m_var.bstrVal != NULL)
+		if(nullptr != m_var.bstrVal)
 		{
 			::SysFreeString(m_var.bstrVal);
 		}
@@ -266,7 +254,6 @@ BOOL SchemaElement::SetData(BSTR * Data)
 	return fRetVal;
 }
 
-
 BOOL SchemaElement::SetData(LPCTSTR Data)
 {
 	USES_CONVERSION;
@@ -274,7 +261,7 @@ BOOL SchemaElement::SetData(LPCTSTR Data)
 
 	if(m_var.vt == VT_BSTR)
 	{
-		if(m_var.bstrVal != NULL)
+		if(nullptr != m_var.bstrVal)
 		{
 			::SysFreeString(m_var.bstrVal);
 		}
@@ -287,94 +274,87 @@ BOOL SchemaElement::SetData(LPCTSTR Data)
 	return fRetVal;
 }
 
-
 BOOL SchemaElement::SetData(VARIANT vData)
 {
 	//clear the variant
-	if(VariantClear(&m_var) != S_OK)return FALSE;
+	if( S_OK != VariantClear(&m_var) ) return false;
 	//init the variant
 	VariantInit(&m_var);
 	//copy the variant
-  	if(VariantCopy(&m_var,&vData) != S_OK)return FALSE;  
-//	UINT uLen = SysStringLen(m_var.bstrVal);
+  	if( S_OK != VariantCopy(&m_var, &vData) ) return false;
 
-	return TRUE;
+	return true;
 }
-
-
 
 BOOL SchemaElement::SetData(long Data)
 {
-	BOOL fRetVal = TRUE;
+	BOOL fRetVal = true;
 
-	if (m_var.vt == VT_I4)
-		{
+	if (VT_I4 == m_var.vt)
+	{
 		V_I4(&m_var) = Data;
-		}
-	else if (m_var.vt == VT_I2)
-		{
+	}
+	else if (VT_I2 == m_var.vt)
+	{
 		V_I2(&m_var) = (short)Data;
-		}
-	else if (m_var.vt == VT_I1)
-		{
+	}
+	else if (VT_I1 == m_var.vt)
+	{
 		V_I2(&m_var) = (char)Data;
-		}
+	}
 	else
-		{ //error
-		fRetVal = FALSE;
-		}
+	{ //error
+		fRetVal = false;
+	}
 	return fRetVal;
 }
 
 BOOL SchemaElement::SetData(unsigned long Data)
 {
-	BOOL fRetVal = TRUE;
+	BOOL fRetVal = true;
 
-	if (m_var.vt == VT_UI4)
-		{
+	if (VT_UI4 == m_var.vt)
+	{
 		V_UI4(&m_var) = Data;
-		}
-	else if (m_var.vt == VT_UI2)
-		{
+	}
+	else if (VT_UI2 == m_var.vt)
+	{
 		V_UI2(&m_var) = (unsigned short)Data;
-		}
-	else if (m_var.vt == VT_UI1)
-		{
+	}
+	else if (VT_UI1 == m_var.vt)
+	{
 		V_UI2(&m_var) = (BYTE)Data;
-		}
+	}
 	else
-		{ //error
-		fRetVal = FALSE;
-		}
+	{ //error
+		fRetVal = false;
+	}
 	return fRetVal;
 }
 
 BOOL SchemaElement::SetData(BOOL Data)
 {
-	BOOL fRetVal = TRUE;
+	BOOL fRetVal = true;
 
-	if (m_var.vt == VT_BOOL)
-		{
-		if(Data == FALSE)V_BOOL(&m_var) = Data;
+	if (VT_BOOL == m_var.vt)
+	{
+		if (false == Data ) V_BOOL(&m_var) = Data;
 		else V_BOOL(&m_var) = VARIANT_TRUE;
-		}
+	}
 	else
-		{ //error
-		fRetVal = FALSE;
-		}
+	{ //error
+		fRetVal = false;
+	}
 	return fRetVal;
 }
 
-
-
-
 BOOL SchemaElement::SetData(BYTE *pBuf, unsigned long cBufLen)
 {
-	BOOL fRetVal = FALSE;
+	BOOL fRetVal = false;
 
 	//the type of the array is unsigned chars (OLE SAFEARRAY)
-	if(m_var.vt == (VT_ARRAY | VT_UI1))
-		{
+	if( (VT_ARRAY | VT_UI1) == m_var.vt )
+	{
 		SafeArrayDestroy(m_var.parray);
 
 		//Set up the bounds structure
@@ -384,14 +364,14 @@ BOOL SchemaElement::SetData(BYTE *pBuf, unsigned long cBufLen)
 		rgsabound[0].lLbound = 0;
 
 		//Create an OLE SAFEARRAY
-		m_var.parray = SafeArrayCreate(VT_UI1,1,rgsabound);
+		m_var.parray = SafeArrayCreate(VT_UI1, 1, rgsabound);
 
-		if(m_var.parray != NULL)
-			{
-			void * pArrayData = NULL;
+		if (nullptr != m_var.parray)
+		{
+			void * pArrayData = nullptr;
 
 			//Get a safe pointer to the array
-			SafeArrayAccessData(m_var.parray,&pArrayData);
+			SafeArrayAccessData(m_var.parray, &pArrayData);
 
 			//Copy data to it
 			memcpy(pArrayData, pBuf, cBufLen);
@@ -399,21 +379,20 @@ BOOL SchemaElement::SetData(BYTE *pBuf, unsigned long cBufLen)
 			//Unlock the variant data
 			SafeArrayUnaccessData(m_var.parray);
 
-			fRetVal = TRUE;
-			}
+			fRetVal = true;
 		}
+	}
 	else
-		{ //error
-		fRetVal = FALSE;
-		}
+	{ //error
+		fRetVal = false;
+	}
 	return fRetVal;
 }
 
-
 void SchemaElement::GetData(BOOL * lpBool)
 {
-	if(m_var.boolVal == VARIANT_TRUE)*lpBool = TRUE;
-	else *lpBool = FALSE;
+	if (VARIANT_TRUE == m_var.boolVal) *lpBool = true;
+	else *lpBool = false;
 }
 
 
@@ -427,7 +406,6 @@ USES_CONVERSION;
 	*Data = (TCHAR *)malloc((nLength + 1) * sizeof(TCHAR));
 	//copy the data in
 	_tcscpy(*Data,W2T(m_var.bstrVal));
-//	*Data = W2T(m_var.bstrVal);
 }
 #endif
 
@@ -436,13 +414,11 @@ void SchemaElement::GetData(BSTR * Data)
 	//Do not init BSTR "Data"
 	*Data = m_var.bstrVal;
 }	  
-  
-
 
 
 BOOL SchemaElement::GetData(BYTE **ppBuf, unsigned long * pcBufLen)
 {
-     BOOL fRetVal = FALSE;
+     BOOL fRetVal = false;
 
 	 *pcBufLen = 0;
 
@@ -453,7 +429,7 @@ BOOL SchemaElement::GetData(BYTE **ppBuf, unsigned long * pcBufLen)
        *pcBufLen = m_var.parray->rgsabound[0].cElements;
 
        *ppBuf = new BYTE[*pcBufLen]; //Allocate a buffer to store the data
-       if(*ppBuf != NULL)
+       if(nullptr != *ppBuf)
        {
          void * pArrayData;
 
@@ -465,33 +441,26 @@ BOOL SchemaElement::GetData(BYTE **ppBuf, unsigned long * pcBufLen)
 
          //Unlock the variant data
          SafeArrayUnaccessData(m_var.parray);
-         fRetVal = TRUE;
+         fRetVal = true;
        }
      }
-	 else if (m_var.vt == VT_NULL)fRetVal = TRUE;
+	 else if (VT_NULL == m_var.vt) fRetVal = true;
      return fRetVal;
 }
-
 
 // implementation of the Element class.
 //
 //////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-
 Element::Element() :
  m_pParent( nullptr )
- ,ppElements( nullptr )
- ,ppAttributes( nullptr )
+, ppElements( nullptr )
+, ppAttributes( nullptr )
 {
 }
 
-
 //copy constructor
-Element::Element(Element& source)
+Element::Element(const Element& source)
 	:SchemaElement(source)
 	,m_pParent( nullptr )
 	,ppElements( nullptr )
@@ -539,9 +508,9 @@ void Element::DeleteContent()
 		}
 		free( ppElements);
 	}
-	m_pParent = NULL;
-	ppElements = NULL;
-	ppAttributes = NULL;
+	m_pParent = nullptr;
+	ppElements = nullptr;
+	ppAttributes = nullptr;
 }
 
 
@@ -597,7 +566,7 @@ void Element::AddChildAttribute(Attribute* pChild)
 	}
 
 	ppAttributes[size - 2] = pChild;
-	ppAttributes[size - 1] = NULL;
+	ppAttributes[size - 1] = nullptr;
 }
 
 void Element::AddChildElement(Element* pChild)
@@ -619,7 +588,7 @@ void Element::AddChildElement(Element* pChild)
 	}
 
 	ppElements[size - 2] = pChild;
-	ppElements[size - 1] = NULL;
+	ppElements[size - 1] = nullptr;
 }
 
 int Element::FindChildElements(LPTSTR pName, Element *** pppElmnts, BOOL blSubs /* = FALSE */)

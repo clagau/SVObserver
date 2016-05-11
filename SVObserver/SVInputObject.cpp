@@ -9,43 +9,41 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:59:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVInputObject.h"
+#pragma endregion Includes
 
 SVInputObject::SVInputObject( LPCSTR strObjectName )
 				:SVObjectClass( strObjectName )
 {
-	m_bCreated = FALSE;
+	m_isCreated = false;
 }
 
 SVInputObject::SVInputObject( SVObjectClass* POwner, int StringResourceID )
 				:SVObjectClass( POwner, StringResourceID )
 {
-	m_bCreated = FALSE;
+	m_isCreated = false;
 }
 
 SVInputObject::~SVInputObject()
 {
-	if( m_bCreated )
+	if( m_isCreated )
+	{
 		Destroy();
+	}
 }
 
 BOOL SVInputObject::Create()
 {
-	m_bCreated = TRUE;
+	m_isCreated = true;
 
-	return TRUE;
+	return m_isCreated;
 }
 
 BOOL SVInputObject::Destroy()
 {
-	m_bCreated = FALSE;
+	m_isCreated = false;
 
-	return TRUE;
+	return !m_isCreated;
 }
-
-BOOL SVInputObject::IsCreated()
-{
-	return m_bCreated;
-}
-

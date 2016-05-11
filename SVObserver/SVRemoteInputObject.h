@@ -17,7 +17,6 @@
 class SVRemoteInputObject : public SVInputObject 
 {
 public:
-
 	SVRemoteInputObject( LPCSTR strObjectName );
 	SVRemoteInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTOBJECT );
 
@@ -25,7 +24,6 @@ public:
 
 	virtual BOOL Create();
 	virtual BOOL Destroy();
-	virtual BOOL IsCreated();
 
 	virtual HRESULT Read( _variant_t& p_rValue );
 
@@ -35,8 +33,9 @@ public:
 	HRESULT WriteCache( const _variant_t& p_rValue );
 	HRESULT GetCache( _variant_t& p_rValue );
 
-	long				m_lIndex;
+	long m_lIndex;
+
 private:
-	CRITICAL_SECTION	m_hCriticalSection;
-	_variant_t			m_vtRemoteCache;
+	CRITICAL_SECTION m_hCriticalSection;
+	_variant_t m_vtRemoteCache;
 };

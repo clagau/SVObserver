@@ -76,22 +76,6 @@ BOOL SVOPPQList::AttachCameraToPPQ(CString sPPQName, CString sCamera)
 	return Result;
 }
 
-BOOL SVOPPQList::RemoveCameraFromPPQ(CString sPPQName, CString sCamera)
-{
-	BOOL Result( FALSE );
-
-	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
-	ASSERT(nullptr != pPPQObj);
-
-	if( nullptr != pPPQObj )
-	{
-		Result =  pPPQObj->DetachCameraFromPPQ(sCamera);
-	}
-
-	return Result;
-}
-
-
 BOOL SVOPPQList::AttachInspectToPPQ(CString sPPQName, CString sInspect)
 {
 	BOOL Result( FALSE );
@@ -101,20 +85,6 @@ BOOL SVOPPQList::AttachInspectToPPQ(CString sPPQName, CString sInspect)
 	if( nullptr != pPPQObj )
 	{
 		Result = pPPQObj->AttachInspectionToPPQ(sInspect);
-	}
-
-	return Result;
-}
-
-BOOL SVOPPQList::RemoveInspectFromPPQ(CString sPPQName, CString sInspect)
-{
-	BOOL Result( FALSE );
-	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
-	ASSERT(nullptr != pPPQObj);
-
-	if( nullptr != pPPQObj )
-	{
-		Result =  pPPQObj->DetachInspectionFromPPQ(sInspect);
 	}
 
 	return Result;
@@ -132,22 +102,6 @@ BOOL SVOPPQList::AttachTriggerToPPQ(CString sPPQName, CString sTrigger)
 
 	return TRUE;
 }
-
-BOOL SVOPPQList::RemoveTriggerFromPPQ(CString sPPQName)
-{
-	SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQName);
-	ASSERT(nullptr != pPPQObj);
-
-	if( nullptr != pPPQObj )
-	{
-		pPPQObj->DetachTriggerFromPPQ();
-	}
-
-	return TRUE;
-}
-
-
-
 
 BOOL SVOPPQList::IsPPQInList(CString sPPQName) const
 {

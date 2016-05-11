@@ -12,18 +12,19 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgStatisticsPage.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVToolSet.h"
 #include "SVStatTool.h"
 #include "SVResult.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVSetupDialogManager.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
+#include "SVToolAdjustmentDialogSheetClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -56,8 +57,9 @@ void SVToolAdjustmentDialogStatisticsPageClass::DoDataExchange(CDataExchange* pD
 	//}}AFX_DATA_MAP
 }
 
-SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
+SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent) 
 : CPropertyPage( SVToolAdjustmentDialogStatisticsPageClass::IDD )
+, m_pParent(pParent)
 , m_pTool(nullptr)
 , m_pToolSet(nullptr)
 {
@@ -85,9 +87,8 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog()
 		getParameters();
 
 		SVObjectReference refObject = m_pTool->GetVariableSelected();
-		m_strVariableToMonitor = refObject.GetCompleteObjectNameToObjectType( NULL, m_pToolSet->GetObjectType() );
+		m_strVariableToMonitor = refObject.GetCompleteObjectNameToObjectType( nullptr, m_pToolSet->GetObjectType() );
 		m_strFullNameOfVariable = refObject.GetCompleteObjectName();
-		//initVariablesComboBox();
 	}
 
 	UpdateData( FALSE ); // set data to dialog
@@ -266,7 +267,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 				SV_TRAP_ERROR_BRK (err, SvOi::Err_15007);
 			}
 
-			if (SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ) != S_OK)
+			if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ))
 			{
 				err.msvlErrorCd = -SvOi::Err_15008;
 				SV_TRAP_ERROR_BRK (err, SvOi::Err_15008);
@@ -304,12 +305,14 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	{
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
 		PublishList.Refresh( static_cast<SVTaskObjectClass*>(pInspection->GetToolSet()) );
-
-		SVIPDoc* l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
-
-		if( nullptr != l_pIPDoc )
+		if (m_pParent)
 		{
-			l_pIPDoc->SetModifiedFlag();
+			SVIPDoc* l_pIPDoc = m_pParent->GetIPDoc();
+
+			if( nullptr != l_pIPDoc )
+			{
+				l_pIPDoc->SetModifiedFlag();
+			}
 		}
 	}
 }

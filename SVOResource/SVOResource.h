@@ -28,6 +28,7 @@ namespace Seidenader
 			 The class constructor
 			***********/
 			SVOResourceApp();
+			virtual ~SVOResourceApp();
 		#pragma endregion Constructor
 
 		public:

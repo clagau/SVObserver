@@ -20,8 +20,8 @@ public:
 	virtual ~SVSecuredObject();
 
 public:
-	CString Lookup(LPCTSTR szApp, int nParent, int nChild, BOOL bCreate=FALSE, LPCTSTR groups=NULL);
-	void  Load(LPCTSTR szApp=NULL, int nParent=0);
+	CString Lookup(LPCTSTR szApp, int nParent, int nChild, BOOL bCreate=FALSE, LPCTSTR groups=nullptr);
+	void  Load(LPCTSTR szApp=nullptr, int nParent=0);
 	void  Save();
 	BOOL  IsSecured(DWORD nParent, DWORD nChild=0);
 	BOOL  Validate(CString strAccount, CString strPassword, DWORD nParent, DWORD nChild=0);

@@ -135,11 +135,11 @@ HRESULT SVFileAcquisitionDevice::CameraGetName( unsigned long p_ulIndex, BSTR &p
 	{
 		l_hrOk = S_OK;
 
-		if ( p_rbstrName != NULL )
+		if ( nullptr != p_rbstrName )
 		{
 			::SysFreeString( p_rbstrName );
 
-			p_rbstrName = NULL;
+			p_rbstrName = nullptr;
 		}
 
 		p_rbstrName = _bstr_t(m_cameras[p_ulIndex].GetName().c_str());
@@ -210,7 +210,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameterList( unsigned long p_ulIndex
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
 		::VariantClear( p_pvarValue );
 
@@ -246,11 +246,11 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameterName( unsigned long p_ulIndex
 	{
 		l_hrOk = S_OK;
 
-		if ( p_rbstrName != NULL )
+		if ( nullptr != p_rbstrName )
 		{
 			::SysFreeString( p_rbstrName );
 
-			p_rbstrName = NULL;
+			p_rbstrName = nullptr;
 		}
 
 		switch( p_iParameterID )
@@ -313,7 +313,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameter( unsigned long p_ulIndex, in
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
 		if( p_ulIndex < m_cameras.size() )
 		{
@@ -505,7 +505,7 @@ HRESULT SVFileAcquisitionDevice::CameraUnregisterBufferInterface( unsigned long 
 
 	if ( p_ulIndex < m_cameras.size() )
 	{
-		m_cameras[p_ulIndex].m_pBufferInterface = NULL;
+		m_cameras[p_ulIndex].m_pBufferInterface = nullptr;
 	} 
 	else
 	{
@@ -533,7 +533,7 @@ HRESULT SVFileAcquisitionDevice::CameraStart( unsigned long p_ulIndex )
 				l_hrOk = rCamera.Start( startHandler, endHandler, p_ulIndex);
 			}
 			
-			if( l_hrOk != S_OK )
+			if( S_OK != l_hrOk )
 			{
 				::InterlockedExchange( &(rCamera.m_lIsStarted), 0 );
 			}
@@ -569,7 +569,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessStartFrame( unsigned long p_ulInde
 	{
 		SVFileCamera& rCamera = m_cameras[ p_ulIndex ];
 
-		if ( rCamera.m_lIsStarted == 1 && rCamera.m_pBufferInterface != NULL )
+		if ( 1 == rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface )
 		{
 			rCamera.m_StartTimeStamp = rCamera.m_pBufferInterface->GetTimeStamp();
 		}
@@ -592,7 +592,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 		
 		char l_szbuf[128];
 
-		if ( rCamera.m_lIsStarted && rCamera.m_pBufferInterface != NULL )
+		if ( rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface )
 		{
 			if (rCamera.IsAcquisitionTriggered())
 			{
@@ -600,18 +600,18 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 			}
 			SVImageBufferInterface l_Buffer;
 			
-			if( rCamera.m_pBufferInterface->GetNextBuffer( l_Buffer ) == S_OK )
+			if( S_OK == rCamera.m_pBufferInterface->GetNextBuffer( l_Buffer ) )
 			{
 				l_Buffer.SetStartFrameTimeStamp( rCamera.m_StartTimeStamp );
 				l_Buffer.SetEndFrameTimeStamp( rCamera.m_pBufferInterface->GetTimeStamp() );
 
 				unsigned char *l_pBuffer = l_Buffer.GetBufferAddress();
 
-				if( l_pBuffer != NULL )
+				if( nullptr != l_pBuffer )
 				{
 					l_hrOk = rCamera.CopyImage( l_pBuffer );
 
-					if( l_hrOk == S_OK )
+					if( S_OK == l_hrOk )
 					{
 						rCamera.m_pBufferInterface->UpdateWithCompletedBuffer( l_Buffer );
 					}
@@ -734,10 +734,10 @@ HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long p_ulHandle, BSTR& 
 	HRESULT l_Result = S_FALSE;
 	if (IsValidDigitizer(p_ulHandle))
 	{
-		if ( p_rbstrName != NULL )
+		if ( nullptr != p_rbstrName )
 		{
 			::SysFreeString( p_rbstrName );
-			p_rbstrName = NULL;
+			p_rbstrName = nullptr;
 		}
 
 		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
@@ -812,7 +812,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterCount( unsigned long p_ulHan
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pulCount != NULL )
+	if ( nullptr != p_pulCount )
 	{
 		if (IsValidDigitizer(p_ulHandle))
 		{
@@ -831,12 +831,12 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterName( unsigned long p_ulHand
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pbstrName != NULL )
+	if ( nullptr != p_pbstrName )
 	{
-		if ( *p_pbstrName != NULL )
+		if ( nullptr != *p_pbstrName )
 		{
 			::SysFreeString( *p_pbstrName );
-			*p_pbstrName = NULL;
+			*p_pbstrName = nullptr;
 		}
 
 		if (IsValidDigitizer(p_ulHandle))
@@ -847,7 +847,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterName( unsigned long p_ulHand
 				*p_pbstrName = ::SysAllocString( L"Acquisition Triggered" );
 				break;
 			}
-			if ( *p_pbstrName != NULL )
+			if ( nullptr != *p_pbstrName )
 			{
 				l_hrOk = S_OK;
 			}
@@ -860,9 +860,9 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long p_ulHan
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_pvarValue != NULL )
+	if ( nullptr != p_pvarValue )
 	{
-		if ( ::VariantClear( p_pvarValue ) == S_OK )
+		if ( S_OK == ::VariantClear( p_pvarValue ) )
 		{
 			if (IsValidDigitizer(p_ulHandle))
 			{
@@ -876,7 +876,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long p_ulHan
 						p_pvarValue->vt = VT_BOOL;
 						bool bAcquisitonTriggered;
 						l_hrOk = IsAcquisitionTriggered(p_ulHandle, bAcquisitonTriggered);
-						if (l_hrOk == S_OK)
+						if ( S_OK == l_hrOk )
 						{
 							p_pvarValue->bVal = (bAcquisitonTriggered) ? VARIANT_TRUE : VARIANT_FALSE;
 						}
@@ -898,7 +898,7 @@ HRESULT SVFileAcquisitionDevice::TriggerSetParameterValue( unsigned long p_ulHan
 
 	if (IsValidDigitizer(p_ulHandle))
 	{
-		if ( p_pvarValue != NULL )
+		if ( nullptr != p_pvarValue )
 		{
 			switch (p_ulIndex)
 			{

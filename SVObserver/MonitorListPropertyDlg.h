@@ -34,7 +34,7 @@ class MonitorListPropertyDlg : public CDialog
 
 #pragma region Public
 public:
-	MonitorListPropertyDlg(RemoteMonitorList& MonitorList, CString sName, CWnd* pParent = NULL);   // standard constructor
+	MonitorListPropertyDlg(RemoteMonitorList& MonitorList, CString sName, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~MonitorListPropertyDlg();
 
 	CString GetMonitorListName() const;

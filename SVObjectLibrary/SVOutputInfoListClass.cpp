@@ -26,47 +26,45 @@
 
 namespace
 {
-
-class DebugOutput
-{
-public:
-	DebugOutput( LPCTSTR strFunctionName ) : m_strFunction(strFunctionName) {}
-
-	virtual ~DebugOutput();
-
-	void Add( LPCTSTR sLine );
-
-	std::vector< SVString > m_vecLog;
-	SVString m_strFunction;
-};
-
-void DebugOutput::Add( LPCTSTR sLine )
-{
-	::OutputDebugString( _T(".") );
-
-	SVString l_Temp = sLine;
-	l_Temp += _T("\n");
-	m_vecLog.push_back( l_Temp );
-}
-
-DebugOutput::~DebugOutput()
-{
-	if ( m_vecLog.size() > 0 )
+	class DebugOutput
 	{
-		::OutputDebugString( _T("\n") );
-		__int64 iTimestamp = static_cast< __int64 >( SVClock::GetTimeStamp() );
-		SVString strBegin;
-		strBegin = SvUl_SF::Format(_T("--> %s  :  %I64u\n"), m_strFunction.c_str(), iTimestamp );
-		::OutputDebugString( strBegin.c_str() );
-		for ( unsigned long i=0; i < m_vecLog.size(); i++ )
-		{
-			::OutputDebugString( m_vecLog[i].c_str() );
-		}
-		SVString strEnd = SvUl_SF::Format(_T("<-- %s\n"), m_strFunction.c_str() );
-		::OutputDebugString( strEnd.c_str() );
-	}
-}
+	public:
+		DebugOutput( LPCTSTR strFunctionName ) : m_strFunction(strFunctionName) {}
 
+		virtual ~DebugOutput();
+
+		void Add( LPCTSTR sLine );
+
+		std::vector< SVString > m_vecLog;
+		SVString m_strFunction;
+	};
+
+	void DebugOutput::Add( LPCTSTR sLine )
+	{
+		::OutputDebugString( _T(".") );
+
+		SVString l_Temp = sLine;
+		l_Temp += _T("\n");
+		m_vecLog.push_back( l_Temp );
+	}
+
+	DebugOutput::~DebugOutput()
+	{
+		if ( m_vecLog.size() > 0 )
+		{
+			::OutputDebugString( _T("\n") );
+			__int64 iTimestamp = static_cast< __int64 >( SVClock::GetTimeStamp() );
+			SVString strBegin;
+			strBegin = SvUl_SF::Format(_T("--> %s  :  %I64u\n"), m_strFunction.c_str(), iTimestamp );
+			::OutputDebugString( strBegin.c_str() );
+			for ( unsigned long i=0; i < m_vecLog.size(); i++ )
+			{
+				::OutputDebugString( m_vecLog[i].c_str() );
+			}
+			SVString strEnd = SvUl_SF::Format(_T("<-- %s\n"), m_strFunction.c_str() );
+			::OutputDebugString( strEnd.c_str() );
+		}
+	}
 }// end namespace
 
 SVOutputInfoListClass::SVOutputInfoListClass()
@@ -74,9 +72,6 @@ SVOutputInfoListClass::SVOutputInfoListClass()
 	m_svObjectArray.SetSize( 0 );
 }
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
 SVOutputInfoListClass::~SVOutputInfoListClass()
 {
 }
@@ -106,9 +101,6 @@ SVOutputInfoListClass::iterator SVOutputInfoListClass::erase( iterator p_Where )
 	return m_svObjectArray.erase( p_Where );
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 BOOL SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 {
 	BOOL BRetVal = FALSE;
@@ -120,22 +112,28 @@ BOOL SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 		{
 			SVOutObjectInfoStruct *l_psvObject = m_svObjectArray.GetAt( Index );
 			// Check only this entry...
-			if( l_psvObject != NULL )
-				BRetVal = ( ( l_psvObject->PObject = SVObjectManagerClass::Instance().GetObject( l_psvObject->UniqueObjectID ) ) != NULL ) ? TRUE : FALSE;
+			if( nullptr != l_psvObject )
+			{
+				BRetVal = ( nullptr != ( l_psvObject->PObject = SVObjectManagerClass::Instance().GetObject( l_psvObject->UniqueObjectID ) ) ) ? true : false;
+			}
 		}
 		else
 		{
 			// Check all entries...
-			BRetVal = TRUE;
+			BRetVal = true;
 
 			for( int i = 0; BRetVal && i < l_lSize; ++i )
 			{
 				SVOutObjectInfoStruct *l_psvObject = m_svObjectArray.GetAt( i );
 
-				if( l_psvObject != NULL )
-					BRetVal = ( ( ( l_psvObject->PObject = SVObjectManagerClass::Instance().GetObject( l_psvObject->UniqueObjectID ) ) != NULL ) ? TRUE : FALSE ) && BRetVal;
+				if( nullptr != l_psvObject )
+				{
+					BRetVal = ( ( nullptr != ( l_psvObject->PObject = SVObjectManagerClass::Instance().GetObject( l_psvObject->UniqueObjectID ) ) ) ? true : false ) && BRetVal;
+				}
 				else
-					BRetVal = FALSE;
+				{
+					BRetVal = false;
+				}
 			}
 		}
 	}
@@ -147,43 +145,38 @@ int SVOutputInfoListClass::GetSize() const
 	return m_svObjectArray.GetSize();
 }
 
-
 SVOutObjectInfoStruct* SVOutputInfoListClass::GetAt( int p_iIndex )
 {
 	DebugOutput debug(_T("SVOutputInfoListClass::GetAt"));
 	SVOutObjectInfoStruct* l_psvObjectInfo = m_svObjectArray.GetAt( p_iIndex );
 
-	if ( l_psvObjectInfo != NULL )
+	if ( nullptr != l_psvObjectInfo )
 	{
-		if ( l_psvObjectInfo != NULL )
+		if ( nullptr != l_psvObjectInfo )
 		{
-			if ( l_psvObjectInfo->PObject != NULL )
+			if ( nullptr != l_psvObjectInfo->PObject )
 			{
 				try
 				{
 					SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>( l_psvObjectInfo->PObject );
 
-					if( l_psvObject == NULL )
+					if( nullptr == l_psvObject )
 					{
 						if( ! CheckExistence( p_iIndex ) )
 						{
-							l_psvObjectInfo = NULL;
+							l_psvObjectInfo = nullptr;
 						}
 					}
 				}
 				catch (std::bad_cast& e)
 				{
 					e;
-					l_psvObjectInfo->PObject = NULL;
-					//m_svObjectSet.erase( l_psvObjectInfo ); m_svObjectArray.SetAt(p_iIndex, NULL);
-					//l_psvObjectInfo = NULL;
+					l_psvObjectInfo->PObject = nullptr;
 					debug.Add(_T("BAD OBJECT (bad_cast)"));
 				}
 				catch( ... )
 				{
-					l_psvObjectInfo->PObject = NULL;
-					//m_svObjectSet.erase( l_psvObjectInfo ); m_svObjectArray.SetAt(p_iIndex, NULL);
-					//l_psvObjectInfo = NULL;
+					l_psvObjectInfo->PObject = nullptr;
 					debug.Add(_T("BAD OBJECT (...)"));
 				}
 			}
@@ -191,16 +184,14 @@ SVOutObjectInfoStruct* SVOutputInfoListClass::GetAt( int p_iIndex )
 			{
 				CString s; s.Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), l_psvObjectInfo->PObject);
 				debug.Add(s);
-				l_psvObjectInfo->PObject = NULL;
-				//m_svObjectSet.erase( l_psvObjectInfo ); m_svObjectArray.SetAt(p_iIndex, NULL);
-				//l_psvObjectInfo = NULL;
+				l_psvObjectInfo->PObject = nullptr;
 			}
 		}
 		else
 		{
 			debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject)"));
-			m_svObjectSet.erase( l_psvObjectInfo ); m_svObjectArray.SetAt(p_iIndex, NULL);
-			l_psvObjectInfo = NULL;
+			m_svObjectSet.erase( l_psvObjectInfo ); m_svObjectArray.SetAt(p_iIndex, nullptr);
+			l_psvObjectInfo = nullptr;
 		}
 	}
 	else
@@ -220,7 +211,7 @@ int SVOutputInfoListClass::Add( SVOutObjectInfoStruct* POutObjectInfo )
 
 	l_oPair = m_svObjectSet.insert( POutObjectInfo );
 
-	if( l_oPair.second == true )
+	if( true == l_oPair.second )
 	{
 		return m_svObjectArray.Add( POutObjectInfo );
 	}
@@ -238,7 +229,7 @@ void SVOutputInfoListClass::InsertAt( int nIndex, SVOutObjectInfoStruct* POutObj
 
 	l_oPair = m_svObjectSet.insert( POutObjectInfo );
 
-	if( l_oPair.second == true )
+	if( true == l_oPair.second )
 	{
 		m_svObjectArray.InsertAt( nIndex, POutObjectInfo );
 	}
@@ -273,26 +264,22 @@ void  SVOutputInfoListClass::RemoveAll()
 // Build a list of objects with desired attributes set.
 //
 //
-void SVOutputInfoListClass::GetSetAttributesList( 
-	UINT uAttributeMask, 
-	SVOutputInfoListClass * pFillList 
-)
+void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVOutputInfoListClass * pFillList )
 {
 	DebugOutput debug(_T("SVOutputInfoListClass::GetSetAttributesList"));
-
 	int nCount = m_svObjectArray.GetSize();
 	for( int i=0; i<nCount; i++)
 	{
 		SVOutObjectInfoStruct* pInfoObject = m_svObjectArray.GetAt(i);
 
-		if ( pInfoObject != NULL )
+		if ( nullptr != pInfoObject )
 		{
-			if ( pInfoObject != NULL )
+			if ( nullptr != pInfoObject )
 			{
-				if ( pInfoObject->PObject != NULL )
+				if ( nullptr != pInfoObject->PObject )
 				{
 
-					SVObjectClass* pObject = NULL;
+					SVObjectClass* pObject = nullptr;
 
 					try
 					{
@@ -301,14 +288,14 @@ void SVOutputInfoListClass::GetSetAttributesList(
 					catch ( std::bad_cast& e )
 					{
 						e;
-						pObject = NULL;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+						pObject = nullptr;
+						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 						debug.Add(_T("BAD OBJECT (bad_cast)"));
 					}
 					catch( ... )
 					{
-						pObject = NULL;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+						pObject = nullptr;
+						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 						debug.Add(_T("BAD OBJECT (...)"));
 					}
 
@@ -325,13 +312,13 @@ void SVOutputInfoListClass::GetSetAttributesList(
 				else
 				{
 					debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject)"));
-					pInfoObject->PObject = NULL;   // m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+					pInfoObject->PObject = nullptr;
 				}
 			}// if validate pInfoObject
 			else
 			{
 				debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject)"));
-				m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+				m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 			}
 		}
 		else
@@ -349,14 +336,14 @@ void SVOutputInfoListClass::GetObjectReferenceList( SVObjectReferenceVector& rve
 	{
 		SVOutObjectInfoStruct* pInfoObject = m_svObjectArray.GetAt(i);
 
-		if ( pInfoObject != NULL )
+		if ( nullptr != pInfoObject )
 		{
 
-			if ( pInfoObject != NULL )
+			if ( nullptr != pInfoObject )
 			{	
-				if ( pInfoObject->PObject != NULL )
+				if ( nullptr != pInfoObject->PObject )
 				{
-					SVObjectClass* pObject = NULL;
+					SVObjectClass* pObject = nullptr;
 
 					try
 					{
@@ -365,14 +352,14 @@ void SVOutputInfoListClass::GetObjectReferenceList( SVObjectReferenceVector& rve
 					catch ( std::bad_cast& e )
 					{
 						e;
-						pObject = NULL;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+						pObject = nullptr;
+						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 						debug.Add(_T("BAD OBJECT (bad_cast)"));
 					}
 					catch( ... )
 					{
-						pObject = NULL;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+						pObject = nullptr;
+						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 						debug.Add(_T("BAD OBJECT (...)"));
 					}
 
@@ -402,13 +389,13 @@ void SVOutputInfoListClass::GetObjectReferenceList( SVObjectReferenceVector& rve
 				else
 				{
 					debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject)"));
-					pInfoObject->PObject = NULL;   // m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+					pInfoObject->PObject = nullptr;
 				}
 			}
 			else
 			{
 				debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject)"));
-				m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+				m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 			}
 		}
 		else
@@ -427,13 +414,13 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVObjectR
 	{
 		SVOutObjectInfoStruct* pInfoObject = m_svObjectArray.GetAt(i);
 
-		if ( pInfoObject != NULL )
+		if ( nullptr != pInfoObject )
 		{
-			if ( pInfoObject != NULL )
+			if ( nullptr != pInfoObject )
 			{
-				if ( pInfoObject->PObject != NULL )
+				if ( nullptr != pInfoObject->PObject )
 				{
-					SVObjectClass* pObject = NULL;
+					SVObjectClass* pObject = nullptr;
 
 					try
 					{
@@ -442,14 +429,14 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVObjectR
 					catch ( std::bad_cast& e )
 					{
 						e;
-						pObject = NULL;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+						pObject = nullptr;
+						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 						debug.Add(_T("BAD OBJECT (bad_cast)"));
 					}
 					catch( ... )
 					{
-						pObject = NULL;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+						pObject = nullptr;
+						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 						debug.Add(_T("BAD OBJECT (...)"));
 					}
 
@@ -485,13 +472,13 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVObjectR
 				else
 				{
 					debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject)"));
-					pInfoObject->PObject = NULL;   // m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+					pInfoObject->PObject = nullptr;
 				}
 			}// end if validate (pInfoObject)
 			else
 			{
 				debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject)"));
-				m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+				m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 			}
 		}
 		else
@@ -501,33 +488,25 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVObjectR
 	}// end for( int i=0; i<nCount; i++)
 }// end GetSetAttributesList
 
-
-
 /////////////////////////////////////////////////////////////////////////////
-//
 // Build a list of objects with desired attributes allowed.
-//
-//
-void SVOutputInfoListClass::GetAllowedAttributesList( 
-	UINT uAttributeMask, 
-	SVOutputInfoListClass * pFillList 
-)
+/////////////////////////////////////////////////////////////////////////////
+void SVOutputInfoListClass::GetAllowedAttributesList( UINT uAttributeMask, SVOutputInfoListClass * pFillList )
 {
 	DebugOutput debug(_T("SVOutputInfoListClass::GetAllowedAttributesList"));
-
 	int nCount = m_svObjectArray.GetSize();
 	for( int i=0; i<nCount; i++)
 	{
 		SVOutObjectInfoStruct* pInfoObject = m_svObjectArray.GetAt(i);
 
-		if ( pInfoObject != NULL )
+		if ( nullptr != pInfoObject )
 		{
-			if ( pInfoObject != NULL )
+			if ( nullptr != pInfoObject )
 			{
-				if ( pInfoObject->PObject != NULL )
+				if ( nullptr != pInfoObject->PObject )
 				{
 
-					SVObjectClass* pObject = NULL;
+					SVObjectClass* pObject = nullptr;
 
 					try
 					{
@@ -536,14 +515,14 @@ void SVOutputInfoListClass::GetAllowedAttributesList(
 					catch ( std::bad_cast& e )
 					{
 						e;
-						pObject = NULL;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+						pObject = nullptr;
+						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 						debug.Add(_T("BAD OBJECT (bad_cast)"));
 					}
 					catch( ... )
 					{
-						pObject = NULL;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+						pObject = nullptr;
+						m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 						debug.Add(_T("BAD OBJECT (...)"));
 					}
 
@@ -561,16 +540,16 @@ void SVOutputInfoListClass::GetAllowedAttributesList(
 				{
 					CString s; s.Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), pInfoObject->PObject);
 					debug.Add(s);
-					pInfoObject->PObject = NULL;   // m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+					pInfoObject->PObject = nullptr;
 				}
 			}
 			else
 			{
 				debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject)"));
-				m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, NULL);
+				m_svObjectSet.erase( pInfoObject ); m_svObjectArray.SetAt(i, nullptr);
 			}
 		}
-		else	// NULL ptr
+		else // nullptr
 		{
 			debug.Add(_T("NULL object"));
 		}
@@ -587,40 +566,10 @@ bool SVOutputInfoListClass::HasDependents()
 		
 		// is anyone using this output
 		if( pOutObjectInfo && pOutObjectInfo->GetInputSize() )
+		{
 			return true;
+		}
 	}
 	return false;
-}
-
-HRESULT SVOutputInfoListClass::ValidateAll()
-{
-	DebugOutput debug(_T("SVOutputInfoListClass::ValidateAll"));
-	long l_lCount = GetSize();
-	for( long l = l_lCount - 1; 0 <= l; l-- )
-	{
-		SVOutObjectInfoStruct* l_psvOutInfo = GetAt( l );
-
-		if ( l_psvOutInfo == NULL )
-		{
-			debug.Add(_T("NULL OBJECT (pInfoObject)"));
-		}
-		else if ( l_psvOutInfo == NULL )
-		{
-			l_psvOutInfo = NULL;
-			debug.Add(_T("BAD OBJECT (pInfoObject)"));
-		}
-		else if ( l_psvOutInfo->PObject == NULL )
-		{
-			l_psvOutInfo = NULL;
-			debug.Add(_T("BAD OBJECT (pInfoObject->PObject)"));
-		}
-
-		if( l_psvOutInfo == NULL )
-		{
-			RemoveAt( l );
-		}
-	}
-
-	return S_OK;
 }
 

@@ -24,7 +24,7 @@ namespace Seidenader
 	{
 		SVToolBarClass::SVToolBarClass()
 		{
-			m_pTBButtons = NULL;
+			m_pTBButtons = nullptr;
 		}
 
 		SVToolBarClass::~SVToolBarClass()
@@ -62,7 +62,7 @@ namespace Seidenader
 				m_pTBButtons[nIndex].dwData = 0;
 				m_pTBButtons[nIndex].iBitmap = nIndex;
 				m_pTBButtons[nIndex].idCommand = nIndex + nBaseID;
-				m_pTBButtons[nIndex].iString = NULL;
+				m_pTBButtons[nIndex].iString = 0;
 			}
 
 			for (nIndex = 0; nIndex < m_nButtonCount; nIndex++)

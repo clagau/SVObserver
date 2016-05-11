@@ -36,7 +36,7 @@ SVToolSetClass::SVToolSetClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwn
 void SVToolSetClass::init()
 {
 	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolSetObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolSetObjectType;
 
 	// Identify our input type needs
 
@@ -75,36 +75,36 @@ void SVToolSetClass::init()
 	
 
 	// Set Embedded defaults
-	enabled.SetDefaultValue( TRUE, TRUE );
-	passed.SetDefaultValue( FALSE, TRUE );			// Default for Passed is FALSE !!!
-	failed.SetDefaultValue( TRUE, TRUE );			// Default for Failed is TRUE !!!
-	warned.SetDefaultValue( TRUE, TRUE );			// Default for Warned is TRUE !!!
-	explicitFailed.SetDefaultValue( FALSE, TRUE );	// Default for Explicit Failed is FALSE !!!
+	enabled.SetDefaultValue( true, true );
+	passed.SetDefaultValue( false, true );			// Default for Passed is FALSE !!!
+	failed.SetDefaultValue( true, true );			// Default for Failed is TRUE !!!
+	warned.SetDefaultValue( true, true );			// Default for Warned is TRUE !!!
+	explicitFailed.SetDefaultValue( false, true );	// Default for Explicit Failed is FALSE !!!
 
-	passedCount.SetDefaultValue( 0, TRUE );
-	failedCount.SetDefaultValue( 0, TRUE );
-	warnedCount.SetDefaultValue( 0, TRUE );
+	passedCount.SetDefaultValue( 0, true );
+	failedCount.SetDefaultValue( 0, true );
+	warnedCount.SetDefaultValue( 0, true );
 
-	enabledCount.SetDefaultValue( 0, TRUE );
-	processedCount.SetDefaultValue( 0, TRUE );
+	enabledCount.SetDefaultValue( 0, true );
+	processedCount.SetDefaultValue( 0, true );
 
-	ToolTime.SetDefaultValue(0, TRUE);
+	ToolTime.SetDefaultValue(0, true);
 	ToolTime.SetName( "Tool Set Time" );
 
 	m_bResetMinMaxToolsetTime = true;
 
-	m_svMinToolsetTime.SetDefaultValue( 0, TRUE );
-	m_svMaxToolsetTime.SetDefaultValue( 0, TRUE );
+	m_svMinToolsetTime.SetDefaultValue( 0, true );
+	m_svMaxToolsetTime.SetDefaultValue( 0, true );
 
-	RegressionTestMode.SetDefaultValue(FALSE, TRUE);
+	RegressionTestMode.SetDefaultValue(false, true);
 
 	drawFlag.SetEnumTypes( IDS_TOOLSETDRAW_ENUMOBJECT_LIST );
-	drawFlag.SetDefaultValue( ( const long ) 0, TRUE ); // 0 Should be show 'All Tools'
-	m_lvoTriggerCount.SetDefaultValue( 0, TRUE );
-	m_latestCompletionPPQIndex.SetDefaultValue( 0, TRUE );
-	m_TriggerDelta.SetDefaultValue( 0, TRUE );
-	m_LastTriggerToPPQCompletion.SetDefaultValue( 0, TRUE );
-	m_LastTriggerToStart.SetDefaultValue( 0, TRUE );
+	drawFlag.SetDefaultValue( ( const long ) 0, true ); // 0 Should be show 'All Tools'
+	m_lvoTriggerCount.SetDefaultValue( 0, true );
+	m_latestCompletionPPQIndex.SetDefaultValue( 0, true );
+	m_TriggerDelta.SetDefaultValue( 0, true );
+	m_LastTriggerToPPQCompletion.SetDefaultValue( 0, true );
+	m_LastTriggerToStart.SetDefaultValue( 0, true );
 
 	// Set local defaults
 	m_StartTime = 0.0;
@@ -112,7 +112,7 @@ void SVToolSetClass::init()
 	m_AverageTime = 0.0;
 	m_ProcessTime = 0.0;
 	setNumber = 0;
-	isCreated = false;
+	m_isCreated = false;
 
 	SVConditionalClass* l_pConditional = new SVConditionalClass( this );
 	AddFriend( l_pConditional->GetUniqueObjectID() );
@@ -128,33 +128,19 @@ void SVToolSetClass::init()
 	m_ResultList.SetToolSet(this);
 }
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : ~SVToolSetClass
 // -----------------------------------------------------------------------------
 // .Description : Standard destructor of class SVToolSetClass
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-//	:30.07.1997 RO			Last Changes, no deletion of toolAdjustmentDialog
 ////////////////////////////////////////////////////////////////////////////////
 SVToolSetClass::~SVToolSetClass()
 {
 	Destroy();
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // Create Operator
 ////////////////////////////////////////////////////////////////////////////////
-
 BOOL SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL bOk = SVTaskObjectListClass::CreateObject( PCreateStructure );
@@ -185,7 +171,7 @@ BOOL SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	mainImageObject.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 
-	isCreated = bOk;
+	m_isCreated = bOk;
 
 	return bOk;
 }
@@ -198,50 +184,16 @@ BOOL SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 // .Title       : Destroy All Array Member operator of class SVToolSetClass
 // -----------------------------------------------------------------------------
 // .Description : Destroys all array members
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:None 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 void SVToolSetClass::Destroy()
 {
 	// Delete our friends
 	DestroyFriends();
 
-	isCreated = FALSE;
-
-	SVImageListClass destroyImageList;
+	m_isCreated = false;
 
 	DeleteAll();
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Destroy Specific Array Member operator of class SVToolSetClass
-// -----------------------------------------------------------------------------
-// .Description : Destroys the array member which is specificated by the given
-//              : index argument
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:int				I
-// .Return Value
-//	:None 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVToolSetClass::DestroyAt( int I )
-{
-	ASSERT( 0 );
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Check the Enabled State
@@ -249,16 +201,6 @@ void SVToolSetClass::DestroyAt( int I )
 // -----------------------------------------------------------------------------
 // .Description : Checks the Enabled state of the SVToolSetClass Object
 //              : SVToolClass* argument
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:SVToolClass*
-// .Return Value
-//	:None
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :29.06.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 bool SVToolSetClass::IsEnabled() const
 {
@@ -286,37 +228,6 @@ bool SVToolSetClass::WasEnabled() const
 	return bEnabled;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : InsertAt
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :29.01.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVToolSetClass::InsertToolAt( int nIndex, SVToolClass* newElement, int nCount )
-{
-	SVTaskObjectListClass::InsertAt( nIndex, ( SVTaskObjectClass* ) newElement, nCount );
-}
-
 void SVToolSetClass::moveTool( int NewIndex, SVToolClass* pTool )
 {
 	int Index = GetIndex( pTool );
@@ -341,7 +252,6 @@ void SVToolSetClass::SetDefaultInputs()
 
 	::SVSendMessage( this, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
-	// SEJ Aug 24,1999
 	// Rebuild ResultList from the toolset level
 	m_ResultList.Refresh( this );
 }
@@ -351,16 +261,6 @@ void SVToolSetClass::SetDefaultInputs()
 //              : SVToolSetClass
 // -----------------------------------------------------------------------------
 // .Description : Returns the index of the given Tool argument 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:SVToolClass*		Tool
-// .Return Value
-//	:int
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 int SVToolSetClass::GetIndex( SVToolClass* PTool )
 {
@@ -371,54 +271,10 @@ int SVToolSetClass::GetIndex( SVToolClass* PTool )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetAt
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :29.01.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-SVToolClass* SVToolSetClass::GetToolAt( int nIndex ) const
-{
-	ASSERT( nIndex >= 0 && nIndex < GetSize() );
-	if( nIndex >= 0 && nIndex < GetSize() )
-		return( ( SVToolClass* )GetAt( nIndex ) ); 
-	return nullptr;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : Get Current Result List member function of class
 //              : SVToolSetClass
 // -----------------------------------------------------------------------------
 // .Description : Returns a pointer to the current SVResultListClass object
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:SVResultListClass* 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :28.05.1997 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 SVResultListClass* SVToolSetClass::GetResultList()
 {
@@ -430,16 +286,6 @@ SVResultListClass* SVToolSetClass::GetResultList()
 //              : SVToolSetClass
 // -----------------------------------------------------------------------------
 // .Description : Returns a pointer to the current SVImageClass object
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:SVImageClass* 
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.1997 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 SVImageClass* SVToolSetClass::getCurrentImage()
 {
@@ -480,10 +326,6 @@ bool SVToolSetClass::getConditionalResult() const
 // .Description : Returns pointer to enumeration value object which is used as 
 //				: conditional tool set draw flag.
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :22.02.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 SVEnumerateValueObjectClass* SVToolSetClass::GetDrawFlagObject()
 {
 	return &drawFlag;
@@ -493,9 +335,9 @@ SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
 {
 	SVConditionalClass* l_pConditional( nullptr );
 
-	for( size_t j = 0; nullptr == l_pConditional && j < friendList.size(); j++ )
+	for( size_t j = 0; nullptr == l_pConditional && j < m_friendList.size(); j++ )
 	{
-		l_pConditional = dynamic_cast<SVConditionalClass *>(friendList[j].PObject);
+		l_pConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].PObject);
 	}// end for
 
 	return l_pConditional; 
@@ -530,12 +372,11 @@ bool SVToolSetClass::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
 
 	return l_Status;
 }
-
-#pragma region virtual method (IToolSet)
+#pragma endregion virtual method (IToolSet)
 
 BOOL SVToolSetClass::OnValidate()
 {
-	BOOL bRetVal = FALSE;
+	BOOL bRetVal = false;
 
 	//	if( mainImageObject )
 
@@ -543,7 +384,7 @@ BOOL SVToolSetClass::OnValidate()
 	if( inputConditionBoolObjectInfo.IsConnected() &&
 		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
 	{
-		bRetVal = TRUE;
+		bRetVal = true;
 		bRetVal = SVTaskObjectListClass::OnValidate() && bRetVal;
 	}
 
@@ -559,22 +400,7 @@ BOOL SVToolSetClass::OnValidate()
 // .Title       : onRun member function of class SVToolSetClass
 // -----------------------------------------------------------------------------
 // .Description : runs this toolset
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :13.09.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-
-
 BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	m_lvoTriggerCount.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_lTriggerCount > 0 ? RRunStatus.m_lTriggerCount : 0 );
@@ -599,7 +425,6 @@ BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 			RRunStatus.SetDisabledByCondition();
 		}
 	}
-
 	return bRetVal;
 }
 
@@ -610,18 +435,6 @@ BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 //				: This Function returns TRUE, if the Tool Set were running.
 //				: Otherwise it returns FALSE, that means: if the Tool Set should
 //				: not run, because the Tool Set Condition failed!
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:03.07.1999 SEJ/RO		Conditional Equation added.
-//  :01.09.1999 RO			Rerouted.
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 {
@@ -1058,7 +871,7 @@ BOOL SVToolSetClass::Validate()
 	if( !IsEnabled() )
 	{
 		// SetDisabled();
-		return TRUE;
+		return true;
 	}// end if
 	
 	return SVTaskObjectListClass::Validate();
@@ -1090,18 +903,18 @@ HRESULT SVToolSetClass::ResetObject()
 	if( S_OK == m_bvoResetCounts.GetValue( l_bReset ) && l_bReset )
 	{
 		// Reset Counters...
-		passedCount.SetDefaultValue( 0, TRUE );
-		failedCount.SetDefaultValue( 0, TRUE );
-		warnedCount.SetDefaultValue( 0, TRUE );
-		enabledCount.SetDefaultValue( 0, TRUE );
-		processedCount.SetDefaultValue( 0, TRUE );
-		RegressionTestMode.SetDefaultValue( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ), TRUE );
+		passedCount.SetDefaultValue( 0, true );
+		failedCount.SetDefaultValue( 0, true );
+		warnedCount.SetDefaultValue( 0, true );
+		enabledCount.SetDefaultValue( 0, true );
+		processedCount.SetDefaultValue( 0, true );
+		RegressionTestMode.SetDefaultValue( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ), true );
 
 		m_bResetMinMaxToolsetTime = true;
 	}
 	else
 	{
-		RegressionTestMode.SetDefaultValue( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ), TRUE );
+		RegressionTestMode.SetDefaultValue( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ), true );
 	}
 
 	return l_hrOk;
@@ -1156,7 +969,7 @@ HRESULT SVToolSetClass::ClearResetCounts()
 
 DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	DWORD_PTR DwResult = 0;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	SVAnalyzerLevelCreateStruct createStruct;
 
@@ -1251,73 +1064,6 @@ DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 	}
 
 	return( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-// Check for existing tool with same name as in newText.
-// If duplicate found - add 'Dup' to name, and retry test.
-//
-void SVToolSetClass::CheckForExistingName(
-    CString& newText,
-    SVToolClass* pToolNewName   // the tool that is getting modified name
-)
-{
-    BOOL bDup = FALSE;
-    CString newTextUpper;
-    BOOL bDone = FALSE;
-    int nCountSafety = 10;
-
-    while(!bDone)
-    {
-        bDup = FALSE;
-        newTextUpper = newText;
-        newTextUpper.MakeUpper();
-
-		for( SVTaskObjectPtrVector::iterator l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
-		{
-			SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( *l_Iter );
-
-			if( nullptr != l_pTool )
-			{
-				CString toolName = l_pTool->GetName();
-				toolName.MakeUpper();
-	        
-				if(toolName == newTextUpper)
-				{
-					//
-					// The tool receiving new name itself is exempt from 
-					// test of duplicate.
-					//
-					if(l_pTool != pToolNewName)
-					{
-						bDup = TRUE;
-						break;
-					}
-				}
-			}
-        }
-        if(bDup)
-        {
-            newText+= _T("DUP");
-
-            //
-            // Allow only 10 iterations
-            //
-            nCountSafety--;
-            if(nCountSafety < 1)
-            {
-                bDone = TRUE;
-            }
-        }
-        else
-        {
-            bDone = TRUE;
-        }
-    }
 }
 
 HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )

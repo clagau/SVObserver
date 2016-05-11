@@ -13,12 +13,12 @@
 #include "SVSAFEARRAY.H"
 
 SVSAFEARRAY::SVSAFEARRAY()
-: m_pSafeArray( NULL )
+: m_pSafeArray( nullptr )
 {
 }
 
 SVSAFEARRAY::SVSAFEARRAY( VARTYPE p_Type, size_type p_Size )
-: m_pSafeArray( NULL )
+: m_pSafeArray( nullptr )
 {
 	if( 0 < p_Size )
 	{
@@ -32,7 +32,7 @@ SVSAFEARRAY::SVSAFEARRAY( VARTYPE p_Type, size_type p_Size )
 }
 
 SVSAFEARRAY::SVSAFEARRAY( VARTYPE p_Type, const SVBounds& p_rBounds )
-: m_pSafeArray( NULL )
+: m_pSafeArray( nullptr )
 {
 	unsigned int l_Dim( static_cast< unsigned int >( p_rBounds.size() ) );
 
@@ -45,19 +45,19 @@ SVSAFEARRAY::SVSAFEARRAY( VARTYPE p_Type, const SVBounds& p_rBounds )
 }
 
 SVSAFEARRAY::SVSAFEARRAY( const SVSAFEARRAY& p_rObject )
-: m_pSafeArray( NULL )
+: m_pSafeArray( nullptr )
 {
 	*this = p_rObject;
 }
 
 SVSAFEARRAY::SVSAFEARRAY( const VARIANT& p_rVariant )
-: m_pSafeArray( NULL )
+: m_pSafeArray( nullptr )
 {
 	*this = p_rVariant;
 }
 
 SVSAFEARRAY::SVSAFEARRAY( SAFEARRAY* p_pObject )
-: m_pSafeArray( NULL )
+: m_pSafeArray( nullptr )
 {
 	*this = p_pObject;
 }
@@ -69,7 +69,7 @@ SVSAFEARRAY::~SVSAFEARRAY()
 
 bool SVSAFEARRAY::empty() const
 {
-	return m_pSafeArray == NULL;
+	return nullptr == m_pSafeArray;
 }
 
 void SVSAFEARRAY::clear()
@@ -86,13 +86,13 @@ SVSAFEARRAY::operator _variant_t () const
 {
 	_variant_t l_Variant;
 
-	if( m_pSafeArray != NULL )
+	if( nullptr != m_pSafeArray )
 	{
 		VARTYPE l_VarType( VT_EMPTY );
 
-		if( GetVartype( l_VarType ) == S_OK )
+		if( S_OK == GetVartype( l_VarType ) )
 		{
-			if( ::SafeArrayCopy( m_pSafeArray, &( l_Variant.parray ) ) == S_OK )
+			if( S_OK == ::SafeArrayCopy( m_pSafeArray, &( l_Variant.parray ) ) )
 			{
 				l_Variant.vt = VT_ARRAY | l_VarType;
 			}
@@ -144,7 +144,7 @@ const SVSAFEARRAY& SVSAFEARRAY::operator=( SAFEARRAY* p_pObject )
 	{
 		LocalDestroy();
 
-		if( p_pObject != NULL )
+		if( nullptr != p_pObject )
 		{
 			::SafeArrayCopy( p_pObject, &m_pSafeArray );
 		}
@@ -172,13 +172,13 @@ HRESULT SVSAFEARRAY::GetBounds( SVBounds& p_rBounds ) const
 		{
 			HRESULT l_GetStatus = ::SafeArrayGetLBound( m_pSafeArray, ( i + 1 ), &p_rBounds[i].lLbound );
 
-			if( l_GetStatus != S_OK )
+			if( S_OK != l_GetStatus )
 			{
 				p_rBounds[i].lLbound = 0;
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
-					if( l_GetStatus == S_OK )
+					if( S_OK == l_GetStatus )
 					{
 						l_Status = l_GetStatus;
 					}
@@ -193,7 +193,7 @@ HRESULT SVSAFEARRAY::GetBounds( SVBounds& p_rBounds ) const
 
 			l_GetStatus = ::SafeArrayGetUBound( m_pSafeArray, ( i + 1 ), &l_Upper );
 
-			if( l_GetStatus == S_OK )
+			if( S_OK == l_GetStatus )
 			{
 				p_rBounds[i].cElements = l_Upper - p_rBounds[i].lLbound + 1;
 			}
@@ -201,9 +201,9 @@ HRESULT SVSAFEARRAY::GetBounds( SVBounds& p_rBounds ) const
 			{
 				p_rBounds[i].cElements = 0;
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
-					if( l_GetStatus == S_OK )
+					if( S_OK == l_GetStatus )
 					{
 						l_Status = l_GetStatus;
 					}
@@ -234,14 +234,14 @@ SVSAFEARRAY::size_type SVSAFEARRAY::size() const
 {
 	size_type l_Size( 0 );
 
-	if( GetDim() == 1 )
+	if( 1 == GetDim() )
 	{
 		long l_Lower( 0 );
 		long l_Upper( 0 );
 
-		if( ::SafeArrayGetLBound( m_pSafeArray, 1, &l_Lower ) == S_OK )
+		if( S_OK == ::SafeArrayGetLBound( m_pSafeArray, 1, &l_Lower ) )
 		{
-			if( ::SafeArrayGetUBound( m_pSafeArray, 1, &l_Upper ) == S_OK )
+			if( S_OK == ::SafeArrayGetUBound( m_pSafeArray, 1, &l_Upper ) )
 			{
 				l_Size = l_Upper - l_Lower + 1;
 			}
@@ -275,7 +275,7 @@ HRESULT SVSAFEARRAY::GetElement( const SVIndex& p_rIndex, _variant_t& p_rData ) 
 
 	p_rData.Clear();
 
-	if( m_pSafeArray != NULL )
+	if( nullptr != m_pSafeArray )
 	{
 		if( 0 < p_rIndex.size() && p_rIndex.size() == GetDim() )
 		{
@@ -283,22 +283,22 @@ HRESULT SVSAFEARRAY::GetElement( const SVIndex& p_rIndex, _variant_t& p_rData ) 
 
 			l_Status = GetVartype( l_VarType );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
-				void* l_pData( NULL );
+				void* l_pData( nullptr );
 				long* l_pIndex( const_cast< long* >( &( p_rIndex[0] ) ) );
 
 				_variant_t l_Variant( p_rData );
 
 				l_Status = GetElementVoidAddress( l_Variant, l_pData );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = ::SafeArrayGetElement( m_pSafeArray, l_pIndex, l_pData );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
-						if( l_VarType != VT_VARIANT )
+						if( VT_VARIANT != l_VarType )
 						{
 							l_Variant.vt = l_VarType;
 						}
@@ -338,7 +338,7 @@ HRESULT SVSAFEARRAY::PutElement( const SVIndex& p_rIndex, const _variant_t& p_rD
 {
 	HRESULT l_Status( S_OK );
 
-	if( m_pSafeArray != NULL )
+	if( nullptr != m_pSafeArray )
 	{
 		if( 0 < p_rIndex.size() && p_rIndex.size() == GetDim() )
 		{
@@ -346,21 +346,21 @@ HRESULT SVSAFEARRAY::PutElement( const SVIndex& p_rIndex, const _variant_t& p_rD
 
 			l_Status = GetVartype( l_VarType );
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
-				void* l_pData( NULL );
+				void* l_pData( nullptr );
 				long* l_pIndex( const_cast< long* >( &( p_rIndex[0] ) ) );
 
 				_variant_t l_Variant( p_rData );
 
-				if( l_VarType != VT_VARIANT )
+				if( VT_VARIANT != l_VarType )
 				{
 					l_Variant.ChangeType( l_VarType );
 				}
 
 				l_Status = PutElementVoidAddress( l_Variant, l_pData );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = ::SafeArrayPutElement( m_pSafeArray, l_pIndex, l_pData );
 				}
@@ -394,11 +394,11 @@ HRESULT SVSAFEARRAY::Add( const _variant_t& p_rData )
 		l_Bound.lLbound = 0;
 		l_Bound.cElements = 1;
 
-		if( m_pSafeArray == NULL )
+		if( nullptr == m_pSafeArray )
 		{
 			m_pSafeArray = ::SafeArrayCreate( p_rData.vt, 1, &l_Bound );
 
-			if( m_pSafeArray == NULL )
+			if( nullptr == m_pSafeArray )
 			{
 				l_Status = E_FAIL;
 			}
@@ -411,7 +411,7 @@ HRESULT SVSAFEARRAY::Add( const _variant_t& p_rData )
 			l_Status = ::SafeArrayRedim( m_pSafeArray, &l_Bound );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			long lIndex = m_pSafeArray->rgsabound[0].cElements - 1;
 
@@ -426,7 +426,7 @@ HRESULT SVSAFEARRAY::UpdateVariant( VARTYPE p_Type, const void* p_pData, _varian
 {
 	HRESULT l_Status( S_OK );
 
-	if( p_pData != NULL )
+	if( nullptr != p_pData )
 	{
 		switch( p_Type )
 		{
@@ -558,7 +558,7 @@ HRESULT SVSAFEARRAY::GetGeneralVoidAddress( const _variant_t &p_rVariant, void*&
 
 	HRESULT l_Status( GetVartype( l_VarType ) );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		switch( l_VarType )
 		{
@@ -662,7 +662,7 @@ HRESULT SVSAFEARRAY::GetGeneralVoidAddress( const _variant_t &p_rVariant, void*&
 			}
 			default:
 			{
-				p_rpData = NULL;
+				p_rpData = nullptr;
 
 				l_Status = S_FALSE;
 			}
@@ -678,7 +678,7 @@ HRESULT SVSAFEARRAY::GetElementVoidAddress( const _variant_t &p_rVariant, void*&
 
 	HRESULT l_Status( GetVartype( l_VarType ) );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		switch( l_VarType )
 		{
@@ -706,7 +706,7 @@ HRESULT SVSAFEARRAY::PutElementVoidAddress( const _variant_t &p_rVariant, void*&
 
 	HRESULT l_Status( GetVartype( l_VarType ) );
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		switch( l_VarType )
 		{
@@ -730,11 +730,11 @@ HRESULT SVSAFEARRAY::PutElementVoidAddress( const _variant_t &p_rVariant, void*&
 
 void SVSAFEARRAY::LocalDestroy()
 {
-	if( m_pSafeArray != NULL )
+	if( nullptr != m_pSafeArray )
 	{
 		::SafeArrayDestroy( m_pSafeArray );
 
-		m_pSafeArray = NULL;
+		m_pSafeArray = nullptr;
 	}
 }
 

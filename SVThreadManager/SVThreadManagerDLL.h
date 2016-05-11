@@ -27,7 +27,7 @@ class CSVThreadManagerApp : public CWinApp
 #pragma region Public
 public:
 	CSVThreadManagerApp();
-
+	virtual ~CSVThreadManagerApp();
 	virtual BOOL InitInstance();
 
 	DECLARE_MESSAGE_MAP()

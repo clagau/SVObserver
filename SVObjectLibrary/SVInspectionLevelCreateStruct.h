@@ -16,7 +16,7 @@
 struct SVInspectionLevelCreateStruct : public SVObjectLevelCreateStruct
 {
 	SVInspectionLevelCreateStruct();
-	SVInspectionLevelCreateStruct( SVObjectLevelCreateStruct& ROLCS );
+	SVInspectionLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS );
 
 	virtual ~SVInspectionLevelCreateStruct();
 

@@ -87,7 +87,7 @@ HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParams(const SVString& camer
 		
 		hr = ReloadCameraParamList(list.m_mainList, p_rCamera);
 
-		if (hr == S_OK)
+		if (S_OK == hr)
 		{
 			hr = ReloadCameraParamList(list.m_transientList, p_rCamera);
 		}

@@ -31,20 +31,11 @@ public:
 		modeRead =         (int) 0x00000,
 		modeWrite =        (int) 0x00001,
 		modeReadWrite =    (int) 0x00002,
-		//shareCompat =      (int) 0x00000,
-		//shareExclusive =   (int) 0x00010,
-		//shareDenyWrite =   (int) 0x00020,
-		//shareDenyRead =    (int) 0x00030,
 		shareDenyNone =    (int) 0x00040,
-		//modeNoInherit =    (int) 0x00080,
 		modeCreate =       (int) 0x01000,
 		modeNoTruncate =   (int) 0x02000,
 		typeText =         (int) 0x04000, // typeText and typeBinary are
 		typeBinary =       (int) 0x08000, // used in derived classes only
-		//osNoBuffer =       (int) 0x10000,
-		//osWriteThrough =   (int) 0x20000,
-		//osRandomAccess =   (int) 0x40000,
-		//osSequentialScan = (int) 0x80000,
 	};
 
 	SVFile();

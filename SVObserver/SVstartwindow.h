@@ -18,18 +18,6 @@
 // .Title       : // e.g. Base Class of module ...
 // -----------------------------------------------------------------------------
 // .Description : e.g. This base class capsules an Image and provides its ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
 ////////////////////////////////////////////////////////////////////////////////
 class SVStartWindowClass : public CDialog
 {
@@ -54,7 +42,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVStartWindowClass(CWnd* pParent = NULL);   // Standardkonstruktor
+	SVStartWindowClass(CWnd* pParent = nullptr);   // Standardkonstruktor
 	virtual ~SVStartWindowClass();
 
 // Überschreibungen

@@ -22,33 +22,6 @@ class SVObjectClass;
 //* MACRO(S):
 //******************************************************************************
 
-// Creates new string using malloc and fills it with the GUID, use free() to deallocate the string memory...
-#define SV_GUID_TO_NEW_STRING( XGUID, XLPTSTR )	\
- 		{ \
-			if( ( XLPTSTR ) = ( LPTSTR ) malloc( sizeof( TCHAR ) * 256 ) )	\
-			{	\
-				_stprintf( ( XLPTSTR ), "{ 0x%x, 0x%x, 0x%x, { 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x } }", \
-				( XGUID ).Data1, ( XGUID ).Data2, ( XGUID ).Data3, \
-				( XGUID ).Data4[0], ( XGUID ).Data4[1], ( XGUID ).Data4[2], ( XGUID ).Data4[3], \
-				( XGUID ).Data4[4], ( XGUID ).Data4[5], ( XGUID ).Data4[6], ( XGUID ).Data4[7] );	\
-			}	\
-		}
-
-// GUID String
-// XLPSZSTRING must be a LPTSTR !!!
-#define SV_GUID_TO_STRING( XGUID, XLPSZSTRING, XLENGTH ) \
-		{	\
-			if( ( XLPSZSTRING ) && ( XLENGTH ) > 0 ) \
-			{ \
-				TCHAR szBuf[ 100 ]; \
-				_stprintf( szBuf, "{%x-%x-%x-%x %x %x %x %x %x %x %x}", \
-						   ( XGUID ).Data1, ( XGUID ).Data2, ( XGUID ).Data3, \
-						   ( XGUID ).Data4[0], ( XGUID ).Data4[1], ( XGUID ).Data4[2], ( XGUID ).Data4[3], \
-						   ( XGUID ).Data4[4], ( XGUID ).Data4[5], ( XGUID ).Data4[6], ( XGUID ).Data4[7] ); \
-				_tcsncpy( XLPSZSTRING, szBuf, min( ( XLENGTH ), 100 ) - 1 ); \
-			} \
-		}
-
 // Should be in the class definition...
 #define SV_DECLARE_CLASS( XCLASSNAME )					\
 		public:	\
@@ -96,13 +69,13 @@ extern /*const*/ GUID SVObjectImageClassGuid;
 /////////////////////////////////////////////////////////////////////////////
 // SVHINDEX
 typedef UINT SVHINDEX;
-	// Not Valid Handle:	NULL
+	// Not Valid Handle:	0x0
 	// First Valid Handle:	0x1
 
 /////////////////////////////////////////////////////////////////////////////
 // SVProductCountType
 typedef DWORD SVProductCountType;
-	// Not Valid Product:	NULL
+	// Not Valid Product:	0x0
 	// First Valid Product: 0x1
 
 

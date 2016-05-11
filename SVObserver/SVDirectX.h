@@ -52,7 +52,7 @@ protected:
 
 private:
 	/*
-	Do not implement the following to methods.
+	Do not implement the following two methods.
 	These definitions prevent copy and assignement operations.
 	*/
 	SVDirectX( const SVDirectX& p_rObject );

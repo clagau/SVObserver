@@ -89,7 +89,7 @@ namespace Seidenader
 			virtual UINT        GetMargin() const;
 
 			virtual BOOL        IsEditing() const           { return m_bEditing; }
-			virtual BOOL        IsDefaultFont() const       { return (m_plfFont == NULL); }
+			virtual BOOL        IsDefaultFont() const       { return (nullptr == m_plfFont); }
 			virtual void        Reset();
 
 		// editing cells

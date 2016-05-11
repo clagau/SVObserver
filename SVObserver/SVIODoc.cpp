@@ -51,32 +51,12 @@ static char THIS_FILE[] = __FILE__;
 // SVIODoc IOFunc Access Macros
 // X - isOutput
 // Y - isModuleIO
-#define SV_GET_IODOC_INPUTFUNC( X, Y )		( ( X ) ? NULL : ( ( Y ) ? pGetModuleInput : pGetResultInput ) )
-#define SV_GET_IODOC_OUTPUTFUNC( X, Y )		( ( X ) ? ( ( Y ) ? pSetModuleOutput : pSetResultOutput ) : NULL )
+#define SV_GET_IODOC_INPUTFUNC( X, Y )		( ( X ) ? nullptr : ( ( Y ) ? pGetModuleInput : pGetResultInput ) )
+#define SV_GET_IODOC_OUTPUTFUNC( X, Y )		( ( X ) ? ( ( Y ) ? pSetModuleOutput : pSetResultOutput ) : nullptr )
 #define SV_GET_IODOC_FORCEFUNC( X, Y )		( ( X ) ? ( ( Y ) ? pForceModuleOutput : pForceResultOutput ) : ( ( Y ) ? pForceModuleInput : pForceResultInput ) )
 #define SV_GET_IODOC_INVERTFUNC( X, Y )		( ( X ) ? ( ( Y ) ? pInvertModuleOutput : pInvertResultOutput ) : ( ( Y ) ? pInvertModuleInput : pInvertResultInput ) )
 
-
-
-//******************************************************************************
-//* FUNCTION IMPLEMENTATION(S):
-//******************************************************************************
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVIODoc
-//* Note(s)    : Document
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-/////////////////////////////////////////////////////////////////////////////
-// SVIODoc
-
 IMPLEMENT_DYNCREATE( SVIODoc, CDocument );
-
 
 BEGIN_MESSAGE_MAP(SVIODoc, CDocument)
 	//{{AFX_MSG_MAP(SVIODoc)
@@ -94,7 +74,7 @@ END_MESSAGE_MAP()
 SVIODoc::SVIODoc()
 : CDocument()
 {
-	m_pIOController = NULL;
+	m_pIOController = nullptr;
 
 	SVFileNameManagerClass svFileManager;
 	svFileManager.AddItem( &msvFileName );
@@ -105,14 +85,7 @@ SVIODoc::~SVIODoc()
 	SVFileNameManagerClass svFileManager;
 	svFileManager.RemoveItem( &msvFileName );
 
-	m_pIOController = NULL;
-}
-
-void SVIODoc::InitIO()
-{
-	InitMenu ();
-
-	UpdateAllViews( NULL );
+	m_pIOController = nullptr;
 }
 
 BOOL SVIODoc::OnNewDocument()
@@ -230,7 +203,7 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 void SVIODoc::OnExtrasTestoutputs()
 {
 	SVSVIMStateClass::AddState( SV_STATE_EDITING );
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS)  == S_OK )
+	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS) )
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{
@@ -287,13 +260,13 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				// Add new ones until we have enough
 				for( j = lCount; j < oDlg.m_lRemoteInputCount; j++ )
 				{
-					pRemInput = NULL;
+					pRemInput = nullptr;
 
 					strName.Format( "Remote Input %d", j + 1 );
 
 					pInputList->GetInputFlyweight( static_cast< LPCTSTR >( strName ), pRemInput );
 
-					if( pRemInput != NULL )
+					if( nullptr != pRemInput )
 					{
 						pRemInput->m_lIndex = j + 1;
 						pRemInput->Create();
@@ -331,7 +304,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				{
 					strName.Format( "Remote Input %d", j + 1 );
 
-					BOOL bFound = FALSE;
+					bool bFound = false;
 
 					for ( int iRI = 0; (iRI < lSize && !bFound); iRI++ )
 					{
@@ -346,10 +319,10 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 						if( strName == l_pObject->GetName() )
 						{
-							bFound = TRUE;
+							bFound = true;
 							pRemInput = dynamic_cast< SVRemoteInputObject* >( l_pObject );
 
-							if( pInputList->DetachInput( pRemInput->GetUniqueObjectID() ) != S_OK )
+							if( S_OK != pInputList->DetachInput( pRemInput->GetUniqueObjectID() ) )
 							{
 								SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
 								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorDetachingInput, StdMessageParams, SvOi::Err_17033_ErrorDetachingInput );
@@ -502,5 +475,11 @@ BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName)
 SVIOController* SVIODoc::GetIOController() const
 {
 	return m_pIOController;
+}
+
+void SVIODoc::SetIOController(SVIOController* pController)
+{
+	m_pIOController = pController;
+	pController->SetIODoc(this);
 }
 

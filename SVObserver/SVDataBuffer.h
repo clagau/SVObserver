@@ -23,18 +23,12 @@ class SVIPDoc;
 // .Title       : SVDataBufferInfoClass 
 // -----------------------------------------------------------------------------
 // .Description : 
-// -----------------------------------------------------------------------------
-// .Export
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :09.09.1999 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 class SVDataBufferInfoClass
 {
 public:
 	SVDataBufferInfoClass();
-	SVDataBufferInfoClass( SVDataBufferInfoClass& S2 );
+	SVDataBufferInfoClass( const SVDataBufferInfoClass& S2 );
 	SVDataBufferInfoClass operator=( SVDataBufferInfoClass& S2 );
 
 	SVToolClass*				POwnerTool;
@@ -59,16 +53,6 @@ public:
 // -----------------------------------------------------------------------------
 // .Description : This class capsules a Data Buffer like the 
 //              : Image Result Buffers in MIL ( refer to MimAllocResult() )
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
 ////////////////////////////////////////////////////////////////////////////////
 class SVDataBufferClass : public SVObjectAppClass
 {

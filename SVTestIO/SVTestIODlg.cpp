@@ -29,7 +29,7 @@ public:
 
 IMPLEMENT_DYNAMIC(SVTestIODlg, CDialog)
 
-SVTestIODlg::SVTestIODlg(CWnd* pParent /*=NULL*/)
+SVTestIODlg::SVTestIODlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVTestIODlg::IDD, pParent)
 	, m_lInputs(0)
 	, m_bResetStart(true)
@@ -209,7 +209,7 @@ void SVTestIODlg::OnStnClickedInput8()
 void SVTestIODlg::SetOutput( unsigned long p_iChannel, bool p_bState)
 {
 
-	HICON l_hState = NULL;
+	HICON l_hState = nullptr;
 
 	::EnterCriticalSection( &m_CriticalSection );
 	if( p_bState )
@@ -539,7 +539,7 @@ HRESULT SVTestIODlg::StopTrigger(unsigned long handle)
 		}
 		hr = S_OK;
 	}
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
 		bool l_bDisableIrq = true;
 		for( it = m_triggerList.begin() ; it != m_triggerList.end() ; ++it )

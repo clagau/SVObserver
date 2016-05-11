@@ -12,7 +12,7 @@
 #include "SVCameraTriggerData.h"
 
 SVCameraTriggerData::SVCameraTriggerData()
-: SVObjectClass(NULL, IDS_OBJECTNAME_CAMERA_TRIGGER_DATA)
+: SVObjectClass(nullptr, IDS_OBJECTNAME_CAMERA_TRIGGER_DATA)
 {
 	init();
 }
@@ -51,7 +51,7 @@ void SVCameraTriggerData::init()
 	// Setup Embedded Objects
 	m_timestamp.SetObjectEmbedded(SVCameraTriggerTimestampGuid, this, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP);
 	m_lineInState.SetObjectEmbedded(SVCameraTriggerLineInStateGuid, this, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE);
-/*
+/* For Camera based Triggering
 	RegisterEmbeddedObject(&m_timestamp, SVCameraTriggerTimestampGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP, false, SVResetItemNone);
 	RegisterEmbeddedObject(&m_lineInState, SVCameraTriggerLineInStateGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE, false, SVResetItemNone);
 */

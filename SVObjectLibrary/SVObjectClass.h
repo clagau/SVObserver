@@ -18,7 +18,6 @@
 #include "SVStatusLibrary/SVErrorClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVObjectScriptUsage.h"
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVOutObjectInfoStruct.h"
@@ -34,14 +33,13 @@ struct SVInObjectInfoStruct;
 struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;
 
-class SVDrawContext;
 class SVObjectAttributeClass;
 #pragma endregion Declarations
 
 /*
 This class is the base class to all configuration level objects.  These objects will get created and managed by the object manager object.
 */
-class SVObjectClass : virtual public SvOi::IObjectClass
+class SVObjectClass : public SvOi::IObjectClass
 {
 	SV_DECLARE_CLASS( SVObjectClass );
 	
@@ -55,16 +53,15 @@ class SVObjectClass : virtual public SvOi::IObjectClass
 public:
 	typedef std::deque< SVObjectClass* > SVObjectPtrDeque;
 
-	friend class SVObjectManagerClass;
-	friend class SVPPQObject;
-	friend class SVConfigurationObject;
+	friend class SVObjectManagerClass;	// @TODO - This needs to go - For access to m_outObjectInfo to assignUnique GUIDs on loading
+	friend class SVConfigurationObject; // @TODO - This needs to go - For access to m_outObjectInfo to assignUnique GUIDs on loading
 
 	friend DWORD_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	friend DWORD_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	SVObjectClass();
 	SVObjectClass( LPCSTR ObjectName );
-	SVObjectClass( SVObjectClass *POwner, int StringResourceID );
+	SVObjectClass( SVObjectClass* POwner, int StringResourceID );
 
 	virtual ~SVObjectClass();
 
@@ -102,8 +99,6 @@ public:
 
 	virtual void Persist( SVObjectWriter& rWriter );
 	virtual void PersistAttributes( SVObjectWriter& rWriter );
-
-	virtual BOOL ReinitObjectInfos();
 
 	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
 
@@ -149,10 +144,9 @@ public:
 	CString GetCompleteObjectName() const;
 	void GetCompleteObjectName( CString& rString ) const;
 
-	CString GetCompleteObjectNameToObjectType( LPCSTR LPSZCompleteName = NULL, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
-	LPTSTR GetCompleteObjectName2( LPCTSTR LPSZCompleteName = NULL ) const;
+	CString GetCompleteObjectNameToObjectType( LPCSTR LPSZCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	LPTSTR GetCompleteObjectName2( LPCTSTR LPSZCompleteName = nullptr ) const;
 	int GetCompleteObjectNameLength( int Length ) const;
-	int GetResourceID() const;
 	SVObjectClass* GetOwner() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 	
@@ -169,14 +163,14 @@ public:
 	virtual SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
-	virtual const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
+	virtual const SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
 	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) override;
 	virtual const UINT ObjectAttributesAllowed() const override;
 	virtual const UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual bool IsArray() const;
 	virtual int GetArraySize() const;
 	virtual const SVGUID& GetUniqueObjectID() const override;
-	virtual bool is_Created() const override { return IsCreated() ? true : false; }
+	virtual bool is_Created() const override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 #pragma endregion virtual method (IObjectClass)
 
@@ -188,7 +182,7 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
-	virtual SVObjectClass *UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
+	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner );
 
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
@@ -198,7 +192,7 @@ protected:
 
 public:
 	//This attribute holds the object level error information.
-	SVErrorClass msvError;
+	SVErrorClass msvError;  // @TODO - This should be replaced with the new message/error handler
 
 	UINT& ObjectAttributesAllowedRef();
 	SVObjectAttributeShim ObjectAttributesSetRef(int iIndex=0);
@@ -216,38 +210,38 @@ protected:
 	UINT m_uDefaultObjectAttributesSet;
 
 	//This attribute holds the data depth of the embedded data elements.
-	int objectDepth;
+	int m_objectDepth;
 
 	//This attribute holds the image depth of the embedded image elements.
-	long mlImageDepth;
+	long m_lImageDepth;
 
 	//This attribute holds the validity state of the object.
-	mutable BOOL isObjectValid;
+	mutable BOOL m_isObjectValid;
 	// Refer to IsCreated()
-	BOOL isCreated;
+	BOOL m_isCreated;
 	//This attribute holds the validation reference identification number.
-	SVGUID validationReferenceID;
+	SVGUID m_validationReferenceID;
 	//If object is embedded, set this ID
-	SVGUID embeddedID;
+	SVGUID m_embeddedID;
 	//Owner Info
-	SVObjectInfoStruct ownerObjectInfo;
+	SVObjectInfoStruct m_ownerObjectInfo;
 	//Contains the object info and could also be used as task out info.
-	SVOutObjectInfoStruct outObjectInfo;
+	SVOutObjectInfoStruct m_outObjectInfo;
 	//Contains a list of friend objects, which will be informed about certain actions or messages this object is doing/processing.
-	SVObjectInfoArrayClass friendList;
+	SVObjectInfoArrayClass m_friendList;
 	//Output table
-	SVPublicAttributeEntryStruct publicAttribute;
+	SVPublicAttributeEntryStruct m_publicAttribute;
 
 	//user given name
-	CString strName;
+	CString m_strName;
 
 private:
 	void init();
 
 	//String resource ID, of NOT user changeable name.
-	int resourceID;
+	int m_resourceID;
 	//NOT user changeable name
-	CString strObjectName;
+	CString m_strObjectName;
 };
 
 #pragma region Declarations

@@ -205,7 +205,7 @@ bool RootObject::Initialize()
 {
 	bool Result(true);
 
-	outObjectInfo.ObjectTypeInfo.ObjectType =  SVRootObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType =  SVRootObjectType;
 
 	//The Root object should have an empty name
 	SetName(_T(""));

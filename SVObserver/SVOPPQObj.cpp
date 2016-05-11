@@ -69,29 +69,28 @@ CString SVOPPQObj::GetAttachedTriggerName() const
 
 BOOL SVOPPQObj::AttachCameraToPPQ(CString sCameraName)
 {
-	BOOL bRet = FALSE;
+	BOOL bRet = false;
 	//check to see if it is already in list
 	//if not add camera to list
-	if (m_slAttachedCameraList.Find(sCameraName) == NULL)
+	if (nullptr == m_slAttachedCameraList.Find(sCameraName) )
 	{ 
 		m_slAttachedCameraList.AddTail(sCameraName);
-		bRet = TRUE;
+		bRet = true;
 	}
 	return bRet;
 }
 
 BOOL SVOPPQObj::DetachCameraFromPPQ(CString sCameraName)
 {
-	BOOL bRet = FALSE;
-	POSITION pos;
+	BOOL bRet = false;
 	
 	if (!m_slAttachedCameraList.IsEmpty())
 	{
-		pos = m_slAttachedCameraList.Find(sCameraName);
-		if (pos != NULL)
+		POSITION pos = m_slAttachedCameraList.Find(sCameraName);
+		if (nullptr != pos)
 		{ //camera is in list.  now delete
 			m_slAttachedCameraList.RemoveAt(pos);
-			bRet = TRUE;
+			bRet = true;
 		}
 	}
 	return bRet;
@@ -107,7 +106,7 @@ CString SVOPPQObj::GetAttachedCamera(int iPos) const
 	CString sReturnStr = "";
 	POSITION pos = m_slAttachedCameraList.FindIndex(iPos);
 	
-	if (pos != NULL)
+	if (nullptr != pos)
 	{
 		sReturnStr = m_slAttachedCameraList.GetAt(pos);
 	}
@@ -116,30 +115,29 @@ CString SVOPPQObj::GetAttachedCamera(int iPos) const
 
 BOOL SVOPPQObj::AttachInspectionToPPQ(CString sInspectName)
 {
-	BOOL bRet = FALSE;
+	BOOL bRet = false;
 	
-	if (m_slAttachedInspectList.Find(sInspectName) == NULL)
+	if (nullptr == m_slAttachedInspectList.Find(sInspectName))
 	{
 		//was not found, add to list
 		m_slAttachedInspectList.AddTail(sInspectName);
-		bRet = TRUE;
+		bRet = true;
 	}
 	return bRet;
 }
 
 BOOL SVOPPQObj::DetachInspectionFromPPQ(CString sInspectName)
 {
-	BOOL bRet = FALSE;
-	POSITION pos;
+	BOOL bRet = false;
 	
 	if (!m_slAttachedInspectList.IsEmpty())
 	{
-		pos = m_slAttachedInspectList.Find(sInspectName);
+		POSITION pos = m_slAttachedInspectList.Find(sInspectName);
 		
-		if (pos != NULL)
+		if (nullptr != pos)
 		{
 			m_slAttachedInspectList.RemoveAt(pos);
-			bRet = TRUE;
+			bRet = true;
 		}
 	}
 	return bRet;

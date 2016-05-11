@@ -18,8 +18,6 @@
 class SVMatroxCommandDataImage : public SVCommandDataImage::SVCommandDataInterface
 {
 public:
-	friend class SVMatroxBlobInterface;
-	friend class SVMatroxBufferInterface;
 	friend class SVMatroxImageInterface;
 	friend class SVMatroxOcrInterface;
 

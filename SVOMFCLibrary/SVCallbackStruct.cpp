@@ -18,18 +18,18 @@
 
 SVCallbackStruct::SVCallbackStruct()
 {
-	m_pCallback = NULL;
+	m_pCallback = nullptr;
 
-	m_pOwner = NULL;
-	m_pData = NULL;
+	m_pOwner = nullptr;
+	m_pData = nullptr;
 }
 
 SVCallbackStruct::SVCallbackStruct( const SVCallbackStruct &p_rOriginal )
 {
-	m_pCallback = NULL;
+	m_pCallback = nullptr;
 
-	m_pOwner = NULL;
-	m_pData = NULL;
+	m_pOwner = nullptr;
+	m_pData = nullptr;
 
 	*this = p_rOriginal;
 }

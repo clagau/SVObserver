@@ -16,7 +16,6 @@
 #include "SVTaskObjectList.h"
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
-#include "SVValueObjectImpl.h"
 #include "SVStatusLibrary\MessageManager.h"			// SvStl::DataOnly
 #include "SVStatusLibrary\MessageManagerResource.h" // SvStl::MessageMgrDisplayAndNotify(),
 #include "SVUtilityLibrary/SVString.h"
@@ -40,7 +39,7 @@ struct SVToolPropertyEntryStruct
 		RadioEnd   = 0;
 	};
 
-	SVToolPropertyEntryStruct( SVToolPropertyEntryStruct& S2 )
+	SVToolPropertyEntryStruct( const SVToolPropertyEntryStruct& S2 )
 	{
 		DWValue = S2.DWValue;
 		ID		= S2.ID;
@@ -82,23 +81,15 @@ enum EAutoSize
 	EnablePosition = 0x2, 
 	EnableSizeAndPosition = 0x3,
 	EnableNegativePosition = 0x4,
-	EnableAll  =  	0x3 | 0x4
+	EnableAll = EnableSizeAndPosition | EnableNegativePosition
 };
 
 class SVToolClass : public SVTaskObjectListClass, public SvOi::ITool
 {
 	SV_DECLARE_CLASS( SVToolClass );
 
-	friend class SVImageClass;
-	friend class SVInspectionProcess;
-	friend class SVPixelAnalyzeResultClass;
-	friend class SVBlobAnalyzeResultClass;
-	friend class SVXReferenceAnalyzerResultClass;
-	friend class SVYReferenceAnalyzerResultClass;
-	friend class SVXYReferenceAnalyzerResultClass;
-	friend class SVBlobAnalyzeFeatureDialogClass;
-	friend class SVToolAdjustmentDialogAnalyzerPageClass;
-	friend class SVToolExtentClass;
+	friend class SVInspectionProcess; // For access to Run()
+	friend class SVToolExtentClass; // For access to UpdateOffsetDataToImage()
 
 public:
 	SVToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL );
@@ -114,8 +105,6 @@ public:
 	bool IsEnabled(long p_lIndex) const;
 
 	bool WasEnabled() const;
-
-	virtual BOOL isFreeMoveable();
 
 	//************************************
 	//! return Flag with enabled Autosize
@@ -148,13 +137,11 @@ public:
 
 	virtual HRESULT ResetObject();
 
-	virtual SVToolPropertyEntryStruct* GetSpecialPropertyList( int& RCount );
 	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
 
 	virtual BOOL Validate();
 	virtual BOOL OnValidate();
-	virtual BOOL PrepareForRunning();
 
 	virtual bool getConditionalResult() const;
 	virtual bool getConditionalResult(long p_lIndex) const;

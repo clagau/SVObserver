@@ -26,7 +26,7 @@ SVArchiveRecord::SVArchiveRecord()
 	m_ImageBufferPtr = new SVImageObjectClass;
 
 	m_lCountImages = 1L;
-	m_pArchiveTool = NULL;
+	m_pArchiveTool = nullptr;
 
 	m_pImageCircleBuffer.clear();
 	m_LastIndexHandle.clear();
@@ -184,24 +184,24 @@ void SVArchiveRecord::ConnectInputObject()
 		//
 		// Get a pointer to the object based on the guid.
 		//
-		SVObjectClass* l_psvObject = NULL;
+		SVObjectClass* l_psvObject = nullptr;
 
 		try
 		{
 			l_psvObject = dynamic_cast<SVObjectClass*>( SVObjectManagerClass::Instance().GetObject( m_svObjectReference.Guid() ) );
 
-			if( l_psvObject != NULL )
+			if( nullptr != l_psvObject )
 			{
-				if( dynamic_cast<SVValueObjectClass*>( l_psvObject ) == NULL &&
-					dynamic_cast<SVImageClass*>( l_psvObject ) == NULL )
+				if( nullptr == dynamic_cast<SVValueObjectClass*>( l_psvObject ) &&
+					nullptr == dynamic_cast<SVImageClass*>( l_psvObject ) )
 				{
-					l_psvObject = NULL;
+					l_psvObject = nullptr;
 				}
 			}
 		}
 		catch( ... )
 		{
-			l_psvObject = NULL;
+			l_psvObject = nullptr;
 		}
 
 		if ( l_psvObject != m_svObjectReference.Object() )
@@ -225,7 +225,7 @@ void SVArchiveRecord::ConnectInputObject()
 		DWORD_PTR rc = ::SVSendMessage( m_svObjectReference.Guid(), 
 		                            SVM_CONNECT_OBJECT_INPUT, 
 		                            reinterpret_cast <DWORD_PTR> (&InObjectInfo), 
-		                            NULL );
+		                            0 );
 
 		ASSERT(rc == SVMR_SUCCESS );
 	}
@@ -244,7 +244,7 @@ void SVArchiveRecord::DisconnectInputObject()
 		DWORD_PTR rc = ::SVSendMessage(	m_svObjectReference.Guid(), 
 		                            SVM_DISCONNECT_OBJECT_INPUT, 
 		                            reinterpret_cast <DWORD_PTR> (&InObjectInfo), 
-		                            NULL );
+		                            0 );
 	}
 }
 
@@ -341,7 +341,7 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 		}
 
 		// now ceate buffer if reserve OK
-		if ( hr == S_OK && m_eArchiveMethod != SVArchiveAsynchronous )
+		if ( S_OK == hr && SVArchiveAsynchronous != m_eArchiveMethod )
 		{
 			if( !( m_ImageBufferPtr.empty() ) )
 			{
@@ -402,7 +402,7 @@ HRESULT SVArchiveRecord::WriteImage( )
 	bool bOk;
 
 	SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_svObjectReference.Object());
-	bOk = pImage != NULL;
+	bOk = nullptr != pImage;
 	
 	if ( bOk )
 	{
@@ -507,9 +507,9 @@ void SVArchiveRecord::Init( SVArchiveTool* pTool )
 
 SVImageClass* SVArchiveRecord::GetImage()
 {
-	SVImageClass* l_psvImage = NULL;
+	SVImageClass* l_psvImage = nullptr;
 
-	if( m_svObjectReference.Object() != NULL )
+	if( nullptr != m_svObjectReference.Object() )
 	{
 		GUID guid = m_svObjectReference.Guid();
 	

@@ -45,11 +45,11 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pInformation != NULL )
+	if( nullptr != p_pInformation )
 	{
 		l_Status = ::VariantClear( p_pInformation );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			SVCommandDataHolder::SVNameDataTypeMap l_Info = m_Data.GetDataInformation();
 
@@ -73,7 +73,7 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 				SVSAFEARRAY::SVIndex l_Index( 2 );
 				SVCommandDataHolder::SVNameDataTypeMap::const_iterator l_Iter = l_Info.begin();
 
-				while( l_Status == S_OK && i < static_cast<long>(l_Info.size()) && l_Iter != l_Info.end() )
+				while( S_OK == l_Status && i < static_cast<long>(l_Info.size()) && l_Iter != l_Info.end() )
 				{
 					l_Index[ 0 ] = i;
 					l_Index[ 1 ] = 0;
@@ -82,7 +82,7 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 					HRESULT l_State = l_Temp.PutElement( l_Index, l_Data );
 					l_Data.Clear();
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = l_State;
 					}
@@ -129,7 +129,7 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 
 					l_State = l_Temp.PutElement( l_Index, l_Data );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = l_State;
 					}
@@ -138,7 +138,7 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 					++l_Iter;
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					_variant_t l_Variant = l_Temp;
 
@@ -163,7 +163,7 @@ STDMETHODIMP SVRemoteCommandData::GetDataType( BSTR p_Name, long* p_pDataType )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pDataType != NULL )
+	if( nullptr != p_pDataType )
 	{
 		*p_pDataType = m_Data.GetDataType( p_Name );
 	}
@@ -179,28 +179,28 @@ STDMETHODIMP SVRemoteCommandData::ConstructCommandData( ISVRemoteCommandData **p
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_ppCommandData != NULL )
+	if( nullptr != p_ppCommandData )
 	{
-		if( *p_ppCommandData != NULL )
+		if( nullptr != *p_ppCommandData )
 		{
 			( *p_ppCommandData )->Release();
 
-			*p_ppCommandData = NULL;
+			*p_ppCommandData = nullptr;
 		}
 
 		CComPtr< ISVRemoteCommandData > l_RemoteCommandDataPtr;
 
 		l_Status = l_RemoteCommandDataPtr.CoCreateInstance( __uuidof( SVRemoteCommandData ) );
 
-		if( l_RemoteCommandDataPtr.p == NULL )
+		if( nullptr == l_RemoteCommandDataPtr.p )
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = E_FAIL;
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_RemoteCommandDataPtr.QueryInterface( p_ppCommandData );
 		}
@@ -217,39 +217,39 @@ STDMETHODIMP SVRemoteCommandData::GetContainer( BSTR p_Name, ISVRemoteCommandDat
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_ppContainer != NULL )
+	if( nullptr != p_ppContainer )
 	{
-		if( ( *p_ppContainer ) != NULL )
+		if( nullptr != ( *p_ppContainer ) )
 		{
 			( *p_ppContainer )->Release();
 
-			( *p_ppContainer ) = NULL;
+			( *p_ppContainer ) = nullptr;
 		}
 
 		SVCommandDataHolder l_Data;
 
 		l_Status = m_Data.GetContainer( p_Name, l_Data );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			CComPtr< ISVRemoteCommandData > l_CommandDataPtr;
 
 			l_Status = l_CommandDataPtr.CoCreateInstance( __uuidof( SVRemoteCommandData ) );
 
-			if( l_CommandDataPtr.p == NULL )
+			if( nullptr == l_CommandDataPtr.p )
 			{
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = E_FAIL;
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				// This has issues when using _ATL_DEBUG_INTERFACES...
 				SVRemoteCommandData* l_pCommandData = dynamic_cast< SVRemoteCommandData* >( l_CommandDataPtr.p );
 
-				if( l_pCommandData != NULL )
+				if( nullptr != l_pCommandData )
 				{
 					l_pCommandData->m_Data = l_Data;
 				}
@@ -259,14 +259,14 @@ STDMETHODIMP SVRemoteCommandData::GetContainer( BSTR p_Name, ISVRemoteCommandDat
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_CommandDataPtr.QueryInterface( p_ppContainer );
 			}
 		}
 		else
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = E_FAIL;
 			}
@@ -284,17 +284,17 @@ STDMETHODIMP SVRemoteCommandData::SetContainer( BSTR p_Name, ISVRemoteCommandDat
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pContainer == NULL )
+	if( nullptr == p_pContainer)
 	{
 		l_Status = E_INVALIDARG;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		// This has issues when using _ATL_DEBUG_INTERFACES...
 		SVRemoteCommandData* l_pCommandData = dynamic_cast< SVRemoteCommandData* >( p_pContainer );
 
-		if( l_pCommandData != NULL )
+		if( nullptr != l_pCommandData )
 		{
 			l_Status = m_Data.SetContainer( p_Name, l_pCommandData->m_Data );
 		}
@@ -311,7 +311,7 @@ STDMETHODIMP SVRemoteCommandData::GetValue( BSTR p_Name, VARIANT* p_pValue )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pValue != NULL )
+	if( nullptr != p_pValue )
 	{
 		::VariantClear( p_pValue );
 
@@ -345,13 +345,13 @@ STDMETHODIMP SVRemoteCommandData::GetBlock( BSTR p_Name, IStream** p_ppStream )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_ppStream != NULL )
+	if( nullptr != p_ppStream )
 	{
-		if( ( *p_ppStream ) != NULL )
+		if( nullptr != ( *p_ppStream ) )
 		{
 			( *p_ppStream )->Release();
 
-			( *p_ppStream ) = NULL;
+			( *p_ppStream ) = nullptr;
 		}
 
 		SVByteVector l_Block;
@@ -362,17 +362,17 @@ STDMETHODIMP SVRemoteCommandData::GetBlock( BSTR p_Name, IStream** p_ppStream )
 		{
 			CComQIPtr< IStream > l_StreamPtr;
 
-			l_Status = ::CreateStreamOnHGlobal( NULL, true, &l_StreamPtr );
+			l_Status = ::CreateStreamOnHGlobal( nullptr, true, &l_StreamPtr );
 
-			if( l_StreamPtr.p == NULL )
+			if( nullptr == l_StreamPtr.p )
 			{
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = E_FAIL;
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				ULARGE_INTEGER l_Size;
 
@@ -380,16 +380,16 @@ STDMETHODIMP SVRemoteCommandData::GetBlock( BSTR p_Name, IStream** p_ppStream )
 
 				l_Status = l_StreamPtr->SetSize( l_Size );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					LARGE_INTEGER l_Position;
 
 					l_Position.QuadPart = 0;
 
-					l_Status = l_StreamPtr->Seek( l_Position, STREAM_SEEK_SET, NULL );
+					l_Status = l_StreamPtr->Seek( l_Position, STREAM_SEEK_SET, nullptr );
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					ULONG l_BytesWritten = 0;
 
@@ -397,7 +397,7 @@ STDMETHODIMP SVRemoteCommandData::GetBlock( BSTR p_Name, IStream** p_ppStream )
 
 					if( l_BytesWritten != l_Block.size() )
 					{
-						if( l_Status == S_OK )
+						if( S_OK == l_Status )
 						{
 							l_Status = E_FAIL;
 						}
@@ -405,14 +405,14 @@ STDMETHODIMP SVRemoteCommandData::GetBlock( BSTR p_Name, IStream** p_ppStream )
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_StreamPtr.QueryInterface( p_ppStream );
 			}
 		}
 		else
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = E_FAIL;
 			}
@@ -430,12 +430,12 @@ STDMETHODIMP SVRemoteCommandData::SetBlock( BSTR p_Name, IStream* p_pStream )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pStream == NULL )
+	if( nullptr == p_pStream )
 	{
 		l_Status = E_INVALIDARG;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		STATSTG l_Stat;
 		LARGE_INTEGER l_Position;
@@ -443,14 +443,14 @@ STDMETHODIMP SVRemoteCommandData::SetBlock( BSTR p_Name, IStream* p_pStream )
 
 		l_Position.QuadPart = 0;
 
-		l_Status = l_StreamPtr->Seek( l_Position, STREAM_SEEK_SET, NULL );
+		l_Status = l_StreamPtr->Seek( l_Position, STREAM_SEEK_SET, nullptr );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_StreamPtr->Stat( &l_Stat, STATFLAG_NONAME );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			size_t l_Size = static_cast< size_t >( l_Stat.cbSize.QuadPart );
 			SVByteVector l_Block( l_Size );
@@ -467,7 +467,7 @@ STDMETHODIMP SVRemoteCommandData::SetBlock( BSTR p_Name, IStream* p_pStream )
 				}
 				else
 				{
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = E_FAIL;
 					}
@@ -487,13 +487,13 @@ STDMETHODIMP SVRemoteCommandData::GetImage( BSTR p_Name, IStream** p_ppStream )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_ppStream != NULL )
+	if( nullptr != p_ppStream )
 	{
-		if( ( *p_ppStream ) != NULL )
+		if( nullptr != ( *p_ppStream ) )
 		{
 			( *p_ppStream )->Release();
 
-			( *p_ppStream ) = NULL;
+			( *p_ppStream ) = nullptr;
 		}
 
 		SVByteVector l_Block;
@@ -504,17 +504,17 @@ STDMETHODIMP SVRemoteCommandData::GetImage( BSTR p_Name, IStream** p_ppStream )
 		{
 			CComQIPtr< IStream > l_StreamPtr;
 
-			l_Status = ::CreateStreamOnHGlobal( NULL, true, &l_StreamPtr );
+			l_Status = ::CreateStreamOnHGlobal( nullptr, true, &l_StreamPtr );
 
-			if( l_StreamPtr.p == NULL )
+			if( nullptr == l_StreamPtr.p )
 			{
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = E_FAIL;
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				ULARGE_INTEGER l_Size;
 
@@ -522,16 +522,16 @@ STDMETHODIMP SVRemoteCommandData::GetImage( BSTR p_Name, IStream** p_ppStream )
 
 				l_Status = l_StreamPtr->SetSize( l_Size );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					LARGE_INTEGER l_Position;
 
 					l_Position.QuadPart = 0;
 
-					l_Status = l_StreamPtr->Seek( l_Position, STREAM_SEEK_SET, NULL );
+					l_Status = l_StreamPtr->Seek( l_Position, STREAM_SEEK_SET, nullptr );
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					ULONG l_BytesWritten = 0;
 
@@ -539,7 +539,7 @@ STDMETHODIMP SVRemoteCommandData::GetImage( BSTR p_Name, IStream** p_ppStream )
 
 					if( l_BytesWritten != l_Block.size() )
 					{
-						if( l_Status == S_OK )
+						if( S_OK == l_Status )
 						{
 							l_Status = E_FAIL;
 						}
@@ -547,14 +547,14 @@ STDMETHODIMP SVRemoteCommandData::GetImage( BSTR p_Name, IStream** p_ppStream )
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = l_StreamPtr.QueryInterface( p_ppStream );
 			}
 		}
 		else
 		{
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				l_Status = E_FAIL;
 			}
@@ -572,12 +572,12 @@ STDMETHODIMP SVRemoteCommandData::SetImage( BSTR p_Name, IStream* p_pStream )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pStream == NULL )
+	if( nullptr == p_pStream )
 	{
 		l_Status = E_INVALIDARG;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		STATSTG l_Stat;
 		LARGE_INTEGER l_Position;
@@ -585,14 +585,14 @@ STDMETHODIMP SVRemoteCommandData::SetImage( BSTR p_Name, IStream* p_pStream )
 
 		l_Position.QuadPart = 0;
 
-		l_Status = l_StreamPtr->Seek( l_Position, STREAM_SEEK_SET, NULL );
+		l_Status = l_StreamPtr->Seek( l_Position, STREAM_SEEK_SET, nullptr );
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_StreamPtr->Stat( &l_Stat, STATFLAG_NONAME );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			size_t l_Size = static_cast< size_t >( l_Stat.cbSize.QuadPart );
 			SVByteVector l_Block( l_Size );
@@ -609,7 +609,7 @@ STDMETHODIMP SVRemoteCommandData::SetImage( BSTR p_Name, IStream* p_pStream )
 				}
 				else
 				{
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = E_FAIL;
 					}

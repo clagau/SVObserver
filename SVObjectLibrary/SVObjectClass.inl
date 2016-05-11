@@ -9,15 +9,14 @@
 //* .Check In Date   : $Date:   19 Dec 2014 02:45:14  $
 //******************************************************************************
 
-#ifndef SVOBJECTCLASS_INL
-#define SVOBJECTCLASS_INL
+#pragma once
 
 /*
 This method returns the object's Global Unique Identifier (GUID) of this object instance.
 */
 inline const SVGUID& SVObjectClass::GetUniqueObjectID() const
 {
-	return outObjectInfo.UniqueObjectID;
+	return m_outObjectInfo.UniqueObjectID;
 }
 
 /*
@@ -25,7 +24,7 @@ This method returns the embedded Global Unique Identifier (GUID) if the object i
 */
 inline const SVGUID& SVObjectClass::GetEmbeddedID() const
 {
-	return embeddedID;
+	return m_embeddedID;
 }
 
 /*
@@ -33,7 +32,7 @@ This method returns the object's Global Unique Identifier (GUID) of this object'
 */
 inline const SVGUID& SVObjectClass::GetOwnerID() const
 {
-	return ownerObjectInfo.UniqueObjectID;
+	return m_ownerObjectInfo.UniqueObjectID;
 }
 
 #pragma region virtual method (IObjectClass)
@@ -42,7 +41,7 @@ This method returns the object's type.
 */
 inline const SVObjectTypeEnum& SVObjectClass::GetObjectType() const
 {
-	return outObjectInfo.ObjectTypeInfo.ObjectType;
+	return m_outObjectInfo.ObjectTypeInfo.ObjectType;
 }
 #pragma endregion virtual method (IObjectClass)
 
@@ -51,7 +50,7 @@ This metthod return the pointer to the owner object.
 */
 inline SVObjectClass* SVObjectClass::GetOwner() const
 {
-	return ownerObjectInfo.PObject;
+	return m_ownerObjectInfo.PObject;
 }
 
 /*
@@ -59,7 +58,7 @@ This method return the owner object info.
 */
 inline const SVObjectInfoStruct& SVObjectClass::GetOwnerInfo() const
 {
-	return ownerObjectInfo;
+	return m_ownerObjectInfo;
 }
 
 /*
@@ -67,7 +66,7 @@ This method returns the object info of this object instance.
 */
 inline const SVObjectInfoStruct& SVObjectClass::GetObjectInfo() const
 {
-	return outObjectInfo;
+	return m_outObjectInfo;
 }
 
 /*
@@ -75,7 +74,7 @@ This method returns the out object info of this object instance.  This method is
 */
 inline SVOutObjectInfoStruct& SVObjectClass::GetObjectOutputInfo()
 {
-	return outObjectInfo;
+	return m_outObjectInfo;
 }
 
 /*
@@ -83,7 +82,7 @@ This method returns the object's image depth.
 */
 inline long SVObjectClass::GetImageDepth() const
 {
-	return mlImageDepth;
+	return m_lImageDepth;
 }
 
 /*
@@ -91,7 +90,7 @@ This method return the object's data depth.
 */
 inline int SVObjectClass::GetObjectDepth() const
 {
-	return objectDepth;
+	return m_objectDepth;
 }
 
 /*
@@ -99,7 +98,7 @@ This method returns the creation state of the object.
 */
 inline BOOL SVObjectClass::IsCreated() const
 {
-	return isCreated;
+	return m_isCreated;
 }
 
 /*
@@ -107,7 +106,7 @@ This method returns the object's valid state.
 */
 inline BOOL SVObjectClass::IsValid()
 {
-	return isObjectValid;
+	return m_isObjectValid;
 }
 
 template< typename SVObjectVisitor >
@@ -119,6 +118,3 @@ HRESULT SVObjectClass::Accept( SVObjectVisitor& p_rVisitor )
 
 	return l_Status;
 }
-
-#endif
-

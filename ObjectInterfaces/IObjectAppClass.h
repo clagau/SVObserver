@@ -14,15 +14,10 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		class IObjectAppClass: virtual public IObjectClass
+		class IObjectAppClass
 		{
 		public:
 			virtual ~IObjectAppClass() {}
-
-			/**********
-			 The method gets the tool object of this object.
-			***********/
-			virtual IObjectClass* GetToolInterface() const = 0;
 
 			/**********
 			 Call this method at the object owner to create an object.

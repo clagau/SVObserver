@@ -56,10 +56,10 @@ namespace Seidenader
 				wndcls.lpfnWndProc      = ::DefWindowProc;
 				wndcls.cbClsExtra       = wndcls.cbWndExtra = 0;
 				wndcls.hInstance        = hInst;
-				wndcls.hIcon            = NULL;
+				wndcls.hIcon            = nullptr;
 				wndcls.hCursor          = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
 				wndcls.hbrBackground    = (HBRUSH) (COLOR_GRADIENTACTIVECAPTION);
-				wndcls.lpszMenuName     = NULL;
+				wndcls.lpszMenuName     = nullptr;
 				wndcls.lpszClassName    = SVKNOB_CLASSNAME;
 
 				if (!AfxRegisterClass(&wndcls))
@@ -92,15 +92,15 @@ namespace Seidenader
 				if (!ClipCursor(&l_rect))
 				{
 					DWORD er = GetLastError();
-					LPTSTR msg = NULL;
+					LPTSTR msg = nullptr;
 					FormatMessage(
 						FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-						NULL,
+						nullptr,
 						er,
 						0,
 						msg,
 						32,
-						NULL
+						nullptr
 						);
 					OutputDebugString(msg);
 					LocalFree(msg);
@@ -110,7 +110,7 @@ namespace Seidenader
 
 		void SVKnobControl::OnLButtonUp(UINT nFlags, CPoint point)
 		{
-			ClipCursor(NULL);
+			ClipCursor(nullptr);
 			m_dragging = false;
 			ReleaseCapture();
 		}
@@ -127,14 +127,11 @@ namespace Seidenader
 				double l_angle = xy2angle(pt);
 				double l_value = angle2val(l_angle);
 				CString msg;
-				//msg.Format("angle: %.4f, value: %.4f, int: %d\n", l_angle, l_value, int_value(l_value));
-				//OutputDebugString(msg);
+				
 				if (l_value < m_min)
 				{
 					l_value = m_min;
 					l_angle = val2angle(l_value);
-					//msg.Format("new angle: %.4f, value: %.4f, int: %d\n", l_angle, l_value, int_value(l_value));
-					//OutputDebugString(msg);
 				}
 				else if (l_value > m_max)
 				{
@@ -147,8 +144,6 @@ namespace Seidenader
 						l_value = m_max;
 					}
 					l_angle = val2angle(l_value);
-					//msg.Format("new angle: %.4f, value: %.4f, int: %d\n", l_angle, l_value, int_value(l_value));
-					//OutputDebugString(msg);
 				}
 				m_dotPoint = angle2xy(knob.center, l_angle, m_radius);
 				pt = m_dotPoint + CSize(4,4);
@@ -156,8 +151,6 @@ namespace Seidenader
 				ClientToScreen(&point);
 				if (fabs(m_value - l_value) > .001)
 				{
-					//msg.Format("x: %d, y: %d, angle: %.4f, value: %.4f, x`: %d, y`: %d\n", point.x, point.y, l_angle, l_value, pt.x, pt.y);
-					//OutputDebugString(msg);
 					m_value = l_value;
 					m_angle = l_angle;
 					GetParent()->PostMessage(WM_TRIGGER_CHANGE, (WPARAM)int_value(m_value), 0);
@@ -171,11 +164,11 @@ namespace Seidenader
 			CPaintDC dc(this); // device context for painting
 			CRect client;
 			GetClientRect(client);
-			if (m_image.GetSafeHandle() == NULL)
+			if (nullptr == m_image.GetSafeHandle())
 			{
 				m_image.CreateCompatibleBitmap(&dc, client.Width(), client.Height());
 			}
-			if (m_screen.GetSafeHandle() == NULL)
+			if (nullptr == m_screen.GetSafeHandle())
 			{
 				m_screen.CreateCompatibleBitmap(&dc, client.Width(), client.Height());
 			}
@@ -193,7 +186,7 @@ namespace Seidenader
 			CRect rect = dot.rect;
 			rect.MoveToXY(m_dotPoint);
 			m_dc.Ellipse(rect);
-			//TransparentBlt(m_dc, dot, pt);
+
 			dc.BitBlt(0, 0, knob.rect.Width(), knob.rect.Height(), &m_dc, 0, 0, SRCCOPY);
 			dc.SelectObject(t_screen);
 			m_dc.SelectObject(t_brush);
@@ -254,28 +247,18 @@ namespace Seidenader
 
 		BOOL SVKnobControl::OnEraseBkgnd(CDC* pDC)
 		{
-			//pDC->SetBkColor(GetSysColor(COLOR_BTNFACE));
-			//CRect & rect = knob.rect;
-			//pDC->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
-			//CPoint & center = knob.center;
-			//int radius = (rect.Height() - dot.rect.Height()) / 2;
-			//for (std::vector<CPoint>::const_iterator it = ticks.begin(); it != ticks.end(); ++it)
-			//{
-			//	pDC->MoveTo(center);
-			//	pDC->LineTo(*it);
-			//}
 			return TRUE;
 		}
 
 		void SVKnobControl::CreateBitmaps()
 		{
-			HDC hdc = ::GetDC(NULL);
+			HDC hdc = ::GetDC(nullptr);
 			CDC dc;
 			dc.Attach(hdc);
 			m_dc.CreateCompatibleDC(&dc);
 			knob.LoadBitmaps(IDB_KNOB_FACE, IDB_KNOB_MASK, dc);
 			dot.LoadBitmaps(IDB_SVDOT_FACE, IDB_SVDOT_MASK, dc);
-			::ReleaseDC(NULL, dc.Detach());
+			::ReleaseDC(nullptr, dc.Detach());
 			m_radius = knob.rect.Width()/2 - 2;
 			m_center = knob.center;
 			m_radius -= dot.rect.Width() * 2;
@@ -317,17 +300,6 @@ namespace Seidenader
 			OutputDebugString(msg);
 			Invalidate();
 			return ret;
-		}
-
-		void SVKnobControl::RunTest() const
-		{
-			CString msg;
-			for (double d = m_min; d < m_max; d += 1.0)
-			{
-				double a = val2angle(d);
-				msg.Format("orig: %.4f, angle: %.4f, value: %.4f\n", d, a, angle2val(a));
-				OutputDebugString(msg);
-			}
 		}
 	} //SVMFCControls
 } //Seidenader

@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(SVPatGeneralPageClass, CPropertyPage)
 
 SVPatGeneralPageClass::SVPatGeneralPageClass() 
-: CPropertyPage(SVPatGeneralPageClass::IDD), m_pPatAnalyzer(NULL)
+: CPropertyPage(SVPatGeneralPageClass::IDD), m_pPatAnalyzer(nullptr)
 {
 	//{{AFX_DATA_INIT(SVPatGeneralPageClass)
 	m_bAngleSearch = FALSE;

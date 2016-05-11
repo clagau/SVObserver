@@ -116,7 +116,7 @@ HRESULT SVLongValueObjectClass::SetValueAt( int iBucket, int iIndex, CString str
 	if ( strDigits == strValue )
 	{
 		strDigits.MakeLower();
-		TCHAR* p = NULL;
+		TCHAR* p = nullptr;
 		long lValue;
 		if ( strDigits.Find(_T('x')) != -1 )
 			lValue = _tcstol(strDigits, &p, 16);
@@ -135,9 +135,9 @@ HRESULT SVLongValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rv
 	_variant_t l_Temp;
 	l_Temp.Attach( rvtValue );
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_lValue );
-	if( hr == S_OK )
+	if( S_OK == hr )
 	{
-		l_Temp = l_lValue ;
+		l_Temp = l_lValue;
 	}
 	else
 	{
@@ -170,7 +170,7 @@ HRESULT SVLongValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdV
 
 void SVLongValueObjectClass::LocalInitialize()
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVLongValueObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVLongValueObjectType;
 	DefaultValue() = 0;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{

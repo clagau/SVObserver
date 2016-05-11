@@ -33,7 +33,6 @@ public:
     BOOL AddCameraToList(CString sCameraName);
     BOOL AddCameraToList(CString sCameraName, int iDig);
     BOOL AddCameraToList(CString sCameraName, int iDig, int iBands);
-    BOOL SetCameraDig(CString sCameraName, int iDig);
     BOOL SetCameraFile(CString sCameraName, CString sFileName);
 	BOOL SetCameraDeviceParams( CString sCameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams );
     BOOL RemoveCameraFromList(CString sCameraName);

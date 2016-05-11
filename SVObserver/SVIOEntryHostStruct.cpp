@@ -19,8 +19,8 @@ SVIOEntryHostStruct::SVIOEntryHostStruct()
 , m_ObjectType( IO_INVALID_OBJECT )
 , m_IOId()
 , m_DeleteValueObject( true )
-, m_pValueObject( NULL )
-, m_pValueParent( NULL )
+, m_pValueObject( nullptr )
+, m_pValueParent( nullptr )
 {
 }
 
@@ -31,7 +31,7 @@ SVIOEntryHostStruct::~SVIOEntryHostStruct()
 
 void SVIOEntryHostStruct::clear()
 {
-	if( m_DeleteValueObject && ( m_pValueObject != NULL ) )
+	if( m_DeleteValueObject && ( nullptr != m_pValueObject ) )
 	{
 		delete m_pValueObject;
 	}
@@ -41,8 +41,8 @@ void SVIOEntryHostStruct::clear()
 	m_ObjectType = IO_INVALID_OBJECT;
 	m_IOId.clear();
 	m_DeleteValueObject = true;
-	m_pValueObject = NULL;
-  m_pValueParent = NULL;
+	m_pValueObject = nullptr;
+  m_pValueParent = nullptr;
 }
 
 bool SVIOEntryHostStruct::PtrGreater( SVIOEntryHostStructPtr elem1, SVIOEntryHostStructPtr elem2 )
@@ -51,7 +51,7 @@ bool SVIOEntryHostStruct::PtrGreater( SVIOEntryHostStructPtr elem1, SVIOEntryHos
 
 	if( !( elem1.empty() ) && !( elem2.empty() ) )
 	{
-		if( ( elem1->m_pValueObject != NULL ) && ( elem2->m_pValueObject != NULL ) )
+		if( ( nullptr != elem1->m_pValueObject ) && ( nullptr != elem2->m_pValueObject ) )
 		{
 			SVString Name1 = elem1->m_pValueObject->GetCompleteObjectName();
 			SVString Name2 = elem2->m_pValueObject->GetCompleteObjectName();

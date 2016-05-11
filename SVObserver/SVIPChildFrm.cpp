@@ -55,7 +55,7 @@ END_MESSAGE_MAP()
 
 LRESULT SVIPSplitterFrame::OnUpdateAllData(WPARAM wParam, LPARAM lParam)
 {
-	if( m_pIPDoc != nullptr )
+	if( nullptr != m_pIPDoc )
 	{
 		m_pIPDoc->UpdateAllData();
 	}
@@ -168,14 +168,14 @@ void SVIPSplitterFrame::SetViewSize( CWnd *l_pView, CSize &p_rViewSize )
 		l_iWidthIndex = 2;
 	}
 
-	if ( l_pHeightWnd != nullptr )
+	if ( nullptr != l_pHeightWnd )
 	{
 		l_pHeightWnd->SetRowInfo( l_iHeightIndex, p_rViewSize.cy, 10 );
 
 		l_pHeightWnd->RecalcLayout();
 	}
 
-	if ( l_pWidthWnd != nullptr )
+	if ( nullptr != l_pWidthWnd )
 	{
 		l_pWidthWnd->SetColumnInfo( l_iWidthIndex, p_rViewSize.cx, 10 );
 
@@ -185,12 +185,12 @@ void SVIPSplitterFrame::SetViewSize( CWnd *l_pView, CSize &p_rViewSize )
 
 BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PContext )
 {
-	if( PContext != nullptr )
+	if( nullptr != PContext )
 	{
 		m_pIPDoc = dynamic_cast< SVIPDoc* >( PContext->m_pCurrentDoc );
 	}
 
-	if( m_pIPDoc != nullptr )
+	if( nullptr != m_pIPDoc )
 	{
 		m_pIPDoc->SetMDIChild( this );
 	}
@@ -202,8 +202,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	//
 	// Create a splitter with 2 rows, 1 column
 	//
-	if( !m_oWndSplitter1.CreateStatic( this, 2, 1, WS_CHILD | WS_VISIBLE, 
-										AFX_IDW_PANE_FIRST ) )
+	if( !m_oWndSplitter1.CreateStatic( this, 2, 1, WS_CHILD | WS_VISIBLE, AFX_IDW_PANE_FIRST ) )
 	{
 		return FALSE;
 	}
@@ -336,32 +335,6 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 
 	return TRUE;
 }// end OnCreateClient
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-// .History
-//	 Date		Author		Comment                                       
-//  :16.06.1999	FRB			First Implementation
-//	:
-//
-void SVIPSplitterFrame::GetToolWidthAndResultHeight( int& nWidthToolSetView, int& nHeightResultView )
-{
-	//
-	// Work on tool set view..
-	//
-	int nWidthMin;
-
-	m_oWndSplitter2.GetColumnInfo( 0, nWidthToolSetView, nWidthMin );
-
-	//
-	// Work on result view...
-	//
-	int nHeightMin;
-
-	m_oWndSplitter1.GetRowInfo( 1, nHeightResultView, nHeightMin );
-}
 
 void SVIPSplitterFrame::SetDefaultPaneSizes(RECT &BoundingRect)
 {

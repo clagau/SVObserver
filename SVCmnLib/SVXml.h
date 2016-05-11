@@ -31,7 +31,7 @@ public:
 	BOOL SaveXmlDocToFile(CString &);
 	void GetSchemaFilename(CString & szSchemaFilename){szSchemaFilename=m_szSchemaFilename;};
 	void SetSchemaFilename(CString & szSchemaFilename){m_szSchemaFilename=szSchemaFilename;};
-	virtual BOOL InitXml( LPCTSTR p_szSchema = NULL );
+	virtual BOOL InitXml( LPCTSTR p_szSchema = nullptr );
 	HRESULT Load(TCHAR * pUrl);
 	MSXML2::IXMLDOMNodePtr GetChildElement(MSXML2::IXMLDOMNode * pNode, TCHAR * pName);
 	virtual BOOL GetXmlDoc(BSTR * bstrDoc);
@@ -49,7 +49,7 @@ protected:
 	BOOL CheckAncestors(Element * pElement,MSXML2::IXMLDOMElement * pXmlElement);
 	BOOL SetXmlElementValues(Element * pElement);
 	BOOL CreateXmlTree();
-	BOOL LoadSchema( LPCTSTR p_szSchema = NULL );
+	BOOL LoadSchema( LPCTSTR p_szSchema = nullptr );
 	BOOL CreateDOMNode(MSXML2::IXMLDOMDocument2* pDoc,int type, BSTR bstrName,MSXML2::IXMLDOMNode ** pNode);
 	BOOL LoadSchemaCollection();
 	BOOL SaveAndLoad(BOOL blValidate = FALSE);
@@ -74,7 +74,7 @@ void GetXmlParserError(MSXML2::IXMLDOMParseError *errorObj);
 	BSTR m_bstrSchemaNamespace;
 
 	BOOL InitXmlTree(void*);
-	void DeleteRoot(){delete(m_pRootElement);m_pRootElement=NULL;};
+	void DeleteRoot(){ delete(m_pRootElement); m_pRootElement = nullptr; }
 	Element * GetElementFromList(LPTSTR lpName);
 	Attribute * GetAttributeFromList(LPTSTR lpName);
 

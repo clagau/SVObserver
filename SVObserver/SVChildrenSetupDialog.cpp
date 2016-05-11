@@ -33,7 +33,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVChildrenSetupDialogClass::SVChildrenSetupDialogClass(CWnd* pParent /*=NULL*/)
+SVChildrenSetupDialogClass::SVChildrenSetupDialogClass(CWnd* pParent /*=nullptr*/)
 : CDialog(SVChildrenSetupDialogClass::IDD, pParent)
 , m_pAvailableChildrenList( nullptr )
 , m_pParentObject( nullptr )
@@ -60,7 +60,7 @@ void SVChildrenSetupDialogClass::redrawLists()
 			{
 				CString strEmpty;
 				strEmpty.LoadString( IDS_EMPTY_STRING );
-				m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( 0, strEmpty ), NULL );
+				m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( 0, strEmpty ), 0 );
 			}
 			else
 			{
@@ -72,7 +72,7 @@ void SVChildrenSetupDialogClass::redrawLists()
 					}
 					else
 					{
-						m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( i, _T( "&&&&&&" ) ), NULL );
+						m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( i, _T( "&&&&&&" ) ), 0 );
 					}
 				}
 			}
@@ -189,7 +189,7 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					m_pParentObject->Add( pObject );
 
 					// Ensure this Object's inputs get connected
-					::SVSendMessage( pObject, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+					::SVSendMessage( pObject, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
 					// And finally try to create the child object...
 					if( ::SVSendMessage( m_pParentObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )

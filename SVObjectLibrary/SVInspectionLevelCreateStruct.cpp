@@ -18,7 +18,7 @@ SVInspectionLevelCreateStruct::SVInspectionLevelCreateStruct()
 	strCreateStructName = "SVObjectLevelCreateStruct\nSVInspectionLevelCreateStruct";
 }
 
-SVInspectionLevelCreateStruct::SVInspectionLevelCreateStruct( SVObjectLevelCreateStruct& ROLCS )
+SVInspectionLevelCreateStruct::SVInspectionLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS )
 						 :SVObjectLevelCreateStruct( ROLCS )
 {
 	strCreateStructName = "SVObjectLevelCreateStruct\nSVInspectionLevelCreateStruct";

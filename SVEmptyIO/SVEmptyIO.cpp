@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:13:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVEmptyIO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -56,6 +58,9 @@ CSVEmptyIOApp::CSVEmptyIOApp()
 	// Place all significant initialization in InitInstance
 }
 
+CSVEmptyIOApp::~CSVEmptyIOApp()
+{
+}
 
 // The one and only CSVEmptyIOApp object
 

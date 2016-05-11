@@ -26,8 +26,6 @@ template< typename SVCommandProcessor >
 class SVJsonCommandManager
 {
 public:
-	friend class SVObserverApp;
-
 	static SVJsonCommandManager& Instance();
 
 	virtual ~SVJsonCommandManager();
@@ -36,16 +34,17 @@ public:
 
 	HRESULT ProcessJsonNotification( const std::string& p_rJsonNotification );
 
+	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
+	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project
+	// So for now the restriction is made manually, just don't call these methods anywhere else, as described via this comment
+	void Startup(unsigned short PortNumber); // This method is only meant to be called by the main application class
+	void Shutdown();						 // This method is only meant to be called by the main application class
+
 protected:
 	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
-
-	SVJsonCommandManager();
-
-	void Startup(unsigned short p_PortNumber);
-	void Shutdown();
 
 	HRESULT ProcessAsyncJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 
@@ -59,9 +58,9 @@ protected:
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
 private:
+	SVJsonCommandManager();
 	SVJsonCommandManager( const SVJsonCommandManager& p_rObject );
 	SVJsonCommandManager& operator=( const SVJsonCommandManager& p_rObject );
-
 };
 
 #include "SVJsonCommandManager.inl"

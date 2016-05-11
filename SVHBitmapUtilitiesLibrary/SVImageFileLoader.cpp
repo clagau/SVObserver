@@ -21,7 +21,7 @@
 
 HRESULT SVImageFileLoader::Load(LPCTSTR FileName, SVImageFile& rImageFile)
 {
-	HBITMAP hBitmap = (HBITMAP)::LoadImage(NULL, FileName, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE | LR_SHARED);
+	HBITMAP hBitmap = (HBITMAP)::LoadImage(nullptr, FileName, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE | LR_SHARED);
 	rImageFile = hBitmap;
 	return ((hBitmap) ? S_OK : S_FALSE);
 }

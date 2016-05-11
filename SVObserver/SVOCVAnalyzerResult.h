@@ -23,17 +23,6 @@
 // .Title       : Class SVOCVAnalyzeResultClass 
 // -----------------------------------------------------------------------------
 // .Description : e.g. This base class capsules an Image and provides its ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 class SVOCVAnalyzeResultClass : public SVResultClass
 {
@@ -51,7 +40,6 @@ public:
 	virtual BOOL OnValidate();
 
 	void GetOCVResultString( CString & csResult );
-	void WriteToArchive(CFile & fileArchive);
 	
 	BOOL GenerateFontModel();
 	HRESULT LoadMatchString();

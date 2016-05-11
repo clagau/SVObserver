@@ -8,10 +8,11 @@
 // * .Current Version : $Revision:   1.1  $
 // * .Check In Date   : $Date:   01 Oct 2013 09:57:48  $
 // ******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SecuredObject.h"
 #include "SVStatusLibrary/SVRegistry.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -72,7 +73,7 @@ SVSecuredObject::~SVSecuredObject()
 {
 }
 
-CString SVSecuredObject::Lookup(LPCTSTR szApp, int nParent, int nChild, BOOL bCreate/*=FALSE*/, LPCTSTR groups/*=NULL*/)
+CString SVSecuredObject::Lookup(LPCTSTR szApp, int nParent, int nChild, BOOL bCreate/*=FALSE*/, LPCTSTR groups/*=nullptr*/)
 {
 	CString key;
 	CString	value = _T("Everybody");
@@ -115,12 +116,12 @@ CString SVSecuredObject::Lookup(LPCTSTR szApp, int nParent, int nChild, BOOL bCr
 	return value;
 }
 
-void SVSecuredObject::Load(LPCTSTR szApp/*=NULL*/, int nParent/*=0*/)
+void SVSecuredObject::Load(LPCTSTR szApp/*=nullptr*/, int nParent/*=0*/)
 {
 	if (!m_map.IsEmpty())
 		m_map.RemoveAll();
 
-	if (szApp == NULL)
+	if (nullptr == szApp)
 	{
 		m_key = _T("\\");
 		SVRegistryClass reg(m_key);
@@ -181,11 +182,11 @@ BOOL SVSecuredObject::IsSecured(DWORD nParent, DWORD nChild)
 
 BOOL SVSecuredObject::Validate(CString strAccount, CString strPassword, DWORD nParent, DWORD nChild)
 {
-	LPLOCALGROUP_USERS_INFO_0	pBuf = NULL;
-	LPLOCALGROUP_USERS_INFO_0	pTmpBuf = NULL;
+	LPLOCALGROUP_USERS_INFO_0	pBuf = nullptr;
+	LPLOCALGROUP_USERS_INFO_0	pTmpBuf = nullptr;
 	NET_API_STATUS				nas = NERR_Success;
-	BOOL						bResult = TRUE;
-	HANDLE						phToken = NULL;
+	BOOL						bResult = true;
+	HANDLE						phToken = nullptr;
 	DWORD						entriesread = 0;
 	DWORD						totalentries = 0;
 
@@ -202,7 +203,7 @@ BOOL SVSecuredObject::Validate(CString strAccount, CString strPassword, DWORD nP
 					  &phToken))
 		{
 			CloseHandle(phToken);
-			nas = NetUserGetLocalGroups(NULL,
+			nas = NetUserGetLocalGroups(nullptr,
 										T2W((TCHAR *)(LPCTSTR) strAccount),
 										0,
 										LG_INCLUDE_INDIRECT,
@@ -210,9 +211,9 @@ BOOL SVSecuredObject::Validate(CString strAccount, CString strPassword, DWORD nP
 										-1,
 										&entriesread,
 										&totalentries);
-			if (nas == NERR_Success && (pTmpBuf = pBuf) != NULL)
+			if (NERR_Success == nas && nullptr != (pTmpBuf = pBuf))
 			{
-				bResult = FALSE;
+				bResult = false;
 				for (DWORD i=0; i<entriesread; i++)
 				{
 					CString group = pTmpBuf->lgrui0_name;
@@ -220,12 +221,14 @@ BOOL SVSecuredObject::Validate(CString strAccount, CString strPassword, DWORD nP
 					do
 					{
 						nFinish = groups.Find(_T(','), ++nStart);
-						if (nFinish == -1)
+						if (-1 == nFinish)
+						{
 							nFinish = groups.GetLength();
+						}
 
 						if (groups.Mid(nStart, (nFinish-nStart)) == group)
 						{
-							bResult = TRUE;
+							bResult = true;
 							break;
 						}
 						nStart = nFinish;
@@ -238,12 +241,15 @@ BOOL SVSecuredObject::Validate(CString strAccount, CString strPassword, DWORD nP
 			}
 		}
 		else
-			bResult = FALSE;
+		{
+			bResult = false;
+		}
 
-		if (pBuf != NULL)
+		if (nullptr != pBuf)
+		{
 			NetApiBufferFree(pBuf);
+		}
 	}
-	
 	return bResult;
 }
 

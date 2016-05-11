@@ -94,8 +94,8 @@ void SVGigeCameraManagerDlg::OnRefresh()
 
 HRESULT SVGigeCameraManagerDlg::Refresh()
 {
-	HCURSOR hCursor = NULL;
-	hCursor = ::LoadCursor(NULL, IDC_WAIT);
+	HCURSOR hCursor = nullptr;
+	hCursor = ::LoadCursor(nullptr, IDC_WAIT);
 	hCursor = ::SetCursor( hCursor );
 
 	TheSVGigeCameraManager.Refresh();
@@ -154,7 +154,7 @@ void SVGigeCameraManagerDlg::OnMoveDown()
 		return;
 	}
 	POSITION l_Pos = m_ctlCameraList.GetFirstSelectedItemPosition();
-	if ( l_Pos != NULL )
+	if ( nullptr != l_Pos )
 	{
 		iCurSel = m_ctlCameraList.GetNextSelectedItem( l_Pos );
 
@@ -179,7 +179,6 @@ void SVGigeCameraManagerDlg::OnMoveDown()
 			UpdateListCtrl();
 
 			TheSVGigeCameraManager.UpdateCameraOrder( m_CamList );
-			//Refresh();
 
 			int iSelction = m_ctlCameraList.SetItemState( iCurSel+1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 		}
@@ -197,7 +196,7 @@ void SVGigeCameraManagerDlg::OnMoveUp()
 	}
 
 	POSITION l_Pos = m_ctlCameraList.GetFirstSelectedItemPosition();
-	if ( l_Pos != NULL )
+	if ( nullptr != l_Pos )
 	{
 		iCurSel = m_ctlCameraList.GetNextSelectedItem( l_Pos );
 		if ( iCurSel > 0 )
@@ -220,7 +219,6 @@ void SVGigeCameraManagerDlg::OnMoveUp()
 			UpdateListCtrl();
 
 			TheSVGigeCameraManager.UpdateCameraOrder( m_CamList );
-			//Refresh();
 
 			int iSelction = m_ctlCameraList.SetItemState( iCurSel-1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 		}

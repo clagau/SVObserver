@@ -50,7 +50,7 @@ int SVCommandInspectionExtentUpdater::ResetToolSizeAdjustTool(SVObjectClass* pOb
 
 	if( TRUE == ToolSizeAdjustTask::UseSizeAdjust(pObject))
 	{
-		DWORD_PTR result = ::SVSendMessage(pObject, SVM_RESET_ALL_OBJECTS, NULL, NULL);
+		DWORD_PTR result = ::SVSendMessage(pObject, SVM_RESET_ALL_OBJECTS, 0, 0);
 		if(result =! SVMR_SUCCESS)
 		{
 			ASSERT(FALSE);
@@ -107,7 +107,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			break;
 		}
 
-		if (retVal == S_OK)
+		if (S_OK == retVal)
 		{
 			pInspection->m_bForceOffsetUpdate = true;
 			if(ResetModeAuto)
@@ -116,14 +116,12 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 				pInspection->AddResetState( SVResetAutoMoveAndResize );
 			}
 			
-
-			
 			SVToolClass* pToolRun(nullptr); 
 			DWORD_PTR result(0); 
 			if(m_ResetMode == ResetMode_Inspection )
 			{
 				SVObjectClass*  pResetObject =  dynamic_cast<SVObjectClass*>  (pInspection);
-				result = ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, NULL, NULL);
+				result = ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, 0, 0);
 			}
 			else if ( m_ResetMode == ResetMode_ToolList)
 			{
@@ -143,7 +141,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			{
 				pToolRun = pTool;
 				SVObjectClass*  pResetObject =  dynamic_cast<SVObjectClass*>  (pTool);
-				result = ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, NULL, NULL);
+				result = ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, 0, 0);
 
 			}
 

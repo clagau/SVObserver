@@ -41,12 +41,12 @@ END_MESSAGE_MAP()
 
 SVTADlgColorThresholdAdjustment::SVTADlgColorThresholdAdjustment() : SVTADlgColorThresholdBasePage(SVTADlgColorThresholdAdjustment::IDD)
 {
-	mpUpperThreshold = NULL;
-	mpLowerThreshold = NULL;
-	mpExclude = NULL;
-	mpCurrentDocument = NULL;
-	mpTool = NULL;
-	mpThreshold = NULL;
+	mpUpperThreshold = nullptr;
+	mpLowerThreshold = nullptr;
+	mpExclude = nullptr;
+	mpCurrentDocument = nullptr;
+	mpTool = nullptr;
+	mpThreshold = nullptr;
 	mBandNumber = 0;
 
 	//{{AFX_DATA_INIT(SVTADlgColorThresholdAdjustment)
@@ -64,42 +64,42 @@ HRESULT SVTADlgColorThresholdAdjustment::SetInspectionData()
 {
 	HRESULT l_hrOk = AddInputRequest( mpLowerThreshold, m_lowerThreshold );
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpUpperThreshold, m_upperThreshold );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpExclude, m_exclude );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpExtentLeft, m_pSheet->m_rectROI.left );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpExtentTop, m_pSheet->m_rectROI.top );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpExtentWidth, m_pSheet->m_rectROI.Width() );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequest( mpExtentHeight, m_pSheet->m_rectROI.Height() );
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = AddInputRequestMarker();
 	}
 
-	if( l_hrOk == S_OK )
+	if( S_OK == l_hrOk )
 	{
 		l_hrOk = RunOnce( mpTool );
 	}
@@ -134,17 +134,12 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 	SetTaskObject( mpTool );
 
-	if( mpTool->GetInspection() != NULL )
-	{
-		mpCurrentDocument = SVObjectManagerClass::Instance().GetIPDoc( mpTool->GetInspection()->GetUniqueObjectID() );
-	}
-
 	// Get the color threshold object
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.ObjectType = SVOperatorObjectType;
 	objectInfo.SubType = SVColorThresholdObjectType;
 
-	mpThreshold = reinterpret_cast <SVColorThresholdClass*> (::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ) );
+	mpThreshold = reinterpret_cast <SVColorThresholdClass*> (::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ) );
 
 	if( mpThreshold )
 	{
@@ -154,22 +149,22 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;
-		mpExtentLeft = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentLeft = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
 
 		// Get Train Color ROI Extent Top Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeTopPositionObjectGuid;
-		mpExtentTop = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentTop = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
 
 		// Get Train Color ROI Extent Width Object...
 		extentObjectInfo.EmbeddedID = SVExtentWidthObjectGuid;
-		mpExtentWidth = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentWidth = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
 
 		// Get Train Color ROI Extent Height Object...
 		extentObjectInfo.EmbeddedID = SVExtentHeightObjectGuid;
-		mpExtentHeight = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentHeight = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
 	}
 
-	SVImageClass* pImage = NULL;
+	SVImageClass* pImage = nullptr;
 	
 	// Get the Threshold variables
 	objectInfo.SubType = SVNotSetSubObjectType;
@@ -183,14 +178,14 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand0UpperThresholdObjectGuid;
-		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		objectInfo.EmbeddedID = SVBand0LowerThresholdObjectGuid;
-		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand0ThresholdExcludeObjectGuid;
-		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 	}
 	else if( mBandNumber == 1 )
 	{
@@ -200,14 +195,14 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand1UpperThresholdObjectGuid;
-		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		objectInfo.EmbeddedID = SVBand1LowerThresholdObjectGuid;
-		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand1ThresholdExcludeObjectGuid;
-		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 	}
 	else
 	{
@@ -217,14 +212,14 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand2UpperThresholdObjectGuid;
-		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		objectInfo.EmbeddedID = SVBand2LowerThresholdObjectGuid;
-		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand2ThresholdExcludeObjectGuid;
-		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 	}
 
 	if( pImage )
@@ -342,7 +337,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 	{
 		SVInspectionProcess* pInspection = mpTool->GetInspection();
 
-		::SVSendMessage( mpTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		::SVSendMessage( mpTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
 
 		if( nullptr != pInspection )
 		{
@@ -396,25 +391,11 @@ void SVTADlgColorThresholdAdjustment::OnVScroll(UINT nSBCode, UINT nPos, CScroll
 		if( &UpperSliderCtrl == ( CSliderCtrl* ) pScrollBar )
 		{
 			m_upperThreshold = 255 - (unsigned char) m_Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
-			/*
-			if ( m_upperThreshold < m_lowerThreshold )
-			{
-				m_upperThreshold = m_lowerThreshold;
-				setScrollPos(&UpperSliderCtrl, m_upperThreshold);
-			}
-			//*/
 			StrUpper.Format( "%u", m_upperThreshold );
 		}
 		else if( &LowerSliderCtrl == ( CSliderCtrl* ) pScrollBar )
 		{
 			m_lowerThreshold = 255 - (unsigned char) m_Normalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
-			/*
-			if ( m_lowerThreshold > m_upperThreshold )
-			{
-				m_lowerThreshold = m_upperThreshold;
-				setScrollPos(&LowerSliderCtrl, m_lowerThreshold);
-			}
-			//*/
 			StrLower.Format( "%u", m_lowerThreshold );
 		}
 
@@ -439,16 +420,12 @@ void SVTADlgColorThresholdAdjustment::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		// this is a reflected message from the image
 		CPoint ptMouse = m_svDlgImage.GetMouseCoordinates();
-		//m_sCoordinates.Format( _T("%d, %d"), ptMouse.x, ptMouse.y );
-		//UpdateData(FALSE);
 
 		if ( m_pSheet->m_pFigureEditor->IsCaptured() )
 		{
 			RefreshProperties();
 			SetInspectionData();
 			updateGraphDisplay();
-
-			//m_svDlgImage.refresh();	// done in updateGraphDisplay
 		}
 	}
 	else

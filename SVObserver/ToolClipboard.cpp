@@ -89,12 +89,12 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 					::DeleteFile( FileName.c_str() );
 					HGLOBAL ClipboardData = GlobalAlloc( GMEM_MOVEABLE,	FileData.size() + 1 );
 
-					if( NULL != ClipboardData )
+					if( nullptr != ClipboardData )
 					{
 						memcpy( GlobalLock( ClipboardData ), &FileData.at( 0 ), FileData.size() );
 						GlobalUnlock( ClipboardData );
 
-						if( NULL == ::SetClipboardData( ClipboardFormat, ClipboardData ) )
+						if( nullptr == ::SetClipboardData( ClipboardFormat, ClipboardData ) )
 						{
 							Result = S_FALSE;
 							SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
@@ -296,12 +296,12 @@ void ToolClipboard::writeSourceGuids( SVObjectXMLWriter& rXmlWriter, SVToolClass
 	rXmlWriter.WriteAttribute( ToolTypeTag, Value );
 
 	SVGUID ToolImageGuid( GUID_NULL );
-	SVInObjectInfoStruct* pImageInfo = NULL;
-	SVInObjectInfoStruct* pLastImageInfo = NULL;
+	SVInObjectInfoStruct* pImageInfo = nullptr;
+	SVInObjectInfoStruct* pLastImageInfo = nullptr;
 
-	while( pImageInfo == NULL && rTool.FindNextInputImageInfo( pImageInfo, pLastImageInfo ) == S_OK )
+	while( nullptr == pImageInfo && S_OK ==  rTool.FindNextInputImageInfo( pImageInfo, pLastImageInfo ) )
 	{
-		if( pImageInfo != NULL )
+		if( nullptr != pImageInfo )
 		{
 			if( pImageInfo->IsConnected() && nullptr != pImageInfo->GetInputObjectInfo().PObject )
 			{
@@ -311,7 +311,7 @@ void ToolClipboard::writeSourceGuids( SVObjectXMLWriter& rXmlWriter, SVToolClass
 		else
 		{
 			pLastImageInfo = pImageInfo;
-			pImageInfo = NULL;
+			pImageInfo = nullptr;
 		}
 	}
 	Value.Clear();
@@ -358,7 +358,7 @@ void ToolClipboard::updateDependencyFiles( const SVStringSet& rDependencyFiles )
 		{
 			_TCHAR Name[_MAX_FNAME];
 			_TCHAR Extension[_MAX_EXT];
-			_splitpath( Iter->c_str(), NULL, NULL, Name, Extension );
+			_splitpath( Iter->c_str(), nullptr, nullptr, Name, Extension );
 
 			SVString DestinationFile( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			DestinationFile += _T("\\");
@@ -386,9 +386,9 @@ HRESULT ToolClipboard::convertClipboardDataToString( SVString& rClipboardData )
 	if( ::OpenClipboard( AfxGetMainWnd()->GetSafeHwnd() ) )
 	{
 		UINT  ClipboardFormat( ::RegisterClipboardFormat( SvO::ToolClipboardFormat ) );
-		HGLOBAL ClipboardMemData = NULL;
+		HGLOBAL ClipboardMemData = nullptr;
 
-		if( NULL == (ClipboardMemData = ::GetClipboardData( ClipboardFormat )) )
+		if( nullptr == (ClipboardMemData = ::GetClipboardData( ClipboardFormat )) )
 		{
 			::CloseClipboard();
 
@@ -465,9 +465,9 @@ HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 {
 	HRESULT Result( S_FALSE );
 
-	SVTreeType::SVBranchHandle EnvironmentItem = NULL;
+	SVTreeType::SVBranchHandle EnvironmentItem = nullptr;
 
-	if( SVNavigateTree::GetItemBranch( rTree, CTAG_ENVIRONMENT, NULL, EnvironmentItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, CTAG_ENVIRONMENT, nullptr, EnvironmentItem ) )
 	{
 		_variant_t ClipboardVersion;
 
@@ -493,9 +493,9 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 {
 	HRESULT Result( S_OK );
 
-	SVTreeType::SVBranchHandle ToolsItem = NULL;
+	SVTreeType::SVBranchHandle ToolsItem = nullptr;
 
-	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, nullptr, ToolsItem ) )
 	{
 		_variant_t Inspection;
 		_variant_t ToolType;
@@ -571,7 +571,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 
 	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 
-	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, nullptr, ToolsItem ) )
 	{
 		SVTreeType::SVBranchHandle ToolItem( nullptr );
 
@@ -585,7 +585,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 			SVString ToolName = SvUl_SF::createSVString( ObjectName.bstrVal );
 			SVString NewName;
 
-			SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc( m_rInspection.GetUniqueObjectID() );
+			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc( m_rInspection.GetUniqueObjectID() );
 			if( nullptr != pDoc )
 			{
 				// Check to make sure the tool name is unique
@@ -613,9 +613,9 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree
 {
 	HRESULT Result( S_FALSE );
 
-	SVTreeType::SVBranchHandle ToolsItem = NULL;
+	SVTreeType::SVBranchHandle ToolsItem = nullptr;
 
-	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, nullptr, ToolsItem ) )
 	{
 		SVStringSet UniqueIDList;
 
@@ -650,7 +650,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 
 	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 
-	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, nullptr, ToolsItem ) )
 	{
 		SVTreeType::SVBranchHandle ToolItem( nullptr );
 
@@ -669,7 +669,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
 				SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle, pToolset->GetUniqueObjectID(), pToolset, &ParserProgressDialog));
-				if( pParser != NULL )
+				if( nullptr != pParser )
 				{
 					// Set the Parser Object
 					ParserProgressDialog.AddParser(parserHandle, pParser);

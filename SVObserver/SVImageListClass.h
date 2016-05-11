@@ -21,9 +21,6 @@ class SVImageListClass : public SVVector< SVImageClass* >
 {
 public:
 	SVImageListClass();
-
 	virtual ~SVImageListClass();
-
-	SVImageClass * GetAtByTool(int nIndex);             // 25 Jun 1999 - frb.
 };
 

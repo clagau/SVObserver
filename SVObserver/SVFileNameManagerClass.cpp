@@ -29,7 +29,6 @@ CString gcsRunPathName;
 // Global File Name array for DLL
 SVFileNameLockablePointerArrayClass gsvFileNameArray;
 
-//##ModelId=3A4B960A0280
 SVFileNameManagerClass::SVFileNameManagerClass()
 {
 	CString csRunPathName = GetRunPathName();
@@ -42,19 +41,16 @@ SVFileNameManagerClass::SVFileNameManagerClass()
 	}
 }
 
-//##ModelId=3A4A3E72038A
 LPCTSTR SVFileNameManagerClass::GetConfigurationPathName()
 {
 	return gcsConfigurationPathName;
 }
 
-//##ModelId=3A4A41370251
 LPCTSTR SVFileNameManagerClass::GetRunPathName()
 {
 	return gcsRunPathName;
 }
 
-//##ModelId=3A4A4E0B0186
 BOOL SVFileNameManagerClass::SetRunPathName(LPCTSTR szPathName)
 {
 	BOOL bOk = FALSE;
@@ -76,7 +72,6 @@ BOOL SVFileNameManagerClass::SetRunPathName(LPCTSTR szPathName)
 	return bOk;
 }
 
-//##ModelId=3A4A4F2200FA
 BOOL SVFileNameManagerClass::SetConfigurationPathName(LPCTSTR szPathName)
 {
 	BOOL bOk = FALSE;
@@ -98,7 +93,6 @@ BOOL SVFileNameManagerClass::SetConfigurationPathName(LPCTSTR szPathName)
 	return bOk;
 }
 
-//##ModelId=3A522D32005D
 BOOL SVFileNameManagerClass::FindItem(SVFileNameClass * svpFileNameClass)
 {
 	BOOL bOk = FALSE;
@@ -127,7 +121,6 @@ BOOL SVFileNameManagerClass::FindItem(SVFileNameClass * svpFileNameClass)
 	return bOk;
 }
 
-//##ModelId=3A4B786E01C5
 BOOL SVFileNameManagerClass::AddItem(SVFileNameClass * svpFileName)
 {
 	BOOL bOk = FALSE;
@@ -156,7 +149,6 @@ BOOL SVFileNameManagerClass::AddItem(SVFileNameClass * svpFileName)
 	return bOk;
 }
 
-//##ModelId=3A52217C034B
 BOOL SVFileNameManagerClass::RemoveItem(SVFileNameClass * svpFileName)
 {
 	BOOL bOk = FALSE;
@@ -188,39 +180,9 @@ BOOL SVFileNameManagerClass::RemoveItem(SVFileNameClass * svpFileName)
 	return bOk;
 }
 
-//##ModelId=3A4B78E60138
-BOOL SVFileNameManagerClass::TopItem()
-{
-	miCurrentItem = 0;
-
-	return TRUE;
-}
-
-//##ModelId=3A4B79090138
-BOOL SVFileNameManagerClass::NextItem()
-{
-	BOOL bOk = FALSE;
-
-	bOk = miCurrentItem < gsvFileNameArray.GetSize();
-
-	if ( bOk )
-	{
-		miCurrentItem++;
-	}
-
-	return bOk;
-}
-
-//##ModelId=3A4B7924000F
-BOOL SVFileNameManagerClass::EndOfItems()
-{
-	return gsvFileNameArray.GetSize() <= miCurrentItem;
-}
-
-//##ModelId=3A4B796B01B5
 SVFileNameClass * SVFileNameManagerClass::GetItem()
 {
-	SVFileNameClass *pItem = NULL;
+	SVFileNameClass *pItem = nullptr;
 
 	if ( gsvFileNameArray.Lock() )
 	{
@@ -235,7 +197,6 @@ SVFileNameClass * SVFileNameManagerClass::GetItem()
 	return pItem;
 }
 
-//##ModelId=3A4B7C70008C
 BOOL SVFileNameManagerClass::CreatePath(LPCTSTR szPathName)
 {
 	CString csPathName = szPathName;
@@ -317,7 +278,6 @@ BOOL SVFileNameManagerClass::CreatePath(LPCTSTR szPathName)
 	return bOk;
 }
 
-//##ModelId=3A560FF50000
 BOOL SVFileNameManagerClass::LoadItem(SVFileNameClass * svFileName)
 {
 	BOOL bOk = TRUE;
@@ -377,27 +337,6 @@ BOOL SVFileNameManagerClass::LoadItem(SVFileNameClass * svFileName)
 	return bOk;
 }
 
-//##ModelId=3A55F7A9000F
-BOOL SVFileNameManagerClass::LoadItems()
-{
-	BOOL bOk = FALSE;
-
-	if ( gsvFileNameArray.Lock() )
-	{
-		bOk = TRUE;
-
-		for ( int i = 0; i < gsvFileNameArray.GetSize() ; i++ )
-		{
-			bOk = LoadItem( gsvFileNameArray[i] ) && bOk;
-		}
-
-		gsvFileNameArray.Unlock();
-	}
-
-	return bOk;
-}
-
-//##ModelId=3A560337007D
 BOOL SVFileNameManagerClass::SaveItem(SVFileNameClass * svFileName)
 {
 	BOOL bOk = TRUE;
@@ -463,7 +402,6 @@ BOOL SVFileNameManagerClass::RenameItem(SVFileNameClass * svFileName)
 	return bOk;
 }
 
-//##ModelId=3A4B7AF10251
 BOOL SVFileNameManagerClass::SaveItems()
 {
 	BOOL bOk = FALSE;
@@ -483,13 +421,10 @@ BOOL SVFileNameManagerClass::SaveItems()
 	return bOk;
 }
 
-//##ModelId=3A59E8470399
 LPCTSTR SVFileNameManagerClass::GetFileNameList()
 {
 	return gsvFileNameArray.GetFileNameList();
 }
-
-
 
 BOOL SVFileNameManagerClass::RemoveUnusedFiles(BOOL bCleanConfigDir)
 {

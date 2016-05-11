@@ -19,6 +19,7 @@ class SVPictureDisplayPropPage : public COlePropertyPage
 public:
 #pragma region Constructor
 	SVPictureDisplayPropPage();
+	virtual ~SVPictureDisplayPropPage();
 #pragma endregion Constructor
 // Dialog Data
 	enum { IDD = IDD_PROPPAGE_SVPICTUREDISPLAY };

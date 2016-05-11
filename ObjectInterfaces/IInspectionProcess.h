@@ -16,7 +16,7 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		class IInspectionProcess: virtual public IObjectClass
+		class IInspectionProcess
 		{
 		public:
 			virtual ~IInspectionProcess() {}

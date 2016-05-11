@@ -96,7 +96,6 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVHBitmapUtilities.h" />
-    <ClInclude Include="SVHBitmapUtilitiesLibrary.h" />
     <ClInclude Include="SVImageDefinitionStruct.h" />
     <ClInclude Include="SVImageFile.h" />
     <ClInclude Include="SVImageFileLoader.h" />

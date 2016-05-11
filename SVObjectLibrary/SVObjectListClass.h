@@ -11,10 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVOMFCLibrary/SVTemplate.h"
 #include "SVObjectInfoStruct.h"
-#include "SVObjectScriptUsage.h"
+#pragma endregion Includes
 
 class SVObjectAttributeClass;
 class SVObjectClass;
@@ -31,24 +32,5 @@ class SVObjectListClass : public SVVector< SVObjectReference >
 public:
 	SVObjectListClass();
 	virtual ~SVObjectListClass();
-
-	BOOL InitObjectAt( int Index, SVObjectClass* PObject );
-	void ResetNameAt( int Index );
-
-	void SetNameAt( int Index, const CString& STRString );
-	void SetObjectOwnerAt( int Index, SVObjectClass* PNewOwner );
-
-	CString GetNameAt( int Index );
-	int		GetNameLengthAt( int Index );
-
-	CString GetObjectNameAt( int Index );
-	int		GetObjectNameLengthAt( int Index );
-
-	const SVObjectInfoStruct& GetObjectOwnerAt( int Index );
-
-	CString GetCompleteObjectNameAt( int Index );
-	int		GetResourceIDAt( int Index );
-	const GUID&	GetUniqueObjectIDAt( int Index ) const;
-
 };
 

@@ -35,18 +35,13 @@ struct SVExtentFigureStruct
 
 	HRESULT GetRect(RECT& p_rRect) const;
 	RECT Rect() const;
-	HRESULT GetRectSize( SVExtentSizeStruct& p_rSize ) const;
+
 	SVExtentSizeStruct Size() const;
 	double Top() const;
 	double Left() const;
-	double Bottom() const;
+
 	double Right() const;
 	HRESULT SetRect( double p_dTop, double p_dLeft, double p_dBottom, double p_dRight );
-	HRESULT SetRectTop( double p_dTop );
-	HRESULT SetRectLeft( double p_dTop );
-	HRESULT SetRectRight( double p_dTop );
-	HRESULT SetRectBottom( double p_dTop );
-	HRESULT SetRectCenter( SVExtentPointStruct p_svCenter );
 
 	SVExtentShapeEnum m_eShape;
 

@@ -163,10 +163,8 @@
     <ClInclude Include="SVObjectManagerClass.h" />
     <ClInclude Include="SVObjectNameInfo.h" />
     <ClInclude Include="SVObjectNotifyTemplate.h" />
-    <ClInclude Include="SVObjectPointArrayClass.h" />
     <ClInclude Include="SVObjectReference.h" />
     <ClInclude Include="SVObjectScriptEnums.h" />
-    <ClInclude Include="SVObjectScriptUsage.h" />
     <ClInclude Include="SVObjectSubmitCommandFacade.h" />
     <ClInclude Include="SVObjectSynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectThreadCommandTemplate.h" />

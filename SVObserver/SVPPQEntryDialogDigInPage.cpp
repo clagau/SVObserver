@@ -17,7 +17,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVPPQEntryDialog.h"
 #include "SVSVIMStateClass.h"
-#include "SVDigitalInputObject1.h"
+#include "SVDigitalInputObject.h"
 #include "SVInfoStructs.h"
 #include "SVPPQObject.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
@@ -34,22 +34,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVPPQEntryDialogDigInPageClass
-//* Note(s)    : property page
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-
-/////////////////////////////////////////////////////////////////////////////
-// SVPPQEntryDialogDigInPageClass property page
 
 IMPLEMENT_DYNCREATE(SVPPQEntryDialogDigInPageClass, CPropertyPage)
 

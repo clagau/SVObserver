@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVDeviceParams.h"
+#pragma endregion Includes
 
 class SVNullDeviceParam : public SVDeviceParam
 {
@@ -19,6 +21,7 @@ public:
 	SVNullDeviceParam();
 	SVNullDeviceParam(SVDeviceParamEnum typeEnum);
 	SVNullDeviceParam(const SVNullDeviceParam& rhs);
+	virtual ~SVNullDeviceParam();
 	virtual SVClonable* CloneImpl() const;
 	SVNullDeviceParam& operator=(const SVNullDeviceParam& rhs);
 

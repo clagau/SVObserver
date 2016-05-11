@@ -60,9 +60,9 @@ void InputValueDefinitionStruct::Clear( )
 void InputValueDefinitionStruct::Init( )
 {
 	lVT = VT_EMPTY;
-	bstrDisplayName = NULL;
-	bstrHelpText = NULL;
-	bstrGroup = NULL;
+	bstrDisplayName = nullptr;
+	bstrHelpText = nullptr;
+	bstrGroup = nullptr;
 }
 
 bool InputValueDefinitionStruct::operator == (const InputValueDefinitionStruct& rhs)
@@ -121,6 +121,6 @@ void ResultValueDefinitionStruct::Clear( )
 void ResultValueDefinitionStruct::Init( )
 {
 	lVT = VT_EMPTY;
-	bstrDisplayName = NULL;
+	bstrDisplayName = nullptr;
 }
 

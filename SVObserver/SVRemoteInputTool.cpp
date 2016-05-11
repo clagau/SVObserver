@@ -24,8 +24,8 @@ SVRemoteInputTool::SVRemoteInputTool( BOOL BCreateDefaultTaskList, SVObjectClass
 : SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
 , m_ElementIdentifier( 0 )
 {
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVRemoteInputToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType    = SVRemoteInputToolObjectType;
 
 	// Register an empty input object
 	m_InputObjectInfo.SetObject( GetObjectInfo() );
@@ -55,9 +55,9 @@ BOOL SVRemoteInputTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 {
 	BOOL l_Status = SVToolClass::CreateObject( PCreateStructure );
 
-	l_Status &= ( SVInputStreamManager::Instance().InsertInputStream( static_cast< const char* >( GetCompleteObjectName() ), GetUniqueObjectID() ) == S_OK );
+	l_Status &= ( S_OK == SVInputStreamManager::Instance().InsertInputStream( static_cast< const char* >( GetCompleteObjectName() ), GetUniqueObjectID() ) );
 
-	isCreated = l_Status;
+	m_isCreated = l_Status;
 
 	m_MatchedValueId.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_MatchedValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
@@ -67,7 +67,7 @@ BOOL SVRemoteInputTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 
 BOOL SVRemoteInputTool::CloseObject()
 {
-	BOOL l_Status = ( SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() ) == S_OK );
+	BOOL l_Status = ( S_OK == SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() ) );
 		
 	l_Status &= SVToolClass::CloseObject();
 
@@ -79,7 +79,7 @@ BOOL SVRemoteInputTool::OnValidate()
 	BOOL l_Status = SVToolClass::OnValidate();
 
 	l_Status = l_Status && ( m_InputObjectInfo.IsConnected() );
-	l_Status = l_Status && ( m_InputObjectInfo.GetInputObjectInfo().PObject != NULL );
+	l_Status = l_Status && ( nullptr != m_InputObjectInfo.GetInputObjectInfo().PObject );
 
 	if( !l_Status )
 	{
@@ -122,7 +122,7 @@ HRESULT SVRemoteInputTool::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDat
 		l_Status = E_FAIL;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
 		if( l_Command == _T( "AddDataItems" ) )
 		{
@@ -147,7 +147,7 @@ HRESULT SVRemoteInputTool::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDat
 
 				l_Status = SVObjectManagerClass::Instance().SubmitCommand( *pInspection, l_CommandPtr );
 
-				if( l_Status != S_OK )
+				if( S_OK != l_Status )
 				{
 					p_rDataPtr->NotifyRequestComplete();
 				}
@@ -178,7 +178,7 @@ HRESULT SVRemoteInputTool::ClearInputObject()
 {
 	HRESULT l_Status = S_OK;
 
-	m_InputObjectInfo.SetInputObject( NULL );
+	m_InputObjectInfo.SetInputObject( nullptr );
 
 	return l_Status;
 }
@@ -199,7 +199,7 @@ HRESULT SVRemoteInputTool::SetInputObject( const SVGUID& p_rObjectId )
 
 SVObjectClass* SVRemoteInputTool::GetInputObject() const
 {
-	SVObjectClass* l_pObject = NULL;
+	SVObjectClass* l_pObject = nullptr;
 
 	if( m_InputObjectInfo.IsConnected() )
 	{
@@ -218,9 +218,9 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 	long l_MatchedStringId = 0;
 	long l_Identifier = 0;
 
-	l_Status = l_Status && ( ProcessCommandQueue() == S_OK );
+	l_Status = l_Status && ( S_OK == ProcessCommandQueue() );
 	l_Status = l_Status && ( m_InputObjectInfo.IsConnected() );
-	l_Status = l_Status && ( m_InputObjectInfo.GetInputObjectInfo().PObject != NULL );
+	l_Status = l_Status && ( nullptr != m_InputObjectInfo.GetInputObjectInfo().PObject );
 
 	if( l_Status )
 	{
@@ -230,7 +230,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 		{
 			if( l_Status )
 			{
-				l_Status = ( pValueObject->GetValue( l_MatchString ) == S_OK );
+				l_Status = ( S_OK == pValueObject->GetValue( l_MatchString ) );
 			}
 		}
 
@@ -240,7 +240,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 			if( l_Status )
 			{
 				SVString Value;
-				l_Status = ( pBasicValueObject->getValue( Value ) == S_OK );
+				l_Status = ( S_OK == pBasicValueObject->getValue( Value ) );
 				l_MatchString = Value.c_str();
 			}
 		}
@@ -294,8 +294,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 
 DWORD_PTR SVRemoteInputTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	//BOOL bResult;
-	DWORD_PTR l_Status = NULL;
+	DWORD_PTR l_Status = SVMR_NOT_PROCESSED;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -308,7 +307,7 @@ DWORD_PTR SVRemoteInputTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMess
 
 			SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() );
 
-			if( SVInputStreamManager::Instance().InsertInputStream( static_cast< const char* >( GetCompleteObjectName() ), GetUniqueObjectID() ) == S_OK )
+			if( S_OK == SVInputStreamManager::Instance().InsertInputStream( static_cast< const char* >( GetCompleteObjectName() ), GetUniqueObjectID() ) )
 			{
 				l_Status = SVMR_SUCCESS;
 			}
@@ -373,7 +372,7 @@ HRESULT SVRemoteInputTool::ProcessCommandQueue()
 				l_TempStatus = E_FAIL;
 			}
 
-			if( l_TempStatus == S_OK )
+			if( S_OK == l_TempStatus )
 			{
 				if( l_Command == _T( "AddDataItems" ) )
 				{
@@ -406,7 +405,7 @@ HRESULT SVRemoteInputTool::ProcessCommandQueue()
 								l_Temp = E_FAIL;
 							}
 
-							if( l_TempStatus == S_OK )
+							if( S_OK == l_TempStatus )
 							{
 								l_TempStatus = l_Temp;
 							}
@@ -428,7 +427,7 @@ HRESULT SVRemoteInputTool::ProcessCommandQueue()
 			}
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			l_Status = l_TempStatus;
 		}
@@ -455,7 +454,7 @@ HRESULT SVRemoteInputTool::SVCommandQueueElement::Execute()
 		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( m_ObjectId );
 		SVRemoteInputTool* l_pTool = dynamic_cast< SVRemoteInputTool* >( l_pObject );
 
-		if( l_pTool != NULL )
+		if( nullptr != l_pTool )
 		{
 			Json::Reader l_Reader;
 			Json::Value l_JsonValues;
@@ -486,7 +485,7 @@ HRESULT SVRemoteInputTool::SVCommandQueueElement::Execute()
 				l_Status = E_FAIL;
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				if( l_Command == _T( "QueryDataItems" ) )
 				{

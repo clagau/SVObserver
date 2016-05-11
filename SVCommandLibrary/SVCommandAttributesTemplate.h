@@ -11,10 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVCommandAttributesFacade.h"
+#pragma endregion Includes
 
-/*
-*/
 template< unsigned long p_CommandType, typename SVAttributeCollection, typename SVDefaultCollection = SVAttributeCollection >
 class SVCommandAttributesTemplate : public SVCommandAttributesFacade< SVAttributeCollection >
 {

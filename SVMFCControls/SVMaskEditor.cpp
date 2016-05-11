@@ -51,19 +51,19 @@ namespace Seidenader
 
 		void CSVMaskEditor::Refresh()
 		{
-			InvokeHelper(DISPID_REFRESH, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+			InvokeHelper(DISPID_REFRESH, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 		}
 
 		long CSVMaskEditor::DoEditMaskModal()
 		{
 			long result;
-			InvokeHelper(0x4, DISPATCH_METHOD, VT_I4, (void*)&result, NULL);
+			InvokeHelper(0x4, DISPATCH_METHOD, VT_I4, (void*)&result, nullptr);
 			return result;
 		}
 
 		void CSVMaskEditor::AboutBox()
 		{
-			InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+			InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 		}
 	} //SVMFCControls
 } //Seidenader

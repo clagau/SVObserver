@@ -59,7 +59,6 @@ namespace Seidenader
 			CString getEquationText() const;
 			void setEquationText();
 			BOOL createToolbars();
-			int GetComboBoxStringExtent( CComboBox& rComboBox, LPCTSTR szStr );
 
 			void HandleValidateError( int posFailed );
 

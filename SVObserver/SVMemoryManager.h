@@ -84,8 +84,6 @@ private:
 		{
 			HRESULT hr = S_FALSE;
 			
-			//ASSERT( m_mapEntries.find(owner) != m_mapEntries.end() );
-
 			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
 			if ( iter != m_mapEntries.end() )
 			{
@@ -147,7 +145,6 @@ private:
 		// manages memory in a pool for one owner
 		struct SVMemoryPoolEntry
 		{
-			//OWNERTYPE owner;
 			__int64   lSize;
 			SVMemoryPoolEntry() : lSize(0) {}
 		};// end class SVMemoryPoolEntry

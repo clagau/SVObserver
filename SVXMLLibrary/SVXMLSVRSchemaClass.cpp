@@ -22,7 +22,7 @@
 
 SVXMLSVRSchemaClass::SVXMLSVRSchemaClass()
 {
-	m_opDOM = NULL;
+	m_opDOM = nullptr;
 }
 
 SVXMLSVRSchemaClass::~SVXMLSVRSchemaClass()
@@ -42,7 +42,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 
 	while (1)
 	{
-		if (p_opDOM == NULL)
+		if (nullptr == p_opDOM)
 		{
 			hr = -1900;
 			break;
@@ -293,7 +293,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 		}
 	
 		oReturnElementPtr = oDOMRootPtr->appendChild (m_oSchemaBaseElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1700;
 			break;
@@ -408,7 +408,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaNameAttribute ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1697;
 			break;
@@ -447,7 +447,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaValueAttribute ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1698;
 			break;
@@ -489,7 +489,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaTypeAttribute ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1699;
 			break;
@@ -559,35 +559,11 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaDATAElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1702;
 			break;
 		}
-
-
-/*- WHEN ELEMENT VALUE WAS AN ATTRIBUTE - JAB01/12/05 -----------------------
-//-	Set up Value attribute of the DATA element.
-//-	  <attribute type="Value" required="yes"/>
-
-		svmopDOM->CreateElement (bstrAttributeElementName, 
-										 oAttributeElementPtr);
-
-		ccvAttributeValue = g_csValue;
-		oAttributeElementPtr->setAttribute ((BSTR) bstrAttributeType2Title, ccvAttributeValue);
-		ccvAttributeValue.Clear ();
-
-		ccvAttributeValue = (BSTR) bstrAttributeDefinitionYesRequired;
-		oAttributeElementPtr->setAttribute ((BSTR) bstrAttributeRequiredTitle, ccvAttributeValue);
-		ccvAttributeValue.Clear ();
-
-		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
-		{
-			hr = -1703;
-			break;
-		}
-*/
 
 
 //-	Set up Type attribute of the DATA element.
@@ -604,14 +580,14 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaDATAElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1704;
 			break;
 		}
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oElementElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1701;
 			break;
@@ -685,7 +661,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaNODEElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1705;
 			break;
@@ -707,7 +683,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaNODEElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1744;
 			break;
@@ -732,7 +708,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaNODEElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oElement2ElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1707;
 			break;
@@ -758,14 +734,14 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaNODEElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oElement2ElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1706;
 			break;
 		}
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oElementElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1708;
 			break;
@@ -812,7 +788,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaFormatAttribute ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1709;
 			break;
@@ -858,7 +834,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaFormatVersionAttribute ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1710;
 			break;
@@ -905,7 +881,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaRevisionAttribute ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1711;
 			break;
@@ -983,7 +959,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaRevisionElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1712;
 			break;
@@ -1004,7 +980,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaRevisionElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1713;
 			break;
@@ -1025,7 +1001,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaRevisionElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1714;
 			break;
@@ -1050,14 +1026,14 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaRevisionElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oElement2ElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1715;
 			break;
 		}
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oElementElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1716;
 			break;
@@ -1135,7 +1111,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaRevisionHistoryElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oElement2ElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1717;
 			break;
@@ -1161,14 +1137,14 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaRevisionHistoryElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oElement2ElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1719;
 			break;
 		}
 		
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oElementElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1720;
 			break;
@@ -1214,7 +1190,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaIsActiveAttribute ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1901;
 			break;
@@ -1287,7 +1263,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaEncryptionElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oAttributeElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1902;
 			break;
@@ -1313,14 +1289,14 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaEncryptionElement ()
 		ccvAttributeValue.Clear ();
 
 		oReturnElementPtr = oElementElementPtr->appendChild (oElement2ElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1904;
 			break;
 		}
 		
 		oReturnElementPtr = m_oSchemaBaseElementPtr->appendChild (oElementElementPtr);
-		if (oReturnElementPtr == NULL)
+		if (nullptr == oReturnElementPtr)
 		{
 			hr = -1903;
 			break;

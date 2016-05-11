@@ -14,7 +14,7 @@
 
 IMPLEMENT_DYNAMIC(SVTriggerSelectionDlg, CDialog)
 
-SVTriggerSelectionDlg::SVTriggerSelectionDlg(const SVTriggerNameIdList& triggerList, CWnd* pParent /*=NULL*/)
+SVTriggerSelectionDlg::SVTriggerSelectionDlg(const SVTriggerNameIdList& triggerList, CWnd* pParent /*=nullptr*/)
 : CDialog(SVTriggerSelectionDlg::IDD, pParent)
 , m_triggerList(triggerList)
 , m_selectedTriggerID(-1) 

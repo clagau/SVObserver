@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNAMIC(SVPictureTabs, CDialog)
 
-SVPictureTabs::SVPictureTabs(CWnd* pParent /*=NULL*/)
+SVPictureTabs::SVPictureTabs(CWnd* pParent /*=nullptr*/)
 : CDialog(SVPictureTabs::IDD, pParent)
 , m_lLastTab(0L)
 , m_lAppearance( TopButtons )
@@ -736,7 +736,7 @@ HRESULT SVPictureTabs::AddTab( LPCTSTR p_Name, long *phandle )
 	UpdateButtonSpacing();
 	UpdateScrollBarWidth();
 	UpdateTabClient( picDlg );
-	if(phandle != nullptr)
+	if( nullptr != phandle )
 	{
 		*phandle = tabHandle;
 	}

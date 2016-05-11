@@ -71,7 +71,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		_bstr_t Type = ptype; 
 
 		HRESULT hres = SVVariantConverter::RestoreVariant(Value.GetBSTR(), Type.GetBSTR() ,pVar);
-		if(hres != S_OK )
+		if (S_OK != hres)
 		{
 			SVStringArray messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
@@ -82,14 +82,13 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 	}
 
-
 	void VariantHelper::FromVariant( const _variant_t& rVar, std::wstring  &rtype, std::wstring  &rValue )
 	{
 		_bstr_t Value;
 		_bstr_t Type;
 
 		HRESULT hres = 	SVVariantConverter::TranslateVariant(const_cast<_variant_t*> (&rVar) , &Value.GetBSTR(), &Type.GetBSTR() );
-		if(hres != S_OK )
+		if (S_OK != hres)
 		{
 			SVStringArray messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
@@ -101,7 +100,6 @@ namespace Seidenader { namespace  SVXMLLibrary
 		rtype  = Type;
 		rValue = Value;
 	}
-
 
 	const  WCHAR* VariantHelper::pWhitespace = L"\a\b\f\n\r\t\v ";
 
@@ -133,11 +131,11 @@ namespace Seidenader { namespace  SVXMLLibrary
 			break;
 		case VT_BOOL:
 			{
-				if(pVal == nullptr)
+				if(nullptr == pVal)
 				{
 					bInvalidArgument = true;
 				}
-				else if(pVal != nullptr && (!wcscmp(pVal, L"TRUE" ) || !wcscmp(pVal, L"YES" )) )
+				else if( nullptr != pVal && (!wcscmp(pVal, L"TRUE" ) || !wcscmp(pVal, L"YES" )) )
 				{
 					pVar->boolVal = VARIANT_TRUE;
 				}
@@ -162,7 +160,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			}
 		case VT_INT:
 			{
-				if(pNumericVal == nullptr)
+				if(nullptr == pNumericVal)
 				{
 					bInvalidArgument = true;
 				}
@@ -183,7 +181,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			}
 		case VT_I4:
 			{
-				if(pNumericVal == nullptr)
+				if(nullptr == pNumericVal)
 				{
 					bInvalidArgument = true;
 				}
@@ -202,7 +200,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			}
 		case VT_UINT:
 			{
-				if (pNumericVal != nullptr &&  iswdigit (*pNumericVal))
+				if (nullptr != pNumericVal &&  iswdigit (*pNumericVal))
 				{
 					//-			Convert strings to longs (including hex representations)
 					pVar->uintVal = wcstol (pNumericVal,  &pNumericValEnd, 0);
@@ -218,7 +216,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		case VT_UI4:
 			{
 
-				if (pNumericVal != nullptr &&  iswdigit (*pNumericVal))
+				if (nullptr != pNumericVal &&  iswdigit (*pNumericVal))
 				{
 					//-			Convert strings to longs (including hex representations)
 					pVar->ulVal = wcstol (pNumericVal,  &pNumericValEnd, 0);
@@ -233,13 +231,13 @@ namespace Seidenader { namespace  SVXMLLibrary
 		case VT_R4:
 			{
 
-				if (pNumericVal == NULL)
+				if (nullptr == pNumericVal)
 				{
 					bInvalidArgument = true;
 				}
 				else if ((iswdigit (*pNumericVal)) || ((*pNumericVal == '-') && iswdigit (*(pNumericVal + 1))))
 				{
-					pVar->fltVal = static_cast <float> (wcstod (pNumericVal,NULL));
+					pVar->fltVal = static_cast <float> (wcstod (pNumericVal, nullptr));
 				}
 				else
 				{
@@ -251,13 +249,13 @@ namespace Seidenader { namespace  SVXMLLibrary
 		case VT_R8:
 			{
 
-				if (pNumericVal == NULL)
+				if (nullptr == pNumericVal)
 				{
 					bInvalidArgument = true;
 				}
 				else if ((iswdigit (*pNumericVal)) || ((*pNumericVal == '-') && iswdigit (*(pNumericVal + 1))))
 				{
-					pVar->dblVal = static_cast <double> (wcstod (pNumericVal,NULL));
+					pVar->dblVal = static_cast <double> (wcstod (pNumericVal, nullptr));
 				}
 				else
 				{
@@ -269,7 +267,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		case VT_I8:
 			{
 
-				if (pNumericVal == NULL)
+				if (nullptr == pNumericVal)
 				{
 					bInvalidArgument = true;
 				}
@@ -289,7 +287,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		case VT_UI8:
 			{
 
-				if (pNumericVal == NULL)
+				if (nullptr == pNumericVal)
 				{
 					bInvalidArgument = true;
 				}
@@ -310,7 +308,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		case  VT_I1:
 			{
 
-				if (pNumericVal == nullptr)
+				if (nullptr == pNumericVal)
 				{
 					bInvalidArgument = true;
 				}

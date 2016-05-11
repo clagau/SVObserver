@@ -69,7 +69,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVAnalyzerObjectType;
 
-			m_pCurrentAnalyzer = reinterpret_cast<SVAnalyzerClass *>(SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
+			m_pCurrentAnalyzer = reinterpret_cast<SVAnalyzerClass *>(SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info) ));
 		}
 	}
 }
@@ -192,11 +192,6 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnButtonDetails
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:28.08.1999 RO			Replaced DoDetailDialog() with SetupDialog().
-////////////////////////////////////////////////////////////////////////////////
 void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 {
 	if( m_pCurrentAnalyzer )
@@ -210,7 +205,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 		// Restore the pointer (in case of Cancel)
 		m_pCurrentAnalyzer = ( SVAnalyzerClass* )SVObjectManagerClass::Instance().GetObject( analyzerGuid);
 
-		if( m_pTool != NULL )
+		if( nullptr != m_pTool )
 		{
 			SVInspectionProcess* pInspection( m_pTool->GetInspection() );
 			ASSERT( nullptr != pInspection );
@@ -219,7 +214,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 			{
 				SVGUID l_ToolId;
 
-				if( m_pTool != NULL )
+				if( nullptr != m_pTool )
 				{
 					l_ToolId = m_pTool->GetUniqueObjectID();
 				}
@@ -271,23 +266,18 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				m_pTool->Add( m_pCurrentAnalyzer );
 
 				// Ensure this Object's inputs get connected
-				//::SVSendMessage( pCurrentAnalyzer, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
-
 				// Fix to ensure Friends get connections as well
-				::SVSendMessage( m_pTool, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+				::SVSendMessage( m_pTool, SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
 				// And last - Create (initialize) it
 
 				if( ! m_pCurrentAnalyzer->IsCreated() )
 				{
-					// SEJ
 					// And finally try to create the child object...
 					if( ::SVSendMessage( m_pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerCreationFailed, StdMessageParams, SvOi::Err_10211 );
-
-						// What should we really do here ??? SEJ
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = m_pCurrentAnalyzer->GetUniqueObjectID();
@@ -296,7 +286,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 						else
 							delete m_pCurrentAnalyzer;
 
-						m_pCurrentAnalyzer = NULL;
+						m_pCurrentAnalyzer = nullptr;
 					}
 				}
 			}
@@ -313,7 +303,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 		DestroyAnalyzer();
 	}
 
-	if( m_pTool != NULL )
+	if( nullptr != m_pTool )
 	{
 		SVInspectionProcess* pInspection( m_pTool->GetInspection() );
 		ASSERT(nullptr != pInspection);
@@ -322,7 +312,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 		{
 			SVGUID l_ToolId;
 
-			if( m_pTool != NULL )
+			if( nullptr != m_pTool )
 			{
 				l_ToolId = m_pTool->GetUniqueObjectID();
 			}
@@ -349,21 +339,21 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 			m_additionalAnalyzerId = SVInvalidGUID;
 		}
 
-		::SVSendMessage( m_pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), NULL );
+		::SVSendMessage( m_pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), 0 );
 		// Close, Disconnect and Delete the Object
 		::SVSendMessage( m_pTool, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection );
 
-		m_pCurrentAnalyzer = NULL;
+		m_pCurrentAnalyzer = nullptr;
 	}
 }
 
 BOOL SVToolAdjustmentDialogAnalyzerPageClass::setImages()
 {
 	// Get the Image for this tool
-	SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>( ::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
+	SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>( ::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0 ));
 	if( pImageInfo )
 	{
-		SVImageClass* l_pImage = NULL;
+		SVImageClass* l_pImage = nullptr;
 
 		pImageInfo->GetOwnerImage( l_pImage );
 
@@ -417,13 +407,13 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		CString strTitle;
 		strTitle.LoadString( IDS_RESULT_ADJUSTMENT_DIALOG_TITLE );
 		// Get Complete Name up to the tool level...
-		strTitle = m_pCurrentAnalyzer->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + SV_TSTR_SPACE + strTitle;
+		strTitle = m_pCurrentAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + SV_TSTR_SPACE + strTitle;
 
-		SVIPDoc* l_pIPDoc = NULL;
+		SVIPDoc* l_pIPDoc = nullptr;
 
-		if( m_pCurrentAnalyzer->GetInspection() != NULL )
+		if( nullptr != m_pCurrentAnalyzer->GetInspection() )
 		{
-			l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pCurrentAnalyzer->GetInspection()->GetUniqueObjectID() );
+			l_pIPDoc = m_pParentDialog->GetIPDoc();
 		}
 
 		// Prepare result adjustment dialog...
@@ -439,9 +429,6 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 
 		// Call dialog...
 		dlg.DoModal();
-
-		// if dialog was cancelled - get current analyzer pointer...
-			//pCurrentAnalyzer = ( SVAnalyzerClass* ) dlg.PParentObject;
 
 		// Restore the pointer (in case of Cancel)
 		m_pCurrentAnalyzer = ( SVAnalyzerClass* )SVObjectManagerClass::Instance().GetObject( analyzerGuid );
@@ -477,7 +464,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
 		PublishList.Refresh( static_cast<SVTaskObjectClass*>(pInspection->GetToolSet()) );
 
-		SVIPDoc* pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
+		SVIPDoc* pIPDoc = m_pParentDialog->GetIPDoc();
 
 		if( nullptr != pIPDoc )
 		{

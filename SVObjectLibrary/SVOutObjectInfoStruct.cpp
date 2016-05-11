@@ -70,7 +70,7 @@ HRESULT SVOutObjectInfoStruct::RemoveInput( SVInObjectInfoStruct& p_rsvInput )
 			UserInfoList.RemoveAt( l );
 
 			// Update Pointer...
-			p_rsvInput.SetInputObject( NULL );
+			p_rsvInput.SetInputObject( nullptr );
 
 			if( p_rsvInput.CheckExistence() )
 			{
@@ -97,7 +97,7 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 			// Send to the Object that is using this output
 			::SVSendMessage(inObjectInfo.UniqueObjectID,
 							SVM_DISCONNECT_OBJECT_INPUT, 
-							reinterpret_cast<DWORD_PTR>(&inObjectInfo), NULL );
+							reinterpret_cast<DWORD_PTR>(&inObjectInfo), 0 );
 		}
 	}
 
@@ -119,10 +119,10 @@ HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SV
 			if( rInInfo.CheckExistence() )
 			{
 				CString strTempName;
-				CString strName = p_psvObject->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType ) + _T( "." );
+				CString strName = p_psvObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( "." );
 
 				// Who is using
-				strTempName = rInInfo.PObject->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
+				strTempName = rInInfo.PObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 				
 				// exclude ourself or our children and the document (published)
 				SVObjectInfoStruct objectTypeInfo = rInInfo.PObject->GetObjectInfo();

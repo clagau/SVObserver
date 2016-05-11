@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   16 Dec 2014 17:57:44  $
 //******************************************************************************
 
-// SVExternalToolInputSelectPage.cpp : implementation file
-//
 #pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
@@ -124,7 +122,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 		std::map<CString, SVRPropertyItem*> mapGroupItems;
 		std::map<CString, SVRPropertyItem*>::iterator iterGroup;
 
-		SVRPropertyItem* pGroupItem = NULL;
+		SVRPropertyItem* pGroupItem = nullptr;
 
 		if( m_bTabbed )
 		{	// create dummy group for the items; OnOK expects groups to exist
@@ -334,7 +332,6 @@ void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*
 {
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE) pNotifyStruct;
 	*plResult = S_OK;
-
 	
 	if ( pNMPropTree->pItem )
 	{
@@ -356,7 +353,7 @@ void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*
 		}
 		else
 		{
-			bValidated = ValidateItem(pItem) == S_OK;
+			bValidated = S_OK == ValidateItem(pItem);
 		}
 
 		if ( !bValidated )
@@ -372,15 +369,14 @@ void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*
 // constant values (if input is not another VO)
 void SVExternalToolInputSelectPage::OnOK() 
 {
+	SVRPropertyItem* pGroup = nullptr;
 
-	SVRPropertyItem* pGroup = NULL;
-
-	if( m_Tree.GetRootItem() && m_Tree.GetRootItem()->GetChild() != NULL )
+	if( m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild() )
 	{
 		pGroup = m_Tree.GetRootItem()->GetChild()->GetChild();
 		while ( pGroup )
 		{
-			SVRPropertyItem* pItem = NULL;
+			SVRPropertyItem* pItem = nullptr;
 			pItem = pGroup->GetChild();
 			while ( pItem )
 			{
@@ -397,15 +393,15 @@ void SVExternalToolInputSelectPage::OnOK()
 				SVInObjectInfoStruct& rInfo = m_pTask->m_Data.m_aInputObjectInfo[iIndex];
 				if ( rInfo.GetInputObjectInfo().PObject )
 				{	// disconnect existing connection
-					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), NULL ) == SVMR_SUCCESS);
-					rInfo.SetInputObject( NULL );
+					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), 0 ) == SVMR_SUCCESS);
+					rInfo.SetInputObject( nullptr );
 				}
 
 				if ( pObject )
 				{
 					rValue.SetValue(iBucket, strTmp);
 					rInfo.SetInputObject( pObject );
-					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), NULL ) == SVMR_SUCCESS);
+					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), 0 ) == SVMR_SUCCESS);
 					ASSERT( bSuccess );
 				}
 				else
@@ -425,7 +421,7 @@ void SVExternalToolInputSelectPage::OnOK()
 
 SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
 {
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 
 	CString strName;
 	pItem->GetItemValue(strName);
@@ -457,8 +453,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 
 	hr = ::VariantChangeType( &vtNew, &vtItem, VARIANT_ALPHABOOL, vt );
 
-
-	if ( hr != S_OK )
+	if ( S_OK != hr )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidData, StdMessageParams, SvOi::Err_10048 ); 
@@ -467,10 +462,10 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 	{
 		// CALL DLL TO VALIDATE RANGE
 		hr = m_pTask->m_dll.ValidateValueParameter( m_pTask->GetUniqueObjectID(), (long) iIndex, vtNew );
-		if ( hr != S_OK )
+		if ( S_OK != hr )
 		{
-			BSTR bstrMessage = NULL;
-			m_pTask->m_dll.GetMessageString(hr, &bstrMessage);
+			BSTR bstrMessage = nullptr;
+			m_pTask->GetDLLMessageString(hr, &bstrMessage);
 			CString sMessage(bstrMessage);
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, sMessage, StdMessageParams, SvOi::Err_10049 ); 

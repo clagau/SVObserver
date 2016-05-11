@@ -8,8 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 13:07:50  $
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
 #include "SVNullDeviceParam.h"
+#pragma endregion Includes
 
 SVClonable* SVNullDeviceParam::CloneImpl() const
 {
@@ -29,6 +32,10 @@ SVNullDeviceParam::SVNullDeviceParam(SVDeviceParamEnum typeEnum)
 
 SVNullDeviceParam::SVNullDeviceParam(const SVNullDeviceParam& rhs)
 : SVDeviceParam(rhs)
+{
+}
+
+SVNullDeviceParam::~SVNullDeviceParam()
 {
 }
 

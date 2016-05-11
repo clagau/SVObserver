@@ -45,9 +45,9 @@ SVXmlStream< SVTreeType >::SVXmlStream(SVTreeType& rTree)
 
 	// Init MSXML members
 	//
-	CurrentElementNode = NULL;
-	m_plDomDocument    = NULL;
-	m_pDocRoot         = NULL;
+	CurrentElementNode = nullptr;
+	m_plDomDocument    = nullptr;
+	m_pDocRoot         = nullptr;
 
 	attrib_index = -1;
 
@@ -180,7 +180,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 			mhr = S_OK;
 			SAFEARRAYBOUND	sabData;
 
-			if (V_ARRAY(&m_Variant) == NULL || m_Variant.vt == VT_EMPTY)
+			if (nullptr == V_ARRAY(&m_Variant) || VT_EMPTY == m_Variant.vt)
 			{
 				sabData.cElements = 1;
 				sabData.lLbound   = 0;
@@ -210,7 +210,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &boolVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_BOOL | VT_ARRAY;
 					}
@@ -227,7 +227,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &bVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_UI1 | VT_ARRAY;
 					}
@@ -244,7 +244,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &uiVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_UI2 | VT_ARRAY;
 					}
@@ -261,7 +261,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &ulVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_UI4 | VT_ARRAY;
 					}
@@ -278,7 +278,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &uintVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_UINT | VT_ARRAY;
 					}
@@ -295,7 +295,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &cVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_I1 | VT_ARRAY;
 					}
@@ -312,7 +312,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &iVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_I2 | VT_ARRAY;
 					}
@@ -329,7 +329,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &lVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_I4 | VT_ARRAY;
 					}
@@ -346,7 +346,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &intVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_INT | VT_ARRAY;
 					}
@@ -363,7 +363,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &fltVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_R4 | VT_ARRAY;
 					}
@@ -380,7 +380,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 				{
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &dblVal);
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_R8 | VT_ARRAY;
 					}
@@ -398,7 +398,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 					long lIndex = V_ARRAY(&m_Variant)->rgsabound[0].cElements - 1;
 					mhr = SafeArrayPutElement(V_ARRAY(&m_Variant), &lIndex, &bstrVal);
 					SysFreeString( bstrVal );
-					if (mhr == S_OK && m_Variant.vt == 0)
+					if (S_OK == mhr && VT_EMPTY == m_Variant.vt)
 					{
 						m_Variant.vt = VT_BSTR | VT_ARRAY;
 					}
@@ -440,7 +440,7 @@ void SVXmlStream< SVTreeType >::Parse_Objects(MSXML2::IXMLDOMNodePtr pObject)
 	//
 	this->ChainTag_Add(this->Tag);
 
-	for (pChild = pObject->firstChild;  NULL != pChild;  pChild = pChild->nextSibling)
+	for (pChild = pObject->firstChild; nullptr != pChild;  pChild = pChild->nextSibling)
 	{
 		// Parse Child nodes
 		//
@@ -516,13 +516,13 @@ void SVXmlStream< SVTreeType >::Grab_Node_Informations(MSXML2::IXMLDOMNodePtr pC
 		this->AttribValues.RemoveAll();
 
 		MSXML2::IXMLDOMNamedNodeMapPtr pAttribs = pChild->Getattributes();
-		if(pAttribs != NULL)
+		if(nullptr != pAttribs)
 		{ 	long nAttriCnt = pAttribs->Getlength();
 			// Iterate over the attributes
 			//
 			for(int i=0; i<nAttriCnt; ++i)
 			{  MSXML2::IXMLDOMNodePtr pAttrib = pAttribs->Getitem(i);
-			   if(pAttrib != NULL)
+			   if(nullptr != pAttrib)
 			   {
 					this->AttribNames.Add(	(CString)(const char *) pAttrib->GetnodeName() );
 
@@ -644,11 +644,11 @@ bool SVXmlStream< SVTreeType >::Add_LastChildNode(LPCTSTR Name)
 
 	// Attach the Node to the document
 	//
-	if(CurrentElementNode != NULL)
+	if(nullptr != CurrentElementNode)
 	{	this->ChainTag_Add( this->Get_CurrentTag() );
 		newNode = CurrentElementNode->appendChild(newNode);
 	}
-	else if(m_pDocRoot != NULL)
+	else if(nullptr != m_pDocRoot)
 	{	this->ChainTag_Add( (CString)(const char*)m_pDocRoot->nodeName );
 		newNode = m_pDocRoot->appendChild(newNode);
 	}
@@ -700,9 +700,9 @@ bool SVXmlStream< SVTreeType >::Add_NodeBefore(LPCTSTR Name)
 
 	// Attach the Node to the document
 	//
-	if(CurrentElementNode != NULL)
+	if(nullptr != CurrentElementNode)
 		newNode = pParent->insertBefore(newNode,NodeRef);
-	else if(m_pDocRoot != NULL)
+	else if(nullptr != m_pDocRoot)
 		newNode = m_pDocRoot->insertBefore(newNode,NodeRef);
 	else
 	{	m_pDocRoot = newNode;
@@ -743,12 +743,12 @@ bool SVXmlStream< SVTreeType >::Add_NodeAfter(LPCTSTR Name)
 	if(this->Is_Root())
 		return false;
 
-	// If CurrentElementNode->NextSibling == NULL then must call Add_LastChildNode on Parent Node
+	// If nullptr == CurrentElementNode->NextSibling then must call Add_LastChildNode on Parent Node
 	// Because we can't use InsertBefore on a NULL Reference ;o)
 	//
 	// We are sure that a Parent node exist because before we control that we aren't not on root node.
 	//
-	if(CurrentElementNode->nextSibling == NULL)
+	if(nullptr == CurrentElementNode->nextSibling)
 	{	// Get Parent Node
 		//
 		MSXML2::IXMLDOMNodePtr pParent;
@@ -773,9 +773,9 @@ bool SVXmlStream< SVTreeType >::Add_NodeAfter(LPCTSTR Name)
 
 	// Attach the Node to the document
 	//
-	if(CurrentElementNode != NULL)
+	if(nullptr != CurrentElementNode)
 		newNode = pParent->insertBefore(newNode,NodeRef);
-	else if(m_pDocRoot != NULL)
+	else if(nullptr != m_pDocRoot)
 		newNode = m_pDocRoot->insertBefore(newNode,NodeRef);
 	else
 	{	m_pDocRoot = newNode;
@@ -803,7 +803,7 @@ bool SVXmlStream< SVTreeType >::Add_FirstChildNode(LPCTSTR Name)
 
 	// If no child then use Add_LastChildNode or CurrentElement node not set yet
 	//
-	if(CurrentElementNode != NULL)
+	if(nullptr != CurrentElementNode)
 	{	if( !this->CurrentElementNode->hasChildNodes() )
 			return (this->Add_LastChildNode(Name));
 	}
@@ -824,11 +824,11 @@ bool SVXmlStream< SVTreeType >::Add_FirstChildNode(LPCTSTR Name)
 
 	// Attach the Node to the document
 	//
-	if(CurrentElementNode != NULL)
+	if(nullptr != CurrentElementNode)
 	{	this->ChainTag_Add( this->Get_CurrentTag() );
 		newNode = CurrentElementNode->insertBefore(newNode,NodeRef);
 	}
-	else if(m_pDocRoot != NULL)
+	else if(nullptr != m_pDocRoot)
 	{	this->ChainTag_Add( (CString)(const char*)m_pDocRoot->nodeName );
 		newNode = m_pDocRoot->insertBefore(newNode,NodeRef);
 	}
@@ -862,7 +862,7 @@ bool SVXmlStream< SVTreeType >::Set_Attribute(LPCTSTR AttribName,LPCTSTR AttribV
 
 	// Set the new attribute
 	//
-	if(CurrentElementNode != NULL)
+	if(nullptr != CurrentElementNode)
 	{
 		CurrentElementNode->setAttribute( AttribName, sAttribute );
 		this->Grab_Node_Informations(CurrentElementNode);
@@ -880,8 +880,8 @@ bool SVXmlStream< SVTreeType >::Set_Attribute(LPCTSTR AttribName,LPCTSTR AttribV
 template< typename SVTreeType >
 bool SVXmlStream< SVTreeType >::Remove_Attribute(LPCTSTR AttribName)
 {
-	if(CurrentElementNode == NULL)
-	{	if(this->m_pDocRoot != NULL)
+	if(nullptr == CurrentElementNode)
+	{	if(nullptr != this->m_pDocRoot)
 			this->CurrentElementNode = this->m_pDocRoot;
 		else
 			return false;
@@ -909,8 +909,8 @@ bool SVXmlStream< SVTreeType >::Set_Text(LPCTSTR TextValue)
 
 	// Find if a CHILD TEXT NODE exist or not
 	//
-	if(CurrentElementNode == NULL)
-	{	if(this->m_pDocRoot != NULL)
+	if(nullptr == CurrentElementNode)
+	{	if(nullptr != this->m_pDocRoot)
 			this->CurrentElementNode = this->m_pDocRoot;
 		else
 			return false;
@@ -919,7 +919,7 @@ bool SVXmlStream< SVTreeType >::Set_Text(LPCTSTR TextValue)
 	if(this->CurrentElementNode->hasChildNodes())
 	{	
 		MSXML2::IXMLDOMNodePtr pChild;
-		for(pChild = this->CurrentElementNode->firstChild; pChild != NULL; pChild = pChild->nextSibling)
+		for(pChild = this->CurrentElementNode->firstChild; nullptr != pChild; pChild = pChild->nextSibling)
 		{	// Find it's a NODE TEXT
 			//
 			if(!this->Is_MSXML_Node(pChild))
@@ -948,7 +948,7 @@ void SVXmlStream< SVTreeType >::Reset_XML_Document()
 	this->Init_MSXML();
 	m_plDomDocument->loadXML("<?xml version=\"1.0\" standalone=\"yes\" ?>");
 	m_pDocRoot = m_plDomDocument->documentElement;
-	CurrentElementNode = NULL;
+	CurrentElementNode = nullptr;
 
 	// Init our members
 	//
@@ -980,7 +980,7 @@ bool SVXmlStream< SVTreeType >::Go_to_Child(LPCTSTR NodeName)
 
 	ChainTag_Add(this->Get_CurrentTag());
 
-	for (pChild = CurrentElementNode->firstChild;  NULL != pChild;  pChild = pChild->nextSibling)
+	for (pChild = CurrentElementNode->firstChild; nullptr != pChild;  pChild = pChild->nextSibling)
 	{
 		// Grab Information from Child node
 		//
@@ -1006,7 +1006,7 @@ bool SVXmlStream< SVTreeType >::Go_to_Parent(LPCTSTR NodeName)
 {
 	// Parent node
 	//
-	MSXML2::IXMLDOMNodePtr pParent = NULL;
+	MSXML2::IXMLDOMNodePtr pParent = nullptr;
    MSXML2::IXMLDOMNodePtr oldCurrent = this->CurrentElementNode;
 	
 	if(!Is_MSXML_Node(this->CurrentElementNode))
@@ -1049,14 +1049,14 @@ bool SVXmlStream< SVTreeType >::Go_to_Forward(LPCTSTR NodeName)
 {
 	// Sibling node
 	//
-	MSXML2::IXMLDOMNodePtr pSibling = NULL;
+	MSXML2::IXMLDOMNodePtr pSibling = nullptr;
 
 	if(!Is_MSXML_Node(this->CurrentElementNode))
 		return false;
 
 	for (pSibling= CurrentElementNode;  true ;  pSibling = pSibling->nextSibling)
 	{
-		if(pSibling == NULL)
+		if(nullptr == pSibling)
 			break;
 
 		// Grab Information from Sibling node
@@ -1087,7 +1087,7 @@ bool SVXmlStream< SVTreeType >::Go_to_Back(LPCTSTR NodeName)
 	if(!Is_MSXML_Node(this->CurrentElementNode))
 		return false;
 
-	for (pSibling = CurrentElementNode;  NULL != pSibling;  pSibling = pSibling->previousSibling)
+	for (pSibling = CurrentElementNode; nullptr != pSibling;  pSibling = pSibling->previousSibling)
 	{
 		// Grab Information from Sibling node
 		//
@@ -1112,10 +1112,10 @@ bool SVXmlStream< SVTreeType >::Remove()
 {	
 	// Parent node
 	//
-	MSXML2::IXMLDOMNodePtr pParent= NULL;
+	MSXML2::IXMLDOMNodePtr pParent = nullptr;
 
-	if(CurrentElementNode == NULL)
-	{	if(this->m_pDocRoot != NULL)
+	if(nullptr == CurrentElementNode)
+	{	if(nullptr != this->m_pDocRoot)
 			this->CurrentElementNode = this->m_pDocRoot;
 		else
 			return false;

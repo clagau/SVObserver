@@ -89,7 +89,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVRPropertyItemFile)
 	//}}AFX_VIRTUAL
-	bool SetItemType(DWORD dwFlags, LPCTSTR lpszVal = NULL);
+	bool SetItemType(DWORD dwFlags, LPCTSTR lpszVal = nullptr);
 
 // Implementation
 public:

@@ -51,7 +51,7 @@ int SVImageFile::GetBitDepth() const
 
 const unsigned char* SVImageFile::GetBits() const
 {
-	const unsigned char* pBits = NULL;
+	const unsigned char* pBits = nullptr;
 
 	DIBSECTION dib;
 	if (::GetObject(m_bitmapHandle, sizeof(DIBSECTION), &dib))

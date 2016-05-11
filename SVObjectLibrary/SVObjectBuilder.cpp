@@ -107,7 +107,7 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 {
 	HRESULT hr = S_OK;
 
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 	// Construct new object...
 	SVObjectManagerClass::Instance().ConstructObject(classID, pObject);
 
@@ -115,7 +115,7 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 	{
 		if (ownerUniqueID != GUID_NULL)
 		{
-			SVObjectClass* pOwnerObject = NULL;
+			SVObjectClass* pOwnerObject = nullptr;
 			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
 			if (pOwnerObject)
 			{
@@ -168,7 +168,7 @@ HRESULT SVObjectBuilder::DestroyFriends(const GUID& objectID)
 {
 	HRESULT hr = S_OK;
 
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(objectID, pObject);
 	if (pObject)
 	{
@@ -181,7 +181,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 {
 	HRESULT hr = S_OK;
 
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 	// Construct new object...
 	SVObjectManagerClass::Instance().ConstructObject(classID, pObject);
 
@@ -191,12 +191,12 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 		pObject->SetObjectOwner(ownerUniqueID);
 		if( SVObjectManagerClass::Instance().ChangeUniqueObjectID( pObject, uniqueID ) )
 		{
-			SVObjectClass* pOwnerObject = NULL;
+			SVObjectClass* pOwnerObject = nullptr;
 			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
 			if(nullptr != pOwnerObject)
 			{
 				pOwnerObject->AddFriend(uniqueID);
-				::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), NULL);
+				::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0);
 			}
 			else
 			{
@@ -215,11 +215,11 @@ HRESULT SVObjectBuilder::CreateEmbeddedObject(const GUID& embeddedID, const GUID
 
 	if (ownerUniqueID != GUID_NULL)
 	{
-		SVObjectClass* pOwnerObject = NULL;
+		SVObjectClass* pOwnerObject = nullptr;
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
 
 		// Send to Owner of Embedded Object, Try to overwrite object...
-		SVObjectClass* pObject = NULL;
+		SVObjectClass* pObject = nullptr;
 		
 		if(nullptr != pOwnerObject)
 		{
@@ -321,8 +321,8 @@ HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectI
 {
 	HRESULT hr = S_OK;
 
-	SVObjectClass* pOwnerObject = NULL;
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pOwnerObject = nullptr;
+	SVObjectClass* pObject = nullptr;
 
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerID, pOwnerObject);
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(objectID, pObject);
@@ -351,16 +351,16 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& g
 {
 	HRESULT hr = S_OK;
 
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(objectID, pObject);
 	
 	if (pObject)
 	{
 		SVInputInfoListClass inputInfoList;
-		::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<DWORD_PTR>(&inputInfoList), NULL);
+		::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<DWORD_PTR>(&inputInfoList), 0);
 
 		// reattach inputs
-		for( int i = 0; hr == S_OK && i < inputInfoList.GetSize(); i++ )
+		for( int i = 0; S_OK == hr && i < inputInfoList.GetSize(); i++ )
 		{
 			SVInObjectInfoStruct* pInInfo = inputInfoList.GetAt(i);
 			if (pInInfo)
@@ -392,8 +392,8 @@ HRESULT SVObjectBuilder::GetObjectDataType(const GUID& ownerID, const GUID& obje
 {
 	HRESULT hr = S_OK;
 	
-	SVObjectClass* pOwnerObject = NULL;
-	SVObjectClass* pObject = NULL;
+	SVObjectClass* pOwnerObject = nullptr;
+	SVObjectClass* pObject = nullptr;
 
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerID, pOwnerObject);
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(objectID, pObject);
