@@ -377,7 +377,11 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int 	Err_16075_ImageNrToBig =  Mec_ErrorBase + 75;
 	///Errornumbers load Configuration 
 	static const int 	Err_16076_CouldNotLoadInspection =  Mec_ErrorBase + 76;
-	
+	///Avoid crash
+	static const int 	Err_16077_EndlessLoop =  Mec_ErrorBase + 77;
+	static const int 	Err_16078_InvalidHandle =  Mec_ErrorBase + 78;
+	///Remove DOM 
+	static const int 	Err_16079_ConfigurationTooOld =  Mec_ErrorBase + 79;
 	
 	// Ben Walter
 	static const int BRW_ErrorBase = 17000;

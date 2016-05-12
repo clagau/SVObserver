@@ -19,13 +19,17 @@
 #include "SVOFileConfigDlg.h"
 #include "SVLibrary/SVBStr.h"
 
-#include "SVConfigurationLibrary/SVOCMGlobals.h"
+#include "SVXMLLibrary\LoadConfiguration.h"
 
 #include "SVOLibrary/SVOLibrary.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "AutoBuild/AutoBuild.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVXMLLibrary/SVObjectXMLWriter.h"
+#include "SVObjectLibrary/GlobalConst.h"
+#include "SVXMLLibrary/TreeToXml.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,7 +37,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVOFileConfigDlg::SVOFileConfigDlg(CWnd* pParent /*=nullptr*/)
+SVOFileConfigDlg::SVOFileConfigDlg(CWnd* pParent /*=NULL*/)
 : CDialog(SVOFileConfigDlg::IDD, pParent), m_XMLCTree( mTree )
 {
 	//{{AFX_DATA_INIT(SVOFileConfigDlg)
@@ -147,7 +151,7 @@ void SVOFileConfigDlg::OnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult)
 				{
 					_variant_t l_Variant;
 
-					if ( S_OK == svArray.GetElement( l, l_Variant ) )
+					if ( svArray.GetElement( l, l_Variant ) == S_OK )
 					{
 						_bstr_t l_String( l_Variant );
 
@@ -205,7 +209,7 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 
 	while (1)
 	{
-		CFileDialog dlg( TRUE, ".svx", nullptr, 
+		CFileDialog dlg( TRUE, ".svx", NULL, 
 										 OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
 										 OFN_ENABLESIZING | OFN_EXPLORER,
 										 "SVObserver Environment Configuration Files (*.svx)|*.svx||", this );
@@ -228,7 +232,7 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 		bstrFileName = dlg.GetPathName();
 
 		m_XMLCTree.Clear();
-		SVOCMLoadConfiguration(	m_ulCurrentVersion, m_ulCurrentVersion, bstrFileName, m_XMLCTree);
+		SVOCMLoadConfiguration(m_ulCurrentVersion, bstrFileName, m_XMLCTree);
 		if( m_ulCurrentVersion >= 0x50100)
 		{
 			CheckConfiguration();
@@ -246,42 +250,36 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 
 void SVOFileConfigDlg::OnButtonsaveSvx() 
 {
-	// TODO: Add your control notification handler code here
+	
+	CFileDialog dlg( TRUE, ".svx", NULL, 
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
+		OFN_ENABLESIZING | OFN_EXPLORER,
+		"SVObserver Environment Configuration Files (*.svx)|*.svx||", this );
 
-	SVBStr	bstrFileName;
+	dlg.m_ofn.lpstrTitle = "Select Configuration File";
+	dlg.m_ofn.lpstrInitialDir = m_strLastDirectory;
 
-	while (1)
+	if (dlg.DoModal () == IDOK)
 	{
-		CFileDialog dlg( TRUE, ".svx", nullptr, 
-										 OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
-										 OFN_ENABLESIZING | OFN_EXPLORER,
-										 "SVObserver Environment Configuration Files (*.svx)|*.svx||", this );
-
-		dlg.m_ofn.lpstrTitle = "Select Configuration File";
-		dlg.m_ofn.lpstrInitialDir = m_strLastDirectory;
-
-		if (dlg.DoModal () != IDOK)
-		{
-			break;
-		}
-		
-
 		m_strLastDirectory = dlg.m_ofn.lpstrFile;
 		GetDirectoryRemoveLevel( m_strLastDirectory, 1);
-
-		bstrFileName = dlg.GetPathName();
-
+		
 		FixConfiguration();
-
-		SVOCMSaveConfiguration(	m_ulCurrentVersion, 
-								m_ulCurrentVersion, 
-								bstrFileName,
-								m_XMLCTree);
-
-
-	break;
+		std::ofstream XMLOutFile;
+		XMLOutFile.open( dlg.GetPathName());
+		if (XMLOutFile.is_open())
+		{
+			SVObjectXMLWriter writer(XMLOutFile);
+			writer.setNewLine( true );
+			SVString RootName( SvOl::FqnRoot );
+			writer.WriteRootElement( RootName.c_str() );
+			writer.WriteSchema();
+			SvXml::TreeToXMl::CopyTreeNodeToWriter<SvXml::SVXMLCTreeCtrl>(m_XMLCTree,m_XMLCTree.getRoot(),writer );
+			writer.EndAllElements();
+			XMLOutFile.close();
+		}
 	}
-	
+
 }
 
 BOOL SVOFileConfigDlg::DestroyWindow()
@@ -354,7 +352,7 @@ void SVOFileConfigDlg::FixConfiguration()
 	m_IOEntryPairs.clear();
 	m_Inspections.clear();
 
-	while( nullptr != l_Current )
+	while( l_Current != NULL )
 	{
 		CString l_strName = mTree.GetItemText( l_Current );
 		CString l_strTmp;
@@ -374,7 +372,7 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 	int count = 0;
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	// Find all IOEntries.
-	while( nullptr != l_Current )
+	while( l_Current != NULL )
 	{
 		CString l_strName = mTree.GetItemText( l_Current);
 
@@ -390,7 +388,7 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 
 	// Update NumberOfIOEntries Last.
 	l_Current = mTree.GetChildItem( p_Item);
-	while( nullptr != l_Current )
+	while( l_Current != NULL )
 	{
 		CString l_strName = mTree.GetItemText( l_Current);
 
@@ -414,7 +412,7 @@ void SVOFileConfigDlg::CheckConfiguration()
 	m_IOEntryPairs.clear();
 	m_Inspections.clear();
 
-	while( nullptr != l_Current )
+	while( l_Current != NULL )
 	{
 		CString l_strName = mTree.GetItemText( l_Current );
 		CString l_strTmp;
@@ -521,14 +519,14 @@ bool SVOFileConfigDlg::ParsePPQ( CString p_strName, CString& p_rstrOut)
 void SVOFileConfigDlg::GetIOChildren(HTREEITEM p_Item)
 {
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
-	while( nullptr != l_Current )
+	while( l_Current != NULL )
 	{
 		CString l_strName = mTree.GetItemText( l_Current);
 
 		if( l_strName.Find( "IOEntry" ) >= 0 )
 		{
 			HTREEITEM l_InspItem = mTree.GetChildItem( l_Current );
-			while( nullptr != l_InspItem )
+			while( l_InspItem != NULL )
 			{
 				CString Name = mTree.GetItemText( l_InspItem );
 				if( Name == "IOEntryName" )
@@ -554,7 +552,7 @@ void SVOFileConfigDlg::GetPPQs(HTREEITEM p_Item)
 {
 	m_PPQs.clear();
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
-	while( nullptr != l_Current )
+	while( l_Current != NULL )
 	{
 		CString l_PPQName = mTree.GetItemText( l_Current);
 
@@ -568,7 +566,7 @@ void SVOFileConfigDlg::GetPPQs(HTREEITEM p_Item)
 void SVOFileConfigDlg::GetInspections(HTREEITEM p_Item)
 {
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
-	while( nullptr != l_Current )
+	while( l_Current != NULL )
 	{
 		CString l_strName = mTree.GetItemText( l_Current);
 		m_Inspections.push_back( l_strName );

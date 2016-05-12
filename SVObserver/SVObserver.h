@@ -23,7 +23,7 @@
 #include "SVOIntelRAIDStatusClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
-#include "SVConfigurationLibrary/SVObserverEnums.h"
+#include "SVSystemLibrary/SVObserverEnums.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -216,11 +216,14 @@ public:
 	//}}AFX_DATA
 
 public:
+	
 #pragma region virtual
 	virtual HRESULT OpenSVXFile( LPCTSTR PathName );
 	virtual SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );	
 	virtual SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
 #pragma endregion virtual
+
+	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 
 	CString GetConfigurationName() const;
 	

@@ -20,7 +20,7 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVDottedName.h"
 #include "SVSharedMemoryLibrary/SVSharedPPQWriter.h"

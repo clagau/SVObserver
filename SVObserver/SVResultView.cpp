@@ -20,7 +20,7 @@
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVIPChildFrm.h"
 #include "RootObject.h"
 #include "SVStatusLibrary/MessageManagerResource.h"

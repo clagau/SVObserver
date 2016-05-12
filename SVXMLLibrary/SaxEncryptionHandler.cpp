@@ -7,7 +7,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#import <msxml6.dll> // MSXML
+#include <msxml6.h>
 #include "SaxEncryptionHandler.h"
 #include "SVXMLEncryptionClass.h"
 #include "SaxTreeElement.h"

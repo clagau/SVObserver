@@ -14,7 +14,7 @@
 #include "SVIOController.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVIODoc.h"

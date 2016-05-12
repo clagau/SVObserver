@@ -12,13 +12,7 @@
 #pragma once
 
 template< typename SVTreeType >
-HRESULT SVOCMLoadConfiguration( unsigned long ulSVOVersion, unsigned long &ulSECVersion, BSTR bstrFilename, SVTreeType& p_rTree );
+HRESULT SVOCMLoadConfiguration( unsigned long &FileVersion, BSTR bstrFilename, SVTreeType& p_rTree );
 
-template< typename SVTreeType >
-HRESULT SVOCMSaveConfiguration( unsigned long ulSVOVersion, unsigned long &ulSECVersion, BSTR bstrFilename, SVTreeType& p_rTree );
-
-template< typename SVTreeType >
-HRESULT SVOCMCheckObsoleteItems( SVTreeType& p_rTree, CString& rItemType, int& errorCode );
-
-#include "SVOCMGlobals.inl"
+#include "LoadConfiguration.inl"
 

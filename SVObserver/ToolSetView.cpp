@@ -19,7 +19,7 @@
 #include "SVTool.h"
 #include "SVIODoc.h"
 #include "SVMainFrm.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVConfigurationObject.h"

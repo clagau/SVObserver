@@ -19,7 +19,7 @@
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVResult.h"
 #include "SVInspectionProcess.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVToolSet.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 

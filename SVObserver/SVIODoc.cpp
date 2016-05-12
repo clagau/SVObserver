@@ -29,7 +29,7 @@
 #include "SVFileNameManagerClass.h"
 #include "SVSVIMStateClass.h"
 #include "SVXMLLibrary\SVNavigateTree.h"
-#include "SVConfigurationLibrary\SVConfigurationTags.h"
+#include "SVXMLLibrary\SVConfigurationTags.h"
 #include "GlobalConstantView.h"
 #include "SVMainFrm.h"
 #include "ObjectInterfaces\SVUserMessage.h"

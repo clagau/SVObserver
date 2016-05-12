@@ -44,12 +44,12 @@ END_MESSAGE_MAP()
 // SVOFileConfigApp construction
 
 SVOFileConfigApp::SVOFileConfigApp()
-: m_Inspection( nullptr )
+: m_Inspection( NULL )
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 
-	pdlg = nullptr;
+	pdlg = NULL;
 }
 
 SVOFileConfigApp::~SVOFileConfigApp()
@@ -57,12 +57,12 @@ SVOFileConfigApp::~SVOFileConfigApp()
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 
-	m_pMainWnd = nullptr;
+	m_pMainWnd = NULL;
 
 	if ( pdlg )
 	{
 		delete pdlg;
-		pdlg = nullptr;
+		pdlg = NULL;
 	}
 }
 
@@ -126,7 +126,7 @@ void SVOFileConfigApp::Serialize(CArchive& ar)
 
 void SVOFileConfigApp::LoadIODoc(LPCTSTR szFileName)
 {
-	CDocTemplate* pDocTemplate = nullptr;
+	CDocTemplate* pDocTemplate = NULL;
 	POSITION pos = GetFirstDocTemplatePosition();
 	if( pos )
 	{
@@ -140,7 +140,7 @@ void SVOFileConfigApp::LoadIODoc(LPCTSTR szFileName)
 
 void SVOFileConfigApp::LoadIPDoc(LPCTSTR szFileName)
 {
-	CDocTemplate* pDocTemplate = nullptr;
+	CDocTemplate* pDocTemplate = NULL;
 	POSITION pos = GetFirstDocTemplatePosition();
 	if( pos )
 	{

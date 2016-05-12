@@ -19,7 +19,7 @@
 #include "SVObjectLibrary\SVInspectionLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVSystemLibrary\SVAutoLockAndReleaseTemplate.h"
-#include "SVConfigurationLibrary\SVConfigurationTags.h"
+#include "SVXMLLibrary\SVConfigurationTags.h"
 #include "SVUtilityLibrary\NaturalStringCompare.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"

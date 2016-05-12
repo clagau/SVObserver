@@ -20,10 +20,10 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <iterator>
 #include "SVInspectionExporter.h"
-#include "SVObjectLibrary/SVObjectXMLWriter.h"
+#include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVInspectionProcess.h"

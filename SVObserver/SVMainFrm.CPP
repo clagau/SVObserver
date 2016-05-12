@@ -33,7 +33,7 @@
 #include "SVDirectX.h"
 #include "ModelessMessageBox.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectScriptParserSVX.h"
 #include "SVInspectionTreeParser.h"
 #include "RemoteCommand.h"

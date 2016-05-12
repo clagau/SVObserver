@@ -25,7 +25,7 @@
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary/StringMunge.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"
 #include "SVAcquisitionDevice.h"

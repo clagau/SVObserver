@@ -54,7 +54,8 @@
 #include "SVDigitalInputObject.h"
 #include "SVDigitalOutputObject.h"
 
-#include "SVConfigurationLibrary\SVOCMGlobals.h"
+
+#include "SVXMLLibrary\LoadConfiguration.h"
 #include "SVDigitizerProcessingClass.h"
 
 #include "SVOConfigAssistantDlg.h"
@@ -109,9 +110,10 @@
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
-#include "SVObjectLibrary\SVObjectXMLWriter.h"
+#include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVXMLLibrary\ObsoleteItemChecker.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2700,6 +2702,7 @@ int SVObserverApp::Run()
 }
 #pragma endregion AFX_Virtual methods
 
+
 #pragma region virtual
 HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 {
@@ -2773,15 +2776,33 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			while (1)
 			{
 				SVTreeType XMLTree;
-
-				hr = SVOCMLoadConfiguration( m_CurrentVersion, configVer, bStr, XMLTree );
+				try 
+				{
+					hr = SVOCMLoadConfiguration( configVer, bStr, XMLTree );
+				}
+				catch( const SvStl::MessageContainer& rExp )
+				{
+					if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
+					{
+						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						Exception.setMessage(rExp.getMessage());
+					}
+					else
+					{
+						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+						Exception.setMessage(rExp.getMessage());
+					}
+					hr = E_FAIL;
+					break;
+				}
+				
 				if (hr & SV_ERROR_CONDITION)
 				{
 					break;
 				}
 				CString itemType;
 				int errorCode(0);
-				hr = SVOCMCheckObsoleteItems( XMLTree, configVer, itemType, errorCode );
+				hr = SvOc::CheckObsoleteItems( XMLTree, configVer, itemType, errorCode );
 				if (hr & SV_ERROR_CONDITION)
 				{
 					if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )

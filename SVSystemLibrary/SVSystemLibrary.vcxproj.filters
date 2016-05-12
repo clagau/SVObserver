@@ -101,6 +101,9 @@
     <ClInclude Include="SVLockableClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVObserverEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVAsyncProcedure.inl">

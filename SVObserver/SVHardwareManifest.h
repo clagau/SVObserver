@@ -16,7 +16,7 @@
 #include "SVAcquisitionConstructParams.h"
 #include "SVTriggerDeviceParams.h"
 #include "SVIMTypeInfoStruct.h"
-#include "SVConfigurationLibrary/SVObserverEnums.h"
+#include "SVSystemLibrary/SVObserverEnums.h"
 #pragma endregion Includes
 
 class SVHardwareManifest

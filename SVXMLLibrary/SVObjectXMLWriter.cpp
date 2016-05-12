@@ -17,6 +17,8 @@
 #include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVXMLLibrary/SVXMLLibraryGlobals.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
+#include "SVXMLEncryptionClass.h"
+
 
 #define Stringtize(s) (#s)
 
@@ -59,6 +61,40 @@ static VariantTypeToStringLookup var_types = boost::assign::map_list_of<>
 (VT_I8, Stringtize(VT_I8))			// signed 64-bit int
 (VT_UI8, Stringtize(VT_UI8))		// unsigned 64-bit int
 ;
+
+
+std::string to_utf8(const wchar_t* buffer, int len)
+{
+	int nChars = ::WideCharToMultiByte(
+		CP_UTF8,
+		0,
+		buffer,
+		len,
+		NULL,
+		0,
+		NULL,
+		NULL);
+	if (nChars == 0) return "";
+
+	std::string newbuffer;
+	newbuffer.resize(nChars) ;
+	::WideCharToMultiByte(
+		CP_UTF8,
+		0,
+		buffer,
+		len,
+		const_cast< char* >(newbuffer.c_str()),
+		nChars,
+		NULL,
+		NULL); 
+
+	return newbuffer;
+}
+
+std::string to_utf8(const std::wstring& str)
+{
+	return to_utf8(str.c_str(), (int)str.size());
+}
 
 static std::string BSTRToUTF8(BSTR value)
 {
@@ -162,12 +198,15 @@ static void Attribute(const wchar_t* name, const _variant_t& value, XMLElementPt
 SVObjectXMLWriter::SVObjectXMLWriter(std::ostream& os)
 {
 	m_pWriter = XMLWriterPtr(new xml::writer(os));
+	m_pEncryption = nullptr;
 }
 
 SVObjectXMLWriter::~SVObjectXMLWriter()
 {
 	m_pWriter.reset();
 }
+
+
 
 void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const variant_t& value)
 {
@@ -178,10 +217,50 @@ void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const variant_t& value)
 
 		if (!varTypeStr.empty())
 		{
-			xml::element data(scDataTag.c_str(), *m_pWriter);
-			data.attr(scNameTag.c_str(), rName);
-			data.attr(scTypeTag.c_str(), varTypeStr.c_str());
-			data.contents(valueStr.c_str());
+			if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE)
+			{
+						_bstr_t Name(rName);
+						_bstr_t Type( varTypeStr.c_str());
+						_bstr_t content(valueStr.c_str());
+						SVBStr EnName;
+						SVBStr EnType;
+						SVBStr EnContent;
+						
+						
+						if(m_pEncryption->m_lEncryptionMethod == -1)
+						{
+							m_pEncryption->EncryptString(1,Name,&EnName );
+							m_pEncryption->EncryptString(1,Type,&EnType );
+							m_pEncryption->EncryptString(1,content,&EnContent );
+						}
+						else
+						{
+								long encryption = m_pEncryption->m_lEncryptionMethod;
+								m_pEncryption->EncryptNameAttribute(Name,&EnName );
+								m_pEncryption->EncryptString(encryption,Type,&EnType );
+								m_pEncryption->EncryptString(encryption,content,&EnContent );
+
+						}
+						
+						std::wstring encryptedName =  (LPWSTR) EnName;
+						std::wstring encyptedType = (LPWSTR) EnType;
+						std::wstring encryptedContent =  (LPWSTR) EnContent;
+						
+						xml::element data(scDataTag.c_str(), *m_pWriter);
+						data.attr(scNameTag.c_str(), to_utf8(encryptedName.c_str()));
+						data.attr(scTypeTag.c_str(), to_utf8(encyptedType.c_str()));
+						data.contents( to_utf8(encryptedContent.c_str()));
+						
+			
+			}
+			else
+			{
+				xml::element data(scDataTag.c_str(), *m_pWriter);
+				data.attr(scNameTag.c_str(), rName);
+				data.attr(scTypeTag.c_str(), varTypeStr.c_str());
+				data.contents(valueStr.c_str());
+			}
+			
 		}
 		else
 		{
@@ -216,7 +295,31 @@ void SVObjectXMLWriter::StartElement(LPCTSTR rName)
 {
 	XMLElementPtr pNode(new xml::element(scNodeTag.c_str(), *m_pWriter));
 	m_elements.push_front(pNode);
-	pNode->attr(scNameTag.c_str(), rName);
+	
+	if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE)
+	{
+		_bstr_t Name(rName);
+		SVBStr EnName;
+		
+		if(m_pEncryption->m_lEncryptionMethod == -1)
+		{
+			m_pEncryption->EncryptString(1,Name,&EnName );
+		}
+		else
+		{
+			long encryption = m_pEncryption->m_lEncryptionMethod;
+			m_pEncryption->EncryptNameAttribute(Name,&EnName );
+		}
+		std::wstring encryptedName =  (LPWSTR) EnName;
+		
+		pNode->attr(scNameTag.c_str(), to_utf8(encryptedName.c_str() ) );
+	}
+	
+	else 
+	{
+		pNode->attr(scNameTag.c_str(), rName);
+	}
+	
 }
 
 void SVObjectXMLWriter::EndElement()
@@ -429,13 +532,61 @@ void SVObjectXMLWriter::WriteSchema()
 	pSchemaNode.reset();
 }
 
+
+void SVObjectXMLWriter::SetEncryption(SVXMLEncryptionClass*  pEncryption)
+{
+
+	m_pEncryption = pEncryption;
+
+}
+
+void SVObjectXMLWriter::WriteEncryption()
+{
+	
+	long isEncrypted(FALSE);
+	if(m_pEncryption)
+	{
+		m_pEncryption->GetIsEncrypted(&isEncrypted);
+	}
+	///<Encryption xmlns="x-schema:#SVR00001" IsActive="TRUE">
+	SVString EncryptionString( _T("Encryption"));
+	XMLElementPtr pEncryptionNode = Element(EncryptionString, *m_pWriter);
+	Attribute("xmlns", "x-schema:#SVR00001", pEncryptionNode);
+	Attribute("IsActive", (isEncrypted == TRUE)?  "TRUE": "FALSE", pEncryptionNode);
+	
+	if(isEncrypted)
+	{
+		m_pEncryption->SetEncryptionMethod(-1);
+		
+		_variant_t content( m_pEncryption->GetNameSeed()); 
+		WriteAttribute( _T("NameSeed"), content);
+		m_pEncryption->SetEncryptionMethod(1);
+	}
+	pEncryptionNode.reset();
+
+}
+
 void SVObjectXMLWriter::WriteStartOfBase()
 {
 	//<NODE xmlns="x-schema:#SVR00001" Name="Base" Type="SV_BASENODE">
 	_variant_t xmlnsValue;
 	_variant_t value;
 	xmlnsValue.SetString("x-schema:#SVR00001");
-	value.SetString("SV_BASENODE");
+	
+	
+	if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE) 
+	{
+		_bstr_t basenode("SV_BASENODE");
+		SVBStr  Enbasenode;
+		m_pEncryption->EncryptString (2, basenode, &Enbasenode);
+		value.SetString( (LPCTSTR) Enbasenode);
+	}
+	else
+	{
+		value.SetString("SV_BASENODE");
+	}
+	
+	
 	StartElement("Base");
 	ElementAttribute("xmlns", xmlnsValue);
 	ElementAttribute("Type", value);
@@ -465,3 +616,11 @@ void SVObjectXMLWriter::setNewLine( bool NewLine )
 	}
 }
 
+
+void SVObjectXMLWriter::setHeader(LPCTSTR header)
+{
+	if( nullptr != m_pWriter )
+	{
+		m_pWriter->setHeader( header );
+	}
+}

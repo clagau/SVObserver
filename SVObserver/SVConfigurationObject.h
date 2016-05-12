@@ -22,13 +22,13 @@
 #include "SVFileNameArrayClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
-#include "SVConfigurationLibrary/SVObserverEnums.h"
+#include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVPPQObject.h"
 #include "SVTriggerObject.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "RemoteMonitorList.h"
-#include "SVObjectLibrary/SVObjectXMLWriter.h"
+#include "SVXMLLibrary\SVObjectXMLWriter.h"
 #pragma endregion Includes
 
 

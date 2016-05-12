@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <sstream>
 #include "SVToolGrouping.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVGlobal.h"
 

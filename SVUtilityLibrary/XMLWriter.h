@@ -57,7 +57,7 @@ namespace xml
 		// writer must be bound to an ostream
 		writer(std::ostream& os) : os(os), need_header(true), m_NewLine(true) {}
 		~writer(void) { assert(elements.empty()); }
-
+		void setHeader(LPCSTR header) { headestring = header;} ;
 		void setNewLine(bool NewLine){ m_NewLine = NewLine; };
 
 	private:
@@ -66,7 +66,14 @@ namespace xml
 		{
 			if (need_header)
 			{
-				os << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+				if(headestring.empty() ) 
+				{
+					os << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+				}
+				else
+				{
+					os << headestring;
+				}
 				need_header = false;
 			}
 			return *this;
@@ -91,6 +98,7 @@ namespace xml
 		bool need_header; // have we written an XML header yet?
 		std::stack<element*> elements; // stack of open element tags
 		bool m_NewLine;
+		std::string headestring;
 	};
 
 	// xml::element class

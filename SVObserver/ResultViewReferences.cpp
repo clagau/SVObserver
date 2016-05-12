@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "StdAfx.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

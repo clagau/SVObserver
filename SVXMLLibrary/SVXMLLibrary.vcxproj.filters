@@ -18,13 +18,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVVariantConverter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVXMLClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVXMLCTreeCtrl.cpp">
@@ -37,12 +31,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVXMLMaterialsTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVXMLSafeArrayConverter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVXMLSVRSchemaClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMaterialData.cpp">
@@ -66,24 +54,21 @@
     <ClCompile Include="SaxEncryptionHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SaxExtractPropertiesHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVObjectXMLWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVariantConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVariantCustomTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVXMLBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVXMLClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVXMLCTreeCtrl.h">
@@ -96,12 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVXMLMaterialsTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVXMLSafeArrayConverter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVXMLSVRSchemaClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVXMLTree.h">
@@ -137,11 +116,26 @@
     <ClInclude Include="SaxEncryptionHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SaxExtractPropertiesHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeToXml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObjectXMLWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVConfigurationTags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObsoleteItemChecker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVXMLClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="SVXMLTree.inl">
       <Filter>Header Files</Filter>
     </None>
@@ -149,6 +143,12 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SaxXMLHandler.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="LoadConfiguration.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="ObsoleteItemChecker.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

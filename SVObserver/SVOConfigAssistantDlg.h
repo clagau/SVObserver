@@ -23,7 +23,7 @@
 #include "SVOPPQList.h"
 #include "SVConfigurationObject.h"
 #include "SVMFCControls\SVOConfigNameEdit.h"
-#include "SVConfigurationLibrary/SVObserverEnums.h"
+#include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVIOBoardCapabilities.h"
 #include "SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 

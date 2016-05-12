@@ -13,7 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 #include "SVImageViewScroll.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVGlobal.h"
 #include "SVImageView.h"

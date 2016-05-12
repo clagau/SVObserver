@@ -7,11 +7,10 @@
 //*****************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#import <msxml6.dll> // MSXML
 //Moved to precompiled header: #include <fstream>
 #include "SVObserver.h"
-#include "SVObjectLibrary/SVObjectXMLWriter.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary\SVObjectXMLWriter.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"

@@ -91,7 +91,7 @@
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCmnLib.lib;SVCommandLibrary.lib;SVConfigurationLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTreeLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib;</AdditionalDependencies>
+      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCmnLib.lib;SVCommandLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTreeLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -150,7 +150,7 @@ echo %time%
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCmnLib.lib;SVCommandLibrary.lib;SVConfigurationLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTreeLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib;</AdditionalDependencies>
+      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCmnLib.lib;SVCommandLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTreeLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -177,10 +177,7 @@ echo %time%
     <ClCompile Include="BasicValueObject.cpp" />
     <ClCompile Include="BasicValueObjects.cpp" />
     <ClCompile Include="Custom2Filter.cpp" />
-    <ClCompile Include="Custom2Filter_ImportExport.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
+    <ClCompile Include="Custom2Filter_ImportExport.cpp" />
     <ClCompile Include="EQAdjustSize.cpp" />
     <ClCompile Include="EQAdjustSizeHeight.cpp" />
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
@@ -261,10 +258,7 @@ echo %time%
     <ClCompile Include="SVInPlaceImageOperatorListClass.cpp" />
     <ClCompile Include="SVInputStreamManager.cpp" />
     <ClCompile Include="SVInspectionExporter.cpp" />
-    <ClCompile Include="SVInspectionImporter.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
+    <ClCompile Include="SVInspectionImporter.cpp" />
     <ClCompile Include="SVIPDocInfoImporter.cpp" />
     <ClCompile Include="SVLaplacianEdge2FilterClass.cpp" />
     <ClCompile Include="SVLaplacianEdgeFilterClass.cpp" />
@@ -630,10 +624,7 @@ echo %time%
     <ClCompile Include="SVVirtualCamera.cpp" />
     <ClCompile Include="SVWaterShedFilter.cpp" />
     <ClCompile Include="SVWindowTool.cpp" />
-    <ClCompile Include="ToolClipboard.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
+    <ClCompile Include="ToolClipboard.cpp" />
     <ClCompile Include="ToolSetView.cpp" />
     <ClCompile Include="ToolSizeAdjustTask.cpp" />
     <ClCompile Include="ZoomHelperEx.cpp" />

@@ -16,14 +16,12 @@
 //Moved to precompiled header: #include <boost/any.hpp>
 //Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <deque>
-#import <msxml6.dll>					// MSXML
 #include "shellapi.h"
 #include "SVInspectionImporter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectBuilder.h"
-#include "SVXMLLibrary/SVXMLClass.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVInspectionTreeParser.h"
 #include "SVObjectScriptParser.h"
@@ -37,6 +35,7 @@
 #include "RootObject.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVXMLLibrary/SaxExtractPropertiesHandler.h"
 #pragma endregion Includes
 
 
@@ -516,74 +515,7 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	return hr;
 }
 
-static HRESULT ExtractProperties(const SVString& filename, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
-{
-	SVDOMClass xml;
-	
-	HRESULT hr = xml.Initialize(0);
-	if (S_OK == hr)
-	{
-		hr = xml.CopyXMLFileToDOM(_bstr_t(filename.c_str())); 
-		if (S_OK == hr)
-		{
-			_bstr_t bstrQueryNameSpace = L"xmlns:svr1=\"x-schema:#SVR00001\"";
-			hr = xml.SetQueryNameSpace(bstrQueryNameSpace);
-			if (S_OK == hr)
-			{
-				SVXML::IXMLDOMElementPtr root;
-				xml.GetRootNode(root);
-				SVXML::IXMLDOMNodeListPtr pXMLDomNodeList = root->selectNodes("//svr1:NODE[@Name='Inspection Process']/svr1:DATA[@Name='NewDisableMethod'] | //svr1:NODE[@Name='Inspection Process']/svr1:DATA[@Name='EnableAuxiliaryExtent'] | //svr1:NODE[@Name='Environment']/svr1:DATA[@Name='VersionNumber']");
-				for (int i = 0;i < pXMLDomNodeList->length;i++)
-				{
-					SVXML::IXMLDOMNodePtr nodePtr;
-					hr = pXMLDomNodeList->get_item(i, &nodePtr);
-					if (S_OK == hr)
-					{
-						SVXML::IXMLDOMNamedNodeMapPtr attributesPtr = nodePtr->attributes;
-						if (attributesPtr)
-						{
-							SVXML::IXMLDOMNodePtr attrNamePtr = attributesPtr->getNamedItem(L"Name");
-							if (attrNamePtr)
-							{
-								_bstr_t bstrNodeName = attrNamePtr->GetnodeValue();
-								VARIANT var;
-								
-								hr = xml.GetDOMNodeElementValue(nodePtr, &var);
-								if (S_OK == hr)
-								{
-									_variant_t value;
-									value.Attach(var);
 
-									if (bstrNodeName == _bstr_t(L"NewDisableMethod"))
-									{
-										rNewDisableMethod = value.lVal;
-									}
-									else if (bstrNodeName == _bstr_t(L"EnableAuxiliaryExtent"))
-									{
-										rEnableAuxExtents = value.lVal;
-									}
-									else if (bstrNodeName == _bstr_t(L"VersionNumber"))
-									{
-										rVersionNumber = value.ulVal;
-									}
-								}
-							}
-							else
-							{
-								hr = E_FAIL;
-							}
-						}
-						else
-						{
-							hr = E_FAIL;
-						}
-					}
-				}
-			}
-		}
-	}
-	return hr;
-}
 
 HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
 {
@@ -612,7 +544,11 @@ HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNew
 			}
 		}
 	}
-	hr = ExtractProperties(inFilename, rNewDisableMethod, rEnableAuxExtents, rVersionNumber);
+	
+	CA2W  pwXmlFilename(inFilename.c_str()); 
+	SvXml::SaxExtractPropertiesHandler   SaxExtractHandler;
+	hr =   SaxExtractHandler.ExtractProperties(pwXmlFilename, rNewDisableMethod, rEnableAuxExtents, rVersionNumber);
+
 	// Deal with single zip file..
 	if( 0 != list.size())
 	{

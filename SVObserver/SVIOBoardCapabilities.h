@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVConfigurationLibrary/SVObserverEnums.h"
+#include "SVSystemLibrary/SVObserverEnums.h"
 
 class SVIOBoardCapabilities  
 {

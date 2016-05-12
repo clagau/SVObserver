@@ -20,7 +20,7 @@
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVSVIMStateClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVAdjustToolSizePositionDlg.h"
 #include "SVAnalyzer.h"
 #include "SVDirectX.h"

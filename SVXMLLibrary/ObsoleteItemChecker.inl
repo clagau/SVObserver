@@ -45,6 +45,20 @@ namespace Seidenader
 		};
 		typedef std::deque<ObsoleteItem> ObsoleteItems;
 
+		
+		
+		template< typename SVTreeType >
+		HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, CString& rItemType, int& errorCode )
+		{
+			HRESULT hr = S_OK;
+			if (0x00072800 > ulSVOConfigVersion) // if 7.40 or greater no need to check
+			{
+				hr = SvOc::HasObsoleteItem(rTree, rItemType, errorCode);
+			}
+			return hr;
+		}
+		
+		
 		template<typename TreeType>
 		static bool HasAcquisitionDevice(TreeType& rTree, const ObsoleteItems& rItems, CString& rItemType, int& rErrorCode)
 		{
@@ -78,7 +92,7 @@ namespace Seidenader
 		{
 			bool bFound = false;
 
-			TreeType::SVBranchHandle htiChild(nullptr);
+			TreeType::SVBranchHandle htiChild(nullptr );
 			if( SVNavigateTree::GetItemBranch( rTree, CTAG_INSPECTION, nullptr, htiChild ) )
 			{
 				TreeType::SVBranchHandle htiSubChild( rTree.getFirstBranch( htiChild ) );
@@ -134,7 +148,7 @@ namespace Seidenader
 			}
 			return bFound;
 		}
-
+		
 		template<typename TreeType>
 		static bool HasInvalidProductType(TreeType& rTree, CString& rItemType, int& rErrorCode)
 		{

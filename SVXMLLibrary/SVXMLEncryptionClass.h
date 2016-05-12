@@ -14,11 +14,8 @@
 
 //Moved to precompiled header: #include <map>
 
-// SVDOM.h must be included to get the SVXML define!
-#include "SVDOM.h"		//	SVXML, SVBStr, SVDOMClass
 
-class SVXMLBase;
-
+#include "SVLibrary/SVBStr.h" 					// SVBStr
 
 union SVValue64Union
 {
@@ -67,49 +64,23 @@ public:
 	//************************************
 	bool LoadEncryptionFromSaxData(LPCWSTR lpName, LPCWSTR lpContent);
 
-
-// XML Interface ----------------------------------------------------------\/
-
-	HRESULT  InitializeXMLInterface (SVXMLBase*    p_opParentXML);
+	unsigned long GetNameSeed();
 
 // SetEncryption () ---------------------------------------------------------
 // This function sets the encryption element information in the schema.
-	HRESULT	SetEncryption ();
+	HRESULT	SetEncryption();
 
-// LoadEncryption () --------------------------------------------------------
-// This function is called from the XML class LoadEncryption function.  This 
-// function requires that both the XML interface and the DOM interface be 
-// previously initialized.
-//
-	HRESULT	LoadEncryption ();
+	void  SetIsEncryption(BOOL isEncrypted){ m_lIsEncrypted = isEncrypted;};
+	BOOL GetIsEncrypted() {return m_lIsEncrypted; } ;
+	void CreateNameSeed() {CreateNameSeed(&m_ulNameSeed);};
+
 
 	HRESULT	GetIsEncrypted (long*		p_lpIsEncrypted);
 
-// GetEncryptionBaseNode () -------------------------------------------------
-// Used by...
-//   SetEncryption ()
-//	  LoadEncryption ()
-	HRESULT	GetEncryptionBaseNode (
-								SVXML::IXMLDOMElementPtr& p_orEncryptionBaseNodePtr);
-
-
 	HRESULT	SetEncryptionMethod (long	p_lEncryptionMethod);
 
-// Test () ------------------------------------------------------------------
-// Normally this is only called from Init () when in _DEBUG mode.
-// Runs a test of various encryption functions.  
-// 
-// NOTE for creating new tests.
-// The location of the Test call prohibits the testing of any parent 
-//	dependent functionallity.
-	HRESULT Test ();
-
-// END OF XML Interface----------------------------------------------------/\
-
-
-
 // DOM Interface ----------------------------------------------------------\/
-	HRESULT	InitializeDOMInterface (SVDOMClass*		p_opParentDOM);
+	//HRESULT	InitializeDOMInterface (SVDOMClass*		p_opParentDOM);
 
 	HRESULT	EncryptNameAttribute (BSTR		p_bstrSourceString, 
 									       SVBStr*	p_bstrEncryptedString);
@@ -128,7 +99,6 @@ public:
 
 // END OF DOM Interface----------------------------------------------------/\
 //
-
 
 	long				m_lEncryptionMethod;
 
@@ -278,8 +248,8 @@ protected:
 	std::map <long, long>	m_oRevCharTableMap;
 
 
-	SVXMLBase*					m_opParentXML;
-	SVDOMClass*					m_opParentDOM;
+	//SVXMLBase*					m_opParentXML;
+	//SVDOMClass*					m_opParentDOM;
 
 
 };

@@ -16,7 +16,7 @@
 #include "SVRemoteOutputsView.h"
 
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVConfigurationLibrary\SVConfigurationTags.h"
+#include "SVXMLLibrary\SVConfigurationTags.h"
 
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"

@@ -107,6 +107,7 @@
     <ClInclude Include="SVFile.h" />
     <ClInclude Include="SVImageConvertorGDI.h" />
     <ClInclude Include="SVLockableClass.h" />
+    <ClInclude Include="SVObserverEnums.h" />
     <ClInclude Include="SVSAXContentHandlerImpl.h" />
     <ClInclude Include="SVSAXErrorHandlerImpl.h" />
     <ClInclude Include="SVSequencer.h" />

@@ -17,7 +17,7 @@
 
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVConfigurationObject.h"

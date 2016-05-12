@@ -16,7 +16,7 @@
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVPPQObject.h"
 #pragma endregion Includes

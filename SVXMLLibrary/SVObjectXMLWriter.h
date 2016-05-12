@@ -19,13 +19,14 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/XMLwriter.h"
-#include "SVObjectWriter.h"
+#include "SVOBJECTLibrary/SVObjectWriter.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 typedef std::tr1::shared_ptr<xml::writer> XMLWriterPtr;
 typedef std::tr1::shared_ptr<xml::element> XMLElementPtr;
 typedef std::deque<XMLElementPtr> Elements;
+class SVXMLEncryptionClass;
 #pragma endregion Declarations
 
 class SVObjectXMLWriter : public SVObjectWriter
@@ -34,16 +35,36 @@ public:
 	SVObjectXMLWriter(std::ostream& os);
 	~SVObjectXMLWriter();
 
-	void WriteAttribute(LPCTSTR rName, const _variant_t& value) override;
-	void WriteAttribute(LPCTSTR rName, const SVVariantList& rValues) override;
+	///Write <DATA ...>
+	void WriteAttribute(LPCTSTR Name, const _variant_t& value) override;
+	
+	///Write <DATA ...>
+	void WriteAttribute(LPCTSTR Name, const SVVariantList& rValues) override;
 
-	void StartElement(LPCTSTR rName) override;
+	
+
+
+
+	///StartNode <Node  Name =  
+	void StartElement(LPCTSTR Name) override;
+	///EndNode  
 	void EndElement();
+	///EndAllNode
 	void EndAllElements();
-	void ElementAttribute(LPCTSTR rAttrName, const _variant_t& value);
+	void ElementAttribute(LPCTSTR AttrName, const _variant_t& value);
 
-	void WriteRootElement(LPCTSTR rName);
+	void WriteRootElement(LPCTSTR Name);
 	void WriteSchema();
+
+	
+	//! Set Encryption pointer
+	//! \param m_pEncryption [in]
+	//! \returns void
+	void SetEncryption(SVXMLEncryptionClass*  m_pEncryption);
+
+	//! Writes Encryption Section 
+	//! \returns void
+	void WriteEncryption();
 
 	//************************************
 	/// Write the start of the node base
@@ -63,9 +84,12 @@ public:
 	//************************************
 	void setNewLine( bool NewLine );
 
+
+	void setHeader(LPCTSTR header);
 private:
 	XMLWriterPtr m_pWriter;
 	Elements m_elements;
+	SVXMLEncryptionClass*  m_pEncryption;
 
 };
 

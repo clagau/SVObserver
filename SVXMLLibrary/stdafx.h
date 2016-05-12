@@ -67,7 +67,12 @@
 #include <string>
 #include <typeinfo>
 
+
 #include <boost/assign/list_of.hpp>
 #include <boost/assign/std/map.hpp>
+#include <boost/foreach.hpp>
+#include <boost/scoped_array.hpp>
+
+
 #pragma endregion Precompiled Headers
 

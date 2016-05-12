@@ -21,7 +21,7 @@
 #include "SVInfoStructs.h"
 #include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputObject.h"
-#include "SVObjectLibrary/SVObjectXMLWriter.h"
+#include "SVXMLLibrary\SVObjectXMLWriter.h"
 #pragma endregion Includes
 
 class SVRemoteOutputGroup : 

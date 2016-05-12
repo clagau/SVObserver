@@ -126,7 +126,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;Netapi32.lib;Advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;Netapi32.lib;Advapi32.lib;SVObjectLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\SVSecurity.def</ModuleDefinitionFile>

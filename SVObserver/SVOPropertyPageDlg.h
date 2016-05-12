@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVConfigurationLibrary/SVObserverEnums.h"
+#include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "PropertyTree/PropTree.h"
 #include "SVOCameraObj.h"

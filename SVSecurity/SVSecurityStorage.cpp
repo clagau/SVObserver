@@ -10,16 +10,18 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#import <msxml6.dll> // MSXML
+#include <msxml6.h>
 #include "SVSecurityStorage.h"
 
 #include "SVMessage/SVMessage.h"
-#include "SVXMLLibrary/SVXMLClass.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVSecurity.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SaxEncryptionHandler.h"
+#include "SVStatusLibrary/CommandLineArgs.h"
+#include "SVXMLLibrary/TreeToXml.h"
+#include <boost/algorithm/string/replace.hpp>
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -120,64 +122,47 @@ CString SVSecurityStorage::GetCurrentPassword() const
 	return m_strCurrentPW;
 }
 
+
 HRESULT SVSecurityStorage::Save( LPCTSTR pFileName )
 {
-USES_CONVERSION;
-
-	HRESULT	hr;
-
-	BSTR l_bstrFormat = nullptr;
-	BSTR l_bstrFileName = nullptr;
-
-	SvXml::SVXMLMaterialsTree XMLTree ;
-	SVXMLClass svX;
-
-	hr = S_OK;
-
-	while (1)
+	
+	SvXml::SVXMLMaterialsTree XMLTree;
+	HRESULT hr = GetMaterialsTree( XMLTree.getTree() );
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
-		hr = GetMaterialsTree( XMLTree.getTree() );
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-
-		hr = svX.Initialize(0,  // do not use checksums
-							0,  // do not use program version/data revision info
-							1); // use encryption
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-
-		l_bstrFormat = ::SysAllocString(L"Security File");
-		if( nullptr == l_bstrFormat )
-		{
-			hr = E_FAIL;
-			break;
-		}
-
-		l_bstrFileName = ::SysAllocString(T2W(pFileName));
-		if( nullptr == l_bstrFileName )
-		{
-			hr = E_FAIL;
-			break;
-		}
-
-		hr = svX.CopyTreeToXMLFile(XMLTree, 1, l_bstrFormat, nullptr, l_bstrFileName);
-		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
-		{
-			break;
-		}
-
-		break;
+		return hr;
 	}
+	std::ofstream XMLSecurityFile;
 
-	SysFreeString( l_bstrFileName );
-	SysFreeString( l_bstrFormat );
+	XMLSecurityFile.open( pFileName);
+	if (XMLSecurityFile.is_open())
+	{
+		SVObjectXMLWriter writer(XMLSecurityFile);
+		writer.setHeader(_T("<?xml version=\"1.0\"  standalone=\"yes\"?>"));
+		SVXMLEncryptionClass Encryption;
 
-	return hr;
+		Encryption.SetIsEncryption(TRUE);
+		Encryption.CreateNameSeed();
+		Encryption.SetEncryptionMethod(-1);
+
+		writer.SetEncryption(&Encryption); 
+		writer.WriteRootElement( _T("Root") );
+		writer.WriteSchema();
+		writer.WriteEncryption();
+		Encryption.SetEncryptionMethod(1);
+
+		SvXml::TreeToXMl::CopyTreeNodeToWriter<SvXml::SVXMLMaterialsTree>(XMLTree,XMLTree.getRoot(),writer );
+		writer.EndAllElements();
+		XMLSecurityFile.close();
+	}
+	else
+	{
+		hr = E_FAIL;
+	}
+	
+return hr;
 }
+
 
 
 HRESULT SVSecurityStorage::SetUseLogon( bool bUse )

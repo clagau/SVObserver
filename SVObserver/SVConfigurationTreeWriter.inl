@@ -16,7 +16,7 @@
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
 #include "SVUtilityLibrary/SVStringConversions.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVConfigurationTreeWriter.h"
 #pragma endregion

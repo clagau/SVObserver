@@ -101,6 +101,29 @@ namespace Seidenader { namespace  SVXMLLibrary
 		rValue = Value;
 	}
 
+
+	void VariantHelper::FromVariant( const _variant_t& rVar, std::string  &rtype, std::string  &rValue )
+	{
+		_bstr_t Value;
+		_bstr_t Type;
+
+		HRESULT hres = 	SVVariantConverter::TranslateVariant(const_cast<_variant_t*> (&rVar) , &Value.GetBSTR(), &Type.GetBSTR() );
+		if(hres != S_OK )
+		{
+			SVStringArray messageList;
+			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
+			SvStl::MessageContainer Exception;
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_TranslateVariantError, messageList, StdMessageParams,SvOi::Err_16065_TRANSLATEVARIANT  );
+			throw Exception;
+		}
+
+		rtype  = Type;
+		rValue = Value;
+	}
+
+
+
+
 	const  WCHAR* VariantHelper::pWhitespace = L"\a\b\f\n\r\t\v ";
 
 	void  VariantHelper::ToVariant( unsigned vartype, const wchar_t  *pVal, _variant_t* pVar)

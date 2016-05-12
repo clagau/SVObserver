@@ -18,7 +18,7 @@
 #include "SVXMLLibrary\SVNavigateTree.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVConfigurationLibrary\SVConfigurationTags.h"
+#include "SVXMLLibrary\SVConfigurationTags.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary\MessageManager.h"

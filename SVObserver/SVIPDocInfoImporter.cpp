@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:17:06  $
 //******************************************************************************
 #include "stdafx.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

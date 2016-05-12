@@ -32,6 +32,8 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//! \returns void
 		//************************************
 		static void FromVariant( const _variant_t& rVar, std::wstring  &rtype, std::wstring  &rValue );
+
+		static void FromVariant( const _variant_t& rVar, std::string  &rtype, std::string  &rValue );
 			
 		//************************************
 		//! Convert a type and value string to a variant 

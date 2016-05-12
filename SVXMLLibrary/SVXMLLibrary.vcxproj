@@ -84,75 +84,58 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SaxEncryptionHandler.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</MultiProcessorCompilation>
     </ClCompile>
+    <ClCompile Include="SaxExtractPropertiesHandler.cpp" />
     <ClCompile Include="SaxParser.cpp" />
     <ClCompile Include="SaxTreeElement.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVDom.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
     <ClCompile Include="SVMaterialData.cpp" />
     <ClCompile Include="SaxContentHandler.cpp" />
     <ClCompile Include="SaxErrorHandler.cpp" />
+    <ClCompile Include="SVObjectXMLWriter.cpp" />
     <ClCompile Include="SVVariantConverter.cpp" />
-    <ClCompile Include="SVXMLClass.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
     <ClCompile Include="SVXMLCTreeCtrl.cpp" />
-    <ClCompile Include="SVXMLEncryptionClass.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
+    <ClCompile Include="SVXMLEncryptionClass.cpp" />
     <ClCompile Include="SVXMLLibraryGlobals.cpp" />
     <ClCompile Include="SVXMLMaterialsTree.cpp" />
-    <ClCompile Include="SVXMLSafeArrayConverter.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
-    <ClCompile Include="SVXMLSVRSchemaClass.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
     <ClCompile Include="VariantHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ISaxElementHandler.h" />
+    <ClInclude Include="LoadConfiguration.h" />
+    <ClInclude Include="ObsoleteItemChecker.h" />
     <ClInclude Include="SaxEncryptionHandler.h" />
+    <ClInclude Include="SaxExtractPropertiesHandler.h" />
     <ClInclude Include="SaxParser.h" />
     <ClInclude Include="SaxTreeElement.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVDom.h" />
+    <ClInclude Include="SVConfigurationTags.h" />
     <ClInclude Include="SVMaterialData.h" />
     <ClInclude Include="SVNavigateTree.h" />
     <ClInclude Include="SaxContentHandler.h" />
     <ClInclude Include="SaxErrorHandler.h" />
     <ClInclude Include="SaxXMLHandler.h" />
+    <ClInclude Include="SVObjectXMLWriter.h" />
     <ClInclude Include="SVVariantConverter.h" />
     <ClInclude Include="SVVariantCustomTypes.h" />
-    <ClInclude Include="SVXMLBase.h" />
-    <ClInclude Include="SVXMLClass.h" />
     <ClInclude Include="SVXMLCTreeCtrl.h" />
     <ClInclude Include="SVXMLEncryptionClass.h" />
     <ClInclude Include="SVXMLLibraryGlobals.h" />
     <ClInclude Include="SVXMLMaterialsTree.h" />
-    <ClInclude Include="SVXMLSafeArrayConverter.h" />
-    <ClInclude Include="SVXMLSVRSchemaClass.h" />
     <ClInclude Include="SVXMLTree.h" />
+    <ClInclude Include="TreeToXml.h" />
     <ClInclude Include="VariantHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LoadConfiguration.inl" />
+    <None Include="ObsoleteItemChecker.inl" />
     <None Include="SVNavigateTree.inl" />
     <None Include="SaxXMLHandler.inl" />
-    <None Include="SVXMLClass.inl" />
     <None Include="SVXMLTree.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

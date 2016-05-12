@@ -16,7 +16,7 @@
 #include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 
 #include "SVObjectLibrary\SVClsIds.h"

@@ -12,6 +12,11 @@ namespace Seidenader
 	{
 		template<typename TreeType>
 		static HRESULT HasObsoleteItem(TreeType& rTree, CString& rItemType, int& errorCode);
+	
+	
+		template< typename SVTreeType >
+		HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, CString& rItemType, int& errorCode );
+	
 	}
 }
 
