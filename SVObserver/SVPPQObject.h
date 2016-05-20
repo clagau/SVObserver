@@ -27,7 +27,7 @@
 #include "SVPPQShiftRegister.h"
 #include "SVValueObject.h"
 #include "SVVirtualCamera.h"
-#include "SVCameraTriggerData.h"
+#include "TriggerHandling/SVCameraTriggerData.h"
 #include "BasicValueObjects.h"
 #include "SVMonitorList.h"
 #pragma endregion Includes
@@ -81,11 +81,11 @@ public:
 	BOOL GetInspectionTimeout( long& rlTimeoutMillisec ) const;
 	const SVString& GetConditionalOutputName() const;
 
-	BOOL AttachTrigger( SVTriggerObject* pTrigger );
+	BOOL AttachTrigger( SvTh::SVTriggerObject* pTrigger );
 	BOOL AttachCamera( SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne = false );
 	BOOL AttachInspection( SVInspectionProcess* pInspection );
 
-	BOOL DetachTrigger( SVTriggerObject* pTrigger );
+	BOOL DetachTrigger( SvTh::SVTriggerObject* pTrigger );
 	BOOL DetachCamera( SVVirtualCamera* pCamera, BOOL bRemoveDepends = FALSE );
 	BOOL DetachInspection( SVInspectionProcess* pInspection );
 
@@ -96,7 +96,7 @@ public:
 	HRESULT GetCameraList( std::deque< SVVirtualCamera* >& p_rCameras ) const;
 	HRESULT GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const;
 
-	BOOL GetTrigger( SVTriggerObject*& ppTrigger );
+	BOOL GetTrigger( SvTh::SVTriggerObject*& ppTrigger );
 	BOOL GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
 
 	HRESULT GetInspections( std::vector< SVInspectionProcess* >& rvecInspections ) const;
@@ -168,7 +168,7 @@ public:
 	/// \param pCaller [unused]
 	/// \param p_rTriggerInfo [in] the trigger information to be queued
 	//************************************
-	BOOL FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerInfo );
+	BOOL FinishTrigger( void *pCaller, SvTh::SVTriggerInfoStruct& p_rTriggerInfo );
 
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 
@@ -184,7 +184,7 @@ public:
 
 	void PersistInputs(SVObjectWriter& rWriter);
 
-	SVCameraTriggerData& GetCameraInputData();
+	SvTh::SVCameraTriggerData& GetCameraInputData();
 	long GetExtraBufferSize() const;
 
 	/// Set or unset Monitor list and activated the shared memory for it.
@@ -216,7 +216,7 @@ protected:
 
 		virtual ~SVTriggerQueueElement();
 
-		SVTriggerInfoStruct m_TriggerInfo;
+		SvTh::SVTriggerInfoStruct m_TriggerInfo;
 		SVVariantBoolVector m_Inputs;
 	};
 
@@ -360,7 +360,7 @@ protected:
 	HRESULT GetProductIndex( long& p_rIndex, long lProcessCount ) const;
 	HRESULT GetProductIndex( long& p_rIndex, SVClock::SVTimeStamp p_TimeStamp ) const;
 
-	SVProductInfoStruct* IndexPPQ( SVTriggerInfoStruct& p_rTriggerInfo );
+	SVProductInfoStruct* IndexPPQ( SvTh::SVTriggerInfoStruct& p_rTriggerInfo );
 	BOOL InitializeProduct( SVProductInfoStruct* p_pNewProduct, const SVVariantBoolVector& p_rInputValues );
 	BOOL StartOutputs( SVProductInfoStruct* p_pProduct );
 	HRESULT NotifyInspections( long p_Offset );
@@ -399,7 +399,7 @@ protected:
 	SVClock::SVTimeStamp m_NextDataValidDelayTimestamp;
 
 	// Queues for the PPQ's threads to store incoming objects to be processed
-	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SVTriggerInfoStruct s and SVVariantBoolVector s
+	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTh::SVTriggerInfoStruct s and SVVariantBoolVector s
 	SVProcessCountQueue m_oCamerasQueue;
 	SVInspectionInfoQueue m_oInspectionQueue;
 	SVProcessCountQueue m_oOutputsDelayQueue;
@@ -424,7 +424,7 @@ protected:
 	SVIOEntryHostStructPtr m_pDataValid;
 
 	// Pointers to the Subsystem objects used by the PPQ
-	SVTriggerObject*            m_pTrigger;
+	SvTh::SVTriggerObject*            m_pTrigger;
 	SVPPQInspectionProcessVector    m_arInspections;
 
 	// Pointer to the PPQ's buckets
@@ -447,7 +447,7 @@ protected:
 	SVBoolValueObjectClass  m_voNotInspected;
 	SVBoolValueObjectClass  m_voDataValid;
 
-	SVCameraTriggerData m_CameraInputData;
+	SvTh::SVCameraTriggerData m_CameraInputData;
 
 	bool m_TriggerToggle;
 	bool m_OutputToggle;

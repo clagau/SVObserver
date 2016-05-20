@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "TriggerHandling/SVTriggerObject.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
@@ -34,7 +35,7 @@ class SVIODoc;
 class SVIPDoc;
 class SVMainFrame;
 class SVMessageWindowClass;
-class SVTriggerObject;
+
 class SVUserObjectListClass;
 class SVObjectWriter;
 
@@ -452,7 +453,7 @@ private:
 
 	long m_gigePacketSize; 
 
-	std::set<SVTriggerObject*> m_dirty_triggers;
+	std::set<SvTh::SVTriggerObject*> m_dirty_triggers;
 
 	// The Standard Configuration Execution Directory
 	// PN -> Path Name

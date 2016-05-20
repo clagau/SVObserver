@@ -15,7 +15,7 @@
 #pragma warning (disable : 4290)
 
 #pragma region Includes
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 #include "SVDLLToolDefinitionStructs.h"
 #include "SVLoki/functor.h"
 #pragma endregion Includes

@@ -13,7 +13,7 @@
 
 #include "SVImageLibrary/SVLut.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 #include "SVTriggerLibrary/SVInternalTrigger.h"
 #include "SVTriggerLibrary/SVTriggerCallbackMap.h"
 
@@ -62,8 +62,8 @@ public:
 
 	virtual HRESULT InternalTriggerEnable( unsigned long p_Handle );
 	virtual HRESULT InternalTrigger( unsigned long p_Handle );
-	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_Handle, SVCallbackStruct& callbackStruct );
-	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_Handle, SVCallbackStruct& callbackStruct );
+	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_Handle, SvTh::SVCallbackStruct& callbackStruct );
+	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_Handle, SvTh::SVCallbackStruct& callbackStruct );
 	virtual HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_Handle );
 
 	virtual void ScanForCameras();
@@ -78,8 +78,8 @@ public:
 	unsigned long TriggerGetHandle(unsigned long p_ulIndex);
 
 	virtual HRESULT TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName);
-	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SVCallbackStruct p_Callback);
-	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SVCallbackStruct p_Callback);
+	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback);
+	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback);
 	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long p_ulHandle);
 	virtual HRESULT TriggerStart(unsigned long p_ulHandle);
 	virtual HRESULT TriggerStop(unsigned long p_ulHandle);

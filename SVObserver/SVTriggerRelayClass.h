@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 #pragma endregion Includes
 
 template<typename TriggerHandler>

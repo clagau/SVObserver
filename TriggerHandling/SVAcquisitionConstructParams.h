@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVAcquisitionConstructParams
-//* .File Name       : $Workfile:   SVAcquisitionConstructParams.h  $
+//* .File Name       : $Workfile:   TriggerHandling/SVAcquisitionConstructParams.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:23:50  $

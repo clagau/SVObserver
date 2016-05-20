@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVREsultList.h
+//* .Module Name     : SVResultList.h
 //* .File Name       : $Workfile:   SVResultList.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
@@ -16,7 +16,6 @@
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVInfoStructs.h"
 #include "ResultViewReferences.h"
-#include "SVObserver.h"
 #pragma endregion Includes
 
 
@@ -25,7 +24,6 @@ class SVResultClass;
 class SVResultViewClass;
 class SVTaskObjectClass;
 class SVToolSetClass;
-
 
 enum SVInspectionStateEnum;
 #pragma endregion Declarations
@@ -81,7 +79,7 @@ public:
 	int AddResults( SVResultsWrapperClass* pSVRWC, LPCTSTR lptitle );
 	
 	
-	bool LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
+	bool LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent);
 	
 	void GetNameSet(SVStringSet& SelectedNamesRaw);
 	bool Insert(const SVString& param1);

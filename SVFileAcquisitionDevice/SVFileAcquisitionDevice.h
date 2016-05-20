@@ -13,13 +13,13 @@
 
 #include "SVTriggerLibrary/SVInternalTrigger.h"
 #include "SVTriggerLibrary/SVTriggerCallbackMap.h"
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVFileAcquisitionDeviceExports.h"
 #include "SVFileCamera.h"
 
 class SVAcquisitionBufferInterface;
-struct SVCallbackStruct;
+
 
 class SVFileAcquisitionDevice
 {
@@ -64,8 +64,8 @@ public:
 
 	virtual HRESULT InternalTriggerEnable( unsigned long p_ulIndex );
 	virtual HRESULT InternalTrigger( unsigned long p_ulIndex );
-	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_ulIndex, SVCallbackStruct& callbackStruct );
-	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_ulIndex, SVCallbackStruct& callbackStruct );
+	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_ulIndex, SvTh::SVCallbackStruct& callbackStruct );
+	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_ulIndex, SvTh::SVCallbackStruct& callbackStruct );
 	virtual HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_ulIndex );
 
 	// Trigger stuff...
@@ -75,8 +75,8 @@ public:
 	unsigned long TriggerGetHandle(unsigned long p_ulIndex);
 
 	virtual HRESULT TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName);
-	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SVCallbackStruct p_Callback);
-	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SVCallbackStruct p_Callback);
+	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback);
+	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback);
 	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long p_ulHandle);
 	virtual HRESULT TriggerStart(unsigned long p_ulHandle);
 	virtual HRESULT TriggerStop(unsigned long p_ulHandle);

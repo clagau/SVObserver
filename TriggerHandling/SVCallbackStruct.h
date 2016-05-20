@@ -3,7 +3,7 @@
 // * All Rights Reserved
 // ******************************************************************************
 // * .Module Name     : SVCallbackStruct
-// * .File Name       : $Workfile:   SVCallbackStruct.h  $
+// * .File Name       : $Workfile:   TriggerHandling/SVCallbackStruct.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   25 Apr 2013 13:01:00  $
@@ -14,20 +14,25 @@
 typedef HRESULT ( CALLBACK *SVCallbackPtr )( void *,   /* Owner */
                                              void * ); /* Data */ 
 
-struct SVCallbackStruct  
-{
-	SVCallbackStruct();
-	SVCallbackStruct( const SVCallbackStruct &p_rOriginal );
-	virtual ~SVCallbackStruct();
+namespace Seidenader { namespace TriggerHandling {
 
-	const SVCallbackStruct &operator=( const SVCallbackStruct &p_rOriginal );
+	struct SVCallbackStruct  
+	{
+		SVCallbackStruct();
+		SVCallbackStruct( const SVCallbackStruct &p_rOriginal );
+		virtual ~SVCallbackStruct();
 
-	SVCallbackPtr m_pCallback;
+		const SVCallbackStruct &operator=( const SVCallbackStruct &p_rOriginal );
 
-	void *m_pOwner;
-	void *m_pData;
-};
+		SVCallbackPtr m_pCallback;
 
-bool operator==( const SVCallbackStruct &p_rLeft,
-                 const SVCallbackStruct &p_rRight );
+		void *m_pOwner;
+		void *m_pData;
+	};
 
+	bool operator==( const SVCallbackStruct &p_rLeft,
+					 const SVCallbackStruct &p_rRight );
+
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;

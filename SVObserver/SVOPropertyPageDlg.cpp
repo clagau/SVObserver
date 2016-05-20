@@ -33,9 +33,8 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
 #include "SVPPQObject.h"
-#include "SVSoftwareTriggerDefaults.h"
 #include "SVPPQConstants.h"
-#include "SVHardwareManifest.h"
+#include "TriggerHandling/SVHardwareManifest.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -333,7 +332,7 @@ void CSVOPropertyPageDlg::SetupAdvancedCamera()
 			pRoot->SetInfoText(_T("Advanced camera properties"));
 			
 			ASSERT( m_eProduct != SVIM_PRODUCT_TYPE_UNKNOWN );
-			if ( SVHardwareManifest::IsDigitalSVIM( m_eProduct ) )
+			if ( SvTh::SVHardwareManifest::IsDigitalSVIM( m_eProduct ) )
 			{
 				// load options based on camera file
 				const SVDeviceParamCollection& rCameraFileParams = m_CameraObj.GetCameraFileParams();
@@ -829,7 +828,7 @@ void CSVOPropertyPageDlg::SetupAdvancedTrigger()
 			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
 			pEdit->SetLabelText(_T("Timer Period"));
 			CString txt;
-			txt.Format(_T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SVSoftwareTriggerDefaults::MinTimerPeriod);
+			txt.Format(_T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTh::MinTimerPeriod);
 			pEdit->SetInfoText(txt);
 			
 			pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
@@ -1467,7 +1466,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					m_Tree.FindItem(ctrlID)->GetItemValue(lType);
 
 					// validate against minimum timer period
-					if (lType < SVSoftwareTriggerDefaults::MinTimerPeriod)
+					if (lType < SvTh::MinTimerPeriod)
 					{
 						MessageBeep(MB_ICONASTERISK);
 						*plResult = S_FALSE;

@@ -19,7 +19,7 @@
 #include "SVDigitalOutputObject.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
-#include "SVHardwareManifest.h"
+#include "TriggerHandling/SVHardwareManifest.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
@@ -195,7 +195,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 
 		if ( m_pIODoc )
 		{
-			if ( SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
+			if ( SvTh::SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
 			{
 				pIOEntry = pConfig->GetRaidErrorBit();
 				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) )

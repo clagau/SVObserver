@@ -12,7 +12,7 @@
 #pragma once
 
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 
 class SVAcquisitionBufferInterface;
 

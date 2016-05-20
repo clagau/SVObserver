@@ -20,6 +20,7 @@
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -825,7 +826,7 @@ void CSVIOTESTDlg::OnStartTriggers()
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
-	SVCallbackStruct l_svCallback;
+	SvTh::SVCallbackStruct l_svCallback;
 
 	l_svCallback.m_pCallback = SVCallback;
 	l_svCallback.m_pOwner = this;
@@ -940,7 +941,7 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 void CSVIOTESTDlg::OnStopTriggers() 
 {
-	SVCallbackStruct l_svCallback;
+	SvTh::SVCallbackStruct l_svCallback;
 
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);

@@ -33,7 +33,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVEquation.h"
 #include "SVImageClass.h"
-#include "SVObserver.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
 #include "SVInputObjectList.h"
@@ -48,11 +47,10 @@
 #include "SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVIODoc.h"
-#include "SVTriggerClass.h"
+#include "TriggerHandling/SVTriggerClass.h"
 #include "SVIPDoc.h"
 #include "SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
-#include "SVObserver.h"
 #include "SVUserMaskOperatorClass.h"
 #pragma region Includes
 
@@ -70,7 +68,7 @@ namespace sv_xml
 
 		void PrintXMLDoc(Writer  writer) const;
 		void WriteTriggers(Writer  writer) const;
-		void WriteTrigger(Writer  writer, SVTriggerObject* pTrigger) const;
+		void WriteTrigger(Writer  writer, SvTh::SVTriggerObject* pTrigger) const;
 		void WriteCameras(Writer  writer) const;
 		void WriteCamera(Writer  writer, SVVirtualCamera* pCamera) const;
 		void WriteHardwareAcq(Writer  writer, SVVirtualCamera* pCamera) const;

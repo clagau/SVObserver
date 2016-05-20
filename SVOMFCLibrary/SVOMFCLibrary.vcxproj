@@ -121,9 +121,6 @@
     </ClCompile>
     <ClCompile Include="StringMunge.cpp" />
     <ClCompile Include="SVBoolValueDeviceParam.cpp" />
-    <ClCompile Include="SVCallbackListArrayClass.cpp" />
-    <ClCompile Include="SVCallbackListClass.cpp" />
-    <ClCompile Include="SVCallbackStruct.cpp" />
     <ClCompile Include="SVCustomDeviceParam.cpp" />
     <ClCompile Include="SVDeviceParam.cpp" />
     <ClCompile Include="SVDeviceParamCollection.cpp" />
@@ -147,9 +144,6 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="StringMunge.h" />
     <ClInclude Include="SVBoolValueDeviceParam.h" />
-    <ClInclude Include="SVCallbackListArrayClass.h" />
-    <ClInclude Include="SVCallbackListClass.h" />
-    <ClInclude Include="SVCallbackStruct.h" />
     <ClInclude Include="SVCustomDeviceParam.h" />
     <ClInclude Include="SVDataItemManagerTemplate.h" />
     <ClInclude Include="SVDeviceParam.h" />

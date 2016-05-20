@@ -17,7 +17,7 @@
 #include "SVImageLibrary/SVLut.h"
 #include "SVOMFCLibrary/SVi64ValueDeviceParam.h"
 #include "SVFileAcquisitionClass.h"
-#include "SVHardwareManifest.h"
+#include "TriggerHandling/SVHardwareManifest.h"
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
@@ -52,7 +52,7 @@ SVDigitizerProcessingClass::~SVDigitizerProcessingClass()
 
 void SVDigitizerProcessingClass::Startup()
 {
-	const SVAcquisitionConstructParamsVector& l_rAcqParams = SVHardwareManifest::Instance().GetAcquisitionDeviceParams();
+	const SVAcquisitionConstructParamsVector& l_rAcqParams = SvTh::SVHardwareManifest::Instance().GetAcquisitionDeviceParams();
 
 	SVAcquisitionConstructParamsVector::const_iterator l_Iter = l_rAcqParams.begin();
 

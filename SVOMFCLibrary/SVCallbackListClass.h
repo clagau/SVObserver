@@ -12,7 +12,7 @@
 #pragma once
 
 #include "SVContainerLibrary/SVList.h"
-#include "SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 
 class SVCallbackListClass : public SVList< SVCallbackStruct >
 {

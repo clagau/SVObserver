@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVOTriggerObj.h"
-#include "SVSoftwareTriggerDefaults.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -22,7 +21,7 @@ static char THIS_FILE[]=__FILE__;
 SVOTriggerObj::SVOTriggerObj(const SVString& name, int nDig)
 : m_sTriggerDisplayName(name)
 , m_iDigNumber(nDig)
-, m_timerPeriod(SVSoftwareTriggerDefaults::TimerPeriod)
+, m_timerPeriod(SvTh::TimerPeriod)
 , m_bSoftwareTrigger(false)
 {
 }
@@ -65,7 +64,7 @@ void SVOTriggerObj::SetSoftwareTrigger(bool bSoftwareTrigger)
 
 bool SVOTriggerObj::IsAcquisitionTrigger() const
 {
-	bool bRet = (m_sTriggerDisplayName.find(SV_CAMERA_TRIGGER_NAME) == 0);
+	bool bRet = (m_sTriggerDisplayName.find(SvTh::CameraTriggerName) == 0);
 	return bRet;
 }
 

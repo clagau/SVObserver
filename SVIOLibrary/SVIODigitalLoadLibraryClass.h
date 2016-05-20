@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );

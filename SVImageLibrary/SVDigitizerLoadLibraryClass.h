@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 #include "SVOMFCLibrary/SVOMFCLibrary.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVAcquisitionBufferInterface.h"
@@ -83,8 +83,8 @@ public:
 	
 	HRESULT InternalTriggerEnable( SVHANDLE p_hHandle );
 	HRESULT InternalTrigger( SVHANDLE p_hHandle );
-	HRESULT InternalTriggerRegister( SVHANDLE p_hHandle, SVCallbackStruct &p_rCallback );
-	HRESULT InternalTriggerUnregister( SVHANDLE p_hHandle, SVCallbackStruct &p_rCallback );
+	HRESULT InternalTriggerRegister( SVHANDLE p_hHandle, SvTh::SVCallbackStruct &p_rCallback );
+	HRESULT InternalTriggerUnregister( SVHANDLE p_hHandle, SvTh::SVCallbackStruct &p_rCallback );
 	HRESULT InternalTriggerUnregisterAll( SVHANDLE p_hHandle );
 	
 	HRESULT DestroyBuffers( SVHANDLE p_hHandle );

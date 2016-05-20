@@ -103,13 +103,13 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 {
-	typedef std::map<std::string, SVTriggerObject*> TriggerMap;
+	typedef std::map<std::string, SvTh::SVTriggerObject*> TriggerMap;
 	TriggerMap triggers;
 	long sz = 0;
 	if( nullptr != m_cfo ){ sz = m_cfo->GetTriggerCount(); }
 	for(long i = 0; i < sz; ++i)
 	{
-		SVTriggerObject* pTrigger( nullptr );
+		SvTh::SVTriggerObject* pTrigger( nullptr );
 		if( nullptr != m_cfo ){ pTrigger = m_cfo->GetTrigger(i); }
 		if( nullptr != pTrigger )
 		{
@@ -127,7 +127,7 @@ inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SVTriggerObject* pTrigger) const
+inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTh::SVTriggerObject* pTrigger) const
 {
 	ASSERT( nullptr != pTrigger );
 	if(nullptr == pTrigger ){ return; }
@@ -347,7 +347,7 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		writer->WriteAttributeString(nullptr, L"OutputResetDelay", nullptr, _itow(lResetDelay, buff, 10));
 		writer->WriteAttributeString(nullptr, L"OutputDelayTime", nullptr, _itow(lDelayTime, buff, 10));
 		
-		SVTriggerObject* pTrigger;
+		SvTh::SVTriggerObject* pTrigger;
 		pPPQ->GetTrigger(pTrigger);
 		if ( nullptr != pTrigger )
 		{

@@ -19,19 +19,19 @@ SVFileAcquisitionInitiator::~SVFileAcquisitionInitiator()
 {
 }
 
-SVFileAcquisitionInitiator::SVFileAcquisitionInitiator(SVAcquisitionInitiator& rAcquisitionInitiator)
+SVFileAcquisitionInitiator::SVFileAcquisitionInitiator(SvTh::SVAcquisitionInitiator & rAcquisitionInitiator)
 : m_acquisitionInitiator(rAcquisitionInitiator)
 {
 }
 
-void SVFileAcquisitionInitiator::Create( SVAcquisitionInitiator& rFunc )
+void SVFileAcquisitionInitiator::Create( SvTh::SVAcquisitionInitiator & rFunc )
 {
 	m_acquisitionInitiator = rFunc;
 }
 
 void SVFileAcquisitionInitiator::Destroy()
 {
-	m_acquisitionInitiator = SVAcquisitionInitiator();
+	m_acquisitionInitiator = SvTh::SVAcquisitionInitiator ();
 }
 
 HRESULT SVFileAcquisitionInitiator::FireAcquisitionTrigger()

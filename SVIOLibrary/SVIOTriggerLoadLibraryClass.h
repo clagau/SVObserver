@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
@@ -40,8 +40,8 @@ public:
 	HRESULT GetCount( unsigned long *p_pulCount );
 	HRESULT GetHandle( unsigned long *p_pulHandle, unsigned long p_ulIndex );
 	HRESULT GetName( unsigned long p_ulHandle, BSTR *p_pbstrName );
-	HRESULT Register( unsigned long p_ulHandle, SVCallbackStruct &p_rCallback );
-	HRESULT Unregister( unsigned long p_ulHandle, SVCallbackStruct &p_rCallback );
+	HRESULT Register( unsigned long p_ulHandle, SvTh::SVCallbackStruct &p_rCallback );
+	HRESULT Unregister( unsigned long p_ulHandle, SvTh::SVCallbackStruct &p_rCallback );
 	HRESULT UnregisterAll( unsigned long p_ulHandle );
 	HRESULT Start( unsigned long p_ulHandle );
 	HRESULT Stop( unsigned long p_ulHandle );

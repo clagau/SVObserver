@@ -24,7 +24,10 @@
 #include "SVInspectionProcess.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVPPQObject.h"
-#include "SVTriggerObject.h"
+#include "TriggerHandling/SVTriggerObject.h"
+#include "TriggerHandling/SVTriggerClass.h"
+#include "TriggerHandling/SVSoftwareTriggerClass.h"
+#include "TriggerHandling/SVCameraTriggerClass.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "RemoteMonitorList.h"
@@ -39,8 +42,6 @@ class SVIOController;
 class SVNavigateTree;
 class SVRemoteOutputGroup;
 class SVRemoteOutputObject;
-class SVCameraTriggerClass;
-class SVSoftwareTriggerClass;
 class SVPPQObject;
 
 struct SVConfigurationAcquisitionDeviceInfoStruct;
@@ -205,11 +206,11 @@ public:
 										SVLut*& rpLut,
 										SVDeviceParamCollection*& rpDeviceParams ) const;
 
-	bool AddTrigger( SVTriggerObject* pTrigger );
-	bool RemoveTrigger( SVTriggerObject* pTrigger );
+	bool AddTrigger( SvTh::SVTriggerObject* pTrigger );
+	bool RemoveTrigger( SvTh::SVTriggerObject* pTrigger );
 	long GetTriggerCount( ) const;
-	SVTriggerObject* GetTrigger( long lIndex ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVTriggerObject** ppTrigger ) const;
+	SvTh::SVTriggerObject* GetTrigger( long lIndex ) const;
+	BOOL GetChildObjectByName( LPCTSTR tszName, SvTh::SVTriggerObject** ppTrigger ) const;
 
 	bool AddPPQ( SVPPQObject* pPPQ );
 	bool RemovePPQ( SVPPQObject* pPPQ );
@@ -382,8 +383,8 @@ private:
 	void SaveDeviceParamSpecial( SVObjectXMLWriter& rWriter, const SVDeviceParam* pParam ) const;
 	HRESULT LoadDeviceParamSpecial( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam );
 
-	void SetupSoftwareTrigger(SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
-	void SetupCameraTrigger(SVCameraTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod);
+	void SetupSoftwareTrigger(SvTh::SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
+	void SetupCameraTrigger(SvTh::SVCameraTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod);
 
 	void GetRemoteInputInspections( const SVString& p_rRemoteInputName, SVInspectionSet& p_rInspections ) const;
 
@@ -398,7 +399,7 @@ private:
 	//************************************
 	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const SVString& listName, MonitoredObjectList& rList );
 
-	SVTriggerObjectArray        m_arTriggerArray;
+	SvTh::SVTriggerObjectArray        m_arTriggerArray;
 	SVPPQObjectArray            m_arPPQArray;
 	SVVirtualCameraArray        m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;

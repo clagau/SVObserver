@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary\SVString.h"
-#include "SVTriggerConstants.h"
+#include "TriggerHandling/SVTriggerConstants.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 

@@ -81,8 +81,8 @@
 #include "SVIOController.h"
 
 #include "SVDirectX.h"
-#include "SVHardwareManifest.h"
-#include "SVTriggerProcessingClass.h"
+#include "TriggerHandling/SVHardwareManifest.h"
+#include "TriggerHandling/SVTriggerProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVSocketLibrary\SVSocketLibrary.h"
 #include "SVInputStreamManager.h"
@@ -1997,7 +1997,7 @@ void SVObserverApp::OnTriggerSettings()
 {
 	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
 	// set dirty handler to the insert method of m_dirty_triggers set
-	SVSoftwareTriggerDlg::Instance().SetDirtyHandler(boost::bind(&std::set<SVTriggerObject*>::insert, &m_dirty_triggers, _1));
+	SVSoftwareTriggerDlg::Instance().SetDirtyHandler(boost::bind(&std::set<SvTh::SVTriggerObject*>::insert, &m_dirty_triggers, _1));
 }
 
 void SVObserverApp::OnUpdateTriggerSettings(CCmdUI *pCmdUI)
@@ -2227,8 +2227,8 @@ BOOL SVObserverApp::InitInstance()
 	// Startup Matrox App
 	SVMatroxApplicationInterface::Startup();
 
-	SVHardwareManifest::Instance().Startup();
-	SVTriggerProcessingClass::Instance().Startup();
+	SvTh::SVHardwareManifest::Instance().Startup();
+	SvTh::SVTriggerProcessingClass::Instance().Startup();
 	SVDigitizerProcessingClass::Instance().Startup();
 
 	InitializeSecurity();
@@ -2648,9 +2648,9 @@ int SVObserverApp::ExitInstance()
 
 	m_mgrRemoteFonts.Shutdown();
 
-	SVTriggerProcessingClass::Instance().Shutdown();
+	SvTh::SVTriggerProcessingClass::Instance().Shutdown();
 	SVDigitizerProcessingClass::Instance().Shutdown();
-	SVHardwareManifest::Instance().Shutdown();
+	SvTh::SVHardwareManifest::Instance().Shutdown();
 
 	SVObjectManagerClass::Instance().Shutdown();
 	SVClassRegisterListClass::Instance().Shutdown();
@@ -4468,7 +4468,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 	{
 		// Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
 		int numTriggers = 0;
-		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
+		const SvTh::SVIMTypeInfoStruct& info = SvTh::SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
 		l_svCapable.SetNonIOSVIM(info.m_MaxTriggers);
 	}
 	else 
@@ -4839,7 +4839,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 
 		if ( S_OK == hr )
 		{
-			if (SVHardwareManifest::IsMatroxGige(eProductType))
+			if (SvTh::SVHardwareManifest::IsMatroxGige(eProductType))
 			{
 				SVGigeCameraManagerDlg dlg;
 				dlg.DoModal();
@@ -5121,7 +5121,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 						return;
 					}
 					
-					SVTriggerObject* pTrigger( nullptr );
+					SvTh::SVTriggerObject* pTrigger( nullptr );
 					pPPQ->GetTrigger( pTrigger );
 					if ( nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
 					{
@@ -5206,7 +5206,7 @@ HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts ) const
 			if( nullptr != pPPQ )
 			{
 				CString l_strTmp;
-				SVTriggerObject* pTrigger( nullptr );
+				SvTh::SVTriggerObject* pTrigger( nullptr );
 				//If returns true has valid pointer
 				if( pPPQ->GetTrigger( pTrigger ))
 				{
@@ -5650,7 +5650,7 @@ void SVObserverApp::Start()
 				pPPQ->PrepareGoOnline();
 				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
 
-				SVTriggerObject* pTrigger( nullptr );
+				SvTh::SVTriggerObject* pTrigger( nullptr );
 				pPPQ->GetTrigger(pTrigger);
 				if ( nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
 				{
@@ -5972,7 +5972,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
 
-		if ( S_OK != SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLTriggers ) )
+		if ( S_OK != SvTh::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLTriggers ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
@@ -6015,7 +6015,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 
 HRESULT SVObserverApp::CloseTriggerDLL()
 {
-	SVTriggerProcessingClass::Instance().clear();
+	SvTh::SVTriggerProcessingClass::Instance().clear();
 
 	m_svDLLTriggers.Close();
 	m_svDLLSoftwareTriggers.Close();
@@ -6035,7 +6035,7 @@ HRESULT SVObserverApp::LoadSoftwareTriggerDLL()
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
 
-		if ( S_OK != SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLSoftwareTriggers ) )
+		if ( S_OK != SvTh::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLSoftwareTriggers ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
@@ -6058,7 +6058,7 @@ HRESULT SVObserverApp::LoadAcquisitionTriggerDLL()
 
 		if( S_OK == ResultLoadDLL )
 		{
-			if( S_OK != SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) )
+			if( S_OK != SvTh::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) )
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
 			}

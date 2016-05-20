@@ -25,7 +25,7 @@
 #include "SVMFCControls\SVOConfigNameEdit.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVIOBoardCapabilities.h"
-#include "SVIMTypeInfoStruct.h"
+#include "TriggerHandling/SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
 #include "ObjectInterfaces\DataStructures.h"
 #pragma endregion Includes

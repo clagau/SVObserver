@@ -12,20 +12,20 @@
 #pragma once
 
 #pragma region Includes
-#include "SVAcquisitionInitiator.h"
+#include "TriggerHandling/SVAcquisitionInitiator.h"
 #pragma region Includes
 
 class SVFileAcquisitionInitiator
 {
 private:
-	SVAcquisitionInitiator m_acquisitionInitiator;
+	SvTh::SVAcquisitionInitiator  m_acquisitionInitiator;
 
 public:
 	SVFileAcquisitionInitiator();
-	SVFileAcquisitionInitiator(SVAcquisitionInitiator& rAcquisitionInitiator);
+	SVFileAcquisitionInitiator(SvTh::SVAcquisitionInitiator & rAcquisitionInitiator);
 	~SVFileAcquisitionInitiator();
 
-	void Create( SVAcquisitionInitiator& rFunc );
+	void Create( SvTh::SVAcquisitionInitiator & rFunc );
 	void Destroy();
 
 	HRESULT FireAcquisitionTrigger();

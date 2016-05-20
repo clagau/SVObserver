@@ -17,7 +17,7 @@
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #include "SVOMFCLibrary/SVStringValueDeviceParam.h"
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 
 // General Export Functions
 
@@ -95,7 +95,7 @@ HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVCallbackPtr p_pCal
 
 	if ( nullptr != p_pCallback )
 	{
-		SVCallbackStruct l_Callback;
+		SvTh::SVCallbackStruct l_Callback;
 
 		l_Callback.m_pCallback = p_pCallback;
 		l_Callback.m_pOwner = p_pOwner;
@@ -114,7 +114,7 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVCallbackPtr p_pC
 
 	if ( nullptr != p_pCallback )
 	{
-		SVCallbackStruct l_Callback;
+		SvTh::SVCallbackStruct l_Callback;
 
 		l_Callback.m_pCallback = p_pCallback;
 		l_Callback.m_pOwner = p_pOwner;
@@ -425,7 +425,7 @@ HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SVF
 	
 	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
-		SVCallbackStruct l_Callback;
+		SvTh::SVCallbackStruct l_Callback;
 		l_Callback.m_pCallback = p_pCallback;
 		l_Callback.m_pOwner = p_pOwner;
 		l_Callback.m_pData = p_pData;
@@ -444,7 +444,7 @@ HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, S
 	
 	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
-		SVCallbackStruct l_Callback;
+		SvTh::SVCallbackStruct l_Callback;
 		l_Callback.m_pCallback = p_pCallback;
 		l_Callback.m_pOwner = p_pOwner;
 		l_Callback.m_pData = p_pData;

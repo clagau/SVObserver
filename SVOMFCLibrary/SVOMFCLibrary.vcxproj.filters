@@ -29,15 +29,6 @@
     <ClCompile Include="SVBoolValueDeviceParam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVCallbackListArrayClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCallbackListClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCallbackStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDeviceParamCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -101,15 +92,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVBoolValueDeviceParam.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCallbackListArrayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCallbackListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCallbackStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDeviceParamCollection.h">

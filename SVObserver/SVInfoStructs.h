@@ -28,6 +28,7 @@
 #include "SVIOEntryHostStruct.h"
 #include "SVValueObjectReference.h"
 #include "SVRunControlLibrary/ProductWorkloadInformation.h" 
+#include "TriggerHandling/SVTriggerObject.h"
 #pragma endregion Includes
 
 enum SVProductInspectedState
@@ -47,7 +48,6 @@ enum SVProductInspectedState
 
 class SVInputObjectList;
 class SVOutputObjectList;
-class SVTriggerObject;
 class SVPPQObject;
 class SVImageClass;
 class SVVirtualCamera;
@@ -142,30 +142,6 @@ struct SVPPQInfoStruct
 	SVDataManagerHandle m_ResultImagePublishedDMIndexHandle;
 
 	SVIOEntryStructVector m_InputData;
-};
-
-
-struct SVTriggerInfoStruct 
-{
-	SVTriggerInfoStruct();
-	SVTriggerInfoStruct( const SVTriggerInfoStruct& p_rsvObject );
-	virtual ~SVTriggerInfoStruct();
-
-	const SVTriggerInfoStruct& operator=( const SVTriggerInfoStruct& p_rsvObject );
-
-	void Reset();
-	void Init();
-
-	BOOL bValid;
-	SVTriggerObject* pTrigger;
-	long lTriggerCount;
-	bool m_ToggleState;
-	SVClock::SVTimeStamp m_BeginProcess;
-	SVClock::SVTimeStamp m_ToggleTimeStamp;
-	SVClock::SVTimeStamp m_CallbackReceived;
-	SVClock::SVTimeStamp m_PushedOutputs;
-	SVClock::SVTimeStamp m_PreviousTrigger;
-	boost::any m_Data;
 };
 
 
@@ -293,7 +269,7 @@ struct SVProductInfoStruct
 
 	ProductWorkloadInformation m_WorkloadInfo;
 
-	SVTriggerInfoStruct oTriggerInfo;
+	SvTh::SVTriggerInfoStruct oTriggerInfo;
 	SVInputsInfoStruct oInputsInfo;
 	SVOutputsInfoStruct oOutputsInfo;
 	SVPPQInfoStruct oPPQInfo;

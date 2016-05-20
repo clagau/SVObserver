@@ -46,7 +46,7 @@
 #include "SVFileNameArrayClass.h"
 #include "SVImageLibrary\SVLightReference.h"
 #include "SVIODoc.h"
-#include "SVTriggerClass.h"
+#include "TriggerHandling/SVTriggerClass.h"
 #include "SVIPDoc.h"
 #include "SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
@@ -1797,7 +1797,7 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 	if( nullptr != pConfig) { lSize = pConfig->GetTriggerCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
+		SvTh::SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
 		if( nullptr != pTrigger )
 		{
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
@@ -1944,7 +1944,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Trigger:"));
 			
-			SVTriggerObject* pTrigger( nullptr );
+			SvTh::SVTriggerObject* pTrigger( nullptr );
 			pPPQ->GetTrigger(pTrigger);
 			sValue.Empty();
 			if(nullptr != pTrigger ) { sValue = pTrigger->GetName();}

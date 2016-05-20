@@ -18,7 +18,7 @@
 // SoftwareTriggerDlg dialog
 namespace
 {
-	void dummy(SVTriggerObject*) {}
+	void dummy(SvTh::SVTriggerObject*) {}
 }
 
 IMPLEMENT_DYNAMIC(SVSoftwareTriggerDlg, CDialog)
@@ -271,7 +271,7 @@ void SVSoftwareTriggerDlg::ClearTriggers()
 	m_triggerTabs.DeleteAllItems();
 }
 
-bool SVSoftwareTriggerDlg::AddTrigger(SVTriggerObject* pTrigger)
+bool SVSoftwareTriggerDlg::AddTrigger(SvTh::SVTriggerObject* pTrigger)
 {
 	ASSERT( nullptr != pTrigger );
 	if( nullptr == pTrigger ){ return false; }

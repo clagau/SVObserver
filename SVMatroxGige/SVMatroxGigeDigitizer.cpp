@@ -239,12 +239,12 @@ void SVMatroxGigeDigitizer::SetLineState(bool bState)
 	m_lineState = bState;
 }
 
-const SVCallbackStruct& SVMatroxGigeDigitizer::GetTriggerCallback() const
+const SvTh::SVCallbackStruct& SVMatroxGigeDigitizer::GetTriggerCallback() const
 {
 	return m_triggerCallback;
 }
 
-void SVMatroxGigeDigitizer::SetTriggerCallback(SVCallbackStruct& callback)
+void SVMatroxGigeDigitizer::SetTriggerCallback(SvTh::SVCallbackStruct& callback)
 {
 	m_triggerCallback = callback;
 }

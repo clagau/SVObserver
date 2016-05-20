@@ -407,12 +407,12 @@ void SVFileCamera::SetLineState(bool bState)
 	m_lineState = bState;
 }
 
-const SVCallbackStruct& SVFileCamera::GetTriggerCallback() const
+const SvTh::SVCallbackStruct& SVFileCamera::GetTriggerCallback() const
 {
 	return m_triggerCallback;
 }
 
-void SVFileCamera::SetTriggerCallback(SVCallbackStruct& callback)
+void SVFileCamera::SetTriggerCallback(SvTh::SVCallbackStruct& callback)
 {
 	m_triggerCallback = callback;
 }

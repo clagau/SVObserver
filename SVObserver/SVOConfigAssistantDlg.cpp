@@ -35,12 +35,12 @@
 #include "SVDigitizerProcessingClass.h"
 #include "SVAcquisitionClass.h"
 #include "SVIPDoc.h"
-#include "SVTriggerClass.h"
+#include "TriggerHandling/SVTriggerClass.h"
 #include "SVMessage/SVMessage.h"
-#include "SVTriggerProcessingClass.h"
+#include "TriggerHandling/SVTriggerProcessingClass.h"
 #include "SVInspectionImporter.h"
 #include "SVImportProgress.h"
-#include "SVHardwareManifest.h"
+#include "TriggerHandling/SVHardwareManifest.h"
 #include "TextDefinesSvO.h"
 #include "SVOGui\GlobalConstantConflictDlg.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
@@ -272,7 +272,7 @@ void CSVOConfigAssistantDlg::SetupSystemComboBox()
 	SVIMProductEnumList list; 
 	typedef std::insert_iterator<SVIMProductEnumList> Insertor;
 	Insertor insertor(list, list.begin());
-	SVHardwareManifest::GetSupportedSVIMList( insertor );
+	SvTh::SVHardwareManifest::GetSupportedSVIMList( insertor );
 
 	for (SVIMProductEnumList::iterator l_Iter = list.begin();l_Iter != list.end(); ++l_Iter)
 	{
@@ -283,7 +283,7 @@ void CSVOConfigAssistantDlg::SetupSystemComboBox()
 	if ( !m_bNewConfiguration )
 	{
 		const CString& l_Name = GetNameFromProductID( m_lConfigurationType );
-		const SVIMTypeInfoStruct& l_SVIMInfo = SVHardwareManifest::GetSVIMTypeInfo( m_lConfigurationType );
+		const SvTh::SVIMTypeInfoStruct& l_SVIMInfo = SvTh::SVHardwareManifest::GetSVIMTypeInfo( m_lConfigurationType );
 		if ( !l_SVIMInfo.m_Supported )
 		{
 			m_ctlAvailableSys.AddString( l_Name );
@@ -352,7 +352,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 
 	if ( ( !m_bNewConfiguration ) || ( m_bModified ) )
 	{
-		if ( SVHardwareManifest::IsCompatible(l_ConfigurationType, CurrentSvimType) )
+		if ( SvTh::SVHardwareManifest::IsCompatible(l_ConfigurationType, CurrentSvimType) )
 		{
 			m_bModified = TRUE;
 
@@ -362,8 +362,8 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 		else
 		{
 			// Check if I/O digital to Non I/O digital or vice versa
-			if ((SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && !SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)) ||
-				(!SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
+			if ((SvTh::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && !SvTh::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)) ||
+				(!SvTh::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SvTh::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Config_SwitchResetQuestion, StdMessageParams, SvOi::Err_10138, 0, nullptr, MB_YESNO);
@@ -389,18 +389,18 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 					m_bModified = TRUE;
 					IsGood();
 
-					if ( SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
+					if ( SvTh::SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
 					{
 						ConvertToDigital(m_lConfigurationType);
 						SetupMessages();
-						if( SVHardwareManifest::IsDigitalSVIM( m_lSystemType ))
+						if( SvTh::SVHardwareManifest::IsDigitalSVIM( m_lSystemType ))
 						{
 							m_Page2.ShowCameraDlgBtn( SW_SHOW );
 						}
 					}
 					else
 					{
-						if ( SVHardwareManifest::IsDigitalSVIM( eType ) )
+						if ( SvTh::SVHardwareManifest::IsDigitalSVIM( eType ) )
 						{
 							ConvertToDigital(m_lConfigurationType); //eType);
 							m_Page2.DisableAdvanceBtn();
@@ -453,7 +453,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 // configuration type, this method will do nothing.
 void CSVOConfigAssistantDlg::UpdateAvailableSystems( SVIMProductEnum p_CurrentConfigurationType, SVIMProductEnum p_SelectedConfigurationType )
 {
-	const SVIMTypeInfoStruct& l_SVIMInfo = SVHardwareManifest::GetSVIMTypeInfo(p_CurrentConfigurationType);
+	const SvTh::SVIMTypeInfoStruct& l_SVIMInfo = SvTh::SVHardwareManifest::GetSVIMTypeInfo(p_CurrentConfigurationType);
 
 	if ( !l_SVIMInfo.m_Supported && p_CurrentConfigurationType != p_SelectedConfigurationType )
 	{
@@ -495,7 +495,7 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				CreateDefaultForSVIMDigital(2, SV_CAMERA_TRIGGER_NAME);
+				CreateDefaultForSVIMDigital(2, SvTh::CameraTriggerName);
 				break;
 			}
 			default:
@@ -795,11 +795,11 @@ CString CSVOConfigAssistantDlg::BuildTrgDig( const SVOTriggerObj& rTriggerObj) c
 
 	if (rTriggerObj.IsAcquisitionTrigger())
 	{
-		sDigName = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).c_str();
+		sDigName = SvTh::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).c_str();
 	}
 	else if (rTriggerObj.IsSoftwareTrigger())
 	{
-		sDigName = SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig).c_str();
+		sDigName = SvTh::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig).c_str();
 	}
 	else
 	{
@@ -814,13 +814,13 @@ CString CSVOConfigAssistantDlg::BuildTrgDig( const SVOTriggerObj& rTriggerObj) c
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			{
-				sDigName = SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig).c_str();
+				sDigName = SvTh::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig).c_str();
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				sDigName = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).c_str();
+				sDigName = SvTh::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).c_str();
 				break;
 			}
 		}
@@ -1013,7 +1013,7 @@ bool CSVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR triggerName) const
 	// - check if Trigger_Source_Option_N (Software Oneshot) is available
 
 	// check if Digital acquisition system
-	if ( SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
+	if ( SvTh::SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
 	{
 		// Get cameras attached to this trigger
 		// this is done by getting the ppq for this trigger and iterating the cameras attached to the same ppq
@@ -1061,7 +1061,7 @@ bool CSVOConfigAssistantDlg::IsCameraLineInputAllowed(LPCTSTR triggerName) const
 	// - check if Line Input Device parameter is available
 
 	// check if Digital acquisition system
-	if ( SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
+	if ( SvTh::SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
 	{
 		// Get cameras attached to this trigger
 		// this is done by getting the ppq for this trigger and iterating the cameras attached to the same ppq
@@ -1426,7 +1426,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectArray& aPPQsT
 				}
 
 				//check trigger...
-				SVTriggerObject* pTrigger( nullptr );
+				SvTh::SVTriggerObject* pTrigger( nullptr );
 				bRet = pPPQ->GetTrigger(pTrigger) && bRet;
 				if ( nullptr != pTrigger )
 				{
@@ -1828,7 +1828,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 	long lCfgTrgCnt = pConfig->GetTriggerCount();
 
 	// Check for Triggers removed
-	SVTriggerObject* pTrigger( nullptr );
+	SvTh::SVTriggerObject* pTrigger( nullptr );
 	for ( long lT = lCfgTrgCnt - 1; -1 < lT; lT-- )
 	{
 		pTrigger = pConfig->GetTrigger(lT);
@@ -1883,7 +1883,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 
 				if ( nullptr == pTrigger )
 				{
-					pTrigger = new SVTriggerObject;
+					pTrigger = new SvTh::SVTriggerObject;
 					pTrigger->SetName( sKey );
 				
 					bRet = nullptr != pTrigger && bRet;
@@ -1902,7 +1902,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 						pTrigger->SetSoftwareTrigger(false);
 					}
 
-					SVTriggerClass* psvDevice = SVTriggerProcessingClass::Instance().GetTrigger( sDeviceName );
+					SvTh::SVTriggerClass* psvDevice = SvTh::SVTriggerProcessingClass::Instance().GetTrigger( sDeviceName );
 
 					if ( nullptr != psvDevice )
 					{
@@ -2323,7 +2323,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 
 				if ( !sPPQTrigger.IsEmpty() )
 				{
-					SVTriggerObject* pTrigger( nullptr );
+					SvTh::SVTriggerObject* pTrigger( nullptr );
 					lSize = pConfig->GetTriggerCount();
 					for (long l = lSize -1; -1 < l; l--)
 					{
@@ -2622,7 +2622,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	CString sCameraFileName;
 
 	SVVirtualCamera* pcfgCamera( nullptr );
-	SVTriggerObject* pcfgTrigger( nullptr );
+	SvTh::SVTriggerObject* pcfgTrigger( nullptr );
 	SVInspectionProcess* pcfgInspection( nullptr );
 	SVPPQObject* pcfgPPQ( nullptr );
 
@@ -2990,7 +2990,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 							}
 							else
 							{
-								if ( SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
+								if ( SvTh::SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
 								{
 									CheckCamera( *pCameraObj, true );
 									CheckTriggers();
@@ -3561,7 +3561,7 @@ int CSVOConfigAssistantDlg::GetAllowedNumberOfDigs(BOOL bTrigger/* = FALSE*/)
 {
 	int iNumberAllowed = 0;
 
-	const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
+	const SvTh::SVIMTypeInfoStruct& info = SvTh::SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
 
 	if (bTrigger)
 	{
@@ -3576,7 +3576,7 @@ int CSVOConfigAssistantDlg::GetAllowedNumberOfDigs(BOOL bTrigger/* = FALSE*/)
 
 void CSVOConfigAssistantDlg::CheckAgainstCurrentList()
 {
-	const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
+	const SvTh::SVIMTypeInfoStruct& info = SvTh::SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
 
 	int iNumberDigitizersAllowed = info.m_MaxDigitizers;
 	int iNumberTriggersAllowed = info.m_MaxTriggers;
@@ -3765,7 +3765,7 @@ void CSVOConfigAssistantDlg::ClearMessages()
 void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 {
 	typedef std::map<CString, int> StringIntMap;
-	CString baseTriggerName = (!IsNonIOSVIM(eType) ? TRIGGER_FIXED_NAME : SV_CAMERA_TRIGGER_NAME);
+	CString baseTriggerName = (!IsNonIOSVIM(eType) ? TRIGGER_FIXED_NAME : SvTh::CameraTriggerName);
 	//get trigger count...
 	int iTriggerCount = m_TriggerList.GetTriggerListCount();
 	int iCameraCount = m_CameraList.GetCameraListCount();
@@ -4111,7 +4111,7 @@ void CSVOConfigAssistantDlg::SetupTriggerStrobeMessage()
 {
 	// Check the ioboard capabilities.  If it has less inverters than triggers 
 	// then display a warning message.
-	if ( SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
+	if ( SvTh::SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
 	{
 		if( m_svCapabilities.GetStrobeInverterCount() < m_TriggerList.GetTriggerListCount() )
 		{
@@ -4177,17 +4177,17 @@ SVIMProductEnum CSVOConfigAssistantDlg::GetProductIDFromName( const CString& p_N
 
 bool CSVOConfigAssistantDlg::IsNonIOSVIM(SVIMProductEnum productType) const
 {
-	return SVHardwareManifest::IsNonIOSVIM(productType);
+	return SvTh::SVHardwareManifest::IsNonIOSVIM(productType);
 }
 
 bool CSVOConfigAssistantDlg::IsGigeSystem() const
 {
-	return SVHardwareManifest::IsMatroxGige(GetProductType());
+	return SvTh::SVHardwareManifest::IsMatroxGige(GetProductType());
 }
 
 bool CSVOConfigAssistantDlg::IsDigitalSystem() const
 {
-	return SVHardwareManifest::IsDigitalSVIM(GetProductType());
+	return SvTh::SVHardwareManifest::IsDigitalSVIM(GetProductType());
 }
 
 bool CSVOConfigAssistantDlg::IsValidCamera(int iDig) const
@@ -4235,7 +4235,7 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 void CSVOConfigAssistantDlg::OnBnClickedCancel()
 {
 	// use m_TmpCameraList to get back the orginial camera information
-	if ( SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
+	if ( SvTh::SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
 	{
 		int iSize = m_TmpCameraList.GetCameraListCount();
 

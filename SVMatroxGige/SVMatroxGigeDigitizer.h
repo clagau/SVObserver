@@ -22,7 +22,7 @@
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
-#include "SVOMFCLibrary/SVCallbackStruct.h"
+#include "TriggerHandling/SVCallbackStruct.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxGigeCallbackStruct.h"
@@ -96,8 +96,8 @@ public:
 	void SetLineState(bool bState);
 	bool GetLineState() const;
 
-	const SVCallbackStruct& GetTriggerCallback() const;
-	void SetTriggerCallback(SVCallbackStruct& callback);
+	const SvTh::SVCallbackStruct& GetTriggerCallback() const;
+	void SetTriggerCallback(SvTh::SVCallbackStruct& callback);
 	void ClearTriggerCallback();
 
 #pragma region Member Variables
@@ -125,7 +125,7 @@ public:
 	SVAcquisitionBufferInterface* m_pBufferInterface;
 
 private:
-	SVCallbackStruct m_triggerCallback;
+	SvTh::SVCallbackStruct m_triggerCallback;
 #pragma endregion Member Variables
 };
 

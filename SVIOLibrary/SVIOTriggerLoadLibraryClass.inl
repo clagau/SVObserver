@@ -171,7 +171,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetName( unsigned long p_ulHandle, B
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long p_ulHandle, SVCallbackStruct &p_rCallback )
+inline HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long p_ulHandle, SvTh::SVCallbackStruct &p_rCallback )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -183,7 +183,7 @@ inline HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long p_ulHandle, 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long p_ulHandle, SVCallbackStruct &p_rCallback )
+inline HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long p_ulHandle, SvTh::SVCallbackStruct &p_rCallback )
 {
 	HRESULT l_hrOk = S_FALSE;
 

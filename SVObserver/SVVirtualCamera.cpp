@@ -667,7 +667,7 @@ HRESULT SVVirtualCamera::RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* trigg
 		SVAcquisitionClassPtr pAcq = GetAcquisitionDevice();
 		if( !( pAcq.empty() ) )
 		{
-			SVAcquisitionInitiator acqInitiator;
+			SvTh::SVAcquisitionInitiator  acqInitiator;
 
 			// need the digitizer name here ...
 			SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName());

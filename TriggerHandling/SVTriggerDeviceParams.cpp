@@ -10,20 +10,22 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVTriggerDeviceParams.h"
+#include "TriggerHandling/SVTriggerDeviceParams.h"
 
-SVTriggerDeviceParams::SVTriggerDeviceParams()
-: m_Name( _T( "" ) ), m_Channel( -1 )
-{
-}
+namespace Seidenader { namespace TriggerHandling {
 
-SVTriggerDeviceParams::SVTriggerDeviceParams( const SVTriggerDeviceParams& p_rObject )
-: m_Name( p_rObject.m_Name ), m_Channel( p_rObject.m_Channel )
-{
-}
+	SVTriggerDeviceParams::SVTriggerDeviceParams()
+	: m_Name( _T( "" ) ), m_Channel( -1 )
+	{
+	}
 
-SVTriggerDeviceParams::SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel )
-	: m_Name( (nullptr != p_szName) ? p_szName : SVString() ), m_Channel( p_Channel )
-{
-}
+	SVTriggerDeviceParams::SVTriggerDeviceParams( const SVTriggerDeviceParams& p_rObject )
+	: m_Name( p_rObject.m_Name ), m_Channel( p_rObject.m_Channel )
+	{
+	}
 
+	SVTriggerDeviceParams::SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel )
+		: m_Name( (nullptr != p_szName) ? p_szName : SVString() ), m_Channel( p_Channel )
+	{
+	}
+} /* namespace TriggerHandling */ } /* namespace Seidenader */

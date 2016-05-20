@@ -10,6 +10,13 @@
 //******************************************************************************
 #pragma once
 
-#define SV_SOFTWARE_TRIGGER_NAME _T("SoftwareTrigger")
-#define SV_CAMERA_TRIGGER_NAME _T("CameraTrigger")
+namespace Seidenader { namespace TriggerHandling {
+
+	static const TCHAR* SoftwareTriggerName = _T("SoftwareTrigger");
+	static const TCHAR* CameraTriggerName = _T("CameraTrigger");
+	static const long TimerPeriod = 200;
+	static const long MinTimerPeriod = 20;
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;
 

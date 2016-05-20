@@ -33,9 +33,9 @@
 #include "SVInfoStructs.h"
 #include "SVMessage/SVMessage.h"
 #include "SVDigitalOutputObject.h"
-#include "SVTriggerObject.h"
+#include "TriggerHandling/SVTriggerObject.h"
 #include "SVAcquisitionClass.h"
-#include "SVTriggerClass.h"
+#include "TriggerHandling/SVTriggerClass.h"
 #include "SVConfigurationObject.h"
 #include "SVRemoteInputObject.h"
 #include "SVPPQConstants.h"
@@ -64,7 +64,7 @@ const long g_lPPQExtraBufferSize = 50;
 HRESULT CALLBACK SVFinishTriggerCallback( void *pOwner, void *pCaller, void *pTriggerInfo )
 {
 	SVPPQObject* pPPQ = reinterpret_cast< SVPPQObject* >( pOwner );
-	SVTriggerInfoStruct* pInfo = reinterpret_cast< SVTriggerInfoStruct* >( pTriggerInfo );
+	SvTh::SVTriggerInfoStruct* pInfo = reinterpret_cast< SvTh::SVTriggerInfoStruct* >( pTriggerInfo );
 
 	BOOL bRet = ( nullptr != pPPQ && nullptr != pInfo );
 
@@ -876,7 +876,7 @@ BOOL SVPPQObject::GetInspectionTimeout( long& rlTimeoutMillisec ) const
 	return TRUE;
 }
 
-BOOL SVPPQObject::AttachTrigger( SVTriggerObject* pTrigger )
+BOOL SVPPQObject::AttachTrigger( SvTh::SVTriggerObject* pTrigger )
 {
 	if( nullptr == pTrigger ) { return FALSE; }
 
@@ -926,7 +926,7 @@ BOOL SVPPQObject::AttachInspection( SVInspectionProcess* pInspection )
 	return TRUE;
 }
 
-BOOL SVPPQObject::DetachTrigger( SVTriggerObject* pTrigger )
+BOOL SVPPQObject::DetachTrigger( SvTh::SVTriggerObject* pTrigger )
 {
 	BOOL bOk = nullptr != m_pTrigger && m_pTrigger == pTrigger;
 
@@ -1085,7 +1085,7 @@ HRESULT SVPPQObject::GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const
 	return l_Status;
 }
 
-BOOL SVPPQObject::GetTrigger( SVTriggerObject*& ppTrigger )
+BOOL SVPPQObject::GetTrigger( SvTh::SVTriggerObject*& ppTrigger )
 {
 	ppTrigger = m_pTrigger;
 
@@ -2665,7 +2665,7 @@ BOOL SVPPQObject::GetAllOutputs( SVIOEntryHostStructPtrList& ppIOEntries ) const
 	return TRUE;
 }
 
-SVProductInfoStruct* SVPPQObject::IndexPPQ( SVTriggerInfoStruct& p_rTriggerInfo )
+SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTh::SVTriggerInfoStruct& p_rTriggerInfo )
 {
 	SVProductInfoStruct* l_pProduct = nullptr;
 	SVProductInfoStruct* l_pNewProduct = nullptr;
@@ -3570,7 +3570,7 @@ BOOL SVPPQObject::FinishCamera( void *pCaller, SVODataResponseClass *pResponse )
 	return l_Status;
 }
 
-BOOL SVPPQObject::FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerInfo )
+BOOL SVPPQObject::FinishTrigger( void *pCaller, SvTh::SVTriggerInfoStruct& p_rTriggerInfo )
 {
 	BOOL l_Status = m_bOnline;
 
@@ -4024,7 +4024,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 
 						if (!l_TriggerInfo.m_TriggerInfo.m_Data.empty())
 						{
-							m_CameraInputData.Set(lDataIndex, boost::any_cast<SVCameraTriggerData::NameVariantMap>(l_TriggerInfo.m_TriggerInfo.m_Data));
+							m_CameraInputData.Set(lDataIndex, boost::any_cast<SvTh::SVCameraTriggerData::NameVariantMap>(l_TriggerInfo.m_TriggerInfo.m_Data));
 						}
 						// Get Shared Memory Slot
 						if (HasActiveMonitorList())
@@ -4801,7 +4801,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-SVCameraTriggerData& SVPPQObject::GetCameraInputData()
+SvTh::SVCameraTriggerData& SVPPQObject::GetCameraInputData()
 {
 	return m_CameraInputData;
 }

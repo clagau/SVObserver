@@ -21,7 +21,7 @@
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVAcquisitionConstructParams.h"
+#include "TriggerHandling/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVFileNameManagerClass.h"
 #include "SVGlobal.h"
