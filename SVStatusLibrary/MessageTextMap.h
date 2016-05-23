@@ -188,7 +188,7 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_ImportFailedDataInvalid, _T("Custom filter import failed, Kernel data is invalid."))
 
 	(SvOi::Tid_True, _T("TRUE"))
-	(SvOi::Tid_False, _T("TRUE"))
+	(SvOi::Tid_False, _T("FALSE"))
 	(SvOi::Tid_ConditionalValidated, _T("Conditional Equation Validated Successfully\n Condition = %s"))
 	(SvOi::Tid_FormulaValidated, _T("Formula Validated Successfully\n Value = %s"))
 	(SvOi::Tid_Error_InvalidFormula, _T("An Invalid Formula has been detected.\nThe Formula must be valid to exit this dialog."))
