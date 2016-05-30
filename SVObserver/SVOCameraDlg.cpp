@@ -265,9 +265,10 @@ void CSVOCameraDlg::OnBtnPropVc()
 				
 					if ( (m_bNewConfig) && (!m_bModified) )
 					{
-						m_bModified = TRUE;
-						if (m_pParent->GetCameraListCount() > 1)
+						//When more than one camera and the camera file is not empty ask if the same setting for all cameras
+						if( 1 < m_pParent->GetCameraListCount() && !pCameraObj->GetCameraFile().IsEmpty() )
 						{
+							m_bModified = TRUE;
 							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Camera_UseQuestion, StdMessageParams, SvOi::Err_10137, 0, nullptr, MB_YESNO );
 							if (IDYES == result)
