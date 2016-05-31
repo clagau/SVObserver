@@ -270,7 +270,8 @@ public:
 	CStringArray m_arViewedInputNames;
 	 
 protected:
-	typedef std::map< SVString, SVGUID > SVFilterElementMap;
+	typedef std::map< SVString, SVValueObjectReference > SVFilterValueMap;
+	typedef std::map< SVString, SVObjectReference > SVFilterImageMap;
 
 	struct SVSharedMemoryFilters
 	{
@@ -278,8 +279,8 @@ protected:
 
 		void clear();
 		
-		SVFilterElementMap m_LastInspectedValues;
-		SVFilterElementMap m_LastInspectedImages;
+		SVFilterValueMap m_LastInspectedValues;
+		SVFilterImageMap m_LastInspectedImages;
 	};
 
 #ifdef EnableTracking
@@ -444,7 +445,7 @@ private:
 
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
-	void FillSharedData(long sharedSlotIndex, SVSharedData& rData, const SVFilterElementMap& rValues, const SVFilterElementMap& rImages, SVProductInfoStruct& rProductInfo, SeidenaderVision::SVSharedInspectionWriter& rWriter);
+	void FillSharedData(long sharedSlotIndex, SVSharedData& rData, const SVFilterValueMap& rValues, const SVFilterImageMap& rImages, SVProductInfoStruct& rProductInfo, SeidenaderVision::SVSharedInspectionWriter& rWriter);
 
 	DWORD m_dwCHTimeout;
 	SVConditionalHistory  m_ConditionalHistory;
