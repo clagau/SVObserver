@@ -68,10 +68,10 @@ namespace SeidenaderVision
 		long next_readable() const;
 		long next_reject_readable() const;
 
-		DataSharedMemPtr shm;
+		DataSharedMemPtr m_DataSharedMemPtr;
 
-		SVSharedProductStore * sh;
-		SVSharedProductStore * rsh;
+		SVSharedProductStore * m_SharedProductStorePPQ;
+		SVSharedProductStore * m_SharedProductStorePPQReject;
 		bool m_isOpen;
 		std::string m_ShareName;
 		mutable InspReaderMap m_inspReaders;

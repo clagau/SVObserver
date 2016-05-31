@@ -15,7 +15,7 @@
 namespace SeidenaderVision
 {
 	SVSharedPPQReader::SVSharedPPQReader(): 
-shm(nullptr), sh(nullptr), rsh(nullptr), m_ShareName(""), m_isOpen(false)
+m_DataSharedMemPtr(nullptr), m_SharedProductStorePPQ(nullptr), m_SharedProductStorePPQReject(nullptr), m_ShareName(""), m_isOpen(false)
 {
 }
 
@@ -30,12 +30,12 @@ bool SVSharedPPQReader::Open(const std::string& name)
 	try
 	{
 		m_ShareName = name + "." + SVSharedConfiguration::GetShareName();
-		shm = DataSharedMemPtr(new boost::interprocess::managed_shared_memory(boost::interprocess::open_only, m_ShareName.c_str()));
+		m_DataSharedMemPtr = DataSharedMemPtr(new boost::interprocess::managed_shared_memory(boost::interprocess::open_only, m_ShareName.c_str()));
 
 		// get pointers to the product and reject segments
-		sh = shm->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str()).first;
-		rsh = shm->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str()).first;
-		if (sh && rsh)
+		m_SharedProductStorePPQ = m_DataSharedMemPtr->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str()).first;
+		m_SharedProductStorePPQReject = m_DataSharedMemPtr->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str()).first;
+		if (m_SharedProductStorePPQ && m_SharedProductStorePPQReject)
 		{
 			retVal = true;
 			m_isOpen = true;
@@ -53,17 +53,17 @@ void SVSharedPPQReader::Close()
 {
 	try
 	{
-		if (shm)
+		if (m_DataSharedMemPtr)
 		{
-			shm.reset();
+			m_DataSharedMemPtr.reset();
 		}
 	}
 	catch(boost::interprocess::interprocess_exception& e)
 	{
 		SVSharedConfiguration::Log(e.what());
 	}
-	sh = nullptr;
-	rsh = nullptr;
+	m_SharedProductStorePPQ = nullptr;
+	m_SharedProductStorePPQReject = nullptr;
 
 	m_isOpen = false;
 }
@@ -81,12 +81,12 @@ ProductPtr SVSharedPPQReader::RequestNextProduct(long & idx) const
 	{
 		idx = next_readable();
 	}
-	else if (idx >= static_cast<long>(sh->data.size()))
+	else if (idx >= static_cast<long>(m_SharedProductStorePPQ->data.size()))
 	{
 		throw std::exception("Index out of bounds.");
 	}
 
-	ProductPtr ret(new SVProductBundle(sh->data[idx]));
+	ProductPtr ret(new SVProductBundle(m_SharedProductStorePPQ->data[idx]));
 	Readers & readers = m_inspReaders;
 	const SVSharedInspectionMap & inspections = ret->product.m_Inspections;
 	std::for_each(inspections.begin(), inspections.end(), 
@@ -111,7 +111,19 @@ void SVSharedPPQReader::ReleaseProduct(const ProductPtr product, long & idx) con
 {
 	if (product)
 	{
+#ifdef _DEBUG	
+		long temp =  product->product.m_Flags; 
+#endif 				
 		short x = _InterlockedDecrement16((volatile short *)&(product->product.m_Flags));
+#ifdef _DEBUG
+		if( x < 0 )
+		{
+			std::stringstream ss; 
+			ss <<  "Product mFlag :" <<  std::hex << temp << " ";
+			ss << "X: "  << x << std::endl;
+			OutputDebugString(ss.str().c_str()); 
+		}
+#endif 		
 		assert(x >= 0);
 		product->product.m_Flags |= ds::ready;
 	}
@@ -120,7 +132,7 @@ void SVSharedPPQReader::ReleaseProduct(const ProductPtr product, long & idx) con
 long SVSharedPPQReader::next_readable() const
 {
 	long flags = ds::none;
-	long start = sh->current_idx;
+	long start = m_SharedProductStorePPQ->current_idx;
 	if (start < 0)
 	{
 		::OutputDebugString("ppq next_readable - No Data\n");
@@ -128,9 +140,9 @@ long SVSharedPPQReader::next_readable() const
 	}
 	long idx = start + 1;
 	long count = 0;
-	long size = static_cast<long>(sh->data.size());
+	long size = static_cast<long>(m_SharedProductStorePPQ->data.size());
 
-	SVSharedProductVector * data = &sh->data;
+	SVSharedProductVector * data = &m_SharedProductStorePPQ->data;
 
 	do
 	{
@@ -150,15 +162,15 @@ long SVSharedPPQReader::next_reject_readable() const
 {
 	int count = 0;
 	long flags = ds::none;
-	long start = rsh->current_idx;
+	long start = m_SharedProductStorePPQReject->current_idx;
 	long idx = start + 1;
-	long size = static_cast<long>(rsh->data.size());
+	long size = static_cast<long>(m_SharedProductStorePPQReject->data.size());
 	if (idx < 0) // -1 means No rejects are available (none exist)
 	{
 		::OutputDebugString("ppq next_reject_readable - No Data\n");
 		throw std::exception("No Rejects exist");
 	}
-	SVSharedProductVector* data = &rsh->data;
+	SVSharedProductVector* data = &m_SharedProductStorePPQReject->data;
 	do
 	{
 		idx = (--idx + size) % size;
@@ -176,7 +188,7 @@ long SVSharedPPQReader::next_reject_readable() const
 
 long SVSharedPPQReader::FindRejectSlot(long trigger) const
 {
-	SVSharedProductVector & store = rsh->data;
+	SVSharedProductVector & store = m_SharedProductStorePPQReject->data;
 	if (trigger < 0) // negative idx requests next product, positive one asks for a specific trigger count
 	{
 		return next_reject_readable();
@@ -201,7 +213,7 @@ long SVSharedPPQReader::FindRejectSlot(long trigger) const
 
 ProductPtr SVSharedPPQReader::GetReject(long idx) const
 {
-	ProductPtr ret(new SVProductBundle(rsh->data[idx]));
+	ProductPtr ret(new SVProductBundle(m_SharedProductStorePPQReject->data[idx]));
 	if (ret->product.m_TriggerCount < 0)
 	{
 		throw std::exception("No reject at this index");
@@ -247,9 +259,9 @@ FailStatusMap SVSharedPPQReader::GetFailStatus(const std::vector<std::string> & 
 {
 	FailStatusMap ret;
 	const SVSharedPPQReader & reader = *this;
-	for (long idx = 0; idx < static_cast<long>(rsh->data.size()); ++idx) // read all rejects and fill in FailStatusMap
+	for (long idx = 0; idx < static_cast<long>(m_SharedProductStorePPQReject->data.size()); ++idx) // read all rejects and fill in FailStatusMap
 	{
-		const SVSharedProduct & prod = rsh->data[idx];
+		const SVSharedProduct & prod = m_SharedProductStorePPQReject->data[idx];
 		reader.lock(prod);
 		long trig = prod.m_TriggerCount;
 		if (trig >= 0)

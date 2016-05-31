@@ -100,7 +100,7 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 					{
 						switch ( pInEntry.m_IOEntryPtr->m_ObjectType )
 						{
-							case IO_DIGITAL_INPUT:
+						case IO_DIGITAL_INPUT:
 							{
 								double l_bValue = 0.0;
 
@@ -111,8 +111,8 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 
 								break;
 							}
-							case IO_REMOTE_INPUT:
-							default:
+						case IO_REMOTE_INPUT:
+						default:
 							{
 								_variant_t l_Value;
 
@@ -181,12 +181,11 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 
 					pIPInfo->m_EndInspection = SVClock::GetTimeStamp();
 
-					#ifdef _DEBUG
-					SVString l_TempStateString = SvUl_SF::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
-							GetName(), p_rProduct.ProcessCount() );
-
-						::OutputDebugString( l_TempStateString.c_str() );
-					#endif
+#ifdef _DEBUG
+					//					SVString l_TempStateString = SvUl_SF::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
+					//						GetName(), p_rProduct.ProcessCount() );
+					//					::OutputDebugString( l_TempStateString.c_str() );
+#endif
 
 					// Mark last run product
 					LastProductUpdate( &p_rProduct );
@@ -224,7 +223,7 @@ HRESULT SVInspectionProcess::ProcessMonitorLists(bool& p_rProcessed)
 	bool bNotFound = false;
 
 	SVMonitorList l_MonitorList;
-		
+
 	if (m_MonitorListQueue.RemoveHead(&l_MonitorList))
 	{
 		m_SharedMemoryFilters.clear();
@@ -285,7 +284,7 @@ HRESULT SVInspectionProcess::ProcessLastInspectedImages( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
 	SVMonitorItemList l_NameList;
-		
+
 	if ( m_ImageNameDequeQueue.RemoveHead( &l_NameList ) )
 	{
 		m_SharedMemoryFilters.m_LastInspectedImages.clear();
@@ -334,7 +333,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 					SeidenaderVision::SVSharedInspectionWriter& rWriter = SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
 					SVSharedData& rLastInspected = rWriter.GetLastInspectedSlot(sharedSlotIndex);
 					FillSharedData(sharedSlotIndex, rLastInspected, m_SharedMemoryFilters.m_LastInspectedValues, m_SharedMemoryFilters.m_LastInspectedImages, l_Product, rWriter);
-				
+
 #ifdef COLLECT_SHAREDMEMORY_STATS
 					commitProfiler.Start();
 #endif
@@ -379,7 +378,7 @@ HRESULT SVInspectionProcess::ProcessConditionalHistory( bool& p_rProcessed )
 
 		// check the transaction queue
 		SVInspectionTransactionStruct message;
-			
+
 		if ( m_qTransactions.RemoveHead( &message ) )
 		{
 			ProcessTransaction( message );
@@ -428,62 +427,62 @@ HRESULT SVInspectionProcess::ProcessTransaction( SVInspectionTransactionStruct p
 {
 	HRESULT hr = S_OK;
 
-	#ifndef _DEBUG
+#ifndef _DEBUG
 	try
-	#endif
+#endif
 	{
-	switch ( p_Message.dwMessage )
-	{
+		switch ( p_Message.dwMessage )
+		{
 		case SVInspectionMessageSetCHProperties:
-		{
-			SVInspectionMessageDataStruct_CHProperties* pData = dynamic_cast <SVInspectionMessageDataStruct_CHProperties*> (p_Message.pData);
-			ASSERT( pData );
-			hr = m_ConditionalHistory.SetProperties( *(pData->pvecProperties), pData->bResetObject );
-			break;
-		}
+			{
+				SVInspectionMessageDataStruct_CHProperties* pData = dynamic_cast <SVInspectionMessageDataStruct_CHProperties*> (p_Message.pData);
+				ASSERT( pData );
+				hr = m_ConditionalHistory.SetProperties( *(pData->pvecProperties), pData->bResetObject );
+				break;
+			}
 		case SVInspectionMessageGetCHProperties:
-		{
-			SVInspectionMessageDataStruct_CHProperties* pData = dynamic_cast <SVInspectionMessageDataStruct_CHProperties*> (p_Message.pData);
-			ASSERT( pData );
-			hr = m_ConditionalHistory.GetProperties( *(pData->pvecProperties) );
-			break;
-		}
+			{
+				SVInspectionMessageDataStruct_CHProperties* pData = dynamic_cast <SVInspectionMessageDataStruct_CHProperties*> (p_Message.pData);
+				ASSERT( pData );
+				hr = m_ConditionalHistory.GetProperties( *(pData->pvecProperties) );
+				break;
+			}
 		case SVInspectionMessageSetCHList:
-		{
-			SVInspectionMessageDataStruct_CHList* pData = dynamic_cast <SVInspectionMessageDataStruct_CHList*> (p_Message.pData);
-			ASSERT( pData );
-			hr = m_ConditionalHistory.SetList( pData->pvecData, pData->pvecImages, pData->pvecConditionals, pData->bResetObject );
-			break;
-		}
+			{
+				SVInspectionMessageDataStruct_CHList* pData = dynamic_cast <SVInspectionMessageDataStruct_CHList*> (p_Message.pData);
+				ASSERT( pData );
+				hr = m_ConditionalHistory.SetList( pData->pvecData, pData->pvecImages, pData->pvecConditionals, pData->bResetObject );
+				break;
+			}
 		case SVInspectionMessageGetCHList:
-		{
-			SVInspectionMessageDataStruct_CHList* pData = dynamic_cast <SVInspectionMessageDataStruct_CHList*> (p_Message.pData);
-			ASSERT( pData );
-			hr = m_ConditionalHistory.GetList( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals) );
-			break;
-		}
+			{
+				SVInspectionMessageDataStruct_CHList* pData = dynamic_cast <SVInspectionMessageDataStruct_CHList*> (p_Message.pData);
+				ASSERT( pData );
+				hr = m_ConditionalHistory.GetList( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals) );
+				break;
+			}
 		case SVInspectionMessageGetCHandClear:
-		{
-			SVInspectionMessageDataStruct_CHGetAll* pData = dynamic_cast <SVInspectionMessageDataStruct_CHGetAll*> (p_Message.pData);
-			ASSERT( pData );
-			hr = m_ConditionalHistory.GetHistoryAndClear( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals), *(pData->pvecProcessCount) );
-			break;
-		}
+			{
+				SVInspectionMessageDataStruct_CHGetAll* pData = dynamic_cast <SVInspectionMessageDataStruct_CHGetAll*> (p_Message.pData);
+				ASSERT( pData );
+				hr = m_ConditionalHistory.GetHistoryAndClear( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals), *(pData->pvecProcessCount) );
+				break;
+			}
 		case SVInspectionMessageGetCHMostRecent:
-		{
-			SVInspectionMessageDataStruct_CHGet* pData = dynamic_cast <SVInspectionMessageDataStruct_CHGet*> (p_Message.pData);
-			ASSERT( pData );
-			hr = m_ConditionalHistory.GetMostRecentHistory( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals), *(pData->plProcessCount) );
-			break;
-		}
-	}// end switch ( p_Message.dwMessage )
+			{
+				SVInspectionMessageDataStruct_CHGet* pData = dynamic_cast <SVInspectionMessageDataStruct_CHGet*> (p_Message.pData);
+				ASSERT( pData );
+				hr = m_ConditionalHistory.GetMostRecentHistory( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals), *(pData->plProcessCount) );
+				break;
+			}
+		}// end switch ( p_Message.dwMessage )
 	}// end try
-	#ifndef _DEBUG
+#ifndef _DEBUG
 	catch (...)
 	{
 		hr = SV_FALSE;	// @TODO:  Add real error code here!!!
 	}
-	#endif
+#endif
 
 	if ( S_OK == hr )
 	{
@@ -495,13 +494,13 @@ HRESULT SVInspectionProcess::ProcessTransaction( SVInspectionTransactionStruct p
 }
 
 SVInspectionProcess::SVInspectionProcess( LPCSTR ObjectName )
-: SVObjectClass( ObjectName )
+	: SVObjectClass( ObjectName )
 {
 	Init();
 }
 
 SVInspectionProcess::SVInspectionProcess( SVObjectClass* POwner, int StringResourceID )
-: SVObjectClass( POwner, StringResourceID )
+	: SVObjectClass( POwner, StringResourceID )
 {
 	Init();
 }
@@ -516,7 +515,7 @@ void SVInspectionProcess::Init()
 
 	m_pCurrentToolset = nullptr;
 	m_PPQId.clear();
-	
+
 	m_bNewDisableMethod	= false;
 	m_lEnableAuxiliaryExtents = 0;
 	m_lInputRequestMarkerCount = 0L;
@@ -547,7 +546,7 @@ SVInspectionProcess::~SVInspectionProcess()
 	m_PPQId.clear();
 
 	m_pCurrentToolset	= nullptr;
-	
+
 	m_bNewDisableMethod	= false;
 	m_lEnableAuxiliaryExtents = 0;
 	m_lInputRequestMarkerCount = 0L;
@@ -729,7 +728,7 @@ BOOL SVInspectionProcess::DestroyInspection()
 	m_qInspectionsQueue.Destroy();
 
 	SVTransactionQueueObjectLock lock( m_qTransactions );
-	
+
 	while ( !m_qTransactions.IsEmpty() )
 	{
 		SVInspectionTransactionStruct message;
@@ -903,7 +902,7 @@ BOOL SVInspectionProcess::GoOffline()
 		{
 			SVString l_Info;
 			SVProductInfoStruct l_Product = LastProductGet( SV_OTHER );
-			
+
 			l_Product.DumpIndexInfo( l_Info );
 
 			l_Stream << _T( "Last : " );
@@ -922,7 +921,7 @@ BOOL SVInspectionProcess::GoOffline()
 		if( l_TrackingStream.is_open() )
 		{
 			SVInspectionTracking::SVEventTrackingMap::iterator l_Iter;
-			
+
 			for( l_Iter =	m_InspectionTracking.m_EventCounts.begin(); l_Iter != m_InspectionTracking.m_EventCounts.end(); ++l_Iter )
 			{
 				// Write Outputs Time...
@@ -1175,7 +1174,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 
 	// Save old list
 	ppOldPPQInputs = m_PPQInputs;
-	
+
 	if( !pPPQ->GetAvailableInputs( ppIOEntries ) )
 		return FALSE;
 
@@ -1229,19 +1228,19 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 
 			switch ( pNewEntry->m_ObjectType )
 			{
-				case IO_DIGITAL_INPUT:
+			case IO_DIGITAL_INPUT:
 				{
 					pValueObject = new SVBoolValueObjectClass(this);
 					pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 					break;
 				}
-				case IO_REMOTE_INPUT:
+			case IO_REMOTE_INPUT:
 				{
 					pValueObject = new SVVariantValueObjectClass(this);
 					pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 					break;
 				}
-				default:
+			default:
 				{
 					pValueObject = new SVVariantValueObjectClass(this);
 					break;
@@ -1300,8 +1299,8 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 	SVResultListClass* pResultlist = GetResultList();
 	if(pResultlist)
 	{
-		
-			pResultlist->RebuildReferenceVector(this);
+
+		pResultlist->RebuildReferenceVector(this);
 	}
 
 	BuildValueObjectMap();
@@ -1315,7 +1314,7 @@ BOOL SVInspectionProcess::AddInputRequest( SVValueObjectReference p_svObjectRef,
 	try
 	{
 		SVInputRequestInfoStructPtr l_pInRequest = new SVInputRequestInfoStruct( p_svObjectRef, p_rValue );
-		
+
 		//add request to inspection process
 		l_bOk = AddInputRequest( l_pInRequest );
 	}
@@ -1565,9 +1564,9 @@ BOOL SVInspectionProcess::RemoveAllInputRequests()
 HRESULT SVInspectionProcess::RebuildInspection()
 {
 	HRESULT l_Status = S_OK;
-	
+
 	SetDefaultInputs();
-	
+
 	long lLength = 2;
 	long l_LastIndex = 1;
 
@@ -1596,7 +1595,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 		l_LastIndex = l_Handle.GetIndex();
 	}
-	
+
 	SetObjectDepthWithIndex( lLength + 50, l_LastIndex );
 	SetImageDepth( TheSVObserverApp.GetResultImageDepth() );
 
@@ -1763,11 +1762,11 @@ void SVInspectionProcess::SingleRunModeLoop( bool p_Refresh )
 	ReserveNextResultImage( &l_svProduct, SV_INSPECTION, true );
 
 	SVImageIndexStruct l_svResultImageIndex;
-	
+
 	l_svProduct.GetResultImageIndex( l_svResultImageIndex, GetUniqueObjectID() );
 
 	SVDataManagerHandle	l_ResultDataDMIndexHandle;
-	
+
 	l_svProduct.GetResultDataIndex( l_ResultDataDMIndexHandle );
 
 	RunInspection( l_ResultDataDMIndexHandle.GetIndex(), l_svResultImageIndex, &l_svProduct );
@@ -2094,8 +2093,8 @@ BOOL SVInspectionProcess::GetChildObjectByName( LPCTSTR tszChildName, SVObjectCl
 		if ( sChildName.Left(sName.GetLength()) == sName )
 		{
 			*ppObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( this, 
-					( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD ) & ~SVM_NOTIFY_ONLY_THIS, 
-					reinterpret_cast<DWORD_PTR>(tszChildName), 0 ));
+				( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD ) & ~SVM_NOTIFY_ONLY_THIS, 
+				reinterpret_cast<DWORD_PTR>(tszChildName), 0 ));
 			bReturn = ( nullptr != *ppObject );
 		}
 	}
@@ -2155,7 +2154,7 @@ HRESULT SVInspectionProcess::GetChildObject( SVObjectClass*& rpObject, const SVO
 
 	return l_Status;
 }
-	
+
 HRESULT SVInspectionProcess::ObserverUpdate( const SVAddTool& p_rData )
 {
 	HRESULT l_Status = S_OK;
@@ -2200,7 +2199,7 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVDeleteTool& p_rData )
 		// Conditional history needs references deleted before we delete the tool.
 		CString l_strToolName = p_rData.m_pTool->GetCompleteObjectName();
 		m_ConditionalHistory.DeleteTool( l_strToolName );
-		
+
 		// Delete the Tool Object
 		::SVSendMessage( GetToolSet(), SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(p_rData.m_pTool), 0 );
 
@@ -2232,8 +2231,8 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVRenameObject& p_rData )
 	if( nullptr != l_pObject )
 	{
 		::SVSendMessage( this, SVM_OBJECT_RENAMED,
-						 reinterpret_cast <DWORD_PTR> ( static_cast <SVObjectClass*> (l_pObject) ),
-						reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>(p_rData.m_OldName.c_str())) );
+			reinterpret_cast <DWORD_PTR> ( static_cast <SVObjectClass*> (l_pObject) ),
+			reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>(p_rData.m_OldName.c_str())) );
 
 		BuildValueObjectMap();
 	}
@@ -2341,7 +2340,7 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 		HRESULT l_Temp = S_OK;
 
 		l_Temp = SetSourceImagesTo( &l_svProduct );
-		
+
 		if( S_OK == l_Status ) { l_Status = l_Temp; }
 
 		l_Temp = ReserveNextResultImage( &l_svProduct, SV_INSPECTION, true );
@@ -2369,7 +2368,7 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 	{
 		l_Status = E_FAIL;
 	}
-	
+
 	return l_Status;
 }
 
@@ -2408,7 +2407,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorLockingInputRequests, StdMessageParams, SvOi::Err_17025_ErrorLockingInputRequests );
 		DebugBreak();
 	}
-	
+
 	while( m_lInputRequestMarkerCount > 0L )
 	{
 		long l_lSize = 0;
@@ -2474,7 +2473,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 				::InterlockedDecrement(const_cast<long*>(&m_lInputRequestMarkerCount));
 				break;
 			}// end if
-			
+
 			// Get the ValueObject that they are trying to set
 			SVValueObjectReference refValueObject = l_pInputRequest->refValueObject;
 			HRESULT hrSet = S_OK;
@@ -2485,7 +2484,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 				bool l_bResetObject = refValueObject.Object()->ResetAlways();
 
 				ASSERT(!::IsArray(refValueObject) || refValueObject.ArrayIndex() < 0);
-				
+
 				// Value objects don't accept each different type for sets
 				// so convert to the appropriate type
 				if( SV_IS_KIND_OF( refValueObject.Object(), SVFileNameValueObjectClass ) )
@@ -2497,24 +2496,24 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 					else
 					{
 						CFileStatus rStatus;
-	
+
 						BOOL bOk = CFile::GetStatus( l_StringValue.c_str(), rStatus );
 						if ( bOk )
 						{
 							bOk = 0L <= rStatus.m_size;
 						}// end if
-	
+
 						if( bOk )
 						{
 							if( ! l_bResetObject )
 							{
 								CString l_csPrevValue;
-	
+
 								hrSet = refValueObject.GetValue( l_csPrevValue );
-	
+
 								l_bResetObject = l_csPrevValue.Compare( l_StringValue.c_str() ) != 0;
 							}
-	
+
 							hrSet = refValueObject.SetValue( l_iIndex, l_StringValue.c_str() );
 						}// end if
 					}
@@ -2530,12 +2529,12 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 						if( ! l_bResetObject )
 						{
 							CString l_csPrevValue;
-	
+
 							hrSet = refValueObject.GetValue( l_csPrevValue );
-	
+
 							l_bResetObject = l_csPrevValue.Compare( l_StringValue.c_str() ) != 0;
 						}
-	
+
 						hrSet = refValueObject.SetValue( l_iIndex, l_StringValue.c_str() );
 					}
 				}// end if SVStringValueObjectClass
@@ -2628,13 +2627,13 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 						if( ! l_bResetObject )
 						{
 							double l_dPrevValue;
-	
+
 							hrSet = refValueObject.GetValue( l_dPrevValue );
-	
+
 							// eventually use CompareWithCurrentValueImpl
 							l_bResetObject = l_dPrevValue != atof( l_StringValue.c_str() );
 						}
-	
+
 						hrSet = refValueObject.SetValue( l_iIndex, l_StringValue.c_str() );
 					}
 				}// end else if
@@ -2656,8 +2655,8 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 							lValue = _tcstol(strNewValue, &p, 10);
 						double l_dNewValue = static_cast <double> (lValue);
 
-					// eventually use CompareWithCurrentValueImpl
-					l_bResetObject = l_dPrevValue != l_dNewValue;
+						// eventually use CompareWithCurrentValueImpl
+						l_bResetObject = l_dPrevValue != l_dNewValue;
 					}
 
 					hrSet = refValueObject.SetValue( l_iIndex, l_StringValue.c_str() );
@@ -2687,9 +2686,9 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 					}
 				}
 			}// end if object exists
-			
+
 		}// end for all input requests
-		
+
 		// Processing phase
 		if ( nullptr != m_pCurrentToolset )
 		{
@@ -2717,7 +2716,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 							else
 							{
 								SVStdSetSVObjectClassPtr::iterator l_oIter;
-								
+
 								l_oIter = p_rsvToolMap[ l_psvTool ].m_svObjectSet.begin();
 
 								while( l_oIter != p_rsvToolMap[ l_psvTool ].m_svObjectSet.end() )
@@ -2751,7 +2750,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 	}
 
 	return l_bRet;
-	
+
 }// end ProcessInputRequests
 
 BOOL SVInspectionProcess::ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct )
@@ -2825,7 +2824,7 @@ BOOL SVInspectionProcess::ProcessInputImageRequests( SVProductInfoStruct *p_psvP
 					}
 					else
 					{
-						 p_psvProduct->GetResultImageIndex( l_svIndex, GetUniqueObjectID() );
+						p_psvProduct->GetResultImageIndex( l_svIndex, GetUniqueObjectID() );
 					}
 
 					l_bOk = ! l_svIndex.IsNull();
@@ -2840,7 +2839,7 @@ BOOL SVInspectionProcess::ProcessInputImageRequests( SVProductInfoStruct *p_psvP
 
 							if ( l_psvImage->GetImageHandle( l_ImageHandle ) && !( l_ImageHandle.empty() ) && !( l_pInRequest->m_ImageHandlePtr.empty() ) )
 							{
-								
+
 								SVMatroxBufferInterface::SVStatusCode l_Code;
 
 								SVImageBufferHandleImage l_MilHandle;
@@ -3068,7 +3067,7 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(CString sCameraNam
 
 		AddInputImageRequest(l_pInRequest);
 	}
-	
+
 	return hrOk;
 }
 
@@ -3129,7 +3128,7 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo( SVProductInfoStruct 
 			if( l_svLastIter != l_Product.m_svCameraInfos.end() )
 			{
 				if( l_svIter->first->CopyValue( l_svLastIter->second.GetSourceImageDMIndexHandle(), 
-					                            l_svIter->second.GetSourceImageDMIndexHandle() ) )
+					l_svIter->second.GetSourceImageDMIndexHandle() ) )
 				{
 					l_hrOk = S_FALSE;
 				}
@@ -3215,12 +3214,12 @@ HRESULT SVInspectionProcess::GetNextAvailableIndexes( SVInspectionInfoStruct& p_
 	{
 		l_Status = TheSVDataManager.GetNextAvailableBufferIndex( m_pResultImageCircleBuffer, p_LockType, p_rInspectionInfo.m_ResultImageDMIndexHandle );
 
-		#ifdef _DEBUG
-			if( S_OK != l_Status )
-			{
-				DumpDMInfo( GetName() );
-			}
-		#endif
+#ifdef _DEBUG
+		if( S_OK != l_Status )
+		{
+			DumpDMInfo( GetName() );
+		}
+#endif
 	}
 
 	return l_Status;
@@ -3244,7 +3243,7 @@ HRESULT SVInspectionProcess::SetConditionalHistoryProperties( SVScalarValueVecto
 
 	/*	// possible optimization for use in inspection thread
 	if ( ::GetCurrentThreadId() == m_dwThreadId )
-		return ProcessTransaction( message );	// in this case don't CreateEvent
+	return ProcessTransaction( message );	// in this case don't CreateEvent
 	else
 	*/
 	{
@@ -3927,9 +3926,9 @@ BOOL SVInspectionProcess::Run( SVRunStatusClass& RRunStatus )
 }
 
 BOOL SVInspectionProcess::RunInspection( long lResultDataIndex, 
-										 SVImageIndexStruct svResultImageIndex, 
-										 SVProductInfoStruct *pProduct, 
-										 bool p_UpdateCounts )
+	SVImageIndexStruct svResultImageIndex, 
+	SVProductInfoStruct *pProduct, 
+	bool p_UpdateCounts )
 {
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 	double del = SvTl::setReferenceTime();
@@ -4128,7 +4127,7 @@ SVInspectionProcess::SVObjectPtrDeque SVInspectionProcess::GetPostProcessObjects
 	SVObjectPtrDeque l_Objects = SVObjectClass::GetPostProcessObjects();
 
 	SVIOEntryStructVector::const_iterator l_Iter;
-	
+
 	for( l_Iter = m_PPQInputs.begin(); l_Iter != m_PPQInputs.end(); ++l_Iter )
 	{
 		const SVIOEntryStruct& l_rIOEntry = *l_Iter;
@@ -4448,7 +4447,7 @@ HRESULT SVInspectionProcess::GetInspectionImage( const CString& p_strName, SVIma
 		{
 			// We found the image by name
 			p_rRefObject = pImage;
-			
+
 			return S_OK;
 		}
 	}
@@ -4459,16 +4458,13 @@ HRESULT SVInspectionProcess::GetInspectionImage( const CString& p_strName, SVIma
 void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rData, const SVFilterElementMap& rValues, const SVFilterElementMap& rImages, SVProductInfoStruct& rProductInfo, SeidenaderVision::SVSharedInspectionWriter& rWriter)
 {
 	SVProductInfoStruct& l_rProductInfo = rProductInfo;
-	
+
 	SVDataManagerHandle dmHandle = l_rProductInfo.oPPQInfo.m_ResultDataDMIndexHandle;
 	long dataIndex = dmHandle.GetIndex();
 
 	SVSharedValueMap& rSharedValues = rData.m_Values;
 	SVSharedImageMap& rSharedImages = rData.m_Images;
-
-	rSharedValues.clear();
-	rSharedImages.clear();
-
+	
 	for (SVFilterElementMap::const_iterator ValueIter = rValues.begin(); ValueIter != rValues.end(); ++ValueIter)
 	{
 		HRESULT hr = S_OK;
@@ -4485,7 +4481,7 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 				SVObjectNameInfo nameInfo;
 				SVObjectNameInfo::ParseObjectName(nameInfo, ValueIter->first.c_str());
 				SVValueObjectReference ref(pObject, nameInfo);
-				
+
 				// for now just a single item (no full array)
 				if (!ref.IsEntireArray())
 				{
@@ -4542,10 +4538,21 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 		{
 			hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		}
+
+		SVSharedValueMap::iterator it = rSharedValues.find(char_string(ValueIter->first.c_str(), rData.m_Allocator));
+		if(it == rSharedValues.end())
+		{
+			std::pair< SVSharedValueMap::iterator,bool>  mRet; 	
+			mRet = rSharedValues.insert(SVSharedValuePair(char_string(ValueIter->first.c_str(), rData.m_Allocator), 
+				SVSharedValue(SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator)));
+		}
+		else
+		{
+			// Performance: Avoid building maps  
+			it->second  = SVSharedValue(SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator);
+		}
 		
-		std::pair< SVSharedValueMap::iterator,bool>  mRet; 	
-		mRet = rSharedValues.insert(SVSharedValuePair(char_string(ValueIter->first.c_str(), rData.m_Allocator), 
-					SVSharedValue(SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator)));
+
 	}
 
 	for (SVFilterElementMap::const_iterator imageIter = rImages.begin(); imageIter != rImages.end(); ++imageIter)
@@ -4562,7 +4569,7 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 			if (nullptr != pImage)
 			{
 				SVSmartHandlePointer imageHandlePtr;
-			
+
 				// Special check for Color Tool's RGBMainImage which is HSI
 				if (SV_IS_KIND_OF(pImage, SVRGBMainImageClass))
 				{
@@ -4579,16 +4586,28 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 				{
 					bImgNotFound = false;
 					// Add Drive and Directory to base filename
+					//@TODO[MEC][7.40][30.05.2016]   string handling must be reworked because of performance reasons
 					SVString name = imageIter->first.c_str();
 					SVString filename = SeidenaderVision::SVSharedConfiguration::GetImageDirectoryName() + "\\" + SVSharedImage::filename(name.c_str(), sharedSlotIndex, img::bmp);
 					// Write Image to disk
 					HRESULT hr = SVImageProcessingClass::Instance().SaveImageBuffer(filename.c_str(), imageHandlePtr);
-					std::pair<SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SVSharedImagePair(char_string(name.c_str(), rData.m_Allocator), SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
-					// if the Insert failed - update the status
-					if (!IterPair.second && IterPair.first != rSharedImages.end())
+
+					SVSharedImageMap::iterator simIt =  rSharedImages.find( char_string(name.c_str(), rData.m_Allocator));
+					if(simIt == rSharedImages.end()) 
 					{
-						IterPair.first->second.m_Status = E_FAIL;
+						std::pair<SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SVSharedImagePair(char_string(name.c_str(), rData.m_Allocator), SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
+						// if the Insert failed - update the status
+						if (!IterPair.second && IterPair.first != rSharedImages.end())
+						{
+							IterPair.first->second.m_Status = E_FAIL;
+						}
 					}
+					else
+					{
+						simIt->second =   SVSharedImage(filename.c_str(), hr, rData.m_Allocator);
+					}
+
+
 				}
 			}
 		}
@@ -4597,20 +4616,32 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 			hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 			SVString name = imageIter->first.c_str();
 			SVString filename;
-			std::pair<SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SVSharedImagePair(char_string(name.c_str(), rData.m_Allocator), SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
-			// if the Insert failed - update the status
-			if (!IterPair.second && IterPair.first != rSharedImages.end())
+
+			SVSharedImageMap::iterator simIt =  rSharedImages.find( char_string(name.c_str(), rData.m_Allocator));
+			if(simIt == rSharedImages.end()) 
 			{
-				IterPair.first->second.m_Status = E_FAIL;
+
+				std::pair<SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SVSharedImagePair(char_string(name.c_str(), rData.m_Allocator), SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
+				// if the Insert failed - update the status
+				if (!IterPair.second && IterPair.first != rSharedImages.end())
+				{
+					IterPair.first->second.m_Status = E_FAIL;
+				}
 			}
+			else
+			{
+				simIt->second =   SVSharedImage(filename.c_str(), hr, rData.m_Allocator);
+			}
+
+
 		}
 	}
 	rData.m_TriggerCount = l_rProductInfo.ProcessCount();
 }
 
 SVInspectionProcess::SVSharedMemoryFilters::SVSharedMemoryFilters()
-: m_LastInspectedValues()
-, m_LastInspectedImages()
+	: m_LastInspectedValues()
+	, m_LastInspectedImages()
 {
 }
 
@@ -4623,12 +4654,12 @@ void SVInspectionProcess::SVSharedMemoryFilters::clear()
 // @TODO - this needs to be moved out of here into another more generic class
 #ifdef EnableTracking
 SVInspectionProcess::SVInspectionTrackingElement::SVInspectionTrackingElement()
-: m_StartTime( 0 ), m_Start(), m_End(), m_Duration()
+	: m_StartTime( 0 ), m_Start(), m_End(), m_Duration()
 {
 }
 
 SVInspectionProcess::SVInspectionTrackingElement::SVInspectionTrackingElement( const SVInspectionTrackingElement& p_rObject )
-: m_StartTime( p_rObject.m_StartTime ), m_Start( p_rObject.m_Start ), m_End( p_rObject.m_End ), m_Duration( p_rObject.m_Duration )
+	: m_StartTime( p_rObject.m_StartTime ), m_Start( p_rObject.m_Start ), m_End( p_rObject.m_End ), m_Duration( p_rObject.m_Duration )
 {
 }
 
@@ -4651,12 +4682,12 @@ void SVInspectionProcess::SVInspectionTrackingElement::clear()
 }
 
 SVInspectionProcess::SVInspectionTracking::SVInspectionTracking()
-: m_StartTime( 0.0 ), m_EventCounts()
+	: m_StartTime( 0.0 ), m_EventCounts()
 {
 }
 
 SVInspectionProcess::SVInspectionTracking::SVInspectionTracking( const SVInspectionTracking& p_rObject )
-: m_StartTime( p_rObject.m_StartTime ), m_EventCounts( p_rObject.m_EventCounts )
+	: m_StartTime( p_rObject.m_StartTime ), m_EventCounts( p_rObject.m_EventCounts )
 {
 }
 
@@ -4721,7 +4752,7 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 	value = GetEnableAuxiliaryExtent();
 	rWriter.WriteAttribute(CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, value);
 	value.Clear();
-	
+
 	// Save the Toolset
 	SVToolSetClass* pToolSet = GetToolSet();
 	pToolSet->Persist(rWriter);
@@ -4797,7 +4828,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList( const UINT
 		});
 	}
 
-	
+
 	SVString InspectionName = GetName();
 
 	SVObjectVector PpqVariables;
@@ -4866,7 +4897,7 @@ bool SVInspectionProcess::IsDisabledPPQVariable(SVValueObjectClass* pValueObject
 	for( size_t i = 0; i < m_PPQInputs.size(); i++ )
 	{	
 		SVIOEntryHostStructPtr ioEntryPtr = m_PPQInputs[i].m_IOEntryPtr;
-		
+
 		if( ioEntryPtr->m_Enabled == false )
 		{
 			if(ioEntryPtr->m_pValueObject == pValueObject)
@@ -4943,7 +4974,7 @@ bool   SVInspectionProcess::LoopOverTools(pToolFunc pf, int& counter )
 				{
 					counter += result; 
 				}	
-				
+
 			}
 		}		
 	}

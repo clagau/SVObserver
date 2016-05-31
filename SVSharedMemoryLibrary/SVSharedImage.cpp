@@ -45,6 +45,7 @@ const SVSharedImage& SVSharedImage::operator=(const SVSharedImage& rData)
 
 std::string SVSharedImage::filename(const std::string& rName, long SlotNumber, img::type ImageType, bool bReject)
 {
+	//@TODO[MEC][7.40][30.5.2016] Improve Performance  
 	static const char *ext[] = { ".bmp", ".png", ".jpg" };
 
 	std::stringstream ret;

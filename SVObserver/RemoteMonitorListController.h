@@ -55,6 +55,17 @@ public:
 	// Returns:   bool - true if the object is allowed to be part of a monitor list
 	//************************************
 	static bool IsValidMonitoredObject(const SVObjectClass* pObject);
+private:
+	//! Write the monitorlist to shared memory
+	//! \param name [in] name of monitorlist
+	//! \param remoteMonitorNamedlist [in] monitorlist
+	//! \returns void
+	static void WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList&  remoteMonitorNamedlist );
+	
+	
+	//! Initialize the monitor writer 
+	static void InitMonitorListInSharedMemory();
+
 #pragma endregion Public
 
 #pragma region Private

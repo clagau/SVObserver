@@ -29,7 +29,7 @@ namespace SeidenaderVision
 
 		bool IsCreated() const;
 		HRESULT Create(const SVSharedMemorySettings & settings);
-		void AddList(const std::string & listName, const std::string & ppqName, int rejectDepth);
+		void AddList(const std::string & listName, const std::string & ppqName, int rejectDepth, bool isActive);
 		void FillList(const std::string & listName, listType type, const std::vector<std::string> & list);
 		void SetProductFilter(const std::string & listName, SVProductFilterEnum filter);
 

@@ -16,8 +16,8 @@
 using namespace SeidenaderVision;
 
 SVSharedInspectionWriter::SVSharedInspectionWriter()
-	: sh(nullptr)
-	, rsh(nullptr)
+	: m_pSharedLastInspectedCache(nullptr)
+	, m_pSharedRejectCache(nullptr)
 {
 }
 
@@ -81,21 +81,21 @@ HRESULT SVSharedInspectionWriter::Create( const std::string& name, const GUID & 
 
 		// Allocate new repositories
 		size_t managedShareSize = rSettings.DataStoreSize() * statics::M;
-		shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
+		m_pManagedSharedMemory = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
 
 		// Allocate Last Inspected Cache
-		SVSharedLastInspectedCacheAllocator salloc = shm->get_allocator<SVSharedLastInspectedCache>();
-		shm->construct<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str())(salloc, rSettings.NumProductSlots());
+		SVSharedLastInspectedCacheAllocator salloc = m_pManagedSharedMemory->get_allocator<SVSharedLastInspectedCache>();
+		m_pManagedSharedMemory->construct<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str())(salloc, rSettings.NumProductSlots());
 
 		// Allocate Reject Cache
-		SVSharedRejectCacheAllocator ralloc = shm->get_allocator<SVSharedRejectCache>();
-		shm->construct<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str())(ralloc, rSettings.NumRejectSlots());
+		SVSharedRejectCacheAllocator ralloc = m_pManagedSharedMemory->get_allocator<SVSharedRejectCache>();
+		m_pManagedSharedMemory->construct<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str())(ralloc, rSettings.NumRejectSlots());
 
 		if (S_OK == hr)
 		{
 			// get pointers to last_inspected/rejects segments
-			sh = shm->find<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str()).first;
-			rsh = shm->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
+			m_pSharedLastInspectedCache = m_pManagedSharedMemory->find<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str()).first;
+			m_pSharedRejectCache = m_pManagedSharedMemory->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
 		}
 	}
 	catch (const boost::interprocess::interprocess_exception& e)
@@ -109,21 +109,21 @@ HRESULT SVSharedInspectionWriter::Create( const std::string& name, const GUID & 
 
 void SVSharedInspectionWriter::Destroy()
 {
-	if (nullptr != shm.get())
+	if (nullptr != m_pManagedSharedMemory.get())
 	{
 		ReleaseAll();
-		if (rsh)
+		if (m_pSharedRejectCache)
 		{
-			shm->destroy_ptr(rsh);
-			rsh = nullptr;
+			m_pManagedSharedMemory->destroy_ptr(m_pSharedRejectCache);
+			m_pSharedRejectCache = nullptr;
 		}
-		if (sh)
+		if (m_pSharedLastInspectedCache)
 		{
-			shm->destroy_ptr(sh);
-			sh = nullptr;
+			m_pManagedSharedMemory->destroy_ptr(m_pSharedLastInspectedCache);
+			m_pSharedLastInspectedCache = nullptr;
 		}
 		// release managed_shared_memory
-		shm.reset();
+		m_pManagedSharedMemory.reset();
 	}
 	// cleanup
 	Init();
@@ -142,27 +142,27 @@ const GUID & SVSharedInspectionWriter::GetGuid() const
 
 SVSharedData& SVSharedInspectionWriter::GetLastInspectedSlot(long idx)
 {
-	if (idx >= 0 && idx < static_cast<long>(sh->data.size()))
+	if (idx >= 0 && idx < static_cast<long>(m_pSharedLastInspectedCache->data.size()))
 	{
-		return sh->data[idx];
+		return m_pSharedLastInspectedCache->data[idx];
 	}
 	throw (std::exception("GetLastInspectedSlot bad Index"));
 }
 
 const SVSharedData& SVSharedInspectionWriter::GetLastInspectedSlot(long idx) const
 {
-	if (idx >= 0 && idx < static_cast<long>(sh->data.size()))
+	if (idx >= 0 && idx < static_cast<long>(m_pSharedLastInspectedCache->data.size()))
 	{
-		return sh->data[idx];
+		return m_pSharedLastInspectedCache->data[idx];
 	}
 	throw (std::exception("GetLastInspectedSlot bad Index"));
 }
 
 SVSharedData & SVSharedInspectionWriter::GetRejectSlot(long idx)
 {
-	if (idx >= 0 && idx < static_cast<long>(rsh->data.size()))
+	if (idx >= 0 && idx < static_cast<long>(m_pSharedRejectCache->data.size()))
 	{
-		return rsh->data[idx];
+		return m_pSharedRejectCache->data[idx];
 	}
 	throw (std::exception("GetRejectSlot bad Index"));
 }
@@ -170,28 +170,28 @@ SVSharedData & SVSharedInspectionWriter::GetRejectSlot(long idx)
 // this should only be called when there are no clients attached
 void SVSharedInspectionWriter::ClearHeldLastInspected()
 {
-	if (sh)
+	if (m_pSharedLastInspectedCache)
 	{
-		size_t size = sh->data.size();
+		size_t size = m_pSharedLastInspectedCache->data.size();
 		for (size_t i = 0; i < size;i++)
 		{
-			sh->data[i].m_Flags = ds::none;
+			m_pSharedLastInspectedCache->data[i].m_Flags = ds::none;
 		}
-		sh->current_idx = -1;
+		m_pSharedLastInspectedCache->current_idx = -1;
 	}
 }
 
 // this should only be called when there are no clients attached
 void SVSharedInspectionWriter::ClearHeldRejects()
 {
-	if (rsh)
+	if (m_pSharedRejectCache)
 	{
-		size_t size = rsh->data.size();
+		size_t size = m_pSharedRejectCache->data.size();
 		for (size_t i = 0; i < size;i++)
 		{
-			rsh->data[i].m_Flags = ds::none;
+			m_pSharedRejectCache->data[i].m_Flags = ds::none;
 		}
-		rsh->current_idx = -1;
+		m_pSharedRejectCache->current_idx = -1;
 	}
 }
 
@@ -211,15 +211,19 @@ HRESULT SVSharedInspectionWriter::CopyLastInspectedToReject(long index, long rej
 		const SVSharedData& rLastInspected = GetLastInspectedSlot(index);
 		SVSharedData& rReject = GetRejectSlot(rejectIndex);
 		rReject.m_TriggerCount = rLastInspected.m_TriggerCount;
-
-		rReject.m_Values.clear();
-		rReject.m_Images.clear();
-
+		
 		for (SVSharedValueMap::const_iterator it = rLastInspected.m_Values.begin();it != rLastInspected.m_Values.end();++it)
 		{
-
-			std::pair< SVSharedValueMap::iterator,bool>  mRet; 	
-			mRet = rReject.m_Values.insert(SVSharedValuePair(it->first, it->second));
+			SVSharedValueMap::iterator SVMIt = rReject.m_Values.find((char_string) (it->first));
+			if(SVMIt == rReject.m_Values.end() )
+			{
+				std::pair< SVSharedValueMap::iterator,bool>  mRet; 	
+				mRet = rReject.m_Values.insert(SVSharedValuePair(it->first, it->second));
+			}
+			else
+			{
+				SVMIt->second  = it->second;
+			}
 		}
 		for (SVSharedImageMap::const_iterator it = rLastInspected.m_Images.begin();it != rLastInspected.m_Images.end();++it)
 		{
@@ -229,11 +233,23 @@ HRESULT SVSharedInspectionWriter::CopyLastInspectedToReject(long index, long rej
 			std::string rejectImgName = SVSharedConfiguration::GetRejectImageDirectoryName() + + "\\" + SVSharedImage::filename(basename, rejectIndex, imgType, true);
 			SVSharedImage rejectImage(rejectImgName.c_str(), it->second.m_Status, it->second.m_Allocator);
 
-			std::pair<SVSharedImageMap::iterator, bool> l_IterPair = rReject.m_Images.insert(SVSharedImagePair(it->first, rejectImage));
-			if (l_IterPair.first != rReject.m_Images.end())
+			SVSharedImageMap::iterator SIMit =   rReject.m_Images.find( it->first);
+			if(SIMit == rReject.m_Images.end() )
 			{
-				CopyFile(it->second.m_Filename.c_str(), rejectImage.m_Filename.c_str(), false);
+				std::pair<SVSharedImageMap::iterator, bool> l_IterPair = rReject.m_Images.insert(SVSharedImagePair(it->first, rejectImage));
+				if (l_IterPair.first != rReject.m_Images.end())
+				{
+					CopyFile(it->second.m_Filename.c_str(), rejectImage.m_Filename.c_str(), false);
+				}
 			}
+			else
+			{
+				SIMit->second = rejectImage;
+				CopyFile(it->second.m_Filename.c_str(), rejectImage.m_Filename.c_str(), false);
+
+			}
+
+			
 		}
 	}
 	catch (const std::exception& e)

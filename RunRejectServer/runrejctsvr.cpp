@@ -69,9 +69,15 @@ typedef Seidenader::Socket::SVSocket<TcpApi> TcpSocket;
 typedef SeidenaderVision::ProductPtr ProductPtr;
 
 typedef std::pair<ProductPtr, long> ProductPtrPair;
-static ProductPtrPair g_lastProduct(ProductPtr(nullptr), -1); // For last held product from GetProduct cmd
-static ProductPtrPair g_lastRejectProduct(ProductPtr(nullptr), -1); // For last held Reject from GetProduct cmd when product filter is lastReject
-static ProductPtrPair g_lastReject(ProductPtr(nullptr), -1); // For last held Reject from GetReject cmd
+
+
+/// For last held product from GetProduct cmd. Map with ppqnames, (productPtr, Index) 
+static std::map<std::string, ProductPtrPair> g_LastProductMap;  
+ /// For last held Reject from GetProduct cmd when product filter is lastReject.Map with ppqnames, (productPtr, Index) 
+static std::map<std::string, ProductPtrPair> g_lastRejectProductMap;
+// For last held Reject from GetReject cmd. Map with ppqnames, (productPtr, Index) 
+static std::map<std::string, ProductPtrPair> g_lastRejectMap; 
+
 
 using Seidenader::Socket::header;
 using Seidenader::Socket::Traits;
@@ -155,6 +161,7 @@ struct MonitorListCopy
 	std::string m_name;
 	std::string m_ppq;
 	int m_rejectDepth;
+	bool m_IsActive;
 	SVProductFilterEnum m_ProductFilter;
 };
 
@@ -411,13 +418,20 @@ Json::Value WriteFailStatus(const FailStatusMap & fsMap)
 	return rslt;
 }
 
-Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames)
+/// for trig == -1 Get the values for the last saved product  and store the product in lastProductPtrPair
+/// for trig  > -1 return  product  from lastProductPtrPair  if it has the tigger number trig
+//! \param rReader [in] reader 
+//! \param trig [in]   triggercount
+//! \param productItemNames [in] Listof item names 
+//! \param lastRejectProduct [in,out] last saved product.
+//! \returns Json::Value
+Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair& lastProductPtrPair)
 {
 	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
 	if (trig >= 0)
 	{
-		if (g_lastProduct.second < 0 || trig != g_lastProduct.first->product.m_TriggerCount)
+		if (lastProductPtrPair.second < 0 || trig != lastProductPtrPair.first->product.m_TriggerCount)
 		{
 			throw(std::exception("Product Not Found"));
 		}
@@ -432,11 +446,11 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const Monitor
 		const ProductPtr product = rReader.RequestNextProduct(idx);
 		rslt = WriteProductItems<UdpApi>(product, productItemNames);
 
-		if (g_lastProduct.second >= 0)
+		if (lastProductPtrPair.second >= 0)
 		{
-			rReader.ReleaseProduct(g_lastProduct.first, g_lastProduct.second);
+			rReader.ReleaseProduct(lastProductPtrPair.first, lastProductPtrPair.second);
 		}
-		g_lastProduct = std::make_pair(product, idx);
+		lastProductPtrPair = std::make_pair(product, idx);
 		lastResult = rslt;
 	}
 	return rslt;
@@ -448,21 +462,35 @@ void ClearHeld();
 template<>
 void ClearHeld<TcpApi>()
 {
-	g_lastReject = std::make_pair(ProductPtr(nullptr), -1);
+	g_lastRejectMap.clear();
 }
 
 template<>
 void ClearHeld<UdpApi>()
 {
-	g_lastProduct = std::make_pair(ProductPtr(nullptr), -1);
-	g_lastRejectProduct = std::make_pair(ProductPtr(nullptr), -1);
+	g_LastProductMap.clear();
+	g_lastRejectProductMap.clear();
 }
 
+//! for trig == -1 Get the values for the last saved reject   and store the product in lastRejectProduct
+//! for trig  > -1 return  product  from lastRejectProduct  if it has the tigger number trig
+ //! \param rReader [in] reader 
+//! \param trig [in]   triggercount
+//! \param productItemNames [in] Listof item names 
+//! \param lastRejectProduct [in,out] last saved product.
+//! \returns Json::Value
 template<typename API>
-Json::Value GetRejectedProduct(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames);
+Json::Value GetRejectedProduct(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastRejectProduct );
 
+//! for trig == -1 Get the values for the last saved reject   and store the product in lastRejectProduct
+//! for trig  > -1 return  product  from lastRejectProduct  if it has the tigger number trig
+//! \param rReader [in] reader 
+//! \param trig [in]   triggercount
+//! \param productItemNames [in] Listof item names 
+//! \param lastRejectProduct [in,out] last saved product.
+//! \returns Json::Value
 template<>
-Json::Value GetRejectedProduct<TcpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames)
+Json::Value GetRejectedProduct<TcpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastReject )
 {
 	Json::Value rslt(Json::objectValue);
 	
@@ -471,22 +499,29 @@ Json::Value GetRejectedProduct<TcpApi>(PPQReader& rReader, long trig, const Moni
 	rslt = WriteProductItems<TcpApi>(product, productItemNames);
 	
 	// Decide which product to keep and which to release...
-	if (g_lastReject.second >= 0)
+	if (lastReject.second >= 0)
 	{
-		rReader.ReleaseReject(g_lastReject.first, g_lastReject.second);
+		rReader.ReleaseReject(lastReject.first, lastReject.second);
 	}
-	g_lastReject = std::make_pair(product, idx);
+	lastReject = std::make_pair(product, idx);
 	return rslt;
 }
 
+//! for trig == -1 Get the values for the last saved reject   and store the product in lastRejectProduct
+//! for trig  > -1 return  product  from lastRejectProduct  if it has the tigger number trig
+//! \param rReader [in] reader 
+//! \param trig [in]   triggercount
+//! \param productItemNames [in] Listof item names 
+//! \param lastRejectProduct [in,out] last saved product.
+//! \returns Json::Value
 template<>
-Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames)
+Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastRejectProduct )
 {
 	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
 	if (trig >= 0)
 	{
-		if (g_lastRejectProduct.second < 0 || trig != g_lastRejectProduct.first->product.m_TriggerCount)
+		if (lastRejectProduct.second < 0 || trig != lastRejectProduct.first->product.m_TriggerCount)
 		{
 			throw(std::exception("Reject Not Found"));
 		}
@@ -502,11 +537,11 @@ Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig, const Moni
 		rslt = WriteProductItems<UdpApi>(product, productItemNames);
 	
 		// Decide which product to keep and which to release...
-		if (g_lastRejectProduct.second >= 0)
+		if (lastRejectProduct.second >= 0)
 		{
-			rReader.ReleaseReject(g_lastRejectProduct.first, g_lastRejectProduct.second);
+			rReader.ReleaseReject(lastRejectProduct.first, lastRejectProduct.second);
 		}
-		g_lastRejectProduct = std::make_pair(product, idx);
+		lastRejectProduct = std::make_pair(product, idx);
 		lastResult = rslt;
 	}
 	return rslt;
@@ -516,132 +551,145 @@ template<>
 Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 {
 	Json::Value rslt(Json::objectValue);
-	if (cmd.isObject() && cmd.isMember(SVRC::cmd::name))
+	if (false == cmd.isObject() || false ==  cmd.isMember(SVRC::cmd::name))
 	{
-		if (cmd[SVRC::cmd::name] == SVRC::cmdName::getFail)
+		throw std::exception("Invalid command name.");
+	}
+
+	if (cmd[SVRC::cmd::name] == SVRC::cmdName::getFail)
+	{
+		const Json::Value & args = cmd[SVRC::cmd::arg];
+		std::string ppqName;
+		std::string listName;
+		MonitorMapCopy::const_iterator mit;
+
+		if (args.isMember(SVRC::arg::listName) 
+			&& (mit = mlMap.find(listName = args[SVRC::arg::listName].asString())) != mlMap.end()
+			&& true == mit->second.m_IsActive 
+			) 
 		{
-			const Json::Value & args = cmd[SVRC::cmd::arg];
-			std::string ppqName;
-			std::string listName;
-			MonitorMapCopy::const_iterator mit;
-			
-			if (args.isMember(SVRC::arg::listName) 
-				&& (mit = mlMap.find(listName = args[SVRC::arg::listName].asString())) != mlMap.end()) 
+			ppqName = mit->second.m_ppq;
+			PPQReader reader;
+			if(false == reader.Open(ppqName))
 			{
-				// for now let's skip checking if the list is activated - there's only one list.
-				ppqName = mit->second.m_ppq;
-				PPQReader reader;
-				reader.Open(ppqName);
-				FailStatusMap fsMap = reader.GetFailStatus(mit->second.failStats);
-				if (static_cast<int>(fsMap.size()) > mit->second.m_rejectDepth)
-				{
-					size_t sz = fsMap.size();
-					FailStatusMap::iterator it = fsMap.begin();
-					std::advance(it, sz - mit->second.m_rejectDepth);
-					fsMap.erase(fsMap.begin(), it);
-				}
-				rslt = WriteFailStatus(fsMap);
-				return rslt;
+				throw std::exception("Can not open Reader ");
 			}
-			else
+			FailStatusMap fsMap = reader.GetFailStatus(mit->second.failStats);
+			if (static_cast<int>(fsMap.size()) > mit->second.m_rejectDepth)
 			{
-				throw std::exception("Invalid arguments");
+				size_t sz = fsMap.size();
+				FailStatusMap::iterator it = fsMap.begin();
+				std::advance(it, sz - mit->second.m_rejectDepth);
+				fsMap.erase(fsMap.begin(), it);
 			}
-		}
-		else
-		if (cmd[SVRC::cmd::name] == SVRC::cmdName::getRjct)
-		{
-			const Json::Value & args = cmd[SVRC::cmd::arg];
-			std::string ppqName;
-			std::string listName;
-			MonitorMapCopy::const_iterator mit;
-			
-			if (args.isMember(SVRC::arg::trgrCount) 
-				&& args.isMember(SVRC::arg::listName) 
-				&& (mit = mlMap.find(listName = args[SVRC::arg::listName].asString())) != mlMap.end()) 
-			{
-				// for now let's skip checking if the list is activated - there's only one list.
-				ppqName = mit->second.m_ppq;
-				PPQReader reader;
-				reader.Open(ppqName);
-				long trig = args[SVRC::arg::trgrCount].asInt();
-				rslt = GetRejectedProduct<TcpApi>(reader, trig, mit->second.prodItems);
-				return rslt;
-			}
-			else
-			{
-				throw std::exception("Invalid arguments");
-			}
-		}
-		else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
-		{
-			const std::string& rVerStr = GetVersionString();
-			Json::Value rslt(Json::objectValue);
-			rslt[SVRC::result::SVO_ver] = rVerStr.c_str();
+			rslt = WriteFailStatus(fsMap);
 			return rslt;
 		}
+		else
+		{
+			throw std::exception("Invalid arguments");
+		}
+	}
+	else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getRjct)
+	{
+		const Json::Value & args = cmd[SVRC::cmd::arg];
+		std::string ppqName;
+		std::string listName;
+		MonitorMapCopy::const_iterator mit;
+
+		if (args.isMember(SVRC::arg::trgrCount) 
+			&& args.isMember(SVRC::arg::listName) 
+			&& (mit = mlMap.find(listName = args[SVRC::arg::listName].asString())) != mlMap.end()
+			&& true == mit->second.m_IsActive 
+			) 
+		{
+			ppqName = mit->second.m_ppq;
+			PPQReader reader;
+			if(false == reader.Open(ppqName))
+			{
+				throw std::exception("Can not open Reader ");
+			}
+			long trig = args[SVRC::arg::trgrCount].asInt();
+			rslt = GetRejectedProduct<TcpApi>(reader, trig, mit->second.prodItems,g_lastRejectMap[ppqName] );
+			return rslt;
+		}
+		else
+		{
+			throw std::exception("Invalid arguments");
+		}
+	}
+	else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
+	{
+		const std::string& rVerStr = GetVersionString();
+		Json::Value rslt(Json::objectValue);
+		rslt[SVRC::result::SVO_ver] = rVerStr.c_str();
+		return rslt;
 	}
 	throw std::exception("Invalid command name.");
+
 }
 
 template<>
 Json::Value DispatchCommand<UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 {
 	Json::Value rslt(Json::objectValue);
-	if (cmd.isObject() && cmd.isMember(SVRC::cmd::name))
+	if ( false == cmd.isObject() || false == cmd.isMember(SVRC::cmd::name))
 	{
-		if (cmd[SVRC::cmd::name] == SVRC::cmdName::getProd)
-		{
-			const Json::Value & args = cmd[SVRC::cmd::arg];
-			std::string ppqName;
-			std::string listName;
-			MonitorMapCopy::const_iterator mit;
-			
-			if (args.isMember(SVRC::arg::listName) && 
-				(mit = mlMap.find(listName = args[SVRC::arg::listName].asString())) != mlMap.end()) // does the list exist?
-			{
-				// for now let's skip checking if the list is activated - there's only one list.
-				ppqName = mit->second.m_ppq;
-				PPQReader reader;
-				reader.Open(ppqName);
+		throw std::exception("Invalid command packet.");
+	}
 
-				long trig = -1;
-				if (args.isMember(SVRC::arg::trgrCount))
-				{
-					trig = args[SVRC::arg::trgrCount].asInt();
-				}
-				if (LastInspectedFilter == mit->second.m_ProductFilter)
-				{
-					rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems);
-				}
-				else
-				{
-					// Check if there are rejects, if so get the rejected propduct, else get the last inspected product.
-					try
-					{
-						rslt = GetRejectedProduct<UdpApi>(reader, trig, mit->second.prodItems);
-					}
-					catch (std::exception& e)
-					{
-						::OutputDebugStringA(e.what());
-						rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems);
-					}
-				}
-			}
-			else
-			{
-				throw std::exception("Invalid monitor list name.");
-			}
+	if (cmd[SVRC::cmd::name] != SVRC::cmdName::getProd)
+	{
+
+		throw std::exception("Invalid command name.");
+	}
+
+	const Json::Value & args = cmd[SVRC::cmd::arg];
+	std::string ppqName;
+	std::string listName;
+	MonitorMapCopy::const_iterator mit;
+
+	if (args.isMember(SVRC::arg::listName) && 
+		(mit = mlMap.find(listName = args[SVRC::arg::listName].asString())) != mlMap.end()
+		&& true == mit->second.m_IsActive 
+		) // does the list exist?
+	{
+
+		ppqName = mit->second.m_ppq;
+		PPQReader reader;
+		if(false == reader.Open(ppqName))
+		{
+			throw std::exception("Can not open Reader ");
+		};
+
+		long trig = -1;
+		if (args.isMember(SVRC::arg::trgrCount))
+		{
+			trig = args[SVRC::arg::trgrCount].asInt();
+		}
+		if (LastInspectedFilter == mit->second.m_ProductFilter)
+		{
+			rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems, g_LastProductMap[ppqName]);
 		}
 		else
 		{
-			throw std::exception("Invalid command name.");
+			// Check if there are rejects, if so get the rejected propduct, else get the last inspected product.
+			try
+			{
+				rslt = GetRejectedProduct<UdpApi>(reader, trig, mit->second.prodItems, g_lastRejectProductMap[ppqName]);
+			}
+			catch (std::exception& e)
+			{
+				::OutputDebugStringA(e.what());
+				rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems, g_LastProductMap[ppqName]);
+			}
 		}
 	}
 	else
 	{
-		throw std::exception("Invalid command packet.");
+		throw std::exception("Invalid monitor list name.");
 	}
+
 	return rslt;
 }
 
@@ -706,6 +754,7 @@ MonitorListCopy MakeCopy(const MonitorListReader & reader, const std::string & n
 	cpy.prodItems = MakeCopy(list.GetProductItems());
 	cpy.failStats = MakeCopy(list.GetFailStatus());
 	cpy.rejctCond = MakeCopy(list.GetRejectCond());
+	cpy.m_IsActive = list.IsActivated();
 	return cpy;
 }
 

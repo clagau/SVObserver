@@ -102,7 +102,7 @@ HRESULT SVMonitorListWriter::Create(const SVSharedMemorySettings & settings)
 	return l_result;
 }
 
-void SVMonitorListWriter::AddList(const std::string & listName, const std::string & ppqName, int rejectDepth)
+void SVMonitorListWriter::AddList(const std::string & listName, const std::string & ppqName, int rejectDepth, bool isActive )
 {
 	SVSharedConfiguration::Log("SVMonitorListWriter::AddList");
 	if (!m_lists)
@@ -111,6 +111,7 @@ void SVMonitorListWriter::AddList(const std::string & listName, const std::strin
 	}
 	MonitorListAllocator alloc = shm->get_allocator<SVSharedMonitorList>();
 	SVSharedMonitorList list(alloc);
+	isActive?   list.Activate(): list.Deactivate();  
 	list.SetNames(listName, ppqName);
 	list.SetRejectDepth(rejectDepth);
 	m_lists->Add(list);
@@ -118,7 +119,7 @@ void SVMonitorListWriter::AddList(const std::string & listName, const std::strin
 
 void SVMonitorListWriter::FillList(const std::string & listName, listType type, const std::vector<std::string> & list)
 {
-	SVSharedConfiguration::Log("SVMonitorListWriter::FillList");
+ 	SVSharedConfiguration::Log("SVMonitorListWriter::FillList");
 	if (!m_lists)
 	{
 		throw std::exception("MonitorListStore not created yet.");

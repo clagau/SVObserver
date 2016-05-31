@@ -224,11 +224,36 @@ void RemoteMonitorListController::ValidateInputs()
 	}
 }
 
-static void WriteMonitorListToSharedMemory(const std::string& name, const std::string& ppqName, int rejectDepth, const MonitoredObjectList& values, const MonitoredObjectList& images, const MonitoredObjectList& failStatus, const MonitoredObjectList& rejectCond)
+void RemoteMonitorListController::InitMonitorListInSharedMemory()
 {
 	const SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
 	SeidenaderVision::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
 	rWriter.Create(rSettings);
+}
+
+
+
+void RemoteMonitorListController::WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList&  remoteMonitorNamedlist )
+{
+	const SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
+	SeidenaderVision::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
+
+	const MonitoredObjectList& values =remoteMonitorNamedlist .GetProductValuesList();
+	const MonitoredObjectList& images = remoteMonitorNamedlist.GetProductImagesList();
+	const MonitoredObjectList& failStatus = remoteMonitorNamedlist.GetFailStatusList();
+	const MonitoredObjectList& rejectCond = remoteMonitorNamedlist.GetRejectConditionList();
+	
+	int  rejectDepth = 	remoteMonitorNamedlist.GetRejectDepthQueue(); 
+	bool isActive = remoteMonitorNamedlist.IsActive();
+	SVString ppqName = remoteMonitorNamedlist.GetPPQName();
+	
+	
+	if (false == rWriter.IsCreated()) 
+	{
+		rWriter.Create(rSettings);
+	}
+
+
 	if (rWriter.IsCreated())
 	{
 		typedef std::vector<std::string> NameList;
@@ -242,7 +267,7 @@ static void WriteMonitorListToSharedMemory(const std::string& name, const std::s
 		std::transform(rejectCond.begin(), rejectCond.end(), Insertor(rejectCondItems, rejectCondItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
 		std::transform(failStatus.begin(), failStatus.end(), Insertor(failStatusItems, failStatusItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
 
-		rWriter.AddList(name, ppqName, rejectDepth);
+		rWriter.AddList(name, ppqName, rejectDepth, isActive);
 		rWriter.FillList(name, SeidenaderVision::productItems, productItems);
 		rWriter.FillList(name, SeidenaderVision::rejectCondition, rejectCondItems);
 		rWriter.FillList(name, SeidenaderVision::failStatus, failStatusItems);
@@ -259,6 +284,9 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 	// Setup failStatus Streaming
 	SVFailStatusStreamManager::Instance().AttachPPQObservers(m_list);
 
+	///Clear monitorLists in shared Memory
+	InitMonitorListInSharedMemory();
+
 	// combine the lists by PPQName
 	for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
 	{
@@ -273,7 +301,8 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 			const SVString& ppqName = it->second.GetPPQName();
 
 			// write the monitorlist to shared memory...
-			WriteMonitorListToSharedMemory(it->first.c_str(), ppqName.c_str(), it->second.GetRejectDepthQueue(), values, images, failStatus, rejectCond);
+			WriteMonitorListToSharedMemory(it->first.c_str(), it->second);
+
 
 			SVMonitorItemList remoteValueList;
 			SVMonitorItemList remoteImageList;
@@ -307,17 +336,6 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
 {
 	HRESULT hr = S_OK;
-
-	if (bActivate)
-	{
-		//unactivate list prior to activating
-		for (RemoteMonitorList::iterator it = m_list.begin();it != m_list.end();++it)
-		{
-			it->second.Activate(false);
-			it->second.SetProductFilter(LastInspectedFilter);
-		}
-	}
-
 	RemoteMonitorList::iterator it = m_list.find(listName);
 	if (it != m_list.end())
 	{

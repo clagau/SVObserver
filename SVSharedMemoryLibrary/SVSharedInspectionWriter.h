@@ -47,11 +47,11 @@ namespace SeidenaderVision
 		void ClearHeldLastInspected();
 		void ClearHeldRejects();
 
-		managed_shared_memory_shared_ptr shm;
+		managed_shared_memory_shared_ptr m_pManagedSharedMemory;
 
 		std::string m_ShareName;
-		SVSharedLastInspectedCache* sh;
-		SVSharedRejectCache* rsh;
+		SVSharedLastInspectedCache* m_pSharedLastInspectedCache;
+		SVSharedRejectCache* m_pSharedRejectCache;
 
 		GUID m_guid;
 	};
