@@ -13,7 +13,7 @@
 
 inline SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct()
 {
-	guid = SVInvalidGUID;
+	guid = SV_GUID_NULL;
 }
 
 inline SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& p_ref, GUID p_guid, const CString& p_strName )
@@ -39,7 +39,7 @@ inline bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskOb
 	{
 		return ref < rhs.ref;
 	}
-	else if ( guid != SVInvalidGUID && rhs.guid != SVInvalidGUID )
+	else if ( guid != SV_GUID_NULL && rhs.guid != SV_GUID_NULL )
 	{
 		return guid < rhs.guid;
 	}

@@ -8,20 +8,18 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <iterator>
 #include "MessageData.h"
+#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVStatusLibrary
 {
-#pragma region Declarations
-		//This is a define because it uses the standard macros
-		#define StdMessageParams _T(__DATE__), _T(__TIME__), _T(__FILE__), __LINE__, _T(__TIMESTAMP__)
-#pragma endregion Declarations
-
 	class MessageContainer : public std::exception
 	{
-#pragma region Constructor
+	#pragma region Constructor
 	public:
 		MessageContainer();
 
@@ -35,36 +33,22 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! This is the constructor to set the data on construction
 		//! \param MessageCode <in> the number identifying the message
 		//! \param AdditionalTextId <in> the Id for the additional text to the code (without AdditionalTextList)
-		//! \param CompileDate <in> the file compile date
-		//! \param CompileTime <in> the file compile time
-		//! \param SourceFile <in> the source file in which code set
-		//! \param SourceLine <in> the source line number in which code set
-		//! \param SourceDateTime <in> the source file date time in which code set
+		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param OSErrorCode <in> the operating system error code
-		//! \param User <in> the respective user for security messages
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-						LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
-						DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User = nullptr );
+		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
 
 		//************************************
 		//! This is the constructor to set the data on construction
 		//! \param MessageCode <in> the number identifying the message
 		//! \param AdditionalTextId <in> the Id for the additional text to the code
 		//! \param AdditionalTextList <in> List of strings for the additional text to the code
-		//! \param CompileDate <in> the file compile date
-		//! \param CompileTime <in> the file compile time
-		//! \param SourceFile <in> the source file in which code set
-		//! \param SourceLine <in> the source line number in which code set
-		//! \param SourceDateTime <in> the source file date time in which code set
+		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param OSErrorCode <in> the operating system error code
-		//! \param User <in> the respective user for security messages
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-						LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
-						DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User = nullptr );
+		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
 
 		//************************************
 		//! This is the assignment operator
@@ -73,9 +57,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		const MessageContainer& operator=(const MessageContainer& rRhs);
 
 		virtual ~MessageContainer();
-#pragma endregion Constructor
+	#pragma endregion Constructor
 	
-#pragma region Public Methods
+	#pragma region Public Methods
 	public:
 
 		inline const MessageData& getMessage() const { return m_Message; };
@@ -86,43 +70,30 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
 		//! \param MessageCode <in> the number identifying the message
 		//! \param AdditionalTextId <in> the Id for the additional text to the code (without AdditionalTextList)
-		//! \param CompileDate <in> the file compile date
-		//! \param CompileTime <in> the file compile time
-		//! \param SourceFile <in> the source file in which code set
-		//! \param SourceLine <in> the source line number in which code set
-		//! \param SourceDateTime <in> the source file date time in which code set
+		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param OSErrorCode <in> the operating system error code
-		//! \param User <in> the respective user for security messages
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-			LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
-			DWORD dwProgramCode=0, DWORD dwOsErrorCode=0, LPCTSTR User=nullptr);
+		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
 		//! \param MessageCode <in> the number identifying the message
 		//! \param AdditionalTextId <in> the Id for the additional text to the code
 		//! \param AdditionalTextList <in> List of strings for the additional text to the code
-		//! \param CompileDate <in> the file compile date
-		//! \param CompileTime <in> the file compile time
-		//! \param SourceFile <in> the source file in which code set
-		//! \param SourceLine <in> the source line number in which code set
-		//! \param SourceDateTime <in> the source file date time in which code set
+		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param OSErrorCode <in> the operating system error code
-		//! \param User <in> the respective user for security messages
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-			LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
-			DWORD dwProgramCode=0, DWORD dwOsErrorCode=0, LPCTSTR User=nullptr);
+		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
 		//! \param rMessage <in> reference to the message data structure
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param clearData <in> flag to determine if data should be cleared prior to setting the data
 		//************************************
-		void setMessage( const MessageData& rMessage, bool clearData = true );
+		void setMessage( const MessageData& rMessage, const GUID& rObjectId=SV_GUID_NULL, bool clearData = true );
 
 		//************************************
 		//! This method first adds the current main message to the m_AdditionalMessage list 
@@ -130,18 +101,10 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param MessageCode <in> the number identifying the message
 		//! \param AdditionalTextId <in> the Id for the additional text to the code
 		//! \param AdditionalTextList <in> List of strings for the additional text to the code
-		//! \param CompileDate <in> the file compile date
-		//! \param CompileTime <in> the file compile time
-		//! \param SourceFile <in> the source file in which code set
-		//! \param SourceLine <in> the source line number in which code set
-		//! \param SourceDateTime <in> the source file date time in which code set
+		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param OSErrorCode <in> the operating system error code
-		//! \param User <in> the respective user for security messages
 		//************************************
-		void addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-			LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
-			DWORD dwProgramCode=0, DWORD dwOsErrorCode=0, LPCTSTR User=nullptr);
+		void addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD dwProgramCode = 0 );
 
 		//************************************
 		//! This method is the same as the addMessage above with a message structure when the flag is true which is the default
@@ -159,7 +122,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//************************************
 		//! This is the method to log the message into the event log
 		//************************************
-		void logMessage();
+		void logMessage() const;
 
 		//************************************
 		//! This is the method to set that the message has been displayed
@@ -178,9 +141,16 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \returns the detailed information to the message code
 		//************************************
 		SVString Format( SVString& rMessage ) const;
-#pragma endregion Public Methods
 
-#pragma region Private Methods
+		//************************************
+		//! This is the method to get the object id of the message owner
+		//! \returns const reference to the object id
+		//************************************
+		const SVGUID& getObjectId( ) const { return m_ObjectId; };
+
+	#pragma endregion Public Methods
+
+	#pragma region Private Methods
 	private:
 		//************************************
 		//! This gets the filtered severity of the message code
@@ -223,15 +193,21 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param rSubstituteStrings <out> the reference for the substitute strings
 		//************************************
 		void setSubstituteStrings( SVStringArray& rSubstituteStrings ) const;
-#pragma endregion Private Methods
+	#pragma endregion Private Methods
 
-#pragma region Member variables
+	#pragma region Member variables
 	private:
 		MessageData m_Message;				//The main message
 		Messages m_AdditionalMessages;		//List of additional messages
+		SVGUID m_ObjectId;					//The object GUID 
 		SVString m_What;					//The what formatted message
-#pragma endregion Member variables
+	#pragma endregion Member variables
 	};
+
+	#pragma region Declarations
+		typedef std::vector< MessageContainer > MessageContainerVector;
+		typedef std::back_insert_iterator<MessageContainerVector>  MessageContainerInserter;
+	#pragma endregion Declarations
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 
 namespace SvStl = Seidenader::SVStatusLibrary;

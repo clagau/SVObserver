@@ -25,9 +25,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	MessageData::MessageData() :
 	  m_Logged( false )
 	, m_MessageCode( 0 )
-	, m_SourceLine( 0 )
 	, m_ProgramCode( 0 )
-	, m_OSErrorCode( 0 )
 	, m_DateTime( 0 )
 	{
 	}
@@ -38,9 +36,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	, m_MessageCode( MessageCode )
 	, m_AdditionalTextId( AdditionalTextId )
 	, m_AdditionalTextList( AdditionalTextList )
-	, m_SourceLine( 0 )
 	, m_ProgramCode( 0 )
-	, m_OSErrorCode( 0 )
 	, m_DateTime( 0 )
 	{
 	}
@@ -51,14 +47,8 @@ namespace Seidenader { namespace SVStatusLibrary
 	, m_MessageCode( rRhs.m_MessageCode )
 	, m_AdditionalTextId( rRhs.m_AdditionalTextId )
 	, m_AdditionalTextList( rRhs.m_AdditionalTextList )
-	, m_CompileDate( rRhs.m_CompileDate )
-	, m_CompileTime( rRhs.m_CompileTime )
 	, m_SourceFile( rRhs.m_SourceFile )
-	, m_SourceLine( rRhs.m_SourceLine )
-	, m_SourceDateTime( rRhs.m_SourceDateTime )
 	, m_ProgramCode( rRhs.m_ProgramCode )
-	, m_OSErrorCode( rRhs.m_OSErrorCode )
-	, m_User( rRhs.m_User )
 	, m_DateTime( rRhs.m_DateTime )
 	{
 	}
@@ -72,14 +62,8 @@ namespace Seidenader { namespace SVStatusLibrary
 			m_MessageCode = rRhs.m_MessageCode;
 			m_AdditionalTextId = rRhs.m_AdditionalTextId;
 			m_AdditionalTextList = rRhs.m_AdditionalTextList;
-			m_CompileDate = rRhs.m_CompileDate;
-			m_CompileTime = rRhs.m_CompileTime;
 			m_SourceFile = rRhs.m_SourceFile;
-			m_SourceLine = rRhs.m_SourceLine;
-			m_SourceDateTime = rRhs.m_SourceDateTime;
 			m_ProgramCode = rRhs.m_ProgramCode;
-			m_OSErrorCode = rRhs.m_OSErrorCode;
-			m_User = rRhs.m_User;
 			m_DateTime = rRhs.m_DateTime;
 		}
 
@@ -99,14 +83,8 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_MessageCode = 0;
 		m_AdditionalTextId = SvOi::Tid_Empty;
 		m_AdditionalTextList.clear();
-		m_CompileDate.clear();
-		m_CompileTime.clear();
 		m_SourceFile.clear();
-		m_SourceLine = 0;
-		m_SourceDateTime.clear();
 		m_ProgramCode = 0;
-		m_OSErrorCode = 0;
-		m_User.clear();
 		m_DateTime = 0;
 	}
 

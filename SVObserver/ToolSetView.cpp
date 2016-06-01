@@ -432,7 +432,7 @@ void ToolSetView::RenameItem(int item, const CString& oldName, const CString& ne
 		if (!m_toolSetListCtrl.IsEndListDelimiter(name) && !m_toolSetListCtrl.IsEmptyStringPlaceHolder(name))
 		{
 			SVGUID toolId = m_toolSetListCtrl.getToolGuid(m_labelingIndex);
-			if (SVInvalidGUID != toolId) // it's a Tool
+			if (SV_GUID_NULL != toolId) // it's a Tool
 			{
 				TheSVObserverApp.RenameObject(SVString(m_csLabelSaved), SVString(m_csLabelEdited), toolId);
 			}
@@ -610,7 +610,7 @@ bool ToolSetView::ShowDuplicateNameMessage(const CString& rName) const
 	SVStringArray msgList;
 	msgList.push_back(SVString(rName));
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	INT_PTR rc = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RenameError_DuplicateName, msgList, StdMessageParams, SvOi::Err_10221, 0, nullptr, MB_RETRYCANCEL );
+	INT_PTR rc = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10221, SV_GUID_NULL, MB_RETRYCANCEL );
 	return (IDRETRY == rc);
 }
 

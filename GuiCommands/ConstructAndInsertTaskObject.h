@@ -51,7 +51,7 @@ namespace Seidenader
 
 							// Remove it from the Tool TaskObjectList ( Destruct it )
 							GUID objectID = pObject->GetUniqueObjectID();
-							if( SVInvalidGUID != objectID )
+							if( SV_GUID_NULL != objectID )
 							{
 								pTaskObjectList->Delete( objectID );
 							}

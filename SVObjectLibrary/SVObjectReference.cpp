@@ -20,7 +20,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	m_IsArray(false)
 {
 	m_pObject = pObject;
-	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SVInvalidGUID;
+	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	m_NameInfo.clear();
 	
 }
@@ -30,7 +30,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 	m_IsArray(true)
 {
 	m_pObject = pObject;
-	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SVInvalidGUID;
+	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	if( nullptr != m_pObject )
 	{
 		m_NameInfo.ParseObjectName( m_NameInfo, static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
@@ -46,7 +46,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo )
 {
 	m_pObject = pObject;
-	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SVInvalidGUID;
+	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	m_NameInfo = p_rNameInfo;
 	m_IsArray =  p_rNameInfo.IsIndexPresent();
 	m_ArrayIndex = p_rNameInfo.GetIndexValue();

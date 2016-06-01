@@ -266,6 +266,17 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo( SVInObjectInfoStruct*& p_rpsv
 	return l_svOk;
 }
 
+SvStl::MessageContainer SVTaskObjectClass::getFirstTaskMessage() const
+{
+	if( 0 < m_TaskMessages.size() )
+	{
+		return m_TaskMessages[0];
+	}
+
+	return SvStl::MessageContainer();
+}
+
+
 HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
 	HRESULT l_Status = SVObjectAppClass::GetChildObject( rpObject, rNameInfo, Index );
@@ -570,8 +581,8 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 
 			SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;
 
-			if ( pInInfo->GetInputObjectInfo().UniqueObjectID == SVInvalidGUID &&
-			         info.EmbeddedID == SVInvalidGUID && 
+			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID &&
+			         SV_GUID_NULL == info.EmbeddedID && 
 			         info.ObjectType == SVNotSetObjectType &&
 			         info.SubType == SVNotSetSubObjectType )
 			{
@@ -582,8 +593,8 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 
 			info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;
 
-			if ( pInInfo->GetInputObjectInfo().UniqueObjectID == SVInvalidGUID &&
-			         info.EmbeddedID == SVInvalidGUID && 
+			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID &&
+			         SV_GUID_NULL == info.EmbeddedID && 
 			         info.ObjectType == SVNotSetObjectType &&
 			         info.SubType == SVNotSetSubObjectType )
 			{
@@ -622,10 +633,10 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 			if (!pInInfo->IsConnected())
 			{
 				// if Connect to Default
-				if (SVInvalidGUID == pInInfo->GetInputObjectInfo().UniqueObjectID )
+				if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID )
 				{
 					// At least one item from the SVObjectTypeInfoStruct is required, but not all
-					if ( SVInvalidGUID != info.EmbeddedID || SVNotSetObjectType != info.ObjectType || SVNotSetSubObjectType != info.SubType )
+					if ( SV_GUID_NULL != info.EmbeddedID || SVNotSetObjectType != info.ObjectType || SVNotSetSubObjectType != info.SubType )
 					{
 						SVObjectClass* pOwner = GetOwner();
 						SVObjectClass* pRequestor = pInInfo->PObject;
@@ -677,10 +688,10 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 							}// end while (pOwner)
 						}// end if (! bSuccess)
 					}
-				}// end if (SVInvalidGUID == pInInfo->InputObjectInfo.UniqueObjectID )
+				}// end if (SV_GUID_NULL == pInInfo->InputObjectInfo.UniqueObjectID )
 				
 				// Finally try to connect...
-				if ( SVInvalidGUID != pInInfo->GetInputObjectInfo().UniqueObjectID )
+				if ( SV_GUID_NULL != pInInfo->GetInputObjectInfo().UniqueObjectID )
 				{
 					DWORD_PTR dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInInfo), 0);
 
@@ -772,7 +783,7 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 				}
 				// Should we really be doing this here?
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CriticalUnableToConnectTo, msgList, StdMessageParams, SvOi::Err_10203 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CriticalUnableToConnectTo, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10203 ); 
 
 				// Try to recover old state...
 				if( nullptr != l_psvOldImage )
@@ -882,6 +893,8 @@ BOOL SVTaskObjectClass::IsValid()
 BOOL SVTaskObjectClass::Validate()
 {
 	BOOL retVal = TRUE;
+
+	clearTaskMessages();
 
 	for (int i = 0; i < embeddedList.GetSize(); i++)
 	{
@@ -1023,8 +1036,8 @@ void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoL
 		{
 			SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;
 
-			if ( pInInfo->GetInputObjectInfo().UniqueObjectID == SVInvalidGUID &&
-			         info.EmbeddedID == SVInvalidGUID && 
+			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID &&
+			         SV_GUID_NULL == info.EmbeddedID && 
 			         info.ObjectType == SVNotSetObjectType &&
 			         info.SubType == SVNotSetSubObjectType )
 			{
@@ -1106,7 +1119,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedOb
 				if (pObject->GetEmbeddedID() == REmbeddedID)
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_DuplicateEmbeddedId, StdMessageParams, SvOi::Err_10204 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10204 ); 
 					return FALSE;
 				}
 			}
@@ -1457,7 +1470,7 @@ void SVTaskObjectClass::Disconnect()
 		SVInObjectInfoStruct* pInObjectInfo = m_InputObjectList.GetAt(inIndex);
 		if (pInObjectInfo)
 		{
-			if (pInObjectInfo->IsConnected() && pInObjectInfo->UniqueObjectID != SVInvalidGUID)
+			if( pInObjectInfo->IsConnected() && SV_GUID_NULL != pInObjectInfo->UniqueObjectID )
 			{
 				// Send to the Object we are using
 				::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
@@ -1534,7 +1547,7 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 			{
 				if( pInObjectInfo->GetInputObjectInfo().UniqueObjectID == l_pImage->GetUniqueObjectID() )
 				{
-					l_pImage->UpdateImage( SVInvalidGUID );
+					l_pImage->UpdateImage( SV_GUID_NULL );
 				}
 			}
 		}
@@ -1547,7 +1560,6 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 // Use this only for real embedded objects.
 void SVTaskObjectClass::AddEmbeddedObject(SVObjectClass* PObject)
 {
-	//	ASSERT( embeddedID == SVInvalidGUID );
 	ASSERT(nullptr != PObject);
 	
 	// Add to Owner's List of Embedded Objects
@@ -2335,7 +2347,7 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectVector& rListOfObject
 			SVInObjectInfoStruct* pInObjectInfo = *iterInput;
 			if (pInObjectInfo)
 			{
-				if (pInObjectInfo->IsConnected() && pInObjectInfo->UniqueObjectID != SVInvalidGUID)
+				if( pInObjectInfo->IsConnected() && SV_GUID_NULL != pInObjectInfo->UniqueObjectID )
 				{
 					// Send to the Object we are using
 					::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,

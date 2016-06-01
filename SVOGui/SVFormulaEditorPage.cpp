@@ -127,7 +127,7 @@ namespace Seidenader { namespace SVOGui
 		if (S_OK != hOK || nullptr == ScintillaInstance)
 		{
 			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_10028_LoadOfScintillaDllFailed );
+			Exception.setMessage( SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10028_LoadOfScintillaDllFailed );
 		}
 		else
 		{
@@ -689,7 +689,7 @@ namespace Seidenader { namespace SVOGui
 				id = SvOi::Tid_FormulaValidated;
 			}
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, id, msgList, StdMessageParams, SvOi::Err_10223 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, id, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10223 );
 		}
 		else // Something is wrong
 		{
@@ -729,7 +729,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			// Equation must be valid or disabled
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, StdMessageParams, SvOi::Err_10222 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10222 );
 			return FALSE;
 		}
 		else

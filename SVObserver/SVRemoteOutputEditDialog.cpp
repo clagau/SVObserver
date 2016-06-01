@@ -72,7 +72,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 	if( nullptr == pConfig )
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17048_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17048_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -84,7 +84,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 		if( nullptr == pPPQ )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, StdMessageParams, SvOi::Err_17049_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17049_ErrorGettingPPQ );
 			DebugBreak();
 		}
 
@@ -96,7 +96,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 			{
 				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingOutputs, StdMessageParams, SvOi::Err_17050_ErrorGettingOutputs );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17050_ErrorGettingOutputs );
 				DebugBreak();
 			}
 

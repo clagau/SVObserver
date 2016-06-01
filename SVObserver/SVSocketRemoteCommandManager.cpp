@@ -800,7 +800,7 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 	{
 		// Log Exception (in case no one else did...)
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( l_Status, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_25018_Json_GetConfig );
+		Exception.setMessage( l_Status, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25018_Json_GetConfig );
 		
 		if (errText.empty())
 		{
@@ -1304,7 +1304,7 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 	{
 		// Log Exception (in case no one else did...)
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( l_Status, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_25019_Json_PutConfig );
+		Exception.setMessage( l_Status, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25019_Json_PutConfig );
 
 		if (errText.empty())
 		{

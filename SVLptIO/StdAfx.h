@@ -51,6 +51,7 @@
 #include <ctime>			//Used by static library
 #include <fstream>
 #include <functional>
+#include <iterator>			//Used by static library
 #include <map>
 #include <set>				//Used by static library
 #include <string>

@@ -61,7 +61,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_sv
 	catch( ... )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotAddInputRequest, StdMessageParams, SvOi::Err_10205 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotAddInputRequest, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10205 );
 	}
 
 	return l_hrOk;
@@ -83,7 +83,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_sv
 	catch( ... )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotAddInputRequest, StdMessageParams, SvOi::Err_10206 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotAddInputRequest, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10206 );
 	}
 
 	return l_hrOk;
@@ -139,7 +139,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequestMarker()
 	catch( ... )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotAddInputRequestMarker, StdMessageParams, SvOi::Err_10207 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotAddInputRequestMarker, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10207 );
 	}
 
 	return l_hrOk;
@@ -152,7 +152,7 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 	try
 	{
 		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
-		SVGUID InspectionId(SVInvalidGUID);
+		SVGUID InspectionId( SV_GUID_NULL );
 		if(nullptr != pInspection )
 		{
 			InspectionId = pInspection->GetUniqueObjectID();
@@ -172,7 +172,7 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 
 		if ((nullptr != p_psvTool) && (SUCCEEDED (l_hrOk) || E_FAIL == l_hrOk))
 		{
-			HRESULT	hrTemp = p_psvTool->GetRunErrorData().m_MessageCode;
+			HRESULT	hrTemp = p_psvTool->getFirstTaskMessage().getMessage().m_MessageCode;
 
 			if (!SUCCEEDED (hrTemp))
 			{
@@ -185,7 +185,7 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 	catch( ... )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotRunOnce, StdMessageParams, SvOi::Err_10208 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10208 );
 	}
 
 	return l_hrOk;

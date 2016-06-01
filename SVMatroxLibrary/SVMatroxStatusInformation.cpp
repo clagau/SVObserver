@@ -118,31 +118,31 @@ const SVMatroxStatusInformation& SVMatroxStatusInformation::operator=( const SVM
 	return *this;
 }
 
-SVMatroxStatusInformation::SVStatusString SVMatroxStatusInformation::GetCompleteString() const
+SVString SVMatroxStatusInformation::GetCompleteString() const
 {
-	SVStatusString l_Temp;
+	SVString Result;
 	SVString l_Code;
 
-	l_Temp += _T( "Status Code=" );
+	Result += _T( "Status Code=" );
 	l_Code = SvUl_SF::Format( _T( "%ld" ), m_StatusCode & ~( SVMEE_MATROX_ERROR ) );
-	l_Temp += l_Code.c_str();
+	Result += l_Code.c_str();
 
-	l_Temp += _T( "-Function Code=" );
+	Result += _T( "-Function Code=" );
 	l_Code = SvUl_SF::Format( _T( "%ld" ), m_FunctionCode );
-	l_Temp += l_Code.c_str();
+	Result += l_Code.c_str();
 
-	l_Temp += _T( "-Status String=" );
-	l_Temp += m_StatusString;
-	l_Temp += _T( "-Function String=" );
-	l_Temp += m_FunctionString;
-	l_Temp += _T( "-Status Sub String 1=" );
-	l_Temp += m_StatusSubString[ 0 ];
-	l_Temp += _T( "-Status Sub String 2=" );
-	l_Temp += m_StatusSubString[ 1 ];
-	l_Temp += _T( "-Status Sub String 3=" );
-	l_Temp += m_StatusSubString[ 2 ];
+	Result += _T( "-Status String=" );
+	Result += m_StatusString;
+	Result += _T( "-Function String=" );
+	Result += m_FunctionString;
+	Result += _T( "-Status Sub String 1=" );
+	Result += m_StatusSubString[ 0 ];
+	Result += _T( "-Status Sub String 2=" );
+	Result += m_StatusSubString[ 1 ];
+	Result += _T( "-Status Sub String 3=" );
+	Result += m_StatusSubString[ 2 ];
 
-	return l_Temp;
+	return Result;
 }
 
 

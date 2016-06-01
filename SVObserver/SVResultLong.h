@@ -51,7 +51,7 @@ inline const GUID & SVLongResultClass::GetInputEmbeddedID() const
 	}
 	else
 	{
-		return SVInvalidGUID;
+		return SV_GUID_NULL;
 	}
 }
 

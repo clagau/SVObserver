@@ -154,8 +154,8 @@ public:
 	static SVStatusCode ClearBuffer( SVMatroxDisplay& p_rBuffer, double p_dColor );
 
 	// ***** Inport / Export *********
-	static SVStatusCode Import(SVMatroxBuffer& p_rBuf, const SVMatroxString& p_rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
-	static SVStatusCode Export(const SVMatroxBuffer& p_rBuf, const SVMatroxString& p_rFileName, SVMatroxFileTypeEnum p_eFileType );
+	static SVStatusCode Import(SVMatroxBuffer& p_rBuf, const SVString& p_rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
+	static SVStatusCode Export(const SVMatroxBuffer& p_rBuf, const SVString& p_rFileName, SVMatroxFileTypeEnum p_eFileType );
 
 	//************************************
 	//! Get  the Dimension  from the Imagefile 
@@ -164,7 +164,7 @@ public:
 	//! \param Height [out]
 	//! \returns SVMatroxBufferInterface::SVStatusCode  SVMEE_STATUS_OK if no error ocurrs 
 	//************************************
-	static SVStatusCode GetImageSize(const SVMatroxString& rFileName, long &rWidth, long &rHeight);
+	static SVStatusCode GetImageSize(const SVString& rFileName, long &rWidth, long &rHeight);
 
 	static bool IsChildBuffer(const SVMatroxBuffer& p_rBuffer);
 	static bool IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer);

@@ -151,7 +151,7 @@ void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive,
 		// The image record has a dotted name that needs to be 
 		// associated with a pointer to an image later.
 		//
-		if ((objectGuid != SVInvalidGUID) && csGuid.GetLength())
+		if ( SV_GUID_NULL != objectGuid && csGuid.GetLength())
 		{
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( objectGuid );

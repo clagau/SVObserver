@@ -53,11 +53,15 @@
 #include <comutil.h>			//Used by static library
 #include <direct.h>
 #include <exception>
-#include <map>					//Used by static library
+#include <iterator>
+#include <map>
 #include <set>					//Used by static library
 #include <string>				//Used by static library
 #include <tchar.h>
 #include <vector>
+
+#include <boost\assign\list_of.hpp>
+#include <boost\assign\std\map.hpp>
 #pragma endregion Precompiled Headers
 
 

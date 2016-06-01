@@ -64,7 +64,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Allocate(co
 */
 SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Allocate(const SVMatroxSystem& SystemID,
 									  long DeviceNum,
-									  const SVMatroxString& DataFormat,
+									  const SVString& DataFormat,
 									  SVMatroxDigitizer& digitizerID)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
@@ -1158,7 +1158,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetOffset(c
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetVendor(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetVendor(const SVMatroxDigitizer& DigitizerID, SVString& Value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1198,7 +1198,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetVendor(c
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetModel(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetModel(const SVMatroxDigitizer& DigitizerID, SVString& Value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1342,7 +1342,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Get(const S
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeVersion(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeVersion(const SVMatroxDigitizer& DigitizerID, SVString& Value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1382,7 +1382,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeVers
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, SVString& Value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1423,7 +1423,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeSeri
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeSpecificInfo(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeSpecificInfo(const SVMatroxDigitizer& DigitizerID, SVString& Value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1946,7 +1946,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetReferenc
 
 */
 SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& DigitizerID,
-                                  const SVMatroxString& FeatureName,
+                                  const SVString& FeatureName,
                                   SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
                                   variant_t& FeatureValue)
 {
@@ -2095,7 +2095,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetFeature(
 
 */
 SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& DigitizerID,
-                                 const SVMatroxString& FeatureName,
+                                 const SVString& FeatureName,
                                  SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
                                  const variant_t& FeatureValue)
 {
@@ -2449,7 +2449,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Destroy(SVM
 @SVOperationDescription This method Enables/Disables Event Notification for the Digitizer.
 
 */
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const SVMatroxString& eventName, const SVMatroxString& value)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const SVString& eventName, const SVString& value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #if SV_CURRENT_MIL_VERSION == 0x0900
@@ -2495,9 +2495,9 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeEven
 				
 				if (l_Code == SVMEE_STATUS_OK)
 				{
-					SVMatroxString name(pEventName); // MIL_TEXT is null terminated
+					SVString name(pEventName); // MIL_TEXT is null terminated
 					SVMatroxInt eventType = -1;
-					SVMatroxString evName = "Event";
+					SVString evName = "Event";
 					evName += name;
 					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_DEFAULT, evName.c_str(), M_TYPE_MIL_INT, &eventType);
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();

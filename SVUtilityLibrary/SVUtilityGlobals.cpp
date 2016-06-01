@@ -13,8 +13,6 @@
 #include "SVUtilityGlobals.h"
 #include "SVString.h"
 
-const GUID SV_GUID_NULL = GUID_NULL;
-
 HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
 // Does a blind copy of the requested element.
 // E.G., if the element is a BSTR (wchar_t*), only the value of the pointer is copied,

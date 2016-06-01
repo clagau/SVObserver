@@ -235,7 +235,7 @@ BOOL SVImageClass::DestroyImage()
 		if ( ! bOk )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImageClass_DestroyError, StdMessageParams, SvOi::Err_10051 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImageClass_DestroyError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10051 ); 
 		}
 	}
 
@@ -1006,7 +1006,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 				sMsgStr.Format("S_FALSE == l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle )");
 
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVO_5053_CHILDIMAGEHANDLESFALSE, sMsgStr, StdMessageParams );
+				Exception.setMessage( SVMSG_SVO_5053_CHILDIMAGEHANDLESFALSE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 		else // really? there are 2 conditions to the if statement above...
@@ -1015,7 +1015,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 			sMsgStr.Format("nullptr == l_pParentImage");
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_5054_NULLPARENTIMAGE, sMsgStr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5054_NULLPARENTIMAGE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 
 			l_hrOk = S_FALSE;
 		}
@@ -1038,7 +1038,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 					sMsgStr.Format("if (l_Iter->second.m_pImageHandles->GetImageHandle( p_rsvBufferHandle )");
 
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_5055_NULLCHILDHANDLE, sMsgStr, StdMessageParams );
+					Exception.setMessage( SVMSG_SVO_5055_NULLCHILDHANDLE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 		}
@@ -1069,7 +1069,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 				sMsgStr.Format("S_FALSE == l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle )");
 
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVO_5056_CHILDIMAGEHANDLESFALSE, sMsgStr, StdMessageParams );
+				Exception.setMessage( SVMSG_SVO_5056_CHILDIMAGEHANDLESFALSE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 			}
 
 		}
@@ -1079,7 +1079,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 			sMsgStr.Format("nullptr == l_pParentImage");
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_5057_NULLPARENTIMAGE, sMsgStr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5057_NULLPARENTIMAGE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 			l_hrOk = S_FALSE;
 		}
 	}
@@ -1105,7 +1105,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 					sMsgStr.Format("null ptr == l_Iter->second.m_pImageHandles->GetImageHandle( l_Handle.GetIndex(), p_rsvBufferHandle )");
 
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_5058_NULLCHILDHANDLE, sMsgStr, StdMessageParams );
+					Exception.setMessage( SVMSG_SVO_5058_NULLCHILDHANDLE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 		}
@@ -1131,7 +1131,7 @@ HRESULT SVImageClass::GetParentImageHandle( SVSmartHandlePointer &p_rsvBufferHan
 		if( S_OK != l_hrOk )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_5059_GETCHILDERROR, SvOi::Tid_Empty, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5059_GETCHILDERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 	return l_hrOk;
@@ -1154,7 +1154,7 @@ HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, 
 		if( S_OK != l_hrOk )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_5060_GETCHILDERROR, SvOi::Tid_GetParentImageHandleError, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5060_GETCHILDERROR, SvOi::Tid_GetParentImageHandleError, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 	return l_hrOk;
@@ -2195,8 +2195,8 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 
 				if( l_Reset )
 				{
-					SvStl::MessageData oldMessage;
-					SVToolClass*	parentTool = GetTool();
+					SvStl::MessageContainerVector oldMessages;
+					SVToolClass* parentTool( GetTool() );
 					if (nullptr == parentTool)
 					{
 						// this image does not belong to a Tool.  
@@ -2206,38 +2206,43 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 						// Because m_BufferArrayPtr->ResetObject() only 
 						// returns an S_FALSE, error data will be tracked 
 						// through the owning Tool (if present).
-						oldMessage = parentTool->GetRunErrorData();
-						parentTool->ClearRunError();
+						//Save all current messages to add them later if no other error message occurs
+						oldMessages = parentTool->getTaskMessages();
+						parentTool->clearTaskMessages();
 					}
 
 					l_Status = m_BufferArrayPtr->ResetObject();
-					SvStl::MessageData currentMessage;
+					SvStl::MessageContainer currentMessage;
 					if (nullptr != parentTool)
 					{
-						currentMessage = parentTool->GetRunErrorData();
+						currentMessage = parentTool->getFirstTaskMessage();
 					}
 
-					if ((S_OK == l_Status) && (S_OK != currentMessage.m_MessageCode))
+					if ((S_OK == l_Status) && (S_OK != currentMessage.getMessage().m_MessageCode ))
 					{
 						l_Status = SVMSG_SVO_5068_INCONSISTENTDATA;
 					}
 					else
 					{
-						l_Status = currentMessage.m_MessageCode;
+						l_Status = currentMessage.getMessage().m_MessageCode;
 					}
 
 					if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == l_Status)
 					{
-						currentMessage.m_AdditionalTextId = SvOi::Tid_Default;
 						SVStringArray msgList;
 						msgList.push_back(GetCompleteName());
-						currentMessage.m_AdditionalTextList = msgList;
-						parentTool->SetRunErrorData(currentMessage);
+						currentMessage.setMessage( currentMessage.getMessage().m_MessageCode, SvOi::Tid_Default, msgList,  SvStl::SourceFileParams(StdMessageParams) );
+						parentTool->addTaskMessage( currentMessage );
 					}
 
-					if ((nullptr != parentTool && SUCCEEDED (parentTool->GetRunErrorData().m_MessageCode)))
+					if( nullptr != parentTool && SUCCEEDED(parentTool->getFirstTaskMessage().getMessage().m_MessageCode) && 0 < oldMessages.size() )  
 					{
-						parentTool->SetRunErrorData(oldMessage);
+						//No other error messages so add the previous messages
+						SvStl::MessageContainerVector::const_iterator Iter( oldMessages.begin() );
+						for( ; oldMessages.end() != Iter; ++Iter)
+						{
+							parentTool->addTaskMessage( *Iter );
+						}
 					}
 				}
 				else
@@ -2501,7 +2506,7 @@ HRESULT SVImageClass::Save(const SVString& rFilename)
 	
 		if (efileformat != SVFileUnknown)
 		{
-			SVMatroxString strPath = rFilename.c_str();
+			SVString strPath = rFilename.c_str();
 			SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Export(MilHandle.GetBuffer(), strPath, efileformat);
 		}
 		else

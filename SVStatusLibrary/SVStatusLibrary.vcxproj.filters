@@ -110,6 +110,9 @@
     <ClInclude Include="CommandLineArgs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SourceFileParams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MessageManager.inl">

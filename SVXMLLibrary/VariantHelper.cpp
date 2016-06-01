@@ -76,7 +76,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			SVStringArray messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_RestoreVariantError, messageList, StdMessageParams,SvOi::Err_16064_RESTOREVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_RestoreVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16064_RESTOREVARIANT  );
 			throw Exception;
 		}
 
@@ -93,7 +93,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			SVStringArray messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_TranslateVariantError, messageList, StdMessageParams,SvOi::Err_16065_TRANSLATEVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_TranslateVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16065_TRANSLATEVARIANT  );
 			throw Exception;
 		}
 
@@ -113,7 +113,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			SVStringArray messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_TranslateVariantError, messageList, StdMessageParams,SvOi::Err_16065_TRANSLATEVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_TranslateVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16065_TRANSLATEVARIANT  );
 			throw Exception;
 		}
 
@@ -358,7 +358,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		if(bInvalidArgument)
 		{
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,SvOi::Tid_ToVariant_InvalidArgument, StdMessageParams,SvOi::Err_16066_TOVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,SvOi::Tid_ToVariant_InvalidArgument, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16066_TOVARIANT  );
 			throw Exception;
 		}
 

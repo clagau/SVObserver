@@ -131,7 +131,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 	if (S_OK != hr)
 	{
 		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( hr, SvOi::Tid_Empty, StdMessageParams, 5015);
+		Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 5015);
 	}
 
 	UpdateData(FALSE); // dialog being initialized.
@@ -958,73 +958,53 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 	// OnItemChanged(). Because OnItemChanged() will in turn go into 
 	// RunOnce() and ResetObject() logic, we will attempt to retrieve 
 	// we will only be able to track results from the Run Error Code.
-	m_pTool->ClearRunError();
+	m_pTool->clearTaskMessages();
 
 	// It is possible for no item to be in focus if the table was not clicked 
 	// on.  In which case nothing has changed.
-	SVRPropertyItem* item = m_Tree.GetFocusedItem ();
+	SVRPropertyItem* item = m_Tree.GetFocusedItem();
 	if (nullptr != item)
 	{
-		item->CommitChanges();  
+		item->CommitChanges();
 	}
 
-	SvStl::MessageData message = m_pTool->GetRunErrorData();
+	SvStl::MessageContainer message = m_pTool->getFirstTaskMessage();
 	
 	// above validates the parameters from the translation tab.
 	// below validates the whole tool.
-	if (SUCCEEDED (message.m_MessageCode))
+	if (SUCCEEDED (message.getMessage().m_MessageCode))
 	{
 		BOOL br = m_pTool->Validate();
-		message = m_pTool->GetValidationErrorData();
-		if ((TRUE == br) != SUCCEEDED (message.m_MessageCode))
+		message = m_pTool->getFirstTaskMessage();
+		if ((TRUE == br) != SUCCEEDED (message.getMessage().m_MessageCode))
 		{
-			message = SvStl::MessageData(SVMSG_SVO_5078_INCONSISTENTDATA);
+			message.clearMessage();
+			message.setMessage( SvStl::MessageData(SVMSG_SVO_5078_INCONSISTENTDATA) );
 		}
 	}
 
-	if (SUCCEEDED (message.m_MessageCode))
+	if (SUCCEEDED (message.getMessage().m_MessageCode))
 	{
 		HRESULT hr = RunOnce(m_pTool);
-		SvStl::MessageData tmpMessage = m_pTool->GetRunErrorData();
-		if (hr == tmpMessage.m_MessageCode)
+		SvStl::MessageContainer tmpMessage = m_pTool->getFirstTaskMessage();
+		if (hr == tmpMessage.getMessage().m_MessageCode)
 		{
 			message = tmpMessage;
 		}
 		else
 		{
-			message.m_MessageCode = hr;
+			message.clearMessage();
+			message.setMessage( SvStl::MessageData(hr) );
 		}
 	}
 
-	if (!SUCCEEDED (message.m_MessageCode))
+	if (!SUCCEEDED (message.getMessage().m_MessageCode))
 	{
-		DisplayRunError(message, 5068);
-	}
-
-	return message.m_MessageCode;
-}
-
-
-void	SVTADlgTranslationResizePage::DisplayRunError (const SvStl::MessageData& displayMessage, unsigned long programCode)
-{
-	const SvStl::MessageData& message = m_pTool->GetRunErrorData();
-
-	if (displayMessage.m_MessageCode == message.m_MessageCode)
-	{
-		if (!message.m_Displayed)
-		{
-			// this is the Run Error and hasn't already been displayed. Should be displayed.
-			SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
-			Exception.setMessage( displayMessage.m_MessageCode, displayMessage.m_AdditionalTextId, displayMessage.m_AdditionalTextList, StdMessageParams, programCode);
-			m_pTool->SetRunDisplayed(true);
-		}
-	}
-	else
-	{
-		// this is not the Run Error and should always be displayed.
 		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( displayMessage.m_MessageCode, displayMessage.m_AdditionalTextId, displayMessage.m_AdditionalTextList, StdMessageParams, programCode);
+		Exception.setMessage( message.getMessage().m_MessageCode, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5068_ValidateTabData );
 	}
+
+	return message.getMessage().m_MessageCode;
 }
 
 
@@ -1108,12 +1088,11 @@ void SVTADlgTranslationResizePage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* 
 
 HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* item)
 {
-	SvStl::MessageData message;
+	SvStl::MessageContainer message;
 
 	// Some items are checked before the RunOnce, and then the RunOnce is 
 	// bypassed.  So the clear must be explicitly called.
-	m_pTool->ClearRunError();
-	m_pTool->ClearValidationError();
+	m_pTool->clearTaskMessages();
 
 	HRESULT	hr = SetInspectionData();
 
@@ -1123,7 +1102,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 		// Error handling within these processes is not complete. The 
 		// maintains members to help pass error data outside these 
 		// operations.
-		message = m_pTool->GetRunErrorData();
+		message = m_pTool->getFirstTaskMessage();
 
 		if (((SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr) ||
 			 (SVMSG_SVO_5061_SFOUTSIDERANGE == hr)) &&
@@ -1137,12 +1116,11 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 
 			SVStringArray msgList;
 			msgList.push_back(item->GetLabelText());
-			message.m_AdditionalTextId = SvOi::Tid_Default;
-			message.m_AdditionalTextList = msgList;
+			message.setMessage( hr, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
-		message.m_MessageCode = hr;
 
-		DisplayRunError(message, SvOi::ProgCode_5067_ValidateCurrentTreeData);
+		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
+		Exception.setMessage( hr, message.getMessage().m_AdditionalTextId, message.getMessage().m_AdditionalTextList, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5067_ValidateCurrentTreeData );
 	}
 
 	if (!SUCCEEDED (hr))
@@ -1160,16 +1138,6 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 	if (SUCCEEDED(hr))
 	{
 		hr = UpdatePropertyTreeData();
-
-		if (SUCCEEDED (hr))
-		{
-			// if there was an error setting the properties the first time,
-			// and there was no error setting the properties back to the 
-			// original values, then preserve the first error (which was 
-			// displayed).
-			m_pTool->SetRunErrorData (message);
-			m_pTool->SetRunDisplayed(true);
-		}
 	}
 
 	return hr;

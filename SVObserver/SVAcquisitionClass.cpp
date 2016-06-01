@@ -362,12 +362,12 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 			if( LogOnly )
 			{
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), StdMessageParams, SvOi::Err_25047_LoadFileFailed );
+				Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed );
 			}
 			else
 			{
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), StdMessageParams, SvOi::Err_25047_LoadFileFailed, 0, nullptr, MB_YESNO ) )
+				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed, SV_GUID_NULL, MB_YESNO ) )
 				{
 					//All other missing files will only be logged
 					LogOnly = true;
@@ -746,7 +746,7 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 		SVStringArray msgList;
 		msgList.push_back(GetDeviceName());
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (hrOk), SvOi::Tid_SVAcquisitionClass_GetNextIndex, msgList, StdMessageParams );
+		Exception.setMessage( static_cast<DWORD> (hrOk), SvOi::Tid_SVAcquisitionClass_GetNextIndex, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 	
 	return hrOk;

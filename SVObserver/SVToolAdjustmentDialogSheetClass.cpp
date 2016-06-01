@@ -309,7 +309,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		default:
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenTADlg, StdMessageParams, SvOi::Err_10218 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenTADlg, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10218 );
 			delete pConditionalDlg;
 			pConditionalDlg = nullptr;
 			break;
@@ -376,7 +376,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 					{
 						// Equation must be valid or disabled
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, StdMessageParams, SvOi::Err_10219 );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10219 );
 						return;
 					}
 				}

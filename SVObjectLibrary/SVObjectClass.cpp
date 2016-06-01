@@ -28,7 +28,7 @@
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVObjectClass, SVInvalidGUID )
+SV_IMPLEMENT_CLASS( SVObjectClass, SV_GUID_NULL )
 
 //This is the default constructor for this object.  This constructor initializes the name objects, clears all owner information, and calls the init method.
 SVObjectClass::SVObjectClass()
@@ -85,9 +85,9 @@ void SVObjectClass::init()
 	m_objectDepth	= 0;	// Standard Depth
 
 	m_isObjectValid		  = false;
-	m_validationReferenceID = SVInvalidGUID;
+	m_validationReferenceID = SV_GUID_NULL;
 
-	m_embeddedID			  = SVInvalidGUID;
+	m_embeddedID			  = SV_GUID_NULL;
 
 	// Set object Info...
 	SVObjectManagerClass::Instance().CreateUniqueObjectID( this );
@@ -783,7 +783,7 @@ This method is used to add an object to the friends list via the object's unique
 BOOL SVObjectClass::AddFriend( const GUID& RFriendGUID )
 {
 	// Check GUID...
-	if( SVInvalidGUID == RFriendGUID )
+	if( SV_GUID_NULL == RFriendGUID )
 	{
 		return false;
 	}
@@ -844,7 +844,7 @@ SVObjectClass*  SVObjectClass::GetFriend( const SVObjectTypeInfoStruct& rObjectT
 			pInfoStruct->SubType   == rObjectType.SubType
 			)
 		{
-			if( SVInvalidGUID == pInfoStruct->EmbeddedID || pInfoStruct->EmbeddedID == rObjectType.EmbeddedID )
+			if( SV_GUID_NULL == pInfoStruct->EmbeddedID || pInfoStruct->EmbeddedID == rObjectType.EmbeddedID )
 			{
 				return 	m_friendList[ i ].PObject;
 			}
@@ -859,7 +859,7 @@ This method is used to remove an object from the friends list via the object's u
 BOOL SVObjectClass::RemoveFriend( const GUID& rFriendGUID )
 {
 	// Check GUID...
-	if (SVInvalidGUID != rFriendGUID)
+	if (SV_GUID_NULL != rFriendGUID)
 	{
 		// Check if friend is applied...
 		if (m_friendList.size())
@@ -1168,14 +1168,14 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 				}
 
 				// Find best match....EmbeddedID, Type, SubType...
-				if( ( SVInvalidGUID == pObjectTypeInfo->EmbeddedID      || pObjectTypeInfo->EmbeddedID == GetEmbeddedID() ) &&
+				if( ( SV_GUID_NULL  == pObjectTypeInfo->EmbeddedID      || pObjectTypeInfo->EmbeddedID == GetEmbeddedID() ) &&
 					( SVNotSetObjectType == pObjectTypeInfo->ObjectType || pObjectTypeInfo->ObjectType == GetObjectType() ) &&
 					( SVNotSetSubObjectType == pObjectTypeInfo->SubType || pObjectTypeInfo->SubType    == GetObjectSubType() )
 					)
 				{
-					if( pObjectTypeInfo->EmbeddedID != SVInvalidGUID         ||
-						pObjectTypeInfo->ObjectType != SVNotSetObjectType    ||
-						pObjectTypeInfo->SubType    != SVNotSetSubObjectType
+					if( SV_GUID_NULL          != pObjectTypeInfo->EmbeddedID ||
+						SVNotSetObjectType    != pObjectTypeInfo->ObjectType ||
+						SVNotSetSubObjectType != pObjectTypeInfo->SubType
 						)
 					{
 						// But object must be specified!
@@ -1298,7 +1298,7 @@ void SVObjectClass::Persist( SVObjectWriter& rWriter )
 	value.Clear();
 
 	// Set up object definition...
-	if( GetEmbeddedID() != SVInvalidGUID )
+	if( SV_GUID_NULL != GetEmbeddedID() )
 	{
 		value.SetString(GetEmbeddedID().ToString().c_str());
 		rWriter.WriteAttribute( scEmbeddedIDTag, value );

@@ -63,6 +63,7 @@
 #include <Guiddef.h>
 #include <list>
 #include <io.h>
+#include <iterator>			//Used by static library
 #include <oleauto.h>
 #include <map>
 #include <math.h>

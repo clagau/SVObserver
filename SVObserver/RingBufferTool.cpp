@@ -159,7 +159,7 @@ BOOL RingBufferTool::OnValidate()
 		msgList.push_back(SvUl_SF::Format("%d", m_minRingBufferDepth));
 		msgList.push_back(SvUl_SF::Format("%d", m_maxRingBufferDepth));
 		msgList.push_back(SvUl_SF::Format("%d", ringBufferDepth));
-		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, SvOi::Tid_RingBuffer_Depth_Invalid_Value, msgList, StdMessageParams, SvOi::Err_10013_RingBuffer_DepthValueInvalid );
+		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, SvOi::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10013_RingBuffer_DepthValueInvalid );
 	}
 	for (int i=0; i< m_numberOfOutputImages; ++i)
 	{

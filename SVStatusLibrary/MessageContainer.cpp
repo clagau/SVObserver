@@ -31,9 +31,9 @@ static const TCHAR* const RegPathEventLog = _T("HKEY_LOCAL_MACHINE\\System\\Curr
 static const TCHAR* const EventMsgFile = _T( "EventMessageFile" );
 static const TCHAR* const SourceCategoryEventFormat = _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n");
 static const TCHAR* const ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
-static const TCHAR* const DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d\r\nOSError: %d\r\nCompiled: %s %s\n");
+static const TCHAR* const DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d [0X%08X]\r\nCompiled: %s %s\n");
 
-static const UINT SubstituteStringNr = 12;
+static const UINT SubstituteStringNr = 9;
 
 static const UINT CategoryNr = 31;
 static const UINT CategoryBase = FAC_UNUSED01;
@@ -79,29 +79,27 @@ static const TCHAR* const TaskCategory[CategoryNr]= {
 namespace Seidenader { namespace SVStatusLibrary
 {
 #pragma region Constructor
-	MessageContainer::MessageContainer()
+	MessageContainer::MessageContainer() :
+	 m_ObjectId( SV_GUID_NULL )
 	{
 	}
 
 	MessageContainer::MessageContainer(const MessageContainer& rRhs) :
-	m_Message( rRhs.m_Message )
-		, m_AdditionalMessages( rRhs.m_AdditionalMessages )
-		, m_What( rRhs.m_What )
+	 m_Message( rRhs.m_Message )
+	,m_AdditionalMessages( rRhs.m_AdditionalMessages )
+	,m_What( rRhs.m_What )
+	,m_ObjectId( rRhs.m_ObjectId )
 	{
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime,
-		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime,
-		DWORD ProgramCode, DWORD OSErrorCode, LPCTSTR User )
+	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/ )
 	{
-		setMessage( MessageCode, AdditionalTextId, SVStringArray(), CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
+		setMessage( MessageCode, AdditionalTextId, SVStringArray(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime,
-		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime,
-		DWORD ProgramCode, DWORD OSErrorCode, LPCTSTR User )
+	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, AdditionalTextList, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
+		setMessage( MessageCode, AdditionalTextId, AdditionalTextList, SourceFile, ProgramCode, rObjectId );
 	}
 
 	const MessageContainer& MessageContainer::operator=(const MessageContainer& rRhs)
@@ -111,6 +109,7 @@ namespace Seidenader { namespace SVStatusLibrary
 			m_Message = rRhs.m_Message;
 			m_AdditionalMessages = rRhs.m_AdditionalMessages;
 			m_What = rRhs.m_What;
+			m_ObjectId = rRhs.m_ObjectId;
 		}
 
 		return *this;
@@ -122,34 +121,24 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
-		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
+	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, SVStringArray(), CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OsErrorCode, User );
+		setMessage( MessageCode, AdditionalTextId, SVStringArray(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, 
-		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
+	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
 		m_Message.m_AdditionalTextId = AdditionalTextId;
 		m_Message.m_AdditionalTextList = AdditionalTextList;
-		m_Message.m_CompileDate = CompileDate;
-		m_Message.m_CompileTime = CompileTime;
-		m_Message.m_SourceLine = SourceLine;
-		m_Message.m_SourceDateTime = SourceDateTime;
 		m_Message.m_SourceFile = SourceFile;
 		m_Message.m_ProgramCode = ProgramCode;
-		m_Message.m_OSErrorCode = OsErrorCode;
-		m_Message.m_User = (nullptr != User) ? User : SVString();
 
-		setMessage( m_Message, false );
+		setMessage( m_Message, rObjectId, false );
 	}
 
-	void MessageContainer::setMessage( const MessageData& rMessage, bool clearData )
+	void MessageContainer::setMessage( const MessageData& rMessage, const GUID& rObjectId /*=SV_GUID_NULL*/, bool clearData /*= true*/ )
 	{
 		if( clearData )
 		{
@@ -157,13 +146,13 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 		//Note if rMessage is the reference to m_Message then no copy is made
 		m_Message = rMessage;
+		//Set the object id only if it is not null
+		if( SV_GUID_NULL != rObjectId )
+		{
+			m_ObjectId = rObjectId;
+		}
 		//Set the date time when this is being set
 		m_Message.m_DateTime = std::time( 0 );
-
-		if( 0 == m_Message.m_OSErrorCode )
-		{
-			m_Message.m_OSErrorCode = GetLastError();
-		}
 
 		SVString additionalText = m_Message.getAdditionalText();
 		if( !additionalText.empty() )
@@ -176,9 +165,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 	}
 
-	void MessageContainer::addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, 
-		LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime , 
-		DWORD ProgramCode, DWORD OsErrorCode, LPCTSTR User )
+	void MessageContainer::addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
 	{
 		//Save the current message to the additional messages
 		m_AdditionalMessages.push_back( m_Message );
@@ -186,16 +173,10 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_Message.m_MessageCode = MessageCode;
 		m_Message.m_AdditionalTextId = AdditionalTextId;
 		m_Message.m_AdditionalTextList = AdditionalTextList;
-		m_Message.m_CompileDate = CompileDate;
-		m_Message.m_CompileTime = CompileTime;
-		m_Message.m_SourceLine = SourceLine;
-		m_Message.m_SourceDateTime = SourceDateTime;
 		m_Message.m_SourceFile = SourceFile;
 		m_Message.m_ProgramCode = ProgramCode;
-		m_Message.m_OSErrorCode = OsErrorCode;
-		m_Message.m_User = (nullptr != User) ? User : SVString();
 
-		setMessage( m_Message, false );
+		setMessage( m_Message, SV_GUID_NULL, false );
 	}
 
 	void MessageContainer::addMessage( const MessageData& rMessage, bool replaceMainMessage )
@@ -204,7 +185,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		{
 			//Save the current message to the additional messages and make the new message the main message
 			m_AdditionalMessages.push_back( m_Message );
-			setMessage( rMessage, false );
+			setMessage( rMessage, SV_GUID_NULL, false );
 		}
 		else
 		{
@@ -222,7 +203,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_What.clear();
 	}
 
-	void MessageContainer::logMessage()
+	void MessageContainer::logMessage() const
 	{
 		SVStringArray SubstituteStrings;
 		const TCHAR *pSubstituteString[SubstituteStringNr];
@@ -395,13 +376,13 @@ namespace Seidenader { namespace SVStatusLibrary
 			rMessage = SvUl_SF::Format( ErrorLoadingDll, m_Message.m_MessageCode);
 
 			MsgDetails = SvUl_SF::Format( DefaultEventFormat,
-				m_Message.m_SourceFile.c_str(),
-				m_Message.m_SourceLine,
-				m_Message.m_SourceDateTime.c_str(),
+				m_Message.m_SourceFile.m_FileName.c_str(),
+				m_Message.m_SourceFile.m_Line,
+				m_Message.m_SourceFile.m_FileDateTime.c_str(),
 				m_Message.m_ProgramCode,
-				m_Message.m_OSErrorCode,
-				m_Message.m_CompileDate.c_str(),
-				m_Message.m_CompileTime.c_str() );
+				m_Message.m_ProgramCode,
+				m_Message.m_SourceFile.m_CompileDate.c_str(),
+				m_Message.m_SourceFile.m_CompileTime.c_str() );
 		}
 		Result += MsgDetails;
 
@@ -497,17 +478,14 @@ namespace Seidenader { namespace SVStatusLibrary
 		rSubstituteStrings.clear();
 		rSubstituteStrings.resize( SubstituteStringNr );
 		rSubstituteStrings[0] = _T("\r\n");
-		rSubstituteStrings[1] =  m_Message.m_SourceFile;
-		rSubstituteStrings[2] = SvUl_SF::Format( _T("%d"), m_Message.m_SourceLine );
-		rSubstituteStrings[3] = m_Message.m_SourceDateTime;
-		rSubstituteStrings[4] = SvUl_SF::Format( _T("%d"), m_Message.m_OSErrorCode );
-		rSubstituteStrings[5] = SvUl_SF::Format( _T("0x%08x"), m_Message.m_OSErrorCode );
-		rSubstituteStrings[6] = m_Message.m_CompileDate;
-		rSubstituteStrings[7] = m_Message.m_CompileTime;
-		rSubstituteStrings[8] = SvUl_SF::Format( _T("%d"), m_Message.m_ProgramCode );
-		rSubstituteStrings[9] = SvUl_SF::Format( _T("0x%08x"), m_Message.m_ProgramCode );
-		rSubstituteStrings[10] = m_Message.getAdditionalText();
-		rSubstituteStrings[11] = m_Message.m_User;
+		rSubstituteStrings[1] =  m_Message.m_SourceFile.m_FileName;
+		rSubstituteStrings[2] = SvUl_SF::Format( _T("%d"), m_Message.m_SourceFile.m_Line );
+		rSubstituteStrings[3] = m_Message.m_SourceFile.m_FileDateTime;
+		rSubstituteStrings[4] = SvUl_SF::Format( _T("%d"), m_Message.m_ProgramCode );
+		rSubstituteStrings[5] = SvUl_SF::Format( _T("0x%08x"), m_Message.m_ProgramCode );
+		rSubstituteStrings[6] = m_Message.m_SourceFile.m_CompileDate;
+		rSubstituteStrings[7] = m_Message.m_SourceFile.m_CompileTime;
+		rSubstituteStrings[8] = m_Message.getAdditionalText();
 	}
 #pragma endregion Private Methods
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */

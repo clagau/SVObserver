@@ -50,8 +50,8 @@ namespace Seidenader { namespace SVOGui {
 	END_MESSAGE_MAP()
 
 	SVDlgImageClass::SVDlgImageClass()
-		: m_inspectionId (SVInvalidGUID)
-		,m_imageId (SVInvalidGUID)
+		: m_inspectionId (SV_GUID_NULL)
+		,m_imageId (SV_GUID_NULL)
 	{
 		mbInit = false;
 		m_dZoomX = 1.0;
@@ -70,7 +70,7 @@ namespace Seidenader { namespace SVOGui {
 
 	void SVDlgImageClass::UpdateImageInfo( const SVGUID& inspectionId, const SVGUID& imageId )
 	{
-		ASSERT( SVInvalidGUID != inspectionId || SVInvalidGUID != imageId );	// if no source image, must supply info & handle
+		ASSERT( SV_GUID_NULL != inspectionId || SV_GUID_NULL != imageId );	// if no source image, must supply info & handle
 
 		m_inspectionId = inspectionId;
 		m_imageId = imageId;

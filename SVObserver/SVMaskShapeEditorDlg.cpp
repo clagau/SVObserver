@@ -675,7 +675,7 @@ int SVMaskShapeEditorDlg::GetPropertyID(GUID guidProperty )
 		do
 		{
 			id = (rand() % 15000) + ID_BASE; //@TODO:  Explain the use of rand() and the 15000.
-		} while ( GetPropertyGuid(id) != SVInvalidGUID );
+		} while ( SV_GUID_NULL != GetPropertyGuid(id) );
 
 		m_mapPropertyIds[ guidProperty ] = id;
 	}
@@ -692,7 +692,7 @@ GUID SVMaskShapeEditorDlg::GetPropertyGuid(int iPropertyID )
 			return iter->first;
 		}
 	}
-	return SVInvalidGUID;
+	return SV_GUID_NULL;
 }
 
 HRESULT SVMaskShapeEditorDlg::BuildPropertyList()

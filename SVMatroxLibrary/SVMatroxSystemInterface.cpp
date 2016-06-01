@@ -24,7 +24,7 @@
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SVMatroxString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& p_rSystem)
+SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SVString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& p_rSystem)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -141,7 +141,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVMatroxString& value)
+SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVString& value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS

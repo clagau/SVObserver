@@ -20,7 +20,7 @@ HRESULT SVGigeLUTGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGige
 	{
 		// Set the Selector
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
+		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t(selector.GetValue().c_str()));
 		hr = l_Code;
 
 		if (l_Code == SVMEE_STATUS_OK)
@@ -61,7 +61,7 @@ HRESULT SVGigeLUTGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGige
 										_variant_t lutIndex(i);
 
 										// Set LUT Index
-										l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVMatroxString("LUTIndex"), SVMatroxDigitizerFeature::SVTypeInt32, lutIndex);
+										l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString("LUTIndex"), SVMatroxDigitizerFeature::SVTypeInt32, lutIndex);
 										hr = l_Code;
 
 										if (l_Code == SVMEE_STATUS_OK)
@@ -70,7 +70,7 @@ HRESULT SVGigeLUTGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGige
 											lutValue.ChangeType(VT_I4);
 							
 											// // Get LUT Value from camera at Index N
-											l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVMatroxString(rFeature.GetName().c_str()), rFeature.GetType(), lutValue);
+											l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), lutValue);
 											hr = l_Code;
 
 											if (l_Code == SVMEE_STATUS_OK)

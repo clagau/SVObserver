@@ -53,9 +53,9 @@ private:
 	SVMatroxBufferArray m_AcqBuffers;
 	SVGigeDeviceParameterMap m_featuresMap;
 	unsigned long m_deviceNumber;
-	SVMatroxString m_lineInputMoniker;
-	SVMatroxString m_lineInputRisingEventName;
-	SVMatroxString m_lineInputFallingEventName;
+	SVString m_lineInputMoniker;
+	SVString m_lineInputRisingEventName;
+	SVString m_lineInputFallingEventName;
 	bool m_lineState;
 	SVGigeEventList m_eventList;
 
@@ -82,8 +82,8 @@ public:
 
 	bool HasLineInput() const;
 	void SetLineInputMoniker(const SVString& moniker);
-	SVMatroxString GetLineInputRisingEventName() const;
-	SVMatroxString GetLineInputFallingEventName() const;
+	SVString GetLineInputRisingEventName() const;
+	SVString GetLineInputFallingEventName() const;
 
 	bool IsAcquisitionTriggered() const;
 	void SetAcquisitionTriggered(bool bAcquisitionTriggered);

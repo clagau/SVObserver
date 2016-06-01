@@ -448,7 +448,7 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 					if (csEqText.IsEmpty())
 					{
 						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_16038_EmptyFormula );
+						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16038_EmptyFormula );
 						return false;
 					}
 				}

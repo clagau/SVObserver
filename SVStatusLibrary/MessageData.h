@@ -10,6 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <ctime>
+#include "SourceFileParams.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/MessageTextEnum.h"
 #pragma endregion Includes
@@ -18,7 +19,7 @@ namespace Seidenader { namespace SVStatusLibrary
 {
 	struct MessageData
 	{
-#pragma region Constructor
+	#pragma region Constructor
 	public:
 		MessageData();
 
@@ -43,9 +44,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		const MessageData& operator=(const MessageData& rRhs);
 
 		virtual ~MessageData();
-#pragma endregion Constructor
+	#pragma endregion Constructor
 
-#pragma region Public Methods
+	#pragma region Public Methods
 	public:
 		//************************************
 		//! This is the method to clear the data
@@ -64,30 +65,24 @@ namespace Seidenader { namespace SVStatusLibrary
 	/// \returns SVString
 	//************************************
 		static SVString convertId2AddtionalText(SvOi::MessageTextEnum id);
-#pragma endregion Public Methods
+	#pragma endregion Public Methods
 
-#pragma region Member Variables
+	#pragma region Member Variables
 	public:
-		bool m_Logged;						//Flag indicating if the message was written to the event log
-		bool m_Displayed;					//Flag indicating if the message has been displayed
+		mutable bool m_Logged;				//Flag indicating if the message was written to the event log
+		mutable bool m_Displayed;			//Flag indicating if the message has been displayed
 		DWORD m_MessageCode;				//Number identifying the message
-		SvOi::MessageTextEnum m_AdditionalTextId;
-		SVStringArray m_AdditionalTextList;
-		SVString m_CompileDate;				//Date the source file was compiled.
-		SVString m_CompileTime;				//Time the source file was compiled.
-		SVString m_SourceFile;				//Name of the source file where the message was encountered.
-		long m_SourceLine;					//Line number within the source file where the message was encountered.
-		SVString m_SourceDateTime;			//Last modification date/time of the source file.
+		SvOi::MessageTextEnum m_AdditionalTextId; //The main additional text id
+		SVStringArray m_AdditionalTextList; //String list to be inserted in the main additional text id
+		SourceFileParams m_SourceFile;		//The source file standard parameters
 		DWORD m_ProgramCode;				//Program specific code.
-		DWORD m_OSErrorCode;				//Operating system error code.
-		SVString m_User;					//The user for security messages
 		std::time_t m_DateTime;				//The date and time when the data is set
-#pragma endregion Member Variables
+	#pragma endregion Member Variables
 	};
 
-#pragma region Declarations
-	typedef std::vector< MessageData > Messages;
-#pragma endregion Declarations
+	#pragma region Declarations
+		typedef std::vector< MessageData > Messages;
+	#pragma endregion Declarations
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 
 namespace SvStl = Seidenader::SVStatusLibrary;

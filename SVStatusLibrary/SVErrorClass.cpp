@@ -205,7 +205,7 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
 		  // log to event log.
 			SvStl::MessageContainer svE;
 			svE.setMessage (SVMSG_SVO_35_LEGACY_ERROR_TRAP, SvOi::Tid_ErrorClass, messageList, 
-				_T(__DATE__), _T(__TIME__), fileName, lineNbr, _T(__TIMESTAMP__), programCd );
+				SvStl::SourceFileParams( _T(__DATE__), _T(__TIME__), fileName, lineNbr, _T(__TIMESTAMP__) ), programCd );
 			svE.logMessage();
 		//*******************************************************
 /*------- End of ACKNOWLEDGE PASSWORD. -------------------------------------*/

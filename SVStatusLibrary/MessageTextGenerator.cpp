@@ -47,12 +47,12 @@ SVString MessageTextGenerator::getText(SvOi::MessageTextEnum messageId, const SV
 		//replace %s with additionalList-strings
 		for (int i=0; i < additionalList.size(); i++)
 		{
-			size_t pos = retString.find("%s");
+			size_t pos = retString.find( _T("%s") );
 
 			if( SVString::npos != pos )
 			{
 				SVString addMessage = convertAddtionalListTextToString(additionalList[i]);
-				retString.replace(pos, strlen("%s"), addMessage);
+				retString.replace(pos, strlen( _T("%s") ), addMessage);
 			}
 		}
 	}

@@ -12,8 +12,9 @@
 #include "stdafx.h"
 #include "sstream"
 #include "SVThreadManager.h"
-#include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\GlobalPath.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 
 SVThreadManager& SVThreadManager::Instance()
 {
@@ -193,6 +194,18 @@ void SVThreadManager::SetThreadAffinityEnabled( BOOL bEnable )
 BOOL SVThreadManager::IsThreadManagerInstalled() const
 {
 	return m_bThreadManagerInstalled;
+}
+
+void SVThreadManager::setThreadError( DWORD MessageCode, LPCTSTR Message, SvStl::SourceFileParams SourceFile )
+{
+	DWORD errorCode = GetLastError();
+	SVStringArray msgList;
+	msgList.push_back( SvUl_SF::Format( _T("%d"), errorCode ));
+	msgList.push_back( SvUl_SF::Format( _T("0X%08X"), errorCode ));
+	msgList.push_back( SVString( Message ) );
+
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( MessageCode, SvOi::Tid_OS_Error_Message, msgList, SourceFile, SvOi::Err_25030_Thread );
 }
 
 

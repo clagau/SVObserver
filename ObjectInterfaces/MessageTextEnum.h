@@ -361,6 +361,12 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_Security_Login,
 		Tid_Security_Access,
 		Tid_Security_UserNoRights,
+		Tid_Security_Access_Granted,
+		Tid_Security_Access_Denied,
+		Tid_Security_Disabled,
+		Tid_OS_Error_Message,
+
+		Tid_Drive_Full,
 	};
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 

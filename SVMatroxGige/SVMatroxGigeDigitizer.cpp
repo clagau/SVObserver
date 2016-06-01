@@ -162,7 +162,7 @@ void SVMatroxGigeDigitizer::SetLineInputMoniker(const SVString& moniker)
 	m_lineInputFallingEventName = GetLineInputFallingEventName();
 }
 
-SVMatroxString SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
+SVString SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 {
 	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SVGigeParameterInputEventName);
 	
@@ -174,7 +174,7 @@ SVMatroxString SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 	return featureName.c_str();
 }
 
-SVMatroxString SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
+SVString SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
 {
 	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SVGigeParameterInputEventName);
 	

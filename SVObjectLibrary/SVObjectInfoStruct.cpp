@@ -119,7 +119,7 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* p_psvObject )
 
 			UniqueObjectID = PObject->GetUniqueObjectID();
 
-			if( SVInvalidGUID == UniqueObjectID )
+			if( SV_GUID_NULL == UniqueObjectID )
 			{
 				UniqueObjectID = PObject->GetObjectInfo().UniqueObjectID;
 			}
@@ -192,7 +192,7 @@ bool SVObjectInfoStruct::operator == ( const SVObjectReference& rhs ) const
 	}
 	else
 	{
-		l_Status = ( SVInvalidGUID == UniqueObjectID );
+		l_Status = ( SV_GUID_NULL == UniqueObjectID );
 	}
 	return l_Status;
 }
@@ -221,7 +221,7 @@ BOOL SVObjectInfoStruct::CheckExistence()
 {
 	BOOL l_bOk = true;
 
-	l_bOk = l_bOk && UniqueObjectID != SVInvalidGUID;
+	l_bOk = l_bOk && SV_GUID_NULL != UniqueObjectID;
 
 	if( l_bOk )
 	{

@@ -1475,7 +1475,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 			{
 #ifndef INITIALIZE_IO_SUBSYSTEM
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_INVALID_LINE_STATE, SvOi::Tid_Lpt_WrongState, StdMessageParams );
+				Exception.setMessage( SVMSG_INVALID_LINE_STATE, SvOi::Tid_Lpt_WrongState, SvStl::SourceFileParams(StdMessageParams) );
 #endif
 			}
 			// Get Value of control port interrupt Bit 

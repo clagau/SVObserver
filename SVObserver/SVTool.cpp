@@ -397,9 +397,9 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 	long lCount;
 	BOOL bIsValid = FALSE;
 
-	ToolTime.Start();
+	clearTaskMessages();
 
-	ClearRunError();
+	ToolTime.Start();
 
 	if( !GetInspection()->GetNewDisableMethod() )
 	{
@@ -659,8 +659,6 @@ BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 
 BOOL SVToolClass::Validate()
 {
-	ClearValidationError();
-
 	if( !IsEnabled() )
 	{
 		SetDisabled();
@@ -672,27 +670,16 @@ BOOL SVToolClass::Validate()
 
 BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
-	// We get away with clearing the Validation error info in the onRun 
-	// instead of the Run because it is immediately converted from a 
-	// Validate error code to a Run error code.  Also, OnValidate is 
-	// called from the SVTaskObject onRun level.
-	ClearValidationError();
-
 	BOOL bRetVal = SVTaskObjectListClass::onRun( RRunStatus );
+	HRESULT hr(S_OK);
 
-	if (SUCCEEDED (m_RunError.m_MessageCode))
+	hr = getFirstTaskMessage().getMessage().m_MessageCode;
+	if( !bRetVal && SUCCEEDED( hr ) )
 	{
-		m_RunError.m_MessageCode = m_ValidationError.m_MessageCode;
-		m_RunError.m_AdditionalTextId = m_ValidationError.m_AdditionalTextId;
-		m_RunError.m_AdditionalTextList = m_ValidationError.m_AdditionalTextList;
+		hr = SVMSG_SVO_5075_INCONSISTENTDATA;
 	}
 
-	if ((false == bRetVal) && (SUCCEEDED (m_RunError.m_MessageCode)))
-	{
-		m_RunError.m_MessageCode = SVMSG_SVO_5075_INCONSISTENTDATA;
-	}
-
-	if( SUCCEEDED (m_RunError.m_MessageCode) )
+	if( SUCCEEDED( hr ) )
 	{
 		if( SV_NO_ATTRIBUTES != ( extentTop.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES )  )
 		{
@@ -719,9 +706,9 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 			bRetVal = ( S_OK == extentHeightScaleFactor.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) ) && bRetVal;
 		}
 
-		if (false == bRetVal)
+		if( !bRetVal )
 		{
-			m_RunError.m_MessageCode = SVMSG_SVO_5076_EXTENTSNOTCOPIED;
+			hr = SVMSG_SVO_5076_EXTENTSNOTCOPIED;
 		}
 
 		// Friends were running, validation was successfully
@@ -732,7 +719,13 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 		}
 	}
 
-	bRetVal = SUCCEEDED (m_RunError.m_MessageCode);
+	if( !SUCCEEDED ( hr ) )
+	{
+		SvStl::MessageContainer message;
+		message.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+		addTaskMessage( message );
+		bRetVal = false;
+	}
 
 	return bRetVal;
 }
@@ -804,7 +797,7 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 				msgList.push_back(GetObjectName());
 				msgList.push_back(SVString(GetCompleteObjectName()));
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreationOf2Failed, msgList, StdMessageParams, SvOi::Err_10209 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10209 );
 
 				DwResult = SVMR_NO_SUCCESS;
 			}
@@ -1496,37 +1489,4 @@ bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location 
 	return ret;
 }
 
-void	SVToolClass::ClearRunError()
-{
-	m_RunError.clear();
-}
 
-void	SVToolClass::SetRunErrorData(const SvStl::MessageData& errorMessage)
-{
-	m_RunError = errorMessage;
-}
-
-const SvStl::MessageData& SVToolClass::GetRunErrorData() const
-{
-	return m_RunError;
-}
-
-void SVToolClass::SetRunDisplayed(bool displayed)
-{
-	m_RunError.m_Displayed = displayed;
-}
-
-void SVToolClass::ClearValidationError()
-{
-	m_ValidationError.clear();
-}
-
-void SVToolClass::SetValidationErrorData(const SvStl::MessageData& errorMessage)
-{
-	m_ValidationError = errorMessage;
-}
-
-const SvStl::MessageData& SVToolClass::GetValidationErrorData() const
-{
-	return m_ValidationError;
-}

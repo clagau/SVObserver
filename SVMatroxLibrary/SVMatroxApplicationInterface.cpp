@@ -130,8 +130,12 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 			MessageCode = SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR;
 			ProgramCode = SvOi::Err_25021_MatroxLibraryFatal;
 		}
+		SVStringArray msgList;
+		msgList.push_back( SvUl_SF::Format( _T("%d"), OsError ));
+		msgList.push_back( SvUl_SF::Format( _T("0X%08X"), OsError ));
+		msgList.push_back( p_rStatusInfo.GetCompleteString() );
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( MessageCode, p_rStatusInfo.GetCompleteString().c_str(), StdMessageParams, ProgramCode,  OsError);
+		Exception.setMessage( MessageCode, SvOi::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams), ProgramCode);
 	}
 }
 
@@ -139,7 +143,7 @@ void SVMatroxApplicationInterface::LogMatroxException( )
 {
 	SVMatroxStatusInformation l_info;
 	l_info.m_StatusCode = SVMEE_MATROX_THREW_EXCEPTION;
-	l_info.m_StatusString = "Matrox Threw an Exception";
+	l_info.m_StatusString = _T("Matrox Threw an Exception");
 	Log( l_info );
 }
 
@@ -401,7 +405,7 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSyst
 	return l_Code;
 }
 
-SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSystemName( SVMatroxInt p_lSystemNumber, SVMatroxString& p_rSystemName )
+SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSystemName( SVMatroxInt p_lSystemNumber, SVString& p_rSystemName )
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
@@ -483,7 +487,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), l_MilVersion));
 				
 				SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvOi::Tid_MilVersion_Error, msgList, StdMessageParams, SvOi::Err_10249 );
+				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvOi::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10249 );
 				::exit( EXIT_FAILURE );
 			}
 		}

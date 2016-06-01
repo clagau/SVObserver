@@ -18,6 +18,7 @@ namespace Seidenader { namespace ObjectInterfaces
 	// Jim Brown Program code.
 	static const unsigned long ProgCode_5066_CreateImageBuffer = 5066;
 	static const unsigned long ProgCode_5067_ValidateCurrentTreeData = 5067;
+	static const unsigned long ProgCode_5068_ValidateTabData = 5068;
 
 	//Marc Ziegler error base
 	static const int Maz_ErrorBase = 10000;
@@ -462,21 +463,7 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_25019_Json_PutConfig = Gra_ErrorBase + 19;
 	static const int Err_25020_MatroxLibraryNone = Gra_ErrorBase + 20;
 	static const int Err_25021_MatroxLibraryFatal = Gra_ErrorBase + 21;
-	static const int Err_25022_EventThread = Gra_ErrorBase + 22;
-	static const int Err_25023_EventThread = Gra_ErrorBase + 23;
-	static const int Err_25024_EventThread = Gra_ErrorBase + 24;
-	static const int Err_25025_EventThread = Gra_ErrorBase + 25;
-	static const int Err_25026_EventThread = Gra_ErrorBase + 26;
-	static const int Err_25027_EventThread = Gra_ErrorBase + 27;
-	static const int Err_25028_EventThread = Gra_ErrorBase + 28;
-	static const int Err_25029_EventThread = Gra_ErrorBase + 29;
 	static const int Err_25030_Thread = Gra_ErrorBase + 30;
-	static const int Err_25031_Thread = Gra_ErrorBase + 31;
-	static const int Err_25032_Thread = Gra_ErrorBase + 32;
-	static const int Err_25033_Thread = Gra_ErrorBase + 33;
-	static const int Err_25034_Thread = Gra_ErrorBase + 34;
-	static const int Err_25035_Thread = Gra_ErrorBase + 35;
-	static const int Err_25036_Thread = Gra_ErrorBase + 36;
 	static const int Err_25037_AsyncProcedure = Gra_ErrorBase + 37;
 	static const int Err_25038_AsyncProcedure = Gra_ErrorBase + 38;
 	static const int Err_25039_AsyncProcedure = Gra_ErrorBase + 39;

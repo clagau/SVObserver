@@ -21,7 +21,7 @@ namespace Seidenader
 			void init( const SvUl::NameGuidList& rList, const SVString& rEmptyListText );
 
 			//************************************
-			/// Return the guid of an entry. If invalid index of the selected item has on GUID it return SVInvalidGUID.
+			/// Return the guid of an entry. If invalid index of the selected item has on GUID it return SV_GUID_NULL.
 			/// \param index [in] Index of the entry
 			/// \returns SVGUID
 			//************************************

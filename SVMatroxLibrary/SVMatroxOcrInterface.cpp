@@ -849,7 +849,7 @@ HRESULT SVMatroxOcrInterface::CalibrateFontCommand( const SVCommandDataHolder& p
 
 */
 SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::CopyFont(const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImageBufId,
-		SVOcrOperationEnum p_eOperation, SVMatroxString& p_String)
+		SVOcrOperationEnum p_eOperation, SVString& p_String)
 {
 	SVStatusCode l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -934,7 +934,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Preprocess( const SVMat
 @SVOperationDescription This function restores an OCR font context, previously saved with SaveFont(), from a file. 
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::RestoreFont( SVMatroxOcr& p_rFontId, const SVMatroxString& p_sFileName, SVOcrOperationEnum p_eOperation)
+SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::RestoreFont( SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation)
 {
 	SVStatusCode l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -993,9 +993,9 @@ HRESULT SVMatroxOcrInterface::RestoreFont( const SVCommandDataHolder& p_rAttribu
 	SVByteVector l_CharacterFileContents;
 	SVByteVector l_ControlFileContents;
 	SVByteVector l_ConstraintFileContents;
-	SVMatroxString l_CharacterFileName;
-	SVMatroxString l_ControlFileName;
-	SVMatroxString l_ConstraintFileName;
+	SVString l_CharacterFileName;
+	SVString l_ControlFileName;
+	SVString l_ConstraintFileName;
 
 	l_Status = p_rAttributes.GetBlock( _T( "Character File Contents" ), l_CharacterFileContents );
 
@@ -1062,7 +1062,7 @@ HRESULT SVMatroxOcrInterface::RestoreFont( const SVCommandDataHolder& p_rAttribu
 @SVOperationDescription This function saves an existing OCR font context to disk using the MIL font file format.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SaveFont( const SVMatroxOcr& p_rFontId, const SVMatroxString& p_sFileName, SVOcrOperationEnum p_eOperation)
+SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SaveFont( const SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation)
 {
 	SVStatusCode l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1103,9 +1103,9 @@ HRESULT SVMatroxOcrInterface::SaveFont( const SVCommandDataHolder& p_rAttributes
 {
 	HRESULT l_Status = S_OK;
 
-	SVMatroxString l_CharacterFileName;
-	SVMatroxString l_ControlFileName;
-	SVMatroxString l_ConstraintFileName;
+	SVString l_CharacterFileName;
+	SVString l_ControlFileName;
+	SVString l_ConstraintFileName;
 
 	SVMatroxOcr l_Font;
 
@@ -1415,7 +1415,7 @@ HRESULT SVMatroxOcrInterface::CharacterThickness( const SVCommandDataHolder& p_r
 @SVOperationDescription This function sets the verify string and the verify flag which determine the operation is used during the execute.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetVerify( SVMatroxOcr& p_rFontId, const SVMatroxString& p_strVerifyString, const bool p_bVerifyOn )
+SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetVerify( SVMatroxOcr& p_rFontId, const SVString& p_strVerifyString, const bool p_bVerifyOn )
 {
 	SVStatusCode l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1566,7 +1566,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr&
 @SVOperationDescription This function inquires about an OCR font context or an OCR result buffer setting.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum  p_eControlType, SVMatroxString& p_rStrValue) 
+SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum  p_eControlType, SVString& p_rStrValue) 
 {
 	SVStatusCode l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1747,7 +1747,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, SVMatroxString& p_rStrValue) 
+SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, SVString& p_rStrValue) 
 {
 	SVStatusCode l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1924,7 +1924,7 @@ HRESULT SVMatroxOcrInterface::ReadString( const SVCommandDataHolder& p_rAttribut
 			// Process the OCR chars returned from MocrReadString();
 			long l_Length = 0L;
 			double l_MatchScore = 0.0;
-			SVMatroxString l_ReadString;
+			SVString l_ReadString;
 
 			l_Status = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_Length );
 
@@ -2021,7 +2021,7 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 			// Process the OCR chars returned from MocrReadString();
 			long l_Length = 0L;
 			double l_MatchScore = 0.0;
-			SVMatroxString l_ReadString;
+			SVString l_ReadString;
 
 			l_Status = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_Length );
 
@@ -2047,7 +2047,7 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 	return l_Status;
 }
 
-HRESULT SVMatroxOcrInterface::CreateTempFileName( SVMatroxString& p_rFileName )
+HRESULT SVMatroxOcrInterface::CreateTempFileName( SVString& p_rFileName )
 {
 	HRESULT l_Status = S_OK;
 
@@ -2070,7 +2070,7 @@ HRESULT SVMatroxOcrInterface::CreateTempFileName( SVMatroxString& p_rFileName )
 	return l_Status;
 }
 
-HRESULT SVMatroxOcrInterface::ConvertFileToByteVector( const SVMatroxString& p_rFileName, SVByteVector& p_rFileContents )
+HRESULT SVMatroxOcrInterface::ConvertFileToByteVector( const SVString& p_rFileName, SVByteVector& p_rFileContents )
 {
 	HRESULT l_Status = S_OK;
 
@@ -2085,11 +2085,11 @@ HRESULT SVMatroxOcrInterface::ConvertFileToByteVector( const SVMatroxString& p_r
 	return l_Status;
 }
 
-HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile( const SVByteVector& p_rFileContents, SVMatroxString& p_rFileName )
+HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile( const SVByteVector& p_rFileContents, SVString& p_rFileName )
 {
 	HRESULT l_Status = S_OK;
 
-	SVMatroxString l_FileName;
+	SVString l_FileName;
 
 	l_Status = CreateTempFileName( l_FileName );
 
@@ -2401,9 +2401,9 @@ HRESULT SVMatroxOcrInterface::CreateFontIdFromFontData( const SVCommandDataHolde
 	long l_lStringLength;
 
 	SVMatroxOcrCreateStruct l_Create;
-	SVMatroxString l_CharacterFileName;
-	SVMatroxString l_ControlFileName;
-	SVMatroxString l_ConstraintFileName;
+	SVString l_CharacterFileName;
+	SVString l_ControlFileName;
+	SVString l_ConstraintFileName;
 
 	double l_dCharacterAcceptance;
 	double l_dStringAcceptance;
@@ -2846,7 +2846,7 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 	long l_Foreground = SVOcrForegroundBlack;
 	double dCharBoxSizeX = 0.0;
 	double dCharBoxSizeY = 0.0;
-	SVMatroxString l_strFontChars;
+	SVString l_strFontChars;
 	SVCommandDataHolder l_Characters;
 			
 	l_Status = SVMatroxOcrInterface::Get( p_rFontId, SVCharNumberInFont, l_Count );
@@ -2874,7 +2874,7 @@ HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId( const SVMatroxOcr& 
 		SVMatroxBuffer l_CharHandle;
 		SVMatroxBufferCreateStruct l_BufferInfo;
 
-		SVMatroxString l_FontChar;
+		SVString l_FontChar;
 		
 		l_FontChar += l_strFontChars[ i ];
 
@@ -2994,7 +2994,7 @@ HRESULT SVMatroxOcrInterface::UpdateFontIdFromCharacterList( const SVCommandData
 
 				if( S_OK == l_Status )
 				{
-					SVMatroxString l_FontChar;
+					SVString l_FontChar;
 
 					l_FontChar += ( static_cast< char* >( l_Label ) )[ 0 ];
 

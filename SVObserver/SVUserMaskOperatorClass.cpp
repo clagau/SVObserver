@@ -819,7 +819,7 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 			// Is not yet connected...
 			if (!pInInfo->IsConnected())
 			{
-				if (pInInfo->GetInputObjectInfo().UniqueObjectID == SVInvalidGUID)
+				if( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID )
 				{
 					// Input Object is not set...Try to get one...
 					SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;

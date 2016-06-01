@@ -253,7 +253,7 @@
 		struct SVObjectTypeInfoStruct
 		{
 			SVObjectTypeInfoStruct( SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, long p_SubType=SVNotSetSubObjectType )
-				: ObjectType( p_ObjectType ), SubType( p_SubType ), EmbeddedID( SVInvalidGUID ) {};
+				: ObjectType( p_ObjectType ), SubType( p_SubType ), EmbeddedID( SV_GUID_NULL ) {};
 
 			SVObjectTypeInfoStruct( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, long p_SubType=SVNotSetSubObjectType )
 				: ObjectType( p_ObjectType ), SubType( p_SubType ), EmbeddedID( p_rEmbeddedID ){};

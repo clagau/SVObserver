@@ -985,7 +985,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 						msgList.push_back(SVString(sModel));
 						msgList.push_back(SVString(sHardwareModel));
 						SvStl::MessageMgrNoDisplay Exception(SvStl::DataOnly);
-						Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvOi::Tid_Error_WrongCameraModel, msgList, StdMessageParams, SvOi::Err_10026_GoOnline_WrongCameraModel );
+						Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvOi::Tid_Error_WrongCameraModel, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10026_GoOnline_WrongCameraModel );
 						Exception.Throw();
 					}
 				}
@@ -996,7 +996,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 				msgList.push_back(venderName);
 				msgList.push_back(venderNameHardware);
 				SvStl::MessageMgrNoDisplay Exception(SvStl::DataOnly);
-				Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvOi::Tid_Error_WrongCameraModel, msgList, StdMessageParams, SvOi::Err_10027_GoOnline_WrongCameraVender );
+				Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvOi::Tid_Error_WrongCameraModel, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10027_GoOnline_WrongCameraVender );
 				Exception.Throw();
 			}
 		}

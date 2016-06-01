@@ -13,19 +13,13 @@
 
 //Moved to precompiled header: #include <comdef.h>
 
+#pragma region Includes
 #include "SVString.h"
 #include "SVUtilityGlobals.h"
+#pragma endregion Includes
 
-extern const GUID SVInvalidGUID;
+extern const GUID SV_GUID_NULL;
 
-/**
-@SVObjectName Global Unique Identifier (GUID)
-
-@SVObjectOverview
-
-@SVObjectOperations
-
-*/
 class SVGUID
 {
 public:
@@ -72,6 +66,7 @@ protected:
 
 };
 
+//This needs to be placed the wrong way due to recursive calling of the method
 inline bool operator==( const GUID& p_rLeft, const SVGUID& p_rRight )
 {
 	return ( p_rRight == p_rLeft );

@@ -398,7 +398,7 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 		SVStringArray msgList;
 		msgList.push_back(SVString(csFileArchivePath));
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_CreateFileFailed, msgList, StdMessageParams, SvOi::Err_10036 ); 
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10036 ); 
 		return FALSE;
 	}
 	
@@ -493,10 +493,10 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 
 	if (m_bDriveError)
 	{	
-		//Display message that the Archive Tool path is full
-		SVString sMessage;
-		sMessage = SvUl_SF::Format(" %s - drive is full.", csImagePath.GetString());
-		SVVisionProcessorHelper::Instance().AddToolError(GetUniqueObjectID(),sMessage);
+		SVStringArray msgList;
+		msgList.push_back( SVString( csImagePath.GetString() ) );
+		SvStl::MessageContainer Msg( 0L, SvOi::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		addTaskMessage( Msg );
 	}
 	m_uiValidateCount = 0;
 
@@ -573,7 +573,7 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 						SVStringArray msgList;
 						msgList.push_back(SVString(csImagePath));
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PathFileNotFound, msgList, StdMessageParams, SvOi::Err_10037 ); 
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PathFileNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10037 ); 
 
 						bOk = FALSE;
 					}

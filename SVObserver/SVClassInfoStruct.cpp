@@ -51,7 +51,7 @@ SVInterfaceListClass SVInterfaceListClass::operator=( const SVInterfaceListClass
 ////////////////////////////////////////////////////////////////////////////////
 SVClassInfoStruct::SVClassInfoStruct()
 {
-	ClassId = SVInvalidGUID;
+	ClassId = SV_GUID_NULL;
 }
 
 SVClassInfoStruct::SVClassInfoStruct( const SVClassInfoStruct& RClassInfo )
@@ -104,8 +104,8 @@ SVObjectClass* SVClassInfoStruct::Construct()
 
 				SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;
 
-				ASSERT( pInInfo->GetInputObjectInfo().UniqueObjectID != SVInvalidGUID ||
-				        info.EmbeddedID != SVInvalidGUID || 
+				ASSERT( SV_GUID_NULL != pInInfo->GetInputObjectInfo().UniqueObjectID ||
+				        SV_GUID_NULL != info.EmbeddedID || 
 				        info.ObjectType != SVNotSetObjectType ||
 				        info.SubType != SVNotSetSubObjectType );
 			}

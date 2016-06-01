@@ -98,7 +98,7 @@ void SVPatModelPageClass::OnOK()
 	if (!m_pPatAnalyzer->IsValidSize())
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Model2Large, StdMessageParams, SvOi::Err_10184, 0, nullptr, MB_YESNO ); 
+		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Model2Large, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10184, SV_GUID_NULL, MB_YESNO ); 
 		if (IDYES == result)
 		{
 			m_bAllowExit = false;
@@ -251,7 +251,7 @@ void SVPatModelPageClass::OnCreateModel()
 					FileFormatID = SVFileTiff;
 				}
 
-				SVMatroxString l_strFileName = m_strModelName;
+				SVString l_strFileName = m_strModelName;
 
 				SVImageBufferHandleImage l_MilHandle;
 				m_pPatAnalyzer->m_patBufferHandlePtr->GetData( l_MilHandle );
@@ -283,7 +283,7 @@ void SVPatModelPageClass::OnCreateModel()
 	if (SvOi::Tid_Empty != msgID)
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, StdMessageParams, SvOi::Err_10246 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10246 );
 	}
 }
 
@@ -460,7 +460,7 @@ void SVPatModelPageClass::ValidateModelWidth()
 	
 	if (!bRetVal)
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatModelSizeErr, StdMessageParams, SvOi::Err_10245 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10245 );
 		throw Msg;
 	}
 }
@@ -484,7 +484,7 @@ void SVPatModelPageClass::ValidateModelHeight()
 	bool bRetVal = (m_lModelHeight >= minHeight && m_lModelHeight <= lMaxPixels);
 	if (!bRetVal)
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatModelSizeErr, StdMessageParams, SvOi::Err_10244 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10244 );
 		throw Msg;
 	}
 }
@@ -591,7 +591,7 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 	if (SvOi::Tid_Empty != msgID)
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, StdMessageParams, SvOi::Err_10247 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10247 );
 		GetDlgItem(nId)->SetFocus();
 		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
 		return FALSE;

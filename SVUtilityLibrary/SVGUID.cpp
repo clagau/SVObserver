@@ -13,7 +13,7 @@
 #include "SVGUID.h"
 #include "SVString.h"
 
-const GUID  SVInvalidGUID = { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0 } };
+const GUID SV_GUID_NULL = GUID_NULL;
 
 SVGUID::SVGUID()
 : m_Guid( SV_GUID_NULL )
@@ -178,12 +178,12 @@ const SVGUID& SVGUID::operator=( const VARIANT& p_rVariant )
 
 bool SVGUID::operator==( const SVGUID& p_rObject ) const
 {
-	return ( m_Guid == p_rObject.m_Guid ) != FALSE;
+	return ( m_Guid == p_rObject.m_Guid ) != false;
 }
 
 bool SVGUID::operator==( const GUID& p_rGuid ) const
 {
-	return ( m_Guid == p_rGuid ) != FALSE;
+	return ( m_Guid == p_rGuid ) != false;
 }
 
 bool SVGUID::operator<( const SVGUID& p_rObject ) const

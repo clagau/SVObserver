@@ -507,7 +507,7 @@ void SVPatAdvancedPageClass::ValidateAdditionalCandidatesValue()
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatAdditionalCandidatesErr, StdMessageParams, SvOi::Err_10240 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatAdditionalCandidatesErr, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10240 );
 			throw Msg;
 		}
 	}
@@ -527,7 +527,7 @@ void SVPatAdvancedPageClass::ValidateCandidatesSpacingXMinValue()
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatCandidateSpaceErr, StdMessageParams, SvOi::Err_10241 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatCandidateSpaceErr, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10241 );
 			throw Msg;
 		}
 	}
@@ -547,7 +547,7 @@ void SVPatAdvancedPageClass::ValidateCandidatesSpacingYMinValue()
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatCandidateSpaceErr, StdMessageParams, SvOi::Err_10242 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatCandidateSpaceErr, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10242 );
 			throw Msg;
 		}
 	}
@@ -567,7 +567,7 @@ void SVPatAdvancedPageClass::ValidatePreliminaryAcceptanceThreshold()
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatPreliminaryAcceptanceThresholdErr, StdMessageParams, SvOi::Err_10243 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatPreliminaryAcceptanceThresholdErr, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10243 );
 			throw Msg;
 		}
 	}

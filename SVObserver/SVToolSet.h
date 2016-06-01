@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "ObjectInterfaces/IToolSet.h"
-
+#include "SVStatusLibrary/MessageContainer.h"
 #include "SVMainImageClass.h"
 #include "SVResultList.h"
 #include "SVObserver.h"
@@ -151,6 +151,7 @@ private:
 	SVTimerValueObjectClass m_TriggerDelta; ///< The time interval between the two most recent triggers
 	SVTimerValueObjectClass m_LastTriggerToPPQCompletion; ///< for the most recently completed product: The time interval between the trigger that started the product and inspection completion in microsceconds
 	SVTimerValueObjectClass m_LastTriggerToStart; ///< for the most recently completed product: The time interval between the trigger that started the product and the start of the inspection in microsceconds
+
 
 	void init();
 };

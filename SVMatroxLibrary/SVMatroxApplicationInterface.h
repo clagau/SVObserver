@@ -42,7 +42,7 @@ public:
 	static void Log( SVMatroxStatusInformation& p_rStatusInfo );
 	static void LogMatroxException();
 	static SVStatusCode GetSystemCount( long& p_lCount );
-	static SVStatusCode GetSystemName( SVMatroxInt p_lSystemNumber, SVMatroxString& p_rSystemName );
+	static SVStatusCode GetSystemName( SVMatroxInt p_lSystemNumber, SVString& p_rSystemName );
 	static HRESULT SVMatroxIntToHRESULT( SVMatroxIdentifier p_Int );
 
 protected:

@@ -311,7 +311,7 @@ namespace Seidenader
 				msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::IRingBufferTool::m_minRingBufferDepth));
 				msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::IRingBufferTool::m_maxRingBufferDepth));
 				msgList.push_back(SVString(csText));
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, StdMessageParams, hResult );
+				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), hResult );
 			}
 			return hResult;
 		}
@@ -332,7 +332,7 @@ namespace Seidenader
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 				SVStringArray msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), indexNumber+1));
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_ImageIndex_Invalid_ValueString, msgList, StdMessageParams, hResult );
+				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_ImageIndex_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), hResult );
 			}
 			return hResult;
 		}

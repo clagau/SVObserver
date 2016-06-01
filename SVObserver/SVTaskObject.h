@@ -26,6 +26,7 @@
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVTaskObjectValueInterface.h"
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
 class SVIPDoc;
@@ -103,6 +104,29 @@ public:
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = nullptr);
 	
+	//************************************
+	//! Adds a task message to the list
+	//! \param rMessage [in] reference to the message container
+	//************************************
+	void addTaskMessage( const SvStl::MessageContainer& rMessage ) { m_TaskMessages.push_back( rMessage ); };
+
+	//************************************
+	//! Clears the task set message list 
+	//************************************
+	void clearTaskMessages( ) { m_TaskMessages.clear(); };
+
+	//************************************
+	//! Gets the list of task messages
+	//! \return a const reference to the message list
+	//************************************
+	const SvStl::MessageContainerVector& getTaskMessages() const { return m_TaskMessages; };
+
+	//************************************
+	//! Get the first task message
+	//! \return a const reference to the first task message
+	//************************************
+	SvStl::MessageContainer getFirstTaskMessage() const;
+
 #pragma region virtual method (ITaskObject)
 	virtual HRESULT AddInputRequestMarker() override;
 	virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) override;
@@ -228,5 +252,7 @@ protected:
 
 private:
 	HRESULT LocalInitialize();
+
+	SvStl::MessageContainerVector m_TaskMessages;  ///The list of task messages
 };	// end class SVTaskObjectClass
 

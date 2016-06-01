@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <list>
 //Moved to precompiled header: #include <comdef.h>
 #include "SVThreadManager\SVThreadAttribute.h"
-
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion
 
 
@@ -43,8 +43,6 @@ typedef HRESULT (WINAPI *RemovePtr)( HANDLE p_hThread );
 typedef HRESULT (WINAPI *ClearPtr)( );
 typedef HRESULT (WINAPI *StartAffinityMgntPtr)();
 typedef HRESULT (WINAPI *StopAffinityMgmtPtr)();
-
-
 
 class SVThreadManager
 {
@@ -89,6 +87,8 @@ public:
 	BOOL GetThreadAffinityEnabled() const;
 	void SetThreadAffinityEnabled( BOOL bEnable );
 	BOOL IsThreadManagerInstalled() const;
+
+	static void setThreadError( DWORD MessageCode, LPCTSTR Message, SvStl::SourceFileParams SourceFile );
 
 #pragma endregion
 

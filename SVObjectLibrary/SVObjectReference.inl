@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:00:26  $
 //******************************************************************************
 
-extern const GUID SVInvalidGUID;
-
 inline SVObjectReference::SVObjectReference()
 {
 	init();
@@ -25,7 +23,7 @@ inline SVObjectReference::SVObjectReference( GUID guid )
 inline void SVObjectReference::init()
 {
 	m_pObject = nullptr;
-	m_Guid = SVInvalidGUID;
+	m_Guid = SV_GUID_NULL;
 	m_NameInfo.clear();
 	m_ArrayIndex = -1;
 	m_IsArray = false; 
@@ -97,7 +95,7 @@ inline bool SVObjectReference::operator < ( const SVObjectReference& rhs ) const
 inline const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference& rhs )
 {
 	m_pObject = rhs.m_pObject;
-	m_Guid = rhs.m_Guid != SVInvalidGUID ? rhs.m_Guid : (m_pObject ? GetObjectGuid( m_pObject ) : SVInvalidGUID);
+	m_Guid = rhs.m_Guid != SV_GUID_NULL ? rhs.m_Guid : (m_pObject ? GetObjectGuid( m_pObject ) : SV_GUID_NULL);
 	m_NameInfo = rhs.m_NameInfo;
 	m_IsArray = rhs.m_IsArray;
 	m_ArrayIndex = rhs.m_ArrayIndex;
@@ -115,7 +113,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 	if ( m_pObject )
 		m_Guid = m_pObject->GetUniqueObjectID();
 	else
-		m_Guid = SVInvalidGUID;
+		m_Guid = SV_GUID_NULL;
 }
 
 template <class T>
@@ -125,7 +123,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject )
 	if ( m_pObject )
 		m_Guid = m_pObject->GetUniqueObjectID();
 	else
-		m_Guid = SVInvalidGUID;
+		m_Guid = SV_GUID_NULL;
 }
 
 template <class T>
@@ -161,7 +159,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 	}
 	else
 	{
-		m_Guid = SVInvalidGUID;
+		m_Guid = SV_GUID_NULL;
 		m_NameInfo.clear();
 	}
 }
@@ -186,7 +184,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, long l
 	}
 	else
 	{
-		m_Guid = SVInvalidGUID;
+		m_Guid = SV_GUID_NULL;
 		m_NameInfo.clear();
 	}
 }
@@ -204,7 +202,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 	}
 	else
 	{
-		m_Guid = SVInvalidGUID;
+		m_Guid = SV_GUID_NULL;
 		m_NameInfo.clear();
 		m_IsArray = false;
 		m_ArrayIndex = -1;
@@ -224,7 +222,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, const 
 	}
 	else
 	{
-		m_Guid = SVInvalidGUID;
+		m_Guid = SV_GUID_NULL;
 		m_NameInfo.clear();
 		m_IsArray = false;
 		m_ArrayIndex = -1;

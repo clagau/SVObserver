@@ -122,7 +122,7 @@ namespace Seidenader { namespace SVOGui
 				if (bIsValid && !IsToolValid())
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_ToolPositionError, StdMessageParams, SvOi::Err_10232 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10232 );
 				}
 			}
 		}

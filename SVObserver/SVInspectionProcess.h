@@ -263,6 +263,17 @@ public:
 	//************************************
 	bool   LoopOverTools(pToolFunc pf, int& counter ); 
 	
+	//************************************
+	//! Clear the tool messages
+	//************************************
+	void clearToolMessages();
+
+	//************************************
+	//! Get the tool messages
+	//! \param rInserter [out] reference to an inserter iterator
+	//************************************
+	void getToolMessages( SvStl::MessageContainerInserter& rInserter ) const;
+
 	SVIOEntryStructVector m_PPQInputs;
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update

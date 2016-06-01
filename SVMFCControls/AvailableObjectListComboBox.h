@@ -34,7 +34,7 @@ namespace Seidenader
 			void Init(const SvUl::NameGuidList& List, const SVString& rSelectedItem, const SVString& rEmptyListText, const SVString& rFirstListText = _T(""));
 
 			//************************************
-			/// Return the guid of the selected item. If no item selected or an error it return SVInvalidGUID.
+			/// Return the guid of the selected item. If no item selected or an error it return SV_GUID_NULL.
 			/// \returns SVGUID
 			//************************************
 			SVGUID getSelectedGUID() const;

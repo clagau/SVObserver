@@ -71,12 +71,12 @@ public:
 	
 	// This function replaces MocrCopyFont
 	static SVStatusCode CopyFont(const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImageBufId,
-		SVOcrOperationEnum p_eOperation, SVMatroxString& p_String);
+		SVOcrOperationEnum p_eOperation, SVString& p_String);
 
 	// This function replaces MocrPreprocess
 	static SVStatusCode Preprocess( const SVMatroxOcr& p_rFontId );
 
-	static SVStatusCode SetVerify( SVMatroxOcr& p_rFontId, const SVMatroxString& p_strVerifyString, const bool p_bVerifyOn );
+	static SVStatusCode SetVerify( SVMatroxOcr& p_rFontId, const SVString& p_strVerifyString, const bool p_bVerifyOn );
 
 	// These functions use MocrControl
 	static SVStatusCode Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum, const double& p_dValue );
@@ -85,7 +85,7 @@ public:
 	// This function replaces MocrInquire
 	static SVStatusCode Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, double& p_rdValue) ;
 	static SVStatusCode Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, long& p_rlValue) ;
-	static SVStatusCode Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, SVMatroxString& p_rStrValue) ;
+	static SVStatusCode Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, SVString& p_rStrValue) ;
 
 	// These functions use MocrControl
 	static SVStatusCode SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum, const double& p_dValue );
@@ -94,15 +94,15 @@ public:
 	// This function replaces MocrInquire
 	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, double& p_rdValue) ;
 	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, long& p_rlValue) ;
-	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVMatroxString& p_rStrValue) ;
+	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVString& p_rStrValue) ;
 	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) ;
 
 	// This function replaces MocrRestoreFont
-	static SVStatusCode RestoreFont( SVMatroxOcr& p_rFontId, const SVMatroxString& p_sFileName, SVOcrOperationEnum p_eOperation);
+	static SVStatusCode RestoreFont( SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation);
 	static HRESULT RestoreFont( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 
 	// This function replaces MocrSaveFont
-	static SVStatusCode SaveFont( const SVMatroxOcr& p_rFontId, const SVMatroxString& p_sFileName, SVOcrOperationEnum p_eOperation);
+	static SVStatusCode SaveFont( const SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation);
 	static HRESULT SaveFont( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 
 	static HRESULT FindFontCharacters( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
@@ -120,10 +120,10 @@ private:
 	static long Convert2MatroxOperationType( SVOcrOperationEnum p_eType ) ;
 	static long Convert2MatroxResultType( SVOcrResultEnum p_eType) ;
 
-	static HRESULT CreateTempFileName( SVMatroxString& p_rFileName );
+	static HRESULT CreateTempFileName( SVString& p_rFileName );
 
-	static HRESULT ConvertFileToByteVector( const SVMatroxString& p_rFileName, SVByteVector& p_rFileContents );
-	static HRESULT ConvertByteVectorToTempFile( const SVByteVector& p_rFileContents, SVMatroxString& p_rFileName );
+	static HRESULT ConvertFileToByteVector( const SVString& p_rFileName, SVByteVector& p_rFileContents );
+	static HRESULT ConvertByteVectorToTempFile( const SVByteVector& p_rFileContents, SVString& p_rFileName );
 
 	static HRESULT CreateFontDataFromFontId( const SVMatroxOcr& p_rFontId, SVCommandDataHolder& p_rFontData );
 	static HRESULT CreateFontIdFromFontData( const SVCommandDataHolder& p_rFontData, SVMatroxOcr& p_rFontId );

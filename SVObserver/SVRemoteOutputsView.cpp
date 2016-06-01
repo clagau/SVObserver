@@ -152,7 +152,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		if( nullptr == pConfig  )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17051_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17051_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 		else
@@ -564,12 +564,12 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				if( bFirst && pos != SVString::npos )
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RemoteOutput_TriggerCountDeleteError, StdMessageParams, SvOi::Err_10194 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RemoteOutput_TriggerCountDeleteError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10194 ); 
 				}
 				else
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingOutput, StdMessageParams, SvOi::Err_10195, 0, nullptr, MB_YESNO ); 
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10195, SV_GUID_NULL, MB_YESNO ); 
 					if( IDYES == result )
 					{
 						pConfig->DeleteRemoteOutputEntry( l_strRemoteGroup, pRemoteOutput );
@@ -596,7 +596,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 					SVStringArray msgList;
 					msgList.push_back(strGroup);
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingAllOutput, msgList, StdMessageParams, SvOi::Err_10196, 0, nullptr, MB_YESNO ); 
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10196, SV_GUID_NULL, MB_YESNO );
 					if( IDYES == result )
 					{
 						// Delete all DLL entries

@@ -196,7 +196,7 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 		msvVariableGUID_OBSOLETE.GetValue( strGuid );
 		if ( !strGuid.IsEmpty() )
 		{
-			GUID guid = SVInvalidGUID;
+			GUID guid = SV_GUID_NULL;
 			AfxGetClassIDFromString(strGuid, &guid);
 			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
 			if( nullptr != pObject )
@@ -381,15 +381,18 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), 0 ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, StdMessageParams, SvOi::Err_10200 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10200 ); 
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
-				if( objectID != SVInvalidGUID )
+				if( SV_GUID_NULL != objectID )
+				{
 					Delete( objectID );
+				}
 				else
+				{
 					delete pResult;
-				
+				}
 			}
 		}
 		break;
@@ -649,7 +652,7 @@ BOOL SVStatisticsToolClass::Test()
 					CString fullObjectName = refValueObject.Object()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 					SVStringArray msgList;
 					msgList.push_back(SVString(fullObjectName));
-					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatToolInvalidVariable, msgList, StdMessageParams, SvOi::Err_10201);
+					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatToolInvalidVariable, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10201);
 				}
 			}
 		}

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
+#pragma region Constructor
 template<typename SVThreadSignalHandler>
 SVThread<SVThreadSignalHandler>::SVThread()
 : m_hShutdown( 0 )
@@ -23,79 +24,9 @@ SVThread<SVThreadSignalHandler>::~SVThread()
 {
 	Destroy();
 }
+#pragma endregion Constructor
 
-template<typename SVThreadSignalHandler>
-DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
-{
-	HRESULT Result = S_OK;
-
-	if( lpParam )
-	{
-		#ifdef DEBUG
-			SVString l_Message;
-		#endif
-
-		SVThread* pThread = static_cast< SVThread* >( lpParam );
-
-		::ResetEvent( pThread->m_hThreadComplete );
-
-		bool l_Continue = true;
-		bool l_WaitForEvents = true;
-
-		while( l_Continue )
-		{
-			if( l_WaitForEvents )
-			{
-				l_Continue = ::WaitForSingleObjectEx( pThread->m_hShutdown, INFINITE, TRUE ) == WAIT_IO_COMPLETION;
-			}
-
-			if( l_Continue )
-			{
-				l_Continue = ::WaitForSingleObjectEx( pThread->m_hShutdown, 0, FALSE ) == WAIT_TIMEOUT;
-
-				if( l_Continue )
-				{
-					l_WaitForEvents = true;
-
-					pThread->m_threadHandler( l_WaitForEvents );
-				}
-				#ifdef DEBUG
-					else
-					{
-						l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-						::OutputDebugString( l_Message.c_str() );
-					}
-				#endif
-			}
-			#ifdef DEBUG
-				else
-				{
-					l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-					::OutputDebugString( l_Message.c_str() );
-				}
-			#endif
-		}
-
-		#ifdef DEBUG
-			l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
-			::OutputDebugString( l_Message.c_str() );
-		#endif
-
-		::SetEvent( pThread->m_hThreadComplete );
-	}
-	else
-	{
-		DWORD errorCode = GetLastError();
-
-		Result = SVMSG_THREAD_EXIT_ERROR;
-
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (Result), SvOi::Tid_UnknowThread, StdMessageParams, SvOi::Err_25030_Thread, errorCode );
-	}
-
-	return Result;
-}
-
+#pragma region Public Methods
 template<typename SVThreadSignalHandler>
 HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute )
 {
@@ -110,11 +41,7 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 		if (nullptr == m_hShutdown)
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
-
-			DWORD errorCode = GetLastError();
-
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25031_Thread, errorCode );
+			SVThreadManager::setThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 
@@ -124,11 +51,7 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 		if( nullptr == m_hThreadComplete )
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
-
-			DWORD errorCode = GetLastError();
-
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25032_Thread, errorCode );
+			SVThreadManager::setThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 
@@ -139,11 +62,7 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 		if (nullptr == m_hThread)
 		{
 			Result = SVMSG_THREAD_CREATION_ERROR;
-
-			DWORD errorCode = GetLastError();
-
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25033_Thread, errorCode );
+			SVThreadManager::setThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 		else
 		{
@@ -163,11 +82,7 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 				if( l_WaitStatus != WAIT_TIMEOUT )
 				{
 					Result = SVMSG_THREAD_CREATION_ERROR;
-
-					DWORD errorCode = GetLastError();
-
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25034_Thread, errorCode );
+					SVThreadManager::setThreadError( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 		}
@@ -201,10 +116,7 @@ void SVThread< SVThreadSignalHandler >::Destroy()
 
 			if( ::WaitForSingleObject( m_hThreadComplete, m_timeoutShutdownThread ) != WAIT_OBJECT_0 )
 			{
-				DWORD errorCode = GetLastError();
-
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_THREAD_EXIT_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25035_Thread, errorCode );
+				SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 
 				::TerminateThread( m_hThread, E_FAIL );
 
@@ -217,10 +129,7 @@ void SVThread< SVThreadSignalHandler >::Destroy()
 		{
 			if( ::WaitForSingleObject( m_hThread, 0 ) == WAIT_TIMEOUT )
 			{
-				DWORD errorCode = GetLastError();
-
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_THREAD_EXIT_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25036_Thread, errorCode );
+				SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 
 				::TerminateThread( m_hThread, E_FAIL );
 			}
@@ -281,3 +190,75 @@ bool SVThread<SVThreadSignalHandler>::IsActive() const
 	return bRetVal;
 }
 
+#pragma endregion Public Methods
+
+#pragma region Private Methods
+template<typename SVThreadSignalHandler>
+DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
+{
+	HRESULT Result = S_OK;
+
+	if( lpParam )
+	{
+#ifdef DEBUG
+		SVString l_Message;
+#endif
+
+		SVThread* pThread = static_cast< SVThread* >( lpParam );
+
+		::ResetEvent( pThread->m_hThreadComplete );
+
+		bool l_Continue = true;
+		bool l_WaitForEvents = true;
+
+		while( l_Continue )
+		{
+			if( l_WaitForEvents )
+			{
+				l_Continue = ::WaitForSingleObjectEx( pThread->m_hShutdown, INFINITE, TRUE ) == WAIT_IO_COMPLETION;
+			}
+
+			if( l_Continue )
+			{
+				l_Continue = ::WaitForSingleObjectEx( pThread->m_hShutdown, 0, FALSE ) == WAIT_TIMEOUT;
+
+				if( l_Continue )
+				{
+					l_WaitForEvents = true;
+
+					pThread->m_threadHandler( l_WaitForEvents );
+				}
+#ifdef DEBUG
+				else
+				{
+					l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+					::OutputDebugString( l_Message.c_str() );
+				}
+#endif
+			}
+#ifdef DEBUG
+			else
+			{
+				l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+				::OutputDebugString( l_Message.c_str() );
+			}
+#endif
+		}
+
+#ifdef DEBUG
+		l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+		::OutputDebugString( l_Message.c_str() );
+#endif
+
+		::SetEvent( pThread->m_hThreadComplete );
+	}
+	else
+	{
+		SVString UnknownThread;
+		UnknownThread = SvStl::MessageData::convertId2AddtionalText( SvOi::Tid_UnknowThread );
+		SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), UnknownThread.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+	}
+
+	return Result;
+}
+#pragma endregion Private Methods

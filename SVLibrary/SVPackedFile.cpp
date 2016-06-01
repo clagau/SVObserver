@@ -41,7 +41,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 	if (!(PackedFile.Open (szPackedFile, CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &FileException)))
 	{
 		FileException.GetErrorMessage (szMessage, sizeof (szMessage));
-		Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+		Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
 
@@ -53,7 +53,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 	{
 		e.GetErrorMessage (szMessage, sizeof (szMessage));
 		PackedFile.Close();
-		Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+		Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
 
@@ -93,7 +93,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 					pe->Delete();
 					PackedFile.Close();
 					FindClose (hFindFile);
-					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, SvStl::SourceFileParams(StdMessageParams) );
 					Exception.Throw();
 				}
 
@@ -113,7 +113,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 						PackedFile.Close();
 						SourceFile.Close();
 						FindClose (hFindFile);
-						Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+						Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, SvStl::SourceFileParams(StdMessageParams) );
 						Exception.Throw();
 					}
 					SourceFile.Close();
@@ -123,7 +123,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 				{
 					PackedFile.Close();
 					FindClose (hFindFile);
-					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, SvOi::Tid_Empty, StdMessageParams );
+					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 					Exception.Throw();
 				}
 			}
@@ -205,7 +205,7 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 							{
 								FileException.GetErrorMessage (szMessage, sizeof (szMessage));
 								PackedFile.Close();
-								Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+								Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, SvStl::SourceFileParams(StdMessageParams) );
 								Exception.Throw();
 							}
 						}
@@ -229,7 +229,7 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 				SourceFile.Close();
 			}
 			PackedFile.Close();
-			Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+			Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, SvStl::SourceFileParams(StdMessageParams) );
 			Exception.Throw();
 		}
 		PackedFile.Close();

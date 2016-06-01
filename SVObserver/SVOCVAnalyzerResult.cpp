@@ -461,7 +461,7 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 			
 			SVMatroxOcrInterface ::SVStatusCode l_Code;
 
-			SVMatroxString l_strPath;
+			SVString l_strPath;
 			l_strPath = strFontFileName;
 
 			l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, l_strPath, SVOcrRestore );
@@ -772,7 +772,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 	double l_dSum;
 	double l_dValidString = 0.0f;
 	double l_dNbrString = 0.0f;
-	SVMatroxString l_strLabel;
+	SVString l_strLabel;
 	SVMatroxDoubleArray l_adScores;
 	SVMatroxDoubleArray l_adXCoords;
 	SVMatroxDoubleArray l_adYCoords;
@@ -782,8 +782,8 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 	double l_dCharBoxSizeX;
 	double l_dCharBoxSizeY;
 
-	SVMatroxString l_strFound;
-	SVMatroxString l_strMatch;
+	SVString l_strFound;
+	SVString l_strMatch;
 	 
 	SVMatroxOcrInterface ::SVStatusCode l_Code = SVMEE_STATUS_OK;
   
@@ -826,7 +826,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						// No MIL image buffer handle..
 						//
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoMilHostBuffer, StdMessageParams, SvOi::Err_10169);
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoMilHostBuffer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10169);
 					}
 					else
 					{
@@ -841,7 +841,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 							SVStringArray msgList;
 							msgList.push_back(SvUl_SF::Format(_T("%x"), imageTypeMil));
 							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_MilImageTypeInvalid, msgList, StdMessageParams, SvOi::Err_10170);
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_MilImageTypeInvalid, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10170);
 						}
 					}
 				}
@@ -1115,7 +1115,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 					}
 
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_30_EXCEPTION_IN_MIL, strFunctionName, StdMessageParams, iProgramCode );
+					Exception.setMessage( SVMSG_SVO_30_EXCEPTION_IN_MIL, strFunctionName, SvStl::SourceFileParams(StdMessageParams), iProgramCode );
 
 					l_lLength = 0;
 				}// end catch
@@ -1342,7 +1342,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 		msgList.push_back(_T("SVOCVAnalyzeResultClass::onRun"));
 
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, StdMessageParams );
+		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		bOk = false;
 	}

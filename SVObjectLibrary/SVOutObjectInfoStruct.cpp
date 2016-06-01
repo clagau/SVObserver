@@ -92,7 +92,7 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 
 		inObjectInfo.SetInputObject( UniqueObjectID );
 
-		if( inObjectInfo.UniqueObjectID != SVInvalidGUID )
+		if( SV_GUID_NULL != inObjectInfo.UniqueObjectID )
 		{
 			// Send to the Object that is using this output
 			::SVSendMessage(inObjectInfo.UniqueObjectID,

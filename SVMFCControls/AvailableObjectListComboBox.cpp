@@ -65,7 +65,7 @@ namespace Seidenader { namespace SVMFCControls
 
 	SVGUID AvailableObjectListComboBox::getSelectedGUID() const
 	{
-		SVGUID retValue = SVInvalidGUID;
+		SVGUID Result = SV_GUID_NULL;
 		int index = GetCurSel();
 		
 		if (CB_ERR != index)
@@ -79,11 +79,11 @@ namespace Seidenader { namespace SVMFCControls
 
 			if (m_List.cend() != iter)
 			{
-				retValue = iter->second;
+				Result = iter->second;
 			}
 		}
 
-		return retValue;
+		return Result;
 	}
 
 	void AvailableObjectListComboBox::remove(const SVString& rItemName)

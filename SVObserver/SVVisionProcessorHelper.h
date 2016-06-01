@@ -50,8 +50,6 @@ enum SVDataDefinitionListType
 const TCHAR StandardItems[] = _T( "StandardItems" );
 #pragma endregion Declarations
 
-typedef std::map<SVGUID,SVString> SVErrorMap;
-
 class SVVisionProcessorHelper
 {
 public:
@@ -114,35 +112,6 @@ public:
 	HRESULT SetProductFilter( const SVString& rListName, SVProductFilterEnum filter );
 	HRESULT GetProductFilter( const SVString& rListName, SVProductFilterEnum& filter ) const;
 	HRESULT RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
-
-
-	//methods for Tool Errors for going into RunMode
-	//////////////////////////////////////////
-	// ClearToolErrorMap 
-	// Clears the map of tool errors before the start of going into RunMode
-	//////////////////////////////////////////
-	void ClearToolErrorMap();
-	
-	//////////////////////////////////////////
-    // AddToolError
-	// Parameters:
-	//     - SVGUID - the Tool's Unique ID
-	//     - SVString - Error Message for that tool
-	//////////////////////////////////////////
-	void AddToolError(SVGUID guid, SVString sErrorMessage);
-
-	//////////////////////////////////////////
-    // GetNumberofToolError
-	// Returns the number of errors in the map. 
-	//////////////////////////////////////////
-	int GetNumberOfToolErrors() const;
-
-	//////////////////////////////////////////
-	// GetFirstErrorMessage
-	// returns true along with the SVGUID and ErrorMessage string.
-	// returns false if it was unable to get anything from the map. this should never happen
-	//////////////////////////////////////////
-	bool GetFirstErrorMessage(SVGUID &guid, SVString &sErrorMessage) const;
 
 	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
 	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declares in another project
@@ -208,7 +177,6 @@ private:
 
 #pragma region Private Members
 private:   //Data
-	SVErrorMap m_ToolErrorMap;
 	MessageNotification m_MessageNotification;
 #pragma endregion Private Members
 };

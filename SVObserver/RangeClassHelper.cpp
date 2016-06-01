@@ -133,7 +133,7 @@ void RangeClassHelper::SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp)
 		SVStringArray msgList;
 		msgList.push_back(SvStl::MessageData::convertId2AddtionalText(er));
 		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_RangeValue_EmptyString, msgList, StdMessageParams, SvOi::Err_16022 );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_RangeValue_EmptyString, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16022 );
 		Exception.Throw();
 	}
 
@@ -149,7 +149,7 @@ void RangeClassHelper::SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp)
 			msgList.push_back(SvUl_SF::Format("%d", static_cast<int>(s_RangeMin)));
 			msgList.push_back(SvUl_SF::Format("%d", static_cast<int>(s_RangeMax)));
 			SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_RangeValue_WrongRange, msgList, StdMessageParams, SvOi::Err_16023 );
+			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_RangeValue_WrongRange, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16023 );
 			Exception.Throw();
 		}
 	}
@@ -174,7 +174,7 @@ void RangeClassHelper::SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp)
 		break;
 	default:
 		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_ErrorUnknownEnum, StdMessageParams, SvOi::Err_16024 );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_ErrorUnknownEnum, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16024 );
 		Exception.Throw();
 		break;
 	}

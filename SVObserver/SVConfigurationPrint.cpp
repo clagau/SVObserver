@@ -311,7 +311,7 @@ void SVConfigurationPrint::DoPrintConfig()
 					CString message;
 					message.Format(AFX_IDP_FAILED_TO_START_PRINT);
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10238 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10238 );
 					return;
 				}  // end if( nullptr == printInfo.m_pPD->m_pd.hDC  )
 			}  // end if( pCmdInfo->m_nShellCommand == CCommandLineInfo::FilePrintTo )
@@ -417,7 +417,7 @@ void SVConfigurationPrint::DoPrintConfig()
 			CString message;
 			message.Format(AFX_IDP_FAILED_TO_START_PRINT);
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, StdMessageParams, SvOi::Err_10239 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10239 );
 			return;
 		}  // end if( printDC.StartDoc( &docInfo ) == SP_ERROR )
 		
@@ -2023,7 +2023,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		if ( nullptr == pPPQ )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, StdMessageParams, SvOi::Err_17000_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17000_ErrorGettingPPQ );
 			DebugBreak();
 			continue;
 		}
@@ -2220,13 +2220,13 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		if ( nullptr == pInputList )
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17001_ErrorGettingInputObjectList );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17001_ErrorGettingInputObjectList );
 			DebugBreak();
 		}
 		else if (!pInputList->FillInputs( ppIOEntries ))
 		{
 			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFillingInputs, StdMessageParams, SvOi::Err_17002_ErrorFillingInputs );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17002_ErrorFillingInputs );
 			DebugBreak();
 		}
 
@@ -2343,7 +2343,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	else
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17003_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17003_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -2387,7 +2387,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( nullptr == pPPQ )
 				{
 					SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, StdMessageParams, SvOi::Err_17004_ErrorGettingPPQ );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17004_ErrorGettingPPQ );
 					DebugBreak();
 				}
 
@@ -2396,7 +2396,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				{
 					SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingOutputs, StdMessageParams, SvOi::Err_17005_ErrorGettingOutputs );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17005_ErrorGettingOutputs );
 					DebugBreak();
 				}
 

@@ -230,7 +230,7 @@ namespace Seidenader
 			if( 0 == m_KernelSum )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, StdMessageParams, SvOi::Err_10225 );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10225 );
 			}
 			else
 			{
@@ -348,21 +348,21 @@ namespace Seidenader
 							SVStringArray msgList;
 							msgList.push_back(pathName);
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_XmlFormatInvalid));
-							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, StdMessageParams, SvOi::Err_10226 );
+							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
 						}
 						else if (E_CUSTOM_IMPORT_VERSION_MISMATCH == Result)
 						{
 							SVStringArray msgList;
 							msgList.push_back(pathName);
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_VersionMismatch));
-							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, StdMessageParams, SvOi::Err_10226 );
+							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
 						}
 						else
 						{
 							SVStringArray msgList;
 							msgList.push_back(pathName);
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
-							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, StdMessageParams, SvOi::Err_10226 );
+							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
 						}
 					}
 				}
@@ -375,7 +375,7 @@ namespace Seidenader
 					SVStringArray msgList;
 					msgList.push_back(pathName);
 					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
-					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, StdMessageParams, SvOi::Err_10226 );
+					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
 				}
 				if( 0 != message.getMessage().m_MessageCode )
 				{
@@ -418,7 +418,7 @@ namespace Seidenader
 				catch( ... )
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ExportFailed, StdMessageParams, SvOi::Err_10227 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ExportFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10227 );
 				}
 			}
 		}
@@ -899,7 +899,7 @@ namespace Seidenader
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelArray.size()));
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelWidth));
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelHeight));
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelSize, msgList, StdMessageParams, Err_10228);
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams), Err_10228);
 				throw message;
 			}
 
@@ -909,7 +909,7 @@ namespace Seidenader
 				SVStringArray msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelWidth));
 				msgList.push_back(SvUl_SF::Format(_T("%d"),ICustom2Filter::MaxKernelSize));
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelWidth, msgList, StdMessageParams, Err_10228);
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), Err_10228);
 				throw message;
 			}
 			if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || ICustom2Filter::MaxKernelSize < m_KernelHeight )
@@ -917,13 +917,13 @@ namespace Seidenader
 				SVStringArray msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelHeight));
 				msgList.push_back(SvUl_SF::Format(_T("%d"),ICustom2Filter::MaxKernelSize));
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelHeight, msgList, StdMessageParams, Err_10228);
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), Err_10228);
 				throw message;
 			}
 			//Normalization Factor is not allowed to be 0 or negative
 			if( 0 >= m_NormalizationFactor )
 			{
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, StdMessageParams, Err_10228);
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), Err_10228);
 				throw message;
 			}
 		}

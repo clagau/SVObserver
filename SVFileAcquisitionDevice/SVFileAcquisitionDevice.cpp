@@ -621,7 +621,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 						TRACE( "%s\n", l_szbuf );
 
 						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, SvOi::Tid_FileAcquisition_FormatError, StdMessageParams );
+						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, SvOi::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams) );
 					}
 				}
 				else

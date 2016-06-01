@@ -69,12 +69,12 @@ namespace Seidenader
 
 		SVGUID ObjectsListBox::getGUID(int index) const
 		{
-			SVGUID retVal = SVInvalidGUID;
+			SVGUID Result = SV_GUID_NULL;
 			if (0 <= index && m_List.size() > index)
 			{
-				retVal = m_List[index].second;
+				Result = m_List[index].second;
 			}
-			return retVal;
+			return Result;
 		}
 
 		BOOL ObjectsListBox::PreCreateWindow(CREATESTRUCT& cs) 

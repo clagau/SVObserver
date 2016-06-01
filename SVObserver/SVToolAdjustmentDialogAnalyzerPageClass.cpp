@@ -58,7 +58,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 , m_pCurrentAnalyzer(nullptr)
 , m_InspectionID(rInspectionID)
 , m_TaskObjectID(rTaskObjectID)
-, m_additionalAnalyzerId(SVInvalidGUID)
+, m_additionalAnalyzerId(SV_GUID_NULL)
 {
 	if( m_pParentDialog )
 	{
@@ -229,7 +229,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 	else
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Error_NoAnalyzerDetails, StdMessageParams, SvOi::Err_10210 );
+		Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Error_NoAnalyzerDetails, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10210 );
 	}
 }
 
@@ -242,7 +242,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 	SVGUID classGUID = m_availableAnalyzerCombobox.getSelectedGUID();
 
 	// Check for valid selection
-	if( SVInvalidGUID != classGUID )
+	if( SV_GUID_NULL != classGUID )
 	{
 		// Check if its the same Analyzer
 		if( m_pCurrentAnalyzer && m_pCurrentAnalyzer->GetClassID() != classGUID )
@@ -277,14 +277,18 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 					if( ::SVSendMessage( m_pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerCreationFailed, StdMessageParams, SvOi::Err_10211 );
+						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10211 );
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = m_pCurrentAnalyzer->GetUniqueObjectID();
-						if( objectID != SVInvalidGUID )
+						if( SV_GUID_NULL != objectID )
+						{
 							m_pTool->Delete( objectID );
+						}
 						else
+						{
 							delete m_pCurrentAnalyzer;
+						}
 
 						m_pCurrentAnalyzer = nullptr;
 					}
@@ -293,7 +297,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			else
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerInstantiationFailed, StdMessageParams, SvOi::Err_10212 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerInstantiationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10212 );
 			}
 		}
 	}
@@ -333,10 +337,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 	if( m_pCurrentAnalyzer )
 	{
 		//This is to remove the analyzer due to MIL License restrictions.
-		if ( SVInvalidGUID != m_additionalAnalyzerId && m_pCurrentAnalyzer->GetClassID() == m_additionalAnalyzerId )
+		if ( SV_GUID_NULL != m_additionalAnalyzerId && m_pCurrentAnalyzer->GetClassID() == m_additionalAnalyzerId )
 		{
 			m_availableAnalyzerCombobox.remove(m_pCurrentAnalyzer->GetObjectName());
-			m_additionalAnalyzerId = SVInvalidGUID;
+			m_additionalAnalyzerId = SV_GUID_NULL;
 		}
 
 		::SVSendMessage( m_pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), 0 );

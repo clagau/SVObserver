@@ -259,7 +259,7 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 	if ( S_OK != hrOk )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Acquisition_SourceInformationFailed, StdMessageParams, SvOi::Err_10050 ); 
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Acquisition_SourceInformationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10050 ); 
 	}
 
 	return hrOk;

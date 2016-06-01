@@ -102,7 +102,7 @@ private:
 	HRESULT CreateSystems();
 	HRESULT DestroySystems();
 	HRESULT DestroySystem(SVMatroxGigeSystem& rSystem);
-	HRESULT AddSystem(const SVMatroxString& rName, long SystemNumber);
+	HRESULT AddSystem(const SVString& rName, long SystemNumber);
 
 	HRESULT CreateDigitizers(SVMatroxGigeSystem& rSystem);
 	HRESULT CreateDigitizer(SVMatroxGigeSystem& rSystem, long digitizerIndex);

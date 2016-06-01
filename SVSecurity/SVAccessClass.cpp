@@ -19,6 +19,7 @@
 #include "SVAccessClass.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary\MessageTextGenerator.h"
 
 #include "resource.h"
 #include "SVAccessPointNode.h"
@@ -138,9 +139,9 @@ bool SVAccessClass::IsMasterPassword( CString p_rstrUser, CString p_rstrPW )
 // S_OK is returned if successful. and the strUser and strPassword strings are filled.
 // The standard SVResearch users that are intended for administration are blocked from being able
 // to logon.  They are SVActiveX, SVIMRun, SVFocusNT, and SVAdmin.
-HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, SvOi::MessageTextEnum messageId, SVStringArray msgList, LPCTSTR p_strStatus)
+HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LPCTSTR Attempt, LPCTSTR p_strStatus)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT Result = S_FALSE;
 
 
 	SVPasswordDlg dlg;
@@ -150,51 +151,57 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, Sv
 	{
 		if( IsMasterPassword( dlg.m_strUser, dlg.m_strPassword ) )
 		{
-			strPassword = dlg.m_strPassword;
-			strUser = dlg.m_strUser;
-			return S_OK;
-		}
-
-		HANDLE phToken = nullptr;
-
-		if( LogonUserA(  ( LPSTR  )( LPCSTR )dlg.m_strUser,
-			( LPSTR  ) ( LPCSTR )m_strLogonServer, 
-			( LPSTR  ) ( LPCSTR )dlg.m_strPassword, 
-			LOGON32_LOGON_NETWORK,
-			LOGON32_PROVIDER_DEFAULT,
-			&phToken) )
-		{
-			CloseHandle( phToken);
-
-			// Hard Coded Deny logging On Priviledged SVResearch Users.
-			if( dlg.m_strUser.CompareNoCase( _T("SVActiveX")) == 0 ||
-				dlg.m_strUser.CompareNoCase( _T("SVIMRun")) == 0 ||
-				dlg.m_strUser.CompareNoCase( _T("SVFocusNT")) == 0 || 
-				dlg.m_strUser.CompareNoCase( _T("SVAdmin")) == 0) 
-			{
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, messageId, msgList, StdMessageParams, 0, 0, dlg.m_strUser );
-
-				dlg.m_strUser.Empty();
-				dlg.m_strPassword.Empty();
-				hr = SVMSG_SVS_ACCESS_DENIED;
-			}
-			else
-			{
-				hr = S_OK;
-			}
+			Result =  S_OK;
 		}
 		else
 		{
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, messageId, msgList, StdMessageParams, 0, 0, dlg.m_strUser );
+			HANDLE phToken = nullptr;
 
-			hr = SVMSG_SVS_ACCESS_DENIED;
+			if( LogonUserA(  static_cast<LPCSTR> (dlg.m_strUser),
+				static_cast<LPCSTR> (m_strLogonServer), 
+				static_cast<LPCSTR> (dlg.m_strPassword), 
+				LOGON32_LOGON_NETWORK,
+				LOGON32_PROVIDER_DEFAULT,
+				&phToken) )
+			{
+				CloseHandle( phToken);
+
+				// Hard Coded Deny logging On Priviledged SVResearch Users.
+				if( dlg.m_strUser.CompareNoCase( _T("SVActiveX")) == 0 ||
+					dlg.m_strUser.CompareNoCase( _T("SVIMRun")) == 0 ||
+					dlg.m_strUser.CompareNoCase( _T("SVFocusNT")) == 0 || 
+					dlg.m_strUser.CompareNoCase( _T("SVAdmin")) == 0) 
+				{
+					SVStringArray msgList;
+					msgList.push_back( SVString(dlg.m_strUser) );
+					msgList.push_back( SVString(Attempt) );
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
+
+					dlg.m_strUser.Empty();
+					dlg.m_strPassword.Empty();
+					Result = SVMSG_SVS_ACCESS_DENIED;
+				}
+				else
+				{
+					Result = S_OK;
+				}
+			}
+			else
+			{
+				SVStringArray msgList;
+				msgList.push_back( SVString(dlg.m_strUser) );
+				msgList.push_back( SVString(Attempt) );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
+
+				Result = SVMSG_SVS_ACCESS_DENIED;
+			}
 		}
 		strUser = dlg.m_strUser;
 		strPassword = dlg.m_strPassword;
 	}
-	return hr;
+	return Result;
 }
 
 // This function checks to see if a user is a member of the given NT Groups
@@ -388,10 +395,8 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 			l_bUserValidated = false;
 			if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || strTmpUser.IsEmpty() )
 			{
-				SVStringArray msgList;
-				msgList.push_back(SVString(strName1));
 				// Call Log Screen
-				hr = PasswordDialog( strTmpUser, strTmpPW, SvOi::Tid_Default, msgList, l_strStatus);
+				hr = PasswordDialog( strTmpUser, strTmpPW, strName1, l_strStatus);
 				if( hr == S_FALSE )
 				{
 					l_bTryLogOn = false;
@@ -423,6 +428,10 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 			{
 				CloseHandle( phToken);
 
+				SVStringArray msgList;
+				msgList.push_back( SVString( strTmpUser ) );
+				msgList.push_back( SVString( strName1 ) );
+				
 				if( IsUserAMember( strTmpUser, strGroups1 )  )
 				{
 					ResetTime();
@@ -432,15 +441,17 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 					// Event viewer
 					// Application Log Gained Access...Category - SVAccess
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED1, strName1, StdMessageParams, 0, 0, strTmpUser );
+					Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvOi::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, StdMessageParams, 0, 0, strTmpUser );
+					msgList.clear();
+					msgList.push_back( SVString( strTmpUser ) );
+					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					break;
 				}
 				if( l_bUserValidated )
 				{
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, strName1, StdMessageParams, 0, 0, strTmpUser );
+					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					l_strStatus = _T("User Does Not Have Rights to This Function");
 				}
@@ -451,8 +462,11 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 	}
 	else
 	{
+		SVStringArray msgList;
+		msgList.push_back( SvStl::MessageData::convertId2AddtionalText( SvOi::Tid_Security_Disabled) );
+		
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, StdMessageParams, 0, 0, _T("Security Disabled") );
+		Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		hr = S_OK;
 	}
 	
@@ -473,8 +487,6 @@ enum ValidateState
 HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 {
 	USES_CONVERSION;
-
-
 
 	HRESULT hr = S_FALSE;
 	CString l_strStatus;
@@ -570,6 +582,9 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 						case 1:
 						{
 							l_strStatus = _T("Access - ") + strName2;
+							msgId = SvOi::Tid_Security_Access;
+							msgList.clear();
+							msgList.push_back(SVString(strName2));
 							break;
 						}
 						case 2:
@@ -586,8 +601,9 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 
 				l_bUserValidated = false;
 
+				SVString Attempt = SvStl::MessageTextGenerator::Instance().getText(msgId, msgList);
 				// Call Log in Dialog
-				hr = PasswordDialog( strTmpUser, strTmpPW, msgId, msgList, l_strStatus);
+				hr = PasswordDialog( strTmpUser, strTmpPW, Attempt.c_str(), l_strStatus);
 				if( hr == S_FALSE )
 				{
 					l_bTryLogOn = false;
@@ -638,10 +654,12 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 					hr = S_OK;
 					l_bTryLogOn = false;
 
+					msgList.clear();
+					msgList.push_back( SVString(strTmpUser) );
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, StdMessageParams, 0, 0, strTmpUser );
+					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-					Exception.setMessage( lId2, SvOi::Tid_Security_GainedAccess, StdMessageParams, 0, 0, strTmpUser );
+					Exception.setMessage( lId2, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					break;
 				}
@@ -649,8 +667,11 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 				{
 					if( l_lState != l_lLastState )
 					{
+						msgList.clear();
+						msgList.push_back( SVString(strTmpUser) );
+						msgList.push_back( SVString(strName1) );
 						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-						Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, strName1, StdMessageParams, 0, 0, strTmpUser );
+						Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
 
 				}
@@ -660,8 +681,10 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 	}
 	else
 	{
+		msgList.clear();
+		msgList.push_back( SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Security_Disabled) );
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, StdMessageParams, 0, 0, _T("Security Disabled") );
+		Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		hr = S_OK;
 	}
 	
@@ -773,8 +796,10 @@ HRESULT SVAccessClass::SetUseLogon(bool bUse)
 // Logout clears the current user and password.
 HRESULT SVAccessClass::Logout()
 {
+	SVStringArray msgList;
+	msgList.push_back( SVString(m_svStorage.GetCurrentUser()) );
 	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-	Exception.setMessage( SVMSG_SVS_ACCESS_LOGGED_OUT, SvOi::Tid_Empty, StdMessageParams, 0, 0, m_svStorage.GetCurrentUser() );
+	Exception.setMessage( SVMSG_SVS_ACCESS_LOGGED_OUT, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 	m_svStorage.ClearUser();
 	m_svStorage.ClearPW();
@@ -792,7 +817,8 @@ HRESULT SVAccessClass::Logon()
 
 	HRESULT hr;
 	CString l_strStatus;
-	while( (hr = PasswordDialog( strTmpUser, strTmpPW, SvOi::Tid_Security_Login, SVStringArray(), l_strStatus )) 
+	SVString Attempt = SvStl::MessageTextGenerator::Instance().getText(SvOi::Tid_Security_Login);
+	while( (hr = PasswordDialog( strTmpUser, strTmpPW, Attempt.c_str(), l_strStatus )) 
 		== SVMSG_SVS_ACCESS_DENIED )
 	{
 		l_strStatus = _T("Invalid User or Password");
@@ -800,8 +826,12 @@ HRESULT SVAccessClass::Logon()
 
 	if( S_OK == hr )
 	{
+		SVStringArray msgList;
+		msgList.push_back( SVString( strTmpUser ) );
+		msgList.push_back( Attempt );
+
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED1, SvOi::Tid_Security_Login, StdMessageParams, 0, 0, strTmpUser );
+		Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvOi::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		m_svStorage.SetUser( strTmpUser );
 		m_svStorage.SetPW( strTmpPW );

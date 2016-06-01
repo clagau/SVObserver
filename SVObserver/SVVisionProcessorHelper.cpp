@@ -1302,39 +1302,3 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists( const SVNam
 	}
 }
 
-void SVVisionProcessorHelper::ClearToolErrorMap()
-{
-	m_ToolErrorMap.clear();
-}
-
-void SVVisionProcessorHelper::AddToolError(SVGUID guid, SVString sErrorMessage)
-{
-	SVErrorMap::iterator iter =	m_ToolErrorMap.find(guid);
-	if ( iter == m_ToolErrorMap.end() )
-	{
-		m_ToolErrorMap.insert(std::make_pair(guid, sErrorMessage));
-	}
-}
-
-int SVVisionProcessorHelper::GetNumberOfToolErrors() const
-{
-	int iSize;
-	iSize = (int)m_ToolErrorMap.size();
-
-	return iSize;
-}
-
-bool SVVisionProcessorHelper::GetFirstErrorMessage(SVGUID &guid, SVString &sErrorMessage) const
-{
-	bool bRet = false;
-	SVErrorMap::const_iterator it = m_ToolErrorMap.begin();
-	if ( it != m_ToolErrorMap.end() )
-	{
-		bRet = true;
-		guid = it->first;
-		sErrorMessage = it->second;
-	}
-
-	return bRet;
-}
-

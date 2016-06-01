@@ -20,12 +20,12 @@ class SVMatroxSystemInterface
 public:
 	typedef SVMatroxStatusInformation::SVStatusCode SVStatusCode;
 
-	static SVStatusCode Allocate(const SVMatroxString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& system);
+	static SVStatusCode Allocate(const SVString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& system);
 	static SVStatusCode Release(SVMatroxSystem& SystemId);
 
 	static SVStatusCode Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& value);
 	static SVStatusCode Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, double& value);
-	static SVStatusCode Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVMatroxString& value);
+	static SVStatusCode Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVString& value);
 
 	static SVStatusCode Set(const SVMatroxSystem& SystemId, SVMatroxSystemControl::SVMatroxSystemControlEnum ControlType, long ControlValue);
 

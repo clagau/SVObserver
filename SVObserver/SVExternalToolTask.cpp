@@ -1564,7 +1564,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 			{
 				// Remove it from the TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
-				if( objectID != SVInvalidGUID )
+				if( SV_GUID_NULL != objectID )
 				{
 					Delete( objectID );
 				}
@@ -1864,7 +1864,7 @@ BOOL SVExternalToolTask::ConnectAllInputs()
 	{
 		l_bRunConnect = FALSE;
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-		if( rInfo.GetInputObjectInfo().UniqueObjectID != SVInvalidGUID )
+		if( SV_GUID_NULL != rInfo.GetInputObjectInfo().UniqueObjectID )
 		{
 			l_bRunConnect = TRUE;
 			break;
@@ -1876,7 +1876,7 @@ BOOL SVExternalToolTask::ConnectAllInputs()
 	{
 		l_bRunConnect = FALSE;
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
-		if( rInfo.GetInputObjectInfo().UniqueObjectID != SVInvalidGUID )
+		if( SV_GUID_NULL != rInfo.GetInputObjectInfo().UniqueObjectID )
 		{
 			l_bRunConnect = TRUE;
 			break;

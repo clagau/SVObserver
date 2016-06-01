@@ -37,7 +37,7 @@ HRESULT SVOCMLoadConfiguration(unsigned long& ulSVOConfigVersion, BSTR bstrFileN
 		{
 
 			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_SVO_97_CONFIGURATION_TOO_OLD, SvOi::Tid_Empty, StdMessageParams, SvOi::Err_16079_ConfigurationTooOld );
+			MsgCont.setMessage( SVMSG_SVO_97_CONFIGURATION_TOO_OLD, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16079_ConfigurationTooOld );
 			throw MsgCont;	}
 		else  
 		{

@@ -39,8 +39,8 @@ SVToolSetListCtrl::SVToolSetListCtrl()
 , m_iTopIndex(0)
 , m_expandState(-1)
 , m_collapseState(-1)
-, m_ToolSetId(SVInvalidGUID)
-, m_InspectionId(SVInvalidGUID)
+, m_ToolSetId(SV_GUID_NULL)
+, m_InspectionId(SV_GUID_NULL)
 {
 }
 
@@ -310,7 +310,7 @@ void SVToolSetListCtrl::RebuildImages()
 		item.iItem = i;	
 		SVGUID toolId = getToolGuid(i);
 
-		if (SVInvalidGUID != toolId)
+		if (SV_GUID_NULL != toolId)
 		{
 			bool bValid = isToolValid(toolId);
 			
@@ -429,7 +429,7 @@ void SVToolSetListCtrl::RestoreScrollPos()
 
 SVGUID SVToolSetListCtrl::getToolGuid(int index) const
 {
-	SVGUID guid = SVInvalidGUID;
+	SVGUID guid = SV_GUID_NULL;
 	if (-1 < index )
 	{
 		LVITEM item;
@@ -451,7 +451,7 @@ SVGUID SVToolSetListCtrl::getToolGuid(int index) const
 
 SVGUID SVToolSetListCtrl::GetSelectedTool() const
 {
-	SVGUID guid = SVInvalidGUID;
+	SVGUID guid = SV_GUID_NULL;
 	int index = GetNextItem(-1, LVNI_SELECTED);
 	
 	{

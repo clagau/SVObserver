@@ -179,7 +179,7 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(CString& rcsPath)
 
 void SVArchiveRecord::ConnectInputObject()
 {
-	if( m_svObjectReference.Guid() != SVInvalidGUID )
+	if( SV_GUID_NULL != m_svObjectReference.Guid() )
 	{
 		//
 		// Get a pointer to the object based on the guid.
@@ -212,7 +212,7 @@ void SVArchiveRecord::ConnectInputObject()
 		}
 	}
 	
-	if( m_svObjectReference.Guid() != SVInvalidGUID)
+	if( SV_GUID_NULL != m_svObjectReference.Guid() )
 	{
 		ASSERT(m_pArchiveTool);
 
@@ -233,7 +233,7 @@ void SVArchiveRecord::ConnectInputObject()
 
 void SVArchiveRecord::DisconnectInputObject()
 {
-	if( m_svObjectReference.Guid() != SVInvalidGUID)
+	if( SV_GUID_NULL != m_svObjectReference.Guid() )
 	{
 		SVInObjectInfoStruct InObjectInfo;
 		
@@ -444,7 +444,7 @@ HRESULT SVArchiveRecord::WriteImage( )
 				{
 					try
 					{
-						SVMatroxString l_strPathImageFile = csPathImageFile;
+						SVString l_strPathImageFile = csPathImageFile;
 
 						l_Code = SVMatroxBufferInterface::Export(milBuffer, 
 							l_strPathImageFile, 
@@ -476,7 +476,7 @@ HRESULT SVArchiveRecord::WriteImage( )
 	HRESULT hr = S_OK;
 	
 	SVMatroxBufferInterface::SVStatusCode l_Code;
-	SVMatroxString l_strPath = sFileName;
+	SVString l_strPath = sFileName;
 
 	if ( !milBuffer.empty() )
 	{

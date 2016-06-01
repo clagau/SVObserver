@@ -246,20 +246,18 @@ BOOL SVXmlException::operator=( SvStl::MessageContainer& rhs)
 	if(!SetProgramCode( rMsg.m_ProgramCode ))return false;
 	//set the error code
 	if(!SetErrorCode( rMsg.m_MessageCode ))return false;
-	//set the OS error code
-	if(!SetOsErrorCode( rMsg.m_OSErrorCode ))return false;
 	//set the error data
 	if(!SetErrorData( _bstr_t(rMsg.getAdditionalText().c_str()).GetAddress() ))return false;
 	//set the source file 
-	if(!SetSourceFile( _bstr_t(rMsg.m_SourceFile.c_str()).GetAddress() ))return false;
+	if(!SetSourceFile( _bstr_t(rMsg.m_SourceFile.m_FileName.c_str()).GetAddress() ))return false;
 	//set the source line
-	if(!SetSourceLine( rMsg.m_SourceLine ))return false;
+	if(!SetSourceLine( rMsg.m_SourceFile.m_Line ))return false;
 	//set the source date & time
-	if(!SetSourceDateTime( _bstr_t(rMsg.m_SourceDateTime.c_str()).GetAddress() ))return false;
+	if(!SetSourceDateTime( _bstr_t(rMsg.m_SourceFile.m_FileDateTime.c_str()).GetAddress() ))return false;
 	//set the compile date
-	if(!SetCompileDate( _bstr_t(rMsg.m_CompileDate.c_str()).GetAddress() ))return false;
+	if(!SetCompileDate( _bstr_t(rMsg.m_SourceFile.m_CompileDate.c_str()).GetAddress() ))return false;
 	//set the compile time
-	if(!SetCompileTime( _bstr_t(rMsg.m_CompileTime.c_str()).GetAddress() ))return false;
+	if(!SetCompileTime( _bstr_t(rMsg.m_SourceFile.m_CompileTime.c_str()).GetAddress() ))return false;
 	//set logged flag
 	if(!SetLogged( rMsg.m_Logged ) )return false;
 

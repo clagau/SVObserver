@@ -210,7 +210,7 @@ HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& rClassID, GUID& rOb
 	}
 	else
 	{
-		rObjectID = SVInvalidGUID;
+		rObjectID = SV_GUID_NULL;
 
 		if( S_OK == l_Status )
 		{
@@ -329,7 +329,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 	if( 0 == rFullName.find( SvOl::ToolSetName ) )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), StdMessageParams, SvOi::Err_25049_DottedName );
+		Exception.setMessage( SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25049_DottedName );
 		ASSERT(false);
 		Result = E_FAIL;
 		rReference = SVObjectReference();
@@ -518,7 +518,7 @@ BOOL SVObjectManagerClass::CloseUniqueObjectID( SVObjectClass* PObject )
 
 BOOL SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* PObject, const SVGUID& RNewGuid )
 {
-	if(	RNewGuid != SVInvalidGUID && CloseUniqueObjectID( PObject ) )
+	if(	SV_GUID_NULL != RNewGuid && CloseUniqueObjectID( PObject ) )
 	{
 		PObject->m_outObjectInfo.UniqueObjectID = RNewGuid;
 		BOOL bRetVal = OpenUniqueObjectID( PObject );
@@ -535,14 +535,14 @@ SVObjectClass* SVObjectManagerClass::GetObject( const SVGUID& RGuid ) const
 {
 	SVObjectClass* pObject = nullptr;
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-	BOOL l_Status = ( RGuid != SVInvalidGUID );
+	BOOL Status = ( SV_GUID_NULL != RGuid );
 
-	if( l_Status && m_State == ReadWrite )
+	if( Status && m_State == ReadWrite )
 	{
-		l_Status = l_AutoLock.Assign( &m_Lock );
+		Status = l_AutoLock.Assign( &m_Lock );
 	}
 
-	if( l_Status )
+	if( Status )
 	{
 		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( RGuid );
 

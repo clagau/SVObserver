@@ -33,7 +33,7 @@ void MessageManager<M_Container, M_Data, M_Display, M_Notify>::Throw()
 }
 
 template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Process( UINT MsgBoxType = MB_OK )
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Process( UINT MsgBoxType /*= MB_OK*/ )
 {
 	INT_PTR Result( IDCANCEL );
 
@@ -50,7 +50,7 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Process( UINT 
 }
 
 template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User=nullptr,  UINT MsgBoxType = MB_OK)
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/ )
 {
 	SVStringArray textList;
 	SvOi::MessageTextEnum id = SvOi::Tid_Empty;
@@ -60,21 +60,21 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DW
 		id = SvOi::Tid_Default;
 	}
 
-	return setMessage( MessageCode, id, textList, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User, MsgBoxType );
+	return setMessage( MessageCode, id, textList, SourceFile, ProgramCode, rObjectId, MsgBoxType );
 }
 
 template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User=nullptr,  UINT MsgBoxType = MB_OK)
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
 {
-	return setMessage( MessageCode, AdditionalTextId, SVStringArray(), CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User, MsgBoxType );
+	return setMessage( MessageCode, AdditionalTextId, SVStringArray(), SourceFile, ProgramCode, rObjectId, MsgBoxType );
 }
 
 template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User=nullptr,  UINT MsgBoxType = MB_OK)
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
 {
 	INT_PTR Result( IDCANCEL );
 
-	M_Container.setMessage( MessageCode, AdditionalTextId, AdditionalTextList, CompileDate, CompileTime, SourceFile, SourceLine, SourceDateTime, ProgramCode, OSErrorCode, User );
+	M_Container.setMessage( MessageCode, AdditionalTextId, AdditionalTextList, SourceFile, ProgramCode, rObjectId );
 
 	Result = Process( MsgBoxType );
 
@@ -82,11 +82,11 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DW
 }
 
 template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( const M_Data& rData,  UINT MsgBoxType = MB_OK)
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( const M_Data& rData, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK */ )
 {
 	INT_PTR Result( IDCANCEL );
 
-	M_Container.setMessage( rData );
+	M_Container.setMessage( rData, rObjectId );
 
 	Result = Process( MsgBoxType );
 
@@ -115,7 +115,8 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Display( const
 {
 	INT_PTR Result( IDCANCEL );
 
-	if( nullptr != M_Display && LogAndDisplay == m_Type)
+	//If the message has already been displayed do not display again
+	if( nullptr != M_Display && LogAndDisplay == m_Type  && !M_Container.getMessage().m_Displayed )
 	{
 		SVString Msg;
 		SVString MsgDetails;
@@ -128,12 +129,14 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Display( const
 
 		if(nullptr != M_Notify )
 		{
-			M_Notify(SvStl::StartMsgBox,M_Container.getMessage().m_ProgramCode,Msg.c_str()  );
+			M_Notify(SvStl::StartMsgBox, M_Container.getMessage().m_ProgramCode ,Msg.c_str() );
 		}
 		Result = M_Display( nullptr, Msg.c_str(), MsgDetails.c_str(), Type );
+		//Message has been displayed do not display again
+		M_Container.getMessage().m_Displayed = true;
 		if(nullptr != M_Notify )
 		{
-			M_Notify(SvStl::EndMsgBox,M_Container.getMessage().m_ProgramCode,Msg.c_str()  );
+			M_Notify(SvStl::EndMsgBox, M_Container.getMessage().m_ProgramCode ,Msg.c_str() );
 		}
 	}
 	

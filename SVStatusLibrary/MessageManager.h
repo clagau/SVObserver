@@ -83,61 +83,47 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! Sets the message data
 		//! \param MessageCode [in] is the unique message number
 		//! \param AdditionalText [in] the additional text to the message code
-		//! \param CompileDate [in] the source file compile date
-		//! \param CompileTime [in] the source file compile time
-		//! \param SourceFile [in] the source file path
-		//! \param SourceLine [in] the source file line number
-		//! \param SourceDateTime [in] the source file save date time
+		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode [in] is the unique program error number
-		//! \param OSErrorCode [in] is the unique OS error number
-		//! \param User [in] the user for security messages
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, LPCTSTR sAdditionalText, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, const long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User = nullptr, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, LPCTSTR sAdditionalText, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
 		//! \param MessageCode [in] is the unique message number
 		//! \param AdditionalTextId <in> Id for the additional text to the message code (without AdditionalTextList)
-		//! \param CompileDate [in] the source file compile date
-		//! \param CompileTime [in] the source file compile time
-		//! \param SourceFile [in] the source file path
-		//! \param SourceLine [in] the source file line number
-		//! \param SourceDateTime [in] the source file save date time
+		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode [in] is the unique program error number
-		//! \param OSErrorCode [in] is the unique OS error number
-		//! \param User [in] the user for security messages
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, const long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User = nullptr, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
 		//! \param MessageCode [in] is the unique message number
 		//! \param AdditionalTextId <in> Id for the additional text to the message code
 		//! \param AdditionalTextList <in> List of strings for the additional text to the message code
-		//! \param CompileDate [in] the source file compile date
-		//! \param CompileTime [in] the source file compile time
-		//! \param SourceFile [in] the source file path
-		//! \param SourceLine [in] the source file line number
-		//! \param SourceDateTime [in] the source file save date time
+		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode [in] is the unique program error number
-		//! \param OSErrorCode [in] is the unique OS error number
-		//! \param User [in] the user for security messages
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR SourceFile, const long SourceLine, LPCTSTR SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, LPCTSTR User = nullptr, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
 		//! \param rData[in] reference to the message data
+		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( const M_Data& rData, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( const M_Data& rData, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Gets the message container

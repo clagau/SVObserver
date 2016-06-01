@@ -13,6 +13,7 @@
 
 //Moved to precompiled header: #include <string>
 #include "SVMatroxTypedefs.h"
+#include "SVUtilityLibrary/SVString.h"
 
 
 /**
@@ -27,9 +28,7 @@ class SVMatroxStatusInformation
 {
 public:
 	typedef long SVFunctionCode;
-	typedef std::string SVFunctionString;
 	typedef SVMatroxStatusCode SVStatusCode;
-	typedef SVMatroxStatusString SVStatusString;
 
 	SVMatroxStatusInformation();
 	SVMatroxStatusInformation( const SVMatroxStatusInformation& p_rObject );
@@ -42,18 +41,18 @@ public:
 
 	const SVMatroxStatusInformation& operator=( const SVMatroxStatusInformation& p_rObject );
 
-	SVStatusString GetCompleteString() const;
+	SVString GetCompleteString() const;
 
 	SVStatusCode m_StatusCode;
-	SVStatusString m_StatusString;
+	SVString m_StatusString;
 
 	SVFunctionCode m_FunctionCode;
-	SVFunctionString m_FunctionString;
+	SVString m_FunctionString;
 
 	long m_StatusSubCodeCount;
 
 	SVStatusCode m_StatusSubCode[ 3 ];
-	SVStatusString m_StatusSubString[ 3 ];
+	SVString m_StatusSubString[ 3 ];
 
 };
 

@@ -94,7 +94,7 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr
 {
 	SVFileNameClass svFileName;
 	CString szFileName;
-	SVMatroxString sFileName;
+	SVString sFileName;
 	HCURSOR hCursor;
 	
 	SVMatroxBufferInterface::SVStatusCode l_Code;

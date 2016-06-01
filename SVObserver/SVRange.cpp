@@ -376,7 +376,7 @@ DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 					SVStringArray msgList;
 					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, StdMessageParams, SvOi::Err_10186 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10186 ); 
 				}
 				DwResult = SVMR_NO_SUCCESS;
 			}
@@ -501,7 +501,7 @@ void SVRangeClass::ConnectAllInputObjects()
 
 		if(nullptr != m_ValueObjectReferences[i].Object())
 		{
-			if( m_ValueObjectReferences[i].Guid() != SVInvalidGUID)
+			if( SV_GUID_NULL != m_ValueObjectReferences[i].Guid() )
 			{
 				SVInObjectInfoStruct InObjectInfo;
 				InObjectInfo.PObject                    = this;
@@ -524,7 +524,7 @@ void SVRangeClass::DisconnectAllInputObjects()
 	{
 		if(nullptr != m_ValueObjectReferences[i].Object() && m_IsConnectedInput[i] == true)
 		{
-			if( m_ValueObjectReferences[i].Guid() != SVInvalidGUID )
+			if( SV_GUID_NULL != m_ValueObjectReferences[i].Guid() )
 			{
 				SVInObjectInfoStruct InObjectInfo;
 

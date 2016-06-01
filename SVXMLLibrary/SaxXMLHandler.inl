@@ -208,7 +208,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 				default:
 					{
 						SvStl::MessageContainer Exception;
-						Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_UnexpectedType, StdMessageParams,SvOi::Err_16067_OnStartElement  );
+						Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_UnexpectedType, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16067_OnStartElement  );
 						throw Exception;
 						break;
 					}
@@ -252,7 +252,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			else
 			{
 				SvStl::MessageContainer Exception;
-				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_UnexpectedOnElementData, StdMessageParams,SvOi::Err_16068_OnElementData  );
+				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_UnexpectedOnElementData, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16068_OnElementData  );
 				throw Exception;
 			}
 
@@ -291,7 +291,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			{
 				ASSERT(m_pCurrentNodeInRevisionTree);
 				SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
-				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, StdMessageParams, SvOi::Err_16069_INVALIDPOINTER );
+				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16069_INVALIDPOINTER );
 
 			}
 			if(nullptr == m_pCurrentNodeInRevisionTree)
@@ -311,7 +311,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			else
 			{
 				SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
-				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, StdMessageParams, SvOi::Err_16070_INVALIDPOINTER );
+				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16070_INVALIDPOINTER );
 				ASSERT(m_pCurrentNodeInEncryptionTree);
 			}
 
@@ -336,7 +336,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			{
 				ASSERT(false);
 				SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
-				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, StdMessageParams, SvOi::Err_16071_INVALIDPOINTER );
+				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16071_INVALIDPOINTER );
 			}
 
 			if(m_ParseArray && pSaxTreeElement)
@@ -369,7 +369,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 					{
 						ASSERT(false);
 						SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
-						Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidArrayElement, StdMessageParams, SvOi::Err_16074_InvalidArrayElement );
+						Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16074_InvalidArrayElement );
 						break;
 					}
 				}
@@ -399,7 +399,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 				{
 					ASSERT(false);
 					SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
-					Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidArrayElement, StdMessageParams, SvOi::Err_16072_INVALID_ARRAYELEMENT );
+					Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16072_INVALID_ARRAYELEMENT );
 				}
 
 				m_ParseArray = false;
@@ -425,7 +425,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		messageList.push_back(SvUl_SF::Format(_T("%i"), errorCode));
 		messageList.push_back(SvUl_SF::createSVString(pwchErrorText));
 		SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
-		Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvOi::Tid_XML_Error, messageList, StdMessageParams, SvOi::Err_16063_SAXPARSER );
+		Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvOi::Tid_XML_Error, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16063_SAXPARSER );
 		ASSERT(false);
 		return S_OK;
 	}

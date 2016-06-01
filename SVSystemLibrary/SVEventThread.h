@@ -8,40 +8,25 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 17:50:48  $
 //******************************************************************************
-
 #pragma once
 
-//Moved to precompiled header: #include <string>
+#include "SVThreadManager.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
-#include "SVThreadManager.h"
-
-/*
-SVEventThreadSignalHandler must have the following prototype:
-
-     void SVProcessThreadData( bool& p_WaitForEvents );
-
-*/
+#include "SVUtilityLibrary\SVString.h"
 
 template< typename SVEventThreadSignalHandler >
 class SVEventThread
 {
-private:
-	HANDLE m_hShutdown;
-	HANDLE m_hThreadComplete;
-	HANDLE m_hThread;
-	HANDLE m_hSignalEvent;
-	unsigned long m_ulThreadID;
-	std::string m_tag;
-	SVEventThreadSignalHandler m_threadHandler;
-
-	static DWORD WINAPI ThreadProc( LPVOID lpParam );
-
+#pragma region Constructor
 public:
 	SVEventThread();
 	~SVEventThread();
+#pragma endregion Constructor
 
+#pragma region Public Methods
+public:
 	HRESULT Create(const SVEventThreadSignalHandler& threadHandler, LPCTSTR tag);
 	void Destroy();
 
@@ -54,7 +39,23 @@ public:
 	HANDLE GetThreadHandle() const;
 
 	HRESULT Signal();
+#pragma endregion Public Methods
 
+#pragma region Private Methods
+private:
+	static DWORD WINAPI ThreadProc( LPVOID lpParam );
+#pragma endregion Private Methods
+
+#pragma region Member Variables
+private:
+	HANDLE m_hShutdown;
+	HANDLE m_hThreadComplete;
+	HANDLE m_hThread;
+	HANDLE m_hSignalEvent;
+	unsigned long m_ulThreadID;
+	SVString m_tag;
+	SVEventThreadSignalHandler m_threadHandler;
+#pragma endregion Member Variables
 };
 
 #include "SVEventThread.inl"

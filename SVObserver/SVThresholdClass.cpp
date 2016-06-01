@@ -448,7 +448,7 @@ BOOL SVThresholdClass::onRun( BOOL First,
 		msgList.push_back(_T("SVThresholdClass::onRun"));
 		
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, StdMessageParams );
+		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		RRunStatus.SetCriticalFailure();
 

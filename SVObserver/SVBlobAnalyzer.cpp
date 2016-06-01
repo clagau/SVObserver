@@ -295,7 +295,7 @@ void SVBlobAnalyzerClass::init()
 		msvValue[i].SetDefaultValue(0, TRUE);
 
 		msvszFeaturesEnabled [i] = _T('1');             // Not enabled.
-		m_guidResults[i] = SVInvalidGUID;
+		m_guidResults[i] = SV_GUID_NULL;
 	}
 
 	msvszFeaturesEnabled [SV_TOPOF_LIST] = _T('\0');    // Null termination.
@@ -455,14 +455,18 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), 0 ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10041 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10041 ); 
 					
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
-				if( objectID != SVInvalidGUID )
+				if( SV_GUID_NULL != objectID )
+				{
 					Delete( objectID );
+				}
 				else
+				{
 					delete pResult;
+				}
 			}
 		}
 
@@ -547,15 +551,18 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pResultBlob), 0 ) != SVMR_SUCCESS )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, StdMessageParams, SvOi::Err_10042 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10042 ); 
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = m_pResultBlob->GetUniqueObjectID();
-				if( objectID != SVInvalidGUID )
+				if( SV_GUID_NULL != objectID )
+				{
 					Delete( objectID );
+				}
 				else
+				{
 					delete m_pResultBlob;
-				
+				}
 			}
 		}
 		
@@ -580,7 +587,7 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 			SV_TRAP_ERROR_BRK (msvError, 1140);
 		}
 		
-		m_guidResults[ aFeatureIndex ] = SVInvalidGUID;
+		m_guidResults[ aFeatureIndex ] = SV_GUID_NULL;
 		
 		SVSendMessage (this, 
 		               SVM_DESTROY_CHILD_OBJECT,

@@ -326,7 +326,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			if( type != NOP )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NameMustNotContainKeyword, StdMessageParams, SvOi::Err_10073 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NameMustNotContainKeyword, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10073 );
 				return FALSE;
 			}
 
@@ -350,12 +350,12 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				}
 				
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10074 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10074 );
 				return FALSE;
 			}
 
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NameExpressionExpected, StdMessageParams, SvOi::Err_10075 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NameExpressionExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10075 );
 			return FALSE;
 		}
 
@@ -375,7 +375,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					else
 					{
 						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OwnerNotExist, StdMessageParams, SvOi::Err_10076 );
+						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OwnerNotExist, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10076 );
 						return FALSE;
 					}
 
@@ -387,7 +387,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				}
 			}
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedMember, StdMessageParams, SvOi::Err_10077 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedMember, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10077 );
 			return FALSE;
 		}
 		else
@@ -432,18 +432,18 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					rOperand.CleanUp();
 
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CannotReadGuid, StdMessageParams, SvOi::Err_10078 );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CannotReadGuid, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10078 );
 					return FALSE;
 				}
 
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10079 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10079 );
 				return FALSE;
 			}
 			else
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ExpressionExpected, StdMessageParams, SvOi::Err_10080 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ExpressionExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10080 );
 				return FALSE;
 			}
 		}
@@ -455,7 +455,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			{
 				// ...using owner info...
 				SVObjectClass* pObject = nullptr;
-				if( rOwnerInfo.UniqueObjectID != SVInvalidGUID )
+				if( SV_GUID_NULL != rOwnerInfo.UniqueObjectID )
 				{
 					pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( rExpressionStack.GetAt( riIndex ))), 0 ));
 				}
@@ -480,7 +480,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					rOperand.CleanUp();
 
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10081 );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10081 );
 					return FALSE;
 				}
 				else
@@ -514,7 +514,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			else
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ExpressionExpected, StdMessageParams, SvOi::Err_10082 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ExpressionExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10082 );
 				return FALSE;
 			}
 		}
@@ -589,7 +589,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 					rOperand.CleanUp();
 
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10083 );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10083 );
 
 					return FALSE;
 				}
@@ -601,18 +601,18 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			else
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ExpressionExpected, StdMessageParams, SvOi::Err_10084 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ExpressionExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10084 );
 				return FALSE;
 			}
 		}
 
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnknownExpression, StdMessageParams, SvOi::Err_10085 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnknownExpression, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10085 );
 		return FALSE;
 	}
 	
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10086 );
+	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10086 );
 	return FALSE;
 }
 
@@ -1282,7 +1282,7 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 									SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
 									SVStringArray msgList;
 									msgList.push_back(pObject->GetName());
-									Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_ScriptParseFailed, msgList, StdMessageParams, SvOi::Err_10030 ); 
+									Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_ScriptParseFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10030 ); 
 									
 									currentParseState = PARSER_ERROR;
 								}
@@ -1428,7 +1428,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 		SVObjectScriptOperandStruct& operand = RInputOperandList.GetAt( i );
 
 		// Check if valid GUID type
-		if( operand.ValueSize() == sizeof( GUID ) && *( ( GUID* ) operand.Value() ) != SVInvalidGUID )
+		if( operand.ValueSize() == sizeof( GUID ) && SV_GUID_NULL != *( ( GUID* ) operand.Value() ) )
 		{
 			SVGUID inputGuid = *( ( GUID* ) operand.Value() );
 
@@ -1808,7 +1808,7 @@ bool SVObjectScriptParserSVXClass::GetStringToken( SVExpressionStack& rExpressio
 	}
 	// Error, unexpected end of parse string...
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfParse, StdMessageParams, SvOi::Err_10088 );
+	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfParse, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10088 );
 	return false;
 }
 
@@ -1858,7 +1858,7 @@ bool SVObjectScriptParserSVXClass::GetNameStringToken( SVExpressionStack& rExpre
 	}	
 	// Error, unexpected end of parse string...
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfName, StdMessageParams, SvOi::Err_10089 );
+	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfName, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10089 );
 	return false;
 }
 
@@ -1888,12 +1888,12 @@ bool SVObjectScriptParserSVXClass::GetGuidStringToken( SVExpressionStack& rExpre
 		}
 
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_EmptyToken, StdMessageParams, SvOi::Err_10090 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_EmptyToken, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10090 );
 		return false;
 	}
 
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_GuidCannotEvaluated, StdMessageParams, SvOi::Err_10091 );
+	Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_GuidCannotEvaluated, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10091 );
 	return false;
 }
 
@@ -1917,7 +1917,7 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 	  )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NameOperandExpected, StdMessageParams, SvOi::Err_10092 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NameOperandExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10092 );
 		return rc;
 	}
 
@@ -1925,7 +1925,7 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 	if( ++index >= numberOfExpressions || _tcscmp( rExpressionStack.GetAt( index ), _T( "=" ) ) )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorExpected, StdMessageParams, SvOi::Err_10093 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10093 );
 		return rc;
 	}
 
@@ -1936,7 +1936,7 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 	  )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperandExpected, StdMessageParams, SvOi::Err_10094 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperandExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10094 );
 		return rc;
 	}
 
@@ -1944,7 +1944,7 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 	if(	++index >= numberOfExpressions || _tcscmp( rExpressionStack.GetAt( index ), _T( ";" ) ) )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CommandTerminationExpected, StdMessageParams, SvOi::Err_10095 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CommandTerminationExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10095 );
 		return rc;
 	}
 
@@ -1952,7 +1952,7 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 	if(	index != rExpressionStack.GetUpperBound() )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_TooManyExpressions, StdMessageParams, SvOi::Err_10096 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_TooManyExpressions, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10096 );
 		return rc;
 	}
 
@@ -2023,7 +2023,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		  )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ClassOperandExpected, StdMessageParams, SvOi::Err_10097 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ClassOperandExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10097 );
 			return pObject;
 		}
 	}
@@ -2037,7 +2037,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	  )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NameOperandExpected, StdMessageParams, SvOi::Err_10098 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NameOperandExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10098 );
 		return pObject;
 	}
 
@@ -2045,7 +2045,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	if( ++index >= rExpressionStack.GetSize() || _tcscmp( rExpressionStack.GetAt( index ), _T( "=" ) ) )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorExpected, StdMessageParams, SvOi::Err_10099 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10099 );
 		return pObject;
 	}
 
@@ -2056,14 +2056,14 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	  )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorOperand, StdMessageParams, SvOi::Err_10100 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorOperand, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10100 );
 		return pObject;
 	}
 
 	if( ++index >= rExpressionStack.GetSize() )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10101 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10101 );
 		return pObject;
 	}
 
@@ -2076,7 +2076,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		  )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ObjectOperandExpected, StdMessageParams, SvOi::Err_10102 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ObjectOperandExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10102 );
 			return pObject;
 		}
 		objectOwnerOperand.Type() = OBJECT_OWNER;
@@ -2084,7 +2084,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		if( ++index >= rExpressionStack.GetSize() )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10103 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10103 );
 			return pObject;
 		}
 	}
@@ -2105,7 +2105,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		else
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, StdMessageParams, SvOi::Err_10104 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OutOfMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10104 );
 			return pObject;
 		}
 	}
@@ -2117,14 +2117,14 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		if( ! ReadOperandList( rLocalOwnerInfo, rAliasTable, inputOperandList, rExpressionStack, index ) )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnableToReadInputList, StdMessageParams, SvOi::Err_10105 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnableToReadInputList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10105 );
 			return pObject;
 		}
 
 		if( ++index >= rExpressionStack.GetSize() )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10106 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10106 );
 			return pObject;
 		}
 	}
@@ -2135,7 +2135,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	  )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CommandTerminationOrObjectMemberExpected, StdMessageParams, SvOi::Err_10107 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CommandTerminationOrObjectMemberExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10107 );
 		return pObject;
 	}
 
@@ -2150,7 +2150,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		if(	index != rExpressionStack.GetUpperBound() )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_TooManyExpressions, StdMessageParams, SvOi::Err_10108 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_TooManyExpressions, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10108 );
 			return pObject;
 		}
 	}
@@ -2163,7 +2163,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 	if( ! ownerObjectInfo.PObject )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NoValidObjectOwner, StdMessageParams, SvOi::Err_10109 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NoValidObjectOwner, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10109 );
 		return pObject;
 	}
 
@@ -2186,7 +2186,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		else
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_WrongEmbeddedValues, StdMessageParams, SvOi::Err_10110 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_WrongEmbeddedValues, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10110 );
 			return pObject;
 		}
 	}
@@ -2215,7 +2215,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		else
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CannotConstructObject, StdMessageParams, SvOi::Err_10111 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CannotConstructObject, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10111 );
 			return pObject;
 		
 		}
@@ -2273,7 +2273,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	if( i < 0 )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ObjectRequired, StdMessageParams, SvOi::Err_10112 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ObjectRequired, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10112 );
 		return rc;
 	}
 	
@@ -2284,7 +2284,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	  )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorOperand, StdMessageParams, SvOi::Err_10113 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorOperand, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10113 );
 		return rc;
 	}
 	
@@ -2294,7 +2294,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	if( ++index >= rExpressionStack.GetSize() || _tcscmp( rExpressionStack.GetAt( index ), _T( "=" ) ) )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorExpected, StdMessageParams, SvOi::Err_10114 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_OperatorExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10114 );
 		return rc;
 	}
 	// skip past operator =
@@ -2302,7 +2302,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	if( ++index >= rExpressionStack.GetSize() )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, StdMessageParams, SvOi::Err_10115 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_UnexpectedEndOfCommand, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10115 );
 		return rc;
 	}
 
@@ -2312,7 +2312,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	if( ! ReadValues( dataObject, rExpressionStack, index ) )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ValuesExpected, StdMessageParams, SvOi::Err_10116 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_ValuesExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10116 );
 		return rc;
 	}
 
@@ -2320,7 +2320,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	if(	_tcscmp( rExpressionStack.GetAt( index ), _T( ";" ) ) )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CommandTerminationOrObjectMemberExpected, StdMessageParams, SvOi::Err_10117 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_CommandTerminationOrObjectMemberExpected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10117 );
 		return rc;
 	}
 	
@@ -2333,7 +2333,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	if( ! objectInfo.PObject )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NoValidObject, StdMessageParams, SvOi::Err_10118 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NoValidObject, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10118 );
 		return rc;
 	}
 	
@@ -2343,7 +2343,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	if( ! ownerObjectInfo.PObject )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NoValidObjectOwner, StdMessageParams, SvOi::Err_10119 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_NoValidObjectOwner, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10119 );
 		return rc;
 	}
 	
@@ -2357,7 +2357,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 		if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<DWORD_PTR>(&objectInfo.UniqueObjectID), reinterpret_cast<DWORD_PTR>(&dataObject) ) != SVMR_SUCCESS )
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_SetObjectMemberFailed, StdMessageParams, SvOi::Err_10120 );
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_SetObjectMemberFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10120 );
 			return rc;
 		}
 		rc = true;

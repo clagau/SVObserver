@@ -141,7 +141,7 @@ namespace Seidenader
 		{
 			int index = m_filterListBox.GetCurSel();
 			SVGUID filterGUID	= m_filterListBox.getGUID(index);
-			if( SVInvalidGUID != filterGUID ) 
+			if( SV_GUID_NULL != filterGUID ) 
 			{
 				typedef GuiCmd::GetObjectTypeInfo Command;
 				typedef SVSharedPtr<Command> CommandPtr;
@@ -232,7 +232,7 @@ namespace Seidenader
 		{ 
 			const SVGUID classID = m_availableFilterCB.getSelectedGUID();
 
-			if( SVInvalidGUID != classID )
+			if( SV_GUID_NULL != classID )
 			{
 				int destinyIndex	= m_filterListBox.GetCurSel();
 
@@ -250,7 +250,7 @@ namespace Seidenader
 				if (S_OK != hr)
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CreationFilterFailed, StdMessageParams, SvOi::Err_10231 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CreationFilterFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10231 );
 				}
 
 				// Refresh Dialog...
@@ -285,7 +285,7 @@ namespace Seidenader
 			for (int i=0; i<listSize; ++i)
 			{
 				SVGUID filterGUID = availableList[i].second;
-				if( SVInvalidGUID != filterGUID )
+				if( SV_GUID_NULL != filterGUID )
 				{
 					typedef GuiCmd::ShouldInspectionReset ResetCommand;
 					typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
@@ -324,7 +324,7 @@ namespace Seidenader
 		{
 			int index = m_filterListBox.GetCurSel();
 			SVGUID filterGUID = m_filterListBox.getGUID(index);
-			if( SVInvalidGUID != filterGUID ) 
+			if( SV_GUID_NULL != filterGUID ) 
 			{
 				typedef GuiCmd::ShouldInspectionReset ResetCommand;
 				typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
@@ -363,7 +363,7 @@ namespace Seidenader
 		{
 			int index = m_filterListBox.GetCurSel();
 			SVGUID filterGUID	= m_filterListBox.getGUID(index);
-			if( SVInvalidGUID != filterGUID ) 
+			if( SV_GUID_NULL != filterGUID ) 
 			{
 				typedef GuiCmd::GetObjectTypeInfo Command;
 				typedef SVSharedPtr<Command> CommandPtr;

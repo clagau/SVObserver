@@ -59,7 +59,7 @@ protected:
 	long GetUserTimeout();
 	HRESULT SetUseLogon(bool bUse);
 	HRESULT SetUserTimeout(long lTime);
-	HRESULT PasswordDialog(CString& strUser, CString& strPassword, SvOi::MessageTextEnum messageId, SVStringArray msgList, LPCTSTR p_strStatus);
+	HRESULT PasswordDialog(CString& strUser, CString& strPassword, LPCTSTR Attempt, LPCTSTR p_strStatus);
 	bool IsUserAMember( const CString& p_strUser, const CString& p_strGroups );
 	bool IsCurrentUserValidated(long lId);
 

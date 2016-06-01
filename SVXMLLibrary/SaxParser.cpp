@@ -43,7 +43,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		{
 			ASSERT(false);
 			SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_Sax_ConInitializeExFailed, StdMessageParams, SvOi::Err_16073_COINITIALIZE_ );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_Sax_ConInitializeExFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16073_COINITIALIZE_ );
 		}
 		else if(S_FALSE == hr)
 		{

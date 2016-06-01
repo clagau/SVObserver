@@ -7,10 +7,10 @@
 #pragma once
 
 #pragma region Includes
-#include <map>
-#include <tchar.h>
-#include <boost\assign\std\map.hpp>
-#include <boost\assign\list_of.hpp>
+//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <tchar.h>
+//Moved to precompiled header: #include <boost\assign\std\map.hpp>
+//Moved to precompiled header: #include <boost\assign\list_of.hpp>
 #include "SVUtilityLibrary\SVString.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
 #pragma endregion Includes
@@ -392,10 +392,16 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_PatAdditionalCandidatesErr, _T("Invalid Additional Candidates Value (range is 1 to 100)"))
 	(SvOi::Tid_PatCandidateSpaceErr, _T("Invalid Candidate Spacing Min Value (range is 1.0 to 100.0)"))
 	(SvOi::Tid_PatPreliminaryAcceptanceThresholdErr, _T("Invalid Preliminary Acceptance Threshold Value (range is 1.0 to 100.0)"))
-	(SvOi::Tid_Security_GainedAccess, _T("Gained Access"))
+	(SvOi::Tid_Security_GainedAccess, _T("%s - Gained Access"))
 	(SvOi::Tid_Security_Login, _T("Login"))
 	(SvOi::Tid_Security_Access, _T("Access - %s"))
 	(SvOi::Tid_Security_UserNoRights, _T("User Does Not Have Rights to This Function"))
+	(SvOi::Tid_Security_Access_Granted, _T(" User: %s\n Gained Access to - %s"))
+	(SvOi::Tid_Security_Access_Denied, _T(" User: %s\n Attempt to Access - %s"))
+	(SvOi::Tid_Security_Disabled, _T("Security Disabled"))
+	(SvOi::Tid_OS_Error_Message, _T("OS Error Number: %s [%s]\nMessage: %s"))
+
+	(SvOi::Tid_Drive_Full, _T(" %s - drive is full.")) 
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

@@ -351,7 +351,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMa
 
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
-*/SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVMatroxString& p_dValue )
+*/SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVString& p_dValue )
 {
 	// Currently there are no strings to set.
 	return SVMEE_INVALID_PARAMETER;
@@ -431,7 +431,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMa
 @SVOperationDescription Get returns the selected control value from the provided SVMatroxBarCode handle.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVMatroxString& p_rstrValue ) 
+SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rstrValue ) 
 {
 	// Currently there are no strings to Get.
 	return SVMEE_INVALID_PARAMETER;
@@ -501,7 +501,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 @SVOperationDescription
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVMatroxString& p_rstrValue)
+SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rstrValue)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -534,28 +534,28 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 					{
 						l_Code = SVMEE_STRING_TOO_LARGE;
 						SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_STRING_TOO_LARGE", StdMessageParams, SvOi::Err_10250 );
+						Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_STRING_TOO_LARGE", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10250 );
 					}
 				}
 				else
 				{
 					l_Code = SVMEE_INVALID_PARAMETER;
 					SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_PARAMETER", StdMessageParams, SvOi::Err_10251 );
+					Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_PARAMETER", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10251 );
 				}
 			}
 			else
 			{
 				l_Code = SVMEE_WRONG_PARAMETER;
 				SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_WRONG_PARAMETER", StdMessageParams, SvOi::Err_10252 );
+				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_WRONG_PARAMETER", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10252 );
 			}
 		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 			SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_HANDLE", StdMessageParams, SvOi::Err_10253 );
+			Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_HANDLE", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10253 );
 		}
 	}
 #ifdef USE_TRY_BLOCKS
@@ -564,7 +564,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 		SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "Exception", StdMessageParams, SvOi::Err_10253 );
+		Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "Exception", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10253 );
 	}
 #endif
 	assert(l_Code == SVMEE_STATUS_OK );

@@ -25,7 +25,7 @@
 #include "SVMatroxDigitizerGrabEnums.h"
 #include "SVMatroxDigitizerLightReferenceEnums.h"
 
-typedef std::map<SVMatroxString, long> SVGigeEventList;
+typedef std::map<SVString, long> SVGigeEventList;
 
 class SVMatroxDigitizerInterface
 {
@@ -34,7 +34,7 @@ public:
 	typedef SVMatroxHookFunctionPtr SVGrabProcessFunc;
 
 	static SVStatusCode Allocate(const SVMatroxSystem& System, long DeviceNum, SVMatroxDigitizer& digitizerID);
-	static SVStatusCode Allocate(const SVMatroxSystem& System, long DeviceNum, const SVMatroxString& DataFormat, SVMatroxDigitizer& digitizerID);
+	static SVStatusCode Allocate(const SVMatroxSystem& System, long DeviceNum, const SVString& DataFormat, SVMatroxDigitizer& digitizerID);
 	static SVStatusCode Release(SVMatroxDigitizer& DigitizerID);
 
 	static SVStatusCode Channel(const SVMatroxDigitizer& DigitizerID, long Channel);
@@ -65,8 +65,8 @@ public:
 	static SVStatusCode Get(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVBoardEnum InquireType, long& Value);
 
 	// Camera
-	static SVStatusCode GetVendor(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value);
-	static SVStatusCode GetModel(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value);
+	static SVStatusCode GetVendor(const SVMatroxDigitizer& DigitizerID, SVString& Value);
+	static SVStatusCode GetModel(const SVMatroxDigitizer& DigitizerID, SVString& Value);
 
 	static SVStatusCode GetColorMode(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVColorModeEnum& Value);
 	static SVStatusCode GetScanMode(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVScanModeEnum& Value);
@@ -92,9 +92,9 @@ public:
 	static SVStatusCode Get(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVUserBitEnum InquireType, long& Value);
 
 	// Gige
-	static SVStatusCode GetGigeVersion(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value);
-	static SVStatusCode GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value);
-	static SVStatusCode GetGigeSpecificInfo(const SVMatroxDigitizer& DigitizerID, SVMatroxString& Value);
+	static SVStatusCode GetGigeVersion(const SVMatroxDigitizer& DigitizerID, SVString& Value);
+	static SVStatusCode GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, SVString& Value);
+	static SVStatusCode GetGigeSpecificInfo(const SVMatroxDigitizer& DigitizerID, SVString& Value);
 	static SVStatusCode GetGigeMACAddress(const SVMatroxDigitizer& DigitizerID, __int64& Value);
 	static SVStatusCode GetGigeIPAddress(const SVMatroxDigitizer& DigitizerID, __int64& Value);
 	static SVStatusCode ShowGigeProperties(const SVMatroxDigitizer& DigitizerID);
@@ -120,12 +120,12 @@ public:
 
 	// Gige Feature Getter/Setter
 	static SVStatusCode GetFeature(const SVMatroxDigitizer& DigitizerID,
-									const SVMatroxString& FeatureName,
+									const SVString& FeatureName,
 									SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
 									variant_t& FeatureValue);
 
 	static SVStatusCode SetFeature(const SVMatroxDigitizer& DigitizerID,
-                                 const SVMatroxString& FeatureName,
+                                 const SVString& FeatureName,
                                  SVMatroxDigitizerFeature::SVFeatureTypeEnum FeatureType,
                                  const variant_t& FeatureValue);
 
@@ -155,7 +155,7 @@ public:
 
 	static SVStatusCode GetGigeCameraTimestamp(SVMatroxIdentifier milEventID, double& timestamp);
 	static SVStatusCode GetGigeEventType(SVMatroxIdentifier milEventID, long& p_rEventType);
-	static SVStatusCode SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const SVMatroxString& name, const SVMatroxString& value);
+	static SVStatusCode SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const SVString& name, const SVString& value);
 	static SVStatusCode GetGigeEventList(const SVMatroxDigitizer& DigitizerID, SVGigeEventList& list);
 };
 

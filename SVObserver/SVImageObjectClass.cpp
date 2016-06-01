@@ -390,7 +390,7 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 				
 				if( fileformatID != -1 && ::SVFileExists( p_szFileName ) )
 				{
-					SVMatroxString l_strFile(p_szFileName);
+					SVString l_strFile(p_szFileName);
 					
 					SVImageBufferHandleImage l_MilHandle;
 					l_svHandle->GetData( l_MilHandle );
@@ -453,7 +453,7 @@ HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageEx
 		if( fileformatID != -1 && ::SVFileExists( pFileName ) )
 		{
 
-			SVMatroxString strFile(pFileName);
+			SVString strFile(pFileName);
 
 			Code =  SVMatroxBufferInterface::GetImageSize(strFile,Width,Height);
 		}
@@ -753,12 +753,13 @@ BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 			// Image does not have a Tool for a parent. Not sure if this can 
 			// happen.
 			SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
-			Exception.setMessage( hr, SvOi::Tid_Empty, StdMessageParams, SvOi::ProgCode_5066_CreateImageBuffer);
+			Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5066_CreateImageBuffer);
 		}
 		else
 		{
-			SvStl::MessageData message(hr);
-			parentTool->SetRunErrorData(message);
+			SvStl::MessageContainer message;
+			message.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+			parentTool->addTaskMessage( message );
 		}
 	}
 

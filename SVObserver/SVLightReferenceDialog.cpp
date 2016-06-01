@@ -102,7 +102,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 					msgList.push_back(pCamera->GetName());
 				}
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LightReference_NotAvailable, msgList, StdMessageParams, SvOi::Err_10059 );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LightReference_NotAvailable, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10059 );
 				DestroyAllPages();
 				return false;
 			}

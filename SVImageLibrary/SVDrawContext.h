@@ -11,8 +11,6 @@
 
 #pragma once
 
-extern const GUID  SVInvalidGUID;
-
 enum { FromViewPort, ToViewPort };
 
 class SVImageClass;

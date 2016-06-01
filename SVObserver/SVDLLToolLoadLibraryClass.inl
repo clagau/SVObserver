@@ -444,7 +444,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::RunTool (GUID tool, long* plStatus)
 			msgList.push_back(SvUl_SF::Format(_T("%d"), l_hrOk));
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvOi::Tid_RunTool_Exception, msgList, StdMessageParams );
+			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvOi::Tid_RunTool_Exception, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 
@@ -510,7 +510,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::InitializeRun ( GUID tool, long lImage
 			SVStringArray msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), l_hrOk));
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvOi::Tid_SVInitializeRun_Exception, msgList, StdMessageParams );
+			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvOi::Tid_SVInitializeRun_Exception, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 

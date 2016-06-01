@@ -27,14 +27,14 @@ HRESULT SVGetObjectDequeByTypeVisitor::VisitElement( SVObjectClass& p_rElement )
 	HRESULT l_Status = S_OK;
 
 	// Find best match....EmbeddedID, Type, SubType...
-	if( ( m_ObjectInfo.EmbeddedID == SVInvalidGUID         || m_ObjectInfo.EmbeddedID == p_rElement.GetEmbeddedID() ) &&
-		( m_ObjectInfo.ObjectType == SVNotSetObjectType    || m_ObjectInfo.ObjectType == p_rElement.GetObjectType() ) &&
-		( m_ObjectInfo.SubType    == SVNotSetSubObjectType || m_ObjectInfo.SubType    == p_rElement.GetObjectSubType() )
+	if( ( SV_GUID_NULL          == m_ObjectInfo.EmbeddedID || m_ObjectInfo.EmbeddedID == p_rElement.GetEmbeddedID() ) &&
+		( SVNotSetObjectType    == m_ObjectInfo.ObjectType || m_ObjectInfo.ObjectType == p_rElement.GetObjectType() ) &&
+		( SVNotSetSubObjectType == m_ObjectInfo.SubType    || m_ObjectInfo.SubType    == p_rElement.GetObjectSubType() )
 	  )
 	{
-		if( m_ObjectInfo.EmbeddedID != SVInvalidGUID         ||
-			m_ObjectInfo.ObjectType != SVNotSetObjectType    ||
-			m_ObjectInfo.SubType    != SVNotSetSubObjectType
+		if( SV_GUID_NULL          != m_ObjectInfo.EmbeddedID ||
+			SVNotSetObjectType    != m_ObjectInfo.ObjectType ||
+			SVNotSetSubObjectType != m_ObjectInfo.SubType 
 		  )
 		{
 			m_Objects.push_back( &p_rElement );

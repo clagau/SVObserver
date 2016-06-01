@@ -43,17 +43,17 @@ public:
 	// Use this instead of McodeControl
 	static SVStatusCode Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue );
 	static SVStatusCode Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue );
-	static SVStatusCode Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVMatroxString& p_dValue );
+	static SVStatusCode Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVString& p_dValue );
 
 	// Use this instead of McodeInquire.
 	static SVStatusCode Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue ) ;
 	static SVStatusCode Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_dValue ) ;
-	static SVStatusCode Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVMatroxString& p_dValue ) ;
+	static SVStatusCode Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_dValue ) ;
 
 	// The following functions call McodeGetResult.
 	static SVStatusCode GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue);
 	static SVStatusCode GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue);
-	static SVStatusCode GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVMatroxString& p_rsValue);
+	static SVStatusCode GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rsValue);
 
 	// Does the work of McodeAllocate 
 	static SVStatusCode Create( SVMatroxBarCode& p_rCodeID, SVBarCodeTypesEnum p_eType );

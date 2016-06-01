@@ -78,7 +78,7 @@ void RangeXDialogClass::OnBnClickedOk()
 		{
 			bOK = false;
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, messageId, messageList, StdMessageParams, hres); 
+			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, messageId, messageList, SvStl::SourceFileParams(StdMessageParams), hres); 
 		}
 	}
 

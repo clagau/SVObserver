@@ -589,13 +589,13 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 				msgList.push_back(fullObjectName);
 				if( S_OK != yacc.m_StatusCode )
 				{
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TooManyVariables, msgList, StdMessageParams, SvOi::Err_10046 );
+					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10046 );
 				}
 				else
 				{
 					ret.iPositionFailed = yacc.lex_stack[yacc.sIndex-1].position+1;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, StdMessageParams, SvOi::Err_10047 );
+					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10047 );
 				}
 				isDataValid = FALSE;
 			}
@@ -682,7 +682,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
 		SVStringArray msgList;
 		msgList.push_back(fullObjectName);
 		msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
-		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, StdMessageParams, SvOi::Err_10198 );
+		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10198 );
 
 		isDataValid = FALSE;
 	}

@@ -556,7 +556,7 @@ bool SVRemoteFontManager::CopyFont( SVMatroxOcr& p_CurrentFont, SVMatroxOcr& p_N
 
 
 					//get list of char's that are in current font
-	SVMatroxString l_strFontChars;
+	SVString l_strFontChars;
 	l_strFontChars.resize( lCharInCurrFont + 1);
 	SVMatroxOcrInterface::Get( p_CurrentFont, SVCharInFont, l_strFontChars );
 	
@@ -573,7 +573,7 @@ bool SVRemoteFontManager::CopyFont( SVMatroxOcr& p_CurrentFont, SVMatroxOcr& p_N
 		l_Create.m_lSizeY = (long)dCharBoxSizeY;
 
 
-		SVMatroxString Str;
+		SVString Str;
 
 		Str = l_strFontChars[i];
 
@@ -637,7 +637,7 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 			if( l_charMapIt != l_cMap.end() )
 			{
 				char cLabel = l_cMap[p_lID];
-				SVMatroxString Str;
+				SVString Str;
 				Str = cLabel;
 
 

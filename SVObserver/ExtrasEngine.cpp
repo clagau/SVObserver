@@ -199,7 +199,7 @@ void ExtrasEngine::ToggleEnableFbwf()
 	}
 
 	SvStl::MessageMgrDisplayAndNotify toggleFbwfMessage( SvStl::LogAndDisplay );
-	toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msgId, msgList, StdMessageParams );
+	toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msgId, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 	ReadCurrentFbwfSettings();
 } 

@@ -442,7 +442,7 @@ DWORD_PTR ToolSizeAdjustTask::ProcessResetAllObject( DWORD DwMessageID, DWORD_PT
 			}
 			SvStl::MsgTypeEnum mode = SilentReset ? SvStl::LogOnly : SvStl::LogAndDisplay;
 			SvStl::MessageMgrDisplayAndNotify Exception(mode);
-			Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, StdMessageParams, ResetStatus );
+			Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), ResetStatus );
 			DwResult = SVMR_NO_SUCCESS | DwResult;
 		}
 		else

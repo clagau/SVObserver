@@ -97,7 +97,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 						{
 							Result = S_FALSE;
 							SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-							e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_SetClipboardDataFailed, StdMessageParams, SvOi::Err_25000_SetClipboardData );
+							e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_SetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25000_SetClipboardData );
 							e.Throw();
 						}
 					}
@@ -105,7 +105,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 					{
 						Result = S_FALSE;
 						SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-						e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardMemoryFailed, StdMessageParams, SvOi::Err_25001_ClipboardMemory );
+						e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardMemoryFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25001_ClipboardMemory );
 						e.Throw();
 					}
 				}
@@ -226,7 +226,7 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 	{
 		Result = S_FALSE;
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ToolInvalid, StdMessageParams, SvOi::Err_25002_ToolInvalid );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25002_ToolInvalid );
 		e.Throw();
 	}
 	else
@@ -393,7 +393,7 @@ HRESULT ToolClipboard::convertClipboardDataToString( SVString& rClipboardData )
 
 			Result = S_FALSE;
 			SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_GetClipboardDataFailed, StdMessageParams, SvOi::Err_25003_GetClipboardData );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_GetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25003_GetClipboardData );
 			e.Throw();
 		}
 		else
@@ -454,7 +454,7 @@ HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVTreeType& r
 	if( false == SUCCEEDED(Result))
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, StdMessageParams, SvOi::Err_25004_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25004_ClipboardDataConversion );
 		e.Throw();
 	}
 	return Result;
@@ -482,7 +482,7 @@ HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 	if( S_OK != Result )
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_Clipboard_VersionMismatch, StdMessageParams, SvOi::Err_25005_VersionMismatch );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_Clipboard_VersionMismatch, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25005_VersionMismatch );
 		e.Throw();
 	}
 	return Result;
@@ -513,7 +513,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 		{
 			Result = S_FALSE;
 			SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ColorToolInsertFailed, StdMessageParams, SvOi::Err_25006_ColorToolInsert );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25006_ColorToolInsert );
 			e.Throw();
 		}
 		//Only color tools are allowed to be the first tool in a color system
@@ -521,7 +521,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 		{
 			Result = S_FALSE;
 			SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_NonColorToolInsertFailed, StdMessageParams, SvOi::Err_25007_NonColorToolInsert );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_NonColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25007_NonColorToolInsert );
 			e.Throw();
 		}
 		else
@@ -557,7 +557,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 	{
 		Result = S_FALSE;
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, StdMessageParams, SvOi::Err_25008_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25008_ClipboardDataConversion );
 		e.Throw();
 	}
 
@@ -601,7 +601,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 	if( S_OK != Result )
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, StdMessageParams, SvOi::Err_25009_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25009_ClipboardDataConversion );
 		e.Throw();
 	}
 
@@ -636,7 +636,7 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree
 	{
 		Result = S_FALSE;
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, StdMessageParams, SvOi::Err_25010_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25010_ClipboardDataConversion );
 		e.Throw();
 	}
 
@@ -685,7 +685,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 	if( S_OK != Result )
 	{
 		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, StdMessageParams, SvOi::Err_25011_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25011_ClipboardDataConversion );
 		e.Throw();
 	}
 	return Result;

@@ -431,7 +431,7 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 				l_Code = SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarCodeStatus, lMilResult );
 				double dScore = 0.0;
 
-				SVMatroxString l_strBarCodeValue;
+				SVString l_strBarCodeValue;
 
 				switch ( lMilResult )
 				{
@@ -471,7 +471,7 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 							}
 							case SVBCStringFormatRemoveCharacters:
 							{
-								SVMatroxString l_strRemoved;
+								SVString l_strRemoved;
 								l_strRemoved.resize( l_strBarCodeValue.size() + 1);
 								int j = 0;
 								for( size_t i = 0 ; i < l_strBarCodeValue.size(); i++ )
@@ -489,7 +489,7 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 							}
 							case SVBCStringFormatTranslateCharacters:
 							{
-								SVMatroxString l_strTranslated;
+								SVString l_strTranslated;
 								l_strTranslated.resize( l_strBarCodeValue.size()+256);
 								int j = 0;
 								for( size_t i = 0 ; i < l_strBarCodeValue.size(); i++ )
@@ -599,7 +599,7 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
 			if( DisplayErrorMessage )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, StdMessageParams, SvOi::Err_10038 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10038 ); 
 			}
 			return FALSE;
 		}
@@ -644,7 +644,7 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
 			if( DisplayErrorMessage )
 			{
 				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, StdMessageParams, SvOi::Err_10039 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10039 ); 
 			}
 			return FALSE;
 		}
@@ -669,7 +669,7 @@ DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR Dw
 				if( !SilentReset && SvOi::Tid_Empty != m_errId )
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, StdMessageParams, SvOi::Err_10040 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10040 ); 
 				}
 				dwResult = SVMR_NO_SUCCESS;
 			}

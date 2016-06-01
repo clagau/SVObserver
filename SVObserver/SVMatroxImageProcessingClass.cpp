@@ -104,7 +104,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVImageInfoClass&
 	if ( S_OK != hrOk && !bDisplayedErrorMessage )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, StdMessageParams, SvOi::Err_10064 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10064 );
 	}
 
 	return hrOk;
@@ -311,18 +311,18 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 					SVStringArray msgList;
 					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteObjectName()));
 					msgList.push_back(SVString(rParentInfo.GetOwner()->GetCompleteObjectName()));
-					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer_parent, msgList, StdMessageParams, SvOi::Err_10065);
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer_parent, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10065);
 				}
 				else 
 				{
 					SVStringArray msgList;
 					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteObjectName()));
-					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer_child, msgList, StdMessageParams, SvOi::Err_10065);
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer_child, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10065);
 				}
 			}
 			else
 			{
-				message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer, StdMessageParams, SvOi::Err_10065);
+				message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10065);
 			}
 
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
@@ -392,7 +392,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 	if ( S_OK != hrOk )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, StdMessageParams, SvOi::Err_10066 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10066 );
 	}
 
 	return hrOk;
@@ -561,7 +561,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 			SVStringArray msgList;
 			msgList.push_back(SVString(strImagePathName));
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_MatroxImage_UnableToFindFile, msgList, StdMessageParams, SvOi::Err_10067 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_MatroxImage_UnableToFindFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10067 );
 			// Browse...
 			//
 			// Try to read the current image file path name from registry...
@@ -600,7 +600,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 		{
 
 			SVMatroxBufferInterface::SVStatusCode l_Code;
-			SVMatroxString l_strPath = strImagePathName;
+			SVString l_strPath = strImagePathName;
 
 			if( !rHandle.empty() )
 			{
@@ -666,11 +666,11 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 		}
 
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnKnownFileFormat, StdMessageParams, SvOi::Err_10068 );
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10068 );
 	}
 
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, StdMessageParams, SvOi::Err_10069 );
+	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10069 );
 
 	return S_FALSE;
 }
@@ -817,7 +817,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( void* pBuffer, SVImageInf
 	rBufferHandle.clear();
 
 	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, StdMessageParams, SvOi::Err_10070 );
+	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10070 );
 
 	return S_FALSE;
 }
@@ -848,7 +848,7 @@ HRESULT SVMatroxImageProcessingClass::SaveImageBuffer( LPCTSTR tstrImagePathName
 
 		if( l_efileformat != SVFileUnknown )
 		{
-			SVMatroxString l_strPath = tstrImagePathName;
+			SVString l_strPath = tstrImagePathName;
 			l_Status = SVMatroxBufferInterface::Export( l_MilHandle.GetBuffer(), l_strPath, l_efileformat );
 		}
 	}

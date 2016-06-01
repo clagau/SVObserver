@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <vector>
 #pragma endregion Includes
 
@@ -38,26 +37,6 @@ typedef long long SVMatroxInt;
 */
 //typedef long SVMatroxStatusCode;
 typedef HRESULT SVMatroxStatusCode;
-
-/**
-@SVObjectName Matrox Status String
-
-@SVObjectOverview
-
-@SVObjectOperations None
-
-*/
-typedef std::string SVMatroxStatusString;
-
-/**
-@SVObjectName Matrox String
-
-@SVObjectOverview
-
-@SVObjectOperations None
-
-*/
-typedef std::string SVMatroxString;
 
 /**
 @SVObjectName Matrox Hook Function Pointer

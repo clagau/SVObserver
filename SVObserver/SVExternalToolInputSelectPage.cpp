@@ -456,7 +456,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 	if ( S_OK != hr )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidData, StdMessageParams, SvOi::Err_10048 ); 
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10048 ); 
 	}
 	else
 	{
@@ -468,7 +468,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 			m_pTask->GetDLLMessageString(hr, &bstrMessage);
 			CString sMessage(bstrMessage);
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, sMessage, StdMessageParams, SvOi::Err_10049 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, sMessage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10049 ); 
 			::SysFreeString(bstrMessage);
 		}
 	}

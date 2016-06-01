@@ -425,7 +425,7 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 	BOOL bOk = FALSE;
 
 	SVMatroxBuffer l_ImportHandle;
-	SVMatroxString l_strImageFile = strImageFile;
+	SVString l_strImageFile = strImageFile;
 
 	SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Import( l_ImportHandle, l_strImageFile, SVFileBitmap, true );
 
@@ -716,7 +716,7 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 	catch( ... )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		l_bOk = FALSE;
 	}
 	return l_bOk;
@@ -1005,7 +1005,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 	catch( ... )
 	{
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		
 		ResetResultValues();
 		SetInvalid();

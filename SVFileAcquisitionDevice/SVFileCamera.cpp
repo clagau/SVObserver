@@ -373,7 +373,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 			id = SvOi::Tid_FileCamera_LoadFailed;
 		}
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, id, msgList, StdMessageParams );
+		Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, id, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 }
 

@@ -43,7 +43,7 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void
 
 	if( ! m_thread.IsActive() )
 	{
-		Exception.setMessage( SVMSG_THREAD_CREATION_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25037_AsyncProcedure );
+		Exception.setMessage( SVMSG_THREAD_CREATION_ERROR, m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25037_AsyncProcedure );
 
 		Result = m_thread.Restart();
 	}
@@ -52,7 +52,7 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void
 	{
 		if( 0 == ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(pData) )  )
 		{
-			Exception.setMessage( SVMSG_QUEUE_USER_APC_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25038_AsyncProcedure );
+			Exception.setMessage( SVMSG_QUEUE_USER_APC_ERROR, m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25038_AsyncProcedure );
 
 			Result = m_thread.Restart();
 
@@ -62,18 +62,18 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void
 				{
 					Result = SVMSG_QUEUE_USER_APC_ERROR;
 
-					Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25039_AsyncProcedure );
+					Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25039_AsyncProcedure );
 				}
 			}
 			else
 			{
-				Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25040_AsyncProcedure );
+				Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25040_AsyncProcedure );
 			}
 		}
 	}
 	else
 	{
-		Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25041_AsyncProcedure );
+		Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25041_AsyncProcedure );
 	}
 
 	return Result;

@@ -2670,7 +2670,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ClearBuffer(SVMat
 
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetImageSize(const SVMatroxString& rFileName, long &rWidth, long &rHeight)
+SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetImageSize(const SVString& rFileName, long &rWidth, long &rHeight)
 {
 	MIL_INT  M_Width(0), M_Height(0);
 	SVStatusCode  Code(SVMEE_STATUS_OK);
@@ -2697,7 +2697,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetImageSize(cons
 
 */
 SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBuffer& p_rBuf, 
-																	  const SVMatroxString& p_rFileName, 
+																	  const SVString& p_rFileName, 
 																	  SVMatroxFileTypeEnum p_eFileType,
 																	  bool p_bRestore)
 {
@@ -2792,7 +2792,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBu
 
 */
 SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMatroxBuffer& p_rBuf, 
-																	  const SVMatroxString& p_rFileName, 
+																	  const SVString& p_rFileName, 
 																	  SVMatroxFileTypeEnum p_eFileType)
 {
 	long l_lFileFormat = 0;
