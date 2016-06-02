@@ -42,38 +42,35 @@
 #include "GridCell.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace Seidenader { namespace GridCtrlLibrary
 {
-	namespace GridCtrlLibrary
+	class CGridCellCheck : public CGridCell
 	{
-		class CGridCellCheck : public CGridCell
-		{
-			friend class CGridCtrl;
-			DECLARE_DYNCREATE(CGridCellCheck)
+		friend class CGridCtrl;
+		DECLARE_DYNCREATE(CGridCellCheck)
 
-		public:
-			CGridCellCheck();
+	public:
+		CGridCellCheck();
 
-		public:
-			BOOL SetCheck(BOOL bChecked = TRUE);
-			BOOL GetCheck();
+	public:
+		BOOL SetCheck(BOOL bChecked = TRUE);
+		BOOL GetCheck();
 
-		// Operations
-			virtual CSize GetCellExtent(CDC* pDC);
-			virtual void OnClick( CPoint PointCellRelative);
-			virtual BOOL GetTextRect( LPRECT pRect);
+	// Operations
+		virtual CSize GetCellExtent(CDC* pDC);
+		virtual void OnClick( CPoint PointCellRelative);
+		virtual BOOL GetTextRect( LPRECT pRect);
 
-		protected:
-			CRect GetCheckPlacement();
+	protected:
+		CRect GetCheckPlacement();
 
-			virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+		virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
 
-		protected:
-			BOOL  m_bChecked;
-			CRect m_Rect;
-		};
-	} //namespace GridCtrlLibrary
-} //namespace Seidenader
+	protected:
+		BOOL  m_bChecked;
+		CRect m_Rect;
+	};
+
+} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
 
 namespace SvGcl = Seidenader::GridCtrlLibrary;
-

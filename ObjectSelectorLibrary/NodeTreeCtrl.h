@@ -18,94 +18,90 @@
 #include "ObjectTreeCtrl.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace Seidenader { namespace ObjectSelectorLibrary
 {
-	namespace ObjectSelectorLibrary
+	#pragma region Declarations
+	//Forward declarations
+	class ObjectSelectorPpg;
+	#pragma endregion Declarations
+
+	class NodeTreeCtrl : public ObjectTreeCtrl
 	{
-		#pragma region Declarations
-		//Forward declarations
-		class ObjectSelectorPpg;
-		#pragma endregion Declarations
+	public:
+	#pragma region Constructor
+		/**********
+			The class constructor
+			\param rParent <in> a reference to the parent property page
+			\param SingleSelect <in> true for single selection mode
+		***********/
+		NodeTreeCtrl( ObjectSelectorPpg& rParent, bool SingleSelect );
 
-		class NodeTreeCtrl : public ObjectTreeCtrl
-		{
-		public:
-		#pragma region Constructor
-			/**********
-			 The class constructor
-			 \param rParent <in> a reference to the parent property page
-			 \param SingleSelect <in> true for single selection mode
-			***********/
-			NodeTreeCtrl( ObjectSelectorPpg& rParent, bool SingleSelect );
+		/**********
+			The class destructor
+		***********/
+		virtual ~NodeTreeCtrl();
+	#pragma endregion Constructor
 
-			/**********
-			 The class destructor
-			***********/
-			virtual ~NodeTreeCtrl();
-		#pragma endregion Constructor
+	public:
+	#pragma region Public Methods
+		/**********
+		The method loads the control with the tree items from the container
+		***********/
+		virtual void loadTree() override;
 
-		public:
-		#pragma region Public Methods
-			/**********
-			The method loads the control with the tree items from the container
-			***********/
-			virtual void loadTree() override;
+		/**********
+		The method updates the changed nodes of the tree control.
+		***********/
+		virtual void updateTree() override;
 
-			/**********
-			The method updates the changed nodes of the tree control.
-			***********/
-			virtual void updateTree() override;
+		/**********
+		This method updates all nodes of the tree control.
+		***********/
+		void UpdateAllNodes();
+	#pragma endregion Public Methods
 
-			/**********
-			This method updates all nodes of the tree control.
-			***********/
-			void UpdateAllNodes();
-		#pragma endregion Public Methods
+	protected:
+	#pragma region Protected Methods
+		DECLARE_MESSAGE_MAP()
+		//{{AFX_MSG(NodeTreeCtrl)
+		afx_msg void OnExpandAll();
+		afx_msg void OnExpandToCheckedItems();
+		afx_msg void OnCollapseAll();
+		afx_msg void OnCollapseTo2ndLevel();
+		afx_msg void OnCheckAll();
+		afx_msg void OnUncheckAll();
+		//}}AFX_MSG
 
-		protected:
-		#pragma region Protected Methods
-			DECLARE_MESSAGE_MAP()
-			//{{AFX_MSG(NodeTreeCtrl)
-			afx_msg void OnExpandAll();
-			afx_msg void OnExpandToCheckedItems();
-			afx_msg void OnCollapseAll();
-			afx_msg void OnCollapseTo2ndLevel();
-			afx_msg void OnCheckAll();
-			afx_msg void OnUncheckAll();
-			//}}AFX_MSG
+		/**********
+		The method is called when tree item selection has changed
+		\param rItem <in> reference to the newly selected item
+		***********/
+		virtual void changeSelectedItem( const HTREEITEM& rItem ) override;
 
-			/**********
-			The method is called when tree item selection has changed
-			\param rItem <in> reference to the newly selected item
-			***********/
-			virtual void changeSelectedItem( const HTREEITEM& rItem ) override;
+		/**********
+		The method displays the context menu
+		\param ItemHit <in> true if item is hit 
+		***********/
+		virtual void showContextMenu( bool ItemHit ) override;
 
-			/**********
-			The method displays the context menu
-			\param ItemHit <in> true if item is hit 
-			***********/
-			virtual void showContextMenu( bool ItemHit ) override;
+		/**********
+		The method determines if item is checkable
+		***********/
+		virtual bool isCheckable() const override;
 
-			/**********
-			The method determines if item is checkable
-			***********/
-			virtual bool isCheckable() const override;
+		/**********
+		The method expands all checked items
+		\return true if there is a checked item
+		***********/
+		bool ExpandToCheckedItems();
 
-			/**********
-			The method expands all checked items
-			\return true if there is a checked item
-			***********/
-			bool ExpandToCheckedItems();
-
-			/**********
-			The method is called to update the state of a node.
-			\param rItem <in> reference to the updating item
-			***********/
-			void UpdateNode( SvTrl::ObjectSelectorItem& rItem );
-#pragma endregion Protected Methods
-		};
-	} //namespace ObjectSelectorLibrary
-} //namespace Seidenader
+		/**********
+		The method is called to update the state of a node.
+		\param rItem <in> reference to the updating item
+		***********/
+		void UpdateNode( SvCl::ObjectSelectorItem& rItem );
+	#pragma endregion Protected Methods
+	};
+} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
 
 namespace SvOsl = Seidenader::ObjectSelectorLibrary;
-

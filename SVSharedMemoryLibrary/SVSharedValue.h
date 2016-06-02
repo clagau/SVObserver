@@ -9,9 +9,12 @@
 //* .Check In Date   : $Date:   14 Aug 2014 17:10:08  $
 //******************************************************************************
 #pragma once
-#include "SVShared.h"
 
-namespace SeidenaderVision
+#pragma region Includes
+#include "SVShared.h"
+#pragma endregion Includes
+
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	struct SVSharedValue
 	{
@@ -54,12 +57,12 @@ namespace SeidenaderVision
 		bool empty() const { return name.empty(); }
 	};
 
-}
+	typedef boost::interprocess::allocator< SVSharedValue, segment_manager_t > SVSharedValueAllocator;
+	typedef std::pair< const char_string, SVSharedValue > SVSharedValuePair;
+	typedef boost::interprocess::allocator< SVSharedValuePair, segment_manager_t > SVSharedValuePairAllocator;
+	typedef boost::interprocess::map< char_string, SVSharedValue, std::less< char_string >, SVSharedValuePairAllocator > SVSharedValueMap;
+	typedef boost::interprocess::allocator< SVSharedValueMap, segment_manager_t > SVSharedValueMapAllocator;
 
-typedef SeidenaderVision::SVSharedValue SVSharedValue;
-typedef boost::interprocess::allocator< SVSharedValue, segment_manager_t > SVSharedValueAllocator;
-typedef std::pair< const char_string, SVSharedValue > SVSharedValuePair;
-typedef boost::interprocess::allocator< SVSharedValuePair, segment_manager_t > SVSharedValuePairAllocator;
-typedef boost::interprocess::map< char_string, SVSharedValue, std::less< char_string >, SVSharedValuePairAllocator > SVSharedValueMap;
-typedef boost::interprocess::allocator< SVSharedValueMap, segment_manager_t > SVSharedValueMapAllocator;
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

@@ -61,12 +61,12 @@ public:
 
 	SVObjectClass();
 	SVObjectClass( LPCSTR ObjectName );
-	SVObjectClass( SVObjectClass* POwner, int StringResourceID );
+	SVObjectClass( SVObjectClass* pOwner, int StringResourceID );
 
 	virtual ~SVObjectClass();
 
 	template< typename SVObjectVisitor >
-	HRESULT Accept( SVObjectVisitor& p_rVisitor );
+	HRESULT Accept( SVObjectVisitor& rVisitor );
 
 	virtual HRESULT ResetObject();
 
@@ -79,19 +79,19 @@ public:
 	virtual long GetImageDepth() const;
 	virtual BOOL SetImageDepth( long lDepth );
 
-	virtual BOOL InitObject( SVObjectClass* PObject );
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual HRESULT ConnectObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL InitObject( SVObjectClass* pObject );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
+	virtual HRESULT ConnectObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual BOOL CloseObject();
 	virtual BOOL IsValid();
 	virtual BOOL Validate();
 	virtual BOOL OnValidate();
-	virtual BOOL SetObjectOwner( SVObjectClass* PNewOwner );
-	virtual BOOL SetObjectOwner( const GUID& RNewOwnerGUID );
+	virtual BOOL SetObjectOwner( SVObjectClass* pNewOwner );
+	virtual BOOL SetObjectOwner( const GUID& rNewOwnerGUID );
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
+	virtual HRESULT GetObjectValue( const SVString& rValueName, VARIANT& rVariantValue ) const;
+	virtual HRESULT SetObjectValue( const SVString& rValueName, const _variant_t& rVariantValue );
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual void SetInvalid();
 	virtual void SetDisabled();
 	virtual DWORD GetObjectColor() const;
@@ -108,20 +108,20 @@ public:
 
 	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
 
-	BOOL ConnectObjectInput( SVInObjectInfoStruct* PObjectInInfo );
-	BOOL DisconnectObjectInput( SVInObjectInfoStruct* PObjectInInfo );
-	BOOL IsObjectValid( GUID& RValidationReferenceID );
-	BOOL IsDescendantOf( SVObjectClass* PAncestorObject );
+	BOOL ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
+	BOOL DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
+	BOOL IsObjectValid( GUID& rValidationReferenceID );
+	BOOL IsDescendantOf( SVObjectClass* pAncestorObject );
 	BOOL IsDescendantOfType( const SVObjectInfoStruct& rAncestorInfo );
 
 	virtual void ResetName();
-	virtual void SetName( LPCTSTR StrString );
+	virtual void SetName( LPCTSTR Name );
 	virtual void SetObjectName( int StringResourceID );
 
-	void SetObjectEmbedded( const GUID& REmbeddedID, SVObjectClass* POwner, int NewStringResourceID );
+	void SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* pOwner, int NewStringResourceID );
 
-	BOOL AddFriend( const GUID& RFriendGUID );
-	BOOL RemoveFriend( const GUID& RFriendGUID );
+	BOOL AddFriend( const GUID& rFriendGUID );
+	BOOL RemoveFriend( const GUID& rFriendGUID );
 	void DestroyFriends();
 	//************************************
 	//! this function returns a pointer to the friendobject which fit the ObjectType, if any. Otherwise it returns nullptr. 
@@ -144,8 +144,8 @@ public:
 	CString GetCompleteObjectName() const;
 	void GetCompleteObjectName( CString& rString ) const;
 
-	CString GetCompleteObjectNameToObjectType( LPCSTR LPSZCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
-	LPTSTR GetCompleteObjectName2( LPCTSTR LPSZCompleteName = nullptr ) const;
+	CString GetCompleteObjectNameToObjectType( LPCSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	LPTSTR GetCompleteObjectName2( LPCTSTR CompleteName = nullptr ) const;
 	int GetCompleteObjectNameLength( int Length ) const;
 	SVObjectClass* GetOwner() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
@@ -158,20 +158,20 @@ public:
 	virtual LPCTSTR GetName() const override;
 	virtual SVString GetCompleteName() const override;
 	virtual HRESULT GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const override;
-	virtual SVString GetObjectNameToObjectType(LPCSTR LPSZCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType) const override;
+	virtual SVString GetObjectNameToObjectType(LPCSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType) const override;
 	virtual const SVObjectTypeEnum& GetObjectType() const override;
 	virtual SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual const SVGUID& GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
-	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) override;
+	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo) override;
 	virtual const UINT ObjectAttributesAllowed() const override;
 	virtual const UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual bool IsArray() const;
 	virtual int GetArraySize() const;
 	virtual const SVGUID& GetUniqueObjectID() const override;
 	virtual bool is_Created() const override;
-	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
+	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
@@ -182,21 +182,21 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
-	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner );
+	virtual SVObjectClass* UpdateObject( const GUID& rFriendGuid, SVObjectClass* pObject, SVObjectClass* pNewOwner );
 
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
-	void buildCompleteObjectName( LPTSTR LPSZCompleteName, int MaxLength );
+	void buildCompleteObjectName( LPTSTR CompleteName, int MaxLength );
 
-	virtual HRESULT RemoveObjectConnection( const GUID& p_rObjectID );
+	virtual HRESULT RemoveObjectConnection( const GUID& rObjectID );
 
 public:
 	//This attribute holds the object level error information.
 	SVErrorClass msvError;  // @TODO - This should be replaced with the new message/error handler
 
 	UINT& ObjectAttributesAllowedRef();
-	SVObjectAttributeShim ObjectAttributesSetRef(int iIndex=0);
-	void SetObjectAttributesSet(UINT uAttributes, int iIndex=0, UINT WhichBits = SET_ALL_BITS);
+	SVObjectAttributeShim ObjectAttributesSetRef(int Index=0);
+	void SetObjectAttributesSet(UINT uAttributes, int Index=0, UINT WhichBits = SET_ALL_BITS);
 	void SetDefaultObjectAttributesSet(UINT uAttributes);
 
 protected:
@@ -233,7 +233,7 @@ protected:
 	SVPublicAttributeEntryStruct m_publicAttribute;
 
 	//user given name
-	CString m_strName;
+	CString m_Name;
 
 private:
 	void init();
@@ -241,7 +241,7 @@ private:
 	//String resource ID, of NOT user changeable name.
 	int m_resourceID;
 	//NOT user changeable name
-	CString m_strObjectName;
+	CString m_ObjectName;
 };
 
 #pragma region Declarations

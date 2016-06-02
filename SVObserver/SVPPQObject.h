@@ -518,7 +518,7 @@ private:
 	void SetRejectConditionList(const SVMonitorItemList& rRejectCondList);
 	void ReleaseSharedMemory(const SVProductInfoStruct& rProduct);
 	void CommitSharedMemory(const SVProductInfoStruct& rProduct);
-	HRESULT CheckRejectCondition(const SVProductInfoStruct& rProduct, SeidenaderVision::SVSharedPPQWriter& rWriter) const;
+	HRESULT CheckRejectCondition(const SVProductInfoStruct& rProduct, SvSml::SVSharedPPQWriter& rWriter) const;
 
 	BasicValueObjects	m_PpqValues;
 

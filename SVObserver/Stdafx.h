@@ -133,6 +133,12 @@
 #include <boost/function.hpp>
 #include <boost/fusion/container.hpp>
 #include <boost/fusion/algorithm.hpp>
+#include <boost/graph/adjacency_list.hpp>					//Used by static library
+#include <boost/graph/depth_first_search.hpp>				//Used by static library
+#include <boost/graph/breadth_first_search.hpp>				//Used by static library
+#include <boost/graph/reverse_graph.hpp>					//Used by static library
+#include <boost/graph/filtered_graph.hpp>					//Used by static library
+#include <boost/graph/graphviz.hpp>							//Used by static library
 #define BOOST_INTERPROCESS_SHARED_DIR_PATH "V:/boost_interprocess"
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/interprocess/detail/shared_dir_helpers.hpp>	//Used by static library

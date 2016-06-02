@@ -24,95 +24,92 @@ typedef boost::xpressive::sregex regrex;
 typedef boost::xpressive::smatch match;
 #pragma endregion Declarations
 
-namespace Seidenader
+namespace Seidenader { namespace SVSocketLibrary
 {
-	namespace Socket
+	template<typename API>
+	class SVClientSocket : public SVSocket<API>
 	{
-		template<typename API>
-		class SVClientSocket : public SVSocket<API>
+	public:
+		SVSocketError::ErrorEnum Connect(const char* ipAddr, unsigned short portNo);
+		void Disconnect();
+		bool IsConnected() const { return m_isConnected; }
+	};
+
+	template<typename API>
+	inline SVSocketError::ErrorEnum SVClientSocket<API>::Connect(const char* hostAddr, unsigned short portNo)
+	{
+		SVSocketError::ErrorEnum error = SVSocketError::Success;
+		if (!IsValidSocket())
 		{
-		public:
-			SVSocketError::ErrorEnum Connect(const char* ipAddr, unsigned short portNo);
-			void Disconnect();
-			bool IsConnected() const { return m_isConnected; }
-		};
+			Create();
+		}
 
-		template<typename API>
-		inline SVSocketError::ErrorEnum SVClientSocket<API>::Connect(const char* hostAddr, unsigned short portNo)
+		bool validSocket = IsValidSocket();
+		if ( validSocket )
 		{
-			SVSocketError::ErrorEnum error = SVSocketError::Success;
-			if (!IsValidSocket())
-			{
-				Create();
-			}
+			// Check HostAddr for Alpha and get canonical address
+			regrex e = boost::xpressive::sregex::compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
+			match sMatchIP;
 
-			bool validSocket = IsValidSocket();
-			if ( validSocket )
+			std::string ipAddr = hostAddr;
+			if ( !boost::xpressive::regex_match(ipAddr, sMatchIP, e) )
 			{
-				// Check HostAddr for Alpha and get canonical address
-				regrex e = boost::xpressive::sregex::compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
-				match sMatchIP;
-
-				std::string ipAddr = hostAddr;
-				if ( !boost::xpressive::regex_match(ipAddr, sMatchIP, e) )
+				hostent* pHost = gethostbyname(hostAddr);
+				if ( nullptr != pHost )
 				{
-					hostent* pHost = gethostbyname(hostAddr);
-					if ( nullptr != pHost )
+					ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
+					// if loopback get real ip address
+					if ( "127.0.0.1" == ipAddr )
 					{
-						ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
-						// if loopback get real ip address
-						if ( "127.0.0.1" == ipAddr )
+						pHost = gethostbyname("");
+						if ( nullptr != pHost )
 						{
-							pHost = gethostbyname("");
-							if ( nullptr != pHost )
-							{
-								ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
-							}
-							else // Host name not resolved
-							{
-								error = SVSocketError::HostNotFound;
-							}
+							ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
+						}
+						else // Host name not resolved
+						{
+							error = SVSocketError::HostNotFound;
 						}
 					}
-					else // Host name not resolved
-					{
-						error = SVSocketError::HostNotFound;
-					}
 				}
-				if ( SVSocketError::Success == error )
+				else // Host name not resolved
 				{
-					m_peer.sin_family = AF_INET;
-					m_peer.sin_addr.s_addr = inet_addr(ipAddr.c_str());
-					m_peer.sin_port = htons(portNo);
-
-					if ( API::connect( m_socket, reinterpret_cast< SOCKADDR* >( &m_peer ), sizeof(sockaddr_in) ) == SOCKET_ERROR )
-					{
-						// could return OperationInProgress for non blocking socket (Windows returns WouldBlock)
-						error = SVSocketError::GetLastSocketError();
-					}
-					else
-					{
-						m_isConnected = true;
-					}
+					error = SVSocketError::HostNotFound;
 				}
 			}
-			else
+			if ( SVSocketError::Success == error )
 			{
-				error = SVSocketError::NotASocket;
-			}
-			return error;
-		}
+				m_peer.sin_family = AF_INET;
+				m_peer.sin_addr.s_addr = inet_addr(ipAddr.c_str());
+				m_peer.sin_port = htons(portNo);
 
-		template<typename API>
-		inline void SVClientSocket<API>::Disconnect()
-		{
-			Destroy();
-			m_isConnected = false;
+				if ( API::connect( m_socket, reinterpret_cast< SOCKADDR* >( &m_peer ), sizeof(sockaddr_in) ) == SOCKET_ERROR )
+				{
+					// could return OperationInProgress for non blocking socket (Windows returns WouldBlock)
+					error = SVSocketError::GetLastSocketError();
+				}
+				else
+				{
+					m_isConnected = true;
+				}
+			}
 		}
+		else
+		{
+			error = SVSocketError::NotASocket;
+		}
+		return error;
 	}
-}
+
+	template<typename API>
+	inline void SVClientSocket<API>::Disconnect()
+	{
+		Destroy();
+		m_isConnected = false;
+	}
+} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSol = Seidenader::SVSocketLibrary;
 
 #pragma warning (pop)
-
-typedef Seidenader::Socket::SVClientSocket<TcpApi> SVClientSocket;
 

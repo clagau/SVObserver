@@ -8,12 +8,16 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   14 Aug 2014 17:08:46  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVSharedLastInspectedCache.h"
+#pragma endregion Includes
 
-SVSharedLastInspectedCache::SVSharedLastInspectedCache( const void_allocator & alloc, size_t cache_size )
-: current_idx( -1 ), data( cache_size, SVSharedData( alloc ), alloc ) 
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-}
+	SVSharedLastInspectedCache::SVSharedLastInspectedCache( const void_allocator & alloc, size_t cache_size )
+	: current_idx( -1 ), data( cache_size, SVSharedData( alloc ), alloc ) 
+	{
+	}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

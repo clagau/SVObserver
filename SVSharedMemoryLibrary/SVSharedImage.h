@@ -10,28 +10,35 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVShared.h"
+#pragma endregion Includes
 
-struct SVSharedImage
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	char_string m_Filename;
-	long m_Status;
+	struct SVSharedImage
+	{
+		char_string m_Filename;
+		long m_Status;
 
-	void_allocator m_Allocator;
+		void_allocator m_Allocator;
 
-	SVSharedImage( const void_allocator& rAlloc );
-	SVSharedImage( const char* Filename, int Status, const void_allocator& rAlloc );
-	SVSharedImage( const SVSharedImage& rData );
+		SVSharedImage( const void_allocator& rAlloc );
+		SVSharedImage( const char* Filename, int Status, const void_allocator& rAlloc );
+		SVSharedImage( const SVSharedImage& rData );
 
-	const SVSharedImage& operator=( const SVSharedImage& rData );
+		const SVSharedImage& operator=( const SVSharedImage& rData );
 
-	static std::string filename(const std::string& rName, long SlotNumber, img::type ImageType, bool bReject=false);
-	static img::type GetImageType(const std::string& rName);
-};
+		static std::string filename(const std::string& rName, long SlotNumber, img::type ImageType, bool bReject=false);
+		static img::type GetImageType(const std::string& rName);
+	};
 
-typedef boost::interprocess::allocator<SVSharedImage, segment_manager_t> SVSharedImageAllocator;
-typedef std::pair< const char_string, SVSharedImage > SVSharedImagePair;
-typedef boost::interprocess::allocator< SVSharedImagePair, segment_manager_t > SVSharedImagePairAllocator;
-typedef boost::interprocess::map< char_string, SVSharedImage, std::less< char_string >, SVSharedImagePairAllocator > SVSharedImageMap;
-typedef boost::interprocess::allocator< SVSharedImageMap, segment_manager_t > SVSharedImageMapAllocator;
+	typedef boost::interprocess::allocator<SVSharedImage, segment_manager_t> SVSharedImageAllocator;
+	typedef std::pair< const char_string, SVSharedImage > SVSharedImagePair;
+	typedef boost::interprocess::allocator< SVSharedImagePair, segment_manager_t > SVSharedImagePairAllocator;
+	typedef boost::interprocess::map< char_string, SVSharedImage, std::less< char_string >, SVSharedImagePairAllocator > SVSharedImageMap;
+	typedef boost::interprocess::allocator< SVSharedImageMap, segment_manager_t > SVSharedImageMapAllocator;
 
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

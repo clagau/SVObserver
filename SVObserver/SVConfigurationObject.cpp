@@ -5167,7 +5167,7 @@ void SVConfigurationObject::GetActiveRemoteMonitorList(RemoteMonitorList& rActiv
 	}
 }
 
-HRESULT SVConfigurationObject::GetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum& rFilter) const
+HRESULT SVConfigurationObject::GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	HRESULT hr = E_POINTER;
 	if (nullptr != m_pIOController)
@@ -5177,7 +5177,7 @@ HRESULT SVConfigurationObject::GetRemoteMonitorListProductFilter(const SVString&
 	return hr;
 
 }
-HRESULT SVConfigurationObject::SetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum filter)
+HRESULT SVConfigurationObject::SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
 {
 	HRESULT hr = E_POINTER;
 	if (nullptr != m_pIOController)

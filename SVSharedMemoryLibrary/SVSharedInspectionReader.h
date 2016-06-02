@@ -10,13 +10,14 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVSharedLastInspectedCache.h"
 #include "SVSharedRejectCache.h"
-//#include "Stats.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	class SVSharedInspectionReader : public boost::noncopyable // one reader per inspection
 	{
@@ -47,5 +48,8 @@ namespace SeidenaderVision
 	};
 
 	typedef std::shared_ptr<SVSharedInspectionReader> InspectionReaderPtr;
-}
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

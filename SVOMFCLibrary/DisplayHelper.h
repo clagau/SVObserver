@@ -62,3 +62,4 @@ namespace Seidenader
 	}//namespace Seidenader
 }//namespace SVOMFCLibrary
 
+namespace SvOml = Seidenader::SVOMFCLibrary;

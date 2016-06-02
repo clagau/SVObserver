@@ -29,11 +29,8 @@
 #include "StdAfx.h"
 #include "Singleton.h"
 
-using namespace Loki::Private;
-
 Loki::Private::TrackerArray Loki::Private::pTrackerArray = 0;
 unsigned int Loki::Private::elements = 0;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // function AtExitFn
@@ -53,10 +50,3 @@ void Loki::Private::AtExitFn()
     // Destroy the element
     delete pTop;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Change log:
-// June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
-// Oct	06	2002: ported by Benjamin Kaufmann to VC 6.0
-////////////////////////////////////////////////////////////////////////////////
-

@@ -441,7 +441,7 @@ void ToolClipboard::readFileToString( const SVString& rFileName, SVString& rFile
 		size_t FileSize( 0 );
 		FileSize = static_cast<size_t> (FileStream.tellg());
 		rFileData.resize( FileSize );
-		FileStream.seekg ( 0, ios::beg );
+		FileStream.seekg ( 0, std::ios::beg );
 		FileStream.read ( &rFileData.at( 0 ), FileSize );
 		FileStream.close();
 	}

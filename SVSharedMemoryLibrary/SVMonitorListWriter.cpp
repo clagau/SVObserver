@@ -8,157 +8,160 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   28 Aug 2014 18:41:56  $
 //******************************************************************************
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVMonitorListWriter.h"
 #include "SVSharedConfiguration.h"
+#pragma endregion Includes
 
-using namespace SeidenaderVision;
-
-const std::string g_shName = "MonitorListStore.";
-
-SVMonitorListWriter::SVMonitorListWriter()
-: m_lists(nullptr)
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	SVSharedConfiguration::Log("SVMonitorListWriter::Constructor");
-}
+	const std::string g_shName = "MonitorListStore.";
 
-SVMonitorListWriter::~SVMonitorListWriter()
-{
-	SVSharedConfiguration::Log("SVMonitorListWriter::Destructor");
-	Release();
-}
-
-void SVMonitorListWriter::Release()
-{
-	SVSharedConfiguration::Log("SVMonitorListWriter::Release");
-	if (nullptr != shm.get())
+	SVMonitorListWriter::SVMonitorListWriter()
+	: m_lists(nullptr)
 	{
-		if (m_lists)
-		{
-			shm->destroy_ptr(m_lists);
-			m_lists = nullptr;
-		}
-		shm.reset();
+		SVSharedConfiguration::Log("SVMonitorListWriter::Constructor");
 	}
-	Init();
-}
 
-void SVMonitorListWriter::Init()
-{
-	SVSharedConfiguration::Log("SVMonitorListWriter::Init");
-	// remove previous share
-	if (!m_ShareName.empty())
+	SVMonitorListWriter::~SVMonitorListWriter()
 	{
-		if (m_lists)
-		{
-			m_lists->Clear();
-			m_lists = nullptr;
-		}
-		boost::interprocess::shared_memory_object::remove(m_ShareName.c_str());
-	}
-}
-
-bool SVMonitorListWriter::IsCreated() const
-{
-	SVSharedConfiguration::Log("SVMonitorListWriter::IsCreated");
-	return (nullptr != shm.get() && m_lists);
-}
-
-HRESULT SVMonitorListWriter::Create(const SVSharedMemorySettings & settings)
-{
-	SVSharedConfiguration::Log("SVMonitorListWriter::Create");
-	HRESULT l_result = S_OK;
-
-	m_ShareName = g_shName + SVSharedConfiguration::GetShareName();
-	try
-	{
-		Init();
-
-		// Allocate new repositories
-		size_t managedShareSize = settings.MonitorStoreSize() * statics::M;
-		shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
-
-		// Allocate monitor list store
-		MonitorListStoreAllocator salloc = shm->get_allocator<MonitorListStoreAllocator>();
-		auto rslt = shm->construct<SVMonitorListStore>("MonitorListStore")(salloc);
-
-		if (rslt)
-		{
-			// get pointer to the monitor list store
-			m_lists = shm->find<SVMonitorListStore>("MonitorListStore").first;
-		}
-		else
-		{
-			m_lists = nullptr;
-			SVSharedConfiguration::Log("SVMonitorListWriter::Create failed to construct MonitorListStore");
-		}
-	}
-	catch (const boost::interprocess::interprocess_exception & e)
-	{
-		SVSharedConfiguration::Log(e.what());
+		SVSharedConfiguration::Log("SVMonitorListWriter::Destructor");
 		Release();
-		l_result = E_FAIL;
 	}
-	return l_result;
-}
+
+	void SVMonitorListWriter::Release()
+	{
+		SVSharedConfiguration::Log("SVMonitorListWriter::Release");
+		if (nullptr != shm.get())
+		{
+			if (m_lists)
+			{
+				shm->destroy_ptr(m_lists);
+				m_lists = nullptr;
+			}
+			shm.reset();
+		}
+		Init();
+	}
+
+	void SVMonitorListWriter::Init()
+	{
+		SVSharedConfiguration::Log("SVMonitorListWriter::Init");
+		// remove previous share
+		if (!m_ShareName.empty())
+		{
+			if (m_lists)
+			{
+				m_lists->Clear();
+				m_lists = nullptr;
+			}
+			boost::interprocess::shared_memory_object::remove(m_ShareName.c_str());
+		}
+	}
+
+	bool SVMonitorListWriter::IsCreated() const
+	{
+		SVSharedConfiguration::Log("SVMonitorListWriter::IsCreated");
+		return (nullptr != shm.get() && m_lists);
+	}
+
+	HRESULT SVMonitorListWriter::Create(const SVSharedMemorySettings & settings)
+	{
+		SVSharedConfiguration::Log("SVMonitorListWriter::Create");
+		HRESULT l_result = S_OK;
+
+		m_ShareName = g_shName + SVSharedConfiguration::GetShareName();
+		try
+		{
+			Init();
+
+			// Allocate new repositories
+			size_t managedShareSize = settings.MonitorStoreSize() * statics::M;
+			shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
+
+			// Allocate monitor list store
+			MonitorListStoreAllocator salloc = shm->get_allocator<MonitorListStoreAllocator>();
+			auto rslt = shm->construct<SVMonitorListStore>("MonitorListStore")(salloc);
+
+			if (rslt)
+			{
+				// get pointer to the monitor list store
+				m_lists = shm->find<SVMonitorListStore>("MonitorListStore").first;
+			}
+			else
+			{
+				m_lists = nullptr;
+				SVSharedConfiguration::Log("SVMonitorListWriter::Create failed to construct MonitorListStore");
+			}
+		}
+		catch (const boost::interprocess::interprocess_exception & e)
+		{
+			SVSharedConfiguration::Log(e.what());
+			Release();
+			l_result = E_FAIL;
+		}
+		return l_result;
+	}
 
 void SVMonitorListWriter::AddList(const std::string & listName, const std::string & ppqName, int rejectDepth, bool isActive )
 {
-	SVSharedConfiguration::Log("SVMonitorListWriter::AddList");
-	if (!m_lists)
-	{
-		throw std::exception("MonitorListStore not created yet.");
-	}
-	MonitorListAllocator alloc = shm->get_allocator<SVSharedMonitorList>();
-	SVSharedMonitorList list(alloc);
-	isActive?   list.Activate(): list.Deactivate();  
-	list.SetNames(listName, ppqName);
-	list.SetRejectDepth(rejectDepth);
-	m_lists->Add(list);
-}
-
-void SVMonitorListWriter::FillList(const std::string & listName, listType type, const std::vector<std::string> & list)
-{
- 	SVSharedConfiguration::Log("SVMonitorListWriter::FillList");
-	if (!m_lists)
-	{
-		throw std::exception("MonitorListStore not created yet.");
+		SVSharedConfiguration::Log("SVMonitorListWriter::AddList");
+		if (!m_lists)
+		{
+			throw std::exception("MonitorListStore not created yet.");
+		}
+		MonitorListAllocator alloc = shm->get_allocator<SVSharedMonitorList>();
+		SVSharedMonitorList list(alloc);
+		isActive?   list.Activate(): list.Deactivate();  
+		list.SetNames(listName, ppqName);
+		list.SetRejectDepth(rejectDepth);
+		m_lists->Add(list);
 	}
 
-	SVSharedMonitorList & mlist = (*m_lists)[listName];
-	switch(type)
+	void SVMonitorListWriter::FillList(const std::string & listName, listType type, const std::vector<std::string> & list)
 	{
-		case productItems:
-			mlist.SetProductItems(list);
-			break;
-		case rejectCondition:
-			mlist.SetRejectCond(list);
-			break;
-		case failStatus:
-			mlist.SetFailStatus(list);
-			break;
-		default:
-			throw std::exception("Invalid list type.");
-	}
-}
+		SVSharedConfiguration::Log("SVMonitorListWriter::FillList");
+		if (!m_lists)
+		{
+			throw std::exception("MonitorListStore not created yet.");
+		}
 
-void SVMonitorListWriter::SetProductFilter(const std::string & listName, SVProductFilterEnum filter)
-{
-	SVSharedConfiguration::Log("SVMonitorListWriter::SetProductFilter");
-	if (!m_lists)
-	{
-		::OutputDebugString("MonitorListStore not created yet.");
-		throw std::exception("MonitorListStore not created yet.");
-	}
-	try
-	{
 		SVSharedMonitorList & mlist = (*m_lists)[listName];
-		mlist.SetProductFilter(filter);
+		switch(type)
+		{
+			case productItems:
+				mlist.SetProductItems(list);
+				break;
+			case rejectCondition:
+				mlist.SetRejectCond(list);
+				break;
+			case failStatus:
+				mlist.SetFailStatus(list);
+				break;
+			default:
+				throw std::exception("Invalid list type.");
+		}
 	}
-	catch (boost::interprocess::interprocess_exception& e)
-	{
-		::OutputDebugString(e.what());
-		throw std::exception("MonitorList SetProductFilter failed.");
-	}
-}
 
+	void SVMonitorListWriter::SetProductFilter(const std::string & listName, SVProductFilterEnum filter)
+	{
+		SVSharedConfiguration::Log("SVMonitorListWriter::SetProductFilter");
+		if (!m_lists)
+		{
+			::OutputDebugString("MonitorListStore not created yet.");
+			throw std::exception("MonitorListStore not created yet.");
+		}
+		try
+		{
+			SVSharedMonitorList & mlist = (*m_lists)[listName];
+			mlist.SetProductFilter(filter);
+		}
+		catch (boost::interprocess::interprocess_exception& e)
+		{
+			::OutputDebugString(e.what());
+			throw std::exception("MonitorList SetProductFilter failed.");
+		}
+	}
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

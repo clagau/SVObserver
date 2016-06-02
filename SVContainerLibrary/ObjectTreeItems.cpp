@@ -12,15 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ObjectTreeItems.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
-#pragma region Declarations
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-#pragma endregion Declarations
-
-namespace Seidenader { namespace SVTreeLibrary
+namespace Seidenader { namespace SVContainerLibrary
 {
 	#pragma region Constructor
 	ObjectTreeItems::ObjectTreeItems() : SVTree<SVString, ObjectSelectorItem>()
@@ -287,9 +283,11 @@ namespace Seidenader { namespace SVTreeLibrary
 				Iter = rParentIter.node()->insert( SVTreeElement( rDisplayLocation, pSelectorItem ) );
 			}
 		}
-		catch( ... )
+		catch( const std::exception& e )
 		{
-			::AfxMessageBox( "EXCEPTION: Error creating node" );
+			//We only want to log otherwise it would need MFC 
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_98_TREE_ITEM, e.what(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 
 		return Iter;
@@ -312,5 +310,5 @@ namespace Seidenader { namespace SVTreeLibrary
 		return Iter;
 	}
 	#pragma endregion Private Methods
-} /* namespace SVTreeLibrary */ } /* namespace Seidenader */
+} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
 

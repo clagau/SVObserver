@@ -2067,7 +2067,7 @@ HRESULT SVRemoteCommandFunctions::GetProductFilter( const std::string& rJsonComm
 	HRESULT hr = S_OK;
 
 	std::string ListName;
-	SVProductFilterEnum filter(LastInspectedFilter);
+	SvSml::SVProductFilterEnum filter(SvSml::LastInspectedFilter);
 	Json::Reader Reader;
 	Json::Value JsonCmdValues;
 
@@ -2135,7 +2135,7 @@ HRESULT SVRemoteCommandFunctions::SetProductFilter( const std::string& rJsonComm
 	HRESULT hr = S_OK;
 
 	std::string ListName;
-	unsigned long filter = LastInspectedFilter;
+	unsigned long filter = static_cast<unsigned long> (SvSml::LastInspectedFilter);
 	Json::Reader Reader;
 	Json::Value JsonCmdValues;
 
@@ -2185,9 +2185,9 @@ HRESULT SVRemoteCommandFunctions::SetProductFilter( const std::string& rJsonComm
 
 	if( S_OK == hr )
 	{
-		if (!(ListName.empty()) && (LastInspectedFilter == filter || LastRejectFilter == filter))
+		if (!(ListName.empty()) && (SvSml::LastInspectedFilter == filter || SvSml::LastRejectFilter == filter))
 		{
-			hr = SVVisionProcessorHelper::Instance().SetProductFilter(ListName, static_cast<SVProductFilterEnum>(filter));
+			hr = SVVisionProcessorHelper::Instance().SetProductFilter(ListName, static_cast<SvSml::SVProductFilterEnum>(filter));
 		}
 		else
 		{

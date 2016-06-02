@@ -100,7 +100,7 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 					{
 						switch ( pInEntry.m_IOEntryPtr->m_ObjectType )
 						{
-						case IO_DIGITAL_INPUT:
+							case IO_DIGITAL_INPUT:
 							{
 								double l_bValue = 0.0;
 
@@ -111,8 +111,8 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 
 								break;
 							}
-						case IO_REMOTE_INPUT:
-						default:
+							case IO_REMOTE_INPUT:
+							default:
 							{
 								_variant_t l_Value;
 
@@ -329,8 +329,8 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 					SvTl::SVProfiler commitProfiler;
 					totalProfiler.Start();
 #endif
-					SeidenaderVision::SVSharedInspectionWriter& rWriter = SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
-					SVSharedData& rLastInspected = rWriter.GetLastInspectedSlot(sharedSlotIndex);
+					SvSml::SVSharedInspectionWriter& rWriter = SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
+					SvSml::SVSharedData& rLastInspected = rWriter.GetLastInspectedSlot(sharedSlotIndex);
 					FillSharedData(sharedSlotIndex, rLastInspected, m_SharedMemoryFilters.m_LastInspectedValues, m_SharedMemoryFilters.m_LastInspectedImages, l_Product, rWriter);
 
 #ifdef COLLECT_SHAREDMEMORY_STATS
@@ -354,7 +354,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 			}
 		}
 		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_Product);
-		SVObjectManagerClass::Instance().UpdateObservers("SVInspectionProcess", GetUniqueObjectID(), l_Data);
+		SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), l_Data );
 
 		p_rProcessed = true;
 
@@ -432,42 +432,42 @@ HRESULT SVInspectionProcess::ProcessTransaction( SVInspectionTransactionStruct p
 	{
 		switch ( p_Message.dwMessage )
 		{
-		case SVInspectionMessageSetCHProperties:
+			case SVInspectionMessageSetCHProperties:
 			{
 				SVInspectionMessageDataStruct_CHProperties* pData = dynamic_cast <SVInspectionMessageDataStruct_CHProperties*> (p_Message.pData);
 				ASSERT( pData );
 				hr = m_ConditionalHistory.SetProperties( *(pData->pvecProperties), pData->bResetObject );
 				break;
 			}
-		case SVInspectionMessageGetCHProperties:
+			case SVInspectionMessageGetCHProperties:
 			{
 				SVInspectionMessageDataStruct_CHProperties* pData = dynamic_cast <SVInspectionMessageDataStruct_CHProperties*> (p_Message.pData);
 				ASSERT( pData );
 				hr = m_ConditionalHistory.GetProperties( *(pData->pvecProperties) );
 				break;
 			}
-		case SVInspectionMessageSetCHList:
+			case SVInspectionMessageSetCHList:
 			{
 				SVInspectionMessageDataStruct_CHList* pData = dynamic_cast <SVInspectionMessageDataStruct_CHList*> (p_Message.pData);
 				ASSERT( pData );
 				hr = m_ConditionalHistory.SetList( pData->pvecData, pData->pvecImages, pData->pvecConditionals, pData->bResetObject );
 				break;
 			}
-		case SVInspectionMessageGetCHList:
+			case SVInspectionMessageGetCHList:
 			{
 				SVInspectionMessageDataStruct_CHList* pData = dynamic_cast <SVInspectionMessageDataStruct_CHList*> (p_Message.pData);
 				ASSERT( pData );
 				hr = m_ConditionalHistory.GetList( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals) );
 				break;
 			}
-		case SVInspectionMessageGetCHandClear:
+			case SVInspectionMessageGetCHandClear:
 			{
 				SVInspectionMessageDataStruct_CHGetAll* pData = dynamic_cast <SVInspectionMessageDataStruct_CHGetAll*> (p_Message.pData);
 				ASSERT( pData );
 				hr = m_ConditionalHistory.GetHistoryAndClear( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals), *(pData->pvecProcessCount) );
 				break;
 			}
-		case SVInspectionMessageGetCHMostRecent:
+			case SVInspectionMessageGetCHMostRecent:
 			{
 				SVInspectionMessageDataStruct_CHGet* pData = dynamic_cast <SVInspectionMessageDataStruct_CHGet*> (p_Message.pData);
 				ASSERT( pData );
@@ -691,7 +691,7 @@ BOOL SVInspectionProcess::DestroyInspection()
 
 	SVCommandStreamManager::Instance().EraseInspection( GetUniqueObjectID() );
 
-	SVObjectManagerClass::Instance().UpdateObservers( "SVInspectionProcess", GetUniqueObjectID(), SVRemoveSubjectStruct() );
+	SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), SVRemoveSubjectStruct() );
 
 	::InterlockedExchange( &m_NotifyWithLastInspected, 0 );
 
@@ -1227,19 +1227,19 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 
 			switch ( pNewEntry->m_ObjectType )
 			{
-			case IO_DIGITAL_INPUT:
+				case IO_DIGITAL_INPUT:
 				{
 					pValueObject = new SVBoolValueObjectClass(this);
 					pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 					break;
 				}
-			case IO_REMOTE_INPUT:
+				case IO_REMOTE_INPUT:
 				{
 					pValueObject = new SVVariantValueObjectClass(this);
 					pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 					break;
 				}
-			default:
+				default:
 				{
 					pValueObject = new SVVariantValueObjectClass(this);
 					break;
@@ -1778,7 +1778,7 @@ void SVInspectionProcess::SingleRunModeLoop( bool p_Refresh )
 		{
 			SVInspectionCompleteInfoStruct l_Data( GetUniqueObjectID(), l_svProduct );
 
-			SVObjectManagerClass::Instance().UpdateObservers( "SVInspectionProcess", GetUniqueObjectID(), l_Data );
+			SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), l_Data );
 		}
 	}
 }
@@ -2735,7 +2735,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 			{
 				SVRemoveValues l_Data;
 
-				SVObjectManagerClass::Instance().UpdateObservers( "SVInspectionProcess", GetUniqueObjectID(), l_Data );
+				SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), l_Data );
 			}
 		}// end if ( nullptr != m_pCurrentToolset )
 	}// end while( m_lInputRequestMarkerCount > 0L )
@@ -3125,7 +3125,7 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo( SVProductInfoStruct 
 			if( l_svLastIter != l_Product.m_svCameraInfos.end() )
 			{
 				if( l_svIter->first->CopyValue( l_svLastIter->second.GetSourceImageDMIndexHandle(), 
-					l_svIter->second.GetSourceImageDMIndexHandle() ) )
+					                            l_svIter->second.GetSourceImageDMIndexHandle() ) )
 				{
 					l_hrOk = S_FALSE;
 				}
@@ -3691,7 +3691,7 @@ HRESULT SVInspectionProcess::RemoveImage(SVImageClass* pImage)
 
 		l_Data.m_Images.insert( pImage->GetUniqueObjectID() );
 
-		SVObjectManagerClass::Instance().UpdateObservers( "SVInspectionProcess", GetUniqueObjectID(), l_Data );
+		SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), l_Data );
 	}
 	else
 	{
@@ -4197,7 +4197,7 @@ void SVInspectionProcess::ResetName()
 
 	SVInspectionNameUpdate l_Data( GetName() );
 
-	SVObjectManagerClass::Instance().UpdateObservers( "SVInspectionProcess", GetUniqueObjectID(), l_Data );
+	SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), l_Data );
 }
 
 void SVInspectionProcess::SetName( const CString& StrString )
@@ -4206,7 +4206,7 @@ void SVInspectionProcess::SetName( const CString& StrString )
 
 	SVInspectionNameUpdate l_Data( GetName() );
 
-	SVObjectManagerClass::Instance().UpdateObservers( "SVInspectionProcess", GetUniqueObjectID(), l_Data );
+	SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), l_Data );
 }
 
 HRESULT SVInspectionProcess::RegisterSubObject( SVValueObjectClass* p_pValueObject )
@@ -4449,15 +4449,15 @@ HRESULT SVInspectionProcess::GetInspectionImage( const CString& p_strName, SVIma
 }
 
 // This method fills the Toolset structure in Shared Memory (for either LastInspected or Rejects )
-void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rData, const SVFilterValueMap& rValues, const SVFilterImageMap& rImages, SVProductInfoStruct& rProductInfo, SeidenaderVision::SVSharedInspectionWriter& rWriter)
+void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SvSml::SVSharedData& rData, const SVFilterValueMap& rValues, const SVFilterImageMap& rImages, SVProductInfoStruct& rProductInfo, SvSml::SVSharedInspectionWriter& rWriter)
 {
 	SVProductInfoStruct& l_rProductInfo = rProductInfo;
 
 	SVDataManagerHandle dmHandle = l_rProductInfo.oPPQInfo.m_ResultDataDMIndexHandle;
 	long dataIndex = dmHandle.GetIndex();
 
-	SVSharedValueMap& rSharedValues = rData.m_Values;
-	SVSharedImageMap& rSharedImages = rData.m_Images;
+	SvSml::SVSharedValueMap& rSharedValues = rData.m_Values;
+	SvSml::SVSharedImageMap& rSharedImages = rData.m_Images;
 	
 	for (SVFilterValueMap::const_iterator ValueIter = rValues.begin(); ValueIter != rValues.end(); ++ValueIter)
 	{
@@ -4525,17 +4525,17 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 			hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		}
 
-		SVSharedValueMap::iterator it = rSharedValues.find(char_string(ValueIter->first.c_str(), rData.m_Allocator));
+		SvSml::SVSharedValueMap::iterator it = rSharedValues.find(SvSml::char_string(ValueIter->first.c_str(), rData.m_Allocator));
 		if(it == rSharedValues.end())
 		{
-			std::pair<SVSharedValueMap::iterator, bool>  mRet; 	
-			mRet = rSharedValues.insert(SVSharedValuePair(char_string(ValueIter->first.c_str(), rData.m_Allocator), 
-				SVSharedValue(SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator)));
+			std::pair<SvSml::SVSharedValueMap::iterator, bool>  mRet; 	
+			mRet = rSharedValues.insert(SvSml::SVSharedValuePair(SvSml::char_string(ValueIter->first.c_str(), rData.m_Allocator), 
+				SvSml::SVSharedValue(SvSml::SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator)));
 		}
 		else
 		{
 			// Performance: Avoid building maps  
-			it->second  = SVSharedValue(SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator);
+			it->second  = SvSml::SVSharedValue(SvSml::SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator);
 		}
 	}
 
@@ -4568,14 +4568,14 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 				// Add Drive and Directory to base filename
 				//@TODO[MEC][7.40][30.05.2016]   string handling must be reworked because of performance reasons
 				SVString name = imageIter->first.c_str();
-				SVString filename = SeidenaderVision::SVSharedConfiguration::GetImageDirectoryName() + "\\" + SVSharedImage::filename(name.c_str(), sharedSlotIndex, img::bmp);
+				SVString filename = SvSml::SVSharedConfiguration::GetImageDirectoryName() + "\\" + SvSml::SVSharedImage::filename(name.c_str(), sharedSlotIndex, SvSml::img::bmp);
 				// Write Image to disk
 				HRESULT hr = SVImageProcessingClass::Instance().SaveImageBuffer(filename.c_str(), imageHandlePtr);
 
-				SVSharedImageMap::iterator simIt = rSharedImages.find(char_string(name.c_str(), rData.m_Allocator));
+				SvSml::SVSharedImageMap::iterator simIt = rSharedImages.find(SvSml::char_string(name.c_str(), rData.m_Allocator));
 				if (simIt == rSharedImages.end()) 
 				{
-					std::pair<SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SVSharedImagePair(char_string(name.c_str(), rData.m_Allocator), SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
+					std::pair<SvSml::SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SvSml::SVSharedImagePair(SvSml::char_string(name.c_str(), rData.m_Allocator), SvSml::SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
 					// if the Insert failed - update the status
 					if (!IterPair.second && IterPair.first != rSharedImages.end())
 					{
@@ -4584,7 +4584,7 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 				}
 				else
 				{
-					simIt->second = SVSharedImage(filename.c_str(), hr, rData.m_Allocator);
+					simIt->second = SvSml::SVSharedImage(filename.c_str(), hr, rData.m_Allocator);
 				}
 			}
 		}
@@ -4594,10 +4594,10 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 			SVString name = imageIter->first.c_str();
 			SVString filename;
 
-			SVSharedImageMap::iterator simIt = rSharedImages.find(char_string(name.c_str(), rData.m_Allocator));
+			SvSml::SVSharedImageMap::iterator simIt = rSharedImages.find(SvSml::char_string(name.c_str(), rData.m_Allocator));
 			if (simIt == rSharedImages.end()) 
 			{
-				std::pair<SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SVSharedImagePair(char_string(name.c_str(), rData.m_Allocator), SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
+				std::pair<SvSml::SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SvSml::SVSharedImagePair(SvSml::char_string(name.c_str(), rData.m_Allocator), SvSml::SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
 				// if the Insert failed - update the status
 				if (!IterPair.second && IterPair.first != rSharedImages.end())
 				{
@@ -4606,7 +4606,7 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rDa
 			}
 			else
 			{
-				simIt->second = SVSharedImage(filename.c_str(), hr, rData.m_Allocator);
+				simIt->second = SvSml::SVSharedImage(filename.c_str(), hr, rData.m_Allocator);
 			}
 		}
 	}

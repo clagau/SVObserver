@@ -12,7 +12,7 @@
 
 //Moved to precompiled header: #include <string>
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSystemLibrary
 {
 	class SVVersionInfo
 	{
@@ -26,5 +26,6 @@ namespace SeidenaderVision
 		SVVersionInfo();
 		~SVVersionInfo();
 	};
-}
+} /*SVSystemLibrary*/ } /*Seidenader*/
 
+namespace SvSyl = Seidenader::SVSystemLibrary;

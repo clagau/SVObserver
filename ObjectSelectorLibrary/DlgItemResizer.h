@@ -15,64 +15,62 @@
 
 #pragma once
 
-namespace Seidenader
+namespace Seidenader { namespace ObjectSelectorLibrary
 {
-	namespace ObjectSelectorLibrary
+	#pragma region Declarations
+		const UINT RESIZE_LOCKLEFT        = 0x0001; // Distance to left is fixed
+		const UINT RESIZE_LOCKRIGHT       = 0x0002; // Distance to right is fixed
+		const UINT RESIZE_LOCKTOP         = 0x0004; // Distance to top is fixed
+		const UINT RESIZE_LOCKBOTTOM      = 0x0008; // Distance to bottom is fixed
+		const UINT RESIZE_SHOWHIDE        = 0x0010; // Show/hide if not fully visible
+
+		const UINT RESIZE_LOCKALL         = RESIZE_LOCKLEFT|RESIZE_LOCKRIGHT|RESIZE_LOCKTOP|RESIZE_LOCKBOTTOM;
+		const UINT RESIZE_LOCKTOPLEFT     = RESIZE_LOCKLEFT|RESIZE_LOCKTOP;
+		const UINT RESIZE_LOCKBOTTOMRIGHT = RESIZE_LOCKBOTTOM|RESIZE_LOCKRIGHT;
+	#pragma endregion Declarations
+
+	class CDlgItemResizer
 	{
-		#pragma region Declarations
-			const UINT RESIZE_LOCKLEFT        = 0x0001; // Distance to left is fixed
-			const UINT RESIZE_LOCKRIGHT       = 0x0002; // Distance to right is fixed
-			const UINT RESIZE_LOCKTOP         = 0x0004; // Distance to top is fixed
-			const UINT RESIZE_LOCKBOTTOM      = 0x0008; // Distance to bottom is fixed
-			const UINT RESIZE_SHOWHIDE        = 0x0010; // Show/hide if not fully visible
 
-			const UINT RESIZE_LOCKALL         = RESIZE_LOCKLEFT|RESIZE_LOCKRIGHT|RESIZE_LOCKTOP|RESIZE_LOCKBOTTOM;
-			const UINT RESIZE_LOCKTOPLEFT     = RESIZE_LOCKLEFT|RESIZE_LOCKTOP;
-			const UINT RESIZE_LOCKBOTTOMRIGHT = RESIZE_LOCKBOTTOM|RESIZE_LOCKRIGHT;
-		#pragma endregion Declarations
+	public:
+	#pragma region Constructor
+		CDlgItemResizer();
+		virtual ~CDlgItemResizer();
+	#pragma endregion Constructor
 
-		class CDlgItemResizer
-		{
+	public:
+	#pragma region Public Methods
+		// Adds a control to the resize list
+		void Add(CWnd *pControl, UINT uFlags);
 
-		public:
-		#pragma region Constructor
-			CDlgItemResizer();
-			virtual ~CDlgItemResizer();
-		#pragma endregion Constructor
+		void Add(CWnd *pWnd, INT nCtrlID, UINT uFlags)
+		{ Add(pWnd->GetDlgItem(nCtrlID), uFlags); }
 
-		public:
-		#pragma region Public Methods
-			// Adds a control to the resize list
-			void Add(CWnd *pControl, UINT uFlags);
+		// Resizes the controls in the form
+		void Resize(CFormView *pWnd);
 
-			void Add(CWnd *pWnd, INT nCtrlID, UINT uFlags)
-			{ Add(pWnd->GetDlgItem(nCtrlID), uFlags); }
+		// Resizes the controls in the window
+		void Resize(CWnd *pWnd);
 
-			// Resizes the controls in the form
-			void Resize(CFormView *pWnd);
+		// Sets the original size of the parent
+		void SetInitialSize(INT cx, INT cy)
+		{ m_szInitial = CSize(cx, cy); }
 
-			// Resizes the controls in the window
-			void Resize(CWnd *pWnd);
+		// Sets the original size of the parent
+		void SetInitialSize(const CSize &size)
+		{ m_szInitial = size; }
 
-			// Sets the original size of the parent
-			void SetInitialSize(INT cx, INT cy)
-			{ m_szInitial = CSize(cx, cy); }
+		// Returns the initial size
+		CSize GetInitialSize() const
+		{ return m_szInitial; }
+	#pragma endregion Public Methods
 
-			// Sets the original size of the parent
-			void SetInitialSize(const CSize &size)
-			{ m_szInitial = size; }
+	private:
+	#pragma region Member Variables
+		CPtrArray m_Controls;
+		CSize m_szInitial;
+	#pragma endregion Member Variables
+	};
+} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
 
-			// Returns the initial size
-			CSize GetInitialSize() const
-			{ return m_szInitial; }
-		#pragma endregion Public Methods
-
-		private:
-		#pragma region Member Variables
-			CPtrArray m_Controls;
-			CSize m_szInitial;
-		#pragma endregion Member Variables
-		};
-	} //namespace ObjectSelectorLibrary
-} //namespace Seidenader
-
+namespace SvOsl = Seidenader::ObjectSelectorLibrary;

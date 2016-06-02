@@ -11,86 +11,84 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVSocket.h"
+#pragma endregion Includes
 
-namespace Seidenader
+namespace Seidenader { namespace SVSocketLibrary
 {
-	namespace Socket
+	template<typename API>
+	class SVServerSocket : public SVSocket<API>
 	{
-		template<typename API>
-		class SVServerSocket : public SVSocket<API>
-		{
-		public:
-			SVSocketError::ErrorEnum Listen(unsigned short portNo);
-			Socket_t Accept(sockaddr* addr, int* addrlen);
-			bool ClientConnecting() const;
-		};
+	public:
+		SVSocketError::ErrorEnum Listen(unsigned short portNo);
+		Socket_t Accept(sockaddr* addr, int* addrlen);
+		bool ClientConnecting() const;
+	};
 
-		template<>
-		inline typename Traits<TcpApi>::Socket_t SVServerSocket<TcpApi>::Accept(sockaddr* addr, int* addrlen)
+	template<>
+	inline typename Traits<TcpApi>::Socket_t SVServerSocket<TcpApi>::Accept(sockaddr* addr, int* addrlen)
+	{
+		return TcpApi::accept(m_socket, addr, addrlen);
+	}
+
+	template<typename API>
+	inline bool SVServerSocket<API>::ClientConnecting() const
+	{
+		timeval timeout = {0, 200};
+		fd_set readset;
+		FD_ZERO(&readset);
+		FD_SET(m_socket, &readset);
+		int max_fd = 1;
+		return (select(max_fd + 1, &readset, nullptr, nullptr, &timeout) == 1) ? true : false;
+	}
+
+	template<>
+	inline typename Traits<UdpApi>::Socket_t SVServerSocket<UdpApi>::Accept(sockaddr* addr, int* addrlen)
+	{
+		// TODO: negotiate buffer size. For now assume 48K.
+		size_t bufsz = 1024*48;
+		unsigned char buf[1024*48];
+		sockaddr_in * addr_in = reinterpret_cast<sockaddr_in *>(addr);
+		if (!IsValidSocket())
 		{
-			return TcpApi::accept(m_socket, addr, addrlen);
+			Create(); // recreate
+			Listen(addr_in->sin_port); // rebind. Kludge!
 		}
-
-		template<typename API>
-		inline bool SVServerSocket<API>::ClientConnecting() const
+		size_t len = *addrlen;
+		Err error;
+		if (SVSocketError::Success != (error = PeekFrom(buf, bufsz, bufsz, *addr_in, len)))
 		{
-			timeval timeout = {0, 200};
-			fd_set readset;
-			FD_ZERO(&readset);
-			FD_SET(m_socket, &readset);
-			int max_fd = 1;
-			return (select(max_fd + 1, &readset, nullptr, nullptr, &timeout) == 1) ? true : false;
+			std::string msg = "accept: ";
+			Log(msg + SVSocketError::GetErrorText(error), true);
+			return InvalidSock;
 		}
+		m_peer = *addr_in;
+		return *this; // Should create a new socket?
+	}
 
-		template<>
-		inline typename Traits<UdpApi>::Socket_t SVServerSocket<UdpApi>::Accept(sockaddr* addr, int* addrlen)
+	template<typename API>
+	inline SVSocketError::ErrorEnum SVServerSocket<API>::Listen(unsigned short portNo)
+	{
+		SVSocketError::ErrorEnum error = SVSocketError::Success;
+		if (IsValidSocket())
 		{
-			// TODO: negotiate buffer size. For now assume 48K.
-			size_t bufsz = 1024*48;
-			unsigned char buf[1024*48];
-			sockaddr_in * addr_in = reinterpret_cast<sockaddr_in *>(addr);
-			if (!IsValidSocket())
+			// bind to INADDR_ANY
+			error = Bind(" ", portNo); //localIP, portNo);
+			if (error == SVSocketError::Success)
 			{
-				Create(); // recreate
-				Listen(addr_in->sin_port); // rebind. Kludge!
-			}
-			size_t len = *addrlen;
-			Err error;
-			if (SVSocketError::Success != (error = PeekFrom(buf, bufsz, bufsz, *addr_in, len)))
-			{
-				std::string msg = "accept: ";
-				Log(msg + SVSocketError::GetErrorText(error), true);
-				return InvalidSock;
-			}
-			m_peer = *addr_in;
-			return *this; // Should create a new socket?
-		}
-
-		template<typename API>
-		inline SVSocketError::ErrorEnum SVServerSocket<API>::Listen(unsigned short portNo)
-		{
-			SVSocketError::ErrorEnum error = SVSocketError::Success;
-			if (IsValidSocket())
-			{
-				// bind to INADDR_ANY
-				error = Bind(" ", portNo); //localIP, portNo);
-				if (error == SVSocketError::Success)
+				if (API::listen(m_socket, 1) == SOCKET_ERROR)
 				{
-					if (API::listen(m_socket, 1) == SOCKET_ERROR)
-					{
-						error = SVSocketError::GetLastSocketError();
-					}
+					error = SVSocketError::GetLastSocketError();
 				}
 			}
-			else
-			{
-				error = SVSocketError::NotASocket;
-			}
-			return error;
 		}
+		else
+		{
+			error = SVSocketError::NotASocket;
+		}
+		return error;
 	}
-}
+} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
 
-typedef Seidenader::Socket::SVServerSocket<TcpApi> SVServerSocket;
-
+namespace SvSol = Seidenader::SVSocketLibrary;

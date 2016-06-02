@@ -32,7 +32,7 @@ SVStartWindowClass::SVStartWindowClass(CWnd* pParent /*=nullptr*/)
 
 	CString strVersion = "Version ";
 
-	strVersion += SeidenaderVision::SVVersionInfo::GetVersion().c_str();
+	strVersion += SvSyl::SVVersionInfo::GetVersion().c_str();
 
 	startImage.TextOut( 0.42, 0.70, RGB( 0, 0, 0 ), strVersion );
 }

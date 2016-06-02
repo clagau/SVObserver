@@ -10,30 +10,38 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <memory>
 #include "SVSharedImage.h"
 #include "SVSharedValue.h"
+#pragma endregion Includes
 
-struct SVSharedData
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	mutable volatile long m_Flags;
-	volatile long m_TriggerCount;
-	SVSharedImageMap m_Images;
-	SVSharedValueMap m_Values;
+	struct SVSharedData
+	{
+		mutable volatile long m_Flags;
+		volatile long m_TriggerCount;
+		SVSharedImageMap m_Images;
+		SVSharedValueMap m_Values;
 
-	void_allocator m_Allocator;
+		void_allocator m_Allocator;
 
-	SVSharedData( const void_allocator& p_rAlloc );
-	SVSharedData( const SVSharedData& p_rData );
+		SVSharedData( const void_allocator& p_rAlloc );
+		SVSharedData( const SVSharedData& p_rData );
 
-	const SVSharedData& operator=( const SVSharedData& p_rData );
+		const SVSharedData& operator=( const SVSharedData& p_rData );
 
-	SeidenaderVision::SVValue FindValue(const std::string & name) const;
-};
+		SVValue FindValue(const std::string & name) const;
+	};
 
-typedef boost::interprocess::allocator< SVSharedData, segment_manager_t > SVSharedDataAllocator;
-typedef boost::interprocess::vector< SVSharedData, SVSharedDataAllocator > SVSharedDataVector;
-typedef boost::interprocess::allocator< SVSharedDataVector, segment_manager_t > SVSharedDataVectorAllocator;
+	typedef boost::interprocess::allocator< SVSharedData, segment_manager_t > SVSharedDataAllocator;
+	typedef boost::interprocess::vector< SVSharedData, SVSharedDataAllocator > SVSharedDataVector;
+	typedef boost::interprocess::allocator< SVSharedDataVector, segment_manager_t > SVSharedDataVectorAllocator;
 
-//typedef std::shared_ptr<SVSharedData> InspectionDataPtr;
-typedef SVSharedData * InspectionDataPtr;
+	//typedef std::shared_ptr<SVSharedData> InspectionDataPtr;
+	typedef SVSharedData* InspectionDataPtr;
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

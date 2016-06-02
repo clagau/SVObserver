@@ -53,11 +53,11 @@ private:
 	void CheckConnection();
 	void ThreadProcessHandler(bool& bWaitEvents);
 
-	SVServerSocket m_server;
-	SVSocket m_client;
+	SvSol::SVServerSocket<SvSol::TcpApi> m_server;
+	SvSol::SVSocket<SvSol::TcpApi> m_client;
 	ConnectionAcceptedCallback m_connectionAcceptedFunc;
 	DataReceivedCallback m_dataReceivedFunc;
-	SVJsonPacket m_dataBuffer;
+	SvSol::SVJsonPacket m_dataBuffer;
 	SVThread<SVThreadProcessHandler> m_thread;
 
 	SVCriticalSection m_WriteQueueLock;

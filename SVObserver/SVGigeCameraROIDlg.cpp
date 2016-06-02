@@ -457,7 +457,7 @@ void SVGigeCameraROIDlg::OnChangeBinningHoriz()
 void SVGigeCameraROIDlg::ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue)
 {
 	std::map<long,_variant_t> ParaMap;
-	int count = Seidenader::SVOMFCLibrary::DisplayHelper::FillParameterMap(ParaMap,ParameterList,ParameterValue);
+	int count = SvOml::DisplayHelper::FillParameterMap(ParaMap,ParameterList,ParameterValue);
 
 	m_iWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
 	m_iHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;

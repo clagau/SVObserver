@@ -19,8 +19,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::ObjectSelectorLibrary;
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -37,142 +35,145 @@ struct DLGITEMINFO
 };
 #pragma endregion Declarations
 
-#pragma region Constructor
-CDlgItemResizer::CDlgItemResizer() :
-	m_szInitial(CSize(0, 0))
+namespace Seidenader { namespace ObjectSelectorLibrary
 {
-}
-
-CDlgItemResizer::~CDlgItemResizer()
-{
-	// Make sure to delete all allocated items
-	for (INT i = 0; i < m_Controls.GetSize(); i++)
+	#pragma region Constructor
+	CDlgItemResizer::CDlgItemResizer() :
+		m_szInitial(CSize(0, 0))
 	{
-		delete (static_cast<DLGITEMINFO*>  (m_Controls[i]));
-	}
-}
-#pragma endregion Constructor
-
-#pragma region Public Methods
-void CDlgItemResizer::Add(CWnd *pCtrl, UINT uFlags)
-{
-	// Make sure params are valid
-	ASSERT(pCtrl != 0);
-	ASSERT(pCtrl->GetParent() != 0);
-
-	CWnd *pParent = pCtrl->GetParent();
-
-	if (uFlags == 0)
-	{
-		return;
 	}
 
-	CRect rc;
-	pCtrl->GetWindowRect(rc);
-	pParent->ScreenToClient(rc);
-
-	DLGITEMINFO *item    = new DLGITEMINFO;
-	item->m_uFlags       = uFlags;
-	item->m_hWnd         = pCtrl->m_hWnd;
-	item->m_rectPosition = rc;
-
-	// Set initial size if not set
-	if (0 == m_szInitial.cx || 0 == m_szInitial.cy) 
+	CDlgItemResizer::~CDlgItemResizer()
 	{
+		// Make sure to delete all allocated items
+		for (INT i = 0; i < m_Controls.GetSize(); i++)
+		{
+			delete (static_cast<DLGITEMINFO*>  (m_Controls[i]));
+		}
+	}
+	#pragma endregion Constructor
+
+	#pragma region Public Methods
+	void CDlgItemResizer::Add(CWnd *pCtrl, UINT uFlags)
+	{
+		// Make sure params are valid
+		ASSERT(pCtrl != 0);
+		ASSERT(pCtrl->GetParent() != 0);
+
+		CWnd *pParent = pCtrl->GetParent();
+
+		if (uFlags == 0)
+		{
+			return;
+		}
+
 		CRect rc;
-		pParent->GetClientRect(rc);
-		m_szInitial = rc.Size();
+		pCtrl->GetWindowRect(rc);
+		pParent->ScreenToClient(rc);
+
+		DLGITEMINFO *item    = new DLGITEMINFO;
+		item->m_uFlags       = uFlags;
+		item->m_hWnd         = pCtrl->m_hWnd;
+		item->m_rectPosition = rc;
+
+		// Set initial size if not set
+		if (0 == m_szInitial.cx || 0 == m_szInitial.cy) 
+		{
+			CRect rc;
+			pParent->GetClientRect(rc);
+			m_szInitial = rc.Size();
+		}
+
+		// Add it to the array
+		m_Controls.Add(item);
 	}
 
-	// Add it to the array
-	m_Controls.Add(item);
-}
-
-void CDlgItemResizer::Resize(CWnd *pWnd)
-{
-	// Just return if no initial size yet
-	if (0 == m_szInitial.cx || 0 == m_szInitial.cy) return;
-
-	// Don't bother to resize minimized windows
-	if (GetWindowLong(pWnd->m_hWnd, GWL_STYLE) & WS_MINIMIZE) return;
-
-	CRect client;
-	pWnd->GetClientRect(client);
-
-	for (INT i = 0; i < m_Controls.GetSize(); i++)
+	void CDlgItemResizer::Resize(CWnd *pWnd)
 	{
-		DLGITEMINFO *item = (DLGITEMINFO *)m_Controls[i];
-		CWnd *ctrl = CWnd::FromHandle(item->m_hWnd);
+		// Just return if no initial size yet
+		if (0 == m_szInitial.cx || 0 == m_szInitial.cy) return;
 
-		// Invalidate the old position
-		CRect rect;
-		ctrl->GetWindowRect(rect);  
-		pWnd->ScreenToClient(rect);
-		pWnd->InvalidateRect(rect);
+		// Don't bother to resize minimized windows
+		if (GetWindowLong(pWnd->m_hWnd, GWL_STYLE) & WS_MINIMIZE) return;
 
-		// Get the current size of the control
-		CSize size = rect.Size();
+		CRect client;
+		pWnd->GetClientRect(client);
 
-		// Set the new position according to the flags specified
-		if ((item->m_uFlags & (RESIZE_LOCKLEFT|RESIZE_LOCKRIGHT)) == (RESIZE_LOCKLEFT|RESIZE_LOCKRIGHT))
+		for (INT i = 0; i < m_Controls.GetSize(); i++)
 		{
-			rect.left = item->m_rectPosition.left;
-			rect.right = client.right - (m_szInitial.cx - item->m_rectPosition.right);
-		}
-		else if (item->m_uFlags & RESIZE_LOCKRIGHT)
-		{
-			rect.right = client.right - (m_szInitial.cx - item->m_rectPosition.right);
-			rect.left  = rect.right - size.cx;
-		}
+			DLGITEMINFO *item = (DLGITEMINFO *)m_Controls[i];
+			CWnd *ctrl = CWnd::FromHandle(item->m_hWnd);
 
-		else if (item->m_uFlags & RESIZE_LOCKLEFT)
-		{
-			rect.left  = item->m_rectPosition.left;
-			rect.right = rect.left + size.cx;
-		}
+			// Invalidate the old position
+			CRect rect;
+			ctrl->GetWindowRect(rect);  
+			pWnd->ScreenToClient(rect);
+			pWnd->InvalidateRect(rect);
 
-		if ((item->m_uFlags & (RESIZE_LOCKTOP|RESIZE_LOCKBOTTOM)) == (RESIZE_LOCKTOP|RESIZE_LOCKBOTTOM))
-		{
-			rect.top = item->m_rectPosition.top;
-			rect.bottom = client.bottom - (m_szInitial.cy - item->m_rectPosition.bottom);
-		}
-		else if (item->m_uFlags & RESIZE_LOCKTOP)
-		{
-			rect.top = item->m_rectPosition.top;
-			rect.bottom = rect.top + size.cy;
-		}
-		else if (item->m_uFlags & RESIZE_LOCKBOTTOM)
-		{
-			rect.bottom = client.bottom - (m_szInitial.cy - item->m_rectPosition.bottom);
-			rect.top = rect.bottom - size.cy;
-		}
+			// Get the current size of the control
+			CSize size = rect.Size();
 
-		// Check if control is completely inside client, hide if not
-		// Do this only when the RESIZE_SHOWHIDE flag is set.
-		if (item->m_uFlags & RESIZE_SHOWHIDE) 
-		{
-			CRect unionrect;
-			unionrect.UnionRect(rect, client);
-
-			if (unionrect != client)
+			// Set the new position according to the flags specified
+			if ((item->m_uFlags & (RESIZE_LOCKLEFT|RESIZE_LOCKRIGHT)) == (RESIZE_LOCKLEFT|RESIZE_LOCKRIGHT))
 			{
-				ctrl->ShowWindow(SW_HIDE);
+				rect.left = item->m_rectPosition.left;
+				rect.right = client.right - (m_szInitial.cx - item->m_rectPosition.right);
+			}
+			else if (item->m_uFlags & RESIZE_LOCKRIGHT)
+			{
+				rect.right = client.right - (m_szInitial.cx - item->m_rectPosition.right);
+				rect.left  = rect.right - size.cx;
+			}
+
+			else if (item->m_uFlags & RESIZE_LOCKLEFT)
+			{
+				rect.left  = item->m_rectPosition.left;
+				rect.right = rect.left + size.cx;
+			}
+
+			if ((item->m_uFlags & (RESIZE_LOCKTOP|RESIZE_LOCKBOTTOM)) == (RESIZE_LOCKTOP|RESIZE_LOCKBOTTOM))
+			{
+				rect.top = item->m_rectPosition.top;
+				rect.bottom = client.bottom - (m_szInitial.cy - item->m_rectPosition.bottom);
+			}
+			else if (item->m_uFlags & RESIZE_LOCKTOP)
+			{
+				rect.top = item->m_rectPosition.top;
+				rect.bottom = rect.top + size.cy;
+			}
+			else if (item->m_uFlags & RESIZE_LOCKBOTTOM)
+			{
+				rect.bottom = client.bottom - (m_szInitial.cy - item->m_rectPosition.bottom);
+				rect.top = rect.bottom - size.cy;
+			}
+
+			// Check if control is completely inside client, hide if not
+			// Do this only when the RESIZE_SHOWHIDE flag is set.
+			if (item->m_uFlags & RESIZE_SHOWHIDE) 
+			{
+				CRect unionrect;
+				unionrect.UnionRect(rect, client);
+
+				if (unionrect != client)
+				{
+					ctrl->ShowWindow(SW_HIDE);
+				}
+				else
+				{
+					// Make sure it is visible
+					if (!(ctrl->GetStyle() & WS_VISIBLE))
+					{
+						ctrl->ShowWindow(SW_SHOWNORMAL);
+					}
+					ctrl->MoveWindow(rect);
+				}
 			}
 			else
 			{
-				// Make sure it is visible
-				if (!(ctrl->GetStyle() & WS_VISIBLE))
-				{
-					ctrl->ShowWindow(SW_SHOWNORMAL);
-				}
 				ctrl->MoveWindow(rect);
 			}
 		}
-		else
-		{
-			ctrl->MoveWindow(rect);
-		}
 	}
-}
-#pragma endregion Public Methods
+	#pragma endregion Public Methods
 
+} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/

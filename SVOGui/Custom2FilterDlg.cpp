@@ -54,7 +54,6 @@ namespace Seidenader
 		static const std::string IsAbsoluteValueTag("IsAbsoluteValue");
 		static const std::string NormalizationFactorTag("NormalizationFactor");
 		static const std::string KernelValueTag("KernelValue");
-		using namespace SvOi;
 #pragma endregion Declarations
 
 		BEGIN_MESSAGE_MAP(Custom2FilterDlg, CDialog)
@@ -145,7 +144,7 @@ namespace Seidenader
 			initializeFilter();
 
 			SVString Entry;
-			for( int i=1; i <= ICustom2Filter::MaxKernelSize; i++ )
+			for( int i=1; i <= SvOi::ICustom2Filter::MaxKernelSize; i++ )
 			{
 				//Check that its an odd value
 				if( 1 == (i % 2) )
@@ -316,7 +315,7 @@ namespace Seidenader
 
 		void Custom2FilterDlg::OnBnClickedImportFilter()
 		{
-			bool FullAccess = isUnrestrictedFileAccess();
+			bool FullAccess = SvOi::isUnrestrictedFileAccess();
 			DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
 			SvMc::SVFileDialog FileDlg( TRUE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
 
@@ -331,26 +330,26 @@ namespace Seidenader
 				long NormalizationFactor( m_NormalizationFactor );
 				BOOL AbsoluteValue( m_AbsoluteValue );
 				BOOL ClippingEnabled( m_ClippingEnabled );
-				ICustom2Filter::LongArray KernelArray;
+				SvOi::ICustom2Filter::LongArray KernelArray;
 				m_KernelArray.swap( KernelArray );
 
 				try
 				{
-					HRESULT Result = importCustom2Filter(pathName, m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray);
+					HRESULT Result = SvOi::importCustom2Filter(pathName, m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray);
 					if ( S_OK == Result )
 					{
 						isDataValid();
 					}
 					else
 					{
-						if (E_CUSTOM_IMPORT_FORMAT_INVALID == Result)
+						if (SvOi::E_CUSTOM_IMPORT_FORMAT_INVALID == Result)
 						{
 							SVStringArray msgList;
 							msgList.push_back(pathName);
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_XmlFormatInvalid));
 							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
 						}
-						else if (E_CUSTOM_IMPORT_VERSION_MISMATCH == Result)
+						else if (SvOi::E_CUSTOM_IMPORT_VERSION_MISMATCH == Result)
 						{
 							SVStringArray msgList;
 							msgList.push_back(pathName);
@@ -406,14 +405,14 @@ namespace Seidenader
 		{
 			UpdateData( TRUE );
 
-			bool FullAccess = isUnrestrictedFileAccess();
+			bool FullAccess = SvOi::isUnrestrictedFileAccess();
 			DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
 			SvMc::SVFileDialog FileDlg(FALSE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
 			if( IDOK == FileDlg.DoModal() )
 			{
 				try
 				{
-					exportCustom2Filter( SVString(FileDlg.GetPathName()), m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray.cbegin(), m_KernelArray.cend() );
+					SvOi::exportCustom2Filter( SVString(FileDlg.GetPathName()), m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray.cbegin(), m_KernelArray.cend() );
 				}
 				catch( ... )
 				{
@@ -560,7 +559,7 @@ namespace Seidenader
 		{
 			initializeKernel( Width, Height );
 
-			GV_ITEM Item;
+			SvGcl::GV_ITEM Item;
 
 			int MiddleRow = (m_KernelHeight + 1) / 2;
 			int MiddleCol = (m_KernelWidth + 1) / 2;
@@ -623,7 +622,7 @@ namespace Seidenader
 
 			if( 0 == Width )
 			{
-				m_KernelWidth = ICustom2Filter::StandardKernelSize;
+				m_KernelWidth = SvOi::ICustom2Filter::StandardKernelSize;
 			}
 			else if( -1 != Width )
 			{
@@ -632,7 +631,7 @@ namespace Seidenader
 
 			if(0 == Height)
 			{
-				m_KernelHeight = ICustom2Filter::StandardKernelSize;
+				m_KernelHeight = SvOi::ICustom2Filter::StandardKernelSize;
 			}
 			else if( -1 != Height )
 			{
@@ -899,31 +898,31 @@ namespace Seidenader
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelArray.size()));
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelWidth));
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelHeight));
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams), Err_10228);
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelSize, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10228);
 				throw message;
 			}
 
 			//Check that the Kernel Width and Height are odd and between 1 and MaxKernelSize
-			if( 1 != m_KernelWidth % 2 || 1 > m_KernelWidth || ICustom2Filter::MaxKernelSize < m_KernelWidth )
+			if( 1 != m_KernelWidth % 2 || 1 > m_KernelWidth || SvOi::ICustom2Filter::MaxKernelSize < m_KernelWidth )
 			{
 				SVStringArray msgList;
-				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelWidth));
-				msgList.push_back(SvUl_SF::Format(_T("%d"),ICustom2Filter::MaxKernelSize));
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), Err_10228);
+				msgList.push_back(SvUl_SF::Format(_T("%d"), m_KernelWidth));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10228);
 				throw message;
 			}
-			if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || ICustom2Filter::MaxKernelSize < m_KernelHeight )
+			if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || SvOi::ICustom2Filter::MaxKernelSize < m_KernelHeight )
 			{
 				SVStringArray msgList;
-				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelHeight));
-				msgList.push_back(SvUl_SF::Format(_T("%d"),ICustom2Filter::MaxKernelSize));
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), Err_10228);
+				msgList.push_back(SvUl_SF::Format(_T("%d"), m_KernelHeight));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10228);
 				throw message;
 			}
 			//Normalization Factor is not allowed to be 0 or negative
 			if( 0 >= m_NormalizationFactor )
 			{
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), Err_10228);
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10228);
 				throw message;
 			}
 		}

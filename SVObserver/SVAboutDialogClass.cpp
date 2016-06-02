@@ -64,7 +64,7 @@ BOOL SVAboutDialogClass::OnInitDialog()
 		CString strVersion = appTitle;
 		
 		strVersion += _T( " " );
-		strVersion += SeidenaderVision::SVVersionInfo::GetVersion().c_str();
+		strVersion += SvSyl::SVVersionInfo::GetVersion().c_str();
 
 		pWnd->SetWindowText( strVersion );
 	}

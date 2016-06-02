@@ -10,10 +10,12 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVShared.h"
 #include "SVSharedInspections.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	struct SVSharedProduct
 	{
@@ -31,5 +33,7 @@ namespace SeidenaderVision
 	typedef boost::interprocess::allocator<SVSharedProduct, segment_manager_t> SVSharedProductAllocator;
 	typedef boost::interprocess::vector<SVSharedProduct, SVSharedProductAllocator> SVSharedProductVector;
 	typedef boost::interprocess::allocator<SVSharedProductVector, segment_manager_t> SVSharedProductVectorAllocator;
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

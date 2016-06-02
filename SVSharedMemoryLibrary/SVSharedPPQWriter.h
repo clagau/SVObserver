@@ -9,12 +9,15 @@
 //* .Check In Date   : $Date:   14 Aug 2014 17:09:54  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "SVSharedProductStore.h"
 #include "SVSharedMonitorList.h"
 #include "SVSharedMemorySettings.h"
 #include "SVSharedInspectionWriter.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	typedef std::pair<std::string, GUID> InspectionID;
 	typedef std::vector<InspectionID> InspectionIDs;
@@ -56,5 +59,7 @@ namespace SeidenaderVision
 		typedef std::shared_ptr< boost::interprocess::managed_shared_memory > managed_shared_memory_shared_ptr;
 		managed_shared_memory_shared_ptr shm;
 	};
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

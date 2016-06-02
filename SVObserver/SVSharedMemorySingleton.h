@@ -28,31 +28,31 @@ public:
 
 	~SVSharedMemorySingleton();
 
-	HRESULT InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SeidenaderVision::InspectionIDs& rIDs);
+	HRESULT InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SvSml::InspectionIDs& rIDs);
 	HRESULT ErasePPQSharedMemory(const SVGUID& rGuid);
 
-	SeidenaderVision::SVSharedPPQWriter& GetPPQWriter(const SVGUID& rGuid);
-	SeidenaderVision::SVSharedInspectionWriter& GetInspectionWriter(const SVGUID& rPPQGuid, const SVGUID& rGuid);
-	SeidenaderVision::SVMonitorListWriter& GetMonitorListWriter();
-	SeidenaderVision::SVShareControlHandler& GetIPCShare();
+	SvSml::SVSharedPPQWriter& GetPPQWriter(const SVGUID& rGuid);
+	SvSml::SVSharedInspectionWriter& GetInspectionWriter(const SVGUID& rPPQGuid, const SVGUID& rGuid);
+	SvSml::SVMonitorListWriter& GetMonitorListWriter();
+	SvSml::SVShareControlHandler& GetIPCShare();
 
 	std::string GetInspectionShareName(const SVGUID& rPPQGuid,const SVGUID& rGuid);
-	const SVSharedMemorySettings& GetSettings() const;
+	const SvSml::SVSharedMemorySettings& GetSettings() const;
 	long GetRejectDepth() const;
 	void SetRejectDepth(long rejectDepth);
 	void SetProductDepth(long productDepth, long extra);
-	static HRESULT SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
+	static HRESULT SetProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
 
 	static bool HasShares();
 	static void Destroy();
 protected:
-	typedef std::map<SVGUID, SeidenaderVision::SVSharedPPQWriter> SVPPQSharedMemoryMap;
+	typedef std::map<SVGUID, SvSml::SVSharedPPQWriter> SVPPQSharedMemoryMap;
 
 	SVSharedMemorySingleton();
 
 	SVPPQSharedMemoryMap m_PPQSharedMemory;
-	SeidenaderVision::SVMonitorListWriter m_monitorListWriter;
-	SeidenaderVision::SVShareControlHandler m_shareControlHandler;
+	SvSml::SVMonitorListWriter m_monitorListWriter;
+	SvSml::SVShareControlHandler m_shareControlHandler;
 private:
 	//Do not implement this method
 	SVSharedMemorySingleton(const SVSharedMemorySingleton& p_rObject);
@@ -62,6 +62,6 @@ private:
 
 	void ReadSettings();
 	void CheckDirectories();
-	SVSharedMemorySettings m_settings;
+	SvSml::SVSharedMemorySettings m_settings;
 };
 

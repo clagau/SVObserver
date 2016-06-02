@@ -35,11 +35,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-using namespace Seidenader::SVOMFCLibrary;
-
-/////////////////////////////////////////////////////////////////////////////
-// SVMaskShapeEditorDlg dialog
-
 SVMaskShapeEditorDlg* SVMaskShapeEditorDlg::m_pThis = nullptr;
 
 BEGIN_MESSAGE_MAP(SVMaskShapeEditorDlg, CDialog)
@@ -546,7 +541,7 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long Tab, long Handle, VAR
 	////////////////////////////////////////////////////////
 	// SET SHAPE PROPERTIES
 	VariantParamMap ParaMap;
-	int count = DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+	int count = SvOml::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 	SVMaskShape* pShape = m_mapShapes[ m_eShapeType ];
 	SVMaskShape::MapType mapProperties;
@@ -946,7 +941,7 @@ void SVMaskShapeEditorDlg::setShapeType(SVShapeMaskHelperClass::ShapeTypeEnum sh
 		}
 
 		COleSafeArray saPar, saVal;
-		DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+		SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 
 		for (int i = 0; i < m_numberOfTabs; i++)
 		{
@@ -1024,7 +1019,7 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 	}
 
 	COleSafeArray saPar, saVal;
-	DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+	SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 	for (int i = 0; i < m_numberOfTabs; i++)
 	{
 		m_dialogImage.EditOverlay( i, m_handleToActiveObjects[i], static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );

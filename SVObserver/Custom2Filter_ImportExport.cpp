@@ -16,8 +16,6 @@
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #pragma endregion Includes
 
-using namespace SvOi;
-
 #pragma region local helper function
 //************************************
 // Description: This method writes an element into the XML file
@@ -69,7 +67,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 	long &normalizationFactor, 
 	BOOL &absoluteValue, 
 	BOOL &clippingEnabled,
-	ICustom2Filter::LongArray &kernelArray)
+	SvOi::ICustom2Filter::LongArray &kernelArray)
 {
 	SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
 	CString Label;

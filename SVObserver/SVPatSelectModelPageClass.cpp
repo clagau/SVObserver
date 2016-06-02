@@ -33,8 +33,6 @@
 #define new DEBUG_NEW
 #endif
 
-using namespace Seidenader::SVOMFCLibrary;
-
 static const int SVMinModelWidth = 4;
 static const int SVMinModelHeight = 4;
 static const int SVMinModelWidthWithCircular = 25;
@@ -410,7 +408,7 @@ void SVPatModelPageClass::ObjectChangedExDialogImage(long Tab, long Handle, VARI
 	////////////////////////////////////////////////////////
 	// SET SHAPE PROPERTIES
 	VariantParamMap ParaMap;
-	int count = DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+	int count = SvOml::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 	if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
 		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&

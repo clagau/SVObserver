@@ -54,6 +54,10 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");
 	const TCHAR* const ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffline");
 
+	const TCHAR* const cInspectionProcessTag = _T( "SVInspectionProcess" );
+	const TCHAR* const cPPQObjectTag = _T( "SVPPQObject" );
+	const TCHAR* const cRemoteOutputGroupTag = _T( "SVRemoteOutputGroup" );
+
 } /* namespace SVObserver */ } /* namespace Seidenader */
 
 namespace SvO = Seidenader::SVObserver;

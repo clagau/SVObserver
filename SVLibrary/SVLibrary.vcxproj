@@ -111,7 +111,6 @@
     <ClCompile Include="SVBStr.cpp" />
     <ClCompile Include="SVPackedFile.cpp" />
     <ClCompile Include="SVSimpleIndexQueue.cpp" />
-    <ClCompile Include="SVVersionInfo.cpp" />
     <ClCompile Include="SVWinUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -122,7 +121,6 @@
     <ClInclude Include="SVPackedFile.h" />
     <ClInclude Include="SVReferenceCountingTemplate.h" />
     <ClInclude Include="SVSimpleIndexQueue.h" />
-    <ClInclude Include="SVVersionInfo.h" />
     <ClInclude Include="SVVisitor.h" />
     <ClInclude Include="SVWinUtility.h" />
   </ItemGroup>

@@ -47,7 +47,7 @@ HRESULT SVJsonUtilities::ConvertJsonValueToVariant( const Json::Value& p_rJsonVa
 		}
 	case Json::stringValue:
 		{
-			l_VariantWrapper = SVStringConversions::to_utf16( p_rJsonValue.asString() ).c_str();
+			l_VariantWrapper = SvUl::to_utf16( p_rJsonValue.asString() ).c_str();
 
 			break;
 		}
@@ -164,7 +164,7 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 				// we are putting the result in a string.
 				// In the future we may put the result in a its native type.
 				SVString l_strTmp = SvUl_SF::Format( _T("0x%016I64x"), p_rVariant.llVal);
-				p_rJsonValue = Json::Value( SVStringConversions::to_utf8(_bstr_t(l_strTmp.c_str()) ));
+				p_rJsonValue = Json::Value( SvUl::to_utf8(_bstr_t(l_strTmp.c_str()) ));
 				break;
 			}
 		case VT_R4:
@@ -176,7 +176,7 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 			}
 		case VT_BSTR:
 			{
-				p_rJsonValue = Json::Value( SVStringConversions::to_utf8( static_cast< _bstr_t >( p_rVariant ) ).c_str() );
+				p_rJsonValue = Json::Value( SvUl::to_utf8( static_cast< _bstr_t >( p_rVariant ) ).c_str() );
 
 				break;
 			}

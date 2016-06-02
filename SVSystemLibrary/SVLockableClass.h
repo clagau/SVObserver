@@ -11,25 +11,22 @@
 
 #pragma once
 
-namespace Seidenader
+namespace Seidenader { namespace SVSystemLibrary
 {
-	namespace SVSystemLibrary
+	class SVLockableClass
 	{
-		class SVLockableClass
-		{
-		public:
-			SVLockableClass();
+	public:
+		SVLockableClass();
 
-			virtual ~SVLockableClass();
+		virtual ~SVLockableClass();
 
-			BOOL Lock( DWORD DWWaitTime = INFINITE ) const;
-			BOOL Unlock() const;
+		BOOL Lock( DWORD DWWaitTime = INFINITE ) const;
+		BOOL Unlock() const;
 
-		protected:
-			HANDLE hProtectionMutex; 
-		};
-	} //SVSystemLibrary
-} //Seidenader
+	protected:
+		HANDLE hProtectionMutex; 
+	};
+} /*SVSystemLibrary*/ } /*Seidenader*/
 
 namespace SvSyl = Seidenader::SVSystemLibrary;
 

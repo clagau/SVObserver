@@ -11,9 +11,11 @@
 
 #pragma once
 
-// This does not use the guideline namespace format because it is legacy code from the SVObserverWeb project.
-namespace SeidenaderVision
+namespace Seidenader { namespace SVUtilityLibrary 
 {
+	//************************************
+	/// SVMetrics is usually not used but should stay in the utility library to be able to use when needed
+	//************************************
 	struct SVMetrics
 	{
 		double minTime;
@@ -25,5 +27,7 @@ namespace SeidenaderVision
 		void Clear();
 		void Update(double elapsed);
 	};
-}
+} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
+
+namespace SvUl = Seidenader::SVUtilityLibrary;
 

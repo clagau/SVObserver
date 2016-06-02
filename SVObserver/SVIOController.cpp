@@ -632,12 +632,12 @@ void SVIOController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
 	m_RemoteMonitorListController.BuildPPQMonitorList(ppqMonitorList);
 }
 
-HRESULT SVIOController::SetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum filter)
+HRESULT SVIOController::SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
 {
 	return m_RemoteMonitorListController.SetRemoteMonitorListProductFilter(listName, filter);
 }
 
-HRESULT SVIOController::GetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum& rFilter) const
+HRESULT SVIOController::GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	return m_RemoteMonitorListController.GetRemoteMonitorListProductFilter(listName, rFilter);
 }

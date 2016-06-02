@@ -9,15 +9,23 @@
 //* .Check In Date   : $Date:   14 Aug 2014 17:08:30  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "SVSharedData.h"
+#pragma endregion Includes
 
-struct SVSharedLastInspectedCache
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	volatile long current_idx;
-	SVSharedDataVector data;
+	struct SVSharedLastInspectedCache
+	{
+		volatile long current_idx;
+		SVSharedDataVector data;
 
-	SVSharedLastInspectedCache(const void_allocator & alloc, size_t cache_size);
-};
+		SVSharedLastInspectedCache(const void_allocator & alloc, size_t cache_size);
+	};
 
-typedef boost::interprocess::allocator<SVSharedLastInspectedCache, segment_manager_t> SVSharedLastInspectedCacheAllocator;
+	typedef boost::interprocess::allocator<SVSharedLastInspectedCache, segment_manager_t> SVSharedLastInspectedCacheAllocator;
 
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

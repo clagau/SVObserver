@@ -8,105 +8,108 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   14 Aug 2014 17:07:26  $
 //******************************************************************************
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVMonitorListReader.h"
 #include "SVSharedConfiguration.h"
+#pragma endregion Includes
 
-const std::string g_shName = "MonitorListStore";
-
-using namespace SeidenaderVision;
- 
-SVMonitorListReader::SVMonitorListReader(): m_store(nullptr), m_isOpen(false)
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	SVSharedConfiguration::Log("SVMonitorListReader::Constructor");
-}
+	const std::string g_shName = "MonitorListStore";
 
-SVMonitorListReader::~SVMonitorListReader()
-{
-	SVSharedConfiguration::Log("SVMonitorListReader::Destructor");
-	Close();
-}
-
-bool SVMonitorListReader::Open()
-{
-	SVSharedConfiguration::Log("SVMonitorListReader::Open");
-	bool retVal = false;
-	try
+	SVMonitorListReader::SVMonitorListReader(): m_store(nullptr), m_isOpen(false)
 	{
-		m_ShareName = g_shName + "." + SVSharedConfiguration::GetShareName();
-		shm = DataSharedMemPtr(new boost::interprocess::managed_shared_memory(boost::interprocess::open_read_only, m_ShareName.c_str()));
-
-		// get a pointer to the monitor list segment
-		auto store = shm->find<SVMonitorListStore>(g_shName.c_str());
-		//if (store.second)
-		if (store.first)
-		{	
-			m_store = store.first;
-			retVal = true;
-			m_isOpen = true;
-		}
+		SVSharedConfiguration::Log("SVMonitorListReader::Constructor");
 	}
-	catch (boost::interprocess::interprocess_exception & e)
-	{
-		SVSharedConfiguration::Log(e.what());
-		m_isOpen = false;
-		m_store = nullptr;
-	}
-	return retVal;
-}
 
-void SVMonitorListReader::Close()
-{
-	SVSharedConfiguration::Log("SVMonitorListReader::Close");
-	try
+	SVMonitorListReader::~SVMonitorListReader()
 	{
-		if (shm)
+		SVSharedConfiguration::Log("SVMonitorListReader::Destructor");
+		Close();
+	}
+
+	bool SVMonitorListReader::Open()
+	{
+		SVSharedConfiguration::Log("SVMonitorListReader::Open");
+		bool retVal = false;
+		try
 		{
-			shm.reset();
+			m_ShareName = g_shName + "." + SVSharedConfiguration::GetShareName();
+			shm = DataSharedMemPtr(new boost::interprocess::managed_shared_memory(boost::interprocess::open_read_only, m_ShareName.c_str()));
+
+			// get a pointer to the monitor list segment
+			auto store = shm->find<SVMonitorListStore>(g_shName.c_str());
+			//if (store.second)
+			if (store.first)
+			{	
+				m_store = store.first;
+				retVal = true;
+				m_isOpen = true;
+			}
 		}
+		catch (boost::interprocess::interprocess_exception & e)
+		{
+			SVSharedConfiguration::Log(e.what());
+			m_isOpen = false;
+			m_store = nullptr;
+		}
+		return retVal;
 	}
-	catch(boost::interprocess::interprocess_exception& e)
+
+	void SVMonitorListReader::Close()
 	{
-		SVSharedConfiguration::Log(e.what());
+		SVSharedConfiguration::Log("SVMonitorListReader::Close");
+		try
+		{
+			if (shm)
+			{
+				shm.reset();
+			}
+		}
+		catch(boost::interprocess::interprocess_exception& e)
+		{
+			SVSharedConfiguration::Log(e.what());
+		}
+		m_store = nullptr;
+		m_ShareName.clear();
+		m_isOpen = false;
 	}
-	m_store = nullptr;
-	m_ShareName.clear();
-	m_isOpen = false;
-}
 
-bool SVMonitorListReader::IsOpen() const
-{
-	SVSharedConfiguration::Log("SVMonitorListReader::IsOpen");
-	return m_isOpen && nullptr != m_store;
-}
-
-const SVSharedMonitorList & SVMonitorListReader::operator[](const std::string & listName) const
-{
-	SVSharedConfiguration::Log("SVMonitorListReader::operator[]");
-	if (!IsOpen())
+	bool SVMonitorListReader::IsOpen() const
 	{
-		throw std::exception("operator[]: MonitorListStore not open yet.");
+		SVSharedConfiguration::Log("SVMonitorListReader::IsOpen");
+		return m_isOpen && nullptr != m_store;
 	}
-	return (*m_store)[listName];
-}
 
-const std::vector<std::string> SVMonitorListReader::GetListNames() const
-{
-	SVSharedConfiguration::Log("SVMonitorListReader::GetListNames");
-	if (!IsOpen())
+	const SVSharedMonitorList & SVMonitorListReader::operator[](const std::string & listName) const
 	{
-		throw std::exception("GetListNames: MonitorListStore not open yet.");
+		SVSharedConfiguration::Log("SVMonitorListReader::operator[]");
+		if (!IsOpen())
+		{
+			throw std::exception("operator[]: MonitorListStore not open yet.");
+		}
+		return (*m_store)[listName];
 	}
-	return m_store->GetListNames();
-}
 
-bool SVMonitorListReader::HasList(const std::string & name) const
-{
-	SVSharedConfiguration::Log("SVMonitorListReader::HasList");
-	if (!IsOpen())
+	const std::vector<std::string> SVMonitorListReader::GetListNames() const
 	{
-		throw std::exception("HasList: MonitorListStore not open yet.");
+		SVSharedConfiguration::Log("SVMonitorListReader::GetListNames");
+		if (!IsOpen())
+		{
+			throw std::exception("GetListNames: MonitorListStore not open yet.");
+		}
+		return m_store->GetListNames();
 	}
-	return m_store->HasList(name);
-}
 
+	bool SVMonitorListReader::HasList(const std::string & name) const
+	{
+		SVSharedConfiguration::Log("SVMonitorListReader::HasList");
+		if (!IsOpen())
+		{
+			throw std::exception("HasList: MonitorListStore not open yet.");
+		}
+		return m_store->HasList(name);
+	}
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

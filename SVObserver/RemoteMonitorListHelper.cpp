@@ -59,7 +59,7 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 		sObjectName = name;
 	}
 
-	obj.guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(sObjectName);
+	obj.guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(sObjectName.c_str());
 	SVObjectNameInfo nameInfo;
 	SVObjectNameInfo::ParseObjectName(nameInfo, name.c_str());
 	

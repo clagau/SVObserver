@@ -37,21 +37,39 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <algorithm>
 #include <BaseTsd.h>
 #include <comdef.h>
+#include <CommCtrl.h>
+#include <comutil.h>		//Used by static library
 #include <concrt.h>
+#include <ctime>			//Used by static library
 #include <deque>
+#include <fstream>
+#include <iostream>
 #include <iterator>
 #include <list>
 #include <map>
-#include <set>
 #include <ppl.h>
+#include <sequential_tree.h>
+#include <set>
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
 #include <vector>
 #include <utility>
 
 #include <boost/config.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/graphviz.hpp>
+#include <boost/graph/reverse_graph.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
+#include <boost/utility.hpp>
 #pragma endregion Precompiled Headers
 

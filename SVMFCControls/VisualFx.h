@@ -34,8 +34,6 @@
 //Moved to precompiled header: #include <list>
 //Moved to precompiled header: #include <map>
 
-using namespace std;
-
 //=============================================================================
 // class TTabItem
 //
@@ -76,7 +74,7 @@ public:
   friend class TTabWnd;
 };
 
-typedef list<TTabItem*> TTabItemList;
+typedef std::list<TTabItem*> TTabItemList;
 
 //=============================================================================
 // class TTabWnd
@@ -189,7 +187,7 @@ protected:
 class TVisualObject;
 class TVisualFramework;
 
-typedef list<TVisualObject*> TVisualObjectList;
+typedef std::list<TVisualObject*> TVisualObjectList;
 typedef std::map<DWORD,TVisualObject*> TVisualObjectMap;
 
 class TVisualObject {

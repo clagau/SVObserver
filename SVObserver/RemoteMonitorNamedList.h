@@ -50,7 +50,7 @@ private:
 	MonitoredObjectList m_rejectConditionList;
 	MonitoredObjectList m_failStatusList;
 	bool m_bActive; // do not persist the active state
-	SVProductFilterEnum m_filter;
+	SvSml::SVProductFilterEnum m_filter;
 #pragma endregion PrivateData
 
 #pragma region PrivateMethods
@@ -88,8 +88,8 @@ public:
 	void Activate(bool bActivate);
 	bool IsActive() const;
 
-	void SetProductFilter(SVProductFilterEnum filter);
-	SVProductFilterEnum GetProductFilter() const;
+	void SetProductFilter(SvSml::SVProductFilterEnum filter);
+	SvSml::SVProductFilterEnum GetProductFilter() const;
 
 #pragma endregion PublicMethods
 };

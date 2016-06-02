@@ -67,10 +67,18 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
 #include <boost/assign/list_of.hpp>
+#include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
+#include <boost/graph/adjacency_list.hpp>				//Used by static library
+#include <boost/graph/depth_first_search.hpp>			//Used by static library
+#include <boost/graph/breadth_first_search.hpp>			//Used by static library
+#include <boost/graph/reverse_graph.hpp>				//Used by static library
+#include <boost/graph/filtered_graph.hpp>				//Used by static library
+#include <boost/graph/graphviz.hpp>						//Used by static library
 #include <boost/scoped_array.hpp>						//Used by static library
 #include <boost/tokenizer.hpp>
 #include <boost/tr1/memory.hpp>
+#include <boost/utility.hpp>
 #pragma endregion Precompiled Headers

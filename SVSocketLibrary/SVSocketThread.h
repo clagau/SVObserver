@@ -22,33 +22,38 @@ ThreadFunc must have the following prototype:
      void ThreadFunc();
 */
 
-template <typename ThreadFunc>
-class SVSocketThread
+namespace Seidenader { namespace SVSocketLibrary
 {
-private:
-	bool m_bQuit;
-	HANDLE m_hThread;
-	unsigned long m_ulThreadID;
-	_bstr_t m_tag;
-	ThreadFunc m_threadFunc;
+	template <typename ThreadFunc>
+	class SVSocketThread
+	{
+	private:
+		bool m_bQuit;
+		HANDLE m_hThread;
+		unsigned long m_ulThreadID;
+		_bstr_t m_tag;
+		ThreadFunc m_threadFunc;
 
-	static DWORD WINAPI ThreadProc( LPVOID lpParam );
+		static DWORD WINAPI ThreadProc( LPVOID lpParam );
 
-public:
-	SVSocketThread();
-	~SVSocketThread();
+	public:
+		SVSocketThread();
+		~SVSocketThread();
 
-	HRESULT Create(const ThreadFunc& threadFunc, const _bstr_t& p_rTag);
-	void Destroy();
+		HRESULT Create(const ThreadFunc& threadFunc, const _bstr_t& p_rTag);
+		void Destroy();
 
-	HRESULT Restart();
+		HRESULT Restart();
 
-	int GetPriority() const;
-	void SetPriority(int priority);
+		int GetPriority() const;
+		void SetPriority(int priority);
 
-	bool IsActive() const;
-	HANDLE GetThreadHandle() const;
-};
+		bool IsActive() const;
+		HANDLE GetThreadHandle() const;
+	};
+} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSol = Seidenader::SVSocketLibrary;
 
 #include "SVSocketThread.inl"
 

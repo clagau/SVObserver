@@ -40,51 +40,47 @@
 
 //Moved to precompiled header:  #include <afxole.h>
 
-
-namespace Seidenader
+namespace Seidenader { namespace GridCtrlLibrary
 {
-	namespace GridCtrlLibrary
+	class CGridCtrl;
+
+	class CGridDropTarget : public COleDropTarget
 	{
-		class CGridCtrl;
+	public:
+		CGridDropTarget();
+		virtual ~CGridDropTarget();
 
-		class CGridDropTarget : public COleDropTarget
-		{
-		public:
-			CGridDropTarget();
-			virtual ~CGridDropTarget();
+	// Attributes
+	public:
+		CGridCtrl* m_pGridCtrl;
+		BOOL       m_bRegistered;
 
-		// Attributes
-		public:
-			CGridCtrl* m_pGridCtrl;
-			BOOL       m_bRegistered;
+	// Operations
+	public:
+		BOOL Register(CGridCtrl *pGridCtrl);
+		virtual void Revoke();
 
-		// Operations
-		public:
-			BOOL Register(CGridCtrl *pGridCtrl);
-			virtual void Revoke();
+		BOOL        OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
+		DROPEFFECT  OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+		void        OnDragLeave(CWnd* pWnd);
+		DROPEFFECT  OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+		DROPEFFECT  OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint point);
 
-			BOOL        OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
-			DROPEFFECT  OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-			void        OnDragLeave(CWnd* pWnd);
-			DROPEFFECT  OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-			DROPEFFECT  OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint point);
+	// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CGridDropTarget)
+		//}}AFX_VIRTUAL
 
-		// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(CGridDropTarget)
-			//}}AFX_VIRTUAL
+	// Implementation
+	protected:
 
-		// Implementation
-		protected:
+		// Generated message map functions
+		//{{AFX_MSG(CGridDropTarget)
+		//}}AFX_MSG
 
-			// Generated message map functions
-			//{{AFX_MSG(CGridDropTarget)
-			//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
+	};
 
-			DECLARE_MESSAGE_MAP()
-		};
-	} //namespace GridCtrlLibrary
-} //namespace Seidenader
+} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
 
 namespace SvGcl = Seidenader::GridCtrlLibrary;
-

@@ -11,16 +11,23 @@
 #pragma once
 #pragma comment (lib, "ws2_32.lib")
 
+#pragma region Includes
 #include "SVSocketError.h"
+#pragma endregion Includes
 
-class SVSocketLibrary
+namespace Seidenader { namespace SVSocketLibrary
 {
-public:
-	static SVSocketError::ErrorEnum Init();
-	static SVSocketError::ErrorEnum Destroy();
+	class SVSocketLibrary
+	{
+	public:
+		static SVSocketError::ErrorEnum Init();
+		static SVSocketError::ErrorEnum Destroy();
 
-private:
-	SVSocketLibrary();
-	~SVSocketLibrary();
-};
+	private:
+		SVSocketLibrary();
+		~SVSocketLibrary();
+	};
+} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSol = Seidenader::SVSocketLibrary;
 

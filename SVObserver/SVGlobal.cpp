@@ -47,7 +47,7 @@ CMDIChildWnd* SVSearchForMDIChildWnd( CWnd* PStartWnd )
 // Works also with negative values.
 long SVCalcLinePixelNumber( long Width, long Height )
 {
-	long Length = max( labs( Width ), labs( Height ) );
+	long Length = std::max( labs( Width ), labs( Height ) );
 	return( ( Width && Height ) ? ++Length : Length );
 }
 

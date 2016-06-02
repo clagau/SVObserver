@@ -10,35 +10,40 @@
 //******************************************************************************
 #pragma once
 
-class SVSharedMemorySettings
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-private:
-	long m_monitorStoreSize;	// in MB
-	long m_dataStoreSize;		// in MB
-	long m_productStoreSize;	// in MB
-	long m_productNumSlots;		// used for both PPQ and Inspections
-	long m_rejectsNumSlots;
-
-public:
-	enum Defaults
+	class SVSharedMemorySettings
 	{
-		DefaultMonitorStoreSize = 4,
-		DefaultProductStoreSize = 8,
-		DefaultDataStoreSize = 20,
-		DefaultProductNumSlots = 64,
-		DefaultRejectsNumSlots = 100
+	private:
+		long m_monitorStoreSize;	// in MB
+		long m_dataStoreSize;		// in MB
+		long m_productStoreSize;	// in MB
+		long m_productNumSlots;		// used for both PPQ and Inspections
+		long m_rejectsNumSlots;
+
+	public:
+		enum Defaults
+		{
+			DefaultMonitorStoreSize = 4,
+			DefaultProductStoreSize = 8,
+			DefaultDataStoreSize = 20,
+			DefaultProductNumSlots = 64,
+			DefaultRejectsNumSlots = 100
+		};
+		SVSharedMemorySettings();
+		SVSharedMemorySettings(long monitorSz, long prodStoreSz, long dataStoreSz, long numProductSlots, long numRejectSlots);
+
+		SVSharedMemorySettings(const SVSharedMemorySettings& rSettings);
+		SVSharedMemorySettings& operator=(const SVSharedMemorySettings& rSettings);
+		long MonitorStoreSize() const;
+		long ProductStoreSize() const;
+		long DataStoreSize() const;
+		long NumProductSlots() const;
+		void SetNumProductSlots(long numProductSlots);
+		long NumRejectSlots() const;
+		void SetNumRejectSlots(long numRejectSlots);
 	};
-	SVSharedMemorySettings();
-	SVSharedMemorySettings(long monitorSz, long prodStoreSz, long dataStoreSz, long numProductSlots, long numRejectSlots);
 
-	SVSharedMemorySettings(const SVSharedMemorySettings& rSettings);
-	SVSharedMemorySettings& operator=(const SVSharedMemorySettings& rSettings);
-	long MonitorStoreSize() const;
-	long ProductStoreSize() const;
-	long DataStoreSize() const;
-	long NumProductSlots() const;
-	void SetNumProductSlots(long numProductSlots);
-	long NumRejectSlots() const;
-	void SetNumRejectSlots(long numRejectSlots);
-};
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

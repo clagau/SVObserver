@@ -1494,7 +1494,7 @@ void SVPPQObject::GoOnline()
 
 static void QuieseSharedMemory()
 {
-	SeidenaderVision::SVShareControlHandler& rControlShare = SVSharedMemorySingleton::Instance().GetIPCShare();
+	SvSml::SVShareControlHandler& rControlShare = SVSharedMemorySingleton::Instance().GetIPCShare();
 	if (rControlShare.IsCreated())
 	{
 		rControlShare.ClearReady();
@@ -3173,7 +3173,7 @@ bool SVPPQObject::SetInspectionComplete( long p_PPQIndex )
 		// Currently only used for Remote Outputs and Fail Status Stream.
 		// returns E_FAIL when there are no listeners/observers.  Not having 
 		// Remote Outputs or Fail Status is not an error in this case.
-		SVObjectManagerClass::Instance().UpdateObservers( "SVPPQObject", GetUniqueObjectID(), *pProduct );
+		SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cPPQObjectTag ), GetUniqueObjectID(), *pProduct );
 
 	}
 
@@ -4031,9 +4031,9 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 						{
 							try
 							{
-								SeidenaderVision::SVSharedPPQWriter& rWriter = SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
+								SvSml::SVSharedPPQWriter& rWriter = SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
 								long idx = 0;
-								SeidenaderVision::SVSharedProduct& rSharedProduct = rWriter.RequestNextProductSlot(idx);
+								SvSml::SVSharedProduct& rSharedProduct = rWriter.RequestNextProductSlot(idx);
 								rSharedProduct.m_TriggerCount = pProduct->ProcessCount();
 								pProduct->m_lastInspectedSlot = idx;
 								std::for_each(pProduct->m_svInspectionInfos.begin(), pProduct->m_svInspectionInfos.end(), 
@@ -4872,11 +4872,11 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 
 		// Get List of Inspections for this PPQ
 		// SVSharedPPQWriter will create the inspection shares
-		SeidenaderVision::InspectionIDs sharedInspectionWriterCreationInfo;
+		SvSml::InspectionIDs sharedInspectionWriterCreationInfo;
 		size_t iSize = m_arInspections.GetSize();
 		for( size_t i = 0; i < iSize; i++ )
 		{
-			sharedInspectionWriterCreationInfo.push_back(SeidenaderVision::InspectionID(m_arInspections[i]->GetName(), m_arInspections[i]->GetUniqueObjectID()));
+			sharedInspectionWriterCreationInfo.push_back(SvSml::InspectionID(m_arInspections[i]->GetName(), m_arInspections[i]->GetUniqueObjectID()));
 		}
 		HRESULT hr = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), sharedInspectionWriterCreationInfo);
 		if (S_OK != hr)
@@ -4891,7 +4891,7 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 		}
 		else
 		{
-			SeidenaderVision::SVShareControlHandler& rControlHandler = SVSharedMemorySingleton::Instance().GetIPCShare();
+			SvSml::SVShareControlHandler& rControlHandler = SVSharedMemorySingleton::Instance().GetIPCShare();
 			if (rControlHandler.IsCreated())
 			{
 				rControlHandler.SetReady();
@@ -5117,7 +5117,7 @@ static SVGUID GetInspectionGuid(const SVString& rName)
 
 	if (dottedName.size())
 	{
-		guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(dottedName[0]);
+		guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(dottedName[0].c_str());
 	}
 	return guid;
 }
@@ -5170,8 +5170,8 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 		try
 		{
 			// Release Shared Product
-			SeidenaderVision::SVSharedPPQWriter& rWriter = SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
-			SeidenaderVision::SVSharedProduct& rSharedProduct = rWriter.GetProductSlot(rProduct.m_lastInspectedSlot);
+			SvSml::SVSharedPPQWriter& rWriter = SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
+			SvSml::SVSharedProduct& rSharedProduct = rWriter.GetProductSlot(rProduct.m_lastInspectedSlot);
 			rSharedProduct.m_TriggerCount = -1;
 			rSharedProduct.m_Inspections.clear();
 
@@ -5202,10 +5202,10 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 		try
 		{
 			long shareSlotIndex = rProduct.m_lastInspectedSlot;
-			SeidenaderVision::SVSharedPPQWriter& rWriter = SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
+			SvSml::SVSharedPPQWriter& rWriter = SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
 
 			// Get next Available Product Slot
-			SeidenaderVision::SVSharedProduct& rSharedProduct = rWriter.GetProductSlot(shareSlotIndex);
+			SvSml::SVSharedProduct& rSharedProduct = rWriter.GetProductSlot(shareSlotIndex);
 
 			rSharedProduct.m_TriggerCount = rProduct.ProcessCount();
 			rSharedProduct.m_Inspections.clear();
@@ -5215,9 +5215,9 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 			for (SVGUIDSVInspectionInfoStructMap::const_iterator it = rProduct.m_svInspectionInfos.begin();it != rProduct.m_svInspectionInfos.end();++it)
 			{
 				const SVString& rShareName = rWriter[it->first].GetShareName();
-				std::pair< SVSharedInspectionMap::iterator,bool>  mRet; 	
-				mRet = rSharedProduct.m_Inspections.insert(SVSharedInspectionPair(char_string(rShareName.c_str(), rSharedProduct.m_Allocator), 
-					SVSharedInspection(rShareName.c_str(), it->second.m_lastInspectedSlot, rSharedProduct.m_Allocator)));
+				std::pair< SvSml::SVSharedInspectionMap::iterator,bool>  mRet; 	
+				mRet = rSharedProduct.m_Inspections.insert(SvSml::SVSharedInspectionPair(SvSml::char_string(rShareName.c_str(), rSharedProduct.m_Allocator), 
+					SvSml::SVSharedInspection(rShareName.c_str(), it->second.m_lastInspectedSlot, rSharedProduct.m_Allocator)));
 			}
 			// A Reject Depth of Zero is allowed and means we aren't keeping any rejects
 			// Check for Reject - if Reject copy Last Inspected to reject (this includes images(file copies))
@@ -5251,22 +5251,22 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 }
 
 // This method checks the Monitor List Reject Condition (usage is for shared memory only)
-HRESULT SVPPQObject::CheckRejectCondition(const SVProductInfoStruct& rProduct, SeidenaderVision::SVSharedPPQWriter& rWriter) const
+HRESULT SVPPQObject::CheckRejectCondition(const SVProductInfoStruct& rProduct, SvSml::SVSharedPPQWriter& rWriter) const
 {
 	HRESULT hr = S_FALSE; // means not a reject
 
 	for (SVInspectionFilterElementMap::const_iterator it = m_SharedMemoryItems.m_RejectConditionValues.begin();it != m_SharedMemoryItems.m_RejectConditionValues.end() && S_OK != hr;++it)
 	{
 		// Get the writer, the last inspected index and the lastInspected data
-		SeidenaderVision::SVSharedInspectionWriter& rInspectionWriter = rWriter[it->first];
+		SvSml::SVSharedInspectionWriter& rInspectionWriter = rWriter[it->first];
 		long index = GetProductInfoInspectionIndex(it->first, rProduct);
 		if (-1 != index)
 		{
-			const SVSharedData& rData = rInspectionWriter.GetLastInspectedSlot(index);
+			const SvSml::SVSharedData& rData = rInspectionWriter.GetLastInspectedSlot(index);
 			for (SVFilterElementMap::const_iterator itItem = it->second.begin();itItem != it->second.end() && S_OK != hr;++itItem)
 			{
 				// Find the named item in the Shared memory
-				SVSharedValueMap::const_iterator valIt = rData.m_Values.find(char_string(itItem->first.c_str(), rData.m_Allocator));
+				SvSml::SVSharedValueMap::const_iterator valIt = rData.m_Values.find(SvSml::char_string(itItem->first.c_str(), rData.m_Allocator));
 				if (valIt != rData.m_Values.end())
 				{
 					// Get the data value and convert to double...

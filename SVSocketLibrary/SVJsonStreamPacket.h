@@ -10,23 +10,30 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <sstream>
+#pragma endregion Includes
 
-class SVJsonStreamPacket
+namespace Seidenader { namespace SVSocketLibrary
 {
-private:
-	std::stringstream m_packet;
-	std::string m_pending;
-	int m_count;
+	class SVJsonStreamPacket
+	{
+	private:
+		std::stringstream m_packet;
+		std::string m_pending;
+		int m_count;
 
-public:
-	SVJsonStreamPacket();
-	void Add(const std::string& data);
-	bool IsComplete() const;
-	bool IsValid() const;
-	std::istream& GetJsonDataStream();
-	void Clear();
-	void Reset();
-};
+	public:
+		SVJsonStreamPacket();
+		void Add(const std::string& data);
+		bool IsComplete() const;
+		bool IsValid() const;
+		std::istream& GetJsonDataStream();
+		void Clear();
+		void Reset();
+	};
+} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSol = Seidenader::SVSocketLibrary;
 

@@ -116,7 +116,7 @@ namespace Seidenader
 								{
 									std::wstring alias_tag( TAG_ALIAS );
 									alias_tag += TAG_SINGLE_QUOTE;
-									alias_tag += SVStringConversions::to_utf16( it->m_tag );
+									alias_tag += SvUl::to_utf16( it->m_tag );
 									alias_tag += TAG_SINGLE_QUOTE;
 
 									if ( nullptr != wcsstr( static_cast<LPCWSTR>(str), alias_tag.c_str() ) )

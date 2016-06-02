@@ -10,12 +10,12 @@
 //* ----------------------------------------------------------------------------
 //* This class is the interface between the object manager and object selector
 //******************************************************************************
-
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <assert.h>
 #include "ObjectInterfaces\ISelectorItemVector.h"
-#include "SVTreeLibrary\ObjectTreeItems.h"
+#include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SelectorItem.h"
 #include "SelectorItemVector.h"
 #include "SelectorOptions.h"
@@ -181,7 +181,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	private:
 	#pragma region Member Variables
-		SvTrl::ObjectTreeItems	m_TreeContainer;	//The tree container to store all tree items
+		SvCl::ObjectTreeItems	m_TreeContainer;	//The tree container to store all tree items
 		SelectorItemVector m_SelectedObjects;		//The selected objects
 		SelectorItemVector m_ModifiedObjects;		//The modified objects
 		TranslateMap m_LocationInputFilters;		//The location input filters
@@ -191,11 +191,10 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		long m_LeafCount;							//The number of leafs in the selector (only as debug information)
 	#pragma endregion Member Variables
 	};
-
-	#pragma region Inline
-	#include "ObjectTreeGenerator.inl"
-	#pragma endregion Inline
 } /* namespace ObjectSelectorLibrary */ } /* namespace Seidenader */
 
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+#pragma region Inline
+#include "ObjectTreeGenerator.inl"
+#pragma endregion Inline
 
+namespace SvOsl = Seidenader::ObjectSelectorLibrary;

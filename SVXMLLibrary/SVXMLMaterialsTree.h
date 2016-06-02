@@ -15,10 +15,10 @@
 #include "SVXMLTree.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMaterialData.h"
-#include "SVTreeLibrary/SVTree.h"
+#include "SVContainerLibrary/SVTree.h"
 #pragma endregion Includes
 
-typedef SvTrl::SVTree<SVString, SVMaterialData> SVMaterialsTree;
+typedef SvCl::SVTree<SVString, SVMaterialData> SVMaterialsTree;
 
 namespace Seidenader { namespace SVXMLLibrary
 {

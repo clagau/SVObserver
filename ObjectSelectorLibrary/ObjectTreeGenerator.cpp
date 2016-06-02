@@ -17,7 +17,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "ObjectInterfaces\ITaskObject.h"
-#include "SVTreeLibrary\ObjectSelectorItem.h"
+#include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
 #include "ObjectFilterPpg.h"
@@ -154,7 +154,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 		while( rItems.end() != IterName )
 		{
-			SvTrl::ObjectTreeItems::iterator Iter( m_TreeContainer.begin() );
+			SvCl::ObjectTreeItems::iterator Iter( m_TreeContainer.begin() );
 			//Need to check if input filters are used
 			SVString Location = getFilteredLocation( m_LocationInputFilters,  *IterName );
 			//If an array we need the extra branch
@@ -173,7 +173,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 			Iter = m_TreeContainer.findItem( Location );
 			if( m_TreeContainer.end() != Iter )
 			{
-				Iter->second->setCheckedState( SvTrl::IObjectSelectorItem::CheckedEnabled );
+				Iter->second->setCheckedState( SvCl::IObjectSelectorItem::CheckedEnabled );
 				Result = true;
 			}
 			++IterName;
@@ -230,35 +230,35 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma region Private Methods
 	void ObjectTreeGenerator::insertTreeObject( const SvOi::ISelectorItem& rItem )
 	{
-		SvTrl::ObjectSelectorItem SelectorItem;
-		SvTrl::IObjectSelectorItem::AttributeEnum Attribute( static_cast<SvTrl::IObjectSelectorItem::AttributeEnum> (SvTrl::IObjectSelectorItem::Leaf | SvTrl::IObjectSelectorItem::Checkable) );
+		SvCl::ObjectSelectorItem SelectorItem;
+		SvCl::IObjectSelectorItem::AttributeEnum Attribute( static_cast<SvCl::IObjectSelectorItem::AttributeEnum> (SvCl::IObjectSelectorItem::Leaf | SvCl::IObjectSelectorItem::Checkable) );
 
 		SVString Location( rItem.getLocation() );
 		SelectorItem.setName( rItem.getName() );
 		SelectorItem.setLocation( Location );
 		SelectorItem.setItemKey( rItem.getItemKey() );
 		SelectorItem.setItemTypeName( rItem.getItemTypeName() );
-		SelectorItem.setCheckedState( SvTrl::IObjectSelectorItem::UncheckedEnabled );
+		SelectorItem.setCheckedState( SvCl::IObjectSelectorItem::UncheckedEnabled );
 
 		if( rItem.isArray() )
 		{
 			Location = convertObjectArrayName( rItem );
 			SelectorItem.setArrayIndex( rItem.getArrayIndex() );
-			Attribute = static_cast<SvTrl::IObjectSelectorItem::AttributeEnum> (SvTrl::IObjectSelectorItem::Leaf | SvTrl::IObjectSelectorItem::Checkable | SvTrl::IObjectSelectorItem::Array);
+			Attribute = static_cast<SvCl::IObjectSelectorItem::AttributeEnum> (SvCl::IObjectSelectorItem::Leaf | SvCl::IObjectSelectorItem::Checkable | SvCl::IObjectSelectorItem::Array);
 		}
 
 		if( TypeSetAttributes == (m_SelectorType & TypeSetAttributes) )
 		{
 			if( rItem.isSelected() )
 			{
-				SelectorItem.setCheckedState( SvTrl::IObjectSelectorItem::CheckedEnabled );
+				SelectorItem.setCheckedState( SvCl::IObjectSelectorItem::CheckedEnabled );
 			}
 		}
 
 		if( rItem.isArray() )
 		{
 			SelectorItem.setArrayIndex( rItem.getArrayIndex() );
-			Attribute = static_cast<SvTrl::IObjectSelectorItem::AttributeEnum> (SvTrl::IObjectSelectorItem::Leaf | SvTrl::IObjectSelectorItem::Checkable | SvTrl::IObjectSelectorItem::Array);
+			Attribute = static_cast<SvCl::IObjectSelectorItem::AttributeEnum> (SvCl::IObjectSelectorItem::Leaf | SvCl::IObjectSelectorItem::Checkable | SvCl::IObjectSelectorItem::Array);
 		}
 
 		SelectorItem.setAttibute( Attribute );
@@ -273,11 +273,11 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 		m_SelectedObjects.clear();
 		m_ModifiedObjects.clear();
-		SvTrl::ObjectTreeItems::pre_order_iterator Iter;
+		SvCl::ObjectTreeItems::pre_order_iterator Iter;
 
 		for( Iter = m_TreeContainer.pre_order_begin(); m_TreeContainer.pre_order_end() != Iter; ++Iter )
 		{
-			bool isSelected( SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() );
+			bool isSelected( SvCl::IObjectSelectorItem::CheckedEnabled == Iter->second->getCheckedState() );
 			bool isModified( Iter->second->getCheckedState() != Iter->second->getOrgCheckedState() );
 
 			if( isModified || isSelected )
@@ -326,7 +326,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	void ObjectTreeGenerator::setItemAttributes()
 	{
-		SvTrl::ObjectTreeItems::const_pre_order_iterator Iter( m_TreeContainer.pre_order_begin() );
+		SvCl::ObjectTreeItems::const_pre_order_iterator Iter( m_TreeContainer.pre_order_begin() );
 
 		while( m_TreeContainer.pre_order_end() != Iter )
 		{
@@ -351,10 +351,10 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 					switch( Iter->second->getCheckedState() )
 					{
-					case SvTrl::IObjectSelectorItem::CheckedEnabled:
+					case SvCl::IObjectSelectorItem::CheckedEnabled:
 						AttributesSet |= m_AttributesFilter;
 						break;
-					case SvTrl::IObjectSelectorItem::UncheckedEnabled:
+					case SvCl::IObjectSelectorItem::UncheckedEnabled:
 						AttributesSet &= ~m_AttributesFilter;
 						break;
 					default:
@@ -422,7 +422,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 			rSelectedItem.setDisplayLocation( DisplayLocation.c_str() );
 		}
 	}
-
 	#pragma endregion Private Methods
+
 } /* namespace ObjectSelectorLibrary */ } /* namespace Seidenader */
 

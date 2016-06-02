@@ -9,11 +9,14 @@
 //* .Check In Date   : $Date:   28 Aug 2014 18:41:54  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "SVMonitorListStore.h"
 #include "SVSharedMemorySettings.h"
 #include "SVProductFilterEnum.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	enum listType { productItems, rejectCondition, failStatus };
 
@@ -40,5 +43,6 @@ namespace SeidenaderVision
 	};
 
 	typedef boost::interprocess::allocator<SVMonitorListStore, segment_manager_t> MonitorListStoreAllocator;
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

@@ -24,7 +24,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-using namespace SvOi;
 enum
 {
 	OffVarRadioEnum_Off = 0,

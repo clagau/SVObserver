@@ -109,8 +109,8 @@ public:
 	HRESULT ActivateMonitorList( const SVString& rListName, bool bActivate );
 	HRESULT QueryMonitorListNames( SVNameSet& rNames ) const;
 	HRESULT GetInspectionNames( SVNameSet& rNames ) const;
-	HRESULT SetProductFilter( const SVString& rListName, SVProductFilterEnum filter );
-	HRESULT GetProductFilter( const SVString& rListName, SVProductFilterEnum& filter ) const;
+	HRESULT SetProductFilter( const SVString& rListName, SvSml::SVProductFilterEnum filter );
+	HRESULT GetProductFilter( const SVString& rListName, SvSml::SVProductFilterEnum& filter ) const;
 	HRESULT RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
 
 	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other

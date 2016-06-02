@@ -10,27 +10,34 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVShared.h"
+#pragma endregion Includes
 
-struct SVSharedInspection
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	char_string m_ShareName;
-	long m_Index;
+	struct SVSharedInspection
+	{
+		char_string m_ShareName;
+		long m_Index;
 
-	void_allocator m_Allocator;
+		void_allocator m_Allocator;
 
-	SVSharedInspection(const char* inspectionShareName, long index, const void_allocator& rAlloc);
-	SVSharedInspection(const void_allocator& rAlloc);
-	SVSharedInspection(const SVSharedInspection& rData);
+		SVSharedInspection(const char* inspectionShareName, long index, const void_allocator& rAlloc);
+		SVSharedInspection(const void_allocator& rAlloc);
+		SVSharedInspection(const SVSharedInspection& rData);
 
-	const SVSharedInspection& operator=(const SVSharedInspection& rData);
-};
+		const SVSharedInspection& operator=(const SVSharedInspection& rData);
+	};
 
-typedef boost::interprocess::allocator<SVSharedInspection, segment_manager_t> SVSharedInspectionAllocator;
-// The first item in the pair is the Inspection Share Name
-typedef std::pair<char_string, SVSharedInspection> SVSharedInspectionPair; // non const key for flt map
-typedef boost::interprocess::allocator<SVSharedInspectionPair, segment_manager_t> SVSharedInspectionPairAllocator;
-// The Key is the Inspection Share Name
-typedef boost::interprocess::flat_map<char_string, SVSharedInspection, std::less<char_string>, SVSharedInspectionPairAllocator> SVSharedInspectionMap;
-typedef boost::interprocess::allocator<SVSharedInspectionMap, segment_manager_t> SVSharedInspectionMapAllocator;
+	typedef boost::interprocess::allocator<SVSharedInspection, segment_manager_t> SVSharedInspectionAllocator;
+	// The first item in the pair is the Inspection Share Name
+	typedef std::pair<char_string, SVSharedInspection> SVSharedInspectionPair; // non const key for flt map
+	typedef boost::interprocess::allocator<SVSharedInspectionPair, segment_manager_t> SVSharedInspectionPairAllocator;
+	// The Key is the Inspection Share Name
+	typedef boost::interprocess::flat_map<char_string, SVSharedInspection, std::less<char_string>, SVSharedInspectionPairAllocator> SVSharedInspectionMap;
+	typedef boost::interprocess::allocator<SVSharedInspectionMap, segment_manager_t> SVSharedInspectionMapAllocator;
 
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

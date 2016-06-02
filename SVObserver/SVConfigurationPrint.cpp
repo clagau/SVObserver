@@ -1276,7 +1276,7 @@ void SVConfigurationPrint::PrintValueObject(CDC* pDC, CPoint& ptCurPos, LPCTSTR 
 		nFirstHeight = PrintString(pDC, ptTemp, lpszName);
 		ptTemp.x     = (ptTemp.x <(m_pageCenter - 10)) ? m_pageCenter :(ptTemp.x + m_TabPixels);
 		nLastHeight  = PrintString(pDC, ptTemp, lpszValue);
-		ptCurPos.y  += max(nFirstHeight, nLastHeight); 
+		ptCurPos.y  += std::max(nFirstHeight, nLastHeight); 
     }
 }
 

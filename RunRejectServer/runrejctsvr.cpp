@@ -43,30 +43,30 @@ template<typename API>
 struct port;
 
 template<>
-struct port<TcpApi>
+struct port<SvSol::TcpApi>
 {
 	enum : u_short { number = 28965 };
 };
 
 template<>
-struct port<UdpApi>
+struct port<SvSol::UdpApi>
 {
 	enum : u_short { number = 28967 };
 };
 
 typedef Json::Value JsonCmd;
 
-typedef SeidenaderVision::SVShareControlHandler ShareControl;
-typedef SeidenaderVision::SVMonitorListReader MonitorListReader;
-typedef SeidenaderVision::SVSharedPPQReader PPQReader;
+typedef SvSml::SVShareControlHandler ShareControl;
+typedef SvSml::SVMonitorListReader MonitorListReader;
+typedef SvSml::SVSharedPPQReader PPQReader;
 
-typedef Seidenader::Socket::SVServerSocket<UdpApi> UdpServerSocket;
-typedef Seidenader::Socket::SVSocket<UdpApi> UdpSocket;
+typedef SvSol::SVServerSocket<SvSol::UdpApi> UdpServerSocket;
+typedef SvSol::SVSocket<SvSol::UdpApi> UdpSocket;
 
-typedef Seidenader::Socket::SVServerSocket<TcpApi> TcpServerSocket;
-typedef Seidenader::Socket::SVSocket<TcpApi> TcpSocket;
+typedef SvSol::SVServerSocket<SvSol::TcpApi> TcpServerSocket;
+typedef SvSol::SVSocket<SvSol::TcpApi> TcpSocket;
 
-typedef SeidenaderVision::ProductPtr ProductPtr;
+typedef SvSml::ProductPtr ProductPtr;
 
 typedef std::pair<ProductPtr, long> ProductPtrPair;
 
@@ -79,9 +79,7 @@ static std::map<std::string, ProductPtrPair> g_lastRejectProductMap;
 static std::map<std::string, ProductPtrPair> g_lastRejectMap; 
 
 
-using Seidenader::Socket::header;
-using Seidenader::Socket::Traits;
-using SeidenaderVision::SVSharedConfiguration;
+using SvSml::SVSharedConfiguration;
 
 DWORD WINAPI servimg(LPVOID)
 {
@@ -89,7 +87,7 @@ DWORD WINAPI servimg(LPVOID)
 	{
 		typedef UdpServerSocket ServerSocket;
 		typedef UdpSocket Socket;
-		typedef Seidenader::Socket::header header;
+		typedef SvSol::header header;
 		ServerSocket sok;
 		sok.Create();
 		sok.SetBufferSize(1024*1024);
@@ -110,7 +108,7 @@ DWORD WINAPI servimg(LPVOID)
 					// read file name
 					bytes buf;
 					u_long sz;
-					if (client.ReadAll(buf, sz, true) == SVSocketError::Success)
+					if (client.ReadAll(buf, sz, true) == SvSol::SVSocketError::Success)
 					{
 						std::string filename = std::string(reinterpret_cast<char *>(buf.get()), sz);
 						try
@@ -138,7 +136,7 @@ DWORD WINAPI servimg(LPVOID)
 				}
 				else
 				{
-					SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
+					SVSharedConfiguration::Log(client.Log(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError()), true));
 				}
 			}
 		}
@@ -162,7 +160,7 @@ struct MonitorListCopy
 	std::string m_ppq;
 	int m_rejectDepth;
 	bool m_IsActive;
-	SVProductFilterEnum m_ProductFilter;
+	SvSml::SVProductFilterEnum m_ProductFilter;
 };
 
 std::string GetVersionString()
@@ -214,8 +212,8 @@ JsonCmd ReadCommand(TcpSocket & sok)
 	bytes arr;
 
 	// read command from socket
-	SVSocketError::ErrorEnum error = SVSocketError::Success;
-	if (SVSocketError::Success == (error = sok.ReadAll(arr, buflen, false)))
+	SvSol::SVSocketError::ErrorEnum error = SvSol::SVSocketError::Success;
+	if (SvSol::SVSocketError::Success == (error = sok.ReadAll(arr, buflen, false)))
 	{
 		if (arr.get())
 		{
@@ -226,11 +224,11 @@ JsonCmd ReadCommand(TcpSocket & sok)
 	}
 	else
 	{
-		if (SVSocketError::ConnectionReset == error)
+		if (SvSol::SVSocketError::ConnectionReset == error)
 		{
 			sok.Destroy();
 		}
-		::OutputDebugStringA(SVSocketError::GetErrorText(error));
+		::OutputDebugStringA(SvSol::SVSocketError::GetErrorText(error));
 		::OutputDebugStringA("\n");
 	}
 	return val;
@@ -241,7 +239,7 @@ JsonCmd ReadCommand(UdpSocket & sok)
 	Json::Value val(Json::nullValue);
 	bytes buff;
 	u_long sz;
-	if (SVSocketError::Success == sok.ReadAll(buff, sz, true))
+	if (SvSol::SVSocketError::Success == sok.ReadAll(buff, sz, true))
 	{
 		const char * beg = reinterpret_cast<char *>(buff.get());
 		const char * end = beg + sz;
@@ -292,15 +290,15 @@ Json::Value NewResponse(const JsonCmd & cmd)
 	return rsp;
 }
 
-typedef SeidenaderVision::SVSharedInspectionReader SHMReader;
+typedef SvSml::SVSharedInspectionReader SHMReader;
 
 // the three following functions expect the Json array and add to it value/error/image objects respectively.
-Json::Value & GenerateValues(Json::Value & arr, InspectionDataPtr data, const MonitorListCopy::Strings& productItemNames)
+Json::Value & GenerateValues(Json::Value & arr, SvSml::InspectionDataPtr data, const MonitorListCopy::Strings& productItemNames)
 {
 	int count = data->m_TriggerCount;
-	for (SVSharedValueMap::const_iterator it = data->m_Values.begin(); it != data->m_Values.end(); ++it)
+	for (SvSml::SVSharedValueMap::const_iterator it = data->m_Values.begin(); it != data->m_Values.end(); ++it)
 	{
-		const SVSharedValueMap::value_type & pair = *it;
+		const SvSml::SVSharedValueMap::value_type & pair = *it;
 		if (std::find(productItemNames.begin(), productItemNames.end(), pair.first.c_str()) != productItemNames.end())
 		{
 			Json::Value val(Json::objectValue);
@@ -316,7 +314,7 @@ Json::Value & GenerateValues(Json::Value & arr, InspectionDataPtr data, const Mo
 	return arr;
 }
 
-Json::Value & GenerateErrors(Json::Value & arr, const InspectionDataPtr & data)
+Json::Value & GenerateErrors(Json::Value & arr, const SvSml::InspectionDataPtr & data)
 {
 	return arr;
 }
@@ -325,25 +323,25 @@ template<typename API>
 void AppendImageContents(Json::Value & val, const std::string & filePath);
 
 template<>
-void AppendImageContents<UdpApi>(Json::Value & val, const std::string & filePath)
+void AppendImageContents<SvSol::UdpApi>(Json::Value & val, const std::string & filePath)
 {
 	val[SVRC::io::imageFileName] = filePath;
 	val[SVRC::io::fetch] = 1;
 }
 
 template<>
-void AppendImageContents<TcpApi>(Json::Value & val, const std::string & filePath)
+void AppendImageContents<SvSol::TcpApi>(Json::Value & val, const std::string & filePath)
 {
 	val[SVRC::io::image] = EncodeImg(filePath);
 }
 
 template<typename API>
-Json::Value & GenerateImages(Json::Value & arr, InspectionDataPtr data, const MonitorListCopy::Strings& productItemNames)
+Json::Value & GenerateImages(Json::Value & arr, SvSml::InspectionDataPtr data, const MonitorListCopy::Strings& productItemNames)
 {
 	int count = data->m_TriggerCount;
-	for (SVSharedImageMap::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
+	for (SvSml::SVSharedImageMap::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
 	{
-		SVSharedImageMap::value_type & pair = *it;
+		SvSml::SVSharedImageMap::value_type& pair = *it;
 		if (std::find(productItemNames.begin(), productItemNames.end(), pair.first.c_str()) != productItemNames.end())
 		{
 			Json::Value val(Json::objectValue);
@@ -365,7 +363,7 @@ Json::Value WriteProductItems(ProductPtr product, const MonitorListCopy::Strings
 	Json::Value images(Json::arrayValue);
 	Json::Value errors(Json::arrayValue);
 	std::for_each(product->inspections.begin(), product->inspections.end(),
-		[&values, &images, &errors, &productItemNames](std::pair<const std::string, InspectionDataPtr> & pair) 
+		[&values, &images, &errors, &productItemNames](std::pair<const std::string, SvSml::InspectionDataPtr> & pair) 
 		{ 
 			GenerateValues(values, pair.second, productItemNames); 
 			GenerateImages<API>(images, pair.second, productItemNames); 
@@ -381,22 +379,18 @@ Json::Value WriteProductItems(ProductPtr product, const MonitorListCopy::Strings
 template<typename API>
 Json::Value DispatchCommand(const JsonCmd & cmd, const MonitorMapCopy & mlMap);
 
-using SeidenaderVision::FailStatusMap;
-using SeidenaderVision::Values;
-using SeidenaderVision::Value;
-
-Json::Value WriteFailStatus(const FailStatusMap & fsMap)
+Json::Value WriteFailStatus(const SvSml::FailStatusMap & fsMap)
 {
 	Json::Value rslt(Json::objectValue);
 	Json::Value failList(Json::arrayValue);
 	std::for_each(fsMap.begin(), fsMap.end(),
-		[&failList](const FailStatusMap::value_type & entry)
+		[&failList](const SvSml::FailStatusMap::value_type & entry)
 		{
-			const Values & values = entry.second;
+			const SvSml::Values & values = entry.second;
 			Json::Value voList(Json::objectValue);
 			Json::Value entries(Json::arrayValue);
 			std::for_each(values.begin(), values.end(),
-				[&entries](const Value & value)
+				[&entries](const SvSml::Value & value)
 				{
 					Json::Value vo(Json::objectValue);
 					vo[SVRC::vo::name] = value.name;
@@ -444,7 +438,7 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const Monitor
 	{
 		long idx = -1;
 		const ProductPtr product = rReader.RequestNextProduct(idx);
-		rslt = WriteProductItems<UdpApi>(product, productItemNames);
+		rslt = WriteProductItems<SvSol::UdpApi>(product, productItemNames);
 
 		if (lastProductPtrPair.second >= 0)
 		{
@@ -460,13 +454,13 @@ template<typename API>
 void ClearHeld();
 
 template<>
-void ClearHeld<TcpApi>()
+void ClearHeld<SvSol::TcpApi>()
 {
 	g_lastRejectMap.clear();
 }
 
 template<>
-void ClearHeld<UdpApi>()
+void ClearHeld<SvSol::UdpApi>()
 {
 	g_LastProductMap.clear();
 	g_lastRejectProductMap.clear();
@@ -490,13 +484,13 @@ Json::Value GetRejectedProduct(PPQReader& rReader, long trig, const MonitorListC
 //! \param lastRejectProduct [in,out] last saved product.
 //! \returns Json::Value
 template<>
-Json::Value GetRejectedProduct<TcpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastReject )
+Json::Value GetRejectedProduct<SvSol::TcpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastReject )
 {
 	Json::Value rslt(Json::objectValue);
 	
 	long idx = -1;
 	ProductPtr product = rReader.RequestReject(trig, idx);
-	rslt = WriteProductItems<TcpApi>(product, productItemNames);
+	rslt = WriteProductItems<SvSol::TcpApi>(product, productItemNames);
 	
 	// Decide which product to keep and which to release...
 	if (lastReject.second >= 0)
@@ -515,7 +509,7 @@ Json::Value GetRejectedProduct<TcpApi>(PPQReader& rReader, long trig, const Moni
 //! \param lastRejectProduct [in,out] last saved product.
 //! \returns Json::Value
 template<>
-Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastRejectProduct )
+Json::Value GetRejectedProduct<SvSol::UdpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastRejectProduct )
 {
 	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
@@ -534,7 +528,7 @@ Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig, const Moni
 	{
 		long idx = -1;
 		const ProductPtr product = rReader.RequestReject(trig, idx);
-		rslt = WriteProductItems<UdpApi>(product, productItemNames);
+		rslt = WriteProductItems<SvSol::UdpApi>(product, productItemNames);
 	
 		// Decide which product to keep and which to release...
 		if (lastRejectProduct.second >= 0)
@@ -548,7 +542,7 @@ Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig, const Moni
 }
 
 template<>
-Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
+Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 {
 	Json::Value rslt(Json::objectValue);
 	if (false == cmd.isObject() || false ==  cmd.isMember(SVRC::cmd::name))
@@ -574,11 +568,11 @@ Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 			{
 				throw std::exception("Can not open Reader ");
 			}
-			FailStatusMap fsMap = reader.GetFailStatus(mit->second.failStats);
+			SvSml::FailStatusMap fsMap = reader.GetFailStatus(mit->second.failStats);
 			if (static_cast<int>(fsMap.size()) > mit->second.m_rejectDepth)
 			{
 				size_t sz = fsMap.size();
-				FailStatusMap::iterator it = fsMap.begin();
+				SvSml::FailStatusMap::iterator it = fsMap.begin();
 				std::advance(it, sz - mit->second.m_rejectDepth);
 				fsMap.erase(fsMap.begin(), it);
 			}
@@ -610,7 +604,7 @@ Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 				throw std::exception("Can not open Reader ");
 			}
 			long trig = args[SVRC::arg::trgrCount].asInt();
-			rslt = GetRejectedProduct<TcpApi>(reader, trig, mit->second.prodItems,g_lastRejectMap[ppqName] );
+			rslt = GetRejectedProduct<SvSol::TcpApi>(reader, trig, mit->second.prodItems,g_lastRejectMap[ppqName] );
 			return rslt;
 		}
 		else
@@ -630,7 +624,7 @@ Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 }
 
 template<>
-Json::Value DispatchCommand<UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
+Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 {
 	Json::Value rslt(Json::objectValue);
 	if ( false == cmd.isObject() || false == cmd.isMember(SVRC::cmd::name))
@@ -640,7 +634,6 @@ Json::Value DispatchCommand<UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 
 	if (cmd[SVRC::cmd::name] != SVRC::cmdName::getProd)
 	{
-
 		throw std::exception("Invalid command name.");
 	}
 
@@ -667,7 +660,7 @@ Json::Value DispatchCommand<UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 		{
 			trig = args[SVRC::arg::trgrCount].asInt();
 		}
-		if (LastInspectedFilter == mit->second.m_ProductFilter)
+		if (SvSml::LastInspectedFilter == mit->second.m_ProductFilter)
 		{
 			rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems, g_LastProductMap[ppqName]);
 		}
@@ -676,7 +669,7 @@ Json::Value DispatchCommand<UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 			// Check if there are rejects, if so get the rejected propduct, else get the last inspected product.
 			try
 			{
-				rslt = GetRejectedProduct<UdpApi>(reader, trig, mit->second.prodItems, g_lastRejectProductMap[ppqName]);
+				rslt = GetRejectedProduct<SvSol::UdpApi>(reader, trig, mit->second.prodItems, g_lastRejectProductMap[ppqName]);
 			}
 			catch (std::exception& e)
 			{
@@ -715,7 +708,7 @@ std::string GenerateResponse(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 	{
 		rsp[SVRC::cmd::err] = ex.what();
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
-		SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
+		SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
 	}
 	Json::FastWriter writer;
 	return writer.write(rsp);
@@ -730,12 +723,12 @@ std::string BusyMessage(const JsonCmd & cmd)
 	return writer.write(rsp);
 }
 
-MonitorListCopy::Strings MakeCopy(const SeidenaderVision::StringList & list)
+MonitorListCopy::Strings MakeCopy(const SvSml::StringList & list)
 {
 	MonitorListCopy::Strings cpy;
 	cpy.reserve(list.size());
 	std::for_each(list.begin(), list.end(),
-		[&cpy](const char_string & str)
+		[&cpy](const SvSml::char_string & str)
 		{
 			cpy.push_back(str.c_str());
 		}
@@ -745,7 +738,7 @@ MonitorListCopy::Strings MakeCopy(const SeidenaderVision::StringList & list)
 
 MonitorListCopy MakeCopy(const MonitorListReader & reader, const std::string & name)
 {
-	const SeidenaderVision::SVSharedMonitorList & list = reader[name];
+	const SvSml::SVSharedMonitorList & list = reader[name];
 	MonitorListCopy cpy;
 	cpy.m_name = list.GetName().c_str();
 	cpy.m_ppq = list.GetPPQName().c_str();
@@ -801,9 +794,9 @@ template<typename API, typename ServerSocket>
 void Handler(ServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap);
 
 template <>
-void Handler<UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
 {
-	typedef UdpApi API;
+	typedef SvSol::UdpApi API;
 	typedef UdpSocket Socket;
 	static long lastReady = -1;
 	static long lastFilterChange = -1;
@@ -830,7 +823,7 @@ void Handler<UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl& ctrl, 
 						ClearHeld<API>();
 					}
 					const std::string& resp = GenerateResponse<API>(cmd, monitorMap);
-					client.Write(resp, Traits<API>::needsHeader);
+					client.Write(resp, SvSol::Traits<API>::needsHeader);
 				}
 				else
 				{
@@ -839,7 +832,7 @@ void Handler<UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl& ctrl, 
 						lastReady = 0;
 						ctrl.SetAck();
 					}
-					client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
+					client.Write(BusyMessage(cmd), SvSol::Traits<API>::needsHeader);
 				}
 			}
 			else
@@ -849,21 +842,21 @@ void Handler<UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl& ctrl, 
 		}
 		catch(std::exception & ex)
 		{
-			SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
+			SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
 			std::cout << ex.what() << std::endl;
 		}
 	}
 	else
 	{
 		std::cout << "invalid socket\n";
-		SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
+		SVSharedConfiguration::Log(client.Log(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError()), true));
 	}
 }
 
 template<>
-void Handler<TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
 {
-	typedef TcpApi API;
+	typedef SvSol::TcpApi API;
 	typedef TcpSocket Socket; 
 	static long lastReady = -1;
 	static long lastFilterChange = -1;
@@ -898,7 +891,7 @@ void Handler<TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, 
 							ClearHeld<API>();
 						}
 						const std::string& resp = GenerateResponse<API>(cmd, monitorMap);
-						client.Write(resp, Traits<API>::needsHeader);
+						client.Write(resp, SvSol::Traits<API>::needsHeader);
 						break;
 					}
 					else
@@ -912,18 +905,18 @@ void Handler<TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, 
 						if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
 						{
 							const std::string& resp = GenerateResponse<API>(cmd, monitorMap);
-							client.Write(resp, Traits<API>::needsHeader);
+							client.Write(resp, SvSol::Traits<API>::needsHeader);
 						}
 						else
 						{
-							client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
+							client.Write(BusyMessage(cmd), SvSol::Traits<API>::needsHeader);
 						}
 					}
 				}
 			}
 			catch(std::exception & ex)
 			{
-				SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
+				SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
 				std::cout << ex.what() << std::endl;
 			}
 		}
@@ -935,7 +928,7 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 {
 	try
 	{
-		typedef Seidenader::Socket::SVServerSocket<API> ServerSocket;
+		typedef SvSol::SVServerSocket<API> ServerSocket;
 		ShareControl& ctrl = *reinterpret_cast<ShareControl *>(ctrlPtr);
 		MonitorListReader mlReader;
 		MonitorMapCopy monitorMap;
@@ -1105,7 +1098,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	bool bCheckSizeOverride = CheckCommandLineArgs(argc, argv, _T("/nocheck"));
 	bool bShowConsole = CheckCommandLineArgs(argc, argv, _T("/show"));
 	
-	HRESULT hr = SeidenaderVision::SVSharedConfiguration::SharedResourcesOk();
+	HRESULT hr = SvSml::SVSharedConfiguration::SharedResourcesOk();
 	if (S_OK != hr )
 	{
 		std::string msg;
@@ -1147,14 +1140,14 @@ int _tmain(int argc, _TCHAR* argv[])
 			HWND hWnd = GetConsoleWindow();
 			ShowWindow(hWnd, SW_HIDE);
 		}
-		SVSocketLibrary::Init();
+		SvSol::SVSocketLibrary::Init();
 		ShareControl ctrl;
 		DWORD threadIds[3];
 		HANDLE threads[3];
 		
 		threads[0] = CreateThread(nullptr, 0, servimg, nullptr, 0, &threadIds[0]);
-		threads[1] = CreateThread(nullptr, 0, servcmd<TcpApi>, (void *)&ctrl, 0, &threadIds[1]);
-		threads[2] = CreateThread(nullptr, 0, servcmd<UdpApi>, (void *)&ctrl, 0, &threadIds[2]);
+		threads[1] = CreateThread(nullptr, 0, servcmd<SvSol::TcpApi>, (void *)&ctrl, 0, &threadIds[1]);
+		threads[2] = CreateThread(nullptr, 0, servcmd<SvSol::UdpApi>, (void *)&ctrl, 0, &threadIds[2]);
 	
 		RunConsole();
 
@@ -1165,7 +1158,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		std::cout << "Failed to start: " << ex.what() << std::endl;
 	}
-	SVSocketLibrary::Destroy();
+	SvSol::SVSocketLibrary::Destroy();
 	return 0;
 }
 

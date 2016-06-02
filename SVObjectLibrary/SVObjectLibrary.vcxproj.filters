@@ -86,6 +86,9 @@
     <ClCompile Include="SVClsids.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DependencyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -206,6 +209,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvOl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DependencyManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JoinType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectNameLookup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DottedNameLookup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

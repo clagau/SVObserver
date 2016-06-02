@@ -9,11 +9,6 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:49:08  $
 //******************************************************************************
 
-#ifndef SVAUTOLOCKANDRELEASETEMPLATE_INL
-#define SVAUTOLOCKANDRELEASETEMPLATE_INL
-
-#include "SVAutoLockAndReleaseTemplate.h"
-
 template< typename SVLockType >
 SVAutoLockAndReleaseTemplate< SVLockType >::SVAutoLockAndReleaseTemplate()
 : m_pLock( nullptr )
@@ -21,28 +16,28 @@ SVAutoLockAndReleaseTemplate< SVLockType >::SVAutoLockAndReleaseTemplate()
 }
 
 template< typename SVLockType >
-BOOL SVAutoLockAndReleaseTemplate< SVLockType >::Assign( SVLockType* p_pLock, DWORD p_WaitTime )
+bool SVAutoLockAndReleaseTemplate< SVLockType >::Assign( SVLockType* pLock, DWORD WaitTime )
 {
-	BOOL l_Status = true;
+	bool Result = true;
 
 	if( nullptr != m_pLock )
 	{
 		m_pLock->Unlock();
 	}
 
-	m_pLock = p_pLock;
+	m_pLock = pLock;
 
 	if( nullptr != m_pLock )
 	{
-		l_Status = m_pLock->Lock( p_WaitTime );
+		Result = m_pLock->Lock( WaitTime ) ? true : false;
 
-		if( !l_Status )
+		if( !Result )
 		{
 			m_pLock = nullptr;
 		}
 	}
 
-	return l_Status;
+	return Result;
 }
 
 template< typename SVLockType >
@@ -53,6 +48,4 @@ SVAutoLockAndReleaseTemplate< SVLockType >::~SVAutoLockAndReleaseTemplate()
 		m_pLock->Unlock();
 	}
 }
-
-#endif
 

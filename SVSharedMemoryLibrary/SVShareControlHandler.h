@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   02 Oct 2014 09:04:10  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "SVSharedControl.h"
 #include "SVSharedConfiguration.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	class SVShareControlHandler
 	{
@@ -49,5 +52,7 @@ namespace SeidenaderVision
 		bool ProductFilterChanged(long previousValue) const;	// for reader use
 		long GetProductFilterChangeCount() const;				// for reader use
 	};
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

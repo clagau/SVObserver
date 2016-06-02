@@ -18,6 +18,12 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectSelectorItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTreeItems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -56,6 +62,27 @@
     <ClInclude Include="SVBimapDeclarations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IObjectSelectorItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSelectorItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTreeItems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVCompareKeys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IGraphNameLookup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDeque.inl">
@@ -74,6 +101,18 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVVector.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVTree.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="ObjectGraph.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="GraphVizHelper.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="BGLVisitorFilterEdges.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

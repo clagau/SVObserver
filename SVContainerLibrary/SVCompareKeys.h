@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVTreeLibrary
+namespace Seidenader { namespace SVContainerLibrary
 {
 	template<typename Key, typename Data>
 	class SVCompareKeys : public std::unary_function< std::pair<Key, Data >, bool>
@@ -28,8 +28,8 @@ namespace Seidenader { namespace SVTreeLibrary
 	private:
 		Key m_elementKey;
 	};
-} /* namespace SVTreeLibrary */ } /* namespace Seidenader */
+} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
 
-namespace SvTrl = Seidenader::SVTreeLibrary;
+namespace SvCl = Seidenader::SVContainerLibrary;
 
 

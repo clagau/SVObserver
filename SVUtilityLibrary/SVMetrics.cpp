@@ -15,43 +15,41 @@
 #include "SVMetrics.h"
 #pragma endregion Includes
 
-#pragma region Declarations
-// This does not use the guideline namespace format because it is legacy code from the SVObserverWeb project.
-using namespace SeidenaderVision;
-#pragma endregion Declarations
-
-SVMetrics::SVMetrics()
+namespace Seidenader { namespace SVUtilityLibrary 
 {
-	Clear();
-}
-
-void SVMetrics::Clear()
-{
-	minTime = std::numeric_limits<double>::max();
-	maxTime = 0.0;
-	avgTime = 0.0;
-	lastTime = 0.0;
-}
-
-void SVMetrics::Update(double elapsed)
-{
-	bool bAvg = true;
-
-	lastTime = elapsed;
-
-	if (elapsed > maxTime) { maxTime = elapsed; }
-
-	if (minTime == std::numeric_limits<double>::max())
+	SVMetrics::SVMetrics()
 	{
-		minTime = elapsed;
-		bAvg = false;
-	}
-	else if (elapsed < minTime)
-	{
-		minTime = elapsed;
+		Clear();
 	}
 
-	avgTime += elapsed;
+	void SVMetrics::Clear()
+	{
+		minTime = std::numeric_limits<double>::max();
+		maxTime = 0.0;
+		avgTime = 0.0;
+		lastTime = 0.0;
+	}
 
-	if (bAvg) { avgTime /= 2.0; }
-}
+	void SVMetrics::Update(double elapsed)
+	{
+		bool bAvg = true;
+
+		lastTime = elapsed;
+
+		if (elapsed > maxTime) { maxTime = elapsed; }
+
+		if (minTime == std::numeric_limits<double>::max())
+		{
+			minTime = elapsed;
+			bAvg = false;
+		}
+		else if (elapsed < minTime)
+		{
+			minTime = elapsed;
+		}
+
+		avgTime += elapsed;
+
+		if (bAvg) { avgTime /= 2.0; }
+	}
+} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */

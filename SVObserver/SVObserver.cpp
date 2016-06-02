@@ -379,7 +379,7 @@ SVObserverApp::SVObserverApp()
 	m_ShouldRunLastEnvironmentAutomatically = FALSE;
 	m_AutoRunDelayTime = 1000;
 
-	m_CurrentVersion = SeidenaderVision::SVVersionInfo::GetLongVersion();
+	m_CurrentVersion = SvSyl::SVVersionInfo::GetLongVersion();
 	m_LoadingVersion = 0L;
 
 	m_pCurrentDocument = nullptr;	// Set by current Document!!!
@@ -2523,17 +2523,17 @@ BOOL SVObserverApp::InitInstance()
 	SVStringArray msgList;
 	if( (m_CurrentVersion & 0xff) == 0xff )
 	{
-		msgList.push_back(SeidenaderVision::SVVersionInfo::GetShortTitleVersion());
+		msgList.push_back(SvSyl::SVVersionInfo::GetShortTitleVersion());
 	}
 	else
 	{
-		msgList.push_back(SeidenaderVision::SVVersionInfo::GetTitleVersion());
+		msgList.push_back(SvSyl::SVVersionInfo::GetTitleVersion());
 	}
 	Exception.setMessage( SVMSG_SVO_25_SVOBSERVER_STARTED, SvOi::Tid_Version, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 	SVDirectX::Instance().Initialize();
 
-	SVSocketLibrary::Init();
+	SvSol::SVSocketLibrary::Init();
 
 	int AutoSaveValue = INI().GetValueInt( _T("Settings"), _T("EnableAutosave"), 0); //Arvid accept a number: non-zero enables
 
@@ -2632,7 +2632,7 @@ int SVObserverApp::ExitInstance()
 	SVInputStreamManager::Instance().Shutdown();
 	SVSocketRemoteCommandManager::Instance().Shutdown();
 
-	SVSocketLibrary::Destroy();
+	SvSol::SVSocketLibrary::Destroy();
 	SVSharedMemorySingleton::Destroy();
 	ValidateMRUList();
 
@@ -2977,6 +2977,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			}
 
 			UpdatePPQBar();
+
 		} // try
 
 		catch( CUserException* pUE )

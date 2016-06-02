@@ -7,15 +7,12 @@
 
 #pragma once
 
-namespace Seidenader
+namespace Seidenader { namespace SVOResource
 {
-	namespace SVOResource
-	{
-		#pragma region Declarations
-		const int IconSize = 16;
-		const int HELPFILE_SVORESOURCE_OFFSET = 0x20000;
-		#pragma endregion Declarations
-	}
-}
+	#pragma region Declarations
+	const int IconSize = 16;
+	const int HELPFILE_SVORESOURCE_OFFSET = 0x20000;
+	#pragma endregion Declarations
+} /*namespace SVOResource*/ } /*namespace Seidenader*/
 
 namespace SvOr = Seidenader::SVOResource;

@@ -18,48 +18,46 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-namespace Seidenader
+namespace Seidenader { namespace SVSystemLibrary
 {
-	namespace SVSystemLibrary
+	SVLockableClass::SVLockableClass()
+		: hProtectionMutex( nullptr )
 	{
-		SVLockableClass::SVLockableClass()
-			: hProtectionMutex( nullptr )
+		hProtectionMutex = CreateMutex( nullptr, false, nullptr );
+	}
+
+	SVLockableClass::~SVLockableClass()
+	{
+		if( nullptr != hProtectionMutex )
 		{
-			hProtectionMutex = CreateMutex( nullptr, false, nullptr );
+			CloseHandle( hProtectionMutex );
+		}
+	}
+
+
+	BOOL SVLockableClass::Lock( DWORD DWWaitTime /* = INFINITE */ ) const
+	{
+		BOOL l_Status = ( nullptr != hProtectionMutex );
+
+		if( l_Status )
+		{
+			l_Status = ( WaitForSingleObject( hProtectionMutex, DWWaitTime ) == WAIT_OBJECT_0 );
 		}
 
-		SVLockableClass::~SVLockableClass()
+		return l_Status;
+	}
+
+	BOOL SVLockableClass::Unlock() const
+	{
+		BOOL l_Status = ( nullptr != hProtectionMutex );
+
+		if( l_Status )
 		{
-			if( nullptr != hProtectionMutex )
-			{
-				CloseHandle( hProtectionMutex );
-			}
+			l_Status = ReleaseMutex( hProtectionMutex );
 		}
 
+		return l_Status;
+	}
 
-		BOOL SVLockableClass::Lock( DWORD DWWaitTime /* = INFINITE */ ) const
-		{
-			BOOL l_Status = ( nullptr != hProtectionMutex );
-
-			if( l_Status )
-			{
-				l_Status = ( WaitForSingleObject( hProtectionMutex, DWWaitTime ) == WAIT_OBJECT_0 );
-			}
-
-			return l_Status;
-		}
-
-		BOOL SVLockableClass::Unlock() const
-		{
-			BOOL l_Status = ( nullptr != hProtectionMutex );
-
-			if( l_Status )
-			{
-				l_Status = ReleaseMutex( hProtectionMutex );
-			}
-
-			return l_Status;
-		}
-	} //SVSystemLibrary
-} //Seidenader
+} /*SVSystemLibrary*/ } /*Seidenader*/
 

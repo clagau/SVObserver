@@ -8,30 +8,34 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 17:16:58  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include <winsock2.h>
 #include "SVSocketLibrary.h"
+#pragma endregion Includes
 
-SVSocketError::ErrorEnum SVSocketLibrary::Init()
+namespace Seidenader { namespace SVSocketLibrary
 {
-	SVSocketError::ErrorEnum error = SVSocketError::Success;
-	WSADATA hWSAData;
-	int iResult = WSAStartup(MAKEWORD(2, 2), &hWSAData);
-	if (iResult != NO_ERROR)
+	SVSocketError::ErrorEnum SVSocketLibrary::Init()
 	{
-		error = SVSocketError::GetLastSocketError();
+		SVSocketError::ErrorEnum error = SVSocketError::Success;
+		WSADATA hWSAData;
+		int iResult = WSAStartup(MAKEWORD(2, 2), &hWSAData);
+		if (iResult != NO_ERROR)
+		{
+			error = SVSocketError::GetLastSocketError();
+		}
+		return error;
 	}
-	return error;
-}
 
-SVSocketError::ErrorEnum SVSocketLibrary::Destroy()
-{
-	SVSocketError::ErrorEnum error = SVSocketError::Success;
-	int iResult = WSACleanup();
-	if (iResult != NO_ERROR)
+	SVSocketError::ErrorEnum SVSocketLibrary::Destroy()
 	{
-		error = SVSocketError::GetLastSocketError();
+		SVSocketError::ErrorEnum error = SVSocketError::Success;
+		int iResult = WSACleanup();
+		if (iResult != NO_ERROR)
+		{
+			error = SVSocketError::GetLastSocketError();
+		}
+		return error;
 	}
-	return error;
-}
-
+} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/

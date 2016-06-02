@@ -19,7 +19,7 @@ public:
 
 	virtual ~SVAutoLockAndReleaseTemplate();
 
-	BOOL Assign( SVLockType* p_pLock, DWORD p_WaitTime = INFINITE );
+	bool Assign( SVLockType* pLock, DWORD WaitTime = INFINITE );
 
 protected:
 	SVLockType* m_pLock;

@@ -8,63 +8,67 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   14 Aug 2014 17:08:34  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVSharedImage.h"
+#pragma endregion Includes
 
-SVSharedImage::SVSharedImage(const void_allocator& rAlloc)
-: m_Status(E_FAIL)
-, m_Allocator(rAlloc)
-, m_Filename("", rAlloc)
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-}
-
-SVSharedImage::SVSharedImage(const char* Filename, int Status, const void_allocator& rAlloc)
-: m_Status(Status)
-, m_Allocator(rAlloc)
-, m_Filename(Filename, rAlloc)
-{
-}
-
-SVSharedImage::SVSharedImage(const SVSharedImage& rData)
-: m_Status(rData.m_Status)
-, m_Allocator(rData.m_Allocator)
-, m_Filename(rData.m_Filename.c_str(), rData.m_Allocator)
-{
-}
-
-const SVSharedImage& SVSharedImage::operator=(const SVSharedImage& rData)
-{
-	if (this != &rData)
+	SVSharedImage::SVSharedImage(const void_allocator& rAlloc)
+	: m_Status(E_FAIL)
+	, m_Allocator(rAlloc)
+	, m_Filename("", rAlloc)
 	{
-		m_Filename = rData.m_Filename;
-		m_Status = rData.m_Status;
 	}
-	return *this;
-}
 
-std::string SVSharedImage::filename(const std::string& rName, long SlotNumber, img::type ImageType, bool bReject)
-{
-	//@TODO[MEC][7.40][30.5.2016] Improve Performance  
-	static const char *ext[] = { ".bmp", ".png", ".jpg" };
-
-	std::stringstream ret;
-	if (bReject)
+	SVSharedImage::SVSharedImage(const char* Filename, int Status, const void_allocator& rAlloc)
+	: m_Status(Status)
+	, m_Allocator(rAlloc)
+	, m_Filename(Filename, rAlloc)
 	{
-		ret << rName << "." << SlotNumber << "." << "REJECT" << ext[ImageType];
 	}
-	else
+
+	SVSharedImage::SVSharedImage(const SVSharedImage& rData)
+	: m_Status(rData.m_Status)
+	, m_Allocator(rData.m_Allocator)
+	, m_Filename(rData.m_Filename.c_str(), rData.m_Allocator)
 	{
-		ret << rName << "." << SlotNumber << ext[ImageType];
 	}
-	return ret.str();
-}
 
-img::type SVSharedImage::GetImageType(const std::string& rName)
-{
-	img::type imgType = img::bmp;
-	std::string baseName = rName;
-	// strip off all but last extension
-	return imgType;
-}
+	const SVSharedImage& SVSharedImage::operator=(const SVSharedImage& rData)
+	{
+		if (this != &rData)
+		{
+			m_Filename = rData.m_Filename;
+			m_Status = rData.m_Status;
+		}
+		return *this;
+	}
 
+	std::string SVSharedImage::filename(const std::string& rName, long SlotNumber, img::type ImageType, bool bReject)
+	{
+		//@TODO[MEC][7.40][30.5.2016] Improve Performance  
+		static const char *ext[] = { ".bmp", ".png", ".jpg" };
+
+		std::stringstream ret;
+		if (bReject)
+		{
+			ret << rName << "." << SlotNumber << "." << "REJECT" << ext[ImageType];
+		}
+		else
+		{
+			ret << rName << "." << SlotNumber << ext[ImageType];
+		}
+		return ret.str();
+	}
+
+	img::type SVSharedImage::GetImageType(const std::string& rName)
+	{
+		img::type imgType = img::bmp;
+		std::string baseName = rName;
+		// strip off all but last extension
+		return imgType;
+	}
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

@@ -21,283 +21,252 @@
 #pragma endregion Includes
 
 template< typename SVObjectTypeName >
-HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& p_rClassID, SVObjectTypeName*& p_rpObject )
+HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& rClassID, SVObjectTypeName*& rpObject )
 {
-	SVObjectClass* l_pObject = nullptr;
+	SVObjectClass* pObject = nullptr;
 
-	p_rpObject = nullptr;
+	rpObject = nullptr;
 
-	HRESULT l_Status = ConstructObject( p_rClassID, l_pObject );
+	HRESULT Result = ConstructObject( rClassID, pObject );
 
-	if( nullptr != l_pObject )
+	if( nullptr != pObject )
 	{
-		p_rpObject = dynamic_cast< SVObjectTypeName* >( l_pObject );
+		rpObject = dynamic_cast<SVObjectTypeName*> ( pObject );
 
-		if( nullptr == p_rpObject )
+		if( nullptr == rpObject )
 		{
-			l_Status = E_FAIL;
+			Result = E_FAIL;
 
-			delete l_pObject;
+			delete pObject;
 		}
 	}
 
-	return l_Status;
+	return Result;
 }
 
 template< typename SVObjectTypeName >
-HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& p_rFullName, SVObjectTypeName*& p_rpObject )
+HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, SVObjectTypeName*& rpObject )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = S_OK;
 
-	SVObjectReference l_Reference;
+	SVObjectReference ObjRef;
 
-	l_Status = GetObjectByDottedName( p_rFullName, l_Reference );
+	Result = GetObjectByDottedName( rFullName, ObjRef );
 
-	if( nullptr != l_Reference.Object() )
+	if( nullptr != ObjRef.Object() )
 	{
-		p_rpObject = dynamic_cast< SVObjectTypeName* >( l_Reference.Object() );
+		rpObject = dynamic_cast<SVObjectTypeName*> ( ObjRef.Object() );
 	}
 	else
 	{
-		p_rpObject = nullptr;
+		rpObject = nullptr;
 	}
 
-	if( S_OK == l_Status && nullptr == p_rpObject )
+	if( S_OK == Result && nullptr == rpObject )
 	{
-		l_Status = E_FAIL;
+		Result = E_FAIL;
 	}
 
-	return l_Status;
+	return Result;
 }
 
 template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, const SVString& rRootChild )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = E_FAIL;
 
-	SVObjectClass* l_pObject = GetObject( m_RootNameChildren[rRootChild] );
+	SVObjectClass* pObject = GetObject( m_RootNameChildren[rRootChild] );
 
-	if( nullptr != l_pObject )
+	if( nullptr != pObject )
 	{
-		rpObject = dynamic_cast< SVObjectTypeName* >( l_pObject );
-	}
-	else
-	{
-		l_Status = E_FAIL;
+		rpObject = dynamic_cast<SVObjectTypeName*> (pObject);
+		Result = S_OK;
 	}
 
-	return l_Status;
+	return Result;
 }
 
 template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& rpObject )
 {
-	return GetRootChildObject(rpObject, SvOl::FqnConfiguration );
+	return GetRootChildObject( rpObject, SvOl::FqnConfiguration );
 }
 
 template< typename SVNotifyData >
-HRESULT SVObjectManagerClass::Notify( const SVGUID& p_rObjectID, SVNotifyData& p_rData )
+HRESULT SVObjectManagerClass::Notify( const SVGUID& rObjectID, SVNotifyData& rData )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = E_FAIL;
 
-	SVObjectClass* l_pObject = GetObject( p_rObjectID );
+	SVObjectClass* pObject = GetObject( rObjectID );
 
-	if( nullptr != l_pObject )
+	if( nullptr != pObject )
 	{
-		SVObjectNotifyTemplate< SVNotifyData >* l_pCommand = dynamic_cast< SVObjectNotifyTemplate< SVNotifyData >* >( l_pObject );
+		SVObjectNotifyTemplate< SVNotifyData >* pCommand = dynamic_cast< SVObjectNotifyTemplate< SVNotifyData >* >( pObject );
 
-		if( nullptr != l_pCommand )
+		if( nullptr != pCommand )
 		{
-			l_Status = l_pCommand->ProcessNotifyData( p_rData );
-		}
-		else
-		{
-			l_Status = E_FAIL;
+			Result = pCommand->ProcessNotifyData( rData );
 		}
 	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
 
-	return l_Status;
+	return Result;
 }
 
 template< typename ObjectVisitor>
-HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& p_rVisitor, const SVGUID& p_rStartingObjectID )
+HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = S_OK;
 
-	GUID l_StartingObjectID = p_rStartingObjectID;
-	if (l_StartingObjectID == GUID_NULL)
+	GUID StartingObjectID = rStartingObjectID;
+	if( GUID_NULL == StartingObjectID )
 	{
 		//Set to configuration as this used to be the start.
-		l_StartingObjectID = GetChildRootObjectID( SvOl::FqnConfiguration );
+		StartingObjectID = GetChildRootObjectID( SvOl::FqnConfiguration );
 	}
-	SVObjectClass* l_pObject = GetObject( l_StartingObjectID );
+	SVObjectClass* pObject = GetObject( StartingObjectID );
 
-	if( nullptr != l_pObject )
+	if( nullptr != pObject )
 	{
-		HRESULT l_Temp = S_OK;
+		HRESULT Temp = S_OK;
 
-		SVObjectClass::SVObjectPtrDeque l_PreObjects = l_pObject->GetPreProcessObjects();
+		SVObjectClass::SVObjectPtrDeque PreObjects = pObject->GetPreProcessObjects();
 
-		SVObjectClass::SVObjectPtrDeque::iterator l_PreIter;
+		SVObjectClass::SVObjectPtrDeque::iterator PreIter;
 
-		for( l_PreIter = l_PreObjects.begin(); l_PreIter != l_PreObjects.end(); ++l_PreIter )
+		for( PreIter = PreObjects.begin(); PreObjects.end() != PreIter; ++PreIter )
 		{
-			SVObjectClass* l_pPreObject = *l_PreIter;
+			SVObjectClass* pPreObject = *PreIter;
 
-			if( nullptr != l_pPreObject )
+			if( nullptr != pPreObject )
 			{
-				l_Temp = VisitElements( p_rVisitor, l_pPreObject->GetUniqueObjectID() );
+				Temp = VisitElements( rVisitor, pPreObject->GetUniqueObjectID() );
 
-				if( S_OK == l_Status )
+				if( S_OK == Result )
 				{
-					l_Status = l_Temp;
+					Result = Temp;
 				}
 			}
 		}
 
-		l_Temp = l_pObject->Accept( p_rVisitor );
+		Temp = pObject->Accept( rVisitor );
 
-		if( S_OK == l_Status )
+		if( S_OK == Result )
 		{
-			l_Status = l_Temp;
+			Result = Temp;
 		}
 
-		SVObjectClass::SVObjectPtrDeque l_PostObjects = l_pObject->GetPostProcessObjects();
+		SVObjectClass::SVObjectPtrDeque PostObjects = pObject->GetPostProcessObjects();
 
-		SVObjectClass::SVObjectPtrDeque::iterator l_PostIter;
+		SVObjectClass::SVObjectPtrDeque::iterator PostIter;
 
-		for( l_PostIter = l_PostObjects.begin(); l_PostIter != l_PostObjects.end(); ++l_PostIter )
+		for( PostIter = PostObjects.begin(); PostObjects.end() != PostIter; ++PostIter )
 		{
-			SVObjectClass* l_pPostObject = *l_PostIter;
+			SVObjectClass* pPostObject = *PostIter;
 
-			if( nullptr != l_pPostObject )
+			if( nullptr != pPostObject )
 			{
-				l_Temp = VisitElements( p_rVisitor, l_pPostObject->GetUniqueObjectID() );
+				Temp = VisitElements( rVisitor, pPostObject->GetUniqueObjectID() );
 
-				if( S_OK == l_Status )
+				if( S_OK == Result )
 				{
-					l_Status = l_Temp;
+					Result = Temp;
 				}
 			}
 		}
 	}
 
-	return l_Status;
+	return Result;
 }
 
 template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObserver( const SVGUID& p_rObserverID, const SVDataType& p_rData )
+HRESULT SVObjectManagerClass::UpdateObserver( const SVGUID& rObserverID, const SVDataType& rData )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = E_FAIL;
 
-	SVObjectClass* l_pObject = GetObject( p_rObserverID );
+	SVObjectClass* pObject = GetObject( rObserverID );
 
-	if( nullptr != l_pObject )
+	if( nullptr != pObject )
 	{
-		SVObserverTemplate< SVDataType >* l_pObserver = dynamic_cast< SVObserverTemplate< SVDataType >* >( l_pObject );
+		SVObserverTemplate< SVDataType >* pObserver = dynamic_cast<SVObserverTemplate<SVDataType>*> (pObject);
 
-		if( nullptr != l_pObserver )
+		if( nullptr != pObserver )
 		{
-			l_Status = l_pObserver->ObserverUpdate( p_rData );
-		}
-		else
-		{
-			l_Status = E_FAIL;
+			Result = pObserver->ObserverUpdate( rData );
 		}
 	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
 
-	return l_Status;
+	return Result;
 }
 
 template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObserver( long p_Cookie, const SVDataType& p_rData )
+HRESULT SVObjectManagerClass::UpdateObserver( long Cookie, const SVDataType& rData )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = E_FAIL;
 
-	SVCookieEntryStructPtr l_CookiePtr = GetCookieEntry( p_Cookie );
+	SVCookieEntryStructPtr pCookie = GetCookieEntry( Cookie );
 
-	if( !( l_CookiePtr.empty() ) )
+	if( !( pCookie.empty() ) )
 	{
-		SVObserverTemplate< SVDataType >* l_pObserver = dynamic_cast< SVObserverTemplate< SVDataType >* >( l_CookiePtr->m_FunctorPtr.get() );
+		SVObserverTemplate<SVDataType>* pObserver = dynamic_cast< SVObserverTemplate<SVDataType>* > ( pCookie->m_pFunctor.get() );
 
-		if( nullptr != l_pObserver )
+		if( nullptr != pObserver )
 		{
-			l_Status = l_pObserver->ObserverUpdate( p_rData );
-		}
-		else
-		{
-			l_Status = E_FAIL;
+			Result = pObserver->ObserverUpdate( rData );
 		}
 	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
 
-	return l_Status;
+	return Result;
 }
 
 template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObservers( const SVString& p_rSubjectDataName, const SVGUID& p_rSubjectID, const SVDataType& p_rData )
+HRESULT SVObjectManagerClass::UpdateObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVDataType& rData )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = S_OK;
 
-	SVSubjectEnabledObserverMap l_Observers;
-	SVSubjectEnabledCookieMap l_Cookies;
+	SVSubjectEnabledObserverMap Observers;
+	SVSubjectEnabledCookieMap Cookies;
 
-	l_Status = GetObservers( p_rSubjectDataName, p_rSubjectID, l_Observers, l_Cookies );
+	Result = GetObservers( rSubjectDataName, rSubjectID, Observers, Cookies );
 
-	if( S_OK == l_Status )
+	if( S_OK == Result )
 	{
-		SVSubjectEnabledObserverMap::iterator l_Iter = l_Observers.begin();
+		SVSubjectEnabledObserverMap::iterator Iter = Observers.begin();
 
-		while( l_Iter != l_Observers.end() )
+		for( ; Observers.end() != Iter;  ++Iter )
 		{
-			if( l_Iter->second == 1 )
+			if( Iter->second == 1 )
 			{
-				HRESULT l_Temp = UpdateObserver( l_Iter->first, p_rData );
+				HRESULT Temp = UpdateObserver( Iter->first, rData );
 
-				if( S_OK == l_Status )
+				if( S_OK == Result )
 				{
-					l_Status = l_Temp;
+					Result = Temp;
 				}
 			}
-
-			++l_Iter;
 		}
 
-		SVSubjectEnabledCookieMap::iterator l_CookieIter = l_Cookies.begin();
+		SVSubjectEnabledCookieMap::iterator CookieIter = Cookies.begin();
 
-		while( l_CookieIter != l_Cookies.end() )
+		for( ; Cookies.end() != CookieIter;  ++CookieIter )
 		{
-			if( l_CookieIter->second == 1 )
+			if( CookieIter->second == 1 )
 			{
-				HRESULT l_Temp = UpdateObserver( l_CookieIter->first, p_rData );
+				HRESULT Temp = UpdateObserver( CookieIter->first, rData );
 
-				if( S_OK == l_Status )
+				if( S_OK == Result )
 				{
-					l_Status = l_Temp;
+					Result = Temp;
 				}
 			}
-
-			++l_CookieIter;
 		}
 	}
 
-	return l_Status;
+	return Result;
 }
 
 template<typename ObjectVisitor>
-HRESULT SvOi::visitElements(ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID)
+HRESULT SvOi::visitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID )
 {
-	return SVObjectManagerClass::Instance().VisitElements(rVisitor, rStartingObjectID);
+	return SVObjectManagerClass::Instance().VisitElements(rVisitor, rStartingObjectID );
 }
 

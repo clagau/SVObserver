@@ -128,18 +128,18 @@ bool RemoteMonitorNamedList::IsActive() const
 	return m_bActive;
 }
 
-void RemoteMonitorNamedList::SetProductFilter(SVProductFilterEnum filter)
+void RemoteMonitorNamedList::SetProductFilter(SvSml::SVProductFilterEnum filter)
 {
 	m_filter = filter;
 }
 
-SVProductFilterEnum RemoteMonitorNamedList::GetProductFilter() const
+SvSml::SVProductFilterEnum RemoteMonitorNamedList::GetProductFilter() const
 {
 	return m_filter;
 }
 
 void RemoteMonitorNamedList::ResolveGuidForPPQName()
 {
-	m_PPQObjectID = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(m_PPQName);
+	m_PPQObjectID = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(m_PPQName.c_str());
 }
 

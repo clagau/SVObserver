@@ -10,18 +10,20 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <string>
 #include "SVSharedProductStore.h"
 #include "SVSharedMonitorList.h"
 #include "SVSharedMemorySettings.h"
 #include "SVSharedInspectionReader.h"
+#pragma endregion Includes
 
 #pragma intrinsic (_InterlockedCompareExchange)
 #pragma intrinsic (_InterlockedDecrement16)
 #pragma intrinsic (_InterlockedIncrement16)
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	typedef std::shared_ptr<boost::interprocess::managed_shared_memory> DataSharedMemPtr;
 
@@ -96,5 +98,7 @@ namespace SeidenaderVision
 			_InterlockedDecrement16((volatile short *)&(prod.m_Flags));		
 		}
 	};
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

@@ -8,110 +8,113 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   28 Aug 2014 18:36:36  $
 //******************************************************************************
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVSharedMonitorList.h"
 #include "SVSharedConfiguration.h"
+#pragma endregion Includes
 
-using namespace SeidenaderVision;
-
-SVSharedMonitorList::SVSharedMonitorList(const void_allocator & allocator)
-: m_allocator(allocator)
-, prodItems(allocator)
-, rejctCond(allocator)
-, failStats(allocator)
-, m_name("", allocator)
-, m_ppq("", allocator)
-, m_rejectDepth(0)
-, m_active(false)
-, m_filter(LastInspectedFilter)
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	SVSharedConfiguration::Log("SVSharedMonitorList::Constructor");
-}
-
-SeidenaderVision::SVSharedMonitorList::SVSharedMonitorList(const SVSharedMonitorList & rho)
-: m_allocator(rho.m_allocator)
-, prodItems(rho.prodItems)
-, rejctCond(rho.rejctCond)
-, failStats(rho.failStats)
-, m_name(rho.m_name.c_str(), rho.m_allocator)
-, m_ppq(rho.m_ppq.c_str(), rho.m_allocator)
-, m_rejectDepth(rho.m_rejectDepth)
-, m_active(rho.m_active)
-, m_filter(rho.m_filter)
-{
-	SVSharedConfiguration::Log("SVSharedMonitorList::copy Constructor");
-}
-
-SeidenaderVision::SVSharedMonitorList & SeidenaderVision::SVSharedMonitorList::operator=(const SVSharedMonitorList & rho)
-{
-	if (&rho != this)
+	SVSharedMonitorList::SVSharedMonitorList(const void_allocator & allocator)
+	: m_allocator(allocator)
+	, prodItems(allocator)
+	, rejctCond(allocator)
+	, failStats(allocator)
+	, m_name("", allocator)
+	, m_ppq("", allocator)
+	, m_rejectDepth(0)
+	, m_active(false)
+	, m_filter(LastInspectedFilter)
 	{
-		SVSharedConfiguration::Log("SVSharedMonitorList::operator=");
-		prodItems = rho.prodItems;
-		rejctCond = rho.rejctCond;
-		failStats = rho.failStats;
-		m_name = rho.m_name;
-		m_ppq = rho.m_ppq;
-		m_rejectDepth = rho.m_rejectDepth;
-		m_active = rho.m_active;
-		m_filter = rho.m_filter;
+		SVSharedConfiguration::Log("SVSharedMonitorList::Constructor");
 	}
-	return *this;
-}
 
-SVSharedMonitorList::~SVSharedMonitorList()
-{
-	SVSharedConfiguration::Log("SVSharedMonitorList::Destructor");
-}
-
-const StringList & SeidenaderVision::SVSharedMonitorList::GetProductItems() const
-{
-	SVSharedConfiguration::Log("SVSharedMonitorList::GetProductItems");
-	return prodItems;
-}
-
-const StringList & SVSharedMonitorList::GetRejectCond() const
-{
-	SVSharedConfiguration::Log("SVSharedMonitorList::GetRejectCond");
-	return rejctCond;
-}
-
-const StringList & SVSharedMonitorList::GetFailStatus() const
-{
-	SVSharedConfiguration::Log("SVSharedMonitorList::GetFailStatus");
-	return failStats;
-}
-
-void SVSharedMonitorList::SetProductItems(const std::vector<std::string> & items)
-{
-	SVSharedConfiguration::Log("SVSharedMonitorList::SetProductItems");
-	prodItems.clear();
-	prodItems.reserve(items.size());
-	for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+	SVSharedMonitorList::SVSharedMonitorList(const SVSharedMonitorList & rho)
+	: m_allocator(rho.m_allocator)
+	, prodItems(rho.prodItems)
+	, rejctCond(rho.rejctCond)
+	, failStats(rho.failStats)
+	, m_name(rho.m_name.c_str(), rho.m_allocator)
+	, m_ppq(rho.m_ppq.c_str(), rho.m_allocator)
+	, m_rejectDepth(rho.m_rejectDepth)
+	, m_active(rho.m_active)
+	, m_filter(rho.m_filter)
 	{
-		prodItems.push_back(char_string(it->c_str(), m_allocator));
+		SVSharedConfiguration::Log("SVSharedMonitorList::copy Constructor");
 	}
-}
 
-void SVSharedMonitorList::SetRejectCond(const std::vector<std::string> & items)
-{
-	SVSharedConfiguration::Log("SVSharedMonitorList::SetRejectCond");
-	rejctCond.clear();
-	rejctCond.reserve(items.size());
-	for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+	SVSharedMonitorList & SVSharedMonitorList::operator=(const SVSharedMonitorList & rho)
 	{
-		rejctCond.push_back(char_string(it->c_str(), m_allocator));
+		if (&rho != this)
+		{
+			SVSharedConfiguration::Log("SVSharedMonitorList::operator=");
+			prodItems = rho.prodItems;
+			rejctCond = rho.rejctCond;
+			failStats = rho.failStats;
+			m_name = rho.m_name;
+			m_ppq = rho.m_ppq;
+			m_rejectDepth = rho.m_rejectDepth;
+			m_active = rho.m_active;
+			m_filter = rho.m_filter;
+		}
+		return *this;
 	}
-}
 
-void SVSharedMonitorList::SetFailStatus(const std::vector<std::string> & items)
-{
-	SVSharedConfiguration::Log("SVSharedMonitorList::SetFailStatus");
-	failStats.clear();
-	failStats.reserve(items.size());
-	for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+	SVSharedMonitorList::~SVSharedMonitorList()
 	{
-		failStats.push_back(char_string(it->c_str(), m_allocator));
+		SVSharedConfiguration::Log("SVSharedMonitorList::Destructor");
 	}
-}
 
+	const StringList & SVSharedMonitorList::GetProductItems() const
+	{
+		SVSharedConfiguration::Log("SVSharedMonitorList::GetProductItems");
+		return prodItems;
+	}
+
+	const StringList & SVSharedMonitorList::GetRejectCond() const
+	{
+		SVSharedConfiguration::Log("SVSharedMonitorList::GetRejectCond");
+		return rejctCond;
+	}
+
+	const StringList & SVSharedMonitorList::GetFailStatus() const
+	{
+		SVSharedConfiguration::Log("SVSharedMonitorList::GetFailStatus");
+		return failStats;
+	}
+
+	void SVSharedMonitorList::SetProductItems(const std::vector<std::string> & items)
+	{
+		SVSharedConfiguration::Log("SVSharedMonitorList::SetProductItems");
+		prodItems.clear();
+		prodItems.reserve(items.size());
+		for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+		{
+			prodItems.push_back(char_string(it->c_str(), m_allocator));
+		}
+	}
+
+	void SVSharedMonitorList::SetRejectCond(const std::vector<std::string> & items)
+	{
+		SVSharedConfiguration::Log("SVSharedMonitorList::SetRejectCond");
+		rejctCond.clear();
+		rejctCond.reserve(items.size());
+		for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+		{
+			rejctCond.push_back(char_string(it->c_str(), m_allocator));
+		}
+	}
+
+	void SVSharedMonitorList::SetFailStatus(const std::vector<std::string> & items)
+	{
+		SVSharedConfiguration::Log("SVSharedMonitorList::SetFailStatus");
+		failStats.clear();
+		failStats.reserve(items.size());
+		for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+		{
+			failStats.push_back(char_string(it->c_str(), m_allocator));
+		}
+	}
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

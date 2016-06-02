@@ -36,13 +36,13 @@ void SVSharedMemorySingleton::ReadSettings()
 	SVOINIClass reader;
 	reader.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
-	long monitorStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("MonitorStoreSize"), SVSharedMemorySettings::DefaultMonitorStoreSize);
-	long productStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("ProductStoreSize"), SVSharedMemorySettings::DefaultProductStoreSize);
-	long dataStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("DataStoreSize"), SVSharedMemorySettings::DefaultDataStoreSize);
-	long numProductSlots = reader.GetValueInt(_T("SharedMemory"), _T("ProductNumSlots"), SVSharedMemorySettings::DefaultProductNumSlots);
-	long numRejectSlots = reader.GetValueInt(_T("SharedMemory"), _T("RejectsNumSlots"), SVSharedMemorySettings::DefaultRejectsNumSlots);
+	long monitorStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("MonitorStoreSize"), SvSml::SVSharedMemorySettings::DefaultMonitorStoreSize);
+	long productStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("ProductStoreSize"), SvSml::SVSharedMemorySettings::DefaultProductStoreSize);
+	long dataStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("DataStoreSize"), SvSml::SVSharedMemorySettings::DefaultDataStoreSize);
+	long numProductSlots = reader.GetValueInt(_T("SharedMemory"), _T("ProductNumSlots"), SvSml::SVSharedMemorySettings::DefaultProductNumSlots);
+	long numRejectSlots = reader.GetValueInt(_T("SharedMemory"), _T("RejectsNumSlots"), SvSml::SVSharedMemorySettings::DefaultRejectsNumSlots);
 	
-	m_settings = SVSharedMemorySettings(monitorStoreSize, productStoreSize, dataStoreSize, numProductSlots, numRejectSlots);
+	m_settings = SvSml::SVSharedMemorySettings(monitorStoreSize, productStoreSize, dataStoreSize, numProductSlots, numRejectSlots);
 }
 
 void SVSharedMemorySingleton::CheckDirectories()
@@ -50,24 +50,24 @@ void SVSharedMemorySingleton::CheckDirectories()
 	// Ensure Directories exist
 	try
 	{
-		//if (S_OK == SeidenaderVision::SVSharedConfiguration::SharedResourcesOk()) // Check if drive exists and enough space
-		if (SeidenaderVision::SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
+		//if (S_OK == SvSml::SVSharedConfiguration::SharedResourcesOk()) // Check if drive exists and enough space
+		if (SvSml::SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
 		{
-			const std::string& sharedMemoryDirectory = SeidenaderVision::SVSharedConfiguration::GetSharedMemoryDirectoryName();
+			const std::string& sharedMemoryDirectory = SvSml::SVSharedConfiguration::GetSharedMemoryDirectoryName();
 			DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
 				// Create the directory
 				CreateDirectory(sharedMemoryDirectory.c_str(), nullptr);
 			}
-			const std::string& imageFileDirectory = SeidenaderVision::SVSharedConfiguration::GetImageDirectoryName();
+			const std::string& imageFileDirectory = SvSml::SVSharedConfiguration::GetImageDirectoryName();
 			res = GetFileAttributes(imageFileDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
 				// Create the directory
 				CreateDirectory(imageFileDirectory.c_str(), nullptr);
 			}
-			const std::string& rejectImageFileDirectory = SeidenaderVision::SVSharedConfiguration::GetRejectImageDirectoryName();
+			const std::string& rejectImageFileDirectory = SvSml::SVSharedConfiguration::GetRejectImageDirectoryName();
 			res = GetFileAttributes(rejectImageFileDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
@@ -81,7 +81,7 @@ void SVSharedMemorySingleton::CheckDirectories()
 	}
 }
 
-HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SeidenaderVision::InspectionIDs& rIDs)
+HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SvSml::InspectionIDs& rIDs)
 {
 	HRESULT hr = S_OK;
 
@@ -89,7 +89,7 @@ HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, co
 
 	if (it == m_PPQSharedMemory.end())
 	{
-		SeidenaderVision::SVSharedPPQWriter& rMemory = m_PPQSharedMemory[rGuid];
+		SvSml::SVSharedPPQWriter& rMemory = m_PPQSharedMemory[rGuid];
 		hr = rMemory.Create(rName.c_str(), rIDs, m_settings);
 	}
 	return hr;
@@ -106,7 +106,7 @@ HRESULT SVSharedMemorySingleton::ErasePPQSharedMemory(const SVGUID& rGuid)
 	return hr;
 }
 
-SeidenaderVision::SVSharedPPQWriter& SVSharedMemorySingleton::GetPPQWriter(const SVGUID& rGuid)
+SvSml::SVSharedPPQWriter& SVSharedMemorySingleton::GetPPQWriter(const SVGUID& rGuid)
 {
 	SVPPQSharedMemoryMap::iterator it = m_PPQSharedMemory.find(rGuid);
 
@@ -117,7 +117,7 @@ SeidenaderVision::SVSharedPPQWriter& SVSharedMemorySingleton::GetPPQWriter(const
 	throw std::exception("SharedPPQWriter Not Found");
 }
 
-SeidenaderVision::SVSharedInspectionWriter& SVSharedMemorySingleton::GetInspectionWriter(const SVGUID& rPPQGuid, const SVGUID& rGuid)
+SvSml::SVSharedInspectionWriter& SVSharedMemorySingleton::GetInspectionWriter(const SVGUID& rPPQGuid, const SVGUID& rGuid)
 {
 	SVPPQSharedMemoryMap::iterator it = m_PPQSharedMemory.find(rPPQGuid);
 	if (it != m_PPQSharedMemory.end())
@@ -137,17 +137,17 @@ std::string SVSharedMemorySingleton::GetInspectionShareName(const SVGUID& rPPQGu
 	throw std::exception("SharedInspectionWriter Not Found");
 }
 
-const SVSharedMemorySettings& SVSharedMemorySingleton::GetSettings() const
+const SvSml::SVSharedMemorySettings& SVSharedMemorySingleton::GetSettings() const
 {
 	return m_settings;
 }
 
-SeidenaderVision::SVMonitorListWriter& SVSharedMemorySingleton::GetMonitorListWriter()
+SvSml::SVMonitorListWriter& SVSharedMemorySingleton::GetMonitorListWriter()
 {
 	return m_monitorListWriter;
 }
 
-SeidenaderVision::SVShareControlHandler& SVSharedMemorySingleton::GetIPCShare()
+SvSml::SVShareControlHandler& SVSharedMemorySingleton::GetIPCShare()
 {
 	return m_shareControlHandler;
 }
@@ -167,10 +167,10 @@ void SVSharedMemorySingleton::SetProductDepth(long productDepth, long extra)
 	m_settings.SetNumProductSlots(productDepth + extra);
 }
 
-HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SVProductFilterEnum filter)
+HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
 {
 	HRESULT hr = S_OK;
-	if (SeidenaderVision::SVSharedConfiguration::SharedDriveExists() && SeidenaderVision::SVSharedConfiguration::ControlFileExits())
+	if (SvSml::SVSharedConfiguration::SharedDriveExists() && SvSml::SVSharedConfiguration::ControlFileExits())
 	{
 		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
 		try
@@ -193,7 +193,7 @@ HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SVPr
 
 void SVSharedMemorySingleton::Destroy()
 {
-	if (SeidenaderVision::SVSharedConfiguration::SharedDriveExists() && SeidenaderVision::SVSharedConfiguration::ControlFileExits())
+	if (SvSml::SVSharedConfiguration::SharedDriveExists() && SvSml::SVSharedConfiguration::ControlFileExits())
 	{
 		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
 		instance.m_PPQSharedMemory.clear();
@@ -204,6 +204,6 @@ void SVSharedMemorySingleton::Destroy()
 
 bool SVSharedMemorySingleton::HasShares()
 {
-	return (SeidenaderVision::SVSharedConfiguration::SharedDriveExists() && SeidenaderVision::SVSharedConfiguration::ControlFileExits());
+	return (SvSml::SVSharedConfiguration::SharedDriveExists() && SvSml::SVSharedConfiguration::ControlFileExits());
 }
 

@@ -36,8 +36,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObjectLibrary;
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -62,15 +60,15 @@ SVVisionProcessorHelper::SVVisionProcessorHelper()
 {
 	m_GetItemsFunctors = boost::assign::map_list_of< SVString, SVGetItemsFunctor >
 		( StandardItems, boost::bind( &SVVisionProcessorHelper::GetStandardItems, this, _1, _2 ) )
-		( FqnInspections, boost::bind( &SVVisionProcessorHelper::GetInspectionItems, this, _1, _2 ) )
-		( FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2 ) )
+		( SvOl::FqnInspections, boost::bind( &SVVisionProcessorHelper::GetInspectionItems, this, _1, _2 ) )
+		( SvOl::FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2 ) )
 		;
 
 	m_SetItemsFunctors = boost::assign::map_list_of< SVString, SVSetItemsFunctor >
 		( StandardItems, boost::bind( &SVVisionProcessorHelper::SetStandardItems, this, _1, _2 ) )
-		( FqnInspections, boost::bind( &SVVisionProcessorHelper::SetInspectionItems, this, _1, _2 ) )
-		( FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2 ) )
-		( FqnCameras, boost::bind( &SVVisionProcessorHelper::SetCameraItems, this, _1, _2 ) )
+		( SvOl::FqnInspections, boost::bind( &SVVisionProcessorHelper::SetInspectionItems, this, _1, _2 ) )
+		( SvOl::FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2 ) )
+		( SvOl::FqnCameras, boost::bind( &SVVisionProcessorHelper::SetCameraItems, this, _1, _2 ) )
 		;
 }
 
@@ -84,7 +82,7 @@ HRESULT SVVisionProcessorHelper::GetVersion( unsigned long& p_rVersion ) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rVersion = SeidenaderVision::SVVersionInfo::GetLongVersion();
+	p_rVersion = SvSyl::SVVersionInfo::GetLongVersion();
 
 	return l_Status;
 }
@@ -93,7 +91,7 @@ HRESULT SVVisionProcessorHelper::GetVersion( SVString& p_rVersion ) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rVersion = SeidenaderVision::SVVersionInfo::GetShortTitleVersion();
+	p_rVersion = SvSyl::SVVersionInfo::GetShortTitleVersion();
 
 	return l_Status;
 }
@@ -439,11 +437,11 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 					if( foundIterator != Internal_DisplayNameMap.end())
 					{
 						DisplayName = foundIterator->second;
-						p_rItems.insert( pair< SVString, SVStorageResult >(DisplayName, NameStorageResultMapIt->second ));
+						p_rItems.insert( std::pair< SVString, SVStorageResult >(DisplayName, NameStorageResultMapIt->second ));
 					}
 					else
 					{
-						p_rItems.insert( pair< SVString, SVStorageResult >(NameStorageResultMapIt->first, NameStorageResultMapIt->second ));
+						p_rItems.insert( std::pair< SVString, SVStorageResult >(NameStorageResultMapIt->first, NameStorageResultMapIt->second ));
 					}	
 
 				}
@@ -520,11 +518,11 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 
 					if( l_FunctorIter != m_SetItemsFunctors.end() )
 					{
-						l_NameStorageItems[ l_FunctorIter->first ].insert(  pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );
+						l_NameStorageItems[ l_FunctorIter->first ].insert( std::pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );
 					}
 					else
 					{
-						l_NameStorageItems[ StandardItems ].insert(  pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );;
+						l_NameStorageItems[ StandardItems ].insert( std::pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );;
 					}
 				}
 			}
@@ -1083,7 +1081,7 @@ HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) cons
 	return hr;
 }
 
-HRESULT SVVisionProcessorHelper::SetProductFilter(const SVString& rListName, SVProductFilterEnum filter) 
+HRESULT SVVisionProcessorHelper::SetProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum filter) 
 {
 	SVConfigurationObject* pConfig = nullptr;
 
@@ -1099,7 +1097,7 @@ HRESULT SVVisionProcessorHelper::SetProductFilter(const SVString& rListName, SVP
 	return  hr;
 }
 
-HRESULT SVVisionProcessorHelper::GetProductFilter(const SVString& rListName, SVProductFilterEnum& rFilter) const
+HRESULT SVVisionProcessorHelper::GetProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	SVConfigurationObject* pConfig = nullptr;
 

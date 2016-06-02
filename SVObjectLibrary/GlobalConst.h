@@ -13,25 +13,22 @@
 
 #pragma once
 
-namespace Seidenader
+namespace Seidenader { namespace SVObjectLibrary
 {
-	namespace SVObjectLibrary
-	{
-		#pragma region Declarations
-		const TCHAR* const FqnConfiguration				= _T( "Configuration Object" );
-		const TCHAR* const FqnInspections				= _T( "Inspections" );
-		const TCHAR* const FqnPPQs						= _T( "PPQs" );
-		const TCHAR* const FqnPPQVariables				= _T( "PPQ Variables" );
-		const TCHAR* const FqnRemoteInputs				= _T( "RemoteInputs" );
-		const TCHAR* const FqnCameras					= _T( "Cameras" );
-		const TCHAR* const FqnEnvironmentMode			= _T( "Environment.Mode" );
-		const TCHAR* const FqnEnvironment				= _T( "Environment" );
-		const TCHAR* const FqnRoot						= _T( "Root" );
-		const TCHAR* const FqnGlobal					= _T( "Global" );
-		static const LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
-		#pragma endregion Declarations
-	}
-}
+	#pragma region Declarations
+	const TCHAR* const FqnConfiguration				= _T( "Configuration Object" );
+	const TCHAR* const FqnInspections				= _T( "Inspections" );
+	const TCHAR* const FqnPPQs						= _T( "PPQs" );
+	const TCHAR* const FqnPPQVariables				= _T( "PPQ Variables" );
+	const TCHAR* const FqnRemoteInputs				= _T( "RemoteInputs" );
+	const TCHAR* const FqnCameras					= _T( "Cameras" );
+	const TCHAR* const FqnEnvironmentMode			= _T( "Environment.Mode" );
+	const TCHAR* const FqnEnvironment				= _T( "Environment" );
+	const TCHAR* const FqnRoot						= _T( "Root" );
+	const TCHAR* const FqnGlobal					= _T( "Global" );
+	static const LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
+	#pragma endregion Declarations
+} /* namespace SVObjectLibrary */ } /* namespace Seidenader */
 
 namespace SvOl = Seidenader::SVObjectLibrary;
 

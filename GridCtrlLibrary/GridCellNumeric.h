@@ -23,21 +23,18 @@
 #include "GridCell.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace Seidenader { namespace GridCtrlLibrary
 {
-	namespace GridCtrlLibrary
+	class CGridCellNumeric : public CGridCell  
 	{
-		class CGridCellNumeric : public CGridCell  
-		{
-			DECLARE_DYNCREATE(CGridCellNumeric)
+		DECLARE_DYNCREATE(CGridCellNumeric)
 
-		public:
-			virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-			virtual void EndEdit();
+	public:
+		virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
+		virtual void EndEdit();
 
-		};
-	} //namespace GridCtrlLibrary
-} //namespace Seidenader
+	};
+
+} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
 
 namespace SvGcl = Seidenader::GridCtrlLibrary;
-

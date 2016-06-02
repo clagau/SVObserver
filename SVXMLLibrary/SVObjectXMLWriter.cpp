@@ -98,7 +98,7 @@ std::string to_utf8(const std::wstring& str)
 
 static std::string BSTRToUTF8(BSTR value)
 {
-	return SVStringConversions::to_utf8(_bstr_t(value));
+	return SvUl::to_utf8(_bstr_t(value));
 }
 
 static std::string VariantTypeToString(VARTYPE vt)

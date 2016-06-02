@@ -183,8 +183,8 @@ void RemoteMonitorListController::ValidateInputs()
 		const SVString& ppqName = namedList.GetPPQName();
 		const SVGUID& ppqGuid = namedList.GetPPQObjectID();
 		// Check that the PPQ still exists
-		const SVGUID& guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(ppqName);
-		if (guid.empty() || guid != ppqGuid)
+		const SVGUID& guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName( ppqName.c_str() );
+		if ( guid.empty() || guid != ppqGuid )
 		{
 			// remove this list
 			it = m_list.erase(it);
@@ -226,8 +226,8 @@ void RemoteMonitorListController::ValidateInputs()
 
 void RemoteMonitorListController::InitMonitorListInSharedMemory()
 {
-	const SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
-	SeidenaderVision::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
+	const SvSml::SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
+	SvSml::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
 	rWriter.Create(rSettings);
 }
 
@@ -235,8 +235,8 @@ void RemoteMonitorListController::InitMonitorListInSharedMemory()
 
 void RemoteMonitorListController::WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList&  remoteMonitorNamedlist )
 {
-	const SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
-	SeidenaderVision::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
+	const SvSml::SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
+	SvSml::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
 
 	const MonitoredObjectList& values =remoteMonitorNamedlist .GetProductValuesList();
 	const MonitoredObjectList& images = remoteMonitorNamedlist.GetProductImagesList();
@@ -268,9 +268,9 @@ void RemoteMonitorListController::WriteMonitorListToSharedMemory(const std::stri
 		std::transform(failStatus.begin(), failStatus.end(), Insertor(failStatusItems, failStatusItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
 
 		rWriter.AddList(name, ppqName, rejectDepth, isActive);
-		rWriter.FillList(name, SeidenaderVision::productItems, productItems);
-		rWriter.FillList(name, SeidenaderVision::rejectCondition, rejectCondItems);
-		rWriter.FillList(name, SeidenaderVision::failStatus, failStatusItems);
+		rWriter.FillList(name, SvSml::productItems, productItems);
+		rWriter.FillList(name, SvSml::rejectCondition, rejectCondItems);
+		rWriter.FillList(name, SvSml::failStatus, failStatusItems);
 	}
 	else
 	{
@@ -340,7 +340,7 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 	if (it != m_list.end())
 	{
 		it->second.Activate(bActivate);
-		it->second.SetProductFilter(LastInspectedFilter);
+		it->second.SetProductFilter(SvSml::LastInspectedFilter);
 	}
 	else
 	{
@@ -361,7 +361,7 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 	}
 }
 
-HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum filter)
+HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
 {
 	HRESULT hr = S_OK;
 	RemoteMonitorList::iterator it = m_list.find(listName);
@@ -390,7 +390,7 @@ HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVS
 	return hr;
 }
 
-HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum& rFilter) const
+HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	HRESULT hr = S_OK;
 	RemoteMonitorList::const_iterator it = m_list.find(listName);

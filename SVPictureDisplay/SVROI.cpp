@@ -93,7 +93,7 @@ HRESULT CSVROI::SetOverlay(VARIANT* pParameterList, VARIANT* pParameterValue, LO
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	m_Parent = 0;
-	Seidenader::SVOMFCLibrary::DisplayHelper::FillParameterMap(m_ParameterMap, pParameterList, pParameterValue);
+	SvOml::DisplayHelper::FillParameterMap(m_ParameterMap, pParameterList, pParameterValue);
 
 	return S_OK;
 }

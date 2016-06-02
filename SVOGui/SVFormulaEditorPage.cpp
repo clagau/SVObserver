@@ -15,7 +15,7 @@
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVTreeLibrary/ObjectSelectorItem.h"
+#include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVFormulaEditorPage.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVUtilityLibrary/LoadDll.h"
@@ -40,9 +40,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace Seidenader { namespace SVOGui
 {
-	using namespace Seidenader::SVObjectLibrary;
-	using namespace Seidenader::ObjectSelectorLibrary;
-	using namespace SvOi;
 	// Constant types
 	enum
 	{
@@ -392,17 +389,17 @@ namespace Seidenader { namespace SVOGui
 		CString tmp;
 		tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
 
-		ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::TypeSingleObject );
-		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, SVString(tmp), SVString( _T("") ) );
-		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, SVString( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(tmp), SVString( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, SVString( _T("") ) );
 
 		// Insert the Names of the objects selecteable for an Equation
 		m_FormulaController->BuildSelectableItems();
 
 		SVStringSet Items;
 		Items.insert( SVString(m_strToolsetOutputVariable) );
-		ObjectTreeGenerator::Instance().setCheckItems( Items );
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 
 		CString Title;
 		CString ToolsetOutput;
@@ -411,11 +408,11 @@ namespace Seidenader { namespace SVOGui
 		Title.Format( _T("%s - %s"), ToolsetOutput, InspectionName.c_str() );
 		Filter.LoadString( IDS_FILTER );
 
-		INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
 
 		if( IDOK == Result )
 		{
-			m_strToolsetOutputVariable = ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
+			m_strToolsetOutputVariable = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
 			UpdateData( FALSE );
 		}
 	}
@@ -661,7 +658,7 @@ namespace Seidenader { namespace SVOGui
 			enableUndoButton();
 			//@Info (MZA): result also true if resetFailed, because the fail of reset of the object maybe happen by a other page.
 			//By leaving the sheet it will reset objects and check if it works
-			return result == IFormulaController::validateSuccessful || result == IFormulaController::resetFailed;
+			return result == SvOi::IFormulaController::validateSuccessful || result == SvOi::IFormulaController::resetFailed;
 		}
 		return true;
 	}
@@ -673,7 +670,7 @@ namespace Seidenader { namespace SVOGui
 		UpdateData( TRUE ); // Update the variables
 		double value = 0;
 		const int result = m_FormulaController->ValidateEquation( equationText, value, false );
-		if( result == IFormulaController::validateSuccessful )
+		if( result == SvOi::IFormulaController::validateSuccessful )
 		{
 			CString tmp;
 			SvOi::MessageTextEnum id = SvOi::Tid_Empty;

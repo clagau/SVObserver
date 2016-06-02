@@ -9,9 +9,12 @@
 //* .Check In Date   : $Date:   14 Aug 2014 17:10:00  $
 //******************************************************************************
 #pragma once
-#include "SVSharedProduct.h"
 
-namespace SeidenaderVision
+#pragma region Includes
+#include "SVSharedProduct.h"
+#pragma endregion Includes
+
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	struct SVSharedProductStore
 	{
@@ -21,5 +24,7 @@ namespace SeidenaderVision
 		SVSharedProductStore(const void_allocator & allocator, size_t cache_size);
 	};
 	typedef boost::interprocess::allocator<SVSharedProductStore, segment_manager_t> ProductStoreAllocator;
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

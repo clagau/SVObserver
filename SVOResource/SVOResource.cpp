@@ -16,10 +16,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVOResource;
-
-SVOResourceApp theApp;
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -27,28 +23,30 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-BEGIN_MESSAGE_MAP(SVOResourceApp, CWinApp)
-END_MESSAGE_MAP()
-
-
-
-#pragma region Constructor
-SVOResourceApp::SVOResourceApp()
+namespace Seidenader { namespace SVOResource
 {
-}
+	SVOResourceApp theApp;
 
-SVOResourceApp::~SVOResourceApp()
-{
-}
-#pragma endregion Constructor
+	BEGIN_MESSAGE_MAP(SVOResourceApp, CWinApp)
+	END_MESSAGE_MAP()
 
-#pragma region Public Methods
-BOOL SVOResourceApp::InitInstance()
-{
-	CWinApp::InitInstance();
+	#pragma region Constructor
+	SVOResourceApp::SVOResourceApp()
+	{
+	}
 
-	return TRUE;
-}
+	SVOResourceApp::~SVOResourceApp()
+	{
+	}
+	#pragma endregion Constructor
 
-#pragma endregion Protected Methods
+	#pragma region Public Methods
+	BOOL SVOResourceApp::InitInstance()
+	{
+		CWinApp::InitInstance();
+
+		return TRUE;
+	}
+	#pragma endregion Public Methods
+} /*namespace SVOResource*/ } /*namespace Seidenader*/
 

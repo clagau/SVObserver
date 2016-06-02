@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <boost/static_assert.hpp>
 //Moved to precompiled header: #include <boost/scoped_array.hpp>
 
-namespace SVStringConversions
+namespace Seidenader { namespace SVUtilityLibrary
 {
 	template<typename T>
 	inline std::string to_utf8(const T& utf16)
@@ -29,7 +29,11 @@ namespace SVStringConversions
 	}
 
 	std::wstring to_utf16(const std::string & utf8, int cp = CP_UTF8);
-}
 
+} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
+
+#pragma region Inline
 #include "SVStringConversions.inl"
+#pragma endregion Inline
 
+namespace SvUl = Seidenader::SVUtilityLibrary;

@@ -378,7 +378,7 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 	// copy first part of title loaded at time of frame creation
 	TCHAR szText[ 256 +_MAX_PATH ];
 
-	CString l_Version = SeidenaderVision::SVVersionInfo::GetShortTitleVersion().c_str();
+	CString l_Version = SvSyl::SVVersionInfo::GetShortTitleVersion().c_str();
 
 	if( GetStyle() & FWS_PREFIXTITLE )
 	{

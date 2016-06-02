@@ -8,88 +8,90 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   14 Aug 2014 17:08:38  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSharedInspectionReader.h"
 #include "SVSharedConfiguration.h"
+#pragma endregion Includes
 
 #pragma intrinsic (_InterlockedDecrement16)
 #pragma intrinsic (_InterlockedIncrement16)
 #pragma intrinsic (_InterlockedCompareExchange)
 
-using namespace SeidenaderVision;
-
-SVSharedInspectionReader::SVSharedInspectionReader()
-: sh(nullptr)
-, rsh(nullptr)
-, m_bOpened(false)
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-}
-
-SVSharedInspectionReader::~SVSharedInspectionReader()
-{
-	Close();
-}
-
-bool SVSharedInspectionReader::Open(const std::string& name)
-{
-	bool bRetVal = false;
-	try
+	SVSharedInspectionReader::SVSharedInspectionReader()
+	: sh(nullptr)
+	, rsh(nullptr)
+	, m_bOpened(false)
 	{
-		m_ShareName = name + "." + SVSharedConfiguration::GetShareName();
-		shm = DataSharedMemPtr(new boost::interprocess::managed_shared_memory(boost::interprocess::open_only, m_ShareName.c_str()));
-
-		// get pointers to last_inspected/reject segments
-		sh = shm->find<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str()).first;
-		rsh = shm->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
-		if (sh && rsh)
-		{
-			bRetVal = true;
-			m_bOpened = true;
-		}
 	}
-	catch (boost::interprocess::interprocess_exception& e)
+
+	SVSharedInspectionReader::~SVSharedInspectionReader()
 	{
-		SVSharedConfiguration::Log(e.what());
+		Close();
+	}
+
+	bool SVSharedInspectionReader::Open(const std::string& name)
+	{
+		bool bRetVal = false;
+		try
+		{
+			m_ShareName = name + "." + SVSharedConfiguration::GetShareName();
+			shm = DataSharedMemPtr(new boost::interprocess::managed_shared_memory(boost::interprocess::open_only, m_ShareName.c_str()));
+
+			// get pointers to last_inspected/reject segments
+			sh = shm->find<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str()).first;
+			rsh = shm->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
+			if (sh && rsh)
+			{
+				bRetVal = true;
+				m_bOpened = true;
+			}
+		}
+		catch (boost::interprocess::interprocess_exception& e)
+		{
+			SVSharedConfiguration::Log(e.what());
+			m_bOpened = false;
+		}
+		return bRetVal;
+	}
+
+	void SVSharedInspectionReader::Close()
+	{
+		try
+		{
+			if (shm)
+			{
+				shm.reset();
+			}
+		}
+		catch(boost::interprocess::interprocess_exception& e)
+		{
+			SVSharedConfiguration::Log(e.what());
+		}
+		sh = nullptr;
+		rsh = nullptr;
+
 		m_bOpened = false;
 	}
-	return bRetVal;
-}
 
-void SVSharedInspectionReader::Close()
-{
-	try
+	bool SVSharedInspectionReader::IsOpen() const
 	{
-		if (shm)
-		{
-			shm.reset();
-		}
+		return m_bOpened;
 	}
-	catch(boost::interprocess::interprocess_exception& e)
+
+	// get Last Inspected Run data
+	SVSharedData& SVSharedInspectionReader::GetInspectedSlot(long index)
 	{
-		SVSharedConfiguration::Log(e.what());
+		return sh->data[ index ];
 	}
-	sh = nullptr;
-	rsh = nullptr;
 
-	m_bOpened = false;
-}
+	// get Reject Run data
+	SVSharedData& SVSharedInspectionReader::GetRejectSlot(long index)
+	{
+		return rsh->data[ index ];
+	}
 
-bool SVSharedInspectionReader::IsOpen() const
-{
-	return m_bOpened;
-}
-
-// get Last Inspected Run data
-SVSharedData& SVSharedInspectionReader::GetInspectedSlot(long index)
-{
-	return sh->data[ index ];
-}
-
-// get Reject Run data
-SVSharedData& SVSharedInspectionReader::GetRejectSlot(long index)
-{
-	return rsh->data[ index ];
-}
-
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

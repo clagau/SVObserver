@@ -10,10 +10,12 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <fstream>
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	class SVSharedConfiguration
 	{
@@ -47,5 +49,6 @@ namespace SeidenaderVision
 		}
 		static bool SharedDriveSizeOk();
 	};
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

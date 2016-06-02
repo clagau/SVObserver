@@ -8,12 +8,14 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   02 Sep 2014 13:18:18  $
 //******************************************************************************
+#pragma region Includes
 #include "StdAfx.h"
 //Moved to precompiled header: #include <cmath>
 #include "SVSharedPPQWriter.h"
 #include "SVSharedConfiguration.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	SVSharedPPQWriter::SVSharedPPQWriter()
 		: sh(nullptr)
@@ -247,6 +249,5 @@ namespace SeidenaderVision
 		ClearHeld(sh);
 		ClearHeld(rsh);
 	}
-}
 
-
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

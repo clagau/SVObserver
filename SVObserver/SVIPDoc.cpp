@@ -86,7 +86,7 @@
 #include "ResizeTool.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/GlobalConst.h"
-#include "SVTreeLibrary/ObjectSelectorItem.h"
+#include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "RootObject.h"
 #include "ToolClipboard.h"
 #include "ExtrasEngine.h"
@@ -1544,7 +1544,7 @@ void SVIPDoc::OnResultsPicker()
 
 				for( Iter = SelectedItems.begin(); Iter != SelectedItems.end(); ++Iter )
 				{
-					if(string::npos  != Iter->getLocation().find(SvOl::FqnPPQVariables))
+					if(std::string::npos  != Iter->getLocation().find(SvOl::FqnPPQVariables))
 					{
 						SVString locationName = Iter->getLocation();
 						SvUl_SF::searchAndReplace(locationName, SvOl::FqnPPQVariables,InspectionName.c_str());

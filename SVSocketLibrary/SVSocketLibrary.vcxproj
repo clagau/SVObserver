@@ -84,10 +84,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVClientSocket.cpp" />
     <ClCompile Include="SVJsonPacket.cpp" />
     <ClCompile Include="SVJsonStreamPacket.cpp" />
-    <ClCompile Include="SVServerSocket.cpp" />
     <ClCompile Include="SVSocket.cpp" />
     <ClCompile Include="SVSocketError.cpp" />
     <ClCompile Include="SVSocketLibrary.cpp" />

@@ -574,7 +574,7 @@ bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 
 
 	SVExtentPropertyInfoStruct info;
-	array<SVExtentPropertyEnum, 4> PropArray = { SVExtentPropertyWidth, SVExtentPropertyHeight,SVExtentPropertyPositionPointX, SVExtentPropertyPositionPointY  };
+	std::tr1::array<SVExtentPropertyEnum, 4> PropArray = { SVExtentPropertyWidth, SVExtentPropertyHeight,SVExtentPropertyPositionPointX, SVExtentPropertyPositionPointY  };
 	std::for_each(PropArray.begin(),PropArray.end(),[&](SVExtentPropertyEnum p)
 	{
 		if (bAllowFullsize && S_OK == pTool->GetPropertyInfo(p, info) )

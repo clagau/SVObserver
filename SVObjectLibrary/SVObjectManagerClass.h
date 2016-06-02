@@ -21,6 +21,7 @@
 #include "SVObjectReference.h"
 #include "SVObserverNotificationFunctor.h"
 #include "SVObjectClass.h"
+#include "JoinType.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -47,7 +48,7 @@ public:
 	virtual ~SVObjectManagerClass();
 
 	SVObjectManagerStateEnum GetState() const;
-	HRESULT SetState( SVObjectManagerStateEnum p_State );
+	HRESULT SetState( SVObjectManagerStateEnum State );
 
 	const SVGUID GetChildRootObjectID( const SVString& rRootChild ) const;
 
@@ -61,7 +62,7 @@ public:
 	HRESULT ConstructRootObject( const SVGUID& rClassID );
 	HRESULT DestroyRootObject();
 	void setRootChildID(const SVString& rRootChild, const SVGUID& rUniqueID);
-	void Translation(SVString& Name);
+	void Translation(SVString& rName);
 
 	HRESULT ConstructObject( const SVGUID& rClassID, GUID& rObjectID );
 	HRESULT ConstructObject( const SVGUID& rClassID, SVObjectClass*& rpObject );
@@ -73,23 +74,23 @@ public:
 
 	HRESULT GetObjectByDottedName( const SVString& rFullName, GUID& rObjectID ) const;
 	HRESULT GetObjectByDottedName( const SVString& rFullName, SVObjectClass*& rpObject ) const;
-	HRESULT GetObjectByDottedName( const SVString& rFullName, SVObjectReference& rReference ) const;
+	HRESULT GetObjectByDottedName( const SVString& rFullName, SVObjectReference& rObjectRef ) const;
 
 	template< typename SVObjectTypeName >
 	HRESULT GetObjectByDottedName( const SVString& rFullName, SVObjectTypeName*& rpObject );
 
-	BOOL CreateUniqueObjectID( SVObjectClass* PObject );
-	BOOL OpenUniqueObjectID( SVObjectClass* PObject );
-	BOOL CloseUniqueObjectID( SVObjectClass* PObject );
-	BOOL ChangeUniqueObjectID( SVObjectClass* PObject, const SVGUID& RNewGuid );
+	BOOL CreateUniqueObjectID( SVObjectClass* pObject );
+	BOOL OpenUniqueObjectID( SVObjectClass* pObject );
+	BOOL CloseUniqueObjectID( SVObjectClass* pObject );
+	BOOL ChangeUniqueObjectID( SVObjectClass* pObject, const SVGUID& rNewGuid );
 
-	SVObjectClass* GetObject( const SVGUID& RGuid ) const;
-	SVObjectClass* GetObjectCompleteName( LPCTSTR tszName );
-	SVObjectReference GetObjectReference( const CString& strName );
+	SVObjectClass* GetObject( const SVGUID& rGuid ) const;
+	SVObjectClass* GetObjectCompleteName( LPCTSTR Name );
+	SVObjectReference GetObjectReference( LPCTSTR Name );
 
-	SVGUID GetObjectIdFromCompleteName( const SVString& rName );
+	SVGUID GetObjectIdFromCompleteName( LPCTSTR Name );
 
-	SVString GetCompleteObjectName( const SVGUID& RGuid );
+	SVString GetCompleteObjectName( const SVGUID& rGuid );
 
 	HRESULT SubmitCommand( const SVGUID& rObjectID, const SVCommandTemplatePtr& rCommandPtr );
 	HRESULT SubmitCommand( SVObjectClass& rObject, const SVCommandTemplatePtr& rCommandPtr );
@@ -100,28 +101,28 @@ public:
 	template< typename ObjectVisitor >
 	HRESULT VisitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID=GUID_NULL );
 
-	HRESULT InsertObserver( SVObserverNotificationFunctorPtr p_FunctorPtr, long& rCookie );
+	HRESULT InsertObserver( SVObserverNotificationFunctorPtr pFunctor, long& rCookie );
 	HRESULT EraseObserver( long p_Cookie );
 
-	HRESULT GetObserverDataNames( long p_Cookie, SVSubjectDataNameDeque& rSubjectDataNames ) const;
+	HRESULT GetObserverDataNames( long Cookie, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 	HRESULT GetObserverDataNames( const SVGUID& rObserverID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 
 	HRESULT GetObserverSubject( const SVString& rSubjectDataName, const SVGUID& rObserverID, GUID& rSubjectID ) const;
-	HRESULT GetObserverSubject( const SVString& rSubjectDataName, long p_Cookie, GUID& rSubjectID ) const;
+	HRESULT GetObserverSubject( const SVString& rSubjectDataName, long Cookie, GUID& rSubjectID ) const;
 
 	HRESULT GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, GuidSet& rObserverIds );
 
 	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long p_Cookie );
+	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
 
 	HRESULT EnableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT EnableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long p_Cookie );
+	HRESULT EnableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
 
 	HRESULT DisableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT DisableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long p_Cookie );
+	HRESULT DisableObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
 
 	HRESULT DetachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT DetachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long p_Cookie );
+	HRESULT DetachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
 	HRESULT DetachObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID );
 
 	HRESULT DetachSubjectsAndObservers( const SVGUID& rObjectID );
@@ -130,7 +131,7 @@ public:
 	HRESULT UpdateObserver( const SVGUID& rObserverID, const SVDataType& rData );
 
 	template< typename SVDataType >
-	HRESULT UpdateObserver( long p_Cookie, const SVDataType& rData );
+	HRESULT UpdateObserver( long Cookie, const SVDataType& rData );
 
 	template< typename SVDataType >
 	HRESULT UpdateObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVDataType& rData );
@@ -146,21 +147,21 @@ public:
 	void ClearProductIndicator();
 	void IncrementProductIndicator();
 	void DecrementProductIndicator();
-	void AdjustProductIndicator( long p_Amount );
+	void AdjustProductIndicator( long Amount );
 
 	long GetPendingImageIndicator() const;
 	void ClearPendingImageIndicator();
 	void IncrementPendingImageIndicator();
 	void DecrementPendingImageIndicator();
-	void AdjustPendingImageIndicator( long p_Amount );
+	void AdjustPendingImageIndicator( long Amount );
 
 	long GetInspectionIndicator() const;
 	void ClearInspectionIndicator();
 	void IncrementInspectionIndicator();
 	void DecrementInspectionIndicator();
-	void AdjustInspectionIndicator( long p_Amount );
+	void AdjustInspectionIndicator( long Amount );
 
-	long GetNextFrameRate( long p_LastFrameRate );
+	long GetNextFrameRate( long LastFrameRate );
 
 	long GetFileSequenceNumber() const;
 
@@ -171,21 +172,35 @@ public:
 	// So for now the restriction is made manually, just don't call this method anywhere else, as described via this comment
 	void Shutdown();	// This method is only meant to be called by the main application class
 
+	//! Connects two objects with a certain join type
+	//! \param rSource [in] reference to the source object ID
+	//! \param rDestination [in] reference to the destination object ID
+	//! \param Type [in] the dependency type
+	//! \returns S_OK on success
+	HRESULT connectDependency( const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type );
+
+	//! Disconnects two objects with a certain join type
+	//! \param rSource [in] reference to the source object ID
+	//! \param rDestination [in] reference to the destination object ID
+	//! \param Type [in] the dependency type
+	//! \returns S_OK on success
+	HRESULT disconnectDependency( const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type );
+
 protected:
 	typedef std::map< SVString, SVGUID > SVSubjectDataNameSubjectIDMap;
 
 	struct SVCookieEntryStruct
 	{
 		long m_Cookie;
-		SVObserverNotificationFunctorPtr m_FunctorPtr;
+		SVObserverNotificationFunctorPtr m_pFunctor;
 
 		SVSubjectDataNameSubjectIDMap m_SubjectIDs;
 
 		SVCookieEntryStruct()
-		: m_Cookie( 0 ), m_FunctorPtr( nullptr ), m_SubjectIDs() {}
+		: m_Cookie( 0 ), m_pFunctor( nullptr ), m_SubjectIDs() {}
 
-		SVCookieEntryStruct( long p_Cookie, SVObserverNotificationFunctorPtr p_FunctorPtr )
-		: m_Cookie( p_Cookie ), m_FunctorPtr( p_FunctorPtr ), m_SubjectIDs() {}
+		SVCookieEntryStruct( long Cookie, SVObserverNotificationFunctorPtr pFunctor )
+		: m_Cookie( Cookie ), m_pFunctor( pFunctor ), m_SubjectIDs() {}
 	};
 
 	typedef SVSharedPtr< SVCookieEntryStruct > SVCookieEntryStructPtr;
@@ -210,14 +225,14 @@ protected:
 
 	struct SVUniqueObjectEntryStruct
 	{
-		SVGUID ObjectUID;
-		SVObjectClass* PObject;
+		SVGUID m_ObjectUID;
+		SVObjectClass* m_pObject;
 
 		SVSubjectDataNameSubjectIDMap m_SubjectIDs;
 		SVSubjectDataNameObserverMap m_DataNameSubjectObservers;
 
 		SVUniqueObjectEntryStruct()
-		: ObjectUID(), PObject( nullptr ), m_SubjectIDs(), m_DataNameSubjectObservers() {}
+		: m_ObjectUID(), m_pObject( nullptr ), m_SubjectIDs(), m_DataNameSubjectObservers() {}
 	};
 
 	typedef SVSharedPtr< SVUniqueObjectEntryStruct > SVUniqueObjectEntryStructPtr;
@@ -230,15 +245,15 @@ protected:
 	HRESULT GetObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers );
 	HRESULT GetObservers( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies );
 
-	SVCookieEntryStructPtr GetCookieEntry( long p_Cookie ) const;
+	SVCookieEntryStructPtr GetCookieEntry( long Cookie ) const;
 
-	SVGUID GetSubjectID( const SVString& rSubjectDataName, SVUniqueObjectEntryStructPtr p_ObjectEntryPtr ) const;
-	SVGUID GetSubjectID( const SVString& rSubjectDataName, SVCookieEntryStructPtr p_CookieEntryPtr ) const;
+	SVGUID GetSubjectID( const SVString& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry ) const;
+	SVGUID GetSubjectID( const SVString& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry ) const;
 
-	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const SVGUID& RGuid ) const;
-	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const CString& sName ) const;
+	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const SVGUID& rGuid ) const;
+	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const CString& rName ) const;
 
-	HRESULT DetachSubjects( long p_Cookie );
+	HRESULT DetachSubjects( long Cookie );
 	HRESULT DetachSubjects( const SVGUID& rObserverID );
 
 	HRESULT DetachObservers( const SVGUID& rSubjectID );

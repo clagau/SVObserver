@@ -110,11 +110,11 @@ inline BOOL SVObjectClass::IsValid()
 }
 
 template< typename SVObjectVisitor >
-HRESULT SVObjectClass::Accept( SVObjectVisitor& p_rVisitor )
+HRESULT SVObjectClass::Accept( SVObjectVisitor& rVisitor )
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status = p_rVisitor.VisitElement( *this );
+	l_Status = rVisitor.VisitElement( *this );
 
 	return l_Status;
 }

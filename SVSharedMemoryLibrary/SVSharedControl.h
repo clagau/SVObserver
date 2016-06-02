@@ -9,28 +9,36 @@
 //* .Check In Date   : $Date:   28 Aug 2014 18:37:56  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "SVShared.h"
+#pragma endregion Includes
 
-typedef unsigned long timestamp;
-
-struct SVShareControl
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	long ready; // zero - means no reader access, non zero is the counter from the writer
-	long productFilterChanged;
-	timestamp svo_heartbeat;
-	timestamp rrs_heartbeat;
-	byte ack;
+	typedef unsigned long timestamp;
 
-	void_allocator allocator;
-	SVShareControl(const void_allocator& rAllocator)
-	: allocator(rAllocator)
-	, ready(0)
-	, productFilterChanged(0)
-	, ack(0)
-	, svo_heartbeat(0)
-	, rrs_heartbeat(0)
-	{}
-};
+	struct SVShareControl
+	{
+		long ready; // zero - means no reader access, non zero is the counter from the writer
+		long productFilterChanged;
+		timestamp svo_heartbeat;
+		timestamp rrs_heartbeat;
+		byte ack;
 
-typedef boost::interprocess::allocator<SVShareControl, segment_manager_t> SVShareControlAllocator;
+		void_allocator allocator;
+		SVShareControl(const void_allocator& rAllocator)
+		: allocator(rAllocator)
+		, ready(0)
+		, productFilterChanged(0)
+		, ack(0)
+		, svo_heartbeat(0)
+		, rrs_heartbeat(0)
+		{}
+	};
 
+	typedef boost::interprocess::allocator<SVShareControl, segment_manager_t> SVShareControlAllocator;
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

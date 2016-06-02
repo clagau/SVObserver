@@ -24,10 +24,8 @@
 #include "SVObserver.h"
 #include "SVOutputStreamManager.h"
 #include "SVRemoteOutputObject.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
-
-static const std::string scRemoteOutputGroupTag = "SVRemoteOutputGroup";
-static const std::string scPPQObjectTag = "SVPPQObject";
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputGroup, SVRemoteOutputGroupGUID );
 
@@ -268,7 +266,7 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 
 		l_JsonResults = l_Writer.write( l_Object ).c_str();
 
-		l_Status = SVObjectManagerClass::Instance().UpdateObservers( scRemoteOutputGroupTag.c_str(), GetUniqueObjectID(), l_JsonResults );
+		l_Status = SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cRemoteOutputGroupTag ), GetUniqueObjectID(), l_JsonResults );
 	}
 
 	return l_Status;
@@ -588,7 +586,7 @@ SVString SVRemoteOutputGroup::GetPPQName() const
 	SVString l_SubjectName;
 	SVGUID l_SubjectID;
 	
-	SVObjectManagerClass::Instance().GetObserverSubject( scPPQObjectTag.c_str(), GetUniqueObjectID(), l_SubjectID );
+	SVObjectManagerClass::Instance().GetObserverSubject( SVString( SvO::cPPQObjectTag ), GetUniqueObjectID(), l_SubjectID );
 
 	if( !( l_SubjectID.empty() ) )
 	{
@@ -606,7 +604,7 @@ SVString SVRemoteOutputGroup::GetPPQName() const
 		if( nullptr != l_pSubject  )
 		{
 			l_SubjectName = l_pSubject->GetCompleteObjectName();
-			HRESULT l_hr = SVObjectManagerClass::Instance().AttachObserver( scPPQObjectTag.c_str(), m_PPQObjectId, GetUniqueObjectID() );
+			HRESULT l_hr = SVObjectManagerClass::Instance().AttachObserver( SVString( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
 		}
 	}
 
@@ -622,20 +620,20 @@ HRESULT SVRemoteOutputGroup::SetPPQName( const SVString& p_rPPQ )
 		HRESULT l_hr;
 		SVGUID l_tmpGUID;
 		m_PPQObjectId = l_pObject->GetUniqueObjectID();
-		l_hr = SVObjectManagerClass::Instance().GetObserverSubject( scPPQObjectTag.c_str(), GetUniqueObjectID(), l_tmpGUID );
+		l_hr = SVObjectManagerClass::Instance().GetObserverSubject( SVString( SvO::cPPQObjectTag ), GetUniqueObjectID(), l_tmpGUID );
 
 		if( GUID_NULL == l_tmpGUID )
 		{
 			// Attach Observer No previous attachment...
-			SVObjectManagerClass::Instance().AttachObserver( scPPQObjectTag.c_str(), m_PPQObjectId, GetUniqueObjectID() );
+			SVObjectManagerClass::Instance().AttachObserver( SVString( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
 		}
 		else
 		{
 			if( l_tmpGUID != m_PPQObjectId )
 			{
 				// Detach Observer then attach new...
-				l_hr = SVObjectManagerClass::Instance().DetachObserver( scPPQObjectTag.c_str(), l_tmpGUID, GetUniqueObjectID() );
-				l_hr = SVObjectManagerClass::Instance().AttachObserver( scPPQObjectTag.c_str(), m_PPQObjectId, GetUniqueObjectID() );
+				l_hr = SVObjectManagerClass::Instance().DetachObserver( SVString( SvO::cPPQObjectTag ), l_tmpGUID, GetUniqueObjectID() );
+				l_hr = SVObjectManagerClass::Instance().AttachObserver( SVString( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
 			}
 			else
 			{

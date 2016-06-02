@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   14 Aug 2014 17:07:26  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "SVMonitorListStore.h"
 #include "SVSharedMemorySettings.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	class SVMonitorListReader
 	{
@@ -34,5 +37,8 @@ namespace SeidenaderVision
 		const SVSharedMonitorList & operator[](const std::string & listName) const;
 		const std::vector<std::string> GetListNames() const;
 	};
-}
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

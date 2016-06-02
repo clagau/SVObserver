@@ -36,14 +36,14 @@ void SVJsonCommandServerSocket::SetDataReceivedCallback(DataReceivedCallback fun
 bool SVJsonCommandServerSocket::Start(unsigned short portNo)
 {
 	bool bRetVal = false;
-	SVSocketError::ErrorEnum error = m_server.Create();
-	if (SVSocketError::Success == error)
+	SvSol::SVSocketError::ErrorEnum error = m_server.Create();
+	if (SvSol::SVSocketError::Success == error)
 	{
 		error = m_server.SetNonBlocking();
-		if (SVSocketError::Success == error)
+		if (SvSol::SVSocketError::Success == error)
 		{
 			error = m_server.Listen(portNo);
-			if (SVSocketError::Success == error)
+			if (SvSol::SVSocketError::Success == error)
 			{
 				bRetVal = true;
 				if (!m_thread.IsActive())
@@ -204,7 +204,7 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 					int error;
 					int errorLen = sizeof(error);
 					getsockopt(m_client, SOL_SOCKET, SO_ERROR, (char *)&error, &errorLen);
-					SVSocketError::ErrorEnum x = SVSocketError::TranslateError(error);
+					SvSol::SVSocketError::ErrorEnum x = SvSol::SVSocketError::TranslateError(error);
 						
 					m_client.Destroy();
 					m_dataBuffer.Reset();
@@ -225,9 +225,9 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 
 							if( !( l_Data.empty() ) )
 							{
-								SVSocketError::ErrorEnum error = m_client.Send( l_Data ); // Use Send instead of Write for JSON.
+								SvSol::SVSocketError::ErrorEnum error = m_client.Send( l_Data ); // Use Send instead of Write for JSON.
 
-								l_Sleep = ( error != SVSocketError::Success );
+								l_Sleep = ( SvSol::SVSocketError::Success != error );
 								if( l_Sleep )
 								{
 									// @TODO - need to log something
@@ -255,7 +255,7 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 					unsigned char buf[ 16 * 1024 ];
 					size_t l_Size = sizeof(buf) - 1;
 					size_t amtRead;
-					SVSocketError::ErrorEnum error = m_client.Read(buf, l_Size, amtRead);
+					SvSol::SVSocketError::ErrorEnum error = m_client.Read(buf, l_Size, amtRead);
 					l_Sleep = ( amtRead <= 0 );
 					if (l_Sleep)
 					{

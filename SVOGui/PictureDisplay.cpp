@@ -25,7 +25,6 @@
 
 #pragma endregion Includes
 
-using namespace Seidenader::SVOMFCLibrary;
 namespace Seidenader
 {
 	namespace SVOGui
@@ -136,7 +135,7 @@ namespace Seidenader
 		SCODE PictureDisplay::AddOverlay( long Tab, const LongParamMap& ParMap, long* pHandle )
 		{
 			COleSafeArray saPar, saVal;
-			DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 			SCODE retValue = CDSVPictureDisplay::AddOverlay( Tab, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ), pHandle );
 			saPar.Destroy();
 			saVal.Destroy();
@@ -146,7 +145,7 @@ namespace Seidenader
 		SCODE PictureDisplay::AddOverlay( long Tab, const VariantParamMap& ParMap, long* pHandle )
 		{
 			COleSafeArray saPar, saVal;
-			DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 			SCODE retValue = CDSVPictureDisplay::AddOverlay( Tab, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ), pHandle );
 			saPar.Destroy();
 			saVal.Destroy();
@@ -161,7 +160,7 @@ namespace Seidenader
 		SCODE PictureDisplay::EditOverlay( long Tab, long handle, LongParamMap ParMap )
 		{
 			COleSafeArray saPar, saVal;
-			DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 			SCODE retValue = CDSVPictureDisplay::EditOverlay( Tab, handle, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );
 			saPar.Destroy();
 			saVal.Destroy();

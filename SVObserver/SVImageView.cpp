@@ -2431,8 +2431,8 @@ HRESULT SVImageViewClass::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect 
 
 		p_rDestRect.left = l_xScroll; 
 		p_rDestRect.top = l_yScroll;
-		p_rDestRect.right =  min( l_parentRect.Width() + l_xScroll, l_imageRect.Width() );
-		p_rDestRect.bottom = min( l_parentRect.Height() + l_yScroll, l_imageRect.Height() );
+		p_rDestRect.right =  std::min( l_parentRect.Width() + l_xScroll, l_imageRect.Width() );
+		p_rDestRect.bottom = std::min( l_parentRect.Height() + l_yScroll, l_imageRect.Height() );
 
 		p_rSourceRect.right = static_cast< long >( std::min< double >( l_zoomFactor * ( l_xScroll + p_rDestRect.Width() ), l_sourceImageWidth ) );
 		p_rSourceRect.left = static_cast< long >( l_zoomFactor * l_xScroll );

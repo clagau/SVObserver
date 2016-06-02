@@ -10,10 +10,12 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVSharedMonitorList.h"
 #include "SVSharedMemorySettings.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	// typedef for std/boost containers to be used with shared memory and corresponding allocators
 	// for details see boost::interprocess and/or std library documentation
@@ -41,5 +43,7 @@ namespace SeidenaderVision
 
 		void_allocator m_allocator;
 	};
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

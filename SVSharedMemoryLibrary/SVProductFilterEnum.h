@@ -10,9 +10,14 @@
 //******************************************************************************
 #pragma once
 
-enum SVProductFilterEnum
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	LastInspectedFilter = 1,
-	LastRejectFilter = 2
-};
+	enum SVProductFilterEnum
+	{
+		LastInspectedFilter = 1,
+		LastRejectFilter = 2
+	};
 
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

@@ -141,9 +141,9 @@ void ToolSetView::OnSize(UINT nType, int cx, int cy)
 		ScreenToClient(&rect2);
 		GetClientRect(&rect1);
 		rect2.right = rect1.right - rect2.left;
-		rect2.right = max(rect2.right, rect2.left + 1);
+		rect2.right = std::max(rect2.right, rect2.left + 1);
 		rect2.bottom = rect1.bottom - rect2.top;
-		rect2.bottom = max(rect2.bottom, rect2.top + 1);
+		rect2.bottom = std::max(rect2.bottom, rect2.top + 1);
 		m_toolSetListCtrl.MoveWindow(&rect2, true);
 	}
 }

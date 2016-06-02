@@ -48,9 +48,6 @@
     <ClCompile Include="SVDottedName.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMetrics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ZipHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,6 +58,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVHistogramBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMetrics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -140,9 +140,6 @@
     <ClInclude Include="SVDottedName.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVMetrics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZipHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -165,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVHistogramStats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMetrics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

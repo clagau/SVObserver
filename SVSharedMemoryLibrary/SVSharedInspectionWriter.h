@@ -10,12 +10,14 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <memory>
 #include "SVSharedLastInspectedCache.h"
 #include "SVSharedRejectCache.h"
 #include "SVSharedMemorySettings.h"
+#pragma endregion Includes
 
-namespace SeidenaderVision
+namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	class SVSharedInspectionWriter // one writer per inspection
 	{
@@ -55,5 +57,7 @@ namespace SeidenaderVision
 
 		GUID m_guid;
 	};
-}
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;
 

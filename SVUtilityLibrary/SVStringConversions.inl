@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   30 Jul 2013 13:27:12  $
 //******************************************************************************
 
-namespace SVStringConversions
+namespace Seidenader { namespace SVUtilityLibrary
 {
 	template<>
 	inline std::string to_utf8(const _bstr_t & utf16)
@@ -50,5 +50,5 @@ namespace SVStringConversions
 		::MultiByteToWideChar(cp, 0, utf8.c_str(), -1, buff.get(), sz);
 		return std::wstring(buff.get());
 	}
-}
+} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
 

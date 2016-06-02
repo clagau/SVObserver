@@ -56,6 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -75,22 +76,31 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ObjectSelectorItem.cpp" />
+    <ClCompile Include="ObjectTreeItems.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IGraphNameLookup.h" />
+    <ClInclude Include="IObjectSelectorItem.h" />
+    <ClInclude Include="ObjectGraph.h" />
+    <ClInclude Include="ObjectSelectorItem.h" />
+    <ClInclude Include="ObjectTreeItems.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVBidirectionalMap.h" />
     <ClInclude Include="SVBimapDeclarations.h" />
     <ClInclude Include="SVBiUniqueMap.h" />
+    <ClInclude Include="SVCompareKeys.h" />
     <ClInclude Include="SVDeque.h" />
     <ClInclude Include="SVList.h" />
     <ClInclude Include="SVObjectArrayClassTemplate.h" />
@@ -98,14 +108,19 @@
     <ClInclude Include="SVMap.h" />
     <ClInclude Include="SVRingBuffer.h" />
     <ClInclude Include="SVSet.h" />
+    <ClInclude Include="SVTree.h" />
     <ClInclude Include="SVVector.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BGLVisitorFilterEdges.inl" />
+    <None Include="GraphVizHelper.inl" />
+    <None Include="ObjectGraph.inl" />
     <None Include="SVDeque.inl" />
     <None Include="SVList.inl" />
     <None Include="SVMap.inl" />
     <None Include="SVRingBuffer.inl" />
     <None Include="SVSet.inl" />
+    <None Include="SVTree.inl" />
     <None Include="SVVector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
