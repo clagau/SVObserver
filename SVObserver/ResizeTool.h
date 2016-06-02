@@ -14,13 +14,6 @@
 #pragma endregion
 
 
-enum ValidationLevelEnum
-{
-	AllParameters,					// level 3
-	RemotelyAndInspectionSettable,  // level 2
-	InspectionSettable				// level 1
-};
-
 class ResizeTool :	public SVToolClass,	public AllowResizeToParent
 {
 	SV_DECLARE_CLASS (ResizeTool);
@@ -52,13 +45,9 @@ public:
 
 	virtual HRESULT	ResetObject() override;
 	virtual BOOL	IsValid() override;
-	virtual BOOL	OnValidate() override;
-	virtual	BOOL	Validate() override;
 
-	virtual HRESULT	OnValidate (ValidationLevelEnum validationLevel);
-	virtual	HRESULT ValidateInspectionSettableParameters ();
-	virtual	HRESULT	ValidateRemotelySettableParameters ();			
-	virtual HRESULT	ValidateOfflineParameters ();
+	virtual bool ValidateRemotelySettableParameters () override;
+	virtual bool ValidateOfflineParameters () override;
 	HRESULT ValidateScaleFactor(const double value);
 	HRESULT ValidateInterpolation(const SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode);
 	HRESULT ValidateOverscan(const SVOverscanOptions::SVOverscanOptionsEnum overscan);

@@ -401,7 +401,8 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_Security_Disabled, _T("Security Disabled"))
 	(SvOi::Tid_OS_Error_Message, _T("OS Error Number: %s [%s]\nMessage: %s"))
 
-	(SvOi::Tid_Drive_Full, _T(" %s - drive is full.")) 
+	(SvOi::Tid_Drive_Full, _T(" %s - drive is full."))
+	(SvOi::Tid_ConditionalValue_Invalid, _T("The conditional value of tool \"%s\" is invalid.")) 
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

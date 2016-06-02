@@ -367,6 +367,7 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_OS_Error_Message,
 
 		Tid_Drive_Full,
+		Tid_ConditionalValue_Invalid,
 	};
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 

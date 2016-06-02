@@ -335,8 +335,15 @@ BOOL SVToolClass::OnValidate()
 	if( inputConditionBoolObjectInfo.IsConnected() &&
 		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
 	{
-		bRetVal = TRUE;
-		bRetVal = SVTaskObjectListClass::OnValidate() && bRetVal;
+		bRetVal = SVTaskObjectListClass::OnValidate();
+	}
+	else
+	{
+		SvStl::MessageContainer message;
+		SVStringArray msgList;
+		msgList.push_back(GetName());
+		message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		addTaskMessage( message );
 	}
 
 	if( !bRetVal )

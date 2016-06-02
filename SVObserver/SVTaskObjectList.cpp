@@ -195,9 +195,9 @@ HRESULT SVTaskObjectListClass::IsInputImage( SVImageClass* p_psvImage )
 //				: Note: Normally Override OnValidate
 BOOL SVTaskObjectListClass::Validate()
 {
-	BOOL retVal = SVTaskObjectClass::Validate();
+	BOOL Result = SVTaskObjectClass::Validate();
 
-	if (retVal)
+	if (Result)
 	{
 		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 		{
@@ -205,16 +205,29 @@ BOOL SVTaskObjectListClass::Validate()
 			if (pTaskObject)
 			{
 				BOOL l_bTemp = pTaskObject->Validate();
-				retVal &= l_bTemp;
+				Result &= l_bTemp;
 			}
 			else
 			{
-				retVal = FALSE;
+				Result = FALSE;
 			}
 		}
 	}
 
-	return retVal;
+	//if Tool-validation is fail but no message in the Message-List, add one
+	if (FALSE == Result && 0 == getFirstTaskMessage().getMessage().m_MessageCode)
+	{
+		SvStl::MessageContainer message;
+		message.setMessage( SVMSG_SVO_5072_INCONSISTENTDATA, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+		addTaskMessage( message );
+	}
+
+	if (Result)
+	{
+		Result = OnValidateParameter(AllParameters);
+	}
+
+	return Result;
 }
 
 // .Title       : OnValidate member function of class SVTaskObjectListClass
@@ -222,14 +235,32 @@ BOOL SVTaskObjectListClass::Validate()
 //				: must be overridden
 BOOL SVTaskObjectListClass::OnValidate()
 {
-	BOOL retVal = SVTaskObjectClass::OnValidate();
+	BOOL Result = (0 == getFirstTaskMessage().getMessage().m_MessageCode);
 
-	if (! retVal)
+	if ( Result )
+	{
+		Result = SVTaskObjectClass::OnValidate();
+		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
+		{
+			SvStl::MessageContainer message;
+			SVStringArray msgList;
+			msgList.push_back(GetName());
+			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			addTaskMessage( message );
+		}
+	}
+
+	if ( Result )
+	{
+		Result = OnValidateParameter(InspectionSettable);
+	}
+
+	if (! Result)
 	{
 		SetInvalid();
 	}
 
-	return retVal;
+	return Result;
 }
 
 BOOL SVTaskObjectListClass::CloseObject()
@@ -1244,6 +1275,47 @@ DWORD_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessa
 	}
 
 	return DwResult;
+}
+
+bool SVTaskObjectListClass::OnValidateParameter (ValidationLevelEnum validationLevel)
+{
+	bool Result(true);
+
+	Result = ValidateInspectionSettableParameters();
+
+	if (Result && (RemotelyAndInspectionSettable == validationLevel || AllParameters == validationLevel))
+	{
+		Result = ValidateRemotelySettableParameters ();
+	}
+
+	if (Result && AllParameters == validationLevel)
+	{
+		Result = ValidateOfflineParameters ();
+	}
+
+	return Result;
+}
+
+bool SVTaskObjectListClass::ValidateInspectionSettableParameters ()
+{
+	bool Result = true;
+	// Possibly should include ROI extents (top, bottom, height, width), but 
+	// I think Extents are checked elsewhere.
+	return Result;
+}
+
+bool SVTaskObjectListClass::ValidateRemotelySettableParameters ()
+{
+	bool Result = true;
+
+	return Result;
+}
+
+bool SVTaskObjectListClass::ValidateOfflineParameters ()
+{
+	bool Result = true;
+
+	return Result;
 }
 #pragma endregion protected methods
 
