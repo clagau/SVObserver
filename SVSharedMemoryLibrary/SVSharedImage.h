@@ -12,7 +12,9 @@
 
 #pragma region Includes
 #include "SVShared.h"
+#include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
 #pragma endregion Includes
+
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
@@ -29,8 +31,16 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		const SVSharedImage& operator=( const SVSharedImage& rData );
 
-		static std::string filename(const std::string& rName, long SlotNumber, img::type ImageType, bool bReject=false);
-		static img::type GetImageType(const std::string& rName);
+		//! Build a filename 
+		//! \param filename [in,out] filename
+		//! \param size [in] len of filename
+		//! \param name [in] name 
+		//! \param slotnumber [in]
+		//! \param bReject [in]
+		//! \param type [in]
+		//! \returns void
+		static void  BuildImageFileName(LPTSTR  filename,int filenamelen,  LPCTSTR name, long slotnumber, bool bReject = false, SVMatroxFileTypeEnum type = SVFileBitmap  );
+		
 	};
 
 	typedef boost::interprocess::allocator<SVSharedImage, segment_manager_t> SVSharedImageAllocator;

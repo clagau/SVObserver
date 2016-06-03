@@ -57,6 +57,8 @@ class SVTaskObjectClass;
 class SVResultListClass;
 #pragma endregion Declarations
 
+#define  BUFFER_IMAGE_FILENAME_LEN 1024
+
 class SVInspectionProcess : 
 	public SVObjectClass,
 	public SVObjectSubmitCommandFacade,
@@ -472,11 +474,14 @@ private:
 
 	// JMS - this variable is only used for configuration conversion.
 	SVConditionalClass* m_pToolSetConditional;
-
 	SVCommandQueue m_CommandQueue;
 	SVMonitorListQueue m_MonitorListQueue;
 	SVImageNameDequeQueue m_ImageNameDequeQueue;
 	SVSharedMemoryFilters m_SharedMemoryFilters;
+
+	TCHAR m_BufferImageFileName[BUFFER_IMAGE_FILENAME_LEN]; 	//< Buffer holds the full path of a Image
+	TCHAR* m_SecondPtrImageFileName;  //<pointer to Filename after the path 
+	int	   m_SecondPtrImageFileNameLen; //len 
 };
 
 typedef SVVector< SVInspectionProcess* > SVInspectionProcessArray;

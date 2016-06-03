@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVSharedInspectionWriter.h"
 #include "SVSharedConfiguration.h"
+#include "..\SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -29,6 +30,14 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	void SVSharedInspectionWriter::Init()
 	{
+		
+
+		SVString rejectImgDirectory = SVSharedConfiguration::GetRejectImageDirectoryName()  + "\\"; 
+		memset(m_BufferRejectImageFileName,0, BUFFER_REJECT_IMAGE_FILENAME_LEN * sizeof(TCHAR) );
+		_tcscpy_s(m_BufferRejectImageFileName,BUFFER_REJECT_IMAGE_FILENAME_LEN, rejectImgDirectory.c_str());
+		m_SecondPtrRejectImageFileName = m_BufferRejectImageFileName + static_cast<int>(strlen(m_BufferRejectImageFileName));
+		m_SecondPtrRejectImageFileNameLen = BUFFER_REJECT_IMAGE_FILENAME_LEN - static_cast<int>(strlen(m_BufferRejectImageFileName));
+		
 		// remove previous share
 		if (!m_ShareName.empty())
 		{
@@ -229,10 +238,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			for (SVSharedImageMap::const_iterator it = rLastInspected.m_Images.begin();it != rLastInspected.m_Images.end();++it)
 			{
 				// need to change images names and copy images
-				img::type imgType = SVSharedImage::GetImageType(it->second.m_Filename.c_str());
-				std::string basename = it->first.c_str();
-				std::string rejectImgName = SVSharedConfiguration::GetRejectImageDirectoryName() + + "\\" + SVSharedImage::filename(basename, rejectIndex, imgType, true);
-				SVSharedImage rejectImage(rejectImgName.c_str(), it->second.m_Status, it->second.m_Allocator);
+								
+				SvSml::SVSharedImage::BuildImageFileName(m_SecondPtrRejectImageFileName,m_SecondPtrRejectImageFileNameLen,  it->first.c_str(),rejectIndex,true,SVFileBitmap);
+				SVSharedImage rejectImage(m_BufferRejectImageFileName, it->second.m_Status, it->second.m_Allocator);
 
 			SVSharedImageMap::iterator SIMit =   rReject.m_Images.find( it->first);
 			if(SIMit == rReject.m_Images.end() )

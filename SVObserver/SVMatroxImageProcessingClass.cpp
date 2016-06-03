@@ -822,34 +822,20 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( void* pBuffer, SVImageInf
 	return S_FALSE;
 }
 
-HRESULT SVMatroxImageProcessingClass::SaveImageBuffer( LPCTSTR tstrImagePathName, const SVSmartHandlePointer& rHandle )
+HRESULT SVMatroxImageProcessingClass::SaveImageBuffer( LPCTSTR tstrImagePathName, SVMatroxFileTypeEnum efileFormat, const SVSmartHandlePointer& rHandle )
 {
 	HRESULT l_Status = S_OK;
 
 	if( !( rHandle.empty() ) )
 	{
-		SVFileNameClass	svfncImageFile( tstrImagePathName );
-
-		SVImageBufferHandleImage l_MilHandle;
+	
+	SVImageBufferHandleImage l_MilHandle;
 		rHandle->GetData( l_MilHandle );
 
-		SVMatroxFileTypeEnum l_efileformat = SVFileUnknown;
-
-		CString strExtension = svfncImageFile.GetExtension();
-
-		if( strExtension.CompareNoCase(_T( ".mim" )) == 0 )
-			l_efileformat = SVFileMIL;
-
-		if( strExtension.CompareNoCase(_T( ".tif" )) == 0 )
-			l_efileformat = SVFileTiff;
-
-		if( strExtension.CompareNoCase(_T( ".bmp" )) == 0 )
-			l_efileformat = SVFileBitmap;
-
-		if( l_efileformat != SVFileUnknown )
+		if( efileFormat != SVFileUnknown )
 		{
 			SVString l_strPath = tstrImagePathName;
-			l_Status = SVMatroxBufferInterface::Export( l_MilHandle.GetBuffer(), l_strPath, l_efileformat );
+			l_Status = SVMatroxBufferInterface::Export( l_MilHandle.GetBuffer(), l_strPath, efileFormat );
 		}
 	}
 	else

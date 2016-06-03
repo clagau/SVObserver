@@ -17,6 +17,8 @@
 #include "SVSharedMemorySettings.h"
 #pragma endregion Includes
 
+#define 	BUFFER_REJECT_IMAGE_FILENAME_LEN 1024
+
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	class SVSharedInspectionWriter // one writer per inspection
@@ -54,8 +56,13 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		std::string m_ShareName;
 		SVSharedLastInspectedCache* m_pSharedLastInspectedCache;
 		SVSharedRejectCache* m_pSharedRejectCache;
-
 		GUID m_guid;
+
+		TCHAR m_BufferRejectImageFileName[BUFFER_REJECT_IMAGE_FILENAME_LEN]; //< Buffer holds the full path of a RejectImage
+		TCHAR* m_SecondPtrRejectImageFileName;   //<pointer to RejectImageFilename after the path 
+		int  m_SecondPtrRejectImageFileNameLen;   //<pointer to RejectImageFilename after the path 
+
+
 	};
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

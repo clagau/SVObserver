@@ -301,6 +301,9 @@
     <ClInclude Include="SVMatroxLicenseInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVMatroxSimpleEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVMatroxEnumConvertor.inl">

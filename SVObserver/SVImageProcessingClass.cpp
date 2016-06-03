@@ -87,9 +87,9 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer,
 	return SVMatroxImageProcessingClass::Instance().LoadImageBuffer( pBuffer, rBufferInfo, rBufferHandle, rCameraInfo );
 }
 
-HRESULT SVImageProcessingClass::SaveImageBuffer( LPCTSTR tstrImagePathName, const SVSmartHandlePointer& rHandle )
+HRESULT SVImageProcessingClass::SaveImageBuffer( LPCTSTR tstrImagePathName, SVMatroxFileTypeEnum efileFormat, const SVSmartHandlePointer& rHandle )
 {
-	return SVMatroxImageProcessingClass::Instance().SaveImageBuffer( tstrImagePathName, rHandle );
+	return SVMatroxImageProcessingClass::Instance().SaveImageBuffer( tstrImagePathName,efileFormat,  rHandle );
 }
 
 HRESULT SVImageProcessingClass::ConvertImageBuffer( SVByteVector& p_rToDIB, const SVSmartHandlePointer& rFromHandle, SVImageOperationTypeEnum p_lConversionType )

@@ -16,23 +16,23 @@
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	SVSharedImage::SVSharedImage(const void_allocator& rAlloc)
-	: m_Status(E_FAIL)
-	, m_Allocator(rAlloc)
-	, m_Filename("", rAlloc)
+		: m_Status(E_FAIL)
+		, m_Allocator(rAlloc)
+		, m_Filename("", rAlloc)
 	{
 	}
 
 	SVSharedImage::SVSharedImage(const char* Filename, int Status, const void_allocator& rAlloc)
-	: m_Status(Status)
-	, m_Allocator(rAlloc)
-	, m_Filename(Filename, rAlloc)
+		: m_Status(Status)
+		, m_Allocator(rAlloc)
+		, m_Filename(Filename, rAlloc)
 	{
 	}
 
 	SVSharedImage::SVSharedImage(const SVSharedImage& rData)
-	: m_Status(rData.m_Status)
-	, m_Allocator(rData.m_Allocator)
-	, m_Filename(rData.m_Filename.c_str(), rData.m_Allocator)
+		: m_Status(rData.m_Status)
+		, m_Allocator(rData.m_Allocator)
+		, m_Filename(rData.m_Filename.c_str(), rData.m_Allocator)
 	{
 	}
 
@@ -46,29 +46,52 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return *this;
 	}
 
-	std::string SVSharedImage::filename(const std::string& rName, long SlotNumber, img::type ImageType, bool bReject)
-	{
-		//@TODO[MEC][7.40][30.5.2016] Improve Performance  
-		static const char *ext[] = { ".bmp", ".png", ".jpg" };
 
-		std::stringstream ret;
-		if (bReject)
+	void  SVSharedImage::BuildImageFileName(LPTSTR  filename, int size,  LPCTSTR name, long slotnumber, bool bReject, SVMatroxFileTypeEnum type )
+	{
+		TCHAR buffer[65];
+		_itot_s(slotnumber,buffer,65, 10);
+		_tcscpy_s(filename,size,name);
+		_tcscat_s(filename,size, _T(".") );
+		_tcscat_s(filename,size, buffer );
+		if(bReject)
 		{
-			ret << rName << "." << SlotNumber << "." << "REJECT" << ext[ImageType];
+			switch (type)
+			{
+
+			case  SVFileMIL:
+				_tcscat_s( filename,size, _T(".REJECT.mil")  );
+				break;
+			case SVFileBitmap:
+				_tcscat_s( filename, size,_T(".REJECT.bmp")  );
+				break;
+			case  SVFileTiff:
+				_tcscat_s( filename, size,_T(".REJECT.tif")  );
+				break;
+			default:
+				_tcscat_s( filename, size, _T(".REJECT.xxx")  );
+				break;
+			}
 		}
 		else
 		{
-			ret << rName << "." << SlotNumber << ext[ImageType];
-		}
-		return ret.str();
-	}
+			switch (type)
+			{
 
-	img::type SVSharedImage::GetImageType(const std::string& rName)
-	{
-		img::type imgType = img::bmp;
-		std::string baseName = rName;
-		// strip off all but last extension
-		return imgType;
+			case SVFileMIL:
+				_tcscat_s( filename, size, _T(".mil")  );
+				break;
+			case  SVFileBitmap:
+				_tcscat_s( filename, size, _T(".bmp")  );
+				break;
+			case SVFileTiff:
+				_tcscat_s( filename, size, _T(".tif")  );
+				break;
+			default:
+				_tcscat_s( filename, size, _T(".xxx")  );
+				break;
+			}
+		}
 	}
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

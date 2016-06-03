@@ -223,6 +223,7 @@
     <ClInclude Include="SVMatroxPatternModel.h" />
     <ClInclude Include="SVMatroxPolarTransformStruct.h" />
     <ClInclude Include="SVMatroxResourceMonitor.h" />
+    <ClInclude Include="SVMatroxSimpleEnums.h" />
     <ClInclude Include="SVMatroxStatusInformation.h" />
     <ClInclude Include="SVMatroxSystem.h" />
     <ClInclude Include="SVMatroxSystemEnums.h" />

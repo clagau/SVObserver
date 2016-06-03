@@ -148,7 +148,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 		{
 			SVString FileName = SvUl_SF::Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
 
-			GetStatus = SVImageProcessingClass::Instance().SaveImageBuffer(FileName.c_str(), ImageHandlePtr);
+			GetStatus = SVImageProcessingClass::Instance().SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , ImageHandlePtr);
 
 			if (S_OK == GetStatus)
 			{
