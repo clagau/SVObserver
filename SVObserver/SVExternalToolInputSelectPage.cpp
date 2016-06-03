@@ -423,14 +423,37 @@ SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
 {
 	SVObjectClass* pObject = nullptr;
 
-	CString strName;
-	pItem->GetItemValue(strName);
+	CString CompleteObjectName;
+	CString Name;
+	pItem->GetItemValue(Name);
 	
-	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> ( m_pTool->GetAncestor( SVToolSetObjectType ) );
-	ASSERT( pToolSet );
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( m_pTool->GetAncestor( SVInspectionObjectType ) );
+	ASSERT( pInspection );
+
+	//If pointer is a nullptr then name is empty
+	if( nullptr != pInspection )
+	{ 
+		CompleteObjectName = pInspection->GetCompleteObjectName(); 
+	}
+	CString ToolSetName;
+	ToolSetName.LoadString(IDS_CLASSNAME_SVTOOLSET);
+
+	// if object name starts with tool set, inspection name must be added
+	// else it must not be added, because it can be another object (e.g. "PPQ_1.Length" or "Environment.Mode.IsRun")
+	if( 0 == Name.Find(ToolSetName) )
+	{	
+		// Inspection name plus object name.
+		CompleteObjectName += "." + Name;
+	}
+	else
+	{
+		// Object name is already complete.
+		CompleteObjectName = Name;
+	}
+
 
 	//MZA: change function to find object from inspection child object to anz dotted name
-	SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strName ), pObject );
+	SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( CompleteObjectName ), pObject );
 
 
 	return pObject;

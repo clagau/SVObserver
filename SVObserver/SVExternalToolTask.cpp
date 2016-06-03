@@ -1955,45 +1955,11 @@ HRESULT SVExternalToolTask::ConnectInputs()
 	// ******* Connect Inputs *************
 	// 
 	//
-	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> ( GetTool()->GetAncestor( SVToolSetObjectType ) );
-
-	SVObjectClass* pObject = nullptr;
-	SVInspectionProcess* pInspection = pToolSet->GetInspection();
-
 	for (int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 	{
-		CString strObjectName ; 
-		CString strCompleteObjectName;
-		//If pointer is a nullptr then name is empty
-		if( nullptr != pInspection ) { strCompleteObjectName = pInspection->GetCompleteObjectName(); }
-		m_Data.m_aInputObjects[i].GetValue(strObjectName);
-
-		CString toolSetText;
-		toolSetText.LoadString(IDS_CLASSNAME_SVTOOLSET);
-
-		// if object name starts with tool set, inspection name must be added
-		// else it must not be added, because it can be another object (e.g. "PPQ_1.Length" or "Environment.Mode.IsRun")
-		if( strObjectName.Find(toolSetText) == 0)
-		{	
-			// Inspection name plus object name.
-			strCompleteObjectName += "." + strObjectName;
-		}
-		else
+		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
+		if ( nullptr != rInfo.GetInputObjectInfo().PObject )	// input is another VO
 		{
-			// Object name is already complete.
-			strCompleteObjectName = strObjectName;
-		}
-
-		//MZA: change function to find object from inspection child object to anz dotted name
-		SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strCompleteObjectName ), pObject );
-		//
-		// Inputs that are Variables must be found in the Inspection or the PPQ
-		// otherwise the inputs are just variant inputs.
-		//
-		if ( pObject )	// input is another VO
-		{
-			SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
-			rInfo.SetInputObject( pObject );
 			if ( !rInfo.IsConnected() )
 			{
 				DWORD_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), 0 );
@@ -2013,7 +1979,7 @@ HRESULT SVExternalToolTask::ConnectInputs()
 			}
 		}
 
-		// get Inupt object name
+		// get Input object name
 		SVStringValueObjectClass& rvo = m_Data.m_aInputObjectNames[i];
 		rvo.SetDefaultValue(CString(m_Data.m_aInputValueDefinitions[i].bstrDisplayName), TRUE);	// set to all buckets
 	
