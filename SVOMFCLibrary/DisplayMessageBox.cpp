@@ -159,6 +159,10 @@ namespace Seidenader { namespace SVOMFCLibrary
 		{
 			m_Buttons[i].SetWindowText( m_ButtonInfos[i].m_Label);
 			m_Buttons[i].ShowWindow( m_ButtonInfos[i].m_Show );
+			if( m_ButtonInfos[i].m_Focus )
+			{
+				GotoDlgCtrl( &m_Buttons[i] );
+			}
 		}
 
 		if( m_MessageDetails.IsEmpty() )
@@ -167,7 +171,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 		}
 
 		UpdateData(FALSE);
-		return TRUE;
+		return FALSE;
 	}
 
 	void DisplayMessageBox::OnPaint()
@@ -243,6 +247,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 				m_ButtonInfos[Button2].m_Show = SW_HIDE;
 				m_ButtonInfos[Button3].m_Label = ButtonOk;
 				m_ButtonInfos[Button3].m_Result = IDOK;
+				m_ButtonInfos[Button3].m_Focus = true;
 			}
 			break;
 		case MB_OKCANCEL:
@@ -252,6 +257,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 				m_ButtonInfos[Button2].m_Result = IDOK;
 				m_ButtonInfos[Button3].m_Label = ButtonCancel;
 				m_ButtonInfos[Button3].m_Result = IDCANCEL;
+				m_ButtonInfos[Button2].m_Focus = true;
 			}
 			break;
 		case MB_ABORTRETRYIGNORE:
@@ -262,6 +268,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 				m_ButtonInfos[Button2].m_Result = IDRETRY;
 				m_ButtonInfos[Button3].m_Label = ButtonIgnore;
 				m_ButtonInfos[Button3].m_Result = IDIGNORE;
+				m_ButtonInfos[Button1].m_Focus = true;
 			}
 			break;
 		case MB_YESNOCANCEL:
@@ -273,6 +280,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 				m_ButtonInfos[Button2].m_Result = IDNO;
 				m_ButtonInfos[Button3].m_Label = ButtonCancel;
 				m_ButtonInfos[Button3].m_Result = IDCANCEL;
+				m_ButtonInfos[Button1].m_Focus = true;
 			}
 			break;
 		case MB_YESNO:
@@ -282,6 +290,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 				m_ButtonInfos[Button2].m_Result = IDYES;
 				m_ButtonInfos[Button3].m_Label = ButtonNo;
 				m_ButtonInfos[Button3].m_Result = IDNO;
+				m_ButtonInfos[Button2].m_Focus = true;
 			}
 			break;
 		case MB_RETRYCANCEL:
@@ -291,6 +300,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 				m_ButtonInfos[Button2].m_Result = IDRETRY;
 				m_ButtonInfos[Button3].m_Label = ButtonCancel;
 				m_ButtonInfos[Button3].m_Result = IDCANCEL;
+				m_ButtonInfos[Button2].m_Focus = true;
 			}
 			break;
 		case MB_CANCELTRYCONTINUE:
@@ -301,6 +311,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 				m_ButtonInfos[Button2].m_Result = IDRETRY;
 				m_ButtonInfos[Button3].m_Label = ButtonContinue;
 				m_ButtonInfos[Button3].m_Result = IDCONTINUE;
+				m_ButtonInfos[Button1].m_Focus = true;
 			}
 			break;
 		default:

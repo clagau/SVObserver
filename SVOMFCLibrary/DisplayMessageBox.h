@@ -28,13 +28,15 @@ namespace Seidenader { namespace SVOMFCLibrary
 		struct ButtonInfo
 		{
 			ButtonInfo():
-				m_Result( 0 )
+			 m_Result( 0 )
 			,m_Show( SW_SHOW )
+			,m_Focus( false )
 			{
 			}
 			CString m_Label;							//The label of the button
 			UINT m_Result;								//The result returned when this button is clicked
 			UINT m_Show;								//Either SW_SHOW or SW_HIDE to display or hide the button
+			bool m_Focus;								//True if this button is to have the focus
 		};
 
 		enum { IDD = IDD_DISPLAY_MSG_BOX };
