@@ -23,6 +23,7 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVIPChildFrm.h"
 #include "RootObject.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
@@ -369,141 +370,149 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 	CDC* pDC = CDC::FromHandle( lpDrawItemStruct->hDC );
 	CRect rcItem( lpDrawItemStruct->rcItem );
 	int nItem = lpDrawItemStruct->itemID;
-	CImageList* pImageList;
+	CImageList* pImageList( nullptr );
 
-	// Save dc state
-	int nSavedDC = pDC->SaveDC();
-
-	// Get item image and state info
-	LV_ITEM lvi;
-	lvi.mask = LVIF_IMAGE | LVIF_STATE;
-	lvi.iItem = nItem;
-	lvi.iSubItem = 0;
-	lvi.stateMask = 0xFFFF;
-
-	// get all state flags
-	listCtrl.GetItem(&lvi);
-
-	// Should the item be highlighted
-	BOOL bHighlight =( ( lvi.state & LVIS_DROPHILITED ) ||
-		( ( lvi.state & LVIS_SELECTED ) && ( ( GetFocus() == this ) ||
-		( GetStyle() & LVS_SHOWSELALWAYS) ) ) );
-
-	// Get rectangles for drawing
-	CRect rcBounds, rcLabel, rcIcon;
-	listCtrl.GetItemRect( nItem, rcBounds, LVIR_BOUNDS );
-	listCtrl.GetItemRect( nItem, rcLabel, LVIR_LABEL );
-	listCtrl.GetItemRect( nItem, rcIcon, LVIR_ICON );
-	CRect rcCol( rcBounds );
-	CString sLabel = listCtrl.GetItemText( nItem, 0 );
-	DWORD_PTR dwColor = listCtrl.GetItemData( nItem );
-
-	// Labels are offset by a certain amount
-	// This offset is related to the width of a space character
-	int offset = pDC->GetTextExtent( _T( " " ), 1 ).cx * 2;
-	CRect rcHighlight;
-	CRect rcWnd;
-	int nExt;
-
-	nExt = pDC->GetOutputTextExtent( sLabel ).cx + offset;
-	rcHighlight = rcLabel;
-
-	if( rcLabel.left + nExt < rcLabel.right )
-		rcHighlight.right = rcLabel.left + nExt;
-
-	GetClientRect( &rcWnd );
-	rcHighlight = rcBounds;
-	rcHighlight.left = rcLabel.left;
-	rcHighlight.right = rcWnd.right-1;
-
-	pDC->FillSolidRect( rcHighlight,::GetSysColor( COLOR_WINDOW ) );
-	pDC->SetTextColor( RGB( 0, 0, 0 ) );
-
-	// Set clip region
-	rcCol.right = rcCol.left + listCtrl.GetColumnWidth( 0 );
-	CRgn rgn;
-	rgn.CreateRectRgnIndirect( &rcCol );
-	pDC->SelectClipRgn( &rgn );
-	rgn.DeleteObject();
-
-	// Draw state icon
-	if( lvi.state & LVIS_STATEIMAGEMASK )
+	if( nullptr != pDC )
 	{
-		int nImage = ( ( lvi.state & LVIS_STATEIMAGEMASK ) >> 12 ) - 1;
-		pImageList = listCtrl.GetImageList( LVSIL_STATE );
+		// Save dc state
+		int nSavedDC = pDC->SaveDC();
+
+		// Get item image and state info
+		LV_ITEM lvi;
+		lvi.mask = LVIF_IMAGE | LVIF_STATE;
+		lvi.iItem = nItem;
+		lvi.iSubItem = 0;
+		lvi.stateMask = 0xFFFF;
+
+		// get all state flags
+		listCtrl.GetItem(&lvi);
+
+		// Should the item be highlighted
+		BOOL bHighlight =( ( lvi.state & LVIS_DROPHILITED ) ||
+			( ( lvi.state & LVIS_SELECTED ) && ( ( GetFocus() == this ) ||
+			( GetStyle() & LVS_SHOWSELALWAYS) ) ) );
+
+		// Get rectangles for drawing
+		CRect rcBounds, rcLabel, rcIcon;
+		listCtrl.GetItemRect( nItem, rcBounds, LVIR_BOUNDS );
+		listCtrl.GetItemRect( nItem, rcLabel, LVIR_LABEL );
+		listCtrl.GetItemRect( nItem, rcIcon, LVIR_ICON );
+		CRect rcCol( rcBounds );
+		CString sLabel = listCtrl.GetItemText( nItem, 0 );
+		DWORD_PTR dwColor = listCtrl.GetItemData( nItem );
+
+		// Labels are offset by a certain amount
+		// This offset is related to the width of a space character
+		int offset = pDC->GetTextExtent( _T( " " ), 1 ).cx * 2;
+		CRect rcHighlight;
+		CRect rcWnd;
+		int nExt;
+
+		nExt = pDC->GetOutputTextExtent( sLabel ).cx + offset;
+		rcHighlight = rcLabel;
+
+		if( rcLabel.left + nExt < rcLabel.right )
+			rcHighlight.right = rcLabel.left + nExt;
+
+		GetClientRect( &rcWnd );
+		rcHighlight = rcBounds;
+		rcHighlight.left = rcLabel.left;
+		rcHighlight.right = rcWnd.right-1;
+
+		pDC->FillSolidRect( rcHighlight,::GetSysColor( COLOR_WINDOW ) );
+		pDC->SetTextColor( RGB( 0, 0, 0 ) );
+
+		// Set clip region
+		rcCol.right = rcCol.left + listCtrl.GetColumnWidth( 0 );
+		CRgn rgn;
+		rgn.CreateRectRgnIndirect( &rcCol );
+		pDC->SelectClipRgn( &rgn );
+		rgn.DeleteObject();
+
+		// Draw state icon
+		if( lvi.state & LVIS_STATEIMAGEMASK )
+		{
+			int nImage = ( ( lvi.state & LVIS_STATEIMAGEMASK ) >> 12 ) - 1;
+			pImageList = listCtrl.GetImageList( LVSIL_STATE );
+			if( pImageList )
+			{
+				pImageList->Draw( pDC, nImage,
+					CPoint( rcCol.left, rcCol.top ), ILD_TRANSPARENT );
+			}
+		}
+		// Draw normal and overlay icon
+		pImageList = listCtrl.GetImageList( LVSIL_SMALL );
 		if( pImageList )
 		{
-			pImageList->Draw( pDC, nImage,
-				CPoint( rcCol.left, rcCol.top ), ILD_TRANSPARENT );
+			UINT nOvlImageMask=lvi.state & LVIS_OVERLAYMASK;
+			pImageList->Draw( pDC, lvi.iImage, CPoint( rcIcon.left, rcIcon.top ),
+				( bHighlight ? ILD_BLEND50 : 0 ) | ILD_TRANSPARENT | nOvlImageMask );
 		}
-	}
-	// Draw normal and overlay icon
-	pImageList = listCtrl.GetImageList( LVSIL_SMALL );
-	if( pImageList )
-	{
-		UINT nOvlImageMask=lvi.state & LVIS_OVERLAYMASK;
-		pImageList->Draw( pDC, lvi.iImage, CPoint( rcIcon.left, rcIcon.top ),
-			( bHighlight ? ILD_BLEND50 : 0 ) | ILD_TRANSPARENT | nOvlImageMask );
-	}
-	// Draw item label - Column 0
-	rcLabel.left += offset/2;
-	rcLabel.right -= offset;
-	pDC->DrawText( sLabel, -1, rcLabel, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP 
-		| DT_VCENTER | DT_END_ELLIPSIS);
-	
-	// Draw labels for remaining columns
-	LV_COLUMN lvc;
-	lvc.mask = LVCF_FMT | LVCF_WIDTH;
-	
-	rcBounds.right = rcHighlight.right > rcBounds.right ? rcHighlight.right :
-		rcBounds.right;
-	rgn.CreateRectRgnIndirect( &rcBounds );
-	pDC->SelectClipRgn( &rgn );
-	for(int nColumn = 1; listCtrl.GetColumn( nColumn, &lvc ); nColumn++)
-	{
-		rcCol.left = rcCol.right;
-		rcCol.right += lvc.cx;
-
-		sLabel = listCtrl.GetItemText( nItem, nColumn );
-		if( sLabel.GetLength() == 0 )
-			continue;
-
-		// Get the text justification
-		UINT nJustify = DT_LEFT;
-		switch(lvc.fmt & LVCFMT_JUSTIFYMASK)
-		{
-			case LVCFMT_RIGHT:
-				nJustify = DT_RIGHT;
-				break;
-
-			case LVCFMT_CENTER:
-				nJustify = DT_CENTER;
-				break;
-
-			default:
-				break;
-		}
-		rcLabel = rcCol;
-		rcLabel.left += offset;
+		// Draw item label - Column 0
+		rcLabel.left += offset/2;
 		rcLabel.right -= offset;
-
-		if( nColumn == 1 )
+		pDC->DrawText( sLabel, -1, rcLabel, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP 
+			| DT_VCENTER | DT_END_ELLIPSIS);
+	
+		// Draw labels for remaining columns
+		LV_COLUMN lvc;
+		lvc.mask = LVCF_FMT | LVCF_WIDTH;
+	
+		rcBounds.right = rcHighlight.right > rcBounds.right ? rcHighlight.right :
+			rcBounds.right;
+		rgn.CreateRectRgnIndirect( &rcBounds );
+		pDC->SelectClipRgn( &rgn );
+		for(int nColumn = 1; listCtrl.GetColumn( nColumn, &lvc ); nColumn++)
 		{
-			int h = rcLabel.Height();
-			CRect rcState( rcLabel.left, rcLabel.top + 2, rcLabel.left + h, rcLabel.bottom - 2 );
+			rcCol.left = rcCol.right;
+			rcCol.right += lvc.cx;
 
-			pDC->FillSolidRect( rcState, static_cast<COLORREF>(dwColor) );
-			rcLabel.left += (h + 4);
+			sLabel = listCtrl.GetItemText( nItem, nColumn );
+			if( sLabel.GetLength() == 0 )
+				continue;
+
+			// Get the text justification
+			UINT nJustify = DT_LEFT;
+			switch(lvc.fmt & LVCFMT_JUSTIFYMASK)
+			{
+				case LVCFMT_RIGHT:
+					nJustify = DT_RIGHT;
+					break;
+
+				case LVCFMT_CENTER:
+					nJustify = DT_CENTER;
+					break;
+
+				default:
+					break;
+			}
+			rcLabel = rcCol;
+			rcLabel.left += offset;
+			rcLabel.right -= offset;
+
+			if( nColumn == 1 )
+			{
+				int h = rcLabel.Height();
+				CRect rcState( rcLabel.left, rcLabel.top + 2, rcLabel.left + h, rcLabel.bottom - 2 );
+
+				pDC->FillSolidRect( rcState, static_cast<COLORREF>(dwColor) );
+				rcLabel.left += (h + 4);
+			}
+
+			pDC->DrawText(sLabel, -1, rcLabel, nJustify | DT_SINGLELINE | 
+				DT_NOPREFIX | DT_VCENTER | DT_END_ELLIPSIS);
 		}
+		// Draw focus rectangle if item has focus
+		if ( ( lvi.state & LVIS_FOCUSED ) && ( GetFocus() == this ) )
+			pDC->DrawFocusRect(rcHighlight);
 
-		pDC->DrawText(sLabel, -1, rcLabel, nJustify | DT_SINGLELINE | 
-			DT_NOPREFIX | DT_VCENTER | DT_END_ELLIPSIS);
+		pDC->RestoreDC( nSavedDC );
 	}
-	// Draw focus rectangle if item has focus
-	if ( ( lvi.state & LVIS_FOCUSED ) && ( GetFocus() == this ) )
-		pDC->DrawFocusRect(rcHighlight);
-
-	pDC->RestoreDC( nSavedDC );
+	else
+	{
+		SvStl::MessageMgrNoDisplay Msg( SvStl::LogOnly );
+		Msg.setMessage( SVMSG_SVO_NULL_POINTER, SvOi::Tid_Unknown, SvStl::SourceFileParams(StdMessageParams) ); 
+	}
 }// end DrawItem
 
 void SVResultViewClass::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos)
