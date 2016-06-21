@@ -202,6 +202,7 @@ public:
 	afx_msg void OnPublishedResultImagesPicker();
 	afx_msg void OnAddRemoteInputTool();
 	afx_msg void OnAddRingBufferTool();
+	afx_msg void OnAddTableTool();
 	afx_msg void OnAllowAdjustLightReference(CCmdUI* pCmdUI);
 	afx_msg void OnAllowAdjustLut(CCmdUI* pCmdUI);
 	afx_msg void OnAddResizetool();

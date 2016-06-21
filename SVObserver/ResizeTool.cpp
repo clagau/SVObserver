@@ -325,7 +325,10 @@ HRESULT ResizeTool::ResetObject()
 {
 	HRESULT	hr  = S_OK;
 
-	hr = OnValidateParameter(RemotelyAndInspectionSettable);
+	if (!OnValidateParameter(RemotelyAndInspectionSettable))
+	{
+		hr = getFirstTaskMessage().getMessage().m_MessageCode;
+	}
 
 	SVImageClass* inputImage = nullptr;
 	if (SUCCEEDED (hr))

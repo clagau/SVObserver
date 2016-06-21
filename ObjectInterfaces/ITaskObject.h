@@ -13,6 +13,7 @@
 #include "ISelectorItemVector.h"
 #include "SVObjectTypeInfoStruct.h"
 #include "DependencyList.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -73,6 +74,10 @@ namespace Seidenader
 			/// \returns the valid state as a boolean
 			//************************************
 			virtual bool IsObjectValid() const = 0;
+
+			/// Gets the list of task messages
+			/// \return a const reference to the message list
+			virtual const SvStl::MessageContainerVector& getTaskMessages() const = 0;
 		};
 	}
 }

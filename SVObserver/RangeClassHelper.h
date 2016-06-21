@@ -164,6 +164,13 @@ public:
 	/// \returns true if valid
 	//************************************
 	bool isValidReference( const CString& rInspectionName, const CString& rIndirectString ) const;
+
+	/// Change the indirect names, if necessary
+	/// \param rIndirectString [in,out] reference to the indirect name. It will be changed if necessary
+	/// \param oldPefix [in] old  name
+	/// \param newPrefix [in] new name
+	/// \returns bool
+	bool RenameIndirectValue(CString& rIndirectString, LPCTSTR oldPefix, LPCTSTR newPrefix);
 #pragma endregion Private Methods
 
 #pragma region Member variables

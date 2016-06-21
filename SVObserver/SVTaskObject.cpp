@@ -1058,9 +1058,16 @@ void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoL
 
 BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID)
 {
-	SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>(p_psvEmbeddedObject);
+	CString Name;
+	Name.LoadString(p_iStringResourceID);
+	return RegisterEmbeddedObject(p_psvEmbeddedObject, p_rguidEmbeddedID, Name);
+}
 
-	BOOL l_bOk = nullptr != l_psvObject && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
+BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, LPCTSTR newString)
+{
+	SVObjectClass *l_psvObject = dynamic_cast<SVObjectClass *>(p_psvEmbeddedObject);
+
+	BOOL l_bOk = nullptr != l_psvObject && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, newString );
 
 	return l_bOk;
 }
@@ -1074,21 +1081,14 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* p_psvEmbeddedObject
 // The only place that this is ever set to true is for the color HSI 
 // conversion value (Color Tool) and it is probably not necessary there.
 //
-BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset )
+BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName )
 {
-	BOOL l_bOk = S_OK == p_psvEmbeddedObject->SetResetOptions( p_bResetAlways, p_eRequiredReset );
-
-	if( l_bOk )
-	{
-		SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>(p_psvEmbeddedObject);
-
-		l_bOk = nullptr != l_psvObject && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
-	}
-
-	return l_bOk;
+	CString Name;
+	Name.LoadString(p_iStringResourceID);
+	return RegisterEmbeddedObject(p_psvEmbeddedObject, p_rguidEmbeddedID, Name, p_bResetAlways, p_eRequiredReset, p_pszTypeName);
 }
 
-BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName )
+BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName )
 {
 	BOOL l_bOk = S_OK == p_psvEmbeddedObject->SetResetOptions( p_bResetAlways, p_eRequiredReset );
 
@@ -1099,14 +1099,13 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbedde
 			p_psvEmbeddedObject->SetTypeName( p_pszTypeName );
 		}
 		SVObjectClass* l_psvObject = dynamic_cast<SVObjectClass*>(p_psvEmbeddedObject);
-
-		l_bOk = nullptr != l_psvObject && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, p_iStringResourceID );
+		l_bOk = nullptr != l_psvObject && RegisterEmbeddedObjectAsClass( l_psvObject, p_rguidEmbeddedID, strName );
 	}
 
 	return l_bOk;
 }
 
-BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, int NewStringResourceID)
+BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName)
 {
 	ASSERT(PEmbeddedObject);
 	if (PEmbeddedObject)
@@ -1125,7 +1124,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedOb
 			}
 		}
 		// Set object embedded to Setup the Embedded GUID
-		PEmbeddedObject->SetObjectEmbedded(REmbeddedID, this, NewStringResourceID);
+		PEmbeddedObject->SetObjectEmbedded(REmbeddedID, this, newObjectName);
 		
 		// Add to embedded object to List of Embedded Objects
 		AddEmbeddedObject(PEmbeddedObject);

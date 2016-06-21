@@ -59,6 +59,11 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10028_LoadOfScintillaDllFailed = Maz_ErrorBase + 28;
 	static const int Err_10029_ValueObject_Parameter_WrongSize = Maz_ErrorBase + 29;
 
+	static const int Err_10030_AddFriend_InvalidParameter = Maz_ErrorBase + 30;
+	static const int Err_10031_AddFriend_Failed = Maz_ErrorBase + 31;
+	static const int Err_10032_DestroyFriendObject_InvalidParameter = Maz_ErrorBase + 32;
+	static const int Err_10033_DestroyFriendObject_Failed = Maz_ErrorBase + 33;
+
 	//Consistent use of error messages
 	static const int Err_10030 = Maz_ErrorBase + 30;
 

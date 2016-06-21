@@ -34,8 +34,9 @@
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/PPQSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
-
-#pragma endregion
+#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVMessage/SVMessage.h"
+#pragma endregion Includes
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -57,6 +58,17 @@ namespace Seidenader { namespace SVOGui
 	, m_EquationID(GUID_NULL)
 	, m_taskValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVToolEnabledObjectGuid, bEnabledReadOnly))))
 	, m_equationValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVEquationEnabledObjectGuid, bEnabledReadOnly))))
+	{
+		init();
+	}
+
+	FormulaController::FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationID, bool bEnabledReadOnly)
+		: m_InspectionID(rInspectionID)
+		, m_TaskObjectID(rTaskObjectID)
+		, m_info(SVObjectTypeInfoStruct())
+		, m_EquationID(rEquationID)
+		, m_taskValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVToolEnabledObjectGuid, bEnabledReadOnly))))
+		, m_equationValues(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvOg::BoundValue(SVEquationEnabledObjectGuid, bEnabledReadOnly))))
 	{
 		init();
 	}
@@ -83,6 +95,14 @@ namespace Seidenader { namespace SVOGui
 		if (S_OK == hr)
 		{
 			equationText = commandPtr->GetEquationString();
+		}
+		else
+		{
+			SVStringArray msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			SvStl::MessageMgrStdDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
+			ASSERT(false);
 		}
 		return equationText;
 	}
@@ -140,6 +160,14 @@ namespace Seidenader { namespace SVOGui
 					retValue = resetFailed; 
 				}
 			}
+		}
+		else
+		{
+			SVStringArray msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			SvStl::MessageMgrStdDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
+			ASSERT(false);
 		}
 		return retValue;
 	}
@@ -214,38 +242,49 @@ namespace Seidenader { namespace SVOGui
 		m_taskValues.Init();
 		m_equationValues.Init();
 
-		typedef GuiCmd::GetTaskObjectInstanceID Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-		// check for Math Container...
-		if (SVMathContainerObjectType == m_info.ObjectType)
+		if (SV_GUID_NULL == m_EquationID)
 		{
-			// Get the Math Container
-			CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK == hr)
+			typedef GuiCmd::GetTaskObjectInstanceID Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+			// check for Math Container...
+			if (SVMathContainerObjectType == m_info.ObjectType)
+			{
+				// Get the Math Container
+				CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				if (S_OK == hr)
+				{
+					// Get the Equation
+					SVObjectTypeInfoStruct info(SVEquationObjectType, SVMathEquationObjectType);
+					GUID containerID = commandPtr->GetInstanceID(); 
+					commandPtr = CommandPtr(new Command(containerID, info));
+					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+					if (S_OK == hr)
+					{
+						m_EquationID = commandPtr->GetInstanceID();
+					}		
+				}
+			}
+			else
 			{
 				// Get the Equation
-				SVObjectTypeInfoStruct info(SVEquationObjectType, SVMathEquationObjectType);
-				GUID containerID = commandPtr->GetInstanceID(); 
-				commandPtr = CommandPtr(new Command(containerID, info));
+				CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
 				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK == hr)
 				{
 					m_EquationID = commandPtr->GetInstanceID();
-				}		
-			}
-		}
-		else
-		{
-			// Get the Equation
-			CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK == hr)
-			{
-				m_EquationID = commandPtr->GetInstanceID();
+				}
+				else
+				{
+					SVStringArray msgList;
+					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+					SvStl::MessageMgrStdDisplay e( SvStl::LogOnly );
+					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
+					ASSERT(false);
+				}
 			}
 		}
 	}

@@ -16,7 +16,9 @@
     <ClInclude Include="AttributesAllowedFilter.h" />
     <ClInclude Include="AttributesSetFilter.h" />
     <ClInclude Include="ConnectToObject.h" />
+    <ClInclude Include="ConstructAndInsertFriend.h" />
     <ClInclude Include="DestroyChildObject.h" />
+    <ClInclude Include="DestroyFriend.h" />
     <ClInclude Include="ExportMask.h" />
     <ClInclude Include="GetAllowedImageList.h" />
     <ClInclude Include="GetAttributesAllowed.h" />
@@ -27,6 +29,7 @@
     <ClInclude Include="GetDependencies.h" />
     <ClInclude Include="GetConnectedObjects.h" />
     <ClInclude Include="GetEquation.h" />
+    <ClInclude Include="GetErrorMessageList.h" />
     <ClInclude Include="GetImage.h" />
     <ClInclude Include="GetInstanceIDByDottedName.h" />
     <ClInclude Include="GetMaskImage.h" />
@@ -52,6 +55,7 @@
     <ClInclude Include="SetAuxSourceImage.h" />
     <ClInclude Include="SetDefaultInputs.h" />
     <ClInclude Include="SetMaskData.h" />
+    <ClInclude Include="SetObjectName.h" />
     <ClInclude Include="SetRingbufferIndexValue.h" />
     <ClInclude Include="ShouldInspectionReset.h" />
     <ClInclude Include="TaskObjectGetEmbeddedValues.h" />

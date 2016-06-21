@@ -477,28 +477,10 @@ LPCTSTR RangeClassHelper::GetOwnerName() const
 
 bool RangeClassHelper::RenameIndirectValues(LPCTSTR oldPefix, LPCTSTR newPrefix)
 {
-	bool result = false;
-
-	if(m_FailHighIndirect.Replace(oldPefix,newPrefix) > 0)
-	{
-		result = true;
-	}
-
-	if(m_WarnHighIndirect.Replace(oldPefix,newPrefix) > 0)
-	{
-		result = true;
-	}
-
-	if(m_FailLowIndirect.Replace(oldPefix,newPrefix) > 0)
-	{
-		result = true;
-	}
-
-	if(m_WarnLowIndirect.Replace(oldPefix,newPrefix) > 0)
-	{
-		result = true;
-	}
-
+	bool result = RenameIndirectValue(m_FailHighIndirect, oldPefix, newPrefix);
+	result = RenameIndirectValue(m_WarnHighIndirect, oldPefix, newPrefix) || result;
+	result = RenameIndirectValue(m_FailLowIndirect, oldPefix, newPrefix) || result;
+	result = RenameIndirectValue(m_WarnLowIndirect, oldPefix, newPrefix) || result;
 	return result;
 }
 
@@ -598,6 +580,34 @@ bool RangeClassHelper::isValidReference( const CString& rInspectionName, const C
 		Result = false;
 	}
 
+	return Result;
+}
+
+bool RangeClassHelper::RenameIndirectValue(CString& rIndirectString, LPCTSTR oldPefix, LPCTSTR newPrefix)
+{
+	bool Result( false );
+	SVString oldString(oldPefix);
+	if ('.' == oldString[oldString.size()-1])
+	{	//check if part of the name (ends with '.') is to replace
+		if(rIndirectString.Replace(oldPefix,newPrefix) > 0)
+		{
+			Result = true;
+		}
+	}
+	else
+	{
+		SVString indirectTmp = rIndirectString;
+		size_t pos = indirectTmp.find('[');
+		if (SVString::npos != pos)
+		{	//if array ("[x]") in the name, remove it for the check
+			indirectTmp = indirectTmp.substr(0, pos);
+		}
+		//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
+		if (oldString == indirectTmp && rIndirectString.Replace(oldPefix,newPrefix) > 0)
+		{	
+			Result = true;
+		}
+	}
 	return Result;
 }
 #pragma endregion Private Methods

@@ -63,13 +63,10 @@ public:
 	void RemoveAt(int nIndex)
 	{
 		Concurrency::reader_writer_lock::scoped_lock lock(m_dataLock);  // writer lock
-		Container::const_iterator endIt = m_list.end();
-		for (Container::const_iterator it = m_list.begin();it != endIt;++it)
+		if (0 <= nIndex && m_list.size() > nIndex)
 		{
-			if (nIndex != static_cast<int>(std::distance(it, endIt)))
-			{
-				m_list.erase(it); 
-			}
+			Container::const_iterator it = m_list.begin() + nIndex;
+			m_list.erase(it);
 		}
 	}
 

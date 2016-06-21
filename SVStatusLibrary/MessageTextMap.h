@@ -403,6 +403,18 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 
 	(SvOi::Tid_Drive_Full, _T(" %s - drive is full."))
 	(SvOi::Tid_ConditionalValue_Invalid, _T("The conditional value of tool \"%s\" is invalid.")) 
+
+	(SvOi::Tid_TableColumnName_NotUnique, _T("The name \"%s\" is used already by another column.\nThe name must be unique."))
+	(SvOi::Tid_TableColumn_AddingFailed, _T("Adding a column failed. Error number %s."))
+	(SvOi::Tid_TableColumn_RemovingFailed, _T("Removing a column failed. Error number %s."))
+	(SvOi::Tid_TableColumn_RenamingFailed, _T("Renaming a column failed. Error number %s."))
+	(SvOi::Tid_TableObject_CreateFailed, _T("Creating the table object in the table tool failed."))
+	(SvOi::Tid_TableObject_Nullptr, _T("Table object in the table tool is a nullptr."))
+	(SvOi::Tid_TableObject_columnValueMapInvalid, _T("The columnValueMap in the table object has invalid entries."))
+	(SvOi::Tid_TableObject_createColumnValueObjectFailed, _T("Creating a value object in the table object failed."))
+	(SvOi::Tid_TableObject_MaxRowWrongValue, _T("Maximum rows must be greater than zero."))
+	(SvOi::Tid_UnknownCommitError, _T("Unknown Commit or Reset error %s."))
+	(SvOi::Tid_UnknownCommandError, _T("Unknown Command error %s."))
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

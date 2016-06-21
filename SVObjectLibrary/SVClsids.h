@@ -35,6 +35,9 @@ extern /*const*/ GUID SVDWordValueObjectClassGuid;
 // GUID for the SVDoubleValueObjectClass
 extern /*const*/ GUID SVDoubleValueObjectClassGuid;
 
+// GUID for the DoubleSortValueObject
+extern /*const*/ GUID DoubleSortValueObjectGuid;
+
 // GUID for the SVLongValueObjectClass
 extern /*const*/ GUID SVLongValueObjectClassGuid;
 
@@ -1196,6 +1199,17 @@ extern	/*const*/ GUID EQAdjustSizePositionXResultGuid;
 extern/*const*/ GUID EQAdjustSizePositionYGuid;						
 extern	/*const*/ GUID EQAdjustSizePositionYResultGuid;	
 
+///////////////////////////////////////////////////
+// GUIDs for the TableTool
+///////////////////////////////////////////////////
+extern /*const*/ GUID TableToolGuid;
+extern /*const*/ GUID TableTool_MaxRowGuid;
+extern /*const*/ GUID TableColumnEquationGuid;
+extern /*const*/ GUID TableObjectGuid;
+extern /*const*/ GUID TableFillObjectGuid;
+extern /*const*/ GUID TableObject_NumberOfRowsGuid;
+const int c_maxTableColumn = 50;
+extern /*const*/ GUID TableColumnValueObjectGuid[c_maxTableColumn];
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 ////////////////////////////////////////////////////////////////////////////////

@@ -750,6 +750,10 @@ BOOL SVEquationClass::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR
 		{
 			newPrefix = _T( "\"" ) + pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType ) + _T( "\"" );
 		}
+		else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
+		{
+			newPrefix = _T( "\"" ) + pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "\"" );
+		}
 		else
 		{
 			newPrefix = _T( "\"" ) + pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );

@@ -474,11 +474,6 @@ const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum a
 	return GetAncestor(ancestorObjectType);
 }
 
-SvOi::IObjectClass* SVObjectClass::GetFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo)
-{
-	return reinterpret_cast<SVObjectClass*>(processMessage(SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&rObjectTypeInfo) ));
-}
-
 SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
 {
 	return static_cast<SVObjectSubTypeEnum>(m_outObjectInfo.ObjectTypeInfo.SubType);
@@ -495,15 +490,12 @@ SvUl::NameGuidList SVObjectClass::GetCreatableObjects(const SVObjectTypeInfoStru
 
 	return list;
 }
-#pragma endregion virtual method (IObjectClass)
 
-/*
-Set user changeable name.
-*/
 void SVObjectClass::SetName( LPCTSTR Name )
 {
 	m_Name = Name;
 }
+#pragma endregion virtual method (IObjectClass)
 
 /*
 This method return the internal object name.  This name is not changeable by the user.
@@ -516,9 +508,9 @@ LPCTSTR SVObjectClass::GetObjectName() const
 /*
 Set the NOT user changeable object instance name.
 */
-void SVObjectClass::SetObjectName( int StringResourceID )
+void SVObjectClass::SetObjectName( LPCTSTR ObjectName )
 {
-	m_ObjectName.LoadString( StringResourceID );
+	m_ObjectName = ObjectName;
 	ResetName();
 }
 
@@ -559,11 +551,11 @@ BOOL SVObjectClass::SetObjectOwner( const GUID& rNewOwnerGUID )
 /*
 Set embedded object info.  Use this only for real embedded objects.
 */
-void SVObjectClass::SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* pOwner, int NewStringResourceID )
+void SVObjectClass::SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName )
 {
 	m_embeddedID = rEmbeddedID;
 	m_outObjectInfo.ObjectTypeInfo.EmbeddedID = rEmbeddedID;
-	SetObjectName( NewStringResourceID );
+	SetObjectName( NewObjectName );
 	SetObjectOwner( pOwner );	
 }
 
@@ -1411,7 +1403,7 @@ const UINT SVObjectClass::ObjectAttributesSet(int iIndex) const
 	{
 		return m_uObjectAttributesSet;
 	}
-		return m_auObjectAttributesSet.at(iIndex);
+	return m_auObjectAttributesSet.at(iIndex);
 }
 
 /*

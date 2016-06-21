@@ -88,6 +88,7 @@ public:
 	virtual void Delete(GUID& objectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
 	virtual DWORD_PTR DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
+	virtual bool DestroyFriendObject(IObjectClass& rObject, DWORD context) override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
 #pragma endregion public methods	
@@ -149,6 +150,11 @@ private:
 	  /param context <in>.
 	***********/
 	DWORD_PTR DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context);
+
+	/// The method destroy a taskObject
+	/// \param rTaskObject [in] This object will destroyed.
+	/// \param context [in] Bits define action (e.g. SVMFSetDefaultInputs = set default inputs, SVMFResetInspection = reset inspection)
+	void DestroyTaskObject(SVTaskObjectClass& rTaskObject, DWORD context);
 #pragma endregion Private Methods
 	
 #pragma region Member Variables

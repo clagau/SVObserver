@@ -156,5 +156,17 @@
     <ClInclude Include="RangeSelectorFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ConstructAndInsertFriend.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DestroyFriend.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SetObjectName.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetErrorMessageList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

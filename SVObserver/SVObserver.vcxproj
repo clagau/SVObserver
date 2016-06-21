@@ -178,6 +178,7 @@ echo %time%
     <ClCompile Include="BasicValueObjects.cpp" />
     <ClCompile Include="Custom2Filter.cpp" />
     <ClCompile Include="Custom2Filter_ImportExport.cpp" />
+    <ClCompile Include="DoubleSortValueObject.cpp" />
     <ClCompile Include="EQAdjustSize.cpp" />
     <ClCompile Include="EQAdjustSizeHeight.cpp" />
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
@@ -613,6 +614,10 @@ echo %time%
     <ClCompile Include="SVVirtualCamera.cpp" />
     <ClCompile Include="SVWaterShedFilter.cpp" />
     <ClCompile Include="SVWindowTool.cpp" />
+    <ClCompile Include="TableColumnEquation.cpp" />
+    <ClCompile Include="TableFillObject.cpp" />
+    <ClCompile Include="TableObject.cpp" />
+    <ClCompile Include="TableTool.cpp" />
     <ClCompile Include="ToolClipboard.cpp" />
     <ClCompile Include="ToolSetView.cpp" />
     <ClCompile Include="ToolSizeAdjustTask.cpp" />
@@ -638,6 +643,7 @@ echo %time%
     <ClInclude Include="BasicValueObject.h" />
     <ClInclude Include="BasicValueObjects.h" />
     <ClInclude Include="Custom2Filter.h" />
+    <ClInclude Include="DoubleSortValueObject.h" />
     <ClInclude Include="EQAdjustSize.h" />
     <ClInclude Include="EQAdjustSizeHeight.h" />
     <ClInclude Include="EQAdjustSizePositionX.h" />
@@ -739,6 +745,10 @@ echo %time%
     <ClInclude Include="SVThresholdClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolGrouping.h" />
+    <ClInclude Include="TableColumnEquation.h" />
+    <ClInclude Include="TableFillObject.h" />
+    <ClInclude Include="TableObject.h" />
+    <ClInclude Include="TableTool.h" />
     <ClInclude Include="ToolSetView.h" />
     <ClInclude Include="SVTriggerSelectionDlg.h" />
     <ClInclude Include="SVUnaryImageOperatorClass.h" />

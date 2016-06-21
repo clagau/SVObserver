@@ -75,6 +75,7 @@
 			SVInt64ValueObjectType					= 0x00000109,
 			SVCharValueObjectType					= 0x0000010A,
 			SVVariantValueObjectType				= 0x0000010B,
+			DoubleSortValueObjectType				= 0x0000010C,
 
 			SVOperatorObjectType					= 0x00001000,
 			SVBinaryOperatorObjectType				= 0x00002000,
@@ -82,6 +83,7 @@
 			SVUnaryImageOperatorObjectType			= 0x00004000,
 			SVFilterObjectType						= 0x00005000,
 			SVUnaryImageOperatorListObjectType		= 0x00006000,
+			TableObjectType							= 0x00007000,
 
 			SVAnalyzerObjectType					= 0x00010000,
 
@@ -128,6 +130,7 @@
 			SVShiftToolObjectType						= 0x00000028,
 			SVResizeToolObjectType						= 0x00000029,
 			SVRingBufferToolObjectType					= 0x0000002a,
+			SVTableToolObjectType					= 0x0000002b,
 
 			// Analyzer Subtypes:	
 			SVPixelAnalyzerObjectType				    = 0x00000100,
@@ -171,6 +174,8 @@
 			EQSizeHeightType							= 0x00000407,
 			EQSizePositionXType							= 0x00000408,
 			EQSizePositionYType							= 0x00000409,
+
+			TableColumnEquationObjectType				= 0x0000040a,
 
 			// Math Container Subtypes:
 			SVEvaluateXObjectType						= 0x00000480,
@@ -245,6 +250,9 @@
 			SVCustom2FilterObjectType					= 0x0000201a,
 			// Operator SubTypes
 			SVColorThresholdObjectType					= 0x00003000,
+
+			//TableObject SubTypes
+			TableFillObjectType						= 0x00007000,
 
 			// unknown
 			SVRegressionTestModeObjectType				= 0x00011010,

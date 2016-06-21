@@ -5083,7 +5083,9 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 						SVConfigurationTreeWriter< SVTreeType > writer(rTree, lutEquationEmbeddedsBranch);
 						SVBoolValueObjectClass isLUTFormulaClipped;
 						isLUTFormulaClipped.SetResetOptions( false, SVResetItemTool );
-						isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, IDS_OBJECTNAME_LUT_EQUATION_CLIP);
+						CString strName;
+						strName.LoadString(IDS_OBJECTNAME_LUT_EQUATION_CLIP);
+						isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, strName);
 						isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
 						isLUTFormulaClipped.SetValue(0, FALSE);
 						isLUTFormulaClipped.Persist(writer);

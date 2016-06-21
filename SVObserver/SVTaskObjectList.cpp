@@ -644,6 +644,48 @@ DWORD_PTR SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD 
 	return DestroyChildObject(pTaskObject, context);
 }
 
+bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWORD context)
+{
+	// Get the object's uniqueID
+	GUID objectID = rObject.GetUniqueObjectID();
+
+	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
+
+	if (nullptr != pTaskObject)
+	{
+		// Notify the Owner of our inputs that they are not needed anymore
+		pTaskObject->Disconnect();
+
+		// Close the Object
+		pTaskObject->CloseObject();
+
+		// Destroy our Friends
+		pTaskObject->DestroyFriends();
+	}
+
+	bool retVal = (TRUE == RemoveFriend(objectID));
+	if (retVal)
+	{
+		delete(&rObject);
+	}
+
+	SVInspectionProcess* pInspection = GetInspection();
+	if( nullptr != pInspection )
+	{
+		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
+		{
+			pInspection->SetDefaultInputs();
+		}
+
+		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
+		{
+			::SVSendMessage( pInspection, SVM_RESET_ALL_OBJECTS, 0, 0 );
+		}
+	}
+
+	return retVal;
+}
+
 SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const
 {
 	SvUl::NameGuidList list = SVTaskObjectClass::GetCreatableObjects(pObjectTypeInfo);
@@ -1337,46 +1379,52 @@ DWORD_PTR SVTaskObjectListClass::DestroyChildObject(SVTaskObjectClass* pTaskObje
 	//This code was located before in processMessage case SVMSGID_DESTROY_CHILD_OBJECT and is moved to this method.
 
 	// Kill the Object
-	if (pTaskObject)
+	if (nullptr != pTaskObject)
 	{
 		// if the object is a Child of this
 		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 		{
 			SVObjectClass* pObject = m_aTaskObjects.GetAt(i);
-			if (pObject && pObject == pTaskObject)
+			if (nullptr != pObject && pObject == pTaskObject)
 			{
-				// Notify the Owner of our inputs that they are not needed anymore
-				pTaskObject->Disconnect();
-
-				// Close the Object
-				pTaskObject->CloseObject();
-
-				// Get the object's uniqueID
-				GUID objectID = pTaskObject->GetUniqueObjectID();
-
-				// Destroy our Friends
-				pTaskObject->DestroyFriends();
-
-				// Remove it from the SVTaskObjectList ( Destruct it )
-				Delete(objectID);
-
-				if( nullptr != GetInspection() )
-				{
-					if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
-					{
-						GetInspection()->SetDefaultInputs();
-					}
-
-					if( SVMFResetInspection == ( context & SVMFResetInspection ) )
-					{
-						::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, 0, 0 );
-					}
-				}
-
+				
+				DestroyTaskObject(*pTaskObject, context);
 				return SVMR_SUCCESS;
 			}
 		}
 	}
 	return SVMR_NO_SUCCESS;
+}
+
+void SVTaskObjectListClass::DestroyTaskObject(SVTaskObjectClass& rTaskObject, DWORD context)
+{
+	// Notify the Owner of our inputs that they are not needed anymore
+	rTaskObject.Disconnect();
+
+	// Close the Object
+	rTaskObject.CloseObject();
+
+	// Get the object's uniqueID
+	GUID objectID = rTaskObject.GetUniqueObjectID();
+
+	// Destroy our Friends
+	rTaskObject.DestroyFriends();
+
+	// Remove it from the SVTaskObjectList ( Destruct it )
+	Delete(objectID);
+
+	SVInspectionProcess* pInspection = GetInspection();
+	if( nullptr != pInspection )
+	{
+		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
+		{
+			pInspection->SetDefaultInputs();
+		}
+
+		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
+		{
+			::SVSendMessage( pInspection, SVM_RESET_ALL_OBJECTS, 0, 0 );
+		}
+	}
 }
 #pragma endregion Private Methods

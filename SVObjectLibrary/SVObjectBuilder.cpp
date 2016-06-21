@@ -42,6 +42,7 @@ static ObjectTypeTable typeTable = boost::assign::map_list_of<>
 (SVLongValueObjectType, SV_LONG_Type)
 (SVEnumValueObjectType, SV_LONG_Type)
 (SVDoubleValueObjectType, SV_DOUBLE_Type)
+(DoubleSortValueObjectType, SV_DOUBLE_Type)
 (SVPointValueObjectType, SV_POINT_Type)
 (SVStringValueObjectType, SV_STRING_Type)
 (SVDPointValueObjectType, SV_DPOINT_Type)
@@ -177,7 +178,7 @@ HRESULT SVObjectBuilder::DestroyFriends(const GUID& objectID)
 	return hr;
 }
 
-HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const SVString& name, const SVString& objectName, const GUID& ownerUniqueID)
+HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const SVString& objectName, const GUID& ownerUniqueID)
 {
 	HRESULT hr = S_OK;
 
@@ -189,13 +190,25 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 	{
 		pObject->SetName(objectName.c_str());
 		pObject->SetObjectOwner(ownerUniqueID);
-		if( SVObjectManagerClass::Instance().ChangeUniqueObjectID( pObject, uniqueID ) )
+		GUID friendId = SV_GUID_NULL;
+		if (SV_GUID_NULL != uniqueID)
+		{
+			if( SVObjectManagerClass::Instance().ChangeUniqueObjectID( pObject, uniqueID ) )
+			{
+				friendId = uniqueID;
+			}
+		}
+		else
+		{
+			friendId = pObject->GetUniqueObjectID();
+		}
+		if( SV_GUID_NULL != friendId )
 		{
 			SVObjectClass* pOwnerObject = nullptr;
 			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
 			if(nullptr != pOwnerObject)
 			{
-				pOwnerObject->AddFriend(uniqueID);
+				pOwnerObject->AddFriend(friendId);
 				::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0);
 			}
 			else

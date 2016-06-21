@@ -126,6 +126,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/assign/list_inserter.hpp>
 #include <boost/bind.hpp>
+#include <boost/circular_buffer.hpp>
 #include <boost/config.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/date_time.hpp>

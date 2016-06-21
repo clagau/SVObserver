@@ -91,8 +91,9 @@ public:
 	virtual void SetDisabled();
 
 	virtual BOOL RegisterEmbeddedObject( SVImageClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID );
-	virtual BOOL RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset );
-	virtual BOOL RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName );
+	virtual BOOL RegisterEmbeddedObject( SVImageClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, LPCTSTR newString );
+	virtual BOOL RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName = nullptr );
+	virtual BOOL RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName = nullptr );
 	virtual BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
 	HRESULT GetOutputListFiltered(std::vector<SVValueObjectReference>& rvecObjects, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
@@ -116,12 +117,6 @@ public:
 	void clearTaskMessages( ) { m_TaskMessages.clear(); };
 
 	//************************************
-	//! Gets the list of task messages
-	//! \return a const reference to the message list
-	//************************************
-	const SvStl::MessageContainerVector& getTaskMessages() const { return m_TaskMessages; };
-
-	//************************************
 	//! Get the first task message
 	//! \return a const reference to the first task message
 	//************************************
@@ -135,6 +130,7 @@ public:
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
 	virtual HRESULT ConnectToImage(const SVString& rInputName, const SVGUID& rNewID) override;
 	virtual bool IsObjectValid() const override;
+	virtual const SvStl::MessageContainerVector& getTaskMessages() const override {return m_TaskMessages;};
 #pragma endregion virtual method (ITaskObject)
 
 protected:
@@ -142,7 +138,7 @@ protected:
 	SVInputInfoListClass m_svToolInputList;
 	long m_lLastToolInputListIndex;
 
-	virtual BOOL RegisterEmbeddedObjectAsClass( SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, int NewStringResourceID );
+	virtual BOOL RegisterEmbeddedObjectAsClass( SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName );
 
 public:
 	// Get the local object color...

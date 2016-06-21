@@ -67,12 +67,6 @@ namespace Seidenader
 			virtual const IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const = 0;
 
 			/**********
-			The method gets the first object with the requested type.
-			/param type <in> 
-			***********/
-			virtual IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) = 0;
-
-			/**********
 			This method gets the attributes allowed for the object.
 			***********/
 			virtual const UINT ObjectAttributesAllowed() const = 0;
@@ -108,6 +102,11 @@ namespace Seidenader
 			/// \returns SvUl::NameGuidList A list of Name and ClassID pairs
 			//************************************
 			virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const = 0;
+
+			/*
+			Set user changeable name.
+			*/
+			virtual void SetName( LPCTSTR StrString ) = 0;
 		};
 	}
 }

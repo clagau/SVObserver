@@ -52,6 +52,8 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVOGui\TextDefinesSvOg.h"
+#include "SVOGui\TADialogTableParameterPage.h"
+#include "SVOGui\TADialogTableDefinesPage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -304,6 +306,12 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		case SVRingBufferToolObjectType:
 			AddPage( new SvOg::SVToolAdjustmentDialogImagePageClass( m_InspectionID, m_TaskObjectID ) );
 			AddPage( new SvOg::TADialogRingBufferParameterPage( m_InspectionID, m_TaskObjectID ) );
+			AddPage( pConditionalDlg );
+			break;
+
+		case SVTableToolObjectType:
+			AddPage( new SvOg::TADialogTableParameterPage( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SvOg::TADialogTableDefinesPage( m_InspectionID, m_TaskObjectID ) );
 			AddPage( pConditionalDlg );
 			break;
 

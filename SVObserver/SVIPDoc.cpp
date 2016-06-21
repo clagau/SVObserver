@@ -98,6 +98,7 @@
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/PPQSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
+#include "TableTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -181,6 +182,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_REMOTEINPUTTOOL, OnAddRemoteInputTool)
 	ON_COMMAND(ID_ADD_RESIZETOOL, &SVIPDoc::OnAddResizetool)
 	ON_COMMAND(ID_ADD_RINGBUFFERTOOL, OnAddRingBufferTool)
+	ON_COMMAND(ID_ADD_TABLETOOL, OnAddTableTool)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAllowAdjustLightReference)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLUT, OnAllowAdjustLut)
 	ON_UPDATE_COMMAND_UI(ID_ADD_STARTTOOLGROUPING, OnUpdateAddStartToolGrouping)
@@ -1101,6 +1103,15 @@ void SVIPDoc::OnAddResizetool()
 void SVIPDoc::OnAddRingBufferTool()
 {
 	SVToolClass* pTool = new RingBufferTool;
+
+	if( AddTool( pTool ) ) { return; }
+
+	if( pTool ) { delete( pTool ); }
+}
+
+void SVIPDoc::OnAddTableTool()
+{
+	SVToolClass* pTool = new TableTool;
 
 	if( AddTool( pTool ) ) { return; }
 

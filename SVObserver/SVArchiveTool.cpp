@@ -1234,6 +1234,10 @@ BOOL SVArchiveTool::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR o
 		{
 			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
 		}
+		else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
+		{
+			newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+		}
 		else
 		{
 			newPrefix = pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
@@ -1248,9 +1252,27 @@ BOOL SVArchiveTool::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR o
 		{
 			CString sName;
 			m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
-			if ( sName.Replace( oldPrefix.c_str(), newPrefix.c_str() ) > 0 )
+
+			if ('.' == oldPrefix[oldPrefix.size()-1])
+			{	//check if part of the name (ends with '.') is to replace
+				if(sName.Replace(oldPrefix.c_str(),newPrefix.c_str()) > 0)
+				{
+					Result = true;
+				}
+			}
+			else
 			{
-				Result = true;
+				SVString indirectTmp = sName;
+				size_t pos = indirectTmp.find('[');
+				if (SVString::npos != pos)
+				{	//if array ("[x]") in the name, remove it for the check
+					indirectTmp = indirectTmp.substr(0, pos);
+				}
+				//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
+				if (oldPrefix == indirectTmp && sName.Replace(oldPrefix.c_str(),newPrefix.c_str()) > 0)
+				{	
+					Result = true;
+				}
 			}
 			m_svoArchiveResultNames.SetValue(iLastSet,i,sName);
 			m_svoArchiveResultNames.GetValue(iLastSet,i,sName);

@@ -24,8 +24,8 @@ namespace Seidenader
 		class SVFormulaEditorSheetClass : public CPropertySheet
 		{
 		public:
-			SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskOjectID, const SVObjectTypeInfoStruct& rInfo, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-			SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskOjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+			SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskOjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+			SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskOjectID, const GUID& rEquationID, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 			virtual ~SVFormulaEditorSheetClass();
 
@@ -36,7 +36,12 @@ namespace Seidenader
 			//}}AFX_VIRTUAL
 
 		protected:
-			void init();
+			/// Initialized the formulaEditorSheetClass 
+			/// \param rInfo [in] info struct of the equation
+			void init(const SVObjectTypeInfoStruct& rInfo);
+			/// Initialized the formulaEditorSheetClass 
+			/// \param rEquationId [in] GUID of the equation
+			void init(const GUID& rEquationId);
 
 			//{{AFX_MSG(SVFormulaEditorSheetClass)
 			afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -50,7 +55,6 @@ namespace Seidenader
 			FormulaEditorPagePtr m_formulaPage;
 			GUID m_InspectionID;
 			GUID m_TaskObjectID;
-			SVObjectTypeInfoStruct m_info;
 		};
 	}
 }

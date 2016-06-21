@@ -115,10 +115,9 @@ public:
 	BOOL IsDescendantOfType( const SVObjectInfoStruct& rAncestorInfo );
 
 	virtual void ResetName();
-	virtual void SetName( LPCTSTR Name );
-	virtual void SetObjectName( int StringResourceID );
+	virtual void SetObjectName( LPCTSTR ObjectName );
 
-	void SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* pOwner, int NewStringResourceID );
+	void SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName );
 
 	BOOL AddFriend( const GUID& rFriendGUID );
 	BOOL RemoveFriend( const GUID& rFriendGUID );
@@ -164,7 +163,6 @@ public:
 	virtual const SVGUID& GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
-	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo) override;
 	virtual const UINT ObjectAttributesAllowed() const override;
 	virtual const UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual bool IsArray() const;
@@ -172,6 +170,7 @@ public:
 	virtual const SVGUID& GetUniqueObjectID() const override;
 	virtual bool is_Created() const override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
+	virtual void SetName( LPCTSTR Name ) override;
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;

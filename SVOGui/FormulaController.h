@@ -29,6 +29,8 @@ namespace Seidenader
 		#pragma region Constructor
 		public:
 			FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectId, const SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly=true);
+
+			FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectId, const GUID& rEquationObjectId, bool bEnabledReadOnly=true);
 		#pragma endregion Constructor
 
 		#pragma region Destructor

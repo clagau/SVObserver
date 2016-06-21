@@ -278,25 +278,26 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_NEW, OnUpdateWindowNew)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_HORZ, OnUpdateWindowTileHorz)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_VERT, OnUpdateWindowTileVert)
-	ON_UPDATE_COMMAND_UI(ID_ADD_SHIFTTOOL, OnUpdateAddShiftTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddWindowTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_SHIFTTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_CYLINDRICALWARPTOOL, OnUpdateAddCylindricalWarpTool)
 	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppAbout)
-	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddLoadImageTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_IMAGETOOL, OnUpdateAddImageTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL,OnUpdateAddArchiveTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_MATHTOOL, OnUpdateAddMathTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_STATISTICSTOOL, OnUpdateAddStatisticsTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_IMAGETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL,OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_MATHTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_STATISTICSTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TRANSFORMATIONTOOL, OnUpdateAddTransformationTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_EXTERNAL_TOOL, OnUpdateAddExternalTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_POLARUNWRAPTOOL, OnUpdateAddPolarUnwrapTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_ACQUISITIONTOOL, OnUpdateAddAcquisitionTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_EXTERNAL_TOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_POLARUNWRAPTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_ACQUISITIONTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColorTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_LINEARTOOL, OnUpdateAddLinearTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_REMOTEINPUTTOOL, OnUpdateAddRemoteInputTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_RESIZETOOL, OnUpdateAddResizetool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_RINGBUFFERTOOL, OnUpdateAddRingBufferTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddPerspectiveTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_LINEARTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_REMOTEINPUTTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_RESIZETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_RINGBUFFERTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_TABLETOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGIN, OnUpdateExtrasLogin)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENVIRONMENTSETTINGS, OnUpdateExtrasAdditionalEnvironmentSettings)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGOUT, OnUpdateExtrasLogout)
@@ -1172,14 +1173,7 @@ void SVObserverApp::OnUpdateWindowTileVert( CCmdUI* PCmdUI )
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
 }
 
-void SVObserverApp::OnUpdateAddShiftTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
-}
-
-void SVObserverApp::OnUpdateAddWindowTool( CCmdUI* PCmdUI ) 
+void SVObserverApp::OnUpdateAddGeneralTool( CCmdUI* PCmdUI ) 
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
 		OkToEdit() &&
@@ -1199,41 +1193,6 @@ void SVObserverApp::OnUpdateAppExit( CCmdUI* PCmdUI )
 
 void SVObserverApp::OnUpdateAppAbout( CCmdUI* PCmdUI ) 
 {
-}
-
-void SVObserverApp::OnUpdateAddLoadImageTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable()  );
-}
-
-void SVObserverApp::OnUpdateAddImageTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable());
-}
-
-void SVObserverApp::OnUpdateAddArchiveTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
-}
-
-void SVObserverApp::OnUpdateAddMathTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
-}
-
-void SVObserverApp::OnUpdateAddStatisticsTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
 }
 
 void SVObserverApp::OnFilePrintConfig() 
@@ -1718,20 +1677,6 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
-void SVObserverApp::OnUpdateAddPolarUnwrapTool(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
-}
-
-void SVObserverApp::OnUpdateAddAcquisitionTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
-}
-
 void SVObserverApp::OnUpdateAddColorTool( CCmdUI* PCmdUI ) 
 {
 	BOOL Enabled = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
@@ -1897,13 +1842,6 @@ void SVObserverApp::OnUpdateAllIOViews()
 	}
 }
 
-void SVObserverApp::OnUpdateAddExternalTool(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() );
-}
-
 void SVObserverApp::OnExtrasSecuritySetup() 
 {
 	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
@@ -2032,34 +1970,6 @@ void SVObserverApp::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI)
 	}
 }
 
-void SVObserverApp::OnUpdateAddLinearTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		IsMonochromeImageAvailable() &&
-		OkToEdit());
-}
-
-void SVObserverApp::OnUpdateAddRemoteInputTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		IsMonochromeImageAvailable() &&
-		OkToEdit());
-}
-
-void SVObserverApp::OnUpdateAddResizetool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		IsMonochromeImageAvailable() &&
-		OkToEdit());
-}
-
-void SVObserverApp::OnUpdateAddRingBufferTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		IsMonochromeImageAvailable() &&
-		OkToEdit());
-}
-
 void SVObserverApp::OnUpdateAddCylindricalWarpTool( CCmdUI* pCmdUI ) 
 {
 	bool l_bEnable = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
@@ -2075,13 +1985,6 @@ void SVObserverApp::OnUpdateAddCylindricalWarpTool( CCmdUI* pCmdUI )
 	{
 		pCmdUI->Enable( l_bEnable );
 	}
-}
-
-void SVObserverApp::OnUpdateAddPerspectiveTool(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
-		IsMonochromeImageAvailable() );
 }
 
 void SVObserverApp::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI) 

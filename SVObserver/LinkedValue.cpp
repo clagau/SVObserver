@@ -182,6 +182,10 @@ void LinkedValue::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR orig
 		{
 			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
 		}
+		else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
+		{
+			newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		}
 		else
 		{
 			newPrefix = pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );

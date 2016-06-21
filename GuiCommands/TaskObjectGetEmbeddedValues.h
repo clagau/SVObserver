@@ -45,13 +45,7 @@ namespace Seidenader
 					GUID parentID = m_ownerID;
 					while (!bFound && GUID_NULL != parentID)
 					{
-						DWORD flags = SVM_GETFIRST_OBJECT;
-
 						const SVObjectTypeInfoStruct& ownerInfo = it->second.GetOwnerInfo();
-						if (SVNotSetObjectType != ownerInfo.ObjectType)
-						{
-							flags &= ~SVM_NOTIFY_FRIENDS;
-						}
 						SvOi::IValueObject* pValueObject = SvOi::FindValueObject(parentID, objectInfo);
 						if (pValueObject)
 						{
