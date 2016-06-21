@@ -22,7 +22,6 @@
 enum { SV_LINE_STEP = 10 };
 
 class SVIPDoc;
-class SVResultsWrapperClass;
 #pragma endregion Declarations
 
 class SVResultViewClass : public CListView

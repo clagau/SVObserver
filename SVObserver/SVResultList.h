@@ -70,13 +70,7 @@ public:
 	HRESULT GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions ) const; 
 
 	
-	//************************************
-	// Description:  Build SVResultsWrapperClass from reference vector.  (Get values of variables for remote interface.)
-	// Parameter:  [out] pSVRWC:  
-	// Parameter:  [in] lptitle:  
-	// Returns:  int:  number of entries which are added to pSVRWC
-	//************************************
-	int AddResults( SVResultsWrapperClass* pSVRWC, LPCTSTR lptitle );
+	
 	
 	
 	bool LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent);

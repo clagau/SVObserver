@@ -15,7 +15,6 @@
 #include "SVResultView.h"
 #include "SVIPDoc.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVResultsWrapperClass.h"
 #include "SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"

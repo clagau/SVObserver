@@ -115,155 +115,33 @@ public:
 	//Parameters:
 //	STDMETHOD (RegisterCallback)();
 
-	//Saves the configuration file supplied and initiates 
-	//loading it into SVObserver.
-	//
-	//Parameters:
-	//
-	//XMLConfig - A BSTR containing the configuration file as 
-	//well-formed XML.
-	//
-	//pXMLError - Pointer to a BSTR that will receive error 
-	//information as well-formed XML
-	//
-	//Return Values:
-	//
-	//S_OK indicates success.
-	STDMETHOD (PutSVIMConfig)(BSTR XMLConfig, BSTR* pXMLError);
+	
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD (PutSVIMConfig)(BSTR XMLConfig, BSTR* pXMLError) {return E_NOTIMPL;} 
 
-	//Retrieves the name of the currently loaded 
-	//configuration from SVObserver.
-	//
-	//Parameters:
-	//
-	//pszConfigFileName - Pointer to a BSTR that will receive 
-	//the fully qualified name of the configuration.
-	//
-	//pXMLError - Pointer to a BSTR that will receive error 
-	//information as well-formed XML
-	//
-	//Return Values:
-	//
-	//S_OK indicates success.
-	STDMETHOD (GetSVIMConfigName)(BSTR * pszXMLData, BSTR* pXMLError);
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD (GetSVIMConfigName)(BSTR * pszXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
 
-	//Retreive a file from the SVIM.
-	//
-	//Parameters:
-	//
-	//szSourceFile - a BSTR containing the name of the file 
-	//to retreive from the SVIM.
-	//
-	//pszXMLDestFile - Pointer to a BSTR that will receive 
-	//the file data as well-formed XML
-	//
-	//pXMLError - Pointer to a BSTR that will receive error 
-	//information as well-formed XML
-	//
-	//Return Values:
-	//
-	//S_OK indicates success.
-	STDMETHOD (GetSVIMFile)(BSTR * pszXMLData, BSTR* pXMLError);
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD (GetSVIMFile)(BSTR * pszXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
 
-	//Saves a file on the SVIM.
-	//
-	//Parameters:
-	//
-	//szXMLSourceFile - a BSTR containing the file to save in 
-	//well-formed XML format.
-	//
-	//szDestFile - A BSTR containing the name of the file 
-	//that is to be saved.
-	//
-	//pXMLError - Pointer to a BSTR that will receive error 
-	//information as well-formed XML
-	//
-	//Return Values:
-	//
-	//S_OK indicates success.
-	STDMETHOD (PutSVIMFile)(BSTR szXMLData, BSTR* pXMLError);
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD (PutSVIMFile)(BSTR szXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
 
-	//Sets the SVIM state to online of offline
-	//
-	//Parameters:
-	//
-	//bSVIMState - boolean that indicates if the SVIM is to 
-	//be set Online (TRUE) or Offline (FALSE).
-	//
-	//pXMLError - Pointer to a BSTR that will receive error 
-	//information as well-formed XML
-	//
-	//Return Values:
-	//
-	//S_OK indicates success.
-	STDMETHOD (SetSVIMState)(BSTR szXMLData, BSTR* pXMLError);
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD (SetSVIMState)(BSTR szXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
 
-	//Retrieves the currently loaded configuration from 
-	//SVObserver.
-	//
-	//Parameters:
-	//
-	//pXMLConfig - Pointer to a BSTR that will receive the 
-	//configuration from SVObserver in well-formed XML format.
-	//
-	//pXMLError - Pointer to a BSTR that will receive error 
-	//information as well-formed XML
-	//
-	//Return Values:
-	//
-	//S_OK indicates success.
-	STDMETHOD (GetSVIMConfig)(BSTR* pXMLConfig, BSTR* pXMLError);
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD (GetSVIMConfig)(BSTR* pXMLConfig, BSTR* pXMLError){return E_NOTIMPL;}
 
-	//Causes SVObserver to load the specified configuration.
-	//
-	//Parameters:
-	//
-	//szConfigFileName - a BSTR containing the name of the 
-	//configuration to load.
-	//
-	//pXMLError - Pointer to a BSTR that will receive error 
-	//information as well-formed XML
-	//
-	//Return Values:
-	//
-	//S_OK indicates success.
-	STDMETHOD (LoadSVIMConfig)(BSTR szXMLData, BSTR* pXMLError);
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD (LoadSVIMConfig)(BSTR szXMLData, BSTR* pXMLError){return E_NOTIMPL;}
 
-	//Retrieve the current inspection results from SVObserver
-	//
-	//Parameters:
-	//
-	//pXMLInspectionResults - Pointer to a BSTR that will 
-	//receive the inspection results as well-formed XML.
-	//
-	//pXMLError - Pointer to a BSTR that will receive error 
-	//information as well-formed XML
-	//
-	//Return Values:
-	//
-	//S_OK indicates success.
-	STDMETHOD (GetSVIMInspectionResults)(BSTR* pszXMLData, BSTR* pXMLError);
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD (GetSVIMInspectionResults)(BSTR* pszXMLData, BSTR* pXMLError){return E_NOTIMPL;}
 
-	//Retrieves the current operating state of the SVIM.
-	//
-	//Parameters:
-	//
-	//pXMLState - Pointer to a BSTR variable where the SVIM 
-	//state will be stored as a well formed XML document.
-	//
-	//pXMLError - Pointer to a BSTR variable where the error 
-	//information will be stored as a well formed XML 
-	//document.
-	//
-	//Return Values:
-	//
-	//S_OK  if the function was successfully called. If 
-	//the function returns S_OK, the pscSVIMError value 
-	//can be checked to determine if the function 
-	//executed successfully.
-	//
-	//Other - see COM documentation.
-	STDMETHOD(GetSVIMState)(/*[out]*/ BSTR *pXMLState, /*[out]*/ BSTR *pXMLError);
+	///Depreciated Function returns E_NOTIMPL 
+	STDMETHOD(GetSVIMState)(/*[out]*/ BSTR *pXMLState, /*[out]*/ BSTR *pXMLError){return E_NOTIMPL;}
 
 //  The following group of functions are the same as above but they
 //  do NOT use XML to wrap each function call. These functions also
@@ -387,7 +265,8 @@ public:
 	//Return Values:
 	//
 	//S_OK indicates success.
-	STDMETHOD (SVGetSVIMInspectionResults)(BSTR bstrInspection, BSTR *bstrXMLResults);
+	///This functionality was removed.
+	STDMETHOD (SVGetSVIMInspectionResults)(BSTR bstrInspection, BSTR *bstrXMLResults) {return E_NOTIMPL;}
 
 	//Retrieves the current operating state of the SVIM.
 	//

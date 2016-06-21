@@ -14,7 +14,7 @@
 #include "ObjectInterfaces/TextDefineSvOi.h"
 #include "SVObserver.h" //Arvid: needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
-#include "SVCmnLib\Utilities.h"
+#include "SVOMFCLibrary\Utilities.h"
 #include "SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/MessageManagerResource.h"

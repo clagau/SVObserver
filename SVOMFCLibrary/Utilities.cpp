@@ -8,9 +8,13 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   18 Apr 2013 18:10:12  $
 // ******************************************************************************
+//Utilities.h moved from SVCmnLib to SVOMFCLibrary 
 
 #include "stdafx.h"
+#include <direct.h>
+#include <tchar.h>
 #include "utilities.h"
+
 
 BOOL CreateDirPath(CString szPath)
 {

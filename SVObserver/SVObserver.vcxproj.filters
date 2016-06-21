@@ -2058,9 +2058,6 @@
     <ClInclude Include="SVResultString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVResultsWrapperClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVResultView.h">
       <Filter>Header Files</Filter>
     </ClInclude>

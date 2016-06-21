@@ -88,208 +88,23 @@ library SVObserver
 	]
 	interface ISVCommand : IDispatch
 	{
-		//Retrieves the current operating state of the SVIM.
-		//
-		//Parameters:
-		//
-		//pszXMLData - Pointer to a BSTR representation of a well 
-		//formed XML document that will receive the current 
-		//state data from SVObserver.
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020000), helpstring("method GetSVIMState")] HRESULT GetSVIMState([out] BSTR *pszXMLData, [out] BSTR *pXMLError);
-
-		//Saves the configuration file supplied and initiates 
-		//loading it into SVObserver.
-		//
-		//Parameters:
-		//
-		//szXMLData - A BSTR representation of a well formed XML
-		//document containing the configuration to save and load.
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020001), helpstring("method PutSVIMConfig")] HRESULT PutSVIMConfig([in] BSTR szXMLData, [out] BSTR *pXMLError);
-
-		//Retrieves the currently loaded configuration from 
-		//SVObserver.
-		//
-		//Parameters:
-		//
-		//pszXMLData - Pointer to a BSTR representation of a well 
-		//formed XML document that will receive the current 
-		//configuration from SVObserver.
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020002), helpstring("method GetSVIMConfig")] HRESULT GetSVIMConfig([out] BSTR *pszXMLData, [out] BSTR *pXMLError);
-
-		//Causes SVObserver to load the specified 
-		//configuration.
-		//
-		//Parameters:
-		//
-		//szXMLData - A BSTR representation of a well formed XML 
-		//document containing the configuration name to load. 
-		//This configuration name can be the fully qualified name, 
-		//or an "sec" filename with or without the "sec" extension.
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020003), helpstring("method LoadSVIMConfig")] HRESULT LoadSVIMConfig([in] BSTR szXMLData, [out] BSTR *pXMLError);
-
-		//Retrieve the current inspection results from 
-		//SVObserver
-		//
-		//Parameters:
-		//
-		//pszXMLData - Pointer to a BSTR representation of a well 
-		//formed XML document containing the fully qualified name 
-		//of the IPD reults data to retreive as well as the results 
-		//data retreived from the SVIM.
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020004), helpstring("method GetSVIMInspectionResults")] HRESULT GetSVIMInspectionResults([in,out] BSTR *pszXMLData, [out] BSTR *pXMLError);
-
-		//Retrieves the name of the currently loaded 
-		//configuration from SVObserver.
-		//
-		//Parameters:
-		//
-		//pszXMLData - Pointer to a BSTR representation of a well 
-		//formed XML document containing the configuration name
-		//retreived from the SVIM.
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020005), helpstring("method GetSVIMConfigName")] HRESULT GetSVIMConfigName([out] BSTR *pszXMLData, [out] BSTR *pXMLError);
-
-		//Saves a file on the SVIM.
-		//
-		//Parameters:
-		//
-		//szXMLData - A BSTR representation of a well formed XML 
-		//document containing the file data with the fully
-		//qualified SVIM file name to save.
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020006), helpstring("method PutSVIMFile")] HRESULT PutSVIMFile([in] BSTR szXMLData, [out] BSTR *pXMLError);
-
-		//Retrieves a file from the SVIM and saves the file locally.
-		//
-		//Parameters:
-		//
-		//pszXMLData - Pointer to a BSTR representation of a well 
-		//formed XML document containing the fully qualified name 
-		//of the SVIM file to save as well as the file data retreived 
-		//from the SVIM.
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020007), helpstring("method GetSVIMFile")] HRESULT GetSVIMFile([in,out] BSTR * pszXMLData, [out] BSTR* pXMLError);
-
-		//Sets the SVIM state to online of offline or ?
-		//
-		//Parameters:
-		//
-		//szXMLData - A BSTR representation of a well formed XML 
-		//document containing the requested SVIM state. 
-		//
-		//pXMLError - Pointer to a BSTR representation of a well
-		//formed XML document that will receive the error information
-		//from this method call.
-		//
-		//Return Values:
-		//
-		//S_OK if the function was successfully called. S_FALSE if 
-		//an SVIM error occured. The pXMLError will be filled with 
-		//error data when the return value is S_FALSE. 
-		//
-		//Other - see COM documentation.
-		//
+		///Depreciated Function returns E_NOTIMPL 
 		[id(0x60020008), helpstring("method SetSVIMState")] HRESULT SetSVIMState([in] BSTR szXMLData, [out] BSTR *pXMLError);
 
 		//Unpacks the configuration file supplied from PutSVIMFile and initiates loading it into SVObserver.
@@ -395,7 +210,7 @@ library SVObserver
 		//Return Values:
 		//
 		//S_OK indicates success.
-		[id(0x60020010), helpstring("method SVGetSVIMInspectionResults")] HRESULT SVGetSVIMInspectionResults([in] BSTR bstrInspection, [out] BSTR *bstrXMLResults);
+		 [id(0x60020010), helpstring("method SVGetSVIMInspectionResults")] HRESULT SVGetSVIMInspectionResults([in] BSTR bstrInspection, [out] BSTR *bstrXMLResults);
 
 		//Retrieves the current operating state of the SVIM.
 		//

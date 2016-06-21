@@ -145,11 +145,6 @@ HRESULT  SVResultListClass::GetResultData( SVIPResultData& p_rResultData) const
 	return m_ResultViewReferences.GetResultData( p_rResultData);
 }
 
-int SVResultListClass::AddResults(  SVResultsWrapperClass* pSVRWC, LPCTSTR lptitle )
-{
-	return m_ResultViewReferences.AddResults(pSVRWC,lptitle);
-}
-
 HRESULT SVResultListClass::GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions )  const
 {
 	return m_ResultViewReferences.GetResultDefinitions(rDefinitions);

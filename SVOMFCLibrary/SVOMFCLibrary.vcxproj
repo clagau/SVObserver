@@ -133,6 +133,7 @@
     <ClCompile Include="SVOIniLoader.cpp" />
     <ClCompile Include="SVParamListDeviceParam.cpp" />
     <ClCompile Include="SVStringValueDeviceParam.cpp" />
+    <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +164,7 @@
     <ClInclude Include="SVParamListDeviceParam.h" />
     <ClInclude Include="SVStringValueDeviceParam.h" />
     <ClInclude Include="SVTemplate.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="ZoomHelper.h" />
   </ItemGroup>
   <ItemGroup>

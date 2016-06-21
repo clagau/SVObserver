@@ -19,7 +19,6 @@
 #include "ResultViewReferences.h"
 #include "SVIPResultData.h"
 #include "SVIPResultItemDefinition.h"
-#include "SVResultsWrapperClass.h"
 #include "SVValueObjectReference.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
@@ -298,66 +297,6 @@ HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rD
 	return S_OK;
 }
 
-int ResultViewReferences::AddResults(  SVResultsWrapperClass* pSVRWC, LPCTSTR lptitle )
-{
-	CString szCol1, szCol2, szCol3, szCol4;
-	DWORD dwColor = 0;
-	size_t i = 0;
-	int iNumberOfItems = 0;
-	int nType;
-
-	for( i = 0; i < m_ReferenceVector.size(); ++i )
-	{
-		SVObjectReference ref = m_ReferenceVector.at(i);
-		if( ref.Object() )
-		{
-			// Insert all items that are picked for viewing
-			szCol1 = ref.GetName();
-
-			dwColor = 0;
-
-			SVValueObjectReference voref(ref);  // try to assign to value object
-			if( voref.Object() )                // if successful
-			{
-				if( voref->GetObjectType() == SVStringValueObjectType)
-				{
-					CString l_strQuotes;
-					CString l_strValue;
-					voref.GetValue( l_strValue );
-					// Wrap string in Quotes...
-					l_strQuotes.Format(_T("\042%s\042"),l_strValue);
-					szCol2 = l_strQuotes;
-				}
-				else
-				{
-					HRESULT hr = voref.GetValue( szCol2 );
-					if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
-						szCol2 = _T("< ") + szCol2 + _T(" >");
-					else if ( hr != S_OK )
-						szCol2 = _T( "<Not Valid>" );
-				}
-
-				// Set Color...
-				dwColor = ref.Object()->GetObjectColor();
-				if( ref.Object()->GetOwner() )
-					dwColor = ref.Object()->GetOwner()->GetObjectColor();
-
-				nType = ref.Object()->GetObjectType();
-			}
-
-			szCol3 = ref.GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
-			szCol4.Format(_T("%d"),iNumberOfItems);
-
-			CString szIPD = lptitle;
-			szIPD += _T( ".ipd" );
-			pSVRWC->AddData( iNumberOfItems, szIPD, szCol1, szCol2, szCol3, szCol4, dwColor, nType);
-
-			++iNumberOfItems;
-		}
-	}
-
-	return iNumberOfItems;
-}// end AddResults
 
 
 

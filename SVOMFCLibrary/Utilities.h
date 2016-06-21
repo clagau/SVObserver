@@ -12,6 +12,7 @@
 #pragma once
 
 //Moved to precompiled header: #include <errno.h>
+//Utilities.h moved from SVCmnLib to SVOMFCLibrary 
 
 BOOL CreateDirPath(CString szPath);
 HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg); ///< also in SVDriveInitDlg.cpp

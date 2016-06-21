@@ -40,7 +40,7 @@
 #include "SVToolSetAdjustmentDialogSheet.h"
 #include "ToolSetView.h"
 #include "SVResultView.h"
-#include "SVResultsWrapperClass.h"
+//#include "SVResultsWrapperClass.h"
 #include "SVTool.h"
 #include "SVOGui\SVSaveToolSetImageDialog.h"
 #include "SVOGui\SVShowDependentsDialog.h"
@@ -2813,24 +2813,6 @@ void SVIPDoc::RefreshPublishedList()
 	publishList.Refresh( ( SVTaskObjectClass* )GetToolSet() );
 
 	SetModifiedFlag();
-}
-
-HRESULT SVIPDoc::GetResults( SVResultsWrapperClass* p_pResults )
-{
-	///MEC_SVO_475 this is used by remote interface !!!!
-	HRESULT Status = E_FAIL;
-	int item(0);
-	SVResultListClass* pResultList = GetResultList();
-	if( nullptr != pResultList)
-	{
-		item += pResultList->AddResults( p_pResults, GetTitle() );
-		
-		Status = S_OK;
-	}
-
-	
-
-	return Status;
 }
 
 SVImageClass* SVIPDoc::GetHSIMainImage()

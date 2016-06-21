@@ -90,13 +90,7 @@ public:
 	//************************************
 	virtual HRESULT GetResultData( SVIPResultData& rResultData) const; 
 
-	//************************************
-	// Description:  Build SVResultsWrapperClass from reference vector.  (Get values of variables for remote interface.)
-	// Parameter:  [out] pSVRWC:  
-	// Parameter:  [in] lptitle:  
-	// Returns:  int:  number of entries which are added to pSVRWC
-	//************************************
-	int AddResults( SVResultsWrapperClass* pSVRWC, LPCTSTR lptitle );
+	
 
 	//************************************
 	// Description:  Clears the lists.
