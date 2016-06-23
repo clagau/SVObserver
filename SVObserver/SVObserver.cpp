@@ -4591,43 +4591,42 @@ BOOL SVObserverApp::IsMonochromeImageAvailable()
 	if( nullptr != m_pCurrentDocument )
 	{
 		Monochrome = !m_pCurrentDocument->IsColorInspectionDocument();
-	}
 
-	if ( !Monochrome )
-	{
-		SVObjectTypeInfoStruct info;
-
-		info.ObjectType = SVImageObjectType;
-		info.SubType = SVNotSetSubObjectType;
-
-		SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
-		SVObjectManagerClass::Instance().VisitElements( l_Visitor, m_pCurrentDocument->GetInspectionID() );
-
-		SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-		for( l_Iter = l_Visitor.GetObjects().begin(); !Monochrome && l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
+		if ( !Monochrome )
 		{
-			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
+			SVObjectTypeInfoStruct info;
 
-			if( nullptr != pImage && nullptr != pImage->GetTool() )
+			info.ObjectType = SVImageObjectType;
+			info.SubType = SVNotSetSubObjectType;
+
+			SVGetObjectDequeByTypeVisitor l_Visitor( info );
+
+			SVObjectManagerClass::Instance().VisitElements( l_Visitor, m_pCurrentDocument->GetInspectionID() );
+
+			SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
+
+			for( l_Iter = l_Visitor.GetObjects().begin(); !Monochrome && l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 			{
-				if( m_pCurrentDocument->GetSelectedToolID() != pImage->GetTool()->GetUniqueObjectID() )
-				{
-					SVImageInfoClass ImageInfo = pImage->GetImageInfo();
+				SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-					long l_lBandNumber = 1;
-
-					Monochrome = S_OK == ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber ) && 1 == l_lBandNumber;
-				}
-				else
+				if( nullptr != pImage && nullptr != pImage->GetTool() )
 				{
-					break;
+					if( m_pCurrentDocument->GetSelectedToolID() != pImage->GetTool()->GetUniqueObjectID() )
+					{
+						SVImageInfoClass ImageInfo = pImage->GetImageInfo();
+
+						long l_lBandNumber = 1;
+
+						Monochrome = S_OK == ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber ) && 1 == l_lBandNumber;
+					}
+					else
+					{
+						break;
+					}
 				}
 			}
 		}
 	}
-
 	return Monochrome;
 }
 
