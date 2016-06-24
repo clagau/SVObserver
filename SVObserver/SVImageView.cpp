@@ -16,6 +16,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/ImageFileUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
@@ -894,7 +895,7 @@ void SVImageViewClass::OnInitialUpdate()
 void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint )
 {
 	bool Update = TRUE;
-	RootObject::getRootChildValue( ::EnvironmentImageUpdate, Update );
+	RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, Update );
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 	if( Update )

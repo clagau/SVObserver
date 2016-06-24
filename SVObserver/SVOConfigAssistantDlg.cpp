@@ -56,10 +56,6 @@ static const int GrayScaleBitDepth = 8;
 // Defines for Camera File extensions
 static const CString SVGigeCameraFileDefExt = _T(".ogc");
 
-static const CString CAMERA_FIXED_NAME   ( _T("Camera_") );
-static const CString INSPECT_FIXED_NAME  ( _T("Inspection_") );
-static const CString PPQ_FIXED_NAME      ( _T("PPQ_") );
-
 //const strings for Gig-E product types
 static const CString SYSTEM_SVIM_X2_GD1A		( _T("SVIM X2-GD1A") );
 static const CString SYSTEM_SVIM_X2_GD1A_COLOR	( _T("SVIM X2-GD1A Color") );
@@ -483,13 +479,13 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			{
-				CreateDefaultForSVIMDigital(1, TRIGGER_FIXED_NAME);
+				CreateDefaultForSVIMDigital(1, SvO::cTriggerFixedName);
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			{
-				CreateDefaultForSVIMDigital(2, TRIGGER_FIXED_NAME);
+				CreateDefaultForSVIMDigital(2, SvO::cTriggerFixedName);
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
@@ -502,7 +498,7 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			{
 				m_lConfigurationType = SVIM_PRODUCT_X2_GD4A;
 
-				CreateDefaultForSVIMDigital(4, TRIGGER_FIXED_NAME);
+				CreateDefaultForSVIMDigital(4, SvO::cTriggerFixedName);
 
 				CString l_sProductString = GetNameFromProductID( m_lConfigurationType );
 				m_ctlAvailableSys.SelectString(-1,l_sProductString.operator LPCTSTR());
@@ -579,7 +575,7 @@ CString CSVOConfigAssistantDlg::GetNextCameraName()
 	while ( bFound )
 	{
 		iRet++;
-		sSearchName.Format("%s%d",CAMERA_FIXED_NAME,iRet);
+		sSearchName.Format("%s%d", SvO::cCameraFixedName, iRet);
 		bFound = m_CameraList.IsCameraInList(sSearchName);
 	}
 	m_iNextCameraNumber = iRet;
@@ -605,7 +601,7 @@ CString CSVOConfigAssistantDlg::GetNextInspectionName() const
 	while ( bFound )
 	{
 		iRet++;
-		sSearchName.Format("%s%d", INSPECT_FIXED_NAME, iRet);
+		sSearchName.Format("%s%d", SvO::cInspectionFixedName, iRet);
 		bFound = m_InspectList.IsInspectionInList(sSearchName);
 	}
 	return sSearchName;
@@ -634,7 +630,7 @@ CString CSVOConfigAssistantDlg::GetNextPPQName() const
 	while (bFound)
 	{
 		iRet++;
-		sSearchName.Format("%s%d",PPQ_FIXED_NAME,iRet);
+		sSearchName.Format("%s%d", SvO::cPpqFixedName, iRet);
 		bFound = m_PPQList.IsPPQInList(sSearchName);
 	}
 	return sSearchName;
@@ -1781,6 +1777,8 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 				{
 					pCamera = new SVVirtualCamera;
 					pCamera->SetName( sKey );
+					//Zero based camera ID, note camera name is one based!
+					pCamera->setCameraID( i );
 					bRet = nullptr != pCamera && bRet;
 					bAddCamera = TRUE;
 				}
@@ -3765,7 +3763,7 @@ void CSVOConfigAssistantDlg::ClearMessages()
 void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 {
 	typedef std::map<CString, int> StringIntMap;
-	CString baseTriggerName = (!IsNonIOSVIM(eType) ? TRIGGER_FIXED_NAME : SvTh::CameraTriggerName);
+	CString baseTriggerName = (!IsNonIOSVIM(eType) ? SvO::cTriggerFixedName : SvTh::CameraTriggerName);
 	//get trigger count...
 	int iTriggerCount = m_TriggerList.GetTriggerListCount();
 	int iCameraCount = m_CameraList.GetCameraListCount();

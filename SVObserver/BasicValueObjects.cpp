@@ -11,8 +11,11 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "BasicValueObjects.h"
-#include "SVObjectLibrary\SVObjectNameInfo.h"
+#include "SVObjectLibrary/SVObjectNameInfo.h"
+#include "SVObjectLibrary/GlobalConst.h"
+#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -21,6 +24,23 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMap = boost::assign::map_list_of< SVString, SVGUID >
+	// Dotted name,												static unique ID
+	( SVString( SvOl::FqnRoot ),								SVGUID( RootUidGuid ) )
+	( SVString( SvOl::FqnGlobal ),								SVGUID( GlobalUidGuid ) )
+	( SVString( SvOl::FqnEnvironment ),							SVGUID( EnvironmentUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentModelNumber ),				SVGUID( EnvironmentModelNumberUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentWinKey ),					SVGUID( EnvironmentWinKeyUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentImageUpdate ),				SVGUID( EnvironmentImageUpdateUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentResultUpdate ),				SVGUID( EnvironmentResultUpdateUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentModeIsRun ),				SVGUID( EnvironmentModeIsRunUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentModeIsStop ),				SVGUID( EnvironmentModeIsStopUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentModeIsRegressionTest ),		SVGUID( EnvironmentModeIsRegressionTestUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentModeIsTest ),				SVGUID( EnvironmentModeIsTestUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentModeIsEdit ),				SVGUID( EnvironmentModeIsEditUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentModeValue ),				SVGUID( EnvironmentModeValueUidGuid ) )
+	;
 #pragma endregion Declarations
 
 #pragma region Constructor

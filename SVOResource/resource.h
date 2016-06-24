@@ -2122,8 +2122,8 @@
 #define IDC_EDIT_RING_DEPTH             16092
 #define IDC_BUTTON_RING_DEPTH           16093
 #define IDC_EDIT_IMAGE_INDEX1           16094
-#define IDC_BUTTON_IMAGE_INDEX1         16095
-#define IDC_EDIT_IMAGE_INDEX2           16096
+#define IDC_EDIT_IMAGE_INDEX2           16095
+#define IDC_BUTTON_IMAGE_INDEX1         16096
 #define IDC_BUTTON_IMAGE_INDEX2         16097
 #define IDC_GLOBAL_NAME                 16098
 #define IDC_GLOBAL_TYPE                 16099

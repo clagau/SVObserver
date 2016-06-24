@@ -114,6 +114,7 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVXMLLibrary\ObsoleteItemChecker.h"
+#include "SVObjectLibrary\GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -5740,9 +5741,9 @@ HRESULT SVObserverApp::INILoad()
 
 		g_bUseCorrectListRecursion = l_iniLoader.m_bUseCorrectListRecursion;
 
-		RootObject::setRootChildValue( ::EnvironmentModelNumber, l_iniLoader.m_csModelNumber );
-		RootObject::setRootChildValue( ::EnvironmentSerialNumber , l_iniLoader.m_csSerialNumber );
-		RootObject::setRootChildValue( ::EnvironmentWinKey, l_iniLoader.m_csWinKey );
+		RootObject::setRootChildValue( SvOl::FqnEnvironmentModelNumber, l_iniLoader.m_csModelNumber );
+		RootObject::setRootChildValue( SvOl::FqnEnvironmentSerialNumber , l_iniLoader.m_csSerialNumber );
+		RootObject::setRootChildValue( SvOl::FqnEnvironmentWinKey, l_iniLoader.m_csWinKey );
 
 		m_csProductName = l_iniLoader.m_csProductName;
 

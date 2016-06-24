@@ -21,21 +21,6 @@
 #include "BasicValueObjects.h"
 #pragma endregion Includes
 
-#pragma region Declarations
-//Environment variables
-const TCHAR* const EnvironmentModelNumber		= _T("Environment.Model Number");
-const TCHAR* const EnvironmentSerialNumber		= _T("Environment.Serial Number");
-const TCHAR* const EnvironmentWinKey			= _T("Environment.Windows.Win Key");
-const TCHAR* const EnvironmentImageUpdate		= _T("Environment.View.Image Display Update");
-const TCHAR* const EnvironmentResultUpdate		= _T("Environment.View.Result Display Update");
-const TCHAR* const EnvironmentModeIsRun			= _T("Environment.Mode.Is Run");
-const TCHAR* const EnvironmentModeIsStop		= _T("Environment.Mode.Is Stop");
-const TCHAR* const EnvironmentModeIsRegressionTest	= _T("Environment.Mode.Is Regression Test");
-const TCHAR* const EnvironmentModeIsTest		= _T("Environment.Mode.Is Test");
-const TCHAR* const EnvironmentModeIsEdit		= _T("Environment.Mode.Is Edit");
-const TCHAR* const EnvironmentModeValue			= _T("Environment.Mode.Value");
-#pragma endregion Declarations
-
 class RootChildren
 {
 #pragma region Declarations

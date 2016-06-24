@@ -94,7 +94,7 @@ bool RootObject::createConfigurationObject()
 	BasicValueObjectPtr pValueObject( nullptr );
 	//Default update views is true
 	bool Update( true );
-	pValueObject = m_RootChildren.setValue( ::EnvironmentImageUpdate, Update );
+	pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentImageUpdate, Update );
 	if( !pValueObject.empty() )
 	{
 		//Need to set the attributes to settable remotely and online for the Image Update object but should not appear in rest of GUI
@@ -102,7 +102,7 @@ bool RootObject::createConfigurationObject()
 		pValueObject->ObjectAttributesAllowedRef() &= ~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
 	}
 
-	pValueObject = m_RootChildren.setValue( ::EnvironmentResultUpdate, Update );
+	pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentResultUpdate, Update );
 	if( !pValueObject.empty() )
 	{
 		//Need to set the attributes to settable remotely and online for the Result Update object but should not appear in rest of GUI
@@ -224,17 +224,17 @@ bool RootObject::createRootChildren()
 	{
 		//When Environment created then create the following variables to set their attributes
 		BasicValueObjectPtr pValueObject( nullptr );
-		pValueObject = m_RootChildren.setValue( ::EnvironmentModelNumber, _T("") );
+		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentModelNumber, _T("") );
 		if( !pValueObject.empty() )
 		{
 			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
 		}
-		pValueObject = m_RootChildren.setValue( ::EnvironmentSerialNumber , _T("") );
+		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentSerialNumber , _T("") );
 		if( !pValueObject.empty() )
 		{
 			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
 		}
-		pValueObject = m_RootChildren.setValue( ::EnvironmentWinKey, _T("") );
+		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentWinKey, _T("") );
 		if( !pValueObject.empty() )
 		{
 			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;

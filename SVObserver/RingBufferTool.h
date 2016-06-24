@@ -7,15 +7,15 @@
 #pragma once
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVTool.h"  // SVToolClass
-#include "ObjectInterfaces\IRingBufferTool.h"
+#include "SVTool.h"
 #include "LinkedValue.h"
+#include "ObjectInterfaces\GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 #pragma endregion Declarations
 
-class RingBufferTool :	public SVToolClass, public SvOi::IRingBufferTool
+class RingBufferTool :	public SVToolClass
 {
 	SV_DECLARE_CLASS (RingBufferTool);
 
@@ -38,17 +38,8 @@ public:
 	virtual HRESULT ResetObject() override;
 	virtual BOOL OnValidate() override;
 
-	virtual void ResetPrivateInputInterface() override;
-
 	SVImageClass* getInputImage();
 	SVImageClass* getOutputImage(int index); 
-
-#pragma region virtual methods (IRingBufferTool) 
-	virtual HRESULT setRingDepth(SVString value) override;
-	virtual SVString getRingBufferDepthString() const override;
-	virtual HRESULT setImageIndex(int indexNumber, SVString value) override;
-	virtual SVString getImageIndex(int indexNumber) const override;
-#pragma endregion virtual methods (IRingBufferTool) 
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -95,23 +86,17 @@ private:
 
 #pragma region Member Variables
 private:
-	static const int m_numberOfOutputImages = 2;
-	static const int m_defaultRingBufferDepth = 8;
-	static const int m_defaultIndex1Value = 1;
-	static const int m_defaultIndex2Value = 2;
-	static const VARTYPE m_varType_imageIndex = VT_I4;
-
 	// Source Image Name - embedded
 	SVStaticStringValueObjectClass m_svSourceImageName;
 	// Output Image - embedded
-	SVImageClass	m_OutputImages[m_numberOfOutputImages];
+	SVImageClass	m_OutputImages[SvOi::cRingBufferNumberOutputImages];
 
 	// Source Image - input
 	SVInObjectInfoStruct	m_InputImageObjectInfo;
 
 	//embedded parameter
-	SVLongValueObjectClass m_BufferDepth; 
-	LinkedValue m_ImageIndexManagers[m_numberOfOutputImages];
+	SVLongValueObjectClass m_BufferDepth;
+	LinkedValue m_ImageIndexManager[SvOi::cRingBufferNumberOutputImages];
 	SVLongValueObjectClass	m_FlagOfOutputImage;
 
 	//ringbuffer

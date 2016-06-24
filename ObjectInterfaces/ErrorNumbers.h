@@ -39,7 +39,7 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10011_RingBuffer_OnValidFailed = Maz_ErrorBase + 11;
 	static const int Err_10012_RingBuffer_NoInputImage = Maz_ErrorBase + 12;
 	static const int Err_10013_RingBuffer_DepthValueInvalid = Maz_ErrorBase + 13;
-	static const int Err_10014_LinkedValueConnectInput_NoInspection = Maz_ErrorBase + 14;
+	static const int Err_10014_LinkedValueConnectInput_InvalidUid = Maz_ErrorBase + 14;
 	static const int Err_10015_LinkedValueConnectInput_ConnectFailed = Maz_ErrorBase + 15;
 	static const int Err_10016_LinkedValueConnectInput_InvalidValue = Maz_ErrorBase + 16;
 	static const int Err_10017_LinkedValueConnectInput_ResetFailed = Maz_ErrorBase + 17;

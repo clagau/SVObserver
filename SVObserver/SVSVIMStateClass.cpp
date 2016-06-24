@@ -12,6 +12,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVVisionProcessorHelper.h"
 #include "RootObject.h"
 #include "ExtrasEngine.h"
@@ -121,11 +122,11 @@ void SVSVIMStateClass::setEnvironmentParameters(svModeEnum mode)
 {
 	long modeValue = static_cast<long>(mode);
 
-	RootObject::setRootChildValue( ::EnvironmentModeValue, modeValue );
-	RootObject::setRootChildValue( ::EnvironmentModeIsRun, ( SVIM_MODE_ONLINE == mode ) );
-	RootObject::setRootChildValue( ::EnvironmentModeIsStop, ( SVIM_MODE_OFFLINE == mode ) );
-	RootObject::setRootChildValue( ::EnvironmentModeIsRegressionTest, ( SVIM_MODE_REGRESSION == mode ) );
-	RootObject::setRootChildValue( ::EnvironmentModeIsTest, ( SVIM_MODE_TEST == mode ) );
-	RootObject::setRootChildValue( ::EnvironmentModeIsEdit, ( SVIM_MODE_EDIT == mode ) );
+	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeValue, modeValue );
+	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsRun, ( SVIM_MODE_ONLINE == mode ) );
+	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsStop, ( SVIM_MODE_OFFLINE == mode ) );
+	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsRegressionTest, ( SVIM_MODE_REGRESSION == mode ) );
+	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsTest, ( SVIM_MODE_TEST == mode ) );
+	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsEdit, ( SVIM_MODE_EDIT == mode ) );
 }
 

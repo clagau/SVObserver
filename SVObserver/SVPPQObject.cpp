@@ -20,6 +20,7 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVDottedName.h"
@@ -379,7 +380,7 @@ void SVPPQObject::init()
 	m_voDataValid.ObjectAttributesAllowedRef()		= SV_EMBEDABLE | SV_PRINTABLE;
 	m_voOutputState.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
 
-	BasicValueObjectPtr pPpqLength =  m_PpqValues.setValueObject( PpqLength, StandardPpqLength, this );
+	BasicValueObjectPtr pPpqLength =  m_PpqValues.setValueObject( SvOl::FqnPpqLength, StandardPpqLength, this );
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
 
 	//fill up the child object list
@@ -808,7 +809,7 @@ BOOL SVPPQObject::SetPPQLength( long lPPQLength )
 		}
 	}
 
-	m_PpqValues.setValueObject( PpqLength, lPPQLength );
+	m_PpqValues.setValueObject( SvOl::FqnPpqLength, lPPQLength );
 
 	if( GetPPQLength() != m_ppPPQPositions.size() )
 	{
@@ -857,7 +858,7 @@ BOOL SVPPQObject::GetPPQLength( long &lPPQLength ) const
 long SVPPQObject::GetPPQLength() const
 {
 	long length = 0;
-	BasicValueObjectPtr pValue  = m_PpqValues.getValueObject(PpqLength);
+	BasicValueObjectPtr pValue  = m_PpqValues.getValueObject( SvOl::FqnPpqLength );
 	if( !pValue.empty() )
 	{
 		pValue->getValue(length);
@@ -2654,6 +2655,26 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voTriggerCount.ResetObject();
 	m_voTriggerCount.SetDefaultValue( 0L, TRUE );
 	m_voTriggerCount.SetValue( 1, 0L );
+
+	BasicValueObjectPtr pPpqLength =  m_PpqValues.getValueObject( SvOl::FqnPpqLength );
+	SVGUID PpqLengthUid = PpqBaseLengthUidGuid;
+	SVString PpqName = GetName();
+	long PpqID( 0 );
+	const size_t PpqFixedNameLength = strlen( SvO::cPpqFixedName );
+	if( PpqFixedNameLength < PpqName.size() )
+	{
+		PpqID = atol( PpqName.c_str() + PpqFixedNameLength );
+		//Zero based PPQ ID, note PPQ name is one based!
+		PpqID--;
+	}
+	//Make sure it is above 0
+	if ( 0 <= PpqID )
+	{
+		PpqLengthUid.ToGUID().Data1 += PpqID;
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID( pPpqLength.get(), PpqLengthUid );
+		pPpqLength->SetObjectOwner( this );
+		pPpqLength->setValue( StandardPpqLength );
+	}
 
 	return TRUE;
 }// end AddDefaultOutputs

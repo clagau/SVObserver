@@ -27,8 +27,6 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const SizeAdjustTextNone = _T( "Manual" );
 	const TCHAR* const SizeAdjustTextFormula = _T( "Formula" );
 	const TCHAR* const SizeAdjustTextFullSize = _T( "Auto Fit" );
-	const TCHAR* const RingBuffer_ImageIndex1Connector = _T( "RingBufferImageIndex1Connector" );
-	const TCHAR* const RingBuffer_ImageIndex2Connector = _T( "RingBufferImageIndex2Connector" );
 
 	const TCHAR* const GlobalViewHeader[] = {_T("Global Constants"), _T("Type"), _T("Value"), _T("Description")};
 	const TCHAR* const Invalid = _T("Invalid");
@@ -57,6 +55,16 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const cInspectionProcessTag = _T( "SVInspectionProcess" );
 	const TCHAR* const cPPQObjectTag = _T( "SVPPQObject" );
 	const TCHAR* const cRemoteOutputGroupTag = _T( "SVRemoteOutputGroup" );
+
+	const TCHAR* const cCameraContrast = _T( "Contrast" );		//Legacy name for Gain was Contrast and needs to be checked on loading
+	const TCHAR* const cPpqFixedName = _T( "PPQ_" );
+	const TCHAR* const cTriggerFixedName = _T( "Trigger_" );
+	const TCHAR* const cCameraFixedName = _T( "Camera_" );
+	const TCHAR* const cInspectionFixedName = _T( "Inspection_" );
+
+	const TCHAR* const cLinkName = _T(" Link");
+	const TCHAR* const cTrue = _T("TRUE");
+	const TCHAR* const cFalse = _T("FALSE");
 
 } /* namespace SVObserver */ } /* namespace Seidenader */
 

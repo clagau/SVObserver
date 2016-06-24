@@ -33,7 +33,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-const TCHAR	PpqLength[]			= _T("Length");
 const long	StandardPpqLength	= 2;
 
 class SVInspectionProcess;

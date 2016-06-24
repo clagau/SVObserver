@@ -15,6 +15,7 @@
 #include "SVResultView.h"
 #include "SVIPDoc.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
@@ -110,7 +111,7 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
 	bool Update = true;
-	RootObject::getRootChildValue( ::EnvironmentResultUpdate, Update );
+	RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, Update );
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 	if( !Update )

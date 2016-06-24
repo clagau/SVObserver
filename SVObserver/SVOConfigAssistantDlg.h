@@ -72,8 +72,6 @@ class SVOTriggerList;
 
 class CSVOConfigAssistantDlg : public CDialog
 {
-#define TRIGGER_FIXED_NAME  ( _T("Trigger_") )
-
 public:
 	typedef SVBiUniqueMap< SVIMProductEnum, CString >::type SVProductStringMap;
 

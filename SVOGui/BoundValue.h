@@ -54,7 +54,8 @@ namespace Seidenader
 
 			bool isReadOnly() const { return m_bReadOnly; }
 			bool isModified() const { return m_bModified; }
-			void ClearModified() { m_bModified = false; }
+			//Need to make this const to be able to clear the flag in other const methods
+			void ClearModified() const { m_bModified = false; }
 		};
 
 		class BoundValues

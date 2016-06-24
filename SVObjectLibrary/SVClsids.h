@@ -480,8 +480,8 @@ extern /*const*/ GUID SVRangeClassGuid;
 ///////////////////////////////////////////////////
 extern /*const*/ GUID RingBufferToolGuid;
 extern /*const*/ GUID RingBuffer_DepthGuid;
-extern /*const*/ GUID RingBuffer_Index1Guid;
-extern /*const*/ GUID RingBuffer_Index2Guid;
+extern /*const*/ GUID RingBuffer_IndexGuid[];
+extern /*const*/ GUID RingBufferLink_IndexGuid[];
 extern /*const*/ GUID RingBuffer_FlagOfOutputImagesGuid;
 
 // GUIDs for the Embedded Objects in the SVRangeClass
@@ -1186,18 +1186,18 @@ extern /*const*/ GUID SVCameraTriggerLineInStateGuid;
 extern /*const*/ GUID SVStringHeaderGuid;
 // GUIDs for ToolSizeAdjustTask ...
 extern /*const*/ GUID ToolSizeAdjustTaskGuid;
-extern  /*const*/ GUID  ToolSizeAdjustSizeWidthModeGuid;		
-extern  /*const*/ GUID  ToolSizeAdjustSizeHeightModeGuid;
-extern  /*const*/ GUID  ToolSizeAdjustSizePositionXModeGuid;
-extern  /*const*/ GUID  ToolSizeAdjustSizePositionYModeGuid;
+extern /*const*/ GUID  ToolSizeAdjustSizeWidthModeGuid;		
+extern /*const*/ GUID  ToolSizeAdjustSizeHeightModeGuid;
+extern /*const*/ GUID  ToolSizeAdjustSizePositionXModeGuid;
+extern /*const*/ GUID  ToolSizeAdjustSizePositionYModeGuid;
 extern /*const*/ GUID EQAdjustSizeWidthGuid;						
-extern	/*const*/ GUID  EQAdjustSizeWidthResultGuid;	
-extern	/*const*/ GUID  EQAdjustSizeHeightGuid;					
-extern	/*const*/ GUID EQAdjustSizeHeightResultGuid;	
-extern	/*const*/ GUID EQAdjustSizePositionXGuid;						
-extern	/*const*/ GUID EQAdjustSizePositionXResultGuid;	
-extern/*const*/ GUID EQAdjustSizePositionYGuid;						
-extern	/*const*/ GUID EQAdjustSizePositionYResultGuid;	
+extern /*const*/ GUID  EQAdjustSizeWidthResultGuid;	
+extern /*const*/ GUID  EQAdjustSizeHeightGuid;					
+extern /*const*/ GUID EQAdjustSizeHeightResultGuid;	
+extern /*const*/ GUID EQAdjustSizePositionXGuid;						
+extern /*const*/ GUID EQAdjustSizePositionXResultGuid;	
+extern /*const*/ GUID EQAdjustSizePositionYGuid;						
+extern /*const*/ GUID EQAdjustSizePositionYResultGuid;	
 
 ///////////////////////////////////////////////////
 // GUIDs for the TableTool
@@ -1210,6 +1210,28 @@ extern /*const*/ GUID TableFillObjectGuid;
 extern /*const*/ GUID TableObject_NumberOfRowsGuid;
 const int c_maxTableColumn = 50;
 extern /*const*/ GUID TableColumnValueObjectGuid[c_maxTableColumn];
+// Unique ID GUID for Global variables
+extern /*const*/ GUID RootUidGuid;
+extern /*const*/ GUID GlobalUidGuid;
+// Unique ID GUID for Environment variables
+extern /*const*/ GUID EnvironmentUidGuid;
+extern /*const*/ GUID EnvironmentModelNumberUidGuid;
+extern /*const*/ GUID EnvironmentWinKeyUidGuid;
+extern /*const*/ GUID EnvironmentImageUpdateUidGuid;
+extern /*const*/ GUID EnvironmentResultUpdateUidGuid;
+extern /*const*/ GUID EnvironmentModeIsRunUidGuid;
+extern /*const*/ GUID EnvironmentModeIsStopUidGuid;
+extern /*const*/ GUID EnvironmentModeIsRegressionTestUidGuid;
+extern /*const*/ GUID EnvironmentModeIsTestUidGuid;
+extern /*const*/ GUID EnvironmentModeIsEditUidGuid;
+extern /*const*/ GUID EnvironmentModeValueUidGuid;
+// Unique base ID GUID for Camera variables always have 0x100 GUIDS free after the base GUID
+extern /*const*/ GUID CameraBaseSerialNumberUidGuid;
+extern /*const*/ GUID CameraBaseGainUidGuid;
+extern /*const*/ GUID CameraBaseShutterUidGuid;
+// Unique base ID GUID for PPQ variables always have 0x100 GUIDS free after the base GUID
+extern /*const*/ GUID PpqBaseLengthUidGuid;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 ////////////////////////////////////////////////////////////////////////////////

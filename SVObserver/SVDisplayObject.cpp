@@ -17,6 +17,7 @@
 #include "SVLibrary/SVWinUtility.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVSVIMStateClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInspectionProcess.h"
@@ -433,8 +434,8 @@ HRESULT SVDisplayObject::FinishInspection( const SVInspectionCompleteInfoStruct&
 	bool ImageUpdate = true;
 	bool ResultUpdate = true;
 
-	RootObject::getRootChildValue( ::EnvironmentImageUpdate, ImageUpdate );
-	RootObject::getRootChildValue( ::EnvironmentResultUpdate, ResultUpdate );
+	RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, ImageUpdate );
+	RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, ResultUpdate );
 
 	if( ImageUpdate || ResultUpdate  || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
 	{

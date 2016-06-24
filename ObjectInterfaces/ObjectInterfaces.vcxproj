@@ -85,6 +85,7 @@
     <ClInclude Include="DependencyList.h" />
     <ClInclude Include="EquationTestResult.h" />
     <ClInclude Include="ErrorNumbers.h" />
+    <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="IBlobAnalyzer.h" />
     <ClInclude Include="ICustom2Filter.h" />
     <ClInclude Include="IEnumerateValueObject.h" />
@@ -94,7 +95,6 @@
     <ClInclude Include="IMatroxImageData.h" />
     <ClInclude Include="IObjectManager.h" />
     <ClInclude Include="ISelectorItemVector.h" />
-    <ClInclude Include="IRingBufferTool.h" />
     <ClInclude Include="IRootObject.h" />
     <ClInclude Include="ISelectorItem.h" />
     <ClInclude Include="ISVFilter.h" />

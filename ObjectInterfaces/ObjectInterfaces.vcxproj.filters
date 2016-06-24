@@ -66,9 +66,6 @@
     <ClInclude Include="SVUserMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IRingBufferTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ErrorNumbers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -124,6 +121,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MessageTextEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalConst.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

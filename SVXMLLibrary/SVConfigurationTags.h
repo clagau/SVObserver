@@ -130,6 +130,7 @@ LPCTSTR const CTAG_OPTIONS                        = _T("Options");
 LPCTSTR const CTAGF_OPTION_X                      = _T("Option_%d"); // CTAGF indicates formatting is required.
 
 LPCTSTR const CTAG_VARIABLE_CAMERA_FORMAT         = _T("VariableCameraFormat");
+LPCTSTR const CTAG_CAMERA_ID				      = _T("CameraID");
 
 LPCTSTR const CTAG_FILEACQUISITION_MODE					= _T("FileAcquisitionMode");
 LPCTSTR const CTAG_FILEACQUISITION_IMAGE_FILENAME		= _T("ImageFilename");

@@ -41,7 +41,6 @@
     <ClInclude Include="GetPPQSelectorList.h" />
     <ClInclude Include="GetReferenceImage.h" />
     <ClInclude Include="GetResultImage.h" />
-    <ClInclude Include="GetRingbufferIndexValue.h" />
     <ClInclude Include="GetTaskObjectInstanceID.h" />
     <ClInclude Include="GetSelectorList.h" />
     <ClInclude Include="GetTaskObjects.h" />
@@ -56,7 +55,6 @@
     <ClInclude Include="SetDefaultInputs.h" />
     <ClInclude Include="SetMaskData.h" />
     <ClInclude Include="SetObjectName.h" />
-    <ClInclude Include="SetRingbufferIndexValue.h" />
     <ClInclude Include="ShouldInspectionReset.h" />
     <ClInclude Include="TaskObjectGetEmbeddedValues.h" />
     <ClInclude Include="TaskObjectSetEmbeddedValues.h" />

@@ -42,6 +42,7 @@ namespace Seidenader
 							// This needs to be more robust, more like ProcessInputRequests method of SVInspectionProcess...
 							_variant_t value = boost::any_cast<_variant_t>(it->second.GetValue());
 							hr = pObject->SetValue(value);
+							it->second.ClearModified();
 						}
 					}
 					else

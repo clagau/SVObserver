@@ -18,6 +18,7 @@
 #include "SVOTriggerObj.h"
 #include "SVTriggerSelectionDlg.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -131,7 +132,7 @@ void CSVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rLis
 	
 	if (!bNonIOSVIM)
 	{
-		name = m_pParent->GetNextTriggerName(TRIGGER_FIXED_NAME);
+		name = m_pParent->GetNextTriggerName(SvO::cTriggerFixedName);
 		rList.insert(std::make_pair(name, id));
 	}
 	if (m_pParent->IsValidCamera(id) && m_pParent->IsDigitalSystem())

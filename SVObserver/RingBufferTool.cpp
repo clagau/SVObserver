@@ -17,6 +17,10 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+static const int cDefaultRingBufferDepth = 8;
+static const long cDefaultIndexValue[] = {1, 2};
+static const VARTYPE cVarType_imageIndex = VT_I4;
+
 SV_IMPLEMENT_CLASS( RingBufferTool, RingBufferToolGuid );
 #pragma endregion Declarations
 
@@ -48,11 +52,10 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_BufferDepth.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION;
 	if (bOk)
 	{
-		for (int i=0; i < m_numberOfOutputImages; i++)
+		for (int i=0; i < SvOi::cRingBufferNumberOutputImages; i++)
 		{
 			bOk &= (S_OK == m_OutputImages[i].InitializeImage( inputImage ));
-			m_ImageIndexManagers[i].init(GetInspection());
-			m_ImageIndexManagers[i].SetAttributes(SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION, true);
+			m_ImageIndexManager[i].ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION;
 		}
 	}
 
@@ -61,11 +64,11 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	m_svSourceImageName.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	// Override base class exposure of the drawflag
+	// Override base class exposure of the draw flag
 	// This value will not be exposed for the RingBuffer Tool.
 	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
 
-	// Override base class exposure of the auxillaryextent variables
+	// Override base class exposure of the auxillary extent variables
 	// These values will not be exposed for the RingBuffer Tool.
 	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
 	m_svAuxiliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
@@ -97,14 +100,6 @@ HRESULT RingBufferTool::ResetObject()
 
 	if (OnValidate())
 	{
-		for (int i=0; i < m_numberOfOutputImages; i++)
-		{
-			if (S_OK == status)
-			{
-				status = m_ImageIndexManagers[i].ResetObject();
-			}
-		}
-
 		SVImageClass* inputImage = getInputImage ();
 		if (nullptr != inputImage)
 		{
@@ -151,33 +146,22 @@ BOOL RingBufferTool::OnValidate()
 
 	long ringBufferDepth = 0;
 	m_BufferDepth.GetValue(ringBufferDepth);
-	if (ringBufferDepth < m_minRingBufferDepth || ringBufferDepth > m_maxRingBufferDepth)
+	if( SvOi::cRingBufferDepthMin > ringBufferDepth || SvOi::cRingBufferDepthMax < ringBufferDepth )
 	{
 		bValid = false;
 		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 		SVStringArray msgList;
-		msgList.push_back(SvUl_SF::Format("%d", m_minRingBufferDepth));
-		msgList.push_back(SvUl_SF::Format("%d", m_maxRingBufferDepth));
+		msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMin));
+		msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMax));
 		msgList.push_back(SvUl_SF::Format("%d", ringBufferDepth));
 		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, SvOi::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10013_RingBuffer_DepthValueInvalid );
 	}
-	for (int i=0; i< m_numberOfOutputImages; ++i)
+	for (int i=0; i< SvOi::cRingBufferNumberOutputImages; ++i)
 	{
-		bValid &= m_ImageIndexManagers[i].IsValid();
+		bValid &= m_ImageIndexManager[i].IsValid() ? true : false;
 	}	
 
 	return SVToolClass::OnValidate() && bValid ;
-}
-
-void RingBufferTool::ResetPrivateInputInterface()
-{
-	const SVObjectInfoStruct& objectInfo = GetObjectInfo();
-	for (int i=0; i < m_numberOfOutputImages; i++)
-	{
-		m_ImageIndexManagers[i].UpdateTaskInfo(objectInfo);
-	}	
-
-	SVToolClass::ResetPrivateInputInterface();
 }
 
 SVImageClass* RingBufferTool::getInputImage()
@@ -194,76 +178,12 @@ SVImageClass* RingBufferTool::getInputImage()
 SVImageClass* RingBufferTool::getOutputImage(int index)
 {
 	SVImageClass *retValue = nullptr;
-	if (index >= 0 && index < m_numberOfOutputImages)
+	if (index >= 0 && index < SvOi::cRingBufferNumberOutputImages)
 	{
 		retValue = &m_OutputImages[index];
 	}
 	return retValue;
 }
-
-#pragma region virtual methods (IRingBufferTool) 
-HRESULT RingBufferTool::setRingDepth(SVString value)
-{
-	HRESULT retValue = S_OK;
-	long depth = 0;
-	bool isNumber = SvUl_SF::Convert2Number(value, depth, true);
-	
-	if (isNumber && m_minRingBufferDepth <= depth && m_maxRingBufferDepth >= depth)
-	{
-		retValue = m_taskObjectValueInterface.AddInputRequest( &m_BufferDepth, depth );
-		if (S_OK == retValue)
-		{
-			retValue = m_taskObjectValueInterface.AddInputRequestMarker();
-		}
-	}
-	else
-	{
-		retValue = SvOi::Err_10018_RingBuffer_InvalidRingDepth;
-	}
-	return retValue;
-}
-
-SVString RingBufferTool::getRingBufferDepthString() const
-{
-	SVString retValue = "";
-	long depth = 0;
-	HRESULT hValue = m_BufferDepth.GetValue(depth);
-	if (S_OK == hValue)
-	{
-		retValue = SvUl_SF::Format("%d", depth);
-	}
-
-	return retValue;
-}
-
-HRESULT RingBufferTool::setImageIndex(int indexNumber, SVString valueString)
-{
-	HRESULT retValue = S_OK;
-	if (0 <= indexNumber && m_numberOfOutputImages > indexNumber)
-	{
-		return m_ImageIndexManagers[indexNumber].SetInputValue(valueString);
-	}
-	else
-	{
-		retValue = SvOi::Err_10019_RingBuffer_InvalidImageIndex;
-	}
-
-	return retValue;
-}
-
-SVString RingBufferTool::getImageIndex(int indexNumber) const 
-{
-	SVString retValue = "";
-	long index = 0;
-
-	if (0 <= indexNumber && m_numberOfOutputImages > indexNumber)
-	{
-		retValue = m_ImageIndexManagers[indexNumber].GetInputValue();
-	}
-
-	return retValue;
-}
-#pragma endregion virtual methods (IRingBufferTool) 
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -294,10 +214,11 @@ BOOL RingBufferTool::onRun( SVRunStatusClass& RRunStatus )
 		}
 
 		//set output image
-		for (int i=0; i < m_numberOfOutputImages; ++i)
+		for (int i=0; i < SvOi::cRingBufferNumberOutputImages; ++i)
 		{
-			_variant_t depthVariant = m_ImageIndexManagers[i].GetValue();
-			if (m_varType_imageIndex == depthVariant.vt && 0 < depthVariant.lVal && ringBufferDepth >= depthVariant.lVal) //imageIndex invalid -> output image deactivated.
+			_variant_t depthVariant;
+			m_ImageIndexManager[i].GetValue( depthVariant );
+			if (cVarType_imageIndex == depthVariant.vt && 0 < depthVariant.lVal && ringBufferDepth >= depthVariant.lVal) //imageIndex invalid -> output image deactivated.
 			{
 				imageOutputFlag |= SetOutputImage(i, depthVariant.lVal, maxIndexPos, ringBufferDepth);
 			}
@@ -347,7 +268,7 @@ void RingBufferTool::LocalInitialize ()
 	BuildInputObjectList ();
 	BuildEmbeddedObjectList ();
 
-	for (int i=0; i<m_numberOfOutputImages; i++)
+	for (int i=0; i<SvOi::cRingBufferNumberOutputImages; i++)
 	{
 		// The output image is referenced in the embedded list.
 		m_OutputImages[i].InitializeImage( SVImageTypePhysical );
@@ -374,43 +295,32 @@ void RingBufferTool::BuildInputObjectList ()
 
 void RingBufferTool::BuildEmbeddedObjectList ()
 {
-	RegisterEmbeddedObject( &m_svSourceImageName, 
-							SVSourceImageNamesGuid, 
-							IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, 
-							false, 
-							SVResetItemTool );
+	RegisterEmbeddedObject( &m_svSourceImageName, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
 	
-	RegisterEmbeddedObject( &m_BufferDepth, 
-		RingBuffer_DepthGuid, 
-		IDS_OBJECTNAME_RINGBUFFER_DEPTH, 
-		true, 
-		SVResetItemTool );
-	m_BufferDepth.SetDefaultValue( m_defaultRingBufferDepth, TRUE );
+	RegisterEmbeddedObject( &m_BufferDepth, RingBuffer_DepthGuid, IDS_OBJECTNAME_RINGBUFFER_DEPTH, true, SVResetItemTool );
+	m_BufferDepth.SetDefaultValue( cDefaultRingBufferDepth, true );
 
-	m_ImageIndexManagers[0].RegisterObjects(*this, SvO::RingBuffer_ImageIndex1Connector, RingBuffer_Index1Guid, IDS_OBJECTNAME_RINGBUFFER_INDEX1, true, SVResetItemTool);
-	_variant_t vtTemp;
-	::VariantInit(&vtTemp);
-	vtTemp.vt = m_varType_imageIndex;
-	vtTemp.lVal = m_defaultIndex1Value;
-	m_ImageIndexManagers[0].setDefaultValue( vtTemp, true );
+	RegisterEmbeddedObject( &m_FlagOfOutputImage, RingBuffer_FlagOfOutputImagesGuid, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SVResetItemNone );
+	m_FlagOfOutputImage.SetDefaultValue( 0, true );
 
-	m_ImageIndexManagers[1].RegisterObjects(*this, SvO::RingBuffer_ImageIndex2Connector, RingBuffer_Index2Guid, IDS_OBJECTNAME_RINGBUFFER_INDEX2, true, SVResetItemTool);
-	::VariantInit(&vtTemp);
-	vtTemp.vt = m_varType_imageIndex;
-	vtTemp.lVal = m_defaultIndex2Value;
-	m_ImageIndexManagers[1].setDefaultValue( vtTemp, true );
-
-	RegisterEmbeddedObject( &m_FlagOfOutputImage, 
-							RingBuffer_FlagOfOutputImagesGuid, 
-							IDS_OBJECTNAME_RINGBUFFER_FLAG, 
-							false, 
-							SVResetItemNone );
-	m_FlagOfOutputImage.SetDefaultValue( 0, TRUE );
-
-	int l_pImageNames[] = { IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2};
-	for( int i = 0; i < m_numberOfOutputImages; i++)
+	int RingbufferIndexNames[SvOi::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_RINGBUFFER_INDEX1, IDS_OBJECTNAME_RINGBUFFER_INDEX2};
+	int ImageNames[SvOi::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2};
+	for( int i = 0; i < SvOi::cRingBufferNumberOutputImages; i++)
 	{
-		RegisterEmbeddedObject( &m_OutputImages[i], aSVVariantResultImageObjectGuid[i], l_pImageNames[i] );
+		RegisterEmbeddedObject( &m_ImageIndexManager[i], RingBuffer_IndexGuid[i], RingbufferIndexNames[i], true, SVResetItemTool );
+		_variant_t vtTemp;
+		::VariantInit(&vtTemp);
+		vtTemp.vt = cVarType_imageIndex;
+		vtTemp.lVal = cDefaultIndexValue[i];
+		m_ImageIndexManager[i].SetDefaultValue( vtTemp, true );
+
+		CString ObjectName;
+		ObjectName.LoadString( RingbufferIndexNames[i] );
+		ObjectName +=  SvO::cLinkName;
+		RegisterEmbeddedObject( &m_ImageIndexManager[i].getLinkedName(), RingBufferLink_IndexGuid[i], ObjectName, false, SVResetItemNone );
+		m_ImageIndexManager[i].getLinkedName().SetDefaultValue( _T(""), false );
+
+		RegisterEmbeddedObject( &m_OutputImages[i], aSVVariantResultImageObjectGuid[i], ImageNames[i] );
 	}
 }
 
@@ -480,21 +390,10 @@ DWORD_PTR RingBufferTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (DwMessageValue); // Object with new name
 			LPCTSTR OriginalName = reinterpret_cast<LPCTSTR> (DwMessageContext);
 
-			for (int i=0; i < m_numberOfOutputImages; i++)
+			for (int i=0; i < SvOi::cRingBufferNumberOutputImages; i++)
 			{
-				m_ImageIndexManagers[i].renameToolSetSymbol( pObject, OriginalName );
-			}
-			dwResult = SVMR_SUCCESS;
-			break;
-		}
-	case SVMSGID_DISCONNECT_OBJECT_INPUT:
-		{
-			SVInObjectInfoStruct* pInInfo = reinterpret_cast <SVInObjectInfoStruct*> (DwMessageValue);
-			SVObjectClass* pObject = pInInfo->GetInputObjectInfo().PObject;
-
-			for (int i=0; i < m_numberOfOutputImages; i++)
-			{
-				m_ImageIndexManagers[i].DisconnectObject(pObject);
+				//This will refresh the dotted name using the Unique ID
+				m_ImageIndexManager[i].UpdateLinkedName();
 			}
 			dwResult = SVMR_SUCCESS;
 			break;

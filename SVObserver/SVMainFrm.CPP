@@ -20,6 +20,7 @@
 #include "SVIPDoc.h"
 #include "SVObjectScriptParser.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVObserver.h"
 #include "SVParserProgressDialog.h"
 #include "SVToolSet.h"
@@ -44,7 +45,6 @@
 #include "SVIPChildFrm.h" 
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/GlobalPath.h"
-
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1380,8 +1380,8 @@ void SVMainFrame::OnViewImageDisplayUpdate()
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
 		bool ImageUpdate = false;
-		RootObject::getRootChildValue( ::EnvironmentImageUpdate, ImageUpdate );
-		RootObject::setRootChildValue( ::EnvironmentImageUpdate, !ImageUpdate );
+		RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, ImageUpdate );
+		RootObject::setRootChildValue( SvOl::FqnEnvironmentImageUpdate, !ImageUpdate );
 	}
 }
 
@@ -1391,7 +1391,7 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 	bool ImageUpdate( false );
-	RootObject::getRootChildValue( ::EnvironmentImageUpdate, ImageUpdate );
+	RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, ImageUpdate );
 	pCmdUI->SetCheck( ImageUpdate );
 
 	bool bEnableZoom = false;
@@ -1427,8 +1427,8 @@ void SVMainFrame::OnViewResultDisplayUpdate()
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
 		bool ResultOnline = false;
-		RootObject::getRootChildValue( ::EnvironmentResultUpdate, ResultOnline );
-		RootObject::setRootChildValue( ::EnvironmentResultUpdate, !ResultOnline );
+		RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, ResultOnline );
+		RootObject::setRootChildValue( SvOl::FqnEnvironmentResultUpdate, !ResultOnline );
 	}
 }
 
@@ -1439,7 +1439,7 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 	pCmdUI->Enable( bEnable);
 
 	bool ResultOnline( false );
-	RootObject::getRootChildValue( ::EnvironmentResultUpdate, ResultOnline );
+	RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, ResultOnline );
 	pCmdUI->SetCheck( ResultOnline );
 }
 

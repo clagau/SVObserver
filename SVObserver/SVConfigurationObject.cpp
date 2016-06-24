@@ -933,13 +933,13 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 	{
 		Value = svValue;
 	}
-	RootObject::setRootChildValue( ::EnvironmentImageUpdate, Value );
+	RootObject::setRootChildValue( SvOl::FqnEnvironmentImageUpdate, Value );
 
 	if (SVNavigateTree::GetItem( rTree, CTAG_RESULT_DISPLAY_UPDATE, hChild, svValue ) )
 	{
 		Value = svValue;
 	}
-	RootObject::setRootChildValue( ::EnvironmentResultUpdate, Value );
+	RootObject::setRootChildValue( SvOl::FqnEnvironmentResultUpdate, Value );
 
 	// Thread Affinity Setup
 	SVTreeType::SVBranchHandle hThreadSetup( nullptr );
@@ -1309,9 +1309,9 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 
 														svLight.Band( i ).Attribute( j ).strName = static_cast< LPCTSTR >( l_String );
 														//Legacy: changed name from Contrast to Gain
-														if( SVString( CameraContrast ) == svLight.Band( i ).Attribute( j ).strName )
+														if( SVString( SvO::cCameraContrast ) == svLight.Band( i ).Attribute( j ).strName )
 														{
-															svLight.Band( i ).Attribute( j ).strName = CameraGain;
+															svLight.Band( i ).Attribute( j ).strName = SvOl::FqnCameraGain;
 														}
 													}
 													if ( SVNavigateTree::GetItem( rTree, CTAG_RESOURCE_ID, hLight, svValue ) )
@@ -1626,7 +1626,6 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 		SVString ItemName = rTree.getBranchName( hSubChild );
 
 		SVVirtualCamera *pCamera = new SVVirtualCamera;
-		pCamera->SetName( ItemName.c_str() );
 		bOk = nullptr != pCamera;
 		if( bOk )
 		{
@@ -1634,7 +1633,19 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 			long lBandLink = 0;
 			CString DeviceName;
 
+			pCamera->SetName( ItemName.c_str() );
 			SVTreeType::SVBranchHandle hDataChild( nullptr );
+
+			//If camera ID is not available then set it to the camera number
+			if( SVNavigateTree::GetItem( rTree, CTAG_CAMERA_ID, hSubChild, svValue ) )
+			{
+				pCamera->setCameraID( svValue );
+			}
+			else
+			{
+				//Zero based camera ID, note camera name is one based!
+				pCamera->setCameraID( lNumCameras - 1 );
+			}
 
 			if( SVNavigateTree::GetItem( rTree, CTAG_ACQUISITION_DEVICE, hSubChild, svValue ) )
 			{
@@ -2877,9 +2888,9 @@ void SVConfigurationObject::SaveEnvironment(SVObjectXMLWriter& rWriter) const
 	svValue = GetProductType();
 	rWriter.WriteAttribute( CTAG_CONFIGURATION_TYPE, svValue );
 
-	RootObject::getRootChildValue( ::EnvironmentImageUpdate, svValue );
+	RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, svValue );
 	rWriter.WriteAttribute( CTAG_IMAGE_DISPLAY_UPDATE, svValue );
-	RootObject::getRootChildValue( ::EnvironmentResultUpdate, svValue );
+	RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, svValue );
 	rWriter.WriteAttribute( CTAG_RESULT_DISPLAY_UPDATE, svValue );
 
 	// Thread Manager Enable.
@@ -3214,6 +3225,10 @@ void SVConfigurationObject::SaveCamera(SVObjectXMLWriter& rWriter) const
 			if ( !pCamera->mpsvDevice.empty() )
 			{
 				_variant_t svVariant;
+				svVariant = pCamera->getCameraID();
+				rWriter.WriteAttribute( CTAG_CAMERA_ID, svVariant );
+				svVariant.Clear();
+
 				svVariant.SetString( pCamera->mpsvDevice->DeviceName() );
 				rWriter.WriteAttribute( CTAG_ACQUISITION_DEVICE, svVariant );
 				svVariant.Clear();
@@ -3576,6 +3591,11 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 		_variant_t Value;
 		(*Iter)->getValue( Value );
 		rWriter.WriteAttribute( CTAG_VALUE, Value );
+		Value.Clear();
+
+		//Save the global constant unique GUID id to have the same id when loading the configuration
+		Value = (*Iter)->GetUniqueObjectID().ToBSTR();
+		rWriter.WriteAttribute( scUniqueReferenceIDTag, Value );
 		Value.Clear();
 
 		//@WARNING [gra][7.30][04.04.2016] The attribute is still saved into the configuration for forward compatibility with version 7.20 can be removed in next version
@@ -4985,7 +5005,7 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 	for( SVVirtualCameraPtrSet::iterator l_Iter = CamerasChanged.begin(); l_Iter != CamerasChanged.end(); ++l_Iter )
 	{
 		SVDeviceParamCollection CameraParameters;
-		HRESULT LoopStatus = (*l_Iter)->UpdateDeviceParameters(CameraParameters);
+		HRESULT LoopStatus = (*l_Iter)->updateDeviceParameters(CameraParameters);
 		if(S_OK == LoopStatus)
 		{
 			CString DeviceName = (*l_Iter)->GetAcquisitionDevice()->GetRootDeviceName();
@@ -5318,9 +5338,16 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 			SVString GlobalConstantName( rTree.getBranchName( hChild ) );
 
 			_variant_t Value;
+			SVGUID UniqueID(SV_GUID_NULL);
 			CString Description;
+
 			if ( S_OK == Result )
 			{
+				//
+				if ( SVNavigateTree::GetItem( rTree, scUniqueReferenceIDTag, hChild, Value ) )
+				{
+					UniqueID = Value.bstrVal;
+				}
 				if ( SVNavigateTree::GetItem( rTree, CTAG_DESCRIPTION, hChild, Value ) )
 				{
 					Description = Value.bstrVal;
@@ -5348,6 +5375,8 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 					}
 					else
 					{
+						//Set the unique GUID id for the global constant that was saved
+						SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), UniqueID );
 						pValue->setDescription( Description );
 						// If type string then remove Selectable for Equation flag.
 						if( VT_BSTR == Value.vt )

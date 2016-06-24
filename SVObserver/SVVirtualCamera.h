@@ -27,12 +27,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-//Camera variables
-const TCHAR CameraSerialNumber[]	= _T( "Serial Number" );
-const TCHAR CameraShutter[]			= _T( "Shutter" );
-const TCHAR CameraGain[]			= _T( "Gain" );
-const TCHAR CameraContrast[]		= _T( "Contrast" ); //Legacy name for Gain was Contrast.
-
 typedef SVVector< SVVirtualCamera* > SVVirtualCameraArray;
 typedef SVSet< SVVirtualCamera* > SVVirtualCameraSet;
 typedef std::set< SVVirtualCamera* > SVVirtualCameraPtrSet;
@@ -129,12 +123,16 @@ public:
 	HRESULT RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulIndex);
 	HRESULT UnregisterTriggerRelay();
 
-	HRESULT UpdateCameraParameters();
-	HRESULT UpdateCameraLongParameter( LPCTSTR Name, const SVLongValueDeviceParam* pLongValueDeviceParam);
-	HRESULT UpdateDeviceParameters(SVDeviceParamCollection& rCameraParameters);
+	void	createCameraParameters();
+	HRESULT updateCameraParameters();
+	HRESULT updateCameraLongParameter( LPCTSTR Name, const SVLongValueDeviceParam* pLongValueDeviceParam);
+	HRESULT updateDeviceParameters(SVDeviceParamCollection& rCameraParameters);
 
 	inline void SetIsColor( bool IsColor ){ m_IsColor = IsColor; };
 	inline bool IsColor()const { return m_IsColor; };
+
+	inline void setCameraID( long CameraID ) { m_CameraID = CameraID; };
+	inline long getCameraID() const { return m_CameraID; };
 #pragma endregion Public Methods
 
 protected:
@@ -164,6 +162,7 @@ private:
 	long m_imageLoadingMode;
 	SIZE m_imageSize;
 	SVTriggerRelayClass<SVFileAcquisitionInitiator> m_triggerRelay;
+	long m_CameraID;
 #pragma endregion Member Variables
 };
 

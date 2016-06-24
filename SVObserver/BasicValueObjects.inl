@@ -80,6 +80,12 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 					Node = true;
 				}
 				pValue = new BasicValueObject( Name.c_str(), pParent, Node, ObjectType );
+				//Check if this is a dotted name with static unique GUID
+				DottedNameGuidMap::const_iterator StaticUidIter( m_StaticUniqueIDMap.find( ParsedName.GetObjectArrayName(0) ) );
+				if( m_StaticUniqueIDMap.end() != StaticUidIter )
+				{
+					SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), StaticUidIter->second );
+				}
 				pValue->setValue(Value);
 
 				if( m_Tree.end() != IterParent )
