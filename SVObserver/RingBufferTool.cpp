@@ -375,32 +375,4 @@ void RingBufferTool::SetToolROIExtentToFullInputImage ()
 		m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointY , scratchpadIndex, 0);
 	}
 }
-
-DWORD_PTR RingBufferTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-		// handle renaming of toolset variables
-	case SVMSGID_OBJECT_RENAMED:
-		{
-			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (DwMessageValue); // Object with new name
-			LPCTSTR OriginalName = reinterpret_cast<LPCTSTR> (DwMessageContext);
-
-			for (int i=0; i < SvOi::cRingBufferNumberOutputImages; i++)
-			{
-				//This will refresh the dotted name using the Unique ID
-				m_ImageIndexManager[i].UpdateLinkedName();
-			}
-			dwResult = SVMR_SUCCESS;
-			break;
-		}
-	}
-
-	dwResult = SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | dwResult;
-	return dwResult;
-}
 #pragma endregion Private Methods

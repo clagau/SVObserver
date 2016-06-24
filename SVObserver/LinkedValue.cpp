@@ -459,6 +459,13 @@ DWORD_PTR LinkedValue::processMessage( DWORD MessageID, DWORD_PTR MessageValue, 
 			Result = SVMR_SUCCESS;
 			break;
 		}
+	case SVMSGID_OBJECT_RENAMED:
+		{
+			//Get the current name of the object
+			UpdateLinkedName();
+			Result = SVMR_SUCCESS;
+			break;
+		}
 	}
 
 	Result = SVVariantValueObjectClass::processMessage( MessageID, MessageValue, MessageContext ) | Result;
