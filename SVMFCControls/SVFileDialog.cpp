@@ -60,17 +60,17 @@ namespace Seidenader
 					int iItems = ::GetMenuItemCount(hmenu);
 					for (int i = 0;i < iItems;i++)
 					{
-					UINT menuID = ::GetMenuItemID(hmenu, i);
-					MENUITEMINFO itemInfo;
-					ZeroMemory(&itemInfo, sizeof(itemInfo));
-					ZeroMemory(&szItemText, sizeof(szItemText));
-					itemInfo.cbSize = sizeof(itemInfo);
-					itemInfo.fMask = MIIM_STRING; 
-					itemInfo.dwTypeData = szItemText; 
-					itemInfo.cch = (sizeof(szItemText) / sizeof(TCHAR));
-					::GetMenuItemInfo(hmenu, menuID, false, &itemInfo);
+						UINT menuID = ::GetMenuItemID(hmenu, i);
+						MENUITEMINFO itemInfo;
+						ZeroMemory(&itemInfo, sizeof(itemInfo));
+						ZeroMemory(&szItemText, sizeof(szItemText));
+						itemInfo.cbSize = sizeof(itemInfo);
+						itemInfo.fMask = MIIM_STRING; 
+						itemInfo.dwTypeData = szItemText; 
+						itemInfo.cch = (sizeof(szItemText) / sizeof(TCHAR));
+						::GetMenuItemInfo(hmenu, menuID, false, &itemInfo);
 
-					TRACE("Menu POS: %d ID: %d String: %s\n", i, menuID, szItemText);
+						TRACE("Menu POS: %d ID: %d String: %s\n", i, menuID, szItemText);
 					}
 					*/
 					::RemoveMenu(hmenu, CMD_RENAME, MF_BYCOMMAND);

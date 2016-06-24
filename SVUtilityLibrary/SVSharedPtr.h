@@ -34,11 +34,11 @@ public:
 	SVSharedPtr( SVAutoPtr& p_rAutoPtr ) 
 	: SVBaseSharedRefPtr(p_rAutoPtr) {}
 
-	// use this constructor for dynamicallly allocated varisbles
+	// use this constructor for dynamically allocated variables
 	SVSharedPtr( Type* pObject ) 
 	: SVBaseSharedRefPtr(pObject) {}
 
-	// use this constructor for statically allocated varisbles
+	// use this constructor for statically allocated variables
 	template< typename SVDeleter >
 	SVSharedPtr( Type* pObject, const SVDeleter& deleter ) 
 	: SVBaseSharedRefPtr(pObject, deleter) {}

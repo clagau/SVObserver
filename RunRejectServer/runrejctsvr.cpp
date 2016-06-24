@@ -228,8 +228,10 @@ JsonCmd ReadCommand(TcpSocket & sok)
 		{
 			sok.Destroy();
 		}
+#if defined (TRACE_FAILURE) || defined (TRACE_OTHER)
 		::OutputDebugStringA(SvSol::SVSocketError::GetErrorText(error));
 		::OutputDebugStringA("\n");
+#endif
 	}
 	return val;
 }
@@ -671,11 +673,18 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, const MonitorMap
 			{
 				rslt = GetRejectedProduct<SvSol::UdpApi>(reader, trig, mit->second.prodItems, g_lastRejectProductMap[ppqName]);
 			}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			catch (std::exception& e)
 			{
 				::OutputDebugStringA(e.what());
 				rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems, g_LastProductMap[ppqName]);
 			}
+#else
+			catch (std::exception& )
+			{
+				rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems, g_LastProductMap[ppqName]);
+			}
+#endif
 		}
 	}
 	else
@@ -1123,7 +1132,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		if (S_OK != hr)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			::OutputDebugStringA(msg.c_str());
+#endif
 			std::cout << msg;
 			// Messagebox ?
 			return -1;

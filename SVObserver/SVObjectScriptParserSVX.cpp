@@ -300,7 +300,9 @@ BOOL SVObjectScriptParserSVXClass::ReadGUIDExpression( SVExpressionStack& rExpre
 		return TRUE;
 	}
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	TRACE( "ReadGUIDExpression: Failed\n" );
+#endif
 	return FALSE;
 }
 
@@ -1268,7 +1270,9 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 						{
 							ASSERT(FALSE);
 							currentParseState = PARSER_ERROR;
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 							TRACE("Failed to Create Object-{%08X}\n",*(DWORD*)firstOperand.Value());
+#endif
 						}
 						else
 						{
@@ -1309,7 +1313,9 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 						if( !ProcessMemberAssignment( expressionStack, localOwnerInfo, *pCurrentAliasTable, firstOperand, localAliasTable ) )
 						{
 							currentParseState = PARSER_ERROR;
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 							TRACE("Failed to Set Object.Member value\n");
+#endif
 						}
 						else
 							currentParseState = PARSE;
@@ -1321,7 +1327,9 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 				} // Check first operand... EvaluateOperandExpression
 
 				// unknown command...
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE("Unknown Command\n");
+#endif
 				ASSERT(FALSE);
 				currentParseState = PARSER_ERROR;
 
@@ -1467,14 +1475,18 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 			}
 			else
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE("Could not find - Object Input is not Valid\n");
+#endif
 
 				l_bOk = false;
 			}
 		}
 		else // Invalid GUID operand
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			TRACE("Object Input is not a Valid GUID type\n");
+#endif
 
 			l_bOk = false;
 		}
@@ -1538,7 +1550,9 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 							else
 							{
 								// error
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 								TRACE("ExtractToken (1) Failed \n");
+#endif
 								ASSERT(FALSE);
 								rParseState = PARSER_ERROR;
 							}
@@ -1585,7 +1599,9 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 						else
 						{
 							// error
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 							TRACE("ExtractToken (2) Failed \n");
+#endif
 							ASSERT(FALSE);
 							rParseState = PARSER_ERROR;
 						}
@@ -1606,7 +1622,9 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 						else
 						{
 							// error
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 							TRACE("ExtractToken (3) Failed \n");
+#endif
 							ASSERT(FALSE);
 							rParseState = PARSER_ERROR;
 						}
@@ -1639,7 +1657,9 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 							else
 							{
 								// error
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 								TRACE("ExtractToken (4) Failed \n");
+#endif
 								ASSERT(FALSE);
 								rParseState = PARSER_ERROR;
 							}
@@ -1682,7 +1702,9 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 						else
 						{
 							// error
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 							TRACE("ExtractToken (6) Failed \n");
+#endif
 							ASSERT(FALSE);
 							rParseState = PARSER_ERROR;
 						}
@@ -1720,7 +1742,9 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 							else
 							{
 								// error
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 								TRACE("ExtractToken (7) Failed \n");
+#endif
 								ASSERT(FALSE);
 								rParseState = PARSER_ERROR;
 							}
@@ -2201,11 +2225,15 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 			if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_REPLACE_OBJECT, reinterpret_cast<DWORD_PTR>(objectOperand.Value()), reinterpret_cast<DWORD_PTR>(pObject) ) != SVMR_SUCCESS )
 			{
 				ASSERT( FALSE );
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SVXPARSER)
 				TRACE( "ReplaceObject %.80s\n", rLocalOwnerInfo.PObject->GetName() );
+#endif
 
 				delete pObject;
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SVXPARSER)
 				TRACE( "after delete, SVM_REPLACE_OBJECT was not successfully" );
+#endif
 			}
 			else
 			{

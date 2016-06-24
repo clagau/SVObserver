@@ -1207,10 +1207,12 @@ void SVMainFrame::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 			{
 				HRESULT hr = SVDirectX::Instance().RestoreAllSurfaces();
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				if (hr != DD_OK)
 				{
 					TRACE(_T( "SVMainFrm::OnActivateApp - RestoreAllSurfaces failed\n" ) );
 				}
+#endif
 			}
 		}
 	}
@@ -1286,20 +1288,24 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 					}
 				}
 			}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			else
 			{
 				TRACE(_T( "SVMainFrm::OnDisplayChange - SVDirectX.Initialize() failed\n" ) );
 			}
+#endif
 		}
 		// restore surfaces
 		else
 		{
 			hr = SVDirectX::Instance().RestoreAllSurfaces();
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			if (hr != DD_OK)
 			{
 				TRACE(_T( "SVMainFrm::OnDisplayChange - RestoreAllSurfaces failed\n" ) );
 			}
+#endif
 		}
 
 		// if pixel depth changed - show mesage...

@@ -119,7 +119,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 
 	DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint /*point*/)
 	{
-	//    TRACE("In CGridDropTarget::OnDragScroll\n");
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
 		{
 			if (dwKeyState & MK_CONTROL)
@@ -133,7 +132,9 @@ namespace Seidenader { namespace GridCtrlLibrary
 	DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, 
 											DWORD dwKeyState, CPoint point)
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE(_T("In CGridDropTarget::OnDragEnter\n"));
+#endif
 		ASSERT(m_pGridCtrl);
 
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
@@ -144,7 +145,9 @@ namespace Seidenader { namespace GridCtrlLibrary
 
 	void CGridDropTarget::OnDragLeave(CWnd* pWnd)
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE(_T("In CGridDropTarget::OnDragLeave\n"));
+#endif
 		ASSERT(m_pGridCtrl);
 
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
@@ -154,7 +157,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 	DROPEFFECT CGridDropTarget::OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, 
 										   DWORD dwKeyState, CPoint point)
 	{
-	//    TRACE("In CGridDropTarget::OnDragOver\n");
 		ASSERT(m_pGridCtrl);
 
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
@@ -166,7 +168,9 @@ namespace Seidenader { namespace GridCtrlLibrary
 	BOOL CGridDropTarget::OnDrop(CWnd* pWnd, COleDataObject* pDataObject,
 								 DROPEFFECT dropEffect, CPoint point)
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE(_T("In CGridDropTarget::OnDrop\n"));
+#endif
 		ASSERT(m_pGridCtrl);
 
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())

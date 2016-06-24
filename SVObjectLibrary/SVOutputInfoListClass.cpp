@@ -41,7 +41,9 @@ namespace
 
 	void DebugOutput::Add( LPCTSTR sLine )
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OILIST)
 		::OutputDebugString( _T(".") );
+#endif
 
 		SVString l_Temp = sLine;
 		l_Temp += _T("\n");
@@ -50,6 +52,7 @@ namespace
 
 	DebugOutput::~DebugOutput()
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OILIST)
 		if ( m_vecLog.size() > 0 )
 		{
 			::OutputDebugString( _T("\n") );
@@ -64,6 +67,7 @@ namespace
 			SVString strEnd = SvUl_SF::Format(_T("<-- %s\n"), m_strFunction.c_str() );
 			::OutputDebugString( strEnd.c_str() );
 		}
+#endif
 	}
 }// end namespace
 

@@ -1,0 +1,43 @@
+Activating Tracing in SVObserver.txc
+
+Currently, many TRACE() AND ::OutputDebugString() calls in SVObserver projects are disabled by 
+	#if defined ()
+preprocessor commands.
+
+Failure-related TRACE()s are active because TRACE_FAILURE is defined in SVOGlobalProperties.props
+
+To reactivate all TRACEs(), 
+		TRACE_THEM_ALL 
+needs to be #defined. 
+
+Traces can also be activated in groups by #defining any or all of the following, as desired:
+
+	TRACE_OTHER
+
+	TRACE_GRIDCTRL
+	TRACE_XMLENCRYPT
+	TRACE_SVXPARSER
+	TRACE_MEMORY
+	TRACE_MATROXGIGE
+	TRACE_VISUALFX
+	TRACE_THREAD
+	TRACE_PPQ
+	TRACE_SVO
+	TRACE_LUT
+	TRACE_REGEX
+	TRACE_PROFILER
+	TRACE_OILIST
+	TRACE_IP
+	TRACE_ARCHIVE
+	TRACE_DESTRUCT
+	
+If new TRACEs or ::OutputDebugString()s are added please enclose them in 
+	#if defined (TRACE_EVERYTING) || defined (TRACE_<whatever>)
+and
+	#endif
+	
+	
+TRACE_OTHER is a catchall for several TRACE()s for which no obvious grouping could be found
+
+Feel free to define	new #defines but please enter them in the list above
+

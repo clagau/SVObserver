@@ -610,7 +610,9 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 {
 	int iReturnCode = 0;	// by default allow color dlg to process message
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 	TRACE("ColorDlgHookFn - MSG: %08X, WPARAM: %08X, LPARAM: %08X\n", uiMsg, wParam, lParam);
+#endif
 
 	CWnd* pwndTmp = CWnd::FromHandle(hdlg);
 	ASSERT(pwndTmp);

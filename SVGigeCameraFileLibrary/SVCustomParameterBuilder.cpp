@@ -351,10 +351,16 @@ void SVCustomParameterBuilder::BuildInt64Param(SVi64ValueDeviceParam* pParam, co
 			Value.ChangeType( VT_I8 );
 			pParam->SetValue( Value );
 		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		catch(_com_error& e)
 		{
 			TRACE1("%s\n", e.ErrorMessage());
 		}
+#else
+		catch(_com_error& )
+		{
+		}
+#endif
 	}
 }
 

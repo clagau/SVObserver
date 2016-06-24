@@ -163,7 +163,9 @@ bool RemoteMonitorListController::ValidateMonitoredObject(MonitoredObjectList& r
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
 		if (!IsValidMonitoredObject(pObject))
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 			::OutputDebugString(_T("MonitorObject reference deleted \n"));
+#endif
 			it = rList.erase(it);
 			bModified = true;
 		}

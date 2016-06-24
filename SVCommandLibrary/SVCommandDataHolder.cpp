@@ -55,7 +55,9 @@ void SVCommandDataHolder::clear()
 	{
 		SVString l_Data = SvUl_SF::Format( _T( "SVCommandDataHolder::clear() - Erase %s\n" ), l_Iter->first.c_str() );
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 		::OutputDebugString( l_Data.c_str() );
+#endif
 
 		l_Iter = m_Data.erase( l_Iter );
 	}

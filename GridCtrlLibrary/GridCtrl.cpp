@@ -558,23 +558,8 @@ namespace Seidenader { namespace GridCtrlLibrary
 	{ // coming from a previous GetLayer (ignored if not same number of column, or the same revision number)
 		if(pLayer[0] != LAYER_SIGNATURE) return;
 		if(pLayer[1] != GetColumnCount()) return;
-	/*	TRACE("  %d == %d \n",m_arColOrder[0],pLayer[2]);
-		TRACE("  %d == %d \n",m_arColOrder[1],pLayer[3]);
-		TRACE("  %d == %d \n",m_arColOrder[2],pLayer[4]);
-		TRACE("  %d == %d \n",m_arColWidths[0],pLayer[2+3]);
-		TRACE("  %d == %d \n",m_arColWidths[1],pLayer[3+3]);
-		TRACE("  %d == %d \n",m_arColWidths[2],pLayer[4+3]);
-		TRACE("  %d == %d \n",GetColumnCount(),3);
 
-	
-		ASSERT(m_arColOrder[0]==pLayer[2]);
-		ASSERT(m_arColOrder[1]==pLayer[3]);
-		ASSERT(m_arColOrder[2]==pLayer[4]);
-		ASSERT(m_arColWidths[0]==pLayer[2+3]);
-		ASSERT(m_arColWidths[1]==pLayer[3+3]);
-		ASSERT(m_arColWidths[2]==pLayer[4+3]);
-		ASSERT(GetColumnCount()==3);
-	*/	memcpy(&m_arColOrder[0],&pLayer[2], GetColumnCount()*sizeof(int));
+		memcpy(&m_arColOrder[0],&pLayer[2], GetColumnCount()*sizeof(int));
 		memcpy(&m_arColWidths[0],&pLayer[2+GetColumnCount()], GetColumnCount()*sizeof(int));
 	}
 
@@ -1780,7 +1765,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 					continue;     // Reached cliprect yet?
 
 				pCell = GetCell(row, col);
-				// TRACE(_T("Cell %d,%d type: %s\n"), row, col, pCell->GetRuntimeClass()->m_lpszClassName);
 				if (pCell)
 				{
 					pCell->SetCoords(row,col);
@@ -1829,9 +1813,11 @@ namespace Seidenader { namespace GridCtrlLibrary
 		   SendCacheHintToParent(CCellRange(-1,-1,-1,-1));
 
 	#ifdef _DEBUG
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		LARGE_INTEGER iEndCount;
 		QueryPerformanceCounter(&iEndCount);
 		TRACE1("Draw counter ticks: %d\n", iEndCount.LowPart-iStartCount.LowPart);
+#endif
 	#endif
 
 	}
@@ -1865,7 +1851,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 	// but not for user caused things such as selection changes.
 	void CGridCtrl::SetRedraw(BOOL bAllowDraw, BOOL bResetScrollBars /* = FALSE */)
 	{
-	//    TRACE(_T("%s: Setting redraw to %s\n"),
 	//             GetRuntimeClass()->m_lpszClassName, bAllowDraw? _T("TRUE") : _T("FALSE"));
 
 		if (bAllowDraw && !m_bAllowDraw)
@@ -2188,7 +2173,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 					}
 				}
 		}
-		//    TRACE(_T("%d cells selected.\n"), m_SelectedCellMap.GetCount());
 
 		if (nullptr != pDC)
 			ReleaseDC(pDC);
@@ -3005,7 +2989,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		while (nTop < nVertScroll && m_idTopLeftCell.row < (GetRowCount()-1))
 			nTop += GetRowHeight(m_idTopLeftCell.row++);
 
-		//TRACE2("TopLeft cell is row %d, col %d\n",m_idTopLeftCell.row, m_idTopLeftCell.col);
 		return m_idTopLeftCell;
 	}
 
@@ -3285,10 +3268,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		// CCellRange visibleCells = GetUnobstructedNonFixedCellRange();
 		// if (!IsValid(visibleCells)) return;
         
-		//TRACE(_T("Visible: %d x %d, Virtual %d x %d.  H %d, V %d\n"), 
-		//      VisibleRect.Width(), VisibleRect.Height(),
-		//      VirtualRect.Width(), VirtualRect.Height(),
-		//      IsVisibleHScroll(), IsVisibleVScroll());
 
 		// If vertical scroll bar, horizontal space is reduced
 		if (VisibleRect.Height() < VirtualRect.Height())
@@ -3421,10 +3400,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		pRect->top    = CellOrigin.y;
 		pRect->right  = CellOrigin.x + GetColumnWidth(nCol)-1;
 		pRect->bottom = CellOrigin.y + GetRowHeight(nRow)-1;
-
-		//TRACE("Row %d, col %d: L %d, T %d, W %d, H %d:  %d,%d - %d,%d\n",
-		//      nRow,nCol, CellOrigin.x, CellOrigin.y, GetColumnWidth(nCol), GetRowHeight(nRow),
-		//      pRect->left, pRect->top, pRect->right, pRect->bottom);
 
 		return TRUE;
 	}
@@ -5808,7 +5783,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 							&& pCell->GetTipTextRect( &TextRect)
 							&& GetCellRect(idCurrentCell.row, idCurrentCell.col, CellRect) )
 						{
-	//						TRACE0("Showing TitleTip\n");
 							m_TitleTip.Show(TextRect, pCell->GetTipText(),  0, CellRect,
 											pCell->GetFont(),  GetTitleTipTextClr(), GetTitleTipBackClr());
 						}
@@ -5920,8 +5894,9 @@ namespace Seidenader { namespace GridCtrlLibrary
 
 	void CGridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE0("CGridCtrl::OnLButtonDblClk\n");
-
+#endif
 		CCellID cell = GetCellFromPt(point);
 		if( !IsValid( cell) )
 		{
@@ -6039,7 +6014,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		m_TitleTip.Hide();  // hide any titletips
 	#endif
 
-		// TRACE0("CGridCtrl::OnLButtonDown\n");
 		// CWnd::OnLButtonDown(nFlags, point);
 
 		SetFocus();
@@ -6392,7 +6366,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 
 	void CGridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 	{
-		// TRACE0("CGridCtrl::OnLButtonUp\n");
 
 		CWnd::OnLButtonUp(nFlags, point);
 
@@ -6516,7 +6489,9 @@ namespace Seidenader { namespace GridCtrlLibrary
 		m_bRMouseButtonDown = TRUE;
 
 	#ifdef GRIDCONTROL_USE_TITLETIPS
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE0("Hiding TitleTip\n");
+#endif
 		m_TitleTip.Hide();  // hide any titletips
 	#endif
 	}

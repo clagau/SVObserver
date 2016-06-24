@@ -200,7 +200,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 
 	if( lpParam )
 	{
-#ifdef DEBUG
+#if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 		SVString l_Message;
 #endif
 
@@ -228,7 +228,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 
 					pThread->m_threadHandler( l_WaitForEvents );
 				}
-#ifdef DEBUG
+#if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 				else
 				{
 					l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
@@ -236,7 +236,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 				}
 #endif
 			}
-#ifdef DEBUG
+#if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 			else
 			{
 				l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
@@ -246,8 +246,10 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 		}
 
 #ifdef DEBUG
+#if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 		l_Message = SvUl_SF::Format( _T( "SVThread(%d) - Exit Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 		::OutputDebugString( l_Message.c_str() );
+#endif
 #endif
 
 		::SetEvent( pThread->m_hThreadComplete );

@@ -132,7 +132,9 @@ namespace Seidenader { namespace SVSocketLibrary
 		}
 		#pragma warning (pop)
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 		::OutputDebugStringA(buff);
+#endif
 		return buff;
 	//#endif
 	}

@@ -393,7 +393,9 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 				double interval = SVClock::ConvertFrom(SVClock::Seconds, TheSVObserverApp.GetForcedImageUpdateTimeInSeconds());
 				// check last update time and if current time is greater than last update time + ForcedImageUpdateTime then Update
 				l_Process = (elapsed >= interval);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 				TRACE("l_Process = %s\n", (l_Process ) ? "true" : "false");
+#endif
 			}
 		}
 

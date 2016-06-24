@@ -146,10 +146,12 @@ bool SVTriggerCountLess( const SVProductInfoStruct* l_pLeft, const SVProductInfo
 	{
 		l_Status = ( l_pRight->ProcessCount() < l_pLeft->ProcessCount() );
 	}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	else
 	{
 		::OutputDebugString( _T( "SVTriggerCountLess - Invalid SVProductInfoStruct\n" ) );
 	}
+#endif
 
 	return l_Status;
 }
@@ -257,10 +259,12 @@ struct SVTriggerTimeStampCompare
 			//l_Status = (l_RightTimeStamp < l_LeftTimeStamp);
 			l_Status = (l_RightTimeStamp - l_LeftTimeStamp) < 0;
 		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		else
 		{
 			::OutputDebugString( _T( "SVTriggerTimeStampCompare - Invalid SVProductInfoStruct\n" ) );
 		}
+#endif
 
 		return l_Status;
 	}

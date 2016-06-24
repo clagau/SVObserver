@@ -255,10 +255,12 @@ namespace Seidenader { namespace SVOGui {
 					if( picture )
 					{
 						hr = picture->get_Handle( (OLE_HANDLE*)&hbm );
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 						if (S_OK != hr)
 						{
 							TRACE(_T("SVDlgImageClass::OnPaint() - pPicture->get_Handle failed - %08lx\n"), hr);
 						}
+#endif
 					}
 				}
 			}

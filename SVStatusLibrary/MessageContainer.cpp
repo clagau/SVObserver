@@ -209,7 +209,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
 		SVString DebugString = SvUl_SF::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.getAdditionalText().c_str() );
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 		::OutputDebugString( DebugString.c_str() );
+#endif
 
 		setSubstituteStrings( SubstituteStrings );
 

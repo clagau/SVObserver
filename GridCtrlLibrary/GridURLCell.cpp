@@ -165,7 +165,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 	// here we figure out if we are over a URL or not
 	BOOL CGridURLCell::OverURL(CPoint& pt, CString& strURL)
 	{
-		//TRACE2("Checking point %d,%d\n",pt.x,pt.y);
 
 		BOOL bOverURL = FALSE;
 		CSize size = GetTextExtent(GetText());

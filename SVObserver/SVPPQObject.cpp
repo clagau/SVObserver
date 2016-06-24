@@ -2740,6 +2740,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTh::SVTriggerInfoStruct& p_rTrigge
 #ifdef _DEBUG
 	if( TheSVObserverApp.GetLogDataManager() )
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
 		SVString l_ProductStates;
 
 		l_ProductStates += GetName();
@@ -2748,6 +2749,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTh::SVTriggerInfoStruct& p_rTrigge
 		m_ppPPQPositions.GetProductStates( l_ProductStates );
 
 		::OutputDebugString( l_ProductStates.c_str() );
+#endif
 	}
 #endif
 
@@ -2903,7 +2905,8 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 			l_Count = std::min< size_t >( 2, m_ppPPQPositions.size() );
 		}
 
-#ifdef _DEBUG
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+
 		SVString l_String = SvUl_SF::Format( _T( "%s:NAK=%ld\n" ), GetName(), l_NAKCount );
 
 		::OutputDebugString( l_String.c_str() );
@@ -2968,7 +2971,9 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 
 			m_ppPPQPositions.GetProductStates( l_ProductStates );
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 			::OutputDebugString( l_ProductStates.c_str() );
+#endif
 		}
 #endif
 	}

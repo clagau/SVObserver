@@ -149,7 +149,9 @@ void SVMonitorListWriter::AddList(const std::string & listName, const std::strin
 		SVSharedConfiguration::Log("SVMonitorListWriter::SetProductFilter");
 		if (!m_lists)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			::OutputDebugString("MonitorListStore not created yet.");
+#endif
 			throw std::exception("MonitorListStore not created yet.");
 		}
 		try
@@ -157,11 +159,18 @@ void SVMonitorListWriter::AddList(const std::string & listName, const std::strin
 			SVSharedMonitorList & mlist = (*m_lists)[listName];
 			mlist.SetProductFilter(filter);
 		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		catch (boost::interprocess::interprocess_exception& e)
 		{
 			::OutputDebugString(e.what());
+
+		}
+#else
+		catch (boost::interprocess::interprocess_exception& )
+		{
 			throw std::exception("MonitorList SetProductFilter failed.");
 		}
+#endif
 	}
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

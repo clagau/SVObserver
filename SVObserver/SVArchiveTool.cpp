@@ -895,8 +895,9 @@ BOOL SVArchiveTool::onRun( SVRunStatusClass& RRunStatus )
 				}
 			}
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
 			TRACE( _T( "SVArchiveTool::onRun-WriteArchiveImageFiles-Name=%s\n" ), GetCompleteObjectName() );
-
+#endif
 			//
 			// Iterate the list of images to archive.
 			//

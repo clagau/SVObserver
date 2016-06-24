@@ -36,7 +36,6 @@ namespace Seidenader { namespace SVUtilityLibrary
 
 	inline std::string to_utf8(const wchar_t * str)
 	{
-		//::OutputDebugStringW(str);
 		int sz = ::WideCharToMultiByte(CP_UTF8, 0, str, -1, nullptr, 0, nullptr, nullptr)+1;
 		boost::scoped_array<char> buff(new char[sz]);
 		::WideCharToMultiByte(CP_UTF8, 0, str, -1, buff.get(), sz, nullptr, nullptr);

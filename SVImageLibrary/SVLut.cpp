@@ -703,7 +703,9 @@ bool SVLut::GetBandData(SAFEARRAY*& rpsaBands) const
 
 SVLutTestCases::SVLutTestCases()
 {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_LUT)
 	TRACE("-----Begin LUT Test Cases-----\n");
+#endif
 
 	SVLutEntry entry;
 	entry = 5;
@@ -720,15 +722,19 @@ SVLutTestCases::SVLutTestCases()
 	lut.Create(info);
 	lut.Create(info);	// check for auto cleanup
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	if (lut.Info().IsNullHandle())
 	{
 		TRACE("Problem with IsNullHandle - false positive\n");
 	}
+#endif
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	if (! info.IsNullHandle() )
 	{
 		TRACE("Problem with IsNullHandle - false negative\n");
 	}
+#endif
 
 	SVDefaultLutTransform transform;
 	transform.SetOperation(SVLutTransformOperationClip());
@@ -746,5 +752,7 @@ SVLutTestCases::SVLutTestCases()
 	int a=0;
 	a++;
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_LUT)
 	TRACE("-----Done LUT Test Cases-----\n");
+#endif
 }

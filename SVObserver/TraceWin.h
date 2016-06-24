@@ -100,7 +100,9 @@ void CFileTrace::Write(const void* lpBuf, UINT nCount)
 #endif //__TRAP1
 	}
 	// Also do normal debug thing
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 	::OutputDebugString((LPCTSTR)lpBuf);
+#endif
 }
 
 /////////////////

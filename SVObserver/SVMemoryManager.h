@@ -89,14 +89,18 @@ private:
 			{
 				__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize );
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d\n"), owner, iter->second.lSize);
+#endif
 				SVSingleLock lock( m_critsec );
 				m_mapEntries.erase( m_mapEntries.find(owner) );
 				hr = S_OK;
 			}
 			else
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - NOT FOUND\n"), owner);
+#endif
 			}
 			return hr;
 		}
@@ -110,13 +114,17 @@ private:
 			{
 				if( lSizeInBytes >= iter->second.lSize )
 				{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
 					TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d >= %d\n"), owner, lSizeInBytes, iter->second.lSize);
+#endif
 				}
 
 				__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -lSizeInBytes );
 
 				iter->second.lSize -= lSizeInBytes;
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d, remaining = %d\n"), owner, lSizeInBytes, iter->second.lSize);
+#endif
 				if ( iter->second.lSize <= 0 )	// check less than for safety
 				{
 					SVSingleLock lock( m_critsec );
@@ -126,7 +134,9 @@ private:
 			}
 			else
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - NOT FOUND\n"), owner);
+#endif
 			}
 			return hr;
 		}

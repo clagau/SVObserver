@@ -86,7 +86,9 @@ void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rc)
 	// verify the window has been created
 	if (!IsWindow(m_hWnd))
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE0("SVRPropertyItemCombo::DrawAttribute() - The window has not been created\n");
+#endif
 		return;
 	}
 
@@ -188,7 +190,9 @@ BOOL SVRPropertyItemCombo::CreateComboBox(DWORD dwStyle)
 
 	if (!Create(dwStyle, CRect(0,0,0,0), m_pProp->GetCtrlParent(), GetCtrlID()))
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE0("SVRPropertyItemCombo::CreateComboBox() - failed to create combo box\n");
+#endif
 		return FALSE;
 	}
 
@@ -233,7 +237,9 @@ BOOL SVRPropertyItemCombo::CreateComboBoxBool()
 
 	if (!Create(dwStyle, CRect(0,0,0,0), m_pProp->GetCtrlParent(), GetCtrlID()))
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE0("SVRPropertyItemCombo::CreateComboBoxBool() - failed to create combo box\n");
+#endif
 		return FALSE;
 	}
 

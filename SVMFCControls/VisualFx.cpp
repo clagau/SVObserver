@@ -1013,7 +1013,9 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, CRuntimeClass *pViewClass,
 
   if (!pWnd->Create(nullptr, nullptr, dwStyle, rect, this, static_cast<UINT>( 13576 + m_TabList.size()), pContext))
   {
+#if defined (TRACE_FAILURE) || defined (TRACE_VISUALFX)
     TRACE0("Warning: couldn't create client area for tab view\n");
+#endif
     // pWnd will be cleaned up by PostNcDestroy
     return nullptr;
   }
@@ -1040,7 +1042,9 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, int nRows, int nCols,
 
   CSplitterWnd *pSplitter = (CSplitterWnd*)pWnd;
   if (!pSplitter->CreateStatic(this, nRows, nCols, dwStyle, nID)) {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_VISUALFX)
     TRACE0("Warning: couldn't create client area for tab view\n");
+#endif
     // pWnd will be cleaned up by PostNcDestroy
     return nullptr;
   }
@@ -1488,8 +1492,10 @@ TVisualFramework::TVisualFramework()
 TVisualFramework::~TVisualFramework()
 {
   if (m_ObjectMap.size() && m_ObjectList.size()) {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_VISUALFX)
     TRACE0(_T(">>> TVisualFramework::Destroy() called in TVisualFramework destructor\n"));
     TRACE0(_T(">>>   It must be called in CFrameWnd derived class OnDestroy() message handler\n"));
+#endif
     Destroy();
   }
 }
@@ -1606,7 +1612,9 @@ BOOL TVisualFramework::Create(CWnd *pWnd)
     pObject = *it;
     rc = execCreate(pWnd, pObject);
     if (rc == FALSE) {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
       TRACE0(_T("Create visual object failed!\n"));
+#endif
       return FALSE;
     }
   }

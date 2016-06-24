@@ -137,7 +137,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		long start = m_SharedProductStorePPQ->current_idx;
 		if (start < 0)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 			::OutputDebugString("ppq next_readable - No Data\n");
+#endif
 			throw std::exception("ppq next_readable No Data");
 		}
 		long idx = start + 1;
@@ -169,7 +171,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		long size = static_cast<long>(m_SharedProductStorePPQReject->data.size());
 		if (idx < 0) // -1 means No rejects are available (none exist)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			::OutputDebugString("ppq next_reject_readable - No Data\n");
+#endif
 			throw std::exception("No Rejects exist");
 		}
 		SVSharedProductVector* data = &m_SharedProductStorePPQReject->data;

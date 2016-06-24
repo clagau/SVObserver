@@ -618,24 +618,30 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 					else
 					{
 						wsprintf(l_szbuf, "FileAcquisition::CopyImage - Error in Format");
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 						TRACE( "%s\n", l_szbuf );
+#endif
 
 						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, SvOi::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams) );
 					}
 				}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				else
 				{
 					wsprintf(l_szbuf,"Error In BufferGetAddress" );
 					TRACE( "%s\n", l_szbuf );
 				}
+#endif
 			}
 		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_ACQDEVICE)
 		else
 		{
 			wsprintf(l_szbuf,"IsStarted = %s", (rCamera.m_lIsStarted) ? "TRUE" : "FALSE" );
 			TRACE( "%s\n", l_szbuf );
 		}
+#endif
 	}
 	return l_hrOk;
 }

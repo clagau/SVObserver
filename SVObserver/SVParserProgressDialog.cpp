@@ -182,10 +182,16 @@ CProgressCtrl* SVParserProgressDialog::GetProgressControl( unsigned long parserH
 		
 		return parserControl.pProgressCtrl.get();
 	}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	catch(std::exception& e)
 	{
 		TRACE(e.what());
 	}
+#else
+	catch(std::exception& )
+	{
+	}
+#endif
 	return nullptr;
 }
 
@@ -196,10 +202,16 @@ CStatic* SVParserProgressDialog::GetTextControl( unsigned long parserHandle )
 		SVParserProgressControlStruct& parserControl = GetParserControl(parserHandle);
 		return parserControl.pStaticTextCtrl.get();
 	}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	catch(std::exception& e)
 	{
 		TRACE(e.what());
 	}
+#else
+	catch(std::exception& )
+	{
+	}
+#endif
 	return nullptr;
 }
 
@@ -331,16 +343,28 @@ LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM wParam, LPARAM lPara
 				// Start next worker thread
 				CWinThread* pParseThread = AfxBeginThread( SVObjectScriptParserClass::ParserThread, parserControl.pParser );
 			}
-			catch (std::exception& e)
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
+			catch(std::exception& e)
 			{
 				TRACE(e.what());
 			}
+#else
+			catch(std::exception& )
+			{
+			}
+#endif
 		}
 	}
-	catch (std::exception& e)
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
+	catch(std::exception& e)
 	{
 		TRACE(e.what());
 	}
+#else
+	catch(std::exception& )
+	{
+	}
+#endif
 	msvEndDialogLock.Unlock ();
 
 	return TRUE;

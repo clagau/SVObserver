@@ -406,7 +406,9 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 	else
 	{
 		assert(false);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 		::OutputDebugString(_T("SVTaskObjectClass::SelectorList - empty functor"));
+#endif
 	}
 	return Result;
 }

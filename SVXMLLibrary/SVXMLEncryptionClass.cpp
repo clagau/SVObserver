@@ -214,7 +214,9 @@ bool SVXMLEncryptionClass::LoadEncryptionFromSaxData(LPCWSTR lpName, LPCWSTR lpC
 		}
 		ulNameSeed = wcstol (bstrDecryptedNameSeed, nullptr, 0);
 		m_ulNameSeed = ulNameSeed;
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 		TRACE ("LoadEncryptionFromSaxData - Loaded NameSeed = %d\n", m_ulNameSeed);
+#endif
 		return true;	
 	}
 	return false;
@@ -274,8 +276,6 @@ HRESULT SVXMLEncryptionClass::CreateRandomLong (unsigned long* p_ulpSeedValue)
 		//  11111111111111122323232323232333
 
 		*p_ulpSeedValue = l_lRand1 << 17 | (l_lTemp1 << 2) | l_lTemp2;
-
-		//TRACE ("CreateRandomLong, seed = %lx, rand = %lx\n", l_lSeed, *p_ulpSeedValue);
 
 		l_lStaticValue = l_lStaticValue + l_lRand2;
 
@@ -677,8 +677,6 @@ HRESULT SVXMLEncryptionClass::EncryptString (long		p_lEncryptionMethod,
 
 	while (1)
 	{
-		//TRACE ("EncryptString (0) - New String\n");
-
 
 		hr = p_bstrpEncryptedString->Clear ();
 		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
@@ -870,7 +868,6 @@ HRESULT SVXMLEncryptionClass::EncryptString (long		p_lEncryptionMethod,
 				(*p_bstrpEncryptedString) [(int) (l_lCurrentDestinationIndex * 8 + l_lCounter)] =  m_cCharTable [l_ulTempIndex];
 
 
-				//TRACE ("EncryptString (1) - Current Index = %d, cd = %d, nd = %d, counter = %d\n", l_lCurrentDestinationIndex * 8 + l_lCounter, l_lCurrentDestinationIndex, l_lNextDestinationIndex, l_lCounter);
 				//Sleep (4);
 
 				if ((*p_bstrpEncryptedString) [(int) (l_lCurrentDestinationIndex * 8 + l_lCounter)] == 0)
@@ -880,7 +877,6 @@ HRESULT SVXMLEncryptionClass::EncryptString (long		p_lEncryptionMethod,
 
 			}
 
-			//TRACE ("EncryptString (2) - Current Index = %d, cd = %d, nd = %d\n", l_lCurrentDestinationIndex * 8 + l_lCounter, l_lCurrentDestinationIndex, l_lNextDestinationIndex);
 			//Sleep (3);
 
 
@@ -900,8 +896,10 @@ HRESULT SVXMLEncryptionClass::EncryptString (long		p_lEncryptionMethod,
 
 			if (l_lTempDevelopment)
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 				TRACE ("???1Enc(1) embedded seed before Char Table: %lx.\n", l_ulTempIndex);
 				TRACE ("???1Enc(2) embedded seed after Char Table:%lx.\n", (*p_bstrpEncryptedString) [(int) (l_lCurrentDestinationIndex * 8 + l_lCounter)]);
+#endif
 			}
 		}
 
@@ -1030,14 +1028,6 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 		if ((l_lRandomChanceForFiller && l_lThereIsEnoughRoomForFillerWithinMaxTrackingLength) ||
 			!l_lThereAreCharactersLeftToProcess)
 		{
-			//if (l_lRandomChanceForFiller)
-			//{
-			//	TRACE ("Random filler\n");
-			//}
-			//else
-			//{
-			//	TRACE ("No characters to process filler\n");
-			//}
 
 			l_lUseFiller = TRUE;
 		}
@@ -1083,7 +1073,9 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 			g_lTempDevelopment = g_lTempDevelopment + 1;
 			if (g_lTempDevelopment < 10)
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 				TRACE ("Method1Sub1(1), %c, %c, %c, %c.\n", p_cpSourceChars [0], p_cpSourceChars [1], p_cpSourceChars [2], p_cpSourceChars [3]);
+#endif
 			}
 
 			l_ulTempSourceValue = *((unsigned long *) p_cpSourceChars);
@@ -1107,20 +1099,26 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 
 				if (g_lTempDevelopment < 10)
 				{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 					TRACE ("Method1Sub1(1.1), %x, counter = %d.\n", ((char*) (&l_ulTempResultValue)) [l_lCounter], l_lCounter);
+#endif
 				}
 
 				((unsigned char*) (&l_ulTempResultValue)) [l_lCounter] = (unsigned char) m_lLookUpTable1 [((unsigned char*) (&l_ulTempResultValue)) [l_lCounter]];
 
 				if (g_lTempDevelopment < 10)
 				{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 					TRACE ("Method1Sub1(1.2), %x.\n", ((unsigned char*) (&l_ulTempResultValue)) [l_lCounter]);
+#endif
 				}
 			}
 
 			if (g_lTempDevelopment < 10)
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 				TRACE ("Method1Sub1(1.3), %x.\n", l_ulTempResultValue);
+#endif
 			}
 
 			//-		Although we posess a 32 bit checksum, only the last 4 bits of 
@@ -1138,8 +1136,10 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 
 			if (g_lTempDevelopment < 10)
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 				TRACE ("Method1Sub1(2), %x, %x, %x, %x.\n", ((char*) (&l_ulTempResultValue)) [0], ((char*) (&l_ulTempResultValue)) [1], ((char*) (&l_ulTempResultValue)) [2], ((char*) (&l_ulTempResultValue)) [3]);
 				TRACE ("Method1Sub1(3), %lx.\n", l_ulTempResultValue);
+#endif
 			}
 
 			//-      5% change of setting character seed value, which if set will 
@@ -1269,7 +1269,6 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 		//-		then we will use the first available index
 		if (l_lFoundGoodIndex == FALSE)
 		{
-			//TRACE ("Method1Sub1(4), First unused = %d\n", *p_lpFirstTrackingUnused); 
 			l_lNewDestinationIndex = *p_lpFirstTrackingUnused;
 			//-			The Relative Jump can not reference the current position. When 
 			//-			this happens it means that the first available was used.
@@ -1362,14 +1361,18 @@ HRESULT SVXMLEncryptionClass::Method2Encryption (
 
 			if (g_lTempDevelopment < 10)
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 				TRACE ("Method2(1.1), %x, counter = %d.\n", ((char*) (&l_ulTempResultValue)) [l_lCounter], l_lCounter);
+#endif
 			}
 
 			((unsigned char*) (&l_ulTempResultValue)) [l_lCounter] = (unsigned char) m_lLookUpTable1 [((unsigned char*) (&l_ulTempResultValue)) [l_lCounter]];
 
 			if (g_lTempDevelopment < 10)
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_XMLENCRYPT)
 				TRACE ("Method2(1.2), %x.\n", ((unsigned char*) (&l_ulTempResultValue)) [l_lCounter]);
+#endif
 			}
 		}
 
@@ -1539,7 +1542,6 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 		l_lCurrentSourceIndex = 0;
 		l_lCurrentDestinationIndex = 0;
 
-		//TRACE ("DecryptString (.01)\n");
 
 		//		while (l_lCurrentDestinationIndex < l_lMaxTrackingLength)
 		while (l_lFirstTrackingUnused < l_lMaxTrackingLength)
@@ -1663,24 +1665,20 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 				(l_lFirstTrackingUnused < l_lMaxTrackingLength))
 			{
 				l_lFirstTrackingUnused = l_lFirstTrackingUnused + 1;
-				//TRACE ("DecryptString (.1) first track unused = %d\n", l_lFirstTrackingUnused);
 			}
 
 			if ((l_lRelativeJump - l_lJumpingOffset) == 0)
 			{
 				l_lCurrentSourceIndex = l_lFirstTrackingUnused;
-				//TRACE ("DecryptString (.2) use unused\n");
 			} // if ((l_lRelativeJump - l_lJumpingOffset == 0)
 			else
 			{
 				//-		We're setting up where the NEXT packet will come from.
 				l_lCurrentSourceIndex = (l_lCurrentSourceIndex + l_lRelativeJump) - 
 					l_lJumpingOffset;
-				//TRACE ("DecryptString (.3) current source index = %d\n", l_lCurrentSourceIndex);
 			}
 
 
-			//TRACE ("DecryptString, First tracking unused = %d, Max tracking length = %d\n", l_lFirstTrackingUnused, l_lMaxTrackingLength);
 		} // while (l_lFirstTrackingUnused < l_lMaxTrackingLength)
 
 

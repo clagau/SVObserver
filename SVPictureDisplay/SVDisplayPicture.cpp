@@ -104,10 +104,12 @@ HBITMAP SVDisplayPicture::GetBitmapFromIPictureDisp() const
 		if( l_pPicture)
 		{
 			HRESULT hr = l_pPicture->get_Handle( (OLE_HANDLE*)&l_hBitmap );
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			if (S_OK != hr)
 			{
 				TRACE(_T("GetBitmapFromIPictureDisp failed %08lx\n"), hr);
 			}
+#endif
 			l_pPicture->Release();
 		}
 	}

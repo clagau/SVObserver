@@ -102,7 +102,9 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 
 			if ( nullptr == ref.Object() )
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
 				TRACE( _T( "SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n" ), m_pArchiveTool->GetCompleteObjectName(), sName );
+#endif
 			}
 			else
 			{

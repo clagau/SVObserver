@@ -77,10 +77,12 @@ static POINT GetPointFromString(const SVString& strVal)
 		_stscanf( SplitVec[0].c_str(), "%d", &pointValue.x );
 		_stscanf( SplitVec[1].c_str(), "%d", &pointValue.y );
 	}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	else 
 	{
 		TRACE("GetPointFromString - Invalid String (Not a Point)\n");
 	}
+#endif
 	return pointValue;
 }
 
@@ -99,7 +101,9 @@ static SVDPointClass GetDPointFromString(const SVString& strVal)
 	}
 	else
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE("GetDPointFromString - Invalid String (Not a DPoint)\n");
+#endif
 	}
 	return pointValue;
 }
@@ -123,11 +127,14 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 				if (::SVSendMessage(pOwnerObject, SVM_REPLACE_OBJECT, reinterpret_cast<DWORD_PTR>(&uniqueID), reinterpret_cast<DWORD_PTR>(pObject)) != SVMR_SUCCESS)
 				{
 					ASSERT(false);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 					TRACE("SVObjectBuilder::CreateObject - ReplaceObject %.80s\n", name.c_str());
-
+#endif
 					delete pObject;
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 					TRACE("SVObjectBuilder::CreateObject - SVM_REPLACE_OBJECT was not successfully");
+#endif
 					hr = S_FALSE;
 				}
 				else
@@ -140,7 +147,9 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 				hr = S_FALSE;
 				ASSERT(false);
 				delete pObject;
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE("SVObjectBuilder::CreateObject - Owner Object not Found");
+#endif
 			}
 		}
 		else
@@ -160,7 +169,9 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 	{
 		hr = S_FALSE;
 		ASSERT(false);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE("SVObjectBuilder::CreateObject - Creation Failed");
+#endif
 	}
 	return hr;
 }
@@ -388,14 +399,18 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& g
 			}
 			else
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE("SVObjectBuilder::SetInputs - Input Info pointer is not valid\n");
+#endif
 				hr = S_FALSE;
 			}
 		}
 	}
 	else
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE("SVObjectBuilder::SetInputs - Not a Valid Object\n");
+#endif
 		hr = S_FALSE;
 	}
 	return hr;

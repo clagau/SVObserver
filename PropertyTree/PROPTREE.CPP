@@ -125,7 +125,9 @@ int SVRPropTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_List.Create(dwStyle, rc, this, m_nID))
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE0("Failed to create SVRPropTreeCtrl\n");
+#endif
 		return -1;
 	}
 
@@ -138,7 +140,9 @@ int SVRPropTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_Info.Create(_T(""), dwStyle, rc, this))
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE0("Failed to create SVRPropertyInfo\n");
+#endif
 		return -1;
 	}
 

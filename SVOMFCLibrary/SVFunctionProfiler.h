@@ -79,7 +79,9 @@ inline SVFunctionProfiler::~SVFunctionProfiler()
 		fclose( fh );
 	}
 	
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PROFILER)
 	TRACE(_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_sName, m_iCount, iTotalTime);
+#endif
 }
 
 inline void SVFunctionProfiler::Begin()
@@ -123,7 +125,9 @@ inline SVSizeProfiler::~SVSizeProfiler()
 		std::map<int,int>::iterator iter;
 		for (iter = m_mapSizeCounter.begin(); iter != m_mapSizeCounter.end(); ++iter)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PROFILER)
 			TRACE(_T("COUNT_PROFILER: %s size %d count=%d\n"), m_sName, iter->first, iter->second);
+#endif
 			fprintf(fh,_T("COUNT_PROFILER: %s size %d count=%d\n"), m_sName, iter->first, iter->second);
 		}
 		fclose( fh );

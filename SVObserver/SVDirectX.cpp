@@ -65,7 +65,9 @@ HRESULT SVDirectX::Initialize()
 		l_Retval = m_pDDObject->SetCooperativeLevel( nullptr, DDSCL_NORMAL | DDSCL_FPUPRESERVE );
 		if( DD_OK != l_Retval )
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			TRACE( _T( "SVDirectX::InitializeObject was unable to set DirectDraw cooperative level." ) );
+#endif
 		}
 		else if( nullptr != m_pDDObject )
 		{
@@ -77,7 +79,9 @@ HRESULT SVDirectX::Initialize()
 	}
 	else
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE( _T( "SVDirectX::InitializeObject was unable to create the DirectDraw object." ) );
+#endif
 
 		if( nullptr != m_pDDObject )
 		{
@@ -207,23 +211,29 @@ HRESULT SVDirectX::CreatePrimarySurface()
 		l_ddSurfaceDesc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
 		l_Retval = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, &rDirectX.m_pDDDisplaySurface, nullptr );
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		if( DD_OK != l_Retval )
 		{
 			TRACE( _T( "SVDirectX::InitializeSurface was unable to create the display surface." ) );
 		}
+#endif
 		else if( nullptr == rDirectX.m_pDDClipper && nullptr != rDirectX.m_pDDDisplaySurface )
 		{
 			if( DD_OK == rDirectX.m_pDDObject->CreateClipper( 0, &rDirectX.m_pDDClipper, nullptr ) )
 			{
 				if( DD_OK != rDirectX.m_pDDDisplaySurface->SetClipper( rDirectX.m_pDDClipper ) )
 				{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 					TRACE( _T( "SVDirectX::InitializeSurface was unable to set the clipper." ) );
+#endif
 				}
 			}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			else
 			{
 				TRACE( _T( "SVDirectX::InitializeSurface was unable to create the clipper." ) );
 			}
+#endif
 		}
 	}
 	return l_Retval;
@@ -260,10 +270,12 @@ HRESULT SVDirectX::CreateSurface(long width, long height, IDirectDrawSurface7** 
 			}
 
 			l_hr = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, ppDDSurface, nullptr );
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			if (DD_OK != l_hr)
 			{
 				TRACE( _T( "SVDirectX::CreateSurface failed (%08lx)\n" ), l_hr );
 			}
+#endif
 		}
 	}
 	return l_hr;
@@ -350,10 +362,12 @@ HRESULT SVDirectX::CreateSurface(const SVBitmapInfo& p_rBitmapInfo, IDirectDrawS
 		}
 
 		l_hr = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, ppDDSurface, nullptr );
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		if (DD_OK != l_hr )
 		{
 			TRACE( _T( "SVDirectX::CreateSurface failed (%08lx)\n" ), l_hr );
 		}
+#endif
 
 		if (DD_OK == l_hr)
 		{
@@ -431,10 +445,12 @@ HRESULT SVDirectX::GetPrimarySurfaceResolution(SIZE& rSize)
 			rSize.cx = l_ddSurfaceDesc.dwWidth;
 			rSize.cy = l_ddSurfaceDesc.dwHeight;
 		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		else
 		{
 			TRACE( _T( "SVDirectX::GetPrimarySurfaceResolution failed (%08lx)\n" ), hr );
 		}
+#endif
 	}
 	return hr;
 }
@@ -454,10 +470,12 @@ HRESULT SVDirectX::GetPrimarySurfacePixelDepth(int& rPixelDepth)
 		{
 			rPixelDepth = l_pPixelFormat.dwRGBBitCount / 8;
 		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		else
 		{
 			TRACE( _T( "SVDirectX::GetPrimarySurfacePixelDepth failed (%08lx)\n" ), hr );
 		}
+#endif
 	}
 	return hr;
 }

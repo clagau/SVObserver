@@ -38,6 +38,7 @@
 #define SV_EXTRACT_MATROXGIGE_SYSTEM_HANDLE( handle ) ( static_cast<unsigned char>( (handle) >> 8 ) )
 #define SV_EXTRACT_MATROXGIGE_DIGITIZER_HANDLE( handle ) ( static_cast<unsigned char>( (handle) ) )
 
+
 SVMatroxGige::SVMatroxGige()
 {
 }
@@ -87,7 +88,9 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 		{
 			if ( l_pCamera->m_lIsStarted == 1 )
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
 				TRACE( "ProcessFrame\n" );
+#endif
 
 				//
 				if (l_pCamera->m_frameStack.get() == 1)
@@ -114,19 +117,25 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 								g_svTheApp.m_svSystem.ProcessEndFrame(*l_pCamera, ModifiedBufferId);
 							}
 						}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 						else
 						{
 							TRACE( "Corrupt Frame\n" );
 						}
+#endif
 					}
 					CString l_csbuf;
 					l_csbuf.Format("Process End Frame Callback - Camera %d-%d",
 									l_pCamera->m_SystemHandle, l_pCamera->m_Handle);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 					TRACE( "%s\n", l_csbuf );
+#endif
 				}
 				else
 				{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
 					TRACE( "Start Frame Count %d\n", l_pCamera->m_frameStack.get() );
+#endif
 				}
 				l_pCamera->m_frameStack.clear();
 			}
@@ -152,7 +161,9 @@ SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType,
 			{
 				if( SVMatroxDigitizerInterface::IsEventGrabFrameStart(HookType) )
 				{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
 					TRACE( "Gige Start Frame\n" );
+#endif
 					// Do StartFrame Logic
 					g_svTheApp.m_svSystem.ProcessStartFrame( *l_pCamera );
 
@@ -161,12 +172,16 @@ SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType,
 								l_pCamera->m_SystemHandle, 
 								l_pCamera->m_Handle, 
 								l_pCamera->m_lStartIndex );
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
 					TRACE( "%s\n", l_csbuf );
+#endif
 				}
 				
 				else if( SVMatroxDigitizerInterface::IsEventGrabFrameEnd(HookType) )
 				{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
 					TRACE( "Gige End Frame\n" );
+#endif
 				}
 			}
 		}
@@ -220,10 +235,12 @@ void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera,
 			callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&Settings));
 		}
 	}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	else
 	{
 		TRACE("SVMatroxGige::DoAcquisitionTrigger unable to get timestamp\n");
 	}
+#endif
 }
 
 HRESULT SVMatroxGige::Open()

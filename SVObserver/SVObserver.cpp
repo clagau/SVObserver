@@ -338,7 +338,9 @@ SVObserverApp::SVObserverApp()
 	m_pszHelpFilePath = _tcsdup(SvStl::GlobalPath::Inst().GetBinPath(_T("SVObserver.chm")).c_str());
 	EnableHtmlHelp();
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
 	::OutputDebugString( _T( "Executing => SVObserverApp::SVObserverApp()\n" ) );
+#endif
 
 	m_csProductName.Empty();
 
@@ -2119,8 +2121,9 @@ BOOL SVObserverApp::InitInstance()
 		afxTraceEnabled = TRUE;
 		PxlTraceInit();                                    // 13 May 1999 - frb.
 	#endif //__USE_TRACEWIN
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
 	TRACE0("..SVObserver - InitInstance()\n");         // 13 May 1999 - frb.
-
+#endif
 	// EB 2002 11 19
 	// added to ensure C:\TEMP always exists;
 	// bad things happen if it doesn't
@@ -5481,7 +5484,9 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 #ifndef _DEBUG
 			ASSERT( false ); //l_strDrive );
 #else
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
 			::OutputDebugString(l_strDrive);
+#endif
 #endif
 		}
 	}
@@ -6415,9 +6420,10 @@ BOOL SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 	int nIndex = nID - ID_FILE_MRU_FILE1;
 	ASSERT((*m_pRecentFileList)[nIndex].GetLength() != 0);
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
 	TRACE2("MRU: open file (%d) '%s'.\n", (nIndex) + 1,
 		(LPCTSTR)(*m_pRecentFileList)[nIndex]);
-
+#endif
 	BOOL bResult = false;
 
 	// Check Security to see if save is allowed

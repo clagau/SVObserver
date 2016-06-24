@@ -65,7 +65,6 @@ namespace Seidenader { namespace TriggerHandling {
 			l_Response.SetExtraData(holder);
 			hr = pDevice->Notify( l_Response );
 
-			//TRACE( "Process Trigger Callback - %s\n", pDevice->GetDeviceName() );
 
 			#ifdef SV_LOG_STATUS_INFO
 				SVString l_String;

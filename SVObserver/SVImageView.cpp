@@ -816,10 +816,12 @@ HRESULT SVImageViewClass::RecreateImageSurface()
 	{
 		hr = SVDirectX::CreateSurface( l_BitmapInfo, &m_pDDImageSurface );
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		if (DD_OK != hr)
 		{
 			TRACE( _T( "SVImageViewClass::RecreateImageSurface - CreateSurface failed (%08lx)\n" ), hr );
 		}
+#endif
 		if (DD_OK == hr)
 		{
 			SIZE l_Size;
@@ -828,10 +830,12 @@ HRESULT SVImageViewClass::RecreateImageSurface()
 
 			hr = SVDirectX::CreateSurface(l_Size.cx, l_Size.cy, &m_pDDScaledImageSurface);
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			if (DD_OK != hr)
 			{
 				TRACE( _T( "SVImageViewClass::RecreateImageSurface - CreateSurface failed (%08lx)\n" ), hr );
 			}
+#endif
 		}
 
 		CRect l_rect;
@@ -1068,13 +1072,6 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 		GetClientRect( l_rect );
 		GetWindowRect( l_screenRect );
 
-		/*TRACE( "CLIENT -- RECT L=%d-T=%d-R=%d-B=%d -- POINT X=%d-Y=%d\n",
-			l_rect.left, l_rect.top, l_rect.right, l_rect.bottom,
-			l_clientPoint.x, l_clientPoint.y );
-
-		TRACE( "SCREEN -- RECT L=%d-T=%d-R=%d-B=%d -- POINT X=%d-Y=%d\n",
-			l_screenRect.left, l_screenRect.top, l_screenRect.right, l_screenRect.bottom,
-		l_screenPoint.x, l_screenPoint.y );*/
 
 		// Get Color of Mouse Point ( inside of View )
 		HDC hDC = ::GetDC( m_hWnd );
@@ -2100,7 +2097,9 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 	{
 		ReleaseImageSurface();
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		TRACE( _T( "SVImageView CreateImageSurface was unable to create the image surface.\n" ) );
+#endif
 	}
 
 	return l_Status;
@@ -2315,10 +2314,12 @@ HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rD
 			m_pDDScaledImageSurface->ReleaseDC( scaledDC );
 		}
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		if( DD_OK != l_Status)
 		{
 			TRACE(_T( "SVImageViewClass::UpdateImage - Surface Blit failed %08lx\n" ), l_Status );
 		}
+#endif
 	}
 	else
 	{
@@ -2384,10 +2385,12 @@ HRESULT SVImageViewClass::RecreateLostSurface()
 				// Destroy and Recreate surface
 				l_hrRestore = RecreateImageSurface();
 				
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				if (DD_OK != l_hrRestore)
 				{
 					TRACE( _T( "SVImageViewClass::UpdateImage - CreateSurface failed\n" ) );
 				}
+#endif
 			}
 
 			// cause a Repaint if Surface was Rrestored/Recreated
@@ -2506,8 +2509,9 @@ HRESULT SVImageViewClass::UpdateSurface()
 			// check for lost surfaces
 			if( DDERR_SURFACELOST == l_Status )
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE( _T( "SVImageViewClass::UpdateImage - DDERR_SURFACELOST\n" ) );
-
+#endif
 				RecreateLostSurface();
 			}
 		}
@@ -2554,7 +2558,9 @@ HRESULT SVImageViewClass::DisplaySurface()
 			// check for lost surfaces
 			if( DDERR_SURFACELOST == l_Status )
 			{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE( _T( "SVImageViewClass::UpdateImage - DDERR_SURFACELOST\n" ) );
+#endif
 
 				RecreateLostSurface();
 			}

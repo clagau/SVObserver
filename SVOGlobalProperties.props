@@ -5,6 +5,10 @@
   <PropertyGroup>
     <IncludePath>C:\Program Files\boost_1_59_0;C:\Program Files\tcl_5.3.1;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);TRACE_FAILURE</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

@@ -592,8 +592,9 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
 		}
 		CATCH (CFileException, e)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			TRACE( "Exception : File = %s -- Line = %d\n", _T(__FILE__), __LINE__ );
-
+#endif
 			m_errId = SvOi::Tid_BarCode_UnableToRead;
 
 			if( DisplayErrorMessage )

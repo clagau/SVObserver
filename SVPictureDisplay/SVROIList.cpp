@@ -219,7 +219,9 @@ STDMETHODIMP CSVROIList::XEnumVARIANT::Next( ULONG celt, VARIANT FAR* rgvar, ULO
 	}
     else if (celt > 1)
     {   
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
         TRACE(_T("XEnumVARIANT::Next() celt > 1 and nullptr == pceltFetched !\r\n"), celt );
+#endif
         return ResultFromScode( E_INVALIDARG );
     }
 
@@ -246,7 +248,9 @@ STDMETHODIMP CSVROIList::XEnumVARIANT::Next( ULONG celt, VARIANT FAR* rgvar, ULO
         }
         else 
         {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
             TRACE(_T("GetNext failed in IEnumVARIANT::Next\r\n") );
+#endif
             return ResultFromScode( E_UNEXPECTED );
         }
     }

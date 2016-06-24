@@ -1696,10 +1696,12 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 	BuildConditionalHistoryListAfterLoad();
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
 	CString strValueObjects;
 	int iCount = static_cast<int>(m_mapValueObjects.size());
 	strValueObjects.Format(_T("%s value object count=%d\n"), GetName(), iCount);
 	::OutputDebugString( strValueObjects );
+#endif
 
 	return l_Status;
 }

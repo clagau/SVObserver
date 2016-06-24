@@ -144,8 +144,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		if( rect.Width() <= 0 || rect.Height() <= 0)  // prevents imagelist item from drawing even
 			return FALSE;                             //  though cell is hidden
 
-		//TRACE3("Drawing %scell %d, %d\n", IsFixed()? _T("Fixed ") : _T(""), nRow, nCol);
-
 		int nSavedDC = pDC->SaveDC();
 		pDC->SetBkMode(TRANSPARENT);
 
@@ -431,7 +429,9 @@ namespace Seidenader { namespace GridCtrlLibrary
 	// Not yet implemented
 	void CGridCellBase::OnMouseEnter()
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE0("Mouse entered cell\n");
+#endif
 	}
 
 	void CGridCellBase::OnMouseOver()
@@ -442,31 +442,41 @@ namespace Seidenader { namespace GridCtrlLibrary
 	// Not Yet Implemented
 	void CGridCellBase::OnMouseLeave()
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE0("Mouse left cell\n");
+#endif
 	}
 
 	void CGridCellBase::OnClick( CPoint PointCellRelative)
 	{
 		UNUSED_ALWAYS(PointCellRelative);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE2("Mouse Left btn up in cell at x=%i y=%i\n", PointCellRelative.x, PointCellRelative.y);
+#endif
 	}
 
 	void CGridCellBase::OnClickDown( CPoint PointCellRelative)
 	{
 		UNUSED_ALWAYS(PointCellRelative);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE2("Mouse Left btn down in cell at x=%i y=%i\n", PointCellRelative.x, PointCellRelative.y);
+#endif
 	}
 
 	void CGridCellBase::OnRClick( CPoint PointCellRelative)
 	{
 		UNUSED_ALWAYS(PointCellRelative);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE2("Mouse right-clicked in cell at x=%i y=%i\n", PointCellRelative.x, PointCellRelative.y);
+#endif
 	}
 
 	void CGridCellBase::OnDblClick( CPoint PointCellRelative)
 	{
 		UNUSED_ALWAYS(PointCellRelative);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE2("Mouse double-clicked in cell at x=%i y=%i\n", PointCellRelative.x, PointCellRelative.y);
+#endif
 	}
 
 	// Return TRUE if you set the cursor

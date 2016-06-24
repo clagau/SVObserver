@@ -247,7 +247,9 @@ public:
 
 void CRegErrorHandler::regerror( LPCTSTR s ) const
 {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_REGEX)
 	TRACE1( "regerror: %s\n", s );
+#endif
 	m_szError = s;
 }
 
@@ -1597,7 +1599,7 @@ void Regexp::Dump()
 {
 	if ( rc )
 		rc->regdump();
-#if defined( _DEBUG )
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	else
 		TRACE0( "No regexp to dump out\n" );
 #endif
