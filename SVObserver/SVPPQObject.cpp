@@ -2668,12 +2668,11 @@ BOOL SVPPQObject::AddDefaultOutputs()
 		PpqID--;
 	}
 	//Make sure it is above 0
-	if ( 0 <= PpqID )
+	if( 0 <= PpqID && nullptr != pPpqLength )
 	{
 		PpqLengthUid.ToGUID().Data1 += PpqID;
 		SVObjectManagerClass::Instance().ChangeUniqueObjectID( pPpqLength.get(), PpqLengthUid );
 		pPpqLength->SetObjectOwner( this );
-		pPpqLength->setValue( StandardPpqLength );
 	}
 
 	return TRUE;
