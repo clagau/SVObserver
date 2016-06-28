@@ -303,6 +303,8 @@ HRESULT LinkedValue::SetValueAt( int Bucket, int Index, CString Value )
 		SetType( GetDefaultType() );
 		Result = SetValueKeepType( Bucket, Value );
 	}
+
+	UpdateLinkedName();
 	return Result;
 }
 
