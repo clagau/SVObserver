@@ -238,23 +238,23 @@ HRESULT SVAcquisitionClass::Reset()
 
 HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long ulSize )
 {
-	HRESULT hrOk = S_FALSE;
+	HRESULT Result = S_FALSE;
 	
-	hrOk = DestroyBuffers();
-	if ( S_OK == hrOk )
+	Result = DestroyBuffers();
+	if ( S_OK == Result )
 	{
 		_bstr_t bsName = DeviceName();
 
-		hrOk = TheSVDataManager.CreateManagedIndexArray( m_pDataManagerHandle, bsName, ulSize );
+		Result = TheSVDataManager.CreateManagedIndexArray( m_pDataManagerHandle, bsName, ulSize );
 
 		mulSize = ulSize + 3;
 		msvImageInfo = IInfo;
 		
-		if( S_OK == hrOk )
+		if( S_OK == Result )
 		{
 			if ( IsDigitizerSubsystemValid() )
 			{
-				hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->CreateBuffers( m_hDigitizer, ulSize + 3 );
+				Result = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->CreateBuffers( m_hDigitizer, ulSize + 3 );
 			}
 
 			bool l_Status = true;
@@ -279,21 +279,21 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 			l_Status = l_Status && S_OK == GetNextIndex( l_Handle );
 			l_Status = l_Status && SetCurrentIndex( l_Handle );
 
-			if( l_Status )
+			if( l_Status && S_OK == Result )
 			{
-				hrOk = S_OK;
+				Result = S_OK;
 			}
-			else
+			else if ( !l_Status )
 			{
-				hrOk = S_FALSE;
+				Result = S_FALSE;
 			}
 		}
 		else
 		{
-			hrOk = S_FALSE;
+			Result = S_FALSE;
 		}
 		
-		if (S_OK == hrOk  )
+		if (S_OK == Result  )
 		{
 			mbIsBufferCreated = true;
 		}
@@ -303,7 +303,7 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 		}
 	}
 	
-	return hrOk;
+	return Result;
 }
 
 HRESULT SVAcquisitionClass::DestroyBuffers()

@@ -468,6 +468,8 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_25019_Json_PutConfig = Gra_ErrorBase + 19;
 	static const int Err_25020_MatroxLibraryNone = Gra_ErrorBase + 20;
 	static const int Err_25021_MatroxLibraryFatal = Gra_ErrorBase + 21;
+	static const int Err_25022_NonPagedMemoryFull = Gra_ErrorBase + 22;
+	static const int Err_25023_NonPagedMemoryLow = Gra_ErrorBase + 23;
 	static const int Err_25030_Thread = Gra_ErrorBase + 30;
 	static const int Err_25037_AsyncProcedure = Gra_ErrorBase + 37;
 	static const int Err_25038_AsyncProcedure = Gra_ErrorBase + 38;

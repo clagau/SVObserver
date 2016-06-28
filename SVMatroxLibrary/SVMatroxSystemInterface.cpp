@@ -365,3 +365,16 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const
 	return l_Code;
 }
 
+/*static*/ HRESULT SVMatroxSystemInterface::getNonPagedMemory( long long& rMemorySize, long long& rMemoryUsed )
+{
+	MIL_INT MilMemSize;
+	MIL_INT MilMemUsed;
+
+	MappInquire( M_NON_PAGED_MEMORY_SIZE, &MilMemSize );
+	MappInquire( M_NON_PAGED_MEMORY_USED, &MilMemUsed );
+
+	rMemorySize = MilMemSize;
+	rMemoryUsed = MilMemUsed;
+
+	return S_OK;
+}

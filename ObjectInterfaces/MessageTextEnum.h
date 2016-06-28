@@ -380,6 +380,8 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_TableObject_MaxRowWrongValue,
 		Tid_UnknownCommitError,
 		Tid_UnknownCommandError,
+
+		Tid_MoreThanPercentUsed,
 	};
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 

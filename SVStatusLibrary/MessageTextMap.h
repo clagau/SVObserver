@@ -415,6 +415,8 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_TableObject_MaxRowWrongValue, _T("Maximum rows must be greater than zero."))
 	(SvOi::Tid_UnknownCommitError, _T("Unknown Commit or Reset error %s."))
 	(SvOi::Tid_UnknownCommandError, _T("Unknown Command error %s."))
+
+	(SvOi::Tid_MoreThanPercentUsed, _T("\nMore than %s% [%s%] has been used."))
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

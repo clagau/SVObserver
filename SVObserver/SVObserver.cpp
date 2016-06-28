@@ -115,6 +115,7 @@
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVXMLLibrary\ObsoleteItemChecker.h"
 #include "SVObjectLibrary\GlobalConst.h"
+#include "SVMatroxLibrary\SVMatroxSystemInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -127,6 +128,8 @@ static const int GoOfflineDefault4GB = 300;
 static const int GoOfflineDefault16GB = 2000;
 
 static const HRESULT ErrorMatroxServiceNotRunning = 0xcf00116f;
+
+static const double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage of the total Non-Page size
 
 extern bool g_bUseCorrectListRecursion;
 #pragma endregion Declarations
@@ -5545,12 +5548,36 @@ void SVObserverApp::Start()
 	try
 	{
 		DisconnectCameras( saCameras );
-		ConnectCameras( saCameras );
-		HRESULT hr = SendCameraParameters( saCameras );
-		if( hr != S_OK )
+		HRESULT Result = ConnectCameras( saCameras );
+		//Buffer allocation error
+		if( SVMEE_MATROX_ALLOCATION == Result )
+		{
+			SvStl::MessageContainer Exception( SVMSG_SVO_NON_PAGED_MEMORY_FULL, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25022_NonPagedMemoryFull );
+			throw Exception;
+		}
+		Result = SendCameraParameters( saCameras );
+		if( Result != S_OK )
 		{
 			SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvOi::Tid_GoOnlineFailure_SendCameraParam, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_45000);
 			throw Exception;
+		}
+
+
+		long long MemSize(0);
+		long long MemUsed(0);
+		SVMatroxSystemInterface::getNonPagedMemory( MemSize, MemUsed );
+		if( 0 < MemSize )
+		{
+			double NonPagedMemUsage = static_cast<double> (MemUsed) / static_cast<double> (MemSize) * 100.0;
+			//If more than the normal pecentage used then log a message
+			if( cNormalNonPageMemoryUsage < NonPagedMemUsage )
+			{
+				SVStringArray msgList;
+				msgList.push_back( SvUl_SF::Format(_T("%.0f"), cNormalNonPageMemoryUsage ) );
+				msgList.push_back( SvUl_SF::Format(_T("%.0f"), NonPagedMemUsage ) );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVO_NON_PAGED_MEMORY_LOW, SvOi::Tid_MoreThanPercentUsed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25023_NonPagedMemoryLow );
+			}
 		}
 
 		SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
@@ -5560,7 +5587,7 @@ void SVObserverApp::Start()
 		PPQMonitorList ppqMonitorList;
 		pConfig->BuildPPQMonitorList(ppqMonitorList);
 
-		for( long l = 0; S_OK == hr && l < lSize; l++ )
+		for( long l = 0; S_OK == Result && l < lSize; l++ )
 		{
 			pPPQ =  pConfig->GetPPQ( l );
 			//Returns true when pointer valid
@@ -6183,7 +6210,10 @@ HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConne
 			}
 		}
 
-		hr = ConnectToolsetBuffers();
+		if( S_OK == hr  )
+		{
+			hr = ConnectToolsetBuffers();
+		}
 	}
 
 	return hr;
