@@ -211,12 +211,12 @@ HRESULT SVDirectX::CreatePrimarySurface()
 		l_ddSurfaceDesc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
 		l_Retval = rDirectX.m_pDDObject->CreateSurface( &l_ddSurfaceDesc, &rDirectX.m_pDDDisplaySurface, nullptr );
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		if( DD_OK != l_Retval )
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			TRACE( _T( "SVDirectX::InitializeSurface was unable to create the display surface." ) );
-		}
 #endif
+		}
 		else if( nullptr == rDirectX.m_pDDClipper && nullptr != rDirectX.m_pDDDisplaySurface )
 		{
 			if( DD_OK == rDirectX.m_pDDObject->CreateClipper( 0, &rDirectX.m_pDDClipper, nullptr ) )
