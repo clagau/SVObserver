@@ -25,6 +25,7 @@
 #include "SVGlobal.h" // Default Coordinates
 #include "SVImageProcessingClass.h"
 #include "SVPolarTransformationTool.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 double SVImagePolarTransformClass::g_dMaxAngularDistance  = 720.0;

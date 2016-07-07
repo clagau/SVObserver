@@ -13,6 +13,7 @@
 #include "SVImageBufferStruct.h"
 
 #include "SVImageProcessingClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 
 HRESULT SVImageBufferStruct::CreateBuffer()
 {

@@ -14,6 +14,7 @@
 #include "SVPackedFile.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
+//Moved to precompiled header: #include <algorithm>
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -49,7 +50,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 	{
 		PackedFile.Write (&dwPackedFileVersion, sizeof (DWORD));
 	}
-	catch (CFileException e)
+	catch (CFileException &e)
 	{
 		e.GetErrorMessage (szMessage, sizeof (szMessage));
 		PackedFile.Close();

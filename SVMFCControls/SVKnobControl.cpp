@@ -179,9 +179,9 @@ namespace Seidenader
 			TransparentBlt(m_dc, knob, CPoint(0,0));
 			DrawTicks(m_dc);
 			m_dotPoint = angle2xy(knob.center - CSize(5,5), m_angle, m_radius);
-			CPen pen = CPen(PS_SOLID, 1, RGB(182,28,39));
+			CPen pen(PS_SOLID, 1, RGB(182, 28, 39));
 			CPen * t_pen = m_dc.SelectObject(&pen);
-			CBrush brush = CBrush(&(dot.bitmap.face));
+			CBrush brush(&(dot.bitmap.face));
 			CBrush * t_brush = m_dc.SelectObject(&brush);
 			CRect rect = dot.rect;
 			rect.MoveToXY(m_dotPoint);
@@ -219,9 +219,9 @@ namespace Seidenader
 			dc.TextOut(rect.Width() - 18, rect.Height() - 10, "max");
 			dc.SelectObject(tmp_font);
 			double pi_6 = pi()/6.0;
-			CPen pen = CPen(PS_SOLID, 1, RGB(0,18,29));
+			CPen pen(PS_SOLID, 1, RGB(0,18,29));
 			CPen * t_pen = dc.SelectObject(&pen);
-			CBrush brush = CBrush(RGB(0, 10, 20));
+			CBrush brush(RGB(0, 10, 20));
 			CBrush * t_brush = dc.SelectObject(&brush);
 			for (double a = 0.0; a < pihalf(); a += pi_6)
 			{

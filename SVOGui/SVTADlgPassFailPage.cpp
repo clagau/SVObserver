@@ -211,7 +211,7 @@ namespace Seidenader { namespace SVOGui
 		if (name.GetLength() > 0)
 		{
 			SVStringSet nameSet;
-			nameSet.insert(name);
+			nameSet.insert(SVString(name));
 			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 		}
 

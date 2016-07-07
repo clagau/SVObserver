@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVTestAcquisitionClass.h"
+#include "SVOMFCLibrary\SVDeviceParams.h"
 
 SVTestAcquisitionSubsystem::SVTestAcquisitionSubsystem()
 {

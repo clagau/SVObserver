@@ -58,6 +58,7 @@
 #include <afxcoll.h>
 #include <afxext.h>         // MFC extensions
 
+#include <algorithm>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>
@@ -69,5 +70,4 @@
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <vector>
-
 #pragma endregion Precompiled Headers

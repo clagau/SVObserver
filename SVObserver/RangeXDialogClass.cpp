@@ -20,6 +20,7 @@
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -184,7 +185,7 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	if(name.GetLength() > 0)
 	{
 		SVStringSet nameSet;
-		nameSet.insert(name);
+		nameSet.insert(SVString(name));
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 

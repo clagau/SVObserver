@@ -439,8 +439,6 @@ private:
 
 	long m_gigePacketSize; 
 
-	std::set<SvTh::SVTriggerObject*> m_dirty_triggers;
-
 	// The Standard Configuration Execution Directory
 	// PN -> Path Name
 	LPCTSTR m_ConfigExePNVariableName;

@@ -26,6 +26,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #pragma region Declarations

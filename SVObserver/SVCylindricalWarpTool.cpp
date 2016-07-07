@@ -16,6 +16,7 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 
 #include "SVImageProcessingClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SVCylindricalWarpToolClassGuid )

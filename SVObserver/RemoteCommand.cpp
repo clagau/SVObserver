@@ -19,6 +19,7 @@
 #include "SVGlobal.h"
 #include "SVIMCommand/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion includes
 
 #pragma region Global functions

@@ -698,7 +698,7 @@ SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SVObjectType
 			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
 			)
 		{
-			list.push_back(std::make_pair(classInfo.ClassName, classInfo.ClassId));
+			list.push_back(std::make_pair(SVString(classInfo.ClassName), classInfo.ClassId));
 		}
 	}
 	return list;

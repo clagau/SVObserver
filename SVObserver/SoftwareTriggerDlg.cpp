@@ -12,19 +12,16 @@
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SoftwareTriggerDlg.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 
 #define COLOR_WARN RGB(255,240,64)
 
 // SoftwareTriggerDlg dialog
-namespace
-{
-	void dummy(SvTh::SVTriggerObject*) {}
-}
 
 IMPLEMENT_DYNAMIC(SVSoftwareTriggerDlg, CDialog)
 
 SVSoftwareTriggerDlg::SVSoftwareTriggerDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVSoftwareTriggerDlg::IDD, pParent), set_dirty(dummy)
+	: CDialog(SVSoftwareTriggerDlg::IDD, pParent)
 {
 	m_spins = 0;
 }
@@ -312,7 +309,6 @@ void SVSoftwareTriggerDlg::SetTriggerPeriod(int val)
 	{
 		SVTriggerProxy * l_trigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
 		l_trigger->SetSoftwareTriggerPeriod(val, true);
-		set_dirty(l_trigger->GetTrigger());
 	}
 }
 

@@ -60,9 +60,11 @@
 #include <ctime>			//Used by static library
 #include <iterator>			//Used by static library
 #include <map>				//Used by static library
+#include <memory>			//Used by static library
 #include <set>				//Used by static library
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <vector>
+#include <boost/assign.hpp>
 #pragma endregion Precompiled Headers
 

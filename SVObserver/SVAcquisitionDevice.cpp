@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "SVAcquisitionDevice.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

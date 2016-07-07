@@ -13,6 +13,7 @@
 #include "SVMaxMinusMinFilterClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 
 SV_IMPLEMENT_CLASS( SVMaxMinusMinFilterClass, SVMaxMinusMinFilterClassGuid )
 

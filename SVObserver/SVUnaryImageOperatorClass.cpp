@@ -14,6 +14,7 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "SVStdImageOperatorListClass.h"
 #include "SVInPlaceImageOperatorListClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma region Includes
 
 SV_IMPLEMENT_CLASS( SVUnaryImageOperatorClass, SVUnaryImageOperatorClassGuid )

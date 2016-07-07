@@ -13,6 +13,7 @@
 #include "SVCustomFilters.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageProcessingClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////

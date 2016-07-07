@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "intersect.h"
+//Moved to precompiled header: #include <algorithm>
 
 //////////////////////////////////////////////////////////////
 // NOTE:

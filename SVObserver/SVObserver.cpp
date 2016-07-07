@@ -912,8 +912,6 @@ void SVObserverApp::OnStop()
 
 	SetAllIPDocumentsOffline();
 
-	m_dirty_triggers.clear();
-
 	if( IsProductTypeRAID() )
 	{
 		m_IntelRAID.UpdateStatus();
@@ -1892,7 +1890,7 @@ void SVObserverApp::OnExtrasSecuritySetup()
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
-void SVObserverApp::OnModeEdit() 
+void SVObserverApp::OnModeEdit()
 {
 	bool l_bAllowAccess = false;
 
@@ -1938,7 +1936,7 @@ void SVObserverApp::OnModeEdit()
 	}
 }
 
-void SVObserverApp::OnUpdateModeEdit(CCmdUI* pCmdUI) 
+void SVObserverApp::OnUpdateModeEdit(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable( (SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY ) ) &&	
 		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
@@ -1950,8 +1948,6 @@ void SVObserverApp::OnUpdateModeEdit(CCmdUI* pCmdUI)
 void SVObserverApp::OnTriggerSettings()
 {
 	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
-	// set dirty handler to the insert method of m_dirty_triggers set
-	SVSoftwareTriggerDlg::Instance().SetDirtyHandler(boost::bind(&std::set<SvTh::SVTriggerObject*>::insert, &m_dirty_triggers, _1));
 }
 
 void SVObserverApp::OnUpdateTriggerSettings(CCmdUI *pCmdUI)
@@ -1959,7 +1955,7 @@ void SVObserverApp::OnUpdateTriggerSettings(CCmdUI *pCmdUI)
 	pCmdUI->Enable();
 }
 
-void SVObserverApp::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI) 
+void SVObserverApp::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI)
 {
 	if( pCmdUI->m_pSubMenu )
 	{
@@ -1976,7 +1972,7 @@ void SVObserverApp::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI)
 	}
 }
 
-void SVObserverApp::OnUpdateAddCylindricalWarpTool( CCmdUI* pCmdUI ) 
+void SVObserverApp::OnUpdateAddCylindricalWarpTool( CCmdUI* pCmdUI )
 {
 	bool l_bEnable = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
 		OkToEdit() &&
@@ -7084,7 +7080,6 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 
 	return -1;
 }
-
 
 
 #pragma endregion Private Methods

@@ -36,11 +36,12 @@ public:
 SVSoftwareTriggerDevice::SVSoftwareTriggerDevice()
 : m_numTriggers(SVMaximumSoftwareTriggers)
 {
-	m_nameHandleList = boost::assign::list_of<NameHandleList::value_type>
+	m_nameHandleList = (boost::assign::list_of<NameHandleList::value_type>
 		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_0")), reinterpret_cast<HANDLE>(1)))
 		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_1")), reinterpret_cast<HANDLE>(2)))
 		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_2")), reinterpret_cast<HANDLE>(3)))
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_3")), reinterpret_cast<HANDLE>(4)));
+		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_3")), reinterpret_cast<HANDLE>(4)))
+		).convert_to_container<NameHandleList>();
 }
 
 SVSoftwareTriggerDevice::~SVSoftwareTriggerDevice()
@@ -66,11 +67,12 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool bInit)
 		timerStruct.timerPeriod = SVDefaultTimerPeriod;
 		timerStruct.timerCallback.Bind(this, &SVSoftwareTriggerDevice::OnSoftwareTimer);
 		
-		m_timerList = boost::assign::map_list_of<HANDLE, SVSoftwareTimerStruct>
+		m_timerList = (boost::assign::map_list_of<HANDLE, SVSoftwareTimerStruct>
 			(reinterpret_cast<HANDLE>(1), timerStruct)
 			(reinterpret_cast<HANDLE>(2), timerStruct)
 			(reinterpret_cast<HANDLE>(3), timerStruct)
-			(reinterpret_cast<HANDLE>(4), timerStruct);
+			(reinterpret_cast<HANDLE>(4), timerStruct)).convert_to_container<TimerList>();
+
 
 		//SVMMTimer::Start();
 	}

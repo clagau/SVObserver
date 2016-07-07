@@ -22,6 +22,8 @@
 #include "SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLuminanceAnalyzerClass, SVLuminanceAnalyzerClassGuid );

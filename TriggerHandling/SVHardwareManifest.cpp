@@ -206,15 +206,15 @@ namespace Seidenader { namespace TriggerHandling {
 	bool SVHardwareManifest::IsCompatible( SVIMProductEnum ConfigType, SVIMProductEnum ProductType )
 	{
 		static SVIMProductCompatibilityList l_compatibleList = boost::assign::map_list_of<>
-		(SVIM_PRODUCT_X2_GD1A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
-		(SVIM_PRODUCT_X2_GD2A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
-		(SVIM_PRODUCT_X2_GD4A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
-		(SVIM_PRODUCT_X2_GD8A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
+			(SVIM_PRODUCT_X2_GD1A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
+			(SVIM_PRODUCT_X2_GD2A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
+			(SVIM_PRODUCT_X2_GD4A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
+			(SVIM_PRODUCT_X2_GD8A_COLOR, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
 
-		(SVIM_PRODUCT_X2_GD1A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
-		(SVIM_PRODUCT_X2_GD2A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
-		(SVIM_PRODUCT_X2_GD4A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A))
-		;
+			(SVIM_PRODUCT_X2_GD1A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
+			(SVIM_PRODUCT_X2_GD2A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>())
+			(SVIM_PRODUCT_X2_GD4A, boost::assign::list_of(SVIM_PRODUCT_X2_GD8A).convert_to_container<SVIMProductEnumSet>());
+
 
 		bool l_bRet = false;
 

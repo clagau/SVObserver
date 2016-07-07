@@ -20,6 +20,7 @@
 #include "SVCommandLibrary/SVCommandDataImage.h"
 #include "SVCommandLibrary/SVCommandDataValue.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 
 SVRemoteCommandData::SVRemoteCommandData()
 : m_Data()

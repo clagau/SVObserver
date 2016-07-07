@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVImageProcessingClass.h"
 #include "SVDataBuffer.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

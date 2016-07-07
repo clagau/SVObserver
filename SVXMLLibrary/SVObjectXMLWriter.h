@@ -23,8 +23,8 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-typedef std::tr1::shared_ptr<xml::writer> XMLWriterPtr;
-typedef std::tr1::shared_ptr<xml::element> XMLElementPtr;
+typedef std::shared_ptr<xml::writer> XMLWriterPtr;
+typedef std::shared_ptr<xml::element> XMLElementPtr;
 typedef std::deque<XMLElementPtr> Elements;
 class SVXMLEncryptionClass;
 #pragma endregion Declarations

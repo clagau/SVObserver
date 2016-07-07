@@ -52,6 +52,7 @@
 #include <ctime>			//Used by static library
 #include <deque>
 #include <map>				//Used by static library
+#include <memory>			//Used by static library
 #include <set>				//Used by static library
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library

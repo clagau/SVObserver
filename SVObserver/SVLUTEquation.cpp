@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVLUTEquation.h"
 #include "SVObserver.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLUTEquationClass, SVLUTEquationClassGuid );

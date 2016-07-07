@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header#include <memory>
 #include "SVDataManagerHandle.h"
 #include "DataManager.h"
 

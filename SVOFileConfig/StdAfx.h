@@ -61,6 +61,7 @@
 #include <ctime>			//Used by static library
 #include <deque>			//Used by static library
 #include <map>
+#include <memory>			//Used by static library
 #include <sequential_tree.h> //Used by static library
 #include <set>
 #include <sstream>			//Used by static library

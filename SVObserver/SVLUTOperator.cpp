@@ -16,6 +16,7 @@
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h" 
 #include "SVLUTEquation.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

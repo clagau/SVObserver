@@ -58,18 +58,19 @@ SVVisionProcessorHelper::SVVisionProcessorHelper()
 , m_lastMode(SVIM_MODE_UNKNOWN)
 
 {
-	m_GetItemsFunctors = boost::assign::map_list_of< SVString, SVGetItemsFunctor >
-		( StandardItems, boost::bind( &SVVisionProcessorHelper::GetStandardItems, this, _1, _2 ) )
-		( SvOl::FqnInspections, boost::bind( &SVVisionProcessorHelper::GetInspectionItems, this, _1, _2 ) )
-		( SvOl::FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2 ) )
-		;
 
-	m_SetItemsFunctors = boost::assign::map_list_of< SVString, SVSetItemsFunctor >
-		( StandardItems, boost::bind( &SVVisionProcessorHelper::SetStandardItems, this, _1, _2 ) )
-		( SvOl::FqnInspections, boost::bind( &SVVisionProcessorHelper::SetInspectionItems, this, _1, _2 ) )
-		( SvOl::FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2 ) )
-		( SvOl::FqnCameras, boost::bind( &SVVisionProcessorHelper::SetCameraItems, this, _1, _2 ) )
-		;
+	m_GetItemsFunctors = (boost::assign::map_list_of< SVString, SVGetItemsFunctor >
+		(StandardItems, boost::bind(&SVVisionProcessorHelper::GetStandardItems, this, _1, _2))
+		(SvOl::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, _1, _2))
+		(SvOl::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2))
+		).convert_to_container<SVGetItemsFunctorMap>() ;
+
+	m_SetItemsFunctors = (boost::assign::map_list_of< SVString, SVSetItemsFunctor >
+		(StandardItems, boost::bind(&SVVisionProcessorHelper::SetStandardItems, this, _1, _2))
+		(SvOl::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, _1, _2))
+		(SvOl::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2))
+		(SvOl::FqnCameras, boost::bind(&SVVisionProcessorHelper::SetCameraItems, this, _1, _2))
+		).convert_to_container<SVSetItemsFunctorMap>();
 }
 
 SVVisionProcessorHelper::~SVVisionProcessorHelper()

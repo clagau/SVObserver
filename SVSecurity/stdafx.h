@@ -67,6 +67,7 @@
 #include <io.h>
 #include <FCNTL.H>
 #include <map>				//Used by static library
+#include <memory>			//Used by static library
 #include <set>				//Used by static library
 #include <sequential_tree.h> //Used by static library
 #include <sstream>			//Used by static library

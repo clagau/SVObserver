@@ -16,6 +16,7 @@
 #include "SVCylindricalWarpDlg.h"
 #include "SVCylindricalWarpTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

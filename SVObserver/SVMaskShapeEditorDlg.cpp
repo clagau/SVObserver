@@ -712,7 +712,7 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 	for( iter = viewOrderedProperties.begin(); iter != viewOrderedProperties.end(); ++iter )
 	{
 		const SVMaskShape::MapType::key_type& key = (*iter)->first;
-		const SVMaskShape::MapType::referent_type& data = (*iter)->second;
+		const SVMaskShapeProperty& data = (*iter)->second;
 
 		SVValueObjectClass* pValueObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject( key );
 		ASSERT( pValueObject );

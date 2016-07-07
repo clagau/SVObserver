@@ -17,6 +17,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageProcessingClass.h"
 #include "SVObserver.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 DWORD WINAPI SVRemoteFontManager::SVRemoteFontCleanupThread( LPVOID lpParam )

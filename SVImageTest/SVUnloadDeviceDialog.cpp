@@ -10,6 +10,7 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
+#include "SVOMFCLibrary\SVDeviceParams.h"
 #include "svimagetest.h"
 #include "SVUnloadDeviceDialog.h"
 #pragma endregion Includes

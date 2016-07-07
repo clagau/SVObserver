@@ -13,6 +13,7 @@
 #include "SVObjectScriptParser.h"
 #include "SVParserProgressStruct.h"
 #include "ObjectInterfaces/SVUserMessage.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 
 unsigned long SVObjectScriptParserClass::GetParserHandle()
 {

@@ -55,13 +55,14 @@ namespace Seidenader
 		public:
 			RangeSelectorFilter(const SVString& rExcludePath)
 			: m_excludePath(rExcludePath)
-			, m_filter(boost::assign::list_of
+				, m_filter((boost::assign::list_of
 					(SVDWordValueObjectType)
 					(SVLongValueObjectType)
 					(SVDoubleValueObjectType)
 					(SVBoolValueObjectType)
 					(SVPointValueObjectType)
-					(SVByteValueObjectType))
+					(SVByteValueObjectType)).convert_to_container<std::set<SVObjectTypeEnum>>())
+
 			{
 			}
 

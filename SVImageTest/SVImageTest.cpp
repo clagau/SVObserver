@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVImageTest.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVImageTestDlg.h"

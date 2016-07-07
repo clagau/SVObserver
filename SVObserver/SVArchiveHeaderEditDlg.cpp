@@ -14,6 +14,8 @@
 #include "SVArchiveHeaderEditDlg.h"
 #include "afxdialogex.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 
 
 // SVArchiveHeaderEditDlg dialog

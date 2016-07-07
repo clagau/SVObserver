@@ -15,6 +15,7 @@
 #include "SVFillBlobDlg.h"
 
 #include "SVTaskObject.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

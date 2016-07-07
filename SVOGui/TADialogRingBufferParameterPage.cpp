@@ -163,7 +163,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		if(0 < name.GetLength())
 		{
 			SVStringSet nameSet;
-			nameSet.insert(name);
+			nameSet.insert(SVString(name));
 			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 		}
 

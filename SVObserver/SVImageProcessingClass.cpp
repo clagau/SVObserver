@@ -15,6 +15,7 @@
 #include "SVImageObjectClass.h"
 #include "SVMatroxImageProcessingClass.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 
 SVImageProcessingClass& SVImageProcessingClass::Instance()
 {

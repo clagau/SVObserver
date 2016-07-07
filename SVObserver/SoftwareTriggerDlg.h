@@ -27,8 +27,6 @@ namespace sv
 	};
 }
 
-typedef boost::function<void (SvTh::SVTriggerObject*)> DirtyHandler;
-
 class SVTriggerProxy
 {
 public:
@@ -135,12 +133,10 @@ private:
 	CButton				m_pauseBtn;
 
 	SVSpinGroup * m_spins;
-	DirtyHandler set_dirty;
 	CBrush * m_brush;
 
 public:
 	virtual BOOL OnInitDialog();
-	void SetDirtyHandler(DirtyHandler handler) { set_dirty = handler; }
 };
 
 // SVSpinGroup inline implementation

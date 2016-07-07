@@ -11,8 +11,9 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <boost/bind.hpp>
+#include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVFileAcquisitionDevice.h"
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferInterface.h"

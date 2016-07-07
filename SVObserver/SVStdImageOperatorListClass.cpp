@@ -17,6 +17,7 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "SVTool.h"
 #include "SVMatroxImageProcessingClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

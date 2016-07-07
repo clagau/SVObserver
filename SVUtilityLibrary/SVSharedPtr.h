@@ -15,15 +15,14 @@
 //Moved to precompiled header: #include <boost/tr1/memory.hpp>
 //Moved to precompiled header: #include <memory>
 #include "SVNullDeleter.h"
-
 ///////////////////////////////////////////////////////////////////////
 // A Ref counted Pointer class
 ///////////////////////////////////////////////////////////////////////
 template< typename Type >
-class SVSharedPtr : public std::tr1::shared_ptr< Type > 
+class SVSharedPtr : public std::shared_ptr< Type > 
 {
 public:
-	typedef typename std::tr1::shared_ptr< Type > SVBaseSharedRefPtr;
+	typedef typename std::shared_ptr< Type > SVBaseSharedRefPtr;
 	typedef typename std::auto_ptr< Type > SVAutoPtr;
 	typedef SVSharedPtr< Type > SVSharedRefPtr;
 	typedef Type Pointee;
@@ -66,6 +65,6 @@ public:
 
 	// Try to provide casting operator...
 	template<typename T>
-	operator std::tr1::shared_ptr<T>() const { return boost::dynamic_pointer_cast<T, Type>(this); }
+	operator std::shared_ptr<T>() const { return boost::dynamic_pointer_cast<T, Type>(this); }
 };
 

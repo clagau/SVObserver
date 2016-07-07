@@ -53,6 +53,7 @@
 #include <comdef.h>
 #include <comutil.h>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 

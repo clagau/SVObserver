@@ -10,6 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
+#include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVImageTest.h"
 #include "SVImageTestDlg.h"
 #include "SVTestAcquisitionClass.h"

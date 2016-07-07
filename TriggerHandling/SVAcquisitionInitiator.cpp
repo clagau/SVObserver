@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVAcquisitionInitiator.h"
 
@@ -160,4 +161,5 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 		return hr;
 	}
+
 } /* namespace TriggerHandling */ } /* namespace Seidenader */
