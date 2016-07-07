@@ -6,20 +6,25 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader
+#pragma region Includes
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
+#include "SVConfigurationTags.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVXmlLibrary/SVNavigateTree.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
+#pragma endregion Includes
+
+namespace Seidenader { namespace  SVXMLLibrary
 {
-	namespace Configuration
-	{
-		template<typename TreeType>
-		static HRESULT HasObsoleteItem(TreeType& rTree, CString& rItemType, int& errorCode);
+	template<typename TreeType>
+	static HRESULT HasObsoleteItem(TreeType& rTree, CString& rItemType, int& errorCode);
 	
 	
-		template< typename SVTreeType >
-		HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, CString& rItemType, int& errorCode );
+	template< typename SVTreeType >
+	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, CString& rItemType, int& errorCode );
 	
-	}
-}
+} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
 
 #include "ObsoleteItemChecker.inl"
 
-namespace SvOc = Seidenader::Configuration;
+namespace SvXml = Seidenader::SVXMLLibrary;

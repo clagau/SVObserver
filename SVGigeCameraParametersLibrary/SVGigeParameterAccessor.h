@@ -8,14 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:57:06  $
 //******************************************************************************
-
 #pragma once
-
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVGigeFeature.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
+#pragma endregion Includes
 
 struct SVGigeParameterAccessor
 {

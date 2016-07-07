@@ -9,13 +9,14 @@
 //* .Check In Date   : $Date:   01 Aug 2013 11:45:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 #include "SVJsonUtilities.h"
-
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
+#pragma endregion Includes
 
 HRESULT SVJsonUtilities::ConvertJsonValueToVariant( const Json::Value& p_rJsonValue, VARIANT& p_rVariant )
 {

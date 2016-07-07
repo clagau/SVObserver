@@ -11,18 +11,10 @@
 
 #pragma once
 
-#include <assert.h>
+#pragma region Includes
+//Moved to precompiled header: #include <assert.h>
+#pragma endregion Includes
 
-/**
-@SVObjectName Unique Identifier Generator
-
-@SVObjectOverview A class to generate ids it just keeps adding to the last id generated
-
-Note: it will roll over and when that happens, we are in big trouble! a better way might be to use a dynamic bitarray and track ids in use/free
-
-@SVObjectOperations
-
-*/
 template <typename Type, typename InvalidID, class GetNext>
 class SVUniqueIdGenerator
 {

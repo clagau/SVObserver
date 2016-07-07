@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:36:58  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
+#pragma endregion Includes
 
 class SVGigeStandardCameraFeatures
 {

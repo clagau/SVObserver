@@ -8,8 +8,8 @@
 #pragma once
 
 #pragma region Includes
-#include <set>
-#include <boost\assign\list_of.hpp>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <boost\assign\list_of.hpp>
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\IObjectClass.h"
 #include "SVUtilityLibrary\SVString.h"

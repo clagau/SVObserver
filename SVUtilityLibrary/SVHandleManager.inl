@@ -8,7 +8,6 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:22:12  $
 //******************************************************************************
-#include "SVHandleManager.h"
 
 template<long NumBits, typename HandleType, HandleType InvalidHandle>
 SVHandleManager<NumBits, HandleType, InvalidHandle>::SVHandleManager()

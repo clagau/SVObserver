@@ -8,8 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:46:28  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeDeviceParameterStruct.h"
+#pragma endregion Includes
 
 SVGigeDeviceParameterStruct::SVGigeDeviceParameterStruct(const SVString& p_name, VARTYPE p_dataType, const SVGigeParameterAccessor& p_accessor)
 : name(p_name), dataType(p_dataType), accessor(p_accessor)

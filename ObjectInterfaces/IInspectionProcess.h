@@ -4,8 +4,8 @@
 //******************************************************************************
 /// Interface class for class inspection process
 //******************************************************************************
-
 #pragma once
+
 #pragma region Includes
 #include "IObjectClass.h"
 #include "ITaskObject.h"

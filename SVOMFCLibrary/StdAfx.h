@@ -45,14 +45,16 @@
 //************************************
 #pragma region Precompiled Headers
 #include <afx.h>
-#include <afxwin.h>
-#include <afxtempl.h>
 #include <afxole.h>
+#include <afxstr.h>
+#include <afxtempl.h>
+#include <afxwin.h>
 
 #include <algorithm>
 #include <cmath>
 #include <comutil.h>
 #include <ctime>			//Used by static library
+#include <direct.h>
 #include <float.h>
 #include <io.h>
 #include <iostream>

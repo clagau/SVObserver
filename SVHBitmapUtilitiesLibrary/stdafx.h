@@ -47,12 +47,14 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <assert.h>
 #include <ctime>			//Used by static library
 #include <comutil.h>		//Used by static library
 #include <comdef.h>
 #include <iterator>
 #include <limits>
 #include <map>				//Used by static library
+#include <math.h>
 #include <set>
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library

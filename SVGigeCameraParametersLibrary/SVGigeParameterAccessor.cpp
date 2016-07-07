@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:57:04  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
@@ -15,6 +16,7 @@
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
+#pragma endregion Includes
 
 // This Method uses the default Setter and getter
 SVGigeParameterAccessor::SVGigeParameterAccessor(const SVGigeFeature& rFeature)

@@ -8,14 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 13:15:10  $
 //******************************************************************************
-
 #pragma once
 
-#include <comdef.h>
-#include <set>
-#include <string>
-
+#pragma region Includes
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <string>
 #include "JsonLib/include/json.h"
+#pragma endregion Includes
 
 namespace SVJsonUtilities
 {

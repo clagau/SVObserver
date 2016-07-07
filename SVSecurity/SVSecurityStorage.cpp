@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   02 Oct 2013 10:00:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <msxml6.h>
 #include "SVSecurityStorage.h"
-
 #include "SVMessage/SVMessage.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
@@ -21,7 +21,7 @@
 #include "SVXMLLibrary/SaxEncryptionHandler.h"
 #include "SVStatusLibrary/CommandLineArgs.h"
 #include "SVXMLLibrary/TreeToXml.h"
-#include <boost/algorithm/string/replace.hpp>
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE

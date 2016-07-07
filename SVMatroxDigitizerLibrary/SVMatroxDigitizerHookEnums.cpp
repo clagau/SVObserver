@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVMatroxDigitizerHookEnums.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h" // for SV_CURRENT_MIL_VERSION define
 

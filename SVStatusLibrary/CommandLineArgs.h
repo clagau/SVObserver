@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include <string>
+//Moved to precompiled header: #include <string>
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2013 19:36:48  $
 //******************************************************************************
+#pragma region Includes
 #include "StdAfx.h"
 #import <msxml6.dll> raw_interfaces_only 
 //Moved to precompiled header: #include <string>
@@ -22,6 +23,7 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/StringToEnum.h"
 #include "SVGigeCameraDBContent.h"
+#pragma endregion Includes
 
 typedef std::wstring WString;
 

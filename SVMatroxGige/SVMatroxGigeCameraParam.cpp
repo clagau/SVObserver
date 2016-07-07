@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:42  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeCameraParam.h"
+#pragma endregion Includes
 
 SVMatroxGigeCameraParam::SVMatroxGigeCameraParam(int p_ParameterID, int p_ParameterTypeID, _variant_t& p_rValue)
 : m_ParameterID(p_ParameterID), m_ParameterTypeID(p_ParameterTypeID), m_value(p_rValue)

@@ -8,13 +8,16 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:39:06  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxGigeBufferStruct.h"
+#pragma endregion Includes
 
 template <SVMatroxBufferAttributeEnum Attribute>
 class SVMatroxGigeBufferCreator

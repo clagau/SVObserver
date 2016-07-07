@@ -7,7 +7,7 @@
 //******************************************************************************
 #pragma once
 
-#include <boost/noncopyable.hpp>
+//Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "ObjectInterfaces/ITaskObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVString.h"

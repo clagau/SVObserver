@@ -8,8 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:46:34  $
 //******************************************************************************
+#pragma region Includes
 #include "Stdafx.h"
 #include "SVGigeEmptyGetter.h"
+#pragma endregion Includes
 
 HRESULT SVGigeEmptyGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 {

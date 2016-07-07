@@ -8,8 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:46  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeFeature.h"
+#pragma endregion Includes
 
 SVGigeFeature::SVGigeFeature(const SVString& p_name, SVMatroxDigitizerFeature::SVFeatureTypeEnum p_featureType)
 : m_name(p_name), m_featureType(p_featureType), m_supported(SVGigeFeature::Supported), m_access(SVGigeFeature::ReadWrite)

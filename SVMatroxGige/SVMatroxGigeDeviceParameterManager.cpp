@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:42:16  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeDigitizer.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
@@ -15,6 +16,7 @@
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVGigeStandardCameraFeatures.h"
 #include "SVGigeCameraDatabase.h"
+#pragma endregion Includes
 
 const SVGigeDeviceParameterMap& SVMatroxGigeDeviceParameterManager::GetParameterMap()
 {

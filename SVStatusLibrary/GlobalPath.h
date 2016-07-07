@@ -6,8 +6,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <windows.h>
-#include <winnt.h>
+//Moved to precompiled header: #include <windows.h>
+//Moved to precompiled header: #include <winnt.h>
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 

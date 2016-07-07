@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:43:56  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeDigitizer.h"
 #include "SVGigeCameraParametersLibrary/SVGigeCameraDBParser.h"
+#pragma endregion Includes
 
 #define NUM_ACQUISITION_BUFFERS 5
 

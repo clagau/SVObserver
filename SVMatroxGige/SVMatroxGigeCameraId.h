@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:38  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 struct SVMatroxGigeCameraId
 {

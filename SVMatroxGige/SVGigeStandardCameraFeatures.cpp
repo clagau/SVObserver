@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   12 Jun 2013 15:13:24  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
-#include <comdef.h>
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVGigeStandardCameraFeatures.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
 #include "SVGigeCameraParametersLibrary/SVGigeFeature.h"
@@ -21,6 +22,7 @@
 #include "SVGigeCameraParametersLibrary/SVGigeLUTGetter.h"
 #include "SVGigeCameraParametersLibrary/SVGigeReadSerialNumber.h"
 #include "SVGigeCameraParametersLibrary/SVGigeReadIPAddress.h"
+#pragma endregion Includes
 
 struct SVGigeTriggerLineGet
 {

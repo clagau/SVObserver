@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
 #include "SVGigeFeatureSelector.h"
 #include "SVGigeFeatureStringEnumList.h"
+#pragma endregion Includes
 
 class SVGigeFeature
 {

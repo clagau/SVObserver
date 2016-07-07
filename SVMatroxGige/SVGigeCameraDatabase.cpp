@@ -8,10 +8,12 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   01 Oct 2013 10:49:00  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/assign/list_of.hpp>
+//Moved to precompiled header: #include <boost/config.hpp>
+//Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVGigeCameraDatabase.h"
+#pragma endregion Includes
 
 // Enum to Diplay Name String mapping
 const SVGigeCameraDatabase::SVGigeEnumToString SVGigeCameraDatabase::m_enumToString = boost::assign::map_list_of<>

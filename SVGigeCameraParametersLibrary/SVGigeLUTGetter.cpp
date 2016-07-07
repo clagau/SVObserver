@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:55:04  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeLutGetter.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
+#pragma endregion Includes
 
 HRESULT SVGigeLUTGetter::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 

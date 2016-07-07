@@ -8,8 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:54  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeCameraParamList.h"
+#pragma endregion Includes
 
 SVMatroxGigeCameraParamList::SVMatroxGigeCameraParamList() 
 : m_bUseTransient(false) 

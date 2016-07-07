@@ -6,11 +6,10 @@
 //******************************************************************************
 #pragma once
 
-
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <sstream>
 #include "SVXMLMaterialsTree.h"
-#include <sstream>
 #include "SVObjectXMLWriter.h"
 #pragma endregion Includes
 

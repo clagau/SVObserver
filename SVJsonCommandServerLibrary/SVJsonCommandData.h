@@ -11,8 +11,10 @@
 
 #pragma once
 
-#include <string>
+#pragma region Includes
+//Moved to precompiled header: #include <string>
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
 struct SVJsonCommandData
 {

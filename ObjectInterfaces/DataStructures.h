@@ -7,9 +7,9 @@
 #pragma once
 
 #pragma region Includes
-#include <set>
-#include <vector>
-#include <tuple> 
+//Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <tuple>
 #include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes

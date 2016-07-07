@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:24  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <utility>
 #include "SVUtilityLibrary/SVHandleManager.h"
+#pragma endregion Includes
 
 template <int MaxHandles, typename HandleType, HandleType InvalidHandle, typename value_type>
 class SVMatroxGigeHandleList

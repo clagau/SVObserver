@@ -52,6 +52,7 @@
 
 #include <algorithm>
 #include <assert.h>
+#include <bitset>
 #include <cassert>
 #include <comdef.h>
 #include <comutil.h>

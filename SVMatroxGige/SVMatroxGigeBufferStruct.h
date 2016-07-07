@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:22  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <deque>
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
 typedef SVSharedPtr<SVMatroxBuffer> SVMatroxBufferRef;
 

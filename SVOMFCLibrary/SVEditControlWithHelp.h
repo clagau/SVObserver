@@ -14,7 +14,7 @@
 #pragma once
 
 #pragma region Includes
-#include <afxstr.h>
+//Moved to precompiled header: #include <afxstr.h>
 #pragma endregion Includes
 
 namespace Seidenader

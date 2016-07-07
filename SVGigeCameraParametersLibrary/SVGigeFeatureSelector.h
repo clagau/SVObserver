@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:54  $
 //******************************************************************************
-
 #pragma once
 
-#include <comdef.h>
+#pragma region Includes
+//Moved to precompiled header: #include <comdef.h>
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVGigeFeatureSelector
 {

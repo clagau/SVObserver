@@ -8,7 +8,6 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 15:22:50  $
 //******************************************************************************
-
 #pragma once
 
 #pragma region Includes

@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <numeric>
+//Moved to precompiled header: #include <numeric>
 #include "SVTADlgArchiveResultsPage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"

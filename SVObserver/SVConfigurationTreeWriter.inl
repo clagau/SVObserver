@@ -11,15 +11,7 @@
 
 #pragma once
 
-#pragma region Includes
-#include <map>
-#include <boost/foreach.hpp>
-#include <boost/assign/list_of.hpp>
-#include "SVUtilityLibrary/SVStringConversions.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVConfigurationTreeWriter.h"
-#pragma endregion
+//Includes for inl files are placed in the .h file
 
 template< typename SVTreeType >
 SVConfigurationTreeWriter< SVTreeType >::SVConfigurationTreeWriter(SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent)

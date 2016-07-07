@@ -62,14 +62,14 @@
     <None Include="SVMatroxGige.def">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="SVMatroxGigeBufferCreator.inl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="SVMatroxGigeHandleList.inl">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="res\SVMatroxGige.rc2">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVMatroxGigeBufferCreator.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVMatroxGigeHandleList.inl">
+      <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

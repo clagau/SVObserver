@@ -4,7 +4,6 @@
 //******************************************************************************
 /// IEquation is the interface to the SVEquationClass for the GUI.
 //******************************************************************************
-
 #pragma once
 
 #pragma region Includes

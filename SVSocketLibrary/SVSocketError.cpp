@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include <winsock2.h>
+//Moved to precompiled header: #include <winsock2.h>
 #include "SVSocketError.h"
 #pragma endregion Includes
 

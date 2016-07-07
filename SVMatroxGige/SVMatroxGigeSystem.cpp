@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:34  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeSystem.h"
+#pragma endregion Includes
 
 SVMatroxGigeSystem::SVMatroxGigeSystem()
 : m_Handle(0xFF)

@@ -8,10 +8,10 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/noncopyable.hpp>
-#include <atlbase.h>
-#include <afxctl.h>
-#include <Guiddef.h>
+//Moved to precompiled header: #include <boost/noncopyable.hpp>
+//Moved to precompiled header: #include <atlbase.h>
+//Moved to precompiled header: #include <afxctl.h>
+//Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"

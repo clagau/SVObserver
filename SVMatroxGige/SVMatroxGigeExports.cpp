@@ -8,7 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:12  $
 //******************************************************************************
-
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVMatroxGigeExports.h"
 #include "SVMatroxGigeApp.h"
@@ -17,6 +17,7 @@
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVImageLibrary/SVLut.h"
+#pragma endregion Includes
 
 // General Export Functions
 

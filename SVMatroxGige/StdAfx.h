@@ -56,6 +56,7 @@
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>
 
+#include <bitset>			//Used by static library
 #include <ctime>			//Used by static library
 #include <comdef.h>
 #include <deque>

@@ -8,12 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:46:20  $
 //******************************************************************************
+#pragma region Includes
 #include "Stdafx.h"
 #import <msxml6.dll> raw_interfaces_only 
 #include "SVSystemLibrary/SVSAXErrorHandlerImpl.h"
 #include "SVSystemLibrary/SVSAXContentHandlerImpl.h"
 #include "SVGigeCameraDBParser.h"
 #include "SVGigeCameraDBContent.h"
+#pragma endregion Includes
 
 HRESULT SVGigeCameraDBParser::Parse(BSTR data, SVGigeDeviceParameterMap& params)
 {

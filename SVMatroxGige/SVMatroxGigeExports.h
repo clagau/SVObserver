@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:18  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "TriggerHandling/SVCallbackStruct.h"
+#pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
 

@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "GlobalPath.h"
 #include "CommandLineArgs.h"
-#include <limits.h>
+//Moved to precompiled header: #include <limits.h>
 #pragma endregion Includes
 
 

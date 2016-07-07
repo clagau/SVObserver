@@ -2722,7 +2722,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				}
 				CString itemType;
 				int errorCode(0);
-				hr = SvOc::CheckObsoleteItems( XMLTree, configVer, itemType, errorCode );
+				hr = SvXml::CheckObsoleteItems( XMLTree, configVer, itemType, errorCode );
 				if (hr & SV_ERROR_CONDITION)
 				{
 					if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )

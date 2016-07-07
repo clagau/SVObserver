@@ -72,6 +72,7 @@
 #include <sstream>
 #include <string>
 #include <tchar.h>			//Used by static library
+#include <tuple>			//Used by static library
 #include <vector>
 
 #include <boost/any.hpp>

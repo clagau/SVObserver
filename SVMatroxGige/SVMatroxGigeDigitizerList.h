@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:06  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxGigeDigitizer.h"
 #include "SVMatroxGigeHandleList.h"
+#pragma endregion Includes
 
 namespace
 {

@@ -11,7 +11,9 @@
 
 #pragma once
 
-#include <map>
+#pragma region Includes
+//Moved to precompiled header: #include <map>
+#pragma endregion Includes
 
 class SVRPropTreeState  
 {

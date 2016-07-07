@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:36  $
 //******************************************************************************
-
 #pragma once
 
-#include <comdef.h>
+#pragma region Includes
+//Moved to precompiled header: #include <comdef.h>
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
 #include "SVGigeFeature.h"
+#pragma endregion Includes
 
 // Note: SafeArray must be allocated to the proper dimension for the camera
 // LUTEnable must be set prior to getting the Lut values

@@ -8,9 +8,9 @@
 //* .Current Version : $Revision:   1.6  $
 //* .Check In Date   : $Date:   01 Dec 2014 12:28:58  $
 //******************************************************************************
-
+#pragma region Includes
 #include "StdAfx.h"
-#include <map>
+//Moved to precompiled header: #include <map>
 #include "SVMatroxGige.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h" // for SV_CURRENT_MIL_VERSION define
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
@@ -30,6 +30,7 @@
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#pragma endregion Includes
 
 // helpers for System/Digitizer Handles
 #define SV_MAKE_MATROXGIGE_SYSTEM_DIGITIZER_HANDLE( SystemHandle, DigitizerHandle ) \

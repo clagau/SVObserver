@@ -8,10 +8,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <boost/tokenizer.hpp>
+//Moved to precompiled header: #include <string>
 #include "CommandLineArgs.h"
-#include <boost/tokenizer.hpp>
-#include <string>
-
 #pragma endregion Includes
 
 

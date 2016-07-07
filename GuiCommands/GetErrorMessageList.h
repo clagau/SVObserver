@@ -7,8 +7,8 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/noncopyable.hpp>
-#include <Guiddef.h>
+//Moved to precompiled header: #include <boost/noncopyable.hpp>
+//Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "SVUtilityLibrary/SVGUID.h"

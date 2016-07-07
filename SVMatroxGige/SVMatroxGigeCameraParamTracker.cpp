@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   22 Apr 2013 15:36:04  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeCameraParamTracker.h"
 #include "SVMatroxGigeDigitizer.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
+#pragma endregion Includes
 
 void SVMatroxGigeCameraParamTracker::Clear()
 {

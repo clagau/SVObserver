@@ -11,8 +11,8 @@
 //Utilities.h moved from SVCmnLib to SVOMFCLibrary 
 
 #include "stdafx.h"
-#include <direct.h>
-#include <tchar.h>
+//Moved to precompiled header: #include <direct.h>
+//Moved to precompiled header: #include <tchar.h>
 #include "utilities.h"
 
 

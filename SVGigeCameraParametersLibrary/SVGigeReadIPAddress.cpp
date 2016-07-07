@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   12 Jun 2013 15:01:40  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeReadIPAddress.h"
+#pragma endregion Includes
 
 HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 

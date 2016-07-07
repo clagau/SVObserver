@@ -6,9 +6,10 @@
 // This is the typedef for the DependencyList
 //******************************************************************************
 #pragma once
+
 #pragma region Includes
-#include <utility>
-#include <deque>
+//Moved to precompiled header: #include <utility>
+//Moved to precompiled header: #include <deque>
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 

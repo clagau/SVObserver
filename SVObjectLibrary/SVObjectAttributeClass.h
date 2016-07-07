@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <vector>
+//Moved to precompiled header: #include <vector>
 #include "SVObjectPointArrayClass.h"
 #include "SVObjectScriptEnums.h"
 #include "SVObjectDPointArrayClass.h"

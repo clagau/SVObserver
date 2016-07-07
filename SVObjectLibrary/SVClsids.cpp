@@ -10,8 +10,7 @@
 //******************************************************************************
 
 #pragma region Includes
-#include <stdafx.h>
-#include <guiddef.h>
+#include "stdafx.h"
 #include "SVClsids.h"
 #pragma endregion Includes
 

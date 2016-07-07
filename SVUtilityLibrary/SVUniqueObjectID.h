@@ -11,7 +11,10 @@
 
 #pragma once
 
-#include <list>
+#pragma region Includes
+//Moved to precompiled header: #include <list>
+#pragma endregion Includes
+
 /**
 @SVObjectName Unique Object Identifier
 

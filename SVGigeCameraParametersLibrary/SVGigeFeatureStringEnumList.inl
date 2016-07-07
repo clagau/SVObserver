@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:55:02  $
 //******************************************************************************
 
-#include "SVGigeFeatureStringEnumList.h"
-
 template< typename _Iter>
 SVGigeFeatureStringEnumList::SVGigeFeatureStringEnumList(_Iter first, _Iter last)
 {

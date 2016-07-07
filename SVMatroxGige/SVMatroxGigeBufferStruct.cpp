@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:38:24  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeBufferStruct.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#pragma endregion Includes
 
 SVMatroxGigeBufferStruct::SVMatroxGigeBufferStruct()
 : m_ulWidth(640)

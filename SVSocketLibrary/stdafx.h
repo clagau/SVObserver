@@ -40,6 +40,7 @@
 #include <string>
 #include <tchar.h>
 #include <vector>
+#include <winsock2.h>
 
 #include <boost/bind.hpp>
 #include <boost/function.hpp>

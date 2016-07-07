@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include <winsock2.h>
+//Moved to precompiled header: #include <winsock2.h>
 #include <Mstcpip.h>
 #pragma endregion Includes
 

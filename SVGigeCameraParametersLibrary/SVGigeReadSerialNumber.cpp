@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:57:08  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeReadSerialNumber.h"
+#pragma endregion Includes
 
 HRESULT SVGigeReadSerialNumber::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 

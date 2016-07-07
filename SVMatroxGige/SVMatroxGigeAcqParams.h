@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:38:50  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerGrabEnums.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
+#pragma endregion Includes
 
 namespace SVMatroxGigeTrigger
 {

@@ -7,8 +7,8 @@
 #pragma once
 
 #pragma region Includes
-#include <deque>
-#include <utility>
+//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <utility>
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 

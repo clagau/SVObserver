@@ -8,8 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:56  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeFeatureStringEnumList.h"
+#pragma endregion Includes
 
 SVGigeFeatureStringEnumList::SVGigeFeatureStringEnumList()
 {

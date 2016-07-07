@@ -8,12 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:40  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxLibrary/SVMatroxSystemRef.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxGigeDigitizerList.h"
+#pragma endregion Includes
 
 class SVMatroxGigeSystem
 {

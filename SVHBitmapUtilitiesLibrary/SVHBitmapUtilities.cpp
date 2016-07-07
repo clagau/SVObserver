@@ -12,8 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVHBitmapUtilities.h"
-#include <assert.h>
-#include <math.h>
+//Moved to precompiled header: #include <assert.h>
+//Moved to precompiled header: #include <math.h>
 #pragma endregion Includes
 
 /**

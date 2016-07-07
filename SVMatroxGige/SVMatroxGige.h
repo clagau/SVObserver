@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   01 Oct 2013 10:49:00  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVImageLibrary/SVLut.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "TriggerHandling/SVCallbackStruct.h"
 #include "SVTriggerLibrary/SVInternalTrigger.h"
 #include "SVTriggerLibrary/SVTriggerCallbackMap.h"
+#pragma endregion Includes
 
 #include "SVMatroxGigeExports.h"
 #include "SVMatroxGigeDigitizer.h"

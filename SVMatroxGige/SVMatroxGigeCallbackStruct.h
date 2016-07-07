@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   08 May 2013 15:22:46  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <deque>
 #include "SVTimerLibrary/SVClock.h"
+#pragma endregion Includes
 
 struct SVMatroxGigeCallbackStruct
 {

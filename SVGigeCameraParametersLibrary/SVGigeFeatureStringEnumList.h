@@ -8,11 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:58  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
 #include "SVContainerLibrary/SVBidirectionalMap.h"
+#pragma endregion Includes
 
 typedef SVString SVDeviceParamString;
 typedef SVString SVGigeFeatureString;

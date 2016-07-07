@@ -4,11 +4,10 @@
 //******************************************************************************
 /// Interface class for task object class
 //******************************************************************************
-
 #pragma once
 
 #pragma region Includes
-#include <boost\function.hpp>
+//Moved to precompiled header: #include <boost\function.hpp>
 #include "IObjectClass.h"
 #include "ISelectorItemVector.h"
 #include "SVObjectTypeInfoStruct.h"

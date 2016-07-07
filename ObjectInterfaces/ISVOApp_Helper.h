@@ -4,12 +4,7 @@
 //******************************************************************************
 /// This file defines function to get access to data from SVObserverApp
 //******************************************************************************
-
 #pragma once
-
-#pragma region Includes
-#pragma endregion Includes
-
 
 namespace Seidenader
 {

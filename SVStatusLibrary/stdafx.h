@@ -47,6 +47,7 @@
 //************************************
 #pragma region Precompiled Headers
 #include <windows.h>
+#include <winnt.h>
 
 #include <atltime.h>
 #include <ctime>
@@ -54,6 +55,7 @@
 #include <direct.h>
 #include <exception>
 #include <iterator>
+#include <limits.h>
 #include <map>
 #include <set>					//Used by static library
 #include <string>				//Used by static library
@@ -62,6 +64,7 @@
 
 #include <boost\assign\list_of.hpp>
 #include <boost\assign\std\map.hpp>
+#include <boost\tokenizer.hpp>
 #pragma endregion Precompiled Headers
 
 

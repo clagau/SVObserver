@@ -11,7 +11,9 @@
 
 #pragma once
 
-#include <bitset>
+#pragma region Includes
+//Moved to precompiled header: #include <bitset>
+#pragma endregion Includes
 
 template<long NumBits, typename HandleType, HandleType InvalidHandle>
 class SVHandleManager

@@ -8,19 +8,18 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
-
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVUtilityLibrary/SVGUID.h"
-
 #include "SVJsonCommandData.h"
 #include "SVJsonCommandServer.h"
+#pragma endregion Includes
 
 template< typename SVCommandProcessor >
 class SVJsonCommandManager

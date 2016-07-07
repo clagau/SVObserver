@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   12 Jun 2013 15:02:02  $
 //******************************************************************************
-
 #pragma once
 
-#include <comdef.h>
+#pragma region Includes
+//Moved to precompiled header: #include <comdef.h>
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVGigeFeature.h"
+#pragma endregion Includes
 
 struct SVGigeReadIPAddress
 {

@@ -9,12 +9,6 @@
 //* .Check In Date   : $Date:   01 Dec 2014 12:22:52  $
 //******************************************************************************
 
-#pragma once
-
-#include <boost/bind.hpp>
-
-#include "SVJsonCommandManager.h"
-
 template< typename SVCommandProcessor >
 SVJsonCommandManager< SVCommandProcessor >::SVJsonCommandManager()
 : m_SocketServer(), m_ProcessingAsyncCommand( 0 ), m_JsonCommandDataPtr(), m_AsyncProcedure()

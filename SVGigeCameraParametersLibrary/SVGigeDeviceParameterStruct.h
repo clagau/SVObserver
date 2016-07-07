@@ -11,12 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVGigeEnums.h"
 #include "SVGigeParameterAccessor.h"
+#pragma endregion Includes
 
 struct SVGigeDeviceParameterStruct
 {

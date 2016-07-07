@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:44:28  $
 //******************************************************************************
 
-#include "SVMatroxGigeHandleList.h"
-
 template <int MaxHandles, typename HandleType, HandleType InvalidHandle, typename value_type>
 HRESULT SVMatroxGigeHandleList<MaxHandles, HandleType, InvalidHandle, value_type>::Add(value_type& rValue)
 {

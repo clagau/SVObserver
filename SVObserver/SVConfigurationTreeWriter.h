@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/foreach.hpp>
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>

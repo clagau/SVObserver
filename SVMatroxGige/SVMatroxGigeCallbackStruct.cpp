@@ -8,9 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:41:26  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeCallbackStruct.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE

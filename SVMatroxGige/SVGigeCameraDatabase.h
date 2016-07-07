@@ -8,14 +8,15 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:36:48  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <comdef.h>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
+#pragma endregion Includes
 
 typedef std::deque<_bstr_t> SVGigeEnumNameList;
 

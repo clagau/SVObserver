@@ -50,6 +50,7 @@
 #include <tchar.h>
 
 #include <comutil.h>		//Used by static library
+#include <comdef.h>
 #include <ctime>			//Used by static library
 #include <deque>
 #include <fstream>

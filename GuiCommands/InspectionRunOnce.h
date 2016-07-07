@@ -9,7 +9,7 @@
 #pragma once
 
 #pragma region Includes
-#include <boost/noncopyable.hpp>
+//Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "ObjectInterfaces\IObjectManager.h"

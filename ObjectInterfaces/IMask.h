@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include <comdef.h>
+//Moved to precompiled header: #include <comdef.h>
 #include "ObjectInterfaces\ISVImage.h"
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes

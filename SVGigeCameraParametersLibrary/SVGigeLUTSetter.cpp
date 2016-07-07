@@ -8,10 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:56:58  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeLutSetter.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
+#pragma endregion Includes
 
 // Note: SafeArray must be allocated to the proper dimension for the camera
 // LUTEnable must be set prior to setting the Lut values

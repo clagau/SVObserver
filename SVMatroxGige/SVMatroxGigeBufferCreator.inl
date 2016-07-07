@@ -9,10 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:39:12  $
 //******************************************************************************
 
-#include "SVMatroxGigeBufferCreator.h"
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-
 template <SVMatroxBufferAttributeEnum Attribute>
 SVMatroxGigeBufferCreator<Attribute>::SVMatroxGigeBufferCreator()
 {

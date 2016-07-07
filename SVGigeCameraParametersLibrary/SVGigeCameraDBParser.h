@@ -10,7 +10,9 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVGigeDeviceParameterStruct.h"
+#pragma endregion Includes
 
 class SVGigeCameraDBParser
 {

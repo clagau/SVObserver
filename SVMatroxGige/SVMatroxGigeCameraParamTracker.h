@@ -8,13 +8,14 @@
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   22 Apr 2013 15:36:04  $
 //******************************************************************************
-
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxGigeCameraParam.h"
 #include "SVMatroxGigeCameraParamList.h"
+#pragma endregion Includes
 
 class SVMatroxGigeDigitizer;
 
