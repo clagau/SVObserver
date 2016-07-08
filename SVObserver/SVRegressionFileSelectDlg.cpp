@@ -20,6 +20,11 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
+#pragma region Declarations
+static const int PathBufferLen = MAX_PATH +2;
+static const int MaxNumberCameraEntries = 4;
+#pragma endregion Declarations 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -77,10 +82,20 @@ void CSVRegressionFileSelectDlg::SetDlgTitle( LPCTSTR lpszTitle )
 
 void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles() 
 {
-	//get last regression path from registry...
+	
+	int CameraNumber(0); 
+	int  Pos = m_strCaption.ReverseFind(_T('_'));
+	if(Pos != -1)
+	{		
+		CString sTemp = m_strCaption.Mid(Pos +1);
+		CameraNumber = _ttoi(sTemp.GetString());
+		CameraNumber = CameraNumber %  MaxNumberCameraEntries; 
+	}
+	//get last regression path for this camera from registry...
 	CString sFilePath;
-
-	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), _T("LastPath"), SvStl::GlobalPath::Inst().GetTempPath().c_str());
+	CString KeyName;
+	KeyName.Format(_T("LastPath_%i"), CameraNumber);
+	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), KeyName.GetString(), SvStl::GlobalPath::Inst().GetTempPath().c_str());
 
 	CString	csFileExtensionFilterList = _T("BMP's (*.bmp)|*.bmp||");
 	static TCHAR szFilter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
@@ -88,6 +103,8 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, szFilter, nullptr);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 
+	TCHAR FileName[PathBufferLen];
+	_tcscpy_s(FileName,PathBufferLen,m_sRegTestFiles.GetString()); 
 	if ( m_sRegTestFiles.IsEmpty() )
 	{
 		//nothing has been set... use what is in the registry
@@ -95,7 +112,10 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	}
 	else
 	{
-		dlg.m_ofn.lpstrInitialDir = m_sRegTestFiles.operator LPCTSTR();
+		///seting lpstrFile instead of lpstrInitialDir avoids strange Windows7 behaviour of CFileDialog
+		dlg.m_ofn.lpstrFile = 	FileName;
+		dlg.m_ofn.nMaxFile = PathBufferLen;
+		dlg.m_ofn.lpstrInitialDir =nullptr;
 	}
 
 	if ( dlg.DoModal() == IDOK)
@@ -115,7 +135,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 			{
 				//only write out registry entry if the path is not empty.
 				CString sTmpDirName = m_sRegTestFiles.Left(iPos);
-				AfxGetApp()->WriteProfileString(_T("RegressionTest"), _T("LastPath"), sTmpDirName);
+				AfxGetApp()->WriteProfileString(_T("RegressionTest"),  KeyName.GetString(), sTmpDirName);
 			}
 		}
 	}
