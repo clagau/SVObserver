@@ -245,9 +245,6 @@ static void PersistDocument(const SVGUID& inspectionGuid, SVObjectWriter& rWrite
 		// Save the View Placements
 		pDoc->SaveViewPlacements(rWriter);
 
-		// Save Conditional History
-		pDoc->SaveConditionalHistory(rWriter);
-
 		// Save Tool Groupings
 		pDoc->SaveToolGroupings(rWriter);
 

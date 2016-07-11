@@ -61,13 +61,6 @@ SVStaticStringValueObjectClass::~SVStaticStringValueObjectClass()
 	CreateBuckets();
 }
 
-BOOL SVStaticStringValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
-{
-	BOOL bCreate = base::CreateObject( pCreateStructure );
-	SetBits( ObjectAttributesAllowedRef(), SV_CH_CONDITIONAL, false);	// Strings not allowed as conditional history conditionals
-	return bCreate;
-}
-
 void SVStaticStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
@@ -254,7 +247,7 @@ void SVStaticStringValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVStringValueObjectType;
 	
-	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_CH_VALUE | SV_DD_VALUE;
+	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE;
 	m_strTypeName = "Text";
 
 	InitializeBuckets();

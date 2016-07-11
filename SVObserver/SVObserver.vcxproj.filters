@@ -143,12 +143,6 @@
     <ClCompile Include="SVCommandStreamManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVConditionalHistory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVConditionalHistorySheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVConfigurationObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -294,12 +288,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVImageArithmetic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVImageBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVImageBufferStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVImageChildStruct.cpp">
@@ -1419,12 +1407,6 @@
     <ClInclude Include="SVCommandStreamManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVConditionalHistory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVConditionalHistorySheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVConfigurationObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1584,9 +1566,6 @@
     <ClInclude Include="SVImageBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageBufferStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVImageChildStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1627,9 +1606,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVInspectionProcessResetStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInspectionProcessTransactions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVInspectionTreeParser.h">
@@ -2065,9 +2041,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVROIFigureEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVScalarValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSetupDialogManager.h">

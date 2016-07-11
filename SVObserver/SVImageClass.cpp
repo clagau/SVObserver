@@ -64,7 +64,7 @@ BOOL SVImageClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 	l_bOk &= ( S_OK == UpdateFromToolInformation() );
 	l_bOk &= ( S_OK == UpdateBufferArrays() );
 
-	ObjectAttributesAllowedRef() |= SV_PUBLISH_RESULT_IMAGE | SV_CH_IMAGE | SV_DD_IMAGE;	// add this on older configs
+	ObjectAttributesAllowedRef() |= SV_PUBLISH_RESULT_IMAGE | SV_DD_IMAGE;	// add this on older configs
 	
 	m_isCreated = l_bOk;
 	
@@ -164,7 +164,7 @@ void SVImageClass::init()
 	
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
-	ObjectAttributesAllowedRef() = SV_ARCHIVABLE_IMAGE | SV_PUBLISH_RESULT_IMAGE | SV_CH_IMAGE | SV_DD_IMAGE;
+	ObjectAttributesAllowedRef() = SV_ARCHIVABLE_IMAGE | SV_PUBLISH_RESULT_IMAGE | SV_DD_IMAGE;
 
 	m_ParentImageInfo.second = nullptr;
 

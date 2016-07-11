@@ -27,7 +27,6 @@ public:
 	BOOL Start();
 	BOOL Stop(long lIndex);
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual HRESULT GetValueAt(int nBucket, int iIndex, CString& rstrValue) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 

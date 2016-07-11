@@ -57,7 +57,6 @@ SVDPointValueObjectClass::~SVDPointValueObjectClass()
 BOOL SVDPointValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	BOOL bCreate = base::CreateObject( pCreateStructure );
-	SetBits( ObjectAttributesAllowedRef(), SV_CH_CONDITIONAL, false);	// DPoints not allowed as conditional history conditionals
 	return bCreate;
 }
 
@@ -261,7 +260,7 @@ void SVDPointValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDPointValueObjectType;
 
-	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_CH_VALUE | SV_DD_VALUE;
+	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE;
 
 	m_strTypeName = "Point";
 

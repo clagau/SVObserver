@@ -61,13 +61,6 @@ SVPointValueObjectClass::~SVPointValueObjectClass()
 	CreateBuckets();
 }
 
-BOOL SVPointValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
-{
-	BOOL bCreate = base::CreateObject( pCreateStructure );
-	SetBits( ObjectAttributesAllowedRef(), SV_CH_CONDITIONAL, false);	// Points not allowed as conditional history conditionals
-	return bCreate;
-}
-
 void SVPointValueObjectClass::Persist(SVObjectWriter& rWriter)
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
@@ -198,7 +191,7 @@ void SVPointValueObjectClass::LocalInitialize()
 		m_sLegacyScriptDefaultName = "defaultPoint";
 		m_sLegacyScriptArrayName = "pArray";
 	}	
-	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_CH_VALUE | SV_DD_VALUE;
+	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE;
 
 	m_strTypeName = "Point";
 	InitializeBuckets();

@@ -60,7 +60,6 @@
 #include "SVObjectLibrary/SVInspectionLevelCreateStruct.h"
 #include "SVLinearToolClass.h"
 #include "SVAdjustToolSizePositionDlg.h"
-#include "SVConditionalHistorySheet.h"
 #include "SVDataDefinitionSheet.h"
 #include "SVRegressionRunDlg.h"
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
@@ -148,8 +147,6 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_RESULTS_PICKER, OnResultsPicker)
 	ON_COMMAND(ID_PUBLISHED_RESULTS_PICKER, OnPublishedResultsPicker)
 	ON_COMMAND(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnPublishedResultImagesPicker)
-	ON_COMMAND(ID_EDIT_CONDITIONAL_HISTORY, OnConditionalHistory)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_CONDITIONAL_HISTORY, OnUpdateConditionalHistory)
 	ON_COMMAND(ID_ADD_LOADIMAGETOOL, OnAddLoadImageTool)
 	ON_COMMAND(ID_RUN_REGRESSIONTEST, RunRegressionTest)
 	ON_COMMAND(ID_ADD_ACQUISITIONTOOL, OnAddAcquisitionTool)
@@ -1686,30 +1683,6 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 	}
 }
 
-void SVIPDoc::OnConditionalHistory()
-{
-	SVInspectionProcess* pInspection( GetInspectionProcess() );
-	if( nullptr != pInspection ) 
-	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-		CString strTitle = _T("Conditional History - ");
-		strTitle += pInspection->GetName();
-		SVConditionalHistorySheet sheet( this, strTitle, *pInspection );
-
-		//remove apply button
-		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-
-		sheet.DoModal();
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
-	}
-}
-
-void SVIPDoc::OnUpdateConditionalHistory( CCmdUI* pCmdUI )
-{
-	pCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
-}
-
-
 void SVIPDoc::EditToolSetCondition()
 {
 	SVConditionalClass* pCondition = GetToolSetCondition();
@@ -2206,8 +2179,6 @@ BOOL SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 
 	SaveViews(rWriter);
 
-	SaveConditionalHistory(rWriter);
-
 	// Save the View Placements
 	SaveViewPlacements(rWriter);
 
@@ -2295,30 +2266,6 @@ void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
 	svVariant = m_nWidthToolSetView;
 	rWriter.WriteAttribute(CTAG_WIDTH_TOOLSET_VIEW, svVariant);
 	svVariant.Clear();
-}
-
-void SVIPDoc::SaveConditionalHistory(SVObjectWriter& rWriter)
-{
-	SVInspectionProcess* pInspection( GetInspectionProcess() );
-
-	if( nullptr != pInspection )
-	{
-		_variant_t svVariant;
-
-		// Conditional History
-		rWriter.StartElement(CTAG_CONDITIONAL_HISTORY);
-
-		SVScalarValueVector vecProperties;
-		pInspection->GetConditionalHistoryProperties(vecProperties);
-		for (size_t i = 0;i < vecProperties.size();++i)
-		{
-			SVScalarValue& rValue = vecProperties[i];
-			svVariant.SetString(rValue.strValue);
-			rWriter.WriteAttribute(rValue.strName, svVariant);
-			svVariant.Clear();
-		}
-		rWriter.EndElement();
-	}
 }
 
 void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
@@ -2436,43 +2383,6 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 		if ( bOk )
 		{
 			m_nWidthToolSetView = svVariant;
-		}
-	}
-
-	// Conditional History
-	if ( bOk )
-	{
-		SVTreeType::SVBranchHandle htiCH = nullptr;
-		BOOL bTemp = SVNavigateTree::GetItemBranch( rTree, CTAG_CONDITIONAL_HISTORY, htiParent, htiCH );
-		if ( bTemp )
-		{
-			// iterate through all sub items
-			VARIANT* pVariant = nullptr;
-			SVScalarValueVector vecProperties;
-			SVTreeType::SVLeafHandle htiChild;
-
-			htiChild = rTree.getFirstLeaf( htiCH );
-
-			while( rTree.isValidLeaf( htiCH, htiChild ) )
-			{
-				CString Name;
-				_variant_t Value;
-
-				Name = rTree.getLeafName( htiChild ).c_str();
-				Value = rTree.getLeafData( htiChild );
-
-				if ( Value.vt == VT_BSTR )
-				{
-					CString strValue = static_cast< LPCTSTR >( _bstr_t( Value ) );
-
-					SVScalarValue l_Value = SVScalarValue( Name, strValue );
-					vecProperties.push_back( l_Value );
-				}
-
-				htiChild = rTree.getNextLeaf( htiCH, htiChild );
-			}
-
-			pInspection->SetConditionalHistoryProperties( vecProperties );
 		}
 	}
 

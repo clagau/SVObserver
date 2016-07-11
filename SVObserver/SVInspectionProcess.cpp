@@ -200,10 +200,6 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 		{
 			::InterlockedIncrement( &m_NotifyWithLastInspected );
 
-			// need RunStatus?? or is last set sufficient for images and values?
-			// Joe: YES as long as this is done in the inspection
-			CollectConditionalHistoryData();
-
 			pIPInfo->ClearIndexes();
 		}
 
@@ -365,34 +361,6 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::ProcessConditionalHistory( bool& p_rProcessed )
-{
-	HRESULT l_Status = S_OK;
-
-	if( !( m_qTransactions.IsEmpty() ) )
-	{
-#ifdef EnableTracking
-		m_InspectionTracking.EventStart( _T( "Process Notify With Last Inspected" ) );
-#endif
-
-		// check the transaction queue
-		SVInspectionTransactionStruct message;
-
-		if ( m_qTransactions.RemoveHead( &message ) )
-		{
-			ProcessTransaction( message );
-		}
-
-		p_rProcessed = true;
-
-#ifdef EnableTracking
-		m_InspectionTracking.EventEnd( _T( "Process Notify With Last Inspected" ) );
-#endif
-	}
-
-	return l_Status;
-}
-
 HRESULT SVInspectionProcess::ProcessCommandQueue( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
@@ -422,76 +390,6 @@ HRESULT SVInspectionProcess::ProcessCommandQueue( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::ProcessTransaction( SVInspectionTransactionStruct p_Message )
-{
-	HRESULT hr = S_OK;
-
-#ifndef _DEBUG
-	try
-#endif
-	{
-		switch ( p_Message.dwMessage )
-		{
-		case SVInspectionMessageSetCHProperties:
-			{
-				SVInspectionMessageDataStruct_CHProperties* pData = dynamic_cast <SVInspectionMessageDataStruct_CHProperties*> (p_Message.pData);
-				ASSERT( pData );
-				hr = m_ConditionalHistory.SetProperties( *(pData->pvecProperties), pData->bResetObject );
-				break;
-			}
-		case SVInspectionMessageGetCHProperties:
-			{
-				SVInspectionMessageDataStruct_CHProperties* pData = dynamic_cast <SVInspectionMessageDataStruct_CHProperties*> (p_Message.pData);
-				ASSERT( pData );
-				hr = m_ConditionalHistory.GetProperties( *(pData->pvecProperties) );
-				break;
-			}
-		case SVInspectionMessageSetCHList:
-			{
-				SVInspectionMessageDataStruct_CHList* pData = dynamic_cast <SVInspectionMessageDataStruct_CHList*> (p_Message.pData);
-				ASSERT( pData );
-				hr = m_ConditionalHistory.SetList( pData->pvecData, pData->pvecImages, pData->pvecConditionals, pData->bResetObject );
-				break;
-			}
-		case SVInspectionMessageGetCHList:
-			{
-				SVInspectionMessageDataStruct_CHList* pData = dynamic_cast <SVInspectionMessageDataStruct_CHList*> (p_Message.pData);
-				ASSERT( pData );
-				hr = m_ConditionalHistory.GetList( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals) );
-				break;
-			}
-		case SVInspectionMessageGetCHandClear:
-			{
-				SVInspectionMessageDataStruct_CHGetAll* pData = dynamic_cast <SVInspectionMessageDataStruct_CHGetAll*> (p_Message.pData);
-				ASSERT( pData );
-				hr = m_ConditionalHistory.GetHistoryAndClear( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals), *(pData->pvecProcessCount) );
-				break;
-			}
-		case SVInspectionMessageGetCHMostRecent:
-			{
-				SVInspectionMessageDataStruct_CHGet* pData = dynamic_cast <SVInspectionMessageDataStruct_CHGet*> (p_Message.pData);
-				ASSERT( pData );
-				hr = m_ConditionalHistory.GetMostRecentHistory( *(pData->pvecData), *(pData->pvecImages), *(pData->pvecConditionals), *(pData->plProcessCount) );
-				break;
-			}
-		}// end switch ( p_Message.dwMessage )
-	}// end try
-#ifndef _DEBUG
-	catch (...)
-	{
-		hr = SV_FALSE;	// @TODO:  Add real error code here!!!
-	}
-#endif
-
-	if ( S_OK == hr )
-	{
-		p_Message.pData->bProcessed = true;
-	}
-	::SetEvent( p_Message.hCompletionEvent );
-
-	return hr;
-}
-
 SVInspectionProcess::SVInspectionProcess( LPCSTR ObjectName )
 	: SVObjectClass( ObjectName )
 {
@@ -519,13 +417,7 @@ void SVInspectionProcess::Init()
 	m_lEnableAuxiliaryExtents = 0;
 	m_lInputRequestMarkerCount = 0L;
 	m_bInspecting = false;
-	m_ConditionalHistory.SetInspection( this );
 	m_dwThreadId = 0;
-#ifdef _DEBUG
-	m_dwCHTimeout = INFINITE;	// to allow debugging
-#else
-	m_dwCHTimeout = 40000;	// not INFINITE
-#endif
 
 	m_svReset.RemoveState( SVResetStateAll );
 
@@ -615,11 +507,6 @@ BOOL SVInspectionProcess::CreateInspection( LPCTSTR szDocName )
 		return false;
 	}
 
-	if ( !m_qTransactions.Create() )
-	{
-		return false;
-	}
-
 	hr = CreateResultImageIndexManager();
 	if( S_OK != hr )
 		return false;
@@ -637,9 +524,6 @@ BOOL SVInspectionProcess::CreateInspection( LPCTSTR szDocName )
 	{
 		return false;
 	}
-
-	if ( S_OK != m_ConditionalHistory.ResetObject() )
-		return false;
 
 	SVCommandStreamManager::Instance().InsertInspection( GetUniqueObjectID() );
 
@@ -677,8 +561,6 @@ void SVInspectionProcess::ThreadProcess( bool& p_WaitForEvents )
 	ProcessLastInspectedImages( l_Processed );
 
 	ProcessNotifyWithLastInspected( l_Processed, l_Product.m_svInspectionInfos[GetUniqueObjectID()].m_lastInspectedSlot );
-
-	ProcessConditionalHistory( l_Processed );
 
 	ProcessCommandQueue( l_Processed );
 
@@ -731,19 +613,6 @@ BOOL SVInspectionProcess::DestroyInspection()
 
 	// Destroy Queues for Inspection Queue
 	m_qInspectionsQueue.Destroy();
-
-	SVTransactionQueueObjectLock lock( m_qTransactions );
-
-	while ( !m_qTransactions.IsEmpty() )
-	{
-		SVInspectionTransactionStruct message;
-		if ( m_qTransactions.RemoveHead( &message ) )
-		{
-			ProcessTransaction( message );
-		}
-	}
-
-	m_qTransactions.Destroy();
 
 	m_PPQInputs.clear();
 
@@ -1694,7 +1563,19 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 	SetDefaultInputs();
 
-	BuildConditionalHistoryListAfterLoad();
+	if( CheckAndResetConditionalHistory() )
+	{
+		if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
+		{
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_CONDITIONAL_HISTORY, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+		}
+		else
+		{
+			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+			Exception.setMessage( SVMSG_SVO_CONDITIONAL_HISTORY, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+		}
+	}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
 	CString strValueObjects;
@@ -2201,11 +2082,6 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVDeleteTool& p_rData )
 
 	if( nullptr != p_rData.m_pTool )
 	{
-		// Call conditional history list and remove tool
-		// Conditional history needs references deleted before we delete the tool.
-		CString l_strToolName = p_rData.m_pTool->GetCompleteObjectName();
-		m_ConditionalHistory.DeleteTool( l_strToolName );
-
 		// Delete the Tool Object
 		::SVSendMessage( GetToolSet(), SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(p_rData.m_pTool), 0 );
 
@@ -2324,7 +2200,7 @@ BOOL SVInspectionProcess::RunOnce( SVToolClass *p_psvTool )
 	}
 
 	return bRet;
-}// end RunOnce
+}
 
 HRESULT SVInspectionProcess::InitializeRunOnce()
 {
@@ -2757,7 +2633,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 
 	return l_bRet;
 
-}// end ProcessInputRequests
+}
 
 BOOL SVInspectionProcess::ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct )
 {
@@ -2873,7 +2749,7 @@ BOOL SVInspectionProcess::ProcessInputImageRequests( SVProductInfoStruct *p_psvP
 	}
 
 	return l_bOk;
-}// end ProcessInputImageRequests
+}
 
 HRESULT SVInspectionProcess::ReserveNextResultImage( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType, bool p_ClearOtherInspections )
 {
@@ -2995,36 +2871,21 @@ BOOL SVInspectionProcess::RemoveCamera( CString sCameraName )
 BOOL SVInspectionProcess::GetNewDisableMethod()
 {
 	return m_bNewDisableMethod;
-}// end GetNewDisableMethod
+}
 
 void SVInspectionProcess::SetNewDisableMethod( BOOL bNewDisableMethod )
 {
 	m_bNewDisableMethod = bNewDisableMethod;
-}// end SetNewDisableMethod
+}
 
 long SVInspectionProcess::GetEnableAuxiliaryExtent() const
 {
 	return m_lEnableAuxiliaryExtents;
-}// end GetEnableAuxiliaryExtent
+}
 
 void SVInspectionProcess::SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents )
 {
 	m_lEnableAuxiliaryExtents = p_lEnableAuxiliaryExtents;
-}// end SetEnableAuxiliaryExtent
-
-HRESULT SVInspectionProcess::CollectOverlayData(SVImageClass *p_pImage, SVImageOverlayClass *p_pOverlayData)
-{
-	HRESULT hrRet = S_OK;
-
-	SVToolSetClass *l_pToolSet = GetToolSet();
-
-	SVExtentMultiLineStructCArray l_MultiLineArray;
-
-	l_pToolSet->CollectOverlays(p_pImage,l_MultiLineArray);
-
-	*p_pOverlayData = l_MultiLineArray;
-
-	return hrRet;
 }
 
 HRESULT SVInspectionProcess::CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray)
@@ -3238,208 +3099,40 @@ void SVInspectionProcess::DumpDMInfo( LPCTSTR p_szName ) const
 	}
 }
 
-HRESULT SVInspectionProcess::SetConditionalHistoryProperties( SVScalarValueVector& p_rvecProperties, bool p_bResetObject )
+bool SVInspectionProcess::CheckAndResetConditionalHistory()
 {
-	HANDLE hEvent = nullptr;
-	SVInspectionMessageDataStruct_CHProperties data( &p_rvecProperties, p_bResetObject );
-
-	hEvent = ::CreateEvent( nullptr, true, false, nullptr );
-	SVInspectionTransactionStruct message( SVInspectionMessageSetCHProperties, hEvent, &data );
-
-	/*	// possible optimization for use in inspection thread
-	if ( ::GetCurrentThreadId() == m_dwThreadId )
-	return ProcessTransaction( message );	// in this case don't CreateEvent
-	else
-	*/
-	{
-
-		AddTransaction( message );
-
-		DWORD dwReturn = ::WaitForSingleObjectEx( hEvent, m_dwCHTimeout, TRUE );
-
-		::CloseHandle( hEvent );
-		if ( dwReturn == WAIT_OBJECT_0 )
-			return S_OK;
-		else
-			return (HRESULT) dwReturn;
-	}
-}
-
-HRESULT SVInspectionProcess::GetConditionalHistoryProperties( SVScalarValueVector& p_rvecProperties )
-{
-	HANDLE hEvent = nullptr;
-	hEvent = ::CreateEvent( nullptr, true, false, nullptr );
-
-	SVInspectionMessageDataStruct_CHProperties data( &p_rvecProperties, false );
-	SVInspectionTransactionStruct message( SVInspectionMessageGetCHProperties, hEvent, &data );
-	AddTransaction( message );
-
-	DWORD dwReturn = ::WaitForSingleObjectEx( hEvent, m_dwCHTimeout, TRUE );
-
-	::CloseHandle( hEvent );
-	if ( dwReturn == WAIT_OBJECT_0 )
-		return S_OK;
-	else
-		return (HRESULT) dwReturn;
-}
-
-HRESULT SVInspectionProcess::GetConditionalHistoryProperties( SVScalarValueMapType& rmapProperties )
-{
-	rmapProperties.clear();
-	SVScalarValueVector vecProperties;
-	HRESULT hr = GetConditionalHistoryProperties( vecProperties );
-	if ( S_OK == hr )
-	{
-		for ( size_t i=0; i < vecProperties.size(); ++i )
-			rmapProperties[ vecProperties[i].strName ]  = vecProperties[i];
-	}
-	return hr;
-}
-
-HRESULT SVInspectionProcess::SetConditionalHistoryList( std::vector <SVScalarValue>* p_pvecData, std::vector <SVScalarValue>* p_pvecImages, std::vector <SVScalarValue>* p_pvecConditionals, bool p_bResetObject )
-{
-	HANDLE hEvent = nullptr;
-	hEvent = ::CreateEvent( nullptr, true, false, nullptr );
-
-	SVInspectionMessageDataStruct_CHList data( p_pvecData, p_pvecImages, p_pvecConditionals, p_bResetObject );
-	SVInspectionTransactionStruct message( SVInspectionMessageSetCHList, hEvent, &data );
-	AddTransaction( message );
-
-	DWORD dwReturn = ::WaitForSingleObjectEx( hEvent, m_dwCHTimeout, TRUE );
-
-	::CloseHandle( hEvent );
-	if ( dwReturn == WAIT_OBJECT_0 )
-		return S_OK;
-	else
-		return (HRESULT) dwReturn;
-}
-
-HRESULT SVInspectionProcess::GetConditionalHistoryList( std::vector <SVScalarValue>& p_rvecData, std::vector <SVScalarValue>& p_rvecImages, std::vector <SVScalarValue>& p_rvecConditionals )
-{
-	HANDLE hEvent = nullptr;
-	hEvent = ::CreateEvent( nullptr, true, false, nullptr );
-
-	SVInspectionMessageDataStruct_CHList data( &p_rvecData, &p_rvecImages, &p_rvecConditionals, false );
-	SVInspectionTransactionStruct message( SVInspectionMessageGetCHList, hEvent, &data );
-	AddTransaction( message );
-
-	DWORD dwReturn = ::WaitForSingleObjectEx( hEvent, m_dwCHTimeout, TRUE );
-
-	::CloseHandle( hEvent );
-	if ( dwReturn == WAIT_OBJECT_0 )
-		return S_OK;
-	else
-		return (HRESULT) dwReturn;
-}
-
-HRESULT SVInspectionProcess::GetConditionalHistoryAndClear( std::vector < std::vector <SVScalarValue> >& rvecValues, std::vector < std::vector <SVImageBufferStruct> >& rvecImages, std::vector < std::vector <SVScalarValue> >& rvecConditionals, std::vector<long>& rvecProcessCount )
-{
-	// check Queue size
-	if ( m_qTransactions.GetCount() <= 3 )
-	{
-		HANDLE hEvent = nullptr;
-		hEvent = ::CreateEvent( nullptr, true, false, nullptr );
-
-		SVInspectionMessageDataStruct_CHGetAll data( &rvecValues, &rvecImages, &rvecConditionals, &rvecProcessCount );
-		SVInspectionTransactionStruct message( SVInspectionMessageGetCHandClear, hEvent, &data );
-		AddTransaction( message );
-
-		DWORD dwReturn = ::WaitForSingleObjectEx( hEvent, m_dwCHTimeout, TRUE );
-
-		::CloseHandle( hEvent );
-		if ( dwReturn == WAIT_OBJECT_0 )
-			return S_OK;
-		else
-			return (HRESULT) dwReturn;
-	}
-	else
-	{
-		return SVMSG_54_SVIM_BUSY;
-	}
-}
-
-HRESULT SVInspectionProcess::GetMostRecentConditionalHistory( std::vector <SVScalarValue>& rvecData, std::vector <SVImageBufferStruct>& rvecImages, std::vector <SVScalarValue>& rvecConditionals, long& rlProcessCount )
-{
-	if ( m_qTransactions.GetCount() <= 3 )
-	{
-		HANDLE hEvent = nullptr;
-		hEvent = ::CreateEvent( nullptr, true, false, nullptr );
-
-		SVInspectionMessageDataStruct_CHGet data( &rvecData, &rvecImages, &rvecConditionals, &rlProcessCount );
-		SVInspectionTransactionStruct message( SVInspectionMessageGetCHMostRecent, hEvent, &data );
-		AddTransaction( message );
-
-		DWORD dwReturn = ::WaitForSingleObjectEx( hEvent, m_dwCHTimeout, TRUE );
-
-		::CloseHandle( hEvent );
-		if ( dwReturn == WAIT_OBJECT_0 )
-			return S_OK;
-		else
-			return (HRESULT) dwReturn;
-	}
-	else
-	{
-		return SVMSG_54_SVIM_BUSY;
-	}
-}
-
-HRESULT SVInspectionProcess::BuildConditionalHistoryListAfterLoad()
-{
-	// build lists from value object attributes. Must happen after BuildValueObjectMap.
-	ASSERT( m_mapValueObjects.size() > 0 );
+	bool Result( false );
 
 	SVTaskObjectListClass* pToolSet = static_cast <SVTaskObjectListClass*> ( m_pCurrentToolset );
 	if( nullptr != pToolSet )
 	{
-		SVScalarValueVector vecValues;
-		SVScalarValueVector vecConditionals;
-		SVScalarValueVector vecImages;
-		// VALUE OBJECTS
+		std::vector<SVValueObjectReference> vecObjects;
+		pToolSet->GetOutputListFiltered( vecObjects, SV_CH_CONDITIONAL | SV_CH_VALUE, false );
+		if( 0 < vecObjects.size() )
 		{
-			std::vector<SVValueObjectReference> vecObjects;
-			pToolSet->GetOutputListFiltered( vecObjects, SV_CH_CONDITIONAL | SV_CH_VALUE, false );
 			SVValueObjectReferenceVector::iterator iter;
 			for( iter = vecObjects.begin(); iter != vecObjects.end(); ++iter )
 			{
-				SVValueObjectReference ref = *iter;
-				UINT uiAttributes = ref.ObjectAttributesSet();
-				if ( uiAttributes & SV_CH_VALUE )
-				{
-					vecValues.push_back( SVScalarValue( ref ) );
-				}
-				if ( uiAttributes & SV_CH_CONDITIONAL )
-				{
-					vecConditionals.push_back( SVScalarValue( ref ) );
-				}
-			}// end for( iter = vecObjects.begin(); iter != vecObjects.end(); ++iter )
-		}// end block
-
-		// IMAGE OBJECTS
-		{
-			SVImageListClass listImages;
-			pToolSet->GetImageList( listImages, SV_CH_IMAGE );
-			int nCount = listImages.GetSize();
-			for(int i=0; i<nCount; i++)
-			{
-				SVImageClass* pImage = listImages.GetAt(i);
-				SVObjectReference refImage( pImage );
-				vecImages.push_back( SVScalarValue( refImage ) );
+				iter->ObjectAttributesSetRef() &= ~( SV_CH_CONDITIONAL | SV_CH_VALUE );
 			}
-		}// end block
+			Result = true;
+		}
 
-		SetConditionalHistoryList( &vecValues, &vecImages, &vecConditionals, true );
+		SVImageListClass listImages;
+		pToolSet->GetImageList( listImages, SV_CH_IMAGE );
+		int NumberOfImages = listImages.GetSize();
+		if( 0 < NumberOfImages )
+		{
+			for( int i=0; i < NumberOfImages; i++)
+			{
+				SVObjectReference refImage( listImages.GetAt(i) );
+				refImage->ObjectAttributesAllowedRef() &= ~SV_CH_IMAGE;
+			}
+			Result = true;
+		}
 
-	}// end if( nullptr != pToolSet )
-
-	return S_OK;
-}
-
-HRESULT SVInspectionProcess::CollectConditionalHistoryData()
-{
-	// should we collect the data here? or in CH?
-	// for now, do it in CH
-	HRESULT hr = m_ConditionalHistory.CollectDataAndStore();
-	return hr;
+	}
+	return Result;
 }
 
 bool SVInspectionProcess::IsColorCamera() const
@@ -3678,15 +3371,6 @@ HRESULT SVInspectionProcess::UpdateSharedMemoryLastInspectedImages( const SVMoni
 	m_AsyncProcedure.Signal( nullptr );
 
 	return l_Status;
-}
-
-HRESULT SVInspectionProcess::AddTransaction( SVInspectionTransactionStruct& p_rMessage )
-{
-	BOOL bAdd = m_qTransactions.AddTail( p_rMessage );
-
-	m_AsyncProcedure.Signal( nullptr );
-
-	return bAdd ? S_OK : S_FALSE;
 }
 
 HRESULT SVInspectionProcess::RemoveImage(SVImageClass* pImage)

@@ -33,11 +33,9 @@
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVConditionalHistory.h"
 #include "SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
 #include "SVInfoStructs.h"
 #include "SVInspectionProcessResetStruct.h"
-#include "SVInspectionProcessTransactions.h"
 #include "SVPublishList.h"
 #include "SVResetStruct.h"
 #include "SVRGBMainImage.h"
@@ -156,14 +154,11 @@ public:
 	HRESULT AddInputImageRequest( SVInputImageRequestInfoStructPtr p_InRequestPtr );
 	HRESULT AddInputImageRequestByCameraName(CString sCameraName, CString sFileName);
 
-	HRESULT SetConditionalHistoryProperties( SVScalarValueVector& rmapProperties, bool bResetObject = true );
-	HRESULT GetConditionalHistoryProperties( SVScalarValueVector& rmapProperties );
-	HRESULT GetConditionalHistoryProperties( SVScalarValueMapType& rmapProperties );
-	HRESULT SetConditionalHistoryList( std::vector <SVScalarValue>* pvecData, std::vector <SVScalarValue>* pvecImages, std::vector <SVScalarValue>* pvecConditionals, bool bResetObject = true );// parameters not const because status will be returned
-	HRESULT GetConditionalHistoryList( std::vector <SVScalarValue>& rvecData, std::vector <SVScalarValue>& rvecImages, std::vector <SVScalarValue>& rvecConditionals );
-	HRESULT GetConditionalHistoryAndClear( std::vector < std::vector <SVScalarValue> >& rvecData, std::vector < std::vector <SVImageBufferStruct> >& rvecImages, std::vector < std::vector <SVScalarValue> >& rvecConditionals, std::vector<long>& rvecProcessCount );
-	HRESULT GetMostRecentConditionalHistory( std::vector <SVScalarValue>& rvecData, std::vector <SVImageBufferStruct>& rvecImages, std::vector <SVScalarValue>& rvecConditionals, long& rlProcessCount );
-	HRESULT BuildConditionalHistoryListAfterLoad();
+	//************************************
+	//! Checks if the configuration has conditional history attributes and resets them as they are deprectaed
+	//! \returns true if conditional history attributes are set
+	//************************************
+	bool CheckAndResetConditionalHistory();
 
 	BOOL DisconnectToolSetMainImage();
 	BOOL ConnectToolSetMainImage();
@@ -175,7 +170,6 @@ public:
 	virtual void SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents ) override;
 
 	//new GetOverlay method for use with the ActiveX
-	HRESULT CollectOverlayData(SVImageClass *p_pImage, SVImageOverlayClass *p_pOverlayData);
 	HRESULT CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray);
 
 	SVProductInfoStruct LastProductGet( SVDataManagerLockTypeEnum p_LockType ) const;
@@ -344,8 +338,6 @@ protected:
 	typedef SVTQueueObject< SVInputRequestInfoStructPtr > SVInputRequestQueue;
 	typedef SVTQueueObject< SVInputImageRequestInfoStructPtr > SVInputImageRequestQueue;
 	typedef SVTQueueObject< SVProductInfoStruct > SVProductQueue;
-	typedef SVTQueueObject<SVInspectionTransactionStruct> SVTransactionQueueType;
-	typedef SVSingleLockT<SVTransactionQueueType> SVTransactionQueueObjectLock;
 	
 	virtual HRESULT SubmitCommand( const SVCommandTemplatePtr& p_rCommandPtr );
 
@@ -400,7 +392,6 @@ protected:
 	HRESULT ProcessMonitorLists( bool& p_rProcessed );
 	HRESULT ProcessLastInspectedImages( bool& p_rProcessed );
 	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed, long sharedSlotIndex );
-	HRESULT ProcessConditionalHistory( bool& p_rProcessed );
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
 
 	SVGUID m_PPQId;
@@ -430,8 +421,6 @@ protected:
 
 	volatile bool m_bInspecting;
 
-	SVTransactionQueueType m_qTransactions;// don't AddTail directly; call AddTransaction
-
 	// Inspection Queue
 	SVProductQueue       m_qInspectionsQueue;
 
@@ -452,16 +441,10 @@ protected:
 
 private:
 	void Init();
-	HRESULT AddTransaction( SVInspectionTransactionStruct& p_rMessage );
-	HRESULT ProcessTransaction( SVInspectionTransactionStruct p_Message );
-	HRESULT CollectConditionalHistoryData();
 
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
 	void FillSharedData(long sharedSlotIndex, SvSml::SVSharedData& rData, const SVFilterValueMap& rValues, const SVFilterImageMap& rImages, SVProductInfoStruct& rProductInfo, SvSml::SVSharedInspectionWriter& rWriter);
-
-	DWORD m_dwCHTimeout;
-	SVConditionalHistory  m_ConditionalHistory;
 
 	SVCriticalSectionPtr m_LastRunLockPtr;
 	bool m_LastRunProductNULL;

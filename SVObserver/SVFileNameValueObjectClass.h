@@ -29,8 +29,6 @@ public:
 
 	virtual ~SVFileNameValueObjectClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
-
 	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 

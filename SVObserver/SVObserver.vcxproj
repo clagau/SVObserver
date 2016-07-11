@@ -330,9 +330,7 @@ echo %time%
     </ClCompile>
     <ClCompile Include="SVCommandInspectionCollectImageData.cpp" />
     <ClCompile Include="SVCommandStreamManager.cpp" />
-    <ClCompile Include="SVConditionalHistory.cpp" />
     <ClCompile Include="SelectedObjectsPage.cpp" />
-    <ClCompile Include="SVConditionalHistorySheet.cpp" />
     <ClCompile Include="SVConfigurationObject.cpp" />
     <ClCompile Include="SVConfigurationPrint.cpp" />
     <ClCompile Include="SVCustomFilters.cpp" />
@@ -386,7 +384,6 @@ echo %time%
     <ClCompile Include="SVImageArchive.cpp" />
     <ClCompile Include="SVImageArithmetic.cpp" />
     <ClCompile Include="SVImageBuffer.cpp" />
-    <ClCompile Include="SVImageBufferStruct.cpp" />
     <ClCompile Include="SVImageChildStruct.cpp" />
     <ClCompile Include="SVImageClass.cpp" />
     <ClCompile Include="SVImageListClass.cpp" />
@@ -794,9 +791,7 @@ echo %time%
     <ClInclude Include="SVCommand.h" />
     <ClInclude Include="SVCommandInspectionCollectImageData.h" />
     <ClInclude Include="SVCommandStreamManager.h" />
-    <ClInclude Include="SVConditionalHistory.h" />
     <ClInclude Include="SelectedObjectsPage.h" />
-    <ClInclude Include="SVConditionalHistorySheet.h" />
     <ClInclude Include="SVConfigurationObject.h" />
     <ClInclude Include="SVConfigurationPrint.h" />
     <ClInclude Include="SVConfigurationTreeWriter.h" />
@@ -853,7 +848,6 @@ echo %time%
     <ClInclude Include="SVImageArchive.h" />
     <ClInclude Include="SVImageArithmetic.h" />
     <ClInclude Include="SVImageBuffer.h" />
-    <ClInclude Include="SVImageBufferStruct.h" />
     <ClInclude Include="SVImageChildStruct.h" />
     <ClInclude Include="SVImageClass.h" />
     <ClInclude Include="SVImageListClass.h" />
@@ -868,7 +862,6 @@ echo %time%
     <ClInclude Include="SVInputObjectList.h" />
     <ClInclude Include="SVInspectionProcess.h" />
     <ClInclude Include="SVInspectionProcessResetStruct.h" />
-    <ClInclude Include="SVInspectionProcessTransactions.h" />
     <ClInclude Include="SVInspectionTreeParser.h" />
     <ClInclude Include="SVInt64ValueObjectClass.h" />
     <ClInclude Include="SVIOAdjustDialog.h" />
@@ -1015,7 +1008,6 @@ echo %time%
     <ClInclude Include="SVResultView.h" />
     <ClInclude Include="SVRGBMainImage.h" />
     <ClInclude Include="SVROIFigureEditor.h" />
-    <ClInclude Include="SVScalarValue.h" />
     <ClInclude Include="SVSetupDialogManager.h" />
     <ClInclude Include="SVShiftTool.h" />
     <ClInclude Include="SVShiftToolUtility.h" />

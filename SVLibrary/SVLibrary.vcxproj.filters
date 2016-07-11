@@ -26,9 +26,6 @@
     <ClCompile Include="SVPackedFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSimpleIndexQueue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVWinUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,9 +47,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVReferenceCountingTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSimpleIndexQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVisitor.h">

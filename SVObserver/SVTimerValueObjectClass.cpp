@@ -44,13 +44,6 @@ SVTimerValueObjectClass::~SVTimerValueObjectClass()
 	ResetObject();
 }
 
-BOOL SVTimerValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
-{
-	BOOL bCreate = base::CreateObject( pCreateStructure );
-	SetBits( ObjectAttributesAllowedRef(), SV_CH_CONDITIONAL, false);	// Timers not allowed as conditional history conditionals
-	return bCreate;
-}
-
 BOOL SVTimerValueObjectClass::Start()
 {
 	BOOL bOk = TRUE;

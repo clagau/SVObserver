@@ -95,7 +95,6 @@ BOOL SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
 	SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
-	SetBits( ObjectAttributesAllowedRef(), SV_CH_IMAGE, true );
 	SetBits( ObjectAttributesAllowedRef(), SV_DD_IMAGE, true );
 	
 	m_isCreated = l_bOk;

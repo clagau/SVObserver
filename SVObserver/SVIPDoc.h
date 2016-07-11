@@ -87,7 +87,6 @@ public:
 
 	void SaveViews(SVObjectWriter& rWriter);
 	void SaveViewPlacements(SVObjectWriter& rWriter);
-	void SaveConditionalHistory(SVObjectWriter& rWriter);
 	void SaveToolGroupings(SVObjectWriter& rWriter);
 	void SaveViewedVariables(SVObjectWriter& rWriter);
 
@@ -192,8 +191,6 @@ public:
 	afx_msg void OnViewResetCountsCurrentIP();
 	afx_msg void OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewResetCountsCurrentIP(CCmdUI* pCmdUI);
-	afx_msg void OnConditionalHistory();
-	afx_msg void OnUpdateConditionalHistory( CCmdUI *pCmdUI );
 	afx_msg void OnEditDataDefinitionLists();
 	afx_msg void OnUpdateEditDataDefinitionLists(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateRunRegressionTest( CCmdUI *pCmdUI );

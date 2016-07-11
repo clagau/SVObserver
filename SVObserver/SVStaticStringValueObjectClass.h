@@ -29,7 +29,6 @@ public:
 
 	virtual ~SVStaticStringValueObjectClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual void Persist(SVObjectWriter& rWriter);
 

@@ -169,8 +169,6 @@ void SelectedObjectsPage::ShowObjectSelector()
 	switch( AttributeFilters )
 	{
 	case SV_DD_VALUE:
-	case SV_CH_VALUE:
-	case SV_CH_CONDITIONAL:
 		{
 			AttributeFilters |= SV_VIEWABLE;
 		}

@@ -68,13 +68,6 @@ SVFileNameValueObjectClass::~SVFileNameValueObjectClass()
 	svFileManager.RemoveItem(&m_svFileName);
 }
 
-BOOL SVFileNameValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
-{
-	BOOL bCreate = base::CreateObject( pCreateStructure );
-	SetBits( ObjectAttributesAllowedRef(), SV_CH_CONDITIONAL, false);	// File names not allowed as conditional history conditionals
-	return bCreate;
-}
-
 void SVFileNameValueObjectClass::Persist(SVObjectWriter& rWriter)
 {
 	SVFileNameManagerClass svFileManager;
@@ -340,7 +333,7 @@ void SVFileNameValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVStringValueObjectType;
 	
-	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_CH_VALUE | SV_DD_VALUE;
+	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE;
 
 	m_strTypeName = "FileName";
 	

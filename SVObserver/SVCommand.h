@@ -116,31 +116,31 @@ public:
 //	STDMETHOD (RegisterCallback)();
 
 	
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD (PutSVIMConfig)(BSTR XMLConfig, BSTR* pXMLError) {return E_NOTIMPL;} 
 
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD (GetSVIMConfigName)(BSTR * pszXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
 
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD (GetSVIMFile)(BSTR * pszXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
 
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD (PutSVIMFile)(BSTR szXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
 
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD (SetSVIMState)(BSTR szXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
 
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD (GetSVIMConfig)(BSTR* pXMLConfig, BSTR* pXMLError){return E_NOTIMPL;}
 
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD (LoadSVIMConfig)(BSTR szXMLData, BSTR* pXMLError){return E_NOTIMPL;}
 
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD (GetSVIMInspectionResults)(BSTR* pszXMLData, BSTR* pXMLError){return E_NOTIMPL;}
 
-	///Depreciated Function returns E_NOTIMPL 
+	///Deprecated Function returns E_NOTIMPL 
 	STDMETHOD(GetSVIMState)(/*[out]*/ BSTR *pXMLState, /*[out]*/ BSTR *pXMLError){return E_NOTIMPL;}
 
 //  The following group of functions are the same as above but they
@@ -422,26 +422,24 @@ public:
 	STDMETHOD(SVSetRemoteInput)(long lIndex, VARIANT vtValue);
 
 
-	// Conditional History functions
-	STDMETHOD(SVSetConditionalHistoryProperties)(BSTR bstrInspectionName, SAFEARRAY*  psaNames,  SAFEARRAY*  psaValues,  SAFEARRAY** ppsaStatus);
-	STDMETHOD(SVGetConditionalHistoryProperties)(BSTR bstrInspectionName, SAFEARRAY** ppsaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus);
-	STDMETHOD(SVSetConditionalHistoryList)(BSTR bstrInspectionName, SAFEARRAY*  psaValueNames,  SAFEARRAY*  psaImageNames,  SAFEARRAY*  psaConditionalNames,  SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaConditionalStatus);
-	STDMETHOD(SVGetConditionalHistoryList)(BSTR bstrInspectionName, SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaConditionalNames, SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaConditionalStatus);
-	STDMETHOD(SVGetConditionalHistoryAndClear)  (BSTR bstrInspectionName, long lCompression,
-		SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays,
-		SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaValues,
-		SAFEARRAY** ppsaConditionalNames, SAFEARRAY** ppsaConditionalValues,
-		SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaConditionalStatus,
-		SAFEARRAY** ppsaProcessCount );
-	STDMETHOD(SVGetMostRecentConditionalHistory)(BSTR bstrInspectionName, long lCompression,
-		SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays,
-		SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaValues,
-		SAFEARRAY** ppsaConditionalNames, SAFEARRAY** ppsaConditionalValues,
-		SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaConditionalStatus,
-		long* ppsaProcessCount );
-
-
-
+	///Deprecated Function returns E_NOTIMPL 
+	STDMETHOD(SVSetConditionalHistoryProperties)(BSTR bstrInspectionName, SAFEARRAY*  psaNames,  SAFEARRAY*  psaValues,  SAFEARRAY** ppsaStatus) {return E_NOTIMPL;};
+	///Deprecated Function returns E_NOTIMPL 
+	STDMETHOD(SVGetConditionalHistoryProperties)(BSTR bstrInspectionName, SAFEARRAY** ppsaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus) {return E_NOTIMPL;};
+	///Deprecated Function returns E_NOTIMPL 
+	STDMETHOD(SVSetConditionalHistoryList)(BSTR bstrInspectionName, SAFEARRAY*  psaValueNames,  SAFEARRAY*  psaImageNames,  SAFEARRAY*  psaConditionalNames,  
+		SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaConditionalStatus) {return E_NOTIMPL;};
+	///Deprecated Function returns E_NOTIMPL 
+	STDMETHOD(SVGetConditionalHistoryList)(BSTR bstrInspectionName, SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaConditionalNames, 
+		SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaConditionalStatus) {return E_NOTIMPL;};
+	///Deprecated Function returns E_NOTIMPL 
+	STDMETHOD(SVGetConditionalHistoryAndClear)  (BSTR bstrInspectionName, long lCompression, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, 
+		SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaConditionalNames, SAFEARRAY** ppsaConditionalValues, SAFEARRAY** ppsaImageStatus, 
+		SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaConditionalStatus, SAFEARRAY** ppsaProcessCount ) {return E_NOTIMPL;};
+	///Deprecated Function returns E_NOTIMPL 
+	STDMETHOD(SVGetMostRecentConditionalHistory)(BSTR bstrInspectionName, long lCompression, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays,
+		SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaConditionalNames, SAFEARRAY** ppsaConditionalValues, SAFEARRAY** ppsaImageStatus, 
+		SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaConditionalStatus, long* ppsaProcessCount ) {return E_NOTIMPL;};
 
 
 	// New functions to support Matrox Font Aalyzers - // Stage 1 runtime only, no setup.

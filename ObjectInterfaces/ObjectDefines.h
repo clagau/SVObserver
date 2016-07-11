@@ -276,9 +276,10 @@ enum SVMessageFlags
 		const UINT SV_EXTENT_OBJECT              = 0x00000400;
 		const UINT SV_HIDDEN                     = 0x00000800;  // EB/TB 2004 05 10
 		const UINT SV_PUBLISH_RESULT_IMAGE       = 0x00001000;
+		//Conditional History has been deprecated, these are used to check and reset the attributes of previously saved configurations
 		const UINT SV_CH_CONDITIONAL             = 0x00002000;  // conditional history
 		const UINT SV_CH_IMAGE                   = 0x00004000;  // conditional history
-		const UINT SV_CH_VALUE                   = 0x00008000;  // conditional history
+		const UINT SV_CH_VALUE                   = 0x00008000;  // conditional history 
 		const UINT SV_DD_VALUE                   = 0x00010000;  // Selected for DataDefinition Value
 		const UINT SV_DD_IMAGE                   = 0x00020000;  // Selected for DataDefinition Image
 
@@ -303,8 +304,6 @@ enum SVMessageFlags
 			| SV_EMBEDABLE
 			| SV_SELECTABLE_FOR_STATISTICS
 			| SV_PRINTABLE
-			| SV_CH_VALUE
-			| SV_CH_CONDITIONAL
 			| SV_DD_VALUE
 			);
 
@@ -312,7 +311,6 @@ enum SVMessageFlags
 			(
 			SV_ARCHIVABLE_IMAGE
 			| SV_PUBLISH_RESULT_IMAGE
-			| SV_CH_IMAGE
 			| SV_DD_IMAGE
 			);
 //	} //	namespace ObjectInterfaces

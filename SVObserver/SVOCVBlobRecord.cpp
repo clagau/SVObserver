@@ -75,7 +75,7 @@ void SVOCVCharacterResultClass::UnhideResults()
 	statusColor.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~SV_PRINTABLE );
 	statusTag.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~SV_PRINTABLE );
 
-	m_cvoLabelValue.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~(SV_PRINTABLE | SV_CH_CONDITIONAL) );
+	m_cvoLabelValue.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~SV_PRINTABLE );
 
 	m_dvoOverlayLeft.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~SV_PRINTABLE );
 	m_dvoOverlayTop.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~SV_PRINTABLE );

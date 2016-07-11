@@ -57,7 +57,6 @@ SVEnumerateValueObjectClass::~SVEnumerateValueObjectClass()
 BOOL SVEnumerateValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	BOOL bCreate = base::CreateObject( pCreateStructure );
-	SetBits( ObjectAttributesAllowedRef(), SV_CH_CONDITIONAL, false);	// Enums not allowed as conditional history conditionals
 	return bCreate;
 }
 
@@ -683,8 +682,6 @@ HRESULT SVEnumerateValueObjectClass::GetNormalizedValueImpl( const CString& strV
 void SVEnumerateValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEnumValueObjectType;
-
-	SetBits( ObjectAttributesAllowedRef(), SV_CH_CONDITIONAL, false);	// Enums not allowed as conditional history conditionals
 
 	m_strTypeName = "Enumeration";
 

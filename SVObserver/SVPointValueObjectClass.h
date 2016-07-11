@@ -29,7 +29,6 @@ public:
 
 	virtual ~SVPointValueObjectClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	HRESULT GetDefaultValue( POINT& rPoint );

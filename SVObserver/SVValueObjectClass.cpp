@@ -89,7 +89,7 @@ BOOL SVValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructu
 		GetInspection()->RegisterSubObject( this );
 	}
 	
-	ObjectAttributesAllowedRef() |= SV_CH_VALUE | SV_CH_CONDITIONAL | SV_DD_VALUE;	// derived classes need to reset this
+	ObjectAttributesAllowedRef() |= SV_DD_VALUE;	// derived classes need to reset this
 
 	if ( m_iNumberOfBuckets < 2 )
 	{
@@ -290,14 +290,6 @@ HRESULT SVValueObjectClass::CompareWithCurrentValueImpl( const CString& rstrComp
 	{
 		hr = ( (strCurrentValue == rstrCompare) ? S_OK : S_FALSE );
 	}
-	return hr;
-}
-
-HRESULT SVValueObjectClass::GetValue( int iBucket, int iIndex, SVScalarValue& rValue ) const
-{
-	rValue.strName = GetCompleteObjectName();
-	HRESULT hr = GetValue( iBucket, iIndex, rValue.strValue );
-
 	return hr;
 }
 

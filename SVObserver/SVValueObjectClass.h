@@ -18,7 +18,6 @@
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVArrayValueHolder.h"
 #include "SVObjectAppClass.h"
-#include "SVScalarValue.h"
 #pragma endregion Includes
 
 enum SVResetItemEnum // used with Embedded Object registration.
@@ -106,10 +105,6 @@ public:
 	HRESULT GetValue( int iBucket, int iIndex, double&  rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
 	HRESULT GetValue( int iBucket, int iIndex, CString& rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
 	HRESULT GetValue( int iBucket, int iIndex, VARIANT& rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
-
-	HRESULT GetValue( SVScalarValue& rValue ) const { return GetValue(m_iLastSetIndex, 0, rValue); }
-	HRESULT GetValue( int iBucket, SVScalarValue& rValue ) const { return GetValue(iBucket, 0, rValue); }
-	HRESULT GetValue( int iBucket, int iIndex, SVScalarValue& rValue ) const;
 
 	HRESULT GetValues( VARIANT& rValue ) const  { return GetArrayValuesAsVariant(m_iLastSetIndex, rValue); }
 	HRESULT GetValues( std::vector< _variant_t >&  rValue ) const  { return GetArrayValuesAsVariantVector(m_iLastSetIndex, rValue); }
