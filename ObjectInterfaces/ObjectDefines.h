@@ -313,5 +313,14 @@ enum SVMessageFlags
 			| SV_PUBLISH_RESULT_IMAGE
 			| SV_DD_IMAGE
 			);
+
+		const UINT SV_SELECTABLE_ATTRIBUTES  = (
+			SV_VIEWABLE
+			| SV_PUBLISHABLE
+			| SV_ARCHIVABLE
+			| SV_SELECTABLE_FOR_EQUATION
+			| SV_SELECTABLE_FOR_STATISTICS
+			| SV_ARCHIVABLE_IMAGE
+			);
 //	} //	namespace ObjectInterfaces
 //} //namespace Seidenader

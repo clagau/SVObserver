@@ -97,17 +97,17 @@ bool RootObject::createConfigurationObject()
 	pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentImageUpdate, Update );
 	if( !pValueObject.empty() )
 	{
-		//Need to set the attributes to settable remotely and online for the Image Update object but should not appear in rest of GUI
+		//Need to set the attributes to settable remotely and online for the Image Update object but should not be selectable
 		pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		pValueObject->ObjectAttributesAllowedRef() &= ~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+		pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
 	}
 
 	pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentResultUpdate, Update );
 	if( !pValueObject.empty() )
 	{
-		//Need to set the attributes to settable remotely and online for the Result Update object but should not appear in rest of GUI
+		//Need to set the attributes to settable remotely and online for the Result Update object but should not be selectable
 		pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		pValueObject->ObjectAttributesAllowedRef() &= ~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+		pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
 	}
 
 	return true;
@@ -227,17 +227,17 @@ bool RootObject::createRootChildren()
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentModelNumber, _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+			pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
 		}
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentSerialNumber , _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+			pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
 		}
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentWinKey, _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+			pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
 		}
 
 		Result = createRootChild( SvOl::FqnGlobal, SVGlobalConstantObjectType );
