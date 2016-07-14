@@ -957,7 +957,7 @@ HRESULT SVToolClass::ResetObject()
 	bool l_bReset = false;
 	if ( nullptr != GetInspection() && 
 		 nullptr != GetInspection()->GetToolSet() && 
-		 ( S_OK == GetInspection()->GetToolSet()->m_bvoResetCounts.GetValue( l_bReset ) ) &&
+		 ( S_OK == GetInspection()->GetToolSet()->getResetCounts( l_bReset ) ) &&
 		 l_bReset )
 	{
 		// Reset Counter...

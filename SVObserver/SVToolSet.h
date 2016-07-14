@@ -29,6 +29,7 @@ class SVToolSetClass : public SVTaskObjectListClass, public SvOi::IToolSet
 
 	friend class SVInspectionProcess; // for access to Run()
 
+#pragma region Public Methods
 public:
 	typedef std::deque< SVGUID > SVToolIdDeque;
 
@@ -76,26 +77,14 @@ public:
 
 	void GetToolIds( SVToolIdDeque& p_rToolIds ) const;
 
+	HRESULT getResetCounts( bool& rResetCounts );
+#pragma endregion Public Methods
+
 #pragma region virtual method (IToolSet)
 	virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const override;
-#pragma region virtual method (IToolSet)
+#pragma endregion virtual method (IToolSet)
 
-	SVBoolValueObjectClass RegressionTestMode;
-
-	long setNumber;
-
-	SVClock::SVTimeStamp m_StartTime;
-	SVClock::SVTimeStamp m_EndTime;
-	SVClock::SVTimeStamp m_AverageTime;
-	SVClock::SVTimeStamp m_ProcessTime;
-
-	SVClock::SVTimeStamp m_TimeStampStart;
-	SVClock::SVTimeStamp m_TimeStampEnd;
-
-	SVBoolValueObjectClass enabled;
-	SVBoolValueObjectClass m_bvoResetCounts;
-	SVLongValueObjectClass m_lvoTriggerCount;
-
+#pragma region Protected Methods
 protected:
 	virtual BOOL Run( SVRunStatusClass& RRunStatus );
 	virtual BOOL RunWithNewDisable( SVRunStatusClass& RRunStatus );
@@ -107,52 +96,70 @@ protected:
 	// Sends SVM_CREATE_ALL_OBJECTS to the child object
 	// and returns the result of this message.
 	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+private:
+	void init();
+#pragma endregion Private Methods
+
+#pragma region Member Variables
+protected:
+	SVBoolValueObjectClass m_RegressionTestMode;
+
+	long m_SetNumber;
+
+	SVClock::SVTimeStamp m_StartTime;
+	SVClock::SVTimeStamp m_EndTime;
+	SVClock::SVTimeStamp m_AverageTime;
+	SVClock::SVTimeStamp m_ProcessTime;
+
+	SVClock::SVTimeStamp m_TimeStampStart;
+	SVClock::SVTimeStamp m_TimeStampEnd;
+
+	SVBoolValueObjectClass m_Enabled;
+	SVBoolValueObjectClass m_ResetCounts;
+	SVLongValueObjectClass m_TriggerCount;
 
 	SVResultListClass m_ResultList;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass passed;
+	SVBoolValueObjectClass m_Passed;
 	// Warned, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass warned;
+	SVBoolValueObjectClass m_Warned;
 	// Failed, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass failed;
+	SVBoolValueObjectClass m_Failed;
 	// Failed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass explicitFailed;
+	SVBoolValueObjectClass m_ExplicitFailed;
 
-	SVLongValueObjectClass passedCount;
-	SVLongValueObjectClass failedCount;
-	SVLongValueObjectClass warnedCount;
+	SVLongValueObjectClass m_PassedCount;
+	SVLongValueObjectClass m_FailedCount;
+	SVLongValueObjectClass m_WarnedCount;
 
-	SVLongValueObjectClass enabledCount;
-	SVLongValueObjectClass processedCount;
+	SVLongValueObjectClass m_EnabledCount;
+	SVLongValueObjectClass m_ProcessedCount;
 
 	// Conditional input
 	SVInObjectInfoStruct inputConditionBoolObjectInfo;
 
 	// Conditional tool set drawing flag.
-	SVEnumerateValueObjectClass	drawFlag;
-	SVTimerValueObjectClass	ToolTime;
+	SVEnumerateValueObjectClass	m_DrawFlag;
+	SVTimerValueObjectClass	m_ToolTime;
 
 	bool m_bResetMinMaxToolsetTime;
 
-	SVTimerValueObjectClass m_svMinToolsetTime;
-	SVTimerValueObjectClass m_svMaxToolsetTime;
-
-	/* maybe later (Arvid?)
-	SVLongValueObjectClass	processesCompleted;
-	SVDoubleValueObjectClass executionTime;
-	*/
-
-	// Embedded Object:
-	SVMainImageClass mainImageObject;	// Embedded
+	SVTimerValueObjectClass m_MinToolsetTime;
+	SVTimerValueObjectClass m_MaxToolsetTime;
 
 private:
+	// Embedded Object:
+	SVMainImageClass m_MainImageObject;	// Main toolset image
 	SVLongValueObjectClass m_latestCompletionPPQIndex; // the PPQ position at which the most recently completed product was located when it was completed
 	SVTimerValueObjectClass m_TriggerDelta; ///< The time interval between the two most recent triggers
 	SVTimerValueObjectClass m_LastTriggerToPPQCompletion; ///< for the most recently completed product: The time interval between the trigger that started the product and inspection completion in microsceconds
 	SVTimerValueObjectClass m_LastTriggerToStart; ///< for the most recently completed product: The time interval between the trigger that started the product and the start of the inspection in microsceconds
-
-
-	void init();
+	SVDoubleValueObjectClass m_Width;	//! The toolset image width			
+	SVDoubleValueObjectClass m_Height;	//! The toolset image height
+#pragma endregion Member Variables
 };
 

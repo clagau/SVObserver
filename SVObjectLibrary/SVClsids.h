@@ -117,9 +117,17 @@ extern /*const*/ GUID SVToolSelectedForOperatorMoveObjectGuid;
 //GUID for the Embedded object for SVToolClass
 extern /*const*/ GUID SVToolTimeGuid;
 
-//GUID for the Embedded object for SVToolClass
+//GUID for the Embedded object for SVToolsetClass
 extern /*const*/ GUID SVMinToolSetTimeGuid;
 extern /*const*/ GUID SVMaxToolSetTimeGuid;
+extern /*const*/ GUID SVResetInspectionCountsGuid;
+extern /*const*/ GUID SVTriggerCountGuid;
+extern /*const*/ GUID SVLatestCompletionPPQIndexGuid;
+extern /*const*/ GUID SVTriggerDeltaGuid;
+extern /*const*/ GUID SVLastTriggerToPPQCompletionGuid;
+extern /*const*/ GUID SVLastTriggerToStartGuid;
+extern /*const*/ GUID ToolsetWidthGuid;
+extern /*const*/ GUID ToolsetHeightGuid;
 
 // GUID for the SVWindowToolClass
 extern /*const*/ GUID SVWindowToolClassGuid;
@@ -1005,7 +1013,6 @@ extern /*const*/ GUID SVExtentRelativeRightPositionObjectGuid;
 extern /*const*/ GUID SVExtentRelativeBottomPositionObjectGuid;
 extern /*const*/ GUID SVExtentWidthObjectGuid;
 extern /*const*/ GUID SVExtentHeightObjectGuid;
-extern /*const*/ GUID SVExtentWidthObjectGuid;
 extern /*const*/ GUID SVExtentHeightScaleFactorObjectGuid;
 extern /*const*/ GUID SVExtentWidthScaleFactorObjectGuid;
 
@@ -1129,12 +1136,6 @@ extern /*const*/ GUID SVEdgeBPositionOffsetGuid;
 extern /*const*/ GUID SVEdgeBLowerThresholdValueGuid;
 extern /*const*/ GUID SVEdgeBUpperThresholdValueGuid;
 extern /*const*/ GUID SVDrawCriteriaObjectGuid;
-extern /*const*/ GUID SVResetInspectionCountsGuid;
-extern /*const*/ GUID SVTriggerCountGuid;
-extern /*const*/ GUID SVLatestCompletionPPQIndexGuid;
-extern /*const*/ GUID SVTriggerDeltaGuid;
-extern /*const*/ GUID SVLastTriggerToPPQCompletionGuid;
-extern /*const*/ GUID SVLastTriggerToStartGuid;
 
 
 ///////////////////////////////////////////////////
