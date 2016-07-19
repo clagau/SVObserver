@@ -20,7 +20,15 @@ namespace Seidenader
 			virtual ~IValueObject() {}
 			virtual HRESULT GetValue(_variant_t& rValue) const = 0;
 			virtual HRESULT SetValue(const _variant_t& rValue) = 0;
+
+			/// Validate the value. If value invalid an exception message will be thrown.
+			/// \param rValue [in]
+			virtual void ValidateValue( const _variant_t& rValue ) const = 0;
+
 		};
+
+		typedef std::pair<IValueObject*, _variant_t> SetValuePair;
+		typedef std::vector<SetValuePair> SetValuePairVector;
 	}
 }
 

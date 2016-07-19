@@ -33,10 +33,21 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual HRESULT ResetObject() override;
 
+	SVObjectClass* getNumberOfRowObject() const;
+
+	const std::vector<DoubleSortValuePtr>& getValueList() const { return m_ValueList; };
+	const ValueObjectSortContainer& getSortContainer() const { return m_sortContainer; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
+	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
+
+	/// Create a new column value Object. If creation failed, this method throw an exception.
+	/// \param embeddedID [in] The EmbeddedId of the new object.
+	/// \param name [in] The name of the new object.
+	/// \param arraySize [in] The array size of the new object.
+	void createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize);
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -49,7 +60,6 @@ private:
 
 #pragma region Member Variables
 protected:
-	int m_maxArray;
 	ValueObjectSortContainer m_sortContainer;
 	std::vector<DoubleSortValuePtr> m_ValueList;
 	SVLongValueObjectClass m_NumberOfRows; 

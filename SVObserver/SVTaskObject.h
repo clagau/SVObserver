@@ -31,6 +31,14 @@
 
 class SVIPDoc;
 
+enum ValidationLevelEnum
+{
+	AllParameters,					// level 3
+	RemotelyAndInspectionSettable,  // level 2
+	InspectionSettable				// level 1
+};
+
+
 class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {
 	SV_DECLARE_CLASS( SVTaskObjectClass )
@@ -62,7 +70,7 @@ public:
 	void ResetPrivateInputInterface();
 	
 	virtual BOOL ConnectAllInputs();
-	virtual HRESULT ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo, SVImageClass* p_psvNewImage ); // SEJ - why is this virtual ?
+	virtual HRESULT ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject ); // SEJ - why is this virtual ?
 
 	virtual BOOL IsValid();
 
@@ -128,9 +136,11 @@ public:
 	virtual SvOi::ISelectorItemVectorPtr GetSelectorList(SvOi::IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const override;
 	virtual SvOi::DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const override;
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
-	virtual HRESULT ConnectToImage(const SVString& rInputName, const SVGUID& rNewID) override;
+	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType ) override;
+	virtual HRESULT ConnectToObject(const SVString& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) override;
 	virtual bool IsObjectValid() const override;
 	virtual const SvStl::MessageContainerVector& getTaskMessages() const override {return m_TaskMessages;};
+	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValuePairVector& valueVector, bool shouldSet) override;
 #pragma endregion virtual method (ITaskObject)
 
 protected:
@@ -178,6 +188,21 @@ public:
 	virtual HRESULT ResetObjectInputs();
 
 protected:
+	/// Validate the Parameter of this object and call depending of the level the sub methods.
+	/// \param validationLevel [in] InspectionSettable calls only ValidateInspectionSettableParameters, RemotelyAndInspectionSettable calls also ValidateRemotelySettableParameters 
+	///										and AllParameters also ValidateOfflineParameters.
+	/// \returns bool
+	bool OnValidateParameter (ValidationLevelEnum validationLevel);
+	/// Check parameter which can be changed online if they are valid.
+	/// \returns bool
+	virtual bool ValidateInspectionSettableParameters ();
+	/// Check parameter which can be remotely settable if they are valid.
+	/// \returns bool
+	virtual bool ValidateRemotelySettableParameters ();
+	/// Check parameter which can only set offline if they are valid.
+	/// \returns bool
+	virtual bool ValidateOfflineParameters ();
+
 	// Direct Method Call
 	// NOTE:
 	// Use onRun() to implement your special updating!

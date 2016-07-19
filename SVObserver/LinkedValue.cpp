@@ -259,29 +259,7 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, BYTE& rValue) const
 HRESULT LinkedValue::SetValueAt( int Bucket, int Index, CString Value )
 {
 	HRESULT Result( S_OK );
-	CString ToolSetName;
-	SVString ObjectName;
-
-	ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
-
-	//If the tool set name is at the start then add the inspection name at the beginning
-	if( 0 == Value.Find( ToolSetName ) )
-	{
-		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( GetAncestor( SVInspectionObjectType ) );
-		if( nullptr != pInspection )
-		{
-			ObjectName = pInspection->GetName();
-			ObjectName += _T(".");
-			ObjectName += Value;
-		}
-	}
-	else
-	{
-		ObjectName = Value;
-	}
-
-	SVObjectClass* pNewLinkedObject( nullptr );
-	SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, pNewLinkedObject );
+	SVObjectClass* pNewLinkedObject = ConvertStringInObject(Value);
 
 	// disconnect existing connection if any existing
 	DisconnectInput();
@@ -334,7 +312,37 @@ void LinkedValue::UpdateLinkedName()
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
+void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	CString tmpValue = rValue.c_str();
+	SVObjectClass* pNewLinkedObject = ConvertStringInObject(tmpValue);
 
+	if ( nullptr != pNewLinkedObject )
+	{
+		//This must use the base class otherwise causes recursive call to ValidateValue
+		SVVariantValueObjectClass::ValidateValue( iBucket, iIndex, pNewLinkedObject->GetUniqueObjectID().ToString().c_str() );
+	}
+	else
+	{
+		_variant_t vtTemp;
+		vtTemp = tmpValue;
+
+		if( DefaultValue().vt != VT_EMPTY )
+		{
+			HRESULT Result = ::VariantChangeType( &vtTemp, &vtTemp, 0, DefaultValue().vt );
+			if ( S_OK != Result) //object index out of range will not throw
+			{
+				SVStringArray msgList;
+				msgList.push_back(GetName());
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				Exception.Throw();
+			}
+		}
+
+		base::ValidateValue( iBucket, iIndex, rValue );
+	}
+}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -484,6 +492,34 @@ HRESULT LinkedValue::ResetObject()
 	m_isObjectValid = (S_OK == Result);
 
 	return Result;
+}
+
+SVObjectClass* LinkedValue::ConvertStringInObject( CString &rValue ) const
+{
+	CString ToolSetName;
+	SVString ObjectName;
+
+	ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
+
+	//If the tool set name is at the start then add the inspection name at the beginning
+	if( 0 == rValue.Find( ToolSetName ) )
+	{
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( GetAncestor( SVInspectionObjectType ) );
+		if( nullptr != pInspection )
+		{
+			ObjectName = pInspection->GetName();
+			ObjectName += _T(".");
+			ObjectName += rValue;
+		}
+	}
+	else
+	{
+		ObjectName = rValue;
+	}
+
+	SVObjectClass* pNewLinkedObject( nullptr );
+	SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, pNewLinkedObject );
+	return pNewLinkedObject;
 }
 
 #pragma endregion Private Methods

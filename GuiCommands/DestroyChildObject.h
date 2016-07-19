@@ -33,7 +33,7 @@ namespace Seidenader
 			/// \param rObjectID [in] GUID of the object which should be destroyed.
 			/// \param flags [in] Define if after destroying object the default inputs are set and/or inspection are reset.
 			//************************************
-			DestroyChildObject(const GUID& rTaskObjectListID, const GUID& rObjectID, FlagEnum flag) 
+			DestroyChildObject(const GUID& rTaskObjectListID, const GUID& rObjectID, FlagEnum flag = Flag_None) 
 				: m_InstanceID(rTaskObjectListID), m_ObjectID(rObjectID), m_flag(flag) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory

@@ -9,12 +9,15 @@
 //* .Check In Date   : $Date:   01 Aug 2013 11:21:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDPointValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVOMFCLibrary/StringMunge.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#include "SVStatusLibrary/MessageManager.h"
+#pragma endregion Includes
 
 namespace	// only for this file
 {
@@ -170,22 +173,16 @@ HRESULT SVDPointValueObjectClass::GetDefaultValue( CPoint& rPoint )
 
 HRESULT SVDPointValueObjectClass::SetValueAt( int iBucket, int iIndex, CString strValue )
 {
-	CString strLegalChars (strValue);
-	StringMunge::KeepChars( &strLegalChars, _T("0123456789()-., ") );	// floats
-	if ( strLegalChars == strValue )
+	try
 	{
-		StringMunge::StripChars( &strLegalChars, _T("()") );
-		int iComma = strLegalChars.Find(_T(','));
-		if ( iComma > 0 && iComma < strLegalChars.GetLength() - 1 )
-		{
-			CString sX = strLegalChars.Left( iComma );
-			CString sY = strLegalChars.Mid( iComma + 1 );
-			SVDPointClass ptValue (atof(sX), atof(sY));
-			return base::SetValueAt(iBucket, iIndex, ptValue );
-		}
+		SVDPointClass value = convertString2DPoint(strValue);
+		return base::SetValueAt(iBucket, iIndex, value );
 	}
-	ASSERT(FALSE);
-	return S_FALSE;
+	catch (const SvStl::MessageContainer&)
+	{
+		ASSERT(FALSE);
+		return S_FALSE;
+	}
 }
 
 HRESULT SVDPointValueObjectClass::SetValueAt( int iBucket, int iIndex, double value )
@@ -256,6 +253,12 @@ HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& 
 	return hr;
 }
 
+void SVDPointValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	convertString2DPoint(rValue.c_str());
+	base::ValidateValue( iBucket, iIndex, rValue );
+}
+
 void SVDPointValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDPointValueObjectType;
@@ -265,5 +268,29 @@ void SVDPointValueObjectClass::LocalInitialize()
 	m_strTypeName = "Point";
 
 	InitializeBuckets();
+}
+
+SVDPointClass SVDPointValueObjectClass::convertString2DPoint(const CString& rValue ) const
+{
+	CString strLegalChars (rValue);
+	StringMunge::KeepChars( &strLegalChars, _T("0123456789()-., ") );	// floats
+	if ( strLegalChars == rValue )
+	{
+		StringMunge::StripChars( &strLegalChars, _T("()") );
+		int iComma = strLegalChars.Find(_T(','));
+		if ( iComma > 0 && iComma < strLegalChars.GetLength() - 1 )
+		{
+			CString sX = strLegalChars.Left( iComma );
+			CString sY = strLegalChars.Mid( iComma + 1 );
+			return SVDPointClass(atof(sX), atof(sY));
+		}
+	}
+	SVStringArray msgList;
+	msgList.push_back(SVString(rValue));
+	msgList.push_back(GetName());
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+	Exception.Throw();
+	return SVDPointClass(); //will never reached, because the exception will throw before. But this line avoid a warning
 }
 

@@ -9,11 +9,14 @@
 //* .Check In Date   : $Date:   01 Aug 2013 11:21:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPointValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h" // for SV_FALSE;
 #include "SVOMFCLibrary/StringMunge.h"
+#include "SVStatusLibrary/MessageManager.h"
+#pragma endregion Includes
 
 namespace	// only for this file
 {
@@ -117,22 +120,16 @@ HRESULT SVPointValueObjectClass::SetValueAt( int iBucket, int iIndex, double val
 
 HRESULT SVPointValueObjectClass::SetValueAt( int iBucket, int iIndex, CString strValue )
 {
-	CString strLegalChars (strValue);
-	StringMunge::KeepChars( &strLegalChars, _T("0123456789()-, ") );	// only integers
-	if ( strLegalChars == strValue )
+	try
 	{
-		StringMunge::StripChars( &strLegalChars, _T("()") );
-		int iComma = strLegalChars.Find(_T(','));
-		if ( iComma > 0 && iComma < strLegalChars.GetLength() - 1 )
-		{
-			CString sX = strLegalChars.Left( iComma );
-			CString sY = strLegalChars.Mid( iComma + 1 );
-			SVPOINT ptValue (atol(sX), atol(sY));
-			return base::SetValueAt(iBucket, iIndex, ptValue );
-		}
+		SVPOINT value = convertString2Point(strValue);
+		return base::SetValueAt(iBucket, iIndex, value );
 	}
-	ASSERT(FALSE);
-	return S_FALSE;
+	catch (const SvStl::MessageContainer&)
+	{
+		ASSERT(FALSE);
+		return S_FALSE;
+	}
 }
 
 HRESULT SVPointValueObjectClass::GetValueAt( int iBucket, int iIndex, POINT& rPoint) const
@@ -183,6 +180,12 @@ HRESULT SVPointValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rV
 	return S_FALSE;
 }
 
+void SVPointValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	convertString2Point(rValue.c_str());
+	base::ValidateValue( iBucket, iIndex, rValue );
+}
+
 void SVPointValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVPointValueObjectType;
@@ -197,3 +200,26 @@ void SVPointValueObjectClass::LocalInitialize()
 	InitializeBuckets();
 }
 
+SVPOINT SVPointValueObjectClass::convertString2Point(const CString& rValue ) const
+{
+	CString strLegalChars (rValue);
+	StringMunge::KeepChars( &strLegalChars, _T("0123456789()-, ") );	// only integers
+	if ( strLegalChars == rValue )
+	{
+		StringMunge::StripChars( &strLegalChars, _T("()") );
+		int iComma = strLegalChars.Find(_T(','));
+		if ( iComma > 0 && iComma < strLegalChars.GetLength() - 1 )
+		{
+			CString sX = strLegalChars.Left( iComma );
+			CString sY = strLegalChars.Mid( iComma + 1 );
+			return SVPOINT(atol(sX), atol(sY));
+		}
+	}
+	SVStringArray msgList;
+	msgList.push_back(SVString(rValue));
+	msgList.push_back(GetName());
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+	Exception.Throw();
+	return SVPOINT(); //will never reached, because the exception will throw before. But this line avoid a warning
+}

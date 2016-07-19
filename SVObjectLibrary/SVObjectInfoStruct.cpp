@@ -107,13 +107,11 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* p_psvObject )
 
 	try
 	{
-		SVObjectClass* l_pTemp = dynamic_cast<SVObjectClass*>( p_psvObject );
-
-		if( nullptr != l_pTemp )
+		if( nullptr != p_psvObject )
 		{
 			clear();
 
-			PObject = l_pTemp;
+			PObject = p_psvObject;
 
 			ObjectTypeInfo = PObject->GetObjectInfo().ObjectTypeInfo;
 

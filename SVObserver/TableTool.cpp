@@ -45,7 +45,7 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	BOOL bOk = SVToolClass::CreateObject( pCreateStructure ); //  TRUE/FALSE
 
-	m_MaxRow.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION;
+	m_MaxRow.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 
 	bOk &= (nullptr != GetTool());
 	bOk &= (nullptr != GetInspection());
@@ -116,7 +116,20 @@ HRESULT TableTool::ResetObject()
 			TableColumnEquation* equation = dynamic_cast<TableColumnEquation*>(m_friendList[j].PObject);
 			if (nullptr != equation)
 			{
-				m_ColumnEquationList.push_back(equation);
+				if (c_maxTableColumn > m_ColumnEquationList.size())
+				{
+					m_ColumnEquationList.push_back(equation);
+				}
+				else
+				{
+					SVStringArray msgList;
+					msgList.push_back(SvUl_SF::Format(_T("%d"), c_maxTableColumn));
+					SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams) );
+					status = E_FAIL;
+					DestroyFriendObject(*equation, 0);
+					j--;
+				}
 			}
 		}
 		long maxArray = 0;
@@ -207,6 +220,9 @@ void TableTool::LocalInitialize ()
 	// Set up your type
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
 	m_outObjectInfo.ObjectTypeInfo.SubType    = SVTableToolObjectType;
+
+	// Hide and Remove Embedded Extents
+	removeEmbeddedExtents();
 }
 
 void TableTool::BuildInputObjectList ()

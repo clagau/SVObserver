@@ -2,7 +2,6 @@
 // \copyright COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
 // All Rights Reserved
 //*****************************************************************************
-
 // This is the RangeController for the Range Value Objects.
 //******************************************************************************
 #pragma once
@@ -35,7 +34,6 @@ namespace Seidenader
 			std::string Get(const std::string& rName) const;
 			void Set(const std::string& rName, const std::string& rValue);
 
-			void FillObjectSelector();
 			SVString GetOwnerName() const;
 			void IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& rValue);
 			void Validate(HINSTANCE resHandle);

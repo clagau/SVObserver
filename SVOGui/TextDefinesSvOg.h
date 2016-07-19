@@ -16,6 +16,8 @@ namespace Seidenader { namespace SVOGui
 	const TCHAR* const RegExp_Name = _T( "[a-zA-Z][0-9a-zA-Z_ ]*" );
 	const TCHAR* const Filter_NoFilterAvailable = _T( "(No Filter Available)" );
 	const TCHAR* const Filter_NoFilter = _T( "(No Filter)" );
+	const TCHAR* const Analyzer_NoAnalyzerAvailable = _T( "(No Analyzer Available)" );
+	const TCHAR* const Analyzer_NoAnalyzer = _T( "(No Analyzer)" );
 	const TCHAR* const ScintillaControlName = _T("Scintilla");
 } /* namespace SVOGui */ } /* namespace Seidenader */
 

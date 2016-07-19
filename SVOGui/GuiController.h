@@ -12,6 +12,7 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <string>
 #include "ObjectInterfaces\NameValueList.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -54,6 +55,13 @@ namespace Seidenader
 			{
 				return SetValues(m_Data, bReset);
 			}
+
+			SvStl::MessageContainerVector getCommitErrorList()
+			{
+				return getSetFailedMessageList();
+			}
+
+			const GUID& GetOwnerID() const { return m_Data.GetOwnerID(); }
 		};
 	}
 }

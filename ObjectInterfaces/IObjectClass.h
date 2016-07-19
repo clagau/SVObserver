@@ -81,11 +81,6 @@ namespace Seidenader
 			***********/
 			virtual bool IsArray() const = 0;
 
-			/**********
-			This method returns the array size
-			***********/
-			virtual int GetArraySize() const = 0;
-
 			/*
 			This method returns the object's Global Unique Identifier (GUID) of this object instance.
 			*/

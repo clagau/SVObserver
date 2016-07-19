@@ -28,6 +28,7 @@
 #include "RootObject.h"
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
 #include "TextDefinesSvO.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -99,7 +100,7 @@ SVTaskObjectClass::~SVTaskObjectClass()
 HRESULT SVTaskObjectClass::ResetObject()
 {
 	HRESULT l_hrOk = S_OK;
-
+	clearTaskMessages();
 	return l_hrOk;
 }
 
@@ -466,6 +467,86 @@ void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, i
 		}
 	}
 }
+
+void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SVObjectTypeInfoStruct& typeInfo, SVObjectTypeEnum objectTypeToInclude )
+{
+	SVInputInfoListClass toolInputList;
+	// Try to get input interface...
+	::SVSendMessage( this, SVM_GET_INPUT_INTERFACE | SVM_NOTIFY_FRIENDS, reinterpret_cast<DWORD_PTR>(&toolInputList), 0 );
+	long lCount = toolInputList.GetSize();
+
+	for( int i = 0; i < lCount; ++ i )
+	{
+		SVInObjectInfoStruct* pInputInfo = toolInputList[ i ];
+
+		if( nullptr != pInputInfo && (SVNotSetObjectType == typeInfo.ObjectType || 
+					( typeInfo.ObjectType == pInputInfo->GetInputObjectInfo().ObjectTypeInfo.ObjectType && 
+					( SVNotSetSubObjectType == typeInfo.SubType || typeInfo.SubType == typeInfo.SubType == pInputInfo->GetInputObjectInfo().ObjectTypeInfo.SubType))) )
+		{
+			SvOi::IObjectClass* pObject = pInputInfo->GetInputObjectInfo().PObject;
+			SVString name = "";
+			SVGUID objectGUID = SV_GUID_NULL;
+			if (pInputInfo->IsConnected() && nullptr != pObject)
+			{
+				SvOi::ISVImage* pImage = dynamic_cast <SvOi::ISVImage*>(pObject);
+				if (nullptr != pImage)
+				{
+					name = pImage->getDisplayedName();
+				}
+				else
+				{
+					if (SVNotSetObjectType == objectTypeToInclude)
+					{
+						name = pObject->GetName();
+					}
+					else
+					{
+						name = pObject->GetObjectNameToObjectType(nullptr, objectTypeToInclude);
+					}
+				}
+				objectGUID = pObject->GetUniqueObjectID();
+			}
+			rList.insert(std::make_pair(pInputInfo->GetInputName(), std::make_pair(name, objectGUID)));
+		}
+	}
+}
+
+SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(const SvOi::SetValuePairVector& valueVector, bool shouldSet)
+{
+	SvStl::MessageContainerVector messages;
+	HRESULT Result(S_OK);
+	for(SvOi::SetValuePairVector::const_iterator it = valueVector.begin(); valueVector.end() != it && S_OK == Result; ++it)
+	{
+		try
+		{
+			it->first->ValidateValue(it->second);
+		}
+		catch ( const SvStl::MessageContainer& rSvE )
+		{
+			messages.push_back(rSvE);
+			Result = rSvE.getMessage().m_MessageCode;
+		}
+		
+	}
+
+	if (shouldSet)
+	{
+		for(SvOi::SetValuePairVector::const_iterator it = valueVector.begin(); valueVector.end() != it && S_OK == Result; ++it)
+		{
+			Result = it->first->SetValue(it->second);
+			if (S_OK != Result)
+			{
+				SVStringArray msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%d"), Result));
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				messages.push_back(Msg.getMessageContainer());
+			}
+		}
+	}
+
+	return messages;
+}
 #pragma endregion virtual method (ITaskObject)
 
 HRESULT SVTaskObjectClass::IsInputImage( SVImageClass* p_psvImage )
@@ -721,7 +802,7 @@ struct CompareInputName
 	bool operator()(const SVInObjectInfoStruct* pInfo) const { return pInfo->GetInputName() == m_Name; }
 };
 
-HRESULT SVTaskObjectClass::ConnectToImage(const SVString& rInputName, const SVGUID& newImageGUID)
+HRESULT SVTaskObjectClass::ConnectToObject(const SVString& rInputName, const SVGUID& newGUID, SVObjectTypeEnum objectType)
 {
 	HRESULT hr = S_OK;
 
@@ -731,10 +812,10 @@ HRESULT SVTaskObjectClass::ConnectToImage(const SVString& rInputName, const SVGU
 	SVVector<SVInObjectInfoStruct*>::const_iterator it = std::find_if(toolInputList.begin(), toolInputList.end(), CompareInputName(rInputName));
 	if (it != toolInputList.end())
 	{
-		SVImageClass* pNewImage = dynamic_cast<SVImageClass*>(SVObjectManagerClass::Instance().GetObject(newImageGUID));
-		if (pNewImage)
+		SVObjectClass* pNewObject = SVObjectManagerClass::Instance().GetObject(newGUID);
+		if (nullptr != pNewObject && (SVNotSetObjectType == objectType || pNewObject->GetObjectType() == objectType))
 		{
-			hr = ConnectToImage((*it), pNewImage);
+			hr = ConnectToObject((*it), pNewObject);
 		}
 		else
 		{
@@ -748,36 +829,36 @@ HRESULT SVTaskObjectClass::ConnectToImage(const SVString& rInputName, const SVGU
 	return hr;
 }
 
-HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo, SVImageClass* p_psvNewImage )
+HRESULT SVTaskObjectClass::ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject )
 {
 	HRESULT l_svOk = S_OK;
 
 	if( nullptr != p_psvInputInfo )
 	{
-		const GUID l_guidOldInputObjectID = p_psvInputInfo->GetInputObjectInfo().UniqueObjectID;
-		SVImageClass* l_psvOldImage = dynamic_cast<SVImageClass*>( SVObjectManagerClass::Instance().GetObject( l_guidOldInputObjectID ) );
+		const GUID guidOldInputObjectID = p_psvInputInfo->GetInputObjectInfo().UniqueObjectID;
+		SVObjectClass* pOldObject = dynamic_cast<SVObjectClass*>( SVObjectManagerClass::Instance().GetObject( guidOldInputObjectID ) );
 
 		// Disconnect input info of input object...
 		if( p_psvInputInfo->IsConnected() )
 		{
 			// Send to the Object we are using
-			::SVSendMessage( l_guidOldInputObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );
+			::SVSendMessage( guidOldInputObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );
 		}
 
 		// Set new input...
-		p_psvInputInfo->SetInputObject( p_psvNewImage );
+		p_psvInputInfo->SetInputObject( pNewObject );
 
-		if( nullptr != p_psvNewImage )
+		if( nullptr != pNewObject )
 		{
 			// Connect input info to new input object...
-			DWORD_PTR dwConnectResult = ::SVSendMessage( p_psvNewImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );
+			DWORD_PTR dwConnectResult = ::SVSendMessage( pNewObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );
 			if( dwConnectResult != SVMR_SUCCESS )
 			{
 				// Unable to connect to new input object....
 				SVStringArray msgList;
-				if( p_psvNewImage )
+				if( pNewObject )
 				{
-					msgList.push_back(p_psvNewImage->GetName());
+					msgList.push_back(pNewObject->GetName());
 				}
 				else
 				{
@@ -788,10 +869,10 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CriticalUnableToConnectTo, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10203 ); 
 
 				// Try to recover old state...
-				if( nullptr != l_psvOldImage )
+				if( nullptr != pOldObject )
 				{
-					p_psvInputInfo->SetInputObject( l_psvOldImage );
-					dwConnectResult = ::SVSendMessage( l_psvOldImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );			
+					p_psvInputInfo->SetInputObject( pOldObject );
+					dwConnectResult = ::SVSendMessage( pOldObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), 0 );			
 				}
 
 				l_svOk = S_FALSE;
@@ -802,10 +883,12 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 			l_svOk = S_FALSE;
 		}
 
-		// Tell Tool image source has changed
 		::SVSendMessage( GetTool(), SVM_CONNECT_ALL_INPUTS, 0, 0 );
 
-		::SVSendMessage( GetTool(), SVM_IMAGE_SOURCE_CHANGED, 0, 0 );
+		if ( nullptr != dynamic_cast<SVImageClass*>(pNewObject) )
+		{
+			::SVSendMessage( GetTool(), SVM_IMAGE_SOURCE_CHANGED, 0, 0 );
+		}
 
 		::SVSendMessage( GetTool(), SVM_RESET_ALL_OBJECTS, 0, 0 );
 	}
@@ -1400,6 +1483,47 @@ void SVTaskObjectClass::PersistEmbeddeds(SVObjectWriter& rWriter)
 		}
 		rWriter.EndElement();
 	}
+}
+
+bool SVTaskObjectClass::OnValidateParameter (ValidationLevelEnum validationLevel)
+{
+	bool Result(true);
+
+	Result = ValidateInspectionSettableParameters();
+
+	if (Result && (RemotelyAndInspectionSettable == validationLevel || AllParameters == validationLevel))
+	{
+		Result = ValidateRemotelySettableParameters ();
+	}
+
+	if (Result && AllParameters == validationLevel)
+	{
+		Result = ValidateOfflineParameters ();
+	}
+
+	return Result;
+}
+
+bool SVTaskObjectClass::ValidateInspectionSettableParameters ()
+{
+	bool Result = true;
+	// Possibly should include ROI extents (top, bottom, height, width), but 
+	// I think Extents are checked elsewhere.
+	return Result;
+}
+
+bool SVTaskObjectClass::ValidateRemotelySettableParameters ()
+{
+	bool Result = true;
+
+	return Result;
+}
+
+bool SVTaskObjectClass::ValidateOfflineParameters ()
+{
+	bool Result = true;
+
+	return Result;
 }
 
 BOOL SVTaskObjectClass::Run(SVRunStatusClass& RRunStatus)

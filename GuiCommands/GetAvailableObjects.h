@@ -34,11 +34,53 @@ namespace Seidenader
 			}
 		};
 
+		class IsObjectFromPriorTool
+		{
+		public:
+			IsObjectFromPriorTool(const GUID& rTaskObjectID)
+				: m_TaskObjectID(rTaskObjectID)
+			{
+			}
+
+			bool operator()(SvOi::IObjectClass* pObject, bool& bStop) const
+			{
+				// Ensure only image sources which are produced by tools above the current tool...
+				bStop = IsObjectCurrentTask(pObject);
+				return !bStop;
+			}
+
+		private:
+			bool IsObjectCurrentTask(SvOi::IObjectClass* pObject) const
+			{
+				bool bRetVal = false;
+				if (nullptr != pObject)
+				{
+					SvOi::IObjectClass* pOwnerTool = pObject->GetAncestorInterface(SVToolObjectType);
+					if (nullptr != pOwnerTool)
+					{
+						GUID ownerID = pOwnerTool->GetUniqueObjectID();
+						if (ownerID == m_TaskObjectID) // stop at this tool...
+						{
+							bRetVal = true;
+						}
+					}
+				}
+				return bRetVal;
+			}
+
+		private:
+			GUID m_TaskObjectID;
+		};
+
 		typedef boost::function<bool (SvOi::IObjectClass*, bool& bStop)> IsAllowedFunc; 
 		struct GetAvailableObjects: public boost::noncopyable
 		{
-			GetAvailableObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, IsAllowedFunc func = IsValidObject() )
-				: m_InstanceID(rObjectID), m_typeInfo(typeInfo), IsAllowed(func) {}
+			/// \param rObjectID [in] Object Id of the object from which level the available objects will search for.
+			/// \param typeInfo [in] Type of the available objects
+			/// \param objectTypeToInclude [in] Object type until the name of the available object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
+			/// \param func [in]
+			GetAvailableObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, IsAllowedFunc func = IsValidObject(), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType )
+				: m_InstanceID(rObjectID), m_typeInfo(typeInfo), IsAllowed(func), m_objectTypeToInclude(objectTypeToInclude) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -77,7 +119,15 @@ namespace Seidenader
 									break;
 								default:
 									{
-										SVString name = pObject->GetName();
+										SVString name;
+										if (SVNotSetObjectType == m_objectTypeToInclude)
+										{
+											name = pObject->GetName();
+										}
+										else
+										{
+											name = pObject->GetObjectNameToObjectType(nullptr, m_objectTypeToInclude);
+										}
 										if (!name.empty())
 										{
 											m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
@@ -103,6 +153,7 @@ namespace Seidenader
 			SVObjectTypeInfoStruct m_typeInfo;
 			SvUl::NameGuidList m_list;
 			GUID m_InstanceID;
+			SVObjectTypeEnum m_objectTypeToInclude;
 			IsAllowedFunc IsAllowed;
 		};
 	}

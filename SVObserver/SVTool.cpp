@@ -1303,7 +1303,7 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
 			}
 		}
 
-		::KeepPrevError( l_hr, ConnectToImage( &m_AuxSourceImageObjectInfo, l_psvImage ) );
+		::KeepPrevError( l_hr, ConnectToObject( &m_AuxSourceImageObjectInfo, l_psvImage ) );
 
 		m_svToolExtent.SetSelectedImage( GetAuxSourceImage() );
 

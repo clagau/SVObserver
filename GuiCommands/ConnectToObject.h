@@ -35,14 +35,7 @@ namespace Seidenader
 				SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_InstanceID));
 				if (pObject)
 				{
-					if (SVImageObjectType == m_objectType)
-					{
-						hr = pObject->ConnectToImage(m_InputName, m_NewID);
-					}
-					else
-					{
-						hr = E_INVALIDARG;
-					}
+					hr = pObject->ConnectToObject(m_InputName, m_NewID, m_objectType);
 				}
 				else
 				{

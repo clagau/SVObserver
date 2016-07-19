@@ -16,6 +16,7 @@
 #include "PictureDisplay.h"
 #include "ValuesAccessor.h"
 #include "GuiController.h"
+#include "ObjectSelectorController.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui
@@ -64,22 +65,10 @@ namespace Seidenader { namespace SVOGui
 		/// \param titleStringID [in] string ID for the object selector title.
 		//************************************
 		void ObjectSelectorForIndex(int index, int titleStringID);
-
-		//************************************
-		/// Show the object selector and return the selection. 
-		/// \param name [in,out] In: Defined which item should selected at begin. 
-		///                     Out: If selector closed with OK-button, the selection will returned.
-		/// \param Title [in] The title of the object selector.
-		/// \returns bool True if selector was closed by OK-button.
-		//************************************
-		bool ShowObjectSelector(CString& name, const CString& Title);
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 	private:
-		GUID GetToolSetGUID() const;
-		SVString GetInspectionName() const;
-		SVString GetPPQName() const;
 		HRESULT SetPageData();
 		HRESULT SetRingDepth();
 		HRESULT SetImageIndex(int indexNumber);
@@ -98,6 +87,7 @@ namespace Seidenader { namespace SVOGui
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
 		typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
 		Controller m_Values;
+		ObjectSelectorController m_objectSelector;
 #pragma endregion Member Variables
 	};
 } /* namespace SVOGui */ } /* namespace Seidenader */

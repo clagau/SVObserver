@@ -276,6 +276,14 @@ namespace Seidenader { namespace SVOGui {
 			}
 		}
 		m_Grid.Refresh();
+		if (c_maxTableColumn > m_gridList.size())
+		{
+			GetDlgItem( IDC_BUTTON_ADD )->EnableWindow(TRUE);
+		}
+		else
+		{
+			GetDlgItem( IDC_BUTTON_ADD )->EnableWindow(FALSE);
+		}
 	}
 
 	bool TADialogTableDefinesPage::isTableNameUnique(const SVString& name)

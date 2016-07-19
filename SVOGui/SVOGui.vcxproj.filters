@@ -116,6 +116,15 @@
     <ClCompile Include="TADialogTableDefinesPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TATableSourcePage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TaTableAnalyzerPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectSelectorController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -268,5 +277,19 @@
     <ClInclude Include="TADialogTableDefinesPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TATableSourcePage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TATableAnalyzerPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSelectorController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectSelectorController.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

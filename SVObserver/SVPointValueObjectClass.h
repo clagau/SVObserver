@@ -45,7 +45,14 @@ protected:
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 
+	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
+
 private:
 	void LocalInitialize();
+
+	/// Convert a string in a SVPOINT. Throw an exception if the string isn't convertible into a SVPOINT
+	/// \param strValue [in] The input string
+	/// \returns char Return value.
+	SVPOINT convertString2Point(const CString& rValue ) const;
 };
 

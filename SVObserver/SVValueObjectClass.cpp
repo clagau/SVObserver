@@ -244,7 +244,7 @@ HRESULT SVValueObjectClass::GetResultSize(int iBucket, int& riResultSize) const
 	if ( iBucket >= 0 && iBucket < m_iNumberOfBuckets )
 	{
 		ASSERT( m_aiResultSize.size() == m_iNumberOfBuckets );
-		riResultSize = m_aiResultSize[iBucket];
+		riResultSize = GetResultSize(iBucket);
 		hr = S_OK;
 	}
 
@@ -291,6 +291,18 @@ HRESULT SVValueObjectClass::CompareWithCurrentValueImpl( const CString& rstrComp
 		hr = ( (strCurrentValue == rstrCompare) ? S_OK : S_FALSE );
 	}
 	return hr;
+}
+
+void SVValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	HRESULT hr = ValidateIndexes(iBucket, iIndex);
+
+	if ( S_OK != hr && SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE != hr ) //object index out of range will not throw
+	{
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		Exception.Throw();
+	}
 }
 
 HRESULT SVValueObjectClass::GetTypeName( CString& p_rstrValue )const 
@@ -373,5 +385,44 @@ HRESULT SVValueObjectClass::GetValue( _variant_t& rValue ) const
 		return GetValue(*(rValue.GetAddress())); 
 	}
 	return GetValues(*(rValue.GetAddress())); 
+}
+
+void SVValueObjectClass::ValidateValue( const _variant_t& rValue ) const
+{
+	if (!IsArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
+	{
+		ValidateValue(m_iLastSetIndex, 0, SvUl_SF::createSVString(rValue).c_str()); 
+	}
+	else
+	{
+		SVSAFEARRAY safeArray( rValue );
+
+		if (safeArray.size() > 0)
+		{
+			//set all value to array
+			for (int i=0; i<safeArray.size(); i++)
+			{
+				variant_t tmpVar;
+				HRESULT tempHr = safeArray.GetElement( i, tmpVar );
+				if (S_OK != tempHr)
+				{
+					SVStringArray msgList;
+					msgList.push_back(SvUl_SF::Format(_T("%d"), tempHr));
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING , SvOi::Tid_ValidateValue_InvalidElementInVariantArray, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					Exception.Throw();
+				}
+
+				//check only if it is possible to set at zero index, because the array size is not changed yet.
+				ValidateValue(m_iLastSetIndex, 0, SvUl_SF::createSVString(tmpVar).c_str()); 
+			}
+		}
+		else
+		{
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID() );
+			Exception.Throw();
+		}
+	}
 }
 #pragma endregion IValueObject

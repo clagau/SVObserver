@@ -49,13 +49,13 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	bOk &= (S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationNone ));
 	SetToolROIExtentToFullInputImage ();
 
-	m_BufferDepth.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION;
+	m_BufferDepth.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 	if (bOk)
 	{
 		for (int i=0; i < SvOi::cRingBufferNumberOutputImages; i++)
 		{
 			bOk &= (S_OK == m_OutputImages[i].InitializeImage( inputImage ));
-			m_ImageIndexManager[i].ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION;
+			m_ImageIndexManager[i].ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 		}
 	}
 

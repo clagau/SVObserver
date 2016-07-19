@@ -68,7 +68,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-
+	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -92,6 +92,11 @@ private:
 
 	virtual DWORD_PTR processMessage( DWORD MessageID, DWORD_PTR MessageValue, DWORD_PTR MessageContext ) override;
 	virtual HRESULT ResetObject() override;
+
+	/// Convert a string (dotted name) to an object.
+	/// \param rValue [in] Input string
+	/// \returns SVObjectClass* The founded object. If object will not found, it return a nullptr.
+	SVObjectClass* ConvertStringInObject( CString &rValue ) const;
 
 #pragma endregion Private Methods
 

@@ -408,15 +408,28 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_TableColumn_AddingFailed, _T("Adding a column failed. Error number %s."))
 	(SvOi::Tid_TableColumn_RemovingFailed, _T("Removing a column failed. Error number %s."))
 	(SvOi::Tid_TableColumn_RenamingFailed, _T("Renaming a column failed. Error number %s."))
+	(SvOi::Tid_TableColumn_TooManyEquation, _T("Too many equation for columns. Max number = %s. Delete the last one."))
 	(SvOi::Tid_TableObject_CreateFailed, _T("Creating the table object in the table tool failed."))
 	(SvOi::Tid_TableObject_Nullptr, _T("Table object in the table tool is a nullptr."))
 	(SvOi::Tid_TableObject_columnValueMapInvalid, _T("The columnValueMap in the table object has invalid entries."))
+	(SvOi::Tid_TableObject_columnValue_NoFreeGUID, _T("Too many column equation, no free GUID for the column value objects."))
 	(SvOi::Tid_TableObject_createColumnValueObjectFailed, _T("Creating a value object in the table object failed."))
 	(SvOi::Tid_TableObject_MaxRowWrongValue, _T("Maximum rows must be greater than zero."))
 	(SvOi::Tid_UnknownCommitError, _T("Unknown Commit or Reset error %s."))
 	(SvOi::Tid_UnknownCommandError, _T("Unknown Command error %s."))
 
 	(SvOi::Tid_MoreThanPercentUsed, _T("\nMore than %s% [%s%] has been used."))
+	(SvOi::Tid_ConnectTableSourceFailed, _T("Connect Table Source \"%s\" with \"%s\" failed."))
+	(SvOi::Tid_ConnectFailed, _T("Connect \"%s\" failed."))
+	(SvOi::Tid_NoValidTableConnected, _T("There is no valid table to the tool connected."))
+	(SvOi::Tid_Error_CreationAnalyzerFailed, _T("Creation of Analyzer Failed"))
+	(SvOi::Tid_Error_SetTableAnalyzerData, _T("Set from Table Analyzer Data failed: %s"))
+	(SvOi::Tid_NoValidColumnConnected, _T("There is no valid column to the analyzer connected."))
+	(SvOi::Tid_LinkedValue_ValidateStringFailed, _T("Set of parameter \"%s\" failed: Invalid object name or value type."))
+	(SvOi::Tid_ValueObject_ValidateStringFailed, _T("Set value \"%s\" to parameter \"%s\" failed: Invalid string."))
+	(SvOi::Tid_SetEmbeddedValueFailed, _T("Set a value of embedded parameter failed: %s."))
+	(SvOi::Tid_ValidateValue_InvalidElementInVariantArray, _T("Validate Value failed: Invalid element in VariantArray: %s"))
+	(SvOi::Tid_ValidateValue_ArraySizeInvalid, _T("Validate Value failed: Array Size must greater than zero."))
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

@@ -18,13 +18,6 @@
 #include "SVTaskObject.h"
 #pragma endregion Includes
 
-enum ValidationLevelEnum
-{
-	AllParameters,					// level 3
-	RemotelyAndInspectionSettable,  // level 2
-	InspectionSettable				// level 1
-};
-
 class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass
 {
 	SV_DECLARE_CLASS( SVTaskObjectListClass )
@@ -69,7 +62,11 @@ public:
 	void SetAt( int nIndex, SVTaskObjectClass* PTaskObject );
 	SVTaskObjectClass* GetAt( int nIndex ) const;
 	void RemoveAt( int nIndex, int nCount = 1 );
-	int Add( SVTaskObjectClass* PTaskObject );
+	/// Add a task object to the task object list
+	/// \param pTaskObject [in] Pointer of the task object
+	/// \param atBegin [in] If true it add it at the begin, if false (default) it add it at the end.
+	/// \returns int Position of the new task in the list.
+	int Add( SVTaskObjectClass* pTaskObject, bool atBegin = false );
 	HRESULT RemoveChild( SVTaskObjectClass* pChildObject );	
 
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
@@ -123,21 +120,6 @@ protected:
 	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual DWORD_PTR	OutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual DWORD_PTR	ChildrenOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
-	/// Validate the Parameter of this object and call depending of the level the sub methods.
-	/// \param validationLevel [in] InspectionSettable calls only ValidateInspectionSettableParameters, RemotelyAndInspectionSettable calls also ValidateRemotelySettableParameters 
-	///										and AllParameters also ValidateOfflineParameters.
-	/// \returns bool
-	bool OnValidateParameter (ValidationLevelEnum validationLevel);
-	/// Check parameter which can be changed online if they are valid.
-	/// \returns bool
-	virtual bool ValidateInspectionSettableParameters ();
-	/// Check parameter which can be remotely settable if they are valid.
-	/// \returns bool
-	virtual bool ValidateRemotelySettableParameters ();
-	/// Check parameter which can only set offline if they are valid.
-	/// \returns bool
-	virtual bool ValidateOfflineParameters ();
 #pragma endregion protected methods	
 
 #pragma region Private Methods

@@ -11,6 +11,7 @@
 #include "DoubleSortValueObject.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -58,98 +59,227 @@ DoubleSortValueObject::~DoubleSortValueObject()
 #pragma endregion Constructor
 
 #pragma region Public Methods
+const ValueObjectSortContainer& DoubleSortValueObject::getSortContainer(int iBucket) const 
+{
+	ASSERT(iBucket >= 0 && iBucket < m_iNumberOfBuckets);
+	if (iBucket < 0 || iBucket > m_iNumberOfBuckets)
+	{
+		iBucket = 0;
+	}
+	
+	return m_sortContainerArray[iBucket];
+}
 
+HRESULT DoubleSortValueObject::setSortContainer(int iBucket, const ValueObjectSortContainer& sortMap) 
+{
+	HRESULT result(E_FAIL);
+	if (iBucket >= 0 && iBucket < m_iNumberOfBuckets && m_isCreated)
+	{
+		m_sortContainerArray[iBucket] = sortMap;
+		result = S_OK;
+	}
+	return result;
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
+HRESULT DoubleSortValueObject::CreateBuckets( )
+{
+	HRESULT result = SVDoubleValueObjectClass::CreateBuckets();
+	m_sortContainerArray.resize(m_iNumberOfBuckets);
+	return result;
+}
+
 HRESULT DoubleSortValueObject::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainer[iIndex], rvtValue);
+		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], rvtValue);
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT DoubleSortValueObject::SetValueAt(int iBucket, int iIndex, const int value)
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainer[iIndex], value);
+		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], value);
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT DoubleSortValueObject::SetValueAt(int iBucket, int iIndex, const long value)
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainer[iIndex], value);
+		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], value);
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT DoubleSortValueObject::SetValueAt(int iBucket, int iIndex, const double value)
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainer[iIndex], value);
+		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], value);
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT DoubleSortValueObject::SetValueAt( int iBucket, int iIndex, CString value )
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	try
 	{
-		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainer[iIndex], value);
+		ValidateValue( iBucket, iIndex, SVString(value) );
+		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], value);
 	}
-	return S_FALSE;
+	catch(const SvStl::MessageContainer&)
+	{
+		ASSERT(FALSE);
+		return E_FAIL;
+	}
 }
 
 HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, double& rValue ) const
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainer[iIndex], rValue);
+		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], rValue);
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, long& rValue ) const
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainer[iIndex], rValue);
+		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], rValue);
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainer[iIndex], rValue);
+		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], rValue);
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, CString& rValue) const
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainer[iIndex], rValue);
+		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], rValue);
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
 {
-	if (0 <= iIndex && m_sortContainer.size()>iIndex)
+	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
-		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainer[iIndex], rValue);
+		return SVDoubleValueObjectClass::GetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], rValue);
 	}
-	return S_FALSE;
+	return E_FAIL;
+}
+
+HRESULT DoubleSortValueObject::GetArrayValues(int iBucket, std::vector<double>& raValues) const
+{
+	HRESULT hrOk = E_FAIL;
+	ASSERT( iBucket >= 0 && iBucket < m_iNumberOfBuckets );
+	if ( iBucket >= 0 && iBucket < m_iNumberOfBuckets )
+	{
+		int iResultSize = GetResultSize(iBucket);
+		ASSERT( iResultSize <= ArraySize() );
+		raValues.resize( iResultSize );
+		double value = 0;
+		for (int i=0; i<iResultSize; i++)
+		{
+			//must be get once by once, because values can be disorder and not in a row.
+			GetValueAt( iBucket, i, value );
+			raValues[i] = value;
+		}
+		hrOk = S_OK;
+	}
+	return hrOk;
+}
+
+HRESULT DoubleSortValueObject::GetArrayValuesAsVariant( int iBucket, VARIANT&  rValue ) const
+{
+	HRESULT hrOk = E_FAIL;
+	_variant_t variantValue;
+	variantValue.Attach( rValue );
+
+	if ( iBucket >= 0 && iBucket < m_iNumberOfBuckets )
+	{
+		SVSAFEARRAY l_SafeArray;
+
+		hrOk = S_OK;
+		int iResultSize = GetResultSize(iBucket);
+		for( int i = 0; i < iResultSize; ++i )
+		{
+			_variant_t l_Variant;
+			GetValue( iBucket, i, l_Variant );
+			HRESULT l_TempStatus = l_SafeArray.Add( l_Variant );
+			if( S_OK == hrOk )
+			{
+				hrOk = l_TempStatus;
+			}
+		}
+
+		if( S_OK == hrOk )
+		{
+			variantValue = l_SafeArray;
+		}
+		else
+		{
+			variantValue.Clear();
+		}
+	}
+	else
+	{
+		variantValue.Clear();
+	}
+
+	rValue = variantValue.Detach();
+
+	return hrOk;
+}
+
+HRESULT DoubleSortValueObject::GetArrayValuesAsVariantVector( int iBucket, std::vector< _variant_t >&  rValues ) const
+{
+	HRESULT hrOk = E_FAIL;
+	ASSERT( iBucket >= 0 && iBucket < m_iNumberOfBuckets );
+	if ( iBucket >= 0 && iBucket < m_iNumberOfBuckets )
+	{
+		int iResultSize = GetResultSize(iBucket);
+		ASSERT( iResultSize <= ArraySize() );
+		rValues.resize( iResultSize );
+		_variant_t value = 0;
+		for (int i=0; i<iResultSize; i++)
+		{
+			//must be get once by once, because values can be disorder and not in a row.
+			GetValueAt( iBucket, i, value );
+			rValues[i] = value;
+		}
+		hrOk = S_OK;
+	}
+	return hrOk;
+}
+
+void DoubleSortValueObject::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	if (0 > iBucket || iBucket >= m_iNumberOfBuckets || 0 > iIndex && m_sortContainerArray[iBucket].size()<=iIndex)
+	{
+		SVStringArray msgList;
+		msgList.push_back(GetName());
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		Exception.Throw();
+	}
+	base::ValidateValue( iBucket, iIndex, rValue );
 }
 #pragma endregion Protected Methods
 

@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVResultLong.h"
 #include "SVRange.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLongResultClass, SVLongResultClassGuid );
@@ -27,8 +28,7 @@ SVLongResultClass::SVLongResultClass( BOOL BCreateDefaultTaskList, SVObjectClass
 	// Identify our input type needs
 	inputObjectInfo.SetInputObjectType( SVLongValueObjectType );
 	inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputObjectInfo, _T( "LongResultValue" ) );
-
+	RegisterInputObject( &inputObjectInfo, SvO::cInputTag_LongResultValue );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SVResetItemNone );

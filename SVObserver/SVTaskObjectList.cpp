@@ -370,26 +370,34 @@ void SVTaskObjectListClass::RemoveAt( int nIndex, int nCount )
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
 
-int SVTaskObjectListClass::Add(SVTaskObjectClass* PTaskObject)
+int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 {
-	if (! PTaskObject)
+	if (! pTaskObject)
 	{
 		return -1;
 	}
 
 	// Check for Unique names 
-	const SVString NewName( checkName( PTaskObject->GetName() ) );
-	if( NewName != PTaskObject->GetName() )
+	const SVString NewName( checkName( pTaskObject->GetName() ) );
+	if( NewName != pTaskObject->GetName() )
 	{
-		PTaskObject->SetName( NewName.c_str() );
+		pTaskObject->SetName( NewName.c_str() );
 	}
 	// SEJ Aug 10,1999
-	PTaskObject->SetObjectOwner(this);
+	pTaskObject->SetObjectOwner(this);
 
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 
-	// call the base class to realy add it
-	return m_aTaskObjects.Add(PTaskObject);
+	if (!atBegin)
+	{
+		// call the base class to really add it
+		return m_aTaskObjects.Add(pTaskObject);
+	}
+	else
+	{
+		m_aTaskObjects.InsertAt(0, pTaskObject);
+		return 0;
+	}
 }
 
 HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
@@ -1317,47 +1325,6 @@ DWORD_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessa
 	}
 
 	return DwResult;
-}
-
-bool SVTaskObjectListClass::OnValidateParameter (ValidationLevelEnum validationLevel)
-{
-	bool Result(true);
-
-	Result = ValidateInspectionSettableParameters();
-
-	if (Result && (RemotelyAndInspectionSettable == validationLevel || AllParameters == validationLevel))
-	{
-		Result = ValidateRemotelySettableParameters ();
-	}
-
-	if (Result && AllParameters == validationLevel)
-	{
-		Result = ValidateOfflineParameters ();
-	}
-
-	return Result;
-}
-
-bool SVTaskObjectListClass::ValidateInspectionSettableParameters ()
-{
-	bool Result = true;
-	// Possibly should include ROI extents (top, bottom, height, width), but 
-	// I think Extents are checked elsewhere.
-	return Result;
-}
-
-bool SVTaskObjectListClass::ValidateRemotelySettableParameters ()
-{
-	bool Result = true;
-
-	return Result;
-}
-
-bool SVTaskObjectListClass::ValidateOfflineParameters ()
-{
-	bool Result = true;
-
-	return Result;
 }
 #pragma endregion protected methods
 

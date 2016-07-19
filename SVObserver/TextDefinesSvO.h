@@ -66,6 +66,10 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const cTrue = _T("TRUE");
 	const TCHAR* const cFalse = _T("FALSE");
 
+	const TCHAR* const cInputTag_SortColumn = _T( "SortColumn" );
+	const TCHAR* const cInputTag_ExcludeColumn = _T( "ExcludeColumn" );
+	const TCHAR* const cInputTag_SourceTable = _T( "SourceTable" );
+	const TCHAR* const cInputTag_LongResultValue = _T( "LongResultValue" );
 } /* namespace SVObserver */ } /* namespace Seidenader */
 
 namespace SvO = Seidenader::SVObserver;

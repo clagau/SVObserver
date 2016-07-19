@@ -193,11 +193,24 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 {
 	HRESULT hr = S_OK;
 
+	if ( GUID_NULL == ownerUniqueID )
+	{
+		ASSERT(FALSE);
+		return E_FAIL;
+	}
+
+	SVObjectClass* pOwnerObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
+	if(nullptr == pOwnerObject)
+	{
+		return E_FAIL;
+	}
+
 	SVObjectClass* pObject = nullptr;
 	// Construct new object...
 	SVObjectManagerClass::Instance().ConstructObject(classID, pObject);
 
-	if( pObject && ownerUniqueID != GUID_NULL )
+	if( nullptr != pObject )
 	{
 		pObject->SetName(objectName.c_str());
 		pObject->SetObjectOwner(ownerUniqueID);
@@ -215,20 +228,24 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 		}
 		if( SV_GUID_NULL != friendId )
 		{
-			SVObjectClass* pOwnerObject = nullptr;
-			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
-			if(nullptr != pOwnerObject)
+			BOOL Result = pOwnerObject->AddFriend(friendId);
+			if (Result)
 			{
-				pOwnerObject->AddFriend(friendId);
+				
 				::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0);
 			}
 			else
 			{
-				hr = S_FALSE;
+				delete pObject;
+				hr = E_FAIL;
 				ASSERT(FALSE);
 			}
 			
 		}
+	}
+	else
+	{
+		hr = E_FAIL;
 	}
 	return hr;
 }

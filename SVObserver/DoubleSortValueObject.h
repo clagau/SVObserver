@@ -32,11 +32,21 @@ public:
 
 #pragma region Public Methods
 public:
-	void setSortContainer(const ValueObjectSortContainer& sortMap) { m_sortContainer = sortMap; };
+	const ValueObjectSortContainer& getSortContainer(int iBucket) const;
+	const ValueObjectSortContainer& getSortContainer() const { return getSortContainer(m_iLastSetIndex); };
+	HRESULT setSortContainer(int iBucket, const ValueObjectSortContainer& sortMap);
+	HRESULT setSortContainer(const ValueObjectSortContainer& sortMap) { return setSortContainer(m_iLastSetIndex, sortMap); };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
+	virtual HRESULT CreateBuckets( ) override;
+	/// Return the result size. 
+	/// ATTENTION: Do not use m_aiResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
+	/// \param iBucket [in]
+	/// \returns int Result size
+	virtual int GetResultSize(int iBucket) const override { return static_cast<int>(getSortContainer(iBucket).size()); };
+
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, CString value ) override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue ) override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, int value ) override;
@@ -48,6 +58,12 @@ protected:
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const override;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const override;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const override;
+
+	virtual HRESULT GetArrayValues(int iBucket, std::vector<double>& raValues) const override;
+	virtual HRESULT GetArrayValuesAsVariant( int iBucket, VARIANT&  rValue ) const override;
+	virtual HRESULT GetArrayValuesAsVariantVector( int iBucket, std::vector< _variant_t >&  rValues ) const override;
+
+	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -57,7 +73,7 @@ private:
 
 #pragma region Member Variables
 private:
-	ValueObjectSortContainer m_sortContainer;
+	std::vector<ValueObjectSortContainer> m_sortContainerArray;
 #pragma endregion Member Variables
 };
 

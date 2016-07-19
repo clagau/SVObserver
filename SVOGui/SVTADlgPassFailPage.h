@@ -15,6 +15,7 @@
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVOGui\RangeController.h"
 #include "ObjectInterfaces\RangeEnum.h"
+#include "ObjectSelectorController.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -25,7 +26,7 @@ namespace Seidenader
 		{
 		public:
 		#pragma region Constructor
-			SVToolAdjustmentDialogPassFailPageClass(const GUID& rInspectionID, const GUID& rTaskObjectID);
+			SVToolAdjustmentDialogPassFailPageClass(const GUID& rInspectionID, const GUID& rTaskObjectID, UINT captionID = 0);
 			SVToolAdjustmentDialogPassFailPageClass();
 			virtual ~SVToolAdjustmentDialogPassFailPageClass();
 		#pragma endregion Constructor
@@ -91,6 +92,7 @@ namespace Seidenader
 			void InitData();
 
 			CBitmap m_downArrowBitmap;
+			ObjectSelectorController m_objectSelector;
 		#pragma endregion Member Variables
 		};
 	}

@@ -84,6 +84,7 @@
 			SVFilterObjectType						= 0x00005000,
 			SVUnaryImageOperatorListObjectType		= 0x00006000,
 			TableObjectType							= 0x00007000,
+			TableAnalyzerType						= 0x00007001,
 
 			SVAnalyzerObjectType					= 0x00010000,
 
@@ -131,6 +132,7 @@
 			SVResizeToolObjectType						= 0x00000029,
 			SVRingBufferToolObjectType					= 0x0000002a,
 			SVTableToolObjectType					= 0x0000002b,
+			SVTableAnalyzerToolObjectType			= 0x0000002c,
 
 			// Analyzer Subtypes:	
 			SVPixelAnalyzerObjectType				    = 0x00000100,
@@ -252,7 +254,12 @@
 			SVColorThresholdObjectType					= 0x00003000,
 
 			//TableObject SubTypes
-			TableFillObjectType						= 0x00007000,
+			TableFillObjectType						= 0x00004000,
+			TableCopyObjectType						= 0x00004001,
+
+			TableAnalyzerSortType					= 0x00004010,
+			TableAnalyzerExcludeType				= 0x00004011,
+			TableAnalyzerLimitType					= 0x00004012,
 
 			// unknown
 			SVRegressionTestModeObjectType				= 0x00011010,

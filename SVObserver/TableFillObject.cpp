@@ -48,10 +48,16 @@ TableFillObject::~TableFillObject()
 #pragma region Public Methods
 void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquation*>& rColumnEquationList, int maxArray)
 {
-	m_maxArray = maxArray;
 	m_sortContainer.set_capacity(maxArray);
 
 	std::vector<TableColumnEquation*> columnList = rColumnEquationList;
+
+	//after the load the m_equationList can be empty and m_ValueList has already loaded values. In this case copy the "loaded" equation to the m_equationList.
+	if (0 == m_equationList.size() && 0 < m_ValueList.size())
+	{
+		m_equationList.insert(m_equationList.begin(), columnList.begin(), columnList.begin()+m_ValueList.size());
+	}
+	ASSERT(m_equationList.size() == m_ValueList.size());
 
 	for (int i=0; i<m_equationList.size(); i++)
 	{
@@ -98,40 +104,31 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 	//add remaining elements from vector to map
 	for (std::vector<TableColumnEquation*>::iterator iter = columnList.begin(); iter != columnList.end(); ++iter )
 	{
-		DoubleSortValueObject* pObject = nullptr;
-		// Construct new object...
-		SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
-
-		if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0 ) == SVMR_SUCCESS )
+		SVGUID newGuid = getNextFreeEmbeddedColumGUID();
+		if (SV_GUID_NULL == newGuid)
 		{
-			RegisterEmbeddedObject( pObject, getNextFreeEmbeddedColumGUID(), (*iter)->GetName(), true, SVResetItemTool );
-			pObject->SetArraySize(maxArray);
-			m_ValueList.push_back(pObject);
-			m_equationList.push_back(*iter);
-		}
-		else
-		{
-			delete pObject;
-			SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
-			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams) );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams) );
 			e.Throw();
 		}
+		createColumnObject(newGuid, (*iter)->GetName(), maxArray);
+		m_equationList.push_back(*iter);
 	}
 }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-BOOL TableFillObject::onRun( SVRunStatusClass& RRunStatus )
+BOOL TableFillObject::onRun( SVRunStatusClass& rRunStatus )
 {
 	BOOL returnValue = S_FALSE;
 
-	returnValue = TableObject::onRun( RRunStatus );
+	returnValue = TableObject::onRun( rRunStatus );
 	if (returnValue)
 	{
 		int nextPos = 0;
 		if (!m_sortContainer.empty())
 		{
-			nextPos = (m_sortContainer[0]+1)%(m_maxArray);
+			nextPos = (m_sortContainer[0]+1)%(m_sortContainer.capacity());
 		}
 		m_sortContainer.push_front(nextPos);
 
@@ -141,12 +138,12 @@ BOOL TableFillObject::onRun( SVRunStatusClass& RRunStatus )
 			TableColumnEquation* pEquation = m_equationList[i];
 			if (nullptr != pValueObject && nullptr != pEquation)
 			{
-				pValueObject->setSortContainer(m_sortContainer);
-				pValueObject->SetValue(RRunStatus.m_lResultDataIndex, 0, pEquation->GetYACCResult());
+				pValueObject->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
+				pValueObject->SetValue(rRunStatus.m_lResultDataIndex, 0, pEquation->GetYACCResult());
 			}
 		}
 
-		m_NumberOfRows.SetValue(RRunStatus.m_lResultDataIndex, static_cast<long>(m_sortContainer.size()));
+		m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, static_cast<long>(m_sortContainer.size()));
 	}
 
 	return returnValue;
@@ -171,7 +168,7 @@ SVGUID TableFillObject::getNextFreeEmbeddedColumGUID()
 		} 
 		);
 		if (m_ValueList.end() == it)
-		{	//GUID not used yes
+		{	//GUID not used yet
 			return TableColumnValueObjectGuid[i];
 		}
 	}

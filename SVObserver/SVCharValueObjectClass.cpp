@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   30 Jul 2013 12:28:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCharValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVOMFCLibrary/StringMunge.h"
+#include "SVStatusLibrary/MessageManager.h"
+#pragma endregion Includes
 
 namespace	// only for this file
 {
@@ -99,35 +102,16 @@ HRESULT SVCharValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIA
 
 HRESULT SVCharValueObjectClass::SetValueAt( int iBucket, int iIndex, CString strValue )
 {
-	if ( strValue.GetLength() == 1 )
+	try
 	{
-		return base::SetValueAt(iBucket, iIndex, static_cast <char> (strValue[0]) );
+		char value = convertString2Char(strValue);
+		return base::SetValueAt(iBucket, iIndex, value );
 	}
-	else
+	catch (const SvStl::MessageContainer&)
 	{
-		CString strDigits( strValue );
-		StringMunge::KeepChars( &strDigits, _T("0123456789 .xXabcdefABCDEF") );
-		if ( strDigits == strValue )
-		{
-			strDigits.MakeLower();
-			TCHAR* p = nullptr;
-			long lValue;
-			if ( strDigits.Find(_T('x')) != -1  )
-				lValue = _tcstol(strDigits, &p, 16);
-			else
-				lValue = _tcstol(strDigits, &p, 10);
-
-			if ( lValue >= 0 && lValue <= 255 )
-				return base::SetValueAt(iBucket, iIndex, static_cast <char> (lValue) );
-		}
-		else // @TODO
-		{
-			// do we want to use the array capabilities to create an array of chars for the string?
-			//STATIC_CHECK( sizeof(TCHAR) == sizeof(char), Need_to_decide_what_to_do_here );
-		}
+		ASSERT(FALSE);
+		return S_FALSE;
 	}
-	ASSERT(FALSE);
-	return S_FALSE;
 }
 
 
@@ -169,6 +153,12 @@ HRESULT SVCharValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdV
 	return hr;
 }
 
+void SVCharValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	convertString2Char(rValue.c_str());
+	base::ValidateValue( iBucket, iIndex, rValue );
+}
+
 void SVCharValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVCharValueObjectType;
@@ -180,5 +170,40 @@ void SVCharValueObjectClass::LocalInitialize()
 	}
 	m_strTypeName = "Char";
 	InitializeBuckets();
+}
+
+char SVCharValueObjectClass::convertString2Char( const CString& rValue ) const
+{
+	if ( rValue.GetLength() == 1 )
+	{
+		return rValue[0];
+	}
+	else
+	{
+		CString strDigits( rValue );
+		StringMunge::KeepChars( &strDigits, _T("0123456789 .xXabcdefABCDEF") );
+		if ( strDigits == rValue )
+		{
+			strDigits.MakeLower();
+			TCHAR* p = nullptr;
+			long lValue;
+			if ( strDigits.Find(_T('x')) != -1  )
+				lValue = _tcstol(strDigits, &p, 16);
+			else
+				lValue = _tcstol(strDigits, &p, 10);
+
+			if ( lValue >= 0 && lValue <= 255 )
+			{
+				return static_cast <char> (lValue);
+			}
+		}
+	}
+	SVStringArray msgList;
+	msgList.push_back(SVString(rValue));
+	msgList.push_back(GetName());
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+	Exception.Throw();
+	return 0; //will never reached, because the exception will throw before. But this line avoid a warning
 }
 

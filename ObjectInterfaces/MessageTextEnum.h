@@ -373,15 +373,28 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_TableColumn_AddingFailed,
 		Tid_TableColumn_RemovingFailed,
 		Tid_TableColumn_RenamingFailed,
+		Tid_TableColumn_TooManyEquation,
 		Tid_TableObject_CreateFailed,
 		Tid_TableObject_Nullptr,
 		Tid_TableObject_columnValueMapInvalid,
+		Tid_TableObject_columnValue_NoFreeGUID,
 		Tid_TableObject_createColumnValueObjectFailed,
 		Tid_TableObject_MaxRowWrongValue,
 		Tid_UnknownCommitError,
 		Tid_UnknownCommandError,
 
 		Tid_MoreThanPercentUsed,
+		Tid_ConnectTableSourceFailed,
+		Tid_ConnectFailed,
+		Tid_NoValidTableConnected,
+		Tid_Error_CreationAnalyzerFailed,
+		Tid_Error_SetTableAnalyzerData,
+		Tid_NoValidColumnConnected,
+		Tid_LinkedValue_ValidateStringFailed,
+		Tid_ValueObject_ValidateStringFailed,
+		Tid_SetEmbeddedValueFailed,
+		Tid_ValidateValue_InvalidElementInVariantArray,
+		Tid_ValidateValue_ArraySizeInvalid,
 	};
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 

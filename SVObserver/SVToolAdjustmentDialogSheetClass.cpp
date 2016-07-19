@@ -54,6 +54,8 @@
 #include "SVOGui\TextDefinesSvOg.h"
 #include "SVOGui\TADialogTableParameterPage.h"
 #include "SVOGui\TADialogTableDefinesPage.h"
+#include "SVOGui\TATableSourcePage.h"
+#include "SVOGui\TATableAnalyzerPage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -312,6 +314,13 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		case SVTableToolObjectType:
 			AddPage( new SvOg::TADialogTableParameterPage( m_InspectionID, m_TaskObjectID ) );
 			AddPage( new SvOg::TADialogTableDefinesPage( m_InspectionID, m_TaskObjectID ) );
+			AddPage( pConditionalDlg );
+			break;
+
+		case SVTableAnalyzerToolObjectType:
+			AddPage( new SvOg::TATableSourcePage( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SvOg::TaTableAnalyzerPage( m_InspectionID, m_TaskObjectID ) );
+			AddPage( new SvOg::SVToolAdjustmentDialogPassFailPageClass( m_InspectionID, m_TaskObjectID, IDS_TABNAME_TABLE_ROWRANGE) );
 			AddPage( pConditionalDlg );
 			break;
 

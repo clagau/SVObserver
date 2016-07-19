@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include "TableObject.h"
 #include "SVTool.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -26,14 +27,12 @@ SV_IMPLEMENT_CLASS(TableObject, TableObjectGuid);
 #pragma region Constructor
 TableObject::TableObject( LPCTSTR ObjectName )
 	: SVTaskObjectClass(ObjectName)
-	, m_maxArray(0)
 {
 	Initialize();
 }
 
 TableObject::TableObject( SVObjectClass* POwner, int StringResourceID )
 	: SVTaskObjectClass(POwner, StringResourceID)
-	, m_maxArray(0)
 {
 	Initialize();
 }
@@ -54,7 +53,7 @@ BOOL TableObject::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	BOOL l_bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
-	m_NumberOfRows.ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PRINTABLE | SV_SELECTABLE_FOR_EQUATION;
+	m_NumberOfRows.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
 	return l_bOk;
 }
@@ -73,9 +72,76 @@ HRESULT TableObject::ResetObject()
 
 	return hr;
 }
+
+SVObjectClass* TableObject::getNumberOfRowObject() const
+{
+	SVLongValueObjectClass* pObject = const_cast<SVLongValueObjectClass*>(&m_NumberOfRows);
+	return pObject; 
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
+DWORD_PTR TableObject::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
+{
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+
+	// Try to process message by yourself...
+	// ( if necessary process here the incoming messages )
+	switch (dwPureMessageID)
+	{
+	case SVMSGID_OVERWRITE_OBJECT:
+		{
+			//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
+			const GUID embeddedID = * ((GUID*) DwMessageContext);
+			bool isColumnValue = false;
+			for (int i=0; i < c_maxTableColumn; ++i)
+			{
+				if (TableColumnValueObjectGuid[i] == embeddedID)
+				{
+					isColumnValue = true;
+				}
+			}
+			if (isColumnValue)
+			{
+				DoubleSortValueObject* pObject = nullptr;
+				// Construct new object...
+				SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
+				RegisterEmbeddedObject( pObject, embeddedID, _T(""), true, SVResetItemTool );
+				m_ValueList.push_back(pObject);
+			}
+			//Don't change DwResult, because SVTaskObjectClass will and have to process the overwrite command.
+			break;
+		}
+	}
+	if (DwResult == SVMR_NOT_PROCESSED)
+	{
+		DwResult = SVTaskObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
+	}
+	return DwResult;
+}
+
+void TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize)
+{
+	DoubleSortValueObject* pObject = nullptr;
+	// Construct new object...
+	SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
+
+	if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0 ) == SVMR_SUCCESS )
+	{
+		RegisterEmbeddedObject( pObject, embeddedID, name, true, SVResetItemTool );
+		pObject->SetArraySize(arraySize);
+		m_ValueList.push_back(pObject);
+	}
+	else
+	{
+		delete pObject;
+		ASSERT(FALSE);
+		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
+		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams) );
+		e.Throw();
+	}
+}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -83,7 +149,6 @@ void TableObject::Initialize()
 {
 	// Set up your type
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = TableObjectType;
-	//m_outObjectInfo.ObjectTypeInfo.SubType    = SVTableToolObjectType;
 
 	BuildEmbeddedObjectList();
 }

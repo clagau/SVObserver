@@ -1233,6 +1233,24 @@ extern /*const*/ GUID CameraBaseShutterUidGuid;
 // Unique base ID GUID for PPQ variables always have 0x100 GUIDS free after the base GUID
 extern /*const*/ GUID PpqBaseLengthUidGuid;
 
+
+///////////////////////////////////////////////////
+// GUIDs for the TableAnalyzerTool
+///////////////////////////////////////////////////
+extern /*const*/ GUID TableAnalyzerToolGuid;
+extern /*const*/ GUID TableCopyObjectGuid;
+
+extern /*const*/ GUID TableAnaylzerSortGuid;
+extern /*const*/ GUID TableAnaylzerExcludeGuid;
+extern /*const*/ GUID TableAnaylzerLimitGuid;
+extern /*const*/ GUID TableAnaylzerSortIsASCGuid;
+extern /*const*/ GUID TableAnaylzerExcludeHighGuid;
+extern /*const*/ GUID TableAnaylzerExcludeHigh_LinkGuid;
+extern /*const*/ GUID TableAnaylzerExcludeLowGuid;
+extern /*const*/ GUID TableAnaylzerExcludeLow_LinkGuid;
+extern /*const*/ GUID TableAnaylzerLimitValueGuid;
+extern /*const*/ GUID TableAnaylzerLimitValue_LinkGuid;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 ////////////////////////////////////////////////////////////////////////////////

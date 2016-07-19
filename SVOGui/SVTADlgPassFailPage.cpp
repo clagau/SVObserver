@@ -19,6 +19,8 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
+#include "GuiCommands\GetSelectorList.h"
+#include "ToolSetItemSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -41,12 +43,11 @@ namespace Seidenader { namespace SVOGui
 	#pragma endregion Declarations
 
 	#pragma region Constructor
-	SVToolAdjustmentDialogPassFailPageClass::SVToolAdjustmentDialogPassFailPageClass(const GUID& rInspectionID, const GUID& rTaskObjectID)
-	: CPropertyPage( SVToolAdjustmentDialogPassFailPageClass::IDD )
+	SVToolAdjustmentDialogPassFailPageClass::SVToolAdjustmentDialogPassFailPageClass(const GUID& rInspectionID, const GUID& rTaskObjectID, UINT captionID)
+	: CPropertyPage( SVToolAdjustmentDialogPassFailPageClass::IDD, captionID )
 	, RangeController(rInspectionID, rTaskObjectID)
+	, m_objectSelector (rInspectionID, rTaskObjectID)
 	{
-		//{{AFX_DATA_INIT(SVToolAdjustmentDialogPassFailPageClass)
-		//}}AFX_DATA_INIT
 		Init();
 	}
 	#pragma endregion Constructor
@@ -204,34 +205,11 @@ namespace Seidenader { namespace SVOGui
 
 	bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(CString& name, RangeEnum::ERange fieldEnum)
 	{
-		bool retValue = false;
-
-		FillObjectSelector();
-
-		if (name.GetLength() > 0)
-		{
-			SVStringSet nameSet;
-			nameSet.insert(SVString(name));
-			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
-		}
-
 		SVString Title = GetOwnerName();
 		Title += _T(": ");
 		Title += RangeEnum::ERange2String(AfxGetResourceHandle(), fieldEnum);
 
-		CString mainTabTitle;
-		mainTabTitle.LoadString(IDS_SELECT_TOOLSET_OUTPUT);
-		CString FilterTab;
-		FilterTab.LoadString(IDS_FILTER);
-
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), mainTabTitle, FilterTab, this );
-
-		if (IDOK == Result)
-		{
-			name = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
-			retValue = true;
-		}
-		return retValue;
+		return m_objectSelector.Show<ToolSetItemSelector<GuiCmd::RangeSelectorFilterType>>(name, Title.c_str(), this);
 	}
 
 	#pragma endregion Private Methods

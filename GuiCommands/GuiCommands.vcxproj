@@ -31,6 +31,7 @@
     <ClInclude Include="GetEquation.h" />
     <ClInclude Include="GetErrorMessageList.h" />
     <ClInclude Include="GetImage.h" />
+    <ClInclude Include="GetInputs.h" />
     <ClInclude Include="GetInstanceIDByDottedName.h" />
     <ClInclude Include="GetMaskImage.h" />
     <ClInclude Include="GetMaskData.h" />

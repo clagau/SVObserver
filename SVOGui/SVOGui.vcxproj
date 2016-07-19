@@ -118,6 +118,7 @@
     <ClCompile Include="GlobalConstantDlg.cpp" />
     <ClCompile Include="ImageController.cpp" />
     <ClCompile Include="MaskController.cpp" />
+    <ClCompile Include="ObjectSelectorController.cpp" />
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
     <ClCompile Include="RangeValidator.cpp" />
@@ -148,6 +149,8 @@
     <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
     <ClCompile Include="TADialogTableDefinesPage.cpp" />
     <ClCompile Include="TADialogTableParameterPage.cpp" />
+    <ClCompile Include="TaTableAnalyzerPage.cpp" />
+    <ClCompile Include="TATableSourcePage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GuiValueHelper.h" />
@@ -164,6 +167,7 @@
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="MaskController.h" />
     <ClInclude Include="NoSelector.h" />
+    <ClInclude Include="ObjectSelectorController.h" />
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="PPQSelector.h" />
     <ClInclude Include="RangeController.h" />
@@ -196,9 +200,14 @@
     <ClInclude Include="TADialogRingBufferParameterPage.h" />
     <ClInclude Include="TADialogTableDefinesPage.h" />
     <ClInclude Include="TADialogTableParameterPage.h" />
+    <ClInclude Include="TATableAnalyzerPage.h" />
+    <ClInclude Include="TATableSourcePage.h" />
     <ClInclude Include="TextDefinesSvOg.h" />
     <ClInclude Include="ToolSetItemSelector.h" />
     <ClInclude Include="ValuesAccessor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ObjectSelectorController.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

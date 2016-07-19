@@ -54,6 +54,7 @@ namespace Seidenader { namespace SVOGui
 		: CPropertyPage(TADialogRingBufferParameterPage::IDD)
 		, m_InspectionID(rInspectionID)
 		, m_TaskObjectID(rTaskObjectID)
+		, m_objectSelector(rInspectionID)
 		, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of
 		(RingDepthTag, RingBuffer_DepthGuid)
 		(RingBufferIndexTag[0], RingBuffer_IndexGuid[0])
@@ -140,102 +141,14 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		m_EditImageIndex[ButtonIndex].GetWindowText( Value );
 		CString Title;
 		Title.LoadString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
-		if (ShowObjectSelector( Value, Title))
+		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this ))
 		{
 			m_EditImageIndex[ButtonIndex].SetWindowText( Value );
 		}
 	}
-
-	bool TADialogRingBufferParameterPage::ShowObjectSelector(CString& name, const CString& Title)
-	{
-		bool result = false;
-		SVString InspectionName = GetInspectionName();
-		SVString PPQName = GetPPQName();
-
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
-
-		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, GetToolSetGUID() );
-		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, ToolSetItemSelector<>>( BuildOptions );
-
-		if(0 < name.GetLength())
-		{
-			SVStringSet nameSet;
-			nameSet.insert(SVString(name));
-			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
-		}
-
-		CString mainTabTitle;
-		mainTabTitle.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-		CString FilterTab;
-		FilterTab.LoadString( IDS_FILTER );
-
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, FilterTab, this );
-
-		if( IDOK == Result )
-		{
-			name = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); 
-			result = true;
-		}
-
-		return result;
-	}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-	GUID TADialogRingBufferParameterPage::GetToolSetGUID() const
-	{
-		GUID toolsetGUID = GUID_NULL;
-
-		typedef GuiCmd::GetTaskObjectInstanceID Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-
-		SVObjectTypeInfoStruct info(SVToolSetObjectType);
-		CommandPtr commandPtr = CommandPtr(new Command(m_InspectionID, info));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
-		{
-			toolsetGUID = commandPtr->GetInstanceID();
-		}
-
-		return toolsetGUID;
-	}
-
-	SVString TADialogRingBufferParameterPage::GetInspectionName() const
-	{
-		SVString inspectionName;
-		typedef GuiCmd::GetObjectName Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-
-		CommandPtr commandPtr(new Command(m_InspectionID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
-		{
-			inspectionName = commandPtr->GetName();
-		}
-		return inspectionName;
-	}
-
-	SVString TADialogRingBufferParameterPage::GetPPQName() const
-	{
-		SVString PPQName;
-		typedef GuiCmd::GetPPQObjectName Command;
-		typedef SVSharedPtr<Command> CommandPtr;
-
-		CommandPtr commandPtr(new Command(m_InspectionID));
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
-		{
-			PPQName = commandPtr->GetName();
-		}
-		return PPQName;
-	}
-
 	HRESULT TADialogRingBufferParameterPage::SetPageData()
 	{
 		HRESULT hResult = SetRingDepth();

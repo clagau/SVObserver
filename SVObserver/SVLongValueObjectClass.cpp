@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   30 Jul 2013 12:29:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLongValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVOMFCLibrary/StringMunge.h"
+#include "SVStatusLibrary/MessageManager.h"
+#pragma endregion Includes
 
 namespace	// only for this file
 {
@@ -111,22 +114,16 @@ HRESULT SVLongValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIA
 
 HRESULT SVLongValueObjectClass::SetValueAt( int iBucket, int iIndex, CString strValue )
 {
-	CString strDigits (strValue);
-	StringMunge::KeepChars( &strDigits, _T("-0123456789 .xXabcdefABCDEF") );
-	if ( strDigits == strValue )
+	try
 	{
-		strDigits.MakeLower();
-		TCHAR* p = nullptr;
-		long lValue;
-		if ( strDigits.Find(_T('x')) != -1 )
-			lValue = _tcstol(strDigits, &p, 16);
-		else
-			lValue = _tcstol(strDigits, &p, 10);
-
-		return base::SetValueAt(iBucket, iIndex, lValue );
+		long value = convertString2Long(strValue);
+		return base::SetValueAt(iBucket, iIndex, value );
 	}
-	ASSERT(FALSE);
-	return S_FALSE;
+	catch (const SvStl::MessageContainer&)
+	{
+		ASSERT(FALSE);
+		return S_FALSE;
+	}
 }
 
 HRESULT SVLongValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rvtValue ) const
@@ -168,6 +165,12 @@ HRESULT SVLongValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdV
 	return hr;
 }
 
+void SVLongValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	convertString2Long(rValue.c_str());
+	base::ValidateValue( iBucket, iIndex, rValue );
+}
+
 void SVLongValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVLongValueObjectType;
@@ -181,3 +184,31 @@ void SVLongValueObjectClass::LocalInitialize()
 	InitializeBuckets();
 }
 
+long SVLongValueObjectClass::convertString2Long(const CString& rValue ) const
+{
+	CString strDigits (rValue);
+	StringMunge::KeepChars( &strDigits, _T("-0123456789 .xXabcdefABCDEF") );
+	if ( strDigits == rValue )
+	{
+		strDigits.MakeLower();
+		TCHAR* p = nullptr;
+		long lValue;
+		if ( strDigits.Find(_T('x')) != -1 )
+		{
+			lValue = _tcstol(strDigits, &p, 16);
+		}
+		else
+		{
+			lValue = _tcstol(strDigits, &p, 10);
+		}
+
+		return lValue;
+	}
+	SVStringArray msgList;
+	msgList.push_back(SVString(rValue));
+	msgList.push_back(GetName());
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+	Exception.Throw();
+	return 0; //will never reached, because the exception will throw before. But this line avoid a warning
+}

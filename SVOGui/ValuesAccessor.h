@@ -51,6 +51,7 @@ namespace Seidenader
 
 			HRESULT SetValues(const SvOg::BoundValues& rValues, bool bReset) 
 			{
+				m_setMessageFailList.clear();
 				const GUID& ownerID = rValues.GetOwnerID();
 				const GUID& inspectionID = rValues.GetInspectionID();
 		
@@ -60,6 +61,7 @@ namespace Seidenader
 				CommandPtr commandPtr(new Command(rValues));
 				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				m_setMessageFailList = commandPtr->getErrorMessages();
 
 				if (S_OK == hr)
 				{
@@ -99,6 +101,11 @@ namespace Seidenader
 				}
 				return SvOi::NameValueList();
 			}
+
+			SvStl::MessageContainerVector getSetFailedMessageList() { return m_setMessageFailList; };
+
+		protected:
+			SvStl::MessageContainerVector m_setMessageFailList;
 		};
 	}
 }

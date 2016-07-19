@@ -9,9 +9,12 @@
 //* .Check In Date   : $Date:   30 Oct 2013 15:18:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBoolValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
+#include "SVStatusLibrary\MessageManager.h"
+#pragma endregion Includes
 
 namespace	// only for this file
 {
@@ -139,24 +142,16 @@ HRESULT SVBoolValueObjectClass::SetValueAt( int iBucket, int iIndex, const bool 
 
 HRESULT SVBoolValueObjectClass::SetValueAt( int iBucket, int iIndex, CString strValue )
 {
-	BOOL l_bValue;
-	strValue.TrimLeft();
-	strValue.TrimRight();
-	if ( strValue == _T("1") || strValue == _T("-1") /*for VB weenies*/ || (strValue.CompareNoCase(scTrue) == 0) )
+	try
 	{
-		l_bValue = TRUE;
+		BOOL l_bValue = ConvertString2Bool(strValue);
+		return base::SetValueAt(iBucket, iIndex, l_bValue);
 	}
-	else if ( strValue == _T("0") || (strValue.CompareNoCase(scFalse) == 0) )
-	{
-		l_bValue = FALSE;
-	}
-	else
+	catch (const SvStl::MessageContainer&)
 	{
 		ASSERT(FALSE);
 		return S_FALSE;
 	}
-
-	return base::SetValueAt(iBucket, iIndex, l_bValue);
 }
 
 HRESULT SVBoolValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )
@@ -217,6 +212,12 @@ HRESULT SVBoolValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rv
 	return hr;
 }
 
+void SVBoolValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	ConvertString2Bool(rValue.c_str());
+	base::ValidateValue( iBucket, iIndex, rValue );
+}
+
 HRESULT SVBoolValueObjectClass::CompareWithCurrentValueImpl( const CString& rstrCompare ) const
 {
 	CString strValue;
@@ -241,5 +242,32 @@ void SVBoolValueObjectClass::LocalInitialize()
 	m_strTypeName = "Bool";
 
 	InitializeBuckets();
+}
+
+BOOL SVBoolValueObjectClass::ConvertString2Bool( const CString &rValue ) const
+{
+	bool Result(TRUE);
+	CString value = rValue;
+	value.TrimLeft();
+	value.TrimRight();
+	if ( _T("1") == value  || _T("-1") == value /*for VB weenies*/ || (value.CompareNoCase(scTrue) == 0) )
+	{
+		Result = TRUE;
+	}
+	else if ( _T("0") == value || (value.CompareNoCase(scFalse) == 0) )
+	{
+		Result = FALSE;
+	}
+	else
+	{
+		SVStringArray msgList;
+		msgList.push_back(SVString(value));
+		msgList.push_back(GetName());
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		Exception.Throw();
+	}
+
+	return Result;
 }
 

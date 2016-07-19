@@ -75,6 +75,8 @@ protected:
 	virtual HRESULT SetValueAt( int nBucket, int iIndex, DWORD value );
 	virtual HRESULT SetValueAt( int nBucket, int iIndex, CString value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
+
+	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
 	
 	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const;
 	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const;

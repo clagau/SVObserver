@@ -39,7 +39,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual BOOL onRun( SVRunStatusClass& rRunStatus ) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

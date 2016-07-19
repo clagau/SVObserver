@@ -198,21 +198,6 @@ namespace Seidenader { namespace SVOGui
 		m_directRangeValues.Set<double>(rName, value);
 	}
 
-	void RangeController::FillObjectSelector()
-	{
-		SVString InspectionName = GetInspectionName();
-		SVString PPQName = GetPPQName();
-
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
-
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
-
-		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, m_TaskObjectID );
-		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<GuiCmd::RangeSelectorFilterType>>( BuildOptions );
-	}
-
 	SVString RangeController::GetOwnerName() const
 	{
 		SVString name;

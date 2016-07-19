@@ -9,10 +9,13 @@
 //* .Check In Date   : $Date:   30 Jul 2013 12:28:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDWordValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVOMFCLibrary/StringMunge.h"
+#include "SVStatusLibrary/MessageManager.h"
+#pragma endregion Includes
 
 namespace	// only for this file
 {
@@ -101,22 +104,16 @@ HRESULT  SVDWordValueObjectClass::SetValueAt( int iBucket, int iIndex, const VAR
 
 HRESULT SVDWordValueObjectClass::SetValueAt( int iBucket, int iIndex, CString strValue )
 {
-	CString strDigits (strValue);
-	StringMunge::KeepChars( &strDigits, _T("0123456789 .xXabcdefABCDEF") );
-	if ( strDigits == strValue )
+	try
 	{
-		strDigits.MakeLower();
-		TCHAR* p = nullptr;
-		DWORD ulValue;
-		if ( strDigits.Find(_T('x')) != -1  )
-			ulValue = _tcstoul(strDigits, &p, 16);
-		else
-			ulValue = _tcstoul(strDigits, &p, 10);
-
-		return base::SetValueAt(iBucket, iIndex, static_cast <DWORD> (ulValue) );
+		DWORD value = convertString2DWord(strValue);
+		return base::SetValueAt(iBucket, iIndex, value );
 	}
-	ASSERT(FALSE);
-	return S_FALSE;
+	catch (const SvStl::MessageContainer&)
+	{
+		ASSERT(FALSE);
+		return S_FALSE;
+	}
 }
 
 
@@ -160,6 +157,12 @@ HRESULT SVDWordValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rd
 	return hr;
 }
 
+void SVDWordValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	convertString2DWord(rValue.c_str());
+	base::ValidateValue( iBucket, iIndex, rValue );
+}
+
 void SVDWordValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDWordValueObjectType;
@@ -171,5 +174,34 @@ void SVDWordValueObjectClass::LocalInitialize()
 	}
 	m_strTypeName = "Integer32Hex";
 	InitializeBuckets();
+}
+
+DWORD SVDWordValueObjectClass::convertString2DWord(const CString& rValue ) const
+{
+	CString strDigits (rValue);
+	StringMunge::KeepChars( &strDigits, _T("0123456789 .xXabcdefABCDEF") );
+	if ( strDigits == rValue )
+	{
+		strDigits.MakeLower();
+		TCHAR* p = nullptr;
+		DWORD ulValue;
+		if ( strDigits.Find(_T('x')) != -1 )
+		{
+			ulValue = _tcstoul(strDigits, &p, 16);
+		}
+		else
+		{
+			ulValue = _tcstoul(strDigits, &p, 10);
+		}
+
+		return ulValue;
+	}
+	SVStringArray msgList;
+	msgList.push_back(SVString(rValue));
+	msgList.push_back(GetName());
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+	Exception.Throw();
+	return 0; //will never reached, because the exception will throw before. But this line avoid a warning
 }
 

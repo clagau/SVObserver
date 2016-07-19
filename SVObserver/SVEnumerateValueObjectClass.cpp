@@ -9,12 +9,15 @@
 //* .Check In Date   : $Date:   01 Oct 2013 14:12:24  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVEnumerateValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVOMFCLibrary/StringMunge.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h" // for SV_FALSE;
+#include "SVStatusLibrary/MessageManager.h"
+#pragma endregion Includes
 
 namespace	// only for this file
 {
@@ -350,6 +353,21 @@ HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIAN
 	rValue = l_Temp.Detach();
 
 	return hr;
+}
+
+void SVEnumerateValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+{
+	long lValue = 0;
+	if (!GetEnumerator( rValue.c_str(), lValue ))
+	{
+		SVStringArray msgList;
+		msgList.push_back(SVString(rValue));
+		msgList.push_back(GetName());
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		Exception.Throw();
+	}
+	base::ValidateValue( iBucket, iIndex, rValue );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

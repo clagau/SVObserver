@@ -78,6 +78,7 @@ public:
 	#pragma region IValueObject
 	virtual HRESULT SetValue( const _variant_t& rValue ) override;
 	virtual HRESULT GetValue( _variant_t& rValue ) const override;
+	virtual void ValidateValue( const _variant_t& rValue ) const override;
 	#pragma endregion IValueObject
 	
 	// NVI pattern : public interface
@@ -155,7 +156,13 @@ protected:
 	virtual DWORD_PTR  processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual HRESULT CreateBuckets();
 	void              InitializeBuckets();
-	int               GetResultSize(int iBucket) const;
+	virtual int GetResultSize(int iBucket) const;
+
+	/// Validate the value. If value invalid an exception message will be thrown.
+	/// \param iBucket [in] 
+	/// \param iIndex [in]
+	/// \param rValue [in]
+	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const;
 
 	HRESULT           ValidateIndexes(int iBucket, int iArrayIndex) const;
 

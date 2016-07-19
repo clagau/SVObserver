@@ -49,9 +49,16 @@ protected:
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, bool&    rValue ) const;
 
+	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
+
 	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const;
 	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const;
 
 private:
 	void LocalInitialize();
+
+	/// Convert a string in a bool. Throw an exception if the string isn't convertible into a bool
+	/// \param strValue [in] The input string: "True", 1 or -1 is true, "false" and 0 is false.
+	/// \returns BOOL Return value.
+	BOOL ConvertString2Bool( const CString &strValue ) const;
 };
