@@ -2070,7 +2070,10 @@ void SVIPDoc::RefreshDocument()
 		if( S_OK == m_NewProductData.PushTail( l_DataPtr->GetProduct() ) )
 		{
 			CWnd* pWnd = GetMDIChild();
-			pWnd->PostMessage( SV_MDICHILDFRAME_UPDATE_ALL_DATA );
+			if( nullptr != pWnd && ::IsWindow(pWnd->GetSafeHwnd() ) )
+			{
+				pWnd->PostMessage( SV_MDICHILDFRAME_UPDATE_ALL_DATA );
+			}
 		}
 	}
 }
