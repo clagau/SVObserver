@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary\GridCtrl.h"
-#include "ObjectInterfaces\DataStructures.h"
+#include "ObjectInterfaces/GlobalConstantData.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui

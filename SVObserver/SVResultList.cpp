@@ -178,13 +178,13 @@ void SVResultListClass::Clear()
 	m_ResultViewReferences.Clear();
 }
 
-void SVResultListClass::GetNameSet(SVStringSet& SelectedNamesRaw)
+const SVObjectReferenceVector& SVResultListClass::GetSelectedObjects() const
 {
-	m_ResultViewReferences.GetNameSet(SelectedNamesRaw);
+	return m_ResultViewReferences.GetSelectedObjects();
 }
 
-bool SVResultListClass::Insert(const SVString& param1)
+bool SVResultListClass::Insert( const SVString& rDottedName )
 {
-	return m_ResultViewReferences.Insert(param1);
+	return m_ResultViewReferences.Insert( rDottedName );
 }
 

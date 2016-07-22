@@ -122,7 +122,6 @@
     <ClCompile Include="SVInputInfoListClass.cpp" />
     <ClCompile Include="SVInspectionLevelCreateStruct.cpp" />
     <ClCompile Include="SVObjectAttributeClass.cpp" />
-    <ClCompile Include="SVObjectAttributeShim.cpp" />
     <ClCompile Include="SVObjectBuilder.cpp" />
     <ClCompile Include="SVObjectClass.cpp" />
     <ClCompile Include="SVObjectInfoStruct.cpp" />
@@ -156,7 +155,6 @@
     <ClInclude Include="SVInspectionLevelCreateStruct.h" />
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
-    <ClInclude Include="SVObjectAttributeShim.h" />
     <ClInclude Include="SVObjectBuilder.h" />
     <ClInclude Include="SVObjectClass.h" />
     <ClInclude Include="SVObjectCommandWrapperTemplate.h" />

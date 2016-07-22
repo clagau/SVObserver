@@ -98,18 +98,17 @@ public:
 	void Clear();
 
 	//************************************
-	// Description:  Add complete Name of variables to the stringset.
-	// Parameter:  stringSet:  
+	// Description: Gets the selected result view objects
 	// Returns:  int:  number of entries in the set
 	//************************************
-	int GetNameSet( SVStringSet& stringSet ) const;
+	const SVObjectReferenceVector& GetSelectedObjects() const;
 
 	//************************************
-	// Description:  Insert a new entry 
-	// Parameter:  dottedName of new Variable   
-	// Returns:  true if sucessfull  
+	// Description:  Insert a new entry
+	// Parameter:  reference to DottedName of new object
+	// Returns:  true if successful
 	//************************************
-	bool Insert( const SVString& dottedName );
+	bool Insert( const SVString& rDottedName );
 
 	//************************************
 	// Description:  Gets the value of the member variable m_LastUpdateTimeStamp
@@ -155,7 +154,7 @@ protected:
 
 #pragma region Member Variables
 	CString m_TagName; // Branch name in the config file
-	std::vector<SVObjectReference> m_ReferenceVector;
+	SVObjectReferenceVector m_ReferenceVector;
 	std::list<ResultViewItemDef> m_ResultViewItemDefList;
 	SVClock::SVTimeStamp m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.
 #pragma endregion Member Variables

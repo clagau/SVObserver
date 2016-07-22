@@ -262,7 +262,6 @@ protected:
 	typedef std::vector< SVProductInfoStruct* > SVProductPositionQueue;
 	typedef std::deque< long > SVProcessCountDeque;
 	typedef std::set< long > SVProcessCountSet;
-	typedef std::set< SVGUID > SVInspectionIDSet;
 	typedef SVTQueueObject< SVCameraQueueElement > SVCameraResponseQueue;
 	typedef SVTQueueObject< SVProductInfoStruct* > SVProductPointerQueue;
 	typedef SVRingBuffer< SVTriggerQueueElement > SVTriggerInfoQueue;
@@ -410,7 +409,7 @@ protected:
 	SVPendingCameraResponseMap m_PendingCameraResponses;
 
 	SVProcessCountSet m_oNotifyInspectionsSet;
-	SVInspectionIDSet m_ProcessInspectionsSet;
+	SVGuidSet m_ProcessInspectionsSet;
 
 	// Pointers to the PPQ's I/O Lists
 	SVIOEntryHostStructPtrList m_AllInputs;

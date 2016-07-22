@@ -95,11 +95,10 @@ void SVObjectClass::init()
 
 	m_outObjectInfo.PObject = this;
 
-	m_uObjectAttributesAllowed = SV_NO_ATTRIBUTES; 
-	m_uObjectAttributesSet     = SV_NO_ATTRIBUTES;
-	m_auObjectAttributesSet.resize( 1 );
-	m_auObjectAttributesSet[0]  = SV_NO_ATTRIBUTES;
-	m_uDefaultObjectAttributesSet = SV_NO_ATTRIBUTES;
+	m_ObjectAttributesAllowed = SV_NO_ATTRIBUTES; 
+	m_ObjectAttributesSet.resize( 1 );
+	m_ObjectAttributesSet[0]  = SV_NO_ATTRIBUTES;
+	m_DefaultObjectAttributesSet = SV_NO_ATTRIBUTES;
 }
 
 /*
@@ -583,15 +582,15 @@ HRESULT SVObjectClass::GetObjectValue( const SVString& rValueName, VARIANT& rVar
 	}
 	else if( rValueName == _T( "AttributesAllowed" ) )
 	{
-		l_TempVariant = m_uObjectAttributesAllowed;
+		l_TempVariant = m_ObjectAttributesAllowed;
 	}
 	else if( rValueName == _T( "AttributesSet" ) )
 	{
 		SVSAFEARRAY l_SafeArray;
 
-		for( size_t i = 0; i < m_auObjectAttributesSet.size(); i++ )
+		for( size_t i = 0; i < m_ObjectAttributesSet.size(); i++ )
 		{
-			_variant_t l_Value = m_auObjectAttributesSet.at(i);
+			_variant_t l_Value = m_ObjectAttributesSet.at(i);
 
 			l_SafeArray.Add( l_Value );
 		}
@@ -653,13 +652,13 @@ HRESULT SVObjectClass::SetObjectValue( const SVString& rValueName, const _varian
 
 				if( S_OK == l_SafeArray.GetElement( i, l_Value ) )
 				{
-					m_uObjectAttributesAllowed = l_Value;
+					m_ObjectAttributesAllowed = l_Value;
 				}
 			}
 		}
 		else
 		{
-			m_uObjectAttributesAllowed = rVariantValue;
+			m_ObjectAttributesAllowed = rVariantValue;
 		}
 	}
 	else if( rValueName == _T( "AttributesSet" ) )
@@ -668,7 +667,7 @@ HRESULT SVObjectClass::SetObjectValue( const SVString& rValueName, const _varian
 		{
 			SVSAFEARRAY l_SafeArray( rVariantValue );
 
-			m_auObjectAttributesSet.resize( l_SafeArray.size() );
+			m_ObjectAttributesSet.resize( l_SafeArray.size() );
 
 			for( size_t i = 0; i < l_SafeArray.size(); i++ )
 			{
@@ -676,11 +675,11 @@ HRESULT SVObjectClass::SetObjectValue( const SVString& rValueName, const _varian
 
 				if( S_OK == l_SafeArray.GetElement( i, l_Value )  )
 				{
-					m_auObjectAttributesSet.at(i) = l_Value;
+					m_ObjectAttributesSet.at(i) = l_Value;
 				}
 				else
 				{
-					m_auObjectAttributesSet.at(i) = 0;
+					m_ObjectAttributesSet.at(i) = 0;
 				}
 			}
 		}
@@ -731,17 +730,17 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 		{
 			for( int i = 0; i < svDWordArray.GetSize(); i++ )
 			{
-				m_uObjectAttributesAllowed = svDWordArray[i];
+				m_ObjectAttributesAllowed = svDWordArray[i];
 			}
 		}
 		else if ( ( bOk = pDataObject->GetAttributeData( "AttributesSet", svDWordArray ) ) )
 		{
 			int iSize = svDWordArray.GetSize();
 			{
-				m_auObjectAttributesSet.resize( iSize );
+				m_ObjectAttributesSet.resize( iSize );
 				for( int i = 0; i < iSize; i++ )
 				{
-					m_auObjectAttributesSet.at(i) = svDWordArray[i];
+					m_ObjectAttributesSet.at(i) = svDWordArray[i];
 				}
 			}
 		}
@@ -1306,16 +1305,16 @@ void SVObjectClass::PersistAttributes( SVObjectWriter& rWriter )
 
 	// Add object attributes as trivial members
 	//@WARNING [gra][7.30][13.01.2016] The attribute is still saved into the configuration for forward compatibility with version 7.20 can be removed in next version
-	_variant_t value(m_uObjectAttributesAllowed); 
+	_variant_t value(m_ObjectAttributesAllowed); 
 	value.ChangeType(VT_UI4);
 	rWriter.WriteAttribute( scAttributesAllowedTag, value );
 
 	rWriter.StartElement(scAttributesSetTag);
 	SVVariantList list;
 
-	for ( unsigned int i = 0; i < m_auObjectAttributesSet.size(); i++ )
+	for ( unsigned int i = 0; i < m_ObjectAttributesSet.size(); i++ )
 	{
-		value.ulVal = m_auObjectAttributesSet.at(i);
+		value.ulVal = m_ObjectAttributesSet.at(i);
 		list.push_back(value);
 	}
 	rWriter.WriteAttribute( scAttributeTag, list);
@@ -1389,21 +1388,9 @@ int SVObjectClass::GetArraySize() const
 /*
 This method returns the allowed attributes of this object.
 */
-const UINT SVObjectClass::ObjectAttributesAllowed() const
+const UINT& SVObjectClass::ObjectAttributesAllowed() const
 {
-	return m_uObjectAttributesAllowed;
-}
-
-/*
-This method returns the set attributes of this object.
-*/
-const UINT SVObjectClass::ObjectAttributesSet(int iIndex) const
-{
-	if ( iIndex < 0 )
-	{
-		return m_uObjectAttributesSet;
-	}
-	return m_auObjectAttributesSet.at(iIndex);
+	return m_ObjectAttributesAllowed;
 }
 
 /*
@@ -1411,39 +1398,24 @@ This method returns a reference to the allowed attributes of this object.
 */
 UINT& SVObjectClass::ObjectAttributesAllowedRef()
 {
-	return m_uObjectAttributesAllowed;
+	return m_ObjectAttributesAllowed;
+}
+
+/*
+This method returns the set attributes of this object.
+*/
+const UINT& SVObjectClass::ObjectAttributesSet(int iIndex) const
+{
+	return m_ObjectAttributesSet.at(iIndex);
 }
 
 /*
 This method sets attributes of this object.
 */
-SVObjectAttributeShim SVObjectClass::ObjectAttributesSetRef(int Index)
+UINT& SVObjectClass::ObjectAttributesSetRef(int Index)
 {
-	if ( Index < 0 )
-	{
-		return SVObjectAttributeShim(this, m_uObjectAttributesSet, Index);
-	}
-		ASSERT( (long)m_auObjectAttributesSet.size() > (long)Index );
-		return SVObjectAttributeShim(this, m_auObjectAttributesSet.at(Index), Index);
-}
-
-/*
-This method sets attributes of this object.
-*/
-void SVObjectClass::SetObjectAttributesSet(UINT uAttributes, int Index, UINT WhichBits)
-{
-	if ( Index < 0 )
-	{
-		m_uObjectAttributesSet = uAttributes;
-	}
-	else
-	{
-		if ( static_cast<long> (m_auObjectAttributesSet.size()) > static_cast<long> (Index) )
-		{
-			//m_auObjectAttributesSet.at(iIndex) = uAttributes;
-			CopyBits(m_auObjectAttributesSet.at(Index), uAttributes, WhichBits);
-		}
-	}
+	ASSERT( (long)m_ObjectAttributesSet.size() > (long)Index );
+	return m_ObjectAttributesSet.at(Index);
 }
 
 /*
@@ -1451,6 +1423,6 @@ This method sets the default attributes of this object.
 */
 void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 {
-	m_uDefaultObjectAttributesSet = uAttributes;
+	m_DefaultObjectAttributesSet = uAttributes;
 }
 

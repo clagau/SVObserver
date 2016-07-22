@@ -14,8 +14,12 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <assert.h>
-#include "ObjectInterfaces\ISelectorItemVector.h"
+#include "ObjectInterfaces/ISelectorItemVector.h"
+#include "SVObjectLibrary/SVObjectReference.h"
+#include "SVObjectLibrary/SVObjectNameInfo.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
+#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #include "SelectorItem.h"
 #include "SelectorItemVector.h"
 #include "SelectorOptions.h"
@@ -27,20 +31,20 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	{
 	public:
 	#pragma region Declarations
-		/**********
-			The object selector dialog type enumerator
-		***********/
+		//************************************
+		//! The object selector dialog type enumerator
+		//************************************
 		enum SelectorTypeEnum
 		{
-			TypeNone				= 0,
-			TypeSetAttributes		= 1 << 1,
-			TypeSingleObject		= 1 << 2,
-			TypeMultipleObject		= 1 << 3,
+			TypeNone				= 0x00,
+			TypeSetAttributes		= 0x01,			//! Selected items are set using the object attributes
+			TypeSingleObject		= 0x02,			//! Single selection mode can only select one item at any time
+			TypeMultipleObject		= 0x04,			//! Multiple selection mode
 		};
 
-		/**********
-			The filter type enumerator
-		***********/
+		//************************************
+		//! The filter type enumerator either input or output name filter
+		//************************************
 		enum FilterEnum
 		{
 			FilterInput,
@@ -50,29 +54,23 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	public:
 	#pragma region Constructor
-		/**********
-			The class constructor
-		***********/
 		ObjectTreeGenerator();
 
-		/**********
-			The class destructor
-		***********/
 		virtual ~ObjectTreeGenerator();
 	#pragma endregion Constructor
 
 	public:
 	#pragma region Public Methods
-		/**********
-			The method returns the instance to the class
-			\return the reference to the static object
-		***********/
+		//************************************
+		//! The method returns the singleton of the class
+		//! \return the reference to the static object
+		//************************************
 		static ObjectTreeGenerator& Instance();
 
-		/**********
-			The method clears all object values
-			\param ClearAll <in> true to clear all values
-		***********/
+		//************************************
+		//! The method clears all items from the selector
+		//! \param ClearAll <in> true to clear the selected and modified lists
+		//************************************
 		void Clear( bool ClearAll = true );
 
 		//************************************
@@ -81,101 +79,109 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		//************************************
 		void insertTreeObjects( const SelectorItemVector& rSelectorItems );
 
-		/**********
-		/// This method inserts items in the tree
-		/// \param rOptions <in> reference to the Selector options
-		***********/
+		//************************************
+		//! This method builds the selectable items to insert into the tree
+		//! \param rOptions <in> reference to the Selector options
+		//************************************
 		template <typename GlobalSelector, typename PPQSelector, typename ToolsetSelector>
 		void BuildSelectableItems( const SelectorOptions& rOptions );
 
-		//**********
-		// Description:  The method displays the object selector dialog
-		// Parameter:  title <in>:  dialog title
-		// Parameter:  mainTabTitle <in>:  title for the main tab
-		// Parameter:  filterTabTitle <in>:  title for the filter tab
-		// Parameter:  pParent <in>:  pointer to the parent, default is nullptr
-		// Return:  INT_PTR:  the result of the dialog
-		//***********
+		//************************************
+		//! The method displays the object selector dialog
+		//! \param title <in>:  dialog title
+		//! \param mainTabTitle <in>:  title for the main tab
+		//! \param filterTabTitle <in>:  title for the filter tab
+		//! \param pParent <in>:  pointer to the parent, default is nullptr
+		//! \return the result of the dialog
+		//************************************
 		INT_PTR showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent = nullptr );
 
-		/**********
-			The method checks the list of items
-			\param rItems <in> the set of items to check
-			\return true if successful
-		***********/
+		//************************************
+		//! The method checks the items listed in the tree selector
+		//! \param rItems <in> the set of items to check as names
+		//! \return true if successful
+		//************************************
 		bool setCheckItems( const SVStringSet& rItems );
 
-		/**********
-			The method sets the location filter
-			\param rType <in> reference to the filter type
-			\param rFilter <in> reference to the filter to set
-			\param rReplace <in> the reference to the replace text
-		***********/
+		//************************************
+		//! The method checks the items listed in the tree selector
+		//! \param rItems <in> the list of items to check in the tree as object references
+		//! \param rInspectionName <in> the name of the corresponding inspection
+		//! \return true if successful
+		//************************************
+		bool setCheckItems( const SVObjectReferenceVector& rItems, const SVString& rInspectionName = SVString() );
+
+		//************************************
+		//! The method sets the location filter
+		//! \param rType <in> reference to the filter type
+		//! \param rFilter <in> reference to the filter to set
+		//! \param rReplace <in> the reference to the replace text
+		//************************************
 		void setLocationFilter( const FilterEnum& rType, const SVString& rFilter, const SVString& rReplace );
 
 		//************************************
-		// Description:  The method converts the location if the object is an array.
-		// Parameter:  rItem <in>:  reference to the item to check
-		// Returns:  The new location with inserted name
+		//! The method converts the location if the object is an array.
+		//! \param rItem <in>:  reference to the item to check
+		//! \return the new location with inserted name
 		//************************************
 		SVString convertObjectArrayName( const SvOi::ISelectorItem& rItem ) const;
 
 		//************************************
-		// Description:  The method gets the list of selected objects
-		// Returns:  const SelectorItemVector& - the reference to the results
+		//! The method gets the list of selected objects
+		//! \return the reference to the results
 		//************************************
 		inline const SelectorItemVector& getSelectedObjects() const;
 
 		//************************************
-		// Description:  The method gets the list of modified objects
-		// Returns:  const SelectorItemVector& - the reference to the results
+		//! The method gets the list of modified objects
+		//! \return the reference to the modified objects
 		//************************************
 		inline const SelectorItemVector& getModifiedObjects() const;
 
-		/**********
-			The method gets the single object selection result
-			\return The single select object
-		***********/
+		//************************************
+		//! The method gets the single object selection result
+		//! \return the single selected object
+		//************************************
 		inline SelectorItem getSingleObjectResult() const;
 
-		/**********
-			The method sets the selector type
-			\param rSelectorType <in> reference to the object selector type
-		***********/
+		//************************************
+		//! The method sets the selector type
+		//! \param rSelectorType <in> reference to the object selector type
+		//************************************
 		inline void setSelectorType( const SelectorTypeEnum& rSelectorType );
 
 	#pragma endregion Public Methods
 
 	private:
 	#pragma region Private Methods
-		/**********
-			The method inserts an object into the tree list
-			\param rObjectRef <in> reference to the object
-		***********/
+		//************************************
+		//! The method inserts an object into the tree list
+		//! \param rObjectRef <in> reference to the object
+		//************************************
 		void insertTreeObject( const SvOi::ISelectorItem& rItem );
 
-		/**********
-			The method checks if the tree has been modified
-			\return True if tree has been modified
-		***********/
+		//************************************
+		//! The method checks if the tree has been modified
+		//! \return true if tree has been modified
+		//************************************
 		bool checkModifiedItems();
 
-		/**********
-			The method sets the attributes of all leaf items that were modified
-		***********/
+		//************************************
+		//! The method sets the attributes of all leaf items that were modified
+		//************************************
 		void setItemAttributes();
 
-		/**********
-			The method filter a location and return it. 
-			\param rFilters<in>, reference to the filters to be used
-			\param rLocation <in> reference to the location before filtering
-			\return filtered location
-		***********/
+		//************************************
+		//! The method filters a location and returns the result
+		//! \param rFilters<in>, reference to the filters to be used
+		//! \param rLocation <in> reference to the location before filtering
+		//! \return filtered location
+		//************************************
 		SVString getFilteredLocation( const TranslateMap& rFilters, const SVString& rLocation ) const;
 
-		/**********
-		The method converts the location to the required format using the location filter and array index
-		***********/
+		//************************************
+		//! The method converts the location to the required format using the location filter and array index
+		//************************************
 		void convertLocation( SelectorItem& rSelectedItem );
 	#pragma endregion Private Methods
 

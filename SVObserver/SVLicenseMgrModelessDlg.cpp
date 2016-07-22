@@ -34,7 +34,7 @@ SVLicenseMgrModelessDlg::SVLicenseMgrModelessDlg(): CDialog(SVLicenseMgrModeless
 {
 }
 
-void SVLicenseMgrModelessDlg::Init(const CString& s,const SVLicenseErrorListSet& p_sList, HANDLE p_hEvent)
+void SVLicenseMgrModelessDlg::Init(const CString& s,const SVGuidSet& p_sList, HANDLE p_hEvent)
 {
 	m_sMsg = s;
 
@@ -45,7 +45,7 @@ void SVLicenseMgrModelessDlg::Init(const CString& s,const SVLicenseErrorListSet&
 	m_sList = p_sList;
 }
 
-void SVLicenseMgrModelessDlg::Show(const CString& s,const SVLicenseErrorListSet& p_sList, HANDLE p_hEvent)
+void SVLicenseMgrModelessDlg::Show(const CString& s,const SVGuidSet& p_sList, HANDLE p_hEvent)
 {
 	SVLicenseMgrModelessDlg& l_rDlg = SVLicenseMgrModelessDlg::Instance();
 	l_rDlg.Init(s,p_sList,p_hEvent);
@@ -113,7 +113,7 @@ BOOL SVLicenseMgrModelessDlg::OnInitDialog()
 	GetDlgItem(IDC_STATIC_TITLE)->SetWindowText(m_sMsg);
 
 	//fill ListControl with items in m_dList
-	SVLicenseErrorListSet::iterator l_Iter = m_sList.begin();
+	SVGuidSet::iterator l_Iter = m_sList.begin();
 
 	while ( l_Iter != m_sList.end() )
 	{

@@ -9,7 +9,7 @@
  
 #pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
-#include "ObjectInterfaces\DataStructures.h"
+#include "ObjectInterfaces/GlobalConstantData.h"
 #include "BasicValueObject.h"
 #pragma endregion Includes
  

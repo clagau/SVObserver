@@ -44,6 +44,9 @@ namespace Seidenader { namespace SVObjectLibrary
 	const TCHAR* const FqnCameraGain					= _T( "Gain" );
 	//! PPQ FQN names
 	const TCHAR* const FqnPpqLength						= _T("Length");
+	//! PPQ Variables FQN names
+	const TCHAR* const FqnRemoteInput					= _T( ".Remote Input" );
+	const TCHAR* const FqnDioInput						= _T( ".DIO.Input" );
 
 	static const LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 	#pragma endregion Declarations

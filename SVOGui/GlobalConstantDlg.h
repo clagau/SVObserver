@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <comutil.h>
 #include "SVOResource\resource.h"
 #include "SVUtilityLibrary\SVString.h"
-#include "ObjectInterfaces\DataStructures.h"
+#include "ObjectInterfaces/GlobalConstantData.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui

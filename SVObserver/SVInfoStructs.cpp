@@ -1159,7 +1159,7 @@ SVRemoveImages::SVRemoveImages()
 {
 }
 
-SVRemoveImages::SVRemoveImages( const SVImageIdSet& p_rImages )
+SVRemoveImages::SVRemoveImages( const SVGuidSet& p_rImages )
 : m_Images( p_rImages )
 {
 }
@@ -1178,7 +1178,7 @@ SVRemoveValues::SVRemoveValues()
 {
 }
 
-SVRemoveValues::SVRemoveValues( const SVValueIdSet& p_rValues )
+SVRemoveValues::SVRemoveValues( const SVGuidSet& p_rValues )
 : m_Values( p_rValues )
 {
 }

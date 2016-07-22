@@ -27,7 +27,7 @@
 #include "SVIOBoardCapabilities.h"
 #include "TriggerHandling/SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
-#include "ObjectInterfaces\DataStructures.h"
+#include "ObjectInterfaces/GlobalConstantData.h"
 #pragma endregion Includes
 
 // Moved SVIM_FULL_BOARD, etc. to SVObserverEnums.h

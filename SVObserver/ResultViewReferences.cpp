@@ -98,10 +98,10 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 	return bOK;
 }
 
-bool ResultViewReferences::Insert( const SVString &dottedName )
+bool ResultViewReferences::Insert( const SVString &rDottedName )
 {
 	SVObjectReference objRef;
-	bool bOK = ( S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( dottedName, objRef ) );
+	bool bOK = ( S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( rDottedName, objRef ) );
 
 	if ( bOK && objRef.Object() )
 	{
@@ -123,7 +123,7 @@ bool ResultViewReferences::Save(SVObjectWriter& rWriter)
 		{
 			CString csObjectName = it->GetCompleteOneBasedObjectName();
 			_variant_t var(csObjectName);
-			rWriter.WriteAttribute(_T("CompleteName"), var);
+			rWriter.WriteAttribute(CTAG_COMPLETENAME, var);
 			var.Clear();
 		}
 	}
@@ -131,20 +131,9 @@ bool ResultViewReferences::Save(SVObjectWriter& rWriter)
 	return true;
 }
 
-int ResultViewReferences::GetNameSet(SVStringSet& stringSet) const
+const SVObjectReferenceVector& ResultViewReferences::GetSelectedObjects() const
 {
-	int res =0;
-	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();
-	for( ; it != m_ReferenceVector.end(); ++it)
-	{
-		if( nullptr != it->Object() )
-		{
-			SVString ObjectName = it->GetCompleteOneBasedObjectName();
-			stringSet.insert(ObjectName);	
-			++res;
-		}
-	}
-	return res;
+	return m_ReferenceVector;
 }
 
 void ResultViewReferences::Clear()

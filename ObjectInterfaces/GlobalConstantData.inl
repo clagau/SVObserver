@@ -2,9 +2,8 @@
 /// \copyright (c) 2015,2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
 //*****************************************************************************
-/// General data structures which are shared across projects
+/// Global constant data structure for comparing
 //******************************************************************************
-#pragma once
 
 namespace Seidenader { namespace ObjectInterfaces
 {

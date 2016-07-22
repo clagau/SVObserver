@@ -8,10 +8,10 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:21:26  $
 //******************************************************************************
-
 #pragma once
 
 //Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <set>
 
 #pragma region Includes
 #include "SVString.h"
@@ -82,3 +82,4 @@ inline bool operator>( const GUID& p_rLeft, const SVGUID& p_rRight )
 	return ( p_rRight < p_rLeft );
 }
 
+typedef std::set< SVGUID > SVGuidSet;

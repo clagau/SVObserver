@@ -178,7 +178,7 @@ const UINT SVObjectReference::ObjectAttributesAllowed() const
 const UINT SVObjectReference::ObjectAttributesSet() const
 {
 	ASSERT( nullptr != m_pObject );
-	return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex:0  );
+	return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0  );
 }
 
 UINT& SVObjectReference::ObjectAttributesAllowedRef()
@@ -187,10 +187,10 @@ UINT& SVObjectReference::ObjectAttributesAllowedRef()
 	return m_pObject->ObjectAttributesAllowedRef();
 }
 
-SVObjectAttributeShim SVObjectReference::ObjectAttributesSetRef()
+UINT& SVObjectReference::ObjectAttributesSetRef()
 {
 	ASSERT( nullptr != m_pObject );
-	return m_pObject->ObjectAttributesSetRef(m_ArrayIndex >= 0 ? m_ArrayIndex:0 );
+	return m_pObject->ObjectAttributesSetRef(m_ArrayIndex >= 0 ? m_ArrayIndex : 0 );
 }
 
 GUID SVObjectReference::GetObjectGuid( SVObjectClass* pObject )

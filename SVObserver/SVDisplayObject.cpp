@@ -106,7 +106,7 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveImages& p_rData )
 
 	if( nullptr != l_pIPDoc )
 	{
-		SVRemoveImages::SVImageIdSet::const_iterator l_Iter = p_rData.m_Images.begin();
+		SVGuidSet::const_iterator l_Iter = p_rData.m_Images.begin();
 
 		while( l_Iter != p_rData.m_Images.end() )
 		{

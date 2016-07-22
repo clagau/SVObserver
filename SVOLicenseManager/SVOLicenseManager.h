@@ -16,8 +16,6 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-typedef std::set< SVGUID > SVLicenseErrorListSet;
-
 class SVOLicenseManager
 {
 public:
@@ -42,7 +40,7 @@ private:
 	bool m_bMatroxIdentificationLicense;
 	bool m_bMatroxGigELicense;
 
-	SVLicenseErrorListSet m_svErrorList;
+	SVGuidSet m_svErrorList;
 
 protected:
 	HANDLE m_hCheckEvent;

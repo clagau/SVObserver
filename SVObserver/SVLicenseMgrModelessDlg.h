@@ -45,17 +45,17 @@ class SVLicenseMgrModelessDlg : public CDialog
 public:
 	SVLicenseMgrModelessDlg();
 	virtual ~SVLicenseMgrModelessDlg();
-	static void Show(const CString& sMsg, const SVLicenseErrorListSet& p_sList, HANDLE p_hEvent);
+	static void Show(const CString& sMsg, const SVGuidSet& p_sList, HANDLE p_hEvent);
 	static void Destroy();
 
 
 protected:
 	CString m_sMsg;
 	HANDLE m_hEvent;
-	SVLicenseErrorListSet m_sList;
+	SVGuidSet m_sList;
 
 private:
-	void Init(const CString& sMsg, const SVLicenseErrorListSet& p_sList, HANDLE p_hEvent);
+	void Init(const CString& sMsg, const SVGuidSet& p_sList, HANDLE p_hEvent);
 	static SVLicenseMgrModelessDlg& Instance();
 	void CleanUp();
 

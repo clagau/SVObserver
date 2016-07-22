@@ -22,7 +22,6 @@
 #include "SVObjectLibrary.h"
 #include "SVOutObjectInfoStruct.h"
 #include "SVPublicAttributeEntryStruct.h"
-#include "SVObjectAttributeShim.h"
 #include "SVObjectWriter.h"
 #include "SVObjectInfoArrayClass.h"
 #include "SVUtilityLibrary/NameGuidList.h"
@@ -163,8 +162,10 @@ public:
 	virtual const SVGUID& GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
-	virtual const UINT ObjectAttributesAllowed() const override;
-	virtual const UINT ObjectAttributesSet(int iIndex=0) const override;
+	virtual const UINT& ObjectAttributesAllowed() const override;
+	virtual UINT& ObjectAttributesAllowedRef() override;
+	virtual const UINT& ObjectAttributesSet(int iIndex=0) const override;
+	virtual UINT& ObjectAttributesSetRef(int Index=0) override;
 	virtual bool IsArray() const;
 	virtual int GetArraySize() const;
 	virtual const SVGUID& GetUniqueObjectID() const override;
@@ -193,20 +194,15 @@ public:
 	//This attribute holds the object level error information.
 	SVErrorClass msvError;  // @TODO - This should be replaced with the new message/error handler
 
-	UINT& ObjectAttributesAllowedRef();
-	SVObjectAttributeShim ObjectAttributesSetRef(int Index=0);
-	void SetObjectAttributesSet(UINT uAttributes, int Index=0, UINT WhichBits = SET_ALL_BITS);
 	void SetDefaultObjectAttributesSet(UINT uAttributes);
 
 protected:
 	//This attribute holds the enumerated bits of allowed object attributes.
-	UINT m_uObjectAttributesAllowed;
-	//This attribute holds the enumerated bits of set object attributes.
-	UINT m_uObjectAttributesSet;
+	UINT m_ObjectAttributesAllowed;
 	//This attribute holds the array enumerated bits of set object attributes based on object array depth.
-	std::vector<UINT> m_auObjectAttributesSet;
+	std::vector<UINT> m_ObjectAttributesSet;
 	//This attribute holds the enumerated bits of default object attributes.
-	UINT m_uDefaultObjectAttributesSet;
+	UINT m_DefaultObjectAttributesSet;
 
 	//This attribute holds the data depth of the embedded data elements.
 	int m_objectDepth;

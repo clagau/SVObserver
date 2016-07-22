@@ -68,15 +68,11 @@ public:
 	// Returns:  S_OK if no error occurs   
 	//************************************
 	HRESULT GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions ) const; 
-
-	
-	
-	
 	
 	bool LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent);
 	
-	void GetNameSet(SVStringSet& SelectedNamesRaw);
-	bool Insert(const SVString& param1);
+	const SVObjectReferenceVector& GetSelectedObjects() const;
+	bool Insert(const SVString& rDottedName);
 	SVClock::SVTimeStamp getUpdateTimeStamp();
 	void Save(SVObjectWriter& rWriter);
 
@@ -84,7 +80,7 @@ public:
 
 #pragma region Member Variables
 protected:
-	ResultViewReferences   m_ResultViewReferences;
+	ResultViewReferences  m_ResultViewReferences;
 	SVToolSetClass* m_pToolSet;
 	SVVector< SVResultClass* > m_results;
 #pragma endregion Member Variables

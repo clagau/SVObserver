@@ -2,7 +2,7 @@
 /// \copyright (c) 2015,2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
 //*****************************************************************************
-/// General data structures which are shared across projects
+/// Global constant data structure for comparing
 //******************************************************************************
 #pragma once
 
@@ -33,6 +33,7 @@ namespace Seidenader { namespace ObjectInterfaces
 	#pragma region Constructor
 	public:
 		inline GlobalConstantData();
+		virtual ~GlobalConstantData() {};
 
 	#pragma region Public Methods
 	public:
@@ -60,7 +61,7 @@ namespace Seidenader { namespace ObjectInterfaces
 
 
 #pragma region Inline
-#include "DataStructures.inl"
+#include "GlobalConstantData.inl"
 #pragma endregion Inline
 
 namespace SvOi = Seidenader::ObjectInterfaces;

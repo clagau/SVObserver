@@ -81,7 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DataStructures.h" />
+    <ClInclude Include="GlobalConstantData.h" />
     <ClInclude Include="DependencyList.h" />
     <ClInclude Include="EquationTestResult.h" />
     <ClInclude Include="ErrorNumbers.h" />
@@ -120,7 +120,7 @@
     <ClInclude Include="TextDefineSvOi.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DataStructures.inl" />
+    <None Include="GlobalConstantData.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

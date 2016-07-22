@@ -973,7 +973,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 {
 	HRESULT hrResult = S_OK;
 
-	typedef std::map< SVInspectionProcess*, SVCommandInspectionCollectImageData::SVImageIdSet > SVInspectionImageIdMap;
+	typedef std::map< SVInspectionProcess*, SVGuidSet > SVInspectionImageIdMap;
 	typedef std::map< SVInspectionProcess*, SVCommandInspectionCollectImageDataPtr > SVInspectionImageDataMap;
 	typedef std::deque< SVGetImageListImageInfo > SVImageNameIdDeque;
 

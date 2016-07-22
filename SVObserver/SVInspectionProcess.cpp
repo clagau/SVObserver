@@ -4507,12 +4507,13 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList( const UINT
 				SVObjectReference ObjectRef( pObject );
 				SvOsl::SelectorItem InsertItem;
 
-				//Need to replace the inspection name with the PPQ Variables name
-				// Only DIO and Remote Input, but is all that is in this list?
 				SVString Location( ObjectRef.GetCompleteOneBasedObjectName() );
-				SvUl_SF::searchAndReplace(Location, InspectionName.c_str(), SvOl::FqnPPQVariables);
 				InsertItem.setName( ObjectRef.GetName() );
 				InsertItem.setLocation( Location.c_str() );
+				//Need to replace the inspection name with the PPQ Variables name
+				// Only DIO and Remote Input, but is all that is in this list?
+				SvUl_SF::searchAndReplace(Location, InspectionName.c_str(), SvOl::FqnPPQVariables);
+				InsertItem.setDisplayLocation( Location.c_str() );
 				InsertItem.setItemKey( ObjectRef->GetUniqueObjectID().ToVARIANT() );
 				if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
 				{

@@ -1529,23 +1529,8 @@ void SVIPDoc::OnResultsPicker()
 			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_VIEWABLE );
 			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 			
-			SVStringSet SelectedNames;
-			SVStringSet SelectedNamesRaw;
-			pResultList->GetNameSet(SelectedNamesRaw);
-			//Need to replace the PPQ Variables name with the inspection name
-			typedef std::insert_iterator<SVStringSet> Insertor;
-			std::transform(SelectedNamesRaw.begin(), SelectedNamesRaw.end(), Insertor(SelectedNames, SelectedNames.end()), [&InspectionName](const SVString& name)->SVString
-			{
-				SVString St(name);
-				// check for .DIO or .Remote Input
-				if (SVString::npos != St.find(_T(".DIO")) || SVString::npos != St.find(_T(".Remote Input")))
-				{
-					SvUl_SF::searchAndReplace( St, InspectionName.c_str(), SvOl::FqnPPQVariables );
-				}
-				return St;
-			});
-
-			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
+			const SVObjectReferenceVector& rSelectedObjects( pResultList->GetSelectedObjects() );
+			SvOsl::ObjectTreeGenerator::Instance().setCheckItems( rSelectedObjects, InspectionName );
 
 			CString Title;
 			CString ResultPicker;
@@ -1563,16 +1548,7 @@ void SVIPDoc::OnResultsPicker()
 
 				for( Iter = SelectedItems.begin(); Iter != SelectedItems.end(); ++Iter )
 				{
-					if(std::string::npos  != Iter->getLocation().find(SvOl::FqnPPQVariables))
-					{
-						SVString locationName = Iter->getLocation();
-						SvUl_SF::searchAndReplace(locationName, SvOl::FqnPPQVariables,InspectionName.c_str());
-						pResultList->Insert(locationName);
-					}
-					else
-					{
-						pResultList->Insert(Iter->getLocation());
-					}
+					pResultList->Insert( Iter->getLocation() );
 				}
 				// Set the Document as modified
 				SetModifiedFlag();
@@ -2041,7 +2017,7 @@ void SVIPDoc::OnChangeToolSetDrawFlag( UINT nId )
 
 void SVIPDoc::RefreshDocument()
 {
-	SVCommandInspectionCollectImageData::SVImageIdSet l_ImageIds;
+	SVGuidSet l_ImageIds;
 
 	for( int i = 0; i < MaxImageViews; ++i )
 	{

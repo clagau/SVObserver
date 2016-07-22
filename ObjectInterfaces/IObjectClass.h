@@ -69,12 +69,14 @@ namespace Seidenader
 			/**********
 			This method gets the attributes allowed for the object.
 			***********/
-			virtual const UINT ObjectAttributesAllowed() const = 0;
+			virtual const UINT& ObjectAttributesAllowed() const = 0;
+			virtual UINT& ObjectAttributesAllowedRef() = 0;
 
 			/**********
 			This method gets the attributes set for the object.
 			***********/
-			virtual const UINT ObjectAttributesSet(int iIndex=0) const = 0;
+			virtual const UINT& ObjectAttributesSet(int iIndex=0) const = 0;
+			virtual UINT& ObjectAttributesSetRef(int iIndex=0) = 0;
 
 			/**********
 			This method returns true if object is an array

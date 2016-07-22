@@ -40,7 +40,6 @@ public:
 
 	typedef std::map< SVString, SVGUID > RootNameChildMap;
 
-	typedef std::set< SVGUID > GuidSet;
 	typedef std::deque< SVString > SVSubjectDataNameDeque;
 
 	static SVObjectManagerClass& Instance();
@@ -62,7 +61,10 @@ public:
 	HRESULT ConstructRootObject( const SVGUID& rClassID );
 	HRESULT DestroyRootObject();
 	void setRootChildID(const SVString& rRootChild, const SVGUID& rUniqueID);
-	void Translation(SVString& rName);
+
+	//! Translates the dotted name if the name start needs to be replaced
+	//! \param rName [in][out] dotted name to translate is done in place
+	void TranslateDottedName(SVString& rName) const;
 
 	HRESULT ConstructObject( const SVGUID& rClassID, GUID& rObjectID );
 	HRESULT ConstructObject( const SVGUID& rClassID, SVObjectClass*& rpObject );
@@ -110,7 +112,7 @@ public:
 	HRESULT GetObserverSubject( const SVString& rSubjectDataName, const SVGUID& rObserverID, GUID& rSubjectID ) const;
 	HRESULT GetObserverSubject( const SVString& rSubjectDataName, long Cookie, GUID& rSubjectID ) const;
 
-	HRESULT GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, GuidSet& rObserverIds );
+	HRESULT GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVGuidSet& rObserverIds );
 
 	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
 	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
@@ -206,7 +208,6 @@ protected:
 	typedef SVSharedPtr< SVCookieEntryStruct > SVCookieEntryStructPtr;
 	typedef std::map< long, SVCookieEntryStructPtr > SVCookieEntryMap;
 
-	typedef std::set< SVGUID > SVSubjectObserverSet;
 	typedef std::set< long > SVSubjectCookieSet;
 
 	typedef std::map< SVGUID, long > SVSubjectEnabledObserverMap;

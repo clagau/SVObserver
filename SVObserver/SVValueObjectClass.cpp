@@ -232,7 +232,7 @@ HRESULT SVValueObjectClass::SetArraySize(int iSize)
 	m_aiResultSize.resize(m_iNumberOfBuckets);
 	std::fill(m_aiResultSize.begin(), m_aiResultSize.end(), iSize);	// allow the result size to be 0
 
-	m_auObjectAttributesSet.resize( m_iArraySize, m_uDefaultObjectAttributesSet );
+	m_ObjectAttributesSet.resize( m_iArraySize, m_DefaultObjectAttributesSet );
 
 	return hr;
 }

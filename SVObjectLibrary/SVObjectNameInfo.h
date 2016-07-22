@@ -13,6 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -93,3 +94,4 @@ private:
 	SVString m_DefaultValue;
 };
 
+typedef std::set< SVObjectNameInfo > SVObjectNameInfoSet;

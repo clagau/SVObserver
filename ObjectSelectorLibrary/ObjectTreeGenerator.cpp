@@ -13,10 +13,9 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "ObjectTreeGenerator.h"
-
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVObjectLibrary\SVObjectLibrary.h"
-#include "ObjectInterfaces\ITaskObject.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/ObjectDefines.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
@@ -152,11 +151,11 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 		SVStringSet::const_iterator IterName( rItems.begin() );
 
-		while( rItems.end() != IterName )
+		for( ; rItems.end() != IterName;  ++IterName )
 		{
 			SvCl::ObjectTreeItems::iterator Iter( m_TreeContainer.begin() );
 			//Need to check if input filters are used
-			SVString Location = getFilteredLocation( m_LocationInputFilters,  *IterName );
+			SVString Location = getFilteredLocation( m_LocationInputFilters, *IterName );
 			//If an array we need the extra branch
 			SVString::size_type BracketPos( SVString::npos );
 			BracketPos = Location.rfind( _T("[") );
@@ -176,9 +175,54 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 				Iter->second->setCheckedState( SvCl::IObjectSelectorItem::CheckedEnabled );
 				Result = true;
 			}
-			++IterName;
 		}
 
+		return Result;
+	}
+
+	bool ObjectTreeGenerator::setCheckItems( const SVObjectReferenceVector& rItems, const SVString& rInspectionName )
+	{
+		bool Result( true );
+		
+		SVStringSet ObjectNames;
+		TranslateMap TranslateNames;
+
+		if( !rInspectionName.empty() )
+		{
+			SVString SearchName;
+			SVString ReplaceName;
+			SearchName = rInspectionName + SvOl::FqnRemoteInput;
+			ReplaceName = SvOl::FqnPPQVariables;
+			ReplaceName += SvOl::FqnRemoteInput;
+			TranslateNames[ SearchName ] = ReplaceName;
+			SearchName = rInspectionName + SvOl::FqnDioInput;
+			ReplaceName = SvOl::FqnPPQVariables;
+			ReplaceName += SvOl::FqnDioInput;
+			TranslateNames[ SearchName ] = ReplaceName;
+		}
+
+		SVObjectReferenceVector::const_iterator Iter( rItems.begin() );
+		for( ; rItems.end() != Iter && Result;  ++Iter )
+		{
+			SVString Name( Iter->GetCompleteOneBasedObjectName() );
+
+			TranslateMap::const_iterator Iter( TranslateNames.begin() );
+			for( ; TranslateNames.end() != Iter; ++Iter )
+			{
+				size_t Pos = Name.find( Iter->first );
+				//Check only that the start of the dotted name is found
+				if( 0 == Pos )
+				{
+					Name.replace( Pos, Iter->first.size(), Iter->second.c_str() );
+					break;
+				}
+			}
+			ObjectNames.insert( Name );
+		}
+		if( Result )
+		{
+			Result = setCheckItems( ObjectNames );
+		}
 		return Result;
 	}
 
@@ -205,7 +249,11 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	SVString ObjectTreeGenerator::convertObjectArrayName( const SvOi::ISelectorItem& rItem ) const
 	{
-		SVString Result( rItem.getLocation() );
+		SVString Result( rItem.getDisplayLocation() );
+		if( Result.empty() )
+		{
+			Result = rItem.getLocation();
+		}
 
 		//If location is array then place an additional level with the array group name
 		if( rItem.isArray() )
@@ -232,14 +280,17 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	{
 		SvCl::ObjectSelectorItem SelectorItem;
 		SvCl::IObjectSelectorItem::AttributeEnum Attribute( static_cast<SvCl::IObjectSelectorItem::AttributeEnum> (SvCl::IObjectSelectorItem::Leaf | SvCl::IObjectSelectorItem::Checkable) );
-
-		SVString Location( rItem.getLocation() );
 		SelectorItem.setName( rItem.getName() );
-		SelectorItem.setLocation( Location );
+		SelectorItem.setLocation( rItem.getLocation() );
 		SelectorItem.setItemKey( rItem.getItemKey() );
 		SelectorItem.setItemTypeName( rItem.getItemTypeName() );
 		SelectorItem.setCheckedState( SvCl::IObjectSelectorItem::UncheckedEnabled );
 
+		SVString Location( rItem.getDisplayLocation() );
+		if( Location.empty() )
+		{
+			Location = rItem.getLocation();
+		}
 		if( rItem.isArray() )
 		{
 			Location = convertObjectArrayName( rItem );
@@ -326,44 +377,30 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	void ObjectTreeGenerator::setItemAttributes()
 	{
-		SvCl::ObjectTreeItems::const_pre_order_iterator Iter( m_TreeContainer.pre_order_begin() );
+		SelectorItemVector::const_iterator Iter( m_ModifiedObjects.begin() );
 
-		while( m_TreeContainer.pre_order_end() != Iter )
+		//Modified objects are only leafs from the tree
+		for( ;m_ModifiedObjects.end() != Iter; ++Iter )
 		{
-			//only leafs are of interest to set the attributes
-			if( Iter->second->isLeaf() && Iter->second->isModified() )
+			SVGUID ObjectID( Iter->getItemKey() );
+
+			SvOi::IObjectClass* pObject( SvOi::getObject( ObjectID ) );
+
+			if ( nullptr != pObject )
 			{
-				//The tree item key is the object GUID
-				SVGUID ObjectGuid( Iter->second->getItemKey() );
+				int ObjectIndex = Iter->isArray() ? Iter->getArrayIndex() : 0;
+				UINT AttributesSet = pObject->ObjectAttributesSet( ObjectIndex );
 
-				SVObjectClass* pObject( nullptr );
-				SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
-
-				if ( nullptr != pObject )
+				if ( Iter->isSelected() )
 				{
-					SVObjectReference ObjectRef = pObject;
-					//If an array must set the index
-					if( Iter->second->isArray() )
-					{
-						ObjectRef.SetArrayIndex( Iter->second->getArrayIndex() );
-					}
-					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-
-					switch( Iter->second->getCheckedState() )
-					{
-					case SvCl::IObjectSelectorItem::CheckedEnabled:
-						AttributesSet |= m_AttributesFilter;
-						break;
-					case SvCl::IObjectSelectorItem::UncheckedEnabled:
-						AttributesSet &= ~m_AttributesFilter;
-						break;
-					default:
-						break;
-					}
-					ObjectRef.ObjectAttributesSetRef() = AttributesSet;
+					AttributesSet |= m_AttributesFilter;
 				}
+				else
+				{
+					AttributesSet &= ~m_AttributesFilter;
+				}
+				pObject->ObjectAttributesSetRef( ObjectIndex ) = AttributesSet;
 			}
-			++Iter;
 		}
 	}
 

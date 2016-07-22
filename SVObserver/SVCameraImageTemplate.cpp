@@ -244,7 +244,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObje
 	{
 		hr = SVImageClass::SetObjectValue( PDataObject );
 
-		m_uObjectAttributesAllowed |= SV_REMOTELY_SETABLE;
+		m_ObjectAttributesAllowed |= SV_REMOTELY_SETABLE;
 
 		return hr;
 	}

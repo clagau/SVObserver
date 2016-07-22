@@ -30,7 +30,7 @@ SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(const S
 {
 }
 
-SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(const SVGUID& p_rInspectionId, const SVImageIdSet& p_rImageIds)
+SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(const SVGUID& p_rInspectionId, const SVGuidSet& p_rImageIds)
 : m_InspectionId( p_rInspectionId )
 , m_ImageIds( p_rImageIds )
 , m_Product()
@@ -84,9 +84,9 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 		m_Product.m_ResultData.m_ToolSetTime = l_ToolSetTime;
 		m_Product.m_ResultData.m_TriggerDistance = l_TriggerDistance;
 
-		const SVCommandInspectionCollectImageData::SVImageIdSet& l_rImageIds = GetImageIds();
+		const SVGuidSet& rImageIds = GetImageIds();
 
-		for( SVCommandInspectionCollectImageData::SVImageIdSet::const_iterator l_Iter = l_rImageIds.begin(); l_Iter != l_rImageIds.end(); ++l_Iter )
+		for( SVGuidSet::const_iterator l_Iter = rImageIds.begin(); l_Iter != rImageIds.end(); ++l_Iter )
 		{
 			SVGUID l_ImageId = *l_Iter;
 
@@ -132,7 +132,7 @@ const SVGUID& SVCommandInspectionCollectImageData::GetInspectionId() const
 	return m_InspectionId;
 }
 
-const SVCommandInspectionCollectImageData::SVImageIdSet& SVCommandInspectionCollectImageData::GetImageIds() const
+const SVGuidSet& SVCommandInspectionCollectImageData::GetImageIds() const
 {
 	return m_ImageIds;
 }

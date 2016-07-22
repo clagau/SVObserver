@@ -153,26 +153,19 @@ void SVObjectManagerClass::setRootChildID( const SVString& rRootChild, const SVG
 	}
 }
 
-void SVObjectManagerClass::Translation( SVString& rName )
+void SVObjectManagerClass::TranslateDottedName( SVString& rName ) const
 {
-	bool NameChanged = false;
-
-	SVObjectNameInfo NameInfo;
-	SVObjectNameInfo::ParseObjectName( NameInfo, rName );
-	SVObjectNameInfo::SVNameDeque::iterator NameIter;
-	for(NameIter = NameInfo.m_NameArray.begin(); NameInfo.m_NameArray.end() != NameIter; ++NameIter)
+	bool NameReplaced( false );
+	TranslateMap::const_iterator Iter( m_TranslationMap.begin() );
+	for( ; m_TranslationMap.end() != Iter && !NameReplaced; ++Iter )
 	{
-		TranslateMap::const_iterator TranslationIter;
-		TranslationIter =  m_TranslationMap.find( *NameIter );
-		if(TranslationIter != m_TranslationMap.end())
+		size_t Pos = rName.find( Iter->first );
+		//Check only that the start of the dotted name is found
+		if( 0 == Pos )
 		{
-			NameChanged = true;
-			*NameIter = TranslationIter->second;
+			rName.replace( Pos, Iter->first.size(), Iter->second.c_str() );
+			NameReplaced = true;
 		}
-	}
-	if(NameChanged)
-	{
-		rName = NameInfo.GetObjectArrayName(0);
 	}
 }
 
@@ -372,7 +365,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 	if( Status )
 	{
 		SVString Name = rFullName;
-		Instance().Translation(Name);
+		Instance().TranslateDottedName( Name );
 		SVObjectClass* pChildRootObject( nullptr );
 		SVObjectNameInfo NameInfo;
 
@@ -767,7 +760,7 @@ HRESULT SVObjectManagerClass::GetObserverSubject( const SVString& rSubjectDataNa
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, GuidSet& rObserverIds )
+HRESULT SVObjectManagerClass::GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVGuidSet& rObserverIds )
 {
 	rObserverIds.clear();
 
@@ -1317,7 +1310,7 @@ long SVObjectManagerClass::GetFileSequenceNumber() const
 HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const
 {
 	HRESULT Result = S_OK;
-	GuidSet GuidObjectList;
+	SVGuidSet GuidObjectList;
 
 	SVObjectClass* pStartObject( nullptr );
 	GetObjectByDottedName(rPath, pStartObject);
@@ -1370,7 +1363,7 @@ HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferen
 		}
 	}
 
-	GuidSet::iterator Iter( GuidObjectList.begin() );
+	SVGuidSet::iterator Iter( GuidObjectList.begin() );
 	while( Iter != GuidObjectList.end() )
 	{
 		SVObjectReference ObjectRef( GetObject(*Iter) );

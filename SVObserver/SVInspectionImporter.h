@@ -14,7 +14,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVIProgress.h"
 #include "SVImportedInspectionInfo.h"
-#include "ObjectInterfaces\DataStructures.h"
+#include "ObjectInterfaces/GlobalConstantData.h"
 #pragma endregion Includes
 
 class SVInspectionImporter

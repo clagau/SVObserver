@@ -356,29 +356,25 @@ struct SVDeleteTool
 
 struct SVRemoveImages
 {
-	typedef std::set< SVGUID > SVImageIdSet;
-
 	SVRemoveImages();
-	SVRemoveImages( const SVImageIdSet& p_rImages );
+	SVRemoveImages( const SVGuidSet& p_rImages );
 	SVRemoveImages( const SVRemoveImages& p_rObject );
 
 	virtual ~SVRemoveImages();
 
-	SVImageIdSet m_Images;
+	SVGuidSet m_Images;
 
 };
 
 struct SVRemoveValues
 {
-	typedef std::set< SVGUID > SVValueIdSet;
-
 	SVRemoveValues();
-	SVRemoveValues( const SVValueIdSet& p_rValues );
+	SVRemoveValues( const SVGuidSet& p_rValues );
 	SVRemoveValues( const SVRemoveValues& p_rObject );
 
 	virtual ~SVRemoveValues();
 
-	SVValueIdSet m_Values;
+	SVGuidSet m_Values;
 
 };
 

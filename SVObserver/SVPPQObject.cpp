@@ -4188,7 +4188,7 @@ HRESULT SVPPQObject::ProcessInspections( bool& p_rProcessed )
 
 		if( p_rProcessed )
 		{
-			SVInspectionIDSet::iterator l_Iter( m_ProcessInspectionsSet.begin() );
+			SVGuidSet::iterator l_Iter( m_ProcessInspectionsSet.begin() );
 
 			while( l_Iter != m_ProcessInspectionsSet.end() )
 			{

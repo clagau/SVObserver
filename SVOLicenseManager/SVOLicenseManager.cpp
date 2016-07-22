@@ -84,7 +84,7 @@ void SVOLicenseManager::AddLicenseErrorToList(const SVGUID& svGuid)
 
 void SVOLicenseManager::RemoveLicenseErrorFromList(const SVGUID& svGuid)
 {
-	SVLicenseErrorListSet::iterator iter;
+	SVGuidSet::iterator iter;
 
 	iter = m_svErrorList.find(svGuid);
 

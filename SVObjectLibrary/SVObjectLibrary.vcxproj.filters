@@ -35,9 +35,6 @@
     <ClCompile Include="SVObjectAttributeClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVObjectAttributeShim.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -116,9 +113,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectAttributeClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectAttributeShim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectBuilder.h">

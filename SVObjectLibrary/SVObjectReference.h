@@ -12,7 +12,6 @@
 #pragma once
 
 //Moved to precompiled header: #include <vector>
-#include "SVObjectAttributeShim.h"
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVObjectNameInfo.h"
 
@@ -84,7 +83,7 @@ public:
 	const UINT ObjectAttributesAllowed() const;
 	const UINT ObjectAttributesSet() const;
 	UINT& ObjectAttributesAllowedRef();
-	SVObjectAttributeShim ObjectAttributesSetRef();
+	UINT& ObjectAttributesSetRef();
 
 	bool operator < ( const SVObjectReference& rhs ) const;
 
