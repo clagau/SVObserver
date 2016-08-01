@@ -42,7 +42,10 @@ namespace Seidenader { namespace SVOGui {
 		ON_BN_CLICKED(IDC_BUTTON_REMOVE, OnBnClickedButtonRemove)
 		ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedButtonAdd)
 		ON_NOTIFY(NM_DBLCLK, IDC_GRID, OnGridDblClick)
+		ON_NOTIFY(NM_RCLICK, IDC_GRID, OnGridRClick)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
+		ON_COMMAND( ID_ADD_COLUMN, OnBnClickedButtonAdd )
+		ON_COMMAND( ID_REMOVE_COLUMNS, OnBnClickedButtonRemove )
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
@@ -174,6 +177,18 @@ namespace Seidenader { namespace SVOGui {
 			SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_gridList[pItem->iRow-1].second.ToGUID(), strCaption.c_str());
 			dlg.DoModal();
 			FillGridControl();
+		}
+	}
+
+	void TADialogTableDefinesPage::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
+	{
+		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
+
+		CPoint p;
+		if (GetCursorPos(&p))
+		{
+			ScreenToClient(&p);
+			showContextMenu( p );
 		}
 	}
 
@@ -320,6 +335,21 @@ namespace Seidenader { namespace SVOGui {
 			}
 		}
 		return bResult;
+	}
+
+	void TADialogTableDefinesPage::showContextMenu( CPoint point )
+	{
+		CMenu menu;
+		CMenu* pPopupMenu;
+
+		if( menu.LoadMenu( IDR_TABLE_DEFINE_MOUSE_MENU ) )
+		{
+			if( pPopupMenu = menu.GetSubMenu( 0 ) )
+			{
+				ClientToScreen( &point );
+				pPopupMenu->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this );
+			}
+		}
 	}
 #pragma endregion Private Mehods
 }}

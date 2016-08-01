@@ -36,6 +36,7 @@
 #define IDR_TREE_ALL_SUB_NODES_MENU     1022
 #define IDR_TREE_ALL_TREE_MENU          1023
 #define IDR_TREE_ALL_VALUES_MENU        1024
+#define IDR_TABLE_DEFINE_MOUSE_MENU     1025
 #define IDI_IOITEM_ICON                 1500
 #define IDI_INPUT_ICON                  1501
 #define IDI_OUTPUT_ICON                 1502
@@ -2344,6 +2345,8 @@
 #define ID_TREE_COLLAPSETO2NDLEVEL      35103
 #define ID_TREE_CHECKALL                35104
 #define ID_TREE_UNCHECKALL              35105
+#define ID_ADD_COLUMN                   35106
+#define ID_REMOVE_COLUMNS               35107
 #define IDS_REGTEST_STOP                61447
 #define IDS_REGTEST_PLAY                61448
 #define IDS_REGTEST_PAUSE               61449

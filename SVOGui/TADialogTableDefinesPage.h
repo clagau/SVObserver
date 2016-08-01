@@ -57,6 +57,7 @@ namespace Seidenader { namespace SVOGui {
 		void OnBnClickedButtonAdd();
 
 		void OnGridDblClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
+		void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
 		//}}AFX_MSG
 
@@ -78,6 +79,10 @@ namespace Seidenader { namespace SVOGui {
 		/// \param name [in] Name to check.
 		/// \returns bool True if name not used yet.
 		bool isTableNameUnique(const SVString& name);
+
+		/// Show the context menu for right mouse click
+		/// \param point [in] Mouse position
+		void showContextMenu( CPoint point );
 #pragma endregion Private Methods
 
 #pragma region Member Variables

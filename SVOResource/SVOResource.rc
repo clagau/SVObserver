@@ -3972,6 +3972,14 @@ BEGIN
     END
 END
 
+IDR_TABLE_DEFINE_MOUSE_MENU MENU
+BEGIN
+    POPUP "Column defines"
+    BEGIN
+        MENUITEM "Add",            ID_ADD_COLUMN
+        MENUITEM "Remove",         ID_REMOVE_COLUMNS
+    END
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
