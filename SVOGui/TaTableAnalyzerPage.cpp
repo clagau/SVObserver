@@ -353,14 +353,6 @@ namespace Seidenader { namespace SVOGui {
 			}
 		}
 
-		if (S_OK == hrOk)
-		{
-			GuiCmd::InspectionRunOncePtr commandPtr = new GuiCmd::InspectionRunOnce( m_InspectionID, m_TaskObjectID );
-			SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > command( m_InspectionID, commandPtr );
-
-			hrOk = command.Execute( TWO_MINUTE_CMD_TIMEOUT );
-		}
-
 		UpdateData( FALSE );
 
 		if (S_OK != hrOk)
@@ -476,6 +468,8 @@ namespace Seidenader { namespace SVOGui {
 		GetDlgItem( IDC_LIMIT_LABEL )->ShowWindow( (TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
 		m_EditLimitValue.ShowWindow( (TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
 		GetDlgItem( IDC_BUTTON_LIMIT_VALUE )->ShowWindow( (TableAnalyzerLimitType==SubType) ? SW_SHOW : SW_HIDE );
+
+		RedrawWindow();
 	}
 
 	void TaTableAnalyzerPage::setSortProperties()

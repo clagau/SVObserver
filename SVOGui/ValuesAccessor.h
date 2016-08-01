@@ -73,6 +73,10 @@ namespace Seidenader
 						SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(inspectionID, commandPtr);
 
 						hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+						if (S_OK != hr)
+						{
+							m_setMessageFailList = commandPtr->getErrorMessages();
+						}
 					}
 					if (S_OK == hr)
 					{

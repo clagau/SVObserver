@@ -118,7 +118,11 @@ public:
 
 	void SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName );
 
-	BOOL AddFriend( const GUID& rFriendGUID );
+	/// Add the object to the friend list.
+	/// \param rFriendGUID [in] Guid of the object
+	/// \param rAddPreGuid [in] The new object will be added before this object. Default: SV_GUID_NULL This means: it will be added at the end.
+	/// \returns BOOL
+	BOOL AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid = SV_GUID_NULL );
 	BOOL RemoveFriend( const GUID& rFriendGUID );
 	void DestroyFriends();
 	//************************************

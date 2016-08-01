@@ -34,6 +34,8 @@ namespace Seidenader { namespace SVOGui {
 	static const int NameColumn = 0;
 	static const int FormulaColumn = 1;
 	const TCHAR* const EquationName = _T("Table Column");
+	const TCHAR* const HeaderName_NameColumn = _T("Column Name");
+	const TCHAR* const HeaderName_FormulaColumn = _T("Formula");
 
 	BEGIN_MESSAGE_MAP(TADialogTableDefinesPage, CPropertyPage)
 		//{{AFX_MSG_MAP(TADialogTableDefinesPage)
@@ -130,6 +132,12 @@ namespace Seidenader { namespace SVOGui {
 
 	void TADialogTableDefinesPage::OnBnClickedButtonAdd()
 	{
+		SVGUID addPreGuid = SV_GUID_NULL;
+		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		if ( Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() )
+		{
+			addPreGuid = m_gridList[Selection.GetMinRow()-1].second;
+		}
 		int number = static_cast<int>(m_gridList.size()+1);
 		SVString name = SvUl_SF::Format(_T("%s %d"), EquationName, number);
 
@@ -142,7 +150,7 @@ namespace Seidenader { namespace SVOGui {
 		// Construct and Create the Filter Class Object
 		typedef GuiCmd::ConstructAndInsertFriend Command;
 		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_TaskObjectID, TableColumnEquationGuid, name.c_str());
+		CommandPtr commandPtr = new Command(m_TaskObjectID, TableColumnEquationGuid, name.c_str(), addPreGuid);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
@@ -216,6 +224,21 @@ namespace Seidenader { namespace SVOGui {
 	{
 		UpdateData(TRUE);
 		HRESULT hResult = S_OK;
+		// Do a reset of the Tool
+		typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
+		ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(m_InspectionID, true));
+		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
+
+		hResult = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK != hResult)
+		{
+			SvStl::MessageContainerVector errorMessageList = commandPtr->getErrorMessages();
+			if (0 < errorMessageList.size())
+			{
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( errorMessageList[0].getMessage() );
+			}
+		}
 		return hResult;
 	}
 
@@ -236,12 +259,12 @@ namespace Seidenader { namespace SVOGui {
 		Item.row = 0;
 		Item.col = NameColumn;
 		Item.crBkClr = CLR_DEFAULT;
-		Item.nFormat = DT_CENTER | DT_VCENTER | DT_WORDBREAK;
-		Item.strText = "Name";
+		Item.nFormat = DT_LEFT | DT_VCENTER | DT_WORDBREAK;
+		Item.strText = HeaderName_NameColumn;
 		m_Grid.SetItem( &Item );
 
 		Item.col = FormulaColumn;
-		Item.strText = "Formula";
+		Item.strText = HeaderName_FormulaColumn;
 		m_Grid.SetItem( &Item );
 	}
 
@@ -260,7 +283,7 @@ namespace Seidenader { namespace SVOGui {
 			SvGcl::GV_ITEM Item;
 			Item.mask = GVIF_TEXT | GVIF_FORMAT | GVIF_BKCLR;
 			Item.crBkClr = CLR_DEFAULT;
-			Item.nFormat = DT_CENTER | DT_VCENTER;
+			Item.nFormat = DT_LEFT | DT_VCENTER;
 			for(int i=0; i<m_gridList.size(); i++)
 			{
 				Item.row = i+HeaderSize;

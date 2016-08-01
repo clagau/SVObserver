@@ -56,6 +56,25 @@ public:
 		return static_cast<int>(m_list.size() - 1);
 	}
 
+	/// Insert an Element to the list at a position
+	/// \param position [in] The position of the add.
+	/// \param newElement [in] item to be added.
+	/// \returns int Position of the add.
+	int Insert(size_t position, const type& newElement)
+	{
+		Concurrency::reader_writer_lock::scoped_lock lock(m_dataLock); // writer lock
+		if (0 <= position && m_list.size() > position)
+		{
+			m_list.insert(m_list.begin()+position, newElement);
+			return static_cast<int>(position);
+		}
+		else
+		{
+			m_list.push_back(newElement);
+			return static_cast<int>(m_list.size() - 1);
+		}
+	}
+
 	/////////////////////////////////////////////////
 	/// Removes an Element from the list, not concurrent safe
 	/// \Param nIndex - index of Element to be removed

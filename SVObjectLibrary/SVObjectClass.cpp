@@ -772,8 +772,9 @@ SVObjectClass* SVObjectClass::UpdateObject( const GUID &rFriendGuid, SVObjectCla
 /*
 This method is used to add an object to the friends list via the object's unique object identifier.
 */
-BOOL SVObjectClass::AddFriend( const GUID& rFriendGUID )
+BOOL SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid )
 {
+	size_t position = m_friendList.size();
 	// Check GUID...
 	if( SV_GUID_NULL == rFriendGUID )
 	{
@@ -787,6 +788,11 @@ BOOL SVObjectClass::AddFriend( const GUID& rFriendGUID )
 			if( m_friendList[ i ].UniqueObjectID == rFriendGUID )
 			{
 				return false;
+			}
+
+			if( m_friendList[i].UniqueObjectID == rAddPreGuid)
+			{
+				position = i;
 			}
 		}
 	}
@@ -822,7 +828,7 @@ BOOL SVObjectClass::AddFriend( const GUID& rFriendGUID )
 		newFriendInfo.UniqueObjectID = rFriendGUID;
 	}
 
-	BOOL bRetVal = ( m_friendList.Add( newFriendInfo ) >= 0  );
+	BOOL bRetVal = ( m_friendList.Insert( position, newFriendInfo ) >= 0  );
 	return bRetVal;
 }
 

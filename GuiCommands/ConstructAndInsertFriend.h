@@ -20,21 +20,22 @@ namespace Seidenader
 	{
 		struct ConstructAndInsertFriend : public boost::noncopyable
 		{
-			ConstructAndInsertFriend(const GUID& rParentID, const GUID& rClassID, LPCTSTR objectName) 
-				: m_InstanceID(rParentID), m_ClassID(rClassID), m_objectName(objectName) {}
+			ConstructAndInsertFriend(const GUID& rParentID, const GUID& rClassID, LPCTSTR objectName, const GUID& rAddPreGuid = SV_GUID_NULL) 
+				: m_InstanceID(rParentID), m_ClassID(rClassID), m_objectName(objectName), m_addPreGuid(rAddPreGuid) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
 			// and replaced with the building and sending of the command
 			HRESULT Execute()
 			{
-				return SVObjectBuilder::CreateFriendObject(m_ClassID, SV_GUID_NULL, m_objectName, m_InstanceID);
+				return SVObjectBuilder::CreateFriendObject(m_ClassID, SV_GUID_NULL, m_objectName, m_InstanceID, m_addPreGuid);
 			}
 			bool empty() const { return false; }
 
 		private:
 			GUID m_InstanceID;
 			GUID m_ClassID;
+			GUID m_addPreGuid;
 			LPCTSTR m_objectName;
 		};
 	}

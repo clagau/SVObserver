@@ -39,14 +39,21 @@ namespace Seidenader
 				if (SVMR_SUCCESS != dwRet)
 				{
 					hr = E_FAIL;
+					SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_InstanceID));
+					if (nullptr != pTask)
+					{
+						m_messages = pTask->getTaskMessages();
+					}
 				}
 				return hr;
 			}
 			bool empty() const { return false; }
+			SvStl::MessageContainerVector getErrorMessages() {return m_messages; };
 
 		private:
 			SVGUID m_InstanceID;
 			bool m_bNotifyFriends;
+			SvStl::MessageContainerVector m_messages;
 		};
 	}
 }

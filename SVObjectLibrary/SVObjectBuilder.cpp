@@ -189,7 +189,7 @@ HRESULT SVObjectBuilder::DestroyFriends(const GUID& objectID)
 	return hr;
 }
 
-HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const SVString& objectName, const GUID& ownerUniqueID)
+HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const SVString& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid)
 {
 	HRESULT hr = S_OK;
 
@@ -228,7 +228,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 		}
 		if( SV_GUID_NULL != friendId )
 		{
-			BOOL Result = pOwnerObject->AddFriend(friendId);
+			BOOL Result = pOwnerObject->AddFriend(friendId, rAddPreGuid);
 			if (Result)
 			{
 				
