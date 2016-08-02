@@ -50,6 +50,8 @@ namespace Seidenader { namespace SVOGui
 		SV_EQUATION_BUFFER_SIZE = 4096, //This enumeration defines the Equation Buffer Size.
 	};
 
+	const int c_offsetXForCursorToolbar = 340;
+
 	BEGIN_MESSAGE_MAP(SVFormulaEditorPageClass, CPropertyPage)
 		//{{AFX_MSG_MAP(SVFormulaEditorPageClass)
 		ON_BN_CLICKED(IDC_ADD_LOCAL_VARIABLE_BUTTON, OnAddLocalVariableButton)
@@ -241,21 +243,13 @@ namespace Seidenader { namespace SVOGui
 			trect, this, IDR_MATH_STATISTICS_TOOLBAR, ID_MINBUTTON, numButtons, size ) && retVal;
 
 		// Miscellaneous operators
-		numButtons = 5;
+		numButtons = 6;
 		trect.left = rect.left;
 		trect.top = trect.bottom + SV_TOOLBAR_BORDER_H;
 		trect.right = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
 		trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
 		retVal = m_miscOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
 			trect, this, IDR_MATH_MISC_TOOLBAR, ID_MODBUTTON, numButtons, size ) && retVal;
-
-		// Punctuation toolbar
-		numButtons = 3;
-		trect.left	 = trect.right;
-		trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
-		trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
-		retVal = m_punctuationBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-			trect, this, IDR_MATH_PUNCTUATION_TOOLBAR, ID_FORMULA_LPARENBUTTON, numButtons, size );
 
 		// Conditional Tool Bar...
 		numButtons = 6;
@@ -267,10 +261,18 @@ namespace Seidenader { namespace SVOGui
 			trect, this, IDR_MATH_CONDITIONAL_TOOLBAR, ID_LESSBUTTON, numButtons,
 			size ) && retVal;
 
+		// Punctuation toolbar
+		numButtons = 3;
+		trect.left	 = trect.right;
+		trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
+		trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
+		retVal = m_punctuationBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+			trect, this, IDR_MATH_PUNCTUATION_TOOLBAR, ID_FORMULA_LPARENBUTTON, numButtons, size );
+
 		// Common Cursor movements toolbar
 		size = CSize( 37, 28 );
 		numButtons = 3;
-		trect.left   = rect.left + 316;
+		trect.left   = rect.left + c_offsetXForCursorToolbar;
 		trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );	
 		retVal = m_cursorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
 			trect, this, IDR_FORMULA_CURSOR_TOOLBAR, ID_FORMULA_DELETEBUTTON, numButtons, size ) && retVal;
@@ -585,6 +587,10 @@ namespace Seidenader { namespace SVOGui
 		case ID_TRUNCBUTTON:
 			insertIntoEditor(" TRUNC() ");
 			backspaceInEditor(2);
+			break;
+		case ID_POWBUTTON:
+			insertIntoEditor(" POW(,) ");
+			backspaceInEditor(3);
 			break;
 
 			// Statistics Operators

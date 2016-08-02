@@ -223,6 +223,13 @@ identifier      {delimiter}{name}("."{name})*{delimiter}
 					return(SV_MODULUS);
 				}
 
+"POW"	| 
+"pow"			{
+					position = currentPos;
+					currentPos += 3;
+					return(SV_POW);
+				}
+
 "ABS"	| 
 "abs"			{
 					position = currentPos;

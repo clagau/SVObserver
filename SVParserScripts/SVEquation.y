@@ -38,7 +38,7 @@ double* listPtr;
 %token	SV_EQ SV_NE SV_LT SV_LTE SV_GT SV_GTE
 %token	SV_AND SV_OR SV_XOR SV_NOT
 %token	SV_SINE SV_COSINE SV_TANGENT SV_ARCSINE SV_ARCCOSINE SV_ARCTANGENT
-%token	SV_MODULUS SV_ABSOLUTE SV_SQUARE SV_SQUAREROOT SV_TRUNCATE
+%token	SV_MODULUS SV_POW SV_ABSOLUTE SV_SQUARE SV_SQUAREROOT SV_TRUNCATE
 %token	SV_MINIMUM SV_MAXIMUM SV_AVERAGE SV_MEDIAN
 %token	SV_SUM SV_STDDEV
 %token  SV_STARTSUBSCRIPT SV_ENDSUBSCRIPT
@@ -96,6 +96,7 @@ Expression:
 		| SV_NOT Expression					{ $$=(!$2); }
 
 		| SV_MODULUS SV_LEFT_PARENTHESIS Expression SV_COMMA Expression SV_RIGHT_PARENTHESIS { $$=fmod($3,$5); }
+		| SV_POW SV_LEFT_PARENTHESIS Expression SV_COMMA Expression SV_RIGHT_PARENTHESIS { $$=pow($3,$5); }
 		| SV_ABSOLUTE SV_LEFT_PARENTHESIS Expression SV_RIGHT_PARENTHESIS		{ $$=fabs($3); }
 		| SV_SQUARE SV_LEFT_PARENTHESIS Expression SV_RIGHT_PARENTHESIS		{ $$=($3*$3); }
 		| SV_SQUAREROOT SV_LEFT_PARENTHESIS Expression SV_RIGHT_PARENTHESIS	{ $$=sqrt($3); }
@@ -108,7 +109,7 @@ Expression:
 		| SV_TANGENT SV_LEFT_PARENTHESIS Expression SV_RIGHT_PARENTHESIS	{ $$=(($3 == 90 || $3 == 270) ? 0.0 : tan(($3 * svDegreesToRadians))); }
 		| SV_ARCTANGENT SV_LEFT_PARENTHESIS Expression SV_RIGHT_PARENTHESIS { $$=(atan($3) * svRadiansToDegrees); }
 		
-        | SV_LEFT_PARENTHESIS Expression SV_RIGHT_PARENTHESIS { $$=$2; }
+		| SV_LEFT_PARENTHESIS Expression SV_RIGHT_PARENTHESIS { $$=$2; }
 
 		| SV_MINIMUM SV_LEFT_PARENTHESIS { if ( g_bUseCorrectListRecursion ) ++current_recursive_depth; InitCurrentList(); }
 					ExpressionListOrArrayIdentifier SV_RIGHT_PARENTHESIS { $$=CalcMin(); if ( g_bUseCorrectListRecursion ) --current_recursive_depth; }
