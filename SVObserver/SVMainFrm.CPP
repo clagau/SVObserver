@@ -219,6 +219,10 @@ BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu
 	}
 
 	WNDCLASS	windowClass;
+
+	if (!(::GetClassInfo( AfxGetInstanceHandle(), "SVObserverMDIClient", &windowClass)))
+	{
+
 	if( !GetClassInfo( AfxGetInstanceHandle(), _T( "mdiclient" ), &windowClass ) )
 		return FALSE; 
 
@@ -229,7 +233,8 @@ BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu
 
 	if( !AfxRegisterClass( &windowClass ) )
 		return( false );
-
+	}
+	
 	CLIENTCREATESTRUCT ccs;
 	ccs.hWindowMenu = pWindowMenu->GetSafeHmenu();
 		// set hWindowMenu for MFC V1 backward compatibility
@@ -1319,6 +1324,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 				HANDLE l_hMessage = ::CreateEvent( nullptr, true, false, nullptr );
 				::SetEvent( l_hMessage );
 				ModelessMessageBox( l_csMessage, l_hMessage );
+				::CloseHandle(l_hMessage);
 			}
 			::SetEvent( m_hDisplayChangedEvent );
 		}

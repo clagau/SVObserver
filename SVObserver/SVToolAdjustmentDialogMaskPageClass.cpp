@@ -38,6 +38,7 @@ static LPCSTR FillAreaTag = "FillArea";
 static LPCSTR FillColorTag = "FillColor";
 static LPCSTR DrawCriteriaTag = "DrawCriteria";
 
+const UINT UISetRGB = RegisterWindowMessage(SETRGBSTRING);
 enum ImageTabEnums
 {
 	SourceTab = 0,
@@ -633,8 +634,8 @@ UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn( HWND hdlg
 				CHOOSECOLOR* pColor = reinterpret_cast<CHOOSECOLOR*>(lParam);
 				if (pColor)
 				{
-					UINT uiSetRGB = RegisterWindowMessage(SETRGBSTRING);
-					::SendMessage(hdlg, uiSetRGB, 0, (LPARAM)RGB(pColor->lCustData, pColor->lCustData, pColor->lCustData));
+					
+					::SendMessage(hdlg, UISetRGB, 0, (LPARAM)RGB(pColor->lCustData, pColor->lCustData, pColor->lCustData));
 				}
 			}
 			iReturnCode = 1;	// don't have color dlg handle this again (it has already handled it)

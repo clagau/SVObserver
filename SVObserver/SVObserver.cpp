@@ -6493,13 +6493,13 @@ static CMultiDocTemplate* getIPDocTemplate()
 	CWinApp& rApp = TheSVObserverApp;
 	CMultiDocTemplate* pTemplate = nullptr;
 	POSITION pos = rApp.GetFirstDocTemplatePosition();
-	if (pos)
+	while  ( !pTemplate  && pos)
 	{
 		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate *>(rApp.GetNextDocTemplate(pos));
-		while (!pTemplate && pDocTemplate)
+		if (pDocTemplate)
 		{
 			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-			if (posDoc)
+			while  (!pTemplate && posDoc)
 			{
 		         CDocument* pDoc = pDocTemplate->GetNextDoc(posDoc);
 				 if (pDoc && pDoc->IsKindOf(RUNTIME_CLASS(SVIPDoc)))

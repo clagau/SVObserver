@@ -36,6 +36,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 SVMaskShapeEditorDlg* SVMaskShapeEditorDlg::m_pThis = nullptr;
+const UINT UISetRGB = RegisterWindowMessage(SETRGBSTRING);
 
 BEGIN_MESSAGE_MAP(SVMaskShapeEditorDlg, CDialog)
 	//{{AFX_MSG_MAP(SVMaskShapeEditorDlg)
@@ -631,9 +632,8 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 				CHOOSECOLOR* pColor = reinterpret_cast <CHOOSECOLOR*> (lParam);
 				SVMaskShapeEditorDlg* pThis = reinterpret_cast <SVMaskShapeEditorDlg*> (pColor->lCustData);
 				long lColor = atoi(pThis->m_sFillColor);
-				UINT uiSetRGB;
-				uiSetRGB = RegisterWindowMessage(SETRGBSTRING);
-				::SendMessage( hdlg, uiSetRGB, 0, static_cast< LPARAM >( RGB(lColor, lColor, lColor) ));
+				
+				::SendMessage( hdlg, UISetRGB, 0, static_cast< LPARAM >( RGB(lColor, lColor, lColor) ));
 			}
 			iReturnCode = 1;	// don't have color dlg handle this again (it has already handled it)
 			break;

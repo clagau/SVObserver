@@ -729,6 +729,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleG
 				m_cameraProxy.SoftwareTrigger(m_hDigitizer, pDigitizer);
 				::WaitForSingleObject(hThread, 2000);
 
+				::CloseHandle(hThread);
 				// turn strobe off (offline)
 				InitializeDevice(w);
 			}
@@ -746,6 +747,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleG
 				// 
 				::WaitForSingleObject(hThread, 2000);
 
+				::CloseHandle(hThread);
 				// turn strobe off (offline)
 				InitializeDevice(w);
 			}
