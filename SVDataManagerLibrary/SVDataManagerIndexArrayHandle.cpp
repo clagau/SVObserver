@@ -20,9 +20,9 @@ SVDataManagerIndexArrayHandle::SVDataManagerIndexArrayHandle()
 {
 }
 
-SVDataManagerIndexArrayHandle::SVDataManagerIndexArrayHandle( SVDataManager& p_rDataManager, long p_ArrayHandle )
-: m_pDataManager( &p_rDataManager ),
-	m_ArrayHandle( p_ArrayHandle )
+SVDataManagerIndexArrayHandle::SVDataManagerIndexArrayHandle( SVDataManager& rDataManager, LONGLONG ArrayHandle )
+: m_pDataManager( &rDataManager ),
+	m_ArrayHandle( ArrayHandle )
 {
 }
 
@@ -49,33 +49,33 @@ long SVDataManagerIndexArrayHandle::GetNbrOfAvailableIndexes() const
 	return l_Size;
 }
 
-long SVDataManagerIndexArrayHandle::GetLockCountByType( SVDataManagerLockTypeEnum p_LockType ) const
+long SVDataManagerIndexArrayHandle::GetLockCountByType( SVDataManagerLockTypeEnum LockType ) const
 {
 	long l_Count = 0;
 
 	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
-		l_Count = m_pDataManager->GetLockCountByType( m_ArrayHandle, p_LockType );
+		l_Count = m_pDataManager->GetLockCountByType( m_ArrayHandle, LockType );
 	}
 
 	return l_Count;
 }
 
-void SVDataManagerIndexArrayHandle::Dump( LPCSTR p_szSource ) const
+void SVDataManagerIndexArrayHandle::Dump( LPCSTR szSource ) const
 {
 	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
-		m_pDataManager->Dump( m_ArrayHandle, p_szSource );
+		m_pDataManager->Dump( m_ArrayHandle, szSource );
 	}
 }
 
-HRESULT SVDataManagerIndexArrayHandle::LockBufferIndex( long p_Index, long p_TransactionId, SVDataManagerLockTypeEnum p_LockType )
+HRESULT SVDataManagerIndexArrayHandle::LockBufferIndex( long Index, long TransactionId, SVDataManagerLockTypeEnum LockType )
 {
 	HRESULT l_Status = S_OK;
 
 	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
-		l_Status = m_pDataManager->LockBufferIndexNoLock( m_ArrayHandle, p_Index, p_TransactionId, p_LockType );
+		l_Status = m_pDataManager->LockBufferIndexNoLock( m_ArrayHandle, Index, TransactionId, LockType );
 	}
 	else
 	{
@@ -85,13 +85,13 @@ HRESULT SVDataManagerIndexArrayHandle::LockBufferIndex( long p_Index, long p_Tra
 	return l_Status;
 }
 
-HRESULT SVDataManagerIndexArrayHandle::ReleaseBufferIndex( const SVDataManagerHandle& p_rHandle )
+HRESULT SVDataManagerIndexArrayHandle::ReleaseBufferIndex( const SVDataManagerHandle& rHandle )
 {
 	HRESULT l_Status = S_OK;
 
 	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
-		l_Status = m_pDataManager->ReleaseBufferIndexNoLock( m_ArrayHandle, p_rHandle.m_Index, p_rHandle.m_TransactionId, p_rHandle.m_LockType );
+		l_Status = m_pDataManager->ReleaseBufferIndexNoLock( m_ArrayHandle, rHandle.m_Index, rHandle.m_TransactionId, rHandle.m_LockType );
 	}
 	else
 	{
@@ -101,13 +101,13 @@ HRESULT SVDataManagerIndexArrayHandle::ReleaseBufferIndex( const SVDataManagerHa
 	return l_Status;
 }
 
-HRESULT SVDataManagerIndexArrayHandle::ValidateBufferIndex( const SVDataManagerHandle& p_rHandle )
+HRESULT SVDataManagerIndexArrayHandle::ValidateBufferIndex( const SVDataManagerHandle& rHandle )
 {
 	HRESULT l_Status = S_OK;
 
 	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
-		l_Status = m_pDataManager->ValidateBufferIndexNoLock( m_ArrayHandle, p_rHandle.m_Index, p_rHandle.m_TransactionId );
+		l_Status = m_pDataManager->ValidateBufferIndexNoLock( m_ArrayHandle, rHandle.m_Index, rHandle.m_TransactionId );
 	}
 	else
 	{
@@ -117,13 +117,13 @@ HRESULT SVDataManagerIndexArrayHandle::ValidateBufferIndex( const SVDataManagerH
 	return l_Status;
 }
 
-long SVDataManagerIndexArrayHandle::GetIndexLockCountByType( const SVDataManagerHandle& p_rHandle )
+long SVDataManagerIndexArrayHandle::GetIndexLockCountByType( const SVDataManagerHandle& rHandle )
 {
 	long l_Count = 0;
 
 	if( nullptr != m_pDataManager && 0 <= m_ArrayHandle )
 	{
-		l_Count = m_pDataManager->GetIndexLockCountByType( m_ArrayHandle, p_rHandle.m_Index, p_rHandle.m_LockType );
+		l_Count = m_pDataManager->GetIndexLockCountByType( m_ArrayHandle, rHandle.m_Index, rHandle.m_LockType );
 	}
 
 	return l_Count;

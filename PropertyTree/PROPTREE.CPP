@@ -891,7 +891,7 @@ LRESULT SVRPropTree::SendNotify(UINT nNotifyCode, SVRPropertyItem* pItem)
 
 	if (lpnm)
 	{
-		UINT id = (UINT)::GetMenu(m_hWnd);
+		UINT_PTR id = reinterpret_cast<UINT_PTR> (::GetMenu(m_hWnd));
 		lpnm->code = nNotifyCode;
 		lpnm->hwndFrom = m_hWnd;
 		lpnm->idFrom = id;

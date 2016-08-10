@@ -21,27 +21,27 @@ public:
 	friend class SVDataManagerHandle;
 
 	SVDataManagerIndexArrayHandle();
-	SVDataManagerIndexArrayHandle( SVDataManager& p_rDataManager, long p_ArrayHandle );
+	SVDataManagerIndexArrayHandle( SVDataManager& rDataManager, LONGLONG ArrayHandle );
 
 	virtual ~SVDataManagerIndexArrayHandle();
 
 	long GetNbrOfAvailableIndexes() const;
 
-	long GetLockCountByType( SVDataManagerLockTypeEnum p_LockType ) const;
+	long GetLockCountByType( SVDataManagerLockTypeEnum LockType ) const;
 
-	void Dump( LPCSTR p_szSource ) const;
+	void Dump( LPCSTR szSource ) const;
 
 protected:
-	HRESULT LockBufferIndex( long p_Index, long p_TransactionId, SVDataManagerLockTypeEnum p_LockType );
+	HRESULT LockBufferIndex( long Index, long TransactionId, SVDataManagerLockTypeEnum LockType );
 
-	HRESULT ReleaseBufferIndex( const SVDataManagerHandle& p_rHandle );
+	HRESULT ReleaseBufferIndex( const SVDataManagerHandle& rHandle );
 
-	HRESULT ValidateBufferIndex( const SVDataManagerHandle& p_rHandle );
+	HRESULT ValidateBufferIndex( const SVDataManagerHandle& rHandle );
 
-	long GetIndexLockCountByType( const SVDataManagerHandle& p_rHandle );
+	long GetIndexLockCountByType( const SVDataManagerHandle& rHandle );
 
 	SVDataManager* m_pDataManager;
-	long m_ArrayHandle;
+	LONGLONG m_ArrayHandle;
 
 private:
 	SVDataManagerIndexArrayHandle( const SVDataManagerIndexArrayHandle& p_rObject );

@@ -47,10 +47,6 @@ BOOL CPropTreeTestApp::InitInstance()
 	CWinApp::InitInstance();
 
 
-	// Create the shell manager, in case the dialog contains
-	// any shell tree view or shell list view controls.
-	CShellManager *pShellManager = new CShellManager;
-
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
 	// of your final executable, you should remove from the following
@@ -72,12 +68,6 @@ BOOL CPropTreeTestApp::InitInstance()
 	{
 		// TODO: Place code here to handle when the dialog is
 		//  dismissed with Cancel
-	}
-
-	// Delete the shell manager created above.
-	if (nullptr != pShellManager)
-	{
-		delete pShellManager;
 	}
 
 	// Since the dialog has been closed, return FALSE so that we exit the

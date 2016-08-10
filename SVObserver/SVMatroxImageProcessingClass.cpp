@@ -461,9 +461,9 @@ HDC SVMatroxImageProcessingClass::CreateBufferDC( const SVImageInfoClass& rInfo,
 				long l_lValue = SVValueDefault;
 				l_Code = SVMatroxBufferInterface::Set( imageDIB_MIL, SVBufWindowDCAlloc, static_cast<SVMatroxInt>(l_lValue) );
 
-				l_lValue = 0;
-				l_Code = SVMatroxBufferInterface::Get(imageDIB_MIL, SVWindowDC, l_lValue);
-				hDC = reinterpret_cast<HDC>( l_lValue );
+				LONGLONG Handle;
+				l_Code = SVMatroxBufferInterface::Get(imageDIB_MIL, SVWindowDC, Handle);
+				hDC = reinterpret_cast<HDC>( Handle );
 
 				//
 				// Substitute the new MIL image in place of the old one.
@@ -473,18 +473,18 @@ HDC SVMatroxImageProcessingClass::CreateBufferDC( const SVImageInfoClass& rInfo,
 			}
 			else
 			{
-				long l_lValue = 0;
-				l_Code = SVMatroxBufferInterface::Get(l_MilHandle.GetBuffer(), SVWindowDC, l_lValue);
-				hDC = reinterpret_cast<HDC>( l_lValue);
+				LONGLONG Value = 0;
+				l_Code = SVMatroxBufferInterface::Get(l_MilHandle.GetBuffer(), SVWindowDC, Value);
+				hDC = reinterpret_cast<HDC> (Value);
 			}
 
 			InitBuffer( rHandle );
 		}
 		else
 		{
-			long l_lValue;
-			l_Code = SVMatroxBufferInterface::Get(l_MilHandle.GetBuffer(), SVWindowDC, l_lValue);
-			hDC = reinterpret_cast<HDC>(l_lValue);
+			LONGLONG Value = 0;
+			l_Code = SVMatroxBufferInterface::Get(l_MilHandle.GetBuffer(), SVWindowDC, Value);
+			hDC = reinterpret_cast<HDC> (Value);
 		}
 	}
 

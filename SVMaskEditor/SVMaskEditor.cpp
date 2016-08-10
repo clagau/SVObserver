@@ -123,9 +123,9 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
 
     HDC hDC;
 
-	long l_lTmp;
-	l_BufIntf.Get( l_MilBuffer, SVWindowDC, l_lTmp );
-	hDC = reinterpret_cast<HDC>(l_lTmp);
+	LONGLONG Handle;
+	l_BufIntf.Get( l_MilBuffer, SVWindowDC, Handle );
+	hDC = reinterpret_cast<HDC> (Handle);
 
     HDC hMemDC = nullptr;
 

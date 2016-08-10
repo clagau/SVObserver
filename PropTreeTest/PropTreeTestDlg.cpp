@@ -31,17 +31,17 @@ namespace
 }
 
 CPropTreeTestDlg::CPropTreeTestDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(CPropTreeTestDlg::IDD, pParent)
+	: CDialog(CPropTreeTestDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void CPropTreeTestDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CPropTreeTestDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CPropTreeTestDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_NOTIFY( PTN_ITEMCHANGED, IDC_RESULT_LIST, OnItemChanged )
@@ -51,7 +51,7 @@ END_MESSAGE_MAP()
 
 BOOL CPropTreeTestDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CDialog::OnInitDialog();
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -107,7 +107,7 @@ void CPropTreeTestDlg::OnPaint()
 	}
 	else
 	{
-		CDialogEx::OnPaint();
+		CDialog::OnPaint();
 	}
 }
 

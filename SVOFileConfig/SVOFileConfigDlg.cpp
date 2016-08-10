@@ -394,8 +394,7 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 
 		if( l_strName == "NumberOfIOEntries")
 		{
-			DWORD l_dwCount = static_cast<DWORD>(mTree.GetItemData( l_Current ));
-			VARIANT* l_pVt = (VARIANT*)l_dwCount;
+			VARIANT* l_pVt = reinterpret_cast<VARIANT*> (mTree.GetItemData( l_Current ));
 			l_pVt->lVal = count;
 			break;
 		}
@@ -531,8 +530,7 @@ void SVOFileConfigDlg::GetIOChildren(HTREEITEM p_Item)
 				CString Name = mTree.GetItemText( l_InspItem );
 				if( Name == "IOEntryName" )
 				{
-					DWORD l_InspData = static_cast<DWORD>(mTree.GetItemData( l_InspItem ));
-					VARIANT* l_vt = (VARIANT*)l_InspData;
+					VARIANT* l_vt = reinterpret_cast<VARIANT*> (mTree.GetItemData( l_InspItem ));
 					if( l_vt->vt == VT_BSTR )
 					{
 						CString l_IOEntryName = l_vt->bstrVal;

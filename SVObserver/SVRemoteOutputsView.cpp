@@ -238,7 +238,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 					GetListCtrl().SetItem( lInsertedEntry + iCurrentPPQ + k, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
 					// Store SVDLLOutputObject pointer in item data for editing
-					GetListCtrl().SetItemData( lInsertedEntry + iCurrentPPQ + k, reinterpret_cast<DWORD>(l_pOutput) );
+					GetListCtrl().SetItemData( lInsertedEntry + iCurrentPPQ + k, reinterpret_cast<DWORD_PTR>(l_pOutput) );
 					
 					lInsertedEntry++;
 				}// end for

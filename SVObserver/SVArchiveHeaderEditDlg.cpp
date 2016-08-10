@@ -214,7 +214,8 @@ void SVArchiveHeaderEditDlg::HeaderListChangeSize(int cx, int cy)
 void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 {
 	POSITION pos = m_HeaderListCtrl.GetFirstSelectedItemPosition();
-	int iSel = reinterpret_cast<int>(pos)-1;
+	//! Double casting required to avoid warnings from 64 to 32 bit conversion
+	int iSel =  static_cast<int> (reinterpret_cast<LONGLONG> (pos)) -1;
 	if( iSel < 0 )
 	{
 		iSel = 0;

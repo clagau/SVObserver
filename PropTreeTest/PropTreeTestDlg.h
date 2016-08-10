@@ -14,7 +14,7 @@
 #include "PropertyTree/PROPTREE.H" // for SVRPropTree
 
 // CPropTreeTestDlg dialog
-class CPropTreeTestDlg : public CDialogEx
+class CPropTreeTestDlg : public CDialog
 {
 // Construction
 public:

@@ -392,9 +392,9 @@ void SVMaskEditorDialogClass::prepareMaskBuffer()
     // Get DC...
 	SVMatroxBufferInterface l_BufIntf;
 	l_BufIntf.Set( milMaskBuffer, SVBufWindowDCAlloc, (SVMatroxInt)SVValueDefault );
-	long l_lDC = 0;
-	l_BufIntf.Get( milMaskBuffer, SVWindowDC, l_lDC );
-	HDC dc = reinterpret_cast<HDC>( l_lDC );
+	LONGLONG Handle( 0 );
+	l_BufIntf.Get( milMaskBuffer, SVWindowDC, Handle );
+	HDC dc = reinterpret_cast<HDC> (Handle);
     if( dc )
     {
         RECT rect;

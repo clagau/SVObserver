@@ -31,67 +31,58 @@ public:
 
 	virtual ~SVDataManager();
 	
-	HRESULT CreateManagedIndexArray( SVSmartIndexArrayHandlePtr& p_pArrayHandle, BSTR p_Name, long p_Depth );
+	HRESULT CreateManagedIndexArray( SVSmartIndexArrayHandlePtr& rArrayHandle, BSTR Name, long Depth );
 	
-	HRESULT GetNextAvailableBufferIndex( const SVSmartIndexArrayHandlePtr& p_pArrayHandle, 
-		SVDataManagerLockTypeEnum aLockType, SVDataManagerHandle& p_rHandle );
+	HRESULT GetNextAvailableBufferIndex( const SVSmartIndexArrayHandlePtr& rArrayHandle, SVDataManagerLockTypeEnum aLockType, SVDataManagerHandle& rHandle );
 	
-	HRESULT GetNextAvailableBufferIndexNoWait( const SVSmartIndexArrayHandlePtr& p_pArrayHandle, 
-		SVDataManagerLockTypeEnum aLockType, SVDataManagerHandle& p_rHandle );
+	HRESULT GetNextAvailableBufferIndexNoWait( const SVSmartIndexArrayHandlePtr& rArrayHandle, SVDataManagerLockTypeEnum aLockType, SVDataManagerHandle& rHandle );
 
 	void Dump_All();
 	
 protected:
-	HRESULT  ReleaseAllIndexes( long alIndexArrayHandle );
+	HRESULT  ReleaseAllIndexes( LONGLONG IndexArrayHandle );
 	
 	HRESULT  CreateManagedIndexArray( BSTR aIndexArrayName, long alIndexArrayDepth, long* alpIndexArrayHandle );
 	
-	HRESULT  GetNextAvailableBufferIndex( long alIndexArrayHandle, 
-		SVDataManagerLockTypeEnum aLockType, bool p_WaitForLock,
-		long* alBufferIndex, long* alTransactionId );
+	HRESULT  GetNextAvailableBufferIndex( LONGLONG IndexArrayHandle, SVDataManagerLockTypeEnum aLockType, bool WaitForLock, long* alBufferIndex, long* alTransactionId );
 	
-	HRESULT  LockBufferIndex( long alIndexArrayHandle, long alBufferIndex,
-		long alTransactionId, SVDataManagerLockTypeEnum aLockType);
+	HRESULT  LockBufferIndex( LONGLONG IndexArrayHandle, long alBufferIndex, long alTransactionId, SVDataManagerLockTypeEnum aLockType);
 	
-	HRESULT  LockBufferIndexNoLock( long alIndexArrayHandle, long alBufferIndex,
-		long alTransactionId, SVDataManagerLockTypeEnum aLockType);
+	HRESULT  LockBufferIndexNoLock( LONGLONG IndexArrayHandle, long alBufferIndex, long alTransactionId, SVDataManagerLockTypeEnum aLockType);
 	
-	HRESULT  ReleaseBufferIndex( long alIndexArrayHandle, long alBufferIndex,
-		long alTransactionId, SVDataManagerLockTypeEnum aLockType);
+	HRESULT  ReleaseBufferIndex( LONGLONG IndexArrayHandle, long alBufferIndex, long alTransactionId, SVDataManagerLockTypeEnum aLockType);
 	
-	HRESULT  ReleaseBufferIndexNoLock( long alIndexArrayHandle, long alBufferIndex,
-		long alTransactionId, SVDataManagerLockTypeEnum aLockType);
+	HRESULT  ReleaseBufferIndexNoLock( LONGLONG IndexArrayHandle, long alBufferIndex, long alTransactionId, SVDataManagerLockTypeEnum aLockType);
 	
-	HRESULT  DestroyIndexArray( long alIndexArrayHandle );
+	HRESULT  DestroyIndexArray( LONGLONG IndexArrayHandle );
 
-	HRESULT  ValidateIndexArrayHandle( long alIndexArrayHandle ) const;
+	HRESULT  ValidateIndexArrayHandle( LONGLONG IndexArrayHandle ) const;
 	
-	HRESULT  ValidateLockType( long alLockType );
+	HRESULT  ValidateLockType( SVDataManagerLockTypeEnum LockType ) const;
 	
-	HRESULT  ValidateBufferIndex( long alIndexArrayHandle, long alBufferIndex );
 	
-	HRESULT	GetNbrOfAvailableIndexes( long alIndexArrayHandle, long* alpNbrOfAvailableIndexes );
+	HRESULT	GetNbrOfAvailableIndexes( LONGLONG IndexArrayHandle, long* alpNbrOfAvailableIndexes ) const;
 	
-	void Dump( long alIndexArrayHandle, LPCSTR p_szSource ) const;
+	void Dump( LONGLONG IndexArrayHandle, LPCSTR szSource ) const;
 		
-	HRESULT  ValidateBufferIndex( long alIndexArrayHandle, long alBufferIndex, long alTransactionId );
+	HRESULT  ValidateBufferIndex( LONGLONG IndexArrayHandle, long alBufferIndex, long alTransactionId = -1 ) const;
 
-	HRESULT  ValidateBufferIndexNoLock( long alIndexArrayHandle, long alBufferIndex, long alTransactionId );
+	HRESULT  ValidateBufferIndexNoLock( LONGLONG IndexArrayHandle, long alBufferIndex, long alTransactionId ) const;
 	
-	long GetIndexLockCountByType( long p_ArrayHandle, long p_Index, SVDataManagerLockTypeEnum p_LockType );
+	long GetIndexLockCountByType( LONGLONG IndexArrayHandle, long Index, SVDataManagerLockTypeEnum LockType );
 	
-	long GetLockCountByType( long p_ArrayHandle, SVDataManagerLockTypeEnum p_LockType );
+	long GetLockCountByType( LONGLONG IndexArrayHandle, SVDataManagerLockTypeEnum LockType );
 	
 	// This element holds the array of managed index containers.
 	SVManagedIndexArrayList svmManagedIndexArrayList;
 	
 	// This references the first position in the svmManagedIndexArrayList which have been destroyed.
-	long svmlFirstUnusedIndex;
+	LONGLONG m_FirstUnusedIndex;
 
 	// This references the last position in the svmManagedIndexArrayList which have been destroyed.
-	long svmlLastUnusedIndex;
+	LONGLONG m_LastUnusedIndex;
 	
-	BOOL Lock( unsigned long p_Timeout ) const;
+	BOOL Lock( unsigned long Timeout ) const;
 	BOOL Unlock() const;
 
 	bool m_IsLockCreated;

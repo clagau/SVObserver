@@ -13,7 +13,6 @@
 
 #define SV_DATAMANAGER_MAXNAME_LENGTH 128
 #define MAXIMUM_DATAMANAGER_DEPTH   50000
-#define SVDM_ERROR_CONDITION          0x80000000
 
 //MACROS
 #define SV_NBRCHARS(x)  sizeof (x) /  sizeof (TCHAR)

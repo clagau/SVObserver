@@ -129,8 +129,9 @@ public:
 	static SVStatusCode GetLine( SVMatroxBuffer& p_rBuf, SVMatroxIdentifier p_lXStart, SVMatroxIdentifier p_lYStart, SVMatroxIdentifier p_lXEnd, SVMatroxIdentifier p_lYEnd, SVMatroxIdentifier& p_rlNbrPixels, void* p_pUserArray );
 
 	// ****** Get and Set Functions **********
-	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& p_rdResult );
-	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& p_rlResult );
+	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult );
+	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult );
+	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, LONGLONG& rResult );
 
 	// ****** Put Functions **********
 	// MbufPut

@@ -108,7 +108,7 @@ HRESULT SVThreadManager::GetThreadInfo( std::list<SVThreadSetup>& rSetupList, SV
 			token1 = strtok_s(nullptr, ",", &next_token);
 			if( nullptr != token1 ) // Handle
 			{
-				tsu.m_hThread = reinterpret_cast<HANDLE>(atol(token1)); // 
+				tsu.m_hThread = reinterpret_cast<HANDLE>(_atoi64(token1)); // 
 			}
 			rSetupList.push_back( tsu );
 		}

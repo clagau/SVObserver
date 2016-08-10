@@ -2382,9 +2382,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetLine(SVMatroxB
 @SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a double.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, 
-																   SVMatroxBufferInfoEnum p_eWhat, 
-																   double& p_rdResult) 
+SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult) 
 {
 	SVStatusCode l_Code(SVMEE_STATUS_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2401,7 +2399,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 				{
 					MbufInquire(p_rBuf.GetIdentifier(),
 						l_lMatroxType,
-						&p_rdResult);
+						&rResult);
 				}
 				else
 				{
@@ -2409,7 +2407,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 					MbufInquire(p_rBuf.GetIdentifier(),
 						l_lMatroxType,
 						&mValue);
-					p_rdResult = static_cast<double>(mValue);
+					rResult = static_cast<double>(mValue);
 				}
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
@@ -2435,14 +2433,12 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 }
 
 /**
-@SVOperationName Get - long
+@SVOperationName Get - LONGLONG
 
-@SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a long.
+@SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a LONGLONG.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, 
-																   SVMatroxBufferInfoEnum p_eWhat, 
-																   long& p_rlResult)  
+SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, LONGLONG& rResult)  
 {
 	SVStatusCode l_Code(SVMEE_STATUS_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2458,13 +2454,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 
 				MbufInquire(p_rBuf.GetIdentifier(),
 					l_lMatroxType,
-					&l_Temp);
-
-				// Matrox uses 64 bits for all parameters, but we probably don't need to worry about more that 32 bits of actual data.
-				p_rlResult = static_cast< long >(l_Temp);
-
-				// Break if there is more data here than 32 bits.
-				assert(static_cast< SVMatroxInt >(p_rlResult) == l_Temp);
+					&rResult);
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
@@ -2486,6 +2476,19 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 	}
 #endif
 	assert(SVMEE_STATUS_OK == l_Code);
+	return l_Code;
+}
+
+//! This method is required for backward compatibility the LONGLONG version is required when getting the hDC
+SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult)  
+{
+	SVStatusCode l_Code(SVMEE_STATUS_OK);
+
+	LONGLONG Value;
+	
+	l_Code = SVMatroxBufferInterface::Get( p_rBuf, p_eWhat, Value );
+	rResult = static_cast<long> ( Value );
+
 	return l_Code;
 }
 

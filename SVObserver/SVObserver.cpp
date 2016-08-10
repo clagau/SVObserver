@@ -3657,7 +3657,7 @@ bool SVObserverApp::AddMenuItem(
 					if (::AppendMenu(
 						hTargetMenu, 
 						MF_POPUP, 
-						(UINT)hPopupMenu, 
+						reinterpret_cast<UINT_PTR> (hPopupMenu), 
 						popupMenuName) > 0)
 					{
 						bSuccess = true;

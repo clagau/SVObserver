@@ -1911,7 +1911,7 @@ void SVIPDoc::InitMenu()
 				pMenu->GetMenuString( pos, strMenu, MF_BYPOSITION );
 
 				// Transfer pop up...
-				if( pMenu->ModifyMenu( pos, MF_BYPOSITION | MF_POPUP, ( UINT ) HMENU( myPopUp ), strMenu ) )
+				if( pMenu->ModifyMenu( pos, MF_BYPOSITION | MF_POPUP, reinterpret_cast<UINT_PTR> (myPopUp.GetSafeHmenu()), strMenu ) )
 				{
 					myPopUp.Detach();
 				}

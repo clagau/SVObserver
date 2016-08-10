@@ -1124,12 +1124,12 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 		// Old way with out User/PW
 		if( l_strGroup.CompareNoCase(_T("Everybody")) == 0 || true )  // Disable CreateProcessWithLogon method of launching
 		{
-			if (33 >  (int) ShellExecuteW (HWND_DESKTOP,
+			if (33 >  reinterpret_cast<LONGLONG> (ShellExecuteW (HWND_DESKTOP,
 										  L"open",
 										  p_wstrAppName,
 										  p_wstrCommand,
 										  wstrDirPath,
-										  SW_SHOWNORMAL))
+										  SW_SHOWNORMAL)))
 			{
 			  CString msg;
 #ifdef _UNICODE

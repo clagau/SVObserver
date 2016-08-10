@@ -148,51 +148,55 @@ protected:
 		hr = CoMarshalInterThreadInterfaceInStream( IID__ISVCommandEvents, pUnk, &pStream);
 		if ( S_OK == hr )
 		{
-			m_mapInterface.SetAt(pUnk, pStream);
-			m_mapMarshaled.SetAt(pUnk, false);
+			m_mapInterface[pUnk] = pStream;
+			m_mapMarshaled[pUnk] = false;
 		}
 		else
 		{
-			m_mapInterface.SetAt(pUnk, nullptr);
+			m_mapInterface[pUnk]= nullptr;
 		}
 
 		return hr;
 	}
 	IUnknown* GetUnmarshaledInterface(IUnknown* pUnk)
 	{
-		IUnknown* pUnmarshal=pUnk;
+		IUnknown* pUnmarshaled=pUnk;
 		IStream* pStream;
 		bool bMarshaled;
 		HRESULT hr;
 
-		if ( m_mapInterface.Lookup(pUnk, (IUnknown*&) pStream) )
+		InterfacePointerMap::iterator IterInterface( m_mapInterface.find( pUnk ) );
+		if ( m_mapInterface.end() != IterInterface )
 		{
-			if ( pStream )
+			pStream = dynamic_cast<IStream*> (IterInterface->second);
+			if ( nullptr != pStream )
 			{
-				if ( m_mapMarshaled.Lookup(pUnk, (bool&) bMarshaled) )
+				MarshaledPointerMap::iterator IterMarshaled( m_mapMarshaled.find( pUnk ) );
+				if ( m_mapMarshaled.end() != IterMarshaled )
 				{
+					bMarshaled = IterMarshaled->second;
 					if ( bMarshaled )
 					{
-						pUnmarshal = reinterpret_cast<IUnknown*> (pStream);
+						pUnmarshaled = reinterpret_cast<IUnknown*> (pStream);
 					}
 					else
 					{
-						hr = CoGetInterfaceAndReleaseStream(pStream, IID__ISVCommandEvents, (void**) &pUnmarshal);
-						m_mapInterface.SetAt(pUnk, pUnmarshal);
-						m_mapMarshaled.SetAt(pUnk, true);
+						hr = CoGetInterfaceAndReleaseStream(pStream, IID__ISVCommandEvents, (void**) &pUnmarshaled);
+						m_mapInterface[pUnk] = pUnmarshaled;
+						m_mapMarshaled[pUnk] = true;
 					}
 				}
 			}
 		}
 
-		return pUnmarshal;
+		return pUnmarshaled;
 	}
 
-	typedef CMap< IUnknown*, IUnknown*, IUnknown*, IUnknown* > CInterfacePointerMap;
-	typedef CMap< IUnknown*, IUnknown*, bool, bool > CMarshaledPointerMap;
+	typedef std::map< IUnknown*, IUnknown* > InterfacePointerMap;
+	typedef std::map< IUnknown*, bool > MarshaledPointerMap;
 
-	CInterfacePointerMap m_mapInterface;
-	CMarshaledPointerMap m_mapMarshaled;
+	InterfacePointerMap m_mapInterface;
+	MarshaledPointerMap m_mapMarshaled;
 
 };
 

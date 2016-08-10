@@ -48,7 +48,7 @@ HRESULT WINAPI SVGetThreadInfoFilter( BSTR* bstrInfo, SVThreadAttribute eFilter 
 		for( SVThreadManagerImpl::ThreadList::const_iterator it = InfoList.begin() ; it != InfoList.end() ; ++it)
 		{
 			char line[256];
-			sprintf_s(line, 256, "%s,%d,%d,%ld\n", it->m_strName.c_str(), it->m_eAttribute, it->m_lAffinity, it->m_hThread);
+			sprintf_s(line, 256, "%s,%d,%d,%lld\n", it->m_strName.c_str(), it->m_eAttribute, it->m_lAffinity, reinterpret_cast<LONGLONG> (it->m_hThread));
 
 			strTmp.append( line );
 		}

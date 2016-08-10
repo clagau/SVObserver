@@ -1632,7 +1632,8 @@ bool SVImageClass::Lock() const
 #ifdef _DEBUG
 			DWORD dwThreadId = ::GetCurrentThreadId();
 			f_mapCritSec[dwThreadId]++;
-			if ( (HANDLE) dwThreadId == (HANDLE) m_hCriticalSection.OwningThread )
+			//! Double casting required to avoid warnings from 64 to 32 bit conversion
+			if ( dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)) )
 			{
 				long lRecursionCount = f_mapCritSec[dwThreadId];
 			}
@@ -1656,13 +1657,15 @@ bool SVImageClass::Unlock() const
 
 #ifdef _DEBUG
 	DWORD dwThreadId = ::GetCurrentThreadId();
-	ASSERT( (HANDLE) dwThreadId == (HANDLE) m_hCriticalSection.OwningThread );
+	//! Double casting required to avoid warnings from 64 to 32 bit conversion
+	ASSERT( dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)) );
 #endif
 
 	try
 	{
 #ifdef _DEBUG
-		if ( (HANDLE) dwThreadId == (HANDLE) m_hCriticalSection.OwningThread )
+		//! Double casting required to avoid warnings from 64 to 32 bit conversion
+		if ( dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)) )
 		{
 			long lRecursionCount = f_mapCritSec[dwThreadId];
 			//ASSERT( lRecursionCount == m_hCriticalSection.RecursionCount );
