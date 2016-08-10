@@ -249,11 +249,7 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnKillActive()
 void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange() 
 {
     SVResultClass* pResult;
-	SVErrorClass err;
-    err.ClearLastErrorCd ();
 
-    while (1)
-    {
 		// Get Selected feature
 		int item = m_lbSelectedList.GetCurSel();
 		if( item != LB_ERR )
@@ -261,19 +257,19 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 			DWORD_PTR index = m_lbSelectedList.GetItemData( item );
 			pResult = m_pTool->GetResultObject( (SVStatisticsFeatureEnum)index );
 
-			if (!pResult)
+			if (nullptr == pResult)
 			{
-				err.msvlErrorCd = -SvOi::Err_15007;
-				SV_TRAP_ERROR_BRK (err, SvOi::Err_15007);
-			}
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16089);
+				
 
-			if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ))
-			{
-				err.msvlErrorCd = -SvOi::Err_15008;
-				SV_TRAP_ERROR_BRK (err, SvOi::Err_15008);
 			}
-		}
-        break;
+			else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ))
+			{
+				
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16090);
+			}
     }
 }
 

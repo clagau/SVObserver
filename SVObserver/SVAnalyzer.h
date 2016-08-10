@@ -76,7 +76,7 @@ public:
 /*- If successful, this function will return the pixel depth of the         */
 /*- SVImageAnalyzerClass input image.  If unsuccessful an error condition   */
 /*- will be returned. ------------------------------------------------------*/
-    unsigned long       GetInputPixelDepth ();
+    unsigned long       GetInputPixelDepth();
 
 	SVImageClass*		getInputImage();
 	

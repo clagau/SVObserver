@@ -322,7 +322,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 
 	SVDoubleResultClass*    pResult;
 	
-	msvError.ClearLastErrorCd ();
+	DWORD LastError(0);
 	
 	while (1)
 	{
@@ -344,8 +344,10 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		
 		if(!pResult)
 		{
-			msvError.msvlErrorCd = -SvOi::Err_15001;
-			SV_TRAP_ERROR_BRK (msvError, SvOi::Err_15001);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16207);
+			LastError = -SvOi::Err_16207;
+			break;
 		}
 		
 		Add( pResult );
@@ -363,8 +365,10 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		
 		if (!pValue)
 		{
-			msvError.msvlErrorCd = -SvOi::Err_15002;
-			SV_TRAP_ERROR_BRK (msvError, SvOi::Err_15002);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16208);
+			LastError = -SvOi::Err_16208;
+			break;
 		}
 		
 		// Make it non visible for any selection
@@ -398,14 +402,14 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		break;
 	}
 	
-	return msvError.GetLastErrorCd ();
+	return LastError;
 }
 
 DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 {
 	SVResultClass*    pResult;
 	
-	msvError.ClearLastErrorCd ();
+	DWORD LastError(0);
 	
 	
 	while (1)
@@ -414,8 +418,10 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 		
 		if (!pResult)
 		{
-			msvError.msvlErrorCd = -SvOi::Err_15003;
-			SV_TRAP_ERROR_BRK (msvError, SvOi::Err_15003);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16208);
+			LastError = -SvOi::Err_16208;
+			break;
 		}
 		
 		
@@ -429,7 +435,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 		break;
 	}
 	
-	return msvError.GetLastErrorCd ();
+	return LastError;
 }
 
 SVResultClass* SVStatisticsToolClass::GetResultObject(SVStatisticsFeatureEnum aFeatureIndex)
@@ -445,8 +451,6 @@ SVResultClass* SVStatisticsToolClass::GetResultObject(SVStatisticsFeatureEnum aF
 	
 	long                    lDone;
 	
-	
-	msvError.ClearLastErrorCd ();
 	
 	lDone = FALSE;
 	

@@ -15,6 +15,9 @@
 #include "SVAnalyzerLuminance.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 SVLuminanceAnalyzerSetupClass::SVLuminanceAnalyzerSetupClass(CWnd* pParent /*=nullptr*/)
@@ -85,26 +88,21 @@ void SVLuminanceAnalyzerSetupClass::OnRange()
 {
 	SVResultClass* pAnalyzerResult;
 
-    msvError.ClearLastErrorCd ();
+   
+	pAnalyzerResult = m_pAnalyzer->GetResultObject();
 
-    while (1)
-    {
-        pAnalyzerResult = m_pAnalyzer->GetResultObject();
+	if (nullptr == pAnalyzerResult)
+	{
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16090);
+	}
+	else  if ( S_OK != SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this ) )
+	{
+		
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16091);
+	}
 
-        if (!pAnalyzerResult)
-        {
-            msvError.msvlErrorCd = -1064;
-            SV_TRAP_ERROR_BRK (msvError, 1064);
-        }
-
-		if ( S_OK != SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this ) )
-        {
-            msvError.msvlErrorCd = -1093;
-            SV_TRAP_ERROR_BRK (msvError, 1093);
-        }
-
-        break;
-    }
 }
 
 HRESULT SVLuminanceAnalyzerSetupClass::SetInspectionData()

@@ -50,8 +50,7 @@ public:
 	void Refresh();
 
 protected:
-	SVErrorClass  msvError;
-
+	
 private:
 	void SetResultRange(const GUID & resultGuid);
 

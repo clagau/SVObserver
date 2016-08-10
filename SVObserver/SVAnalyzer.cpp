@@ -244,32 +244,23 @@ SVImageClass* SVImageAnalyzerClass::getInputImage()
 	return nullptr;
 }
 
-unsigned long SVImageAnalyzerClass::GetInputPixelDepth ()
+unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 {
-    SVImageClass *pImage;
-    SVImageInfoClass ImageInfo; 
-
-    unsigned long   ulPixelDepth;
-
-//  Calling function must clear last error.
-
-    while (1)
-    {
-        pImage = getInputImage ();
-        if (!pImage)
-        {
-            msvError.msvlErrorCd = -1101;
-            SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1101);
-        }
-
-        ulPixelDepth = pImage->getPixelDepth();
-        break;
-    }
-
-    if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-        return msvError.GetLastErrorCd ();
-
-    return ulPixelDepth;
+	SVImageClass *pImage(nullptr);
+	SVImageInfoClass ImageInfo; 
+	unsigned long   ulPixelDepth(0);
+	pImage = getInputImage ();
+	if (!pImage)
+	{
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::DataOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16110);
+		MesMan.Throw();
+	}
+	else
+	{
+		ulPixelDepth = pImage->getPixelDepth();
+	}
+	return ulPixelDepth;
 }
 
 BOOL SVImageAnalyzerClass::OnValidate()

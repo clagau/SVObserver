@@ -23,21 +23,22 @@
 #include "SVResultLong.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
 
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLuminanceAnalyzerClass, SVLuminanceAnalyzerClassGuid );
 
 SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( LPCSTR ObjectName )
-: SVImageAnalyzerClass( ObjectName )
-, msvlHistValueArraySize( 0 )
+	: SVImageAnalyzerClass( ObjectName )
+	, msvlHistValueArraySize( 0 )
 {
 	init();
 }
 
 SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
-, msvlHistValueArraySize( 0 )
+	: SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+	, msvlHistValueArraySize( 0 )
 {
 	init();
 }
@@ -53,154 +54,151 @@ void SVLuminanceAnalyzerClass::init()
 	// Set embedded defaults.
 	// Set local defaults.
 	// 
-	
+
 	// Default taskObjectList items:
-	
-	while (1)
+
+
+	// Identify our output type
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
+
+	// Register Embedded Objects
+	RegisterEmbeddedObject( 
+		&msvLuminanceValue, 
+		SVLuminanceValueObjectGuid, 
+		IDS_OBJECTNAME_LUMINANCE,
+		false, SVResetItemNone );
+
+	// Register Embedded Objects
+	RegisterEmbeddedObject( 
+		&msvCalcStdDevValue,
+		SVCalcStdDevObjectGuid,
+		IDS_OBJECTNAME_CALCSTDDEV,
+		false, SVResetItemNone );
+
+	// Register Embedded Objects
+	RegisterEmbeddedObject( 
+		&msvVarianceValue,
+		SVStatVarianceObjectGuid,
+		IDS_OBJECTNAME_STATVARIANCE,
+		false, SVResetItemNone );
+
+	// Register Embedded Objects
+	RegisterEmbeddedObject( 
+		&msvStdDevValue,
+		SVStatStdDevObjectGuid,
+		IDS_OBJECTNAME_STATSTDDEV,
+		false, SVResetItemNone );
+
+	// Set Embedded defaults
+	msvLuminanceValue.SetDefaultValue (0, TRUE);
+	msvVarianceValue.SetDefaultValue (0, TRUE);
+	msvStdDevValue.SetDefaultValue (0, TRUE);
+
+	// Set default inputs and outputs
+	addDefaultInputObjects();
+
+
+	// Set Local
+
+	SVLongResultClass* pAnalyzerResult = 
+		new SVLongResultClass( true, this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT );
+
+	if(nullptr == pAnalyzerResult)
 	{
-		// Identify our output type
-		m_outObjectInfo.ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
-		
-		// Register Embedded Objects
-		RegisterEmbeddedObject( 
-			&msvLuminanceValue, 
-			SVLuminanceValueObjectGuid, 
-			IDS_OBJECTNAME_LUMINANCE,
-			false, SVResetItemNone );
-		
-		// Register Embedded Objects
-		RegisterEmbeddedObject( 
-			&msvCalcStdDevValue,
-			SVCalcStdDevObjectGuid,
-			IDS_OBJECTNAME_CALCSTDDEV,
-			false, SVResetItemNone );
-		
-		// Register Embedded Objects
-		RegisterEmbeddedObject( 
-			&msvVarianceValue,
-			SVStatVarianceObjectGuid,
-			IDS_OBJECTNAME_STATVARIANCE,
-			false, SVResetItemNone );
-		
-		// Register Embedded Objects
-		RegisterEmbeddedObject( 
-			&msvStdDevValue,
-			SVStatStdDevObjectGuid,
-			IDS_OBJECTNAME_STATSTDDEV,
-			false, SVResetItemNone );
-		
-		// Set Embedded defaults
-		msvLuminanceValue.SetDefaultValue (0, TRUE);
-		msvVarianceValue.SetDefaultValue (0, TRUE);
-		msvStdDevValue.SetDefaultValue (0, TRUE);
-		
-		// Set default inputs and outputs
-		addDefaultInputObjects();
-
-
-		// Set Local
-
-		SVLongResultClass* pAnalyzerResult = 
-		 new SVLongResultClass( true, this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT );
-
-		if(!pAnalyzerResult)
-		{
-			msvError.msvlErrorCd = -1063;
-			SV_TRAP_ERROR_BRK (msvError, 1063);
-		}
-
-		Add( pAnalyzerResult );
-
-		break;
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16092);
 	}
-	
+	else
+	{
+		Add( pAnalyzerResult );
+	}
+
+
+
+
 }
 
 
 BOOL SVLuminanceAnalyzerClass::OnValidate ()
 {
 
-   msvError.ClearLastErrorCd ();   
-   msvError.msvlErrorCd = 0x00000000;
 
-   while (1)
-   {
-      if (!SVImageAnalyzerClass::OnValidate ())
-      {
-//       Error code set inside SVImageAnalyzerClass::OnValidate ()
-         break;
-      }
+	BOOL Valid(TRUE);
+	if (!SVImageAnalyzerClass::OnValidate ())
+	{
+		//Error code set inside SVImageAnalyzerClass::OnValidate ()
+		Valid = FALSE;
+	}
+	else if (msvHistResultID.empty())
+	{
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16094);
+		Valid = FALSE;	
+	}
+	else if (msvplHistValues.size() == 0)
+	{
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16095);
+		Valid = FALSE;	
+	}
 
-      if (msvHistResultID.empty())
-      {
-         msvError.msvlErrorCd = -1066;
-         SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1066);
-      }
 
-      if (msvplHistValues.size() == 0)
-      {
-         msvError.msvlErrorCd = -1073;
-         SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1073);
-      }
-
-      break;
-   }
-
-   if( (msvError.GetLastErrorCd () & SV_ERROR_CONDITION) ||
-	   (msvError.msvlErrorCd       & SV_ERROR_CONDITION) )
-   {
-       SetInvalid ();
-       return FALSE;
-   }
-
-   isObjectValid.SetValue (1, TRUE);
-   return TRUE;
+	if(Valid == false)
+	{
+		SetInvalid ();
+		return FALSE;
+	}
+	isObjectValid.SetValue (1, TRUE);
+	return TRUE;
 
 }
 
 SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()
 {
-   CloseObject ();
+	CloseObject ();
 }
 
 BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
+	SVImageClass *pSVImage(nullptr);
+	BOOL bError(FALSE);
 
-    SVImageClass *pSVImage;
+	if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
+	{
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16095);
+		bError = TRUE;
+	}
+	else
+	{
+		pSVImage = getInputImage ();
+		if (nullptr == pSVImage )
+		{
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16096);
+			bError = TRUE;
+		}
+	}
 
-    msvError.ClearLastErrorCd ();
+	if(!bError)
+	{
+		msvlHistValueArraySize = 1 << (pSVImage->getPixelDepth() & SVBufferSize);
+		msvplHistValues.resize( msvlHistValueArraySize );
+		if (msvplHistValues.size() == 0)
+		{
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16097);
+			bError = TRUE;
+		}
+	}
 
-    while (1)
-    {
-        if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
-        {
-         msvError.msvlErrorCd = -1069;
-         SV_TRAP_ERROR_BRK (msvError, 1069);
-        }
-
-        pSVImage = getInputImage ();
-
-        if (!pSVImage)
-        {
-         msvError.msvlErrorCd = -1076;
-         SV_TRAP_ERROR_BRK (msvError, 1076);
-        }
-
-        msvlHistValueArraySize = 1 << (pSVImage->getPixelDepth() & SVBufferSize);
-
-        msvplHistValues.resize( msvlHistValueArraySize );
-
-        if (msvplHistValues.size() == 0)
-        {
-         msvError.msvlErrorCd = -1072;
-         SV_TRAP_ERROR_BRK (msvError, 1072);
-        }
-
-        for( int i = 0; i < msvlHistValueArraySize; i++ )
-           msvplHistValues [i] = 0L;
-
+	if(!bError)
+	{
+		for( int i = 0; i < msvlHistValueArraySize; i++ )
+		{
+			msvplHistValues [i] = 0L;
+		}
 		SVDataBufferInfoClass svData;
-
 		svData.Length = msvlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
 		svData.HBuffer.milResult = msvHistResultID;
@@ -209,24 +207,21 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 			msvHistResultID = svData.HBuffer.milResult;
 		}
 
-        if (msvHistResultID.empty())
-        {
-         msvError.msvlErrorCd = -1070;
-         SV_TRAP_ERROR_BRK (msvError, 1070);
-        }
+		if (msvHistResultID.empty())
+		{
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16098);
+			bError = TRUE;
+		}
+	}
 
-        break;
-    }
-
-
-    
-    if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-    {
-        m_isCreated = false;
-    }
-    else
+	if(bError )
 	{
-        m_isCreated = true;
+		m_isCreated = false;
+	}
+	else
+	{
+		m_isCreated = true;
 	}
 
 	msvLuminanceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
@@ -234,33 +229,19 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 	msvStdDevValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	msvCalcStdDevValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
-    return m_isCreated;
+	return m_isCreated;
 }
 
 
 BOOL SVLuminanceAnalyzerClass::CloseObject()
 {
-   msvError.ClearLastErrorCd ();
 
-   while (1)
-   {
-      
-      msvplHistValues.clear();
+	msvplHistValues.clear();
+	SVMatroxImageInterface l_lIntf;
+	l_lIntf.Destroy( msvHistResultID );
+	SVImageAnalyzerClass::CloseObject ();
 
-	  SVMatroxImageInterface l_lIntf;
-
-      l_lIntf.Destroy( msvHistResultID );
-
-      SVImageAnalyzerClass::CloseObject ();
-      break;
-   }
-
-   if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-   {
-      return FALSE;
-   }
-
-   return TRUE;
+	return TRUE;
 }
 
 
@@ -276,20 +257,15 @@ SVResultClass* SVLuminanceAnalyzerClass::GetResultObject()
 
 BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 {
-	SVImageClass     *pInputImage;
-	
-	__int64          sum;
-	size_t           lI;
-	long             lNbrPixels;
+	SVImageClass     *pInputImage(nullptr);
+	__int64          sum(0);
+	size_t           lI(0);
+	long             lNbrPixels(0);
 	double			 value = 0.0;
 
 	SVMatroxImageInterface::SVStatusCode l_Code;
+	bool  LastError(false);
 
-	pInputImage = nullptr;
-	msvError.ClearLastErrorCd ();
-	sum = 0;
-	lNbrPixels = 0;
-	
 	while (1)
 	{
 		///////////////////////////////////////////////////
@@ -297,37 +273,44 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////
 		msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, value );
 		msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, value );
-		
+
 		if( !SVImageAnalyzerClass::onRun( RRunStatus ) )
 		{
 			break;
 		}
-		
+
 		pInputImage = getInputImage ();
-		
+
 		if( ! pInputImage )
 		{
 			SetInvalid ();            
-			msvError.msvlErrorCd = -1077;
-			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1077)
+
+			SvStl::MessageMgrDisplayAndNotify  Ex( SvStl::LogAndDisplay );
+			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16099);
+			LastError = true;
+			break;
 		}
-		
+
 		SVSmartHandlePointer ImageHandle;
-		
+
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
-			msvError.msvlErrorCd = -1067;
-			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1067)
+			SvStl::MessageMgrDisplayAndNotify  Ex( SvStl::LogAndDisplay );
+			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16100);
+			LastError = true;
+			break;
 		}
-				
+
 		SVImageBufferHandleImage l_MilBuffer;
 
 		HRESULT l_Status = ImageHandle->GetData( l_MilBuffer );
 
 		if( S_OK != l_Status )
 		{
-			msvError.msvlErrorCd = l_Status;
-			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1067)
+			SvStl::MessageMgrDisplayAndNotify  Ex( SvStl::LogAndDisplay );
+			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16101);
+			LastError = true;
+			break;
 		}
 
 		SVMatroxImageInterface l_lImageIntf;
@@ -336,52 +319,63 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( l_Code != SVMEE_STATUS_OK )
 		{
 			//          35 = Invalid MIL ID, for others see milerr.h
-			msvError.msvlErrorCd = l_Code | SV_ERROR_CONDITION;
-			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1067)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16102);
+			LastError = true;
+			break;
 		}
-		
+
 		l_Code = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
 
-		
+
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-				msvError.msvlErrorCd = l_Code | SV_ERROR_CONDITION;
-				SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1071)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16103);
+			LastError = true;
+			break;
+
 		}
-		
+
 		for (lI = 0; lI < msvplHistValues.size(); lI++)
 		{
-				sum = sum + (msvplHistValues [lI] * lI);
-				lNbrPixels = lNbrPixels + msvplHistValues [lI];
+			sum = sum + (msvplHistValues [lI] * lI);
+			lNbrPixels = lNbrPixels + msvplHistValues [lI];
 		}
-			
+
 		if (lNbrPixels == 0)
 		{
-				msvError.msvlErrorCd = -1075;
-				SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1075)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16104);
+			LastError = true;
+			break;
 		}
 
 		if ( S_OK != msvLuminanceValue.SetValue( RRunStatus.m_lResultDataIndex, (long)(sum / lNbrPixels) ) )
 		{
-				msvError.msvlErrorCd = -1074;
-				SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1074)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16105);
+			LastError = true;
+			break;
 		}
-		
+
 		///////////////////////////////////////////////////
 		// Get calculate StdDeviation flag
 		///////////////////////////////////////////////////
 		BOOL calcStdDev = FALSE;
-		
+
 		if ( S_OK != msvCalcStdDevValue.GetValue( calcStdDev ))
 		{
-			msvError.msvlErrorCd = -SvOi::Err_15009;
-			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, SvOi::Err_15009)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16106);
+			LastError = true;
+			break;
 		}
-		
+
 		if (calcStdDev)
 		{
 			double accumulatedSquares = 0.0;	// for calculating variance
-			
+
 			for (lI = 0; lI < msvplHistValues.size(); lI++)
 			{
 				///////////////////////////////////////////////////
@@ -390,7 +384,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				value = ( double )( ( double )msvplHistValues [lI] * ( double )lI * ( double )lI );
 				accumulatedSquares += value;
 			}
-			
+
 			///////////////////////////////////////////////////////////////////
 			// Calculate Standard Deviation on the Histogram
 			// First need to calculate the Variance
@@ -403,16 +397,18 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				///////////////////////////////////////////////////////////////////
 				double averageValue = ( double )( sum / numberOfSamples );
 				value = calculateVariance( numberOfSamples, averageValue, accumulatedSquares );
-				
+
 				///////////////////////////////////////////////////////////////////
 				// Save Variance
 				///////////////////////////////////////////////////////////////////
 				if (S_OK != msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
 				{
-					msvError.msvlErrorCd = -SvOi::Err_15010;
-					SV_TRAP_ERROR_BRK_TSTFIRST(msvError, SvOi::Err_15010);
+					SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16107);
+					LastError = true;
+					break;
 				}
-				
+
 				///////////////////////////////////////////////////////////////////
 				// Standard Deviation is the positive square root of the Variance
 				// Note: Variance cannot be negative !!!
@@ -421,8 +417,10 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				{
 					if (value < 0)
 					{
-						msvError.msvlErrorCd = -SvOi::Err_15011;
-						SV_TRAP_ERROR_BRK_TSTFIRST(msvError, SvOi::Err_15011);
+						SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16108);
+						LastError = true;
+						break;
 					}
 					else
 						value = fabs( sqrt( value ) );
@@ -432,24 +430,25 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				///////////////////////////////////////////////////////////////////
 				if (S_OK != msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
 				{
-					msvError.msvlErrorCd = -SvOi::Err_15012;
-					SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1075);
+					SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16109);
+					LastError = true;
+					break;
 				}
 			}
 		}
-		
+
 		break;
-  }
-	
-	
-  if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-  {
+	}
+
+	if(	LastError )  
+	{
 		SetInvalid ();
 		RRunStatus.SetInvalid();
 		return FALSE;
-  }
-	
-  return TRUE;
+	}
+
+	return TRUE;
 }
 
 double SVLuminanceAnalyzerClass::calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares )
@@ -463,9 +462,9 @@ double SVLuminanceAnalyzerClass::calculateVariance( double aNumberOfSamples, dou
 	double averageTimesSamplesSquared = (averageTimesSamples * averageTimesSamples);
 
 	double value =
-	( 1.0 / ( aNumberOfSamples * ( aNumberOfSamples - 1.0 ) ) ) *
-							( aNumberOfSamples * aAccumulatedSquares - ( averageTimesSamplesSquared) );
-	
+		( 1.0 / ( aNumberOfSamples * ( aNumberOfSamples - 1.0 ) ) ) *
+		( aNumberOfSamples * aAccumulatedSquares - ( averageTimesSamplesSquared) );
+
 	return value;
 }
 

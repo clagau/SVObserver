@@ -82,14 +82,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CommandLineArgs.cpp" />
-    <ClCompile Include="ec000009.cpp" />
-    <ClCompile Include="ec010049.cpp" />
-    <ClCompile Include="ec050099.cpp" />
-    <ClCompile Include="ec100149.cpp" />
-    <ClCompile Include="ec150199.cpp" />
-    <ClCompile Include="ec200249.cpp" />
-    <ClCompile Include="ec250299.cpp" />
-    <ClCompile Include="ec300349.cpp" />
     <ClCompile Include="GlobalPath.cpp" />
     <ClCompile Include="MessageData.cpp" />
     <ClCompile Include="MessageTextGenerator.cpp" />
@@ -97,7 +89,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVErrorClass.cpp" />
     <ClCompile Include="SVEventLogClass.cpp" />
     <ClCompile Include="SVEventRecordStruct.cpp" />
     <ClCompile Include="MessageContainer.cpp" />
@@ -113,7 +104,6 @@
     <ClInclude Include="MessageTextMap.h" />
     <ClInclude Include="SourceFileParams.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVErrorClass.h" />
     <ClInclude Include="SVEventLogClass.h" />
     <ClInclude Include="SVEventRecordStruct.h" />
     <ClInclude Include="MessageContainer.h" />

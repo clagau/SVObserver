@@ -28,8 +28,6 @@ public:
 	virtual HRESULT SetInspectionData();
 
 protected:
-	SVErrorClass  msvError;
-
 	// Construction
 public:
 	SVLuminanceAnalyzerSetupClass(CWnd* pParent = nullptr);   // standard constructor

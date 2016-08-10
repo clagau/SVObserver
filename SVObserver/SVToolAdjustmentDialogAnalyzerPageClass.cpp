@@ -443,7 +443,6 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 {
 	if( nullptr == m_pCurrentAnalyzer || nullptr == m_pTool ) { return; }
 
-	msvError.ClearLastErrorCd();
 
 	SVInspectionProcess* pInspection = m_pTool->GetInspection();
 	if( nullptr == pInspection ) { return; }

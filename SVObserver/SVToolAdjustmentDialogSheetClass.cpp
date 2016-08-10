@@ -351,7 +351,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		// Send Errors to the display
 		SVToolClass* pTool = GetTool();
-		pTool->msvError.m_bDisplayError = true;
+	
 
 		CString l_Temp = _T( "Tool Adjustment: " );
 		l_Temp += pTool->GetObjectName();
@@ -365,7 +365,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	void SVToolAdjustmentDialogSheetClass::OnDestroy() 
 	{
 		// reset Flag so errors do not go to the display.
-		GetTool()->msvError.m_bDisplayError = false;
+	
 
 		CPropertySheet::OnDestroy();
 

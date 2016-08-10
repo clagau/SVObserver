@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <vector>
 
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVStatusLibrary/SVErrorClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVObjectInfoStruct.h"
@@ -195,8 +194,6 @@ protected:
 	virtual HRESULT RemoveObjectConnection( const GUID& rObjectID );
 
 public:
-	//This attribute holds the object level error information.
-	SVErrorClass msvError;  // @TODO - This should be replaced with the new message/error handler
 
 	void SetDefaultObjectAttributesSet(UINT uAttributes);
 

@@ -1546,11 +1546,6 @@ BOOL SVTaskObjectClass::onRun(SVRunStatusClass& RRunStatus)
 {
 	SVToolClass* pTool = GetTool();
 
-	// set error display
-	if(nullptr != pTool)
-	{
-		msvError.m_bDisplayError = pTool->msvError.m_bDisplayError;
-	}
 
 	// Run first friends...
 	BOOL bRetVal = runFriends(RRunStatus);

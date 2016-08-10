@@ -87,8 +87,6 @@ protected:
 	// Data Element(s):
 	//******************************************************************************
 public:
-	SVErrorClass    msvError;
-
 protected:
 	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
 	SVToolClass*                    m_pTool;

@@ -168,16 +168,18 @@ void SVPatternAnalyzerClass::CreateResult()
 			SVResultClass* pResult = (SVLongResultClass *)resultClassInfo.Construct();
 			if (!pResult)
 			{
-				msvError.msvlErrorCd = -ERR_SRI1;
-				SV_TRAP_ERROR_BRK (msvError, ERR_SRI1);
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16199);
+				break;
 			}
 
 			// Set the defaults for the Range Object
 			SVRangeClass *pRange = pResult->GetResultRange();
 			if (!pRange)
 			{
-				msvError.msvlErrorCd = -ERR_SRI2;
-				SV_TRAP_ERROR_BRK (msvError, ERR_SRI2);
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16200);
+				break;
 			}
 
 			Add(pResult);
@@ -422,6 +424,7 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::MessageTextEnum *pErrMsgId)
 {
+	DWORD LastError(0);
 	BOOL bOk = FALSE;
 
 	SVMatroxBuffer l_ImportHandle;
@@ -466,8 +469,10 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 			*pErrMsgId = SvOi::Tid_PatInvalidFilename;
 		}
 
-		msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-		SV_TRAP_ERROR (msvError, ERR_SRI5);
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16205);
+		LastError = -SvOi::Err_16205;
+		
 	}
 
 	if ( bOk )
@@ -482,8 +487,9 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 			*pErrMsgId = SvOi::Tid_PatAllocModelFailed;
 		}
 
-		msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-		SV_TRAP_ERROR (msvError, ERR_SRI6);
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16206);
+		LastError = -SvOi::Err_16206;
 	}
 	else
 	{
@@ -842,12 +848,13 @@ BOOL SVPatternAnalyzerClass::OnValidate()
 
 BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 {
+	DWORD LastError(0);
 	try
 	{
 		SVImageClass	*pSVImage;
 		SVMatroxBuffer	ImageBufId;
 		
-		msvError.ClearLastErrorCd();
+		
 		
 		SVMatroxPatternInterface::SVStatusCode l_Code;
 
@@ -863,8 +870,10 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 			pSVImage = (SVImageClass *)getInputImage();
 			if( nullptr == pSVImage || ! pSVImage->GetImageHandle( ImageHandle ) )
 			{
-				msvError.msvlErrorCd = -ERR_SRI15; // Error code 25015
-				SV_TRAP_ERROR_BRK (msvError, ERR_SRI15);
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16206);
+				LastError = -SvOi::Err_16206;
+				break;
 			}
 			
 			SVImageBufferHandleImage l_MilHandle;
@@ -993,7 +1002,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 			break;
 		}
 		
-		if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
+		if (LastError)
 		{
 			ResetResultValues();
 			SetInvalid();

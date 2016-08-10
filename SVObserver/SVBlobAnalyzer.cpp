@@ -207,7 +207,6 @@ void SVBlobAnalyzerClass::init()
 {
 	SVBlobFeatureEnum i;
 
-	msvError.ClearLastErrorCd();
 
 	msvlDefaultAttributes = 0;
 	m_lNumberOfBlobsFound = 0;
@@ -391,9 +390,9 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 	CString                 strTitle;
 	SVObjectTypeInfoStruct  interfaceInfo;
 
-	SVDoubleResultClass*    pResult;
+	SVDoubleResultClass*    pResult(nullptr);
+	DWORD LastError(0);
 
-	msvError.ClearLastErrorCd ();
 
 	//not a MIL Feature...  Just return
 	if ( (aFeatureIndex == SV_CENTER_X_SOURCE)  || (aFeatureIndex == SV_CENTER_Y_SOURCE) )
@@ -419,9 +418,11 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		m_guidResults[ aFeatureIndex ] = pResult->GetUniqueObjectID();
 
 		if(!pResult)
-		{
-			msvError.msvlErrorCd = -1136;
-			SV_TRAP_ERROR_BRK (msvError, 1136);
+		{	
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16111);
+			LastError =  -SvOi::Err_16111;
+			break;
 		}
 
 		Add( pResult );
@@ -438,8 +439,10 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 
 		if (!pValue)
 		{
-			msvError.msvlErrorCd = -1137;
-			SV_TRAP_ERROR_BRK (msvError, 1137);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16112);
+			LastError =   -SvOi::Err_16112 ; 
+			break;
 		}
 
 		pValue->ObjectAttributesAllowedRef() = pValue->ObjectAttributesAllowed() & ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
@@ -472,7 +475,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 
 	} while (false);
 
-	return msvError.GetLastErrorCd ();
+	return LastError;	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -494,7 +497,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 
 //    SVDoubleResultClass*    pResult;
 
-	msvError.ClearLastErrorCd ();
+	DWORD LastError(0);
 	
 	do
 	{
@@ -516,8 +519,10 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		
 		if(!m_pResultBlob)
 		{
-			msvError.msvlErrorCd = -25025;
-			SV_TRAP_ERROR_BRK (msvError, 25025);
+			SvStl::MessageMgrDisplayAndNotify  Ex( SvStl::LogAndDisplay );
+			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16113);
+			LastError =   -SvOi::Err_16113 ; 
+			break;
 		}
 		
 		Add( m_pResultBlob );
@@ -533,9 +538,11 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 			reinterpret_cast<DWORD_PTR>(&info)));
 		
 		if (!pValue)
-		{
-			msvError.msvlErrorCd = 25026;
-			SV_TRAP_ERROR_BRK (msvError, 25026);
+		{		
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16114);
+			LastError =   -SvOi::Err_16114 ; 
+			break;
 		}
 		
 		pValue->ObjectAttributesAllowedRef() = pValue->ObjectAttributesAllowed() & ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
@@ -568,37 +575,39 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		
 	} while ( false );
 	
-	return msvError.GetLastErrorCd ();
+	return LastError;	
 }
 
 DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 {
-	SVResultClass*    pResult;
+	SVResultClass*    pResult(nullptr);
+	DWORD LastError(0);
 	
-	msvError.ClearLastErrorCd ();
-	
-	do
+	pResult = GetResultObject (aFeatureIndex);
+
+	if (nullptr == pResult)
 	{
-		pResult = GetResultObject (aFeatureIndex);
-		
-		if (!pResult)
-		{
-			msvError.msvlErrorCd = -1140;
-			SV_TRAP_ERROR_BRK (msvError, 1140);
-		}
-		
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16115);
+		LastError =   -SvOi::Err_16115 ; 
+
+	}
+	else
+	{
+
+
 		m_guidResults[ aFeatureIndex ] = SV_GUID_NULL;
-		
+
 		SVSendMessage (this, 
-		               SVM_DESTROY_CHILD_OBJECT,
-		              reinterpret_cast<DWORD_PTR>(pResult),
-		               SVMFSetDefaultInputs);
-		
+			SVM_DESTROY_CHILD_OBJECT,
+			reinterpret_cast<DWORD_PTR>(pResult),
+			SVMFSetDefaultInputs);
+
 		pResult = nullptr;
-		
-	} while ( false );
+	}
 	
-	return msvError.GetLastErrorCd ();
+	return LastError;
+	
 }
 
 SVResultClass* SVBlobAnalyzerClass::GetResultObject(SVBlobFeatureEnum aFeatureIndex)
@@ -616,8 +625,6 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 	SVDoubleResultClass*    pResult;
 	SVObjectClass*          pSVObject;
 	
-	msvError.ClearLastErrorCd ();
-
 	SVObjectTypeInfoStruct info;
 
 	info.ObjectType = SVResultObjectType;
@@ -707,10 +714,11 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructure)
 {
 	CString             tempString;
-	SVBlobFeatureEnum   i;
-	double              deflt;
+	SVBlobFeatureEnum   i(SV_AREA);
+	double              deflt(0.0);
+	DWORD				LastError(0);
 	
-	msvError.ClearLastErrorCd ();
+	
 	
 	SVMatroxBlobInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
 	
@@ -718,8 +726,10 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	{
 		if(!SVImageAnalyzerClass::CreateObject( PCreateStructure ))
 		{
-			msvError.msvlErrorCd = -1125;
-			SV_TRAP_ERROR_BRK (msvError, 1125);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16116);
+			LastError = - SvOi::Err_16116;
+			break;
 		}
 		
 		//
@@ -764,8 +774,10 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		
 		if ( msvResultBufferID.empty() )
 		{
-			msvError.msvlErrorCd = -1127;
-			SV_TRAP_ERROR_BRK (msvError, 1127);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16117);
+			LastError = - SvOi::Err_16117;
+			break;
 		}
 		
 		l_Code = SVMatroxBlobInterface::Set( msvResultBufferID, SVEBlobIdentifier, static_cast<long>(SVValueBinary) );
@@ -801,15 +813,19 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 				SVResultClass *pResult = GetResultObject (i);
 				if(!pResult)
 				{
-					msvError.msvlErrorCd = 25027;
-					SV_TRAP_ERROR_BRK (msvError, 25027); // Break out of for loop
+					SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16118);
+					LastError = - SvOi::Err_16118;
+					break; // Break out of for loop 
 				}
 				
 				SVRangeClass *pRange = pResult->GetResultRange();
 				if(!pRange)
 				{
-					msvError.msvlErrorCd = 25028;
-					SV_TRAP_ERROR_BRK (msvError, 25028);// Break out of for loop
+					SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16119);
+					LastError = - SvOi::Err_16119;
+					break; // Break out of for loop 
 				}
 				
 				pRange->FailHigh.SetValue(1, 5000.0); // Set some high values, so that it doesn't fail
@@ -817,9 +833,13 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 			}
 		}
 
-		if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-			break; // If any error had occurred in the for loop, break out of while loop also.
-		
+
+		if (0 != LastError )
+		{
+			break; // If any error had occurred in the for loop, break out of while loop also.	
+		}
+
+
 		// RDS 2002-03-26
 		// Set currently existing features into the persistence string.
 		// Mainly this should be SV_BOXX_MAX thru SV_BOXY_MIN
@@ -837,8 +857,11 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 			SVRangeClass *pRange = m_pResultBlob->GetResultRange();
 			if(!pRange)
 			{
-				msvError.msvlErrorCd = 25029;
-				SV_TRAP_ERROR_BRK (msvError, 25029);
+			
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16120);
+				LastError = SvOi::Err_16120;
+				break; 
 			}
 			pRange->FailLow.SetValue(1, m_defaultResultNumberOfBlobsLowFail); 
 			pRange->WarnLow.SetValue(1, m_defaultResultNumberOfBlobsLowWarn);
@@ -851,7 +874,8 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		
 	} while ( false );
 
-	if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
+	
+	if (0 != LastError )
 	{
 		m_isCreated = false;
 	}
@@ -940,25 +964,13 @@ DWORD SVBlobAnalyzerClass::DisableFeature (SVBlobFeatureEnum aIndex)
 
 BOOL SVBlobAnalyzerClass::OnValidate()
 {
-	msvError.ClearLastErrorCd ();
-	msvError.msvlErrorCd = 0x00000000;
 	
-	do
+	if(SVImageAnalyzerClass::OnValidate ())
 	{
-		if (!SVImageAnalyzerClass::OnValidate ())
-		{
-			//       Error code set inside SVImageAnalyzerClass::OnValidate ()
-			break;
-		}
-	} while ( false );
-	
-	if( (msvError.GetLastErrorCd () & SV_ERROR_CONDITION) ||
-		(msvError.msvlErrorCd       & SV_ERROR_CONDITION) )
-	{
-		SetInvalid ();
-		return FALSE;
+			SetInvalid ();
+			return FALSE;
 	}
-	
+
 	isObjectValid.SetValue (1, TRUE);
 	return TRUE;
 }
@@ -993,14 +1005,13 @@ DWORD_PTR SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMes
 //
 BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 {
+	
+	DWORD LastError(0);
 	long lSortFeature;
-
 	bool l_bCenterXSet = false;
 	bool l_bCenterYSet = false;
 
-	SVImageClass* pImage;
-
-	msvError.ClearLastErrorCd();
+	SVImageClass* pImage(nullptr);
 
 	SVMatroxBlobInterface::SVStatusCode l_Code;
 
@@ -1020,15 +1031,20 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if (!pImage)
 		{
-			msvError.msvlErrorCd = -1135;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1135);
+
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16135);
+			LastError = - SvOi::Err_16135;
+			break;
 		}
 
 		if ( ! pImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
 			ASSERT( FALSE );
-			msvError.msvlErrorCd = -1135;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1135);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16136);
+			LastError = - SvOi::Err_16136;
+			break;;
 		}
 
 		SVImageBufferHandleImage l_MilBuffer;
@@ -1037,8 +1053,10 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if ( l_MilBuffer.empty() )
 		{
 			ASSERT( FALSE );
-			msvError.msvlErrorCd = -1135;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1135);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16137);
+			LastError = - SvOi::Err_16137;
+			break;
 		}
 
 		//
@@ -1048,8 +1066,12 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-			msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1131);
+			ASSERT( FALSE );
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16138);
+			LastError = - SvOi::Err_16138;
+			break;
+
 		}
 
 		// Sri 04-12-00
@@ -1074,14 +1096,18 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					SVResultClass* pResult = GetResultObject(eFeature);
 					if(!pResult)
 					{
-						msvError.msvlErrorCd = 25030;
-						SV_TRAP_ERROR_BRK (msvError, 25030); // Break out of for loop
+						SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16139);
+						LastError = - SvOi::Err_16139;
+						break;
 					}
 					SVRangeClass* pRange = pResult->GetResultRange();
 					if(!pRange)
 					{
-						msvError.msvlErrorCd = 25031;
-						SV_TRAP_ERROR_BRK (msvError, 25031);// Break out of for loop
+						SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16140);
+						LastError = - SvOi::Err_16140;
+						break;
 					}
 
 					double dLow(0), dHigh(0);
@@ -1117,13 +1143,18 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 					if( l_Code != SVMEE_STATUS_OK )
 					{
-						msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-						SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 25032);
+
+						SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16141);
+						LastError = - SvOi::Err_16141;
+						break;
 					}
 				}
 			}
-			if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
+			if (0 != LastError )
+			{
 				break; // If any error had occurred in the for loop, break out of while loop also.
+			}
 		}// end if(bExclude)
 		// End. Sri
 
@@ -1134,8 +1165,10 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-			msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1132);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16142);
+			LastError = - SvOi::Err_16142;
+			break;
 		}
 
 		if (m_lNumberOfBlobsFound > m_lBlobSampleSize)
@@ -1187,14 +1220,18 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			else //if(lSelectedNbrOfBlobs > m_lBlobSampleSize)
 			{
 				// this is an error condition!  i.e. selected more blobs then we asked for !
-				msvError.msvlErrorCd = SV_ERROR_CONDITION;
-				SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1133);
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16143);
+				LastError = - SvOi::Err_16143;
+				break;
 			}
 
 			if( l_Code != SVMEE_STATUS_OK )
 			{
-				msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-				SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1133);
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16144);
+				LastError = - SvOi::Err_16144;
+				break;
 			}
 		}// end if (m_lNumberOfBlobsFound > m_lBlobSampleSize)
 
@@ -1432,7 +1469,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		}// end if
 	} while ( false );
 
-	if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
+	if (0 != LastError )
 	{
 		SetInvalid();
 		RRunStatus.SetInvalid();
@@ -1443,55 +1480,41 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 }
 
 DWORD SVBlobAnalyzerClass::SortBlobs (long alSortFeature, 
-                                      long* alSortMap,
-                                      long p_lArraySize )
+	long* alSortMap,
+	long p_lArraySize )
 {
-
-	int i;
-// it is assumed that msvError.ClearLastErrorCd () is done in calling function.
-
-	for (i = 0; i < p_lArraySize; i++)
+	DWORD LastError(0);
+	
+	for (int i = 0; i < p_lArraySize; i++)
 	{
 		alSortMap [i] = i;
 	}
 
-	BOOL ascending;
+	BOOL ascending(FALSE);
 	msvSortAscending.GetValue(ascending);
 	if (m_vec2dBlobResults[alSortFeature].size() > 0)
 	{
-		MapQuickSort (&(m_vec2dBlobResults[alSortFeature][0]),
-	                alSortMap,
-	                0, 
-	                p_lArraySize - 1, 
-#ifndef _DEBUG
-	                ascending);                           // Ascending
-#else
-	                ascending,
-	                m_vec2dBlobResults[alSortFeature]);     // Ascending
-#endif
+		LastError =	MapQuickSort (&(m_vec2dBlobResults[alSortFeature][0]),
+			alSortMap,
+			0, 
+			p_lArraySize - 1, 
+		ascending);                           // Ascending
+
 	}
-	return msvError.GetLastErrorCd ();
+	return LastError;
 }
 
 DWORD SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray, 
-                                         long*      alSortMap,
-                                         long       alBeginning,
-                                         long       alEnd,
-#ifndef _DEBUG
-                                         BOOL       abAscending)
-#else
-                                         BOOL       abAscending,
-                                         std::vector<double>& SVA)
-#endif
+	long*      alSortMap,
+	long       alBeginning,
+	long       alEnd,
+	BOOL       abAscending)
 {
-	long    i;
-	long    j;
-	long    lTemp;
+	DWORD LastError(0);
 	
-	double  val;
-	
-	i = alEnd;
-	j = alBeginning;
+	long    i = alEnd;
+	long   	j = alBeginning;
+	double  val(0.0);
 	
 	do
 	{
@@ -1501,9 +1524,9 @@ DWORD SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray,
 			//          nothing to sort.
 			break;
 		}
-		
+
 		val = aSortArray [alSortMap [(alBeginning + alEnd) / 2]];
-		
+
 		do
 		{
 			if (abAscending)
@@ -1528,56 +1551,59 @@ DWORD SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray,
 					i--;
 				}
 			}
-			
+
 			if (i >= j)
 			{
 				if (i != j)
 				{
-					lTemp = alSortMap [i];
+					long lTemp = alSortMap [i];
 					alSortMap [i] = alSortMap [j];
 					alSortMap [j] = lTemp;
 				}
-				
+
 				i --;
 				j ++;
 			}
-			
+
 		} while (j <= i);
-		
+
 		if (alBeginning < i)
 		{
-			msvError.msvlErrorCd = MapQuickSort (aSortArray,
-			                                     alSortMap,
-			                                     alBeginning,
-			                                     i,
-#ifndef _DEBUG
-			                                     abAscending);
-#else
-			                                     abAscending,
-			                                     SVA);          // Ascending
-#endif
+			LastError = MapQuickSort (aSortArray,
+				alSortMap,
+				alBeginning,
+				i,
+				abAscending);
+			if(LastError)
+			{
 
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1134);
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16146);
+				LastError = - SvOi::Err_16146;
+				break;
+			}
+
+			
 		}
 		if (j < alEnd)
 		{
-			msvError.msvlErrorCd = MapQuickSort (aSortArray,
-			                                     alSortMap,
-			                                     j,
-			                                     alEnd,
-#ifndef _DEBUG
-			                                     abAscending);
-#else
-			                                     abAscending,
-			                                     SVA);          // Ascending
-#endif
-
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1135);
+			LastError = MapQuickSort (aSortArray,
+				alSortMap,
+				j,
+				alEnd,
+				abAscending);
+			if(LastError)
+			{
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16147);
+				LastError = - SvOi::Err_16147;
+				break;
+			}
 		}
 
 	} while ( false );
 
-	return msvError.GetLastErrorCd ();
+	return LastError;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1585,59 +1611,59 @@ DWORD SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray,
 //
 DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 {
-	SVBlobFeatureEnum i;
-	
-	
-	msvError.ClearLastErrorCd ();
-
-	
 	SVMatroxBlobInterface::SVStatusCode l_Code;
+	DWORD LastError(0);
 
-	do
+	if ( !msvFeatureListID.empty() )
 	{
-		if ( !msvFeatureListID.empty() )
+		l_Code = SVMatroxBlobInterface::Destroy( msvFeatureListID );
+
+		if( l_Code != SVMEE_STATUS_OK )
 		{
-			l_Code = SVMatroxBlobInterface::Destroy( msvFeatureListID );
-			
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16148);
+			LastError = - SvOi::Err_16148;
+			return LastError;
+
+		}
+	}
+
+	l_Code = SVMatroxBlobInterface::Create(msvFeatureListID );
+
+	if ( msvFeatureListID.empty() )
+	{
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16149);
+		LastError = - SvOi::Err_16149;
+		return LastError;
+	}
+
+	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
+	{
+		if (msvszFeaturesEnabled [i] == _T('1'))
+		{
+			if ( (i == SV_CENTER_X_SOURCE) || (i == SV_CENTER_Y_SOURCE) )
+			{
+				continue;
+			}
+
+			l_Code = SVMatroxBlobInterface::BlobSelectFeature( msvFeatureListID, 
+				BlobFeatureConstants [i].MILFeatureDef);
+
+
 			if( l_Code != SVMEE_STATUS_OK )
 			{
-				msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-				SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1128);
+				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16150);
+				LastError = - SvOi::Err_16150;
+				return LastError;
 			}
 		}
-		
-		l_Code = SVMatroxBlobInterface::Create(msvFeatureListID );
-		
-		if ( msvFeatureListID.empty() )
-		{
-			msvError.msvlErrorCd = -1129;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1129);
-		}
-		
-		for (i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
-		{
-			if (msvszFeaturesEnabled [i] == _T('1'))
-			{
-				if ( (i == SV_CENTER_X_SOURCE) || (i == SV_CENTER_Y_SOURCE) )
-				{
-					continue;
-				}
+	}
 
-				l_Code = SVMatroxBlobInterface::BlobSelectFeature( msvFeatureListID, 
-					BlobFeatureConstants [i].MILFeatureDef);
 
-				
-				if( l_Code != SVMEE_STATUS_OK )
-				{
-					msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-					SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1130);
-				}
-			}
-		}
 
-	} while ( false );
-	
-	return msvError.GetLastErrorCd ();
+	return LastError;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

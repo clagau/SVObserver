@@ -370,3 +370,4 @@ enum svModeEnum
 };
 
 
+#define SV_ERROR_CONDITION     0xc0000000

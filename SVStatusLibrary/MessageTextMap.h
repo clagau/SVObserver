@@ -430,6 +430,8 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_SetEmbeddedValueFailed, _T("Set a value of embedded parameter failed: %s."))
 	(SvOi::Tid_ValidateValue_InvalidElementInVariantArray, _T("Validate Value failed: Invalid element in VariantArray: %s"))
 	(SvOi::Tid_ValidateValue_ArraySizeInvalid, _T("Validate Value failed: Array Size must greater than zero."))
+	(SvOi::Tid_UnexpectedError, _T("An unexpected error ocurred."))
+	
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

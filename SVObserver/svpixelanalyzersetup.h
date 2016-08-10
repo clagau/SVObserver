@@ -73,12 +73,9 @@ public:
 
     unsigned long           SetGrayscale (long alGrayscale);
 
-
-    SVErrorClass            msvError;
-
-    SVToolClass             *msvpTool;
-    SVPixelAnalyzerClass    *msvpAnalyzer;
-    CWnd                    *msvpParent;
+    SVToolClass             *m_pTool;
+    SVPixelAnalyzerClass    *m_pAnalyzer;
+    CWnd                    *m_pParent;
 
     unsigned long           msvulMaxGrayscale;
     unsigned long           msvulMinGrayscale;

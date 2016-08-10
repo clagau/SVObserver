@@ -88,9 +88,6 @@ private:
 /*- restored if the operator presses cancel. ---------------------------------------*/
 	TCHAR                           msvszOriginalFeaturesEnabled 
 	                                    [SV_NUMBER_OF_BLOB_FEATURES + 1]; // Null Terminated
-
-	SVErrorClass                    msvError;
-
 	SVToolClass*                    msvpTool;
 
 	CString script;

@@ -395,6 +395,7 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_SetEmbeddedValueFailed,
 		Tid_ValidateValue_InvalidElementInVariantArray,
 		Tid_ValidateValue_ArraySizeInvalid,
+		Tid_UnexpectedError,
 	};
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 

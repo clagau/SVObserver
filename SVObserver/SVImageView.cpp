@@ -983,14 +983,11 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 				SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
 				if( l_psvAnalyzer )
 				{
-					// Set Display Flag so Errors will be displayed on dialog.
-					l_psvAnalyzer->GetTool()->msvError.m_bDisplayError = true;
-					l_psvAnalyzer->msvError.m_bDisplayError = true;
+				
 
 					SVSetupDialogManager::Instance().SetupDialog( l_psvAnalyzer->GetClassID(), l_psvAnalyzer->GetUniqueObjectID(), this );
 
-					l_psvAnalyzer->msvError.m_bDisplayError = false;
-					l_psvAnalyzer->GetTool()->msvError.m_bDisplayError = false;
+			
 
 					l_psvIPDoc->RunOnce();
 				}

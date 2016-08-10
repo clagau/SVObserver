@@ -139,8 +139,8 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 		msvpTool = (SVToolClass *) m_pCurrentAnalyzer->GetOwner ();
 		if (!msvpTool)
 		{
-			msvError.msvlErrorCd = -1145;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1145);
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16080);
 		}
 		
 		m_pCurrentAnalyzer->msvSortFeature.GetValue (lSortFeature);
@@ -396,7 +396,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 			}
 		}
 	}
-	
+
 	EnableButtons();
 
 	UpdateData (FALSE);
@@ -407,34 +407,30 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 //
 void SVBlobAnalyzeFeatureDialogClass::OnButtonSetRange() 
 {
-	SVErrorClass  error;
-	
+
 	SVBlobFeatureEnum index;
-	SVResultClass *pAnalyzerResult;
-	
-	pAnalyzerResult = nullptr;
-	
-	while (1)
+	SVResultClass *pAnalyzerResult(nullptr);
+
+	index = (SVBlobFeatureEnum) m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel());
+
+	if (index == LB_ERR || index < 0)
 	{
-		index = (SVBlobFeatureEnum) m_lbSelectedFeatures.GetItemData(
-			m_lbSelectedFeatures.GetCurSel());
-		
-		if (index == LB_ERR || index < 0)
-		{
-			error.msvlErrorCd = -1141;
-			SV_TRAP_ERROR_BRK_TSTFIRST(error, 1141)
-		}
-		
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16087);
+	}
+	else
+	{
 		pAnalyzerResult = m_pCurrentAnalyzer->GetResultObject( index );
-		
-		if (!pAnalyzerResult)
+
+		if (nullptr == pAnalyzerResult)
 		{
-			error.msvlErrorCd = -1142;
-			SV_TRAP_ERROR_BRK_TSTFIRST(error, 1142)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16088);
 		}
-		
-		SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this );
-		break;
+		else
+		{
+			SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this );
+		}
 	}
 }
 

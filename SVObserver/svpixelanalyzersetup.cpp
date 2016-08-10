@@ -50,9 +50,9 @@ HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( nullptr != msvpAnalyzer )
+	if( nullptr != m_pAnalyzer )
 	{
-		l_hrOk = AddInputRequest( &( msvpAnalyzer->m_pixelCountColor ), msvGrayscaleToCount );
+		l_hrOk = AddInputRequest( &( m_pAnalyzer->m_pixelCountColor ), msvGrayscaleToCount );
 
 		if( S_OK == l_hrOk )
 		{
@@ -61,7 +61,7 @@ HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( msvpAnalyzer->GetTool() );
+			l_hrOk = RunOnce( m_pAnalyzer->GetTool() );
 		}
 
 		UpdateData( FALSE );
@@ -74,29 +74,27 @@ unsigned long SVPixelAnalyzerSetupClass::init (SVPixelAnalyzerClass *apAnalyzer,
                                                CWnd* apParent)
 {
     SVObjectTypeInfoStruct  pixelAnalyzerToolInfo;
-
-    msvError.ClearLastErrorCd ();
-
-    while (1)
-    {
-        msvpParent = apParent;
-        msvpAnalyzer = apAnalyzer;
-        if (!msvpAnalyzer)
-        {
-            msvError.msvlErrorCd = -1098;
-            SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1098);
-        }
-
-        msvpTool = (SVToolClass *) msvpAnalyzer->GetOwner ();
-        if (!msvpTool)
-        {
-            msvError.msvlErrorCd = -1096;
-            SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1096);
-        }
-        break;
-    }
-
-    return msvError.GetLastErrorCd ();
+	unsigned long ret(0);
+	m_pParent = apParent;
+	m_pAnalyzer = apAnalyzer;
+	if (nullptr == m_pAnalyzer)
+	{
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16082);
+		ret = - SvOi::Err_16082;
+	
+	}
+	else
+	{
+		m_pTool = (SVToolClass *) m_pAnalyzer->GetOwner ();
+		if (!m_pTool)
+		{
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16083);
+			ret = - SvOi::Err_16083;
+		}
+	}
+	return ret; 
 }
 
 
@@ -134,141 +132,124 @@ END_MESSAGE_MAP()
 void SVPixelAnalyzerSetupClass::OnOK() 
 {
 	// TODO: Add extra validation here
-	SVIPDoc* l_pIPDoc = TheSVObserverApp.GetIPDoc(msvpTool->GetInspection()->GetUniqueObjectID());
+	SVIPDoc* l_pIPDoc = TheSVObserverApp.GetIPDoc(m_pTool->GetInspection()->GetUniqueObjectID());
 
 	if( nullptr != l_pIPDoc )
 	{
 		l_pIPDoc->SetModifiedFlag();
     }
-    	
+
 	CDialog::OnOK();
 }
 
 BOOL SVPixelAnalyzerSetupClass::OnInitDialog() 
 {
-    BYTE    byGrayscale;
+	
+	BYTE    byGrayscale;
+	CDialog::OnInitDialog();
+	SetTaskObject( m_pTool );
 
-    msvError.ClearLastErrorCd ();
+	if (nullptr == m_pTool)
+	{
+		SvStl::MessageMgrDisplayAndNotify  Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16084);
+	}
+	else
+	{
+		msvulMinGrayscale = 0;
+		try
+		{
+			msvulMaxGrayscale = (1 << m_pAnalyzer->GetInputPixelDepth ()) - 1;
+		}
+		catch (	const SvStl::MessageContainer& rContain )
+		{
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( rContain.getMessage());
+			return TRUE;
 
-    while (1)
-    {
-       	CDialog::OnInitDialog();
-
-		SetTaskObject( msvpTool );
-
-        if (!msvpTool)
-        {
-            msvError.msvlErrorCd = -1103;
-            SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1103);
-        }
-
-
-        msvulMinGrayscale = 0;
-        msvulMaxGrayscale = (1 << msvpAnalyzer->GetInputPixelDepth ()) - 1;
-
-	    msvHighGrayscaleValue.Format (_T("%d"), msvulMaxGrayscale);
+		}
+		msvHighGrayscaleValue.Format (_T("%d"), msvulMaxGrayscale);
 		msvLowGrayscaleValue.Format (_T("%d"), msvulMinGrayscale);
 
-        msvpAnalyzer->m_pixelCountColor.GetValue(byGrayscale);
+		m_pAnalyzer->m_pixelCountColor.GetValue(byGrayscale);
 
-        if (byGrayscale == msvulMinGrayscale) //Black
-        {
-            SetBlack ();
-        }
-        else
-        if (byGrayscale == msvulMaxGrayscale) //White
-        {
-            SetWhite ();
-        }
-        else
-        {
-            SetOther (byGrayscale);
+		if (byGrayscale == msvulMinGrayscale) //Black
+		{
+			SetBlack ();
+		}
+		else
+			if (byGrayscale == msvulMaxGrayscale) //White
+			{
+				SetWhite ();
+			}
+			else
+			{
+				SetOther (byGrayscale);
 
-        }
-            
-        msvGrayscaleSld.SetRangeMin (-((long)msvulMaxGrayscale), FALSE);
-        msvGrayscaleSld.SetRangeMax (-((long)msvulMinGrayscale), FALSE);
+			}
 
-        UpdateData (FALSE);
-        break;
-    }
-    
+			msvGrayscaleSld.SetRangeMin (-((long)msvulMaxGrayscale), FALSE);
+			msvGrayscaleSld.SetRangeMax (-((long)msvulMinGrayscale), FALSE);
+			UpdateData (FALSE);
+	}
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
 unsigned long SVPixelAnalyzerSetupClass::SetBlack ()
 {
-    msvError.ClearLastErrorCd ();
+	unsigned long ret(0);
+	msvWhiteRad.SetCheck(BST_UNCHECKED);
+	msvBlackRad.SetCheck (BST_CHECKED);
+	msvOtherRad.SetCheck(BST_UNCHECKED);
+	msvGrayscaleSld.EnableWindow (FALSE);
+	msvGrayScaleEdt.EnableWindow (FALSE);
 
-    while (1)
-    {
-		msvWhiteRad.SetCheck(BST_UNCHECKED);
-        msvBlackRad.SetCheck (BST_CHECKED);
-		msvOtherRad.SetCheck(BST_UNCHECKED);
-        msvGrayscaleSld.EnableWindow (FALSE);
-        msvGrayScaleEdt.EnableWindow (FALSE);
+	SetGrayscale (msvulMinGrayscale);
 
-        SetGrayscale (msvulMinGrayscale);
-        break;
-    }
-
-
-    return msvError.GetLastErrorCd ();
-}
+	return ret;
+	}
 
 
 unsigned long SVPixelAnalyzerSetupClass::SetWhite ()
 {
-    msvError.ClearLastErrorCd ();
+	unsigned long ret(0);
+	msvWhiteRad.SetCheck(BST_CHECKED);
+	msvBlackRad.SetCheck (BST_UNCHECKED);
+	msvOtherRad.SetCheck(BST_UNCHECKED);
+	msvGrayscaleSld.EnableWindow (FALSE);
+	msvGrayScaleEdt.EnableWindow (FALSE);
 
-    while (1)
-    {
-		msvWhiteRad.SetCheck(BST_CHECKED);
-        msvBlackRad.SetCheck (BST_UNCHECKED);
-		msvOtherRad.SetCheck(BST_UNCHECKED);
-        msvGrayscaleSld.EnableWindow (FALSE);
-        msvGrayScaleEdt.EnableWindow (FALSE);
+	SetGrayscale (msvulMaxGrayscale);
 
-        SetGrayscale (msvulMaxGrayscale);
-        break;
-    }
 
-    return msvError.GetLastErrorCd ();
+	return ret;
+
 }
 
 
 unsigned long SVPixelAnalyzerSetupClass::SetOther (long alGrayscale)
 {
-    msvError.ClearLastErrorCd ();
+	unsigned long ret(0);
+	msvWhiteRad.SetCheck(BST_UNCHECKED);
+	msvBlackRad.SetCheck (BST_UNCHECKED);
+	msvOtherRad.SetCheck(BST_CHECKED);
+	msvGrayscaleSld.EnableWindow (TRUE);
+	msvGrayScaleEdt.EnableWindow (TRUE);
 
-    while (1)
-    {
-		msvWhiteRad.SetCheck(BST_UNCHECKED);
-        msvBlackRad.SetCheck (BST_UNCHECKED);
-		msvOtherRad.SetCheck(BST_CHECKED);
-        msvGrayscaleSld.EnableWindow (TRUE);
-        msvGrayScaleEdt.EnableWindow (TRUE);
-        
-        SetGrayscale (alGrayscale);
-        break;
-    }
-
-    return msvError.GetLastErrorCd ();
+	SetGrayscale (alGrayscale);
+	return ret;
 }
 
 
 unsigned long SVPixelAnalyzerSetupClass::SetGrayscale (long alGrayscale)
 {
-	msvError.ClearLastErrorCd ();
-	
+	unsigned long ret(0);
 	msvGrayscaleToCount = alGrayscale;
 	msvGrayscaleSliderValue = -alGrayscale;
-
 	SetInspectionData();
+	return ret;
 	
-	return msvError.GetLastErrorCd ();
 }
 
 
@@ -289,7 +270,7 @@ void SVPixelAnalyzerSetupClass::OnOtherRad()
 {
     BYTE    byGrayscale;
 
-    msvpAnalyzer->m_pixelCountColor.GetValue(byGrayscale);
+    m_pAnalyzer->m_pixelCountColor.GetValue(byGrayscale);
     SetOther (byGrayscale);	
 }
 
@@ -325,27 +306,20 @@ void SVPixelAnalyzerSetupClass::OnCancel()
 void SVPixelAnalyzerSetupClass::OnPixelSetRange() 
 {
 	// TODO: Add your control notification handler code here
-    SVResultClass* pAnalyzerResult;
+	SVResultClass* pAnalyzerResult;
 
-    msvError.ClearLastErrorCd ();
+	pAnalyzerResult = m_pAnalyzer->GetResultObject();
 
-    while (1)
-    {
-        pAnalyzerResult = msvpAnalyzer->GetResultObject();
+	if (nullptr == pAnalyzerResult)
+	{
+		SvStl::MessageMgrDisplayAndNotify  Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16085);
+	} 
+	else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), m_pParent) )
+	{
+		SvStl::MessageMgrDisplayAndNotify  Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16086);;
+	}
 
-        if (!pAnalyzerResult)
-        {
-            msvError.msvlErrorCd = -1121;
-            SV_TRAP_ERROR_BRK (msvError, 1121);
-        }
-
-		if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), msvpParent) )
-        {
-            msvError.msvlErrorCd = -1122;
-            SV_TRAP_ERROR_BRK (msvError, 1122);
-        }
-
-        break;
-    }
 }
 

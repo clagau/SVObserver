@@ -566,9 +566,8 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 				
 				if(!bOk)  
 				{
-					msvError.msvlErrorCd = (DWORD)(-(long)(GetLastError()));
-
-					if ( msvError.msvlErrorCd == -3 )
+					DWORD  ErrorCd =  GetLastError();
+					if ( ErrorCd == ERROR_PATH_NOT_FOUND )
 					{ //should not ever get here since the path is validated above
 						SVStringArray msgList;
 						msgList.push_back(SVString(csImagePath));
@@ -1030,8 +1029,7 @@ void SVArchiveTool::RebuildImageArchiveList()
 	//
 	// Get a pointer to the toolset
 	//
-	SVErrorClass msvError;
-	msvError.ClearLastErrorCd ();
+
 	
 	SVObjectTypeInfoStruct  info;
 

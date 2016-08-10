@@ -249,20 +249,13 @@ protected:
 
 /*- MapQuickSort () ----------------------------------------------------------*/
 /*- This should not be called directly, but through SortBlobs () -------------*/
-#ifndef _DEBUG
+
 	DWORD MapQuickSort (double*    aSortArray, 
 	                    long*      alSortMap,
 	                    long       alBeginning,
 	                    long       alEnd,
 	                    BOOL       abAscending);
-#else
-	DWORD MapQuickSort (double*    aSortArray, 
-	                    long*      alSortMap,
-	                    long       alBeginning,
-	                    long       alEnd,
-	                    BOOL       abAscending,
-	                    std::vector<double>& SVA);
-#endif
+
 
 	virtual void addDefaultInputObjects( BOOL BCallBaseClass = false, SVInputInfoListClass* PInputListToFill = nullptr );
 

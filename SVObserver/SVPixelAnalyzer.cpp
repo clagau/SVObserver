@@ -40,40 +40,38 @@ SVPixelAnalyzerClass::SVPixelAnalyzerClass(BOOL BCreateDefaultTaskList, SVObject
 
 void SVPixelAnalyzerClass::init()
 {
-    while (1)
-    {
-		// Identify our output type
-	    m_outObjectInfo.ObjectTypeInfo.SubType = SVPixelAnalyzerObjectType;
+	// Identify our output type
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVPixelAnalyzerObjectType;
 
-	    // Identify our input type needs
+	// Identify our input type needs
 
-	    // Register Embedded Objects
-		RegisterEmbeddedObject(&m_pixelCount, SVPixelCountObjectGuid, IDS_OBJECTNAME_PIXEL_COUNT, false, SVResetItemNone);
-			
-			RegisterEmbeddedObject(&m_pixelCountColor, SVPixelColorIndexObjectGuid,	IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SVResetItemNone);
-			
-	    // Set Embedded defaults
-	    m_pixelCountColor. SetDefaultValue( 255, true ); // White
-	    m_pixelCount. SetDefaultValue( 0, true );
+	// Register Embedded Objects
+	RegisterEmbeddedObject(&m_pixelCount, SVPixelCountObjectGuid, IDS_OBJECTNAME_PIXEL_COUNT, false, SVResetItemNone);
 
-	    // Set default inputs and outputs
-	    addDefaultInputObjects();
-	    
-	    // Instantiate Children
-        SVLongResultClass *pAnalyzerResult = new SVLongResultClass (true, this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
+	RegisterEmbeddedObject(&m_pixelCountColor, SVPixelColorIndexObjectGuid,	IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SVResetItemNone);
 
-	    if (!pAnalyzerResult)
-	    {
-            msvError.msvlErrorCd = -1082;
-            SV_TRAP_ERROR (msvError, 1082);
-	    }
+	// Set Embedded defaults
+	m_pixelCountColor. SetDefaultValue( 255, true ); // White
+	m_pixelCount. SetDefaultValue( 0, true );
 
-        Add( pAnalyzerResult );
+	// Set default inputs and outputs
+	addDefaultInputObjects();
 
-	    // set defaults
-        m_alHistValues.clear();
-        break;
-    }
+	// Instantiate Children
+	SVLongResultClass *pAnalyzerResult = new SVLongResultClass (true, this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
+
+	if (!pAnalyzerResult)
+	{
+		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16187);
+
+	}
+
+	Add( pAnalyzerResult );
+
+	// set defaults
+	m_alHistValues.clear();
+
 }
 
 SVPixelAnalyzerClass::~SVPixelAnalyzerClass()
@@ -95,30 +93,41 @@ BOOL SVPixelAnalyzerClass::CloseObject()
 
 BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-    SVImageClass *pSVImage;
-	
-    msvError.ClearLastErrorCd ();
-	
+    SVImageClass *pSVImage(nullptr);
+	DWORD LastError(0);
+    	
     while (1)
     {
         if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
         {
-			msvError.msvlErrorCd = -1084;
-			SV_TRAP_ERROR_BRK (msvError, 1084);
+			
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16121);
+			LastError =  -SvOi::Err_16121;
+			break;
         }
 		
         pSVImage = getInputImage ();
 		
         if (!pSVImage)
         {
-			msvError.msvlErrorCd = -1085;
-			SV_TRAP_ERROR_BRK (msvError, 1085);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16122);
+			LastError =  -SvOi::Err_16122;
+			break;
         }
-		
-        m_svlHistValueArraySize = 1 << (GetInputPixelDepth () & SVBufferSize);
-		
-        m_alHistValues.resize( m_svlHistValueArraySize );
-		
+		try
+		{
+			m_svlHistValueArraySize = 1 << (GetInputPixelDepth () & SVBufferSize);
+			m_alHistValues.resize( m_svlHistValueArraySize );
+		}
+		catch(const SvStl::MessageContainer& rContain)
+		{
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( rContain.getMessage());
+			LastError =  -SvOi::Err_16123;
+			break;
+		}
         for( int i = 0; i < m_svlHistValueArraySize; i++ )
 		{
 			m_alHistValues [i] = 0L;
@@ -136,13 +145,15 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 		
 		if( m_histResultID.empty() )
 		{
-			msvError.msvlErrorCd = -1087;
-			SV_TRAP_ERROR_BRK (msvError, 1087);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16124);
+			LastError =  -SvOi::Err_16124;
+			break;
         }
         break;
     }
 	
-    if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
+    if (0 != LastError)
     {
         m_isCreated = false;
     }
@@ -160,9 +171,9 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 {
     SVImageClass* pInputImage (nullptr);
-    BYTE byIndex;
-
-    msvError.ClearLastErrorCd ();
+    BYTE byIndex(0);
+	DWORD LastError(0);
+   
 
     while (1)
     {
@@ -174,14 +185,18 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 
         if( ! pInputImage )
         {
-            msvError.msvlErrorCd = -1089;
-            SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1089)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16188);
+			LastError = SvOi::Err_16188;
+			break;
         }
 
         if ( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
         {
-            msvError.msvlErrorCd = -1089;
-            SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1089)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16189);
+			LastError = SvOi::Err_16189;
+			break;
         }
 
 		SVImageBufferHandleImage l_MilHandle;
@@ -191,17 +206,20 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 
 		if( l_Code != SVMEE_STATUS_OK )
         {
-			//          35 = Invalid MIL ID, for others see milerr.h
-            msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-            SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1090)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16190);
+			LastError = SvOi::Err_16190;
+			break;
         }
 		
 		l_Code = SVMatroxImageInterface::GetResult( m_histResultID, m_alHistValues );
 		
 		if( l_Code != SVMEE_STATUS_OK )
         {
-            msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
-            SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1091)
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16191);
+			LastError = SvOi::Err_16191;
+			break;
         }
 		
 		m_pixelCountColor.GetValue (byIndex);
@@ -210,7 +228,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
         break;
     }
 	
-    if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
+    if (0 != LastError)
     {
 		SetInvalid ();            
 		RRunStatus.SetInvalid ();
@@ -222,9 +240,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 
 BOOL SVPixelAnalyzerClass::OnValidate ()
 {
-	msvError.ClearLastErrorCd ();
-	msvError.msvlErrorCd = 0x00000000;
-
+	DWORD LastError(0);
 	while (1)
 	{
 		if (!SVImageAnalyzerClass::OnValidate ())
@@ -234,21 +250,26 @@ BOOL SVPixelAnalyzerClass::OnValidate ()
 
 		if ( m_histResultID.empty() )
 		{
-			msvError.msvlErrorCd = -1093;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1093);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16197);
+			LastError = -SvOi::Err_16197;
+			break;
+		
 		}
 
 		if ( m_alHistValues.size() != m_svlHistValueArraySize)
 		{
-			msvError.msvlErrorCd = -1094;
-			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1094);
+			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16198);
+			LastError = -SvOi::Err_16198;
+			break;
 		}
 		break;
 	}
 
-	if( (msvError.GetLastErrorCd () & SV_ERROR_CONDITION) ||
-		(msvError.msvlErrorCd       & SV_ERROR_CONDITION) )
+	if (0 != LastError)
 	{
+
 		SetInvalid();
 		return false;
 	}
