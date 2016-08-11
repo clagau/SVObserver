@@ -965,7 +965,7 @@ DWORD SVBlobAnalyzerClass::DisableFeature (SVBlobFeatureEnum aIndex)
 BOOL SVBlobAnalyzerClass::OnValidate()
 {
 	
-	if(SVImageAnalyzerClass::OnValidate ())
+	if(!SVImageAnalyzerClass::OnValidate ())
 	{
 			SetInvalid ();
 			return FALSE;
