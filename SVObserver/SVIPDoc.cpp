@@ -1526,7 +1526,7 @@ void SVIPDoc::OnResultsPicker()
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_VIEWABLE );
+			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_VIEWABLE, GUID_NULL, true );
 			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 			
 			const SVObjectReferenceVector& rSelectedObjects( pResultList->GetSelectedObjects() );

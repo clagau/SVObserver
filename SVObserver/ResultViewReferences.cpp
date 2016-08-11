@@ -224,22 +224,31 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 			}
 			else
 			{
-				HRESULT hr = voref.GetValue( csValue );
-				if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+				if (!voref.IsEntireArray())
 				{
-					csValue = _T("< ") + csValue + _T(" >");
+					HRESULT hr = voref.GetValue( csValue );
+					if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+					{
+						csValue = _T("< ") + csValue + _T(" >");
+					}
+					else if ( S_OK != hr )
+					{
+						csValue = _T( "<Not Valid>" );
+					}
 				}
-				else if ( S_OK != hr )
+				else
 				{
-					csValue = _T( "<Not Valid>" );
+					HRESULT hr = voref.GetValues( csValue );
+					if ( S_OK != hr )
+					{
+						csValue = _T( "<Not Valid>" );
+					}
 				}
 			}
 		}
 		else  if(nullptr != (bvo = dynamic_cast<BasicValueObject*>(it->Object()))) 
 		{
-
 			Color = SV_DEFAULT_WHITE_COLOR;
-
 
 			SVString value;
 			HRESULT hr = bvo->getValue(value);
@@ -252,7 +261,6 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 			{
 				csValue = value.c_str();
 			}
-
 		}
 		p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( static_cast< LPCTSTR >( csValue ), Color );
 

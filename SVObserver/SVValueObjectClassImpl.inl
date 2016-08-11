@@ -499,6 +499,27 @@ HRESULT SVValueObjectClassImpl<T>::GetArrayValues(int iBucket, DoubleVectorType&
 }
 
 template <typename T>
+HRESULT SVValueObjectClassImpl<T>::GetArrayValues(int iBucket, CString& rValues) const
+{
+	HRESULT hrOk = S_FALSE;
+	rValues = _T("");
+	if ( iBucket >= 0 && iBucket < m_iNumberOfBuckets && 0 < GetResultSize(iBucket) )
+	{
+		hrOk = S_OK;
+
+		GetValue( iBucket, 0, rValues );
+		int resultSize = GetResultSize(iBucket);
+		for( int i = 1; i < resultSize; ++i )
+		{
+			CString valueString;
+			GetValue( iBucket, i, valueString );
+			rValues += _T(" ; ")+valueString;
+		}
+	}
+	return hrOk;
+}
+
+template <typename T>
 HRESULT SVValueObjectClassImpl<T>::GetArrayValuesAsVariant( int iBucket, VARIANT& rValue ) const
 {
 	HRESULT hrOk = S_FALSE;

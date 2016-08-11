@@ -158,7 +158,14 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 			{
 				if( l_rDef.GetIndexPresent())
 				{
-					l_Name.Format( "%s[%d]", l_pObject->GetName(),  l_rDef.GetIndex() +1 );
+					if (0 <= l_rDef.GetIndex())
+					{
+						l_Name.Format( "%s[%d]", l_pObject->GetName(),  l_rDef.GetIndex() +1 );
+					}
+					else
+					{
+						l_Name.Format( "%s[]", l_pObject->GetName() );
+					}
 				}
 				else
 				{

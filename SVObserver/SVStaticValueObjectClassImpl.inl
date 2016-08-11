@@ -452,6 +452,27 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValues(int iBucket, DoubleVecto
 }
 
 template <typename T>
+HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValues(int iBucket, CString& rValues) const
+{
+	HRESULT hrOk = S_FALSE;
+	rValues = _T("");
+	if ( 0 < GetResultSize(0) )
+	{
+		hrOk = S_OK;
+
+		GetValue( 1, 0, rValues );
+		int resultSize = GetResultSize(0);
+		for( int i = 1; i < resultSize; ++i )
+		{
+			CString valueString;
+			GetValue( 1, i, valueString );
+			rValues += _T(" ; ")+valueString;
+		}
+	}
+	return hrOk;
+}
+
+template <typename T>
 HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValuesAsVariant( int iBucket, VARIANT& rValue ) const
 {
 	HRESULT hrOk = S_FALSE;

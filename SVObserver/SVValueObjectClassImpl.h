@@ -116,8 +116,9 @@ protected:
 	typedef typename UseTypeExceptMatch<std::vector<double>, std::vector<T> >::type DoubleVectorType;
 	typedef typename UseTypeExceptMatch<double, T>::type DoubleType;
 	virtual HRESULT GetArrayValues(int iBucket, DoubleVectorType& raValues) const;	// allow copy to vector<double>
-	virtual HRESULT GetArrayValuesAsVariant( int iBucket, VARIANT& rValue ) const;	// allow copy to VARIANT SAFEARRAY
-	virtual HRESULT GetArrayValuesAsVariantVector(int iBucket, std::vector<_variant_t>& raValues) const;	// allow copy to vector<_variant_t>
+	virtual HRESULT GetArrayValues(int iBucket, CString& raValues) const override;
+	virtual HRESULT GetArrayValuesAsVariant( int iBucket, VARIANT& rValue ) const override;	// allow copy to VARIANT SAFEARRAY
+	virtual HRESULT GetArrayValuesAsVariantVector(int iBucket, std::vector<_variant_t>& raValues) const override;	// allow copy to vector<_variant_t>
 
 	// implements copying the specified array to a vector of any implicitly convertible type
 	template <typename ELEMENT_TYPE>

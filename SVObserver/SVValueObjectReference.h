@@ -57,6 +57,14 @@ public:
 		return (static_cast<SVValueObjectClass*>(m_pObject))->GetValues(rValue);
 	}
 
+	/// Return the value array as string semicolon-separated.
+	/// \param rValue [out] The return value.
+	/// \returns HRESULT
+	HRESULT GetValues(CString& rValue) const
+	{
+		return (static_cast<SVValueObjectClass*>(m_pObject))->GetValues(rValue);
+	}
+
 	template<typename T, typename Iter>
 	__forceinline HRESULT SetArrayValues(int iBucket, Iter begin, Iter end)
 	{

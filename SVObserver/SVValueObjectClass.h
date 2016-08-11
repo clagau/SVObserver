@@ -107,6 +107,10 @@ public:
 	HRESULT GetValue( int iBucket, int iIndex, CString& rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
 	HRESULT GetValue( int iBucket, int iIndex, VARIANT& rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
 
+	/// Get the value array of the last used bucket as string (semicolon-separated).
+	/// \param rValue [out] The return string.
+	/// \returns HRESULT
+	HRESULT GetValues( CString&  rValue ) const  { return GetArrayValues(m_iLastSetIndex, rValue); }
 	HRESULT GetValues( VARIANT& rValue ) const  { return GetArrayValuesAsVariant(m_iLastSetIndex, rValue); }
 	HRESULT GetValues( std::vector< _variant_t >&  rValue ) const  { return GetArrayValuesAsVariantVector(m_iLastSetIndex, rValue); }
 
@@ -143,6 +147,11 @@ protected:
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const = 0;//  { ASSERT(0); return S_FALSE; }
 
 	virtual HRESULT GetArrayValues( int iBucket, std::vector< double >&  rValue ) const = 0;//  { ASSERT(0); return S_FALSE; }
+	/// Get the value array as string (semicolon-separated).
+	/// \param iBucket [in] The bucket of the value.
+	/// \param rValue [out] The return string.
+	/// \returns HRESULT
+	virtual HRESULT GetArrayValues( int iBucket, CString& rValue ) const = 0;
 	virtual HRESULT GetArrayValuesAsVariant( int iBucket, VARIANT&  rValue ) const = 0;//  { ASSERT(0); return S_FALSE; }
 	virtual HRESULT GetArrayValuesAsVariantVector( int iBucket, std::vector< _variant_t >&  rValue ) const = 0;//  { ASSERT(0); return S_FALSE; }
 
