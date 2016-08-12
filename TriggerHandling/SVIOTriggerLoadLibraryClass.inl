@@ -171,25 +171,25 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetName( unsigned long p_ulHandle, B
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long p_ulHandle, SvTh::SVCallbackStruct &p_rCallback )
+inline HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long p_ulHandle, const TriggerCallbackInformation &rTriggerCallbackInfo )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvRegister )
 	{
-		l_hrOk = m_psvRegister( p_ulHandle, p_rCallback.m_pCallback, p_rCallback.m_pOwner, p_rCallback.m_pData );
+		l_hrOk = m_psvRegister( p_ulHandle, rTriggerCallbackInfo);
 	}
 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long p_ulHandle, SvTh::SVCallbackStruct &p_rCallback )
+inline HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long p_ulHandle, const TriggerCallbackInformation &rTriggerCallbackInfo )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvUnregister )
 	{
-		l_hrOk = m_psvUnregister( p_ulHandle, p_rCallback.m_pCallback, p_rCallback.m_pOwner, p_rCallback.m_pData );
+		l_hrOk = m_psvUnregister( p_ulHandle, rTriggerCallbackInfo);
 	}
 
 	return l_hrOk;

@@ -13,31 +13,16 @@
 
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <vector>
 #include "SVTimerLibrary/SVTimerCallbackImpl.h"
-#include "SVTriggerLibrary/SVTriggerCallbackStruct.h"
+#include "TriggerHandling/IODeviceBase.h"
 #include "SVContainerLibrary/SVBidirectionalMap.h"
-#include "SVSystemLibrary\/SVCriticalSection.h"
+#include "SVSystemLibrary/SVCriticalSection.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////
-struct SVSoftwareTriggerStruct
-{
-	SVTriggerCallbackStruct callbackStruct;
-	bool bStarted;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-///////////////////////////////////////////////////////////////////////
-typedef std::deque<SVSoftwareTriggerStruct> TriggerCallbackList;
-typedef std::map<HANDLE, TriggerCallbackList> TriggerList;
-
-///////////////////////////////////////////////////////////////////////
-//
-///////////////////////////////////////////////////////////////////////
-class SVSoftwareTriggerDevice
+class SVSoftwareTriggerDevice : public SvTh::IODeviceBase
 {
 	///////////////////////////////////////////////////////////////////////
 	//
@@ -47,7 +32,7 @@ class SVSoftwareTriggerDevice
 		long timerPeriod;
 		SVTimerCallbackImpl<SVSoftwareTriggerDevice, void> timerCallback;
 	};
-	typedef std::map<HANDLE, SVSoftwareTimerStruct> TimerList;
+	typedef std::map<unsigned long, SVSoftwareTimerStruct> TimerList;
 
 	enum ParameterEnum
 	{
@@ -56,10 +41,9 @@ class SVSoftwareTriggerDevice
 	};
 
 protected:
-	typedef SVBidirectionalMap<SVString, HANDLE>::type NameHandleList;
+	typedef SVBidirectionalMap<SVString, unsigned long>::type NameHandleList;
 	NameHandleList m_nameHandleList;
 	TimerList m_timerList;
-	TriggerList m_triggerList;
 	int m_numTriggers;
 
 public:
@@ -69,27 +53,31 @@ public:
 	HRESULT Initialize(bool bInit);
 
 	unsigned long GetTriggerCount();
-	HANDLE GetTriggerHandle(unsigned long index);
-	BSTR GetTriggerName(HANDLE handle);
-	HRESULT AddTriggerCallback(HANDLE handle, SVTriggerCallbackPtr pCallback, void* pOwner, void* pData);
-	HRESULT RemoveTriggerCallback(HANDLE handle, SVTriggerCallbackPtr pCallback);
-	HRESULT RemoveAllTriggerCallbacks(HANDLE handle);
-	HRESULT StartTrigger(HANDLE handle);
-	HRESULT StopTrigger(HANDLE handle);
+	unsigned long GetTriggerHandle(unsigned long index);
+	BSTR GetTriggerName(unsigned long handle);
 
-	HRESULT TriggerGetParameterCount( HANDLE p_ulHandle, unsigned long *p_pulCount );
-	HRESULT TriggerGetParameterName( HANDLE p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName );
-	HRESULT TriggerGetParameterValue( HANDLE p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	HRESULT TriggerSetParameterValue( HANDLE p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT TriggerGetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount );
+	HRESULT TriggerGetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName );
+	HRESULT TriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT TriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+
+protected:
+	void lockIfRequired() override {m_CritSec.Lock();}
+	void unlockIfRequired() override {m_CritSec.Unlock();}
+	void beforeStartTrigger(unsigned long handle) override {SetTimerCallback(handle);	m_CritSec.Lock();}
+	HRESULT afterStartTrigger(HRESULT hr) override {m_CritSec.Unlock();return hr;}
+	virtual void beforeStopTrigger(unsigned long handle) override {RemoveTimerCallback(handle);m_CritSec.Lock();}
+	HRESULT afterStopTrigger(HRESULT hr) override {m_CritSec.Unlock();return hr;}
+
 
 private:
-	HRESULT GetTriggerPeriod( HANDLE handle, long* p_lPeriod ) const;
-	HRESULT SetTriggerPeriod( HANDLE handle, long p_lPeriod );
+	HRESULT GetTriggerPeriod( unsigned long handle, long* p_lPeriod ) const;
+	HRESULT SetTriggerPeriod( unsigned long handle, long p_lPeriod );
 
-	HRESULT SetTimerCallback(HANDLE handle);
-	HRESULT RemoveTimerCallback(HANDLE handle);
+	HRESULT SetTimerCallback(unsigned long handle);
+	HRESULT RemoveTimerCallback(unsigned long handle);
 	void OnSoftwareTimer(const SVString& tag);
-	static void DispatchTrigger(const SVSoftwareTriggerStruct& triggerListener);
+	static void DispatchTrigger(const SvTh::TriggerCallbackInformation& triggerListenerInfo);
 	SVCriticalSection m_CritSec;
 };
 

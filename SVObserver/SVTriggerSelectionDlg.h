@@ -39,7 +39,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	SVTriggerNameIdList m_triggerList;
+	SVTriggerNameIdList m_triggerCallbackMap;
 	CListBox m_selectionListBox;
 	CString m_selectedTriggerName;
 	int m_selectedTriggerID;

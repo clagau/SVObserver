@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVTriggerDeviceParams
-//* .File Name       : $Workfile:   TriggerHandling/SVTriggerDeviceParams.h  $
+//* .File Name       : $Workfile:   SVTriggerDeviceParams.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   24 Apr 2013 12:28:54  $

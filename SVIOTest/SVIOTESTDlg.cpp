@@ -18,9 +18,8 @@
 #include "SVTriggerSetupDlgClass.h"
 #include "SVSoftwareTriggerSetupDlg.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "TriggerHandling/SVCallbackStruct.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -427,11 +426,11 @@ void CSVIOTESTDlg::OnButton1()
 
 // TURN ON ALL OUPUTS
 	unsigned long numOutputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 	
 	for( DWORD dwChan = 0 ; dwChan < numOutputs; dwChan++)
 	{
-		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, false );
+		SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, false );
 	}
 }
 
@@ -441,10 +440,10 @@ void CSVIOTESTDlg::OnButton2()
 
 // TURN OFF ALL OUPUTS
 	unsigned long numOutputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 	for( DWORD dwChan = 0 ; dwChan < numOutputs ; dwChan++)
 	{
-		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, true );
+		SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, true );
 	}
 }
 
@@ -459,10 +458,10 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 
 	// Update Digital Input status Indicators
 	unsigned long numInputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(numInputs);
+	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(numInputs);
 	for (DWORD dwChan = 0 ; dwChan < numInputs ; dwChan++)
 	{
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputValue(dwChan, bValue);
+		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputValue(dwChan, bValue);
 		switch (dwChan)
 		{
 			case 0:
@@ -511,14 +510,14 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 	{
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue);
-		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState, &l_vValue) )
+		if( S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState, &l_vValue) )
 		{
 			m_Fan1.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 1 ) ? IDI_ICON4 : IDI_ICON3 ));
 			m_Fan2.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 2 ) ? IDI_ICON4 : IDI_ICON3 ));
 			m_Fan3.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 4 ) ? IDI_ICON4 : IDI_ICON3 ));
 			m_Fan4.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 8 ) ? IDI_ICON4 : IDI_ICON3 ));
 		}
-		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
+		if( S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
 		{
 			m_lFanFreq1 = l_vValue.lVal & 0xff;
 			m_lFanFreq2 = (l_vValue.lVal >> 8) & 0xff;
@@ -530,7 +529,7 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 
 	// Sequence Outputs 0 - 7 and 8 - 15 
 	unsigned long numOutputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 
 	if (nSeq != 0)
 	{
@@ -546,12 +545,12 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 		if (nCounter >= nCount)
 		{
 			// Outputs 0 - 7  
-			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 , true);
-			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount, false);
+			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 , true);
+			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount, false);
 			
 			// Outputs 8 - 15 (actually numOutputs now)
-			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 + 8, true);
-			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount + (numOutputs - 8) , false);
+			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 + 8, true);
+			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount + (numOutputs - 8) , false);
 
 			if (7 == nSeqCount)
 			{
@@ -738,10 +737,10 @@ void CSVIOTESTDlg::OnSequence()
 	nSeq = ~nSeq;
 	// TURN OFF ALL OUPUTS
 	unsigned long numOutputs;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 	for(DWORD dwChan = 0 ; dwChan < numOutputs ; dwChan++)
 	{
-		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(dwChan, true);
+		SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(dwChan, true);
 	}
 }
 
@@ -769,16 +768,16 @@ void CSVIOTESTDlg::OnDestroy()
 
 void CSVIOTESTDlg::OnTestOutputs() 
 {
-	SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
+	SvTh::SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
 }
 
-HRESULT CALLBACK SVCallback( void *pOwner, void *pData )
+HRESULT CALLBACK SVCallback( SvTh::TriggerParameters triggerparams)
 {
 	SVClock::SVTimeStamp l_TimeStamp = SVClock::GetTimeStamp();
 
-	if ( nullptr != pData )
+	if ( nullptr != triggerparams.m_pData )
 	{
-		SVIOTriggerDataStruct *l_pData = (SVIOTriggerDataStruct *)pData;
+		SVIOTriggerDataStruct *l_pData = (SVIOTriggerDataStruct *)(triggerparams.m_pData);
 
 		(l_pData->lTriggerCount)++;
 
@@ -826,12 +825,11 @@ void CSVIOTESTDlg::OnStartTriggers()
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
-	SvTh::SVCallbackStruct l_svCallback;
+	SvTh::TriggerCallbackInformation TriggerCallbackInfo;
 
-	l_svCallback.m_pCallback = SVCallback;
-	l_svCallback.m_pOwner = this;
+	TriggerCallbackInfo.m_pCallback = SVCallback;
 
-	l_svCallback.m_pData = &m_svTrigger1Data;
+	TriggerCallbackInfo.m_TriggerParameters = SvTh::TriggerParameters(this, &m_svTrigger1Data);
 
 	m_svTrigger1Data.ulLastIndex = 0;
 	m_svTrigger1Data.ulIndex = 0;
@@ -850,10 +848,10 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 	if (numTriggers > 0)
 	{
-		m_psvTriggers->Register( 1, l_svCallback );
+		m_psvTriggers->Register( 1, TriggerCallbackInfo );
 	}
 
-	l_svCallback.m_pData = &m_svTrigger2Data;
+	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger2Data;
 
 	m_svTrigger2Data.ulLastIndex = 0;
 	m_svTrigger2Data.ulIndex = 0;
@@ -872,9 +870,9 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 	if (numTriggers > 1)
 	{
-		m_psvTriggers->Register( 2, l_svCallback );
+		m_psvTriggers->Register( 2, TriggerCallbackInfo );
 	}
-	l_svCallback.m_pData = &m_svTrigger3Data;
+	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger3Data;
 
 	m_svTrigger3Data.ulLastIndex = 0;
 	m_svTrigger3Data.ulIndex = 0;
@@ -893,9 +891,9 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 	if (numTriggers > 2)
 	{
-		m_psvTriggers->Register( 3, l_svCallback );
+		m_psvTriggers->Register( 3, TriggerCallbackInfo );
 	}
-	l_svCallback.m_pData = &m_svTrigger4Data;
+	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger4Data;
 
 	m_svTrigger4Data.ulLastIndex = 0;
 	m_svTrigger4Data.ulIndex = 0;
@@ -914,7 +912,7 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 	if (numTriggers > 3)
 	{
-		m_psvTriggers->Register( 4, l_svCallback );
+		m_psvTriggers->Register( 4, TriggerCallbackInfo );
 	}
 	if (numTriggers > 0)
 	{
@@ -941,7 +939,7 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 void CSVIOTESTDlg::OnStopTriggers() 
 {
-	SvTh::SVCallbackStruct l_svCallback;
+	SvTh::TriggerCallbackInformation TriggerCallbackInfo;
 
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
@@ -966,33 +964,33 @@ void CSVIOTESTDlg::OnStopTriggers()
 		m_psvTriggers->Stop( 1 );
 	}
 
-	l_svCallback.m_pCallback = SVCallback;
-	l_svCallback.m_pOwner = this;
+	TriggerCallbackInfo.m_pCallback = SVCallback;
+	TriggerCallbackInfo.m_TriggerParameters.m_pOwner = this;
 
-	l_svCallback.m_pData = &m_svTrigger4Data;
+	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger4Data;
 
 	if (numTriggers > 3)
 	{
-		m_psvTriggers->Unregister( 4, l_svCallback );
+		m_psvTriggers->Unregister( 4, TriggerCallbackInfo );
 	}
-	l_svCallback.m_pData = &m_svTrigger3Data;
+	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger3Data;
 
 	if (numTriggers > 2)
 	{
-		m_psvTriggers->Unregister( 3, l_svCallback );
+		m_psvTriggers->Unregister( 3, TriggerCallbackInfo );
 	}
 
-	l_svCallback.m_pData = &m_svTrigger2Data;
+	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger2Data;
 
 	if (numTriggers > 1)
 	{
-		m_psvTriggers->Unregister( 2, l_svCallback );
+		m_psvTriggers->Unregister( 2, TriggerCallbackInfo );
 	}
-	l_svCallback.m_pData = &m_svTrigger1Data;
+	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger1Data;
 
 	if (numTriggers > 1)
 	{
-		m_psvTriggers->Unregister( 1, l_svCallback );
+		m_psvTriggers->Unregister( 1, TriggerCallbackInfo );
 	}
 	m_bInterruptEnabled = false;
 
@@ -1029,7 +1027,7 @@ DWORD WINAPI SVWorkerThreadFunc( LPVOID lpParam )
 			if( i != l_pOwner->m_lStaticChannel )
 			{
 				l_bState = ((l_dwAccum & (1 << i)) != 0);
-				if( S_OK != SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( i, l_bState ) )
+				if( S_OK != SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( i, l_bState ) )
 				{
 					AfxMessageBox("Bad Return Code");
 				}
@@ -1046,7 +1044,7 @@ void CSVIOTESTDlg::OnStartTest()
 
 	if( m_lStaticChannel >= 0 && m_lStaticChannel < 16 )
 	{
-		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
+		SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
 	}
 
 	if( !m_bThreadRunning )
@@ -1077,7 +1075,7 @@ void CSVIOTESTDlg::OnChangeStaticChannel()
 	{
 		if( m_lStaticChannel >= 0 && m_lStaticChannel < 16 )
 		{
-			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
+			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
 		}
 		else
 		{
@@ -1284,7 +1282,7 @@ void CSVIOTESTDlg::OnSelchangeBoardModelCombo()
 			break;
 		}
 	}
-	if( S_OK != SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt ) )
+	if( S_OK != SvTh::SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt ) )
 	{
 		AfxMessageBox(" Error Setting System Type");
 	}

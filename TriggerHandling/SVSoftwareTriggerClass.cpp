@@ -11,8 +11,8 @@
 
 #include "stdafx.h"
 #include "SVSoftwareTriggerClass.h"
-#include "SVCallbackStruct.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "TriggerBasics.h"
+#include "SVIOTriggerLoadLibraryClass.h"
 
 namespace Seidenader { namespace TriggerHandling {
 
@@ -25,15 +25,15 @@ namespace Seidenader { namespace TriggerHandling {
 	{
 	}
 
-	HRESULT CALLBACK SVSoftwareTriggerClass::TriggerCallback( void *p_pvOwner, void *p_pvData )
+	HRESULT CALLBACK SVSoftwareTriggerClass::TriggerCallback(TriggerParameters triggerparams)
 	{
 		HRESULT hrOk = S_OK;
 
-		if ( p_pvOwner )
+		if ( nullptr != triggerparams.m_pOwner )
 		{
 			try
 			{
-				SVSoftwareTriggerClass* pDevice = (SVSoftwareTriggerClass *)p_pvOwner;
+				SVSoftwareTriggerClass* pDevice = (SVSoftwareTriggerClass *)(triggerparams.m_pOwner);
 				hrOk = pDevice->FireAcquisitionTrigger();
 			}
 			catch ( ... )
@@ -43,15 +43,15 @@ namespace Seidenader { namespace TriggerHandling {
 		return hrOk;
 	}
 
-	HRESULT CALLBACK SVSoftwareTriggerClass::TriggerCompleteCallback( void *p_pvOwner, void *p_pvData )
+	HRESULT CALLBACK SVSoftwareTriggerClass::TriggerCompleteCallback(TriggerParameters triggerparams)
 	{
 		HRESULT hrOk = S_OK;
 
-		if ( p_pvOwner )
+		if ( nullptr != triggerparams.m_pOwner )
 		{
 			try
 			{
-				SVSoftwareTriggerClass* pDevice = (SVSoftwareTriggerClass *)p_pvOwner;
+				SVSoftwareTriggerClass* pDevice = (SVSoftwareTriggerClass *)(triggerparams.m_pOwner);
 
 				SVOResponseClass l_Response;
 
@@ -76,15 +76,13 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			SVCallbackStruct localCallback;
+			TriggerCallbackInformation localCallback;
 			localCallback.m_pCallback = SVSoftwareTriggerClass::TriggerCallback;
-			localCallback.m_pOwner = this;
-			localCallback.m_pData = pvOwner;
+			localCallback.m_TriggerParameters = TriggerParameters(this, pvOwner);
 
-			SVCallbackStruct l_Callback;
-			l_Callback.m_pCallback = SVSoftwareTriggerClass::TriggerCompleteCallback;
-			l_Callback.m_pOwner = this;
-			l_Callback.m_pData = pvOwner;
+			TriggerCallbackInformation triggerCallbackInfo;
+			triggerCallbackInfo.m_pCallback = SVSoftwareTriggerClass::TriggerCompleteCallback;
+			triggerCallbackInfo.m_TriggerParameters = TriggerParameters(this, pvOwner);
 
 			if ( S_OK == l_hrOk )
 			{
@@ -93,13 +91,13 @@ namespace Seidenader { namespace TriggerHandling {
 
 			if ( S_OK == l_hrOk )
 			{
-				l_hrOk = m_acquisitionInitiator.RegisterCallback( l_Callback );
+				l_hrOk = m_acquisitionInitiator.RegisterCallback( triggerCallbackInfo );
 			}
 
 			if ( S_OK != l_hrOk )
 			{
 				m_pDLLTrigger->Unregister( m_ulHandle, localCallback );
-				m_acquisitionInitiator.UnRegisterCallback(l_Callback);
+				m_acquisitionInitiator.UnRegisterCallback(triggerCallbackInfo);
 			}
 		}
 		else
@@ -121,22 +119,20 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			SVCallbackStruct localCallback;
+			TriggerCallbackInformation localCallback;
 
 			localCallback.m_pCallback = SVSoftwareTriggerClass::TriggerCallback;
-			localCallback.m_pOwner = this;
-			localCallback.m_pData = pvOwner;
+			localCallback.m_TriggerParameters = TriggerParameters(this, pvOwner);
 
-			SVCallbackStruct l_Callback;
-			l_Callback.m_pCallback = SVSoftwareTriggerClass::TriggerCompleteCallback;
-			l_Callback.m_pOwner = this;
-			l_Callback.m_pData = pvOwner;
+			TriggerCallbackInformation triggerCallbackInfo;
+			triggerCallbackInfo.m_pCallback = SVSoftwareTriggerClass::TriggerCompleteCallback;
+			localCallback.m_TriggerParameters = TriggerParameters(this, pvOwner);
 
 			if ( S_OK != m_pDLLTrigger->Unregister( m_ulHandle, localCallback ) )
 			{
 				l_hrOk = S_FALSE;
 			}
-			m_acquisitionInitiator.UnRegisterCallback(l_Callback);
+			m_acquisitionInitiator.UnRegisterCallback(triggerCallbackInfo);
 		}
 		else
 		{

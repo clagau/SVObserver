@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVAcquisitionConstructParams
-//* .File Name       : $Workfile:   TriggerHandling/SVAcquisitionConstructParams.h  $
+//* .File Name       : $Workfile:   SVAcquisitionConstructParams.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:23:50  $
@@ -17,35 +17,42 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-struct SVAcquisitionConstructParams
-{
-	SVAcquisitionConstructParams();
-	SVAcquisitionConstructParams( const SVAcquisitionConstructParams& p_rObject );
-	SVAcquisitionConstructParams( LPCTSTR p_szDeviceName, LPCTSTR p_szDigitizerName,
-		int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize,
-		const SVLutInfo& p_rLUTInfo, int p_LRBandSize, int p_LRConstrast, int p_LRBrightness );
-	SVAcquisitionConstructParams( LPCTSTR p_szDeviceName, LPCTSTR p_szDigitizerName,
-		int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize );
 
-	virtual ~SVAcquisitionConstructParams();
+namespace Seidenader { namespace TriggerHandling {
 
-	const SVAcquisitionConstructParams& operator=( const SVAcquisitionConstructParams& p_rObject );
+	struct SVAcquisitionConstructParams
+	{
+		SVAcquisitionConstructParams();
+		SVAcquisitionConstructParams( const SVAcquisitionConstructParams& p_rObject );
+		SVAcquisitionConstructParams( LPCTSTR p_szDeviceName, LPCTSTR p_szDigitizerName,
+			int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize,
+			const SVLutInfo& p_rLUTInfo, int p_LRBandSize, int p_LRConstrast, int p_LRBrightness );
+		SVAcquisitionConstructParams( LPCTSTR p_szDeviceName, LPCTSTR p_szDigitizerName,
+			int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize );
 
-	SVString m_DeviceName;
-	SVString m_DigitizerName;
+		virtual ~SVAcquisitionConstructParams();
 
-	int m_Channel;
-	int m_DigNumber;
-	int m_BandSize;
-	int m_BandMaxSize;
+		const SVAcquisitionConstructParams& operator=( const SVAcquisitionConstructParams& p_rObject );
 
-	bool m_LUTAndLRSet;
+		SVString m_DeviceName;
+		SVString m_DigitizerName;
 
-	SVLutInfo m_LUTInfo;
+		int m_Channel;
+		int m_DigNumber;
+		int m_BandSize;
+		int m_BandMaxSize;
 
-	int m_LRBandSize;
-	int m_LRConstrast;
-	int m_LRBrightness;
-};
+		bool m_LUTAndLRSet;
 
-typedef std::vector< SVAcquisitionConstructParams > SVAcquisitionConstructParamsVector;
+		SVLutInfo m_LUTInfo;
+
+		int m_LRBandSize;
+		int m_LRConstrast;
+		int m_LRBrightness;
+	};
+
+	typedef std::vector< SVAcquisitionConstructParams > SVAcquisitionConstructParamsVector;
+
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;

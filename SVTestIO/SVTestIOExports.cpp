@@ -10,9 +10,8 @@
 // ******************************************************************************
 
 #include "StdAfx.h"
-#include "SVTestIOExports.h"
 #include "SVTestIO.h"
-#include "SVTestIOCallback.h"
+#include "SVTestIOExports.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 extern CSVTestIOApp theApp;
 
@@ -242,29 +241,29 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVTestIOCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( nullptr != p_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
+	if ( nullptr != triggerCallbackInfo.m_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
 	{
-		l_hrOk = theApp.m_pTestIODlg->AddTriggerCallback(p_ulHandle, p_pCallback, p_pOwner, p_pData);
+		l_hrOk = theApp.m_pTestIODlg->AddTriggerCallback(p_ulHandle, triggerCallbackInfo);
 	} 
 
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVTestIOCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( nullptr != p_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
+	if ( nullptr != triggerCallbackInfo.m_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
 	{
-		l_hrOk = theApp.m_pTestIODlg->RemoveTriggerCallback(p_ulHandle, p_pCallback);
+		l_hrOk = theApp.m_pTestIODlg->RemoveTriggerCallback(p_ulHandle, triggerCallbackInfo.m_pCallback);
 	} 
 
 	return l_hrOk;

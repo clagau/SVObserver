@@ -1295,6 +1295,9 @@
     <ClCompile Include="TableLimitAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVImageBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -2211,9 +2214,6 @@
     <ClInclude Include="SVTransformationTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTriggerRelayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVUnaryImageOperatorList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2688,9 +2688,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVToolExtentClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVTriggerRelayClass.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVValueObjectClass.inl">

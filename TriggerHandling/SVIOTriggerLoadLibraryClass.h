@@ -11,15 +11,15 @@
 
 #pragma once
 
-#include "TriggerHandling/SVCallbackStruct.h"
+namespace Seidenader { namespace TriggerHandling {
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
 typedef HRESULT (WINAPI *SVTriggerGetCountPtr)( unsigned long * );
 typedef HRESULT (WINAPI *SVTriggerGetHandlePtr)( unsigned long *, unsigned long );
 typedef HRESULT (WINAPI *SVTriggerGetNamePtr)( unsigned long, BSTR * );
-typedef HRESULT (WINAPI *SVTriggerRegisterPtr)( unsigned long, SVCallbackPtr, void *, void * );
-typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)( unsigned long, SVCallbackPtr, void *, void * );
+typedef HRESULT (WINAPI *SVTriggerRegisterPtr)( unsigned long, const TriggerCallbackInformation &rTriggerCallbackInfo );
+typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)( unsigned long, const TriggerCallbackInformation &rTriggerCallbackInfo );
 typedef HRESULT (WINAPI *SVTriggerUnregisterAllPtr)( unsigned long );
 typedef HRESULT (WINAPI *SVTriggerStartPtr)( unsigned long );
 typedef HRESULT (WINAPI *SVTriggerStopPtr)( unsigned long );
@@ -40,8 +40,8 @@ public:
 	HRESULT GetCount( unsigned long *p_pulCount );
 	HRESULT GetHandle( unsigned long *p_pulHandle, unsigned long p_ulIndex );
 	HRESULT GetName( unsigned long p_ulHandle, BSTR *p_pbstrName );
-	HRESULT Register( unsigned long p_ulHandle, SvTh::SVCallbackStruct &p_rCallback );
-	HRESULT Unregister( unsigned long p_ulHandle, SvTh::SVCallbackStruct &p_rCallback );
+	HRESULT Register( unsigned long p_ulHandle, const TriggerCallbackInformation &rTriggerCallbackInfo );
+	HRESULT Unregister( unsigned long p_ulHandle, const TriggerCallbackInformation &rTriggerCallbackInfo );
 	HRESULT UnregisterAll( unsigned long p_ulHandle );
 	HRESULT Start( unsigned long p_ulHandle );
 	HRESULT Stop( unsigned long p_ulHandle );
@@ -71,3 +71,6 @@ private:
 
 #include "SVIOTriggerLoadLibraryClass.inl"
 
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;

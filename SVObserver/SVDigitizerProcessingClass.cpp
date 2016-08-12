@@ -52,9 +52,9 @@ SVDigitizerProcessingClass::~SVDigitizerProcessingClass()
 
 void SVDigitizerProcessingClass::Startup()
 {
-	const SVAcquisitionConstructParamsVector& l_rAcqParams = SvTh::SVHardwareManifest::Instance().GetAcquisitionDeviceParams();
+	const SvTh::SVAcquisitionConstructParamsVector& l_rAcqParams = SvTh::SVHardwareManifest::Instance().GetAcquisitionDeviceParams();
 
-	SVAcquisitionConstructParamsVector::const_iterator l_Iter = l_rAcqParams.begin();
+	SvTh::SVAcquisitionConstructParamsVector::const_iterator l_Iter = l_rAcqParams.begin();
 
 	while( l_Iter != l_rAcqParams.end() )
 	{

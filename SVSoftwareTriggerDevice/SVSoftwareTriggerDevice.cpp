@@ -16,6 +16,8 @@
 //Moved to precompiled header: #include <functional>
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <string>
+
+#include "TriggerHandling/CallbackStructContainers.h"
 #include "SVSoftwareTriggerDevice.h"
 #include "SVTimerLibrary/SVMMTimer.h"
 
@@ -24,23 +26,14 @@
 static const long SVDefaultTimerPeriod = 200;
 static const int SVMaximumSoftwareTriggers = 4;
 
-class SVSoftwareTriggerFind : public std::binary_function<SVSoftwareTriggerStruct, SVTriggerCallbackPtr, bool>
-{
-public:
-	bool operator()(const SVSoftwareTriggerStruct& triggerStruct, const SVTriggerCallbackPtr& pCallback) const
-	{
-		return (triggerStruct.callbackStruct.pCallback == pCallback);
-	}
-};
-
 SVSoftwareTriggerDevice::SVSoftwareTriggerDevice()
 : m_numTriggers(SVMaximumSoftwareTriggers)
 {
 	m_nameHandleList = (boost::assign::list_of<NameHandleList::value_type>
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_0")), reinterpret_cast<HANDLE>(1)))
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_1")), reinterpret_cast<HANDLE>(2)))
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_2")), reinterpret_cast<HANDLE>(3)))
-		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_3")), reinterpret_cast<HANDLE>(4)))
+		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_0")), 1ul))
+		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_1")), 2ul))
+		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_2")), 3ul))
+		(std::make_pair(SVString(_T("SoftwareTrigger_1.Dig_3")), 4ul))
 		).convert_to_container<NameHandleList>();
 }
 
@@ -56,7 +49,7 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool bInit)
 		SVMMTimer::Stop();
 
 		// Clear all callbacks
-		m_triggerList.clear();
+		m_triggerCallbackMap.clear();
 		m_timerList.clear();
 	}
 	else
@@ -67,11 +60,11 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool bInit)
 		timerStruct.timerPeriod = SVDefaultTimerPeriod;
 		timerStruct.timerCallback.Bind(this, &SVSoftwareTriggerDevice::OnSoftwareTimer);
 		
-		m_timerList = (boost::assign::map_list_of<HANDLE, SVSoftwareTimerStruct>
-			(reinterpret_cast<HANDLE>(1), timerStruct)
-			(reinterpret_cast<HANDLE>(2), timerStruct)
-			(reinterpret_cast<HANDLE>(3), timerStruct)
-			(reinterpret_cast<HANDLE>(4), timerStruct)).convert_to_container<TimerList>();
+		m_timerList = (boost::assign::map_list_of<unsigned long, SVSoftwareTimerStruct>
+			(1, timerStruct)
+			(2, timerStruct)
+			(3, timerStruct)
+			(4, timerStruct)).convert_to_container<TimerList>();
 
 
 		//SVMMTimer::Start();
@@ -84,12 +77,12 @@ unsigned long SVSoftwareTriggerDevice::GetTriggerCount()
 	return m_numTriggers;
 }
 
-HANDLE SVSoftwareTriggerDevice::GetTriggerHandle(unsigned long index)
+unsigned long SVSoftwareTriggerDevice::GetTriggerHandle(unsigned long index)
 {
-	return (HANDLE)(index + 1);
+	return (unsigned long)(index + 1);
 }
 
-BSTR SVSoftwareTriggerDevice::GetTriggerName(HANDLE handle)
+BSTR SVSoftwareTriggerDevice::GetTriggerName(unsigned long handle)
 {
 	BSTR name = nullptr;
 
@@ -104,141 +97,7 @@ BSTR SVSoftwareTriggerDevice::GetTriggerName(HANDLE handle)
 	return name;
 }
 
-HRESULT SVSoftwareTriggerDevice::AddTriggerCallback(HANDLE handle, SVTriggerCallbackPtr pCallback, void* pOwner, void* pData)
-{
-	HRESULT hr = S_FALSE;
-
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-
-		// check for dups
-		TriggerCallbackList::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(SVSoftwareTriggerFind(), pCallback));
-		
-		if (callbackIt != list.end())
-		{
-			// DUPLICATE Entry!!!
-		}
-		else
-		{
-			// add it
-			SVSoftwareTriggerStruct triggerStruct;
-			triggerStruct.bStarted = false;
-			triggerStruct.callbackStruct.pCallback = pCallback;
-			triggerStruct.callbackStruct.pOwner = pOwner;
-			triggerStruct.callbackStruct.pData = pData;
-
-			list.push_back(triggerStruct);
-			hr = S_OK;
-		}
-	}
-	else
-	{
-		// add it
-		TriggerCallbackList list;
-		SVSoftwareTriggerStruct triggerStruct;
-		triggerStruct.bStarted = false;
-		triggerStruct.callbackStruct.pCallback = pCallback;
-		triggerStruct.callbackStruct.pOwner = pOwner;
-		triggerStruct.callbackStruct.pData = pData;
-
-		list.push_back(triggerStruct);
-		m_CritSec.Lock();
-		m_triggerList.insert(std::make_pair(handle, list));
-		m_CritSec.Unlock();
-		hr = S_OK;
-	}
-	return hr;
-}
-
-HRESULT SVSoftwareTriggerDevice::RemoveTriggerCallback(HANDLE handle, SVTriggerCallbackPtr pCallback)
-{
-	HRESULT hr = S_FALSE;
-
-	m_CritSec.Lock();
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		// check if it is in the list
-		TriggerCallbackList& list = it->second;
-		
-		TriggerCallbackList::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(SVSoftwareTriggerFind(), pCallback));
-		if (callbackIt != list.end())
-		{
-			list.erase(callbackIt);
-			hr = S_OK;
-		}
-	}
-	m_CritSec.Unlock();
-	return hr;
-}
-
-HRESULT SVSoftwareTriggerDevice::RemoveAllTriggerCallbacks(HANDLE handle)
-{
-	m_CritSec.Lock();
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		for (size_t i = 0;i < list.size();i++)
-		{
-			list[i].bStarted = false;
-		}
-		m_triggerList.erase(it);
-	}
-	m_CritSec.Unlock();
-	return S_OK;
-}
-
-HRESULT SVSoftwareTriggerDevice::StartTrigger(HANDLE handle)
-{
-	HRESULT hr = S_FALSE;
-
-	SetTimerCallback(handle);
-
-	m_CritSec.Lock();
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		
-		for (size_t i = 0;i < list.size();i++)
-		{
-			if (!list[i].bStarted)
-			{
-				list[i].bStarted = true;	
-			}
-		}
-		hr = S_OK;
-	}
-	m_CritSec.Unlock();
-	return hr;
-}
-
-HRESULT SVSoftwareTriggerDevice::StopTrigger(HANDLE handle)
-{
-	HRESULT hr = S_FALSE;
-
-	RemoveTimerCallback(handle);
-
-	m_CritSec.Lock();
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		
-		for (size_t i = 0;i < list.size();i++)
-		{
-			list[i].bStarted = false;
-		}
-		hr = S_OK;
-	}
-	m_CritSec.Unlock();
-	return hr;
-}
-
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount( HANDLE p_ulHandle, unsigned long *p_pulCount )
+HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -258,7 +117,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount( HANDLE p_ulHandle, un
 	return l_hrOk;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( HANDLE p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName )
+HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -294,7 +153,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( HANDLE p_ulHandle, uns
 	return l_hrOk;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( HANDLE p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -337,7 +196,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( HANDLE p_ulHandle, un
 	return l_hrOk;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( HANDLE p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -361,7 +220,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( HANDLE p_ulHandle, un
 	return l_hrOk;
 }
 
-HRESULT SVSoftwareTriggerDevice::GetTriggerPeriod( HANDLE handle, long* p_lPeriod) const
+HRESULT SVSoftwareTriggerDevice::GetTriggerPeriod( unsigned long handle, long* p_lPeriod) const
 {
 	HRESULT hr = S_FALSE;
 
@@ -375,7 +234,7 @@ HRESULT SVSoftwareTriggerDevice::GetTriggerPeriod( HANDLE handle, long* p_lPerio
 	return hr;
 }
 
-HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( HANDLE handle, long p_lPeriod )
+HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( unsigned long handle, long p_lPeriod )
 {
 	HRESULT hr = S_FALSE;
 	m_CritSec.Lock();
@@ -396,7 +255,7 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( HANDLE handle, long p_lPeriod
 	return hr;
 }
 
-HRESULT SVSoftwareTriggerDevice::SetTimerCallback(HANDLE handle)
+HRESULT SVSoftwareTriggerDevice::SetTimerCallback(unsigned long handle)
 {
 	HRESULT hr = S_FALSE;
 	m_CritSec.Lock();
@@ -421,7 +280,7 @@ HRESULT SVSoftwareTriggerDevice::SetTimerCallback(HANDLE handle)
 	return hr;
 }
 
-HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(HANDLE handle)
+HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 {
 	HRESULT hr = S_FALSE;
 	m_CritSec.Lock();
@@ -441,12 +300,9 @@ HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(HANDLE handle)
 	return hr;
 }
 
-void SVSoftwareTriggerDevice::DispatchTrigger(const SVSoftwareTriggerStruct& triggerListener)
+void SVSoftwareTriggerDevice::DispatchTrigger(const SvTh::TriggerCallbackInformation& triggerListenerInfo)
 {
-	if (triggerListener.bStarted && triggerListener.callbackStruct.pCallback)
-	{
-		triggerListener.callbackStruct.pCallback(triggerListener.callbackStruct.pOwner, triggerListener.callbackStruct.pData);
-	}
+	triggerListenerInfo.DispatchIfPossible();
 }
 
 void SVSoftwareTriggerDevice::OnSoftwareTimer(const SVString& tag)
@@ -455,14 +311,14 @@ void SVSoftwareTriggerDevice::OnSoftwareTimer(const SVString& tag)
 	NameHandleList::const_iterator it = m_nameHandleList.get<from>().find(tag);
 	if (it != m_nameHandleList.end())
 	{
-		HANDLE handle = it->second;
+		unsigned long handle = it->second;
 
 		// get callback list
 		m_CritSec.Lock();
-		TriggerList::iterator triggerIt = m_triggerList.find(handle);
-		if (triggerIt != m_triggerList.end())
+		SvTh::TriggerCallbackMap::iterator triggerIt = m_triggerCallbackMap.find(handle);
+		if (triggerIt != m_triggerCallbackMap.end())
 		{
-			TriggerCallbackList& list = triggerIt->second;
+			SvTh::TriggerCallbackList& list = triggerIt->second;
 			std::for_each(list.begin(), list.end(), SVSoftwareTriggerDevice::DispatchTrigger);
 		}
 		m_CritSec.Unlock();

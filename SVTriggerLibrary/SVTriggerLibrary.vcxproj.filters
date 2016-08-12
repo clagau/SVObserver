@@ -27,9 +27,6 @@
     <ClCompile Include="SVTriggerCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTriggerCallbackMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTriggerHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -59,19 +56,13 @@
     <ClInclude Include="SVTriggerCallbackFuncInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTriggerCallbackMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerCallbackPtr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerCallbackStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTriggerHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTriggerCallbackStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

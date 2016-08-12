@@ -16,7 +16,7 @@
 #include "SVConfigurationPrint.h"
 #include "SVConfigurationObject.h"
 
-#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling\SVIOConfigurationInterfaceClass.h"
 #include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVOMFCLibrary\SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary\SVi64ValueDeviceParam.h"
@@ -2234,7 +2234,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 		// Print module input title...
 		DWORD dwMaxInput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
+		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
 
 		value.Format(_T("%ld"), dwMaxInput);
 		ptCurPos.x = nIndentLevel * m_shortTabPixels;
@@ -2356,7 +2356,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 		// Print Result Output title...
 		DWORD dwMaxOutput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
+		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
 		value.Format(_T("%ld"), dwMaxOutput);
 		ptCurPos.x = nIndentLevel * m_shortTabPixels;
 		PrintValueObject(pDC, ptCurPos, _T("Result Outputs:"), value);

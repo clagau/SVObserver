@@ -15,16 +15,6 @@
 #include "SVTestIO.h"
 #include "SVTestIODlg.h"
 
-class SVTestIOTriggerFind : public std::binary_function<SVTestIOTriggerStruct, SVTestIOCallbackPtr, bool>
-{
-public:
-	bool operator()(const SVTestIOTriggerStruct& triggerStruct, const SVTestIOCallbackPtr& pCallback) const
-	{
-		return (triggerStruct.pCallback == pCallback);
-	}
-};
-
-
 // SVTestIODlg dialog
 
 IMPLEMENT_DYNAMIC(SVTestIODlg, CDialog)
@@ -350,16 +340,16 @@ void SVTestIODlg::OnBnClickedClearButton()
 void SVTestIODlg::OnBnClickedTriggerButton()
 {
 
-	for( TriggerList::iterator it = m_triggerList.begin() ; it != m_triggerList.end() ; ++it)
+	for( SvTh::TriggerCallbackMap::iterator it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
 	{
-		TriggerCallbackList& list = it->second;
+		SvTh::TriggerCallbackList& list = it->second;
 		if( it->first == 1) // Trigger 1....1 based handle / index.
 		{
 			for (size_t i = 0;i < list.size();i++)
 			{
-				if (list[i].bStarted)
+				if (list[i].m_IsStarted)
 				{
-					(list[i].pCallback)(list[i].pOwner, list[i].pData);
+					(list[i].m_pCallback)(list[i].m_TriggerParameters);
 				}
 			}
 		}
@@ -369,16 +359,16 @@ void SVTestIODlg::OnBnClickedTriggerButton()
 
 void SVTestIODlg::OnBnClickedTrigger2()
 {
-	for( TriggerList::iterator it = m_triggerList.begin() ; it != m_triggerList.end() ; ++it)
+	for( SvTh::TriggerCallbackMap::iterator it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
 	{
-		TriggerCallbackList& list = it->second;
+		SvTh::TriggerCallbackList& list = it->second;
 		if( it->first == 2) // Trigger 2. 1 based handle / index.
 		{
 			for (size_t i = 0;i < list.size();i++)
 			{
-				if (list[i].bStarted)
+				if (list[i].m_IsStarted)
 				{
-					(list[i].pCallback)(list[i].pOwner, list[i].pData);
+					(list[i].m_pCallback)(list[i].m_TriggerParameters);
 				}
 			}
 		}
@@ -387,16 +377,16 @@ void SVTestIODlg::OnBnClickedTrigger2()
 
 void SVTestIODlg::OnBnClickedTrigger3()
 {
-	for( TriggerList::iterator it = m_triggerList.begin() ; it != m_triggerList.end() ; ++it)
+	for( SvTh::TriggerCallbackMap::iterator it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
 	{
-		TriggerCallbackList& list = it->second;
+		SvTh::TriggerCallbackList& list = it->second;
 		if( it->first == 3) // Trigger 3.  1 based handle / index.
 		{
 			for (size_t i = 0;i < list.size();i++)
 			{
-				if (list[i].bStarted)
+				if (list[i].m_IsStarted)
 				{
-					(list[i].pCallback)(list[i].pOwner, list[i].pData);
+					(list[i].m_pCallback)(list[i].m_TriggerParameters);
 				}
 			}
 		}
@@ -405,16 +395,16 @@ void SVTestIODlg::OnBnClickedTrigger3()
 
 void SVTestIODlg::OnBnClickedTrigger4()
 {
-	for( TriggerList::iterator it = m_triggerList.begin() ; it != m_triggerList.end() ; ++it)
+	for( SvTh::TriggerCallbackMap::iterator it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
 	{
-		TriggerCallbackList& list = it->second;
+		SvTh::TriggerCallbackList& list = it->second;
 		if( it->first == 4) // trigger 4.  1 based handle / index.
 		{
 			for (size_t i = 0;i < list.size();i++)
 			{
-				if (list[i].bStarted)
+				if (list[i].m_IsStarted)
 				{
-					(list[i].pCallback)(list[i].pOwner, list[i].pData);
+					(list[i].m_pCallback)(list[i].m_TriggerParameters);
 				}
 			}
 		}
@@ -422,131 +412,17 @@ void SVTestIODlg::OnBnClickedTrigger4()
 }
 
 
-HRESULT SVTestIODlg::AddTriggerCallback(unsigned long handle, SVTestIOCallbackPtr pCallback, void* pOwner, void* pData)
+HRESULT SVTestIODlg::afterStopTrigger(HRESULT hr)
 {
-	HRESULT hr = S_FALSE;
 
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-
-		// check for dups
-		TriggerCallbackList::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(SVTestIOTriggerFind(), pCallback));
-		
-		if (callbackIt != list.end())
-		{
-			// DUPLICATE Entry!!!
-		}
-		else
-		{
-			// add it
-			SVTestIOTriggerStruct triggerStruct;
-			triggerStruct.bStarted = false;
-			triggerStruct.pCallback = pCallback;
-			triggerStruct.pOwner = pOwner;
-			triggerStruct.pData = pData;
-
-			list.push_back(triggerStruct);
-			hr = S_OK;
-		}
-	}
-	else
-	{
-		// add it
-		TriggerCallbackList list;
-		SVTestIOTriggerStruct triggerStruct;
-		triggerStruct.bStarted = false;
-		triggerStruct.pCallback = pCallback;
-		triggerStruct.pOwner = pOwner;
-		triggerStruct.pData = pData;
-
-		list.push_back(triggerStruct);
-		m_triggerList.insert(std::make_pair(handle, list));
-			
-		hr = S_OK;
-	}
-	return hr;
-}
-
-HRESULT SVTestIODlg::RemoveTriggerCallback(unsigned long handle, SVTestIOCallbackPtr pCallback)
-{
-	HRESULT hr = S_FALSE;
-
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		// check if it is in the list
-		TriggerCallbackList& list = it->second;
-		
-		TriggerCallbackList::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(SVTestIOTriggerFind(), pCallback));
-		if (callbackIt != list.end())
-		{
-			list.erase(callbackIt);
-			hr = S_OK;
-		}
-	}
-	return hr;
-}
-
-HRESULT SVTestIODlg::RemoveAllTriggerCallbacks(unsigned long handle)
-{
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		
-		for (size_t i = 0;i < list.size();i++)
-		{
-			list[i].bStarted = false;
-		}
-		m_triggerList.erase(it);
-	}
-	return S_OK;
-}
-
-HRESULT SVTestIODlg::StartTrigger(unsigned long handle)
-{
-	HRESULT hr = S_FALSE;
-
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		
-		for (size_t i = 0;i < list.size();i++)
-		{
-			list[i].bStarted = true;
-		}
-		hr = S_OK;
-	}
-
-	return hr;
-}
-
-HRESULT SVTestIODlg::StopTrigger(unsigned long handle)
-{
-	HRESULT hr = S_FALSE;
-
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		
-		for (size_t i = 0;i < list.size();i++)
-		{
-			list[i].bStarted = false;
-		}
-		hr = S_OK;
-	}
 	if( S_OK == hr )
 	{
 		bool l_bDisableIrq = true;
-		for( it = m_triggerList.begin() ; it != m_triggerList.end() ; ++it )
+		for( auto it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it )
 		{
-			TriggerCallbackList& list = it->second;
+			SvTh::TriggerCallbackList& list = it->second;
 
-			if( 0 == list.size() || list[0].bStarted )
+			if( 0 == list.size() || list[0].m_IsStarted )
 			{
 				l_bDisableIrq = false;
 			}
@@ -555,6 +431,8 @@ HRESULT SVTestIODlg::StopTrigger(unsigned long handle)
 
 	return hr;
 }
+
+
 
 void SVTestIODlg::OnCancel()
 {

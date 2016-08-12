@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "TriggerHandling/SVTriggerDeviceParams.h"
+#include "SVTriggerDeviceParams.h"
 
 namespace Seidenader { namespace TriggerHandling {
 

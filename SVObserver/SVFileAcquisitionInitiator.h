@@ -30,5 +30,5 @@ public:
 
 	HRESULT FireAcquisitionTrigger();
 
-	static HRESULT CALLBACK TriggerCallback( void *p_pvOwner, void *p_pvData );
+	static HRESULT CALLBACK TriggerCallback(SvTh::TriggerParameters triggerparams);
 };

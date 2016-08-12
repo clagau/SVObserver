@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVDiscreteInputsView.h"
-#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling\SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVObserver.h"
 #include "SVIODoc.h"
@@ -159,7 +159,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 
 		// Module Inputs
 		DWORD maxInput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( maxInput );
+		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( maxInput );
 		for( i = 0; i < static_cast<long>(maxInput); ++i )
 		{
 			// First column: Module I/O

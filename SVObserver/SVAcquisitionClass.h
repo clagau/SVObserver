@@ -21,15 +21,12 @@
 #include "SVOLibrary/SVODeviceClass.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#include "TriggerHandling/SVAcquisitionConstructParams.h"
 
 #include "SVFileNameArrayClass.h"
 #include "SVImageObjectClass.h"
 #include "SVSubscriberProviderInterfaces.h"
 #pragma endregion Includes
-
-#pragma region Declarations
-struct SVAcquisitionConstructParams;
-#pragma endregion Declarations
 
 /**
 @SVObjectName Acquisition Class
@@ -45,7 +42,7 @@ class SVAcquisitionClass :
 	public SVAcquisitionBufferInterface
 {
 public:
-	SVAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
+	SVAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVAcquisitionClass();
 
 	virtual bool IsValid() const;  // SVODataDeviceClass Override

@@ -14,8 +14,8 @@
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
-class SVIOConfigurationInterfaceClass;
-class SVIOTriggerLoadLibraryClass;
+class SvTh::SVIOConfigurationInterfaceClass;
+class SvTh::SVIOTriggerLoadLibraryClass;
 
 enum IOBoardType
 {
@@ -109,7 +109,7 @@ public:
 	int nSpeed;
 	int nSeq;
 
-	SVIOTriggerLoadLibraryClass *m_psvTriggers;
+	SvTh::SVIOTriggerLoadLibraryClass *m_psvTriggers;
 
 	long m_lSystemType;
 

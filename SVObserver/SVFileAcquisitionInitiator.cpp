@@ -40,15 +40,15 @@ HRESULT SVFileAcquisitionInitiator::FireAcquisitionTrigger()
 	return hr;
 }
 
-HRESULT CALLBACK SVFileAcquisitionInitiator::TriggerCallback( void *p_pvOwner, void *p_pvData )
+HRESULT CALLBACK SVFileAcquisitionInitiator::TriggerCallback( SvTh::TriggerParameters triggerparams )
 {
 	HRESULT hrOk = S_OK;
 
-	if ( p_pvOwner )
+	if (nullptr != triggerparams.m_pOwner)
 	{
 		try
 		{
-			SVFileAcquisitionInitiator* pDevice = (SVFileAcquisitionInitiator *)p_pvOwner;
+			SVFileAcquisitionInitiator* pDevice = (SVFileAcquisitionInitiator *)(triggerparams.m_pOwner);
 			hrOk = pDevice->FireAcquisitionTrigger();
 		}
 		catch ( ... )

@@ -11,15 +11,14 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVFileAcquisitionDevice.h"
-//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferInterface.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "TriggerHandling/SVCallbackStruct.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVTriggerLibrary/SVTriggerActivatorFunc.h"
 #include "SVTriggerLibrary/SVTriggerCallbackFunc.h"
@@ -37,7 +36,7 @@ SVFileAcquisitionDevice::~SVFileAcquisitionDevice()
 {
 	Close();
 }
-// Handle is just the oridnal
+// Handle is just the original
 static unsigned long GetDigitizerHandle(unsigned long p_ulIndex)
 {
 	return p_ulIndex;
@@ -673,14 +672,9 @@ HRESULT SVFileAcquisitionDevice::InternalTrigger( unsigned long p_ulIndex )
 	return hr;
 }
 
-HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long p_ulIndex, SvTh::SVCallbackStruct& callbackStruct )
+HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo )
 {
-	SVTriggerCallbackStruct triggerCallbackStruct; 
-	triggerCallbackStruct.pCallback = callbackStruct.m_pCallback;
-	triggerCallbackStruct.pOwner = callbackStruct.m_pOwner;
-	triggerCallbackStruct.pData = callbackStruct.m_pData;
-
-	m_triggerMap.Add(p_ulIndex, triggerCallbackStruct);
+	m_triggerMap.Add(p_ulIndex, rTriggerCallbackInfo );
 	
 	typedef SVTriggerActivatorFunc<SVFileAcquisitionDevice> Activator;
 	typedef SVTriggerCallbackFunc<SVFileAcquisitionDevice> TriggerCallback;
@@ -691,14 +685,9 @@ HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long 
 	return m_triggerMgr.Subscribe(p_ulIndex, handler);
 }
 
-HRESULT SVFileAcquisitionDevice::UnregisterInternalTriggerCallback( unsigned long p_ulIndex, SvTh::SVCallbackStruct& callbackStruct )
+HRESULT SVFileAcquisitionDevice::UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo )
 {
-	SVTriggerCallbackStruct triggerCallbackStruct; 
-	triggerCallbackStruct.pCallback = callbackStruct.m_pCallback;
-	triggerCallbackStruct.pOwner = callbackStruct.m_pOwner;
-	triggerCallbackStruct.pData = callbackStruct.m_pData;
-
-	m_triggerMap.Remove(p_ulIndex, triggerCallbackStruct);
+	m_triggerMap.Remove(p_ulIndex, rTriggerCallbackInfo);
 	return m_triggerMgr.Unsubscribe( p_ulIndex);
 }
 
@@ -755,19 +744,19 @@ HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long p_ulHandle, BSTR& 
 	return l_Result;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback)
+HRESULT SVFileAcquisitionDevice::TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	HRESULT l_Result = S_FALSE;
 	if (IsValidDigitizer(p_ulHandle))
 	{
 		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
-		l_rCamera.SetTriggerCallback(p_Callback);
+		l_rCamera.SetTriggerCallback(triggerCallbackInfo);
 		l_Result = S_OK;
 	}
 	return l_Result;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback)
+HRESULT SVFileAcquisitionDevice::TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	HRESULT l_Result = S_FALSE;
 	if (IsValidDigitizer(p_ulHandle))
@@ -954,8 +943,8 @@ void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
 	SVClock::SVTimeStamp timestamp = SVClock::GetTimeStamp();
 	// Simulate Trigger and send Timestamp and Line State...
 	bool lineState = p_rCamera.GetLineState(); // could simulate line state via a socket connection
-	const SvTh::SVCallbackStruct& callback = p_rCamera.GetTriggerCallback();
-	if (callback.m_pCallback)
+	const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo = p_rCamera.GetTriggerCallback();
+	if (nullptr != rTriggerCallbackInfo.m_pCallback)
 	{
 		typedef  std::map<SVString, _variant_t> NameVariantMap;
 		NameVariantMap Settings;
@@ -963,7 +952,7 @@ void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
 		Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
 		Settings[_T("StartFrameTimestamp")] = _variant_t(p_rCamera.m_StartTimeStamp);
 			
-		callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&Settings));
+		rTriggerCallbackInfo.m_pCallback(SvTh::TriggerParameters(rTriggerCallbackInfo.m_TriggerParameters.m_pOwner, &Settings));
 	}
 }
 

@@ -225,8 +225,8 @@ void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera,
 	{
 		// Simulate Trigger and send Timestamp and Line State...
 		bool lineState = p_rCamera.GetLineState();
-		const SvTh::SVCallbackStruct& callback = p_rCamera.GetTriggerCallback();
-		if (callback.m_pCallback)
+		const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo = p_rCamera.GetTriggerCallback();
+		if (nullptr != rTriggerCallbackInfo.m_pCallback)
 		{
 			typedef  std::map<SVString, _variant_t> NameVariantMap;
 			NameVariantMap Settings;
@@ -234,7 +234,7 @@ void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera,
 			Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
 			Settings[_T("StartFrameTimestamp")] = _variant_t(p_rCamera.m_StartFrameTimeStamp);
 			
-			callback.m_pCallback(callback.m_pOwner, reinterpret_cast<void *>(&Settings));
+			rTriggerCallbackInfo.m_pCallback(SvTh::TriggerParameters(rTriggerCallbackInfo.m_TriggerParameters.m_pOwner, &Settings));
 		}
 	}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
@@ -1225,18 +1225,13 @@ HRESULT SVMatroxGige::InternalTrigger( unsigned long p_Handle )
 	return hr;
 }
 
-HRESULT SVMatroxGige::RegisterInternalTriggerCallback( unsigned long p_Handle, SvTh::SVCallbackStruct& callbackStruct )
+HRESULT SVMatroxGige::RegisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo )
 {
 	HRESULT hr = S_FALSE;
 
 	if (IsValidDigitizer(p_Handle))
 	{
-		SVTriggerCallbackStruct triggerCallbackStruct; 
-		triggerCallbackStruct.pCallback = callbackStruct.m_pCallback;
-		triggerCallbackStruct.pOwner = callbackStruct.m_pOwner;
-		triggerCallbackStruct.pData = callbackStruct.m_pData;
-
-		m_triggerMap.Add(p_Handle, triggerCallbackStruct);
+		m_triggerMap.Add(p_Handle, rTriggerCallbackInfo);
 		
 		typedef SVTriggerActivatorFunc<SVMatroxGige> Activator;
 		typedef SVTriggerCallbackFunc<SVMatroxGige> TriggerCallback;
@@ -1249,18 +1244,13 @@ HRESULT SVMatroxGige::RegisterInternalTriggerCallback( unsigned long p_Handle, S
 	return hr;
 }
 
-HRESULT SVMatroxGige::UnregisterInternalTriggerCallback( unsigned long p_Handle, SvTh::SVCallbackStruct& callbackStruct )
+HRESULT SVMatroxGige::UnregisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo )
 {
 	HRESULT hr = S_FALSE;
 
 	if (IsValidDigitizer(p_Handle))
 	{
-		SVTriggerCallbackStruct triggerCallbackStruct; 
-		triggerCallbackStruct.pCallback = callbackStruct.m_pCallback;
-		triggerCallbackStruct.pOwner = callbackStruct.m_pOwner;
-		triggerCallbackStruct.pData = callbackStruct.m_pData;
-
-		m_triggerMap.Remove(p_Handle, triggerCallbackStruct);
+		m_triggerMap.Remove(p_Handle, rTriggerCallbackInfo);
 		hr = m_triggerMgr.Unsubscribe( p_Handle );
 	}
 	return hr;
@@ -1765,19 +1755,19 @@ HRESULT SVMatroxGige::TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName
 	return l_Result;
 }
 
-HRESULT SVMatroxGige::TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback)
+HRESULT SVMatroxGige::TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	HRESULT l_Result = S_FALSE;
 	if (IsValidDigitizer(p_ulHandle))
 	{
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_ulHandle);
-		l_rCamera.SetTriggerCallback(p_Callback);
+		l_rCamera.SetTriggerCallback(triggerCallbackInfo);
 		l_Result = S_OK;
 	}
 	return l_Result;
 }
 
-HRESULT SVMatroxGige::TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback)
+HRESULT SVMatroxGige::TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	HRESULT l_Result = S_FALSE;
 	if (IsValidDigitizer(p_ulHandle))

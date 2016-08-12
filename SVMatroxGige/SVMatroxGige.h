@@ -13,9 +13,9 @@
 #pragma region Includes
 #include "SVImageLibrary/SVLut.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "TriggerHandling/SVCallbackStruct.h"
+#include "TriggerHandling/TriggerBasics.h"
 #include "SVTriggerLibrary/SVInternalTrigger.h"
-#include "SVTriggerLibrary/SVTriggerCallbackMap.h"
+#include "TriggerHandling/SVTriggerCallbackMap.h"
 #pragma endregion Includes
 
 #include "SVMatroxGigeExports.h"
@@ -63,8 +63,8 @@ public:
 
 	virtual HRESULT InternalTriggerEnable( unsigned long p_Handle );
 	virtual HRESULT InternalTrigger( unsigned long p_Handle );
-	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_Handle, SvTh::SVCallbackStruct& callbackStruct );
-	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_Handle, SvTh::SVCallbackStruct& callbackStruct );
+	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo );
+	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo );
 	virtual HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_Handle );
 
 	virtual void ScanForCameras();
@@ -79,8 +79,8 @@ public:
 	unsigned long TriggerGetHandle(unsigned long p_ulIndex);
 
 	virtual HRESULT TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName);
-	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback);
-	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback);
+	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
+	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
 	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long p_ulHandle);
 	virtual HRESULT TriggerStart(unsigned long p_ulHandle);
 	virtual HRESULT TriggerStop(unsigned long p_ulHandle);
@@ -96,7 +96,7 @@ private:
 	SVMatroxGigeSystemList m_Systems;
 
 	SVInternalTrigger m_triggerMgr;
-	SVTriggerCallbackMap m_triggerMap;
+	SvTh::SVTriggerCallbackMap m_triggerMap;
 
 	SVMatroxGigeCameraParamTracker m_trackedCameraParameters;
 

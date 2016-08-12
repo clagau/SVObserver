@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVTestIOCallback.h"
+#include "TriggerHandling/TriggerBasics.h"
 
 class SVAcquisitionBufferInterface;
 
@@ -36,8 +36,8 @@ HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulV
 HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );
 HRESULT WINAPI SVTriggerGetHandle( unsigned long *p_pulHandle, unsigned long p_ulIndex );
 HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVTestIOCallbackPtr p_pCallback, void *p_pOwner, void *p_pData );
-HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVTestIOCallbackPtr p_pCallback, void *p_pOwner, void *p_pData );
+HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo );
+HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
 HRESULT WINAPI SVTriggerUnregisterAll( unsigned long p_ulHandle );
 HRESULT WINAPI SVTriggerStart( unsigned long p_ulHandle );
 HRESULT WINAPI SVTriggerStop( unsigned long p_ulHandle );

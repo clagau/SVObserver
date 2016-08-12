@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVRange.h"
 #include "RangeClassHelper.h"
-#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling\SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary\SVObjectAsynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"

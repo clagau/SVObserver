@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "TriggerHandling/SVCallbackStruct.h"
+namespace Seidenader { namespace TriggerHandling {
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
@@ -89,3 +89,6 @@ private:
 
 #include "SVIODigitalLoadLibraryClass.inl"
 
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;

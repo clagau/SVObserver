@@ -88,7 +88,7 @@ private:
 	HRESULT ProcessJsonCommand(const std::string& rJsonCommand, std::string& rJsonResults);
 
 	//**********************************************
-	/// ProcessStartStopCommand - processes the Start/Stop Stream comamnd
+	/// ProcessStartStopCommand - processes the Start/Stop Stream command
 	/// \param name [in] - name of Fail Status Stream to start/stop
 	/// \param bStart [in] - boolean start/stop
 	/// \return HRESULT - S_OK for success
@@ -102,10 +102,10 @@ private:
 
 	struct FailStatusList
 	{
-		bool bStarted; // state (started/stopped)
+		bool m_IsStarted; // state (started/stopped)
 		SVString name; // name of the list
 		SVFailStatusStream stream; // stream (Json) builder
-		FailStatusList() : bStarted(false) {}
+		FailStatusList() : m_IsStarted(false) {}
 	};
 	typedef std::map<SVString, FailStatusList> FailStatusLists;
 	// Key is PPQ UniqueObjectID

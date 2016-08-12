@@ -50,15 +50,6 @@ TriggerDebugData g_TDebugData[MaxDebugData];
 long g_CallbackCount = 0;
 #endif
 
-class SVLptTriggerFind : public std::binary_function<SVLptIOTriggerStruct, SVLptIOCallbackPtr, bool>
-{
-public:
-	bool operator()(const SVLptIOTriggerStruct& triggerStruct, const SVLptIOCallbackPtr& pCallback) const
-	{
-		return (triggerStruct.pCallback == pCallback);
-	}
-};
-
 SVLptIOImpl::SVLptIOImpl() 
 : m_numPorts(2)
 , m_numInputs(12)
@@ -203,7 +194,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 				SetActive(0);  
 			}
 			// Stop all triggers
-			m_triggerList.clear();
+			m_triggerCallbackMap.clear();
 		}
 	}
 	return hr;
@@ -627,12 +618,12 @@ unsigned long SVLptIOImpl::GetTriggerCount()
 	return m_numTriggers;
 }
 
-HANDLE SVLptIOImpl::GetTriggerHandle(unsigned long index)
+unsigned long SVLptIOImpl::GetTriggerHandle(unsigned long index)
 {
-	return (HANDLE)(index + 1);
+	return (index + 1);
 }
 
-BSTR SVLptIOImpl::GetTriggerName(HANDLE handle)
+BSTR SVLptIOImpl::GetTriggerName(unsigned long handle)
 {
 	char szTmp[128];
 	szTmp[0] = 0;
@@ -649,108 +640,16 @@ BSTR SVLptIOImpl::GetTriggerName(HANDLE handle)
 	return name;
 }
 
-HRESULT SVLptIOImpl::AddTriggerCallback(HANDLE handle, SVLptIOCallbackPtr pCallback, void* pOwner, void* pData)
+void SVLptIOImpl::beforeStartTrigger(unsigned long)
 {
-	HRESULT hr = S_FALSE;
-
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-
-		// check for dups
-		TriggerCallbackList::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(SVLptTriggerFind(), pCallback));
-		
-		if (callbackIt != list.end())
-		{
-			// DUPLICATE Entry!!!
-		}
-		else
-		{
-			// add it
-			SVLptIOTriggerStruct triggerStruct;
-			triggerStruct.bStarted = false;
-			triggerStruct.pCallback = pCallback;
-			triggerStruct.pOwner = pOwner;
-			triggerStruct.pData = pData;
-
-			list.push_back(triggerStruct);
-			hr = S_OK;
-		}
-	}
-	else
-	{
-		// add it
-		TriggerCallbackList list;
-		SVLptIOTriggerStruct triggerStruct;
-		triggerStruct.bStarted = false;
-		triggerStruct.pCallback = pCallback;
-		triggerStruct.pOwner = pOwner;
-		triggerStruct.pData = pData;
-
-		list.push_back(triggerStruct);
-		m_triggerList.insert(std::make_pair(handle, list));
-			
-		hr = S_OK;
-	}
-	return hr;
+#ifdef SV_LOG_STATUS_INFO
+	m_StatusLog.clear();
+#endif
 }
 
-HRESULT SVLptIOImpl::RemoveTriggerCallback(HANDLE handle, SVLptIOCallbackPtr pCallback)
+
+HRESULT SVLptIOImpl::afterStartTrigger(HRESULT hr)
 {
-	HRESULT hr = S_FALSE;
-
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		// check if it is in the list
-		TriggerCallbackList& list = it->second;
-		
-		TriggerCallbackList::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(SVLptTriggerFind(), pCallback));
-		if (callbackIt != list.end())
-		{
-			list.erase(callbackIt);
-			hr = S_OK;
-		}
-	}
-	return hr;
-}
-
-HRESULT SVLptIOImpl::RemoveAllTriggerCallbacks(HANDLE handle)
-{
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		
-		for (size_t i = 0;i < list.size();i++)
-		{
-			list[i].bStarted = false;
-		}
-		m_triggerList.erase(it);
-	}
-	return S_OK;
-}
-
-HRESULT SVLptIOImpl::StartTrigger(HANDLE handle)
-{
-	HRESULT hr = S_FALSE;
-
-	#ifdef SV_LOG_STATUS_INFO
-		m_StatusLog.clear();
-	#endif
-
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		
-		for (size_t i = 0;i < list.size();i++)
-		{
-			list[i].bStarted = true;
-		}
-		hr = S_OK;
-	}
 	if (S_OK == hr)
 	{
 		// Initialize previous Trigger State
@@ -763,41 +662,29 @@ HRESULT SVLptIOImpl::StartTrigger(HANDLE handle)
 		}
 	}
 
-	#ifdef SV_LOG_STATUS_INFO
-		if(S_OK != hr)
-		{
-			SVString String;
-			String.Format(_T("StartTrigger - Status = 0x%X"), hr);
-			m_StatusLog.push_back(String);
-		}
-	#endif
+#ifdef SV_LOG_STATUS_INFO
+	if(S_OK != hr)
+	{
+		SVString String;
+		String.Format(_T("StartTrigger - Status = 0x%X"), hr);
+		m_StatusLog.push_back(String);
+	}
+#endif
 
 	return hr;
 }
 
-HRESULT SVLptIOImpl::StopTrigger(HANDLE handle)
-{
-	HRESULT hr = S_FALSE;
 
-	TriggerList::iterator it = m_triggerList.find(handle);
-	if (it != m_triggerList.end())
-	{
-		TriggerCallbackList& list = it->second;
-		
-		for (size_t i = 0;i < list.size();i++)
-		{
-			list[i].bStarted = false;
-		}
-		hr = S_OK;
-	}
+HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
+{
 	if (S_OK == hr)
 	{
 		bool bDisableIrq = true;
-		for (it = m_triggerList.begin() ; it != m_triggerList.end() ; ++it)
+		for (auto it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
 		{
-			TriggerCallbackList& list = it->second;
+			SvTh::TriggerCallbackList& list = it->second;
 
-			if(0 == list.size() || list[0].bStarted)
+			if(0 == list.size() || list[0].m_IsStarted)
 			{
 				bDisableIrq = false;
 			}
@@ -808,26 +695,28 @@ HRESULT SVLptIOImpl::StopTrigger(HANDLE handle)
 		}
 	}
 
-	#ifdef SV_LOG_STATUS_INFO
-		SVString FileName;
+#ifdef SV_LOG_STATUS_INFO
+	SVString FileName;
 
-		FileName.Format(_T("C:\\SVObserver\\SVLpt.log"));
-		std::fstream Stream(FileName.ToString(), std::ios_base::trunc | std::ios_base::out);
-		if (Stream.is_open())
+	FileName.Format(_T("C:\\SVObserver\\SVLpt.log"));
+	std::fstream Stream(FileName.ToString(), std::ios_base::trunc | std::ios_base::out);
+	if (Stream.is_open())
+	{
+		for (int i = 0;i < m_StatusLog.GetCount(); ++i)
 		{
-			for (int i = 0;i < m_StatusLog.GetCount(); ++i)
-			{
-				SVString String;
-				m_StatusLog.GetAt(i, &String);
-				Stream << String.ToString() << std::endl;
-			}
-			Stream.close();
-			m_StatusLog.clear();
+			SVString String;
+			m_StatusLog.GetAt(i, &String);
+			Stream << String.ToString() << std::endl;
 		}
-	#endif
+		Stream.close();
+		m_StatusLog.clear();
+	}
+#endif
 
 	return hr;
 }
+
+
 
 HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long ulHandle, unsigned long* pulCount)
 {
@@ -1734,11 +1623,11 @@ void SVLptIOImpl::HandleIRQ()
 		#endif
 
 		// call trigger callbacks
-		TriggerList::iterator it;
+		SvTh::TriggerCallbackMap::iterator it;
 
-		for (it = m_triggerList.begin();it != m_triggerList.end() ;it++)
+		for (it = m_triggerCallbackMap.begin();it != m_triggerCallbackMap.end() ;it++)
 		{
-			long lTrigger = reinterpret_cast<long>(it->first); // Trigger = the 1 based handle.
+			long lTrigger = it->first; // Trigger = the 1 based handle.
 
 			short nTriggerBit = SVTriggerNone;
 
@@ -1776,13 +1665,13 @@ void SVLptIOImpl::HandleIRQ()
 					m_StatusLog.push_back(String);
 				#endif
 
-				TriggerCallbackList& list = it->second;
+				SvTh::TriggerCallbackList& list = it->second;
 
 				for (size_t i = 0;i < list.size();i++)
 				{
-					if (list[i].bStarted)
+					if (list[i].m_IsStarted)
 					{
-						(list[i].pCallback)(list[i].pOwner, list[i].pData);
+						(list[i].m_pCallback)(list[i].m_TriggerParameters);
 					}
 				}
 			}

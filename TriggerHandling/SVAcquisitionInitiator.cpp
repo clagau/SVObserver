@@ -55,7 +55,7 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 	}
 
-	HRESULT SVAcquisitionInitiator::RegisterCallback(SVCallbackStruct& p_rCallback)
+	HRESULT SVAcquisitionInitiator::RegisterCallback(const TriggerCallbackInformation& rTriggerCallbackInfo)
 	{
 		HRESULT hr = S_FALSE;
 		if (m_initiatorList.size())
@@ -70,14 +70,14 @@ namespace Seidenader { namespace TriggerHandling {
 				if (handleList.size())
 				{
 					// register first one or just last one?
-					hr = pDLL->InternalTriggerRegister(handleList[0], p_rCallback);
+					hr = pDLL->InternalTriggerRegister(handleList[0], rTriggerCallbackInfo);
 				}
 			}
 		}
 		return hr;
 	}
 
-	HRESULT SVAcquisitionInitiator::UnRegisterCallback(SVCallbackStruct& p_rCallback)
+	HRESULT SVAcquisitionInitiator::UnRegisterCallback(const TriggerCallbackInformation& rTriggerCallbackInfo)
 	{
 		HRESULT hr = S_FALSE;
 		if (m_initiatorList.size())
@@ -92,7 +92,7 @@ namespace Seidenader { namespace TriggerHandling {
 				if (handleList.size())
 				{
 					// register first one or just last one?
-					hr = pDLL->InternalTriggerUnregister(handleList[0], p_rCallback);
+					hr = pDLL->InternalTriggerUnregister(handleList[0], rTriggerCallbackInfo);
 				}
 			}
 		}

@@ -358,9 +358,6 @@ void SVCameraPage::StartAcquire()
 			m_timerID = SetTimer(1, m_triggerPeriod, nullptr);
 		}
 	}
-	SvTh::SVCallbackStruct l_svCallback;
-
-	l_svCallback.m_pOwner = this;
 
 	ResetCount();
 

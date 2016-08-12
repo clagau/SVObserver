@@ -11,8 +11,10 @@
 
 #pragma once
 
-#include "SVIODigitalArrayClass.h"
+#include "SVIOLibrary/SVIODigitalArrayClass.h"
 #include "SVIODigitalLoadLibraryClass.h"
+
+namespace Seidenader { namespace TriggerHandling {
 
 class SVIOConfigurationInterfaceClass  
 {
@@ -92,3 +94,6 @@ private:
 
 #include "SVIOConfigurationInterfaceClass.inl"
 
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;

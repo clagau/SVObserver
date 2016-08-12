@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVHardwareManifest
-//* .File Name       : $Workfile:   TriggerHandling/SVHardwareManifest.h  $
+//* .File Name       : $Workfile:   SVHardwareManifest.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   11 Jun 2013 15:26:12  $

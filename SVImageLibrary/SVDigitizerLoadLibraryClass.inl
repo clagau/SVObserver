@@ -468,13 +468,13 @@ inline HRESULT SVDigitizerLoadLibraryClass::InternalTrigger( SVHANDLE p_hHandle 
 /*
 This method uses the m_psvInternalTriggerRegister attribute to call the DLL SVDigitizerInternalTriggerRegister function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
 */
-inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerRegister( SVHANDLE p_hHandle, SvTh::SVCallbackStruct& p_rCallback )
+inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerRegister( SVHANDLE p_hHandle, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvInternalTriggerRegister )
 	{
-		l_hrOk = m_psvInternalTriggerRegister( p_hHandle, p_rCallback.m_pCallback, p_rCallback.m_pOwner, p_rCallback.m_pData );
+		l_hrOk = m_psvInternalTriggerRegister( p_hHandle, rTriggerCallbackInfo);
 	}
 
 	return l_hrOk;
@@ -483,13 +483,13 @@ inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerRegister( SVHANDLE p_
 /*
 This method uses the m_psvInternalTriggerUnregister attribute to call the DLL SVDigitizerInternalTriggerUnregister function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
 */
-inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerUnregister( SVHANDLE p_hHandle, SvTh::SVCallbackStruct& p_rCallback )
+inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerUnregister( SVHANDLE p_hHandle, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvInternalTriggerUnregister )
 	{
-		l_hrOk = m_psvInternalTriggerUnregister( p_hHandle, p_rCallback.m_pCallback, p_rCallback.m_pOwner, p_rCallback.m_pData );
+		l_hrOk = m_psvInternalTriggerUnregister( p_hHandle, rTriggerCallbackInfo);
 	}
 
 	return l_hrOk;

@@ -662,7 +662,7 @@ void SVVirtualCamera::SetFileImageHeight(long height)
 	m_imageSize.cy = height;
 }
 
-HRESULT SVVirtualCamera::RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulHandle)
+HRESULT SVVirtualCamera::RegisterTriggerRelay(SvTh::SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulHandle)
 {
 	HRESULT hr = S_FALSE;
 

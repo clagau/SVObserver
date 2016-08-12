@@ -24,9 +24,6 @@
     <ClInclude Include="SVLptIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVLptIOCallback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVLptIOExports.h">
       <Filter>Header Files</Filter>
     </ClInclude>

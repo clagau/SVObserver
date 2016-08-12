@@ -228,7 +228,7 @@ HRESULT WINAPI SVTriggerGetHandle(unsigned long* pulHandle, unsigned long ulInde
 
 	if (nullptr != pulHandle)
 	{
-		*pulHandle = reinterpret_cast<unsigned long>(g_Lpt.GetTriggerHandle(ulIndex));
+		*pulHandle = g_Lpt.GetTriggerHandle(ulIndex);
 		hr = S_OK;
 	}
 	return hr;
@@ -246,7 +246,7 @@ HRESULT WINAPI SVTriggerGetName(unsigned long ulHandle, BSTR* pbstrName)
 			::SysFreeString(*pbstrName);
 		}
 
-		*pbstrName = g_Lpt.GetTriggerName((HANDLE)ulHandle);
+		*pbstrName = g_Lpt.GetTriggerName(ulHandle);
 		
 		if (nullptr != *pbstrName)
 		{
@@ -256,26 +256,26 @@ HRESULT WINAPI SVTriggerGetName(unsigned long ulHandle, BSTR* pbstrName)
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerRegister(unsigned long ulHandle, SVLptCallbackPtr pCallback, void* pOwner, void* pData)
+HRESULT WINAPI SVTriggerRegister(unsigned long ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	HRESULT hr = S_FALSE;
 
-	if ( nullptr != pCallback && 0 < ulHandle)
+	if ( nullptr != triggerCallbackInfo.m_pCallback && 0 < ulHandle)
 	{
 		hr = S_OK;
 
-		g_Lpt.AddTriggerCallback((HANDLE)ulHandle, pCallback, pOwner, pData);
+		g_Lpt.AddTriggerCallback(ulHandle, triggerCallbackInfo);
 	} 
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerUnregister(unsigned long ulHandle, SVLptCallbackPtr pCallback, void* pOwner, void* pData)
+HRESULT WINAPI SVTriggerUnregister(unsigned long ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	HRESULT hr = S_FALSE;
 
-	if (nullptr != pCallback && 0 < ulHandle)
+	if (nullptr != triggerCallbackInfo.m_pCallback && 0 < ulHandle)
 	{
-		hr = g_Lpt.RemoveTriggerCallback((HANDLE)ulHandle, pCallback);
+		hr = g_Lpt.RemoveTriggerCallback(ulHandle, triggerCallbackInfo.m_pCallback);
 	} 
 	return hr;
 }
@@ -286,7 +286,7 @@ HRESULT WINAPI SVTriggerUnregisterAll(unsigned long ulHandle)
 
 	if (0 < ulHandle)
 	{
-		hr = g_Lpt.RemoveAllTriggerCallbacks((HANDLE)ulHandle);
+		hr = g_Lpt.RemoveAllTriggerCallbacks(ulHandle);
 	} 
 	return hr;
 }
@@ -297,7 +297,7 @@ HRESULT WINAPI SVTriggerStart(unsigned long ulHandle)
 
 	if (0 < ulHandle)
 	{
-		hr = g_Lpt.StartTrigger((HANDLE)ulHandle);
+		hr = g_Lpt.StartTrigger(ulHandle);
 	} 
 	return hr;
 }
@@ -308,7 +308,7 @@ HRESULT WINAPI SVTriggerStop(unsigned long ulHandle)
 
 	if (0 < ulHandle)
 	{
-		hr = g_Lpt.StopTrigger((HANDLE)ulHandle);
+		hr = g_Lpt.StopTrigger(ulHandle);
 	} 
 	return hr;
 }

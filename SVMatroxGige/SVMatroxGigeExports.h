@@ -12,13 +12,10 @@
 
 #pragma region Includes
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
-#include "TriggerHandling/SVCallbackStruct.h"
+#include "TriggerHandling/TriggerBasics.h"
 #pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
-
-typedef HRESULT ( CALLBACK *SVMatroxGigeCallbackPtr )( void *,   /* Owner */
-                                               void * ); /* Data */ 
 
 // General Exports
 
@@ -30,8 +27,8 @@ HRESULT WINAPI SVDestroy();
 HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );
 HRESULT WINAPI SVTriggerGetHandle( unsigned long *p_pulHandle, unsigned long p_ulIndex );
 HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVCallbackPtr p_pCallback, void *p_pOwner, void *p_pData );
-HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVCallbackPtr p_pCallback, void *p_pOwner, void *p_pData );
+HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation TriggerCallbackInfo );
+HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation TriggerCallbackInfo );
 HRESULT WINAPI SVTriggerUnregisterAll( unsigned long p_ulHandle );
 HRESULT WINAPI SVTriggerStart( unsigned long p_ulHandle );
 HRESULT WINAPI SVTriggerStop( unsigned long p_ulHandle );
@@ -69,8 +66,8 @@ HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long p_ulHandle, SVDevicePa
 
 HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long p_ulHandle );
 HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long p_ulHandle );
-HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SVMatroxGigeCallbackPtr& callback, void* pOwner, void* pData );
-HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, SVMatroxGigeCallbackPtr& callback, void* pOwner, void* pData );
+HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, const SvTh::TriggerCallbackInformation &rTriggerCallbackInfo );
+HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, const SvTh::TriggerCallbackInformation &rTriggerCallbackInfo );
 HRESULT WINAPI SVDigitizerInternalTriggerUnregisterAll( unsigned long p_ulHandle );
 
 HRESULT WINAPI SVDigitizerScanForCameras();

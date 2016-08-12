@@ -407,20 +407,19 @@ void SVFileCamera::SetLineState(bool bState)
 	m_lineState = bState;
 }
 
-const SvTh::SVCallbackStruct& SVFileCamera::GetTriggerCallback() const
+const SvTh::TriggerCallbackInformation& SVFileCamera::GetTriggerCallback() const
 {
-	return m_triggerCallback;
+	return m_triggerCallbackInfo;
 }
 
-void SVFileCamera::SetTriggerCallback(SvTh::SVCallbackStruct& callback)
+void SVFileCamera::SetTriggerCallback(const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo)
 {
-	m_triggerCallback = callback;
+	m_triggerCallbackInfo = rTriggerCallbackInfo;
 }
 
 void SVFileCamera::ClearTriggerCallback()
 {
-	m_triggerCallback.m_pCallback = nullptr;
-	m_triggerCallback.m_pOwner = nullptr;
-	m_triggerCallback.m_pData = nullptr;
+	m_triggerCallbackInfo.m_pCallback = nullptr;
+	m_triggerCallbackInfo.m_TriggerParameters = SvTh::TriggerParameters();
 }
 

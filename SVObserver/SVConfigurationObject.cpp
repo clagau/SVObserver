@@ -15,7 +15,7 @@
 #include "SVConfigurationObject.h"
 
 #include "GuiCommands/InspectionRunOnce.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectAsynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -1578,7 +1578,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							{
 								int iDigNum = psvDevice->DigNumber();
 								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pParam);
-								SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
+								SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
 							}
 
 							// strobe
@@ -1586,7 +1586,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							{
 								int iDigNum = psvDevice->DigNumber();
 								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
-								SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
+								SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
 							}
 							// Get Combined parameters
 							psvDevice->GetDeviceParameters(svDeviceParams);

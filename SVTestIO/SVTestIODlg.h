@@ -15,21 +15,11 @@
 #include "resource.h"
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "SVTestIOCallback.h"
+#include "TriggerHandling/IODeviceBase.h"
 #include "SVTestIOExports.h"
 
-struct SVTestIOTriggerStruct
-{
-	SVTestIOCallbackPtr pCallback;
-	void* pOwner;
-	void* pData;
-	bool bStarted;
-};
 
-typedef std::vector<SVTestIOTriggerStruct> TriggerCallbackList;
-typedef std::map<unsigned long, TriggerCallbackList> TriggerList;
-
-class SVTestIODlg : public CDialog
+class SVTestIODlg : public CDialog, public SvTh::IODeviceBase
 {
 	DECLARE_DYNAMIC(SVTestIODlg)
 
@@ -42,16 +32,12 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	TriggerList m_triggerList;
 
 	DECLARE_MESSAGE_MAP()
 public:
 
-	HRESULT AddTriggerCallback(unsigned long handle, SVTestIOCallbackPtr pCallback, void* pOwner, void* pData);
-	HRESULT RemoveTriggerCallback(unsigned long handle, SVTestIOCallbackPtr pCallback);
-	HRESULT RemoveAllTriggerCallbacks(unsigned long handle);
-	HRESULT StartTrigger(unsigned long handle);
-	HRESULT StopTrigger(unsigned long handle);
+	HRESULT afterStopTrigger(HRESULT hr);
+
 	void SetOutput( unsigned long p_iChannel, bool p_bState);
 	CRITICAL_SECTION m_CriticalSection;
 	unsigned __int64 m_i64Frequency;
@@ -97,7 +83,7 @@ public:
 	CButton m_LogBtn;
 	bool m_bResetStart;
 	afx_msg void OnBnClickedTriggerButton();
-	std::vector<SVTestIOCallbackPtr> m_pCallBacks;
+	std::vector<SvTh::SVTriggerCallbackPtr> m_pCallBacks;
 	afx_msg void OnBnClickedTrigger2();
 	afx_msg void OnBnClickedTrigger3();
 	afx_msg void OnBnClickedTrigger4();

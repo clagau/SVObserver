@@ -17,7 +17,6 @@
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #include "SVOMFCLibrary/SVStringValueDeviceParam.h"
-#include "TriggerHandling/SVCallbackStruct.h"
 
 // General Export Functions
 
@@ -87,40 +86,29 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 	return l_hr;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
 	HRESULT l_hr = S_FALSE;
 
-	if ( nullptr != p_pCallback )
+	if ( nullptr != triggerCallbackInfo.m_pCallback )
 	{
-		SvTh::SVCallbackStruct l_Callback;
-
-		l_Callback.m_pCallback = p_pCallback;
-		l_Callback.m_pOwner = p_pOwner;
-		l_Callback.m_pData = p_pData;
-
-		l_hr = g_svTheApp.m_fileAcqDevice.TriggerRegisterCallback(p_ulHandle, l_Callback);
+		l_hr = g_svTheApp.m_fileAcqDevice.TriggerRegisterCallback(p_ulHandle, triggerCallbackInfo);
 	} 
 	return l_hr;
 }
 
-HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
 	HRESULT l_hr = S_OK;
 
-	if ( nullptr != p_pCallback )
+	if ( nullptr != triggerCallbackInfo.m_pCallback )
 	{
-		SvTh::SVCallbackStruct l_Callback;
 
-		l_Callback.m_pCallback = p_pCallback;
-		l_Callback.m_pOwner = p_pOwner;
-		l_Callback.m_pData = p_pData;
-
-		if ( S_OK != g_svTheApp.m_fileAcqDevice.TriggerUnregisterCallback(p_ulHandle, l_Callback) )
+		if ( S_OK != g_svTheApp.m_fileAcqDevice.TriggerUnregisterCallback(p_ulHandle, triggerCallbackInfo) )
 		{
 			l_hr = S_FALSE;
 		}
@@ -416,7 +404,7 @@ HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long p_ulHandle )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SVFileAcquisitionCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, const SvTh::TriggerCallbackInformation &rTriggerCallbackInfo)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
@@ -425,17 +413,12 @@ HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SVF
 	
 	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
-		SvTh::SVCallbackStruct l_Callback;
-		l_Callback.m_pCallback = p_pCallback;
-		l_Callback.m_pOwner = p_pOwner;
-		l_Callback.m_pData = p_pData;
-
-		l_hrOk = g_svTheApp.m_fileAcqDevice.RegisterInternalTriggerCallback( p_ulHandle - 1, l_Callback );
+		l_hrOk = g_svTheApp.m_fileAcqDevice.RegisterInternalTriggerCallback( p_ulHandle - 1, rTriggerCallbackInfo );
 	}
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, SVFileAcquisitionCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, const SvTh::TriggerCallbackInformation &rTriggerCallbackInfo )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
@@ -444,12 +427,7 @@ HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, S
 	
 	if ( S_OK == l_hrOk && p_ulHandle <= l_ulCount )
 	{
-		SvTh::SVCallbackStruct l_Callback;
-		l_Callback.m_pCallback = p_pCallback;
-		l_Callback.m_pOwner = p_pOwner;
-		l_Callback.m_pData = p_pData;
-
-		l_hrOk = g_svTheApp.m_fileAcqDevice.UnregisterInternalTriggerCallback( p_ulHandle - 1, l_Callback );
+		l_hrOk = g_svTheApp.m_fileAcqDevice.UnregisterInternalTriggerCallback( p_ulHandle - 1, rTriggerCallbackInfo );
 	}
 	return l_hrOk;
 }

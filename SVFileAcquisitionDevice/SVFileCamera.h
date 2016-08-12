@@ -19,7 +19,7 @@
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"
-#include "TriggerHandling/SVCallbackStruct.h"
+#include "TriggerHandling/TriggerBasics.h"
 #include "SVSystemLibrary/SVSequencer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -103,14 +103,14 @@ public:
 	void SetLineState(bool bState);
 	bool GetLineState() const;
 
-	const SvTh::SVCallbackStruct& GetTriggerCallback() const;
-	void SetTriggerCallback(SvTh::SVCallbackStruct& callback);
+	const SvTh::TriggerCallbackInformation& GetTriggerCallback() const;
+	void SetTriggerCallback(const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo);
 	void ClearTriggerCallback();
 
 	SVAcquisitionBufferInterface* m_pBufferInterface;
 
 	SVClock::SVTimeStamp m_StartTimeStamp;
-	SvTh::SVCallbackStruct m_triggerCallback;
+	SvTh::TriggerCallbackInformation m_triggerCallbackInfo;
 };
 
 typedef std::vector<SVFileCamera> SVFileCameraList;

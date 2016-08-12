@@ -18,8 +18,9 @@
 
 #include "resource.h"		// main symbols
 
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 
 static int SVMEBoardNumber = 0;
@@ -45,5 +46,5 @@ public:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	SVIOTriggerLoadLibraryClass m_svTriggers;
+	SvTh::SVIOTriggerLoadLibraryClass m_svTriggers;
 };

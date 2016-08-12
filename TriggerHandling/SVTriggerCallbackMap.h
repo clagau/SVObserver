@@ -12,20 +12,25 @@
 #pragma once
 
 //Moved to precompiled header: #include <map>
-#include "SVTriggerCallbackStruct.h"
+#include "TriggerBasics.h"
+#include "CallbackStructContainers.h"
 
-typedef std::map<unsigned long, SVTriggerCallbackList> TriggerCallbackMap;
+namespace Seidenader { namespace TriggerHandling {
 
-class SVTriggerCallbackMap
-{
-private:
-	TriggerCallbackMap m_triggerCallbacks;
+	class SVTriggerCallbackMap
+	{
+	private:
+		TriggerCallbackMap m_triggerCallbacks;
 
-public:
-	void Add(unsigned long p_ulIndex, SVTriggerCallbackStruct& callback);
-	void Remove(unsigned long p_ulIndex, SVTriggerCallbackStruct& callback);
-	void RemoveAll(unsigned long p_ulIndex);
+	public:
+		void Add(unsigned long p_ulIndex, const TriggerCallbackInformation& rTriggerCallbackInfo);
+		void Remove(unsigned long p_ulIndex, const TriggerCallbackInformation& rTriggerCallbackInfo);
+		void RemoveAll(unsigned long p_ulIndex);
 
-	HRESULT Dispatch(unsigned long p_ulIndex);
-};
+		HRESULT Dispatch(unsigned long p_ulIndex);
+	};
 
+
+}}
+
+namespace SvTh = Seidenader::TriggerHandling;

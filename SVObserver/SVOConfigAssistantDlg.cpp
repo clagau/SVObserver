@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <sys/stat.h>
 //Moved to precompiled header: #include <io.h>
 #include "SVOConfigAssistantDlg.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
@@ -1666,7 +1666,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 						{
 							int iDigNum = psvDevice->DigNumber();
 							const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pParam);
-							SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
+							SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
 						}
 
 						// strobe
@@ -1674,7 +1674,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 						{
 							int iDigNum = psvDevice->DigNumber();
 							const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
-							SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
+							SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
 						}
 					}// end if ( nullptr != psvDevice )
 				}// end if ( TheSVObserverApp.mpsvImaging->GetAcquisitionDevice( sDigName, psvDevice ) )

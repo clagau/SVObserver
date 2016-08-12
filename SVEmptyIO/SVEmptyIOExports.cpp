@@ -239,13 +239,13 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVEmptyIOCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( nullptr != p_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
+	if ( nullptr != triggerCallbackInfo.m_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
 	{
 		l_hrOk = S_OK;
 	} 
@@ -253,13 +253,13 @@ HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVEmptyIOCallbackPtr
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVEmptyIOCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( nullptr != p_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
+	if ( nullptr != triggerCallbackInfo.m_pCallback && 0 < p_ulHandle && p_ulHandle <= 4 )
 	{
 		l_hrOk = S_OK;
 	} 
@@ -629,14 +629,14 @@ HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long p_ulHandle )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SVEmptyIOCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation& )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, SVEmptyIOCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation& )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 

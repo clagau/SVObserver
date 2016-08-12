@@ -11,9 +11,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-#include "TriggerHandling/SVCallbackStruct.h"
+#include "TriggerBasics.h"
+#include "SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
+
+namespace Seidenader { namespace TriggerHandling {
 
 template<typename TriggerHandler>
 class SVTriggerRelayClass
@@ -33,3 +35,4 @@ public:
 
 #include "SVTriggerRelayClass.inl"
 
+}}

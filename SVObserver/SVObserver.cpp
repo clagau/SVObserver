@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <iostream>
 #include "SVObserver.h"
 
-#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling\SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary\SVPackedFile.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOMFCLibrary\SVDeviceParam.h"
@@ -2572,7 +2572,7 @@ int SVObserverApp::ExitInstance()
 	SVObjectManagerClass::Instance().Shutdown();
 	SVClassRegisterListClass::Instance().Shutdown();
 
-	SVIOConfigurationInterfaceClass::Instance().Shutdown();
+	SvTh::SVIOConfigurationInterfaceClass::Instance().Shutdown();
 
 	// Shutdown MIL
 	SVMatroxApplicationInterface::Shutdown();
@@ -4363,9 +4363,9 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 	SVIOBoardCapabilities l_svCapable;
 	unsigned long l_lCount;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( l_lCount );
+	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( l_lCount );
 	l_svCapable.SetInputCount( l_lCount );
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( l_lCount );
+	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( l_lCount );
 	l_svCapable.SetOutputCount( l_lCount );
 
 	// Special code to determine the inverters 
@@ -4445,7 +4445,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			long lPPQ = 0;
 			long lPPQCount = 0;
 
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
+			SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
 
 			if ( nullptr != pConfig )
 			{
@@ -4492,9 +4492,9 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 						pConfig->GetModuleReady()->m_IOId = pOutput->GetUniqueObjectID();
 
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (15, pOutput->IsInverted ());
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (15, pOutput->IsForced ());
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue (15, pOutput->GetForcedValue ());
+						SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (15, pOutput->IsInverted ());
+						SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (15, pOutput->IsForced ());
+						SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue (15, pOutput->GetForcedValue ());
 					}
 				}
 			}
@@ -5806,9 +5806,9 @@ HRESULT SVObserverApp::INILoad()
 
 		for ( int i = 0; i < 4; i++ )
 		{
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, 0 == l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, 0 == l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, 0 == l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) );
+			SvTh::SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, 0 == l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) );
+			SvTh::SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, 0 == l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) );
+			SvTh::SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, 0 == l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) );
 		}
 
 		l_hrOk = l_hrOk | LoadDigitalDLL();
@@ -5928,7 +5928,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 			{
 				bool l_bRising;
 
-				SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue( i, l_bRising );
+				SvTh::SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue( i, l_bRising );
 
 				if ( l_bRising )
 				{
@@ -6085,7 +6085,7 @@ HRESULT SVObserverApp::LoadDigitalDLL()
 
 	if ( ! m_csDigitalDLL.IsEmpty() )
 	{
-		if ( SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_csDigitalDLL ) != S_OK )
+		if ( SvTh::SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_csDigitalDLL ) != S_OK )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
 		}
@@ -6098,12 +6098,12 @@ HRESULT SVObserverApp::LoadDigitalDLL()
 			if( !m_csDigitalOption.IsEmpty() )
 			{
 				l_vt.lVal = atol( m_csDigitalOption );
-				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
+				SvTh::SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
 			}
 			else
 			{	// Legacy behavior.... Hardware.Ini file does not have new entry...
 				l_vt.lVal = atol( m_csIOBoard );
-				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
+				SvTh::SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
 			}
 		}
 	}
@@ -6120,7 +6120,7 @@ HRESULT SVObserverApp::LoadDigitalDLL()
 
 HRESULT SVObserverApp::CloseDigitalDLL()
 {
-	SVIOConfigurationInterfaceClass::Instance().CloseDigital();
+	SvTh::SVIOConfigurationInterfaceClass::Instance().CloseDigital();
 
 	return S_OK;
 }

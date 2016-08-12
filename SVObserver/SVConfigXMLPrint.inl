@@ -505,7 +505,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 		
 		// Print Result Output title...
 		DWORD dwMaxOutput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
+		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
 		writer->WriteStartElement(nullptr, L"ResultOutputs", nullptr);
 		writer->WriteAttributeString(nullptr, L"NumberOfOutputs", nullptr, _itow(dwMaxOutput, buff, 10));
 		
@@ -600,7 +600,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 			
 			// Print module input title...
 			DWORD dwMaxInput = 0;
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
+			SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
 
 			writer->WriteStartElement(nullptr, L"DigitalInputs", nullptr);
 			writer->WriteAttributeString(nullptr, L"NumberOfInputs", nullptr, _itow(dwMaxInput, buff, 10));

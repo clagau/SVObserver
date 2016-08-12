@@ -18,6 +18,7 @@
 #include "resource.h"		// main symbols
 #include "SVTestIODlg.h"
 
+
 class CSVTestIOApp : public CWinApp
 {
 public:

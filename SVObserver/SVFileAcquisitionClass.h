@@ -17,7 +17,7 @@
 class SVFileAcquisitionClass : public SVAcquisitionClass
 {
 public:
-	SVFileAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
+	SVFileAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVFileAcquisitionClass();
 
 	virtual bool IsValid() const;

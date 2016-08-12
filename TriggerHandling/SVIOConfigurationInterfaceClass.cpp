@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "SVIOConfigurationInterfaceClass.h"
 
+namespace Seidenader { namespace TriggerHandling {
+
 SVIOConfigurationInterfaceClass::SVIOConfigurationInterfaceClass()
 {
 	m_Opto22InputInvert = true;
@@ -703,3 +705,4 @@ HRESULT SVIOConfigurationInterfaceClass::SetParameterValue( unsigned long p_ulIn
 	return m_svDigitalBoard.SetParameterValue( p_ulIndex, p_pvarValue );
 }
 
+} /* namespace TriggerHandling */ } /* namespace Seidenader */

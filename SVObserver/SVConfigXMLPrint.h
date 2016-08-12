@@ -18,7 +18,7 @@
 //Moved to precompiled header: #include <boost/date_time.hpp>
 #include "xmllite.h"
 
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary/SVi64ValueDeviceParam.h"

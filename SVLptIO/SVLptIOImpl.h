@@ -13,31 +13,21 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "SVLptIO.h"
-#include "SVLptIOCallback.h"
+#include "TriggerHandling/IODeviceBase.h"
 
-///////////////////////////////////////////////////////////////////////
-//
-///////////////////////////////////////////////////////////////////////
-struct SVLptIOTriggerStruct
-{
-	SVLptIOCallbackPtr pCallback;
-	void* pOwner;
-	void* pData;
-	bool bStarted;
-};
 
 enum ParallelBoardInterfaceType
 {
 	LegacyFunctions = 0,
 	Function00ForWrite1 = 1,
 };
-typedef std::vector<SVLptIOTriggerStruct> TriggerCallbackList;
-typedef std::map<HANDLE, TriggerCallbackList> TriggerList;
+
 
 ///////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////
-class SVLptIOImpl : public SVLptIO
+class SVLptIOImpl : public SVLptIO, public SvTh::IODeviceBase
+//@TODO [developer] it might be better to use aggregation instead of multiple inheritance here
 {
 #pragma region public
 public:
@@ -118,13 +108,12 @@ public:
 
 	// Triggers
 	unsigned long GetTriggerCount();
-	HANDLE GetTriggerHandle(unsigned long index);
-	BSTR GetTriggerName(HANDLE handle);
-	HRESULT AddTriggerCallback(HANDLE handle, SVLptIOCallbackPtr pCallback, void* pOwner, void* pData);
-	HRESULT RemoveTriggerCallback(HANDLE handle, SVLptIOCallbackPtr pCallback);
-	HRESULT RemoveAllTriggerCallbacks(HANDLE handle);
-	HRESULT StartTrigger(HANDLE handle);
-	HRESULT StopTrigger(HANDLE handle);
+	unsigned long GetTriggerHandle(unsigned long index);
+	BSTR GetTriggerName(unsigned long handle);
+
+	void beforeStartTrigger(unsigned long) override;
+	HRESULT afterStartTrigger(HRESULT hr) override;
+	HRESULT afterStopTrigger(HRESULT hr) override;
 
 	HRESULT TriggerGetParameterCount(unsigned long ulHandle, unsigned long *pulCount);
 	HRESULT TriggerGetParameterName(unsigned long ulHandle, unsigned long ulIndex, BSTR *pbstrName);
@@ -143,7 +132,6 @@ protected:
 	#ifdef SV_LOG_STATUS_INFO
 		SVStatusDeque m_StatusLog;
 	#endif
-	TriggerList m_triggerList;
 
 	int m_numPorts;
 	int m_numInputs;

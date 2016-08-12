@@ -1069,7 +1069,6 @@ echo %time%
     <ClInclude Include="SVToolSetListCtrl.h" />
     <ClInclude Include="SVTransform.h" />
     <ClInclude Include="SVTransformationTool.h" />
-    <ClInclude Include="SVTriggerRelayClass.h" />
     <ClInclude Include="SVUnaryImageOperatorList.h" />
     <ClInclude Include="SVUpperThresholdEquation.h" />
     <ClInclude Include="SVUtilities.h" />
@@ -1112,7 +1111,6 @@ echo %time%
     <None Include="SVStaticValueObjectClassImpl.inl" />
     <None Include="SVTaskObjectInterfaceInputRequestStruct.inl" />
     <None Include="SVToolExtentClass.inl" />
-    <None Include="SVTriggerRelayClass.inl" />
     <None Include="SVValueObjectClass.inl" />
     <None Include="SVValueObjectClassImpl.inl" />
     <None Include="hlp\AfxCore.rtf" />

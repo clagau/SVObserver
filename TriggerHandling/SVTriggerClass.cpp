@@ -12,19 +12,19 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 #include "SVTriggerClass.h"
-#include "TriggerHandling/SVCallbackStruct.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "TriggerBasics.h"
+#include "SVIOTriggerLoadLibraryClass.h"
 
 namespace Seidenader { namespace TriggerHandling {
-	HRESULT CALLBACK SVTriggerClass::SVTriggerCallback( void *p_pvOwner, void *p_pvData )
+	HRESULT CALLBACK SVTriggerClass::SVTriggerCallback(TriggerParameters triggerparams)
 	{
 		HRESULT hrOk = S_OK;
 
-		if ( p_pvOwner )
+		if ( nullptr != triggerparams.m_pOwner)
 		{
 			SVOResponseClass l_Response;
 
-			SVTriggerClass *pDevice = (SVTriggerClass *)p_pvOwner;
+			SVTriggerClass *pDevice = (SVTriggerClass *)(triggerparams.m_pOwner);
 
 			l_Response.Reset();
 			l_Response.SetIsValid( TRUE );
@@ -63,11 +63,11 @@ namespace Seidenader { namespace TriggerHandling {
 	{
 		HRESULT l_hrOk = S_OK;
 
-		SVCallbackStruct l_Callback;
+		TriggerCallbackInformation triggerCallbackInfo;
 
-		l_Callback.m_pCallback = SVTriggerClass::SVTriggerCallback;
-		l_Callback.m_pOwner = this;
-		l_Callback.m_pData = pvOwner;
+		triggerCallbackInfo.m_pCallback = SVTriggerClass::SVTriggerCallback;
+		triggerCallbackInfo.m_TriggerParameters.m_pOwner = this;
+		triggerCallbackInfo.m_TriggerParameters.m_pData = pvOwner;
 
 		l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
@@ -75,12 +75,12 @@ namespace Seidenader { namespace TriggerHandling {
 		{
 			if ( S_OK == l_hrOk )
 			{
-				l_hrOk = m_pDLLTrigger->Register( m_ulHandle, l_Callback );
+				l_hrOk = m_pDLLTrigger->Register( m_ulHandle, triggerCallbackInfo );
 			}
 
 			if ( S_OK != l_hrOk )
 			{
-				m_pDLLTrigger->Unregister( m_ulHandle, l_Callback );
+				m_pDLLTrigger->Unregister( m_ulHandle, triggerCallbackInfo );
 			}
 		}
 		else
@@ -100,13 +100,12 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			SVCallbackStruct l_Callback;
+			TriggerCallbackInformation triggerCallbackInfo;
 
-			l_Callback.m_pCallback = SVTriggerCallback;
-			l_Callback.m_pOwner = this;
-			l_Callback.m_pData = pvOwner;
+			triggerCallbackInfo.m_pCallback = SVTriggerCallback;
+			triggerCallbackInfo.m_TriggerParameters = TriggerParameters(this, pvOwner);
 
-			l_hrOk = m_pDLLTrigger->Unregister( m_ulHandle, l_Callback );
+			l_hrOk = m_pDLLTrigger->Unregister( m_ulHandle, triggerCallbackInfo );
 		}
 		else
 		{

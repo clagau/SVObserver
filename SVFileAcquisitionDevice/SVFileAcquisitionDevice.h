@@ -12,8 +12,8 @@
 #pragma once
 
 #include "SVTriggerLibrary/SVInternalTrigger.h"
-#include "SVTriggerLibrary/SVTriggerCallbackMap.h"
-#include "TriggerHandling/SVCallbackStruct.h"
+#include "TriggerHandling/SVTriggerCallbackMap.h"
+#include "TriggerHandling/TriggerBasics.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVFileAcquisitionDeviceExports.h"
 #include "SVFileCamera.h"
@@ -29,7 +29,7 @@ private:
 	SVFileCameraList m_cameras;
 	
 	SVInternalTrigger m_triggerMgr;
-	SVTriggerCallbackMap m_triggerMap;
+	SvTh::SVTriggerCallbackMap m_triggerMap;
 
 public:
 	SVFileAcquisitionDevice();
@@ -64,8 +64,8 @@ public:
 
 	virtual HRESULT InternalTriggerEnable( unsigned long p_ulIndex );
 	virtual HRESULT InternalTrigger( unsigned long p_ulIndex );
-	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_ulIndex, SvTh::SVCallbackStruct& callbackStruct );
-	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_ulIndex, SvTh::SVCallbackStruct& callbackStruct );
+	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo );
+	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo );
 	virtual HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_ulIndex );
 
 	// Trigger stuff...
@@ -75,8 +75,8 @@ public:
 	unsigned long TriggerGetHandle(unsigned long p_ulIndex);
 
 	virtual HRESULT TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName);
-	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback);
-	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::SVCallbackStruct p_Callback);
+	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
+	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
 	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long p_ulHandle);
 	virtual HRESULT TriggerStart(unsigned long p_ulHandle);
 	virtual HRESULT TriggerStop(unsigned long p_ulHandle);

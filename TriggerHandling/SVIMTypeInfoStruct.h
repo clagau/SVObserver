@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVIMTypeInfoStruct
-//* .File Name       : $Workfile:   TriggerHandling/SVIMTypeInfoStruct.h  $
+//* .File Name       : $Workfile:   SVIMTypeInfoStruct.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:58:58  $

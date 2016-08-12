@@ -18,7 +18,7 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVPPQObject.h"
 #include "SVDataManagerLibrary/DataManager.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -2047,7 +2047,7 @@ BOOL SVPPQObject::AddDefaultInputs()
 	unsigned long ulCount = 0;
 	unsigned long l;
 
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
+	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
 
 	// Create all the default Digital Inputs
 	for( l = 0; l < ulCount; l++ )

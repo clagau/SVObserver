@@ -24,7 +24,7 @@ struct SVGigeCameraFileInfoStruct;
 class SVMatroxGigeAcquisitionClass : public SVAcquisitionClass
 {
 public:
-	SVMatroxGigeAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
+	SVMatroxGigeAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVMatroxGigeAcquisitionClass();
 
 	virtual bool IsValid() const;

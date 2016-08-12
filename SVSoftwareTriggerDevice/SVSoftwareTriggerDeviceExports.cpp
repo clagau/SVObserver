@@ -79,7 +79,7 @@ HRESULT WINAPI SVTriggerGetHandle( unsigned long *p_pulHandle, unsigned long p_u
 
 	if ( nullptr != p_pulHandle )
 	{
-		*p_pulHandle = reinterpret_cast<unsigned long>(g_softwareTrigger.GetTriggerHandle(p_ulIndex));
+		*p_pulHandle = g_softwareTrigger.GetTriggerHandle(p_ulIndex);
 		l_hrOk = S_OK;
 	}
 	return l_hrOk;
@@ -95,7 +95,7 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 		{
 			::SysFreeString(*p_pbstrName);
 		}
-		*p_pbstrName = g_softwareTrigger.GetTriggerName(reinterpret_cast<HANDLE>(p_ulHandle));
+		*p_pbstrName = g_softwareTrigger.GetTriggerName(p_ulHandle);
 		
 		if (nullptr != *p_pbstrName)
 		{
@@ -105,26 +105,26 @@ HRESULT WINAPI SVTriggerGetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SVTriggerCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVTriggerRegister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( nullptr != p_pCallback && 0 < p_ulHandle)
+	if ( nullptr != triggerCallbackInfo.m_pCallback && 0 < p_ulHandle)
 	{
 		l_hrOk = S_OK;
 
-		g_softwareTrigger.AddTriggerCallback(reinterpret_cast<HANDLE>(p_ulHandle), p_pCallback, p_pOwner, p_pData);
+		g_softwareTrigger.AddTriggerCallback(p_ulHandle, triggerCallbackInfo);
 	} 
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SVTriggerCallbackPtr p_pCallback, void *p_pOwner, void *p_pData )
+HRESULT WINAPI SVTriggerUnregister( unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( nullptr != p_pCallback && 0 < p_ulHandle )
+	if ( nullptr != triggerCallbackInfo.m_pCallback && 0 < p_ulHandle )
 	{
-		l_hrOk = g_softwareTrigger.RemoveTriggerCallback(reinterpret_cast<HANDLE>(p_ulHandle), p_pCallback);
+		l_hrOk = g_softwareTrigger.RemoveTriggerCallback(p_ulHandle, triggerCallbackInfo.m_pCallback);
 	} 
 	return l_hrOk;
 }
@@ -135,7 +135,7 @@ HRESULT WINAPI SVTriggerUnregisterAll( unsigned long p_ulHandle )
 
 	if ( 0 < p_ulHandle )
 	{
-		l_hrOk = g_softwareTrigger.RemoveAllTriggerCallbacks(reinterpret_cast<HANDLE>(p_ulHandle));
+		l_hrOk = g_softwareTrigger.RemoveAllTriggerCallbacks(p_ulHandle);
 	} 
 	return l_hrOk;
 }
@@ -146,7 +146,7 @@ HRESULT WINAPI SVTriggerStart( unsigned long p_ulHandle )
 
 	if ( 0 < p_ulHandle)
 	{
-		l_hrOk = g_softwareTrigger.StartTrigger(reinterpret_cast<HANDLE>(p_ulHandle));
+		l_hrOk = g_softwareTrigger.StartTrigger(p_ulHandle);
 	} 
 	return l_hrOk;
 }
@@ -157,32 +157,32 @@ HRESULT WINAPI SVTriggerStop( unsigned long p_ulHandle )
 
 	if ( 0 < p_ulHandle )
 	{
-		l_hrOk = g_softwareTrigger.StopTrigger(reinterpret_cast<HANDLE>(p_ulHandle));
+		l_hrOk = g_softwareTrigger.StopTrigger(p_ulHandle);
 	} 
 	return l_hrOk;
 }
 
 HRESULT WINAPI SVTriggerGetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount )
 {
-	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterCount(reinterpret_cast<HANDLE>(p_ulHandle), p_pulCount);
+	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterCount(p_ulHandle, p_pulCount);
 	return l_hrOk;
 }
 
 HRESULT WINAPI SVTriggerGetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName )
 {
-	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterName(reinterpret_cast<HANDLE>(p_ulHandle), p_ulIndex, p_pbstrName);
+	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterName(p_ulHandle, p_ulIndex, p_pbstrName);
 	return l_hrOk;
 }
 
 HRESULT WINAPI SVTriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
-	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterValue(reinterpret_cast<HANDLE>(p_ulHandle), p_ulIndex, p_pvarValue);
+	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterValue(p_ulHandle, p_ulIndex, p_pvarValue);
 	return l_hrOk;
 }
 
 HRESULT WINAPI SVTriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
-	HRESULT l_hrOk = g_softwareTrigger.TriggerSetParameterValue(reinterpret_cast<HANDLE>(p_ulHandle), p_ulIndex, p_pvarValue);
+	HRESULT l_hrOk = g_softwareTrigger.TriggerSetParameterValue(p_ulHandle, p_ulIndex, p_pvarValue);
 	return l_hrOk;
 }
 

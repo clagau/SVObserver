@@ -34,7 +34,7 @@
 #endif
 #pragma endregion Declarations
 
-SVFileAcquisitionClass::SVFileAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
+SVFileAcquisitionClass::SVFileAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
 {
 	mbIsFilesLoaded = false;

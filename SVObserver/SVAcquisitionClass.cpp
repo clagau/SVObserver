@@ -38,7 +38,7 @@
 #endif
 #pragma endregion Declarations
 
-SVAcquisitionClass::SVAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
+SVAcquisitionClass::SVAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams )
 : SVODataDeviceClass( p_rParams.m_DeviceName.c_str() )
 {
 	mbIsBufferCreated = false;

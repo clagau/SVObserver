@@ -15,6 +15,7 @@
 
 typedef HRESULT (CALLBACK *LPSVFINISHPROC)(void*,void*,void*); //@TODO [Arvid] this is currently a duplication of the definition in SVObserver\SVInfoStructs.h and will be removed in the future
 
+#include "TriggerBasics.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVTimerLibrary/SVClock.h"

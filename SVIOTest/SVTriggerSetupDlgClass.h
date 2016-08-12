@@ -11,9 +11,6 @@
 
 #pragma once
 
-class SVIOConfigurationInterfaceClass;
-class SVIOTriggerLoadLibraryClass;
-
 /////////////////////////////////////////////////////////////////////////////
 // SVTriggerSetupDlgClass dialog
 
@@ -24,7 +21,7 @@ public:
 	SVTriggerSetupDlgClass(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVTriggerSetupDlgClass();
 
-	SVIOTriggerLoadLibraryClass *m_psvTriggers;
+	SvTh::SVIOTriggerLoadLibraryClass *m_psvTriggers;
 	long m_lStrobeInverts;
 	long m_lTrigInverts;
 	long m_lSystemType;

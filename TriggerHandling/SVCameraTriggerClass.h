@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerHandling/SVSoftwareTriggerClass.h"
+#include "SVSoftwareTriggerClass.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {
@@ -42,7 +42,7 @@ namespace Seidenader { namespace TriggerHandling {
 		virtual HRESULT UnregisterCallback(SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller);
 	
 		static HRESULT CALLBACK SoftwareTriggerCompleteCallback(void *p_pvOwner, void *p_pvData, void * p_pvResponse);
-		static HRESULT CALLBACK TriggerCallback(void *p_pvOwner, void *p_pvData);
+		static HRESULT CALLBACK TriggerCallback(TriggerParameters triggerparams);
 	};
 
 } /* namespace TriggerHandling */ } /* namespace Seidenader */

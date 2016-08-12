@@ -81,17 +81,20 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IODeviceBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVAcquisitionConstructParams.cpp" />
     <ClCompile Include="SVAcquisitionInitiator.cpp" />
-    <ClCompile Include="SVCallbackStruct.cpp" />
+    <ClCompile Include="TriggerBasics.cpp" />
     <ClCompile Include="SVCameraTriggerClass.cpp" />
     <ClCompile Include="SVCameraTriggerData.cpp" />
     <ClCompile Include="SVHardwareManifest.cpp" />
+    <ClCompile Include="SVIOConfigurationInterfaceClass.cpp" />
     <ClCompile Include="SVSoftwareTriggerClass.cpp" />
+    <ClCompile Include="SVTriggerCallbackMap.cpp" />
     <ClCompile Include="SVTriggerClass.cpp" />
     <ClCompile Include="SVTriggerDeviceParams.cpp" />
     <ClCompile Include="SVTriggerInfoStruct.cpp" />
@@ -99,23 +102,34 @@
     <ClCompile Include="SVTriggerProcessingClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CallbackStructContainers.h" />
+    <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVAcquisitionConstructParams.h" />
     <ClInclude Include="SVAcquisitionInitiator.h" />
-    <ClInclude Include="SVCallbackStruct.h" />
     <ClInclude Include="SVCameraTriggerClass.h" />
     <ClInclude Include="SVCameraTriggerData.h" />
     <ClInclude Include="SVHardwareManifest.h" />
     <ClInclude Include="SVIMTypeInfoStruct.h" />
+    <ClInclude Include="SVIOConfigurationInterfaceClass.h" />
+    <ClInclude Include="SVIODigitalLoadLibraryClass.h" />
+    <ClInclude Include="SVIOTriggerLoadLibraryClass.h" />
     <ClInclude Include="SVSoftwareTriggerClass.h" />
+    <ClInclude Include="SVTriggerCallbackMap.h" />
     <ClInclude Include="SVTriggerClass.h" />
     <ClInclude Include="SVTriggerConstants.h" />
     <ClInclude Include="SVTriggerDeviceParams.h" />
     <ClInclude Include="SVTriggerInfoStruct.h" />
     <ClInclude Include="SVTriggerObject.h" />
     <ClInclude Include="SVTriggerProcessingClass.h" />
+    <ClInclude Include="SVTriggerRelayClass.h" />
+    <ClInclude Include="TriggerBasics.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="SVIOConfigurationInterfaceClass.inl" />
+    <None Include="SVIODigitalLoadLibraryClass.inl" />
+    <None Include="SVIOTriggerLoadLibraryClass.inl" />
+    <None Include="SVTriggerRelayClass.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

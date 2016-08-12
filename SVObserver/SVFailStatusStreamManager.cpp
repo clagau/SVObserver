@@ -115,7 +115,7 @@ HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorList& rLi
 				FailStatusLists::iterator listIt = it->second.find(listName);
 				if (listIt != it->second.end())
 				{
-					failStatus.bStarted = listIt->second.bStarted; // keep the current state
+					failStatus.m_IsStarted = listIt->second.m_IsStarted; // keep the current state
 					listIt->second.stream.Clear(); // remove the items
 				}
 				// Build fail status value list
@@ -155,7 +155,7 @@ HRESULT SVFailStatusStreamManager::AttachPPQObservers(const RemoteMonitorList& r
 				FailStatusLists::iterator listIt = it->second.find(listName);
 				if (listIt != it->second.end())
 				{
-					failStatus.bStarted = listIt->second.bStarted; // keep the current state
+					failStatus.m_IsStarted = listIt->second.m_IsStarted; // keep the current state
 					listIt->second.stream.Clear(); // remove the items
 				}
 				// Build fail status value list
@@ -204,7 +204,7 @@ HRESULT SVFailStatusStreamManager::ObserverUpdate(const SVProductInfoStruct& rDa
 			{
 				for (FailStatusLists::const_iterator listIt = it->second.begin(); listIt != it->second.end();++listIt)
 				{
-					if (listIt->second.bStarted)
+					if (listIt->second.m_IsStarted)
 					{
 						hr = listIt->second.stream.BuildJsonStream(rData, m_SocketServer);
 					}
@@ -264,7 +264,7 @@ HRESULT SVFailStatusStreamManager::ProcessStartStopCommand(const SVString& rName
 		FailStatusLists::iterator listIt = it->second.find(rName);
 		if (listIt != it->second.end())
 		{
-			listIt->second.bStarted = bStart;
+			listIt->second.m_IsStarted = bStart;
 			hr = S_OK;
 		}
 	}

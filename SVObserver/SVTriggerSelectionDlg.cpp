@@ -16,7 +16,7 @@ IMPLEMENT_DYNAMIC(SVTriggerSelectionDlg, CDialog)
 
 SVTriggerSelectionDlg::SVTriggerSelectionDlg(const SVTriggerNameIdList& triggerList, CWnd* pParent /*=nullptr*/)
 : CDialog(SVTriggerSelectionDlg::IDD, pParent)
-, m_triggerList(triggerList)
+, m_triggerCallbackMap(triggerList)
 , m_selectedTriggerID(-1) 
 {
 }
@@ -33,7 +33,7 @@ void SVTriggerSelectionDlg::DoDataExchange(CDataExchange* pDX)
 
 void SVTriggerSelectionDlg::PopulateSelectionList()
 {
-	for (SVTriggerNameIdList ::const_iterator it = m_triggerList.begin();it != m_triggerList.end();++it)
+	for (SVTriggerNameIdList ::const_iterator it = m_triggerCallbackMap.begin();it != m_triggerCallbackMap.end();++it)
 	{
 		int index = m_selectionListBox.AddString(it->first.c_str());
 		m_selectionListBox.SetItemData(index, it->second);

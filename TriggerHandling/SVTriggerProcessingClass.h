@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVString.h"
-#include "TriggerHandling/SVTriggerClass.h"
+#include "SVTriggerClass.h"
 #pragma endregion Includes
 
 class SVIOTriggerLoadLibraryClass;

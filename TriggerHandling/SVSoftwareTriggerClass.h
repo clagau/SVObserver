@@ -28,8 +28,8 @@ namespace Seidenader { namespace TriggerHandling {
 		virtual HRESULT RegisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller );
 		virtual HRESULT UnregisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller );
 	
-		static HRESULT CALLBACK TriggerCallback( void *p_pvOwner, void *p_pvData );
-		static HRESULT CALLBACK TriggerCompleteCallback( void *p_pvOwner, void *p_pvData );
+		static HRESULT CALLBACK TriggerCallback(TriggerParameters triggerparams);
+		static HRESULT CALLBACK TriggerCompleteCallback(TriggerParameters triggerparams);
 
 		virtual void RegisterAcquistionInitiator( SVAcquisitionInitiator& rFunc); 
 

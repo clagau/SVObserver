@@ -37,7 +37,7 @@
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVMatroxGigeAcquisitionClass::SVMatroxGigeAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
+SVMatroxGigeAcquisitionClass::SVMatroxGigeAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
 {
 	mbIsCamFilesLoaded = false;

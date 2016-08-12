@@ -8,10 +8,9 @@
 #pragma once
 
 //Moved to precompiled header: #include <comdef.h>
-#include "SVLptIOCallback.h"
+#include "TriggerHandling/TriggerBasics.h"
 
 #pragma region exports
-typedef HRESULT (CALLBACK *SVLptCallbackPtr)(void * /* Owner */, void * /* Data */); 
 
 HRESULT WINAPI SVCreate();
 HRESULT WINAPI SVDestroy();
@@ -33,8 +32,8 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long ulPort, unsigned long ulValue)
 HRESULT WINAPI SVTriggerGetCount(unsigned long *pulCount);
 HRESULT WINAPI SVTriggerGetHandle(unsigned long *pulHandle, unsigned long ulIndex);
 HRESULT WINAPI SVTriggerGetName(unsigned long ulHandle, BSTR *pbstrName);
-HRESULT WINAPI SVTriggerRegister(unsigned long ulHandle, SVLptCallbackPtr pCallback, void *pOwner, void *pData);
-HRESULT WINAPI SVTriggerUnregister(unsigned long ulHandle, SVLptCallbackPtr pCallback, void *pOwner, void *pData);
+HRESULT WINAPI SVTriggerRegister(unsigned long ulHandle, SvTh::TriggerCallbackInformation TriggerCallbackInfo );
+HRESULT WINAPI SVTriggerUnregister(unsigned long ulHandle, SvTh::TriggerCallbackInformation TriggerCallbackInfo );
 HRESULT WINAPI SVTriggerUnregisterAll(unsigned long ulHandle);
 HRESULT WINAPI SVTriggerStart(unsigned long ulHandle);
 HRESULT WINAPI SVTriggerStop(unsigned long ulHandle);

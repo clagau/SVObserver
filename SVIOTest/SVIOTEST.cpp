@@ -10,9 +10,9 @@
 // ******************************************************************************
 
 #include "stdafx.h"
+
 #include "SVIOTEST.h"
 #include "SVIOTESTDlg.h"
-
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVOMFCLibrary/SVOIniLoader.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 
 CSVIOTESTApp::CSVIOTESTApp()
 {
-	SVIOConfigurationInterfaceClass::Instance().Shutdown();
+	SvTh::SVIOConfigurationInterfaceClass::Instance().Shutdown();
 }
 
 CSVIOTESTApp::~CSVIOTESTApp()
@@ -80,7 +80,7 @@ BOOL CSVIOTESTApp::InitInstance()
 	bool l_bOk = true;
 
 	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.m_csTriggerDLL ) && l_bOk;
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_csDigitalDLL ) && l_bOk;
+	l_bOk = S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_csDigitalDLL ) && l_bOk;
 
 	if ( ! l_bOk )
 	{

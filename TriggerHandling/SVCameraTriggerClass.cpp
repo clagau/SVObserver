@@ -10,10 +10,10 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "TriggerHandling/SVCameraTriggerClass.h"
-#include "TriggerHandling/SVCameraTriggerData.h"
-#include "TriggerHandling/SVCallbackStruct.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "SVCameraTriggerClass.h"
+#include "SVCameraTriggerData.h"
+#include "TriggerBasics.h"
+#include "SVIOTriggerLoadLibraryClass.h"
 
 namespace Seidenader { namespace TriggerHandling {
 
@@ -39,15 +39,15 @@ namespace Seidenader { namespace TriggerHandling {
 		return hr;
 	}
 
-	HRESULT CALLBACK SVCameraTriggerClass::TriggerCallback(void* p_pvOwner, void* p_pvData)
+	HRESULT CALLBACK SVCameraTriggerClass::TriggerCallback(TriggerParameters triggerparams)
 	{
 		HRESULT hr = S_OK;
-		if (p_pvOwner)
+		if (nullptr != triggerparams.m_pOwner)
 		{
 			SVOResponseClass l_Response;
 
-			SVCameraTriggerClass *pDevice = reinterpret_cast<SVCameraTriggerClass *>(p_pvOwner);
-			SVCameraTriggerData::NameVariantMap* pSettings = reinterpret_cast<SVCameraTriggerData::NameVariantMap*> (p_pvData);
+			SVCameraTriggerClass *pDevice = reinterpret_cast<SVCameraTriggerClass *>(triggerparams.m_pOwner);
+			SVCameraTriggerData::NameVariantMap* pSettings = reinterpret_cast<SVCameraTriggerData::NameVariantMap*> (triggerparams.m_pData);
 
 			_variant_t startVal;
 			SVCameraTriggerData::NameVariantMap::const_iterator Iter( pSettings->end() );
@@ -82,18 +82,17 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if (nullptr != m_pDLLTrigger)
 		{
-			SVCallbackStruct l_Callback;
-			l_Callback.m_pCallback = SVCameraTriggerClass::TriggerCallback;
-			l_Callback.m_pOwner = this;
-			l_Callback.m_pData = nullptr;
+			TriggerCallbackInformation triggerCallbackInfo;
+			triggerCallbackInfo.m_pCallback = SVCameraTriggerClass::TriggerCallback;
+			triggerCallbackInfo.m_TriggerParameters = TriggerParameters(this);
 
 			if (S_OK == hr)
 			{
-				hr = m_pDLLTrigger->Register(m_ulHandle, l_Callback);
+				hr = m_pDLLTrigger->Register(m_ulHandle, triggerCallbackInfo);
 			}
 			if (S_OK != hr)
 			{
-				m_pDLLTrigger->Unregister(m_ulHandle, l_Callback);
+				m_pDLLTrigger->Unregister(m_ulHandle, triggerCallbackInfo);
 			}
 			if (S_OK == hr)
 			{
@@ -124,12 +123,11 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 		if (nullptr != m_pDLLTrigger)
 		{
-			SVCallbackStruct l_Callback;
-			l_Callback.m_pCallback = SVCameraTriggerClass::TriggerCallback;
-			l_Callback.m_pOwner = this;
-			l_Callback.m_pData = nullptr;
+			TriggerCallbackInformation triggerCallbackInfo;
+			triggerCallbackInfo.m_pCallback = SVCameraTriggerClass::TriggerCallback;
+			triggerCallbackInfo.m_TriggerParameters = TriggerParameters(this, nullptr);
 
-			if (S_OK != m_pDLLTrigger->Unregister( m_ulHandle, l_Callback))
+			if (S_OK != m_pDLLTrigger->Unregister( m_ulHandle, triggerCallbackInfo))
 			{
 				hr = S_FALSE;
 			}

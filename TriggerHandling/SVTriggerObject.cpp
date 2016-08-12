@@ -11,11 +11,11 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-#include "SVTriggerLibrary/SVTriggerEnums.h"
 #include "SVTriggerObject.h"
 #include "SVTriggerClass.h"
 #include "SVTriggerConstants.h"
+#include "SVTriggerLibrary/SVTriggerEnums.h"
+#include "SVIOTriggerLoadLibraryClass.h"
 
 namespace Seidenader { namespace TriggerHandling {
 	HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void *pvOwner, void *pvCaller, void *pvResponse )

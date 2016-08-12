@@ -52,14 +52,13 @@
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
-#include <deque>
 #include <functional>
 #include <list>				//Used by static library
 #include <map>
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library
-#include <vector>			//Used by static library
+#include <vector>
 
 #include <boost/assign/list_of.hpp>
 #include <boost/assign/list_inserter.hpp>

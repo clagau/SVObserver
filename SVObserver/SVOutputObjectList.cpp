@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOutputObjectList.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
 #include "SVValueObject.h"
 #include "SVDigitalOutputObject.h"
 #include "SVRemoteOutputObject.h"
@@ -225,7 +225,7 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& p_IOEntries, long 
 		{
 			dwValue = 0;
 
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputState( sizeof dwValue, (unsigned char *)&dwValue );
+			SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputState( sizeof dwValue, (unsigned char *)&dwValue );
 
 			strValue.Format( "%d", dwValue );
 
@@ -307,7 +307,7 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, 
 		{
 			dwValue = 0;
 
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputState( sizeof dwValue, (unsigned char *)&dwValue );
+			SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputState( sizeof dwValue, (unsigned char *)&dwValue );
 
 			strValue.Format( "%d", dwValue );
 

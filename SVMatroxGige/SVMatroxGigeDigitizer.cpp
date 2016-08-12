@@ -65,7 +65,7 @@ const SVMatroxGigeDigitizer& SVMatroxGigeDigitizer::operator=( const SVMatroxGig
 
 		m_AcqBuffers = p_rValue.m_AcqBuffers;
 
-		m_triggerCallback = p_rValue.m_triggerCallback;
+		m_triggerCallbackInfo = p_rValue.m_triggerCallbackInfo;
 
 		m_lineInputMoniker = p_rValue.m_lineInputMoniker;
 		m_lineInputRisingEventName = p_rValue.m_lineInputRisingEventName;
@@ -240,20 +240,19 @@ void SVMatroxGigeDigitizer::SetLineState(bool bState)
 	m_lineState = bState;
 }
 
-const SvTh::SVCallbackStruct& SVMatroxGigeDigitizer::GetTriggerCallback() const
+const SvTh::TriggerCallbackInformation& SVMatroxGigeDigitizer::GetTriggerCallback() const
 {
-	return m_triggerCallback;
+	return m_triggerCallbackInfo;
 }
 
-void SVMatroxGigeDigitizer::SetTriggerCallback(SvTh::SVCallbackStruct& callback)
+void SVMatroxGigeDigitizer::SetTriggerCallback(const SvTh::TriggerCallbackInformation& callback)
 {
-	m_triggerCallback = callback;
+	m_triggerCallbackInfo = callback;
 }
 
 void SVMatroxGigeDigitizer::ClearTriggerCallback()
 {
-	m_triggerCallback.m_pCallback = nullptr;
-	m_triggerCallback.m_pOwner = nullptr;
-	m_triggerCallback.m_pData = nullptr;
+	m_triggerCallbackInfo.m_pCallback = nullptr;
+	m_triggerCallbackInfo.m_TriggerParameters = SvTh::TriggerParameters();
 }
 

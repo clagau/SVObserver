@@ -7,7 +7,7 @@
 #include "stdafx.h"
 #include "SVDigitalOutputObject.h"
 
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
 #pragma endregion Includes
 
 SVDigitalOutputObject::SVDigitalOutputObject( LPCSTR strObjectName )
@@ -67,7 +67,7 @@ HRESULT SVDigitalOutputObject::Write( const _variant_t& p_rValue )
 
 	m_bLastValue = p_rValue;
 
-	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lChannel, m_bLastValue );
+	l_Status = SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lChannel, m_bLastValue );
 
 	return l_Status;
 }
@@ -76,7 +76,7 @@ HRESULT SVDigitalOutputObject::Reset()
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lChannel, m_bDefaultValue );
+	l_Status = SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lChannel, m_bDefaultValue );
 
 	return l_Status;
 }
@@ -88,8 +88,8 @@ BOOL SVDigitalOutputObject::Force( bool bForce, bool bForcedValue )
 	m_bForced = bForce;
 	m_bForcedValue = bForcedValue;
 
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced( m_lChannel, m_bForced );
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue( m_lChannel, m_bForcedValue ) && l_bOk;
+	l_bOk = S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced( m_lChannel, m_bForced );
+	l_bOk = S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue( m_lChannel, m_bForcedValue ) && l_bOk;
 
 	return l_bOk;
 }
@@ -100,7 +100,7 @@ BOOL SVDigitalOutputObject::Invert( bool bInvert )
 
 	m_bInverted = bInvert;
 
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted( m_lChannel, m_bInverted );
+	l_bOk = S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted( m_lChannel, m_bInverted );
 
 	return l_bOk;
 }
