@@ -99,7 +99,6 @@
     <ClInclude Include="SVTriggerCallback.h" />
     <ClInclude Include="SVTriggerCallbackFunc.h" />
     <ClInclude Include="SVTriggerCallbackFuncInterface.h" />
-    <ClInclude Include="SVTriggerCallbackStruct.h" />
     <ClInclude Include="SVTriggerEnums.h" />
     <ClInclude Include="SVTriggerHandler.h" />
   </ItemGroup>
