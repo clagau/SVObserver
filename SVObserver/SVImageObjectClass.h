@@ -71,6 +71,8 @@ public:
 	HRESULT CopyToBSTR( BSTR &p_rbstrData );
 	HRESULT CopyFromBSTR( BSTR p_Image );
 
+	void SetTranslationOffset(double offsetX, double offsetY);
+
 	//************************************
 	//! Get the Extension for the Image
 	//! \param pFileName [in]

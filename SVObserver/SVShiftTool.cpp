@@ -300,6 +300,8 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 
 				if( l_Status )
 				{
+					m_OutputImage.SetTranslationOffset(l_OffsetX, l_OffsetY);
+
 					SVMatroxImageInterface::SVStatusCode l_Code;
 
 					l_Code = SVMatroxBufferInterface::CopyBuffer( l_OutMilHandle.GetBuffer(), l_InMilHandle.GetBuffer(), static_cast< long >( -l_OffsetX ), static_cast< long >( -l_OffsetY ) );

@@ -122,6 +122,7 @@ public:
 	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SVExtentPointStruct p_InPt, SVExtentPointStruct& p_OutPt); //@TODO:  Change method to const?
 
 	void GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const;
+	void SetTranslationOffset(double offsetX, double offsetY);
 
 #pragma region virtual method (ISVImage)
 	virtual SVImageTypeEnum GetImageType() const override;

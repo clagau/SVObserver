@@ -22,7 +22,6 @@
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManagerResource.h"  // Use SvStl::MessageMgrDisplayAndNotify
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 SVImageObjectClass::SVImageObjectClass()
@@ -641,6 +640,12 @@ HRESULT SVImageObjectClass::CopyFromBSTR( BSTR p_Image )
 	}
 
 	return l_Status;
+}
+
+void SVImageObjectClass::SetTranslationOffset(double offsetX, double offsetY)
+{
+	m_ImageInfo.SetExtentProperty(SVExtentPropertyTranslationOffsetX, offsetX);
+	m_ImageInfo.SetExtentProperty(SVExtentPropertyTranslationOffsetY, offsetY);
 }
 
 SVImageObjectClass::SVImageObjectElement::SVImageObjectElement()

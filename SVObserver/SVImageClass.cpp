@@ -2326,6 +2326,16 @@ HRESULT SVImageClass::ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvE
 	return l_hrOk;
 }
 
+// Method to keep the Translation Offset in sync between the ToolExtents and ImageExtents
+// Called by SVShitftTool::oRun
+void SVImageClass::SetTranslationOffset(double offsetX, double offsetY)
+{
+	m_ImageInfo.SetExtentProperty(SVExtentPropertyTranslationOffsetX, offsetX);
+	m_ImageInfo.SetExtentProperty(SVExtentPropertyTranslationOffsetY, offsetY);
+	SVImageObjectClassPtr ptr = GetBufferArrayPtr();
+	ptr->SetTranslationOffset(offsetX, offsetY);
+}
+
 /*
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
