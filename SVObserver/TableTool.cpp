@@ -31,13 +31,13 @@ SV_IMPLEMENT_CLASS( TableTool, TableToolGuid );
 TableTool::TableTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int stringResourceID )
 	:SVToolClass( bCreateDefaultTaskList, pOwner, stringResourceID )
 	,m_pClearEquation(nullptr)
+	,m_pTable(nullptr)
 {
 	LocalInitialize ();
 }
 
 TableTool::~TableTool() 
 {
-	RemoveEmbeddedObject(m_pTable);
 }
 #pragma endregion Constructor
 
@@ -81,13 +81,6 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 		}
 	}
 
-	CString tableObjectString;
-	tableObjectString.LoadString(IDS_CLASSNAME_TABLE_OBJECT);
-	// Set object embedded to Setup the Embedded GUID
-	m_pTable->SetObjectEmbedded(GUID_NULL, this, tableObjectString);
-	// Add to embedded object to List of Embedded Objects
-	AddEmbeddedObject(m_pTable);
-
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Table Tool.
 	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
@@ -104,6 +97,22 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 	m_isCreated = bOk;
 
 	return bOk;
+}
+
+HRESULT TableTool::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const
+{
+	HRESULT Status( SVTaskObjectListClass::GetOutputList( p_rOutputInfoList ) );
+
+	if (nullptr != m_pTable)
+	{
+		p_rOutputInfoList.Add( &(m_pTable->GetObjectOutputInfo()) );
+	}
+	else
+	{
+		Status = E_FAIL;
+	}
+
+	return Status;
 }
 
 bool TableTool::DoesObjectHaveExtents() const

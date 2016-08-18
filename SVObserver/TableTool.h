@@ -35,6 +35,8 @@ public:
 public:
 	virtual BOOL	CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
+	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const override;
+
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual HRESULT ResetObject() override;
