@@ -56,6 +56,7 @@
 #include "SVOGui\TADialogTableDefinesPage.h"
 #include "SVOGui\TATableSourcePage.h"
 #include "SVOGui\TATableAnalyzerPage.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -429,6 +430,23 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			}
 		
 			EndDialog( IDOK );
+		}
+		else
+		{
+			SvStl::MessageContainer message = pTool->getFirstTaskMessage();
+			SvOi::MessageTextEnum textEnum = SvOi::Tid_Empty;
+			SVStringArray textList; 
+			if (0 != message.getMessage().m_MessageCode)
+			{
+				textEnum = message.getMessage().m_AdditionalTextId;
+				textList = message.getMessage().m_AdditionalTextList;
+			}
+			SvStl::MessageMgrDisplayAndNotify messageMgr(  SvStl::LogAndDisplay );
+			INT_PTR result = messageMgr.setMessage( SVMSG_SVO_104_TA_DIALOG_CLOSING_ERROR, textEnum, textList, SvStl::SourceFileParams(StdMessageParams), 0, pTool->GetUniqueObjectID(), MB_YESNO );
+			if (IDYES == result)
+			{
+				EndDialog( IDOK );
+			}
 		}
 	}
 

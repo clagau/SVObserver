@@ -17,6 +17,7 @@
 #include "GuiCommands\GetErrorMessageList.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVMessage\SVMessage.h"
+#include "ObjectInterfaces\GlobalConst.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -64,6 +65,7 @@ namespace Seidenader { namespace SVOGui {
 		CPropertyPage::DoDataExchange(pDX);
 		//{{AFX_DATA_MAP(TADialogTableParameterPage)
 		DDX_Text(pDX, IDC_EDIT_TABLE_MAX_ROWS, m_maxRows);
+		DDV_MinMaxLong(pDX, m_maxRows, SvOi::cTableMaxRowMin, SvOi::cTableMaxRowMax);
 		DDX_Text(pDX, IDC_EDIT_TABLE_CLEAR_FORMULA, m_clearString);
 		//}}AFX_DATA_MAP
 	}
@@ -118,44 +120,52 @@ namespace Seidenader { namespace SVOGui {
 
 	void TADialogTableParameterPage::OnBnClickedButtonFormula()
 	{
-		CString strCaption = _T("Clear Condtional Formula");
+		BOOL updateState = UpdateData(TRUE);
+		if (updateState)
+		{
+			CString strCaption = _T("Clear Conditional Formula");
 
-		SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_ClearEquationID, strCaption);
-		dlg.DoModal();
-		setEquationText();
+			SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_ClearEquationID, strCaption);
+			dlg.DoModal();
+			setEquationText();
+		}
 	}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 	HRESULT TADialogTableParameterPage::SetPageData()
 	{
-		UpdateData(TRUE);
-		m_Values.Set<long>(MaxRowTag, m_maxRows);
-		HRESULT hResult = m_Values.Commit(true);
-
-		if (S_OK != hResult)
+		HRESULT hResult = S_FALSE;
+		BOOL updateState = UpdateData(TRUE);
+		if (updateState)
 		{
-			typedef GuiCmd::GetErrorMessageList Command;
-			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(m_TaskObjectID);
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			SvStl::MessageContainerVector messages;
-			if (S_OK == hr)
+			m_Values.Set<long>(MaxRowTag, m_maxRows);
+			hResult = m_Values.Commit(true);
+
+			if (S_OK != hResult)
 			{
-				messages = commandPtr->GetMessageList();
-			}
-			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
-			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-				Msg.setMessage(messages[0].getMessage());
-			}
-			else
-			{
-				SVStringArray msgList;
-				msgList.push_back(SvUl_SF::Format(_T("%d"), hResult));
-				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams));
+				typedef GuiCmd::GetErrorMessageList Command;
+				typedef SVSharedPtr<Command> CommandPtr;
+				CommandPtr commandPtr = new Command(m_TaskObjectID);
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				SvStl::MessageContainerVector messages;
+				if (S_OK == hr)
+				{
+					messages = commandPtr->GetMessageList();
+				}
+				if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
+				{
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage(messages[0].getMessage());
+				}
+				else
+				{
+					SVStringArray msgList;
+					msgList.push_back(SvUl_SF::Format(_T("%d"), hResult));
+					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams));
+				}
 			}
 		}
 		return hResult;

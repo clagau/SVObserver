@@ -65,8 +65,8 @@ namespace Seidenader { namespace SVOGui {
 #pragma region Public Methods
 	bool TADialogTableDefinesPage::QueryAllowExit()
 	{
-		HRESULT hResult = ValidateData();
-		return (S_OK == hResult);
+		ValidateData();
+		return true;
 	}
 #pragma endregion Public Methods
 
@@ -94,15 +94,8 @@ namespace Seidenader { namespace SVOGui {
 
 	BOOL TADialogTableDefinesPage::OnKillActive()
 	{
-		HRESULT hResult = ValidateData();
-		if (S_OK == hResult)
-		{
-			return CPropertyPage::OnKillActive();
-		}
-		else
-		{
-			return FALSE;
-		}
+		ValidateData();
+		return CPropertyPage::OnKillActive();
 	}
 
 	void TADialogTableDefinesPage::OnBnClickedButtonRemove()

@@ -13,6 +13,8 @@ namespace Seidenader { namespace ObjectInterfaces
 	const int			cRingBufferDepthMin = 2;
 	const int			cRingBufferDepthMax = 30;
 	const int			cRingBufferNumberOutputImages = 2;
+	const int			cTableMaxRowMin = 1;
+	const int			cTableMaxRowMax = 10000;
 
 	#pragma endregion Declarations
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */

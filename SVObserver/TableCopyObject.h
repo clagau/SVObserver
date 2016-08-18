@@ -30,7 +30,7 @@ public:
 
 #pragma region Public Methods
 public:
-	void setSourecTable(TableObject* sourceTable) { m_sourceTable = sourceTable; };
+	void setSourecTable(TableObject* sourceTable) { m_pSourceTable = sourceTable; };
 	virtual HRESULT ResetObject() override;
 	/// Set a new sort Container to this object and its column values.
 	/// \param sortMap [in] the new container
@@ -50,6 +50,6 @@ private:
 
 #pragma region Member Variables
 private:
-	TableObject* m_sourceTable;
+	TableObject* m_pSourceTable;
 #pragma endregion Member Variables
 };

@@ -380,6 +380,7 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_TableObject_columnValue_NoFreeGUID,
 		Tid_TableObject_createColumnValueObjectFailed,
 		Tid_TableObject_MaxRowWrongValue,
+		Tid_TableCopy_Nullptr,
 		Tid_UnknownCommitError,
 		Tid_UnknownCommandError,
 

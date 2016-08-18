@@ -72,7 +72,7 @@ namespace Seidenader { namespace SVOGui {
 		GUID m_InspectionID;
 		GUID m_TaskObjectID;
 		GUID m_ClearEquationID;
-		int m_maxRows;
+		long m_maxRows;
 
 		FormulaController* m_pFormulaController;
 		CString m_clearString;

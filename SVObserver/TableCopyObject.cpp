@@ -29,13 +29,14 @@ SV_IMPLEMENT_CLASS(TableCopyObject, TableCopyObjectGuid);
 #pragma region Constructor
 TableCopyObject::TableCopyObject( LPCTSTR ObjectName )
 	: TableObject(ObjectName)
-	, m_sourceTable(nullptr)
+	, m_pSourceTable(nullptr)
 {
 	Initialize();
 }
 
 TableCopyObject::TableCopyObject( SVObjectClass* POwner, int StringResourceID )
 	: TableObject(POwner, StringResourceID)
+	, m_pSourceTable(nullptr)
 {
 	Initialize();
 }
@@ -48,9 +49,9 @@ TableCopyObject::~TableCopyObject()
 #pragma region Public Methods
 HRESULT TableCopyObject::ResetObject()
 {
-	if (nullptr != m_sourceTable)
+	if (nullptr != m_pSourceTable)
 	{
-		std::vector<DoubleSortValuePtr> SourceValues = m_sourceTable->getValueList();
+		std::vector<DoubleSortValuePtr> SourceValues = m_pSourceTable->getValueList();
 		for (int i=0; i<m_ValueList.size(); ++i)
 		{
 			std::vector<DoubleSortValuePtr>::const_iterator it = std::find_if(SourceValues.begin(), SourceValues.end(), [&](const DoubleSortValuePtr& entry)->bool 
@@ -146,33 +147,51 @@ BOOL TableCopyObject::onRun( SVRunStatusClass& rRunStatus )
 	returnValue = TableObject::onRun( rRunStatus );
 	if (returnValue)
 	{
-		std::vector<DoubleSortValuePtr> SourceValues = m_sourceTable->getValueList();
-		m_sortContainer = m_sourceTable->getSortContainer();
-
-		for (std::vector<DoubleSortValuePtr>::const_iterator itSource = SourceValues.begin();SourceValues.end() != itSource; ++itSource)
+		if (nullptr != m_pSourceTable)
 		{
-			std::vector<DoubleSortValuePtr>::const_iterator itDest = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const DoubleSortValuePtr& entry)->bool 
-			{ 
-				return (nullptr != entry.get() && entry->GetEmbeddedID() == (*itSource)->GetEmbeddedID()); 
-			} 
-			);
-			//copy Values
-			if (m_ValueList.end() != itDest && nullptr != itDest->get())
+			const std::vector<DoubleSortValuePtr>& rSourceValues = m_pSourceTable->getValueList();
+			if (!rSourceValues.empty())
 			{
-				DoubleSortValueObject* object = itDest->get();
-				object->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
-				for (int i=0; i<m_sortContainer.size(); ++i)
+				m_sortContainer = m_pSourceTable->getSortContainer();
+
+				for (std::vector<DoubleSortValuePtr>::const_iterator itSource = rSourceValues.begin();rSourceValues.end() != itSource; ++itSource)
 				{
-					double value = 0;
-					if (S_OK == (*itSource)->GetValue(rRunStatus.m_lResultDataIndex, i, value))
+					std::vector<DoubleSortValuePtr>::const_iterator itDest = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const DoubleSortValuePtr& entry)->bool 
+					{ 
+						return (nullptr != entry.get() && entry->GetEmbeddedID() == (*itSource)->GetEmbeddedID()); 
+					} 
+					);
+					//copy Values
+					if (m_ValueList.end() != itDest && nullptr != itDest->get())
 					{
-						object->SetValue(rRunStatus.m_lResultDataIndex, i, value);
+						DoubleSortValueObject* object = itDest->get();
+						object->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
+						for (int i=0; i<m_sortContainer.size(); ++i)
+						{
+							double value = 0;
+							if (S_OK == (*itSource)->GetValue(rRunStatus.m_lResultDataIndex, i, value))
+							{
+								object->SetValue(rRunStatus.m_lResultDataIndex, i, value);
+							}
+						}
 					}
 				}
+				
+				m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, static_cast<long>(m_sortContainer.size()));
+			}
+			else
+			{
+				m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, 0);
+				returnValue = E_FAIL;
 			}
 		}
-
-		m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, static_cast<long>(m_sortContainer.size()));
+		else
+		{
+			returnValue = E_FAIL;
+			SvStl::MessageContainer message;
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableCopy_Nullptr, SvStl::SourceFileParams(StdMessageParams) );
+			addTaskMessage( message );
+		}
 	}
 
 	return returnValue;

@@ -59,7 +59,7 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 		{
 			bOk = false;
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams) );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
 			Msg.setMessage( message.getMessage() );
 			addTaskMessage( message );
@@ -86,7 +86,7 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 		{
 			bOk = false;
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams) );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
 			Msg.setMessage( message.getMessage() );
 			addTaskMessage( message );
@@ -96,7 +96,7 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 	{
 		bOk = false;
 		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams) );
+		message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
 		Msg.setMessage( message.getMessage() );
 		addTaskMessage( message );
@@ -158,7 +158,7 @@ bool TableAnalyzerTool::ValidateOfflineParameters ()
 		if (nullptr == m_pResultTable)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams) );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			addTaskMessage( message );
 			Result = false;
 		}
@@ -167,7 +167,7 @@ bool TableAnalyzerTool::ValidateOfflineParameters ()
 		if (!m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*>(pObject))
 		{
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams) );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			addTaskMessage( message );
 			Result = false;
 		}

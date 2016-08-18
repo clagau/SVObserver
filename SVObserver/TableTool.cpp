@@ -14,6 +14,7 @@
 #include "SVEquation.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "TableColumnEquation.h"
+#include "ObjectInterfaces\GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -36,7 +37,7 @@ TableTool::TableTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int st
 
 TableTool::~TableTool() 
 {
-
+	RemoveEmbeddedObject(m_pTable);
 }
 #pragma endregion Constructor
 
@@ -79,6 +80,13 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 			addTaskMessage( message );
 		}
 	}
+
+	CString tableObjectString;
+	tableObjectString.LoadString(IDS_CLASSNAME_TABLE_OBJECT);
+	// Set object embedded to Setup the Embedded GUID
+	m_pTable->SetObjectEmbedded(GUID_NULL, this, tableObjectString);
+	// Add to embedded object to List of Embedded Objects
+	AddEmbeddedObject(m_pTable);
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Table Tool.
@@ -188,10 +196,14 @@ bool TableTool::ValidateOfflineParameters ()
 
 		long maxRow = 0;
 		m_MaxRow.GetValue(maxRow);
-		if (maxRow <= 0)
+		if (SvOi::cTableMaxRowMin > maxRow || SvOi::cTableMaxRowMax < maxRow)
 		{
+			SVStringArray messageList;
+			messageList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cTableMaxRowMin));
+			messageList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cTableMaxRowMax));
+			messageList.push_back(SvUl_SF::Format(_T("%d"), maxRow));
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_MaxRowWrongValue, SvStl::SourceFileParams(StdMessageParams) );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_MaxRowWrongValue, messageList, SvStl::SourceFileParams(StdMessageParams) );
 			addTaskMessage( message );
 			Result = false;
 		}
