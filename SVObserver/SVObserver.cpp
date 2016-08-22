@@ -5590,8 +5590,10 @@ void SVObserverApp::Start()
 			//Returns true when pointer valid
 			if( nullptr != pPPQ )
 			{
-				pPPQ->PrepareGoOnline();
+				// Do this before calling PrepareGoOnline
 				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
+
+				pPPQ->PrepareGoOnline();
 
 				SvTh::SVTriggerObject* pTrigger( nullptr );
 				pPPQ->GetTrigger(pTrigger);

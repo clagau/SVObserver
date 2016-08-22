@@ -249,12 +249,10 @@ void RemoteMonitorListController::WriteMonitorListToSharedMemory(const std::stri
 	bool isActive = remoteMonitorNamedlist.IsActive();
 	SVString ppqName = remoteMonitorNamedlist.GetPPQName();
 	
-	
 	if (false == rWriter.IsCreated()) 
 	{
 		rWriter.Create(rSettings);
 	}
-
 
 	if (rWriter.IsCreated())
 	{

@@ -21,7 +21,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		volatile long current_idx;
 		SVSharedDataVector data;
 
-		SVSharedRejectCache( const void_allocator & alloc, size_t cache_size );
+	SVSharedRejectCache( const void_allocator& alloc, size_t cache_size, size_t num_images, size_t num_values );
 	};
 
 	typedef boost::interprocess::allocator< SVSharedRejectCache, segment_manager_t > SVSharedRejectCacheAllocator;

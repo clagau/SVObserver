@@ -132,6 +132,12 @@
     <ClInclude Include="SVProductFilterEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVSharedValueContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVSharedImageContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

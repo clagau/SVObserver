@@ -32,7 +32,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		static const std::string GetSharedMemoryDirectoryName();
 		static const std::string GetImageDirectoryName();
 		static const std::string GetRejectImageDirectoryName();
-		static void Log(const std::string & msg);
+		static void Log(const std::string& msg);
 
 		static HRESULT SharedResourcesOk();
 		static void EnsureShareDirectoryExists();

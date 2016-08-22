@@ -90,6 +90,7 @@ namespace Seidenader { namespace SVSocketLibrary
 				}
 				else
 				{
+					DisableDelay();
 					m_isConnected = true;
 				}
 			}

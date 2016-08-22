@@ -1295,6 +1295,31 @@ void SVPPQObject::PrepareGoOnline()
 		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_ConditionalOutput, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
 		throw Msg;
 	}
+	if (HasActiveMonitorList())
+	{
+		// Get List of Inspections for this PPQ
+		// SVSharedPPQWriter will create the inspection shares
+		HRESULT hr = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), m_InspectionWriterCreationInfos);
+		if (S_OK != hr)
+		{
+			// clear the list
+			SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+
+			SVStringArray msgList;
+			msgList.push_back(GetName());
+			SvStl::MessageContainer Exception( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvOi::Tid_ErrorNotEnoughDiskSpace, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15025 );
+			throw Exception;
+		}
+		else
+		{
+			SvSml::SVShareControlHandler& rControlHandler = SVSharedMemorySingleton::Instance().GetIPCShare();
+			if (rControlHandler.IsCreated())
+			{
+				rControlHandler.SetReady();
+				// do we wait for ack?
+			}
+		}
+	}
 }// end PrepareGoOnline
 
 void SVPPQObject::GoOnline()
@@ -4850,9 +4875,8 @@ static bool CompareInspectionName(const SVString& name, const SVString& dottedNa
 
 static HRESULT GetValueObject(const SVString& rName, SVValueObjectReference& rRefObject)
 {
-	HRESULT hr = S_FALSE;
 	SVObjectClass* pObject(nullptr);
-	hr = SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
+	HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
 	if (nullptr != pObject)
 	{
 		rRefObject = SVValueObjectReference(pObject);
@@ -4864,6 +4888,7 @@ static HRESULT GetValueObject(const SVString& rName, SVValueObjectReference& rRe
 void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 {
 	m_bActiveMonitorList = rActiveList.first;
+	m_InspectionWriterCreationInfos.clear();
 	if (m_bActiveMonitorList)
 	{
 		SVSharedMemorySingleton::Instance().SetRejectDepth(rActiveList.second.rejectDepth);
@@ -4890,39 +4915,15 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 					SVMonitorItemList(imgBounds.first, imgBounds.second),
 					SVMonitorItemList(), SVMonitorItemList(), SVMonitorItemList());
 
+				// need to get number of values/images so the SharedMemory container is sized and initialized properly
+				size_t numImages = imgList.size();
+				size_t numValues = valList.size();
+				SvSml::InspectionWriterCreationInfo creationInfo(std::make_pair(pInspection->GetName(), pInspection->GetUniqueObjectID()), numImages, numValues);
+				m_InspectionWriterCreationInfos.push_back(creationInfo);
 				pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
 			}
 		}
 		SetRejectConditionList(rejectCondList);
-
-		// Get List of Inspections for this PPQ
-		// SVSharedPPQWriter will create the inspection shares
-		SvSml::InspectionIDs sharedInspectionWriterCreationInfo;
-		size_t iSize = m_arInspections.GetSize();
-		for( size_t i = 0; i < iSize; i++ )
-		{
-			sharedInspectionWriterCreationInfo.push_back(SvSml::InspectionID(m_arInspections[i]->GetName(), m_arInspections[i]->GetUniqueObjectID()));
-		}
-		HRESULT hr = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), sharedInspectionWriterCreationInfo);
-		if (S_OK != hr)
-		{
-			//Set MonitorList failed, clear momitorList
-			SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
-
-			SVStringArray msgList;
-			msgList.push_back(GetName());
-			SvStl::MessageContainer Exception( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvOi::Tid_ErrorNotEnoughDiskSpace, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15025 );
-			throw;
-		}
-		else
-		{
-			SvSml::SVShareControlHandler& rControlHandler = SVSharedMemorySingleton::Instance().GetIPCShare();
-			if (rControlHandler.IsCreated())
-			{
-				rControlHandler.SetReady();
-				// do we wait for ack?
-			}
-		}
 	}
 	else
 	{
@@ -5172,7 +5173,7 @@ void SVPPQObject::SetRejectConditionList(const SVMonitorItemList& rRejectCondLis
 			SVValueObjectReference l_RefObject;
 			if (S_OK == GetValueObject(name, l_RefObject))
 			{
-				m_SharedMemoryItems.m_RejectConditionValues[inspectionGuid][name] = l_RefObject.Guid();
+				m_SharedMemoryItems.m_RejectConditionValues[inspectionGuid][name] = l_RefObject;
 			}
 			else
 			{
@@ -5280,7 +5281,7 @@ HRESULT SVPPQObject::CheckRejectCondition(const SVProductInfoStruct& rProduct, S
 {
 	HRESULT hr = S_FALSE; // means not a reject
 
-	for (SVInspectionFilterElementMap::const_iterator it = m_SharedMemoryItems.m_RejectConditionValues.begin();it != m_SharedMemoryItems.m_RejectConditionValues.end() && S_OK != hr;++it)
+	for (SVInspectionFilterValueMap::const_iterator it = m_SharedMemoryItems.m_RejectConditionValues.begin();it != m_SharedMemoryItems.m_RejectConditionValues.end() && S_OK != hr;++it)
 	{
 		// Get the writer, the last inspected index and the lastInspected data
 		SvSml::SVSharedInspectionWriter& rInspectionWriter = rWriter[it->first];
@@ -5288,29 +5289,29 @@ HRESULT SVPPQObject::CheckRejectCondition(const SVProductInfoStruct& rProduct, S
 		if (-1 != index)
 		{
 			const SvSml::SVSharedData& rData = rInspectionWriter.GetLastInspectedSlot(index);
-			for (SVFilterElementMap::const_iterator itItem = it->second.begin();itItem != it->second.end() && S_OK != hr;++itItem)
+			for (SVFilterValueMap::const_iterator itItem = it->second.begin();itItem != it->second.end() && S_OK != hr;++itItem)
 			{
 				// Find the named item in the Shared memory
-				SvSml::SVSharedValueMap::const_iterator valIt = rData.m_Values.find(SvSml::char_string(itItem->first.c_str(), rData.m_Allocator));
-				if (valIt != rData.m_Values.end())
+				const SvSml::SVValue& val = rData.FindValue(itItem->first.c_str());
+				if (!val.empty())
 				{
 					// Get the data value and convert to double...
 					double dValue = 0.0;
-					std::string val = valIt->second.m_Result.c_str();
+					const std::string& result = val.value;
 					// handle boolean, as std::stod doesn't like it
-					if ("TRUE" == val || "true" == val)
+					if ("TRUE" == result || "true" == result)
 					{
 						dValue = 1.0;
 					}
-					else if ("FALSE" == val || "false" == val)
+					else if ("FALSE" == result || "false" == result)
 					{
 						dValue = 0.0;
 					}
 					else
 					{
-						dValue = std::stod(val);
+						dValue = std::stod(result);
 					}
-					if (dValue != 0.0)
+					if (0.0 != dValue)
 					{
 						hr = S_OK; // signifies a reject
 					}

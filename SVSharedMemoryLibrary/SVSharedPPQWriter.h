@@ -20,7 +20,17 @@
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	typedef std::pair<std::string, GUID> InspectionID;
-	typedef std::vector<InspectionID> InspectionIDs;
+	struct InspectionWriterCreationInfo
+	{
+		InspectionID inspectionID;
+		size_t num_images;
+		size_t num_values;
+
+		InspectionWriterCreationInfo(const InspectionID& nameGuid, size_t numImages, size_t numValues)
+		: inspectionID(nameGuid), num_images(numImages), num_values(numValues)
+		{}
+	};
+	typedef std::vector<InspectionWriterCreationInfo> InspectionWriterCreationInfos;
 	typedef std::vector<SVSharedInspectionWriter> InspectionWriters;
 
 	class SVSharedPPQWriter // one writer per ppq
@@ -29,30 +39,30 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedPPQWriter();
 		~SVSharedPPQWriter();
 
-		HRESULT Create( const std::string& name, const InspectionIDs & inspections, const SVSharedMemorySettings& p_rSettings );
+		HRESULT Create( const std::string& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& p_rSettings );
 		void Destroy();
 
-		SVSharedProduct & RequestNextProductSlot(long & idx);
-		SVSharedProduct & GetProductSlot(long idx);
+		SVSharedProduct& RequestNextProductSlot(long& idx);
+		SVSharedProduct& GetProductSlot(long idx);
 
-		void ReleaseProduct(SVSharedProduct & product);
-		SVSharedProduct & RequestNextRejectSlot(long & idx);
-		void ReleaseReject(SVSharedProduct & product);
+		void ReleaseProduct(SVSharedProduct& product);
+		SVSharedProduct& RequestNextRejectSlot(long& idx);
+		void ReleaseReject(SVSharedProduct& product);
 
-		SVSharedInspectionWriter & operator[](const std::string & shareName);
-		SVSharedInspectionWriter & operator[](const GUID & guid);
+		SVSharedInspectionWriter& operator[](const std::string& shareName);
+		SVSharedInspectionWriter& operator[](const GUID& guid);
 
 		HRESULT CopyLastInspectedToReject(const SVSharedProduct& rProduct);
 
 	private:
 		void Init();
-		long next_writable(SVSharedProductStore * share, bool bReject=false);
+		long next_writable(SVSharedProductStore* share, bool bReject=false);
 
 		void ClearHeld(SVSharedProductStore* share);
 		void ReleaseAll();
 
-		SVSharedProductStore * sh; // product queue
-		SVSharedProductStore * rsh; // reject queue
+		SVSharedProductStore* sh; // product queue
+		SVSharedProductStore* rsh; // reject queue
 		std::string m_ShareName;
 		InspectionWriters m_writers;
 

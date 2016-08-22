@@ -22,7 +22,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		mutable volatile long m_Flags;
 		volatile long m_TriggerCount;
 		SVSharedInspectionMap m_Inspections;
-		long InspectionSlotIndex(const std::string & inspectionShareName) const;
+		long InspectionSlotIndex(const std::string& inspectionShareName) const;
 		void_allocator m_Allocator;
 
 		SVSharedProduct(const void_allocator& rAlloc);

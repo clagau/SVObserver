@@ -20,7 +20,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	class SVShareControlHandler
 	{
 		typedef std::shared_ptr< boost::interprocess::managed_shared_memory > managed_shared_memory_shared_ptr;
-		SVShareControl * m_ctrl;
+		SVShareControl* m_ctrl;
 		const std::string m_shareName;
 		managed_shared_memory_shared_ptr shm;
 		long m_count;

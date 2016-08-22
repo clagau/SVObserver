@@ -49,6 +49,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	struct statics
 	{
+		static const int max_result_size = 512;
 		static const int K = 1024;
 		static const int M = K * K;
 		static const size_t page_sz = 4 * K;

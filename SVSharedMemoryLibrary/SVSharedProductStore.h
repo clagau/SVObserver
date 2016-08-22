@@ -21,7 +21,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		volatile long current_idx;
 		SVSharedProductVector data;
 		
-		SVSharedProductStore(const void_allocator & allocator, size_t cache_size);
+		SVSharedProductStore(const void_allocator& allocator, size_t cache_size);
 	};
 	typedef boost::interprocess::allocator<SVSharedProductStore, segment_manager_t> ProductStoreAllocator;
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

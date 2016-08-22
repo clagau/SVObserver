@@ -108,7 +108,7 @@ DWORD WINAPI servimg(LPVOID)
 					// read file name
 					bytes buf;
 					u_long sz;
-					if (client.ReadAll(buf, sz, true) == SvSol::SVSocketError::Success)
+					if (SvSol::SVSocketError::Success == client.ReadAll(buf, sz, true))
 					{
 						std::string filename = std::string(reinterpret_cast<char *>(buf.get()), sz);
 						try
@@ -151,7 +151,7 @@ DWORD WINAPI servimg(LPVOID)
 
 struct MonitorListCopy 
 {
-	typedef std::vector<std::string> Strings;
+	typedef std::vector<std::string> Strings; // maybe use set instead (to ensure it's sorted)?
 	Strings  prodItems;
 	Strings  rejctCond;
 	Strings  failStats;
@@ -298,17 +298,19 @@ typedef SvSml::SVSharedInspectionReader SHMReader;
 Json::Value & GenerateValues(Json::Value & arr, SvSml::InspectionDataPtr data, const MonitorListCopy::Strings& productItemNames)
 {
 	int count = data->m_TriggerCount;
-	for (SvSml::SVSharedValueMap::const_iterator it = data->m_Values.begin(); it != data->m_Values.end(); ++it)
+	for (SvSml::SVSharedValueContainer::const_iterator it = data->m_Values.begin(); it != data->m_Values.end(); ++it)
 	{
-		const SvSml::SVSharedValueMap::value_type & pair = *it;
-		if (std::find(productItemNames.begin(), productItemNames.end(), pair.first.c_str()) != productItemNames.end())
+		const SvSml::SVSharedValueContainer::value_type& sharedValue = *it;
+		// Is this lookup really necessary? 
+		// The MonitorList should be in sync with SVObserver, so what is written to shared memory would be correct
+		if (std::find(productItemNames.begin(), productItemNames.end(), sharedValue.m_ElementName.c_str()) != productItemNames.end())
 		{
 			Json::Value val(Json::objectValue);
-			val[SVRC::vo::name] = pair.first.c_str();
-			val[SVRC::vo::status] = pair.second.m_Status;
+			val[SVRC::vo::name] = sharedValue.m_ElementName.c_str();
+			val[SVRC::vo::status] = sharedValue.m_Status;
 			val[SVRC::vo::count] = count;
 			Json::Value value(Json::arrayValue);
-			value.append(pair.second.m_Result.c_str());
+			value.append(sharedValue.m_Result);
 			val[SVRC::vo::array] = value;
 			arr.append(val);
 		}
@@ -341,16 +343,18 @@ template<typename API>
 Json::Value & GenerateImages(Json::Value & arr, SvSml::InspectionDataPtr data, const MonitorListCopy::Strings& productItemNames)
 {
 	int count = data->m_TriggerCount;
-	for (SvSml::SVSharedImageMap::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
+	for (SvSml::SVSharedImageContainer::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
 	{
-		SvSml::SVSharedImageMap::value_type& pair = *it;
-		if (std::find(productItemNames.begin(), productItemNames.end(), pair.first.c_str()) != productItemNames.end())
+		const SvSml::SVSharedImageContainer::value_type& sharedImage = *it;
+		// Is this lookup really necessary? 
+		// The MonitorList should be in sync with SVObserver, so what is written to shared memory would be correct
+		if (std::find(productItemNames.begin(), productItemNames.end(), sharedImage.m_ElementName.c_str()) != productItemNames.end())
 		{
 			Json::Value val(Json::objectValue);
-			val[SVRC::io::name] = pair.first.c_str();
-			val[SVRC::io::status] = pair.second.m_Status;
+			val[SVRC::io::name] = sharedImage.m_ElementName.c_str();
+			val[SVRC::io::status] = sharedImage.m_Status;
 			val[SVRC::io::count] = count;
-			AppendImageContents<API>(val, pair.second.m_Filename.c_str());
+			AppendImageContents<API>(val, sharedImage.m_Filename);
 			arr.append(val);
 		}
 	}

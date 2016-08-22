@@ -117,6 +117,7 @@
     <ClInclude Include="SVSharedControl.h" />
     <ClInclude Include="SVSharedData.h" />
     <ClInclude Include="SVSharedImage.h" />
+    <ClInclude Include="SVSharedImageContainer.h" />
     <ClInclude Include="SVSharedInspections.h" />
     <ClInclude Include="SVSharedLastInspectedCache.h" />
     <ClInclude Include="SVSharedInspectionReader.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="SVSharedProductStore.h" />
     <ClInclude Include="SVSharedRejectCache.h" />
     <ClInclude Include="SVSharedValue.h" />
+    <ClInclude Include="SVSharedValueContainer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

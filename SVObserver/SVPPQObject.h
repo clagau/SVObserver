@@ -206,6 +206,7 @@ public:
 	ProductWorkloadInformation GetMostRecentWorkLoadInformation(){return m_MostRecentWorkLoadInfo;}
 
 protected:
+	SvSml::InspectionWriterCreationInfos m_InspectionWriterCreationInfos;
 	typedef SVVector< SVInspectionProcess* > SVPPQInspectionProcessVector;
 
 	struct SVTriggerQueueElement
@@ -245,14 +246,14 @@ protected:
 
 	};
 
-	typedef std::map<SVString, SVGUID> SVFilterElementMap; // Dotted name to Guid mapping
-	typedef std::map<SVGUID, SVFilterElementMap> SVInspectionFilterElementMap; // Inspection Guid to FilterElementMap mapping
+	typedef std::map<SVString, SVValueObjectReference> SVFilterValueMap; // Dotted name to SVValueObjectReference mapping
+	typedef std::map<SVGUID, SVFilterValueMap> SVInspectionFilterValueMap; // Inspection Guid to FilterValueMap mapping
 	struct SVSharedMemoryFilters
 	{
 		SVSharedMemoryFilters();
 
 		void clear();
-		SVInspectionFilterElementMap m_RejectConditionValues;
+		SVInspectionFilterValueMap m_RejectConditionValues;
 	};
 	SVSharedMemoryFilters m_SharedMemoryItems;
 	bool m_bActiveMonitorList;

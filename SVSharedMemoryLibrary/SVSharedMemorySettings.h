@@ -26,7 +26,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		{
 			DefaultMonitorStoreSize = 4,
 			DefaultProductStoreSize = 8,
-			DefaultDataStoreSize = 20,
+			DefaultDataStoreSize = 150,
 			DefaultProductNumSlots = 64,
 			DefaultRejectsNumSlots = 100
 		};

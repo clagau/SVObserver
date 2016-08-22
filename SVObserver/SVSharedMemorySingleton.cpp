@@ -81,7 +81,7 @@ void SVSharedMemorySingleton::CheckDirectories()
 	}
 }
 
-HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SvSml::InspectionIDs& rIDs)
+HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SvSml::InspectionWriterCreationInfos& rCreationInfos)
 {
 	HRESULT hr = S_OK;
 
@@ -90,7 +90,7 @@ HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, co
 	if (it == m_PPQSharedMemory.end())
 	{
 		SvSml::SVSharedPPQWriter& rMemory = m_PPQSharedMemory[rGuid];
-		hr = rMemory.Create(rName.c_str(), rIDs, m_settings);
+		hr = rMemory.Create(rName.c_str(), rCreationInfos, m_settings);
 	}
 	return hr;
 }

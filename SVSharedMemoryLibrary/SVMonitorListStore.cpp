@@ -18,9 +18,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	const std::string g_shName = "MonitorListStore.";
 
-	SVMonitorListStore::SVMonitorListStore(const void_allocator & allocator)
-	: m_allocator(allocator)
-	, m_lists(std::less<char_string>(), allocator)
+	SVMonitorListStore::SVMonitorListStore(const void_allocator& rAllocator)
+	: m_allocator(rAllocator)
+	, m_lists(std::less<char_string>(), rAllocator)
 	{
 		SVSharedConfiguration::Log("SVMonitorListStore::Constructor");
 	}
@@ -88,10 +88,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			}
 			return tmp;
 		}
-		else
-		{
-			throw std::exception("Monitor list empty.");
-		}
+		throw std::exception("Monitor list empty.");
 	}
 
 	void SVMonitorListStore::Add(const SVSharedMonitorList & list)

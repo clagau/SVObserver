@@ -22,7 +22,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		typedef std::shared_ptr<boost::interprocess::managed_shared_memory> DataSharedMemPtr;
 		bool m_isOpen;
 		std::string m_ShareName;
-		const SVMonitorListStore * m_store;
+		const SVMonitorListStore* m_store;
 		DataSharedMemPtr shm;
 
 	public:
@@ -32,12 +32,11 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		bool Open();
 		void Close();
 		bool IsOpen() const;
-		bool HasList(const std::string & name) const;
+		bool HasList(const std::string& name) const;
 
-		const SVSharedMonitorList & operator[](const std::string & listName) const;
+		const SVSharedMonitorList& operator[](const std::string& listName) const;
 		const std::vector<std::string> GetListNames() const;
 	};
-
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

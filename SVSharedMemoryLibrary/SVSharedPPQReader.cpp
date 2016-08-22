@@ -16,8 +16,10 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	SVSharedPPQReader::SVSharedPPQReader(): 
-		m_DataSharedMemPtr(nullptr), m_SharedProductStorePPQ(nullptr), m_SharedProductStorePPQReject(nullptr), m_ShareName(""), m_isOpen(false)
+	typedef std::map<std::string, InspectionReaderPtr> Readers;
+
+	SVSharedPPQReader::SVSharedPPQReader()
+	: m_DataSharedMemPtr(nullptr), m_SharedProductStorePPQ(nullptr), m_SharedProductStorePPQReject(nullptr), m_ShareName(""), m_isOpen(false)
 	{
 	}
 
@@ -75,9 +77,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return m_isOpen;
 	}
 
-	typedef std::map<std::string, InspectionReaderPtr> Readers;
-
-	ProductPtr SVSharedPPQReader::RequestNextProduct(long & idx) const
+	ProductPtr SVSharedPPQReader::RequestNextProduct(long& idx) const
 	{
 		if (idx < 0) // negative idx requests next product, positive one asks for a specific index
 		{
@@ -89,10 +89,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 
 		ProductPtr ret(new SVProductBundle(m_SharedProductStorePPQ->data[idx]));
-		Readers & readers = m_inspReaders;
-		const SVSharedInspectionMap & inspections = ret->product.m_Inspections;
+		Readers& readers = m_inspReaders;
+		const SVSharedInspectionMap& inspections = ret->product.m_Inspections;
 		std::for_each(inspections.begin(), inspections.end(), 
-			[&readers, ret](const SVSharedInspectionPair & pair)
+			[&readers, ret](const SVSharedInspectionPair& pair)
 		{
 			std::string name = pair.first.c_str();
 			if (readers.find(name.c_str()) == readers.end())
@@ -109,7 +109,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return ret;
 	}
 
-	void SVSharedPPQReader::ReleaseProduct(const ProductPtr product, long & idx) const
+	void SVSharedPPQReader::ReleaseProduct(const ProductPtr product, long& idx) const
 	{
 		if (product)
 		{
@@ -146,7 +146,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		long count = 0;
 		long size = static_cast<long>(m_SharedProductStorePPQ->data.size());
 
-		SVSharedProductVector * data = &m_SharedProductStorePPQ->data;
+		SVSharedProductVector* data = &m_SharedProductStorePPQ->data;
 
 		do
 		{
@@ -193,7 +193,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	long SVSharedPPQReader::FindRejectSlot(long trigger) const
 	{
-		SVSharedProductVector & store = m_SharedProductStorePPQReject->data;
+		SVSharedProductVector& store = m_SharedProductStorePPQReject->data;
 		if (trigger < 0) // negative idx requests next product, positive one asks for a specific trigger count
 		{
 			return next_reject_readable();
@@ -223,10 +223,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		{
 			throw std::exception("No reject at this index");
 		}
-		Readers & readers = m_inspReaders;
-		const SVSharedInspectionMap & inspections = ret->product.m_Inspections;
+		Readers& readers = m_inspReaders;
+		const SVSharedInspectionMap& inspections = ret->product.m_Inspections;
 		std::for_each(inspections.begin(), inspections.end(), 
-			[&readers, ret](const SVSharedInspectionPair & pair)
+			[&readers, ret](const SVSharedInspectionPair& pair)
 		{
 			if (readers.find(pair.first.c_str()) == readers.end())
 			{
@@ -244,7 +244,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return ret;
 	}
 
-	ProductPtr SVSharedPPQReader::RequestReject(long trig, long & idx) const
+	ProductPtr SVSharedPPQReader::RequestReject(long trig, long& idx) const
 	{
 		idx = FindRejectSlot(trig);
 		return GetReject(idx);
@@ -260,23 +260,23 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 	}
 
-	FailStatusMap SVSharedPPQReader::GetFailStatus(const std::vector<std::string> & names) const
+	FailStatusMap SVSharedPPQReader::GetFailStatus(const std::vector<std::string>& names) const
 	{
 		FailStatusMap ret;
-		const SVSharedPPQReader & reader = *this;
+		const SVSharedPPQReader& reader = *this;
 		for (long idx = 0; idx < static_cast<long>(m_SharedProductStorePPQReject->data.size()); ++idx) // read all rejects and fill in FailStatusMap
 		{
-			const SVSharedProduct & prod = m_SharedProductStorePPQReject->data[idx];
+			const SVSharedProduct& prod = m_SharedProductStorePPQReject->data[idx];
 			reader.lock(prod);
 			long trig = prod.m_TriggerCount;
 			if (trig >= 0)
 			{
 				ProductPtr pp = reader.GetReject(idx);
 				ret.insert(std::make_pair(trig, Values()));
-				Values & values = ret[trig];
+				Values& values = ret[trig];
 				values.reserve(names.size());
 				std::for_each(names.begin(), names.end(), //init values with fail status names/triggers
-					[&values, trig, pp](const std::string & name)
+					[&values, trig, pp](const std::string& name)
 				{
 					Value val = pp->find(name);
 					if (!val.empty())
@@ -293,7 +293,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 	// This method is only called from GetFailStatus
-	Value SVProductBundle::find(const std::string & name) const
+	Value SVProductBundle::find(const std::string& name) const
 	{
 		Value val;
 		// find the Inspection Share for this item

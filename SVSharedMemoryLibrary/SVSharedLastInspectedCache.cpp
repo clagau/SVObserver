@@ -15,8 +15,8 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	SVSharedLastInspectedCache::SVSharedLastInspectedCache( const void_allocator & alloc, size_t cache_size )
-	: current_idx( -1 ), data( cache_size, SVSharedData( alloc ), alloc ) 
+	SVSharedLastInspectedCache::SVSharedLastInspectedCache( const void_allocator & alloc, size_t cache_size, size_t num_images, size_t num_values )
+	: current_idx( -1 ), data( cache_size, SVSharedData( alloc, num_images, num_values ), alloc ) 
 	{
 	}
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

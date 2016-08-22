@@ -224,7 +224,6 @@ public:
 	HRESULT RemoveImage(SVImageClass* pImage);
 
 	void UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList );
-	HRESULT UpdateSharedMemoryLastInspectedImages( const SVMonitorItemList& p_rImageList );
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	long GetResultDataIndex() const;
@@ -389,8 +388,7 @@ protected:
 	void ThreadProcess( bool& p_WaitForEvents );
 
 	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
-	HRESULT ProcessMonitorLists( bool& p_rProcessed );
-	HRESULT ProcessLastInspectedImages( bool& p_rProcessed );
+	HRESULT ProcessMonitorLists(); // No longer done in the Inspection Thread
 	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed, long sharedSlotIndex );
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
 
@@ -445,6 +443,7 @@ private:
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
 	void FillSharedData(long sharedSlotIndex, SvSml::SVSharedData& rData, const SVFilterValueMap& rValues, const SVFilterImageMap& rImages, SVProductInfoStruct& rProductInfo, SvSml::SVSharedInspectionWriter& rWriter);
+	void InitSharedMemoryItemNames();
 
 	SVCriticalSectionPtr m_LastRunLockPtr;
 	bool m_LastRunProductNULL;
@@ -459,7 +458,6 @@ private:
 	SVConditionalClass* m_pToolSetConditional;
 	SVCommandQueue m_CommandQueue;
 	SVMonitorListQueue m_MonitorListQueue;
-	SVImageNameDequeQueue m_ImageNameDequeQueue;
 	SVSharedMemoryFilters m_SharedMemoryFilters;
 
 	TCHAR m_BufferImageFileName[BUFFER_IMAGE_FILENAME_LEN]; 	//< Buffer holds the full path of a Image
@@ -584,6 +582,4 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 		return TYPE_E_TYPEMISMATCH;
 	}
 }
-
-
 

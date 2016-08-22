@@ -66,7 +66,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedConfiguration::Log("SVSharedMonitorList::Destructor");
 	}
 
-	const StringList & SVSharedMonitorList::GetProductItems() const
+	const StringList& SVSharedMonitorList::GetProductItems() const
 	{
 		SVSharedConfiguration::Log("SVSharedMonitorList::GetProductItems");
 		return prodItems;

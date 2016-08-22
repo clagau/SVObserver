@@ -32,8 +32,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		void Close();
 		bool IsOpen() const;
 
-		//Stats m_stats;
-
 		SVSharedData& GetInspectedSlot(long index); // for the product reader's use
 		SVSharedData& GetRejectSlot(long index);
 
@@ -48,7 +46,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	};
 
 	typedef std::shared_ptr<SVSharedInspectionReader> InspectionReaderPtr;
-
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

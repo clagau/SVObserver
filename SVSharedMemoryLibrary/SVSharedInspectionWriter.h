@@ -27,7 +27,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedInspectionWriter();
 		~SVSharedInspectionWriter();
 
-		HRESULT Create(const std::string& name, const GUID& guid, const SVSharedMemorySettings& rSettings);
+		HRESULT Create(const std::string& name, const GUID& guid, const SVSharedMemorySettings& rSettings, size_t numImages, size_t numValues);
 		void Destroy();
 
 		const std::string& GetShareName() const;

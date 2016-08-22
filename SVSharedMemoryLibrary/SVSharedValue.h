@@ -16,6 +16,7 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
+	// shared memory structure
 	struct SVSharedValue
 	{
 		enum ResultTypeEnum
@@ -26,21 +27,20 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			FloatType = 3,
 			BooleanType = 4
 		};
+		char_string m_ElementName;
 		ResultTypeEnum m_ResultType;	// this is the native type
-		char_string m_Result;
-
+		char m_Result[statics::max_result_size];
 		int m_Status;
-
 		void_allocator m_Allocator;
 
-		SVSharedValue( int p_Status, const void_allocator& p_rAlloc );
-		SVSharedValue( ResultTypeEnum p_ResultType, const char* p_szResult, int p_Status, const void_allocator& p_rAlloc );
-		SVSharedValue( const void_allocator& p_rAlloc );
-		SVSharedValue( const SVSharedValue& p_rData );
-
-		const SVSharedValue& operator=( const SVSharedValue& p_rData );
+		SVSharedValue(const void_allocator& rAlloc);
+		SVSharedValue(const SVSharedValue& rData);
+		const SVSharedValue& operator=(const SVSharedValue& rData);
+		void SetName(const std::string& Name);
+		void SetData(ResultTypeEnum ResultType, const std::string& Result, int Status);
 	};
 
+	// local memory structure
 	struct SVValue
 	{
 		long trigger;
@@ -48,20 +48,15 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		std::string name;
 		std::string value;
 
-		SVValue(const std::string & n, long trg, long sts, const std::string & val): 
-			name(n), trigger(trg), status(sts), value(val)
-			{
-			}
+		SVValue(const std::string& n, long trg, long sts, const std::string& val)
+		: name(n), trigger(trg), status(sts), value(val)
+		{
+		}
 		SVValue() {}
 
 		bool empty() const { return name.empty(); }
 	};
-
 	typedef boost::interprocess::allocator< SVSharedValue, segment_manager_t > SVSharedValueAllocator;
-	typedef std::pair< const char_string, SVSharedValue > SVSharedValuePair;
-	typedef boost::interprocess::allocator< SVSharedValuePair, segment_manager_t > SVSharedValuePairAllocator;
-	typedef boost::interprocess::map< char_string, SVSharedValue, std::less< char_string >, SVSharedValuePairAllocator > SVSharedValueMap;
-	typedef boost::interprocess::allocator< SVSharedValueMap, segment_manager_t > SVSharedValueMapAllocator;
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

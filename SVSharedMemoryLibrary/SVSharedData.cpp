@@ -15,21 +15,21 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	SVSharedData::SVSharedData( const void_allocator& p_rAlloc )
+	SVSharedData::SVSharedData( const void_allocator& rAlloc, size_t numImages, size_t numValues )
 	: m_Flags( ds::none )
 	, m_TriggerCount( 0 )
-	, m_Images( std::less< char_string >(), p_rAlloc )
-	, m_Values( std::less< char_string >(), p_rAlloc )
-	, m_Allocator( p_rAlloc )
+	, m_Images( numImages, SVSharedImage(rAlloc), rAlloc )
+	, m_Values( numValues, SVSharedValue(rAlloc), rAlloc )
+	, m_Allocator( rAlloc )
 	{
 	}
 
-	SVSharedData::SVSharedData( const SVSharedData& p_rData )
-	: m_Flags( p_rData.m_Flags )
-	, m_TriggerCount( p_rData.m_TriggerCount )
-	, m_Images( p_rData.m_Images )
-	, m_Values( p_rData.m_Values )
-	, m_Allocator( p_rData.m_Allocator )
+	SVSharedData::SVSharedData( const SVSharedData& rData )
+	: m_Flags( rData.m_Flags )
+	, m_TriggerCount( rData.m_TriggerCount )
+	, m_Images( rData.m_Images )
+	, m_Values( rData.m_Values )
+	, m_Allocator( rData.m_Allocator )
 	{
 	}
 
@@ -45,24 +45,18 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return *this;
 	}
 
-	SVValue SVSharedData::FindValue(const std::string & name) const
+	SVValue SVSharedData::FindValue(const std::string& name) const
 	{
-		SVSharedValueMap::const_iterator it = std::find_if(m_Values.begin(), m_Values.end(),
-			[&name](const std::pair<char_string, SVSharedValue> & pair)
+		SVSharedValueContainer::const_iterator it = std::find_if(m_Values.begin(), m_Values.end(),
+			[&name](const SVSharedValue& value)
 			{
-				return name == pair.first.c_str();
+				return name == value.m_ElementName.c_str();
 			}
 		);
 		if (it != m_Values.end()) 
 		{
-			return SVValue(
-				it->first.c_str(), 
-				0,
-				it->second.m_Status,
-				it->second.m_Result.c_str()
-				);
+			return SVValue(it->m_ElementName.c_str(), 0, it->m_Status, it->m_Result);
 		}
 		throw std::exception((name + " not found.").c_str());
 	}
-
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

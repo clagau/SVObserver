@@ -15,47 +15,53 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	SVSharedValue::SVSharedValue( int p_Status, const void_allocator& p_rAlloc )
-	: m_ResultType( SVSharedValue::UnknownType )
-	, m_Result( "", p_rAlloc )
-	, m_Status( p_Status )
-	, m_Allocator( p_rAlloc )
+	SVSharedValue::SVSharedValue(const void_allocator& rAlloc)
+	: m_ResultType(SVSharedValue::UnknownType)
+	, m_Status(-1)
+	, m_Allocator(rAlloc )
+	, m_ElementName("", rAlloc)
 	{
+		memset(m_Result, 0, sizeof(m_Result));
 	}
 
-	SVSharedValue::SVSharedValue( SVSharedValue::ResultTypeEnum p_ResultType, const char* p_szResult, int p_Status, const void_allocator& p_rAlloc )
-	: m_ResultType( p_ResultType )
-	, m_Result( p_szResult, p_rAlloc )
-	, m_Status( p_Status )
-	, m_Allocator( p_rAlloc )
+	SVSharedValue::SVSharedValue(const SVSharedValue& rData)
+	: m_ResultType( rData.m_ResultType)
+	, m_Status(rData.m_Status)
+	, m_Allocator(rData.m_Allocator)
+	, m_ElementName(rData.m_ElementName)
 	{
+		strcpy_s(m_Result, sizeof(m_Result), rData.m_Result);
 	}
 
-	SVSharedValue::SVSharedValue( const void_allocator& p_rAlloc )
-	: m_ResultType( SVSharedValue::UnknownType )
-	, m_Result( "", p_rAlloc )
-	, m_Status( -1 )
-	, m_Allocator( p_rAlloc )
+	const SVSharedValue& SVSharedValue::operator=(const SVSharedValue& rData)
 	{
-	}
-
-	SVSharedValue::SVSharedValue( const SVSharedValue& p_rData )
-	: m_ResultType( p_rData.m_ResultType )
-	, m_Result( p_rData.m_Result.c_str(), p_rData.m_Allocator )
-	, m_Status( p_rData.m_Status )
-	, m_Allocator( p_rData.m_Allocator )
-	{
-	}
-
-	const SVSharedValue& SVSharedValue::operator=( const SVSharedValue& p_rData )
-	{
-		if (this != &p_rData)
+		if (this != &rData)
 		{
-			m_ResultType = p_rData.m_ResultType;
-			m_Result = p_rData.m_Result;
-			m_Status = p_rData.m_Status;
+			strcpy_s(m_Result, sizeof(m_Result), rData.m_Result);
+			m_ResultType = rData.m_ResultType;
+			m_Status = rData.m_Status;
+			m_ElementName = rData.m_ElementName;
 		}
 		return *this;
 	}
 
+	void SVSharedValue::SetName(const std::string& Name)
+	{
+		m_ElementName = char_string(Name.c_str(), m_Allocator);
+	}
+
+	void SVSharedValue::SetData(ResultTypeEnum ResultType, const std::string& Result, int Status)
+	{
+		m_ResultType = ResultType;
+		try
+		{
+			strcpy_s(m_Result, sizeof(m_Result), Result.c_str());
+			m_Status = Status;
+		}
+		catch (...)
+		{
+			memset(m_Result, 0, sizeof(m_Result));
+			m_Status = E_FAIL;
+		}
+	}
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

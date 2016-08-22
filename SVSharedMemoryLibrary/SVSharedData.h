@@ -12,8 +12,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include "SVSharedImage.h"
-#include "SVSharedValue.h"
+#include "SVSharedImageContainer.h"
+#include "SVSharedValueContainer.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -22,17 +22,17 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		mutable volatile long m_Flags;
 		volatile long m_TriggerCount;
-		SVSharedImageMap m_Images;
-		SVSharedValueMap m_Values;
+		SVSharedImageContainer m_Images;
+		SVSharedValueContainer m_Values;
 
 		void_allocator m_Allocator;
 
-		SVSharedData( const void_allocator& p_rAlloc );
-		SVSharedData( const SVSharedData& p_rData );
+		SVSharedData( const void_allocator& rAlloc, size_t numImages, size_t numValues );
+		SVSharedData( const SVSharedData& rData );
 
-		const SVSharedData& operator=( const SVSharedData& p_rData );
+		const SVSharedData& operator=( const SVSharedData& rData );
 
-		SVValue FindValue(const std::string & name) const;
+		SVValue FindValue(const std::string& name) const;
 	};
 
 	typedef boost::interprocess::allocator< SVSharedData, segment_manager_t > SVSharedDataAllocator;

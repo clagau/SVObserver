@@ -28,19 +28,19 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		Destroy();
 	}
 
-	SVSharedProduct & SVSharedPPQWriter::RequestNextProductSlot(long & idx)
+	SVSharedProduct& SVSharedPPQWriter::RequestNextProductSlot(long& idx)
 	{
 		idx = next_writable(sh);
 		return sh->data[idx];
 	}
 
-	SVSharedProduct & SVSharedPPQWriter::RequestNextRejectSlot(long & idx)
+	SVSharedProduct& SVSharedPPQWriter::RequestNextRejectSlot(long& idx)
 	{
 		idx = next_writable(rsh, true);
 		return rsh->data[idx];
 	}
 
-	SVSharedProduct & SVSharedPPQWriter::GetProductSlot(long idx)
+	SVSharedProduct& SVSharedPPQWriter::GetProductSlot(long idx)
 	{
 		if (idx >= 0 && idx < static_cast<long>(sh->data.size()))
 		{
@@ -49,26 +49,26 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		throw (std::exception("GetProductSlot Bad Index"));
 	}
 
-	void SVSharedPPQWriter::ReleaseProduct(SVSharedProduct & product)
+	void SVSharedPPQWriter::ReleaseProduct(SVSharedProduct& product)
 	{
 		product.m_Flags &= ~ds::writing;
 		product.m_Flags |= ds::ready;
 	}
 
-	void SVSharedPPQWriter::ReleaseReject(SVSharedProduct & product)
+	void SVSharedPPQWriter::ReleaseReject(SVSharedProduct& product)
 	{
 		product.m_Flags &= ~ds::writing;
 		product.m_Flags |= ds::ready;
 	}
 
 	// get next writable index for the ppq Run or Reject data
-	long SVSharedPPQWriter::next_writable(SVSharedProductStore * share, bool bReject)
+	long SVSharedPPQWriter::next_writable(SVSharedProductStore* share, bool bReject)
 	{
 		long current_idx = share->current_idx;
 		long idx = 0;
 		size_t count = 0;
 		long flags = ds::none;
-		SVSharedProductVector & data = share->data;
+		SVSharedProductVector& data = share->data;
 		size_t size = data.size();
 		do 
 		{
@@ -102,7 +102,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 	// Create
-	HRESULT SVSharedPPQWriter::Create( const std::string& name, const InspectionIDs & inspections, const SVSharedMemorySettings& p_rSettings )
+	HRESULT SVSharedPPQWriter::Create( const std::string& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& p_rSettings )
 	{
 		HRESULT l_result = S_OK;
 
@@ -131,15 +131,18 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			try
 			{
 				m_writers.resize(inspections.size());
-				InspectionIDs::const_iterator it = inspections.begin();
+				InspectionWriterCreationInfos::const_iterator it = inspections.begin();
 				std::for_each(m_writers.begin(), m_writers.end(), 
-					[&it, &settings](SVSharedInspectionWriter & wr) 
+					[&it, &settings](SVSharedInspectionWriter& wr) 
 				{ 
-					if (S_OK != wr.Create(it->first, it->second, settings)) throw std::exception("Failed to create inspection writer");
+					if (S_OK != wr.Create(it->inspectionID.first, it->inspectionID.second, settings, it->num_images, it->num_values))
+					{
+						throw std::exception("Failed to create inspection writer");
+					}
 					++it;
 				});
 			}
-			catch (std::exception & e)
+			catch (std::exception& e)
 			{
 				SVSharedConfiguration::Log(e.what());
 				l_result = E_FAIL;
@@ -183,10 +186,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		m_ShareName.clear();
 	}
 
-	SVSharedInspectionWriter & SVSharedPPQWriter::operator[](const std::string & shareName)
+	SVSharedInspectionWriter& SVSharedPPQWriter::operator[](const std::string& shareName)
 	{
 		InspectionWriters::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
-			[&shareName](SVSharedInspectionWriter & iw)->bool 
+			[&shareName](SVSharedInspectionWriter& iw)->bool 
 		{ return iw.GetShareName() == shareName; });
 		if (it != m_writers.end())
 		{
@@ -195,10 +198,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		throw std::exception("Inspection writer not found.");
 	}
 
-	SVSharedInspectionWriter & SVSharedPPQWriter::operator[](const GUID & guid)
+	SVSharedInspectionWriter& SVSharedPPQWriter::operator[](const GUID& guid)
 	{
 		InspectionWriters::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
-			[&guid](SVSharedInspectionWriter & iw)->bool 
+			[&guid](SVSharedInspectionWriter& iw)->bool 
 		{ return std::memcmp(&iw.GetGuid(), &guid, sizeof(GUID)) == 0; });
 		if (it != m_writers.end())
 		{
@@ -216,7 +219,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		for (SVSharedInspectionMap::const_iterator it = rProduct.m_Inspections.begin();it != rProduct.m_Inspections.end() && S_OK == hr;++it)
 		{
-			SVSharedInspectionWriter & rInspectionWriter = (*this)[it->second.m_ShareName.c_str()];
+			SVSharedInspectionWriter& rInspectionWriter = (*this)[it->second.m_ShareName.c_str()];
 			hr = rInspectionWriter.CopyLastInspectedToReject(it->second.m_Index, rejectIndex);
 			if (S_OK == hr)
 			{

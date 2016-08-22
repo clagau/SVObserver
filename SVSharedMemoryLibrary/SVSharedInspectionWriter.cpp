@@ -30,8 +30,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	void SVSharedInspectionWriter::Init()
 	{
-		
-
 		SVString rejectImgDirectory = SVSharedConfiguration::GetRejectImageDirectoryName()  + "\\"; 
 		memset(m_BufferRejectImageFileName,0, BUFFER_REJECT_IMAGE_FILENAME_LEN * sizeof(TCHAR) );
 		_tcscpy_s(m_BufferRejectImageFileName,BUFFER_REJECT_IMAGE_FILENAME_LEN, rejectImgDirectory.c_str());
@@ -79,7 +77,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 	// Create
-	HRESULT SVSharedInspectionWriter::Create( const std::string& name, const GUID & guid, const SVSharedMemorySettings& rSettings )
+	HRESULT SVSharedInspectionWriter::Create( const std::string& name, const GUID& guid, const SVSharedMemorySettings& rSettings, size_t numImages, size_t numValues )
 	{
 		HRESULT hr = S_OK;
 		m_guid = guid;
@@ -91,21 +89,21 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 			// Allocate new repositories
 			size_t managedShareSize = rSettings.DataStoreSize() * statics::M;
-		m_pManagedSharedMemory = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
+			m_pManagedSharedMemory = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
 
 			// Allocate Last Inspected Cache
-		SVSharedLastInspectedCacheAllocator salloc = m_pManagedSharedMemory->get_allocator<SVSharedLastInspectedCache>();
-		m_pManagedSharedMemory->construct<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str())(salloc, rSettings.NumProductSlots());
+			SVSharedLastInspectedCacheAllocator salloc = m_pManagedSharedMemory->get_allocator<SVSharedLastInspectedCache>();
+			m_pManagedSharedMemory->construct<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str())(salloc, rSettings.NumProductSlots(), numImages, numValues);
 
 			// Allocate Reject Cache
-		SVSharedRejectCacheAllocator ralloc = m_pManagedSharedMemory->get_allocator<SVSharedRejectCache>();
-		m_pManagedSharedMemory->construct<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str())(ralloc, rSettings.NumRejectSlots());
+			SVSharedRejectCacheAllocator ralloc = m_pManagedSharedMemory->get_allocator<SVSharedRejectCache>();
+			m_pManagedSharedMemory->construct<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str())(ralloc, rSettings.NumRejectSlots(), numImages, numValues);
 
 			if (S_OK == hr)
 			{
 				// get pointers to last_inspected/rejects segments
-			m_pSharedLastInspectedCache = m_pManagedSharedMemory->find<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str()).first;
-			m_pSharedRejectCache = m_pManagedSharedMemory->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
+				m_pSharedLastInspectedCache = m_pManagedSharedMemory->find<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str()).first;
+				m_pSharedRejectCache = m_pManagedSharedMemory->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
 			}
 		}
 		catch (const boost::interprocess::interprocess_exception& e)
@@ -119,21 +117,21 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	void SVSharedInspectionWriter::Destroy()
 	{
-	if (nullptr != m_pManagedSharedMemory.get())
+		if (nullptr != m_pManagedSharedMemory.get())
 		{
 			ReleaseAll();
-		if (m_pSharedRejectCache)
+			if (m_pSharedRejectCache)
 			{
-			m_pManagedSharedMemory->destroy_ptr(m_pSharedRejectCache);
-			m_pSharedRejectCache = nullptr;
+				m_pManagedSharedMemory->destroy_ptr(m_pSharedRejectCache);
+				m_pSharedRejectCache = nullptr;
 			}
-		if (m_pSharedLastInspectedCache)
+			if (m_pSharedLastInspectedCache)
 			{
-			m_pManagedSharedMemory->destroy_ptr(m_pSharedLastInspectedCache);
-			m_pSharedLastInspectedCache = nullptr;
+				m_pManagedSharedMemory->destroy_ptr(m_pSharedLastInspectedCache);
+				m_pSharedLastInspectedCache = nullptr;
 			}
 			// release managed_shared_memory
-		m_pManagedSharedMemory.reset();
+			m_pManagedSharedMemory.reset();
 		}
 		// cleanup
 		Init();
@@ -152,27 +150,27 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	SVSharedData& SVSharedInspectionWriter::GetLastInspectedSlot(long idx)
 	{
-	if (idx >= 0 && idx < static_cast<long>(m_pSharedLastInspectedCache->data.size()))
+		if (idx >= 0 && idx < static_cast<long>(m_pSharedLastInspectedCache->data.size()))
 		{
-		return m_pSharedLastInspectedCache->data[idx];
+			return m_pSharedLastInspectedCache->data[idx];
 		}
 		throw (std::exception("GetLastInspectedSlot bad Index"));
 	}
 
 	const SVSharedData& SVSharedInspectionWriter::GetLastInspectedSlot(long idx) const
 	{
-	if (idx >= 0 && idx < static_cast<long>(m_pSharedLastInspectedCache->data.size()))
+		if (idx >= 0 && idx < static_cast<long>(m_pSharedLastInspectedCache->data.size()))
 		{
-		return m_pSharedLastInspectedCache->data[idx];
+			return m_pSharedLastInspectedCache->data[idx];
 		}
 		throw (std::exception("GetLastInspectedSlot bad Index"));
 	}
 
 	SVSharedData & SVSharedInspectionWriter::GetRejectSlot(long idx)
 	{
-	if (idx >= 0 && idx < static_cast<long>(m_pSharedRejectCache->data.size()))
+		if (idx >= 0 && idx < static_cast<long>(m_pSharedRejectCache->data.size()))
 		{
-		return m_pSharedRejectCache->data[idx];
+			return m_pSharedRejectCache->data[idx];
 		}
 		throw (std::exception("GetRejectSlot bad Index"));
 	}
@@ -180,28 +178,28 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	// this should only be called when there are no clients attached
 	void SVSharedInspectionWriter::ClearHeldLastInspected()
 	{
-	if (m_pSharedLastInspectedCache)
+		if (m_pSharedLastInspectedCache)
 		{
-		size_t size = m_pSharedLastInspectedCache->data.size();
+			size_t size = m_pSharedLastInspectedCache->data.size();
 			for (size_t i = 0; i < size;i++)
 			{
-			m_pSharedLastInspectedCache->data[i].m_Flags = ds::none;
+				m_pSharedLastInspectedCache->data[i].m_Flags = ds::none;
 			}
-		m_pSharedLastInspectedCache->current_idx = -1;
+			m_pSharedLastInspectedCache->current_idx = -1;
 		}
 	}
 
 	// this should only be called when there are no clients attached
 	void SVSharedInspectionWriter::ClearHeldRejects()
 	{
-	if (m_pSharedRejectCache)
+		if (m_pSharedRejectCache)
 		{
-		size_t size = m_pSharedRejectCache->data.size();
+			size_t size = m_pSharedRejectCache->data.size();
 			for (size_t i = 0; i < size;i++)
 			{
-			m_pSharedRejectCache->data[i].m_Flags = ds::none;
+				m_pSharedRejectCache->data[i].m_Flags = ds::none;
 			}
-		m_pSharedRejectCache->current_idx = -1;
+			m_pSharedRejectCache->current_idx = -1;
 		}
 	}
 
@@ -216,51 +214,28 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	HRESULT SVSharedInspectionWriter::CopyLastInspectedToReject(long index, long rejectIndex)
 	{
 		HRESULT hr = S_OK;
+
 		try
 		{
 			const SVSharedData& rLastInspected = GetLastInspectedSlot(index);
 			SVSharedData& rReject = GetRejectSlot(rejectIndex);
 			rReject.m_TriggerCount = rLastInspected.m_TriggerCount;
-		
-			for (SVSharedValueMap::const_iterator it = rLastInspected.m_Values.begin();it != rLastInspected.m_Values.end();++it)
+			rReject.m_Values = rLastInspected.m_Values; // Copy Entire Container
+			rReject.m_Images = rLastInspected.m_Images; // Copy Entire Container
+
+			for (SVSharedImageContainer::iterator it = rReject.m_Images.begin();it != rReject.m_Images.end();++it)
 			{
-			SVSharedValueMap::iterator SVMIt = rReject.m_Values.find((char_string) (it->first));
-			if(SVMIt == rReject.m_Values.end() )
-			{
-				std::pair< SVSharedValueMap::iterator,bool>  mRet; 	
-				mRet = rReject.m_Values.insert(SVSharedValuePair(it->first, it->second));
-			}
-			else
-			{
-				SVMIt->second  = it->second;
+				std::string lastInspectedImageFileName = it->m_Filename;
+				// need to change image name and copy image
+				std::string basename = it->m_ElementName.c_str();
+				// What a horrible unsafe practice and programmer trap!
+				// m_SecondPtrImageFileName points to m_BufferImageFileName, sort of
+				// You must use m_BufferImageFileName and not m_SecondPtrImageFileName after calling SvSml::SVSharedImage::BuildImageFileName
+				SvSml::SVSharedImage::BuildImageFileName(m_SecondPtrRejectImageFileName, m_SecondPtrRejectImageFileNameLen, basename.c_str(), rejectIndex, true, SVFileBitmap);
+				it->SetFileName(m_BufferRejectImageFileName); // assign new name
+				CopyFile(lastInspectedImageFileName.c_str(), m_BufferRejectImageFileName, false);
 			}
 		}
-			for (SVSharedImageMap::const_iterator it = rLastInspected.m_Images.begin();it != rLastInspected.m_Images.end();++it)
-			{
-				// need to change images names and copy images
-								
-				SvSml::SVSharedImage::BuildImageFileName(m_SecondPtrRejectImageFileName,m_SecondPtrRejectImageFileNameLen,  it->first.c_str(),rejectIndex,true,SVFileBitmap);
-				SVSharedImage rejectImage(m_BufferRejectImageFileName, it->second.m_Status, it->second.m_Allocator);
-
-			SVSharedImageMap::iterator SIMit =   rReject.m_Images.find( it->first);
-			if(SIMit == rReject.m_Images.end() )
-			{
-				std::pair<SVSharedImageMap::iterator, bool> l_IterPair = rReject.m_Images.insert(SVSharedImagePair(it->first, rejectImage));
-				if (l_IterPair.first != rReject.m_Images.end())
-				{
-					CopyFile(it->second.m_Filename.c_str(), rejectImage.m_Filename.c_str(), false);
-				}
-			}
-			else
-			{
-				SIMit->second = rejectImage;
-				CopyFile(it->second.m_Filename.c_str(), rejectImage.m_Filename.c_str(), false);
-
-			}
-
-			
-		}
-	}
 		catch (const std::exception& e)
 		{
 			SVSharedConfiguration::Log(e.what());
@@ -268,6 +243,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 		return hr;
 	}
-
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

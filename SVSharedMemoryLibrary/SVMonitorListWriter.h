@@ -23,7 +23,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	class SVMonitorListWriter
 	{
 		std::string m_ShareName;
-		SVMonitorListStore * m_lists;
+		SVMonitorListStore* m_lists;
 		void Init();
 
 	public:
@@ -31,10 +31,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		~SVMonitorListWriter();
 
 		bool IsCreated() const;
-		HRESULT Create(const SVSharedMemorySettings & settings);
-		void AddList(const std::string & listName, const std::string & ppqName, int rejectDepth, bool isActive);
-		void FillList(const std::string & listName, listType type, const std::vector<std::string> & list);
-		void SetProductFilter(const std::string & listName, SVProductFilterEnum filter);
+		HRESULT Create(const SVSharedMemorySettings& settings);
+		void AddList(const std::string& listName, const std::string& ppqName, int rejectDepth, bool isActive);
+		void FillList(const std::string& listName, listType type, const std::vector<std::string>& list);
+		void SetProductFilter(const std::string& listName, SVProductFilterEnum filter);
 
 		void Release();
 

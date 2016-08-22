@@ -28,7 +28,7 @@ public:
 
 	~SVSharedMemorySingleton();
 
-	HRESULT InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SvSml::InspectionIDs& rIDs);
+	HRESULT InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SvSml::InspectionWriterCreationInfos& rCreationInfos);
 	HRESULT ErasePPQSharedMemory(const SVGUID& rGuid);
 
 	SvSml::SVSharedPPQWriter& GetPPQWriter(const SVGUID& rGuid);

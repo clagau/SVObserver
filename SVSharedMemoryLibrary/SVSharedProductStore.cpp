@@ -15,8 +15,8 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	SVSharedProductStore::SVSharedProductStore(const void_allocator & allocator, size_t cache_size ): 
-		current_idx(-1), data(cache_size, SVSharedProduct(allocator), allocator)
+	SVSharedProductStore::SVSharedProductStore(const void_allocator& rAllocator, size_t cache_size)
+	: current_idx(-1), data(cache_size, SVSharedProduct(rAllocator), rAllocator)
 	{
 	}
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
