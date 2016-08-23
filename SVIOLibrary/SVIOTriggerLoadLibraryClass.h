@@ -11,15 +11,22 @@
 
 #pragma once
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerHandling { //AB namespace used only for forward declaration
+
+	struct TriggerDispatcher;
+
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;
+;
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
 typedef HRESULT (WINAPI *SVTriggerGetCountPtr)( unsigned long * );
 typedef HRESULT (WINAPI *SVTriggerGetHandlePtr)( unsigned long *, unsigned long );
 typedef HRESULT (WINAPI *SVTriggerGetNamePtr)( unsigned long, BSTR * );
-typedef HRESULT (WINAPI *SVTriggerRegisterPtr)( unsigned long, const TriggerCallbackInformation &rTriggerCallbackInfo );
-typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)( unsigned long, const TriggerCallbackInformation &rTriggerCallbackInfo );
+typedef HRESULT (WINAPI *SVTriggerRegisterPtr)( unsigned long, const SvTh::TriggerDispatcher &rDispatcher );
+typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)( unsigned long, const SvTh::TriggerDispatcher &rDispatcher );
 typedef HRESULT (WINAPI *SVTriggerUnregisterAllPtr)( unsigned long );
 typedef HRESULT (WINAPI *SVTriggerStartPtr)( unsigned long );
 typedef HRESULT (WINAPI *SVTriggerStopPtr)( unsigned long );
@@ -38,17 +45,17 @@ public:
 	HRESULT Close();
 	
 	HRESULT GetCount( unsigned long *p_pulCount );
-	HRESULT GetHandle( unsigned long *p_pulHandle, unsigned long p_ulIndex );
-	HRESULT GetName( unsigned long p_ulHandle, BSTR *p_pbstrName );
-	HRESULT Register( unsigned long p_ulHandle, const TriggerCallbackInformation &rTriggerCallbackInfo );
-	HRESULT Unregister( unsigned long p_ulHandle, const TriggerCallbackInformation &rTriggerCallbackInfo );
-	HRESULT UnregisterAll( unsigned long p_ulHandle );
-	HRESULT Start( unsigned long p_ulHandle );
-	HRESULT Stop( unsigned long p_ulHandle );
-	HRESULT GetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount );
-	HRESULT GetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName );
-	HRESULT GetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	HRESULT SetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT GetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex );
+	HRESULT GetName( unsigned long triggerchannel, BSTR *p_pbstrName );
+	HRESULT Register( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher );
+	HRESULT Unregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher );
+	HRESULT UnregisterAll( unsigned long triggerchannel );
+	HRESULT Start( unsigned long triggerchannel );
+	HRESULT Stop( unsigned long triggerchannel );
+	HRESULT GetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
+	HRESULT GetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
+	HRESULT GetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT SetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
 private:
 	HMODULE m_hmHandle;
@@ -70,7 +77,3 @@ private:
 };
 
 #include "SVIOTriggerLoadLibraryClass.inl"
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;

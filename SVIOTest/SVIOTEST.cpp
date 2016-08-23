@@ -42,7 +42,7 @@ END_MESSAGE_MAP()
 
 CSVIOTESTApp::CSVIOTESTApp()
 {
-	SvTh::SVIOConfigurationInterfaceClass::Instance().Shutdown();
+	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 }
 
 CSVIOTESTApp::~CSVIOTESTApp()
@@ -80,7 +80,7 @@ BOOL CSVIOTESTApp::InitInstance()
 	bool l_bOk = true;
 
 	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.m_csTriggerDLL ) && l_bOk;
-	l_bOk = S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_csDigitalDLL ) && l_bOk;
+	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_csDigitalDLL ) && l_bOk;
 
 	if ( ! l_bOk )
 	{

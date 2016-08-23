@@ -27,7 +27,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 	#pragma region public methods
 	public:
-		HRESULT AddTriggerCallback(unsigned long handle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
+		HRESULT AddTriggerCallback(unsigned long handle, const TriggerDispatcher &rDispatcher);
 		HRESULT RemoveTriggerCallback(unsigned long handle, SVTriggerCallbackPtr pCallback);
 		HRESULT RemoveAllTriggerCallbacks(unsigned long handle);
 		HRESULT StartTrigger(unsigned long handle);
@@ -47,19 +47,19 @@ namespace Seidenader { namespace TriggerHandling {
 
 	#pragma region member variables
 	protected:
-		TriggerCallbackMap m_triggerCallbackMap;
+		TriggerDispatcherMap m_triggerDispatcherMap;
 	#pragma endregion member variables
 
 	};
 
 
-	/// a functor that sets the trigger callback pointer in a TriggerCallbackInformation struct
-	class TriggerFinder : public std::binary_function<TriggerCallbackInformation, SVTriggerCallbackPtr, bool>
+	/// a functor that sets the trigger callback pointer in a TriggerDispatcher struct
+	class TriggerFinder : public std::binary_function<TriggerDispatcher, SVTriggerCallbackPtr, bool>
 	{
 	public:
-		bool operator()(const TriggerCallbackInformation& rTriggerCallbackInfo, const SVTriggerCallbackPtr& pCallback) const
+		bool operator()(const TriggerDispatcher& rDispatcher, const SVTriggerCallbackPtr& pCallback) const
 		{
-			return (rTriggerCallbackInfo.m_pCallback == pCallback);
+			return (rDispatcher.getCallback()== pCallback);
 		}
 	};
 

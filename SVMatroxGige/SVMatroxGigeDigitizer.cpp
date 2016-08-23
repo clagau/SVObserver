@@ -26,12 +26,14 @@ SVMatroxGigeDigitizer::SVMatroxGigeDigitizer(unsigned long deviceNumber, unsigne
 , m_pBufferInterface(nullptr)
 , m_StartFrameTimeStamp(0) 
 , m_lineState(false)
+, m_dispatcher(nullptr,SvTh::TriggerParameters())
 {
 	m_params.TriggerType = SVMatroxGigeTrigger::HardwareTrigger;
 	m_params.TriggerMode = SVMatroxDigitizerGrab::SVEdgeRising;
 }
 
 SVMatroxGigeDigitizer::SVMatroxGigeDigitizer( const SVMatroxGigeDigitizer& p_rValue)
+: m_dispatcher(nullptr,SvTh::TriggerParameters())
 {
 	*this = p_rValue;
 }
@@ -65,7 +67,7 @@ const SVMatroxGigeDigitizer& SVMatroxGigeDigitizer::operator=( const SVMatroxGig
 
 		m_AcqBuffers = p_rValue.m_AcqBuffers;
 
-		m_triggerCallbackInfo = p_rValue.m_triggerCallbackInfo;
+		m_dispatcher = p_rValue.m_dispatcher;
 
 		m_lineInputMoniker = p_rValue.m_lineInputMoniker;
 		m_lineInputRisingEventName = p_rValue.m_lineInputRisingEventName;
@@ -230,6 +232,8 @@ long SVMatroxGigeDigitizer::GetLineFallingEvent() const
 	return eventId;
 }
 
+//@TODO[Arvid] SVMatroxGigeDigitizer and SVFileCamera share some functions - they should be derived from the same base class
+
 bool SVMatroxGigeDigitizer::GetLineState() const
 {
 	return m_lineState;
@@ -240,19 +244,18 @@ void SVMatroxGigeDigitizer::SetLineState(bool bState)
 	m_lineState = bState;
 }
 
-const SvTh::TriggerCallbackInformation& SVMatroxGigeDigitizer::GetTriggerCallback() const
+const SvTh::TriggerDispatcher& SVMatroxGigeDigitizer::GetTriggerDispatcher() const
 {
-	return m_triggerCallbackInfo;
+	return m_dispatcher;
 }
 
-void SVMatroxGigeDigitizer::SetTriggerCallback(const SvTh::TriggerCallbackInformation& callback)
+void SVMatroxGigeDigitizer::SetTriggerDispatcher(const SvTh::TriggerDispatcher& callback)
 {
-	m_triggerCallbackInfo = callback;
+	m_dispatcher = callback;
 }
 
 void SVMatroxGigeDigitizer::ClearTriggerCallback()
 {
-	m_triggerCallbackInfo.m_pCallback = nullptr;
-	m_triggerCallbackInfo.m_TriggerParameters = SvTh::TriggerParameters();
+	m_dispatcher.clear();
 }
 

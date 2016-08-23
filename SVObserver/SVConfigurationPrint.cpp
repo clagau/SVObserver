@@ -13,10 +13,11 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost\algorithm\string.hpp>
 //Moved to precompiled header: #include <boost\algorithm\string\replace.hpp>
+
 #include "SVConfigurationPrint.h"
 #include "SVConfigurationObject.h"
 
-#include "TriggerHandling\SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
 #include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVOMFCLibrary\SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary\SVi64ValueDeviceParam.h"
@@ -1797,7 +1798,7 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 	if( nullptr != pConfig) { lSize = pConfig->GetTriggerCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SvTh::SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
+		SvTi::SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
 		if( nullptr != pTrigger )
 		{
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
@@ -1944,7 +1945,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Trigger:"));
 			
-			SvTh::SVTriggerObject* pTrigger( nullptr );
+			SvTi::SVTriggerObject* pTrigger( nullptr );
 			pPPQ->GetTrigger(pTrigger);
 			sValue.Empty();
 			if(nullptr != pTrigger ) { sValue = pTrigger->GetName();}
@@ -2234,7 +2235,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 		// Print module input title...
 		DWORD dwMaxInput = 0;
-		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
+		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
 
 		value.Format(_T("%ld"), dwMaxInput);
 		ptCurPos.x = nIndentLevel * m_shortTabPixels;
@@ -2356,7 +2357,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 		// Print Result Output title...
 		DWORD dwMaxOutput = 0;
-		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
+		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
 		value.Format(_T("%ld"), dwMaxOutput);
 		ptCurPos.x = nIndentLevel * m_shortTabPixels;
 		PrintValueObject(pDC, ptCurPos, _T("Result Outputs:"), value);

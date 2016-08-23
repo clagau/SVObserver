@@ -12,27 +12,31 @@
 
 #pragma region Includes
 #include "TriggerBasics.h"
-#include "SVIOTriggerLoadLibraryClass.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {
 
-template<typename TriggerHandler>
-class SVTriggerRelayClass
-{
-private:
-	SVIOTriggerLoadLibraryClass* m_pTriggerDLL;
-	unsigned long m_ulTriggerHandle;
-	TriggerHandler m_triggerHandler;
-	
-public:
-	SVTriggerRelayClass(); 
-	~SVTriggerRelayClass();
-	
-	HRESULT RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* pTriggerDLL, unsigned long ulHandle, TriggerHandler& rTriggerHandler);
-	HRESULT UnregisterTriggerRelay();
-};
+	template<typename TriggerHandler>
+	class SVTriggerRelayClass
+	{
+	private:
+		SVIOTriggerLoadLibraryClass* m_pTriggerDLL;
+		unsigned long m_ulTriggerHandle;
+		TriggerHandler m_triggerHandler;
+
+	public:
+		SVTriggerRelayClass(); 
+		~SVTriggerRelayClass();
+
+		HRESULT RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* pTriggerDLL, unsigned long triggerchannel, TriggerHandler& rTriggerHandler);
+		HRESULT UnregisterTriggerRelay();
+	};
 
 #include "SVTriggerRelayClass.inl"
 
-}}
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;
+
+

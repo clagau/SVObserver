@@ -14,12 +14,11 @@ namespace Seidenader { namespace TriggerHandling {
 
 	//! This struct was introduced to facilitate the passing of further parameters 
 	//! (beyond 'Owner' and 'Data') - in particular in preparation for the SVPLCIO.dll.
-	//! Since it contains only pointers and small data it can be passed by value
+
 	struct TriggerParameters
 	{
 		void* m_pOwner;
 		void* m_pData;
-
 		TriggerParameters(void* pOwner=nullptr, void* pData=nullptr): m_pOwner(pOwner), m_pData(pData){}
 	};
 
@@ -28,21 +27,33 @@ namespace Seidenader { namespace TriggerHandling {
 	//! this adds a callback function pointer and further informational variables
 	//! (currently just one) to the information contained in TriggerParameters
 	//! Note: assignment and comparison operators ('=' and '=='), which hat been implemented previously,
-	//! were removed because the defaults for both TriggerCallbackInformation and m_TriggerParameters seemed 
+	//! were removed because the defaults for both TriggerDispatcher and m_TriggerParameters seemed 
 	//! better (and safer)
-	struct TriggerCallbackInformation
+	struct TriggerDispatcher
 	{
-		TriggerCallbackInformation();
-		TriggerCallbackInformation( const TriggerCallbackInformation &p_rOriginal );
-		virtual ~TriggerCallbackInformation(){}
+		TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp);
+		TriggerDispatcher( const TriggerDispatcher &p_rOriginal );
 
-		void DispatchIfPossible() const;
+		bool operator==(const TriggerDispatcher &p_rOriginal ) const;
 
-		SVTriggerCallbackPtr m_pCallback;
+		virtual ~TriggerDispatcher(){}
 
-		TriggerParameters m_TriggerParameters;
+		void clear();
+		void DispatchIfPossible() const ;
+		void Dispatch() const;
+
+		bool hasCallback() const {return (nullptr != m_pCallback);}
 
 		bool m_IsStarted;
+
+		const SVTriggerCallbackPtr getCallback() const {return m_pCallback;}
+		const TriggerParameters &GetTriggerParameters() const  {return m_TriggerParameters;}
+
+		void SetData(void *data){m_TriggerParameters.m_pData = data;}
+
+	private:
+		SVTriggerCallbackPtr m_pCallback;
+		TriggerParameters m_TriggerParameters;
 	};
 
 } /* namespace TriggerHandling */ } /* namespace Seidenader */

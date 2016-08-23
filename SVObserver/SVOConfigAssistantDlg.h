@@ -19,13 +19,13 @@
 #include "SVOProPosQueDlg.h"
 #include "SVOCameraList.h"
 #include "SVOInspectionList.h"
-#include "SVOTriggerList.h"
+#include "TriggerInformation/SVOTriggerList.h"
 #include "SVOPPQList.h"
 #include "SVConfigurationObject.h"
 #include "SVMFCControls\SVOConfigNameEdit.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVIOBoardCapabilities.h"
-#include "TriggerHandling/SVIMTypeInfoStruct.h"
+#include "TriggerInformation/SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
 #include "ObjectInterfaces/GlobalConstantData.h"
 #pragma endregion Includes
@@ -104,7 +104,7 @@ public:
 	BOOL IsPPQInList(CString sPPQName) const;
 
 	CString BuildDigName(const SVOCameraObj& rCameraObj, bool bIsAcqDev = false) const;
-	CString BuildTrgDig(const SVOTriggerObj& rTriggerObj) const;
+	CString BuildTrgDig(const SvTi::SVOTriggerObj& rTriggerObj) const;
 
 	CString GetInspectionLabelFromName(CString sInspectName);
 	CString GetInspectionNameFromLabel(CString sInspectLabel);
@@ -117,8 +117,8 @@ public:
 
 	SVOCameraObjPtr GetCameraObject(int iPos);
 	SVOCameraObjPtr GetCameraObjectByName(CString sCameraName);
-	SVOTriggerObjPtr GetTriggerObject(int iPos);
-	SVOTriggerObjPtr GetTriggerObjectByName(CString sTriggerName);
+	SvTi::SVOTriggerObjPtr GetTriggerObject(int iPos);
+	SvTi::SVOTriggerObjPtr GetTriggerObjectByName(CString sTriggerName);
 	SVOInspectionObjPtr GetInspectionObject(int iPos);
 	SVOInspectionObjPtr GetInspectionObjectByName(CString sName);
 	SVOPPQObjPtr GetPPQObject(int iPos);
@@ -220,7 +220,7 @@ private:
 	HRESULT CheckCamera( SVOCameraObj& rCameraObj, bool SetFileParameters = false );
 	void CheckColor( const SVOCameraObj& rCameraObj );
 	void CheckTriggers();
-	BOOL CheckTrigger( const SVOTriggerObj& rTriggerObj);
+	BOOL CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj);
 	void RemoveFileAcquisitionMessages( const CString& rCameraName );
 
 	HRESULT ConnectToolsetBuffers();
@@ -259,7 +259,7 @@ private:
 
 	SVOCameraList m_CameraList;
 	SVOInspectionList m_InspectList;
-	SVOTriggerList m_TriggerList;
+	SvTi::SVOTriggerList m_TriggerList;
 	SVOPPQList m_PPQList;
 
 	SVOCameraList m_TmpCameraList; //used for cancel

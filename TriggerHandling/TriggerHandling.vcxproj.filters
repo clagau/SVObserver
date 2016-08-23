@@ -18,60 +18,36 @@
     <ClCompile Include="STDAFX.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAcquisitionConstructParams.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVAcquisitionInitiator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVCameraTriggerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCameraTriggerData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVHardwareManifest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVSoftwareTriggerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTriggerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTriggerDeviceParams.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTriggerInfoStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTriggerObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTriggerProcessingClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTriggerCallbackMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IODeviceBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOConfigurationInterfaceClass.cpp">
+    <ClCompile Include="TriggerBasics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TriggerBasics.cpp">
+    <ClCompile Include="SVFileAcquisitionInitiator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAcquisitionInitiator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTriggerClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AcquisitionTriggers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAcquisitionConstructParams.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAcquisitionInitiator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCameraTriggerClass.h">
@@ -80,34 +56,10 @@
     <ClInclude Include="SVCameraTriggerData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVHardwareManifest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIMTypeInfoStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVSoftwareTriggerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTriggerClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTriggerConstants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerDeviceParams.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerInfoStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerProcessingClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerCallbackMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TriggerBasics.h">
@@ -122,27 +74,21 @@
     <ClInclude Include="IODeviceBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIODigitalLoadLibraryClass.h">
+    <ClInclude Include="SVFileAcquisitionInitiator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIOConfigurationInterfaceClass.h">
+    <ClInclude Include="SVAcquisitionInitiator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIOTriggerLoadLibraryClass.h">
+    <ClInclude Include="SVTriggerClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AcquisitionTriggers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVTriggerRelayClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVIODigitalLoadLibraryClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVIOConfigurationInterfaceClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVIOTriggerLoadLibraryClass.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

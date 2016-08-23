@@ -16,7 +16,7 @@
 
 namespace Seidenader { namespace TriggerHandling {
 
-	class SVSoftwareTriggerClass : public SVTriggerClass
+	class SVSoftwareTriggerClass : public SvTh::SVTriggerClass
 	{
 	private:
 		SVAcquisitionInitiator m_acquisitionInitiator;

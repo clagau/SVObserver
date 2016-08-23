@@ -21,7 +21,7 @@
 #include "SVOLibrary/SVODeviceClass.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "TriggerHandling/SVAcquisitionConstructParams.h"
+#include "TriggerInformation/SVAcquisitionConstructParams.h"
 
 #include "SVFileNameArrayClass.h"
 #include "SVImageObjectClass.h"
@@ -42,7 +42,7 @@ class SVAcquisitionClass :
 	public SVAcquisitionBufferInterface
 {
 public:
-	SVAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams );
+	SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVAcquisitionClass();
 
 	virtual bool IsValid() const;  // SVODataDeviceClass Override

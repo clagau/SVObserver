@@ -16,10 +16,11 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVFileCameraStruct.h"
 #include "SVEventHandler.h"
+#include "TriggerHandling/TriggerBasics.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"
-#include "TriggerHandling/TriggerBasics.h"
+
 #include "SVSystemLibrary/SVSequencer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -103,14 +104,14 @@ public:
 	void SetLineState(bool bState);
 	bool GetLineState() const;
 
-	const SvTh::TriggerCallbackInformation& GetTriggerCallback() const;
-	void SetTriggerCallback(const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo);
+	const SvTh::TriggerDispatcher& GetTriggerDispatcher() const;
+	void SetTriggerDispatcher(const SvTh::TriggerDispatcher& rDispatcher);
 	void ClearTriggerCallback();
 
 	SVAcquisitionBufferInterface* m_pBufferInterface;
 
 	SVClock::SVTimeStamp m_StartTimeStamp;
-	SvTh::TriggerCallbackInformation m_triggerCallbackInfo;
+	SvTh::TriggerDispatcher m_dispatcher;
 };
 
 typedef std::vector<SVFileCamera> SVFileCameraList;

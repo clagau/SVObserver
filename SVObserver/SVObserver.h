@@ -12,10 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerHandling/TriggerBasics.h"
-#include "TriggerHandling/SVTriggerObject.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
-#include "TriggerHandling/SVIOTriggerLoadLibraryClass.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -434,9 +432,9 @@ private:
 	CString m_csFileAcquisitionDLL;
 	SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;
 
-	SvTh::SVIOTriggerLoadLibraryClass m_svDLLTriggers;
-	SvTh::SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;
-	SvTh::SVIOTriggerLoadLibraryClass m_svDLLAcquisitionTriggers;
+	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
+	SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;
+	SVIOTriggerLoadLibraryClass m_svDLLAcquisitionTriggers;
 
 	long m_gigePacketSize; 
 

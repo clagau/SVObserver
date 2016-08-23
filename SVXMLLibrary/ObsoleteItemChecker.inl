@@ -154,7 +154,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			if (SVNavigateTree::GetItem(rTree, CTAG_CONFIGURATION_TYPE, hChild, svValue))
 			{
 				int iType = svValue;
-				if (!SvTh::SVHardwareManifest::IsValidProductType(static_cast<SVIMProductEnum>(iType)))
+				if (!SvTi::SVHardwareManifest::IsValidProductType(static_cast<SVIMProductEnum>(iType)))
 				{
 					bInvalid = true;
 					rErrorCode = SvOi::Err_15043_UnknownProductType;

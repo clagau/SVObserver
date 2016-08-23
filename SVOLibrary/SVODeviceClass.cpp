@@ -516,7 +516,7 @@ HRESULT SVODeviceClass::ProcessResponse( SVResponseQueue &rUsedQueue, SVORespons
 /*
 This method walks the Callback list and executes the provided callback with the provided response.
 */
-HRESULT SVODeviceClass::ExecuteCallback( SVCallbackClassPtrQueue &rCallbackList, SVOResponseClass& p_rResponse )
+HRESULT SVODeviceClass::ExecuteCallback( SVCallbackClassPtrQueue&, SVOResponseClass& p_rResponse )
 {
 	HRESULT hrOk = S_FALSE;
 

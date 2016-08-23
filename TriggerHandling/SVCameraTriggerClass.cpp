@@ -13,7 +13,7 @@
 #include "SVCameraTriggerClass.h"
 #include "SVCameraTriggerData.h"
 #include "TriggerBasics.h"
-#include "SVIOTriggerLoadLibraryClass.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 
 namespace Seidenader { namespace TriggerHandling {
 
@@ -82,17 +82,15 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if (nullptr != m_pDLLTrigger)
 		{
-			TriggerCallbackInformation triggerCallbackInfo;
-			triggerCallbackInfo.m_pCallback = SVCameraTriggerClass::TriggerCallback;
-			triggerCallbackInfo.m_TriggerParameters = TriggerParameters(this);
+			TriggerDispatcher dispatcher (SVCameraTriggerClass::TriggerCallback, TriggerParameters(this));
 
 			if (S_OK == hr)
 			{
-				hr = m_pDLLTrigger->Register(m_ulHandle, triggerCallbackInfo);
+				hr = m_pDLLTrigger->Register(m_triggerchannel, dispatcher);
 			}
 			if (S_OK != hr)
 			{
-				m_pDLLTrigger->Unregister(m_ulHandle, triggerCallbackInfo);
+				m_pDLLTrigger->Unregister(m_triggerchannel, dispatcher);
 			}
 			if (S_OK == hr)
 			{
@@ -123,11 +121,9 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 		if (nullptr != m_pDLLTrigger)
 		{
-			TriggerCallbackInformation triggerCallbackInfo;
-			triggerCallbackInfo.m_pCallback = SVCameraTriggerClass::TriggerCallback;
-			triggerCallbackInfo.m_TriggerParameters = TriggerParameters(this, nullptr);
+			TriggerDispatcher dispatcher(SVCameraTriggerClass::TriggerCallback, TriggerParameters(this, nullptr));
 
-			if (S_OK != m_pDLLTrigger->Unregister( m_ulHandle, triggerCallbackInfo))
+			if (S_OK != m_pDLLTrigger->Unregister( m_triggerchannel, dispatcher))
 			{
 				hr = S_FALSE;
 			}

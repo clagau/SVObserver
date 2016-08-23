@@ -12,7 +12,7 @@
 #include "SVTriggerInfoStruct.h"
 
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 	SVTriggerInfoStruct::SVTriggerInfoStruct()
 	: bValid( FALSE )
 	, pTrigger( nullptr )
@@ -55,6 +55,7 @@ namespace Seidenader { namespace TriggerHandling {
 			m_ToggleState = p_rsvObject.m_ToggleState;
 			m_BeginProcess = p_rsvObject.m_BeginProcess;
 			m_ToggleTimeStamp = p_rsvObject.m_ToggleTimeStamp;
+
 			// *** // ***
 			// For Debugging Only
 			m_PushedOutputs = p_rsvObject.m_PushedOutputs;
@@ -75,6 +76,7 @@ namespace Seidenader { namespace TriggerHandling {
 		m_ToggleState = false;
 		m_BeginProcess	= 0;
 		m_ToggleTimeStamp = 0;
+		
 		// *** // ***
 		// For Debugging Only
 		m_PushedOutputs		= 0;
@@ -101,6 +103,6 @@ namespace Seidenader { namespace TriggerHandling {
 	}// end Init
 
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */
 
-namespace SvTh = Seidenader::TriggerHandling;
+namespace SvTi = Seidenader::TriggerInformation;

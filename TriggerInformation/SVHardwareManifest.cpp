@@ -24,7 +24,7 @@ static const CString SVIM_SOFTWARE_TRIGGER_SOURCE_STRING   ( _T("SoftwareTrigger
 static const CString SVIM_CAMERA_TRIGGER_SOURCE_STRING   ( _T("CameraTrigger") );
 static const CString SVIM_DIG_NAME_STRING       ( _T(".Dig_") );
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 
 	typedef std::set<SVIMProductEnum> SVIMProductEnumSet;
 	typedef std::map<SVIMProductEnum, SVIMProductEnumSet> SVIMProductCompatibilityList;
@@ -60,31 +60,31 @@ namespace Seidenader { namespace TriggerHandling {
 
 	void SVHardwareManifest::Startup()
 	{
-		m_TriggerDeviceParams = boost::assign::list_of< SVTriggerDeviceParams >
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_0" ), 0 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_1" ), 1 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_2" ), 2 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_3" ), 3 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_4" ), 4 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_5" ), 5 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_6" ), 6 ) )
-			( SVTriggerDeviceParams( _T( "IO_Board_1.Dig_7" ), 7 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_0" ), 0 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_1" ), 1 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_2" ), 2 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_3" ), 3 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_4" ), 4 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_5" ), 5 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_6" ), 6 ) )
-			( SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_7" ), 7 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_0" ), 0 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_1" ), 1 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_2" ), 2 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_3" ), 3 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_4" ), 4 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_5" ), 5 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_6" ), 6 ) )
-			( SVTriggerDeviceParams( _T( "CameraTrigger.Dig_7" ), 7 ) )
+		m_TriggerDeviceParams = boost::assign::list_of< SvTi::SVTriggerDeviceParams >
+			( SvTi::SVTriggerDeviceParams( _T( "IO_Board_1.Dig_0" ), 0 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "IO_Board_1.Dig_1" ), 1 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "IO_Board_1.Dig_2" ), 2 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "IO_Board_1.Dig_3" ), 3 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "IO_Board_1.Dig_4" ), 4 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "IO_Board_1.Dig_5" ), 5 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "IO_Board_1.Dig_6" ), 6 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "IO_Board_1.Dig_7" ), 7 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_0" ), 0 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_1" ), 1 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_2" ), 2 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_3" ), 3 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_4" ), 4 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_5" ), 5 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_6" ), 6 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "SoftwareTrigger_1.Dig_7" ), 7 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "CameraTrigger.Dig_0" ), 0 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "CameraTrigger.Dig_1" ), 1 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "CameraTrigger.Dig_2" ), 2 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "CameraTrigger.Dig_3" ), 3 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "CameraTrigger.Dig_4" ), 4 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "CameraTrigger.Dig_5" ), 5 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "CameraTrigger.Dig_6" ), 6 ) )
+			( SvTi::SVTriggerDeviceParams( _T( "CameraTrigger.Dig_7" ), 7 ) )
 		;
 
 		m_AcquisitionDeviceParams = boost::assign::list_of< SVAcquisitionConstructParams >
@@ -309,5 +309,5 @@ namespace Seidenader { namespace TriggerHandling {
 		SVIMProductEnumSet::const_iterator it = l_NonIOList.find(p_ProductType);
 		return (it != l_NonIOList.end());
 	}
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */
 

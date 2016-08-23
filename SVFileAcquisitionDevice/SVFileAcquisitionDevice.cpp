@@ -42,19 +42,19 @@ static unsigned long GetDigitizerHandle(unsigned long p_ulIndex)
 	return p_ulIndex;
 }
 
-bool SVFileAcquisitionDevice::IsValidDigitizer(unsigned long p_ulHandle) const
+bool SVFileAcquisitionDevice::IsValidDigitizer(unsigned long triggerchannel) const
 {
-	return ( p_ulHandle < m_cameras.size() );
+	return ( triggerchannel < m_cameras.size() );
 }
 
-SVFileCamera& SVFileAcquisitionDevice::GetDigitizer(unsigned long p_ulHandle)
+SVFileCamera& SVFileAcquisitionDevice::GetDigitizer(unsigned long triggerchannel)
 {
-	return m_cameras[ p_ulHandle ];
+	return m_cameras[ triggerchannel ];
 }
 
-const SVFileCamera& SVFileAcquisitionDevice::GetDigitizer(unsigned long p_ulHandle) const
+const SVFileCamera& SVFileAcquisitionDevice::GetDigitizer(unsigned long triggerchannel) const
 {
-	return m_cameras[ p_ulHandle ];
+	return m_cameras[ triggerchannel ];
 }
 
 HRESULT SVFileAcquisitionDevice::Create()
@@ -672,9 +672,9 @@ HRESULT SVFileAcquisitionDevice::InternalTrigger( unsigned long p_ulIndex )
 	return hr;
 }
 
-HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo )
+HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher )
 {
-	m_triggerMap.Add(p_ulIndex, rTriggerCallbackInfo );
+	m_acquisitionTriggers.Add(p_ulIndex, rDispatcher );
 	
 	typedef SVTriggerActivatorFunc<SVFileAcquisitionDevice> Activator;
 	typedef SVTriggerCallbackFunc<SVFileAcquisitionDevice> TriggerCallback;
@@ -685,15 +685,15 @@ HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long 
 	return m_triggerMgr.Subscribe(p_ulIndex, handler);
 }
 
-HRESULT SVFileAcquisitionDevice::UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo )
+HRESULT SVFileAcquisitionDevice::UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher )
 {
-	m_triggerMap.Remove(p_ulIndex, rTriggerCallbackInfo);
+	m_acquisitionTriggers.Remove(p_ulIndex, rDispatcher);
 	return m_triggerMgr.Unsubscribe( p_ulIndex);
 }
 
 HRESULT SVFileAcquisitionDevice::UnregisterAllInternalTriggerCallbacks( unsigned long p_ulIndex )
 {
-	m_triggerMap.RemoveAll(p_ulIndex);
+	m_acquisitionTriggers.RemoveAll(p_ulIndex);
 	return m_triggerMgr.Unsubscribe( p_ulIndex );
 }
 
@@ -709,7 +709,7 @@ HRESULT SVFileAcquisitionDevice::FireOneShot( unsigned long p_ulIndex )
 
 HRESULT SVFileAcquisitionDevice::DispatchTriggerCallback( unsigned long p_ulIndex )
 {
-	HRESULT hr = m_triggerMap.Dispatch( p_ulIndex );
+	HRESULT hr = m_acquisitionTriggers.Dispatch( p_ulIndex );
 	return hr;
 }
 
@@ -725,10 +725,10 @@ unsigned long SVFileAcquisitionDevice::TriggerGetHandle(unsigned long p_ulIndex)
 	return GetDigitizerHandle(p_ulIndex); 
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName)
+HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long triggerchannel, BSTR& p_rbstrName)
 {
 	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
 		if ( nullptr != p_rbstrName )
 		{
@@ -736,81 +736,81 @@ HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long p_ulHandle, BSTR& 
 			p_rbstrName = nullptr;
 		}
 
-		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
-		SVString name = SvUl_SF::Format("CameraTrigger.Dig_%d", p_ulHandle);
+		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
+		SVString name = SvUl_SF::Format("CameraTrigger.Dig_%d", triggerchannel);
 		p_rbstrName = _bstr_t(name.c_str());
 		l_Result = S_OK;
 	}
 	return l_Result;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
+HRESULT SVFileAcquisitionDevice::TriggerRegisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
 {
 	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
-		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
-		l_rCamera.SetTriggerCallback(triggerCallbackInfo);
+		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
+		l_rCamera.SetTriggerDispatcher(rDispatcher);
 		l_Result = S_OK;
 	}
 	return l_Result;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
+HRESULT SVFileAcquisitionDevice::TriggerUnregisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
 {
 	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
-		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
+		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
 		l_rCamera.ClearTriggerCallback();
 		l_Result = S_OK;
 	}
 	return l_Result;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerUnregisterAllCallbacks(unsigned long p_ulHandle)
+HRESULT SVFileAcquisitionDevice::TriggerUnregisterAllCallbacks(unsigned long triggerchannel)
 {
 	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
-		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
+		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
 		l_rCamera.ClearTriggerCallback();
 		l_Result = S_OK;
 	}
 	return l_Result;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerStart(unsigned long p_ulHandle)
+HRESULT SVFileAcquisitionDevice::TriggerStart(unsigned long triggerchannel)
 {
 	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
-		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
+		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
 		l_rCamera.m_bAcquisitionTriggered = true;
 		l_Result = S_OK;
 	}
 	return l_Result;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerStop(unsigned long p_ulHandle)
+HRESULT SVFileAcquisitionDevice::TriggerStop(unsigned long triggerchannel)
 {
 	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
-		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
+		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
 		l_rCamera.m_bAcquisitionTriggered = false;
 		l_Result = S_OK;
 	}
 	return l_Result;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerGetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount )
+HRESULT SVFileAcquisitionDevice::TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulCount )
 	{
-		if (IsValidDigitizer(p_ulHandle))
+		if (IsValidDigitizer(triggerchannel))
 		{
 			*p_pulCount = 1;
 			l_hrOk = S_OK;
@@ -823,7 +823,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterCount( unsigned long p_ulHan
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerGetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName )
+HRESULT SVFileAcquisitionDevice::TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -835,7 +835,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterName( unsigned long p_ulHand
 			*p_pbstrName = nullptr;
 		}
 
-		if (IsValidDigitizer(p_ulHandle))
+		if (IsValidDigitizer(triggerchannel))
 		{
 			switch ( p_ulIndex )
 			{
@@ -852,7 +852,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterName( unsigned long p_ulHand
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -860,7 +860,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long p_ulHan
 	{
 		if ( S_OK == ::VariantClear( p_pvarValue ) )
 		{
-			if (IsValidDigitizer(p_ulHandle))
+			if (IsValidDigitizer(triggerchannel))
 			{
 				// SVTriggerPeriod and SVBoardVersion enums are used here to make the code more clear.
 				// however at some time in the future the Dll parameters may be implemented
@@ -871,7 +871,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long p_ulHan
 					{
 						p_pvarValue->vt = VT_BOOL;
 						bool bAcquisitonTriggered;
-						l_hrOk = IsAcquisitionTriggered(p_ulHandle, bAcquisitonTriggered);
+						l_hrOk = IsAcquisitionTriggered(triggerchannel, bAcquisitonTriggered);
 						if ( S_OK == l_hrOk )
 						{
 							p_pvarValue->bVal = (bAcquisitonTriggered) ? VARIANT_TRUE : VARIANT_FALSE;
@@ -888,11 +888,11 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long p_ulHan
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::TriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT SVFileAcquisitionDevice::TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
 		if ( nullptr != p_pvarValue )
 		{
@@ -902,7 +902,7 @@ HRESULT SVFileAcquisitionDevice::TriggerSetParameterValue( unsigned long p_ulHan
 				{
 					if( p_pvarValue->vt == VT_BOOL )
 					{
-						l_hrOk = SetAcquisitionTriggered( p_ulHandle, (p_pvarValue->boolVal == VARIANT_TRUE) ? true : false);
+						l_hrOk = SetAcquisitionTriggered( triggerchannel, (p_pvarValue->boolVal == VARIANT_TRUE) ? true : false);
 					}
 					break;
 				}
@@ -912,27 +912,27 @@ HRESULT SVFileAcquisitionDevice::TriggerSetParameterValue( unsigned long p_ulHan
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::IsAcquisitionTriggered(unsigned long p_ulHandle, bool& bAcquisitionTriggered) const
+HRESULT SVFileAcquisitionDevice::IsAcquisitionTriggered(unsigned long triggerchannel, bool& bAcquisitionTriggered) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
 		l_hrOk = S_OK;
-		const SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
+		const SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
 		bAcquisitionTriggered = l_rCamera.IsAcquisitionTriggered();
 	}
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::SetAcquisitionTriggered(unsigned long p_ulHandle, bool bAcquisitionTriggered)
+HRESULT SVFileAcquisitionDevice::SetAcquisitionTriggered(unsigned long triggerchannel, bool bAcquisitionTriggered)
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if (IsValidDigitizer(p_ulHandle))
+	if (IsValidDigitizer(triggerchannel))
 	{
 		l_hrOk = S_OK;
-		SVFileCamera& l_rCamera = GetDigitizer(p_ulHandle);
+		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
 		l_rCamera.SetAcquisitionTriggered(bAcquisitionTriggered);
 	}
 	return l_hrOk;
@@ -943,16 +943,19 @@ void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
 	SVClock::SVTimeStamp timestamp = SVClock::GetTimeStamp();
 	// Simulate Trigger and send Timestamp and Line State...
 	bool lineState = p_rCamera.GetLineState(); // could simulate line state via a socket connection
-	const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo = p_rCamera.GetTriggerCallback();
-	if (nullptr != rTriggerCallbackInfo.m_pCallback)
+
+	SvTh::TriggerDispatcher dispatcher(p_rCamera.GetTriggerDispatcher());
+
+	if (dispatcher.hasCallback())
 	{
 		typedef  std::map<SVString, _variant_t> NameVariantMap;
 		NameVariantMap Settings;
 		Settings[_T("Timestamp")] = _variant_t(timestamp);
 		Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
 		Settings[_T("StartFrameTimestamp")] = _variant_t(p_rCamera.m_StartTimeStamp);
-			
-		rTriggerCallbackInfo.m_pCallback(SvTh::TriggerParameters(rTriggerCallbackInfo.m_TriggerParameters.m_pOwner, &Settings));
+
+		dispatcher.SetData(&Settings);
+		dispatcher.Dispatch();
 	}
 }
 

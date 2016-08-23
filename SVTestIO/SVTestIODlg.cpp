@@ -36,167 +36,69 @@ SVTestIODlg::~SVTestIODlg()
 void SVTestIODlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_INPUT1, m_Input1);
-	DDX_Control(pDX, IDC_INPUT2, m_Input2);
-	DDX_Control(pDX, IDC_INPUT3, m_Input3);
-	DDX_Control(pDX, IDC_INPUT4, m_Input4);
-	DDX_Control(pDX, IDC_INPUT5, m_Input5);
-	DDX_Control(pDX, IDC_INPUT6, m_Input6);
-	DDX_Control(pDX, IDC_INPUT7, m_Input7);
-	DDX_Control(pDX, IDC_INPUT8, m_Input8);
-	DDX_Control(pDX, IDC_OUTPUT1, m_Output1);
-	DDX_Control(pDX, IDC_OUTPUT2, m_Output2);
-	DDX_Control(pDX, IDC_OUTPUT3, m_Output3);
-	DDX_Control(pDX, IDC_OUTPUT4, m_Output4);
-	DDX_Control(pDX, IDC_OUTPUT5, m_Output5);
-	DDX_Control(pDX, IDC_OUTPUT6, m_Output6);
-	DDX_Control(pDX, IDC_OUTPUT7, m_Output7);
-	DDX_Control(pDX, IDC_OUTPUT8, m_Output8);
-	DDX_Control(pDX, IDC_OUTPUT9, m_Output9);
-	DDX_Control(pDX, IDC_OUTPUT10, m_Output10);
-	DDX_Control(pDX, IDC_OUTPUT11, m_Output11);
-	DDX_Control(pDX, IDC_OUTPUT12, m_Output12);
-	DDX_Control(pDX, IDC_OUTPUT13, m_Output13);
-	DDX_Control(pDX, IDC_OUTPUT14, m_Output14);
-	DDX_Control(pDX, IDC_OUTPUT15, m_Output15);
-	DDX_Control(pDX, IDC_OUTPUT16, m_Output16);
+
+	// IDC_INPUT1 to IDC_INPUT8 must be contiguous and sequential for this to work:
+	for (int inputchannel = 1; inputchannel < c_upperBoundForInputChannel; inputchannel++)
+	{
+		DDX_Control(pDX, IDC_INPUT1+inputchannel-1, m_input[inputchannel]);
+	}
+
+	// IDC_OUTPUT1 to IDC_OUTPUT16 must be contiguous and sequential for this to work:
+	for (int outputchannel = 1; outputchannel < c_upperBoundForOutputChannel; outputchannel++)
+	{
+		DDX_Control(pDX, IDC_OUTPUT1+outputchannel-1, m_Output[outputchannel]);
+	}
+
 	DDX_Control(pDX, IDC_LOG_LIST, m_LogList);
 	DDX_Control(pDX, IDC_LOG_CHECK, m_LogBtn);
 }
 
 BEGIN_MESSAGE_MAP(SVTestIODlg, CDialog)
-	ON_STN_CLICKED(IDC_INPUT1, &SVTestIODlg::OnStnClickedInput1)
-	ON_STN_CLICKED(IDC_INPUT2, &SVTestIODlg::OnStnClickedInput2)
-	ON_STN_CLICKED(IDC_INPUT3, &SVTestIODlg::OnStnClickedInput3)
-	ON_STN_CLICKED(IDC_INPUT4, &SVTestIODlg::OnStnClickedInput4)
-	ON_STN_CLICKED(IDC_INPUT5, &SVTestIODlg::OnStnClickedInput5)
-	ON_STN_CLICKED(IDC_INPUT6, &SVTestIODlg::OnStnClickedInput6)
-	ON_STN_CLICKED(IDC_INPUT7, &SVTestIODlg::OnStnClickedInput7)
-	ON_STN_CLICKED(IDC_INPUT8, &SVTestIODlg::OnStnClickedInput8)
+
+	// IDC_INPUT1 to IDC_INPUT8 must be contiguous and sequential for this to work:
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_INPUT1, IDC_INPUT8, &SVTestIODlg::OnInputButtonClicked)
+
 	ON_BN_CLICKED(IDC_LOG_BUTTON, &SVTestIODlg::OnBnClickedLogButton)
 	ON_BN_CLICKED(IDC_CLEAR_BTN, &SVTestIODlg::OnBnClickedClearButton)
-	ON_BN_CLICKED(IDC_TRIGGER_BUTTON, &SVTestIODlg::OnBnClickedTriggerButton)
-	ON_BN_CLICKED(IDC_TRIGGER_2, &SVTestIODlg::OnBnClickedTrigger2)
-	ON_BN_CLICKED(IDC_TRIGGER_3, &SVTestIODlg::OnBnClickedTrigger3)
-	ON_BN_CLICKED(IDC_TRIGGER_4, &SVTestIODlg::OnBnClickedTrigger4)
+
+	// IDC_TRIGGER_1 to IDC_TRIGGER_4 must be contiguous and sequential for this to work:
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_TRIGGER_1, IDC_TRIGGER_4, &SVTestIODlg::OnTriggerButtonClicked)
+
 END_MESSAGE_MAP()
 
 
 // SVTestIODlg message handlers
 
-void SVTestIODlg::OnStnClickedInput1()
+void SVTestIODlg::OnInputButtonClicked( UINT nID )
 {
-	if( m_lInputs & 1 )
+	int inputchannel = nID - IDC_INPUT1 + 1; //inputchannel is one-based
+
+	ToggleInput( inputchannel );
+
+}
+
+
+void SVTestIODlg::ToggleInput(unsigned int inputchannel)
+{
+	if( inputchannel < 1 ||  inputchannel >= c_upperBoundForInputChannel)
 	{
-		m_lInputs &= ~1 ;
-		m_Input1.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
+		return; //invalid inputchannel: do nothing!
+	}
+
+	long mask = 1 << (inputchannel-1);
+	if( m_lInputs & mask )
+	{
+		m_lInputs &= ~mask ;
+		m_input[inputchannel].SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
 	}
 	else
 	{
-		m_lInputs |= 1 ;
-		m_Input1.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
+		m_lInputs |= mask ;
+		m_input[inputchannel].SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
 	}
 }
 
-void SVTestIODlg::OnStnClickedInput2()
-{
-	if( m_lInputs & 2 )
-	{
-		m_lInputs &= ~2 ;
-		m_Input2.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
-	}
-	else
-	{
-		m_lInputs |= 2 ;
-		m_Input2.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
-	}
-}
-
-void SVTestIODlg::OnStnClickedInput3()
-{
-	if( m_lInputs & 4 )
-	{
-		m_lInputs &= ~4 ;
-		m_Input3.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
-	}
-	else
-	{
-		m_lInputs |= 4 ;
-		m_Input3.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
-	}
-}
-
-void SVTestIODlg::OnStnClickedInput4()
-{
-	if( m_lInputs & 8 )
-	{
-		m_lInputs &= ~8 ;
-		m_Input4.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
-	}
-	else
-	{
-		m_lInputs |= 8 ;
-		m_Input4.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
-	}
-}
-
-void SVTestIODlg::OnStnClickedInput5()
-{
-	if( m_lInputs & 16 )
-	{
-		m_lInputs &= ~16 ;
-		m_Input5.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
-	}
-	else
-	{
-		m_lInputs |= 16 ;
-		m_Input5.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
-	}
-}
-
-void SVTestIODlg::OnStnClickedInput6()
-{
-	if( m_lInputs & 32 )
-	{
-		m_lInputs &= ~32 ;
-		m_Input6.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
-	}
-	else
-	{
-		m_lInputs |= 32 ;
-		m_Input6.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
-	}
-}
-
-void SVTestIODlg::OnStnClickedInput7()
-{
-	if( m_lInputs & 64 )
-	{
-		m_lInputs &= ~64 ;
-		m_Input7.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
-	}
-	else
-	{
-		m_lInputs |= 64 ;
-		m_Input7.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
-	}
-}
-
-void SVTestIODlg::OnStnClickedInput8()
-{
-	if( m_lInputs & 128 )
-	{
-		m_lInputs &= ~128 ;
-		m_Input8.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON1));
-	}
-	else
-	{
-		m_lInputs |= 128 ;
-		m_Input8.SetIcon( AfxGetApp()->LoadIconA(IDI_ICON4));
-	}
-}
-
-void SVTestIODlg::SetOutput( unsigned long p_iChannel, bool p_bState)
+void SVTestIODlg::SetOutput( unsigned long zeroBasedOutputchannel, bool p_bState)
 {
 
 	HICON l_hState = nullptr;
@@ -211,89 +113,13 @@ void SVTestIODlg::SetOutput( unsigned long p_iChannel, bool p_bState)
 		l_hState = AfxGetApp()->LoadIconA( IDI_ICON4 );
 	}
 
-	switch( p_iChannel )
+	unsigned long oneBasedOutputchannel = zeroBasedOutputchannel +1;
+
+	if (oneBasedOutputchannel < c_upperBoundForOutputChannel)
 	{
-		case 0:
-		{
-			m_Output1.SetIcon( l_hState );
-			break;
-		}
-		case 1:
-		{
-			m_Output2.SetIcon( l_hState );
-			break;
-		}
-		case 2:
-		{
-			m_Output3.SetIcon( l_hState );
-			break;
-		}
-		case 3:
-		{
-			m_Output4.SetIcon( l_hState );
-			break;
-		}
-		case 4:
-		{
-			m_Output5.SetIcon( l_hState );
-			break;
-		}
-		case 5:
-		{
-			m_Output6.SetIcon( l_hState );
-			break;
-		}
-		case 6:
-		{
-			m_Output7.SetIcon( l_hState );
-			break;
-		}
-		case 7:
-		{
-			m_Output8.SetIcon( l_hState );
-			break;
-		}
-		case 8:
-		{
-			m_Output9.SetIcon( l_hState );
-			break;
-		}
-		case 9:
-		{
-			m_Output10.SetIcon( l_hState );
-			break;
-		}
-		case 10:
-		{
-			m_Output11.SetIcon( l_hState );
-			break;
-		}
-		case 11:
-		{
-			m_Output12.SetIcon( l_hState );
-			break;
-		}
-		case 12:
-		{
-			m_Output13.SetIcon( l_hState );
-			break;
-		}
-		case 13:
-		{
-			m_Output14.SetIcon( l_hState );
-			break;
-		}
-		case 14:
-		{
-			m_Output15.SetIcon( l_hState );
-			break;
-		}
-		case 15:
-		{
-			m_Output16.SetIcon( l_hState );
-			break;
-		}
+		m_Output[oneBasedOutputchannel].SetIcon( l_hState );
 	}
+
 	if( m_LogBtn.GetCheck() != 0 )
 	{
 		CString l_strTmp;
@@ -310,7 +136,7 @@ void SVTestIODlg::SetOutput( unsigned long p_iChannel, bool p_bState)
 
 		::QueryPerformanceCounter( (LARGE_INTEGER*)&l_i64Check);
 		l_iTime = (l_i64Check - m_i64Start)/m_i64Frequency;
-		l_strTmp.Format( "%010I64u Ch %02d %s", l_iTime, p_iChannel + 1, p_bState? "Off" : "On");
+		l_strTmp.Format( "%010I64u Ch %02d %s", l_iTime, oneBasedOutputchannel, p_bState? "Off" : "On");
 		m_LogList.AddString(l_strTmp);
 	}
 	::LeaveCriticalSection(&m_CriticalSection);
@@ -337,79 +163,35 @@ void SVTestIODlg::OnBnClickedClearButton()
 
 }
 
-void SVTestIODlg::OnBnClickedTriggerButton()
+void SVTestIODlg::OnTriggerButtonClicked( UINT nID )
 {
+	int triggerchannel = nID - IDC_TRIGGER_1 + 1; //triggerchannel is one-based
 
-	for( SvTh::TriggerCallbackMap::iterator it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
+	CallTrigger(triggerchannel);
+
+}
+
+
+void SVTestIODlg::CallTrigger(int index, bool CalledByTimer)
+{
+	UpdateData(TRUE);
+
+	for( SvTh::TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.begin() ; it != m_triggerDispatcherMap.end() ; ++it)
 	{
-		SvTh::TriggerCallbackList& list = it->second;
-		if( it->first == 1) // Trigger 1....1 based handle / index.
+		SvTh::DispatcherVector& list = it->second;
+		if( it->first == index) // Trigger index....1 based handle / index.
 		{
 			for (size_t i = 0;i < list.size();i++)
 			{
 				if (list[i].m_IsStarted)
 				{
-					(list[i].m_pCallback)(list[i].m_TriggerParameters);
+					list[i].Dispatch();
 				}
 			}
 		}
 	}
 }
 
-
-void SVTestIODlg::OnBnClickedTrigger2()
-{
-	for( SvTh::TriggerCallbackMap::iterator it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
-	{
-		SvTh::TriggerCallbackList& list = it->second;
-		if( it->first == 2) // Trigger 2. 1 based handle / index.
-		{
-			for (size_t i = 0;i < list.size();i++)
-			{
-				if (list[i].m_IsStarted)
-				{
-					(list[i].m_pCallback)(list[i].m_TriggerParameters);
-				}
-			}
-		}
-	}
-}
-
-void SVTestIODlg::OnBnClickedTrigger3()
-{
-	for( SvTh::TriggerCallbackMap::iterator it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
-	{
-		SvTh::TriggerCallbackList& list = it->second;
-		if( it->first == 3) // Trigger 3.  1 based handle / index.
-		{
-			for (size_t i = 0;i < list.size();i++)
-			{
-				if (list[i].m_IsStarted)
-				{
-					(list[i].m_pCallback)(list[i].m_TriggerParameters);
-				}
-			}
-		}
-	}
-}
-
-void SVTestIODlg::OnBnClickedTrigger4()
-{
-	for( SvTh::TriggerCallbackMap::iterator it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
-	{
-		SvTh::TriggerCallbackList& list = it->second;
-		if( it->first == 4) // trigger 4.  1 based handle / index.
-		{
-			for (size_t i = 0;i < list.size();i++)
-			{
-				if (list[i].m_IsStarted)
-				{
-					(list[i].m_pCallback)(list[i].m_TriggerParameters);
-				}
-			}
-		}
-	}
-}
 
 
 HRESULT SVTestIODlg::afterStopTrigger(HRESULT hr)
@@ -418,9 +200,9 @@ HRESULT SVTestIODlg::afterStopTrigger(HRESULT hr)
 	if( S_OK == hr )
 	{
 		bool l_bDisableIrq = true;
-		for( auto it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it )
+		for( auto it = m_triggerDispatcherMap.begin() ; it != m_triggerDispatcherMap.end() ; ++it )
 		{
-			SvTh::TriggerCallbackList& list = it->second;
+			SvTh::DispatcherVector& list = it->second;
 
 			if( 0 == list.size() || list[0].m_IsStarted )
 			{

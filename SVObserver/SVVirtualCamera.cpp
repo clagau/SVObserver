@@ -11,6 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
+
+
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
@@ -662,7 +664,7 @@ void SVVirtualCamera::SetFileImageHeight(long height)
 	m_imageSize.cy = height;
 }
 
-HRESULT SVVirtualCamera::RegisterTriggerRelay(SvTh::SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulHandle)
+HRESULT SVVirtualCamera::RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulHandle)
 {
 	HRESULT hr = S_FALSE;
 
@@ -681,7 +683,7 @@ HRESULT SVVirtualCamera::RegisterTriggerRelay(SvTh::SVIOTriggerLoadLibraryClass*
 				acqInitiator.Add(pAcqDLL, pAcq->m_hDigitizer);
 			}
 
-			hr = m_triggerRelay.RegisterTriggerRelay(triggerDLL, ulHandle, SVFileAcquisitionInitiator(acqInitiator));
+			hr = m_triggerRelay.RegisterTriggerRelay(triggerDLL, ulHandle, SvTh::SVFileAcquisitionInitiator(acqInitiator));
 		}
 	}
 	return hr;

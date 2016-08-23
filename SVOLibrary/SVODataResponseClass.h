@@ -20,7 +20,7 @@
 /*
 This object holds the data response information to a event.
 */
-class SVODataResponseClass
+class SVODataResponseClass  //@TODO[Arvid] this is similar to SVOResponseClass: combine or derive?
 {
 public:
 	SVODataResponseClass();
@@ -48,8 +48,8 @@ public:
 	virtual HRESULT GetEndTick( SVClock::SVTimeStamp& p_rTick ) const;
 	virtual HRESULT SetEndTick( const SVClock::SVTimeStamp& p_rTick );
 
-	virtual HRESULT GetExtraData( unsigned long &ulData) const;
-	virtual HRESULT SetExtraData( unsigned long ulData );
+
+
 
 	//This attribute holds the Data Manager index of the associated data element.
 	SVDataManagerHandle mDMHandle;
@@ -67,9 +67,6 @@ private:
 	SVClock::SVTimeStamp m_StartTick;
 	//This attribute holds the end time stamp the response.
 	SVClock::SVTimeStamp m_EndTick;
-
-	//This attribute holds context data of the response. 
-	unsigned long mulExtraData;
 
 };
 

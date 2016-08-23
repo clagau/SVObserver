@@ -66,7 +66,7 @@ private:
 	SVClock::SVTimeStamp m_EndTick;
 
 	//This attribute holds context data of the response. 
-	boost::any mExtraData;
+	boost::any mExtraData;  //used by SVCameraTriggerClass::TriggerCallback() only
 
 };
 

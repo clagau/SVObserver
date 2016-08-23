@@ -153,9 +153,9 @@ void SVMMTimer::Dispatch( bool& p_WaitForEvents )
 		//if (it->second.tickCount >= it->second.interval)
 		//{
 		//	it->second.tickCount = 0;
-		//	if (it->second.m_pCallback)
+		//	if (it->second.getCallback())
 		//	{
-		//		it->second.m_pCallback->Notify(it->first);
+		//		it->second.getCallback()->Notify(it->first);
 		//	}
 		//}
 	}

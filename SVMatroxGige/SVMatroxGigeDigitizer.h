@@ -21,13 +21,13 @@
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
-#include "TriggerHandling/TriggerBasics.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxGigeCallbackStruct.h"
 #include "SVMatroxGigeCameraId.h"
 #include "SVMatroxGigeAcqParams.h"
 #include "SVMatroxGigeBufferCreator.h"
+#include "TriggerHandling/TriggerBasics.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -95,8 +95,8 @@ public:
 	void SetLineState(bool bState);
 	bool GetLineState() const;
 
-	const SvTh::TriggerCallbackInformation& GetTriggerCallback() const;
-	void SetTriggerCallback(const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo);
+	const SvTh::TriggerDispatcher& GetTriggerDispatcher() const;
+	void SetTriggerDispatcher(const SvTh::TriggerDispatcher& rDispatcher);
 	void ClearTriggerCallback();
 
 #pragma region Member Variables
@@ -124,7 +124,7 @@ public:
 	SVAcquisitionBufferInterface* m_pBufferInterface;
 
 private:
-	SvTh::TriggerCallbackInformation m_triggerCallbackInfo;
+	SvTh::TriggerDispatcher m_dispatcher;
 #pragma endregion Member Variables
 };
 

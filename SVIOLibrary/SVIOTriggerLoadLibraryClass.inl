@@ -147,133 +147,133 @@ inline HRESULT SVIOTriggerLoadLibraryClass::GetCount( unsigned long *p_pulCount 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::GetHandle( unsigned long *p_pulHandle, unsigned long p_ulIndex )
+inline HRESULT SVIOTriggerLoadLibraryClass::GetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvGetHandle )
 	{
-		l_hrOk = m_psvGetHandle( p_pulHandle, p_ulIndex );
+		l_hrOk = m_psvGetHandle( pTriggerchannel, p_ulIndex );
 	}
 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::GetName( unsigned long p_ulHandle, BSTR *p_pbstrName )
+inline HRESULT SVIOTriggerLoadLibraryClass::GetName( unsigned long triggerchannel, BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvGetName )
 	{
-		l_hrOk = m_psvGetName( p_ulHandle, p_pbstrName );
+		l_hrOk = m_psvGetName( triggerchannel, p_pbstrName );
 	}
 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long p_ulHandle, const TriggerCallbackInformation &rTriggerCallbackInfo )
+inline HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvRegister )
 	{
-		l_hrOk = m_psvRegister( p_ulHandle, rTriggerCallbackInfo);
+		l_hrOk = m_psvRegister( triggerchannel, rDispatcher);
 	}
 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long p_ulHandle, const TriggerCallbackInformation &rTriggerCallbackInfo )
+inline HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvUnregister )
 	{
-		l_hrOk = m_psvUnregister( p_ulHandle, rTriggerCallbackInfo);
+		l_hrOk = m_psvUnregister( triggerchannel, rDispatcher);
 	}
 
 	return l_hrOk;
 }
 	
-inline HRESULT SVIOTriggerLoadLibraryClass::UnregisterAll( unsigned long p_ulHandle )
+inline HRESULT SVIOTriggerLoadLibraryClass::UnregisterAll( unsigned long triggerchannel )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvUnregisterAll )
 	{
-		l_hrOk = m_psvUnregisterAll( p_ulHandle );
+		l_hrOk = m_psvUnregisterAll( triggerchannel );
 	}
 
 	return l_hrOk;
 }
 	
-inline HRESULT SVIOTriggerLoadLibraryClass::Start( unsigned long p_ulHandle )
+inline HRESULT SVIOTriggerLoadLibraryClass::Start( unsigned long triggerchannel )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvStart )
 	{
-		l_hrOk = m_psvStart( p_ulHandle );
+		l_hrOk = m_psvStart( triggerchannel );
 	}
 
 	return l_hrOk;
 }
 	
-inline HRESULT SVIOTriggerLoadLibraryClass::Stop( unsigned long p_ulHandle )
+inline HRESULT SVIOTriggerLoadLibraryClass::Stop( unsigned long triggerchannel )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvStop )
 	{
-		l_hrOk = m_psvStop( p_ulHandle );
+		l_hrOk = m_psvStop( triggerchannel );
 	}
 
 	return l_hrOk;
 }
 	
-inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount )
+inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvGetParameterCount )
 	{
-		l_hrOk = m_psvGetParameterCount( p_ulHandle, p_pulCount );
+		l_hrOk = m_psvGetParameterCount( triggerchannel, p_pulCount );
 	}
 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName )
+inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvGetParameterName )
 	{
-		l_hrOk = m_psvGetParameterName( p_ulHandle, p_ulIndex, p_pbstrName );
+		l_hrOk = m_psvGetParameterName( triggerchannel, p_ulIndex, p_pbstrName );
 	}
 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+inline HRESULT SVIOTriggerLoadLibraryClass::GetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvGetParameterValue )
 	{
-		l_hrOk = m_psvGetParameterValue( p_ulHandle, p_ulIndex, p_pvarValue );
+		l_hrOk = m_psvGetParameterValue( triggerchannel, p_ulIndex, p_pvarValue );
 	}
 
 	return l_hrOk;
 }
 
-inline HRESULT SVIOTriggerLoadLibraryClass::SetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+inline HRESULT SVIOTriggerLoadLibraryClass::SetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != m_psvSetParameterValue )
 	{
-		l_hrOk = m_psvSetParameterValue( p_ulHandle, p_ulIndex, p_pvarValue );
+		l_hrOk = m_psvSetParameterValue( triggerchannel, p_ulIndex, p_pvarValue );
 	}
 
 	return l_hrOk;

@@ -31,7 +31,7 @@ SVCameraPropDlgClass::SVCameraPropDlgClass(CWnd* pParent /*=nullptr*/)
 	//}}AFX_DATA_INIT
 
 	m_psvDigitizers = nullptr;
-	m_ulHandle = 0;
+	m_triggerchannel = 0;
 }
 
 SVCameraPropDlgClass::~SVCameraPropDlgClass()
@@ -74,7 +74,7 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 
 		::VariantInit( &l_varList );
 
-		m_psvDigitizers->ParameterGetList( m_ulHandle, &l_varList );
+		m_psvDigitizers->ParameterGetList( m_triggerchannel, &l_varList );
 
 		if( ( l_varList.vt & VT_ARRAY ) == VT_ARRAY )
 		{
@@ -97,9 +97,9 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 
 				::SafeArrayGetElement(l_varList.parray, &i, &l_iParameterID);
 
-				if( S_OK == m_psvDigitizers->ParameterGetName( m_ulHandle, l_iParameterID, &l_bstrName ) )
+				if( S_OK == m_psvDigitizers->ParameterGetName( m_triggerchannel, l_iParameterID, &l_bstrName ) )
 				{
-					m_psvDigitizers->ParameterGetValue( m_ulHandle, l_iParameterID, &l_iParameterTypeID, &l_varValue );
+					m_psvDigitizers->ParameterGetValue( m_triggerchannel, l_iParameterID, &l_iParameterTypeID, &l_varValue );
 
 					CString l_csName;
 
@@ -185,7 +185,7 @@ void SVCameraPropDlgClass::OnOK()
 		l_varValue.vt = VT_UI4;
 		l_varValue.lVal = atol( l_csData );
 
-		m_psvDigitizers->ParameterSetValue( m_ulHandle, l_lParameterID, l_lParameterTypeID, &l_varValue );
+		m_psvDigitizers->ParameterSetValue( m_triggerchannel, l_lParameterID, l_lParameterTypeID, &l_varValue );
 	}
 	
 	CDialog::OnOK();

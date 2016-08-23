@@ -18,7 +18,7 @@
 #include "SVOCameraObj.h"
 #include "SVOInspectionObj.h"
 #include "SVOPPQObj.h"
-#include "SVOTriggerObj.h"
+#include "TriggerInformation/SVOTriggerObj.h"
 #pragma endregion Includes
 
 // defines for the dlgs
@@ -82,7 +82,7 @@ enum PROPERTY_PAGE_PROPERTY
 /////////////////////////////////////////////////////////////////////////////
 // CSVOPropertyPageDlg dialog
 
-class SVOTriggerObj;
+class SvTi::SVOTriggerObj;
 class SVOInspectionObj;
 class SVOPPQObj;
 class CSVOConfigAssistantDlg;
@@ -95,7 +95,7 @@ public:
 	virtual ~CSVOPropertyPageDlg();
 
 	SVOCameraObj& getCameraObject() { return m_CameraObj; };
-    SVOTriggerObj& getTriggerObject() { return m_TriggerObj; };
+    SvTi::SVOTriggerObj& getTriggerObject() { return m_TriggerObj; };
     SVOInspectionObj& getInspectObject() { return m_InspectionObj; };
     SVOPPQObj& getPPQObject() { return m_PPQObj; };
 
@@ -142,7 +142,7 @@ protected:
 
 private: //data members
     SVOCameraObj m_CameraObj;
-    SVOTriggerObj m_TriggerObj;
+    SvTi::SVOTriggerObj m_TriggerObj;
     SVOInspectionObj m_InspectionObj;
     SVOPPQObj m_PPQObj;
 	CSVOConfigAssistantDlg* m_pAssistant;

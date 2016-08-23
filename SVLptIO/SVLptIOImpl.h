@@ -115,10 +115,10 @@ public:
 	HRESULT afterStartTrigger(HRESULT hr) override;
 	HRESULT afterStopTrigger(HRESULT hr) override;
 
-	HRESULT TriggerGetParameterCount(unsigned long ulHandle, unsigned long *pulCount);
-	HRESULT TriggerGetParameterName(unsigned long ulHandle, unsigned long ulIndex, BSTR *pbstrName);
-	HRESULT TriggerGetParameterValue(unsigned long ulHandle, unsigned long ulIndex, VARIANT *pvarValue);
-	HRESULT TriggerSetParameterValue(unsigned long ulHandle, unsigned long ulIndex, VARIANT *pvarValue);
+	HRESULT TriggerGetParameterCount(unsigned long triggerchannel, unsigned long *pulCount);
+	HRESULT TriggerGetParameterName(unsigned long triggerchannel, unsigned long ulIndex, BSTR *pbstrName);
+	HRESULT TriggerGetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT *pvarValue);
+	HRESULT TriggerSetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT *pvarValue);
 
 	// Non-Trigger Parameter Functions
 	HRESULT GetParameterCount(unsigned long *pulCount);

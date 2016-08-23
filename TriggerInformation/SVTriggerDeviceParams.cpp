@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVTriggerDeviceParams.h"
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 
 	SVTriggerDeviceParams::SVTriggerDeviceParams()
 	: m_Name( _T( "" ) ), m_Channel( -1 )
@@ -28,4 +28,4 @@ namespace Seidenader { namespace TriggerHandling {
 		: m_Name( (nullptr != p_szName) ? p_szName : SVString() ), m_Channel( p_Channel )
 	{
 	}
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */

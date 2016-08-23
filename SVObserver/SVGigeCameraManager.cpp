@@ -79,7 +79,7 @@ HRESULT SVGigeCameraManager::UpdateCameraOrder( const SVGigeCameraStructSet& rSV
 	{
 		CString strKey;
 		CString l_Number;
-		if( (0 != rSVCameraList[x].m_ulHandle) || ignoreHandles )
+		if( (0 != rSVCameraList[x].m_triggerchannel) || ignoreHandles )
 		{
 			l_Number = rSVCameraList[ x ].strIPAddress;
 		}
@@ -193,7 +193,7 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 				l_rCamera.strModelName.Empty();
 				l_rCamera.strVendorName.Empty();
 				l_rCamera.eChangeType = SvOi::SVGigeCameraStructInterface::SVCameraRemoved;
-				l_rCamera.m_ulHandle = 0;
+				l_rCamera.m_triggerchannel = 0;
 			}
 		}
 		l_rCamera.iPosition = static_cast<int>(i);
@@ -203,7 +203,7 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 	{
 		SVGigeCameraStruct& l_rCamera = m_OrderedCamaras[ i ];
 
-		if( 0 == l_rCamera.m_ulHandle )
+		if( 0 == l_rCamera.m_triggerchannel )
 		{
 			SVConnectedCameraMap::iterator l_Iter = rSVCameraList.begin();
 

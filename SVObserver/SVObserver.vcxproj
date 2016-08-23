@@ -91,7 +91,7 @@
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib;TriggerHandling.lib</AdditionalDependencies>
+      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -150,7 +150,7 @@ echo %time%
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
+      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -368,7 +368,6 @@ echo %time%
     <ClCompile Include="SVExternalToolTask.cpp" />
     <ClCompile Include="SVFigureEditor.cpp" />
     <ClCompile Include="SVFileAcquisitionClass.cpp" />
-    <ClCompile Include="SVFileAcquisitionInitiator.cpp" />
     <ClCompile Include="SVFileNameArrayClass.cpp" />
     <ClCompile Include="SVFileNameLockablePointerArrayClass.cpp" />
     <ClCompile Include="SVFileNameManagerClass.cpp" />
@@ -445,7 +444,6 @@ echo %time%
     <ClCompile Include="SVMemoryManager.cpp" />
     <ClCompile Include="SVMessageWindow.cpp" />
     <ClCompile Include="SVMultiDocTemplate.cpp" />
-    <ClCompile Include="SVOAcquisitionDeviceMapClass.cpp" />
     <ClCompile Include="SVObjectAppClass.cpp" />
     <ClCompile Include="SVObjectCommandDataJson.cpp" />
     <ClCompile Include="SVObjectScriptParser.cpp" />
@@ -486,8 +484,6 @@ echo %time%
     <ClCompile Include="SVOPropertyPageDlg.cpp" />
     <ClCompile Include="SVOProPosQueDlg.cpp" />
     <ClCompile Include="SVOTriggerDeviceDlg.cpp" />
-    <ClCompile Include="SVOTriggerList.cpp" />
-    <ClCompile Include="SVOTriggerObj.cpp" />
     <ClCompile Include="SVOutputObject.cpp" />
     <ClCompile Include="SVOutputObjectList.cpp" />
     <ClCompile Include="SVOutputStreamManager.cpp" />
@@ -841,7 +837,6 @@ echo %time%
     <ClInclude Include="SVExternalToolTask.h" />
     <ClInclude Include="SVFigureEditor.h" />
     <ClInclude Include="SVFileAcquisitionClass.h" />
-    <ClInclude Include="SVFileAcquisitionInitiator.h" />
     <ClInclude Include="SVFileNameArrayClass.h" />
     <ClInclude Include="SVFileNameLockablePointerArrayClass.h" />
     <ClInclude Include="SVFileNameManagerClass.h" />
@@ -921,7 +916,6 @@ echo %time%
     <ClInclude Include="SVMemoryManager.h" />
     <ClInclude Include="SVMessageWindow.h" />
     <ClInclude Include="SVMultiDocTemplate.h" />
-    <ClInclude Include="SVOAcquisitionDeviceMapClass.h" />
     <ClInclude Include="SVObjectAppClass.h" />
     <ClInclude Include="SVObjectAttributeClassHelper.h" />
     <ClInclude Include="SVObjectCommandDataJson.h" />
@@ -956,8 +950,6 @@ echo %time%
     <ClInclude Include="SVOPropertyPageDlg.h" />
     <ClInclude Include="SVOProPosQueDlg.h" />
     <ClInclude Include="SVOTriggerDeviceDlg.h" />
-    <ClInclude Include="SVOTriggerList.h" />
-    <ClInclude Include="SVOTriggerObj.h" />
     <ClInclude Include="SVOutputObject.h" />
     <ClInclude Include="SVOutputObjectList.h" />
     <ClInclude Include="SVOutputStreamManager.h" />

@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVAcquisitionConstructParams.h"
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 
 SVAcquisitionConstructParams::SVAcquisitionConstructParams()
 : m_DeviceName( _T( "" ) )
@@ -105,4 +105,4 @@ const SVAcquisitionConstructParams& SVAcquisitionConstructParams::operator=( con
 }
 
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */

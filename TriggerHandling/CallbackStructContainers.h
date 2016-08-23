@@ -13,8 +13,8 @@
 
 namespace Seidenader { namespace TriggerHandling {
 
-	typedef std::vector<TriggerCallbackInformation> TriggerCallbackList;
-	typedef std::map<unsigned long, TriggerCallbackList> TriggerCallbackMap;
+	typedef std::vector<TriggerDispatcher> DispatcherVector;
+	typedef std::map<unsigned long, DispatcherVector> TriggerDispatcherMap;
 
 } /* namespace TriggerHandling */ } /* namespace Seidenader */
 

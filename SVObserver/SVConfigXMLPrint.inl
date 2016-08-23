@@ -101,13 +101,13 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 {
-	typedef std::map<std::string, SvTh::SVTriggerObject*> TriggerMap;
+	typedef std::map<std::string, SvTi::SVTriggerObject*> TriggerMap;
 	TriggerMap triggers;
 	long sz = 0;
 	if( nullptr != m_cfo ){ sz = m_cfo->GetTriggerCount(); }
 	for(long i = 0; i < sz; ++i)
 	{
-		SvTh::SVTriggerObject* pTrigger( nullptr );
+		SvTi::SVTriggerObject* pTrigger( nullptr );
 		if( nullptr != m_cfo ){ pTrigger = m_cfo->GetTrigger(i); }
 		if( nullptr != pTrigger )
 		{
@@ -125,7 +125,7 @@ inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTh::SVTriggerObject* pTrigger) const
+inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTi::SVTriggerObject* pTrigger) const
 {
 	ASSERT( nullptr != pTrigger );
 	if(nullptr == pTrigger ){ return; }
@@ -345,7 +345,7 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		writer->WriteAttributeString(nullptr, L"OutputResetDelay", nullptr, _itow(lResetDelay, buff, 10));
 		writer->WriteAttributeString(nullptr, L"OutputDelayTime", nullptr, _itow(lDelayTime, buff, 10));
 		
-		SvTh::SVTriggerObject* pTrigger;
+		SvTi::SVTriggerObject* pTrigger;
 		pPPQ->GetTrigger(pTrigger);
 		if ( nullptr != pTrigger )
 		{
@@ -505,7 +505,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 		
 		// Print Result Output title...
 		DWORD dwMaxOutput = 0;
-		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
+		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
 		writer->WriteStartElement(nullptr, L"ResultOutputs", nullptr);
 		writer->WriteAttributeString(nullptr, L"NumberOfOutputs", nullptr, _itow(dwMaxOutput, buff, 10));
 		
@@ -600,7 +600,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 			
 			// Print module input title...
 			DWORD dwMaxInput = 0;
-			SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
+			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
 
 			writer->WriteStartElement(nullptr, L"DigitalInputs", nullptr);
 			writer->WriteAttributeString(nullptr, L"NumberOfInputs", nullptr, _itow(dwMaxInput, buff, 10));

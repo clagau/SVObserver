@@ -17,31 +17,37 @@
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
-class SVOTriggerObj  
-{
-public:
-	SVOTriggerObj(const SVString& sTriggerName, int iDig);
-	virtual ~SVOTriggerObj();
 
-	LPCTSTR GetTriggerDisplayName() const;
-	int GetTriggerDigNumber() const;
+namespace Seidenader { namespace TriggerInformation {
 
-	void SetTimerPeriod(long lPeriod);
-	long GetTimerPeriod() const;
+	class SVOTriggerObj  
+	{
+	public:
+		SVOTriggerObj(const SVString& sTriggerName, int iDig);
+		virtual ~SVOTriggerObj();
 
-	bool IsSoftwareTrigger() const;
-	void SetSoftwareTrigger(bool bSoftwareTrigger);
+		LPCTSTR GetTriggerDisplayName() const;
+		int GetTriggerDigNumber() const;
 
-	bool IsAcquisitionTrigger() const;
+		void SetTimerPeriod(long lPeriod);
+		long GetTimerPeriod() const;
 
-private:  //data members
-	SVString m_sTriggerDisplayName;
-	int m_iDigNumber;
+		bool IsSoftwareTrigger() const;
+		void SetSoftwareTrigger(bool bSoftwareTrigger);
 
-	bool m_bSoftwareTrigger;
-	long m_timerPeriod;
-};
+		bool IsAcquisitionTrigger() const;
 
-typedef SVSharedPtr< SVOTriggerObj > SVOTriggerObjPtr;
+	private:  //data members
+		SVString m_sTriggerDisplayName;
+		int m_iDigNumber;
+
+		bool m_bSoftwareTrigger;
+		long m_timerPeriod;
+	};
+
+	typedef SVSharedPtr< SVOTriggerObj > SVOTriggerObjPtr;
 
 
+} /* namespace TriggerInformation */ } /* namespace Seidenader */
+
+namespace SvTi = Seidenader::TriggerInformation;

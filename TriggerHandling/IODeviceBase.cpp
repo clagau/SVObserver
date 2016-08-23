@@ -12,17 +12,17 @@
 
 namespace Seidenader { namespace TriggerHandling {
 
-	HRESULT IODeviceBase::AddTriggerCallback(unsigned long handle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
+	HRESULT IODeviceBase::AddTriggerCallback(unsigned long handle, const TriggerDispatcher &rDispatcher)
 	{
 		HRESULT hr = S_FALSE;
 
-		TriggerCallbackMap::iterator it = m_triggerCallbackMap.find(handle);
-		if (it != m_triggerCallbackMap.end())
+		TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
+		if (it != m_triggerDispatcherMap.end())
 		{
-			TriggerCallbackList& list = it->second;
+			DispatcherVector& list = it->second;
 
 			// check for dups
-			TriggerCallbackList::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(TriggerFinder(), triggerCallbackInfo.m_pCallback));
+			DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(TriggerFinder(), rDispatcher.getCallback()));
 
 			if (callbackIt != list.end())
 			{
@@ -31,18 +31,18 @@ namespace Seidenader { namespace TriggerHandling {
 			else
 			{
 				// add it
-				list.push_back(triggerCallbackInfo);
+				list.push_back(rDispatcher);
 				hr = S_OK;
 			}
 		}
 		else
 		{
 			// add it
-			TriggerCallbackList list;
+			DispatcherVector list;
 
-			list.push_back(triggerCallbackInfo);
+			list.push_back(rDispatcher);
 			lockIfRequired();
-			m_triggerCallbackMap.insert(std::make_pair(handle, list));
+			m_triggerDispatcherMap.insert(std::make_pair(handle, list));
 			unlockIfRequired();
 			hr = S_OK;
 		}
@@ -55,13 +55,13 @@ namespace Seidenader { namespace TriggerHandling {
 		lockIfRequired();
 		HRESULT hr = S_FALSE;
 
-		TriggerCallbackMap::iterator it = m_triggerCallbackMap.find(handle);
-		if (it != m_triggerCallbackMap.end())
+		TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
+		if (it != m_triggerDispatcherMap.end())
 		{
 			// check if it is in the list
-			TriggerCallbackList& list = it->second;
+			DispatcherVector& list = it->second;
 
-			TriggerCallbackList::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(TriggerFinder(), pCallback));
+			DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(TriggerFinder(), pCallback));
 			if (callbackIt != list.end())
 			{
 				list.erase(callbackIt);
@@ -76,15 +76,15 @@ namespace Seidenader { namespace TriggerHandling {
 	HRESULT IODeviceBase::RemoveAllTriggerCallbacks(unsigned long handle)
 	{
 		lockIfRequired();
-		TriggerCallbackMap::iterator it = m_triggerCallbackMap.find(handle);
-		if (it != m_triggerCallbackMap.end())
+		TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
+		if (it != m_triggerDispatcherMap.end())
 		{
-			TriggerCallbackList& list = it->second;
+			DispatcherVector& list = it->second;
 			for (size_t i = 0;i < list.size();i++)
 			{
 				list[i].m_IsStarted = false;
 			}
-			m_triggerCallbackMap.erase(it);
+			m_triggerDispatcherMap.erase(it);
 		}
 		unlockIfRequired();
 		return S_OK;
@@ -96,10 +96,10 @@ namespace Seidenader { namespace TriggerHandling {
 
 		beforeStartTrigger(handle);
 
-		TriggerCallbackMap::iterator it = m_triggerCallbackMap.find(handle);
-		if (it != m_triggerCallbackMap.end())
+		TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
+		if (it != m_triggerDispatcherMap.end())
 		{
-			TriggerCallbackList& list = it->second;
+			DispatcherVector& list = it->second;
 
 			for (size_t i = 0;i < list.size();i++)
 			{
@@ -119,10 +119,10 @@ namespace Seidenader { namespace TriggerHandling {
 
 		beforeStopTrigger(handle);
 
-		TriggerCallbackMap::iterator it = m_triggerCallbackMap.find(handle);
-		if (it != m_triggerCallbackMap.end())
+		TriggerDispatcherMap::iterator it = m_triggerDispatcherMap.find(handle);
+		if (it != m_triggerDispatcherMap.end())
 		{
-			TriggerCallbackList& list = it->second;
+			DispatcherVector& list = it->second;
 
 			for (size_t i = 0;i < list.size();i++)
 			{

@@ -21,17 +21,15 @@ SVTriggerRelayClass<TriggerHandler>::~SVTriggerRelayClass()
 }
 
 template<typename TriggerHandler>
-HRESULT SVTriggerRelayClass<TriggerHandler>::RegisterTriggerRelay( SVIOTriggerLoadLibraryClass* pTriggerDLL, unsigned long ulHandle, TriggerHandler& rTriggerHandler)
+HRESULT SVTriggerRelayClass<TriggerHandler>::RegisterTriggerRelay( SVIOTriggerLoadLibraryClass* pTriggerDLL, unsigned long triggerchannel, TriggerHandler& rTriggerHandler)
 {
-	m_ulTriggerHandle = ulHandle;
+	m_ulTriggerHandle = triggerchannel;
 	m_pTriggerDLL = pTriggerDLL;
 	m_triggerHandler = rTriggerHandler;
 
-	TriggerCallbackInformation triggerCallbackInfo;
-	triggerCallbackInfo.m_pCallback = TriggerHandler::TriggerCallback;
-	triggerCallbackInfo.m_TriggerParameters = TriggerParameters(&m_triggerHandler);
+	TriggerDispatcher dispatcher(TriggerHandler::TriggerCallback,TriggerParameters(&m_triggerHandler));
 	
-	HRESULT l_hr = m_pTriggerDLL->Register( m_ulTriggerHandle, triggerCallbackInfo );
+	HRESULT l_hr = m_pTriggerDLL->Register( m_ulTriggerHandle, dispatcher );
 	return l_hr;
 }
 
@@ -41,11 +39,9 @@ HRESULT SVTriggerRelayClass<TriggerHandler>::UnregisterTriggerRelay()
 	HRESULT l_hr = S_OK;
 	if (m_pTriggerDLL && m_ulTriggerHandle > 0)
 	{
-		TriggerCallbackInformation triggerCallbackInfo;
-		triggerCallbackInfo.m_pCallback = TriggerHandler::TriggerCallback;
-		triggerCallbackInfo.m_TriggerParameters = TriggerParameters(&m_triggerHandler);
+		TriggerDispatcher dispatcher(TriggerHandler::TriggerCallback,TriggerParameters(&m_triggerHandler));
 
-		l_hr = m_pTriggerDLL->Unregister( m_ulTriggerHandle, triggerCallbackInfo );
+		l_hr = m_pTriggerDLL->Unregister( m_ulTriggerHandle, dispatcher );
 	}
 	return l_hr;
 }

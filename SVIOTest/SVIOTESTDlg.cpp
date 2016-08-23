@@ -14,11 +14,12 @@
 //Moved to precompiled header: #include <string>
 #include "SVIOTEST.h"
 #include "SVIOTESTDlg.h"
+#include "TriggerHandling/TriggerBasics.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVTriggerSetupDlgClass.h"
 #include "SVSoftwareTriggerSetupDlg.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
-#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
@@ -83,10 +84,6 @@ END_MESSAGE_MAP()
 
 CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CSVIOTESTDlg::IDD, pParent)
-	, m_lFanFreq1(0)
-	, m_lFanFreq2(0)
-	, m_lFanFreq3(0)
-	, m_lFanFreq4(0)
 {
 	//{{AFX_DATA_INIT(CSVIOTESTDlg)
 	m_lStaticChannel = 0;
@@ -95,41 +92,11 @@ CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=nullptr*/)
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
-	m_svTrigger1Data.ulLastIndex = 0;
-	m_svTrigger1Data.ulIndex = 0;
-	m_svTrigger1Data.ulNextIndex = ( m_svTrigger1Data.ulIndex + 1 ) % 100;
-	m_svTrigger1Data.lTriggerCount = 0;
-	m_svTrigger1Data.m_LastTime = 0;
-	m_svTrigger1Data.m_TotalTime = 0;
-	m_svTrigger1Data.m_MaxTime = SVClock::GetMinTimeStamp();
-	m_svTrigger1Data.m_MinTime = SVClock::GetMaxTimeStamp();
-
-	m_svTrigger2Data.ulLastIndex = 0;
-	m_svTrigger2Data.ulIndex = 0;
-	m_svTrigger2Data.ulNextIndex = ( m_svTrigger2Data.ulIndex + 1 ) % 100;
-	m_svTrigger2Data.lTriggerCount = 0;
-	m_svTrigger2Data.m_LastTime = 0;
-	m_svTrigger2Data.m_TotalTime = 0;
-	m_svTrigger2Data.m_MaxTime = SVClock::GetMinTimeStamp();
-	m_svTrigger2Data.m_MinTime = SVClock::GetMaxTimeStamp();
-
-	m_svTrigger3Data.ulLastIndex = 0;
-	m_svTrigger3Data.ulIndex = 0;
-	m_svTrigger3Data.ulNextIndex = ( m_svTrigger3Data.ulIndex + 1 ) % 100;
-	m_svTrigger3Data.lTriggerCount = 0;
-	m_svTrigger3Data.m_LastTime = 0;
-	m_svTrigger3Data.m_TotalTime = 0;
-	m_svTrigger3Data.m_MaxTime = SVClock::GetMinTimeStamp();
-	m_svTrigger3Data.m_MinTime = SVClock::GetMaxTimeStamp();
-
-	m_svTrigger4Data.ulLastIndex = 0;
-	m_svTrigger4Data.ulIndex = 0;
-	m_svTrigger4Data.ulNextIndex = ( m_svTrigger4Data.ulIndex + 1 ) % 100;
-	m_svTrigger4Data.lTriggerCount = 0;
-	m_svTrigger4Data.m_LastTime = 0;
-	m_svTrigger4Data.m_TotalTime = 0;
-	m_svTrigger4Data.m_MaxTime = SVClock::GetMinTimeStamp();
-	m_svTrigger4Data.m_MinTime = SVClock::GetMaxTimeStamp();
+	for (int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+	{
+		m_FanFreq[triggerchannel] = 0;
+		m_TriggerData[triggerchannel].OnTriggerStart();
+	}
 }
 
 CSVIOTESTDlg::~CSVIOTESTDlg()
@@ -159,49 +126,40 @@ void CSVIOTESTDlg::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CSVIOTESTDlg)
 	DDX_Control(pDX, IDC_BOARD_MODEL_COMBO, m_BoardModelCombo);
 	DDX_Control(pDX, IDC_SYSTEM_TEXT, m_BoardTxt);
-	DDX_Control(pDX, IDC_FAN4_TXT, m_Fan4Txt);
-	DDX_Control(pDX, IDC_FAN3_TXT, m_Fan3Txt);
-	DDX_Control(pDX, IDC_FAN2_TXT, m_Fan2Txt);
-	DDX_Control(pDX, IDC_FAN1_TXT, m_Fan1Txt);
-	DDX_Control(pDX, IDC_FAN4, m_Fan4);
-	DDX_Control(pDX, IDC_FAN3, m_Fan3);
-	DDX_Control(pDX, IDC_FAN2, m_Fan2);
-	DDX_Control(pDX, IDC_FAN1, m_Fan1);
-	DDX_Control(pDX, IDC_TRIGGER4_MINIMUM, m_Trigger4Minimum);
-	DDX_Control(pDX, IDC_TRIGGER3_MINIMUM, m_Trigger3Minimum);
-	DDX_Control(pDX, IDC_TRIGGER2_MINIMUM, m_Trigger2Minimum);
-	DDX_Control(pDX, IDC_TRIGGER1_MINIMUM, m_Trigger1Minimum);
-	DDX_Control(pDX, IDC_TRIGGER4_MAXIMUM, m_Trigger4Maximum);
-	DDX_Control(pDX, IDC_TRIGGER3_MAXIMUM, m_Trigger3Maximum);
-	DDX_Control(pDX, IDC_TRIGGER2_MAXIMUM, m_Trigger2Maximum);
-	DDX_Control(pDX, IDC_TRIGGER1_MAXIMUM, m_Trigger1Maximum);
-	DDX_Control(pDX, IDC_TRIGGER3_DISTANCE, m_Trigger3Distance);
-	DDX_Control(pDX, IDC_TRIGGER4_DISTANCE, m_Trigger4Distance);
-	DDX_Control(pDX, IDC_TRIGGER2_DISTANCE, m_Trigger2Distance);
-	DDX_Control(pDX, IDC_TRIGGER4_COUNT, m_Trigger4Count);
-	DDX_Control(pDX, IDC_TRIGGER3_COUNT, m_Trigger3Count);
-	DDX_Control(pDX, IDC_TRIGGER2_COUNT, m_Trigger2Count);
-	DDX_Control(pDX, IDC_TRIGGER4_AVERAGE, m_Trigger4Average);
-	DDX_Control(pDX, IDC_TRIGGER3_AVERAGE, m_Trigger3Average);
-	DDX_Control(pDX, IDC_TRIGGER2_AVERAGE, m_Trigger2Average);
-	DDX_Control(pDX, IDC_TRIGGER1_DISTANCE, m_Trigger1Distance);
-	DDX_Control(pDX, IDC_TRIGGER1_COUNT, m_Trigger1Count);
-	DDX_Control(pDX, IDC_TRIGGER1_AVERAGE, m_Trigger1Average);
+
+	// IDC_FAN_FREQ1 to IDC_FAN_FREQ4,
+	// IDC_FAN1_TXT to IDC_FAN4_TXT,
+	// and IDC_FAN1 to IDC_FAN4 must be contiguous and sequential for this to work:
+	for (int fanID = 1; fanID < c_upperBoundForFanId; fanID++)
+	{
+		DDX_Text(pDX, IDC_FAN_FREQ1 + fanID - 1, m_FanFreq[fanID]);
+		DDX_Control(pDX, IDC_FAN1_TXT + fanID - 1, m_FanTxt[fanID]);
+		DDX_Control(pDX, IDC_FAN1 + fanID - 1, m_Fan[fanID]);
+	}
+	// IDC_TRIGGER1_MINIMUM to IDC_TRIGGER4_MINIMUM,
+	// IDC_TRIGGER1_AVERAGE to IDC_TRIGGER4_AVERAGE
+	// IDC_TRIGGER1_MAXIMUM to IDC_TRIGGER4_MAXIMUM,
+	// and IDC_TRIGGER1_COUNT to IDC_TRIGGER4_COUNT must be contiguous and sequential for this to work:
+	for (int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+	{
+		DDX_Control(pDX, IDC_TRIGGER1_MINIMUM + triggerchannel -1, m_TriggerMinimum[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_AVERAGE + triggerchannel -1, m_TriggerAverage[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_MAXIMUM + triggerchannel -1, m_TriggerMaximum[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_DISTANCE + triggerchannel -1, m_TriggerDistance[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_COUNT + triggerchannel -1, m_TriggerCountWnd[triggerchannel]);
+	}
+
+	// IDC_INPUT1 to IDC_INPUT8 must be contiguous and sequential for this to work:
+	for (int inputchannel = 1; inputchannel < c_upperBoundForInputChannel; inputchannel++)
+	{
+		DDX_Control(pDX, IDC_INPUT1 + inputchannel - 1, m_input[inputchannel]);
+	}
+
 	DDX_Control(pDX, IDC_RADIO1, m_cbtSlow);
-	DDX_Control(pDX, IDC_INPUT8, m_input8);
-	DDX_Control(pDX, IDC_INPUT7, m_input7);
-	DDX_Control(pDX, IDC_INPUT6, m_input6);
-	DDX_Control(pDX, IDC_INPUT5, m_input5);
-	DDX_Control(pDX, IDC_INPUT4, m_input4);
-	DDX_Control(pDX, IDC_INPUT3, m_input3);
-	DDX_Control(pDX, IDC_INPUT2, m_input2);
-	DDX_Control(pDX, IDC_INPUT1, m_input1);
+
 	DDX_Text(pDX, IDC_STATIC_CHANNEL, m_lStaticChannel);
 	//}}AFX_DATA_MAP
-	DDX_Text(pDX, IDC_FAN_FREQ1, m_lFanFreq1);
-	DDX_Text(pDX, IDC_FAN_FREQ2, m_lFanFreq2);
-	DDX_Text(pDX, IDC_FAN_FREQ3, m_lFanFreq3);
-	DDX_Text(pDX, IDC_FAN_FREQ4, m_lFanFreq4);
+
 }
 
 BEGIN_MESSAGE_MAP(CSVIOTESTDlg, CDialog)
@@ -426,11 +384,11 @@ void CSVIOTESTDlg::OnButton1()
 
 // TURN ON ALL OUPUTS
 	unsigned long numOutputs;
-	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 	
 	for( DWORD dwChan = 0 ; dwChan < numOutputs; dwChan++)
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, false );
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, false );
 	}
 }
 
@@ -440,10 +398,10 @@ void CSVIOTESTDlg::OnButton2()
 
 // TURN OFF ALL OUPUTS
 	unsigned long numOutputs;
-	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 	for( DWORD dwChan = 0 ; dwChan < numOutputs ; dwChan++)
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, true );
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( dwChan, true );
 	}
 }
 
@@ -458,38 +416,38 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 
 	// Update Digital Input status Indicators
 	unsigned long numInputs;
-	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(numInputs);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(numInputs);
 	for (DWORD dwChan = 0 ; dwChan < numInputs ; dwChan++)
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputValue(dwChan, bValue);
+		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputValue(dwChan, bValue);
 		switch (dwChan)
 		{
 			case 0:
-				pCStatic = &m_input1;
+				pCStatic = &m_input[1];
 				break;
 			case 1:
-				pCStatic = &m_input2;
+				pCStatic = &m_input[2];
 				break;
 			case 2:
-				pCStatic = &m_input3;
+				pCStatic = &m_input[3];
 				break;
 			case 3:
-				pCStatic = &m_input4;
+				pCStatic = &m_input[4];
 				break;
 			case 4:
-				pCStatic = &m_input5;
+				pCStatic = &m_input[5];
 				break;
 			case 5:
-				pCStatic = &m_input6;
+				pCStatic = &m_input[6];
 				break;
 			case 6:
-				pCStatic = &m_input7;
+				pCStatic = &m_input[7];
 				break;
 			case 7:
-				pCStatic = &m_input8;
+				pCStatic = &m_input[8];
 				break;
 			default:
-				pCStatic = &m_input1;
+				pCStatic = &m_input[1];
 		}
 		if( (SVRABBIT_X2 == m_lSystemType || SVRABBIT_X3 == m_lSystemType) && (6 == dwChan || 7 == dwChan) )
 		{
@@ -510,26 +468,29 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 	{
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue);
-		if( S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState, &l_vValue) )
+		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState, &l_vValue) )
 		{
-			m_Fan1.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 1 ) ? IDI_ICON4 : IDI_ICON3 ));
-			m_Fan2.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 2 ) ? IDI_ICON4 : IDI_ICON3 ));
-			m_Fan3.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 4 ) ? IDI_ICON4 : IDI_ICON3 ));
-			m_Fan4.SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 8 ) ? IDI_ICON4 : IDI_ICON3 ));
+			for (unsigned int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+			{
+				m_Fan[triggerchannel].SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 1 << ( triggerchannel - 1 ) ? IDI_ICON4 : IDI_ICON3 )));
+			}
 		}
-		if( S_OK == SvTh::SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
+		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
 		{
-			m_lFanFreq1 = l_vValue.lVal & 0xff;
-			m_lFanFreq2 = (l_vValue.lVal >> 8) & 0xff;
-			m_lFanFreq3 = (l_vValue.lVal >> 16) & 0xff;
-			m_lFanFreq4 = (l_vValue.lVal >> 24) & 0xff;
+			for (unsigned int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+			{
+				for (int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+				{
+					m_FanFreq[triggerchannel] = l_vValue.lVal >> (8 * ( triggerchannel - 1 )) & 0xff;
+				}
+			}
 			UpdateData(FALSE);
 		}
 	}
 
 	// Sequence Outputs 0 - 7 and 8 - 15 
 	unsigned long numOutputs;
-	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 
 	if (nSeq != 0)
 	{
@@ -545,12 +506,12 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 		if (nCounter >= nCount)
 		{
 			// Outputs 0 - 7  
-			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 , true);
-			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount, false);
+			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 , true);
+			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount, false);
 			
 			// Outputs 8 - 15 (actually numOutputs now)
-			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 + 8, true);
-			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount + (numOutputs - 8) , false);
+			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 + 8, true);
+			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount + (numOutputs - 8) , false);
 
 			if (7 == nSeqCount)
 			{
@@ -565,162 +526,24 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 		nCounter++;
 	}
 
-	CString csText;
-
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
 	if (numTriggers > 0)
 	{
-		if ( 1 < m_svTrigger1Data.lTriggerCount && 
-			 m_lTrigger1Count != m_svTrigger1Data.lTriggerCount )
-		{
-			m_lTrigger1Count = m_svTrigger1Data.lTriggerCount;
-
-			long l_lCount = 100;
-
-			if ( ( m_lTrigger1Count - 1 ) < l_lCount )
-			{
-				l_lCount = m_lTrigger1Count - 1;
-			}
-
-			long l_lLastValue = (long)( m_svTrigger1Data.m_LastTime * 1000 );
-
-			long l_lAvgValue = (long)( ( m_svTrigger1Data.m_TotalTime * 1000 ) / l_lCount );
-
-			long l_lMaxValue = (long)( m_svTrigger1Data.m_MaxTime * 1000 );
-
-			long l_lMinValue = (long)( m_svTrigger1Data.m_MinTime * 1000 );
-
-			csText.Format( "%ld", l_lMaxValue );
-			m_Trigger1Maximum.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lMinValue );
-			m_Trigger1Minimum.SetWindowText( csText );
-
-			csText.Format( "%ld", m_lTrigger1Count );
-			m_Trigger1Count.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lLastValue );
-			m_Trigger1Distance.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lAvgValue );
-			m_Trigger1Average.SetWindowText( csText );
-		}
+		updateValues(1);
 	}
 	if (numTriggers > 1)
 	{
-		if ( 1 < m_svTrigger2Data.lTriggerCount && 
-			 m_lTrigger2Count != m_svTrigger2Data.lTriggerCount )
-		{
-			m_lTrigger2Count = m_svTrigger2Data.lTriggerCount;
-
-			long l_lCount = 100;
-
-			if ( ( m_lTrigger2Count - 1 ) < l_lCount )
-			{
-				l_lCount = m_lTrigger2Count - 1;
-			}
-
-			long l_lLastValue = (long)( m_svTrigger2Data.m_LastTime * 1000 );
-
-			long l_lAvgValue = (long)( ( m_svTrigger2Data.m_TotalTime * 1000 ) / l_lCount );
-
-			long l_lMaxValue = (long)( m_svTrigger2Data.m_MaxTime * 1000 );
-
-			long l_lMinValue = (long)( m_svTrigger2Data.m_MinTime * 1000 );
-
-			csText.Format( "%ld", l_lMaxValue );
-			m_Trigger2Maximum.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lMinValue );
-			m_Trigger2Minimum.SetWindowText( csText );
-
-			csText.Format( "%ld", m_lTrigger2Count );
-			m_Trigger2Count.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lLastValue );
-			m_Trigger2Distance.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lAvgValue );
-			m_Trigger2Average.SetWindowText( csText );
-		}
+		updateValues(2);
 	}
 	if (numTriggers > 2)
 	{
-		if ( 1 < m_svTrigger3Data.lTriggerCount && 
-			 m_lTrigger3Count != m_svTrigger3Data.lTriggerCount )
-		{
-			m_lTrigger3Count = m_svTrigger3Data.lTriggerCount;
-
-			long l_lCount = 100;
-
-			if ( ( m_lTrigger3Count - 1 ) < l_lCount )
-			{
-				l_lCount = m_lTrigger3Count - 1;
-			}
-
-			long l_lLastValue = (long)( m_svTrigger3Data.m_LastTime * 1000 );
-
-			long l_lAvgValue = (long)( ( m_svTrigger3Data.m_TotalTime * 1000 ) / l_lCount );
-
-			long l_lMaxValue = (long)( m_svTrigger3Data.m_MaxTime * 1000 );
-
-			long l_lMinValue = (long)( m_svTrigger3Data.m_MinTime * 1000 );
-
-			csText.Format( "%ld", l_lMaxValue );
-			m_Trigger3Maximum.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lMinValue );
-			m_Trigger3Minimum.SetWindowText( csText );
-
-			csText.Format( "%ld", m_lTrigger3Count );
-			m_Trigger3Count.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lLastValue );
-			m_Trigger3Distance.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lAvgValue );
-			m_Trigger3Average.SetWindowText( csText );
-		}
+		updateValues(3);
 	}
 	if (numTriggers > 3)
 	{
-		if ( 1 < m_svTrigger4Data.lTriggerCount && 
-			 m_lTrigger4Count != m_svTrigger4Data.lTriggerCount )
-		{
-			m_lTrigger4Count = m_svTrigger4Data.lTriggerCount;
-
-			long l_lCount = 100;
-
-			if ( ( m_lTrigger4Count - 1 ) < l_lCount )
-			{
-				l_lCount = m_lTrigger4Count - 1;
-			}
-
-			long l_lLastValue = (long)( m_svTrigger4Data.m_LastTime * 1000 );
-
-			long l_lAvgValue = (long)( ( m_svTrigger4Data.m_TotalTime * 1000 ) / l_lCount );
-
-			long l_lMaxValue = (long)( m_svTrigger4Data.m_MaxTime * 1000 );
-
-			long l_lMinValue = (long)( m_svTrigger4Data.m_MinTime * 1000 );
-
-			csText.Format( "%ld", l_lMaxValue );
-			m_Trigger4Maximum.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lMinValue );
-			m_Trigger4Minimum.SetWindowText( csText );
-
-			csText.Format( "%ld", m_lTrigger4Count );
-			m_Trigger4Count.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lLastValue );
-			m_Trigger4Distance.SetWindowText( csText );
-
-			csText.Format( "%ld", l_lAvgValue );
-			m_Trigger4Average.SetWindowText( csText );
-		}
+		updateValues(4);
 	}
 	CDialog::OnTimer(nIDEvent);
 }
@@ -737,10 +560,10 @@ void CSVIOTESTDlg::OnSequence()
 	nSeq = ~nSeq;
 	// TURN OFF ALL OUPUTS
 	unsigned long numOutputs;
-	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(numOutputs);
 	for(DWORD dwChan = 0 ; dwChan < numOutputs ; dwChan++)
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(dwChan, true);
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(dwChan, true);
 	}
 }
 
@@ -768,7 +591,7 @@ void CSVIOTESTDlg::OnDestroy()
 
 void CSVIOTESTDlg::OnTestOutputs() 
 {
-	SvTh::SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
+	SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
 }
 
 HRESULT CALLBACK SVCallback( SvTh::TriggerParameters triggerparams)
@@ -818,6 +641,33 @@ HRESULT CALLBACK SVCallback( SvTh::TriggerParameters triggerparams)
 	return S_OK;
 }
 
+
+
+void SVIOTriggerDataStruct::OnTriggerStart()
+{
+	ulLastIndex = 0;
+	ulIndex = 0;
+	ulNextIndex = 1;
+	lTriggerCount = 0;
+	m_LastTime = 0;
+	m_TotalTime = 0;
+	m_MaxTime = SVClock::GetMinTimeStamp();
+	m_MinTime = SVClock::GetMaxTimeStamp();
+}
+
+void CSVIOTESTDlg::StartTrigger(int triggerchannel) 
+{
+	m_TriggerData[triggerchannel].OnTriggerStart();
+
+	m_TriggerCountWnd[triggerchannel].SetWindowText( "0" );
+	m_TriggerDistance[triggerchannel].SetWindowText( "0" );
+	m_TriggerAverage[triggerchannel].SetWindowText( "0" );
+	m_TriggerMinimum[triggerchannel].SetWindowText( "0" );
+	m_TriggerMaximum[triggerchannel].SetWindowText( "0" );
+
+}
+
+
 void CSVIOTESTDlg::OnStartTriggers() 
 {
 	CString csText("0");
@@ -825,111 +675,28 @@ void CSVIOTESTDlg::OnStartTriggers()
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
-	SvTh::TriggerCallbackInformation TriggerCallbackInfo;
+	SvTh::TriggerDispatcher dispatcher(SVCallback,SvTh::TriggerParameters(this));
 
-	TriggerCallbackInfo.m_pCallback = SVCallback;
-
-	TriggerCallbackInfo.m_TriggerParameters = SvTh::TriggerParameters(this, &m_svTrigger1Data);
-
-	m_svTrigger1Data.ulLastIndex = 0;
-	m_svTrigger1Data.ulIndex = 0;
-	m_svTrigger1Data.ulNextIndex = ( m_svTrigger1Data.ulIndex + 1 ) % 100;
-	m_svTrigger1Data.lTriggerCount = 0;
-	m_svTrigger1Data.m_LastTime = 0;
-	m_svTrigger1Data.m_TotalTime = 0;
-	m_svTrigger1Data.m_MaxTime = SVClock::GetMinTimeStamp();
-	m_svTrigger1Data.m_MinTime = SVClock::GetMaxTimeStamp();
-
-	m_Trigger1Count.SetWindowText( csText );
-	m_Trigger1Distance.SetWindowText( csText );
-	m_Trigger1Average.SetWindowText( csText );
-	m_Trigger1Minimum.SetWindowText( csText );
-	m_Trigger1Maximum.SetWindowText( csText );
-
-	if (numTriggers > 0)
+	for(unsigned int triggerchannel = 1; triggerchannel < 5; triggerchannel++)
 	{
-		m_psvTriggers->Register( 1, TriggerCallbackInfo );
+		dispatcher.SetData(&m_TriggerData[triggerchannel]);
+
+		StartTrigger(triggerchannel);
+		if (numTriggers >= triggerchannel)
+		{
+			m_psvTriggers->Register( triggerchannel, dispatcher );
+		}
 	}
 
-	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger2Data;
-
-	m_svTrigger2Data.ulLastIndex = 0;
-	m_svTrigger2Data.ulIndex = 0;
-	m_svTrigger2Data.ulNextIndex = ( m_svTrigger2Data.ulIndex + 1 ) % 100;
-	m_svTrigger2Data.lTriggerCount = 0;
-	m_svTrigger2Data.m_LastTime = 0;
-	m_svTrigger2Data.m_TotalTime = 0;
-	m_svTrigger2Data.m_MaxTime = SVClock::GetMinTimeStamp();
-	m_svTrigger2Data.m_MinTime = SVClock::GetMaxTimeStamp();
-
-	m_Trigger2Count.SetWindowText( csText );
-	m_Trigger2Distance.SetWindowText( csText );
-	m_Trigger2Average.SetWindowText( csText );
-	m_Trigger2Minimum.SetWindowText( csText );
-	m_Trigger2Maximum.SetWindowText( csText );
-
-	if (numTriggers > 1)
+	for(unsigned triggerchannel = 1; triggerchannel < 5; triggerchannel++)
 	{
-		m_psvTriggers->Register( 2, TriggerCallbackInfo );
+		if (numTriggers >= triggerchannel)
+		{
+			m_psvTriggers->Start( triggerchannel );
+		}
 	}
-	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger3Data;
 
-	m_svTrigger3Data.ulLastIndex = 0;
-	m_svTrigger3Data.ulIndex = 0;
-	m_svTrigger3Data.ulNextIndex = ( m_svTrigger3Data.ulIndex + 1 ) % 100;
-	m_svTrigger3Data.lTriggerCount = 0;
-	m_svTrigger3Data.m_LastTime = 0;
-	m_svTrigger3Data.m_TotalTime = 0;
-	m_svTrigger3Data.m_MaxTime = SVClock::GetMinTimeStamp();
-	m_svTrigger3Data.m_MinTime = SVClock::GetMaxTimeStamp();
 
-	m_Trigger3Count.SetWindowText( csText );
-	m_Trigger3Distance.SetWindowText( csText );
-	m_Trigger3Average.SetWindowText( csText );
-	m_Trigger3Minimum.SetWindowText( csText );
-	m_Trigger3Maximum.SetWindowText( csText );
-
-	if (numTriggers > 2)
-	{
-		m_psvTriggers->Register( 3, TriggerCallbackInfo );
-	}
-	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger4Data;
-
-	m_svTrigger4Data.ulLastIndex = 0;
-	m_svTrigger4Data.ulIndex = 0;
-	m_svTrigger4Data.ulNextIndex = ( m_svTrigger4Data.ulIndex + 1 ) % 100;
-	m_svTrigger4Data.lTriggerCount = 0;
-	m_svTrigger4Data.m_LastTime = 0;
-	m_svTrigger4Data.m_TotalTime = 0;
-	m_svTrigger4Data.m_MaxTime = SVClock::GetMinTimeStamp();
-	m_svTrigger4Data.m_MinTime = SVClock::GetMaxTimeStamp();
-
-	m_Trigger4Count.SetWindowText( csText );
-	m_Trigger4Distance.SetWindowText( csText );
-	m_Trigger4Average.SetWindowText( csText );
-	m_Trigger4Minimum.SetWindowText( csText );
-	m_Trigger4Maximum.SetWindowText( csText );
-
-	if (numTriggers > 3)
-	{
-		m_psvTriggers->Register( 4, TriggerCallbackInfo );
-	}
-	if (numTriggers > 0)
-	{
-		m_psvTriggers->Start( 1 );
-	}
-	if (numTriggers > 1)
-	{
-		m_psvTriggers->Start( 2 );
-	}
-	if (numTriggers > 2)
-	{
-		m_psvTriggers->Start( 3 );
-	}
-	if (numTriggers > 3)
-	{
-		m_psvTriggers->Start( 4 );
-	}
 	m_bInterruptEnabled = true;
 	if (IsSoftwareTrigger())
 	{
@@ -939,8 +706,6 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 void CSVIOTESTDlg::OnStopTriggers() 
 {
-	SvTh::TriggerCallbackInformation TriggerCallbackInfo;
-
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
@@ -964,35 +729,36 @@ void CSVIOTESTDlg::OnStopTriggers()
 		m_psvTriggers->Stop( 1 );
 	}
 
-	TriggerCallbackInfo.m_pCallback = SVCallback;
-	TriggerCallbackInfo.m_TriggerParameters.m_pOwner = this;
-
-	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger4Data;
+	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters(this ,&m_TriggerData[4]));
 
 	if (numTriggers > 3)
 	{
-		m_psvTriggers->Unregister( 4, TriggerCallbackInfo );
+		m_psvTriggers->Unregister( 4, dispatcher );
 	}
-	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger3Data;
+
+	dispatcher.SetData(&m_TriggerData[3]);
 
 	if (numTriggers > 2)
 	{
-		m_psvTriggers->Unregister( 3, TriggerCallbackInfo );
+		m_psvTriggers->Unregister( 3, dispatcher );
 	}
 
-	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger2Data;
+	dispatcher.SetData(&m_TriggerData[2]);
+
 
 	if (numTriggers > 1)
 	{
-		m_psvTriggers->Unregister( 2, TriggerCallbackInfo );
+		m_psvTriggers->Unregister( 2, dispatcher );
 	}
-	TriggerCallbackInfo.m_TriggerParameters.m_pData = &m_svTrigger1Data;
+
+	dispatcher.SetData(&m_TriggerData[1]);
 
 	if (numTriggers > 1)
 	{
-		m_psvTriggers->Unregister( 1, TriggerCallbackInfo );
+		m_psvTriggers->Unregister( 1, dispatcher );
 	}
 	m_bInterruptEnabled = false;
+
 
 	if (IsSoftwareTrigger())
 	{
@@ -1027,7 +793,7 @@ DWORD WINAPI SVWorkerThreadFunc( LPVOID lpParam )
 			if( i != l_pOwner->m_lStaticChannel )
 			{
 				l_bState = ((l_dwAccum & (1 << i)) != 0);
-				if( S_OK != SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( i, l_bState ) )
+				if( S_OK != SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( i, l_bState ) )
 				{
 					AfxMessageBox("Bad Return Code");
 				}
@@ -1044,7 +810,7 @@ void CSVIOTESTDlg::OnStartTest()
 
 	if( m_lStaticChannel >= 0 && m_lStaticChannel < 16 )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
 	}
 
 	if( !m_bThreadRunning )
@@ -1075,7 +841,7 @@ void CSVIOTESTDlg::OnChangeStaticChannel()
 	{
 		if( m_lStaticChannel >= 0 && m_lStaticChannel < 16 )
 		{
-			SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
+			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lStaticChannel, false );
 		}
 		else
 		{
@@ -1089,7 +855,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 	if (IsSoftwareTrigger())
 	{
 		SVSoftwareTriggerSetupDlg l_dlg;
-		unsigned long l_ulHandle;
+		unsigned long triggerchannel;
 		unsigned long l_ulCount;
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue);
@@ -1098,8 +864,8 @@ void CSVIOTESTDlg::OnTriggerParam()
 		m_psvTriggers->GetCount(&l_ulCount );
 		for( unsigned long x = 0 ; x < l_ulCount ; x++ )
 		{
-			m_psvTriggers->GetHandle(&l_ulHandle, x );
-			m_psvTriggers->GetParameterValue( l_ulHandle, 0, &l_vValue);
+			m_psvTriggers->GetHandle(&triggerchannel, x );
+			m_psvTriggers->GetParameterValue( triggerchannel, 0, &l_vValue);
 
 			switch (x)
 			{
@@ -1124,7 +890,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 		{
 			for( unsigned long x = 0 ; x < l_ulCount ; x++ )
 			{
-				m_psvTriggers->GetHandle(&l_ulHandle, x );
+				m_psvTriggers->GetHandle(&triggerchannel, x );
 			
 				switch (x)
 				{
@@ -1144,14 +910,14 @@ void CSVIOTESTDlg::OnTriggerParam()
 					l_vValue.lVal = l_dlg.m_period4;
 					break;
 				}
-				m_psvTriggers->SetParameterValue( l_ulHandle, 0, &l_vValue);
+				m_psvTriggers->SetParameterValue( triggerchannel, 0, &l_vValue);
 			}
 		}
 	}
 	else
 	{
 		SVTriggerSetupDlgClass l_dlg;
-		unsigned long l_ulHandle;
+		unsigned long triggerchannel;
 		unsigned long l_ulCount;
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue);
@@ -1164,8 +930,8 @@ void CSVIOTESTDlg::OnTriggerParam()
 		m_psvTriggers->GetCount(&l_ulCount );
 		for( unsigned long x = 0 ; x < l_ulCount ; x++ )
 		{
-			m_psvTriggers->GetHandle(&l_ulHandle, x );
-			m_psvTriggers->GetParameterValue( l_ulHandle, SVSignalEdge, &l_vValue);
+			m_psvTriggers->GetHandle(&triggerchannel, x );
+			m_psvTriggers->GetParameterValue( triggerchannel, SVSignalEdge, &l_vValue);
 			switch( x )
 			{
 				case 0:
@@ -1194,7 +960,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 		{
 			for( unsigned long x = 0 ; x < l_ulCount ; x++ )
 			{
-				m_psvTriggers->GetHandle(&l_ulHandle, x );
+				m_psvTriggers->GetHandle(&triggerchannel, x );
 				switch( x )
 				{
 					case 0:
@@ -1218,7 +984,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 						break;
 					}
 				}
-				m_psvTriggers->SetParameterValue( l_ulHandle, SVSignalEdge, &l_vValue);
+				m_psvTriggers->SetParameterValue( triggerchannel, SVSignalEdge, &l_vValue);
 			}
 		}
 		m_lStrobeInverts = l_dlg.m_lStrobeInverts;
@@ -1230,14 +996,11 @@ void CSVIOTESTDlg::ShowFans( bool p_bShow )
 {
 	UINT cmd = (p_bShow) ? SW_SHOW : SW_HIDE;
 	
-	m_Fan1.ShowWindow( cmd );
-	m_Fan2.ShowWindow( cmd );
-	m_Fan3.ShowWindow( cmd );
-	m_Fan4.ShowWindow( cmd );
-	m_Fan1Txt.ShowWindow( cmd );
-	m_Fan2Txt.ShowWindow( cmd );
-	m_Fan3Txt.ShowWindow( cmd );
-	m_Fan4Txt.ShowWindow( cmd );
+	for (unsigned int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+	{
+		m_Fan[ triggerchannel ].ShowWindow( cmd );
+		m_FanTxt[ triggerchannel ].ShowWindow( cmd );
+	}
 	GetDlgItem(IDC_FAN_FREQ1)->ShowWindow( cmd );
 	GetDlgItem(IDC_FAN_FREQ2)->ShowWindow( cmd );
 	GetDlgItem(IDC_FAN_FREQ3)->ShowWindow( cmd );
@@ -1282,9 +1045,50 @@ void CSVIOTESTDlg::OnSelchangeBoardModelCombo()
 			break;
 		}
 	}
-	if( S_OK != SvTh::SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt ) )
+	if( S_OK != SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt ) )
 	{
 		AfxMessageBox(" Error Setting System Type");
 	}
 }
 
+void CSVIOTESTDlg::updateValues(int triggerchannel)
+{
+	CString csText;
+
+	if ( 1 < m_TriggerData[triggerchannel].lTriggerCount && 
+		m_TriggerCount[triggerchannel] != m_TriggerData[triggerchannel].lTriggerCount )
+	{
+		m_TriggerCount[triggerchannel] = m_TriggerData[triggerchannel].lTriggerCount;
+
+		long l_lCount = 100;
+
+		if ( ( m_TriggerCount[triggerchannel] - 1 ) < l_lCount )
+		{
+			l_lCount = m_TriggerCount[triggerchannel] - 1;
+		}
+
+		long l_lLastValue = (long)( m_TriggerData[triggerchannel].m_LastTime * 1000 );
+
+		long l_lAvgValue = (long)( ( m_TriggerData[triggerchannel].m_TotalTime * 1000 ) / l_lCount );
+
+		long l_lMaxValue = (long)( m_TriggerData[triggerchannel].m_MaxTime * 1000 );
+
+		long l_lMinValue = (long)( m_TriggerData[triggerchannel].m_MinTime * 1000 );
+
+		csText.Format( "%ld", l_lMaxValue );
+		m_TriggerMaximum[triggerchannel].SetWindowText( csText );
+
+		csText.Format( "%ld", l_lMinValue );
+		m_TriggerMinimum[triggerchannel].SetWindowText( csText );
+
+		csText.Format( "%ld", m_TriggerCount[triggerchannel] );
+		m_TriggerCountWnd[triggerchannel].SetWindowText( csText );
+
+		csText.Format( "%ld", l_lLastValue );
+		m_TriggerDistance[triggerchannel].SetWindowText( csText );
+
+		csText.Format( "%ld", l_lAvgValue );
+		m_TriggerAverage[triggerchannel].SetWindowText( csText );
+	}
+
+}

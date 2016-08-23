@@ -23,6 +23,7 @@ SVODataDeviceClass::SVODataDeviceClass()
 : mbIsCreated(false)
 , mbIsValid(false)
 , mbIsStarted(false)
+
 {
 }
 
@@ -31,6 +32,7 @@ SVODataDeviceClass::SVODataDeviceClass(LPCTSTR deviceName)
 , mbIsCreated(false)
 , mbIsValid(false)
 , mbIsStarted(false)
+
 {
 }
 

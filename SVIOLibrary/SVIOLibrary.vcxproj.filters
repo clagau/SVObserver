@@ -20,6 +20,9 @@
     <ClCompile Include="SVIODigitalStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVIOConfigurationInterfaceClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -34,5 +37,25 @@
     <ClInclude Include="SVIOParameterEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVIOConfigurationInterfaceClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIODigitalLoadLibraryClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIOTriggerLoadLibraryClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SVIOConfigurationInterfaceClass.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVIODigitalLoadLibraryClass.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVIOTriggerLoadLibraryClass.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

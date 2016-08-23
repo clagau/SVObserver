@@ -23,7 +23,7 @@ SVODataResponseClass::SVODataResponseClass()
 , mpvOwner( nullptr )
 , m_StartTick( 0.0 )
 , m_EndTick( 0.0 )
-, mulExtraData( 0 )
+
 {
 	m_StartTick = SVClock::GetTimeStamp();
 	m_EndTick = SVClock::GetTimeStamp();
@@ -39,7 +39,7 @@ SVODataResponseClass::SVODataResponseClass(const SVODataResponseClass& rResponse
 , mpvOwner( rResponse.mpvOwner )
 , m_StartTick( rResponse.m_StartTick )
 , m_EndTick( rResponse.m_EndTick )
-, mulExtraData( rResponse.mulExtraData )
+
 {
 }
 
@@ -80,8 +80,6 @@ HRESULT SVODataResponseClass::Reset()
 
 	m_StartTick = SVClock::GetTimeStamp();
 	m_EndTick = SVClock::GetTimeStamp();
-
-	mulExtraData = 0;
 
 	return hrOk;
 }
@@ -202,30 +200,6 @@ HRESULT SVODataResponseClass::SetIsComplete( bool bIsComplete )
 	HRESULT hrOk = S_OK;
 
 	mbIsComplete = bIsComplete;
-
-	return hrOk;
-}
-
-/*
-This method returns the context data of this object.
-*/
-HRESULT SVODataResponseClass::GetExtraData(unsigned long &rulData) const
-{
-	HRESULT hrOk = S_OK;
-
-	rulData = mulExtraData;
-
-	return hrOk;
-}
-
-/*
-This method sets the context data of this object.
-*/
-HRESULT SVODataResponseClass::SetExtraData(unsigned long ulData)
-{
-	HRESULT hrOk = S_OK;
-
-	mulExtraData = ulData;
 
 	return hrOk;
 }

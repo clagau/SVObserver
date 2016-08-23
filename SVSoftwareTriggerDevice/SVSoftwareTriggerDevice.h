@@ -56,10 +56,10 @@ public:
 	unsigned long GetTriggerHandle(unsigned long index);
 	BSTR GetTriggerName(unsigned long handle);
 
-	HRESULT TriggerGetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount );
-	HRESULT TriggerGetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName );
-	HRESULT TriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	HRESULT TriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
+	HRESULT TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
+	HRESULT TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
 protected:
 	void lockIfRequired() override {m_CritSec.Lock();}
@@ -77,7 +77,7 @@ private:
 	HRESULT SetTimerCallback(unsigned long handle);
 	HRESULT RemoveTimerCallback(unsigned long handle);
 	void OnSoftwareTimer(const SVString& tag);
-	static void DispatchTrigger(const SvTh::TriggerCallbackInformation& triggerListenerInfo);
+	static void DispatchTrigger(const SvTh::TriggerDispatcher& triggerListenerInfo);
 	SVCriticalSection m_CritSec;
 };
 

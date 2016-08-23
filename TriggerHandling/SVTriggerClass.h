@@ -11,20 +11,17 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerBasics.h"
 #include "SVOLibrary/SVODeviceClass.h"
 #include "SVOLibrary/SVQueueObject.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+
 #pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {
 
-	class SVIOTriggerLoadLibraryClass;
-
 	class SVTriggerClass : public SVODeviceClass  
 	{
 	public:
-		static HRESULT CALLBACK SVTriggerCallback(TriggerParameters triggerparams);
-
 		SVTriggerClass(LPCTSTR deviceName);
 		virtual ~SVTriggerClass();
 
@@ -42,7 +39,7 @@ namespace Seidenader { namespace TriggerHandling {
 		int miChannelNumber;  // &&& var needs to be set...
 
 		SVIOTriggerLoadLibraryClass *m_pDLLTrigger;
-		unsigned long m_ulHandle;
+		unsigned long m_triggerchannel;
 
 	protected:
 		#ifdef SV_LOG_STATUS_INFO

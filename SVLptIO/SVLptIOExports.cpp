@@ -222,23 +222,23 @@ HRESULT WINAPI SVTriggerGetCount(unsigned long* pulCount)
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerGetHandle(unsigned long* pulHandle, unsigned long ulIndex)
+HRESULT WINAPI SVTriggerGetHandle(unsigned long* pTriggerchannel, unsigned long ulIndex)
 {
 	HRESULT hr = S_FALSE;
 
-	if (nullptr != pulHandle)
+	if (nullptr != pTriggerchannel)
 	{
-		*pulHandle = g_Lpt.GetTriggerHandle(ulIndex);
+		*pTriggerchannel = g_Lpt.GetTriggerHandle(ulIndex);
 		hr = S_OK;
 	}
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerGetName(unsigned long ulHandle, BSTR* pbstrName)
+HRESULT WINAPI SVTriggerGetName(unsigned long triggerchannel, BSTR* pbstrName)
 {
 	HRESULT hr = S_FALSE;
 
-	if (nullptr != pbstrName && 0 < ulHandle)
+	if (nullptr != pbstrName && 0 < triggerchannel)
 	{
 		// free any data on input...
 		if (nullptr != *pbstrName)
@@ -246,7 +246,7 @@ HRESULT WINAPI SVTriggerGetName(unsigned long ulHandle, BSTR* pbstrName)
 			::SysFreeString(*pbstrName);
 		}
 
-		*pbstrName = g_Lpt.GetTriggerName(ulHandle);
+		*pbstrName = g_Lpt.GetTriggerName(triggerchannel);
 		
 		if (nullptr != *pbstrName)
 		{
@@ -256,93 +256,93 @@ HRESULT WINAPI SVTriggerGetName(unsigned long ulHandle, BSTR* pbstrName)
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerRegister(unsigned long ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
 {
 	HRESULT hr = S_FALSE;
 
-	if ( nullptr != triggerCallbackInfo.m_pCallback && 0 < ulHandle)
+	if ( rDispatcher.hasCallback() && 0 < triggerchannel)
 	{
 		hr = S_OK;
 
-		g_Lpt.AddTriggerCallback(ulHandle, triggerCallbackInfo);
+		g_Lpt.AddTriggerCallback(triggerchannel, rDispatcher);
 	} 
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerUnregister(unsigned long ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo)
+HRESULT WINAPI SVTriggerUnregister(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
 {
 	HRESULT hr = S_FALSE;
 
-	if (nullptr != triggerCallbackInfo.m_pCallback && 0 < ulHandle)
+	if (rDispatcher.hasCallback() && 0 < triggerchannel)
 	{
-		hr = g_Lpt.RemoveTriggerCallback(ulHandle, triggerCallbackInfo.m_pCallback);
+		hr = g_Lpt.RemoveTriggerCallback(triggerchannel, rDispatcher.getCallback());
 	} 
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerUnregisterAll(unsigned long ulHandle)
+HRESULT WINAPI SVTriggerUnregisterAll(unsigned long triggerchannel)
 {
 	HRESULT hr = S_FALSE;
 
-	if (0 < ulHandle)
+	if (0 < triggerchannel)
 	{
-		hr = g_Lpt.RemoveAllTriggerCallbacks(ulHandle);
+		hr = g_Lpt.RemoveAllTriggerCallbacks(triggerchannel);
 	} 
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerStart(unsigned long ulHandle)
+HRESULT WINAPI SVTriggerStart(unsigned long triggerchannel)
 {
 	HRESULT hr = S_FALSE;
 
-	if (0 < ulHandle)
+	if (0 < triggerchannel)
 	{
-		hr = g_Lpt.StartTrigger(ulHandle);
+		hr = g_Lpt.StartTrigger(triggerchannel);
 	} 
 	return hr;
 }
 
-HRESULT WINAPI SVTriggerStop(unsigned long ulHandle)
+HRESULT WINAPI SVTriggerStop(unsigned long triggerchannel)
 {
 	HRESULT hr = S_FALSE;
 
-	if (0 < ulHandle)
+	if (0 < triggerchannel)
 	{
-		hr = g_Lpt.StopTrigger(ulHandle);
+		hr = g_Lpt.StopTrigger(triggerchannel);
 	} 
 	return hr;
 }
 
 // SVTriggerGetParameterCount
 // Gets the number of parameters
-// for the trigger represented by ulHandle
-HRESULT WINAPI SVTriggerGetParameterCount(unsigned long ulHandle, unsigned long *pulCount)
+// for the trigger represented by triggerchannel
+HRESULT WINAPI SVTriggerGetParameterCount(unsigned long triggerchannel, unsigned long *pulCount)
 {
-	return g_Lpt.TriggerGetParameterCount(ulHandle, pulCount);
+	return g_Lpt.TriggerGetParameterCount(triggerchannel, pulCount);
 }
 
 // SVTriggerGetParameterName
 // Gets the parameter name.
 // The caller is responsible for freeing the BSTR.
-HRESULT WINAPI SVTriggerGetParameterName(unsigned long ulHandle, unsigned long ulIndex, BSTR* pbstrName)
+HRESULT WINAPI SVTriggerGetParameterName(unsigned long triggerchannel, unsigned long ulIndex, BSTR* pbstrName)
 {
-	return g_Lpt.TriggerGetParameterName( ulHandle, ulIndex, pbstrName);
+	return g_Lpt.TriggerGetParameterName( triggerchannel, ulIndex, pbstrName);
 }
 
 // SVTriggerGetParameterValue
 // Gets the parameter value for
-// the trigger represented by ulHandle.
-HRESULT WINAPI SVTriggerGetParameterValue(unsigned long ulHandle, unsigned long ulIndex, VARIANT* pvarValue)
+// the trigger represented by triggerchannel.
+HRESULT WINAPI SVTriggerGetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT* pvarValue)
 {
-	return g_Lpt.TriggerGetParameterValue(ulHandle, ulIndex, pvarValue);
+	return g_Lpt.TriggerGetParameterValue(triggerchannel, ulIndex, pvarValue);
 }
 
 // SVTriggerSetParameterValue
 // Sets the parameter value for
-// the trigger represented by ulHandle.
-HRESULT WINAPI SVTriggerSetParameterValue(unsigned long ulHandle, unsigned long ulIndex, VARIANT* pvarValue)
+// the trigger represented by triggerchannel.
+HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT* pvarValue)
 {
-	return g_Lpt.TriggerSetParameterValue(ulHandle, ulIndex, pvarValue);
+	return g_Lpt.TriggerSetParameterValue(triggerchannel, ulIndex, pvarValue);
 }
 
 // Digital I/O Parameters..No handles...

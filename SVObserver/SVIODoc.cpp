@@ -12,8 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
+
 #include "SVIODoc.h"
-#include "TriggerHandling\SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -207,7 +208,7 @@ void SVIODoc::OnExtrasTestoutputs()
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{
-			SvTh::SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
+			SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
 		}
 	}
 	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );

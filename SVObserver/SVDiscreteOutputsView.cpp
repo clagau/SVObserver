@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVDiscreteOutputsView.h"
-#include "TriggerHandling\SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVObserver.h"
 #include "SVIODoc.h"
@@ -171,7 +171,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 
 		// Result Outputs
 		DWORD maxOutput = 0;
-		SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( maxOutput );
+		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( maxOutput );
 		for( i = 0; i < static_cast<int>(maxOutput); ++i )
 		{
 			// First column: Result I/O

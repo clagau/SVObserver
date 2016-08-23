@@ -18,7 +18,7 @@
 //Moved to precompiled header: #include <boost/date_time.hpp>
 #include "xmllite.h"
 
-#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary/SVi64ValueDeviceParam.h"
@@ -47,7 +47,6 @@
 #include "SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVIODoc.h"
-#include "TriggerHandling/SVTriggerClass.h"
 #include "SVIPDoc.h"
 #include "SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
@@ -68,7 +67,7 @@ namespace sv_xml
 
 		void PrintXMLDoc(Writer  writer) const;
 		void WriteTriggers(Writer  writer) const;
-		void WriteTrigger(Writer  writer, SvTh::SVTriggerObject* pTrigger) const;
+		void WriteTrigger(Writer  writer, SvTi::SVTriggerObject* pTrigger) const;
 		void WriteCameras(Writer  writer) const;
 		void WriteCamera(Writer  writer, SVVirtualCamera* pCamera) const;
 		void WriteHardwareAcq(Writer  writer, SVVirtualCamera* pCamera) const;

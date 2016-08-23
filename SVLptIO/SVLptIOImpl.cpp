@@ -194,7 +194,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 				SetActive(0);  
 			}
 			// Stop all triggers
-			m_triggerCallbackMap.clear();
+			m_triggerDispatcherMap.clear();
 		}
 	}
 	return hr;
@@ -680,9 +680,9 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 	if (S_OK == hr)
 	{
 		bool bDisableIrq = true;
-		for (auto it = m_triggerCallbackMap.begin() ; it != m_triggerCallbackMap.end() ; ++it)
+		for (auto it = m_triggerDispatcherMap.begin() ; it != m_triggerDispatcherMap.end() ; ++it)
 		{
-			SvTh::TriggerCallbackList& list = it->second;
+			SvTh::DispatcherVector& list = it->second;
 
 			if(0 == list.size() || list[0].m_IsStarted)
 			{
@@ -718,13 +718,13 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 
 
 
-HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long ulHandle, unsigned long* pulCount)
+HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long triggerchannel, unsigned long* pulCount)
 {
 	HRESULT hr = S_FALSE;
 
 	if (nullptr != pulCount)
 	{
-		if (0 < ulHandle)
+		if (0 < triggerchannel)
 		{
 			*pulCount = 3;
 			hr = S_OK;
@@ -737,7 +737,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long ulHandle, unsigned l
 	return hr;
 }
 
-HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long ulHandle, unsigned long ulIndex, BSTR* pbstrName)
+HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long triggerchannel, unsigned long ulIndex, BSTR* pbstrName)
 {
 	HRESULT hr = S_FALSE;
 
@@ -749,7 +749,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long ulHandle, unsigned lo
 			*pbstrName = nullptr;
 		}
 
-		if (0 < ulHandle)
+		if (0 < triggerchannel)
 		{
 			// SVSignalEdge and SVBoardVersion enums are used here to make the code more clear.
 			// however at some time in the future the Dll parameters may be implemented
@@ -775,7 +775,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long ulHandle, unsigned lo
 	return hr;
 }
 
-HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long ulHandle, unsigned long ulIndex, VARIANT* pvarValue)
+HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT* pvarValue)
 {
 	HRESULT hr = S_FALSE;
 
@@ -783,7 +783,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long ulHandle, unsigned l
 	{
 		if (S_OK == ::VariantClear(pvarValue))
 		{
-			if (0 < ulHandle)
+			if (0 < triggerchannel)
 			{
 				// SVSignalEdge enum is used here to make the code more clear.
 				// however at some time in the future the Dll parameters may be implemented
@@ -791,7 +791,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long ulHandle, unsigned l
 				if (SVSignalEdge == ulIndex)
 				{
 					long lMask;
-					switch (ulHandle)
+					switch (triggerchannel)
 					{
 						case 1: 
 						{
@@ -850,11 +850,11 @@ HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long ulHandle, unsigned l
 	return hr;
 }
 
-HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long ulHandle, unsigned long ulIndex, VARIANT* pvarValue)
+HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT* pvarValue)
 {
 	HRESULT hr = S_FALSE;
 
-	if (0 < ulHandle)
+	if (0 < triggerchannel)
 	{
 		if (nullptr != pvarValue)
 		{
@@ -865,9 +865,9 @@ HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long ulHandle, unsigned l
 			{
 				if (VT_I4 == pvarValue->vt)
 				{
-					long lMask = 0; //1 << (ulHandle - 1);
+					long lMask = 0; //1 << (triggerchannel - 1);
 
-					switch (ulHandle)
+					switch (triggerchannel)
 					{
 						case 1: 
 						{
@@ -896,7 +896,7 @@ HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long ulHandle, unsigned l
 						case 1:
 						{
 							m_lLptTriggerEdge |= lMask;
-							m_lIOBrdTriggerEdge |= 1 << (ulHandle -1);
+							m_lIOBrdTriggerEdge |= 1 << (triggerchannel -1);
 
 							hr = S_OK;
 							break;
@@ -904,7 +904,7 @@ HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long ulHandle, unsigned l
 						case -1:
 						{
 							m_lLptTriggerEdge &= ~lMask;
-							m_lIOBrdTriggerEdge &= ~(1 << (ulHandle -1));
+							m_lIOBrdTriggerEdge &= ~(1 << (triggerchannel -1));
 
 							hr = S_OK;
 							break;
@@ -1623,9 +1623,9 @@ void SVLptIOImpl::HandleIRQ()
 		#endif
 
 		// call trigger callbacks
-		SvTh::TriggerCallbackMap::iterator it;
+		SvTh::TriggerDispatcherMap::iterator it;
 
-		for (it = m_triggerCallbackMap.begin();it != m_triggerCallbackMap.end() ;it++)
+		for (it = m_triggerDispatcherMap.begin();it != m_triggerDispatcherMap.end() ;it++)
 		{
 			long lTrigger = it->first; // Trigger = the 1 based handle.
 
@@ -1665,13 +1665,13 @@ void SVLptIOImpl::HandleIRQ()
 					m_StatusLog.push_back(String);
 				#endif
 
-				SvTh::TriggerCallbackList& list = it->second;
+				SvTh::DispatcherVector& list = it->second;
 
 				for (size_t i = 0;i < list.size();i++)
 				{
 					if (list[i].m_IsStarted)
 					{
-						(list[i].m_pCallback)(list[i].m_TriggerParameters);
+						list[i].Dispatch();
 					}
 				}
 			}

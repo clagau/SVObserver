@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVFileCamera.h"
 //Moved to precompiled header: #include <boost/bind.hpp>
+
 #include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVFileSystemLibrary/SVFileSystemScanner.h"
@@ -22,6 +23,7 @@ SVFileCamera::SVFileCamera()
 : m_lIsStarted(0)
 , m_index(-1)
 , m_bAcquisitionTriggered(false)
+, m_dispatcher(nullptr,SvTh::TriggerParameters())
 {
 	m_pBufferInterface = nullptr;
 	m_StartTimeStamp = 0;
@@ -407,19 +409,18 @@ void SVFileCamera::SetLineState(bool bState)
 	m_lineState = bState;
 }
 
-const SvTh::TriggerCallbackInformation& SVFileCamera::GetTriggerCallback() const
+const SvTh::TriggerDispatcher& SVFileCamera::GetTriggerDispatcher() const
 {
-	return m_triggerCallbackInfo;
+	return m_dispatcher;
 }
 
-void SVFileCamera::SetTriggerCallback(const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo)
+void SVFileCamera::SetTriggerDispatcher(const SvTh::TriggerDispatcher& rDispatcher)
 {
-	m_triggerCallbackInfo = rTriggerCallbackInfo;
+	m_dispatcher = rDispatcher;
 }
 
 void SVFileCamera::ClearTriggerCallback()
 {
-	m_triggerCallbackInfo.m_pCallback = nullptr;
-	m_triggerCallbackInfo.m_TriggerParameters = SvTh::TriggerParameters();
+	m_dispatcher.clear();
 }
 

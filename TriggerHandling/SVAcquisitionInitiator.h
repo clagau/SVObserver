@@ -13,8 +13,9 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
-#include "SVTriggerClass.h"
+
 #include "TriggerBasics.h"
+#include "SVTriggerClass.h"
 
 #pragma endregion Includes
 
@@ -38,8 +39,8 @@ namespace Seidenader { namespace TriggerHandling {
 
 		HRESULT EnableInternalTrigger();
 		HRESULT Exec();
-		HRESULT RegisterCallback(const TriggerCallbackInformation& rTriggerCallbackInfo );
-		HRESULT UnRegisterCallback(const TriggerCallbackInformation& rTriggerCallbackInfo );
+		HRESULT RegisterCallback(const SvTh::TriggerDispatcher& rDispatcher );
+		HRESULT UnRegisterCallback(const SvTh::TriggerDispatcher& rDispatcher );
 		HRESULT UnRegisterAllCallbacks();
 	};
 } /* namespace TriggerHandling */ } /* namespace Seidenader */

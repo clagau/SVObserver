@@ -15,7 +15,7 @@
 #include "SVOTriggerDeviceDlg.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVOPropertyPageDlg.h"
-#include "SVOTriggerObj.h"
+#include "TriggerInformation/SVOTriggerObj.h"
 #include "SVTriggerSelectionDlg.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "TextDefinesSvO.h"
@@ -88,7 +88,7 @@ void CSVOTriggerDeviceDlg::SetupList()
 
     m_ctlTriggerList.ResetContent();
     int iTrigCount = m_pParent->GetTriggerListCount();
-    SVOTriggerObjPtr pTriggerObj( nullptr );
+    SvTi::SVOTriggerObjPtr pTriggerObj( nullptr );
 
     for (int i = 0; i < iTrigCount; i++)
     {
@@ -232,11 +232,11 @@ void CSVOTriggerDeviceDlg::OnBtnPropTrig()
 		CString sTxt;
 		CString sLabel;
 		m_ctlTriggerList.GetText(iCurSel,sTxt);
-		SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
 		if( nullptr != pTriggerObj )
 		{
 			CSVOPropertyPageDlg oDlg;
-			SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
+			SvTi::SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
 
 			rTmpObj = *pTriggerObj;
 			oDlg.SetDlgPage(VIRTUAL_TRIGGER_DLG);
@@ -260,11 +260,11 @@ void CSVOTriggerDeviceDlg::OnBtnAdvanced()
     if ( iCurSel != LB_ERR )
     {
         m_ctlTriggerList.GetText(iCurSel,sTxt);
-		SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
 		if( nullptr != pTriggerObj )
 		{
 			CSVOPropertyPageDlg oDlg;
-			SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
+			SvTi::SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
 
 			rTmpObj = *pTriggerObj;
 			oDlg.SetDlgPage(VIRTUAL_TRIGGER_ADV);
@@ -310,7 +310,7 @@ void CSVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
 	// check for advanced properties
 	CString sTxt;
 	m_ctlTriggerList.GetText(iSelection, sTxt);
-    SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+    SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
 	if( nullptr != pTriggerObj && pTriggerObj->IsSoftwareTrigger())
 	{
 		EnableAdvancedPropertyButton(true);

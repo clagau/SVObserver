@@ -13,9 +13,8 @@
 #pragma region Includes
 
 
-typedef HRESULT (CALLBACK *LPSVFINISHPROC)(void*,void*,void*); //@TODO [Arvid] this is currently a duplication of the definition in SVObserver\SVInfoStructs.h and will be removed in the future
+typedef HRESULT (CALLBACK *LPSVFINISHPROC)(void*,void*,void*);
 
-#include "TriggerBasics.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -23,10 +22,17 @@ typedef HRESULT (CALLBACK *LPSVFINISHPROC)(void*,void*,void*); //@TODO [Arvid] t
 
 #pragma endregion Includes
 
-class SVOResponseClass;
+class SVOResponseClass; //defined in SVOLibrary/SVOResponseClass.cpp
 
-namespace Seidenader { namespace TriggerHandling {
-	class SVTriggerClass;
+namespace Seidenader { namespace TriggerHandling {//AB namespace used only for forward declaration
+
+class SVTriggerClass;
+
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;
+
+namespace Seidenader { namespace TriggerInformation {
 
 	class SVTriggerObject : public SVObjectClass
 	{
@@ -35,7 +41,7 @@ namespace Seidenader { namespace TriggerHandling {
 		SVTriggerObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRIGGEROBJECT );
 		virtual ~SVTriggerObject();
 
-		BOOL Create( SVTriggerClass *psvDevice );
+		BOOL Create( SvTh::SVTriggerClass *psvDevice );
 		BOOL Destroy();
 
 		// Runtime Functions
@@ -62,7 +68,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 		long m_lTriggerCount;
 
-		SVTriggerClass* mpsvDevice;
+		SvTh::SVTriggerClass* mpsvDevice;
 
 	private:
 		bool m_bSoftwareTrigger;
@@ -73,6 +79,6 @@ namespace Seidenader { namespace TriggerHandling {
 		#endif
 	};
 	typedef SVVector< SVTriggerObject* > SVTriggerObjectArray;
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */
 
-namespace SvTh = Seidenader::TriggerHandling;
+namespace SvTi = Seidenader::TriggerInformation;

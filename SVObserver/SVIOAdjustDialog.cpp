@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+
 #include "SVIODoc.h"
 #include "SVIOAdjustDialog.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -19,7 +20,7 @@
 #include "SVDigitalOutputObject.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
-#include "TriggerHandling/SVHardwareManifest.h"
+#include "TriggerInformation/SVHardwareManifest.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
@@ -195,7 +196,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 
 		if ( m_pIODoc )
 		{
-			if ( SvTh::SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
+			if ( SvTi::SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
 			{
 				pIOEntry = pConfig->GetRaidErrorBit();
 				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) )

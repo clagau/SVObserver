@@ -21,7 +21,7 @@ public:
 	SVTriggerSetupDlgClass(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVTriggerSetupDlgClass();
 
-	SvTh::SVIOTriggerLoadLibraryClass *m_psvTriggers;
+	SVIOTriggerLoadLibraryClass *m_psvTriggers;
 	long m_lStrobeInverts;
 	long m_lTrigInverts;
 	long m_lSystemType;

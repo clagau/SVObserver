@@ -11,13 +11,14 @@
 
 #pragma region Includes
 #include "stdafx.h"
+
 #include "SVDigitizerProcessingClass.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVOMFCLibrary/SVi64ValueDeviceParam.h"
 #include "SVFileAcquisitionClass.h"
-#include "TriggerHandling/SVHardwareManifest.h"
+#include "TriggerInformation/SVHardwareManifest.h"
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
@@ -52,9 +53,9 @@ SVDigitizerProcessingClass::~SVDigitizerProcessingClass()
 
 void SVDigitizerProcessingClass::Startup()
 {
-	const SvTh::SVAcquisitionConstructParamsVector& l_rAcqParams = SvTh::SVHardwareManifest::Instance().GetAcquisitionDeviceParams();
+	const SvTi::SVAcquisitionConstructParamsVector& l_rAcqParams = SvTi::SVHardwareManifest::Instance().GetAcquisitionDeviceParams();
 
-	SvTh::SVAcquisitionConstructParamsVector::const_iterator l_Iter = l_rAcqParams.begin();
+	SvTi::SVAcquisitionConstructParamsVector::const_iterator l_Iter = l_rAcqParams.begin();
 
 	while( l_Iter != l_rAcqParams.end() )
 	{
@@ -606,7 +607,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 					_variant_t Value("");
 
 					Camera.iPosition = i;
-					Camera.m_ulHandle = Handle;
+					Camera.m_triggerchannel = Handle;
 
 					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterVendorName, 0, &Value ) )
 					{
@@ -643,7 +644,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 	{
 		SVGigeCameraStruct& Camera = Cameras.ElementAt( j );
 
-		if( 0 != Camera.m_ulHandle )
+		if( 0 != Camera.m_triggerchannel )
 		{
 			SVString DigitizerName = SvUl_SF::Format( _T("Matrox_GIGE.Dig_%d"), j );
 
@@ -653,7 +654,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 			{
 				SVDeviceParamCollection DeviceParams;
 
-				pAcquisitionDevice->m_hDigitizer = Camera.m_ulHandle;
+				pAcquisitionDevice->m_hDigitizer = Camera.m_triggerchannel;
 
 				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
 				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( Camera.strIPAddress ) );

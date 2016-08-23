@@ -12,10 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
+
+
 #include "SVConfigurationObject.h"
 
 #include "GuiCommands/InspectionRunOnce.h"
-#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectAsynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -45,11 +47,11 @@
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVSubscriberProviderInterfaces.h"
 #include "TriggerHandling/SVAcquisitionInitiator.h"
-#include "TriggerHandling/SVTriggerProcessingClass.h"
+#include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVConfigurationTreeWriter.h"
 #include "TriggerHandling/SVCameraTriggerClass.h"
-#include "TriggerHandling/SVHardwareManifest.h"
+#include "TriggerInformation/SVHardwareManifest.h"
 #include "SVCameraDataInputObject.h"
 #include "SVGlobal.h"
 #include "SVSVIMStateClass.h"
@@ -185,7 +187,7 @@ HRESULT SVConfigurationObject::RebuildOutputObjectList()
 	return l_Status;
 }
 
-bool SVConfigurationObject::AddTrigger( SvTh::SVTriggerObject* pTrigger )
+bool SVConfigurationObject::AddTrigger( SvTi::SVTriggerObject* pTrigger )
 {
 	bool Result(false);
 
@@ -198,7 +200,7 @@ bool SVConfigurationObject::AddTrigger( SvTh::SVTriggerObject* pTrigger )
 	return Result;
 }
 
-bool SVConfigurationObject::RemoveTrigger( SvTh::SVTriggerObject* pTrigger )
+bool SVConfigurationObject::RemoveTrigger( SvTi::SVTriggerObject* pTrigger )
 {
 	if( nullptr == pTrigger ) { return false; }
 
@@ -222,7 +224,7 @@ long SVConfigurationObject::GetTriggerCount( ) const
 	return m_arTriggerArray.GetSize();
 }// end GetTriggerCount
 
-BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SvTh::SVTriggerObject** ppTrigger ) const
+BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger ) const
 {
 	bool bReturn = false;
 
@@ -235,7 +237,7 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SvTh::SVTrigg
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SvTh::SVTriggerObject* pTrigger = GetTrigger( l );
+		SvTi::SVTriggerObject* pTrigger = GetTrigger( l );
 		if( nullptr != pTrigger && sName == pTrigger->GetCompleteObjectName() )
 		{
 			*ppTrigger = pTrigger;
@@ -247,9 +249,9 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SvTh::SVTrigg
 	return bReturn;
 }
 
-SvTh::SVTriggerObject* SVConfigurationObject::GetTrigger( long lIndex ) const
+SvTi::SVTriggerObject* SVConfigurationObject::GetTrigger( long lIndex ) const
 {
-	SvTh::SVTriggerObject* retValue = nullptr;
+	SvTi::SVTriggerObject* retValue = nullptr;
 
 	ASSERT( 0 <= lIndex && static_cast<long>(m_arTriggerArray.size()) > lIndex );
 
@@ -1578,7 +1580,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							{
 								int iDigNum = psvDevice->DigNumber();
 								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pParam);
-								SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
+								SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
 							}
 
 							// strobe
@@ -1586,7 +1588,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							{
 								int iDigNum = psvDevice->DigNumber();
 								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
-								SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
+								SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
 							}
 							// Get Combined parameters
 							psvDevice->GetDeviceParameters(svDeviceParams);
@@ -1773,7 +1775,7 @@ bool SVConfigurationObject::LoadTrigger( SVTreeType& rTree )
 	{
 		SVString ItemName = rTree.getBranchName( hSubChild );
 
-		SvTh::SVTriggerObject* pTrigger = new SvTh::SVTriggerObject;
+		SvTi::SVTriggerObject* pTrigger = new SvTi::SVTriggerObject;
 		pTrigger->SetName( ItemName.c_str() );
 		bOk = nullptr != pTrigger;
 		if ( bOk )
@@ -1805,7 +1807,7 @@ bool SVConfigurationObject::LoadTrigger( SVTreeType& rTree )
 
 			if ( bOk )
 			{
-				SvTh::SVTriggerClass* psvDevice = SvTh::SVTriggerProcessingClass::Instance().GetTrigger( csDeviceName );
+				SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger( csDeviceName );
 
 				if ( nullptr != psvDevice )
 				{
@@ -2135,7 +2137,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 				for ( long l = 0; bOk && l < lCount; l++ )
 				{
-					SvTh::SVTriggerObject* pTrigger = GetTrigger( l );
+					SvTi::SVTriggerObject* pTrigger = GetTrigger( l );
 
 					bOk = (nullptr != pTrigger);
 					if( bOk )
@@ -2853,11 +2855,11 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 			}
 			else if( rNameInfo.m_NameArray[ 0 ].substr( 0, 7 ) == _T( "Trigger" ) )
 			{
-				SvTh::SVTriggerObjectArray::const_iterator l_TriggerIter;
+				SvTi::SVTriggerObjectArray::const_iterator l_TriggerIter;
 
 				for( l_TriggerIter = m_arTriggerArray.begin(); nullptr == rpObject && l_TriggerIter != m_arTriggerArray.end(); ++l_TriggerIter )
 				{
-					SvTh::SVTriggerObject* pTrigger = ( *l_TriggerIter );
+					SvTi::SVTriggerObject* pTrigger = ( *l_TriggerIter );
 
 					if( nullptr != pTrigger )
 					{
@@ -3292,7 +3294,7 @@ void SVConfigurationObject::SaveTrigger(SVObjectXMLWriter& rWriter) const
 	long lCount = GetTriggerCount( );
 	for ( long l = 0; l < lCount; l++ )
 	{
-		SvTh::SVTriggerObject* pTrigger = GetTrigger( l );
+		SvTi::SVTriggerObject* pTrigger = GetTrigger( l );
 
 		if ( nullptr != pTrigger )
 		{
@@ -3379,7 +3381,7 @@ void SVConfigurationObject::SavePPQ(SVObjectXMLWriter& rWriter) const
 
 			SavePPQ_Attributes(rWriter, *pPPQ);
 
-			SvTh::SVTriggerObject* pTrigger( nullptr );
+			SvTi::SVTriggerObject* pTrigger( nullptr );
 			pPPQ->GetTrigger( pTrigger );
 
 			if( nullptr != pTrigger )
@@ -3624,7 +3626,7 @@ void SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigColo
 	SVIMProductEnum ConfigType( GetProductType() );
 
 	//Need to change the product type from color to standard product type
-	bool isColor = SvTh::SVHardwareManifest::IsColorSystem( ConfigType );
+	bool isColor = SvTi::SVHardwareManifest::IsColorSystem( ConfigType );
 	if( isColor )
 	{
 		rConfigColor = isColor;
@@ -3972,8 +3974,8 @@ void SVConfigurationObject::SetupCameraTrigger(SvTh::SVCameraTriggerClass* pTrig
 
 	if (bSoftwareTrigger)
 	{
-		CString sDeviceName = SvTh::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDigNum).c_str();
-		SvTh::SVTriggerClass* psvDevice = SvTh::SVTriggerProcessingClass::Instance().GetTrigger( sDeviceName );
+		CString sDeviceName = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDigNum).c_str();
+		SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger( sDeviceName );
 		if (psvDevice)
 		{
 			psvDevice->Create();
@@ -3999,7 +4001,7 @@ void SVConfigurationObject::SetupCameraTrigger(SvTh::SVCameraTriggerClass* pTrig
 					{
 						if (iDigNum == pCamera->mpsvDevice->DigNumber())
 						{
-							pTriggerDevice->m_ulHandle = pCamera->mpsvDevice->m_hDigitizer;
+							pTriggerDevice->m_triggerchannel = pCamera->mpsvDevice->m_hDigitizer;
 							break;
 						}
 					}
@@ -4036,7 +4038,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 	BOOL bOk = true;
 	for ( long l = 0; bOk && l < lCount; l++ )
 	{
-		SvTh::SVTriggerObject* pTrigger = GetTrigger( l );
+		SvTi::SVTriggerObject* pTrigger = GetTrigger( l );
 		bOk = ( nullptr != pTrigger );
 		if ( bOk )
 		{
@@ -4081,7 +4083,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 						{
 							if (pCamera->IsFileAcquisition())
 							{
-								hr = pCamera->RegisterTriggerRelay(pTrigger->mpsvDevice->m_pDLLTrigger, pTrigger->mpsvDevice->m_ulHandle);
+								hr = pCamera->RegisterTriggerRelay(pTrigger->mpsvDevice->m_pDLLTrigger, pTrigger->mpsvDevice->m_triggerchannel);
 							}
 						}
 					}
@@ -5057,7 +5059,7 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 
 	for ( long i = 0; !bRetVal && i < lCount; i++ )
 	{
-		SvTh::SVTriggerObject* pTrigger = GetTrigger( i );
+		SvTi::SVTriggerObject* pTrigger = GetTrigger( i );
 		if ( nullptr != pTrigger )
 		{
 			if (pTrigger->IsAcquisitionTrigger())

@@ -28,7 +28,8 @@
 #include "SVIOEntryHostStruct.h"
 #include "SVValueObjectReference.h"
 #include "SVRunControlLibrary/ProductWorkloadInformation.h" 
-#include "TriggerHandling/SVTriggerObject.h"
+#include "TriggerInformation/SVTriggerObject.h"
+#include "TriggerInformation/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 enum SVProductInspectedState
@@ -269,7 +270,7 @@ struct SVProductInfoStruct
 
 	ProductWorkloadInformation m_WorkloadInfo;
 
-	SvTh::SVTriggerInfoStruct oTriggerInfo;
+	SvTi::SVTriggerInfoStruct oTriggerInfo;
 	SVInputsInfoStruct oInputsInfo;
 	SVOutputsInfoStruct oOutputsInfo;
 	SVPPQInfoStruct oPPQInfo;
@@ -430,8 +431,6 @@ private:
 
 typedef SVSharedPtr< SVInputImageRequestInfoStruct > SVInputImageRequestInfoStructPtr;
 typedef std::vector< SVInputImageRequestInfoStructPtr > SVInputImageRequestInfoStructPtrVector;
-
-typedef HRESULT (CALLBACK *LPSVFINISHPROC)(void*,void*,void*);
 
 struct SVOutputRequestInfoStruct
 {

@@ -34,7 +34,7 @@
 #define IDC_LOG_CHECK                   1027
 #define IDC_BUTTON2                     1028
 #define IDC_CLEAR_BTN                   1028
-#define IDC_TRIGGER_BUTTON              1029
+#define IDC_TRIGGER_1                   1029
 #define IDC_TRIGGER_2                   1030
 #define IDC_TRIGGER_3                   1031
 #define IDC_TRIGGER_4                   1032

@@ -45,7 +45,7 @@ const SVGigeCameraStruct& SVGigeCameraStruct::operator = (const SVGigeCameraStru
 		strVendorName = SVGigecs.strVendorName;
 		strIPAddress = SVGigecs.strIPAddress;
 
-		m_ulHandle = SVGigecs.m_ulHandle;
+		m_triggerchannel = SVGigecs.m_triggerchannel;
 	}
 
 	return *this;
@@ -59,7 +59,7 @@ void SVGigeCameraStruct::SetInfo(const SVGigeCameraStruct& rhs)
 		strModelName = rhs.strModelName;
 		strVendorName = rhs.strVendorName;
 		strIPAddress = rhs.strIPAddress;
-		m_ulHandle = rhs.m_ulHandle;
+		m_triggerchannel = rhs.m_triggerchannel;
 	}
 }
 
@@ -71,7 +71,7 @@ void SVGigeCameraStruct::Clear()
 	strIPAddress.Empty();
 	eChangeType = SVNoChange;
 	
-	m_ulHandle = 0;
+	m_triggerchannel = 0;
 }
 
 bool SVGigeCameraStruct::operator == (const SVGigeCameraStruct &SVGigecs) const

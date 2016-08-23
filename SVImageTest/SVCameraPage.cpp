@@ -173,12 +173,12 @@ void SVCameraPage::OnProperitiesButtonClick()
 
 	if (m_pAcquisition)
 	{
-		unsigned long l_ulHandle = 0;
+		unsigned long triggerchannel = 0;
 
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &l_ulHandle, m_lSelectedCamera );
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &triggerchannel, m_lSelectedCamera );
 
 		l_svDialog.m_psvDigitizers = &m_pAcquisition->m_rSubsystem.m_svDigitizers;
-		l_svDialog.m_ulHandle = l_ulHandle;
+		l_svDialog.m_triggerchannel = triggerchannel;
 
 		l_svDialog.DoModal();
 
@@ -260,17 +260,17 @@ void SVCameraPage::CreateCameraImage()
 {
 	if( 0 <= m_lSelectedCamera && nullptr != m_pAcquisition )
 	{
-		unsigned long l_ulHandle( 0L );
+		unsigned long triggerchannel( 0L );
 
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &l_ulHandle, m_lSelectedCamera );
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &triggerchannel, m_lSelectedCamera );
 
 		unsigned long bufWidth = 640;
 		unsigned long bufHeight = 480;
 		int iFormat = SVImageFormatUnknown;
 
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferHeight( l_ulHandle, &bufHeight );
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferWidth( l_ulHandle, &bufWidth );
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferFormat( l_ulHandle, &iFormat );
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferHeight( triggerchannel, &bufHeight );
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferWidth( triggerchannel, &bufWidth );
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferFormat( triggerchannel, &iFormat );
 
 		m_CameraImage.UpdateDisplayBufferInfo( bufWidth, bufHeight, iFormat );
 		m_CameraImage.Invalidate();
@@ -348,10 +348,10 @@ void SVCameraPage::StartAcquire()
 {
 	if (m_bUseSoftwareTrigger)
 	{
-		unsigned long l_ulHandle = 0;
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &l_ulHandle, m_lSelectedCamera );
+		unsigned long triggerchannel = 0;
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &triggerchannel, m_lSelectedCamera );
 
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.InternalTriggerEnable(l_ulHandle);
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.InternalTriggerEnable(triggerchannel);
 
 		if (m_timerID == 0)
 		{

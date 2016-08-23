@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <iostream>
 #include "SVObserver.h"
 
-#include "TriggerHandling\SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary\SVPackedFile.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOMFCLibrary\SVDeviceParam.h"
@@ -81,8 +81,8 @@
 #include "SVIOController.h"
 
 #include "SVDirectX.h"
-#include "TriggerHandling/SVHardwareManifest.h"
-#include "TriggerHandling/SVTriggerProcessingClass.h"
+#include "TriggerInformation/SVHardwareManifest.h"
+#include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVSocketLibrary\SVSocketLibrary.h"
 #include "SVInputStreamManager.h"
@@ -2144,8 +2144,8 @@ BOOL SVObserverApp::InitInstance()
 	// Startup Matrox App
 	SVMatroxApplicationInterface::Startup();
 
-	SvTh::SVHardwareManifest::Instance().Startup();
-	SvTh::SVTriggerProcessingClass::Instance().Startup();
+	SvTi::SVHardwareManifest::Instance().Startup();
+	SvTi::SVTriggerProcessingClass::Instance().Startup();
 	SVDigitizerProcessingClass::Instance().Startup();
 
 	InitializeSecurity();
@@ -2565,14 +2565,14 @@ int SVObserverApp::ExitInstance()
 
 	m_mgrRemoteFonts.Shutdown();
 
-	SvTh::SVTriggerProcessingClass::Instance().Shutdown();
+	SvTi::SVTriggerProcessingClass::Instance().Shutdown();
 	SVDigitizerProcessingClass::Instance().Shutdown();
-	SvTh::SVHardwareManifest::Instance().Shutdown();
+	SvTi::SVHardwareManifest::Instance().Shutdown();
 
 	SVObjectManagerClass::Instance().Shutdown();
 	SVClassRegisterListClass::Instance().Shutdown();
 
-	SvTh::SVIOConfigurationInterfaceClass::Instance().Shutdown();
+	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 
 	// Shutdown MIL
 	SVMatroxApplicationInterface::Shutdown();
@@ -4363,9 +4363,9 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 	SVIOBoardCapabilities l_svCapable;
 	unsigned long l_lCount;
-	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( l_lCount );
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( l_lCount );
 	l_svCapable.SetInputCount( l_lCount );
-	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( l_lCount );
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( l_lCount );
 	l_svCapable.SetOutputCount( l_lCount );
 
 	// Special code to determine the inverters 
@@ -4386,7 +4386,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 	{
 		// Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
 		int numTriggers = 0;
-		const SvTh::SVIMTypeInfoStruct& info = SvTh::SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
+		const SvTi::SVIMTypeInfoStruct& info = SvTi::SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
 		l_svCapable.SetNonIOSVIM(info.m_MaxTriggers);
 	}
 	else 
@@ -4445,7 +4445,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			long lPPQ = 0;
 			long lPPQCount = 0;
 
-			SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
+			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
 
 			if ( nullptr != pConfig )
 			{
@@ -4492,9 +4492,9 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 						pConfig->GetModuleReady()->m_IOId = pOutput->GetUniqueObjectID();
 
-						SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (15, pOutput->IsInverted ());
-						SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (15, pOutput->IsForced ());
-						SvTh::SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue (15, pOutput->GetForcedValue ());
+						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (15, pOutput->IsInverted ());
+						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (15, pOutput->IsForced ());
+						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue (15, pOutput->GetForcedValue ());
 					}
 				}
 			}
@@ -4756,7 +4756,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 
 		if ( S_OK == hr )
 		{
-			if (SvTh::SVHardwareManifest::IsMatroxGige(eProductType))
+			if (SvTi::SVHardwareManifest::IsMatroxGige(eProductType))
 			{
 				SVGigeCameraManagerDlg dlg;
 				dlg.DoModal();
@@ -5038,7 +5038,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 						return;
 					}
 					
-					SvTh::SVTriggerObject* pTrigger( nullptr );
+					SvTi::SVTriggerObject* pTrigger( nullptr );
 					pPPQ->GetTrigger( pTrigger );
 					if ( nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
 					{
@@ -5123,7 +5123,7 @@ HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts ) const
 			if( nullptr != pPPQ )
 			{
 				CString l_strTmp;
-				SvTh::SVTriggerObject* pTrigger( nullptr );
+				SvTi::SVTriggerObject* pTrigger( nullptr );
 				//If returns true has valid pointer
 				if( pPPQ->GetTrigger( pTrigger ))
 				{
@@ -5595,7 +5595,7 @@ void SVObserverApp::Start()
 
 				pPPQ->PrepareGoOnline();
 
-				SvTh::SVTriggerObject* pTrigger( nullptr );
+				SvTi::SVTriggerObject* pTrigger( nullptr );
 				pPPQ->GetTrigger(pTrigger);
 				if ( nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
 				{
@@ -5808,9 +5808,9 @@ HRESULT SVObserverApp::INILoad()
 
 		for ( int i = 0; i < 4; i++ )
 		{
-			SvTh::SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, 0 == l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) );
-			SvTh::SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, 0 == l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) );
-			SvTh::SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, 0 == l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, 0 == l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, 0 == l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, 0 == l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) );
 		}
 
 		l_hrOk = l_hrOk | LoadDigitalDLL();
@@ -5917,7 +5917,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
 
-		if ( S_OK != SvTh::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLTriggers ) )
+		if ( S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLTriggers ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
@@ -5930,7 +5930,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 			{
 				bool l_bRising;
 
-				SvTh::SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue( i, l_bRising );
+				SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue( i, l_bRising );
 
 				if ( l_bRising )
 				{
@@ -5960,7 +5960,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 
 HRESULT SVObserverApp::CloseTriggerDLL()
 {
-	SvTh::SVTriggerProcessingClass::Instance().clear();
+	SvTi::SVTriggerProcessingClass::Instance().clear();
 
 	m_svDLLTriggers.Close();
 	m_svDLLSoftwareTriggers.Close();
@@ -5980,7 +5980,7 @@ HRESULT SVObserverApp::LoadSoftwareTriggerDLL()
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
 
-		if ( S_OK != SvTh::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLSoftwareTriggers ) )
+		if ( S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLSoftwareTriggers ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
@@ -6003,7 +6003,7 @@ HRESULT SVObserverApp::LoadAcquisitionTriggerDLL()
 
 		if( S_OK == ResultLoadDLL )
 		{
-			if( S_OK != SvTh::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) )
+			if( S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) )
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
 			}
@@ -6087,7 +6087,7 @@ HRESULT SVObserverApp::LoadDigitalDLL()
 
 	if ( ! m_csDigitalDLL.IsEmpty() )
 	{
-		if ( SvTh::SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_csDigitalDLL ) != S_OK )
+		if ( SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_csDigitalDLL ) != S_OK )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
 		}
@@ -6100,12 +6100,12 @@ HRESULT SVObserverApp::LoadDigitalDLL()
 			if( !m_csDigitalOption.IsEmpty() )
 			{
 				l_vt.lVal = atol( m_csDigitalOption );
-				SvTh::SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
+				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
 			}
 			else
 			{	// Legacy behavior.... Hardware.Ini file does not have new entry...
 				l_vt.lVal = atol( m_csIOBoard );
-				SvTh::SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
+				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
 			}
 		}
 	}
@@ -6122,7 +6122,7 @@ HRESULT SVObserverApp::LoadDigitalDLL()
 
 HRESULT SVObserverApp::CloseDigitalDLL()
 {
-	SvTh::SVIOConfigurationInterfaceClass::Instance().CloseDigital();
+	SVIOConfigurationInterfaceClass::Instance().CloseDigital();
 
 	return S_OK;
 }

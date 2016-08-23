@@ -12,8 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
-#include "SVAcquisitionClass.h"
 
+#include "SVAcquisitionClass.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -21,7 +21,7 @@
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "TriggerHandling/SVAcquisitionConstructParams.h"
+#include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVFileNameManagerClass.h"
 #include "SVGlobal.h"
@@ -38,7 +38,7 @@
 #endif
 #pragma endregion Declarations
 
-SVAcquisitionClass::SVAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams )
+SVAcquisitionClass::SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams )
 : SVODataDeviceClass( p_rParams.m_DeviceName.c_str() )
 {
 	mbIsBufferCreated = false;

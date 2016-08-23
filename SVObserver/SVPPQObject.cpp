@@ -16,9 +16,11 @@
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <limits>
 //Moved to precompiled header: #include <boost/bind.hpp>
+
+
 #include "SVPPQObject.h"
 #include "SVDataManagerLibrary/DataManager.h"
-#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -34,7 +36,7 @@
 #include "SVInfoStructs.h"
 #include "SVMessage/SVMessage.h"
 #include "SVDigitalOutputObject.h"
-#include "TriggerHandling/SVTriggerObject.h"
+#include "TriggerInformation/SVTriggerObject.h"
 #include "SVAcquisitionClass.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "SVConfigurationObject.h"
@@ -66,7 +68,7 @@ const long g_lPPQExtraBufferSize = 50;
 HRESULT CALLBACK SVFinishTriggerCallback( void *pOwner, void *pCaller, void *pTriggerInfo )
 {
 	SVPPQObject* pPPQ = reinterpret_cast< SVPPQObject* >( pOwner );
-	SvTh::SVTriggerInfoStruct* pInfo = reinterpret_cast< SvTh::SVTriggerInfoStruct* >( pTriggerInfo );
+	SvTi::SVTriggerInfoStruct* pInfo = reinterpret_cast< SvTi::SVTriggerInfoStruct* >( pTriggerInfo );
 
 	BOOL bRet = ( nullptr != pPPQ && nullptr != pInfo );
 
@@ -878,7 +880,7 @@ BOOL SVPPQObject::GetInspectionTimeout( long& rlTimeoutMillisec ) const
 	return TRUE;
 }
 
-BOOL SVPPQObject::AttachTrigger( SvTh::SVTriggerObject* pTrigger )
+BOOL SVPPQObject::AttachTrigger( SvTi::SVTriggerObject* pTrigger )
 {
 	if( nullptr == pTrigger ) { return FALSE; }
 
@@ -928,7 +930,7 @@ BOOL SVPPQObject::AttachInspection( SVInspectionProcess* pInspection )
 	return TRUE;
 }
 
-BOOL SVPPQObject::DetachTrigger( SvTh::SVTriggerObject* pTrigger )
+BOOL SVPPQObject::DetachTrigger( SvTi::SVTriggerObject* pTrigger )
 {
 	BOOL bOk = nullptr != m_pTrigger && m_pTrigger == pTrigger;
 
@@ -1087,7 +1089,7 @@ HRESULT SVPPQObject::GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const
 	return l_Status;
 }
 
-BOOL SVPPQObject::GetTrigger( SvTh::SVTriggerObject*& ppTrigger )
+BOOL SVPPQObject::GetTrigger( SvTi::SVTriggerObject*& ppTrigger )
 {
 	ppTrigger = m_pTrigger;
 
@@ -1179,7 +1181,7 @@ void SVPPQObject::AssignCameraToAcquisitionTrigger()
 				SVAcquisitionClassPtr acquisitionPtr = pCamera->GetAcquisitionDevice();
 				if (!acquisitionPtr.empty() && acquisitionPtr->DigNumber() == iDigNum)
 				{
-					m_pTrigger->mpsvDevice->m_ulHandle = acquisitionPtr->m_hDigitizer;
+					m_pTrigger->mpsvDevice->m_triggerchannel = acquisitionPtr->m_hDigitizer;
 					break;
 				}
 			}
@@ -2072,7 +2074,7 @@ BOOL SVPPQObject::AddDefaultInputs()
 	unsigned long ulCount = 0;
 	unsigned long l;
 
-	SvTh::SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
 
 	// Create all the default Digital Inputs
 	for( l = 0; l < ulCount; l++ )
@@ -2710,7 +2712,7 @@ BOOL SVPPQObject::GetAllOutputs( SVIOEntryHostStructPtrList& ppIOEntries ) const
 	return TRUE;
 }
 
-SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTh::SVTriggerInfoStruct& p_rTriggerInfo )
+SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTriggerInfo )
 {
 	SVProductInfoStruct* l_pProduct = nullptr;
 	SVProductInfoStruct* l_pNewProduct = nullptr;
@@ -2729,6 +2731,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTh::SVTriggerInfoStruct& p_rTrigge
 		SVString l_TriggerCount = SvUl_SF::Format( _T( "%ld" ), p_rTriggerInfo.lTriggerCount );
 
 		l_pNewProduct->bTriggered = TRUE;
+
 		l_pNewProduct->m_ProductState += _T( "|" );
 		l_pNewProduct->m_ProductState += GetName();
 		l_pNewProduct->m_ProductState += _T( "|TRI=" );
@@ -3620,7 +3623,7 @@ BOOL SVPPQObject::FinishCamera( void *pCaller, SVODataResponseClass *pResponse )
 	return l_Status;
 }
 
-BOOL SVPPQObject::FinishTrigger( void *pCaller, SvTh::SVTriggerInfoStruct& p_rTriggerInfo )
+BOOL SVPPQObject::FinishTrigger( void *pCaller, SvTi::SVTriggerInfoStruct& p_rTriggerInfo )
 {
 	BOOL l_Status = m_bOnline;
 
@@ -4054,27 +4057,27 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 
 	if( p_rProcessed )
 	{
-		SVTriggerQueueElement l_TriggerInfo; ///would it not be preferable to call this variable "QueueElement"?
+		SVTriggerQueueElement poppedFromQueue;
 
-		if( S_OK == m_oTriggerQueue.PopHead( l_TriggerInfo )  )
+		if( S_OK == m_oTriggerQueue.PopHead( poppedFromQueue )  )
 		{
 			if( m_bOnline )
 			{
-				SVProductInfoStruct* pProduct = IndexPPQ( l_TriggerInfo.m_TriggerInfo );
+				SVProductInfoStruct* pProduct = IndexPPQ( poppedFromQueue.m_TriggerInfo );
 
 				if( nullptr != pProduct )
 				{
-					if( InitializeProduct( pProduct, l_TriggerInfo.m_Inputs ) )
+					if( InitializeProduct( pProduct, poppedFromQueue.m_Inputs ) )
 					{
 						long lDataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 
-						m_voTriggerCount.SetValue( lDataIndex, l_TriggerInfo.m_TriggerInfo.lTriggerCount );
+						m_voTriggerCount.SetValue( lDataIndex, poppedFromQueue.m_TriggerInfo.lTriggerCount );
 
 						m_oNotifyInspectionsSet.insert( pProduct->ProcessCount() );
 
-						if (!l_TriggerInfo.m_TriggerInfo.m_Data.empty())
+						if (!poppedFromQueue.m_TriggerInfo.m_Data.empty())
 						{
-							m_CameraInputData.Set(lDataIndex, boost::any_cast<SvTh::SVCameraTriggerData::NameVariantMap>(l_TriggerInfo.m_TriggerInfo.m_Data));
+							m_CameraInputData.Set(lDataIndex, boost::any_cast<SvTh::SVCameraTriggerData::NameVariantMap>(poppedFromQueue.m_TriggerInfo.m_Data));
 						}
 						// Get Shared Memory Slot
 						if (HasActiveMonitorList())
@@ -4107,7 +4110,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 					}
 				}
 			} // if( m_bOnline )
-		} // if( S_OK == m_oTriggerQueue.PopHead( l_TriggerInfo )  )
+		} // if( S_OK == m_oTriggerQueue.PopHead( poppedFromQueue )  )
 		else
 		{
 			l_Status = E_FAIL;

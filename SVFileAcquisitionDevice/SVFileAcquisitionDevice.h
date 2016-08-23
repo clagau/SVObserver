@@ -12,8 +12,8 @@
 #pragma once
 
 #include "SVTriggerLibrary/SVInternalTrigger.h"
-#include "TriggerHandling/SVTriggerCallbackMap.h"
-#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/AcquisitionTriggers.h"
+
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVFileAcquisitionDeviceExports.h"
 #include "SVFileCamera.h"
@@ -29,7 +29,7 @@ private:
 	SVFileCameraList m_cameras;
 	
 	SVInternalTrigger m_triggerMgr;
-	SvTh::SVTriggerCallbackMap m_triggerMap;
+	SvTh::AcquisitionTriggers m_acquisitionTriggers;
 
 public:
 	SVFileAcquisitionDevice();
@@ -64,8 +64,8 @@ public:
 
 	virtual HRESULT InternalTriggerEnable( unsigned long p_ulIndex );
 	virtual HRESULT InternalTrigger( unsigned long p_ulIndex );
-	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo );
-	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo );
+	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher );
+	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher );
 	virtual HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_ulIndex );
 
 	// Trigger stuff...
@@ -74,22 +74,22 @@ public:
 	// convert ordinal to handle
 	unsigned long TriggerGetHandle(unsigned long p_ulIndex);
 
-	virtual HRESULT TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName);
-	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
-	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
-	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long p_ulHandle);
-	virtual HRESULT TriggerStart(unsigned long p_ulHandle);
-	virtual HRESULT TriggerStop(unsigned long p_ulHandle);
+	virtual HRESULT TriggerGetName(unsigned long triggerchannel, BSTR& p_rbstrName);
+	virtual HRESULT TriggerRegisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
+	virtual HRESULT TriggerUnregisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
+	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long triggerchannel);
+	virtual HRESULT TriggerStart(unsigned long triggerchannel);
+	virtual HRESULT TriggerStop(unsigned long triggerchannel);
 
-	virtual HRESULT TriggerGetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount );
-	virtual HRESULT TriggerGetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName );
-	virtual HRESULT TriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	virtual HRESULT TriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	virtual HRESULT TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
+	virtual HRESULT TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
+	virtual HRESULT TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	virtual HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
 private:
-	bool IsValidDigitizer(unsigned long p_ulHandle) const;
-	SVFileCamera& GetDigitizer(unsigned long p_ulHandle);
-	const SVFileCamera& GetDigitizer(unsigned long p_ulHandle) const;
+	bool IsValidDigitizer(unsigned long triggerchannel) const;
+	SVFileCamera& GetDigitizer(unsigned long triggerchannel);
+	const SVFileCamera& GetDigitizer(unsigned long triggerchannel) const;
 
 	HRESULT CameraProcessStartFrame( unsigned long p_ulIndex );
 	HRESULT CameraProcessEndFrame( unsigned long p_ulIndex );
@@ -98,7 +98,7 @@ private:
 	HRESULT DispatchTriggerCallback( unsigned long p_ulIndex );
 
 	void DoAcquisitionTrigger(SVFileCamera& rCamera);
-	HRESULT IsAcquisitionTriggered(unsigned long p_ulHandle, bool& bAcquisitionTriggered) const;
-	HRESULT SetAcquisitionTriggered(unsigned long p_ulHandle, bool bAcquisitionTriggered);
+	HRESULT IsAcquisitionTriggered(unsigned long triggerchannel, bool& bAcquisitionTriggered) const;
+	HRESULT SetAcquisitionTriggered(unsigned long triggerchannel, bool bAcquisitionTriggered);
 };
 

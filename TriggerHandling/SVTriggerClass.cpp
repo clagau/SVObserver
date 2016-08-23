@@ -11,12 +11,13 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
+
+#include "TriggerHandling/TriggerBasics.h"
 #include "SVTriggerClass.h"
-#include "TriggerBasics.h"
-#include "SVIOTriggerLoadLibraryClass.h"
+
 
 namespace Seidenader { namespace TriggerHandling {
-	HRESULT CALLBACK SVTriggerClass::SVTriggerCallback(TriggerParameters triggerparams)
+	HRESULT CALLBACK TriggerCallbackSvtc(SvTh::TriggerParameters triggerparams)
 	{
 		HRESULT hrOk = S_OK;
 
@@ -27,6 +28,7 @@ namespace Seidenader { namespace TriggerHandling {
 			SVTriggerClass *pDevice = (SVTriggerClass *)(triggerparams.m_pOwner);
 
 			l_Response.Reset();
+
 			l_Response.SetIsValid( TRUE );
 			l_Response.SetIsComplete( TRUE );
 
@@ -47,7 +49,7 @@ namespace Seidenader { namespace TriggerHandling {
 	SVTriggerClass::SVTriggerClass(LPCTSTR deviceName)
 	: SVODeviceClass(deviceName)
 	, m_pDLLTrigger(nullptr)
-	, m_ulHandle(0)
+	, m_triggerchannel(0)
 	, miChannelNumber(-1)
 	{
 		#ifdef SV_LOG_STATUS_INFO
@@ -63,11 +65,7 @@ namespace Seidenader { namespace TriggerHandling {
 	{
 		HRESULT l_hrOk = S_OK;
 
-		TriggerCallbackInformation triggerCallbackInfo;
-
-		triggerCallbackInfo.m_pCallback = SVTriggerClass::SVTriggerCallback;
-		triggerCallbackInfo.m_TriggerParameters.m_pOwner = this;
-		triggerCallbackInfo.m_TriggerParameters.m_pData = pvOwner;
+		SvTh::TriggerDispatcher dispatcher(TriggerCallbackSvtc,SvTh::TriggerParameters(this, pvOwner));
 
 		l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
@@ -75,12 +73,12 @@ namespace Seidenader { namespace TriggerHandling {
 		{
 			if ( S_OK == l_hrOk )
 			{
-				l_hrOk = m_pDLLTrigger->Register( m_ulHandle, triggerCallbackInfo );
+				l_hrOk = m_pDLLTrigger->Register( m_triggerchannel, dispatcher );
 			}
 
 			if ( S_OK != l_hrOk )
 			{
-				m_pDLLTrigger->Unregister( m_ulHandle, triggerCallbackInfo );
+				m_pDLLTrigger->Unregister( m_triggerchannel, dispatcher );
 			}
 		}
 		else
@@ -100,12 +98,9 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			TriggerCallbackInformation triggerCallbackInfo;
+			SvTh::TriggerDispatcher dispatcher(TriggerCallbackSvtc, SvTh::TriggerParameters(this, pvOwner));
 
-			triggerCallbackInfo.m_pCallback = SVTriggerCallback;
-			triggerCallbackInfo.m_TriggerParameters = TriggerParameters(this, pvOwner);
-
-			l_hrOk = m_pDLLTrigger->Unregister( m_ulHandle, triggerCallbackInfo );
+			l_hrOk = m_pDLLTrigger->Unregister( m_triggerchannel, dispatcher );
 		}
 		else
 		{
@@ -128,7 +123,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			HRESULT l_Temp = m_pDLLTrigger->UnregisterAll( m_ulHandle );
+			HRESULT l_Temp = m_pDLLTrigger->UnregisterAll( m_triggerchannel );
 		
 			if( S_OK != l_Temp && S_OK == l_hrOk )
 			{
@@ -156,7 +151,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			l_hrOk = m_pDLLTrigger->Start( m_ulHandle );
+			l_hrOk = m_pDLLTrigger->Start( m_triggerchannel );
 		}
 		else
 		{
@@ -177,7 +172,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			HRESULT l_Temp = m_pDLLTrigger->Stop( m_ulHandle );
+			HRESULT l_Temp = m_pDLLTrigger->Stop( m_triggerchannel );
 
 			if( S_OK != l_Temp && S_OK == l_hrOk )
 			{

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "TriggerHandling/TriggerBasics.h"
+
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVTimerLibrary/SVClock.h"

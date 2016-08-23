@@ -17,7 +17,7 @@
 #include "SVOCameraObj.h"
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
-#include "SVOTriggerObj.h"
+#include "TriggerInformation/SVOTriggerObj.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 
 #ifdef _DEBUG
@@ -184,7 +184,7 @@ void CSVOProPosQueDlg::OnBtnAddVt()
 {
     int iTrigCount = m_pParent->GetTriggerListCount();
     CString sTriggerName;
-    SVOTriggerObjPtr pTriggerObj( nullptr );
+    SvTi::SVOTriggerObjPtr pTriggerObj( nullptr );
 	SVOPPQObjPtr pPPQObj( nullptr );
     CString sPPQ;
     int iPPQ = m_ctlPPQList.GetCurSel();

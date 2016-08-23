@@ -13,16 +13,15 @@
 #include "stdafx.h"
 #include "SVTriggerProcessingClass.h"
 #include "SVHardwareManifest.h"
-#include "SVTriggerClass.h"
-#include "SVIOTriggerLoadLibraryClass.h"
-#include "SVSoftwareTriggerClass.h"
-#include "SVCameraTriggerClass.h"
-#include "SVTriggerConstants.h"
+#include "TriggerHandling/SVTriggerClass.h"
+#include "TriggerHandling/SVSoftwareTriggerClass.h"
+#include "TriggerHandling/SVCameraTriggerClass.h"
+#include "TriggerHandling/SVTriggerConstants.h"
 #pragma endregion Includes
 
 static int i = 0;
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 
 		SVTriggerProcessingClass& SVTriggerProcessingClass::Instance()
 		{
@@ -48,19 +47,19 @@ namespace Seidenader { namespace TriggerHandling {
 
 			while( l_Iter != l_rTriggerParams.end() )
 			{
-				SVTriggerClass* l_pTrigger = nullptr;
+				SvTh::SVTriggerClass* l_pTrigger = nullptr;
 
-				if( 0 == l_Iter->m_Name.find( SoftwareTriggerName ) )
+				if( 0 == l_Iter->m_Name.find( SvTh::SoftwareTriggerName ) )
 				{
-					l_pTrigger = new SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
+					l_pTrigger = new SvTh::SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
 				}
 				else if( l_Iter->m_Name.find( _T( "IO_Board" ) ) == 0 )
 				{
-					l_pTrigger = new SVTriggerClass( l_Iter->m_Name.c_str() );
+					l_pTrigger = new SvTh::SVTriggerClass( l_Iter->m_Name.c_str() );
 				}
-				else if( 0 == l_Iter->m_Name.find( CameraTriggerName ) )
+				else if( 0 == l_Iter->m_Name.find( SvTh::CameraTriggerName ) )
 				{
-					l_pTrigger = new SVCameraTriggerClass( l_Iter->m_Name.c_str() );
+					l_pTrigger = new SvTh::SVCameraTriggerClass( l_Iter->m_Name.c_str() );
 				}
 
 				if( nullptr != l_pTrigger )
@@ -84,7 +83,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 				while( l_Iter != m_Triggers.end() )
 				{
-					SVTriggerClass* l_pTrigger = l_Iter->second;
+					SvTh::SVTriggerClass* l_pTrigger = l_Iter->second;
 
 					if( nullptr != l_pTrigger )
 					{
@@ -107,7 +106,7 @@ namespace Seidenader { namespace TriggerHandling {
 					if( nullptr != l_Iter->second )
 					{
 						l_Iter->second->m_pDLLTrigger = nullptr;
-						l_Iter->second->m_ulHandle = 0;
+						l_Iter->second->m_triggerchannel = 0;
 					}
 					++l_Iter;
 				}
@@ -138,15 +137,15 @@ namespace Seidenader { namespace TriggerHandling {
 				{
 					SVString l_Name;
 
-					unsigned long l_ulHandle = 0;
+					unsigned long triggerchannel = 0;
 
-					l_hrOk = p_pDLLTrigger->GetHandle( &l_ulHandle, i );
+					l_hrOk = p_pDLLTrigger->GetHandle( &triggerchannel, i );
 
 					if ( S_OK == l_hrOk )
 					{
 						BSTR l_bstrName = nullptr;
 
-						l_hrOk = p_pDLLTrigger->GetName( l_ulHandle, &l_bstrName );
+						l_hrOk = p_pDLLTrigger->GetName( triggerchannel, &l_bstrName );
 
 						if( S_OK == l_hrOk )
 						{
@@ -167,7 +166,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 					if( S_OK == l_hrOk )
 					{
-						l_hrOk = AddTrigger( l_Name.c_str(), p_pDLLTrigger, l_ulHandle );
+						l_hrOk = AddTrigger( l_Name.c_str(), p_pDLLTrigger, triggerchannel );
 					}
 				}
 			}
@@ -179,9 +178,9 @@ namespace Seidenader { namespace TriggerHandling {
 			return l_hrOk;
 		}
 
-		SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const
+		SvTh::SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const
 		{
-			SVTriggerClass* l_pTrigger = nullptr;
+			SvTh::SVTriggerClass* l_pTrigger = nullptr;
 
 			SVNameTriggerMap::const_iterator l_Iter = m_Triggers.find( szName );
 
@@ -204,7 +203,7 @@ namespace Seidenader { namespace TriggerHandling {
 				if( l_Iter->second->m_pDLLTrigger != p_pTriggerSubsystem )
 				{
 					l_Iter->second->m_pDLLTrigger = p_pTriggerSubsystem;
-					l_Iter->second->m_ulHandle = p_Handle;
+					l_Iter->second->m_triggerchannel = p_Handle;
 
 					SVNameTriggerSubsystemMap::iterator l_SubsystemIter = m_TriggerSubsystems.find( p_szName );
 
@@ -226,4 +225,4 @@ namespace Seidenader { namespace TriggerHandling {
 			return l_Status;
 		}
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */

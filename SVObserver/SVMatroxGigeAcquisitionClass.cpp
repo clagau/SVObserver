@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "SVMessage/SVMessage.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraFileReader.h"
@@ -37,7 +38,7 @@
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVMatroxGigeAcquisitionClass::SVMatroxGigeAcquisitionClass( const SvTh::SVAcquisitionConstructParams& p_rParams )
+SVMatroxGigeAcquisitionClass::SVMatroxGigeAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
 {
 	mbIsCamFilesLoaded = false;

@@ -24,7 +24,7 @@
 #include "SVInspectionProcess.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVPPQObject.h"
-#include "TriggerHandling/SVTriggerObject.h"
+#include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "TriggerHandling/SVSoftwareTriggerClass.h"
 #include "TriggerHandling/SVCameraTriggerClass.h"
@@ -33,6 +33,17 @@
 #include "RemoteMonitorList.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 #pragma endregion Includes
+
+
+namespace Seidenader { namespace TriggerHandling {//namespace used only for forward declarations
+
+	class SVSoftwareTriggerClass;
+	class SVCameraTriggerClass;
+
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;
+
 
 
 #pragma region Declarations
@@ -206,11 +217,11 @@ public:
 										SVLut*& rpLut,
 										SVDeviceParamCollection*& rpDeviceParams ) const;
 
-	bool AddTrigger( SvTh::SVTriggerObject* pTrigger );
-	bool RemoveTrigger( SvTh::SVTriggerObject* pTrigger );
+	bool AddTrigger( SvTi::SVTriggerObject* pTrigger );
+	bool RemoveTrigger( SvTi::SVTriggerObject* pTrigger );
 	long GetTriggerCount( ) const;
-	SvTh::SVTriggerObject* GetTrigger( long lIndex ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SvTh::SVTriggerObject** ppTrigger ) const;
+	SvTi::SVTriggerObject* GetTrigger( long lIndex ) const;
+	BOOL GetChildObjectByName( LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger ) const;
 
 	bool AddPPQ( SVPPQObject* pPPQ );
 	bool RemovePPQ( SVPPQObject* pPPQ );
@@ -399,7 +410,7 @@ private:
 	//************************************
 	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const SVString& listName, MonitoredObjectList& rList );
 
-	SvTh::SVTriggerObjectArray        m_arTriggerArray;
+	SvTi::SVTriggerObjectArray        m_arTriggerArray;
 	SVPPQObjectArray            m_arPPQArray;
 	SVVirtualCameraArray        m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;

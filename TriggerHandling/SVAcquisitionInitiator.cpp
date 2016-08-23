@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVOMFCLibrary\SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVAcquisitionInitiator.h"
 
@@ -55,7 +55,7 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 	}
 
-	HRESULT SVAcquisitionInitiator::RegisterCallback(const TriggerCallbackInformation& rTriggerCallbackInfo)
+	HRESULT SVAcquisitionInitiator::RegisterCallback(const SvTh::TriggerDispatcher& rDispatcher)
 	{
 		HRESULT hr = S_FALSE;
 		if (m_initiatorList.size())
@@ -70,14 +70,14 @@ namespace Seidenader { namespace TriggerHandling {
 				if (handleList.size())
 				{
 					// register first one or just last one?
-					hr = pDLL->InternalTriggerRegister(handleList[0], rTriggerCallbackInfo);
+					hr = pDLL->InternalTriggerRegister(handleList[0], rDispatcher);
 				}
 			}
 		}
 		return hr;
 	}
 
-	HRESULT SVAcquisitionInitiator::UnRegisterCallback(const TriggerCallbackInformation& rTriggerCallbackInfo)
+	HRESULT SVAcquisitionInitiator::UnRegisterCallback(const SvTh::TriggerDispatcher& rDispatcher)
 	{
 		HRESULT hr = S_FALSE;
 		if (m_initiatorList.size())
@@ -92,7 +92,7 @@ namespace Seidenader { namespace TriggerHandling {
 				if (handleList.size())
 				{
 					// register first one or just last one?
-					hr = pDLL->InternalTriggerUnregister(handleList[0], rTriggerCallbackInfo);
+					hr = pDLL->InternalTriggerUnregister(handleList[0], rDispatcher);
 				}
 			}
 		}

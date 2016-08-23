@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVSoftwareTriggerClass.h"
 #include "TriggerBasics.h"
-#include "SVIOTriggerLoadLibraryClass.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 
 namespace Seidenader { namespace TriggerHandling {
 
@@ -74,30 +74,28 @@ namespace Seidenader { namespace TriggerHandling {
 
 		l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
+		TriggerParameters tp(this, pvOwner);
+
 		if ( nullptr != m_pDLLTrigger )
 		{
-			TriggerCallbackInformation localCallback;
-			localCallback.m_pCallback = SVSoftwareTriggerClass::TriggerCallback;
-			localCallback.m_TriggerParameters = TriggerParameters(this, pvOwner);
+			TriggerDispatcher localCallback(SVSoftwareTriggerClass::TriggerCallback, tp);
 
-			TriggerCallbackInformation triggerCallbackInfo;
-			triggerCallbackInfo.m_pCallback = SVSoftwareTriggerClass::TriggerCompleteCallback;
-			triggerCallbackInfo.m_TriggerParameters = TriggerParameters(this, pvOwner);
+			TriggerDispatcher dispatcher(SVSoftwareTriggerClass::TriggerCompleteCallback, tp);
 
 			if ( S_OK == l_hrOk )
 			{
-				l_hrOk = m_pDLLTrigger->Register( m_ulHandle, localCallback );
+				l_hrOk = m_pDLLTrigger->Register( m_triggerchannel, localCallback );
 			}
 
 			if ( S_OK == l_hrOk )
 			{
-				l_hrOk = m_acquisitionInitiator.RegisterCallback( triggerCallbackInfo );
+				l_hrOk = m_acquisitionInitiator.RegisterCallback( dispatcher );
 			}
 
 			if ( S_OK != l_hrOk )
 			{
-				m_pDLLTrigger->Unregister( m_ulHandle, localCallback );
-				m_acquisitionInitiator.UnRegisterCallback(triggerCallbackInfo);
+				m_pDLLTrigger->Unregister( m_triggerchannel, localCallback );
+				m_acquisitionInitiator.UnRegisterCallback(dispatcher);
 			}
 		}
 		else
@@ -119,20 +117,15 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			TriggerCallbackInformation localCallback;
+			TriggerDispatcher localCallback(SVSoftwareTriggerClass::TriggerCallback, TriggerParameters(this, pvOwner));
 
-			localCallback.m_pCallback = SVSoftwareTriggerClass::TriggerCallback;
-			localCallback.m_TriggerParameters = TriggerParameters(this, pvOwner);
+			TriggerDispatcher dispatcher(SVSoftwareTriggerClass::TriggerCompleteCallback, TriggerParameters(this, pvOwner));
 
-			TriggerCallbackInformation triggerCallbackInfo;
-			triggerCallbackInfo.m_pCallback = SVSoftwareTriggerClass::TriggerCompleteCallback;
-			localCallback.m_TriggerParameters = TriggerParameters(this, pvOwner);
-
-			if ( S_OK != m_pDLLTrigger->Unregister( m_ulHandle, localCallback ) )
+			if ( S_OK != m_pDLLTrigger->Unregister( m_triggerchannel, localCallback ) )
 			{
 				l_hrOk = S_FALSE;
 			}
-			m_acquisitionInitiator.UnRegisterCallback(triggerCallbackInfo);
+			m_acquisitionInitiator.UnRegisterCallback(dispatcher);
 		}
 		else
 		{

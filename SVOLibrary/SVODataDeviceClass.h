@@ -17,6 +17,7 @@
 
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 
+
 #include "SVOCallbackClass.h"
 #include "SVODataResponseClass.h"
 #include "SVProcessFunctor.h"
@@ -58,6 +59,7 @@ public:
 	virtual HRESULT Stop();
 	virtual HRESULT Reset();
 
+
 	LPCTSTR GetDeviceName() const;
 	virtual void SetDeviceName( LPCTSTR p_szName );
 
@@ -82,6 +84,8 @@ protected:
 	virtual HRESULT GetIsValid( bool &rbIsValid )const;
 	virtual HRESULT SetIsValid( bool bIsValid );
 
+
+
 	//This attribute is a container that holds the list of registered recipients of the acquisition notifications.
 	SVCallbackClassPtrQueue m_CallbackList;
 
@@ -98,6 +102,8 @@ private:
 
 	HRESULT DestroyLocal();
 
+
+
 	//This attribute holds the validity state of this object.
 	bool mbIsValid;
 	//This attribute holds the processing state of this object.
@@ -106,7 +112,7 @@ private:
 	//This attribute holds the handle to the application thread.
 	SVAsyncProcedure< SVAPCFunctionPtr, SVProcessFunctorImpl > m_Thread;
 
-	//This attribute is a container that holds the unused resposes in the callback system.
+	//This attribute is a container that hold the unused responses in the callback system.
 	SVDataResponseQueue mUsedQueue;
 };
 

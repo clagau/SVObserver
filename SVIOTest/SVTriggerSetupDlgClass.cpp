@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 
-#include "TriggerHandling/TriggerBasics.h"
+
 #include "sviotest.h"
 #include "SVTriggerSetupDlgClass.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
@@ -74,12 +74,12 @@ void SVTriggerSetupDlgClass::OnStrobe1InvBtn()
 	CButton* l_btn = (CButton*)GetDlgItem(IDC_STROBE1_INV_BTN);
 	if( l_btn->GetCheck() )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(0, 0);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(0, 0);
 		m_lStrobeInverts |= 1;
 	}
 	else
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(0, 1);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(0, 1);
 		m_lStrobeInverts &= ~1L;
 	}
 }
@@ -89,12 +89,12 @@ void SVTriggerSetupDlgClass::OnStrobe2InvBtn()
 	CButton* l_btn = (CButton*)GetDlgItem(IDC_STROBE2_INV_BTN);
 	if( l_btn->GetCheck() )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(1, 0);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(1, 0);
 		m_lStrobeInverts |= 2;
 	}
 	else
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(1, 1);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(1, 1);
 		m_lStrobeInverts &= ~2L;
 	}
 }
@@ -104,12 +104,12 @@ void SVTriggerSetupDlgClass::OnStrobe3InvBtn()
 	CButton* l_btn = (CButton*)GetDlgItem(IDC_STROBE3_INV_BTN);
 	if( l_btn->GetCheck() )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(2, 0);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(2, 0);
 		m_lStrobeInverts |= 4;
 	}
 	else
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(2, 1);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(2, 1);
 		m_lStrobeInverts &= ~4L;
 	}
 }
@@ -119,12 +119,12 @@ void SVTriggerSetupDlgClass::OnStrobe4InvBtn()
 	CButton* l_btn = (CButton*)GetDlgItem(IDC_STROBE4_INV_BTN);
 	if( l_btn->GetCheck() )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(3, 0);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(3, 0);
 		m_lStrobeInverts |= 8;
 	}
 	else
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(3, 1);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(3, 1);
 		m_lStrobeInverts &= ~8L;
 	}
 }
@@ -135,12 +135,12 @@ void SVTriggerSetupDlgClass::OnTrig1InvBtn()
 	CButton* l_btn = (CButton*)GetDlgItem(IDC_TRIG1_INV_BTN);
 	if( l_btn->GetCheck() )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(0, 0);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(0, 0);
 		m_lTrigInverts |= 1;
 	}
 	else
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(0, 1);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(0, 1);
 		m_lTrigInverts &= ~1L;
 	}
 }
@@ -150,12 +150,12 @@ void SVTriggerSetupDlgClass::OnTrig2InvBtn()
 	CButton* l_btn = (CButton*)GetDlgItem(IDC_TRIG2_INV_BTN);
 	if( l_btn->GetCheck() )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(1, 0);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(1, 0);
 		m_lTrigInverts |= 2;
 	}
 	else
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(1, 1);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(1, 1);
 		m_lTrigInverts &= ~2L;
 	}
 }
@@ -165,12 +165,12 @@ void SVTriggerSetupDlgClass::OnTrig3InvBtn()
 	CButton* l_btn = (CButton*)GetDlgItem(IDC_TRIG3_INV_BTN);
 	if( l_btn->GetCheck() )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(2, 0);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(2, 0);
 		m_lTrigInverts |= 4;
 	}
 	else
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(2, 1);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(2, 1);
 		m_lTrigInverts &= ~4L;
 	}
 }
@@ -180,12 +180,12 @@ void SVTriggerSetupDlgClass::OnTrig4InvBtn()
 	CButton* l_btn = (CButton*)GetDlgItem(IDC_TRIG4_INV_BTN);
 	if( l_btn->GetCheck() )
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(3, 0);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(3, 0);
 		m_lTrigInverts |= 8;
 	}
 	else
 	{
-		SvTh::SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(3, 1);
+		SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(3, 1);
 		m_lTrigInverts &= ~8L;
 	}
 }

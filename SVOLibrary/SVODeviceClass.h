@@ -63,6 +63,8 @@ public:
 	LPCTSTR GetDeviceName() const;
 	virtual void SetDeviceName( LPCTSTR p_szName );
 
+	virtual HRESULT Notify( SVOResponseClass& p_rResponse );
+
 protected:
 	typedef SVRingBuffer< SVOResponseClass > SVResponseQueue;
 
@@ -71,8 +73,6 @@ protected:
 	virtual HRESULT Process( bool& p_WaitForEvents );
 
 	/* Device Callback Functions */
-
-	virtual HRESULT Notify( SVOResponseClass& p_rResponse );
 
 	virtual HRESULT GetUsedResponse( SVResponseQueue &rUsedQueue, SVOResponseClass& p_rResponse );
 	virtual HRESULT AddUsedResponse( SVResponseQueue &rUsedQueue, SVOResponseClass& p_rResponse );
@@ -91,6 +91,9 @@ protected:
 
 	//This attribute holds the device name.
 	SVDeviceName mDeviceName;
+
+
+
 
 private:
 	SVODeviceClass();

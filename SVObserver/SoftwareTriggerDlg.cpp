@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVObserver.h"
+
 #include "SoftwareTriggerDlg.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 
@@ -268,7 +268,7 @@ void SVSoftwareTriggerDlg::ClearTriggers()
 	m_triggerTabs.DeleteAllItems();
 }
 
-bool SVSoftwareTriggerDlg::AddTrigger(SvTh::SVTriggerObject* pTrigger)
+bool SVSoftwareTriggerDlg::AddTrigger(SvTi::SVTriggerObject* pTrigger)
 {
 	ASSERT( nullptr != pTrigger );
 	if( nullptr == pTrigger ){ return false; }

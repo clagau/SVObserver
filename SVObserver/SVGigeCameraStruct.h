@@ -53,7 +53,7 @@ struct SVGigeCameraStruct : public SvOi::SVGigeCameraStructInterface
 	CString strIPAddress;
 	
 	int iPosition;
-	unsigned long m_ulHandle;
+	unsigned long m_triggerchannel;
 };
 
 typedef SVVector< SVGigeCameraStruct > SVGigeCameraStructSet;

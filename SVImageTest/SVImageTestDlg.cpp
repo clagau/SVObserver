@@ -228,13 +228,13 @@ void CSVImageTestDlg::OnRefresh()
 
 				if( nullptr != m_Camera[ i ].m_pAcquisition )
 				{
-					unsigned long l_ulHandle = 0;
+					unsigned long triggerchannel = 0;
 
 					BSTR l_bstrName = nullptr;
 					CString l_csName;
 
-					m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &l_ulHandle, i );
-					m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetName( l_ulHandle, &l_bstrName );
+					m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &triggerchannel, i );
+					m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetName( triggerchannel, &l_bstrName );
 
 					l_csName = l_bstrName;
 

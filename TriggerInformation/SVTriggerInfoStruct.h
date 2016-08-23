@@ -7,7 +7,8 @@
 /// Contains the struct SVTriggerInfoStruct 
 //******************************************************************************
 
-namespace Seidenader { namespace TriggerHandling {
+#pragma once
+namespace Seidenader { namespace TriggerInformation {
 	struct SVTriggerInfoStruct 
 	{
 		SVTriggerInfoStruct();
@@ -30,6 +31,6 @@ namespace Seidenader { namespace TriggerHandling {
 		SVClock::SVTimeStamp m_PreviousTrigger;
 		boost::any m_Data;
 	};
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */
 
-namespace SvTh = Seidenader::TriggerHandling;
+namespace SvTi = Seidenader::TriggerInformation;

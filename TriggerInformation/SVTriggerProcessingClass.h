@@ -14,14 +14,14 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 #include "SVUtilityLibrary/SVString.h"
-#include "SVTriggerClass.h"
+#include "TriggerHandling/SVTriggerClass.h"
 #pragma endregion Includes
 
 class SVIOTriggerLoadLibraryClass;
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 
-	class SVTriggerClass;
+	class SvTh::SVTriggerClass;
 
 	class SVTriggerProcessingClass
 	{
@@ -34,7 +34,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 		HRESULT UpdateTriggerSubsystem( SVIOTriggerLoadLibraryClass* p_pDLLTrigger );
 
-		SVTriggerClass* GetTrigger( LPCTSTR p_szName ) const;
+		SvTh::SVTriggerClass* GetTrigger( LPCTSTR p_szName ) const;
 
 		// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
 		// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declares in another project
@@ -44,7 +44,7 @@ namespace Seidenader { namespace TriggerHandling {
 	
 	private:
 		typedef std::set< SVIOTriggerLoadLibraryClass* > SVTriggerSubsystemSet;
-		typedef std::map< SVString, SVTriggerClass* > SVNameTriggerMap;
+		typedef std::map< SVString, SvTh::SVTriggerClass* > SVNameTriggerMap;
 		typedef std::map< SVString, SVIOTriggerLoadLibraryClass* > SVNameTriggerSubsystemMap;
 
 		SVTriggerProcessingClass();
@@ -66,4 +66,4 @@ namespace Seidenader { namespace TriggerHandling {
 	};
 } /* namespace TriggerHandling */ } /* namespace Seidenader */
 
-namespace SvTh = Seidenader::TriggerHandling;
+namespace SvTi = Seidenader::TriggerInformation;

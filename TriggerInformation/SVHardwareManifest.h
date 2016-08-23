@@ -19,7 +19,7 @@
 #include "SVSystemLibrary/SVObserverEnums.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 
 	class SVHardwareManifest
 	{
@@ -141,6 +141,6 @@ namespace Seidenader { namespace TriggerHandling {
 		static const SVIMTypeMap m_SVIMTypeMap;
 	};
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */
 
-namespace SvTh = Seidenader::TriggerHandling;
+namespace SvTi = Seidenader::TriggerInformation;

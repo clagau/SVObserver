@@ -245,9 +245,6 @@
     <ClCompile Include="SVFileAcquisitionClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVFileAcquisitionInitiator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVFileNameArrayClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -461,9 +458,6 @@
     <ClCompile Include="SVMultiDocTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVOAcquisitionDeviceMapClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectAppClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -558,12 +552,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOTriggerDeviceDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOTriggerList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOTriggerObj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOutputObject.cpp">
@@ -1533,9 +1521,6 @@
     <ClInclude Include="SVFileAcquisitionClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVFileAcquisitionInitiator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVFileNameArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1770,9 +1755,6 @@
     <ClInclude Include="SVMultiDocTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVOAcquisitionDeviceMapClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectAppClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1873,12 +1855,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOTriggerDeviceDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOTriggerList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOTriggerObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOutputObject.h">

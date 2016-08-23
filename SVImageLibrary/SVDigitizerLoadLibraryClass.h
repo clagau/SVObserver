@@ -35,11 +35,11 @@ typedef HRESULT (WINAPI *SVDigitizerStopPtr)( SVHANDLE );
 typedef HRESULT (WINAPI *SVDigitizerUnregisterBufferInterfacePtr)( SVHANDLE );
 typedef HRESULT (WINAPI *SVDigitizerInternalTriggerEnablePtr)( SVHANDLE );
 typedef HRESULT (WINAPI *SVDigitizerInternalTriggerPtr)( SVHANDLE );
-typedef HRESULT (WINAPI *SVDigitizerInternalTriggerRegisterPtr)( SVHANDLE, const SvTh::TriggerCallbackInformation &rTriggerCallbackInfo);
-typedef HRESULT (WINAPI *SVDigitizerInternalTriggerUnregisterPtr)( SVHANDLE, const SvTh::TriggerCallbackInformation &rTriggerCallbackInfo);
+typedef HRESULT (WINAPI *SVDigitizerInternalTriggerRegisterPtr)( SVHANDLE, const SvTh::TriggerDispatcher &rDispatcher);
+typedef HRESULT (WINAPI *SVDigitizerInternalTriggerUnregisterPtr)( SVHANDLE, const SvTh::TriggerDispatcher &rDispatcher);
 typedef HRESULT (WINAPI *SVDigitizerInternalTriggerUnregisterAllPtr)( SVHANDLE );
-typedef HRESULT (WINAPI *SVDigitizerUnregisterStartAcquirePtr)( SVHANDLE, unsigned long, SvTh::TriggerCallbackInformation triggerCallbackInfo);
-typedef HRESULT (WINAPI *SVDigitizerUnregisterStopAcquirePtr)( SVHANDLE, unsigned long, SvTh::TriggerCallbackInformation triggerCallbackInfo);
+typedef HRESULT (WINAPI *SVDigitizerUnregisterStartAcquirePtr)( SVHANDLE, unsigned long, const SvTh::TriggerDispatcher &rDispatcher);
+typedef HRESULT (WINAPI *SVDigitizerUnregisterStopAcquirePtr)( SVHANDLE, unsigned long, const SvTh::TriggerDispatcher &rDispatcher);
 typedef HRESULT (WINAPI *SVDigitizerUnregisterAllAcquirePtr)( SVHANDLE, unsigned long );
 typedef HRESULT (WINAPI *SVDigitizerDestroyBuffersPtr)( SVHANDLE );
 typedef HRESULT (WINAPI *SVDigitizerUnloadCameraFilePtr)( SVHANDLE );
@@ -83,8 +83,8 @@ public:
 	
 	HRESULT InternalTriggerEnable( SVHANDLE p_hHandle );
 	HRESULT InternalTrigger( SVHANDLE p_hHandle );
-	HRESULT InternalTriggerRegister( SVHANDLE p_hHandle, const SvTh::TriggerCallbackInformation &rTriggerCallbackInfo );
-	HRESULT InternalTriggerUnregister( SVHANDLE p_hHandle, const SvTh::TriggerCallbackInformation &rTriggerCallbackInfo );
+	HRESULT InternalTriggerRegister( SVHANDLE p_hHandle, const SvTh::TriggerDispatcher &rDispatcher );
+	HRESULT InternalTriggerUnregister( SVHANDLE p_hHandle, const SvTh::TriggerDispatcher &rDispatcher );
 	HRESULT InternalTriggerUnregisterAll( SVHANDLE p_hHandle );
 	
 	HRESULT DestroyBuffers( SVHANDLE p_hHandle );

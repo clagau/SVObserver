@@ -13,9 +13,9 @@
 #pragma region Includes
 #include "SVImageLibrary/SVLut.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "TriggerHandling/TriggerBasics.h"
+
 #include "SVTriggerLibrary/SVInternalTrigger.h"
-#include "TriggerHandling/SVTriggerCallbackMap.h"
+#include "TriggerHandling/AcquisitionTriggers.h"
 #pragma endregion Includes
 
 #include "SVMatroxGigeExports.h"
@@ -63,8 +63,8 @@ public:
 
 	virtual HRESULT InternalTriggerEnable( unsigned long p_Handle );
 	virtual HRESULT InternalTrigger( unsigned long p_Handle );
-	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo );
-	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerCallbackInformation& rTriggerCallbackInfo );
+	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerDispatcher& rDispatcher );
+	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerDispatcher& rDispatcher );
 	virtual HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_Handle );
 
 	virtual void ScanForCameras();
@@ -78,17 +78,17 @@ public:
 	// convert ordinal to handle
 	unsigned long TriggerGetHandle(unsigned long p_ulIndex);
 
-	virtual HRESULT TriggerGetName(unsigned long p_ulHandle, BSTR& p_rbstrName);
-	virtual HRESULT TriggerRegisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
-	virtual HRESULT TriggerUnregisterCallback(unsigned long p_ulHandle, SvTh::TriggerCallbackInformation triggerCallbackInfo);
-	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long p_ulHandle);
-	virtual HRESULT TriggerStart(unsigned long p_ulHandle);
-	virtual HRESULT TriggerStop(unsigned long p_ulHandle);
+	virtual HRESULT TriggerGetName(unsigned long triggerchannel, BSTR& p_rbstrName);
+	virtual HRESULT TriggerRegisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
+	virtual HRESULT TriggerUnregisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
+	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long triggerchannel);
+	virtual HRESULT TriggerStart(unsigned long triggerchannel);
+	virtual HRESULT TriggerStop(unsigned long triggerchannel);
 
-	virtual HRESULT TriggerGetParameterCount( unsigned long p_ulHandle, unsigned long *p_pulCount );
-	virtual HRESULT TriggerGetParameterName( unsigned long p_ulHandle, unsigned long p_ulIndex, BSTR *p_pbstrName );
-	virtual HRESULT TriggerGetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	virtual HRESULT TriggerSetParameterValue( unsigned long p_ulHandle, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	virtual HRESULT TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
+	virtual HRESULT TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
+	virtual HRESULT TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	virtual HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
 private:
 	long m_lRefCount;
@@ -96,7 +96,7 @@ private:
 	SVMatroxGigeSystemList m_Systems;
 
 	SVInternalTrigger m_triggerMgr;
-	SvTh::SVTriggerCallbackMap m_triggerMap;
+	SvTh::AcquisitionTriggers m_acquisitionTriggers;
 
 	SVMatroxGigeCameraParamTracker m_trackedCameraParameters;
 
@@ -157,8 +157,8 @@ private:
 
 	HRESULT FindCamera(const SVMatroxGigeSystem& p_rSystem, long p_DeviceNumber, unsigned long& p_rHandle);
 
-	HRESULT IsAcquisitionTriggered(unsigned long p_ulHandle, bool& bAcquisitionTriggered) const;
-	HRESULT SetAcquisitionTriggered(unsigned long p_ulHandle, bool bAcquisitionTriggered);
+	HRESULT IsAcquisitionTriggered(unsigned long triggerchannel, bool& bAcquisitionTriggered) const;
+	HRESULT SetAcquisitionTriggered(unsigned long triggerchannel, bool bAcquisitionTriggered);
 	void DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier HookId );
 
 	// Matrox Hooks

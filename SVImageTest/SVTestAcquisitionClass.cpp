@@ -190,7 +190,7 @@ bool SVTestAcquisitionClass::IsOnline()
 
 bool SVTestAcquisitionClass::StartAcquire( SVCameraPage& p_rDisplay )
 {
-	unsigned long l_ulHandle = 0;
+	unsigned long triggerchannel = 0;
 
 	m_pDisplay = &p_rDisplay;
 
@@ -206,7 +206,7 @@ bool SVTestAcquisitionClass::StartAcquire( SVCameraPage& p_rDisplay )
 
 void SVTestAcquisitionClass::StopAcquire( )
 {
-	unsigned long l_ulHandle = 0;
+	unsigned long triggerchannel = 0;
 
 	m_bOnline = false;
 	

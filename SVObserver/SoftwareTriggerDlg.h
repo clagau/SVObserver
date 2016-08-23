@@ -13,8 +13,8 @@
 //Moved to precompiled header: #include <limits>
 //Moved to precompiled header: #include <boost/function.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
-#include "SVMFCControls\SVKnobControl.h"
-#include "TriggerHandling/SVTriggerObject.h"
+#include "SVMFCControls/SVKnobControl.h"
+#include "TriggerInformation/SVTriggerObject.h"
 
 // SoftwareTriggerDlg dialog
 namespace sv
@@ -30,13 +30,13 @@ namespace sv
 class SVTriggerProxy
 {
 public:
-	SVTriggerProxy(SvTh::SVTriggerObject* t): m_pTrigger(t), m_paused(false), m_period(200)
+	SVTriggerProxy(SvTi::SVTriggerObject* t): m_pTrigger(t), m_paused(false), m_period(200)
 	{
 	}
 	int GetSoftwareTriggerPeriod() { if( !m_paused){m_period = m_pTrigger->GetSoftwareTriggerPeriod();} return m_period; }
 	CString GetName() const { return m_pTrigger->GetName(); }
 	void SetSoftwareTriggerPeriod(long period, bool setTimer = false) { m_period = period; if (!m_paused) m_pTrigger->SetSoftwareTriggerPeriod(period, setTimer); }
-	SvTh::SVTriggerObject* GetTrigger() { return m_pTrigger; }
+	SvTi::SVTriggerObject* GetTrigger() { return m_pTrigger; }
 	void Pause() { m_paused = true; m_period = GetSoftwareTriggerPeriod(); m_pTrigger->SetSoftwareTriggerPeriod(INT_MAX, true); }
 	void Continue() { if (m_paused) { m_paused = false; m_pTrigger->SetSoftwareTriggerPeriod(m_period, true); } }
 	CString ButtonText() const { return m_paused?_T("Continue"):_T("Pause"); }
@@ -44,7 +44,7 @@ public:
 	bool Paused() const { return m_paused;  }
 
 private:
-	SvTh::SVTriggerObject* m_pTrigger;
+	SvTi::SVTriggerObject* m_pTrigger;
 	long m_period;
 	bool m_paused;
 };
@@ -104,7 +104,7 @@ public:
 	afx_msg void OnBnClickedPausebutton();
 	
 	void ClearTriggers();
-	bool AddTrigger(SvTh::SVTriggerObject* pTrigger);
+	bool AddTrigger(SvTi::SVTriggerObject* pTrigger);
 	bool HasTriggers() const { return m_triggerTabs.GetItemCount() > 0; }
 	int SelectTrigger();
 

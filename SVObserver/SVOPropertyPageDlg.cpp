@@ -11,6 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
+
+
 #include "SVOPropertyPageDlg.h"
 #include "SVObserver.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
@@ -34,7 +36,7 @@
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
 #include "SVPPQObject.h"
 #include "SVPPQConstants.h"
-#include "TriggerHandling/SVHardwareManifest.h"
+#include "TriggerInformation/SVHardwareManifest.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -332,7 +334,7 @@ void CSVOPropertyPageDlg::SetupAdvancedCamera()
 			pRoot->SetInfoText(_T("Advanced camera properties"));
 			
 			ASSERT( m_eProduct != SVIM_PRODUCT_TYPE_UNKNOWN );
-			if ( SvTh::SVHardwareManifest::IsDigitalSVIM( m_eProduct ) )
+			if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_eProduct ) )
 			{
 				// load options based on camera file
 				const SVDeviceParamCollection& rCameraFileParams = m_CameraObj.GetCameraFileParams();

@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+
 #include "SVObserver.h"
 #include "SVOCameraDlg.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
@@ -20,7 +21,7 @@
 #include "SVOInspectionObj.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVAcquisitionClass.h"
-#include "TriggerHandling/SVHardwareManifest.h"
+#include "TriggerInformation/SVHardwareManifest.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
@@ -81,8 +82,8 @@ BOOL CSVOCameraDlg::OnInitDialog()
     m_pParent = (CSVOConfigAssistantDlg*)GetParent()->GetParent();
     m_bNewConfig = m_pParent->GetNewConfigFlag();
 	
-	if( SvTh::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() )
-		&& SvTh::SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp.GetSVIMType() ))
+	if( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() )
+		&& SvTi::SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp.GetSVIMType() ))
 	{
 		m_btnCameraManager.ShowWindow(SW_SHOW);
 	}
@@ -113,7 +114,7 @@ void CSVOCameraDlg::OnUpdateAdvancedBtn( CCmdUI* pCmdUI )
 		{
 			if ( !pCameraObj->IsFileAcquisition() )
 			{
-				if ( SvTh::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
+				if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 				{
 					if( pCameraObj->GetCameraFile().IsEmpty() )
 					{
@@ -278,7 +279,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 						}
 					}
 
-					if ( SvTh::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
+					if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 					{
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
 						CString strDigName = m_pParent->BuildDigName( *pCameraObj );

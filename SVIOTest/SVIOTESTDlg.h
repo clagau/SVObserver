@@ -14,8 +14,8 @@
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
-class SvTh::SVIOConfigurationInterfaceClass;
-class SvTh::SVIOTriggerLoadLibraryClass;
+class SVIOConfigurationInterfaceClass;
+class SVIOTriggerLoadLibraryClass;
 
 enum IOBoardType
 {
@@ -41,16 +41,30 @@ struct SVIOTriggerDataStruct
 	SVClock::SVTimeStamp m_TotalTime;
 	SVClock::SVTimeStamp m_MinTime;
 	SVClock::SVTimeStamp m_MaxTime;
+
+	void OnTriggerStart();
+
 };
+
+const int c_upperBoundForTriggerChannel = 5;
+const int c_upperBoundForFanId = 5;
+const int c_upperBoundForInputChannel = 9;
 
 class CSVIOTESTDlg : public CDialog
 {
 // Construction
+private:
+	//@TODO[Arvid]: I have removed some code duplication in this Project.
+	//@TODO[Arvid]: currently the 0-th Array elements are not used and the array sizes are 5 (for just four trigger channels)
+	//@TODO[Arvid]: I have left it like this so the numbers used remain the same.
+	//@TODO[Arvid]: Whoever feels like correcting this is very welcome to tidy up the code further
+
+	HANDLE m_hWorkerThread;
 public:
 	bool m_bFast;
 	bool m_bTestRand;
-	HANDLE m_hWorkerThread;
 	bool m_bThreadRunning;
+
 	CSVIOTESTDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~CSVIOTESTDlg();
 
@@ -59,43 +73,17 @@ public:
 	enum { IDD = IDD_SVIOTEST_DIALOG };
 	CComboBox	m_BoardModelCombo;
 	CStatic	m_BoardTxt;
-	CStatic	m_Fan4Txt;
-	CStatic	m_Fan3Txt;
-	CStatic	m_Fan2Txt;
-	CStatic	m_Fan1Txt;
-	CStatic	m_Fan4;
-	CStatic	m_Fan3;
-	CStatic	m_Fan2;
-	CStatic	m_Fan1;
-	CStatic	m_Trigger4Minimum;
-	CStatic	m_Trigger3Minimum;
-	CStatic	m_Trigger2Minimum;
-	CStatic	m_Trigger1Minimum;
-	CStatic	m_Trigger4Maximum;
-	CStatic	m_Trigger3Maximum;
-	CStatic	m_Trigger2Maximum;
-	CStatic	m_Trigger1Maximum;
-	CStatic	m_Trigger3Distance;
-	CStatic	m_Trigger4Distance;
-	CStatic	m_Trigger2Distance;
-	CStatic	m_Trigger4Count;
-	CStatic	m_Trigger3Count;
-	CStatic	m_Trigger2Count;
-	CStatic	m_Trigger4Average;
-	CStatic	m_Trigger3Average;
-	CStatic	m_Trigger2Average;
-	CStatic	m_Trigger1Distance;
-	CStatic	m_Trigger1Count;
-	CStatic	m_Trigger1Average;
+
+	CStatic	m_FanTxt[c_upperBoundForFanId];
+	CStatic	m_Fan[c_upperBoundForFanId];
+	CStatic	m_TriggerMinimum[c_upperBoundForTriggerChannel];
+	CStatic	m_TriggerMaximum[c_upperBoundForTriggerChannel];
+	CStatic	m_TriggerDistance[c_upperBoundForTriggerChannel];
+	CStatic	m_TriggerCountWnd[c_upperBoundForTriggerChannel];
+	CStatic	m_TriggerAverage[c_upperBoundForTriggerChannel];
+
 	CButton	m_cbtSlow;
-	CStatic	m_input8;
-	CStatic	m_input7;
-	CStatic	m_input6;
-	CStatic	m_input5;
-	CStatic	m_input4;
-	CStatic	m_input3;
-	CStatic	m_input2;
-	CStatic	m_input1;
+	CStatic	m_input[c_upperBoundForInputChannel];
 	long	m_lStaticChannel;
 	int		m_BoardModel;
 	//}}AFX_DATA
@@ -109,7 +97,7 @@ public:
 	int nSpeed;
 	int nSeq;
 
-	SvTh::SVIOTriggerLoadLibraryClass *m_psvTriggers;
+	SVIOTriggerLoadLibraryClass *m_psvTriggers;
 
 	long m_lSystemType;
 
@@ -154,21 +142,18 @@ protected:
 	bool IsSoftwareTrigger() const;
 	bool AllowTriggerParamEditing() const;
 
-private:
-	long m_lTrigger1Count;
-	long m_lTrigger2Count;
-	long m_lTrigger3Count;
-	long m_lTrigger4Count;
+	void updateValues(int triggerchannel);
+	void StartTrigger(int triggerchannel);
 
-	SVIOTriggerDataStruct m_svTrigger1Data;
-	SVIOTriggerDataStruct m_svTrigger2Data;
-	SVIOTriggerDataStruct m_svTrigger3Data;
-	SVIOTriggerDataStruct m_svTrigger4Data;
+
+private:
+	long m_TriggerCount[c_upperBoundForTriggerChannel];
+
+	SVIOTriggerDataStruct m_TriggerData[c_upperBoundForTriggerChannel];
+
+	long m_FanFreq[c_upperBoundForFanId];
+
 public:
-	long m_lFanFreq1;
-	long m_lFanFreq2;
-	long m_lFanFreq3;
-	long m_lFanFreq4;
 };
 
 

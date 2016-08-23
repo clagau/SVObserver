@@ -11,13 +11,13 @@
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
+#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/SVTriggerClass.h"
 #include "SVTriggerObject.h"
-#include "SVTriggerClass.h"
-#include "SVTriggerConstants.h"
+#include "TriggerHandling/SVTriggerConstants.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"
-#include "SVIOTriggerLoadLibraryClass.h"
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 	HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void *pvOwner, void *pvCaller, void *pvResponse )
 	{
 		HRESULT hrOk = S_OK;
@@ -40,7 +40,7 @@ namespace Seidenader { namespace TriggerHandling {
 	, m_pOwner(nullptr)
 	, m_lTriggerCount(0)
 	, m_bSoftwareTrigger(false)
-	, m_timerPeriod(TimerPeriod) 
+	, m_timerPeriod(SvTh::TimerPeriod) 
 	{
 		#ifdef SV_LOG_STATUS_INFO
 			m_StatusLog.Create();
@@ -54,7 +54,7 @@ namespace Seidenader { namespace TriggerHandling {
 	, m_pOwner(nullptr)
 	, m_lTriggerCount(0)
 	, m_bSoftwareTrigger(false)
-	, m_timerPeriod(TimerPeriod) 
+	, m_timerPeriod(SvTh::TimerPeriod) 
 	{
 		#ifdef SV_LOG_STATUS_INFO
 			m_StatusLog.Create();
@@ -71,7 +71,7 @@ namespace Seidenader { namespace TriggerHandling {
 		m_lTriggerCount	= 0;
 	}
 
-	BOOL SVTriggerObject::Create( SVTriggerClass *psvDevice )
+	BOOL SVTriggerObject::Create( SvTh::SVTriggerClass *psvDevice )
 	{
 		BOOL bOk = TRUE;
 
@@ -226,7 +226,7 @@ namespace Seidenader { namespace TriggerHandling {
 
 		if (nullptr != mpsvDevice)
 		{
-			SVTriggerClass* pTrigger = dynamic_cast<SVTriggerClass *>(mpsvDevice);
+			SvTh::SVTriggerClass* pTrigger = dynamic_cast<SvTh::SVTriggerClass *>(mpsvDevice);
 			if (nullptr != pTrigger)
 			{
 				hr = pTrigger->EnableInternalTrigger();
@@ -276,7 +276,7 @@ namespace Seidenader { namespace TriggerHandling {
 		if (mpsvDevice)
 		{
 			SVString name = mpsvDevice->GetDeviceName();
-			bRet = (name.find(CameraTriggerName) == 0);
+			bRet = (name.find(SvTh::CameraTriggerName) == 0);
 		}
 		return bRet;
 	}
@@ -299,4 +299,4 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 	}
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */

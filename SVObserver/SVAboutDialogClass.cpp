@@ -15,7 +15,7 @@
 #include "SVObserver.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
-#include "TriggerHandling/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 
@@ -238,7 +238,7 @@ void SVAboutDialogClass::LoadVersionList()
 	// SVBoardVersion enum is used here to make the code more clear.
 	// however at some time in the future the Dll parameters may be implemented
 	// as an array and therefore this enum may not apply.
-	HRESULT l_hr = SvTh::SVIOConfigurationInterfaceClass::Instance().GetParameterName(SVBoardVersion, &l_bstName );
+	HRESULT l_hr = SVIOConfigurationInterfaceClass::Instance().GetParameterName(SVBoardVersion, &l_bstName );
 
 	if( S_OK == l_hr )
 	{
@@ -249,7 +249,7 @@ void SVAboutDialogClass::LoadVersionList()
 
 		::SysFreeString( l_bstName );
 
-		l_hr = SvTh::SVIOConfigurationInterfaceClass::Instance().GetParameterValue( SVBoardVersion, &l_vVersion );
+		l_hr = SVIOConfigurationInterfaceClass::Instance().GetParameterValue( SVBoardVersion, &l_vVersion );
 
 		// Display Information about the Board.
 		l_strValue = l_vVersion.bstrVal;

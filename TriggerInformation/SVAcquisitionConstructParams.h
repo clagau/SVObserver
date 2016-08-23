@@ -18,7 +18,7 @@
 #pragma endregion Includes
 
 
-namespace Seidenader { namespace TriggerHandling {
+namespace Seidenader { namespace TriggerInformation {
 
 	struct SVAcquisitionConstructParams
 	{
@@ -53,6 +53,6 @@ namespace Seidenader { namespace TriggerHandling {
 
 	typedef std::vector< SVAcquisitionConstructParams > SVAcquisitionConstructParamsVector;
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} /* namespace TriggerInformation */ } /* namespace Seidenader */
 
-namespace SvTh = Seidenader::TriggerHandling;
+namespace SvTi = Seidenader::TriggerInformation;

@@ -26,10 +26,10 @@ SVTestGigeAcquisitionSubsystem::~SVTestGigeAcquisitionSubsystem()
 
 SVTestAcquisitionClass* SVTestGigeAcquisitionSubsystem::GetAcquisitionDevice( long selectedCamera )
 {
-	unsigned long l_ulHandle = 0;
+	unsigned long triggerchannel = 0;
 
-	m_svDigitizers.GetHandle( &l_ulHandle, selectedCamera );
+	m_svDigitizers.GetHandle( &triggerchannel, selectedCamera );
 		
-	return new SVTestGigeAcquisitionClass( *this, l_ulHandle );
+	return new SVTestGigeAcquisitionClass( *this, triggerchannel );
 }
 

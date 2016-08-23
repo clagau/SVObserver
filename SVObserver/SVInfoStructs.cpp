@@ -637,6 +637,7 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 
 		m_ProductState = p_rsvData.m_ProductState;
 		bTriggered = p_rsvData.bTriggered;
+
 		bStartAcquisition = p_rsvData.bStartAcquisition;
 		bFinishAcquisition = p_rsvData.bFinishAcquisition;
 		bDelayExpired = p_rsvData.bDelayExpired;
@@ -672,6 +673,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 
 		m_ProductState = p_rsvData.m_ProductState;
 		bTriggered = p_rsvData.bTriggered;
+
 		bStartAcquisition = p_rsvData.bStartAcquisition;
 		bFinishAcquisition = p_rsvData.bFinishAcquisition;
 		bDelayExpired = p_rsvData.bDelayExpired;

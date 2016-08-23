@@ -12,23 +12,29 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerHandling/SVAcquisitionInitiator.h"
+#include "SVAcquisitionInitiator.h"
 #pragma region Includes
 
-class SVFileAcquisitionInitiator
-{
-private:
-	SvTh::SVAcquisitionInitiator  m_acquisitionInitiator;
+namespace Seidenader { namespace TriggerHandling {
 
-public:
-	SVFileAcquisitionInitiator();
-	SVFileAcquisitionInitiator(SvTh::SVAcquisitionInitiator & rAcquisitionInitiator);
-	~SVFileAcquisitionInitiator();
+	class SVFileAcquisitionInitiator
+	{
+	private:
+		SvTh::SVAcquisitionInitiator  m_acquisitionInitiator;
 
-	void Create( SvTh::SVAcquisitionInitiator & rFunc );
-	void Destroy();
+	public:
+		SVFileAcquisitionInitiator();
+		SVFileAcquisitionInitiator(SVAcquisitionInitiator & rAcquisitionInitiator);
+		~SVFileAcquisitionInitiator();
 
-	HRESULT FireAcquisitionTrigger();
+		void Create( SVAcquisitionInitiator & rFunc );
+		void Destroy();
 
-	static HRESULT CALLBACK TriggerCallback(SvTh::TriggerParameters triggerparams);
-};
+		HRESULT FireAcquisitionTrigger();
+
+		static HRESULT CALLBACK TriggerCallback(SvTh::TriggerParameters triggerparams);
+	};
+
+} /* namespace TriggerHandling */ } /* namespace Seidenader */
+
+namespace SvTh = Seidenader::TriggerHandling;
