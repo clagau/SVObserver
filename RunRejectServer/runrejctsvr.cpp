@@ -30,9 +30,8 @@
 #include "SVSharedMemoryLibrary\SVMonitorListReader.h"
 #include "SVSharedMemoryLibrary\SVShareControlHandler.h"
 #include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
+#include "RunRejectService.h"
 #pragma endregion Includes
-
-bool g_bQuit = false;
 
 DWORD threadIds[3] = {0};
 HANDLE threads[3] = {0};
@@ -79,8 +78,6 @@ static std::map<std::string, ProductPtrPair> g_lastRejectProductMap;
 static std::map<std::string, ProductPtrPair> g_lastRejectMap; 
 
 
-using SvSml::SVSharedConfiguration;
-
 DWORD WINAPI servimg(LPVOID)
 {
 	try
@@ -95,7 +92,7 @@ DWORD WINAPI servimg(LPVOID)
 		const size_t buflen = 1024*48;
 		boost::scoped_array<u_char> arr(new u_char[buflen]);
 		long cnt = 0;
-		while (!g_bQuit)
+		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, 0) )
 		{
 			if (sok.ClientConnecting())
 			{
@@ -129,14 +126,14 @@ DWORD WINAPI servimg(LPVOID)
 						catch(std::exception & ex)
 						{
 							std::cout << ex.what() << std::endl;
-							SVSharedConfiguration::Log(ex.what());
+							SvSml::SVSharedConfiguration::Log(ex.what());
 							break;
 						}
 					}
 				}
 				else
 				{
-					SVSharedConfiguration::Log(client.Log(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError()), true));
+					SvSml::SVSharedConfiguration::Log(client.Log(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError()), true));
 				}
 			}
 		}
@@ -144,7 +141,7 @@ DWORD WINAPI servimg(LPVOID)
 	catch (std::exception & ex)
 	{
 		std::cout << ex.what() << std::endl;
-		SVSharedConfiguration::Log(ex.what());
+		SvSml::SVSharedConfiguration::Log(ex.what());
 	}	
 	return 0;
 }
@@ -721,7 +718,7 @@ std::string GenerateResponse(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 	{
 		rsp[SVRC::cmd::err] = ex.what();
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
-		SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
+		SvSml::SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
 	}
 	Json::FastWriter writer;
 	return writer.write(rsp);
@@ -855,14 +852,14 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl&
 		}
 		catch(std::exception & ex)
 		{
-			SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
+			SvSml::SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
 			std::cout << ex.what() << std::endl;
 		}
 	}
 	else
 	{
 		std::cout << "invalid socket\n";
-		SVSharedConfiguration::Log(client.Log(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError()), true));
+		SvSml::SVSharedConfiguration::Log(client.Log(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError()), true));
 	}
 }
 
@@ -882,7 +879,7 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl&
 		client.DisableDelay(); // turn off nagle
 	}
 
-	while (!g_bQuit && client.IsValidSocket() && client.IsConnected())
+	while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, 0) && client.IsValidSocket() && client.IsConnected())
 	{
 		if (client.DataAvailable())
 		{
@@ -929,7 +926,7 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl&
 			}
 			catch(std::exception & ex)
 			{
-				SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
+				SvSml::SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
 				std::cout << ex.what() << std::endl;
 			}
 		}
@@ -949,7 +946,7 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 		sok.Create();
 		sok.SetBlocking();
 		sok.Listen(port<API>::number);
-		while (!g_bQuit)
+		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, 0)  )
 		{
 			if (sok.ClientConnecting())
 			{
@@ -962,94 +959,6 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 		std::cout << ex.what() << std::endl;
 	}	
 	return 0;
-}
-
-void RunConsole()
-{
-	bool paused = false;
-	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE); 
-    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
-	CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
-	GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
-	WORD wOldColorAttrs = csbiInfo.wAttributes;
-
-	// Set the text attributes to draw green text on black background. 
-    SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-
-	// Turn off the line input and echo input modes 
-	DWORD fdwOldMode;
-    GetConsoleMode(hStdin, &fdwOldMode);
-    
-    DWORD fdwMode = fdwOldMode &  ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT); 
-    SetConsoleMode(hStdin, fdwMode);
-    	
-    LPTSTR lpszPrompt = _T("Type q to quit: ");
-	DWORD cWritten;
-	COORD coordScreen = { 0, 0 };
-	while (!g_bQuit) 
-    { 
-		coordScreen.X = 0;
-		coordScreen.Y = 23;
-		SetConsoleCursorPosition( hStdout, coordScreen);
-		
-		if (paused)
-		{
-			WriteConsole(hStdout, _T("*** PAUSED ***"), 14, &cWritten, nullptr);
-		}
-		else
-		{
-			WriteConsole(hStdout, _T("              "), 14, &cWritten, nullptr);
-		}
-		coordScreen.Y = 24;
-		SetConsoleCursorPosition( hStdout, coordScreen);
-		WriteConsole(hStdout, lpszPrompt, static_cast<DWORD>(_tcslen(lpszPrompt)), &cWritten, nullptr);
-
-		DWORD NumberOfEventsRead = 0;
-		INPUT_RECORD buff[128];
-		BOOL rc = PeekConsoleInput(hStdin, buff, sizeof(buff), &NumberOfEventsRead);
-		if (rc && NumberOfEventsRead)
-		{
-			rc = ReadConsoleInput(hStdin, buff, sizeof(buff), &NumberOfEventsRead);
-			if (rc && NumberOfEventsRead)
-			{           
-				for (DWORD i = 0; i < NumberOfEventsRead; i++) 
-				{
-					switch(buff[i].EventType) 
-					{ 
-						case KEY_EVENT: // keyboard input 
-						{
-							if (buff[i].Event.KeyEvent.uChar.AsciiChar == 'q' || buff[i].Event.KeyEvent.uChar.AsciiChar == 'Q' )
-							{
-								g_bQuit = true;
-							}
-							break; 
-						}
-	 
-						case MOUSE_EVENT: // mouse input 
-						//MouseEventProc(irInBuf[i].Event.MouseEvent); 
-						break; 
-	 
-						case WINDOW_BUFFER_SIZE_EVENT: // scrn buf. resizing 
-						//ResizeEventProc(irInBuf[i].Event.WindowBufferSizeEvent); 
-						break; 
-	 
-						case FOCUS_EVENT:  // disregard focus events 
-						case MENU_EVENT:   // disregard menu events 
-						break; 
-	 
-						default: 
-						break; 
-					} 
-				}
-			}
-		}
-		Sleep(250);
-	}
-	// Restore the original console mode. 
-    SetConsoleMode(hStdin, fdwOldMode);
-
-    // Restore the original text colors. 
-    SetConsoleTextAttribute(hStdout, wOldColorAttrs);
 }
 
 bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
@@ -1068,49 +977,14 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	return bFound;
 }
 
-bool IsProcessRunning(const TCHAR* processName,DWORD dwProcess)
-{
-    bool exists = false;
-    PROCESSENTRY32 entry;
-	memset(&entry, 0, sizeof(entry));
-    entry.dwSize = sizeof(PROCESSENTRY32);
-
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	if (INVALID_HANDLE_VALUE != snapshot)
-	{
-		if (Process32First(snapshot, &entry))
-		{
-			while (Process32Next(snapshot, &entry))
-			{
-				if (!_tcsicmp(entry.szExeFile, processName))
-				{
-					if (entry.th32ProcessID != dwProcess)
-					{
-						exists = true;
-					}
-				}
-			}
-		}
-		CloseHandle(snapshot);
-	}
-    return exists;
-}
 
 // Command Line arguments: /nocheck /show
 // /nocheck means to ignore the 2 GiG size requirement
-// /show means show console window (it is hidden by default)
-int _tmain(int argc, _TCHAR* argv[])
+void StartThreads( DWORD argc, LPWSTR  *argv )
 {
-	 DWORD pid = GetCurrentProcessId();
-
-	if ( IsProcessRunning(_T("RunRejectServer.exe"),pid) )
-	{
-		return -1;
-	}
 	// check command line args - if /nocheck is specified - ignore the < 2 Gig error
 	bool bCheckSizeOverride = CheckCommandLineArgs(argc, argv, _T("/nocheck"));
-	bool bShowConsole = CheckCommandLineArgs(argc, argv, _T("/show"));
-	
+
 	HRESULT hr = SvSml::SVSharedConfiguration::SharedResourcesOk();
 	if (S_OK != hr )
 	{
@@ -1136,35 +1010,27 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		if (S_OK != hr)
 		{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			::OutputDebugStringA(msg.c_str());
-#endif
 			std::cout << msg;
 			// Messagebox ?
-			return -1;
+			return;
 		}
 	}
+
 	try
 	{
 		const std::string& versionStr = GetVersionString();
 		std::string title = "Run/Reject Server ";
 		title += versionStr;
 		SetConsoleTitleA(title.c_str());
-		if (!bShowConsole)
-		{
-			HWND hWnd = GetConsoleWindow();
-			ShowWindow(hWnd, SW_HIDE);
-		}
 		SvSol::SVSocketLibrary::Init();
 		ShareControl ctrl;
 		DWORD threadIds[3];
 		HANDLE threads[3];
-		
+
 		threads[0] = CreateThread(nullptr, 0, servimg, nullptr, 0, &threadIds[0]);
 		threads[1] = CreateThread(nullptr, 0, servcmd<SvSol::TcpApi>, (void *)&ctrl, 0, &threadIds[1]);
 		threads[2] = CreateThread(nullptr, 0, servcmd<SvSol::UdpApi>, (void *)&ctrl, 0, &threadIds[2]);
-	
-		RunConsole();
 
 		// stop the threads...
 		::WaitForMultipleObjects(3, threads, true, INFINITE);
@@ -1174,6 +1040,23 @@ int _tmain(int argc, _TCHAR* argv[])
 		std::cout << "Failed to start: " << ex.what() << std::endl;
 	}
 	SvSol::SVSocketLibrary::Destroy();
-	return 0;
 }
 
+int _tmain(int argc, _TCHAR* argv[])
+{
+	//Function pointer for starting the threads
+	gp_StartThreads = &StartThreads;
+
+	SERVICE_TABLE_ENTRY ServiceTable[] = 
+	{
+		{ cServiceName, (LPSERVICE_MAIN_FUNCTION) ServiceMain },
+		{NULL, NULL}
+	};
+
+	if( !StartServiceCtrlDispatcher( ServiceTable ) )
+	{
+		OutputDebugString(_T("StartServiceCtrlDispatcher returned error"));
+		return GetLastError ();
+	}
+	return 0;
+}
