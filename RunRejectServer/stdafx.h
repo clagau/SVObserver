@@ -32,6 +32,7 @@
 #include <iomanip>
 #include <list>
 #include <process.h>
+#include <signal.h>
 #include <Psapi.h>
 #include <sstream>			//Used by static library
 #include <string>

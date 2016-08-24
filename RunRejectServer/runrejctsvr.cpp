@@ -69,7 +69,6 @@ typedef SvSml::ProductPtr ProductPtr;
 
 typedef std::pair<ProductPtr, long> ProductPtrPair;
 
-
 /// For last held product from GetProduct cmd. Map with ppqnames, (productPtr, Index) 
 static std::map<std::string, ProductPtrPair> g_LastProductMap;  
  /// For last held Reject from GetProduct cmd when product filter is lastReject.Map with ppqnames, (productPtr, Index) 
@@ -77,6 +76,16 @@ static std::map<std::string, ProductPtrPair> g_lastRejectProductMap;
 // For last held Reject from GetReject cmd. Map with ppqnames, (productPtr, Index) 
 static std::map<std::string, ProductPtrPair> g_lastRejectMap; 
 
+typedef void (*SignalHandlerPointer)(int);
+SignalHandlerPointer previousHandler(nullptr);
+
+using SvSml::SVSharedConfiguration;
+
+void AccessViolationHandler(int signal)
+{
+	SVSharedConfiguration::Log("Access Violation");
+    throw std::exception("Access Violation");
+}
 
 DWORD WINAPI servimg(LPVOID)
 {
@@ -127,7 +136,6 @@ DWORD WINAPI servimg(LPVOID)
 						{
 							std::cout << ex.what() << std::endl;
 							SvSml::SVSharedConfiguration::Log(ex.what());
-							break;
 						}
 					}
 				}
@@ -443,12 +451,13 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const Monitor
 		const ProductPtr product = rReader.RequestNextProduct(idx);
 		rslt = WriteProductItems<SvSol::UdpApi>(product, productItemNames);
 
-		if (lastProductPtrPair.second >= 0)
-		{
-			rReader.ReleaseProduct(lastProductPtrPair.first, lastProductPtrPair.second);
-		}
+		ProductPtrPair prevProduct = lastProductPtrPair;
 		lastProductPtrPair = std::make_pair(product, idx);
 		lastResult = rslt;
+		if (prevProduct.second >= 0)
+		{
+			rReader.ReleaseProduct(prevProduct.first, prevProduct.second);
+		}
 	}
 	return rslt;
 }
@@ -495,12 +504,14 @@ Json::Value GetRejectedProduct<SvSol::TcpApi>(PPQReader& rReader, long trig, con
 	ProductPtr product = rReader.RequestReject(trig, idx);
 	rslt = WriteProductItems<SvSol::TcpApi>(product, productItemNames);
 	
-	// Decide which product to keep and which to release...
-	if (lastReject.second >= 0)
-	{
-		rReader.ReleaseReject(lastReject.first, lastReject.second);
-	}
+	ProductPtrPair prevReject = lastReject;
 	lastReject = std::make_pair(product, idx);
+	// Decide which product to keep and which to release...
+	if (prevReject.second >= 0)
+	{
+		rReader.ReleaseReject(prevReject.first, prevReject.second);
+	}
+
 	return rslt;
 }
 
@@ -533,13 +544,15 @@ Json::Value GetRejectedProduct<SvSol::UdpApi>(PPQReader& rReader, long trig, con
 		const ProductPtr product = rReader.RequestReject(trig, idx);
 		rslt = WriteProductItems<SvSol::UdpApi>(product, productItemNames);
 	
-		// Decide which product to keep and which to release...
-		if (lastRejectProduct.second >= 0)
-		{
-			rReader.ReleaseReject(lastRejectProduct.first, lastRejectProduct.second);
-		}
+		ProductPtrPair prevReject = lastRejectProduct;
+
 		lastRejectProduct = std::make_pair(product, idx);
 		lastResult = rslt;
+		// Decide which product to keep and which to release...
+		if (prevReject.second >= 0)
+		{
+			rReader.ReleaseReject(prevReject.first, prevReject.second);
+		}
 	}
 	return rslt;
 }
@@ -567,7 +580,7 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 		{
 			ppqName = mit->second.m_ppq;
 			PPQReader reader;
-			if(false == reader.Open(ppqName))
+			if (false == reader.Open(ppqName))
 			{
 				throw std::exception("Can not open Reader ");
 			}
@@ -623,7 +636,6 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 		return rslt;
 	}
 	throw std::exception("Invalid command name.");
-
 }
 
 template<>
@@ -650,13 +662,12 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, const MonitorMap
 		&& true == mit->second.m_IsActive 
 		) // does the list exist?
 	{
-
 		ppqName = mit->second.m_ppq;
 		PPQReader reader;
-		if(false == reader.Open(ppqName))
+		if (false == reader.Open(ppqName))
 		{
 			throw std::exception("Can not open Reader ");
-		};
+		}
 
 		long trig = -1;
 		if (args.isMember(SVRC::arg::trgrCount))
@@ -977,8 +988,7 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	return bFound;
 }
 
-
-// Command Line arguments: /nocheck /show
+// Command Line arguments: /nocheck
 // /nocheck means to ignore the 2 GiG size requirement
 void StartThreads( DWORD argc, LPWSTR  *argv )
 {
@@ -1010,15 +1020,18 @@ void StartThreads( DWORD argc, LPWSTR  *argv )
 		}
 		if (S_OK != hr)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			::OutputDebugStringA(msg.c_str());
+#endif
 			std::cout << msg;
 			// Messagebox ?
 			return;
 		}
 	}
-
 	try
 	{
+		previousHandler = signal(SIGSEGV, AccessViolationHandler);
+
 		const std::string& versionStr = GetVersionString();
 		std::string title = "Run/Reject Server ";
 		title += versionStr;
@@ -1034,6 +1047,8 @@ void StartThreads( DWORD argc, LPWSTR  *argv )
 
 		// stop the threads...
 		::WaitForMultipleObjects(3, threads, true, INFINITE);
+
+		signal(SIGSEGV, previousHandler);
 	}
 	catch (std::exception & ex)
 	{
@@ -1044,19 +1059,28 @@ void StartThreads( DWORD argc, LPWSTR  *argv )
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	int rc = 0;
+
 	//Function pointer for starting the threads
 	gp_StartThreads = &StartThreads;
 
 	SERVICE_TABLE_ENTRY ServiceTable[] = 
 	{
 		{ cServiceName, (LPSERVICE_MAIN_FUNCTION) ServiceMain },
-		{NULL, NULL}
+		{ nullptr, nullptr}
 	};
 
 	if( !StartServiceCtrlDispatcher( ServiceTable ) )
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)	
 		OutputDebugString(_T("StartServiceCtrlDispatcher returned error"));
-		return GetLastError ();
+#endif		
+		rc = GetLastError();
+		// running as console (for Debug?)
+		if (ERROR_FAILED_SERVICE_CONTROLLER_CONNECT == rc)
+		{
+			StartThreads(argc, argv);
+		}
 	}
-	return 0;
+	return rc;
 }
