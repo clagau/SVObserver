@@ -184,7 +184,7 @@ HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName, long  alI
 			
 							svmManagedIndexArrayList [m_FirstUnusedIndex] = pNewManagedIndexArray;
 			
-							*pIndexArrayHandle = m_FirstUnusedIndex;
+							*pIndexArrayHandle = static_cast<long> (m_FirstUnusedIndex);
 							m_FirstUnusedIndex = temp;
 			
 							//------ If svmlFirstUnusedIndex equals -1, then it means we have just 

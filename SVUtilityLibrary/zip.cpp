@@ -2646,7 +2646,8 @@ ZRESULT TZip::Add(const TCHAR *odstzn, void *src,unsigned int len, DWORD flags)
   keys[2]=878082192L;
   for (const char *cp=password; cp!=0 && *cp!=0; cp++) update_keys(keys,*cp);
   // generate some random bytes
-  if (!has_seeded) srand(GetTickCount()^reinterpret_cast<unsigned __int64> (GetDesktopWindow()));
+  //The double casting is necessary to be 64 bit compatible and avoid compile warnings
+  if (!has_seeded) srand(GetTickCount() ^ static_cast<unsigned int> (reinterpret_cast<unsigned __int64> (GetDesktopWindow())) );
   char encbuf[12]; for (int i=0; i<12; i++) encbuf[i]=(char)((rand()>>7)&0xff);
   encbuf[11] = (char)((zfi.tim>>8)&0xff);
   for (int ei=0; ei<12; ei++) encbuf[ei]=zencode(keys,encbuf[ei]);
