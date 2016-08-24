@@ -571,25 +571,25 @@ long SVBStr::InternalPreAllocate (unsigned long p_ulNbrOfCharacters)
 
 long SVBStr::InitializeCriticalSection ()
 {
-   ::InitializeCriticalSection (&svmCriticalSection);
+   ::InitializeCriticalSection (&m_CriticalSection);
    return 0;
 }
 
 long SVBStr::EnterCriticalSection () const
 {
-   ::EnterCriticalSection (&((CRITICAL_SECTION) svmCriticalSection));
+   ::EnterCriticalSection (&m_CriticalSection);
    return 0;
 }
 
 long SVBStr::LeaveCriticalSection () const
 {
-   ::LeaveCriticalSection (&((CRITICAL_SECTION) svmCriticalSection));
+   ::LeaveCriticalSection (&m_CriticalSection);
    return 0;
 }
 
 long SVBStr::DeleteCriticalSection ()
 {
-   ::DeleteCriticalSection (&svmCriticalSection);
+   ::DeleteCriticalSection (&m_CriticalSection);
    return 0;
 }
 

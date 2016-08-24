@@ -110,7 +110,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//! \param pwstrPath [in
 		//! \returns HRESULT
 		//************************************
-		HRESULT BuildFromXMLFile(TreeType*  dataTree , const wchar_t * pwstrPath);
+		HRESULT BuildFromXMLFile(TreeType*  dataTree , LPCTSTR FileName);
 			
 		//************************************
 		//! //! Parses the xml string in var to to dataTre  and to m_EncryptionTree and m_RevisionTree

@@ -702,7 +702,8 @@ HRESULT SVObjectManagerClass::InsertObserver( SVObserverNotificationFunctorPtr p
 	{
 		rCookie = ::InterlockedExchangeAdd( &m_ObserverCookie, 1 );
 
-		m_CookieEntries[ rCookie ] = new SVCookieEntryStruct( rCookie, pFunctor );
+		SVCookieEntryStructPtr pCookieEntry( new SVCookieEntryStruct( rCookie, pFunctor ) );
+		m_CookieEntries[ rCookie ] = pCookieEntry;
 	}
 	else
 	{

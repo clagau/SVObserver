@@ -23,12 +23,12 @@
 
 
 template< typename SVTreeType >
-HRESULT SVOCMLoadConfiguration(unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree)
+HRESULT SVOCMLoadConfiguration(unsigned long& ulSVOConfigVersion, LPCTSTR FileName, SVTreeType& p_rTree)
 {
 
 
 	SvXml::SaxExtractPropertiesHandler   SaxExtractHandler;
-	HRESULT hrOK = SaxExtractHandler.ExtractProperties(bstrFileName, ulSVOConfigVersion);
+	HRESULT hrOK = SaxExtractHandler.ExtractProperties(FileName, ulSVOConfigVersion);
 
 	if( SUCCEEDED( hrOK ) )
 	{
@@ -38,11 +38,12 @@ HRESULT SVOCMLoadConfiguration(unsigned long& ulSVOConfigVersion, BSTR bstrFileN
 
 			SvStl::MessageContainer MsgCont;
 			MsgCont.setMessage( SVMSG_SVO_97_CONFIGURATION_TOO_OLD, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16079_ConfigurationTooOld );
-			throw MsgCont;	}
+			throw MsgCont;	
+		}
 		else  
 		{
 			SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
-			hrOK = SaxHandler.BuildFromXMLFile(&p_rTree, bstrFileName);
+			hrOK = SaxHandler.BuildFromXMLFile(&p_rTree, FileName);
 		}
 
 

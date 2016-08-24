@@ -482,11 +482,11 @@ HRESULT SVDigitizerProcessingClass::RestoreLastCameraImage()
 	return l_Status;
 }
 
-HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR p_szName, SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem, unsigned long p_Handle )
+HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem, unsigned long p_Handle )
 {
 	HRESULT l_Status = S_OK;
 
-	SVString l_FullName = p_szName;
+	SVString l_FullName = Name;
 
 	l_FullName += _T( ".Ch_0" );
 
@@ -497,9 +497,9 @@ HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR p_szName, SVDigitizerL
 	{
 		l_Iter->second->m_hDigitizer = p_Handle;
 
-		m_DigitizerSubsystems[ p_szName ] = p_pDigitizerSubsystem;
+		m_DigitizerSubsystems[ SVString( Name ) ] = p_pDigitizerSubsystem;
 
-		m_Digitizers[ p_szName ] = l_Iter->second;
+		m_Digitizers[ SVString( Name ) ] = l_Iter->second;
 	}
 	else
 	{

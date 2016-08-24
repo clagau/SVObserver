@@ -62,6 +62,7 @@ private:
 
 #pragma region Private Members
 	HANDLE            m_hThread;
+	HANDLE			  m_hAppThread;
 	DWORD             m_dwThreadId;
 	CCriticalSection  m_mtxQueue;	// not needed if queue is done in APC
 	volatile bool     m_bRunThread;

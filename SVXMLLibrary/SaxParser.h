@@ -92,10 +92,10 @@ namespace Seidenader { namespace  SVXMLLibrary
 			
 		//************************************
 		//! Parse a local file path, or a HTTP URL path.
-		//! \param pwstrPath [in]
+		//! \param FileName [in]
 		//! \returns HRESULT
 		//************************************
-		HRESULT  ParseFile(const wchar_t * pwstrPath);
+		HRESULT  ParseFile(LPCTSTR FileName);
 			
 		//************************************
 		//!Time needed for parsing in ms

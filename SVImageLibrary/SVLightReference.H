@@ -28,6 +28,8 @@ public:
 	
 	SVLightReferenceAttributeInfo();
 	SVLightReferenceAttributeInfo( const SVLightReferenceAttributeInfo& rhs );
+	~SVLightReferenceAttributeInfo();
+
 	const SVLightReferenceAttributeInfo& operator = ( const SVLightReferenceAttributeInfo& rhs );
 };
 

@@ -77,13 +77,13 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 
 	bool bOK = ( 0 == Name.compare( CTAG_COMPLETENAME ) );
 
-	_variant_t svValue;
-	svValue = rTree.getLeafData( htiLeaf );
-	bOK = bOK && ( VT_EMPTY != svValue.vt);
+	_variant_t Value;
+	rTree.getLeafData( htiLeaf, Value );
+	bOK = bOK && ( VT_EMPTY != Value.vt);
 	if ( bOK )
 	{
 		SVObjectReference objRef;
-		SVString dottedName = SvUl_SF::createSVString(svValue);
+		SVString dottedName = SvUl_SF::createSVString(Value.GetVARIANT());
 		bOK = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( dottedName, objRef ));
 		if ( bOK && objRef.Object() )
 		{

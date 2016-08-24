@@ -142,7 +142,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetName( unsigned long p_ulIndex, BSTR &p
 			p_rbstrName = nullptr;
 		}
 
-		p_rbstrName = _bstr_t(m_cameras[p_ulIndex].GetName().c_str());
+		p_rbstrName = _bstr_t(m_cameras[p_ulIndex].GetName().c_str()).Detach();
 	} 
 	return l_hrOk;
 }

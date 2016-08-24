@@ -35,7 +35,7 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 	//************************************
 	SVString createSVString( const wchar_t* pString );
 	SVString createSVString( const _bstr_t& rString );
-	SVString createSVString( const VARIANT& rVariant );
+	SVString createSVString( const _variant_t& rVariant );
 
 	//************************************
 	/// Compare to strings like the std::string.comapre function, but ignore upper and lower cases.

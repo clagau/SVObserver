@@ -105,15 +105,10 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//************************************
 		void SetStartNodeName(const wchar_t* aName , const wchar_t* atype = L"SV_BASENODE" );
 
-
-
-
-		
-
 		//! Extract the properties from the xmlfile stops parsing when the properties are found 
-		HRESULT  ExtractProperties(const wchar_t * xmlFileName, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber);
+		HRESULT  ExtractProperties(LPCTSTR FileName, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber);
 
-		HRESULT  SaxExtractPropertiesHandler::ExtractProperties(const wchar_t * pwstrPath, unsigned long& rVersionNumber);
+		HRESULT  SaxExtractPropertiesHandler::ExtractProperties(LPCTSTR FileName, unsigned long& rVersionNumber);
 
 #pragma endregion Public Methods
 
@@ -126,7 +121,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//! \param pwstrPath [in
 		//! \returns HRESULT
 		//************************************
-		HRESULT   BuildFromXMLFile(const wchar_t * pwstrPath);
+		HRESULT   BuildFromXMLFile(LPCTSTR pwstrPath);
 
 		
 		//************************************

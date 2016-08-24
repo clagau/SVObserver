@@ -29,6 +29,7 @@ SVOutObjectInfoStruct::SVOutObjectInfoStruct( const SVOutObjectInfoStruct& p_rsv
 
 SVOutObjectInfoStruct::~SVOutObjectInfoStruct()
 {
+	m_CriticalSectionPtr.clear();
 }
 
 const SVOutObjectInfoStruct& SVOutObjectInfoStruct::operator=( const SVOutObjectInfoStruct& p_rsvValue )

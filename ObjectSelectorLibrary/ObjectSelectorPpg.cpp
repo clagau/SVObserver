@@ -25,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static const int IconNumber = 8;
-static const int IconGrowBy = 4;
+static const int IconGrowBy = 1;
 #pragma endregion Declarations
 
 namespace Seidenader { namespace ObjectSelectorLibrary

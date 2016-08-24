@@ -18,7 +18,6 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
 
 #include "SVDigitizerProcessingClass.h"
 #include "SVImageObjectClass.h"

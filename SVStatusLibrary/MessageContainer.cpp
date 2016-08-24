@@ -251,6 +251,8 @@ namespace Seidenader { namespace SVStatusLibrary
 				case SEV_FATAL:
 					Severity = EVENTLOG_ERROR_TYPE;
 					break;
+				default:
+					break;
 				}
 				m_Message.m_Logged = ReportEvent (hEventLog, Severity, getCategory(), m_Message.m_MessageCode, nullptr, SubstituteStringNr, 0, pSubstituteString, nullptr) ? true : false;
 				DeregisterEventSource (hEventLog);

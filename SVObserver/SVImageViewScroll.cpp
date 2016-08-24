@@ -107,13 +107,31 @@ void SVImageViewScroll::OnInitialUpdate()
 
 BOOL SVImageViewScroll::Create(LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DWStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext)
 {
-	LPCTSTR lpszClassName = AfxRegisterWndClass( CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW, 0, m_hWindowBackgroundColor, 0 );
-	if (CWnd::Create( lpszClassName, _T( "Untitled Image Scroll" ), DWStyle, Rect, PParentWnd, NID, PContext ))
+	BOOL Result( TRUE );
+
+	WNDCLASS WindowClass;
+	if( !::GetClassInfo( AfxGetInstanceHandle(), _T( "Image Scroll" ),  &WindowClass) )
 	{
-		return m_pView->Create(LPSZClassName, LPSZWindowName, DWStyle, Rect, static_cast< CWnd* >( this ), NID, PContext);
+		memset( &WindowClass, 0, sizeof(WNDCLASS) );
+		WindowClass.style = CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+		WindowClass.lpfnWndProc = ::DefWindowProc; 
+		WindowClass.hInstance = AfxGetInstanceHandle();
+		WindowClass.hbrBackground = m_hWindowBackgroundColor;
+		WindowClass.lpszMenuName = nullptr;
+		WindowClass.lpszClassName = _T( "Image Scroll" );
+
+		Result = AfxRegisterClass(&WindowClass);
+	}
+	
+	if( Result )
+	{
+		if (CWnd::Create( WindowClass.lpszClassName, _T( "Untitled Image Scroll" ), DWStyle, Rect, PParentWnd, NID, PContext ))
+		{
+			Result = m_pView->Create(LPSZClassName, LPSZWindowName, DWStyle, Rect, static_cast<CWnd*> (this), NID, PContext);
+		}
 	}
 
-	return FALSE;
+	return Result;
 }
 
 void SVImageViewScroll::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)

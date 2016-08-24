@@ -12,7 +12,7 @@
 #pragma once
 
 template< typename SVTreeType >
-HRESULT SVOCMLoadConfiguration( unsigned long &FileVersion, BSTR bstrFilename, SVTreeType& p_rTree );
+HRESULT SVOCMLoadConfiguration( unsigned long &FileVersion, LPCTSTR Filename, SVTreeType& p_rTree );
 
 #include "LoadConfiguration.inl"
 

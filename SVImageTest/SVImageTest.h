@@ -28,10 +28,10 @@ public:
 	CSVImageTestApp();
 	virtual ~CSVImageTestApp();
 
-	SVOIniLoader m_iniLoader;
-	CString m_svimIniFile;
-	CString m_hardwareIniFile;
-	CString m_oemIniFile;
+	SvOml::SVOIniLoader m_iniLoader;
+	SVString m_svimIniFile;
+	SVString m_hardwareIniFile;
+	SVString m_oemIniFile;
 
 	bool IsGigeSystem() const;
 

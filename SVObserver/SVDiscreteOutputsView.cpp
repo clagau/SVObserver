@@ -14,6 +14,7 @@
 #include "SVDiscreteOutputsView.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 #include "SVObserver.h"
 #include "SVIODoc.h"
 #include "SVIOAdjustDialog.h"
@@ -94,17 +95,16 @@ BOOL SVDiscreteOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName
 	
 	BOOL RetVal = CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 
-	ImageList.Create( 16, 16, TRUE, 5, 5 );                  // 20 Apr 1999 - frb.
+	ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
 
-	StateImageList.Create( 16, 16, TRUE, 2, 2 );             // 20 Apr 1999 - frb.
+	StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_INPUT_ICON ) );
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_OUTPUT_ICON ) );
 
 
 	GetListCtrl().SetImageList( &StateImageList, LVSIL_STATE );
-	GetListCtrl().SetImageList( &ImageList, LVSIL_NORMAL );
 	GetListCtrl().SetImageList( &ImageList, LVSIL_SMALL );
 
 

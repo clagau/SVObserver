@@ -190,17 +190,19 @@ namespace Seidenader { namespace SVXMLLibrary
 		//************************************
 		//! Method to get the leaf data
 		//! \param pLeaf [in] handle to the leaf
-		//! \returns the leaf data as a variant
+		//! \param rData [out] reference to a variant for the data
+		//! \returns S_OK on success
 		//************************************
-		virtual _variant_t	getLeafData( const SVLeafHandle pLeaf ) const;
+		virtual HRESULT	getLeafData( const SVLeafHandle pLeaf, _variant_t& rData ) const;
 
 		//************************************
 		//! Method to get the leaf data
 		//! \param pParent [in] handle to the parent branch
 		//! \param Name [in] name of child leaf to get the data
-		//! \returns the leaf data as a variant
+		//! \param rData [out] reference to a variant for the data
+		//! \returns S_OK on success
 		//************************************
-		virtual _variant_t	getLeafData( const SVBranchHandle pParent, LPCTSTR Name );
+		virtual HRESULT	getLeafData( const SVBranchHandle pParent, LPCTSTR Name, _variant_t& rData );
 
 		//************************************
 		//! Method to set the leaf data

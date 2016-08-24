@@ -879,16 +879,33 @@ void SVImageViewClass::OnDraw( CDC* p_pDC )
 
 BOOL SVImageViewClass::Create( LPCTSTR p_className, LPCTSTR p_windowName, DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext )
 {
-	LPCTSTR l_className = AfxRegisterWndClass( CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW, 0, m_hWindowBackgroundColor , 0 );
+	BOOL Result( TRUE );
 
-	BOOL l_bOk = CWnd::Create( l_className, _T( "Untitled Main Image" ), p_style, p_rect, p_pParentWnd, p_NID, p_pContext );
+	WNDCLASS WindowClass;
+	if( !::GetClassInfo( AfxGetInstanceHandle(), _T( "Main Image" ),  &WindowClass) )
+	{
+		memset( &WindowClass, 0, sizeof(WNDCLASS) );
+		WindowClass.style = CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+		WindowClass.lpfnWndProc = ::DefWindowProc; 
+		WindowClass.hInstance = AfxGetInstanceHandle();
+		WindowClass.hbrBackground = m_hWindowBackgroundColor;
+		WindowClass.lpszMenuName = nullptr;
+		WindowClass.lpszClassName = _T( "Main Image" );
 
-	if( l_bOk )
+		Result = AfxRegisterClass(&WindowClass);
+	}
+
+	if( Result )
+	{
+		Result = CWnd::Create( WindowClass.lpszClassName, _T( "Untitled Main Image" ), p_style, p_rect, p_pParentWnd, p_NID, p_pContext );
+	}
+
+	if( Result )
 	{
 		ReleaseImageSurface();
 	}
 
-	return l_bOk;
+	return Result;
 }
 
 void SVImageViewClass::OnInitialUpdate()
@@ -1846,22 +1863,22 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 	BOOL l_bOk = FALSE;
 	BOOL bZoomExOK = FALSE;
 
-	_variant_t l_svVariant;
+	_variant_t Value;
 
 	bool l_bUseImageView = false;
 
-	l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, l_svVariant );
+	l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, Value );
 	if( l_bOk )
 	{
-		l_bUseImageView = l_svVariant;
+		l_bUseImageView = Value;
 	}
 
 	if( l_bOk )
 	{
-		bZoomExOK = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, l_svVariant );
+		bZoomExOK = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
 		if(bZoomExOK)
 		{
-			double dZoom = l_svVariant;
+			double dZoom = Value;
 			if( !SetZoom(EZoomValue, dZoom, false) )
 			{
 				SetZoom( EZoomValue, 1.0, false );
@@ -1871,12 +1888,12 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	if( l_bOk && !bZoomExOK )
 	{
-		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, l_svVariant );
+		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, Value );
 		if( l_bOk )
 		{
 			long l_index = 0;
 
-			l_index = l_svVariant;
+			l_index = Value;
 
 			if( l_index < 0 )
 			{
@@ -1896,10 +1913,10 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	if( l_bOk && l_bUseImageView )
 	{
-		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, l_svVariant );
+		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, Value );
 		if( l_bOk )
 		{
-			_bstr_t l_String( l_svVariant );
+			_bstr_t l_String( Value.bstrVal );
 
 			if( 0 < l_String.length() )
 			{
@@ -1923,23 +1940,23 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 {
 	BOOL l_bOk = FALSE;
 
-	_variant_t l_svVariant;
+	_variant_t Value;
 
 	bool l_bUseImageView = false;
 	bool bZoomExOK = false;
 
-	l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, l_svVariant );
+	l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, Value );
 	if( l_bOk )
 	{
-		l_bUseImageView = l_svVariant;
+		l_bUseImageView = Value;
 	}
 
 	if( l_bOk )
 	{
-		bZoomExOK = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, l_svVariant );
+		bZoomExOK = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
 		if(bZoomExOK)
 		{
-			double dZoom = l_svVariant;
+			double dZoom = Value;
 
 			if( m_ZoomHelper.GetZoom() != dZoom )
 			{
@@ -1953,12 +1970,12 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 	if( l_bOk && !bZoomExOK )
 	{
-		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, l_svVariant );
+		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, Value );
 		if( l_bOk )
 		{
 			long l_index = 0;
 
-			l_index = l_svVariant;
+			l_index = Value;
 
 			if( l_index < 0 )
 			{
@@ -1981,10 +1998,10 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 	if( l_bOk && l_bUseImageView )
 	{
-		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, l_svVariant );
+		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, Value );
 		if( l_bOk )
 		{
-			_bstr_t l_String( l_svVariant );
+			_bstr_t l_String( Value.bstrVal );
 
 			if( 0 < l_String.length() )
 			{

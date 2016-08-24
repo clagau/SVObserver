@@ -101,6 +101,10 @@ CSVCommand::CSVCommand()
 
 CSVCommand::~CSVCommand()
 {
+	if( m_bCriticalSectionInitialized )
+	{
+		::DeleteCriticalSection( &m_hProductCritSect );
+	}
 }
 #pragma endregion Constructor
 

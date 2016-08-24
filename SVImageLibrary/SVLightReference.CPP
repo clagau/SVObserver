@@ -22,6 +22,10 @@ SVLightReferenceAttributeInfo::SVLightReferenceAttributeInfo()
 	lStep=0;
 }
 
+SVLightReferenceAttributeInfo::~SVLightReferenceAttributeInfo()
+{
+}
+
 SVLightReferenceAttributeInfo::SVLightReferenceAttributeInfo( const SVLightReferenceAttributeInfo& rhs )
 {
 	*this = rhs;

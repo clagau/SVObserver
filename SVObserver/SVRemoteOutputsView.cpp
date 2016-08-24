@@ -14,10 +14,9 @@
 //Moved to precompiled header: #include <boost\config.hpp>
 //Moved to precompiled header: #include <boost\bind.hpp>
 #include "SVRemoteOutputsView.h"
-
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVXMLLibrary\SVConfigurationTags.h"
-
+#include "SVOResource\ConstGlobalSvOr.h"
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
 #include "SVObserver.h"
@@ -90,18 +89,17 @@ int SVRemoteOutputsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CListCtrl& lc = GetListCtrl();
 
-	ImageList.Create( 16, 16, TRUE, 5, 5 );
+	ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 4, 1 );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_COLLAPSE ) );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_EXPAND ) );
 
-	StateImageList.Create( 16, 16, TRUE, 2, 2 );
+	StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_ICON ) );
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_REMOTE_OUTPUT_ICON ) );
 
 	lc.SetImageList( &StateImageList, LVSIL_STATE );
-	lc.SetImageList( &ImageList, LVSIL_NORMAL );
 	lc.SetImageList( &ImageList, LVSIL_SMALL );
 
 	// insert columns

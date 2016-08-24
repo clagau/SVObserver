@@ -41,7 +41,7 @@ public:
 	static bool GetItemLeaf( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, typename SVTreeType::SVLeafHandle& rpItem );
 
 	template< typename SVTreeType >
-	static bool GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, _variant_t& rVariant );
+	static bool GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, _variant_t& rData );
 
 	template< typename SVTreeType >
 	static bool DeleteItem( SVTreeType &rTree, typename SVTreeType::SVBranchHandle pItem );

@@ -64,7 +64,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 	
 	
-	HRESULT  SaxExtractPropertiesHandler::ExtractProperties(const wchar_t * pwstrPath, unsigned long& rVersionNumber)
+	HRESULT  SaxExtractPropertiesHandler::ExtractProperties(LPCTSTR FileName, unsigned long& rVersionNumber)
 	{
 		SaxProperty sPaxProp;
 		sPaxProp.NodeName = L"Environment";
@@ -74,7 +74,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 		m_Complete = false; 
 		m_BreakIfComplete = true;
-		HRESULT hres =  BuildFromXMLFile(pwstrPath);
+		HRESULT hres =  BuildFromXMLFile(FileName);
 		
 		rVersionNumber = 0;
 		if(m_Properties.find(L"VersionNumber") != m_Properties.end() )
@@ -89,7 +89,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	}
 	
 	
-	HRESULT  SaxExtractPropertiesHandler::ExtractProperties(const wchar_t * pwstrPath, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
+	HRESULT  SaxExtractPropertiesHandler::ExtractProperties(LPCTSTR FileName, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
 	{
 
 		SaxProperty sPaxProp;
@@ -111,7 +111,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		
 		m_Complete = false; 
 		m_BreakIfComplete = true;
-		HRESULT hres =  BuildFromXMLFile(pwstrPath);
+		HRESULT hres =  BuildFromXMLFile(FileName);
 		rNewDisableMethod = _wtoi (m_Properties[L"NewDisableMethod"].Content.c_str());
 		rEnableAuxExtents = _wtoi (m_Properties[ L"EnableAuxiliaryExtent"].Content.c_str()); 
 		rVersionNumber =0;
@@ -126,7 +126,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		return hres;	
 	}
 
-	HRESULT  SaxExtractPropertiesHandler::BuildFromXMLFile(const wchar_t * pwstrPath)
+	HRESULT  SaxExtractPropertiesHandler::BuildFromXMLFile(LPCTSTR FileName)
 	{
 
 		if( !m_SaxParser.IsReady() )
@@ -138,7 +138,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		HRESULT hr(E_FAIL);
 		try
 		{
-			hr =   m_SaxParser.ParseFile(pwstrPath);
+			hr =   m_SaxParser.ParseFile(FileName);
 		}
 		catch ( const SvStl::MessageContainer&  )
 		{

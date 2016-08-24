@@ -51,10 +51,15 @@
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 
+#include <comutil.h>		//Used by static library
 #include <concrt.h>			//Used by static library
 #include <deque>
 #include <fstream>
 #include <io.h>
 #include <iostream>
+#include <map>				//Used by static library
+#include <set>				//Used by static library
 #include <string>
+#include <tchar.h>			//Used by static library
+#include <vector>			//Used by static library
 #pragma endregion Precompiled Headers

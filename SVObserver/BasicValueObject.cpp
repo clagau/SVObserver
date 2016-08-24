@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-BasicValueObject::BasicValueObject( LPCSTR ObjectName,  SVObjectClass* pOwner, bool Node, SVObjectTypeEnum ObjectType )
+BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, bool Node, SVObjectTypeEnum ObjectType )
 : SVObjectClass(ObjectName)
 	, m_Created(false)
 	, m_Node(Node)

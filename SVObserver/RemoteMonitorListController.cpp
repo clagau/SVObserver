@@ -228,9 +228,12 @@ void RemoteMonitorListController::ValidateInputs()
 
 void RemoteMonitorListController::InitMonitorListInSharedMemory()
 {
-	const SvSml::SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
 	SvSml::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
-	rWriter.Create(rSettings);
+	if( !rWriter.IsCreated() )
+	{
+		const SvSml::SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
+		rWriter.Create(rSettings);
+	}
 }
 
 

@@ -157,6 +157,11 @@ protected:
 private:
 	CRITICAL_SECTION m_hCriticalSection;
 	BOOL m_bCriticalSectionCreated;
+	//! Trigger active is used as a work around because the thread handle in SVLpt.dll is not being closed in when calling DisableInterrupt
+	//! The thread is started only once and uses this active flag in the callback function to control going online and offline
+	//! It should be solved in the dll however changes could cause the driver signature to become invalid
+	//! The thread is closed on destruction causing the one thread handle to leak
+	bool m_TriggerActive;
 
 	LPCTSTR GetControlText(long lControl);
 

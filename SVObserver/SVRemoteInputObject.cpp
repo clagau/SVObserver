@@ -41,9 +41,12 @@ SVRemoteInputObject::~SVRemoteInputObject()
 
 BOOL SVRemoteInputObject::Create()
 {
-	m_isCreated = true;
+	if( !m_isCreated )
+	{
+		m_isCreated = true;
 
-  ::InitializeCriticalSection( &m_hCriticalSection );
+		::InitializeCriticalSection( &m_hCriticalSection );
+	}
 
 	return true;
 }// end Create

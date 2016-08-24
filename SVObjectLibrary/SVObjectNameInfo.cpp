@@ -149,6 +149,11 @@ SVObjectNameInfo::SVObjectNameInfo( const SVObjectNameInfo& p_rObject )
 {
 }
 
+SVObjectNameInfo::~SVObjectNameInfo()
+{
+	clear();
+}
+
 void SVObjectNameInfo::clear()
 {
 	m_NameArray.clear();

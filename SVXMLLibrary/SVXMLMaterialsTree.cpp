@@ -461,7 +461,8 @@ namespace Seidenader { namespace SVXMLLibrary
 		if( nullptr != pBranch )
 		{
 			SVLeafHandle pNewLeaf;
-			pNewLeaf = pBranch->insert( SVMaterialsTree::SVTreeElement( LeafName, new SVMaterialData( rData ) ) );
+			SVMaterialDataPtr pMaterial = new SVMaterialData( rData );
+			pNewLeaf = pBranch->insert( SVMaterialsTree::SVTreeElement( LeafName, pMaterial ) );
 
 			if( pBranch->end() != pNewLeaf )
 			{
@@ -513,21 +514,24 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	_variant_t SVXMLMaterialsTree::getLeafData( const SVLeafHandle pLeaf ) const
+	HRESULT SVXMLMaterialsTree::getLeafData( const SVLeafHandle pLeaf, _variant_t& rData ) const
 	{
-		_variant_t Result;
+		HRESULT Result( E_FAIL );
 
+		rData.Clear();
 		if( m_Tree.end() != pLeaf )
 		{
-			Result = *pLeaf->second;
+			::VariantInit( &rData.GetVARIANT() );
+			::VariantCopy( &rData.GetVARIANT(), &pLeaf->second->GetVARIANT() );
+			Result = S_OK;
 		}
 
 		return Result;
 	}
 
-	_variant_t SVXMLMaterialsTree::getLeafData( const SVBranchHandle pParent, LPCTSTR Name )
+	HRESULT SVXMLMaterialsTree::getLeafData( const SVBranchHandle pParent, LPCTSTR Name, _variant_t& rData )
 	{
-		return getLeafData( findLeaf( pParent, Name ) );
+		return getLeafData( findLeaf( pParent, Name ), rData );
 	}
 
 	HRESULT SVXMLMaterialsTree::setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData )
@@ -557,7 +561,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		while( isValidLeaf( pParent, pLeaf ) )
 		{
 			_variant_t Value;
-			Value = getLeafData( pLeaf );
+			getLeafData( pLeaf, Value );
 			if( Value == rSearchName )
 			{
 				Value = rReplaceName;
@@ -588,8 +592,8 @@ namespace Seidenader { namespace SVXMLLibrary
 			if( rSearchName == LeafName )
 			{
 				_variant_t Value;
-				Value = getLeafData( pLeaf );
-				rLeafValues.insert( SvUl_SF::createSVString(Value) );
+				getLeafData( pLeaf, Value );
+				rLeafValues.insert( SvUl_SF::createSVString( Value.GetVARIANT() ) );
 			}
 
 			pLeaf = getNextLeaf( pParent, pLeaf);

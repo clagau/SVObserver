@@ -124,9 +124,7 @@ void SVBarCodeAnalyzerClass::init()
 	msv_RawData.SetArraySize(256);
 
 	//set MIL Timeout default to be what is in the INI file...
-	SVOINIClass l_SvimIni;
-
-	l_SvimIni.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	SvOml::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	int l_mTimeout = l_SvimIni.GetValueInt(_T("SVIM Information"), _T("MILBarcodeTimeout"),20);
 

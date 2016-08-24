@@ -96,7 +96,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 			kernelArray.clear();
 			while ( rTree.isValidLeaf( Elements, Leaf ) )
 			{
-				Value = rTree.getLeafData( Leaf );
+				rTree.getLeafData( Leaf, Value );
 				kernelArray.push_back( Value );
 				Leaf = rTree.getNextLeaf( Elements, Leaf );
 			}
@@ -175,7 +175,7 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 	}
 }	
 
-HRESULT SvOi::importCustom2Filter(const SVString &filePath,
+HRESULT SvOi::importCustom2Filter(const SVString& rFileName,
 	long &kernelWidth, 
 	long &kernelHeight, 
 	long &normalizationFactor, 
@@ -186,8 +186,7 @@ HRESULT SvOi::importCustom2Filter(const SVString &filePath,
 	SvXml::SVXMLMaterialsTree Tree;
 	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
 
-	CA2W  pwXmlFilename(filePath.c_str()); 
-	HRESULT Result  = SaxHandler.BuildFromXMLFile(&Tree,  pwXmlFilename );	
+	HRESULT Result  = SaxHandler.BuildFromXMLFile(&Tree, rFileName.c_str() );	
 	
 	if(SUCCEEDED(Result))
 	{

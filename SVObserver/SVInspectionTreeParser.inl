@@ -1,4 +1,4 @@
-//******************************************************************************
+	//******************************************************************************
 //* COPYRIGHT (c) 2012 by Seidenader Vision, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
@@ -77,14 +77,14 @@ size_t SVInspectionTreeParser< SVTreeType >::GetTotal() const
 }
 
 template< typename SVTreeType >
-bool SVInspectionTreeParser< SVTreeType >::GetItemValue(const SVString& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& value)
+bool SVInspectionTreeParser< SVTreeType >::GetItemValue(const SVString& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& rValue)
 {
 	m_count++;
-	return SVNavigateTree::GetItem(m_rTree, tag.c_str(), hItem, value) ? true : false;
+	return SVNavigateTree::GetItem(m_rTree, tag.c_str(), hItem, rValue) ? true : false;
 }
 
 template< typename SVTreeType >
-bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBranchHandle hItem, const SVString& tag, SVVariantList& list)
+bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBranchHandle hItem, const SVString& tag, SVVariantList& rValueList)
 {
 	bool bRetVal = false;
 
@@ -100,10 +100,10 @@ bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBran
 			if( m_rTree.isValidLeaf(hBranch, hValue) )
 			{
 				m_count++;
-				_variant_t value;
+				_variant_t Data;
 
-				value = m_rTree.getLeafData(hValue);
-				list.push_back(value);
+				m_rTree.getLeafData(hValue, Data);
+				rValueList.push_back( Data );
 
 				hValue = m_rTree.getNextLeaf(hBranch, hValue);
 			}
@@ -142,7 +142,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		GUID objectID( GUID_NULL );
 		if( m_ReplaceUniqueID )
 		{
-			objectID = SVGUID(uniqueID);
+			objectID = SVGUID(uniqueID.GetVARIANT());
 		}
 		//Create this object only if it is not the same as the owner GUID
 		if( ownerID == objectID )
@@ -152,7 +152,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		}
 		else
 		{
-			hr = SVObjectBuilder::CreateObject(SVGUID(classID), objectID, name, SvUl_SF::createSVString(objectName), ownerID);
+			hr = SVObjectBuilder::CreateObject(SVGUID(classID), objectID, name, SvUl_SF::createSVString(objectName.GetVARIANT()), ownerID);
 		}
 		if (S_OK == hr)
 		{
@@ -270,8 +270,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	UpdateProgress(m_count, m_totalSize);
 
 	// Build the Object
-	GUID objectID = SVGUID(uniqueID);
-	hr = SVObjectBuilder::CreateFriendObject(SVGUID(classID), objectID, SvUl_SF::createSVString(objectName), ownerID);
+	GUID objectID = SVGUID(uniqueID.GetVARIANT());
+	hr = SVObjectBuilder::CreateFriendObject(SVGUID(classID), objectID, SvUl_SF::createSVString(objectName.GetVARIANT()), ownerID);
 	if (S_OK == hr)
 	{
 		// this will be different for embeddeds, it will use the owning object ID and the embedded object ID
@@ -325,8 +325,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 
 	UpdateProgress(m_count, m_totalSize);
 
-	GUID objectID = SVGUID(uniqueID);
-	hr = SVObjectBuilder::CreateEmbeddedObject(SVGUID(embeddedID), objectID, Name.c_str(), SvUl_SF::createSVString(objectName), ownerID);
+	GUID objectID = SVGUID(uniqueID.GetVARIANT());
+	hr = SVObjectBuilder::CreateEmbeddedObject(SVGUID(embeddedID), objectID, Name.c_str(), SvUl_SF::createSVString(objectName.GetVARIANT()), ownerID);
 	if (S_OK == hr)
 	{
 		SVObjectScriptDataObjectTypeEnum dataType;
@@ -410,10 +410,10 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 					{
 						if (m_rTree.isValidLeaf(hValue, hChildValue))
 						{
-							_variant_t value;
+							_variant_t Data;
 
-							value = m_rTree.getLeafData(hChildValue);
-							values.push_back(value);
+							m_rTree.getLeafData(hChildValue, Data);
+							values.push_back(Data);
 
 							hChildValue = m_rTree.getNextLeaf(hValue, hChildValue);
 						}
@@ -458,7 +458,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 
 		while( S_OK == hr && m_rTree.isValidLeaf(hItem, hValue) )
 		{
-			SVVariantList values;
+			SVVariantList ValueList;
 
 			SVString DataName;
 
@@ -466,10 +466,10 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 
 			if( g_ObjectAttributeFilter.find( DataName.c_str() ) == g_ObjectAttributeFilter.end() )
 			{
-				_variant_t value;
+				_variant_t Data;
 
-				value = m_rTree.getLeafData(hValue);
-				values.push_back(value);
+				m_rTree.getLeafData(hValue, Data);
+				ValueList.push_back(Data);
 
 				SVObjectScriptDataObjectTypeEnum l_Type = SV_UNKNOWN_Type;
 
@@ -484,7 +484,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 				}
 				//End of attribute object type section
 
-				hr = SVObjectBuilder::SetObjectValue(objectID, objectID, DataName.c_str(), values, l_Type);
+				hr = SVObjectBuilder::SetObjectValue(objectID, objectID, DataName.c_str(), ValueList, l_Type);
 			}
 
 			hValue = m_rTree.getNextLeaf(hItem, hValue);
@@ -549,8 +549,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType:
 
 			if (name.vt == VT_BSTR && value.vt == VT_BSTR)
 			{
-				GUID inputID = SVGUID(value.bstrVal);
-				inputList.insert(std::make_pair(name.bstrVal, inputID));
+				GUID inputID = SVGUID(value);
+				inputList.insert(std::make_pair(_bstr_t(name.bstrVal), inputID));
 			}
 			hInput = m_rTree.getNextBranch(hInputs, hInput);
 		}

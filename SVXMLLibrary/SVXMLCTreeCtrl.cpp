@@ -345,7 +345,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		
 			if( ! m_rTree.DeleteItem( pLeaf ) )
 			{
-				l_Status = S_FALSE;
+				l_Status = E_FAIL;
 			}
 
 			if( 0 != pData )
@@ -358,12 +358,12 @@ namespace Seidenader { namespace SVXMLLibrary
 			}
 			else
 			{
-				l_Status = S_FALSE;
+				l_Status = E_FAIL;
 			}
 		}
 		else
 		{
-			l_Status = S_FALSE;
+			l_Status = E_FAIL;
 		}
 
 		return l_Status;
@@ -378,11 +378,11 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	_variant_t SVXMLCTreeCtrl::getLeafData( const SVLeafHandle pLeaf ) const
+	HRESULT SVXMLCTreeCtrl::getLeafData( const SVLeafHandle pLeaf, _variant_t& rData ) const
 	{
-		VARIANT Result;
+		HRESULT Result( E_FAIL );
 
-		::VariantInit( &Result );
+		rData.Clear();
 
 		if( nullptr != pLeaf )
 		{
@@ -392,16 +392,17 @@ namespace Seidenader { namespace SVXMLLibrary
 			{
 				VARIANT* pVariant( reinterpret_cast< VARIANT* >( pData ) );
 
-				::VariantCopy( &Result, pVariant );
+				::VariantInit( &rData.GetVARIANT() );
+				::VariantCopy( &rData.GetVARIANT(), pVariant );
 			}
 		}
 
 		return Result;
 	}
 
-	_variant_t SVXMLCTreeCtrl::getLeafData( const SVBranchHandle pParent, LPCTSTR Name )
+	HRESULT SVXMLCTreeCtrl::getLeafData( const SVBranchHandle pParent, LPCTSTR Name, _variant_t& rData )
 	{
-		return 	getLeafData( findLeaf( pParent, Name ) );
+		return 	getLeafData( findLeaf( pParent, Name ), rData );
 	}
 
 	HRESULT SVXMLCTreeCtrl::setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData )

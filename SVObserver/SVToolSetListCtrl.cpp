@@ -19,6 +19,7 @@
 #include "GuiCommands\IsValid.h"
 #include "GuiCommands\GetTaskObjects.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -598,7 +599,7 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 
 void SVToolSetListCtrl::CreateImageLists()
 {
-	m_ImageList.Create(16, 16, TRUE, 2, 2);
+	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 4, 1 );
 
 	CWinApp* pApp = AfxGetApp();
 	if (pApp)
@@ -608,7 +609,6 @@ void SVToolSetListCtrl::CreateImageLists()
 		m_collapseState = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));
 		m_expandState = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND));
 	}
-	SetImageList(&m_ImageList, LVSIL_NORMAL);
 	SetImageList(&m_ImageList, LVSIL_SMALL);
 }
 

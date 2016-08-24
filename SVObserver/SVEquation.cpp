@@ -544,9 +544,8 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 		GetEquationText( equationText );
 		equationText += "\n";
 		// Note Buffer must be terminated with a new line
-		LPTSTR pEquation = equationText.GetBuffer( equationText.GetLength() + 1 );
 		// Build Lexical Stack
-		SvOi::EquationTestResult result = lexicalScan( pEquation );
+		SvOi::EquationTestResult result = lexicalScan( static_cast<LPCTSTR> (equationText) );
 		if( result.bPassed )
 		{
 			// Parse the equation
@@ -609,8 +608,6 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 		{
 			ret = result;
 		}
-		equationText.ReleaseBuffer();
-		
 		
 		isObjectValid.SetValue( 1, ret.bPassed );
 	}
@@ -630,7 +627,7 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SvOi::EquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
+SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 {
 	SvOi::EquationTestResult ret;
 	ret.bPassed = true;
@@ -650,7 +647,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
 	int yychar;
 	int sIndex = 0;
 	// Scan the input buffer
-	b = lex.yy_scan_string(inBuf);
+	b = lex.yy_scan_string(inBuffer);
 
 	// Find the Tokens and build the token stack for YACC
 	while ((yychar = lex.yylex()) > 0)

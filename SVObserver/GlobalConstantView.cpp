@@ -290,7 +290,7 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	case VT_BSTR:
 		{
 			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::TextType];
-			ValueText = SvUl_SF::createSVString(Value);
+			ValueText = SvUl_SF::createSVString(Value.GetVARIANT());
 		}
 		break;
 	default:
@@ -529,20 +529,21 @@ int GlobalConstantView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	lpCreateStruct->style |= LVS_SINGLESEL;
 	if (CListView::OnCreate(lpCreateStruct) == -1)
+	{
 		return -1;
+	}
 
 	m_rCtrl.SetExtendedStyle( m_rCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT );
 
 	CWinApp* pApp = AfxGetApp();
-	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, true, 2, 2 );
+	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
 	m_ImageList.Add( pApp->LoadIcon( IDI_IOITEM_ICON ) );
 	m_ImageList.Add( pApp->LoadIcon( IDI_NOIOITEM_ICON ) );
 
-	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, true, 1, 1 );
+	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 1, 1 );
 	m_StateImageList.Add( pApp->LoadIcon( IDI_GLOBAL_CONSTANT )) ;
 
 	m_rCtrl.SetImageList( &m_StateImageList, LVSIL_STATE );
-	m_rCtrl.SetImageList( &m_ImageList, LVSIL_NORMAL );
 	m_rCtrl.SetImageList( &m_ImageList, LVSIL_SMALL );
 
 	// insert columns

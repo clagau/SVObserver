@@ -123,9 +123,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 	m_hrInitialized = S_FALSE;
 
-	SVOINIClass m_SvimIni;
-
-	m_SvimIni.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	SvOml::SVOINIClass m_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	m_bUseImageCopies = m_SvimIni.GetValueInt(_T("External Tool"), _T("UseImageCopy"), TRUE) != FALSE;
 

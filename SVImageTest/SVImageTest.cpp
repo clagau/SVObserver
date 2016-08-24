@@ -43,7 +43,7 @@ bool IsGigeDigitizer(LPCTSTR p_productName)
 
 bool CSVImageTestApp::IsGigeSystem() const
 {
-	return IsGigeDigitizer(m_iniLoader.m_csProductName);
+	return IsGigeDigitizer(m_iniLoader.m_ProductName.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -66,10 +66,10 @@ CSVImageTestApp::CSVImageTestApp()
 	m_svimIniFile = SvStl::GlobalPath::Inst().GetSVIMIniPath();
 	m_hardwareIniFile = SvStl::GlobalPath::Inst().GetHardwareIniPath();
 
-	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
+	TCHAR SystemDir[ MAX_PATH + 1 ];
 
-	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );
-	m_oemIniFile.Format( "%s\\OEMINFO.INI", l_szSystemDir );
+	::GetSystemDirectory( SystemDir, MAX_PATH + 1 );
+	m_oemIniFile = SvUl_SF::Format( _T("%s\\OEMINFO.INI"), SystemDir);
 }
 
 CSVImageTestApp::~CSVImageTestApp()
@@ -143,7 +143,7 @@ int CSVImageTestApp::ExitInstance()
 
 bool CSVImageTestApp::ReadSVIMModelNo()
 {
-	HRESULT hr = m_iniLoader.Load(m_svimIniFile, m_oemIniFile, m_hardwareIniFile);
+	HRESULT hr = m_iniLoader.Load( m_svimIniFile.c_str(), m_oemIniFile.c_str(), m_hardwareIniFile.c_str() );
 	return (S_OK == hr) ? true : false;
 }
 
@@ -163,7 +163,7 @@ SVTestAcquisitionSubsystem* CSVImageTestApp::LoadDigitizer()
 
 	if (m_pSubsystem)
 	{
-		if( !m_pSubsystem->Create(m_iniLoader.m_csDigitizerDLL ) )
+		if( !m_pSubsystem->Create( CString( m_iniLoader.m_DigitizerDLL.c_str() ) ) )
 		{
 			delete m_pSubsystem;
 

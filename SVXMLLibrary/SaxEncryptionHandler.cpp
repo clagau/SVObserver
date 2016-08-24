@@ -43,10 +43,10 @@ namespace Seidenader { namespace  SVXMLLibrary
 		{
 			_bstr_t  bstrString(pTreeElement->GetNameAtt() );
 			SVBStr bstrDecryptedString;	
-			m_Encryptionclass.DecryptNameAttribute(bstrString.Detach(), &bstrDecryptedString);
+			m_Encryptionclass.DecryptNameAttribute(bstrString.GetBSTR(), &bstrDecryptedString);
 			pTreeElement->SetNameAttribute((LPCWSTR) bstrDecryptedString);
 			bstrString =  pTreeElement->GetTypeAtt();
-			m_Encryptionclass.DecryptString(bstrString.Detach(),&bstrDecryptedString );
+			m_Encryptionclass.DecryptString(bstrString.GetBSTR(),&bstrDecryptedString );
 			pTreeElement->SetTypeAttribute((LPCWSTR) bstrDecryptedString);
 		}
 	}
@@ -57,7 +57,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		{
 			_bstr_t  bstrString(pTreeElement->GetContent() );
 			SVBStr bstrDecryptedString;	
-			m_Encryptionclass.DecryptString(bstrString.Detach(),&bstrDecryptedString );
+			m_Encryptionclass.DecryptString(bstrString.GetBSTR(),&bstrDecryptedString );
 			pTreeElement->SetContent((LPCWSTR) bstrDecryptedString);
 		}
 

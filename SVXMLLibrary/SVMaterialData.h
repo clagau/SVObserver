@@ -35,6 +35,8 @@ public:
 
 	void clear();
 
+	VARIANT GetVARIANT();
+
 	operator const _variant_t & () const;
 
 	const SVMaterialData& operator=( const SVMaterialData& rObject );

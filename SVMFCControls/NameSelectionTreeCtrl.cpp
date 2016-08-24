@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOResource\resource.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 #include "NameSelectionTreeCtrl.h"
 #pragma endregion Includes
 
@@ -133,7 +134,7 @@ namespace Seidenader
 
 			void NameSelectionTreeCtrl::InitTreeCtrl()
 			{
-				m_StateImageList.Create(16, 16, true, 5, 5);
+				m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 4, 1 );
 
 				// State image index 0 is not used
 				m_StateImageList.Add(AfxGetApp()->LoadIcon(IDI_ICON_NOTEXIST));

@@ -81,17 +81,17 @@ END_MESSAGE_MAP()
 // SVUtilitiesCustomizeDialogClass message handlers
 BOOL CALLBACK LoadComboBox (CString &szKeyName, LPVOID pVoid)
 {
-  CString szKey;
+	CString szKey;
 
-  szKey.Format (_T("%s\\%s"), gmszUtilityKeyStr, szKeyName);
-  SVRegistryClass reg(szKey);
+	szKey.Format (_T("%s\\%s"), gmszUtilityKeyStr, szKeyName);
+	SVRegistryClass reg(szKey);
 
-  reg.SetRegistryValue (gmszIdValueNameStr, gmdwLastId++);
+	reg.SetRegistryValue (gmszIdValueNameStr, gmdwLastId++);
 
-  CComboBox *pBox = (CComboBox *) pVoid;
-  pBox->AddString (szKeyName);
+	CComboBox *pBox = (CComboBox *) pVoid;
+	pBox->AddString (szKeyName);
 
-  return TRUE;
+	return TRUE;
 }
 
 BOOL SVUtilitiesCustomizeDialogClass::OnInitDialog() 
@@ -99,21 +99,21 @@ BOOL SVUtilitiesCustomizeDialogClass::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	mszCommandValueName = _T("Command");
-  mszArgumentsValueName = _T("Arguments");
-  mszWorkingDirectoryValueName = _T("Working Directory");
-  mszPromptValueName = _T("Prompt For Arguments");
-  mszIdValueName = _T("Menu Id");
+	mszArgumentsValueName = _T("Arguments");
+	mszWorkingDirectoryValueName = _T("Working Directory");
+	mszPromptValueName = _T("Prompt For Arguments");
+	mszIdValueName = _T("Menu Id");
 
-  gmszIdValueNameStr = mszIdValueName;
-  gmszUtilityKeyStr = mszUtilityKey;
-  gmdwLastId = ID_EXTRAS_UTILITIES_BASE;
+	gmszIdValueNameStr = mszIdValueName;
+	gmszUtilityKeyStr = mszUtilityKey;
+	gmdwLastId = ID_EXTRAS_UTILITIES_BASE;
 
-  SVRegistryClass reg(mszUtilityKey); // Note: mszUtilityKey MUST be set in calling routine before DoModal() is called!
-  CComboBox *pBox;
+	SVRegistryClass reg(mszUtilityKey); // Note: mszUtilityKey MUST be set in calling routine before DoModal() is called!
+	CComboBox *pBox;
 
-  pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
-  SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
-//load the combobox with the info in the map.
+	pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
+	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
+	//load the combobox with the info in the map.
 
 	std::map<UINT, SVUtilityIniClass>::iterator iter;
 
@@ -128,124 +128,151 @@ BOOL SVUtilitiesCustomizeDialogClass::OnInitDialog()
 		++iter;
 	}
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void SVUtilitiesCustomizeDialogClass::OnSelEndOkCustomizeMenuText() 
 {
-  CString szKey;
-  CComboBox *pBox;
-  int iCurSel;
-  SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
+	CString szKey;
+	CComboBox *pBox;
+	int iCurSel;
+	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
 
-  pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
-  iCurSel = pBox->GetCurSel ();
+	pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
+	iCurSel = pBox->GetCurSel ();
 
-  if (iCurSel > -1)
-  {
-    pBox->GetLBText (iCurSel, mszMenuText);
-
-	std::map<UINT, SVUtilityIniClass>::iterator iter;
-
-	iter = pApp->m_UtilityMenu.begin();
-
-	BOOL bDone = FALSE;
-
-	while ( (iter != pApp->m_UtilityMenu.end()) && !bDone )
+	if (iCurSel > -1)
 	{
-		SVUtilityIniClass l_Struct;
-		l_Struct = iter->second;
-		if ( l_Struct.m_csDisplayName == mszMenuText)
-		{
-			mszCommand = l_Struct.m_csCommand;
-			mszArguments = l_Struct.m_csArguments;
-			mszWorkingDirectory = l_Struct.m_csWorkingDirectory;
-			if ( l_Struct.m_csPromptForArguments.Left(1).CompareNoCase("Y") == 0 )
-			{
-				mbPromptForArguments = TRUE;
-			}
-			else
-			{
-				mbPromptForArguments = FALSE;
-			}
+		pBox->GetLBText (iCurSel, mszMenuText);
 
-			//fill in the info
-			bDone = TRUE;
+		std::map<UINT, SVUtilityIniClass>::iterator iter;
+
+		iter = pApp->m_UtilityMenu.begin();
+
+		BOOL bDone = FALSE;
+
+		while ( (iter != pApp->m_UtilityMenu.end()) && !bDone )
+		{
+			SVUtilityIniClass l_Struct;
+			l_Struct = iter->second;
+			if ( l_Struct.m_csDisplayName == mszMenuText)
+			{
+				mszCommand = l_Struct.m_csCommand;
+				mszArguments = l_Struct.m_csArguments;
+				mszWorkingDirectory = l_Struct.m_csWorkingDirectory;
+				if ( l_Struct.m_csPromptForArguments.Left(1).CompareNoCase("Y") == 0 )
+				{
+					mbPromptForArguments = TRUE;
+				}
+				else
+				{
+					mbPromptForArguments = FALSE;
+				}
+
+				//fill in the info
+				bDone = TRUE;
+			}
+			++iter;
 		}
-		++iter;
+		SetApplyState (FALSE);
+		UpdateData (FALSE);
 	}
-    SetApplyState (FALSE);
-    UpdateData (FALSE);
-  }
 }
 
 void SVUtilitiesCustomizeDialogClass::OnEditChangeCustomizeMenuText() 
 {
-  SetApplyState (TRUE);
+	SetApplyState (TRUE);
 }
 
 void SVUtilitiesCustomizeDialogClass::SetApplyState(BOOL bEnabled)
 {
-  CButton *pApply;
+	CButton *pApply;
 
 	pApply = (CButton *) GetDlgItem (IDC_APPLY);
-  pApply->EnableWindow (bEnabled);
-  SetDeleteState (!bEnabled);
+	pApply->EnableWindow (bEnabled);
+	SetDeleteState (!bEnabled);
 }
 
 void SVUtilitiesCustomizeDialogClass::OnChangeCustomizeCommand() 
 {
-  SetApplyState (TRUE);
+	SetApplyState (TRUE);
 }
 
 void SVUtilitiesCustomizeDialogClass::OnChangeCustomizeArguments() 
 {
-  SetApplyState (TRUE);
+	SetApplyState (TRUE);
 }
 
 void SVUtilitiesCustomizeDialogClass::OnChangeCustomizeWorkingDirectory() 
 {
-  SetApplyState (TRUE);
+	SetApplyState (TRUE);
 }
 
 void SVUtilitiesCustomizeDialogClass::OnCustomizePromptForArguments() 
 {
-  SetApplyState (TRUE);
+	SetApplyState (TRUE);
 }
 
 void SVUtilitiesCustomizeDialogClass::SetDeleteState(BOOL bEnabled)
 {
-  CButton *pDelete;
+	CButton *pDelete;
 
 	pDelete = (CButton *) GetDlgItem (IDC_CUSTOMIZE_DELETE);
-  pDelete->EnableWindow (bEnabled);
+	pDelete->EnableWindow (bEnabled);
 }
 
 void SVUtilitiesCustomizeDialogClass::OnApply() 
 {
-  CString szKey;
-  CComboBox *pBox;
+	CString szKey;
+	CComboBox *pBox;
 
-  UpdateData (TRUE);
-  if (!mszMenuText.IsEmpty ())
-  {
-
-	  //check to see if it is already in the map, if not add it
-	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
-	std::map<UINT, SVUtilityIniClass>::iterator iter;
-
-	iter = pApp->m_UtilityMenu.begin();
-	BOOL bFound = FALSE;
-
-	while ( (iter != pApp->m_UtilityMenu.end()) && !bFound )
+	UpdateData (TRUE);
+	if (!mszMenuText.IsEmpty ())
 	{
-		SVUtilityIniClass l_Struct;
-		l_Struct = iter->second;
-		if ( l_Struct.m_csDisplayName == mszMenuText)
+
+		//check to see if it is already in the map, if not add it
+		SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
+		std::map<UINT, SVUtilityIniClass>::iterator iter;
+
+		iter = pApp->m_UtilityMenu.begin();
+		BOOL bFound = FALSE;
+
+		while ( (iter != pApp->m_UtilityMenu.end()) && !bFound )
 		{
+			SVUtilityIniClass l_Struct;
+			l_Struct = iter->second;
+			if ( l_Struct.m_csDisplayName == mszMenuText)
+			{
+				l_Struct.m_csArguments = mszArguments;
+				l_Struct.m_csCommand = mszCommand;
+				l_Struct.m_csWorkingDirectory = mszWorkingDirectory;
+				if ( mbPromptForArguments )
+				{
+					l_Struct.m_csPromptForArguments = "Y";
+				}
+				else
+				{
+					l_Struct.m_csPromptForArguments = "N";
+				}
+				iter->second = l_Struct;
+				bFound = TRUE;
+			}
+			++iter;
+		}
+		if ( !bFound )
+		{
+
+			pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
+			pBox->AddString (mszMenuText);
+
+			//must be a new utility
+			std::map<UINT, SVUtilityIniClass>::reverse_iterator riter;
+			SVUtilityIniClass l_Struct;
+			riter = pApp->m_UtilityMenu.rbegin();
+			UINT uintVal = riter->first;
 			l_Struct.m_csArguments = mszArguments;
 			l_Struct.m_csCommand = mszCommand;
-			l_Struct.m_csWorkingDirectory = mszWorkingDirectory;
+			l_Struct.m_csDisplayName = mszMenuText;
 			if ( mbPromptForArguments )
 			{
 				l_Struct.m_csPromptForArguments = "Y";
@@ -254,158 +281,118 @@ void SVUtilitiesCustomizeDialogClass::OnApply()
 			{
 				l_Struct.m_csPromptForArguments = "N";
 			}
-			iter->second = l_Struct;
-			bFound = TRUE;
+			l_Struct.m_csWorkingDirectory = mszWorkingDirectory;
+
+			//add new utility to map
+			pApp->m_UtilityMenu[uintVal+1] = l_Struct;
+
+			SvOml::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
+
+			int iCnt = UtilityIni.GetValueInt("General","HighestUtilityIndex",0);
+			iCnt++;
+			UtilityIni.SetValueInt("General","HighestUtilityIndex",iCnt);
+			CString Stanza;
+			Stanza.Format("Utility%d",iCnt);
+			UtilityIni.SetValueString( Stanza, _T("DisplayName"), l_Struct.m_csDisplayName );
+			UtilityIni.SetValueString( Stanza, _T("Command"), l_Struct.m_csCommand );
+			UtilityIni.SetValueString( Stanza, _T("Arguments"), l_Struct.m_csArguments );
+			UtilityIni.SetValueString( Stanza, _T("WorkingDirectory"), l_Struct.m_csWorkingDirectory );
+			UtilityIni.SetValueString( Stanza, _T("PromptForArguments"), l_Struct.m_csPromptForArguments );
 		}
-		++iter;
 	}
-	if ( !bFound )
-	{
+	SetApplyState (FALSE);
 
-		pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
-		pBox->AddString (mszMenuText);
-
-		//must be a new utility
-		std::map<UINT, SVUtilityIniClass>::reverse_iterator riter;
-		SVUtilityIniClass l_Struct;
-		riter = pApp->m_UtilityMenu.rbegin();
-		UINT uintVal = riter->first;
-		l_Struct.m_csArguments = mszArguments;
-		l_Struct.m_csCommand = mszCommand;
-		l_Struct.m_csDisplayName = mszMenuText;
-		if ( mbPromptForArguments )
-		{
-			l_Struct.m_csPromptForArguments = "Y";
-		}
-		else
-		{
-			l_Struct.m_csPromptForArguments = "N";
-		}
-		l_Struct.m_csWorkingDirectory = mszWorkingDirectory;
-
-		//add new utility to map
-		pApp->m_UtilityMenu[uintVal+1] = l_Struct;
-
-		SVOINIClass l_svIni;
-		CString csIniName =SvStl::GlobalPath::Inst().GetSVUtilityIniPath();
-
-		int iCnt = l_svIni.GetValueInt("General","HighestUtilityIndex",0,csIniName);
-		iCnt++;
-		l_svIni.SetValue("General","HighestUtilityIndex",iCnt,csIniName);
-		CString csStanza;
-		csStanza.Format("Utility%d",iCnt);
-		l_svIni.SetValue(csStanza,"DisplayName",l_Struct.m_csDisplayName,csIniName);
-		l_svIni.SetValue(csStanza,"Command",l_Struct.m_csCommand,csIniName);
-		l_svIni.SetValue(csStanza,"Arguments",l_Struct.m_csArguments,csIniName);
-		l_svIni.SetValue(csStanza,"WorkingDirectory",l_Struct.m_csWorkingDirectory,csIniName);
-		l_svIni.SetValue(csStanza,"PromptForArguments",l_Struct.m_csPromptForArguments,csIniName);
-
-	}
-
-
-  }
-  SetApplyState (FALSE);
-
-  if (mszMenuText.IsEmpty ())
-    SetDeleteState (FALSE);
+	if (mszMenuText.IsEmpty ())
+		SetDeleteState (FALSE);
 }
 
 void SVUtilitiesCustomizeDialogClass::OnOK() 
 {
-  CButton *pApply;
+	CButton *pApply;
 
 	pApply = (CButton *) GetDlgItem (IDC_APPLY);
-  if (pApply->IsWindowEnabled ())
-    OnApply();
-	
+	if (pApply->IsWindowEnabled ())
+		OnApply();
+
 	CDialog::OnOK();
 }
 
 void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete() 
 {
-  CString szKey;
-  CComboBox *pBox;
+	CString szKey;
+	CComboBox *pBox;
 
 	SVUtilityIniClass l_Struct;
 	std::map<UINT,SVUtilityIniClass>::iterator iter;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
-	SVOINIClass l_svIni;
-	CString csIniName = SvStl::GlobalPath::Inst().GetSVUtilityIniPath();
+	SvOml::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
 
-  UpdateData (TRUE);
+	UpdateData (TRUE);
 
-  pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
-  pBox->DeleteString (pBox->FindStringExact (0, mszMenuText));
+	pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
+	pBox->DeleteString (pBox->FindStringExact (0, mszMenuText));
 
-  szKey.Format (_T("%s\\%s"), mszUtilityKey, mszMenuText);
+	szKey.Format (_T("%s\\%s"), mszUtilityKey, mszMenuText);
 
+	CString Stanza;
+	int iUtlCnt = 0;
 
-	//find utility in INI and delete
+	BOOL bFound = FALSE;
 
-  CString csStanza;
-  int iUtlCnt = 0;
-  
-  BOOL bFound = FALSE;
+	while ( !bFound )
+	{
+		SVString Value;
+		iUtlCnt++;
+		Stanza.Format(_T("Utility%d"), iUtlCnt);
+		Value = UtilityIni.GetValueString( Stanza, _T("DisplayName"), _T("") );
 
-  while ( !bFound )
-  {
-	  BSTR l_bstrVal = nullptr;
-	  CString l_csVal;
-	  iUtlCnt++;
-	  csStanza.Format("Utility%d", iUtlCnt);
-	  l_svIni.GetValue(csStanza, "DisplayName", "", &l_bstrVal, csIniName);
-	  l_csVal = l_bstrVal;
+		if ( Value == static_cast<LPCTSTR> (mszMenuText) )
+		{
+			//found value.  delete from INI
+			UtilityIni.SetValueString( Stanza, nullptr, _T("") );
+			int iVal = UtilityIni.GetValueInt( _T("General"), _T("HighestUtilityIndex"), 0);
+			UtilityIni.SetValueInt( _T("General"), _T("HighestUtilityIndex"), (iVal-1) );
+			bFound = TRUE;
 
-	  if ( l_csVal == mszMenuText )
-	  {
-		  //found value.  delete from INI
-		  l_svIni.SetValue(csStanza, nullptr, "", csIniName);
-		  int iVal = l_svIni.GetValueInt("General", "HighestUtilityIndex", 0, csIniName);
-		  l_svIni.SetValue("General", "HighestUtilityIndex", (iVal-1), csIniName);
-		  bFound = TRUE;
+			//find and delete from map
+			iter = pApp->m_UtilityMenu.begin();
+			BOOL bDelete = FALSE;
 
-		  //find and delete from map
-		  iter = pApp->m_UtilityMenu.begin();
-		  BOOL bDelete = FALSE;
+			while ( (!bDelete) && (iter != pApp->m_UtilityMenu.end()) )
+			{
+				l_Struct = iter->second;
+				if ( l_Struct.m_csDisplayName == mszMenuText )
+				{
+					iter = pApp->m_UtilityMenu.erase(iter);
+					bDelete = TRUE;
+				}
+				else
+				{
+					++iter;
+				}
+			}
 
-		  while ( (!bDelete) && (iter != pApp->m_UtilityMenu.end()) )
-		  {
-			  l_Struct = iter->second;
-			  if ( l_Struct.m_csDisplayName == mszMenuText )
-			  {
-				  iter = pApp->m_UtilityMenu.erase(iter);
-				  bDelete = TRUE;
-			  }
-			  else
-			  {
-				  ++iter;
-			  }
-		  }
-
-		  if ( bDelete )
-		  {
-			  //call UtilitiesClass to cleanup the ini
-			  m_pUtilityClass->CleanupIni();
-		  }
-			  
-			
-		  
-	  }
-  }
+			if ( bDelete )
+			{
+				//call UtilitiesClass to cleanup the ini
+				m_pUtilityClass->CleanupIni();
+			}
+		}
+	}
 
 
 
-  mbPromptForArguments = FALSE;
-  mszArguments.Empty ();
-  mszCommand.Empty ();
-  mszMenuText.Empty ();
-  mszWorkingDirectory.Empty ();
-  muiId = 0;
- 
+	mbPromptForArguments = FALSE;
+	mszArguments.Empty ();
+	mszCommand.Empty ();
+	mszMenuText.Empty ();
+	mszWorkingDirectory.Empty ();
+	muiId = 0;
 
-  SetApplyState (FALSE);
-  SetDeleteState (FALSE);
-  UpdateData (FALSE);
+
+	SetApplyState (FALSE);
+	SetDeleteState (FALSE);
+	UpdateData (FALSE);
 }
 
 void SVUtilitiesCustomizeDialogClass::OnCustomizeCommandSelect() 
@@ -430,13 +417,13 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDirectorySelect()
 	if (svfncWorkingDirectory.SelectPath())
 	{
 		mszWorkingDirectory = svfncWorkingDirectory.GetPathName();
-    SetApplyState (TRUE);
-    UpdateData (FALSE);
-  }
+		SetApplyState (TRUE);
+		UpdateData (FALSE);
+	}
 }
 
 void SVUtilitiesCustomizeDialogClass::OnKillfocusCustomizeMenutext() 
 {
-    GetDlgItem(IDC_CUSTOMIZE_MENUTEXT)->GetWindowText(mszMenuText);
-    UpdateData (FALSE);
+	GetDlgItem(IDC_CUSTOMIZE_MENUTEXT)->GetWindowText(mszMenuText);
+	UpdateData (FALSE);
 }

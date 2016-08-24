@@ -33,8 +33,7 @@ SVSharedMemorySingleton::SVSharedMemorySingleton()
 
 void SVSharedMemorySingleton::ReadSettings()
 {
-	SVOINIClass reader;
-	reader.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	SvOml::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	long monitorStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("MonitorStoreSize"), SvSml::SVSharedMemorySettings::DefaultMonitorStoreSize);
 	long productStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("ProductStoreSize"), SvSml::SVSharedMemorySettings::DefaultProductStoreSize);

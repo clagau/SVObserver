@@ -239,26 +239,25 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	m_lTrigInverts = 0;
 
 	// Read Information from hardware.ini about the board options...
-	SVOINIClass l_INIHardware;
-	l_INIHardware.SetFile( SvStl::GlobalPath::Inst().GetHardwareIniPath() );
-	std::string l_strDesc;
+	SvOml::SVOINIClass HardwareIni( SvStl::GlobalPath::Inst().GetHardwareIniPath() );
+	SVString Value;
 
-	l_strDesc = l_INIHardware.GetValueString("IO Board","10","Entech X1");
-	l_strDesc = "10 - " + l_strDesc;
-	m_BoardModelCombo.AddString( l_strDesc.c_str() );
+	Value = HardwareIni.GetValueString( _T("IO Board"), _T("10"), _T("Entech X1") );
+	Value = _T("10 - ") + Value;
+	m_BoardModelCombo.AddString( Value.c_str() );
 
-	l_strDesc = l_INIHardware.GetValueString("IO Board","20","Entech X2");
-	l_strDesc = "20 - " + l_strDesc;
-	m_BoardModelCombo.AddString( l_strDesc.c_str() );
+	Value = HardwareIni.GetValueString( _T("IO Board"), _T("20"), _T("Entech X2") );
+	Value = _T("20 - ") + Value;
+	m_BoardModelCombo.AddString( Value.c_str() );
 
-	l_strDesc = l_INIHardware.GetValueString("IO Board","12","Entech X3");
-	l_strDesc = "12 - " + l_strDesc;
-	m_BoardModelCombo.AddString( l_strDesc.c_str() );
+	Value = HardwareIni.GetValueString( _T("IO Board"), _T("12"), _T("Entech X3") );
+	Value = _T("12 - ") + Value;
+	m_BoardModelCombo.AddString( Value.c_str() );
 
 	// Default board is an IO board model 10
 	m_BoardModel = 0;
 
-	if(0 == m_csDigital.CompareNoCase(SVLPTIODLL))
+	if(0 == m_csDigital.CompareNoCase(SVLPTIODLL) )
 	{
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue );

@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "SVOResource\resource.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 #include "SVTreeCtrl.h"
 
 #ifdef _DEBUG
@@ -38,7 +39,7 @@ namespace Seidenader
 		//
 		BOOL SVTreeCtrlClass::InitTreeCtrl()
 		{
-			StateImageList.Create( 16, 16, TRUE, 5, 5 );
+			StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 3, 1 );
 
 			// State image index 0 is not used
 			StateImageList.Add( AfxGetApp()->LoadIcon( IDI_ICON_NOTEXIST ) );

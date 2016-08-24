@@ -81,6 +81,7 @@ protected:
 	void ExpandItem(int item);
 	void ToggleExpandCollapse(int item);
 
+	CListCtrl& m_rCtrl;								//Reference to the list control
 	CImageList ImageList;
 	CImageList StateImageList;
 	CollapseExpandMap m_ExpandCollapseStates;

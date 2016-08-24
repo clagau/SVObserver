@@ -18,13 +18,17 @@ SVMaterialData::SVMaterialData()
 }
 
 SVMaterialData::SVMaterialData( const SVMaterialData& rObject )
-: m_Variant(rObject.m_Variant)
 {
+	m_Variant.Clear();
+	::VariantInit( &m_Variant.GetVARIANT() );
+	::VariantCopy( &m_Variant.GetVARIANT(), &rObject.m_Variant );
 }
 
 SVMaterialData::SVMaterialData( const _variant_t& rVariant )
-: m_Variant( rVariant )
 {
+	m_Variant.Clear();
+	::VariantInit( &m_Variant.GetVARIANT() );
+	::VariantCopy( &m_Variant.GetVARIANT(), &rVariant );
 }
 
 SVMaterialData::~SVMaterialData()
@@ -42,16 +46,23 @@ void SVMaterialData::clear()
 	m_Variant.Clear();
 }
 
+VARIANT SVMaterialData::GetVARIANT()
+{
+	return m_Variant.GetVARIANT();
+}
+
 SVMaterialData::operator const _variant_t & () const
 {
 	return m_Variant;
 }
 
-const SVMaterialData& SVMaterialData::operator=( const SVMaterialData& p_rObject )
+const SVMaterialData& SVMaterialData::operator=( const SVMaterialData& rObject )
 {
-	if( this != &p_rObject )
+	if( this != &rObject )
 	{
-		m_Variant = p_rObject.m_Variant;
+		m_Variant.Clear();
+		::VariantInit( &m_Variant.GetVARIANT() );
+		::VariantCopy( &m_Variant.GetVARIANT(), &rObject.m_Variant );
 	}
 
 	return *this;
@@ -61,7 +72,9 @@ const SVMaterialData& SVMaterialData::operator=( const _variant_t& rVariant )
 {
 	if( &m_Variant != &rVariant )
 	{
-		m_Variant = rVariant;
+		m_Variant.Clear();
+		::VariantInit( &m_Variant.GetVARIANT() );
+		::VariantCopy( &m_Variant.GetVARIANT(), &rVariant );
 	}
 
 	return *this;

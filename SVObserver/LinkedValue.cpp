@@ -356,10 +356,10 @@ HRESULT LinkedValue::UpdateConnection()
 	//We now need to check the no linked value so call the base class method
 	SVVariantValueObjectClass::GetValueAt( m_iLastSetIndex, 0,  Value );
 
-	SVGUID LinkedUid( _bstr_t(Value).GetBSTR() );
+	SVGUID LinkedUid( _bstr_t( static_cast<LPCTSTR> (Value)) );
 
 	//If valid GUID then should be able to get the linked value from the object manager
-	if( SV_GUID_NULL != LinkedUid )
+	if( SV_GUID_NULL != LinkedUid  )
 	{
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( LinkedUid, pLinkedObject );
 		if ( nullptr == pLinkedObject )

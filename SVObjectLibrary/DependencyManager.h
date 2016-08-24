@@ -23,6 +23,8 @@ namespace Seidenader { namespace SVObjectLibrary
 	#pragma region Constructor
 	public:
 		DependencyManager();
+
+		~DependencyManager();
 	#pragma endregion Constructor
 
 	#pragma region Public Methods

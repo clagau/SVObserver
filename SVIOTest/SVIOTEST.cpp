@@ -13,7 +13,6 @@
 
 #include "SVIOTEST.h"
 #include "SVIOTESTDlg.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVOMFCLibrary/SVOIniLoader.h"
 #include "SVStatusLibrary/GlobalPath.h"
 
@@ -59,28 +58,19 @@ CSVIOTESTApp theApp;
 
 BOOL CSVIOTESTApp::InitInstance()
 {
-	SVOINIClass l_svINI;
-
-	BSTR l_bstrValue = nullptr;
-
-	CString l_csTrigger;
-	CString l_csDigital;
-	CString l_csDDE;
-
-
 	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
 	CString l_csSystemDir;
 
 	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );
 	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
 
-	SVOIniLoader l_iniLoader;
+	SvOml::SVOIniLoader l_iniLoader;
 	HRESULT l_hrOk = l_iniLoader.Load(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	bool l_bOk = true;
 
-	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.m_csTriggerDLL ) && l_bOk;
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_csDigitalDLL ) && l_bOk;
+	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.m_TriggerDLL.c_str() ) && l_bOk;
+	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_DigitalDLL.c_str() ) && l_bOk;
 
 	if ( ! l_bOk )
 	{
@@ -93,22 +83,12 @@ BOOL CSVIOTESTApp::InitInstance()
 		m_pMainWnd = &dlg;
 
 		dlg.m_psvTriggers = &m_svTriggers;
-		dlg.m_csDigital = l_iniLoader.m_csDigitalDLL;
-		dlg.m_csTrigger = l_iniLoader.m_csTrigger;
-		dlg.m_lSystemType = atol(l_iniLoader.m_csIOBoard);
+		dlg.m_csDigital = l_iniLoader.m_DigitalDLL.c_str();
+		dlg.m_csTrigger = l_iniLoader.m_Trigger.c_str();
+		dlg.m_lSystemType = atol(l_iniLoader.m_IOBoard.c_str());
 
 		dlg.DoModal();
 	}
-
-	#ifdef _DEBUG	
-		l_svINI.SetValue( "IO", "DebugTriggerDLLName", l_csTrigger, "./SVIOTEST.INI" );
-		l_svINI.SetValue( "IO", "DebugDigitalDLLName", l_csDigital, "./SVIOTEST.INI" );
-	#else // _DEBUG
-		l_svINI.SetValue( "IO", "TriggerDLLName", l_csTrigger, "./SVIOTEST.INI" );
-		l_svINI.SetValue( "IO", "DigitalDLLName", l_csDigital, "./SVIOTEST.INI" );
-	#endif // _DEBUG
-
-
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.

@@ -23,7 +23,7 @@ public:
 	SVSecurityStorage();
 	virtual ~SVSecurityStorage();
 
-	HRESULT Load(LPCTSTR pFileName);
+	HRESULT Load(LPCTSTR FileName);
 	HRESULT Add( long lID, LPCTSTR sName, LPCTSTR sGroup , bool bForcePrompt = false );
 	HRESULT Add( long lID, LPCTSTR sName );
 	HRESULT ProtectData( long lID );

@@ -398,24 +398,24 @@ void SVDriveInitDlg::OnOK()
 
 bool SVDriveInitDlg::IsValidModelNumber() const
 {
-	SVOIniLoader iniLoader;
+	SvOml::SVOIniLoader iniLoader;
 	bool bValid(true);
 
-	CString csModel;
-	m_model_number.GetWindowText(csModel);
-	csModel.MakeUpper();
+	CString Model;
+	m_model_number.GetWindowText(Model);
+	Model.MakeUpper();
 	
-	HRESULT hr = iniLoader.DecodeModelNumber(csModel);
+	HRESULT hr = iniLoader.DecodeModelNumber(static_cast<LPCTSTR> (Model));
 	if (S_OK == hr)
 	{
-		hr = iniLoader.LoadHardwareIni(SvStl::GlobalPath::Inst().GetHardwareIniPath(), iniLoader.m_csOptions);
+		hr = iniLoader.LoadHardwareIni(SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 		if (S_OK == hr)
 		{
-			if (iniLoader.m_csProcessorBoardName.IsEmpty() ||
-				iniLoader.m_csTriggerBoardName .IsEmpty() ||
-				iniLoader.m_csAcquisitionBoardName.IsEmpty() ||
-				iniLoader.m_csDigitalBoardName.IsEmpty())
+			if (iniLoader.m_ProcessorBoardName.empty() ||
+				iniLoader.m_TriggerBoardName .empty() ||
+				iniLoader.m_AcquisitionBoardName.empty() ||
+				iniLoader.m_DigitalBoardName.empty())
 			{
 				bValid = false;
 			}

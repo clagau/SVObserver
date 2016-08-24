@@ -279,31 +279,31 @@ HRESULT SVObjectBuilder::CreateEmbeddedObject(const GUID& embeddedID, const GUID
 	return hr;
 }
 
-static void BuildDataArray(SVObjectAttributeClass& dataObject, const SVString& itemName, const SVVariantList& values, SVObjectScriptDataObjectTypeEnum dstDataType)
+static void BuildDataArray(SVObjectAttributeClass& dataObject, const SVString& itemName, const SVVariantList& ValueList, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
 	dataObject.SetName(itemName.c_str());
 	// check embedded class type for SVPointValueObject/SVDPointValueObject/SVVariantValueObject
-	for (SVVariantList::const_iterator it = values.begin();it != values.end();++it)
+	for (SVVariantList::const_iterator it = ValueList.begin();it != ValueList.end();++it)
 	{
-		const _variant_t& v = (*it);
+		const _variant_t& rValue = (*it);
 		if (dstDataType == SV_VARIANT_Type)
 		{
-			dataObject.AddData(v);
+			dataObject.AddData(rValue);
 		}
 		else 
 		{
-			switch (v.vt)
+			switch (rValue.vt)
 			{
 				case VT_BOOL:
 					{
-						BOOL bVal = (v.boolVal == VARIANT_TRUE) ? true : false;
+						BOOL bVal = (rValue.boolVal == VARIANT_TRUE) ? true : false;
 						dataObject.AddData(bVal);
 					}
 					break;
 
 				case VT_BSTR:
 					{
-						SVString strVal = SvUl_SF::createSVString(v);
+						SVString strVal = SvUl_SF::createSVString(rValue.bstrVal);
 						// check for Point/DPoint ??
 						if (dstDataType == SV_POINT_Type)
 						{
@@ -323,24 +323,24 @@ static void BuildDataArray(SVObjectAttributeClass& dataObject, const SVString& i
 					break;
 
 				case VT_R8:
-					dataObject.AddData(v.dblVal);
+					dataObject.AddData(rValue.dblVal);
 					break;
 
 				case VT_UI4:
-					dataObject.AddData(v.ulVal);
+					dataObject.AddData(rValue.ulVal);
 					break;
 
 				case VT_I4:
-					dataObject.AddData(v.lVal);
+					dataObject.AddData(rValue.lVal);
 					break;
 
 				case VT_I1:
 				case VT_UI1:
-					dataObject.AddData(v.bVal);
+					dataObject.AddData(rValue.bVal);
 					break;
 
 				case VT_I8:
-					dataObject.AddData(v.llVal);
+					dataObject.AddData(rValue.llVal);
 					break;
 
 				case VT_NULL:

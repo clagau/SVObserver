@@ -312,15 +312,15 @@ namespace Seidenader { namespace  SVXMLLibrary
 		return hr;
 	}
 	
-	HRESULT   SaxParser::ParseFile(const wchar_t * pwstrPath)
+	HRESULT   SaxParser::ParseFile(LPCTSTR FileName)
 	{
 		if ( !IsReady() )
 		{
 			return E_FAIL;
 		}
-
+		_bstr_t FileNameToParse( FileName );
 		DWORD Tick = ::GetTickCount();
-		HRESULT hr = m_pReader->parseURL(pwstrPath);
+		HRESULT hr = m_pReader->parseURL( FileNameToParse );
 		m_ParseTime = ::GetTickCount() -Tick;
 
 		return hr;

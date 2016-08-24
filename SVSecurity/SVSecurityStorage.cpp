@@ -198,7 +198,7 @@ HRESULT SVSecurityStorage::SetUseAutoEdit( bool p_bAutoEdit )
 	return S_OK;
 }
 
-HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
+HRESULT SVSecurityStorage::Load( LPCTSTR FileName )
 {
 	
 	SvXml::SaxEncryptionHandler EncyptionHandler;
@@ -207,8 +207,7 @@ HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
 	SvXml::SaxXMLHandler<SvXml::SVXMLMaterialsTree>  SaxHandler;
 	SaxHandler.SetSaxEncryptionHandler(&EncyptionHandler);
 
-	CA2W  pwXmlFilename(pFileName); 
-	HRESULT hr  = SaxHandler.BuildFromXMLFile(&XMLTree,  pwXmlFilename );	
+	HRESULT hr  = SaxHandler.BuildFromXMLFile(&XMLTree,  FileName );
 	
 	if( S_OK == hr )
 	{
@@ -251,12 +250,21 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& r
 		if( S_OK == l_Status )
 		{
 			rTree.set( SVMaterialsTree::SVTreeElement( _T( "Root" ), SVMaterialDataPtr( nullptr ) ) );
-
-			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Logon") ), new SVMaterialData( _variant_t( GetUseLogon() ) ) ) );
-			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Logon Timeout") ), new SVMaterialData( _variant_t( GetUserTimeout() ) ) ) );
-			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current User") ), new SVMaterialData( _variant_t( GetCurrentUser() ) ) ) );
-			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current PW") ), new SVMaterialData( _variant_t( GetCurrentPassword() ) ) ) );
-			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Auto Edit") ), new SVMaterialData( _variant_t( GetAutoEdit() ) ) ) );
+			SVMaterialDataPtr pMaterial;
+			pMaterial = new SVMaterialData( _variant_t( GetUseLogon() ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Logon") ), pMaterial ) );
+			pMaterial.clear();
+			pMaterial = new SVMaterialData( _variant_t( GetUserTimeout() ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Logon Timeout") ), pMaterial ) );
+			pMaterial.clear();
+			pMaterial = new SVMaterialData( _variant_t( GetCurrentUser() ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current User") ), pMaterial ) );
+			pMaterial.clear();
+			pMaterial = new SVMaterialData( _variant_t( GetCurrentPassword() ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current PW") ), pMaterial ) );
+			pMaterial.clear();
+			pMaterial = new SVMaterialData( _variant_t( GetAutoEdit() ) );
+			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Auto Edit") ), pMaterial ) );
 		}
 
 		if( S_OK == l_Status )
@@ -312,9 +320,15 @@ HRESULT SVSecurityStorage::GetChildMaterialsTree( SVMaterialsTree::SVTreeContain
 		}
 		if( nullptr != pNode )
 		{
-			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("Force Prompt") ), new SVMaterialData( _variant_t( p_rNodeIter->m_bForcePrompt ) ) ) );
-			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("NT Group") ), new SVMaterialData( _variant_t( p_rNodeIter->m_strNTGroup ) ) ) );
-			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("ID") ), new SVMaterialData( _variant_t( p_rNodeIter->m_lID ) ) ) );
+			SVMaterialDataPtr pMaterial;
+			pMaterial =new SVMaterialData( _variant_t( p_rNodeIter->m_bForcePrompt ) );
+			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("Force Prompt") ), pMaterial ) );
+			pMaterial.clear();
+			pMaterial = new SVMaterialData( _variant_t( p_rNodeIter->m_strNTGroup ) );
+			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("NT Group") ), pMaterial ) );
+			pMaterial.clear();
+			pMaterial = new SVMaterialData( _variant_t( p_rNodeIter->m_lID ) );
+			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("ID") ), pMaterial ) );
 		}
 		
 		++p_rNodeIter;

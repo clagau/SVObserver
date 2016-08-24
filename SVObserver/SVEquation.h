@@ -219,7 +219,7 @@ protected:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	
 private:
-	SvOi::EquationTestResult lexicalScan( LPSTR buffer );		// perform lexical scan
+	SvOi::EquationTestResult lexicalScan( LPCTSTR inBuffer );		// perform lexical scan
 
 	protected:
 	SVEquationLexClass lex;					// scanner class

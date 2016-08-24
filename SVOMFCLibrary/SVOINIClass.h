@@ -11,51 +11,29 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <io.h>
+#include "SVUtilityLibrary/SVString.h"
 
-class SVOINIClass  
+namespace Seidenader { namespace SVOMFCLibrary
 {
-public:
-	SVOINIClass();
-	~SVOINIClass();
+	class SVOINIClass
+	{
+	public:
+		SVOINIClass( LPCTSTR FileName );
+		virtual ~SVOINIClass();
 
-	HRESULT SetFile( LPCTSTR p_szFile );
+		SVString GetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Default ) const;
 
-	std::string GetValueString( LPCTSTR p_szSection,
-	                  LPCTSTR p_szKey,
-	                  LPCTSTR p_szDefault,
-	                  LPCTSTR p_szFileName = nullptr );
+		int GetValueInt( LPCTSTR Section, LPCTSTR Key, int Default ) const;
 
-	HRESULT GetValue( LPCTSTR p_szSection,
-	                  LPCTSTR p_szKey,
-	                  LPCTSTR p_szDefault,
-	                  BSTR*   p_pbstrValue,
-	                  LPCTSTR p_szFileName = nullptr );
+		HRESULT SetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Value ) const;
 
-	HRESULT GetValue( LPCTSTR p_szSection,
-	                  LPCTSTR p_szKey,
-	                  int     p_iDefault,
-	                  int*    p_piValue,
-	                  LPCTSTR p_szFileName = nullptr );
-
-	int GetValueInt( LPCTSTR p_szSection,
-	                     LPCTSTR p_szKey,
-	                     int     p_iDefault,
-	                     LPCTSTR p_szFileName = nullptr );
-
-	HRESULT SetValue( LPCTSTR p_szSection,
-	                  LPCTSTR p_szKey,
-	                  LPCTSTR p_szValue,
-	                  LPCTSTR p_szFileName = nullptr );
-
-	HRESULT SetValue( LPCTSTR p_szSection,
-	                  LPCTSTR p_szKey,
-	                  int     p_iValue,
-	                  LPCTSTR p_szFileName = nullptr );
-protected:
-	LPTSTR	m_tszFile;
-};
+		HRESULT SetValueInt( LPCTSTR Section, LPCTSTR Key, int Value ) const;
+	protected:
+		SVString m_FileName;
+	};
+} /* namespace SVOMFCLibrary */ } /* namespace Seidenader */
 
 #include "SVOINIClass.inl"
 
+namespace SvOml = Seidenader::SVOMFCLibrary;

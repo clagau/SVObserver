@@ -164,13 +164,21 @@ HANDLE SVThread<SVThreadSignalHandler>::GetThreadHandle() const
 template<typename SVThreadSignalHandler>
 int SVThread<SVThreadSignalHandler>::GetPriority() const
 {
-	return ::GetThreadPriority(m_hThread);
+	int Result( -1 );
+	if( nullptr != m_hThread )
+	{
+		Result = ::GetThreadPriority(m_hThread);
+	}
+	return Result;
 }
 
 template<typename SVThreadSignalHandler>
 void SVThread<SVThreadSignalHandler>::SetPriority(int priority)
 {
-	::SetThreadPriority(m_hThread, priority);
+	if( nullptr != m_hThread )
+	{
+		::SetThreadPriority(m_hThread, priority);
+	}
 }
 
 template<typename SVThreadSignalHandler>

@@ -59,8 +59,8 @@ private:
 	
 	HRESULT ProcessAttributes(const GUID& ownerID, const GUID& objectID, typename SVTreeType::SVBranchHandle hItem);
 
-	bool GetItemValue(const SVString& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& value);
-	bool GetValues(typename SVTreeType::SVBranchHandle hItem, const SVString& tag, SVVariantList& values);
+	bool GetItemValue(const SVString& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& rValue);
+	bool GetValues(typename SVTreeType::SVBranchHandle hItem, const SVString& tag, SVVariantList& rValueList);
 	bool HasTag(typename SVTreeType::SVBranchHandle hItem, const SVString& tag);
 };
 

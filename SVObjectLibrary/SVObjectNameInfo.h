@@ -29,6 +29,8 @@ struct SVObjectNameInfo
 	SVObjectNameInfo( const SVNameDeque& p_rNameArray, const SVString& p_rIndex, const SVString& p_rDefaultValue );
 	SVObjectNameInfo( const SVObjectNameInfo& p_rObject );
 
+	~SVObjectNameInfo();
+
 	void clear();
 
 	HRESULT ParseObjectName( const SVString& p_rObjectName );

@@ -123,10 +123,9 @@ BOOL SVArchiveHeaderEditDlg::OnInitDialog()
 	int iItem = 0;
 	for(StringPairVect::const_iterator l_it = m_Strings.begin() ; l_it != m_Strings.end() ; ++l_it)
 	{
-		BSTR l_bstGUID = l_it->first.AllocSysString();
-		SVGUID l_ObjGUID(l_bstGUID);
-		::SysFreeString( l_bstGUID );
-		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(l_ObjGUID);
+		_bstr_t bstGUID( static_cast<LPCTSTR> (l_it->first) );
+		SVGUID ObjGUID( bstGUID );
+		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(ObjGUID);
 		if( l_pObject )
 		{
 			CString strObjectName = l_pObject->GetCompleteObjectName();

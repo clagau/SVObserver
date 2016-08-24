@@ -8,64 +8,76 @@
 // * .Current Version : $Revision:   1.2  $
 // * .Check In Date   : $Date:   10 Jun 2013 18:08:06  $
 // ******************************************************************************
-
 #pragma once
 
-class SVOIniLoader
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
+
+namespace Seidenader { namespace SVOMFCLibrary
 {
-public:
-	CString m_csWinKey;
-	CString m_csModelNumber;
-	CString m_csSerialNumber;
-	CString m_csProcessor;
-	CString m_csFrameGrabber;
-	CString m_csIOBoard;
-	CString m_csOptions;
+	#pragma region Declarations
+	const int MaxTriggers = 4;
+	#pragma endregion Declarations
 
-	CString m_csTrigger;
+	class SVOIniLoader
+	{
+	public:
+		SVString m_WinKey;
+		SVString m_ModelNumber;
+		SVString m_SerialNumber;
+		SVString m_Processor;
+		SVString m_FrameGrabber;
+		SVString m_IOBoard;
+		SVString m_Options;
 
-	CString m_Opto22InputInvert;
-	CString m_Opto22OutputInvert;
-	CString m_csTriggerEdge[4];
-	CString m_csStrobeEdge[4];
-	CString m_csStartFrameType[4];
+		SVString m_Trigger;
 
-	CString m_csProductName;
-	CString m_csProcessorBoardName;
-	CString m_csTriggerBoardName;
-	CString m_csAcquisitionBoardName;
-	CString m_csDigitalBoardName;
-	CString m_csRAIDBoardName;
+		SVString m_Opto22InputInvert;
+		SVString m_Opto22OutputInvert;
+		SVString m_TriggerEdge[MaxTriggers];
+		SVString m_StrobeEdge[MaxTriggers];
+		SVString m_StartFrameType[MaxTriggers];
+
+		SVString m_ProductName;
+		SVString m_ProcessorBoardName;
+		SVString m_TriggerBoardName;
+		SVString m_AcquisitionBoardName;
+		SVString m_DigitalBoardName;
+		SVString m_RAIDBoardName;
 	
-	CString m_csDigitizerDLL;
-	CString m_csTriggerDLL;
-	CString m_csReloadAcquisitionDLL;
-	CString m_csReloadTriggerDLL;
-	CString m_csDigitalDLL;
-	CString m_csReloadDigitalDLL;
-	CString m_csFileAcquisitionDLL;
-	CString m_csSoftwareTriggerDLL;
-	CString m_csAcquisitionTriggerDLL;
-	CString m_csHardwareOptions;
+		SVString m_DigitizerDLL;
+		SVString m_TriggerDLL;
+		SVString m_ReloadAcquisitionDLL;
+		SVString m_ReloadTriggerDLL;
+		SVString m_DigitalDLL;
+		SVString m_ReloadDigitalDLL;
+		SVString m_FileAcquisitionDLL;
+		SVString m_SoftwareTriggerDLL;
+		SVString m_AcquisitionTriggerDLL;
+		SVString m_HardwareOptions;
 
-	CString m_csIOBoardOption;
+		SVString m_IOBoardOption;
 	
-	long m_gigePacketSize;
-	bool m_bUseCorrectListRecursion;
+		long m_gigePacketSize;
+		bool m_bUseCorrectListRecursion;
 	
-	HRESULT m_hrOEMFailure;
+		HRESULT m_hrOEMFailure;
 		
-	SVOIniLoader();
+		SVOIniLoader();
 	
-	HRESULT Load(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile);
-	HRESULT LoadOEMIni(LPCTSTR oemIniFile);
-	HRESULT LoadSVIMIni(LPCTSTR svimIniFile);
-	HRESULT LoadHardwareIni(LPCTSTR hardwareIniFile, LPCTSTR modelOptions);
-	HRESULT DecodeModelNumber(LPCTSTR modelNumber);
-	unsigned char GetForcedImageUpdateTime() const;
+		HRESULT Load(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile);
+		HRESULT LoadOEMIni(LPCTSTR oemIniFile);
+		HRESULT LoadSVIMIni(LPCTSTR svimIniFile);
+		HRESULT LoadHardwareIni(LPCTSTR hardwareIniFile);
+		HRESULT DecodeModelNumber(LPCTSTR modelNumber);
+		unsigned char GetForcedImageUpdateTime() const;
 
-protected:
-	bool m_bSingleCameraModel;
-	unsigned char m_forcedImageUpdateTimeInSeconds;
-};
+	protected:
+		bool m_bSingleCameraModel;
+		unsigned char m_forcedImageUpdateTimeInSeconds;
+	};
+} /* namespace SVOMFCLibrary */ } /* namespace Seidenader */
+
+namespace SvOml = Seidenader::SVOMFCLibrary;
 

@@ -108,17 +108,15 @@ bool SVNavigateTree::GetItemLeaf( SVTreeType &rTree, LPCTSTR Name, typename SVTr
 }
 
 template< typename SVTreeType >
-bool SVNavigateTree::GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, _variant_t &rVariant )
+bool SVNavigateTree::GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, _variant_t &rData )
 {
 	bool Result( false );
 	SVTreeType::SVLeafHandle pLeaf;
 
-	rVariant.Clear();
-
 	Result = GetItemLeaf( rTree, Name, pParent, pLeaf );
 	if ( Result )
 	{
-		rVariant = rTree.getLeafData( pLeaf );
+		rTree.getLeafData( pLeaf, rData );
 	}
 
 	return Result;

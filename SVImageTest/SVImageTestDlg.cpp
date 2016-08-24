@@ -142,7 +142,7 @@ BOOL CSVImageTestDlg::OnInitDialog()
 	}
 
 	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();
-	m_modelNo = pApp->m_iniLoader.m_csModelNumber;
+	m_modelNo = pApp->m_iniLoader.m_ModelNumber.c_str();
 
 	UpdateData( FALSE );
 	
@@ -276,7 +276,7 @@ void CSVImageTestDlg::OnUpdateModelNumber()
 	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();	
 	CString l_modelNumber = m_modelNo;
 	UpdateData();
-	HRESULT hr = pApp->m_iniLoader.DecodeModelNumber(m_modelNo);
+	HRESULT hr = pApp->m_iniLoader.DecodeModelNumber( static_cast<LPCTSTR> (m_modelNo) );
 	if (S_OK == hr)
 	{
 		StopAllCameras();
@@ -295,7 +295,7 @@ void CSVImageTestDlg::OnUpdateModelNumber()
 		}
 
 		// update settings from hardware.ini
-		pApp->m_iniLoader.LoadHardwareIni(pApp->m_hardwareIniFile, pApp->m_iniLoader.m_csOptions);
+		pApp->m_iniLoader.LoadHardwareIni(pApp->m_hardwareIniFile.c_str());
 		pApp->UnLoadDigitizer();
 		m_pSubsystem = pApp->LoadDigitizer();
 

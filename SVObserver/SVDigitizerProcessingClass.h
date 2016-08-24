@@ -75,7 +75,7 @@ private:
 	typedef std::map< SVString, SVAcquisitionClassPtr > SVNameDigitizerMap;
 	typedef std::map< SVString, SVDigitizerLoadLibraryClass* > SVNameDigitizerSubsystemMap;
 
-	HRESULT AddDigitizer( LPCTSTR p_szName, SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem, unsigned long p_Handle );
+	HRESULT AddDigitizer( LPCTSTR Name, SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem, unsigned long p_Handle );
 
 	HRESULT UpdateMatroxDevices();
 

@@ -31,7 +31,7 @@ END_MESSAGE_MAP()
 static const int ItemSelectedCol = 1;
 static const int ItemsSelectedWidth = 500;
 static const int IconNumber = 1;
-static const int IconGrowBy = 2;
+static const int IconGrowBy = 1;
 #pragma endregion Declarations
 
 #pragma region Constructor

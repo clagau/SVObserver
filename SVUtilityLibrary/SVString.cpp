@@ -37,7 +37,6 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 	SVString createSVString( const _bstr_t& rString )
 	{
 		SVString retVal(_T(""));
-		//_bstr_t l_String( p_rString );
 
 		if( rString.length() )
 		{
@@ -47,14 +46,13 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 		return retVal;
 	}
 
-	SVString createSVString( const VARIANT& rVariant )
+	SVString createSVString( const _variant_t& rVariant )
 	{
 		SVString retVal(_T(""));
-		_bstr_t l_String( rVariant );
 
-		if (l_String.length())
+		if( VT_BSTR == rVariant.vt )
 		{
-			retVal.assign( l_String );
+			retVal = createSVString( _bstr_t( rVariant.bstrVal ) );
 		}
 
 		return retVal;

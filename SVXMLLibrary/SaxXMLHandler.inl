@@ -74,7 +74,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	}
 
 	template<typename TreeType>
-	HRESULT  SaxXMLHandler<TreeType>::BuildFromXMLFile(TreeType*  dataTree , const wchar_t * pwstrPath)
+	HRESULT  SaxXMLHandler<TreeType>::BuildFromXMLFile(TreeType*  dataTree , LPCTSTR FileName)
 	{
 		m_pData_Tree = dataTree;
 		if( !m_SaxParser.IsReady() )
@@ -86,7 +86,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		HRESULT hr(E_FAIL);
 		try
 		{
-			hr =   m_SaxParser.ParseFile(pwstrPath);
+			hr =   m_SaxParser.ParseFile(FileName);
 		}
 		catch ( const SvStl::MessageContainer&  )
 		{

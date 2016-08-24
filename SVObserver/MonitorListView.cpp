@@ -22,6 +22,7 @@
 #include "MonitorListPropertyDlg.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 enum MonitorListViewUpdateHints
@@ -262,7 +263,8 @@ static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& value
 
 IMPLEMENT_DYNCREATE(MonitorListView, CListView)
 
-MonitorListView::MonitorListView()
+MonitorListView::MonitorListView() :
+	m_rCtrl( GetListCtrl() )
 {
 	m_pDocument = dynamic_cast<SVIODoc *>(CListView::GetDocument());
 	VERIFY(m_ContextMenuNamedList.LoadMenu(IDR_MONITOR_LIST_ADD_REMOVE));
@@ -403,10 +405,9 @@ void MonitorListView::CollapseItem(int item)
 	lvItem.iItem = item;
 	lvItem.iSubItem = 0;
 
-	CListCtrl& rCtrl = GetListCtrl();
-	rCtrl.GetItem(&lvItem);
+	m_rCtrl.GetItem(&lvItem);
 	MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
-	const SVString& name = GetListName(rCtrl, item);
+	const SVString& name = GetListName(m_rCtrl, item);
 	CollapseExpandMap::iterator it = m_ExpandCollapseStates.find(name);
 	if (it != m_ExpandCollapseStates.end())
 	{
@@ -424,10 +425,9 @@ void MonitorListView::ExpandItem(int item)
 	lvItem.iItem = item;
 	lvItem.iSubItem = 0;
 
-	CListCtrl& rCtrl = GetListCtrl();
-	rCtrl.GetItem(&lvItem);
+	m_rCtrl.GetItem(&lvItem);
 
-	const SVString& name = GetListName(rCtrl, item);
+	const SVString& name = GetListName(m_rCtrl, item);
 	CollapseExpandMap::iterator it = m_ExpandCollapseStates.find(name);
 	if (it != m_ExpandCollapseStates.end())
 	{
@@ -446,10 +446,9 @@ void MonitorListView::ToggleExpandCollapse(int item)
 	lvItem.iItem = item;
 	lvItem.iSubItem = 0;
 
-	CListCtrl& rCtrl = GetListCtrl();
-	rCtrl.GetItem(&lvItem);
+	m_rCtrl.GetItem(&lvItem);
 
-	const SVString& name = GetListName(rCtrl, item);
+	const SVString& name = GetListName(m_rCtrl, item);
 	CollapseExpandMap::iterator it = m_ExpandCollapseStates.find(name);
 	if (it != m_ExpandCollapseStates.end())
 	{
@@ -469,33 +468,32 @@ int MonitorListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	lpCreateStruct->style |= LVS_SINGLESEL;
 	if (CListView::OnCreate(lpCreateStruct) == -1)
+	{
 		return -1;
-
-	CListCtrl& lc = GetListCtrl();
+	}
 
 	CWinApp* pApp = AfxGetApp();
-	ImageList.Create(16, 16, true, 5, 5);
+	ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 0, 1 );
 	ImageList.Add(pApp->LoadIcon(IDI_IOITEM_ICON));		// 0
-	ImageList.Add(pApp->LoadIcon(IDI_NOIOITEM_ICON));	// 1
-	ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));		// 2
-	ImageList.Add(pApp->LoadIcon(IDI_EXPAND));			// 3
+	ImageList.Add( pApp->LoadIcon(IDI_NOIOITEM_ICON));	// 1
+	ImageList.Add( pApp->LoadIcon(IDI_COLLAPSE));		// 2
+	ImageList.Add( pApp->LoadIcon(IDI_EXPAND));			// 3
 
-	StateImageList.Create(16, 16, true, 2, 2);
+	StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 0, 1 );
 	StateImageList.Add(pApp->LoadIcon(IDI_PPQ_ICON));			// 0
 	StateImageList.Add(pApp->LoadIcon(IDI_REMOTE_OUTPUT_ICON));	// 1
 
-	lc.SetImageList(&StateImageList, LVSIL_STATE);
-	lc.SetImageList(&ImageList, LVSIL_NORMAL);
-	lc.SetImageList(&ImageList, LVSIL_SMALL);
+	m_rCtrl.SetImageList(&StateImageList, LVSIL_STATE);
+	m_rCtrl.SetImageList(&ImageList, LVSIL_SMALL);
 
 	// insert columns
-	lc.InsertColumn(0, scITEM, LVCFMT_LEFT, -1, -1);
-	lc.InsertColumn(1, scPPQ, LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(0, scITEM, LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(1, scPPQ, LVCFMT_LEFT, -1, -1);
 	
-	lc.SetColumnWidth(0, 500);
-	lc.SetColumnWidth(1, 125);
+	m_rCtrl.SetColumnWidth(0, 500);
+	m_rCtrl.SetColumnWidth(1, 125);
 
-	lc.SetExtendedStyle(lc.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
+	m_rCtrl.SetExtendedStyle(m_rCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
 	return 0;
 }
 
@@ -520,9 +518,8 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 		pConfig->ValidateRemoteMonitorList(); // prune the list if necessary 
 
-		CListCtrl& rCtrl = GetListCtrl();
-		rCtrl.SetRedraw(false);
-		rCtrl.DeleteAllItems();
+		m_rCtrl.SetRedraw(false);
+		m_rCtrl.DeleteAllItems();
 
 		if (lHint == None)
 		{
@@ -553,11 +550,11 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			lvItem.iSubItem = 0;
 			lvItem.lParam = MonitorListNameNode;
 
-			int ipos = rCtrl.InsertItem(&lvItem); 
-			rCtrl.SetItemText(ipos, 0, it->first.c_str());
+			int ipos = m_rCtrl.InsertItem(&lvItem); 
+			m_rCtrl.SetItemText(ipos, 0, it->first.c_str());
 
 			// Set PPQ Name
-			rCtrl.SetItemText(ipos, 1, it->second.GetPPQName().c_str());
+			m_rCtrl.SetItemText(ipos, 1, it->second.GetPPQName().c_str());
 		
 			if (!state.bListCollapsed)
 			{
@@ -566,19 +563,19 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				// Add ProductItemList
 				const MonitoredObjectList& productValues = items.GetProductValuesList();
 				const MonitoredObjectList& productImages = items.GetProductImagesList();
-				ipos += AddProductItemList(rCtrl, productValues, productImages, state.bProductCollapsed, state.bProductValuesCollapsed, state.bProductImagesCollapsed, ++ipos);
+				ipos += AddProductItemList(m_rCtrl, productValues, productImages, state.bProductCollapsed, state.bProductValuesCollapsed, state.bProductImagesCollapsed, ++ipos);
 
 				// Add RejectConditionList
 				const MonitoredObjectList& rejectConditionList = items.GetRejectConditionList();
-				ipos += AddRejectConditionList(rCtrl, rejectConditionList, state.bRejectCollapsed, state.bRejectValuesCollapsed, ++ipos);
+				ipos += AddRejectConditionList(m_rCtrl, rejectConditionList, state.bRejectCollapsed, state.bRejectValuesCollapsed, ++ipos);
 
 				// Add FailStatusList
 				const MonitoredObjectList& failStatusList = items.GetFailStatusList();
-				ipos += AddFailStatusList(rCtrl, failStatusList, state.bFailStatusCollapsed, state.bFailStatusValuesCollapsed, ++ipos);
+				ipos += AddFailStatusList(m_rCtrl, failStatusList, state.bFailStatusCollapsed, state.bFailStatusValuesCollapsed, ++ipos);
 			}
 			k = ipos;
 		}
-		rCtrl.SetRedraw(true);
+		m_rCtrl.SetRedraw(true);
 	}
 	// Do not call CListView::OnUpdate() - it will cause flicker
 }
@@ -586,7 +583,7 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 void MonitorListView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	UINT flags;
-	int item = GetListCtrl().HitTest(point, &flags);
+	int item = m_rCtrl.HitTest(point, &flags);
 
 	if (item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL))
 	{
@@ -604,7 +601,7 @@ void MonitorListView::OnLButtonDblClk(UINT nFlags, CPoint point)
 				}
 			}
 			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
-			GetListCtrl().SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+			m_rCtrl.SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 		}
 	}
 }
@@ -614,10 +611,10 @@ BOOL MonitorListView::PreTranslateMessage(MSG* pMsg)
 	BOOL bRet = false;
 	if (pMsg->message == WM_KEYDOWN && TheSVObserverApp.OkToEdit())
 	{
-		POSITION Pos = GetListCtrl().GetFirstSelectedItemPosition();
+		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (nullptr != Pos)
 		{
-			int item = GetListCtrl().GetNextSelectedItem(Pos);
+			int item = m_rCtrl.GetNextSelectedItem(Pos);
 			if (item >= 0)
 			{
 				if (pMsg->wParam == VK_DELETE)
@@ -666,15 +663,14 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 	lvItem.iItem = item;
 	lvItem.iSubItem = 0;
 
-	CListCtrl& rCtrl = GetListCtrl();
-	rCtrl.GetItem(&lvItem);
+	m_rCtrl.GetItem(&lvItem);
 	MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if( nullptr != pConfig )
 	{
-		const SVString& name = GetListName(rCtrl, item);
+		const SVString& name = GetListName(m_rCtrl, item);
 		RemoteMonitorList list = pConfig->GetRemoteMonitorList();
 		RemoteMonitorList::iterator it = list.find(name);
 	
@@ -740,7 +736,7 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 					{
 						// Remove ProductItemList Values Item
 						MonitoredObjectList valuesList = it->second.GetProductValuesList();
-						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
+						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(m_rCtrl, item));
 						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), rMatch);
 						if (valueIt != valuesList.end())
 						{
@@ -759,7 +755,7 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 					{
 						// Remove ProductItemList Images Item
 						MonitoredObjectList imagesList = it->second.GetProductImagesList();
-						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
+						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(m_rCtrl, item));
 						MonitoredObjectList::iterator imageIt = std::find(imagesList.begin(), imagesList.end(), rMatch);
 						if (imageIt != imagesList.end())
 						{
@@ -794,7 +790,7 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 					if (it != list.end())
 					{
 						MonitoredObjectList valuesList = it->second.GetRejectConditionList();
-						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
+						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(m_rCtrl, item));
 						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), rMatch);
 						if (valueIt != valuesList.end())
 						{
@@ -829,7 +825,7 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 					if (it != list.end())
 					{
 						MonitoredObjectList valuesList = it->second.GetFailStatusList();
-						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
+						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(m_rCtrl, item));
 						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), rMatch);
 						if (valueIt != valuesList.end())
 						{
@@ -860,15 +856,14 @@ bool MonitorListView::EditMonitoredItem(int item)
 	lvItem.iItem = item;
 	lvItem.iSubItem = 0;
 
-	CListCtrl& rCtrl = GetListCtrl();
-	rCtrl.GetItem(&lvItem);
+	m_rCtrl.GetItem(&lvItem);
 	MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if( nullptr != pConfig )
 	{
-		const SVString& listName = GetListName(rCtrl, item);
+		const SVString& listName = GetListName(m_rCtrl, item);
 		RemoteMonitorList rList = pConfig->GetRemoteMonitorList();
 		RemoteMonitorList::iterator it = rList.find(listName);
 
@@ -964,11 +959,11 @@ void MonitorListView::AddItem()
 {
 	if (TheSVObserverApp.OkToEdit())
 	{
-		POSITION Pos = GetListCtrl().GetFirstSelectedItemPosition();
+		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		int item = -1;
 		if (Pos)
 		{
-			item = GetListCtrl().GetNextSelectedItem(Pos);
+			item = m_rCtrl.GetNextSelectedItem(Pos);
 		}
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
@@ -985,7 +980,7 @@ void MonitorListView::AddItem()
 
 		if (item > -1)
 		{
-			GetListCtrl().SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+			m_rCtrl.SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 		}
 	}
 }
@@ -998,9 +993,9 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	if (TheSVObserverApp.OkToEdit())
 	{
-		GetListCtrl().ScreenToClient( &ListPoint);
+		m_rCtrl.ScreenToClient( &ListPoint);
 			
-		int item = GetListCtrl().HitTest(ListPoint, &nFlags);
+		int item = m_rCtrl.HitTest(ListPoint, &nFlags);
 
 		if (item >= 0)
 		{
@@ -1010,8 +1005,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			lvItem.iItem = item;
 			lvItem.iSubItem = 0;
 
-			CListCtrl& rCtrl = GetListCtrl();
-			rCtrl.GetItem(&lvItem);
+			m_rCtrl.GetItem(&lvItem);
 			MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
 
 			switch (nodeType)
@@ -1108,17 +1102,16 @@ void MonitorListView::OnEditListProperties()
 	if (TheSVObserverApp.OkToEdit())
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-		CListCtrl& rCtrl = GetListCtrl();
-		POSITION Pos = rCtrl.GetFirstSelectedItemPosition();
+		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (Pos)
 		{
-			int item = rCtrl.GetNextSelectedItem(Pos);
+			int item = m_rCtrl.GetNextSelectedItem(Pos);
 
 			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 			if( nullptr != pConfig )
 			{
-				const SVString& listName = GetListName(rCtrl, item);
+				const SVString& listName = GetListName(m_rCtrl, item);
 				RemoteMonitorList rList = pConfig->GetRemoteMonitorList();
 				RemoteMonitorList::iterator it = rList.find(listName);
 				if (it != rList.end())
@@ -1148,12 +1141,11 @@ void MonitorListView::OnDeleteItem()
 	if (TheSVObserverApp.OkToEdit())
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-		CListCtrl& rCtrl = GetListCtrl();
-		POSITION Pos = rCtrl.GetFirstSelectedItemPosition();
+		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (nullptr != Pos)
 		{
-			int item = rCtrl.GetNextSelectedItem(Pos);
-			int Nextitem = rCtrl.GetNextItem(item, LVNI_ABOVE);
+			int item = m_rCtrl.GetNextSelectedItem(Pos);
+			int Nextitem = m_rCtrl.GetNextItem(item, LVNI_ABOVE);
 			if (RemoveMonitoredItem(item))
 			{
 				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
@@ -1163,13 +1155,13 @@ void MonitorListView::OnDeleteItem()
 					pIODoc->SetModifiedFlag();
 				}
 
-				if (rCtrl.GetItemCount())
+				if (m_rCtrl.GetItemCount())
 				{
 					if (item < 0)
 					{
 						item = 0;
 					}
-					rCtrl.SetItemState(Nextitem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+					m_rCtrl.SetItemState(Nextitem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 				}
 			}
 		}
@@ -1183,10 +1175,10 @@ void MonitorListView::OnEditItem()
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
-		POSITION Pos = GetListCtrl().GetFirstSelectedItemPosition();
+		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (nullptr != Pos)
 		{
-			int item = GetListCtrl().GetNextSelectedItem(Pos);
+			int item = m_rCtrl.GetNextSelectedItem(Pos);
 			if (EditMonitoredItem(item))
 			{
 				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
@@ -1205,7 +1197,7 @@ void MonitorListView::OnEditItem()
 void MonitorListView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	UINT uFlags;
-	int item = GetListCtrl().HitTest(point, &uFlags);
+	int item = m_rCtrl.HitTest(point, &uFlags);
 	if (!(uFlags & LVHT_ONITEMLABEL) && (uFlags & LVHT_ONITEMSTATEICON | LVHT_ONITEMICON))
 	{
 		// Toggle Collapse.

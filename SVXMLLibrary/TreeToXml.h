@@ -57,7 +57,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 					{
 						break;
 					}
-					leafdata = rTree.getLeafData( pLeaf  );
+					rTree.getLeafData( pLeaf, leafdata  );
 					if( VT_EMPTY == leafdata.vt )
 					{
 						break;

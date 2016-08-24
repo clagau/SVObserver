@@ -119,7 +119,7 @@ private:
 // alSourceLength - input, This refers to the byte length!!!
 	long*		DoWeNeedNewBuffer (long	alSourceLength);
 
-   CRITICAL_SECTION svmCriticalSection; 
+   mutable CRITICAL_SECTION m_CriticalSection; 
 
 // svmlAllocationPageSize ---------------------------------------------------
 // Number of bytes!!!	

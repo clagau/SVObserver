@@ -121,7 +121,7 @@ void RootObject::destroyConfigurationObject()
 	}
 }
 
-/*static*/ BasicValueObjectPtr RootObject::getRootChildObjectValue( LPCSTR DottedName )
+/*static*/ BasicValueObjectPtr RootObject::getRootChildObjectValue( LPCTSTR DottedName )
 {
 	RootObject* pRoot( nullptr );
 	BasicValueObjectPtr pValue( nullptr );
@@ -159,7 +159,7 @@ void RootObject::destroyConfigurationObject()
 	}
 }
 
-/*static*/ HRESULT RootObject::deleteRootChildValue( LPCSTR DottedName )
+/*static*/ HRESULT RootObject::deleteRootChildValue( LPCTSTR DottedName )
 {
 	HRESULT Result( S_FALSE );
 	RootObject* pRoot( nullptr );
@@ -174,7 +174,7 @@ void RootObject::destroyConfigurationObject()
 	return Result;
 }
 
-/*static*/ HRESULT RootObject::resetRootChildValue( LPCSTR Name )
+/*static*/ HRESULT RootObject::resetRootChildValue( LPCTSTR Name )
 {
 	HRESULT Result( S_FALSE );
 	RootObject* pRoot( nullptr );

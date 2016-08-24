@@ -54,7 +54,7 @@ static const int UpperLimitImageNumbers = 10000000; ///Upper Limit for Input
 static const int ItemSelectedCol = 1;
 static const int ItemsSelectedWidth = 500;
 static const int IconNumber = 1;
-static const int IconGrowBy = 2;
+static const int IconGrowBy = 1;
 static const long MaxImagesWarningLimit = 100L;
 #pragma endregion Declarations
 

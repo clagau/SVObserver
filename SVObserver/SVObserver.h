@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
@@ -233,7 +232,6 @@ public:
 	bool IsProductTypeRAID() const;
 	void ValidateMRUList();
 
-	SVOINIClass& INI();
 	void ResetAllCounts();
 	bool AddMenuItem(HMENU hTargetMenu, const CString& itemText, UINT itemID);
 	bool RemoveMenu(HMENU hTargetMenu,  const CString& itemText);
@@ -492,7 +490,6 @@ private:
 
 	HRESULT m_hrHardwareFailure;
 
-	SVOINIClass m_SvimIni;
 	HMENU m_hAddMenu;
 	HANDLE m_hEvent;
 

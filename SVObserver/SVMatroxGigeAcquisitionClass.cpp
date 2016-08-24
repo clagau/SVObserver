@@ -26,7 +26,6 @@
 #include "SVObserver.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVImageProcessingClass.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #pragma endregion Includes

@@ -117,7 +117,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	if (m_fileData.mode == ContinuousMode || m_fileData.mode == SingleIterationMode)
 	{
 		// Get File List
-		SVFileSystemScanner<Insertor>::ScanForFiles(m_fileData.directory.c_str(), "*.bmp", Insertor(m_fileList, m_fileList.end()));
+		SVFileSystemScanner<Insertor>::ScanForFiles(m_fileData.directory.c_str(), _T("*.bmp"), Insertor(m_fileList, m_fileList.end()));
 	}
 	else // Single File Mode
 	{

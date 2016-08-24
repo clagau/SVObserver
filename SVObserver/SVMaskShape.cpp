@@ -39,7 +39,12 @@ SVMaskShape::SVMaskShape()
 
 SVMaskShape::~SVMaskShape()	// this is a base class
 {
-	m_dib.FreeBitmapInfo();
+	if ( nullptr != m_dib.hbm )
+	{
+		::DeleteObject( m_dib.hbm );
+		m_dib.FreeBitmapInfo();
+		m_dib.Clear();
+	}
 }
 
 HRESULT SVMaskShape::Draw( HDC hDC ) const

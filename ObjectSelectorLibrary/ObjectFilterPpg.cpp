@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 
 static const int FilterColumnNumber = 4;
 static const int IconNumber = 8;
-static const int IconGrowBy = 4;
+static const int IconGrowBy = 1;
 static const int NameColWidthDefault = 150;
 static const int LocationColWidthDefault = 290;
 static const int CheckColWidthDefault = 50;

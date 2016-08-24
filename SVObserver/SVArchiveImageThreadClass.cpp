@@ -17,6 +17,7 @@
 SVArchiveImageThreadClass::SVArchiveImageThreadClass()
 {
 	m_hThread = nullptr;
+	m_hAppThread = nullptr;
 	m_dwThreadId = 0;
 	m_bRunThread = false;
 	m_hExitEvent = nullptr;
@@ -38,6 +39,8 @@ HRESULT SVArchiveImageThreadClass::GoOnline()
 
 		// create thread
 		m_bRunThread = true;
+		HANDLE hProcess = ::GetCurrentProcess();
+		DuplicateHandle( hProcess, AfxGetApp()->m_hThread, hProcess, &m_hAppThread, 0, FALSE, DUPLICATE_SAME_ACCESS );
 		ASSERT( nullptr == m_hExitEvent );
 		m_hExitEvent = ::CreateEvent( nullptr, true, false, nullptr );
 		ASSERT( nullptr == m_hThread );
@@ -58,9 +61,12 @@ HRESULT SVArchiveImageThreadClass::GoOffline()
 		m_bRunThread = false;
 		ASSERT( nullptr != m_hExitEvent );
 		::SetEvent( m_hExitEvent );
+		::CloseHandle( m_hAppThread );
 		::CloseHandle( m_hThread );	// can be done on a live thread
 		SVThreadManager::Instance().Remove( m_hThread );
 		m_dwThreadId = 0;
+		m_hAppThread = nullptr;
+		m_hThread = nullptr;
 	}
 	return S_OK;
 }
@@ -223,12 +229,8 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 	// handle to app thread, handle to exit event
 	// timeout 1 ms
 	HANDLE ahObjects[2];
-	BOOL bDuplicateHandle = ::DuplicateHandle(  ::GetCurrentProcess(),
-	                                            AfxGetApp()->m_hThread,
-	                                            ::GetCurrentProcess(),
-	                                            &(ahObjects[0]),
-	                                            0, FALSE, DUPLICATE_SAME_ACCESS );
 	ASSERT( nullptr != m_hExitEvent );
+	ahObjects[0] = m_hAppThread;
 	ahObjects[1] = m_hExitEvent;
 
 	const DWORD dwTimeoutMilliseconds = 10;
@@ -245,7 +247,6 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 		}
 	}
 
-	::CloseHandle( ahObjects[0] );
 	::CloseHandle( m_hExitEvent );
 	m_hExitEvent = nullptr;
 
@@ -256,8 +257,6 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 		::Sleep(1);
 	}
 
-
-	m_hThread = nullptr;
 	return 0;
 }
 

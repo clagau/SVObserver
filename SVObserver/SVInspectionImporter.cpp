@@ -329,9 +329,8 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 
 	rProgress.UpdateText(_T("Loading Inspection XML..."));
 
-	CA2W  pwXmlFilename(filename.c_str()); 
 	SvXml::SaxXMLHandler<SVTreeType>  SaxHandler;
-	HRESULT	hr =  SaxHandler.BuildFromXMLFile(&XmlTree, pwXmlFilename);
+	HRESULT	hr =  SaxHandler.BuildFromXMLFile(&XmlTree, filename.c_str());
 	
 	
 	if (SUCCEEDED(hr))
@@ -517,26 +516,26 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 
 
 
-HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
+HRESULT SVInspectionImporter::GetProperties(const SVString& rFileName, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber)
 {
 	HRESULT hr = S_OK;
 	::CoInitialize(nullptr);
 
-	SVString inFilename = filename;
-	SVString zipFilename = GetFilenameWithoutExt(inFilename);
+	SVString inFileName = rFileName;
+	SVString zipFilename = GetFilenameWithoutExt(rFileName);
 	zipFilename += scDependentsZipExt;
 
 	SVStringSet list;
 
 	// Deal with single zip file
-	if (isExportFile(inFilename))
+	if (isExportFile(inFileName))
 	{
-		ZipHelper::unzipAll( inFilename, SVString( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
+		ZipHelper::unzipAll( inFileName, SVString( SvStl::GlobalPath::Inst().GetRunPath().c_str() ), list );
 		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			if (isXMLFile(*it))
 			{
-				inFilename = (*it);
+				inFileName = (*it);
 			}
 			else if (isZipFile(*it))
 			{
@@ -545,9 +544,8 @@ HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNew
 		}
 	}
 	
-	CA2W  pwXmlFilename(inFilename.c_str()); 
 	SvXml::SaxExtractPropertiesHandler   SaxExtractHandler;
-	hr =   SaxExtractHandler.ExtractProperties(pwXmlFilename, rNewDisableMethod, rEnableAuxExtents, rVersionNumber);
+	hr =   SaxExtractHandler.ExtractProperties(inFileName.c_str(), rNewDisableMethod, rEnableAuxExtents, rVersionNumber);
 
 	// Deal with single zip file..
 	if( 0 != list.size())

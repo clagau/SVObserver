@@ -56,6 +56,7 @@ SVLptIOImpl::SVLptIOImpl()
 , m_numOutputs(24)
 , m_numTriggers(3)
 , m_lBoardVersion(0)
+, m_TriggerActive( false )
 {
 	try
 	{
@@ -658,7 +659,17 @@ HRESULT SVLptIOImpl::afterStartTrigger(HRESULT hr)
 		if (S_OK == hr)
 		{
 			m_lLastTriggerState = status;
-			hr = EnableAckInterrupt(boost::bind(&SVLptIOImpl::HandleIRQ, this));
+			if( !m_TriggerActive )
+			{
+				if( !IsActive() )
+				{
+					hr = EnableAckInterrupt(boost::bind(&SVLptIOImpl::HandleIRQ, this));
+				}
+				if( S_OK == hr )
+				{
+					m_TriggerActive = true;
+				}
+			}
 		}
 	}
 
@@ -691,7 +702,7 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 		}
 		if (bDisableIrq) // Make sure all triggers are stopped before Masking the IRQ
 		{
-			hr = DisableAckInterrupt();
+			m_TriggerActive = false;
 		}
 	}
 
@@ -1590,6 +1601,11 @@ LPCTSTR SVLptIOImpl::GetControlText(long lControl)
 
 void SVLptIOImpl::HandleIRQ()
 {
+	if( !m_TriggerActive )
+	{
+		return;
+	}
+
 	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
 #ifdef LogDebugData

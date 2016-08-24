@@ -24,10 +24,10 @@ class SVGUID
 {
 public:
 	SVGUID();
-	SVGUID( const SVGUID& p_rObject );
-	SVGUID( const GUID& p_rGuid );
-	SVGUID( const BSTR& p_rString );
-	SVGUID( const VARIANT& p_rVariant );
+	SVGUID( const SVGUID& rObject );
+	SVGUID( const GUID& rGuid );
+	SVGUID( const _bstr_t& rString );
+	SVGUID( const _variant_t& rVariant );
 
 	virtual ~SVGUID();
 
@@ -47,10 +47,9 @@ public:
 	_bstr_t ToBSTR() const;
 	SVString ToString() const;
 
-	const SVGUID& operator=( const SVGUID& p_rObject );
-	const SVGUID& operator=( const GUID& p_rGuid );
-	const SVGUID& operator=( const BSTR& p_rString );
-	const SVGUID& operator=( const VARIANT& p_rVariant );
+	const SVGUID& operator=( const SVGUID& rObject );
+	const SVGUID& operator=( const GUID& rGuid );
+	const SVGUID& operator=( const _bstr_t& rString );
 
 	bool operator==( const SVGUID& p_rObject ) const;
 	bool operator==( const GUID& p_rGuid ) const;

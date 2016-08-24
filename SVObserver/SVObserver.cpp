@@ -20,6 +20,8 @@
 #include "SVOMFCLibrary\SVDeviceParam.h"
 #include "SVOMFCLibrary\SVDeviceParams.h"
 #include "SVOMFCLibrary\SVLongValueDeviceParam.h"
+#include "SVOMFCLibrary\SVOINIClass.h"
+#include "SVOMFCLibrary\SVOIniLoader.h"
 #include "SVTimerLibrary\SVClock.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVMessage\SVMessage.h"
@@ -64,8 +66,6 @@
 
 #include "SVConfigurationObject.h"
 #include "ObjectInterfaces\SVUserMessage.h"
-#include "SVOMFCLibrary\SVOINIClass.h"
-#include "SVOMFCLibrary\SVOIniLoader.h"
 
 #include "SVGigeCameraManagerDlg.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -936,7 +936,7 @@ void SVObserverApp::OnStop()
 
 	//add message to event viewer - gone off-line
 	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-	Exception.setMessage( SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, l_strTrigCnts, SvStl::SourceFileParams(StdMessageParams) );
+	Exception.setMessage( SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, static_cast<LPCTSTR> (l_strTrigCnts), SvStl::SourceFileParams(StdMessageParams) );
 
 	SVSVIMStateClass::AddState( SV_STATE_READY );
 	SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STOPING );
@@ -2182,7 +2182,7 @@ BOOL SVObserverApp::InitInstance()
 
 	LoadStdProfileSettings( 7 );  // Standard-INI-Dateioptionen einlesen (einschließlich MRU)
 
-	m_SvimIni.SetFile(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	SvOml::SVOINIClass SvimIni( SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 
 	ValidateMRUList();
 
@@ -2382,15 +2382,15 @@ BOOL SVObserverApp::InitInstance()
 	//if amount of physical memory is around 16 GigE allocate the larger memory pools.
 	if (AmountOfRam >= UseLargerArchiveMemoryPool)
 	{
-		iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault16GB );
-		iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault16GB);
+		iGoOfflineBufferSize = SvimIni.GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault16GB );
+		iAsyncBufferSize = SvimIni.GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault16GB);
 		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
 		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
 	}
 	else
 	{
-		iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault4GB );
-		iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault4GB );
+		iGoOfflineBufferSize = SvimIni.GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault4GB );
+		iAsyncBufferSize = SvimIni.GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault4GB );
 		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
 		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
 	}
@@ -2442,9 +2442,9 @@ BOOL SVObserverApp::InitInstance()
 
 	SvSol::SVSocketLibrary::Init();
 
-	int AutoSaveValue = INI().GetValueInt( _T("Settings"), _T("EnableAutosave"), 0); //Arvid accept a number: non-zero enables
+	int AutoSaveValue = SvimIni.GetValueInt( _T("Settings"), _T("EnableAutosave"), 0); //Arvid accept a number: non-zero enables
 
-	std::string AutoSaveValueString=INI().GetValueString( _T("Settings"), _T("EnableAutosave"), _T("FALSE")); //Arvid accept a string
+	std::string AutoSaveValueString=SvimIni.GetValueString( _T("Settings"), _T("EnableAutosave"), _T("FALSE")); //Arvid accept a string
 
 	if ( AutoSaveValueString == std::string("TRUE") || AutoSaveValueString == std::string("true"))
 	{
@@ -2453,39 +2453,39 @@ BOOL SVObserverApp::InitInstance()
 
 	ExtrasEngine::Instance().SetEnabled(AutoSaveValue != 0);
 	unsigned short defaultPortNo = -1;
-	m_RemoteCommandsPortNumber = INI().GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), defaultPortNo );
+	m_RemoteCommandsPortNumber = SvimIni.GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), defaultPortNo );
 	if ( m_RemoteCommandsPortNumber == defaultPortNo )
 	{
 		m_RemoteCommandsPortNumber = RemoteCommandsPortNumber;
 
-		INI().SetValue(_T( "Settings" ),_T( "RemoteCommandsPortNumber" ), m_RemoteCommandsPortNumber );
+		SvimIni.SetValueInt( _T( "Settings" ),_T( "RemoteCommandsPortNumber" ), m_RemoteCommandsPortNumber );
 	}
 
-	m_InputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("InputStreamPortNumber"), defaultPortNo );
+	m_InputStreamPortNumber = SvimIni.GetValueInt( _T("Settings"), _T("InputStreamPortNumber"), defaultPortNo );
 	if ( m_InputStreamPortNumber == defaultPortNo )
 	{
 		m_InputStreamPortNumber = InputStreamPortNumber;
 
-		INI().SetValue(_T( "Settings" ),_T( "InputStreamPortNumber" ), m_InputStreamPortNumber );
+		SvimIni.SetValueInt( _T( "Settings" ),_T( "InputStreamPortNumber" ), m_InputStreamPortNumber );
 	}
 
-	m_OutputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("OutputStreamPortNumber"), defaultPortNo );
+	m_OutputStreamPortNumber = SvimIni.GetValueInt( _T("Settings"), _T("OutputStreamPortNumber"), defaultPortNo );
 	if ( m_OutputStreamPortNumber == defaultPortNo)
 	{
 		m_OutputStreamPortNumber = OutputStreamPortNumber;
 
-		INI().SetValue(_T( "Settings" ),_T( "OutputStreamPortNumber" ), m_OutputStreamPortNumber );
+		SvimIni.SetValueInt( _T( "Settings" ),_T( "OutputStreamPortNumber" ), m_OutputStreamPortNumber );
 	}
 
-	m_FailStatusStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("FailStatusStreamPortNumber"), defaultPortNo );
+	m_FailStatusStreamPortNumber = SvimIni.GetValueInt( _T("Settings"), _T("FailStatusStreamPortNumber"), defaultPortNo );
 	if ( m_FailStatusStreamPortNumber == defaultPortNo )
 	{
 		m_FailStatusStreamPortNumber = FailStatusStreamPortNumber;
 
-		INI().SetValue(_T( "Settings" ),_T( "FailStatusStreamPortNumber" ), m_FailStatusStreamPortNumber );
+		SvimIni.SetValueInt(_T( "Settings" ),_T( "FailStatusStreamPortNumber" ), m_FailStatusStreamPortNumber );
 	}
 
-	m_DataValidDelay = static_cast<long> ( INI().GetValueInt( _T("Settings"), _T("DataValidDelay"), 0 ) );
+	m_DataValidDelay = static_cast<long> ( SvimIni.GetValueInt( _T("Settings"), _T("DataValidDelay"), 0 ) );
 
 	SVSocketRemoteCommandManager::Instance().Startup( m_RemoteCommandsPortNumber );
 	SVInputStreamManager::Instance().Startup( m_InputStreamPortNumber );
@@ -2677,25 +2677,19 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 		try
 		{
-			CString csFullFileName;
-
-			BSTR bStr = nullptr;
 			unsigned long configVer = 0;
 
 			setConfigFullFileName( PathName );
 
-			SVRCSetSVCPathName( getConfigFullFileName() );
-
-			csFullFileName = getConfigFullFileName();
-
-			bStr = csFullFileName.AllocSysString();
+			CString csFullFileName( getConfigFullFileName() );
+			SVRCSetSVCPathName( csFullFileName );
 
 			while (1)
 			{
 				SVTreeType XMLTree;
 				try 
 				{
-					hr = SVOCMLoadConfiguration( configVer, bStr, XMLTree );
+					hr = SVOCMLoadConfiguration( configVer, csFullFileName, XMLTree );
 				}
 				catch( const SvStl::MessageContainer& rExp )
 				{
@@ -2848,9 +2842,6 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				break;
 			} // while (1)
 			
-			SysFreeString (bStr);
-			bStr = nullptr;
-
 			if (hr & SV_ERROR_CONDITION)
 			{
 				// If there was an error during configuration loading...
@@ -3223,9 +3214,6 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 				if( nullptr != pConfig )
 				{
-					pConfig->ClearRemoteMonitorList();
-					bOk = pConfig->DestroyConfiguration();
-
 					RootObject *pRoot = nullptr;
 					SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
 					if(nullptr != pRoot)
@@ -3270,9 +3258,6 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 		if( nullptr != pConfig )
 		{
-			pConfig->ClearRemoteMonitorList();
-			bOk = pConfig->DestroyConfiguration();
-
 			RootObject *pRoot = nullptr;
 			SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
 			if(nullptr != pRoot)
@@ -3522,11 +3507,6 @@ void SVObserverApp::ValidateMRUList()
 			}
 		}// end for
 	}// end if
-}
-
-SVOINIClass& SVObserverApp::INI()
-{
-	return m_SvimIni;
 }
 
 void SVObserverApp::ResetAllCounts()
@@ -5740,7 +5720,7 @@ void SVObserverApp::Start()
 
 HRESULT SVObserverApp::INILoad()
 {
-	SVOIniLoader l_iniLoader;
+	SvOml::SVOIniLoader IniLoader;
 
 	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
 	CString l_csSystemDir;
@@ -5763,54 +5743,58 @@ HRESULT SVObserverApp::INILoad()
 	m_csOptions.Empty();
 
 	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
-	HRESULT l_hrOk = l_iniLoader.Load(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,SvStl::GlobalPath::Inst().GetHardwareIniPath());
+	HRESULT l_hrOk = IniLoader.Load(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	if (S_OK == l_hrOk)
 	{
 		// copy settings from the SVOIniLoader class for now
-		m_forcedImageUpdateTimeInSeconds = l_iniLoader.GetForcedImageUpdateTime();
+		m_forcedImageUpdateTimeInSeconds = IniLoader.GetForcedImageUpdateTime();
 
-		g_bUseCorrectListRecursion = l_iniLoader.m_bUseCorrectListRecursion;
+		g_bUseCorrectListRecursion = IniLoader.m_bUseCorrectListRecursion;
 
-		RootObject::setRootChildValue( SvOl::FqnEnvironmentModelNumber, l_iniLoader.m_csModelNumber );
-		RootObject::setRootChildValue( SvOl::FqnEnvironmentSerialNumber , l_iniLoader.m_csSerialNumber );
-		RootObject::setRootChildValue( SvOl::FqnEnvironmentWinKey, l_iniLoader.m_csWinKey );
+		RootObject::setRootChildValue( SvOl::FqnEnvironmentModelNumber, IniLoader.m_ModelNumber.c_str() );
+		RootObject::setRootChildValue( SvOl::FqnEnvironmentSerialNumber , IniLoader.m_SerialNumber.c_str() );
+		RootObject::setRootChildValue( SvOl::FqnEnvironmentWinKey, IniLoader.m_WinKey.c_str() );
 
-		m_csProductName = l_iniLoader.m_csProductName;
+		m_csProductName = IniLoader.m_ProductName.c_str();
 
-		m_csProcessorBoardName = l_iniLoader.m_csProcessorBoardName;
-		m_csTriggerBoardName = l_iniLoader.m_csTriggerBoardName;
-		m_csAcquisitionBoardName = l_iniLoader.m_csAcquisitionBoardName;
-		m_csDigitalBoardName = l_iniLoader.m_csDigitalBoardName;
-		m_csRAIDBoardName = l_iniLoader.m_csRAIDBoardName;
+		m_csProcessorBoardName = IniLoader.m_ProcessorBoardName.c_str();
+		m_csTriggerBoardName = IniLoader.m_TriggerBoardName.c_str();
+		m_csAcquisitionBoardName = IniLoader.m_AcquisitionBoardName.c_str();
+		m_csDigitalBoardName = IniLoader.m_DigitalBoardName.c_str();
+		m_csRAIDBoardName = IniLoader.m_RAIDBoardName.c_str();
 
-		m_csDigitalDLL = l_iniLoader.m_csDigitalDLL;
-		m_csDigitalOption = l_iniLoader.m_csIOBoardOption;
-		m_csDigitizerDLL = l_iniLoader.m_csDigitizerDLL;
-		m_csFileAcquisitionDLL = l_iniLoader.m_csFileAcquisitionDLL;
-		m_csTriggerDLL = l_iniLoader.m_csTriggerDLL;
-		m_csSoftwareTriggerDLL = l_iniLoader.m_csSoftwareTriggerDLL;
-		m_csAcquisitionTriggerDLL = l_iniLoader.m_csAcquisitionTriggerDLL;
+		m_csDigitalDLL = IniLoader.m_DigitalDLL.c_str();
+		m_csDigitalOption = IniLoader.m_IOBoardOption.c_str();
+		m_csDigitizerDLL = IniLoader.m_DigitizerDLL.c_str();
+		m_csFileAcquisitionDLL = IniLoader.m_FileAcquisitionDLL.c_str();
+		m_csTriggerDLL = IniLoader.m_TriggerDLL.c_str();
+		m_csSoftwareTriggerDLL = IniLoader.m_SoftwareTriggerDLL.c_str();
+		m_csAcquisitionTriggerDLL = IniLoader.m_AcquisitionTriggerDLL.c_str();
 
-		m_csReloadDigitalDLL = l_iniLoader.m_csReloadDigitalDLL;
-		m_csReloadAcquisitionDLL = l_iniLoader.m_csReloadAcquisitionDLL;
-		m_csReloadTriggerDLL = l_iniLoader.m_csReloadTriggerDLL;
+		m_csReloadDigitalDLL = IniLoader.m_ReloadDigitalDLL.c_str();
+		m_csReloadAcquisitionDLL = IniLoader.m_ReloadAcquisitionDLL.c_str();
+		m_csReloadTriggerDLL = IniLoader.m_ReloadTriggerDLL.c_str();
 
-		m_csOptions = l_iniLoader.m_csOptions;
-		m_csProcessor = l_iniLoader.m_csProcessor;
-		m_csFrameGrabber = l_iniLoader.m_csFrameGrabber;
-		m_csIOBoard = l_iniLoader.m_csIOBoard;
+		m_csOptions = IniLoader.m_Options.c_str();
+		m_csProcessor = IniLoader.m_Processor.c_str();
+		m_csFrameGrabber = IniLoader.m_FrameGrabber.c_str();
+		m_csIOBoard = IniLoader.m_IOBoard.c_str();
 
-		m_csTrigger = l_iniLoader.m_csTrigger;
+		m_csTrigger = IniLoader.m_Trigger.c_str();
 
 		// Get GIGE packet Size
-		m_gigePacketSize = l_iniLoader.m_gigePacketSize;
+		m_gigePacketSize = IniLoader.m_gigePacketSize;
 
-		for ( int i = 0; i < 4; i++ )
+		for ( int i = 0; i < SvOml::MaxTriggers; i++ )
 		{
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, 0 == l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, 0 == l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, 0 == l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) );
+			bool Value( false );
+			Value = (0 == SvUl_SF::CompareNoCase( IniLoader.m_TriggerEdge[i], SVString( _T("R") ) ) );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, Value );
+			Value = (0 == SvUl_SF::CompareNoCase( IniLoader.m_StrobeEdge[i], SVString( _T("R") ) ) );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, Value );
+			Value = (0 == SvUl_SF::CompareNoCase( IniLoader.m_StartFrameType[i], SVString( _T("Y") ) ) );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, Value );
 		}
 
 		l_hrOk = l_hrOk | LoadDigitalDLL();
@@ -5822,7 +5806,7 @@ HRESULT SVObserverApp::INILoad()
 	}
 	else
 	{
-		if (S_OK != l_iniLoader.m_hrOEMFailure)
+		if (S_OK != IniLoader.m_hrOEMFailure)
 		{
 			ASSERT( FALSE );
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );

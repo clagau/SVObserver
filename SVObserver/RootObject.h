@@ -84,7 +84,7 @@ public:
 	//! \param DottedName <in> the dotted name of the object to get
 	//! \return pointer to the value object
 	//************************************
-	static BasicValueObjectPtr getRootChildObjectValue( LPCSTR DottedName );
+	static BasicValueObjectPtr getRootChildObjectValue( LPCTSTR DottedName );
 
 	//************************************
 	//! The static method gets a root child value if available
@@ -93,7 +93,7 @@ public:
 	//! \return S_OK on success
 	//************************************
 	template <typename ELEMENT_TYPE>
-	static HRESULT getRootChildValue( LPCSTR DottedName, ELEMENT_TYPE& rValue );
+	static HRESULT getRootChildValue( LPCTSTR DottedName, ELEMENT_TYPE& rValue );
 
 	//************************************
 	//! The static method sets a root child value
@@ -102,7 +102,7 @@ public:
 	//! \return pointer to the value object
 	//************************************
 	template <typename ELEMENT_TYPE>
-	static BasicValueObjectPtr setRootChildValue( LPCSTR DottedName, const ELEMENT_TYPE& rValue );
+	static BasicValueObjectPtr setRootChildValue( LPCTSTR DottedName, const ELEMENT_TYPE& rValue );
 
 	//************************************
 	/// The method fill up a list with filtered root child objects.
@@ -125,14 +125,14 @@ public:
 	//! \param DottedName <in> the dotted name of the object to delete
 	//! \return S_OK on success
 	//************************************
-	static HRESULT deleteRootChildValue( LPCSTR DottedName );
+	static HRESULT deleteRootChildValue( LPCTSTR DottedName );
 
 	//************************************
 	//! The static method resets a root child
 	//! \param Name <in> the root child name to reset
 	//! \return S_OK on success
 	//************************************
-	static HRESULT resetRootChildValue( LPCSTR Name );
+	static HRESULT resetRootChildValue( LPCTSTR Name );
 #pragma endregion Public Methods
 
 private:

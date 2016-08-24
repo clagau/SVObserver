@@ -182,6 +182,7 @@ namespace Seidenader { namespace SVContainerLibrary
 	#pragma endregion Private Methods
 
 	#pragma region Member Variables
+	private:
 		VertexNameDataMap m_VertexNameDataMap;
 		DependencyGraph m_Graph;
 		SVString m_DotGraph;

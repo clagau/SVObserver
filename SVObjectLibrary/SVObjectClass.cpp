@@ -418,19 +418,19 @@ This method return the object name.  This name is changeable by the user.
 */
 LPCTSTR SVObjectClass::GetName() const
 {
-	return m_Name;
+	return static_cast<LPCTSTR> (m_Name);
 }
 
 SVString SVObjectClass::GetCompleteName() const 
 {
 	CString name = GetCompleteObjectName();
-	return SVString(static_cast<LPCSTR>(name));
+	return SVString( static_cast<LPCTSTR> (name) );
 }
 
 HRESULT SVObjectClass::GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const
 {
 	HRESULT hr = S_OK;
-	SVString name;
+
 	if (GetObjectType() == objectType)
 	{
 		rName = GetCompleteName();
@@ -438,7 +438,7 @@ HRESULT SVObjectClass::GetCompleteNameToType(SVObjectTypeEnum objectType, SVStri
 	else
 	{
 		const SvOi::IObjectClass* pObject = GetAncestorInterface(objectType);
-		if (pObject)
+		if( nullptr != pObject )
 		{
 			rName = pObject->GetCompleteName();
 		}

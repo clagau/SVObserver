@@ -20,28 +20,31 @@ SVGUID::SVGUID()
 {
 }
 
-SVGUID::SVGUID( const SVGUID& p_rObject )
+SVGUID::SVGUID( const SVGUID& rObject )
 : m_Guid( SV_GUID_NULL )
 {
-	*this = p_rObject;
+	*this = rObject;
 }
 
-SVGUID::SVGUID( const GUID& p_rGuid )
+SVGUID::SVGUID( const GUID& rGuid )
 : m_Guid( SV_GUID_NULL )
 {
-	*this = p_rGuid;
+	*this = rGuid;
 }
 
-SVGUID::SVGUID( const BSTR& p_rString )
+SVGUID::SVGUID( const _bstr_t& rString )
 : m_Guid( SV_GUID_NULL )
 {
-	*this = p_rString;
+	*this = rString;
 }
 
-SVGUID::SVGUID( const VARIANT& p_rVariant )
+SVGUID::SVGUID( const _variant_t& rVariant )
 : m_Guid( SV_GUID_NULL )
 {
-	*this = p_rVariant;
+	if( VT_BSTR == rVariant.vt )
+	{
+		*this = _bstr_t( rVariant.bstrVal );
+	}
 }
 
 SVGUID::~SVGUID()
@@ -104,60 +107,37 @@ SVString SVGUID::ToString() const
 		);
 }
 
-const SVGUID& SVGUID::operator=( const SVGUID& p_rObject )
+const SVGUID& SVGUID::operator=( const SVGUID& rObject )
 {
-	if( this != &p_rObject )
+	if( this != &rObject )
 	{
-		m_Guid = p_rObject.m_Guid;
+		m_Guid = rObject.m_Guid;
 	}
 
 	return *this;
 }
 
-const SVGUID& SVGUID::operator=( const GUID& p_rGuid )
+const SVGUID& SVGUID::operator=( const GUID& rGuid )
 {
-	if( &m_Guid != &p_rGuid )
+	if( &m_Guid != &rGuid )
 	{
-		m_Guid = p_rGuid;
+		m_Guid = rGuid;
 	}
 
 	return *this;
 }
 
-const SVGUID& SVGUID::operator=( const BSTR& p_rString )
+const SVGUID& SVGUID::operator=( const _bstr_t& rString )
 {
-	GUID l_Guid( SV_GUID_NULL );
+	GUID Guid( SV_GUID_NULL );
 
-	wchar_t* l_pTempString( static_cast< wchar_t* >( p_rString ) );
+	SVString GuidString = SvUl_SF::createSVString( rString );
+	SvUl_SF::RemoveCharacters(GuidString, _T("{}") );
 
-	if( l_pTempString[ 0 ] == L'{' )
+	RPC_CSTR RpcString( reinterpret_cast<unsigned char*> ( const_cast<char*> ( GuidString.c_str() )  ) );
+	if( RPC_S_OK == ::UuidFromString( RpcString , &Guid ) )
 	{
-		size_t l_Size( ::wcslen( l_pTempString ) );
-		size_t l_DestPos( 0 );
-
-		for( size_t l = 0; l < l_Size; ++l )
-		{
-			if( l_pTempString[ l ] != L'{' )
-			{
-				if( l_pTempString[ l ] == L'}' )
-				{
-					l_pTempString[ l_DestPos ] = L'\0';
-
-					break;
-				}
-				else
-				{
-					l_pTempString[ l_DestPos++ ] = l_pTempString[ l ];
-				}
-			}
-		}
-	}
-
-	RPC_WSTR l_RpcString( reinterpret_cast< RPC_WSTR >( l_pTempString ) );
-
-	if( ::UuidFromStringW( l_RpcString, &l_Guid ) == RPC_S_OK )
-	{
-		m_Guid = l_Guid;
+		m_Guid = Guid;
 	}
 	else
 	{
@@ -167,43 +147,34 @@ const SVGUID& SVGUID::operator=( const BSTR& p_rString )
 	return *this;
 }
 
-const SVGUID& SVGUID::operator=( const VARIANT& p_rVariant )
+bool SVGUID::operator==( const SVGUID& rObject ) const
 {
-	_variant_t l_Variant( p_rVariant );
-
-	*this = static_cast< _bstr_t >( l_Variant );
-
-	return *this;
+	return ( m_Guid == rObject.m_Guid ) != false;
 }
 
-bool SVGUID::operator==( const SVGUID& p_rObject ) const
+bool SVGUID::operator==( const GUID& rGuid ) const
 {
-	return ( m_Guid == p_rObject.m_Guid ) != false;
+	return ( m_Guid == rGuid ) != false;
 }
 
-bool SVGUID::operator==( const GUID& p_rGuid ) const
+bool SVGUID::operator<( const SVGUID& rObject ) const
 {
-	return ( m_Guid == p_rGuid ) != false;
+	return m_Guid < rObject.m_Guid;
 }
 
-bool SVGUID::operator<( const SVGUID& p_rObject ) const
+bool SVGUID::operator<( const GUID& rGuid ) const
 {
-	return m_Guid < p_rObject.m_Guid;
+	return m_Guid < rGuid;
 }
 
-bool SVGUID::operator<( const GUID& p_rGuid ) const
+bool SVGUID::operator>( const SVGUID& rObject ) const
 {
-	return m_Guid < p_rGuid;
+	return m_Guid > rObject.m_Guid;
 }
 
-bool SVGUID::operator>( const SVGUID& p_rObject ) const
+bool SVGUID::operator>( const GUID& rGuid ) const
 {
-	return m_Guid > p_rObject.m_Guid;
-}
-
-bool SVGUID::operator>( const GUID& p_rGuid ) const
-{
-	return m_Guid > p_rGuid;
+	return m_Guid > rGuid;
 }
 
 
