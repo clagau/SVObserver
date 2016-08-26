@@ -42,7 +42,7 @@ public:
 protected:
 	HRESULT  ReleaseAllIndexes( LONGLONG IndexArrayHandle );
 	
-	HRESULT  CreateManagedIndexArray( BSTR aIndexArrayName, long alIndexArrayDepth, long* alpIndexArrayHandle );
+	HRESULT  CreateManagedIndexArray( BSTR aIndexArrayName, long alIndexArrayDepth, LONGLONG* alpIndexArrayHandle );
 	
 	HRESULT  GetNextAvailableBufferIndex( LONGLONG IndexArrayHandle, SVDataManagerLockTypeEnum aLockType, bool WaitForLock, long* alBufferIndex, long* alTransactionId );
 	

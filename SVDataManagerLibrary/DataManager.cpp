@@ -68,7 +68,7 @@ HRESULT SVDataManager::CreateManagedIndexArray( SVSmartIndexArrayHandlePtr& rArr
 {
 	HRESULT Result( S_OK ); 
 	
-	long Handle = -1;
+	LONGLONG Handle = -1;
 	
 	Result = CreateManagedIndexArray( Name, Depth, &Handle );
 	
@@ -145,7 +145,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndexNoWait( const SVSmartIndexArra
 /*
 This method creates managed index array elements.
 */
-HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName, long  alIndexArrayDepth, long* pIndexArrayHandle)
+HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName, long  alIndexArrayDepth, LONGLONG* pIndexArrayHandle)
 {
 	HRESULT Result( S_OK );
 	
@@ -184,7 +184,7 @@ HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName, long  alI
 			
 							svmManagedIndexArrayList [m_FirstUnusedIndex] = pNewManagedIndexArray;
 			
-							*pIndexArrayHandle = static_cast<long> (m_FirstUnusedIndex);
+							*pIndexArrayHandle = m_FirstUnusedIndex;
 							m_FirstUnusedIndex = temp;
 			
 							//------ If svmlFirstUnusedIndex equals -1, then it means we have just 
