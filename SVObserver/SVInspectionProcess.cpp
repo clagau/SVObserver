@@ -1558,6 +1558,8 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 	if( CheckAndResetConditionalHistory() )
 	{
+		//Configuration has changed need to set the modified flag
+		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 		if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
@@ -3122,7 +3124,7 @@ bool SVInspectionProcess::CheckAndResetConditionalHistory()
 			for( int i=0; i < NumberOfImages; i++)
 			{
 				SVObjectReference refImage( listImages.GetAt(i) );
-				refImage->ObjectAttributesAllowedRef() &= ~SV_CH_IMAGE;
+				refImage->ObjectAttributesSetRef() &= ~SV_CH_IMAGE;
 			}
 			Result = true;
 		}
