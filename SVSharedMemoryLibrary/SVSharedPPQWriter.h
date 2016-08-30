@@ -23,11 +23,11 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	struct InspectionWriterCreationInfo
 	{
 		InspectionID inspectionID;
-		size_t num_images;
-		size_t num_values;
+		CreationInfo imagesCreationInfo;
+		CreationInfo valuesCreationInfo;
 
-		InspectionWriterCreationInfo(const InspectionID& nameGuid, size_t numImages, size_t numValues)
-		: inspectionID(nameGuid), num_images(numImages), num_values(numValues)
+		InspectionWriterCreationInfo(const InspectionID& nameGuid, const CreationInfo& imagesInfo, const CreationInfo& valuesInfo)
+		: inspectionID(nameGuid), imagesCreationInfo(imagesInfo), valuesCreationInfo(valuesInfo)
 		{}
 	};
 	typedef std::vector<InspectionWriterCreationInfo> InspectionWriterCreationInfos;
@@ -39,7 +39,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedPPQWriter();
 		~SVSharedPPQWriter();
 
-		HRESULT Create( const std::string& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& p_rSettings );
+		HRESULT Create( const std::string& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& p_rSettings, const long ProoductSlots, const long RejectSlots, size_t size );
 		void Destroy();
 
 		SVSharedProduct& RequestNextProductSlot(long& idx);

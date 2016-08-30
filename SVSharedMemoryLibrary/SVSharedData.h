@@ -39,7 +39,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	typedef boost::interprocess::vector< SVSharedData, SVSharedDataAllocator > SVSharedDataVector;
 	typedef boost::interprocess::allocator< SVSharedDataVector, segment_manager_t > SVSharedDataVectorAllocator;
 
-	//typedef std::shared_ptr<SVSharedData> InspectionDataPtr;
 	typedef SVSharedData* InspectionDataPtr;
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

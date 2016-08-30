@@ -62,6 +62,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 const long g_lPPQExtraBufferSize = 50;
+static const double TwentyPercent = .20;
 
 #pragma endregion Declarations
 
@@ -307,6 +308,8 @@ SVPPQObject::SVPPQObject( LPCSTR ObjectName )
 	, m_conditionalOutputName( PPQ_CONDITIONAL_OUTPUT_ALWAYS )
 	, m_bActiveMonitorList(false)
 	, m_AttributesAllowedFilterForFillChildObjectList( 0 )
+	, m_numProductSlots(0)
+	, m_numRejectSlots(0)
 {
 	init();
 }
@@ -318,6 +321,8 @@ SVPPQObject::SVPPQObject( SVObjectClass* POwner, int StringResourceID )
 	, m_conditionalOutputName ( PPQ_CONDITIONAL_OUTPUT_ALWAYS ) 
 	, m_bActiveMonitorList(false)
 	, m_AttributesAllowedFilterForFillChildObjectList( 0 )
+	, m_numProductSlots(0)
+	, m_numRejectSlots(0)
 {
 	init();
 }
@@ -1301,11 +1306,12 @@ void SVPPQObject::PrepareGoOnline()
 	{
 		// Get List of Inspections for this PPQ
 		// SVSharedPPQWriter will create the inspection shares
-		HRESULT hr = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), m_InspectionWriterCreationInfos);
+		HRESULT hr = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), m_numProductSlots, m_numRejectSlots, m_InspectionWriterCreationInfos);
 		if (S_OK != hr)
 		{
 			// clear the list
 			SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+			SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 
 			SVStringArray msgList;
 			msgList.push_back(GetName());
@@ -4894,8 +4900,12 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 	m_InspectionWriterCreationInfos.clear();
 	if (m_bActiveMonitorList)
 	{
-		SVSharedMemorySingleton::Instance().SetRejectDepth(rActiveList.second.rejectDepth);
-		SVSharedMemorySingleton::Instance().SetProductDepth(GetPPQLength(), g_lPPQExtraBufferSize);
+		// Flawed design, eash list can have a reject depth, when in reality they must be the same for the PPQ
+		m_numRejectSlots = std::max(m_numRejectSlots, static_cast<long>(rActiveList.second.rejectDepth)); 
+
+		// Flawed design, the number of last inspected slots shouldn't mimic the PPQ in SVObserver, it should be some fixed size like 32 or 64...
+		m_numProductSlots = GetPPQLength() + g_lPPQExtraBufferSize;
+
 		const SVMonitorList& rList = rActiveList.second.monitorList;
 
 		// separate the list by Inspection and send to each Inspection
@@ -4919,9 +4929,21 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 					SVMonitorItemList(), SVMonitorItemList(), SVMonitorItemList());
 
 				// need to get number of values/images so the SharedMemory container is sized and initialized properly
-				size_t numImages = imgList.size();
-				size_t numValues = valList.size();
-				SvSml::InspectionWriterCreationInfo creationInfo(std::make_pair(pInspection->GetName(), pInspection->GetUniqueObjectID()), numImages, numValues);
+				size_t numImages = inspectionMonitorList.GetImageList().size();
+				size_t numValues = inspectionMonitorList.GetDataList().size();
+				size_t valuesNamesSize(0);
+				size_t imagesNamesSize(0);
+				for (SVMonitorItemList::const_iterator it = valBounds.first; it != valBounds.second; ++it)
+				{
+					valuesNamesSize += it->size();
+				}
+				for (SVMonitorItemList::const_iterator it = imgBounds.first; it != imgBounds.second; ++it)
+				{
+					imagesNamesSize += it->size();
+				}
+				valuesNamesSize += static_cast<size_t>(static_cast<double>(valuesNamesSize) * TwentyPercent); // plus 20%
+				imagesNamesSize += static_cast<size_t>(static_cast<double>(imagesNamesSize) * TwentyPercent); // plus 20%
+				SvSml::InspectionWriterCreationInfo creationInfo(std::make_pair(pInspection->GetName(), pInspection->GetUniqueObjectID()), SvSml::CreationInfo(numImages, imagesNamesSize), SvSml::CreationInfo(numValues, valuesNamesSize));
 				m_InspectionWriterCreationInfos.push_back(creationInfo);
 				pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
 			}
@@ -5250,7 +5272,7 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 			}
 			// A Reject Depth of Zero is allowed and means we aren't keeping any rejects
 			// Check for Reject - if Reject copy Last Inspected to reject (this includes images(file copies))
-			if (SVSharedMemorySingleton::Instance().GetRejectDepth() && S_OK == CheckRejectCondition(rProduct, rWriter))
+			if (m_numRejectSlots && S_OK == CheckRejectCondition(rProduct, rWriter))
 			{
 				HRESULT hr = rWriter.CopyLastInspectedToReject(rSharedProduct);
 				if (S_OK != hr)
@@ -5340,3 +5362,12 @@ DWORD SVPPQObject::GetObjectColor() const
 	return SV_DEFAULT_WHITE_COLOR;
 }
 
+long SVPPQObject::GetNumProductSlots() const
+{
+	return m_numProductSlots;
+}
+
+long SVPPQObject::GetNumRejectSlots() const
+{
+	return m_numRejectSlots;
+}

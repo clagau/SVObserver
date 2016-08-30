@@ -443,7 +443,7 @@ private:
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
 	void FillSharedData(long sharedSlotIndex, SvSml::SVSharedData& rData, const SVFilterValueMap& rValues, const SVFilterImageMap& rImages, SVProductInfoStruct& rProductInfo, SvSml::SVSharedInspectionWriter& rWriter);
-	void InitSharedMemoryItemNames();
+	void InitSharedMemoryItemNames(const long ProductSlots, const long RejectSlots);
 
 	SVCriticalSectionPtr m_LastRunLockPtr;
 	bool m_LastRunProductNULL;

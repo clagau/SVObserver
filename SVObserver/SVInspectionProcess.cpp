@@ -210,7 +210,7 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 template<typename T>
 struct SH { int i; T it; };
 
-void SVInspectionProcess::InitSharedMemoryItemNames()
+void SVInspectionProcess::InitSharedMemoryItemNames(const long ProductSlots, const long RejectSlots)
 {
 	SvSml::SVSharedInspectionWriter& rWriter = SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
 	SvSml::SVSharedData& rFirstData = rWriter.GetLastInspectedSlot(0);
@@ -225,13 +225,12 @@ void SVInspectionProcess::InitSharedMemoryItemNames()
 	{
 		rFirstData.m_Images[oh_sh.i].SetName(oh_sh.it->first.c_str());
 	}
-	const SvSml::SVSharedMemorySettings& settings = SVSharedMemorySingleton::Instance().GetSettings();
-	for (int i = 1;i < settings.NumProductSlots();i++)
+	for (int i = 1;i < ProductSlots;i++)
 	{
 		SvSml::SVSharedData& rData = rWriter.GetLastInspectedSlot(i);
 		rData = rFirstData;
 	}
-	for (int i = 0;i < settings.NumRejectSlots();i++)
+	for (int i = 0;i < RejectSlots;i++)
 	{
 		SvSml::SVSharedData& rData = rWriter.GetRejectSlot(i);
 		rData = rFirstData;
@@ -746,10 +745,10 @@ BOOL SVInspectionProcess::GoOnline()
 	}
 
 	ProcessMonitorLists();
-
-	if (GetPPQ()->HasActiveMonitorList())
+	SVPPQObject* pPPQ = GetPPQ();
+	if (pPPQ && pPPQ->HasActiveMonitorList())
 	{
-		InitSharedMemoryItemNames();
+		InitSharedMemoryItemNames(pPPQ->GetNumProductSlots(), pPPQ->GetNumRejectSlots());
 	}
 	return true;
 }// end GoOnline

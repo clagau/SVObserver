@@ -16,11 +16,11 @@
 #include "SVShared.h"
 #pragma endregion Includes
 
+// Uncommnet to enable logging
+//	#define ENABLE_LOG
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	#define ENABLE_LOG
-
 	const std::string SVSharedConfiguration::GetControlShareName()
 	{
 		return "ControlSegment";

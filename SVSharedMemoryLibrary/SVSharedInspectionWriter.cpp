@@ -77,7 +77,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 	// Create
-	HRESULT SVSharedInspectionWriter::Create( const std::string& name, const GUID& guid, const SVSharedMemorySettings& rSettings, size_t numImages, size_t numValues )
+	HRESULT SVSharedInspectionWriter::Create( const std::string& name, const GUID& guid, const SVSharedMemorySettings& rSettings, const long numProductSlots, const long numRejectSlots, const CreationInfo& rImagesInfo, const CreationInfo& rValuesInfo )
 	{
 		HRESULT hr = S_OK;
 		m_guid = guid;
@@ -87,17 +87,25 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		{
 			Init();
 
+		// check for required size
+		size_t requiredDataSize = (rValuesInfo.num_entries * sizeof(SVSharedValue)) + (rValuesInfo.names_size * rValuesInfo.num_entries);
+		requiredDataSize += (rImagesInfo.num_entries * sizeof(SVSharedImage)) + (rImagesInfo.names_size * rImagesInfo.num_entries);
+		size_t requiredSize = (numProductSlots * requiredDataSize) + (numRejectSlots * requiredDataSize);
+		requiredSize += (numRejectSlots * requiredDataSize) + (numRejectSlots * requiredDataSize);
+		size_t managedShareSize = rSettings.DataStoreSize() * statics::M;
+
+		if (requiredSize < managedShareSize)
+		{
 			// Allocate new repositories
-			size_t managedShareSize = rSettings.DataStoreSize() * statics::M;
 			m_pManagedSharedMemory = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
 
 			// Allocate Last Inspected Cache
 			SVSharedLastInspectedCacheAllocator salloc = m_pManagedSharedMemory->get_allocator<SVSharedLastInspectedCache>();
-			m_pManagedSharedMemory->construct<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str())(salloc, rSettings.NumProductSlots(), numImages, numValues);
+			m_pManagedSharedMemory->construct<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str())(salloc, numProductSlots, rImagesInfo.num_entries, rValuesInfo.num_entries);
 
 			// Allocate Reject Cache
 			SVSharedRejectCacheAllocator ralloc = m_pManagedSharedMemory->get_allocator<SVSharedRejectCache>();
-			m_pManagedSharedMemory->construct<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str())(ralloc, rSettings.NumRejectSlots(), numImages, numValues);
+			m_pManagedSharedMemory->construct<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str())(ralloc, numRejectSlots, rImagesInfo.num_entries, rValuesInfo.num_entries);
 
 			if (S_OK == hr)
 			{
@@ -106,14 +114,19 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				m_pSharedRejectCache = m_pManagedSharedMemory->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
 			}
 		}
-		catch (const boost::interprocess::interprocess_exception& e)
+		else
 		{
-			SVSharedConfiguration::Log(e.what());
-			Destroy();
-			hr = E_FAIL;
+			hr = E_INVALIDARG; // maybe E_OUTOFMEMORY ?
 		}
-		return hr;
 	}
+	catch (const boost::interprocess::interprocess_exception& e)
+	{
+		SVSharedConfiguration::Log(e.what());
+		Destroy();
+		hr = E_FAIL;
+	}
+	return hr;
+}
 
 	void SVSharedInspectionWriter::Destroy()
 	{

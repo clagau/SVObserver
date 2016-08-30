@@ -89,7 +89,9 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_IsLessThan,
 		Tid_IsInvalidRef,
 
+		Tid_ErrorInitMonitorListInSharedMemory,
 		Tid_ErrorWriteMonitorListNoSharedMemory,
+		Tid_ErrorReleaseProductNoReaderLock,
 		Tid_RingBuffer_Depth_Invalid_Value,
 		Tid_Error_NoFontFileSpec,
 		Tid_Error_FontFileNotExist,

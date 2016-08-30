@@ -59,7 +59,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		bool IsOpen() const;
 
 		ProductPtr RequestNextProduct(long& idx) const;
-		void ReleaseProduct(const ProductPtr product, long& idx) const;
+		void ReleaseProduct(const ProductPtr product, long idx) const;
 		// request reject for a given trigger
 		ProductPtr RequestReject(long trig, long& idx) const;
 		void ReleaseReject(const ProductPtr product, long idx) const;

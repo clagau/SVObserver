@@ -205,6 +205,9 @@ public:
 	/// \returns workload information for the most recently completed product 
 	ProductWorkloadInformation GetMostRecentWorkLoadInformation(){return m_MostRecentWorkLoadInfo;}
 
+	long GetNumProductSlots() const;
+	long GetNumRejectSlots() const;
+
 protected:
 	SvSml::InspectionWriterCreationInfos m_InspectionWriterCreationInfos;
 	typedef SVVector< SVInspectionProcess* > SVPPQInspectionProcessVector;
@@ -454,9 +457,7 @@ protected:
 	// Pointers to the Master Lists
 	SVCameraInfoMap m_Cameras;
 
-
 private:
-
 	SVString m_conditionalOutputName; // persist this
 	SVGUID m_conditionalOutputValueID; // do not persist this
 
@@ -467,7 +468,6 @@ private:
 	bool AlwaysWriteOutputs() const;
 	bool EvaluateConditionalOutput(long dataIndex) const;
 	void init();
-
 
 #ifdef EnableTracking
 	struct SVPPQTrackingElement
@@ -484,7 +484,6 @@ private:
 		void IncrementCount( size_t p_Index, size_t p_VectorSize );
 
 		SVCountVector m_TrackedCounts;
-
 	};
 
 	struct SVPPQTracking
@@ -538,6 +537,9 @@ private:
 	//They are not a state of the object only a help for the method. To be able to set the method const, this parameter are muteable.
 	mutable SVObjectPtrDeque m_childObjectsForFillChildObjectList;  //<This list is saved for the method fillChildObjectList, to reuse it if the same filter (m_AttributesAllowedFilterForFillChildObjectList) is used. 
 	mutable UINT m_AttributesAllowedFilterForFillChildObjectList; //<This filter flag was used in the last run of the method fillChildObjectList.
+
+	long m_numProductSlots;
+	long m_numRejectSlots;
 };
 
 typedef SVVector< SVPPQObject* > SVPPQObjectArray;

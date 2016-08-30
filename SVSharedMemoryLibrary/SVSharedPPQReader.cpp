@@ -12,6 +12,8 @@
 #include "StdAfx.h"
 #include "SVSharedPPQReader.h"
 #include "SVSharedConfiguration.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -109,25 +111,41 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return ret;
 	}
 
-	void SVSharedPPQReader::ReleaseProduct(const ProductPtr product, long& idx) const
+	void SVSharedPPQReader::ReleaseProduct(const ProductPtr product, long idx) const
 	{
-		if (product)
+		long size = static_cast<long>(m_SharedProductStorePPQ->data.size());
+		if (product && (idx >= 0 && idx < size))
 		{
-#ifdef _DEBUG	
-			long temp =  product->product.m_Flags; 
-#endif 				
-			short x = _InterlockedDecrement16((volatile short *)&(product->product.m_Flags));
-#ifdef _DEBUG
-			if( x < 0 )
+			try
 			{
-				std::stringstream ss; 
-				ss <<  "Product mFlag :" <<  std::hex << temp << " ";
-				ss << "X: "  << x << std::endl;
-				OutputDebugString(ss.str().c_str()); 
+				SVSharedProductVector* pData = &m_SharedProductStorePPQ->data;
+	
+				short flags = static_cast<short>((*pData)[idx].m_Flags);
+				if (flags > 0) // check for a reader lock
+				{
+					short x = _InterlockedDecrement16((volatile short *)&((*pData)[idx].m_Flags));
+					assert(x >= 0);
+					(*pData)[idx].m_Flags |= ds::ready;
+				}
+				else
+				{
+					// When SVObserver has gone offline and the RRS hasn't detected the state change yet,
+					// it could still be in the process of handling a GetProduct command,
+					// and current_idx could be -1 (See ClearHeld in SVSharedPPQWriter) 
+					if (m_SharedProductStorePPQ->current_idx >= 0)
+					{
+						// log exception
+						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						Exception.setMessage(SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK, SvOi::Tid_ErrorReleaseProductNoReaderLock, SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK );
+					}
+				}
 			}
-#endif 		
-			assert(x >= 0);
-			product->product.m_Flags |= ds::ready;
+			catch (std::exception& e)
+			{
+				// log exception
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage(SVMSG_SHAREDMEMORY_READER_ACCESS_VIOLATION, e.what(), SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_ACCESS_VIOLATION );
+			}
 		}
 	}
 
@@ -252,11 +270,39 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	void SVSharedPPQReader::ReleaseReject(const ProductPtr product, long idx) const
 	{
-		if (product)
+		long size = static_cast<long>(m_SharedProductStorePPQReject->data.size());
+		if (product && (idx >= 0 && idx < size))
 		{
-			short x = _InterlockedDecrement16((volatile short *)&(product->product.m_Flags));
-			assert(x >= 0);
-			product->product.m_Flags |= ds::ready;
+			try
+			{
+				SVSharedProductVector* pData = &m_SharedProductStorePPQReject->data;
+	
+				short flags = static_cast<short>((*pData)[idx].m_Flags);
+				if (flags > 0) // check for a reader lock
+				{
+					short x = _InterlockedDecrement16((volatile short *)&((*pData)[idx].m_Flags));
+					assert(x >= 0);
+					(*pData)[idx].m_Flags |= ds::ready;
+				}
+				else
+				{
+					// When SVObserver has gone offline and the RRS hasn't detected the state change yet,
+					// it could still be in the process of handling a GetReject command,
+					// and current_idx could be -1 (See ClearHeld in SVSharedPPQWriter) 
+					if (m_SharedProductStorePPQReject->current_idx >= 0)
+					{
+						// log exception
+						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						Exception.setMessage(SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK, SvOi::Tid_ErrorReleaseProductNoReaderLock, SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK );
+					}
+				}
+			}
+			catch (std::exception& e)
+			{
+				// log exception
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage(SVMSG_SHAREDMEMORY_READER_ACCESS_VIOLATION, e.what(), SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_ACCESS_VIOLATION );
+			}
 		}
 	}
 
@@ -318,6 +364,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 		return val;
 	}
-
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

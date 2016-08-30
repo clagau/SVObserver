@@ -66,7 +66,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return (nullptr != shm.get() && m_lists);
 	}
 
-	HRESULT SVMonitorListWriter::Create(const SVSharedMemorySettings & settings)
+	HRESULT SVMonitorListWriter::Create(const SVSharedMemorySettings& settings, size_t requiredSize)
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::Create");
 		HRESULT l_result = S_OK;
@@ -76,26 +76,34 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		{
 			Init();
 
-			// Allocate new repositories
+			// check required size
 			size_t managedShareSize = settings.MonitorStoreSize() * statics::M;
-			shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
-
-			// Allocate monitor list store
-			MonitorListStoreAllocator salloc = shm->get_allocator<MonitorListStoreAllocator>();
-			auto rslt = shm->construct<SVMonitorListStore>("MonitorListStore")(salloc);
-
-			if (rslt)
+			if (requiredSize < managedShareSize)
 			{
-				// get pointer to the monitor list store
-				m_lists = shm->find<SVMonitorListStore>("MonitorListStore").first;
+				// Allocate new repositories
+				shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
+
+				// Allocate monitor list store
+				MonitorListStoreAllocator salloc = shm->get_allocator<MonitorListStoreAllocator>();
+				auto rslt = shm->construct<SVMonitorListStore>("MonitorListStore")(salloc);
+
+				if (rslt)
+				{
+					// get pointer to the monitor list store
+					m_lists = shm->find<SVMonitorListStore>("MonitorListStore").first;
+				}
+				else
+				{
+					m_lists = nullptr;
+					SVSharedConfiguration::Log("SVMonitorListWriter::Create failed to construct MonitorListStore");
+				}
 			}
 			else
 			{
-				m_lists = nullptr;
-				SVSharedConfiguration::Log("SVMonitorListWriter::Create failed to construct MonitorListStore");
+				l_result = E_INVALIDARG;
 			}
 		}
-		catch (const boost::interprocess::interprocess_exception & e)
+		catch (const boost::interprocess::interprocess_exception& e)
 		{
 			SVSharedConfiguration::Log(e.what());
 			Release();
@@ -104,8 +112,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return l_result;
 	}
 
-void SVMonitorListWriter::AddList(const std::string & listName, const std::string & ppqName, int rejectDepth, bool isActive )
-{
+	void SVMonitorListWriter::AddList(const std::string & listName, const std::string & ppqName, int rejectDepth, bool isActive )
+	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::AddList");
 		if (!m_lists)
 		{

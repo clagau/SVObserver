@@ -296,6 +296,8 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_15041_ProfileTool = Sej_ErrorBase + 41;
 	static const int Err_15042_FastOCR = Sej_ErrorBase + 42;
 	static const int Err_15043_UnknownProductType = Sej_ErrorBase + 43;
+	// Shared memory
+	static const int Err_15044_InitMonitorListInSharedMemory = Sej_ErrorBase + 44;
 
 	//Marcus Eichengrün error base
 	static const int Mec_ErrorBase = 16000;

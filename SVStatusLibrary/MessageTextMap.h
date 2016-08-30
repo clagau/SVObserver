@@ -99,7 +99,9 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_IsLessThan, _T("ERROR:\n%s\nis less than\n%s"))
 	(SvOi::Tid_IsInvalidRef, _T("ERROR:\n%s: %s\nis an invalid reference."))
 
+	(SvOi::Tid_ErrorInitMonitorListInSharedMemory, _T("InitMonitorListInSharedMemory - Not enough memory"))
 	(SvOi::Tid_ErrorWriteMonitorListNoSharedMemory, _T("WriteMonitorListToSharedMemory - No Shared memory"))
+	(SvOi::Tid_ErrorReleaseProductNoReaderLock, _T("ReleaseProduct - No Reader Lock found"))
 	(SvOi::Tid_RingBuffer_Depth_Invalid_Value, _T( "RingBuffer Depth has to be between %s and %s, current %s" ))
 	(SvOi::Tid_Error_NoFontFileSpec, _T("No Font File Specified"))
 	(SvOi::Tid_Error_FontFileNotExist, _T( "Font File Does Not Exist: %s" ))

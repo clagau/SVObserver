@@ -28,7 +28,7 @@ public:
 
 	~SVSharedMemorySingleton();
 
-	HRESULT InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SvSml::InspectionWriterCreationInfos& rCreationInfos);
+	HRESULT InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const long ProductSlots, const long RejectSlots, const SvSml::InspectionWriterCreationInfos& rCreationInfos);
 	HRESULT ErasePPQSharedMemory(const SVGUID& rGuid);
 
 	SvSml::SVSharedPPQWriter& GetPPQWriter(const SVGUID& rGuid);
@@ -38,9 +38,6 @@ public:
 
 	std::string GetInspectionShareName(const SVGUID& rPPQGuid,const SVGUID& rGuid);
 	const SvSml::SVSharedMemorySettings& GetSettings() const;
-	long GetRejectDepth() const;
-	void SetRejectDepth(long rejectDepth);
-	void SetProductDepth(long productDepth, long extra);
 	static HRESULT SetProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
 
 	static bool HasShares();

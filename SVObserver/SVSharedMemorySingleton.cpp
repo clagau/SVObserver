@@ -15,6 +15,8 @@
 #include "SVSharedMemorySingleton.h"
 #include "SVStatusLibrary/GlobalPath.h"
 
+static const double TwentyPercent = .20;
+
 SVSharedMemorySingleton& SVSharedMemorySingleton::Instance()
 {
 	static SVSharedMemorySingleton l_Object;
@@ -38,10 +40,8 @@ void SVSharedMemorySingleton::ReadSettings()
 	long monitorStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("MonitorStoreSize"), SvSml::SVSharedMemorySettings::DefaultMonitorStoreSize);
 	long productStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("ProductStoreSize"), SvSml::SVSharedMemorySettings::DefaultProductStoreSize);
 	long dataStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("DataStoreSize"), SvSml::SVSharedMemorySettings::DefaultDataStoreSize);
-	long numProductSlots = reader.GetValueInt(_T("SharedMemory"), _T("ProductNumSlots"), SvSml::SVSharedMemorySettings::DefaultProductNumSlots);
-	long numRejectSlots = reader.GetValueInt(_T("SharedMemory"), _T("RejectsNumSlots"), SvSml::SVSharedMemorySettings::DefaultRejectsNumSlots);
 	
-	m_settings = SvSml::SVSharedMemorySettings(monitorStoreSize, productStoreSize, dataStoreSize, numProductSlots, numRejectSlots);
+	m_settings = SvSml::SVSharedMemorySettings(monitorStoreSize, productStoreSize, dataStoreSize);
 }
 
 void SVSharedMemorySingleton::CheckDirectories()
@@ -80,7 +80,24 @@ void SVSharedMemorySingleton::CheckDirectories()
 	}
 }
 
-HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const SvSml::InspectionWriterCreationInfos& rCreationInfos)
+////////////////////////////////////////////////////////////////////////////
+// Calculate the size required to hold the Inspection data in the PPQ Share
+////////////////////////////////////////////////////////////////////////////
+static size_t CalcPPQSharedMemorySize(const SVString& rName, const SvSml::InspectionWriterCreationInfos& rCreationInfos)
+{
+	size_t size = rName.size() + sizeof(SvSml::SVSharedProduct);
+	for (SvSml::InspectionWriterCreationInfos::const_iterator it = rCreationInfos.begin(); it != rCreationInfos.end();++it)
+	{
+	
+		std::string name = it->inspectionID.first;
+		std::string shareName = name + "." + SvSml::SVSharedConfiguration::GetShareName();
+		size += shareName.length() + name.length() + sizeof(SvSml::SVSharedInspection);
+	}
+	size += static_cast<size_t>(static_cast<double>(size) * TwentyPercent);
+	return size;
+}
+
+HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const long ProductSlots, const long RejectSlots, const SvSml::InspectionWriterCreationInfos& rCreationInfos)
 {
 	HRESULT hr = S_OK;
 
@@ -88,8 +105,9 @@ HRESULT SVSharedMemorySingleton::InsertPPQSharedMemory(const SVString& rName, co
 
 	if (it == m_PPQSharedMemory.end())
 	{
+		size_t size = CalcPPQSharedMemorySize(rName, rCreationInfos);
 		SvSml::SVSharedPPQWriter& rMemory = m_PPQSharedMemory[rGuid];
-		hr = rMemory.Create(rName.c_str(), rCreationInfos, m_settings);
+		hr = rMemory.Create(rName.c_str(), rCreationInfos, m_settings, ProductSlots, RejectSlots, size);
 	}
 	return hr;
 }
@@ -149,21 +167,6 @@ SvSml::SVMonitorListWriter& SVSharedMemorySingleton::GetMonitorListWriter()
 SvSml::SVShareControlHandler& SVSharedMemorySingleton::GetIPCShare()
 {
 	return m_shareControlHandler;
-}
-
-long SVSharedMemorySingleton::GetRejectDepth() const
-{
-	return m_settings.NumRejectSlots();
-}
-
-void SVSharedMemorySingleton::SetRejectDepth(long rejectDepth)
-{
-	m_settings.SetNumRejectSlots(rejectDepth);
-}
-
-void SVSharedMemorySingleton::SetProductDepth(long productDepth, long extra)
-{
-	m_settings.SetNumProductSlots(productDepth + extra);
 }
 
 HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)

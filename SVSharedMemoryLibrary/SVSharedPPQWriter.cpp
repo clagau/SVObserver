@@ -102,7 +102,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 	// Create
-	HRESULT SVSharedPPQWriter::Create( const std::string& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& p_rSettings )
+	HRESULT SVSharedPPQWriter::Create( const std::string& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& rSettings, const long ProductSlots, const long RejectSlots, size_t size )
 	{
 		HRESULT l_result = S_OK;
 
@@ -111,47 +111,56 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		{
 			Init();
 
-			// Allocate new repositories
-			size_t managedShareSize = p_rSettings.ProductStoreSize() * statics::M;
-			shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
-
-			// Allocate product store
-			ProductStoreAllocator salloc = shm->get_allocator<SVSharedProductStore>();
-			shm->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str())(salloc, p_rSettings.NumProductSlots());
-
 			// Adjust Number of Reject slots
-			long numRejectSlots = p_rSettings.NumRejectSlots();
+			long numRejectSlots(RejectSlots);
 			if (numRejectSlots)
 			{
 				numRejectSlots += static_cast<long>(std::ceil(static_cast<float>(numRejectSlots) * 0.5f)) + 4; // allow 50% extra + 4 additional slots
 			}
-			// Construct adjusted settings
-			SVSharedMemorySettings settings(p_rSettings.MonitorStoreSize(), p_rSettings.ProductStoreSize(), p_rSettings.DataStoreSize(), p_rSettings.NumProductSlots(), numRejectSlots);
-			shm->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str())(salloc, numRejectSlots);
-			try
+			// check required size
+			size_t requiredSize = (ProductSlots * size);
+			requiredSize += (numRejectSlots * size);
+			size_t managedShareSize = rSettings.ProductStoreSize() * statics::M;
+
+			if (requiredSize < managedShareSize)
 			{
-				m_writers.resize(inspections.size());
-				InspectionWriterCreationInfos::const_iterator it = inspections.begin();
-				std::for_each(m_writers.begin(), m_writers.end(), 
-					[&it, &settings](SVSharedInspectionWriter& wr) 
-				{ 
-					if (S_OK != wr.Create(it->inspectionID.first, it->inspectionID.second, settings, it->num_images, it->num_values))
-					{
-						throw std::exception("Failed to create inspection writer");
-					}
-					++it;
-				});
+				// Allocate new repositories
+				shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
+
+				// Allocate product store
+				ProductStoreAllocator salloc = shm->get_allocator<SVSharedProductStore>();
+				shm->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str())(salloc, ProductSlots);
+			
+				shm->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str())(salloc, numRejectSlots);
+				try
+				{
+					m_writers.resize(inspections.size());
+					InspectionWriterCreationInfos::const_iterator it = inspections.begin();
+					std::for_each(m_writers.begin(), m_writers.end(), 
+						[&it, &rSettings, &ProductSlots, &numRejectSlots](SVSharedInspectionWriter& wr) 
+					{ 
+						if (S_OK != wr.Create(it->inspectionID.first, it->inspectionID.second, rSettings, ProductSlots, numRejectSlots, it->imagesCreationInfo, it->valuesCreationInfo))
+						{
+							throw std::exception("Failed to create inspection writer");
+						}
+						++it;
+					});
+				}
+				catch (std::exception& e)
+				{
+					SVSharedConfiguration::Log(e.what());
+					l_result = E_FAIL;
+				}
+				if (S_OK == l_result)
+				{
+					// get pointers to the product and reject queues
+					sh = shm->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str()).first;
+					rsh = shm->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str()).first;
+				}
 			}
-			catch (std::exception& e)
+			else
 			{
-				SVSharedConfiguration::Log(e.what());
-				l_result = E_FAIL;
-			}
-			if (S_OK == l_result)
-			{
-				// get pointers to the product and reject queues
-				sh = shm->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str()).first;
-				rsh = shm->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str()).first;
+				l_result = E_INVALIDARG;
 			}
 		}
 		catch (const boost::interprocess::interprocess_exception& bex)
@@ -252,5 +261,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		ClearHeld(sh);
 		ClearHeld(rsh);
 	}
-
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

@@ -39,14 +39,13 @@ public:
 	void HideShowViewTab();
 	void ResetObject();
 	void ValidateInputs();
-	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
+	HRESULT BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
 
 	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
 	HRESULT GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const;
-
 
 	//************************************
 	// Method:    IsValidMonitoredObject
@@ -55,21 +54,19 @@ public:
 	// Returns:   bool - true if the object is allowed to be part of a monitor list
 	//************************************
 	static bool IsValidMonitoredObject(const SVObjectClass* pObject);
+#pragma endregion Public
+
+#pragma region Private	
 private:
 	//! Write the monitorlist to shared memory
 	//! \param name [in] name of monitorlist
 	//! \param remoteMonitorNamedlist [in] monitorlist
 	//! \returns void
-	static void WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList&  remoteMonitorNamedlist );
-	
+	static void WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist);
 	
 	//! Initialize the monitor writer 
-	static void InitMonitorListInSharedMemory();
+	static HRESULT InitMonitorListInSharedMemory(size_t size);
 
-#pragma endregion Public
-
-#pragma region Private
-private:
 	RemoteMonitorList m_list;
 
 	PPQNameListNames GetPPQMonitorLists(SVConfigurationObject* pConfig) const;

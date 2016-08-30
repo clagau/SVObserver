@@ -18,32 +18,34 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		long m_monitorStoreSize;	// in MB
 		long m_dataStoreSize;		// in MB
 		long m_productStoreSize;	// in MB
-		long m_productNumSlots;		// used for both PPQ and Inspections
-		long m_rejectsNumSlots;
 
 	public:
 		enum Defaults
 		{
 			DefaultMonitorStoreSize = 4,
 			DefaultProductStoreSize = 8,
-			DefaultDataStoreSize = 150,
-			DefaultProductNumSlots = 64,
-			DefaultRejectsNumSlots = 100
+			DefaultDataStoreSize = 150
 		};
 		SVSharedMemorySettings();
-		SVSharedMemorySettings(long monitorSz, long prodStoreSz, long dataStoreSz, long numProductSlots, long numRejectSlots);
+		SVSharedMemorySettings(long monitorSz, long prodStoreSz, long dataStoreSz);
 
 		SVSharedMemorySettings(const SVSharedMemorySettings& rSettings);
 		SVSharedMemorySettings& operator=(const SVSharedMemorySettings& rSettings);
 		long MonitorStoreSize() const;
 		long ProductStoreSize() const;
 		long DataStoreSize() const;
-		long NumProductSlots() const;
-		void SetNumProductSlots(long numProductSlots);
-		long NumRejectSlots() const;
-		void SetNumRejectSlots(long numRejectSlots);
 	};
 
+	/////////////////////////////////////////////////////////////////////////////////
+	// Structure to hold the Inspection Share Creation Info
+	/////////////////////////////////////////////////////////////////////////////////
+	struct CreationInfo
+	{
+		size_t num_entries; // number of items
+		size_t names_size;	// size of the names
+	
+		CreationInfo(size_t numEntries, size_t namesSize) : num_entries(numEntries), names_size(namesSize) {}
+	};
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;
