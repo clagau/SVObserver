@@ -166,7 +166,6 @@ namespace Seidenader { namespace SVOGui
 			if (lOperator == static_cast<long>(m_operatorCtrl.GetItemData(i)))
 			{
 				m_operatorCtrl.SetCurSel(i); // Set Selected Operator...
-				OnSelchangeOperatorCombo();
 				break;
 			}
 		}

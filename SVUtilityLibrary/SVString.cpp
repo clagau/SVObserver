@@ -48,14 +48,15 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 
 	SVString createSVString( const _variant_t& rVariant )
 	{
-		SVString retVal(_T(""));
+		SVString Result(_T(""));
+		_bstr_t Value( rVariant );
 
-		if( VT_BSTR == rVariant.vt )
+		if( 0 < Value.length() )
 		{
-			retVal = createSVString( _bstr_t( rVariant.bstrVal ) );
+			Result.assign( Value );
 		}
 
-		return retVal;
+		return Result;
 	}
 
 	int CompareNoCase(const SVString& rStringValue, const SVString & rStringValue2)
