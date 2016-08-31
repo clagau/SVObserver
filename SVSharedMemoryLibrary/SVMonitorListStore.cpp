@@ -45,7 +45,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		// iterate over the monitor list names
 		for (MonitorMap::iterator it = m_lists.begin();it != m_lists.end();++it)
 		{
-			if (listName == it->first.c_str())
+			const char_string& key = it->first;
+			if (listName == key.c_str())
 			{
 				return it->second;
 			}
@@ -66,7 +67,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		*/
 		for (MonitorMap::const_iterator it = m_lists.begin();it != m_lists.end();++it)
 		{
-			if (listName == it->first.c_str())
+			const char_string& key = it->first;
+			if (listName == key.c_str())
 			{
 				return it->second;
 			}
@@ -94,7 +96,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	void SVMonitorListStore::Add(const SVSharedMonitorList & list)
 	{
 		SVSharedConfiguration::Log("SVMonitorListStore::Add");
-		MonitorMapValue val(list.GetName(), list);
+		const char_string& name = list.GetName();
+		MonitorMapValue val(name, list);
 		m_lists.insert(val);
 	}
 
