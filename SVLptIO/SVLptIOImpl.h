@@ -29,8 +29,7 @@ enum ParallelBoardInterfaceType
 class SVLptIOImpl : public SVLptIO, public SvTh::IODeviceBase
 //@TODO [developer] it might be better to use aggregation instead of multiple inheritance here
 {
-#pragma region public
-public:
+#pragma region Declarations
 	enum SVHWControlEnum
 	{
 //		NoMode Not used anywhere.
@@ -61,7 +60,16 @@ public:
 		SVTrigger3    = 0x20,	// S5+ PaperEnd
 		SVTrigger4    = 0x80,	// S7- Busy
 	};
+#pragma endregion Declarations
 
+#pragma region Constructor
+public:
+	SVLptIOImpl();
+	virtual ~SVLptIOImpl();
+#pragma endregion Constructor
+
+#pragma region Public Methods
+public:
 	// Trigger Variables...
 	long m_lLastTriggerState;
 	long m_lLptTriggerEdge;
@@ -69,9 +77,6 @@ public:
 
 	bool m_bUseSingleTrigger;
 	short m_nPreviousOutputs[SVNumOutputPorts + 1];
-
-	SVLptIOImpl();
-	virtual ~SVLptIOImpl();
 
 	HRESULT Initialize(bool bInit);
 	
@@ -125,9 +130,9 @@ public:
 	HRESULT GetParameterName(unsigned long ulIndex, BSTR *p_pbstrName);
 	HRESULT GetParameterValue(unsigned long ulIndex, VARIANT *pvarValue);
 	HRESULT SetParameterValue(unsigned long ulIndex, VARIANT *pvarValue);
-#pragma endregion public
+#pragma endregion Public Methods
 
-#pragma region protected
+#pragma region Protected Methods
 protected:
 	#ifdef SV_LOG_STATUS_INFO
 		SVStatusDeque m_StatusLog;
@@ -151,9 +156,17 @@ protected:
 	HRESULT TranslateBoardType(long& ulBoardType);
 	HRESULT SVReadWriteLpt(unsigned long& rlValue, long lControl, long lBit = -1);
 
-#pragma endregion protected
+#pragma endregion Protected Methods
 
-#pragma region private
+#pragma region Private Methods
+private:
+	LPCTSTR GetControlText(long lControl);
+
+	// IRQ Interrupt handler
+	void HandleIRQ();
+#pragma endregion Private Methods
+
+#pragma region Member Variables
 private:
 	CRITICAL_SECTION m_hCriticalSection;
 	BOOL m_bCriticalSectionCreated;
@@ -162,11 +175,6 @@ private:
 	//! It should be solved in the dll however changes could cause the driver signature to become invalid
 	//! The thread is closed on destruction causing the one thread handle to leak
 	bool m_TriggerActive;
-
-	LPCTSTR GetControlText(long lControl);
-
-	// IRQ Interrupt handler
-	void HandleIRQ();
-#pragma endregion private
+#pragma endregion Member Variables
 };
 

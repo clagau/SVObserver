@@ -39,6 +39,8 @@ public:
 	 HRESULT DisableAckInterrupt();
 	 HRESULT EnableAckInterrupt(IrqHandler func);
 
+	 bool isIrqHandlerEnabled() const;
+
 #pragma endregion public
 
 #pragma region private

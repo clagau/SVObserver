@@ -661,7 +661,7 @@ HRESULT SVLptIOImpl::afterStartTrigger(HRESULT hr)
 			m_lLastTriggerState = status;
 			if( !m_TriggerActive )
 			{
-				if( !IsActive() )
+				if( !isIrqHandlerEnabled() )
 				{
 					hr = EnableAckInterrupt(boost::bind(&SVLptIOImpl::HandleIRQ, this));
 				}
