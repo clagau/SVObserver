@@ -372,7 +372,7 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_LinearSpecial_OrientationVertical, _T("Tool profile orientation is at vertical.  By turning rotation on the profile orientation will be set to horizontal. Do you wish to continue"))
 	(SvOi::Tid_LinearSpecial_IsRotated, _T("Tool is currently rotated.  By turning off rotation the figure will be drawn at a rotation angle of 0. Do you wish to continue"))
 	(SvOi::Tid_MaskPage_StartOCXFailed, _T("Static Mask Editor OCX Failed to Start"))
-	(SvOi::Tid_Error_CannotOpenFile, _T("Cannot open file!"))
+	(SvOi::Tid_Error_CannotOpenFile, _T("Cannot open file %s !"))
 	(SvOi::Tid_Error_CannotOpenTADlg, _T("Unable to open Tool Adjustment Dialog!"))
 	(SvOi::Tid_UnableStart_Utility, _T("Unable to start %s\n(%s).\n\nCheck Utility Properties."))
 	(SvOi::Tid_SetClipboardDataFailed, _T( "Setting the data into the clipboard failed." ))
@@ -435,6 +435,14 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_ValidateValue_ArraySizeInvalid, _T("Validate Value failed: Array Size must greater than zero."))
 	(SvOi::Tid_UnexpectedError, _T("An unexpected error ocurred."))
 	
+	(SvOi::Tid_FailedtoStart, _T("Failed to start %s"))
+	(SvOi::Tid_SocketInvalid, _T("Invalid socket Error: %s"))
+	(SvOi::Tid_InvalidCommand, _T("Invalid Command received: %s"))
+	(SvOi::Tid_CannotOpenReader, _T("Cannot open Reader"))
+	(SvOi::Tid_InvalidArguments, _T("Invalid arguments: %s"))
+	(SvOi::Tid_InvalidMonitorlist, _T("Invalid monitor list name: %s"))
+	(SvOi::Tid_RejectNotFound, _T("Reject not found"))
+	(SvOi::Tid_ProductNotFound, _T("Product not found"))
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

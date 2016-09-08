@@ -12,6 +12,8 @@
 #include "SVRegistry.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVUtilityLibrary\LoadDll.h"
+#include <locale>
+#include <codecvt>
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -36,13 +38,13 @@ static const TCHAR* const DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\n
 static const UINT SubstituteStringNr = 9;
 
 static const UINT CategoryNr = 31;
-static const UINT CategoryBase = FAC_UNUSED01;
+static const UINT CategoryBase = FAC_RRS;
 static const TCHAR* const CategoryUnknown = _T("Unknown");
 static const TCHAR* const CategoryNone = _T("None");
 static const TCHAR* const CategorySystem = _T("System");
 static const TCHAR* const CategoryApplication = _T("Application");
 static const TCHAR* const TaskCategory[CategoryNr]= { 
-	_T("Unused01"),
+	_T("RRS"),
 	_T("Unused02"),  
 	_T("Unused03"), 
 	_T("Unused04"), 
@@ -97,9 +99,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		setMessage( MessageCode, AdditionalTextId, SVStringArray(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, AdditionalTextList, SourceFile, ProgramCode, rObjectId );
+		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId );
 	}
 
 	const MessageContainer& MessageContainer::operator=(const MessageContainer& rRhs)
@@ -121,17 +123,27 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma endregion Constructor
 
 #pragma region Public Methods
+	//! This is the virtual method of std::exception if unicode use rather the What method
+	const char* MessageContainer::what() const
+	{
+#ifdef UNICODE
+		return nullptr;
+#else
+		return m_What.c_str();
+#endif
+	}
+
 	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		setMessage( MessageCode, AdditionalTextId, SVStringArray(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
 		m_Message.m_AdditionalTextId = AdditionalTextId;
-		m_Message.m_AdditionalTextList = AdditionalTextList;
+		m_Message.m_AdditionalTextList = rAdditionalTextList;
 		m_Message.m_SourceFile = SourceFile;
 		m_Message.m_ProgramCode = ProgramCode;
 

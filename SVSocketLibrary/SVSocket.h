@@ -127,7 +127,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		std::string state() const;
 
 		bool IsValidPayload(size_t) { return true; } // Currently, we say every payload is valid.  May be specialized later.
-		Err Bind(const char* hostAddr, unsigned short portNo);
+		Err Bind(const TCHAR* hostAddr, unsigned short portNo);
 		SVSocketError::ErrorEnum Send( const std::string& data ); // Use Send for JSON (no header).
 
 		bool DataAvailable() const

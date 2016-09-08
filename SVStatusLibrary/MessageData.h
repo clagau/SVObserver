@@ -27,9 +27,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! Constructor to set only the following parameters
 		//! \param MessageCode <in> the message code
 		//! \param AdditionalTextId <in> Id for the additional text
-		//! \param AdditionalTextList <in> List of strings for the additional text
+		//! \param rAdditionalTextList <in> Reference to list of strings for the additional text
 		//************************************
-		MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId = SvOi::Tid_Empty, SVStringArray AdditionalTextList = SVStringArray() );
+		MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId = SvOi::Tid_Empty, const SVStringArray& rAdditionalTextList = SVStringArray() );
 
 		//************************************
 		//! This is the copy constructor

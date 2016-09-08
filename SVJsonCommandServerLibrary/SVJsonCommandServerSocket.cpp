@@ -49,7 +49,7 @@ bool SVJsonCommandServerSocket::Start(unsigned short portNo)
 				if (!m_thread.IsActive())
 				{
 					// Start thread for accepts and reads
-					m_thread.Create(boost::bind(&SVJsonCommandServerSocket::ThreadProcessHandler, this, _1), "SVJsonCommandServerSocketThread", SVNone);
+					m_thread.Create(boost::bind(&SVJsonCommandServerSocket::ThreadProcessHandler, this, _1), _T("SVJsonCommandServerSocketThread"), SVNone);
 					QueueUserAPC(SVJsonCommandServerSocket::OnAPCEvent, m_thread.GetThreadHandle(), reinterpret_cast<ULONG_PTR>(nullptr));
 				}
 			}

@@ -27,6 +27,7 @@
 #include <atlenc.h>
 
 #include <algorithm>
+#include <comutil.h>		//Used by static library
 #include <conio.h>
 #include <fstream>
 #include <iomanip>
@@ -34,8 +35,10 @@
 #include <process.h>
 #include <signal.h>
 #include <Psapi.h>
+#include <set>				//Used by static library
 #include <sstream>			//Used by static library
 #include <string>
+#include <tchar.h>			//Used by static library
 #include <tlhelp32.h>
 #include <utility>
 #include <vector>

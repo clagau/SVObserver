@@ -21,7 +21,7 @@
 #pragma endregion Includes
 
 
-typedef std::string SVString;
+typedef std::basic_string<TCHAR> SVString;
 typedef std::set< SVString > SVStringSet;
 typedef std::vector< SVString > SVStringArray;
 typedef std::map< SVString, SVString > TranslateMap;

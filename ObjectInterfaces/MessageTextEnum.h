@@ -399,6 +399,15 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_ValidateValue_InvalidElementInVariantArray,
 		Tid_ValidateValue_ArraySizeInvalid,
 		Tid_UnexpectedError,
+
+		Tid_FailedtoStart,
+		Tid_SocketInvalid,
+		Tid_InvalidCommand,
+		Tid_CannotOpenReader,
+		Tid_InvalidArguments,
+		Tid_InvalidMonitorlist,
+		Tid_RejectNotFound,
+		Tid_ProductNotFound,
 	};
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 

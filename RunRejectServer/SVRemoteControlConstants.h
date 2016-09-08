@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   29 Aug 2014 17:35:56  $
 //******************************************************************************
 
-#ifndef SVREMOTECONTROLCONSTANTS_H
-#define SVREMOTECONTROLCONSTANTS_H
+#pragma  once
 
 namespace SVRC
 {
@@ -148,6 +147,4 @@ namespace SVRC
 		const std::string add_info = "AdditionalInfo";
 	}
 }
-
-#endif
 

@@ -14,64 +14,64 @@
 #include "SVSocketError.h"
 #pragma endregion Includes
 
-const char * ErrorText[] =
+const TCHAR* const ErrorText[] =
 {
-	"Success.",
-	"Interrupted function call.",
-	"Permission denied.",
-	"Invalid pointer address.",
-	"Invalid argument.",
-	"Too many open sockets.",
-	"Resource temporarily unavailable.",
-	"Operation now in progress.",
-	"Operation already in progress.",
-	"Socket operation on nonsocket.",
-	"Destination address required.",
-	"Message too long.",
-	"Protocol wrong type for socket.",
-	"Bad protocol option.",
-	"Protocol not supported.",
-	"Socket type not supported.",
-	"Operation not supported.",
-	"Protocol family not supported.",
-	"Address family not supported by protocol family.",
-	"Address already in use.",
-	"Cannot assign requested address.",
-	"Network is down.",
-	"Network is unreachable.",
-	"Network dropped connection on reset.",
-	"Software caused connection abort.",
-	"Connection reset by peer.",
-	"No buffer space available.",
-	"Socket is already connected.",
-	"Socket is not connected.",
-	"Cannot send after socket shutdown.",
-	"Connection timed out.",
-	"Connection refused.",
-	"Host is down.",
-	"No route to host.",
-	"Too many processes.",
-	"Network subsystem is unavailable.",
-	"Winsock.dll version out of range.",
-	"Successful WSAStartup not yet performed.",
-	"Graceful shutdown in progress.",
-	"Class type not found.",
-	"Host not found.",
-	"Nonauthoritative host not found. Try again.",
-	"This is a nonrecoverable error.",
-	"Valid name, no data record of requested type.",
-	"Specified event object handle is invalid.",
-	"One or more parameters are invalid.",
-	"Overlapped I/O event object not in signaled state.",
-	"Overlapped operations will complete later.",
-	"Insufficient memory available.",
-	"Overlapped operation aborted.",
-	"Invalid procedure table from service provider.",
-	"Invalid service provider version number.",
-	"Unable to initialize a service provider.",
-	"System call failure.",
-	"Already created.",
- 	"Unknown error."
+	_T("Success."),
+	_T("Interrupted function call."),
+	_T("Permission denied."),
+	_T("Invalid pointer address."),
+	_T("Invalid argument."),
+	_T("Too many open sockets."),
+	_T("Resource temporarily unavailable."),
+	_T("Operation now in progress."),
+	_T("Operation already in progress."),
+	_T("Socket operation on nonsocket."),
+	_T("Destination address required."),
+	_T("Message too long."),
+	_T("Protocol wrong type for socket."),
+	_T("Bad protocol option."),
+	_T("Protocol not supported."),
+	_T("Socket type not supported."),
+	_T("Operation not supported."),
+	_T("Protocol family not supported."),
+	_T("Address family not supported by protocol family."),
+	_T("Address already in use."),
+	_T("Cannot assign requested address."),
+	_T("Network is down."),
+	_T("Network is unreachable."),
+	_T("Network dropped connection on reset."),
+	_T("Software caused connection abort."),
+	_T("Connection reset by peer."),
+	_T("No buffer space available."),
+	_T("Socket is already connected."),
+	_T("Socket is not connected."),
+	_T("Cannot send after socket shutdown."),
+	_T("Connection timed out."),
+	_T("Connection refused."),
+	_T("Host is down."),
+	_T("No route to host."),
+	_T("Too many processes."),
+	_T("Network subsystem is unavailable."),
+	_T("Winsock.dll version out of range."),
+	_T("Successful WSAStartup not yet performed."),
+	_T("Graceful shutdown in progress."),
+	_T("Class type not found."),
+	_T("Host not found."),
+	_T("Non authoritative host not found. Try again."),
+	_T("This is a nonrecoverable error."),
+	_T("Valid name, no data record of requested type."),
+	_T("Specified event object handle is invalid."),
+	_T("One or more parameters are invalid."),
+	_T("Overlapped I/O event object not in signaled state."),
+	_T("Overlapped operations will complete later."),
+	_T("Insufficient memory available."),
+	_T("Overlapped operation aborted."),
+	_T("Invalid procedure table from service provider."),
+	_T("Invalid service provider version number."),
+	_T("Unable to initialize a service provider."),
+	_T("System call failure."),
+	_T("Already created."),
+ 	_T("Unknown error.")
 };
 
 HRESULT Hresults[] = 
@@ -144,11 +144,11 @@ namespace Seidenader { namespace SVSocketLibrary
 		return error;
 	}
 
-	const char * SVSocketError::GetErrorText(SVSocketError::ErrorEnum err)
+	LPCTSTR SVSocketError::GetErrorText(SVSocketError::ErrorEnum err)
 	{
-		static const char * defError = "Error number out of range.";
+		static const TCHAR* const defError = _T("Error number out of range.");
 		size_t i = err;
-		return ( 0 <= i && i < sizeof(ErrorText)/sizeof(ErrorText[0]))? ::ErrorText[i]:defError;
+		return ( 0 <= i && i < sizeof(ErrorText)/sizeof(ErrorText[0])) ? ::ErrorText[i] : defError;
 	}
 
 	HRESULT SVSocketError::HrFromSocketError(SVSocketError::ErrorEnum err)

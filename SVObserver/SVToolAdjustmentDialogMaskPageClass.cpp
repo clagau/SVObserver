@@ -422,7 +422,9 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 		if (!SUCCEEDED(hr))
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10216 );
+			SVStringArray msgList;
+			msgList.push_back( SVString(strPathName) );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10216 );
 		}
 	}
 	// Refresh image view...
@@ -440,7 +442,9 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 		if (!SUCCEEDED(hr))
 		{
 			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10217 );
+			SVStringArray msgList;
+			msgList.push_back( SVString(m_svfnFileName.GetFullFileName()) );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10217 );
 		}
 	}
 	// Refresh image view...

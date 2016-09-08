@@ -165,7 +165,7 @@ namespace Seidenader { namespace SVSocketLibrary
 	}
 
 	template<typename API>
-	inline Err SVSocket<API>::Bind(const char* hostAddr, unsigned short portNo)
+	inline Err SVSocket<API>::Bind(const TCHAR* hostAddr, unsigned short portNo)
 	{
 		std::string msg = "bind: ";
 		Err error = SVSocketError::Success;

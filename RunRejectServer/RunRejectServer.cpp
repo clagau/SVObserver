@@ -30,13 +30,22 @@
 #include "SVSharedMemoryLibrary\SVMonitorListReader.h"
 #include "SVSharedMemoryLibrary\SVShareControlHandler.h"
 #include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "RunRejectService.h"
 #pragma endregion Includes
 
+#pragma region Declarations
 DWORD threadIds[3] = {0};
 HANDLE threads[3] = {0};
 
 const u_short imgPort = 28963;
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
 template<typename API>
 struct port;
@@ -84,7 +93,7 @@ using SvSml::SVSharedConfiguration;
 void AccessViolationHandler(int signal)
 {
 	SVSharedConfiguration::Log("Access Violation");
-    throw std::exception("Access Violation");
+	throw std::exception("Access Violation");
 }
 
 DWORD WINAPI servimg(LPVOID)
@@ -123,7 +132,11 @@ DWORD WINAPI servimg(LPVOID)
 							is.open(filename, std::ios::in | std::ios::binary);
 							if (!is.is_open())
 							{
-								throw std::runtime_error("Cannot open " + filename);
+								SvStl::MessageContainer MsgCont;
+								SVStringArray msgList;
+								msgList.push_back( SVString( filename.c_str() ) );
+								MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
+								throw MsgCont;
 							}
 							is.seekg(0, std::ios::end);
 							std::streamsize sz = is.tellg();
@@ -132,25 +145,42 @@ DWORD WINAPI servimg(LPVOID)
 							is.read(reinterpret_cast<char *>(&vec[0]), sz);
 							client.Write(&vec[0], static_cast<size_t>(sz), true);
 						}
-						catch(std::exception & ex)
+						catch( const SvStl::MessageContainer& rExp )
 						{
-							std::cout << ex.what() << std::endl;
-							SvSml::SVSharedConfiguration::Log(ex.what());
+							SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+							e.setMessage( rExp.getMessage() );
+						}
+						catch(std::exception& rExp)
+						{
+							SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+							SVStringArray msgList;
+							msgList.push_back( rExp.what() );
+							Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 						}
 					}
 				}
 				else
 				{
-					SvSml::SVSharedConfiguration::Log(client.Log(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError()), true));
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SVStringArray msgList;
+					msgList.push_back( SVString( SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError() ) ) );
+					Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 		}
 	}
-	catch (std::exception & ex)
+	catch( const SvStl::MessageContainer& rExp )
 	{
-		std::cout << ex.what() << std::endl;
-		SvSml::SVSharedConfiguration::Log(ex.what());
-	}	
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( rExp.getMessage() );
+	}
+	catch (std::exception& rExp)
+	{
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SVStringArray msgList;
+		msgList.push_back( rExp.what() );
+		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+	}
 	return 0;
 }
 
@@ -261,7 +291,11 @@ std::string EncodeImg(const std::string & name)
 	HANDLE hFile = ::CreateFileA(name.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
-		throw std::exception("Invalid file handle");
+		SvStl::MessageContainer MsgCont;
+		SVStringArray msgList;
+		msgList.push_back( SVString( name.c_str() ) );
+		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		throw MsgCont;
 	}
 	else
 	{
@@ -292,7 +326,11 @@ Json::Value NewResponse(const JsonCmd & cmd)
 	}
 	else
 	{
-		throw std::exception("Invalid command received.");
+		SvStl::MessageContainer MsgCont;
+		SVStringArray msgList;
+		msgList.push_back( SVString( cmd[SVRC::cmd::name].asString().c_str() ) );
+		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		throw MsgCont;
 	}
 	return rsp;
 }
@@ -438,7 +476,9 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const Monitor
 	{
 		if (lastProductPtrPair.second < 0 || trig != lastProductPtrPair.first->product.m_TriggerCount)
 		{
-			throw(std::exception("Product Not Found"));
+			SvStl::MessageContainer MsgCont;
+			MsgCont.setMessage( SVMSG_RRS_4_GENERAL_WARNING, SvOi::Tid_ProductNotFound, SvStl::SourceFileParams(StdMessageParams) );
+			throw MsgCont;
 		}
 		else
 		{
@@ -531,7 +571,9 @@ Json::Value GetRejectedProduct<SvSol::UdpApi>(PPQReader& rReader, long trig, con
 	{
 		if (lastRejectProduct.second < 0 || trig != lastRejectProduct.first->product.m_TriggerCount)
 		{
-			throw(std::exception("Reject Not Found"));
+			SvStl::MessageContainer MsgCont;
+			MsgCont.setMessage( SVMSG_RRS_4_GENERAL_WARNING, SvOi::Tid_RejectNotFound, SvStl::SourceFileParams(StdMessageParams) );
+			throw MsgCont;
 		}
 		else
 		{
@@ -563,7 +605,11 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 	Json::Value rslt(Json::objectValue);
 	if (false == cmd.isObject() || false ==  cmd.isMember(SVRC::cmd::name))
 	{
-		throw std::exception("Invalid command name.");
+		SvStl::MessageContainer MsgCont;
+		SVStringArray msgList;
+		msgList.push_back( SVString( cmd[SVRC::cmd::name].asString().c_str() ) );
+		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		throw MsgCont;
 	}
 
 	if (cmd[SVRC::cmd::name] == SVRC::cmdName::getFail)
@@ -582,7 +628,9 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 			PPQReader reader;
 			if (false == reader.Open(ppqName))
 			{
-				throw std::exception("Can not open Reader ");
+				SvStl::MessageContainer MsgCont;
+				MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_CannotOpenReader, SvStl::SourceFileParams(StdMessageParams) );
+				throw MsgCont;
 			}
 			SvSml::FailStatusMap fsMap = reader.GetFailStatus(mit->second.failStats);
 			if (static_cast<int>(fsMap.size()) > mit->second.m_rejectDepth)
@@ -597,7 +645,11 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 		}
 		else
 		{
-			throw std::exception("Invalid arguments");
+			SvStl::MessageContainer MsgCont;
+			SVStringArray msgList;
+			msgList.push_back( SVString( listName.c_str() ) );
+			MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_InvalidArguments, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			throw MsgCont;
 		}
 	}
 	else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getRjct)
@@ -617,7 +669,9 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 			PPQReader reader;
 			if(false == reader.Open(ppqName))
 			{
-				throw std::exception("Can not open Reader ");
+				SvStl::MessageContainer MsgCont;
+				MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_CannotOpenReader, SvStl::SourceFileParams(StdMessageParams) );
+				throw MsgCont;
 			}
 			long trig = args[SVRC::arg::trgrCount].asInt();
 			rslt = GetRejectedProduct<SvSol::TcpApi>(reader, trig, mit->second.prodItems,g_lastRejectMap[ppqName] );
@@ -625,7 +679,11 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 		}
 		else
 		{
-			throw std::exception("Invalid arguments");
+			SvStl::MessageContainer MsgCont;
+			SVStringArray msgList;
+			msgList.push_back( SVString( listName.c_str() ) );
+			MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_InvalidArguments, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			throw MsgCont;
 		}
 	}
 	else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
@@ -635,7 +693,12 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 		rslt[SVRC::result::SVO_ver] = rVerStr.c_str();
 		return rslt;
 	}
-	throw std::exception("Invalid command name.");
+	
+	SvStl::MessageContainer MsgCont;
+	SVStringArray msgList;
+	msgList.push_back( SVString() );
+	MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+	throw MsgCont;
 }
 
 template<>
@@ -644,12 +707,20 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, const MonitorMap
 	Json::Value rslt(Json::objectValue);
 	if ( false == cmd.isObject() || false == cmd.isMember(SVRC::cmd::name))
 	{
-		throw std::exception("Invalid command packet.");
+		SvStl::MessageContainer MsgCont;
+		SVStringArray msgList;
+		msgList.push_back( SVString() );
+		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		throw MsgCont;
 	}
 
 	if (cmd[SVRC::cmd::name] != SVRC::cmdName::getProd)
 	{
-		throw std::exception("Invalid command name.");
+		SvStl::MessageContainer MsgCont;
+		SVStringArray msgList;
+		msgList.push_back( SVString( cmd[SVRC::cmd::name].asString().c_str() ) );
+		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		throw MsgCont;
 	}
 
 	const Json::Value & args = cmd[SVRC::cmd::arg];
@@ -666,7 +737,9 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, const MonitorMap
 		PPQReader reader;
 		if (false == reader.Open(ppqName))
 		{
-			throw std::exception("Can not open Reader ");
+			SvStl::MessageContainer MsgCont;
+			MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_CannotOpenReader, SvStl::SourceFileParams(StdMessageParams) );
+			throw MsgCont;
 		}
 
 		long trig = -1;
@@ -680,28 +753,27 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, const MonitorMap
 		}
 		else
 		{
-			// Check if there are rejects, if so get the rejected propduct, else get the last inspected product.
+			// Check if there are rejects, if so get the rejected product, else get the last inspected product.
 			try
 			{
 				rslt = GetRejectedProduct<SvSol::UdpApi>(reader, trig, mit->second.prodItems, g_lastRejectProductMap[ppqName]);
 			}
+			catch( const SvStl::MessageContainer& rExp )
+			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-			catch (std::exception& e)
-			{
-				::OutputDebugStringA(e.what());
-				rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems, g_LastProductMap[ppqName]);
-			}
-#else
-			catch (std::exception& )
-			{
-				rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems, g_LastProductMap[ppqName]);
-			}
+				::OutputDebugStringA(rExp.what());
 #endif
+				rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems, g_LastProductMap[ppqName]);
+			}
 		}
 	}
 	else
 	{
-		throw std::exception("Invalid monitor list name.");
+		SvStl::MessageContainer MsgCont;
+		SVStringArray msgList;
+		msgList.push_back( SVString( listName.c_str() ) );
+		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_InvalidMonitorlist, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		throw MsgCont;
 	}
 
 	return rslt;
@@ -725,11 +797,23 @@ std::string GenerateResponse(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 			rsp[SVRC::cmd::reslts] = value;
 		}
 	}
-	catch(std::exception & ex)
+	catch( const SvStl::MessageContainer& rExp )
 	{
-		rsp[SVRC::cmd::err] = ex.what();
+		rsp[SVRC::cmd::err] = rExp.what();
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
-		SvSml::SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
+
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( rExp.getMessage() );
+	}
+	catch(std::exception& rExp)
+	{
+		rsp[SVRC::cmd::err] = rExp.what();
+		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
+
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SVStringArray msgList;
+		msgList.push_back( rExp.what() );
+		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 	Json::FastWriter writer;
 	return writer.write(rsp);
@@ -861,16 +945,25 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl&
 				std::cout << "null cmd \n";
 			}
 		}
-		catch(std::exception & ex)
+		catch( const SvStl::MessageContainer& rExp )
 		{
-			SvSml::SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
-			std::cout << ex.what() << std::endl;
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( rExp.getMessage() );
+		}
+		catch(std::exception& rExp)
+		{
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SVStringArray msgList;
+			msgList.push_back( rExp.what() );
+			Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 	else
 	{
-		std::cout << "invalid socket\n";
-		SvSml::SVSharedConfiguration::Log(client.Log(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError()), true));
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SVStringArray msgList;
+		msgList.push_back( SVString( SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError() ) ) );
+		Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 }
 
@@ -935,10 +1028,17 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl&
 					}
 				}
 			}
-			catch(std::exception & ex)
+			catch( const SvStl::MessageContainer& rExp )
 			{
-				SvSml::SVSharedConfiguration::Log(SvSol::Traits<API>::ApiName() + ": " + ex.what());
-				std::cout << ex.what() << std::endl;
+				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+				e.setMessage( rExp.getMessage() );
+			}
+			catch(std::exception & rExp)
+			{
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SVStringArray msgList;
+				msgList.push_back( rExp.what() );
+				Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 	}
@@ -950,7 +1050,7 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 	try
 	{
 		typedef SvSol::SVServerSocket<API> ServerSocket;
-		ShareControl& ctrl = *reinterpret_cast<ShareControl *>(ctrlPtr);
+		ShareControl& ctrl = *reinterpret_cast<ShareControl*> (ctrlPtr);
 		MonitorListReader mlReader;
 		MonitorMapCopy monitorMap;
 		ServerSocket sok;
@@ -965,10 +1065,18 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 			}
 		}
 	}
-	catch(std::exception & ex)
+	catch( const SvStl::MessageContainer& rExp )
 	{
-		std::cout << ex.what() << std::endl;
-	}	
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( rExp.getMessage() );
+	}
+	catch(std::exception & rExp)
+	{
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SVStringArray msgList;
+		msgList.push_back( rExp.what() );
+		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+	}
 	return 0;
 }
 
@@ -990,7 +1098,7 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 
 // Command Line arguments: /nocheck
 // /nocheck means to ignore the 2 GiG size requirement
-void StartThreads( DWORD argc, LPWSTR  *argv )
+void StartThreads( DWORD argc, LPTSTR  *argv )
 {
 	// check command line args - if /nocheck is specified - ignore the < 2 Gig error
 	bool bCheckSizeOverride = CheckCommandLineArgs(argc, argv, _T("/nocheck"));
@@ -1050,9 +1158,12 @@ void StartThreads( DWORD argc, LPWSTR  *argv )
 
 		signal(SIGSEGV, previousHandler);
 	}
-	catch (std::exception & ex)
+	catch (std::exception& rExp)
 	{
-		std::cout << "Failed to start: " << ex.what() << std::endl;
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SVStringArray msgList;
+		msgList.push_back( rExp.what() );
+		Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_FailedtoStart, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 	SvSol::SVSocketLibrary::Destroy();
 }
@@ -1061,6 +1172,9 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	int rc = 0;
 
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_RRS_0_STARTED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+	
 	//Function pointer for starting the threads
 	gp_StartThreads = &StartThreads;
 
@@ -1082,5 +1196,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			StartThreads(argc, argv);
 		}
 	}
+
+	Exception.setMessage( SVMSG_RRS_1_STOPPED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+
 	return rc;
 }

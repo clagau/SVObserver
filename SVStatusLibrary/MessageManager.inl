@@ -70,11 +70,11 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DW
 }
 
 template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
+INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
 {
 	INT_PTR Result( IDCANCEL );
 
-	M_Container.setMessage( MessageCode, AdditionalTextId, AdditionalTextList, SourceFile, ProgramCode, rObjectId );
+	M_Container.setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId );
 
 	Result = Process( MsgBoxType );
 

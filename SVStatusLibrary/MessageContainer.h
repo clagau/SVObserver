@@ -43,12 +43,12 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! This is the constructor to set the data on construction
 		//! \param MessageCode <in> the number identifying the message
 		//! \param AdditionalTextId <in> the Id for the additional text to the code
-		//! \param AdditionalTextList <in> List of strings for the additional text to the code
+		//! \param rAdditionalTextList <in> reference t list of strings for the additional text to the code
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
+		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
 
 		//************************************
 		//! This is the assignment operator
@@ -64,7 +64,14 @@ namespace Seidenader { namespace SVStatusLibrary
 
 		inline const MessageData& getMessage() const { return m_Message; };
 		inline const Messages& getAdditionalMessages() const { return m_AdditionalMessages; };
-		inline virtual const TCHAR* what() const { return m_What.c_str(); };
+		//! The what method has to return a value of type char*
+		inline virtual const char* what() const;
+
+		//************************************
+		//! This is the method to return the What message
+		//! \returns const reference to the what message as a SVString
+		//************************************
+		const SVString What() const { return m_What; };
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -80,12 +87,12 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
 		//! \param MessageCode <in> the number identifying the message
 		//! \param AdditionalTextId <in> the Id for the additional text to the code
-		//! \param AdditionalTextList <in> List of strings for the additional text to the code
+		//! \param rAdditionalTextList <in> Reference to list of strings for the additional text to the code
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
+		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list

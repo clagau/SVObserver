@@ -30,12 +30,12 @@ namespace Seidenader { namespace SVStatusLibrary
 	{
 	}
 
-	MessageData::MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList ) :
+	MessageData::MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList ) :
 	m_Logged( false )
 	, m_Displayed( false )
 	, m_MessageCode( MessageCode )
 	, m_AdditionalTextId( AdditionalTextId )
-	, m_AdditionalTextList( AdditionalTextList )
+	, m_AdditionalTextList( rAdditionalTextList )
 	, m_ProgramCode( 0 )
 	, m_DateTime( 0 )
 	{

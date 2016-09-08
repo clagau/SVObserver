@@ -77,7 +77,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		};
 		static SVSocketError::ErrorEnum GetLastSocketError();
 		static SVSocketError::ErrorEnum TranslateError(int errorCode);
-		static const char * GetErrorText(ErrorEnum err);
+		static LPCTSTR GetErrorText(ErrorEnum err);
 		static HRESULT HrFromSocketError(ErrorEnum err);
 
 	private:

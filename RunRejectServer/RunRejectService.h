@@ -14,7 +14,7 @@
 
 #pragma region Declarations
 #define cServiceName _T("Run Reject Server")
-typedef void (*ServiceWorkerFunction)( DWORD argc, LPWSTR  *argv );
+typedef void (*ServiceWorkerFunction)( DWORD argc, LPTSTR  *argv );
 #pragma endregion Declarations
 
 void WINAPI ServiceMain( DWORD argc, LPTSTR *argv );

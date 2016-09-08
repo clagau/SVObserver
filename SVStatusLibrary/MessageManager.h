@@ -107,14 +107,14 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! Sets the message data
 		//! \param MessageCode [in] is the unique message number
 		//! \param AdditionalTextId <in> Id for the additional text to the message code
-		//! \param AdditionalTextList <in> List of strings for the additional text to the message code
+		//! \param rAdditionalTextList <in> reference to list of strings for the additional text to the message code
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode [in] is the unique program error number
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
