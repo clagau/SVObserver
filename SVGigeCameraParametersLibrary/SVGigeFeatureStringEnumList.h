@@ -2,11 +2,16 @@
 //* COPYRIGHT (c) 2009 by Seidenader Vision, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVGigeFeatureStringEnum
-//* .File Name       : $Workfile:   SVGigeFeatureStringEnumList.h  $
+//* .Module Name     : SVStringEnum
+//* .File Name       : $Workfile:   SVStringEnumList.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:58  $
+//******************************************************************************
+//*****************************************************************************
+/// This class is a string mapping between Gige Feature and Device parameter
+/// and vice verse (The Gige Feature or Device parameter can be given as the input 
+/// and it returns the corresponding parameter)
 //******************************************************************************
 #pragma once
 
@@ -15,15 +20,12 @@
 #include "SVContainerLibrary/SVBidirectionalMap.h"
 #pragma endregion Includes
 
-typedef SVString SVDeviceParamString;
-typedef SVString SVGigeFeatureString;
 
 class SVGigeFeatureStringEnumList
 {
-	typedef SVBidirectionalMap<SVDeviceParamString, SVGigeFeatureString>::type GigeFeatureStringEnumList;
-	GigeFeatureStringEnumList m_stringEnums;
-
 public:
+	SVBidirectionalMap<SVString, SVString>::type m_stringEnums;
+
 	SVGigeFeatureStringEnumList();
 	~SVGigeFeatureStringEnumList();
 
@@ -34,8 +36,18 @@ public:
 	SVGigeFeatureStringEnumList& operator=(const SVGigeFeatureStringEnumList& rList);
 
 	bool HasTranslation() const;
-	HRESULT GetGigeFeatureString(const SVDeviceParamString& in, SVGigeFeatureString& out) const;
-	HRESULT GetDeviceParamString(const SVGigeFeatureString& in, SVDeviceParamString& out) const;
+
+	//! Gets the Gige Feature string
+	//! \param rDeviceParam [in] reference to the device parameter string
+	//! \param rGigeFeature [out] reference to the corresponding Gige Feature string
+	//! \returns S_OK on success
+	HRESULT GetGigeFeatureString(const SVString& rDeviceParam, SVString& rGigeFeature) const;
+
+	//! Gets the Device Parameter string
+	//! \param rGigeFeature [in] reference to the Gige feature string
+	//! \param rDeviceParam [out] reference to the corresponding Device Parameter string
+	//! \returns S_OK on success
+	HRESULT GetDeviceParamString(const SVString& rGigeFeature, SVString& rDeviceParam) const;
 };
 
 #include "SVGigeFeatureStringEnumList.inl"

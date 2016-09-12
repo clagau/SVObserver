@@ -1358,7 +1358,7 @@ HRESULT SVMatroxGige::EnableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 	if (!risingName.empty() && !fallingName.empty())
 	{
 		const SVGigeDeviceParameterStruct& param = p_rCamera.GetFeature(SVGigeParameterInputEvent);
-		SVGigeFeatureString featureValue;
+		SVString featureValue;
 		param.accessor.feature.GetGigeFeatureString("Enable", featureValue);
 
 		l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), risingName.c_str(), featureValue.c_str());
@@ -1383,7 +1383,7 @@ HRESULT SVMatroxGige::DisableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 	if (!risingName.empty() && !fallingName.empty())
 	{
 		const SVGigeDeviceParameterStruct& param = p_rCamera.GetFeature(SVGigeParameterInputEvent);
-		SVGigeFeatureString featureValue;
+		SVString featureValue;
 		param.accessor.feature.GetGigeFeatureString("Disable", featureValue);
 		l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), risingName.c_str(), featureValue.c_str());
 		if (l_Code == SVMEE_STATUS_OK)

@@ -445,8 +445,8 @@ void SVGigeCameraDBContent::GetGigeFeatureSelectorAttributes(MSXML2::ISAXAttribu
 // Get XML Attributes for GetGigeFeatureStringEnumList
 void SVGigeCameraDBContent::GetGigeFeatureStringEnumAttributes(MSXML2::ISAXAttributes* pAttributes)
 {
-	SVDeviceParamString deviceParamString;
-	SVGigeFeatureString gigeFeatureString;
+	SVString deviceParamString;
+	SVString gigeFeatureString;
 
 	int numAttributes = 0;
 	pAttributes->getLength(&numAttributes);

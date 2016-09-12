@@ -48,8 +48,7 @@ private:
 
 		SVGigeFeatureSelectorInfo m_GigeSelector;
 
-		typedef SVBidirectionalMap<SVDeviceParamString, SVGigeFeatureString>::type GigeFeatureStringEnumList;
-		GigeFeatureStringEnumList m_GigeFeatureStringEnumList;
+		SVBidirectionalMap<SVString, SVString>::type m_GigeFeatureStringEnumList;
 
 		void clear() 
 		{ 

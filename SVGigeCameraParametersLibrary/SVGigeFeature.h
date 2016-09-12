@@ -48,8 +48,8 @@ public:
 	bool HasSelector() const;
 	const SVGigeFeatureSelector& GetSelector() const;
 	bool HasTranslation() const;
-	HRESULT GetGigeFeatureString(const SVDeviceParamString& in, SVGigeFeatureString& out) const;
-	HRESULT GetDeviceParamString(const SVGigeFeatureString& in, SVDeviceParamString& out) const;
+	HRESULT GetGigeFeatureString(const SVString& rDeviceParam, SVString& rGigeFeature) const;
+	HRESULT GetDeviceParamString(const SVString& rGigeFeature, SVString& rDeviceParam) const;
 
 private:
 	SVString m_name;

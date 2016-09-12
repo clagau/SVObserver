@@ -87,16 +87,16 @@ bool SVGigeFeature::HasTranslation() const
 	return m_stringEnums.HasTranslation();
 }
 
-HRESULT SVGigeFeature::GetGigeFeatureString(const SVDeviceParamString& in, SVGigeFeatureString& out) const
+HRESULT SVGigeFeature::GetGigeFeatureString(const SVString& rDeviceParam, SVString& rGigeFeature) const
 {
-	HRESULT hr = m_stringEnums.GetGigeFeatureString(in, out);
+	HRESULT hr = m_stringEnums.GetGigeFeatureString(rDeviceParam, rGigeFeature);
 	
 	return hr;
 }
 
-HRESULT SVGigeFeature::GetDeviceParamString(const SVGigeFeatureString& in, SVDeviceParamString& out) const
+HRESULT SVGigeFeature::GetDeviceParamString(const SVString& rGigeFeature, SVString& rDeviceParam) const
 {
-	HRESULT hr =  m_stringEnums.GetDeviceParamString(in, out);
+	HRESULT hr =  m_stringEnums.GetDeviceParamString(rGigeFeature, rDeviceParam);
 
 	return hr;
 }

@@ -71,8 +71,8 @@ HRESULT SVGigeParameterAccessor::GetFeature(SVMatroxDigitizerRef Digitizer, cons
 			hr = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
 			if (S_OK == hr)
 			{
-				SVGigeFeatureString gigeFeatureValue(SvUl_SF::createSVString(value));
-				SVDeviceParamString deviceParamString;
+				SVString gigeFeatureValue(SvUl_SF::createSVString(value));
+				SVString deviceParamString;
 		
 				hr = rFeature.GetDeviceParamString(gigeFeatureValue, deviceParamString);
 				rValue = deviceParamString.c_str();
@@ -102,8 +102,8 @@ HRESULT SVGigeParameterAccessor::SetFeature(SVMatroxDigitizerRef Digitizer, cons
 		// Translate Strings
 		if (rFeature.HasTranslation())
 		{
-			SVDeviceParamString deviceParamString(SvUl_SF::createSVString(rValue));
-			SVGigeFeatureString gigeFeatureValue;
+			SVString deviceParamString(SvUl_SF::createSVString(rValue));
+			SVString gigeFeatureValue;
 			
 			hr = rFeature.GetGigeFeatureString(deviceParamString, gigeFeatureValue);
 			if (S_OK == hr)

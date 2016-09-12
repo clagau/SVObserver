@@ -118,7 +118,7 @@ HRESULT SVCameraFormat::ParseAndAssignCameraFormat( const CString& sCameraFormat
 	{
 		m_eImageType = SVImageFormatMono8;
 	}
-	else if ( -1 != sType.Find(_T("RGB")) || -1 != sType.Find(_T("YUV")) )
+	else if ( -1 != sType.Find(_T("RGB")) || -1 != sType.Find(_T("YUV")) || -1 != sType.Find(_T("BayerRG")) )
 	{
 		m_eImageType = SVImageFormatRGB8888;
 		m_bColor = true;

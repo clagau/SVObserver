@@ -169,7 +169,7 @@ SVString SVMatroxGigeDigitizer::GetLineInputRisingEventName() const
 {
 	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SVGigeParameterInputEventName);
 	
-	SVGigeFeatureString featureName;
+	SVString featureName;
 	if (deviceParamStruct.accessor.feature.HasTranslation())
 	{
 		deviceParamStruct.accessor.feature.GetGigeFeatureString(m_lineInputMoniker + " Rising", featureName);
@@ -181,7 +181,7 @@ SVString SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
 {
 	const SVGigeDeviceParameterStruct& deviceParamStruct = GetFeature(SVGigeParameterInputEventName);
 	
-	SVGigeFeatureString featureName;
+	SVString featureName;
 	if (deviceParamStruct.accessor.feature.HasTranslation())
 	{
 		deviceParamStruct.accessor.feature.GetGigeFeatureString(m_lineInputMoniker + " Falling", featureName);

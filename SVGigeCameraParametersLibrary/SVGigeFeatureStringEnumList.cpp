@@ -47,15 +47,15 @@ bool SVGigeFeatureStringEnumList::HasTranslation() const
 	return m_stringEnums.size() > 0;
 }
 
-HRESULT SVGigeFeatureStringEnumList::GetGigeFeatureString(const SVDeviceParamString& in, SVGigeFeatureString& out) const
+HRESULT SVGigeFeatureStringEnumList::GetGigeFeatureString(const SVString& rDeviceParam, SVString& rGigeFeature) const
 {
 	HRESULT hr = S_OK;
 
-	typedef GigeFeatureStringEnumList::index_const_iterator<from>::type const_iterator;
-	const_iterator it = m_stringEnums.get<from>().find(in);
+	typedef SVBidirectionalMap<SVString, SVString>::type::index_const_iterator<from>::type const_iterator;
+	const_iterator it = m_stringEnums.get<from>().find(rDeviceParam);
 	if (it != m_stringEnums.get<from>().end())
 	{
-		out = it->second;
+		rGigeFeature = it->second;
 	}
 	else
 	{
@@ -64,15 +64,15 @@ HRESULT SVGigeFeatureStringEnumList::GetGigeFeatureString(const SVDeviceParamStr
 	return hr;
 }
 
-HRESULT SVGigeFeatureStringEnumList::GetDeviceParamString(const SVGigeFeatureString& in, SVDeviceParamString& out) const
+HRESULT SVGigeFeatureStringEnumList::GetDeviceParamString(const SVString& rGigeFeature, SVString& rDeviceParam) const
 {
 	HRESULT hr = S_OK;
 
-	typedef GigeFeatureStringEnumList::index_const_iterator<to>::type const_iterator;
-	const_iterator it = m_stringEnums.get<to>().find(in);
+	typedef SVBidirectionalMap<SVString, SVString>::type::index_const_iterator<to>::type const_iterator;
+	const_iterator it = m_stringEnums.get<to>().find(rGigeFeature);
 	if (it != m_stringEnums.get<to>().end())
 	{
-		out = it->first;
+		rDeviceParam = it->first;
 	}
 	else
 	{
