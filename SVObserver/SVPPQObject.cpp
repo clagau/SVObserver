@@ -64,6 +64,7 @@ static char THIS_FILE[] = __FILE__;
 const long g_lPPQExtraBufferSize = 50;
 static const double TwentyPercent = .20;
 
+const long MinReducedPPQPosition =2; 
 #pragma endregion Declarations
 
 HRESULT CALLBACK SVFinishTriggerCallback( void *pOwner, void *pCaller, void *pTriggerInfo )
@@ -304,7 +305,12 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct
 SVPPQObject::SVPPQObject( LPCSTR ObjectName )
 	: SVObjectClass( ObjectName )
 	, m_oTriggerQueue( 10 )
+	,m_NAKParameter(DefaultNakParameter)
 	, m_NAKCount( 0 )
+	,m_NAKMode(Bursts)
+	,m_FirstNAKProcessCount(0)
+	, m_NewNAKCount(0)
+	,m_ReducedPPQPosition(MinReducedPPQPosition)
 	, m_conditionalOutputName( PPQ_CONDITIONAL_OUTPUT_ALWAYS )
 	, m_bActiveMonitorList(false)
 	, m_AttributesAllowedFilterForFillChildObjectList( 0 )
@@ -317,7 +323,12 @@ SVPPQObject::SVPPQObject( LPCSTR ObjectName )
 SVPPQObject::SVPPQObject( SVObjectClass* POwner, int StringResourceID )
 	: SVObjectClass( POwner, StringResourceID )
 	, m_oTriggerQueue( 10 )
+	,m_NAKParameter(DefaultNakParameter)
 	, m_NAKCount( 0 )
+	,m_NAKMode(Bursts)
+	,m_FirstNAKProcessCount(0)
+	, m_NewNAKCount(0)
+	,m_ReducedPPQPosition(MinReducedPPQPosition)
 	, m_conditionalOutputName ( PPQ_CONDITIONAL_OUTPUT_ALWAYS ) 
 	, m_bActiveMonitorList(false)
 	, m_AttributesAllowedFilterForFillChildObjectList( 0 )
@@ -1524,6 +1535,19 @@ void SVPPQObject::GoOnline()
 	{
 		m_NAKCount = 0;
 	}
+	m_NewNAKCount = m_NAKCount;
+	m_FirstNAKProcessCount =0;
+	m_ReducedPPQPosition = MinReducedPPQPosition;
+	const int HundredPercent = 100;
+	if((m_NAKMode == FixedMaximum || m_NAKMode == RepairedLegacy ) && m_NAKParameter > 0 && m_NAKParameter <= HundredPercent)
+	{
+		m_ReducedPPQPosition =  ( long(m_ppPPQPositions.size()) * m_NAKParameter) /HundredPercent ;
+		if(m_ReducedPPQPosition < MinReducedPPQPosition)
+		{
+			m_ReducedPPQPosition = MinReducedPPQPosition;
+		}
+		m_ReducedPPQPosition = std::min< long >( m_ReducedPPQPosition, static_cast<long>(m_ppPPQPositions.size()) );
+	}
 }// end GoOnline
 
 static void QuieseSharedMemory()
@@ -2392,6 +2416,11 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 		//m_PPQTracking.IncrementCount( _T( "Product NAK" ) );
 #endif
 		::InterlockedIncrement( &m_NAKCount );
+		::InterlockedIncrement( &m_NewNAKCount );
+	}
+	else
+	{
+		::InterlockedExchange(&m_NewNAKCount,0);
 	}
 
 	return bRet;
@@ -2879,11 +2908,11 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 
 						pTempProduct->m_ProductState += _T( "|CP=" );
 						pTempProduct->m_ProductState += m_arInspections[ i ]->GetName();
-
+#ifdef EnableTracking
 						SVString l_Title = m_arInspections[ i ]->GetName();
 
 						l_Title += _T( " CP" );
-#ifdef EnableTracking
+
 						m_PPQTracking.IncrementCount( l_Title, p_Offset );
 #endif
 					}
@@ -2925,10 +2954,12 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 	size_t l_ProductIndex = m_ppPPQPositions.size();
 	size_t l_Count = m_ppPPQPositions.size();
 
+	switch(m_NAKMode)
+	{
+	case Legacy: ///old Behavior 
 	if( 0 < m_NAKCount )
 	{
 		long l_NAKCount = m_NAKCount;
-
 		if( ( l_NAKCount + 2 ) < static_cast< long >( l_Count ) )
 		{
 			l_Count -= l_NAKCount;
@@ -2937,13 +2968,35 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 		{
 			l_Count = std::min< size_t >( 2, m_ppPPQPositions.size() );
 		}
+		}
+		break;
+	case Bursts: 
+		if(m_FirstNAKProcessCount && !IsProductAlive(m_FirstNAKProcessCount))
+		{
+			m_FirstNAKProcessCount =0;
+		}
+		break;
+	
+	case RepairedLegacy: 
+		if( 0 < m_NewNAKCount )
+		{
+			long l_NAKCount = m_NewNAKCount;
+			if( ( l_NAKCount + m_ReducedPPQPosition ) < static_cast< long >( l_Count ) )
+			{
+				l_Count -= l_NAKCount;
+			}
+			else
+			{
+				l_Count = std::min< size_t >( m_ReducedPPQPosition, m_ppPPQPositions.size() );
+			}
+		}
+		break;
 
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+	case FixedMaximum: 
+		l_Count = m_ReducedPPQPosition; 
+		break;
 
-		SVString l_String = SvUl_SF::Format( _T( "%s:NAK=%ld\n" ), GetName(), l_NAKCount );
 
-		::OutputDebugString( l_String.c_str() );
-#endif
 	}
 
 	// Begin checking inspections to start processing
@@ -2963,7 +3016,18 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 				{
 					l_pProduct = pTempProduct; // product info
 					l_ProductIndex = i;
-
+					if(m_NAKMode == Bursts)
+					{
+						if( (m_NewNAKCount > 2 && m_FirstNAKProcessCount == 0) )
+						{
+							m_FirstNAKProcessCount = pTempProduct->ProcessCount();
+							break;	
+						}
+						else if ( ( m_FirstNAKProcessCount >  pTempProduct->ProcessCount()) )
+						{
+							break;
+						}
+					}
 				}
 			}
 			else
@@ -2987,10 +3051,9 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 
 		l_Status = l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection->StartProcess( l_pProduct );
 
-		SVString l_Title = l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection->GetName();
-
-		l_Title += _T( " Start" );
 #ifdef EnableTracking
+		SVString l_Title = l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection->GetName();
+		l_Title += _T( " Start" );
 		m_PPQTracking.IncrementCount( l_Title, l_ProductIndex );
 #endif
 
@@ -3295,6 +3358,9 @@ bool SVPPQObject::SetProductComplete( SVProductInfoStruct& p_rProduct )
 {
 	bool l_Status = true;
 
+	///@TODO[mec, 26.07.2016]  Normaly this is a bug and SVPPQObject::IsProductAlive  should  be used this code exist only to 
+	/// have the possibility to switch with nakmode M_Old to the old behavior and should be corrected or removed 
+	// if this is not longer necessary 
 	if( m_ppPPQPositions.IsProductAlive( p_rProduct.ProcessCount() ) )
 	{
 		::InterlockedExchange( &m_NAKCount, 0 );
@@ -3447,12 +3513,12 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 				m_PendingCameraResponses[ p_rElement.m_pCamera ] = p_rElement;
 
 				SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
+#ifdef EnableTracking
 
 				SVString l_Title = _T( "Pending " );
 
 				l_Title += p_rElement.m_pCamera->GetName();
 
-#ifdef EnableTracking
 				m_PPQTracking.IncrementCount( l_Title );
 #endif
 			}
@@ -4627,12 +4693,12 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 
 					l_pPPQProduct->m_ProductState += _T( "|" );
 					l_pPPQProduct->m_ProductState += l_rInspectInfo.pInspection->GetName();
-
+#ifdef EnableTracking
 					SVString l_Title = l_rInspectInfo.pInspection->GetName();
 
 					l_Title += _T( " Complete" );
 
-#ifdef EnableTracking
+
 					m_PPQTracking.IncrementCount( l_Title, l_PPQIndex );
 #endif
 
@@ -5361,6 +5427,12 @@ DWORD SVPPQObject::GetObjectColor() const
 {
 	return SV_DEFAULT_WHITE_COLOR;
 }
+void SVPPQObject::SetNAKMode(NakGeneration nakMode, int NAKPar)
+{
+	m_NAKMode= nakMode;
+	m_NAKParameter = NAKPar;
+}
+
 
 long SVPPQObject::GetNumProductSlots() const
 {

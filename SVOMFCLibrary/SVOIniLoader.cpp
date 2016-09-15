@@ -12,6 +12,7 @@
 #include"stdafx.h"
 #include "SVOIniLoader.h"
 #include "SVOIniClass.h"
+#include "SVObserver\SVPPQEnums.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -35,6 +36,10 @@ static const TCHAR* const UseStrobeasStartFrameCameraTag = _T("Use Strobe as Sta
 static const TCHAR* const ShowUpdateFirmwareTag = _T("ShowUpdateFirmware");
 static const TCHAR* const DisplaySectionTag = _T("Display");
 static const TCHAR* const ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
+
+static const TCHAR* const NAKSectionTag = _T("NAK_SETTINGS");
+static const TCHAR* const  NAKMode    = _T("NAKMode");
+static const TCHAR* const  NAKParameter    = _T("NAKPar");
 
 static const TCHAR* const UnknownboardTag = _T("Unknown board");
 static const TCHAR* const ProcessorSectionTag = _T("Processor");
@@ -72,6 +77,8 @@ namespace Seidenader { namespace SVOMFCLibrary
 	, m_gigePacketSize( 0 )
 	, m_bSingleCameraModel( false )
 	, m_forcedImageUpdateTimeInSeconds(0) // zero means no forced image update
+	, m_NAKMode(NakGeneration::Legacy)
+	,m_NAKParameter(DefaultNakParameter) 
 	{
 	}
 
@@ -160,6 +167,8 @@ namespace Seidenader { namespace SVOMFCLibrary
 		// Force Image Update Time (in seconds)
 		int forcedImageUpdateTime = SvimIni.GetValueInt( DisplaySectionTag, ForcedImageUpdateTimeInSecondsTag, 0 );
 		m_forcedImageUpdateTimeInSeconds = static_cast<unsigned char> (forcedImageUpdateTime);
+		m_NAKMode = static_cast<NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, NakGeneration::Legacy));
+		m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, DefaultNakParameter);	  
 		return Result;
 	}
 
@@ -392,4 +401,21 @@ namespace Seidenader { namespace SVOMFCLibrary
 	{
 		return m_forcedImageUpdateTimeInSeconds;
 	}
+
+NakGeneration  SVOIniLoader::GetNAKMode() const
+{
+
+	return m_NAKMode;
+}
+
+int  SVOIniLoader::GetNAKPar() const
+{
+
+	return m_NAKParameter;
+}
+
+
+
+
+
 } /* namespace SVOMFCLibrary */ } /* namespace Seidenader */

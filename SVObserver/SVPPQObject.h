@@ -54,6 +54,7 @@ public:
 	virtual ~SVPPQObject();
 
 public:
+	void SetNAKMode(NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
 	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData );
@@ -530,7 +531,13 @@ private:
 
 	UINT m_uOutputTimer;
 
+	NakGeneration  m_NAKMode;			//!Different Mode for NAK Behavior Legacy, Bursts,RepairedLegacy,FixedMaximum
+	int m_NAKParameter;						//!Additional Parameter for NAK Behavior 	
 	long m_NAKCount;
+	long m_FirstNAKProcessCount;		///only trigger >= m_FirstNAKProcessCount will be inspected 
+	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
+	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2 
+
 	SVObjectPtrDeque m_childObjects;
 
 	//This parameter a temporary parameter to speed up the method fillChildObjectList. 

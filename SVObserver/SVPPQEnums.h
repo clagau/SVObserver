@@ -30,3 +30,22 @@ enum SVPPQOutputModeEnum
 	                                                // Aborts waiting if product leaves PPQ.
 };
 
+static const int  DefaultNakParameter = 25;
+
+//*********************************
+//! Enum for possible values of the NAKmode. The NAKmode can be set with SVIM.ini file. The defaultvalue is legacy.
+//  The NAKmode   determines for what product the next inspection is started in the case that NAKs occurs.
+//	(without NAKS of course the oldest Product will be inspected next)
+//************************************
+
+enum NakGeneration
+{
+	Legacy = 0,				//! the same behavior as it is in SVObserver 7.30 
+	Bursts = 1,				//! When more then 2 NAKS occurs: Starts an inspection with the newest Product and then take the following,
+	RepairedLegacy = 2,		//! reduces the number of inspection which are considered to be taken next proportional to the NAK number.
+	FixedMaximum =3			//!  Regardless of a nack occurred or not take the inspection from the front part from the PPQbuffer. Front part is determined by NAKPar .
+};
+
+
+
+

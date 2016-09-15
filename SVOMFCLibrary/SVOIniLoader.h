@@ -11,7 +11,9 @@
 #pragma once
 
 #pragma region Includes
+#include "SVObserver\SVPPQEnums.h"
 #include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOMFCLibrary
@@ -72,10 +74,14 @@ namespace Seidenader { namespace SVOMFCLibrary
 		HRESULT LoadHardwareIni(LPCTSTR hardwareIniFile);
 		HRESULT DecodeModelNumber(LPCTSTR modelNumber);
 		unsigned char GetForcedImageUpdateTime() const;
+		NakGeneration GetNAKMode() const;
+		int GetNAKPar() const;
 
 	protected:
 		bool m_bSingleCameraModel;
 		unsigned char m_forcedImageUpdateTimeInSeconds;
+		NakGeneration m_NAKMode;
+		int m_NAKParameter; 
 	};
 } /* namespace SVOMFCLibrary */ } /* namespace Seidenader */
 

@@ -24,6 +24,7 @@
 #include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #pragma endregion Includes
+#include "SVPPQEnums.h"
 
 #pragma region Declarations
 class SVConfigurationObject;
@@ -502,6 +503,8 @@ private:
 
 	unsigned char m_forcedImageUpdateTimeInSeconds;
 
+	NakGeneration m_NAKMode; ///Different Mode for NAK Behavior 
+	int m_NAKParameter;
 #pragma endregion Member variables
 };
 

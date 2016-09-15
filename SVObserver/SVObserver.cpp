@@ -336,6 +336,8 @@ SVObserverApp::SVObserverApp()
 , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
 , m_DataValidDelay( 0 )
 , m_forcedImageUpdateTimeInSeconds(0)
+, m_NAKMode(Bursts)
+,m_NAKParameter(DefaultNakParameter)	
 {
 	free((void*)m_pszHelpFilePath);
 	
@@ -5570,7 +5572,10 @@ void SVObserverApp::Start()
 			//Returns true when pointer valid
 			if( nullptr != pPPQ )
 			{
-				// Do this before calling PrepareGoOnline
+				///Set NAK Behviour
+				pPPQ->SetNAKMode( m_NAKMode, m_NAKParameter); 
+
+				// Do this before calling CanGoOnline
 				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
 
 				pPPQ->PrepareGoOnline();
@@ -5749,6 +5754,8 @@ HRESULT SVObserverApp::INILoad()
 	{
 		// copy settings from the SVOIniLoader class for now
 		m_forcedImageUpdateTimeInSeconds = IniLoader.GetForcedImageUpdateTime();
+		m_NAKMode = IniLoader.GetNAKMode();
+		m_NAKParameter = IniLoader.GetNAKPar();
 
 		g_bUseCorrectListRecursion = IniLoader.m_bUseCorrectListRecursion;
 
