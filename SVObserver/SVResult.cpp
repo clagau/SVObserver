@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVResult.h"
-#include "SVGlobal.h"
 #include "SVRange.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #pragma endregion Includes
@@ -151,7 +150,7 @@ BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 
 		//make sure the statusColor is set correctly
 		DWORD dwColor = RRunStatus.GetStatusColor();
-		statusColor.SetValue(RRunStatus.m_lResultDataIndex, dwColor);
+		m_statusColor.SetValue(RRunStatus.m_lResultDataIndex, dwColor);
 
 		passed.SetValue( RRunStatus.m_lResultDataIndex, true );
 		failed.SetValue( RRunStatus.m_lResultDataIndex, false );
@@ -165,7 +164,7 @@ BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 		{
 			//make sure statusColor is set correctly
 			DWORD dwColor = RRunStatus.GetStatusColor();
-			statusColor.SetValue(RRunStatus.m_lResultDataIndex, dwColor);
+			m_statusColor.SetValue(RRunStatus.m_lResultDataIndex, dwColor);
 
 			// set our state according to the runStatus
 			passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );

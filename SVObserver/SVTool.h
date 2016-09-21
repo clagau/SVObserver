@@ -25,51 +25,7 @@ class SVAnalyzerClass;
 class SVExtentClass;
 class SVToolSetClass;
 class SVThresholdClass;
-class SVIPDoc;
 class SVConditionalClass;
-
-struct SVToolPropertyEntryStruct  
-{
-	SVToolPropertyEntryStruct()
-	{
-		DWValue = 0L;
-		ID		= 0;
-
-		RadioStart = 0;
-		RadioEnd   = 0;
-	};
-
-	SVToolPropertyEntryStruct( const SVToolPropertyEntryStruct& S2 )
-	{
-		DWValue = S2.DWValue;
-		ID		= S2.ID;
-		StrName = S2.StrName;
-
-		RadioStart = S2.RadioStart;
-		RadioEnd   = S2.RadioEnd;
-	};
-
-	SVToolPropertyEntryStruct operator=( SVToolPropertyEntryStruct& S2 )
-	{
-		DWValue = S2.DWValue;
-		ID		= S2.ID;
-		StrName = S2.StrName;
-
-		RadioStart = S2.RadioStart;
-		RadioEnd   = S2.RadioEnd;
-
-		return( *this );
-	};
-	
-
-	DWORD	DWValue;
-	CString StrName;
-	int		ID;
-
-	int		RadioStart;
-	int		RadioEnd;
-};
-
 class SVToolClass;
 
 struct AllowResizeToParent{};
@@ -92,7 +48,7 @@ class SVToolClass : public SVTaskObjectListClass, public SvOi::ITool
 	friend class SVToolExtentClass; // For access to UpdateOffsetDataToImage()
 
 public:
-	SVToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL );
+	SVToolClass( BOOL BCreateDefaultTaskList = false, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL );
 	virtual ~SVToolClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -217,22 +173,16 @@ protected:
 	// and returns the result of this message.
 	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
 
-	SVToolSetClass* pCurrentToolSet;
-
-	SVClassInfoStructListClass availableAnalyzerList;
-	SVClassInfoStructListClass availableFilterList;
-
-	SVToolPropertyEntryStruct* pPropertyArray;
-	int propertyCount;
+	SVToolSetClass* m_pCurrentToolSet;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass	passed;
+	SVBoolValueObjectClass passed;
 	// Warned, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass	warned;
+	SVBoolValueObjectClass warned;
 	// Failed, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass	failed;
+	SVBoolValueObjectClass failed;
 	// Failed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass	explicitFailed;
+	SVBoolValueObjectClass explicitFailed;
 
 	SVLongValueObjectClass passedCount;
 	SVLongValueObjectClass failedCount;

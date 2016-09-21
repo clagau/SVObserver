@@ -10,7 +10,6 @@
 #include "SVObserver.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #pragma region implementation of methods from ISVOApp_Helper

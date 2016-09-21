@@ -53,6 +53,8 @@
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
+#include <direct.h>
+#include <exception>
 #include <io.h>
 #include <iomanip>
 #include <iterator>
@@ -65,6 +67,7 @@
 #include <stdio.h>
 #include <share.h>
 #include <string>
+#include <sys/stat.h>
 #include <tchar.h>
 #include <vector>			//Used by static library
 

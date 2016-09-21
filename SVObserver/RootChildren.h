@@ -18,7 +18,7 @@
 #include "SVUtilityLibrary\SVString.h"
 #include "ObjectInterfaces\IRootObject.h"
 #include "SVObjectLibrary\SVObjectClass.h"
-#include "BasicValueObjects.h"
+#include "SVValueObjectLibrary/BasicValueObjects.h"
 #pragma endregion Includes
 
 class RootChildren

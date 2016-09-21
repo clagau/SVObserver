@@ -338,7 +338,7 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 	{
 		COLORREF l_Color = 0;
 
-		statusColor.GetValue( l_Color );
+		m_statusColor.GetValue( l_Color );
 
 		l_svMultiLine.m_Color = l_Color;
 
@@ -440,7 +440,7 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 		{
 			l_svToolExtents.TranslateFromOutputSpace( l_svMultiLine, l_svMultiLine );
 
-			statusColor.GetValue(l_svMultiLine.m_Color);
+			m_statusColor.GetValue(l_svMultiLine.m_Color);
 
 			UpdateOverlayIDs( l_svMultiLine );
 

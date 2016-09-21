@@ -69,7 +69,7 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPEDGE );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	// Add the Sub-pixel Edge Y Result...
 	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
@@ -78,7 +78,7 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPEDGE );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	resultClassInfo.DesiredInputInterface.RemoveAll();
 	interfaceInfo.EmbeddedID = SVLinearDistanceEdgeAObjectGuid;
@@ -91,18 +91,16 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
 	strTitle.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 }
 
-
 SVLinearEdgePositionLineAnalyzerClass::~SVLinearEdgePositionLineAnalyzerClass()
 {
 	CloseObject();
 }
-
 
 BOOL SVLinearEdgePositionLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {

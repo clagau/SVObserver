@@ -107,12 +107,6 @@
     <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVBoolValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVByteValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVCameraImageTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -120,9 +114,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCameraStructInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCharValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVChildrenSetupDialog.cpp">
@@ -185,12 +176,6 @@
     <ClCompile Include="SVDLLToolDefinitionStructs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDoubleValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDPointValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDPointXResult.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -200,16 +185,10 @@
     <ClCompile Include="SVDrawObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDWordValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVEnumerateCombo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEnumerateValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVEnvironmentSettingsDialog.cpp">
@@ -243,18 +222,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFileAcquisitionClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFileNameArrayClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFileNameLockablePointerArrayClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFileNameManagerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFileNameValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFillBlobDlg.cpp">
@@ -324,9 +291,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVInspectionProcess.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVInt64ValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVIOAdjustDialog.cpp">
@@ -402,9 +366,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVLinearToolClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLongValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVLowerThresholdEquation.cpp">
@@ -596,9 +557,6 @@
     <ClCompile Include="svpixelanalyzersetup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPointValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVPolarTransform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -743,9 +701,6 @@
     <ClCompile Include="SVStreamCommandFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVStringValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVSVIMStateClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -816,9 +771,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVThinningFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTimerValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTool.cpp">
@@ -893,16 +845,7 @@
     <ClCompile Include="SVValueBaseNormalizerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVValueObjectImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVVariantResultClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVVariantValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVVirtualCamera.cpp">
@@ -1022,9 +965,6 @@
     <ClCompile Include="SVVertEdgeFilterClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVStaticStringValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDLLToolLoadLibraryClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1047,12 +987,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RemoteCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicValueObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicValueObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RootChildren.cpp">
@@ -1262,9 +1196,6 @@
     <ClCompile Include="TableObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DoubleSortValueObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TableFillObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1284,6 +1215,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVImageBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVImageAnalyzerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1335,9 +1269,6 @@
     <ClInclude Include="SVArchiveWritingDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVArrayValueHolder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVAutoThresholdEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1377,12 +1308,6 @@
     <ClInclude Include="SVBlobFeaturePropertiesDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVBoolValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVByteValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVCameraImageTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1390,9 +1315,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCameraStructInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCharValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVChildrenSetupDialog.h">
@@ -1461,12 +1383,6 @@
     <ClInclude Include="SVDLLToolLoadLibraryClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDoubleValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDPointValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVDPointXResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1476,16 +1392,10 @@
     <ClInclude Include="SVDrawObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDWordValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEnumerateCombo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEnumerateValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEnvironmentSettingsDialog.h">
@@ -1519,18 +1429,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFileAcquisitionClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileNameArrayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileNameLockablePointerArrayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileNameManagerClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileNameValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFillBlobDlg.h">
@@ -1612,9 +1510,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVInspectionTreeParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInt64ValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVIOAdjustDialog.h">
@@ -1701,9 +1596,6 @@
     <ClInclude Include="SVLinearToolClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVLongValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVLowerThresholdEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1756,9 +1648,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectAppClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectAttributeClassHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectCommandDataJson.h">
@@ -1900,9 +1789,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPixelAnalyzerSetup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPointValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPolarTransform.h">
@@ -2058,9 +1944,6 @@
     <ClInclude Include="SVStreamCommandFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVStringValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVSubscriberProviderInterfaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2136,9 +2019,6 @@
     <ClInclude Include="SVThinningFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTimerValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2211,25 +2091,7 @@
     <ClInclude Include="SVValueBaseNormalizerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVValueObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVValueObjectClassImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVValueObjectGlobals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVValueObjectReference.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVVariantResultClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVVariantValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVirtualCamera.h">
@@ -2239,9 +2101,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWindowTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UseTypeExceptMatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCommand.h">
@@ -2370,12 +2229,6 @@
     <ClInclude Include="SVVertEdgeFilterClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVStaticValueObjectClassImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVStaticStringValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVArchiveHeaderEditDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2401,12 +2254,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MonitorListPropertyDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicValueObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicValueObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RootChildren.h">
@@ -2622,9 +2469,6 @@
     <ClInclude Include="TableObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DoubleSortValueObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TableFillObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2641,6 +2485,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TableLimitAnalyzer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImageAnalyzerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2664,12 +2511,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVToolExtentClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVValueObjectClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVValueObjectClassImpl.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="hlp\AfxCore.rtf">
@@ -2763,15 +2604,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVConfigXMLPrint.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVStaticValueObjectClassImpl.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="BasicValueObjects.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="BasicValueObject.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="RootChildren.inl">

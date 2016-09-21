@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   03 Oct 2013 13:31:02  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <Objidl.h>
 #include "SVObserver.h"
@@ -20,7 +21,7 @@
 #include "SVCommandLibrary/SVCommandDataImage.h"
 #include "SVCommandLibrary/SVCommandDataValue.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#pragma endregion Includes
 
 SVRemoteCommandData::SVRemoteCommandData()
 : m_Data()

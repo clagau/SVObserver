@@ -14,9 +14,6 @@
 #include "SVArchiveHeaderEditDlg.h"
 #include "afxdialogex.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-
-
 
 // SVArchiveHeaderEditDlg dialog
 
@@ -27,7 +24,6 @@ SVArchiveHeaderEditDlg::SVArchiveHeaderEditDlg(CWnd* pParent /*=nullptr*/)
 	,m_pEdit(nullptr)
 	,m_PreviousClient()
 {
-
 }
 
 SVArchiveHeaderEditDlg::~SVArchiveHeaderEditDlg()

@@ -97,7 +97,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPEDGE_A );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 	
 	// Add the Sub-pixel EdgeA Y Result...
 	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
@@ -106,7 +106,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPEDGE_A );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	// Declare Input Interface of Sub-pixel Edge B Results...
 	resultClassInfo.DesiredInputInterface.RemoveAll();
@@ -120,7 +120,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPEDGE_B );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 	
 	// Add the Sub-pixel EdgeB Y Result...
 	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
@@ -129,7 +129,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPEDGE_B );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	// Declare Input Interface of Sub-pixel Center Results...
 	resultClassInfo.DesiredInputInterface.RemoveAll();
@@ -143,7 +143,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPCENTER );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 	
 	// Add the Sub-pixel Center Y Result...
 	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
@@ -152,7 +152,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPCENTER );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	// Declare Input Interface of Sub-pixel Width Result...
 	resultClassInfo.DesiredInputInterface.RemoveAll();
@@ -166,7 +166,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DWIDTH );
 	strTitle.LoadString( IDS_RESULT_STRING );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	resultClassInfo.DesiredInputInterface.RemoveAll();
 	interfaceInfo.EmbeddedID = SVLinearDistanceEdgeAObjectGuid;
@@ -179,7 +179,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
 	strTitle.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	resultClassInfo.DesiredInputInterface.RemoveAll();
 	interfaceInfo.EmbeddedID = SVLinearDistanceEdgeBObjectGuid;
@@ -192,7 +192,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B );
 	strTitle.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 }
 
 SVLinearMeasurementAnalyzerClass::~SVLinearMeasurementAnalyzerClass()

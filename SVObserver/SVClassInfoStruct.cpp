@@ -106,8 +106,8 @@ SVObjectClass* SVClassInfoStruct::Construct()
 
 				ASSERT( SV_GUID_NULL != pInInfo->GetInputObjectInfo().UniqueObjectID ||
 				        SV_GUID_NULL != info.EmbeddedID || 
-				        info.ObjectType != SVNotSetObjectType ||
-				        info.SubType != SVNotSetSubObjectType );
+				        SVNotSetObjectType != info.ObjectType ||
+				        SVNotSetSubObjectType != info.SubType );
 			}
 		}
 	}

@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVTADlgColorToolPage.h"
 #include "SVColorTool.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVIPDoc.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectInterfaces\IObjectManager.h"

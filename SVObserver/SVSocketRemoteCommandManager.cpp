@@ -22,7 +22,6 @@
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
-#include "SVGlobal.h"
 #include "SVRemoteControlConstants.h"
 #include "SVVisionProcessorHelper.h"
 #include "ObjectInterfaces/SVUserMessage.h"

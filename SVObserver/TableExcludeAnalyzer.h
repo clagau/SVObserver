@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "SVTaskObject.h"
-#include "DoubleSortValueObject.h"
+#include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #include "LinkedValue.h"
 #pragma endregion Includes
 

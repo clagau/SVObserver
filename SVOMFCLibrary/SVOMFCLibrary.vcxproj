@@ -110,6 +110,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="StringEscape.cpp" />
     <ClCompile Include="SVDlgGraph.cpp" />
     <ClCompile Include="SVEditControlWithHelp.cpp" />
     <ClCompile Include="DisplayHelper.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="StringEscape.h" />
     <ClInclude Include="SVDlgGraph.h" />
     <ClInclude Include="SVEditControlWithHelp.h" />
     <ClInclude Include="DisplayHelper.h" />

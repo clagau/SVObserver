@@ -155,6 +155,9 @@ public:
 	const SVGUID& GetOwnerID() const;
 	BOOL IsCreated() const;
 
+	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
+	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
+
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
 	virtual SVString GetCompleteName() const override;

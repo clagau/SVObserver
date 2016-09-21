@@ -223,13 +223,12 @@ CString SVLinearToolClass::GetProfileOrientation()
 
 BOOL SVLinearToolClass::GetRotation()
 {
-	BOOL bVal = FALSE;
+	BOOL bVal = false;
 	
 	m_voUseProfileRotation.GetValue(bVal);
 
 	return bVal;
 }
-
 
 EAutoSize SVLinearToolClass::GetAutoSizeEnabled()
 {
@@ -241,13 +240,11 @@ EAutoSize SVLinearToolClass::GetAutoSizeEnabled()
 	{
 		return EnableSizeAndPosition;
 	}
-
 }
-
 
 BOOL SVLinearToolClass::IsToolRotated()
 {
-	BOOL bRet = FALSE;
+	BOOL bRet = false;
 	SVImageExtentClass svImageExtent;
 	double dRotationAngle;
 
@@ -256,7 +253,7 @@ BOOL SVLinearToolClass::IsToolRotated()
 
 	if ( dRotationAngle != 0 )
 	{
-		bRet = TRUE;
+		bRet = true;
 	}
 	return bRet;
 }
@@ -321,49 +318,49 @@ void SVLinearToolClass::init()
 	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearPixelCountingAnalyzerObjectType;
 	analyzerClassInfo.ClassId = SVLinearPixelCountingLineAnalyzerClassGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
-	availableChildren.Add( analyzerClassInfo );
+	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the Line Edge Count Analyzer...
 	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearEdgeCountingAnalyzerObjectType;
 	analyzerClassInfo.ClassId = SVLinearEdgeCountingLineAnalyzerClassGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
+	m_availableChildren.Add(analyzerClassInfo);
 	
 	// Add the Line Edge Position Analyzer...
 	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearEdgePositionAnalyzerObjectType;
 	analyzerClassInfo.ClassId = SVLinearEdgePositionLineAnalyzerClassGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
+	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Line Linear Measurement Analyzer...
 	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMeasurementAnalyzerObjectType;
 	analyzerClassInfo.ClassId = SVLinearMeasurementAnalyzerClassGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
+	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Line Maximum Foreground Object Analyzer...
 	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumForegroundObjectAnalyzerObjectType;
 	analyzerClassInfo.ClassId = SVLinearMaximumForegroundObjectLineAnalyzerClassGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
+	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Line Maximum Background Object Analyzer...
 	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumBackgroundObjectAnalyzerObjectType;
 	analyzerClassInfo.ClassId = SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
+	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Line Maximum Object Analyzer...
 	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumObjectAnalyzerObjectType;
 	analyzerClassInfo.ClassId = SVLinearMaximumObjectLineAnalyzerClassGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
+	m_availableChildren.Add(analyzerClassInfo);
 
 	// Build an operator list...
 

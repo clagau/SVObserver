@@ -9,8 +9,8 @@
 
 #pragma region Includes
 #include "SVObjectLibrary\SVInObjectInfoStruct.h"
-#include "SVStaticStringValueObjectClass.h"
-#include "SVVariantValueObjectClass.h"
+#include "SVValueObjectLibrary/SVStaticStringValueObjectClass.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVTaskObject.h"
 #pragma endregion Includes
 
@@ -49,7 +49,7 @@ public:
 	/// Set the value. If string a valid dotted name of a value object, it connect it to the linked object.
 	/// \returns HRESULT S_OK, if set was OK.
 	//************************************
-	virtual HRESULT SetValueAt( int Bucket, int Index, CString Value ) override;
+	virtual HRESULT SetValueAt( int Bucket, int Index, const CString& Value ) override;
 
 	//************************************
 	/// Disconnect the object if it is connected to this value.
@@ -96,7 +96,7 @@ private:
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
 	/// \returns SVObjectClass* The founded object. If object will not found, it return a nullptr.
-	SVObjectClass* ConvertStringInObject( CString &rValue ) const;
+	SVObjectClass* ConvertStringInObject( const CString& rValue ) const;
 
 #pragma endregion Private Methods
 

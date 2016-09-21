@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVAnalyzer.h"     // Required by PixelAnalyzer.h
+#include "SVImageAnalyzerClass.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////

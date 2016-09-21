@@ -17,7 +17,6 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
-#include "SVGlobal.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
@@ -28,6 +27,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVOMFCLibrary/StringEscape.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -468,7 +468,7 @@ void SVEquationClass::Persist( SVObjectWriter& rWriter )
 	// Get the Data Values (Member Info, Values)
 	CString tmp = equationStruct.EquationBuffer;
 	
-	::SVAddEscapeSpecialCharacters( tmp, true );
+	SvOml::AddEscapeSpecialCharacters( tmp, true );
 
 	_variant_t value;
 	value.SetString(tmp);
@@ -492,7 +492,7 @@ HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 		{
 			equationStruct.EquationBuffer = svCStringArray.GetAt( i );
 
-			::SVRemoveEscapedSpecialCharacters( equationStruct.EquationBuffer, true );
+			SvOml::RemoveEscapedSpecialCharacters( equationStruct.EquationBuffer, true );
 		}
 	}
 	else
@@ -504,7 +504,6 @@ HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	hr = bOk ? S_OK : S_FALSE;
 	return hr;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
@@ -609,12 +608,13 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 			ret = result;
 		}
 		
-		isObjectValid.SetValue( 1, ret.bPassed );
+		m_isObjectValid.SetValue( 1, ret.bPassed );
 	}
 	// return true if no equation or disabled
 	if( !HasCondition() || !IsEnabled() )
+	{
 		ret.bPassed = true;
-
+	}
 	if( DisplayErrorMessage && !ret.bPassed )
 	{
 		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );

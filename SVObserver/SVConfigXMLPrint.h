@@ -44,7 +44,7 @@
 #include "SVStatTool.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVAcquisitionClass.h"
-#include "SVFileNameArrayClass.h"
+#include "SVSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVIODoc.h"
 #include "SVIPDoc.h"

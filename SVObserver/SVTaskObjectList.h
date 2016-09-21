@@ -13,8 +13,8 @@
 #pragma region Includes
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVClassInfoStruct.h"
-#include "SVValueObject.h"
 #include "SVTaskObject.h"
 #pragma endregion Includes
 
@@ -124,8 +124,6 @@ protected:
 
 #pragma region Private Methods
 private:
-	void cleanUpEmptyEntries();
-
 	/**********
 	  The method destroys a child object. 
 	  /param pTaskObject <in> object to destroy.
@@ -142,7 +140,7 @@ private:
 #pragma region Member Variables
 protected:
 	typedef SVVector< SVTaskObjectClass*, SVTaskObjectClass* > SVTaskObjectPtrVector;
-	SVClassInfoStructListClass availableChildren; // available children classes (not instantiated)
+	SVClassInfoStructListClass m_availableChildren; // available children classes (not instantiated)
 
 	SVClock::SVTimeStamp m_LastListUpdateTimestamp;
 	SVTaskObjectPtrVector m_aTaskObjects;

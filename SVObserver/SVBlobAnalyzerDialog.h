@@ -86,13 +86,13 @@ private:
 /*- msvszOriginalFeaturesEnabled ---------------------------------------------------*/
 /*- This holds the original list of enabled features so that the list can be        */
 /*- restored if the operator presses cancel. ---------------------------------------*/
-	TCHAR                           msvszOriginalFeaturesEnabled 
-	                                    [SV_NUMBER_OF_BLOB_FEATURES + 1]; // Null Terminated
-	SVToolClass*                    msvpTool;
+	TCHAR  msvszOriginalFeaturesEnabled[SV_NUMBER_OF_BLOB_FEATURES + 1]; // Null Terminated
+
+	SVToolClass* m_pTool;
 
 	CString script;
 	CString alias;
-	long    m_colorBlobEnum;
+	long m_colorBlobEnum;
 
 protected:
 	SVIPDoc* m_pIPDoc;

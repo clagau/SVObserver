@@ -20,6 +20,7 @@
 #include "SVEnumerateCombo.h"
 #pragma endregion Includes
 
+class SVToolClass;
 class SVAnalyzerClass;
 class SVToolAdjustmentDialogSheetClass;
 class SVUnaryImageOperatorListClass;

@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVDlgImageEditor.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVImageLibrary/SVExtentFigureStruct.h"
 #pragma endregion Includes
 

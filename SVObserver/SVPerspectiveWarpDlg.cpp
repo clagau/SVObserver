@@ -16,7 +16,6 @@
 #include "SVTool.h"
 #include "SVPerspectiveTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

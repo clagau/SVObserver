@@ -14,7 +14,7 @@
 #include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 #include "SVToolLoadImage.h"
 #include "SVAnalyzer.h"
-#include "SVGlobal.h"
+#include "SVGlobal.h" // For SVFileExists
 #include "SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -127,13 +127,12 @@ BOOL SVLoadImageToolClass::OnValidate ()
 		
 		if( ::SVFileExists((LPCTSTR)strPathName) ) // No can do! || strPathName.IsEmpty())
 		{
-			return TRUE;
+			return true;
 		}
 	}
 	SetInvalid ();
-	return FALSE;
+	return false;
 }
-
 
 BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
@@ -211,7 +210,7 @@ HRESULT SVLoadImageToolClass::IsInputImage(SVImageClass *p_psvImage)
 
 	if ( nullptr != p_psvImage )
 	{
-		if ( p_psvImage == pCurrentToolSet->getCurrentImage() )
+		if ( p_psvImage == m_pCurrentToolSet->getCurrentImage() )
 		{
 			l_hrOk = S_OK;
 		}
@@ -223,7 +222,6 @@ HRESULT SVLoadImageToolClass::IsInputImage(SVImageClass *p_psvImage)
 
 	return l_hrOk;
 }
-
 
 SVTaskObjectClass *SVLoadImageToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {

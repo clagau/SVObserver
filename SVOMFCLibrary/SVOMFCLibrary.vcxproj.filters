@@ -80,6 +80,9 @@
     <ClCompile Include="SVFileNameClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StringEscape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -167,6 +170,9 @@
       <Filter>Control Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFileNameClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringEscape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">

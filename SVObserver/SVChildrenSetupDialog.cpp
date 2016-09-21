@@ -22,7 +22,6 @@
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -33,6 +32,36 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
+
+//******************************************************************************
+// Method:		GetAndEnableWindow
+// Description:	Gets a control from a dialog and enables or disables it.
+// Parameter:	dialog - This should be a pointer the dialog containing the 
+//		control to be enabled or disabled.
+// Parameter:	ctrlId - This should be the identifier for the control.
+// Parameter:	enable - Indicates if the control should be enabled {TRUE, default}
+//		or disabled {FALSE}.
+// Returns:		HRESULT -
+//		S_OK - The control was not previously disabled.
+//		S_FALSE - The control was not previously disabled.
+//		E_FAIL - ctrlId was not found in dialog.
+//******************************************************************************
+HRESULT GetAndEnableWindow( CWnd* dialog, const int ctrlId, const BOOL enable = TRUE )
+{
+	HRESULT hr = E_FAIL;
+
+	if ( nullptr != dialog )
+	{
+		CWnd* item = dialog->GetDlgItem( ctrlId );
+		if ( nullptr != item )
+		{
+			BOOL wasDisabled = item->EnableWindow( enable );
+			hr = wasDisabled == FALSE ? S_FALSE : S_OK;
+		}
+	}
+
+	return hr;
+}
 
 SVChildrenSetupDialogClass::SVChildrenSetupDialogClass(CWnd* pParent /*=nullptr*/)
 : CDialog(SVChildrenSetupDialogClass::IDD, pParent)

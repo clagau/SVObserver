@@ -10,7 +10,6 @@
 #pragma region Includes
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "TableObject.h"
-#include "DoubleSortValueObject.h"
 #include "TableColumnEquation.h"
 #pragma endregion Includes
 

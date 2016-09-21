@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVLinearAnalyzerClass.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
 
 class SVLinearPixelCountingLineAnalyzerClass : public SVLinearAnalyzerClass

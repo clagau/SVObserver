@@ -68,7 +68,7 @@ namespace Seidenader { namespace SVContainerLibrary
 	}
 
 
-	typedef SVObjectArrayClassTemplate<CPoint> SVObjectCPointArrayClass;
+	typedef SVObjectArrayClassTemplate<POINT> SVObjectPointArrayClass;
 	typedef SVObjectArrayClassTemplate<BOOL> SVObjectBoolArrayClass;
 	typedef SVObjectArrayClassTemplate<BYTE> SVObjectByteArrayClass;
 	typedef SVObjectArrayClassTemplate<long> SVObjectLongArrayClass;

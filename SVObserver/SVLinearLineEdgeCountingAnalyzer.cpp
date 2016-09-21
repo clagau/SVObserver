@@ -66,15 +66,13 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_EDGE_COUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 }
-
 
 SVLinearEdgeCountingLineAnalyzerClass::~SVLinearEdgeCountingLineAnalyzerClass()
 {
 	CloseObject();
 }
-
 
 BOOL SVLinearEdgeCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {

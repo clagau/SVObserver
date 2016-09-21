@@ -21,7 +21,7 @@
 #include "SVResult.h"
 #include "SVFillBlobDlg.h"
 #include "SVBlobFeaturePropertiesDlg.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVSetupDialogManager.h"
 #pragma endregion Includes
 
@@ -52,13 +52,14 @@ END_MESSAGE_MAP()
 //
 //
 SVBlobAnalyzeFeatureDialogClass::SVBlobAnalyzeFeatureDialogClass(  
-	SVToolClass* PTool, 
+	SVToolClass* pTool, 
 	SVBlobAnalyzerClass* pAnalyzer, 
 	SVIPDoc* p_pIPDoc, 
 	CWnd* pParent )
 	: CDialog( SVBlobAnalyzeFeatureDialogClass::IDD, pParent )
 	, m_colorBlobEnum(SV_BLOB_WHITE)
 	, m_pIPDoc( p_pIPDoc )
+	, m_pTool( pTool )
 	, m_pCurrentAnalyzer( pAnalyzer )
 {
 	//{{AFX_DATA_INIT(SVBlobAnalyzeFeatureDialogClass)
@@ -98,11 +99,11 @@ void SVBlobAnalyzeFeatureDialogClass::DoDataExchange(CDataExchange* pDX)
 //
 // Saved location of dialog.
 //
-static CPoint gPtPosition(0,0);
+static CPoint gPtPosition(0, 0);
 
 BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog() 
 {
-	long    lSortFeature;
+	long lSortFeature;
 
 	CDialog::OnInitDialog();
 	
@@ -136,8 +137,7 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 			return FALSE;
 		}
 
-		msvpTool = (SVToolClass *) m_pCurrentAnalyzer->GetOwner ();
-		if (!msvpTool)
+		if (!m_pTool)
 		{
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16080);
@@ -538,7 +538,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnExcludeBlob()
 
 void SVBlobAnalyzeFeatureDialogClass::OnBtnFillBlobs() 
 {
-	SVFillBlobDlg dlg;
+	SVFillBlobDlg dlg(m_pTool);
 	
 	dlg.m_pvoBlobFillColor = &m_pCurrentAnalyzer->m_evoBlobFillColor;
 	dlg.m_pvoBlobType = &m_pCurrentAnalyzer->m_evoBlobType;

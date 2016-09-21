@@ -22,7 +22,7 @@
 #include "TriggerHandling/SVFileAcquisitionInitiator.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
-#include "BasicValueObjects.h"
+#include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #pragma endregion Includes
 

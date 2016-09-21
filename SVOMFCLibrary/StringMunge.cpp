@@ -17,24 +17,24 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*static*/ bool StringMunge::StripChars(CString* psString, const TCHAR* tszChars)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	{
+{
 	// this works like the PERL statement tr/abc//   -or-    s/[abc]//g
 	// it will strip all occurances of any char in tszChars out of psString
 	int t;
 	bool bModified=false;
 
 	while ( ( t = static_cast< int >( _tcscspn( *psString, tszChars ) ) ) < psString->GetLength() )
-		{
+	{
 		bModified=true;
 		*psString=psString->Left(t)+psString->Mid(t+1);
-		}
-	return bModified;
 	}
+	return bModified;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*static*/ bool StringMunge::KeepChars(CString* psString, const TCHAR* tszChars)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	{
+{
 	// works like PERL's     s/[^abc]//g
 	// psString will keep only those chars in tszChars
 
@@ -42,27 +42,26 @@
 	bool bModified=false;
 
 	while ( ( t = static_cast< int >( _tcsspn( *psString, tszChars ) ) ) < psString->GetLength() )
-		{
+	{
 		bModified=true;
 		*psString=psString->Left(t)+psString->Mid(t+1);
-		}
+	}
 
 	return bModified;
-	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*static*/ bool StringMunge::KeepAlphaNum(CString* psString)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	{
+{
 	// optimize for speed; common characters first
 	return KeepChars(psString, _T(" etoanishrdlumwgycfpbvkITAHSWj0192345678qxzBCDEFGJKLMNOPQRUVXYZ"));
-	}
-
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*static*/ bool StringMunge::TranslateChars(CString* psString, const TCHAR* tszFrom, const TCHAR* tszTo)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	{
+{
 	// works like PERL's tr/abc/ABC/ command
 	// tszFrom & tszTo must be the same length
 
@@ -77,38 +76,40 @@
 
 	int i,s=psString->GetLength();
 	for (i=0; i<s; i++)
-		{
+	{
 		tc=psString->GetAt(i);
 		tszTemp[0]=tc;
 		if ( ( ( nPos = static_cast< long >( _tcscspn( tszFrom, tszTemp ) ) ) < len ) && ( nPos >= 0 ) )
-			{
+		{
 			tc=tszTo[nPos];
 			psString->SetAt(i,tc);
 			bModified=true;
-			}
 		}
-	return bModified;
 	}
+	return bModified;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*static*/ bool StringMunge::ReplaceStrings(CString* psString, int nNumElements, const TCHAR* tszFrom, const TCHAR* tszTo)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	{
+{
 	// work around the bug in ReplaceStringsImpl... if nNumElements is 1
 	CString s(tszTo);
 	if (nNumElements != 1 || s.Find(tszFrom) == -1)
 		return ReplaceStringsImpl(psString, nNumElements, tszFrom, tszTo);
 	else
-		{
+	{
 		bool b = ReplaceStringsImpl(psString, 1, tszFrom, _T("†¤„"));
 		if (b)
+		{
 			ReplaceStringsImpl(psString, 1, _T("†¤„"), tszTo);
-		return b;
 		}
+		return b;
 	}
+}
 
 /*static*/ bool StringMunge::ReplaceStringsImpl(CString* psString, int nNumElements, const TCHAR* tszFrom, const TCHAR* tszTo)
-	{
+{
 	// will translate any set of chars in tszFrom (separated by NULLs) to the corresponding set of 
 	// chars in tszTo (also separated by NULLs)
 	// e.g.     ReplaceString(&sTemp, 2, _T("\n\0\t"), _T(", \0 "))
@@ -136,11 +137,11 @@
 	int nNumFound=1;
 
 	while (nNumFound > 0)
-		{
+	{
 		nNumFound=nFromPos=nToPos=0;
 
 		for (i=0; i<nNumElements; i++)
-			{
+		{
 
 			ptszFromSet=&(tszFrom[nFromPos]);
 
@@ -150,21 +151,21 @@
 			nToPos+=len;
 
 			if ((nFoundPos=psString->Find(ptszFromSet)) >=0)
-				{// found one of the sets; now translate
+			{// found one of the sets; now translate
 				*psString = psString->Left(nFoundPos) + ptszToSet + psString->Mid(nFoundPos + len - 1);
 				nNumFound++;
 				bModified=true;
-				}
 			}
 		}
+	}
 
 	return bModified;
-	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*static*/ double StringMunge::ApproxiMatch(const CString& s1, const CString& s2, double dPicky /*= 1.2*/)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	{
+{
 	// by Eric Beyeler - Dec 7, 1998
 	// ebeyeler@usa.com
 	// extended from an algorithm by:
@@ -181,7 +182,7 @@
 	// letters at the beginning of the word are given a higher significance
 	// than towards the end of the word.
 	const double dMaxScore[25]=
-		{
+	{
 		3,
 		18,
 		60,
@@ -207,8 +208,7 @@
 		92100,
 		109100,
 		128375,
-		};
-
+	};
 
 	register int i, j, k, x, y;
 	double dScore=0.0;
@@ -268,14 +268,14 @@
 	const double POSITION_SCALE = 2.0;
 	// calculate raw score
 	for (i=0; i<nLength1; i++)
-		{
+	{
 		x = i;
 		for (j=0; j<nLength2 && x<nLength1; j++)
-			{
+		{
 			y = j;
 			k = 0;
 			while ((x < nLength1 && y < nLength2) &&  s1[x] == s2[y])
-				{
+			{
 				k++;
 				dScore += (double) (k*k);
 				
@@ -285,9 +285,9 @@
 
 				x++;
 				y++;
-				}
 			}
 		}
+	}
 
 	// calculate raw character difference
 
@@ -322,5 +322,5 @@
 		dScore = pow(dScore, SPECIAL_ENDING_ADJUSTMENT);
 
 	return dScore;	// final score
-	}
+}
 

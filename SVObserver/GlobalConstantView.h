@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/GlobalConstantData.h"
-#include "BasicValueObject.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
  
 class SVIODoc;

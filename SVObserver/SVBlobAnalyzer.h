@@ -12,7 +12,7 @@
 #pragma once
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVAnalyzer.h"
+#include "SVImageAnalyzerClass.h"
 #include "SVBlobAnalyzerResultDlg.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
 #pragma endregion Includes

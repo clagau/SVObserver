@@ -73,7 +73,7 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_BLACKPIXELCOUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 
 	// Declare Input Interface of White Pixel Count Result...
 	resultClassInfo.DesiredInputInterface.RemoveAll();
@@ -87,7 +87,7 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_WHITEPIXELCOUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );
 	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
-	availableChildren.Add( resultClassInfo );
+	m_availableChildren.Add( resultClassInfo );
 }
 
 

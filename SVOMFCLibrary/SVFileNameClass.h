@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "SVUtilityLibrary/SVString.h"
+
 enum SVFileTypesEnum
 {
 	SV_DEFAULT_FILE_TYPE               = 0,
@@ -83,11 +85,11 @@ public:
 
 	//This operator exposes the strings contained in the 
 	//mcsFileName and mcsExtension attribute.
-	LPCTSTR GetFileName();
+	LPCTSTR GetFileName() const;
 
 	//This operator exposed the strings contained in the 
 	//mcsPathName, mcsFileName and mcsExtension attributes.
-	LPCTSTR GetFullFileName();
+	LPCTSTR GetFullFileName() const;
 
 	//This operator exposes the string contained in the 
 	//mcsFileSelectDialogTitle attribute.
@@ -224,7 +226,7 @@ private:
 	//! \param FileName [in] the selected file name
 	//! \returns the valid PathName
 //************************************
-	CString checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const;
+	SVString checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const;
 
 	//This attribute defines which kind of file is desired to 
 	//be held within this object.
@@ -233,43 +235,43 @@ private:
 	//This is a temporary storage container for the string 
 	//defining the fully qualified file name.  This name 
 	//include the path, name, and the extension.
-	CString m_FullFileName;
+	mutable SVString m_FullFileName;
 
 	//This attribute defines the path name attached to this 
 	//object.
-	CString m_PathName;
+	SVString m_PathName;
 
 	//This attribute defines the file name attached to this 
 	//object with the extension.  This variable gets updated 
 	//when the GetFileName operation is called.
-	CString m_FileName;
+	mutable SVString m_FileName;
 
 	//This is a temporary storage container for the string 
 	//defining the file name without the extension.
-	CString m_FileNameOnly;
+	SVString m_FileNameOnly;
 
 	//This attribute defines the extension attached to this 
 	//object.
-	CString m_Extension;
+	SVString m_Extension;
 
 	//This attribute defines the title to be placed on the 
 	//file selection dialog.
-	CString m_FileSelectDialogTitle;
+	SVString m_FileSelectDialogTitle;
 
 	//This attribute defines the title to be placed on the 
 	//file save dialog for this object.
-	CString m_FileSaveDialogTitle;
+	SVString m_FileSaveDialogTitle;
 
 	//This attribute define the default file extension to be 
 	//used for both the file selection and file saving dialog.
-	CString m_DefaultFileExtension;
+	SVString m_DefaultFileExtension;
 
 	//This attribute defines the default file name to be used 
 	//for the file selecting and file saving dialog for this 
 	//object.
-	CString m_DefaultFileName;
+	SVString m_DefaultFileName;
 
-	CString m_DefaultPathName;
+	SVString m_DefaultPathName;
 
 	//This attribute defines the flags needed for the file 
 	//selection dialog for this object.
@@ -282,8 +284,8 @@ private:
 	//This attribute defines the file extension filter list 
 	//for both the file selection and the file saving dialog 
 	//for this object.
-	CString m_FileExtensionFilterList;
+	SVString m_FileExtensionFilterList;
 
-	CString m_ExcludeChar;			//The array of file name exclude characters
+	SVString m_ExcludeChar;			//The array of file name exclude characters
 };
 

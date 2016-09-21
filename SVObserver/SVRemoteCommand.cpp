@@ -8,14 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 14:42:46  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVObserver_i.h"
 #include "SVRemoteCommand.h"
 #include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #include "SVRemoteCommandData.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#pragma endregion Includes
 
 SVRemoteCommand::SVRemoteCommand()
 : m_Command()

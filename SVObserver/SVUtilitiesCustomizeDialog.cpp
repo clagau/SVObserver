@@ -18,7 +18,6 @@
 #include "SVUtilityIniClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

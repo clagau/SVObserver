@@ -383,7 +383,6 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 	{
 		pTaskObject->SetName( NewName.c_str() );
 	}
-	// SEJ Aug 10,1999
 	pTaskObject->SetObjectOwner(this);
 
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
@@ -393,11 +392,8 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 		// call the base class to really add it
 		return m_aTaskObjects.Add(pTaskObject);
 	}
-	else
-	{
-		m_aTaskObjects.InsertAt(0, pTaskObject);
-		return 0;
-	}
+	m_aTaskObjects.InsertAt(0, pTaskObject);
+	return 0;
 }
 
 HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
@@ -698,15 +694,15 @@ SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SVObjectType
 {
 	SvUl::NameGuidList list = SVTaskObjectClass::GetCreatableObjects(pObjectTypeInfo);
 
-	for (int i = 0; i < availableChildren.GetSize(); i++)
+	for (int i = 0; i < m_availableChildren.GetSize(); i++)
 	{
-		SVClassInfoStruct classInfo = availableChildren.GetAt(i);
+		SVClassInfoStruct classInfo = m_availableChildren.GetAt(i);
 		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo.ObjectType &&
 			(pObjectTypeInfo.SubType == SVNotSetSubObjectType ||
 			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
 			)
 		{
-			list.push_back(std::make_pair(SVString(classInfo.ClassName), classInfo.ClassId));
+			list.push_back(std::make_pair(classInfo.ClassName, classInfo.ClassId));
 		}
 	}
 	return list;
@@ -810,9 +806,9 @@ BOOL SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pLis
 {
 	BOOL rc = FALSE;
 
-	for (int i = 0; i < availableChildren.GetSize(); i++)
+	for (int i = 0; i < m_availableChildren.GetSize(); i++)
 	{
-		SVClassInfoStruct classInfo = availableChildren.GetAt(i);
+		SVClassInfoStruct classInfo = m_availableChildren.GetAt(i);
 		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo->ObjectType &&
 			(pObjectTypeInfo->SubType == SVNotSetSubObjectType ||
 			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo->SubType) 
@@ -867,11 +863,11 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 
 	// Get Status Color...
 	DWORD dwValue = RRunStatus.GetStatusColor();
-	statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
 	// Get Status...
 	dwValue = RRunStatus.GetState();
-	statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
 	return bRetVal;
 }
@@ -1329,18 +1325,6 @@ DWORD_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessa
 #pragma endregion protected methods
 
 #pragma region Private Methods
-void SVTaskObjectListClass::cleanUpEmptyEntries()
-{
-	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
-	{
-		if (! m_aTaskObjects.GetAt(i))
-		{
-			m_aTaskObjects.RemoveAt(i--);
-		}
-	}
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
-}
-
 DWORD_PTR SVTaskObjectListClass::DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context)
 {
 	//This code was located before in processMessage case SVMSGID_DESTROY_CHILD_OBJECT and is moved to this method.

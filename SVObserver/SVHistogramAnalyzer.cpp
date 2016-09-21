@@ -455,7 +455,7 @@ BOOL SVHistogramAnalyzerClass::OnValidate()
 		  break;
       }
 
-      if (msvplHistValues.size() == 0)
+      if (0 == msvplHistValues.size())
       {
 		  SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
 		  MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16152);
@@ -466,14 +466,14 @@ BOOL SVHistogramAnalyzerClass::OnValidate()
       break;
    }
 
-   if( 0 !=LastError)
+   if( 0 != LastError )
    {
        SetInvalid();
-       return FALSE;
+       return false;
    }
 
-   isObjectValid.SetValue(1, TRUE);
-   return TRUE;
+   m_isObjectValid.SetValue(1, true);
+   return true;
 }
 
 SVHistogramAnalyzerClass::~SVHistogramAnalyzerClass()

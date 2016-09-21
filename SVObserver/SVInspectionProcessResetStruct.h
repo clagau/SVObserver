@@ -15,6 +15,8 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #pragma endregion Includes
 
+class SVToolClass;
+
 struct SVInspectionProcessResetStruct
 {
 	SVInspectionProcessResetStruct();

@@ -18,7 +18,7 @@
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVObjectAppClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVImageClass.h"
 #include "SVImageListClass.h"
 #include "SVExtentPropertiesInfoStruct.h"
@@ -171,10 +171,8 @@ public:
 
 	HRESULT GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true );
 
-	virtual HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
-	virtual HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
-	virtual HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
-	virtual HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
+	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
+	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
 
 	virtual HRESULT RegisterSubObjects( SVTaskObjectClass* p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList );
 	virtual HRESULT UnregisterSubObjects( SVTaskObjectClass* p_psvOwner );
@@ -223,6 +221,11 @@ protected:
 
 	virtual void hideEmbeddedObject( SVObjectClass& RObjectToHide );
 
+	virtual HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
+	virtual HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
+	virtual HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
+	virtual HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
+
 	// Called by Run()
 	// NOTE:
 	// Override this if you want to implement your own special run.
@@ -236,20 +239,16 @@ protected:
 	virtual DWORD_PTR	FriendOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual DWORD_PTR	EmbeddedOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
 protected:
 
 	SVValueObjectClassPtrSet        m_svValueObjectSet;
 	SVImageClassPtrSet              m_svImageObjectSet;
-
 	SVInputInfoListClass            m_InputObjectList;
 
 	// Embedded Object:
-	SVBoolValueObjectClass          isObjectValid;	//	Embedded
-	SVDWordValueObjectClass         statusTag;
-	SVDWordValueObjectClass         statusColor;
+	SVBoolValueObjectClass          m_isObjectValid;	//	Embedded
+	SVDWordValueObjectClass         m_statusTag;
+	SVDWordValueObjectClass         m_statusColor;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// .Description : Contains pointer to SVObjectClass items, but doesn't owns these
@@ -259,17 +258,17 @@ protected:
 	// Only SVTaskObjectListClass and SVTaskObjectClass can have Embedded Objects
 	// Embedded Objects can be SVObjectClass Objects
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	SVObjectClassPtrArray           embeddedList;
+	SVObjectClassPtrArray m_embeddedList;
 
 	// Input Interface List
 	// Used to register your input interface...
 	// Counterpart to embeddedList, which is some kind of 
 	// outputInterfaceList.
-	SVInputInfoListClass            inputInterfaceList;
+	SVInputInfoListClass m_inputInterfaceList;
 
-	bool                            m_bUseOverlays;
+	bool m_bUseOverlays;
 
-	SVTaskObjectValueInterface      m_taskObjectValueInterface;  ///< this parameter is needed for the interface implementation from RunOnce and AddInputRequestMarker
+	SVTaskObjectValueInterface m_taskObjectValueInterface;  ///< this parameter is needed for the interface implementation from RunOnce and AddInputRequestMarker
 
 private:
 	HRESULT LocalInitialize();

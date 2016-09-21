@@ -298,6 +298,8 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_15043_UnknownProductType = Sej_ErrorBase + 43;
 	// Shared memory
 	static const int Err_15044_InitMonitorListInSharedMemory = Sej_ErrorBase + 44;
+	// Filename Manager 
+	static const int Err_15044_FileNameManagerAdd = Sej_ErrorBase + 45;
 
 	//Marcus Eichengrün error base
 	static const int Mec_ErrorBase = 16000;

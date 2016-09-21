@@ -39,7 +39,7 @@ inline bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskOb
 	{
 		return ref < rhs.ref;
 	}
-	else if ( guid != SV_GUID_NULL && rhs.guid != SV_GUID_NULL )
+	else if ( SV_GUID_NULL != guid && SV_GUID_NULL != rhs.guid )
 	{
 		return guid < rhs.guid;
 	}

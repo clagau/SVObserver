@@ -663,14 +663,11 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 				measureDialog.AddPage( pPageB );
 			}
 
-			l_pAnalyzer->MakeDirty();
-
-			BOOL l_bShowA = FALSE;
-			BOOL l_bShowB = FALSE;
+			BOOL l_bShowA = false;
+			BOOL l_bShowB = false;
 
 			l_pAnalyzer->m_svShowAllEdgeAOverlays.GetValue( l_bShowA );
 			l_pAnalyzer->m_svShowAllEdgeBOverlays.GetValue( l_bShowB );
-
 
 			if( IDOK == measureDialog.DoModal() )
 			{

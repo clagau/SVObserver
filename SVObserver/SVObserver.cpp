@@ -30,7 +30,7 @@
 #include "SVAboutDialogClass.h"
 #include "SVConfigurationPrint.h"
 #include "SVEnvironmentSettingsDialog.h"
-#include "SVFileNameManagerClass.h"
+#include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVImageViewScroll.h"
 #include "SVIPChildFrm.h"
 #include "SVMainFrm.h"

@@ -16,7 +16,6 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVObserver.h"
 #include "SVImageProcessingClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 TCHAR SVRCCurrentSVCPathName[ _MAX_PATH ];
@@ -91,8 +90,6 @@ double SVGetDataTypeMin( DWORD DataType )
 	return 0.0;
 }
 
-
-
 double SVGetDataTypeMax( DWORD DataType )
 {
 	switch( DataType )
@@ -132,8 +129,6 @@ double SVGetDataTypeMax( DWORD DataType )
 	}
 	return 0.0;
 }
-
-
 
 double SVGetDataTypeRange( DWORD DataType )
 {
@@ -240,8 +235,6 @@ BOOL SVCheckPathDir( LPCTSTR TStrPathName, BOOL BCreateIfNotExists )
 	_tchdir( curPath );
 	return FALSE;
 }
-
-
 
 BOOL SVDeleteFiles( LPCTSTR TStrPathName, BOOL BIncludeSubDirectories )
 {
@@ -402,136 +395,6 @@ BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion )
 #endif
 	return TRUE;
 }
-
-// Escapes Special Characters in CStrings 
-bool SVAddEscapeSpecialCharacters( CString& RString, bool bConvertCtrl )
-{
-	bool bAdded = false;
-
-	IntStrPairMap FoundStrings;
-
-	//// Find Special Characters
-	int len = RString.GetLength();
-	for( int index = 0 ; index < len ; index++ )
-	{
-		// find the single character....
-		TBYTE l_ch = RString[index]; 
-		if( l_ch == _T('\\'))
-		{
-			FoundStrings[index] = StrStrPair(_T("\\\\"),_T("\\"));
-			bAdded = true;
-		}
-		else
-		if( l_ch == _T('"'))
-		{
-			FoundStrings[index] = StrStrPair(_T("\\\""),_T("\""));
-			bAdded = true;
-		}
-		else
-		if( bConvertCtrl && iscntrl(l_ch) )
-		{
-			CString first;
-			CString second;
-			first.Format( _T("\\%03o"),l_ch);
-			second.Format( _T("%c"), l_ch);
-			FoundStrings[index] = StrStrPair(first, second);
-			bAdded = true;
-		}
-	}
-
-	// Process List
-	if( bAdded )
-	{
-		CString NewString;
-		int start = 0;
-		int count;
-
-		for( IntStrPairMap::iterator it = FoundStrings.begin() ; it != FoundStrings.end(); ++it)
-		{
-			count = it->first - start;
-			if( count > 0 )
-			{
-				NewString += RString.Mid( start, count); // copy up to the found character.
-			}
-			// Expanded character added...
-			NewString += it->second.first;
-
-			start = it->first + it->second.second.GetLength();
-		}
-		NewString += RString.Mid( start );
-		RString = NewString;
-	}
-	return bAdded;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Removes Escaped Double Quotes in CStrings.
-//
-//
-bool SVRemoveEscapedSpecialCharacters( CString& RString, bool bConvertCtrl )
-{
-	bool bRemoved = false;
-
-	IntStrPairMap FoundStrings;
-
-
-	//// Find Special Characters
-	int len = RString.GetLength()-1;
-	int index = 0;
-
-	while( ( index = RString.Find(_T('\\'), index ))!= -1)
-	{
-		if( RString[index+1] == _T('\\') )
-		{
-			FoundStrings[index] = StrStrPair(_T("\\\\"), _T("\\"));
-			index++;
-		}
-		else
-		if( RString[index+1] == _T('"'))
-		{
-			FoundStrings[index] = StrStrPair(_T("\\\""), _T("\""));
-			index++;
-		}
-		else
-		if( bConvertCtrl && index < len - 2 && 
-			isdigit(RString[index + 1]) &&
-			isdigit(RString[index + 2]) &&
-			isdigit(RString[index + 3]) )
-		{
-			CString first;
-			CString second;
-			int ctrlValue = (RString[index+1]-_T('0'))*64  + (RString[index+2]-_T('0'))*8 + (RString[index+3]-_T('0'));
-			first.Format( _T("\\%03o"),ctrlValue);
-			second.Format(_T("%c"), ctrlValue);
-			FoundStrings[index] = StrStrPair(first, second);
-			index += 3;
-		}
-		index++;
-	}
-
-	// Process Found list.
-	if( FoundStrings.size() > 0 )
-	{
-		CString NewString;
-		
-		int start = 0;
-		for( IntStrPairMap::iterator it = FoundStrings.begin() ; it != FoundStrings.end() ; ++it )
-		{
-			int count = it->first - start;
-			NewString += RString.Mid( start, count );
-			// Insert "Single Character"
-			NewString += it->second.second;	
-			start = it->first + it->second.first.GetLength();
-		}
-		NewString += RString.Mid( start );
-		RString = NewString;
-		bRemoved = true;
-
-	}
-	return bRemoved;
-}
-
 
 // Convert Hex Data to a Hex Dumop String
 // Len of the data is first in the String

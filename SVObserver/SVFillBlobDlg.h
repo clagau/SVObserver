@@ -13,15 +13,17 @@
 
 #pragma region Includes
 #include "SVEnumerateCombo.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 
 #include "SVTaskObjectInterfaceClass.h"
 #pragma endregion Includes
 
+class SVToolClass;
+
 class SVFillBlobDlg : public CDialog, public SVTaskObjectInterfaceClass
 {
 public:
-	SVFillBlobDlg(CWnd* pParent = nullptr);   // standard constructor
+	SVFillBlobDlg(SVToolClass* pTool, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVFillBlobDlg();
 	virtual HRESULT SetInspectionData();
 
@@ -42,7 +44,6 @@ public:
 
 // Implementation
 protected:
-	
 	// Generated message map functions
 	//{{AFX_MSG(SVFillBlobDlg)
 	virtual BOOL OnInitDialog();
@@ -52,6 +53,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	SVToolClass* m_pTool;
 	SVEnumerateValueObjectClass *m_pvoBlobType;
 	SVEnumerateValueObjectClass *m_pvoBlobFillColor;
 

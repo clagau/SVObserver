@@ -21,7 +21,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "RemoteMonitorList.h"
-#include "SVValueObjectReference.h"
+#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVFailStatusStream.h"
 #include "SVInfoStructs.h"
 #pragma endregion

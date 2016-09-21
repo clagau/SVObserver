@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVIOEntryHostStruct.h"
-#include "SVValueObjectClass.h"
+#include "SVValueObjectLibrary/SVValueObjectClass.h"
 
 SVIOEntryHostStruct::SVIOEntryHostStruct()
 : m_Enabled( false )

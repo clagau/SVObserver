@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolExtentPropertiesClass.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
 
 SVToolExtentPropertiesClass::SVToolExtentPropertiesClass()

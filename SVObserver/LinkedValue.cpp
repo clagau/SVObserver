@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "LinkedValue.h"
-#include "BasicValueObject.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVInspectionProcess.h"
 #include "TextDefinesSvO.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -256,7 +256,7 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, BYTE& rValue) const
 	return Result;
 }
 
-HRESULT LinkedValue::SetValueAt( int Bucket, int Index, CString Value )
+HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& Value )
 {
 	HRESULT Result( S_OK );
 	SVObjectClass* pNewLinkedObject = ConvertStringInObject(Value);
@@ -494,7 +494,7 @@ HRESULT LinkedValue::ResetObject()
 	return Result;
 }
 
-SVObjectClass* LinkedValue::ConvertStringInObject( CString &rValue ) const
+SVObjectClass* LinkedValue::ConvertStringInObject( const CString& rValue ) const
 {
 	CString ToolSetName;
 	SVString ObjectName;

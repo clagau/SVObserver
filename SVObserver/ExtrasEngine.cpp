@@ -20,7 +20,6 @@
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 
 #pragma endregion Includes
 

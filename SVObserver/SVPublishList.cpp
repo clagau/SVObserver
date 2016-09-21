@@ -194,14 +194,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 					// Add Outputs to the PPQ
 					SVIOEntryHostStructPtr pIOEntry;
 
-					SVObjectClass* pValueParent = pValueObject->GetInspection();
-
-					if( nullptr == pValueParent )
-					{
-						pValueParent = pValueObject->GetOwner();
-						while( nullptr != pValueParent && !SV_IS_KIND_OF( pValueParent, SVInspectionProcess ) )
-							pValueParent = pValueParent->GetOwner();
-					}
+					SVObjectClass* pValueParent = pValueObject->GetAncestor(SVInspectionObjectType);
 
 					pPPQ = m_pInspection->GetPPQ();
 					BOOL bDigital = SV_IS_KIND_OF( pValueObject, SVBoolValueObjectClass );

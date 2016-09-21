@@ -34,8 +34,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVResultListClass::SVResultListClass():
-m_ResultViewReferences(CTAG_VIEWEDRESULTS)
+SVResultListClass::SVResultListClass()
+: m_ResultViewReferences(CTAG_VIEWEDRESULTS)
 {
 }
 
@@ -91,11 +91,11 @@ void SVResultListClass::Save(SVObjectWriter& rWriter)
 	m_ResultViewReferences.Save(rWriter);
 }
 
-bool SVResultListClass::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+bool SVResultListClass::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent)
 {
 	m_ResultViewReferences.Clear();
 	SVInspectionProcess* pInspec(nullptr);
-	if(m_pToolSet)
+	if (m_pToolSet)
 	{
 		pInspec = m_pToolSet->GetInspection();
 	}
@@ -103,32 +103,27 @@ bool SVResultListClass::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBra
 	bool SevenOneCfg(false);
 	bool SevenTwoCfg(false);
 
-	SVTreeType::SVBranchHandle htiChild = nullptr;
-
+	ResultViewReferences::SVTreeType::SVBranchHandle htiChild = nullptr;
 
 	if (SVNavigateTree::GetItemBranch(rTree, CTAG_VIEWEDVARIABLES, htiParent, htiChild))
 	{
-
 		SevenTwoCfg = m_ResultViewReferences.Load( rTree, htiChild );
-		if(SevenTwoCfg == false)
+		if ( false == SevenTwoCfg )
 		{
 			///older configurations may have a ViewedEnvVariables entry! 
 			m_ResultViewReferences.Load( rTree, htiChild, CTAG_VIEWEDENVARIABLES);
 			SevenOneCfg = m_ResultViewReferences.Load( rTree, htiChild, CTAG_VIEWEDTOOLVARIABLES);
 		}
-
-		
 	}
 	
-	if(!SevenTwoCfg )
+	if ( !SevenTwoCfg )
 	{
 		m_ResultViewReferences.InsertFromPPQInputs(pInspec);
 	}
 
-
-	if(!SevenTwoCfg && !SevenOneCfg )
+	if ( !SevenTwoCfg && !SevenOneCfg )
 	{
-		///older configurations may have no  ViewedToolVariables entry!
+		///older configurations may have no ViewedToolVariables entry!
 		m_ResultViewReferences.InsertFromOutputList(pInspec);
 	}
 

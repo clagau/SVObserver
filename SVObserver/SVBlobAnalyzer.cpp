@@ -901,7 +901,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 			msvValue[i].ObjectAttributesAllowedRef() |= SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
 		}
 
-		if ( msvValue[i].ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+		if ( SV_NO_ATTRIBUTES != msvValue[i].ObjectAttributesAllowed() )
 		{
 			msvValue[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE;	// for older configs
 		}
@@ -925,20 +925,16 @@ DWORD SVBlobAnalyzerClass::EnableFeature (SVBlobFeatureEnum aIndex)
 {
 	msvValue[aIndex].ObjectAttributesAllowedRef() = msvlDefaultAttributes;
 
-	RegisterEmbeddedObject(
-		&msvValue[aIndex], 
-		*BlobFeatureConstants[aIndex].pEmbeddedID,
-		BlobFeatureConstants[aIndex].NewStringResourceID,
-		false, SVResetItemNone );
+	RegisterEmbeddedObject( &msvValue[aIndex], *BlobFeatureConstants[aIndex].pEmbeddedID, BlobFeatureConstants[aIndex].NewStringResourceID, false, SVResetItemNone );
 	
 	GetInspection()->SetDefaultInputs();
 	
 	AllocateResult (aIndex);
 
 	GetInspection()->SetDefaultInputs();
-	if ( !(aIndex == SV_CENTER_X_SOURCE || aIndex == SV_CENTER_Y_SOURCE) )
+	if ( !(SV_CENTER_X_SOURCE == aIndex || SV_CENTER_Y_SOURCE == aIndex) )
 	{
-		BuildFeatureListID ();
+		BuildFeatureListID();
 	}
 	return 0;
 }
@@ -946,7 +942,7 @@ DWORD SVBlobAnalyzerClass::EnableFeature (SVBlobFeatureEnum aIndex)
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-DWORD SVBlobAnalyzerClass::DisableFeature (SVBlobFeatureEnum aIndex)
+DWORD SVBlobAnalyzerClass::DisableFeature(SVBlobFeatureEnum aIndex)
 {
 	if ( SV_CENTER_X_SOURCE  != aIndex && SV_CENTER_Y_SOURCE != aIndex )
 	{
@@ -956,23 +952,21 @@ DWORD SVBlobAnalyzerClass::DisableFeature (SVBlobFeatureEnum aIndex)
 	RemoveEmbeddedObject (&msvValue[aIndex]);
 	GetInspection()->SetDefaultInputs();
 
-
-	BuildFeatureListID ();
+	BuildFeatureListID();
 
 	return 0;
 }
 
 BOOL SVBlobAnalyzerClass::OnValidate()
 {
-	
-	if(!SVImageAnalyzerClass::OnValidate ())
+	if (!SVImageAnalyzerClass::OnValidate ())
 	{
-			SetInvalid ();
-			return FALSE;
+		SetInvalid();
+		return false;
 	}
 
-	isObjectValid.SetValue (1, TRUE);
-	return TRUE;
+	m_isObjectValid.SetValue(1, true);
+	return true;
 }
 
 DWORD_PTR SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)

@@ -310,19 +310,6 @@ BOOL SVGetPathInformation( CString& RStrOutput, LPCTSTR TStrFileInputPath, DWORD
 BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion );
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVEscapeDoubleQuotes
-// -----------------------------------------------------------------------------
-// .Description : Places escape character before double quotes in a CString
-////////////////////////////////////////////////////////////////////////////////
-bool SVAddEscapeSpecialCharacters( CString& RString, bool bConvertCtrl );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVRemoveEscapedDoubleQuotes
-// -----------------------------------------------------------------------------
-// .Description : Removes any escape characters before double quotes in a CString
-bool SVRemoveEscapedSpecialCharacters( CString& RString, bool bConvertCtrl );
-
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConvertToHexString
 // -----------------------------------------------------------------------------
 // .Description : Convert hex binary data to a hex Dump String

@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVValueObjectReference.h"
+#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
 #pragma endregion Includes
 

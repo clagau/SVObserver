@@ -21,7 +21,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVConditional.h"
-#include "SVFileNameManagerClass.h"
+#include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
 #include "SVImageArchive.h"
 #include "SVImageViewScroll.h"

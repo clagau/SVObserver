@@ -2633,15 +2633,7 @@ HRESULT SVImageClass::RegisterAsSubObject()
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != GetTool() )
-	{
-		GetTool()->RegisterSubObject( this );
-	}
-	
-	if( nullptr != GetInspection() )
-	{
-		GetInspection()->RegisterSubObject( this );
-	}
+	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
 	return l_Status;
 }
 
@@ -2649,15 +2641,8 @@ HRESULT SVImageClass::UnregisterAsSubObject()
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != GetInspection() )
-	{
-		GetInspection()->UnregisterSubObject( this );
-	}
+	SVObjectManagerClass::Instance().UnregisterSubObject(GetUniqueObjectID());
 
-	if( nullptr != GetTool() )
-	{
-		GetTool()->UnregisterSubObject( this );
-	}
 	return l_Status;
 }
 

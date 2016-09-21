@@ -13,7 +13,7 @@
 
 #pragma region Inlcudes
 #include "SVMatroxLibrary\SVMatroxImageInterface.h"
-#include "SVAnalyzer.h"
+#include "SVImageAnalyzerClass.h"
 #pragma endregion Inlcudes
 
 class SVLuminanceAnalyzerClass : public SVImageAnalyzerClass

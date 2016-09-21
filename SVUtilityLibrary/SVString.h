@@ -69,12 +69,21 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 	SVString& TrimRight(SVString& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
 
 	//************************************
+	/// Copy a number of character from the Left of the string
+	/// \param rStringValue [in] The source string, will not be changed.
+	/// \param count [in] Count of character to copy. If count > size, it returns an empty String.
+	/// \returns SVString The copied string.
+	//************************************
+	SVString Left( const SVString& rStringValue, size_t count );
+
+	//************************************
 	/// Copy a number of character from the mid of the string
 	/// \param rStringValue [in] The source string, will not be changed.
 	/// \param count [in] Count of character to copy. If count > size, it return a copy of rStringValue.
 	/// \returns SVString The copied string.
 	//************************************
 	SVString Mid( const SVString& rStringValue, size_t count );
+
 	//************************************
 	/// Copy a number of character from the right part of the string.
 	/// \param rStringValue [in] The source string, will not be changed.

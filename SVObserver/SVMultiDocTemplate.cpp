@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVMultiDocTemplate.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

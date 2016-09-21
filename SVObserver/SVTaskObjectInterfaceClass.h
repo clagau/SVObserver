@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
 #include "SVTaskObjectValueInterface.h"
-#include "SVValueObjectReference.h"
+#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #pragma endregion Includes
 
 class SVTaskObjectClass;

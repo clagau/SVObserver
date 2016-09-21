@@ -27,13 +27,13 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVAnalyzerClass, SVAnalyzerClassGuid );
 
 SVAnalyzerClass::SVAnalyzerClass( LPCSTR ObjectName )
-				:SVTaskObjectListClass( ObjectName ) 
+: SVTaskObjectListClass( ObjectName ) 
 {
 	init();
 }
 
 SVAnalyzerClass::SVAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-				:SVTaskObjectListClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+: SVTaskObjectListClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
 {
 	init();
 }
@@ -41,8 +41,7 @@ SVAnalyzerClass::SVAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* PO
 // Initialization of newly Instantiated Object
 void SVAnalyzerClass::init()
 {
-	pAnalyzerResult			= nullptr;
-	isDirty					= false;
+	pAnalyzerResult	= nullptr;
 
 	// Indentify our type in the Output List
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
@@ -62,25 +61,18 @@ BOOL SVAnalyzerClass::CloseObject()
 
 BOOL SVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	if( SVTaskObjectClass::CreateObject( PCreateStructure ) )
 	{
 		if( GetInspection() && GetTool() )
 		{
-			isDirty	= false;
-
 			bOk = true;
 		}
 	}
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-void SVAnalyzerClass::MakeDirty()
-{
-	isDirty = true;
 }
 
 SVResultClass* SVAnalyzerClass::GetResultObject()
@@ -190,87 +182,3 @@ DWORD_PTR SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass* pChildObjec
 	
 	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
 }
-
-SV_IMPLEMENT_CLASS( SVImageAnalyzerClass, SVImageAnalyzerClassGuid );
-
-SVImageAnalyzerClass::SVImageAnalyzerClass( LPCSTR ObjectName )
-					 :SVAnalyzerClass( ObjectName ) 
-{
-	init();
-}
-
-SVImageAnalyzerClass::SVImageAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-					 :SVAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
-{
-	init();
-}
-
-void SVImageAnalyzerClass::init()
-{
-	// Set object type info...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	// Set sub type only in derived classes!
-
-	// Set Input requirement
-	inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
-	inputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputImageObjectInfo, _T( "ImageAnalyzerImage" ) );
-
-	addDefaultInputObjects();
-}
-
-SVImageAnalyzerClass::~SVImageAnalyzerClass()
-{
-}
-
-BOOL SVImageAnalyzerClass::CloseObject()
-{
-	return SVAnalyzerClass::CloseObject();
-}
-
-BOOL SVImageAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
-{
-	m_isCreated = SVAnalyzerClass::CreateObject( PCreateStructure );
-
-	return m_isCreated;
-}
-
-SVImageClass* SVImageAnalyzerClass::getInputImage()
-{
-	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().PObject )
-	{
-		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().PObject;
-	}
-	return nullptr;
-}
-
-unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
-{
-	SVImageClass *pImage(nullptr);
-	SVImageInfoClass ImageInfo; 
-	unsigned long   ulPixelDepth(0);
-	pImage = getInputImage ();
-	if (!pImage)
-	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::DataOnly );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16110);
-		MesMan.Throw();
-	}
-	else
-	{
-		ulPixelDepth = pImage->getPixelDepth();
-	}
-	return ulPixelDepth;
-}
-
-BOOL SVImageAnalyzerClass::OnValidate()
-{
-	BOOL l_bOk = true;
-
-	l_bOk = l_bOk && inputImageObjectInfo.IsConnected();
-	l_bOk = l_bOk && nullptr != inputImageObjectInfo.GetInputObjectInfo().PObject;
-	l_bOk = l_bOk && inputImageObjectInfo.GetInputObjectInfo().PObject->IsValid();
-
-  return l_bOk;
-}
-

@@ -18,7 +18,7 @@
 #include "SVInspectionProcess.h"
 #include "RangeClassHelper.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "BasicValueObject.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -90,7 +90,7 @@ void SVRangeClass::init()
 
 	m_isValidRange = true;
 
-	isObjectValid.SetDefaultValue(true, true);
+	m_isObjectValid.SetDefaultValue(true, true);
 
 	// Setup up the input
 	m_inputObjectInfo.SetObject( GetObjectInfo() );

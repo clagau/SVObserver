@@ -25,10 +25,10 @@
 #include "SVInfoStructs.h"
 #include "SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVVirtualCamera.h"
 #include "TriggerHandling/SVCameraTriggerData.h"
-#include "BasicValueObjects.h"
+#include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVMonitorList.h"
 #pragma endregion Includes
 

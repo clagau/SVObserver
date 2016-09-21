@@ -42,7 +42,7 @@ namespace Seidenader
 			virtual BOOL SetPoints( const SvCl::SVObjectByteArrayClass& RByteVec );
 			virtual BOOL SetPoints( const SvCl::SVObjectLongArrayClass& RLongVec );
 			virtual BOOL SetPoints( const SvCl::SVObjectDoubleArrayClass& RDoubleVec );
-			virtual BOOL SetPoints( const SvCl::SVObjectCPointArrayClass& RPointVec );
+			virtual BOOL SetPoints( const SvCl::SVObjectPointArrayClass& RPointVec );
 
 			BOOL SetMousePointProcFunc( SVProcMousePointFunc PFunc, LPVOID PUserData );	
 			void SetNormalizeMode( SVNormalizeModeEnum NormalizeMode );
@@ -67,7 +67,7 @@ namespace Seidenader
 
 		protected:
 
-			SvCl::SVObjectCPointArrayClass pointVec;
+			SvCl::SVObjectPointArrayClass pointVec;
 			SVProcMousePointFunc pProcFunc;
 			LPVOID pUserData;
 

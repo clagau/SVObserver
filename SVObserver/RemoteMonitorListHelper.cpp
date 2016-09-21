@@ -8,10 +8,12 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   16 Dec 2014 10:01:22  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVValueObjectReference.h"
+#include "SVValueObjectLibrary/SVValueObjectReference.h"
+#pragma endregion Includes
 
 SVString RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject)
 {

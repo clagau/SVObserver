@@ -12,9 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVBoolValueObjectClass.h"
-#include "SVDoubleValueObjectClass.h"
-#include "SVEnumerateValueObjectClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #include "SVImageClass.h"
 #include "SVTool.h"
 #pragma endregion Includes

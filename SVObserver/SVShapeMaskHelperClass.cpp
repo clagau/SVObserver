@@ -15,6 +15,7 @@
 #include "SVUserMaskOperatorClass.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVUtilityLibrary/SetBits.h"
 
 SV_IMPLEMENT_CLASS( SVShapeMaskHelperClass, SVShapeMaskHelperClassGuid )
 
@@ -156,32 +157,32 @@ HRESULT SVShapeMaskHelperClass::ResetObject()
 		const bool bIsDoughnut = eShapeType == SVMaskShapeTypeDoughnut;
 		const bool bIsTrapezoid = eShapeType == SVMaskShapeTypeSymmetricTrapezoid;
 
-		SetBits( m_Data.bvoAutoResize.ObjectAttributesSetRef().operator volatile UINT&(),         dwAttributes, bIsShape );
-		SetBits( m_Data.evoShapeType.ObjectAttributesSetRef().operator volatile UINT&(),          dwAttributes, bIsShape );
-		SetBits( m_Data.evoMaskArea.ObjectAttributesSetRef().operator volatile UINT&(),           dwAttributes, bIsShape );
-		SetBits( m_Data.lvoCenterX.ObjectAttributesSetRef().operator volatile UINT&(),            dwAttributes, bIsShape );
-		SetBits( m_Data.lvoCenterY.ObjectAttributesSetRef().operator volatile UINT&(),            dwAttributes, bIsShape );
-		SetBits( m_Data.lvoWidth.ObjectAttributesSetRef().operator volatile UINT&(),              dwAttributes, bIsShape );
-		SetBits( m_Data.lvoHeight.ObjectAttributesSetRef().operator volatile UINT&(),             dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.bvoAutoResize.ObjectAttributesSetRef().operator volatile UINT&(),         dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.evoShapeType.ObjectAttributesSetRef().operator volatile UINT&(),          dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.evoMaskArea.ObjectAttributesSetRef().operator volatile UINT&(),           dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.lvoCenterX.ObjectAttributesSetRef().operator volatile UINT&(),            dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.lvoCenterY.ObjectAttributesSetRef().operator volatile UINT&(),            dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.lvoWidth.ObjectAttributesSetRef().operator volatile UINT&(),              dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.lvoHeight.ObjectAttributesSetRef().operator volatile UINT&(),             dwAttributes, bIsShape );
 
-		SetBits( m_Data.lvoSideThickness.ObjectAttributesSetRef().operator volatile UINT&(),      dwAttributes, bIsShape && bIsDoughnut );
-		SetBits( m_Data.lvoTopBottomThickness.ObjectAttributesSetRef().operator volatile UINT&(), dwAttributes, bIsShape && bIsDoughnut );
-		SetBits( m_Data.lvoOffset.ObjectAttributesSetRef().operator volatile UINT&(),             dwAttributes, bIsShape && bIsTrapezoid );
-		SetBits( m_Data.evoXYSymmetry.ObjectAttributesSetRef().operator volatile UINT&(),         dwAttributes, bIsShape && bIsTrapezoid );
+		SvUl::SetBits( m_Data.lvoSideThickness.ObjectAttributesSetRef().operator volatile UINT&(),      dwAttributes, bIsShape && bIsDoughnut );
+		SvUl::SetBits( m_Data.lvoTopBottomThickness.ObjectAttributesSetRef().operator volatile UINT&(), dwAttributes, bIsShape && bIsDoughnut );
+		SvUl::SetBits( m_Data.lvoOffset.ObjectAttributesSetRef().operator volatile UINT&(),             dwAttributes, bIsShape && bIsTrapezoid );
+		SvUl::SetBits( m_Data.evoXYSymmetry.ObjectAttributesSetRef().operator volatile UINT&(),         dwAttributes, bIsShape && bIsTrapezoid );
 
 		// ARGH!
-		SetBits( m_Data.bvoAutoResize.ObjectAttributesAllowedRef(),         dwAttributes, bIsShape );
-		SetBits( m_Data.evoShapeType.ObjectAttributesAllowedRef(),          dwAttributes, bIsShape );
-		SetBits( m_Data.evoMaskArea.ObjectAttributesAllowedRef(),           dwAttributes, bIsShape );
-		SetBits( m_Data.lvoCenterX.ObjectAttributesAllowedRef(),            dwAttributes, bIsShape );
-		SetBits( m_Data.lvoCenterY.ObjectAttributesAllowedRef(),            dwAttributes, bIsShape );
-		SetBits( m_Data.lvoWidth.ObjectAttributesAllowedRef(),              dwAttributes, bIsShape );
-		SetBits( m_Data.lvoHeight.ObjectAttributesAllowedRef(),             dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.bvoAutoResize.ObjectAttributesAllowedRef(),         dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.evoShapeType.ObjectAttributesAllowedRef(),          dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.evoMaskArea.ObjectAttributesAllowedRef(),           dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.lvoCenterX.ObjectAttributesAllowedRef(),            dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.lvoCenterY.ObjectAttributesAllowedRef(),            dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.lvoWidth.ObjectAttributesAllowedRef(),              dwAttributes, bIsShape );
+		SvUl::SetBits( m_Data.lvoHeight.ObjectAttributesAllowedRef(),             dwAttributes, bIsShape );
 
-		SetBits( m_Data.lvoSideThickness.ObjectAttributesAllowedRef(),      dwAttributes, bIsShape && bIsDoughnut );
-		SetBits( m_Data.lvoTopBottomThickness.ObjectAttributesAllowedRef(), dwAttributes, bIsShape && bIsDoughnut );
-		SetBits( m_Data.lvoOffset.ObjectAttributesAllowedRef(),             dwAttributes, bIsShape && bIsTrapezoid );
-		SetBits( m_Data.evoXYSymmetry.ObjectAttributesAllowedRef(),         dwAttributes, bIsShape && bIsTrapezoid );
+		SvUl::SetBits( m_Data.lvoSideThickness.ObjectAttributesAllowedRef(),      dwAttributes, bIsShape && bIsDoughnut );
+		SvUl::SetBits( m_Data.lvoTopBottomThickness.ObjectAttributesAllowedRef(), dwAttributes, bIsShape && bIsDoughnut );
+		SvUl::SetBits( m_Data.lvoOffset.ObjectAttributesAllowedRef(),             dwAttributes, bIsShape && bIsTrapezoid );
+		SvUl::SetBits( m_Data.evoXYSymmetry.ObjectAttributesAllowedRef(),         dwAttributes, bIsShape && bIsTrapezoid );
 	}	
 
 	SVTaskObjectClass::ResetObject();	// ignore return value.

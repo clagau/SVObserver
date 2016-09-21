@@ -19,7 +19,7 @@
 #include "SVImageProcessingClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
-#include "SVValueObjectReference.h"
+#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #pragma endregion Includes
 
 #pragma region Declarations

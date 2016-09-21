@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   01 Oct 2013 11:54:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
 #include "SoftwareTriggerDlg.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#pragma endregion Includes
 
 #define COLOR_WARN RGB(255,240,64)
 

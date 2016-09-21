@@ -196,21 +196,21 @@ void TableAnalyzerTool::LocalInitialize ()
 	analyzerClassInfo.ObjectTypeInfo.SubType = TableAnalyzerSortType;
 	analyzerClassInfo.ClassId = TableAnaylzerSortGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_TABLEANALYZER_SORT );
-	availableChildren.Add( analyzerClassInfo );
+	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the Exclude Analyzer
 	analyzerClassInfo.ObjectTypeInfo.ObjectType = TableAnalyzerType;
 	analyzerClassInfo.ObjectTypeInfo.SubType = TableAnalyzerExcludeType;
 	analyzerClassInfo.ClassId = TableAnaylzerExcludeGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_TABLEANALYZER_EXCLUDE );
-	availableChildren.Add( analyzerClassInfo );
+	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the Limit Analyzer
 	analyzerClassInfo.ObjectTypeInfo.ObjectType = TableAnalyzerType;
 	analyzerClassInfo.ObjectTypeInfo.SubType = TableAnalyzerLimitType;
 	analyzerClassInfo.ClassId = TableAnaylzerLimitGuid;
 	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_TABLEANALYZER_LIMIT );
-	availableChildren.Add( analyzerClassInfo );
+	m_availableChildren.Add( analyzerClassInfo );
 
 	// Setup the result
 	SVClassInfoStruct resultClassInfo;

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:46:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVHistogramAnalyzer.h"
@@ -19,7 +20,7 @@
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVSquare, CStatic)
 

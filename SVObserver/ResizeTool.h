@@ -13,7 +13,6 @@
 #include "SVTool.h"  // SVToolClass
 #pragma endregion
 
-
 class ResizeTool :	public SVToolClass,	public AllowResizeToParent
 {
 	SV_DECLARE_CLASS (ResizeTool);

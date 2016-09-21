@@ -188,6 +188,9 @@ public:
 	//! \returns S_OK on success
 	HRESULT disconnectDependency( const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type );
 
+	HRESULT RegisterSubObject( const SVGUID& rSubObjectID );
+	HRESULT UnregisterSubObject( const SVGUID& rSubObjectID );
+
 protected:
 	typedef std::map< SVString, SVGUID > SVSubjectDataNameSubjectIDMap;
 

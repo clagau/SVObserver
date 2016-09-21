@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVThresholdClass.h"
-#include "SVGlobal.h"
+#include "SVGlobal.h" // for SV_DEFAULT_TOOL...
 #include "SVUpperThresholdEquation.h"
 #include "SVLowerThresholdEquation.h"
 #include "SVAutoThresholdEquation.h"
@@ -21,7 +21,6 @@
 #include "SVImageProcessingClass.h"
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #define SV_OC_ERROR 0xc0000000   //SV Operator Class Error.

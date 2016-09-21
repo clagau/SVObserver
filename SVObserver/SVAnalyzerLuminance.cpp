@@ -22,7 +22,6 @@
 #include "SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVStatusLibrary/MessageManagerResource.h"
 
 #pragma endregion Includes
@@ -30,15 +29,15 @@
 SV_IMPLEMENT_CLASS( SVLuminanceAnalyzerClass, SVLuminanceAnalyzerClassGuid );
 
 SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( LPCSTR ObjectName )
-	: SVImageAnalyzerClass( ObjectName )
-	, msvlHistValueArraySize( 0 )
+: SVImageAnalyzerClass( ObjectName )
+, msvlHistValueArraySize( 0 )
 {
 	init();
 }
 
 SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-	: SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
-	, msvlHistValueArraySize( 0 )
+: SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+, msvlHistValueArraySize( 0 )
 {
 	init();
 }
@@ -121,36 +120,32 @@ void SVLuminanceAnalyzerClass::init()
 
 BOOL SVLuminanceAnalyzerClass::OnValidate ()
 {
-
-
-	BOOL Valid(TRUE);
+	bool Valid(true);
 	if (!SVImageAnalyzerClass::OnValidate ())
 	{
 		//Error code set inside SVImageAnalyzerClass::OnValidate ()
-		Valid = FALSE;
+		Valid = false;
 	}
 	else if (msvHistResultID.empty())
 	{
 		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16094);
-		Valid = FALSE;	
+		Valid = false;	
 	}
-	else if (msvplHistValues.size() == 0)
+	else if (0 == msvplHistValues.size())
 	{
 		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16095);
-		Valid = FALSE;	
+		Valid = false;	
 	}
 
-
-	if(Valid == false)
-	{
-		SetInvalid ();
-		return FALSE;
-	}
-	isObjectValid.SetValue (1, TRUE);
-	return TRUE;
-
+	if (false == Valid)
+   {
+       SetInvalid();
+       return false;
+   }
+   m_isObjectValid.SetValue (1, true);
+   return true;
 }
 
 SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()
@@ -160,14 +155,14 @@ SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()
 
 BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	SVImageClass *pSVImage(nullptr);
-	BOOL bError(FALSE);
+	SVImageClass* pSVImage(nullptr);
+	bool bError(false);
 
 	if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
 	{
 		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16095);
-		bError = TRUE;
+		bError = true;
 	}
 	else
 	{
@@ -176,11 +171,11 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		{
 			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16096);
-			bError = TRUE;
+			bError = true;
 		}
 	}
 
-	if(!bError)
+	if (!bError)
 	{
 		msvlHistValueArraySize = 1 << (pSVImage->getPixelDepth() & SVBufferSize);
 		msvplHistValues.resize( msvlHistValueArraySize );
@@ -188,11 +183,11 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		{
 			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16097);
-			bError = TRUE;
+			bError = true;
 		}
 	}
 
-	if(!bError)
+	if (!bError)
 	{
 		for( int i = 0; i < msvlHistValueArraySize; i++ )
 		{
@@ -211,11 +206,11 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		{
 			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16098);
-			bError = TRUE;
+			bError = true;
 		}
 	}
 
-	if(bError )
+	if (bError )
 	{
 		m_isCreated = false;
 	}

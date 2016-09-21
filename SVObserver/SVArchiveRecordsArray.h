@@ -6,10 +6,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStringValueObjectClass.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "ArchiveMethodEnum.h"
 #pragma endregion Includes
-
 
 class SVArchiveTool;
 class SVArchiveRecord;

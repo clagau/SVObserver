@@ -155,6 +155,7 @@
     <ClInclude Include="SVInspectionLevelCreateStruct.h" />
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
+    <ClInclude Include="SVObjectAttributeClassHelper.h" />
     <ClInclude Include="SVObjectBuilder.h" />
     <ClInclude Include="SVObjectClass.h" />
     <ClInclude Include="SVObjectCommandWrapperTemplate.h" />

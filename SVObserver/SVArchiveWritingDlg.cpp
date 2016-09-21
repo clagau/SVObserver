@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVArchiveWritingDlg.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

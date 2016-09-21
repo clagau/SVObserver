@@ -18,7 +18,6 @@
 #include "SVToolSet.h"
 #include "SVTool.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE

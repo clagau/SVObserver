@@ -60,7 +60,6 @@ public:
 	void RebuildReferenceVector(SVInspectionProcess* pInspection = nullptr);
 	
 	void Clear();
-
 	
 	//************************************
 	// Description:  Build SVResultDefinitionDeque from the reference vector.  (Defines the list of viewed variables.)
@@ -68,7 +67,7 @@ public:
 	// Returns:  S_OK if no error occurs   
 	//************************************
 	HRESULT GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions ) const; 
-	
+
 	bool LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent);
 	
 	const SVObjectReferenceVector& GetSelectedObjects() const;

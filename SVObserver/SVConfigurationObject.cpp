@@ -27,6 +27,7 @@
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary/StringMunge.h"
+#include "SVOMFCLibrary/StringEscape.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"
@@ -3599,7 +3600,7 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 
 		CString Description( (*Iter)->getDescription() );
 		//This is needed to remove any CR LF in the description
-		::SVAddEscapeSpecialCharacters( Description, true );
+		SvOml::AddEscapeSpecialCharacters( Description, true );
 		Value.SetString( Description );
 		rWriter.WriteAttribute( CTAG_DESCRIPTION, Value );
 		Value.Clear();
@@ -5345,7 +5346,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 				{
 					Description = Value.bstrVal;
 					//This is needed to insert any CR LF in the description which were replaced while saving
-					::SVRemoveEscapedSpecialCharacters( Description, true );
+					SvOml::RemoveEscapedSpecialCharacters( Description, true );
 				}
 				else
 				{

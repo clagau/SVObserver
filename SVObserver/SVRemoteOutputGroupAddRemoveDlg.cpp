@@ -15,7 +15,6 @@
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 // SVRemoteOutputGroupAddRemoveDlg dialog

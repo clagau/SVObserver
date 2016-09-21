@@ -12,12 +12,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
 
 class SVEnumerateComboClass : public CComboBox
 {
-
 public:
 	SVEnumerateComboClass();
 	virtual ~SVEnumerateComboClass();

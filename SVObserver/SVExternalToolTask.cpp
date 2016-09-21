@@ -19,6 +19,7 @@
 #include "SVOMFCLibrary\SVOINIClass.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
+#include "SVUtilityLibrary/SetBits.h"
 #include "SVExternalTool.h"
 #include "SVGlobal.h"
 #include "SVInspectionProcess.h"
@@ -26,7 +27,7 @@
 #include "SVTaskObject.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
-#include "BasicValueObject.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 
@@ -239,47 +240,46 @@ void SVExternalToolTask::SetAllAttributes()
 	for ( i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
 		bool bUsed = i < m_Data.m_lNumInputValues;
-		SetBits( m_Data.m_aInputObjects[i].ObjectAttributesAllowedRef(),  SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SETABLE_ONLINE, bUsed );
-		SetBits( m_Data.m_aInputObjectNames[i].ObjectAttributesAllowedRef(),  SV_VIEWABLE , false );
-		SetBits( m_Data.m_aInputObjectNames[i].ObjectAttributesAllowedRef(),  SV_PRINTABLE, bUsed );
-		SetBits( m_Data.m_aInputObjects[i].ObjectAttributesAllowedRef(), SV_SELECTABLE_FOR_EQUATION , bUsed );
+		SvUl::SetBits( m_Data.m_aInputObjects[i].ObjectAttributesAllowedRef(),  SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SETABLE_ONLINE, bUsed );
+		SvUl::SetBits( m_Data.m_aInputObjectNames[i].ObjectAttributesAllowedRef(),  SV_VIEWABLE , false );
+		SvUl::SetBits( m_Data.m_aInputObjectNames[i].ObjectAttributesAllowedRef(),  SV_PRINTABLE, bUsed );
+		SvUl::SetBits( m_Data.m_aInputObjects[i].ObjectAttributesAllowedRef(), SV_SELECTABLE_FOR_EQUATION , bUsed );
 	}
 
 	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 	{
-		SetBits( m_aResultImages[i].ObjectAttributesAllowedRef(), SV_HIDDEN, i >= m_Data.m_lNumResultImages );
-		SetBits( m_aResultImages[i].ObjectAttributesAllowedRef(), SV_ARCHIVABLE_IMAGE, i < m_Data.m_lNumResultImages );
+		SvUl::SetBits( m_aResultImages[i].ObjectAttributesAllowedRef(), SV_HIDDEN, i >= m_Data.m_lNumResultImages );
+		SvUl::SetBits( m_aResultImages[i].ObjectAttributesAllowedRef(), SV_ARCHIVABLE_IMAGE, i < m_Data.m_lNumResultImages );
 	}
 
 	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
 		bool bUsed = i < m_Data.m_lNumResultValues;
-		SetBits( m_Data.m_aResultObjects[i].ObjectAttributesAllowedRef(),  SV_VIEWABLE, bUsed );
-		SetBits( m_Data.m_aResultObjects[i].ObjectAttributesAllowedRef(),  SV_PRINTABLE, false );
-		SetBits( m_Data.m_aResultObjectNames[i].ObjectAttributesAllowedRef(),  SV_VIEWABLE | SV_PRINTABLE, false );
-		SetBits( m_Data.m_aResultObjects[i].ObjectAttributesAllowedRef(),  SV_SELECTABLE_FOR_EQUATION, bUsed );
+		SvUl::SetBits( m_Data.m_aResultObjects[i].ObjectAttributesAllowedRef(),  SV_VIEWABLE, bUsed );
+		SvUl::SetBits( m_Data.m_aResultObjects[i].ObjectAttributesAllowedRef(),  SV_PRINTABLE, false );
+		SvUl::SetBits( m_Data.m_aResultObjectNames[i].ObjectAttributesAllowedRef(),  SV_VIEWABLE | SV_PRINTABLE, false );
+		SvUl::SetBits( m_Data.m_aResultObjects[i].ObjectAttributesAllowedRef(),  SV_SELECTABLE_FOR_EQUATION, bUsed );
 	}
 
 	for ( i=0; i < static_cast<long>(m_Data.m_aDllDependencies.size()); i++)
 	{
-		SetBits( m_Data.m_aDllDependencies[i].ObjectAttributesAllowedRef(),  SV_REMOTELY_SETABLE, true );
-		SetBits( m_Data.m_aDllDependencies[i].ObjectAttributesAllowedRef(),  SV_VIEWABLE, false );
+		SvUl::SetBits( m_Data.m_aDllDependencies[i].ObjectAttributesAllowedRef(),  SV_REMOTELY_SETABLE, true );
+		SvUl::SetBits( m_Data.m_aDllDependencies[i].ObjectAttributesAllowedRef(),  SV_VIEWABLE, false );
 		CString sTemp;
 		m_Data.m_aDllDependencies[i].GetValue( sTemp );
 		bool bUsed = !sTemp.IsEmpty();
-		SetBits( m_Data.m_aDllDependencies[i].ObjectAttributesAllowedRef(),  SV_PRINTABLE, bUsed );
+		SvUl::SetBits( m_Data.m_aDllDependencies[i].ObjectAttributesAllowedRef(),  SV_PRINTABLE, bUsed );
 	}
-	SetBits( m_Data.m_voToolVersion.ObjectAttributesAllowedRef(), SV_PRINTABLE, true );
-	SetBits( m_Data.m_voToolName.ObjectAttributesAllowedRef(), SV_PRINTABLE, true );
-	SetBits( m_Data.m_voDllPath.ObjectAttributesAllowedRef(), SV_PRINTABLE | SV_REMOTELY_SETABLE, true );
-
+	SvUl::SetBits( m_Data.m_voToolVersion.ObjectAttributesAllowedRef(), SV_PRINTABLE, true );
+	SvUl::SetBits( m_Data.m_voToolName.ObjectAttributesAllowedRef(), SV_PRINTABLE, true );
+	SvUl::SetBits( m_Data.m_voDllPath.ObjectAttributesAllowedRef(), SV_PRINTABLE | SV_REMOTELY_SETABLE, true );
 }
 
 SVExternalToolTask::~SVExternalToolTask()
 {
 	CloseObject();
 	// remove embeddeds so that invalid objects won't be Close()d
-	embeddedList.RemoveAll();
+	m_embeddedList.RemoveAll();
 }
 
 DWORD_PTR SVExternalToolTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )

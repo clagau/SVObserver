@@ -18,7 +18,7 @@
 
 #include "SVObjectCommandDataJson.h"
 #include "SVTool.h"
-#include "SVVariantValueObjectClass.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
 class SVRemoteInputTool : 

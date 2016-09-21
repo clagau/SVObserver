@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVAnalyzer.h"
+#include "SVImageAnalyzerClass.h"
 #pragma endregion Includes
 
 class SVOCVAnalyzerClass : public SVImageAnalyzerClass

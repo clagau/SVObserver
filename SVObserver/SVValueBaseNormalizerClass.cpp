@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:58:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVValueBaseNormalizerClass.h"
-
-// ***** Public Operators *****
+#pragma endregion Includes
 
 SVValueBaseNormalizerClass::SVValueBaseNormalizerClass()
 {

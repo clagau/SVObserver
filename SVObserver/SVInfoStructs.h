@@ -26,11 +26,13 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVIOEntryHostStruct.h"
-#include "SVValueObjectReference.h"
+#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVRunControlLibrary/ProductWorkloadInformation.h" 
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
 #pragma endregion Includes
+
+class SVToolClass;
 
 enum SVProductInspectedState
 {

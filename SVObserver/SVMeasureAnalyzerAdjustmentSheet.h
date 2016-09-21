@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include "SVValueBaseNormalizerClass.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVTaskObjectInterfaceClass.h"
 #pragma endregion Includes
 

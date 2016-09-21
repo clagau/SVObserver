@@ -1742,6 +1742,54 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 	return l_Status;
 }
 
+HRESULT SVObjectManagerClass::RegisterSubObject( const SVGUID& rSubObjectID )
+{
+	HRESULT hr = S_FALSE;
+
+	// get Tool and InspectionProcess
+	SVObjectClass* pObject = GetObject(rSubObjectID);
+	if (pObject)
+	{
+		SVObjectClass* pTool = pObject->GetAncestor(SVToolObjectType);
+		if (pTool)
+		{
+			pTool->RegisterSubObject(pObject);
+			hr = S_OK;
+		}
+		SVObjectClass* pInspection = pObject->GetAncestor(SVInspectionObjectType);
+		if (pInspection)
+		{
+			pInspection->RegisterSubObject(pObject);
+			hr = S_OK;
+		}
+	}
+	return hr;
+}
+
+HRESULT SVObjectManagerClass::UnregisterSubObject( const SVGUID& rSubObjectID )
+{
+	HRESULT hr = S_FALSE;
+
+	// get Tool and InspectionProcess
+	SVObjectClass* pObject = GetObject(rSubObjectID);
+	if (pObject)
+	{
+		SVObjectClass* pTool = pObject->GetAncestor(SVToolObjectType);
+		if (pTool)
+		{
+			pTool->UnregisterSubObject(pObject);
+			hr = S_OK;
+		}
+		SVObjectClass* pInspection = pObject->GetAncestor(SVInspectionObjectType);
+		if (pInspection)
+		{
+			pInspection->UnregisterSubObject(pObject);
+			hr = S_OK;
+		}
+	}
+	return hr;
+}
+
 #pragma region IObjectManager-function
 SvOi::IObjectClass* SvOi::getObjectByDottedName( const SVString& rFullName )
 {

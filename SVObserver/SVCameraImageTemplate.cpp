@@ -19,6 +19,7 @@
 #include "SVInspectionProcess.h"
 #include "SVVirtualCamera.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
+#include "SVUtilityLibrary/SetBits.h"
 
 SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 : SVImageClass( ObjectName )
@@ -30,7 +31,7 @@ SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
+	SvUl::SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
 }
 
 SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringResourceID )
@@ -43,7 +44,7 @@ SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringR
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
+	SvUl::SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
 }
 
 SVCameraImageTemplate::~SVCameraImageTemplate()
@@ -94,8 +95,8 @@ BOOL SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
-	SetBits( ObjectAttributesAllowedRef(), SV_DD_IMAGE, true );
+	SvUl::SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
+	SvUl::SetBits( ObjectAttributesAllowedRef(), SV_DD_IMAGE, true );
 	
 	m_isCreated = l_bOk;
 	

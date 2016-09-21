@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVInputObjectList.h"
 #include "SVInfoStructs.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVDigitalInputObject.h"
 #include "SVRemoteInputObject.h"
 #include "SVCameraDataInputObject.h"

@@ -838,12 +838,12 @@ BOOL SVPatternAnalyzerClass::OnValidate()
 	{
 		if ( IsValidSize() && !m_patModelHandle.empty() && !m_patResultHandle.empty() )
 		{
-			isObjectValid.SetValue(1, TRUE);
-			return TRUE;
+			m_isObjectValid.SetValue(1, true);
+			return true;
 		}
 	}
 	SetInvalid();
-	return FALSE;
+	return false;
 }
 
 BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
@@ -851,11 +851,8 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 	DWORD LastError(0);
 	try
 	{
-		SVImageClass	*pSVImage;
-		SVMatroxBuffer	ImageBufId;
-		
-		
-		
+		SVImageClass* pSVImage;
+		SVMatroxBuffer ImageBufId;
 		SVMatroxPatternInterface::SVStatusCode l_Code;
 
 		while(1)

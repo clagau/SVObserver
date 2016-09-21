@@ -17,7 +17,7 @@
 #include "SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
 
 //////////////////////////////////////////////////////////////////////

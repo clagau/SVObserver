@@ -13,9 +13,8 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVFillBlobDlg.h"
-
 #include "SVTaskObject.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVTool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -24,8 +23,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVFillBlobDlg::SVFillBlobDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVFillBlobDlg::IDD, pParent)
+SVFillBlobDlg::SVFillBlobDlg(SVToolClass* pTool, CWnd* pParent /*=nullptr*/)
+: CDialog(SVFillBlobDlg::IDD, pParent)
+, m_pTool(pTool)
 {
 	//{{AFX_DATA_INIT(SVFillBlobDlg)
 		// NOTE: the ClassWizard will add member initialization here
@@ -78,13 +78,12 @@ HRESULT SVFillBlobDlg::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( m_pvoBlobType->GetTool() );
+			l_hrOk = RunOnce( m_pTool );
 		}
 	}
 
 	return l_hrOk;
 }
-
 
 void SVFillBlobDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -110,7 +109,7 @@ BOOL SVFillBlobDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SetTaskObject( dynamic_cast<SVTaskObjectClass *>( m_pvoBlobType->GetOwner() ) );
+	SetTaskObject( dynamic_cast<SVTaskObjectClass *>( m_pTool ) );
 
 	FillCombos();
 	// TODO: Add extra initialization here
@@ -120,7 +119,6 @@ BOOL SVFillBlobDlg::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 void SVFillBlobDlg::FillCombos()
 {
@@ -134,8 +132,6 @@ void SVFillBlobDlg::FillCombos()
 	m_pvoBlobType->GetValue(l_sCurrentType);
 	m_ctlBlobType.SelectString(-1,l_sCurrentType);
 
-
-
 	CString l_sCurrentColor;
 	m_pvoBlobFillColor->GetEnumTypes(l_sBlobColorStr);
 	m_ctlBlobColor.SetEnumTypes(l_sBlobColorStr);
@@ -143,9 +139,7 @@ void SVFillBlobDlg::FillCombos()
 	m_ctlBlobColor.SelectString(-1,l_sCurrentColor);
 
 	UpdateData( FALSE );
-	
 }
-
 
 void SVFillBlobDlg::OnSelchangeComboBlobColor() 
 {

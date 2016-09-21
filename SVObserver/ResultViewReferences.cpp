@@ -15,11 +15,11 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "BasicValueObject.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
+#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "ResultViewReferences.h"
 #include "SVIPResultData.h"
 #include "SVIPResultItemDefinition.h"
-#include "SVValueObjectReference.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes

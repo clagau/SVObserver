@@ -15,7 +15,6 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMainImageClass.h"
 #include "SVResultList.h"
-#include "SVObserver.h"
 #include "SVTaskObjectList.h"
 #pragma region Includes
 

@@ -55,18 +55,18 @@ SVFileNameClass::SVFileNameClass(const SVFileNameClass& orig)
 const SVFileNameClass& SVFileNameClass::operator=(const SVFileNameClass& rhs)
 {
 	SetFileType( rhs.m_FileType );
-	SetPathName( rhs.m_PathName );
-	SetFileNameOnly( rhs.m_FileNameOnly );
-	SetExtension( rhs.m_Extension );
-	SetFileSelectDialogTitle( rhs.m_FileSelectDialogTitle );
-	SetFileSaveDialogTitle( rhs.m_FileSaveDialogTitle );
-	SetDefaultPathName( rhs.m_DefaultPathName );
-	SetDefaultFileName( rhs.m_DefaultFileName );
-	SetDefaultFileExtension( rhs.m_DefaultFileExtension );
+	SetPathName( rhs.m_PathName.c_str() );
+	SetFileNameOnly( rhs.m_FileNameOnly.c_str() );
+	SetExtension( rhs.m_Extension.c_str() );
+	SetFileSelectDialogTitle( rhs.m_FileSelectDialogTitle.c_str() );
+	SetFileSaveDialogTitle( rhs.m_FileSaveDialogTitle.c_str() );
+	SetDefaultPathName( rhs.m_DefaultPathName.c_str() );
+	SetDefaultFileName( rhs.m_DefaultFileName.c_str() );
+	SetDefaultFileExtension( rhs.m_DefaultFileExtension.c_str() );
 	SetFileSelectFlags( rhs.m_FileSelectFlags );
 	SetFileSaveFlags( rhs.m_FileSaveFlags );
-	SetFileExtensionFilterList( rhs.m_FileExtensionFilterList );
-	setExcludeCharacters( rhs.m_ExcludeChar );
+	SetFileExtensionFilterList( rhs.m_FileExtensionFilterList.c_str() );
+	setExcludeCharacters( rhs.m_ExcludeChar.c_str() );
 
 	return *this;
 }
@@ -78,63 +78,63 @@ DWORD SVFileNameClass::GetFileType() const
 
 LPCTSTR SVFileNameClass::GetPathName() const
 {
-	return m_PathName;
+	return m_PathName.c_str();
 }
 
-LPCTSTR SVFileNameClass::GetFileName()
+LPCTSTR SVFileNameClass::GetFileName() const
 {
 	m_FileName = m_FileNameOnly + m_Extension;
 
-	return m_FileName;
+	return m_FileName.c_str();
 }
 
 LPCTSTR SVFileNameClass::GetFileNameOnly() const
 {
-	return m_FileNameOnly;
+	return m_FileNameOnly.c_str();
 }
 
 LPCTSTR SVFileNameClass::GetExtension() const
 {
-	return m_Extension;
+	return m_Extension.c_str();
 }
 
-LPCTSTR SVFileNameClass::GetFullFileName()
+LPCTSTR SVFileNameClass::GetFullFileName() const
 {
-	m_FullFileName.Empty();
+	m_FullFileName.clear();
 	
 	m_FullFileName = GetFileName();
 
-	if ( !m_PathName.IsEmpty() )
+	if ( !m_PathName.empty() )
 	{
 		m_FullFileName = m_PathName + "\\" + m_FullFileName;
 	}
 
-	return m_FullFileName;
+	return m_FullFileName.c_str();
 }
 
 LPCTSTR SVFileNameClass::GetFileSelectDialogTitle() const
 {
-	return m_FileSelectDialogTitle;
+	return m_FileSelectDialogTitle.c_str();
 }
 
 LPCTSTR SVFileNameClass::GetFileSaveDialogTitle() const
 {
-	return m_FileSaveDialogTitle;
+	return m_FileSaveDialogTitle.c_str();
 }
 
 LPCTSTR SVFileNameClass::GetDefaultPathName() const
 {
-	return m_DefaultPathName;
+	return m_DefaultPathName.c_str();
 }
 
 LPCTSTR SVFileNameClass::GetDefaultFileName() const
 {
-	return m_DefaultFileName;
+	return m_DefaultFileName.c_str();
 }
 
 LPCTSTR SVFileNameClass::GetDefaultFileExtension() const
 {
-	return m_DefaultFileExtension;
+	return m_DefaultFileExtension.c_str();
 }
 
 DWORD SVFileNameClass::GetFileSelectFlags() const
@@ -149,12 +149,12 @@ DWORD SVFileNameClass::GetFileSaveFlags() const
 
 LPCTSTR SVFileNameClass::GetFileExtensionFilterList() const
 {
-	return m_FileExtensionFilterList;
+	return m_FileExtensionFilterList.c_str();
 }
 
 BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
 	m_FileType = dwFileType;
 
@@ -164,14 +164,14 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 		{
 			SetFileSelectDialogTitle( _T("Select File") );
 			SetFileSaveDialogTitle( _T("Save File") );
-			SetDefaultFileExtension( nullptr );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileExtension( _T("") );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("All Files (*.*)|*.*||") );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_CAMERA_FILE_TYPE:
@@ -179,7 +179,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select Camera File") );
 			SetFileSaveDialogTitle( _T("Save Camera File") );
 			SetDefaultFileExtension( _T(".cca") );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( _T("C:\\CAM") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
@@ -193,13 +193,13 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select Image File") );
 			SetFileSaveDialogTitle( _T("Save Image File") );
 			SetDefaultFileExtension( ".bmp" );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( _T("C:\\IMAGES") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("Bitmap File Format (*.bmp)|*.bmp|MIL Image Format File (*.mim)|*.mim|TIFF Image Format (*.tif)|*.tif||") );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_PATTERN_MODEL_FILE_TYPE:
@@ -207,13 +207,13 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select Model File") );
 			SetFileSaveDialogTitle( _T("Save Model File") );
 			SetDefaultFileExtension( _T(".bmp") );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( "Bitmap File Format (*.bmp)|*.bmp|MIL Image Format File (*.mim)|*.mim|TIFF Image Format (*.tif)|*.tif||" );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_MASK_FILE_TYPE:
@@ -221,13 +221,13 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select SVObserver Mask File") );
 			SetFileSaveDialogTitle( _T("Save SVObserver Mask File") );
 			SetDefaultFileExtension( _T(".svm") );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("SVObserver Mask Files (*.svm)|*.svm||") );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
  		case SV_BAR_CODE_MATCH_STRING_FILE_TYPE:
@@ -235,13 +235,13 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select Bar Code Match String File") );
 			SetFileSaveDialogTitle( _T("Save Bar Code Match String File") );
 			SetDefaultFileExtension( _T(".txt") );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_BAR_CODE_STORE_VALUE_FILE_TYPE:
@@ -249,7 +249,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select File") );
 			SetFileSaveDialogTitle( _T("Save Bar Code Value File") );
 			SetDefaultFileExtension( _T(".txt") );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
@@ -263,13 +263,13 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select OCR Match String File") );
 			SetFileSaveDialogTitle( _T("Save OCR Match String File") );
 			SetDefaultFileExtension( _T(".txt") );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_OCR_FONT_FILE_TYPE:
@@ -277,13 +277,13 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select WiT Font Training File") );
 			SetFileSaveDialogTitle( _T("Save WiT Font Training File") );
 			SetDefaultFileExtension( _T(".wit") );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("WiT Font Files (*.wit)|*.wit||") );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_SVX_CONFIGURATION_FILE_TYPE:
@@ -291,13 +291,13 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectDialogTitle( _T("Select Configuration File") );
 			SetFileSaveDialogTitle( _T( "Save Configuration File" ) );
 			SetDefaultFileExtension( _T(".svx") );
-			SetDefaultFileName( nullptr );
+			SetDefaultFileName( _T("") );
 			SetDefaultPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T( "SVResearch Configuration Files (*.svx)|*.svx||" ) );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		default:
@@ -311,228 +311,291 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 
 BOOL SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
 {
-	CString csFullName = szFullName;
-
-	if ( csFullName.IsEmpty() )
+	if (szFullName)
 	{
-		SetPathName( nullptr );
-		SetFileNameOnly( nullptr );
-		SetExtension( nullptr );
+		SVString sFullName = szFullName;
+
+		if ( sFullName.empty() )
+		{
+			SetPathName( nullptr );
+			SetFileNameOnly( nullptr );
+			SetExtension( nullptr );
+		}
+		else
+		{
+			SVString sPathName;
+
+			char drive[_MAX_DRIVE];
+			char dir[_MAX_DIR];
+			char fname[_MAX_FNAME];
+			char ext[_MAX_EXT];
+
+			_splitpath( sFullName.c_str(), drive, dir, fname, ext );
+
+			sPathName = drive;
+			sPathName += dir;
+
+			SetFileNameOnly( fname );
+			SetExtension( ext );
+			SetPathName( sPathName.c_str() );
+		}
+		return true;
 	}
-	else
-	{
-		CString csPathName;
-
-		char drive[_MAX_DRIVE];
-		char dir[_MAX_DIR];
-		char fname[_MAX_FNAME];
-		char ext[_MAX_EXT];
-
-		_splitpath( csFullName, drive, dir, fname, ext );
-
-		csPathName = drive;
-		csPathName += dir;
-
-		SetFileNameOnly( fname );
-		SetExtension( ext );
-		SetPathName( csPathName );
-	}
-
-	return TRUE;
+	return false;
 }
 
 BOOL SVFileNameClass::SetPathName(LPCTSTR szPathName)
 {
-	m_PathName = szPathName;
+	if (szPathName)
+	{
+		m_PathName = szPathName;
 
-	m_PathName.Replace('/','\\');
-	m_PathName.TrimRight( '\\' );
-
-	return TRUE;
+		SvUl_SF::searchAndReplace(m_PathName, "/", "\\");
+		SvUl_SF::TrimRight(m_PathName, "\\" );
+	}
+	else
+	{
+		m_PathName.clear();
+	}
+	return true;
 }
 
 BOOL SVFileNameClass::SetFileName(LPCTSTR szFileName)
 {
-	CString csFullFileName = GetPathName();
+	SVString sFullFileName = GetPathName();
 
-	if ( csFullFileName.IsEmpty() )
+	if ( sFullFileName.empty() )
 	{
-		csFullFileName = szFileName;
+		sFullFileName = szFileName;
 	}
 	else
 	{
-		csFullFileName += "\\";
-		csFullFileName += szFileName;
+		sFullFileName += "\\";
+		sFullFileName += szFileName;
 	}
 
-	return SetFullFileName( csFullFileName );
+	return SetFullFileName( sFullFileName.c_str() );
 }
 
 BOOL SVFileNameClass::SetFileNameOnly(LPCTSTR szFileName)
 {
-	m_FileNameOnly = szFileName;
-	m_FileNameOnly.TrimRight();
-
-	return TRUE;
+	if (szFileName)
+	{
+		m_FileNameOnly = szFileName;
+		SvUl_SF::TrimRight(m_FileNameOnly);
+	}
+	else
+	{
+		m_FileNameOnly.clear();
+	}
+	return true;
 }
 
 BOOL SVFileNameClass::SetExtension(LPCTSTR szExtension)
 {
-	m_Extension = szExtension;
+	if (szExtension)
+	{
+		m_Extension = szExtension;
+	}
+	else
+	{
+		m_Extension.clear();
+	}
 
-	return TRUE;
+	return true;
 }
 
 BOOL SVFileNameClass::SetFileSelectDialogTitle(LPCTSTR szTitle)
 {
-	m_FileSelectDialogTitle = szTitle;
+	if (szTitle)
+	{
+		m_FileSelectDialogTitle = szTitle;
+	}
+	else
+	{
+		m_FileSelectDialogTitle.clear();
+	}
 
-	return TRUE;
+	return true;
 }
 
 BOOL SVFileNameClass::SetFileSaveDialogTitle(LPCTSTR szTitle)
 {
-	m_FileSaveDialogTitle = szTitle;
-
-	return TRUE;
+	if (szTitle)
+	{
+		m_FileSaveDialogTitle = szTitle;
+	}
+	else
+	{
+		m_FileSaveDialogTitle.clear();
+	}
+	return true;
 }
 
 BOOL SVFileNameClass::SetDefaultFullFileName(LPCTSTR szFullName)
 {
-	CString csFullName = szFullName;
-
-	if ( csFullName.IsEmpty() )
+	if (szFullName)
 	{
-		SetDefaultPathName( nullptr );
-		SetDefaultFileName( nullptr );
-		SetDefaultFileExtension( nullptr );
+		SVString sFullName = szFullName;
+
+		if ( sFullName.empty() )
+		{
+			SetDefaultPathName( nullptr );
+			SetDefaultFileName( nullptr );
+			SetDefaultFileExtension( nullptr );
+		}
+		else
+		{
+			SVString sPathName;
+
+			char drive[_MAX_DRIVE];
+			char dir[_MAX_DIR];
+			char fname[_MAX_FNAME];
+			char ext[_MAX_EXT];
+
+			_splitpath( sFullName.c_str(), drive, dir, fname, ext );
+
+			sPathName = drive;
+			sPathName += dir;
+
+			SetDefaultFileName( fname );
+			SetDefaultFileExtension( ext );
+			SetDefaultPathName( sPathName.c_str() );
+		}
+
+		return true;
 	}
-	else
-	{
-		CString csPathName;
-
-		char drive[_MAX_DRIVE];
-		char dir[_MAX_DIR];
-		char fname[_MAX_FNAME];
-		char ext[_MAX_EXT];
-
-		_splitpath( csFullName, drive, dir, fname, ext );
-
-		csPathName = drive;
-		csPathName += dir;
-
-		SetDefaultFileName( fname );
-		SetDefaultFileExtension( ext );
-		SetDefaultPathName( csPathName );
-	}
-
-	return TRUE;
+	return false;
 }
 
 BOOL SVFileNameClass::SetDefaultPathName(LPCTSTR szPathName)
 {
-	m_DefaultPathName = szPathName;
+	if (szPathName)
+	{
+		m_DefaultPathName = szPathName;
 
-	m_DefaultPathName.Replace('/','\\');
-	m_DefaultPathName.TrimRight( '\\' );
-
-	return TRUE;
+		SvUl_SF::searchAndReplace(m_DefaultPathName, "/", "\\");
+		SvUl_SF::TrimRight(m_DefaultPathName, "\\" );
+	}
+	else
+	{
+		m_DefaultPathName.clear();
+	}
+	return true;
 }
 
 BOOL SVFileNameClass::SetDefaultFileName(LPCTSTR szName)
 {
-	m_DefaultFileName = szName;
-
-	return TRUE;
+	if (szName)
+	{
+		m_DefaultFileName = szName;
+	}
+	else
+	{
+		m_DefaultFileName.clear();
+	}
+	return true;
 }
 
 BOOL SVFileNameClass::SetDefaultFileExtension(LPCTSTR szExtension)
 {
-	m_DefaultFileExtension = szExtension;
-
-	return TRUE;
+	if (szExtension)
+	{
+		m_DefaultFileExtension = szExtension;
+	}
+	else
+	{
+		m_DefaultFileExtension.clear();
+	}
+	return true;
 }
 
 BOOL SVFileNameClass::SetFileSelectFlags(DWORD dwFlags)
 {
 	m_FileSelectFlags = dwFlags;
 
-	return TRUE;
+	return true;
 }
 
 BOOL SVFileNameClass::SetFileSaveFlags(DWORD dwFlags)
 {
 	m_FileSaveFlags = dwFlags;
 
-	return TRUE;
+	return true;
 }
 
 BOOL SVFileNameClass::SetFileExtensionFilterList(LPCTSTR szFilter)
 {
-	m_FileExtensionFilterList = szFilter;
-
-	return TRUE;
+	if (szFilter)
+	{
+		m_FileExtensionFilterList = szFilter;
+	}
+	else
+	{
+		m_FileExtensionFilterList .clear();
+	}
+	return true;
 }
 
 BOOL SVFileNameClass::SelectPath()
 {
-	BOOL bOk = FALSE;
-	CString		strPath;
+	BOOL bOk = false;
+	SVString strPath;
 
-	CString initialDir = GetPathName();
-	if (initialDir.IsEmpty())
+	SVString initialDir = GetPathName();
+	if (initialDir.empty())
 	{
 		initialDir = GetDefaultPathName();
 	}
 	bool bFullAccess = SvOi::isUnrestrictedFileAccess();
-	SvMc::SVDlgFolder dlg(bFullAccess, initialDir);
+	SvMc::SVDlgFolder dlg(bFullAccess, initialDir.c_str());
 
 	dlg.InitDlgFolder(_T("Ok"), _T("Select Folder"));
-	if ( dlg.DoModal() == IDOK )
+	if ( IDOK == dlg.DoModal() )
 	{
 		strPath = dlg.GetPathName();
-		bOk = SetPathName( strPath );
-		SetDefaultPathName( strPath );
+		bOk = SetPathName( strPath.c_str() );
+		SetDefaultPathName( strPath.c_str() );
 	}
 	return bOk;
 }
 
 BOOL SVFileNameClass::SelectFile()
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
-	if ( CString( GetDefaultPathName() ).IsEmpty() )
+	if ( SVString( GetDefaultPathName() ).empty() )
 	{
 		SetDefaultPathName( GetPathName() );
 	}
 
-	if ( CString( GetDefaultFileName() ).IsEmpty() )
+	if ( SVString( GetDefaultFileName() ).empty() )
 	{
 		SetDefaultFileName( GetFileNameOnly() );
 	}
 
-	if ( CString( GetDefaultFileExtension() ).IsEmpty() )
+	if ( SVString( GetDefaultFileExtension() ).empty() )
 	{
 		SetDefaultFileExtension( GetExtension() );
 	}
 
-	CString csFileName = GetDefaultFileName();
-    if (!csFileName.IsEmpty())
+	SVString sFileName = GetDefaultFileName();
+    if (!sFileName.empty())
 	{
-	    csFileName += GetDefaultFileExtension();
+	    sFileName += GetDefaultFileExtension();
 	}
 	bool bFullAccess = SvOi::isUnrestrictedFileAccess();
 	SvMc::SVFileDialog dlg( true,
 					bFullAccess,  
 	                GetDefaultFileExtension(),
-					csFileName, 
+					sFileName.c_str(), 
 					GetFileSelectFlags(),
 					GetFileExtensionFilterList(),
 					nullptr );
 
 	dlg.m_ofn.lpstrTitle = GetFileSelectDialogTitle();
 
-	if ( CString( GetPathName() ).IsEmpty() )
+	if ( SVString( GetPathName() ).empty() )
 	{
 		dlg.m_ofn.lpstrInitialDir = GetDefaultPathName();
 	}
@@ -541,7 +604,7 @@ BOOL SVFileNameClass::SelectFile()
 		dlg.m_ofn.lpstrInitialDir = GetPathName();
 	}
 
-	if ( dlg.DoModal() == IDOK )
+	if ( IDOK == dlg.DoModal() )
 	{
 		bOk = SetFullFileName( dlg.GetPathName() );
 		
@@ -553,32 +616,32 @@ BOOL SVFileNameClass::SelectFile()
 
 BOOL SVFileNameClass::SaveFile()
 {
-	BOOL bOk = FALSE;
-	BOOL bDone = FALSE;
+	BOOL bOk = false;
+	BOOL bDone = false;
 
-	if ( CString( GetDefaultPathName() ).IsEmpty() )
+	if ( SVString( GetDefaultPathName() ).empty() )
 	{
 		SetDefaultPathName( GetPathName() );
 	}
 
-	if ( CString( GetDefaultFileName() ).IsEmpty() )
+	if ( SVString( GetDefaultFileName() ).empty() )
 	{
 		SetDefaultFileName( GetFileNameOnly() );
 	}
 
-	if ( CString( GetDefaultFileExtension() ).IsEmpty() )
+	if ( SVString( GetDefaultFileExtension() ).empty() )
 	{
 		SetDefaultFileExtension( GetExtension() );
 	}
 
-	CString csFileName = GetDefaultFileName();
+	SVString csFileName = GetDefaultFileName();
 	csFileName += GetDefaultFileExtension();
 
 	bool bFullAccess = SvOi::isUnrestrictedFileAccess();
 	SvMc::SVFileDialog dlg( false, 
 					 bFullAccess,
 	                 GetDefaultFileExtension(),
-					 csFileName, 
+					 csFileName.c_str(), 
 					 GetFileSaveFlags(),
 					 GetFileExtensionFilterList(),
 					 nullptr );
@@ -587,7 +650,7 @@ BOOL SVFileNameClass::SaveFile()
 
 	while ( ! bDone )
 	{
-		if ( CString( GetPathName() ).IsEmpty() )
+		if ( SVString( GetPathName() ).empty() )
 		{
 			dlg.m_ofn.lpstrInitialDir = GetDefaultPathName();
 		}
@@ -596,30 +659,30 @@ BOOL SVFileNameClass::SaveFile()
 			dlg.m_ofn.lpstrInitialDir = GetPathName();
 		}
 
-		bOk = dlg.DoModal() == IDOK ;
+		bOk = IDOK == dlg.DoModal();
 
 		bDone = ! bOk;
 
 		if ( ! bDone )
 		{
-			CString PathName = checkFileName( dlg.GetPathName(), dlg.GetFileName() );
+			SVString PathName = checkFileName( dlg.GetPathName(), dlg.GetFileName() );
 
-			bOk = SetFullFileName( PathName );
-			SetDefaultFullFileName( PathName );
+			bOk = SetFullFileName( PathName.c_str() );
+			SetDefaultFullFileName( PathName.c_str() );
 
 			bDone = GetFileType() != SV_SVX_CONFIGURATION_FILE_TYPE ;
 
 			if ( ! bDone )
 			{
-				CString csNewFullFileName = GetPathName();
+				SVString csNewFullFileName = GetPathName();
 
-				if ( CString( GetExtension() ).CompareNoCase( _T( ".svx" ) ) != 0 )
+				if ( 0 != SvUl_SF::CompareNoCase(SVString( GetExtension() ), _T( ".svx" ) ) )
 				{
 					SetExtension( _T( ".svx" ) );
 				}
 
-				bDone = csNewFullFileName.CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 ||
-					      _access( GetFullFileName(), 0 ) == 0;
+				bDone = (0 == SvUl_SF::CompareNoCase(csNewFullFileName, SvStl::GlobalPath::Inst().GetRunPath() ) ) ||
+				        ( 0 == _access( GetFullFileName(), 0 ) );
 
 				if ( ! bDone )
 				{
@@ -628,17 +691,16 @@ BOOL SVFileNameClass::SaveFile()
 					csNewFullFileName += _T( "\\" );
 					csNewFullFileName += GetFileName();
 
-					bOk = SetFullFileName( csNewFullFileName );
+					bOk = SetFullFileName( csNewFullFileName.c_str() );
 
-					bDone = _access( GetFullFileName(), 0 ) != 0;
+					bDone = 0 != _access( GetFullFileName(), 0 );
 
 					if ( ! bDone )
 					{
-						CString csMessage = GetFullFileName();
+						SVString csMessage = GetFullFileName();
 						csMessage += _T( " already exists.\nDo you want to replace it?" );
 
-						bDone = dlg.MessageBox( csMessage, GetFileSaveDialogTitle(),
-																		MB_ICONWARNING | MB_YESNO ) == IDYES;
+						bDone = IDYES == dlg.MessageBox( csMessage.c_str(), GetFileSaveDialogTitle(), MB_ICONWARNING | MB_YESNO );
 					}
 				}
 			}
@@ -651,39 +713,34 @@ BOOL SVFileNameClass::SaveFile()
 void SVFileNameClass::Init()
 {
 	m_FileType = 0;
-	m_FullFileName.Empty();
-	m_PathName.Empty();
-	m_FileName.Empty();
-	m_FileNameOnly.Empty();
-	m_Extension.Empty();
+	m_FullFileName.clear();
+	m_PathName.clear();
+	m_FileName.clear();
+	m_FileNameOnly.clear();
+	m_Extension.clear();
 	m_FileSelectDialogTitle = "Select File";
 	m_FileSaveDialogTitle = "Save File";
-	m_DefaultFileExtension.Empty();
-	m_DefaultFileName.Empty();
-	m_DefaultPathName.Empty();
+	m_DefaultFileExtension.clear();
+	m_DefaultFileName.clear();
+	m_DefaultPathName.clear();
 	m_FileSelectFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER;
 	m_FileSaveFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER;
 	m_FileExtensionFilterList = "All Files (*.*)|*.*||";
 }
 
-CString SVFileNameClass::checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const
+SVString SVFileNameClass::checkFileName( LPCTSTR PathName, LPCTSTR FileName ) const
 {
-	CString Result( PathName );
+	SVString Result( PathName );
 
-	if( !m_ExcludeChar.IsEmpty() )
+	if( !m_ExcludeChar.empty() )
 	{
 		bool NameChanged( false );
-		CString NewFileName( FileName );
+		SVString NewFileName( FileName );
 
-		for( int i=0; i < m_ExcludeChar.GetLength(); i++ )
-		{
-			if( 0 < NewFileName.Remove( m_ExcludeChar[i] ) )
-			{
-				NameChanged =  true;
-			}
-		}
-
-		if( NewFileName.IsEmpty() || NewFileName == m_DefaultFileExtension )
+		SvUl_SF::RemoveCharacters(NewFileName, m_ExcludeChar.c_str());
+		NameChanged = NewFileName == FileName;
+		
+		if( NewFileName.empty() || NewFileName == m_DefaultFileExtension )
 		{
 			NewFileName = GetDefaultFileName();
 			NameChanged = true;
@@ -691,7 +748,7 @@ CString SVFileNameClass::checkFileName( LPCTSTR PathName, LPCTSTR FileName ) con
 
 		if( NameChanged )
 		{
-			Result.Replace( FileName, NewFileName );
+			SvUl_SF::searchAndReplace( Result, FileName, NewFileName.c_str() );
 		}
 	}
 

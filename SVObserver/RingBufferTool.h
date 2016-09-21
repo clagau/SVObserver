@@ -21,15 +21,13 @@ class RingBufferTool :	public SVToolClass
 
 #pragma region Constructor
 public:
-	RingBufferTool (	BOOL	bCreateDefaultTaskList = FALSE, 
-							SVObjectClass*	pOwner = nullptr, 
-							int	stringResourceID = IDS_CLASSNAME_RINGBUFFER_TOOL );
+	RingBufferTool (BOOL bCreateDefaultTaskList = false, SVObjectClass*	pOwner = nullptr, int stringResourceID = IDS_CLASSNAME_RINGBUFFER_TOOL );
 
 	virtual ~RingBufferTool(void);
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual BOOL	CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
 	virtual bool DoesObjectHaveExtents() const override;
 
@@ -46,7 +44,7 @@ public:
 protected:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	
-	virtual BOOL	onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -54,17 +52,17 @@ private:
 	//************************************
 	/// Initialized the class.
 	//************************************
-	void	LocalInitialize();
+	void LocalInitialize();
 
 	//************************************
 	/// Build the input object list for this tool.
 	//************************************
-	void	BuildInputObjectList();
+	void BuildInputObjectList();
 
 	//************************************
 	/// Build the embedded object list for this tool.
 	//************************************
-	void	BuildEmbeddedObjectList();
+	void BuildEmbeddedObjectList();
 
 	//************************************
 	/// Copy the image from ringbuffer to a output image.
@@ -87,15 +85,15 @@ private:
 	// Source Image Name - embedded
 	SVStaticStringValueObjectClass m_svSourceImageName;
 	// Output Image - embedded
-	SVImageClass	m_OutputImages[SvOi::cRingBufferNumberOutputImages];
+	SVImageClass m_OutputImages[SvOi::cRingBufferNumberOutputImages];
 
 	// Source Image - input
-	SVInObjectInfoStruct	m_InputImageObjectInfo;
+	SVInObjectInfoStruct m_InputImageObjectInfo;
 
 	//embedded parameter
 	SVLongValueObjectClass m_BufferDepth;
 	LinkedValue m_ImageIndexManager[SvOi::cRingBufferNumberOutputImages];
-	SVLongValueObjectClass	m_FlagOfOutputImage;
+	SVLongValueObjectClass m_FlagOfOutputImage;
 
 	//ringbuffer
 	std::vector<SVSmartHandlePointer> m_ringBuffer;

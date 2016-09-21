@@ -80,15 +80,12 @@ If this Object is NOT valid, the validationReferenceID refers to the object on t
 void SVObjectClass::init()
 {
 	m_isCreated	  = false;
-
 	m_lImageDepth = 0;
-
-	m_objectDepth	= 0;	// Standard Depth
+	m_objectDepth = 0;	// Standard Depth
 
 	m_isObjectValid		  = false;
 	m_validationReferenceID = SV_GUID_NULL;
-
-	m_embeddedID			  = SV_GUID_NULL;
+	m_embeddedID = SV_GUID_NULL;
 
 	// Set object Info...
 	SVObjectManagerClass::Instance().CreateUniqueObjectID( this );
@@ -1432,3 +1429,18 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 	m_DefaultObjectAttributesSet = uAttributes;
 }
 
+/*
+This method must be overridden if the derived class desires this functionality
+*/
+HRESULT SVObjectClass::RegisterSubObject( SVObjectClass* pObject )
+{
+	return S_FALSE;
+}
+
+/*
+This method must be overridden if the derived class desires this functionality
+*/
+HRESULT SVObjectClass::UnregisterSubObject( SVObjectClass* pObject )
+{
+	return S_FALSE;
+}

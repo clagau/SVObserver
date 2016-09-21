@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 06:50:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVThreadInfoDlg.h"
@@ -16,7 +17,7 @@
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#pragma endregion Includes
 
 // SVThreadInfoDlg dialog
 

@@ -25,7 +25,7 @@
 #include "SVIPImageDataElement.h"
 #include "SVIPProductStruct.h"
 #include "SVIPResultData.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
 #pragma endregion Includes
 

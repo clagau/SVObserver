@@ -350,19 +350,19 @@ BOOL SVBarCodeAnalyzerClass::OnValidate ()
 	{
 		if (!m_MilCodeId.empty())
 		{
-			isObjectValid.SetValue (1, TRUE);
-			return TRUE;
+			m_isObjectValid.SetValue (1, true);
+			return true;
 		}
 	}
 	else
 	{
 		SetInvalid();
-		bRetVal = FALSE;
+		bRetVal = false;
 	}
 
 	if( m_bHasLicenseError )
 	{
-		bRetVal = FALSE;
+		bRetVal = false;
 	}
 
 	return bRetVal;

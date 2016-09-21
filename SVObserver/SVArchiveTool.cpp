@@ -19,7 +19,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVFileNameManagerClass.h"
+#include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
 #include "SVImageClass.h"
 #include "SVImageListClass.h"
@@ -29,7 +29,7 @@
 #include "SVToolSet.h"
 #include "SVArchiveHeaderEditDlg.h"
 #include "SVVisionProcessorHelper.h"
-#include "BasicValueObject.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 

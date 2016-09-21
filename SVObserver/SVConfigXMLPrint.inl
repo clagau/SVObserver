@@ -17,6 +17,7 @@
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
 #include "RootObject.h"
+#include "SVObserver.h"
 #pragma endregion Includes
 
 std::pair<GUID **, size_t> NonPrintGuids();

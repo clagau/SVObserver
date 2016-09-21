@@ -30,7 +30,7 @@ public:
 	SVDPointClass( double dX, double dY );
 	SVDPointClass( const VARIANT& p_rVariant );
 
-	BOOL GetValue( POINT &Point );
+	BOOL GetValue( POINT &Point ) const;
 
 	~SVDPointClass();
 

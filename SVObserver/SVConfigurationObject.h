@@ -19,7 +19,7 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
-#include "SVFileNameArrayClass.h"
+#include "SVSystemLibrary/SVFileNameArrayClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "SVSystemLibrary/SVObserverEnums.h"

@@ -20,6 +20,7 @@
 #include "SVToolSet.h"              // Required for scripting
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
+#include "SVObserver.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -28,8 +29,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVPixelAnalyzerSetupClass::SVPixelAnalyzerSetupClass(SVPixelAnalyzerClass* apAnalyzer, 
-                                                     CWnd* pParent /*=nullptr*/)
+SVPixelAnalyzerSetupClass::SVPixelAnalyzerSetupClass(SVPixelAnalyzerClass* apAnalyzer, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVPixelAnalyzerSetupClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVPixelAnalyzerSetupClass)
@@ -113,7 +113,6 @@ void SVPixelAnalyzerSetupClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Slider(pDX, IDC_GRAYSCALE_SLD, msvGrayscaleSliderValue);
 	//}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(SVPixelAnalyzerSetupClass, CDialog)
 	//{{AFX_MSG_MAP(SVPixelAnalyzerSetupClass)

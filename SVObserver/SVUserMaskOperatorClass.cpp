@@ -14,11 +14,12 @@
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/MatroxImageData.h"
+#include "SVUtilityLibrary/SetBits.h"
+#include "SVObjectLibrary/SVObjectAttributeClass.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVTool.h"
 #include "SVImageProcessingClass.h"
-#include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVGlobal.h"
-#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVGlobal.h" // For ConvertToHex
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"
 #include "SVToolSet.h"
@@ -158,23 +159,22 @@ HRESULT SVUserMaskOperatorClass::ResetObject()
 	{
 		l_hrOk = pShapeHelper->ResetObject();
 
-		SetBits( pShapeHelper->ObjectAttributesSetRef(),     SV_PRINTABLE, dwMaskType == MASK_TYPE_SHAPE );
-		SetBits( pShapeHelper->ObjectAttributesSetRef(),     SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, true );
-		SetBits( m_Data.evoFillArea.ObjectAttributesSetRef(), SV_PRINTABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive) );
-		SetBits( m_Data.lvoFillColor.ObjectAttributesSetRef(), SV_PRINTABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
+		SvUl::SetBits( pShapeHelper->ObjectAttributesSetRef(),     SV_PRINTABLE, dwMaskType == MASK_TYPE_SHAPE );
+		SvUl::SetBits( pShapeHelper->ObjectAttributesSetRef(),     SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, true );
+		SvUl::SetBits( m_Data.evoFillArea.ObjectAttributesSetRef(), SV_PRINTABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive) );
+		SvUl::SetBits( m_Data.lvoFillColor.ObjectAttributesSetRef(), SV_PRINTABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
 		// ARGH 
-		SetBits( pShapeHelper->ObjectAttributesAllowedRef(), SV_PRINTABLE | SV_VIEWABLE, dwMaskType == MASK_TYPE_SHAPE );
-		SetBits( pShapeHelper->ObjectAttributesAllowedRef(), SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, true );
-		SetBits( m_Data.evoFillArea.ObjectAttributesAllowedRef(), SV_PRINTABLE | SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
-		SetBits( m_Data.lvoFillColor.ObjectAttributesAllowedRef(), SV_PRINTABLE | SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
+		SvUl::SetBits( pShapeHelper->ObjectAttributesAllowedRef(), SV_PRINTABLE | SV_VIEWABLE, dwMaskType == MASK_TYPE_SHAPE );
+		SvUl::SetBits( pShapeHelper->ObjectAttributesAllowedRef(), SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, true );
+		SvUl::SetBits( m_Data.evoFillArea.ObjectAttributesAllowedRef(), SV_PRINTABLE | SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
+		SvUl::SetBits( m_Data.lvoFillColor.ObjectAttributesAllowedRef(), SV_PRINTABLE | SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
 
 		if ( !bActive )
 		{
 			//turn off items.
-			SetBits( m_Data.evoFillArea.ObjectAttributesSetRef(), SV_PRINTABLE| SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive) );
-			SetBits( m_Data.lvoFillColor.ObjectAttributesSetRef(), SV_PRINTABLE| SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
+			SvUl::SetBits( m_Data.evoFillArea.ObjectAttributesSetRef(), SV_PRINTABLE| SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive) );
+			SvUl::SetBits( m_Data.lvoFillColor.ObjectAttributesSetRef(), SV_PRINTABLE| SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
 		}
-
 	}
 	// if image mask or overlays are turned on, set to true
 	SVDrawCriteriaEnum l_eCriteria;
@@ -1033,12 +1033,12 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 			if ( pShapeHelper )
 			{
 				DWORD dwShapeColor;
-				statusColor.GetDefaultValue(dwShapeColor);
-				if ( dwMaskType == MASK_TYPE_SHAPE )
+				m_statusColor.GetDefaultValue(dwShapeColor);
+				if ( MASK_TYPE_SHAPE == dwMaskType )
 				{
 					dwShapeColor = RRunStatus.GetStatusColor();
 				}
-				pShapeHelper->statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
+				pShapeHelper->m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
 			}
 			// Success...
 			return TRUE;
@@ -1051,8 +1051,8 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 		if ( pShapeHelper )
 		{
 			DWORD dwShapeColor;
-			statusColor.GetDefaultValue(dwShapeColor);
-			pShapeHelper->statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
+			m_statusColor.GetDefaultValue(dwShapeColor);
+			pShapeHelper->m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
 		}
 		return FALSE;
 	}
@@ -1063,8 +1063,8 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 	if ( pShapeHelper )
 	{
 		DWORD dwShapeColor;
-		statusColor.GetDefaultValue(dwShapeColor);
-		pShapeHelper->statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
+		m_statusColor.GetDefaultValue(dwShapeColor);
+		pShapeHelper->m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
 	}
 	return FALSE;
 }

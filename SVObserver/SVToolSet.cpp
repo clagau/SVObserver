@@ -369,7 +369,6 @@ HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )
 	return m_ResetCounts.GetValue( rResetCounts );
 }
 
-
 #pragma region virtual method (IToolSet)
 bool SVToolSetClass::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
 {
@@ -465,8 +464,8 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 
 		// First Set ToolSet Invalid, if other things succeed, it will become valid
 		// Do the same for the counts
-		isObjectValid.GetValue( bIsValid );
-		isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, bIsValid );
+		m_isObjectValid.GetValue( bIsValid );
+		m_isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, bIsValid );
 		m_PassedCount.GetValue( lCount );
 		m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
 		m_FailedCount.GetValue( lCount );
@@ -535,7 +534,7 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 			}
 
 			// Set ToolSet Valid
-			isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, TRUE );
+			m_isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, true );
 
 			// set our state according to the runStatus
 			// RRunStatus.SetValid();
@@ -632,11 +631,11 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 
 		// Get Status Color...
 		DWORD dwValue = RRunStatus.GetStatusColor();
-		statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+		m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
 		// Get Status...
 		dwValue = RRunStatus.GetState();
-		statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+		m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 	}// end if
 	else
 	{
@@ -789,7 +788,7 @@ BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 			}// end else
 
 			// Set ToolSet Valid
-			isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, TRUE );
+			m_isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, true );
 
 			// set our state according to the runStatus
 			RRunStatus.SetValid();
@@ -797,14 +796,14 @@ BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 		else
 		{
 			RRunStatus.SetDisabledByCondition();
-			bDisabled = TRUE;
+			bDisabled = true;
 		}// end else
 
 	}// end if
 	else
 	{
 		RRunStatus.SetDisabled();
-		bDisabled = TRUE;
+		bDisabled = true;
 	}// end else
 
 	// if disabled or disabled by condition
@@ -854,11 +853,11 @@ BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 
 	// Get Status Color...
 	DWORD dwValue = RRunStatus.GetStatusColor();
-	statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
 	// Get Status...
 	dwValue = RRunStatus.GetState();
-	statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
 	return bRetVal;
 }// end RunWithNewDisable

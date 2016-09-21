@@ -29,7 +29,7 @@
 #include "SVImageLibrary\SVImagingDeviceParams.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVEquation.h"
 #include "SVImageClass.h"
 #include "SVObserver.h"
@@ -44,7 +44,7 @@
 #include "SVStatTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVAcquisitionClass.h"
-#include "SVFileNameArrayClass.h"
+#include "SVSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary\SVLightReference.h"
 #include "SVIODoc.h"
 #include "TriggerHandling/SVTriggerClass.h"

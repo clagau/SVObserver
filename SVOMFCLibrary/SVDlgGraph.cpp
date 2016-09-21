@@ -8,18 +8,11 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:15:20  $
 //******************************************************************************
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVDlgGraph.h"
+#pragma endregion Includes
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -71,7 +64,7 @@ namespace Seidenader
 			pointVec.SetSize( size );
 			for( int i = 0; i < size; ++ i )
 			{
-				CPoint& rPoint = pointVec[ i ];
+				POINT& rPoint = pointVec[ i ];
 				rPoint.y = RByteVec[ i ];
 				rPoint.x = i;
 			}
@@ -85,7 +78,7 @@ namespace Seidenader
 			pointVec.SetSize( size );
 			for( int i = 0; i < size; ++ i )
 			{
-				CPoint& rPoint = pointVec[ i ];
+				POINT& rPoint = pointVec[ i ];
 				rPoint.x = i;
 				rPoint.y = RLongVec[ i ];
 			}
@@ -99,7 +92,7 @@ namespace Seidenader
 			pointVec.SetSize( size );
 			for( int i = 0; i < size; ++ i )
 			{
-				CPoint& rPoint = pointVec[ i ];
+				POINT& rPoint = pointVec[ i ];
 				rPoint.x = i;
 				rPoint.y = (long)(RDoubleVec[ i ]);
 			}
@@ -107,7 +100,7 @@ namespace Seidenader
 			return( Normalize() && RedrawWindow() );
 		}
 
-		BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectCPointArrayClass& RPointVec ) 
+		BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectPointArrayClass& RPointVec ) 
 		{
 			pointVec.Copy( RPointVec );
 
@@ -153,7 +146,7 @@ namespace Seidenader
 					// Get extremes...
 					for(i = 0; i < size; ++ i )
 					{
-						CPoint& rPoint = pointVec[ i ];
+						POINT& rPoint = pointVec[ i ];
 						xMax = __max( xMax, rPoint.x );
 						xMin = __min( xMin, rPoint.x );
 						yMax = __max( yMax, rPoint.y );
@@ -192,7 +185,7 @@ namespace Seidenader
 				// Normalize...
 				for( i = 0; i < size; ++ i )
 				{
-					CPoint& rPoint = pointVec[ i ];
+					POINT& rPoint = pointVec[ i ];
 					rPoint.x = ( long ) ( ( double ) ( rPoint.x + xDisp ) * xMult );
 					rPoint.y = yClient - ( long ) ( ( double ) ( rPoint.y + yDisp ) * yMult );
 				}

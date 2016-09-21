@@ -313,11 +313,11 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	
 	// Get Status Color...
 	DWORD dwValue = RRunStatus.GetStatusColor();
-	statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 	
 	// Get Status...
 	dwValue = RRunStatus.GetState();
-	statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 	
 	return bRetVal;
 }

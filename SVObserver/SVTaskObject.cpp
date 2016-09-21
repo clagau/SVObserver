@@ -17,6 +17,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVOMFCLibrary/SVTemplate.h"
+#include "SVUtilityLibrary/SetBits.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVAnalyzer.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
@@ -63,14 +64,14 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 
 	// SetObjectDepth has already been called in SVObjectClass Ctor
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SVResetItemNone );
-	RegisterEmbeddedObject(&statusTag, SVStatusObjectGuid, IDS_OBJECTNAME_STATUS, false, SVResetItemNone );
-	RegisterEmbeddedObject(&statusColor, SVColorObjectGuid, IDS_OBJECTNAME_COLOR, false, SVResetItemNone );
+	RegisterEmbeddedObject(&m_isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SVResetItemNone );
+	RegisterEmbeddedObject(&m_statusTag, SVStatusObjectGuid, IDS_OBJECTNAME_STATUS, false, SVResetItemNone );
+	RegisterEmbeddedObject(&m_statusColor, SVColorObjectGuid, IDS_OBJECTNAME_COLOR, false, SVResetItemNone );
 	
 	// Set Embedded defaults
-	statusColor.SetDefaultValue((const DWORD&) SV_DEFAULT_INACTIVE_COLOR, TRUE);
-	statusTag.SetDefaultValue(FALSE, TRUE);
-	isObjectValid.SetDefaultValue(FALSE, TRUE);
+	m_statusColor.SetDefaultValue((const DWORD&) SV_DEFAULT_INACTIVE_COLOR, true);
+	m_statusTag.SetDefaultValue(false, true);
+	m_isObjectValid.SetDefaultValue(false, true);
 	
 	// Add out Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -85,14 +86,14 @@ SVTaskObjectClass::~SVTaskObjectClass()
 	DestroyFriends();
 	
 	// empty the Embedded List
-	for (int i = embeddedList.GetSize() - 1; i >= 0; i--)
+	for (int i = m_embeddedList.GetSize() - 1; i >= 0; i--)
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if (pObject && pObject->IsCreated())
 		{
 			pObject->CloseObject();
 		}
-		embeddedList.RemoveAt(i);
+		m_embeddedList.RemoveAt(i);
 	}
 	CloseObject();
 }
@@ -128,9 +129,9 @@ HRESULT SVTaskObjectClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoLi
 		}
 	}
 
-	for( long i = 0; i < embeddedList.GetSize(); i++ )
+	for( long i = 0; i < m_embeddedList.GetSize(); i++ )
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if( nullptr != pObject )
 		{
 			p_rOutputInfoList.Add( &(pObject->GetObjectOutputInfo()) );
@@ -277,7 +278,6 @@ SvStl::MessageContainer SVTaskObjectClass::getFirstTaskMessage() const
 	return SvStl::MessageContainer();
 }
 
-
 HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
 	HRESULT l_Status = SVObjectAppClass::GetChildObject( rpObject, rNameInfo, Index );
@@ -298,9 +298,9 @@ HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObj
 
 			if( ( S_OK != l_Status ) && ( ( Index + 1 ) == ( rNameInfo.m_NameArray.size() - 1 ) ) )
 			{
-				for( long j = 0; nullptr == rpObject && j < embeddedList.GetSize(); j++ )
+				for( long j = 0; nullptr == rpObject && j < m_embeddedList.GetSize(); j++ )
 				{
-					SVObjectClass* l_pObject = embeddedList.GetAt(j);
+					SVObjectClass* l_pObject = m_embeddedList.GetAt(j);
 
 					if( nullptr != l_pObject )
 					{
@@ -357,7 +357,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 				InsertItem.setItemKey( ObjectRef->GetUniqueObjectID().ToVARIANT() );
 				if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (ObjectRef.Object()) )
 				{
-					CString typeName = _T("");
+					CString typeName;
 					pValueObject->GetTypeName( typeName );
 					InsertItem.setItemTypeName( typeName );
 				}
@@ -571,9 +571,9 @@ HRESULT SVTaskObjectClass::IsInputImage( SVImageClass* p_psvImage )
 		}
 
 		// Notify embeddeds...
-		for( int i = 0; S_OK != l_hrOk && i < embeddedList.GetSize(); ++i )
+		for( int i = 0; S_OK != l_hrOk && i < m_embeddedList.GetSize(); ++i )
 		{
-			l_psvObject = dynamic_cast<SVTaskObjectClass*>(embeddedList[i]);
+			l_psvObject = dynamic_cast<SVTaskObjectClass*>(m_embeddedList[i]);
 
 			if( nullptr != l_psvObject )
 			{
@@ -603,9 +603,9 @@ SVTaskObjectClass* SVTaskObjectClass::GetObjectAtPoint( const SVExtentPointStruc
 	}
 
 	// Notify embeddeds...
-	for( int i = 0; nullptr == l_psvObject && i < embeddedList.GetSize(); ++i )
+	for( int i = 0; nullptr == l_psvObject && i < m_embeddedList.GetSize(); ++i )
 	{
-		l_psvObject = dynamic_cast<SVTaskObjectClass*>(embeddedList[i]);
+		l_psvObject = dynamic_cast<SVTaskObjectClass*>(m_embeddedList[i]);
 
 		if( nullptr != l_psvObject )
 		{
@@ -655,9 +655,9 @@ HRESULT SVTaskObjectClass::GetOutputRectangle( RECT &l_roRect )
 // ( Refer to SVObjectManagerClass::ChangeUniqueObjectID() )
 void SVTaskObjectClass::ResetPrivateInputInterface()
 {
-	for (int i = 0; i < inputInterfaceList.GetSize(); ++ i)
+	for (int i = 0; i < m_inputInterfaceList.GetSize(); ++ i)
 	{
-		SVInObjectInfoStruct* pInInfo =	inputInterfaceList[i];
+		SVInObjectInfoStruct* pInInfo =	m_inputInterfaceList[i];
 		if (pInInfo)
 		{
 			const SVObjectInfoStruct &l_rsvInfo = GetObjectInfo();
@@ -665,9 +665,9 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 			SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;
 
 			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID &&
-			         SV_GUID_NULL == info.EmbeddedID && 
-			         info.ObjectType == SVNotSetObjectType &&
-			         info.SubType == SVNotSetSubObjectType )
+			     SV_GUID_NULL == info.EmbeddedID && 
+			     SVNotSetObjectType == info.ObjectType &&
+			     SVNotSetSubObjectType == info.SubType )
 			{
 				//ASSERT( FALSE );
 			}
@@ -677,9 +677,9 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 			info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;
 
 			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID &&
-			         SV_GUID_NULL == info.EmbeddedID && 
-			         info.ObjectType == SVNotSetObjectType &&
-			         info.SubType == SVNotSetSubObjectType )
+			     SV_GUID_NULL == info.EmbeddedID && 
+			     SVNotSetObjectType == info.ObjectType &&
+			     SVNotSetSubObjectType == info.SubType )
 			{
 				//ASSERT( FALSE );
 			}
@@ -932,9 +932,9 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 
 	// Create the embeddeds...
 	// Save the owner and set the owner of our embeddeds to us!
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if (pObject)
 		{
 			DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0 );
@@ -945,9 +945,9 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 		}
 	}
 
-	isObjectValid.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;	//	Embedded
-	statusTag.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	statusColor.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_isObjectValid.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;	//	Embedded
+	m_statusTag.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_statusColor.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	
 	m_isCreated = retVal;
 	
@@ -964,7 +964,7 @@ BOOL SVTaskObjectClass::IsValid()
 {
 	BOOL bIsValid;
 	
-	isObjectValid.GetValue(bIsValid);
+	m_isObjectValid.GetValue(bIsValid);
 	
 	return bIsValid;
 }
@@ -981,9 +981,9 @@ BOOL SVTaskObjectClass::Validate()
 
 	clearTaskMessages();
 
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if (pObject)
 		{
 			BOOL l_bTemp = pObject->Validate();
@@ -1016,7 +1016,7 @@ BOOL SVTaskObjectClass::OnValidate()
 
 	if( l_bOk )
 	{
-		isObjectValid.SetValue(1, TRUE);
+		m_isObjectValid.SetValue(1, true);
 	}
 	else
 	{
@@ -1044,11 +1044,11 @@ BOOL SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
 		}
 	}
 	
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		if (embeddedList.GetAt(i))
+		if (m_embeddedList.GetAt(i))
 		{
-			embeddedList.GetAt(i)->SetObjectDepth(NewObjectDepth);
+			m_embeddedList.GetAt(i)->SetObjectDepth(NewObjectDepth);
 		}
 	}
 	
@@ -1071,11 +1071,11 @@ BOOL SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastS
 		}
 	}
 	
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		if (embeddedList.GetAt(i))
+		if (m_embeddedList.GetAt(i))
 		{
-			embeddedList.GetAt(i)->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
+			m_embeddedList.GetAt(i)->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 		}
 	}
 	
@@ -1098,11 +1098,11 @@ BOOL SVTaskObjectClass::SetImageDepth(long lDepth)
 		}
 	}
 
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		if (embeddedList.GetAt(i))
+		if (m_embeddedList.GetAt(i))
 		{
-			embeddedList.GetAt(i)->SetImageDepth(lDepth);
+			m_embeddedList.GetAt(i)->SetImageDepth(lDepth);
 		}
 	}
 	
@@ -1111,20 +1111,20 @@ BOOL SVTaskObjectClass::SetImageDepth(long lDepth)
 
 void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoListClass* PInputListToFill)
 {
-	int l_iCount = inputInterfaceList.GetSize();
+	int l_iCount = m_inputInterfaceList.GetSize();
 	int i( 0 );
 
 	for (i = 0; i < l_iCount; i++)
 	{
-		SVInObjectInfoStruct* pInInfo = inputInterfaceList.GetAt(i);
+		SVInObjectInfoStruct* pInInfo = m_inputInterfaceList.GetAt(i);
 		if (pInInfo)
 		{
 			SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;
 
 			if ( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID &&
-			         SV_GUID_NULL == info.EmbeddedID && 
-			         info.ObjectType == SVNotSetObjectType &&
-			         info.SubType == SVNotSetSubObjectType )
+			     SV_GUID_NULL == info.EmbeddedID && 
+			     SVNotSetObjectType == info.ObjectType &&
+			     SVNotSetSubObjectType == info.SubType )
 			{
 				//ASSERT( FALSE );
 			}
@@ -1195,9 +1195,9 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedOb
 	ASSERT(PEmbeddedObject);
 	if (PEmbeddedObject)
 	{
-		for (int i = 0; i < embeddedList.GetSize(); i++)
+		for (int i = 0; i < m_embeddedList.GetSize(); i++)
 		{
-			SVObjectClass* pObject = embeddedList.GetAt(i);
+			SVObjectClass* pObject = m_embeddedList.GetAt(i);
 			if (pObject)
 			{
 				if (pObject->GetEmbeddedID() == REmbeddedID)
@@ -1231,7 +1231,7 @@ SVTaskObjectClass::SVObjectPtrDeque SVTaskObjectClass::GetPostProcessObjects() c
 	SVObjectPtrDeque l_Objects = SVObjectAppClass::GetPostProcessObjects();
 
 	SVObjectClassPtrArray::const_iterator l_Iter;
-	for( l_Iter = embeddedList.begin(); l_Iter != embeddedList.end(); ++l_Iter )
+	for( l_Iter = m_embeddedList.begin(); l_Iter != m_embeddedList.end(); ++l_Iter )
 	{
 		SVObjectClass* pObject = *l_Iter;
 		if( nullptr != pObject )
@@ -1247,7 +1247,7 @@ BOOL SVTaskObjectClass::RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo,
 {
 	if (PInObjectInfo)
 	{
-		if (inputInterfaceList.Add(PInObjectInfo) >= 0)
+		if (m_inputInterfaceList.Add(PInObjectInfo) >= 0)
 		{
 			PInObjectInfo->SetInputName( p_rInputName );
 
@@ -1261,7 +1261,7 @@ BOOL SVTaskObjectClass::RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo,
 
 void SVTaskObjectClass::GetPrivateInputList(SVInputInfoListClass& RInputInterface)
 {
-	RInputInterface.Copy(inputInterfaceList);
+	RInputInterface.Copy(m_inputInterfaceList);
 }
 
 // Set an Embedded Object's data Value(s)
@@ -1270,18 +1270,18 @@ BOOL SVTaskObjectClass::SetEmbeddedObjectValue(const GUID& RObjectID, SVObjectAt
 	BOOL rc = FALSE;
 	GUID uniqueID;
 	
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		if (embeddedList.GetAt(i))
+		if (m_embeddedList.GetAt(i))
 		{
 			// check if it's this object
-			uniqueID = embeddedList.GetAt(i)->GetUniqueObjectID();
+			uniqueID = m_embeddedList.GetAt(i)->GetUniqueObjectID();
 			if (RObjectID == uniqueID)
 			{
 				// Set the Object Depth ?
 				
 				// Set the Object's Data Member Value
-				rc = ( S_OK == embeddedList.GetAt(i)->SetObjectValue(PDataObject) );
+				rc = ( S_OK == m_embeddedList.GetAt(i)->SetObjectValue(PDataObject) );
 				break;
 			}
 		}
@@ -1294,9 +1294,9 @@ BOOL SVTaskObjectClass::SetEmbeddedObjectValue(const GUID& RObjectID, SVObjectAt
 void SVTaskObjectClass::SetInvalid()
 {
 	// Set all embeddeds ( outputs ) to invalid...
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if (pObject)
 		{
 			pObject->SetInvalid();
@@ -1304,16 +1304,16 @@ void SVTaskObjectClass::SetInvalid()
 	}
 	
 	// Set yourself to invalid...
-	isObjectValid.SetValue(1, FALSE);
+	m_isObjectValid.SetValue(1, false);
 }
 
 // Override this function to implement object behavior...
 void SVTaskObjectClass::SetDisabled()
 {
 	// Set all embeddeds ( outputs ) to disabled...
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if (pObject)
 		{
 			pObject->SetDisabled();
@@ -1324,7 +1324,7 @@ void SVTaskObjectClass::SetDisabled()
 	
 	// Special implementation here:
 	// Set just your object color to disabled...
-	statusColor.SetValue(1, SV_DEFAULT_DISABLED_COLOR);
+	m_statusColor.SetValue(1, SV_DEFAULT_DISABLED_COLOR);
 	
 	// Set friends to disabled...
 	for (size_t i = 0; i < m_friendList.size(); ++ i)
@@ -1340,14 +1340,14 @@ void SVTaskObjectClass::SetDisabled()
 DWORD SVTaskObjectClass::GetObjectColor() const
 {
 	DWORD dwColor;
-	statusColor.GetValue(dwColor);
+	m_statusColor.GetValue(dwColor);
 	return dwColor;
 }
 
 DWORD SVTaskObjectClass::GetObjectState() const
 {
 	DWORD dwState;
-	statusTag.GetValue(dwState);
+	m_statusTag.GetValue(dwState);
 	return dwState;
 }
 
@@ -1473,13 +1473,13 @@ void SVTaskObjectClass::PersistInputs(SVObjectWriter& writer)
 void SVTaskObjectClass::PersistEmbeddeds(SVObjectWriter& rWriter)
 {
 	// Set up embedded object definitions...
-	if (embeddedList.GetSize())
+	if (m_embeddedList.GetSize())
 	{
 		rWriter.StartElement(scEmbeddedsTag);
 		// Get embedded object script...
-		for (int j = 0; j < embeddedList.GetSize(); j++)
+		for (int j = 0; j < m_embeddedList.GetSize(); j++)
 		{
-			embeddedList.GetAt(j)->Persist(rWriter);
+			m_embeddedList.GetAt(j)->Persist(rWriter);
 		}
 		rWriter.EndElement();
 	}
@@ -1533,11 +1533,11 @@ BOOL SVTaskObjectClass::Run(SVRunStatusClass& RRunStatus)
 	
 	// Get Status Color...
 	DWORD dwValue = RRunStatus.GetStatusColor();
-	statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 	
 	// Get Status...
 	dwValue = RRunStatus.GetState();
-	statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 	
 	return bRetVal;
 }
@@ -1644,9 +1644,9 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 
 	if( nullptr != pInObjectInfo )
 	{
-		for( int i = 0; ! l_Status && i < inputInterfaceList.GetSize(); i++ )
+		for( int i = 0; ! l_Status && i < m_inputInterfaceList.GetSize(); i++ )
 		{
-			SVInObjectInfoStruct* pInputObjectInfo = inputInterfaceList.GetAt(i);
+			SVInObjectInfoStruct* pInputObjectInfo = m_inputInterfaceList.GetAt(i);
 			
 			if (pInputObjectInfo)
 			{
@@ -1659,9 +1659,9 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 			}
 		}
 
-		for( int j = 0; j < embeddedList.GetSize(); ++j )
+		for( int j = 0; j < m_embeddedList.GetSize(); ++j )
 		{
-			SVImageClass* l_pImage( dynamic_cast< SVImageClass* >( embeddedList[ j ] ) );
+			SVImageClass* l_pImage( dynamic_cast< SVImageClass* >( m_embeddedList[ j ] ) );
 
 			if( nullptr != l_pImage )
 			{
@@ -1683,7 +1683,7 @@ void SVTaskObjectClass::AddEmbeddedObject(SVObjectClass* PObject)
 	ASSERT(nullptr != PObject);
 	
 	// Add to Owner's List of Embedded Objects
-	embeddedList.Add(PObject);
+	m_embeddedList.Add(PObject);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1692,9 +1692,9 @@ void SVTaskObjectClass::AddEmbeddedObject(SVObjectClass* PObject)
 void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass* pObjectToRemove)
 {
 	// iterate and remove object if in embedded list.
-	for (int i = embeddedList.GetSize() - 1; i >= 0; i--)
+	for (int i = m_embeddedList.GetSize() - 1; i >= 0; i--)
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if (pObject)
 		{
 			if (pObject == pObjectToRemove)
@@ -1703,7 +1703,7 @@ void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass* pObjectToRemove)
 				{
 					pObject->CloseObject();
 				}
-				embeddedList.RemoveAt(i);
+				m_embeddedList.RemoveAt(i);
 				break;
 			}
 		}
@@ -1771,9 +1771,9 @@ BOOL SVTaskObjectClass::CloseObject()
 	}
 	
 	// Close Embeddeds...
-	for (int i = embeddedList.GetSize() - 1; i >= 0; i--)
+	for (int i = m_embeddedList.GetSize() - 1; i >= 0; i--)
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if (pObject && pObject->IsCreated())
 		{
 			pObject->CloseObject();
@@ -1927,9 +1927,9 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 					// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
 					// ... and if object could not be identified then call base class processMessage member function!!!
 					
-					for (int i = 0; i < embeddedList.GetSize(); i++)
+					for (int i = 0; i < m_embeddedList.GetSize(); i++)
 					{
-						SVObjectClass* pEmbeddedObject = embeddedList.GetAt(i);
+						SVObjectClass* pEmbeddedObject = m_embeddedList.GetAt(i);
 						if ( nullptr != pEmbeddedObject )
 						{
 							const GUID& ObjectID = pEmbeddedObject->GetEmbeddedID();
@@ -2136,9 +2136,9 @@ DWORD_PTR SVTaskObjectClass::EmbeddedOutputListProcessMessage( DWORD DwMessageID
 	// Try to send message to outputObjectList members, if not already processed...
 	if ((DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
 	{
-		for( long i = 0; ! DwResult && i < embeddedList.GetSize(); i++ )
+		for( long i = 0; ! DwResult && i < m_embeddedList.GetSize(); i++ )
 		{
-			SVObjectClass* l_pObject = embeddedList.GetAt(i);
+			SVObjectClass* l_pObject = m_embeddedList.GetAt(i);
 
 			if( nullptr != l_pObject )
 			{
@@ -2152,9 +2152,9 @@ DWORD_PTR SVTaskObjectClass::EmbeddedOutputListProcessMessage( DWORD DwMessageID
 	}
 	else
 	{
-		for( long i = 0; i < embeddedList.GetSize(); i++ )
+		for( long i = 0; i < m_embeddedList.GetSize(); i++ )
 		{
-			SVObjectClass* l_pObject = embeddedList.GetAt(i);
+			SVObjectClass* l_pObject = m_embeddedList.GetAt(i);
 
 			if( nullptr != l_pObject )
 			{
@@ -2350,6 +2350,50 @@ HRESULT SVTaskObjectClass::UnregisterSubObject( SVImageClass* p_pImageObject )
 	return l_Status;
 }
 
+HRESULT SVTaskObjectClass::RegisterSubObject( SVObjectClass* pObject )
+{
+	HRESULT hr = S_FALSE;
+	if (SVImageObjectType == pObject->GetObjectInfo().ObjectTypeInfo.ObjectType)
+	{
+		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
+		if (pImage)
+		{
+			hr = RegisterSubObject(pImage);
+		}
+	}
+	else
+	{
+		SVValueObjectClass* pValue = dynamic_cast<SVValueObjectClass*>(pObject);
+		if (pValue)
+		{
+			hr = RegisterSubObject(pValue);
+		}
+	}
+	return hr;
+}
+
+HRESULT SVTaskObjectClass::UnregisterSubObject( SVObjectClass* pObject )
+{
+	HRESULT hr = S_FALSE;
+	if (SVImageObjectType == pObject->GetObjectInfo().ObjectTypeInfo.ObjectType)
+	{
+		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
+		if (pImage)
+		{
+			hr = UnregisterSubObject(pImage);
+		}
+	}
+	else
+	{
+		SVValueObjectClass* pValue = dynamic_cast<SVValueObjectClass*>(pObject);
+		if (pValue)
+		{
+			hr = UnregisterSubObject(pValue);
+		}
+	}
+	return hr;
+}
+
 HRESULT SVTaskObjectClass::RegisterSubObjects( SVTaskObjectClass* p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList )
 {
 	HRESULT l_hrOk = UnregisterSubObjects( p_psvOwner );
@@ -2489,14 +2533,14 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectVector& rListOfObject
 		}
 
 		// check embeddeds
-		if ( (iterEmbedded = std::find(embeddedList.begin(), embeddedList.end(), *iterList )) != embeddedList.end() )
+		if ( (iterEmbedded = std::find(m_embeddedList.begin(), m_embeddedList.end(), *iterList )) != m_embeddedList.end() )
 		{
 			SVObjectClass* pObject = *iterEmbedded;
 			if (pObject && pObject->IsCreated())
 			{
 				pObject->CloseObject();
 			}
-			embeddedList.erase(iterEmbedded);
+			m_embeddedList.erase(iterEmbedded);
 		}
 
 		// check friend list??
@@ -2510,7 +2554,7 @@ HRESULT SVTaskObjectClass::HideInputsOutputs(SVObjectVector& rListOfObjects)
 	SVObjectVector::iterator iter;
 	for ( iter = rListOfObjects.begin(); iter != rListOfObjects.end(); ++iter )
 	{
-		SetBits( (*iter)->ObjectAttributesSetRef(), SV_VIEWABLE , false );
+		SvUl::SetBits( (*iter)->ObjectAttributesSetRef(), SV_VIEWABLE , false );
 	}
 	return S_OK;
 }
@@ -2680,9 +2724,9 @@ SVValueObjectClass* SVTaskObjectClass::GetEmbeddedValueObject( GUID classguid )
 {
 	SVValueObjectClass* pValueObject = nullptr;
 
-	for (int i = 0; i < embeddedList.GetSize(); i++)
+	for (int i = 0; i < m_embeddedList.GetSize(); i++)
 	{
-		SVObjectClass* pObject = embeddedList.GetAt(i);
+		SVObjectClass* pObject = m_embeddedList.GetAt(i);
 		if ( pObject->GetEmbeddedID() == classguid )
 		{
 			pValueObject = dynamic_cast <SVValueObjectClass*> (pObject);

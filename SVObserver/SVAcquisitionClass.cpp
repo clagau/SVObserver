@@ -23,7 +23,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVFileNameManagerClass.h"
+#include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"

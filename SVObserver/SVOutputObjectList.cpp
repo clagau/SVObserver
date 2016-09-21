@@ -11,10 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-
 #include "SVOutputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVValueObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVDigitalOutputObject.h"
 #include "SVRemoteOutputObject.h"
 #include "SVInfoStructs.h"

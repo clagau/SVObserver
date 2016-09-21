@@ -19,7 +19,6 @@
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #pragma region Declarations

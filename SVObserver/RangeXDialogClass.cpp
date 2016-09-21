@@ -20,7 +20,6 @@
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #pragma region Declarations

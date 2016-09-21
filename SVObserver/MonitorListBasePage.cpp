@@ -16,7 +16,6 @@
 #include "MonitorListBasePage.h"
 #include "MonitorListSheet.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

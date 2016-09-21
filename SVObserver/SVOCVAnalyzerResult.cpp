@@ -26,7 +26,6 @@
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -388,7 +387,6 @@ CRect SVOCVAnalyzeResultClass::Draw( HDC DC, CRect R )
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 {
-	
 	BOOL bOk = TRUE;
 	long	l_lIsFontPreprocessed = 0;
 

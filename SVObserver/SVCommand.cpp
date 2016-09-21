@@ -55,7 +55,7 @@
 
 #include "SVOlicenseManager/SVOLicenseManager.h"
 #include "RemoteCommand.h"
-#include "BasicValueObject.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVStorageResult.h"
 #include "SVVisionProcessorHelper.h"
 #include "RangeClassHelper.h"

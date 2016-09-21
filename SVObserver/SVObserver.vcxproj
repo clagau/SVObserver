@@ -91,7 +91,7 @@
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVValueObjectLibrary.lib;GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -150,7 +150,7 @@ echo %time%
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVValueObjectLibrary.lib;GridCtrlLibrary.lib;JsonLib.lib;ObjectSelectorLibrary.lib;PropTree.lib;SVCommandLibrary.lib;SVContainerLibrary.lib;SVDataManagerLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVGigeCameraFileLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVIOLibrary.lib;SVJsonCommandServerLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVObjectLibrary.lib;SVOGui.lib;SVOLibrary.lib;SVOLicenseManager.lib;SVOMFCLibrary.lib;SVRunControlLibrary.lib;SVSecurity.lib;SVSharedMemoryLibrary.lib;SVSocketLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;ddraw.lib;dxguid.lib;Rpcrt4.lib;Winmm.lib;xmllite.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -174,11 +174,8 @@ echo %time%
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArchiveToolHelper.cpp" />
-    <ClCompile Include="BasicValueObject.cpp" />
-    <ClCompile Include="BasicValueObjects.cpp" />
     <ClCompile Include="Custom2Filter.cpp" />
     <ClCompile Include="Custom2Filter_ImportExport.cpp" />
-    <ClCompile Include="DoubleSortValueObject.cpp" />
     <ClCompile Include="EQAdjustSize.cpp" />
     <ClCompile Include="EQAdjustSizeHeight.cpp" />
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
@@ -253,6 +250,7 @@ echo %time%
     <ClCompile Include="SVFilterClass.cpp" />
     <ClCompile Include="SVGigeCameraROIDlg.cpp" />
     <ClCompile Include="SVHorizEdgeFilterClass.cpp" />
+    <ClCompile Include="SVImageAnalyzerClass.cpp" />
     <ClCompile Include="SVImportedInspectionInfo.cpp" />
     <ClCompile Include="SVInPlaceImageOperatorListClass.cpp" />
     <ClCompile Include="SVInputStreamManager.cpp" />
@@ -274,7 +272,6 @@ echo %time%
     <ClCompile Include="SVSharpenFilterClass.cpp" />
     <ClCompile Include="SVSmoothFilterClass.cpp" />
     <ClCompile Include="SVSocketRemoteCommandManager.cpp" />
-    <ClCompile Include="SVStaticStringValueObjectClass.cpp" />
     <ClCompile Include="SVStdImageOperatorListClass.cpp" />
     <ClCompile Include="SVStorage.cpp" />
     <ClCompile Include="SVStorageResult.cpp" />
@@ -314,12 +311,9 @@ echo %time%
     <ClCompile Include="SVBlobAnalyzerDialog.cpp" />
     <ClCompile Include="SVBlobAnalyzerResultDlg.cpp" />
     <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp" />
-    <ClCompile Include="SVBoolValueObjectClass.cpp" />
-    <ClCompile Include="SVByteValueObjectClass.cpp" />
     <ClCompile Include="SVCameraImageTemplate.cpp" />
     <ClCompile Include="SVCameraListBox.cpp" />
     <ClCompile Include="SVCameraStructInterface.cpp" />
-    <ClCompile Include="SVCharValueObjectClass.cpp" />
     <ClCompile Include="SVChildrenSetupDialog.cpp" />
     <ClCompile Include="SVClassInfoStruct.cpp" />
     <ClCompile Include="SVColorThreshold.cpp" />
@@ -348,15 +342,11 @@ echo %time%
     <ClCompile Include="SVDisplayObject.cpp" />
     <ClCompile Include="SVDlgImageEditor.cpp" />
     <ClCompile Include="SVDLLToolDefinitionStructs.cpp" />
-    <ClCompile Include="SVDoubleValueObjectClass.cpp" />
-    <ClCompile Include="SVDPointValueObjectClass.cpp" />
     <ClCompile Include="SVDPointXResult.cpp" />
     <ClCompile Include="SVDPointYResult.cpp" />
     <ClCompile Include="SVDrawObject.cpp" />
-    <ClCompile Include="SVDWordValueObjectClass.cpp" />
     <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp" />
     <ClCompile Include="SVEnumerateCombo.cpp" />
-    <ClCompile Include="SVEnumerateValueObjectClass.cpp" />
     <ClCompile Include="SVEnvironmentSettingsDialog.cpp" />
     <ClCompile Include="SVEquation.cpp" />
     <ClCompile Include="SVEvaluate.cpp" />
@@ -368,10 +358,6 @@ echo %time%
     <ClCompile Include="SVExternalToolTask.cpp" />
     <ClCompile Include="SVFigureEditor.cpp" />
     <ClCompile Include="SVFileAcquisitionClass.cpp" />
-    <ClCompile Include="SVFileNameArrayClass.cpp" />
-    <ClCompile Include="SVFileNameLockablePointerArrayClass.cpp" />
-    <ClCompile Include="SVFileNameManagerClass.cpp" />
-    <ClCompile Include="SVFileNameValueObjectClass.cpp" />
     <ClCompile Include="SVFillBlobDlg.cpp" />
     <ClCompile Include="SVGigeCameraManager.cpp" />
     <ClCompile Include="SVGigeCameraManagerDlg.cpp" />
@@ -396,7 +382,6 @@ echo %time%
     <ClCompile Include="SVInputObject.cpp" />
     <ClCompile Include="SVInputObjectList.cpp" />
     <ClCompile Include="SVInspectionProcess.cpp" />
-    <ClCompile Include="SVInt64ValueObjectClass.cpp" />
     <ClCompile Include="SVIOAdjustDialog.cpp" />
     <ClCompile Include="SVIOBoardCapabilities.cpp" />
     <ClCompile Include="SVIOController.cpp" />
@@ -425,7 +410,6 @@ echo %time%
     <ClCompile Include="SVLinearLinePixelCountingAnalyzer.cpp" />
     <ClCompile Include="SVLinearMeasurementAnalyzerClass.cpp" />
     <ClCompile Include="SVLinearToolClass.cpp" />
-    <ClCompile Include="SVLongValueObjectClass.cpp" />
     <ClCompile Include="SVLowerThresholdEquation.cpp" />
     <ClCompile Include="SVLutDlg.cpp" />
     <ClCompile Include="SVLUTEquation.cpp" />
@@ -498,7 +482,6 @@ echo %time%
     <ClCompile Include="SVPerspectiveWarpDlg.cpp" />
     <ClCompile Include="SVPixelAnalyzer.cpp" />
     <ClCompile Include="svpixelanalyzersetup.cpp" />
-    <ClCompile Include="SVPointValueObjectClass.cpp" />
     <ClCompile Include="SVPolarTransform.cpp" />
     <ClCompile Include="SVPolarTransformationTool.cpp" />
     <ClCompile Include="SVPPQBar.cpp" />
@@ -550,7 +533,6 @@ echo %time%
     <ClCompile Include="SVStartWindow.cpp" />
     <ClCompile Include="SVStatTool.cpp" />
     <ClCompile Include="SVStreamCommandFactory.cpp" />
-    <ClCompile Include="SVStringValueObjectClass.cpp" />
     <ClCompile Include="SVSVIMStateClass.cpp" />
     <ClCompile Include="SVTADlgAcquisitionSourcePage.cpp" />
     <ClCompile Include="SVTADlgColorThresholdAdjustment.cpp" />
@@ -575,7 +557,6 @@ echo %time%
     <ClCompile Include="SVTaskObjectValueInterface.cpp" />
     <ClCompile Include="SVThickeningFilter.cpp" />
     <ClCompile Include="SVThinningFilter.cpp" />
-    <ClCompile Include="SVTimerValueObjectClass.cpp" />
     <ClCompile Include="SVTool.cpp" />
     <ClCompile Include="SVToolAcquisition.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogAnalyzerPageClass.cpp" />
@@ -600,10 +581,7 @@ echo %time%
     <ClCompile Include="SVUtilityArgumentDialog.cpp" />
     <ClCompile Include="SVUtilityIniClass.cpp" />
     <ClCompile Include="SVValueBaseNormalizerClass.cpp" />
-    <ClCompile Include="SVValueObjectClass.cpp" />
-    <ClCompile Include="SVValueObjectImpl.cpp" />
     <ClCompile Include="SVVariantResultClass.cpp" />
-    <ClCompile Include="SVVariantValueObjectClass.cpp" />
     <ClCompile Include="SVVirtualCamera.cpp" />
     <ClCompile Include="SVWaterShedFilter.cpp" />
     <ClCompile Include="SVWindowTool.cpp" />
@@ -638,10 +616,7 @@ echo %time%
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="ArchiveMethodEnum.h" />
     <ClInclude Include="ArchiveToolHelper.h" />
-    <ClInclude Include="BasicValueObject.h" />
-    <ClInclude Include="BasicValueObjects.h" />
     <ClInclude Include="Custom2Filter.h" />
-    <ClInclude Include="DoubleSortValueObject.h" />
     <ClInclude Include="EQAdjustSize.h" />
     <ClInclude Include="EQAdjustSizeHeight.h" />
     <ClInclude Include="EQAdjustSizePositionX.h" />
@@ -709,6 +684,7 @@ echo %time%
     <ClInclude Include="SVFilterClass.h" />
     <ClInclude Include="SVGigeCameraROIDlg.h" />
     <ClInclude Include="SVHorizEdgeFilterClass.h" />
+    <ClInclude Include="SVImageAnalyzerClass.h" />
     <ClInclude Include="SVImportedInputList.h" />
     <ClInclude Include="SVImportedInspectionInfo.h" />
     <ClInclude Include="SVImportProgress.h" />
@@ -732,8 +708,6 @@ echo %time%
     <ClInclude Include="SVSharpenFilterClass.h" />
     <ClInclude Include="SVSmoothFilterClass.h" />
     <ClInclude Include="SVSocketRemoteCommandManager.h" />
-    <ClInclude Include="SVStaticStringValueObjectClass.h" />
-    <ClInclude Include="SVStaticValueObjectClassImpl.h" />
     <ClInclude Include="SVStdImageOperatorListClass.h" />
     <ClInclude Include="SVStorage.h" />
     <ClInclude Include="SVStorageResult.h" />
@@ -770,7 +744,6 @@ echo %time%
     <ClInclude Include="SVAnalyzerResultDlg.h" />
     <ClInclude Include="SVArchiveTool.h" />
     <ClInclude Include="SVArchiveWritingDlg.h" />
-    <ClInclude Include="SVArrayValueHolder.h" />
     <ClInclude Include="SVAutoThresholdEquation.h" />
     <ClInclude Include="SVBarCodeAnalyzerClass.h" />
     <ClInclude Include="SVBarCodeAttributesDialog.h" />
@@ -784,12 +757,9 @@ echo %time%
     <ClInclude Include="SVBlobAnalyzerDialog.h" />
     <ClInclude Include="SVBlobAnalyzerResultDlg.h" />
     <ClInclude Include="SVBlobFeaturePropertiesDlg.h" />
-    <ClInclude Include="SVBoolValueObjectClass.h" />
-    <ClInclude Include="SVByteValueObjectClass.h" />
     <ClInclude Include="SVCameraImageTemplate.h" />
     <ClInclude Include="SVCameraListBox.h" />
     <ClInclude Include="SVCameraStructInterface.h" />
-    <ClInclude Include="SVCharValueObjectClass.h" />
     <ClInclude Include="SVChildrenSetupDialog.h" />
     <ClInclude Include="SVClassInfoStruct.h" />
     <ClInclude Include="SVColorThreshold.h" />
@@ -817,15 +787,11 @@ echo %time%
     <ClInclude Include="SVDlgImageEditor.h" />
     <ClInclude Include="SVDLLToolDefinitionStructs.h" />
     <ClInclude Include="SVDLLToolLoadLibraryClass.h" />
-    <ClInclude Include="SVDoubleValueObjectClass.h" />
-    <ClInclude Include="SVDPointValueObjectClass.h" />
     <ClInclude Include="SVDPointXResult.h" />
     <ClInclude Include="SVDPointYResult.h" />
     <ClInclude Include="SVDrawObject.h" />
-    <ClInclude Include="SVDWordValueObjectClass.h" />
     <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h" />
     <ClInclude Include="SVEnumerateCombo.h" />
-    <ClInclude Include="SVEnumerateValueObjectClass.h" />
     <ClInclude Include="SVEnvironmentSettingsDialog.h" />
     <ClInclude Include="SVEquation.h" />
     <ClInclude Include="SVEvaluate.h" />
@@ -837,10 +803,6 @@ echo %time%
     <ClInclude Include="SVExternalToolTask.h" />
     <ClInclude Include="SVFigureEditor.h" />
     <ClInclude Include="SVFileAcquisitionClass.h" />
-    <ClInclude Include="SVFileNameArrayClass.h" />
-    <ClInclude Include="SVFileNameLockablePointerArrayClass.h" />
-    <ClInclude Include="SVFileNameManagerClass.h" />
-    <ClInclude Include="SVFileNameValueObjectClass.h" />
     <ClInclude Include="SVFillBlobDlg.h" />
     <ClInclude Include="SVGigeCameraManager.h" />
     <ClInclude Include="SVGigeCameraManagerDlg.h" />
@@ -868,7 +830,6 @@ echo %time%
     <ClInclude Include="SVInspectionProcess.h" />
     <ClInclude Include="SVInspectionProcessResetStruct.h" />
     <ClInclude Include="SVInspectionTreeParser.h" />
-    <ClInclude Include="SVInt64ValueObjectClass.h" />
     <ClInclude Include="SVIOAdjustDialog.h" />
     <ClInclude Include="SVIOBoardCapabilities.h" />
     <ClInclude Include="SVIOController.h" />
@@ -897,7 +858,6 @@ echo %time%
     <ClInclude Include="SVLinearLinePixelCountingAnalyzer.h" />
     <ClInclude Include="SVLinearMeasurementAnalyzerClass.h" />
     <ClInclude Include="SVLinearToolClass.h" />
-    <ClInclude Include="SVLongValueObjectClass.h" />
     <ClInclude Include="SVLowerThresholdEquation.h" />
     <ClInclude Include="SVLutDlg.h" />
     <ClInclude Include="SVLUTEquation.h" />
@@ -917,7 +877,6 @@ echo %time%
     <ClInclude Include="SVMessageWindow.h" />
     <ClInclude Include="SVMultiDocTemplate.h" />
     <ClInclude Include="SVObjectAppClass.h" />
-    <ClInclude Include="SVObjectAttributeClassHelper.h" />
     <ClInclude Include="SVObjectCommandDataJson.h" />
     <ClInclude Include="SVObjectScriptParser.h" />
     <ClInclude Include="SVObjectScriptParserBase.h" />
@@ -965,7 +924,6 @@ echo %time%
     <ClInclude Include="SVPerspectiveWarpDlg.h" />
     <ClInclude Include="SVPixelAnalyzer.h" />
     <ClInclude Include="SVPixelAnalyzerSetup.h" />
-    <ClInclude Include="SVPointValueObjectClass.h" />
     <ClInclude Include="SVPolarTransform.h" />
     <ClInclude Include="SVPolarTransformationTool.h" />
     <ClInclude Include="SVPPQBar.h" />
@@ -1017,7 +975,6 @@ echo %time%
     <ClInclude Include="SVStartWindow.h" />
     <ClInclude Include="SVStatTool.h" />
     <ClInclude Include="SVStreamCommandFactory.h" />
-    <ClInclude Include="SVStringValueObjectClass.h" />
     <ClInclude Include="SVSubscriberProviderInterfaces.h" />
     <ClInclude Include="SVSVIMStateClass.h" />
     <ClInclude Include="SVTADlgAcquisitionSourcePage.h" />
@@ -1043,7 +1000,6 @@ echo %time%
     <ClInclude Include="SVTaskObjectValueInterface.h" />
     <ClInclude Include="SVThickeningFilter.h" />
     <ClInclude Include="SVThinningFilter.h" />
-    <ClInclude Include="SVTimerValueObjectClass.h" />
     <ClInclude Include="SVTool.h" />
     <ClInclude Include="SVToolAcquisition.h" />
     <ClInclude Include="SVToolAdjustmentDialogAnalyzerPageClass.h" />
@@ -1068,13 +1024,7 @@ echo %time%
     <ClInclude Include="SVUtilityArgumentDialog.h" />
     <ClInclude Include="SVUtilityIniClass.h" />
     <ClInclude Include="SVValueBaseNormalizerClass.h" />
-    <ClInclude Include="SVValueObject.h" />
-    <ClInclude Include="SVValueObjectClass.h" />
-    <ClInclude Include="SVValueObjectClassImpl.h" />
-    <ClInclude Include="SVValueObjectGlobals.h" />
-    <ClInclude Include="SVValueObjectReference.h" />
     <ClInclude Include="SVVariantResultClass.h" />
-    <ClInclude Include="SVVariantValueObjectClass.h" />
     <ClInclude Include="SVVirtualCamera.h" />
     <ClInclude Include="SVWaterShedFilter.h" />
     <ClInclude Include="SVWindowTool.h" />
@@ -1082,13 +1032,10 @@ echo %time%
     <ClInclude Include="ToolClipboard.h" />
     <ClInclude Include="ToolSizeAdjustTask.h" />
     <ClInclude Include="TraceWin.h" />
-    <ClInclude Include="UseTypeExceptMatch.h" />
     <ClInclude Include="ZoomHelperEx.h" />
     <ClInclude Include="ZoomToolBar.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="BasicValueObject.inl" />
-    <None Include="BasicValueObjects.inl" />
     <None Include="RootChildren.inl" />
     <None Include="RootObject.inl" />
     <None Include="SVConfigurationTreeWriter.inl" />
@@ -1100,11 +1047,8 @@ echo %time%
     <None Include="SVInspectionTreeParser.inl" />
     <None Include="SVMemoryManager.inl" />
     <None Include="SVOutputObjectList.inl" />
-    <None Include="SVStaticValueObjectClassImpl.inl" />
     <None Include="SVTaskObjectInterfaceInputRequestStruct.inl" />
     <None Include="SVToolExtentClass.inl" />
-    <None Include="SVValueObjectClass.inl" />
-    <None Include="SVValueObjectClassImpl.inl" />
     <None Include="hlp\AfxCore.rtf" />
     <None Include="hlp\AfxOleCl.rtf" />
     <None Include="hlp\AfxOleSv.rtf" />

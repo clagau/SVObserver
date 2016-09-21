@@ -15,6 +15,7 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVUtilityLibrary/SetBits.h"
 #include "SVAnalyzer.h"
 #include "SVConditional.h"
 #include "SVGlobal.h"
@@ -146,9 +147,7 @@ void SVToolClass::init()
 	m_svAuxiliarySourceImageName.SetDefaultValue( "", TRUE );
 	m_svAuxiliaryDrawType.SetDefaultValue( "", TRUE );
 
-	pCurrentToolSet = nullptr;
-	pPropertyArray = nullptr;
-	propertyCount = 0;
+	m_pCurrentToolSet = nullptr;
 
 	// Auxiliary Source Image.
 	m_AuxSourceImageObjectInfo.SetInputObjectType( SVImageObjectType );
@@ -182,7 +181,7 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 		{
 			bOk = TRUE;
 
-			pCurrentToolSet = GetInspection()->GetToolSet();
+			m_pCurrentToolSet = GetInspection()->GetToolSet();
 		}
 	}
 
@@ -279,9 +278,9 @@ bool SVToolClass::WasEnabled() const
 {
 	bool bEnabled = true;
 
-	if( nullptr != pCurrentToolSet )
+	if( nullptr != m_pCurrentToolSet )
 	{
-		bEnabled = pCurrentToolSet->WasEnabled();
+		bEnabled = m_pCurrentToolSet->WasEnabled();
 	}
 
 	if (bEnabled)
@@ -301,9 +300,9 @@ HRESULT SVToolClass::GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine )
 {
 	HRESULT l_Status = S_OK;
 
-	if( pCurrentToolSet )
+	if( m_pCurrentToolSet )
 	{
-		SVEnumerateValueObjectClass* pSetEnum = pCurrentToolSet->GetDrawFlagObject();
+		SVEnumerateValueObjectClass* pSetEnum = m_pCurrentToolSet->GetDrawFlagObject();
 
 		if( pSetEnum )
 		{
@@ -411,9 +410,9 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 	if( !GetInspection()->GetNewDisableMethod() )
 	{
 		// First Set the old stuff forward for the counts
-		isObjectValid.GetValue( bIsValid );
+		m_isObjectValid.GetValue( bIsValid );
 
-		isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, bIsValid );
+		m_isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, bIsValid );
 
 		passedCount.GetValue( lCount );
 		passedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
@@ -508,11 +507,11 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 		
 		// Get Status Color...
 		DWORD dwValue = RRunStatus.GetStatusColor();
-		statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+		m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
 		// Get Status...
 		dwValue = RRunStatus.GetState();
-		statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+		m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 	}// end if
 	else
 	{
@@ -655,11 +654,11 @@ BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 	
 	// Get Status Color...
 	DWORD dwValue = RRunStatus.GetStatusColor();
-	statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
 	// Get Status...
 	dwValue = RRunStatus.GetState();
-	statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
 	return dwRet;
 }// end RunWithNewDisable
@@ -916,11 +915,11 @@ HRESULT SVToolClass::EnableAuxiliaryExtents( bool p_bEnable )
 		m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() |= l_dwAttributes;
 		m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() |= l_dwAttributes;
 
-		SetBits( m_svAuxiliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SetBits( m_svAuxiliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SetBits( m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SetBits( m_svAuxiliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SetBits( m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SvUl::SetBits( m_svAuxiliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SvUl::SetBits( m_svAuxiliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SvUl::SetBits( m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SvUl::SetBits( m_svAuxiliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SvUl::SetBits( m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
 	}
 	else
 	{
@@ -936,11 +935,11 @@ HRESULT SVToolClass::EnableAuxiliaryExtents( bool p_bEnable )
 		m_svAuxiliaryDrawType.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
 		m_svAuxiliarySourceImageName.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
 
-		SetBits( m_svAuxiliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SetBits( m_svAuxiliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SetBits( m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SetBits( m_svAuxiliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SetBits( m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SvUl::SetBits( m_svAuxiliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SvUl::SetBits( m_svAuxiliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SvUl::SetBits( m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SvUl::SetBits( m_svAuxiliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SvUl::SetBits( m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
 	}
 	return l_hr;
 }
@@ -986,7 +985,7 @@ HRESULT SVToolClass::ResetObject()
 			| SV_PUBLISHABLE;
 		m_svUpdateAuxiliaryExtents.GetValue( l_dValue );
 
-		SetBits( m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		SvUl::SetBits( m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
 	}
 	else
 	{
@@ -1002,7 +1001,7 @@ HRESULT SVToolClass::ResetObject()
 			| SV_SELECTABLE_FOR_STATISTICS 
 			| SV_PUBLISHABLE);
 
-		SetBits( m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		SvUl::SetBits( m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
 	}
 
 	EnableAuxiliaryExtents( l_dValue > 0 );

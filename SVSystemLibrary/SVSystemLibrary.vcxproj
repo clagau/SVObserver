@@ -89,6 +89,9 @@
     <ClCompile Include="SVCriticalSection.cpp" />
     <ClCompile Include="SVEncodeDecodeUtilities.cpp" />
     <ClCompile Include="SVFile.cpp" />
+    <ClCompile Include="SVFileNameArrayClass.cpp" />
+    <ClCompile Include="SVFileNameLockablePointerArrayClass.cpp" />
+    <ClCompile Include="SVFileNameManagerClass.cpp" />
     <ClCompile Include="SVImageConvertorGDI.cpp" />
     <ClCompile Include="SVLockableClass.cpp" />
     <ClCompile Include="SVSAXContentHandlerImpl.cpp" />
@@ -105,6 +108,9 @@
     <ClInclude Include="SVEncodeDecodeUtilities.h" />
     <ClInclude Include="SVEventThread.h" />
     <ClInclude Include="SVFile.h" />
+    <ClInclude Include="SVFileNameArrayClass.h" />
+    <ClInclude Include="SVFileNameLockablePointerArrayClass.h" />
+    <ClInclude Include="SVFileNameManagerClass.h" />
     <ClInclude Include="SVImageConvertorGDI.h" />
     <ClInclude Include="SVLockableClass.h" />
     <ClInclude Include="SVObserverEnums.h" />

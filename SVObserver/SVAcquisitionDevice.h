@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVFileNameArrayClass.h"
+#include "SVSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"

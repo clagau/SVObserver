@@ -31,13 +31,12 @@
 
 #include "SVConfigurationObject.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVGlobal.h"
 #include "RootObject.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVXMLLibrary/SaxExtractPropertiesHandler.h"
+#include "SVOMFCLibrary/StringEscape.h"
 #pragma endregion Includes
-
 
 static LPCTSTR scImportNewExt = _T(".new.xml");
 static LPCTSTR scDependentsZipExt = _T(".dependents.zip");
@@ -245,7 +244,7 @@ static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSe
 				CString Description;
 				Description = Value.bstrVal;
 				//This is needed to insert any CR LF in the description which were replaced while saving
-				::SVRemoveEscapedSpecialCharacters( Description, true );
+				SvOml::RemoveEscapedSpecialCharacters( Description, true );
 				GlobalData.m_Description = Description;
 			}
 			rImportedGlobals.insert( GlobalData );

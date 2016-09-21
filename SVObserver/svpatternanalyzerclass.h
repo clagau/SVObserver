@@ -14,7 +14,7 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVAnalyzer.h"
+#include "SVImageAnalyzerClass.h"
 #include "ObjectInterfaces/MessageTextEnum.h"
 #pragma endregion Includes
 

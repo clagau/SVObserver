@@ -26,13 +26,14 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVUtilityLibrary/ZipHelper.h"
+#include "SVOMFCLibrary/StringEscape.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
-#include "SVFileNameManagerClass.h"
+#include "SVSystemLibrary/SVFileNameManagerClass.h"
+#include "SVObserver.h"
 #include "SVIPDoc.h"
 #include "RootObject.h"
 #include "SVToolSet.h"
-#include "SVGlobal.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
@@ -126,7 +127,7 @@ static void WriteGlobalConstants(SVObjectXMLWriter& rWriter, SVObjectClass* pObj
 				Value.Clear();
 				CString Description( pGlobalConstant->getDescription() );
 				//This is needed to remove any CR LF in the description
-				::SVAddEscapeSpecialCharacters( Description, true );
+				SvOml::AddEscapeSpecialCharacters( Description, true );
 				Value.SetString( Description );
 				rWriter.WriteAttribute( CTAG_DESCRIPTION, Value );
 

@@ -377,13 +377,13 @@ HRESULT SVInspectionProcess::ProcessCommandQueue( bool& p_rProcessed )
 }
 
 SVInspectionProcess::SVInspectionProcess( LPCSTR ObjectName )
-	: SVObjectClass( ObjectName )
+: SVObjectClass( ObjectName )
 {
 	Init();
 }
 
 SVInspectionProcess::SVInspectionProcess( SVObjectClass* POwner, int StringResourceID )
-	: SVObjectClass( POwner, StringResourceID )
+: SVObjectClass( POwner, StringResourceID )
 {
 	Init();
 }
@@ -2545,7 +2545,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 
 				if( SVResetItemIP != p_reResetItem && l_bResetObject && refValueObject.Object()->ResetItem() < SVResetItemNone )
 				{
-					SVToolClass *l_psvTool = refValueObject.Object()->GetTool();
+					SVToolClass* l_psvTool = dynamic_cast<SVToolClass*>(refValueObject.Object()->GetAncestor(SVToolObjectType));
 
 					if( nullptr != l_psvTool )
 					{
@@ -3883,6 +3883,50 @@ void SVInspectionProcess::SetName( const CString& StrString )
 	SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), l_Data );
 }
 
+HRESULT SVInspectionProcess::RegisterSubObject( SVObjectClass* pObject )
+{
+	HRESULT hr = S_FALSE;
+	if (SVImageObjectType == pObject->GetObjectInfo().ObjectTypeInfo.ObjectType)
+	{
+		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
+		if (pImage)
+		{
+			hr = RegisterSubObject(pImage);
+		}
+	}
+	else
+	{
+		SVValueObjectClass* pValue = dynamic_cast<SVValueObjectClass*>(pObject);
+		if (pValue)
+		{
+			hr = RegisterSubObject(pValue);
+		}
+	}
+	return hr;
+}
+
+HRESULT SVInspectionProcess::UnregisterSubObject( SVObjectClass* pObject )
+{
+	HRESULT hr = S_FALSE;
+	if (SVImageObjectType == pObject->GetObjectInfo().ObjectTypeInfo.ObjectType)
+	{
+		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
+		if (pImage)
+		{
+			hr = UnregisterSubObject(pImage);
+		}
+	}
+	else
+	{
+		SVValueObjectClass* pValue = dynamic_cast<SVValueObjectClass*>(pObject);
+		if (pValue)
+		{
+			hr = UnregisterSubObject(pValue);
+		}
+	}
+	return hr;
+}
+
 HRESULT SVInspectionProcess::RegisterSubObject( SVValueObjectClass* p_pValueObject )
 {
 	HRESULT l_Status = S_OK;
@@ -4414,7 +4458,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList( const UINT
 			InsertItem.setItemKey( rObjectRef->GetUniqueObjectID().ToVARIANT() );
 			if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (rObjectRef.Object()) )
 			{
-				CString typeName = _T("");
+				CString typeName;
 				pValueObject->GetTypeName( typeName );
 				InsertItem.setItemTypeName( typeName );
 			}
@@ -4469,7 +4513,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList( const UINT
 				InsertItem.setItemKey( ObjectRef->GetUniqueObjectID().ToVARIANT() );
 				if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
 				{
-					CString typeName = _T("");
+					CString typeName;
 					pValueObject->GetTypeName( typeName );
 					InsertItem.setItemTypeName( typeName );
 				}

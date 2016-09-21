@@ -39,7 +39,7 @@
 #include "SVPublishList.h"
 #include "SVResetStruct.h"
 #include "SVRGBMainImage.h"
-#include "SVValueObjectReference.h"
+#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVVirtualCamera.h"
 #include "SVMonitorList.h"
 #pragma endregion Includes
@@ -99,10 +99,8 @@ public:
 	virtual BOOL OnValidate();
 	virtual BOOL Validate();
 
-	virtual HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
-	virtual HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
-	virtual HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
-	virtual HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
+	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
+	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
 
 	virtual HRESULT RegisterSubObjects( SVTaskObjectClass *p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList );
 	virtual HRESULT UnregisterSubObjects( SVTaskObjectClass *p_psvOwner );
@@ -123,7 +121,7 @@ public:
 	virtual SvOi::ISelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
-#pragma region virtual method (IInspectionProcess)
+#pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const CString& p_rName ) const;
 
@@ -203,7 +201,6 @@ public:
 
 	int UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
 	bool IsColorCamera() const;
-
 
 	LPCTSTR GetToolsetImage();
 	void SetToolsetImage( CString sToolsetImage );
@@ -344,6 +341,11 @@ protected:
 	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
+
+	virtual HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
+	virtual HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
+	virtual HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
+	virtual HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
 
 	BOOL RunOnce( SVToolClass* p_psvTool = nullptr );
 	BOOL RunInspection( long lResultDataIndex, SVImageIndexStruct svResultImageIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
