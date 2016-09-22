@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2009 by Seidenader Vision, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVStringEnum
-//* .File Name       : $Workfile:   SVStringEnumList.h  $
+//* .Module Name     : SVGigeFeatureStringEnumList
+//* .File Name       : $Workfile:   SVGigeFeatureStringEnumList.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:54:58  $
@@ -23,9 +23,9 @@
 
 class SVGigeFeatureStringEnumList
 {
-public:
 	SVBidirectionalMap<SVString, SVString>::type m_stringEnums;
 
+public:
 	SVGigeFeatureStringEnumList();
 	~SVGigeFeatureStringEnumList();
 
