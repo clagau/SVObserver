@@ -19,6 +19,8 @@
 #include "SVTool.h"
 #include "SVWaterShedFilter.h"
 #include "ObjectInterfaces/TextDefineSvOi.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG

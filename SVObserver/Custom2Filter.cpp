@@ -15,6 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageProcessingClass.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #pragma region Declarations

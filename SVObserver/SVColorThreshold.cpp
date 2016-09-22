@@ -22,6 +22,7 @@
 #include "SVGlobal.h"
 #include "SVImageProcessingClass.h"
 #include "SVTool.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

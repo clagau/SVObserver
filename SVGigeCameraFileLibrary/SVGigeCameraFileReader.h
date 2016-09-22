@@ -15,14 +15,18 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVGigeCameraFileInfoStruct.h"
 
 class SVGigeCameraFileReader
 {
 public:
-	SVGigeCameraFileReader(SVGigeCameraFileInfoStruct& rInfo);
-	HRESULT ReadParams( SVDeviceParamCollection& rParams );
+	SVGigeCameraFileReader(const SVString& rFilename,bool bColorSystem);
+
+	HRESULT ReadParams(SVDeviceParamCollection& rParams);
 	HRESULT ReadGigeFeatureOverrides();
+	HRESULT ReadCameraFileImpl( SVDeviceParamCollection& rParams );
+
+	const SVString& GetFeatureOverrides() const {return m_FeatureOverrides;}
+
 
 private:
 	unsigned short GetChecksum(std::istream& rFile);
@@ -39,5 +43,9 @@ private:
 //	HRESULT ReadCameraFileOptions(const SVString& sSection, const SVString& sKey, const SVString& sFilename, SVDeviceParamOptionInsertor& rInsertor);
 	HRESULT ReadCameraFileLongValueInfo(const SVString& sSection, const SVString& sKey, const SVString& sFilename, SVLongValueDeviceParam* pParam);
 
-	SVGigeCameraFileInfoStruct& m_rInfo;
+
+	SVString m_Filename;
+	bool m_isColorSystem;
+
+	SVString m_FeatureOverrides;
 };

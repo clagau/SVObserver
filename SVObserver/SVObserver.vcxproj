@@ -361,7 +361,6 @@ echo %time%
     <ClCompile Include="SVFillBlobDlg.cpp" />
     <ClCompile Include="SVGigeCameraManager.cpp" />
     <ClCompile Include="SVGigeCameraManagerDlg.cpp" />
-    <ClCompile Include="SVGigeCameraStruct.cpp" />
     <ClCompile Include="SVGlobal.cpp" />
     <ClCompile Include="SVGuiExtentUpdater.cpp" />
     <ClCompile Include="SVHistogramAnalyzer.cpp" />
@@ -806,7 +805,6 @@ echo %time%
     <ClInclude Include="SVFillBlobDlg.h" />
     <ClInclude Include="SVGigeCameraManager.h" />
     <ClInclude Include="SVGigeCameraManagerDlg.h" />
-    <ClInclude Include="SVGigeCameraStruct.h" />
     <ClInclude Include="SVGlobal.h" />
     <ClInclude Include="SVGlobalHandles.h" />
     <ClInclude Include="SVGuiExtentUpdater.h" />

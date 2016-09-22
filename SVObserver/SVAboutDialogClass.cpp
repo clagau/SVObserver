@@ -17,6 +17,8 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 
 //******************************************************************************
 // Message Map Entries

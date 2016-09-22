@@ -15,6 +15,8 @@
 #include "SVRemoteCommand.h"
 #include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #include "SVRemoteCommandData.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 SVRemoteCommand::SVRemoteCommand()

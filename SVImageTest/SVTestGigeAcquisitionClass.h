@@ -19,13 +19,13 @@ class SVTestGigeAcquisitionClass : public SVTestAcquisitionClass
 private:
 	SVTestGigeCameraProxy m_gigeCameraProxy;
 
-	HRESULT SetGigeFeatureOverrides(const SVString& featureOverrides);
+	HRESULT SetGigeFeatureOverrides(const SVString& rFeatureOverrides);
 
 public:
 	SVTestGigeAcquisitionClass(SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer);
 	virtual ~SVTestGigeAcquisitionClass();
 
-	virtual HRESULT ReadCameraFile( const CString& sFile );
+	virtual HRESULT ReadCameraFile( const SVString&);
 
 	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual bool CameraMatchesCameraFile();

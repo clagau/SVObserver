@@ -233,9 +233,6 @@
     <ClCompile Include="SVGigeCameraManagerDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVGigeCameraStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVGlobal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1438,9 +1435,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraManagerDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGigeCameraStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGlobal.h">

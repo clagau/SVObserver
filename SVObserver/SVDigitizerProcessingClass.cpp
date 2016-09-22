@@ -20,7 +20,7 @@
 #include "SVFileAcquisitionClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "SVMatroxGigeAcquisitionClass.h"
-#include "SVGigeCameraStruct.h"
+#include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

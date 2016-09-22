@@ -807,7 +807,7 @@ SVDeviceParamCollection& SVAcquisitionClass::HardwareCapabilities()
 	return m_DeviceParams;
 }
 
-HRESULT SVAcquisitionClass::ReadCameraFile( const CString& sFile, SVDeviceParamCollection& rParams )
+HRESULT SVAcquisitionClass::ReadCameraFile( const SVString& , SVDeviceParamCollection& rParams )
 {
 	return E_NOTIMPL;
 }

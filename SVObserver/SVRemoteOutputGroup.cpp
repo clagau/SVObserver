@@ -25,6 +25,8 @@
 #include "SVOutputStreamManager.h"
 #include "SVRemoteOutputObject.h"
 #include "TextDefinesSvO.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputGroup, SVRemoteOutputGroupGUID );

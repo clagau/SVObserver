@@ -20,6 +20,8 @@
 #include "SVRemoteOutputsView.h"
 #include "MonitorListView.h"
 #include "GlobalConstantView.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVIOTabbedView, CMDIChildWnd)

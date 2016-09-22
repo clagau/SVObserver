@@ -22,6 +22,7 @@
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManagerResource.h"  // Use SvStl::MessageMgrDisplayAndNotify
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 SVImageObjectClass::SVImageObjectClass()

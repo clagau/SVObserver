@@ -50,7 +50,7 @@ public:
 	HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
 	bool CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
 
-	HRESULT SetGigeFeatureOverrides(const SVString& xmlData, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT SetGigeFeatureOverrides(const SVString& rXmlData, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
 	HRESULT SetDigitizerParameter( const SVDeviceParamWrapper& rw, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer );
 
 	HRESULT SVLUTToSafeArray(const SVLut& lut, _variant_t& output);

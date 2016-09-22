@@ -20,6 +20,8 @@
 #include "SVStatusLibrary/MessageManagerResource.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVSquare, CStatic)

@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVRegressionExitDlg.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG

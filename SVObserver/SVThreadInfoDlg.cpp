@@ -17,6 +17,8 @@
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 // SVThreadInfoDlg dialog

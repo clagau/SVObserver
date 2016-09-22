@@ -26,7 +26,7 @@
 #include "SVObserver.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVImageProcessingClass.h"
-#include "SVGigeCameraStruct.h"
+#include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #pragma endregion Includes
 
@@ -141,20 +141,18 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 		ASSERT( mFiles.GetSize() == 1 );	// only one file
 		if ( mFiles.GetSize() == 1 )
 		{
-			CString sFile = mFiles[0].GetFullFileName();
+			SVString sFile (mFiles[0].GetFullFileName());
 
-			SVGigeCameraFileInfoStruct info;
-			info.sFilename = sFile;
-			info.bColorSystem = IsColor();
+			SVGigeCameraFileReader reader(sFile, IsColor());
 
-			hr = SVGigeCameraProxy::ReadCameraFileImpl( info, m_CameraFileDeviceParams );
+			hr = reader.ReadCameraFileImpl( m_CameraFileDeviceParams );
 
-			if ( SVMSG_INCORRECT_CHECKSUM == hr )
-			{
-			}
 			// Set Gige Feature Overrides
-			hr = SetGigeFeatureOverrides(info.sFeatureOverrides);
-	
+			if (S_OK == hr)
+			{
+				hr = SetGigeFeatureOverrides(reader.GetFeatureOverrides());
+			}
+
 			SVDeviceParamCollection DeviceParams(m_CameraFileDeviceParams);
 			SVGigeCameraStructSet Cameras;
 			Cameras = TheSVGigeCameraManager.GetCameraOrder();
@@ -176,17 +174,16 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 // Called from SVCameraPage::LoadSVCameraFiles (SVImageTest)
 // Called from CSVOConfigAssistantDlg::ItemChanged (SVObserver)
 // Called from CSVOConfigAssistantDlg::CheckCamera (SVObserver)
-HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const CString& sFilename, SVDeviceParamCollection& rParams )
+HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const SVString& rFilename, SVDeviceParamCollection &rParams )
 {
-	SVGigeCameraFileInfoStruct info;
-	info.sFilename = sFilename;
-	info.bColorSystem = IsColor();
-	HRESULT hr = SVGigeCameraProxy::ReadCameraFileImpl( info, rParams );
+	SVGigeCameraFileReader reader(SVString(rFilename), IsColor());
+
+	HRESULT hr = reader.ReadCameraFileImpl( rParams );
 	
 	if (S_OK == hr)
 	{
 		// Set Gige Feature Overrides
-		hr = SetGigeFeatureOverrides(info.sFeatureOverrides);
+		hr = SetGigeFeatureOverrides(reader.GetFeatureOverrides());
 	}
 	return hr;
 }
@@ -768,6 +765,7 @@ HRESULT SVMatroxGigeAcquisitionClass::IsValidCameraFileParameters( SVDeviceParam
 {
 	return m_cameraProxy.IsValidCameraFileParameters( rDeviceParams, m_hDigitizer, SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName));
 }
+
 
 HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& featureOverrides)
 {

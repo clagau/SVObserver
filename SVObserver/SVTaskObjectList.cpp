@@ -23,6 +23,7 @@
 #include "SVInspectionProcess.h"
 #include "SVAnalyzer.h"
 #include "SVTool.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion
 
 #ifdef _DEBUG

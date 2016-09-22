@@ -3932,7 +3932,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 			pDevice->GetDeviceParameters( DeviceParams );
 			rCameraObj.SetCameraDeviceParams( DeviceParams );
 
-			HRESULT hr = pDevice->ReadCameraFile( rCameraObj.GetCameraFile(), DeviceParams );
+			HRESULT hr = pDevice->ReadCameraFile( SVString(rCameraObj.GetCameraFile()), DeviceParams );
 
 			if( SetFileParameters )
 			{

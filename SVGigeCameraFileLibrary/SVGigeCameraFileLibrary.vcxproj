@@ -117,14 +117,15 @@
     <ClCompile Include="SVGigeCameraFileReader.cpp" />
     <ClCompile Include="SVGigeCameraParamValidateClass.cpp" />
     <ClCompile Include="SVGigeCameraProxy.cpp" />
+    <ClCompile Include="SVGigeCameraStruct.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVCustomParameterBuilder.h" />
-    <ClInclude Include="SVGigeCameraFileInfoStruct.h" />
     <ClInclude Include="SVGigeCameraFileReader.h" />
     <ClInclude Include="SVGigeCameraParamValidateClass.h" />
     <ClInclude Include="SVGigeCameraProxy.h" />
+    <ClInclude Include="SVGigeCameraStruct.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVCustomParameterBuilder.inl" />

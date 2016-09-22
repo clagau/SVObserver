@@ -17,9 +17,6 @@
 #include "SVMatroxGigeCameraProxy.h"
 #pragma endregion Includes
 
-#pragma region Declarations
-struct SVGigeCameraFileInfoStruct;
-#pragma endregion Declarations
 
 class SVMatroxGigeAcquisitionClass : public SVAcquisitionClass
 {
@@ -35,7 +32,7 @@ public:
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const;
 	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray );
-	virtual HRESULT ReadCameraFile( const CString& sFile, SVDeviceParamCollection& rParams );
+	virtual HRESULT ReadCameraFile( const SVString& filename, SVDeviceParamCollection& rParams );
 
 	virtual HRESULT CreateLightReference( int iBands, int iBrightness, int iContrast );
 

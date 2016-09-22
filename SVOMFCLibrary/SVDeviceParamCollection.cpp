@@ -97,3 +97,92 @@ HRESULT SVDeviceParamCollection::CreateParameter( SVDeviceParamEnum e, const VAR
 	return SV_FALSE;
 }
 
+HRESULT SVDeviceParamCollection::SetParameterDefaults()
+{
+	// set default values for newly added parameters that wouldn't be in old configs
+	// and for parameters that must always exist
+
+	// IO Strobe Edge
+	// The normal camera implementation has the strobe signal active high.
+	// We want the normal signal after the gate inversion to be low.
+	// So by default we need to provide an inversion. On cameras where the polarity is selectable,
+	// no inversion is necessary - just default to active low.
+
+	Clear();
+
+	if ( !ParameterExists( DeviceParamAcquisitionStrobeEdge ) )
+	{
+		bool l_bRising = true;
+
+		if ( ParameterExists( DeviceParamGigeStrobeEdge ) )
+		{
+			const SVStringValueDeviceParam* pParam = Parameter( DeviceParamGigeStrobeEdge ).DerivedValue( pParam );
+			CString l_Temp( _T( "rising" ) );
+			l_bRising = l_Temp.CompareNoCase( pParam->strValue.c_str() ) == 0;
+		}
+
+		if ( ParameterExists( DeviceParamIOStrobeInvert ) )
+		{
+			const SVBoolValueDeviceParam* pParam = Parameter( DeviceParamIOStrobeInvert ).DerivedValue( pParam );
+			l_bRising = ( pParam->bValue ) ? ! l_bRising : l_bRising;
+		}
+
+		// for Legacy Code in SVConfigurationObject and SVOConfigAssistantDlg
+		// Create the BoolDeviceParam for DeviceParamAcquisitionStrobeEdge
+		SetParameter( DeviceParamAcquisitionStrobeEdge, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( DeviceParamAcquisitionStrobeEdge )) );
+		SVBoolValueDeviceParam* pEdge = GetParameter( DeviceParamAcquisitionStrobeEdge ).DerivedValue(pEdge);
+
+		SVBoolValueDeviceParam::OptionType l_Option;
+
+		l_Option.strDescription = _T("Rising Edge");
+		l_Option.value = true;
+		pEdge->info.options.push_back( l_Option );
+
+		l_Option.strDescription = _T("Falling Edge");
+		l_Option.value = false;
+		pEdge->info.options.push_back( l_Option );
+
+		pEdge->bValue = l_bRising; // default falling edge
+		pEdge->SetDetailLevel( 99 );
+	}
+
+	// IO Trigger Edge
+	if ( !ParameterExists( DeviceParamAcquisitionTriggerEdge ) )
+	{
+		bool l_bRising = true;
+
+		if ( ParameterExists( DeviceParamGigeTriggerEdge ) )
+		{
+			const SVStringValueDeviceParam* pParam = Parameter( DeviceParamGigeTriggerEdge ).DerivedValue( pParam );
+			CString l_Temp( _T( "rising" ) );
+			l_bRising = l_Temp.CompareNoCase( pParam->strValue.c_str() ) == 0;
+		}
+
+		if ( ParameterExists( DeviceParamIOTriggerInvert ) )
+		{
+			const SVBoolValueDeviceParam* pParam = Parameter( DeviceParamIOTriggerInvert ).DerivedValue( pParam );
+			l_bRising = ( pParam->bValue ) ? ! l_bRising : l_bRising;
+		}
+
+		// for Legacy Code in SVConfigurationObject and SVOConfigAssistantDlg
+		// Create the BoolDeviceParam for DeviceParamAcquisitionTriggerEdge
+		SetParameter( DeviceParamAcquisitionTriggerEdge, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( DeviceParamAcquisitionTriggerEdge )) );
+		SVBoolValueDeviceParam* pEdge = GetParameter( DeviceParamAcquisitionTriggerEdge ).DerivedValue(pEdge);
+
+		SVBoolValueDeviceParam::OptionType l_Option;
+
+		l_Option.strDescription = _T("Rising Edge");
+		l_Option.value = true;
+		pEdge->info.options.push_back( l_Option );
+
+		l_Option.strDescription = _T("Falling Edge");
+		l_Option.value = false;
+		pEdge->info.options.push_back( l_Option );
+
+		pEdge->bValue = l_bRising; // default falling edge
+		pEdge->SetDetailLevel( 99 );
+	}
+
+	return S_OK;
+}
+

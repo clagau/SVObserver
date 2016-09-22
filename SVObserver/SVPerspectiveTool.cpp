@@ -15,6 +15,8 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVImageProcessingClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 
 SV_IMPLEMENT_CLASS( SVPerspectiveToolClass, SVPerspectiveToolClassGuid )
 

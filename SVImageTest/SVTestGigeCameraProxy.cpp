@@ -145,13 +145,13 @@ HRESULT SVTestGigeCameraProxy::InitializeDevice( const SVDeviceParamCollection& 
 	return hr;
 }
 
-HRESULT SVTestGigeCameraProxy::SetGigeFeatureOverrides(const SVString& xmlData, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVTestGigeCameraProxy::SetGigeFeatureOverrides(const SVString& rXmlData, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	HRESULT hr = S_OK;
 
 	if (nullptr != pDigitizer && 0 < hDigitizer)
 	{
-		_variant_t l_oValue = xmlData.c_str(); // does this convert from ansi to wide ?
+		_variant_t l_oValue = rXmlData.c_str(); // does this convert from ansi to wide ?
 		hr = pDigitizer->ParameterSetValue(hDigitizer, SVGigeParameterFeatureOverrides, 0, &l_oValue);
 	}
 	return hr;

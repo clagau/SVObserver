@@ -26,12 +26,12 @@
     <ClCompile Include="SVCustomParameterBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVGigeCameraStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGigeCameraFileInfoStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraFileReader.h">
@@ -44,6 +44,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCustomParameterBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGigeCameraStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

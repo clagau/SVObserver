@@ -16,6 +16,8 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVObserver.h"
 #include "SVImageProcessingClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 TCHAR SVRCCurrentSVCPathName[ _MAX_PATH ];

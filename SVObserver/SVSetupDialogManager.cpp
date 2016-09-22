@@ -52,6 +52,8 @@
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
 #include "SVRange.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Inlcudes
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()

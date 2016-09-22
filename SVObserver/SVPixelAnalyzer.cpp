@@ -21,6 +21,8 @@
 #include "SVImageProcessingClass.h"
 #include "SVPixelAnalyzerSetup.h" // Required by SVPixelAnalyzerSetupClass
 #include "SVResultLong.h"   // Required by SVLongResultClass
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVPixelAnalyzerClass, SVPixelAnalyzerClassGuid );

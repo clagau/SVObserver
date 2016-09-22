@@ -15,6 +15,9 @@
 #include "SVImageProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
+
 #pragma endregion Includes
 
 #ifdef _DEBUG

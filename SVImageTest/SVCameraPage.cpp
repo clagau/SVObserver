@@ -290,7 +290,7 @@ void SVCameraPage::LoadSVCameraFiles()
 {
 	if (m_pAcquisition)
 	{
-		HRESULT hr = m_pAcquisition->ReadCameraFile(m_csFileName);
+		HRESULT hr = m_pAcquisition->ReadCameraFile(SVString(m_csFileName));
 
 		if (S_OK == hr)
 		{

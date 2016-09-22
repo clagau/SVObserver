@@ -26,19 +26,16 @@ SVTestGigeAcquisitionClass::~SVTestGigeAcquisitionClass()
 {
 }
 
-HRESULT SVTestGigeAcquisitionClass::ReadCameraFile( const CString& sFile )
+HRESULT SVTestGigeAcquisitionClass::ReadCameraFile( const SVString& rFilename )
 {
-	SVGigeCameraFileInfoStruct info;
-	info.sFilename = sFile;
-	info.bColorSystem = false;
 
-	m_DeviceParams.Clear();
-	HRESULT hr = SVGigeCameraProxy::ReadCameraFileImpl( info, m_CameraFileDeviceParams );
+	SVGigeCameraFileReader reader(rFilename, false);
+	HRESULT hr = reader.ReadCameraFileImpl( m_CameraFileDeviceParams );
 
 	// Set GigeFeature Overrides
 	if (S_OK == hr)
 	{
-		hr = SetGigeFeatureOverrides(info.sFeatureOverrides);
+		hr = SetGigeFeatureOverrides(reader.GetFeatureOverrides());
 	}
 	 
 	hr = SetDeviceParameters( m_CameraFileDeviceParams );
@@ -109,8 +106,8 @@ void SVTestGigeAcquisitionClass::StopAcquire()
 	m_gigeCameraProxy.GoOffline(m_hDigitizer, &m_rSubsystem.m_svDigitizers);
 }
 
-HRESULT SVTestGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& featureOverrides)
+HRESULT SVTestGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& rFeatureOverrides)
 {
-	return m_gigeCameraProxy.SetGigeFeatureOverrides(featureOverrides, m_hDigitizer, &m_rSubsystem.m_svDigitizers);
+	return m_gigeCameraProxy.SetGigeFeatureOverrides(rFeatureOverrides, m_hDigitizer, &m_rSubsystem.m_svDigitizers);
 }
 

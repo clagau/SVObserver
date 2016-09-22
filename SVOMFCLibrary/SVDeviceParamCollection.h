@@ -32,6 +32,8 @@ public:
 	HRESULT Clear();
 	SVDeviceParamCollection& operator = ( const SVDeviceParamCollection& rhs );
 
+	HRESULT SetParameterDefaults();
+
 	HRESULT CreateParameter( SVDeviceParamEnum e, const VARIANT& rv );
 
 	template <typename DERIVED> HRESULT SetParameter( SVDeviceParamEnum e, const DERIVED& rParam )

@@ -21,6 +21,8 @@
 #include "SVImageProcessingClass.h"
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 #define SV_OC_ERROR 0xc0000000   //SV Operator Class Error.

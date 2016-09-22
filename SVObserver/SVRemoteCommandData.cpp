@@ -21,6 +21,8 @@
 #include "SVCommandLibrary/SVCommandDataImage.h"
 #include "SVCommandLibrary/SVCommandDataValue.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 SVRemoteCommandData::SVRemoteCommandData()

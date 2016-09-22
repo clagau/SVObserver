@@ -40,7 +40,7 @@ public:
 	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer );
 	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer );
 
-	virtual HRESULT ReadCameraFile( const CString& sFile );
+	virtual HRESULT ReadCameraFile( const SVString& rFilename );
 
 	virtual HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );

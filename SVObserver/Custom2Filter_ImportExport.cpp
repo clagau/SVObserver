@@ -14,6 +14,7 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #pragma region local helper function

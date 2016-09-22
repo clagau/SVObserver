@@ -11,6 +11,8 @@
 
 #include "stdafx.h"
 #include "SVGigeCameraManagerDlg.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

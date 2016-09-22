@@ -17,6 +17,8 @@
 #include "SVObserver.h"
 #include "SVImageClass.h"
 #include "SVImageObjectClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -1326,7 +1326,7 @@ void CVariantObj::fromString(LPCTSTR lpszSrc)
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-CVariantObj::~CVariantObj() 
+CVariantObj::~CVariantObj() throw(_com_error)
 {
 	Clear();
 }
