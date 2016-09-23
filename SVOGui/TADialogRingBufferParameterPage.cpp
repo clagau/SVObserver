@@ -151,47 +151,60 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 #pragma region Private Methods
 	HRESULT TADialogRingBufferParameterPage::SetPageData()
 	{
-		HRESULT hResult = SetRingDepth();
+		HRESULT Result = SetRingDepth();
 
-		if (S_OK == hResult)
+		if( S_OK == Result )
 		{
-			hResult = SetImageIndex(0);
+			Result = SetImageIndex(0);
 		}
-		if (S_OK == hResult)
+		if( S_OK == Result )
 		{
-			hResult = SetImageIndex(1);
+			Result = SetImageIndex(1);
 		}
 
-		return hResult;
+		if( S_OK == Result )
+		{
+			Result = m_Values.Commit();
+
+			if( S_OK != Result )
+			{
+				SvStl::MessageContainerVector errorMessageList;
+				errorMessageList = m_Values.getCommitErrorList();
+				if (0 < errorMessageList.size())
+				{
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( errorMessageList[0].getMessage() );
+				}
+			}
+		}
+
+		return Result;
 	}
 
 	HRESULT TADialogRingBufferParameterPage::SetRingDepth()
 	{
-		CString csText;
-		m_EditRingDepth.GetWindowText(csText);
-		SVString value = csText;
+		HRESULT Result( S_OK );
+
+		CString Text;
+		m_EditRingDepth.GetWindowText(Text);
+		SVString Value = Text;
 		long depth = 0;
-		bool isNumber = SvUl_SF::Convert2Number(value, depth, true);
-		HRESULT Result = S_OK;
-		if (isNumber && SvOi::cRingBufferDepthMin <= depth && SvOi::cRingBufferDepthMax >= depth)
+		bool isNumber = SvUl_SF::Convert2Number( Value, depth, true );
+		if( isNumber && SvOi::cRingBufferDepthMin <= depth && SvOi::cRingBufferDepthMax >= depth )
 		{
 			m_Values.Set<long>(RingDepthTag, depth);
-			Result = m_Values.Commit();
 		}
 		else
 		{
+			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+			SVStringArray msgList;
+			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMin) );
+			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMax) );
+			msgList.push_back( Value );
+			Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), Result );
 			Result = E_FAIL;
 		}
 
-		if( S_OK != Result )
-		{
-			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-			SVStringArray msgList;
-			msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMin));
-			msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMax));
-			msgList.push_back(SVString(csText));
-			Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), Result );
-		}
 		return Result;
 	}
 
@@ -205,14 +218,6 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 			m_EditImageIndex[Index].GetWindowText( Value );
 
 			m_Values.Set<CString>(RingBufferIndexTag[Index], Value);
-			Result = m_Values.Commit();
-			if( S_OK != Result )
-			{
-				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-				SVStringArray msgList;
-				msgList.push_back( SvUl_SF::Format( _T("%d"), Index+1 ));
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_ImageIndex_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), Result );
-			}
 		}
 		return Result;
 	}

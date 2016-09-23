@@ -12,6 +12,9 @@ namespace Seidenader { namespace ObjectInterfaces
 {
 	const TCHAR* const WatershedMarkerImageConnectionName = _T( "WatershedFilterMarkerImage" );
 	const TCHAR* const TableClearEquationName = _T("ClearConditionalFormula");
+
+	const TCHAR* const cTrue = _T("TRUE");
+	const TCHAR* const cFalse = _T("FALSE");
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 
 namespace SvOi = Seidenader::ObjectInterfaces;

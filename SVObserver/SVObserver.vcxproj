@@ -184,7 +184,6 @@ echo %time%
     <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="MessageNotification.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
-    <ClCompile Include="LinkedValue.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp" />
     <ClCompile Include="MonitorListBasePage.cpp" />
     <ClCompile Include="MonitorListImagesPage.cpp" />
@@ -625,7 +624,6 @@ echo %time%
     <ClInclude Include="MessageNotification.h" />
     <ClInclude Include="GlobalConstantView.h" />
     <ClInclude Include="ISVCancel.h" />
-    <ClInclude Include="LinkedValue.h" />
     <ClInclude Include="ModelessMessageBox.h" />
     <ClInclude Include="MonitorListBasePage.h" />
     <ClInclude Include="MonitorListImagesPage.h" />

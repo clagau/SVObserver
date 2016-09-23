@@ -63,8 +63,6 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const cInspectionFixedName = _T( "Inspection_" );
 
 	const TCHAR* const cLinkName = _T(" Link");
-	const TCHAR* const cTrue = _T("TRUE");
-	const TCHAR* const cFalse = _T("FALSE");
 
 	const TCHAR* const cInputTag_SortColumn = _T( "SortColumn" );
 	const TCHAR* const cInputTag_ExcludeColumn = _T( "ExcludeColumn" );

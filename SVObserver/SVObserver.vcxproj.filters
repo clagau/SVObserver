@@ -1100,9 +1100,6 @@
     <ClCompile Include="RingBufferTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LinkedValue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgTranslationResizePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2356,9 +2353,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RingBufferTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LinkedValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResizeTool.h">

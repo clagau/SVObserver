@@ -8,7 +8,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVTool.h"
-#include "LinkedValue.h"
+#include "SVValueObjectLibrary\LinkedValue.h"
 #include "ObjectInterfaces\GlobalConst.h"
 #pragma endregion Includes
 

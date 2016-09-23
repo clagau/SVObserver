@@ -9,13 +9,14 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "LinkedValue.h"
-#include "SVValueObjectLibrary/BasicValueObject.h"
-#include "SVInspectionProcess.h"
-#include "TextDefinesSvO.h"
+#include "BasicValueObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "ObjectInterfaces\IObjectClass.h"
+#include "ObjectInterfaces\TextDefineSvOi.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVUtilityLibrary\SVString.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -29,6 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma region Constructor
 LinkedValue::LinkedValue() : 
  m_pLinkedObject( nullptr )
+,m_CircularReference( false )
 {
 }
 
@@ -42,8 +44,17 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, VARIANT& rValue ) const
 {
 	HRESULT Result( ValidateIndexes(Bucket,Index) );
 
+	//! If this flag is still set then this value is trying to reference itself!
+	if( m_CircularReference )
+	{
+		Result = SVMSG_SVO_105_CIRCULAR_REFERENCE;
+	}
+
+
 	if( S_OK ==  Result )
 	{
+		//! When getting the value from an indirect value make sure it is not referencing this object
+		m_CircularReference = true;
 		if(  SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_pLinkedObject) )
 		{
 			Result = pValueObject->GetValue( Bucket, Index, rValue );
@@ -58,6 +69,7 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, VARIANT& rValue ) const
 		{
 			Result = SVVariantValueObjectClass::GetValueAt( Bucket, Index, rValue );
 		}
+		m_CircularReference = false;
 		if( S_OK == Result )
 		{
 			if (S_OK != ::VariantChangeType( &rValue, &rValue, VARIANT_ALPHABOOL, GetDefaultType() ) )
@@ -114,12 +126,12 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, BOOL& rValue ) const
 		case VT_BSTR:
 			{
 				SVString Temp( _bstr_t( Value.bstrVal) );
-				if ( 0 == SvUl_SF::CompareNoCase( Temp, SVString( SvO::cTrue) ) )
+				if ( 0 == SvUl_SF::CompareNoCase( Temp, SVString( SvOi::cTrue) ) )
 				{
 					rValue = true;
 
 				}
-				if ( 0 == SvUl_SF::CompareNoCase( Temp, SVString( SvO::cFalse) ) )
+				if ( 0 == SvUl_SF::CompareNoCase( Temp, SVString( SvOi::cFalse) ) )
 				{
 					rValue = false;
 				}
@@ -256,10 +268,10 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, BYTE& rValue) const
 	return Result;
 }
 
-HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& Value )
+HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& rValue )
 {
 	HRESULT Result( S_OK );
-	SVObjectClass* pNewLinkedObject = ConvertStringInObject(Value);
+	SVObjectClass* pNewLinkedObject = ConvertStringInObject( SVString( rValue ) );
 
 	// disconnect existing connection if any existing
 	DisconnectInput();
@@ -279,7 +291,7 @@ HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& Value )
 	else
 	{
 		SetType( GetDefaultType() );
-		Result = SetValueKeepType( Bucket, Value );
+		Result = SetValueKeepType( Bucket, rValue );
 	}
 
 	UpdateLinkedName();
@@ -314,18 +326,31 @@ void LinkedValue::UpdateLinkedName()
 #pragma region Protected Methods
 void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
 {
-	CString tmpValue = rValue.c_str();
-	SVObjectClass* pNewLinkedObject = ConvertStringInObject(tmpValue);
+	SVObjectClass* pLinkedObject = ConvertStringInObject(rValue);
 
-	if ( nullptr != pNewLinkedObject )
+	if ( nullptr != pLinkedObject )
 	{
-		//This must use the base class otherwise causes recursive call to ValidateValue
-		SVVariantValueObjectClass::ValidateValue( iBucket, iIndex, pNewLinkedObject->GetUniqueObjectID().ToString().c_str() );
+		HRESULT Result = CheckLinkedObject( pLinkedObject );
+		if( S_OK == Result )
+		{
+			//This must use the base class otherwise causes recursive call to ValidateValue
+			SVVariantValueObjectClass::ValidateValue( iBucket, iIndex, pLinkedObject->GetUniqueObjectID().ToString().c_str() );
+		}
+		else
+		{
+			pLinkedObject = nullptr;
+			//! This means the linked object is invalid
+			SVStringArray msgList;
+			msgList.push_back( GetName() );
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			Exception.Throw();
+		}
 	}
 	else
 	{
 		_variant_t vtTemp;
-		vtTemp = tmpValue;
+		vtTemp = rValue.c_str();
 
 		if( DefaultValue().vt != VT_EMPTY )
 		{
@@ -362,9 +387,11 @@ HRESULT LinkedValue::UpdateConnection()
 	if( SV_GUID_NULL != LinkedUid  )
 	{
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( LinkedUid, pLinkedObject );
-		if ( nullptr == pLinkedObject )
+		
+		Result = CheckLinkedObject( pLinkedObject );
+		if( S_OK != Result )
 		{
-			Result = SvOi::Err_10014_LinkedValueConnectInput_InvalidUid;
+			pLinkedObject = nullptr;
 		}
 	}
 	else
@@ -379,7 +406,7 @@ HRESULT LinkedValue::UpdateConnection()
 		//If the tool set name is at the start then add the inspection name at the beginning
 		if( 0 == Value.Find( ToolSetName ) )
 		{
-			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( GetAncestor( SVInspectionObjectType ) );
+			SvOi::IObjectClass* pInspection = GetAncestorInterface( SVInspectionObjectType );
 			if( nullptr != pInspection )
 			{
 				ObjectName = pInspection->GetName();
@@ -494,7 +521,7 @@ HRESULT LinkedValue::ResetObject()
 	return Result;
 }
 
-SVObjectClass* LinkedValue::ConvertStringInObject( const CString& rValue ) const
+SVObjectClass* LinkedValue::ConvertStringInObject( const SVString& rValue ) const
 {
 	CString ToolSetName;
 	SVString ObjectName;
@@ -502,9 +529,9 @@ SVObjectClass* LinkedValue::ConvertStringInObject( const CString& rValue ) const
 	ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
 
 	//If the tool set name is at the start then add the inspection name at the beginning
-	if( 0 == rValue.Find( ToolSetName ) )
+	if( 0 == rValue.find( ToolSetName ) )
 	{
-		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( GetAncestor( SVInspectionObjectType ) );
+		const SvOi::IObjectClass* pInspection = GetAncestorInterface( SVInspectionObjectType );
 		if( nullptr != pInspection )
 		{
 			ObjectName = pInspection->GetName();
@@ -520,6 +547,29 @@ SVObjectClass* LinkedValue::ConvertStringInObject( const CString& rValue ) const
 	SVObjectClass* pNewLinkedObject( nullptr );
 	SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, pNewLinkedObject );
 	return pNewLinkedObject;
+}
+
+HRESULT LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject ) const
+{
+	HRESULT Result( S_OK );
+
+	//! Check if a valid object and make sure it does not link to itself
+	if ( nullptr == pLinkedObject || this == pLinkedObject )
+	{
+		Result = SvOi::Err_10014_LinkedValueConnectInput_InvalidUid;
+	}
+	else
+	{
+		//! This is important when copying tools that the value of another inspection is not used due to the GUID being valid
+		//! That is why check that the linked value an object is in the same inspection
+		bool isSameInpection = GetAncestorInterface( SVInspectionObjectType ) == pLinkedObject->GetAncestorInterface( SVInspectionObjectType );
+		if( !isSameInpection )
+		{
+			Result = SvOi::Err_10014_LinkedValueConnectInput_InvalidUid;
+		}
+	}
+
+	return Result;
 }
 
 #pragma endregion Private Methods

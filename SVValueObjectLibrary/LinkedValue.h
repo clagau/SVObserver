@@ -9,9 +9,8 @@
 
 #pragma region Includes
 #include "SVObjectLibrary\SVInObjectInfoStruct.h"
-#include "SVValueObjectLibrary/SVStaticStringValueObjectClass.h"
-#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
-#include "SVTaskObject.h"
+#include "SVStaticStringValueObjectClass.h"
+#include "SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
 
@@ -24,7 +23,7 @@ class LinkedValue : public SVVariantValueObjectClass
 public:
 	LinkedValue();
 
-	~LinkedValue();
+	virtual ~LinkedValue();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -49,7 +48,7 @@ public:
 	/// Set the value. If string a valid dotted name of a value object, it connect it to the linked object.
 	/// \returns HRESULT S_OK, if set was OK.
 	//************************************
-	virtual HRESULT SetValueAt( int Bucket, int Index, const CString& Value ) override;
+	virtual HRESULT SetValueAt( int Bucket, int Index, const CString& rValue ) override;
 
 	//************************************
 	/// Disconnect the object if it is connected to this value.
@@ -64,6 +63,8 @@ public:
 	void UpdateLinkedName();
 
 	SVStaticStringValueObjectClass& getLinkedName() { return m_LinkedName; };
+
+	bool isIndirectValue() { return ( nullptr != m_pLinkedObject ); };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -95,9 +96,13 @@ private:
 
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
-	/// \returns SVObjectClass* The founded object. If object will not found, it return a nullptr.
-	SVObjectClass* ConvertStringInObject( const CString& rValue ) const;
+	/// \returns SVObjectClass* The founded object. If object not found, return a nullptr.
+	SVObjectClass* ConvertStringInObject( const SVString& rValue ) const;
 
+	//! Checks if the linked object is valid.
+	//! \param pLinkedObject [in] Pointer to the indirect object
+	//! \returns S_OK if linked object is valid
+	HRESULT CheckLinkedObject( const SVObjectClass* const pLinkedObject ) const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -105,5 +110,6 @@ private:
 	SVStaticStringValueObjectClass m_LinkedName;
 	SVObjectClass* m_pLinkedObject;
 	SVGUID m_LinkedUid;
+	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
 #pragma endregion Member Variables
 };
