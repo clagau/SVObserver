@@ -428,6 +428,7 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_Error_CreationAnalyzerFailed, _T("Creation of Analyzer Failed"))
 	(SvOi::Tid_Error_SetTableAnalyzerData, _T("Set from Table Analyzer Data failed: %s"))
 	(SvOi::Tid_NoValidColumnConnected, _T("There is no valid column to the analyzer connected."))
+	(SvOi::Tid_ExcludeHighMustBeHigher, _T("Exclude High must be higher than Exclude Low."))
 	(SvOi::Tid_LinkedValue_ValidateStringFailed, _T("Set of parameter \"%s\" failed: Invalid object name or value type."))
 	(SvOi::Tid_ValueObject_ValidateStringFailed, _T("Set value \"%s\" to parameter \"%s\" failed: Invalid string."))
 	(SvOi::Tid_SetEmbeddedValueFailed, _T("Set a value of embedded parameter failed: %s."))

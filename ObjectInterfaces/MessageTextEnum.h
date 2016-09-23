@@ -393,6 +393,7 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_Error_CreationAnalyzerFailed,
 		Tid_Error_SetTableAnalyzerData,
 		Tid_NoValidColumnConnected,
+		Tid_ExcludeHighMustBeHigher,
 		Tid_LinkedValue_ValidateStringFailed,
 		Tid_ValueObject_ValidateStringFailed,
 		Tid_SetEmbeddedValueFailed,

@@ -88,6 +88,10 @@ namespace Seidenader { namespace SVOGui {
 		/// Set the data of the old (current) selection and if this failed, it display an error and reset the selection to this analyzer.
 		/// \returns HRESULT S_OK, if setting works.
 		HRESULT prepareSwitchOfAnalyzerSelection();
+
+		/// Reset one analyzer by one analyzer and check if the correct. If the find an error display an message and set the focus to this analyzer.
+		/// \returns HRESULT S_OK, if all analyzer correct.
+		HRESULT checkAllAnaylzer();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

@@ -179,6 +179,22 @@ bool TableExcludeAnalyzer::ValidateOfflineParameters ()
 		}
 		Result &= m_excludeHigh.IsValid() ? true : false;
 		Result &= m_excludeLow.IsValid() ? true : false;
+
+		if (!m_excludeLow.isIndirectValue() && !m_excludeHigh.isIndirectValue())
+		{
+			//check if high greater than low
+			double excludeHigh;
+			double excludeLow;
+			m_excludeHigh.GetValue(excludeHigh);
+			m_excludeLow.GetValue(excludeLow);
+			if (excludeHigh<excludeLow)
+			{
+				SvStl::MessageContainer message;
+				message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExcludeHighMustBeHigher, SvStl::SourceFileParams(StdMessageParams) );
+				addTaskMessage( message );
+				Result = false;
+			}
+		}
 	}
 
 	return Result;

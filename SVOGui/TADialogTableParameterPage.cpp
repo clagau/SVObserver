@@ -14,7 +14,6 @@
 #include "GuiCommands\GetAvailableObjects.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "FormulaController.h"
-#include "GuiCommands\GetErrorMessageList.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\GlobalConst.h"
@@ -140,20 +139,11 @@ namespace Seidenader { namespace SVOGui {
 		if (updateState)
 		{
 			m_Values.Set<long>(MaxRowTag, m_maxRows);
-			hResult = m_Values.Commit(true);
+			hResult = m_Values.Commit();
 
 			if (S_OK != hResult)
 			{
-				typedef GuiCmd::GetErrorMessageList Command;
-				typedef SVSharedPtr<Command> CommandPtr;
-				CommandPtr commandPtr = new Command(m_TaskObjectID);
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				SvStl::MessageContainerVector messages;
-				if (S_OK == hr)
-				{
-					messages = commandPtr->GetMessageList();
-				}
+				SvStl::MessageContainerVector messages = m_Values.getCommitErrorList();
 				if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 				{
 					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
@@ -166,6 +156,10 @@ namespace Seidenader { namespace SVOGui {
 					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
+			}
+			else
+			{
+				resetInspection();
 			}
 		}
 		return hResult;
@@ -181,6 +175,24 @@ namespace Seidenader { namespace SVOGui {
 		}
 
 		UpdateData(FALSE);
+	}
+
+	void TADialogTableParameterPage::resetInspection()
+	{
+		typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
+		ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(m_InspectionID, true));
+		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
+
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK != hr)
+		{
+			SvStl::MessageContainerVector messages = commandPtr->getErrorMessages();
+			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
+			{
+				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				Msg.setMessage(messages[0].getMessage());
+			}
+		}
 	}
 #pragma endregion Private Mehods
 }}

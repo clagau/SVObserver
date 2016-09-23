@@ -136,6 +136,7 @@ HRESULT TableAnalyzerTool::ResetObject()
 	}
 	else
 	{
+		m_pResultTable->setSourecTable(nullptr);
 		status = S_FALSE;
 	}
 
@@ -169,6 +170,14 @@ bool TableAnalyzerTool::ValidateOfflineParameters ()
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			addTaskMessage( message );
+			Result = false;
+		}
+		else if (pObject->GetAncestorInterface(SVInspectionObjectType) != GetAncestorInterface(SVInspectionObjectType))
+		{
+			SvStl::MessageContainer message;
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			addTaskMessage( message );
+			m_sourceTableObjectInfo.SetInputObject(nullptr);
 			Result = false;
 		}
 	}

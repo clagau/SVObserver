@@ -65,6 +65,9 @@ namespace Seidenader { namespace SVOGui {
 
 		/// Set the equation text to control
 		void setEquationText();
+
+		//Reset the inspection.
+		void resetInspection();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

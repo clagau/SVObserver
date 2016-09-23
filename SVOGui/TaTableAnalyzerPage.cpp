@@ -78,6 +78,10 @@ namespace Seidenader { namespace SVOGui {
 	bool TaTableAnalyzerPage::QueryAllowExit()
 	{
 		HRESULT hResult = SetInspectionData();
+		if (S_OK == hResult)
+		{
+			hResult = checkAllAnaylzer();
+		}
 		return (S_OK == hResult);
 	}
 #pragma endregion Public Methods
@@ -303,6 +307,11 @@ namespace Seidenader { namespace SVOGui {
 	BOOL TaTableAnalyzerPage::OnKillActive()
 	{
 		HRESULT hResult = SetInspectionData();
+		if (S_OK == hResult)
+		{
+			hResult = checkAllAnaylzer();
+		}
+
 		if (S_OK == hResult)
 		{
 			return CPropertyPage::OnKillActive();
@@ -576,6 +585,36 @@ namespace Seidenader { namespace SVOGui {
 			m_analyzerListBox.SetCurSel(index);
 		}
 		return Result;
+	}
+
+	HRESULT TaTableAnalyzerPage::checkAllAnaylzer()
+	{
+		HRESULT hrOk = S_OK;
+		//reset all analyzer to check if they correct
+		for (int i=0; S_OK == hrOk && i< m_analyzerListBox.GetCount(); i++)
+		{
+			SVGUID analyzerGUID = m_analyzerListBox.getGUID(i);
+			if ( SV_GUID_NULL != analyzerGUID && analyzerGUID != m_selectedAnalyzerID)
+			{
+				// Do a reset of the analyzer
+				typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
+				ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(analyzerGUID, true));
+				SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
+
+				hrOk = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				if (S_OK != hrOk)
+				{
+					SvStl::MessageContainerVector errorMessageList = commandPtr->getErrorMessages();
+					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( errorMessageList[0].getMessage() );
+
+					m_analyzerListBox.SetCurSel(i);
+					m_selectedAnalyzerID = analyzerGUID;
+					SetPropertyControls();
+				}
+			}
+		}
+		return hrOk;
 	}
 #pragma endregion Private Methods
 }}  //end namespaces
