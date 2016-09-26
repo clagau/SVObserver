@@ -13,86 +13,90 @@
 
 class SVFileNameClass;
 
+#include "SVFileNameLockablePointerArrayClass.h"
+#include "SVUtilityLibrary\SVString.h"
+
 //This class maintains a list of object global to the 
 //application.  This class is responsible for copying the 
 //appropriate files to the configuration and run directories.
 class SVFileNameManagerClass 
 {
+private:
+	SVString m_ConfigurationPathName; // Configuration Path Name variable
+	SVString m_RunPathName; // Run Path Name variable
+	SVFileNameLockablePointerArrayClass m_svFileNameList; // File Name List
+	int m_iCurrentItem; //This attribute contains the value of the current position in the file name list.
+
+	static SVFileNameManagerClass& Instance();
+	
+	// This method assigns the default values to the class's attributes.
+	SVFileNameManagerClass();
+
 public:
 	//This operator will create a semicolon separated string 
 	//list of file names contained within the array.
-	LPCTSTR GetFileNameList();
+	static LPCTSTR GetFileNameList();
 
 	//This operator copies the file from the selected 
 	//location to the configuration and run directory as 
 	//necessary.
-	BOOL SaveItem(SVFileNameClass* svFileName);
+	static BOOL SaveItem(SVFileNameClass* svFileName);
 
 	//This operator copies the file from the selected 
 	//location to the configuration and run directory as 
 	//necessary.
-	BOOL LoadItem(SVFileNameClass* svFileName);
+	static BOOL LoadItem(SVFileNameClass* svFileName);
 
 	//This operator renames the file from the selected 
 	//location to the run directory as necessary.
-	BOOL RenameItem(SVFileNameClass* svFileName);
-
-	//This operator is the default constructor for the class. 
-	// This method assigns the default values to the class's 
-	//attributes.
-	SVFileNameManagerClass();
+	static BOOL RenameItem(SVFileNameClass* svFileName);
 
 	//This operator exposes the string contained in the 
 	//gcsConfigurationPathName application attribute.
-	LPCTSTR GetConfigurationPathName();
+	static LPCTSTR GetConfigurationPathName();
 
 	//This operator exposes the string contained in the 
 	//gcsRunPathName application attribute.
-	LPCTSTR GetRunPathName();
+	static LPCTSTR GetRunPathName();
 
 	//This operator sets the gcsRunPathName application 
 	//attribute with the value passes as a parameter to the 
 	//method.
-	BOOL SetRunPathName(LPCTSTR szPathName);
+	static BOOL SetRunPathName(LPCTSTR szPathName);
 
 	//This operator sets the gcsConfigurationPathName 
 	//application attribute with the value passes as a 
 	//parameter to the method.
-	BOOL SetConfigurationPathName(LPCTSTR szPathName);
+	static BOOL SetConfigurationPathName(LPCTSTR szPathName);
 
 	//This operator will add a pointer to a SVFileNameClass 
 	//object to the application file list.  The miCurrentItem 
 	//index will be set to this element.
-	BOOL AddItem(SVFileNameClass* svpFileName);
+	static BOOL AddItem(SVFileNameClass* svpFileName);
 
 	//This operator will remove a pointer to a 
 	//SVFileNameClass object from the application file list.  
 	//The miCurrentItem index will be set to the proceding 
 	//element.
-	BOOL RemoveItem(SVFileNameClass* svpFileName);
+	static BOOL RemoveItem(SVFileNameClass* svpFileName);
 
 	//This operator will search the global application list 
 	//for a match for the pointer address.  It will reset the 
 	//array index pointer to the appropriate array element.
-	BOOL FindItem(SVFileNameClass* svpFileNameClass);
+	static BOOL FindItem(SVFileNameClass* svpFileNameClass);
 
 	//This operator will return the pointer address to the 
 	//appropriate file object at the current array index.
-	SVFileNameClass* GetItem();
+	static SVFileNameClass* GetItem();
 
 	//This operator creates the full path tree if it does not 
 	//exist.
-	BOOL CreatePath(LPCTSTR szPathName);
+	static BOOL CreatePath(LPCTSTR szPathName);
 
 	//This operator copies all the files contained in the 
 	//application array from the selected location to the 
 	//configuration and run directory as necessary.
-	BOOL SaveItems();
+	static BOOL SaveItems();
 
-	BOOL RemoveUnusedFiles(BOOL bCleanConfigDir = TRUE);
-
-private:
-	//This attribute contains the value of the current 
-	//position in the application file name array.
-	int miCurrentItem;
+	static BOOL RemoveUnusedFiles(BOOL bCleanConfigDir = true);
 };

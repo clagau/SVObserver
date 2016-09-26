@@ -18,26 +18,22 @@
 //Moved to precompiled header: #include <exception>
 #include "SVFileNameManagerClass.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
-#include "SVFileNameLockablePointerArrayClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
-// Global Configuration Path Name variable for DLL
-CString gcsConfigurationPathName;
-
-// Global Run Path Name variable for DLL
-CString gcsRunPathName;
-
-// Global File Name array for DLL
-SVFileNameLockablePointerArrayClass gsvFileNameArray;
+SVFileNameManagerClass& SVFileNameManagerClass::Instance()
+{
+	static SVFileNameManagerClass fileNameMgr;
+	return fileNameMgr;
+}
 
 SVFileNameManagerClass::SVFileNameManagerClass()
 {
 	CString csRunPathName = GetRunPathName();
 
-	miCurrentItem = 0;
+	m_iCurrentItem = 0;
 
 	if ( csRunPathName.IsEmpty() )
 	{
@@ -47,30 +43,39 @@ SVFileNameManagerClass::SVFileNameManagerClass()
 
 LPCTSTR SVFileNameManagerClass::GetConfigurationPathName()
 {
-	return gcsConfigurationPathName;
+	return Instance().m_ConfigurationPathName.c_str();
 }
 
 LPCTSTR SVFileNameManagerClass::GetRunPathName()
 {
-	return gcsRunPathName;
+	return Instance().m_RunPathName.c_str();
 }
 
 BOOL SVFileNameManagerClass::SetRunPathName(LPCTSTR szPathName)
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
-	if ( gsvFileNameArray.Lock() )
+	SVFileNameManagerClass& rFileMgr = Instance();
+
+	if ( rFileMgr.m_svFileNameList.Lock() )
 	{
-		bOk = TRUE;
+		bOk = true;
 
-		gcsRunPathName = szPathName;
-
-		if ( !gcsRunPathName.IsEmpty() )
+		if (szPathName)
 		{
-			bOk = CreatePath( gcsRunPathName );
+			rFileMgr.m_RunPathName = szPathName;
+		}
+		else
+		{
+			rFileMgr.m_RunPathName.clear();
 		}
 
-		gsvFileNameArray.Unlock();
+		if ( !rFileMgr.m_RunPathName.empty() )
+		{
+			bOk = CreatePath( rFileMgr.m_RunPathName.c_str() );
+		}
+
+		rFileMgr.m_svFileNameList.Unlock();
 	}
 
 	return bOk;
@@ -78,48 +83,59 @@ BOOL SVFileNameManagerClass::SetRunPathName(LPCTSTR szPathName)
 
 BOOL SVFileNameManagerClass::SetConfigurationPathName(LPCTSTR szPathName)
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
-	if ( gsvFileNameArray.Lock() )
+	SVFileNameManagerClass& rFileMgr = Instance();
+
+	if ( rFileMgr.m_svFileNameList.Lock() )
 	{
-		bOk = TRUE;
+		bOk = true;
 
-		gcsConfigurationPathName = szPathName;
-
-		if ( !gcsConfigurationPathName.IsEmpty() )
+		if (szPathName)
 		{
-			bOk = CreatePath( gcsConfigurationPathName );
+			rFileMgr.m_ConfigurationPathName = szPathName;
+		}
+		else
+		{
+			rFileMgr.m_ConfigurationPathName.clear();
 		}
 
-		gsvFileNameArray.Unlock();
+		if ( !rFileMgr.m_ConfigurationPathName.empty() )
+		{
+			bOk = CreatePath( rFileMgr.m_ConfigurationPathName.c_str() );
+		}
+
+		rFileMgr.m_svFileNameList.Unlock();
 	}
 
 	return bOk;
 }
 
-BOOL SVFileNameManagerClass::FindItem(SVFileNameClass * svpFileNameClass)
+BOOL SVFileNameManagerClass::FindItem(SVFileNameClass* svpFileNameClass)
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
-	if ( 0 < gsvFileNameArray.GetSize() )
+	SVFileNameManagerClass& rFileMgr = Instance();
+
+	if ( 0 < rFileMgr.m_svFileNameList.GetSize() )
 	{
-		BOOL bDone = FALSE;
+		BOOL bDone = false;
 
-		miCurrentItem = static_cast<int>(gsvFileNameArray.GetSize());
+		rFileMgr.m_iCurrentItem = static_cast<int>(rFileMgr.m_svFileNameList.GetSize());
 		
-		for ( int i = 0; !bDone && i < gsvFileNameArray.GetSize(); i++ )
+		for ( int i = 0; !bDone && i < rFileMgr.m_svFileNameList.GetSize(); i++ )
 		{
-			bDone = svpFileNameClass <= gsvFileNameArray[i];
+			bDone = svpFileNameClass <= rFileMgr.m_svFileNameList[i];
 			if ( bDone )
 			{
-				bOk = gsvFileNameArray[i] == svpFileNameClass;
-				miCurrentItem = i;
+				bOk = rFileMgr.m_svFileNameList[i] == svpFileNameClass;
+				rFileMgr.m_iCurrentItem = i;
 			}
 		}
 	}
 	else
 	{
-		miCurrentItem = 0;
+		rFileMgr.m_iCurrentItem = 0;
 	}
 
 	return bOk;
@@ -127,9 +143,11 @@ BOOL SVFileNameManagerClass::FindItem(SVFileNameClass * svpFileNameClass)
 
 BOOL SVFileNameManagerClass::AddItem(SVFileNameClass* svpFileName)
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
-	if ( gsvFileNameArray.Lock() )
+	SVFileNameManagerClass& rFileMgr = Instance();
+
+	if ( rFileMgr.m_svFileNameList.Lock() )
 	{
 		bOk = FindItem( svpFileName );
 
@@ -137,9 +155,9 @@ BOOL SVFileNameManagerClass::AddItem(SVFileNameClass* svpFileName)
 		{
 			try
 			{
-				gsvFileNameArray.InsertAt( miCurrentItem, svpFileName );
+				rFileMgr.m_svFileNameList.InsertAt( rFileMgr.m_iCurrentItem, svpFileName );
 
-				bOk = LoadItem( gsvFileNameArray[miCurrentItem] );
+				bOk = LoadItem( rFileMgr.m_svFileNameList[rFileMgr.m_iCurrentItem] );
 			}
 			catch (std::bad_alloc& e)
 			{
@@ -148,7 +166,7 @@ BOOL SVFileNameManagerClass::AddItem(SVFileNameClass* svpFileName)
 			}
 		}
 
-		gsvFileNameArray.Unlock();
+		rFileMgr.m_svFileNameList.Unlock();
 	}
 
 	return bOk;
@@ -156,30 +174,32 @@ BOOL SVFileNameManagerClass::AddItem(SVFileNameClass* svpFileName)
 
 BOOL SVFileNameManagerClass::RemoveItem(SVFileNameClass * svpFileName)
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
-	if ( gsvFileNameArray.Lock() )
+	SVFileNameManagerClass& rFileMgr = Instance();
+
+	if ( rFileMgr.m_svFileNameList.Lock() )
 	{
 		bOk = FindItem( svpFileName );
 
 		if ( bOk )
 		{
-			gsvFileNameArray.RemoveAt( miCurrentItem );
+			rFileMgr.m_svFileNameList.RemoveAt( rFileMgr.m_iCurrentItem );
 
-			if ( 0 < gsvFileNameArray.GetSize() )
+			if ( 0 < rFileMgr.m_svFileNameList.GetSize() )
 			{
-				if ( gsvFileNameArray.GetSize() <= miCurrentItem )
+				if ( rFileMgr.m_svFileNameList.GetSize() <= rFileMgr.m_iCurrentItem )
 				{
-					miCurrentItem = static_cast<int>(gsvFileNameArray.GetSize()) - 1;
+					rFileMgr.m_iCurrentItem = static_cast<int>(rFileMgr.m_svFileNameList.GetSize()) - 1;
 				}
 			}
 			else
 			{
-				miCurrentItem = 0;
+				rFileMgr.m_iCurrentItem = 0;
 			}
 		}
 
-		gsvFileNameArray.Unlock();
+		rFileMgr.m_svFileNameList.Unlock();
 	}
 
 	return bOk;
@@ -189,14 +209,16 @@ SVFileNameClass * SVFileNameManagerClass::GetItem()
 {
 	SVFileNameClass *pItem = nullptr;
 
-	if ( gsvFileNameArray.Lock() )
+	SVFileNameManagerClass& rFileMgr = Instance();
+
+	if ( rFileMgr.m_svFileNameList.Lock() )
 	{
-		if ( miCurrentItem < gsvFileNameArray.GetSize() )
+		if ( rFileMgr.m_iCurrentItem < rFileMgr.m_svFileNameList.GetSize() )
 		{
-			pItem = gsvFileNameArray[miCurrentItem];
+			pItem = rFileMgr.m_svFileNameList[rFileMgr.m_iCurrentItem];
 		}
 
-		gsvFileNameArray.Unlock();
+		rFileMgr.m_svFileNameList.Unlock();
 	}
 
 	return pItem;
@@ -283,9 +305,9 @@ BOOL SVFileNameManagerClass::CreatePath(LPCTSTR szPathName)
 	return bOk;
 }
 
-BOOL SVFileNameManagerClass::LoadItem(SVFileNameClass * svFileName)
+BOOL SVFileNameManagerClass::LoadItem(SVFileNameClass* svFileName)
 {
-	BOOL bOk = TRUE;
+	BOOL bOk = true;
 
 	if ( !CString( svFileName->GetFileName() ).IsEmpty() )
 	{
@@ -344,7 +366,7 @@ BOOL SVFileNameManagerClass::LoadItem(SVFileNameClass * svFileName)
 
 BOOL SVFileNameManagerClass::SaveItem(SVFileNameClass * svFileName)
 {
-	BOOL bOk = TRUE;
+	BOOL bOk = true;
 
 	if ( !CString( svFileName->GetFileName() ).IsEmpty() )
 	{
@@ -397,7 +419,7 @@ BOOL SVFileNameManagerClass::SaveItem(SVFileNameClass * svFileName)
 
 BOOL SVFileNameManagerClass::RenameItem(SVFileNameClass * svFileName)
 {
-	BOOL bOk = TRUE;
+	BOOL bOk = true;
 
 	if ( !CString( svFileName->GetFileName() ).IsEmpty() )
 	{
@@ -409,18 +431,20 @@ BOOL SVFileNameManagerClass::RenameItem(SVFileNameClass * svFileName)
 
 BOOL SVFileNameManagerClass::SaveItems()
 {
-	BOOL bOk = FALSE;
+	BOOL bOk = false;
 
-	if ( gsvFileNameArray.Lock() )
+	SVFileNameManagerClass& rFileMgr = Instance();
+
+	if ( rFileMgr.m_svFileNameList.Lock() )
 	{
-		bOk = TRUE;
+		bOk = true;
 
-		for ( int i= 0; i < gsvFileNameArray.GetSize(); i++ )
+		for ( int i= 0; i < rFileMgr.m_svFileNameList.GetSize(); i++ )
 		{
-			bOk = SaveItem( gsvFileNameArray[i] ) && bOk;
+			bOk = SaveItem( rFileMgr.m_svFileNameList[i] ) && bOk;
 		}
 
-		gsvFileNameArray.Unlock();
+		rFileMgr.m_svFileNameList.Unlock();
 	}
 
 	return bOk;
@@ -428,15 +452,17 @@ BOOL SVFileNameManagerClass::SaveItems()
 
 LPCTSTR SVFileNameManagerClass::GetFileNameList()
 {
-	return gsvFileNameArray.GetFileNameList();
+	return Instance().m_svFileNameList.GetFileNameList();
 }
 
 BOOL SVFileNameManagerClass::RemoveUnusedFiles(BOOL bCleanConfigDir)
 {
-	BOOL bOk = TRUE;
+	BOOL bOk = true;
 
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind;
+
+	SVFileNameManagerClass& rFileMgr = Instance();
 
 	CString csFileMask = GetRunPathName();
 
@@ -445,16 +471,16 @@ BOOL SVFileNameManagerClass::RemoveUnusedFiles(BOOL bCleanConfigDir)
 	hFind = FindFirstFile( csFileMask, &FindFileData );
 	if ( hFind != INVALID_HANDLE_VALUE )
 	{
-		BOOL bRun = TRUE;
+		BOOL bRun = true;
 
 		while ( bRun )
 		{
-			BOOL bFound = FALSE;
+			BOOL bFound = false;
 			CString csFileName = FindFileData.cFileName;
 
-			for ( int i = 0; ! bFound && i < gsvFileNameArray.GetSize(); i++ )
+			for ( int i = 0; ! bFound && i < rFileMgr.m_svFileNameList.GetSize(); i++ )
 			{
-				bFound = csFileName.CompareNoCase( gsvFileNameArray[i]->GetFileName() ) == 0;
+				bFound = csFileName.CompareNoCase( rFileMgr.m_svFileNameList[i]->GetFileName() ) == 0;
 			}
 
 			if ( ! bFound )
@@ -470,9 +496,8 @@ BOOL SVFileNameManagerClass::RemoveUnusedFiles(BOOL bCleanConfigDir)
 
 			bRun = FindNextFile( hFind, &FindFileData );
 		}
-
-    FindClose( hFind );
-  }
+		FindClose( hFind );
+	}
 
 	if ( bCleanConfigDir && bOk )
 	{
@@ -485,16 +510,16 @@ BOOL SVFileNameManagerClass::RemoveUnusedFiles(BOOL bCleanConfigDir)
 			hFind = FindFirstFile( csFileMask, &FindFileData );
 			if ( hFind != INVALID_HANDLE_VALUE )
 			{
-				BOOL bRun = TRUE;
+				BOOL bRun = true;
 
 				while ( bRun )
 				{
-					BOOL bFound = FALSE;
+					BOOL bFound = false;
 					CString csFileName = FindFileData.cFileName;
 
-					for ( int i = 0; ! bFound && i < gsvFileNameArray.GetSize(); i++ )
+					for ( int i = 0; ! bFound && i < rFileMgr.m_svFileNameList.GetSize(); i++ )
 					{
-						bFound = csFileName.CompareNoCase( gsvFileNameArray[i]->GetFileName() ) == 0;
+						bFound = csFileName.CompareNoCase( rFileMgr.m_svFileNameList[i]->GetFileName() ) == 0;
 					}
 
 					if ( ! bFound )

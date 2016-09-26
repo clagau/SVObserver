@@ -29,7 +29,6 @@
 #include "SVOMFCLibrary/StringEscape.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
-#include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVObserver.h"
 #include "SVIPDoc.h"
 #include "RootObject.h"

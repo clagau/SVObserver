@@ -77,14 +77,12 @@ SVIODoc::SVIODoc()
 {
 	m_pIOController = nullptr;
 
-	SVFileNameManagerClass svFileManager;
-	svFileManager.AddItem( &msvFileName );
+	SVFileNameManagerClass::AddItem( &msvFileName );
 }
 
 SVIODoc::~SVIODoc()
 {
-	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveItem( &msvFileName );
+	SVFileNameManagerClass::RemoveItem( &msvFileName );
 
 	m_pIOController = nullptr;
 }
@@ -154,8 +152,7 @@ void SVIODoc::SetPathName( LPCTSTR lpszPathName, BOOL bAddToMRU )
 {
 	msvFileName.SetFullFileName( lpszPathName );
 
-	SVFileNameManagerClass svFileManager;
-	svFileManager.LoadItem( &msvFileName );
+	SVFileNameManagerClass::LoadItem( &msvFileName );
 
 	// Never add to MRU file list! 
 	CDocument::SetPathName( msvFileName.GetFullFileName(), FALSE );
@@ -426,9 +423,7 @@ BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	if ( bOk )
 	{
-		SVFileNameManagerClass svFileManager;
-
-		bOk = svFileManager.LoadItem( &msvFileName );
+		bOk = SVFileNameManagerClass::LoadItem( &msvFileName );
 	}
 
 	if ( bOk )
@@ -441,13 +436,12 @@ BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	SVFileNameManagerClass svFileManager;
 
 	BOOL bOk = msvFileName.SetFullFileName( lpszPathName );
 
-	if ( bOk && CString( msvFileName.GetPathName() ).CompareNoCase( svFileManager.GetRunPathName() ) != 0 )
+	if ( bOk && CString( msvFileName.GetPathName() ).CompareNoCase( SVFileNameManagerClass::GetRunPathName() ) != 0 )
 	{
-		bOk = msvFileName.SetPathName( svFileManager.GetRunPathName() );
+		bOk = msvFileName.SetPathName( SVFileNameManagerClass::GetRunPathName() );
 	}
 
 	if ( bOk && CString( msvFileName.GetExtension() ).CompareNoCase( ".iod" ) != 0 )
@@ -462,7 +456,7 @@ BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName)
 	
 	if ( bOk )
 	{
-		bOk = svFileManager.SaveItem( &msvFileName );
+		bOk = SVFileNameManagerClass::SaveItem( &msvFileName );
 
 		if ( bOk )
 		{

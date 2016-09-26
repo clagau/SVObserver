@@ -17,10 +17,9 @@
 
 class SVFileNameClass;
 
-//This class is inheirated from the CArray class.  This class 
-//maintains an array of pointers to SVFileNameClass objects.  
+//This class maintains a list of pointers to SVFileNameClass objects.  
 //This class also maintains a mechanism for allowing shared 
-//access to the array using a lock.
+//access using a lock.
 class SVFileNameLockablePointerArrayClass : public SVVector<SVFileNameClass*>
 {
 public:

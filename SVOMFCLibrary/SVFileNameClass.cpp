@@ -311,37 +311,37 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 
 BOOL SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
 {
+	SVString sFullName;
 	if (szFullName)
 	{
-		SVString sFullName = szFullName;
-
-		if ( sFullName.empty() )
-		{
-			SetPathName( nullptr );
-			SetFileNameOnly( nullptr );
-			SetExtension( nullptr );
-		}
-		else
-		{
-			SVString sPathName;
-
-			char drive[_MAX_DRIVE];
-			char dir[_MAX_DIR];
-			char fname[_MAX_FNAME];
-			char ext[_MAX_EXT];
-
-			_splitpath( sFullName.c_str(), drive, dir, fname, ext );
-
-			sPathName = drive;
-			sPathName += dir;
-
-			SetFileNameOnly( fname );
-			SetExtension( ext );
-			SetPathName( sPathName.c_str() );
-		}
-		return true;
+		sFullName = szFullName;
 	}
-	return false;
+
+	if ( sFullName.empty() )
+	{
+		SetPathName( nullptr );
+		SetFileNameOnly( nullptr );
+		SetExtension( nullptr );
+	}
+	else
+	{
+		SVString sPathName;
+
+		char drive[_MAX_DRIVE];
+		char dir[_MAX_DIR];
+		char fname[_MAX_FNAME];
+		char ext[_MAX_EXT];
+
+		_splitpath( sFullName.c_str(), drive, dir, fname, ext );
+
+		sPathName = drive;
+		sPathName += dir;
+
+		SetFileNameOnly( fname );
+		SetExtension( ext );
+		SetPathName( sPathName.c_str() );
+	}
+	return true;
 }
 
 BOOL SVFileNameClass::SetPathName(LPCTSTR szPathName)
@@ -364,14 +364,17 @@ BOOL SVFileNameClass::SetFileName(LPCTSTR szFileName)
 {
 	SVString sFullFileName = GetPathName();
 
-	if ( sFullFileName.empty() )
+	if (szFileName)
 	{
-		sFullFileName = szFileName;
-	}
-	else
-	{
-		sFullFileName += "\\";
-		sFullFileName += szFileName;
+		if ( sFullFileName.empty() )
+		{
+			sFullFileName = szFileName;
+		}
+		else
+		{
+			sFullFileName += "\\";
+			sFullFileName += szFileName;
+		}
 	}
 
 	return SetFullFileName( sFullFileName.c_str() );
@@ -434,38 +437,39 @@ BOOL SVFileNameClass::SetFileSaveDialogTitle(LPCTSTR szTitle)
 
 BOOL SVFileNameClass::SetDefaultFullFileName(LPCTSTR szFullName)
 {
+	SVString sFullName;
+
 	if (szFullName)
 	{
-		SVString sFullName = szFullName;
-
-		if ( sFullName.empty() )
-		{
-			SetDefaultPathName( nullptr );
-			SetDefaultFileName( nullptr );
-			SetDefaultFileExtension( nullptr );
-		}
-		else
-		{
-			SVString sPathName;
-
-			char drive[_MAX_DRIVE];
-			char dir[_MAX_DIR];
-			char fname[_MAX_FNAME];
-			char ext[_MAX_EXT];
-
-			_splitpath( sFullName.c_str(), drive, dir, fname, ext );
-
-			sPathName = drive;
-			sPathName += dir;
-
-			SetDefaultFileName( fname );
-			SetDefaultFileExtension( ext );
-			SetDefaultPathName( sPathName.c_str() );
-		}
-
-		return true;
+		sFullName = szFullName;
 	}
-	return false;
+
+	if ( sFullName.empty() )
+	{
+		SetDefaultPathName( nullptr );
+		SetDefaultFileName( nullptr );
+		SetDefaultFileExtension( nullptr );
+	}
+	else
+	{
+		SVString sPathName;
+
+		char drive[_MAX_DRIVE];
+		char dir[_MAX_DIR];
+		char fname[_MAX_FNAME];
+		char ext[_MAX_EXT];
+
+		_splitpath( sFullName.c_str(), drive, dir, fname, ext );
+
+		sPathName = drive;
+		sPathName += dir;
+
+		SetDefaultFileName( fname );
+		SetDefaultFileExtension( ext );
+		SetDefaultPathName( sPathName.c_str() );
+	}
+
+	return true;
 }
 
 BOOL SVFileNameClass::SetDefaultPathName(LPCTSTR szPathName)

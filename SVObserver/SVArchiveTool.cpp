@@ -371,9 +371,7 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 
 		if ( _access( svFileName.GetPathName(), 0 ) != 0 )
 		{
-			SVFileNameManagerClass svFileManager;
-
-			if(!svFileManager.CreatePath(svFileName.GetPathName() ) )return FALSE;
+			if (!SVFileNameManagerClass::CreatePath(svFileName.GetPathName() ) ) return false;
 		}
 	}
 
@@ -488,9 +486,7 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 
 		if ( !bOk )
 		{
-			SVFileNameManagerClass svFileManager;
-
-			bOk = svFileManager.CreatePath( csImagePath );
+			bOk = SVFileNameManagerClass::CreatePath( csImagePath );
 		}
 	}
 
@@ -540,8 +536,7 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 						if ( _access( csImagePath, 0 ) != 0 )
 						{
 							//create the new path
-							SVFileNameManagerClass svFileManager;
-							svFileManager.CreatePath( csImagePath );
+							SVFileNameManagerClass::CreatePath( csImagePath );
 						}
 					}
 				}
@@ -746,9 +741,7 @@ HRESULT SVArchiveTool::initializeOnRun()
 	{
 		if ( _access( csTemp, 0 ) != 0 )
 		{
-			SVFileNameManagerClass svFileManager;
-
-			if(!svFileManager.CreatePath( csTemp ))
+			if (!SVFileNameManagerClass::CreatePath( csTemp ))
 				return S_FALSE;
 		}
 	}

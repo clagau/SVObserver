@@ -252,8 +252,7 @@ void SVIPDoc::SetInspectionID( const SVGUID& p_InspectionID )
 
 void SVIPDoc::init()
 {
-	SVFileNameManagerClass svFileManager;
-	svFileManager.AddItem( &msvFileName );
+	SVFileNameManagerClass::AddItem( &msvFileName );
 
 	mbRegressionSingleStep = FALSE;
 	mbInitImagesByName = FALSE;
@@ -284,8 +283,7 @@ SVIPDoc::~SVIPDoc()
 
 	m_oDisplay.Destroy();
 
-	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveItem( &msvFileName );
+	SVFileNameManagerClass::RemoveItem( &msvFileName );
 
 	ClearRegressionTestStructures();
 
@@ -536,8 +534,7 @@ void SVIPDoc::SetPathName( LPCTSTR LPSZPathName, BOOL bAddToMRU )
 	{
 		msvFileName.SetFullFileName( LPSZPathName );
 
-		SVFileNameManagerClass svFileManager;
-		svFileManager.LoadItem( &msvFileName );
+		SVFileNameManagerClass::LoadItem( &msvFileName );
 
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 	}
@@ -2093,9 +2090,7 @@ BOOL SVIPDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	if ( bOk )
 	{
-		SVFileNameManagerClass svFileManager;
-
-		bOk = svFileManager.LoadItem( &msvFileName );
+		bOk = SVFileNameManagerClass::LoadItem( &msvFileName );
 
 		if ( bOk )
 		{
@@ -2108,13 +2103,11 @@ BOOL SVIPDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL SVIPDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	SVFileNameManagerClass svFileManager;
-
 	BOOL bOk = msvFileName.SetFullFileName( lpszPathName );
 
-	if ( bOk && CString( msvFileName.GetPathName() ).CompareNoCase( svFileManager.GetRunPathName() ) != 0 )
+	if ( bOk && CString( msvFileName.GetPathName() ).CompareNoCase( SVFileNameManagerClass::GetRunPathName() ) != 0 )
 	{
-		bOk = msvFileName.SetPathName( svFileManager.GetRunPathName() );
+		bOk = msvFileName.SetPathName( SVFileNameManagerClass::GetRunPathName() );
 	}
 
 	if ( bOk && CString( msvFileName.GetExtension() ).CompareNoCase( ".ipd" ) != 0 )
@@ -2128,7 +2121,7 @@ BOOL SVIPDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 		if ( bOk )
 		{
-			bOk = svFileManager.SaveItem( &msvFileName );
+			bOk = SVFileNameManagerClass::SaveItem( &msvFileName );
 
 			if ( bOk )
 			{

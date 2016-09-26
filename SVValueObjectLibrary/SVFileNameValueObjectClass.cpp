@@ -64,14 +64,12 @@ SVFileNameValueObjectClass::~SVFileNameValueObjectClass()
 	SetObjectDepth(0);
 	CreateBuckets();
 	
-	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveItem(&m_svFileName);
+	SVFileNameManagerClass::RemoveItem(&m_svFileName);
 }
 
 void SVFileNameValueObjectClass::Persist(SVObjectWriter& rWriter)
 {
-	SVFileNameManagerClass svFileManager;
-	svFileManager.SaveItem(&m_svFileName);
+	SVFileNameManagerClass::SaveItem(&m_svFileName);
 	
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 
@@ -135,10 +133,8 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue( const SVString& p_rValueName
 
 			m_iLastSetIndex = 1;
 
-			SVFileNameManagerClass SVFileManager;
-
 			m_svFileName.SetFullFileName(ScalarBucket(1));
-			SVFileManager.LoadItem(&m_svFileName);
+			SVFileNameManagerClass::LoadItem(&m_svFileName);
 		}
 		else
 		{
@@ -277,10 +273,8 @@ HRESULT SVFileNameValueObjectClass::SetValueAt(int iBucket, int iIndex, const CS
 
 	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
-		SVFileNameManagerClass SVFileManager;
-
 		m_svFileName.SetFullFileName(strValue);
-		SVFileManager.LoadItem(&m_svFileName);
+		SVFileNameManagerClass::LoadItem(&m_svFileName);
 		hr = base::SetValueAt(iBucket, iIndex, m_svFileName.GetFullFileName());
 	}
 	
@@ -339,7 +333,6 @@ void SVFileNameValueObjectClass::LocalInitialize()
 	
 	InitializeBuckets();
 
-	SVFileNameManagerClass svFileManager;
-	svFileManager.AddItem(&m_svFileName);
+	SVFileNameManagerClass::AddItem(&m_svFileName);
 }
 

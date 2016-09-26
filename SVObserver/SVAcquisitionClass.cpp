@@ -106,11 +106,9 @@ void SVAcquisitionClass::ClearDevice()
 
 	mLightReference.Reset();
 
-	SVFileNameManagerClass svFileMgr;
-
 	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
 	{
-		svFileMgr.RemoveItem( &(mFiles[l]) );
+		SVFileNameManagerClass::RemoveItem( &(mFiles[l]) );
 	}
 
 	m_SingleGrabHandle.clear();
@@ -147,11 +145,9 @@ HRESULT SVAcquisitionClass::Destroy()
 		hrOk = l_Status;
 	}
 
-	SVFileNameManagerClass svFileMgr;
-
 	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
 	{
-		svFileMgr.RemoveItem( &(mFiles[l]) );
+		SVFileNameManagerClass::RemoveItem( &(mFiles[l]) );
 	}
 
 	return hrOk;
@@ -341,11 +337,9 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 
 	long l( 0 );
 
-	SVFileNameManagerClass svFileMgr;
-
 	for ( l = mFiles.GetSize() - 1; -1 < l; l-- )
 	{
-		svFileMgr.RemoveItem( &(mFiles[l]) );
+		SVFileNameManagerClass::RemoveItem( &(mFiles[l]) );
 	}
 
 	mFiles = rArray;
@@ -353,7 +347,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 
 	for ( l = 0; S_OK == Result  && l < mFiles.GetSize(); l++ )
 	{
-		if ( ! svFileMgr.AddItem( &(mFiles[l]) ) )
+		if ( ! SVFileNameManagerClass::AddItem( &(mFiles[l]) ) )
 		{
 			if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
 			{
@@ -552,11 +546,9 @@ HRESULT SVAcquisitionClass::UnloadFiles()
 {
 	HRESULT hrOk = S_OK;
 
-	SVFileNameManagerClass svFileMgr;
-
 	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
 	{
-		svFileMgr.RemoveItem( &(mFiles[l]) );
+		SVFileNameManagerClass::RemoveItem( &(mFiles[l]) );
 	}
 
 	mFiles.RemoveAll();

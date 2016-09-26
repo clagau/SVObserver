@@ -33,8 +33,7 @@ SVOIPDocClass::SVOIPDocClass()
 {
 	EnableCompoundFile();
 
-	SVFileNameManagerClass svFileManager;
-	svFileManager.AddItem( &msvFileName );
+	SVFileNameManagerClass::AddItem( &msvFileName );
 }
 
 BOOL SVOIPDocClass::OnNewDocument()
@@ -49,8 +48,7 @@ BOOL SVOIPDocClass::OnNewDocument()
 
 SVOIPDocClass::~SVOIPDocClass()
 {
-	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveItem( &msvFileName );
+	SVFileNameManagerClass::RemoveItem( &msvFileName );
 }
 
 BEGIN_MESSAGE_MAP(SVOIPDocClass, COleServerDoc)
@@ -101,9 +99,7 @@ BOOL SVOIPDocClass::OnOpenDocument(LPCTSTR lpszPathName)
 
 	if ( bOk )
 	{
-		SVFileNameManagerClass svFileManager;
-
-		bOk = svFileManager.LoadItem( &msvFileName );
+		bOk = SVFileNameManagerClass::LoadItem( &msvFileName );
 	}
 
 	if ( bOk )
@@ -118,8 +114,7 @@ void SVOIPDocClass::SetPathName( LPCTSTR lpszPathName, BOOL bAddToMRU )
 {
 	msvFileName.SetFullFileName( lpszPathName );
 
-	SVFileNameManagerClass svFileManager;
-	svFileManager.LoadItem( &msvFileName );
+	SVFileNameManagerClass::LoadItem( &msvFileName );
 
 	// Never add to MRU file list! 
 	COleServerDoc::SetPathName( msvFileName.GetFullFileName(), FALSE );

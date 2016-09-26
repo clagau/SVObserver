@@ -398,15 +398,14 @@ SVObserverApp::SVObserverApp()
 	m_ConfigFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 	m_ConfigFileName.setExcludeCharacters( SvO::SVEXCLUDECHARS_CONFIG_NAME );
 
-	SVFileNameManagerClass svFileManager;
-	svFileManager.AddItem( &m_ConfigFileName );
+	SVFileNameManagerClass::AddItem(&m_ConfigFileName);
+
 }// end SVObserver ctor
 
 SVObserverApp::~SVObserverApp()
 {
 	// File management for config file.
-	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveItem( &m_ConfigFileName );
+	SVFileNameManagerClass::RemoveItem( &m_ConfigFileName );
 }
 #pragma endregion Constructor
 
@@ -486,9 +485,7 @@ void SVObserverApp::OnFileSaveConfig()
 	}
 	else
 	{
-		SVFileNameManagerClass svFileManager;
-
-		CString csTempName = svFileManager.GetConfigurationPathName();
+		CString csTempName = SVFileNameManagerClass::GetConfigurationPathName();
 
 		if ( csTempName.IsEmpty() )
 		{
@@ -1779,15 +1776,14 @@ void SVObserverApp::OnRCSaveAllAndGetConfig()
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
 		CString csConfigPath;
-		SVFileNameManagerClass svFileManager;
 
 		BOOL bModified = SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
 
-		csConfigPath = svFileManager.GetConfigurationPathName();
+		csConfigPath = SVFileNameManagerClass::GetConfigurationPathName();
 
 		if ( ! csConfigPath.IsEmpty() )
 		{
-			svFileManager.SetConfigurationPathName( nullptr );
+			SVFileNameManagerClass::SetConfigurationPathName( _T(""));
 		}
 
 		SVFileNameClass svFileName;
@@ -1802,7 +1798,7 @@ void SVObserverApp::OnRCSaveAllAndGetConfig()
 
 		if ( ! csConfigPath.IsEmpty() )
 		{
-			svFileManager.SetConfigurationPathName( csConfigPath );
+			SVFileNameManagerClass::SetConfigurationPathName( csConfigPath );
 		}
 
 		if ( bModified )
@@ -2640,6 +2636,8 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 	while (1)
 	{
+		// @Note: [SEJ] If DestroyConfig doesn't return S_OK, the MRU is updated incorrectly
+		// The file to be loaded, if it was in the MRU, will be removed from the MRU !
 		hrDestroyed = DestroyConfig();
 		if (S_OK != hrDestroyed )
 		{
@@ -2663,18 +2661,17 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			break;
 		}
 
-		SVFileNameManagerClass svFileManager;
 		SVFileNameClass svFileName( PathName );
 
 		//
 		// Check if we tried to load the SVC from 
 		// Execution path...("C:\RUN\")
 		//
-		if ( CString( svFileName.GetPathName() ).CompareNoCase( svFileManager.GetRunPathName() ) )
+		if ( CString( svFileName.GetPathName() ).CompareNoCase( SVFileNameManagerClass::GetRunPathName() ) )
 		{
 			// Clean up Execution Directory...
 			// Check path, create if necessary and delete contents...
-			InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
+			InitPath( CString( SVFileNameManagerClass::GetRunPathName() ) + "\\", TRUE, TRUE );
 		} // if ( CString
 
 		try
@@ -2866,13 +2863,13 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			// IsSECModified = FALSE; 03 Dec 1999 - frb. delay until 
 			// .ipd parsing is completed.
 
-			if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+			if ( CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
 			{
 				AddToRecentFileList( getConfigFullFileName() );
 			}
 			else
 			{
-				AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
+				AddToRecentFileList( CString( SVFileNameManagerClass::GetConfigurationPathName() ) + 
 					"\\" + getConfigFileName() );
 			}
 
@@ -3293,8 +3290,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 void SVObserverApp::RemoveUnusedFiles()
 {
-	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveUnusedFiles( FALSE );
+	SVFileNameManagerClass::RemoveUnusedFiles( false );
 }
 
 SVIODoc* SVObserverApp::GetIODoc() const
@@ -4100,27 +4096,23 @@ LPCTSTR SVObserverApp::getConfigFullFileName() const
 
 BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
 {
-	BOOL bOk = FALSE;
-
-	SVFileNameManagerClass svFileManager;
-
-	bOk = m_ConfigFileName.SetFullFileName( csFullFileName );
+	BOOL bOk = m_ConfigFileName.SetFullFileName( csFullFileName );
 
 	if ( bOk )
 	{
 		if ( CString( m_ConfigFileName.GetPathName() ).IsEmpty() )
 		{
-			svFileManager.SetConfigurationPathName( nullptr );
+			SVFileNameManagerClass::SetConfigurationPathName( nullptr );
 		}
 		else
 		{
 			if ( CString( m_ConfigFileName.GetPathName() ).CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
 			{
-				svFileManager.SetConfigurationPathName( nullptr );
+				SVFileNameManagerClass::SetConfigurationPathName( nullptr );
 			}
 			else
 			{
-				bOk = svFileManager.SetConfigurationPathName( m_ConfigFileName.GetPathName() );
+				bOk = SVFileNameManagerClass::SetConfigurationPathName( m_ConfigFileName.GetPathName() );
 				// if this returns FALSE, unable to access specified path!
 				if ( !bOk )
 				{
@@ -4143,17 +4135,17 @@ BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction
 			{
 			case LOAD_CONFIG:
 				{
-					bOk = svFileManager.LoadItem( &m_ConfigFileName );
+					bOk = SVFileNameManagerClass::LoadItem( &m_ConfigFileName );
 					break;
 				}
 			case SAVE_CONFIG:
 				{
-					bOk = svFileManager.SaveItem( &m_ConfigFileName );
+					bOk = SVFileNameManagerClass::SaveItem( &m_ConfigFileName );
 					break;
 				}
 			case RENAME_CONFIG:
 				{
-					bOk = svFileManager.RenameItem( &m_ConfigFileName );
+					bOk = SVFileNameManagerClass::RenameItem( &m_ConfigFileName );
 					break;
 				}
 			default:
@@ -4167,11 +4159,11 @@ BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction
 
 	if ( bOk )
 	{
-		if ( !CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+		if ( !CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
 		{
 			AfxGetApp()->WriteProfileString( _T( "Settings" ), 
 				_T( "ConfigurationFilePath" ), 
-				svFileManager.GetConfigurationPathName() );
+				SVFileNameManagerClass::GetConfigurationPathName() );
 		}
 	}
 
@@ -4279,8 +4271,6 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 	if ( bFileNewConfiguration )
 	{
-		SVFileNameManagerClass svFileManager;
-
 		// Clean up SVObserver
 		if( S_OK != DestroyConfig() )
 		{
@@ -4303,7 +4293,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 		// Clean up Execution Directory...
 		// Check path, create if necessary and delete contents...
-		InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
+		InitPath( CString( SVFileNameManagerClass::GetRunPathName() ) + "\\", TRUE, TRUE );
 
 		// Ensure that DestroyConfig() can do his work...
 		SVSVIMStateClass::AddState( SV_STATE_READY );
@@ -6284,7 +6274,6 @@ HRESULT SVObserverApp::InitializeSecurity()
 
 void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave) 
 {
-	SVFileNameManagerClass svFileManager;
 	CWaitCursor wait;
 
 	BOOL bOk=TRUE;
@@ -6309,9 +6298,9 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 
 			if ( CString( svFileName.GetPathName() ).CompareNoCase(SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
 			{
-				if ( ! CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+				if ( ! CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
 				{
-					svFileName.SetPathName( svFileManager.GetConfigurationPathName() );
+					svFileName.SetPathName( SVFileNameManagerClass::GetConfigurationPathName() );
 				}
 			}
 			else
@@ -6392,21 +6381,21 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 		}
 		else 
 		{
-			svFileManager.SaveItem( &m_ConfigFileName );//Arvid: here the configuration seems to be copied from the Run directory (C:\Run)
-			svFileManager.SaveItems();					//Arvid: here other files required for the configuration seem to be copied from the Run directory (C:\Run)
-			svFileManager.RemoveUnusedFiles();
+			SVFileNameManagerClass::SaveItem( &m_ConfigFileName );//Arvid: here the configuration seems to be copied from the Run directory (C:\Run)
+			SVFileNameManagerClass::SaveItems();					//Arvid: here other files required for the configuration seem to be copied from the Run directory (C:\Run)
+			SVFileNameManagerClass::RemoveUnusedFiles();
 
 			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
 
 			if ( bOk )
 			{
-				if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+				if ( CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
 				{
 					AddToRecentFileList( getConfigFullFileName() );
 				}
 				else
 				{
-						AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
+						AddToRecentFileList( CString( SVFileNameManagerClass::GetConfigurationPathName() ) + 
 							"\\" + getConfigFileName() );
 				}
 				ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: configuration successfully saved: update autosave timestamp
