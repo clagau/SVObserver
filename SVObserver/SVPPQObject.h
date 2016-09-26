@@ -23,7 +23,7 @@
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVSharedMemorySingleton.h"
 #include "SVInfoStructs.h"
-#include "SVPPQEnums.h"
+#include "ObjectInterfaces/SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVVirtualCamera.h"

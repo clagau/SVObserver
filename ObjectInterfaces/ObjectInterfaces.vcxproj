@@ -116,6 +116,7 @@
     <ClInclude Include="SVGigeCameraStructInterface.h" />
     <ClInclude Include="SVImageEnums.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />
+    <ClInclude Include="SVPPQEnums.h" />
     <ClInclude Include="SVUserMessage.h" />
     <ClInclude Include="TextDefineSvOi.h" />
   </ItemGroup>

@@ -24,7 +24,7 @@
 #include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #pragma endregion Includes
-#include "SVPPQEnums.h"
+#include "Objectinterfaces/SVPPQEnums.h"
 
 #pragma region Declarations
 class SVConfigurationObject;

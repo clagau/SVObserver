@@ -126,6 +126,9 @@
     <ClInclude Include="GlobalConstantData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVPPQEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GlobalConstantData.inl">

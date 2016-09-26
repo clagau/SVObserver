@@ -12,7 +12,6 @@
 #include"stdafx.h"
 #include "SVOIniLoader.h"
 #include "SVOIniClass.h"
-#include "SVObserver\SVPPQEnums.h"
 #pragma endregion Includes
 
 #pragma region Declarations
