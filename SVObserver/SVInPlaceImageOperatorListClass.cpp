@@ -16,7 +16,7 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "SVTool.h"
 #include "SVMatroxImageProcessingClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

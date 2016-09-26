@@ -15,7 +15,7 @@
 #include "SVImageObjectClass.h"
 #include "SVMatroxImageProcessingClass.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 
 SVImageProcessingClass& SVImageProcessingClass::Instance()

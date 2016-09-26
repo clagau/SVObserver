@@ -21,7 +21,7 @@
 #include "SVImageProcessingClass.h"
 #include "SVPixelAnalyzerSetup.h" // Required by SVPixelAnalyzerSetupClass
 #include "SVResultLong.h"   // Required by SVLongResultClass
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

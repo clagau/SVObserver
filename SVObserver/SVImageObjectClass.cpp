@@ -22,7 +22,7 @@
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManagerResource.h"  // Use SvStl::MessageMgrDisplayAndNotify
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
 SVImageObjectClass::SVImageObjectClass()

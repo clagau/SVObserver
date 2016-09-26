@@ -25,7 +25,7 @@
 #include "SVGlobal.h" // Default Coordinates
 #include "SVImageProcessingClass.h"
 #include "SVPolarTransformationTool.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

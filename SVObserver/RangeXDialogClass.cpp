@@ -20,7 +20,7 @@
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
 #pragma region Declarations

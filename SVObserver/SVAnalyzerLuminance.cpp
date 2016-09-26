@@ -22,7 +22,7 @@
 #include "SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVStatusLibrary/MessageManagerResource.h"
 
 #pragma endregion Includes

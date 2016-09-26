@@ -52,7 +52,7 @@
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
 #include "SVRange.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Inlcudes
 

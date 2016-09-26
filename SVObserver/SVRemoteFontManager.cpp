@@ -17,7 +17,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageProcessingClass.h"
 #include "SVObserver.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 
 #pragma endregion Includes

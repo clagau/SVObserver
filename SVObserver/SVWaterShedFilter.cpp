@@ -17,7 +17,7 @@
 #include "SVTaskObjectList.h"
 #include "SVToolSet.h"
 #include "SVTool.h"
-#include "SVWaterShedFilter.h"
+#include "SVWaterShedFilter.h" //Arvid added to avoid VS2015 compile Error
 #include "ObjectInterfaces/TextDefineSvOi.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 

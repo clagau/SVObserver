@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVImageProcessingClass.h"
 #include "SVDataBuffer.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

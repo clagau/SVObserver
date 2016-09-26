@@ -17,7 +17,7 @@
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

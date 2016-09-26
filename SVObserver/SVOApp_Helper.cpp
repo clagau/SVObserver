@@ -10,7 +10,7 @@
 #include "SVObserver.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

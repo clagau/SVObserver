@@ -16,7 +16,7 @@
 #include "SVCylindricalWarpDlg.h"
 #include "SVCylindricalWarpTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
 #ifdef _DEBUG

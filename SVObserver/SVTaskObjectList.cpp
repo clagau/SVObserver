@@ -23,7 +23,7 @@
 #include "SVInspectionProcess.h"
 #include "SVAnalyzer.h"
 #include "SVTool.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion
 
 #ifdef _DEBUG

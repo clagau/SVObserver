@@ -16,7 +16,7 @@
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h" 
 #include "SVLUTEquation.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

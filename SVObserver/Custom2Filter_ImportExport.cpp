@@ -14,7 +14,7 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
 #pragma region local helper function

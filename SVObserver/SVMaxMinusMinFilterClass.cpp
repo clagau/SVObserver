@@ -13,7 +13,7 @@
 #include "SVMaxMinusMinFilterClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 
 SV_IMPLEMENT_CLASS( SVMaxMinusMinFilterClass, SVMaxMinusMinFilterClassGuid )
