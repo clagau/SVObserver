@@ -42,6 +42,13 @@ enum SVResetItemEnum // used with Embedded Object registration.
 	SVResetItemSize,
 };
 
+
+enum OutputFormat
+{
+	OutputFormat_int,
+	OutputFormat_hex,
+};
+
 /**
 @SVObjectName Value Object
 
@@ -136,6 +143,8 @@ public:
 	int  GetLastSetIndex()               const    { return m_iLastSetIndex; }
 	void SetLegacyVectorObjectCompatibility() { m_bLegacyVectorObjectCompatibility = true; }
 
+	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) { return E_NOTIMPL; };
+
 protected:
 	// use the NonVirtual Interface pattern (NVI; C++ Coding Standards # 39, Sutter & Alexandrescu)
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) = 0;
@@ -191,6 +200,8 @@ protected:
 
 	bool m_bResetAlways;
 	SVResetItemEnum m_eResetItem;
+
+	SVString m_outFormat;
 
 private:
 	void Initialize();

@@ -32,6 +32,8 @@ public:
 	virtual ~SVDWordValueObjectClass();
 	virtual void Persist(SVObjectWriter& rWriter);
 
+	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
+
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 protected:

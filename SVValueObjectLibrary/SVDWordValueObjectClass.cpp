@@ -96,6 +96,24 @@ void SVDWordValueObjectClass::Persist(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
+HRESULT SVDWordValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
+{
+	HRESULT Result = S_OK;
+	switch (outputFormat)
+	{
+	case OutputFormat_int:
+		m_outFormat = _T("%d");
+		break;
+	case OutputFormat_hex:
+		m_outFormat = _T("0x%8.8x");
+		break;
+	default:
+		Result = E_INVALIDARG;
+		break;
+	}
+	return Result;
+}
+
 HRESULT  SVDWordValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )
 {
 	if ( VT_UI4 == rvtValue.vt )
@@ -144,7 +162,7 @@ HRESULT SVDWordValueObjectClass::GetValueAt( int iBucket, int iIndex, CString& r
 	DWORD dwValue=0;
 
 	HRESULT hr = base::GetValueAt(iBucket, iIndex, dwValue);
-	rstrValue.Format(_T("0x%8.8x"), dwValue);
+	rstrValue.Format(m_outFormat.c_str(), dwValue);
 
 	return hr;
 }
@@ -177,6 +195,8 @@ void SVDWordValueObjectClass::LocalInitialize()
 	}
 	m_strTypeName = "Integer32Hex";
 	InitializeBuckets();
+
+	SetOutputFormat(OutputFormat_hex);
 }
 
 DWORD SVDWordValueObjectClass::convertString2DWord(const CString& rValue ) const

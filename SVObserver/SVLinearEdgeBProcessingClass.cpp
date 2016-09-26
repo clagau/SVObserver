@@ -45,18 +45,26 @@ SVLinearEdgeBProcessingClass::SVLinearEdgeBProcessingClass( SVObjectClass* POwne
 	RegisterEmbeddedObject( &m_svUseLowerThresholdMaxMinusOffset, SVUseLowerThresholdMaxMinusOffsetBObjectGuid, IDS_OBJECTNAME_USELOWERTHRESHOLD_MAXMINUSOFFSET_B, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUseLowerThresholdMinPlusOffset, SVUseLowerThresholdMinPlusOffsetBObjectGuid, IDS_OBJECTNAME_USELOWERTHRESHOLD_MINPLUSOFFSET_B, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_svLowerThresholdValue, SVEdgeBLowerThresholdValueGuid, IDS_OBJECTNAME_EDGE_B_LOWER_THRESHOLD_VALUE, false, SVResetItemNone );
+	m_svLowerThresholdValue.SetOutputFormat(OutputFormat_int);
 	RegisterEmbeddedObject( &m_svLowerMaxMinusPercentDiffValue, SVLowerThresholdMaxMinusPercentDiffBObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLD_PERCENTDIFF_B, false, SVResetItemNone );
+	m_svLowerMaxMinusPercentDiffValue.SetOutputFormat(OutputFormat_int);
 	RegisterEmbeddedObject( &m_svLowerMaxMinusOffsetValue, SVLowerThresholdMaxMinusOffsetBObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLD_MAXOFFSET_B, false, SVResetItemNone );
+	m_svLowerMaxMinusOffsetValue.SetOutputFormat(OutputFormat_int);
 	RegisterEmbeddedObject( &m_svLowerMinPlusOffsetValue, SVLowerThresholdMinPlusOffsetBObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLD_MINOFFSET_B, false, SVResetItemNone );
+	m_svLowerMinPlusOffsetValue.SetOutputFormat(OutputFormat_int);
 
 	RegisterEmbeddedObject( &m_svUseUpperThresholdSelectable, SVUseUpperThresholdSelectableBObjectGuid, IDS_OBJECTNAME_USEUPPERTHRESHOLD_SELECTABLE_B, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUseUpperThresholdMaxMinusPercentDiff, SVUseUpperThresholdMaxMinusPercentDiffBObjectGuid, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSPERCENTDIFF_B, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUseUpperThresholdMaxMinusOffset, SVUseUpperThresholdMaxMinusOffsetBObjectGuid, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSOFFSET_B, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUseUpperThresholdMinPlusOffset, SVUseUpperThresholdMinPlusOffsetBObjectGuid, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MINPLUSOFFSET_B, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUpperThresholdValue, SVEdgeBUpperThresholdValueGuid, IDS_OBJECTNAME_EDGE_B_UPPER_THRESHOLD_VALUE, false, SVResetItemNone );
+	m_svUpperThresholdValue.SetOutputFormat(OutputFormat_int);
 	RegisterEmbeddedObject( &m_svUpperMaxMinusPercentDiffValue, SVUpperThresholdMaxMinusPercentDiffBObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLD_PERCENTDIFF_B, false, SVResetItemNone );
+	m_svUpperMaxMinusPercentDiffValue.SetOutputFormat(OutputFormat_int);
 	RegisterEmbeddedObject( &m_svUpperMaxMinusOffsetValue, SVUpperThresholdMaxMinusOffsetBObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLD_MAXOFFSET_B, false, SVResetItemNone );
+	m_svUpperMaxMinusOffsetValue.SetOutputFormat(OutputFormat_int);
 	RegisterEmbeddedObject( &m_svUpperMinPlusOffsetValue, SVUpperThresholdMinPlusOffsetBObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLD_MINOFFSET_B, false, SVResetItemNone );
+	m_svUpperMinPlusOffsetValue.SetOutputFormat(OutputFormat_int);
 
 	RegisterEmbeddedObject(&m_svLinearEdges, SVLinearEdgesClassGuid, IDS_CLASSNAME_SVLINEAREDGESCLASS, false, SVResetItemNone );
 

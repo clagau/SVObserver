@@ -115,6 +115,24 @@ HRESULT SVByteValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObj
 	return hr;
 }
 
+HRESULT SVByteValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
+{
+	HRESULT Result = S_OK;
+	switch (outputFormat)
+	{
+	case OutputFormat_int:
+		m_outFormat = _T("%d");
+		break;
+	case OutputFormat_hex:
+		m_outFormat = _T("0x%2.2x");
+		break;
+	default:
+		Result = E_INVALIDARG;
+		break;
+	}
+	return Result;
+}
+
 HRESULT SVByteValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& vtValue )
 {
 	if ( VT_UI1 == vtValue.vt || VT_I1 == vtValue.vt )
@@ -162,7 +180,7 @@ HRESULT SVByteValueObjectClass::GetValueAt( int iBucket, int iIndex, CString& rs
 	BYTE value=0;
 
 	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rstrValue.Format(_T("0x%2.2x"), value);
+	rstrValue.Format(m_outFormat.c_str(), value);
 
 	return hr;
 }
@@ -194,6 +212,8 @@ void SVByteValueObjectClass::LocalInitialize()
 	}
 	m_strTypeName = "Integer8";
 	InitializeBuckets();
+
+	SetOutputFormat(OutputFormat_hex);
 }
 
 BYTE SVByteValueObjectClass::convertString2Byte(const CString& rValue ) const

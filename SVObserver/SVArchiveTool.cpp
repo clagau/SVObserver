@@ -111,18 +111,21 @@ void SVArchiveTool::initializeArchiveTool()
 		SVArchiveAppendArchiveFileGuid,
 		IDS_OBJECTNAME_ARCHIVE_APPEND_ARCHIVE_FILE,
 		false, SVResetItemTool );
+	m_dwAppendArchiveFile.SetOutputFormat(OutputFormat_int);
 	
 	RegisterEmbeddedObject(	
 		&m_dwArchiveStopAtMaxImages,
 		SVArchiveStopAtMaxImagesGuid,
 		IDS_OBJECTNAME_ARCHIVE_STOP_AT_MAX_IMAGES,
 		false, SVResetItemNone );
+	m_dwArchiveStopAtMaxImages.SetOutputFormat(OutputFormat_int);
 	
 	RegisterEmbeddedObject(	
 		&m_dwArchiveMaxImagesCount,
 		SVArchiveMaxImagesCountGuid,
 		IDS_OBJECTNAME_ARCHIVE_MAX_IMAGES_COUNT,
 		false, SVResetItemNone );
+	m_dwArchiveMaxImagesCount.SetOutputFormat(OutputFormat_int);
 
 	RegisterEmbeddedObject(	
 		&m_evoArchiveMethod,

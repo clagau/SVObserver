@@ -166,8 +166,9 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	// Set / Reset Printable Flags
 	m_pixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_pixelCountColor.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_pixelCountColor.SetOutputFormat(OutputFormat_int);
 	
-    return m_isCreated;
+	return m_isCreated;
 }
 BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 {
