@@ -1800,9 +1800,6 @@
     <ClInclude Include="SVPPQEntryDialogRemotePage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVPPQEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVPPQObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>

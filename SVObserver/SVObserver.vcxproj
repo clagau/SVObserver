@@ -926,7 +926,6 @@ echo %time%
     <ClInclude Include="SVPPQEntryDialog.h" />
     <ClInclude Include="SVPPQEntryDialogDigInPage.h" />
     <ClInclude Include="SVPPQEntryDialogRemotePage.h" />
-    <ClInclude Include="SVPPQEnums.h" />
     <ClInclude Include="SVPPQObject.h" />
     <ClInclude Include="SVPPQShiftRegister.h" />
     <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h" />
