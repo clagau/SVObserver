@@ -163,102 +163,60 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileImpl( SVDeviceParamCollection &rPa
 
 HRESULT SVGigeCameraFileReader::ReadParams( SVDeviceParamCollection& rParams )
 {
-	HRESULT hr = S_OK;
+	HRESULT Result( S_OK );
+	SVString sSection( scINFO );
 
-	// calculate checksum
-	std::ifstream file;
-	file.open( m_Filename.c_str() );
-	if ( file.is_open() )
-	{
-		unsigned short w = GetChecksum( file );
+	ReadCameraFileStringParam( rParams, DeviceParamVendorName,  sSection );
+	ReadCameraFileStringParam( rParams, DeviceParamModelName, sSection );
+	ReadCameraFileStringParam( rParams, DeviceParamFirmware,  sSection );
 
-		file.close();
+	sSection = scSETTINGS;
 
-		SVString sFileChecksum = SvUl_SF::Format(_T("%04X"), w);
+	ReadCameraFileCameraFormatsParam( rParams, DeviceParamCameraFormats, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamNumCameraBuffers, sSection );
+	ReadCameraFileLutParam( rParams, DeviceParamLut, sSection );
 
-		TCHAR sChecksum[20];
-		DWORD nChars = GetPrivateProfileString(scCHECKSUM, scCHECKSUM, sKEY_DOES_NOT_EXIST, sChecksum, 10, m_Filename.c_str());
+	// Exposure
+	ReadCameraFileLongParam( rParams, DeviceParamShutter, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamShutterDelay, sSection );
 
-		if (SVString(sChecksum) != sFileChecksum)
-		{
-			// checksum doesn't match
-			hr = SVMSG_INCORRECT_CHECKSUM;
-		}
+	// Analog Controls
+	ReadCameraFileLongParam( rParams, DeviceParamGamma, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamBrightness, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamGain, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamSharpness, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamHue, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamSaturation, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamExposure, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamWhiteBalanceUB, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamWhiteBalanceVR, sSection );
 
-		{	// begin block
+	// Trigger
+	ReadCameraFileStringParam( rParams, DeviceParamGigeTriggerSource, sSection );
+	ReadCameraFileStringParam( rParams, DeviceParamGigeTriggerEdge, sSection );
+	ReadCameraFileStringParam( rParams, DeviceParamGigeTriggerEnable, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamShutterDelay, sSection );
+	ReadCameraFileBoolParam( rParams, DeviceParamIOTriggerInvert, sSection );
 
-			SVString sSection;
-			sSection = scINFO;
-
-			TCHAR sVal[129];
-			DWORD dwLen = GetPrivateProfileString(sSection.c_str(), scVERSION, sKEY_DOES_NOT_EXIST, sVal, 32, m_Filename.c_str() );
-			SVString sVersion = sVal; //Arvid 160920 this is used nowhere. I am leaving it in since this information may be of interest in the future
-
-			sVal[0] = _T('\0');
-			dwLen = GetPrivateProfileString( sSection.c_str(), scCAMERATYPE, sKEY_DOES_NOT_EXIST, sVal, 128, m_Filename.c_str() );
-			SVString sCameraType = sVal; //Arvid 160920 this is used nowhere. I am leaving it in since this information may be of interest in the future
-
-			ReadCameraFileStringParam( rParams, DeviceParamVendorName,  sSection );
-			ReadCameraFileStringParam( rParams, DeviceParamModelName, sSection );
-			ReadCameraFileStringParam( rParams, DeviceParamFirmware,  sSection );
-
-			sSection = scSETTINGS;
-
-			ReadCameraFileCameraFormatsParam( rParams, DeviceParamCameraFormats, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamNumCameraBuffers, sSection );
-			ReadCameraFileLutParam( rParams, DeviceParamLut, sSection );
-
-			// Exposure
-			ReadCameraFileLongParam( rParams, DeviceParamShutter, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamShutterDelay, sSection );
-
-			// Analog Controls
-			ReadCameraFileLongParam( rParams, DeviceParamGamma, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamBrightness, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamGain, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamSharpness, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamHue, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamSaturation, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamExposure, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamWhiteBalanceUB, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamWhiteBalanceVR, sSection );
-
-			// Trigger
-			ReadCameraFileStringParam( rParams, DeviceParamGigeTriggerSource, sSection );
-			ReadCameraFileStringParam( rParams, DeviceParamGigeTriggerEdge, sSection );
-			ReadCameraFileStringParam( rParams, DeviceParamGigeTriggerEnable, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamShutterDelay, sSection );
-			ReadCameraFileBoolParam( rParams, DeviceParamIOTriggerInvert, sSection );
-
-			// Strobe
-			ReadCameraFileStringParam( rParams, DeviceParamGigeStrobeSource, sSection );
-			ReadCameraFileStringParam( rParams, DeviceParamGigeStrobeEdge, sSection );
-			ReadCameraFileStringParam( rParams, DeviceParamGigeStrobeEnable, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamStrobePulseDelay, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamStrobePulseDuration, sSection );
-			ReadCameraFileBoolParam( rParams, DeviceParamIOStrobeInvert, sSection );
+	// Strobe
+	ReadCameraFileStringParam( rParams, DeviceParamGigeStrobeSource, sSection );
+	ReadCameraFileStringParam( rParams, DeviceParamGigeStrobeEdge, sSection );
+	ReadCameraFileStringParam( rParams, DeviceParamGigeStrobeEnable, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamStrobePulseDelay, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamStrobePulseDuration, sSection );
+	ReadCameraFileBoolParam( rParams, DeviceParamIOStrobeInvert, sSection );
 			
-			// Inputs
-			ReadCameraFileStringParam( rParams, DeviceParamCameraInput, sSection );
+	// Inputs
+	ReadCameraFileStringParam( rParams, DeviceParamCameraInput, sSection );
 
-			// Test Pattern
-			//ReadCameraFileLongParam( rParams, DeviceParamTestPattern, sSection );
+	//! Test Pattern used to display a test pattern as a camera image
+	//ReadCameraFileLongParam( rParams, DeviceParamTestPattern, sSection );
 
-			// Binning (optional)
-			ReadCameraFileLongParam( rParams, DeviceParamHorizontalBinning, sSection );
-			ReadCameraFileLongParam( rParams, DeviceParamVerticalBinning, sSection );
-		}
-		//
-		file.close();
+	// Binning (optional)
+	ReadCameraFileLongParam( rParams, DeviceParamHorizontalBinning, sSection );
+	ReadCameraFileLongParam( rParams, DeviceParamVerticalBinning, sSection );
 
-		ReadCustomParams(m_Filename, rParams);
-	}
-	else
-	{
-		// couldn't open file
-		hr = S_FALSE;
-	}
-	return hr;
+	return Result;
 }
 
 typedef std::deque< std::string > split_list_type;
