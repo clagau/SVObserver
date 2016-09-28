@@ -3190,10 +3190,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SVObjectXMLWriter& rWrit
 		SAFEARRAY* psaBandData = nullptr;
 		bool bGotData = rLut(iBand).GetBandData(psaBandData);
 		svVariant = SVSAFEARRAY( psaBandData );
-		//@WARNING [gra][7.30][13.01.2016] We set the new line off to have forward compatibility with version 7.20 can be removed in next version
-		rWriter.setNewLine( false );
 		rWriter.WriteAttribute( CTAG_LUT_BAND_DATA, svVariant );
-		rWriter.setNewLine( true );
 		svVariant.Clear();
 		rWriter.EndElement(); // csBand
 	}
@@ -3592,12 +3589,6 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 		rWriter.WriteAttribute( scUniqueReferenceIDTag, Value );
 		Value.Clear();
 
-		//@WARNING [gra][7.30][04.04.2016] The attribute is still saved into the configuration for forward compatibility with version 7.20 can be removed in next version
-		Value = (*Iter)->ObjectAttributesAllowedRef();
-		Value.ChangeType(VT_UI4);
-		rWriter.WriteAttribute( scAttributesAllowedTag, Value );
-		Value.Clear();
-
 		CString Description( (*Iter)->getDescription() );
 		//This is needed to remove any CR LF in the description
 		SvOml::AddEscapeSpecialCharacters( Description, true );
@@ -3631,8 +3622,6 @@ BOOL SVConfigurationObject::SaveConfiguration(SVObjectXMLWriter& rWriter) const
 {
 	BOOL bOk = true;
 	SVString RootName( SvOl::FqnRoot );
-	//@WARNING [gra][7.30][13.01.2016] We set the new line off to have forward compatibility with version 7.20 can be removed in next version
-	rWriter.setNewLine( false );
 	rWriter.WriteRootElement( RootName.c_str() );
 	rWriter.WriteSchema();
 
@@ -3640,7 +3629,6 @@ BOOL SVConfigurationObject::SaveConfiguration(SVObjectXMLWriter& rWriter) const
 	SVString versionString = SvUl_SF::Format("%d.%d", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
 	rWriter.WriteRevisionHistory(versionString.c_str(), 1);
 	rWriter.WriteStartOfBase();
-	rWriter.setNewLine( true );
 
 	SaveEnvironment(rWriter);
 	SaveIO(rWriter);
