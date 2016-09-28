@@ -58,16 +58,19 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				shm->destroy_ptr(m_ctrl);
 				m_ctrl = nullptr;
 			}
+			//@TODO[MEC][7.40][28.09.2016]  destroying shared memory must be more sophisticated 
+			// with this code problems occurs because the other partner do not recognize the vanishing of shared memory
+			/* 
 			shm.reset();
 			try
 			{
-				const std::string segmentName = SVSharedConfiguration::GetControlShareName();
-				boost::interprocess::shared_memory_object::remove(segmentName.c_str());
+			const std::string segmentName = SVSharedConfiguration::GetControlShareName();
+			boost::interprocess::shared_memory_object::remove(segmentName.c_str());
 			}
 			catch (boost::interprocess::interprocess_exception& e)
 			{
-				SVSharedConfiguration::Log(e.what());
-			}
+			SVSharedConfiguration::Log(e.what());
+			}*/
 		}
 	}
 

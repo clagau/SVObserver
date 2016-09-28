@@ -4285,6 +4285,16 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SvSml::SVSharedDa
 					SvSml::SVSharedImage::BuildImageFileName(m_SecondPtrImageFileName, m_SecondPtrImageFileNameLen, name.c_str(), sharedSlotIndex, false, SVFileBitmap);
 					// Write Image to disk
 					HRESULT hr = SVImageProcessingClass::Instance().SaveImageBuffer(m_BufferImageFileName, SVFileBitmap, imageHandlePtr);
+					if(S_OK != hr)
+					{
+						SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+						MesMan.setMessage( SVMSG_RRS_4_GENERAL_WARNING, SvOi::Tid_FailedToSaveImage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16220_SaveImageBuffer);
+					}
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED)
+					TRACE1( "Produktstate: %s \n",  l_rProductInfo.m_ProductState.c_str());
+					TRACE3( "Save Image buffer %s   index %i  result %i\n", m_BufferImageFileName, sharedSlotIndex, hr);
+#endif 
 					it->SetData(m_BufferImageFileName, hr);
 				}
 			}

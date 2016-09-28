@@ -64,9 +64,7 @@ struct port<SvSol::UdpApi>
 
 typedef Json::Value JsonCmd;
 
-typedef SvSml::SVShareControlHandler ShareControl;
-typedef SvSml::SVMonitorListReader MonitorListReader;
-typedef SvSml::SVSharedPPQReader PPQReader;
+
 
 typedef SvSol::SVServerSocket<SvSol::UdpApi> UdpServerSocket;
 typedef SvSol::SVSocket<SvSol::UdpApi> UdpSocket;
@@ -74,9 +72,9 @@ typedef SvSol::SVSocket<SvSol::UdpApi> UdpSocket;
 typedef SvSol::SVServerSocket<SvSol::TcpApi> TcpServerSocket;
 typedef SvSol::SVSocket<SvSol::TcpApi> TcpSocket;
 
-typedef SvSml::ProductPtr ProductPtr;
 
-typedef std::pair<ProductPtr, long> ProductPtrPair;
+
+typedef std::pair<SvSml::ProductPtr, long> ProductPtrPair;
 
 /// For last held product from GetProduct cmd. Map with ppqnames, (productPtr, Index) 
 static std::map<std::string, ProductPtrPair> g_LastProductMap;  
@@ -405,7 +403,7 @@ Json::Value & GenerateImages(Json::Value & arr, SvSml::InspectionDataPtr data, c
 }
 
 template<typename API>
-Json::Value WriteProductItems(ProductPtr product, const MonitorListCopy::Strings& productItemNames)
+Json::Value WriteProductItems(SvSml::ProductPtr product, const MonitorListCopy::Strings& productItemNames)
 {
 	Json::Value rslt(Json::objectValue);
 	Json::Value values(Json::arrayValue);
@@ -468,7 +466,7 @@ Json::Value WriteFailStatus(const SvSml::FailStatusMap & fsMap)
 //! \param productItemNames [in] Listof item names 
 //! \param lastRejectProduct [in,out] last saved product.
 //! \returns Json::Value
-Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair& lastProductPtrPair)
+Json::Value GetLastInspectedProduct(SvSml::SVSharedPPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair& lastProductPtrPair)
 {
 	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
@@ -488,7 +486,7 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const Monitor
 	else
 	{
 		long idx = -1;
-		const ProductPtr product = rReader.RequestNextProduct(idx);
+		const SvSml::ProductPtr product = rReader.RequestNextProduct(idx);
 		rslt = WriteProductItems<SvSol::UdpApi>(product, productItemNames);
 
 		ProductPtrPair prevProduct = lastProductPtrPair;
@@ -526,7 +524,7 @@ void ClearHeld<SvSol::UdpApi>()
 //! \param lastRejectProduct [in,out] last saved product.
 //! \returns Json::Value
 template<typename API>
-Json::Value GetRejectedProduct(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastRejectProduct );
+Json::Value GetRejectedProduct(SvSml::SVSharedPPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastRejectProduct );
 
 //! for trig == -1 Get the values for the last saved reject   and store the product in lastRejectProduct
 //! for trig  > -1 return  product  from lastRejectProduct  if it has the tigger number trig
@@ -536,12 +534,12 @@ Json::Value GetRejectedProduct(PPQReader& rReader, long trig, const MonitorListC
 //! \param lastRejectProduct [in,out] last saved product.
 //! \returns Json::Value
 template<>
-Json::Value GetRejectedProduct<SvSol::TcpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastReject )
+Json::Value GetRejectedProduct<SvSol::TcpApi>(SvSml::SVSharedPPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastReject )
 {
 	Json::Value rslt(Json::objectValue);
 	
 	long idx = -1;
-	ProductPtr product = rReader.RequestReject(trig, idx);
+	SvSml::ProductPtr product = rReader.RequestReject(trig, idx);
 	rslt = WriteProductItems<SvSol::TcpApi>(product, productItemNames);
 	
 	ProductPtrPair prevReject = lastReject;
@@ -563,7 +561,7 @@ Json::Value GetRejectedProduct<SvSol::TcpApi>(PPQReader& rReader, long trig, con
 //! \param lastRejectProduct [in,out] last saved product.
 //! \returns Json::Value
 template<>
-Json::Value GetRejectedProduct<SvSol::UdpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastRejectProduct )
+Json::Value GetRejectedProduct<SvSol::UdpApi>(SvSml::SVSharedPPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames, ProductPtrPair&  lastRejectProduct )
 {
 	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
@@ -583,7 +581,7 @@ Json::Value GetRejectedProduct<SvSol::UdpApi>(PPQReader& rReader, long trig, con
 	else
 	{
 		long idx = -1;
-		const ProductPtr product = rReader.RequestReject(trig, idx);
+		const SvSml::ProductPtr product = rReader.RequestReject(trig, idx);
 		rslt = WriteProductItems<SvSol::UdpApi>(product, productItemNames);
 	
 		ProductPtrPair prevReject = lastRejectProduct;
@@ -625,7 +623,7 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 			) 
 		{
 			ppqName = mit->second.m_ppq;
-			PPQReader reader;
+			SvSml::SVSharedPPQReader reader;
 			if (false == reader.Open(ppqName))
 			{
 				SvStl::MessageContainer MsgCont;
@@ -666,7 +664,7 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const MonitorMap
 			) 
 		{
 			ppqName = mit->second.m_ppq;
-			PPQReader reader;
+			SvSml::SVSharedPPQReader reader;
 			if(false == reader.Open(ppqName))
 			{
 				SvStl::MessageContainer MsgCont;
@@ -734,7 +732,7 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, const MonitorMap
 		) // does the list exist?
 	{
 		ppqName = mit->second.m_ppq;
-		PPQReader reader;
+		SvSml::SVSharedPPQReader reader;
 		if (false == reader.Open(ppqName))
 		{
 			SvStl::MessageContainer MsgCont;
@@ -841,7 +839,7 @@ MonitorListCopy::Strings MakeCopy(const SvSml::StringList & list)
 	return cpy;
 }
 
-MonitorListCopy MakeCopy(const MonitorListReader & reader, const std::string & name)
+MonitorListCopy MakeCopy(const SvSml::SVMonitorListReader & reader, const std::string & name)
 {
 	const SvSml::SVSharedMonitorList & list = reader[name];
 	MonitorListCopy cpy;
@@ -856,7 +854,7 @@ MonitorListCopy MakeCopy(const MonitorListReader & reader, const std::string & n
 	return cpy;
 }
 
-static bool CheckReadyChanged(long& lastReady, long count, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+static bool CheckReadyChanged(long& lastReady, long count, SvSml::SVMonitorListReader& mlReader, MonitorMapCopy& monitorMap)
 {
 	bool readyChanged = false;
 	if (count && count != lastReady) // ready counter has changed - monitor list might have changed
@@ -877,7 +875,7 @@ static bool CheckReadyChanged(long& lastReady, long count, MonitorListReader& ml
 	return readyChanged;
 }
 
-static void CheckProductFilterChanged(long& lastFilterChange, long count, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+static void CheckProductFilterChanged(long& lastFilterChange, long count, SvSml::SVMonitorListReader& mlReader, MonitorMapCopy& monitorMap)
 {
 	if (count && count != lastFilterChange) // filter counter has changed - product filter might have changed
 	{
@@ -896,10 +894,10 @@ static void CheckProductFilterChanged(long& lastFilterChange, long count, Monito
 }
 
 template<typename API, typename ServerSocket>
-void Handler(ServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap);
+void Handler(ServerSocket& sok, SvSml::SVShareControlHandler& ctrl, SvSml::SVMonitorListReader& mlReader, MonitorMapCopy& monitorMap);
 
 template <>
-void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, SvSml::SVShareControlHandler& ctrl, SvSml::SVMonitorListReader& mlReader, MonitorMapCopy& monitorMap)
 {
 	typedef SvSol::UdpApi API;
 	typedef UdpSocket Socket;
@@ -968,7 +966,7 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl&
 }
 
 template<>
-void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, SvSml::SVShareControlHandler& ctrl, SvSml::SVMonitorListReader& mlReader, MonitorMapCopy& monitorMap)
 {
 	typedef SvSol::TcpApi API;
 	typedef TcpSocket Socket; 
@@ -1050,8 +1048,8 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 	try
 	{
 		typedef SvSol::SVServerSocket<API> ServerSocket;
-		ShareControl& ctrl = *reinterpret_cast<ShareControl*> (ctrlPtr);
-		MonitorListReader mlReader;
+		SvSml::SVShareControlHandler& ctrl = *reinterpret_cast<SvSml::SVShareControlHandler*> (ctrlPtr);
+		SvSml::SVMonitorListReader mlReader;
 		MonitorMapCopy monitorMap;
 		ServerSocket sok;
 		sok.Create();
@@ -1145,7 +1143,7 @@ void StartThreads( DWORD argc, LPTSTR  *argv )
 		title += versionStr;
 		SetConsoleTitleA(title.c_str());
 		SvSol::SVSocketLibrary::Init();
-		ShareControl ctrl;
+		SvSml::SVShareControlHandler ctrl;
 		DWORD threadIds[3];
 		HANDLE threads[3];
 

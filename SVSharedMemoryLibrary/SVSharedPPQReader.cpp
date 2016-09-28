@@ -125,7 +125,14 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				{
 					short x = _InterlockedDecrement16((volatile short *)&((*pData)[idx].m_Flags));
 					assert(x >= 0);
-					(*pData)[idx].m_Flags |= ds::ready;
+					long inFlags(0),Toflags(0);
+					do
+					{
+						inFlags = (*pData)[idx].m_Flags;
+						Toflags =  inFlags | ds::ready;
+					}
+					while (inFlags != _InterlockedCompareExchange(&((*pData)[idx].m_Flags ),Toflags,flags)); 
+					// If no other thread updated m_Flags, then Toflags is stored and the loop ends.					
 				}
 				else
 				{
@@ -282,7 +289,14 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				{
 					short x = _InterlockedDecrement16((volatile short *)&((*pData)[idx].m_Flags));
 					assert(x >= 0);
-					(*pData)[idx].m_Flags |= ds::ready;
+					long inFlags(0), toFlags(0);
+					do
+					{
+						inFlags = (*pData)[idx].m_Flags;
+						toFlags =  inFlags | ds::ready;
+					}
+					while (inFlags != _InterlockedCompareExchange(&((*pData)[idx].m_Flags ),toFlags,flags)); 
+					// If no other thread updated m_Flags, then Toflags is stored and the loop ends.					
 				}
 				else
 				{

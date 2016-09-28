@@ -4159,6 +4159,9 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 								SvSml::SVSharedPPQWriter& rWriter = SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
 								long idx = 0;
 								SvSml::SVSharedProduct& rSharedProduct = rWriter.RequestNextProductSlot(idx);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED)
+								TRACE2("Produktstate: %s,  RequestNext Slot %i\n",pProduct->m_ProductState.c_str(), idx);
+#endif 
 								rSharedProduct.m_TriggerCount = pProduct->ProcessCount();
 								pProduct->m_lastInspectedSlot = idx;
 								std::for_each(pProduct->m_svInspectionInfos.begin(), pProduct->m_svInspectionInfos.end(), 
@@ -5349,7 +5352,10 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 			}
 			// Mark Product Share as ready for reading
 			rWriter.ReleaseProduct(rSharedProduct);
-		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED)
+			TRACE2(" %s Release Product %i  \n", rProduct.m_ProductState.c_str(), shareSlotIndex);
+#endif 			
+}
 		catch (const std::exception& e)
 		{
 			SVStringArray msgList;

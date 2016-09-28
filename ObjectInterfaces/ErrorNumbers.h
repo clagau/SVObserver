@@ -536,6 +536,7 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int 	Err_16218  =  Mec_ErrorBase + 218;
 	static const int 	Err_16219  =  Mec_ErrorBase + 219;	
 
+	static const int 	Err_16220_SaveImageBuffer   =  Mec_ErrorBase + 220;	
 
 
 	

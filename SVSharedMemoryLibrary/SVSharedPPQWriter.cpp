@@ -51,14 +51,30 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	void SVSharedPPQWriter::ReleaseProduct(SVSharedProduct& product)
 	{
-		product.m_Flags &= ~ds::writing;
-		product.m_Flags |= ds::ready;
-	}
+		_ReadWriteBarrier();
+		long flag,newflag;
+		do 
+		{
+			flag = product.m_Flags;
+			newflag =  flag &  ~ds::writing;
+			newflag |= ds::ready;
+		}
+		while ( InterlockedCompareExchange(&(product.m_Flags),newflag, flag) != flag) ;
+		// If no other thread updated product.m_Flags, then newflag is stored and the loop ends.
+    }
 
 	void SVSharedPPQWriter::ReleaseReject(SVSharedProduct& product)
 	{
-		product.m_Flags &= ~ds::writing;
-		product.m_Flags |= ds::ready;
+		
+		_ReadWriteBarrier();
+		long flag,newflag;
+		do 
+		{
+			flag = product.m_Flags;
+			newflag =  flag &  ~ds::writing;
+			newflag |= ds::ready;
+		}
+		while ( InterlockedCompareExchange(&(product.m_Flags),newflag, flag) != flag) ;
 	}
 
 	// get next writable index for the ppq Run or Reject data
