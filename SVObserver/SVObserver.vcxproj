@@ -311,8 +311,6 @@ echo %time%
     <ClCompile Include="SVBlobAnalyzerResultDlg.cpp" />
     <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp" />
     <ClCompile Include="SVCameraImageTemplate.cpp" />
-    <ClCompile Include="SVCameraListBox.cpp" />
-    <ClCompile Include="SVCameraStructInterface.cpp" />
     <ClCompile Include="SVChildrenSetupDialog.cpp" />
     <ClCompile Include="SVClassInfoStruct.cpp" />
     <ClCompile Include="SVColorThreshold.cpp" />
@@ -755,8 +753,6 @@ echo %time%
     <ClInclude Include="SVBlobAnalyzerResultDlg.h" />
     <ClInclude Include="SVBlobFeaturePropertiesDlg.h" />
     <ClInclude Include="SVCameraImageTemplate.h" />
-    <ClInclude Include="SVCameraListBox.h" />
-    <ClInclude Include="SVCameraStructInterface.h" />
     <ClInclude Include="SVChildrenSetupDialog.h" />
     <ClInclude Include="SVClassInfoStruct.h" />
     <ClInclude Include="SVColorThreshold.h" />

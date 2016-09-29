@@ -23,9 +23,6 @@
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\IToolSet.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "GuiController.h"
-#include "BoundValue.h"
-#include "ValuesAccessor.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui

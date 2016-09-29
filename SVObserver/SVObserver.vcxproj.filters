@@ -110,12 +110,6 @@
     <ClCompile Include="SVCameraImageTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVCameraListBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCameraStructInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVChildrenSetupDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1303,12 +1297,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCameraImageTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCameraListBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCameraStructInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVChildrenSetupDialog.h">
