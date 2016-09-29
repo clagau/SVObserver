@@ -97,6 +97,7 @@
     <ClCompile Include="SVSharedInspectionReader.cpp" />
     <ClCompile Include="SVSharedMemorySettings.cpp" />
     <ClCompile Include="SVSharedInspectionWriter.cpp" />
+    <ClCompile Include="SVSharedMemorySingleton.cpp" />
     <ClCompile Include="SVSharedMonitorList.cpp" />
     <ClCompile Include="SVSharedPPQReader.cpp" />
     <ClCompile Include="SVSharedPPQWriter.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="SVSharedInspectionReader.h" />
     <ClInclude Include="SVSharedMemorySettings.h" />
     <ClInclude Include="SVSharedInspectionWriter.h" />
+    <ClInclude Include="SVSharedMemorySingleton.h" />
     <ClInclude Include="SVSharedMonitorList.h" />
     <ClInclude Include="SVSharedPPQReader.h" />
     <ClInclude Include="SVSharedPPQWriter.h" />

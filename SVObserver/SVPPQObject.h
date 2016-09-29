@@ -21,7 +21,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "SVSharedMemorySingleton.h"
+#include "SVsharedmemoryLibrary/SVSharedMemorySingleton.h"
 #include "SVInfoStructs.h"
 #include "ObjectInterfaces/SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"

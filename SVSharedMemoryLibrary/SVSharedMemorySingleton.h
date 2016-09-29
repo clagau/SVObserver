@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #pragma once
-
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVGUID.h"
@@ -19,7 +18,11 @@
 #include "SVSharedMemoryLibrary/SVMonitorListWriter.h"
 #include "SVSharedMemoryLibrary/SVShareControlHandler.h"
 #include "SVSharedMemoryLibrary/SVSharedMemorySettings.h"
+#include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #pragma endregion Includes
+
+namespace Seidenader { namespace SVSharedMemoryLibrary
+{
 
 class SVSharedMemorySingleton
 {
@@ -31,15 +34,19 @@ public:
 	HRESULT InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const long ProductSlots, const long RejectSlots, const SvSml::InspectionWriterCreationInfos& rCreationInfos);
 	HRESULT ErasePPQSharedMemory(const SVGUID& rGuid);
 
-	SvSml::SVSharedPPQWriter& GetPPQWriter(const SVGUID& rGuid);
-	SvSml::SVSharedInspectionWriter& GetInspectionWriter(const SVGUID& rPPQGuid, const SVGUID& rGuid);
-	SvSml::SVMonitorListWriter& GetMonitorListWriter();
-	SvSml::SVShareControlHandler& GetIPCShare();
+	SVSharedPPQWriter& GetPPQWriter(const SVGUID& rGuid);
+	SVSharedInspectionWriter& GetInspectionWriter(const SVGUID& rPPQGuid, const SVGUID& rGuid);
+	SVMonitorListWriter& GetMonitorListWriter();
+	SVShareControlHandler& GetIPCShare();
 
 	std::string GetInspectionShareName(const SVGUID& rPPQGuid,const SVGUID& rGuid);
-	const SvSml::SVSharedMemorySettings& GetSettings() const;
-	static HRESULT SetProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
+	const SVSharedMemorySettings& GetSettings() const;
+	static HRESULT SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
 
+	/// Stops the RRS reading Products. Function is moved from SVPPQObjects 
+	static void QuiesceSharedMemory();
+	/// Clears the PPQ part of the shared memory
+	static void ClearPPQSharedMemory();
 	static bool HasShares();
 	static void Destroy();
 protected:
@@ -62,3 +69,6 @@ private:
 	SvSml::SVSharedMemorySettings m_settings;
 };
 
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+namespace SvSml = Seidenader::SVSharedMemoryLibrary;

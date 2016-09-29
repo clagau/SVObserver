@@ -19,7 +19,7 @@
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
 #include "SVIOTabbedView.h"
-#include "SVSharedMemorySingleton.h"
+#include "SVSharedMemoryLibrary/SVSharedMemorySingleton.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -231,8 +231,8 @@ void RemoteMonitorListController::ValidateInputs()
 ////////////////////////////////////////////////////////////////////////////
 HRESULT RemoteMonitorListController::InitMonitorListInSharedMemory(size_t size)
 {
-	const SvSml::SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
-	SvSml::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
+	const SvSml::SVSharedMemorySettings& rSettings =SvSml::SVSharedMemorySingleton::Instance().GetSettings();
+	SvSml::SVMonitorListWriter& rWriter =SvSml::SVSharedMemorySingleton::Instance().GetMonitorListWriter();
 	HRESULT hr = rWriter.Create(rSettings, size);
 	if (S_OK != hr)
 	{
@@ -298,8 +298,8 @@ static size_t CalcSharedMemorySize(const RemoteMonitorList& rList)
 
 void RemoteMonitorListController::WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist)
 {
-	const SvSml::SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
-	SvSml::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
+	const SvSml::SVSharedMemorySettings& rSettings = SvSml::SVSharedMemorySingleton::Instance().GetSettings();
+	SvSml::SVMonitorListWriter& rWriter = SvSml::SVSharedMemorySingleton::Instance().GetMonitorListWriter();
 
 	const MonitoredObjectList& values = remoteMonitorNamedlist.GetProductValuesList();
 	const MonitoredObjectList& images = remoteMonitorNamedlist.GetProductImagesList();
@@ -439,7 +439,7 @@ HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVS
 			// otherwise we will pick up the change when we go online
 			if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 			{
-				SVSharedMemorySingleton::SetProductFilter(listName, filter);
+				SvSml::SVSharedMemorySingleton::SetProductFilter(listName, filter);
 			}
 		}
 		else

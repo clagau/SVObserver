@@ -12,8 +12,11 @@
 #include "stdafx.h"
 #include "SVOMFCLibrary/SVOIniClass.h"
 #include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
-#include "SVSharedMemorySingleton.h"
+#include "SVSharedMemoryLibrary/SVSharedMemorySingleton.h"
 #include "SVStatusLibrary/GlobalPath.h"
+
+namespace Seidenader { namespace SVSharedMemoryLibrary
+{
 
 static const double TwentyPercent = .20;
 
@@ -50,23 +53,23 @@ void SVSharedMemorySingleton::CheckDirectories()
 	try
 	{
 		//if (S_OK == SvSml::SVSharedConfiguration::SharedResourcesOk()) // Check if drive exists and enough space
-		if (SvSml::SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
+		if (SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
 		{
-			const std::string& sharedMemoryDirectory = SvSml::SVSharedConfiguration::GetSharedMemoryDirectoryName();
+			const std::string& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
 			DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
 				// Create the directory
 				CreateDirectory(sharedMemoryDirectory.c_str(), nullptr);
 			}
-			const std::string& imageFileDirectory = SvSml::SVSharedConfiguration::GetImageDirectoryName();
+			const std::string& imageFileDirectory = SVSharedConfiguration::GetImageDirectoryName();
 			res = GetFileAttributes(imageFileDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
 				// Create the directory
 				CreateDirectory(imageFileDirectory.c_str(), nullptr);
 			}
-			const std::string& rejectImageFileDirectory = SvSml::SVSharedConfiguration::GetRejectImageDirectoryName();
+			const std::string& rejectImageFileDirectory = SVSharedConfiguration::GetRejectImageDirectoryName();
 			res = GetFileAttributes(rejectImageFileDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
@@ -90,7 +93,7 @@ static size_t CalcPPQSharedMemorySize(const SVString& rName, const SvSml::Inspec
 	{
 	
 		std::string name = it->inspectionID.first;
-		std::string shareName = name + "." + SvSml::SVSharedConfiguration::GetShareName();
+		std::string shareName = name + "." + SVSharedConfiguration::GetShareName();
 		size += shareName.length() + name.length() + sizeof(SvSml::SVSharedInspection);
 	}
 	size += static_cast<size_t>(static_cast<double>(size) * TwentyPercent);
@@ -172,7 +175,7 @@ SvSml::SVShareControlHandler& SVSharedMemorySingleton::GetIPCShare()
 HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
 {
 	HRESULT hr = S_OK;
-	if (SvSml::SVSharedConfiguration::SharedDriveExists() && SvSml::SVSharedConfiguration::ControlFileExits())
+	if (SVSharedConfiguration::SharedDriveExists() && SVSharedConfiguration::ControlFileExits())
 	{
 		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
 		try
@@ -193,9 +196,39 @@ HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SvSm
 	return hr;
 }
 
+void SVSharedMemorySingleton::QuiesceSharedMemory()
+{
+	SvSml::SVShareControlHandler& rControlShare = SVSharedMemorySingleton::Instance().GetIPCShare();
+	if (rControlShare.IsCreated())
+	{
+		rControlShare.ClearReady();
+		bool bStop = false;
+		long timetoWait = 25; // ticks are approx 10 to 16 ms
+		long startTime = GetTickCount();
+		while (!bStop)
+		{
+			bStop = rControlShare.GotAck();
+			if (!bStop)
+			{
+				long curTime = GetTickCount();
+				if ((curTime - startTime) > timetoWait)
+				{
+					bStop = true;
+				}
+				else
+				{
+					::Sleep(20);
+				}
+			}
+		}
+	}
+}
+
+
+
 void SVSharedMemorySingleton::Destroy()
 {
-	if (SvSml::SVSharedConfiguration::SharedDriveExists() && SvSml::SVSharedConfiguration::ControlFileExits())
+	if (SVSharedConfiguration::SharedDriveExists() && SVSharedConfiguration::ControlFileExits())
 	{
 		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
 		instance.m_PPQSharedMemory.clear();
@@ -204,8 +237,21 @@ void SVSharedMemorySingleton::Destroy()
 	}
 }
 
-bool SVSharedMemorySingleton::HasShares()
+
+void SVSharedMemorySingleton::ClearPPQSharedMemory()
 {
-	return (SvSml::SVSharedConfiguration::SharedDriveExists() && SvSml::SVSharedConfiguration::ControlFileExits());
+	if (SVSharedConfiguration::SharedDriveExists() && SVSharedConfiguration::ControlFileExits())
+	{
+		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
+		instance.m_PPQSharedMemory.clear();
+	}
 }
 
+
+
+bool SVSharedMemorySingleton::HasShares()
+{
+	return (SVSharedConfiguration::SharedDriveExists() && SVSharedConfiguration::ControlFileExits());
+}
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

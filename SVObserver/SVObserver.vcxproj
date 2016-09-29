@@ -266,7 +266,6 @@ echo %time%
     <ClCompile Include="SVObjectScriptParserBase.cpp" />
     <ClCompile Include="SVOpeningFilterClass.cpp" />
     <ClCompile Include="SVShapeMaskHelperClass.cpp" />
-    <ClCompile Include="SVSharedMemorySingleton.cpp" />
     <ClCompile Include="SVSharpen2FilterClass.cpp" />
     <ClCompile Include="SVSharpenFilterClass.cpp" />
     <ClCompile Include="SVSmoothFilterClass.cpp" />
@@ -698,7 +697,6 @@ echo %time%
     <ClInclude Include="SVPPQConstants.h" />
     <ClInclude Include="SVRemoteControlConstants.h" />
     <ClInclude Include="SVShapeMaskHelperClass.h" />
-    <ClInclude Include="SVSharedMemorySingleton.h" />
     <ClInclude Include="SVSharpen2FilterClass.h" />
     <ClInclude Include="SVSharpenFilterClass.h" />
     <ClInclude Include="SVSmoothFilterClass.h" />

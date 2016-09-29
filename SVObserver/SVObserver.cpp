@@ -105,7 +105,7 @@
 #include "RootObject.h"
 #include "SVMonitorList.h"
 #include "SVThreadInfoDlg.h"
-#include "SVSharedMemorySingleton.h"
+#include "SVSharedMemoryLibrary/SVSharedMemorySingleton.h"
 #include "SVUtilityLibrary\LoadDll.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
@@ -2538,7 +2538,7 @@ int SVObserverApp::ExitInstance()
 	SVSocketRemoteCommandManager::Instance().Shutdown();
 
 	SvSol::SVSocketLibrary::Destroy();
-	SVSharedMemorySingleton::Destroy();
+	SvSml::SVSharedMemorySingleton::Destroy();
 	ValidateMRUList();
 
 	// Destroy still open message windows
@@ -5553,8 +5553,21 @@ void SVObserverApp::Start()
 		l_trgrDlg.ShowWindow(SW_HIDE);
 		l_trgrDlg.ClearTriggers();
 
+		
+		if (SvSml::SVSharedMemorySingleton::HasShares())
+		{
+			SvSml::SVSharedMemorySingleton::QuiesceSharedMemory();
+		}
+		
 		PPQMonitorList ppqMonitorList;
 		pConfig->BuildPPQMonitorList(ppqMonitorList);
+		
+		if (SvSml::SVSharedMemorySingleton::HasShares())
+		{
+			//[mec] clear the shared memory.
+			//to clear the shared memory is only real necessary when the Monitorlist has changed
+			SvSml::SVSharedMemorySingleton::ClearPPQSharedMemory();
+		}
 
 		for( long l = 0; S_OK == Result && l < lSize; l++ )
 		{

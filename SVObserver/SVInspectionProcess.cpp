@@ -212,7 +212,7 @@ struct SH { int i; T it; };
 
 void SVInspectionProcess::InitSharedMemoryItemNames(const long ProductSlots, const long RejectSlots)
 {
-	SvSml::SVSharedInspectionWriter& rWriter = SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
+	SvSml::SVSharedInspectionWriter& rWriter = SvSml::SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
 	SvSml::SVSharedData& rFirstData = rWriter.GetLastInspectedSlot(0);
 
 	SH<SVFilterValueMap::iterator> sh = {0, m_SharedMemoryFilters.m_LastInspectedValues.begin()};
@@ -315,7 +315,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 			{
 				if (l_Product.ProcessCount() > 0 && sharedSlotIndex >= 0)
 				{
-					SvSml::SVSharedInspectionWriter& rWriter = SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
+					SvSml::SVSharedInspectionWriter& rWriter = SvSml::SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
 					SvSml::SVSharedData& rLastInspected = rWriter.GetLastInspectedSlot(sharedSlotIndex);
 					FillSharedData(sharedSlotIndex, rLastInspected, m_SharedMemoryFilters.m_LastInspectedValues, m_SharedMemoryFilters.m_LastInspectedImages, l_Product, rWriter);
 				}

@@ -1031,9 +1031,6 @@
     <ClCompile Include="FramedSplitterWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSharedMemorySingleton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Custom2Filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2284,9 +2281,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FramedSplitterWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedMemorySingleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Custom2Filter.h">
