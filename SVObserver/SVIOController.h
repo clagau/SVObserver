@@ -92,6 +92,11 @@ public:
 	void ReplaceOrAddMonitorList( const RemoteMonitorNamedList& rList );
 	void ShowMonitorListTab();
 	void ValidateRemoteMonitorList();
+	//! Activate or deactivate the Monitorlist.
+	//!	When the Monitorlist is activated all Other Monitorlist which belong to the same PPQ are deactivated
+	//! \param listName [in]
+	//! \param bActivate [in]
+	//! \returns S_OK when unsuccessfully 
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
 	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum rFilter);

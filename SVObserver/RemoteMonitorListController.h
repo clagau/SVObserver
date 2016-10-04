@@ -41,7 +41,13 @@ public:
 	void ValidateInputs();
 	HRESULT BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
+	//! Activate or deactivate the Monitorlist.
+	//!	When the Monitorlist is activated all Other Monitorlist which belong to the same PPQ are deactivated
+	//! \param listName [in]
+	//! \param bActivate [in]
+	//! \returns S_OK when unsuccessfully 
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
+	
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
 
 	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
@@ -54,6 +60,12 @@ public:
 	// Returns:   bool - true if the object is allowed to be part of a monitor list
 	//************************************
 	static bool IsValidMonitoredObject(const SVObjectClass* pObject);
+
+
+	static LPCTSTR s_DefaultMonitorListName;
+
+
+
 #pragma endregion Public
 
 #pragma region Private	

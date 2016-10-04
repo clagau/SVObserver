@@ -35,6 +35,8 @@
 
 extern SVObserverApp TheSVObserverApp;
 
+LPCTSTR RemoteMonitorListController::s_DefaultMonitorListName =_T("MonitorList_");
+
 PPQNameListNames RemoteMonitorListController::GetPPQMonitorLists(SVConfigurationObject* pConfig) const
 {
 	PPQNameListNames list;
@@ -405,6 +407,17 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 	{
 		it->second.Activate(bActivate);
 		it->second.SetProductFilter(SvSml::LastInspectedFilter);
+		if(true == bActivate)
+		{	
+			SVGUID PPQ_GUID = it->second.GetPPQObjectID();
+			for(RemoteMonitorList::iterator it_S = m_list.begin(); it_S != m_list.end();it_S++ )
+			{
+				if(it_S->second.GetPPQObjectID() == PPQ_GUID && it_S != it)
+				{
+					it_S->second.Activate(false);
+				}
+			}
+		}
 	}
 	else
 	{

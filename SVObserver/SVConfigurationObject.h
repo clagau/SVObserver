@@ -300,7 +300,16 @@ public:
 	//************************************
 	void ReplaceOrAddMonitorList(const RemoteMonitorNamedList& rList);
 	void ValidateRemoteMonitorList();
+	//! Activate or deactivate the Monitorlist.
+	//!	When the Monitorlist is activated all Other Monitorlist which belong to the same PPQ are deactivated
+	//! \param listName [in]
+	//! \param bActivate [in]
+	//! \returns S_OK when unsuccessfully 
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
+	
+	//! Activates the default monitorlists, when no monitorlist is active and default monitorlist exist  
+	//! \returns true if at least one default monitorlist was activated 
+	bool ActivateDefaultMonitorList();
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
 	HRESULT GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const;
 	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);

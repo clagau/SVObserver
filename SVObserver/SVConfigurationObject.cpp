@@ -5162,6 +5162,32 @@ HRESULT SVConfigurationObject::ActivateRemoteMonitorList(const SVString& listNam
 	return hr;
 }
 
+bool SVConfigurationObject::ActivateDefaultMonitorList()
+{
+	bool activated(false);
+	RemoteMonitorList rActiveList ;
+	GetActiveRemoteMonitorList( rActiveList);
+	if( rActiveList.size() ==0)
+	{
+		int Size = GetPPQCount();
+		for( int i = 0;  i < Size; i++ )
+		{
+			SVString Name( RemoteMonitorListController::s_DefaultMonitorListName);
+			SVPPQObject* pPPQ =  GetPPQ( i);
+			if(nullptr == pPPQ)
+			{
+				break;
+			}
+			Name += pPPQ->GetName();
+			if(S_OK == ActivateRemoteMonitorList( Name,true))
+			{
+				activated = true;
+			}
+		}
+	}
+	return activated;
+}
+
 void SVConfigurationObject::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const
 {
 	rActiveList.clear();
