@@ -94,18 +94,17 @@ static SVString GetListName(CListCtrl& rCtrl, int item)
 	return name;
 }
 
-static int AddMonitoredItems(CListCtrl& rCtrl, const MonitoredObjectList& items, bool bCollapse, int insertPos, int indent, int itemData)
+static int AddMonitoredItems(CListCtrl& rCtrl, const MonitoredObjectList& items, bool bCollapse, int NextLine, int indent, int itemData)
 {
-	int pos = 0;
+	
 	LVITEM lvItem;
-
+	int next(NextLine);
 	// Insert ProductItemsList Tag
 	lvItem.mask = LVIF_IMAGE | LVIF_STATE | LVIF_INDENT | LVIF_PARAM;
 	lvItem.iIndent = indent;
 	lvItem.state = INDEXTOSTATEIMAGEMASK(2); // IDI_REMOTE_OUTPUT_ICON
 	lvItem.stateMask = LVIS_STATEIMAGEMASK;
 	lvItem.iImage = 0; // IDI_IOITEM_ICON
-	lvItem.iItem = insertPos + pos;
 	lvItem.iSubItem = 0;
 	lvItem.lParam = itemData;
 
@@ -114,38 +113,39 @@ static int AddMonitoredItems(CListCtrl& rCtrl, const MonitoredObjectList& items,
 		const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		if (!name.empty())
 		{
-			lvItem.iItem = insertPos + pos++;
+			lvItem.iItem =  next++;
 			int curPos = rCtrl.InsertItem(&lvItem);
 			rCtrl.SetItemText(curPos, 0, name.c_str());
 		}
 	}
-	return pos;
+	return next;
 }
 
-static int AddFailStatusList(CListCtrl& rCtrl, const MonitoredObjectList& values, bool bCollapse, bool bValuesCollapse, int insertPos)
+static int AddFailStatusList(CListCtrl& rCtrl, const MonitoredObjectList& values, bool bCollapse, bool bValuesCollapse, int NextLine)
 {
-	int pos = 0;
+	
 	LVITEM lvItem;
-
+	int next(NextLine);
 	// Insert FailStatusList
 	lvItem.mask = LVIF_IMAGE | LVIF_STATE | LVIF_INDENT | LVIF_PARAM;
 	lvItem.iIndent = 1;
 	lvItem.state = 0;
 	lvItem.stateMask = 0;
 	lvItem.iImage = 2 + bCollapse;
-	lvItem.iItem = insertPos + pos++;
+	lvItem.iItem = next++;
 	lvItem.iSubItem = 0;
 	lvItem.lParam = FailStatusListNode;
 
 	// Insert FailStatusList tag
 	int curPos = rCtrl.InsertItem(&lvItem);
+	
 	rCtrl.SetItemText(curPos, 0, scFAILSTATUSLIST);
 
 	if (!bCollapse)
 	{
 		// Insert Values tag
 		lvItem.iIndent = 2;
-		lvItem.iItem = insertPos + pos++;
+		lvItem.iItem = next++;
 		lvItem.iImage = 2 + bValuesCollapse;
 		lvItem.lParam = FailStatusValuesNode;
 
@@ -155,16 +155,15 @@ static int AddFailStatusList(CListCtrl& rCtrl, const MonitoredObjectList& values
 		if (!bValuesCollapse)
 		{
 			// Insert FailStatusList Values
-			pos += AddMonitoredItems(rCtrl, values, bCollapse, insertPos + pos, 3, FailStatusValuesItemNode);
+			next  = AddMonitoredItems(rCtrl, values, bCollapse, next, 3, FailStatusValuesItemNode);
 		}
 	}
-	return pos;
+	return next;
 }
 
-static int AddRejectConditionList(CListCtrl& rCtrl, const MonitoredObjectList& values, bool bCollapse, bool bValuesCollapse, int insertPos)
+static int AddRejectConditionList(CListCtrl& rCtrl, const MonitoredObjectList& values, bool bCollapse, bool bValuesCollapse, int NextLine)
 {
-	int pos = 0;
-
+	int next(NextLine);
 	// Insert RejectConditionList
 	LVITEM lvItem;
 
@@ -173,37 +172,38 @@ static int AddRejectConditionList(CListCtrl& rCtrl, const MonitoredObjectList& v
 	lvItem.state = 0;
 	lvItem.stateMask = 0;
 	lvItem.iImage = 2 + bCollapse;
-	lvItem.iItem = insertPos + pos++;
+	lvItem.iItem = next++;
 	lvItem.iSubItem = 0;
 	lvItem.lParam = RejectConditionListNode;
 
 	// Insert RejectConditionList tag
 	int curPos = rCtrl.InsertItem(&lvItem);
+
 	rCtrl.SetItemText(curPos, 0, scREJECTCONDITIONLIST);
 
 	if (!bCollapse)
 	{
 		// Insert Values tag
 		lvItem.iIndent = 2;
-		lvItem.iItem = insertPos + pos++;
+		lvItem.iItem = next++;
 		lvItem.iImage = 2 + bValuesCollapse;
 		lvItem.lParam = RejectConditionValuesNode;
-	
 		curPos = rCtrl.InsertItem(&lvItem);
 		rCtrl.SetItemText(curPos, 0, scVALUES);
 
 		if (!bValuesCollapse)
 		{
 			// Insert RejectConditionList Values
-			pos += AddMonitoredItems(rCtrl, values, bCollapse, insertPos + pos, 3, RejectConditionValuesItemNode);
+			next   = AddMonitoredItems(rCtrl, values, bCollapse, next, 3, RejectConditionValuesItemNode);
 		}
 	}
-	return pos;
+	return next;
 }
 
-static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& values, const MonitoredObjectList& images, bool bCollapse, bool bValuesCollapse, bool bImagesCollapse, int insertPos)
+static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& values, const MonitoredObjectList& images, bool bCollapse, bool bValuesCollapse, bool bImagesCollapse, int NextLine)
 {
-	int pos = 0;
+	
+	int next(NextLine);
 	LVITEM lvItem;
 
 	// Insert ProductItemsList Tag
@@ -212,7 +212,7 @@ static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& value
 	lvItem.state = 0;
 	lvItem.stateMask = 0;
 	lvItem.iImage = 2 + bCollapse;
-	lvItem.iItem = insertPos + pos++;
+	lvItem.iItem = next++;
 	lvItem.iSubItem = 0;
 	lvItem.lParam = ProductItemListNode;
 
@@ -226,7 +226,7 @@ static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& value
 		lvItem.state = 0;
 		lvItem.stateMask = 0;
 		lvItem.iImage = 2 + bValuesCollapse;
-		lvItem.iItem = insertPos + pos++;
+		lvItem.iItem = next++;
 		lvItem.iSubItem = 0;
 		lvItem.lParam = ProductItemValuesNode;
 
@@ -236,7 +236,7 @@ static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& value
 		if (!bValuesCollapse)
 		{
 			// Insert ProductItemList Values
-			pos += AddMonitoredItems(rCtrl, values, bCollapse, insertPos + pos, 3, ProductItemValuesItemNode);
+			next = AddMonitoredItems(rCtrl, values, bCollapse, next, 3, ProductItemValuesItemNode);
 		}
 				
 		// Insert Images Tag
@@ -244,20 +244,21 @@ static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& value
 		lvItem.state = 0;
 		lvItem.stateMask = 0;
 		lvItem.iImage = 2 + bImagesCollapse;
-		lvItem.iItem = insertPos + pos++;
+		lvItem.iItem = next++;
 		lvItem.iSubItem = 0;
 		lvItem.lParam = ProductItemImagesNode;
 
 		curPos = rCtrl.InsertItem(&lvItem);
+		
 		rCtrl.SetItemText(curPos, 0, scIMAGES);
 
 		if (!bImagesCollapse)
 		{
 			// Insert ProductItemList Images
-			pos += AddMonitoredItems(rCtrl, images, bCollapse, insertPos + pos, 3, ProductItemImagesItemNode);
+			next = AddMonitoredItems(rCtrl, images, bCollapse,next, 3, ProductItemImagesItemNode);
 		}
 	}
-	return pos;
+	return next;
 }
 #pragma endregion Static Functions
 
@@ -525,8 +526,7 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		{
 			m_ExpandCollapseStates.clear();
 		}
-		int k = 0;
-
+		int NextLine(0);
 		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
 		for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
 		{
@@ -546,7 +546,7 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			lvItem.stateMask = LVIS_STATEIMAGEMASK;
 			lvItem.iImage = 2 + (state.bListCollapsed ? 1 : 0);
 
-			lvItem.iItem = k++;
+			lvItem.iItem = NextLine++;
 			lvItem.iSubItem = 0;
 			lvItem.lParam = MonitorListNameNode;
 
@@ -563,17 +563,17 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				// Add ProductItemList
 				const MonitoredObjectList& productValues = items.GetProductValuesList();
 				const MonitoredObjectList& productImages = items.GetProductImagesList();
-				ipos += AddProductItemList(m_rCtrl, productValues, productImages, state.bProductCollapsed, state.bProductValuesCollapsed, state.bProductImagesCollapsed, ++ipos);
+				NextLine = AddProductItemList(m_rCtrl, productValues, productImages, state.bProductCollapsed, state.bProductValuesCollapsed, state.bProductImagesCollapsed, NextLine);
 
 				// Add RejectConditionList
 				const MonitoredObjectList& rejectConditionList = items.GetRejectConditionList();
-				ipos += AddRejectConditionList(m_rCtrl, rejectConditionList, state.bRejectCollapsed, state.bRejectValuesCollapsed, ++ipos);
+				NextLine = AddRejectConditionList(m_rCtrl, rejectConditionList, state.bRejectCollapsed, state.bRejectValuesCollapsed, NextLine);
 
 				// Add FailStatusList
 				const MonitoredObjectList& failStatusList = items.GetFailStatusList();
-				ipos += AddFailStatusList(m_rCtrl, failStatusList, state.bFailStatusCollapsed, state.bFailStatusValuesCollapsed, ++ipos);
+				NextLine = AddFailStatusList(m_rCtrl, failStatusList, state.bFailStatusCollapsed, state.bFailStatusValuesCollapsed, NextLine);
 			}
-			k = ipos;
+			
 		}
 		m_rCtrl.SetRedraw(true);
 	}
