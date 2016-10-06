@@ -45,6 +45,8 @@ public:
 
 	/// Stops the RRS reading Products. Function is moved from SVPPQObjects 
 	static void QuiesceSharedMemory();
+	///Returns the ready flag from ControlSegment in shared memory 
+	static bool  IsReady();
 	/// Clears the PPQ part of the shared memory
 	static void ClearPPQSharedMemory();
 	static bool HasShares();

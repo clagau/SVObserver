@@ -700,6 +700,12 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 			writer->WriteAttributeString(nullptr, L"Value", nullptr, _itow(Depth, buff, 10));
 			writer->WriteEndElement();//queue depth
 
+			//write Active Flag 
+			bool isActive = monitorList.IsActive();
+			writer->WriteStartElement(nullptr, L"IsActive", nullptr);
+			writer->WriteAttributeString(nullptr, L"Value", nullptr, isActive? L"TRUE" :  L"FALSE" );
+			writer->WriteEndElement();
+
 			//write Product Value List
 			ItemCount = 0;
 			const MonitoredObjectList& ValueList = monitorList.GetProductValuesList();

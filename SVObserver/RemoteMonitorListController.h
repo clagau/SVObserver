@@ -45,9 +45,17 @@ public:
 	//!	When the Monitorlist is activated all Other Monitorlist which belong to the same PPQ are deactivated
 	//! \param listName [in]
 	//! \param bActivate [in]
-	//! \returns S_OK when unsuccessfully 
+	//! \returns S_OK when successfully 
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	
+	//! Activate or deactivate the Monitorlist.
+	//!	When the Monitorlist is activated all Other Monitorlist which belong to the same PPQ are deactivated
+	//! \param rRemoteMonitorList [in,out]
+	//! \param listName [in]
+	//! \param bActivate [in]
+	//! \returns S_OK when successfully 
+	static HRESULT ActivateRemoteMonitorList(RemoteMonitorList& rRemoteMonitorList , const SVString& listName, bool bActivate); 
+
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
 
 	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);

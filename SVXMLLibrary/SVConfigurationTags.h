@@ -104,6 +104,7 @@ LPCTSTR const CTAG_REJECTCONDITION_LIST           = (_T("RejectConditionList"));
 LPCTSTR const CTAG_FAILSTATUS_LIST                = (_T("FailStatusList"));
 LPCTSTR const CTAG_PPQ_NAME                       = (_T("PPQName"));
 LPCTSTR const CTAG_REJECT_QUEUE_DEPTH             = (_T("RejectQueueDepth"));
+LPCTSTR const CTAG_IS_ACTIVATED						= (_T("IsActivated"));
 LPCTSTR const CTAG_VERSION_NUMBER                 = (_T("VersionNumber"));
 LPCTSTR const CTAGF_INPUT_X                       = (_T("Input_%d")); // CTAGF indicates formatting is required.
 LPCTSTR const CTAG_ITEM_NAME                      = (_T("ItemName"));

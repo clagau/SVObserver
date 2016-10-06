@@ -49,7 +49,7 @@ private:
 	MonitoredObjectList m_productImagesList;
 	MonitoredObjectList m_rejectConditionList;
 	MonitoredObjectList m_failStatusList;
-	bool m_bActive; // do not persist the active state
+	bool m_bActive;
 	SvSml::SVProductFilterEnum m_filter;
 #pragma endregion PrivateData
 

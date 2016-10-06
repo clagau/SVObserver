@@ -196,6 +196,19 @@ HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SvSm
 	return hr;
 }
 
+bool SVSharedMemorySingleton::IsReady()
+{
+	SvSml::SVShareControlHandler& rControlShare = SVSharedMemorySingleton::Instance().GetIPCShare();
+	if (rControlShare.IsCreated())
+	{
+		return rControlShare.IsReady();
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void SVSharedMemorySingleton::QuiesceSharedMemory()
 {
 	SvSml::SVShareControlHandler& rControlShare = SVSharedMemorySingleton::Instance().GetIPCShare();

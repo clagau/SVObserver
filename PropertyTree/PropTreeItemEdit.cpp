@@ -406,6 +406,21 @@ bool SVRPropertyItemEdit::GetItemValue(BYTE& bVal)
 }
 
 
+bool SVRPropertyItemEdit::GetItemValue(bool& bVal)
+{
+	try
+	{
+		bVal = (bool)m_vtData;
+	}
+	catch(_com_error e)
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+
 bool SVRPropertyItemEdit::GetItemValue(short& iVal)
 {
 	try
@@ -689,6 +704,22 @@ bool SVRPropertyItemEdit::SetItemValue(LPCTSTR strSrc)
 	{
 		m_vtData = strSrc;
 		m_pstr   = nullptr;
+	}
+	catch(_com_error e)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool SVRPropertyItemEdit::SetItemValue(const bool  boolVal)
+{
+	try
+	{
+		m_vtData = boolVal;
 	}
 	catch(_com_error e)
 	{

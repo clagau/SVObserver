@@ -759,6 +759,10 @@ BOOL SVPPQObject::Destroy()
 
 	if (SvSml::SVSharedMemorySingleton::HasShares())
 	{
+		if(SvSml::SVSharedMemorySingleton::IsReady())
+		{
+			SvSml::SVSharedMemorySingleton::QuiesceSharedMemory();
+		}
 		SvSml::SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 	}
 

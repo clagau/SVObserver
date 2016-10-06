@@ -65,6 +65,7 @@ public:
 	virtual bool GetItemValue(double& pdblVal);
 	virtual bool GetItemValue(CString& lpszVal);
     virtual bool GetItemValue(VARIANT& vtVal);
+	virtual bool GetItemValue(bool& bVal);
 
 	// Set the item's attribute value
 	virtual bool SetItemValue(const BYTE bVal);
@@ -77,6 +78,7 @@ public:
 	virtual bool SetItemValue(const float fltVal);
 	virtual bool SetItemValue(const double dblVal);
 	virtual bool SetItemValue(LPCTSTR pstrVal);
+	virtual bool SetItemValue(const bool bVal);
 
 	// Set the item's attribute reference
 	virtual bool SetItemValuePtr(BYTE& bVal);

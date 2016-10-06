@@ -23,6 +23,8 @@
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "TextDefinesSvO.h"
+
 #pragma endregion Includes
 
 enum MonitorListViewUpdateHints
@@ -35,6 +37,7 @@ enum MonitorListViewUpdateHints
 
 static const CString scPPQ = _T("PPQ");
 static const CString scITEM = _T("Item");
+static const CString scIsActivated =  _T("Is Activated");
 static const CString scPRODUCTITEMLIST = _T("ProductItemList");
 static const CString scREJECTCONDITIONLIST = _T("RejectConditionList");
 static const CString scFAILSTATUSLIST = _T("FailStatusList");
@@ -490,9 +493,11 @@ int MonitorListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// insert columns
 	m_rCtrl.InsertColumn(0, scITEM, LVCFMT_LEFT, -1, -1);
 	m_rCtrl.InsertColumn(1, scPPQ, LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(2, scIsActivated, LVCFMT_LEFT, -1, -1);
 	
 	m_rCtrl.SetColumnWidth(0, 500);
 	m_rCtrl.SetColumnWidth(1, 125);
+	m_rCtrl.SetColumnWidth(2, 125);
 
 	m_rCtrl.SetExtendedStyle(m_rCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
 	return 0;
@@ -555,6 +560,9 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 			// Set PPQ Name
 			m_rCtrl.SetItemText(ipos, 1, it->second.GetPPQName().c_str());
+
+			// Set IsActivated 
+			m_rCtrl.SetItemText(ipos, 2, it->second.IsActive()?  SvO::cTrue : SvO::cFalse );
 		
 			if (!state.bListCollapsed)
 			{

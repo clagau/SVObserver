@@ -399,18 +399,18 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 	return hr;
 }
 
-HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
+HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorList& rRemoteMonitorList , const SVString& listName, bool bActivate) 
 {
 	HRESULT hr = S_OK;
-	RemoteMonitorList::iterator it = m_list.find(listName);
-	if (it != m_list.end())
+	RemoteMonitorList::iterator it = rRemoteMonitorList.find(listName);
+	if (it != rRemoteMonitorList.end())
 	{
 		it->second.Activate(bActivate);
 		it->second.SetProductFilter(SvSml::LastInspectedFilter);
 		if(true == bActivate)
 		{	
 			SVGUID PPQ_GUID = it->second.GetPPQObjectID();
-			for(RemoteMonitorList::iterator it_S = m_list.begin(); it_S != m_list.end();it_S++ )
+			for(RemoteMonitorList::iterator it_S = rRemoteMonitorList.begin(); it_S != rRemoteMonitorList.end();it_S++ )
 			{
 				if(it_S->second.GetPPQObjectID() == PPQ_GUID && it_S != it)
 				{
@@ -421,10 +421,16 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 	}
 	else
 	{
-		 hr = E_INVALIDARG;
+		hr = E_INVALIDARG;
 	}
 	return hr;
 }
+
+HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
+{
+	return ActivateRemoteMonitorList(m_list, listName,bActivate);
+}	
+
 
  void RemoteMonitorListController::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const
 {

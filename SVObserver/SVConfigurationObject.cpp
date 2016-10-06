@@ -3529,6 +3529,10 @@ bool SVConfigurationObject::SaveRemoteMonitorList( SVObjectXMLWriter &rWriter ) 
 		rWriter.WriteAttribute( CTAG_REJECT_QUEUE_DEPTH, svValue );
 		svValue.Clear();
 
+		svValue = monitorList.IsActive();
+		rWriter.WriteAttribute( CTAG_IS_ACTIVATED, svValue );
+		svValue.Clear();
+
 		bOk = SaveMonitoredObjectList( rWriter, CTAG_PRODUCTVALUES_LIST, monitorList.GetProductValuesList() ) && bOk;
 		bOk = SaveMonitoredObjectList( rWriter, CTAG_PRODUCTIMAGE_LIST, monitorList.GetProductImagesList() ) && bOk;
 		bOk = SaveMonitoredObjectList( rWriter, CTAG_REJECTCONDITION_LIST, monitorList.GetRejectConditionList() ) && bOk;
@@ -5239,6 +5243,7 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
 		{
 			SVString ppqName = "";
 			int rejectDepth = 0;
+			
 			SVString listName( rTree.getBranchName( hSubChild ) );
 			_variant_t svValue = 0.0;
 
@@ -5261,6 +5266,11 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
 				{
 					result = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
 				}
+			}
+			bool isactivated(false);
+			if (  S_OK == result && SVNavigateTree::GetItem( rTree, CTAG_IS_ACTIVATED, hSubChild, svValue ) )
+			{
+				isactivated = svValue;
 			}
 
 			MonitoredObjectList productValueList;
@@ -5286,6 +5296,8 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
 			if (S_OK == result)
 			{
 				RemoteMonitorNamedList monitorList( ppqName, listName, productValueList, productImageList, rejectConditionList, failStatusList, rejectDepth );
+				monitorList.Activate(isactivated);
+				
 				lists[listName] = monitorList;
 
 				hSubChild = rTree.getNextBranch( hChild, hSubChild );

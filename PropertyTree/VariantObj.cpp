@@ -1184,7 +1184,30 @@ void CVariantObj::fromString(LPCTSTR lpszSrc)
 	
 	switch (V_VT(this))
 	{
-		case VT_UI1:
+
+	case VT_BOOL:
+	case VT_BOOL | VT_BYREF:
+		{
+			bool val(false);
+			if( _tcsncmp(lpszSrc,_T("1"), 1 ) == 0  ||  _tcsnicmp(lpszSrc,_T("True"), 4 ) == 0)
+			{
+
+				val = true;
+			}
+
+			if (V_ISBYREF(this))
+			{
+				*V_BOOLREF(this) = val; 
+			}
+			else 
+			{
+				V_BOOL(this) = val;
+			}
+
+		}
+		break;
+		
+	case VT_UI1:
 		case VT_UI1 | VT_BYREF:
 		{
 			ULONG ul = _tcstoul(lpszSrc, &stopstring, 0);

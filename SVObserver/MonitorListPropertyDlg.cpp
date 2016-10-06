@@ -15,6 +15,7 @@
 #include "MonitorListPropertyDlg.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "RemoteMonitorListController.h"
 #pragma endregion Includes
 
 enum {IDC_MONITOR_PROPERTY_TREE = 100};
@@ -25,6 +26,7 @@ MonitorListPropertyDlg::MonitorListPropertyDlg(RemoteMonitorList& MonitorList, C
 : CDialog(MonitorListPropertyDlg::IDD, pParent)
 , m_MonitorList(MonitorList)
 , m_MonitorListName(sName)
+,m_IsMonitorListActive(false)
 {
 }
 
@@ -64,6 +66,7 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 	{
 		m_DisplayName = it->second.GetName().c_str();
 		m_MonitorListRejectQueueDepth = it->second.GetRejectDepthQueue();
+		m_IsMonitorListActive = it->second.IsActive();
 	}
 
 	SetupMonitorListProperties();
@@ -140,6 +143,13 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 				m_Tree.FindItem(PROP_MONITOR_LIST_DEPTH)->SetItemValue(m_MonitorListRejectQueueDepth);
 			}
 		}
+		else if ( PROP_MONITOR_LIST_ISACTIVE == pItem->GetCtrlID() )
+		{
+			bool isActive;
+			m_Tree.FindItem(PROP_MONITOR_LIST_ISACTIVE)->GetItemValue(isActive);		
+				m_IsMonitorListActive = isActive;			
+		}
+
 	}
 }
 
@@ -156,6 +166,8 @@ void MonitorListPropertyDlg::OnOK()
 		m_MonitorList.insert(std::make_pair(m_DisplayName, namedList));
 	}
 
+	//use ActivateRemoteMonitorList to avoid more then one active monitorlist per PPQ 
+	RemoteMonitorListController::ActivateRemoteMonitorList(m_MonitorList, SVString(m_MonitorListName),m_IsMonitorListActive );
 	CDialog::OnOK();
 }
 
@@ -190,6 +202,16 @@ void MonitorListPropertyDlg::SetupMonitorListProperties()
 			pPropItem->SetItemValue(m_MonitorListRejectQueueDepth);
 		}
 
+		pPropItem = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(),pRoot);
+
+		if ( pPropItem )
+		{
+			pPropItem->SetLabelText(_T("Is Activ"));
+			pPropItem->SetCtrlID(PROP_MONITOR_LIST_ISACTIVE);
+			pPropItem->SetInfoText(_T("Only one Monitorlist per PPQ can be active"));
+			pPropItem->SetItemValue(m_IsMonitorListActive);
+		}
+
 		pRoot->Select(true);
 		pRoot->Expand();
 	}
@@ -203,5 +225,10 @@ CString MonitorListPropertyDlg::GetMonitorListName() const
 int MonitorListPropertyDlg::GetMonitorListRejectQueueDepth() const
 {
 	return m_MonitorListRejectQueueDepth;
+}
+
+bool MonitorListPropertyDlg::GetIsMonitorListActive() const
+{
+	return  m_IsMonitorListActive;
 }
 

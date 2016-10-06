@@ -5559,10 +5559,6 @@ void SVObserverApp::Start()
 			SvSml::SVSharedMemorySingleton::QuiesceSharedMemory();
 		}
 		
-		
-		pConfig->ActivateDefaultMonitorList();
-
-
 		PPQMonitorList ppqMonitorList;
 		pConfig->BuildPPQMonitorList(ppqMonitorList);
 		

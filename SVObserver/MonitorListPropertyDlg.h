@@ -22,6 +22,7 @@ enum MonitorListPropertyEnum
 {
 	PROP_MONITOR_LIST_NAME		= 101,
 	PROP_MONITOR_LIST_DEPTH		= 102,
+	PROP_MONITOR_LIST_ISACTIVE   = 103,
 };
 
 #pragma endregion ENUMS
@@ -39,7 +40,7 @@ public:
 
 	CString GetMonitorListName() const;
 	int GetMonitorListRejectQueueDepth() const;
-
+	bool GetIsMonitorListActive() const;
 // Dialog Data
 	enum { IDD = IDD_DLG_PROP_MON_LIST };
 
@@ -68,6 +69,7 @@ protected:
 	CString m_DisplayName;		// current valid Monitor List name (starts out as original Monitor List name)
 	int m_MonitorListRejectQueueDepth;
 	CString m_sPPQ;
+	bool m_IsMonitorListActive;
 	void SetupMonitorListProperties();
 	bool IsValidListName(const CString& name, const CString& originalName) const;
 	void ValidateLabelText(CString& newText) const;
