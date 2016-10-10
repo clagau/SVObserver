@@ -17,7 +17,7 @@
 #include "SVVisionProcessorHelper.h"
 
 #include "JsonLib/include/json.h"
-#include "SVIMCommand/SVIMCommand.h"
+#include "ObjectInterfaces/SVIMCommand.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 
 #include "SVConfigurationObject.h"
@@ -104,56 +104,56 @@ HRESULT SVVisionProcessorHelper::GetState( unsigned long& p_rState ) const
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
-		p_rState |= SVIM_CONFIG_LOADED;
+		p_rState |= SvOi::SVIM_CONFIG_LOADED;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_SAVING ) )
 	{
-		p_rState |= SVIM_SAVING_CONFIG;
+		p_rState |= SvOi::SVIM_SAVING_CONFIG;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
 	{
-		p_rState |= SVIM_CONFIG_LOADING;
+		p_rState |= SvOi::SVIM_CONFIG_LOADING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		p_rState |= SVIM_ONLINE;
+		p_rState |= SvOi::SVIM_ONLINE;
 
 		if (! SVSVIMStateClass::CheckState( SV_STATE_TEST ) ) // testing (but not regression testing) sets the running flag
 		{
-			p_rState |= SVIM_RUNNING;
+			p_rState |= SvOi::SVIM_RUNNING;
 		}
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
 	{
-		p_rState |= SVIM_REGRESSION_TEST;
+		p_rState |= SvOi::SVIM_REGRESSION_TEST;
 	}
 	else if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )// can be testing without regression testing, but can't be regression testing without testing
 	{
-		p_rState |= SVIM_RUNNING_TEST;
+		p_rState |= SvOi::SVIM_RUNNING_TEST;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
-		p_rState |= SVIM_SETUPMODE;
+		p_rState |= SvOi::SVIM_SETUPMODE;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
 	{
-		p_rState |= SVIM_STOPPING;
+		p_rState |= SvOi::SVIM_STOPPING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
 	{
-		p_rState |= SVIM_ONLINE_PENDING;
+		p_rState |= SvOi::SVIM_ONLINE_PENDING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
 	{
-		p_rState |= SVIM_RAID_FAILURE;
+		p_rState |= SvOi::SVIM_RAID_FAILURE;
 	}
 
 	return l_Status;

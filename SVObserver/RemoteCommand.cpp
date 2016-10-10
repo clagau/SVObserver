@@ -17,7 +17,7 @@
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVSVIMStateClass.h"
 #include "SVGlobal.h"
-#include "SVIMCommand/SVIMCommand.h"
+#include "ObjectInterfaces/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion includes
@@ -43,58 +43,58 @@ BOOL GlobalRCGetState( DWORD* pdwSVIMState )
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
-		*pdwSVIMState |= SVIM_CONFIG_LOADED;
+		*pdwSVIMState |= SvOi::SVIM_CONFIG_LOADED;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_SAVING ) )
 	{
-		*pdwSVIMState |= SVIM_SAVING_CONFIG;
+		*pdwSVIMState |= SvOi::SVIM_SAVING_CONFIG;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
 	{
-		*pdwSVIMState |= SVIM_CONFIG_LOADING;
+		*pdwSVIMState |= SvOi::SVIM_CONFIG_LOADING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		*pdwSVIMState |= SVIM_ONLINE;
+		*pdwSVIMState |= SvOi::SVIM_ONLINE;
 
 		// testing (but not regression testing) sets the running flag
 		if (! SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
 		{
-			*pdwSVIMState |= SVIM_RUNNING;
+			*pdwSVIMState |= SvOi::SVIM_RUNNING;
 		}
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
 	{
-		*pdwSVIMState |= SVIM_REGRESSION_TEST;
+		*pdwSVIMState |= SvOi::SVIM_REGRESSION_TEST;
 	}
 	// can be testing without regression testing, but can't be regression testing without testing
 	else if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
 	{
-		*pdwSVIMState |= SVIM_RUNNING_TEST;
+		*pdwSVIMState |= SvOi::SVIM_RUNNING_TEST;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
-		*pdwSVIMState |= SVIM_SETUPMODE;
+		*pdwSVIMState |= SvOi::SVIM_SETUPMODE;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
 	{
-		*pdwSVIMState |= SVIM_STOPPING;
+		*pdwSVIMState |= SvOi::SVIM_STOPPING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
 	{
-		*pdwSVIMState |= SVIM_ONLINE_PENDING;
+		*pdwSVIMState |= SvOi::SVIM_ONLINE_PENDING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
 	{
-		*pdwSVIMState |= SVIM_RAID_FAILURE;
+		*pdwSVIMState |= SvOi::SVIM_RAID_FAILURE;
 	}
 
 	bOk = *pdwSVIMState != 0 || bOk;
