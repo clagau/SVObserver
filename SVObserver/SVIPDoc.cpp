@@ -2931,25 +2931,34 @@ void SVIPDoc::SetRegressionTestPlayMode(RegressionPlayModeEnum newPlayMode)
 
 DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 {
-	SVIPDoc* l_IPDoc = reinterpret_cast< SVIPDoc* >( lpParam );
+	SVIPDoc* pIPDoc = reinterpret_cast<SVIPDoc*> (lpParam);
+	SVMainFrame* pMainFrm( dynamic_cast<SVMainFrame*> (AfxGetApp()->m_pMainWnd) );
+	HWND hRegressionWnd( nullptr );
 
-	if( nullptr == l_IPDoc->GetInspectionProcess() ) { return E_FAIL; }
+	if( nullptr != pMainFrm && nullptr != pMainFrm->m_pregTestDlg )
+	{
+		hRegressionWnd = pMainFrm->m_pregTestDlg->GetSafeHwnd();
+	}
+	if( nullptr == pIPDoc->GetInspectionProcess() || nullptr == hRegressionWnd )
+	{ 
+		return E_FAIL;
+	}
 
 	bool l_bFirst = true;
-	l_IPDoc->m_bRegressionTestRunning = true;
+	pIPDoc->m_bRegressionTestRunning = true;
 
-	l_IPDoc->m_regtestRunMode = RegModePause;
-	l_IPDoc->m_bRegressionTestStopping = false;
+	pIPDoc->m_regtestRunMode = RegModePause;
+	pIPDoc->m_bRegressionTestStopping = false;
 
 	bool l_bUsingSingleFile = false;
 	BOOL bDisplayFile = FALSE;
 	BOOL bModeReset = FALSE;
 
-	while ( l_IPDoc->m_regtestRunMode != RegModeStopExit)
+	while ( pIPDoc->m_regtestRunMode != RegModeStopExit)
 	{
 		//while in Pause mode, sleep
 		bModeReset = FALSE;
-		if ( l_IPDoc->m_regtestRunMode == RegModePause )
+		if ( pIPDoc->m_regtestRunMode == RegModePause )
 		{
 			::Sleep(50);
 			continue;
@@ -2959,20 +2968,28 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 		RegressionRunFileStruct *ptmpRunFileStruct;
 		RegressionTestStruct *ptmpRegTestStruct;
 
-		INT_PTR iListCnt = l_IPDoc->m_listRegCameras.GetCount();
+		INT_PTR iListCnt = pIPDoc->m_listRegCameras.GetCount();
 		bool l_bDone = false;
 		bool l_bListDone = false;
 		int l_iNumSingleFile = 0;
 
 		for ( INT_PTR i = 0; i < iListCnt; i++ )
 		{
-			POSITION posCamera = l_IPDoc->m_listRegCameras.FindIndex(i);
+			POSITION posCamera = pIPDoc->m_listRegCameras.FindIndex(i);
 
-			if ( nullptr == posCamera ) { continue; }
+			if( nullptr == posCamera )
+			{ 
+				continue;
+			}
 			l_bDone = false;
 
 			ptmpRunFileStruct = new RegressionRunFileStruct;
-			ptmpRegTestStruct = l_IPDoc->m_listRegCameras.GetAt(posCamera);
+			ptmpRegTestStruct = pIPDoc->m_listRegCameras.GetAt(posCamera);
+
+			if( nullptr == ptmpRegTestStruct )
+			{ 
+				continue;
+			}
 
 			if ( ptmpRegTestStruct->iFileMethod == RegSingleFile )
 			{
@@ -2981,7 +2998,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 			}
 
 			ptmpRunFileStruct->csCameraName = ptmpRegTestStruct->csCamera;
-			switch (l_IPDoc->m_regtestRunMode)
+			switch (pIPDoc->m_regtestRunMode)
 			{
 			case RegModePlay:
 				{
@@ -2997,7 +3014,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 					if ( ptmpRegTestStruct->iFileMethod != RegSingleFile)
 					{
-						if ( l_IPDoc->m_regtestRunPlayMode != Continue && !l_bFirst )
+						if ( pIPDoc->m_regtestRunPlayMode != Continue && !l_bFirst )
 						{
 							if ( ptmpRegTestStruct->stdIteratorCurrent == ptmpRegTestStruct->stdIteratorStart )
 							{
@@ -3007,14 +3024,14 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 						}
 					}
 
-					if (l_IPDoc->m_regtestRunPlayMode != Continue)
+					if (pIPDoc->m_regtestRunPlayMode != Continue)
 					{
 						if ( l_bUsingSingleFile )
 						{
 							if ( iListCnt == l_iNumSingleFile ) //all using single file
 							{
-								l_IPDoc->m_regtestRunMode = RegModePause;
-								SendMessage(( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->GetSafeHwnd(),WM_REGRESSION_TEST_SET_PLAYPAUSE,(LPARAM)&l_IPDoc->m_regtestRunMode,0);
+								pIPDoc->m_regtestRunMode = RegModePause;
+								SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0 );
 								bModeReset = true;
 								l_bFirst = true;
 							}
@@ -3024,8 +3041,8 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 								//check to see if at end of list.  if so stop...
 								if ( l_bListDone && ( (iListCnt-1) == i) )
 								{
-									l_IPDoc->m_regtestRunMode = RegModePause;
-									SendMessage(( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->GetSafeHwnd(),WM_REGRESSION_TEST_SET_PLAYPAUSE,(LPARAM)&l_IPDoc->m_regtestRunMode,0);
+									pIPDoc->m_regtestRunMode = RegModePause;
+									SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0 );
 									bModeReset = true;
 									l_bFirst = true;
 									bDisplayFile = FALSE;
@@ -3036,8 +3053,8 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 						{  //not using single files.
 							if ( l_bListDone && ( (iListCnt-1) == i) )
 							{
-								l_IPDoc->m_regtestRunMode = RegModePause;
-								SendMessage(( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->GetSafeHwnd(),WM_REGRESSION_TEST_SET_PLAYPAUSE,(LPARAM)&l_IPDoc->m_regtestRunMode,0);
+								pIPDoc->m_regtestRunMode = RegModePause;
+								SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0 );
 								bModeReset = true;
 								l_bFirst = true;
 								bDisplayFile = FALSE;
@@ -3109,7 +3126,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 					if ( i == (iListCnt-1) ) //last item in list
 					{
 						//set back to pause
-						l_IPDoc->m_regtestRunMode = RegModePause;
+						pIPDoc->m_regtestRunMode = RegModePause;
 					}
 					l_bUsingSingleFile = false; //reset this value
 					l_iNumSingleFile = 0;
@@ -3125,13 +3142,13 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 			if ( bDisplayFile )
 			{
-				l_IPDoc->m_listRegCameras.SetAt(posCamera,ptmpRegTestStruct);
+				pIPDoc->m_listRegCameras.SetAt(posCamera,ptmpRegTestStruct);
 
 				l_lstFileNames.AddTail(ptmpRunFileStruct);
 
-				if( nullptr != l_IPDoc->GetInspectionProcess() )
+				if( nullptr != pIPDoc->GetInspectionProcess() )
 				{
-					l_IPDoc->GetInspectionProcess()->AddInputImageRequestByCameraName(ptmpRunFileStruct->csCameraName,ptmpRunFileStruct->csFileName);
+					pIPDoc->GetInspectionProcess()->AddInputImageRequestByCameraName(ptmpRunFileStruct->csCameraName,ptmpRunFileStruct->csFileName);
 				}
 				else
 				{
@@ -3139,15 +3156,15 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 				}
 			}
 		}//end for i to num cameras...
-		if ( l_IPDoc->m_regtestRunMode == RegModeBackToBeginningPlay ) 
+		if ( pIPDoc->m_regtestRunMode == RegModeBackToBeginningPlay ) 
 		{
-			l_IPDoc->m_regtestRunMode = RegModePlay;
+			pIPDoc->m_regtestRunMode = RegModePlay;
 		}
 
-		if ( l_IPDoc->m_regtestRunMode == RegModeBackToBeginningStop)
+		if ( pIPDoc->m_regtestRunMode == RegModeBackToBeginningStop)
 		{
-			l_IPDoc->m_regtestRunMode = RegModePause;
-			SendMessage(( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->GetSafeHwnd(),WM_REGRESSION_TEST_SET_PLAYPAUSE,(LPARAM)&l_IPDoc->m_regtestRunMode,0);
+			pIPDoc->m_regtestRunMode = RegModePause;
+			SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0 );
 		}
 		l_bDone = false;
 		//send image info to the dialog...
@@ -3155,9 +3172,9 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 		{
 			bDisplayFile = FALSE;
 
-			SendMessage(( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->GetSafeHwnd(),WM_REGRESSION_TEST_SET_FILENAMES,(LPARAM)&l_lstFileNames,0);
+			SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_FILENAMES, reinterpret_cast<LPARAM> (&l_lstFileNames) , 0 );
 
-			l_IPDoc->RunOnce();
+			pIPDoc->RunOnce();
 
 			//////////////////////////////////////////////////////////////////////////////////
 			//clean up
@@ -3177,11 +3194,11 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 			} //end of loop to delete temp structures...
 		}
 
-		if ( !l_IPDoc->m_bRegressionTestStopping )
+		if ( !pIPDoc->m_bRegressionTestStopping )
 		{
-			if ( l_IPDoc->m_regtestRunMode == RegModePlay )
+			if ( pIPDoc->m_regtestRunMode == RegModePlay )
 			{
-				int iMS = l_IPDoc->m_iRegessionTimeoutMS;
+				int iMS = pIPDoc->m_iRegessionTimeoutMS;
 				if( iMS < MinRegressionTime )
 				{
 					iMS = MinRegressionTime;
@@ -3190,7 +3207,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 			}
 			else 
 			{
-				l_IPDoc->m_regtestRunMode = RegModePause;
+				pIPDoc->m_regtestRunMode = RegModePause;
 			}
 		}
 
@@ -3201,23 +3218,22 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 	}//end of while loop
 
 	//let the IP know that the regression test is done.
-	//	CWnd* pWnd = AfxGetMainWnd(); // SEJ -this fails in VC8 (could be cause we are in a different thread?)
-	// @WARNING:  Pointers should be checked before they are dereferenced.
-	CWnd* pWnd = AfxGetApp()->m_pMainWnd;
-	PostMessage (pWnd->m_hWnd, WM_COMMAND, WM_REGRESSION_TEST_COMPLETE, 0L);
-
+	PostMessage( pMainFrm->GetSafeHwnd(), WM_COMMAND, WM_REGRESSION_TEST_COMPLETE, 0L );
 	//let the RegressionRunDlg know that it is to shut down...
-	SendMessage(( ( SVMainFrame* ) pWnd )->m_pregTestDlg->GetSafeHwnd(), WM_REGRESSION_TEST_CLOSE_REGRESSION, 0, 0);
+	SendMessage( hRegressionWnd, WM_REGRESSION_TEST_CLOSE_REGRESSION, 0, 0 );
 
 	return 0L;
 }
 
 void SVIPDoc::RegressionTestComplete()
 {
-	// @WARNING:  Pointers should be checked before they are dereferenced.
-	( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->DestroyWindow();
-	delete ( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg;
-	( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg = nullptr;
+	SVMainFrame* pMainFrm( dynamic_cast<SVMainFrame*> (AfxGetApp()->m_pMainWnd) );
+	if( nullptr != pMainFrm && nullptr != pMainFrm->m_pregTestDlg )
+	{
+		pMainFrm->m_pregTestDlg->DestroyWindow();
+		delete pMainFrm->m_pregTestDlg;
+		pMainFrm->m_pregTestDlg = nullptr;
+	}
 
 	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
 }

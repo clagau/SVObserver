@@ -37,6 +37,7 @@
 #include "SVPPQObject.h"
 #include "SVPPQConstants.h"
 #include "TriggerInformation/SVHardwareManifest.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1732,17 +1733,23 @@ void CSVOPropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* p
 					_variant_t Value;
 					pItem->GetItemValue(Value);
 					const SVCameraFormat* pFormat = reinterpret_cast< const SVCameraFormat*> (Value.llVal);
-					if ( pFormat )
+					if ( nullptr != pFormat )
 					{
+						//@WARNING [gra][7.40][07.10.2016] SVObserver has crashed before with pFormat being not nullptr so it seems the pointer is corrupt
 						if ( pFormat->m_bVariableROI )
 						{
 							*plResult = TRUE;
-						}// end if ( pFormat->bVariable )
-					}// end if ( pFormat )
-				}// end case DeviceParamCameraFormats:
-			}// end switch ( pDeviceParam->Type() )
-		}// end if ( pItem->GetCtrlID() >= PROP_CAMERA_FILE_BASE )
-	}// end if ( pNMPropTree->pItem )
+						}
+					}
+					else
+					{
+						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+						Exception.setMessage( SVMSG_SVO_NULL_POINTER, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+					}
+				}
+			}
+		}
+	}
 }
 
 void CSVOPropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)

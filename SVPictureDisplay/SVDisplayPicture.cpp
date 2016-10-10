@@ -294,9 +294,13 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 		}
 
 		// Create compatible Bitmap here...Rather than in OnPaint to save time.
-		CDC* dc = GetDC();
-		m_memBitmap = ::CreateCompatibleBitmap( dc->m_hDC, rect.Width(), rect.Height() );
-		ReleaseDC( dc );
+		CDC* pDC = GetDC();
+		//@WARNING [gra][7.40][07.10.2016] We do not generate an event log if nullptr as this is an ocx which has not yet been linked with the SVMessage.dll
+		if( nullptr != pDC )
+		{
+			m_memBitmap = ::CreateCompatibleBitmap( pDC->m_hDC, rect.Width(), rect.Height() );
+			ReleaseDC( pDC );
+		}
 
 		p_Picture->QueryInterface( IID_IPicture, reinterpret_cast< void** >( &l_pPicture ) );
 
